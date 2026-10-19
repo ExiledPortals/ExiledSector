@@ -36,6 +36,7 @@ public final class ModificationBay {
     private SocketPanelPlacement sidePlacement;
     private BenchMode benchMode = BenchMode.HULL_ITEMS;
     private boolean hullItemsOnly;
+    private boolean modeLocked;
     private boolean drawer;
     private boolean closing;
 
@@ -56,6 +57,16 @@ public final class ModificationBay {
                                                     Listener bayListener) {
         ModificationBay bay = new ModificationBay(hostPanel, installedShipLookup, bayListener);
         bay.hullItemsOnly = true;
+        bay.modeLocked = true;
+        bay.layOut(area);
+        return bay;
+    }
+
+    public static ModificationBay openStarChartsOnly(CustomPanelAPI hostPanel, SocketPanelPlacement area, Function<Item, String> installedShipLookup,
+                                                     Listener bayListener) {
+        ModificationBay bay = new ModificationBay(hostPanel, installedShipLookup, bayListener);
+        bay.benchMode = BenchMode.STAR_CHARTS;
+        bay.modeLocked = true;
         bay.layOut(area);
         return bay;
     }
@@ -125,7 +136,7 @@ public final class ModificationBay {
 
             @Override
             public boolean offersModeSwitch() {
-                return !hullItemsOnly;
+                return !modeLocked;
             }
 
             @Override

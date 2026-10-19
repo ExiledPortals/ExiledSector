@@ -336,6 +336,7 @@ Each phase ends with tests passing and, from phase 1 onwards, the soak check.
    - Farming QoL commission merit in systems is fine.
    - The dev setting stays, renamed as a dev switch and off by default: when on, it skips the Gateway and lets the button work anywhere outside a chart system.
    - No upgrade or downgrade chain for now (decided 2026-10-18). Better Market Overhaul would turn one into an upgrade path.
+   - Clicking the Gateway in the colony screen offers a "Star Charts" option (`exiledsector.ui.chart.WormholeGatewayOption`, a vanilla `IndustryOptionProvider`), shown on the player's own colony even while the Gateway is under construction. It opens the Crafting window locked to its Star Charts mode: no mode switch and no hull items, only the chart picker, chart crafting and the Open Wormhole button, which still needs the docked Gateway check above (decided 2026-10-19).
 10. **Polish.** Wormhole visuals and sounds, the fleet preview, and balance.
 
 Atlas progression is deferred to a later project.

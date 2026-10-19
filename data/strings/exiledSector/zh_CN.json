@@ -126,6 +126,8 @@
     "chart.gateway.unavailable.janus": "需要杰纳斯装置。",
     "chart.gateway.unavailable.onePerFaction": "每个势力只能拥有一座虫洞门户。你的虫洞门户位于{colony}。",
     "chart.gateway.tooltip.opens": "你的舰队停靠在此殖民地时，可以开启星图虫洞。",
+    "chart.gateway.option.open": "星图",
+    "chart.gateway.option.tooltip": "改造你的星图并开启它们的虫洞。",
     "industry.exiledSector_wormhole_gateway.name": "虫洞门户",
     "industry.exiledSector_wormhole_gateway.description": "一组场投射器构成的网格，能让星图坐标保持稳定，足以撕开一道通往测绘星系的虫洞。停靠在此的舰队可以开启星图虫洞。",
     "chart.ui.open.confirm.title": "用{name}开启虫洞？",

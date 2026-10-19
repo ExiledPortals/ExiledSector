@@ -110,6 +110,8 @@
     "chart.gateway.unavailable.janus": "Requires the Janus Device.",
     "chart.gateway.unavailable.onePerFaction": "Only one Wormhole Gateway per faction is allowed. Yours is at {colony}.",
     "chart.gateway.tooltip.opens": "Your fleet can open Star Chart wormholes while docked at this colony.",
+    "chart.gateway.option.open": "Star Charts",
+    "chart.gateway.option.tooltip": "Modify your Star Charts and open their wormholes.",
     "industry.exiledSector_wormhole_gateway.name": "Wormhole Gateway",
     "industry.exiledSector_wormhole_gateway.description": "A lattice of field projectors that holds a Star Chart's coordinates steady long enough to tear a wormhole open to the charted system. Fleets docked here can open Star Chart wormholes.",
     "chart.ui.open.confirm.title": "Open a wormhole with {name}?",

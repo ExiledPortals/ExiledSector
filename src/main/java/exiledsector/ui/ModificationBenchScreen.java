@@ -42,6 +42,7 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin {
     }
 
     private final Host host;
+    private final boolean starChartsOnly;
     private CustomPanelAPI hostPanel;
     private ModificationBay bay;
     private Map<String, FleetMemberAPI> ownedShips = Map.of();
@@ -52,7 +53,16 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin {
     private String wormholeMessage;
 
     ModificationBenchScreen(Host host) {
+        this(host, false);
+    }
+
+    ModificationBenchScreen(Host host, boolean starChartsOnly) {
         this.host = host;
+        this.starChartsOnly = starChartsOnly;
+    }
+
+    boolean starChartsOnly() {
+        return starChartsOnly;
     }
 
     void attach(CustomPanelAPI panel) {
@@ -73,22 +83,24 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin {
         if (!closing && !bayOpened && openLevel >= 1f) {
             bayOpened = true;
             SkillTreeSounds.panelOpened();
-            bay = ModificationBay.open(hostPanel, benchArea(Global.getSettings().getScreenWidth(), Global.getSettings().getScreenHeight(), false),
-                    SocketCustody.shipNames(ownedShips), new ModificationBay.Listener() {
-                        @Override
-                        public void closed() {
-                            closing = true;
-                        }
+            SocketPanelPlacement area = benchArea(Global.getSettings().getScreenWidth(), Global.getSettings().getScreenHeight(), false);
+            ModificationBay.Listener bayListener = new ModificationBay.Listener() {
+                @Override
+                public void closed() {
+                    closing = true;
+                }
 
-                        @Override
-                        public void pressedInside() {
-                        }
+                @Override
+                public void pressedInside() {
+                }
 
-                        @Override
-                        public void wormholeOpened(String message) {
-                            wormholeMessage = message;
-                        }
-                    });
+                @Override
+                public void wormholeOpened(String message) {
+                    wormholeMessage = message;
+                }
+            };
+            bay = starChartsOnly ? ModificationBay.openStarChartsOnly(hostPanel, area, SocketCustody.shipNames(ownedShips), bayListener)
+                    : ModificationBay.open(hostPanel, area, SocketCustody.shipNames(ownedShips), bayListener);
         }
         if (closing && openLevel <= 0f && !closeRequested) {
             closeRequested = true;

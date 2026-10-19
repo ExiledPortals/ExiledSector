@@ -120,6 +120,17 @@ class ModificationBenchCargoLauncherTest {
     }
 
     @Test
+    void theStarChartsEntryLocksTheBenchToStarChartsAndTheInventoryEntryDoesNot() {
+        ModificationBenchCargoLauncher.open(campaignUI, null);
+        assertFalse(((ModificationBenchScreen) benchPlugin).starChartsOnly());
+        corePanel.children.clear();
+
+        assertTrue(ModificationBenchCargoLauncher.openStarCharts(campaignUI));
+
+        assertTrue(((ModificationBenchScreen) benchPlugin).starChartsOnly());
+    }
+
+    @Test
     void closingRemovesTheBenchOnTheNextFrameAndThenRunsTheAfterCloseStep() {
         AtomicInteger afterCloseRuns = new AtomicInteger();
         ModificationBenchCargoLauncher.open(campaignUI, afterCloseRuns::incrementAndGet);

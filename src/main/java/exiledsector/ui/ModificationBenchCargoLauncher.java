@@ -16,14 +16,22 @@ public final class ModificationBenchCargoLauncher {
     private ModificationBenchCargoLauncher() {
     }
 
-    // java:S1181: UiReflection declares Throwable, and a changed engine may only cost the inventory Crafting button, never the game
-    @SuppressWarnings("java:S1181")
     public static boolean open(CampaignUIAPI campaignUI, Runnable afterClose) {
+        return open(campaignUI, false, afterClose);
+    }
+
+    public static boolean openStarCharts(CampaignUIAPI campaignUI) {
+        return open(campaignUI, true, null);
+    }
+
+    // java:S1181: UiReflection declares Throwable, and a changed engine may only cost the core UI Crafting window, never the game
+    @SuppressWarnings("java:S1181")
+    private static boolean open(CampaignUIAPI campaignUI, boolean starChartsOnly, Runnable afterClose) {
         try {
             UIPanelAPI hostPanel = hostPanel(campaignUI);
             if (hostPanel == null || benchOpenIn(hostPanel)) return false;
             CargoHost host = new CargoHost(hostPanel, afterClose);
-            ModificationBenchScreen screen = new ModificationBenchScreen(host);
+            ModificationBenchScreen screen = new ModificationBenchScreen(host, starChartsOnly);
             CustomPanelAPI panel = Global.getSettings().createCustom(Global.getSettings().getScreenWidth(), Global.getSettings().getScreenHeight(), screen);
             host.benchPanel = panel;
             hostPanel.addComponent(panel).inTL(0f, 0f);
@@ -31,7 +39,7 @@ public final class ModificationBenchCargoLauncher {
             SkillTreeSounds.play(CLICK_SOUND);
             return true;
         } catch (Throwable e) {
-            LOG.error("[ExiledSector] Could not open the Crafting window from the inventory screen", e);
+            LOG.error("[ExiledSector] Could not open the Crafting window over the campaign screens", e);
             return false;
         }
     }

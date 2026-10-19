@@ -76,6 +76,7 @@ import exiledsector.ui.ModificationBenchRefitButton;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.TreeCameraMemory;
 import exiledsector.ui.cargo.CargoCraftingTabListener;
+import exiledsector.ui.chart.WormholeGatewayOption;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
 import exiledsector.ui.inspect.SkillTreeCodexListener;
 import exiledsector.ui.inspect.ItemCodex;
@@ -244,6 +245,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         Global.getSector().getListenerManager().addListener(new SkillTreeCodexListener(), true);
         Global.getSector().getListenerManager().addListener(new PhantomHullModRefitHider(), true);
         Global.getSector().getListenerManager().addListener(new CargoCraftingTabListener(), true);
+        Global.getSector().getListenerManager().addListener(new WormholeGatewayOption(), true);
         SocketLossListener socketLossListener = new SocketLossListener();
         Global.getSector().getListenerManager().addListener(socketLossListener, true);
         ItemLootListener itemLootListener = new ItemLootListener();
