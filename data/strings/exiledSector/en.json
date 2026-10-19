@@ -116,6 +116,7 @@
     "chart.effect.CHART_RESOURCE_PERCENT": "<good>{value}%</good> more supplies, fuel, metals and other commodities in the system",
     "chart.effect.CHART_BLUEPRINT_PERCENT": "<good>{value}%</good> more blueprints and hull mod specs in the system",
     "chart.effect.CHART_AI_CORE_PERCENT": "<good>{value}%</good> more AI cores in the system",
+    "chart.effect.CHART_COLONY_ITEM_PERCENT": "<good>{value}%</good> higher chance that the system hides a colony item, which can never be certain",
     "chart.effect.CHART_WARDEN_SPOILS_PERCENT": "The warden carries <good>{value}%</good> richer spoils",
     "chart.effect.CHART_REWARD_PERCENT": "<good>{value}%</good> larger completion reward",
     "settings.starCharts.fleetLimit.name": "Star Charts: enemy fleets per system",

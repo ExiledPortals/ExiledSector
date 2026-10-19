@@ -1,8 +1,11 @@
 package exiledsector.charts;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.DerelictShipEntityPlugin;
 import com.fs.starfarer.api.impl.campaign.DerelictShipEntityPlugin.DerelictShipData;
@@ -18,6 +21,7 @@ import com.fs.starfarer.api.impl.campaign.procgen.themes.BaseThemeGenerator.Loca
 import com.fs.starfarer.api.impl.campaign.procgen.themes.SalvageEntityGeneratorOld;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.SalvageSpecialAssigner.ShipRecoverySpecialCreator;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.SalvageSpecialAssigner.SpecialCreationContext;
+import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.BaseSalvageSpecial;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import org.lwjgl.util.vector.Vector2f;
@@ -125,5 +129,12 @@ final class VanillaChartContentEngine implements ChartContentEngine {
     public ChartVanillaLoot.SiteDrops siteDrops(String salvageSpec) {
         SalvageEntityGenDataSpec spec = SalvageEntityGeneratorOld.getSalvageSpec(salvageSpec);
         return spec == null ? ChartVanillaLoot.SiteDrops.NONE : new ChartVanillaLoot.SiteDrops(spec.getDropRandom(), spec.getDropValue());
+    }
+
+    @Override
+    public void addColonyItem(SectorEntityToken holder, String itemId) {
+        CargoAPI colonyItem = Global.getFactory().createCargo(true);
+        colonyItem.addSpecial(new SpecialItemData(itemId, null), 1f);
+        BaseSalvageSpecial.addExtraSalvage(holder, colonyItem);
     }
 }

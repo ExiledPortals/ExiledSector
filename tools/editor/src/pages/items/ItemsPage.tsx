@@ -1,7 +1,15 @@
 import { Alert, Center, Loader, Tabs } from '@mantine/core';
 import { IconAlertTriangle } from '@tabler/icons-react';
 import { useVocabulary } from '../../api/vocabulary.ts';
-import { CHART_BLOCKED_ABILITY_SPEC, CHART_DROP_SPEC, CHART_FACTION_SPEC, CHART_LOOT_SPEC, CHART_POI_SPEC, CHART_TIER_SPEC } from './model/chartTables.ts';
+import {
+  CHART_BLOCKED_ABILITY_SPEC,
+  CHART_COLONY_ITEM_SPEC,
+  CHART_DROP_SPEC,
+  CHART_FACTION_SPEC,
+  CHART_LOOT_SPEC,
+  CHART_POI_SPEC,
+  CHART_TIER_SPEC,
+} from './model/chartTables.ts';
 import { ChartTableTab } from './tabs/ChartTableTab.tsx';
 import { CraftingTab } from './tabs/CraftingTab.tsx';
 import { DefinitionsTab } from './tabs/DefinitionsTab.tsx';
@@ -42,6 +50,7 @@ export function ItemsPage() {
         <Tabs.Tab value="chart-factions">Chart factions</Tabs.Tab>
         <Tabs.Tab value="chart-drops">Chart drops</Tabs.Tab>
         <Tabs.Tab value="chart-loot">Chart loot</Tabs.Tab>
+        <Tabs.Tab value="chart-colony-items">Chart colony items</Tabs.Tab>
         <Tabs.Tab value="chart-blocked-abilities">Chart blocked abilities</Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value="definitions" style={PANEL_STYLE}>
@@ -76,6 +85,9 @@ export function ItemsPage() {
       </Tabs.Panel>
       <Tabs.Panel value="chart-loot" style={PANEL_STYLE}>
         <ChartTableTab spec={CHART_LOOT_SPEC} vocabulary={vocabulary.data} />
+      </Tabs.Panel>
+      <Tabs.Panel value="chart-colony-items" style={PANEL_STYLE}>
+        <ChartTableTab spec={CHART_COLONY_ITEM_SPEC} vocabulary={vocabulary.data} />
       </Tabs.Panel>
       <Tabs.Panel value="chart-blocked-abilities" style={PANEL_STYLE}>
         <ChartTableTab spec={CHART_BLOCKED_ABILITY_SPEC} vocabulary={vocabulary.data} />

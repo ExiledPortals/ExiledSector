@@ -302,6 +302,45 @@ class ChartContentGeneratorTest {
         assertFalse(patrol.getMemoryWithoutUpdate().contains(ChartIds.STRENGTH_BONUS_MEMORY_KEY));
     }
 
+    private ChartGenContext certainColonyItem() throws Exception {
+        ChartColonyItems.register(new JSONArray().put(new JSONObject().put("id", "ceiling").put("value", "0.9999999"))
+                .put(new JSONObject().put("id", "synchrotron").put("value", "10")).put(new JSONObject().put("id", "mantle_bore").put("value", "10")),
+                itemId -> true);
+        return ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_COLONY_ITEM_PERCENT, 100000f)));
+    }
+
+    @Test
+    void aRolledColonyItemGoesToTheWardenOnceAndTheSameSeedPicksTheSameItem() throws Exception {
+        try {
+            ChartGenContext context = certainColonyItem();
+
+            ChartContent content = ChartContentGenerator.generate(sector, system, RUN_ID, 21L, 12, WORMHOLE, context);
+
+            assertNotNull(content.bossFleetId());
+            assertEquals(1, engine.colonyItems.size());
+            assertEquals(content.bossFleetId(), engine.colonyItems.get(0).holder().getId());
+            String firstItem = engine.colonyItems.get(0).itemId();
+            engine = FakeChartContentEngine.install(new FakeChartContentEngine().offering(-4000f, 0f, 0f, 5000f, 0f, -5000f, 6500f, 0f));
+            ChartContentGenerator.generate(sector, system, RUN_ID, 21L, 12, WORMHOLE, context);
+            assertEquals(firstItem, engine.colonyItems.get(0).itemId());
+        } finally {
+            ChartColonyItems.clear();
+        }
+    }
+
+    @Test
+    void noBonusGivesAColonyItemBelowTheFirstTierWithAChance() throws Exception {
+        try {
+            ChartGenContext context = certainColonyItem();
+
+            ChartContentGenerator.generate(sector, system, RUN_ID, 21L, ChartTiers.firstColonyItemTier() - 1, WORMHOLE, context);
+
+            assertEquals(List.of(), engine.colonyItems);
+        } finally {
+            ChartColonyItems.clear();
+        }
+    }
+
     @Test
     void placedSitesGetTheChartsVanillaLootBonus() throws Exception {
         ChartLoot.register(new JSONArray().put(new JSONObject().put("id", "weapons2").put("drop_type", "weapon").put("group", "weapons2")),

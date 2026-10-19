@@ -1,0 +1,16 @@
+id,value,note
+ceiling,0.25,"Not an item: the soft ceiling on a run's colony item chance. Bonuses bend the chance towards it and never reach it"
+synchrotron,10,"Weights copied from vanilla's rare_tech drop group; modded colony items can be appended"
+pristine_nanoforge,3,
+corrupted_nanoforge,7,
+orbital_fusion_lamp,10,
+mantle_bore,10,
+catalytic_core,10,
+soil_nanites,10,
+biofactory_embryo,10,
+fullerene_spool,10,
+plasma_dynamo,10,
+cryoarithmetic_engine,10,
+drone_replicator,10,
+dealmaker_holosuite,10,
+coronal_portal,10,

@@ -22,4 +22,6 @@ interface ChartContentEngine {
     CampaignFleetAPI createFleet(FleetParamsV3 params);
 
     ChartVanillaLoot.SiteDrops siteDrops(String salvageSpec);
+
+    void addColonyItem(SectorEntityToken holder, String itemId);
 }

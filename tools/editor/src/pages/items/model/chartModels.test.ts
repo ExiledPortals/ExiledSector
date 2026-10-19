@@ -3,6 +3,7 @@ import { buildVocabulary } from '../../../api/vocabulary.ts';
 import { parseCsvTable, serializeCsvTable } from '../../../shared/csv.ts';
 import {
   CHART_BLOCKED_ABILITY_SPEC,
+  CHART_COLONY_ITEM_SPEC,
   CHART_DROP_SPEC,
   CHART_FACTION_SPEC,
   CHART_LOOT_SPEC,
@@ -315,6 +316,19 @@ describe('chart tables', () => {
     expect(dropTierSummary(model.rows[0], vocabulary)).toBe('1% from 150, +1 tier per 120 more, up to t6');
   });
 
+  it('mirrors the colony item loader: the ceiling row is a fraction, items need a weight', () => {
+    const text = 'id,value,note\r\nceiling,1.5,\r\nsynchrotron,10,\r\nmantle_bore,0,\r\n';
+    const model = chartTable(CHART_COLONY_ITEM_SPEC, text);
+    expect(serializeChartTable(model, CHART_COLONY_ITEM_SPEC.columns)).toBe(text);
+    expect(CHART_COLONY_ITEM_SPEC.issues(model, vocabulary)).toEqual([
+      'ceiling: the ceiling must be above 0 and below 1, so an item is never certain',
+      'mantle_bore: an item needs a weight above 0',
+    ]);
+    expect(CHART_COLONY_ITEM_SPEC.warnings(chartTable(CHART_COLONY_ITEM_SPEC, 'id,value\nsynchrotron,10\n'), vocabulary)).toEqual([
+      'No ceiling row, so the ceiling is 25%',
+    ]);
+  });
+
   it('mirrors the chart loot loader: one drop type per group, base entries need a scope, mode and amount', () => {
     const text =
       'id,drop_type,scope,group,mode,amount,min_tier,note\r\n' +
@@ -360,6 +374,14 @@ describe('chart tables', () => {
       'tier 16: fleets_min 1.5 is rounded to a whole number',
       'No row for tier 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15; the game uses built-in values for them',
     ]);
+  });
+
+  it('warns when a colony item chance looks like a percentage or is negative', () => {
+    const model = chartTable(CHART_TIER_SPEC, 'tier,colony_item_chance\n1,4\n2,-0.01\n');
+    expect(CHART_TIER_SPEC.warnings(model, vocabulary)).toEqual(
+      expect.arrayContaining(['tier 1: colony_item_chance above 100% counts as 100%; it is a fraction, so 0.04 is 4%']),
+    );
+    expect(CHART_TIER_SPEC.warnings(model, vocabulary).filter((warning) => warning.startsWith('tier 2: colony_item_chance'))).toHaveLength(1);
   });
 
   it('gives each site category its own tier budget column and checks them like the tier loader', () => {

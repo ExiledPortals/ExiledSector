@@ -49,6 +49,7 @@ public final class StarCharts {
         ChartDrops.load();
         ChartPois.load();
         ChartLoot.load();
+        ChartColonyItems.load();
         ChartFactions.load();
     }
 }

@@ -50,6 +50,7 @@ public final class ChartContentGenerator {
     static final long SALVAGE_SALT = 0x434853414c5647L;
     static final long FLEET_BUILD_SALT = 0x43484255494c44L;
     static final long LOOT_SALT = 0x43484c4f4f5453L;
+    static final long COLONY_ITEM_SALT = 0x4348434f4c4f4eL;
     static final List<String> HOSTILITY_FLAGS = List.of(MemFlags.MEMORY_KEY_MAKE_HOSTILE, MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE,
             MemFlags.MEMORY_KEY_ALLOW_LONG_PURSUIT, MemFlags.MEMORY_KEY_NO_JUMP, MemFlags.MEMORY_KEY_SAW_PLAYER_WITH_TRANSPONDER_ON,
             MemFlags.MEMORY_KEY_NO_REP_IMPACT, MemFlags.MEMORY_KEY_LOW_REP_IMPACT);
@@ -85,6 +86,7 @@ public final class ChartContentGenerator {
         try {
             build.placePois(plan);
             build.spawnFleets(plan);
+            build.placeColonyItem(plan);
             return build.settle(plan);
         } catch (RuntimeException | LinkageError e) {
             report("generate the content", seed, e);
@@ -347,6 +349,46 @@ public final class ChartContentGenerator {
             } catch (RuntimeException | LinkageError e) {
                 report("add loot to a " + poi.id() + " point of interest", seed, e);
             }
+        }
+
+        void placeColonyItem(ChartContentPlan plan) {
+            try {
+                Random colonyItemRandom = ChartLayoutGenerator.derivedRandom(seed, COLONY_ITEM_SALT);
+                float chance = ChartColonyItems.chance(ChartTiers.colonyItemChance(tier), chartContext.dropMult(DropType.COLONY_ITEM));
+                if (!(colonyItemRandom.nextFloat() < chance)) {
+                    return;
+                }
+                String itemId = ChartColonyItems.pick(colonyItemRandom);
+                SectorEntityToken holder = colonyItemHolder(plan, colonyItemRandom);
+                if (itemId != null && holder != null) {
+                    engine.addColonyItem(holder, itemId);
+                }
+            } catch (RuntimeException | LinkageError e) {
+                report("place a colony item", seed, e);
+            }
+        }
+
+        private SectorEntityToken colonyItemHolder(ChartContentPlan plan, Random colonyItemRandom) {
+            for (CampaignFleetAPI fleet : fleets) {
+                if (fleet.getId() != null && fleet.getId().equals(bossFleetId)) {
+                    return fleet;
+                }
+            }
+            List<SectorEntityToken> stationsAndDomainSites = new ArrayList<>();
+            List<SectorEntityToken> anySites = new ArrayList<>();
+            for (int i = 0; i < poiEntities.size() && i < plan.pois().size(); i++) {
+                SectorEntityToken site = poiEntities.get(i);
+                if (site == null) {
+                    continue;
+                }
+                anySites.add(site);
+                ChartPoi.Kind kind = plan.pois().get(i).poi().kind();
+                if (kind == ChartPoi.Kind.STATION || kind == ChartPoi.Kind.DOMAIN) {
+                    stationsAndDomainSites.add(site);
+                }
+            }
+            List<SectorEntityToken> candidates = stationsAndDomainSites.isEmpty() ? anySites : stationsAndDomainSites;
+            return candidates.isEmpty() ? null : candidates.get(colonyItemRandom.nextInt(candidates.size()));
         }
 
         void spawnFleets(ChartContentPlan plan) {
