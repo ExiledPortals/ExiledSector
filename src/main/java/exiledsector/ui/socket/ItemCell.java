@@ -6,8 +6,8 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.items.Item;
 import exiledsector.ui.util.GLDraw;
+import exiledsector.ui.cargo.AnimatedItemIcons;
 import exiledsector.ui.util.SpriteCache;
-import exiledsector.ui.util.SpriteDraw;
 
 import java.awt.Color;
 import java.util.List;
@@ -124,7 +124,7 @@ public final class ItemCell extends BaseCustomUIPanelPlugin {
             return;
         }
         float iconSize = cellPosition.getWidth() - look.iconInset() * 2f;
-        SpriteDraw.drawAtCenter(ICONS, item.iconPath(), cellPosition.getCenterX(), cellPosition.getCenterY(), iconSize, iconSize,
+        AnimatedItemIcons.drawAtCenter(ICONS, item.iconPath(), cellPosition.getCenterX(), cellPosition.getCenterY(), iconSize, iconSize,
                 Color.WHITE, (cellListener.dimmed() ? DIMMED_ICON_ALPHA : 1f) * alphaMult);
     }
 

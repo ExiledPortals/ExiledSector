@@ -4,8 +4,8 @@ import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.ui.util.GLDraw;
+import exiledsector.ui.cargo.AnimatedItemIcons;
 import exiledsector.ui.util.SpriteCache;
-import exiledsector.ui.util.SpriteDraw;
 
 import java.awt.Color;
 import java.util.List;
@@ -68,7 +68,7 @@ final class IconTileCell extends BaseCustomUIPanelPlugin {
             return;
         }
         float iconSize = cellPosition.getWidth() - ICON_INSET * 2f;
-        SpriteDraw.drawAtCenter(ICONS, iconPath, cellPosition.getCenterX(), cellPosition.getCenterY(), iconSize, iconSize,
+        AnimatedItemIcons.drawAtCenter(ICONS, iconPath, cellPosition.getCenterX(), cellPosition.getCenterY(), iconSize, iconSize,
                 Color.WHITE, (blocked ? BLOCKED_ICON_ALPHA : 1f) * alphaMult);
     }
 
