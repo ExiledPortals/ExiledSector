@@ -6,7 +6,11 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.LocaleChain;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.charts.ChartEffects;
+import exiledsector.items.ItemEffects;
+import exiledsector.items.ItemType;
 import exiledsector.items.RolledEffect;
+import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.NodeDescription;
@@ -83,8 +87,20 @@ public final class EditorDescriber {
     private static StyledText describeModifierLine(JSONObject lineJson) throws JSONException {
         String effectName = lineJson.getString("effect");
         JSONArray hullValuesJson = lineJson.optJSONArray("hullValues");
+        JSONArray tierBandsJson = lineJson.optJSONArray("tierBands");
         ModifierLine line;
-        if (hullValuesJson != null) {
+        if (tierBandsJson != null) {
+            List<Integer> bandStartTiers = new ArrayList<>();
+            List<Float> bandLowValues = new ArrayList<>();
+            List<Float> bandHighValues = new ArrayList<>();
+            for (int index = 0; index < tierBandsJson.length(); index++) {
+                JSONObject band = tierBandsJson.getJSONObject(index);
+                bandStartTiers.add(band.getInt("tier"));
+                bandLowValues.add((float) band.getDouble("min"));
+                bandHighValues.add((float) band.getDouble("max"));
+            }
+            line = ModifierLine.perTierBandRanges(effectName, bandStartTiers, bandLowValues, bandHighValues);
+        } else if (hullValuesJson != null) {
             List<Float> hullValues = new ArrayList<>();
             for (int index = 0; index < hullValuesJson.length(); index++) {
                 hullValues.add((float) hullValuesJson.getDouble(index));
@@ -93,7 +109,15 @@ public final class EditorDescriber {
         } else {
             line = ModifierLine.range(effectName, (float) lineJson.getDouble("min"), (float) lineJson.getDouble("max"));
         }
-        return new RolledEffect(effectName, line.boundFarthestFromZero()).rangeDescription(line);
+        return new RolledEffect(effectName, line.boundFarthestFromZero()).rangeDescription(effectsFor(lineJson.optString("itemType", null)), line);
+    }
+
+    private static ModifierEffects effectsFor(String itemTypeId) {
+        ItemType itemType = itemTypeId == null ? null : ItemType.byIdOrNull(itemTypeId);
+        if (itemType == ItemType.STAR_CHART) {
+            return ChartEffects.RESOLVER;
+        }
+        return ItemEffects.forType(itemType);
     }
 
     private void registerTypes(JSONObject typesJson) throws JSONException {

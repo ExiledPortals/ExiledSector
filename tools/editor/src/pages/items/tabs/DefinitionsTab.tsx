@@ -48,7 +48,7 @@ import {
   type ItemModifier,
   type ModifierUsage,
 } from '../model/modifiers.ts';
-import { parseFamilyImplicits, type ImplicitsModel } from '../model/implicits.ts';
+import { implicitItemType, parseFamilyImplicits, type ImplicitsModel } from '../model/implicits.ts';
 import { DefinitionView } from './DefinitionView.tsx';
 import { FamilySwitch } from './FamilySwitch.tsx';
 import { PoolEntryRow } from './PoolEntryRow.tsx';
@@ -192,7 +192,7 @@ export function DefinitionsTab({ vocabulary }: { vocabulary: Vocabulary }) {
                     definition={model.definitions[selectedIndex]}
                     catalogue={model.catalogue}
                     catalogueFileName={MODIFIER_FILE_NAMES[model.family]}
-                    describeLines={model.family !== 'chart'}
+                    itemType={implicitItemType(model.family)}
                     implicitModifierIds={model.implicitIdsBySection[implicitGroupOf(model.definitions[selectedIndex], model.family, vocabulary)] ?? []}
                   />
                 ) : model.definitions[selectedIndex] ? (

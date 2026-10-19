@@ -41,9 +41,11 @@ export interface DescribedModifierLines {
 
 export interface ModifierLineRequest {
   effect: string;
+  itemType?: string;
   min?: number;
   max?: number;
   hullValues?: number[];
+  tierBands?: { tier: number; min: number; max: number }[];
 }
 
 export async function fetchModifierLineDescriptions(modifierLines: ModifierLineRequest[]): Promise<DescribedModifierLines> {

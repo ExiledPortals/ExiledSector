@@ -1,6 +1,6 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { StrictMode } from 'react';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { buildVocabulary } from '../../api/vocabulary.ts';
 import { renderWithProviders } from '../../test/renderWithProviders.tsx';
 import { findLabelled } from '../../test/labelledQueries.ts';
@@ -57,6 +57,36 @@ async function switchToStarCharts() {
 }
 
 describe('star chart editing', () => {
+  it('view mode asks for star chart wording with tier bands and shows it', async () => {
+    const serverFetch = globalThis.fetch;
+    const requested: { effect: string; itemType?: string; tierBands?: { tier: number; min: number; max: number }[] }[] = [];
+    vi.stubGlobal('fetch', async (input: RequestInfo | URL, init?: RequestInit) => {
+      if (String(input) === '/api/describe') {
+        const { modifierLines } = JSON.parse(String(init?.body)) as { modifierLines: typeof requested };
+        requested.push(...modifierLines);
+        const lines = modifierLines.map((line) => (line.effect === 'CHART_FLEET_SIZE_PERCENT' ? 'Enemy fleet size <bad>+15-20%/50-70%/150-200%</bad>' : null));
+        return new Response(JSON.stringify({ lines }), { status: 200, headers: { 'content-type': 'application/json' } });
+      }
+      return serverFetch(input, init);
+    });
+    try {
+      renderWithProviders(<DefinitionsTab vocabulary={vocabulary} />);
+      await screen.findAllByDisplayValue('Military Domain Subroutine', undefined, { timeout: 30000 });
+      await switchToStarCharts();
+      await screen.findAllByDisplayValue('t3+', undefined, { timeout: 30000 });
+
+      fireEvent.click(screen.getByText('View'));
+
+      const highlighted = (await screen.findAllByText('+15-20%/50-70%/150-200%', undefined, { timeout: 30000 }))[0];
+      expect(highlighted.parentElement?.textContent).toBe('Enemy fleet size +15-20%/50-70%/150-200%');
+      const fleetSize = requested.find((line) => line.effect === 'CHART_FLEET_SIZE_PERCENT');
+      expect(fleetSize?.itemType).toBe('star_chart');
+      expect(fleetSize?.tierBands?.[0]).toEqual({ tier: 1, min: 15, max: 20 });
+    } finally {
+      vi.stubGlobal('fetch', serverFetch);
+    }
+  }, 90000);
+
   it('edits a star chart definition and saves only star_charts.csv', async () => {
     renderWithProviders(<DefinitionsTab vocabulary={vocabulary} />);
     await screen.findAllByDisplayValue('Military Domain Subroutine', undefined, { timeout: 30000 });
@@ -73,7 +103,7 @@ describe('star chart editing', () => {
     fireEvent.click(saveButton());
     await screen.findByText('Saved star_charts.csv', undefined, { timeout: 30000 });
 
-    expect(server.readProjectFile(STAR_CHARTS_FILE)).toBe(before.replace("The Warden's Vigil,graphics/icons/attuned_sensors.png,1,true,4,", "The Warden's Vigil,graphics/icons/attuned_sensors.png,1,true,5,"));
+    expect(server.readProjectFile(STAR_CHARTS_FILE)).toBe(before.replace("The Warden's Vigil,graphics/icons/colony_management.png,1,true,4,", "The Warden's Vigil,graphics/icons/colony_management.png,1,true,5,"));
   }, 90000);
 
   it('edits a star chart description under StrictMode', async () => {

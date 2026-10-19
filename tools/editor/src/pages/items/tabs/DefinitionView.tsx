@@ -13,7 +13,7 @@ interface DefinitionViewProps {
   catalogue: ItemModifier[];
   implicitModifierIds: string[];
   catalogueFileName?: string;
-  describeLines?: boolean;
+  itemType?: string;
 }
 
 interface ViewRow {
@@ -26,18 +26,21 @@ interface ViewRow {
   inlineText?: string;
 }
 
-function lineRequest(line: ModifierLine): ModifierLineRequest | null {
+function lineRequest(line: ModifierLine, itemType: string | undefined): ModifierLineRequest | null {
+  const typed: ModifierLineRequest = itemType ? { effect: line.effect, itemType } : { effect: line.effect };
   if (line.tierBands) {
-    return null;
+    const readable = line.tierBands.every((band) => band.unparsedText === undefined && isNumberText(band.tier) && isNumberText(band.min) && isNumberText(band.max));
+    return readable ? { ...typed, tierBands: line.tierBands.map((band) => ({ tier: Number(band.tier), min: Number(band.min), max: Number(band.max) })) } : null;
   }
   if (line.hullValues) {
-    return line.hullValues.every(isNumberText) ? { effect: line.effect, hullValues: line.hullValues.map(Number) } : null;
+    return line.hullValues.every(isNumberText) ? { ...typed, hullValues: line.hullValues.map(Number) } : null;
   }
-  return isNumberText(line.min) && isNumberText(line.max) ? { effect: line.effect, min: Number(line.min), max: Number(line.max) } : null;
+  return isNumberText(line.min) && isNumberText(line.max) ? { ...typed, min: Number(line.min), max: Number(line.max) } : null;
 }
 
 function lineKey(line: ModifierLine): string {
-  return `${line.effect}|${line.min}|${line.max}|${(line.hullValues ?? []).join('/')}`;
+  const bands = (line.tierBands ?? []).map((band) => band.unparsedText ?? `t${band.tier}=${band.min}-${band.max}`).join('/');
+  return `${line.effect}|${line.min}|${line.max}|${(line.hullValues ?? []).join('/')}|${bands}`;
 }
 
 function descriptionNote(described: DescribedModifierLines | undefined): string | null {
@@ -50,17 +53,17 @@ function descriptionNote(described: DescribedModifierLines | undefined): string 
   return described.error ?? described.message ?? null;
 }
 
-function useLineDescriptions(lines: ModifierLine[]) {
+function useLineDescriptions(lines: ModifierLine[], itemType: string | undefined) {
   const requests = new Map<string, ModifierLineRequest>();
   for (const line of lines) {
-    const request = lineRequest(line);
+    const request = lineRequest(line, itemType);
     if (request) {
       requests.set(lineKey(line), request);
     }
   }
   const keys = [...requests.keys()];
   const query = useQuery({
-    queryKey: ['modifierLineDescriptions', keys, stringsRevision()],
+    queryKey: ['modifierLineDescriptions', itemType ?? '', keys, stringsRevision()],
     queryFn: () => fetchModifierLineDescriptions([...requests.values()]),
     refetchInterval: (state) => (state.state.data?.pending ? RETRY_DELAY_MS : false),
     staleTime: Infinity,
@@ -146,7 +149,7 @@ function RowsTable({ rows, describedByKey, showWeights, catalogueFileName }: Row
   );
 }
 
-export function DefinitionView({ definition, catalogue, implicitModifierIds, catalogueFileName = 'item_modifiers.csv', describeLines = true }: DefinitionViewProps) {
+export function DefinitionView({ definition, catalogue, implicitModifierIds, catalogueFileName = 'item_modifiers.csv', itemType }: DefinitionViewProps) {
   const implicitRows = rowsOf(
     implicitModifierIds.map((modifierId) => ({ modifierId, weight: '' })),
     catalogue,
@@ -154,7 +157,7 @@ export function DefinitionView({ definition, catalogue, implicitModifierIds, cat
   );
   const groupRows = AFFIX_GROUPS.map((group) => ({ group, rows: rowsOf(definition[group.key], catalogue, true) }));
   const allLines = [...implicitRows, ...groupRows.flatMap((entry) => entry.rows)].flatMap((row) => row.modifier?.lines ?? []);
-  const { describedByKey, note } = useLineDescriptions(describeLines ? allLines : []);
+  const { describedByKey, note } = useLineDescriptions(allLines, itemType);
 
   return (
     <div className={TOOLTIP_PANEL_CLASS} style={{ maxWidth: 'none' }}>

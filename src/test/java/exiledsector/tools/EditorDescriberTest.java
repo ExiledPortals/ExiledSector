@@ -53,6 +53,25 @@ class EditorDescriberTest {
     }
 
     @Test
+    void starChartLinesAreDescribedWithTheirInGameWordingAndTierBands() throws Exception {
+        JSONArray bands = new JSONArray()
+                .put(new JSONObject().put("tier", 1).put("min", 15).put("max", 20))
+                .put(new JSONObject().put("tier", 6).put("min", 50).put("max", 70));
+        JSONArray lines = new JSONArray()
+                .put(new JSONObject().put("effect", "CHART_FLEET_SIZE_PERCENT").put("itemType", "star_chart").put("tierBands", bands))
+                .put(new JSONObject().put("effect", "CHART_LOOT_BUDGET_PERCENT").put("itemType", "star_chart").put("min", 10).put("max", 20))
+                .put(new JSONObject().put("effect", "CHART_FLEET_SIZE_PERCENT").put("min", 10).put("max", 20));
+
+        JSONArray described = new JSONObject(new EditorDescriber().respond(new JSONObject().put("modifierLines", lines).toString()))
+                .getJSONArray("lines");
+
+        String fleetSize = described.getString(0);
+        assertTrue(fleetSize.startsWith("Enemy fleet size") && fleetSize.contains("15") && fleetSize.contains("70"), fleetSize);
+        assertTrue(described.getString(1).contains("more loot in the system"), described.getString(1));
+        assertTrue(described.isNull(2), "without the star chart item type a chart effect is not a hull item effect");
+    }
+
+    @Test
     void aSavedTypeIsDescribedWithItsTitleAndHighlightedEffects() throws Exception {
         JSONObject response = new JSONObject(new EditorDescriber().respond(request(savedTypes, "flux_capacity", null).toString()));
 
