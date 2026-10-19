@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.i18n.StyledText;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierCategory;
 import exiledsector.modifiers.ModifierLine;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -70,6 +72,24 @@ class ItemHybridTest {
         assertEquals(3, item.effectLines().size());
         assertEquals(List.of(ModifierSlot.PREFIX, ModifierSlot.PREFIX, ModifierSlot.SUFFIX),
                 item.rolls(ModifierCategory.EXPLICIT).stream().map(SlottedRoll::slot).toList());
+    }
+
+    @Test
+    void expandedLinesGroupAHybridUnderOneTaggedHeader() {
+        Item item = item(List.of(platedFrame(7f, 4f), RolledModifier.single(ModifierSlot.SUFFIX, new RolledEffect("HULL_MULT", 5f))));
+
+        List<SlottedLine> expanded = item.slottedEffectLines(true, null);
+        List<StyledText> collapsed = item.effectLines(false);
+
+        assertEquals(Arrays.asList(ModifierSlot.PREFIX, null, null, ModifierSlot.SUFFIX), expanded.stream().map(SlottedLine::slot).toList());
+        assertEquals("<muted>Hybrid</muted>", expanded.get(0).text().toMarkup());
+        assertTrue(expanded.get(1).text().toMarkup().startsWith("<muted>|</muted> "));
+        assertTrue(expanded.get(1).text().plain().contains("(5%-10%)"));
+        assertTrue(expanded.get(2).text().toMarkup().startsWith("<muted>|</muted> "));
+        assertTrue(expanded.get(2).text().plain().contains("(3%-6%)"));
+        assertTrue(expanded.get(3).text().plain().contains("(4%-6%)"));
+        assertTrue(collapsed.stream().noneMatch(line -> line.plain().startsWith("|") || line.plain().equals("Hybrid")));
+        assertEquals(3, collapsed.size());
     }
 
     @Test

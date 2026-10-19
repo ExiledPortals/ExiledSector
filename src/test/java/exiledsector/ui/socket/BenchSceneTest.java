@@ -48,7 +48,7 @@ class BenchSceneTest {
             float centreY = mode.socketY() - mode.orbitRadiusY() * (float) Math.sin(angle);
             centres[index] = new float[]{centreX, centreY};
             String tile = mode + " tile " + index;
-            assertTrue(centreY + halfTile < BenchScene.DETAILS_TOP, tile + " overlaps the details plate");
+            assertTrue(centreY + halfTile < BenchScene.detailsTop(mode), tile + " overlaps the details plate");
             assertTrue(centreY - halfTile > BenchScene.NOTICE_TOP + BenchScene.NOTICE_HEIGHT, tile + " overlaps the notice");
             assertTrue(centreX - halfTile > mode.leftConsoleX() + halfTile, tile + " overlaps the left console");
             assertTrue(centreX + halfTile < mode.rightConsoleX() - halfTile, tile + " overlaps the right console");
@@ -61,13 +61,14 @@ class BenchSceneTest {
     }
 
     @Test
-    void theDetailsPlateSitsUnderTheSocketGraphicInEveryModeAndFitsTheArt() {
-        float hullSocketBottom = BenchMode.HULL_ITEMS.socketY() + BenchScene.SLOT_RADIUS * 1.05f;
-        assertTrue(BenchScene.DETAILS_TOP - hullSocketBottom < 5f, "the hull bench plate starts just under its socket");
+    void theDetailsPlateStartsJustUnderTheSocketGraphicInEveryModeAndFitsTheArt() {
+        assertEquals(111f, BenchScene.detailsTop(BenchMode.HULL_ITEMS), 0.1f, "the hull bench plate keeps its place");
         for (BenchMode mode : BenchMode.values()) {
-            assertTrue(BenchScene.DETAILS_TOP > mode.socketY() + BenchScene.SLOT_RADIUS * 1.05f, mode + " socket graphic overlaps the plate");
+            float gap = BenchScene.detailsTop(mode) - (mode.socketY() + BenchScene.SLOT_RADIUS * 1.05f);
+            assertTrue(gap > 0f && gap < 3f, mode + " plate does not start just under its socket graphic");
+            assertTrue(BenchScene.detailsTop(mode) < BenchScene.CHART_DETAILS_BOTTOM, mode + " plate has no height");
         }
-        assertTrue(BenchScene.DETAILS_TOP + BenchScene.DETAILS_HEIGHT <= BenchScene.ART_HEIGHT);
+        assertTrue(BenchScene.DETAILS_BOTTOM <= BenchScene.ART_HEIGHT);
         for (BenchMode mode : BenchMode.values()) {
             assertTrue(BenchScene.DETAILS_LEFT - BenchScene.TILE_SIZE / 2f > mode.leftConsoleX(), mode + " left console overlaps the plate");
             assertTrue(BenchScene.DETAILS_LEFT + BenchScene.DETAILS_WIDTH + BenchScene.TILE_SIZE / 2f < mode.rightConsoleX(),
@@ -89,8 +90,8 @@ class BenchSceneTest {
 
     @Test
     void theOpenWormholeButtonSitsUnderTheShortenedChartPlateInsideTheArt() {
-        assertTrue(BenchScene.CHART_DETAILS_HEIGHT < BenchScene.DETAILS_HEIGHT);
-        assertTrue(BenchScene.DETAILS_TOP + BenchScene.CHART_DETAILS_HEIGHT < BenchScene.OPEN_BUTTON_TOP, "the button overlaps the plate");
+        assertTrue(BenchScene.CHART_DETAILS_BOTTOM < BenchScene.DETAILS_BOTTOM);
+        assertTrue(BenchScene.CHART_DETAILS_BOTTOM < BenchScene.OPEN_BUTTON_TOP, "the button overlaps the plate");
         assertTrue(BenchScene.OPEN_BUTTON_TOP + BenchScene.OPEN_BUTTON_HEIGHT <= BenchScene.ART_HEIGHT, "the button runs off the art");
     }
 }

@@ -244,6 +244,7 @@ public final class SkillTreePanelStyle {
             case GOOD -> POSITIVE_STAT_COLOR;
             case BAD -> NEGATIVE_STAT_COLOR;
             case IMMUTABLE -> IMMUTABLE_TEXT_COLOR;
+            case MUTED -> Misc.getGrayColor();
             default -> Misc.getHighlightColor();
         };
     }

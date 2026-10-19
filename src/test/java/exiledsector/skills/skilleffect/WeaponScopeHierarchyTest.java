@@ -151,7 +151,7 @@ class WeaponScopeHierarchyTest {
     void descriptionsNameTheScopeAndNeverExposeTheBeamOffset() {
         assertEquals("10% increased non-beam energy weapon damage.",
                 SkillEffect.byName("NON_BEAM_ENERGY_WEAPON_DAMAGE_PERCENT").description(10f).plain());
-        assertEquals("Increases weapon range by 50.", SkillEffect.byName("WEAPON_RANGE_FLAT").description(50f).plain());
+        assertEquals("+50 to weapon range.", SkillEffect.byName("WEAPON_RANGE_FLAT").description(50f).plain());
         assertEquals("Significantly improved missile guidance algorithm.",
                 SkillEffect.byName("MISSILE_WEAPON_GUIDANCE_FLAT").description(1f).plain());
         assertTrue(SkillEffect.byName("ENERGY_WEAPON_FIRE_RATE_PERCENT").description(10f).plain().contains("Burst beams"));

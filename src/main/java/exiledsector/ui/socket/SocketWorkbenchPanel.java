@@ -97,6 +97,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     private static final float PICK_BUTTON_WIDTH = 120f;
     private static final float TOOLTIP_WIDTH = 340f;
     private static final float SLOT_TAG_WIDTH = 20f;
+    private static final float SCROLLBAR_ROOM = 20f;
     private static final float MIN_OPEN_BUTTON_HEIGHT = 26f;
     private static final float OPEN_CONFIRM_HEIGHT = 170f;
     private static final Color PLATE_COLOR = Color.BLACK;
@@ -268,7 +269,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         BenchScene.drawArt(benchMode, artLeft, artBottom, sceneScale, contentAlpha);
         float vignette = Math.min(artWidth, artHeight) * VIGNETTE_SHARE;
         GLDraw.innerGlow(artLeft, artBottom, artWidth, artHeight, vignette, PLATE_COLOR, contentAlpha);
-        drawPlate(BenchScene.DETAILS_LEFT, BenchScene.DETAILS_TOP, BenchScene.DETAILS_WIDTH, detailsArtHeight(), contentAlpha);
+        drawPlate(BenchScene.DETAILS_LEFT, BenchScene.detailsTop(benchMode), BenchScene.DETAILS_WIDTH, detailsArtHeight(), contentAlpha);
         Color subjectColor = loadedItem == null ? null : loadedItem.frameColor();
         socketFlair.render(socketScreenX(), socketScreenY(), slotRadius(), SkillTreePanelStyle.GLOW_COLOR, subjectColor,
                 loadedItem == null ? null : loadedItem.iconPath(), loadedLook, contentAlpha);
@@ -689,7 +690,8 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     }
 
     private float detailsArtHeight() {
-        return showsOpenButton() ? BenchScene.CHART_DETAILS_HEIGHT : BenchScene.DETAILS_HEIGHT;
+        float detailsBottom = showsOpenButton() ? BenchScene.CHART_DETAILS_BOTTOM : BenchScene.DETAILS_BOTTOM;
+        return detailsBottom - BenchScene.detailsTop(benchMode);
     }
 
     private WormholeOpenCheck.Blocker openBlocker() {
@@ -706,7 +708,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         }
         WormholeOpenCheck.Blocker blocker = openBlocker();
         float buttonWidth = BenchScene.DETAILS_WIDTH * sceneScale;
-        float plateBottom = artY(BenchScene.DETAILS_TOP + BenchScene.CHART_DETAILS_HEIGHT) + PLATE_PAD;
+        float plateBottom = artY(BenchScene.CHART_DETAILS_BOTTOM) + PLATE_PAD;
         float buttonTop = Math.max(artY(BenchScene.OPEN_BUTTON_TOP), plateBottom + PLATE_PAD);
         float artBottom = artY(BenchScene.ART_HEIGHT);
         float buttonHeight = Math.min(Math.max(MIN_OPEN_BUTTON_HEIGHT, BenchScene.OPEN_BUTTON_HEIGHT * sceneScale), artBottom - buttonTop);
@@ -1010,6 +1012,13 @@ public final class SocketWorkbenchPanel extends HoloPanel {
                 }
             }
             float paraPad = GAP * 2f;
+            if (loadedItem instanceof StarChart chart) {
+                float linePad = paraPad;
+                for (StyledText line : chart.lootTotalLines()) {
+                    centred(VanillaText.addPara(element, line, linePad, Misc.getTextColor()));
+                    linePad = LINE_PAD;
+                }
+            }
             addDetailSection(element, "hullItem.tooltip.implicit", loadedItem.implicitLines(detailsShowRollRanges), paraPad);
             if (detailsShowRollRanges) {
                 addSlottedDetailSection(element, "socketable.tooltip.primaryData", loadedItem.slottedEffectLines(true, null), paraPad,
@@ -1017,11 +1026,8 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             } else {
                 addDetailSection(element, "socketable.tooltip.primaryData", loadedItem.effectLines(false), paraPad);
             }
-            if (loadedItem instanceof StarChart chart) {
-                addDetailSection(element, StarChart.LOOT_TOTALS_HEADING_KEY, chart.lootTotalLines(), paraPad);
-            }
         }
-        detailsElement = placedComponent(replaceElement(detailsElement, element, artX(BenchScene.DETAILS_LEFT), artY(BenchScene.DETAILS_TOP)));
+        detailsElement = placedComponent(replaceElement(detailsElement, element, artX(BenchScene.DETAILS_LEFT), artY(BenchScene.detailsTop(benchMode))));
     }
 
     private static void addDetailSection(TooltipMakerAPI element, String headingKey, List<StyledText> lines, float headingPad) {
@@ -1042,18 +1048,21 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             return;
         }
         element.addSectionHeading(Translation.text(headingKey), Alignment.MID, headingPad);
-        float textWidth = sectionWidth - SLOT_TAG_WIDTH - GAP;
+        float textWidth = sectionWidth - SCROLLBAR_ROOM - SLOT_TAG_WIDTH - GAP;
         float linePad = GAP;
         for (SlottedLine line : lines) {
             TooltipMakerAPI textCell = element.beginSubTooltip(textWidth);
             VanillaText.addPara(textCell, line.text(), 0f, Misc.getTextColor());
             element.endSubTooltip();
+            element.addCustom(textCell, linePad);
+            linePad = LINE_PAD;
+            if (line.slot() == null) {
+                continue;
+            }
             TooltipMakerAPI slotCell = element.beginSubTooltip(SLOT_TAG_WIDTH);
             VanillaText.plainPara(slotCell, Translation.text(slotTagKey(line.slot())), 0f, Misc.getGrayColor()).setAlignment(Alignment.RMID);
             element.endSubTooltip();
-            element.addCustom(textCell, linePad);
             element.addCustomDoNotSetPosition(slotCell).getPosition().rightOfTop(textCell, GAP);
-            linePad = LINE_PAD;
         }
     }
 

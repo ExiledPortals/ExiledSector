@@ -86,3 +86,4 @@ The zh_CN catalogue was drafted by Claude and still needs review by a native spe
 - Don't add spaces around numbers or highlight tags. The mod adds any spacing Starsector needs to colour game-drawn text.
 - Keep every `{placeholder}` and every `<good>`/`<bad>`/`<hl>`/`<hullmod>`/`<node>` tag. Move them to wherever the matching words go in the Chinese sentence.
 - `desc.mult.*` describes a multiplicative change. It is written as 提高/降低 …（乘算） to tell it apart from the additive `desc.pct.*` wording.
+- The English wording rules in `docs/tooltip_wording.md` carry over: additive percentages are 提高/降低, multiplicative ones add （乘算）, counts of extra things use 额外…个/支/名, and flat values to a stat are {stat}+N. Category names (通货物品, 商品, 物品) are fixed like their English counterparts.

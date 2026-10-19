@@ -14,8 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ExoshipVoyageTest {
 
     private static final float FRAME = 1f / 60f;
-    private static final List<ExoshipVoyage.Anchor> FAR_APART = List.of(new ExoshipVoyage.Anchor(0f, 0f),
-            new ExoshipVoyage.Anchor(6000f, 0f), new ExoshipVoyage.Anchor(0f, 8000f));
+    private static final List<ExoshipVoyage.Anchor> FAR_APART = List.of(new ExoshipVoyage.Anchor(0f, 0f, false),
+            new ExoshipVoyage.Anchor(6000f, 0f, false), new ExoshipVoyage.Anchor(0f, 8000f, false));
 
     private static final class RecordedEvents implements ExoshipVoyage.Events {
         final List<String> names = new ArrayList<>();
@@ -172,8 +172,8 @@ class ExoshipVoyageTest {
 
     @Test
     void destinationsAtLeastTheMinimumJumpAwayAreChosenWhenThereAreAny() {
-        List<ExoshipVoyage.Anchor> anchors = List.of(new ExoshipVoyage.Anchor(0f, 0f), new ExoshipVoyage.Anchor(300f, 0f),
-                new ExoshipVoyage.Anchor(9000f, 0f));
+        List<ExoshipVoyage.Anchor> anchors = List.of(new ExoshipVoyage.Anchor(0f, 0f, false), new ExoshipVoyage.Anchor(300f, 0f, false),
+                new ExoshipVoyage.Anchor(9000f, 0f, false));
         for (int seed = 0; seed < 20; seed++) {
             ExoshipVoyage voyage = new ExoshipVoyage(anchors, new Random(seed), new RecordedEvents());
             ExoshipVoyage.Anchor start = voyage.currentAnchor();
@@ -186,9 +186,24 @@ class ExoshipVoyageTest {
     }
 
     @Test
+    void theShipAlternatesBetweenCoreAndNonCoreNotables() {
+        List<ExoshipVoyage.Anchor> anchors = List.of(new ExoshipVoyage.Anchor(0f, 0f, true), new ExoshipVoyage.Anchor(3000f, 0f, true),
+                new ExoshipVoyage.Anchor(9000f, 0f, false), new ExoshipVoyage.Anchor(0f, 9000f, false));
+        for (int seed = 0; seed < 20; seed++) {
+            ExoshipVoyage voyage = new ExoshipVoyage(anchors, new Random(seed), new RecordedEvents());
+            for (int jump = 0; jump < 4; jump++) {
+                boolean startedAtCore = voyage.currentAnchor().core();
+                runUntil(voyage, ExoshipVoyage.Phase.ARRIVING, ExoshipVoyage.JUMP_INTERVAL_SECONDS + 10f);
+                runUntil(voyage, ExoshipVoyage.Phase.ORBITING, 10f);
+                assertNotEquals(startedAtCore, voyage.currentAnchor().core(), "seed " + seed + " jump " + jump);
+            }
+        }
+    }
+
+    @Test
     void aLoneNotableKeepsTheShipInOrbitForever() {
         RecordedEvents events = new RecordedEvents();
-        ExoshipVoyage voyage = new ExoshipVoyage(List.of(new ExoshipVoyage.Anchor(50f, 50f)), new Random(6), events);
+        ExoshipVoyage voyage = new ExoshipVoyage(List.of(new ExoshipVoyage.Anchor(50f, 50f, false)), new Random(6), events);
 
         for (int frame = 0; frame < 60 * 90; frame++) {
             voyage.advance(FRAME);
