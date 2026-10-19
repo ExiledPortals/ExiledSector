@@ -1,9 +1,12 @@
 package exiledsector.items;
 
+import exiledsector.modifiers.ModifierSlot;
+
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public enum StarChartCurrency implements ItemCurrency {
 
@@ -106,8 +109,8 @@ public enum StarChartCurrency implements ItemCurrency {
             return false;
         }
         return switch (this) {
-            case REFORGE -> canReforge(chart);
-            case ANNULMENT -> !annullable(chart).isEmpty();
+            case REFORGE -> canReforge(chart, context.guardedSlots());
+            case ANNULMENT -> !annullable(chart, context.guardedSlots()).isEmpty();
             case CARTOGRAPHY -> chart.tier() < StarChart.HIGHEST_TIER;
         };
     }
@@ -119,22 +122,44 @@ public enum StarChartCurrency implements ItemCurrency {
         }
         StarChart chart = (StarChart) item;
         return switch (this) {
-            case REFORGE -> reforge(chart, random);
-            case ANNULMENT -> annul(chart, random);
+            case REFORGE -> reforge(chart, random, context.guardedSlots());
+            case ANNULMENT -> annul(chart, context.guardedSlots());
             case CARTOGRAPHY -> raiseTier(chart);
         };
     }
 
+    @Override
+    public boolean respectsWards() {
+        return this == REFORGE || this == ANNULMENT;
+    }
+
+    @Override
+    public boolean wouldChange(Item item, RolledModifier rolled) {
+        return respectsWards();
+    }
+
     static boolean canReforge(StarChart chart) {
+        return canReforge(chart, Set.of());
+    }
+
+    static boolean canReforge(StarChart chart, Set<ModifierSlot> guarded) {
         ItemDefinition definition = chart.definition();
-        return !definition.unique() && (!AffixLayout.rollableAt(definition.type(), definition.prefixes(), chart.tier()).isEmpty()
-                || !AffixLayout.rollableAt(definition.type(), definition.suffixes(), chart.tier()).isEmpty());
+        return !definition.unique() && (rerollable(definition, definition.prefixes(), ModifierSlot.PREFIX, chart.tier(), guarded)
+                || rerollable(definition, definition.suffixes(), ModifierSlot.SUFFIX, chart.tier(), guarded));
+    }
+
+    private static boolean rerollable(ItemDefinition definition, List<PoolEntry> side, ModifierSlot slot, int tier, Set<ModifierSlot> guarded) {
+        return !guarded.contains(slot) && !AffixLayout.rollableAt(definition.type(), side, tier).isEmpty();
     }
 
     static StarChart reforge(StarChart chart, Random random) {
+        return reforge(chart, random, Set.of());
+    }
+
+    static StarChart reforge(StarChart chart, Random random, Set<ModifierSlot> guarded) {
         ItemDefinition definition = chart.definition();
         for (int attempt = 0; attempt < MAX_REFORGE_ATTEMPTS; attempt++) {
-            List<RolledModifier> rerolled = ItemRoller.rollAtTier(definition, random.nextLong(), chart.tier());
+            List<RolledModifier> rerolled = keepGuarded(chart.explicits(), ItemRoller.rollAtTier(definition, random.nextLong(), chart.tier()), guarded);
             if (!rerolled.equals(chart.explicits())) {
                 chart.replaceExplicits(rerolled);
                 chart.refreezeName();
@@ -144,24 +169,47 @@ public enum StarChartCurrency implements ItemCurrency {
         return null;
     }
 
+    private static List<RolledModifier> keepGuarded(List<RolledModifier> previous, List<RolledModifier> rerolled, Set<ModifierSlot> guarded) {
+        if (guarded.isEmpty()) {
+            return rerolled;
+        }
+        List<RolledModifier> merged = new ArrayList<>(previous.stream().filter(rolled -> guarded.contains(rolled.slot())).toList());
+        for (RolledModifier rolled : rerolled) {
+            if (!guarded.contains(rolled.slot())) {
+                merged.add(AffixLayout.insertIndex(merged, rolled.slot()), rolled);
+            }
+        }
+        return merged;
+    }
+
     static List<Integer> annullable(StarChart chart) {
+        return annullable(chart, Set.of());
+    }
+
+    static List<Integer> annullable(StarChart chart, Set<ModifierSlot> guarded) {
         List<Integer> removable = new ArrayList<>();
         if (chart.definition().unique()) {
             return removable;
         }
         List<RolledModifier> explicits = chart.explicits();
         for (int index = 0; index < explicits.size(); index++) {
-            if (!explicits.get(index).locked()) {
+            RolledModifier rolled = explicits.get(index);
+            if (!rolled.locked() && !guarded.contains(rolled.slot())) {
                 removable.add(index);
             }
         }
         return removable;
     }
 
-    static StarChart annul(StarChart chart, Random random) {
-        List<Integer> removable = annullable(chart);
-        List<RolledModifier> remaining = new ArrayList<>(chart.explicits());
-        remaining.remove((int) removable.get(random.nextInt(removable.size())));
+    static StarChart annul(StarChart chart, Set<ModifierSlot> guarded) {
+        List<Integer> removable = annullable(chart, guarded);
+        List<RolledModifier> remaining = new ArrayList<>();
+        List<RolledModifier> explicits = chart.explicits();
+        for (int index = 0; index < explicits.size(); index++) {
+            if (!removable.contains(index)) {
+                remaining.add(explicits.get(index));
+            }
+        }
         chart.replaceExplicits(remaining);
         chart.refreezeName();
         return chart;

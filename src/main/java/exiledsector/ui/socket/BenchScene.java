@@ -10,10 +10,6 @@ final class BenchScene {
 
     static final float ART_WIDTH = 320f;
     static final float ART_HEIGHT = 180f;
-    static final float LEFT_CONSOLE_X = 72.2f;
-    static final float LEFT_CONSOLE_Y = 118.8f;
-    static final float RIGHT_CONSOLE_X = 241.2f;
-    static final float RIGHT_CONSOLE_Y = 121.2f;
     static final float ORBIT_DROP_RADIANS = (float) Math.toRadians(15.0);
     static final float SLOT_RADIUS = 24f;
     static final float TILE_SIZE = 15f;

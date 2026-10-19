@@ -50,10 +50,8 @@ class BenchSceneTest {
             String tile = mode + " tile " + index;
             assertTrue(centreY + halfTile < BenchScene.DETAILS_TOP, tile + " overlaps the details plate");
             assertTrue(centreY - halfTile > BenchScene.NOTICE_TOP + BenchScene.NOTICE_HEIGHT, tile + " overlaps the notice");
-            if (mode.showsInhibitors()) {
-                assertTrue(centreX - halfTile > BenchScene.LEFT_CONSOLE_X + halfTile, tile + " overlaps the left console");
-                assertTrue(centreX + halfTile < BenchScene.RIGHT_CONSOLE_X - halfTile, tile + " overlaps the right console");
-            }
+            assertTrue(centreX - halfTile > mode.leftConsoleX() + halfTile, tile + " overlaps the left console");
+            assertTrue(centreX + halfTile < mode.rightConsoleX() - halfTile, tile + " overlaps the right console");
         }
         for (int index = 1; index < tileCount; index++) {
             float gapX = Math.abs(centres[index][0] - centres[index - 1][0]);
@@ -70,8 +68,23 @@ class BenchSceneTest {
             assertTrue(BenchScene.DETAILS_TOP > mode.socketY() + BenchScene.SLOT_RADIUS * 1.05f, mode + " socket graphic overlaps the plate");
         }
         assertTrue(BenchScene.DETAILS_TOP + BenchScene.DETAILS_HEIGHT <= BenchScene.ART_HEIGHT);
-        assertTrue(BenchScene.DETAILS_LEFT - BenchScene.TILE_SIZE / 2f > BenchScene.LEFT_CONSOLE_X);
-        assertTrue(BenchScene.DETAILS_LEFT + BenchScene.DETAILS_WIDTH + BenchScene.TILE_SIZE / 2f < BenchScene.RIGHT_CONSOLE_X);
+        for (BenchMode mode : BenchMode.values()) {
+            assertTrue(BenchScene.DETAILS_LEFT - BenchScene.TILE_SIZE / 2f > mode.leftConsoleX(), mode + " left console overlaps the plate");
+            assertTrue(BenchScene.DETAILS_LEFT + BenchScene.DETAILS_WIDTH + BenchScene.TILE_SIZE / 2f < mode.rightConsoleX(),
+                    mode + " right console overlaps the plate");
+        }
+    }
+
+    @Test
+    void theStarChartInhibitorsSitOnTheMapDeviceConsoleScreens() {
+        assertEquals(225f / 6f, BenchMode.STAR_CHARTS.leftConsoleX(), 0.1f);
+        assertEquals(621f / 6f, BenchMode.STAR_CHARTS.leftConsoleY(), 0.1f);
+        assertEquals(1702f / 6f, BenchMode.STAR_CHARTS.rightConsoleX(), 0.1f);
+        assertEquals(604f / 6f, BenchMode.STAR_CHARTS.rightConsoleY(), 0.1f);
+        for (BenchMode mode : BenchMode.values()) {
+            float halfTile = BenchScene.TILE_SIZE / 2f;
+            assertTrue(mode.leftConsoleX() - halfTile >= 0f && mode.rightConsoleX() + halfTile <= BenchScene.ART_WIDTH, mode + " console tile leaves the art");
+        }
     }
 
     @Test

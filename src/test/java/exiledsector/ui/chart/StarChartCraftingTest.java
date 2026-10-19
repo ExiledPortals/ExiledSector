@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.SpecialItemData;
 import exiledsector.items.CraftingContext;
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.CraftingMaterials;
+import exiledsector.items.CraftingWard;
 import exiledsector.items.Item;
 import exiledsector.items.ItemCurrencies;
 import exiledsector.items.ItemCurrency;
@@ -151,6 +152,8 @@ class StarChartCraftingTest {
         assertEquals(Refusal.UNIQUE, StarChartCrafting.refusal(CraftingCurrency.AUGMENTATION, unique, store, materials, definition -> true));
         assertEquals(Refusal.NOT_UNIQUE, StarChartCrafting.refusal(CraftingCurrency.TRANSPOSITION, chart, store, materials, definition -> true));
         assertEquals(Refusal.CANNOT_USE, StarChartCrafting.refusal(CraftingCurrency.TRANSPOSITION, unique, store, materials, definition -> true));
+        assertEquals(Refusal.WARD_BLOCKS, StarChartCrafting.refusal(StarChartCurrency.ANNULMENT, chart, store, materials, definition -> true,
+                List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)));
         Random random = new Random(4L);
         while (StarChartCrafting.use(StarChartCurrency.ANNULMENT, chart, store, materials, random, definition -> true) != null) {
             assertTrue(chart.explicits().size() < 6);

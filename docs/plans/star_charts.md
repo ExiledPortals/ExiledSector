@@ -133,7 +133,7 @@ The chart currencies fit the three rarities. Main already has four of them as ke
 
 New chart-only currencies:
 - reforge: rerolls every explicit modifier, with rarity following the new count. This is close to Corruption's "modifiers rerolled" outcome.
-- annul: removes one random explicit modifier, which can turn a Rare chart Common.
+- annul: removes every explicit modifier, or only the unprotected side while an inhibitor is on.
 - tier-up: the "cartographer's" step.
 
 Chart-only currencies must not drop from ship loot: `ItemDrops.pickKernel` picks from every registered currency, so they need a drop-source filter or a weight of 0 there.
@@ -362,10 +362,12 @@ Corruption's "values stretched" outcome now reaches tier-band lines too. Their r
 
 Three chart-only currencies are `StarChartCurrency` entries, each a special item that reuses a kernel icon tinted with its own colour:
 - the Reforging Cipher rerolls every explicit modifier at the chart's tier, and the rarity follows the new count;
-- the Annulment Cipher removes one random explicit modifier, so a Rare chart can turn Common;
+- the Annulment Cipher removes every explicit modifier, so the chart turns Common;
 - the Cartographer's Cipher raises the tier by one, up to 15. Modifiers keep their roll positions and take the new tier's values, and a unique starts from its minimum tier.
 
-Uniques refuse the reforge and the annulment, and corrupted or mirrored charts refuse everything. All three can be grown from Nanite Feedstock by right-clicking their tile in the Crafting window's Star Charts mode, at the costs in `item_crafting.csv`. Their `dropsFromShipLoot()` is false, so `ItemDrops.pickKernel` never picks them and ship kernel drops are unchanged.
+Uniques refuse the reforge and the annulment, and corrupted or mirrored charts refuse everything.
+
+The Prefix and Suffix Inhibitors work at the Star Chart bench too, on the two side consoles of the map device art. With one on, the Reforging Cipher keeps every modifier on the protected side and rerolls only the other side, the Annulment Cipher removes only the unprotected side, and Tuning skips the protected side as it does on hull items. An inhibitor is used up only when the craft would have changed a modifier it protected, and a craft that would leave nothing to change is refused. All three can be grown from Nanite Feedstock by right-clicking their tile in the Crafting window's Star Charts mode, at the costs in `item_crafting.csv`. Their `dropsFromShipLoot()` is false, so `ItemDrops.pickKernel` never picks them and ship kernel drops are unchanged.
 
 Chart drops come from `chart_drops.csv`, one row per source, through `ChartDrops`:
 - run_reward: completing an objective drops one chart and a 25 percent chance of a second, scaled by the chart's reward multiplier and capped at four. Each chart is 40 percent likely to be one tier higher. A chart-only currency comes with it 75 percent of the time.

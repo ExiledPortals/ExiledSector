@@ -426,7 +426,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     private void openCraftConfirm(ItemCurrency currency, Control confirmId) {
         pendingCurrency = currency;
         boolean growing = confirmId == Control.CONFIRM_GROW;
-        Set<CraftingWard> spentWards = growing || !benchMode.showsInhibitors() ? Set.of() : ItemCrafting.wardsSpentBy(currency, loadedItem, activeWards);
+        Set<CraftingWard> spentWards = growing ? Set.of() : ItemCrafting.wardsSpentBy(currency, loadedItem, activeWards);
         float confirmHeight = growing ? GROW_CONFIRM_HEIGHT : USE_CONFIRM_HEIGHT + spentWards.size() * WARD_LINE_HEIGHT;
         openConfirm(confirmHeight, element -> writeCraftConfirm(element, currency, growing, spentWards),
                 growing ? "ui.workbench.confirm.grow" : "ui.workbench.confirm.use", confirmId, "ui.workbench.confirm.cancel", Control.CANCEL_CONFIRM);
@@ -487,10 +487,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             showNotice(Translation.text("ui.workbench.notice.loadFirst"));
             return false;
         }
-        List<CraftingWard> missingWards = activeWards.stream().filter(ward -> materials.count(ward.itemId()) < 1).toList();
-        if (!missingWards.isEmpty()) {
-            missingWards.forEach(activeWards::remove);
-            showNotice(Translation.msg("ui.workbench.notice.wardMissing").arg("name", MaterialItems.displayName(missingWards.get(0).itemId())).text());
+        if (droppedMissingWards(materials)) {
             return false;
         }
         if (!ItemCrafting.canUse(currency, loadedItem, allowedUniques(), activeWards)) {
@@ -523,8 +520,23 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         return true;
     }
 
+    private boolean droppedMissingWards(CraftingMaterials materials) {
+        List<CraftingWard> missingWards = activeWards.stream().filter(ward -> materials.count(ward.itemId()) < 1).toList();
+        if (missingWards.isEmpty()) {
+            return false;
+        }
+        missingWards.forEach(activeWards::remove);
+        showNotice(Translation.msg("ui.workbench.notice.wardMissing").arg("name", MaterialItems.displayName(missingWards.get(0).itemId())).text());
+        return true;
+    }
+
     private boolean chartUsable(ItemCurrency currency) {
-        StarChartCrafting.Refusal refusal = StarChartCrafting.refusal(currency, loadedItem, benchMode.store(), playerMaterials(), allowedUniques());
+        CraftingMaterials materials = playerMaterials();
+        StarChartCrafting.Refusal refusal = StarChartCrafting.refusal(currency, loadedItem, benchMode.store(), materials, allowedUniques(),
+                activeWards);
+        if (refusal != StarChartCrafting.Refusal.NO_CHART && refusal != StarChartCrafting.Refusal.NONE_OWNED && droppedMissingWards(materials)) {
+            return false;
+        }
         if (refusal == StarChartCrafting.Refusal.NONE) {
             return true;
         }
@@ -539,14 +551,16 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private void applyChartUse(ItemCurrency currency) {
         String nameBefore = loadedItem.name();
+        Set<CraftingWard> spentWards = ItemCrafting.wardsSpentBy(currency, loadedItem, activeWards);
         StarChartCrafting.Used used = StarChartCrafting.use(currency, loadedItem, benchMode.store(), playerMaterials(), craftingRandom,
-                allowedUniques());
+                allowedUniques(), activeWards);
         if (used == null) {
             showNotice(chartRefusalText(currency, StarChartCrafting.Refusal.CANNOT_USE));
             return;
         }
+        activeWards.removeAll(spentWards);
         loadedItem = used.selectedAfter();
-        noticeText = StarChartCrafting.usedNotice(currency, nameBefore, used);
+        noticeText = withSpentWards(StarChartCrafting.usedNotice(currency, nameBefore, used), spentWards);
         SkillTreeSounds.socketed();
         socketFlair.flash(used.result().frameColor());
         afterChange();
@@ -577,13 +591,19 @@ public final class SocketWorkbenchPanel extends HoloPanel {
                     .arg("type", result.kind().displayName()).text();
             noticeText = Translation.msg("format.sentences").arg("a", noticeText).arg("b", movedNotice).text();
         }
-        for (CraftingWard ward : spentWards) {
-            String spentNotice = Translation.msg("ui.workbench.notice.wardSpent").arg("name", MaterialItems.displayName(ward.itemId())).text();
-            noticeText = Translation.msg("format.sentences").arg("a", noticeText).arg("b", spentNotice).text();
-        }
+        noticeText = withSpentWards(noticeText, spentWards);
         SkillTreeSounds.socketed();
         socketFlair.flash(result.frameColor());
         afterChange();
+    }
+
+    private static String withSpentWards(String notice, Set<CraftingWard> spentWards) {
+        String combined = notice;
+        for (CraftingWard ward : spentWards) {
+            String spentNotice = Translation.msg("ui.workbench.notice.wardSpent").arg("name", MaterialItems.displayName(ward.itemId())).text();
+            combined = Translation.msg("format.sentences").arg("a", combined).arg("b", spentNotice).text();
+        }
+        return combined;
     }
 
     private void showNotice(String text) {
@@ -764,17 +784,15 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             float tileCentreY = socketY - benchMode.orbitRadiusY() * sceneScale * (float) Math.sin(angle);
             addTile(element, shownCurrencies.get(i), tileCentreX - tileSize / 2f, tileCentreY - tileSize / 2f, tileSize, materials);
         }
-        if (benchMode.showsInhibitors()) {
-            addInhibitorTiles(element, tileSize, materials);
-        }
+        addInhibitorTiles(element, tileSize, materials);
         recipesElement = replaceElement(recipesElement, element, FRAME_INSET, FRAME_INSET);
     }
 
     private void addInhibitorTiles(TooltipMakerAPI element, float tileSize, CraftingMaterials materials) {
-        addWardTile(element, CraftingWard.SUFFIX, BenchScene.LEFT_CONSOLE_X * sceneScale - tileSize / 2f,
-                BenchScene.LEFT_CONSOLE_Y * sceneScale - tileSize / 2f, tileSize, materials);
-        addWardTile(element, CraftingWard.PREFIX, BenchScene.RIGHT_CONSOLE_X * sceneScale - tileSize / 2f,
-                BenchScene.RIGHT_CONSOLE_Y * sceneScale - tileSize / 2f, tileSize, materials);
+        addWardTile(element, CraftingWard.SUFFIX, benchMode.leftConsoleX() * sceneScale - tileSize / 2f,
+                benchMode.leftConsoleY() * sceneScale - tileSize / 2f, tileSize, materials);
+        addWardTile(element, CraftingWard.PREFIX, benchMode.rightConsoleX() * sceneScale - tileSize / 2f,
+                benchMode.rightConsoleY() * sceneScale - tileSize / 2f, tileSize, materials);
     }
 
     private void addWardTile(TooltipMakerAPI element, CraftingWard ward, float tileLeft, float tileTop, float tileSize,
@@ -917,7 +935,8 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         if (ownedCount == 0) {
             hints.add(Translation.text(currency.synthesisable() ? "ui.workbench.tile.noneOwned" : "ui.workbench.tile.noneFound"));
         } else if (benchMode == BenchMode.STAR_CHARTS) {
-            StarChartCrafting.Refusal refusal = StarChartCrafting.refusal(currency, loadedItem, benchMode.store(), playerMaterials(), allowedUniques());
+            StarChartCrafting.Refusal refusal = StarChartCrafting.refusal(currency, loadedItem, benchMode.store(), playerMaterials(), allowedUniques(),
+                    activeWards);
             hints.add(refusal == StarChartCrafting.Refusal.NONE
                     ? Translation.msg("chart.ui.currency.use").arg("target", loadedItem.name()).text() : chartRefusalText(currency, refusal));
         } else if (loadedItem != null && ItemCrafting.canUse(currency, loadedItem, allowedUniques(), activeWards)) {

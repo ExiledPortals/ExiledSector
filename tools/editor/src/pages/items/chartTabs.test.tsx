@@ -173,7 +173,7 @@ describe('star chart editing', () => {
     renderWithProviders(<CraftingTab />);
     const costInputs = await screen.findAllByLabelText('Parts to synthesise', undefined, { timeout: 30000 });
     expect(screen.getByText('Star chart ciphers')).toBeTruthy();
-    expect(screen.getByLabelText("Cartographer's Cipher - image")).toHaveProperty('value', 'graphics/icons/cargo/transposition_kernel.png');
+    expect(screen.getByLabelText("Cartographer's Cipher - image")).toHaveProperty('value', 'graphics/icons/cargo/cartographer_cipher.png');
     const cartographerCost = costInputs.find((input) => (input as HTMLInputElement).value === '120');
     expect(cartographerCost).toBeTruthy();
     const craftingBefore = server.readProjectFile(CRAFTING_FILE);

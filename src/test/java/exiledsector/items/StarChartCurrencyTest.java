@@ -339,22 +339,63 @@ class StarChartCurrencyTest {
     }
 
     @Test
-    void annulmentRemovesOneModifierAtATimeAndARareChartCanTurnCommon() {
-        StarChart chart = storedWith(SINGLE, 9, candidate -> candidate.explicits().size() == 3);
+    void annulmentRemovesEveryModifierAndTheChartTurnsCommon() {
+        StarChart chart = storedWith(SINGLE, 9, candidate -> candidate.explicits().size() >= 3);
         assertEquals(ItemRarity.RARE, chart.rarity());
-        List<RolledModifier> before = List.copyOf(chart.explicits());
+        List<RolledModifier> implicitsBefore = List.copyOf(chart.implicits());
 
         assertSame(chart, use(StarChartCurrency.ANNULMENT, chart, 2L));
 
-        assertEquals(2, chart.explicits().size());
-        assertTrue(before.containsAll(chart.explicits()));
-        assertEquals(ItemRarity.COMMON, chart.rarity());
-        use(StarChartCurrency.ANNULMENT, chart, 3L);
-        use(StarChartCurrency.ANNULMENT, chart, 4L);
         assertTrue(chart.explicits().isEmpty());
+        assertEquals(implicitsBefore, chart.implicits());
+        assertEquals(ItemRarity.COMMON, chart.rarity());
         assertFalse(ItemCrafting.canUse(StarChartCurrency.ANNULMENT, chart, ANY_UNIQUE));
         assertNull(use(StarChartCurrency.ANNULMENT, chart, 5L));
         assertEquals(9, chart.tier());
+    }
+
+    @Test
+    void anInhibitorKeepsItsSideThroughAnnulmentAndIsUsedUp() {
+        StarChart chart = storedWith(SINGLE, 9, candidate -> side(candidate, ModifierSlot.PREFIX) >= 1 && side(candidate, ModifierSlot.SUFFIX) >= 1);
+        List<RolledModifier> prefixes = chart.explicits().stream().filter(rolled -> rolled.slot() == ModifierSlot.PREFIX).toList();
+        List<CraftingWard> prefixWard = List.of(CraftingWard.PREFIX);
+
+        assertEquals(Set.of(CraftingWard.PREFIX), ItemCrafting.wardsSpentBy(StarChartCurrency.ANNULMENT, chart, prefixWard));
+        assertSame(chart, ItemCrafting.use(StarChartCurrency.ANNULMENT, chart, materials, store, new Random(2L), ANY_UNIQUE, prefixWard));
+
+        assertEquals(prefixes, chart.explicits());
+        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(CraftingWard.PREFIX.itemId()), 1);
+        assertFalse(ItemCrafting.canUse(StarChartCurrency.ANNULMENT, chart, ANY_UNIQUE, prefixWard));
+        assertFalse(ItemCrafting.canUse(StarChartCurrency.ANNULMENT, chart, ANY_UNIQUE, List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)));
+        assertTrue(ItemCrafting.canUse(StarChartCurrency.ANNULMENT, chart, ANY_UNIQUE));
+    }
+
+    @Test
+    void anInhibitorKeepsItsSideThroughAReforgeAndOnlyTheOtherSideIsRerolled() {
+        StarChart chart = storedWith(SINGLE, 6, candidate -> side(candidate, ModifierSlot.SUFFIX) >= 1);
+        List<CraftingWard> suffixWard = List.of(CraftingWard.SUFFIX);
+        boolean prefixesChanged = false;
+        for (long seed = 0; seed < 40; seed++) {
+            List<RolledModifier> suffixes = chart.explicits().stream().filter(rolled -> rolled.slot() == ModifierSlot.SUFFIX).toList();
+            List<RolledModifier> prefixes = chart.explicits().stream().filter(rolled -> rolled.slot() == ModifierSlot.PREFIX).toList();
+
+            assertSame(chart, ItemCrafting.use(StarChartCurrency.REFORGE, chart, materials, store, new Random(seed), ANY_UNIQUE, suffixWard));
+
+            assertEquals(suffixes, chart.explicits().stream().filter(rolled -> rolled.slot() == ModifierSlot.SUFFIX).toList());
+            prefixesChanged |= !prefixes.equals(chart.explicits().stream().filter(rolled -> rolled.slot() == ModifierSlot.PREFIX).toList());
+            assertTrue(side(chart, ModifierSlot.PREFIX) <= AffixLayout.limits(ItemType.STAR_CHART).maxPerSide());
+            assertEquals(chart.explicits().size() <= 2 ? ItemRarity.COMMON : ItemRarity.RARE, chart.rarity());
+        }
+        assertTrue(prefixesChanged);
+        assertFalse(ItemCrafting.canUse(StarChartCurrency.REFORGE, chart, ANY_UNIQUE, List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)));
+    }
+
+    @Test
+    void cartographyIgnoresInhibitors() {
+        StarChart chart = storedWith(SINGLE, 4, candidate -> !candidate.explicits().isEmpty());
+
+        assertTrue(ItemCrafting.wardsSpentBy(StarChartCurrency.CARTOGRAPHY, chart, List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)).isEmpty());
+        assertTrue(ItemCrafting.canUse(StarChartCurrency.CARTOGRAPHY, chart, ANY_UNIQUE, List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)));
     }
 
     @Test
