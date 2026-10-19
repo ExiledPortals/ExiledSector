@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Pattern;
 
 public final class WormholeAnchorDefinitions {
 
@@ -23,11 +25,20 @@ public final class WormholeAnchorDefinitions {
     static final String EXIT_NODE_COLUMN = "exit_node";
     static final String DROP_FACTIONS_COLUMN = "drop_factions";
     static final String DROP_CHANCE_COLUMN = "drop_chance";
+    static final String COLOR_COLUMN = "color";
+    static final String CREST_FACTION_COLUMN = "crest_faction";
     static final String LIST_SEPARATOR = ";";
+    public static final Color DEFAULT_COLOR = new Color(190, 90, 255);
+    private static final Pattern HEX_COLOR = Pattern.compile("#[0-9A-Fa-f]{6}");
+    private static final AnchorStyle DEFAULT_STYLE = new AnchorStyle(DEFAULT_COLOR, null);
     private static final Logger LOG = Logger.getLogger(WormholeAnchorDefinitions.class);
     private static final AtomicReference<Map<String, AnchorTarget>> TARGETS_BY_ID = new AtomicReference<>(Map.of());
+    private static final AtomicReference<Map<String, AnchorStyle>> STYLES_BY_ID = new AtomicReference<>(Map.of());
 
     public record AnchorTarget(String volume, String exitNodeId) {
+    }
+
+    public record AnchorStyle(Color color, String crestFactionId) {
     }
 
     private WormholeAnchorDefinitions() {
@@ -40,6 +51,7 @@ public final class WormholeAnchorDefinitions {
     public static void register(JSONArray rows) throws JSONException {
         List<ItemDefinition> definitions = new ArrayList<>();
         Map<String, AnchorTarget> targets = new LinkedHashMap<>();
+        Map<String, AnchorStyle> styles = new LinkedHashMap<>();
         Map<String, String> definitionIdsByVolume = new LinkedHashMap<>();
         Map<String, FactionFleetDrops.Source> dropSources = new LinkedHashMap<>();
         ModCsv.forEach(rows == null ? new JSONArray() : rows, (index, row) -> {
@@ -69,6 +81,7 @@ public final class WormholeAnchorDefinitions {
                 float dropChance = dropChance(definition.id(), ModCsv.text(row, DROP_CHANCE_COLUMN));
                 definitions.add(definition);
                 targets.put(definition.id(), new AnchorTarget(volume, exitNodeId));
+                styles.put(definition.id(), style(definition.id(), ModCsv.text(row, COLOR_COLUMN), ModCsv.text(row, CREST_FACTION_COLUMN)));
                 dropSources.put(definition.id(), new FactionFleetDrops.Source(volume, dropFactions(ModCsv.text(row, DROP_FACTIONS_COLUMN)), dropChance));
             } catch (IllegalArgumentException e) {
                 LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": " + e.getMessage());
@@ -76,7 +89,32 @@ public final class WormholeAnchorDefinitions {
         });
         ItemDefinitions.registerWormholeAnchors(definitions);
         TARGETS_BY_ID.set(Collections.unmodifiableMap(targets));
+        STYLES_BY_ID.set(Collections.unmodifiableMap(styles));
         FactionFleetDrops.register(ItemType.WORMHOLE_ANCHOR, dropSources);
+    }
+
+    static AnchorStyle style(String definitionId, String colorText, String crestFactionId) {
+        Color color = parseColor(colorText);
+        if (color == null) {
+            if (!colorText.isEmpty()) {
+                LOG.error(definitionId + " in " + DATA_PATH + " has the color \"" + colorText + "\"; expected #RRGGBB, so it uses the default");
+            }
+            color = DEFAULT_COLOR;
+        }
+        return new AnchorStyle(color, crestFactionId.isEmpty() ? null : crestFactionId);
+    }
+
+    static boolean isValidColor(String colorText) {
+        return colorText.isEmpty() || parseColor(colorText) != null;
+    }
+
+    private static Color parseColor(String colorText) {
+        return HEX_COLOR.matcher(colorText).matches() ? Color.decode(colorText) : null;
+    }
+
+    public static AnchorStyle style(String definitionId) {
+        AnchorStyle style = definitionId == null ? null : STYLES_BY_ID.get().get(ItemIdAliases.currentId(definitionId));
+        return style == null ? DEFAULT_STYLE : style;
     }
 
     static float dropChance(String definitionId, String chanceText) {
@@ -152,6 +190,7 @@ public final class WormholeAnchorDefinitions {
 
     public static void clear() {
         TARGETS_BY_ID.set(Map.of());
+        STYLES_BY_ID.set(Map.of());
         ItemDefinitions.clearWormholeAnchors();
         FactionFleetDrops.clear(ItemType.WORMHOLE_ANCHOR);
     }

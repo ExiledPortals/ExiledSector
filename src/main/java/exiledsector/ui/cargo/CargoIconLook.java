@@ -3,41 +3,45 @@ package exiledsector.ui.cargo;
 import java.awt.Color;
 
 public record CargoIconLook(Color color, float glow, boolean framed, boolean rings, boolean ticks, boolean sparkles, boolean arcs,
-                            boolean heartbeat, boolean prismatic, Color badgeColor, SwarmMotion swarm) {
+                            boolean heartbeat, boolean prismatic, Color badgeColor, SwarmMotion swarm, AnchorLook anchor) {
 
     public CargoIconLook withBadge(Color badge) {
-        return new CargoIconLook(color, glow, framed, rings, ticks, sparkles, arcs, heartbeat, prismatic, badge, swarm);
+        return new CargoIconLook(color, glow, framed, rings, ticks, sparkles, arcs, heartbeat, prismatic, badge, swarm, anchor);
     }
 
     public CargoIconLook withSwarm(SwarmMotion motion) {
-        return new CargoIconLook(color, glow, framed, rings, ticks, sparkles, arcs, heartbeat, prismatic, badgeColor, motion);
+        return new CargoIconLook(color, glow, framed, rings, ticks, sparkles, arcs, heartbeat, prismatic, badgeColor, motion, anchor);
     }
 
     public CargoIconLook unframed() {
-        return new CargoIconLook(color, glow, false, rings, ticks, sparkles, arcs, heartbeat, prismatic, badgeColor, swarm);
+        return new CargoIconLook(color, glow, false, rings, ticks, sparkles, arcs, heartbeat, prismatic, badgeColor, swarm, anchor);
     }
 
     public static CargoIconLook plain(Color color) {
-        return new CargoIconLook(color, 0f, false, false, false, false, false, false, false, null, SwarmMotion.NONE);
+        return new CargoIconLook(color, 0f, false, false, false, false, false, false, false, null, SwarmMotion.NONE, null);
     }
 
     public static CargoIconLook outlined(Color color) {
-        return new CargoIconLook(color, 0f, true, false, false, false, false, false, false, null, SwarmMotion.NONE);
+        return new CargoIconLook(color, 0f, true, false, false, false, false, false, false, null, SwarmMotion.NONE, null);
     }
 
     public static CargoIconLook glowing(Color color, float glow) {
-        return new CargoIconLook(color, glow, true, false, false, false, false, false, false, null, SwarmMotion.NONE);
+        return new CargoIconLook(color, glow, true, false, false, false, false, false, false, null, SwarmMotion.NONE, null);
     }
 
     public static CargoIconLook ringed(Color color, float glow) {
-        return new CargoIconLook(color, glow, true, true, false, true, false, false, false, null, SwarmMotion.NONE);
+        return new CargoIconLook(color, glow, true, true, false, true, false, false, false, null, SwarmMotion.NONE, null);
     }
 
     public static CargoIconLook charged(Color color, float glow) {
-        return new CargoIconLook(color, glow, true, true, true, true, true, true, false, null, SwarmMotion.NONE);
+        return new CargoIconLook(color, glow, true, true, true, true, true, true, false, null, SwarmMotion.NONE, null);
+    }
+
+    public static CargoIconLook anchor(Color color, AnchorLook anchor) {
+        return new CargoIconLook(color, 0f, true, false, false, false, false, false, false, null, SwarmMotion.NONE, anchor);
     }
 
     public static CargoIconLook refracting(Color color, float glow) {
-        return new CargoIconLook(color, glow, true, true, true, true, true, true, true, null, SwarmMotion.NONE);
+        return new CargoIconLook(color, glow, true, true, true, true, true, true, true, null, SwarmMotion.NONE, null);
     }
 }

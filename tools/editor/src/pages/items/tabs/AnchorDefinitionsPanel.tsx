@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Divider, Group, NavLink, ScrollArea, Select, Stack, Text, Textarea, TextInput } from '@mantine/core';
+import { Avatar, Box, Button, ColorInput, Divider, Group, NavLink, ScrollArea, Select, Stack, Text, Textarea, TextInput } from '@mantine/core';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { useCallback, useEffect, useState } from 'react';
 import type { Vocabulary } from '../../../api/vocabulary.ts';
@@ -252,6 +252,24 @@ function AnchorForm({ document, anchor, index, vocabulary, nodeFacts, onSelect }
         />
       </Group>
       <TextInput label="Name" value={anchor.name} onChange={(event) => { const text = event.currentTarget.value; edit((draft) => void (draft.name = text)); }} />
+      <Group grow align="flex-start">
+        <ColorInput
+          label="Faction colour"
+          description="#RRGGBB for the cargo icon's frame, lights and wormhole effects; bake the icon glow with tools/WormholeAnchorIcons.java"
+          format="hex"
+          value={anchor.color}
+          onChange={(value) => edit((draft) => void (draft.color = value.toUpperCase()))}
+        />
+        <TextInput
+          label="Crest faction"
+          description="Faction id whose crest shows as the icon's badge; blank shows none"
+          value={anchor.crestFaction}
+          onChange={(event) => {
+            const text = event.currentTarget.value;
+            edit((draft) => void (draft.crestFaction = text));
+          }}
+        />
+      </Group>
       <DecimalInput w={220} label="Rarity (loot weight)" value={anchor.rarity} onChange={(text) => edit((draft) => void (draft.rarity = text))} />
       <Group grow align="flex-start">
         <TextInput

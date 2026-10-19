@@ -699,9 +699,9 @@ reconnect.
 ### Definitions and drops
 
 The definitions are in `data/config/exiledSector/wormhole_anchors.csv`, one row per tree volume, with the
-columns `id`, `volume`, `exit_node`, `name`, `icon`, `rarity`, `description`, `unlock`, `drop_factions` and
-`drop_chance`. `volume` is a tree region other than `core`, and `exit_node` is the volume's exit (`exoship` for
-ExoTech). `WormholeAnchorDefinitions` loads the file after the star charts
+columns `id`, `volume`, `exit_node`, `name`, `icon`, `color`, `crest_faction`, `rarity`, `description`, `unlock`,
+`drop_factions` and `drop_chance`. `volume` is a tree region other than `core`, and `exit_node` is the volume's
+exit (`exoship` for ExoTech). `color` and `crest_faction` style the icon (see "Anchor icons"). `WormholeAnchorDefinitions` loads the file after the star charts
 and keeps the volume and exit of each anchor. It skips, with an error in the log, a row whose volume is not a
 region, a row without an exit, a second row for a volume that already has an anchor, and an id that a
 subroutine, hull item or star chart already uses. The definitions sit in their own registry, like star charts,
@@ -765,11 +765,52 @@ only the named volume's, to the player's cargo.
 ### ExoTech and the Exoship
 
 The Exoship is the ExoTech exit. It keeps its carried branches (`ExoshipNodes.isCarried`), its voyage, escorts
-and boarding view, and the ghost-flight and connector rules for carried nodes. The beacon node is gone, but
-the Hyper-Nav Beacon item keeps its look: its icon is vanilla's `graphics/stations/buoy00.png`, and
-`AnimatedItemIcons` draws that path at 1.6 times the icon box with `buoy00glow.png` pulsing orange over it,
-wherever item icons are drawn (cargo, sockets, the workbench and the section flair). The glow is steady when
-item animations are set to Calm or Off. The codex and tooltip images show the plain buoy sprite.
+and boarding view, and the ghost-flight and connector rules for carried nodes. The beacon node is gone. The
+Hyper-Nav Beacon item looks like every other anchor (see "Anchor icons"), in ExoTech gold with the ExoTech
+crest. `AnimatedItemIcons` still draws `graphics/stations/buoy00.png` at 1.6 times the icon box with
+`buoy00glow.png` pulsing orange over it, for any data that uses that path, but no anchor does any more.
+
+### Anchor icons
+
+Each anchor has its own icon and a cargo animation in its faction's colour. The `color` column (`#RRGGBB`) is the
+faction colour and `crest_faction` names the faction whose crest is the badge. A blank colour falls back to the
+anchor's default purple, a colour that is not `#RRGGBB` logs an error and does the same, and a blank crest
+faction shows no badge. `ItemDataIntegrity` reports a bad colour. The anchor's `frameColor` is its faction colour,
+so item storage frames it in that colour too.
+
+The icons are baked, not tinted in game. `tools/WormholeAnchorIcons.java` takes vanilla's
+`graphics/icons/cargo/wormhole_anchor.png`, recolours its purple glow (hue 265 to 345, ramping in with
+saturation) to each row's colour while keeping the brightness, and writes
+`graphics/icons/cargo/exiledSector_wormhole_anchor_<volume>.png`. Rerun it with `--overwrite` after changing a
+colour. The baked icon is what the codex, tooltips, tree sockets and item storage show.
+
+Wherever a `CargoIconLook` is drawn (cargo, the workbench and its tiles), `CargoIconLooks.forItem` gives an anchor
+an anchor look, and `CargoIconFx.render` hands it to `AnchorIconFx` instead of the rarity brackets and glows. All
+sizes are in an 80 by 80 design box scaled to the icon. When the look is framed, the icon is inset as framed
+items are, a faction-coloured frame with a soft additive inner band surrounds it, and ten small lights
+(`graphics/fx/glow64.png`) sit along each half of the frame, from the top-left corner to the bottom-right one. A
+lit light grows, and slides inward just enough that its glow stays inside the icon box. The
+crest of `crest_faction` (read from the faction spec, so mod crests are never copied) sits in a circle in the
+bottom-right corner, drawn as a textured fan with a dark rim, plus a faction-coloured ring when framed. A faction
+that isn't loaded shows no badge.
+
+With item animations on Full, each icon runs a six-second cycle, offset per stack so a cargo grid never pulses in
+step:
+
+- Behind the icon, a tunnel of vanilla's `graphics/fx/radial_fx.png` is mapped around the gem (texture u around
+  the circle, v as 1/radius plus a scroll), so streaks stream outward while the mesh slowly spins. It fades at
+  the centre and the rim, and its radius is the gem's distance to the nearest box edge, so it never leaves the
+  icon. It brightens while the aperture is open.
+- 0 to 22% of the cycle, four chevrons spiral in onto the gem's diagonals and close on it, then blink twice.
+  They start no further out than the gem's distance to the nearest edge allows.
+- 30 to 78%, the gem opens: a dark core with a `star_halo.png` rim in the faction colour.
+- 34 to 78%, three `shields256ringd.png` rings fall into the aperture one after another, spinning.
+- From about 30%, a light wave runs along both halves of the frame and meets at the crest at the very end of
+  the cycle, where the badge flashes, just before the next lock-on.
+
+On Calm or Off the icon is still: frame, dim lights and badge, no tunnel, aperture or motion. The socket
+workbench draws the anchor unframed, so it has no frame or lights there. Nothing here polls or allocates more
+than a few colours per frame, and the vanilla textures are loaded on first use through `SpriteCache`.
 
 ## Node radii
 

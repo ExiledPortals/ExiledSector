@@ -87,6 +87,10 @@ public final class CargoIconFx {
 
     public static void render(SpriteCache sprites, String iconPath, CargoIconLook look, float x, float y, float w, float h,
                               float alphaMult, float glowMult, int phaseSeed, float burstAge) {
+        if (look != null && look.anchor() != null) {
+            AnchorIconFx.render(sprites, iconPath, look, x, y, w, h, alphaMult, phaseSeed);
+            return;
+        }
         ItemAnimationSetting.Mode mode = ItemAnimationSetting.mode();
         float size = Math.min(w, h);
         float cx = x + w / 2f;

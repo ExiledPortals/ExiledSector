@@ -9,6 +9,7 @@ import exiledsector.items.Item;
 import exiledsector.items.ItemRarity;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.MaterialTier;
+import exiledsector.items.WormholeAnchor;
 import exiledsector.ui.section.SectionFlair;
 
 import java.awt.Color;
@@ -51,6 +52,9 @@ public final class CargoIconLooks {
     public static CargoIconLook forItem(Item item) {
         if (item == null) {
             return null;
+        }
+        if (item instanceof WormholeAnchor anchor) {
+            return CargoIconLook.anchor(anchor.color(), new AnchorLook(anchor.crestFactionId()));
         }
         ItemRarity rarity = item.rarity();
         CargoIconLook look = switch (rarity) {

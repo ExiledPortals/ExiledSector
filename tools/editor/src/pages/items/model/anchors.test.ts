@@ -49,9 +49,9 @@ const TREE = JSON.stringify({
 const nodeFacts = treeNodeFacts(TREE, TYPES, vocabulary);
 
 const CSV =
-  'id,volume,exit_node,name,icon,rarity,description,unlock,drop_factions,drop_chance\r\n' +
-  'wormhole_anchor_hegemony,hegemony,hegemony_2,Hegemony Corridor Lock,graphics/icons/nav_relay.png,10,"A lock, with a comma.",,,0.06\r\n' +
-  'wormhole_anchor_exotech,exotech,exoship,Hyper-Nav Beacon,graphics/icons/rat_exogrid.png,10,A beacon.,rat_player_exoship,rat_exotech;other_exotech,0.02\r\n';
+  'id,volume,exit_node,name,icon,color,crest_faction,rarity,description,unlock,drop_factions,drop_chance\r\n' +
+  'wormhole_anchor_hegemony,hegemony,hegemony_2,Hegemony Corridor Lock,graphics/icons/nav_relay.png,#F5961E,hegemony,10,"A lock, with a comma.",,,0.06\r\n' +
+  'wormhole_anchor_exotech,exotech,exoship,Hyper-Nav Beacon,graphics/icons/rat_exogrid.png,,,10,A beacon.,rat_player_exoship,rat_exotech;other_exotech,0.02\r\n';
 
 function anchor(overrides: Partial<WormholeAnchor>): WormholeAnchor {
   return {
@@ -61,6 +61,8 @@ function anchor(overrides: Partial<WormholeAnchor>): WormholeAnchor {
     exitNode: 'pirate_wormhole_2',
     name: 'Raider Run Lock',
     icon: 'graphics/icons/nav_relay.png',
+    color: '',
+    crestFaction: '',
     rarity: '10',
     description: '',
     unlock: '',
@@ -79,15 +81,19 @@ describe('wormhole anchors', () => {
       ['wormhole_anchor_exotech', 'exotech', 'exoship', 'rat_player_exoship', 'rat_exotech;other_exotech', '0.02'],
     ]);
     expect(model.anchors[0].description).toBe('A lock, with a comma.');
+    expect([model.anchors[0].color, model.anchors[0].crestFaction]).toEqual(['#F5961E', 'hegemony']);
+    expect([model.anchors[1].color, model.anchors[1].crestFaction]).toEqual(['', '']);
     expect(serializeWormholeAnchorsCsv(model)).toBe(CSV);
   });
 
   it('keeps columns it does not know and writes edits into their own cells', () => {
-    const model = parseWormholeAnchorsCsv('id,volume,exit_node,name,icon,rarity,description,unlock,drop_factions,drop_chance,note\nold,pirate,pirate_wormhole_2,Old,,1,,,,0.06,keep me\n');
+    const model = parseWormholeAnchorsCsv(
+      'id,volume,exit_node,name,icon,color,crest_faction,rarity,description,unlock,drop_factions,drop_chance,note\nold,pirate,pirate_wormhole_2,Old,,,,1,,,,0.06,keep me\n',
+    );
     model.anchors[0].exitNode = 'pirate_wormhole_3';
 
     expect(serializeWormholeAnchorsCsv(model)).toBe(
-      'id,volume,exit_node,name,icon,rarity,description,unlock,drop_factions,drop_chance,note\nold,pirate,pirate_wormhole_3,Old,,1,,,,0.06,keep me\n',
+      'id,volume,exit_node,name,icon,color,crest_faction,rarity,description,unlock,drop_factions,drop_chance,note\nold,pirate,pirate_wormhole_3,Old,,,,1,,,,0.06,keep me\n',
     );
   });
 
@@ -166,6 +172,22 @@ describe('wormhole anchors', () => {
       'bad_drops: exotech already has an anchor; each volume has exactly one',
       'bad_drops: drop chance must be a number of 0 or more',
       'bad_drops: drop factions must be faction ids separated by ;',
+    ]);
+  });
+
+  it('reports a colour that is not #RRGGBB and a crest faction that is not one faction id', () => {
+    const issues = validateWormholeAnchors(
+      [
+        anchor({ color: '#f5961e', crestFaction: 'pirates' }),
+        anchor({ id: 'wormhole_anchor_hegemony', volume: 'hegemony', exitNode: 'hegemony_2', color: 'orange', crestFaction: 'pirates;hegemony' }),
+      ],
+      vocabulary,
+      nodeFacts,
+    );
+
+    expect(issues).toEqual([
+      'wormhole_anchor_hegemony: color must be #RRGGBB or blank',
+      'wormhole_anchor_hegemony: crest faction must be a single faction id',
     ]);
   });
 

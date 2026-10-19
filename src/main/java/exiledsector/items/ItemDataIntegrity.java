@@ -358,6 +358,10 @@ public final class ItemDataIntegrity {
             if (!WormholeAnchorDefinitions.isValidDropChance(dropChance)) {
                 error(file, line, definitionId + " has the drop chance \"" + dropChance + "\"; expected a number of 0 or more");
             }
+            String color = ModCsv.text(row, WormholeAnchorDefinitions.COLOR_COLUMN);
+            if (!WormholeAnchorDefinitions.isValidColor(color)) {
+                error(file, line, definitionId + " has the color \"" + color + "\"; expected #RRGGBB or blank");
+            }
         });
     }
 

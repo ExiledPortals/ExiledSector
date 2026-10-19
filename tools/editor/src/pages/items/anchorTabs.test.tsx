@@ -63,6 +63,18 @@ describe('wormhole anchor editing', () => {
     expect(server.readProjectFile(ANCHORS_FILE)).toBe(before.replace(',Hyper-Nav Beacon,', ',Portable Hyper-Nav Beacon,'));
   }, 90000);
 
+  it('saves an edited crest faction into its own column', async () => {
+    await openAnchor('Hegemony Corridor Lock');
+    const before = server.readProjectFile(ANCHORS_FILE);
+
+    expect(await findLabelled('Crest faction')).toHaveProperty('value', 'hegemony');
+    fireEvent.change(screen.getByLabelText('Crest faction'), { target: { value: 'lions_guard' } });
+    fireEvent.click(saveButton());
+    await screen.findByText('Saved wormhole_anchors.csv', undefined, { timeout: 30000 });
+
+    expect(server.readProjectFile(ANCHORS_FILE)).toBe(before.replace(',#F5961E,hegemony,', ',#F5961E,lions_guard,'));
+  }, 90000);
+
   it('refuses to save two anchors with the same id', async () => {
     await openAnchor('Hegemony Corridor Lock');
     const before = server.readProjectFile(ANCHORS_FILE);
