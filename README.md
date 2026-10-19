@@ -91,7 +91,7 @@ These mods have dedicated compatibility. The version listed is the one I last te
 | Random Assortment of Things | 3.3.1 | The Abyss area of the tree appears, along with the ExoTech Exoship, which warps between notables carrying its own branches. Hull items can also drop from the mod's abyssal structures, abyssal drones and relic sites. |
 | Nightcross Armory | 2.1.6 | The Nightcross and Stargazer areas of the tree appear. |
 | [GraphicsLib](https://fractalsoftworks.com/forum/index.php?topic=10982.0) | 1.12.1 | Optional. When its lights and distortion are on, Exiled Sector's combat effects light up: Ludd's Light and Phase Anchor send out shockwaves, Frozen Heart stacks pulse, Ion Bolter arcs, Corrosion Beam motes and redirected Hullbreacher and Refracting shots glow, Repair Coordinator drones throw light as they weld, and Candle's Grace Replica bends space around the ship. The Exiled Sector settings can switch all of this off except the mote glow, which GraphicsLib draws itself. |
-| Industrial Evolution | 4.1.b | Hull items can drop from its orbital laboratories and arsenal stations. |
+| Industrial Evolution | 4.1.b | Hull items can drop from its orbital laboratories and arsenal stations. Arsenal stations can also turn up in Star Chart systems from tier 5, unless its derelict stations are switched off in its settings. |
 | Knights of Ludd | 1.4.0 | Hull items can drop from its research stations and caches. |
 | Secrets of the Frontier | 0.15.1 | Hull items can drop from its A Promise station and Hypnos laboratory. |
 | Arthr's Ships n Shit | 0.100-dev | Hull items can drop from its Exodyne research stations. |

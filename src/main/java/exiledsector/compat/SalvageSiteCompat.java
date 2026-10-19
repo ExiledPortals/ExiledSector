@@ -29,7 +29,7 @@ public final class SalvageSiteCompat {
 
     public static final List<Source> SOURCES = List.of(
             new Source("Random Assortment of Things", RandomAssortmentCompat.MOD_ID, List.of("3.3.1")),
-            new Source("Industrial Evolution", "IndEvo", List.of("4.1.b")),
+            new Source("Industrial Evolution", IndustrialEvolutionCompat.MOD_ID, List.of("4.1.b")),
             new Source("Knights of Ludd", "knights_of_ludd", List.of("1.4.0")),
             new Source("Secrets of the Frontier", "secretsofthefrontier", List.of("0.15.1")),
             new Source("Arthr's Ships n Shit", "arthrships", List.of("0.100-dev")),

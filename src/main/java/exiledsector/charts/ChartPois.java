@@ -1,6 +1,10 @@
 package exiledsector.charts;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.ModManagerAPI;
+import com.fs.starfarer.api.SettingsAPI;
 import exiledsector.ModCsv;
+import exiledsector.compat.IndustrialEvolutionCompat;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,6 +17,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BooleanSupplier;
 
 public final class ChartPois {
 
@@ -20,6 +25,7 @@ public final class ChartPois {
     static final String ID_COLUMN = "id";
     static final Set<String> DERELICT_TYPES = Set.of("CIVILIAN", "SMALL", "MEDIUM", "LARGE");
     static final List<String> KIND_NAMES = Arrays.stream(ChartPoi.Kind.values()).map(kind -> kind.name().toLowerCase(Locale.ROOT)).toList();
+    static final Map<String, BooleanSupplier> MOD_SETTING_GATES = Map.of(IndustrialEvolutionCompat.MOD_ID, IndustrialEvolutionCompat::derelictStationsEnabled);
     private static final Logger LOG = Logger.getLogger(ChartPois.class);
     private static volatile List<ChartPoi> pois = List.of();
 
@@ -69,7 +75,8 @@ public final class ChartPois {
         int minTier = ChartTiers.clamp(csv.integer(row, "min_tier", ChartTiers.LOWEST_TIER, id));
         int maxTier = ChartTiers.clamp(csv.integer(row, "max_tier", ChartTiers.HIGHEST_TIER, id));
         return new ChartPoi(id, kind, entityType, ModCsv.text(row, "salvage_spec"), derelictType, csv.number(row, "cost", 1f, id),
-                csv.number(row, "weight", 1f, id), Math.min(minTier, maxTier), Math.max(minTier, maxTier), csv.flag(row, "guarded", false, id));
+                csv.number(row, "weight", 1f, id), Math.min(minTier, maxTier), Math.max(minTier, maxTier), csv.flag(row, "guarded", false, id),
+                ModCsv.text(row, "requires_mod"));
     }
 
     public static List<ChartPoi> all() {
@@ -79,11 +86,25 @@ public final class ChartPois {
     static List<ChartPoi> lootAt(List<ChartPoi> candidates, int tier) {
         List<ChartPoi> eligible = new ArrayList<>();
         for (ChartPoi poi : candidates) {
-            if (poi.allowedAt(tier) && poi.cost() > 0f && poi.weight() > 0f) {
+            if (poi.allowedAt(tier) && poi.cost() > 0f && poi.weight() > 0f && requirementMet(poi)) {
                 eligible.add(poi);
             }
         }
         return eligible;
+    }
+
+    static boolean requirementMet(ChartPoi poi) {
+        String modId = poi.requiredMod();
+        if (modId.isEmpty()) {
+            return true;
+        }
+        SettingsAPI settings = Global.getSettings();
+        ModManagerAPI modManager = settings == null ? null : settings.getModManager();
+        if (modManager == null || !modManager.isModEnabled(modId)) {
+            return false;
+        }
+        BooleanSupplier settingGate = MOD_SETTING_GATES.get(modId);
+        return settingGate == null || settingGate.getAsBoolean();
     }
 
     static List<ChartPoi> ofKind(List<ChartPoi> candidates, ChartPoi.Kind kind) {

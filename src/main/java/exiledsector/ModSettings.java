@@ -25,7 +25,11 @@ public final class ModSettings {
     }
 
     public static boolean booleanOr(String fieldId, boolean defaultValue) {
-        Boolean value = LunaSettings.getBoolean(MOD_ID, fieldId);
+        return otherModBooleanOr(MOD_ID, fieldId, defaultValue);
+    }
+
+    public static boolean otherModBooleanOr(String modId, String fieldId, boolean defaultValue) {
+        Boolean value = LunaSettings.getBoolean(modId, fieldId);
         return value != null ? value : defaultValue;
     }
 }

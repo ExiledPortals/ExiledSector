@@ -178,9 +178,19 @@ class ChartContentDataTest {
         }
 
         for (ChartPoi poi : ChartPois.all()) {
-            assertTrue(dropSites.contains(poi.specForSalvage()), poi.id() + " drops no hull items: " + poi.specForSalvage());
+            Set<String> sites = poi.requiredMod().isEmpty() ? dropSites : compatDropSites(poi.requiredMod());
+            assertTrue(sites.contains(poi.specForSalvage()), poi.id() + " drops no hull items: " + poi.specForSalvage());
         }
         assertTrue(dropSites.contains(ChartRewards.REWARD_SITE));
+    }
+
+    private static Set<String> compatDropSites(String modId) throws Exception {
+        Set<String> sites = new HashSet<>();
+        JSONArray rows = csvRows("data/config/exiledSector/compat/salvage/" + modId + ".csv");
+        for (int i = 0; i < rows.length(); i++) {
+            sites.add(rows.getJSONObject(i).optString("site"));
+        }
+        return sites;
     }
 
     @Test
