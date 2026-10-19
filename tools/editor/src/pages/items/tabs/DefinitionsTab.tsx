@@ -136,7 +136,7 @@ export function DefinitionsTab({ vocabulary }: { vocabulary: Vocabulary }) {
   const addItem = () => {
     document.update((draft) => {
       const kind = draft.family === 'chart' ? STAR_CHART_KIND : kindFilter || vocabulary.itemKinds[0] || 'subroutine';
-      draft.definitions.push(newItemDefinition(draft.definitions, kind, draft.catalogue, draft.otherFamilyIds));
+      draft.definitions.push(newItemDefinition(draft.definitions, kind, draft.catalogue, draft.otherFamilyIds, vocabulary.subroutineKinds[0] ?? ''));
     });
     setSelectedIndex(definitions.length);
   };
@@ -234,6 +234,14 @@ function groupOfListedDefinition(definition: ItemDefinition, family: ItemFamily)
   return family === 'chart' ? definition.systemType || ANY_SYSTEM_TYPE : definition.kind;
 }
 
+function listedDefinitionSummary(definition: ItemDefinition, family: ItemFamily): string {
+  const group = groupOfListedDefinition(definition, family);
+  if (itemTypeOfKind(definition.kind) === SUBROUTINE_TYPE) {
+    return `${group} - ${definition.subroutineKind || 'no kind'}`;
+  }
+  return `${group} - ${definition.prefixes.length} prefixes, ${definition.suffixes.length} suffixes`;
+}
+
 function DefinitionList({ model, vocabulary, kindFilter, onKindFilter, selectedIndex, onSelect }: DefinitionListProps) {
   const isChart = model.family === 'chart';
   const kindOptions = useMemo(() => {
@@ -276,7 +284,7 @@ function DefinitionList({ model, vocabulary, kindFilter, onKindFilter, selectedI
               active={index === selectedIndex}
               onClick={() => onSelect(index)}
               label={definition.name || definition.id}
-              description={`${groupOfListedDefinition(definition, model.family)} - ${definition.prefixes.length} prefixes, ${definition.suffixes.length} suffixes`}
+              description={listedDefinitionSummary(definition, model.family)}
               leftSection={<Avatar src={fileUrl(definition.icon)} radius="sm" size={32} />}
             />
           ))
@@ -411,6 +419,11 @@ function DefinitionForm({ document, family, definition, index, vocabulary, catal
   const kinds = vocabulary.itemKinds.includes(definition.kind) ? vocabulary.itemKinds : [definition.kind, ...vocabulary.itemKinds];
   const unique = isTrueText(definition.unique);
   const itemType = itemTypeOfKind(definition.kind);
+  const isSubroutine = itemType === SUBROUTINE_TYPE;
+  const showsAffixPools = !isSubroutine || definition.prefixes.length > 0 || definition.suffixes.length > 0;
+  const subroutineKind = definition.subroutineKind ?? '';
+  const subroutineKindOptions =
+    subroutineKind === '' || vocabulary.subroutineKinds.includes(subroutineKind) ? vocabulary.subroutineKinds : [subroutineKind, ...vocabulary.subroutineKinds];
 
   const duplicate = () => {
     document.update((draft) => {
@@ -470,10 +483,21 @@ function DefinitionForm({ document, family, definition, index, vocabulary, catal
         )}
       </Group>
       {isChart && <StarChartFields definition={definition} vocabulary={vocabulary} edit={edit} />}
+      {isSubroutine && (
+        <Select
+          label="Subroutine kind"
+          description="Sets what the subroutine does on the skill tree; subroutines roll no prefixes or suffixes"
+          data={subroutineKindOptions}
+          value={subroutineKind === '' ? null : subroutineKind}
+          onChange={(value) => edit((draft) => void (draft.subroutineKind = value ?? ''))}
+          allowDeselect={false}
+          error={vocabulary.subroutineKinds.includes(subroutineKind) ? undefined : 'Pick a subroutine kind'}
+        />
+      )}
       <TextInput label="Name" value={definition.name} onChange={(event) => { const text = event.currentTarget.value; edit((draft) => void (draft.name = text)); }} />
       <DecimalInput w={220} label="Rarity (loot weight)" value={definition.rarity} onChange={(text) => edit((draft) => void (draft.rarity = text))} />
       <Checkbox
-        label="Unique - shown with the name above in orange, and rolls every prefix and suffix"
+        label={isSubroutine ? 'Unique - shown with the name above in orange' : 'Unique - shown with the name above in orange, and rolls every prefix and suffix'}
         checked={unique}
         onChange={(event) => {
           const checked = event.currentTarget.checked;
@@ -502,60 +526,64 @@ function DefinitionForm({ document, family, definition, index, vocabulary, catal
         value={definition.description}
         onChange={(event) => { const text = event.currentTarget.value; edit((draft) => void (draft.description = text)); }}
       />
-      <Divider />
-      <Text size="xs" c="dimmed">
-        {isChart
-          ? 'Charts roll 2 to 6 modifiers, at most 3 a side; 3 or more makes a rare chart. A tier range (t3+, t2-6) keeps an entry out of charts below or above those tiers.'
-          : 'Items roll 2 effects (common: 1 prefix + 1 suffix) 55% of the time, 3 (rare: 2+1 or 1+2) 35% and 4 (rare: 2+2) 10%, never repeating a modifier.'}{' '}
-        A higher rarity weight makes a modifier come up more often within its group; a blank weight counts as 1. Each entry picks a modifier from {MODIFIER_FILE_NAMES[family]}. Its
-        values can be edited here or in the Modifiers tab; a shared modifier changes every item that uses it, so use &quot;Copy for this item&quot; to tune one item alone.
-      </Text>
-      {AFFIX_GROUPS.map((group) => {
-        const pool = definition[group.key];
-        const shares = poolShares(pool);
-        return (
-          <Stack key={group.key} gap="xs">
-            <Title order={5}>
-              {group.label} - {isChart ? 'a common chart rolls 1, a rare 1-3' : 'a common item rolls 1, a rare 1-2'}
-            </Title>
-            {pool.length === 0 && (
-              <Text size="sm" c="dimmed">
-                None yet.
-              </Text>
-            )}
-            {pool.map((entry, entryIndex) => (
-              <PoolEntryRow
-                key={entryIndex}
-                groupKey={group.key}
-                entry={entry}
-                slot={group.singular}
-                itemType={itemType}
-                family={family}
-                index={entryIndex}
-                count={pool.length}
-                share={shares[entryIndex]}
-                catalogue={catalogue}
-                otherItemsUsingModifier={(usage.get(entry.modifierId)?.items ?? []).filter((itemId) => itemId !== definition.id).join(', ')}
-                vocabulary={vocabulary}
-                onEdit={editEntry}
-                onEditModifier={editModifier}
-                onCopyModifier={copyModifier}
-                onMove={moveEntry}
-                onRemove={removeEntry}
-              />
-            ))}
-            <Button
-              size="xs"
-              variant="default"
-              w="fit-content"
-              leftSection={<IconPlus size={14} />}
-              onClick={() => edit((draft) => void draft[group.key].push({ modifierId: '', weight: '' }))}
-            >
-              Add {group.singular}
-            </Button>
-          </Stack>
-        );
-      })}
+      {showsAffixPools && (
+        <>
+          <Divider />
+          <Text size="xs" c="dimmed">
+            {isChart
+              ? 'Charts roll 2 to 6 modifiers, at most 3 a side; 3 or more makes a rare chart. A tier range (t3+, t2-6) keeps an entry out of charts below or above those tiers.'
+              : 'Items roll 2 effects (common: 1 prefix + 1 suffix) 55% of the time, 3 (rare: 2+1 or 1+2) 35% and 4 (rare: 2+2) 10%, never repeating a modifier.'}{' '}
+            A higher rarity weight makes a modifier come up more often within its group; a blank weight counts as 1. Each entry picks a modifier from {MODIFIER_FILE_NAMES[family]}. Its
+            values can be edited here or in the Modifiers tab; a shared modifier changes every item that uses it, so use &quot;Copy for this item&quot; to tune one item alone.
+          </Text>
+          {AFFIX_GROUPS.map((group) => {
+            const pool = definition[group.key];
+            const shares = poolShares(pool);
+            return (
+              <Stack key={group.key} gap="xs">
+                <Title order={5}>
+                  {group.label} - {isChart ? 'a common chart rolls 1, a rare 1-3' : 'a common item rolls 1, a rare 1-2'}
+                </Title>
+                {pool.length === 0 && (
+                  <Text size="sm" c="dimmed">
+                    None yet.
+                  </Text>
+                )}
+                {pool.map((entry, entryIndex) => (
+                  <PoolEntryRow
+                    key={entryIndex}
+                    groupKey={group.key}
+                    entry={entry}
+                    slot={group.singular}
+                    itemType={itemType}
+                    family={family}
+                    index={entryIndex}
+                    count={pool.length}
+                    share={shares[entryIndex]}
+                    catalogue={catalogue}
+                    otherItemsUsingModifier={(usage.get(entry.modifierId)?.items ?? []).filter((itemId) => itemId !== definition.id).join(', ')}
+                    vocabulary={vocabulary}
+                    onEdit={editEntry}
+                    onEditModifier={editModifier}
+                    onCopyModifier={copyModifier}
+                    onMove={moveEntry}
+                    onRemove={removeEntry}
+                  />
+                ))}
+                <Button
+                  size="xs"
+                  variant="default"
+                  w="fit-content"
+                  leftSection={<IconPlus size={14} />}
+                  onClick={() => edit((draft) => void draft[group.key].push({ modifierId: '', weight: '' }))}
+                >
+                  Add {group.singular}
+                </Button>
+              </Stack>
+            );
+          })}
+        </>
+      )}
       <Divider />
       <Group>
         <Button variant="default" leftSection={<IconCopy size={14} />} onClick={duplicate}>

@@ -31,7 +31,7 @@ class ShipSectionsTest {
         ItemDefinitions.register(new JSONArray()
                 .put(definition("bridge_item", "bridge", "HULL_PERCENT:5:5"))
                 .put(definition("emitter", "shield_generator", "HULL_PERCENT:10:10"))
-                .put(definition("chip", "subroutine", "HULL_PERCENT:20:20")));
+                .put(definition("chip", "reactor", "HULL_PERCENT:20:20")));
         shipData = new ShipSkillData();
         shipData.grantUnlockedSocketType("bridge");
         shipData.grantUnlockedSocketType("shield_generator");
@@ -48,8 +48,7 @@ class ShipSectionsTest {
     }
 
     private static JSONObject definition(String id, String kind, String prefixes) throws Exception {
-        JSONObject row = new JSONObject().put("id", id).put("name", id).put("rarity", "10").put("prefixes", prefixes);
-        return "subroutine".equals(kind) ? row : row.put("section", kind);
+        return new JSONObject().put("id", id).put("name", id).put("rarity", "10").put("prefixes", prefixes).put("section", kind);
     }
 
     private static ShipProfile fit(ShieldType shieldType) {

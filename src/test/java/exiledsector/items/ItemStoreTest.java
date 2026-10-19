@@ -68,7 +68,7 @@ class ItemStoreTest {
         Item first = store.add(military, 7L);
         Item second = store.add(military, 7L);
 
-        assertEquals(ItemKind.SUBROUTINE, first.kind());
+        assertEquals(ItemKind.BRIDGE, first.kind());
         assertNotEquals(first.id(), second.id());
         assertEquals(ItemRoller.roll(military, 7L), first.explicits());
         assertEquals(List.of(first, second), store.owned());

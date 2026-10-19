@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 class NpcTreeTagTest {
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         RealSkillData.clear();
         register("root", type("root_type", SkillTier.ROOT));
         register("a", type("a_type", SkillTier.SMALL), "root");
@@ -38,15 +38,21 @@ class NpcTreeTagTest {
         register("optional_1", new SkillType.Builder("optional", "optional", "a.png", SkillTier.SMALL)
                 .optionalOptionIds(List.of("flux_option", "hull_option")).build(), "a");
         register("b", type("b_type", SkillTier.NOTABLE), "optional_1");
+        registerVolumeSubroutine();
     }
 
     @AfterEach
     void tearDown() {
+        ItemDefinitions.clear();
         RealSkillData.clear();
     }
 
     private static SkillType type(String id, SkillTier tier) {
         return new SkillType.Builder(id, id, "a.png", tier).build();
+    }
+
+    private static void registerVolumeSubroutine() throws Exception {
+        ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "volume_subroutine").put("kind", "VOLUME")));
     }
 
     private static SkillType registerType(SkillType type) {
@@ -90,19 +96,19 @@ class NpcTreeTagTest {
     @Test
     void anNpcHullItemSurvivesEncodingAndDecodingInItsSocket() {
         ShipSkillData data = withSocket();
-        data.socketItem("socket_1", NpcItems.id("domain_subroutine_military", -42L));
+        data.socketItem("socket_1", NpcItems.id("volume_subroutine", -42L));
 
         String tag = NpcTreeTag.encode(data);
         ShipSkillData decoded = NpcTreeTag.decode(tag);
 
-        assertEquals("exiledSector_npcTree|generated|2|root,a,socket_1|sockets:socket_1=npc:domain_subroutine_military/-42", tag);
-        assertEquals("npc:domain_subroutine_military/-42", decoded.getSocketedItem("socket_1"));
+        assertEquals("exiledSector_npcTree|generated|2|root,a,socket_1|sockets:socket_1=npc:volume_subroutine/-42", tag);
+        assertEquals("npc:volume_subroutine/-42", decoded.getSocketedItem("socket_1"));
     }
 
     @Test
     void aFlagshipsUnlockedSocketsAndTheirItemsSurviveTheTagAlongsideTreeSockets() {
         ShipSkillData data = withSocket();
-        data.socketItem("socket_1", NpcItems.id("domain_subroutine_military", -42L));
+        data.socketItem("socket_1", NpcItems.id("volume_subroutine", -42L));
         data.grantUnlockedSocketType("bridge");
         data.grantUnlockedSocketType("reactor");
         data.grantUnlockedSocketType("flight_deck");
@@ -111,9 +117,9 @@ class NpcTreeTagTest {
         String tag = NpcTreeTag.encode(data);
         ShipSkillData decoded = NpcTreeTag.decode(tag);
 
-        assertEquals("exiledSector_npcTree|generated|2|root,a,socket_1|sockets:socket_1=npc:domain_subroutine_military/-42"
+        assertEquals("exiledSector_npcTree|generated|2|root,a,socket_1|sockets:socket_1=npc:volume_subroutine/-42"
                 + "|frameworkTypes:bridge+reactor+flight_deck|frameworkSockets:flight_deck=npc:deck_basic/3", tag);
-        assertEquals("npc:domain_subroutine_military/-42", decoded.getSocketedItem("socket_1"));
+        assertEquals("npc:volume_subroutine/-42", decoded.getSocketedItem("socket_1"));
         assertEquals(List.of("bridge", "reactor", "flight_deck"), decoded.getUnlockedSocketTypeIds());
         assertEquals(3, decoded.getHullUpgradePoints());
         assertEquals(Map.of("flight_deck", "npc:deck_basic/3"), decoded.getSectionItems());
@@ -134,6 +140,18 @@ class NpcTreeTagTest {
     }
 
     @Test
+    void aSavedTreeSocketHoldingARetiredSubroutineIsDroppedOnRestoreButAnUnloadedOneIsKept() {
+        withSocket();
+
+        ShipSkillData retired = NpcTreeTag.decode("exiledSector_npcTree|generated|2|root,a,socket_1|sockets:socket_1=npc:domain_subroutine_military/5");
+        ShipSkillData unloaded = NpcTreeTag.decode("exiledSector_npcTree|generated|2|root,a,socket_1|sockets:socket_1=npc:not_loaded_subroutine/5");
+
+        assertNull(retired.getSocketedItem("socket_1"));
+        assertTrue(retired.isAllocated("socket_1"));
+        assertEquals("npc:not_loaded_subroutine/5", unloaded.getSocketedItem("socket_1"));
+    }
+
+    @Test
     void socketsWithoutItemsRoundTripAndTagsFromEarlierSectionBuildsAreIgnored() {
         ShipSkillData data = withSocket();
         data.grantUnlockedSocketType("bridge");
@@ -148,7 +166,7 @@ class NpcTreeTagTest {
     @Test
     void socketTagsAlreadyWrittenIntoSavedFleetsStillDecodeWithTheirRolls() {
         withSocket();
-        String rolled = "npc:domain_subroutine_military/-42/HULL_MULT:5;ARMOR_PERCENT:-0.25";
+        String rolled = "npc:volume_subroutine/-42/HULL_MULT:5;ARMOR_PERCENT:-0.25";
         String saved = "exiledSector_npcTree|generated|2|root,a,socket_1|sockets:socket_1=" + rolled;
 
         ShipSkillData decoded = NpcTreeTag.decode(saved);

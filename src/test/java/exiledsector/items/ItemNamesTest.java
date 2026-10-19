@@ -31,18 +31,31 @@ class ItemNamesTest {
     @BeforeEach
     void setUp() throws Exception {
         Path root = RealSkillData.projectRoot();
-        ItemNames.registerWords(new JSONObject(Files.readString(root.resolve(NAMES), StandardCharsets.UTF_8)));
+        ItemNames.registerWords(new JSONObject(Files.readString(root.resolve(NAMES), StandardCharsets.UTF_8))
+                .put("military_bridge", words("codename", List.of("Askonia", "Corvus", "Galatia", "Hybrasil", "Magec", "Duzahk", "Thule", "Aztlan",
+                                "Samarra", "Zagan", "Valhalla", "Mayasura", "Eos", "Canaan"),
+                        List.of("Battlegroup", "Doctrine", "Protocol", "Directive", "Picket", "Cordon", "Vanguard", "Sentinel", "Mandate", "Interdict",
+                                "Tribunal", "Overwatch"), List.of()))
+                .put("industrial_bridge", words("codename", List.of("Ilmari", "Hephaestus", "Basalt", "Tungsten", "Anvil", "Gantry"),
+                        List.of("Governor", "Regulator", "Manifold", "Coupling", "Loom", "Spindle"), List.of()))
+                .put("consumer_bridge", words("product", List.of("Sunny", "Happy", "Comfort", "Easy", "Safe", "Family"),
+                        List.of("Pal", "Helper", "Buddy", "Assist", "Companion", "Navigator"), List.of("3000", "Plus", "Pro", "Max"))));
         ItemFixtures.registerModifierNames("FLUX_DISSIPATION_MULT,prefix,FLUX_DISSIPATION_MULT:4:6,Vent-efficient",
                 "SHIELD_DAMAGE_TAKEN_MULT,suffix,SHIELD_DAMAGE_TAKEN_MULT:-15:-10,Shielding", "HULL_MULT,suffix,HULL_MULT:4:6,Fortitude");
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.row("domain_subroutine_military", "subroutine", ItemFixtures.MILITARY_PREFIXES,
+                .put(ItemFixtures.row("military_bridge", "bridge", ItemFixtures.MILITARY_PREFIXES,
                         ItemFixtures.MILITARY_SUFFIXES))
-                .put(ItemFixtures.row("domain_subroutine_industrial", "subroutine", "HULL_MULT:4:6")
-                        .put("name", "Industrial-grade Domain Subroutine"))
-                .put(ItemFixtures.row("domain_subroutine_consumer", "subroutine", "HULL_MULT:4:6")
-                        .put("name", "Consumer-grade Domain Subroutine"))
+                .put(ItemFixtures.row("industrial_bridge", "bridge", "HULL_MULT:4:6")
+                        .put("name", "Industrial-grade Bridge"))
+                .put(ItemFixtures.row("consumer_bridge", "bridge", "HULL_MULT:4:6")
+                        .put("name", "Consumer-grade Bridge"))
                 .put(ItemFixtures.row("relic", "reactor", "HULL_MULT:4:6; ARMOR_PERCENT:6:9; FLUX_CAPACITY_MULT:4:6")
                         .put("name", "Omega Shard").put("unique", "TRUE")));
+    }
+
+    private static JSONObject words(String style, List<String> firstWords, List<String> secondWords, List<String> models) throws Exception {
+        JSONObject wordsJson = new JSONObject().put("style", style).put("first", new JSONArray(firstWords)).put("second", new JSONArray(secondWords));
+        return models.isEmpty() ? wordsJson : wordsJson.put("models", new JSONArray(models));
     }
 
     private static JSONArray csvRows(String dataPath) throws Exception {
@@ -63,16 +76,16 @@ class ItemNamesTest {
 
     @Test
     void twoEffectsMakeACommonItemNamedAfterThemWithItsTypeUnderneath() {
-        ItemName name = name("domain_subroutine_military", 1L, List.of(DISSIPATION, SHIELDING));
+        ItemName name = name("military_bridge", 1L, List.of(DISSIPATION, SHIELDING));
 
         assertEquals(ItemRarity.COMMON, name.rarity());
-        assertEquals("Vent-efficient subroutine of Shielding", name.title());
-        assertEquals("Military-grade Domain Subroutine", name.baseName());
+        assertEquals("Vent-efficient officer of Shielding", name.title());
+        assertEquals("Military-grade Bridge", name.baseName());
     }
 
     @Test
     void theCommonNameFollowsEachEffectsRoleNotItsOrder() {
-        assertEquals("Vent-efficient subroutine of Shielding", name("domain_subroutine_military", 1L, List.of(SHIELDING, DISSIPATION)).title());
+        assertEquals("Vent-efficient officer of Shielding", name("military_bridge", 1L, List.of(SHIELDING, DISSIPATION)).title());
     }
 
     @Test
@@ -80,30 +93,30 @@ class ItemNamesTest {
         ItemFixtures.registerModifierNames("FLUX_DISSIPATION_MULT,prefix,FLUX_DISSIPATION_MULT:4:6,Dissipation",
                 "HULL_MULT,suffix,HULL_MULT:4:6,Fortitude");
 
-        assertEquals("Dissipation subroutine", name("domain_subroutine_military", 1L, List.of(DISSIPATION, ARMOR)).title());
-        assertEquals("Subroutine of Fortitude",
-                name("domain_subroutine_military", 1L, List.of(new RolledEffect("REMOVED_EFFECT", 1f), HULL)).title());
+        assertEquals("Dissipation officer", name("military_bridge", 1L, List.of(DISSIPATION, ARMOR)).title());
+        assertEquals("Officer of Fortitude",
+                name("military_bridge", 1L, List.of(new RolledEffect("REMOVED_EFFECT", 1f), HULL)).title());
     }
 
     @Test
     void threeOrFourEffectsMakeARareCodenameOverTheBaseName() {
         Set<String> names = new HashSet<>();
         for (long seed = 0; seed < 200; seed++) {
-            ItemName name = name("domain_subroutine_military", seed, List.of(DISSIPATION, SHIELDING, HULL));
+            ItemName name = name("military_bridge", seed, List.of(DISSIPATION, SHIELDING, HULL));
             assertEquals(ItemRarity.RARE, name.rarity());
-            assertEquals("Military-grade Domain Subroutine", name.baseName());
+            assertEquals("Military-grade Bridge", name.baseName());
             assertTrue(name.title().matches("[A-Z][a-z]+ [A-Z][a-z]+"), name.title());
             names.add(name.title());
         }
-        assertEquals(name("domain_subroutine_military", 7L, List.of(DISSIPATION, SHIELDING, HULL)),
-                name("domain_subroutine_military", 7L, List.of(DISSIPATION, SHIELDING, HULL, ARMOR)));
+        assertEquals(name("military_bridge", 7L, List.of(DISSIPATION, SHIELDING, HULL)),
+                name("military_bridge", 7L, List.of(DISSIPATION, SHIELDING, HULL, ARMOR)));
         assertTrue(names.size() > 50, "names should vary: " + names.size());
     }
 
     @Test
     void industrialRaresAreTwoWordNamesWithNoRevisionNumber() {
         for (long seed = 0; seed < 200; seed++) {
-            String title = name("domain_subroutine_industrial", seed, List.of(HULL, ARMOR, DISSIPATION)).title();
+            String title = name("industrial_bridge", seed, List.of(HULL, ARMOR, DISSIPATION)).title();
             assertTrue(title.matches("[A-Z][a-z]+ [A-Z][a-z]+"), title);
         }
     }
@@ -113,7 +126,7 @@ class ItemNamesTest {
         boolean compound = false;
         boolean model = false;
         for (long seed = 0; seed < 400; seed++) {
-            String title = name("domain_subroutine_consumer", seed, List.of(HULL, ARMOR, DISSIPATION)).title();
+            String title = name("consumer_bridge", seed, List.of(HULL, ARMOR, DISSIPATION)).title();
             String[] words = title.split(" ");
             assertTrue(words.length == 2 || words.length == 3, title);
             assertNotEquals(words[words.length - 1], words[words.length - 2], title);
@@ -126,13 +139,13 @@ class ItemNamesTest {
     @Test
     void aProductWordListOfOneRepeatedWordStillNamesTheItem() throws Exception {
         ItemNames.registerWords(new JSONObject()
-                .put("domain_subroutine_consumer", new JSONObject().put("style", "product")
+                .put("consumer_bridge", new JSONObject().put("style", "product")
                         .put("first", new JSONArray().put("Sunny").put("Sunny").put(" Sunny "))
                         .put("second", new JSONArray().put("Pal"))));
 
         org.junit.jupiter.api.Assertions.assertTimeoutPreemptively(java.time.Duration.ofSeconds(5), () -> {
             for (long seed = 0; seed < 200; seed++) {
-                assertEquals("Sunny Pal", name("domain_subroutine_consumer", seed, List.of(HULL, ARMOR, DISSIPATION)).title());
+                assertEquals("Sunny Pal", name("consumer_bridge", seed, List.of(HULL, ARMOR, DISSIPATION)).title());
             }
         });
     }

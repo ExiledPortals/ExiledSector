@@ -33,7 +33,7 @@ final class SkillTreeWormholeGhostFlights {
 
     void advance(float amount, ShipSkillData skillData) {
         flights.removeIf(flight -> flight.advance(amount));
-        for (SkillTreeTopology.WormholePair pair : SkillTree.topology().wormholePairs()) {
+        for (SkillTreeTopology.WormholePair pair : skillData.wormholePairs(SkillTree.topology())) {
             if (skillData.isAllocated(pair.first().getId()) && skillData.isAllocated(pair.second().getId())
                     && !ExoshipNodes.isCarried(pair.first()) && !ExoshipNodes.isCarried(pair.second())) {
                 scheduleFlights(pair, amount);

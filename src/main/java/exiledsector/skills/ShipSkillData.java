@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
-public class ShipSkillData {
+public class ShipSkillData implements WormholePartners {
 
     private final Set<String> allocatedNodeIds = new LinkedHashSet<>();
     private Map<String, String> optionalSelections = new LinkedHashMap<>();
@@ -238,6 +238,17 @@ public class ShipSkillData {
         return revision;
     }
 
+    @Override
+    public String wormholePartner(SkillNode node) {
+        // TODO: wormhole anchors: also return socket-to-exit and exit-to-socket links of socketed anchors, cached per revision in a transient map
+        return WormholePartners.pairedWith(node);
+    }
+
+    public List<SkillTreeTopology.WormholePair> wormholePairs(SkillTreeTopology topology) {
+        // TODO: wormhole anchors: add a socket-to-exit pair per socketed anchor, cached per revision
+        return topology.wormholePairs();
+    }
+
     public Set<String> getAllocatedNodeIds() {
         return allocatedNodeIds;
     }
@@ -438,7 +449,7 @@ public class ShipSkillData {
         allocatedNodeIds.add(node.getId());
         charge(node.getId(), opCost);
 
-        String pairedId = node.getPairedNodeId();
+        String pairedId = wormholePartner(node);
         if (pairedId != null && !isAllocated(pairedId)) {
             discardItemCharge(pairedId);
             allocatedNodeIds.add(pairedId);
@@ -452,7 +463,7 @@ public class ShipSkillData {
         allocatedNodeIds.remove(node.getId());
         release(node.getId());
 
-        String pairedId = node.getPairedNodeId();
+        String pairedId = wormholePartner(node);
         if (pairedId != null && allocatedNodeIds.remove(pairedId)) {
             release(pairedId);
         }
@@ -581,11 +592,12 @@ public class ShipSkillData {
             if (node == null) {
                 continue;
             }
-            boolean freePartnerOfAllocatedEnd = pairedFreeNodeIds().contains(nodeId) && allocatedNodeIds.contains(node.getPairedNodeId());
+            String partnerId = wormholePartner(node);
+            boolean freePartnerOfAllocatedEnd = pairedFreeNodeIds().contains(nodeId) && allocatedNodeIds.contains(partnerId);
             dormantNodeIds.remove(nodeId);
             release(nodeId);
             released.add(nodeId);
-            SkillNode allocatedEnd = freePartnerOfAllocatedEnd ? tree.get(node.getPairedNodeId()) : null;
+            SkillNode allocatedEnd = freePartnerOfAllocatedEnd ? tree.get(partnerId) : null;
             if (allocatedEnd != null) {
                 topology = topology != null ? topology : SkillTreeTopology.of(tree.values());
                 if (canDeallocate(allocatedEnd, topology, satisfiedRootId)) {
@@ -659,7 +671,7 @@ public class ShipSkillData {
     public boolean canDeallocate(SkillNode node, SkillTreeTopology topology, String satisfiedRootId) {
         Set<String> excluded = new HashSet<>();
         excluded.add(node.getId());
-        String pairedId = node.getPairedNodeId();
+        String pairedId = wormholePartner(node);
         if (pairedId != null) excluded.add(pairedId);
 
         Set<String> reachableBefore = reachableAllocatedNodeIds(topology, satisfiedRootId, Set.of());
@@ -691,7 +703,7 @@ public class ShipSkillData {
     }
 
     private String allocatedWormholePartner(SkillNode node, Set<String> excludedNodeIds) {
-        String partnerId = node.getType().getTier() == SkillTier.WORMHOLE ? node.getPairedNodeId() : null;
+        String partnerId = wormholePartner(node);
         return partnerId != null && !excludedNodeIds.contains(partnerId) && isAllocated(partnerId) ? partnerId : null;
     }
 

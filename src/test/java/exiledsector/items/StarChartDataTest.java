@@ -111,10 +111,10 @@ class StarChartDataTest {
                 .put(chart("chart_a", "QUATERNARY", "", "@CHART_EXTRA_POIS:2:t3-40"))
                 .put(chart("chart_b", "SINGLE", "", "@CHART_REWARD_PERCENT:2:t3; @CHART_MISSING"));
         JSONArray implicits = new JSONArray().put(new JSONObject().put("system_type", "NEBULA").put("implicits", "@CHART_EXTRA_POIS"));
-        JSONArray subroutines = new JSONArray().put(ItemFixtures.row("chip", "subroutine", "@HULL_MULT:5:t3"));
+        JSONArray hullItems = new JSONArray().put(ItemFixtures.row("chip", "bridge", "@HULL_MULT:5:t3"));
 
         List<String> errors = chartErrors(itemModifiers, chartModifiers, charts, implicits);
-        List<String> shipErrors = ItemDataIntegrity.checkWithStarCharts(itemModifiers, subroutines, new JSONArray(), new JSONArray(),
+        List<String> shipErrors = ItemDataIntegrity.checkWithStarCharts(itemModifiers, new JSONArray(), hullItems, new JSONArray(),
                 new JSONArray(), new JSONArray(), new JSONArray()).stream().map(Violation::message).toList();
 
         assertTrue(errors.contains("HULL_MULT gives HULL_MULT tier bands, but only star chart modifiers in " + StarChartItems.MODIFIERS_PATH
@@ -177,7 +177,7 @@ class StarChartDataTest {
         assertEquals("BINARY_FAR", StarChartDefinitions.systemType("chart_ok"));
         assertEquals(StarChartDefinitions.ANY_SYSTEM_TYPE, StarChartDefinitions.systemType("chart_any"));
         assertNull(ItemDefinitions.get("chart_bad"));
-        assertEquals(ItemType.SUBROUTINE, ItemDefinitions.get(ItemFixtures.MILITARY).type());
+        assertEquals(ItemType.HULL_ITEM, ItemDefinitions.get(ItemFixtures.MILITARY).type());
         assertEquals(2, ItemDefinitions.ofType(ItemType.STAR_CHART).size());
     }
 }

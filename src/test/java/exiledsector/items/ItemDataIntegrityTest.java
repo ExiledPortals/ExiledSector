@@ -18,8 +18,12 @@ class ItemDataIntegrityTest {
         return ItemFixtures.modifierRow(id, slot, lines, name);
     }
 
-    private static JSONObject subroutine(String id, String prefixes, String suffixes, boolean unique) throws JSONException {
-        return ItemFixtures.row(id, "subroutine", prefixes, suffixes).put("unique", unique ? "TRUE" : "");
+    private static JSONObject subroutine(String id, String subroutineKind) throws JSONException {
+        return ItemFixtures.subroutineRow(id).put(ItemDefinition.SUBROUTINE_KIND_COLUMN, subroutineKind);
+    }
+
+    private static JSONObject poolItem(String id, String prefixes, String suffixes, boolean unique) throws JSONException {
+        return ItemFixtures.row(id, "bridge", prefixes, suffixes).put("unique", unique ? "TRUE" : "");
     }
 
     private static JSONObject hullItem(String id, String section, String prefixes, String suffixes) throws JSONException {
@@ -51,11 +55,11 @@ class ItemDataIntegrityTest {
     }
 
     private static JSONArray validSubroutines() throws JSONException {
-        return new JSONArray().put(subroutine("chip", "@HULL_MULT:10", "@ARMOR_PERCENT", false));
+        return new JSONArray().put(subroutine("chip", "VOLUME"));
     }
 
     private static JSONArray validHullItems() throws JSONException {
-        return new JSONArray().put(hullItem("plate", "armor_plating", "@HULL_MULT", ""));
+        return new JSONArray().put(hullItem("plate", "armor_plating", "@HULL_MULT:10", "@ARMOR_PERCENT"));
     }
 
     private static JSONArray validImplicits() throws JSONException {
@@ -120,18 +124,34 @@ class ItemDataIntegrityTest {
     }
 
     @Test
-    void anItemOnlyRollsModifiersScopedToItsType() throws Exception {
+    void noModifierRollsOnSubroutinesAndAnItemOnlyRollsModifiersScopedToItsType() throws Exception {
         JSONArray modifiers = validModifiers()
-                .put(ItemFixtures.modifierRow("VENT_RATE_PERCENT", "prefix", "hull_item", "VENT_RATE_PERCENT:1:2", "Venting"))
+                .put(ItemFixtures.modifierRow("VENT_RATE_PERCENT", "prefix", "subroutine", "VENT_RATE_PERCENT:1:2", "Venting"))
                 .put(ItemFixtures.modifierRow("HULL_PERCENT_IMPLICIT", "implicit", "subroutine", "HULL_PERCENT:1:2", ""));
-        JSONArray subroutines = validSubroutines().put(subroutine("vented_chip", "@VENT_RATE_PERCENT", "", false));
         JSONArray hullItems = validHullItems().put(hullItem("vent", "reactor", "@VENT_RATE_PERCENT", ""));
         JSONArray implicits = validImplicits().put(implicit("reactor", "@HULL_PERCENT_IMPLICIT"));
 
-        List<String> errors = errors(modifiers, subroutines, hullItems, implicits);
+        List<String> errors = errors(modifiers, validSubroutines(), hullItems, implicits);
 
-        assertEquals(List.of("vented_chip is a subroutine, but VENT_RATE_PERCENT only rolls on hull_item",
+        assertEquals(List.of("VENT_RATE_PERCENT rolls on subroutine, but subroutines do not roll modifiers",
+                "HULL_PERCENT_IMPLICIT rolls on subroutine, but subroutines do not roll modifiers",
+                "vent is a hull_item, but VENT_RATE_PERCENT only rolls on subroutine",
                 "reactor is a hull_item, but HULL_PERCENT_IMPLICIT only rolls on subroutine"), errors);
+    }
+
+    @Test
+    void subroutinesNeedAKnownKindAndListNoPrefixesOrSuffixes() throws Exception {
+        JSONArray subroutines = validSubroutines()
+                .put(subroutine("doctrine", " doctrine "))
+                .put(subroutine("expansion", "EXPANSION"))
+                .put(subroutine("kindless", ""))
+                .put(subroutine("pooled", "UNIQUE").put("prefixes", "@HULL_MULT").put("suffixes", "@ARMOR_PERCENT"));
+
+        List<String> errors = errors(validModifiers(), subroutines, validImplicits());
+
+        assertEquals(List.of("expansion has kind \"EXPANSION\"; expected one of VOLUME, DOCTRINE, BYPASS, UNIQUE",
+                "kindless has kind \"\"; expected one of VOLUME, DOCTRINE, BYPASS, UNIQUE",
+                "pooled lists prefixes or suffixes, but subroutines do not roll them"), errors);
     }
 
     @Test
@@ -148,22 +168,22 @@ class ItemDataIntegrityTest {
 
     @Test
     void poolEntriesMustReferenceExistingModifiersOfTheirSlot() throws Exception {
-        JSONArray subroutines = validSubroutines()
-                .put(subroutine("inline", "HULL_MULT:4:6", "", false))
-                .put(subroutine("missing", "@NO_SUCH_MODIFIER", "", false))
-                .put(subroutine("wrong_side", "@ARMOR_PERCENT", "", false))
-                .put(subroutine("twice", "@HULL_MULT; @HULL_MULT", "", false))
-                .put(subroutine("heavy", "@HULL_MULT:0", "", false))
-                .put(subroutine("chip", "@HULL_MULT", "", false));
+        JSONArray hullItems = validHullItems()
+                .put(poolItem("inline", "HULL_MULT:4:6", "", false))
+                .put(poolItem("missing", "@NO_SUCH_MODIFIER", "", false))
+                .put(poolItem("wrong_side", "@ARMOR_PERCENT", "", false))
+                .put(poolItem("twice", "@HULL_MULT; @HULL_MULT", "", false))
+                .put(poolItem("heavy", "@HULL_MULT:0", "", false))
+                .put(poolItem("plate", "@HULL_MULT", "", false));
 
-        List<String> errors = errors(validModifiers(), subroutines, validImplicits());
+        List<String> errors = errors(validModifiers(), validSubroutines(), hullItems, validImplicits());
 
         assertTrue(errors.contains("inline lists \"HULL_MULT:4:6\" inline; reference a modifier as @ID or @ID:weight"), errors.toString());
         assertTrue(errors.contains("missing references NO_SUCH_MODIFIER, which is not in " + ItemModifiers.DATA_PATH), errors.toString());
         assertTrue(errors.contains("wrong_side lists ARMOR_PERCENT in its prefix slot, but it is a suffix"), errors.toString());
         assertTrue(errors.contains("twice lists HULL_MULT more than once"), errors.toString());
         assertTrue(errors.contains("heavy entry \"@HULL_MULT:0\" needs a weight above zero"), errors.toString());
-        assertTrue(errors.contains("id chip is already used on line 2"), errors.toString());
+        assertTrue(errors.contains("id plate is already used on line 2"), errors.toString());
     }
 
     @Test
@@ -171,11 +191,11 @@ class ItemDataIntegrityTest {
         JSONArray modifiers = validModifiers()
                 .put(modifier("HULL_PERCENT", "prefix", "HULL_PERCENT:1:2", ""))
                 .put(modifier("TOP_SPEED_PERCENT", "prefix", "TOP_SPEED_PERCENT:1:2", ""));
-        JSONArray subroutines = validSubroutines()
-                .put(subroutine("common", "@HULL_PERCENT", "", false))
-                .put(subroutine("relic", "@TOP_SPEED_PERCENT", "", true));
+        JSONArray hullItems = validHullItems()
+                .put(poolItem("common", "@HULL_PERCENT", "", false))
+                .put(poolItem("relic", "@TOP_SPEED_PERCENT", "", true));
 
-        List<String> errors = errors(modifiers, subroutines, validImplicits());
+        List<String> errors = errors(modifiers, validSubroutines(), hullItems, validImplicits());
 
         assertEquals(List.of("HULL_PERCENT rolls on items that are not unique, so it needs a name for their common names"), errors);
     }

@@ -3,15 +3,15 @@ import { csvCell, csvTableFromRows, dropCsvColumn, parseCsvTable, serializeCsvTa
 import { isNumberText } from '../../../shared/decimalText.ts';
 import { isUnshippedImagePath } from '../../../shared/imagePaths.ts';
 import { MODIFIER_FILE_NAMES, type ItemFamily } from './itemFamily.ts';
-import { MODIFIER_REFERENCE_MARK, STAR_CHART_TYPE, type ItemModifier } from './modifiers.ts';
+import { MODIFIER_REFERENCE_MARK, STAR_CHART_TYPE, SUBROUTINE_TYPE, type ItemModifier } from './modifiers.ts';
 
 export const SUBROUTINE_KIND = 'subroutine';
-export const SUBROUTINE_TYPE = 'subroutine';
+export { SUBROUTINE_TYPE };
 export const HULL_ITEM_TYPE = 'hull_item';
 export const STAR_CHART_KIND = 'star_chart';
 export const ANY_SYSTEM_TYPE = 'any';
 export const ITEM_TYPE_LABELS: Record<string, string> = { [SUBROUTINE_TYPE]: 'Subroutine', [HULL_ITEM_TYPE]: 'Hull item', [STAR_CHART_TYPE]: 'Star chart' };
-export const SUBROUTINE_COLUMNS = ['id', 'name', 'icon', 'rarity', 'unique', 'description', 'prefixes', 'suffixes', 'unlock'] as const;
+export const SUBROUTINE_COLUMNS = ['id', 'name', 'icon', 'rarity', 'unique', 'kind', 'description', 'unlock'] as const;
 export const HULL_ITEM_COLUMNS = ['id', 'section', 'name', 'icon', 'rarity', 'unique', 'description', 'prefixes', 'suffixes', 'unlock'] as const;
 export const STAR_CHART_COLUMNS = ['id', 'system_type', 'name', 'icon', 'rarity', 'unique', 'min_tier', 'description', 'prefixes', 'suffixes', 'unlock'] as const;
 export const UNLOCK_LABELS: Record<string, string> = {
@@ -48,6 +48,7 @@ export interface ItemDefinition {
   prefixes: PoolEntry[];
   suffixes: PoolEntry[];
   unlock: string;
+  subroutineKind?: string;
   systemType?: string;
   minTier?: string;
   loadedId?: string;
@@ -150,7 +151,10 @@ export function parseItemDefinitions(subroutinesText: string, hullItemsText: str
     subroutineTable,
     hullItemTable,
     definitions: [
-      ...parseDefinitionRows(subroutineTable, () => SUBROUTINE_KIND),
+      ...parseDefinitionRows(subroutineTable, () => SUBROUTINE_KIND).map((definition) => ({
+        ...definition,
+        subroutineKind: csvCell(subroutineTable, definition.cells, 'kind').trim(),
+      })),
       ...parseDefinitionRows(hullItemTable, (cells) => csvCell(hullItemTable, cells, 'section').trim()),
     ],
   };
@@ -172,6 +176,8 @@ function definitionColumnValue(definition: ItemDefinition, column: string): unkn
       return formatPool(definition.prefixes);
     case 'suffixes':
       return formatPool(definition.suffixes);
+    case 'kind':
+      return definition.subroutineKind ?? '';
     case 'section':
       return definition.kind;
     case 'system_type':
@@ -191,7 +197,8 @@ function serializeDefinitions(table: CsvTable, definitions: ItemDefinition[], co
 
 export function serializeSubroutinesCsv(model: Pick<ItemDefinitionsModel, 'subroutineTable' | 'definitions'>): string {
   const subroutines = model.definitions.filter((definition) => itemTypeOfKind(definition.kind) === SUBROUTINE_TYPE);
-  return serializeDefinitions(model.subroutineTable, subroutines, SUBROUTINE_COLUMNS);
+  const leftoverPoolColumns = AFFIX_GROUPS.map((group) => group.key).filter((column) => model.subroutineTable.header.includes(column));
+  return serializeDefinitions(model.subroutineTable, subroutines, [...SUBROUTINE_COLUMNS, ...leftoverPoolColumns]);
 }
 
 export function serializeHullItemsCsv(model: Pick<ItemDefinitionsModel, 'hullItemTable' | 'definitions'>): string {
@@ -272,9 +279,31 @@ function newDefinitionNaming(itemType: string): { id: string; name: string } {
   return itemType === STAR_CHART_TYPE ? { id: 'new_star_chart', name: 'New Star Chart' } : { id: 'new_hull_item', name: 'New Hull Item' };
 }
 
-export function newItemDefinition(definitions: ItemDefinition[], kind: string, catalogue: ItemModifier[], takenIds: readonly string[] = []): ItemDefinition {
+export function newItemDefinition(
+  definitions: ItemDefinition[],
+  kind: string,
+  catalogue: ItemModifier[],
+  takenIds: readonly string[] = [],
+  subroutineKind = '',
+): ItemDefinition {
   const itemType = itemTypeOfKind(kind);
   const naming = newDefinitionNaming(itemType);
+  if (itemType === SUBROUTINE_TYPE) {
+    return {
+      cells: [],
+      id: uniqueItemId(definitions, naming.id, takenIds),
+      kind,
+      name: naming.name,
+      icon: '',
+      rarity: '10',
+      unique: '',
+      description: '',
+      unlock: '',
+      prefixes: [],
+      suffixes: [],
+      subroutineKind,
+    };
+  }
   const definition: ItemDefinition = {
     cells: [],
     id: uniqueItemId(definitions, naming.id, takenIds),
@@ -395,6 +424,17 @@ function starChartIssues(label: string, definition: ItemDefinition, vocabulary: 
   return issues;
 }
 
+function subroutineIssues(label: string, definition: ItemDefinition, vocabulary: Vocabulary): string[] {
+  const issues: string[] = [];
+  if (!vocabulary.subroutineKinds.includes(definition.subroutineKind ?? '')) {
+    issues.push(`${label}: subroutine kind must be one of ${vocabulary.subroutineKinds.join(', ')}`);
+  }
+  if (definition.prefixes.length > 0 || definition.suffixes.length > 0) {
+    issues.push(`${label}: subroutines do not roll prefixes or suffixes; remove them`);
+  }
+  return issues;
+}
+
 export function validateItemDefinitions(
   definitions: ItemDefinition[],
   vocabulary: Vocabulary,
@@ -424,7 +464,9 @@ export function validateItemDefinitions(
     if (isUnshippedImagePath(definition.icon)) {
       issues.push(`${label}: icon ${definition.icon} is in a folder that is not deployed`);
     }
-    if (definition.prefixes.length === 0 && definition.suffixes.length === 0) {
+    if (itemTypeOfKind(definition.kind) === SUBROUTINE_TYPE) {
+      issues.push(...subroutineIssues(label, definition, vocabulary));
+    } else if (definition.prefixes.length === 0 && definition.suffixes.length === 0) {
       issues.push(`${label}: it has no prefixes or suffixes`);
     }
     if (!(Number.parseFloat(definition.rarity) >= 0)) {

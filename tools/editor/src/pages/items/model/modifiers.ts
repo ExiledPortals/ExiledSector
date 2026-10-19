@@ -11,6 +11,7 @@ export const HYBRID_ID_PREFIX = 'HYBRID_';
 export const MODIFIER_REFERENCE_MARK = '@';
 export const HULL_SIZE_LABELS = ['Frigate', 'Destroyer', 'Cruiser', 'Capital'];
 export const STAR_CHART_TYPE = 'star_chart';
+export const SUBROUTINE_TYPE = 'subroutine';
 const MODIFIER_ID_PATTERN = /^[A-Za-z0-9_]+$/;
 const TIER_BAND_TEXT = /^t([^=]*)=(-?[^-]*)(?:-(.*))?$/;
 const TIER_BAND_NUMBER = /^-?\d+(?:\.\d+)?$/;
@@ -204,7 +205,7 @@ export function uniqueModifierId(modifiers: ItemModifier[], base: string, takenI
 }
 
 export function shipItemTypes(vocabulary: Vocabulary): string[] {
-  return vocabulary.itemTypes.filter((itemType) => itemType !== STAR_CHART_TYPE);
+  return vocabulary.itemTypes.filter((itemType) => itemType !== STAR_CHART_TYPE && itemType !== SUBROUTINE_TYPE);
 }
 
 export function familyItemTypes(family: ItemFamily, vocabulary: Vocabulary): string[] {
@@ -304,6 +305,8 @@ function itemTypeIssues(label: string, modifier: ItemModifier, vocabulary: Vocab
   for (const itemType of modifier.itemTypes) {
     if (itemType === STAR_CHART_TYPE) {
       issues.push(`${label}: star chart modifiers belong in star_chart_modifiers.csv, not item_modifiers.csv`);
+    } else if (itemType === SUBROUTINE_TYPE) {
+      issues.push(`${label}: subroutines do not roll modifiers, so remove ${SUBROUTINE_TYPE} from its item types`);
     } else if (!vocabulary.itemTypes.includes(itemType)) {
       issues.push(`${label}: unknown item type ${itemType}`);
     }

@@ -366,7 +366,7 @@ function ModifierForm({ document, family, otherFileIds, modifier, index, usage, 
       ) : (
         <MultiSelect
           label="Item types"
-          description="Which item types can roll it. Ship modifiers suit subroutines and hull items; star charts have their own modifier file."
+          description="Which item types can roll it. Ship modifiers roll on hull items; subroutines roll none, and star charts have their own modifier file."
           data={familyItemTypes(family, vocabulary).map((itemType) => ({ value: itemType, label: ITEM_TYPE_LABELS[itemType] ?? itemType }))}
           value={modifier.itemTypes}
           onChange={(itemTypes) => edit((draft) => void (draft.itemTypes = itemTypes))}

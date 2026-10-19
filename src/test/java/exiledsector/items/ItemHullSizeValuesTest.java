@@ -25,7 +25,7 @@ class ItemHullSizeValuesTest {
 
     @Test
     void aSlashSeparatedValueGivesEachHullSizeItsOwnFixedValue() throws Exception {
-        ItemDefinitions.register(new JSONArray().put(row("scaled", "subroutine", SCALED_POOL + "; SHIELD_ARC_FLAT:-1/-2.5/3/4")));
+        ItemDefinitions.register(new JSONArray().put(row("scaled", "bridge", SCALED_POOL + "; SHIELD_ARC_FLAT:-1/-2.5/3/4")));
 
         ItemDefinition definition = ItemDefinitions.get("scaled");
         PoolEntry armor = definition.poolEntry("ARMOR_FLAT");
@@ -40,19 +40,19 @@ class ItemHullSizeValuesTest {
     @Test
     void badHullValuesSkipTheDefinition() throws Exception {
         ItemDefinitions.register(new JSONArray()
-                .put(row("three_values", "subroutine", "ARMOR_FLAT:5/10/15"))
-                .put(row("five_values", "subroutine", "ARMOR_FLAT:5/10/15/20/25"))
-                .put(row("empty_value", "subroutine", "ARMOR_FLAT:5//15/20"))
-                .put(row("not_a_number", "subroutine", "ARMOR_FLAT:5/ten/15/20"))
-                .put(row("extra_field", "subroutine", "ARMOR_FLAT:5/10/15/20:1:2"))
-                .put(row("zero_weight", "subroutine", "ARMOR_FLAT:5/10/15/20:0")));
+                .put(row("three_values", "bridge", "ARMOR_FLAT:5/10/15"))
+                .put(row("five_values", "bridge", "ARMOR_FLAT:5/10/15/20/25"))
+                .put(row("empty_value", "bridge", "ARMOR_FLAT:5//15/20"))
+                .put(row("not_a_number", "bridge", "ARMOR_FLAT:5/ten/15/20"))
+                .put(row("extra_field", "bridge", "ARMOR_FLAT:5/10/15/20:1:2"))
+                .put(row("zero_weight", "bridge", "ARMOR_FLAT:5/10/15/20:0")));
 
         assertEquals(0, ItemDefinitions.all().size());
     }
 
     @Test
     void eachHullSizeGetsItsOwnValueWhateverWasStored() throws Exception {
-        ItemDefinitions.register(new JSONArray().put(row("scaled", "subroutine", SCALED_POOL)));
+        ItemDefinitions.register(new JSONArray().put(row("scaled", "bridge", SCALED_POOL)));
         Item item = Item.withEffects("socketable_1", "scaled", 1L,
                 List.of(new RolledEffect("ARMOR_FLAT", 3f), new RolledEffect("HULL_MULT", 5f)));
 
@@ -65,14 +65,14 @@ class ItemHullSizeValuesTest {
 
     @Test
     void aNewRollStoresTheFrigateValue() throws Exception {
-        ItemDefinitions.register(new JSONArray().put(row("scaled", "subroutine", "ARMOR_FLAT:5/10/15/20")));
+        ItemDefinitions.register(new JSONArray().put(row("scaled", "bridge", "ARMOR_FLAT:5/10/15/20")));
 
         assertEquals(List.of(new RolledEffect("ARMOR_FLAT", 5f)), RolledModifier.lines(ItemRoller.roll(ItemDefinitions.get("scaled"), 7L)));
     }
 
     @Test
     void theGenericTooltipListsEveryHullSizeValueLikeVanilla() throws Exception {
-        ItemDefinitions.register(new JSONArray().put(row("scaled", "subroutine", SCALED_POOL)));
+        ItemDefinitions.register(new JSONArray().put(row("scaled", "bridge", SCALED_POOL)));
         Item item = Item.withEffects("socketable_2", "scaled", 1L,
                 List.of(new RolledEffect("ARMOR_FLAT", 5f), new RolledEffect("HULL_MULT", 5f)));
 
@@ -86,7 +86,7 @@ class ItemHullSizeValuesTest {
 
     @Test
     void onAShipTheTooltipShowsOnlyThatHullSizesValueWithNoRange() throws Exception {
-        ItemDefinitions.register(new JSONArray().put(row("scaled", "subroutine", SCALED_POOL)));
+        ItemDefinitions.register(new JSONArray().put(row("scaled", "bridge", SCALED_POOL)));
         Item item = Item.withEffects("socketable_3", "scaled", 1L, List.of(new RolledEffect("ARMOR_FLAT", 5f)));
 
         String expanded = item.effectLines(true, HullSize.CAPITAL_SHIP).get(0).plain();

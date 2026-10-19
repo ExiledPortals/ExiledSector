@@ -373,6 +373,7 @@
   "blueprintCategories": ["hullmod"],
   "itemTypes": ["subroutine", "hull_item", "star_chart"],
   "itemKinds": [{"id": "subroutine", "type": "subroutine"}, {"id": "bridge", "type": "hull_item"}, {"id": "crew_quarters", "type": "hull_item"}, {"id": "engine_room", "type": "hull_item"}, {"id": "reactor", "type": "hull_item"}, {"id": "armor_plating", "type": "hull_item"}, {"id": "weapon_mount", "type": "hull_item"}, {"id": "shield_generator", "type": "hull_item"}, {"id": "phase_coil", "type": "hull_item"}, {"id": "flight_deck", "type": "hull_item"}],
+  "subroutineKinds": ["VOLUME", "DOCTRINE", "BYPASS", "UNIQUE"],
   "itemUnlocks": ["found_onslaught_mk1", "found_gate_hauler", "found_planetkiller", "defeated_ziggurat"],
   "clearedChartTierPrefix": "cleared_chart_tier_",
   "chartTierRange": [1, 15],

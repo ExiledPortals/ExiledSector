@@ -3,8 +3,12 @@ package exiledsector.skills;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.items.Item;
+import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemStore;
+import exiledsector.items.RolledEffect;
+import exiledsector.items.RolledModifier;
+import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -37,8 +41,7 @@ class SocketedEffectsTest {
         SkillTree.clearNodes();
         socket = new SkillNode("socket", new SkillType.Builder("socket_type", "Socket", "", SkillTier.SOCKET).build(), List.of(), 0f, 0f);
         SkillTree.register(socket);
-        ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "chip")
-                .put("prefixes", "HULL_MULT:4:6; ARMOR_PERCENT:6:9").put("suffixes", "BEAM_WEAPON_DAMAGE_PERCENT:10:15")));
+        ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "chip").put("kind", "UNIQUE").put("unique", "true")));
     }
 
     @AfterEach
@@ -50,7 +53,7 @@ class SocketedEffectsTest {
 
     @Test
     void anInstalledItemsEffectsFlowThroughItsSocketNode() {
-        Item item = ItemStore.get().add(ItemDefinitions.get("chip"), 4L);
+        Item item = ItemStore.get().add(new ItemData("chip", 4L, List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledEffect("HULL_MULT", 5f))), null));
         ShipSkillData data = new ShipSkillData();
         data.allocate(socket, 3);
         AllocatedNode allocated = AllocatedNode.of(data).get(0);
@@ -64,7 +67,7 @@ class SocketedEffectsTest {
 
     @Test
     void aDestroyedItemNoLongerContributesAnything() {
-        Item item = ItemStore.get().add(ItemDefinitions.get("chip"), 4L);
+        Item item = ItemStore.get().add(new ItemData("chip", 4L, List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledEffect("HULL_MULT", 5f))), null));
         ShipSkillData data = new ShipSkillData();
         data.allocate(socket, 3);
         data.socketItem("socket", item.id());

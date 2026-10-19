@@ -31,7 +31,7 @@ class CraftingWardTest {
     @BeforeEach
     void setUp() throws Exception {
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.row(ItemFixtures.MILITARY, "subroutine", ItemFixtures.MILITARY_PREFIXES, ItemFixtures.MILITARY_SUFFIXES))
+                .put(ItemFixtures.row(ItemFixtures.MILITARY, "bridge", ItemFixtures.MILITARY_PREFIXES, ItemFixtures.MILITARY_SUFFIXES))
                 .put(ItemFixtures.row("relic_a", "reactor", "HULL_MULT:4:6; ARMOR_PERCENT:6:9").put("unique", "TRUE"))
                 .put(ItemFixtures.row("relic_b", "crew_quarters", "FLUX_CAPACITY_MULT:4:6").put("unique", "TRUE")));
         ItemNames.registerWords(new JSONObject().put(ItemFixtures.MILITARY, new JSONObject().put("style", "codename")
@@ -120,7 +120,7 @@ class CraftingWardTest {
 
     @Test
     void aWardGuardingOnlyAFixedEffectIsNotSpent() throws Exception {
-        ItemDefinitions.register(new JSONArray().put(ItemFixtures.row("lean", "subroutine", "HULL_MULT:4:6", "ARMOR_PERCENT:6:9")));
+        ItemDefinitions.register(new JSONArray().put(ItemFixtures.row("lean", "bridge", "HULL_MULT:4:6", "ARMOR_PERCENT:6:9")));
         Item item = store.add(ItemFixtures.data("lean", 1L, List.of(new RolledEffect("HULL_MULT", 5f), new RolledEffect("ARMOR_PERCENT", 7f)), null));
         ItemCrafting.fixate(item, new Random(1L), Set.of(ModifierSlot.SUFFIX));
 

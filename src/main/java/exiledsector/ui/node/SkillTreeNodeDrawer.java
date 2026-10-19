@@ -277,8 +277,9 @@ public final class SkillTreeNodeDrawer {
         @Override
         public void deallocated(SkillNode node) {
             connectorFills.cancel(node.getId());
-            if (node.getPairedNodeId() != null) {
-                connectorFills.cancel(node.getPairedNodeId());
+            String partnerId = session.wormholePartner(node);
+            if (partnerId != null) {
+                connectorFills.cancel(partnerId);
             }
         }
 

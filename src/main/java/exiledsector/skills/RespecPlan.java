@@ -20,12 +20,12 @@ public final class RespecPlan {
         }
         Set<String> removed = new LinkedHashSet<>();
         removed.add(selected.getId());
-        String pairedId = selected.getPairedNodeId();
+        String pairedId = data.wormholePartner(selected);
         if (pairedId != null && data.isAllocated(pairedId)) {
             removed.add(pairedId);
         }
         Set<String> dependents = dependents(data, topology, startingRootId, selected, removed);
-        Map<String, Integer> distanceById = distancesAwayFrom(removed, dependents, topology);
+        Map<String, Integer> distanceById = distancesAwayFrom(removed, dependents, topology, data);
 
         List<String> ordered = new ArrayList<>(dependents);
         ordered.sort(Comparator.comparingInt((String id) -> distanceById.getOrDefault(id, Integer.MAX_VALUE)).reversed()
@@ -37,8 +37,9 @@ public final class RespecPlan {
             if (node == null || !covered.add(id)) {
                 continue;
             }
-            if (node.getPairedNodeId() != null) {
-                covered.add(node.getPairedNodeId());
+            String partnerId = data.wormholePartner(node);
+            if (partnerId != null) {
+                covered.add(partnerId);
             }
             plan.add(node);
         }
@@ -59,13 +60,14 @@ public final class RespecPlan {
         return dependents;
     }
 
-    private static Map<String, Integer> distancesAwayFrom(Set<String> removed, Set<String> dependents, SkillTreeTopology topology) {
+    private static Map<String, Integer> distancesAwayFrom(Set<String> removed, Set<String> dependents, SkillTreeTopology topology,
+                                                          WormholePartners partners) {
         TreeSearch search = TreeSearch.from(topology, removed, child -> dependents.contains(child.getId()));
         Map<String, Integer> distanceById = new HashMap<>();
         search.reached().forEach(id -> distanceById.put(id, search.distance(id)));
         for (String id : dependents) {
             SkillNode node = topology.node(id);
-            String partner = node == null ? null : node.getPairedNodeId();
+            String partner = node == null ? null : partners.wormholePartner(node);
             if (partner != null && dependents.contains(partner)) {
                 int nearer = Math.min(distanceById.getOrDefault(id, Integer.MAX_VALUE), distanceById.getOrDefault(partner, Integer.MAX_VALUE));
                 distanceById.put(id, nearer);

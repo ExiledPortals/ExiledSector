@@ -31,14 +31,16 @@ const vocabulary = buildVocabulary({
     { id: 'subroutine', type: 'subroutine' },
     { id: 'armor_plating', type: 'hull_item' },
   ],
+  subroutineKinds: ['VOLUME', 'DOCTRINE', 'BYPASS', 'UNIQUE'],
   itemUnlocks: [],
 });
 
-const SUBROUTINES_CSV =
-  'id,name,icon,rarity,unique,description,prefixes,suffixes,unlock\n' +
-  'chip,Chip,,10,,,@HULL_MULT:5,@ARMOR_FLAT,\n' +
-  'relic,Relic,,1,true,,@UNNAMED_PERCENT,,\n';
-const HULL_ITEMS_CSV = 'id,section,name,prefixes\nplate,armor_plating,Plate,@HULL_MULT\n';
+const SUBROUTINES_CSV = 'id,name,icon,rarity,unique,kind,description,unlock\nvolume,Volume,,10,,VOLUME,,\n';
+const HULL_ITEMS_CSV =
+  'id,section,name,rarity,unique,prefixes,suffixes\n' +
+  'chip,armor_plating,Chip,10,,@HULL_MULT:5,@ARMOR_FLAT\n' +
+  'relic,armor_plating,Relic,1,true,@UNNAMED_PERCENT,\n' +
+  'plate,armor_plating,Plate,10,,@HULL_MULT,\n';
 const IMPLICITS_CSV = 'section,implicits\narmor_plating,@HYBRID_ARMOR_HULL\n';
 
 function definitions() {
@@ -84,16 +86,18 @@ describe('item modifiers', () => {
         'HULL_MULT,prefix,subroutine,HULL_MULT:4:6,Reinforced\n' +
         'HULL_MULT,prefix,subroutine,HULL_MULT:1:2,Again\n' +
         'bad id,sideways,,,\n' +
-        'STURDY,suffix,subroutine;star_map,HULL_MULT:6:4:5,Sturdy\n' +
+        'STURDY,suffix,hull_item;star_map,HULL_MULT:6:4:5,Sturdy\n' +
         'ARMOR_AND_HULL,implicit,hull_item,ARMOR_FLAT:1/2/3/4; ARMOR_FLAT:1:2,\n' +
-        'ARMOR_FLAT,suffix,subroutine,ARMOR_FLAT:1/2/3,\n' +
-        'UNNAMED_PERCENT,prefix,subroutine,UNNAMED_PERCENT:1:2,\n',
+        'ARMOR_FLAT,suffix,hull_item,ARMOR_FLAT:1/2/3,\n' +
+        'UNNAMED_PERCENT,prefix,hull_item,UNNAMED_PERCENT:1:2,\n',
     ).modifiers;
     const usage = modifierUsage(definitions(), []);
 
     expect(validateModifiers(modifiers, vocabulary, usage)).toEqual([
+      'HULL_MULT: subroutines do not roll modifiers, so remove subroutine from its item types',
       'HULL_MULT: a hull_item rolls it, so item types must include hull_item',
       'HULL_MULT: id is used more than once',
+      'HULL_MULT: subroutines do not roll modifiers, so remove subroutine from its item types',
       'HULL_MULT: a hull_item rolls it, so item types must include hull_item',
       'bad id: id must use only letters, digits and underscores',
       'bad id: slot must be one of implicit, prefix, suffix',
@@ -123,9 +127,9 @@ describe('item modifiers', () => {
       itemKinds: [{ id: 'subroutine', type: 'subroutine' }],
       itemUnlocks: [],
     });
-    expect(shipItemTypes(withCharts)).toEqual(['subroutine', 'hull_item']);
-    expect(newModifier([], 'prefix', withCharts).itemTypes).toEqual(['subroutine', 'hull_item']);
-    const modifiers = parseModifiersCsv('id,slot,item_types,lines,name\nHULL_MULT,prefix,subroutine;star_chart,HULL_MULT:4:6,Reinforced\n').modifiers;
+    expect(shipItemTypes(withCharts)).toEqual(['hull_item']);
+    expect(newModifier([], 'prefix', withCharts).itemTypes).toEqual(['hull_item']);
+    const modifiers = parseModifiersCsv('id,slot,item_types,lines,name\nHULL_MULT,prefix,hull_item;star_chart,HULL_MULT:4:6,Reinforced\n').modifiers;
 
     expect(validateModifiers(modifiers, withCharts, new Map())).toEqual([
       'HULL_MULT: star chart modifiers belong in star_chart_modifiers.csv, not item_modifiers.csv',
@@ -140,15 +144,15 @@ describe('item modifiers', () => {
     expect(usage.get('HULL_MULT')).toEqual({
       items: ['chip', 'plate'],
       nonUniqueItems: ['chip', 'plate'],
-      itemTypes: ['subroutine', 'hull_item'],
+      itemTypes: ['hull_item'],
       implicitSections: [],
     });
-    expect(usage.get('UNNAMED_PERCENT')).toEqual({ items: ['relic'], nonUniqueItems: [], itemTypes: ['subroutine'], implicitSections: [] });
+    expect(usage.get('UNNAMED_PERCENT')).toEqual({ items: ['relic'], nonUniqueItems: [], itemTypes: ['hull_item'], implicitSections: [] });
     expect(usage.get('HYBRID_ARMOR_HULL')).toEqual({ items: [], nonUniqueItems: [], itemTypes: ['hull_item'], implicitSections: ['armor_plating'] });
 
     expect(renameModifierReferences(items, implicitRows, 'HYBRID_ARMOR_HULL', 'HYBRID_ARMOR_HULL_PLATING')).toBe(1);
     expect(renameModifierReferences(items, implicitRows, 'HULL_MULT', 'HULL_MULT_CHIP')).toBe(2);
-    expect(items[0].prefixes).toEqual([{ modifierId: 'HULL_MULT_CHIP', weight: '5' }]);
+    expect(items.find((item) => item.id === 'chip')?.prefixes).toEqual([{ modifierId: 'HULL_MULT_CHIP', weight: '5' }]);
     expect(implicitRows[0].implicits).toEqual([{ modifierId: 'HYBRID_ARMOR_HULL_PLATING' }]);
   });
 
@@ -156,7 +160,7 @@ describe('item modifiers', () => {
     const implicitRows = parseImplicitsCsv(IMPLICITS_CSV, vocabulary).rows;
     const catalogue = modifierById(
       parseModifiersCsv(
-        'id,slot,item_types,lines,name\nHULL_MULT,suffix,subroutine;hull_item,HULL_MULT:4:6,Reinforced\nARMOR_FLAT,suffix,subroutine,ARMOR_FLAT:1:2,Plating\n',
+        'id,slot,item_types,lines,name\nHULL_MULT,suffix,hull_item,HULL_MULT:4:6,Reinforced\nARMOR_FLAT,suffix,hull_item,ARMOR_FLAT:1:2,Plating\n',
       ).modifiers,
     );
 

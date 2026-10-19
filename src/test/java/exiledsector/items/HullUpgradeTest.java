@@ -51,7 +51,7 @@ class HullUpgradeTest {
         store = ItemStore.get();
         ItemDefinitions.register(new JSONArray()
                 .put(ItemFixtures.row("officer", "bridge", "HULL_PERCENT:10:10"))
-                .put(ItemFixtures.row("chip", "subroutine", "HULL_PERCENT:10:10")));
+                .put(ItemFixtures.subroutineRow("chip")));
     }
 
     @AfterEach

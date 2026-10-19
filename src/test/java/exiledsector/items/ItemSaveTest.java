@@ -64,7 +64,7 @@ class ItemSaveTest {
         assertEquals(ModifierSlot.PREFIX, restored.explicits().get(0).slot());
         String resaved = xstream().toXML(restored);
         assertTrue(resaved.startsWith("<exiledSector.Socketable>"), resaved);
-        assertEquals(Subroutine.class, xstream().fromXML(resaved).getClass());
+        assertEquals(HullItem.class, xstream().fromXML(resaved).getClass());
     }
 
     @Test
@@ -93,10 +93,10 @@ class ItemSaveTest {
         String xml = xstream().toXML(store);
         ItemStore loaded = (ItemStore) xstream().fromXML(xml);
 
-        assertTrue(xml.contains("<exiledSector.SocketableStore>") && xml.contains("<exiledSector.Subroutine>") && xml.contains("<exiledSector.RolledEffect>"), xml);
+        assertTrue(xml.contains("<exiledSector.SocketableStore>") && xml.contains("<exiledSector.HullItem>") && xml.contains("<exiledSector.RolledEffect>"), xml);
         assertFalse(xml.contains("exiledsector.socketables"), xml);
         Item restored = loaded.owned().get(0);
-        assertEquals(ItemKind.SUBROUTINE, restored.kind());
+        assertEquals(ItemKind.BRIDGE, restored.kind());
         assertEquals(saved.id(), restored.id());
         assertEquals(saved.effects(), restored.effects());
         assertEquals(99L, restored.seed());
@@ -128,15 +128,15 @@ class ItemSaveTest {
         List<String> legacyAliases = new java.util.ArrayList<>(ItemSaveAliases.LEGACY_ITEM_ALIASES);
         legacyAliases.add(ItemSaveAliases.UNRESOLVED_ITEM_ALIAS);
         for (String legacyAlias : legacyAliases) {
-            String legacyXml = currentXml.replace("exiledSector.Subroutine>", legacyAlias + ">");
+            String legacyXml = currentXml.replace("exiledSector.HullItem>", legacyAlias + ">");
             ItemStore loaded = (ItemStore) xstream().fromXML(legacyXml);
 
             assertTrue(legacyXml.contains("<" + legacyAlias + ">"), legacyXml);
             Item restored = loaded.owned().get(0);
-            assertEquals(Subroutine.class, restored.getClass());
+            assertEquals(HullItem.class, restored.getClass());
             assertEquals(saved.effects(), restored.effects());
-            assertEquals(ItemKind.SUBROUTINE, restored.kind());
-            assertTrue(xstream().toXML(loaded).contains("<exiledSector.Subroutine>"));
+            assertEquals(ItemKind.BRIDGE, restored.kind());
+            assertTrue(xstream().toXML(loaded).contains("<exiledSector.HullItem>"));
         }
     }
 
@@ -160,7 +160,7 @@ class ItemSaveTest {
 
     @Test
     void cargoItemDataRoundTripsAndRejectsGarbage() {
-        ItemData item = new ItemData("domain_subroutine_military", -5L);
+        ItemData item = new ItemData("retired_item", -5L);
 
         assertEquals(item, ItemData.of(item.toSpecialItem()));
         assertEquals(null, ItemData.parse("no_seed"));

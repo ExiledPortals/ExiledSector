@@ -35,6 +35,7 @@ import exiledsector.skills.npc.RealSkillData;
 import exiledsector.items.HullUpgradeData;
 import exiledsector.items.HullUpgradesSetting;
 import exiledsector.items.ItemData;
+import exiledsector.items.ItemDefinitions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,7 +59,7 @@ import static org.mockito.Mockito.when;
 
 class ItemLootListenerTest {
 
-    private static final String TAG = "exiledSector_npcTree|generated|1|root,socket_1|sockets:socket_1=npc:domain_subroutine_military/12";
+    private static final String TAG = "exiledSector_npcTree|generated|1|root,socket_1|sockets:socket_1=npc:volume_subroutine/12";
     private static final String SECTION_ITEM_TAG = TAG + "|frameworkTypes:bridge+reactor|frameworkSockets:bridge=npc:bridge_basic/3";
 
     private MockedStatic<Global> globalMock;
@@ -66,7 +67,7 @@ class ItemLootListenerTest {
     private final ItemLootListener listener = new ItemLootListener();
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         globalMock = Mockito.mockStatic(Global.class);
         playerCargo = mock(CargoAPI.class);
         CampaignFleetAPI playerFleet = mock(CampaignFleetAPI.class);
@@ -83,10 +84,12 @@ class ItemLootListenerTest {
         SkillTree.registerType(socketType);
         SkillTree.register(new SkillNode("root", rootType, List.of(), 0f, 0f));
         SkillTree.register(new SkillNode("socket_1", socketType, List.of("root"), 0f, 0f));
+        ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "volume_subroutine").put("kind", "VOLUME")));
     }
 
     @AfterEach
     void tearDown() {
+        ItemDefinitions.clear();
         RealSkillData.clear();
         globalMock.close();
     }
@@ -143,7 +146,7 @@ class ItemLootListenerTest {
 
         listener.reportEncounterLootGenerated(context(battle), loot);
 
-        assertEquals(List.of("domain_subroutine_military|12", "domain_subroutine_military|12"), lootData(loot, 2));
+        assertEquals(List.of("volume_subroutine|12", "volume_subroutine|12"), lootData(loot, 2));
     }
 
     private static FleetMemberAPI cruiserFlagship(String id) {
@@ -174,7 +177,7 @@ class ItemLootListenerTest {
 
         ArgumentCaptor<SpecialItemData> items = ArgumentCaptor.forClass(SpecialItemData.class);
         verify(loot, Mockito.times(3)).addSpecial(items.capture(), Mockito.eq(1f));
-        assertEquals(List.of(ItemData.ITEM_ID + ":domain_subroutine_military|12", ItemData.ITEM_ID + ":bridge_basic|3",
+        assertEquals(List.of(ItemData.ITEM_ID + ":volume_subroutine|12", ItemData.ITEM_ID + ":bridge_basic|3",
                         HullUpgradeData.ITEM_ID + ":CRUISER"),
                 items.getAllValues().stream().map(item -> item.getId() + ":" + item.getData()).toList());
     }
@@ -192,7 +195,7 @@ class ItemLootListenerTest {
 
             ArgumentCaptor<SpecialItemData> items = ArgumentCaptor.forClass(SpecialItemData.class);
             verify(loot, Mockito.times(1)).addSpecial(items.capture(), Mockito.eq(1f));
-            assertEquals(List.of(ItemData.ITEM_ID + ":domain_subroutine_military|12"),
+            assertEquals(List.of(ItemData.ITEM_ID + ":volume_subroutine|12"),
                     items.getAllValues().stream().map(item -> item.getId() + ":" + item.getData()).toList());
         } finally {
             HullUpgradesSetting.setEnabledForTests(HullUpgradesSetting.DEFAULT_ENABLED);
@@ -233,7 +236,7 @@ class ItemLootListenerTest {
 
         listener.reportBattleFinished(null, battle);
 
-        assertEquals(List.of("domain_subroutine_military|12"), lootData(playerCargo, 1));
+        assertEquals(List.of("volume_subroutine|12"), lootData(playerCargo, 1));
     }
 
     @Test

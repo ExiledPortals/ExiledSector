@@ -60,6 +60,9 @@ public final class ItemDefinitions {
 
     private static void addRows(Map<String, ItemDefinition> loaded, JSONArray rows, String source,
                                 Function<JSONObject, ItemDefinition> parser) throws JSONException {
+        if (rows == null) {
+            return;
+        }
         ModCsv.forEach(rows, (index, row) -> {
             try {
                 ItemDefinition definition = parser.apply(row);

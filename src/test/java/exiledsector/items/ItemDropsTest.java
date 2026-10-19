@@ -36,8 +36,8 @@ class ItemDropsTest {
     @BeforeEach
     void setUp() throws Exception {
         ItemDefinitions.register(new JSONArray()
-                .put(row(MILITARY, "subroutine", MILITARY_PREFIXES, MILITARY_SUFFIXES))
-                .put(row("relic", "subroutine", MILITARY_PREFIXES, MILITARY_SUFFIXES).put("unique", "true")));
+                .put(ItemFixtures.subroutineRow(MILITARY))
+                .put(ItemFixtures.subroutineRow("relic", SubroutineKind.UNIQUE).put("unique", "true")));
         ItemDrops.register(new JSONArray()
                 .put(new JSONObject().put("site", "probe").put("chances", "0.5").put("uniqueChance", "0"))
                 .put(new JSONObject().put("site", "station").put("chances", "1;0.6;0.3").put("uniqueChance", "0.19"))

@@ -55,9 +55,9 @@ class ItemCodecTest {
     @BeforeEach
     void registerDefinitions() throws Exception {
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.row("sub", "subroutine", PREFIXES, SUFFIXES))
-                .put(ItemFixtures.row("gadget", "subroutine", PREFIXES, SUFFIXES))
-                .put(ItemFixtures.row("relic", "subroutine", PREFIXES, SUFFIXES)));
+                .put(ItemFixtures.row("sub", "bridge", PREFIXES, SUFFIXES))
+                .put(ItemFixtures.row("gadget", "bridge", PREFIXES, SUFFIXES))
+                .put(ItemFixtures.row("relic", "bridge", PREFIXES, SUFFIXES)));
     }
 
     @AfterEach
@@ -141,7 +141,7 @@ class ItemCodecTest {
     @Test
     void savedSeedOnlyCargoStringsDecodeToTheSameItems() {
         assertEquals(new ItemData("sub", 7L), ItemData.parse("sub|7"));
-        assertEquals(new ItemData("domain_subroutine_military", -5L), ItemData.parse("domain_subroutine_military|-5"));
+        assertEquals(new ItemData("retired_item", -5L), ItemData.parse("retired_item|-5"));
         assertEquals(new ItemData("a|b", 7L), ItemData.parse("a|b|7"));
         assertEquals(new ItemData("a/b", 7L), ItemData.parse("a/b|7"));
         assertNull(ItemData.parse("|7"));

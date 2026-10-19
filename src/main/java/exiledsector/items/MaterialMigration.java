@@ -22,12 +22,9 @@ public final class MaterialMigration {
     private MaterialMigration() {
     }
 
-    public static void run(SectorAPI sector) {
-        if (sector == null) {
-            return;
-        }
+    public static void run(List<CargoAPI> savedCargoes) {
         int convertedCount = 0;
-        for (CargoAPI cargo : cargoes(sector)) {
+        for (CargoAPI cargo : savedCargoes) {
             convertedCount += convert(cargo);
         }
         if (convertedCount > 0) {
@@ -51,8 +48,11 @@ public final class MaterialMigration {
         return convertedCount;
     }
 
-    private static List<CargoAPI> cargoes(SectorAPI sector) {
+    public static List<CargoAPI> savedCargoes(SectorAPI sector) {
         List<CargoAPI> cargoes = new ArrayList<>();
+        if (sector == null) {
+            return cargoes;
+        }
         CampaignFleetAPI playerFleet = sector.getPlayerFleet();
         if (playerFleet != null) {
             cargoes.add(playerFleet.getCargo());

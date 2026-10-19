@@ -4,6 +4,7 @@ import { fractionToPercentText, percentToFractionText } from '../../../shared/de
 import {
   formatPool,
   markDefinitionsSaved,
+  newItemDefinition,
   parseItemDefinitions,
   parsePool,
   poolShares,
@@ -32,15 +33,16 @@ const vocabulary = buildVocabulary({
     { id: 'subroutine', type: 'subroutine' },
     { id: 'bridge', type: 'hull_item' },
   ],
+  subroutineKinds: ['VOLUME', 'DOCTRINE', 'BYPASS', 'UNIQUE'],
   itemUnlocks: ['defeated_ziggurat'],
 });
 
 const catalogue = modifierById(
   parseModifiersCsv(
     'id,slot,item_types,lines,name\n' +
-      'HULL_MULT,prefix,subroutine;hull_item,HULL_MULT:1:2,Reinforced\n' +
+      'HULL_MULT,prefix,hull_item,HULL_MULT:1:2,Reinforced\n' +
       'HULL_MULT_BRIDGE,prefix,hull_item,HULL_MULT:3:4,Reinforced\n' +
-      'ARMOR_FLAT,suffix,subroutine;hull_item,ARMOR_FLAT:5/10/15/20,Plating\n',
+      'ARMOR_FLAT,suffix,hull_item,ARMOR_FLAT:5/10/15/20,Plating\n',
   ).modifiers,
 );
 
@@ -48,7 +50,7 @@ function definition(overrides: Partial<ItemDefinition>): ItemDefinition {
   return {
     cells: [],
     id: 'good_id',
-    kind: 'subroutine',
+    kind: 'bridge',
     name: 'Good',
     icon: 'graphics/icons/a.png',
     rarity: '10',
@@ -124,32 +126,57 @@ describe('item definitions', () => {
     ]);
   });
 
-  it('rejects a modifier scoped to another item type', () => {
-    const subroutine = definition({ id: 'chip', prefixes: parsePool('@HULL_MULT_BRIDGE'), suffixes: [] });
-    const hullItem = definition({ id: 'plate', kind: 'bridge', prefixes: parsePool('@HULL_MULT_BRIDGE'), suffixes: [] });
+  it('needs a known kind on every subroutine and keeps prefixes and suffixes off it', () => {
+    const volume = definition({ id: 'volume', kind: 'subroutine', subroutineKind: 'VOLUME', prefixes: [], suffixes: [] });
+    const pooled = definition({ id: 'pooled', kind: 'subroutine', subroutineKind: 'EXPANSION', prefixes: parsePool('@HULL_MULT'), suffixes: [] });
+    const kindless = definition({ id: 'kindless', kind: 'subroutine', prefixes: [], suffixes: [] });
 
-    expect(validateItemDefinitions([subroutine, hullItem], vocabulary, catalogue)).toEqual([
-      'chip: HULL_MULT_BRIDGE only rolls on hull_item, not subroutine',
+    expect(validateItemDefinitions([volume, pooled, kindless], vocabulary, catalogue)).toEqual([
+      'pooled: subroutine kind must be one of VOLUME, DOCTRINE, BYPASS, UNIQUE',
+      'pooled: subroutines do not roll prefixes or suffixes; remove them',
+      'pooled: HULL_MULT only rolls on hull_item, not subroutine',
+      'kindless: subroutine kind must be one of VOLUME, DOCTRINE, BYPASS, UNIQUE',
     ]);
   });
 
+  it('starts a new subroutine with a kind and no prefixes or suffixes', () => {
+    const subroutine = newItemDefinition([], 'subroutine', [...catalogue.values()], [], 'DOCTRINE');
+
+    expect(subroutine).toMatchObject({ id: 'new_subroutine', kind: 'subroutine', subroutineKind: 'DOCTRINE', prefixes: [], suffixes: [] });
+    expect(validateItemDefinitions([subroutine], vocabulary, catalogue)).toEqual([]);
+    expect(newItemDefinition([], 'bridge', [...catalogue.values()]).prefixes).toEqual([{ modifierId: 'HULL_MULT', weight: '' }]);
+  });
+
   it('reads subroutines and hull items from their own files and saves each back to its file', () => {
-    const subroutineHeader = 'id,name,icon,rarity,unique,description,prefixes,suffixes,unlock,notes\n';
+    const subroutineHeader = 'id,name,icon,rarity,unique,kind,description,unlock,notes\n';
     const hullItemHeader = 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\n';
-    const subroutinesText = `${subroutineHeader}chip,Chip,,10,,,@HULL_MULT,,,keep\n`;
+    const subroutinesText = `${subroutineHeader}chip,Chip,,10,,VOLUME,,,keep\n`;
     const hullItemsText = `${hullItemHeader}plate,bridge,Plate,,10,,,@HULL_MULT_BRIDGE,,\n`;
     const model = parseItemDefinitions(subroutinesText, hullItemsText);
 
-    expect(model.definitions.map((entry) => [entry.id, entry.kind])).toEqual([
-      ['chip', 'subroutine'],
-      ['plate', 'bridge'],
+    expect(model.definitions.map((entry) => [entry.id, entry.kind, entry.subroutineKind])).toEqual([
+      ['chip', 'subroutine', 'VOLUME'],
+      ['plate', 'bridge', undefined],
     ]);
     expect(serializeSubroutinesCsv(model)).toBe(subroutinesText);
     expect(serializeHullItemsCsv(model)).toBe(hullItemsText);
 
+    model.definitions[0].subroutineKind = 'BYPASS';
+    expect(serializeSubroutinesCsv(model)).toBe(`${subroutineHeader}chip,Chip,,10,,BYPASS,,,keep\n`);
+
     setDefinitionKind(model.definitions[0], 'bridge');
     expect(serializeSubroutinesCsv(model)).toBe(subroutineHeader);
-    expect(serializeHullItemsCsv(model)).toBe(`${hullItemHeader}chip,bridge,Chip,,10,,,@HULL_MULT,,\nplate,bridge,Plate,,10,,,@HULL_MULT_BRIDGE,,\n`);
+    expect(serializeHullItemsCsv(model)).toBe(`${hullItemHeader}chip,bridge,Chip,,10,,,,,\nplate,bridge,Plate,,10,,,@HULL_MULT_BRIDGE,,\n`);
+  });
+
+  it('keeps leftover pool columns of an older subroutines.csv so removing their entries is saved', () => {
+    const olderText = 'id,name,icon,rarity,unique,description,prefixes,suffixes,unlock\nchip,Chip,,10,,,@HULL_MULT,,\n';
+    const model = parseItemDefinitions(olderText, 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\n');
+
+    expect(serializeSubroutinesCsv(model)).toBe('id,name,icon,rarity,unique,description,prefixes,suffixes,unlock,kind\nchip,Chip,,10,,,@HULL_MULT,,,\n');
+    model.definitions[0].prefixes = [];
+    model.definitions[0].subroutineKind = 'UNIQUE';
+    expect(serializeSubroutinesCsv(model)).toBe('id,name,icon,rarity,unique,description,prefixes,suffixes,unlock,kind\nchip,Chip,,10,,,,,,UNIQUE\n');
   });
 });
 

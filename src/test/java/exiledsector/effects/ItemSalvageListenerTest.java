@@ -58,8 +58,8 @@ class ItemSalvageListenerTest {
     void setUp() throws Exception {
         miscMock = Mockito.mockStatic(Misc.class);
         miscMock.when(() -> Misc.getSalvageSeed(any())).thenReturn(42L);
-        ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "domain_subroutine_military")
-                .put("rarity", "10").put("prefixes", "HULL_MULT:4:6").put("suffixes", "ARMOR_PERCENT:6:9")));
+        ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "volume_subroutine").put("kind", "VOLUME")
+                .put("rarity", "10")));
         ItemDrops.register(new JSONArray()
                 .put(new JSONObject().put("site", "station_research").put("chances", "1").put("uniqueChance", "0")));
     }

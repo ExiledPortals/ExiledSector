@@ -99,7 +99,7 @@ class ItemRollerTest {
 
     @Test
     void aPoolSmallerThanTheRollIsUsedUpWithoutFailing() throws Exception {
-        ItemDefinitions.register(new org.json.JSONArray().put(ItemFixtures.row("tiny", "subroutine", "HULL_MULT:4:6")));
+        ItemDefinitions.register(new org.json.JSONArray().put(ItemFixtures.row("tiny", "bridge", "HULL_MULT:4:6")));
 
         for (long seed = 0; seed < 50; seed++) {
             assertEquals(1, ItemRoller.roll(ItemDefinitions.get("tiny"), seed).size());

@@ -170,7 +170,7 @@ final class TemplatePlanner {
         List<TemplateStep> steps = new ArrayList<>(TemplateCapture.capture(orderedNodeIds, nodeId -> {
             String templateOption = templateOptionsByNodeId.get(nodeId);
             return templateOption != null && liveData.isAllocated(nodeId) ? templateOption : planData.getOptionalSelection(nodeId);
-        }, startingRootId, SkillTree.getAllNodes()));
+        }, planData, startingRootId, SkillTree.getAllNodes()));
         for (TemplateStep carriedStep : carriedSteps) {
             if (!planData.isAllocated(carriedStep.nodeId())) {
                 steps.add(carriedStep);

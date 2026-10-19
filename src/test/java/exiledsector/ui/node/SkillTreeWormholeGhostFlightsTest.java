@@ -45,6 +45,7 @@ class SkillTreeWormholeGhostFlightsTest {
         skillTreeMock.when(() -> SkillTree.get("wormhole_a")).thenReturn(a);
         skillTreeMock.when(() -> SkillTree.get("wormhole_b")).thenReturn(b);
         data = mock(ShipSkillData.class);
+        when(data.wormholePairs(topology)).thenReturn(topology.wormholePairs());
     }
 
     @AfterEach

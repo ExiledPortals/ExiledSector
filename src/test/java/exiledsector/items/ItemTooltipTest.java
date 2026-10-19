@@ -45,7 +45,7 @@ class ItemTooltipTest {
 
         List<String> lines = item.tooltipLines().stream().map(StyledText::plain).toList();
 
-        assertEquals("Military-grade Domain Subroutine", item.name());
+        assertEquals("Military-grade Bridge", item.name());
         assertEquals(List.of("12% increased beam weapon damage."), lines);
     }
 
@@ -67,7 +67,7 @@ class ItemTooltipTest {
 
     @Test
     void anEffectNoLongerInItsPoolOrWithAFixedValueShowsNoRange() throws Exception {
-        ItemDefinitions.register(new org.json.JSONArray().put(ItemFixtures.row("fixed", "subroutine", "HULL_MULT:5:5")));
+        ItemDefinitions.register(new org.json.JSONArray().put(ItemFixtures.row("fixed", "bridge", "HULL_MULT:5:5")));
         Item item = Item.withEffects("socketable_5", "fixed", 1L,
                 List.of(new RolledEffect("HULL_MULT", 5f), new RolledEffect("ARMOR_PERCENT", 7f)));
 
@@ -77,7 +77,7 @@ class ItemTooltipTest {
 
     @Test
     void onAKnownHullSizeTheTooltipShowsOnlyThatSizesValue() throws Exception {
-        ItemDefinitions.register(new org.json.JSONArray().put(ItemFixtures.row("plating", "subroutine", "ARMOR_FLAT:5/10/15/20")));
+        ItemDefinitions.register(new org.json.JSONArray().put(ItemFixtures.row("plating", "bridge", "ARMOR_FLAT:5/10/15/20")));
         Item item = Item.withEffects("socketable_6", "plating", 1L, List.of(new RolledEffect("ARMOR_FLAT", 5f)));
 
         List<String> onCapital = writtenParagraphs(item, HullSize.CAPITAL_SHIP, List::of);
@@ -120,7 +120,7 @@ class ItemTooltipTest {
 
     @Test
     void theDescriptionIsTheOnlyLineAboveTheEffects() throws Exception {
-        ItemDefinitions.register(new org.json.JSONArray().put(ItemFixtures.row("described", "subroutine", "HULL_MULT:4:6")
+        ItemDefinitions.register(new org.json.JSONArray().put(ItemFixtures.row("described", "bridge", "HULL_MULT:4:6")
                 .put("description", "Pulled from a Domain-era warship.")));
         Item item = Item.withEffects("socketable_3", "described", 1L, List.of());
 

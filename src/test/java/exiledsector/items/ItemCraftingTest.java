@@ -38,7 +38,7 @@ class ItemCraftingTest {
     @BeforeEach
     void setUp() throws Exception {
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.row(ItemFixtures.MILITARY, "subroutine", ItemFixtures.MILITARY_PREFIXES,
+                .put(ItemFixtures.row(ItemFixtures.MILITARY, "bridge", ItemFixtures.MILITARY_PREFIXES,
                         ItemFixtures.MILITARY_SUFFIXES))
                 .put(ItemFixtures.row("relic_a", "reactor", "HULL_MULT:4:6; ARMOR_PERCENT:6:9").put("unique", "TRUE"))
                 .put(ItemFixtures.row("relic_b", "crew_quarters", "FLUX_CAPACITY_MULT:4:6").put("unique", "TRUE")));
@@ -124,7 +124,7 @@ class ItemCraftingTest {
 
     @Test
     void everyRecalibrationChangesAValueSoTheKernelIsNeverWasted() throws Exception {
-        ItemDefinitions.register(new JSONArray().put(ItemFixtures.row("narrow", "subroutine", "HULL_MULT:4:5", "ARMOR_PERCENT:1:1")));
+        ItemDefinitions.register(new JSONArray().put(ItemFixtures.row("narrow", "bridge", "HULL_MULT:4:5", "ARMOR_PERCENT:1:1")));
         Item item = store.add(ItemFixtures.data("narrow", 1L,
                 List.of(new RolledEffect("HULL_MULT", 4f), new RolledEffect("ARMOR_PERCENT", 1f)), null));
 
@@ -139,8 +139,8 @@ class ItemCraftingTest {
     @Test
     void decimalRangesThatStayBelowOneCanBeRecalibrated() throws Exception {
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.row("decimal", "subroutine", "HULL_MULT:0.15:0.25", "ARMOR_PERCENT:0.01:0.03"))
-                .put(ItemFixtures.row("fixed", "subroutine", "HULL_MULT:1:1", "ARMOR_PERCENT:2.5:2.5")));
+                .put(ItemFixtures.row("decimal", "bridge", "HULL_MULT:0.15:0.25", "ARMOR_PERCENT:0.01:0.03"))
+                .put(ItemFixtures.row("fixed", "bridge", "HULL_MULT:1:1", "ARMOR_PERCENT:2.5:2.5")));
         Item decimal = store.add(ItemFixtures.data("decimal", 1L,
                 List.of(new RolledEffect("HULL_MULT", 0.2f), new RolledEffect("ARMOR_PERCENT", 0.02f)), null));
         Item fixed = store.add(ItemFixtures.data("fixed", 1L,
@@ -259,7 +259,7 @@ class ItemCraftingTest {
 
     @Test
     void fixingNeedsAtLeastTwoEffects() throws Exception {
-        ItemDefinitions.register(new JSONArray().put(ItemFixtures.row("single", "subroutine", "HULL_MULT:4:6", "")));
+        ItemDefinitions.register(new JSONArray().put(ItemFixtures.row("single", "bridge", "HULL_MULT:4:6", "")));
         Item single = store.add(ItemFixtures.data("single", 1L, List.of(new RolledEffect("HULL_MULT", 5f)), null));
 
         assertFalse(ItemCrafting.canUse(CraftingCurrency.FIXATION, single, definition -> true));

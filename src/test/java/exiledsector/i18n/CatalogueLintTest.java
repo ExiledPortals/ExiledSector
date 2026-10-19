@@ -65,7 +65,7 @@ class CatalogueLintTest {
         for (String definitionFile : ITEM_DEFINITION_FILES) {
             String itemRows = Files.readString(root.resolve(definitionFile), StandardCharsets.UTF_8).replace("\r\n", "\n");
             JSONArray items = CDL.toJSONArray(itemRows);
-            for (int i = 0; i < items.length(); i++) {
+            for (int i = 0; items != null && i < items.length(); i++) {
                 JSONObject item = items.getJSONObject(i);
                 sources.put("socketable." + item.getString("id") + ".name", item.getString("name"));
                 String description = item.optString("description", "");

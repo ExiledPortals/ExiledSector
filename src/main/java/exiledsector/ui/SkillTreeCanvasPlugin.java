@@ -13,6 +13,7 @@ import exiledsector.effects.ShipTreeSync;
 import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.radius.RadiusSize;
 import exiledsector.items.SocketCustody;
 import exiledsector.items.Item;
 import exiledsector.ui.decoration.AbyssDarknessRenderer;
@@ -23,6 +24,7 @@ import exiledsector.ui.decoration.SkillTreeStarRenderer;
 import exiledsector.ui.decoration.SkillTreeStarfieldRenderer;
 import exiledsector.ui.decoration.SkillTreeStaticImageRenderer;
 import exiledsector.ui.inspect.ItemCodex;
+import exiledsector.ui.node.NodeRadiusRingRenderer;
 import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.node.SkillTreeNodeDrawer;
 import exiledsector.ui.node.TreeAllocationSession;
@@ -47,6 +49,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SkillTreeRingBeltRenderer ringBeltRenderer = new SkillTreeRingBeltRenderer();
     private final SkillTreeFleetRenderer fleetRenderer;
     private final SkillTreeStarRenderer starRenderer = new SkillTreeStarRenderer();
+    private final NodeRadiusRingRenderer radiusRingRenderer = new NodeRadiusRingRenderer();
     private final TreeAllocationSession treeSession;
     private final SkillTreeNodeDrawer nodeDrawer;
     private final SkillTreeStatPanel statPanel;
@@ -85,7 +88,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.nodeDrawer = SkillTreeNodeDrawer.attachedTo(treeSession, member, panelStyle, nodeSearch);
         this.templateUi = new SkillTreeTemplateController(member, treeSession, panelStyle);
         this.statPanel = new SkillTreeStatPanel(member);
-        this.hyperspaceMode = new HyperspaceMode(camera, statPanel, treeSession::isHidden);
+        this.hyperspaceMode = new HyperspaceMode(camera, statPanel, treeSession::isHidden, treeSession::wormholePairs);
         this.socketPlacement = new SocketPlacement(hostPanel, treeSession, nodeSearch, searchBar);
         this.chrome = new SkillTreeChrome(member, panelStyle, statPanel, searchBar, templateUi, socketPlacement, shipCardHeight);
 
@@ -105,6 +108,14 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     void setShipCard(UIComponentAPI component) {
         chrome.setShipCard(component);
+    }
+
+    public void setHighlightedRadius(SkillNode centre, RadiusSize size) {
+        radiusRingRenderer.setHighlightedRadius(centre, size);
+    }
+
+    public void clearHighlightedRadius() {
+        radiusRingRenderer.clearHighlightedRadius();
     }
 
     private CanvasMode mode() {
@@ -494,6 +505,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         exoshipView.setHovered(shipHovered);
         TreeLayers layers = exoshipView.layers(viewport, alphaMult * treeAlpha);
         if (treeAlpha > 0f) {
+            radiusRingRenderer.render(layers);
             nodeDrawer.render(layers, mouseX, mouseY, treeHovered);
         }
         fleetRenderer.render(viewport, backgroundAlpha * treeAlpha * exoshipFade);

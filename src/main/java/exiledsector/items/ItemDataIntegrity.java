@@ -63,7 +63,7 @@ public final class ItemDataIntegrity {
         ItemDataIntegrity integrity = new ItemDataIntegrity();
         integrity.checkModifiers(modifierRows, ItemModifiers.DATA_PATH, false);
         integrity.checkModifiers(chartModifierRows, StarChartItems.MODIFIERS_PATH, true);
-        integrity.checkDefinitions(subroutineRows, ItemDefinitions.SUBROUTINES_PATH, ItemType.SUBROUTINE);
+        integrity.checkDefinitions(orEmpty(subroutineRows), ItemDefinitions.SUBROUTINES_PATH, ItemType.SUBROUTINE);
         integrity.checkDefinitions(hullItemRows, ItemDefinitions.HULL_ITEMS_PATH, ItemType.HULL_ITEM);
         integrity.checkDefinitions(chartRows, StarChartDefinitions.DATA_PATH, ItemType.STAR_CHART);
         integrity.checkImplicits(implicitRows);
@@ -79,7 +79,7 @@ public final class ItemDataIntegrity {
             JSONArray subroutineRows = ModCsv.rows("id", ItemDefinitions.SUBROUTINES_PATH);
             JSONArray hullItemRows = ModCsv.rows("id", ItemDefinitions.HULL_ITEMS_PATH);
             JSONArray implicitRows = ModCsv.rows("section", ItemImplicits.DATA_PATH);
-            if (modifierRows == null || subroutineRows == null || hullItemRows == null || implicitRows == null) {
+            if (modifierRows == null || hullItemRows == null || implicitRows == null) {
                 return;
             }
             JSONArray chartModifierRows = orEmpty(ModCsv.rows("id", StarChartItems.MODIFIERS_PATH));
@@ -143,6 +143,9 @@ public final class ItemDataIntegrity {
     private void checkItemTypesBelongInFile(String file, int line, String modifierId, Set<ItemType> itemTypes, boolean starChartFile) {
         if (itemTypes.isEmpty()) {
             return;
+        }
+        if (itemTypes.contains(ItemType.SUBROUTINE)) {
+            error(file, line, modifierId + " rolls on " + ItemType.SUBROUTINE.id() + ", but subroutines do not roll modifiers");
         }
         if (starChartFile && !itemTypes.equals(Set.of(ItemType.STAR_CHART))) {
             error(file, line, modifierId + " is in " + file + ", so its item_types must be " + ItemType.STAR_CHART.id() + " only");
@@ -262,6 +265,10 @@ public final class ItemDataIntegrity {
                 checkSystemType(file, line, definitionId, ModCsv.text(row, StarChartDefinitions.SYSTEM_TYPE_COLUMN));
                 checkMinTier(file, line, definitionId, ModCsv.text(row, StarChartDefinitions.MIN_TIER_COLUMN));
             }
+            if (itemType == ItemType.SUBROUTINE) {
+                checkSubroutine(file, line, definitionId, row);
+                return;
+            }
             boolean unique = "true".equalsIgnoreCase(ModCsv.text(row, "unique"));
             List<ModifierRow> pool = new ArrayList<>();
             checkPool(file, line, definitionId, ModCsv.text(row, "prefixes"), ModifierSlot.PREFIX, itemType, unique, pool);
@@ -270,6 +277,16 @@ public final class ItemDataIntegrity {
                 error(file, line, definitionId + " has no prefixes or suffixes");
             }
         });
+    }
+
+    private void checkSubroutine(String file, int line, String definitionId, JSONObject row) {
+        String kindText = ModCsv.text(row, ItemDefinition.SUBROUTINE_KIND_COLUMN);
+        if (SubroutineKind.byIdOrNull(kindText) == null) {
+            error(file, line, definitionId + " has kind \"" + kindText + "\"; expected one of " + SubroutineKind.ids());
+        }
+        if (!ModCsv.text(row, "prefixes").isEmpty() || !ModCsv.text(row, "suffixes").isEmpty()) {
+            error(file, line, definitionId + " lists prefixes or suffixes, but subroutines do not roll them");
+        }
     }
 
     private void checkSection(String file, int line, String definitionId, String sectionId) {

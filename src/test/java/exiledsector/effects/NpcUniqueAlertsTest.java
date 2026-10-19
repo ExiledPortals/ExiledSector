@@ -96,7 +96,7 @@ class NpcUniqueAlertsTest {
     }
 
     private static JSONObject definition(String id, boolean unique) throws Exception {
-        return new JSONObject().put("id", id).put("prefixes", "HULL_MULT:4:6")
+        return new JSONObject().put("id", id).put("kind", unique ? "UNIQUE" : "VOLUME")
                 .put("unique", Boolean.toString(unique));
     }
 

@@ -52,8 +52,8 @@ class GrantHullItemsCommandTest {
         when(sector.getPlayerFleet()).thenReturn(fleet);
         when(fleet.getCargo()).thenReturn(cargo);
         ItemDefinitions.register(new JSONArray()
-                .put(definition("first_subroutine"))
-                .put(definition("second_subroutine")));
+                .put(definition("first_hull_item"))
+                .put(definition("second_hull_item")));
     }
 
     @AfterEach
@@ -64,7 +64,7 @@ class GrantHullItemsCommandTest {
     }
 
     private static JSONObject definition(String id) throws Exception {
-        return new JSONObject().put("id", id).put("prefixes", "HULL_MULT:4:6").put("suffixes", "ARMOR_PERCENT:6:9");
+        return new JSONObject().put("id", id).put("section", "bridge").put("prefixes", "HULL_MULT:4:6").put("suffixes", "ARMOR_PERCENT:6:9");
     }
 
     private List<ItemData> granted(int expectedItems) {
@@ -80,7 +80,7 @@ class GrantHullItemsCommandTest {
         assertEquals(CommandResult.SUCCESS, result);
         List<ItemData> items = granted(10);
         Map<String, Long> perType = items.stream().collect(Collectors.groupingBy(ItemData::definitionId, Collectors.counting()));
-        assertEquals(Map.of("first_subroutine", 5L, "second_subroutine", 5L), perType);
+        assertEquals(Map.of("first_hull_item", 5L, "second_hull_item", 5L), perType);
         Set<Long> seeds = new HashSet<>();
         items.forEach(item -> seeds.add(item.seed()));
         assertEquals(10, seeds.size());

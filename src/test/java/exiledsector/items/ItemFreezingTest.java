@@ -28,7 +28,7 @@ class ItemFreezingTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        registerSubroutine(BEFORE_PREFIXES, BEFORE_SUFFIXES);
+        registerBridge(BEFORE_PREFIXES, BEFORE_SUFFIXES);
         registerWords("Askonia", "Corvus");
         ItemFixtures.registerModifierNames("FIGHTER_ARMOR_PERCENT,prefix,FIGHTER_ARMOR_PERCENT:10:15,Plated",
                 "HULL_MULT,suffix,HULL_MULT:4:6,Fortitude");
@@ -42,9 +42,9 @@ class ItemFreezingTest {
         ItemDefinitions.clear();
     }
 
-    private static void registerSubroutine(String prefixes, String suffixes) throws Exception {
-        ItemDefinitions.register(new JSONArray().put(row("sub", "subroutine", prefixes, suffixes)
-                .put("name", "Military-grade Domain Subroutine")));
+    private static void registerBridge(String prefixes, String suffixes) throws Exception {
+        ItemDefinitions.register(new JSONArray().put(row("sub", "bridge", prefixes, suffixes)
+                .put("name", "Military-grade Bridge")));
     }
 
     private static void registerWords(String... first) throws Exception {
@@ -59,13 +59,13 @@ class ItemFreezingTest {
     }
 
     private static void rebalance() throws Exception {
-        registerSubroutine("FLUX_DISSIPATION_MULT:8:10", "ARMOR_PERCENT:10:12");
+        registerBridge("FLUX_DISSIPATION_MULT:8:10", "ARMOR_PERCENT:10:12");
         registerWords("Zagan", "Thule", "Eos", "Magec", "Duzahk");
     }
 
     private static void registerGadget() throws Exception {
-        ItemDefinitions.register(new JSONArray().put(row("gadget", "subroutine", BEFORE_PREFIXES, BEFORE_SUFFIXES)
-                .put("name", "Consumer-grade Domain Subroutine")));
+        ItemDefinitions.register(new JSONArray().put(row("gadget", "bridge", BEFORE_PREFIXES, BEFORE_SUFFIXES)
+                .put("name", "Consumer-grade Bridge")));
         ItemNames.registerWords(new JSONObject().put("gadget", new JSONObject().put("style", "product")
                 .put("first", new JSONArray(List.of("Sunny"))).put("second", new JSONArray(List.of("Pal")))));
     }
@@ -125,7 +125,7 @@ class ItemFreezingTest {
         Item claimedCommon = store.add(ItemData.of(common.toSpecialItem()));
         Item claimedRare = store.add(ItemData.of(rare.toSpecialItem()));
 
-        assertEquals("Plated subroutine of Fortitude", commonName);
+        assertEquals("Plated officer of Fortitude", commonName);
         assertEquals(COMMON, claimedCommon.effects());
         assertEquals(commonName, claimedCommon.name());
         assertEquals(RARE, claimedRare.effects());
@@ -171,12 +171,12 @@ class ItemFreezingTest {
         ItemNames.registerWords(new JSONObject());
         Item owned = Item.withEffects("socketable_1", "sub", 42L, RARE);
         ItemData dropped = ItemData.of(frozen(RARE).toSpecialItem());
-        assertEquals("Military-grade Domain Subroutine", owned.name());
+        assertEquals("Military-grade Bridge", owned.name());
 
         registerWords("Askonia", "Corvus");
 
         assertNull(dropped.frozenName());
-        assertNotEquals("Military-grade Domain Subroutine", owned.name());
+        assertNotEquals("Military-grade Bridge", owned.name());
         assertEquals(frozen(RARE).preview().name(), owned.name());
     }
 

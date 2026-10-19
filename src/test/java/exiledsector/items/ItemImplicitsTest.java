@@ -72,11 +72,11 @@ class ItemImplicitsTest {
     }
 
     @Test
-    void uniquesGetTheirTypeImplicitsAndSubroutinesGetNone() {
+    void uniquesGetTheirTypeImplicitsAndSubroutinesGetNone() throws Exception {
+        ItemDefinitions.register(new JSONArray().put(ItemFixtures.subroutineRow(ItemFixtures.SUBROUTINE)), csvRows(ItemDefinitions.HULL_ITEMS_PATH));
         ItemDefinition unique = ItemDefinitions.all().stream()
                 .filter(definition -> definition.unique() && definition.kind() == ItemKind.WEAPON_MOUNT).findFirst().orElseThrow();
-        ItemDefinition subroutine = ItemDefinitions.all().stream()
-                .filter(definition -> definition.kind() == ItemKind.SUBROUTINE).findFirst().orElseThrow();
+        ItemDefinition subroutine = ItemDefinitions.get(ItemFixtures.SUBROUTINE);
 
         assertEquals(1, Item.withEffects("u", unique.id(), 7L, List.of()).implicits().size());
         assertTrue(Item.withEffects("s", subroutine.id(), 7L, List.of()).implicits().isEmpty());

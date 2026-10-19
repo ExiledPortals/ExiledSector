@@ -11,6 +11,7 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillTreeTopology;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.progression.ShipOpBudget;
 import exiledsector.skills.template.AutoAllocateRun;
@@ -196,6 +197,14 @@ public final class TreeAllocationSession {
         return node != null && viewSnapshot().isHidden(node);
     }
 
+    String wormholePartner(SkillNode node) {
+        return allocator.data().wormholePartner(node);
+    }
+
+    public List<SkillTreeTopology.WormholePair> wormholePairs() {
+        return allocator.data().wormholePairs(SkillTree.topology());
+    }
+
     public Item socketedItem(SkillNode node) {
         return node == null ? null : ItemStore.lookup(allocator.data().getSocketedItem(node.getId()));
     }
@@ -262,10 +271,10 @@ public final class TreeAllocationSession {
     }
 
     public SkillNode wormholeJumpTarget(SkillNode node, boolean ctrlDown) {
-        if (!ctrlDown || node.getType().getTier() != SkillTier.WORMHOLE) {
+        if (!ctrlDown) {
             return null;
         }
-        String pairedId = node.getPairedNodeId();
+        String pairedId = wormholePartner(node);
         SkillNode paired = pairedId == null ? null : SkillTree.get(pairedId);
         if (paired == null) {
             return null;

@@ -42,45 +42,52 @@ function saveButton() {
   return screen.getByText('Save to project').closest('button') as HTMLButtonElement;
 }
 
+async function openSpecialistCrew() {
+  renderWithProviders(<DefinitionsTab vocabulary={vocabulary} />);
+  fireEvent.click(await screen.findByText('Specialist Crew', undefined, { timeout: 30000 }));
+  await screen.findAllByDisplayValue('Specialist Crew', undefined, { timeout: 30000 });
+}
+
 describe('hull item tabs', () => {
   it('loads the definitions with their modifier references resolved', async () => {
-    renderWithProviders(<DefinitionsTab vocabulary={vocabulary} />);
+    await openSpecialistCrew();
 
-    expect((await screen.findAllByDisplayValue('FLUX_CAPACITY_MULT', undefined, { timeout: 30000 })).length).toBeGreaterThan(0);
+    expect((await screen.findAllByDisplayValue('CREW_LOSS_PERCENT', undefined, { timeout: 30000 })).length).toBeGreaterThan(0);
     expect(screen.queryByText('Not in item_modifiers.csv')).toBeNull();
   }, 60000);
 
   it('edits a modifier value from a definition and saves it to item_modifiers.csv', async () => {
-    renderWithProviders(<DefinitionsTab vocabulary={vocabulary} />);
-    const maxInput = await findLabelled('FLUX_CAPACITY_MULT max');
+    await openSpecialistCrew();
+    const maxInput = await findLabelled('CREW_LOSS_PERCENT max');
     const subroutinesBefore = server.readProjectFile(SUBROUTINES_FILE);
+    const hullItemsBefore = server.readProjectFile(HULL_ITEMS_FILE);
     const modifiersBefore = server.readProjectFile(MODIFIERS_FILE);
 
-    expect(screen.getAllByText(/FLUX_CAPACITY_MULT is shared: editing its values also changes/).length).toBeGreaterThan(0);
-    fireEvent.change(maxInput, { target: { value: '7' } });
+    expect(screen.getAllByText(/CREW_LOSS_PERCENT is shared: editing its values also changes unique_olinadu_security/).length).toBeGreaterThan(0);
+    fireEvent.change(maxInput, { target: { value: '-9' } });
     fireEvent.click(saveButton());
     await screen.findByText('Saved subroutines.csv, hull_items.csv and item_modifiers.csv', undefined, { timeout: 30000 });
 
     expect(server.readProjectFile(MODIFIERS_FILE)).toBe(
-      modifiersBefore.replace('FLUX_CAPACITY_MULT,prefix,subroutine,FLUX_CAPACITY_MULT:4:6,Capacitive', 'FLUX_CAPACITY_MULT,prefix,subroutine,FLUX_CAPACITY_MULT:4:7,Capacitive'),
+      modifiersBefore.replace('CREW_LOSS_PERCENT,prefix,hull_item,CREW_LOSS_PERCENT:-15:-10,Sheltered', 'CREW_LOSS_PERCENT,prefix,hull_item,CREW_LOSS_PERCENT:-15:-9,Sheltered'),
     );
     expect(server.readProjectFile(SUBROUTINES_FILE)).toBe(subroutinesBefore);
+    expect(server.readProjectFile(HULL_ITEMS_FILE)).toBe(hullItemsBefore);
   }, 90000);
 
   it('copies a shared modifier for one item so its values can be tuned alone', async () => {
-    renderWithProviders(<DefinitionsTab vocabulary={vocabulary} />);
-    await findLabelled('FLUX_CAPACITY_MULT max');
+    await openSpecialistCrew();
+    await findLabelled('CREW_LOSS_PERCENT max');
 
     fireEvent.click(screen.getAllByText('Copy for this item')[0].closest('button') as HTMLButtonElement);
-    await waitFor(() => expect(screen.getAllByDisplayValue('FLUX_CAPACITY_MULT_DOMAIN_SUBROUTINE_MILITARY').length).toBeGreaterThan(0));
+    await waitFor(() => expect(screen.getAllByDisplayValue('CREW_LOSS_PERCENT_CREW_QUARTERS_SPECIALISTS').length).toBeGreaterThan(0));
     fireEvent.click(saveButton());
     await screen.findByText('Saved subroutines.csv, hull_items.csv and item_modifiers.csv', undefined, { timeout: 30000 });
 
-    expect(server.readProjectFile(MODIFIERS_FILE)).toContain('FLUX_CAPACITY_MULT_DOMAIN_SUBROUTINE_MILITARY,prefix,subroutine,FLUX_CAPACITY_MULT:4:');
-    const military = server.readProjectFile(SUBROUTINES_FILE).split('\n').find((line) => line.startsWith('domain_subroutine_military,'));
-    expect(military).toContain('@FLUX_CAPACITY_MULT_DOMAIN_SUBROUTINE_MILITARY:1500');
-    const industrial = server.readProjectFile(SUBROUTINES_FILE).split('\n').find((line) => line.startsWith('domain_subroutine_industrial,'));
-    expect(industrial).toContain('@FLUX_CAPACITY_MULT:1500');
+    expect(server.readProjectFile(MODIFIERS_FILE)).toContain('CREW_LOSS_PERCENT_CREW_QUARTERS_SPECIALISTS,prefix,hull_item,CREW_LOSS_PERCENT:-15:');
+    const hullItemLines = server.readProjectFile(HULL_ITEMS_FILE).split('\n');
+    expect(hullItemLines.find((line) => line.startsWith('crew_quarters_specialists,'))).toContain('@CREW_LOSS_PERCENT_CREW_QUARTERS_SPECIALISTS:1000');
+    expect(hullItemLines.find((line) => line.startsWith('unique_olinadu_security,'))).toContain('@CREW_LOSS_PERCENT,');
   }, 90000);
 
   it('edits an implicit value from the Implicits tab and saves it to item_modifiers.csv', async () => {
@@ -105,21 +112,20 @@ describe('hull item tabs', () => {
     vi.stubGlobal('fetch', async (input: RequestInfo | URL, init?: RequestInit) => {
       if (String(input) === '/api/describe') {
         const { modifierLines } = JSON.parse(String(init?.body)) as { modifierLines: { effect: string }[] };
-        const lines = modifierLines.map((line) => (line.effect === 'FLUX_CAPACITY_MULT' ? '+<good>4%-6%</good> flux capacity' : null));
+        const lines = modifierLines.map((line) => (line.effect === 'SUPPLIES_PER_MONTH_MULT' ? '<good>fewer</good> supplies per month' : null));
         return new Response(JSON.stringify({ lines }), { status: 200, headers: { 'content-type': 'application/json' } });
       }
       return serverFetch(input, init);
     });
     try {
-      renderWithProviders(<DefinitionsTab vocabulary={vocabulary} />);
-      await screen.findAllByDisplayValue('Military Domain Subroutine', undefined, { timeout: 30000 });
+      await openSpecialistCrew();
 
       fireEvent.click(screen.getByText('View'));
 
-      const highlighted = await screen.findByText('4%-6%');
-      expect(highlighted.parentElement?.textContent).toBe('+4%-6% flux capacity');
-      expect(screen.getAllByText('Capacitive').length).toBeGreaterThan(0);
-      expect(screen.getAllByText('1500').length).toBeGreaterThan(0);
+      const highlighted = await screen.findAllByText('fewer');
+      expect(highlighted[0].parentElement?.textContent).toBe('fewer supplies per month');
+      expect(screen.getAllByText('Thrifty').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('750').length).toBeGreaterThan(0);
       expect(screen.queryAllByLabelText('Modifier 1')).toEqual([]);
     } finally {
       vi.stubGlobal('fetch', serverFetch);
@@ -161,14 +167,31 @@ describe('hull item tabs', () => {
 
   it('refuses to save a modifier that a common hull item rolls without a name', async () => {
     await renderModifiersTab();
-    await selectModifier('HULL_MULT');
+    await selectModifier('SUPPLIES_PER_MONTH_MULT_CREW_QUARTERS');
     const before = server.readProjectFile(MODIFIERS_FILE);
 
     fireEvent.change(screen.getByLabelText('Name'), { target: { value: '' } });
     fireEvent.click(saveButton());
 
     const refusal = await screen.findByRole('dialog');
-    expect(within(refusal).getByText(/HULL_MULT: .* can roll it, so it needs a name/)).toBeTruthy();
+    expect(within(refusal).getByText(/SUPPLIES_PER_MONTH_MULT_CREW_QUARTERS: .* can roll it, so it needs a name/)).toBeTruthy();
     expect(server.readProjectFile(MODIFIERS_FILE)).toBe(before);
   });
+
+  it('adds a subroutine with a kind and no prefixes or suffixes and saves it to subroutines.csv', async () => {
+    const subroutinesBefore = server.readProjectFile(SUBROUTINES_FILE);
+    const hullItemsBefore = server.readProjectFile(HULL_ITEMS_FILE);
+    renderWithProviders(<DefinitionsTab vocabulary={vocabulary} />);
+    await screen.findAllByDisplayValue('Coatl Bastion Gunnery Team', undefined, { timeout: 30000 });
+
+    fireEvent.click(screen.getByText('New item').closest('button') as HTMLButtonElement);
+    expect(await findLabelled('Subroutine kind')).toHaveProperty('value', 'VOLUME');
+    expect(screen.queryByText('Add prefix')).toBeNull();
+    fireEvent.click(saveButton());
+    await screen.findByText('Saved subroutines.csv and hull_items.csv', undefined, { timeout: 30000 });
+
+    const lineEnding = subroutinesBefore.includes('\r\n') ? '\r\n' : '\n';
+    expect(server.readProjectFile(SUBROUTINES_FILE)).toBe(`${subroutinesBefore}new_subroutine,New Subroutine,,10,,VOLUME,,${lineEnding}`);
+    expect(server.readProjectFile(HULL_ITEMS_FILE)).toBe(hullItemsBefore);
+  }, 90000);
 });

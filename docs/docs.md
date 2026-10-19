@@ -306,6 +306,52 @@ its target is not a skill effect, or if the alias is still an effect of its own.
 mods like the other CSVs. A socketable pool entry naming an effect that is neither current nor aliased is
 skipped with a warning; the rest of the definition still loads.
 
+## Subroutines
+
+Subroutines are the socketables that go in tree sockets. They never roll prefixes or suffixes: a row in
+`data/config/exiledSector/subroutines.csv` has no pool columns, and no row of `item_modifiers.csv` may list
+`subroutine` in its `item_types` (`ItemDataIntegrity` reports it). What a subroutine does comes from its
+`kind` column, one of `VOLUME`, `DOCTRINE`, `BYPASS` or `UNIQUE`, read into `SubroutineKind` on the
+definition and never stored on the item. A row with a missing or unknown kind is skipped with an error in
+the log. The file currently has no rows; the kinds are planned in `docs/plans/subroutines_rework.md`.
+
+The four domain subroutines (`domain_subroutine_military`, `_industrial`, `_consumer` and `_management`)
+were deleted with no compensation. Their ids are listed in `DeletedSubroutines.DELETED_DEFINITION_IDS`, and
+only those ids are ever removed, checked after `item_id_aliases.csv` and only while no definition uses the id
+again. `DeletedSubroutines.removeFromSave` runs once from `onGameLoad`. It removes those items from item
+storage whatever class they loaded as (0.8.0 saved every item as `exiledSector.Socketable`), unsockets them
+from every ship's tree sockets including `npc:` ids left in recovered ships, and removes their stacks from the
+player fleet's cargo and every submarket of every market, the same cargo list `MaterialMigration` converts.
+It logs one line with the counts and is skipped if no item definitions loaded at all. Decoding an NPC tree tag
+also drops a socketed retired id.
+
+Any other item with a missing definition, a subroutine included, loads as an `UnresolvedItem`, keeps its
+rolls and its socket, and comes back once the definition loads again. So a broken `subroutines.csv` row or a
+mod that fails to load never deletes anything. Retiring another subroutine later means adding its id to
+`DELETED_DEFINITION_IDS`.
+
+## Node radii
+
+Some subroutine kinds planned for the rework (Bypass, Doctrine Archives) act on every node within a radius
+of a node. A radius is the straight-line distance between node positions on the tree, the same `x`/`y`
+the tree is drawn with. A node exactly on the edge counts as inside. The centre node is never in its own
+radius, so a mechanic that should also affect the centre has to add it itself.
+
+There are three sizes, small, medium and large, set in `data/config/exiledSector/node_radii.json` in tree
+units. Neighbouring nodes sit roughly 250 units apart, and the placeholder sizes of 400, 700 and 1000 reach
+about 2, 4 and 7 nodes around a typical node. Each size must be at least as large as the one before, so a
+smaller radius always lies inside a larger one. If the file is missing or invalid, the error is logged and
+every radius covers nothing. A size of zero also covers nothing.
+
+The Exoship node and the nodes it carries move with the ship, so they are never inside any radius and
+never a centre.
+
+`SkillTree.radii()` holds which nodes fall inside each size around every node. It is built once when the
+tree loads and again whenever the active tree changes, for example when a mod area is switched on or off,
+so a lookup is a single map read and costs nothing per frame. The tree canvas can draw the radius as a ring
+around its centre, which the hover on a socket holding a radius subroutine will turn on once those
+subroutines exist.
+
 ## Hull Upgrade icons
 
 The Hull Upgrade icons in `graphics/icons/hull_upgrades/` are generated from vanilla hull sprites by

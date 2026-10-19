@@ -448,7 +448,7 @@ public final class NpcSkillTreeBuilder {
             Map<String, SkillType> searchOptions = new HashMap<>();
             return Search.of(TreeSearch.from(topology, new TreeSet<>(shipData.getAllocatedNodeIds()),
                     candidate -> traversable(candidate, fitState, searchOptions),
-                    candidate -> candidate.getType().getTier() == SkillTier.WORMHOLE ? candidate.getPairedNodeId() : null), fitInstalled, searchOptions);
+                    shipData::wormholePartner), fitInstalled, searchOptions);
         }
 
         private State state(Set<String> fitInstalled) {
@@ -518,7 +518,7 @@ public final class NpcSkillTreeBuilder {
         }
 
         private boolean wormholeAllowed(SkillNode wormhole) {
-            SkillNode exitNode = topology.node(wormhole.getPairedNodeId());
+            SkillNode exitNode = topology.node(shipData.wormholePartner(wormhole));
             if (factionRegion == null || exitNode == null) {
                 return false;
             }

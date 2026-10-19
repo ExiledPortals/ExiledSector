@@ -69,7 +69,7 @@ class ItemCurrenciesTest {
 
         @Override
         public boolean appliesTo(ItemType type) {
-            return type == ItemType.SUBROUTINE;
+            return type == ItemType.HULL_ITEM;
         }
 
         @Override
@@ -94,8 +94,8 @@ class ItemCurrenciesTest {
     @BeforeEach
     void setUp() throws Exception {
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.row(ItemFixtures.MILITARY, "subroutine", ItemFixtures.MILITARY_PREFIXES, ItemFixtures.MILITARY_SUFFIXES))
-                .put(ItemFixtures.row("plate", "armor_plating", "HULL_MULT:4:6; ARMOR_PERCENT:6:9")));
+                .put(ItemFixtures.row(ItemFixtures.MILITARY, "bridge", ItemFixtures.MILITARY_PREFIXES, ItemFixtures.MILITARY_SUFFIXES))
+                .put(ItemFixtures.subroutineRow("volume")));
     }
 
     @AfterEach
@@ -203,24 +203,24 @@ class ItemCurrenciesTest {
     @Test
     void anAddedCurrencyJoinsTheMaterialsDropsAndCraftingForItsTypesOnly() {
         ItemCurrencies.register(annulment);
-        Item subroutine = store.add(ItemDefinitions.get(ItemFixtures.MILITARY), 4L);
-        Item plate = store.add(ItemDefinitions.get("plate"), 4L);
-        int explicitsBefore = subroutine.explicits().size();
+        Item hullItem = store.add(ItemDefinitions.get(ItemFixtures.MILITARY), 4L);
+        Item subroutine = store.add(ItemDefinitions.get("volume"), 4L);
+        int explicitsBefore = hullItem.explicits().size();
         owns(ANNULMENT_ID, 2f);
 
         assertSame(annulment, ItemCurrencies.byItemId(ANNULMENT_ID));
         assertEquals(annulment, ItemCurrencies.all().get(CraftingCurrency.values().length));
-        assertTrue(ItemCurrencies.forType(ItemType.SUBROUTINE).contains(annulment));
-        assertFalse(ItemCurrencies.forType(ItemType.HULL_ITEM).contains(annulment));
+        assertTrue(ItemCurrencies.forType(ItemType.HULL_ITEM).contains(annulment));
+        assertFalse(ItemCurrencies.forType(ItemType.SUBROUTINE).contains(annulment));
         assertTrue(MaterialItems.isMaterial(ANNULMENT_ID));
         assertEquals(MaterialTier.MAJOR, MaterialItems.tier(ANNULMENT_ID));
         assertEquals(Color.CYAN, MaterialItems.color(ANNULMENT_ID));
-        assertFalse(ItemCrafting.canUse(annulment, plate, definition -> true));
-        assertTrue(ItemCrafting.canUse(annulment, subroutine, definition -> true));
-        assertSame(subroutine, ItemCrafting.use(annulment, subroutine, CraftingMaterials.cargoOnly(cargo), store, new Random(2L), definition -> true));
-        assertEquals(explicitsBefore - 1, subroutine.explicits().size());
+        assertFalse(ItemCrafting.canUse(annulment, subroutine, definition -> true));
+        assertTrue(ItemCrafting.canUse(annulment, hullItem, definition -> true));
+        assertSame(hullItem, ItemCrafting.use(annulment, hullItem, CraftingMaterials.cargoOnly(cargo), store, new Random(2L), definition -> true));
+        assertEquals(explicitsBefore - 1, hullItem.explicits().size());
         verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(ANNULMENT_ID), 1);
-        assertTrue(ItemCrafting.wardsSpentBy(annulment, subroutine, List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)).isEmpty());
+        assertTrue(ItemCrafting.wardsSpentBy(annulment, hullItem, List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)).isEmpty());
         Map<String, Integer> drops = new LinkedHashMap<>();
         Random random = new Random(5L);
         for (int pick = 0; pick < 4000; pick++) {

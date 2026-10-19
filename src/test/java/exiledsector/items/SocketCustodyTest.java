@@ -33,7 +33,7 @@ class SocketCustodyTest {
         SkillTree.clearNodes();
         socket = new SkillNode("socket", new SkillType.Builder("socket_type", "Socket", "", SkillTier.SOCKET).build(), List.of(), 0f, 0f);
         SkillTree.register(socket);
-        ItemFixtures.registerMilitary();
+        ItemFixtures.registerMilitaryAndSubroutine();
     }
 
     @AfterEach
@@ -43,7 +43,7 @@ class SocketCustodyTest {
     }
 
     private Item install(String shipId) {
-        Item item = store.add(ItemDefinitions.get(ItemFixtures.MILITARY), shipId.hashCode());
+        Item item = store.add(ItemDefinitions.get(ItemFixtures.SUBROUTINE), shipId.hashCode());
         ShipSkillData data = new ShipSkillData();
         data.allocate(socket, 3);
         data.socketItem("socket", item.id());
@@ -54,7 +54,7 @@ class SocketCustodyTest {
     @Test
     void anItemCountsAsInstalledOnlyWhileASocketHoldsIt() {
         Item item = install("ship-a");
-        Item loose = store.add(ItemDefinitions.get(ItemFixtures.MILITARY), 7L);
+        Item loose = store.add(ItemDefinitions.get(ItemFixtures.SUBROUTINE), 7L);
 
         assertTrue(SocketCustody.isInstalled(ships, item));
         assertFalse(SocketCustody.isInstalled(ships, loose));

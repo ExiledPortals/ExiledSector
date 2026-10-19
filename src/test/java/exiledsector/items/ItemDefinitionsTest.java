@@ -14,8 +14,10 @@ import java.util.List;
 
 import static exiledsector.items.ItemFixtures.MILITARY;
 import static exiledsector.items.ItemFixtures.MILITARY_PREFIXES;
+import static exiledsector.items.ItemFixtures.MILITARY_SECTION;
 import static exiledsector.items.ItemFixtures.MILITARY_SUFFIXES;
 import static exiledsector.items.ItemFixtures.row;
+import static exiledsector.items.ItemFixtures.subroutineRow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -36,7 +38,8 @@ class ItemDefinitionsTest {
     void aRowBecomesADefinitionWithItsPrefixesAndSuffixesInOrderAndRangesLowToHigh() throws Exception {
         ItemDefinition definition = ItemFixtures.registerMilitary();
 
-        assertEquals(ItemKind.SUBROUTINE, definition.kind());
+        assertEquals(ItemKind.BRIDGE, definition.kind());
+        assertNull(definition.subroutineKind());
         assertEquals(20f, definition.rarity());
         assertEquals(List.of("FLUX_CAPACITY_MULT", "FLUX_DISSIPATION_MULT", "BEAM_WEAPON_DAMAGE_PERCENT"),
                 definition.prefixes().stream().map(PoolEntry::effectName).toList());
@@ -56,18 +59,35 @@ class ItemDefinitionsTest {
     @Test
     void badRowsAreSkippedWithoutLosingTheGoodOnes() throws Exception {
         ItemDefinitions.register(new JSONArray()
-                .put(row(MILITARY, "subroutine", MILITARY_PREFIXES, MILITARY_SUFFIXES))
+                .put(row(MILITARY, MILITARY_SECTION, MILITARY_PREFIXES, MILITARY_SUFFIXES))
                 .put(row("unknown_kind", "drone", MILITARY_PREFIXES, MILITARY_SUFFIXES))
-                .put(row("unknown_effect", "subroutine", "NOT_AN_EFFECT:1:2"))
-                .put(row("not_a_number", "subroutine", "HULL_MULT:one:2"))
-                .put(row("empty_pool", "subroutine", " ; "))
-                .put(row("zero_weight", "subroutine", "HULL_MULT:1:2:0"))
-                .put(row("duplicate_effect", "subroutine", "HULL_MULT:1:2; HULL_MULT:3:4"))
-                .put(row("both_sides", "subroutine", "HULL_MULT:1:2", "HULL_MULT:3:4")));
+                .put(row("unknown_effect", MILITARY_SECTION, "NOT_AN_EFFECT:1:2"))
+                .put(row("not_a_number", MILITARY_SECTION, "HULL_MULT:one:2"))
+                .put(row("empty_pool", MILITARY_SECTION, " ; "))
+                .put(row("zero_weight", MILITARY_SECTION, "HULL_MULT:1:2:0"))
+                .put(row("duplicate_effect", MILITARY_SECTION, "HULL_MULT:1:2; HULL_MULT:3:4"))
+                .put(row("both_sides", MILITARY_SECTION, "HULL_MULT:1:2", "HULL_MULT:3:4"))
+                .put(subroutineRow("unknown_subroutine_kind").put(ItemDefinition.SUBROUTINE_KIND_COLUMN, "EXPANSION"))
+                .put(subroutineRow("no_subroutine_kind").put(ItemDefinition.SUBROUTINE_KIND_COLUMN, "")));
 
         assertNotNull(ItemDefinitions.get(MILITARY));
         assertEquals(1, ItemDefinitions.all().size());
         assertNull(ItemDefinitions.get("unknown_kind"));
+    }
+
+    @Test
+    void aSubroutineReadsItsKindFromItsRowAndRollsNoPrefixesOrSuffixes() throws Exception {
+        ItemDefinitions.register(new JSONArray()
+                .put(subroutineRow("volume", SubroutineKind.VOLUME).put("prefixes", "HULL_MULT:4:6").put("suffixes", "ARMOR_PERCENT:6:9"))
+                .put(subroutineRow("bypass").put(ItemDefinition.SUBROUTINE_KIND_COLUMN, " bypass ")), new JSONArray());
+
+        ItemDefinition volume = ItemDefinitions.get("volume");
+        assertEquals(ItemKind.SUBROUTINE, volume.kind());
+        assertEquals(ItemType.SUBROUTINE, volume.type());
+        assertEquals(SubroutineKind.VOLUME, volume.subroutineKind());
+        assertTrue(volume.pool().isEmpty());
+        assertEquals(List.of(), ItemRoller.roll(volume, 3L));
+        assertEquals(SubroutineKind.BYPASS, ItemDefinitions.get("bypass").subroutineKind());
     }
 
     @Test
@@ -123,21 +143,22 @@ class ItemDefinitionsTest {
     }
 
     @Test
-    void theShippedDefinitionsAllLoadAndAreTheThreeDomainSubroutines() throws Exception {
+    void theShippedDefinitionsAllLoadAndOnlyHullItemsRollAffixes() throws Exception {
         JSONArray subroutineRows = ItemFixtures.shippedRows(ItemDefinitions.SUBROUTINES_PATH);
         JSONArray hullItemRows = ItemFixtures.shippedRows(ItemDefinitions.HULL_ITEMS_PATH);
+        int subroutineRowCount = subroutineRows == null ? 0 : subroutineRows.length();
 
         ItemFixtures.registerShippedItems();
 
-        assertEquals(subroutineRows.length() + hullItemRows.length(), ItemDefinitions.all().size());
+        assertEquals(subroutineRowCount + hullItemRows.length(), ItemDefinitions.all().size());
         assertTrue(ItemDefinitions.all().stream().allMatch(definition -> definition.type() != null));
-        assertEquals(subroutineRows.length(), ItemDefinitions.all().stream().filter(definition -> definition.type() == ItemType.SUBROUTINE).count());
-        for (String variant : List.of("military", "industrial", "consumer")) {
-            ItemDefinition definition = ItemDefinitions.get("domain_subroutine_" + variant);
-            assertNotNull(definition, variant);
-            assertEquals(ItemKind.SUBROUTINE, definition.kind());
-            assertTrue(definition.prefixes().size() >= 2 && definition.suffixes().size() >= 2,
-                    variant + " needs two prefixes and two suffixes for a four-effect roll");
+        assertEquals(subroutineRowCount, ItemDefinitions.all().stream().filter(definition -> definition.type() == ItemType.SUBROUTINE).count());
+        for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.SUBROUTINE)) {
+            assertNotNull(definition.subroutineKind(), definition.id());
+            assertTrue(definition.pool().isEmpty(), definition.id() + " is a subroutine, so it rolls no prefixes or suffixes");
+        }
+        for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.HULL_ITEM)) {
+            assertFalse(definition.pool().isEmpty(), definition.id());
         }
         for (ItemDefinition definition : ItemDefinitions.all()) {
             String icon = definition.icon();

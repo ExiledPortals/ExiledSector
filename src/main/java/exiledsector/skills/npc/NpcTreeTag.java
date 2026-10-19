@@ -8,6 +8,7 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
+import exiledsector.items.DeletedSubroutines;
 import exiledsector.items.NpcItems;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemType;
@@ -151,7 +152,7 @@ public final class NpcTreeTag {
             String itemId = entry.substring(separator + 1);
             SkillNode node = SkillTree.get(nodeId);
             ItemData itemData = NpcItems.item(itemId);
-            boolean fitsTreeSocket = itemData != null
+            boolean fitsTreeSocket = itemData != null && !DeletedSubroutines.isDeleted(itemData)
                     && (itemData.definition() == null || itemData.definition().type() == ItemType.SUBROUTINE);
             if (node != null && node.getType().getTier() == SkillTier.SOCKET && fitsTreeSocket) {
                 shipData.socketItem(nodeId, itemId);

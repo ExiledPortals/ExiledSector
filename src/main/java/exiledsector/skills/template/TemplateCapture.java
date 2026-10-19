@@ -2,6 +2,7 @@ package exiledsector.skills.template;
 
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
+import exiledsector.skills.WormholePartners;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,11 +18,11 @@ public final class TemplateCapture {
     }
 
     public static List<TemplateStep> capture(ShipSkillData shipData, String startingRootId, Map<String, SkillNode> nodesById) {
-        return capture(shipData.getAllocatedNodeIds(), shipData::getOptionalSelection, startingRootId, nodesById);
+        return capture(shipData.getAllocatedNodeIds(), shipData::getOptionalSelection, shipData, startingRootId, nodesById);
     }
 
-    public static List<TemplateStep> capture(Collection<String> orderedNodeIds, UnaryOperator<String> optionOf, String startingRootId,
-                                             Map<String, SkillNode> nodesById) {
+    public static List<TemplateStep> capture(Collection<String> orderedNodeIds, UnaryOperator<String> optionOf, WormholePartners partners,
+                                             String startingRootId, Map<String, SkillNode> nodesById) {
         List<String> unplacedNodeIds = new ArrayList<>();
         for (String nodeId : orderedNodeIds) {
             if (!nodeId.equals(startingRootId) && nodesById.containsKey(nodeId)) {
@@ -40,7 +41,7 @@ public final class TemplateCapture {
             }
             unplacedNodeIds.remove(nextNode.getId());
             place(nextNode, optionOf, placedNodeIds, steps);
-            String partnerId = nextNode.getPairedNodeId();
+            String partnerId = partners.wormholePartner(nextNode);
             if (partnerId != null && unplacedNodeIds.remove(partnerId)) {
                 place(nodesById.get(partnerId), optionOf, placedNodeIds, steps);
             }

@@ -71,7 +71,7 @@ describe('star chart editing', () => {
     });
     try {
       renderWithProviders(<DefinitionsTab vocabulary={vocabulary} />);
-      await screen.findAllByDisplayValue('Military Domain Subroutine', undefined, { timeout: 30000 });
+      await screen.findAllByDisplayValue('Coatl Bastion Gunnery Team', undefined, { timeout: 30000 });
       await switchToStarCharts();
       await screen.findAllByDisplayValue('t3+', undefined, { timeout: 30000 });
 
@@ -89,7 +89,7 @@ describe('star chart editing', () => {
 
   it('edits a star chart definition and saves only star_charts.csv', async () => {
     renderWithProviders(<DefinitionsTab vocabulary={vocabulary} />);
-    await screen.findAllByDisplayValue('Military Domain Subroutine', undefined, { timeout: 30000 });
+    await screen.findAllByDisplayValue('Coatl Bastion Gunnery Team', undefined, { timeout: 30000 });
     await switchToStarCharts();
 
     expect((await screen.findAllByDisplayValue('t3+', undefined, { timeout: 30000 })).length).toBeGreaterThan(0);
@@ -112,7 +112,7 @@ describe('star chart editing', () => {
         <DefinitionsTab vocabulary={vocabulary} />
       </StrictMode>,
     );
-    await screen.findAllByDisplayValue('Military Domain Subroutine', undefined, { timeout: 30000 });
+    await screen.findAllByDisplayValue('Coatl Bastion Gunnery Team', undefined, { timeout: 30000 });
     await switchToStarCharts();
     fireEvent.click(await screen.findByText("The Warden's Vigil", undefined, { timeout: 30000 }));
     const description = (await findLabelled('Tooltip description (optional)')) as HTMLTextAreaElement;

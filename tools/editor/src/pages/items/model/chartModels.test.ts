@@ -24,7 +24,10 @@ const vocabulary = buildVocabulary({
   unlockConditionTypes: [],
   blueprintCategories: [],
   itemTypes: ['subroutine', 'hull_item', 'star_chart'],
-  itemKinds: [{ id: 'subroutine', type: 'subroutine' }],
+  itemKinds: [
+    { id: 'subroutine', type: 'subroutine' },
+    { id: 'bridge', type: 'hull_item' },
+  ],
   itemUnlocks: ['defeated_ziggurat'],
   clearedChartTierPrefix: 'cleared_chart_tier_',
   chartTierRange: [1, 15],
@@ -116,7 +119,7 @@ describe('star chart modifiers', () => {
   });
 
   it('keeps tier bands out of ship modifiers', () => {
-    const modifiers = parseModifiersCsv('id,slot,item_types,lines,name\nHULL_MULT,prefix,subroutine,HULL_MULT:t1=1-2,Reinforced\n').modifiers;
+    const modifiers = parseModifiersCsv('id,slot,item_types,lines,name\nHULL_MULT,prefix,hull_item,HULL_MULT:t1=1-2,Reinforced\n').modifiers;
     expect(validateModifiers(modifiers, vocabulary, new Map(), 'ship', new Set(['HULL_MULT']))).toEqual([
       'HULL_MULT: star_chart_modifiers.csv already has this id, and ids must be unique across both modifier files',
       'HULL_MULT: HULL_MULT has tier bands, but only star charts have a tier',
@@ -178,12 +181,12 @@ describe('star chart definitions', () => {
   });
 
   it('flags tier ranges on ship items, which have no tier', () => {
-    const shipCatalogue = modifierById(parseModifiersCsv('id,slot,item_types,lines,name\nHULL_MULT,prefix,subroutine,HULL_MULT:1:2,Reinforced\n').modifiers);
+    const shipCatalogue = modifierById(parseModifiersCsv('id,slot,item_types,lines,name\nHULL_MULT,prefix,hull_item,HULL_MULT:1:2,Reinforced\n').modifiers);
     const definitions = [
       {
         cells: [],
         id: 'chip',
-        kind: 'subroutine',
+        kind: 'bridge',
         name: 'Chip',
         icon: '',
         rarity: '1',

@@ -23,10 +23,11 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import static exiledsector.items.ItemFixtures.MILITARY;
+import static exiledsector.items.ItemFixtures.SUBROUTINE;
 import static exiledsector.items.ItemFixtures.MILITARY_PREFIXES;
 import static exiledsector.items.ItemFixtures.MILITARY_SUFFIXES;
 import static exiledsector.items.ItemFixtures.row;
+import static exiledsector.items.ItemFixtures.subroutineRow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -48,11 +49,11 @@ class NpcItemsTest {
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
         ItemDefinitions.register(new JSONArray()
-                .put(row(MILITARY, "subroutine", MILITARY_PREFIXES, MILITARY_SUFFIXES))
-                .put(row("relic", "subroutine", MILITARY_PREFIXES, MILITARY_SUFFIXES).put("unique", "true"))
+                .put(subroutineRow(SUBROUTINE))
+                .put(subroutineRow("relic", SubroutineKind.UNIQUE).put("unique", "true"))
                 .put(row("gunners", "weapon_mount", MILITARY_PREFIXES, MILITARY_SUFFIXES).put("unique", "true"))
                 .put(row("core", "reactor", MILITARY_PREFIXES, MILITARY_SUFFIXES))
-                .put(row("unweighted", "subroutine", MILITARY_PREFIXES, MILITARY_SUFFIXES).put("rarity", "0")));
+                .put(subroutineRow("unweighted").put("rarity", "0")));
     }
 
     @AfterEach
@@ -76,10 +77,10 @@ class NpcItemsTest {
 
     @Test
     void anIdCarriesTheDefinitionAndSeedAndRejectsAnythingElse() {
-        String id = NpcItems.id(MILITARY, -7L);
+        String id = NpcItems.id(SUBROUTINE, -7L);
 
         assertTrue(NpcItems.isNpcId(id));
-        assertEquals(new ItemData(MILITARY, -7L), NpcItems.item(id));
+        assertEquals(new ItemData(SUBROUTINE, -7L), NpcItems.item(id));
         assertFalse(NpcItems.isNpcId("socketable_3"));
         assertNull(NpcItems.item("npc:missing_seed"));
         assertNull(NpcItems.item("npc:x/not_a_number"));
@@ -111,7 +112,7 @@ class NpcItemsTest {
             drawn.add(NpcItems.pickDefinition(random, definition -> false).id());
         }
 
-        assertEquals(Set.of(MILITARY), drawn);
+        assertEquals(Set.of(SUBROUTINE), drawn);
     }
 
     @Test
@@ -148,7 +149,7 @@ class NpcItemsTest {
         ShipSkillData data = NpcSkillTreeBuilder.rootedTree(SkillTree.get("root"), 2);
         data.allocate(SkillTree.get("socket_a"), 1);
         data.allocate(SkillTree.get("socket_b"), 1);
-        data.socketItem("socket_a", NpcItems.id(MILITARY, 1L));
+        data.socketItem("socket_a", NpcItems.id(SUBROUTINE, 1L));
         data.socketItem("socket_b", NpcItems.id("relic", 2L));
 
         List<Item> uniques = NpcItems.uniquesCarriedBy(data);
@@ -159,10 +160,10 @@ class NpcItemsTest {
 
     @Test
     void aPreviewRollsTheSameEffectsAsTheItemWouldOnceOwned() {
-        String id = NpcItems.id(MILITARY, 99L);
+        String id = NpcItems.id(SUBROUTINE, 99L);
 
         Item preview = ItemStore.lookup(id);
-        Item owned = ItemStore.get().add(ItemDefinitions.get(MILITARY), 99L);
+        Item owned = ItemStore.get().add(ItemDefinitions.get(SUBROUTINE), 99L);
 
         assertNotNull(preview);
         assertEquals(owned.effects(), preview.effects());
@@ -180,7 +181,7 @@ class NpcItemsTest {
         SkillTree.register(new SkillNode("socket_1", socketType, List.of("root"), 0f, 0f));
         ShipSkillData data = NpcSkillTreeBuilder.rootedTree(SkillTree.get("root"), 1);
         data.allocate(SkillTree.get("socket_1"), 1);
-        data.socketItem("socket_1", NpcItems.id(MILITARY, 5L));
+        data.socketItem("socket_1", NpcItems.id(SUBROUTINE, 5L));
 
         NpcItems.claimForPlayer(data);
 

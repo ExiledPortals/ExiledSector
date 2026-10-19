@@ -8,6 +8,9 @@ import exiledsector.skills.loader.SkillTreeLoader;
 import exiledsector.skills.loader.SkillTypeLoader;
 import exiledsector.skills.loader.TreeRegionFilter;
 import exiledsector.skills.loader.WormholePairValidator;
+import exiledsector.skills.radius.NodeRadii;
+import exiledsector.skills.radius.NodeRadiusCache;
+import exiledsector.skills.radius.RadiusSize;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -35,6 +38,7 @@ public class SkillTree {
     private static Set<String> disabledRegions = Set.of();
     private static boolean loadedCompletely;
     private static SkillTreeTopology topology;
+    private static NodeRadiusCache radiusCache;
 
     private SkillTree() {
     }
@@ -78,6 +82,7 @@ public class SkillTree {
         RING_BELTS.addAll(activeTree.ringBelts);
         STARS.addAll(activeTree.stars);
         topology = SkillTreeTopology.of(NODES.values());
+        radiusCache = NodeRadiusCache.of(NODES.values(), NodeRadii.distances());
     }
 
     public static void clear() {
@@ -108,6 +113,7 @@ public class SkillTree {
         DECLARED_NODES.clear();
         declaredTree = null;
         topology = null;
+        radiusCache = null;
     }
 
     public static void clearTypes() {
@@ -121,6 +127,14 @@ public class SkillTree {
         return topology;
     }
 
+    public static NodeRadiusCache radii() {
+        Map<RadiusSize, Float> distancesBySize = NodeRadii.distances();
+        if (radiusCache == null || !radiusCache.isBuiltWith(distancesBySize)) {
+            radiusCache = NodeRadiusCache.of(NODES.values(), distancesBySize);
+        }
+        return radiusCache;
+    }
+
     public static boolean isLoadedCompletely() {
         return loadedCompletely;
     }
@@ -131,11 +145,13 @@ public class SkillTree {
         }
         NODES.put(node.getId(), node);
         topology = null;
+        radiusCache = null;
     }
 
     public static void unregister(String nodeId) {
         NODES.remove(nodeId);
         topology = null;
+        radiusCache = null;
     }
 
     public static SkillNode get(String nodeId) {

@@ -25,7 +25,7 @@ class ItemHybridTest {
     private static final Modifier CAPACITY = Modifier.single(ModifierSlot.PREFIX, ModifierLine.range("FLUX_CAPACITY_MULT", 4f, 6f));
     private static final Modifier SHIELDING = Modifier.single(ModifierSlot.SUFFIX, ModifierLine.range("SHIELD_DAMAGE_TAKEN_MULT", -6f, -4f));
 
-    private static final ItemDefinition FRAME = new ItemDefinition("frame", ItemKind.SUBROUTINE, "Frame", ItemDefinition.FALLBACK_ICON,
+    private static final ItemDefinition FRAME = new ItemDefinition("frame", ItemKind.BRIDGE, "Frame", ItemDefinition.FALLBACK_ICON,
             1f, false, "", List.of(new PoolEntry(PLATED_FRAME, 1f), new PoolEntry(CAPACITY, 1f)),
             List.of(new PoolEntry(FORTITUDE, 1f), new PoolEntry(SHIELDING, 1f)), "");
 

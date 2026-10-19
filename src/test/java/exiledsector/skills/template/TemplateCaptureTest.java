@@ -5,6 +5,7 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.WormholePartners;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.npc.RealSkillData;
 import org.junit.jupiter.api.AfterEach;
@@ -185,7 +186,8 @@ class TemplateCaptureTest {
         node("b", "a");
         node("c", "root");
 
-        List<TemplateStep> steps = TemplateCapture.capture(List.of("c", "b", "a"), nodeId -> null, "root", SkillTree.getAllNodes());
+        List<TemplateStep> steps = TemplateCapture.capture(List.of("c", "b", "a"), nodeId -> null, WormholePartners::pairedWith, "root",
+                SkillTree.getAllNodes());
 
         assertEquals(List.of("c", "a", "b"), steps.stream().map(TemplateStep::nodeId).toList());
     }

@@ -24,6 +24,7 @@ import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemNames;
 import exiledsector.items.StarChartCurrency;
+import exiledsector.items.SubroutineKind;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
 import exiledsector.ui.inspect.SkillTreeCodexListener;
@@ -98,7 +99,7 @@ class ExiledSectorModPluginTest {
         when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/npc_faction_volumes.csv", "exiledSector"))
                 .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("id", "data/config/exiledSector/subroutines.csv", "exiledSector"))
-                .thenReturn(new JSONArray("[{\"id\": \"chip\", \"prefixes\": \"HULL_MULT:4:6\"}]"));
+                .thenReturn(new JSONArray("[{\"id\": \"chip\", \"kind\": \"VOLUME\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("id", "data/config/exiledSector/hull_items.csv", "exiledSector"))
                 .thenReturn(new JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("section", "data/config/exiledSector/hull_item_implicits.csv", "exiledSector"))
@@ -325,6 +326,7 @@ class ExiledSectorModPluginTest {
         new ExiledSectorModPlugin().onApplicationLoad();
 
         assertEquals(ItemKind.SUBROUTINE, ItemDefinitions.get("chip").kind());
+        assertEquals(SubroutineKind.VOLUME, ItemDefinitions.get("chip").subroutineKind());
     }
 
     @Test

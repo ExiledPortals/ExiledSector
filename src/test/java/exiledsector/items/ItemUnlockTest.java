@@ -51,13 +51,13 @@ class ItemUnlockTest {
         when(player.getLevel()).thenReturn(15);
         when(sector.getPlayerStats()).thenReturn(player);
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.row("basic", "subroutine", "HULL_MULT:4:6"))
+                .put(ItemFixtures.row("basic", "bridge", "HULL_MULT:4:6"))
                 .put(ItemFixtures.row("open_unique", "crew_quarters", "HULL_MULT:4:6").put("unique", "true"))
-                .put(ItemFixtures.row("vambrace", "subroutine", "HULL_MULT:4:6").put("unique", "true").put("unlock", "found_onslaught_mk1"))
-                .put(ItemFixtures.row("coil", "subroutine", "HULL_MULT:4:6").put("unique", "true").put("unlock", "found_gate_hauler"))
-                .put(ItemFixtures.row("circuit", "subroutine", "HULL_MULT:4:6").put("unique", "true").put("unlock", "found_planetkiller"))
+                .put(ItemFixtures.row("vambrace", "bridge", "HULL_MULT:4:6").put("unique", "true").put("unlock", "found_onslaught_mk1"))
+                .put(ItemFixtures.row("coil", "bridge", "HULL_MULT:4:6").put("unique", "true").put("unlock", "found_gate_hauler"))
+                .put(ItemFixtures.row("circuit", "bridge", "HULL_MULT:4:6").put("unique", "true").put("unlock", "found_planetkiller"))
                 .put(ItemFixtures.row("survivor", "bridge", "HULL_MULT:4:6").put("unique", "true").put("unlock", "defeated_ziggurat"))
-                .put(ItemFixtures.row("mystery", "subroutine", "HULL_MULT:4:6").put("unique", "true").put("unlock", "found_something_else")));
+                .put(ItemFixtures.row("mystery", "bridge", "HULL_MULT:4:6").put("unique", "true").put("unlock", "found_something_else")));
     }
 
     @AfterEach
@@ -181,7 +181,7 @@ class ItemUnlockTest {
         for (String dataPath : List.of(ItemDefinitions.SUBROUTINES_PATH, ItemDefinitions.HULL_ITEMS_PATH)) {
             String csv = Files.readString(RealSkillData.projectRoot().resolve(dataPath), StandardCharsets.UTF_8);
             JSONArray fileRows = CDL.toJSONArray(csv.replace("\r\n", "\n"));
-            for (int i = 0; i < fileRows.length(); i++) {
+            for (int i = 0; fileRows != null && i < fileRows.length(); i++) {
                 rows.put(fileRows.getJSONObject(i));
             }
         }
@@ -206,8 +206,8 @@ class ItemUnlockTest {
         when(memory.getInt(anyString())).thenAnswer(call -> ((Number) values.get(call.<String>getArgument(0))).intValue());
         when(sector.getMemoryWithoutUpdate()).thenReturn(memory);
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.row("basic", "subroutine", "HULL_MULT:4:6"))
-                .put(ItemFixtures.row("charted", "subroutine", "HULL_MULT:4:6").put("unique", "true").put("unlock", "cleared_chart_tier_4")));
+                .put(ItemFixtures.row("basic", "bridge", "HULL_MULT:4:6"))
+                .put(ItemFixtures.row("charted", "bridge", "HULL_MULT:4:6").put("unique", "true").put("unlock", "cleared_chart_tier_4")));
         ItemDefinition charted = ItemDefinitions.get("charted");
 
         assertFalse(ItemUnlock.unlockConditionMet(charted, sector));

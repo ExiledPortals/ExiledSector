@@ -36,7 +36,7 @@ class SectionItemDropsTest {
     @BeforeEach
     void setUp() throws Exception {
         ItemDefinitions.register(new JSONArray()
-                .put(row("chip", "subroutine", "HULL_PERCENT:4:6"))
+                .put(ItemFixtures.subroutineRow("chip"))
                 .put(row("bridge_basic", "bridge", "HULL_PERCENT:4:6"))
                 .put(row("emitter_basic", "shield_generator", "HULL_PERCENT:4:6"))
                 .put(row("bridge_relic", "bridge", "HULL_PERCENT:4:6").put("unique", "true")));

@@ -14,7 +14,7 @@ class ItemRollOddsTest {
     private static final double EXACT = 1e-9;
 
     private static ItemDefinition definition(boolean unique, List<PoolEntry> prefixes, List<PoolEntry> suffixes) {
-        return new ItemDefinition("odds", ItemKind.SUBROUTINE, "Odds", ItemDefinition.FALLBACK_ICON, 1f, unique, "",
+        return new ItemDefinition("odds", ItemKind.BRIDGE, "Odds", ItemDefinition.FALLBACK_ICON, 1f, unique, "",
                 prefixes, suffixes, "");
     }
 

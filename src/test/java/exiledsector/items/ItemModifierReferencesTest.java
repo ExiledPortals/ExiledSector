@@ -77,15 +77,12 @@ class ItemModifierReferencesTest {
     @Test
     void aPoolEntryForAModifierScopedToAnotherItemTypeIsSkipped() throws Exception {
         ItemModifiers.register(new JSONArray()
-                .put(ItemFixtures.modifierRow("VENT_RATE_PERCENT", "prefix", "hull_item", "VENT_RATE_PERCENT:1:2", "Venting"))
-                .put(ItemFixtures.modifierRow("HULL_MULT", "prefix", "subroutine;hull_item", "HULL_MULT:4:6", "Reinforced")));
+                .put(ItemFixtures.modifierRow("VENT_RATE_PERCENT", "prefix", "star_chart", "VENT_RATE_PERCENT:1:2", "Venting"))
+                .put(ItemFixtures.modifierRow("HULL_MULT", "prefix", "hull_item", "HULL_MULT:4:6", "Reinforced")));
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.row("chip", "subroutine", "@VENT_RATE_PERCENT; @HULL_MULT"))
-                .put(ItemFixtures.row("vent", "reactor", "@VENT_RATE_PERCENT; @HULL_MULT")));
+                .put(ItemFixtures.row("chip", "bridge", "@VENT_RATE_PERCENT; @HULL_MULT")));
 
         assertEquals(List.of("HULL_MULT"), ItemDefinitions.get("chip").prefixes().stream().map(entry -> entry.modifier().id()).toList());
-        assertEquals(List.of("VENT_RATE_PERCENT", "HULL_MULT"),
-                ItemDefinitions.get("vent").prefixes().stream().map(entry -> entry.modifier().id()).toList());
     }
 
     @Test

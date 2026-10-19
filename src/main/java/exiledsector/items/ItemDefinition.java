@@ -11,26 +11,37 @@ import java.util.ArrayList;
 import java.util.List;
 
 public record ItemDefinition(String id, ItemKind kind, String name, String icon, float rarity, boolean unique,
-                                   String description, List<PoolEntry> prefixes, List<PoolEntry> suffixes, String unlock, ItemType type) {
+                                   String description, List<PoolEntry> prefixes, List<PoolEntry> suffixes, String unlock, ItemType type,
+                                   SubroutineKind subroutineKind) {
 
     public static final String FALLBACK_ICON = "graphics/icons/cargo/chip1.png";
     private static final Logger LOG = Logger.getLogger(ItemDefinition.class);
     private static final String ENTRY_SEPARATOR = ";";
     static final String SECTION_COLUMN = "section";
+    static final String SUBROUTINE_KIND_COLUMN = "kind";
 
     public ItemDefinition {
         if (kind != null) {
             type = kind.type();
         }
+        if (type != ItemType.SUBROUTINE) {
+            subroutineKind = null;
+        }
     }
 
     public ItemDefinition(String id, ItemKind kind, String name, String icon, float rarity, boolean unique, String description,
                           List<PoolEntry> prefixes, List<PoolEntry> suffixes, String unlock) {
-        this(id, kind, name, icon, rarity, unique, description, prefixes, suffixes, unlock, null);
+        this(id, kind, name, icon, rarity, unique, description, prefixes, suffixes, unlock, null, null);
     }
 
     static ItemDefinition parseSubroutine(JSONObject row) {
-        return parse(row, ItemKind.SUBROUTINE);
+        String definitionId = definitionId(row);
+        String kindText = row.optString(SUBROUTINE_KIND_COLUMN, "").trim();
+        SubroutineKind subroutineKind = SubroutineKind.byIdOrNull(kindText);
+        if (subroutineKind == null) {
+            throw new IllegalArgumentException(definitionId + " has kind \"" + kindText + "\"; expected one of " + SubroutineKind.ids());
+        }
+        return parseShared(row, ItemKind.SUBROUTINE, ItemType.SUBROUTINE, new Pools(List.of(), List.of()), subroutineKind);
     }
 
     static ItemDefinition parseHullItem(JSONObject row) {
@@ -51,26 +62,42 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
     }
 
     static ItemDefinition parse(JSONObject row, ItemKind kind, ItemType itemType) {
-        String definitionId = row.optString("id", "").trim();
-        if (definitionId.isEmpty()) {
-            throw new IllegalArgumentException("a row has no id");
+        if (itemType == ItemType.SUBROUTINE) {
+            return parseSubroutine(row);
         }
-        String icon = row.optString("icon", "").trim();
-        float rarity = (float) row.optDouble("rarity", 1.0);
-        if (!(rarity >= 0f)) {
-            throw new IllegalArgumentException("rarity must be zero or more");
-        }
+        String definitionId = definitionId(row);
         List<PoolEntry> prefixes = parsePool(definitionId, row.optString("prefixes", ""), ModifierSlot.PREFIX, itemType);
         List<PoolEntry> suffixes = parsePool(definitionId, row.optString("suffixes", ""), ModifierSlot.SUFFIX, itemType);
         if (prefixes.isEmpty() && suffixes.isEmpty()) {
             throw new IllegalArgumentException("it has no prefixes or suffixes");
         }
         rejectRepeats(prefixes, suffixes);
+        return parseShared(row, kind, itemType, new Pools(prefixes, suffixes), null);
+    }
+
+    private record Pools(List<PoolEntry> prefixes, List<PoolEntry> suffixes) {
+    }
+
+    private static String definitionId(JSONObject row) {
+        String definitionId = row.optString("id", "").trim();
+        if (definitionId.isEmpty()) {
+            throw new IllegalArgumentException("a row has no id");
+        }
+        return definitionId;
+    }
+
+    private static ItemDefinition parseShared(JSONObject row, ItemKind kind, ItemType itemType, Pools pools, SubroutineKind subroutineKind) {
+        String definitionId = definitionId(row);
+        String icon = row.optString("icon", "").trim();
+        float rarity = (float) row.optDouble("rarity", 1.0);
+        if (!(rarity >= 0f)) {
+            throw new IllegalArgumentException("rarity must be zero or more");
+        }
         boolean unique = "true".equalsIgnoreCase(row.optString("unique", "").trim());
         return new ItemDefinition(definitionId, kind,
                 nameOrId(row.optString("name", "").trim(), definitionId), icon.isEmpty() ? FALLBACK_ICON : icon, rarity, unique,
-                row.optString("description", "").trim(), prefixes, suffixes,
-                row.optString("unlock", "").trim(), itemType);
+                row.optString("description", "").trim(), pools.prefixes(), pools.suffixes(),
+                row.optString("unlock", "").trim(), itemType, subroutineKind);
     }
 
     private static void rejectRepeats(List<PoolEntry> prefixes, List<PoolEntry> suffixes) {

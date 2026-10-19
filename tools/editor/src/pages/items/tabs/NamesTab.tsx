@@ -185,7 +185,7 @@ function RareNames({ document, rareNames }: { document: DataDocument<NamesTabMod
     });
 
   const addHullItem = async () => {
-    const hullItemId = await promptText('Add hull item', 'Item id (as in the id column of subroutines.csv or hull_items.csv)');
+    const hullItemId = await promptText('Add hull item', 'Item id (as in the id column of hull_items.csv)');
     if (!hullItemId) {
       return;
     }

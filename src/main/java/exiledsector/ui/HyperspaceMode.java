@@ -4,6 +4,7 @@ import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillTreeTopology;
 import exiledsector.skills.layout.Star;
 import exiledsector.skills.tags.SkillTags;
 import exiledsector.ui.hyperspace.HyperspaceAnchor;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 final class HyperspaceMode {
@@ -34,13 +36,16 @@ final class HyperspaceMode {
     private Set<String> anchorIds = Set.of();
     private Set<String> hiddenStarIds = Set.of();
     private final Predicate<SkillNode> nodeHidden;
+    private final Supplier<List<SkillTreeTopology.WormholePair>> shipWormholePairs;
     private float mapStarRadius;
     private boolean reopenStats;
 
-    HyperspaceMode(TreeCamera treeCamera, SkillTreeStatPanel statPanel, Predicate<SkillNode> nodeHidden) {
+    HyperspaceMode(TreeCamera treeCamera, SkillTreeStatPanel statPanel, Predicate<SkillNode> nodeHidden,
+                   Supplier<List<SkillTreeTopology.WormholePair>> shipWormholePairs) {
         this.treeCamera = treeCamera;
         this.statPanel = statPanel;
         this.nodeHidden = nodeHidden;
+        this.shipWormholePairs = shipWormholePairs;
     }
 
     Set<String> hiddenStarIds() {
@@ -106,7 +111,7 @@ final class HyperspaceMode {
             ids.add(anchor.id());
         }
         anchorIds = ids;
-        ghostFlights.setRoutes(HyperspaceRoute.between(anchors, SkillTree.topology().wormholePairs()));
+        ghostFlights.setRoutes(HyperspaceRoute.between(anchors, shipWormholePairs.get()));
         treeCamera.stopMoving();
         mapStarRadius = HyperspaceAnchor.mapStarRadius(anchors, STAR_SCALE);
         HyperspaceCamera fittedCamera = framing(canvasPosition);
