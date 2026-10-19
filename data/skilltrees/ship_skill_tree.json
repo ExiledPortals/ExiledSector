@@ -973,7 +973,8 @@
 				"small_flux_optional_16",
 				"small_flux_optional_14",
 				"small_flux_optional_35",
-				"operations_center_1"
+				"operations_center_1",
+				"modular_hull_socket_20"
 			],
 			"x": 0,
 			"y": 4500,
@@ -1209,7 +1210,8 @@
 				"small_flux_optional_44",
 				"small_flux_optional_2",
 				"flux_dissipation_1",
-				"survey_generic_cost_reduction_1"
+				"survey_generic_cost_reduction_1",
+				"modular_hull_socket_18"
 			],
 			"x": 0,
 			"y": -3000,
@@ -2019,7 +2021,8 @@
 				"small_flux_optional_29",
 				"small_flux_optional_31",
 				"small_flux_optional_11",
-				"small_flux_optional_34"
+				"small_flux_optional_34",
+				"modular_hull_socket_17"
 			],
 			"x": 2810,
 			"y": 1051,
@@ -2207,7 +2210,8 @@
 				"small_flux_optional_19",
 				"small_flux_optional_45",
 				"crew_capacity_flat_1",
-				"cargo_capacity_flat_2"
+				"cargo_capacity_flat_2",
+				"modular_hull_socket_16"
 			],
 			"x": -2831,
 			"y": 992,
@@ -5439,7 +5443,8 @@
 				"small_flux_optional_9",
 				"small_flux_optional_7",
 				"REDACTED_1",
-				"pd_damage_to_missiles_2"
+				"pd_damage_to_missiles_2",
+				"modular_hull_socket_19"
 			],
 			"x": 3662,
 			"y": -2616,
@@ -5455,7 +5460,8 @@
 			"connectedTo": [
 				"small_flux_optional_23",
 				"dictat_wormhole_1",
-				"small_flux_optional_21"
+				"small_flux_optional_21",
+				"modular_hull_socket_12"
 			],
 			"x": -3641,
 			"y": -2645,
@@ -7179,6 +7185,78 @@
 			"orbitAngle": 270,
 			"tags": [
 				"tritachyon"
+			]
+		},
+		{
+			"id": "modular_hull_socket_12",
+			"type": "modular_hull_socket",
+			"connectedTo": [
+				"small_flux_optional_22"
+			],
+			"x": -3400,
+			"y": -2435,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "modular_hull_socket_16",
+			"type": "modular_hull_socket",
+			"connectedTo": [
+				"small_flux_optional_39"
+			],
+			"x": -2438,
+			"y": 1267,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "modular_hull_socket_17",
+			"type": "modular_hull_socket",
+			"connectedTo": [
+				"small_flux_optional_30"
+			],
+			"x": 2389,
+			"y": 1315,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "modular_hull_socket_18",
+			"type": "modular_hull_socket",
+			"connectedTo": [
+				"small_flux_optional_4"
+			],
+			"x": 327,
+			"y": -2679,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "modular_hull_socket_19",
+			"type": "modular_hull_socket",
+			"connectedTo": [
+				"small_flux_optional_8"
+			],
+			"x": 3312,
+			"y": -2597,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"id": "modular_hull_socket_20",
+			"type": "modular_hull_socket",
+			"connectedTo": [
+				"small_flux_optional_15"
+			],
+			"x": -364,
+			"y": 4166,
+			"tags": [
+				"core"
 			]
 		}
 	],
