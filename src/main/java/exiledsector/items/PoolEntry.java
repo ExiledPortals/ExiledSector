@@ -34,20 +34,24 @@ public record PoolEntry(Modifier modifier, float weight, TierRange tiers) {
     }
 
     static PoolEntry parse(String entryText, ModifierSlot slot) {
-        return parse(entryText, slot, null);
+        return parse(entryText, slot, (ModifierScope) null);
     }
 
     static PoolEntry parse(String entryText, ModifierSlot slot, ItemType itemType) {
+        return parse(entryText, slot, ModifierScope.of(itemType));
+    }
+
+    static PoolEntry parse(String entryText, ModifierSlot slot, ModifierScope scope) {
         if (ItemModifiers.isReference(entryText)) {
-            return parseReference(entryText, slot, itemType);
+            return parseReference(entryText, slot, scope);
         }
         ModifierLine.Parsed parsed = ModifierLine.parse(entryText);
         float weight = parseWeight(parsed.trailingField(), entryText);
-        String effectName = ItemDefinition.currentEffectName(parsed.line().effectName(), ItemEffects.forType(itemType));
+        String effectName = ItemDefinition.currentEffectName(parsed.line().effectName(), ItemEffects.forType(scope == null ? null : scope.itemType()));
         return effectName == null ? null : new PoolEntry(Modifier.single(slot, parsed.line().named(effectName)), weight);
     }
 
-    private static PoolEntry parseReference(String entryText, ModifierSlot slot, ItemType itemType) {
+    private static PoolEntry parseReference(String entryText, ModifierSlot slot, ModifierScope scope) {
         String[] fields = entryText.substring(ItemModifiers.REFERENCE_MARK.length()).split(WEIGHT_SEPARATOR, -1);
         boolean tierGated = fields.length >= 2 && isTierRangeText(fields[fields.length - 1]);
         int weightFields = fields.length - 1 - (tierGated ? 1 : 0);
@@ -55,7 +59,7 @@ public record PoolEntry(Modifier modifier, float weight, TierRange tiers) {
             throw new IllegalArgumentException("entry \"" + entryText + "\" is not @MODIFIER_ID, @MODIFIER_ID:weight, @MODIFIER_ID:tMIN-MAX "
                     + "or @MODIFIER_ID:weight:tMIN-MAX");
         }
-        Modifier referencedModifier = ItemModifiers.referenced(fields[0].trim(), slot, itemType);
+        Modifier referencedModifier = ItemModifiers.referenced(fields[0].trim(), slot, scope);
         float weight = parseWeight(weightFields == 1 ? fields[1] : null, entryText);
         TierRange tiers = tierGated ? parseTierRange(fields[fields.length - 1], entryText) : TierRange.ANY;
         return new PoolEntry(referencedModifier, weight, tiers);

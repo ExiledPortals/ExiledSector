@@ -1,4 +1,4 @@
-import { AFFIX_GROUPS, HULL_ITEM_TYPE, isTrueText, itemTypeOfKind, type ItemDefinition } from './definitions.ts';
+import { HULL_ITEM_TYPE, isTrueText, poolEntries, referenceGroups, type ItemDefinition } from './definitions.ts';
 import type { ImplicitRow } from './implicits.ts';
 import type { ItemModifier, ModifierUsage } from './modifiers.ts';
 
@@ -19,14 +19,14 @@ export function modifierUsage(definitions: ItemDefinition[], implicitRows: Impli
     return entry;
   };
   for (const definition of definitions) {
-    for (const group of AFFIX_GROUPS) {
-      for (const entry of definition[group.key]) {
+    for (const group of referenceGroups(definition)) {
+      for (const entry of poolEntries(definition, group.key)) {
         if (entry.inlineText !== undefined) {
           continue;
         }
         const entryUsage = usageOf(entry.modifierId);
         entryUsage.items.push(definition.id);
-        addOnce(entryUsage.itemTypes, itemTypeOfKind(definition.kind));
+        addOnce(entryUsage.itemTypes, group.itemType);
         if (!isTrueText(definition.unique)) {
           entryUsage.nonUniqueItems.push(definition.id);
         }
@@ -52,8 +52,8 @@ export function isUsed(usage: ModifierUsage | undefined): boolean {
 export function renameModifierReferences(definitions: ItemDefinition[], implicitRows: ImplicitRow[], fromId: string, toId: string): number {
   let renamed = 0;
   for (const definition of definitions) {
-    for (const group of AFFIX_GROUPS) {
-      for (const entry of definition[group.key]) {
+    for (const group of referenceGroups(definition)) {
+      for (const entry of poolEntries(definition, group.key)) {
         if (entry.inlineText === undefined && entry.modifierId === fromId) {
           entry.modifierId = toId;
           renamed++;
@@ -75,8 +75,8 @@ export function renameModifierReferences(definitions: ItemDefinition[], implicit
 export function referenceIssues(definitions: ItemDefinition[], implicitRows: ImplicitRow[], catalogue: Map<string, ItemModifier>): string[] {
   const issues: string[] = [];
   for (const definition of definitions) {
-    for (const group of AFFIX_GROUPS) {
-      for (const entry of definition[group.key]) {
+    for (const group of referenceGroups(definition)) {
+      for (const entry of poolEntries(definition, group.key)) {
         if (entry.inlineText !== undefined) {
           continue;
         }

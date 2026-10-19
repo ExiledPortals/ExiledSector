@@ -32,7 +32,7 @@ class WorkbenchStringKeysTest {
         for (CraftingCurrency currency : CraftingCurrency.values()) {
             require(catalogue, SocketWorkbenchPanel.descriptionKey(currency), missing);
             if (currency == CraftingCurrency.CORRUPTION) {
-                for (CorruptionOutcome outcome : CorruptionOutcome.values()) {
+                for (CorruptionOutcome outcome : CorruptionOutcome.NANOSWARM_OUTCOMES) {
                     for (ItemNature nature : ItemNature.values()) {
                         require(catalogue, SocketWorkbenchPanel.usedNoticeKey(currency, outcome, nature), missing);
                     }

@@ -30,7 +30,7 @@ class CatalogueLintTest {
     private static final Set<String> REPORTED_LOCALES = Set.of(LocaleChain.SIMPLIFIED_CHINESE);
     private static final String HULL_MODS_FILE = "data/hullmods/hull_mods.csv";
     private static final List<String> ITEM_DEFINITION_FILES = List.of("data/config/exiledSector/subroutines.csv", "data/config/exiledSector/hull_items.csv",
-            "data/config/exiledSector/star_charts.csv");
+            "data/config/exiledSector/star_charts.csv", "data/config/exiledSector/wormhole_anchors.csv");
     private static final List<String> ITEM_MODIFIERS_FILES = List.of("data/config/exiledSector/item_modifiers.csv",
             "data/config/exiledSector/star_chart_modifiers.csv");
     private static final String ITEM_NAMES_FILE = "data/config/exiledSector/item_names.json";

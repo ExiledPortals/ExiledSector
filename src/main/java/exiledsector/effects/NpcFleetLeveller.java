@@ -31,6 +31,7 @@ import exiledsector.items.NpcItems;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemUnlock;
+import exiledsector.items.SubroutineSocketLimits;
 
 import java.util.List;
 import java.util.Map;
@@ -54,7 +55,8 @@ public final class NpcFleetLeveller {
         String seedPrefix = null;
         int playerLevel = 0;
         List<Integer> playerShipPowers = List.of();
-        String factionRegion = npcFleet.getFaction() == null ? null : NpcFactionVolumes.regionFor(npcFleet.getFaction().getId());
+        String fleetFactionId = npcFleet.getFaction() == null ? null : npcFleet.getFaction().getId();
+        String factionRegion = fleetFactionId == null ? null : NpcFactionVolumes.regionFor(fleetFactionId);
         NpcTreeSize.PercentRange chartTreeRange = ChartTiers.fleetStrengthRangeFor(npcFleet.getMemoryWithoutUpdate());
         String chartSeed = ChartIds.fleetSeed(npcFleet.getMemoryWithoutUpdate());
         List<FleetMemberAPI> members = npcFleet.getFleetData().getMembersListCopy();
@@ -76,7 +78,7 @@ public final class NpcFleetLeveller {
                 String memberSeedKey = chartSeed != null ? String.valueOf(memberIndex) : member.getId();
                 Random itemRandom = member.isFlagship() && carriesItems(npcFleet)
                         ? Seeds.random(seedPrefix + memberSeedKey + HULL_ITEM_SEED_SUFFIX) : null;
-                memberRecord = decide(member, playerLevel, playerShipPowers, chartTreeRange, factionRegion,
+                memberRecord = decide(member, playerLevel, playerShipPowers, chartTreeRange, factionRegion, fleetFactionId,
                         Seeds.random(seedPrefix + memberSeedKey), itemRandom, definition -> ItemUnlock.canDrop(definition, Global.getSector()));
                 recordsByMemberId.put(member.getId(), memberRecord);
                 NpcUniqueAlerts.markIfCarrying(npcFleet, memberRecord);
@@ -102,11 +104,11 @@ public final class NpcFleetLeveller {
 
     static String decide(FleetMemberAPI member, int playerLevel, List<Integer> playerShipPowers, String factionRegion, Random random,
                          Random itemRandom, Predicate<ItemDefinition> uniqueAllowed) {
-        return decide(member, playerLevel, playerShipPowers, null, factionRegion, random, itemRandom, uniqueAllowed);
+        return decide(member, playerLevel, playerShipPowers, null, factionRegion, null, random, itemRandom, uniqueAllowed);
     }
 
     static String decide(FleetMemberAPI member, int playerLevel, List<Integer> playerShipPowers, NpcTreeSize.PercentRange treeRange,
-                         String factionRegion, Random random, Random itemRandom, Predicate<ItemDefinition> uniqueAllowed) {
+                         String factionRegion, String fleetFactionId, Random random, Random itemRandom, Predicate<ItemDefinition> uniqueAllowed) {
         if (!NpcShipSelector.isCandidate(member) || !NpcShipSelector.isChosen(member, random)) {
             return NpcTreeRecords.NOT_LEVELLED;
         }
@@ -120,8 +122,8 @@ public final class NpcFleetLeveller {
                 NpcFreedOp.of(member, hullMods), nodeCount, itemCount, SkillTypeUnlockStatus.lockedFor(null),
                 member.getHullSpec().getHullId()), random);
         for (String socketNodeId : treeBuild.claimedSockets()) {
-            ItemDefinition definition = NpcItems.pickDefinition(itemRandom, uniqueAllowed);
-            if (definition != null) {
+            ItemDefinition definition = NpcItems.pickDefinition(itemRandom, fleetFactionId, uniqueAllowed);
+            if (definition != null && !SubroutineSocketLimits.limitReached(definition, socketNodeId, treeBuild.shipData().getSocketedItems())) {
                 treeBuild.shipData().socketItem(socketNodeId, NpcItems.id(ItemData.rolled(definition, itemRandom.nextLong())));
             }
         }

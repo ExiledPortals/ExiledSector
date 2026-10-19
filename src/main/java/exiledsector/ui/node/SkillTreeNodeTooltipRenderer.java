@@ -13,6 +13,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
+import exiledsector.items.WormholeAnchor;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeTooltipTable;
 import exiledsector.ui.TooltipExpansion;
@@ -158,6 +159,9 @@ final class SkillTreeNodeTooltipRenderer {
         }
         if (socketed != null) {
             List<DescriptionLine> lines = new ArrayList<>();
+            if (socketed instanceof WormholeAnchor anchor) {
+                anchor.statusLines().forEach(statusLine -> lines.add(new DescriptionLine(statusLine, false)));
+            }
             for (StyledText effectLine : socketed.effectLines(expanded, fleetMember.getHullSpec().getHullSize())) {
                 lines.add(new DescriptionLine(effectLine, false));
             }

@@ -156,6 +156,40 @@ describe('item modifiers', () => {
     expect(implicitRows[0].implicits).toEqual([{ modifierId: 'HYBRID_ARMOR_HULL_PLATING' }]);
   });
 
+  it('counts unique subroutine lines as unique_subroutine uses, renames them and checks their scope', () => {
+    const withUniques = buildVocabulary({
+      effects: [{ name: 'HULL_MULT', statMode: 'MULT', lowerIsBetter: false }],
+      tags: { theme: [], region: [], requirement: [] },
+      tiers: [],
+      unlockConditionTypes: [],
+      blueprintCategories: [],
+      itemTypes: ['subroutine', 'hull_item', 'star_chart'],
+      itemKinds: [{ id: 'subroutine', type: 'subroutine' }],
+      modifierScopes: ['subroutine', 'unique_subroutine', 'hull_item', 'star_chart'],
+      itemUnlocks: [],
+    });
+    const items = parseItemDefinitions(
+      'id,name,icon,rarity,unique,kind,description,lines,source,unlock\nlattice,Lattice,,10,true,UNIQUE,,@HULL_MULT_RELIC; HULL_MULT:1:1,site:wreck,\n',
+      'id,section,name,rarity,unique,prefixes,suffixes\n',
+    ).definitions;
+    const usage = modifierUsage(items, []);
+    const modifiers = parseModifiersCsv(
+      'id,slot,item_types,lines,name\n' +
+        'HULL_MULT_RELIC,suffix,hull_item,HULL_MULT:4:6,\n' +
+        'HULL_MULT_SUFFIX,suffix,unique_subroutine,HULL_MULT:4:6,\n',
+    ).modifiers;
+
+    expect(shipItemTypes(withUniques)).toEqual(['unique_subroutine', 'hull_item']);
+    expect(usage.get('HULL_MULT_RELIC')).toEqual({ items: ['lattice'], nonUniqueItems: [], itemTypes: ['unique_subroutine'], implicitSections: [] });
+    expect(validateModifiers(modifiers, withUniques, usage)).toEqual([
+      'HULL_MULT_RELIC: a unique_subroutine rolls it, so item types must include unique_subroutine',
+      'HULL_MULT_SUFFIX: unique subroutine lines are prefixes, so a modifier for unique_subroutine must be a prefix',
+    ]);
+    expect(referenceIssues(items, [], modifierById(modifiers))).toEqual(['lattice lists HULL_MULT_RELIC as a prefix, but it is a suffix']);
+    expect(renameModifierReferences(items, [], 'HULL_MULT_RELIC', 'HULL_MULT_SALVAGED')).toBe(1);
+    expect(items[0].lines).toEqual([{ modifierId: 'HULL_MULT_SALVAGED', weight: '' }, { modifierId: '', weight: '', inlineText: 'HULL_MULT:1:1' }]);
+  });
+
   it('flags references that a modifier edit breaks', () => {
     const implicitRows = parseImplicitsCsv(IMPLICITS_CSV, vocabulary).rows;
     const catalogue = modifierById(

@@ -47,11 +47,11 @@ public class GrantUniqueHullItemsCommand implements BaseCommand {
             }
         }
         if (grantedUniqueCount == 0) {
-            Console.showMessage("No unique hull items are defined.");
+            Console.showMessage("No unique items are defined.");
             return CommandResult.ERROR;
         }
 
-        Console.showMessage("Added one copy of each of " + grantedUniqueCount + (grantedUniqueCount == 1 ? " unique hull item" : " unique hull items")
+        Console.showMessage("Added one copy of each of " + grantedUniqueCount + (grantedUniqueCount == 1 ? " unique item" : " unique items")
                 + " to your cargo.");
         return CommandResult.SUCCESS;
     }

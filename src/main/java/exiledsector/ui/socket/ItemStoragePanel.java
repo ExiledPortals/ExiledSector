@@ -115,6 +115,7 @@ public final class ItemStoragePanel extends HoloPanel {
     private List<ItemStorageRow> storageRows = List.of();
     private Item selectedItem;
     private String placingHint;
+    private String socketRefusalNotice;
     private boolean targetingSocket;
     private List<Item> pendingDisassembly = List.of();
     private boolean disassemblyMode;
@@ -245,9 +246,23 @@ public final class ItemStoragePanel extends HoloPanel {
         setSelected(item, null);
     }
 
+    public void showRefusal(String refusal) {
+        socketRefusalNotice = refusal;
+        queue(() -> rebuildFooter(ItemStorageQuery.apply(storageRows, storageFilter)));
+    }
+
+    public void clearRefusal() {
+        if (socketRefusalNotice == null) {
+            return;
+        }
+        socketRefusalNotice = null;
+        queue(() -> rebuildFooter(ItemStorageQuery.apply(storageRows, storageFilter)));
+    }
+
     public void setSelected(Item item, String hint) {
         selectedItem = item;
         placingHint = hint;
+        socketRefusalNotice = null;
         if (item != null) {
             leaveDisassemblyMode();
         }
@@ -256,8 +271,10 @@ public final class ItemStoragePanel extends HoloPanel {
 
     public void setTargetingSocket(boolean targeting) {
         if (targeting == targetingSocket) {
+            clearRefusal();
             return;
         }
+        socketRefusalNotice = null;
         targetingSocket = targeting;
         if (targeting) {
             leaveDisassemblyMode();
@@ -305,7 +322,8 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private void disassembleNow(List<Item> requested, boolean leaveMode) {
-        List<Item> targets = requested.stream().filter(item -> !SocketCustody.isInstalled(item) && ItemStore.get().owned().contains(item)).toList();
+        List<Item> targets = requested.stream().filter(item -> ItemDisassembly.canDisassemble(item) && !SocketCustody.isInstalled(item)
+                && ItemStore.get().owned().contains(item)).toList();
         if (targets.isEmpty()) {
             return;
         }
@@ -423,6 +441,9 @@ public final class ItemStoragePanel extends HoloPanel {
             return;
         }
         if (disassemblyMode) {
+            if (!ItemDisassembly.canDisassemble(row.item())) {
+                return;
+            }
             queue(() -> {
                 if (!markedForDisassembly.remove(row.item())) {
                     markedForDisassembly.add(row.item());
@@ -493,7 +514,7 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private void cellRightClicked(ItemStorageRow row) {
-        if (!isConfirmOpen() && !disassemblyMode && !row.installed()) {
+        if (!isConfirmOpen() && !disassemblyMode && !row.installed() && ItemDisassembly.canDisassemble(row.item())) {
             queue(() -> openDisassemblyConfirm(List.of(row.item())));
         }
     }
@@ -570,21 +591,31 @@ public final class ItemStoragePanel extends HoloPanel {
         List<Item> owned = ItemStore.get().owned();
         List<ItemStorageRow> built = new ArrayList<>(owned.size());
         for (int i = 0; i < owned.size(); i++) {
-            if (showsKind(owned.get(i).kind())) {
+            if (showsItem(owned.get(i))) {
                 built.add(ItemStorageRow.of(owned.get(i), i, installedShipLookup));
             }
         }
         storageRows = built;
     }
 
-    private boolean showsKind(ItemKind kind) {
+    private boolean showsItem(Item item) {
+        return showsItem(item, kindFilter, sectionItemsOnly, storageFilter.socketTypes);
+    }
+
+    static boolean showsItem(Item item, ItemKind kindFilter, boolean sectionItemsOnly, Set<ItemKind> chosenSocketTypes) {
+        ItemKind kind = listedKind(item);
         if (kindFilter != null) {
             return kind == kindFilter;
         }
         if (sectionItemsOnly && (kind == null || !kind.fitsSection())) {
             return false;
         }
-        return chipTypes().stream().noneMatch(storageFilter.socketTypes::contains) || storageFilter.socketTypes.contains(kind);
+        List<ItemKind> chipTypes = sectionItemsOnly ? ItemKind.sectionItemTypes() : List.of(ItemKind.values());
+        return chipTypes.stream().noneMatch(chosenSocketTypes::contains) || chosenSocketTypes.contains(kind);
+    }
+
+    public static ItemKind listedKind(Item item) {
+        return item.type() == ItemType.WORMHOLE_ANCHOR ? ItemKind.SUBROUTINE : item.kind();
     }
 
     private List<ItemKind> chipTypes() {
@@ -717,6 +748,8 @@ public final class ItemStoragePanel extends HoloPanel {
                     : Translation.msg("ui.socketStorage.disassemblyMarked").arg("count", markedForDisassembly.size()).arg("parts", markedParts)
                     .text();
             VanillaText.plainPara(newNotice, hint, 0f, Misc.getNegativeHighlightColor());
+        } else if (socketRefusalNotice != null) {
+            VanillaText.plainPara(newNotice, socketRefusalNotice, 0f, Misc.getNegativeHighlightColor());
         } else if (selectedItem != null && !pickerMode) {
             VanillaText.plainPara(newNotice,
                     placingHint != null ? placingHint : Translation.msg("ui.socketStorage.placingHint").arg("name", selectedItem.name()).text(),
@@ -831,23 +864,34 @@ public final class ItemStoragePanel extends HoloPanel {
             String installedKey = isSubroutine(row) ? "ui.socketStorage.cell.installed" : "ui.socketStorage.cell.installedFramework";
             return List.of(Translation.msg(installedKey).arg("ship", row.installedShipName()).styled());
         }
+        boolean disassemblable = ItemDisassembly.canDisassemble(row.item());
+        if (disassemblyMode && !disassemblable) {
+            return List.of(Translation.styled("socketable.anchor.noDisassembly"));
+        }
         if (disassemblyMode) {
             int partCount = row.item().rarity().disassemblyParts();
             String key = markedForDisassembly.contains(row.item()) ? "ui.socketStorage.cell.unmark" : "ui.socketStorage.cell.mark";
             return List.of(Translation.msg(key).count(partCount).arg("count", partCount).styled());
         }
-        StyledText installHint;
-        if (workbenchPanel != null || pickerMode) {
-            installHint = Translation.styled("ui.socketStorage.cell.workbench");
-        } else if (targetingSocket) {
-            installHint = Translation.styled("ui.socketStorage.cell.freeTarget");
-        } else if (isSubroutine(row)) {
-            installHint = Translation.styled("ui.socketStorage.cell.free");
-        } else {
-            installHint = Translation.msg("ui.socketStorage.cell.freeFramework").arg("type", row.item().kind().displayName()).styled();
+        StyledText installHint = installHint(row);
+        if (!disassemblable) {
+            return List.of(installHint);
         }
         return List.of(installHint, Translation.msg("ui.socketStorage.cell.disassemble")
                 .count(row.item().rarity().disassemblyParts()).arg("count", row.item().rarity().disassemblyParts()).styled());
+    }
+
+    private StyledText installHint(ItemStorageRow row) {
+        if (workbenchPanel != null || pickerMode) {
+            return Translation.styled("ui.socketStorage.cell.workbench");
+        }
+        if (targetingSocket) {
+            return Translation.styled("ui.socketStorage.cell.freeTarget");
+        }
+        if (isSubroutine(row)) {
+            return Translation.styled("ui.socketStorage.cell.free");
+        }
+        return Translation.msg("ui.socketStorage.cell.freeFramework").arg("type", row.item().kindName()).styled();
     }
 
     private static boolean isSubroutine(ItemStorageRow row) {

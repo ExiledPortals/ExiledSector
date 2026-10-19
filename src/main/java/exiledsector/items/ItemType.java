@@ -7,7 +7,8 @@ public enum ItemType {
 
     SUBROUTINE("subroutine"),
     HULL_ITEM("hull_item"),
-    STAR_CHART("star_chart");
+    STAR_CHART("star_chart"),
+    WORMHOLE_ANCHOR("wormhole_anchor");
 
     private final String id;
 

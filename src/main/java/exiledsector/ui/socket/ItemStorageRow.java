@@ -20,7 +20,7 @@ public record ItemStorageRow(Item item, int storeOrder, String name, ItemRarity 
             searchBuilder.append('\n').append(displayName.baseName());
         }
         if (definition != null) {
-            searchBuilder.append('\n').append(item.kind().displayName());
+            searchBuilder.append('\n').append(item.kindName());
         }
         for (StyledText line : item.tooltipLines()) {
             searchBuilder.append('\n').append(line.plain());

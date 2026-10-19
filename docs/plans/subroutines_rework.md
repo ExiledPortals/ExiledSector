@@ -41,14 +41,14 @@ Every new kind is still a `Subroutine` (`ItemType.SUBROUTINE`). A new `kind` col
 
 Most kinds need the following:
 
-- A frozen rolled node. Volume and Bypass subroutines each roll one tree node when they're created: a notable or a keystone. That node id is stored on the item and never rerolled, in line with the socketable-freezing rule. Doctrine Archives use the item's existing `seed` instead.
-- Corruption from the start. Volume and Bypass subroutines are created already corrupted, which locks them from all currency. The current `CorruptionOutcome` values describe what a Corrupted Nanoswarm did to an item. Born-corrupted items need their own value (for example `INNATE`), so the tooltip can say "Corrupted" without claiming something was changed.
+- A frozen rolled node. Volume and Bypass subroutines each roll one tree node when they're created: a notable or a keystone. That node id is stored on the item and never rerolled, in line with the socketable-freezing rule. Doctrine Archives use the item's existing `seed` instead. (done: `Subroutine.rolledNodeId`, picked by `SubroutineNodePools` from the seed. Volume and Bypass register their candidate pools with `SubroutineNodePools.use` when they're built. Cargo stacks still carry only the seed, so the node is fixed when the item is absorbed into storage.)
+- Corruption from the start. Volume and Bypass subroutines are created already corrupted, which locks them from all currency. The current `CorruptionOutcome` values describe what a Corrupted Nanoswarm did to an item. Born-corrupted items need their own value (for example `INNATE`), so the tooltip can say "Corrupted" without claiming something was changed. (done: `CorruptionOutcome.INNATE`, set from `SubroutineKind.bornCorrupted()`. Nanoswarms draw only from `NANOSWARM_OUTCOMES`.)
 - A radius. Nothing measures distance between nodes yet. A radius is Euclidean distance on node `x`/`y`, in three sizes (small, medium, large) set in data. Which nodes fall inside each radius is computed once when the tree loads and cached per node. This keeps per-frame cost at zero. Moving nodes such as the Exoship are never in any radius. (done: `exiledsector.skills.radius`, sizes in `node_radii.json`, read through `SkillTree.radii()`)
 - A radius ring on the tree, drawn when hovering a socket that holds a radius subroutine, or the subroutine itself in storage. (renderer done: `NodeRadiusRingRenderer`, reached through `SkillTreeCanvasPlugin.setHighlightedRadius`. The hover hooks wait for the first radius subroutine.)
 - Overrides per ship. Doctrine Archives change what a node does on one ship only. `SkillTree` is one global registry, so overrides have to be a per-ship layer applied when effects are gathered (`AllocatedSkillEffects`) and when tooltips and names are drawn, never a change to the shared tree.
-- Socket kinds. The existing `modular_hull_socket` becomes the standard socket, which holds Volume, Doctrine, Bypass and Unique subroutines, and wormhole anchors. `Subroutine.canSocketInto` and the anchor's own override check that the item fits the socket.
+- Socket kinds. The existing `modular_hull_socket` becomes the standard socket, which holds Volume, Doctrine, Bypass and Unique subroutines, and wormhole anchors. `Subroutine.canSocketInto` and the anchor's own override check that the item fits the socket. (subroutine side done: a kind is required, and `SubroutineSocketLimits` caps Doctrine and Bypass at one per ship when socketing, on transposition, for NPC rolls, and in a load sweep.)
 - Socket placement. All sockets are placed by hand once this plan is settled, using the 14 flux nodes from `49ebd8f6` as candidate spots. Three of those still carry gate tags. The core ends of the faction wormholes (section 6) free up more spots in places the tree already expects travel to start. (done in `f9a5898a`: six standard sockets in the core, `modular_hull_socket_12` and `_16` to `_20`, none gated. More can go on the wormhole core ends when anchors land.)
-- NPCs. They never fill sockets with subroutines today. That stays true for the first version. `NpcItems.pickDefinition` and `ItemDrops.pickBasic` still pick any non-unique subroutine, though. That finds nothing while `subroutines.csv` is empty, so it must be restricted by kind before the first Volume subroutine row lands. Wormhole anchors are the exception (section 6), because NPC trees already take one notable from their faction's volume.
+- NPCs. NPC trees already fill sockets. `NpcSkillTreeBuilder` claims sockets, and `NpcFleetLeveller.decide` fills each one with `NpcItems.pickDefinition`, which takes any non-unique subroutine through `ItemDrops.pickBasic`. That finds nothing only because `subroutines.csv` has no non-unique rows. In the first version NPCs socket none of the new kinds, so the pick must be restricted by kind before the first Volume subroutine row lands. Otherwise NPC trees would socket Volume subroutines immediately. Wormhole anchors are the exception (section 6), because NPC trees already take one notable from their faction's volume.
 - Data and editor. Every new column and file needs the editor's serialisers and `EditorRoundTripTest`, or editor saves will delete them. Player text goes through `Translation`, with en and zh_CN keys under the existing `socketable.*` prefix. `docs/docs.md` gets a section for each kind once it's built.
 
 ## 2. Volume subroutines
@@ -115,6 +115,16 @@ This is a single base, corrupted when created. It rolls one random keystone from
 - Only one per ship.
 
 ## 5. Unique subroutines
+
+Status: the framework and a first draft of five uniques are done.
+- Data: `lines` and `source` columns in `subroutines.csv`, and a `unique_subroutine` modifier scope.
+- Effects apply only in an allocated socket.
+- Every currency refuses a unique, including Tuning Nanoswarms (decided: no rerolls).
+- Drops reuse the faction flagship and salvage-site unique paths.
+- The five drafts await review: Halcyon Fire-Control Lattice, Cracked Drive Governor, KR-9 Lamplighter Modspec, Domain Autorepair Kernel, Warden Threat Matrix.
+- A per-definition `socket_limit` column: each current unique is limited to 1 per ship, and blank or 0 means unlimited.
+- Load warnings for sources that can never drop (`UniqueSourceCheck`).
+- Still missing: named-fleet and commission sources, and showing the source in the tooltip.
 
 These are hand-made subroutines with fixed names, art and flavour text. They're the one place a subroutine may carry plain SkillEffects, the same kind of lines hull items roll, which would otherwise break the identity split. To keep that from blurring the split again:
 - every unique is curated, never rolled from a pool;
@@ -203,6 +213,12 @@ The only change to topology is the wormhole partner, which now depends on the sh
 
 ### Item and data
 
+Status: done except drops.
+- `ItemType.WORMHOLE_ANCHOR`, `WormholeAnchor`, `wormhole_anchors.csv` with 13 rows, integrity checks, the editor panel and the `ExiledSectorGrantWormholeAnchors` console command.
+- Area gating through the active tree, and the `rat_player_exoship` unlock, which fails closed.
+- Drop sources wait for the tree changes.
+- The one-per-volume socket rule, the wormhole links, the save migration and NPC anchors are still to do.
+
 - A new `ItemType.WORMHOLE_ANCHOR` and a `WormholeAnchor` item class next to `Subroutine`, with its own XStream alias. It's a socketable, not a subroutine, so it never takes subroutine currency or modifiers.
 - No rolls in the first version. An anchor is defined entirely by its volume. It isn't corrupted, and currency has nothing to act on.
 - Data: `wormhole_anchors.csv` with `id`, `volume`, `exit_node`, `icon`, `requires` (for example RAT) and drop weights. It goes through the editor's serialisers and `EditorRoundTripTest` like every other new file, and `ItemDataIntegrity` checks that every `exit_node` is an exit.
@@ -226,9 +242,9 @@ Ships in existing saves may have nodes allocated in faction volumes through worm
 
 1. Delete the old subroutines and clean up loading (section 1). Add the `kind` column and `SubroutineKind`. (done)
 2. Place the standard sockets by hand, using the core ends of the faction wormholes as candidate spots. (done)
-3. Wormhole anchors (section 6): the per-ship partner lookup first (done), then the item, data, tree changes, save migration and NPC implicit anchors together, since the tree changes cut off every volume until anchors exist.
+3. Wormhole anchors (section 6): the per-ship partner lookup first (done), then the item and data (done), tree changes, save migration and NPC implicit anchors together, since the tree changes cut off every volume until anchors exist.
 4. Volume subroutines. They need born corruption and the frozen rolled node, but no radius.
-5. Unique subroutines, a first handful.
+5. Unique subroutines, a first handful. (done, drafts awaiting review)
 6. Radius groundwork (done), then the Bypass subroutine. It reuses the reachability hook, so it's the cheapest radius kind.
 7. The per-ship override layer, then Doctrine Archives: augment doctrines first, transform doctrines second.
 

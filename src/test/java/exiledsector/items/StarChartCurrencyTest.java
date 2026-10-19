@@ -259,7 +259,7 @@ class StarChartCurrencyTest {
                 assertFalse(ItemCrafting.canUse(currency, corrupted, ANY_UNIQUE), currency.key());
             }
         }
-        assertEquals(EnumSet.allOf(CorruptionOutcome.class), outcomes);
+        assertEquals(EnumSet.copyOf(CorruptionOutcome.NANOSWARM_OUTCOMES), outcomes);
     }
 
     @Test

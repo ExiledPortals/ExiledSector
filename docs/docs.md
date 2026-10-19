@@ -313,7 +313,45 @@ Subroutines are the socketables that go in tree sockets. They never roll prefixe
 `subroutine` in its `item_types` (`ItemDataIntegrity` reports it). What a subroutine does comes from its
 `kind` column, one of `VOLUME`, `DOCTRINE`, `BYPASS` or `UNIQUE`, read into `SubroutineKind` on the
 definition and never stored on the item. A row with a missing or unknown kind is skipped with an error in
-the log. The file currently has no rows; the kinds are planned in `docs/plans/subroutines_rework.md`.
+the log. Only `UNIQUE` is built so far; the other kinds are planned in `docs/plans/subroutines_rework.md`.
+
+Unique subroutines are hand-made rows with `kind` set to `UNIQUE` and `unique` set to `true`; a `UNIQUE` row
+without the flag is skipped. They are the one subroutine kind that carries plain skill effects. Their `lines`
+column lists those effects, either written inline (`HULL_MULT:5:8`) or as `@ID` references to rows of
+`item_modifiers.csv` whose `item_types` include `unique_subroutine`. That scope exists only for these lines,
+so a modifier meant for a unique subroutine has to opt in, and its slot must be `prefix`. The plain
+`subroutine` scope is still an error. Lines carry no weight or tier range, because every line always rolls,
+once. A line is either a fixed value (`min` equal to `max`) or a small range rolled when the item is created
+and frozen on it like any other socketable roll. A rebalance of the row changes new drops only. Other kinds
+may not list lines. Internally the lines load as the definition's prefixes, so they reach the ship the same
+way every socketed item's rolls do: `AllocatedSkillEffects` adds them while the subroutine sits in an
+allocated tree socket, and drops them when the socket is unallocated or the item leaves it. The tooltip and
+the codex list them like a unique hull item's effects.
+
+No currency works on a unique subroutine. `ItemCrafting.canUse` refuses every currency, including ones other
+mods register, without the item being corrupted, and the workbench says why. In particular Tuning
+Nanoswarms do not reroll their frozen values (an open decision in the plan; the current answer is no). A
+corrupted or transposed unique hull item never turns into a unique subroutine, since transposition stays
+within the item's type and skips unique subroutines.
+
+Each unique subroutine names where it comes from in its `source` column, as `faction:FACTION_ID` or
+`site:SALVAGE_SITE_ID`, several separated by `;`. A source restricts the existing unique drop paths rather
+than adding new ones. `faction:` uniques can only be drawn by `NpcItems.pickDefinition` for a fleet of that
+faction, which is the small unique share of the items a levelled NPC flagship carries in its tree sockets;
+the fleet is flagged for the sensor alert, and destroying or recovering the ship drops the item as usual.
+`site:` uniques can only be drawn by the unique roll of that `item_salvage.csv` site, so the site needs a
+`uniqueChance` above zero. Unique hull items have no source and still drop from any site with a unique roll.
+`ItemDrops.pickUnique`, which transposition uses, never draws a unique with a source. Like every unique, they
+only drop from player level 15 and after their `unlock` condition, if they have one. `ItemDataIntegrity`
+reports a unique subroutine with no lines, no source or a malformed source.
+
+A source can still name something that never drops anything. After the item data and `item_salvage.csv`
+have loaded, `UniqueSourceCheck` logs a warning for every `faction:` source whose id is not one of the
+faction specs the game loaded (`SettingsAPI.getAllFactionSpecs`, so a modded faction counts while its mod is
+active), and for every `site:` source with no row in `item_salvage.csv` or a compat salvage file, or whose
+row has a `uniqueChance` of zero. The chart sites such as `exiledSector_chart_warden` are rows of
+`item_salvage.csv` like any other. These are warnings only; the definition still loads. If no faction specs
+are available the faction check is skipped.
 
 The four domain subroutines (`domain_subroutine_military`, `_industrial`, `_consumer` and `_management`)
 were deleted with no compensation. Their ids are listed in `DeletedSubroutines.DELETED_DEFINITION_IDS`, and
@@ -329,6 +367,112 @@ Any other item with a missing definition, a subroutine included, loads as an `Un
 rolls and its socket, and comes back once the definition loads again. So a broken `subroutines.csv` row or a
 mod that fails to load never deletes anything. Retiring another subroutine later means adding its id to
 `DELETED_DEFINITION_IDS`.
+
+Volume and Bypass subroutines are born corrupted (`SubroutineKind.bornCorrupted`). Every way a subroutine
+comes into being ends in the `Subroutine` constructors or its `readResolve`: rolling a drop, a console grant,
+claiming or previewing an `npc:<definition>/<seed>` id, absorbing a cargo stack, a transposition, and an
+`UnresolvedItem` turning back into a subroutine. There, an item of a born-corrupted kind with no corruption
+yet gets `CorruptionOutcome.INNATE`. That counts as corrupted everywhere, so every currency refuses it
+exactly as it refuses an item a Corrupted Nanoswarm has touched, and its frame takes the corruption colour.
+A Corrupted Nanoswarm only ever rolls the other four outcomes (`CorruptionOutcome.NANOSWARM_OUTCOMES`). The
+tooltip and the workbench show "Corrupted from the start" for `INNATE`, which claims nothing was changed,
+and plain "Corrupted" for the rest.
+
+Volume and Bypass subroutines also roll one tree node when they are created (`SubroutineKind.rollsNode`).
+The candidates come from `SubroutineNodePools`, where each kind plugs in a function from the definition to
+its candidate node ids. No kind has a pool yet; Volume (the notables of one volume) and Bypass (the core
+keystones) will register theirs when they are built. The pick is a pure function of the candidates and the
+item's seed: the ids are trimmed, de-duplicated and sorted, then one is chosen with a `SplittableRandom`
+seeded from the item seed and a fixed salt. So the same seed always lands on the same node, and an NPC's
+`npc:` id decodes to the node the player gets when the ship is recovered. The chosen id is stored in the
+`rolledNodeId` field of `Subroutine` and never rolled again, so a later change to the tree or the pool
+cannot reroll an existing item. It is copied by mirroring and by every conversion, and an `UnresolvedItem`
+keeps it while the definition is missing. If the kind has no pool, the pool is empty or it throws, the field
+stays empty and nothing crashes; an item loaded with an empty field tries again on the next load. A
+subroutine in cargo carries only its seed, so it takes its node when it is absorbed into item storage. The
+tooltip names the node through the tree's node and type names, and a stored id that is no longer in the
+tree shows as an unknown node.
+
+A subroutine fits a tree socket only if its definition has a kind. Doctrine and Bypass subroutines are
+limited to one per ship and Volume and Unique ones are not (`SubroutineKind.socketLimitPerShip`).
+`SubroutineSocketLimits` counts the other subroutines of the same kind already in the ship's tree sockets,
+leaving out the socket being filled and the item itself, so swapping one for another in the same socket is
+allowed. Installing from the subroutine storage panel checks it and shows the refusal in the panel's notice
+line until the next install attempt, a successful install, or a change of selected item or targeted socket.
+NPC trees skip a socket roll that would break it, and if a transposition turns a socketed subroutine into a
+kind the ship already has its fill of, `SocketCustody.unsocketIfMisfit` unsockets it.
+
+A definition can also carry its own limit in the `socket_limit` column of `subroutines.csv`: the most copies
+of that definition one ship can have in its tree sockets. Blank or 0 means no limit, and anything other than
+a whole number of 0 or more skips the row with an error (`ItemDataIntegrity` reports it too). Every current
+unique subroutine has a limit of 1. The definition limit is checked in the same places and the same way as
+the kind limit: it counts the other socketed items with the same definition id, leaving out the socket being
+filled and the item itself, so moving a copy or swapping one copy for another in the same socket is allowed.
+`npc:` items count through their definition, so a fleet never rolls more copies than the limit. Installing a
+copy past the limit is refused with its own message naming the item; when an item is over both limits, the
+kind refusal is shown.
+
+A subroutine whose definition is missing loads as an `UnresolvedItem` and counts towards no kind, so a ship
+can end up over a limit once the definition returns. `SocketTypeMigration.run`, called from `onGameLoad`,
+therefore also runs `SubroutineSocketLimits.unsocketExtras`. For each ship it walks the sockets in order of
+socket node id, keeps the first subroutines of each limited kind and of each limited definition up to their
+limits, and unsockets the rest. An item unsocketed for one limit does not count towards the other. They stay in
+item storage. One info line in the log names what was returned.
+
+## Wormhole anchors
+
+A wormhole anchor is a socketable of its own type (`ItemType.WORMHOLE_ANCHOR`, class `WormholeAnchor`, saved
+under the XStream alias `exiledSector.WormholeAnchor`). It is not a subroutine. So far only the item exists:
+socketing one does nothing yet, nothing drops it, and the faction wormholes in the tree are unchanged. The plan
+for the rest is section 6 of `docs/plans/subroutines_rework.md`.
+
+The definitions are in `data/config/exiledSector/wormhole_anchors.csv`, one row per tree volume, with the
+columns `id`, `volume`, `exit_node`, `name`, `icon`, `rarity`, `description` and `unlock`. `volume` is a tree
+region other than `core`, and `exit_node` is the node the anchor will open onto, today the far end of the
+volume's wormhole pair (`exoship` for ExoTech). `WormholeAnchorDefinitions` loads the file after the star charts
+and keeps the volume and exit of each anchor. It skips, with an error in the log, a row whose volume is not a
+region, a row without an exit, a second row for a volume that already has an anchor, and an id that a
+subroutine, hull item or star chart already uses. The definitions sit in their own registry, like star charts,
+so `ItemDefinitions.all()` never lists them. `ofType(ItemType.WORMHOLE_ANCHOR)` does. Names and descriptions
+are translated as `socketable.<id>.name` and `.description`, like every other item definition.
+
+`ItemDataIntegrity.checkWormholeAnchors` runs at startup against the declared skill tree. It reports a
+missing or repeated id, an id used by another item file, a bad or repeated volume, an exit that is not in the
+tree, sits in another region or is not a wormhole tier node, and an unlock that `ItemUnlock` does not
+understand (an item unlock id, `cleared_chart_tier_N` or blank are all accepted, the same set the runtime
+honours). A
+modifier row listing `wormhole_anchor` in its `item_types` is an error too, since anchors roll nothing.
+
+An anchor has no prefixes, suffixes or implicits and is never corrupted or mirrored: it ignores stored traits,
+and its explicit and implicit lists are always empty. `ItemCrafting.canUse` refuses every currency on it, even
+one a mod extends to the anchor type, so the workbench shows nothing usable. `ItemDisassembly` refuses to break
+it down, and item storage leaves it out of disassembly marking and the right-click disassembly prompt. The drop and NPC pickers in `ItemDrops` skip
+the anchor type outright, on top of anchors not being in `ItemDefinitions.all()`, so salvage, battle loot,
+chart loot and NPC fleets never produce one.
+
+`canSocketInto` accepts the standard tree socket (`SkillTier.SOCKET`), like a subroutine. Item storage lists
+anchors with the subroutines when a tree socket is being filled, and the tree's storage button ("Socket
+Items") counts both. Anchors have no `ItemKind`, so storage and workbench text that names an item's kind uses
+`Item.kindName()`, which falls back to the definition's noun. An anchor whose area is off cannot be socketed:
+`TreeAllocationSession.socketRefusal` returns the anchor's own refusal (`socketable.anchor.areaOffRefusal`),
+which plays the refusal sound and shows in the storage panel in both the place-on-socket and targeted-socket
+flows. A socketed anchor's tree tooltip shows the same volume and inert lines as its item tooltip. Area gating reuses the area toggles: `AreaToggles` and `TreeRegionFilter` already drop a disabled
+area's nodes from the active tree, so an anchor counts as active only while its exit node is in the active
+tree (`SkillTree.get`). That covers Kesteven and Enigma (LOST_SECTOR), ExoTech and Abyss (RAT) and Nightcross
+and Stargazer, whatever the setting or missing mod that turned them off. The definition stays loaded either
+way, so an anchor the player owns is never lost when an area is turned off. Its tooltip names the volume it
+leads to and says when it is inert because its area is off.
+
+The `unlock` column on an anchor is a condition for use, not for dropping. The ExoTech anchor, the Hyper-Nav
+Beacon, carries `rat_player_exoship`, an `ItemUnlock` that is met once RAT reports the Exoship recovered or
+owned, and latches like the other item unlocks. It reads RAT through
+`RandomAssortmentCompat.exoshipConfirmedRecovered`, which fails closed: if RAT's Exoship state can't be read,
+the unlock is not met and nothing is latched. The tree's ExoTech beacon gate (`exoshipGateOpen`) still fails
+open so its area stays usable. Until the unlock is met the tooltip says the beacon is inert. Nothing enforces it
+yet, because socketing does nothing yet.
+
+For testing, the console command `ExiledSectorGrantWormholeAnchors [volume]` adds one anchor per volume, or
+only the named volume's, to the player's cargo.
 
 ## Node radii
 

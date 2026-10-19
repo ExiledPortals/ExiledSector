@@ -22,6 +22,7 @@ public final class ItemDefinitions {
     private static final Logger LOG = Logger.getLogger(ItemDefinitions.class);
     private static final AtomicReference<Map<String, ItemDefinition>> BY_ID = new AtomicReference<>(Map.of());
     private static final AtomicReference<Map<String, ItemDefinition>> STAR_CHARTS_BY_ID = new AtomicReference<>(Map.of());
+    private static final AtomicReference<Map<String, ItemDefinition>> WORMHOLE_ANCHORS_BY_ID = new AtomicReference<>(Map.of());
 
     private ItemDefinitions() {
     }
@@ -92,13 +93,28 @@ public final class ItemDefinitions {
         STAR_CHARTS_BY_ID.set(Collections.unmodifiableMap(loaded));
     }
 
+    static void registerWormholeAnchors(Collection<ItemDefinition> definitions) {
+        Map<String, ItemDefinition> loaded = new LinkedHashMap<>();
+        for (ItemDefinition definition : definitions) {
+            if (definition.type() != ItemType.WORMHOLE_ANCHOR) {
+                throw new IllegalArgumentException(definition.id() + " is not a wormhole anchor");
+            }
+            loaded.put(definition.id(), definition);
+        }
+        WORMHOLE_ANCHORS_BY_ID.set(Collections.unmodifiableMap(loaded));
+    }
+
     public static ItemDefinition get(String definitionId) {
         if (definitionId == null) {
             return null;
         }
         String currentId = ItemIdAliases.currentId(definitionId);
         ItemDefinition shipItem = BY_ID.get().get(currentId);
-        return shipItem != null ? shipItem : STAR_CHARTS_BY_ID.get().get(currentId);
+        if (shipItem != null) {
+            return shipItem;
+        }
+        ItemDefinition starChart = STAR_CHARTS_BY_ID.get().get(currentId);
+        return starChart != null ? starChart : WORMHOLE_ANCHORS_BY_ID.get().get(currentId);
     }
 
     public static Collection<ItemDefinition> all() {
@@ -109,15 +125,23 @@ public final class ItemDefinitions {
         if (type == ItemType.STAR_CHART) {
             return STAR_CHARTS_BY_ID.get().values();
         }
+        if (type == ItemType.WORMHOLE_ANCHOR) {
+            return WORMHOLE_ANCHORS_BY_ID.get().values();
+        }
         return BY_ID.get().values().stream().filter(definition -> definition.type() == type).toList();
     }
 
     public static void clear() {
         BY_ID.set(Map.of());
         STAR_CHARTS_BY_ID.set(Map.of());
+        WORMHOLE_ANCHORS_BY_ID.set(Map.of());
     }
 
     public static void clearStarCharts() {
         STAR_CHARTS_BY_ID.set(Map.of());
+    }
+
+    public static void clearWormholeAnchors() {
+        WORMHOLE_ANCHORS_BY_ID.set(Map.of());
     }
 }

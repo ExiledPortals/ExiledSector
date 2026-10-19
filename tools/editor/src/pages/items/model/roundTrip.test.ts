@@ -3,6 +3,7 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { buildVocabulary } from '../../../api/vocabulary.ts';
 import { parseCsvTable, serializeCsvTable } from '../../../shared/csv.ts';
+import { parseWormholeAnchorsCsv, serializeWormholeAnchorsCsv } from './anchors.ts';
 import { CHART_TABLE_SPECS, parseChartTable, serializeChartTable } from './chartTables.ts';
 import { parseCraftingCsv, serializeCraftingCsv } from './crafting.ts';
 import {
@@ -37,6 +38,23 @@ describe('saving unchanged item data reproduces the files byte for byte', () => 
     const model = parseItemDefinitions(subroutinesText, hullItemsText);
     expect(serializeSubroutinesCsv(model)).toBe(subroutinesText);
     expect(serializeHullItemsCsv(model)).toBe(hullItemsText);
+  });
+
+  it('keeps every unique subroutine line, source and socket limit through a save', () => {
+    const model = parseItemDefinitions(readData(path.join(configDir, 'subroutines.csv')), readData(path.join(configDir, 'hull_items.csv')));
+    const uniques = model.definitions.filter((definition) => definition.subroutineKind === 'UNIQUE');
+    const resaved = parseItemDefinitions(serializeSubroutinesCsv(model), serializeHullItemsCsv(model)).definitions;
+
+    expect(uniques.length).toBeGreaterThan(0);
+    for (const unique of uniques) {
+      const saved = resaved.find((definition) => definition.id === unique.id);
+      expect(unique.lines?.length, unique.id).toBeGreaterThan(0);
+      expect(unique.source, unique.id).not.toBe('');
+      expect(saved?.lines, unique.id).toEqual(unique.lines);
+      expect(saved?.source, unique.id).toBe(unique.source);
+      expect(unique.socketLimit, unique.id).toBe('1');
+      expect(saved?.socketLimit, unique.id).toBe(unique.socketLimit);
+    }
   });
 
   it('item_modifiers.csv', () => {
@@ -76,6 +94,11 @@ describe('saving unchanged item data reproduces the files byte for byte', () => 
     const texts = Object.fromEntries(['subroutines', 'hull_items', 'star_charts'].map((name) => [name.replace('_', '-'), readData(path.join(configDir, `${name}.csv`))]));
     expect(serializeFamilyDefinitions(parseFamilyDefinitions('chart', texts))).toEqual({ 'star-charts': text });
     expect(serializeFamilyDefinitions(parseFamilyDefinitions('ship', texts))).toEqual({ subroutines: texts.subroutines, 'hull-items': texts['hull-items'] });
+  });
+
+  it('wormhole_anchors.csv', () => {
+    const text = readData(path.join(configDir, 'wormhole_anchors.csv'));
+    expect(serializeWormholeAnchorsCsv(parseWormholeAnchorsCsv(text))).toBe(text);
   });
 
   it('star_chart_modifiers.csv', () => {

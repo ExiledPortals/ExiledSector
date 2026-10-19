@@ -17,6 +17,7 @@ public final class ItemSaveAliases {
             "exiledSector.Subroutine", Subroutine.class,
             "exiledSector.HullItem", HullItem.class,
             "exiledSector.StarChart", StarChart.class,
+            "exiledSector.WormholeAnchor", WormholeAnchor.class,
             "exiledSector.RolledModifier", RolledModifier.class,
             "exiledSector.ModifierSlot", ModifierSlot.class);
 

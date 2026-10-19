@@ -139,13 +139,28 @@ final class SocketPlacement {
         if (placingItem == null) {
             return false;
         }
+        clearRefusal();
         if (treeSession.installInSocket(node, placingItem)) {
             stopPlacing();
             refresh();
         } else {
             SkillTreeSounds.refused();
+            showRefusal(node, placingItem);
         }
         return true;
+    }
+
+    private void showRefusal(SkillNode node, Item item) {
+        String refusal = treeSession.socketRefusal(node, item);
+        if (refusal != null && storagePanel != null) {
+            storagePanel.showRefusal(refusal);
+        }
+    }
+
+    private void clearRefusal() {
+        if (storagePanel != null) {
+            storagePanel.clearRefusal();
+        }
     }
 
     boolean handleSocketClick(SkillNode node, boolean ctrlDown, PositionAPI canvasPosition, ScreenRect shipCard) {
@@ -183,7 +198,7 @@ final class SocketPlacement {
             return;
         }
         countedStoreSize = owned.size();
-        int subroutineCount = (int) owned.stream().filter(item -> item.kind() == ItemKind.SUBROUTINE).count();
+        int subroutineCount = (int) owned.stream().filter(item -> ItemStoragePanel.listedKind(item) == ItemKind.SUBROUTINE).count();
         if (subroutineCount == shownSubroutineCount) {
             return;
         }
@@ -280,8 +295,12 @@ final class SocketPlacement {
             clearTargetSocket();
             return false;
         }
+        clearRefusal();
         if (treeSession.installInSocket(targetSocket, item)) {
             refresh();
+        } else if (treeSession.socketRefusal(targetSocket, item) != null) {
+            SkillTreeSounds.refused();
+            showRefusal(targetSocket, item);
         }
         return true;
     }

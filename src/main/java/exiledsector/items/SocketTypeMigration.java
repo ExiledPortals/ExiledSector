@@ -19,6 +19,7 @@ public final class SocketTypeMigration {
 
     public static void run() {
         List<Item> returnedItems = returnMisfits(ShipSkillDataManager.all(), ItemStore.get());
+        SubroutineSocketLimits.unsocketExtras(ShipSkillDataManager.all(), ItemStore.get());
         if (returnedItems.isEmpty() || !CampaignMessages.available()) {
             return;
         }

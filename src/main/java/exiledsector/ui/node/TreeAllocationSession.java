@@ -23,6 +23,8 @@ import exiledsector.items.HullUpgradeRules;
 import exiledsector.items.SocketCustody;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
+import exiledsector.items.SubroutineSocketLimits;
+import exiledsector.items.WormholeAnchor;
 import exiledsector.ui.SkillTreeSounds;
 import lunalib.lunaRefit.BaseRefitButton;
 
@@ -575,9 +577,18 @@ public final class TreeAllocationSession {
         }
     }
 
+    public String socketRefusal(SkillNode node, Item item) {
+        if (node == null || item == null) {
+            return null;
+        }
+        String anchorRefusal = item instanceof WormholeAnchor anchor ? anchor.socketRefusal() : null;
+        return anchorRefusal != null ? anchorRefusal : SubroutineSocketLimits.refusal(item, node.getId(), allocator.data().getSocketedItems());
+    }
+
     public boolean installInSocket(SkillNode node, Item item) {
         return apply(() -> item.canSocketInto(node)
                 && !SocketCustody.installations(ShipSkillDataManager.all()).containsKey(item.id())
+                && socketRefusal(node, item) == null
                 && allocator.socketItem(node, item.id()), () -> {
             SkillTreeSounds.socketed();
             feedback.pulse(node);

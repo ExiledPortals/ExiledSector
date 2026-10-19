@@ -6,6 +6,10 @@ import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
 import exiledsector.modifiers.TierRange;
 import exiledsector.modifiers.ValueScaling;
+import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTier;
+import exiledsector.skills.SkillTree;
+import exiledsector.skills.tags.SkillTags;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,6 +17,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -39,7 +44,7 @@ public final class ItemDataIntegrity {
     private static final String WEIGHT_SEPARATOR = ":";
     private static final int FIRST_DATA_LINE = 2;
 
-    private record ModifierRow(String id, ModifierSlot slot, Set<ItemType> itemTypes, List<String> effectNames, boolean named, int line,
+    private record ModifierRow(String id, ModifierSlot slot, Set<ModifierScope> scopes, List<String> effectNames, boolean named, int line,
                                String file) {
     }
 
@@ -85,14 +90,86 @@ public final class ItemDataIntegrity {
             JSONArray chartModifierRows = orEmpty(ModCsv.rows("id", StarChartItems.MODIFIERS_PATH));
             JSONArray chartRows = orEmpty(ModCsv.rows("id", StarChartDefinitions.DATA_PATH));
             JSONArray chartImplicitRows = orEmpty(ModCsv.rows(StarChartImplicits.SYSTEM_TYPE_COLUMN, StarChartImplicits.DATA_PATH));
-            for (Violation violation : checkWithStarCharts(modifierRows, subroutineRows, hullItemRows, implicitRows, chartModifierRows, chartRows,
-                    chartImplicitRows)) {
+            List<Violation> violations = new ArrayList<>(checkWithStarCharts(modifierRows, subroutineRows, hullItemRows, implicitRows,
+                    chartModifierRows, chartRows, chartImplicitRows));
+            JSONArray anchorRows = orEmpty(ModCsv.rows("id", WormholeAnchorDefinitions.DATA_PATH));
+            violations.addAll(checkWormholeAnchors(anchorRows, SkillTree.getDeclaredNodes(), definitionIds(orEmpty(subroutineRows), hullItemRows, chartRows)));
+            for (Violation violation : violations) {
                 if (violation.severity() == Severity.ERROR) {
                     LOG.error(violation);
                 }
             }
         } catch (IOException | JSONException e) {
             LOG.error("Could not check the item data", e);
+        }
+    }
+
+    private static Set<String> definitionIds(JSONArray... definitionRowSets) throws JSONException {
+        Set<String> definitionIds = new HashSet<>();
+        for (JSONArray rows : definitionRowSets) {
+            ModCsv.forEach(rows, (index, row) -> definitionIds.add(ModCsv.text(row, "id")));
+        }
+        return definitionIds;
+    }
+
+    public static List<Violation> checkWormholeAnchors(JSONArray anchorRows, Map<String, SkillNode> treeNodes, Collection<String> otherDefinitionIds)
+            throws JSONException {
+        ItemDataIntegrity integrity = new ItemDataIntegrity();
+        integrity.checkAnchorRows(orEmpty(anchorRows), treeNodes, otherDefinitionIds);
+        return List.copyOf(integrity.violations);
+    }
+
+    private void checkAnchorRows(JSONArray rows, Map<String, SkillNode> treeNodes, Collection<String> otherDefinitionIds) throws JSONException {
+        String file = WormholeAnchorDefinitions.DATA_PATH;
+        Map<String, Integer> linesById = new HashMap<>();
+        Map<String, Integer> linesByVolume = new HashMap<>();
+        ModCsv.forEach(rows, (index, row) -> {
+            int line = index + FIRST_DATA_LINE;
+            String definitionId = ModCsv.text(row, "id");
+            if (definitionId.isEmpty()) {
+                error(file, line, "the row has no id");
+                return;
+            }
+            Integer earlierLine = linesById.putIfAbsent(definitionId, line);
+            if (earlierLine != null) {
+                error(file, line, "id " + definitionId + " is already used on line " + earlierLine);
+            } else if (otherDefinitionIds.contains(definitionId)) {
+                error(file, line, "id " + definitionId + " is already used by a subroutine, hull item or star chart");
+            }
+            String volume = ModCsv.text(row, WormholeAnchorDefinitions.VOLUME_COLUMN);
+            if (!WormholeAnchorDefinitions.isVolume(volume)) {
+                error(file, line, definitionId + " has volume \"" + volume + "\"; expected a tree region other than " + SkillTags.CORE_REGION);
+            } else {
+                Integer volumeLine = linesByVolume.putIfAbsent(volume, line);
+                if (volumeLine != null) {
+                    error(file, line, definitionId + " leads to " + volume + ", which already has an anchor on line " + volumeLine);
+                }
+            }
+            checkAnchorExit(file, line, definitionId, volume, ModCsv.text(row, WormholeAnchorDefinitions.EXIT_NODE_COLUMN), treeNodes);
+            String unlock = ModCsv.text(row, "unlock");
+            if (!WormholeAnchorDefinitions.isKnownUnlock(unlock)) {
+                error(file, line, definitionId + " has the unknown unlock \"" + unlock + "\"; use an item unlock id, "
+                        + ItemUnlock.CLEARED_CHART_TIER_PREFIX + "N or leave it blank");
+            }
+        });
+    }
+
+    private void checkAnchorExit(String file, int line, String definitionId, String volume, String exitNodeId, Map<String, SkillNode> treeNodes) {
+        if (exitNodeId.isEmpty()) {
+            error(file, line, definitionId + " has no exit node");
+            return;
+        }
+        SkillNode exitNode = treeNodes.get(exitNodeId);
+        if (exitNode == null) {
+            error(file, line, definitionId + " exits at " + exitNodeId + ", which is not in the skill tree");
+            return;
+        }
+        if (!volume.equals(exitNode.getRegion())) {
+            error(file, line, definitionId + " exits at " + exitNodeId + ", which is in " + exitNode.getRegion() + " rather than " + volume);
+        }
+        SkillTier exitTier = exitNode.getType().getTier();
+        if (exitTier != SkillTier.WORMHOLE) {
+            error(file, line, definitionId + " exits at " + exitNodeId + ", which is a " + exitTier + " node rather than a wormhole");
         }
     }
 
@@ -130,42 +207,50 @@ public final class ItemDataIntegrity {
             if (slot == null) {
                 error(file, line, modifierId + " has slot \"" + slotText + "\"; expected implicit, prefix or suffix");
             }
-            Set<ItemType> itemTypes = checkItemTypes(file, line, modifierId, ModCsv.text(row, "item_types"));
-            checkItemTypesBelongInFile(file, line, modifierId, itemTypes, starChartFile);
-            List<String> effectNames = checkLines(file, line, modifierId, slot, effectsFor(file, line, itemTypes), ModCsv.text(row, "lines"),
+            Set<ModifierScope> scopes = checkScopes(file, line, modifierId, ModCsv.text(row, "item_types"));
+            checkScopesBelongInFile(file, line, modifierId, scopes, starChartFile);
+            if (scopes.contains(ModifierScope.UNIQUE_SUBROUTINE) && slot != null && slot != ModifierSlot.PREFIX) {
+                error(file, line, modifierId + " rolls on " + ModifierScope.UNIQUE_SUBROUTINE.id() + ", so its slot must be "
+                        + ModifierSlot.PREFIX.id());
+            }
+            List<String> effectNames = checkLines(file, line, modifierId, slot, effectsFor(file, line, scopes), ModCsv.text(row, "lines"),
                     starChartFile);
             checkIdConvention(file, line, modifierId, effectNames);
-            modifiersById.put(modifierId, new ModifierRow(modifierId, slot, itemTypes, effectNames,
+            modifiersById.put(modifierId, new ModifierRow(modifierId, slot, scopes, effectNames,
                     !ModCsv.text(row, "name").isEmpty(), line, file));
         });
     }
 
-    private void checkItemTypesBelongInFile(String file, int line, String modifierId, Set<ItemType> itemTypes, boolean starChartFile) {
-        if (itemTypes.isEmpty()) {
+    private void checkScopesBelongInFile(String file, int line, String modifierId, Set<ModifierScope> scopes, boolean starChartFile) {
+        if (scopes.isEmpty()) {
             return;
         }
-        if (itemTypes.contains(ItemType.SUBROUTINE)) {
-            error(file, line, modifierId + " rolls on " + ItemType.SUBROUTINE.id() + ", but subroutines do not roll modifiers");
+        if (scopes.contains(ModifierScope.SUBROUTINE)) {
+            error(file, line, modifierId + " rolls on " + ModifierScope.SUBROUTINE.id() + ", but subroutines do not roll modifiers");
         }
-        if (starChartFile && !itemTypes.equals(Set.of(ItemType.STAR_CHART))) {
-            error(file, line, modifierId + " is in " + file + ", so its item_types must be " + ItemType.STAR_CHART.id() + " only");
-        } else if (!starChartFile && itemTypes.contains(ItemType.STAR_CHART)) {
-            error(file, line, modifierId + " rolls on " + ItemType.STAR_CHART.id() + "; star chart modifiers belong in " + StarChartItems.MODIFIERS_PATH);
+        if (scopes.contains(ModifierScope.WORMHOLE_ANCHOR)) {
+            error(file, line, modifierId + " rolls on " + ModifierScope.WORMHOLE_ANCHOR.id() + ", but wormhole anchors do not roll modifiers");
+        }
+        if (starChartFile && !scopes.equals(Set.of(ModifierScope.STAR_CHART))) {
+            error(file, line, modifierId + " is in " + file + ", so its item_types must be " + ModifierScope.STAR_CHART.id() + " only");
+        } else if (!starChartFile && scopes.contains(ModifierScope.STAR_CHART)) {
+            error(file, line, modifierId + " rolls on " + ModifierScope.STAR_CHART.id() + "; star chart modifiers belong in "
+                    + StarChartItems.MODIFIERS_PATH);
         }
     }
 
-    private Set<ItemType> checkItemTypes(String file, int line, String modifierId, String itemTypesText) {
+    private Set<ModifierScope> checkScopes(String file, int line, String modifierId, String itemTypesText) {
         try {
-            return ItemModifiers.parseItemTypes(modifierId, itemTypesText);
+            return ItemModifiers.parseScopes(modifierId, itemTypesText);
         } catch (IllegalArgumentException e) {
             error(file, line, e.getMessage());
             return Set.of();
         }
     }
 
-    private ModifierEffects effectsFor(String file, int line, Set<ItemType> itemTypes) {
+    private ModifierEffects effectsFor(String file, int line, Set<ModifierScope> scopes) {
         try {
-            return ItemEffects.forTypes(itemTypes);
+            return ItemEffects.forTypes(ItemModifiers.itemTypesOf(scopes));
         } catch (IllegalArgumentException e) {
             error(file, line, e.getMessage());
             return ItemEffects.SKILL_EFFECTS;
@@ -281,12 +366,92 @@ public final class ItemDataIntegrity {
 
     private void checkSubroutine(String file, int line, String definitionId, JSONObject row) {
         String kindText = ModCsv.text(row, ItemDefinition.SUBROUTINE_KIND_COLUMN);
-        if (SubroutineKind.byIdOrNull(kindText) == null) {
+        SubroutineKind subroutineKind = SubroutineKind.byIdOrNull(kindText);
+        if (subroutineKind == null) {
             error(file, line, definitionId + " has kind \"" + kindText + "\"; expected one of " + SubroutineKind.ids());
         }
         if (!ModCsv.text(row, "prefixes").isEmpty() || !ModCsv.text(row, "suffixes").isEmpty()) {
             error(file, line, definitionId + " lists prefixes or suffixes, but subroutines do not roll them");
         }
+        String linesText = ModCsv.text(row, ItemDefinition.UNIQUE_LINES_COLUMN);
+        String sourcesText = ModCsv.text(row, ItemDefinition.UNIQUE_SOURCE_COLUMN);
+        checkSources(file, line, definitionId, sourcesText);
+        String socketLimitText = ModCsv.text(row, ItemDefinition.SOCKET_LIMIT_COLUMN);
+        if (ItemDefinition.parsedSocketLimit(socketLimitText) == null) {
+            error(file, line, definitionId + " has socket limit \"" + socketLimitText + "\"; expected a whole number of 0 or more, or blank for no limit");
+        }
+        if (subroutineKind != SubroutineKind.UNIQUE) {
+            if (!linesText.isEmpty()) {
+                error(file, line, definitionId + " lists lines, but only " + SubroutineKind.UNIQUE.id() + " subroutines have them");
+            }
+            if (!sourcesText.isEmpty()) {
+                warning(file, line, definitionId + " names a source, but sources only apply to " + SubroutineKind.UNIQUE.id() + " subroutines");
+            }
+            return;
+        }
+        if (!"true".equalsIgnoreCase(ModCsv.text(row, "unique"))) {
+            error(file, line, definitionId + " is a " + SubroutineKind.UNIQUE.id() + " subroutine, so unique must be true");
+        }
+        if (checkUniqueLines(file, line, definitionId, linesText) == 0) {
+            error(file, line, definitionId + " is a " + SubroutineKind.UNIQUE.id() + " subroutine but lists no lines");
+        }
+        if (sourcesText.isEmpty()) {
+            error(file, line, definitionId + " is a " + SubroutineKind.UNIQUE.id() + " subroutine but names no source; add faction:FACTION_ID or "
+                    + "site:SALVAGE_SITE_ID");
+        }
+    }
+
+    private void checkSources(String file, int line, String definitionId, String sourcesText) {
+        try {
+            UniqueSource.parseList(sourcesText);
+        } catch (IllegalArgumentException e) {
+            error(file, line, definitionId + ": " + e.getMessage());
+        }
+    }
+
+    private int checkUniqueLines(String file, int line, String definitionId, String linesText) {
+        List<ModifierRow> listed = new ArrayList<>();
+        for (String entryText : linesText.split(ENTRY_SEPARATOR)) {
+            String trimmed = entryText.trim();
+            if (trimmed.isEmpty()) {
+                continue;
+            }
+            ModifierRow lineRow = ItemModifiers.isReference(trimmed) ? referencedUniqueLine(file, line, definitionId, trimmed)
+                    : inlineUniqueLine(file, line, definitionId, trimmed);
+            if (lineRow != null) {
+                checkRepeats(file, line, definitionId, lineRow, listed);
+                listed.add(lineRow);
+            }
+        }
+        return listed.size();
+    }
+
+    private ModifierRow referencedUniqueLine(String file, int line, String definitionId, String entryText) {
+        String referenceText = entryText.substring(ItemModifiers.REFERENCE_MARK.length()).trim();
+        if (referenceText.contains(WEIGHT_SEPARATOR)) {
+            error(file, line, definitionId + " line \"" + entryText + "\" has a weight or tier range, but every unique subroutine line always rolls");
+            return null;
+        }
+        return referencedModifier(file, line, definitionId, referenceText, ModifierSlot.PREFIX, ModifierScope.UNIQUE_SUBROUTINE);
+    }
+
+    private ModifierRow inlineUniqueLine(String file, int line, String definitionId, String entryText) {
+        ModifierLine.Parsed parsed;
+        try {
+            parsed = ModifierLine.parse(entryText);
+        } catch (IllegalArgumentException e) {
+            error(file, line, definitionId + ": " + e.getMessage());
+            return null;
+        }
+        if (parsed.trailingField() != null) {
+            error(file, line, definitionId + " line \"" + entryText + "\" has a weight, but every unique subroutine line always rolls");
+        }
+        if (parsed.line().scalesWithTier()) {
+            error(file, line, definitionId + " gives " + parsed.line().effectName() + " tier bands, but only star charts have tiers");
+        }
+        String effectName = parsed.line().effectName();
+        checkEffectName(file, line, definitionId, ItemEffects.forType(ItemType.SUBROUTINE), effectName);
+        return new ModifierRow(effectName, ModifierSlot.PREFIX, Set.of(ModifierScope.UNIQUE_SUBROUTINE), List.of(effectName), false, line, file);
     }
 
     private void checkSection(String file, int line, String definitionId, String sectionId) {
@@ -372,9 +537,13 @@ public final class ItemDataIntegrity {
     }
 
     private ModifierRow referencedModifier(String file, int line, String ownerId, String referenceId, ModifierSlot slot, ItemType itemType) {
+        return referencedModifier(file, line, ownerId, referenceId, slot, ModifierScope.of(itemType));
+    }
+
+    private ModifierRow referencedModifier(String file, int line, String ownerId, String referenceId, ModifierSlot slot, ModifierScope scope) {
         ModifierRow modifier = modifiersById.get(referenceId);
         if (modifier == null) {
-            String modifierFile = itemType == ItemType.STAR_CHART ? StarChartItems.MODIFIERS_PATH : ItemModifiers.DATA_PATH;
+            String modifierFile = scope == ModifierScope.STAR_CHART ? StarChartItems.MODIFIERS_PATH : ItemModifiers.DATA_PATH;
             error(file, line, ownerId + " references " + referenceId + ", which is not in " + modifierFile);
             return null;
         }
@@ -382,9 +551,9 @@ public final class ItemDataIntegrity {
         if (modifier.slot() != null && modifier.slot() != slot) {
             error(file, line, ownerId + " lists " + referenceId + " in its " + slot.id() + " slot, but it is a " + modifier.slot().id());
         }
-        if (!modifier.itemTypes().isEmpty() && !modifier.itemTypes().contains(itemType)) {
-            error(file, line, ownerId + " is a " + itemType.id() + ", but " + referenceId + " only rolls on "
-                    + modifier.itemTypes().stream().map(ItemType::id).collect(Collectors.joining(", ")));
+        if (!modifier.scopes().isEmpty() && !modifier.scopes().contains(scope)) {
+            error(file, line, ownerId + " is a " + scope.id() + ", but " + referenceId + " only rolls on "
+                    + modifier.scopes().stream().map(ModifierScope::id).collect(Collectors.joining(", ")));
         }
         return modifier;
     }

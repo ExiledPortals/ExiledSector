@@ -180,6 +180,111 @@ describe('item definitions', () => {
   });
 });
 
+describe('unique subroutines', () => {
+  const uniqueCatalogue = modifierById(
+    parseModifiersCsv(
+      'id,slot,item_types,lines,name\n' +
+        'HULL_MULT_RELIC,prefix,unique_subroutine,HULL_MULT:5:8,\n' +
+        'ARMOR_FLAT_RELIC,suffix,unique_subroutine,ARMOR_FLAT:5:10,\n' +
+        'HULL_MULT,prefix,hull_item,HULL_MULT:1:2,Reinforced\n',
+    ).modifiers,
+  );
+  const header = 'id,name,icon,rarity,unique,kind,description,lines,source,unlock\n';
+
+  function relic(overrides: Partial<ItemDefinition>): ItemDefinition {
+    return definition({
+      id: 'relic',
+      kind: 'subroutine',
+      unique: 'true',
+      subroutineKind: 'UNIQUE',
+      prefixes: [],
+      suffixes: [],
+      lines: parsePool('@HULL_MULT_RELIC; ARMOR_FLAT:3:3'),
+      source: 'faction:pirates',
+      ...overrides,
+    });
+  }
+
+  it('reads the lines and source columns and writes them back unchanged', () => {
+    const text = `${header}relic,Relic,,10,true,UNIQUE,,@HULL_MULT_RELIC; ARMOR_FLAT:3:3,faction:pirates; site:wreck,\n`;
+    const model = parseItemDefinitions(text, 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\n');
+
+    expect(model.definitions[0].lines).toEqual([{ modifierId: 'HULL_MULT_RELIC', weight: '' }, { modifierId: '', weight: '', inlineText: 'ARMOR_FLAT:3:3' }]);
+    expect(model.definitions[0].source).toBe('faction:pirates; site:wreck');
+    expect(serializeSubroutinesCsv(model)).toBe(text);
+
+    model.definitions[0].source = 'site:wreck';
+    expect(serializeSubroutinesCsv(model)).toBe(`${header}relic,Relic,,10,true,UNIQUE,,@HULL_MULT_RELIC; ARMOR_FLAT:3:3,site:wreck,\n`);
+  });
+
+  it('adds the lines and source columns to an older file only once a subroutine uses them', () => {
+    const olderText = 'id,name,icon,rarity,unique,kind,description,unlock\nchip,Chip,,10,,VOLUME,,\n';
+    const model = parseItemDefinitions(olderText, 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\n');
+
+    expect(serializeSubroutinesCsv(model)).toBe(olderText);
+    model.definitions[0].subroutineKind = 'UNIQUE';
+    model.definitions[0].lines = parsePool('@HULL_MULT_RELIC');
+    expect(serializeSubroutinesCsv(model)).toBe('id,name,icon,rarity,unique,kind,description,unlock,lines\nchip,Chip,,10,,UNIQUE,,,@HULL_MULT_RELIC\n');
+    model.definitions[0].source = 'site:wreck';
+    expect(serializeSubroutinesCsv(model)).toBe('id,name,icon,rarity,unique,kind,description,unlock,lines,source\nchip,Chip,,10,,UNIQUE,,,@HULL_MULT_RELIC,site:wreck\n');
+  });
+
+  it('reads and writes the socket limit, adding its column to an older file only once it is set', () => {
+    const withLimit = 'id,name,icon,rarity,unique,kind,description,lines,source,socket_limit,unlock\nrelic,Relic,,10,true,UNIQUE,,@HULL_MULT_RELIC,site:wreck,1,\n';
+    const limited = parseItemDefinitions(withLimit, 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\n');
+    const olderText = 'id,name,icon,rarity,unique,kind,description,unlock\nchip,Chip,,10,,VOLUME,,\n';
+    const older = parseItemDefinitions(olderText, 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\n');
+
+    expect(limited.definitions[0].socketLimit).toBe('1');
+    expect(serializeSubroutinesCsv(limited)).toBe(withLimit);
+    expect(serializeSubroutinesCsv(older)).toBe(olderText);
+    older.definitions[0].socketLimit = '2';
+    expect(serializeSubroutinesCsv(older)).toBe('id,name,icon,rarity,unique,kind,description,unlock,socket_limit\nchip,Chip,,10,,VOLUME,,,2\n');
+  });
+
+  it('accepts a blank or whole socket limit and refuses anything else', () => {
+    expect(validateItemDefinitions([relic({ socketLimit: '' }), relic({ id: 'zero', socketLimit: '0' }), relic({ id: 'one', socketLimit: '1' })], vocabulary, uniqueCatalogue)).toEqual([]);
+    expect(validateItemDefinitions([relic({ id: 'negative', socketLimit: '-1' }), relic({ id: 'fractional', socketLimit: '1.5' })], vocabulary, uniqueCatalogue)).toEqual([
+      'negative: socket limit must be blank or a whole number of 0 or more',
+      'fractional: socket limit must be blank or a whole number of 0 or more',
+    ]);
+  });
+
+  it('accepts a unique subroutine with scoped or inline lines and a source', () => {
+    expect(validateItemDefinitions([relic({})], vocabulary, uniqueCatalogue)).toEqual([]);
+  });
+
+  it('checks the flag, lines and source of a unique subroutine and keeps lines off other kinds', () => {
+    const issues = validateItemDefinitions(
+      [
+        relic({ id: 'flagless', unique: '' }),
+        relic({ id: 'empty', lines: [], source: '' }),
+        relic({ id: 'misplaced', source: 'colony:jangala; faction:pirates; faction:pirates' }),
+        relic({ id: 'weighted', lines: parsePool('@HULL_MULT_RELIC:4; HULL_MULT:1:2:3') }),
+        relic({ id: 'wrong_scope', lines: parsePool('@HULL_MULT; @ARMOR_FLAT_RELIC; @MISSING') }),
+        relic({ id: 'volume', subroutineKind: 'VOLUME', lines: parsePool('@HULL_MULT_RELIC'), source: '' }),
+      ],
+      vocabulary,
+      uniqueCatalogue,
+    );
+
+    expect(issues).toEqual([
+      'flagless: a UNIQUE subroutine must be marked unique',
+      'empty: a UNIQUE subroutine needs at least one line',
+      'empty: a UNIQUE subroutine needs a source, such as faction:pirates or site:station_research',
+      'misplaced: source "colony:jangala" is not faction:ID or site:ID',
+      'misplaced: source "faction:pirates" is listed more than once',
+      'weighted: line HULL_MULT_RELIC has a weight or tier range, but every unique subroutine line always rolls',
+      'weighted: line "HULL_MULT:1:2:3" has a weight or tier bands, but every unique subroutine line always rolls',
+      'weighted: HULL_MULT is listed twice, as HULL_MULT_RELIC and HULL_MULT',
+      'wrong_scope: HULL_MULT only rolls on hull_item, not unique_subroutine',
+      'wrong_scope: ARMOR_FLAT_RELIC is a suffix, but unique subroutine lines are prefixes',
+      'wrong_scope: line MISSING is not in item_modifiers.csv',
+      'volume: only UNIQUE subroutines have lines; remove them',
+    ]);
+  });
+});
+
 describe('drops', () => {
   function row(chances: string[]): DropRow {
     return { cells: [], passthrough: false, site: 'derelict', chances, unique: '' };

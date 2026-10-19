@@ -9,16 +9,22 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public record ItemDefinition(String id, ItemKind kind, String name, String icon, float rarity, boolean unique,
                                    String description, List<PoolEntry> prefixes, List<PoolEntry> suffixes, String unlock, ItemType type,
-                                   SubroutineKind subroutineKind) {
+                                   SubroutineKind subroutineKind, List<UniqueSource> uniqueSources, int socketLimit) {
 
     public static final String FALLBACK_ICON = "graphics/icons/cargo/chip1.png";
+    public static final int NO_SOCKET_LIMIT = 0;
     private static final Logger LOG = Logger.getLogger(ItemDefinition.class);
     private static final String ENTRY_SEPARATOR = ";";
+    private static final Pattern WHOLE_NUMBER = Pattern.compile("\\d{1,9}");
     static final String SECTION_COLUMN = "section";
     static final String SUBROUTINE_KIND_COLUMN = "kind";
+    static final String UNIQUE_LINES_COLUMN = "lines";
+    static final String UNIQUE_SOURCE_COLUMN = "source";
+    static final String SOCKET_LIMIT_COLUMN = "socket_limit";
 
     public ItemDefinition {
         if (kind != null) {
@@ -27,11 +33,30 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
         if (type != ItemType.SUBROUTINE) {
             subroutineKind = null;
         }
+        uniqueSources = uniqueSources == null ? List.of() : List.copyOf(uniqueSources);
+        socketLimit = Math.max(NO_SOCKET_LIMIT, socketLimit);
     }
 
     public ItemDefinition(String id, ItemKind kind, String name, String icon, float rarity, boolean unique, String description,
                           List<PoolEntry> prefixes, List<PoolEntry> suffixes, String unlock) {
-        this(id, kind, name, icon, rarity, unique, description, prefixes, suffixes, unlock, null, null);
+        this(id, kind, name, icon, rarity, unique, description, prefixes, suffixes, unlock, null, null, List.of(), NO_SOCKET_LIMIT);
+    }
+
+    public boolean limitsSocketsPerShip() {
+        return socketLimit > NO_SOCKET_LIMIT;
+    }
+
+    static Integer parsedSocketLimit(String socketLimitText) {
+        String trimmed = socketLimitText == null ? "" : socketLimitText.trim();
+        if (trimmed.isEmpty()) {
+            return NO_SOCKET_LIMIT;
+        }
+        return WHOLE_NUMBER.matcher(trimmed).matches() ? Integer.valueOf(trimmed) : null;
+    }
+
+    private ItemDefinition withSocketLimit(int limit) {
+        return new ItemDefinition(id, kind, name, icon, rarity, unique, description, prefixes, suffixes, unlock, type, subroutineKind,
+                uniqueSources, limit);
     }
 
     static ItemDefinition parseSubroutine(JSONObject row) {
@@ -41,7 +66,26 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
         if (subroutineKind == null) {
             throw new IllegalArgumentException(definitionId + " has kind \"" + kindText + "\"; expected one of " + SubroutineKind.ids());
         }
-        return parseShared(row, ItemKind.SUBROUTINE, ItemType.SUBROUTINE, new Pools(List.of(), List.of()), subroutineKind);
+        String linesText = row.optString(UNIQUE_LINES_COLUMN, "").trim();
+        List<PoolEntry> uniqueLines = List.of();
+        if (subroutineKind == SubroutineKind.UNIQUE) {
+            if (!"true".equalsIgnoreCase(row.optString("unique", "").trim())) {
+                throw new IllegalArgumentException(definitionId + " is a " + SubroutineKind.UNIQUE.id() + " subroutine, so unique must be true");
+            }
+            uniqueLines = parsePool(definitionId, linesText, ModifierSlot.PREFIX, ModifierScope.UNIQUE_SUBROUTINE);
+            rejectRepeats(uniqueLines, List.of());
+        } else if (!linesText.isEmpty()) {
+            throw new IllegalArgumentException(definitionId + " lists lines, but only " + SubroutineKind.UNIQUE.id() + " subroutines have them");
+        }
+        List<UniqueSource> sources = UniqueSource.parseList(row.optString(UNIQUE_SOURCE_COLUMN, ""));
+        String socketLimitText = row.optString(SOCKET_LIMIT_COLUMN, "");
+        Integer socketLimit = parsedSocketLimit(socketLimitText);
+        if (socketLimit == null) {
+            throw new IllegalArgumentException(definitionId + " has socket limit \"" + socketLimitText.trim()
+                    + "\"; expected a whole number of 0 or more, or blank for no limit");
+        }
+        return parseShared(row, ItemKind.SUBROUTINE, ItemType.SUBROUTINE, new Pools(uniqueLines, List.of()), subroutineKind, sources)
+                .withSocketLimit(socketLimit);
     }
 
     static ItemDefinition parseHullItem(JSONObject row) {
@@ -57,6 +101,10 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
         return parse(row, null, ItemType.STAR_CHART);
     }
 
+    static ItemDefinition parseWormholeAnchor(JSONObject row) {
+        return parseCommon(row, null, ItemType.WORMHOLE_ANCHOR, new Pools(List.of(), List.of()), null, false, List.of());
+    }
+
     static ItemDefinition parse(JSONObject row, ItemKind kind) {
         return parse(row, kind, kind.type());
     }
@@ -65,6 +113,9 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
         if (itemType == ItemType.SUBROUTINE) {
             return parseSubroutine(row);
         }
+        if (itemType == ItemType.WORMHOLE_ANCHOR) {
+            return parseWormholeAnchor(row);
+        }
         String definitionId = definitionId(row);
         List<PoolEntry> prefixes = parsePool(definitionId, row.optString("prefixes", ""), ModifierSlot.PREFIX, itemType);
         List<PoolEntry> suffixes = parsePool(definitionId, row.optString("suffixes", ""), ModifierSlot.SUFFIX, itemType);
@@ -72,7 +123,7 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
             throw new IllegalArgumentException("it has no prefixes or suffixes");
         }
         rejectRepeats(prefixes, suffixes);
-        return parseShared(row, kind, itemType, new Pools(prefixes, suffixes), null);
+        return parseShared(row, kind, itemType, new Pools(prefixes, suffixes), null, List.of());
     }
 
     private record Pools(List<PoolEntry> prefixes, List<PoolEntry> suffixes) {
@@ -86,18 +137,28 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
         return definitionId;
     }
 
-    private static ItemDefinition parseShared(JSONObject row, ItemKind kind, ItemType itemType, Pools pools, SubroutineKind subroutineKind) {
+    private static ItemDefinition parseShared(JSONObject row, ItemKind kind, ItemType itemType, Pools pools, SubroutineKind subroutineKind,
+                                              List<UniqueSource> uniqueSources) {
+        boolean unique = "true".equalsIgnoreCase(row.optString("unique", "").trim());
+        return parseCommon(row, kind, itemType, pools, subroutineKind, unique, uniqueSources);
+    }
+
+    private static ItemDefinition parseCommon(JSONObject row, ItemKind kind, ItemType itemType, Pools pools, SubroutineKind subroutineKind,
+                                              boolean unique, List<UniqueSource> uniqueSources) {
         String definitionId = definitionId(row);
         String icon = row.optString("icon", "").trim();
         float rarity = (float) row.optDouble("rarity", 1.0);
         if (!(rarity >= 0f)) {
             throw new IllegalArgumentException("rarity must be zero or more");
         }
-        boolean unique = "true".equalsIgnoreCase(row.optString("unique", "").trim());
         return new ItemDefinition(definitionId, kind,
                 nameOrId(row.optString("name", "").trim(), definitionId), icon.isEmpty() ? FALLBACK_ICON : icon, rarity, unique,
                 row.optString("description", "").trim(), pools.prefixes(), pools.suffixes(),
-                row.optString("unlock", "").trim(), itemType, subroutineKind);
+                row.optString("unlock", "").trim(), itemType, subroutineKind, uniqueSources, NO_SOCKET_LIMIT);
+    }
+
+    public boolean isUniqueSubroutine() {
+        return subroutineKind == SubroutineKind.UNIQUE;
     }
 
     private static void rejectRepeats(List<PoolEntry> prefixes, List<PoolEntry> suffixes) {
@@ -214,17 +275,21 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
     }
 
     static List<PoolEntry> parsePool(String poolText, ModifierSlot slot) {
-        return parsePool(null, poolText, slot, null);
+        return parsePool(null, poolText, slot, (ModifierScope) null);
     }
 
     private static List<PoolEntry> parsePool(String definitionId, String poolText, ModifierSlot slot, ItemType itemType) {
+        return parsePool(definitionId, poolText, slot, ModifierScope.of(itemType));
+    }
+
+    private static List<PoolEntry> parsePool(String definitionId, String poolText, ModifierSlot slot, ModifierScope scope) {
         List<PoolEntry> pool = new ArrayList<>();
         for (String entryText : poolText.split(ENTRY_SEPARATOR)) {
             String trimmed = entryText.trim();
             if (trimmed.isEmpty()) {
                 continue;
             }
-            PoolEntry entry = parseEntry(definitionId, trimmed, slot, itemType);
+            PoolEntry entry = parseEntry(definitionId, trimmed, slot, scope);
             if (entry != null) {
                 pool.add(entry);
             }
@@ -232,12 +297,12 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
         return List.copyOf(pool);
     }
 
-    private static PoolEntry parseEntry(String definitionId, String entryText, ModifierSlot slot, ItemType itemType) {
+    private static PoolEntry parseEntry(String definitionId, String entryText, ModifierSlot slot, ModifierScope scope) {
         if (!ItemModifiers.isReference(entryText)) {
-            return PoolEntry.parse(entryText, slot, itemType);
+            return PoolEntry.parse(entryText, slot, scope);
         }
         try {
-            return PoolEntry.parse(entryText, slot, itemType);
+            return PoolEntry.parse(entryText, slot, scope);
         } catch (IllegalArgumentException e) {
             LOG.error("Skipping pool entry " + entryText + (definitionId == null ? "" : " of " + definitionId) + ": " + e.getMessage());
             return null;

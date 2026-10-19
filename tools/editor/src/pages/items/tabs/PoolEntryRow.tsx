@@ -4,14 +4,14 @@ import { memo } from 'react';
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { DecimalInput } from '../../../shared/DecimalInput.tsx';
 import { RowButtons } from '../../../shared/MoveButtons.tsx';
-import type { AffixGroup, PoolEntry } from '../model/definitions.ts';
+import type { PoolEntry, PoolGroup } from '../model/definitions.ts';
 import { MODIFIER_FILE_NAMES, type ItemFamily } from '../model/itemFamily.ts';
 import type { ItemModifier, ModifierLine } from '../model/modifiers.ts';
 import { ModifierLineRow } from './ModifierLineRow.tsx';
 import { ModifierSelect } from './ModifierSelect.tsx';
 
 interface PoolEntryRowProps {
-  groupKey: AffixGroup;
+  groupKey: PoolGroup;
   entry: PoolEntry;
   slot: 'prefix' | 'suffix';
   itemType: string;
@@ -22,11 +22,12 @@ interface PoolEntryRowProps {
   otherItemsUsingModifier: string;
   vocabulary: Vocabulary;
   family?: ItemFamily;
-  onEdit: (groupKey: AffixGroup, entryIndex: number, recipe: (entry: PoolEntry) => void) => void;
+  weighted?: boolean;
+  onEdit: (groupKey: PoolGroup, entryIndex: number, recipe: (entry: PoolEntry) => void) => void;
   onEditModifier: (modifierId: string, recipe: (modifier: ItemModifier) => void) => void;
-  onCopyModifier: (groupKey: AffixGroup, entryIndex: number) => void;
-  onMove: (groupKey: AffixGroup, from: number, to: number) => void;
-  onRemove: (groupKey: AffixGroup, entryIndex: number) => void;
+  onCopyModifier: (groupKey: PoolGroup, entryIndex: number) => void;
+  onMove: (groupKey: PoolGroup, from: number, to: number) => void;
+  onRemove: (groupKey: PoolGroup, entryIndex: number) => void;
 }
 
 export const PoolEntryRow = memo(function PoolEntryRow({
@@ -41,6 +42,7 @@ export const PoolEntryRow = memo(function PoolEntryRow({
   otherItemsUsingModifier,
   vocabulary,
   family = 'ship',
+  weighted = true,
   onEdit,
   onEditModifier,
   onCopyModifier,
@@ -69,25 +71,27 @@ export const PoolEntryRow = memo(function PoolEntryRow({
               })
             }
           />
-          <DecimalInput
-            style={{ flex: 2 }}
-            label={
-              <Group gap={4} wrap="nowrap">
-                Rarity weight
-                <Text span size="xs" c="dimmed">
-                  ({Math.round(share * 100)}% of first picks)
-                </Text>
-              </Group>
-            }
-            placeholder="1"
-            value={entry.weight}
-            onChange={(text) =>
-              editEntry((draft) => {
-                draft.weight = text;
-                delete draft.emptyWeightField;
-              })
-            }
-          />
+          {weighted && (
+            <DecimalInput
+              style={{ flex: 2 }}
+              label={
+                <Group gap={4} wrap="nowrap">
+                  Rarity weight
+                  <Text span size="xs" c="dimmed">
+                    ({Math.round(share * 100)}% of first picks)
+                  </Text>
+                </Group>
+              }
+              placeholder="1"
+              value={entry.weight}
+              onChange={(text) =>
+                editEntry((draft) => {
+                  draft.weight = text;
+                  delete draft.emptyWeightField;
+                })
+              }
+            />
+          )}
           {family === 'chart' && (
             <TextInput
               style={{ flex: 1 }}

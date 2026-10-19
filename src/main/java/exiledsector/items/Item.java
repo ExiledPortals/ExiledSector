@@ -67,6 +67,7 @@ public abstract class Item {
             case SUBROUTINE -> new Subroutine(id, definitionId, seed, explicitModifiers);
             case HULL_ITEM -> new HullItem(id, definitionId, seed, explicitModifiers);
             case STAR_CHART -> new StarChart(id, definitionId, seed, explicitModifiers);
+            case WORMHOLE_ANCHOR -> new WormholeAnchor(id, definitionId, seed);
         };
     }
 
@@ -126,12 +127,21 @@ public abstract class Item {
             case SUBROUTINE -> new Subroutine(this);
             case HULL_ITEM -> new HullItem(this);
             case STAR_CHART -> new StarChart(this);
+            case WORMHOLE_ANCHOR -> new WormholeAnchor(this);
         };
     }
 
     public ItemKind kind() {
         ItemDefinition definition = definition();
         return definition == null ? null : definition.kind();
+    }
+
+    public String kindName() {
+        ItemDefinition definition = definition();
+        if (definition == null) {
+            return Translation.text("socketable.unknown");
+        }
+        return definition.kind() == null ? definition.noun() : definition.kind().displayName();
     }
 
     public String id() {
@@ -310,7 +320,7 @@ public abstract class Item {
             lines.add(Translation.styled("socketable.tooltip.mirrored"));
         }
         if (corruption != null) {
-            lines.add(Translation.styled("socketable.tooltip.corrupted"));
+            lines.add(Translation.styled(corruption.tooltipKey()));
         }
         return lines;
     }

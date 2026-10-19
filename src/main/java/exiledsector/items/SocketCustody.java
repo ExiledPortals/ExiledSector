@@ -136,7 +136,7 @@ public final class SocketCustody {
     }
 
     static boolean fitsTreeSocket(Item item) {
-        return item instanceof Subroutine;
+        return item instanceof Subroutine || item instanceof WormholeAnchor;
     }
 
     static boolean fitsSection(Item item, String socketTypeId) {
@@ -151,7 +151,8 @@ public final class SocketCustody {
         String itemId = item.id();
         for (ShipSkillData shipData : shipDataById.values()) {
             for (Map.Entry<String, String> socketedEntry : List.copyOf(shipData.getSocketedItems().entrySet())) {
-                if (socketedEntry.getValue().equals(itemId) && !fitsTreeSocket(item)) {
+                if (socketedEntry.getValue().equals(itemId) && (!fitsTreeSocket(item)
+                        || SubroutineSocketLimits.limitReached(item, socketedEntry.getKey(), shipData.getSocketedItems()))) {
                     shipData.unsocketItem(socketedEntry.getKey());
                     return true;
                 }

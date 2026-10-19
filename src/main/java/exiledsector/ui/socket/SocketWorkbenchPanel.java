@@ -508,6 +508,10 @@ public final class SocketWorkbenchPanel extends HoloPanel {
                 showNotice(Translation.msg("ui.workbench.notice.corruptedItem").arg("name", loadedItem.name()).text());
                 return false;
             }
+            if (ItemCrafting.isLockedFromCurrency(loadedItem.definition())) {
+                showNotice(Translation.msg("ui.workbench.notice.uniqueSubroutine").arg("name", loadedItem.name()).text());
+                return false;
+            }
             if (currency == CraftingCurrency.FIXATION && loadedItem.hasLockedModifier()) {
                 showNotice(Translation.msg("ui.workbench.notice.alreadyFixed").arg("name", loadedItem.name()).text());
                 return false;
@@ -574,7 +578,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         SocketCustody.markHostsChanged(result);
         if ((currency == CraftingCurrency.TRANSPOSITION || currency == CraftingCurrency.CORRUPTION) && SocketCustody.unsocketIfMisfit(result)) {
             String movedNotice = Translation.msg("ui.workbench.notice.movedToStorage").arg("name", result.name())
-                    .arg("type", result.kind().displayName()).text();
+                    .arg("type", result.kindName()).text();
             noticeText = Translation.msg("format.sentences").arg("a", noticeText).arg("b", movedNotice).text();
         }
         for (CraftingWard ward : spentWards) {
@@ -976,15 +980,16 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             if (displayName.baseName() != null) {
                 centred(VanillaText.plainPara(element, displayName.baseName(), LINE_PAD, Misc.getGrayColor()));
             }
-            if (loadedItem.mirrored()) {
-                centred(VanillaText.addPara(element, Translation.styled("socketable.tooltip.mirrored"), LINE_PAD, Misc.getGrayColor()));
-            }
-            if (loadedItem.corrupted()) {
-                centred(VanillaText.addPara(element, Translation.styled("socketable.tooltip.corrupted"), LINE_PAD, Misc.getGrayColor()));
-            }
             if (benchMode == BenchMode.STAR_CHARTS) {
                 for (StyledText line : loadedItem.headerLines()) {
                     centred(VanillaText.addPara(element, line, LINE_PAD, Misc.getGrayColor()));
+                }
+            } else {
+                if (loadedItem.mirrored()) {
+                    centred(VanillaText.addPara(element, Translation.styled("socketable.tooltip.mirrored"), LINE_PAD, Misc.getGrayColor()));
+                }
+                if (loadedItem.corrupted()) {
+                    centred(VanillaText.addPara(element, Translation.styled(loadedItem.corruption().tooltipKey()), LINE_PAD, Misc.getGrayColor()));
                 }
             }
             float paraPad = GAP * 2f;

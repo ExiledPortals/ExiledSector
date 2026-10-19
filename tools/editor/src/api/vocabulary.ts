@@ -18,6 +18,8 @@ interface VocabularyFile {
   itemTypes: string[];
   itemKinds: { id: string; type: string }[];
   subroutineKinds?: string[];
+  modifierScopes?: string[];
+  uniqueSourceKinds?: string[];
   itemUnlocks: string[];
   clearedChartTierPrefix?: string;
   chartTierRange?: [number, number];
@@ -59,6 +61,8 @@ export interface Vocabulary {
   itemKinds: string[];
   itemKindTypes: Map<string, string>;
   subroutineKinds: string[];
+  modifierScopes: string[];
+  uniqueSourceKinds: string[];
   itemUnlocks: string[];
   clearedChartTierPrefix: string;
   lowestChartTier: number;
@@ -88,6 +92,8 @@ export function buildVocabulary(file: VocabularyFile): Vocabulary {
     itemKinds: file.itemKinds.map((kind) => kind.id),
     itemKindTypes: new Map(file.itemKinds.map((kind) => [kind.id, kind.type])),
     subroutineKinds: (file.subroutineKinds ?? []).slice(),
+    modifierScopes: (file.modifierScopes ?? file.itemTypes).slice(),
+    uniqueSourceKinds: (file.uniqueSourceKinds ?? ['faction', 'site']).slice(),
     itemUnlocks: file.itemUnlocks.slice(),
     clearedChartTierPrefix: file.clearedChartTierPrefix ?? 'cleared_chart_tier_',
     lowestChartTier: file.chartTierRange?.[0] ?? 1,

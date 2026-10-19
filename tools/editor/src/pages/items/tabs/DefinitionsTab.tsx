@@ -14,12 +14,14 @@ import {
   AFFIX_GROUPS,
   ANY_SYSTEM_TYPE,
   definitionWarnings,
+  editablePool,
   isTrueText,
+  isUniqueSubroutine,
   markDefinitionsSaved,
   itemTypeOfKind,
   ITEM_TYPE_LABELS,
   modifierQualifierFor,
-  type AffixGroup,
+  type PoolGroup,
   newItemDefinition,
   normalisedSystemType,
   parseFamilyDefinitions,
@@ -28,6 +30,8 @@ import {
   setDefinitionKind,
   STAR_CHART_KIND,
   SUBROUTINE_TYPE,
+  UNIQUE_LINES_GROUP,
+  UNIQUE_SUBROUTINE_TYPE,
   UNLOCK_LABELS,
   uniqueItemId,
   validateItemDefinitions,
@@ -36,7 +40,16 @@ import {
   type PoolEntry,
 } from '../model/definitions.ts';
 import type { CsvTable } from '../../../shared/csv.ts';
-import { DEFINITION_FILE_NAMES, DEFINITION_RESOURCES, IMPLICIT_RESOURCES, MODIFIER_FILE_NAMES, MODIFIER_RESOURCES, type ItemFamily } from '../model/itemFamily.ts';
+import {
+  DEFINITION_FAMILY_OPTIONS,
+  DEFINITION_FILE_NAMES,
+  DEFINITION_RESOURCES,
+  IMPLICIT_RESOURCES,
+  MODIFIER_FILE_NAMES,
+  MODIFIER_RESOURCES,
+  type DefinitionFamily,
+  type ItemFamily,
+} from '../model/itemFamily.ts';
 import { modifierUsage } from '../model/modifierUsage.ts';
 import {
   copiedModifier,
@@ -49,8 +62,9 @@ import {
   type ModifierUsage,
 } from '../model/modifiers.ts';
 import { implicitItemType, parseFamilyImplicits, type ImplicitsModel } from '../model/implicits.ts';
+import { AnchorDefinitionsPanel } from './AnchorDefinitionsPanel.tsx';
 import { DefinitionView } from './DefinitionView.tsx';
-import { FamilySwitch } from './FamilySwitch.tsx';
+import { FamilyOptionSwitch } from './FamilySwitch.tsx';
 import { PoolEntryRow } from './PoolEntryRow.tsx';
 
 type DefinitionsViewMode = 'edit' | 'view';
@@ -84,7 +98,20 @@ function implicitGroupOf(definition: ItemDefinition, family: ItemFamily, vocabul
 }
 
 export function DefinitionsTab({ vocabulary }: { vocabulary: Vocabulary }) {
-  const [family, setFamily] = useState<ItemFamily>('ship');
+  const [family, setFamily] = useState<DefinitionFamily>('ship');
+  if (family === 'anchor') {
+    return <AnchorDefinitionsPanel vocabulary={vocabulary} onFamily={setFamily} />;
+  }
+  return <ItemDefinitionsPanel vocabulary={vocabulary} family={family} onFamily={setFamily} />;
+}
+
+interface ItemDefinitionsPanelProps {
+  vocabulary: Vocabulary;
+  family: ItemFamily;
+  onFamily: (family: DefinitionFamily) => void;
+}
+
+function ItemDefinitionsPanel({ vocabulary, family, onFamily }: ItemDefinitionsPanelProps) {
   const document = useDataDocument<DefinitionsModel>({
     key: 'items.definitions',
     noun: 'item definition',
@@ -141,17 +168,23 @@ export function DefinitionsTab({ vocabulary }: { vocabulary: Vocabulary }) {
     setSelectedIndex(definitions.length);
   };
 
-  const switchFamily = (nextFamily: ItemFamily) => {
+  const switchFamily = (nextFamily: DefinitionFamily) => {
     setSelectedIndex(0);
     setKindFilter('');
-    setFamily(nextFamily);
+    onFamily(nextFamily);
   };
 
   return (
     <Stack h="100%" gap={0}>
       <Box px="md" py="xs">
         <DataToolbar document={document}>
-          <FamilySwitch document={document} family={family} onFamily={switchFamily} noun="item definition" />
+          <FamilyOptionSwitch<DefinitionsModel, DefinitionFamily>
+            document={document}
+            family={family}
+            onFamily={switchFamily}
+            noun="item definition"
+            options={DEFINITION_FAMILY_OPTIONS}
+          />
           <SegmentedControl
             size="xs"
             value={viewMode}
@@ -371,15 +404,16 @@ function DefinitionForm({ document, family, definition, index, vocabulary, catal
   );
 
   const copyModifier = useCallback(
-    (groupKey: AffixGroup, entryIndex: number) =>
+    (groupKey: PoolGroup, entryIndex: number) =>
       updateDocument((draft) => {
         const draftDefinition = draft.definitions[index];
-        const entry = draftDefinition[groupKey][entryIndex];
+        const entry = editablePool(draftDefinition, groupKey)[entryIndex];
         const source = draft.catalogue.find((candidate) => candidate.id === entry.modifierId);
         if (!source) {
           return;
         }
-        const copy = copiedModifier(draft.catalogue, source, modifierQualifierFor(draftDefinition), itemTypeOfKind(draftDefinition.kind), new Set(otherCatalogueIds));
+        const copyItemType = groupKey === UNIQUE_LINES_GROUP.key ? UNIQUE_SUBROUTINE_TYPE : itemTypeOfKind(draftDefinition.kind);
+        const copy = copiedModifier(draft.catalogue, source, modifierQualifierFor(draftDefinition), copyItemType, new Set(otherCatalogueIds));
         draft.catalogue.push(copy);
         entry.modifierId = copy.id;
         draft.catalogueChanged = true;
@@ -388,11 +422,14 @@ function DefinitionForm({ document, family, definition, index, vocabulary, catal
   );
 
   const editEntry = useCallback(
-    (groupKey: AffixGroup, entryIndex: number, recipe: (entry: PoolEntry) => void) => edit((draft) => recipe(draft[groupKey][entryIndex])),
+    (groupKey: PoolGroup, entryIndex: number, recipe: (entry: PoolEntry) => void) => edit((draft) => recipe(editablePool(draft, groupKey)[entryIndex])),
     [edit],
   );
-  const moveEntry = useCallback((groupKey: AffixGroup, from: number, to: number) => edit((draft) => moveItem(draft[groupKey], from, to)), [edit]);
-  const removeEntry = useCallback((groupKey: AffixGroup, entryIndex: number) => edit((draft) => void draft[groupKey].splice(entryIndex, 1)), [edit]);
+  const moveEntry = useCallback((groupKey: PoolGroup, from: number, to: number) => edit((draft) => moveItem(editablePool(draft, groupKey), from, to)), [edit]);
+  const removeEntry = useCallback(
+    (groupKey: PoolGroup, entryIndex: number) => edit((draft) => void editablePool(draft, groupKey).splice(entryIndex, 1)),
+    [edit],
+  );
 
   const commitId = async () => {
     const newId = idText.trim();
@@ -421,6 +458,8 @@ function DefinitionForm({ document, family, definition, index, vocabulary, catal
   const itemType = itemTypeOfKind(definition.kind);
   const isSubroutine = itemType === SUBROUTINE_TYPE;
   const showsAffixPools = !isSubroutine || definition.prefixes.length > 0 || definition.suffixes.length > 0;
+  const uniqueLines = definition.lines ?? [];
+  const showsUniqueFields = isSubroutine && (isUniqueSubroutine(definition) || uniqueLines.length > 0 || Boolean(definition.source));
   const subroutineKind = definition.subroutineKind ?? '';
   const subroutineKindOptions =
     subroutineKind === '' || vocabulary.subroutineKinds.includes(subroutineKind) ? vocabulary.subroutineKinds : [subroutineKind, ...vocabulary.subroutineKinds];
@@ -496,6 +535,16 @@ function DefinitionForm({ document, family, definition, index, vocabulary, catal
       )}
       <TextInput label="Name" value={definition.name} onChange={(event) => { const text = event.currentTarget.value; edit((draft) => void (draft.name = text)); }} />
       <DecimalInput w={220} label="Rarity (loot weight)" value={definition.rarity} onChange={(text) => edit((draft) => void (draft.rarity = text))} />
+      {isSubroutine && (
+        <DecimalInput
+          w={320}
+          label="Socket limit per ship"
+          description="Most copies of this subroutine one ship can socket; blank or 0 for no limit"
+          placeholder="no limit"
+          value={definition.socketLimit ?? ''}
+          onChange={(text) => edit((draft) => void (draft.socketLimit = text))}
+        />
+      )}
       <Checkbox
         label={isSubroutine ? 'Unique - shown with the name above in orange' : 'Unique - shown with the name above in orange, and rolls every prefix and suffix'}
         checked={unique}
@@ -526,6 +575,61 @@ function DefinitionForm({ document, family, definition, index, vocabulary, catal
         value={definition.description}
         onChange={(event) => { const text = event.currentTarget.value; edit((draft) => void (draft.description = text)); }}
       />
+      {showsUniqueFields && (
+        <>
+          <Divider />
+          <TextInput
+            label="Drop source"
+            description="faction:FACTION_ID - flagships of that faction's fleets can carry it; site:SALVAGE_SITE_ID - that salvage site's unique roll. Separate several with ;"
+            value={definition.source ?? ''}
+            onChange={(event) => {
+              const text = event.currentTarget.value;
+              edit((draft) => void (draft.source = text));
+            }}
+          />
+          <Text size="xs" c="dimmed">
+            Every line always rolls, once. A min-max range is rolled when the subroutine drops and frozen on it. Each line picks a prefix from{' '}
+            {MODIFIER_FILE_NAMES[family]} whose item types include {UNIQUE_SUBROUTINE_TYPE}.
+          </Text>
+          <Title order={5}>{UNIQUE_LINES_GROUP.label}</Title>
+          {uniqueLines.length === 0 && (
+            <Text size="sm" c="dimmed">
+              None yet.
+            </Text>
+          )}
+          {uniqueLines.map((entry, entryIndex) => (
+            <PoolEntryRow
+              key={entryIndex}
+              groupKey={UNIQUE_LINES_GROUP.key}
+              entry={entry}
+              slot={UNIQUE_LINES_GROUP.singular}
+              itemType={UNIQUE_SUBROUTINE_TYPE}
+              family={family}
+              index={entryIndex}
+              count={uniqueLines.length}
+              share={0}
+              weighted={false}
+              catalogue={catalogue}
+              otherItemsUsingModifier={(usage.get(entry.modifierId)?.items ?? []).filter((itemId) => itemId !== definition.id).join(', ')}
+              vocabulary={vocabulary}
+              onEdit={editEntry}
+              onEditModifier={editModifier}
+              onCopyModifier={copyModifier}
+              onMove={moveEntry}
+              onRemove={removeEntry}
+            />
+          ))}
+          <Button
+            size="xs"
+            variant="default"
+            w="fit-content"
+            leftSection={<IconPlus size={14} />}
+            onClick={() => edit((draft) => void editablePool(draft, UNIQUE_LINES_GROUP.key).push({ modifierId: '', weight: '' }))}
+          >
+            Add line
+          </Button>
+        </>
+      )}
       {showsAffixPools && (
         <>
           <Divider />

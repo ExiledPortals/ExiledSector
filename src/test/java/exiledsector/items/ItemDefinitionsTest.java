@@ -155,7 +155,9 @@ class ItemDefinitionsTest {
         assertEquals(subroutineRowCount, ItemDefinitions.all().stream().filter(definition -> definition.type() == ItemType.SUBROUTINE).count());
         for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.SUBROUTINE)) {
             assertNotNull(definition.subroutineKind(), definition.id());
-            assertTrue(definition.pool().isEmpty(), definition.id() + " is a subroutine, so it rolls no prefixes or suffixes");
+            assertTrue(definition.suffixes().isEmpty(), definition.id() + " is a subroutine, so it rolls no suffixes");
+            assertEquals(definition.isUniqueSubroutine(), !definition.prefixes().isEmpty(),
+                    definition.id() + " lists fixed lines only if it is a unique subroutine, and subroutines roll no prefixes");
         }
         for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.HULL_ITEM)) {
             assertFalse(definition.pool().isEmpty(), definition.id());

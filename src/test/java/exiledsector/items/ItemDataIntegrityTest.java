@@ -120,7 +120,8 @@ class ItemDataIntegrityTest {
         List<String> errors = errors(modifiers, validSubroutines(), validImplicits());
 
         assertTrue(errors.contains("HULL_PERCENT needs at least one item type in item_types"), errors.toString());
-        assertTrue(errors.contains("TOP_SPEED_PERCENT lists item type \"star_map\"; expected subroutine, hull_item, star_chart"), errors.toString());
+        assertTrue(errors.contains("TOP_SPEED_PERCENT lists item type \"star_map\"; expected subroutine, unique_subroutine, hull_item, star_chart, "
+                        + "wormhole_anchor"), errors.toString());
     }
 
     @Test
@@ -145,13 +146,78 @@ class ItemDataIntegrityTest {
                 .put(subroutine("doctrine", " doctrine "))
                 .put(subroutine("expansion", "EXPANSION"))
                 .put(subroutine("kindless", ""))
-                .put(subroutine("pooled", "UNIQUE").put("prefixes", "@HULL_MULT").put("suffixes", "@ARMOR_PERCENT"));
+                .put(subroutine("pooled", "VOLUME").put("prefixes", "@HULL_MULT").put("suffixes", "@ARMOR_PERCENT"));
 
         List<String> errors = errors(validModifiers(), subroutines, validImplicits());
 
         assertEquals(List.of("expansion has kind \"EXPANSION\"; expected one of VOLUME, DOCTRINE, BYPASS, UNIQUE",
                 "kindless has kind \"\"; expected one of VOLUME, DOCTRINE, BYPASS, UNIQUE",
                 "pooled lists prefixes or suffixes, but subroutines do not roll them"), errors);
+    }
+
+    private static JSONObject uniqueSubroutine(String id, String lines, String source) throws JSONException {
+        return subroutine(id, "UNIQUE").put("unique", "true").put(ItemDefinition.UNIQUE_LINES_COLUMN, lines)
+                .put(ItemDefinition.UNIQUE_SOURCE_COLUMN, source);
+    }
+
+    private static JSONArray modifiersWithUniqueLines() throws JSONException {
+        return validModifiers()
+                .put(ItemFixtures.modifierRow("TOP_SPEED_PERCENT_RELIC", "prefix", "unique_subroutine", "TOP_SPEED_PERCENT:5:8", ""))
+                .put(ItemFixtures.modifierRow("VENT_RATE_PERCENT_RELIC", "suffix", "unique_subroutine", "VENT_RATE_PERCENT:5:8", ""));
+    }
+
+    @Test
+    void aUniqueSubroutineListsItsLinesAndNamesASource() throws Exception {
+        JSONArray subroutines = validSubroutines()
+                .put(uniqueSubroutine("relic", "@TOP_SPEED_PERCENT_RELIC; HULL_PERCENT:3:3", "faction:pirates; site:station_research"));
+
+        List<Violation> violations = check(modifiersWithUniqueLines(), subroutines, validHullItems(), validImplicits());
+
+        assertEquals(List.of("VENT_RATE_PERCENT_RELIC rolls on unique_subroutine, so its slot must be prefix"),
+                violations.stream().filter(violation -> violation.severity() == Severity.ERROR).map(Violation::message).toList());
+    }
+
+    @Test
+    void uniqueSubroutineLinesAreCheckedAndOnlyUniqueSubroutinesHaveThem() throws Exception {
+        JSONArray subroutines = validSubroutines()
+                .put(subroutine("flagless", "UNIQUE").put(ItemDefinition.UNIQUE_LINES_COLUMN, "@TOP_SPEED_PERCENT_RELIC")
+                        .put(ItemDefinition.UNIQUE_SOURCE_COLUMN, "faction:pirates"))
+                .put(uniqueSubroutine("empty", "", "faction:pirates"))
+                .put(uniqueSubroutine("sourceless", "@TOP_SPEED_PERCENT_RELIC", ""))
+                .put(uniqueSubroutine("misplaced", "@TOP_SPEED_PERCENT_RELIC", "colony:jangala"))
+                .put(uniqueSubroutine("weighted", "@TOP_SPEED_PERCENT_RELIC:5; HULL_PERCENT:1:2:3", "site:wreck"))
+                .put(uniqueSubroutine("hull_only", "@HULL_MULT", "site:wreck"))
+                .put(uniqueSubroutine("doubled", "@TOP_SPEED_PERCENT_RELIC; TOP_SPEED_PERCENT:1:1", "site:wreck"))
+                .put(subroutine("volume_lines", "VOLUME").put(ItemDefinition.UNIQUE_LINES_COLUMN, "HULL_PERCENT:1:2"));
+
+        List<String> errors = errors(modifiersWithUniqueLines(), subroutines, validImplicits());
+
+        assertTrue(errors.contains("flagless is a UNIQUE subroutine, so unique must be true"), errors.toString());
+        assertTrue(errors.contains("empty is a UNIQUE subroutine but lists no lines"), errors.toString());
+        assertTrue(errors.contains("sourceless is a UNIQUE subroutine but names no source; add faction:FACTION_ID or site:SALVAGE_SITE_ID"),
+                errors.toString());
+        assertTrue(errors.contains("misplaced: source \"colony:jangala\" is not faction:FACTION_ID or site:SALVAGE_SITE_ID"), errors.toString());
+        assertTrue(errors.contains("weighted line \"@TOP_SPEED_PERCENT_RELIC:5\" has a weight or tier range, but every unique subroutine line always rolls"),
+                errors.toString());
+        assertTrue(errors.contains("weighted line \"HULL_PERCENT:1:2:3\" has a weight, but every unique subroutine line always rolls"), errors.toString());
+        assertTrue(errors.contains("hull_only is a unique_subroutine, but HULL_MULT only rolls on hull_item"), errors.toString());
+        assertTrue(errors.contains("doubled lists TOP_SPEED_PERCENT twice, as TOP_SPEED_PERCENT_RELIC and TOP_SPEED_PERCENT"), errors.toString());
+        assertTrue(errors.contains("volume_lines lists lines, but only UNIQUE subroutines have them"), errors.toString());
+    }
+
+    @Test
+    void aSocketLimitIsBlankOrAWholeNumberOfZeroOrMore() throws Exception {
+        JSONArray subroutines = validSubroutines()
+                .put(uniqueSubroutine("once", "@TOP_SPEED_PERCENT_RELIC", "site:wreck").put(ItemDefinition.SOCKET_LIMIT_COLUMN, "1"))
+                .put(uniqueSubroutine("unlimited", "@TOP_SPEED_PERCENT_RELIC", "site:wreck").put(ItemDefinition.SOCKET_LIMIT_COLUMN, "0"))
+                .put(uniqueSubroutine("negative", "@TOP_SPEED_PERCENT_RELIC", "site:wreck").put(ItemDefinition.SOCKET_LIMIT_COLUMN, "-1"))
+                .put(uniqueSubroutine("fractional", "@TOP_SPEED_PERCENT_RELIC", "site:wreck").put(ItemDefinition.SOCKET_LIMIT_COLUMN, "1.5"));
+
+        List<String> errors = errors(modifiersWithUniqueLines(), subroutines, validImplicits()).stream()
+                .filter(error -> error.contains("socket limit")).toList();
+
+        assertEquals(List.of("negative has socket limit \"-1\"; expected a whole number of 0 or more, or blank for no limit",
+                "fractional has socket limit \"1.5\"; expected a whole number of 0 or more, or blank for no limit"), errors);
     }
 
     @Test

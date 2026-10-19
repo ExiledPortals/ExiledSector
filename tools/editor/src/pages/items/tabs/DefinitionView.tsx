@@ -3,8 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchModifierLineDescriptions, stringsRevision, type DescribedModifierLines, type ModifierLineRequest } from '../../../api/describe.ts';
 import { isNumberText } from '../../../shared/decimalText.ts';
 import { renderMarkup, TOOLTIP_PANEL_CLASS } from '../../../shared/tooltipMarkup.ts';
-import { AFFIX_GROUPS, isTrueText, poolShares, poolWeight, type ItemDefinition } from '../model/definitions.ts';
-import { lineSummary, type ItemModifier, type ModifierLine } from '../model/modifiers.ts';
+import { AFFIX_GROUPS, isTrueText, poolShares, poolWeight, UNIQUE_LINES_GROUP, type ItemDefinition, type PoolEntry } from '../model/definitions.ts';
+import { lineSummary, parseModifierLine, UNIQUE_SUBROUTINE_TYPE, type ItemModifier, type ModifierLine } from '../model/modifiers.ts';
 
 const RETRY_DELAY_MS = 1500;
 
@@ -149,6 +149,17 @@ function RowsTable({ rows, describedByKey, showWeights, catalogueFileName }: Row
   );
 }
 
+function uniqueLineRowsOf(entries: PoolEntry[], catalogue: ItemModifier[]): ViewRow[] {
+  return rowsOf(entries, catalogue, false).map((row) =>
+    row.inlineText === undefined
+      ? row
+      : {
+          ...row,
+          modifier: { cells: [], id: row.inlineText, slot: 'prefix', itemTypes: [UNIQUE_SUBROUTINE_TYPE], lines: [parseModifierLine(row.inlineText)], name: '' },
+        },
+  );
+}
+
 export function DefinitionView({ definition, catalogue, implicitModifierIds, catalogueFileName = 'item_modifiers.csv', itemType }: DefinitionViewProps) {
   const implicitRows = rowsOf(
     implicitModifierIds.map((modifierId) => ({ modifierId, weight: '' })),
@@ -156,7 +167,8 @@ export function DefinitionView({ definition, catalogue, implicitModifierIds, cat
     false,
   );
   const groupRows = AFFIX_GROUPS.map((group) => ({ group, rows: rowsOf(definition[group.key], catalogue, true) }));
-  const allLines = [...implicitRows, ...groupRows.flatMap((entry) => entry.rows)].flatMap((row) => row.modifier?.lines ?? []);
+  const uniqueLineRows = uniqueLineRowsOf(definition.lines ?? [], catalogue);
+  const allLines = [...implicitRows, ...uniqueLineRows, ...groupRows.flatMap((entry) => entry.rows)].flatMap((row) => row.modifier?.lines ?? []);
   const { describedByKey, note } = useLineDescriptions(allLines, itemType);
 
   return (
@@ -187,6 +199,21 @@ export function DefinitionView({ definition, catalogue, implicitModifierIds, cat
               Implicit
             </Text>
             <RowsTable rows={implicitRows} describedByKey={describedByKey} showWeights={false} catalogueFileName={catalogueFileName} />
+          </Stack>
+        )}
+        {uniqueLineRows.length > 0 && (
+          <Stack gap={2}>
+            <Group gap="xs" align="baseline">
+              <Text size="sm" fw={600} c="white">
+                {UNIQUE_LINES_GROUP.label}
+              </Text>
+              {definition.source && (
+                <Text size="xs" c="dimmed">
+                  drops from {definition.source}
+                </Text>
+              )}
+            </Group>
+            <RowsTable rows={uniqueLineRows} describedByKey={describedByKey} showWeights={false} catalogueFileName={catalogueFileName} />
           </Stack>
         )}
         {groupRows.map(({ group, rows }) => (

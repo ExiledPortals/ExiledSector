@@ -126,7 +126,7 @@ public final class StarChart extends Item {
     }
 
     private static Modifier catalogueModifier(String modifierId) {
-        return ItemModifiers.itemTypes(modifierId).contains(ItemType.STAR_CHART) ? ItemModifiers.get(modifierId) : null;
+        return ItemModifiers.scopes(modifierId).contains(ModifierScope.STAR_CHART) ? ItemModifiers.get(modifierId) : null;
     }
 
     @Override

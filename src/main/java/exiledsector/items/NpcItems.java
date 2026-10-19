@@ -70,8 +70,12 @@ public final class NpcItems {
     }
 
     public static ItemDefinition pickDefinition(Random random, Predicate<ItemDefinition> uniqueAllowed) {
+        return pickDefinition(random, null, uniqueAllowed);
+    }
+
+    public static ItemDefinition pickDefinition(Random random, String fleetFactionId, Predicate<ItemDefinition> uniqueAllowed) {
         if (random.nextFloat() < UNIQUE_SHARE) {
-            ItemDefinition uniqueDefinition = ItemDrops.pickUnique(random,
+            ItemDefinition uniqueDefinition = ItemDrops.pickUniqueFrom(UniqueSource.Kind.FACTION, fleetFactionId, random,
                     definition -> definition.type() == ItemType.SUBROUTINE && uniqueAllowed.test(definition));
             if (uniqueDefinition != null) {
                 return uniqueDefinition;

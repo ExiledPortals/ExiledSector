@@ -141,7 +141,8 @@ class StarChartTest {
     @Test
     void transposingAShipItemNeverPicksAChart() {
         ItemStore store = new ItemStore();
-        ItemDefinition shipUnique = ItemDefinitions.all().stream().filter(ItemDefinition::unique).findFirst().orElseThrow();
+        ItemDefinition shipUnique = ItemDefinitions.all().stream()
+                .filter(definition -> definition.unique() && definition.type() == ItemType.HULL_ITEM).findFirst().orElseThrow();
         Item item = store.add(shipUnique, 1L);
         for (int attempt = 0; attempt < 40; attempt++) {
             Item transposed = ItemCrafting.transpose(store, item, new Random(attempt), definition -> true);

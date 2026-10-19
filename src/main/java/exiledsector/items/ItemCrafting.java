@@ -41,10 +41,19 @@ public final class ItemCrafting {
     public static boolean canUse(ItemCurrency currency, Item item, Predicate<ItemDefinition> allowedUniques,
                                  Collection<CraftingWard> wards) {
         ItemDefinition definition = item == null ? null : item.definition();
-        if (definition == null || item.mirrored() || item.corrupted() || !ItemCurrencies.appliesTo(currency, definition.type())) {
+        if (definition == null || !takesCurrency(definition.type()) || item.mirrored() || item.corrupted() || isLockedFromCurrency(definition)
+                || !ItemCurrencies.appliesTo(currency, definition.type())) {
             return false;
         }
         return currency.canUse(item, new CraftingContext(null, allowedUniques, CraftingWard.guardedSlots(wards)));
+    }
+
+    public static boolean takesCurrency(ItemType type) {
+        return type != null && type != ItemType.WORMHOLE_ANCHOR;
+    }
+
+    public static boolean isLockedFromCurrency(ItemDefinition definition) {
+        return definition != null && definition.isUniqueSubroutine();
     }
 
     public static boolean wardBlocksTransposition(Item item, Set<ModifierSlot> guarded) {
@@ -261,10 +270,10 @@ public final class ItemCrafting {
     }
 
     static Item corrupt(ItemStore store, Item item, Random random, Predicate<ItemDefinition> allowedUniques) {
-        CorruptionOutcome[] outcomes = CorruptionOutcome.values();
-        CorruptionOutcome outcome = outcomes[random.nextInt(outcomes.length)];
+        List<CorruptionOutcome> outcomes = CorruptionOutcome.NANOSWARM_OUTCOMES;
+        CorruptionOutcome outcome = outcomes.get(random.nextInt(outcomes.size()));
         Item corrupted = switch (outcome) {
-            case NOTHING -> item;
+            case NOTHING, INNATE -> item;
             case IMPLICIT_REPLACED -> replaceImplicit(item, random) ? item : null;
             case VALUES_RANDOMISED -> randomiseValues(item, random);
             case MODIFIERS_RANDOMISED -> randomiseModifiers(store, item, random, allowedUniques);
@@ -427,7 +436,7 @@ public final class ItemCrafting {
     private static boolean otherUnique(ItemDefinition definition, ItemDefinition currentDefinition, int tier,
                                        Predicate<ItemDefinition> allowedUniques) {
         boolean tierAllowed = definition.type() != ItemType.STAR_CHART || StarChartDefinitions.rollsAtTier(definition.id(), tier);
-        return definition.unique() && !definition.id().equals(currentDefinition.id()) && definition.rarity() > 0f && tierAllowed
-                && allowedUniques.test(definition);
+        return definition.unique() && definition.type() == currentDefinition.type() && !isLockedFromCurrency(definition)
+                && !definition.id().equals(currentDefinition.id()) && definition.rarity() > 0f && tierAllowed && allowedUniques.test(definition);
     }
 }

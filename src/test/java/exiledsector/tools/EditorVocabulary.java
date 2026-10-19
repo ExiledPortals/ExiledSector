@@ -15,8 +15,10 @@ import exiledsector.charts.ChartTiers;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
+import exiledsector.items.ModifierScope;
 import exiledsector.items.StarChartDefinitions;
 import exiledsector.items.SubroutineKind;
+import exiledsector.items.UniqueSource;
 import org.json.JSONObject;
 
 import java.nio.file.Path;
@@ -65,6 +67,9 @@ final class EditorVocabulary {
                         .collect(Collectors.joining(", ")))
                 .append("],\n");
         json.append("  \"subroutineKinds\": ").append(list(Arrays.stream(SubroutineKind.values()).map(SubroutineKind::id).toList())).append(",\n");
+        json.append("  \"modifierScopes\": ").append(list(Arrays.stream(ModifierScope.values()).map(ModifierScope::id).toList())).append(",\n");
+        json.append("  \"uniqueSourceKinds\": ")
+                .append(list(Arrays.stream(UniqueSource.Kind.values()).map(UniqueSource.Kind::prefix).toList())).append(",\n");
         json.append("  \"itemUnlocks\": ")
                 .append(list(Arrays.stream(ItemUnlock.values()).map(ItemUnlock::id).toList())).append(",\n");
         json.append("  \"clearedChartTierPrefix\": ").append(quote(ItemUnlock.CLEARED_CHART_TIER_PREFIX)).append(",\n");

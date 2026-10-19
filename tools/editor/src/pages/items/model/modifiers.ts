@@ -1,6 +1,7 @@
 import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { csvTableFromRows, parseCsvTable, serializeCsvTable, trimmedCsvCells, type CsvTable } from '../../../shared/csv.ts';
 import { isNumberText } from '../../../shared/decimalText.ts';
+import { WORMHOLE_ANCHOR_TYPE } from './anchors.ts';
 import { familyEffectNames, isFamilyEffect, MODIFIER_FILE_NAMES, type ItemFamily } from './itemFamily.ts';
 
 export const MODIFIER_COLUMNS = ['id', 'slot', 'item_types', 'lines', 'name'] as const;
@@ -12,6 +13,8 @@ export const MODIFIER_REFERENCE_MARK = '@';
 export const HULL_SIZE_LABELS = ['Frigate', 'Destroyer', 'Cruiser', 'Capital'];
 export const STAR_CHART_TYPE = 'star_chart';
 export const SUBROUTINE_TYPE = 'subroutine';
+export const UNIQUE_SUBROUTINE_TYPE = 'unique_subroutine';
+const SHIP_ITEM_TYPE = 'hull_item';
 const MODIFIER_ID_PATTERN = /^[A-Za-z0-9_]+$/;
 const TIER_BAND_TEXT = /^t([^=]*)=(-?[^-]*)(?:-(.*))?$/;
 const TIER_BAND_NUMBER = /^-?\d+(?:\.\d+)?$/;
@@ -205,7 +208,7 @@ export function uniqueModifierId(modifiers: ItemModifier[], base: string, takenI
 }
 
 export function shipItemTypes(vocabulary: Vocabulary): string[] {
-  return vocabulary.itemTypes.filter((itemType) => itemType !== STAR_CHART_TYPE && itemType !== SUBROUTINE_TYPE);
+  return vocabulary.modifierScopes.filter((itemType) => itemType !== STAR_CHART_TYPE && itemType !== SUBROUTINE_TYPE && itemType !== WORMHOLE_ANCHOR_TYPE);
 }
 
 export function familyItemTypes(family: ItemFamily, vocabulary: Vocabulary): string[] {
@@ -228,7 +231,7 @@ export function newModifier(
   takenIds: ReadonlySet<string> = new Set(),
 ): ItemModifier {
   const lines = [newModifierLine(family, vocabulary, slot)];
-  const itemTypes = family === 'chart' ? [STAR_CHART_TYPE] : slot === 'implicit' ? ['hull_item'] : shipItemTypes(vocabulary);
+  const itemTypes = family === 'chart' ? [STAR_CHART_TYPE] : [SHIP_ITEM_TYPE];
   return { cells: [], id: uniqueModifierId(modifiers, suggestedModifierId(lines, 'NEW'), takenIds), slot, itemTypes, lines, name: '' };
 }
 
@@ -307,9 +310,14 @@ function itemTypeIssues(label: string, modifier: ItemModifier, vocabulary: Vocab
       issues.push(`${label}: star chart modifiers belong in star_chart_modifiers.csv, not item_modifiers.csv`);
     } else if (itemType === SUBROUTINE_TYPE) {
       issues.push(`${label}: subroutines do not roll modifiers, so remove ${SUBROUTINE_TYPE} from its item types`);
-    } else if (!vocabulary.itemTypes.includes(itemType)) {
+    } else if (itemType === WORMHOLE_ANCHOR_TYPE) {
+      issues.push(`${label}: wormhole anchors do not roll modifiers, so remove ${WORMHOLE_ANCHOR_TYPE} from its item types`);
+    } else if (!vocabulary.modifierScopes.includes(itemType)) {
       issues.push(`${label}: unknown item type ${itemType}`);
     }
+  }
+  if (modifier.itemTypes.includes(UNIQUE_SUBROUTINE_TYPE) && modifier.slot !== 'prefix') {
+    issues.push(`${label}: unique subroutine lines are prefixes, so a modifier for ${UNIQUE_SUBROUTINE_TYPE} must be a prefix`);
   }
   return issues;
 }

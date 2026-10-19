@@ -66,6 +66,27 @@ class SocketedEffectsTest {
     }
 
     @Test
+    void aUniqueSubroutineAppliesItsLinesOnlyWhileSocketedInAnAllocatedSocket() throws Exception {
+        ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "relic").put("kind", "UNIQUE").put("unique", "true")
+                .put("lines", "HULL_MULT:5:5; TOP_SPEED_PERCENT:-4:-4").put("source", "faction:pirates")));
+        Item relic = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get("relic"), 9L));
+        ShipSkillData data = new ShipSkillData();
+        data.allocate(socket, 3);
+
+        assertTrue(AllocatedSkillEffects.forData(data, null).isEmpty());
+
+        data.socketItem("socket", relic.id());
+        List<SkillTypeEffect> applied = AllocatedSkillEffects.appliedEffects(data, AllocatedNode.of(data).get(0), null);
+
+        assertEquals(List.of("HULL_MULT", "TOP_SPEED_PERCENT"), applied.stream().map(effect -> effect.effect().name()).toList());
+        assertEquals(List.of(5f, -4f), applied.stream().map(SkillTypeEffect::magnitude).toList());
+
+        data.deallocate(socket);
+
+        assertTrue(AllocatedSkillEffects.forData(data, null).isEmpty());
+    }
+
+    @Test
     void aDestroyedItemNoLongerContributesAnything() {
         Item item = ItemStore.get().add(new ItemData("chip", 4L, List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledEffect("HULL_MULT", 5f))), null));
         ShipSkillData data = new ShipSkillData();

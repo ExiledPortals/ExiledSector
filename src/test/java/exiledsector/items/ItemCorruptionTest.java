@@ -57,7 +57,7 @@ class ItemCorruptionTest {
                 assertFalse(ItemCrafting.canUse(currency, corrupted, definition -> true), currency + " must not touch a corrupted item");
             }
         }
-        assertEquals(EnumSet.allOf(CorruptionOutcome.class), seen);
+        assertEquals(EnumSet.copyOf(CorruptionOutcome.NANOSWARM_OUTCOMES), seen, "a nanoswarm never makes an item born corrupted");
     }
 
     @Test

@@ -34,7 +34,7 @@ public final class ItemModifiers {
     private static final AtomicReference<Catalogue> SHIP_ITEM_PART = new AtomicReference<>(Catalogue.EMPTY);
     private static final AtomicReference<Catalogue> STAR_CHART_PART = new AtomicReference<>(Catalogue.EMPTY);
 
-    private record Catalogue(Map<String, Modifier> modifiersById, Map<String, String> namesById, Map<String, Set<ItemType>> itemTypesById) {
+    private record Catalogue(Map<String, Modifier> modifiersById, Map<String, String> namesById, Map<String, Set<ModifierScope>> scopesById) {
         static final Catalogue EMPTY = new Catalogue(Map.of(), Map.of(), Map.of());
 
         static Catalogue merged(Catalogue first, Catalogue second) {
@@ -43,10 +43,10 @@ public final class ItemModifiers {
             }
             Map<String, Modifier> modifiersById = new LinkedHashMap<>(first.modifiersById());
             Map<String, String> namesById = new LinkedHashMap<>(first.namesById());
-            Map<String, Set<ItemType>> itemTypesById = new LinkedHashMap<>(first.itemTypesById());
+            Map<String, Set<ModifierScope>> scopesById = new LinkedHashMap<>(first.scopesById());
             second.modifiersById().forEach((modifierId, modifier) -> {
                 if (modifiersById.putIfAbsent(modifierId, modifier) == null) {
-                    itemTypesById.put(modifierId, second.itemTypesById().get(modifierId));
+                    scopesById.put(modifierId, second.scopesById().get(modifierId));
                     String englishName = second.namesById().get(modifierId);
                     if (englishName != null) {
                         namesById.put(modifierId, englishName);
@@ -54,7 +54,7 @@ public final class ItemModifiers {
                 }
             });
             return new Catalogue(Collections.unmodifiableMap(modifiersById), Collections.unmodifiableMap(namesById),
-                    Collections.unmodifiableMap(itemTypesById));
+                    Collections.unmodifiableMap(scopesById));
         }
     }
 
@@ -72,32 +72,32 @@ public final class ItemModifiers {
 
     static void registerStarCharts(JSONArray rows, String sourcePath) throws JSONException {
         Catalogue shipItemModifiers = SHIP_ITEM_PART.get();
-        STAR_CHART_PART.set(catalogueOf(rows == null ? new JSONArray() : rows, sourcePath, itemTypes -> itemTypes.equals(Set.of(ItemType.STAR_CHART)),
+        STAR_CHART_PART.set(catalogueOf(rows == null ? new JSONArray() : rows, sourcePath, scopes -> scopes.equals(Set.of(ModifierScope.STAR_CHART)),
                 shipItemModifiers.modifiersById().keySet()));
         LOADED.set(Catalogue.merged(shipItemModifiers, STAR_CHART_PART.get()));
     }
 
-    private static Catalogue catalogueOf(JSONArray rows, String sourcePath, Predicate<Set<ItemType>> allowedTypes) throws JSONException {
-        return catalogueOf(rows, sourcePath, allowedTypes, Set.of());
+    private static Catalogue catalogueOf(JSONArray rows, String sourcePath, Predicate<Set<ModifierScope>> allowedScopes) throws JSONException {
+        return catalogueOf(rows, sourcePath, allowedScopes, Set.of());
     }
 
-    private static Catalogue catalogueOf(JSONArray rows, String sourcePath, Predicate<Set<ItemType>> allowedTypes, Set<String> takenIds)
+    private static Catalogue catalogueOf(JSONArray rows, String sourcePath, Predicate<Set<ModifierScope>> allowedScopes, Set<String> takenIds)
             throws JSONException {
         Map<String, Modifier> modifiersById = new LinkedHashMap<>();
         Map<String, String> namesById = new LinkedHashMap<>();
-        Map<String, Set<ItemType>> itemTypesById = new LinkedHashMap<>();
+        Map<String, Set<ModifierScope>> scopesById = new LinkedHashMap<>();
         ModCsv.forEach(rows, (index, row) -> {
             try {
                 Modifier modifier = parse(row);
-                Set<ItemType> itemTypes = parseItemTypes(modifier.id(), ModCsv.text(row, "item_types"));
-                if (!allowedTypes.test(itemTypes)) {
-                    throw new IllegalArgumentException(modifier.id() + " lists item types " + itemTypes.stream().map(ItemType::id).toList()
+                Set<ModifierScope> scopes = parseScopes(modifier.id(), ModCsv.text(row, "item_types"));
+                if (!allowedScopes.test(scopes)) {
+                    throw new IllegalArgumentException(modifier.id() + " lists item types " + scopes.stream().map(ModifierScope::id).toList()
                             + ", which do not belong in this file");
                 }
                 if (takenIds.contains(modifier.id()) || modifiersById.putIfAbsent(modifier.id(), modifier) != null) {
                     throw new IllegalArgumentException(modifier.id() + " is listed more than once");
                 }
-                itemTypesById.put(modifier.id(), itemTypes);
+                scopesById.put(modifier.id(), scopes);
                 String englishName = ModCsv.text(row, "name");
                 if (!englishName.isEmpty()) {
                     namesById.put(modifier.id(), englishName);
@@ -107,7 +107,7 @@ public final class ItemModifiers {
             }
         });
         return new Catalogue(Collections.unmodifiableMap(modifiersById), Collections.unmodifiableMap(namesById),
-                Collections.unmodifiableMap(itemTypesById));
+                Collections.unmodifiableMap(scopesById));
     }
 
     static Modifier parse(JSONObject row) {
@@ -124,33 +124,39 @@ public final class ItemModifiers {
         return new Modifier(modifierId, slot, parseLines(modifierId, slot, effects, ModCsv.text(row, "lines")));
     }
 
-    static Set<ItemType> parseItemTypes(String modifierId, String itemTypesText) {
-        Set<ItemType> itemTypes = EnumSet.noneOf(ItemType.class);
-        for (String itemTypeText : itemTypesText.split(LINE_SEPARATOR)) {
-            String trimmed = itemTypeText.trim();
+    static Set<ModifierScope> parseScopes(String modifierId, String itemTypesText) {
+        Set<ModifierScope> scopes = EnumSet.noneOf(ModifierScope.class);
+        for (String scopeText : itemTypesText.split(LINE_SEPARATOR)) {
+            String trimmed = scopeText.trim();
             if (trimmed.isEmpty()) {
                 continue;
             }
-            ItemType itemType = ItemType.byIdOrNull(trimmed);
-            if (itemType == null) {
-                throw new IllegalArgumentException(modifierId + " lists item type \"" + trimmed + "\"; expected " + ItemType.ids());
+            ModifierScope scope = ModifierScope.byIdOrNull(trimmed);
+            if (scope == null) {
+                throw new IllegalArgumentException(modifierId + " lists item type \"" + trimmed + "\"; expected " + ModifierScope.ids());
             }
-            itemTypes.add(itemType);
+            scopes.add(scope);
         }
-        if (itemTypes.isEmpty()) {
+        if (scopes.isEmpty()) {
             throw new IllegalArgumentException(modifierId + " needs at least one item type in item_types");
         }
+        return Collections.unmodifiableSet(scopes);
+    }
+
+    static Set<ItemType> itemTypesOf(Set<ModifierScope> scopes) {
+        Set<ItemType> itemTypes = EnumSet.noneOf(ItemType.class);
+        scopes.forEach(scope -> itemTypes.add(scope.itemType()));
         return Collections.unmodifiableSet(itemTypes);
     }
 
     private static ModifierEffects effectsForListedTypes(String itemTypesText) {
-        Set<ItemType> itemTypes;
+        Set<ModifierScope> scopes;
         try {
-            itemTypes = parseItemTypes("", itemTypesText);
+            scopes = parseScopes("", itemTypesText);
         } catch (IllegalArgumentException e) {
             return ItemEffects.SKILL_EFFECTS;
         }
-        return ItemEffects.forTypes(itemTypes);
+        return ItemEffects.forTypes(itemTypesOf(scopes));
     }
 
     private static List<ModifierLine> parseLines(String modifierId, ModifierSlot slot, ModifierEffects effects, String linesText) {
@@ -184,6 +190,10 @@ public final class ItemModifiers {
     }
 
     static Modifier referenced(String referenceId, ModifierSlot expectedSlot, ItemType itemType) {
+        return referenced(referenceId, expectedSlot, ModifierScope.of(itemType));
+    }
+
+    static Modifier referenced(String referenceId, ModifierSlot expectedSlot, ModifierScope scope) {
         Modifier modifier = get(referenceId);
         if (modifier == null) {
             throw new IllegalArgumentException("no modifier " + referenceId + " in " + DATA_PATH);
@@ -191,8 +201,8 @@ public final class ItemModifiers {
         if (modifier.slot() != expectedSlot) {
             throw new IllegalArgumentException("modifier " + referenceId + " is in the " + modifier.slot().id() + " slot, not the " + expectedSlot.id() + " slot");
         }
-        if (itemType != null && !itemTypes(referenceId).contains(itemType)) {
-            throw new IllegalArgumentException("modifier " + referenceId + " does not roll on the " + itemType.id() + " item type");
+        if (scope != null && !scopes(referenceId).contains(scope)) {
+            throw new IllegalArgumentException("modifier " + referenceId + " does not roll on the " + scope.id() + " item type");
         }
         return modifier;
     }
@@ -201,8 +211,12 @@ public final class ItemModifiers {
         return modifierId == null ? null : LOADED.get().modifiersById().get(modifierId);
     }
 
+    public static Set<ModifierScope> scopes(String modifierId) {
+        return modifierId == null ? Set.of() : LOADED.get().scopesById().getOrDefault(modifierId, Set.of());
+    }
+
     public static Set<ItemType> itemTypes(String modifierId) {
-        return modifierId == null ? Set.of() : LOADED.get().itemTypesById().getOrDefault(modifierId, Set.of());
+        return itemTypesOf(scopes(modifierId));
     }
 
     public static Collection<Modifier> all() {

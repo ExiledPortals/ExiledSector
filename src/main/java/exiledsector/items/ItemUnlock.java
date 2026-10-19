@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.impl.campaign.intel.misc.GateHaulerIntel;
+import exiledsector.compat.RandomAssortmentCompat;
 
 import java.util.function.Predicate;
 
@@ -13,7 +14,8 @@ public enum ItemUnlock {
     FOUND_ONSLAUGHT_MK1("found_onslaught_mk1", sector -> sector.getMemoryWithoutUpdate().getBoolean("$foundOneslaught")),
     FOUND_GATE_HAULER("found_gate_hauler", ItemUnlock::foundGateHauler),
     FOUND_PLANETKILLER("found_planetkiller", sector -> sector.getMemoryWithoutUpdate().getBoolean("$pk_recovered")),
-    DEFEATED_ZIGGURAT("defeated_ziggurat", sector -> sector.getMemoryWithoutUpdate().getBoolean("$defeatedZiggurat"));
+    DEFEATED_ZIGGURAT("defeated_ziggurat", sector -> sector.getMemoryWithoutUpdate().getBoolean("$defeatedZiggurat")),
+    RAT_PLAYER_EXOSHIP("rat_player_exoship", sector -> RandomAssortmentCompat.isModEnabled() && RandomAssortmentCompat.exoshipConfirmedRecovered());
 
     public static final int UNIQUE_MIN_PLAYER_LEVEL = 15;
     public static final int SECTION_ITEM_MIN_PLAYER_LEVEL = 15;

@@ -109,6 +109,8 @@ export function resolveDataResource(paths: ProjectPaths, name: string): DataReso
       return { filePath: path.join(configDir, 'hull_item_implicits.csv'), check: (text) => checkCsvHeader(text, 'section,', 'the section column') };
     case 'star-charts':
       return { filePath: path.join(configDir, 'star_charts.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
+    case 'wormhole-anchors':
+      return { filePath: path.join(configDir, 'wormhole_anchors.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
     case 'star-chart-modifiers':
       return { filePath: path.join(configDir, 'star_chart_modifiers.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
     case 'star-chart-implicits':

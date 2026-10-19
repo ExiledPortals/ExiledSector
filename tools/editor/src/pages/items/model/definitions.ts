@@ -2,16 +2,33 @@ import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { csvCell, csvTableFromRows, dropCsvColumn, parseCsvTable, serializeCsvTable, trimmedCsvCells, type CsvTable } from '../../../shared/csv.ts';
 import { isNumberText } from '../../../shared/decimalText.ts';
 import { isUnshippedImagePath } from '../../../shared/imagePaths.ts';
-import { MODIFIER_FILE_NAMES, type ItemFamily } from './itemFamily.ts';
-import { MODIFIER_REFERENCE_MARK, STAR_CHART_TYPE, SUBROUTINE_TYPE, type ItemModifier } from './modifiers.ts';
+import { isFamilyEffect, MODIFIER_FILE_NAMES, type ItemFamily } from './itemFamily.ts';
+import {
+  MODIFIER_REFERENCE_MARK,
+  parseModifierLine,
+  rolledValuesIssues,
+  STAR_CHART_TYPE,
+  SUBROUTINE_TYPE,
+  UNIQUE_SUBROUTINE_TYPE,
+  type ItemModifier,
+} from './modifiers.ts';
 
 export const SUBROUTINE_KIND = 'subroutine';
-export { SUBROUTINE_TYPE };
+export { SUBROUTINE_TYPE, UNIQUE_SUBROUTINE_TYPE };
 export const HULL_ITEM_TYPE = 'hull_item';
 export const STAR_CHART_KIND = 'star_chart';
 export const ANY_SYSTEM_TYPE = 'any';
-export const ITEM_TYPE_LABELS: Record<string, string> = { [SUBROUTINE_TYPE]: 'Subroutine', [HULL_ITEM_TYPE]: 'Hull item', [STAR_CHART_TYPE]: 'Star chart' };
-export const SUBROUTINE_COLUMNS = ['id', 'name', 'icon', 'rarity', 'unique', 'kind', 'description', 'unlock'] as const;
+export const UNIQUE_SUBROUTINE_KIND = 'UNIQUE';
+export const ITEM_TYPE_LABELS: Record<string, string> = {
+  [SUBROUTINE_TYPE]: 'Subroutine',
+  [UNIQUE_SUBROUTINE_TYPE]: 'Unique subroutine',
+  [HULL_ITEM_TYPE]: 'Hull item',
+  [STAR_CHART_TYPE]: 'Star chart',
+};
+export const SUBROUTINE_COLUMNS = ['id', 'name', 'icon', 'rarity', 'unique', 'kind', 'description', 'lines', 'source', 'socket_limit', 'unlock'] as const;
+export const OPTIONAL_SUBROUTINE_FIELDS: readonly string[] = ['lines', 'source', 'socket_limit'];
+const UNIQUE_SOURCE_ID = /^[A-Za-z0-9_.-]+$/;
+const SOCKET_LIMIT_TEXT = /^\d{1,9}$/;
 export const HULL_ITEM_COLUMNS = ['id', 'section', 'name', 'icon', 'rarity', 'unique', 'description', 'prefixes', 'suffixes', 'unlock'] as const;
 export const STAR_CHART_COLUMNS = ['id', 'system_type', 'name', 'icon', 'rarity', 'unique', 'min_tier', 'description', 'prefixes', 'suffixes', 'unlock'] as const;
 export const UNLOCK_LABELS: Record<string, string> = {
@@ -19,14 +36,23 @@ export const UNLOCK_LABELS: Record<string, string> = {
   found_gate_hauler: 'Found the Gate Hauler',
   found_planetkiller: 'Recovered the first Planetkiller',
   defeated_ziggurat: 'Defeated the Ziggurat at Alpha Site',
+  rat_player_exoship: 'Recovered or owns the Exoship (Random Assortment of Things)',
 };
 const TIER_RANGE_TEXT = /^t(\d+)(?:(\+)|-(\d+))?$/;
 
 export type AffixGroup = 'prefixes' | 'suffixes';
+export type PoolGroup = AffixGroup | 'lines';
 export const AFFIX_GROUPS: { key: AffixGroup; label: string; singular: 'prefix' | 'suffix' }[] = [
   { key: 'prefixes', label: 'Prefixes', singular: 'prefix' },
   { key: 'suffixes', label: 'Suffixes', singular: 'suffix' },
 ];
+export const UNIQUE_LINES_GROUP: { key: PoolGroup; label: string; singular: 'prefix' } = { key: 'lines', label: 'Lines', singular: 'prefix' };
+
+export interface ReferenceGroup {
+  key: PoolGroup;
+  singular: 'prefix' | 'suffix';
+  itemType: string;
+}
 
 export interface PoolEntry {
   modifierId: string;
@@ -49,6 +75,9 @@ export interface ItemDefinition {
   suffixes: PoolEntry[];
   unlock: string;
   subroutineKind?: string;
+  lines?: PoolEntry[];
+  source?: string;
+  socketLimit?: string;
   systemType?: string;
   minTier?: string;
   loadedId?: string;
@@ -77,6 +106,30 @@ export function itemTypeOfKind(kind: string): string {
     return SUBROUTINE_TYPE;
   }
   return kind === STAR_CHART_KIND ? STAR_CHART_TYPE : HULL_ITEM_TYPE;
+}
+
+export function isUniqueSubroutine(definition: Pick<ItemDefinition, 'kind' | 'subroutineKind'>): boolean {
+  return itemTypeOfKind(definition.kind) === SUBROUTINE_TYPE && definition.subroutineKind === UNIQUE_SUBROUTINE_KIND;
+}
+
+export function poolEntries(definition: ItemDefinition, group: PoolGroup): PoolEntry[] {
+  return group === 'lines' ? (definition.lines ?? []) : definition[group];
+}
+
+export function editablePool(definition: ItemDefinition, group: PoolGroup): PoolEntry[] {
+  if (group !== 'lines') {
+    return definition[group];
+  }
+  definition.lines ??= [];
+  return definition.lines;
+}
+
+export function referenceGroups(definition: ItemDefinition): ReferenceGroup[] {
+  const itemType = itemTypeOfKind(definition.kind);
+  return [
+    ...AFFIX_GROUPS.map((group) => ({ key: group.key, singular: group.singular, itemType })),
+    { key: UNIQUE_LINES_GROUP.key, singular: UNIQUE_LINES_GROUP.singular, itemType: UNIQUE_SUBROUTINE_TYPE },
+  ];
 }
 
 export function parsePoolEntry(text: string): PoolEntry {
@@ -154,6 +207,9 @@ export function parseItemDefinitions(subroutinesText: string, hullItemsText: str
       ...parseDefinitionRows(subroutineTable, () => SUBROUTINE_KIND).map((definition) => ({
         ...definition,
         subroutineKind: csvCell(subroutineTable, definition.cells, 'kind').trim(),
+        lines: parsePool(csvCell(subroutineTable, definition.cells, 'lines')),
+        source: csvCell(subroutineTable, definition.cells, 'source').trim(),
+        socketLimit: csvCell(subroutineTable, definition.cells, 'socket_limit').trim(),
       })),
       ...parseDefinitionRows(hullItemTable, (cells) => csvCell(hullItemTable, cells, 'section').trim()),
     ],
@@ -178,6 +234,12 @@ function definitionColumnValue(definition: ItemDefinition, column: string): unkn
       return formatPool(definition.suffixes);
     case 'kind':
       return definition.subroutineKind ?? '';
+    case 'lines':
+      return formatPool(definition.lines ?? []);
+    case 'source':
+      return definition.source ?? '';
+    case 'socket_limit':
+      return definition.socketLimit ?? '';
     case 'section':
       return definition.kind;
     case 'system_type':
@@ -198,7 +260,13 @@ function serializeDefinitions(table: CsvTable, definitions: ItemDefinition[], co
 export function serializeSubroutinesCsv(model: Pick<ItemDefinitionsModel, 'subroutineTable' | 'definitions'>): string {
   const subroutines = model.definitions.filter((definition) => itemTypeOfKind(definition.kind) === SUBROUTINE_TYPE);
   const leftoverPoolColumns = AFFIX_GROUPS.map((group) => group.key).filter((column) => model.subroutineTable.header.includes(column));
-  return serializeDefinitions(model.subroutineTable, subroutines, [...SUBROUTINE_COLUMNS, ...leftoverPoolColumns]);
+  const writtenColumns = SUBROUTINE_COLUMNS.filter(
+    (column) =>
+      !OPTIONAL_SUBROUTINE_FIELDS.includes(column) ||
+      model.subroutineTable.header.includes(column) ||
+      subroutines.some((definition) => String(definitionColumnValue(definition, column)) !== ''),
+  );
+  return serializeDefinitions(model.subroutineTable, subroutines, [...writtenColumns, ...leftoverPoolColumns]);
 }
 
 export function serializeHullItemsCsv(model: Pick<ItemDefinitionsModel, 'hullItemTable' | 'definitions'>): string {
@@ -302,6 +370,9 @@ export function newItemDefinition(
       prefixes: [],
       suffixes: [],
       subroutineKind,
+      lines: [],
+      source: '',
+      socketLimit: '',
     };
   }
   const definition: ItemDefinition = {
@@ -424,7 +495,85 @@ function starChartIssues(label: string, definition: ItemDefinition, vocabulary: 
   return issues;
 }
 
-function subroutineIssues(label: string, definition: ItemDefinition, vocabulary: Vocabulary): string[] {
+export function uniqueSourceIssues(sourceText: string, vocabulary: Vocabulary): string[] {
+  const issues: string[] = [];
+  const seenSources = new Set<string>();
+  for (const part of sourceText.split(';').map((text) => text.trim()).filter(Boolean)) {
+    const separatorIndex = part.indexOf(':');
+    const kind = separatorIndex < 0 ? '' : part.slice(0, separatorIndex).trim().toLowerCase();
+    const sourceId = separatorIndex < 0 ? '' : part.slice(separatorIndex + 1).trim();
+    const normalised = `${kind}:${sourceId}`;
+    if (!vocabulary.uniqueSourceKinds.includes(kind) || !UNIQUE_SOURCE_ID.test(sourceId)) {
+      issues.push(`source "${part}" is not ${vocabulary.uniqueSourceKinds.map((sourceKind) => `${sourceKind}:ID`).join(' or ')}`);
+    } else if (seenSources.has(normalised)) {
+      issues.push(`source "${part}" is listed more than once`);
+    }
+    seenSources.add(normalised);
+  }
+  return issues;
+}
+
+interface ListedLine {
+  id: string;
+  effect: string | null;
+}
+
+function inlineLineIssues(label: string, inlineText: string, vocabulary: Vocabulary): { issues: string[]; listed: ListedLine } {
+  const line = parseModifierLine(inlineText);
+  const issues: string[] = [];
+  if (!isFamilyEffect('ship', vocabulary, line.effect)) {
+    issues.push(`${label}: line "${inlineText}" uses unknown effect ${line.effect || '(none)'}`);
+  }
+  if (line.extraField !== undefined || line.tierBands) {
+    issues.push(`${label}: line "${inlineText}" has a weight or tier bands, but every unique subroutine line always rolls`);
+  }
+  issues.push(...rolledValuesIssues(`${label}: line ${line.effect}`, line, vocabulary));
+  return { issues, listed: { id: line.effect, effect: line.effect } };
+}
+
+function referencedLineIssues(label: string, entry: PoolEntry, catalogue: Map<string, ItemModifier>): { issues: string[]; listed: ListedLine | null } {
+  const issues: string[] = [];
+  const lineLabel = entry.modifierId || '(no modifier)';
+  if (entry.weight !== '' || entry.emptyWeightField || entry.tiers !== undefined) {
+    issues.push(`${label}: line ${lineLabel} has a weight or tier range, but every unique subroutine line always rolls`);
+  }
+  const modifier = catalogue.get(entry.modifierId);
+  if (!modifier) {
+    issues.push(`${label}: line ${lineLabel} is not in ${MODIFIER_FILE_NAMES.ship}`);
+    return { issues, listed: null };
+  }
+  if (modifier.slot !== UNIQUE_LINES_GROUP.singular) {
+    issues.push(`${label}: ${modifier.id} is a ${modifier.slot}, but unique subroutine lines are prefixes`);
+  }
+  if (!modifier.itemTypes.includes(UNIQUE_SUBROUTINE_TYPE)) {
+    issues.push(`${label}: ${modifier.id} only rolls on ${modifier.itemTypes.join(', ') || 'no item type'}, not ${UNIQUE_SUBROUTINE_TYPE}`);
+  }
+  return { issues, listed: { id: modifier.id, effect: modifier.lines.length === 1 ? modifier.lines[0].effect : null } };
+}
+
+function uniqueLineIssues(label: string, definition: ItemDefinition, catalogue: Map<string, ItemModifier>, vocabulary: Vocabulary): string[] {
+  const issues: string[] = [];
+  const listedLines: ListedLine[] = [];
+  for (const entry of definition.lines ?? []) {
+    const checked = entry.inlineText === undefined ? referencedLineIssues(label, entry, catalogue) : inlineLineIssues(label, entry.inlineText, vocabulary);
+    issues.push(...checked.issues);
+    const current = checked.listed;
+    if (!current) {
+      continue;
+    }
+    for (const earlier of listedLines) {
+      if (earlier.id === current.id) {
+        issues.push(`${label}: ${current.id} is listed more than once`);
+      } else if (current.effect !== null && earlier.effect === current.effect) {
+        issues.push(`${label}: ${current.effect} is listed twice, as ${earlier.id} and ${current.id}`);
+      }
+    }
+    listedLines.push(current);
+  }
+  return issues;
+}
+
+function subroutineIssues(label: string, definition: ItemDefinition, vocabulary: Vocabulary, catalogue: Map<string, ItemModifier>): string[] {
   const issues: string[] = [];
   if (!vocabulary.subroutineKinds.includes(definition.subroutineKind ?? '')) {
     issues.push(`${label}: subroutine kind must be one of ${vocabulary.subroutineKinds.join(', ')}`);
@@ -432,6 +581,27 @@ function subroutineIssues(label: string, definition: ItemDefinition, vocabulary:
   if (definition.prefixes.length > 0 || definition.suffixes.length > 0) {
     issues.push(`${label}: subroutines do not roll prefixes or suffixes; remove them`);
   }
+  issues.push(...uniqueSourceIssues(definition.source ?? '', vocabulary).map((issue) => `${label}: ${issue}`));
+  const socketLimit = (definition.socketLimit ?? '').trim();
+  if (socketLimit !== '' && !SOCKET_LIMIT_TEXT.test(socketLimit)) {
+    issues.push(`${label}: socket limit must be blank or a whole number of 0 or more`);
+  }
+  if (!isUniqueSubroutine(definition)) {
+    if ((definition.lines ?? []).length > 0) {
+      issues.push(`${label}: only ${UNIQUE_SUBROUTINE_KIND} subroutines have lines; remove them`);
+    }
+    return issues;
+  }
+  if (!isTrueText(definition.unique)) {
+    issues.push(`${label}: a ${UNIQUE_SUBROUTINE_KIND} subroutine must be marked unique`);
+  }
+  if ((definition.lines ?? []).length === 0) {
+    issues.push(`${label}: a ${UNIQUE_SUBROUTINE_KIND} subroutine needs at least one line`);
+  }
+  if (!(definition.source ?? '').trim()) {
+    issues.push(`${label}: a ${UNIQUE_SUBROUTINE_KIND} subroutine needs a source, such as faction:pirates or site:station_research`);
+  }
+  issues.push(...uniqueLineIssues(label, definition, catalogue, vocabulary));
   return issues;
 }
 
@@ -465,7 +635,7 @@ export function validateItemDefinitions(
       issues.push(`${label}: icon ${definition.icon} is in a folder that is not deployed`);
     }
     if (itemTypeOfKind(definition.kind) === SUBROUTINE_TYPE) {
-      issues.push(...subroutineIssues(label, definition, vocabulary));
+      issues.push(...subroutineIssues(label, definition, vocabulary, catalogue));
     } else if (definition.prefixes.length === 0 && definition.suffixes.length === 0) {
       issues.push(`${label}: it has no prefixes or suffixes`);
     }
@@ -487,6 +657,9 @@ export function definitionWarnings(definitions: ItemDefinition[], family: ItemFa
     const unique = isTrueText(definition.unique);
     if (!unique && definition.unlock) {
       warnings.push(`${label}: the drop condition ${definition.unlock} only applies to uniques, so it is ignored`);
+    }
+    if (definition.source && !isUniqueSubroutine(definition)) {
+      warnings.push(`${label}: the source ${definition.source} only applies to ${UNIQUE_SUBROUTINE_KIND} subroutines, so it is ignored`);
     }
     if (family === 'chart' && unique) {
       const gated = AFFIX_GROUPS.flatMap((group) => definition[group.key]).filter((entry) => entry.tiers !== undefined);

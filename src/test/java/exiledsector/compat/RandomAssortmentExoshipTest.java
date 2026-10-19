@@ -7,6 +7,9 @@ import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import exiledsector.items.ItemDefinition;
+import exiledsector.items.ItemType;
+import exiledsector.items.ItemUnlock;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
@@ -23,8 +26,11 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class RandomAssortmentExoshipTest {
@@ -33,6 +39,8 @@ class RandomAssortmentExoshipTest {
     private static final SkillType BEACON = new SkillType.Builder("exotech_beacon", "Hyper-Nav Beacon", "", SkillTier.WORMHOLE)
             .unlockConditions(List.of(UnlockCondition.modGate(UnlockConditionType.RAT_PLAYER_EXOSHIP)))
             .build();
+    private static final ItemDefinition BEACON_ANCHOR = new ItemDefinition("wormhole_anchor_exotech", null, "Hyper-Nav Beacon", "", 10f, false, "",
+            List.of(), List.of(), ItemUnlock.RAT_PLAYER_EXOSHIP.id(), ItemType.WORMHOLE_ANCHOR, null, List.of(), ItemDefinition.NO_SOCKET_LIMIT);
 
     private MockedStatic<Global> globalMock;
     private MockedStatic<LunaSettings> lunaSettingsMock;
@@ -122,6 +130,26 @@ class RandomAssortmentExoshipTest {
         lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", "exiledSector_disableMemoryFlagUnlock")).thenReturn(true);
 
         assertFalse(SkillTypeUnlockStatus.isLocked(BEACON, null));
+    }
+
+    @Test
+    void theBeaconAnchorUnlockFailsClosedAndLatchesNothingWhenRatCannotBeRead() {
+        when(settings.getScriptClassLoader()).thenReturn(new ClassLoader(null) {
+        });
+        exoData.setRecoveredExoship(true);
+
+        assertFalse(ItemUnlock.unlockConditionMet(BEACON_ANCHOR, Global.getSector()));
+        verify(sectorMemory, never()).set(anyString(), any());
+        assertTrue(RandomAssortmentCompat.exoshipGateOpen());
+    }
+
+    @Test
+    void theBeaconAnchorUnlocksAndLatchesOnceRatReportsTheExoship() {
+        assertFalse(ItemUnlock.unlockConditionMet(BEACON_ANCHOR, Global.getSector()));
+        exoData.setRecoveredExoship(true);
+
+        assertTrue(ItemUnlock.unlockConditionMet(BEACON_ANCHOR, Global.getSector()));
+        verify(sectorMemory).set("$exiledSector_socketUnlock_" + ItemUnlock.RAT_PLAYER_EXOSHIP.id(), true);
     }
 
     @Test

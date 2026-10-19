@@ -16,8 +16,12 @@ public final class ItemDisassembly {
         return disassemble(item, materials, ItemStore.get(), ShipSkillDataManager.all());
     }
 
+    public static boolean canDisassemble(Item item) {
+        return item != null && item.type() != ItemType.WORMHOLE_ANCHOR;
+    }
+
     static int disassemble(Item item, CraftingMaterials materials, ItemStore store, Map<String, ShipSkillData> shipDataById) {
-        if (item == null || SocketCustody.isInstalled(shipDataById, item) || !store.remove(item)) {
+        if (!canDisassemble(item) || SocketCustody.isInstalled(shipDataById, item) || !store.remove(item)) {
             return 0;
         }
         int partsGained = item.rarity().disassemblyParts();

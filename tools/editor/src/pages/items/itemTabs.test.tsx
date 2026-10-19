@@ -182,16 +182,40 @@ describe('hull item tabs', () => {
     const subroutinesBefore = server.readProjectFile(SUBROUTINES_FILE);
     const hullItemsBefore = server.readProjectFile(HULL_ITEMS_FILE);
     renderWithProviders(<DefinitionsTab vocabulary={vocabulary} />);
-    await screen.findAllByDisplayValue('Coatl Bastion Gunnery Team', undefined, { timeout: 30000 });
+    await screen.findAllByDisplayValue('Halcyon Fire-Control Lattice', undefined, { timeout: 30000 });
 
     fireEvent.click(screen.getByText('New item').closest('button') as HTMLButtonElement);
     expect(await findLabelled('Subroutine kind')).toHaveProperty('value', 'VOLUME');
     expect(screen.queryByText('Add prefix')).toBeNull();
+    expect(screen.queryByText('Add line')).toBeNull();
     fireEvent.click(saveButton());
     await screen.findByText('Saved subroutines.csv and hull_items.csv', undefined, { timeout: 30000 });
 
     const lineEnding = subroutinesBefore.includes('\r\n') ? '\r\n' : '\n';
-    expect(server.readProjectFile(SUBROUTINES_FILE)).toBe(`${subroutinesBefore}new_subroutine,New Subroutine,,10,,VOLUME,,${lineEnding}`);
+    expect(server.readProjectFile(SUBROUTINES_FILE)).toBe(`${subroutinesBefore}new_subroutine,New Subroutine,,10,,VOLUME,,,,,${lineEnding}`);
+    expect(server.readProjectFile(HULL_ITEMS_FILE)).toBe(hullItemsBefore);
+  }, 90000);
+
+  it('shows a unique subroutine its lines and source and saves an edited source to subroutines.csv', async () => {
+    const subroutinesBefore = server.readProjectFile(SUBROUTINES_FILE);
+    const hullItemsBefore = server.readProjectFile(HULL_ITEMS_FILE);
+    renderWithProviders(<DefinitionsTab vocabulary={vocabulary} />);
+    await screen.findAllByDisplayValue('Halcyon Fire-Control Lattice', undefined, { timeout: 30000 });
+
+    expect(await findLabelled('Drop source')).toHaveProperty('value', 'faction:tritachyon');
+    expect(await findLabelled('Socket limit per ship')).toHaveProperty('value', '1');
+    expect(screen.getAllByDisplayValue('BEAM_WEAPON_RANGE_PERCENT_HALCYON_LATTICE').length).toBeGreaterThan(0);
+    expect(screen.getByText('Add line')).not.toBeNull();
+    expect(screen.queryByText('Add prefix')).toBeNull();
+    expect(screen.queryByText(/Rarity weight/)).toBeNull();
+
+    fireEvent.change(await findLabelled('Drop source'), { target: { value: 'faction:tritachyon; site:station_research' } });
+    fireEvent.click(saveButton());
+    await screen.findByText('Saved subroutines.csv and hull_items.csv', undefined, { timeout: 30000 });
+
+    expect(server.readProjectFile(SUBROUTINES_FILE)).toBe(
+      subroutinesBefore.replace('_HALCYON_LATTICE,faction:tritachyon,', '_HALCYON_LATTICE,faction:tritachyon; site:station_research,'),
+    );
     expect(server.readProjectFile(HULL_ITEMS_FILE)).toBe(hullItemsBefore);
   }, 90000);
 });

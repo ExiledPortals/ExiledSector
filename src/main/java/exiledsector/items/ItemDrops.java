@@ -96,6 +96,11 @@ public final class ItemDrops {
         return rule == null || rule.otherMod() && !SalvageSiteCompat.dropsEnabled() ? null : rule;
     }
 
+    public static boolean hasUniqueRoll(String siteId) {
+        Rule rule = siteId == null ? null : RULES.get().get(siteId);
+        return rule != null && rule.uniqueChance() > 0f;
+    }
+
     public static List<ItemData> roll(String siteId, Random random) {
         return roll(siteId, random, 1f);
     }
@@ -120,7 +125,7 @@ public final class ItemDrops {
         }
         List<ItemData> droppedItems = rollCascade(rule, random, chances.general(), ItemDrops::pickBasic);
         if (random.nextFloat() < rule.uniqueChance() * chances.general()) {
-            ItemDefinition uniqueDefinition = pickUnique(random, uniqueAllowed);
+            ItemDefinition uniqueDefinition = pickUniqueFrom(UniqueSource.Kind.SITE, siteId, random, uniqueAllowed);
             if (uniqueDefinition != null) {
                 droppedItems.add(ItemData.rolled(uniqueDefinition, random.nextLong()));
             }
@@ -346,11 +351,17 @@ public final class ItemDrops {
     }
 
     private static boolean isDroppable(ItemDefinition definition) {
-        return definition.rarity() > 0f && SAFE_ID.matcher(definition.id()).matches();
+        return definition.type() != ItemType.WORMHOLE_ANCHOR && definition.rarity() > 0f && SAFE_ID.matcher(definition.id()).matches();
     }
 
     public static ItemDefinition pickUnique(Random random, Predicate<ItemDefinition> allowedUniques) {
-        return pick(random, definition -> definition.unique() && allowedUniques.test(definition));
+        return pick(random, definition -> definition.unique() && definition.uniqueSources().isEmpty() && allowedUniques.test(definition));
+    }
+
+    public static ItemDefinition pickUniqueFrom(UniqueSource.Kind sourceKind, String sourceId, Random random,
+                                                Predicate<ItemDefinition> allowedUniques) {
+        return pick(random, definition -> definition.unique() && UniqueSource.allows(definition.uniqueSources(), sourceKind, sourceId)
+                && allowedUniques.test(definition));
     }
 
     public static ItemDefinition pickChartAtTier(Random random, int tier, Predicate<ItemDefinition> filter) {
