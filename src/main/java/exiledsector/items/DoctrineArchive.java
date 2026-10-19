@@ -7,7 +7,7 @@ import java.util.List;
 
 public record DoctrineArchive(String definitionId, DoctrineBehaviour behaviour, RadiusSize radiusSize, List<String> notableTypeIds,
                               List<String> keystoneTypeIds, List<String> smallTypeIds, List<PoolEntry> modifierPool, int minLines,
-                              int maxLines) {
+                              int maxLines, String factionId) {
 
     public DoctrineArchive {
         notableTypeIds = List.copyOf(notableTypeIds);

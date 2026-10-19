@@ -1,6 +1,8 @@
 package exiledsector.ui;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
+import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
@@ -37,6 +39,7 @@ import org.lwjgl.input.Keyboard;
 
 import java.awt.Color;
 import java.util.List;
+import java.util.Objects;
 
 public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
@@ -72,6 +75,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private boolean swallowEscapeUp;
     private float workbenchDimProgress;
     private boolean hoverRingShown;
+    private String socketedFactionId;
+    private Color socketedFactionColor;
 
     public SkillTreeCanvasPlugin(FleetMemberAPI member, ShipVariantAPI variant, float shipCardHeight, BaseRefitButton refitButton,
                                  CustomPanelAPI hostPanel) {
@@ -152,6 +157,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         camera.beginStartingRootFollow(treeSession);
         treeSession.advance(amount);
         nodeDrawer.advance(amount);
+        refreshSocketedRadiusRing();
+        radiusRingRenderer.advance(amount);
         camera.applyStartingRootFollow(treeSession, followingStartingRoot);
         CanvasMode mode = mode();
         dropStaleGesture(mode);
@@ -509,6 +516,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         TreeLayers layers = exoshipView.layers(viewport, alphaMult * treeAlpha);
         if (treeAlpha > 0f) {
             refreshRadiusRing(layers, treeHovered);
+            radiusRingRenderer.renderSocketed(layers);
             radiusRingRenderer.render(layers);
             nodeDrawer.render(layers, mouseX, mouseY, treeHovered);
         }
@@ -546,6 +554,18 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             radiusRingRenderer.clearHighlightedRadius();
             hoverRingShown = false;
         }
+    }
+
+    private void refreshSocketedRadiusRing() {
+        SubroutineRadius.Footprint footprint = treeSession.socketedRadiusFootprint();
+        SkillNode centre = footprint == null ? null : SkillTree.get(footprint.centreNodeId());
+        String factionId = footprint == null ? null : footprint.factionId();
+        if (!Objects.equals(factionId, socketedFactionId)) {
+            socketedFactionId = factionId;
+            FactionAPI faction = factionId == null || Global.getSector() == null ? null : Global.getSector().getFaction(factionId);
+            socketedFactionColor = faction == null ? null : faction.getBaseUIColor();
+        }
+        radiusRingRenderer.setSocketedRadius(centre, footprint == null ? null : footprint.size(), socketedFactionColor);
     }
 
     private SubroutineRadius.Footprint socketFootprint(SkillNode socket) {

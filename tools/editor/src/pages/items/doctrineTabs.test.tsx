@@ -54,7 +54,7 @@ describe('doctrine archive editing', () => {
     await openDoctrine('Hegemony Doctrine Archive', 'doctrine_archive_hegemony');
     const before = server.readProjectFile(DOCTRINES_FILE);
 
-    expect(screen.getAllByText('AUGMENT - medium').length).toBe(4);
+    expect(screen.getAllByText('AUGMENT - large').length).toBe(4);
     expect(screen.getAllByText('TRANSFORM - large').length).toBe(3);
     fireEvent.change(screen.getByLabelText('Max lines per node'), { target: { value: '3' } });
     fireEvent.click(saveButton());

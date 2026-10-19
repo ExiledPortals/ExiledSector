@@ -25,6 +25,7 @@ import exiledsector.items.SocketCustody;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
 import exiledsector.items.Subroutine;
+import exiledsector.items.SubroutineRadius;
 import exiledsector.items.SubroutineSocketLimits;
 import exiledsector.items.VolumeGrantLinks;
 import exiledsector.items.WormholeAnchor;
@@ -228,6 +229,16 @@ public final class TreeAllocationSession {
 
     public Item socketedItem(SkillNode node) {
         return node == null ? null : ItemStore.lookup(allocator.data().getSocketedItem(node.getId()));
+    }
+
+    public SubroutineRadius.Footprint socketedRadiusFootprint() {
+        for (Map.Entry<String, String> socketed : allocator.data().getSocketedItems().entrySet()) {
+            SubroutineRadius.Footprint footprint = SubroutineRadius.footprint(ItemStore.lookup(socketed.getValue()), socketed.getKey());
+            if (footprint != null) {
+                return footprint;
+            }
+        }
+        return null;
     }
 
     public String doctrineRemovalWarning(SkillNode socket) {

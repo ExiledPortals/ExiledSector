@@ -161,6 +161,10 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
         return subroutineKind == SubroutineKind.UNIQUE;
     }
 
+    public boolean hasUniqueRarity() {
+        return unique || subroutineKind != null && subroutineKind.uniqueRarity();
+    }
+
     private static void rejectRepeats(List<PoolEntry> prefixes, List<PoolEntry> suffixes) {
         List<PoolEntry> combinedPool = new ArrayList<>(prefixes);
         combinedPool.addAll(suffixes);

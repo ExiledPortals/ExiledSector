@@ -201,6 +201,10 @@ final class SkillTreeNodeTooltipRenderer {
                 anchor.socketStatusLines(skillData, node.getId()).forEach(statusLine -> lines.add(new DescriptionLine(statusLine, false)));
             }
             if (socketed instanceof Subroutine subroutine) {
+                StyledText limitLine = subroutine.limitLine();
+                if (limitLine != null) {
+                    lines.add(new DescriptionLine(limitLine, false));
+                }
                 subroutine.doctrineLines().forEach(doctrineLine -> lines.add(new DescriptionLine(doctrineLine, false)));
                 subroutine.volumeSocketLines(socketGrantStatus).forEach(volumeLine -> lines.add(new DescriptionLine(volumeLine, false)));
             }

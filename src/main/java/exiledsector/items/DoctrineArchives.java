@@ -25,6 +25,7 @@ public final class DoctrineArchives {
     static final String ID_COLUMN = "id";
     static final String BEHAVIOUR_COLUMN = "behaviour";
     static final String RADIUS_COLUMN = "radius";
+    static final String FACTION_COLUMN = "faction";
     static final String NOTABLES_COLUMN = "notables";
     static final String KEYSTONES_COLUMN = "keystones";
     static final String SMALL_NODES_COLUMN = "small_nodes";
@@ -87,6 +88,8 @@ public final class DoctrineArchives {
         if (radiusSize == null) {
             throw new IllegalArgumentException(definitionId + " has radius \"" + radiusText + "\"; expected one of " + radiusKeys());
         }
+        String factionText = ModCsv.text(row, FACTION_COLUMN);
+        String factionId = factionText.isEmpty() ? null : factionText;
         List<String> notableTypeIds = typeIds(ModCsv.text(row, NOTABLES_COLUMN));
         List<String> keystoneTypeIds = typeIds(ModCsv.text(row, KEYSTONES_COLUMN));
         List<String> smallTypeIds = typeIds(ModCsv.text(row, SMALL_NODES_COLUMN));
@@ -105,7 +108,7 @@ public final class DoctrineArchives {
                 throw new IllegalArgumentException(definitionId + " transforms nodes, so it lists no modifiers");
             }
             return new DoctrineArchive(definitionId, behaviour, radiusSize, notableTypeIds, keystoneTypeIds, smallTypeIds, List.of(), minLines,
-                    maxLines);
+                    maxLines, factionId);
         }
         if (listsTypes) {
             throw new IllegalArgumentException(definitionId + " augments nodes, so it lists no replacement nodes");
@@ -114,7 +117,8 @@ public final class DoctrineArchives {
         if (modifierPool.isEmpty()) {
             throw new IllegalArgumentException(definitionId + " augments nodes but lists no modifiers");
         }
-        return new DoctrineArchive(definitionId, behaviour, radiusSize, List.of(), List.of(), List.of(), modifierPool, minLines, maxLines);
+        return new DoctrineArchive(definitionId, behaviour, radiusSize, List.of(), List.of(), List.of(), modifierPool, minLines, maxLines,
+                factionId);
     }
 
     private static String radiusKeys() {

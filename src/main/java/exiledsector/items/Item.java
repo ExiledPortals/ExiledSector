@@ -307,6 +307,10 @@ public abstract class Item {
         return lines;
     }
 
+    public StyledText limitLine() {
+        return null;
+    }
+
     public List<StyledText> headerLines() {
         List<StyledText> lines = new ArrayList<>();
         ItemDefinition definition = definition();

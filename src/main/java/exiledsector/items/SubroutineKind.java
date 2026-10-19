@@ -6,10 +6,10 @@ import java.util.stream.Collectors;
 
 public enum SubroutineKind {
 
-    VOLUME(true, true, SubroutineKind.UNLIMITED_PER_SHIP, false),
-    DOCTRINE(false, false, 1, false),
-    BYPASS(true, true, 1, false),
-    UNIQUE(false, false, SubroutineKind.UNLIMITED_PER_SHIP, true);
+    VOLUME(true, true, SubroutineKind.UNLIMITED_PER_SHIP, false, false),
+    DOCTRINE(false, false, 1, false, true),
+    BYPASS(true, true, 1, false, false),
+    UNIQUE(false, false, SubroutineKind.UNLIMITED_PER_SHIP, true, true);
 
     public static final int UNLIMITED_PER_SHIP = Integer.MAX_VALUE;
 
@@ -17,12 +17,18 @@ public enum SubroutineKind {
     private final boolean rollsNode;
     private final int socketLimitPerShip;
     private final boolean inGenericPools;
+    private final boolean uniqueRarity;
 
-    SubroutineKind(boolean bornCorrupted, boolean rollsNode, int socketLimitPerShip, boolean inGenericPools) {
+    SubroutineKind(boolean bornCorrupted, boolean rollsNode, int socketLimitPerShip, boolean inGenericPools, boolean uniqueRarity) {
         this.bornCorrupted = bornCorrupted;
         this.rollsNode = rollsNode;
         this.socketLimitPerShip = socketLimitPerShip;
         this.inGenericPools = inGenericPools;
+        this.uniqueRarity = uniqueRarity;
+    }
+
+    public boolean uniqueRarity() {
+        return uniqueRarity;
     }
 
     public boolean inGenericPools() {

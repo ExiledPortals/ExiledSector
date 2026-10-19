@@ -68,7 +68,7 @@ public class ItemCodexEntry extends BoxedCodexEntry {
     private void writeDefinition(TooltipMakerAPI info, float textWidth) {
         TooltipMakerAPI header = info.beginImageWithText(definition.icon(), ICON_SIZE);
         header.setTitleOrbitronLarge();
-        header.addTitle(definition.displayName(), definition.unique() ? ItemRarity.UNIQUE.color() : Misc.getBasePlayerColor());
+        header.addTitle(definition.displayName(), definition.hasUniqueRarity() ? ItemRarity.UNIQUE.color() : Misc.getBasePlayerColor());
         String installsInKey = definition.kind().fitsSection() ? "codex.hullItems.section" : "codex.socketables.socket";
         VanillaText.addPara(header, Translation.msg(installsInKey).arg("socket", definition.kind().displayName()).styled(), LINE_PAD, Misc.getTextColor());
         info.addImageWithText(0f);

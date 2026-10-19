@@ -13,6 +13,7 @@ import exiledsector.items.NpcItems;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemData;
+import exiledsector.items.SubroutineSocketLimits;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -182,7 +183,8 @@ public final class NpcTreeTag {
             ItemData itemData = NpcItems.item(itemId);
             boolean fitsTreeSocket = itemData != null && !DeletedSubroutines.isDeleted(itemData)
                     && (itemData.definition() == null || itemData.definition().type() == ItemType.SUBROUTINE);
-            if (node != null && node.getType().getTier() == SkillTier.SOCKET && fitsTreeSocket) {
+            boolean withinLimit = itemData == null || !SubroutineSocketLimits.limitReached(itemData.definition(), nodeId, shipData.getSocketedItems());
+            if (node != null && node.getType().getTier() == SkillTier.SOCKET && fitsTreeSocket && withinLimit) {
                 shipData.socketItem(nodeId, itemId);
             }
         }

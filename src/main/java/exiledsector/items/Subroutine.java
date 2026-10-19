@@ -175,9 +175,18 @@ public final class Subroutine extends Item {
             return lines;
         }
         String radiusName = Translation.text("socketable.doctrine.radius." + archive.radiusSize().dataKey());
-        String behaviourKey = archive.transforms() ? "socketable.doctrine.transforms" : "socketable.doctrine.augments";
-        lines.add(Translation.msg(behaviourKey).arg("radius", radiusName).styled());
+        lines.add(Translation.msg("socketable.doctrine.radiusLine").arg("radius", radiusName).styled());
         return lines;
+    }
+
+    @Override
+    public StyledText limitLine() {
+        SubroutineKind kind = subroutineKind();
+        if (kind != SubroutineKind.DOCTRINE) {
+            return null;
+        }
+        int limit = kind.socketLimitPerShip();
+        return Translation.msg("socketable.doctrine.limit").count(limit).arg("limit", limit).styled();
     }
 
     static StyledText rolledNodeLine(String nodeId) {

@@ -65,7 +65,7 @@ final class AffixLayout {
     }
 
     static ItemRarity rarityFor(ItemDefinition definition, int effectCount) {
-        if (definition != null && definition.unique()) {
+        if (definition != null && definition.hasUniqueRarity()) {
             return ItemRarity.UNIQUE;
         }
         int commonMaxEffects = limits(definition == null ? null : definition.type()).commonMaxEffects();

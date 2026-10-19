@@ -8,7 +8,7 @@ export const DOCTRINE_ARCHIVE_RESOURCE = 'doctrine-archives';
 export const DOCTRINE_ARCHIVE_FILE_NAME = 'doctrine_archives.csv';
 export const TRANSFORM_BEHAVIOUR = 'TRANSFORM';
 export const AUGMENT_BEHAVIOUR = 'AUGMENT';
-export const DOCTRINE_ARCHIVE_COLUMNS = ['id', 'behaviour', 'radius', 'notables', 'keystones', 'small_nodes', 'modifiers', 'min_lines', 'max_lines'] as const;
+export const DOCTRINE_ARCHIVE_COLUMNS = ['id', 'behaviour', 'radius', 'faction', 'notables', 'keystones', 'small_nodes', 'modifiers', 'min_lines', 'max_lines'] as const;
 export const DOCTRINE_POOL_TIERS = { notables: 'NOTABLE', keystones: 'KEYSTONE', smallNodes: 'SMALL' } as const;
 export type DoctrinePoolKey = keyof typeof DOCTRINE_POOL_TIERS;
 const ENTRY_SEPARATOR = ';';
@@ -21,6 +21,7 @@ export interface DoctrineArchive {
   id: string;
   behaviour: string;
   radius: string;
+  faction: string;
   notables: string;
   keystones: string;
   smallNodes: string;
@@ -50,6 +51,7 @@ export function parseDoctrineArchivesCsv(text: string): DoctrineArchivesModel {
       id: columns.id,
       behaviour: columns.behaviour,
       radius: columns.radius,
+      faction: columns.faction,
       notables: columns.notables,
       keystones: columns.keystones,
       smallNodes: columns.small_nodes,
@@ -67,6 +69,7 @@ function archiveColumnValues(archive: DoctrineArchive): Record<(typeof DOCTRINE_
     id: archive.id,
     behaviour: archive.behaviour,
     radius: archive.radius,
+    faction: archive.faction,
     notables: archive.notables,
     keystones: archive.keystones,
     small_nodes: archive.smallNodes,
@@ -123,6 +126,7 @@ export function newDoctrineArchive(archives: DoctrineArchive[], doctrineSubrouti
     id,
     behaviour: vocabulary.doctrineBehaviours[0] ?? TRANSFORM_BEHAVIOUR,
     radius: vocabulary.radiusSizes[1] ?? vocabulary.radiusSizes[0] ?? 'medium',
+    faction: '',
     notables: '',
     keystones: '',
     smallNodes: '',

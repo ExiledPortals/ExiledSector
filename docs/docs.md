@@ -790,16 +790,29 @@ socket it sits in on this ship, otherwise on the socket the panel is filling). `
 centre and size through the kind, so each radius kind chooses its own centre: a Doctrine Archive uses its
 socket.
 
+While a radius subroutine sits in a socket on the shown ship, the canvas also marks its radius all the time
+(`NodeRadiusRingRenderer.renderSocketed`) with vanilla's neutrino detector band (the `abilities`/`neutrino_detector`
+texture, drawn like `GraviticScanAbility`), its outer edge fixed on the radius and fading inward, with two
+passes pulsing against each other. The texture's transparent lead-in is trimmed so the glow starts right at
+the edge. It takes the doctrine's faction colour (the `faction` column's base UI colour), or the tree's glow
+colour without one. The hover ring draws on top of it. `TreeAllocationSession.socketedRadiusFootprint` finds the socketed
+subroutine each frame by walking the ship's few socketed items.
+
 ## Doctrine Archives
 
 A Doctrine Archive is a subroutine of kind `DOCTRINE`, one per vanilla faction volume. While it sits in an
 allocated standard socket it rewrites every node within its radius on that ship only. The nodes still have
-to be allocated to give anything, and only one Doctrine Archive fits on a ship (`SubroutineKind`). Nothing
-drops them yet; the console command `ExiledSectorGrantDoctrineArchives [faction]` adds them for testing.
+to be allocated to give anything, and only one Doctrine Archive fits on a ship (`SubroutineKind`). Installing
+a second is refused, extras are unsocketed when a save loads (`SubroutineSocketLimits`), and restoring an NPC
+tree from its tag skips a socket past the limit. Doctrine Archives have unique rarity (`SubroutineKind.uniqueRarity`,
+read through `ItemDefinition.hasUniqueRarity`) without being `unique` in `subroutines.csv`, so they stay out of
+the unique drop and unlock rules and still take Corrupted Nanoswarms and Replicator Nanoseeds. Nothing drops them
+yet; the console command `ExiledSectorGrantDoctrineArchives [faction]` adds them for testing.
 
 Each doctrine has a row in `data/config/exiledSector/doctrine_archives.csv`, keyed by the subroutine's id.
 `behaviour` is `TRANSFORM` or `AUGMENT`, `radius` is `small`, `medium` or `large` (the sizes from "Node
-radii"), `notables`, `keystones` and `small_nodes` list the skill types a transforming doctrine may put in
+radii"), `faction` is the vanilla faction id whose colour marks the radius, `notables`, `keystones` and
+`small_nodes` list the skill types a transforming doctrine may put in
 place of each tier, and `modifiers` lists `@ID` or `@ID:weight` references to `item_modifiers.csv` rows
 whose `item_types` include `doctrine`, with `min_lines` and `max_lines` giving how many of them an
 augmenting doctrine adds to each node. Doctrine modifiers must be prefixes. `DoctrineArchives` loads the
@@ -873,14 +886,15 @@ reported yet is not known in advance.
 
 On the tree, rewritten node icons are tinted (amber for transformed, light blue for augmented). A
 transformed node shows its replacement's name, icon and tooltip, then "Originally: <name>"; an augmented
-node lists its added lines; both name the doctrine and its revision. A socket holding a doctrine shows the
-revision and what it does in its tooltip, and hovering it draws its radius.
+node lists its added lines; both name the doctrine and its revision. The archive's tooltip, and the tooltip
+of a socket holding one, shows "Limited to 1 doctrine archive" under the title, then its firmware revision
+and radius.
 
 The first draft has augmenting doctrines for the Hegemony (armour, hull and ballistic lines), the Lion's
 Guard of the Sindrian Diktat (combat readiness, range and energy lines) and the Persean League (fighter,
-logistics and escort lines), all medium radius with one or two lines per node, and the pirates, whose lines
-pair speed or damage with a combat readiness or d-mod drawback. Tri-Tachyon, the Luddic Church and the
-[REDACTED] volume transform within a large radius. Their notable pools are their own volume's notables plus
+logistics and escort lines), with one or two lines per node, and the pirates, whose lines pair speed or
+damage with a combat readiness or d-mod drawback. Tri-Tachyon, the Luddic Church and the [REDACTED] volume
+transform. Every doctrine has a large radius. Their notable pools are their own volume's notables plus
 three or four curated `doctrine_*` notables each, Tri-Tachyon and [REDACTED] have a curated keystone each,
 the Luddic doctrine uses its volume's two keystones, and the Luddic doctrine turns small nodes into Plain
 Rites, which gives nothing. Every magnitude is a placeholder.

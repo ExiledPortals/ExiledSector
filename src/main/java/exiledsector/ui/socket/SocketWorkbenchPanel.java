@@ -27,7 +27,6 @@ import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemNature;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemName;
-import exiledsector.items.ItemRarity;
 import exiledsector.items.ItemStore;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
@@ -517,7 +516,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
                 showNotice(Translation.msg("ui.workbench.notice.alreadyFixed").arg("name", loadedItem.name()).text());
                 return false;
             }
-            if (currency == CraftingCurrency.TRANSPOSITION && loadedItem.rarity() == ItemRarity.UNIQUE) {
+            if (currency == CraftingCurrency.TRANSPOSITION && loadedItem.definition() != null && loadedItem.definition().unique()) {
                 showNotice(Translation.text("ui.workbench.notice.noOtherUnique"));
                 return false;
             }

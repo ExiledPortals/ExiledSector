@@ -48,9 +48,9 @@ function modifier(id: string, itemTypes: string[], slot = 'prefix'): ItemModifie
 const MODIFIERS = [modifier('ARMOR_PERCENT_DOCTRINE', ['doctrine']), modifier('ARMOR_PERCENT_PLATE', ['hull_item'])];
 const DOCTRINES = ['doc_transform', 'doc_augment', 'doc_missing'];
 const CSV = [
-  'id,behaviour,radius,notables,keystones,small_nodes,modifiers,min_lines,max_lines',
-  'doc_transform,TRANSFORM,large,notable_a; notable_b,keystone_a,small_a,,1,1',
-  'doc_augment,AUGMENT,medium,,,,@ARMOR_PERCENT_DOCTRINE:2,1,2',
+  'id,behaviour,radius,faction,notables,keystones,small_nodes,modifiers,min_lines,max_lines',
+  'doc_transform,TRANSFORM,large,tritachyon,notable_a; notable_b,keystone_a,small_a,,1,1',
+  'doc_augment,AUGMENT,medium,,,,,@ARMOR_PERCENT_DOCTRINE:2,1,2',
   '',
 ].join('\r\n');
 

@@ -34,6 +34,10 @@ public final class ItemTooltip {
             if (itemName.baseName() != null) {
                 VanillaText.plainPara(tooltip, itemName.baseName(), 0f, Misc.getGrayColor());
             }
+            StyledText limitLine = item.limitLine();
+            if (limitLine != null) {
+                VanillaText.addPara(tooltip, limitLine, LINE_PAD, Misc.getGrayColor());
+            }
             addLines(tooltip, item.headerLines(), Misc.getGrayColor());
             if (item instanceof StarChart chart) {
                 float linePad = PAD;

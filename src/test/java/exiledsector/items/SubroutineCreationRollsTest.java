@@ -116,6 +116,18 @@ class SubroutineCreationRollsTest {
     }
 
     @Test
+    void doctrineArchivesAreUniqueAndShowTheirPerShipLimit() {
+        Item doctrine = stored(DOCTRINE, 3L);
+        Item volume = stored(VOLUME, 3L);
+
+        assertEquals(ItemRarity.UNIQUE, doctrine.rarity());
+        assertFalse(doctrine.definition().unique());
+        assertEquals("Limited to 1 doctrine archive", doctrine.limitLine().plain());
+        assertNull(volume.limitLine());
+        assertTrue(ItemCrafting.canUse(CraftingCurrency.CORRUPTION, doctrine, definition -> true));
+    }
+
+    @Test
     void aBornCorruptedSubroutineRefusesEveryCurrencyThatAnUncorruptedOneTakes() {
         Item doctrine = stored(DOCTRINE, 3L);
         assertTrue(ItemCrafting.canUse(CraftingCurrency.CORRUPTION, doctrine, definition -> true));

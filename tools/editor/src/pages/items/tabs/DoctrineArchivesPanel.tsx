@@ -224,6 +224,15 @@ function DoctrineForm({ document, archive, index, vocabulary, model, onSelect }:
           onChange={(value) => edit((draft) => void (draft.radius = value ?? ''))}
           allowDeselect={false}
         />
+        <TextInput
+          label="Faction"
+          description="Vanilla faction id whose colour marks the radius"
+          value={archive.faction}
+          onChange={(event) => {
+            const faction = event.currentTarget.value;
+            edit((draft) => void (draft.faction = faction));
+          }}
+        />
       </Group>
       {archive.behaviour !== AUGMENT_BEHAVIOUR &&
         (Object.keys(DOCTRINE_POOL_TIERS) as DoctrinePoolKey[]).map((poolKey) => {
