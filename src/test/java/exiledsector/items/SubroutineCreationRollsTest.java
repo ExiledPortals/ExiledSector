@@ -22,7 +22,6 @@ import java.util.Set;
 import static exiledsector.items.ItemFixtures.subroutineRow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -53,7 +52,7 @@ class SubroutineCreationRollsTest {
 
     private static void registerDefinitions() throws Exception {
         ItemDefinitions.register(new JSONArray()
-                .put(subroutineRow(VOLUME, SubroutineKind.VOLUME))
+                .put(subroutineRow(VOLUME, SubroutineKind.MODSPEC_CACHE))
                 .put(subroutineRow(BYPASS, SubroutineKind.BYPASS))
                 .put(subroutineRow(DOCTRINE, SubroutineKind.DOCTRINE))
                 .put(subroutineRow(UNIQUE, SubroutineKind.UNIQUE).put("unique", "true")));
@@ -105,13 +104,13 @@ class SubroutineCreationRollsTest {
 
     @Test
     void kindPropertiesMatchThePlan() {
-        assertTrue(SubroutineKind.VOLUME.bornCorrupted() && SubroutineKind.VOLUME.rollsNode());
+        assertTrue(SubroutineKind.MODSPEC_CACHE.bornCorrupted() && SubroutineKind.MODSPEC_CACHE.rollsNode());
         assertTrue(SubroutineKind.BYPASS.bornCorrupted() && SubroutineKind.BYPASS.rollsNode());
         assertFalse(SubroutineKind.DOCTRINE.bornCorrupted() || SubroutineKind.DOCTRINE.rollsNode());
         assertFalse(SubroutineKind.UNIQUE.bornCorrupted() || SubroutineKind.UNIQUE.rollsNode());
         assertEquals(1, SubroutineKind.DOCTRINE.socketLimitPerShip());
         assertEquals(1, SubroutineKind.BYPASS.socketLimitPerShip());
-        assertFalse(SubroutineKind.VOLUME.limitsSocketsPerShip());
+        assertFalse(SubroutineKind.MODSPEC_CACHE.limitsSocketsPerShip());
         assertFalse(SubroutineKind.UNIQUE.limitsSocketsPerShip());
     }
 
@@ -160,40 +159,40 @@ class SubroutineCreationRollsTest {
         Subroutine volume = stored(VOLUME, 3L);
         SubroutineNodePools.use(SubroutineKind.BYPASS, definition -> List.of());
 
-        assertNull(volume.rolledNodeId());
-        assertNull(stored(BYPASS, 3L).rolledNodeId());
-        assertTrue(plainLines(volume).stream().noneMatch(line -> line.startsWith("Encoded node")), plainLines(volume).toString());
+        assertEquals(List.of(), volume.rolledNodeIds());
+        assertEquals(List.of(), stored(BYPASS, 3L).rolledNodeIds());
+        assertTrue(plainLines(volume).stream().noneMatch(line -> line.startsWith("Allocates")), plainLines(volume).toString());
     }
 
     @Test
     void aBrokenPoolRollsNoNodeInsteadOfCrashing() {
-        SubroutineNodePools.use(SubroutineKind.VOLUME, definition -> {
+        SubroutineNodePools.use(SubroutineKind.MODSPEC_CACHE, definition -> {
             throw new IllegalStateException("tree not ready");
         });
 
-        assertNull(stored(VOLUME, 3L).rolledNodeId());
+        assertEquals(List.of(), stored(VOLUME, 3L).rolledNodeIds());
     }
 
     @Test
     void onlyKindsThatRollANodeGetOneAndEachPathAgreesOnIt() {
-        SubroutineNodePools.use(SubroutineKind.VOLUME, definition -> FIRST_POOL);
+        SubroutineNodePools.use(SubroutineKind.MODSPEC_CACHE, definition -> FIRST_POOL);
         SubroutineNodePools.use(SubroutineKind.DOCTRINE, definition -> FIRST_POOL);
-        String expected = SubroutineNodePools.pick(FIRST_POOL, 42L);
+        List<String> expected = List.of(SubroutineNodePools.pick(FIRST_POOL, 42L));
 
-        assertEquals(expected, stored(VOLUME, 42L).rolledNodeId());
-        assertEquals(expected, ((Subroutine) NpcItems.resolve(NpcItems.id(VOLUME, 42L))).rolledNodeId());
-        assertEquals(expected, ((Subroutine) store.add(NpcItems.item(NpcItems.id(VOLUME, 42L)))).rolledNodeId());
-        assertEquals(expected, ((Subroutine) ItemData.of(new ItemData(VOLUME, 42L).toSpecialItem()).preview()).rolledNodeId());
-        assertNull(stored(DOCTRINE, 42L).rolledNodeId());
-        assertNull(stored(UNIQUE, 42L).rolledNodeId());
+        assertEquals(expected, stored(VOLUME, 42L).rolledNodeIds());
+        assertEquals(expected, ((Subroutine) NpcItems.resolve(NpcItems.id(VOLUME, 42L))).rolledNodeIds());
+        assertEquals(expected, ((Subroutine) store.add(NpcItems.item(NpcItems.id(VOLUME, 42L)))).rolledNodeIds());
+        assertEquals(expected, ((Subroutine) ItemData.of(new ItemData(VOLUME, 42L).toSpecialItem()).preview()).rolledNodeIds());
+        assertEquals(List.of(), stored(DOCTRINE, 42L).rolledNodeIds());
+        assertEquals(List.of(), stored(UNIQUE, 42L).rolledNodeIds());
     }
 
     @Test
     void theRolledNodeIsFrozenThroughCopiesAndSavesWhenThePoolChanges() {
         SubroutineNodePools.use(SubroutineKind.BYPASS, definition -> FIRST_POOL);
         Subroutine original = stored(BYPASS, 11L);
-        String rolledNodeId = original.rolledNodeId();
-        assertNotNull(rolledNodeId);
+        List<String> rolledNodeIds = original.rolledNodeIds();
+        assertEquals(1, rolledNodeIds.size());
         String xml = xstream().toXML(store);
 
         SubroutineNodePools.use(SubroutineKind.BYPASS, definition -> SECOND_POOL);
@@ -201,18 +200,18 @@ class SubroutineCreationRollsTest {
         Subroutine mirror = (Subroutine) store.addMirrorOf(original);
         Subroutine converted = new Subroutine(original);
 
-        assertTrue(xml.contains("<rolledNodeId>" + rolledNodeId + "</rolledNodeId>"), xml);
-        assertEquals(rolledNodeId, reloaded.rolledNodeId());
+        assertTrue(xml.contains("<rolledNodeIds>") && xml.contains("<string>" + rolledNodeIds.get(0) + "</string>"), xml);
+        assertEquals(rolledNodeIds, reloaded.rolledNodeIds());
         assertEquals(CorruptionOutcome.INNATE, reloaded.corruption());
-        assertEquals(rolledNodeId, mirror.rolledNodeId());
-        assertEquals(rolledNodeId, converted.rolledNodeId());
-        assertTrue(SECOND_POOL.contains(stored(BYPASS, 11L).rolledNodeId()), "a new item rolls from the current pool");
+        assertEquals(rolledNodeIds, mirror.rolledNodeIds());
+        assertEquals(rolledNodeIds, converted.rolledNodeIds());
+        assertTrue(SECOND_POOL.containsAll(stored(BYPASS, 11L).rolledNodeIds()), "a new item rolls from the current pool");
     }
 
     @Test
     void theRolledNodeSurvivesALoadWhileTheDefinitionIsMissing() throws Exception {
-        SubroutineNodePools.use(SubroutineKind.VOLUME, definition -> FIRST_POOL);
-        String rolledNodeId = stored(VOLUME, 12L).rolledNodeId();
+        SubroutineNodePools.use(SubroutineKind.MODSPEC_CACHE, definition -> FIRST_POOL);
+        List<String> rolledNodeIds = stored(VOLUME, 12L).rolledNodeIds();
         String xml = xstream().toXML(store);
 
         ItemDefinitions.clear();
@@ -220,12 +219,12 @@ class SubroutineCreationRollsTest {
         assertEquals(UnresolvedItem.class, unresolved.getClass());
         String resaved = xstream().toXML(unresolved);
 
-        SubroutineNodePools.use(SubroutineKind.VOLUME, definition -> SECOND_POOL);
+        SubroutineNodePools.use(SubroutineKind.MODSPEC_CACHE, definition -> SECOND_POOL);
         registerDefinitions();
         Item restored = (Item) xstream().fromXML(resaved);
 
         assertEquals(Subroutine.class, restored.getClass());
-        assertEquals(rolledNodeId, ((Subroutine) restored).rolledNodeId());
+        assertEquals(rolledNodeIds, ((Subroutine) restored).rolledNodeIds());
         assertEquals(CorruptionOutcome.INNATE, restored.corruption());
     }
 
@@ -233,14 +232,14 @@ class SubroutineCreationRollsTest {
     void theTooltipNamesTheRolledNodeAndCopesWithANodeThatIsGone() {
         SkillType keystone = new SkillType.Builder("test_keystone", "Safety Overrides", "", SkillTier.KEYSTONE).build();
         SkillTree.register(new SkillNode("notable_a", keystone, List.of(), 0f, 0f));
-        SubroutineNodePools.use(SubroutineKind.BYPASS, definition -> List.of("notable_a"));
-        Subroutine known = stored(BYPASS, 1L);
-        SubroutineNodePools.use(SubroutineKind.BYPASS, definition -> List.of("removed_node"));
-        Subroutine orphaned = stored(BYPASS, 2L);
+        SubroutineNodePools.use(SubroutineKind.MODSPEC_CACHE, definition -> List.of("notable_a"));
+        Subroutine known = stored(VOLUME, 1L);
+        SubroutineNodePools.use(SubroutineKind.MODSPEC_CACHE, definition -> List.of("removed_node"));
+        Subroutine orphaned = stored(VOLUME, 2L);
 
-        assertTrue(plainLines(known).contains("Encoded node: Safety Overrides"), plainLines(known).toString());
-        assertEquals("removed_node", orphaned.rolledNodeId());
-        assertTrue(plainLines(orphaned).contains("Encoded node: unknown (no longer in the skill tree)"), plainLines(orphaned).toString());
+        assertTrue(plainLines(known).contains("Allocates Safety Overrides"), plainLines(known).toString());
+        assertEquals(List.of("removed_node"), orphaned.rolledNodeIds());
+        assertTrue(plainLines(orphaned).contains("Allocates an unknown node (no longer in the skill tree)"), plainLines(orphaned).toString());
     }
 
     @Test

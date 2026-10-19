@@ -6,7 +6,7 @@ public final class UnresolvedItem extends Item {
 
     private Integer chartTier;
     private Integer chartQuality;
-    private String rolledNodeId;
+    private List<String> rolledNodeIds;
 
     UnresolvedItem(String id, String definitionId, long seed, List<RolledModifier> explicitModifiers) {
         super(id, definitionId, seed, explicitModifiers);
@@ -18,11 +18,11 @@ public final class UnresolvedItem extends Item {
             chartTier = chart.tier();
             chartQuality = chart.quality();
         } else if (source instanceof Subroutine subroutine) {
-            rolledNodeId = subroutine.rolledNodeId();
+            rolledNodeIds = subroutine.rolledNodeIds();
         } else if (source instanceof UnresolvedItem unresolved) {
             chartTier = unresolved.chartTier;
             chartQuality = unresolved.chartQuality;
-            rolledNodeId = unresolved.rolledNodeId;
+            rolledNodeIds = unresolved.rolledNodeIds;
         }
     }
 
@@ -39,7 +39,7 @@ public final class UnresolvedItem extends Item {
         return chartQuality == null ? fallback : chartQuality;
     }
 
-    String rolledNodeId() {
-        return rolledNodeId;
+    List<String> rolledNodeIds() {
+        return rolledNodeIds;
     }
 }

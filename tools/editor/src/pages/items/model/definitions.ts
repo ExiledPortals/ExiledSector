@@ -20,7 +20,7 @@ export const HULL_ITEM_TYPE = 'hull_item';
 export const STAR_CHART_KIND = 'star_chart';
 export const ANY_SYSTEM_TYPE = 'any';
 export const UNIQUE_SUBROUTINE_KIND = 'UNIQUE';
-export const VOLUME_SUBROUTINE_KIND = 'VOLUME';
+export const MODSPEC_CACHE_SUBROUTINE_KIND = 'MODSPEC_CACHE';
 export const ITEM_TYPE_LABELS: Record<string, string> = {
   [SUBROUTINE_TYPE]: 'Subroutine',
   [UNIQUE_SUBROUTINE_TYPE]: 'Unique subroutine',
@@ -40,13 +40,13 @@ export const SUBROUTINE_COLUMNS = [
   'source',
   'socket_limit',
   'unlock',
-  'volume',
   'excluded_nodes',
+  'node_count_chances',
   'drop_chance',
   'salvage_chance',
 ] as const;
-export const VOLUME_SUBROUTINE_FIELDS: readonly string[] = ['volume', 'excluded_nodes', 'drop_chance', 'salvage_chance'];
-export const OPTIONAL_SUBROUTINE_FIELDS: readonly string[] = ['lines', 'source', 'socket_limit', ...VOLUME_SUBROUTINE_FIELDS];
+export const MODSPEC_CACHE_SUBROUTINE_FIELDS: readonly string[] = ['excluded_nodes', 'node_count_chances', 'drop_chance', 'salvage_chance'];
+export const OPTIONAL_SUBROUTINE_FIELDS: readonly string[] = ['lines', 'source', 'socket_limit', ...MODSPEC_CACHE_SUBROUTINE_FIELDS];
 const NODE_ID_TEXT = /^[A-Za-z0-9_.-]+$/;
 const UNIQUE_SOURCE_ID = /^[A-Za-z0-9_.-]+$/;
 const SOCKET_LIMIT_TEXT = /^\d{1,9}$/;
@@ -99,8 +99,8 @@ export interface ItemDefinition {
   lines?: PoolEntry[];
   source?: string;
   socketLimit?: string;
-  volume?: string;
   excludedNodes?: string;
+  nodeCountChances?: string;
   dropChance?: string;
   salvageChance?: string;
   systemType?: string;
@@ -137,12 +137,12 @@ export function isUniqueSubroutine(definition: Pick<ItemDefinition, 'kind' | 'su
   return itemTypeOfKind(definition.kind) === SUBROUTINE_TYPE && definition.subroutineKind === UNIQUE_SUBROUTINE_KIND;
 }
 
-export function isVolumeSubroutine(definition: Pick<ItemDefinition, 'kind' | 'subroutineKind'>): boolean {
-  return itemTypeOfKind(definition.kind) === SUBROUTINE_TYPE && definition.subroutineKind === VOLUME_SUBROUTINE_KIND;
+export function isModspecCacheSubroutine(definition: Pick<ItemDefinition, 'kind' | 'subroutineKind'>): boolean {
+  return itemTypeOfKind(definition.kind) === SUBROUTINE_TYPE && definition.subroutineKind === MODSPEC_CACHE_SUBROUTINE_KIND;
 }
 
-export function hasVolumeFields(definition: Pick<ItemDefinition, 'volume' | 'excludedNodes' | 'dropChance' | 'salvageChance'>): boolean {
-  return [definition.volume, definition.excludedNodes, definition.dropChance, definition.salvageChance].some((value) => (value ?? '').trim() !== '');
+export function hasModspecCacheFields(definition: Pick<ItemDefinition, 'excludedNodes' | 'nodeCountChances' | 'dropChance' | 'salvageChance'>): boolean {
+  return [definition.excludedNodes, definition.nodeCountChances, definition.dropChance, definition.salvageChance].some((value) => (value ?? '').trim() !== '');
 }
 
 export function excludedNodeIds(text: string | undefined): string[] {
@@ -150,6 +150,11 @@ export function excludedNodeIds(text: string | undefined): string[] {
     .split(';')
     .map((nodeId) => nodeId.trim())
     .filter((nodeId) => nodeId !== '');
+}
+
+function nodeCountChanceEntries(text: string | undefined): string[] {
+  const trimmed = String(text ?? '').trim();
+  return trimmed === '' ? [] : trimmed.split(';').map((entry) => entry.trim());
 }
 
 export function poolEntries(definition: ItemDefinition, group: PoolGroup): PoolEntry[] {
@@ -250,8 +255,8 @@ export function parseItemDefinitions(subroutinesText: string, hullItemsText: str
         lines: parsePool(csvCell(subroutineTable, definition.cells, 'lines')),
         source: csvCell(subroutineTable, definition.cells, 'source').trim(),
         socketLimit: csvCell(subroutineTable, definition.cells, 'socket_limit').trim(),
-        volume: csvCell(subroutineTable, definition.cells, 'volume').trim(),
         excludedNodes: csvCell(subroutineTable, definition.cells, 'excluded_nodes').trim(),
+        nodeCountChances: csvCell(subroutineTable, definition.cells, 'node_count_chances').trim(),
         dropChance: csvCell(subroutineTable, definition.cells, 'drop_chance').trim(),
         salvageChance: csvCell(subroutineTable, definition.cells, 'salvage_chance').trim(),
       })),
@@ -284,10 +289,10 @@ function definitionColumnValue(definition: ItemDefinition, column: string): unkn
       return definition.source ?? '';
     case 'socket_limit':
       return definition.socketLimit ?? '';
-    case 'volume':
-      return definition.volume ?? '';
     case 'excluded_nodes':
       return definition.excludedNodes ?? '';
+    case 'node_count_chances':
+      return definition.nodeCountChances ?? '';
     case 'drop_chance':
       return definition.dropChance ?? '';
     case 'salvage_chance':
@@ -425,8 +430,8 @@ export function newItemDefinition(
       lines: [],
       source: '',
       socketLimit: '',
-      volume: '',
       excludedNodes: '',
+      nodeCountChances: '',
       dropChance: '',
       salvageChance: '',
     };
@@ -634,15 +639,30 @@ function chanceIssue(label: string, name: string, text: string | undefined): str
   return trimmed === '' || (isNumberText(trimmed) && Number.parseFloat(trimmed) >= 0) ? [] : [`${label}: ${name} must be blank or a number of 0 or more`];
 }
 
-function volumeIssues(label: string, definition: ItemDefinition, vocabulary: Vocabulary): string[] {
-  if (!isVolumeSubroutine(definition)) {
-    return hasVolumeFields(definition) ? [`${label}: only ${VOLUME_SUBROUTINE_KIND} subroutines have a volume, excluded nodes or drop chances; clear them`] : [];
+function nodeCountChanceIssues(label: string, text: string | undefined): string[] {
+  const entries = nodeCountChanceEntries(text);
+  if (entries.length === 0) {
+    return [`${label}: a ${MODSPEC_CACHE_SUBROUTINE_KIND} subroutine needs node count chances, such as 0.9;0.09;0.01`];
   }
   const issues: string[] = [];
-  const volume = (definition.volume ?? '').trim();
-  if (volume !== '' && !vocabulary.regionTags.includes(volume)) {
-    issues.push(`${label}: volume must be one of ${vocabulary.regionTags.join(', ')}`);
+  for (const entry of entries) {
+    if (!isNumberText(entry) || !(Number.parseFloat(entry) >= 0)) {
+      issues.push(`${label}: node count chance "${entry}" must be a number of 0 or more`);
+    }
   }
+  if (issues.length === 0 && !entries.some((entry) => Number.parseFloat(entry) > 0)) {
+    issues.push(`${label}: at least one node count chance must be above 0`);
+  }
+  return issues;
+}
+
+function modspecCacheIssues(label: string, definition: ItemDefinition): string[] {
+  if (!isModspecCacheSubroutine(definition)) {
+    return hasModspecCacheFields(definition)
+      ? [`${label}: only ${MODSPEC_CACHE_SUBROUTINE_KIND} subroutines have excluded nodes, node count chances or drop chances; clear them`]
+      : [];
+  }
+  const issues: string[] = [];
   const seenNodeIds = new Set<string>();
   for (const nodeId of excludedNodeIds(definition.excludedNodes)) {
     if (!NODE_ID_TEXT.test(nodeId)) {
@@ -652,7 +672,11 @@ function volumeIssues(label: string, definition: ItemDefinition, vocabulary: Voc
     }
     seenNodeIds.add(nodeId);
   }
-  issues.push(...chanceIssue(label, 'drop chance', definition.dropChance), ...chanceIssue(label, 'salvage chance', definition.salvageChance));
+  issues.push(
+    ...nodeCountChanceIssues(label, definition.nodeCountChances),
+    ...chanceIssue(label, 'drop chance', definition.dropChance),
+    ...chanceIssue(label, 'salvage chance', definition.salvageChance),
+  );
   return issues;
 }
 
@@ -669,7 +693,7 @@ function subroutineIssues(label: string, definition: ItemDefinition, vocabulary:
   if (socketLimit !== '' && !SOCKET_LIMIT_TEXT.test(socketLimit)) {
     issues.push(`${label}: socket limit must be blank or a whole number of 0 or more`);
   }
-  issues.push(...volumeIssues(label, definition, vocabulary));
+  issues.push(...modspecCacheIssues(label, definition));
   if (!isUniqueSubroutine(definition)) {
     if ((definition.lines ?? []).length > 0) {
       issues.push(`${label}: only ${UNIQUE_SUBROUTINE_KIND} subroutines have lines; remove them`);
@@ -731,25 +755,6 @@ export function validateItemDefinitions(
     }
     issues.push(...poolIssues(label, definition, catalogue, vocabulary, family));
   });
-  issues.push(...duplicateVolumeIssues(definitions));
-  return issues;
-}
-
-function duplicateVolumeIssues(definitions: ItemDefinition[]): string[] {
-  const issues: string[] = [];
-  const definitionIdsByVolume = new Map<string, string>();
-  for (const definition of definitions) {
-    const volume = (definition.volume ?? '').trim();
-    if (!isVolumeSubroutine(definition) || volume === '') {
-      continue;
-    }
-    const earlierId = definitionIdsByVolume.get(volume);
-    if (earlierId === undefined) {
-      definitionIdsByVolume.set(volume, definition.id);
-    } else {
-      issues.push(`${definition.id}: the ${volume} volume already has the volume subroutine ${earlierId}`);
-    }
-  }
   return issues;
 }
 

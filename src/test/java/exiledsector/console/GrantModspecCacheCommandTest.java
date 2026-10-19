@@ -7,8 +7,8 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ModspecCaches;
 import exiledsector.items.SubroutineKind;
-import exiledsector.items.VolumeSubroutines;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -33,7 +33,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class GrantVolumeSubroutinesCommandTest {
+class GrantModspecCacheCommandTest {
 
     private MockedStatic<Global> globalMock;
     private MockedStatic<Console> consoleMock;
@@ -50,16 +50,15 @@ class GrantVolumeSubroutinesCommandTest {
         when(sector.getPlayerFleet()).thenReturn(fleet);
         when(fleet.getCargo()).thenReturn(cargo);
         JSONArray rows = new JSONArray()
-                .put(subroutine("volume_subroutine_core", SubroutineKind.VOLUME).put("volume", "core"))
-                .put(subroutine("volume_subroutine_hegemony", SubroutineKind.VOLUME).put("volume", "hegemony"))
+                .put(subroutine("contraband_modspec_cache", SubroutineKind.MODSPEC_CACHE).put("node_count_chances", "0.9;0.09;0.01"))
                 .put(subroutine("doctrine_archive_hegemony", SubroutineKind.DOCTRINE));
         ItemDefinitions.register(rows);
-        VolumeSubroutines.register(rows);
+        ModspecCaches.register(rows);
     }
 
     @AfterEach
     void tearDown() {
-        VolumeSubroutines.clear();
+        ModspecCaches.clear();
         ItemDefinitions.clear();
         consoleMock.close();
         globalMock.close();
@@ -69,36 +68,45 @@ class GrantVolumeSubroutinesCommandTest {
         return new JSONObject().put("id", id).put("name", id).put("rarity", "10").put("kind", kind.id());
     }
 
-    private List<String> grantedIds(int expectedItems) {
+    private List<ItemData> granted(int expectedItems) {
         ArgumentCaptor<SpecialItemData> items = ArgumentCaptor.forClass(SpecialItemData.class);
         verify(cargo, times(expectedItems)).addSpecial(items.capture(), Mockito.eq(1f));
-        return items.getAllValues().stream().map(ItemData::of).map(ItemData::definitionId).toList();
+        return items.getAllValues().stream().map(ItemData::of).toList();
     }
 
     @Test
-    void withNoArgumentItAddsEveryVolumeSubroutine() {
-        assertEquals(CommandResult.SUCCESS, new GrantVolumeSubroutinesCommand(new Random(3L)).runCommand("", CommandContext.CAMPAIGN_MAP));
+    void withNoArgumentItAddsOneCache() {
+        assertEquals(CommandResult.SUCCESS, new GrantModspecCacheCommand(new Random(3L)).runCommand("", CommandContext.CAMPAIGN_MAP));
 
-        assertEquals(List.of("volume_subroutine_core", "volume_subroutine_hegemony"), grantedIds(2));
+        assertEquals(List.of("contraband_modspec_cache"), granted(1).stream().map(ItemData::definitionId).toList());
     }
 
     @Test
-    void aVolumeNamePicksItsSubroutine() {
-        assertEquals(CommandResult.SUCCESS, new GrantVolumeSubroutinesCommand(new Random(3L)).runCommand(" Hegemony ", CommandContext.CAMPAIGN_MAP));
+    void aNodeCountPicksASeedThatRollsThatManyNodes() {
+        assertEquals(CommandResult.SUCCESS, new GrantModspecCacheCommand(new Random(3L)).runCommand(" 3 ", CommandContext.CAMPAIGN_MAP));
 
-        assertEquals(List.of("volume_subroutine_hegemony"), grantedIds(1));
+        ItemData cache = granted(1).get(0);
+        assertEquals(3, ModspecCaches.base(cache.definitionId()).nodeCount(cache.seed()));
     }
 
     @Test
-    void anUnknownVolumeIsRejectedWithoutAddingAnything() {
-        assertEquals(CommandResult.BAD_SYNTAX, new GrantVolumeSubroutinesCommand(new Random(3L)).runCommand("ocean", CommandContext.CAMPAIGN_MAP));
+    void aNodeCountNoCacheCanRollAddsNothing() {
+        assertEquals(CommandResult.ERROR, new GrantModspecCacheCommand(new Random(3L)).runCommand("4", CommandContext.CAMPAIGN_MAP));
+
+        verify(cargo, never()).addSpecial(any(), anyFloat());
+    }
+
+    @Test
+    void aBadNodeCountIsRejectedWithoutAddingAnything() {
+        assertEquals(CommandResult.BAD_SYNTAX, new GrantModspecCacheCommand(new Random(3L)).runCommand("lots", CommandContext.CAMPAIGN_MAP));
+        assertEquals(CommandResult.BAD_SYNTAX, new GrantModspecCacheCommand(new Random(3L)).runCommand("0", CommandContext.CAMPAIGN_MAP));
 
         verify(cargo, never()).addSpecial(any(), anyFloat());
     }
 
     @Test
     void itOnlyWorksInTheCampaign() {
-        assertEquals(CommandResult.WRONG_CONTEXT, new GrantVolumeSubroutinesCommand().runCommand("", CommandContext.COMBAT_SIMULATION));
+        assertEquals(CommandResult.WRONG_CONTEXT, new GrantModspecCacheCommand().runCommand("", CommandContext.COMBAT_SIMULATION));
 
         verify(cargo, never()).addSpecial(any(), anyFloat());
     }

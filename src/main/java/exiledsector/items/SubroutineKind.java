@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 public enum SubroutineKind {
 
-    VOLUME(true, true, SubroutineKind.UNLIMITED_PER_SHIP, false),
+    MODSPEC_CACHE(true, true, SubroutineKind.UNLIMITED_PER_SHIP, false),
     DOCTRINE(false, false, 1, false),
     BYPASS(true, true, 1, false),
     UNIQUE(false, false, SubroutineKind.UNLIMITED_PER_SHIP, true);

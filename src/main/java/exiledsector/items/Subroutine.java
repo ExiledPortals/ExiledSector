@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.NodeReplacements;
@@ -12,7 +13,7 @@ import java.util.List;
 
 public final class Subroutine extends Item {
 
-    private String rolledNodeId;
+    private List<String> rolledNodeIds;
 
     Subroutine(String id, String definitionId, long seed, List<RolledModifier> explicitModifiers) {
         super(id, definitionId, seed, explicitModifiers);
@@ -21,11 +22,13 @@ public final class Subroutine extends Item {
 
     Subroutine(Item source) {
         super(source);
+        List<String> sourceNodeIds = null;
         if (source instanceof Subroutine subroutine) {
-            rolledNodeId = subroutine.rolledNodeId;
+            sourceNodeIds = subroutine.rolledNodeIds;
         } else if (source instanceof UnresolvedItem unresolved) {
-            rolledNodeId = unresolved.rolledNodeId();
+            sourceNodeIds = unresolved.rolledNodeIds();
         }
+        rolledNodeIds = sourceNodeIds == null || sourceNodeIds.isEmpty() ? null : new ArrayList<>(sourceNodeIds);
         settleCreationRolls();
     }
 
@@ -46,15 +49,16 @@ public final class Subroutine extends Item {
         if (kind.bornCorrupted() && corruption() == null) {
             corrupt(CorruptionOutcome.INNATE);
         }
-        if (kind.rollsNode() && rolledNodeId == null) {
-            rolledNodeId = SubroutineNodePools.roll(definition(), seed());
+        if (kind.rollsNode() && rolledNodeIds == null) {
+            List<String> rolled = SubroutineNodePools.roll(definition(), seed());
+            rolledNodeIds = rolled.isEmpty() ? null : new ArrayList<>(rolled);
         }
     }
 
     @Override
     void copyTraitsFrom(Item source) {
-        if (source instanceof Subroutine subroutine && subroutine.rolledNodeId != null && subroutine.definitionId().equals(definitionId())) {
-            rolledNodeId = subroutine.rolledNodeId;
+        if (source instanceof Subroutine subroutine && subroutine.rolledNodeIds != null && subroutine.definitionId().equals(definitionId())) {
+            rolledNodeIds = new ArrayList<>(subroutine.rolledNodeIds);
         }
     }
 
@@ -68,12 +72,26 @@ public final class Subroutine extends Item {
         return definition == null ? null : definition.subroutineKind();
     }
 
-    public String rolledNodeId() {
-        return rolledNodeId;
+    public List<String> rolledNodeIds() {
+        return rolledNodeIds == null ? List.of() : List.copyOf(rolledNodeIds);
     }
 
-    public String currentNodeId() {
-        if (rolledNodeId == null || SkillTree.getDeclared(rolledNodeId) != null) {
+    public List<String> currentNodeIds() {
+        if (rolledNodeIds == null) {
+            return List.of();
+        }
+        List<String> currentIds = new ArrayList<>(rolledNodeIds.size());
+        for (String rolledNodeId : rolledNodeIds) {
+            String currentId = currentNodeId(rolledNodeId);
+            if (!currentIds.contains(currentId)) {
+                currentIds.add(currentId);
+            }
+        }
+        return currentIds;
+    }
+
+    private static String currentNodeId(String rolledNodeId) {
+        if (SkillTree.getDeclared(rolledNodeId) != null) {
             return rolledNodeId;
         }
         String replacementId = NodeReplacements.all().get(rolledNodeId);
@@ -88,75 +106,47 @@ public final class Subroutine extends Item {
     @Override
     public List<StyledText> headerLines() {
         List<StyledText> lines = new ArrayList<>(super.headerLines());
-        if (currentNodeId() != null) {
-            lines.add(rolledNodeLine(currentNodeId()));
-        }
+        lines.addAll(allocationLines(NodeGrantStatus.lastKnown(id())));
         lines.addAll(doctrineLines());
-        lines.addAll(volumeLines(VolumeGrantStatus.lastKnown(id())));
         return lines;
     }
 
-    public List<StyledText> volumeSocketLines(VolumeGrantStatus status) {
-        if (subroutineKind() != SubroutineKind.VOLUME) {
+    public List<StyledText> allocationLines(List<NodeGrantStatus> statuses) {
+        if (subroutineKind() != SubroutineKind.MODSPEC_CACHE) {
             return List.of();
         }
         List<StyledText> lines = new ArrayList<>();
-        if (currentNodeId() != null) {
-            lines.add(rolledNodeLine(currentNodeId()));
-        }
-        lines.addAll(volumeLines(status));
-        return lines;
-    }
-
-    public List<StyledText> volumeLines(VolumeGrantStatus status) {
-        if (subroutineKind() != SubroutineKind.VOLUME) {
-            return List.of();
-        }
-        List<StyledText> lines = new ArrayList<>();
-        String volume = VolumeSubroutines.volume(definitionId());
-        if (volume != null) {
-            lines.add(Translation.msg("socketable.volume.volume").arg("volume", VolumeSubroutines.volumeName(volume)).styled());
-        }
-        lines.add(Translation.styled("socketable.volume.explain"));
-        VolumeGrantStatus shownStatus = status != null ? status : idleStatus();
-        if (shownStatus != null) {
-            lines.add(volumeStatusLine(shownStatus, volume));
+        for (String nodeId : currentNodeIds()) {
+            NodeGrantStatus status = NodeGrantStatus.find(statuses, nodeId);
+            addAllocationLines(lines, nodeId, status != null ? status : idleStatus(nodeId));
         }
         return lines;
     }
 
-    public String volumeSocketRefusal() {
-        VolumeGrantStatus idle = subroutineKind() == SubroutineKind.VOLUME ? idleStatus() : null;
-        if (idle == null || idle.state() != VolumeGrantStatus.State.AREA_OFF) {
-            return null;
+    private static NodeGrantStatus idleStatus(String nodeId) {
+        if (SkillTree.getDeclared(nodeId) == null) {
+            return NodeGrantStatus.of(nodeId, NodeGrantStatus.State.UNKNOWN_NODE);
         }
-        String volume = VolumeSubroutines.volume(definitionId());
-        return Translation.msg("socketable.volume.areaOffRefusal").arg("name", name())
-                .arg("volume", volume == null ? "" : VolumeSubroutines.volumeName(volume)).text();
+        return SkillTree.get(nodeId) == null ? NodeGrantStatus.of(nodeId, NodeGrantStatus.State.AREA_OFF) : null;
     }
 
-    private VolumeGrantStatus idleStatus() {
-        if (currentNodeId() == null || SkillTree.getDeclared(currentNodeId()) == null) {
-            return VolumeGrantStatus.of(VolumeGrantStatus.State.UNKNOWN_NODE);
-        }
-        return SkillTree.get(currentNodeId()) == null ? VolumeGrantStatus.of(VolumeGrantStatus.State.AREA_OFF) : null;
-    }
-
-    private StyledText volumeStatusLine(VolumeGrantStatus status, String volume) {
-        SkillNode node = currentNodeId() == null ? null : SkillTree.getDeclared(currentNodeId());
+    private static void addAllocationLines(List<StyledText> lines, String nodeId, NodeGrantStatus status) {
+        SkillNode node = SkillTree.getDeclared(nodeId);
         String nodeName = node == null ? "" : node.getDisplayName();
-        String reason = status.reason() == null ? "" : status.reason();
-        return switch (status.state()) {
-            case ACTIVE -> Translation.msg("socketable.volume.active").arg("node", nodeName).styled();
-            case READY -> Translation.msg("socketable.volume.ready").arg("node", nodeName).styled();
-            case BY_PATH -> Translation.msg("socketable.volume.byPath").arg("node", nodeName).styled();
-            case DUPLICATE -> Translation.msg("socketable.volume.duplicate").arg("node", nodeName).styled();
-            case INELIGIBLE -> Translation.msg("socketable.volume.ineligible").arg("node", nodeName).arg("reason", reason).styled();
-            case WAITING -> Translation.msg("socketable.volume.waiting").arg("node", nodeName).arg("reason", reason).styled();
-            case AREA_OFF -> Translation.msg("socketable.volume.areaOff").arg("volume", volume == null ? "" : VolumeSubroutines.volumeName(volume))
-                    .styled();
-            case UNKNOWN_NODE -> Translation.styled("socketable.volume.unknownNode");
-        };
+        NodeGrantStatus.State state = status == null ? NodeGrantStatus.State.ACTIVE : status.state();
+        switch (state) {
+            case ACTIVE, READY -> lines.add(Translation.msg("socketable.cache.allocates").arg("node", nodeName).styled());
+            case BY_PATH -> lines.add(Translation.msg("socketable.cache.byPath").arg("node", nodeName).styled());
+            case DUPLICATE -> lines.add(Translation.msg("socketable.cache.duplicate").arg("node", nodeName).styled());
+            case INELIGIBLE -> {
+                lines.add(Translation.msg("socketable.cache.ineligible").arg("node", nodeName).styled());
+                if (status.reason() != null && !status.reason().isEmpty()) {
+                    lines.add(StyledText.styled(status.reason(), Style.BAD));
+                }
+            }
+            case AREA_OFF -> lines.add(Translation.msg("socketable.cache.areaOff").arg("node", nodeName).styled());
+            case UNKNOWN_NODE -> lines.add(Translation.styled("socketable.cache.unknownNode"));
+        }
     }
 
     public int firmwareRevision() {
@@ -178,13 +168,5 @@ public final class Subroutine extends Item {
         String behaviourKey = archive.transforms() ? "socketable.doctrine.transforms" : "socketable.doctrine.augments";
         lines.add(Translation.msg(behaviourKey).arg("radius", radiusName).styled());
         return lines;
-    }
-
-    static StyledText rolledNodeLine(String nodeId) {
-        SkillNode node = SkillTree.getDeclared(nodeId);
-        if (node == null) {
-            return Translation.styled("socketable.tooltip.rolledNodeUnknown");
-        }
-        return Translation.msg("socketable.tooltip.rolledNode").arg("node", node.getDisplayName()).styled();
     }
 }

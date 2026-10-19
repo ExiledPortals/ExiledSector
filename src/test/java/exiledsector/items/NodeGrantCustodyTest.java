@@ -24,9 +24,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class VolumeGrantCustodyTest {
+class NodeGrantCustodyTest {
 
-    private static final String CHIP_ID = "item_volume";
+    private static final String CACHE_ID = "item_cache";
 
     private final Map<String, ShipSkillData> ships = new LinkedHashMap<>();
     private SkillNode root;
@@ -46,8 +46,8 @@ class VolumeGrantCustodyTest {
         }
         NodeGrants.install(new NodeGrants.GrantLookup() {
             @Override
-            public String grantedNodeId(String socketedItemId) {
-                return CHIP_ID.equals(socketedItemId) ? "notable" : null;
+            public List<String> grantedNodeIds(String socketedItemId) {
+                return CACHE_ID.equals(socketedItemId) ? List.of("notable") : List.of();
             }
 
             @Override
@@ -72,17 +72,15 @@ class VolumeGrantCustodyTest {
         ShipSkillData data = new ShipSkillData();
         data.chooseStartingRoot(root);
         data.allocate(socket, 1);
-        data.socketItem("socket", CHIP_ID);
-        data.allocate(notable, 1);
+        data.socketItem("socket", CACHE_ID);
+        data.allocateGranted(notable);
         ships.put("ship-a", data);
         return data;
     }
 
     @Test
-    void aShipLeavingCustodyLosesItsSubroutineAndTheNotableItGrantedWithItsItemRefunded() {
+    void aShipLeavingCustodyLosesItsSubroutineAndTheNotableItGranted() {
         ShipSkillData data = shipWithGrant();
-        SkillItemCost itemCharge = new SkillItemCost("abyssal_core", 1f);
-        data.recordItemCharge("notable", itemCharge);
         List<SkillItemCost> refunds = new ArrayList<>();
 
         SocketCustody.reconcile(ships, Set.of(), new HashSet<>(), new ItemStore(), refunds::add);
@@ -90,13 +88,12 @@ class VolumeGrantCustodyTest {
         assertNull(data.getSocketedItem("socket"));
         assertFalse(data.isAllocated("notable"));
         assertTrue(data.isAllocated("socket"));
-        assertEquals(List.of(itemCharge), refunds);
+        assertEquals(List.of(), refunds);
     }
 
     @Test
     void aShipDestroyedInBattleRefundsNothingForItsGrantedNotable() {
         ShipSkillData data = shipWithGrant();
-        data.recordItemCharge("notable", new SkillItemCost("abyssal_core", 1f));
         List<SkillItemCost> refunds = new ArrayList<>();
 
         Set<String> lostForGood = SocketCustody.reconcile(ships, Set.of(), new HashSet<>(Set.of("ship-a")), new ItemStore(), refunds::add);
@@ -107,13 +104,29 @@ class VolumeGrantCustodyTest {
     }
 
     @Test
-    void aNotableAllocatedByPathStaysWhenTheSubroutineLeaves() {
+    void aNotablePaidForByPathStaysWhenTheSubroutineLeaves() {
+        ShipSkillData data = new ShipSkillData();
+        data.chooseStartingRoot(root);
+        data.allocate(socket, 1);
+        data.allocate(pathNode, 1);
+        data.allocate(notable, 1);
+        data.socketItem("socket", CACHE_ID);
+        ships.put("ship-a", data);
+
+        SocketCustody.reconcile(ships, Set.of(), new HashSet<>(), new ItemStore(), refund -> { });
+
+        assertTrue(data.isAllocated("notable"));
+    }
+
+    @Test
+    void aGrantedNotableReachedByPathLeavesWithTheSubroutine() {
         ShipSkillData data = shipWithGrant();
         data.allocate(pathNode, 1);
 
         SocketCustody.reconcile(ships, Set.of(), new HashSet<>(), new ItemStore(), refund -> { });
 
-        assertTrue(data.isAllocated("notable"));
+        assertFalse(data.isAllocated("notable"));
+        assertTrue(data.isAllocated("path"));
     }
 
     @Test
@@ -123,6 +136,6 @@ class VolumeGrantCustodyTest {
         SocketCustody.reconcile(ships, Set.of("ship-a"), new HashSet<>(), new ItemStore(), refund -> { });
 
         assertTrue(data.isAllocated("notable"));
-        assertEquals(CHIP_ID, data.getSocketedItem("socket"));
+        assertEquals(CACHE_ID, data.getSocketedItem("socket"));
     }
 }

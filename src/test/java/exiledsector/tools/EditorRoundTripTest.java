@@ -62,12 +62,12 @@ class EditorRoundTripTest {
     private static final String CHART_COLONY_ITEMS = "exiledsector/charts/ChartColonyItems.java";
     private static final String WORMHOLE_ANCHOR_DEFINITIONS = "exiledsector/items/WormholeAnchorDefinitions.java";
     private static final String DOCTRINE_ARCHIVES = "exiledsector/items/DoctrineArchives.java";
-    private static final String VOLUME_SUBROUTINES = "exiledsector/items/VolumeSubroutines.java";
+    private static final String MODSPEC_CACHES = "exiledsector/items/ModspecCaches.java";
 
     private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, ITEM_DEFINITIONS, ITEM_DEFINITION,
             ITEM_NAMES, ITEM_DROPS, SALVAGE_COMPAT, ITEM_CRAFTING, HULL_ITEM_IMPLICITS, ITEM_MODIFIERS, STAR_CHART_DEFINITIONS, STAR_CHART_IMPLICITS,
             STAR_CHART_ITEMS, STAR_CHART_NAMES, CHART_TIERS, CHART_POIS, CHART_FACTIONS, CHART_BLOCKED_ABILITIES, CHART_DROPS, CHART_LOOT,
-            CHART_COLONY_ITEMS, WORMHOLE_ANCHOR_DEFINITIONS, DOCTRINE_ARCHIVES, VOLUME_SUBROUTINES);
+            CHART_COLONY_ITEMS, WORMHOLE_ANCHOR_DEFINITIONS, DOCTRINE_ARCHIVES, MODSPEC_CACHES);
 
     private static final List<String> EDITED_DATA_PATHS = List.of("data/skilltrees/skill_types.json", "data/skilltrees/ship_skill_tree.json",
             "data/config/exiledSector/item_modifiers", "data/config/exiledSector/item_names", "data/config/exiledSector/item_crafting",
@@ -162,7 +162,7 @@ class EditorRoundTripTest {
                     List.of(new EditorSource(WORMHOLE_ANCHORS_MODEL, "WORMHOLE_ANCHOR_COLUMNS")), true),
             new Pin("doctrine_archives.csv columns", DOCTRINE_ARCHIVES, List.of("load", "parse"),
                     List.of(new EditorSource(DOCTRINE_ARCHIVES_MODEL, "DOCTRINE_ARCHIVE_COLUMNS")), true),
-            new Pin("subroutines.csv volume subroutine columns", VOLUME_SUBROUTINES, List.of("load", "register", "parse"),
+            new Pin("subroutines.csv modspec cache columns", MODSPEC_CACHES, List.of("load", "register", "parse"),
                     List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "SUBROUTINE_COLUMNS")), true));
 
     private static final String JAVA_KEY_READ_PREFIX = "(?:\\.\\s*(?:opt|get|has|isNull)[A-Za-z]*\\s*\\(\\s*"

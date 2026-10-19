@@ -58,20 +58,20 @@ describe('saving unchanged item data reproduces the files byte for byte', () => 
     }
   });
 
-  it('keeps every volume subroutine volume, exclusions and drop chances through a save', () => {
+  it('keeps every modspec cache exclusion, node count chance and drop chance through a save', () => {
     const model = parseItemDefinitions(readData(path.join(configDir, 'subroutines.csv')), readData(path.join(configDir, 'hull_items.csv')));
-    const volumeSubroutines = model.definitions.filter((definition) => definition.subroutineKind === 'VOLUME');
+    const caches = model.definitions.filter((definition) => definition.subroutineKind === 'MODSPEC_CACHE');
     const resaved = parseItemDefinitions(serializeSubroutinesCsv(model), serializeHullItemsCsv(model)).definitions;
 
-    expect(volumeSubroutines.length).toBe(vocabulary.regionTags.length);
-    expect(new Set(volumeSubroutines.map((definition) => definition.volume))).toEqual(new Set(vocabulary.regionTags));
-    for (const volumeSubroutine of volumeSubroutines) {
-      const saved = resaved.find((definition) => definition.id === volumeSubroutine.id);
-      expect(Number.parseFloat(volumeSubroutine.dropChance || volumeSubroutine.salvageChance || '0'), volumeSubroutine.id).toBeGreaterThan(0);
-      expect(saved?.volume, volumeSubroutine.id).toBe(volumeSubroutine.volume);
-      expect(saved?.excludedNodes, volumeSubroutine.id).toBe(volumeSubroutine.excludedNodes);
-      expect(saved?.dropChance, volumeSubroutine.id).toBe(volumeSubroutine.dropChance);
-      expect(saved?.salvageChance, volumeSubroutine.id).toBe(volumeSubroutine.salvageChance);
+    expect(caches.length).toBeGreaterThan(0);
+    for (const cache of caches) {
+      const saved = resaved.find((definition) => definition.id === cache.id);
+      expect(Number.parseFloat(cache.dropChance || cache.salvageChance || '0'), cache.id).toBeGreaterThan(0);
+      expect(cache.nodeCountChances, cache.id).not.toBe('');
+      expect(saved?.excludedNodes, cache.id).toBe(cache.excludedNodes);
+      expect(saved?.nodeCountChances, cache.id).toBe(cache.nodeCountChances);
+      expect(saved?.dropChance, cache.id).toBe(cache.dropChance);
+      expect(saved?.salvageChance, cache.id).toBe(cache.salvageChance);
     }
   });
 

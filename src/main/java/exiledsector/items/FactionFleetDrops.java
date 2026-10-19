@@ -18,14 +18,22 @@ public final class FactionFleetDrops {
     static final float DEPLOYMENT_POINTS_PER_CHANCE_STEP = 100f;
     private static final AtomicReference<Map<String, Map<String, Source>>> SOURCES_BY_GROUP = new AtomicReference<>(Map.of());
 
-    public record Source(String volume, Set<String> extraFactionIds, float chancePer100DeploymentPoints) {
+    public record Source(String volume, Set<String> extraFactionIds, float chancePer100DeploymentPoints, boolean anyFaction) {
 
         public Source {
             extraFactionIds = extraFactionIds == null ? Set.of() : Set.copyOf(extraFactionIds);
         }
 
+        public Source(String volume, Set<String> extraFactionIds, float chancePer100DeploymentPoints) {
+            this(volume, extraFactionIds, chancePer100DeploymentPoints, false);
+        }
+
+        public static Source anyFaction(float chancePer100DeploymentPoints) {
+            return new Source(null, Set.of(), chancePer100DeploymentPoints, true);
+        }
+
         boolean dropsFrom(String factionId) {
-            return factionId != null && (extraFactionIds.contains(factionId) || volume != null && volume.equals(NpcFactionVolumes.regionFor(factionId)));
+            return factionId != null && (anyFaction || extraFactionIds.contains(factionId) || volume != null && volume.equals(NpcFactionVolumes.regionFor(factionId)));
         }
     }
 
@@ -92,7 +100,7 @@ public final class FactionFleetDrops {
         if (definition.type() == ItemType.WORMHOLE_ANCHOR) {
             return WormholeAnchorDefinitions.areaActive(definition.id());
         }
-        return definition.subroutineKind() != SubroutineKind.VOLUME || VolumeSubroutines.areaActive(definition.id());
+        return true;
     }
 
     public static void clear(ItemType type) {

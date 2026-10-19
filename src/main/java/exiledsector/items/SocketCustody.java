@@ -16,7 +16,6 @@ import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillTree;
-import exiledsector.skills.SkillTreeTopology;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -77,15 +76,14 @@ public final class SocketCustody {
             Set<String> grantOnlyBefore = destroyed ? Set.of() : grantOnlyNodeIds(shipData);
             for (String nodeId : Set.copyOf(shipData.getSocketedItems().keySet())) {
                 String itemId = shipData.unsocketItem(nodeId);
-                VolumeGrantStatus.forget(itemId);
+                NodeGrantStatus.forget(itemId);
                 Item item = store.find(itemId);
                 if (destroyed && item != null) {
                     store.remove(item);
                 }
             }
-            if (!grantOnlyBefore.isEmpty()) {
-                SkillTreeTopology topology = SkillTree.topology();
-                shipData.releaseNewlyStranded(topology, shipData.resolveStartingRootId(), grantOnlyBefore).charges().forEach(refund);
+            if (!destroyed) {
+                shipData.releaseUngrantedFreeNodes(SkillTree.topology(), shipData.resolveStartingRootId(), grantOnlyBefore).charges().forEach(refund);
             }
             for (String socketTypeId : Set.copyOf(shipData.getSectionItems().keySet())) {
                 Item item = store.find(shipData.removeFromSection(socketTypeId));

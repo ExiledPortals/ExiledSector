@@ -54,7 +54,7 @@ class GrantDoctrineArchivesCommandTest {
         ItemDefinitions.register(new JSONArray()
                 .put(subroutine("doctrine_archive_hegemony", SubroutineKind.DOCTRINE))
                 .put(subroutine("doctrine_archive_luddic", SubroutineKind.DOCTRINE))
-                .put(subroutine("volume_chip", SubroutineKind.VOLUME)));
+                .put(subroutine("volume_chip", SubroutineKind.MODSPEC_CACHE)));
         DoctrineArchives.register(new JSONArray().put(new JSONObject().put("id", "doctrine_archive_luddic").put("behaviour", "TRANSFORM")
                 .put("radius", "large").put("notables", "anything")));
     }

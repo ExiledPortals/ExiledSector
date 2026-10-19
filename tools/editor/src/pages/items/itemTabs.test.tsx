@@ -230,15 +230,17 @@ describe('hull item tabs', () => {
     await screen.findAllByDisplayValue('Halcyon Fire-Control Lattice', undefined, { timeout: 30000 });
 
     fireEvent.click(screen.getByText('New item').closest('button') as HTMLButtonElement);
-    expect(await findLabelled('Subroutine kind')).toHaveProperty('value', 'VOLUME');
+    expect(await findLabelled('Subroutine kind')).toHaveProperty('value', 'MODSPEC_CACHE');
     expect(screen.queryByText('Add prefix')).toBeNull();
     expect(screen.queryByText('Add line')).toBeNull();
-    expect(await findLabelled('Volume')).toBeTruthy();
+    expect(screen.queryByLabelText('Volume')).toBeNull();
+    expect(await findLabelled('Excluded nodes')).toBeTruthy();
+    fireEvent.change(await findLabelled('Node count chances'), { target: { value: '0.9;0.1' } });
     fireEvent.click(saveButton());
     await screen.findByText('Saved subroutines.csv and hull_items.csv', undefined, { timeout: 30000 });
 
     const lineEnding = subroutinesBefore.includes('\r\n') ? '\r\n' : '\n';
-    expect(server.readProjectFile(SUBROUTINES_FILE)).toBe(`${subroutinesBefore}new_subroutine,New Subroutine,,10,,VOLUME,,,,,,,,,${lineEnding}`);
+    expect(server.readProjectFile(SUBROUTINES_FILE)).toBe(`${subroutinesBefore}new_subroutine,New Subroutine,,10,,MODSPEC_CACHE,,,,,,,0.9;0.1,,${lineEnding}`);
     expect(server.readProjectFile(HULL_ITEMS_FILE)).toBe(hullItemsBefore);
   }, 90000);
 

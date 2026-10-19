@@ -2,14 +2,15 @@ package exiledsector.items;
 
 import exiledsector.skills.NodeGrants;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public final class VolumeGrantLinks implements NodeGrants.GrantLookup {
+public final class NodeGrantLinks implements NodeGrants.GrantLookup {
 
-    private static final VolumeGrantLinks INSTANCE = new VolumeGrantLinks();
+    private static final NodeGrantLinks INSTANCE = new NodeGrantLinks();
     private static final AtomicInteger REVISION = new AtomicInteger();
 
-    private VolumeGrantLinks() {
+    private NodeGrantLinks() {
     }
 
     public static void install() {
@@ -21,16 +22,16 @@ public final class VolumeGrantLinks implements NodeGrants.GrantLookup {
     }
 
     @Override
-    public String grantedNodeId(String socketedItemId) {
-        Subroutine volumeSubroutine = volumeSubroutine(socketedItemId);
-        return volumeSubroutine == null ? null : volumeSubroutine.currentNodeId();
+    public List<String> grantedNodeIds(String socketedItemId) {
+        Subroutine cache = modspecCache(socketedItemId);
+        return cache == null ? List.of() : cache.currentNodeIds();
     }
 
-    static Subroutine volumeSubroutine(String socketedItemId) {
+    static Subroutine modspecCache(String socketedItemId) {
         if (socketedItemId == null || NpcItems.isNpcId(socketedItemId)) {
             return null;
         }
-        return ItemStore.lookup(socketedItemId) instanceof Subroutine subroutine && subroutine.subroutineKind() == SubroutineKind.VOLUME
+        return ItemStore.lookup(socketedItemId) instanceof Subroutine subroutine && subroutine.subroutineKind() == SubroutineKind.MODSPEC_CACHE
                 ? subroutine : null;
     }
 

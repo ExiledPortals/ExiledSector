@@ -22,6 +22,7 @@ public class ShipSkillData implements WormholePartners {
     private int bankedFreeAllocations = 0;
     private Set<String> freeNodeIds = new LinkedHashSet<>();
     private Set<String> pairedFreeNodeIds = new LinkedHashSet<>();
+    private Set<String> grantFreeNodeIds;
     private String startingRootId;
     private boolean npcBuild;
     private transient int revision;
@@ -40,7 +41,7 @@ public class ShipSkillData implements WormholePartners {
     private transient int anchorLinksRevision;
     private transient AnchorLinks.ExitLookup anchorLinksLookup;
     private transient int anchorLinksLookupRevision;
-    private transient Map<String, String> grantedNodeBySocketId;
+    private transient Map<String, List<String>> grantedNodesBySocketId;
     private transient int grantLinksRevision;
     private transient NodeGrants.GrantLookup grantLinksLookup;
     private transient int grantLinksLookupRevision;
@@ -58,6 +59,11 @@ public class ShipSkillData implements WormholePartners {
     private Set<String> pairedFreeNodeIds() {
         if (pairedFreeNodeIds == null) pairedFreeNodeIds = new LinkedHashSet<>();
         return pairedFreeNodeIds;
+    }
+
+    private Set<String> grantFreeNodeIds() {
+        if (grantFreeNodeIds == null) grantFreeNodeIds = new LinkedHashSet<>();
+        return grantFreeNodeIds;
     }
 
     public String getSocketedItem(String nodeId) {
@@ -347,15 +353,15 @@ public class ShipSkillData implements WormholePartners {
         socketByExitId.put(exitId, socketId);
     }
 
-    public Map<String, String> grantedNodesBySocket() {
+    public Map<String, List<String>> grantedNodesBySocket() {
         refreshGrantLinks();
-        return Collections.unmodifiableMap(grantedNodeBySocketId);
+        return Collections.unmodifiableMap(grantedNodesBySocketId);
     }
 
     public String grantingSocket(String nodeId) {
         refreshGrantLinks();
-        for (Map.Entry<String, String> grantLink : grantedNodeBySocketId.entrySet()) {
-            if (grantLink.getValue().equals(nodeId)) {
+        for (Map.Entry<String, List<String>> grantLink : grantedNodesBySocketId.entrySet()) {
+            if (grantLink.getValue().contains(nodeId)) {
                 return grantLink.getKey();
             }
         }
@@ -366,23 +372,94 @@ public class ShipSkillData implements WormholePartners {
         return isAllocated(nodeId) && grantingSocket(nodeId) != null;
     }
 
-    private void refreshGrantLinks() {
-        NodeGrants.GrantLookup lookup = NodeGrants.lookup();
-        int lookupRevision = lookup.revision();
-        if (grantedNodeBySocketId != null && grantLinksRevision == revision && grantLinksLookup == lookup
-                && grantLinksLookupRevision == lookupRevision) {
-            return;
+    public boolean isGrantFree(String nodeId) {
+        return grantFreeNodeIds != null && grantFreeNodeIds.contains(nodeId);
+    }
+
+    public int usedNodeSlots() {
+        if (grantFreeNodeIds == null || grantFreeNodeIds.isEmpty()) {
+            return allocatedNodeIds.size();
         }
-        Map<String, String> nodeBySocketId = new LinkedHashMap<>();
-        if (socketedItems != null) {
-            new TreeMap<>(socketedItems).forEach((socketId, itemId) -> {
-                String grantedNodeId = isAllocated(socketId) ? lookup.grantedNodeId(itemId) : null;
-                if (grantedNodeId != null && !grantedNodeId.equals(socketId)) {
-                    nodeBySocketId.put(socketId, grantedNodeId);
+        int used = 0;
+        for (String nodeId : allocatedNodeIds) {
+            if (!grantFreeNodeIds.contains(nodeId)) {
+                used++;
+            }
+        }
+        return used;
+    }
+
+    public void allocateGranted(SkillNode node) {
+        revision++;
+        String nodeId = node.getId();
+        discardItemCharge(nodeId);
+        dormantNodeIds().remove(nodeId);
+        allocatedNodeIds.add(nodeId);
+        grantFreeNodeIds().add(nodeId);
+    }
+
+    private Set<String> grantedNodeIds() {
+        Set<String> granted = new HashSet<>();
+        grantedNodesBySocket().values().forEach(granted::addAll);
+        return granted;
+    }
+
+    private List<String> ungrantedFreeNodeIds() {
+        if (grantFreeNodeIds == null || grantFreeNodeIds.isEmpty()) {
+            return List.of();
+        }
+        Set<String> granted = grantedNodeIds();
+        if (socketedItems != null && dormantNodeIds != null) {
+            NodeGrants.GrantLookup lookup = NodeGrants.lookup();
+            socketedItems.forEach((socketId, itemId) -> {
+                if (dormantNodeIds.contains(socketId)) {
+                    granted.addAll(lookup.grantedNodeIds(itemId));
                 }
             });
         }
-        grantedNodeBySocketId = nodeBySocketId.isEmpty() ? Map.of() : nodeBySocketId;
+        List<String> ungranted = new ArrayList<>();
+        for (String nodeId : grantFreeNodeIds) {
+            if (allocatedNodeIds.contains(nodeId) && !granted.contains(nodeId)) {
+                ungranted.add(nodeId);
+            }
+        }
+        return ungranted;
+    }
+
+    public ReleasedNodes releaseUngrantedFreeNodes(SkillTreeTopology topology, String satisfiedRootId) {
+        return releaseUngrantedFreeNodes(topology, satisfiedRootId, Set.of());
+    }
+
+    public ReleasedNodes releaseUngrantedFreeNodes(SkillTreeTopology topology, String satisfiedRootId, Set<String> alsoReleasable) {
+        List<String> ungranted = ungrantedFreeNodeIds();
+        if (ungranted.isEmpty() && alsoReleasable.isEmpty()) {
+            return ReleasedNodes.NONE;
+        }
+        Set<String> reachableBefore = reachableAllocatedNodeIds(topology, satisfiedRootId, Set.of());
+        reachableBefore.addAll(ungranted);
+        reachableBefore.addAll(alsoReleasable);
+        return releaseNewlyStranded(topology, satisfiedRootId, reachableBefore);
+    }
+
+    private void refreshGrantLinks() {
+        NodeGrants.GrantLookup lookup = NodeGrants.lookup();
+        int lookupRevision = lookup.revision();
+        if (grantedNodesBySocketId != null && grantLinksRevision == revision && grantLinksLookup == lookup
+                && grantLinksLookupRevision == lookupRevision) {
+            return;
+        }
+        Map<String, List<String>> nodesBySocketId = new LinkedHashMap<>();
+        if (socketedItems != null) {
+            new TreeMap<>(socketedItems).forEach((socketId, itemId) -> {
+                List<String> grantedNodeIds = isAllocated(socketId) ? lookup.grantedNodeIds(itemId) : List.of();
+                List<String> linkedNodeIds = grantedNodeIds == null ? List.of()
+                        : grantedNodeIds.stream().filter(nodeId -> nodeId != null && !nodeId.equals(socketId)).distinct().toList();
+                if (!linkedNodeIds.isEmpty()) {
+                    nodesBySocketId.put(socketId, linkedNodeIds);
+                }
+            });
+        }
+        grantedNodesBySocketId = nodesBySocketId.isEmpty() ? Map.of() : nodesBySocketId;
         grantLinksRevision = revision;
         grantLinksLookup = lookup;
         grantLinksLookupRevision = lookupRevision;
@@ -407,7 +484,7 @@ public class ShipSkillData implements WormholePartners {
         AnchorLinks.ExitLookup lookup = AnchorLinks.lookup();
         for (Map.Entry<String, String> link : List.copyOf(anchorExitsBySocket().entrySet())) {
             String exitId = link.getValue();
-            if (!isAllocated(exitId) && allocatedNodeIds.size() < maxAllocatedNodes && canOpen(link.getKey(), lookup)) {
+            if (!isAllocated(exitId) && usedNodeSlots() < maxAllocatedNodes && canOpen(link.getKey(), lookup)) {
                 revision++;
                 discardItemCharge(exitId);
                 dormantNodeIds().remove(exitId);
@@ -459,7 +536,7 @@ public class ShipSkillData implements WormholePartners {
     }
 
     public boolean isFreeNode(String nodeId) {
-        return freeNodeIds().contains(nodeId) || pairedFreeNodeIds().contains(nodeId);
+        return freeNodeIds().contains(nodeId) || pairedFreeNodeIds().contains(nodeId) || isGrantFree(nodeId);
     }
 
     public boolean isAutoAllocatingTemplate() {
@@ -498,6 +575,7 @@ public class ShipSkillData implements WormholePartners {
         if (optionalSelections != null) {
             copy.optionalSelections.putAll(optionalSelections);
         }
+        copy.grantFreeNodeIds = grantFreeNodeIds == null ? null : new LinkedHashSet<>(grantFreeNodeIds);
         copy.mirrorSocketedItems(this);
         return copy;
     }
@@ -556,8 +634,14 @@ public class ShipSkillData implements WormholePartners {
         if (satisfiedRootId == null || !isAllocated(satisfiedRootId)) {
             return ReleasedNodes.NONE;
         }
-        Set<String> reachable = reachableAllocatedNodeIds(topology, satisfiedRootId, Set.of());
         Set<String> allocatedBefore = new LinkedHashSet<>(allocatedNodeIds);
+        for (String nodeId : ungrantedFreeNodeIds()) {
+            SkillNode node = topology.node(nodeId);
+            if (node != null && releasable.test(node)) {
+                deallocate(node);
+            }
+        }
+        Set<String> reachable = reachableAllocatedNodeIds(topology, satisfiedRootId, Set.of());
         for (String nodeId : List.copyOf(allocatedNodeIds)) {
             SkillNode node = topology.node(nodeId);
             if (node != null && isAllocated(nodeId) && !reachable.contains(nodeId) && !nodeId.equals(satisfiedRootId) && releasable.test(node)) {
@@ -677,7 +761,7 @@ public class ShipSkillData implements WormholePartners {
         List<String> order = new ArrayList<>(allocatedNodeIds);
         for (int i = order.size() - 1; i >= 0; i--) {
             String nodeId = order.get(i);
-            boolean alreadyFree = freeNodeIds().contains(nodeId) || pairedFreeNodeIds().contains(nodeId);
+            boolean alreadyFree = isFreeNode(nodeId);
             if (alreadyFree || nodeId.equals(startingRoot)) {
                 continue;
             }
@@ -736,6 +820,9 @@ public class ShipSkillData implements WormholePartners {
         }
         if (pairedFreeNodeIds().remove(oldId)) {
             pairedFreeNodeIds().add(newId);
+        }
+        if (grantFreeNodeIds != null && grantFreeNodeIds.remove(oldId)) {
+            grantFreeNodeIds.add(newId);
         }
         if (oldId.equals(startingRootId)) {
             startingRootId = newId;
@@ -820,7 +907,7 @@ public class ShipSkillData implements WormholePartners {
             Set<String> grantOnlyNodeIds = wakeTopology == null ? Set.of() : grantHeldOffPath(wakeTopology, satisfiedRootId);
             for (String nodeId : List.copyOf(dormantNodeIds)) {
                 SkillNode node = tree.get(nodeId);
-                if (node != null && isReconnected(node, satisfiedRootId, grantOnlyNodeIds)) {
+                if (node != null && (!isGrantFree(nodeId) || grantingSocket(nodeId) != null) && isReconnected(node, satisfiedRootId, grantOnlyNodeIds)) {
                     wokeAny |= wake(node, satisfiedRootId, maxAllocatedNodes, wakeCheck);
                 }
             }
@@ -857,7 +944,7 @@ public class ShipSkillData implements WormholePartners {
     }
 
     private boolean wake(SkillNode node, String satisfiedRootId, int maxAllocatedNodes, WakeCheck wakeCheck) {
-        if (allocatedNodeIds.size() >= maxAllocatedNodes || !wakeCheck.allows(node)) {
+        if (!isGrantFree(node.getId()) && usedNodeSlots() >= maxAllocatedNodes || !wakeCheck.allows(node)) {
             return false;
         }
         String nodeId = node.getId();
@@ -873,7 +960,7 @@ public class ShipSkillData implements WormholePartners {
     private Set<String> grantHeldOffPath(SkillTreeTopology topology, String satisfiedRootId) {
         Set<String> pathReached = pathReachableAllocatedNodeIds(topology, satisfiedRootId, Set.of());
         Set<String> grantHeld = new HashSet<>();
-        for (String grantedNodeId : grantedNodesBySocket().values()) {
+        for (String grantedNodeId : grantedNodeIds()) {
             if (isAllocated(grantedNodeId) && !pathReached.contains(grantedNodeId)) {
                 grantHeld.add(grantedNodeId);
             }
@@ -914,6 +1001,9 @@ public class ShipSkillData implements WormholePartners {
         }
         freeNodeIds().clear();
         pairedFreeNodeIds().clear();
+        if (grantFreeNodeIds != null) {
+            grantFreeNodeIds.clear();
+        }
         if (optionalSelections != null) {
             optionalSelections.clear();
         }
@@ -938,6 +1028,9 @@ public class ShipSkillData implements WormholePartners {
         } else {
             pairedFreeNodeIds().remove(nodeId);
         }
+        if (grantFreeNodeIds != null) {
+            grantFreeNodeIds.remove(nodeId);
+        }
     }
 
     public boolean canDeallocate(SkillNode node, Collection<SkillNode> allNodes, String satisfiedRootId) {
@@ -953,10 +1046,10 @@ public class ShipSkillData implements WormholePartners {
         Set<String> reachableBefore = reachableAllocatedNodeIds(topology, satisfiedRootId, Set.of());
         Set<String> reachableAfter = reachableAllocatedNodeIds(topology, satisfiedRootId, excluded);
         Set<String> closingRelease = closingRelease(node, topology, satisfiedRootId, reachableBefore);
-        String grantedNodeId = grantedNodesBySocket().get(node.getId());
+        List<String> grantedNodeIds = grantedNodesBySocket().getOrDefault(node.getId(), List.of());
 
         for (String allocatedId : reachableBefore) {
-            if (excluded.contains(allocatedId) || closingRelease.contains(allocatedId) || allocatedId.equals(grantedNodeId)) continue;
+            if (excluded.contains(allocatedId) || closingRelease.contains(allocatedId) || grantedNodeIds.contains(allocatedId)) continue;
             if (!reachableAfter.contains(allocatedId)) {
                 return false;
             }
@@ -985,11 +1078,14 @@ public class ShipSkillData implements WormholePartners {
 
     private List<String> grantedReachableNodeIds(SkillTreeTopology topology, Set<String> pathReached, Set<String> excludedNodeIds) {
         List<String> granted = new ArrayList<>();
-        for (Map.Entry<String, String> grantLink : grantedNodesBySocket().entrySet()) {
-            String grantedNodeId = grantLink.getValue();
-            if (pathReached.contains(grantLink.getKey()) && isAllocated(grantedNodeId) && !excludedNodeIds.contains(grantedNodeId)
-                    && topology.node(grantedNodeId) != null) {
-                granted.add(grantedNodeId);
+        for (Map.Entry<String, List<String>> grantLink : grantedNodesBySocket().entrySet()) {
+            if (!pathReached.contains(grantLink.getKey())) {
+                continue;
+            }
+            for (String grantedNodeId : grantLink.getValue()) {
+                if (isAllocated(grantedNodeId) && !excludedNodeIds.contains(grantedNodeId) && topology.node(grantedNodeId) != null) {
+                    granted.add(grantedNodeId);
+                }
             }
         }
         return granted;

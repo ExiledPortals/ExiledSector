@@ -52,7 +52,7 @@ class NpcTreeTagTest {
     }
 
     private static void registerVolumeSubroutine() throws Exception {
-        ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "volume_subroutine").put("kind", "VOLUME")));
+        ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "volume_subroutine").put("kind", "MODSPEC_CACHE")));
     }
 
     private static SkillType registerType(SkillType type) {

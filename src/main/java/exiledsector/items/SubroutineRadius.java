@@ -19,7 +19,7 @@ public final class SubroutineRadius {
                 DoctrineArchive archive = DoctrineArchives.get(subroutine.definitionId());
                 yield archive == null ? null : archive.radiusSize();
             }
-            case VOLUME, BYPASS, UNIQUE -> null;
+            case MODSPEC_CACHE, BYPASS, UNIQUE -> null;
         };
     }
 
@@ -29,7 +29,7 @@ public final class SubroutineRadius {
         }
         return switch (subroutine.subroutineKind()) {
             case DOCTRINE -> socketNodeId;
-            case VOLUME, BYPASS, UNIQUE -> null;
+            case MODSPEC_CACHE, BYPASS, UNIQUE -> null;
         };
     }
 
