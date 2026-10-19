@@ -30,7 +30,7 @@ const vocabulary = buildVocabulary({
   chartTierRange: [1, 15],
   chartEffects: ['CHART_EXTRA_FLEETS', 'CHART_QUANTITY_PERCENT', 'CHART_LOOT_BUDGET_PERCENT'],
   chartSystemTypes: ['SINGLE', 'BINARY_CLOSE'],
-  chartPoiKinds: ['cache', 'station', 'derelict', 'vault'],
+  chartPoiKinds: ['cache', 'station', 'derelict'],
   chartDerelictTypes: ['CIVILIAN', 'LARGE', 'MEDIUM', 'SMALL'],
   chartDropSources: [
     { id: 'run_reward', insideSystem: true },
@@ -217,8 +217,8 @@ describe('review findings', () => {
     expect(CHART_FACTION_SPEC.warnings(chartTable(CHART_FACTION_SPEC, 'faction,weight,fleet_size_bonus\npirates,0,-20\n'), vocabulary)).toEqual([
       'pirates: a weight of 0 or less means it is never picked',
     ]);
-    expect(CHART_POI_SPEC.warnings(chartTable(CHART_POI_SPEC, 'id,kind,entity,guarded\nvault,vault,station_research,no\n'), vocabulary)).toEqual([
-      'vault: a vault is always guarded, whatever guarded says',
+    expect(CHART_POI_SPEC.warnings(chartTable(CHART_POI_SPEC, 'id,kind,entity,cost\nfree,cache,supply_cache,0\n'), vocabulary)).toEqual([
+      'free: a cost or weight of 0 or less means it is never placed',
     ]);
     const drops = chartTable(CHART_DROP_SPEC, 'source,chance\nrun_reward,6\nbattle,0\n');
     expect(CHART_DROP_SPEC.warnings(drops, vocabulary)).toEqual(['run_reward: at most 4 charts drop at once, so a chance above 400% is capped']);
@@ -339,14 +339,13 @@ describe('chart tables', () => {
     );
     expect(CHART_POI_SPEC.issues(pois, vocabulary)).toEqual([
       'wreck: a derelict needs a derelict type, one of CIVILIAN, LARGE, MEDIUM, SMALL',
-      'odd: kind must be one of cache, station, derelict, vault',
+      'odd: kind must be one of cache, station, derelict',
       'odd: needs an entity type',
       'odd: guarded "sometimes" must be yes or no',
     ]);
     expect(CHART_POI_SPEC.warnings(pois, vocabulary)).toEqual([
       'odd: min_tier is above max_tier, so the game swaps them',
       'odd: a cost or weight of 0 or less means it is never placed',
-      'No vault point of interest, so the vault objective is never picked',
     ]);
     const factions = chartTable(CHART_FACTION_SPEC, 'faction,weight\npirates,0\npirates,1\n');
     expect(CHART_FACTION_SPEC.issues(factions, vocabulary)).toEqual(['pirates: listed more than once, so only its last row is used']);

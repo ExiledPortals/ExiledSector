@@ -430,7 +430,7 @@ class ChartRunCloserTest {
 
     @Test
     void contentFleetsAreDespawnedWhileTheRunIsClosingSoTheirDefeatNeverCounts() {
-        run.recordContent(new ChartContent(3, "pirates", ChartObjective.CLEAR, List.of("guard"), null, null, 1, 0));
+        run.recordContent(new ChartContent(3, "pirates", ChartObjective.CLEAR, List.of("guard"), null, 1, 0));
         when(systemFleet.getId()).thenReturn("guard");
         when(systemFleet.hasTag(ChartIds.runTag(RUN_ID))).thenReturn(true);
         Mockito.doAnswer(invocation -> {

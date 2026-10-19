@@ -52,7 +52,7 @@ public final class ChartPois {
         ChartPoi.Kind kind = ChartPoi.Kind.parse(ModCsv.text(row, "kind"));
         String entityType = ModCsv.text(row, "entity");
         if (kind == null) {
-            csv.skipRow(id, "kind must be cache, station, derelict or vault");
+            csv.skipRow(id, "kind must be cache, station or derelict");
             return null;
         }
         if (entityType.isEmpty()) {
@@ -77,17 +77,7 @@ public final class ChartPois {
     static List<ChartPoi> lootAt(List<ChartPoi> candidates, int tier) {
         List<ChartPoi> eligible = new ArrayList<>();
         for (ChartPoi poi : candidates) {
-            if (!poi.isVault() && poi.allowedAt(tier) && poi.cost() > 0f && poi.weight() > 0f) {
-                eligible.add(poi);
-            }
-        }
-        return eligible;
-    }
-
-    static List<ChartPoi> vaultsAt(List<ChartPoi> candidates, int tier) {
-        List<ChartPoi> eligible = new ArrayList<>();
-        for (ChartPoi poi : candidates) {
-            if (poi.isVault() && poi.allowedAt(tier)) {
+            if (poi.allowedAt(tier) && poi.cost() > 0f && poi.weight() > 0f) {
                 eligible.add(poi);
             }
         }

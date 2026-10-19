@@ -3,6 +3,9 @@ package exiledsector.charts;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+import com.thoughtworks.xstream.security.AnyTypePermission;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -203,7 +206,7 @@ class ChartRunTest {
         assertEquals(ChartTiers.LOWEST_TIER, run.tier());
         assertNull(run.objective());
 
-        run.recordContent(new ChartContent(12, "remnant", ChartObjective.CLEAR, List.of("g1", "g2"), "b", null, 5, 9));
+        run.recordContent(new ChartContent(12, "remnant", ChartObjective.CLEAR, List.of("g1", "g2"), "b", 5, 9));
 
         assertEquals(12, run.tier());
         assertEquals("remnant", run.contentFaction());
@@ -232,9 +235,29 @@ class ChartRunTest {
         assertNull(ChartRun.join(List.of()));
         assertEquals(List.of(), ChartRun.split(null));
         ChartRun run = new ChartRun("abc", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(40, null, ChartObjective.BOSS, List.of(), null, null, 0, 0));
+        run.recordContent(new ChartContent(40, null, ChartObjective.BOSS, List.of(), null, 0, 0));
         assertEquals(ChartTiers.HIGHEST_TIER, run.tier());
         assertFalse(run.isObjectiveMet());
         assertFalse(run.recordTargetGone(null));
+    }
+
+    @Test
+    void aSavedVaultRunLoadsAsClearWithoutItsVaultTarget() {
+        XStream xstream = new XStream(new DomDriver());
+        XStream.setupDefaultSecurity(xstream);
+        xstream.addPermission(AnyTypePermission.ANY);
+        xstream.ignoreUnknownElements();
+        ChartRun run = new ChartRun("abc", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+        run.recordContent(new ChartContent(5, "pirates", ChartObjective.CLEAR, List.of("vault1"), null, 2, 4));
+        String vaultXml = xstream.toXML(run)
+                .replace("<objective>CLEAR</objective>", "<objective>" + ChartRun.LEGACY_VAULT_OBJECTIVE + "</objective><vaultEntityId>vault1</vaultEntityId>");
+
+        ChartRun loaded = (ChartRun) xstream.fromXML(vaultXml);
+
+        assertEquals(ChartObjective.CLEAR, loaded.objective());
+        assertEquals(List.of(), loaded.objectiveTargetIds());
+        assertEquals(List.of(), loaded.defeatedTargetIds());
+        assertEquals(5, loaded.tier());
+        assertFalse(loaded.isObjectiveMet());
     }
 }

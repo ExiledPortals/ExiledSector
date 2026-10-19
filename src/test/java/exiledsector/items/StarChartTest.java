@@ -157,7 +157,7 @@ class StarChartTest {
         boolean bossAtHighTier = false;
         for (long seed = 0; seed < 400; seed++) {
             assertFalse(modifierIds(StarChartFixtures.chart(SINGLE, seed, 1)).contains("HYBRID_CHART_WARDEN_SIZE"), "seed " + seed);
-            assertFalse(modifierIds(StarChartFixtures.chart(SINGLE, seed, 2)).contains("CHART_VAULT_RICHNESS_PERCENT"), "seed " + seed);
+            assertFalse(modifierIds(StarChartFixtures.chart(SINGLE, seed, 2)).contains("HYBRID_CHART_EXTRA_OFFICERS"), "seed " + seed);
             bossAtHighTier |= modifierIds(StarChartFixtures.chart(SINGLE, seed, 10)).contains("HYBRID_CHART_WARDEN_SIZE");
         }
         assertTrue(bossAtHighTier);
@@ -481,7 +481,7 @@ class StarChartTest {
             Item chart = new ItemData(SINGLE, seed).preview();
             assertEquals(StarChart.LOWEST_TIER, chart.tier());
             Set<String> ids = modifierIds(chart);
-            assertFalse(ids.contains("HYBRID_CHART_WARDEN_SIZE") || ids.contains("HYBRID_CHART_EXTRA_OFFICERS") || ids.contains("CHART_VAULT_RICHNESS_PERCENT"), "seed " + seed + ": " + ids);
+            assertFalse(ids.contains("HYBRID_CHART_WARDEN_SIZE") || ids.contains("HYBRID_CHART_EXTRA_OFFICERS"), "seed " + seed + ": " + ids);
         }
     }
 

@@ -89,18 +89,6 @@ public enum ChartEffect implements ModifierEffect {
             ChartGenContext.markSalvageChances(generated);
         }
     },
-    CHART_VAULT_RICHNESS_PERCENT(false) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addVaultRichnessPercent(value);
-        }
-
-        @Override
-        public void afterGeneration(ChartGenerated generated, float value) {
-            ChartGenContext.enrichVault(generated, value);
-            ChartGenContext.markSalvageChances(generated);
-        }
-    },
     CHART_REWARD_PERCENT(false) {
         @Override
         public void beforeGeneration(ChartGenContext context, float value) {

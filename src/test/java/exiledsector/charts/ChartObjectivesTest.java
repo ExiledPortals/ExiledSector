@@ -4,12 +4,9 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignEventListener.FleetDespawnReason;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
-import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
-import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.util.MutableValue;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyFloat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -69,9 +65,9 @@ class ChartObjectivesTest {
         globalMock.close();
     }
 
-    private ChartRun openRun(ChartObjective objective, List<String> targets, String vaultId) {
+    private ChartRun openRun(ChartObjective objective, List<String> targets) {
         ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(7, "hegemony", objective, targets, "boss", vaultId, 4, 6));
+        run.recordContent(new ChartContent(7, "hegemony", objective, targets, "boss", 4, 6));
         run.recordArrival();
         ChartRuns.store(run);
         return run;
@@ -88,7 +84,7 @@ class ChartObjectivesTest {
 
     @Test
     void destroyingEveryGuardianCompletesClearAndPaysTheRewardOnce() {
-        ChartRun run = openRun(ChartObjective.CLEAR, List.of("g1", "g2"), null);
+        ChartRun run = openRun(ChartObjective.CLEAR, List.of("g1", "g2"));
 
         assertTrue(ChartObjectives.fleetGone(sector, fleet("g1", true), FleetDespawnReason.DESTROYED_BY_BATTLE));
         assertEquals(1, run.objectiveTargetsDefeated());
@@ -107,7 +103,7 @@ class ChartObjectivesTest {
 
     @Test
     void despawnsThatAreNotDefeatsOrBelongToOtherRunsAreIgnored() {
-        ChartRun run = openRun(ChartObjective.CLEAR, List.of("g1"), null);
+        ChartRun run = openRun(ChartObjective.CLEAR, List.of("g1"));
 
         assertFalse(ChartObjectives.fleetGone(sector, fleet("g1", true), FleetDespawnReason.PLAYER_FAR_AWAY));
         assertFalse(ChartObjectives.fleetGone(sector, fleet("g1", false), FleetDespawnReason.DESTROYED_BY_BATTLE));
@@ -117,7 +113,7 @@ class ChartObjectivesTest {
 
     @Test
     void nothingCountsOnceTheRunIsClosing() {
-        ChartRun run = openRun(ChartObjective.BOSS, List.of("boss"), null);
+        ChartRun run = openRun(ChartObjective.BOSS, List.of("boss"));
         run.beginClosing();
 
         assertFalse(ChartObjectives.fleetGone(sector, fleet("boss", true), FleetDespawnReason.DESTROYED_BY_BATTLE));
@@ -127,7 +123,7 @@ class ChartObjectivesTest {
 
     @Test
     void killingTheWardenCompletesBossEvenWhenAnotherFleetDidIt() {
-        ChartRun run = openRun(ChartObjective.BOSS, List.of("boss"), null);
+        ChartRun run = openRun(ChartObjective.BOSS, List.of("boss"));
 
         assertTrue(ChartObjectives.fleetGone(sector, fleet("boss", true), FleetDespawnReason.DESTROYED_BY_BATTLE));
 
@@ -135,29 +131,8 @@ class ChartObjectivesTest {
     }
 
     @Test
-    void salvagingTheVaultCompletesVaultThroughTheLootListener() {
-        ChartRun run = openRun(ChartObjective.VAULT, List.of("vault1"), "vault1");
-        CustomCampaignEntityAPI vault = mock(CustomCampaignEntityAPI.class);
-        when(vault.getId()).thenReturn("vault1");
-        CustomCampaignEntityAPI cache = mock(CustomCampaignEntityAPI.class);
-        when(cache.getId()).thenReturn("cache");
-        InteractionDialogAPI cacheDialog = mock(InteractionDialogAPI.class);
-        when(cacheDialog.getInteractionTarget()).thenReturn(cache);
-        InteractionDialogAPI vaultDialog = mock(InteractionDialogAPI.class);
-        when(vaultDialog.getInteractionTarget()).thenReturn(vault);
-        ChartContentListener listener = new ChartContentListener();
-
-        listener.reportAboutToShowLootToPlayer(mock(CargoAPI.class), cacheDialog);
-        assertFalse(run.isObjectiveComplete());
-        listener.reportAboutToShowLootToPlayer(mock(CargoAPI.class), vaultDialog);
-
-        assertTrue(run.isObjectiveComplete());
-        verify(credits).add(eq((float) ChartRewards.creditsFor(7)));
-    }
-
-    @Test
     void theFleetListenerForwardsDefeatsAndSurvivesErrors() {
-        ChartRun run = openRun(ChartObjective.BOSS, List.of("boss"), null);
+        ChartRun run = openRun(ChartObjective.BOSS, List.of("boss"));
         ChartContentListener listener = new ChartContentListener();
         CampaignFleetAPI broken = mock(CampaignFleetAPI.class);
         when(broken.hasTag(Mockito.anyString())).thenThrow(new IllegalStateException("odd fleet"));
@@ -170,7 +145,7 @@ class ChartObjectivesTest {
 
     @Test
     void reconcilingCatchesTargetsThatVanishedWithoutAnEvent() {
-        ChartRun run = openRun(ChartObjective.CLEAR, List.of("g1", "g2"), null);
+        ChartRun run = openRun(ChartObjective.CLEAR, List.of("g1", "g2"));
         CampaignFleetAPI survivor = fleet("g1", true);
         CampaignFleetAPI despawning = fleet("g2", true);
         when(despawning.isDespawning()).thenReturn(true);
@@ -188,20 +163,6 @@ class ChartObjectivesTest {
     }
 
     @Test
-    void aFadingVaultCountsAsSalvagedWhenReconciling() {
-        ChartRun run = openRun(ChartObjective.VAULT, List.of("vault1"), "vault1");
-        CustomCampaignEntityAPI vault = tags.tagged(mock(CustomCampaignEntityAPI.class));
-        when(system.getEntityById("vault1")).thenReturn(vault);
-
-        assertFalse(ChartObjectives.reconcile(sector));
-        vault.addTag(Tags.FADING_OUT_AND_EXPIRING);
-        assertTrue(ChartObjectives.reconcile(sector));
-
-        assertTrue(run.isObjectiveComplete());
-        assertTrue(ChartObjectives.isSalvaged(null));
-    }
-
-    @Test
     void creditsRiseWithTheTier() {
         int previous = 0;
         for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
@@ -215,7 +176,7 @@ class ChartObjectivesTest {
 
     @Test
     void theIntelFollowsItsRunAndAsksToBeRemovedOnceTheRunIsGone() {
-        ChartRun run = openRun(ChartObjective.CLEAR, List.of("g1", "g2"), null);
+        ChartRun run = openRun(ChartObjective.CLEAR, List.of("g1", "g2"));
         ChartObjectiveIntel intel = new ChartObjectiveIntel(RUN_ID);
 
         assertTrue(intel.belongsToRun(RUN_ID));

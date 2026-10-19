@@ -48,11 +48,8 @@ final class ChartContentPlanner {
                                  ChartGenContext chartContext, int fleetLimit) {
         ChartTier tier = chartContext.adjust(baseTier);
         ChartFaction faction = ChartFactions.resolve(chartContext.factionId(), factions, factionLoaded, ChartLayoutGenerator.derivedRandom(seed, FACTION_SALT));
-        List<ChartPoi> vaults = affordableVaults(pois, tier);
-        ChartObjective objective = pickObjective(tier, !vaults.isEmpty(), ChartLayoutGenerator.derivedRandom(seed, OBJECTIVE_SALT));
-        boolean vaultPlanned = objective == ChartObjective.VAULT;
-        ChartTier lootTier = vaultPlanned ? tier : tier.withLootBudget(chartContext.lootBudgetWithoutVault(baseTier));
-        List<PlannedPoi> plannedPois = spendLoot(lootTier, pois, vaultPlanned ? vaults : List.of(), ChartLayoutGenerator.derivedRandom(seed, LOOT_SALT));
+        ChartObjective objective = pickObjective(tier, ChartLayoutGenerator.derivedRandom(seed, OBJECTIVE_SALT));
+        List<PlannedPoi> plannedPois = spendLoot(tier, pois, ChartLayoutGenerator.derivedRandom(seed, LOOT_SALT));
         plannedPois = addExtraPois(tier, pois, plannedPois, chartContext.extraPois(), ChartLayoutGenerator.derivedRandom(seed, EXTRA_POI_SALT));
         List<PlannedFleet> plannedFleets = new ArrayList<>();
         plannedPois = planFleets(tier, faction, objective, plannedPois, plannedFleets, ChartLayoutGenerator.derivedRandom(seed, FLEET_SALT),
@@ -60,23 +57,10 @@ final class ChartContentPlanner {
         return new ChartContentPlan(tier.tier(), faction, objective, plannedPois, plannedFleets);
     }
 
-    static List<ChartPoi> affordableVaults(List<ChartPoi> pois, ChartTier tier) {
-        List<ChartPoi> affordable = new ArrayList<>();
-        for (ChartPoi vault : ChartPois.vaultsAt(pois, tier.tier())) {
-            if (vault.cost() <= tier.lootBudget()) {
-                affordable.add(vault);
-            }
-        }
-        return affordable;
-    }
-
-    static ChartObjective pickObjective(ChartTier tier, boolean vaultAvailable, Random random) {
+    static ChartObjective pickObjective(ChartTier tier, Random random) {
         Map<ChartObjective, Float> weights = new EnumMap<>(ChartObjective.class);
         for (ChartObjective objective : ChartObjective.values()) {
             float weight = tier.weightFor(objective);
-            if (objective == ChartObjective.VAULT && !vaultAvailable) {
-                weight = 0f;
-            }
             if (weight > 0f) {
                 weights.put(objective, weight);
             }
@@ -88,14 +72,9 @@ final class ChartContentPlanner {
         return WeightedPick.pick(candidates, weights::get, random);
     }
 
-    static List<PlannedPoi> spendLoot(ChartTier tier, List<ChartPoi> pois, List<ChartPoi> vaults, Random random) {
+    static List<PlannedPoi> spendLoot(ChartTier tier, List<ChartPoi> pois, Random random) {
         List<PlannedPoi> planned = new ArrayList<>();
         float remaining = tier.lootBudget();
-        if (!vaults.isEmpty()) {
-            ChartPoi vault = WeightedPick.pick(vaults, candidate -> Math.max(candidate.weight(), 0.0001f), random);
-            planned.add(new PlannedPoi(vault, true));
-            remaining -= vault.cost();
-        }
         List<ChartPoi> eligible = ChartPois.lootAt(pois, tier.tier());
         while (planned.size() < MAX_POIS) {
             List<ChartPoi> affordable = new ArrayList<>();
@@ -178,7 +157,7 @@ final class ChartContentPlanner {
             }
         }
         if (tier.boss()) {
-            fleets.add(plannedBoss(tier, faction, quality, bossTarget(guardedPois)));
+            fleets.add(plannedBoss(tier, faction, quality, mostValuableIndex(guardedPois)));
         }
         return guardedPois;
     }
@@ -214,14 +193,5 @@ final class ChartContentPlanner {
             }
         }
         return best;
-    }
-
-    static int bossTarget(List<PlannedPoi> pois) {
-        for (int i = 0; i < pois.size(); i++) {
-            if (pois.get(i).poi().isVault()) {
-                return i;
-            }
-        }
-        return mostValuableIndex(pois);
     }
 }

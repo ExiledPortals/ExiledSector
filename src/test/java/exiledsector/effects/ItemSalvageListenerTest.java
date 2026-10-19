@@ -143,7 +143,7 @@ class ItemSalvageListenerTest {
             when(sector.getPersistentData()).thenReturn(new HashMap<>());
             global.when(Global::getSector).thenReturn(sector);
             ChartRun run = new ChartRun("salvageRun", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-            run.recordContent(new ChartContent(6, "hegemony", ChartObjective.CLEAR, List.of("g1"), "boss", null, 4, 6));
+            run.recordContent(new ChartContent(6, "hegemony", ChartObjective.CLEAR, List.of("g1"), "boss", 4, 6));
             run.recordArrival();
             ChartRuns.store(run);
             StarSystemAPI system = mock(StarSystemAPI.class);

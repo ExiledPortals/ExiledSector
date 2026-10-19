@@ -230,7 +230,7 @@ class ChartDropsTest {
 
     private ChartRun storeRun(int tier) {
         ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(tier, "hegemony", ChartObjective.CLEAR, List.of("g1"), "boss", null, 4, 6));
+        run.recordContent(new ChartContent(tier, "hegemony", ChartObjective.CLEAR, List.of("g1"), "boss", 4, 6));
         run.recordArrival();
         ChartRuns.store(run);
         return run;

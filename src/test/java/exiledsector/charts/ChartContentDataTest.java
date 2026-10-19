@@ -67,7 +67,8 @@ class ChartContentDataTest {
             previous = current;
         }
         assertFalse(ChartTiers.forTier(1).boss());
-        assertEquals(0f, ChartTiers.forTier(1).weightFor(ChartObjective.VAULT));
+        assertTrue(ChartTiers.forTier(3).weightFor(ChartObjective.CLEAR) > 0f);
+        assertEquals(0f, ChartTiers.forTier(3).weightFor(ChartObjective.BOSS), "tier 3 has no warden, so it is Clear only");
         assertTrue(ChartTiers.forTier(15).boss());
         assertTrue(ChartTiers.forTier(15).wardenSize() > 0f);
     }
@@ -133,41 +134,33 @@ class ChartContentDataTest {
     }
 
     @Test
-    void theShippedPointsOfInterestAllParseAndIncludeAGuardedVault() throws Exception {
+    void theShippedPointsOfInterestAllParse() throws Exception {
         JSONArray rows = csvRows(ChartPois.PATH);
         ChartPois.register(rows);
 
         assertEquals(rows.length(), ChartPois.all().size());
-        List<ChartPoi> vaults = ChartPois.vaultsAt(ChartPois.all(), 15);
-        assertEquals(1, vaults.size());
-        assertTrue(vaults.get(0).guarded());
-        assertEquals("exiledSector_chart_vault", vaults.get(0).specForSalvage());
         for (ChartPoi poi : ChartPois.all()) {
             assertTrue(poi.cost() > 0f, poi.id());
             if (poi.kind() == ChartPoi.Kind.DERELICT) {
                 assertTrue(ChartPois.DERELICT_TYPES.contains(poi.derelictType()), poi.id());
             }
         }
-        assertTrue(ChartPois.lootAt(ChartPois.all(), 1).stream().noneMatch(ChartPoi::isVault));
         assertTrue(ChartPois.lootAt(ChartPois.all(), 1).stream().allMatch(poi -> poi.allowedAt(1)));
-        assertTrue(ChartPois.vaultsAt(ChartPois.all(), 1).isEmpty());
     }
 
     @Test
-    void everyChartSalvageSpecHasAHullItemDropRuleAndTheVaultSpecExists() throws Exception {
+    void everyChartSalvageSpecHasAHullItemDropRule() throws Exception {
         ChartPois.register(csvRows(ChartPois.PATH));
         Set<String> dropSites = new HashSet<>();
         JSONArray salvageRows = csvRows("data/config/exiledSector/item_salvage.csv");
         for (int i = 0; i < salvageRows.length(); i++) {
             dropSites.add(salvageRows.getJSONObject(i).optString("site"));
         }
-        String chartSalvageSpecs = Files.readString(RealSkillData.projectRoot().resolve("data/campaign/procgen/salvage_entity_gen_data.csv"));
 
         for (ChartPoi poi : ChartPois.all()) {
             assertTrue(dropSites.contains(poi.specForSalvage()), poi.id() + " drops no hull items: " + poi.specForSalvage());
         }
         assertTrue(dropSites.contains(ChartRewards.REWARD_SITE));
-        assertTrue(chartSalvageSpecs.contains("\nexiledSector_chart_vault,"));
     }
 
     @Test

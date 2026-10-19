@@ -97,7 +97,7 @@ class ChartContentGeneratorTest {
         assertEquals(engine.fleets.size(), inSystem.size());
         assertNotNull(content.bossFleetId());
         for (String targetId : content.targetIds()) {
-            assertTrue(targetId.startsWith(content.objective() == ChartObjective.VAULT ? "poi-" : "fleet-"), targetId);
+            assertTrue(targetId.startsWith("fleet-"), targetId);
         }
     }
 
@@ -118,28 +118,21 @@ class ChartContentGeneratorTest {
     }
 
     @Test
-    void lootGetsItsSalvageSpecOverrideAndRunTagsAndTheVaultItsName() {
-        boolean sawVault = false;
-        for (long seed = 0; seed < 40 && !sawVault; seed++) {
-            engine = FakeChartContentEngine.install(new FakeChartContentEngine().offering(-4000f, 0f, 0f, 5000f));
-            ChartContent content = generate(seed, 12);
-            for (int i = 0; i < engine.salvageEntities.size(); i++) {
-                SectorEntityToken entity = engine.salvageEntities.get(i);
-                assertTrue(entity.hasTag(ChartIds.ENTITY_TAG));
-                assertTrue(entity.hasTag(ChartIds.runTag(RUN_ID)));
-                assertTrue(entity.hasTag(ChartIds.CONTENT_TAG));
-                if (!"wreck".equals(engine.salvageTypes.get(i))) {
-                    assertNotNull(entity.getMemoryWithoutUpdate().getString(MemFlags.SALVAGE_SPEC_ID_OVERRIDE));
-                }
-                if (entity.hasTag(ChartIds.VAULT_TAG)) {
-                    sawVault = true;
-                    assertEquals("exiledSector_chart_vault", entity.getMemoryWithoutUpdate().getString(MemFlags.SALVAGE_SPEC_ID_OVERRIDE));
-                    assertEquals(entity.getId(), content.vaultEntityId());
-                    verify(entity).setName(anyString());
-                }
+    void lootGetsItsSalvageSpecOverrideAndRunTags() {
+        engine = FakeChartContentEngine.install(new FakeChartContentEngine().offering(-4000f, 0f, 0f, 5000f));
+        generate(3L, 12);
+
+        assertFalse(engine.salvageEntities.isEmpty());
+        for (int i = 0; i < engine.salvageEntities.size(); i++) {
+            SectorEntityToken entity = engine.salvageEntities.get(i);
+            assertTrue(entity.hasTag(ChartIds.ENTITY_TAG));
+            assertTrue(entity.hasTag(ChartIds.runTag(RUN_ID)));
+            assertTrue(entity.hasTag(ChartIds.CONTENT_TAG));
+            if (!"wreck".equals(engine.salvageTypes.get(i))) {
+                assertNotNull(entity.getMemoryWithoutUpdate().getString(MemFlags.SALVAGE_SPEC_ID_OVERRIDE));
             }
+            verify(entity, never()).setName(anyString());
         }
-        assertTrue(sawVault);
     }
 
     @Test
@@ -241,7 +234,6 @@ class ChartContentGeneratorTest {
         assertEquals(0, content.pois());
         assertTrue(engine.salvageEntities.isEmpty());
         assertTrue(content.objective() == ChartObjective.CLEAR || content.objective() == ChartObjective.BOSS);
-        assertNull(content.vaultEntityId());
         for (CampaignFleetAPI fleet : engine.fleets) {
             Vector2f at = fleet.getLocation();
             assertTrue(Vector2f.sub(at, WORMHOLE, new Vector2f()).length() >= ChartContentGenerator.FLEET_WORMHOLE_CLEARANCE, at.toString());
@@ -256,7 +248,7 @@ class ChartContentGeneratorTest {
 
         assertEquals(0, content.fleets());
         assertTrue(inSystem.isEmpty());
-        assertTrue(content.objective() == null || content.objective() == ChartObjective.VAULT);
+        assertNull(content.objective());
         verify(system, never()).addEntity(any(CampaignFleetAPI.class));
     }
 
@@ -272,12 +264,11 @@ class ChartContentGeneratorTest {
 
     @Test
     void anObjectiveThatCouldNotBePlacedFallsBackToOneThatCan() {
-        assertEquals(ChartObjective.VAULT, ChartContentGenerator.settleObjective(ChartObjective.VAULT, true, true, true));
-        assertEquals(ChartObjective.CLEAR, ChartContentGenerator.settleObjective(ChartObjective.VAULT, true, true, false));
-        assertEquals(ChartObjective.BOSS, ChartContentGenerator.settleObjective(ChartObjective.CLEAR, false, true, false));
-        assertEquals(ChartObjective.VAULT, ChartContentGenerator.settleObjective(ChartObjective.BOSS, false, false, true));
-        assertNull(ChartContentGenerator.settleObjective(ChartObjective.BOSS, false, false, false));
-        assertNull(ChartContentGenerator.settleObjective(null, false, false, false));
+        assertEquals(ChartObjective.BOSS, ChartContentGenerator.settleObjective(ChartObjective.BOSS, true, true));
+        assertEquals(ChartObjective.CLEAR, ChartContentGenerator.settleObjective(ChartObjective.BOSS, true, false));
+        assertEquals(ChartObjective.BOSS, ChartContentGenerator.settleObjective(ChartObjective.CLEAR, false, true));
+        assertNull(ChartContentGenerator.settleObjective(ChartObjective.BOSS, false, false));
+        assertNull(ChartContentGenerator.settleObjective(null, false, false));
     }
 
     @Test

@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 public final class ChartRun {
 
     static final String ID_SEPARATOR = "|";
+    static final String LEGACY_VAULT_OBJECTIVE = "VAULT";
 
     private final String runId;
     private final String systemId;
@@ -29,7 +30,6 @@ public final class ChartRun {
     private String objectiveTargets;
     private String objectiveDefeated;
     private String bossFleetId;
-    private String vaultEntityId;
     private int contentFleets;
     private int contentPois;
     private boolean objectiveComplete;
@@ -121,6 +121,15 @@ public final class ChartRun {
         return layoutGenerated;
     }
 
+    private Object readResolve() {
+        if (LEGACY_VAULT_OBJECTIVE.equals(objective)) {
+            objective = ChartObjective.CLEAR.name();
+            objectiveTargets = null;
+            objectiveDefeated = null;
+        }
+        return this;
+    }
+
     public void recordContent(ChartContent content) {
         tier = ChartTiers.clamp(content.tier());
         contentFaction = content.factionId();
@@ -128,7 +137,6 @@ public final class ChartRun {
         objectiveTargets = join(content.targetIds());
         objectiveDefeated = null;
         bossFleetId = content.bossFleetId();
-        vaultEntityId = content.vaultEntityId();
         contentFleets = content.fleets();
         contentPois = content.pois();
         objectiveComplete = false;
@@ -161,10 +169,6 @@ public final class ChartRun {
 
     public String bossFleetId() {
         return bossFleetId;
-    }
-
-    public String vaultEntityId() {
-        return vaultEntityId;
     }
 
     public int contentFleets() {

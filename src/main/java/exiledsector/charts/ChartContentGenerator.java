@@ -100,17 +100,16 @@ public final class ChartContentGenerator {
         }
     }
 
-    static ChartObjective settleObjective(ChartObjective planned, boolean hasGuards, boolean hasBoss, boolean hasVault) {
+    static ChartObjective settleObjective(ChartObjective planned, boolean hasGuards, boolean hasBoss) {
         List<ChartObjective> order = new ArrayList<>();
         if (planned != null) {
             order.add(planned);
         }
-        order.addAll(List.of(ChartObjective.CLEAR, ChartObjective.BOSS, ChartObjective.VAULT));
+        order.addAll(List.of(ChartObjective.CLEAR, ChartObjective.BOSS));
         for (ChartObjective candidate : order) {
             boolean achievable = switch (candidate) {
                 case CLEAR -> hasGuards;
                 case BOSS -> hasBoss;
-                case VAULT -> hasVault;
             };
             if (achievable) {
                 return candidate;
@@ -277,7 +276,6 @@ public final class ChartContentGenerator {
         private final Set<SectorEntityToken> usedFoci = new LinkedHashSet<>();
         private List<Hazard> hazards = List.of();
         private String bossFleetId;
-        private String vaultEntityId;
 
         Build(StarSystemAPI system, String runId, int tier, long seed, Vector2f innerWormhole) {
             this.system = system;
@@ -300,9 +298,6 @@ public final class ChartContentGenerator {
                     report("place a " + planned.poi().id() + " point of interest", seed, e);
                 }
                 poiEntities.add(placed);
-                if (placed != null && planned.poi().isVault()) {
-                    vaultEntityId = placed.getId();
-                }
             }
         }
 
@@ -327,10 +322,6 @@ public final class ChartContentGenerator {
                     entity.getMemoryWithoutUpdate().set(MemFlags.SALVAGE_SPEC_ID_OVERRIDE, poi.specForSalvage());
                 }
                 tagContent(entity, runId);
-                if (poi.isVault()) {
-                    entity.addTag(ChartIds.VAULT_TAG);
-                    entity.setName(Translation.gameText("chart.poi.vault.name"));
-                }
                 if (poi.kind() != ChartPoi.Kind.CACHE && spot.focus() != null) {
                     usedFoci.add(spot.focus());
                 }
@@ -410,11 +401,10 @@ public final class ChartContentGenerator {
         }
 
         ChartContent settle(ChartContentPlan plan) {
-            ChartObjective objective = settleObjective(plan.objective(), !guardFleetIds.isEmpty(), bossFleetId != null, vaultEntityId != null);
+            ChartObjective objective = settleObjective(plan.objective(), !guardFleetIds.isEmpty(), bossFleetId != null);
             List<String> targets = objective == null ? List.of() : switch (objective) {
                 case CLEAR -> guardFleetIds;
                 case BOSS -> List.of(bossFleetId);
-                case VAULT -> List.of(vaultEntityId);
             };
             int placedPois = 0;
             for (SectorEntityToken entity : poiEntities) {
@@ -422,7 +412,7 @@ public final class ChartContentGenerator {
                     placedPois++;
                 }
             }
-            return new ChartContent(tier, plan.faction().factionId(), objective, targets, bossFleetId, vaultEntityId, fleets.size(), placedPois);
+            return new ChartContent(tier, plan.faction().factionId(), objective, targets, bossFleetId, fleets.size(), placedPois);
         }
 
         void removeEverything() {

@@ -66,8 +66,6 @@ class ChartContentPlannerTest {
                 for (PlannedPoi planned : plan.pois()) {
                     assertTrue(planned.poi().allowedAt(tier), planned.poi().id() + " at tier " + tier);
                 }
-                boolean hasVault = plan.pois().stream().anyMatch(planned -> planned.poi().isVault());
-                assertEquals(plan.objective() == ChartObjective.VAULT, hasVault, "tier " + tier + " seed " + seed);
             }
         }
     }
@@ -124,7 +122,7 @@ class ChartContentPlannerTest {
 
     @Test
     void fleetsOverTheSizeCapAreCappedAndTurnTheRestIntoFleetStrength() {
-        ChartTier huge = new ChartTier(15, 1200f, 2, 2, 1, 1, 50f, 100, 100, 0f, true, 2000f, 1f, 0f, 0f);
+        ChartTier huge = new ChartTier(15, 1200f, 2, 2, 1, 1, 50f, 100, 100, 0f, true, 2000f, 1f, 0f);
 
         ChartContentPlan plan = ChartContentPlanner.plan(5L, huge, List.of(), List.of(), EVERY_FACTION);
 
@@ -144,7 +142,7 @@ class ChartContentPlannerTest {
 
     @Test
     void theChartsFactionInhabitsTheSystemWhenItIsLoaded() {
-        ChartTier tier = new ChartTier(8, 200f, 3, 3, 0, 0, 60f, 100, 100, 0f, true, 400f, 1f, 0f, 0f);
+        ChartTier tier = new ChartTier(8, 200f, 3, 3, 0, 0, 60f, 100, 100, 0f, true, 400f, 1f, 0f);
         List<ChartFaction> factions = List.of(new ChartFaction("pirates", 10f, 0f, 0f), new ChartFaction("remnant", 1f, -10f, 15f));
         ChartGenContext remnantChart = ChartGenContext.of(List.of(), 0, "remnant");
 
@@ -158,7 +156,7 @@ class ChartContentPlannerTest {
 
     @Test
     void aFactionsFleetSizeBonusAddsToEveryFleetAndTheWarden() {
-        ChartTier tier = new ChartTier(8, 200f, 3, 3, 0, 0, 60f, 100, 100, 0f, true, 400f, 1f, 0f, 0f);
+        ChartTier tier = new ChartTier(8, 200f, 3, 3, 0, 0, 60f, 100, 100, 0f, true, 400f, 1f, 0f);
         ChartFaction plain = new ChartFaction("hegemony", 1f, 0f, 0f);
         ChartFaction bigger = new ChartFaction("derelict", 1f, 20f, -10f);
 
@@ -174,7 +172,7 @@ class ChartContentPlannerTest {
 
     @Test
     void theClearObjectiveAlwaysHasAGuardEvenWithoutGuardedLoot() {
-        ChartTier clearOnly = new ChartTier(2, 100f, 2, 3, 0, 0, 40f, 60, 90, 0f, false, 0f, 1f, 0f, 0f);
+        ChartTier clearOnly = new ChartTier(2, 100f, 2, 3, 0, 0, 40f, 60, 90, 0f, false, 0f, 1f, 0f);
 
         ChartContentPlan noLoot = ChartContentPlanner.plan(9L, clearOnly, List.of(), List.of(), EVERY_FACTION);
 
@@ -198,27 +196,29 @@ class ChartContentPlannerTest {
         Set<ChartObjective> seenAtFifteen = EnumSet.noneOf(ChartObjective.class);
         for (long seed = 0; seed < 200; seed++) {
             seenAtFifteen.add(plan(seed, 15).objective());
-            ChartObjective atTwo = plan(seed, 2).objective();
-            assertEquals(ChartObjective.CLEAR, atTwo);
+            for (int tier = ChartTiers.LOWEST_TIER; tier <= 3; tier++) {
+                assertEquals(ChartObjective.CLEAR, plan(seed, tier).objective(), "tier " + tier + " seed " + seed);
+            }
         }
         assertEquals(EnumSet.allOf(ChartObjective.class), seenAtFifteen);
-        ChartTier vaultWithoutVaults = new ChartTier(6, 200f, 3, 3, 0, 0, 50f, 100, 100, 20f, false, 0f, 0f, 0f, 5f);
-        assertEquals(ChartObjective.CLEAR, ChartContentPlanner.pickObjective(vaultWithoutVaults, false, new Random(3)));
-        assertEquals(ChartObjective.VAULT, ChartContentPlanner.pickObjective(vaultWithoutVaults, true, new Random(3)));
+        ChartTier noWeights = new ChartTier(6, 200f, 3, 3, 0, 0, 50f, 100, 100, 20f, false, 0f, 0f, 5f);
+        assertEquals(ChartObjective.CLEAR, ChartContentPlanner.pickObjective(noWeights, new Random(3)));
     }
 
     @Test
-    void theBossGuardsTheVaultWhenThereIsOne() {
-        boolean checked = false;
-        for (long seed = 0; seed < 200 && !checked; seed++) {
+    void theWardenGuardsTheMostValuableSite() {
+        int checked = 0;
+        for (long seed = 0; seed < 50; seed++) {
             ChartContentPlan plan = plan(seed, 12);
-            if (plan.objective() == ChartObjective.VAULT) {
-                PlannedFleet boss = plan.fleets().stream().filter(fleet -> fleet.role() == FleetRole.BOSS).findFirst().orElseThrow();
-                assertTrue(plan.pois().get(boss.poiIndex()).poi().isVault());
-                checked = true;
+            PlannedFleet boss = plan.fleets().stream().filter(fleet -> fleet.role() == FleetRole.BOSS).findFirst().orElseThrow();
+            if (plan.pois().isEmpty()) {
+                continue;
             }
+            float highestCost = (float) plan.pois().stream().mapToDouble(planned -> planned.poi().cost()).max().orElseThrow();
+            assertEquals(highestCost, plan.pois().get(boss.poiIndex()).poi().cost(), 0.001f, "seed " + seed);
+            checked++;
         }
-        assertTrue(checked);
+        assertTrue(checked > 0);
     }
 
     @Test

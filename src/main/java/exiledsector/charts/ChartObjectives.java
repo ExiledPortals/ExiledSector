@@ -3,10 +3,8 @@ package exiledsector.charts;
 import com.fs.starfarer.api.campaign.CampaignEventListener.FleetDespawnReason;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
-import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
-import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import org.apache.log4j.Logger;
 
 import java.util.HashSet;
@@ -37,14 +35,6 @@ public final class ChartObjectives {
         return run.recordTargetGone(fleet.getId()) && progressed(sector, run);
     }
 
-    public static boolean lootShown(SectorAPI sector, SectorEntityToken salvaged) {
-        ChartRun run = trackedRun();
-        if (run == null || salvaged == null || run.vaultEntityId() == null || !run.vaultEntityId().equals(salvaged.getId())) {
-            return false;
-        }
-        return run.recordTargetGone(salvaged.getId()) && progressed(sector, run);
-    }
-
     public static boolean reconcile(SectorAPI sector) {
         ChartRun run = trackedRun();
         if (run == null) {
@@ -66,16 +56,11 @@ public final class ChartObjectives {
             if (defeated.contains(targetId)) {
                 continue;
             }
-            boolean gone = targetId.equals(run.vaultEntityId()) ? isSalvaged(system.getEntityById(targetId)) : !remainingFleetIds.contains(targetId);
-            if (gone && run.recordTargetGone(targetId)) {
+            if (!remainingFleetIds.contains(targetId) && run.recordTargetGone(targetId)) {
                 changed = true;
             }
         }
         return changed && progressed(sector, run);
-    }
-
-    static boolean isSalvaged(SectorEntityToken vault) {
-        return vault == null || vault.isExpired() || vault.hasTag(Tags.FADING_OUT_AND_EXPIRING);
     }
 
     private static boolean progressed(SectorAPI sector, ChartRun run) {

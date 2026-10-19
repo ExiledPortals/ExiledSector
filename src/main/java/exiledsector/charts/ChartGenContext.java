@@ -19,8 +19,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public final class ChartGenContext {
 
-    static final float VAULT_BASE_DROP_VALUE = 20000f;
-    static final String VAULT_DROP_GROUP = "basic";
     static final float MIN_SENSOR_RANGE_MULT = 0.1f;
     static final float MAX_SENSOR_RANGE_MULT = 2f;
     static final float PERCENT = 100f;
@@ -48,7 +46,6 @@ public final class ChartGenContext {
     private float lootBudgetPercent;
     private int extraPois;
     private float itemChancePercent;
-    private float vaultRichnessPercent;
     private float rewardPercent;
 
     private ChartGenContext(List<AppliedEffect> applied, int quality, String factionId) {
@@ -174,10 +171,6 @@ public final class ChartGenContext {
         itemChancePercent += value;
     }
 
-    void addVaultRichnessPercent(float value) {
-        vaultRichnessPercent += value;
-    }
-
     void addRewardPercent(float value) {
         rewardPercent += value;
     }
@@ -191,7 +184,7 @@ public final class ChartGenContext {
         return new ChartTier(base.tier(), base.fleetSize() + fleetSizePercent, fleetsMin, fleetsMax, base.officerLevelBonus() + officerLevelBonus,
                 base.officerCountBonus() + extraOfficers, base.fleetQuality() + fleetQualityPercent, base.fleetStrengthMin(), base.fleetStrengthMax(),
                 base.lootBudget() * lootMult(), base.boss(), base.boss() ? Math.max(0f, base.wardenSize() + wardenSizePercent) : base.wardenSize(),
-                base.clearWeight(), base.bossWeight(), base.vaultWeight());
+                base.clearWeight(), base.bossWeight());
     }
 
     private static float multiplier(float percent) {
@@ -238,28 +231,12 @@ public final class ChartGenContext {
         return multiplier(quantityPercent + qualityQuantityPercent());
     }
 
-    public float lootMultWithoutVault() {
-        return multiplier(lootBudgetPercent + quantityPercent + qualityQuantityPercent() + vaultRichnessPercent);
-    }
-
-    public float lootBudgetWithoutVault(ChartTier base) {
-        return isEmpty() ? base.lootBudget() : base.lootBudget() * lootMultWithoutVault();
-    }
-
     public float rewardMult() {
         return multiplier(rewardPercent + quantityPercent + qualityQuantityPercent());
     }
 
     public float itemChanceMult() {
         return multiplier(itemChancePercent);
-    }
-
-    public float vaultItemChanceMult() {
-        return itemChanceMult() * multiplier(vaultRichnessPercent);
-    }
-
-    public float vaultRichnessPercent() {
-        return vaultRichnessPercent;
     }
 
     public float sensorRangeMult() {
@@ -276,29 +253,15 @@ public final class ChartGenContext {
         if (generated.system() == null) {
             return;
         }
-        String vaultId = generated.content() == null ? null : generated.content().vaultEntityId();
+        float chanceMult = generated.context().itemChanceMult();
         for (SectorEntityToken entity : generated.system().getEntitiesWithTag(ChartIds.CONTENT_TAG)) {
             if (entity instanceof CampaignFleetAPI || !ChartIds.belongsToRun(entity, generated.runId())) {
                 continue;
             }
-            float chanceMult = entity.getId() != null && entity.getId().equals(vaultId)
-                    ? generated.context().vaultItemChanceMult() : generated.context().itemChanceMult();
             MemoryAPI memory = entity.getMemoryWithoutUpdate();
             if (memory != null && chanceMult != 1f) {
                 memory.set(ChartIds.ITEM_CHANCE_MEMORY_KEY, chanceMult);
             }
-        }
-    }
-
-    static void enrichVault(ChartGenerated generated, float richnessPercent) {
-        String vaultId = generated.content() == null ? null : generated.content().vaultEntityId();
-        if (vaultId == null || generated.system() == null || richnessPercent <= 0f) {
-            return;
-        }
-        SectorEntityToken vault = generated.system().getEntityById(vaultId);
-        int extraValue = Math.round(VAULT_BASE_DROP_VALUE * richnessPercent / PERCENT);
-        if (vault != null && extraValue > 0) {
-            vault.addDropValue(VAULT_DROP_GROUP, extraValue);
         }
     }
 
@@ -308,10 +271,10 @@ public final class ChartGenContext {
             return factionText + "no chart modifiers";
         }
         return factionText + String.format(Locale.ROOT, "fleet size %+.0f%%, %+d rolled fleet(s), %+d added fleet(s), %+d officer level(s), %+d officer(s), warden size %+.0f%%, "
-                        + "fleet quality %+.0f%%, loot x%.2f (x%.2f without a vault), %+d point(s) of interest, hull item chance x%.2f, vault x%.2f, "
+                        + "fleet quality %+.0f%%, loot x%.2f, %+d point(s) of interest, hull item chance x%.2f, "
                         + "reward x%.2f, sensor range x%.2f, chart quality %d",
                 fleetSizePercent, baseFleets, extraFleets, officerLevelBonus, extraOfficers, wardenSizePercent,
-                fleetQualityPercent, lootMult(), lootMultWithoutVault(), extraPois(), itemChanceMult(), multiplier(vaultRichnessPercent), rewardMult(),
+                fleetQualityPercent, lootMult(), extraPois(), itemChanceMult(), rewardMult(),
                 sensorRangeMult(), quality);
     }
 }

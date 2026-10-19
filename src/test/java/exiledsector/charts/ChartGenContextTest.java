@@ -77,7 +77,6 @@ class ChartGenContextTest {
 
         assertEquals(first.applied(), second.applied());
         assertTrue(first.applied().contains(new AppliedEffect(ChartEffect.CHART_WARDEN_SIZE_PERCENT, 700f)), first.applied().toString());
-        assertTrue(first.applied().contains(new AppliedEffect(ChartEffect.CHART_VAULT_RICHNESS_PERCENT, 150f)), first.applied().toString());
         assertTrue(first.applied().contains(new AppliedEffect(ChartEffect.CHART_OFFICER_LEVEL_BONUS, 2f)), first.applied().toString());
         assertEquals(chart.implicits().get(0).modifierId(), "CHART_FACTION_" + first.factionId().toUpperCase(java.util.Locale.ROOT),
                 "the faction implicit is read too");
@@ -111,14 +110,12 @@ class ChartGenContextTest {
     void eachRewardEffectChangesTheLootOrTheReward() {
         ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_LOOT_BUDGET_PERCENT, 30f),
                 new AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, 10f), new AppliedEffect(ChartEffect.CHART_REWARD_PERCENT, 20f),
-                new AppliedEffect(ChartEffect.CHART_EXTRA_POIS, 3f), new AppliedEffect(ChartEffect.CHART_ITEM_DROP_CHANCE_PERCENT, 50f),
-                new AppliedEffect(ChartEffect.CHART_VAULT_RICHNESS_PERCENT, 100f)));
+                new AppliedEffect(ChartEffect.CHART_EXTRA_POIS, 3f), new AppliedEffect(ChartEffect.CHART_ITEM_DROP_CHANCE_PERCENT, 50f)));
 
         assertEquals(BASE.lootBudget() * 1.4f, context.adjust(BASE).lootBudget(), TOLERANCE);
         assertEquals(1.3f, context.rewardMult(), TOLERANCE);
         assertEquals(3, context.extraPois());
         assertEquals(1.5f, context.itemChanceMult(), TOLERANCE);
-        assertEquals(3f, context.vaultItemChanceMult(), TOLERANCE);
         assertEquals(BASE.fleetSize(), context.adjust(BASE).fleetSize(), TOLERANCE);
         assertEquals(0.7f, with(ChartEffect.CHART_SENSOR_RANGE_PERCENT, -30f).sensorRangeMult(), TOLERANCE);
         assertEquals(ChartGenContext.MIN_SENSOR_RANGE_MULT, with(ChartEffect.CHART_SENSOR_RANGE_PERCENT, -400f).sensorRangeMult(), TOLERANCE);
@@ -159,25 +156,19 @@ class ChartGenContextTest {
     }
 
     @Test
-    void afterGenerationMarksOnlyThisRunsSalvageAndEnrichesTheVault() {
+    void afterGenerationMarksOnlyThisRunsSalvage() {
         StarSystemAPI system = mock(StarSystemAPI.class);
         MemoryAPI cacheMemory = mock(MemoryAPI.class);
-        MemoryAPI vaultMemory = mock(MemoryAPI.class);
         SectorEntityToken cache = entity("cache_1", "run1", cacheMemory);
-        SectorEntityToken vault = entity("vault_1", "run1", vaultMemory);
         SectorEntityToken otherRun = entity("cache_2", "run2", mock(MemoryAPI.class));
         CampaignFleetAPI guard = mock(CampaignFleetAPI.class);
-        when(system.getEntitiesWithTag(ChartIds.CONTENT_TAG)).thenReturn(List.of(cache, vault, otherRun, guard));
-        when(system.getEntityById("vault_1")).thenReturn(vault);
-        ChartContent content = new ChartContent(5, "pirates", ChartObjective.VAULT, List.of("vault_1"), null, "vault_1", 1, 2);
-        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_ITEM_DROP_CHANCE_PERCENT, 50f),
-                new AppliedEffect(ChartEffect.CHART_VAULT_RICHNESS_PERCENT, 25f)));
+        when(system.getEntitiesWithTag(ChartIds.CONTENT_TAG)).thenReturn(List.of(cache, otherRun, guard));
+        ChartContent content = new ChartContent(5, "pirates", ChartObjective.CLEAR, List.of("guard_1"), null, 1, 2);
+        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_ITEM_DROP_CHANCE_PERCENT, 50f)));
 
         context.afterGeneration(new ChartGenerated(system, "run1", content, context));
 
         verify(cacheMemory, atLeastOnce()).set(ChartIds.ITEM_CHANCE_MEMORY_KEY, 1.5f);
-        verify(vaultMemory, atLeastOnce()).set(eq(ChartIds.ITEM_CHANCE_MEMORY_KEY), eq(1.875f));
-        verify(vault).addDropValue(ChartGenContext.VAULT_DROP_GROUP, 5000);
         verify(otherRun, never()).getMemoryWithoutUpdate();
         verifyNoInteractions(guard);
     }
@@ -288,7 +279,7 @@ class ChartGenContextTest {
         assertEquals(ChartContentPlanner.FLEET_SIZE_CAP, squeezed.cappedFleetSize(), TOLERANCE);
         assertEquals(ChartContentPlanner.MAX_OVERFLOW_STRENGTH, squeezed.totalStrengthBonus(), "size past the cap adds strength too");
 
-        ChartTier overRolled = new ChartTier(15, 200f, limit * 2, limit * 2, 0, 0, 50f, 100, 100, 0f, false, 0f, 1f, 0f, 0f);
+        ChartTier overRolled = new ChartTier(15, 200f, limit * 2, limit * 2, 0, 0, 50f, 100, 100, 0f, false, 0f, 1f, 0f);
         for (long seed = 0; seed < 20; seed++) {
             ChartContentPlan plain = ChartContentPlanner.plan(seed, overRolled, List.of(), List.of(), faction -> true);
             assertEquals(limit, plain.count(FleetRole.GUARD) + plain.count(FleetRole.PATROL), "seed " + seed);
@@ -307,31 +298,6 @@ class ChartGenContextTest {
                 assertTrue(binary.count(FleetRole.GUARD) + binary.count(FleetRole.PATROL) <= limit, "tier " + tier + " seed " + seed);
             }
         }
-    }
-
-    @Test
-    void vaultRichnessBecomesLootWhenTheSystemHasNoVault() {
-        ChartGenContext hoard = with(ChartEffect.CHART_VAULT_RICHNESS_PERCENT, 100f);
-        assertEquals(BASE.lootBudget(), hoard.adjust(BASE).lootBudget(), TOLERANCE);
-        assertEquals(BASE.lootBudget() * 2f, hoard.lootBudgetWithoutVault(BASE), TOLERANCE);
-        assertEquals(BASE.lootBudget(), ChartGenContext.none().lootBudgetWithoutVault(BASE), TOLERANCE);
-        boolean sawVault = false;
-        boolean sawNoVault = false;
-        for (long seed = 0; seed < 40; seed++) {
-            ChartContentPlan plain = plan(ChartGenContext.none(), seed);
-            ChartContentPlan hoarded = plan(hoard, seed);
-            assertEquals(plain.objective(), hoarded.objective(), "seed " + seed);
-            if (plain.objective() == ChartObjective.VAULT) {
-                sawVault = true;
-                assertEquals(plain, hoarded, "with a vault, the richness stays in the vault: seed " + seed);
-            } else {
-                sawNoVault = true;
-                assertTrue(hoarded.lootSpent() > plain.lootSpent(), "seed " + seed + ": " + plain.lootSpent() + " -> " + hoarded.lootSpent());
-            }
-        }
-        assertTrue(sawVault);
-        assertTrue(sawNoVault);
-        assertTrue(ChartEffect.CHART_VAULT_RICHNESS_PERCENT.description(25f).plain().contains("without a vault"));
     }
 
     @Test

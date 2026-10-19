@@ -347,7 +347,7 @@ private static List<SpecialItemData> starCharts(CargoAPI cargo) {
             SectorAPI sector = Global.getSector();
             when(sector.getPersistentData()).thenReturn(new HashMap<>());
             ChartRun run = new ChartRun("lootRun", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-            run.recordContent(new ChartContent(8, "hegemony", ChartObjective.CLEAR, List.of("g1"), "boss", null, 4, 6));
+            run.recordContent(new ChartContent(8, "hegemony", ChartObjective.CLEAR, List.of("g1"), "boss", 4, 6));
             run.recordArrival();
             ChartRuns.store(run);
             StarSystemAPI system = mock(StarSystemAPI.class);

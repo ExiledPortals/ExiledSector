@@ -53,7 +53,6 @@ export const CHART_TIER_COLUMNS = [
   'warden_size',
   'weight_clear',
   'weight_boss',
-  'weight_vault',
   'note',
 ] as const;
 export const CHART_POI_COLUMNS = ['id', 'kind', 'entity', 'salvage_spec', 'derelict_type', 'cost', 'weight', 'min_tier', 'max_tier', 'guarded', 'note'] as const;
@@ -199,7 +198,7 @@ export const CHART_TIER_SPEC: ChartTableSpec = {
   noun: 'chart tier',
   keyColumn: 'tier',
   description:
-    'One row per tier from 1 to 15. A blank value, or a missing tier, uses the built-in value. Fleet size and warden size are percents of a standard fleet of 50 fleet points (about a vanilla heavy patrol); the loot budget is spent on points of interest; the three weights pick the objective (the vault only when a vault point of interest fits the loot budget).',
+    'One row per tier from 1 to 15. A blank value, or a missing tier, uses the built-in value. Fleet size and warden size are percents of a standard fleet of 50 fleet points (about a vanilla heavy patrol); the loot budget is spent on points of interest; the two weights pick the objective.',
   columns: columnsOf(CHART_TIER_COLUMNS, {
     tier: { label: 'Tier', kind: 'integer' },
     fleet_size: {
@@ -223,7 +222,6 @@ export const CHART_TIER_SPEC: ChartTableSpec = {
     warden_size: { label: 'Warden size %', kind: 'number', help: 'Size of the warden fleet, where 100% is a standard fleet of 50 fleet points, capped at 1200%' },
     weight_clear: { label: 'Clear weight', kind: 'number' },
     weight_boss: { label: 'Boss weight', kind: 'number' },
-    weight_vault: { label: 'Vault weight', kind: 'number' },
     note: NOTE_COLUMN,
   }),
   newRow: (model, vocabulary) => {
@@ -265,7 +263,6 @@ export const CHART_TIER_SPEC: ChartTableSpec = {
           'warden_size',
           'weight_clear',
           'weight_boss',
-          'weight_vault',
         ]),
       );
       warnings.push(...negativeWarnings(row, label, ['fleets_min'], 1));
@@ -310,7 +307,7 @@ export const CHART_POI_SPEC: ChartTableSpec = {
   noun: 'point of interest',
   keyColumn: 'id',
   description:
-    'Loot points of interest the generator places in a system, spending the tier loot budget by cost and picking by weight. Derelicts need a derelict type. The vault kind is only placed for the vault objective.',
+    'Loot points of interest the generator places in a system, spending the tier loot budget by cost and picking by weight. Derelicts need a derelict type.',
   columns: columnsOf(CHART_POI_COLUMNS, {
     id: { label: 'Id', kind: 'text' },
     kind: { label: 'Kind', kind: 'choice', choices: (vocabulary) => vocabulary.chartPoiKinds },
@@ -351,16 +348,10 @@ export const CHART_POI_SPEC: ChartTableSpec = {
     model.rows.forEach((row, index) => {
       const label = rowLabel(CHART_POI_SPEC, row, index);
       warnings.push(...roundedIntegerWarnings(CHART_POI_SPEC.columns, row, label), ...tierSpanWarnings(row, label, vocabulary));
-      if (value(row, 'kind').toLowerCase() !== 'vault' && (!(numberValue(row, 'cost', 1) > 0) || !(numberValue(row, 'weight', 1) > 0))) {
+      if (!(numberValue(row, 'cost', 1) > 0) || !(numberValue(row, 'weight', 1) > 0)) {
         warnings.push(`${label}: a cost or weight of 0 or less means it is never placed`);
       }
-      if (value(row, 'kind').toLowerCase() === 'vault' && value(row, 'guarded') !== '' && !isYes(value(row, 'guarded'))) {
-        warnings.push(`${label}: a vault is always guarded, whatever guarded says`);
-      }
     });
-    if (!model.rows.some((row) => value(row, 'kind').toLowerCase() === 'vault')) {
-      warnings.push('No vault point of interest, so the vault objective is never picked');
-    }
     return warnings;
   },
   summary: tierSpanSummary,

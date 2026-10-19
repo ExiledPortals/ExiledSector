@@ -169,7 +169,6 @@ class StarChartCurrencyTest {
                 use(CraftingCurrency.AUGMENTATION, chart, seed);
             }
             assertFalse(has(chart, "HYBRID_CHART_WARDEN_SIZE"), "seed " + seed);
-            assertFalse(has(chart, "CHART_VAULT_RICHNESS_PERCENT"), "seed " + seed);
         }
     }
 

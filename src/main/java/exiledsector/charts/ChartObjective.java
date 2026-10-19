@@ -4,8 +4,7 @@ import java.util.Locale;
 
 public enum ChartObjective {
     CLEAR,
-    BOSS,
-    VAULT;
+    BOSS;
 
     public static ChartObjective parse(String text) {
         if (text == null || text.isBlank()) {

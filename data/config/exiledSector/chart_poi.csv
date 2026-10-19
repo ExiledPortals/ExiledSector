@@ -17,4 +17,3 @@ mining_station,station,station_mining,,,6,4,4,15,yes,
 survey_ship,station,derelict_survey_ship,,,6,3,5,15,yes,"Vanilla Domain drones may defend it"
 research_station,station,station_research,,,8,3,6,15,yes,
 mothership,station,derelict_mothership,,,14,1,12,15,yes,"Vanilla Domain drones may defend it"
-vault,vault,station_research,exiledSector_chart_vault,,10,1,3,15,yes,"Only placed for the vault objective; salvaged with the richer exiledSector_chart_vault spec"

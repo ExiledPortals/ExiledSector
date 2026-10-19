@@ -200,7 +200,7 @@ Stage 2 is content, spending the tier's loot and fleet budgets:
   - derelict ships;
   - research and mining stations;
   - an orbital habitat;
-  - a guarded "vault" at higher tiers.
+  - a guarded "vault" at higher tiers (removed 2026-10-19; warden spoils replace it, see `chart_loot.md` section 4).
 - Each entity gets a salvage seed derived from the chart seed, and a salvage-spec override, so hull item and chart drop rules apply.
 - Fleets come from `FleetFactoryV3`:
   - added directly to the system, with no RouteManager;
@@ -210,7 +210,7 @@ Stage 2 is content, spending the tier's loot and fleet budgets:
   - every fleet is recorded in the run.
 - Every fleet gets `$exiledSector_chartTier` before levelling, so `NpcFleetLeveller` scales NPC trees and carried hull items by tier instead of by player power.
 - Factions come from `chart_factions.csv`, but fleets stay on their real faction and hostility is enforced through memory flags. Exiled Space's "unknown faction" trick isn't needed. Since 2026-10-19 the faction is the implicit every chart shares ("The system is inhabited by X"): the chart rolls it by weight when it drops and stores it, so a later change to the list leaves charts already rolled alone. The list holds only vanilla factions for now and has no tier gating. A chart whose faction isn't loaded, or an opening without a chart, picks one by weight when the system generates. Corruption's implicit replacement swaps the faction for another listed one.
-- Objectives can be "clear the guardians", "kill the boss" or "loot the vault". Finishing one gives a completion reward and a chance at a chart drop, and the objective's intel ends with the run.
+- Objectives are "clear the guardians" or "kill the boss" (a third, "loot the vault", was removed on 2026-10-19; warden spoils replace it). Finishing one gives a completion reward and a chance at a chart drop, and the objective's intel ends with the run.
 
 ## Isolation
 
@@ -382,3 +382,81 @@ Rare charts take codename words from `star_chart_names.json`, which the editor's
 None of this adds anything to a save for a closed run. The only new save value is that cleared-tier number.
 
 Left for later phases: drop balance (phase 10).
+
+## Enemy scaling by tier (planned, agreed 2026-10-19)
+
+Today a chart fleet's ship trees are still sized from the player's fleet. The tier only sets a percentage of a random player ship's tree power (`fleet_strength_min/max`, 50-80% at tier 1 up to 170-240% at tier 15, read in `ChartTiers.fleetStrengthRangeFor` and used in `NpcFleetLeveller.decide`). In the regular sector that is right: enemies are always 80-120% of the player. Inside charts the scaling is inverted. The tier alone decides how strong the enemy is, and nothing inside a chart system reads the player's fleet.
+
+### Tier-based trees
+
+- Tree size is a share of a full tree (`ShipLevelConfig.maxAllocatedNodesBesidesRoot`), not of the player's ships. `fleet_strength_min/max` become `npc_tree_min/max`, a percent of a full tree, reaching 100% at tier 10.
+- Everything else in a chart fleet that reads the player reads the tier instead. A new `npc_item_level` column replaces the player level in `NpcItems.rollCount` and `NpcItems.rollSectionItems`.
+- The overflow strength bonus (`STRENGTH_BONUS_MEMORY_KEY`, from fleets cut by the fleet limit or sizes past the cap) adds to the tree percent up to a full tree. Anything left over goes to officer levels.
+
+### Tiers 11 to 15: per-ship strength after full trees
+
+Starsector's battle size caps what each side fields at once, so above some size extra fleet points become reinforcement waves rather than a stronger front line. Fleet points keep growing above tier 10, but per-ship strength carries the difficulty there, through new `star_chart_tiers.csv` columns:
+- `average_smods` sets `FleetParamsV3.averageSMods`: 0 up to tier 10, rising to about 2 at tier 15.
+- `min_ship_size` sets `FleetParamsV3.minShipSize`: 0 up to tier 10, then frigates and later destroyers are excluded, so the same fleet points sit in fewer, stronger hulls.
+- `officer_level_limit` sets `FleetParamsV3.officerLevelLimit`, raised only at the top tiers, so elite officers appear.
+- `npc_item_level` keeps rising, so ships carry more and better hull items and subroutines.
+- Fleet quality keeps rising to 100 at tier 15, as it does now.
+
+Tiers 1 to 10 feel like enemies catching up as their trees fill. Tiers 11 to 15 feel like elite fleets. All values are placeholders.
+
+### Keeping tier 1 from feeling too easy
+
+A player who reaches charting with large trees would find tier 1 enemies much weaker than the sector's. Three parts handle this, following how Path of Exile starts maps right where the campaign ends and lets strong players climb fast:
+
+1. Parity tier. The parity tier is the lowest tier whose average enemy tree is at least as big as what the sector gives the player's enemies now (the player's tree power from `PlayerTreePower`, with the same level floor, times the sector's 80-120% midpoint). Charts found outside chart systems (the `battle`, `salvage` and `techmining_*` rows of `chart_drops.csv`) drop at the parity tier, with their existing tier-up chance, instead of the current deployment-point and player-level formulas. Trees are full at tier 10, so a fully levelled player's parity tier tops out at 10, and tiers 11 to 15 still have to be climbed.
+2. The chart tooltip compares the chart with the sector: one line saying whether its enemies are weaker than, about equal to, or stronger than the sector's, from the chart's tier against the current parity tier.
+3. Charts dropped inside a run (`run_reward`, and the fleet and site sources from `docs/plans/chart_loot.md`) never come below the parity tier. A late player who runs a low chart is never stuck grinding the bottom of the ladder.
+
+The parity tier is worked out when a chart drops and is frozen into the chart's tier, so nothing new goes into the save. Stripping the fleet to lower it gains nothing: the level floor limits how low it goes, and lower charts pay less.
+
+Low-tier charts stay low on purpose: they're easy, they pay at their own tier, and running one is the player's choice.
+
+## Chart drawbacks (planned)
+
+Today every chart drawback strengthens the enemy: fleet size, rolled and extra fleets, officer levels and count, warden size and fleet quality. The one exception is sensor range (Shrouded), which shrinks the player fleet's sensors through a temporary fleet stat modifier (`ChartRunEffects.applySensorRange`). That is too few drawbacks for six-modifier charts, and they all feel alike: more enemies. This section adds a second family that weakens the player's fleet while it is inside the system, in the spirit of Path of Exile's "Players have ..." map modifiers.
+
+### Player fleet drawbacks
+
+Combat, per ship:
+- more shield damage taken, more armour damage taken, more hull damage taken, more EMP damage taken;
+- less top speed, less acceleration and turn rate;
+- less flux dissipation, less flux capacity;
+- less weapon range, less rate of fire;
+- shorter peak CR time, faster CR loss, lower maximum CR;
+- longer overloads, longer ship system cooldowns;
+- slower fighter replacement;
+- less missile ammo.
+
+Campaign, while in the system:
+- lower maximum burn;
+- larger sensor profile, so enemy fleets spot the player sooner;
+- higher supply use;
+- slower CR recovery and repair between fights;
+- higher deployment cost;
+- more crew losses.
+
+Each one is a hybrid modifier: the drawback plus Quantity, fixed by how punishing it is (as in section 8 of `docs/plans/chart_loot.md`). These drawbacks are relative to the player's own stats, like Path of Exile's player modifiers. So, as in Path of Exile, their values grow over three tier bands (1-5, 6-10, 11-15), for example 5%, 7% and 10% for the damage-taken lines, while the Quantity they pay stays the same.
+
+### How they apply
+
+- Combat and per-ship stats go through `SkillTreeHullMod`, which `ShipTreeSync` puts on every player fleet member and keeps applying last. In `applyEffectsBeforeShipCreation` it reads a cached snapshot of the active chart drawbacks and applies them only to members of the player fleet. That also covers stats the engine fixes when a ship is built, such as armour, hull and missile ammo, and the refit screen shows the reduced values while the player is inside.
+- `ChartRunScript` sets the snapshot when the player fleet enters a live chart system and clears it when the fleet leaves or the run closes. On each change it marks the player fleet's members for a stat update. This is event-driven with no per-frame work, and nothing is saved, so leaving the system or loading a save outside it always restores the fleet.
+- Campaign stats use temporary fleet stat modifiers, the same way sensor range already does.
+- The drawbacks are applied as multipliers under their own modifier id, so the tree's additive percent pools can't absorb them. Where it matters, the stacking is checked against the decompiled engine first.
+- Allied fleets that join a battle are not affected. Only the player's own fleet is.
+- When the player enters the system, a campaign message lists the active drawbacks. The tree hullmod's tooltip gets a "Chart conditions" block while they apply.
+
+### Enemy combat buffs (later)
+
+The mirror family, where chart enemies get more damage, armour, speed or faster flux, can go through the same hullmod on NPC ships that carry a tree, reading the fleet's chart tier key. Ships that rolled no tree would miss out, so this needs a decision on whether chart fleets always get trees before it is built.
+
+### Pool structure
+
+- A `group` column in `star_chart_modifiers.csv`, checked by `AffixLayout`, means at most one modifier per group can roll. Groups cover variants of the same stat, and pairs that together would be miserable rather than interesting.
+- Slots follow Path of Exile (decided 2026-10-19): enemy drawbacks are prefixes and player drawbacks are suffixes. Player drawbacks compete with the loot suffixes for the three suffix slots, so a chart trades targeted loot against the Quantity its player drawbacks pay.
+- Some drawbacks sit behind a minimum tier, as in Path of Exile, where the nastier modifiers only enter at higher bands.

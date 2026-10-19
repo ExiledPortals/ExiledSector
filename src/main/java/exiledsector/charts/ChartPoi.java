@@ -8,8 +8,7 @@ public record ChartPoi(String id, Kind kind, String entityType, String salvageSp
     public enum Kind {
         CACHE,
         STATION,
-        DERELICT,
-        VAULT;
+        DERELICT;
 
         static Kind parse(String text) {
             if (text == null) {
@@ -30,7 +29,6 @@ public record ChartPoi(String id, Kind kind, String entityType, String salvageSp
         derelictType = derelictType == null ? "" : derelictType;
         cost = Math.max(0f, cost);
         weight = Math.max(0f, weight);
-        guarded = guarded || kind == Kind.VAULT;
     }
 
     public boolean allowedAt(int tier) {
@@ -39,9 +37,5 @@ public record ChartPoi(String id, Kind kind, String entityType, String salvageSp
 
     public String specForSalvage() {
         return salvageSpec.isEmpty() ? entityType : salvageSpec;
-    }
-
-    public boolean isVault() {
-        return kind == Kind.VAULT;
     }
 }

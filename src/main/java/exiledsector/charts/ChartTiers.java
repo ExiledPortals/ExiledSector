@@ -56,8 +56,7 @@ public final class ChartTiers {
                         csv.flag(row, "boss", fallback.boss(), label),
                         csv.number(row, "warden_size", fallback.wardenSize(), label),
                         csv.number(row, "weight_clear", fallback.clearWeight(), label),
-                        csv.number(row, "weight_boss", fallback.bossWeight(), label),
-                        csv.number(row, "weight_vault", fallback.vaultWeight(), label)));
+                        csv.number(row, "weight_boss", fallback.bossWeight(), label)));
             });
         }
         csv.report(LOG);

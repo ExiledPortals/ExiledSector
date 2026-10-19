@@ -2,7 +2,7 @@ package exiledsector.charts;
 
 public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax, int officerLevelBonus, int officerCountBonus,
                         float fleetQuality, int fleetStrengthMin, int fleetStrengthMax, float lootBudget, boolean boss,
-                        float wardenSize, float clearWeight, float bossWeight, float vaultWeight) {
+                        float wardenSize, float clearWeight, float bossWeight) {
 
     public static final float FLEET_SIZE_BASE_POINTS = 50f;
     static final float PERCENT = 100f;
@@ -30,7 +30,6 @@ public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax,
         boss = boss && wardenSize > 0f;
         clearWeight = Math.max(0f, clearWeight);
         bossWeight = Math.max(0f, bossWeight);
-        vaultWeight = Math.max(0f, vaultWeight);
     }
 
     public static float fleetPoints(float sizePercent) {
@@ -39,14 +38,13 @@ public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax,
 
     public ChartTier withLootBudget(float replacementLootBudget) {
         return new ChartTier(tier, fleetSize, fleetsMin, fleetsMax, officerLevelBonus, officerCountBonus, fleetQuality, fleetStrengthMin,
-                fleetStrengthMax, replacementLootBudget, boss, wardenSize, clearWeight, bossWeight, vaultWeight);
+                fleetStrengthMax, replacementLootBudget, boss, wardenSize, clearWeight, bossWeight);
     }
 
     public float weightFor(ChartObjective objective) {
         return switch (objective) {
             case CLEAR -> clearWeight;
             case BOSS -> boss ? bossWeight : 0f;
-            case VAULT -> vaultWeight;
         };
     }
 
@@ -59,6 +57,6 @@ public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax,
                 steps / 3, steps / 3, Math.min(100f, 30f + 5f * steps), strengthMin, Math.min(300, strengthMin + 40),
                 FALLBACK_FIRST_TIER_LOOT + FALLBACK_LOOT_PER_TIER * steps, hasBoss,
                 hasBoss ? FALLBACK_FIRST_WARDEN_SIZE + FALLBACK_WARDEN_SIZE_PER_TIER * (tier - FALLBACK_FIRST_BOSS_TIER) : 0f,
-                1f, hasBoss ? 1f : 0f, tier >= 3 ? 1f : 0f);
+                1f, hasBoss ? 1f : 0f);
     }
 }
