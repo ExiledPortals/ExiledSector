@@ -718,12 +718,12 @@ effect|ENGINE_DURABILITY_PERCENT|12.5	0	<good>12.5%</good> increased engine dura
 effect|ENGINE_DURABILITY_PERCENT|100.0	0	<good>100%</good> increased engine durability.
 effect|ENGINE_DURABILITY_PERCENT|-10.0	0	<bad>10%</bad> reduced engine durability.
 effect|ENGINE_DURABILITY_PERCENT|-12.5	0	<bad>12.5%</bad> reduced engine durability.
-effect|ESCORT_MANEUVER_BONUS_PERCENT|1.0	0	While within 700 su of a larger friendly ship, up to 1% increased maneuverability (acceleration, deceleration and turn rate), fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
-effect|ESCORT_MANEUVER_BONUS_PERCENT|10.0	0	While within 700 su of a larger friendly ship, up to 10% increased maneuverability (acceleration, deceleration and turn rate), fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
-effect|ESCORT_MANEUVER_BONUS_PERCENT|12.5	0	While within 700 su of a larger friendly ship, up to 12.5% increased maneuverability (acceleration, deceleration and turn rate), fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
-effect|ESCORT_MANEUVER_BONUS_PERCENT|100.0	0	While within 700 su of a larger friendly ship, up to 100% increased maneuverability (acceleration, deceleration and turn rate), fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
-effect|ESCORT_MANEUVER_BONUS_PERCENT|-10.0	0	While within 700 su of a larger friendly ship, up to -10% increased maneuverability (acceleration, deceleration and turn rate), fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
-effect|ESCORT_MANEUVER_BONUS_PERCENT|-12.5	0	While within 700 su of a larger friendly ship, up to -12.5% increased maneuverability (acceleration, deceleration and turn rate), fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
+effect|ESCORT_MANEUVER_BONUS_PERCENT|1.0	0	While within 700 su of a larger friendly ship, up to 1% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
+effect|ESCORT_MANEUVER_BONUS_PERCENT|10.0	0	While within 700 su of a larger friendly ship, up to 10% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
+effect|ESCORT_MANEUVER_BONUS_PERCENT|12.5	0	While within 700 su of a larger friendly ship, up to 12.5% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
+effect|ESCORT_MANEUVER_BONUS_PERCENT|100.0	0	While within 700 su of a larger friendly ship, up to 100% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
+effect|ESCORT_MANEUVER_BONUS_PERCENT|-10.0	0	While within 700 su of a larger friendly ship, up to -10% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
+effect|ESCORT_MANEUVER_BONUS_PERCENT|-12.5	0	While within 700 su of a larger friendly ship, up to -12.5% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 effect|ESCORT_SPEED_BONUS_PERCENT|1.0	0	While within 700 su of a larger friendly ship, up to 1% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 effect|ESCORT_SPEED_BONUS_PERCENT|10.0	0	While within 700 su of a larger friendly ship, up to 10% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 effect|ESCORT_SPEED_BONUS_PERCENT|12.5	0	While within 700 su of a larger friendly ship, up to 12.5% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
@@ -1156,12 +1156,12 @@ effect|KINETIC_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased kinetic 
 effect|KINETIC_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased kinetic damage taken.
 effect|KINETIC_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced kinetic damage taken.
 effect|KINETIC_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced kinetic damage taken.
-effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|1.0	1	<good>1%</good> more negative effects from logistics D-mods (storage, drive field, maintenance, automation, life support and fuel injector) per D-mod, up to 5 D-mods.
-effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|10.0	1	<good>10%</good> more negative effects from logistics D-mods (storage, drive field, maintenance, automation, life support and fuel injector) per D-mod, up to 5 D-mods.
-effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|12.5	1	<good>12.5%</good> more negative effects from logistics D-mods (storage, drive field, maintenance, automation, life support and fuel injector) per D-mod, up to 5 D-mods.
-effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|100.0	1	<good>100%</good> more negative effects from logistics D-mods (storage, drive field, maintenance, automation, life support and fuel injector) per D-mod, up to 5 D-mods.
-effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|-10.0	1	<bad>10%</bad> less negative effects from logistics D-mods (storage, drive field, maintenance, automation, life support and fuel injector) per D-mod, up to 5 D-mods.
-effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|-12.5	1	<bad>12.5%</bad> less negative effects from logistics D-mods (storage, drive field, maintenance, automation, life support and fuel injector) per D-mod, up to 5 D-mods.
+effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|1.0	1	<good>1%</good> more negative effects from logistics D-mods per D-mod, up to 5 D-mods.
+effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|10.0	1	<good>10%</good> more negative effects from logistics D-mods per D-mod, up to 5 D-mods.
+effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|12.5	1	<good>12.5%</good> more negative effects from logistics D-mods per D-mod, up to 5 D-mods.
+effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|100.0	1	<good>100%</good> more negative effects from logistics D-mods per D-mod, up to 5 D-mods.
+effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|-10.0	1	<bad>10%</bad> less negative effects from logistics D-mods per D-mod, up to 5 D-mods.
+effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|-12.5	1	<bad>12.5%</bad> less negative effects from logistics D-mods per D-mod, up to 5 D-mods.
 effect|MALFUNCTION_AURA_PERCENT|1.0	0	Enemy ships within 1000 su have a <good>1%</good> chance of weapon malfunctions. Several ships with this effect don't stack; the strongest applies.
 effect|MALFUNCTION_AURA_PERCENT|10.0	0	Enemy ships within 1000 su have a <good>10%</good> chance of weapon malfunctions. Several ships with this effect don't stack; the strongest applies.
 effect|MALFUNCTION_AURA_PERCENT|12.5	0	Enemy ships within 1000 su have a <good>12.5%</good> chance of weapon malfunctions. Several ships with this effect don't stack; the strongest applies.
@@ -1510,12 +1510,12 @@ effect|NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT|12.5	0	<good>12.5%</good> increa
 effect|NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT|100.0	0	<good>100%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed, with no cap.
 effect|NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT|-10.0	0	<good>-10%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed, with no cap.
 effect|NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT|-12.5	0	<good>-12.5%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed, with no cap.
-effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|1.0	1	<good>1%</good> more negative effects from combat D-mods (every D-mod except logistics ones) per D-mod, up to 5 D-mods.
-effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|10.0	1	<good>10%</good> more negative effects from combat D-mods (every D-mod except logistics ones) per D-mod, up to 5 D-mods.
-effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|12.5	1	<good>12.5%</good> more negative effects from combat D-mods (every D-mod except logistics ones) per D-mod, up to 5 D-mods.
-effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|100.0	1	<good>100%</good> more negative effects from combat D-mods (every D-mod except logistics ones) per D-mod, up to 5 D-mods.
-effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|-10.0	1	<bad>10%</bad> less negative effects from combat D-mods (every D-mod except logistics ones) per D-mod, up to 5 D-mods.
-effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|-12.5	1	<bad>12.5%</bad> less negative effects from combat D-mods (every D-mod except logistics ones) per D-mod, up to 5 D-mods.
+effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|1.0	1	<good>1%</good> more negative effects from combat D-mods per D-mod, up to 5 D-mods.
+effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|10.0	1	<good>10%</good> more negative effects from combat D-mods per D-mod, up to 5 D-mods.
+effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|12.5	1	<good>12.5%</good> more negative effects from combat D-mods per D-mod, up to 5 D-mods.
+effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|100.0	1	<good>100%</good> more negative effects from combat D-mods per D-mod, up to 5 D-mods.
+effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|-10.0	1	<bad>10%</bad> less negative effects from combat D-mods per D-mod, up to 5 D-mods.
+effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|-12.5	1	<bad>12.5%</bad> less negative effects from combat D-mods per D-mod, up to 5 D-mods.
 effect|OBJECTIVE_CAPTURE_RANGE_FLAT|1.0	0	<good>+1</good> to range from which combat objectives can be captured.
 effect|OBJECTIVE_CAPTURE_RANGE_FLAT|10.0	0	<good>+10</good> to range from which combat objectives can be captured.
 effect|OBJECTIVE_CAPTURE_RANGE_FLAT|12.5	0	<good>+12.5</good> to range from which combat objectives can be captured.
@@ -3072,27 +3072,27 @@ type|engine_durability|CRUISER|0	0	<good>25%</good> increased engine durability.
 type|engine_durability|CRUISER|1	1	<bad>10%</bad> reduced sensor profile.
 type|engine_durability|CAPITAL_SHIP|0	0	<good>25%</good> increased engine durability.
 type|engine_durability|CAPITAL_SHIP|1	1	<bad>10%</bad> reduced sensor profile.
-type|escort_package|null|0	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability (acceleration, deceleration and turn rate), fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
+type|escort_package|null|0	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type|escort_package|null|1	0	While within 700 su of a larger friendly ship, up to 10% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type|escort_package|null|2	0	While within 700 su of a larger friendly ship, up to 15% increased ballistic and energy weapon range, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type-detail|escort_package|null|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
 type-detail|escort_package|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Escort Package</hullmod>
-type|escort_package|FRIGATE|0	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability (acceleration, deceleration and turn rate), fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
+type|escort_package|FRIGATE|0	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type|escort_package|FRIGATE|1	0	While within 700 su of a larger friendly ship, up to 10% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type|escort_package|FRIGATE|2	0	While within 700 su of a larger friendly ship, up to 15% increased ballistic and energy weapon range, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type-detail|escort_package|FRIGATE|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
 type-detail|escort_package|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Escort Package</hullmod>
-type|escort_package|DESTROYER|0	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability (acceleration, deceleration and turn rate), fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
+type|escort_package|DESTROYER|0	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type|escort_package|DESTROYER|1	0	While within 700 su of a larger friendly ship, up to 10% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type|escort_package|DESTROYER|2	0	While within 700 su of a larger friendly ship, up to 15% increased ballistic and energy weapon range, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type-detail|escort_package|DESTROYER|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
 type-detail|escort_package|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Escort Package</hullmod>
-type|escort_package|CRUISER|0	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability (acceleration, deceleration and turn rate), fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
+type|escort_package|CRUISER|0	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type|escort_package|CRUISER|1	0	While within 700 su of a larger friendly ship, up to 10% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type|escort_package|CRUISER|2	0	While within 700 su of a larger friendly ship, up to 15% increased ballistic and energy weapon range, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type-detail|escort_package|CRUISER|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
 type-detail|escort_package|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Escort Package</hullmod>
-type|escort_package|CAPITAL_SHIP|0	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability (acceleration, deceleration and turn rate), fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
+type|escort_package|CAPITAL_SHIP|0	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type|escort_package|CAPITAL_SHIP|1	0	While within 700 su of a larger friendly ship, up to 10% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type|escort_package|CAPITAL_SHIP|2	0	While within 700 su of a larger friendly ship, up to 15% increased ballistic and energy weapon range, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type-detail|escort_package|CAPITAL_SHIP|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
@@ -4728,7 +4728,7 @@ summary|option0|FRIGATE|77	0	Each refraction deals <bad>20%</bad> less damage th
 summary|option0|FRIGATE|78	0	<good>38%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 summary|option0|FRIGATE|79	0	<good>185%</good> increased engine durability.
 summary|option0|FRIGATE|80	1	<bad>105%</bad> reduced sensor profile.
-summary|option0|FRIGATE|81	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability (acceleration, deceleration and turn rate), fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
+summary|option0|FRIGATE|81	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 summary|option0|FRIGATE|82	0	While within 700 su of a larger friendly ship, up to 15% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 summary|option0|FRIGATE|83	0	<good>16%</good> increased timeflow.
 summary|option0|FRIGATE|84	1	<bad>25%</bad> reduced sensor profile on phase hulls.
@@ -4939,7 +4939,7 @@ summary|option0|DESTROYER|77	0	Each refraction deals <bad>20%</bad> less damage 
 summary|option0|DESTROYER|78	0	<good>38%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 summary|option0|DESTROYER|79	0	<good>185%</good> increased engine durability.
 summary|option0|DESTROYER|80	1	<bad>105%</bad> reduced sensor profile.
-summary|option0|DESTROYER|81	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability (acceleration, deceleration and turn rate), fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
+summary|option0|DESTROYER|81	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 summary|option0|DESTROYER|82	0	While within 700 su of a larger friendly ship, up to 15% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 summary|option0|DESTROYER|83	0	<good>16%</good> increased timeflow.
 summary|option0|DESTROYER|84	1	<bad>25%</bad> reduced sensor profile on phase hulls.
@@ -5150,7 +5150,7 @@ summary|option0|CRUISER|77	0	Each refraction deals <bad>20%</bad> less damage th
 summary|option0|CRUISER|78	0	<good>38%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 summary|option0|CRUISER|79	0	<good>185%</good> increased engine durability.
 summary|option0|CRUISER|80	1	<bad>105%</bad> reduced sensor profile.
-summary|option0|CRUISER|81	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability (acceleration, deceleration and turn rate), fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
+summary|option0|CRUISER|81	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 summary|option0|CRUISER|82	0	While within 700 su of a larger friendly ship, up to 15% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 summary|option0|CRUISER|83	0	<good>16%</good> increased timeflow.
 summary|option0|CRUISER|84	1	<bad>25%</bad> reduced sensor profile on phase hulls.
@@ -5361,7 +5361,7 @@ summary|option0|CAPITAL_SHIP|77	0	Each refraction deals <bad>20%</bad> less dama
 summary|option0|CAPITAL_SHIP|78	0	<good>38%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 summary|option0|CAPITAL_SHIP|79	0	<good>185%</good> increased engine durability.
 summary|option0|CAPITAL_SHIP|80	1	<bad>105%</bad> reduced sensor profile.
-summary|option0|CAPITAL_SHIP|81	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability (acceleration, deceleration and turn rate), fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
+summary|option0|CAPITAL_SHIP|81	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 summary|option0|CAPITAL_SHIP|82	0	While within 700 su of a larger friendly ship, up to 15% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 summary|option0|CAPITAL_SHIP|83	0	<good>16%</good> increased timeflow.
 summary|option0|CAPITAL_SHIP|84	1	<bad>25%</bad> reduced sensor profile on phase hulls.
@@ -5572,7 +5572,7 @@ summary|option1|FRIGATE|77	0	Each refraction deals <bad>20%</bad> less damage th
 summary|option1|FRIGATE|78	0	<good>38%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 summary|option1|FRIGATE|79	0	<good>185%</good> increased engine durability.
 summary|option1|FRIGATE|80	1	<bad>105%</bad> reduced sensor profile.
-summary|option1|FRIGATE|81	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability (acceleration, deceleration and turn rate), fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
+summary|option1|FRIGATE|81	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 summary|option1|FRIGATE|82	0	While within 700 su of a larger friendly ship, up to 15% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 summary|option1|FRIGATE|83	0	<good>16%</good> increased timeflow.
 summary|option1|FRIGATE|84	1	<bad>25%</bad> reduced sensor profile on phase hulls.
@@ -5783,7 +5783,7 @@ summary|option1|DESTROYER|77	0	Each refraction deals <bad>20%</bad> less damage 
 summary|option1|DESTROYER|78	0	<good>38%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 summary|option1|DESTROYER|79	0	<good>185%</good> increased engine durability.
 summary|option1|DESTROYER|80	1	<bad>105%</bad> reduced sensor profile.
-summary|option1|DESTROYER|81	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability (acceleration, deceleration and turn rate), fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
+summary|option1|DESTROYER|81	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 summary|option1|DESTROYER|82	0	While within 700 su of a larger friendly ship, up to 15% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 summary|option1|DESTROYER|83	0	<good>16%</good> increased timeflow.
 summary|option1|DESTROYER|84	1	<bad>25%</bad> reduced sensor profile on phase hulls.
@@ -5994,7 +5994,7 @@ summary|option1|CRUISER|77	0	Each refraction deals <bad>20%</bad> less damage th
 summary|option1|CRUISER|78	0	<good>38%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 summary|option1|CRUISER|79	0	<good>185%</good> increased engine durability.
 summary|option1|CRUISER|80	1	<bad>105%</bad> reduced sensor profile.
-summary|option1|CRUISER|81	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability (acceleration, deceleration and turn rate), fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
+summary|option1|CRUISER|81	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 summary|option1|CRUISER|82	0	While within 700 su of a larger friendly ship, up to 15% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 summary|option1|CRUISER|83	0	<good>16%</good> increased timeflow.
 summary|option1|CRUISER|84	1	<bad>25%</bad> reduced sensor profile on phase hulls.
@@ -6205,7 +6205,7 @@ summary|option1|CAPITAL_SHIP|77	0	Each refraction deals <bad>20%</bad> less dama
 summary|option1|CAPITAL_SHIP|78	0	<good>38%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 summary|option1|CAPITAL_SHIP|79	0	<good>185%</good> increased engine durability.
 summary|option1|CAPITAL_SHIP|80	1	<bad>105%</bad> reduced sensor profile.
-summary|option1|CAPITAL_SHIP|81	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability (acceleration, deceleration and turn rate), fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
+summary|option1|CAPITAL_SHIP|81	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 summary|option1|CAPITAL_SHIP|82	0	While within 700 su of a larger friendly ship, up to 15% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 summary|option1|CAPITAL_SHIP|83	0	<good>16%</good> increased timeflow.
 summary|option1|CAPITAL_SHIP|84	1	<bad>25%</bad> reduced sensor profile on phase hulls.
@@ -6416,7 +6416,7 @@ summary|option2|FRIGATE|77	0	Each refraction deals <bad>20%</bad> less damage th
 summary|option2|FRIGATE|78	0	<good>38%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 summary|option2|FRIGATE|79	0	<good>185%</good> increased engine durability.
 summary|option2|FRIGATE|80	1	<bad>105%</bad> reduced sensor profile.
-summary|option2|FRIGATE|81	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability (acceleration, deceleration and turn rate), fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
+summary|option2|FRIGATE|81	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 summary|option2|FRIGATE|82	0	While within 700 su of a larger friendly ship, up to 15% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 summary|option2|FRIGATE|83	0	<good>16%</good> increased timeflow.
 summary|option2|FRIGATE|84	1	<bad>25%</bad> reduced sensor profile on phase hulls.
@@ -6627,7 +6627,7 @@ summary|option2|DESTROYER|77	0	Each refraction deals <bad>20%</bad> less damage 
 summary|option2|DESTROYER|78	0	<good>38%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 summary|option2|DESTROYER|79	0	<good>185%</good> increased engine durability.
 summary|option2|DESTROYER|80	1	<bad>105%</bad> reduced sensor profile.
-summary|option2|DESTROYER|81	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability (acceleration, deceleration and turn rate), fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
+summary|option2|DESTROYER|81	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 summary|option2|DESTROYER|82	0	While within 700 su of a larger friendly ship, up to 15% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 summary|option2|DESTROYER|83	0	<good>16%</good> increased timeflow.
 summary|option2|DESTROYER|84	1	<bad>25%</bad> reduced sensor profile on phase hulls.
@@ -6838,7 +6838,7 @@ summary|option2|CRUISER|77	0	Each refraction deals <bad>20%</bad> less damage th
 summary|option2|CRUISER|78	0	<good>38%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 summary|option2|CRUISER|79	0	<good>185%</good> increased engine durability.
 summary|option2|CRUISER|80	1	<bad>105%</bad> reduced sensor profile.
-summary|option2|CRUISER|81	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability (acceleration, deceleration and turn rate), fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
+summary|option2|CRUISER|81	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 summary|option2|CRUISER|82	0	While within 700 su of a larger friendly ship, up to 15% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 summary|option2|CRUISER|83	0	<good>16%</good> increased timeflow.
 summary|option2|CRUISER|84	1	<bad>25%</bad> reduced sensor profile on phase hulls.
@@ -7049,7 +7049,7 @@ summary|option2|CAPITAL_SHIP|77	0	Each refraction deals <bad>20%</bad> less dama
 summary|option2|CAPITAL_SHIP|78	0	<good>38%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 summary|option2|CAPITAL_SHIP|79	0	<good>185%</good> increased engine durability.
 summary|option2|CAPITAL_SHIP|80	1	<bad>105%</bad> reduced sensor profile.
-summary|option2|CAPITAL_SHIP|81	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability (acceleration, deceleration and turn rate), fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
+summary|option2|CAPITAL_SHIP|81	0	While within 700 su of a larger friendly ship, up to 25% increased maneuverability, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 summary|option2|CAPITAL_SHIP|82	0	While within 700 su of a larger friendly ship, up to 15% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 summary|option2|CAPITAL_SHIP|83	0	<good>16%</good> increased timeflow.
 summary|option2|CAPITAL_SHIP|84	1	<bad>25%</bad> reduced sensor profile on phase hulls.
