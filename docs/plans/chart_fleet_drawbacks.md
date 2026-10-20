@@ -31,10 +31,12 @@ These change the battle itself for every fight the player fleet has inside the s
 
 | Modifier | Effect | Name |
 |---|---|---|
-| `HYBRID_CHART_DEPLOYMENT_POINTS` | less maximum deployment points for the player's side | Cramped |
-| `HYBRID_CHART_ENEMY_DEPLOYMENT_POINTS` | more maximum deployment points for the enemy side | Besieged |
+| `HYBRID_CHART_DEPLOYMENT_COST` | your ships cost more deployment points | Cramped |
+| `HYBRID_CHART_ENEMY_DEPLOYMENT_COST` | enemy ships cost fewer deployment points | Besieged |
 | `HYBRID_CHART_COMMAND_POINT_RATE` | less command point recovery rate | Jammed |
 | `HYBRID_CHART_ENEMY_OBJECTIVE_CAPTURE` | enemy ships capture combat objectives faster | Contested |
+| `CHART_SMALLER_BATTLES_FLAT` | -20 to -50 battle size, no item quantity | Contained |
+| `CHART_LARGER_BATTLES_FLAT` | +20 to +50 battle size, no item quantity | Sprawling |
 
 ### Campaign drawbacks (done)
 
@@ -61,7 +63,7 @@ These act on the campaign map while the player fleet is in the system.
 
 A combat plugin registered under `plugins` in `data/config/settings.json` applies these to the player's side when a battle inside the system starts.
 
-- Deployment points: `CombatEngine.computeFleetStrengths()` runs every unpaused frame and overwrites `setMaxStrength`, so that call doesn't stick. `setMaxFleetPoints` sticks but freezes both sides for the whole battle. The usable hook is the commander's `Stats.DEPLOYMENT_POINTS_FRACTION_OF_BATTLE_SIZE_BONUS_MOD`, on the `PersonAPI` from `getFleetCommanderPreferPlayer()`. It is added per side after the base split, so changing one side doesn't change the other. The engine floors that bonus at the MIN fraction (0 by default), so a negative flat only cancels objective bonuses. These are character stats saved with the game, so the plugin removes the modifier when the battle ends, `ChartRunScript` removes it on the next campaign frame, and every load removes it from the player. Don't use the MIN fraction mod: the enemy's floor reads the player commander's value.
+- Deployment points: the caps can't be changed through the commander's `DEPLOYMENT_POINTS_FRACTION_OF_BATTLE_SIZE_BONUS_MOD`. `CombatEngine.computeFleetStrengths()` floors it at the MIN fraction (0 by default) and caps each side at 60% of battle size, and `setMaxStrength` is overwritten every unpaused frame. So since 2026-10-20 Cramped and Besieged change ship cost instead (`Stats.DEPLOYMENT_POINTS_MOD`, read directly by `FleetMember.getDeploymentPointsCost`): Cramped through the hullmod on the player's ships, Besieged through the plugin on enemy reserves (member stats are transient, so nothing is saved and no cleanup is needed).
 - Command points: the rate is the commander's `command_point_rate` plus `getCPRateModifier()` (base 0, where Comm Relays add their flat bonus). A multiplier on that modifier does nothing useful, so the drawback is a flat `-X * getCPRateMult()` on `getTaskManager(false).getCPRateModifier()`, refreshed about once a second, keeping the total above 0. A negative rate runs the timer backwards.
 - Objective capture: `BattleObjective.advance()` reads each ship's `SHIP_OBJECTIVE_CAP_RATE_MULT` live and uses the side's best, floored at 1. Enemy ships get a multiplier above 1, applied by the plugin as they deploy.
 
@@ -71,8 +73,8 @@ The user chose the minimal version on 2026-10-20: no assignments or memory flags
 
 ## Build order
 
-1. [x] Ship drawbacks: `ChartFleetStat`, `ChartFleetConditions`, `ChartEffect` entries, `ChartGenContext.fleetStatMults`, run script and hullmod hooks, data rows and pool weights in every chart, strings (en and zh_CN), `ChartFleetConditionsTest` and `ChartRunEffectsTest`. Uncommitted on `main`.
-2. [x] Battle drawbacks: `ChartBattlePlugin` (registered in `data/config/settings.json`), commander-stat cleanup in the plugin, `ChartRunScript` and `StarCharts.onGameLoad`, data rows, pool weights, strings, `ChartBattlePluginTest`. Uncommitted on `main`.
-   Open (review 2026-10-20): Cramped and Besieged don't work as built. The engine floors the commander bonus at 0 and caps each side at 60% of battle size, and the first-frame `setMaxStrength` only changes the opening deployment screen. Proposed fix, awaiting the user: Cramped as more deployment cost for the player's ships, Besieged as less for chart-fleet ships, or dropped.
-3. [x] Hunted: enemy sensor bonus at spawn, data row, pool weight, strings, test in `ChartBattlePluginTest`. Uncommitted on `main`.
-4. [x] `docs/docs.md` section "Star Chart drawbacks". Uncommitted on `main`.
+1. [x] Ship drawbacks: `ChartFleetStat`, `ChartFleetConditions`, `ChartEffect` entries, `ChartGenContext.fleetStatMults`, run script and hullmod hooks, data rows and pool weights in every chart, strings (en and zh_CN), `ChartFleetConditionsTest` and `ChartRunEffectsTest`. Commit 96916889 on `main`.
+2. [x] Battle drawbacks: `ChartBattlePlugin` (registered in `data/config/settings.json`) for command points, enemy objective capture and enemy deployment cost; data rows, pool weights, strings, `ChartBattlePluginTest`. Commit 96916889 on `main`, then Cramped and Besieged reworked to deployment cost after the review found the cap approach blocked by engine clamps (uncommitted on `main`).
+3. [x] Hunted: enemy sensor bonus at spawn, data row, pool weight, strings, test in `ChartBattlePluginTest`. Commit 96916889 on `main`.
+4. [x] `docs/docs.md` section "Star Chart drawbacks". Commit 96916889 on `main`, updated since (uncommitted).
+5. [x] Battle size modifiers (user request 2026-10-20: for fun, not drawbacks, so no item quantity): `ChartBattlePlugin.refreshBattleSize` fixes both caps with `setMaxFleetPoints` on the first frame, split in proportion to the caps, and re-adds objective bonus deployment points each refresh. Both can roll on one chart and net out. Uncommitted on `main`.

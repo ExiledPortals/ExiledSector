@@ -1,6 +1,7 @@
 package exiledsector.charts;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Stats;
 
 public enum ChartFleetStat {
 
@@ -35,8 +36,8 @@ public enum ChartFleetStat {
         stats.getEnergyWeaponRangeBonus().modifyMult(id, mult);
         stats.getMissileWeaponRangeBonus().modifyMult(id, mult);
     }),
-    DEPLOYMENT_POINTS(null),
-    ENEMY_DEPLOYMENT_POINTS(null),
+    DEPLOYMENT_COST((stats, id, mult) -> stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).modifyMult(id, mult)),
+    ENEMY_DEPLOYMENT_COST(null),
     COMMAND_POINT_RATE(null),
     ENEMY_OBJECTIVE_CAPTURE_RATE(null);
 

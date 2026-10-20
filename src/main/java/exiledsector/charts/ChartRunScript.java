@@ -36,9 +36,6 @@ public class ChartRunScript implements EveryFrameScript {
 
     @Override
     public void advance(float amount) {
-        if (ChartBattlePlugin.hasCommanderBonuses()) {
-            ChartBattlePlugin.liftCommanderBonuses();
-        }
         ChartRun run = ChartRuns.currentOrNull();
         if (run == null) {
             if (sensorRangeApplied || ChartFleetConditions.isActive()) {
@@ -153,6 +150,7 @@ public class ChartRunScript implements EveryFrameScript {
             sensorRangeApplied = true;
         }
         ChartFleetConditions.set(context.fleetStatMults(), playerFleet);
+        ChartFleetConditions.setBattleSizeBonus(context.battleSizeBonus());
     }
 
     private void liftRunEffects(CampaignFleetAPI playerFleet) {

@@ -1,46 +1,56 @@
 package exiledsector.charts;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.BaseEveryFrameCombatPlugin;
+import com.fs.starfarer.api.combat.BattleObjectiveAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatFleetManagerAPI;
 import com.fs.starfarer.api.combat.CombatTaskManagerAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.MutableStat.StatMod;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.mission.FleetSide;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ChartBattlePlugin extends BaseEveryFrameCombatPlugin {
 
     public static final String MOD_ID = ChartFleetConditions.MOD_ID;
     static final float REFRESH_SECONDS = 1f;
+    static final int PLAYER_OWNER = 0;
     static final int ENEMY_OWNER = 1;
     private static final Logger LOG = Logger.getLogger(ChartBattlePlugin.class);
-    private static final List<PersonAPI> MODIFIED_COMMANDERS = new ArrayList<>();
     private static boolean failureReported;
 
     private CombatEngineAPI engine;
     private boolean active;
     private boolean started;
     private float secondsSinceRefresh;
+    private boolean capsFrozen;
+    private int playerBaseCap;
+    private int enemyBaseCap;
+    private int appliedPlayerCap;
+    private int appliedEnemyCap;
 
     @Override
     public void init(CombatEngineAPI engine) {
         this.engine = engine;
         started = false;
         secondsSinceRefresh = 0f;
+        capsFrozen = false;
+        appliedPlayerCap = -1;
+        appliedEnemyCap = -1;
         active = engine != null && engine.isInCampaign() && !engine.isSimulation() && !engine.isInCampaignSim() && hasBattleConditions();
     }
 
     static boolean hasBattleConditions() {
+        if (ChartFleetConditions.battleSizeBonus() != 0) {
+            return true;
+        }
         for (ChartFleetStat stat : ChartFleetConditions.active().keySet()) {
             if (!stat.appliesToShips()) {
                 return true;
@@ -59,10 +69,9 @@ public class ChartBattlePlugin extends BaseEveryFrameCombatPlugin {
             return;
         }
         secondsSinceRefresh = 0f;
-        boolean firstFrame = !started;
         started = true;
         try {
-            refresh(firstFrame);
+            refresh();
         } catch (RuntimeException | LinkageError e) {
             active = false;
             if (!failureReported) {
@@ -72,41 +81,69 @@ public class ChartBattlePlugin extends BaseEveryFrameCombatPlugin {
         }
     }
 
-    void refresh(boolean firstFrame) {
-        if (engine.isCombatOver()) {
-            liftCommanderBonuses();
-            active = false;
-            return;
-        }
-        refreshDeploymentPoints(FleetSide.PLAYER, ChartFleetConditions.mult(ChartFleetStat.DEPLOYMENT_POINTS), firstFrame);
-        refreshDeploymentPoints(FleetSide.ENEMY, ChartFleetConditions.mult(ChartFleetStat.ENEMY_DEPLOYMENT_POINTS), firstFrame);
+    void refresh() {
+        refreshBattleSize(ChartFleetConditions.battleSizeBonus());
+        refreshEnemyDeploymentCost(ChartFleetConditions.mult(ChartFleetStat.ENEMY_DEPLOYMENT_COST));
         refreshCommandPointRate(ChartFleetConditions.mult(ChartFleetStat.COMMAND_POINT_RATE));
         refreshEnemyObjectiveCaptureRate(ChartFleetConditions.mult(ChartFleetStat.ENEMY_OBJECTIVE_CAPTURE_RATE));
     }
 
-    void refreshDeploymentPoints(FleetSide side, float mult, boolean firstFrame) {
+    void refreshBattleSize(int bonusPoints) {
+        if (bonusPoints == 0 || !capsFrozen && !freezeBaseCaps(bonusPoints)) {
+            return;
+        }
+        int playerCap = Math.max(1, playerBaseCap + objectiveBonus(PLAYER_OWNER));
+        int enemyCap = Math.max(1, enemyBaseCap + objectiveBonus(ENEMY_OWNER));
+        if (playerCap != appliedPlayerCap) {
+            engine.setMaxFleetPoints(FleetSide.PLAYER, playerCap);
+            appliedPlayerCap = playerCap;
+        }
+        if (enemyCap != appliedEnemyCap) {
+            engine.setMaxFleetPoints(FleetSide.ENEMY, enemyCap);
+            appliedEnemyCap = enemyCap;
+        }
+    }
+
+    private boolean freezeBaseCaps(int bonusPoints) {
+        CombatFleetManagerAPI playerManager = engine.getFleetManager(FleetSide.PLAYER);
+        CombatFleetManagerAPI enemyManager = engine.getFleetManager(FleetSide.ENEMY);
+        int playerMax = playerManager == null ? 0 : playerManager.getMaxStrength();
+        int enemyMax = enemyManager == null ? 0 : enemyManager.getMaxStrength();
+        if (playerMax <= 0 || enemyMax <= 0) {
+            return false;
+        }
+        int playerShare = Math.round(bonusPoints * playerMax / (float) (playerMax + enemyMax));
+        playerBaseCap = playerMax + playerShare - objectiveBonus(PLAYER_OWNER);
+        enemyBaseCap = enemyMax + bonusPoints - playerShare - objectiveBonus(ENEMY_OWNER);
+        capsFrozen = true;
+        return true;
+    }
+
+    private int objectiveBonus(int owner) {
+        List<BattleObjectiveAPI> objectives = engine.getObjectives();
+        if (objectives == null || objectives.isEmpty()) {
+            return 0;
+        }
+        int battleSize = Global.getSettings().getBattleSize();
+        int bonus = 0;
+        for (BattleObjectiveAPI objective : objectives) {
+            if (objective.getOwner() == owner) {
+                bonus += Math.round(battleSize * objective.getBattleSizeFractionBonus());
+            }
+        }
+        return bonus;
+    }
+
+    void refreshEnemyDeploymentCost(float mult) {
         if (mult == 1f) {
             return;
         }
-        CombatFleetManagerAPI manager = engine.getFleetManager(side);
-        PersonAPI commander = manager == null ? null : manager.getFleetCommanderPreferPlayer();
-        int battleSize = Global.getSettings().getBattleSize();
-        int currentMax = manager == null ? 0 : manager.getMaxStrength();
-        if (commander == null || battleSize <= 0 || currentMax <= 0) {
+        CombatFleetManagerAPI manager = engine.getFleetManager(FleetSide.ENEMY);
+        if (manager == null) {
             return;
         }
-        StatBonus fractionBonus = commander.getStats().getDynamic().getMod(Stats.DEPLOYMENT_POINTS_FRACTION_OF_BATTLE_SIZE_BONUS_MOD);
-        StatMod ours = fractionBonus.getFlatBonus(MOD_ID);
-        int ourPoints = ours == null ? 0 : Math.round(battleSize * ours.getValue());
-        int maxWithoutOurs = Math.max(1, currentMax - ourPoints);
-        int wantedPoints = Math.max(1 - maxWithoutOurs, Math.round(maxWithoutOurs * (mult - 1f)));
-        if (ours != null && wantedPoints == ourPoints) {
-            return;
-        }
-        fractionBonus.modifyFlat(MOD_ID, wantedPoints / (float) battleSize);
-        rememberCommander(commander);
-        if (firstFrame) {
-            manager.setMaxStrength(maxWithoutOurs + wantedPoints);
+        for (FleetMemberAPI member : manager.getReservesCopy()) {
+            member.getStats().getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).modifyMult(MOD_ID, mult);
         }
     }
 
@@ -133,32 +170,6 @@ public class ChartBattlePlugin extends BaseEveryFrameCombatPlugin {
             if (ship.getOwner() == ENEMY_OWNER && !ship.isFighter()) {
                 ship.getMutableStats().getDynamic().getStat(Stats.SHIP_OBJECTIVE_CAP_RATE_MULT).modifyMult(MOD_ID, mult);
             }
-        }
-    }
-
-    private static void rememberCommander(PersonAPI commander) {
-        for (PersonAPI known : MODIFIED_COMMANDERS) {
-            if (known == commander) {
-                return;
-            }
-        }
-        MODIFIED_COMMANDERS.add(commander);
-    }
-
-    public static boolean hasCommanderBonuses() {
-        return !MODIFIED_COMMANDERS.isEmpty();
-    }
-
-    public static void liftCommanderBonuses() {
-        for (PersonAPI commander : MODIFIED_COMMANDERS) {
-            liftFrom(commander);
-        }
-        MODIFIED_COMMANDERS.clear();
-    }
-
-    public static void liftFrom(PersonAPI person) {
-        if (person != null && person.getStats() != null) {
-            person.getStats().getDynamic().getMod(Stats.DEPLOYMENT_POINTS_FRACTION_OF_BATTLE_SIZE_BONUS_MOD).unmodify(MOD_ID);
         }
     }
 }
