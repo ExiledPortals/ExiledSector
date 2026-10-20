@@ -265,6 +265,31 @@ refused there afterwards. Nodes whose conflicting mod names no cause, like Necro
 `exclusiveHullMods` list instead. A learned entry is never removed, even if a later version of that mod
 drops the conflict.
 
+## Threat volume
+
+The Threat volume holds Fragment Swarm, Secondary Fabricator and Fragment Coordinator, plus small Fragment
+Swarm Size and Fragment Replacement Rate nodes. Fragment Swarm is a passthrough node (`vanillaHullMod`) as
+well as a phantom, because the swarm itself is created in the vanilla hull mod's `advanceInCombat`; the
+phantom alone would apply nothing. Fragment weapons only need the swarm, so they work off the node. The two
+upgrades are plain phantoms whose node effects write the same dynamic stats vanilla uses
+(`fragment_swarm_size_mod` and `fragment_swarm_respawn_rate_mult`) as percentages. They add to the vanilla
+upgrades and to each other, and the Threat Hull's hive and fabricator multipliers apply on top, so Threat
+hulls need no special case. Fragment Swarm is refused on phase hulls and with Shrouded hull mods, as in
+vanilla. The upgrades rely on sitting behind Fragment Swarm in the tree rather than on a requirement check.
+
+Each notable costs the item vanilla consumes on install: a Fragment Fabricator for Fragment Swarm and
+Secondary Fabricator, a Threat Processing Unit for Fragment Coordinator. These are special items, not
+commodities, so `CostItems` decides per item id which cargo calls to use and how to name it. The
+blueprints drop from destroyed Threat fabricators (vanilla `ThreatFIDConfig`).
+
+Every node in the volume carries `gate_threat_fought`, which opens on vanilla's player memory flag
+`$encounteredThreat`. `ThreatFIDConfig` sets it when a battle against a Threat fleet starts, whatever the
+outcome, and never clears it.
+
+The volume has no star. Its centrepiece is a `threatUnits` entry in `ship_skill_tree.json`, a Threat
+Fabricator or Hive sprite drawn by `ThreatUnitRenderer` with a fragment swarm orbiting it. It is also the
+volume's anchor on the hyperspace map, ahead of any nebula image.
+
 ## Generated NPC trees
 
 NPC trees are generated per ship by `NpcSkillTreeBuilder.generate`, seeded from the sector seed, fleet id
@@ -307,6 +332,55 @@ reached, so the recovered ship keeps no volume it has no anchor for. The empty s
 
 `NpcRelevance` weights theme tags: matching weapon kinds, fighter bays, shields, phase cloaks and heavy armour
 lift their themes, and so do the themes of nodes that own the ship's built-in hull mods.
+
+## NPC levels
+
+An NPC ship's level is the number of nodes it allocates besides its root (`NpcTreeTag.nodesBesidesRoot`).
+Open-world fleets roll it as before, 80% to 120% of a random player combat ship's tree power
+(`NpcTreeSize.roll`), then cap it by the fleet's category (`NpcLevelCaps`). The design is in
+`docs/plans/npc_levels.md`.
+
+The category comes from `npc_levels.csv` first, then an AI-core commander (AI, 35), then the faction's
+`pirateBehavior` custom flag (pirate, 15), and everything else is a faction (25), the player's own faction and
+allies included. The CSV columns are `id,category,cap`. A row whose id equals its category sets that
+category's cap, and any other row moves a faction to a category, gives it its own cap, or both. Every cap is
+clamped to the max level and max allocated nodes settings. Chart fleets (`ChartIds.TIER_MEMORY_KEY`) have no
+cap.
+
+A ship's cap is fixed when `NpcFleetLeveller` levels it and is stored as a variant tag
+(`NpcLevelCaps.TAG_PREFIX`). In a battle, vanilla merges each side into one fleet that takes the primary
+fleet's faction, commander and memory, so the cap can't be read from the live fleet then. Ships without the
+tag fall back to their fleet. `NpcBonusScale` caps the player's average tree power at the ship's cap before
+computing the multiplier.
+
+### Bounties
+
+`NpcBounties` turns a bounty target fleet into a 0 to 1 difficulty:
+- A person bounty has a `PersonBountyIntel` fleet listener. The difficulty is its level over 10, capped at 1.
+- A custom bounty (vanilla `mcb`/`ucb` and Nexerelin's `nex_remcb`) keeps a 0 to 10 difficulty in a protected
+  `CustomBountyData`. After accept the `BaseCustomBounty` is a fleet listener. Before accept the three
+  offered fleets already exist with no marker, so they are found through their `MissionFleetAutoDespawn`
+  script's `mission` field. Both fields are read by name through `UiReflection.fieldNamed`, and the data
+  whose `fleet` is this fleet is used.
+- A MagicLib bounty has the `MagicLib_Bounty_target_fleet` tag or memory flag. It has no difficulty number,
+  so it counts as 1.
+
+The bounty cap runs from the category cap at difficulty 0 to 25 at difficulty 1, and a category already at or
+above 25 keeps its cap. The flagship rolls 3 more levels under a cap 3 higher. Person bounty fleets always use
+the pirate category, because vanilla keeps them neutral until the player enters their system. A fleet that
+becomes a bounty after its ships were levelled keeps their earlier caps.
+
+### Chart fleets
+
+Chart fleets don't mirror the player. `star_chart_tiers.csv` gives each tier a `level_min` and `level_max`
+(26 to 29 at tier 1, 47 to 50 at tier 15), and every ship rolls a level in that range
+(`ChartTiers.fleetStrengthRangeFor`). The Fleet Strength % modifier multiplies both ends by
+`1 + bonus / 100`. Levels are clamped to the max level and max allocated nodes settings. Warden fleet ships
+(`ChartIds.WARDEN_MEMORY_KEY`) roll one level higher and may reach the max level plus one.
+
+A won battle outside a chart system drops a chart only if it defeated `min_strength` deployment points in
+`chart_drops.csv`. Its tier is the highest one whose `level_min` the strongest defeated NPC ship reaches
+(`ChartDrops.battleTier`), at least 1 and at most the rule's `max_tier`. Salvage and tech mining drop tier 1.
 
 ## Renamed skill effects
 
@@ -733,8 +807,9 @@ is met. It checks on load and on every economy tick, and remembers the grant in 
 
 An anchor has no prefixes, suffixes or implicits and is never corrupted or mirrored: it ignores stored traits,
 and its explicit and implicit lists are always empty. `ItemCrafting.canUse` refuses every currency on it, even
-one a mod extends to the anchor type, so the workbench shows nothing usable. It disassembles into parts like any
-other item.
+one a mod extends to the anchor type, so the workbench shows nothing usable. Every anchor has unique rarity
+(`ItemDefinition.hasUniqueRarity`) without being `unique`, so the unique drop pools, transposition and the
+unique-granting console command never pick one. It disassembles into parts like any other unique.
 
 `canSocketInto` accepts the standard tree socket (`SkillTier.SOCKET`), like a subroutine. Item storage lists
 anchors with the subroutines when a tree socket is being filled, and the tree's storage button ("Socket
@@ -794,9 +869,10 @@ sizes are in an 80 by 80 design box scaled to the icon. When the look is framed,
 items are, a faction-coloured frame with a soft additive inner band surrounds it, and ten small lights
 (`graphics/fx/glow64.png`) sit along each half of the frame, from the top-left corner to the bottom-right one. A
 lit light grows, and slides inward just enough that its glow stays inside the icon box. The
-crest of `crest_faction` (read from the faction spec, so mod crests are never copied) sits in a circle in the
+crest of `crest_faction` (read from the faction spec) sits in a circle in the
 bottom-right corner, drawn as a textured fan with a dark rim, plus a faction-coloured ring when framed. A faction
-that isn't loaded shows no badge.
+that isn't loaded falls back to `graphics/icons/crests/<faction id>.png`, which bundles the crests of the merged
+areas whose mods may be absent (Kesteven, Enigma, Nightcross, Stargazer); with neither, there is no badge.
 
 With item animations on Full, each icon runs a six-second cycle, offset per stack so a cargo grid never pulses in
 step:

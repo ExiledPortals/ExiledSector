@@ -7,7 +7,7 @@ import { buildVocabulary } from '../../api/vocabulary.ts';
 import { renderWithProviders } from '../../test/renderWithProviders.tsx';
 import { readRepositoryFile, startTestServer, type TestServer } from '../../test/testServer.ts';
 import { openAddNode, openTypeEditor, openTypePicker } from './dialogs/treeDialogs.tsx';
-import { nodeById } from './model/types.ts';
+import { nodeById, threatUnitById } from './model/types.ts';
 import { addNodeOfType, duplicateNode, selectOnly, setMode } from './state/treeActions.ts';
 import { loadTree, saveTree } from './state/treePersistence.ts';
 import { EMPTY_SELECTION, isReservedNodeId, setSelection, useTreeStore } from './state/treeStore.ts';
@@ -153,6 +153,55 @@ describe('tree page', () => {
     expect(await screen.findByText('3 objects selected')).toBeTruthy();
     fireEvent.click(screen.getByText('Clear selection'));
     expect(useTreeStore.getState().selection.nodes).toEqual([]);
+  });
+
+  it('draws every threat unit from the tree file with a selectable centre handle', async () => {
+    const { container } = await renderLoadedTree();
+    const threatUnits = useTreeStore.getState().document.threatUnits;
+    expect(container.querySelectorAll('[data-threat-unit-id]').length).toBe(threatUnits.length);
+  });
+
+  it('adds a threat unit in its mode, edits it and moves it together with a selected node', async () => {
+    const { container } = await renderLoadedTree();
+    fireEvent.keyDown(window, { key: 'h' });
+    expect(useTreeStore.getState().mode).toBe('addThreatUnit');
+    act(() => useTreeStore.setState({ view: { panX: 0, panY: 0, zoom: 1 } }));
+    const svg = nodeElements(container)[0].closest('svg') as SVGSVGElement;
+    fireEvent.pointerDown(svg, { button: 0, clientX: 77123, clientY: 66456 });
+    window.dispatchEvent(new MouseEvent('pointerup'));
+
+    const threatUnitId = useTreeStore.getState().selection.threatUnits[0];
+    expect(threatUnitId).toMatch(/^threat_unit_\d+$/);
+    expect(useTreeStore.getState().mode).toBe('select');
+    const added = threatUnitById(useTreeStore.getState().document, threatUnitId);
+    expect(added).toMatchObject({ x: 77123, y: 66456, unitType: 'fabricator', length: 600, rotation: 0 });
+    expect(await screen.findByLabelText('Threat unit id')).toBeTruthy();
+    commitField('Length', '480');
+    expect(threatUnitById(useTreeStore.getState().document, threatUnitId)?.length).toBe(480);
+    expect(container.querySelector(`image[href$="fabricator.png"]`)).toBeTruthy();
+
+    act(() => setSelection({}));
+    fireEvent.pointerDown(svg, { button: 0, shiftKey: true, clientX: 77100, clientY: 66400 });
+    act(() => window.dispatchEvent(new MouseEvent('pointerup', { clientX: 77150, clientY: 66500 })));
+    expect(useTreeStore.getState().selection.threatUnits).toEqual([threatUnitId]);
+
+    const freeNode = useTreeStore.getState().document.nodes.find((node) => !node.orbitAnchorId);
+    const nodeBefore = { ...freeNode! };
+    act(() => setSelection({ nodes: [nodeBefore.id], threatUnits: [threatUnitId] }));
+    const handle = container.querySelector(`[data-threat-unit-id="${threatUnitId}"]`) as SVGElement;
+    fireEvent.pointerDown(handle, { button: 0, clientX: 0, clientY: 0 });
+    act(() => {
+      window.dispatchEvent(new MouseEvent('pointermove', { clientX: 40, clientY: 25 }));
+      window.dispatchEvent(new MouseEvent('pointerup', { clientX: 40, clientY: 25 }));
+    });
+    const moved = useTreeStore.getState().document;
+    expect(threatUnitById(moved, threatUnitId)).toMatchObject({ x: 77163, y: 66481 });
+    expect(nodeById(moved, nodeBefore.id)).toMatchObject({ x: nodeBefore.x + 40, y: nodeBefore.y + 25 });
+
+    act(() => selectOnly('threatUnits', threatUnitId));
+    fireEvent.keyDown(window, { key: 'q' });
+    expect(threatUnitById(useTreeStore.getState().document, threatUnitId)).toBeUndefined();
+    expect(container.querySelector(`[data-threat-unit-id="${threatUnitId}"]`)).toBeNull();
   });
 
   it('switches modes and deletes the selection from the keyboard', async () => {

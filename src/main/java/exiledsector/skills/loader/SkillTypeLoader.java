@@ -1,8 +1,8 @@
 package exiledsector.skills.loader;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.skills.CostItems;
 import exiledsector.skills.HullSizeSkillEffect;
 import exiledsector.skills.ShipHullSizes;
 import exiledsector.skills.SkillItemCost;
@@ -109,23 +109,11 @@ public final class SkillTypeLoader {
             return null;
         }
         SkillItemCost itemCost = new SkillItemCost(itemCostJson.getString("itemId"), (float) itemCostJson.getDouble("quantity"));
-        if (!commodityExists(itemCost.itemId())) {
-            Logger.getLogger(SkillTypeLoader.class).info("Waiving the " + itemCost.itemId() + " item cost: no such commodity in this game");
+        if (!CostItems.exists(itemCost.itemId())) {
+            Logger.getLogger(SkillTypeLoader.class).info("Waiving the " + itemCost.itemId() + " item cost: no such commodity or special item in this game");
             return null;
         }
         return itemCost;
-    }
-
-    static boolean commodityExists(String commodityId) {
-        SettingsAPI settings = Global.getSettings();
-        if (settings == null) {
-            return true;
-        }
-        try {
-            return settings.getCommoditySpec(commodityId) != null;
-        } catch (RuntimeException e) {
-            return false;
-        }
     }
 
     private static Set<HullSize> parseRequiredHullSizes(String typeId, JSONArray hullSizesArray) throws JSONException {

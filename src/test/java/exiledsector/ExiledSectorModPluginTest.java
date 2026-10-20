@@ -18,6 +18,8 @@ import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.npc.NpcFactionVolumes;
+import exiledsector.skills.npc.NpcLevelCaps;
+import exiledsector.skills.npc.NpcLevelCategory;
 import exiledsector.skills.skilleffect.FleetCrewLedger;
 import exiledsector.items.SocketLossListener;
 import exiledsector.items.ItemDefinitions;
@@ -98,6 +100,8 @@ class ExiledSectorModPluginTest {
                 .thenReturn(new JSONArray("[{\"ability_id\": \"fracture_jump\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/npc_faction_volumes.csv", "exiledSector"))
                 .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
+        when(settings.getMergedSpreadsheetDataForMod("id", "data/config/exiledSector/npc_levels.csv", "exiledSector"))
+                .thenReturn(new JSONArray("[{\"id\": \"remnant\", \"category\": \"ai\", \"cap\": \"\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("id", "data/config/exiledSector/subroutines.csv", "exiledSector"))
                 .thenReturn(new JSONArray("[{\"id\": \"chip\", \"kind\": \"MODSPEC_CACHE\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("id", "data/config/exiledSector/hull_items.csv", "exiledSector"))
@@ -129,6 +133,7 @@ class ExiledSectorModPluginTest {
         loadTree("");
         SkillTree.clearTypes();
         NpcFactionVolumes.clear();
+        NpcLevelCaps.clear();
         ItemDefinitions.clear();
         ItemNames.clear();
         StarChartCurrency.unregisterAll();
@@ -334,6 +339,13 @@ class ExiledSectorModPluginTest {
         new ExiledSectorModPlugin().onApplicationLoad();
 
         assertEquals("hegemony", NpcFactionVolumes.regionFor("hegemony"));
+    }
+
+    @Test
+    void onApplicationLoadLoadsTheNpcLevelCapsMergedAcrossMods() throws Exception {
+        new ExiledSectorModPlugin().onApplicationLoad();
+
+        assertEquals(NpcLevelCategory.AI, NpcLevelCaps.categoryFor("remnant", false, false));
     }
 
     @Test

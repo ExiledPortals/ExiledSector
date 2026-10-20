@@ -14,7 +14,7 @@ import { useTreeStore, type EditorMode } from './state/treeStore.ts';
 import { TreeToolbar } from './TreeToolbar.tsx';
 
 const TOOLTIP_HULL_SIZE_KEY = 'exiledSectorEditor.tooltipHullSize';
-const MODE_KEYS: Record<string, EditorMode> = { a: 'select', s: 'add', d: 'addAnchor', f: 'addImage', g: 'addStar' };
+const MODE_KEYS: Record<string, EditorMode> = { a: 'select', s: 'add', d: 'addAnchor', f: 'addImage', g: 'addStar', h: 'addThreatUnit' };
 
 function isTypingTarget(target: EventTarget | null): boolean {
   if (!(target instanceof HTMLElement)) {

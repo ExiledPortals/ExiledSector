@@ -11,6 +11,7 @@ import exiledsector.skills.layout.Rotation;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.layout.Star;
 import exiledsector.skills.layout.StaticImage;
+import exiledsector.skills.layout.ThreatUnit;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,7 +45,7 @@ public final class SkillTreeLoader {
         JSONObject treeJson = loadRoot();
         if (treeJson == null) {
             return new ParsedTree(new ArrayList<>(), 0, new LinkedHashMap<>(), new HashSet<>(),
-                    new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+                    new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         }
         JSONArray declaredNodes = treeJson.optJSONArray("nodes");
         return new ParsedTree(
@@ -54,7 +55,8 @@ public final class SkillTreeLoader {
                 safeParse("hidden connectors", () -> parseHiddenConnectors(treeJson), new HashSet<>()),
                 safeParse("static images", () -> parseStaticImages(treeJson), new ArrayList<>()),
                 safeParse("ring belts", () -> parseRingBelts(treeJson), new ArrayList<>()),
-                safeParse("stars", () -> parseStars(treeJson), new ArrayList<>()));
+                safeParse("stars", () -> parseStars(treeJson), new ArrayList<>()),
+                safeParse("threat units", () -> parseThreatUnits(treeJson), new ArrayList<>()));
     }
 
     private static <T> T safeParse(String sectionName, JsonParser<T> parser, T fallback) {
@@ -78,9 +80,11 @@ public final class SkillTreeLoader {
         public final List<StaticImage> staticImages;
         public final List<RingBelt> ringBelts;
         public final List<Star> stars;
+        public final List<ThreatUnit> threatUnits;
 
         ParsedTree(List<SkillNode> nodes, int declaredNodeCount, Map<String, ConnectorCurve> connectorCurves, Set<String> hiddenConnectors,
-                   List<StaticImage> staticImages, List<RingBelt> ringBelts, List<Star> stars) {
+                   List<StaticImage> staticImages, List<RingBelt> ringBelts, List<Star> stars,
+                   List<ThreatUnit> threatUnits) {
             this.nodes = nodes;
             this.declaredNodeCount = declaredNodeCount;
             this.connectorCurves = connectorCurves;
@@ -88,6 +92,7 @@ public final class SkillTreeLoader {
             this.staticImages = staticImages;
             this.ringBelts = ringBelts;
             this.stars = stars;
+            this.threatUnits = threatUnits;
         }
     }
 
@@ -143,6 +148,24 @@ public final class SkillTreeLoader {
                     SkillTypeLoader.parseStringArray(starJson.optJSONArray("tags"))));
         }
         return stars;
+    }
+
+    public static List<ThreatUnit> parseThreatUnits(JSONObject treeJson) throws JSONException {
+        List<ThreatUnit> threatUnits = new ArrayList<>();
+        JSONArray unitArray = treeJson.optJSONArray("threatUnits");
+        if (unitArray == null) return threatUnits;
+        for (int i = 0; i < unitArray.length(); i++) {
+            JSONObject unitJson = unitArray.getJSONObject(i);
+            threatUnits.add(new ThreatUnit(
+                    unitJson.getString("id"),
+                    (float) unitJson.getDouble("x"),
+                    (float) unitJson.getDouble("y"),
+                    unitJson.optString("unitType", ThreatUnit.FABRICATOR),
+                    (float) unitJson.getDouble("length"),
+                    (float) unitJson.optDouble("rotation", 0.0),
+                    SkillTypeLoader.parseStringArray(unitJson.optJSONArray("tags"))));
+        }
+        return threatUnits;
     }
 
     public static Map<String, ConnectorCurve> parseConnectorCurves(JSONObject treeJson) throws JSONException {

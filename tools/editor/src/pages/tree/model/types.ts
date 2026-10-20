@@ -114,6 +114,18 @@ export interface Star {
   tags?: string[];
 }
 
+export type ThreatUnitType = 'fabricator' | 'hive';
+
+export interface ThreatUnit {
+  id: string;
+  x: number;
+  y: number;
+  unitType: string;
+  length: number;
+  rotation: number;
+  tags?: string[];
+}
+
 export interface TreeDocument {
   types: SkillType[];
   nodes: TreeNode[];
@@ -122,6 +134,7 @@ export interface TreeDocument {
   anchors: OrbitAnchor[];
   images: StaticImage[];
   stars: Star[];
+  threatUnits: ThreatUnit[];
 }
 
 export type Tier = 'SMALL' | 'NOTABLE' | 'KEYSTONE' | 'WORMHOLE' | 'WORMHOLE_EXIT' | 'ROOT' | 'SOCKET';
@@ -202,6 +215,25 @@ export const VANILLA_STAR_TYPES = [
   'black_hole',
 ];
 
+export const THREAT_UNIT_TYPES: ThreatUnitType[] = ['fabricator', 'hive'];
+
+export const DEFAULT_THREAT_UNIT_LENGTH = 600;
+
+export interface ThreatUnitSprite {
+  label: string;
+  spritePath: string;
+  widthPerLength: number;
+}
+
+export const THREAT_UNIT_SPRITES: Record<ThreatUnitType, ThreatUnitSprite> = {
+  fabricator: { label: 'Fabricator', spritePath: 'graphics/ships/threat/fabricator.png', widthPerLength: 380 / 370 },
+  hive: { label: 'Hive', spritePath: 'graphics/ships/threat/threat_hive.png', widthPerLength: 212 / 280 },
+};
+
+export function threatUnitSprite(unitType: string): ThreatUnitSprite {
+  return THREAT_UNIT_TYPES.includes(unitType as ThreatUnitType) ? THREAT_UNIT_SPRITES[unitType as ThreatUnitType] : THREAT_UNIT_SPRITES.fabricator;
+}
+
 export const HULL_SIZE_OPTIONS = [
   { value: 'FRIGATE', label: 'Frigate' },
   { value: 'DESTROYER', label: 'Destroyer' },
@@ -219,6 +251,7 @@ export const UNLOCK_CONDITION_LABELS: Record<string, string> = {
   nightcrossPascalVisited: 'Nightcross: player has entered Pascal',
   nightcrossLunarFleetDefeated: 'Nightcross: Stargazer existential threat defeated',
   nightcrossAncientPrototypeFound: 'Nightcross: an Ancient Prototype found',
+  threatFought: 'Player has fought a Threat fleet',
 };
 
 export const PARAMETERISED_UNLOCK_CONDITIONS: ReadonlySet<string> = new Set(['blueprint', 'characterStat', 'minShipLevel', 'memoryFlag']);
@@ -249,6 +282,10 @@ export function imageById(document: Pick<TreeDocument, 'images'>, imageId: strin
 
 export function starById(document: Pick<TreeDocument, 'stars'>, starId: string): Star | undefined {
   return document.stars.find((star) => star.id === starId);
+}
+
+export function threatUnitById(document: Pick<TreeDocument, 'threatUnits'>, threatUnitId: string): ThreatUnit | undefined {
+  return document.threatUnits.find((threatUnit) => threatUnit.id === threatUnitId);
 }
 
 export function uniqueId(prefix: string, taken: (id: string) => boolean): string {

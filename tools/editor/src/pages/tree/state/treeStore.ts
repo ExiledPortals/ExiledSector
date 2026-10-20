@@ -4,16 +4,16 @@ import { registerUnloadCheck } from '../../../shared/unsavedChanges.ts';
 import type { TreeLineEndings } from '../model/serialization.ts';
 import type { AnchorShape, TreeDocument } from '../model/types.ts';
 
-export type EditorMode = 'select' | 'add' | 'addAnchor' | 'addImage' | 'addStar';
+export type EditorMode = 'select' | 'add' | 'addAnchor' | 'addImage' | 'addStar' | 'addThreatUnit';
 
-export type SelectionKind = 'nodes' | 'anchors' | 'images' | 'stars';
+export type SelectionKind = 'nodes' | 'anchors' | 'images' | 'stars' | 'threatUnits';
 
 export type Selection = Record<SelectionKind, string[]>;
 
-export type HandleKind = 'anchorResize' | 'anchorRotate' | 'imageResize' | 'imageRotate' | 'starResize';
+export type HandleKind = 'anchorResize' | 'anchorRotate' | 'imageResize' | 'imageRotate' | 'starResize' | 'threatUnitResize' | 'threatUnitRotate';
 
 export type ActiveDrag =
-  | { kind: 'move'; anchorIds: string[]; imageIds: string[]; starIds: string[] }
+  | { kind: 'move'; anchorIds: string[]; imageIds: string[]; starIds: string[]; threatUnitIds: string[] }
   | { kind: 'curve'; key: string }
   | { kind: HandleKind; id: string }
   | { kind: 'marquee'; startX: number; startY: number; currentX: number; currentY: number };
@@ -47,9 +47,9 @@ export interface TreeStoreState {
   releasedNodeIds: ReadonlySet<string>;
 }
 
-export const EMPTY_SELECTION: Selection = { nodes: [], anchors: [], images: [], stars: [] };
+export const EMPTY_SELECTION: Selection = { nodes: [], anchors: [], images: [], stars: [], threatUnits: [] };
 
-export const EMPTY_DOCUMENT: TreeDocument = { types: [], nodes: [], curves: [], hiddenConnectors: [], anchors: [], images: [], stars: [] };
+export const EMPTY_DOCUMENT: TreeDocument = { types: [], nodes: [], curves: [], hiddenConnectors: [], anchors: [], images: [], stars: [], threatUnits: [] };
 
 export const MIN_ZOOM = 0.08;
 export const MAX_ZOOM = 3;
@@ -94,5 +94,5 @@ export function setSelection(selection: Partial<Selection>): void {
 }
 
 export function selectionCount(selection: Selection): number {
-  return selection.nodes.length + selection.anchors.length + selection.images.length + selection.stars.length;
+  return selection.nodes.length + selection.anchors.length + selection.images.length + selection.stars.length + selection.threatUnits.length;
 }

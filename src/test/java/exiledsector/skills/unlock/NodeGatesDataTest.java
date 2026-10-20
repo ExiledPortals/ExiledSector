@@ -36,6 +36,7 @@ class NodeGatesDataTest {
     private static final String ABYSS_GATE = "gate_singularity_defeated";
     private static final String PASCAL_GATE = "gate_pascal_visited";
     private static final String LUNAR_FLEET_GATE = "gate_lunar_fleet_defeated";
+    private static final String THREAT_GATE = "gate_threat_fought";
     private static final String PROTOTYPE_GATE = "gate_ancient_prototype_found";
     private static final String CANDLES_GRACE_NODE_ID = "gravitational_drag_1";
 
@@ -86,6 +87,11 @@ class NodeGatesDataTest {
     @Test
     void everyNightcrossNodeAndTheWormholeIntoItWaitForPascal() {
         assertTrue(ungatedIn("nightcross", PASCAL_GATE).isEmpty(), "Nightcross nodes without the gate: " + ungatedIn("nightcross", PASCAL_GATE));
+    }
+
+    @Test
+    void everyThreatNodeAndTheWormholeIntoItWaitUntilTheThreatIsFought() {
+        assertTrue(ungatedIn("threat", THREAT_GATE).isEmpty(), "Threat nodes without the gate: " + ungatedIn("threat", THREAT_GATE));
     }
 
     @Test

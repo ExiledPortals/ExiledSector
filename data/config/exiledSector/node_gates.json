@@ -26,5 +26,12 @@
 				"type": "nightcrossAncientPrototypeFound"
 			}
 		]
+	},
+	"gate_threat_fought": {
+		"unlockConditions": [
+			{
+				"type": "threatFought"
+			}
+		]
 	}
 }

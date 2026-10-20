@@ -2,6 +2,7 @@ import { withLineEnding, type LineEnding } from '../../../shared/lineEndings.ts'
 import { linkedEntries, pruneConnectorEntries } from './connectors.ts';
 import {
   ANCHOR_RECTANGLE_ASPECT,
+  DEFAULT_THREAT_UNIT_LENGTH,
   defaultBeltBandWidth,
   PARAMETERISED_UNLOCK_CONDITIONS,
   tierOf,
@@ -9,6 +10,7 @@ import {
   type SkillType,
   type Star,
   type StaticImage,
+  type ThreatUnit,
   type TreeDocument,
   type TreeNode,
   type UnlockCondition,
@@ -22,6 +24,7 @@ interface TreeFileJson {
   ringBelts?: { id: string; rotation?: number }[];
   staticImages?: Partial<StaticImage>[];
   stars?: Partial<Star>[];
+  threatUnits?: Partial<ThreatUnit>[];
 }
 
 function parseJson<TValue>(text: string, fileName: string): TValue {
@@ -73,6 +76,18 @@ function normalizeStars(stars: Partial<Star>[] | undefined): Star[] {
   }));
 }
 
+function normalizeThreatUnits(threatUnits: Partial<ThreatUnit>[] | undefined): ThreatUnit[] {
+  return (threatUnits ?? []).map((threatUnit) => ({
+    id: threatUnit.id ?? '',
+    x: threatUnit.x ?? 0,
+    y: threatUnit.y ?? 0,
+    unitType: threatUnit.unitType || 'fabricator',
+    length: threatUnit.length ?? DEFAULT_THREAT_UNIT_LENGTH,
+    rotation: threatUnit.rotation || 0,
+    tags: threatUnit.tags ? threatUnit.tags.slice() : undefined,
+  }));
+}
+
 export function parseTreeDocument(typesText: string, treeText: string): TreeDocument {
   const typesJson = parseJson<{ skillTypes?: SkillType[] }>(typesText, 'skill_types.json');
   const treeJson = parseJson<TreeFileJson>(treeText, 'ship_skill_tree.json');
@@ -90,6 +105,7 @@ export function parseTreeDocument(typesText: string, treeText: string): TreeDocu
     anchors: anchorsFromTree(treeJson),
     images: normalizeImages(treeJson.staticImages),
     stars: normalizeStars(treeJson.stars),
+    threatUnits: normalizeThreatUnits(treeJson.threatUnits),
   };
   pruneConnectorEntries(document);
   return document;
@@ -278,6 +294,23 @@ function serializeStar(star: Star): Record<string, unknown> {
   return out;
 }
 
+function serializeThreatUnit(threatUnit: ThreatUnit): Record<string, unknown> {
+  const out: Record<string, unknown> = {
+    id: threatUnit.id,
+    x: threatUnit.x,
+    y: threatUnit.y,
+    unitType: threatUnit.unitType || 'fabricator',
+    length: threatUnit.length,
+  };
+  if (threatUnit.rotation) {
+    out.rotation = threatUnit.rotation;
+  }
+  if (threatUnit.tags?.length) {
+    out.tags = threatUnit.tags;
+  }
+  return out;
+}
+
 export interface SkillTypesFile {
   skillTypes: Record<string, unknown>[];
 }
@@ -308,6 +341,9 @@ function treeFileObject(document: TreeDocument): Record<string, unknown> {
   }
   if (document.stars.length) {
     out.stars = document.stars.map(serializeStar);
+  }
+  if (document.threatUnits.length) {
+    out.threatUnits = document.threatUnits.map(serializeThreatUnit);
   }
   return out;
 }

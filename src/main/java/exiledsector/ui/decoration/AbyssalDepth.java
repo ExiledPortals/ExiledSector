@@ -15,7 +15,7 @@ record AbyssalDepth(float directionX, float directionY, float fadeStart, float f
         float abyssSumY = 0f;
         int abyssCount = 0;
         for (SkillNode node : nodes) {
-            if (node.getTags().contains(SkillTags.ABYSS_REGION)) {
+            if (isAbyssal(node)) {
                 abyssSumX += node.getX();
                 abyssSumY += node.getY();
                 abyssCount++;
@@ -33,7 +33,7 @@ record AbyssalDepth(float directionX, float directionY, float fadeStart, float f
         float abyssNearEdge = Float.POSITIVE_INFINITY;
         for (SkillNode node : nodes) {
             float along = node.getX() * directionX + node.getY() * directionY;
-            if (node.getTags().contains(SkillTags.ABYSS_REGION)) {
+            if (isAbyssal(node)) {
                 abyssNearEdge = Math.min(abyssNearEdge, along);
             } else {
                 mainTreeReach = Math.max(mainTreeReach, along);
@@ -43,6 +43,11 @@ record AbyssalDepth(float directionX, float directionY, float fadeStart, float f
         if (gap <= 0f) return null;
         return new AbyssalDepth(directionX, directionY, mainTreeReach + gap * FADE_START_SHARE_OF_GAP,
                 mainTreeReach + gap * FADE_END_SHARE_OF_GAP);
+    }
+
+    static boolean isAbyssal(SkillNode node) {
+        String region = node.getRegion();
+        return region != null && SkillTags.ABYSSAL_REGIONS.contains(region);
     }
 
     float depthAt(float treeX, float treeY) {

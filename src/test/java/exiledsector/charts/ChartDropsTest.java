@@ -206,19 +206,35 @@ class ChartDropsTest {
     }
 
     @Test
-    void outsideSystemsTheTierComesFromTheEncounterStrength() throws Exception {
+    void outsideSystemsTheStrengthOnlyGatesTheDropAndSalvageAndTechMiningStayAtTierOne() throws Exception {
         ChartDrops.register(ChartContentDataTest.csvRows(ChartDrops.PATH));
 
         assertEquals(ChartDrops.NO_TIER, ChartDrops.tierForStrength(ChartDrops.Source.BATTLE, 100f));
         assertEquals(1, ChartDrops.tierForStrength(ChartDrops.Source.BATTLE, 150f));
-        assertEquals(1, ChartDrops.tierForStrength(ChartDrops.Source.BATTLE, 269f));
-        assertEquals(2, ChartDrops.tierForStrength(ChartDrops.Source.BATTLE, 270f));
-        assertEquals(6, ChartDrops.tierForStrength(ChartDrops.Source.BATTLE, 100000f));
         assertEquals(ChartDrops.NO_TIER, ChartDrops.tierForStrength(ChartDrops.Source.SALVAGE, 4f));
         assertEquals(1, ChartDrops.tierForStrength(ChartDrops.Source.SALVAGE, 5f));
-        assertEquals(3, ChartDrops.tierForStrength(ChartDrops.Source.SALVAGE, 11f));
-        assertEquals(5, ChartDrops.tierForStrength(ChartDrops.Source.SALVAGE, 60f));
+        assertEquals(1, ChartDrops.tierForStrength(ChartDrops.Source.SALVAGE, 60f));
+        assertEquals(1, ChartDrops.tierForStrength(ChartDrops.Source.TECHMINING_FIRST_FIND, 60f));
+        assertEquals(1, ChartDrops.tierForStrength(ChartDrops.Source.TECHMINING_MONTHLY, 60f));
         assertTrue(ChartDrops.roll(ChartDrops.Source.BATTLE, ChartDrops.NO_TIER, 1f, new Random(1L), anyUnique()).isEmpty());
+    }
+
+    @Test
+    void aWonBattleDropsTheTierItsStrongestDefeatedNpcLevelReached() throws Exception {
+        ChartDrops.register(ChartContentDataTest.csvRows(ChartDrops.PATH));
+        ChartTiers.register(ChartContentDataTest.csvRows(ChartTiers.PATH));
+        try {
+            assertEquals(ChartDrops.NO_TIER, ChartDrops.battleTier(100f, 40));
+            assertEquals(1, ChartDrops.battleTier(400f, 0));
+            assertEquals(1, ChartDrops.battleTier(400f, 15));
+            assertEquals(1, ChartDrops.battleTier(400f, 25));
+            assertEquals(2, ChartDrops.battleTier(400f, 28));
+            assertEquals(7, ChartDrops.battleTier(400f, 35));
+            assertEquals(6, tierOf(ChartDrops.roll(ChartDrops.Source.BATTLE, ChartDrops.battleTier(400f, 35), 100f, new Random(1L),
+                    anyUnique()).charts().get(0)));
+        } finally {
+            ChartTiers.resetForTests();
+        }
     }
 
     private StarSystemAPI system(String runId) {
@@ -248,7 +264,7 @@ class ChartDropsTest {
         ChartDrops.Loot salvage = ChartDrops.forSalvage(sector, system, new Random(1L));
         assertEquals(9, tierOf(salvage.charts().get(0)));
         assertEquals(1, salvage.currencies().size());
-        assertTrue(ChartDrops.forBattle(sector, system, 400f, new Random(1L)).isEmpty());
+        assertTrue(ChartDrops.forBattle(sector, system, 400f, 30, new Random(1L)).isEmpty());
         assertTrue(ChartDrops.forSalvage(sector, system("otherRun"), new Random(1L)).isEmpty());
 
         LocationAPI outside = mock(LocationAPI.class);

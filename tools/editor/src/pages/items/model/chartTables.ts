@@ -46,8 +46,8 @@ export const CHART_TIER_COLUMNS = [
   'officer_level_bonus',
   'officer_count_bonus',
   'fleet_quality',
-  'fleet_strength_min',
-  'fleet_strength_max',
+  'level_min',
+  'level_max',
   'cache_budget',
   'domain_budget',
   'station_budget',
@@ -78,7 +78,7 @@ export const CHART_COLONY_ITEM_CEILING_ID = 'ceiling';
 export const CHART_LOOT_COLUMNS =['id', 'drop_type', 'scope', 'group', 'mode', 'amount', 'min_tier', 'note'] as const;
 export const CHART_LOOT_MODES = ['random', 'value'];
 export const ALWAYS_BLOCKED_ABILITY = 'fracture_jump';
-const FLEET_STRENGTH_RANGE = [0, 300];
+const DEFAULT_MAX_LEVEL = 50;
 const MAX_CHARTS_PER_DROP = 4;
 
 type ColumnDetails = Omit<ChartColumn, 'column'>;
@@ -223,8 +223,12 @@ export const CHART_TIER_SPEC: ChartTableSpec = {
     officer_level_bonus: { label: 'Officer levels', kind: 'integer', help: 'Extra levels on enemy officers' },
     officer_count_bonus: { label: 'Extra officers', kind: 'integer' },
     fleet_quality: { label: 'Fleet quality %', kind: 'number', help: 'Controls d-mods and weapon quality, 0 to 150; 100% means no d-mods' },
-    fleet_strength_min: { label: 'Fleet strength % min', kind: 'integer', help: 'Enemy Exiled Sector skill tree size, 0 to 300 percent' },
-    fleet_strength_max: { label: 'Fleet strength % max', kind: 'integer' },
+    level_min: {
+      label: 'Level min',
+      kind: 'integer',
+      help: 'Lowest enemy ship level (skill tree nodes besides the root), clamped to the max level setting. Warden ships roll one level higher.',
+    },
+    level_max: { label: 'Level max', kind: 'integer' },
     cache_budget: { label: 'Cache budget', kind: 'number', help: 'Spent on cache points of interest by their cost' },
     domain_budget: {
       label: 'Domain budget',
@@ -297,17 +301,15 @@ export const CHART_TIER_SPEC: ChartTableSpec = {
       if (Math.round(numberValue(row, 'fleets_max', builtIn?.fleetsMax ?? Number.POSITIVE_INFINITY)) < fleetsMin) {
         warnings.push(`${label}: fleets_max is below fleets_min${value(row, 'fleets_min') === '' ? ` (built-in ${fleetsMin})` : ''}, so it is raised to fleets_min`);
       }
-      const strengthMin = Math.round(numberValue(row, 'fleet_strength_min', builtIn?.fleetStrengthMin ?? FLEET_STRENGTH_RANGE[0]));
-      const strengthMax = Math.round(numberValue(row, 'fleet_strength_max', builtIn?.fleetStrengthMax ?? Number.POSITIVE_INFINITY));
-      if (strengthMin > strengthMax) {
-        warnings.push(
-          `${label}: fleet_strength_min (${strengthMin}) is above fleet_strength_max (${strengthMax}), counting built-in values for blanks, so the game swaps them`,
-        );
+      const levelMin = Math.round(numberValue(row, 'level_min', builtIn?.levelMin ?? 0));
+      const levelMax = Math.round(numberValue(row, 'level_max', builtIn?.levelMax ?? Number.POSITIVE_INFINITY));
+      if (levelMin > levelMax) {
+        warnings.push(`${label}: level_min (${levelMin}) is above level_max (${levelMax}), counting built-in values for blanks, so the game swaps them`);
       }
-      for (const column of ['fleet_strength_min', 'fleet_strength_max']) {
-        const percent = numberValue(row, column, FLEET_STRENGTH_RANGE[0]);
-        if (percent < FLEET_STRENGTH_RANGE[0] || percent > FLEET_STRENGTH_RANGE[1]) {
-          warnings.push(`${label}: ${column} is clamped to ${FLEET_STRENGTH_RANGE[0]}-${FLEET_STRENGTH_RANGE[1]}`);
+      warnings.push(...negativeWarnings(row, label, ['level_min', 'level_max']));
+      for (const column of ['level_min', 'level_max']) {
+        if (numberValue(row, column, 0) > DEFAULT_MAX_LEVEL) {
+          warnings.push(`${label}: ${column} is above the default max level (${DEFAULT_MAX_LEVEL}), so it is clamped to the max level setting`);
         }
       }
       const wardenSize = numberValue(row, 'warden_size', builtIn?.wardenSize ?? 0);

@@ -2,8 +2,11 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.ModSettings;
 import exiledsector.ModSettingsListener;
+import exiledsector.skills.npc.NpcLevelCaps;
 
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -21,7 +24,7 @@ public final class NpcBonusScale {
     private static final float REFRESH_DAYS = 1f;
     private static final AtomicReference<Snapshot> SNAPSHOT = new AtomicReference<>();
 
-    private record Snapshot(float multiplier, long timestamp) {
+    private record Snapshot(float averageTreePower, Config config, long timestamp) {
     }
 
     record Config(int lowTreePower, int highTreePower, float maxMultiplier) {
@@ -45,18 +48,31 @@ public final class NpcBonusScale {
     private NpcBonusScale() {
     }
 
-    public static float current() {
+    public static float forShip(FleetMemberAPI member, ShipVariantAPI variant) {
+        Snapshot snapshot = snapshot();
+        return snapshot == null ? 1f : cappedMultiplier(snapshot.averageTreePower(), NpcLevelCaps.capFor(member, variant), snapshot.config());
+    }
+
+    public static float current(int levelCap) {
+        Snapshot snapshot = snapshot();
+        return snapshot == null ? 1f : cappedMultiplier(snapshot.averageTreePower(), levelCap, snapshot.config());
+    }
+
+    private static Snapshot snapshot() {
         SectorAPI sector = Global.getSector();
         if (sector == null || sector.getClock() == null) {
-            return 1f;
+            return null;
         }
         Snapshot snapshot = SNAPSHOT.get();
-        if (snapshot != null && sector.getClock().getElapsedDaysSince(snapshot.timestamp()) < REFRESH_DAYS) {
-            return snapshot.multiplier();
+        if (snapshot == null || sector.getClock().getElapsedDaysSince(snapshot.timestamp()) >= REFRESH_DAYS) {
+            snapshot = new Snapshot(PlayerTreePower.average(PlayerTreePower.current()), Config.current(), sector.getClock().getTimestamp());
+            SNAPSHOT.set(snapshot);
         }
-        float multiplier = rounded(multiplier(PlayerTreePower.average(PlayerTreePower.current()), Config.current()));
-        SNAPSHOT.set(new Snapshot(multiplier, sector.getClock().getTimestamp()));
-        return multiplier;
+        return snapshot;
+    }
+
+    static float cappedMultiplier(float averageTreePower, int levelCap, Config config) {
+        return rounded(multiplier(Math.min(averageTreePower, levelCap), config));
     }
 
     public static void invalidate() {

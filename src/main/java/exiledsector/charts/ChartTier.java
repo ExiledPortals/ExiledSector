@@ -1,7 +1,7 @@
 package exiledsector.charts;
 
 public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax, int officerLevelBonus, int officerCountBonus,
-                        float fleetQuality, int fleetStrengthMin, int fleetStrengthMax, float cacheBudget, float domainBudget,
+                        float fleetQuality, int levelMin, int levelMax, float cacheBudget, float domainBudget,
                         float stationBudget, float derelictBudget, boolean boss, float wardenSize, float clearWeight, float bossWeight) {
 
     public static final float FLEET_SIZE_BASE_POINTS = 50f;
@@ -19,6 +19,9 @@ public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax,
     static final int FALLBACK_FIRST_DOMAIN_TIER = 2;
     static final int FALLBACK_FIRST_STATION_TIER = 3;
     static final int FALLBACK_FIRST_BOSS_TIER = 4;
+    static final int FALLBACK_FIRST_TIER_LEVEL = 26;
+    static final float FALLBACK_LEVELS_PER_TIER = 1.5f;
+    static final int FALLBACK_LEVEL_SPREAD = 3;
 
     public ChartTier {
         fleetSize = Math.max(0f, fleetSize);
@@ -27,10 +30,10 @@ public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax,
         officerLevelBonus = Math.max(0, officerLevelBonus);
         officerCountBonus = Math.max(0, officerCountBonus);
         fleetQuality = Math.max(0f, fleetQuality);
-        int lowerPercent = Math.max(0, Math.min(fleetStrengthMin, fleetStrengthMax));
-        int upperPercent = Math.max(0, Math.max(fleetStrengthMin, fleetStrengthMax));
-        fleetStrengthMin = lowerPercent;
-        fleetStrengthMax = upperPercent;
+        int lowerLevel = Math.max(0, Math.min(levelMin, levelMax));
+        int upperLevel = Math.max(0, Math.max(levelMin, levelMax));
+        levelMin = lowerLevel;
+        levelMax = upperLevel;
         cacheBudget = Math.max(0f, cacheBudget);
         domainBudget = Math.max(0f, domainBudget);
         stationBudget = Math.max(0f, stationBudget);
@@ -68,11 +71,11 @@ public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax,
     static ChartTier fallback(int tier) {
         int steps = Math.max(0, tier - 1);
         boolean hasBoss = tier >= FALLBACK_FIRST_BOSS_TIER;
-        int strengthMin = Math.min(200, 50 + 10 * steps);
+        int levelMin = FALLBACK_FIRST_TIER_LEVEL + Math.round(FALLBACK_LEVELS_PER_TIER * steps);
         float poiBudget = FALLBACK_FIRST_TIER_POI_BUDGET + FALLBACK_POI_BUDGET_PER_TIER * steps;
         return new ChartTier(tier, FALLBACK_FIRST_TIER_FLEET_SIZE + FALLBACK_FLEET_SIZE_PER_TIER * steps, 2 + steps / 3,
                 4 + steps / 3,
-                steps / 3, steps / 3, Math.min(100f, 30f + 5f * steps), strengthMin, Math.min(300, strengthMin + 40),
+                steps / 3, steps / 3, Math.min(100f, 30f + 5f * steps), levelMin, levelMin + FALLBACK_LEVEL_SPREAD,
                 poiBudget * FALLBACK_CACHE_SHARE, tier >= FALLBACK_FIRST_DOMAIN_TIER ? poiBudget * FALLBACK_DOMAIN_SHARE : 0f,
                 tier >= FALLBACK_FIRST_STATION_TIER ? poiBudget * FALLBACK_STATION_SHARE : 0f, poiBudget * FALLBACK_DERELICT_SHARE, hasBoss,
                 hasBoss ? FALLBACK_FIRST_WARDEN_SIZE + FALLBACK_WARDEN_SIZE_PER_TIER * (tier - FALLBACK_FIRST_BOSS_TIER) : 0f,

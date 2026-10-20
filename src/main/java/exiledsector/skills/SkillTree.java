@@ -3,6 +3,7 @@ package exiledsector.skills;
 import exiledsector.skills.layout.ConnectorCurve;
 import exiledsector.skills.layout.RingBelt;
 import exiledsector.skills.layout.Star;
+import exiledsector.skills.layout.ThreatUnit;
 import exiledsector.skills.layout.StaticImage;
 import exiledsector.skills.loader.SkillTreeLoader;
 import exiledsector.skills.loader.SkillTypeLoader;
@@ -30,6 +31,7 @@ public class SkillTree {
     private static final List<StaticImage> STATIC_IMAGES = new ArrayList<>();
     private static final List<RingBelt> RING_BELTS = new ArrayList<>();
     private static final List<Star> STARS = new ArrayList<>();
+    private static final List<ThreatUnit> THREAT_UNITS = new ArrayList<>();
     private static final Map<String, SkillNode> NODES_VIEW = Collections.unmodifiableMap(NODES);
     private static final Map<String, SkillType> TYPES_VIEW = Collections.unmodifiableMap(TYPES);
     private static final Map<String, SkillNode> DECLARED_NODES = new LinkedHashMap<>();
@@ -81,6 +83,7 @@ public class SkillTree {
         STATIC_IMAGES.addAll(activeTree.staticImages);
         RING_BELTS.addAll(activeTree.ringBelts);
         STARS.addAll(activeTree.stars);
+        THREAT_UNITS.addAll(activeTree.threatUnits);
         topology = SkillTreeTopology.of(NODES.values());
         radiusCache = NodeRadiusCache.of(NODES.values(), NodeRadii.distances());
     }
@@ -97,6 +100,7 @@ public class SkillTree {
         STATIC_IMAGES.clear();
         RING_BELTS.clear();
         STARS.clear();
+        THREAT_UNITS.clear();
     }
 
     public static SkillNode getDeclared(String nodeId) {
@@ -199,5 +203,9 @@ public class SkillTree {
 
     public static List<Star> getStars() {
         return STARS;
+    }
+
+    public static List<ThreatUnit> getThreatUnits() {
+        return THREAT_UNITS;
     }
 }

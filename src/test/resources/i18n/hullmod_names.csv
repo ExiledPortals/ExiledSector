@@ -36,6 +36,8 @@ expanded_deck_crew,Expanded Deck Crew
 extendedshieldemitter,Extended Shields
 fluxbreakers,Resistant Flux Conduits
 force_field7s,Repulse-Field
+fragment_coordinator,Fragment Coordinator
+fragment_swarm,Fragment Swarm
 frontemitter,Shield Conversion - Front
 frontshield,Makeshift Shield Generator
 gr_GhostDesign,Ultimate Design
@@ -82,7 +84,11 @@ reinforcedhull,Reinforced Bulkheads
 resonance7s,Illusia Resonance
 safety_protocols7s,Safety Protocols
 safetyoverrides,Safety Overrides
+secondary_fabricator,Secondary Fabricator
 shield_shunt,Shield Shunt
+shrouded_lens,Shrouded Lens
+shrouded_mantle,Shrouded Mantle
+shrouded_thunderhead,Shrouded Thunderhead
 singularity_hullmod7s,Singularity Hullmod
 solar_shielding,Solar Shielding
 stabilizedshieldemitter,Stabilized Shields

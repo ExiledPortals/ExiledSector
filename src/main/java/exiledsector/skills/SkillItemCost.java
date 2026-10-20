@@ -5,13 +5,13 @@ import exiledsector.i18n.NumberText;
 
 public record SkillItemCost(String itemId, float quantity) {
 
-    public String commodityName() {
-        return CommodityNames.displayName(itemId);
+    public String itemName() {
+        return CostItems.displayName(itemId);
     }
 
     public void refundTo(CargoAPI cargo) {
         if (cargo != null) {
-            cargo.addCommodity(itemId, quantity);
+            CostItems.add(cargo, itemId, quantity);
         }
     }
 

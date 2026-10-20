@@ -47,6 +47,7 @@ import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.npc.NpcFactionVolumes;
+import exiledsector.skills.npc.NpcLevelCaps;
 import exiledsector.skills.radius.NodeRadii;
 import exiledsector.skills.skilleffect.CsvIdList;
 import exiledsector.skills.skilleffect.EffectAliases;
@@ -128,6 +129,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         CsvIdList.loadAll();
         StarCharts.loadData();
         NpcFactionVolumes.load();
+        NpcLevelCaps.load();
         ItemIdAliases.load();
         ItemModifiers.load();
         ItemDefinitions.load();

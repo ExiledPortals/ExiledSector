@@ -6,6 +6,7 @@ import {
   DEFAULT_STAR_COLOR,
   radiusForTier,
   TIER_COLOR_VARIABLES,
+  threatUnitSprite,
   TIER_RADIUS,
   tierOf,
   type ConnectorCurve,
@@ -14,6 +15,7 @@ import {
   type SkillType,
   type Star,
   type StaticImage,
+  type ThreatUnit,
   type Tier,
   type TreeNode,
 } from '../model/types.ts';
@@ -44,7 +46,7 @@ function centerClass(selected: boolean): string {
   return `${classes.centerHandle}${selected ? ` ${classes.centerHandleSelected}` : ''}`;
 }
 
-function isMoving(activeDrag: ActiveDrag | null, list: 'anchorIds' | 'imageIds' | 'starIds', id: string): boolean {
+function isMoving(activeDrag: ActiveDrag | null, list: 'anchorIds' | 'imageIds' | 'starIds' | 'threatUnitIds', id: string): boolean {
   return activeDrag?.kind === 'move' && activeDrag[list].includes(id);
 }
 
@@ -398,6 +400,78 @@ export const StarLayer = memo(function StarLayer({ stars }: { stars: Star[] }) {
           <g key={star.id}>
             <circle cx={star.x} cy={star.y} r={star.radius * 3} fill={colour} fillOpacity={0.12} />
             <circle cx={star.x} cy={star.y} r={star.radius} fill={colour} fillOpacity={0.85} />
+          </g>
+        );
+      })}
+    </g>
+  );
+});
+
+function threatUnitWidth(threatUnit: ThreatUnit): number {
+  return threatUnit.length * threatUnitSprite(threatUnit.unitType).widthPerLength;
+}
+
+export const ThreatUnitLayer = memo(function ThreatUnitLayer({ threatUnits, selectedIds }: { threatUnits: ThreatUnit[]; selectedIds: string[] }) {
+  return (
+    <g pointerEvents="none">
+      {threatUnits.map((threatUnit) => {
+        const sprite = threatUnitSprite(threatUnit.unitType);
+        const spriteWidth = threatUnitWidth(threatUnit);
+        const transform = threatUnit.rotation ? `rotate(${threatUnit.rotation} ${threatUnit.x} ${threatUnit.y})` : undefined;
+        const outlineClass = `${classes.threatUnitOutline}${selectedIds.includes(threatUnit.id) ? ` ${classes.threatUnitOutlineSelected}` : ''}`;
+        return (
+          <g key={threatUnit.id} transform={transform}>
+            <image
+              href={fileUrl(sprite.spritePath)}
+              x={threatUnit.x - spriteWidth / 2}
+              y={threatUnit.y - threatUnit.length / 2}
+              width={spriteWidth}
+              height={threatUnit.length}
+              preserveAspectRatio="none"
+            />
+            <ellipse cx={threatUnit.x} cy={threatUnit.y} rx={spriteWidth / 2} ry={threatUnit.length / 2} className={outlineClass} />
+            <text x={threatUnit.x} y={threatUnit.y + threatUnit.length / 2 + 16} textAnchor="middle" className={classes.threatUnitLabel}>
+              {sprite.label}
+            </text>
+          </g>
+        );
+      })}
+    </g>
+  );
+});
+
+export const ThreatUnitHandleLayer = memo(function ThreatUnitHandleLayer({ items, selectedIds, activeDrag }: HandleLayerProps<ThreatUnit>) {
+  return (
+    <g>
+      {items.map((threatUnit) => {
+        const selected = selectedIds.includes(threatUnit.id);
+        const moving = isMoving(activeDrag, 'threatUnitIds', threatUnit.id);
+        const resizing = isHandleActive(activeDrag, 'threatUnitResize', threatUnit.id);
+        const rotating = isHandleActive(activeDrag, 'threatUnitRotate', threatUnit.id);
+        const lengthOffset = rotateAroundOrigin(0, threatUnit.length / 2, threatUnit.rotation || 0);
+        const rotateOffset = rotateAroundOrigin(0, -(threatUnit.length / 2) - 24, threatUnit.rotation || 0);
+        return (
+          <g key={threatUnit.id}>
+            <circle cx={threatUnit.x} cy={threatUnit.y} r={moving ? 8 : 6} className={centerClass(selected || moving)} data-threat-unit-id={threatUnit.id} />
+            {selected ? (
+              <>
+                <circle
+                  cx={threatUnit.x + lengthOffset.x}
+                  cy={threatUnit.y + lengthOffset.y}
+                  r={resizing ? 7 : 5}
+                  className={handleClass(classes.resizeHandle, resizing)}
+                  data-threat-unit-resize={threatUnit.id}
+                />
+                <line x1={threatUnit.x} y1={threatUnit.y} x2={threatUnit.x + rotateOffset.x} y2={threatUnit.y + rotateOffset.y} className={classes.imageRotateLine} />
+                <circle
+                  cx={threatUnit.x + rotateOffset.x}
+                  cy={threatUnit.y + rotateOffset.y}
+                  r={rotating ? 7 : 5}
+                  className={handleClass(classes.rotateHandle, rotating)}
+                  data-threat-unit-rotate={threatUnit.id}
+                />
+              </>
+            ) : null}
           </g>
         );
       })}

@@ -2,6 +2,7 @@ package exiledsector.skills.loader;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import exiledsector.skills.SkillType;
 import org.json.JSONObject;
@@ -49,6 +50,13 @@ class SkillTypeLoaderItemCostTest {
 
         assertEquals("lobster", type.getItemCost().itemId());
         assertEquals(50f, type.getItemCost().quantity());
+    }
+
+    @Test
+    void anItemCostInASpecialItemTheGameHasIsKept() throws Exception {
+        when(settings.getSpecialItemSpec("fragment_fabricator")).thenReturn(mock(SpecialItemSpecAPI.class));
+
+        assertEquals("fragment_fabricator", typeCosting("fragment_fabricator").getItemCost().itemId());
     }
 
     @Test

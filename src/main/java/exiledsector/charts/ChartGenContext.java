@@ -238,7 +238,7 @@ public final class ChartGenContext {
         int fleetsMin = Math.max(1, base.fleetsMin() + baseFleets);
         int fleetsMax = Math.max(fleetsMin, base.fleetsMax() + baseFleets);
         return new ChartTier(base.tier(), base.fleetSize() + fleetSizePercent, fleetsMin, fleetsMax, base.officerLevelBonus() + officerLevelBonus,
-                base.officerCountBonus() + extraOfficers, base.fleetQuality() + fleetQualityPercent, base.fleetStrengthMin(), base.fleetStrengthMax(),
+                base.officerCountBonus() + extraOfficers, base.fleetQuality() + fleetQualityPercent, base.levelMin(), base.levelMax(),
                 base.cacheBudget() * siteBudgetMult(ChartPoi.Kind.CACHE), base.domainBudget() * siteBudgetMult(ChartPoi.Kind.DOMAIN),
                 base.stationBudget() * siteBudgetMult(ChartPoi.Kind.STATION), base.derelictBudget() * siteBudgetMult(ChartPoi.Kind.DERELICT),
                 base.boss(), base.boss() ? Math.max(0f, base.wardenSize() + wardenSizePercent) : base.wardenSize(),

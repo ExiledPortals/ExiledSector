@@ -56,7 +56,7 @@ public final class ShipTreeLookup {
 
     private static ShipTree npcTree(FleetMemberAPI member, ShipVariantAPI variant) {
         ShipSkillData skillData = SkillDataResolver.resolve(member, variant);
-        return new ShipTree(skillData, NpcBuildLabel.mainThemes(skillData), NpcBonusScale.current(), ShipSections.forVariant(skillData, variant));
+        return new ShipTree(skillData, NpcBuildLabel.mainThemes(skillData), NpcBonusScale.forShip(member, variant), ShipSections.forVariant(skillData, variant));
     }
 
     private static boolean isInPlayerFleet(FleetMemberAPI member) {

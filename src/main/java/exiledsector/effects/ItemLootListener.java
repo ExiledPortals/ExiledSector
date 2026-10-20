@@ -53,6 +53,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         private boolean playerWon;
         private float partsEarned;
         private float deploymentPointsDefeated;
+        private int highestDefeatedNpcLevel;
 
         List<ItemData> items() {
             List<ItemData> allItems = new ArrayList<>();
@@ -117,7 +118,8 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         ItemDrops.SiteLoot chartLoot = ItemDrops.SiteLoot.NONE;
         if (pendingLoot.playerWon) {
             try {
-                ChartDrops.Loot battleLoot = ChartDrops.forBattle(sector, playerFleet.getContainingLocation(), pendingLoot.deploymentPointsDefeated, chartRandom);
+                ChartDrops.Loot battleLoot = ChartDrops.forBattle(sector, playerFleet.getContainingLocation(), pendingLoot.deploymentPointsDefeated,
+                        pendingLoot.highestDefeatedNpcLevel, chartRandom);
                 chartLoot = chartLoot.plus(battleLoot.charts(), List.of(), battleLoot.currencies());
             } catch (RuntimeException e) {
                 LOG.error("[ExiledSector] Rolling Star Chart battle drops failed", e);
@@ -190,6 +192,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         for (FleetMemberAPI member : lostMembers) {
             String npcTreeTag = member == null ? null : NpcTreeTag.find(member.getVariant());
             ShipSkillData npcTree = npcTreeTag == null ? null : NpcTreeTag.decode(npcTreeTag);
+            pendingLoot.highestDefeatedNpcLevel = Math.max(pendingLoot.highestDefeatedNpcLevel, NpcTreeTag.nodesBesidesRoot(npcTree));
             List<ItemData> carriedItems = HullUpgradesSetting.enabled() ? NpcItems.carriedBy(npcTree)
                     : NpcItems.subroutinesCarriedBy(npcTree);
             if (!carriedItems.isEmpty()) {

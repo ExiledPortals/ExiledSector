@@ -127,7 +127,7 @@ public class SkillNode extends SkillTreeObject {
         if (itemCost == null) {
             return null;
         }
-        return Translation.msg("node.itemCost").arg("quantity", itemCost.formattedQuantity()).arg("item", itemCost.commodityName()).styled();
+        return Translation.msg("node.itemCost").arg("quantity", itemCost.formattedQuantity()).arg("item", itemCost.itemName()).styled();
     }
 
     private static StyledText describeExclusivity(SkillType type) {

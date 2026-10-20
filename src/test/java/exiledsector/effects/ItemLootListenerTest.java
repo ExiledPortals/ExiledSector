@@ -390,7 +390,7 @@ private static List<SpecialItemData> starCharts(CargoAPI cargo) {
             chartListener.reportBattleFinished(null, strongBattle);
             List<SpecialItemData> strongCharts = starCharts(playerCargo);
             assertEquals(1, strongCharts.size());
-            assertEquals(3, ItemData.ofStarChart(strongCharts.get(0)).preview().tier());
+            assertEquals(1, ItemData.ofStarChart(strongCharts.get(0)).preview().tier(), "ships without NPC trees count as level 0");
         } finally {
             ChartDrops.clear();
             StarChartFixtures.clear();
