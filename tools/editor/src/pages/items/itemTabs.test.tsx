@@ -15,13 +15,14 @@ const SUBROUTINES_FILE = `${CONFIG_DIR}/subroutines.csv`;
 const IMPLICITS_FILE = `${CONFIG_DIR}/hull_item_implicits.csv`;
 const DOCTRINES_FILE = `${CONFIG_DIR}/doctrine_archives.csv`;
 const CORRUPTION_POOL_FILE = `${CONFIG_DIR}/subroutine_corruption_implicits.csv`;
+const HULL_ITEM_CORRUPTION_POOL_FILE = `${CONFIG_DIR}/hull_item_corruption_implicits.csv`;
 const CHART_FILES = ['star_charts.csv', 'star_chart_modifiers.csv', 'star_chart_implicits.csv'].map((name) => `${CONFIG_DIR}/${name}`);
 const vocabulary = buildVocabulary(JSON.parse(readRepositoryFile('tools/editor_vocabulary.json')));
 
 let server: TestServer;
 
 beforeAll(() => {
-  server = startTestServer(['tools/editor_vocabulary.json', 'data/skilltrees/skill_types.json', MODIFIERS_FILE, SUBROUTINES_FILE, HULL_ITEMS_FILE, IMPLICITS_FILE, DOCTRINES_FILE, CORRUPTION_POOL_FILE, ...CHART_FILES]);
+  server = startTestServer(['tools/editor_vocabulary.json', 'data/skilltrees/skill_types.json', MODIFIERS_FILE, SUBROUTINES_FILE, HULL_ITEMS_FILE, IMPLICITS_FILE, DOCTRINES_FILE, CORRUPTION_POOL_FILE, HULL_ITEM_CORRUPTION_POOL_FILE, ...CHART_FILES]);
 });
 
 afterAll(async () => {
@@ -101,7 +102,7 @@ describe('hull item tabs', () => {
     expect(screen.queryByRole('button', { name: 'Copy for this section' })).toBeNull();
     fireEvent.change(maxInput, { target: { value: '12' } });
     fireEvent.click(saveButton());
-    await screen.findByText('Saved hull_item_implicits.csv, subroutine_corruption_implicits.csv and item_modifiers.csv', undefined, { timeout: 30000 });
+    await screen.findByText('Saved hull_item_implicits.csv, subroutine_corruption_implicits.csv, hull_item_corruption_implicits.csv and item_modifiers.csv', undefined, { timeout: 30000 });
 
     expect(server.readProjectFile(MODIFIERS_FILE)).toBe(
       modifiersBefore.replace('ARMOR_PERCENT_IMPLICIT,implicit,hull_item,ARMOR_PERCENT:5:10,', 'ARMOR_PERCENT_IMPLICIT,implicit,hull_item,ARMOR_PERCENT:5:12,'),
@@ -177,7 +178,7 @@ describe('hull item tabs', () => {
     expect(within(pool).getAllByDisplayValue('CR_RECOVERY_RATE_PERCENT_SUBROUTINE_IMPLICIT').length).toBeGreaterThan(0);
     fireEvent.click(within(pool).getAllByRole('button', { name: 'Remove' })[0]);
     fireEvent.click(saveButton());
-    await screen.findByText('Saved hull_item_implicits.csv and subroutine_corruption_implicits.csv', undefined, { timeout: 30000 });
+    await screen.findByText('Saved hull_item_implicits.csv, subroutine_corruption_implicits.csv and hull_item_corruption_implicits.csv', undefined, { timeout: 30000 });
 
     expect(server.readProjectFile(CORRUPTION_POOL_FILE)).toBe(poolBefore.replace(/@CR_RECOVERY_RATE_PERCENT_SUBROUTINE_IMPLICIT\r?\n/, ''));
     expect(server.readProjectFile(IMPLICITS_FILE)).toBe(implicitsBefore);
@@ -204,6 +205,28 @@ describe('hull item tabs', () => {
       filesBefore[MODIFIERS_FILE].replace('SENSOR_STRENGTH_PERCENT_SUBROUTINE_IMPLICIT,implicit', 'SENSOR_STRENGTH_PERCENT_CORRUPTED,implicit'),
     );
     expect(server.readProjectFile(HULL_ITEMS_FILE)).toBe(filesBefore[HULL_ITEMS_FILE]);
+  }, 90000);
+
+  it('counts the hull item corruption pool as a user of a modifier and renames its reference with it', async () => {
+    const filesBefore = Object.fromEntries([MODIFIERS_FILE, HULL_ITEM_CORRUPTION_POOL_FILE].map((file) => [file, server.readProjectFile(file)]));
+    await renderModifiersTab();
+    await selectModifier('CARGO_CAPACITY_PERCENT_CORRUPTION_IMPLICIT');
+
+    expect(screen.getByText('Hull item corruption pool')).toBeTruthy();
+    const idInput = screen.getByLabelText(/^Id/);
+    fireEvent.change(idInput, { target: { value: 'CARGO_CAPACITY_PERCENT_CORRUPTED' } });
+    fireEvent.blur(idInput);
+    fireEvent.click(await screen.findByRole('button', { name: 'Rename' }));
+    await waitFor(() => expect(screen.getByLabelText(/^Id/)).toHaveProperty('value', 'CARGO_CAPACITY_PERCENT_CORRUPTED'));
+    fireEvent.click(saveButton());
+    await screen.findByText(/Saved item_modifiers.csv and the renamed references/, undefined, { timeout: 15000 });
+
+    expect(server.readProjectFile(HULL_ITEM_CORRUPTION_POOL_FILE)).toBe(
+      filesBefore[HULL_ITEM_CORRUPTION_POOL_FILE].replace('@CARGO_CAPACITY_PERCENT_CORRUPTION_IMPLICIT', '@CARGO_CAPACITY_PERCENT_CORRUPTED'),
+    );
+    expect(server.readProjectFile(MODIFIERS_FILE)).toBe(
+      filesBefore[MODIFIERS_FILE].replace('CARGO_CAPACITY_PERCENT_CORRUPTION_IMPLICIT,implicit', 'CARGO_CAPACITY_PERCENT_CORRUPTED,implicit'),
+    );
   }, 90000);
 
   it('counts doctrine archives as users of a modifier and renames their references with it', async () => {

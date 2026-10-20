@@ -4,9 +4,34 @@ import { ANY_SYSTEM_TYPE, HULL_ITEM_TYPE, normalisedSystemType } from './definit
 import { MODIFIER_FILE_NAMES, type ItemFamily } from './itemFamily.ts';
 import { MODIFIER_REFERENCE_MARK, STAR_CHART_TYPE, SUBROUTINE_TYPE, type ItemModifier } from './modifiers.ts';
 
-export const CORRUPTION_POOL_RESOURCE = 'subroutine-corruption-implicits';
-export const CORRUPTION_POOL_FILE_NAME = 'subroutine_corruption_implicits.csv';
-export const CORRUPTION_POOL_LABEL = 'Subroutine corruption pool';
+export interface CorruptionPool {
+  resource: string;
+  fileName: string;
+  label: string;
+  itemType: string;
+  itemNoun: string;
+  copyQualifier: string;
+}
+
+export const SUBROUTINE_CORRUPTION_POOL: CorruptionPool = {
+  resource: 'subroutine-corruption-implicits',
+  fileName: 'subroutine_corruption_implicits.csv',
+  label: 'Subroutine corruption pool',
+  itemType: SUBROUTINE_TYPE,
+  itemNoun: 'subroutines',
+  copyQualifier: 'subroutine_implicit',
+};
+
+export const HULL_ITEM_CORRUPTION_POOL: CorruptionPool = {
+  resource: 'hull-item-corruption-implicits',
+  fileName: 'hull_item_corruption_implicits.csv',
+  label: 'Hull item corruption pool',
+  itemType: HULL_ITEM_TYPE,
+  itemNoun: 'hull items',
+  copyQualifier: 'corruption_implicit',
+};
+
+export const CORRUPTION_POOLS: readonly CorruptionPool[] = [SUBROUTINE_CORRUPTION_POOL, HULL_ITEM_CORRUPTION_POOL];
 
 export interface ImplicitReference {
   modifierId: string;
@@ -30,6 +55,7 @@ export interface CorruptionPoolEntry {
 }
 
 export interface CorruptionPoolModel {
+  pool: CorruptionPool;
   table: CsvTable;
   entries: CorruptionPoolEntry[];
 }
@@ -115,9 +141,9 @@ function poolReference(text: string): ImplicitReference {
   return references.length === 1 ? references[0] : { modifierId: '', inlineText: String(text).trim() };
 }
 
-export function parseCorruptionPoolCsv(text: string): CorruptionPoolModel {
+export function parseCorruptionPoolCsv(text: string, pool: CorruptionPool = SUBROUTINE_CORRUPTION_POOL): CorruptionPoolModel {
   const table = parseCsvTable(text);
-  return { table, entries: table.rows.map((cells) => ({ cells, implicit: poolReference(trimmedCsvCells(table, cells, ['implicit']).implicit) })) };
+  return { pool, table, entries: table.rows.map((cells) => ({ cells, implicit: poolReference(trimmedCsvCells(table, cells, ['implicit']).implicit) })) };
 }
 
 export function serializeCorruptionPoolCsv(model: CorruptionPoolModel): string {
@@ -135,7 +161,7 @@ export function newImplicitOf(catalogue: ItemModifier[], itemType: string): Impl
 export function validateCorruptionPool(model: CorruptionPoolModel, catalogue: Map<string, ItemModifier>): string[] {
   const issues: string[] = [];
   const listed: ItemModifier[] = [];
-  const label = CORRUPTION_POOL_LABEL;
+  const label = model.pool.label;
   for (const { implicit } of model.entries) {
     if (implicit.inlineText !== undefined) {
       issues.push(`${label}: "${implicit.inlineText}" is not a single @ID reference; pick an implicit modifier instead`);
@@ -153,8 +179,8 @@ export function validateCorruptionPool(model: CorruptionPoolModel, catalogue: Ma
     if (modifier.slot !== 'implicit') {
       issues.push(`${label}: ${modifier.id} is a ${modifier.slot}, not an implicit`);
     }
-    if (!modifier.itemTypes.includes(SUBROUTINE_TYPE)) {
-      issues.push(`${label}: ${modifier.id} does not roll on subroutines`);
+    if (!modifier.itemTypes.includes(model.pool.itemType)) {
+      issues.push(`${label}: ${modifier.id} does not roll on ${model.pool.itemNoun}`);
     }
     for (const earlier of listed) {
       if (earlier.id === modifier.id) {

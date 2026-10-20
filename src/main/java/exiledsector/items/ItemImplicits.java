@@ -21,17 +21,24 @@ import java.util.concurrent.atomic.AtomicReference;
 public final class ItemImplicits {
 
     static final String DATA_PATH = "data/config/exiledSector/hull_item_implicits.csv";
+    static final String CORRUPTION_DATA_PATH = "data/config/exiledSector/hull_item_corruption_implicits.csv";
     private static final String ENTRY_SEPARATOR = ";";
     private static final long IMPLICIT_SEED_SALT = 0x5DEECE66DL;
     private static final Logger LOG = Logger.getLogger(ItemImplicits.class);
     private static final AtomicReference<Map<ItemKind, List<Modifier>>> BY_TYPE = new AtomicReference<>();
     private static final AtomicReference<CorruptionPool> CORRUPTION_POOL = new AtomicReference<>();
+    private static final CorruptionImplicitPool CORRUPTION_ONLY_IMPLICITS = new CorruptionImplicitPool(CORRUPTION_DATA_PATH, ItemType.HULL_ITEM, LOG);
 
     private ItemImplicits() {
     }
 
     public static void load() {
         ModCsv.load("section", DATA_PATH, LOG, ItemImplicits::register);
+        CORRUPTION_ONLY_IMPLICITS.load();
+    }
+
+    public static void registerCorruptionPool(JSONArray rows) throws JSONException {
+        CORRUPTION_ONLY_IMPLICITS.register(rows);
     }
 
     public static void register(JSONArray rows) throws JSONException {
@@ -152,20 +159,22 @@ public final class ItemImplicits {
         if (byType == null) {
             return List.of();
         }
+        List<Modifier> corruptionOnly = CORRUPTION_ONLY_IMPLICITS.implicits();
         CorruptionPool cached = CORRUPTION_POOL.get();
-        if (cached != null && cached.source() == byType) {
+        if (cached != null && cached.source() == byType && cached.corruptionOnly() == corruptionOnly) {
             return cached.implicits();
         }
-        List<Modifier> pool = buildCorruptionPool(byType);
-        CORRUPTION_POOL.set(new CorruptionPool(byType, pool));
+        List<Modifier> pool = buildCorruptionPool(byType, corruptionOnly);
+        CORRUPTION_POOL.set(new CorruptionPool(byType, corruptionOnly, pool));
         return pool;
     }
 
-    private record CorruptionPool(Map<ItemKind, List<Modifier>> source, List<Modifier> implicits) {
+    private record CorruptionPool(Map<ItemKind, List<Modifier>> source, List<Modifier> corruptionOnly, List<Modifier> implicits) {
     }
 
-    private static List<Modifier> buildCorruptionPool(Map<ItemKind, List<Modifier>> byType) {
+    private static List<Modifier> buildCorruptionPool(Map<ItemKind, List<Modifier>> byType, List<Modifier> corruptionOnly) {
         Map<String, Modifier> distinctById = new LinkedHashMap<>();
+        corruptionOnly.forEach(implicit -> distinctById.putIfAbsent(implicit.id(), implicit));
         for (ItemKind kind : ItemKind.values()) {
             if (kind.type() == ItemType.HULL_ITEM) {
                 byType.getOrDefault(kind, List.of()).forEach(implicit -> distinctById.putIfAbsent(implicit.id(), implicit));
@@ -208,5 +217,6 @@ public final class ItemImplicits {
 
     public static void clear() {
         BY_TYPE.set(null);
+        CORRUPTION_ONLY_IMPLICITS.clear();
     }
 }

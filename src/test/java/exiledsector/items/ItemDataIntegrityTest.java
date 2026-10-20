@@ -79,10 +79,21 @@ class ItemDataIntegrityTest {
         List<Violation> violations = ItemDataIntegrity.checkAll(ItemFixtures.shippedRows(ItemModifiers.DATA_PATH),
                 ItemFixtures.shippedRows(ItemDefinitions.SUBROUTINES_PATH), ItemFixtures.shippedRows(ItemDefinitions.HULL_ITEMS_PATH),
                 ItemFixtures.shippedRows(ItemImplicits.DATA_PATH), new JSONArray(), new JSONArray(), new JSONArray(),
-                ItemFixtures.shippedRows(SubroutineImplicits.DATA_PATH));
+                ItemFixtures.shippedRows(SubroutineImplicits.DATA_PATH), new JSONArray());
 
         assertEquals(List.of(), violations.stream().filter(violation -> violation.severity() == Severity.ERROR).toList());
         assertTrue(violations.stream().noneMatch(violation -> violation.message().contains("_SUBROUTINE_IMPLICIT")), violations.toString());
+    }
+
+    @Test
+    void theShippedHullItemCorruptionPoolIsCheckedAndCountsAsUsed() throws Exception {
+        List<Violation> violations = ItemDataIntegrity.checkAll(ItemFixtures.shippedRows(ItemModifiers.DATA_PATH),
+                ItemFixtures.shippedRows(ItemDefinitions.SUBROUTINES_PATH), ItemFixtures.shippedRows(ItemDefinitions.HULL_ITEMS_PATH),
+                ItemFixtures.shippedRows(ItemImplicits.DATA_PATH), new JSONArray(), new JSONArray(), new JSONArray(), new JSONArray(),
+                ItemFixtures.shippedRows(ItemImplicits.CORRUPTION_DATA_PATH));
+
+        assertEquals(List.of(), violations.stream().filter(violation -> violation.severity() == Severity.ERROR).toList());
+        assertTrue(violations.stream().noneMatch(violation -> violation.message().contains("_CORRUPTION_IMPLICIT")), violations.toString());
     }
 
     @Test
@@ -90,11 +101,23 @@ class ItemDataIntegrityTest {
         JSONArray pool = new JSONArray().put(new JSONObject().put(SubroutineImplicits.IMPLICIT_COLUMN, "@HYBRID_ARMOR_HULL"));
 
         List<String> errors = ItemDataIntegrity.checkAll(validModifiers(), validSubroutines(), validHullItems(), validImplicits(),
-                new JSONArray(), new JSONArray(), new JSONArray(), pool).stream()
+                new JSONArray(), new JSONArray(), new JSONArray(), pool, new JSONArray()).stream()
                 .filter(violation -> violation.severity() == Severity.ERROR).map(Violation::message).toList();
 
         assertEquals(1, errors.size(), errors.toString());
         assertTrue(errors.get(0).contains("HYBRID_ARMOR_HULL"), errors.toString());
+    }
+
+    @Test
+    void theHullItemCorruptionPoolOnlyTakesHullItemImplicits() throws Exception {
+        JSONArray pool = new JSONArray().put(new JSONObject().put(SubroutineImplicits.IMPLICIT_COLUMN, "@ARMOR_PERCENT"));
+
+        List<String> errors = ItemDataIntegrity.checkAll(validModifiers(), validSubroutines(), validHullItems(), validImplicits(),
+                new JSONArray(), new JSONArray(), new JSONArray(), new JSONArray(), pool).stream()
+                .filter(violation -> violation.severity() == Severity.ERROR).map(Violation::message).toList();
+
+        assertEquals(1, errors.size(), errors.toString());
+        assertTrue(errors.get(0).contains("ARMOR_PERCENT") && errors.get(0).contains("hull item corruption pool"), errors.toString());
     }
 
     @Test

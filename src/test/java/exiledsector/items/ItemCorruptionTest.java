@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -12,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -27,6 +29,7 @@ class ItemCorruptionTest {
     private static final String RELIC = "plate_relic";
     private static final String DOCTRINE = "doctrine_test";
     private static final String SUBROUTINE_IMPLICIT = "SENSOR_STRENGTH_PERCENT_SUBROUTINE_IMPLICIT";
+    private static final String HULL_CORRUPTION_IMPLICIT = "CARGO_CAPACITY_PERCENT_CORRUPTION_IMPLICIT";
     private final ItemStore store = new ItemStore();
 
     @BeforeEach
@@ -161,6 +164,35 @@ class ItemCorruptionTest {
         Item reloaded = new HullItem(item);
         assertEquals("FLUX_DISSIPATION_PERCENT", reloaded.implicits().get(0).modifierId(), "a corrupted implicit is never remapped back");
         assertTrue(reloaded.headerLines().stream().anyMatch(line -> line.plain().equals("Corrupted")));
+    }
+
+    @Test
+    void aReplacedHullItemImplicitCanComeFromTheCorruptionOnlyPool() throws Exception {
+        ItemModifiers.register(new JSONArray()
+                .put(ItemFixtures.modifierRow(SUBROUTINE_IMPLICIT, "implicit", "subroutine", "SENSOR_STRENGTH_PERCENT:5:10", ""))
+                .put(ItemFixtures.modifierRow(HULL_CORRUPTION_IMPLICIT, "implicit", "hull_item", "CARGO_CAPACITY_PERCENT:7:7", "")));
+        ItemImplicits.registerCorruptionPool(new JSONArray().put(new JSONObject().put(SubroutineImplicits.IMPLICIT_COLUMN, "@" + HULL_CORRUPTION_IMPLICIT)));
+
+        assertEquals(Set.of(HULL_CORRUPTION_IMPLICIT, "FLUX_DISSIPATION_PERCENT", "ARMOR_PERCENT"),
+                ItemImplicits.corruptionPool().stream().map(Modifier::id).collect(Collectors.toSet()),
+                "the corruption-only implicits join every section's implicits");
+        Item item = null;
+        Random random = new Random(9L);
+        for (long seed = 0; seed < 40 && item == null; seed++) {
+            Item candidate = plate(seed);
+            assertTrue(ItemCrafting.replaceImplicit(candidate, random));
+            if (candidate.implicits().get(0).modifierId().equals(HULL_CORRUPTION_IMPLICIT)) {
+                item = candidate;
+            }
+        }
+        assertNotNull(item);
+        item.corrupt(CorruptionOutcome.IMPLICIT_REPLACED);
+
+        assertEquals(7f, item.implicits().get(0).lines().get(0).magnitude());
+        assertTrue(item.skillEffects().stream().anyMatch(effect -> effect.effect().name().equals("CARGO_CAPACITY_PERCENT")));
+        Item reloaded = new HullItem(item);
+        assertEquals(HULL_CORRUPTION_IMPLICIT, reloaded.implicits().get(0).modifierId());
+        assertEquals(1, reloaded.implicitLines(false).size());
     }
 
     @Test

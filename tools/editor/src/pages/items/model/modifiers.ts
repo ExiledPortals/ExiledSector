@@ -64,7 +64,7 @@ export interface ModifierUsage {
   itemTypes: string[];
   implicitSections: string[];
   doctrineArchives?: string[];
-  inCorruptionPool?: boolean;
+  corruptionPools?: string[];
 }
 
 export function isTierBandText(text: string | undefined): boolean {

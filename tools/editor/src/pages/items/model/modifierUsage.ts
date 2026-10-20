@@ -1,7 +1,7 @@
 import { HULL_ITEM_TYPE, isTrueText, poolEntries, referenceGroups, type ItemDefinition } from './definitions.ts';
 import { DOCTRINE_TYPE, doctrineModifierReferences, doctrineReferenceIssues, renameDoctrineModifier, type DoctrineArchive } from './doctrines.ts';
-import { CORRUPTION_POOL_LABEL, type ImplicitReference, type ImplicitRow } from './implicits.ts';
-import { SUBROUTINE_TYPE, type ItemModifier, type ModifierUsage } from './modifiers.ts';
+import type { CorruptionPoolModel, ImplicitRow } from './implicits.ts';
+import type { ItemModifier, ModifierUsage } from './modifiers.ts';
 
 function addOnce(values: string[], value: string): void {
   if (!values.includes(value)) {
@@ -14,7 +14,7 @@ export function modifierUsage(
   implicitRows: ImplicitRow[],
   implicitItemType: string = HULL_ITEM_TYPE,
   doctrineArchives: readonly DoctrineArchive[] = [],
-  corruptionPool: readonly ImplicitReference[] = [],
+  corruptionPools: readonly CorruptionPoolModel[] = [],
 ): Map<string, ModifierUsage> {
   const usage = new Map<string, ModifierUsage>();
   const usageOf = (modifierId: string) => {
@@ -57,11 +57,14 @@ export function modifierUsage(
       addOnce(referenceUsage.itemTypes, DOCTRINE_TYPE);
     }
   }
-  for (const reference of corruptionPool) {
-    if (reference.inlineText === undefined) {
-      const referenceUsage = usageOf(reference.modifierId);
-      referenceUsage.inCorruptionPool = true;
-      addOnce(referenceUsage.itemTypes, SUBROUTINE_TYPE);
+  for (const { pool, entries } of corruptionPools) {
+    for (const { implicit } of entries) {
+      if (implicit.inlineText === undefined) {
+        const referenceUsage = usageOf(implicit.modifierId);
+        referenceUsage.corruptionPools = referenceUsage.corruptionPools ?? [];
+        addOnce(referenceUsage.corruptionPools, pool.label);
+        addOnce(referenceUsage.itemTypes, pool.itemType);
+      }
     }
   }
   return usage;
@@ -69,7 +72,7 @@ export function modifierUsage(
 
 export function isUsed(usage: ModifierUsage | undefined): boolean {
   return Boolean(
-    usage && (usage.items.length > 0 || usage.implicitSections.length > 0 || (usage.doctrineArchives?.length ?? 0) > 0 || usage.inCorruptionPool),
+    usage && (usage.items.length > 0 || usage.implicitSections.length > 0 || (usage.doctrineArchives?.length ?? 0) > 0 || (usage.corruptionPools?.length ?? 0) > 0),
   );
 }
 
@@ -78,7 +81,7 @@ export function usedByText(usage: ModifierUsage | undefined): string {
     ...(usage?.items ?? []),
     ...(usage?.implicitSections ?? []),
     ...(usage?.doctrineArchives ?? []),
-    ...(usage?.inCorruptionPool ? [CORRUPTION_POOL_LABEL] : []),
+    ...(usage?.corruptionPools ?? []),
   ].join(', ');
 }
 
@@ -88,12 +91,12 @@ export function renameModifierReferences(
   fromId: string,
   toId: string,
   doctrineArchives: DoctrineArchive[] = [],
-  corruptionPool: ImplicitReference[] = [],
+  corruptionPools: CorruptionPoolModel[] = [],
 ): number {
   let renamed = renameDoctrineModifier(doctrineArchives, fromId, toId);
-  for (const reference of corruptionPool) {
-    if (reference.inlineText === undefined && reference.modifierId === fromId) {
-      reference.modifierId = toId;
+  for (const { implicit } of corruptionPools.flatMap((pool) => pool.entries)) {
+    if (implicit.inlineText === undefined && implicit.modifierId === fromId) {
+      implicit.modifierId = toId;
       renamed++;
     }
   }
@@ -123,7 +126,7 @@ export function referenceIssues(
   implicitRows: ImplicitRow[],
   catalogue: Map<string, ItemModifier>,
   doctrineArchives: readonly DoctrineArchive[] = [],
-  corruptionPool: readonly ImplicitReference[] = [],
+  corruptionPools: readonly CorruptionPoolModel[] = [],
 ): string[] {
   const issues: string[] = doctrineReferenceIssues(doctrineArchives, catalogue);
   for (const definition of definitions) {
@@ -154,15 +157,17 @@ export function referenceIssues(
       }
     }
   }
-  for (const reference of corruptionPool) {
-    if (reference.inlineText !== undefined) {
-      continue;
-    }
-    const modifier = catalogue.get(reference.modifierId);
-    if (!modifier) {
-      issues.push(`The subroutine corruption pool lists ${reference.modifierId}, which is not a modifier`);
-    } else if (modifier.slot !== 'implicit') {
-      issues.push(`The subroutine corruption pool lists ${modifier.id}, but it is a ${modifier.slot}`);
+  for (const { pool, entries } of corruptionPools) {
+    for (const { implicit } of entries) {
+      if (implicit.inlineText !== undefined) {
+        continue;
+      }
+      const modifier = catalogue.get(implicit.modifierId);
+      if (!modifier) {
+        issues.push(`The ${pool.label.toLowerCase()} lists ${implicit.modifierId}, which is not a modifier`);
+      } else if (modifier.slot !== 'implicit') {
+        issues.push(`The ${pool.label.toLowerCase()} lists ${modifier.id}, but it is a ${modifier.slot}`);
+      }
     }
   }
   return issues;

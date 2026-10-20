@@ -3,6 +3,7 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { buildVocabulary } from '../../../api/vocabulary.ts';
 import {
+  HULL_ITEM_CORRUPTION_POOL,
   parseCorruptionPoolCsv,
   parseImplicitsCsv,
   serializeCorruptionPoolCsv,
@@ -16,6 +17,7 @@ import { modifierById, parseModifiersCsv, validateModifiers } from './modifiers.
 const repositoryRoot = path.resolve(import.meta.dirname, '..', '..', '..', '..', '..', '..');
 const implicitsFile = path.join(repositoryRoot, 'data', 'config', 'exiledSector', 'hull_item_implicits.csv');
 const corruptionPoolFile = path.join(repositoryRoot, 'data', 'config', 'exiledSector', 'subroutine_corruption_implicits.csv');
+const hullItemCorruptionPoolFile = path.join(repositoryRoot, 'data', 'config', 'exiledSector', 'hull_item_corruption_implicits.csv');
 
 const vocabulary = buildVocabulary({
   effects: [
@@ -118,8 +120,8 @@ describe('subroutine corruption pool', () => {
   });
 
   it('counts pool entries as uses, renames them and reports dangling references', () => {
-    const pool = parseCorruptionPoolCsv('implicit\n@FLUX_CAPACITY_PERCENT_IMPLICIT\n').entries.map((entry) => entry.implicit);
-    const usage = modifierUsage([], [], 'hull_item', [], pool);
+    const pool = parseCorruptionPoolCsv('implicit\n@FLUX_CAPACITY_PERCENT_IMPLICIT\n');
+    const usage = modifierUsage([], [], 'hull_item', [], [pool]);
 
     expect(isUsed(usage.get('FLUX_CAPACITY_PERCENT_IMPLICIT'))).toBe(true);
     expect(usedByText(usage.get('FLUX_CAPACITY_PERCENT_IMPLICIT'))).toBe('Subroutine corruption pool');
@@ -129,10 +131,36 @@ describe('subroutine corruption pool', () => {
       'FLUX_CAPACITY_PERCENT_IMPLICIT: a subroutine rolls it, so item types must include subroutine',
     ]);
 
-    expect(renameModifierReferences([], [], 'FLUX_CAPACITY_PERCENT_IMPLICIT', 'FLUX_CAPACITY_PERCENT_SUBROUTINE_IMPLICIT', [], pool)).toBe(1);
-    expect(pool).toEqual([{ modifierId: 'FLUX_CAPACITY_PERCENT_SUBROUTINE_IMPLICIT' }]);
-    expect(referenceIssues([], [], catalogue, [], pool)).toEqual([
+    expect(renameModifierReferences([], [], 'FLUX_CAPACITY_PERCENT_IMPLICIT', 'FLUX_CAPACITY_PERCENT_SUBROUTINE_IMPLICIT', [], [pool])).toBe(1);
+    expect(pool.entries.map((entry) => entry.implicit)).toEqual([{ modifierId: 'FLUX_CAPACITY_PERCENT_SUBROUTINE_IMPLICIT' }]);
+    expect(referenceIssues([], [], catalogue, [], [pool])).toEqual([
       'The subroutine corruption pool lists FLUX_CAPACITY_PERCENT_SUBROUTINE_IMPLICIT, which is not a modifier',
+    ]);
+  });
+});
+
+describe('hull item corruption pool', () => {
+  it('saving the unchanged file reproduces it byte for byte', () => {
+    const text = fs.readFileSync(hullItemCorruptionPoolFile, 'utf8');
+    expect(serializeCorruptionPoolCsv(parseCorruptionPoolCsv(text, HULL_ITEM_CORRUPTION_POOL))).toBe(text);
+  });
+
+  it('accepts hull item implicits and rejects subroutine only ones', () => {
+    const model = parseCorruptionPoolCsv('implicit\n@ARMOR_PERCENT_IMPLICIT\n@FLUX_CAPACITY_PERCENT_IMPLICIT\n', HULL_ITEM_CORRUPTION_POOL);
+
+    expect(validateCorruptionPool(model, catalogue)).toEqual(['Hull item corruption pool: FLUX_CAPACITY_PERCENT_IMPLICIT does not roll on hull items']);
+  });
+
+  it('counts each pool by name and as a use by its item type', () => {
+    const subroutinePool = parseCorruptionPoolCsv('implicit\n@ARMOR_PERCENT_IMPLICIT\n');
+    const hullItemPool = parseCorruptionPoolCsv('implicit\n@ARMOR_PERCENT_IMPLICIT\n', HULL_ITEM_CORRUPTION_POOL);
+    const usage = modifierUsage([], [], 'hull_item', [], [subroutinePool, hullItemPool]);
+
+    expect(usedByText(usage.get('ARMOR_PERCENT_IMPLICIT'))).toBe('Subroutine corruption pool, Hull item corruption pool');
+    expect(usage.get('ARMOR_PERCENT_IMPLICIT')?.itemTypes).toEqual(['subroutine', 'hull_item']);
+    expect(renameModifierReferences([], [], 'ARMOR_PERCENT_IMPLICIT', 'ARMOR_PERCENT_CORRUPTION_IMPLICIT', [], [subroutinePool, hullItemPool])).toBe(2);
+    expect(referenceIssues([], [], catalogue, [], [hullItemPool])).toEqual([
+      'The hull item corruption pool lists ARMOR_PERCENT_CORRUPTION_IMPLICIT, which is not a modifier',
     ]);
   });
 });

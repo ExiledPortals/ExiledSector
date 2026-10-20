@@ -8,9 +8,8 @@ import { DocumentState } from '../../../shared/DocumentState.tsx';
 import { RowButtons } from '../../../shared/MoveButtons.tsx';
 import { useDataDocument } from '../../../shared/useDataDocument.ts';
 import {
-  CORRUPTION_POOL_FILE_NAME,
-  CORRUPTION_POOL_LABEL,
-  CORRUPTION_POOL_RESOURCE,
+  CORRUPTION_POOLS,
+  HULL_ITEM_CORRUPTION_POOL,
   implicitItemType,
   newImplicit,
   newImplicitOf,
@@ -20,6 +19,7 @@ import {
   serializeFamilyImplicits,
   validateCorruptionPool,
   validateImplicits,
+  type CorruptionPool,
   type CorruptionPoolModel,
   type ImplicitReference,
   type ImplicitRow,
@@ -33,7 +33,6 @@ import {
   modifierById,
   parseModifiersCsv,
   serializeModifiersCsv,
-  SUBROUTINE_TYPE,
   validateModifiers,
   type ItemModifier,
   type ModifierLine,
@@ -51,7 +50,7 @@ interface ImplicitsTabModel extends ImplicitsModel {
   catalogue: ItemModifier[];
   catalogueTable: CsvTable;
   catalogueChanged: boolean;
-  corruptionPool: CorruptionPoolModel | null;
+  corruptionPools: CorruptionPoolModel[];
   otherFileIds: string[];
 }
 
@@ -69,25 +68,25 @@ function otherFamily(family: ItemFamily): ItemFamily {
   return family === 'chart' ? 'ship' : 'chart';
 }
 
-const CORRUPTION_POOL_QUALIFIER = 'subroutine_implicit';
+function poolDescription(pool: CorruptionPool): string {
+  return pool === HULL_ITEM_CORRUPTION_POOL
+    ? "A Corrupted Nanoswarm that replaces a hull item's implicit picks from these and every section's implicits, each equally likely."
+    : 'A Corrupted Nanoswarm can add one of these to a subroutine, each equally likely.';
+}
 
 function implicitsFileNames(family: ItemFamily): string[] {
   const fileNames = [IMPLICIT_RESOURCES[family], MODIFIER_RESOURCES[family], MODIFIER_RESOURCES[otherFamily(family)]];
-  return family === 'ship' ? [...fileNames, CORRUPTION_POOL_RESOURCE] : fileNames;
-}
-
-function poolReferences(model: ImplicitsTabModel): ImplicitReference[] {
-  return model.corruptionPool?.entries.map((entry) => entry.implicit) ?? [];
+  return family === 'ship' ? [...fileNames, ...CORRUPTION_POOLS.map((pool) => pool.resource)] : fileNames;
 }
 
 function usageOf(model: ImplicitsTabModel) {
-  return modifierUsage([], model.rows, implicitItemType(model.family), [], poolReferences(model));
+  return modifierUsage([], model.rows, implicitItemType(model.family), [], model.corruptionPools);
 }
 
 function savedFileNames(model: ImplicitsTabModel): string {
   const names = [
     IMPLICIT_FILE_NAMES[model.family],
-    ...(model.corruptionPool ? [CORRUPTION_POOL_FILE_NAME] : []),
+    ...model.corruptionPools.map((pool) => pool.pool.fileName),
     ...(model.catalogueChanged ? [MODIFIER_FILE_NAMES[model.family]] : []),
   ];
   return names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names[0];
@@ -107,20 +106,20 @@ export function ImplicitsTab({ vocabulary }: ImplicitsTabProps) {
         catalogue: modifiers.modifiers,
         catalogueTable: modifiers.table,
         catalogueChanged: false,
-        corruptionPool: family === 'ship' ? parseCorruptionPoolCsv(files[CORRUPTION_POOL_RESOURCE].content) : null,
+        corruptionPools: family === 'ship' ? CORRUPTION_POOLS.map((pool) => parseCorruptionPoolCsv(files[pool.resource].content, pool)) : [],
         otherFileIds: parseModifiersCsv(files[MODIFIER_RESOURCES[otherFamily(family)]].content).modifiers.map((modifier) => modifier.id),
       };
     },
     serialize: (model) => ({
       [IMPLICIT_RESOURCES[model.family]]: serializeFamilyImplicits(model.family, model),
-      ...(model.corruptionPool ? { [CORRUPTION_POOL_RESOURCE]: serializeCorruptionPoolCsv(model.corruptionPool) } : {}),
+      ...Object.fromEntries(model.corruptionPools.map((pool) => [pool.pool.resource, serializeCorruptionPoolCsv(pool)])),
       ...(model.catalogueChanged
         ? { [MODIFIER_RESOURCES[model.family]]: serializeModifiersCsv({ table: model.catalogueTable, modifiers: model.catalogue }) }
         : {}),
     }),
     validate: (model) => [
       ...validateImplicits(model, vocabulary, modifierById(model.catalogue), model.family),
-      ...(model.corruptionPool ? validateCorruptionPool(model.corruptionPool, modifierById(model.catalogue)) : []),
+      ...model.corruptionPools.flatMap((pool) => validateCorruptionPool(pool, modifierById(model.catalogue))),
       ...(model.catalogueChanged ? validateModifiers(model.catalogue, vocabulary, usageOf(model), model.family, new Set(model.otherFileIds)) : []),
     ],
     savedMessage: (model) => `Saved ${savedFileNames(model)}`,
@@ -162,21 +161,23 @@ export function ImplicitsTab({ vocabulary }: ImplicitsTabProps) {
       draft.catalogueChanged = true;
     });
 
-  const editPool = (recipe: (pool: CorruptionPoolModel) => void) =>
+  const editPool = (poolIndex: number, recipe: (pool: CorruptionPoolModel) => void) =>
     document.update((draft) => {
-      if (draft.corruptionPool) {
-        recipe(draft.corruptionPool);
+      const pool = draft.corruptionPools[poolIndex];
+      if (pool) {
+        recipe(pool);
       }
     });
 
-  const copyPoolModifier = (index: number) =>
+  const copyPoolModifier = (poolIndex: number, index: number) =>
     document.update((draft) => {
-      const entry = draft.corruptionPool?.entries[index];
+      const pool = draft.corruptionPools[poolIndex];
+      const entry = pool?.entries[index];
       const source = entry ? draft.catalogue.find((candidate) => candidate.id === entry.implicit.modifierId) : undefined;
       if (!entry || !source) {
         return;
       }
-      const copy = copiedModifier(draft.catalogue, source, CORRUPTION_POOL_QUALIFIER, SUBROUTINE_TYPE, new Set(draft.otherFileIds));
+      const copy = copiedModifier(draft.catalogue, source, pool.pool.copyQualifier, pool.pool.itemType, new Set(draft.otherFileIds));
       draft.catalogue.push(copy);
       entry.implicit = { modifierId: copy.id };
       draft.catalogueChanged = true;
@@ -199,7 +200,7 @@ export function ImplicitsTab({ vocabulary }: ImplicitsTabProps) {
                 <Text size="xs" c="dimmed">
                   {model.family === 'chart'
                     ? 'Edits data/config/exiledSector/star_chart_implicits.csv. Every star chart first rolls one inhabiting faction by weight from chart_factions.csv, edited in the Chart factions tab. Every star chart of a system type also rolls all of that type\'s implicits, uniques included; charts whose system type is "any" use the Any row. Each implicit is a star chart modifier from star_chart_modifiers.csv with the implicit slot; its values can be edited here or in the Modifiers tab, and a modifier shared by several system types changes all of them unless you copy it for one. Charts already rolled keep their values when these change.'
-                    : "Edits data/config/exiledSector/hull_item_implicits.csv. Every hull item of a section rolls all of that section's implicits, uniques included. Each implicit is a hull item modifier from item_modifiers.csv with the implicit slot; its values can be edited here or in the Modifiers tab, and a modifier shared by several sections changes all of them unless you copy it for one section. Subroutines only get an implicit from a Corrupted Nanoswarm, picked from the subroutine corruption pool below. Items already rolled keep their values when these change."}
+                    : "Edits data/config/exiledSector/hull_item_implicits.csv. Every hull item of a section rolls all of that section's implicits, uniques included. Each implicit is a hull item modifier from item_modifiers.csv with the implicit slot; its values can be edited here or in the Modifiers tab, and a modifier shared by several sections changes all of them unless you copy it for one section. A Corrupted Nanoswarm picks a subroutine's or a hull item's new implicit from the corruption pools below. Items already rolled keep their values when these change."}
                 </Text>
                 {model.rows.map((row) => (
                   <Paper key={row.section} withBorder p="sm">
@@ -234,7 +235,7 @@ export function ImplicitsTab({ vocabulary }: ImplicitsTabProps) {
                               ...(usage.get(implicit.modifierId)?.implicitSections ?? [])
                                 .filter((section) => section !== row.section)
                                 .map((section) => groupLabel(section, model.family)),
-                              ...(usage.get(implicit.modifierId)?.inCorruptionPool ? [CORRUPTION_POOL_LABEL.toLowerCase()] : []),
+                              ...(usage.get(implicit.modifierId)?.corruptionPools ?? []).map((label) => label.toLowerCase()),
                             ]}
                             vocabulary={vocabulary}
                             onSelect={(modifierId) =>
@@ -257,63 +258,68 @@ export function ImplicitsTab({ vocabulary }: ImplicitsTabProps) {
                     </Stack>
                   </Paper>
                 ))}
-                {model.corruptionPool && (
-                  <Paper withBorder p="sm">
+                {model.corruptionPools.map((corruptionPool, poolIndex) => (
+                  <Paper key={corruptionPool.pool.resource} withBorder p="sm">
                     <Stack gap="xs">
                       <Group justify="space-between">
-                        <Title order={5}>{CORRUPTION_POOL_LABEL}</Title>
+                        <Title order={5}>{corruptionPool.pool.label}</Title>
                         <Button
                           size="xs"
                           variant="light"
                           leftSection={<IconPlus size={14} />}
-                          onClick={() => editPool((pool) => void pool.entries.push({ cells: [], implicit: newImplicitOf(model.catalogue, SUBROUTINE_TYPE) }))}
+                          onClick={() =>
+                            editPool(poolIndex, (pool) => void pool.entries.push({ cells: [], implicit: newImplicitOf(model.catalogue, pool.pool.itemType) }))
+                          }
                         >
                           Add implicit
                         </Button>
                       </Group>
                       <Text size="xs" c="dimmed">
-                        Edits data/config/exiledSector/{CORRUPTION_POOL_FILE_NAME}. A Corrupted Nanoswarm can add one of these to a subroutine, each equally
-                        likely. Each is an implicit modifier from item_modifiers.csv whose item types include subroutine.
+                        Edits data/config/exiledSector/{corruptionPool.pool.fileName}. {poolDescription(corruptionPool.pool)} Each is an implicit modifier from
+                        item_modifiers.csv whose item types include {corruptionPool.pool.itemType}.
                       </Text>
-                      {model.corruptionPool.entries.length === 0 ? (
+                      {corruptionPool.entries.length === 0 ? (
                         <Text size="sm" c="dimmed">
                           No implicits.
                         </Text>
                       ) : (
-                        model.corruptionPool.entries.map((entry, index, entries) => (
+                        corruptionPool.entries.map((entry, index, entries) => (
                           <ImplicitEntryRow
                             key={index}
                             family={model.family}
-                            itemType={SUBROUTINE_TYPE}
-                            copyLabel="Copy for subroutines"
+                            itemType={corruptionPool.pool.itemType}
+                            copyLabel={`Copy for the ${corruptionPool.pool.label.toLowerCase()}`}
                             implicit={entry.implicit}
                             index={index}
                             count={entries.length}
                             catalogue={model.catalogue}
-                            otherGroupsUsingModifier={(usage.get(entry.implicit.modifierId)?.implicitSections ?? []).map((section) =>
-                              groupLabel(section, model.family),
-                            )}
+                            otherGroupsUsingModifier={[
+                              ...(usage.get(entry.implicit.modifierId)?.implicitSections ?? []).map((section) => groupLabel(section, model.family)),
+                              ...(usage.get(entry.implicit.modifierId)?.corruptionPools ?? [])
+                                .filter((label) => label !== corruptionPool.pool.label)
+                                .map((label) => label.toLowerCase()),
+                            ]}
                             vocabulary={vocabulary}
                             onSelect={(modifierId) =>
-                              editPool((pool) => {
+                              editPool(poolIndex, (pool) => {
                                 pool.entries[index].implicit = { modifierId };
                               })
                             }
                             onEditModifier={(recipe) => editModifier(entry.implicit.modifierId, recipe)}
-                            onCopyModifier={() => copyPoolModifier(index)}
+                            onCopyModifier={() => copyPoolModifier(poolIndex, index)}
                             onMove={(from, to) =>
-                              editPool((pool) => {
+                              editPool(poolIndex, (pool) => {
                                 const [moved] = pool.entries.splice(from, 1);
                                 pool.entries.splice(to, 0, moved);
                               })
                             }
-                            onRemove={() => editPool((pool) => void pool.entries.splice(index, 1))}
+                            onRemove={() => editPool(poolIndex, (pool) => void pool.entries.splice(index, 1))}
                           />
                         ))
                       )}
                     </Stack>
                   </Paper>
-                )}
+                ))}
               </Stack>
             </ScrollArea>
           );

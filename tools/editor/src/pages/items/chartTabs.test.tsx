@@ -41,7 +41,7 @@ beforeAll(() => {
     DROPS_FILE,
     POIS_FILE,
     'data/skilltrees/skill_types.json',
-    ...['item_modifiers.csv', 'subroutines.csv', 'hull_items.csv', 'hull_item_implicits.csv', 'item_names.json', 'doctrine_archives.csv', 'subroutine_corruption_implicits.csv'].map(config),
+    ...['item_modifiers.csv', 'subroutines.csv', 'hull_items.csv', 'hull_item_implicits.csv', 'item_names.json', 'doctrine_archives.csv', 'subroutine_corruption_implicits.csv', 'hull_item_corruption_implicits.csv'].map(config),
   ]);
 });
 
