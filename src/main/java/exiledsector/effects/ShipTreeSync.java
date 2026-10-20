@@ -13,6 +13,7 @@ import exiledsector.skills.InstalledHullMods;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.npc.NpcLevelCaps;
 import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.skills.tags.SkillTags;
 import exiledsector.skills.progression.ShipLevelConfig;
@@ -248,6 +249,7 @@ public final class ShipTreeSync {
 
     private static void clearNpcTree(ShipVariantAPI variant) {
         NpcTreeTag.removeAll(variant);
+        NpcLevelCaps.removeTag(variant);
         if (variant.hasHullMod(SkillTreeHullMod.ID) && !variant.getPermaMods().contains(SkillTreeHullMod.ID)) {
             variant.removeMod(SkillTreeHullMod.ID);
         }

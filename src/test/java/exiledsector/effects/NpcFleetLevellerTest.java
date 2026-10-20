@@ -19,6 +19,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import exiledsector.ExiledSectorModPlugin;
@@ -32,6 +33,7 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.npc.NpcFactionVolumes;
+import exiledsector.skills.npc.NpcLevelCaps;
 import exiledsector.skills.npc.NpcTreeConfig;
 import exiledsector.skills.npc.NpcTreeRecords;
 import exiledsector.skills.npc.NpcTreeTag;
@@ -330,8 +332,8 @@ class NpcFleetLevellerTest {
 
         NpcFleetLeveller.ensure(fleetOf(officered));
 
-        assertEquals(1, tags.size());
-        assertTrue(tags.get(0).startsWith(NpcTreeTag.PREFIX));
+        assertEquals(List.of(NpcLevelCaps.TAG_PREFIX + "25"), tags.stream().filter(tag -> !tag.startsWith(NpcTreeTag.PREFIX)).toList());
+        assertEquals(1, tags.stream().filter(tag -> tag.startsWith(NpcTreeTag.PREFIX)).count());
     }
 
     @Test
@@ -570,5 +572,79 @@ class NpcFleetLevellerTest {
         assertTrue(byTheSettings > 2, "the default tree has " + byTheSettings + " nodes");
         assertTrue(tierFifteen > byTheSettings, tierFifteen + " vs " + byTheSettings);
         assertTrue(tierOne < byTheSettings, tierOne + " vs " + byTheSettings);
+    }
+
+    private void registerLongChain() {
+        String previous = "armor_1";
+        for (int i = 0; i < 50; i++) {
+            String id = "chain_" + i;
+            SkillTree.register(new SkillNode(id, type(id, SkillTier.SMALL).build(), List.of(previous), 0f, 0f));
+            previous = id;
+        }
+    }
+
+    private String treeForFaction(boolean pirateBehavior, boolean aiCommander) {
+        FleetMemberAPI officered = member("m1", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
+        CampaignFleetAPI fleet = fleetOf(officered);
+        when(fleet.getFaction().getCustomBoolean(Factions.CUSTOM_PIRATE_BEHAVIOR)).thenReturn(pirateBehavior);
+        PersonAPI commander = mock(PersonAPI.class);
+        when(commander.isAICore()).thenReturn(aiCommander);
+        when(fleet.getCommander()).thenReturn(commander);
+        NpcFleetLeveller.ensure(fleet);
+        return NpcTreeTag.find(officered.getVariant());
+    }
+
+    private static int nodesBesidesRoot(String tag) {
+        return NpcTreeTag.decode(tag).getAllocatedNodeIds().size() - 1;
+    }
+
+    @Test
+    void openWorldTreesNeverGrowPastTheirCategoryCap() {
+        registerLongChain();
+        when(playerStats.getLevel()).thenReturn(45);
+
+        assertEquals(15, nodesBesidesRoot(treeForFaction(true, false)));
+        assertEquals(25, nodesBesidesRoot(treeForFaction(false, false)));
+        assertEquals(35, nodesBesidesRoot(treeForFaction(true, true)));
+    }
+
+    @Test
+    void levelledShipsCarryTheirFleetsCapSoMergedBattleFleetsKeepIt() {
+        FleetMemberAPI officered = member("m1", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
+        CampaignFleetAPI pirateFleet = fleetOf(officered);
+        when(pirateFleet.getFaction().getCustomBoolean(Factions.CUSTOM_PIRATE_BEHAVIOR)).thenReturn(true);
+        NpcFleetLeveller.ensure(pirateFleet);
+        CampaignFleetAPI combinedFleet = fleetOf();
+        FleetDataAPI combinedFleetData = mock(FleetDataAPI.class);
+        when(combinedFleetData.getFleet()).thenReturn(combinedFleet);
+        when(officered.getFleetData()).thenReturn(combinedFleetData);
+
+        assertEquals(15, NpcLevelCaps.capFor(officered, officered.getVariant()));
+        assertEquals(25, NpcLevelCaps.capFor(officered));
+    }
+
+    @Test
+    void belowTheCapTheRollStillMirrorsThePlayer() {
+        registerLongChain();
+        when(playerStats.getLevel()).thenReturn(10);
+
+        String pirateTree = treeForFaction(true, false);
+
+        assertEquals(pirateTree, treeForFaction(true, true));
+        assertTrue(nodesBesidesRoot(pirateTree) >= 8 && nodesBesidesRoot(pirateTree) <= 12, pirateTree);
+    }
+
+    @Test
+    void chartFleetsIgnoreTheCategoryCap() {
+        registerLongChain();
+        when(playerStats.getLevel()).thenReturn(45);
+        FleetMemberAPI officered = member("m1", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
+        CampaignFleetAPI fleet = fleetOf(officered);
+        when(fleet.getFaction().getCustomBoolean(Factions.CUSTOM_PIRATE_BEHAVIOR)).thenReturn(true);
+        fleet.getMemoryWithoutUpdate().set(ChartIds.TIER_MEMORY_KEY, 15);
+
+        NpcFleetLeveller.ensure(fleet);
+
+        assertTrue(nodesBesidesRoot(NpcTreeTag.find(officered.getVariant())) > 15);
     }
 }

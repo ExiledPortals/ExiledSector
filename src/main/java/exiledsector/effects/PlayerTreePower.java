@@ -6,6 +6,8 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.npc.NpcLevelCaps;
+import exiledsector.skills.npc.NpcLevelCategory;
 import exiledsector.skills.npc.NpcTreeSize;
 import exiledsector.skills.progression.SkillNodeOpCost;
 import org.apache.log4j.Logger;
@@ -58,8 +60,17 @@ public final class PlayerTreePower {
         int fewestNodes = NpcTreeSize.nodesFor(shipPowers.get(0), percentRange.min());
         int mostNodes = NpcTreeSize.nodesFor(shipPowers.get(shipPowers.size() - 1), percentRange.max());
         LOG.info("[ExiledSector] Your combat ships' tree power is " + shipPowers + ", so new NPC trees get " + fewestNodes + " to " + mostNodes
-                + " nodes (" + percentRange.min() + " to " + percentRange.max() + " percent of a random ship's tree power), and NPC bonuses are"
-                + " multiplied by " + NpcBonusScale.current() + ".");
+                + " nodes (" + percentRange.min() + " to " + percentRange.max() + " percent of a random ship's tree power), capped at "
+                + categoryCaps() + ".");
+    }
+
+    private static String categoryCaps() {
+        List<String> capEntries = new ArrayList<>();
+        for (NpcLevelCategory category : NpcLevelCategory.values()) {
+            int levelCap = NpcLevelCaps.capOf(category);
+            capEntries.add(category.csvId() + " " + levelCap + " (bonuses x" + NpcBonusScale.current(levelCap) + ")");
+        }
+        return String.join(", ", capEntries);
     }
 
     static List<Integer> of(List<FleetMemberAPI> members, int levelFloor) {

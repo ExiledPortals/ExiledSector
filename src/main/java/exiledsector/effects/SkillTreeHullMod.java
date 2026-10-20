@@ -53,7 +53,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
                 && !SkillDataResolver.isNpcTree(variant)) {
             DoctrineOverrides.bindShipFacts(shipData, () -> PlayerShipFacts.of(member, variant));
         }
-        ResolvedTree resolvedTree = ResolvedTree.of(shipData, hullSize, bonusScale(stats.getVariant()),
+        ResolvedTree resolvedTree = ResolvedTree.of(shipData, hullSize, bonusScale(member, stats.getVariant()),
                 ShipSections.forVariant(shipData, stats.getVariant()));
         for (ResolvedTree.Entry entry : resolvedTree.entries()) {
             if (entry instanceof ResolvedTree.VanillaEntry vanillaEntry) {
@@ -226,11 +226,12 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
 
     private static ResolvedTree treeFor(ShipAPI ship) {
         ShipVariantAPI variant = ship.getVariant();
-        ShipSkillData shipData = SkillDataResolver.resolve(ship.getMutableStats().getFleetMember(), variant);
-        return ResolvedTree.of(shipData, ship.getHullSize(), bonusScale(variant), ShipSections.forVariant(shipData, variant));
+        FleetMemberAPI member = ship.getMutableStats().getFleetMember();
+        ShipSkillData shipData = SkillDataResolver.resolve(member, variant);
+        return ResolvedTree.of(shipData, ship.getHullSize(), bonusScale(member, variant), ShipSections.forVariant(shipData, variant));
     }
 
-    private static float bonusScale(ShipVariantAPI variant) {
-        return SkillDataResolver.isNpcTree(variant) ? NpcBonusScale.current() : 1f;
+    private static float bonusScale(FleetMemberAPI member, ShipVariantAPI variant) {
+        return SkillDataResolver.isNpcTree(variant) ? NpcBonusScale.forShip(member, variant) : 1f;
     }
 }
