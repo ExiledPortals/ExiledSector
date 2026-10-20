@@ -210,13 +210,13 @@ describe('star chart definitions', () => {
 });
 
 describe('review findings', () => {
-  const withDefaults = { ...vocabulary, chartTierDefaults: [{ tier: 10, fleetsMin: 5, fleetsMax: 7, fleetStrengthMin: 140, fleetStrengthMax: 180, wardenSize: 0 }] };
+  const withDefaults = { ...vocabulary, chartTierDefaults: [{ tier: 10, fleetsMin: 5, fleetsMax: 7, levelMin: 40, levelMax: 43, wardenSize: 0 }] };
 
   it('compares blank tier cells against the built-in values', () => {
-    const model = chartTable(CHART_TIER_SPEC, 'tier,fleets_min,fleets_max,boss,warden_size,fleet_strength_min,fleet_strength_max\n10,,3,yes,,,100\n');
+    const model = chartTable(CHART_TIER_SPEC, 'tier,fleets_min,fleets_max,boss,warden_size,level_min,level_max\n10,,3,yes,,,35\n');
     expect(CHART_TIER_SPEC.warnings(model, withDefaults).slice(0, 3)).toEqual([
       'tier 10: fleets_max is below fleets_min (built-in 5), so it is raised to fleets_min',
-      'tier 10: fleet_strength_min (140) is above fleet_strength_max (100), counting built-in values for blanks, so the game swaps them',
+      'tier 10: level_min (40) is above level_max (35), counting built-in values for blanks, so the game swaps them',
       'tier 10: boss is yes but warden_size is blank and the built-in value is 0, so there is no boss',
     ]);
   });
@@ -361,8 +361,8 @@ describe('chart tables', () => {
   it('mirrors the tier loader', () => {
     const model = chartTable(
       CHART_TIER_SPEC,
-      'tier,fleet_size,fleets_min,fleets_max,boss,warden_size,fleet_strength_min,fleet_strength_max\n' +
-        '1,60,2,1,yes,0,90,80\n' +
+      'tier,fleet_size,fleets_min,fleets_max,boss,warden_size,level_min,level_max\n' +
+        '1,60,2,1,yes,0,30,28\n' +
         '16,x,1.5,3,maybe,,,\n',
     );
     expect(CHART_TIER_SPEC.issues(model, vocabulary)).toEqual([
@@ -372,7 +372,7 @@ describe('chart tables', () => {
     ]);
     expect(CHART_TIER_SPEC.warnings(model, vocabulary)).toEqual([
       'tier 1: fleets_max is below fleets_min, so it is raised to fleets_min',
-      'tier 1: fleet_strength_min (90) is above fleet_strength_max (80), counting built-in values for blanks, so the game swaps them',
+      'tier 1: level_min (30) is above level_max (28), counting built-in values for blanks, so the game swaps them',
       'tier 1: boss is yes but warden_size is 0, so there is no boss',
       'tier 16: fleets_min 1.5 is rounded to a whole number',
       'No row for tier 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15; the game uses built-in values for them',
@@ -385,6 +385,21 @@ describe('chart tables', () => {
       expect.arrayContaining(['tier 1: colony_item_chance above 100% counts as 100%; it is a fraction, so 0.04 is 4%']),
     );
     expect(CHART_TIER_SPEC.warnings(model, vocabulary).filter((warning) => warning.startsWith('tier 2: colony_item_chance'))).toHaveLength(1);
+  });
+
+  it('keeps the tier level columns on a round trip and warns where the game clamps them', () => {
+    expect(CHART_TIER_SPEC.columns.map((column) => column.column)).toEqual(expect.arrayContaining(['level_min', 'level_max']));
+    expect(CHART_TIER_SPEC.columns.map((column) => column.column)).not.toContain('fleet_strength_min');
+    const text = 'tier,level_min,level_max\r\n1,26,29\r\n15,-2,60\r\n';
+    const model = chartTable(CHART_TIER_SPEC, text);
+    expect(serializeChartTable(model, CHART_TIER_SPEC.columns)).toBe(text);
+    expect(CHART_TIER_SPEC.warnings(model, vocabulary)).toEqual(
+      expect.arrayContaining([
+        'tier 15: level_min below 0 counts as 0',
+        'tier 15: level_max is above the default max level (50), so it is clamped to the max level setting',
+      ]),
+    );
+    expect(CHART_TIER_SPEC.warnings(model, vocabulary).filter((warning) => warning.startsWith('tier 1:'))).toEqual([]);
   });
 
   it('gives each site category its own tier budget column and checks them like the tier loader', () => {

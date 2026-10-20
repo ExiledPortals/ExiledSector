@@ -29,7 +29,7 @@ public final class ChartEditorVocabulary {
         for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
             ChartTier fallback = ChartTier.fallback(tier);
             defaults.add("{\"tier\": " + tier + ", \"fleetsMin\": " + fallback.fleetsMin() + ", \"fleetsMax\": " + fallback.fleetsMax()
-                    + ", \"fleetStrengthMin\": " + fallback.fleetStrengthMin() + ", \"fleetStrengthMax\": " + fallback.fleetStrengthMax()
+                    + ", \"levelMin\": " + fallback.levelMin() + ", \"levelMax\": " + fallback.levelMax()
                     + ", \"wardenSize\": " + fallback.wardenSize() + "}");
         }
         return defaults;

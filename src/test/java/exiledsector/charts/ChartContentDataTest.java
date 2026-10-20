@@ -1,10 +1,9 @@
 package exiledsector.charts;
 
-import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.items.StarChartImplicits;
 import exiledsector.modifiers.Modifier;
-import exiledsector.skills.npc.NpcTreeSize;
 import exiledsector.skills.npc.RealSkillData;
+import exiledsector.skills.progression.ShipLevelConfig;
 import org.json.CDL;
 import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
@@ -22,10 +21,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class ChartContentDataTest {
 
@@ -79,9 +75,10 @@ class ChartContentDataTest {
                 for (ChartPoi.Kind kind : ChartPoi.Kind.values()) {
                     assertTrue(current.siteBudget(kind) >= previous.siteBudget(kind), kind + " budget never drops at tier " + tier);
                 }
-                assertTrue(current.fleetStrengthMax() >= previous.fleetStrengthMax(), "fleet strength never drops at tier " + tier);
+                assertTrue(current.levelMin() > previous.levelMin(), "the lowest level rises at tier " + tier);
+                assertTrue(current.levelMax() > previous.levelMax(), "the highest level rises at tier " + tier);
             }
-            assertTrue(current.fleetStrengthMax() <= NpcTreeSize.HIGHEST_PERCENT);
+            assertTrue(current.levelMax() <= ShipLevelConfig.DEFAULT_MAX_LEVEL, "tier " + tier + " fits under the default max level");
             assertTrue(current.fleetSize() <= ChartContentPlanner.FLEET_SIZE_CAP, "tier " + tier + " fleets fit under the size cap");
             assertTrue(current.wardenSize() <= ChartContentPlanner.WARDEN_SIZE_CAP, "tier " + tier + " warden fits under the size cap");
             previous = current;
@@ -115,42 +112,10 @@ class ChartContentDataTest {
             ChartTier fallback = ChartTiers.forTier(tier);
             assertTrue(fallback.fleetSize() > 0f);
             assertTrue(fallback.fleetsMax() >= fallback.fleetsMin());
-            assertTrue(fallback.fleetStrengthMin() <= fallback.fleetStrengthMax());
+            assertTrue(fallback.levelMin() <= fallback.levelMax());
         }
-    }
-
-    @Test
-    void aFleetsChartTierPicksItsFleetStrengthRange() throws Exception {
-        ChartTiers.register(csvRows(ChartTiers.PATH));
-        MemoryAPI tierFifteen = mock(MemoryAPI.class);
-        when(tierFifteen.get(ChartIds.TIER_MEMORY_KEY)).thenReturn(15);
-        MemoryAPI notAChartFleet = mock(MemoryAPI.class);
-        MemoryAPI garbled = mock(MemoryAPI.class);
-        when(garbled.get(ChartIds.TIER_MEMORY_KEY)).thenReturn("fifteen");
-
-        ChartTier fifteen = ChartTiers.forTier(15);
-        assertEquals(new NpcTreeSize.PercentRange(fifteen.fleetStrengthMin(), fifteen.fleetStrengthMax()), ChartTiers.fleetStrengthRangeFor(tierFifteen));
-        assertTrue(fifteen.fleetStrengthMax() < NpcTreeSize.HIGHEST_PERCENT, "tier 15 leaves room for overflow strength");
-        assertNull(ChartTiers.fleetStrengthRangeFor(notAChartFleet));
-        assertNull(ChartTiers.fleetStrengthRangeFor(garbled));
-        assertNull(ChartTiers.fleetStrengthRangeFor(null));
-    }
-
-    @Test
-    void anOversizedFleetsStrengthBonusRaisesItsRangeUpToTheTreeCap() throws Exception {
-        ChartTiers.register(csvRows(ChartTiers.PATH));
-        ChartTier seventh = ChartTiers.forTier(7);
-        MemoryAPI tierSeven = mock(MemoryAPI.class);
-        when(tierSeven.get(ChartIds.TIER_MEMORY_KEY)).thenReturn(7);
-        when(tierSeven.get(ChartIds.STRENGTH_BONUS_MEMORY_KEY)).thenReturn(20);
-        MemoryAPI tierFifteen = mock(MemoryAPI.class);
-        when(tierFifteen.get(ChartIds.TIER_MEMORY_KEY)).thenReturn(15);
-        when(tierFifteen.get(ChartIds.STRENGTH_BONUS_MEMORY_KEY)).thenReturn(80);
-
-        assertEquals(new NpcTreeSize.PercentRange(seventh.fleetStrengthMin() + 20, seventh.fleetStrengthMax() + 20),
-                ChartTiers.fleetStrengthRangeFor(tierSeven));
-        ChartTier fifteen = ChartTiers.forTier(15);
-        assertEquals(new NpcTreeSize.PercentRange(fifteen.fleetStrengthMin() + 80, NpcTreeSize.HIGHEST_PERCENT), ChartTiers.fleetStrengthRangeFor(tierFifteen));
+        assertEquals(26, ChartTiers.forTier(ChartTiers.LOWEST_TIER).levelMin());
+        assertEquals(ShipLevelConfig.DEFAULT_MAX_LEVEL, ChartTiers.forTier(ChartTiers.HIGHEST_TIER).levelMax());
     }
 
     @Test

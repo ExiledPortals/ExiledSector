@@ -2,7 +2,7 @@ package exiledsector.charts;
 
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.ModCsv;
-import exiledsector.skills.npc.NpcTreeSize;
+import exiledsector.skills.progression.ShipLevelConfig;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,6 +20,7 @@ public final class ChartTiers {
     static final String TIER_COLUMN = "tier";
     private static final Logger LOG = Logger.getLogger(ChartTiers.class);
     static final float MAX_COLONY_ITEM_CHANCE = 1f;
+    static final int WARDEN_EXTRA_LEVELS = 1;
     private static volatile Map<Integer, ChartTier> tiers = Map.of();
     private static volatile Map<Integer, Float> colonyItemChances = Map.of();
 
@@ -53,8 +54,8 @@ public final class ChartTiers {
                         csv.integer(row, "officer_level_bonus", fallback.officerLevelBonus(), label),
                         csv.integer(row, "officer_count_bonus", fallback.officerCountBonus(), label),
                         csv.number(row, "fleet_quality", fallback.fleetQuality(), label),
-                        csv.integer(row, "fleet_strength_min", fallback.fleetStrengthMin(), label),
-                        csv.integer(row, "fleet_strength_max", fallback.fleetStrengthMax(), label),
+                        csv.integer(row, "level_min", fallback.levelMin(), label),
+                        csv.integer(row, "level_max", fallback.levelMax(), label),
                         csv.number(row, "cache_budget", fallback.cacheBudget(), label),
                         csv.number(row, "domain_budget", fallback.domainBudget(), label),
                         csv.number(row, "station_budget", fallback.stationBudget(), label),
@@ -111,16 +112,26 @@ public final class ChartTiers {
         return loaded != null ? loaded : ChartTier.fallback(clamped);
     }
 
-    public static NpcTreeSize.PercentRange fleetStrengthRangeFor(MemoryAPI fleetMemory) {
+    public static ChartLevelRange fleetStrengthRangeFor(MemoryAPI fleetMemory) {
         Object storedTier = fleetMemory == null ? null : fleetMemory.get(ChartIds.TIER_MEMORY_KEY);
         if (!(storedTier instanceof Number tierNumber)) {
             return null;
         }
         ChartTier tier = forTier(tierNumber.intValue());
         int bonus = fleetMemory.get(ChartIds.STRENGTH_BONUS_MEMORY_KEY) instanceof Number storedBonus ? Math.max(0, storedBonus.intValue()) : 0;
-        int lowest = Math.max(NpcTreeSize.LOWEST_PERCENT, Math.min(NpcTreeSize.HIGHEST_PERCENT, tier.fleetStrengthMin() + bonus));
-        int highest = Math.max(lowest, Math.min(NpcTreeSize.HIGHEST_PERCENT, tier.fleetStrengthMax() + bonus));
-        return new NpcTreeSize.PercentRange(lowest, highest);
+        int maxLevel = ShipLevelConfig.maxLevel();
+        int lowest = scaledLevel(tier.levelMin(), bonus, maxLevel);
+        int highest = scaledLevel(tier.levelMax(), bonus, maxLevel);
+        int nodeCap = ShipLevelConfig.maxAllocatedNodesBesidesRoot();
+        if (Boolean.TRUE.equals(fleetMemory.get(ChartIds.WARDEN_MEMORY_KEY))) {
+            return new ChartLevelRange(Math.min(nodeCap, lowest + WARDEN_EXTRA_LEVELS), Math.min(nodeCap, highest + WARDEN_EXTRA_LEVELS));
+        }
+        return new ChartLevelRange(Math.min(nodeCap, lowest), Math.min(nodeCap, highest));
+    }
+
+    static int scaledLevel(int level, int strengthBonusPercent, int maxLevel) {
+        int scaled = Math.round(level * (1f + strengthBonusPercent / ChartTier.PERCENT));
+        return Math.max(0, Math.min(maxLevel, scaled));
     }
 
     static void resetForTests() {

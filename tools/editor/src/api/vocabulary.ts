@@ -40,8 +40,8 @@ export interface ChartTierDefault {
   tier: number;
   fleetsMin: number;
   fleetsMax: number;
-  fleetStrengthMin: number;
-  fleetStrengthMax: number;
+  levelMin: number;
+  levelMax: number;
   wardenSize: number;
 }
 

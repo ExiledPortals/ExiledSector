@@ -223,6 +223,7 @@ public final class ChartContentGenerator {
         }
         if (role == FleetRole.BOSS) {
             memory.set(MemFlags.FLEET_FIGHT_TO_THE_LAST, true);
+            memory.set(ChartIds.WARDEN_MEMORY_KEY, true);
         }
         fleet.setNoAutoDespawn(true);
         fleet.setTransponderOn(true);
