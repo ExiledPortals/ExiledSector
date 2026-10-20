@@ -453,7 +453,7 @@ public final class ItemStoragePanel extends HoloPanel {
             return;
         }
         if (workbenchPanel != null) {
-            workbenchPanel.load(row.item());
+            workbenchPanel.load(row.item() == workbenchPanel.loaded() ? null : row.item());
             return;
         }
         queue(() -> storageListener.selected(row.item() == selectedItem ? null : row.item()));

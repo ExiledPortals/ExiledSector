@@ -252,6 +252,9 @@ public final class ModificationBay {
             @Override
             public void selected(Item item) {
                 if (item == null) {
+                    if (benchPanel != null) {
+                        benchPanel.load(null);
+                    }
                     if (storagePanel != null) {
                         storagePanel.setSelected(null);
                     }
