@@ -21,6 +21,7 @@ public final class UiReflection {
     private static final MethodHandle METHOD_RETURN_TYPE = virtual(METHOD, "getReturnType", Class.class);
     private static final MethodHandle METHOD_INVOKE = virtual(METHOD, "invoke", Object.class, Object.class, Object[].class);
     private static final MethodHandle FIELD_TYPE = virtual(FIELD, "getType", Class.class);
+    private static final MethodHandle FIELD_NAME = virtual(FIELD, "getName", String.class);
     private static final MethodHandle METHOD_TRY_SET_ACCESSIBLE = virtual(METHOD, "trySetAccessible", boolean.class);
     private static final MethodHandle FIELD_TRY_SET_ACCESSIBLE = virtual(FIELD, "trySetAccessible", boolean.class);
     private static final MethodHandle FIELD_GET = virtual(FIELD, "get", Object.class, Object.class);
@@ -31,6 +32,7 @@ public final class UiReflection {
     private static final Object[] NO_ARGS = new Object[0];
     private static final Map<Class<?>, Map<String, Object[]>> METHODS = new HashMap<>();
     private static final Map<Class<?>, Map<Class<?>, Object>> FIELDS = new HashMap<>();
+    private static final Map<Class<?>, Map<String, Object>> FIELDS_BY_NAME = new HashMap<>();
     private static final Map<Class<?>, Map<Class<?>, Object[]>> METHODS_BY_RETURN_TYPE = new HashMap<>();
 
     private UiReflection() {
@@ -74,6 +76,14 @@ public final class UiReflection {
     static <T> T fieldOfType(Object target, Class<T> type) throws Throwable {
         if (target == null) return null;
         Object field = field(target.getClass(), type);
+        if (field == NONE) return null;
+        Object value = FIELD_GET.invoke(field, target);
+        return type.isInstance(value) ? type.cast(value) : null;
+    }
+
+    public static <T> T fieldNamed(Object target, String name, Class<T> type) throws Throwable {
+        if (target == null) return null;
+        Object field = namedField(target.getClass(), name);
         if (field == NONE) return null;
         Object value = FIELD_GET.invoke(field, target);
         return type.isInstance(value) ? type.cast(value) : null;
@@ -152,6 +162,24 @@ public final class UiReflection {
             }
         }
         byType.put(valueType, found);
+        return found;
+    }
+
+    private static Object namedField(Class<?> type, String name) throws Throwable {
+        Map<String, Object> byName = FIELDS_BY_NAME.computeIfAbsent(type, key -> new HashMap<>());
+        Object cached = byName.get(name);
+        if (cached != null) return cached;
+        Object found = NONE;
+        for (Class<?> current = type; current != null && found == NONE; current = current.getSuperclass()) {
+            for (Object candidate : (Object[]) GET_DECLARED_FIELDS.invoke(current)) {
+                if (name.equals(FIELD_NAME.invoke(candidate))) {
+                    boolean accessible = (boolean) FIELD_TRY_SET_ACCESSIBLE.invoke(candidate);
+                    found = accessible ? candidate : NONE;
+                    break;
+                }
+            }
+        }
+        byName.put(name, found);
         return found;
     }
 

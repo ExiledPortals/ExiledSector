@@ -23,6 +23,8 @@ import java.util.concurrent.atomic.AtomicReference;
 public final class NpcLevelCaps {
 
     public static final int UNCAPPED = Integer.MAX_VALUE;
+    public static final int BOUNTY_TOP_CAP = 25;
+    public static final int BOUNTY_FLAGSHIP_LEVELS = 3;
     public static final String TAG_PREFIX = "exiledSector_npcLevelCap|";
     static final String DATA_PATH = "data/config/exiledSector/npc_levels.csv";
     private static final String ID_COLUMN = "id";
@@ -103,23 +105,36 @@ public final class NpcLevelCaps {
         CAP_DATA.set(CapData.defaults());
     }
 
-    public static int capFor(CampaignFleetAPI fleet) {
+    public static NpcLevelLimit limitFor(CampaignFleetAPI fleet) {
         if (fleet == null) {
-            return capFor(null, false, false);
+            return NpcLevelLimit.of(capFor(null, false, false));
         }
         if (isChartFleet(fleet.getMemoryWithoutUpdate())) {
-            return UNCAPPED;
+            return NpcLevelLimit.UNCAPPED;
         }
         FactionAPI faction = fleet.getFaction();
         PersonAPI commander = fleet.getCommander();
-        return capFor(faction == null ? null : faction.getId(),
-                faction != null && faction.getCustomBoolean(Factions.CUSTOM_PIRATE_BEHAVIOR),
+        NpcBounties.Bounty bounty = NpcBounties.find(fleet);
+        int categoryCap = capFor(faction == null ? null : faction.getId(),
+                (bounty != null && bounty.personBounty()) || (faction != null && faction.getCustomBoolean(Factions.CUSTOM_PIRATE_BEHAVIOR)),
                 commander != null && commander.isAICore());
+        return bounty == null ? NpcLevelLimit.of(categoryCap) : bountyLimit(categoryCap, bounty.difficulty());
+    }
+
+    public static int capFor(CampaignFleetAPI fleet) {
+        return limitFor(fleet).cap();
     }
 
     public static int capFor(FleetMemberAPI member) {
         FleetDataAPI fleetData = member == null ? null : member.getFleetData();
-        return capFor(fleetData == null ? null : fleetData.getFleet());
+        return limitFor(fleetData == null ? null : fleetData.getFleet()).capFor(member != null && member.isFlagship());
+    }
+
+    static NpcLevelLimit bountyLimit(int categoryCap, float bountyDifficulty) {
+        int bountyTopCap = clampToMaxLevel(BOUNTY_TOP_CAP);
+        int bountyCap = categoryCap >= bountyTopCap ? categoryCap
+                : Math.round(categoryCap + (bountyTopCap - categoryCap) * Math.max(0f, Math.min(1f, bountyDifficulty)));
+        return new NpcLevelLimit(bountyCap, clampToMaxLevel(bountyCap + BOUNTY_FLAGSHIP_LEVELS), BOUNTY_FLAGSHIP_LEVELS);
     }
 
     public static int capFor(FleetMemberAPI member, ShipVariantAPI variant) {
@@ -141,6 +156,10 @@ public final class NpcLevelCaps {
         }
         removeTag(variant);
         variant.addTag(capTag);
+    }
+
+    public static boolean hasTag(ShipVariantAPI variant) {
+        return findTag(variant) != null;
     }
 
     public static void removeTag(ShipVariantAPI variant) {

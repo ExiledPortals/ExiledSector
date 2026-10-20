@@ -8,6 +8,7 @@ import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
+import com.fs.starfarer.api.impl.campaign.intel.PersonBountyIntel;
 import exiledsector.charts.ChartIds;
 import exiledsector.skills.progression.ShipLevelConfig;
 import lunalib.lunaSettings.LunaSettings;
@@ -141,6 +142,58 @@ class NpcLevelCapsTest {
         assertEquals(NpcLevelCaps.UNCAPPED, NpcLevelCaps.capFor(null, variant));
         NpcLevelCaps.removeTag(variant);
         assertEquals(List.of(), tags);
+    }
+
+    @Test
+    void bountyCapsRiseFromTheCategoryCapToTwentyFiveWithDifficultyAndTheFlagshipGetsThreeMore() {
+        assertEquals(new NpcLevelLimit(15, 18, 3), NpcLevelCaps.bountyLimit(15, 0f));
+        assertEquals(new NpcLevelLimit(20, 23, 3), NpcLevelCaps.bountyLimit(15, 0.5f));
+        assertEquals(new NpcLevelLimit(25, 28, 3), NpcLevelCaps.bountyLimit(15, 1f));
+        assertEquals(new NpcLevelLimit(25, 28, 3), NpcLevelCaps.bountyLimit(25, 0f));
+        assertEquals(new NpcLevelLimit(35, 38, 3), NpcLevelCaps.bountyLimit(35, 1f));
+    }
+
+    @Test
+    void bountyCapsStayWithinTheMaxLevel() {
+        lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", ShipLevelConfig.MAX_LEVEL_FIELD_ID)).thenReturn(20);
+
+        assertEquals(new NpcLevelLimit(20, 20, 3), NpcLevelCaps.bountyLimit(15, 1f));
+    }
+
+    @Test
+    void theFlagshipBonusAddsToTheRollAndItsOwnCap() {
+        NpcLevelLimit bountyLimit = new NpcLevelLimit(15, 18, 3);
+
+        assertEquals(10, bountyLimit.nodeCount(10, 59, false));
+        assertEquals(13, bountyLimit.nodeCount(10, 59, true));
+        assertEquals(15, bountyLimit.nodeCount(30, 59, false));
+        assertEquals(18, bountyLimit.nodeCount(30, 59, true));
+        assertEquals(16, bountyLimit.nodeCount(30, 16, true));
+    }
+
+    @Test
+    void aBountyFleetIsCappedByItsDifficulty() {
+        CampaignFleetAPI pirateBounty = fleet("pirates", true, false);
+        when(pirateBounty.hasTag(NpcBounties.MAGICLIB_TARGET_TAG)).thenReturn(true);
+
+        assertEquals(new NpcLevelLimit(25, 28, 3), NpcLevelCaps.limitFor(pirateBounty));
+        assertEquals(NpcLevelLimit.of(15), NpcLevelCaps.limitFor(fleet("pirates", true, false)));
+    }
+
+    @Test
+    void aPersonBountyCountsAsPiratesEvenWhileItsFleetIsStillNeutralAndItsFlagshipFallsBackToTheFlagshipCap() {
+        CampaignFleetAPI neutralBounty = fleet("neutral", false, false);
+        PersonBountyIntel personBounty = mock(PersonBountyIntel.class);
+        when(personBounty.getLevel()).thenReturn(0);
+        when(neutralBounty.getEventListeners()).thenReturn(List.of(personBounty));
+        FleetMemberAPI flagship = mock(FleetMemberAPI.class);
+        when(flagship.isFlagship()).thenReturn(true);
+        FleetDataAPI fleetData = mock(FleetDataAPI.class);
+        when(fleetData.getFleet()).thenReturn(neutralBounty);
+        when(flagship.getFleetData()).thenReturn(fleetData);
+
+        assertEquals(new NpcLevelLimit(15, 18, 3), NpcLevelCaps.limitFor(neutralBounty));
+        assertEquals(18, NpcLevelCaps.capFor(flagship));
     }
 
     @Test

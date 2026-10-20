@@ -626,6 +626,25 @@ class NpcFleetLevellerTest {
     }
 
     @Test
+    void aBountyFleetRisesToItsBountyCapAndItsFlagshipGetsThreeMoreLevels() {
+        registerLongChain();
+        when(playerStats.getLevel()).thenReturn(45);
+        FleetMemberAPI flagship = member("boss", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
+        when(flagship.isFlagship()).thenReturn(true);
+        FleetMemberAPI escort = member("escort", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
+        CampaignFleetAPI bountyFleet = fleetOf(flagship, escort);
+        when(bountyFleet.getFaction().getCustomBoolean(Factions.CUSTOM_PIRATE_BEHAVIOR)).thenReturn(true);
+        when(bountyFleet.hasTag("MagicLib_Bounty_target_fleet")).thenReturn(true);
+
+        NpcFleetLeveller.ensure(bountyFleet);
+
+        assertEquals(28, nodesBesidesRoot(NpcTreeTag.find(flagship.getVariant())));
+        assertEquals(25, nodesBesidesRoot(NpcTreeTag.find(escort.getVariant())));
+        assertEquals(28, NpcLevelCaps.capFor(flagship, flagship.getVariant()));
+        assertEquals(25, NpcLevelCaps.capFor(escort, escort.getVariant()));
+    }
+
+    @Test
     void belowTheCapTheRollStillMirrorsThePlayer() {
         registerLongChain();
         when(playerStats.getLevel()).thenReturn(10);

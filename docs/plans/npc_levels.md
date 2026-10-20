@@ -32,7 +32,7 @@ Below the cap this is still a mirror, so going from level 5 to level 12 does not
 
 Flagship hull item counts (`NpcItems.rollCount`, `rollSectionItems`) follow player character level today and stay as they are.
 
-## 3. Bounties
+## 3. Bounties (done)
 
 Bounty targets are mostly pirates or deserters. Under the pirate cap they would be trivial late, which is when they are meant to be the challenge, so they bridge the open world and charts.
 
@@ -41,6 +41,13 @@ A bounty fleet uses the same mirror roll, capped at the bounty cap instead of th
 Difficulty comes from the bounty itself. Vanilla custom bounties have a difficulty that climbs with each one completed of that type, and person bounties have a level. So taking harder bounties is how the player works up to chart tier 1 strength.
 
 First, decompile vanilla to find how a bounty fleet can be told apart from other fleets and where its difficulty can be read: `PersonBountyIntel`, the custom bounty missions (`BaseCustomBounty` and its creators), and Nexerelin's bounties from its bundled source. Don't guess memory flags.
+
+As built (`NpcBounties`), difficulty is a 0 to 1 progress:
+- Person bounties are found by their `PersonBountyIntel` fleet listener. Progress is `getLevel()` over 10, capped at 1, since bonus levels can reach 14.
+- Custom bounties, vanilla and Nexerelin's `nex_remcb`, store their difficulty (0 to 10) in a protected `CustomBountyData`. Once accepted, the `BaseCustomBounty` is a fleet listener. Before accept, the offered fleets already exist in the world, so they are found through their `MissionFleetAutoDespawn` script's `mission` field. Both are read by reflection.
+- MagicLib bounties are found by the `MagicLib_Bounty_target_fleet` tag or memory flag. They have no difficulty number, so they count as the hardest.
+
+Nexerelin's faction and system bounties have no target fleet. A ship's cap is fixed when it is levelled, so a fleet that becomes a bounty later (a MagicLib bounty placed on an existing fleet) keeps its earlier cap, and `npc_levels.csv` edits only reach ships levelled afterwards. Person bounty fleets always use the pirate category, since vanilla keeps them neutral until the player enters their system.
 
 ## 4. Chart fleets (done)
 
@@ -70,7 +77,7 @@ In `chart_drops.csv`, `min_strength` and `strength_per_tier` stay as the gate fo
 
 1. Categories and `npc_levels.csv`, with open-world caps and the capped `NpcBonusScale`. Done in c7a6f882 on `main`: `NpcLevelCategory`, `NpcLevelCaps`, the cap in `NpcFleetLeveller.decide`, `NpcBonusScale.forShip`. Each levelled ship carries its cap as a variant tag (`NpcLevelCaps.TAG_PREFIX`), because vanilla merges a battle side into one fleet with the primary fleet's faction and commander. `PlayerTreePower.logNpcScaling` already logs the caps (section 6).
 2. Chart fleet levels: the column rename, `fleetStrengthRangeFor`, the Fleet Strength % conversion and the editor table. Done in 322df1bc, merged into `main`: `ChartLevelRange`, warden flag `ChartIds.WARDEN_MEMORY_KEY`.
-3. Bounty detection (decompile first), then the bounty cap and the flagship bonus.
+3. Bounty detection (decompile first), then the bounty cap and the flagship bonus. Done, committed on `main`: `NpcBounties`, `NpcLevelLimit`, `NpcLevelCaps.bountyLimit`.
 4. Outside chart drop tiers from defeated NPC levels.
 5. Docs and settings text.
 
