@@ -184,7 +184,7 @@ final class SectionsDisplay {
         hostPanel.addComponent(tooltipAnchor).inTL(sectionCentreX[hovered] - radius - hostPosition.getX(),
                 hostPosition.getY() + hostPosition.getHeight() - sectionCentreY[hovered] - radius);
         tooltipSection = hovered;
-        hoverTooltip.show(hoveredSection, hoveredSection.item(), treeSession.hullSize(), () -> tooltipFooter(hoveredSection), tooltipAnchor.getPosition());
+        hoverTooltip.show(hoveredSection, hoveredSection.item(), treeSession.hullSize(), expanded -> tooltipFooter(hoveredSection), tooltipAnchor.getPosition());
     }
 
     private static List<StyledText> tooltipFooter(ShipSections.UnlockedSection unlocked) {

@@ -76,7 +76,7 @@ class WormholeAnchorTest {
 
     static JSONObject anchorRow(String id, String volume, String exitNode) throws Exception {
         return new JSONObject().put("id", id).put("volume", volume).put("exit_node", exitNode).put("name", id + " name")
-                .put("icon", "graphics/icons/nav_relay.png").put("rarity", "10").put("description", "A navigation lock.");
+                .put("icon", "graphics/icons/nav_relay.png").put("rarity", "10").put("description", "Opens a wormhole.");
     }
 
     private static XStream xstream() {
@@ -268,9 +268,8 @@ class WormholeAnchorTest {
         List<String> abyssLines = anchor(ABYSS_ANCHOR).tooltipLines().stream().map(StyledText::plain).toList();
         List<String> beaconLines = anchor(BEACON).tooltipLines().stream().map(StyledText::plain).toList();
 
-        assertEquals(List.of("A navigation lock.", "Leads to the Hegemony volume."), hegemonyLines);
-        assertEquals("Leads to the Abyss volume.", abyssLines.get(1));
-        assertTrue(abyssLines.get(2).startsWith("Inert while the Abyss volume is turned off."), abyssLines.get(2));
+        assertEquals(List.of("Opens a wormhole."), hegemonyLines);
+        assertTrue(abyssLines.get(1).startsWith("Inert while the Abyss volume is turned off."), abyssLines.get(1));
         assertEquals("Inert until you recover or own the Exoship.", beaconLines.get(beaconLines.size() - 1));
     }
 

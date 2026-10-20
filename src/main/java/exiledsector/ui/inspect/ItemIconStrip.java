@@ -72,7 +72,7 @@ final class ItemIconStrip extends BaseCustomUIPanelPlugin {
     }
 
     private void hovered(Entry entry, PositionAPI cellPosition) {
-        queuedActions.add(() -> hoverTooltip.show(entry, entry.item(), entry.hullSize(), entry::footer, cellPosition));
+        queuedActions.add(() -> hoverTooltip.show(entry, entry.item(), entry.hullSize(), expanded -> entry.footer(), cellPosition));
     }
 
     private void left(Entry entry) {

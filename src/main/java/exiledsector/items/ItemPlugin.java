@@ -53,8 +53,8 @@ public class ItemPlugin extends BaseSpecialItemPlugin {
         if (codexEntryId != null) {
             tooltip.setCodexEntryId(codexEntryId);
         }
-        boolean codexLinked = codexEntryId != null;
-        Supplier<List<StyledText>> footer = () -> codexLinked
+        boolean showCodexHint = codexEntryId != null && expanded;
+        Supplier<List<StyledText>> footer = () -> showCodexHint
                 ? List.of(Translation.styled("socketable.tooltip.storage"), Translation.styled("socketable.tooltip.codexHint"))
                 : List.of(Translation.styled("socketable.tooltip.storage"));
         ItemTooltip.write(tooltip, previewItem, footer, expanded);

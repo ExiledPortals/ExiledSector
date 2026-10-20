@@ -142,14 +142,18 @@ public final class WormholeAnchor extends Item {
         if (description != null) {
             lines.add(description);
         }
-        lines.addAll(statusLines());
+        lines.addAll(statusLines(description == null));
         return lines;
     }
 
     public List<StyledText> statusLines() {
+        return statusLines(true);
+    }
+
+    private List<StyledText> statusLines(boolean includeVolumeLine) {
         List<StyledText> lines = new ArrayList<>();
         String volume = volume();
-        if (volume != null) {
+        if (volume != null && includeVolumeLine) {
             lines.add(Translation.msg("socketable.anchor.volume").arg("volume", volumeName(volume)).styled());
         }
         SectorAPI sector = Global.getSector();

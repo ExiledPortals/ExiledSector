@@ -64,7 +64,7 @@ describe('wormhole anchor editing', () => {
   }, 90000);
 
   it('saves an edited crest faction into its own column', async () => {
-    await openAnchor('Hegemony Corridor Lock');
+    await openAnchor('Hegemony Wormhole Anchor');
     const before = server.readProjectFile(ANCHORS_FILE);
 
     expect(await findLabelled('Crest faction')).toHaveProperty('value', 'hegemony');
@@ -76,7 +76,7 @@ describe('wormhole anchor editing', () => {
   }, 90000);
 
   it('refuses to save two anchors with the same id', async () => {
-    await openAnchor('Hegemony Corridor Lock');
+    await openAnchor('Hegemony Wormhole Anchor');
     const before = server.readProjectFile(ANCHORS_FILE);
 
     fireEvent.change(screen.getByLabelText(/^Id/), { target: { value: 'wormhole_anchor_tritachyon' } });

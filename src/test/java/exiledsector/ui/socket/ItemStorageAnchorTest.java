@@ -30,7 +30,7 @@ class ItemStorageAnchorTest {
     void setUp() throws Exception {
         SkillTree.clearNodes();
         WormholeAnchorDefinitions.register(new JSONArray().put(new JSONObject().put("id", ANCHOR_ID).put("volume", "abyss")
-                .put("exit_node", "rat_abyss_wormhole_1").put("name", "Abyssal Lock").put("description", "A navigation lock.")));
+                .put("exit_node", "rat_abyss_wormhole_1").put("name", "Abyss Wormhole Anchor").put("description", "Opens a wormhole to the Abyss volume.")));
         anchor = ItemData.rolled(ItemDefinitions.get(ANCHOR_ID), 5L).preview();
     }
 
@@ -44,9 +44,9 @@ class ItemStorageAnchorTest {
     void aKindlessAnchorBuildsAStorageRowSearchableByItsNoun() {
         ItemStorageRow row = ItemStorageRow.of(anchor, 0, item -> null);
 
-        assertEquals("Abyssal Lock", row.name());
+        assertEquals("Abyss Wormhole Anchor", row.name());
         assertTrue(row.searchText().contains("wormhole anchor"), row.searchText());
-        assertTrue(row.searchText().contains("leads to the abyss volume"), row.searchText());
+        assertTrue(row.searchText().contains("opens a wormhole to the abyss volume"), row.searchText());
         assertNull(row.installedShipName());
     }
 
