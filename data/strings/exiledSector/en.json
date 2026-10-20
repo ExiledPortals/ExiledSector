@@ -590,7 +590,6 @@
     "socketable.anchor.areaOff": "<bad>Inert</bad> while the {volume} is turned off. Turn its area on in the mod settings, or run the mod it needs.",
     "socketable.anchor.lockedUntilExoship": "<bad>Inert</bad> until you recover or own the Exoship.",
     "socketable.anchor.locked": "<bad>Inert</bad> until its unlock condition is met.",
-    "socketable.anchor.noDisassembly": "Wormhole anchors cannot be disassembled.",
     "socketable.anchor.areaOffRefusal": "{name} can't be installed: it is inert while the {volume} is turned off.",
     "socketable.anchor.volumeLimit": "{name} can't be installed: this ship already has an anchor for the {volume}.",
     "socketable.anchor.open": "The wormhole to the {volume} is <good>open</good>. Ctrl click the socket to travel through it.",

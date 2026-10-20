@@ -574,7 +574,6 @@
     "socketable.anchor.areaOff": "{volume}已关闭，此物品<bad>暂时失效</bad>。请在模组设置中开启该区域，或运行其所需的模组。",
     "socketable.anchor.lockedUntilExoship": "在你找回或拥有外星舰之前<bad>暂时失效</bad>。",
     "socketable.anchor.locked": "在满足解锁条件之前<bad>暂时失效</bad>。",
-    "socketable.anchor.noDisassembly": "虫洞锚点无法拆解。",
     "socketable.anchor.areaOffRefusal": "无法安装{name}：{volume}已关闭，它暂时失效。",
     "socketable.anchor.volumeLimit": "无法安装{name}：这艘舰船已经装有通往{volume}的锚点。",
     "socketable.anchor.open": "通往{volume}的虫洞已<good>开启</good>。按住Ctrl点击插槽即可穿越。",

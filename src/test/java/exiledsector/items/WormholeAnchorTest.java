@@ -33,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.mock;
@@ -212,15 +211,15 @@ class WormholeAnchorTest {
     }
 
     @Test
-    void anAnchorCannotBeDisassembled() {
+    void anAnchorDisassemblesIntoParts() {
         ItemStore store = new ItemStore();
         Item stored = store.add(ItemDefinitions.get(HEGEMONY_ANCHOR), 5L);
         Map<String, ShipSkillData> ships = new HashMap<>();
 
-        assertFalse(ItemDisassembly.canDisassemble(stored));
-        assertEquals(0, ItemDisassembly.disassemble(stored, CraftingMaterials.cargoOnly(cargo), store, ships));
-        assertSame(stored, store.find(stored.id()));
-        verify(cargo, never()).addSpecial(Mockito.any(), anyFloat());
+        int parts = ItemDisassembly.disassemble(stored, CraftingMaterials.cargoOnly(cargo), store, ships);
+
+        assertEquals(stored.rarity().disassemblyParts(), parts);
+        assertNull(store.find(stored.id()));
     }
 
     @Test

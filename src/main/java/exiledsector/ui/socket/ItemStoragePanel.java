@@ -325,7 +325,7 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private void disassembleNow(List<Item> requested, boolean leaveMode) {
-        List<Item> targets = requested.stream().filter(item -> ItemDisassembly.canDisassemble(item) && !SocketCustody.isInstalled(item)
+        List<Item> targets = requested.stream().filter(item -> !SocketCustody.isInstalled(item)
                 && ItemStore.get().owned().contains(item)).toList();
         if (targets.isEmpty()) {
             return;
@@ -444,9 +444,6 @@ public final class ItemStoragePanel extends HoloPanel {
             return;
         }
         if (disassemblyMode) {
-            if (!ItemDisassembly.canDisassemble(row.item())) {
-                return;
-            }
             queue(() -> {
                 if (!markedForDisassembly.remove(row.item())) {
                     markedForDisassembly.add(row.item());
@@ -517,7 +514,7 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private void cellRightClicked(ItemStorageRow row) {
-        if (!isConfirmOpen() && !disassemblyMode && !row.installed() && ItemDisassembly.canDisassemble(row.item())) {
+        if (!isConfirmOpen() && !disassemblyMode && !row.installed()) {
             queue(() -> openDisassemblyConfirm(List.of(row.item())));
         }
     }
@@ -867,20 +864,12 @@ public final class ItemStoragePanel extends HoloPanel {
             String installedKey = isSubroutine(row) ? "ui.socketStorage.cell.installed" : "ui.socketStorage.cell.installedFramework";
             return List.of(Translation.msg(installedKey).arg("ship", row.installedShipName()).styled());
         }
-        boolean disassemblable = ItemDisassembly.canDisassemble(row.item());
-        if (disassemblyMode && !disassemblable) {
-            return List.of(Translation.styled("socketable.anchor.noDisassembly"));
-        }
         if (disassemblyMode) {
             int partCount = row.item().rarity().disassemblyParts();
             String key = markedForDisassembly.contains(row.item()) ? "ui.socketStorage.cell.unmark" : "ui.socketStorage.cell.mark";
             return List.of(Translation.msg(key).count(partCount).arg("count", partCount).styled());
         }
-        StyledText installHint = installHint(row);
-        if (!disassemblable) {
-            return List.of(installHint);
-        }
-        return List.of(installHint, Translation.msg("ui.socketStorage.cell.disassemble")
+        return List.of(installHint(row),Translation.msg("ui.socketStorage.cell.disassemble")
                 .count(row.item().rarity().disassemblyParts()).arg("count", row.item().rarity().disassemblyParts()).styled());
     }
 
