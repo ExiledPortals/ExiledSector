@@ -18,6 +18,8 @@ public final class ItemCrafting {
     static final int MIN_FIXATION_MODIFIERS = 2;
     static final float CORRUPTION_RANGE_STRETCH = 0.35f;
     static final int CORRUPTION_REROLL_ATTEMPTS = 16;
+    static final int RARE_BASE_MIN_MODIFIERS = 3;
+    static final int RARE_BASE_MAX_MODIFIERS = 4;
 
     private ItemCrafting() {
     }
@@ -273,13 +275,15 @@ public final class ItemCrafting {
         if (item == null) {
             return null;
         }
-        List<CorruptionOutcome> outcomes = CorruptionOutcome.NANOSWARM_OUTCOMES;
+        List<CorruptionOutcome> outcomes = corruptionOutcomes(item);
         CorruptionOutcome outcome = outcomes.get(random.nextInt(outcomes.size()));
         Item corrupted = switch (outcome) {
             case NOTHING, INNATE -> item;
             case IMPLICIT_REPLACED -> replaceImplicit(item, random) ? item : null;
+            case IMPLICIT_ADDED -> addImplicit(item, random) ? item : null;
             case VALUES_RANDOMISED -> randomiseValues(item, random);
             case MODIFIERS_RANDOMISED -> randomiseModifiers(store, item, random, allowedUniques);
+            case BECAME_RARE -> reforgeAsRareBase(store, item, random);
         };
         if (corrupted == null) {
             corrupted = item;
@@ -289,15 +293,21 @@ public final class ItemCrafting {
         return corrupted;
     }
 
+    static List<CorruptionOutcome> corruptionOutcomes(Item item) {
+        if (item instanceof Subroutine) {
+            return CorruptionOutcome.SUBROUTINE_OUTCOMES;
+        }
+        ItemDefinition definition = item.definition();
+        boolean uniqueHullItem = item instanceof HullItem && definition != null && definition.unique();
+        return uniqueHullItem ? CorruptionOutcome.UNIQUE_HULL_ITEM_OUTCOMES : CorruptionOutcome.NANOSWARM_OUTCOMES;
+    }
+
     static boolean replaceImplicit(Item item, Random random) {
         List<RolledModifier> implicits = new ArrayList<>(item.implicits());
-        List<Modifier> candidates = item.implicitCorruptionPool().stream()
-                .filter(implicit -> implicits.stream().noneMatch(current -> current.modifierId().equals(implicit.id()))).toList();
-        if (candidates.isEmpty()) {
+        RolledModifier replacement = rollCorruptionImplicit(item, random);
+        if (replacement == null) {
             return false;
         }
-        Modifier chosen = candidates.get(random.nextInt(candidates.size()));
-        RolledModifier replacement = new RolledModifier(chosen.id(), ModifierSlot.IMPLICIT, RolledModifier.roll(chosen, random, false).lines());
         if (implicits.isEmpty()) {
             implicits.add(replacement);
         } else {
@@ -307,7 +317,63 @@ public final class ItemCrafting {
         return true;
     }
 
+    static boolean addImplicit(Item item, Random random) {
+        RolledModifier added = rollCorruptionImplicit(item, random);
+        if (added == null) {
+            return false;
+        }
+        List<RolledModifier> implicits = new ArrayList<>(item.implicits());
+        implicits.add(added);
+        item.replaceImplicits(implicits);
+        return true;
+    }
+
+    private static RolledModifier rollCorruptionImplicit(Item item, Random random) {
+        List<RolledModifier> implicits = item.implicits();
+        List<Modifier> candidates = item.implicitCorruptionPool().stream()
+                .filter(implicit -> implicits.stream().noneMatch(current -> current.modifierId().equals(implicit.id()))).toList();
+        if (candidates.isEmpty()) {
+            return null;
+        }
+        Modifier chosen = candidates.get(random.nextInt(candidates.size()));
+        return new RolledModifier(chosen.id(), ModifierSlot.IMPLICIT, RolledModifier.roll(chosen, random, false).lines());
+    }
+
+    static Item reforgeAsRareBase(ItemStore store, Item item, Random random) {
+        ItemDefinition uniqueDefinition = item.definition();
+        if (!(item instanceof HullItem) || uniqueDefinition == null || !uniqueDefinition.unique()) {
+            return null;
+        }
+        List<ItemDefinition> bases = ItemDefinitions.ofType(ItemType.HULL_ITEM).stream()
+                .filter(definition -> definition.kind() == uniqueDefinition.kind() && !definition.unique() && definition.rarity() > 0f).toList();
+        ItemDefinition base = WeightedPick.pick(bases, ItemDefinition::rarity, random);
+        List<Integer> modifierCounts = base == null ? List.of() : rareBaseModifierCounts(base);
+        if (modifierCounts.isEmpty()) {
+            return null;
+        }
+        long seed = random.nextLong();
+        int modifierCount = modifierCounts.get(random.nextInt(modifierCounts.size()));
+        Item replacement = Item.create(item.id(), base.id(), seed, ItemRoller.rollWithEffectCount(base, seed, modifierCount));
+        replacement.replaceImplicits(item.implicits());
+        replacement.copyTraitsFrom(item);
+        replacement.freezeName();
+        return store.replace(item, replacement) ? replacement : null;
+    }
+
+    private static List<Integer> rareBaseModifierCounts(ItemDefinition base) {
+        List<Integer> counts = new ArrayList<>();
+        for (int count = RARE_BASE_MIN_MODIFIERS; count <= RARE_BASE_MAX_MODIFIERS; count++) {
+            if (ItemRoller.canRollEffectCount(base, count)) {
+                counts.add(count);
+            }
+        }
+        return counts;
+    }
+
     static Item randomiseValues(Item item, Random random) {
+        if (item.explicits().isEmpty() && item.implicits().isEmpty()) {
+            return null;
+        }
         ItemDefinition definition = item.definition();
         List<RolledModifier> explicits = new ArrayList<>(item.explicits().size());
         for (RolledModifier rolled : item.explicits()) {
@@ -316,26 +382,11 @@ public final class ItemCrafting {
         }
         List<RolledModifier> implicits = new ArrayList<>(item.implicits().size());
         for (RolledModifier rolled : item.implicits()) {
-            implicits.add(stretchedReroll(rolled, implicitModifier(item, rolled.modifierId()), random));
+            implicits.add(stretchedReroll(rolled, item.implicitModifier(rolled.modifierId()), random));
         }
         item.replaceExplicits(explicits);
         item.replaceImplicits(implicits);
         return item;
-    }
-
-    private static Modifier implicitModifier(Item item, String modifierId) {
-        if (item instanceof StarChart) {
-            return item.implicitModifier(modifierId);
-        }
-        ItemKind kind = item.kind();
-        if (kind != null) {
-            for (Modifier implicit : kind.implicits()) {
-                if (implicit.id().equals(modifierId)) {
-                    return implicit;
-                }
-            }
-        }
-        return ItemImplicits.anyById(modifierId);
     }
 
     private static RolledModifier stretchedReroll(RolledModifier rolled, Modifier modifier, Random random) {
@@ -367,6 +418,9 @@ public final class ItemCrafting {
         }
         if (definition.unique()) {
             return canTranspose(definition, item.tier(), allowedUniques) ? transpose(store, item, random, allowedUniques) : null;
+        }
+        if (definition.prefixes().isEmpty() && definition.suffixes().isEmpty()) {
+            return null;
         }
         Set<String> previousIds = new HashSet<>();
         item.explicits().forEach(rolled -> previousIds.add(rolled.modifierId()));

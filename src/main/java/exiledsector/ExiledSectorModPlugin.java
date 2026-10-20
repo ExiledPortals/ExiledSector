@@ -61,6 +61,7 @@ import exiledsector.items.BattleItemDrops;
 import exiledsector.items.ItemCraftingCosts;
 import exiledsector.items.MarketHullItems;
 import exiledsector.items.ItemImplicits;
+import exiledsector.items.SubroutineImplicits;
 import exiledsector.items.ItemDataIntegrity;
 import exiledsector.items.ItemModifiers;
 import exiledsector.items.ItemIdAliases;
@@ -138,6 +139,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         ItemModifiers.load();
         ItemDefinitions.load();
         ItemImplicits.load();
+        SubroutineImplicits.load();
         StarChartItems.load();
         WormholeAnchorDefinitions.load();
         WormholeAnchorLinks.install();

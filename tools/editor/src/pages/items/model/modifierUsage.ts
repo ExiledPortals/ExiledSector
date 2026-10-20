@@ -1,7 +1,7 @@
 import { HULL_ITEM_TYPE, isTrueText, poolEntries, referenceGroups, type ItemDefinition } from './definitions.ts';
 import { DOCTRINE_TYPE, doctrineModifierReferences, doctrineReferenceIssues, renameDoctrineModifier, type DoctrineArchive } from './doctrines.ts';
-import type { ImplicitRow } from './implicits.ts';
-import type { ItemModifier, ModifierUsage } from './modifiers.ts';
+import { CORRUPTION_POOL_LABEL, type ImplicitReference, type ImplicitRow } from './implicits.ts';
+import { SUBROUTINE_TYPE, type ItemModifier, type ModifierUsage } from './modifiers.ts';
 
 function addOnce(values: string[], value: string): void {
   if (!values.includes(value)) {
@@ -14,6 +14,7 @@ export function modifierUsage(
   implicitRows: ImplicitRow[],
   implicitItemType: string = HULL_ITEM_TYPE,
   doctrineArchives: readonly DoctrineArchive[] = [],
+  corruptionPool: readonly ImplicitReference[] = [],
 ): Map<string, ModifierUsage> {
   const usage = new Map<string, ModifierUsage>();
   const usageOf = (modifierId: string) => {
@@ -56,15 +57,29 @@ export function modifierUsage(
       addOnce(referenceUsage.itemTypes, DOCTRINE_TYPE);
     }
   }
+  for (const reference of corruptionPool) {
+    if (reference.inlineText === undefined) {
+      const referenceUsage = usageOf(reference.modifierId);
+      referenceUsage.inCorruptionPool = true;
+      addOnce(referenceUsage.itemTypes, SUBROUTINE_TYPE);
+    }
+  }
   return usage;
 }
 
 export function isUsed(usage: ModifierUsage | undefined): boolean {
-  return Boolean(usage && (usage.items.length > 0 || usage.implicitSections.length > 0 || (usage.doctrineArchives?.length ?? 0) > 0));
+  return Boolean(
+    usage && (usage.items.length > 0 || usage.implicitSections.length > 0 || (usage.doctrineArchives?.length ?? 0) > 0 || usage.inCorruptionPool),
+  );
 }
 
 export function usedByText(usage: ModifierUsage | undefined): string {
-  return [...(usage?.items ?? []), ...(usage?.implicitSections ?? []), ...(usage?.doctrineArchives ?? [])].join(', ');
+  return [
+    ...(usage?.items ?? []),
+    ...(usage?.implicitSections ?? []),
+    ...(usage?.doctrineArchives ?? []),
+    ...(usage?.inCorruptionPool ? [CORRUPTION_POOL_LABEL] : []),
+  ].join(', ');
 }
 
 export function renameModifierReferences(
@@ -73,8 +88,15 @@ export function renameModifierReferences(
   fromId: string,
   toId: string,
   doctrineArchives: DoctrineArchive[] = [],
+  corruptionPool: ImplicitReference[] = [],
 ): number {
   let renamed = renameDoctrineModifier(doctrineArchives, fromId, toId);
+  for (const reference of corruptionPool) {
+    if (reference.inlineText === undefined && reference.modifierId === fromId) {
+      reference.modifierId = toId;
+      renamed++;
+    }
+  }
   for (const definition of definitions) {
     for (const group of referenceGroups(definition)) {
       for (const entry of poolEntries(definition, group.key)) {
@@ -101,6 +123,7 @@ export function referenceIssues(
   implicitRows: ImplicitRow[],
   catalogue: Map<string, ItemModifier>,
   doctrineArchives: readonly DoctrineArchive[] = [],
+  corruptionPool: readonly ImplicitReference[] = [],
 ): string[] {
   const issues: string[] = doctrineReferenceIssues(doctrineArchives, catalogue);
   for (const definition of definitions) {
@@ -129,6 +152,17 @@ export function referenceIssues(
       } else if (modifier.slot !== 'implicit') {
         issues.push(`${row.section} implicits list ${modifier.id}, but it is a ${modifier.slot}`);
       }
+    }
+  }
+  for (const reference of corruptionPool) {
+    if (reference.inlineText !== undefined) {
+      continue;
+    }
+    const modifier = catalogue.get(reference.modifierId);
+    if (!modifier) {
+      issues.push(`The subroutine corruption pool lists ${reference.modifierId}, which is not a modifier`);
+    } else if (modifier.slot !== 'implicit') {
+      issues.push(`The subroutine corruption pool lists ${modifier.id}, but it is a ${modifier.slot}`);
     }
   }
   return issues;

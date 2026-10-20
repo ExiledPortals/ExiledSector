@@ -75,6 +75,29 @@ class ItemDataIntegrityTest {
     }
 
     @Test
+    void theShippedSubroutineCorruptionPoolIsCheckedAndCountsAsUsed() throws Exception {
+        List<Violation> violations = ItemDataIntegrity.checkAll(ItemFixtures.shippedRows(ItemModifiers.DATA_PATH),
+                ItemFixtures.shippedRows(ItemDefinitions.SUBROUTINES_PATH), ItemFixtures.shippedRows(ItemDefinitions.HULL_ITEMS_PATH),
+                ItemFixtures.shippedRows(ItemImplicits.DATA_PATH), new JSONArray(), new JSONArray(), new JSONArray(),
+                ItemFixtures.shippedRows(SubroutineImplicits.DATA_PATH));
+
+        assertEquals(List.of(), violations.stream().filter(violation -> violation.severity() == Severity.ERROR).toList());
+        assertTrue(violations.stream().noneMatch(violation -> violation.message().contains("_SUBROUTINE_IMPLICIT")), violations.toString());
+    }
+
+    @Test
+    void theSubroutineCorruptionPoolOnlyTakesSubroutineImplicits() throws Exception {
+        JSONArray pool = new JSONArray().put(new JSONObject().put(SubroutineImplicits.IMPLICIT_COLUMN, "@HYBRID_ARMOR_HULL"));
+
+        List<String> errors = ItemDataIntegrity.checkAll(validModifiers(), validSubroutines(), validHullItems(), validImplicits(),
+                new JSONArray(), new JSONArray(), new JSONArray(), pool).stream()
+                .filter(violation -> violation.severity() == Severity.ERROR).map(Violation::message).toList();
+
+        assertEquals(1, errors.size(), errors.toString());
+        assertTrue(errors.get(0).contains("HYBRID_ARMOR_HULL"), errors.toString());
+    }
+
+    @Test
     void validDataPasses() throws Exception {
         assertEquals(List.of(), check(validModifiers(), validSubroutines(), validHullItems(), validImplicits()));
     }
@@ -125,7 +148,7 @@ class ItemDataIntegrityTest {
     }
 
     @Test
-    void noModifierRollsOnSubroutinesAndAnItemOnlyRollsModifiersScopedToItsType() throws Exception {
+    void subroutinesOnlyRollImplicitsAndAnItemOnlyRollsModifiersScopedToItsType() throws Exception {
         JSONArray modifiers = validModifiers()
                 .put(ItemFixtures.modifierRow("VENT_RATE_PERCENT", "prefix", "subroutine", "VENT_RATE_PERCENT:1:2", "Venting"))
                 .put(ItemFixtures.modifierRow("HULL_PERCENT_IMPLICIT", "implicit", "subroutine", "HULL_PERCENT:1:2", ""));
@@ -134,8 +157,7 @@ class ItemDataIntegrityTest {
 
         List<String> errors = errors(modifiers, validSubroutines(), hullItems, implicits);
 
-        assertEquals(List.of("VENT_RATE_PERCENT rolls on subroutine, but subroutines do not roll modifiers",
-                "HULL_PERCENT_IMPLICIT rolls on subroutine, but subroutines do not roll modifiers",
+        assertEquals(List.of("VENT_RATE_PERCENT rolls on subroutine, but subroutines only roll corrupted implicits",
                 "vent is a hull_item, but VENT_RATE_PERCENT only rolls on subroutine",
                 "reactor is a hull_item, but HULL_PERCENT_IMPLICIT only rolls on subroutine"), errors);
     }

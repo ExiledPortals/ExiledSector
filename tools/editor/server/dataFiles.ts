@@ -107,6 +107,11 @@ export function resolveDataResource(paths: ProjectPaths, name: string): DataReso
       return { filePath: path.join(configDir, 'item_crafting.csv'), check: (text) => checkCsvHeader(text, 'item,', 'the item column') };
     case 'hull-item-implicits':
       return { filePath: path.join(configDir, 'hull_item_implicits.csv'), check: (text) => checkCsvHeader(text, 'section,', 'the section column') };
+    case 'subroutine-corruption-implicits':
+      return {
+        filePath: path.join(configDir, 'subroutine_corruption_implicits.csv'),
+        check: (text) => checkCsvHeader(text, 'implicit', 'the implicit column'),
+      };
     case 'star-charts':
       return { filePath: path.join(configDir, 'star_charts.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
     case 'wormhole-anchors':

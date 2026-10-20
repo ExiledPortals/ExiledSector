@@ -9,7 +9,19 @@ import { useDataDocument, type DataDocument } from '../../../shared/useDataDocum
 import { ModifierLineRow } from './ModifierLineRow.tsx';
 import { FamilySwitch } from './FamilySwitch.tsx';
 import { ITEM_TYPE_LABELS, parseFamilyDefinitions, serializeFamilyDefinitions, type FamilyDefinitions } from '../model/definitions.ts';
-import { implicitItemType, parseFamilyImplicits, serializeFamilyImplicits, type ImplicitsModel } from '../model/implicits.ts';
+import {
+  CORRUPTION_POOL_FILE_NAME,
+  CORRUPTION_POOL_LABEL,
+  CORRUPTION_POOL_RESOURCE,
+  implicitItemType,
+  parseCorruptionPoolCsv,
+  parseFamilyImplicits,
+  serializeCorruptionPoolCsv,
+  serializeFamilyImplicits,
+  type CorruptionPoolModel,
+  type ImplicitReference,
+  type ImplicitsModel,
+} from '../model/implicits.ts';
 import {
   DEFINITION_FILE_NAMES,
   DEFINITION_RESOURCES,
@@ -50,6 +62,7 @@ interface ModifiersTabModel {
   items: FamilyDefinitions;
   implicits: ImplicitsModel;
   doctrines: DoctrineArchivesModel | null;
+  corruptionPool: CorruptionPoolModel | null;
   otherFileIds: string[];
   referencesChanged: boolean;
 }
@@ -60,11 +73,15 @@ function otherFamily(family: ItemFamily): ItemFamily {
 
 function modifiersFileNames(family: ItemFamily): string[] {
   const fileNames = [MODIFIER_RESOURCES[family], ...DEFINITION_RESOURCES[family], IMPLICIT_RESOURCES[family], MODIFIER_RESOURCES[otherFamily(family)]];
-  return family === 'ship' ? [...fileNames, DOCTRINE_ARCHIVE_RESOURCE] : fileNames;
+  return family === 'ship' ? [...fileNames, DOCTRINE_ARCHIVE_RESOURCE, CORRUPTION_POOL_RESOURCE] : fileNames;
+}
+
+function poolReferences(model: ModifiersTabModel): ImplicitReference[] {
+  return model.corruptionPool?.entries.map((entry) => entry.implicit) ?? [];
 }
 
 function usageOf(model: ModifiersTabModel): Map<string, ModifierUsage> {
-  return modifierUsage(model.items.definitions, model.implicits.rows, implicitItemType(model.family), model.doctrines?.archives ?? []);
+  return modifierUsage(model.items.definitions, model.implicits.rows, implicitItemType(model.family), model.doctrines?.archives ?? [], poolReferences(model));
 }
 
 export function ModifiersTab({ vocabulary }: { vocabulary: Vocabulary }) {
@@ -79,6 +96,7 @@ export function ModifiersTab({ vocabulary }: { vocabulary: Vocabulary }) {
       items: parseFamilyDefinitions(family, Object.fromEntries(DEFINITION_RESOURCES[family].map((name) => [name, files[name].content]))),
       implicits: parseFamilyImplicits(family, files[IMPLICIT_RESOURCES[family]].content, vocabulary),
       doctrines: family === 'ship' ? parseDoctrineArchivesCsv(files[DOCTRINE_ARCHIVE_RESOURCE].content) : null,
+      corruptionPool: family === 'ship' ? parseCorruptionPoolCsv(files[CORRUPTION_POOL_RESOURCE].content) : null,
       otherFileIds: parseModifiersCsv(files[MODIFIER_RESOURCES[otherFamily(family)]].content).modifiers.map((modifier) => modifier.id),
       referencesChanged: false,
     }),
@@ -89,16 +107,17 @@ export function ModifiersTab({ vocabulary }: { vocabulary: Vocabulary }) {
             ...serializeFamilyDefinitions(model.items),
             [IMPLICIT_RESOURCES[model.family]]: serializeFamilyImplicits(model.family, model.implicits),
             ...(model.doctrines ? { [DOCTRINE_ARCHIVE_RESOURCE]: serializeDoctrineArchivesCsv(model.doctrines) } : {}),
+            ...(model.corruptionPool ? { [CORRUPTION_POOL_RESOURCE]: serializeCorruptionPoolCsv(model.corruptionPool) } : {}),
           }
         : {}),
     }),
     validate: (model) => [
       ...validateModifiers(model.catalogue.modifiers, vocabulary, usageOf(model), model.family, new Set(model.otherFileIds)),
-      ...referenceIssues(model.items.definitions, model.implicits.rows, modifierById(model.catalogue.modifiers), model.doctrines?.archives ?? []),
+      ...referenceIssues(model.items.definitions, model.implicits.rows, modifierById(model.catalogue.modifiers), model.doctrines?.archives ?? [], poolReferences(model)),
     ],
     savedMessage: (model) =>
       model.referencesChanged
-        ? `Saved ${MODIFIER_FILE_NAMES[model.family]} and the renamed references in ${DEFINITION_FILE_NAMES[model.family]}, ${IMPLICIT_FILE_NAMES[model.family]}${model.doctrines ? ` and ${DOCTRINE_ARCHIVE_FILE_NAME}` : ''}`
+        ? `Saved ${MODIFIER_FILE_NAMES[model.family]} and the renamed references in ${DEFINITION_FILE_NAMES[model.family]}, ${IMPLICIT_FILE_NAMES[model.family]}${model.doctrines ? `, ${DOCTRINE_ARCHIVE_FILE_NAME} and ${CORRUPTION_POOL_FILE_NAME}` : ''}`
         : `Saved ${MODIFIER_FILE_NAMES[model.family]}`,
     afterSave: (draft, saved) => {
       markModifiersSaved(draft.catalogue, saved.catalogue);
@@ -280,7 +299,7 @@ function ModifierForm({ document, family, otherFileIds, modifier, index, usage, 
       const draftModifier = draft.catalogue.modifiers[index];
       const oldId = draftModifier.id;
       draftModifier.id = newId;
-      if (renameModifierReferences(draft.items.definitions, draft.implicits.rows, oldId, newId, draft.doctrines?.archives ?? []) > 0) {
+      if (renameModifierReferences(draft.items.definitions, draft.implicits.rows, oldId, newId, draft.doctrines?.archives ?? [], poolReferences(draft)) > 0) {
         draft.referencesChanged = true;
       }
     });
@@ -295,7 +314,7 @@ function ModifierForm({ document, family, otherFileIds, modifier, index, usage, 
         message:
           'Saved games store this id on every item that rolled it. Items whose id matches its effect name still find it, but other ids are only matched by ' +
           'their effect within the same slot, and common items whose frozen name used it take the word of their current first prefix or suffix. ' +
-          `References in ${DEFINITION_FILE_NAMES[family]}, ${IMPLICIT_FILE_NAMES[family]}${family === 'ship' ? ` and ${DOCTRINE_ARCHIVE_FILE_NAME}` : ''} are renamed and saved with it. ` +
+          `References in ${DEFINITION_FILE_NAMES[family]}, ${IMPLICIT_FILE_NAMES[family]}${family === 'ship' ? `, ${DOCTRINE_ARCHIVE_FILE_NAME} and ${CORRUPTION_POOL_FILE_NAME}` : ''} are renamed and saved with it. ` +
           `Its socketable.modifier.${modifier.loadedId} key in zh_CN.json keeps the old id and must be renamed by hand.`,
         confirmLabel: 'Rename',
         danger: true,
@@ -429,6 +448,7 @@ function ModifierForm({ document, family, otherFileIds, modifier, index, usage, 
           {usage && usage.items.length > 0 && <Text size="sm">Items: {usage.items.join(', ')}</Text>}
           {usage && usage.implicitSections.length > 0 && <Text size="sm">Implicit of: {usage.implicitSections.join(', ')}</Text>}
           {usage?.doctrineArchives && usage.doctrineArchives.length > 0 && <Text size="sm">Doctrine archives: {usage.doctrineArchives.join(', ')}</Text>}
+          {usage?.inCorruptionPool && <Text size="sm">{CORRUPTION_POOL_LABEL}</Text>}
         </Stack>
       ) : (
         <Text size="sm" c="dimmed">

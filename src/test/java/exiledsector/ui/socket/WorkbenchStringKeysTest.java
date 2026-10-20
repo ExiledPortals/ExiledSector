@@ -33,8 +33,8 @@ class WorkbenchStringKeysTest {
         for (CraftingCurrency currency : CraftingCurrency.values()) {
             require(catalogue, SocketWorkbenchPanel.descriptionKey(currency), missing);
             if (currency == CraftingCurrency.CORRUPTION) {
-                for (CorruptionOutcome outcome : CorruptionOutcome.NANOSWARM_OUTCOMES) {
-                    for (ItemNature nature : ItemNature.values()) {
+                for (ItemNature nature : ItemNature.values()) {
+                    for (CorruptionOutcome outcome : shownOutcomes(nature)) {
                         require(catalogue, SocketWorkbenchPanel.usedNoticeKey(currency, outcome, nature), missing);
                     }
                 }
@@ -52,6 +52,13 @@ class WorkbenchStringKeysTest {
             require(catalogue, SocketWorkbenchPanel.slotTagKey(slot), missing);
         }
         assertEquals(List.of(), missing);
+    }
+
+    private static List<CorruptionOutcome> shownOutcomes(ItemNature nature) {
+        if (nature != ItemNature.SOFTWARE) {
+            return CorruptionOutcome.UNIQUE_HULL_ITEM_OUTCOMES;
+        }
+        return CorruptionOutcome.SUBROUTINE_OUTCOMES.stream().filter(outcome -> outcome != CorruptionOutcome.BECAME_RARE).toList();
     }
 
     private static void require(JSONObject catalogue, String key, List<String> missing) {

@@ -8,11 +8,19 @@ import { DocumentState } from '../../../shared/DocumentState.tsx';
 import { RowButtons } from '../../../shared/MoveButtons.tsx';
 import { useDataDocument } from '../../../shared/useDataDocument.ts';
 import {
+  CORRUPTION_POOL_FILE_NAME,
+  CORRUPTION_POOL_LABEL,
+  CORRUPTION_POOL_RESOURCE,
   implicitItemType,
   newImplicit,
+  newImplicitOf,
+  parseCorruptionPoolCsv,
   parseFamilyImplicits,
+  serializeCorruptionPoolCsv,
   serializeFamilyImplicits,
+  validateCorruptionPool,
   validateImplicits,
+  type CorruptionPoolModel,
   type ImplicitReference,
   type ImplicitRow,
   type ImplicitsModel,
@@ -25,6 +33,7 @@ import {
   modifierById,
   parseModifiersCsv,
   serializeModifiersCsv,
+  SUBROUTINE_TYPE,
   validateModifiers,
   type ItemModifier,
   type ModifierLine,
@@ -42,6 +51,7 @@ interface ImplicitsTabModel extends ImplicitsModel {
   catalogue: ItemModifier[];
   catalogueTable: CsvTable;
   catalogueChanged: boolean;
+  corruptionPool: CorruptionPoolModel | null;
   otherFileIds: string[];
 }
 
@@ -59,12 +69,36 @@ function otherFamily(family: ItemFamily): ItemFamily {
   return family === 'chart' ? 'ship' : 'chart';
 }
 
+const CORRUPTION_POOL_QUALIFIER = 'subroutine_implicit';
+
+function implicitsFileNames(family: ItemFamily): string[] {
+  const fileNames = [IMPLICIT_RESOURCES[family], MODIFIER_RESOURCES[family], MODIFIER_RESOURCES[otherFamily(family)]];
+  return family === 'ship' ? [...fileNames, CORRUPTION_POOL_RESOURCE] : fileNames;
+}
+
+function poolReferences(model: ImplicitsTabModel): ImplicitReference[] {
+  return model.corruptionPool?.entries.map((entry) => entry.implicit) ?? [];
+}
+
+function usageOf(model: ImplicitsTabModel) {
+  return modifierUsage([], model.rows, implicitItemType(model.family), [], poolReferences(model));
+}
+
+function savedFileNames(model: ImplicitsTabModel): string {
+  const names = [
+    IMPLICIT_FILE_NAMES[model.family],
+    ...(model.corruptionPool ? [CORRUPTION_POOL_FILE_NAME] : []),
+    ...(model.catalogueChanged ? [MODIFIER_FILE_NAMES[model.family]] : []),
+  ];
+  return names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names[0];
+}
+
 export function ImplicitsTab({ vocabulary }: ImplicitsTabProps) {
   const [family, setFamily] = useState<ItemFamily>('ship');
   const document = useDataDocument<ImplicitsTabModel>({
     key: 'items.implicits',
     noun: 'implicits',
-    fileNames: [IMPLICIT_RESOURCES[family], MODIFIER_RESOURCES[family], MODIFIER_RESOURCES[otherFamily(family)]],
+    fileNames: implicitsFileNames(family),
     parse: (files) => {
       const modifiers = parseModifiersCsv(files[MODIFIER_RESOURCES[family]].content);
       return {
@@ -73,25 +107,23 @@ export function ImplicitsTab({ vocabulary }: ImplicitsTabProps) {
         catalogue: modifiers.modifiers,
         catalogueTable: modifiers.table,
         catalogueChanged: false,
+        corruptionPool: family === 'ship' ? parseCorruptionPoolCsv(files[CORRUPTION_POOL_RESOURCE].content) : null,
         otherFileIds: parseModifiersCsv(files[MODIFIER_RESOURCES[otherFamily(family)]].content).modifiers.map((modifier) => modifier.id),
       };
     },
     serialize: (model) => ({
       [IMPLICIT_RESOURCES[model.family]]: serializeFamilyImplicits(model.family, model),
+      ...(model.corruptionPool ? { [CORRUPTION_POOL_RESOURCE]: serializeCorruptionPoolCsv(model.corruptionPool) } : {}),
       ...(model.catalogueChanged
         ? { [MODIFIER_RESOURCES[model.family]]: serializeModifiersCsv({ table: model.catalogueTable, modifiers: model.catalogue }) }
         : {}),
     }),
     validate: (model) => [
       ...validateImplicits(model, vocabulary, modifierById(model.catalogue), model.family),
-      ...(model.catalogueChanged
-        ? validateModifiers(model.catalogue, vocabulary, modifierUsage([], model.rows, implicitItemType(model.family)), model.family, new Set(model.otherFileIds))
-        : []),
+      ...(model.corruptionPool ? validateCorruptionPool(model.corruptionPool, modifierById(model.catalogue)) : []),
+      ...(model.catalogueChanged ? validateModifiers(model.catalogue, vocabulary, usageOf(model), model.family, new Set(model.otherFileIds)) : []),
     ],
-    savedMessage: (model) =>
-      model.catalogueChanged
-        ? `Saved ${IMPLICIT_FILE_NAMES[model.family]} and ${MODIFIER_FILE_NAMES[model.family]}`
-        : `Saved ${IMPLICIT_FILE_NAMES[model.family]}`,
+    savedMessage: (model) => `Saved ${savedFileNames(model)}`,
     afterSave: (draft, saved) => {
       markModifiersSaved({ table: draft.catalogueTable, modifiers: draft.catalogue }, { table: saved.catalogueTable, modifiers: saved.catalogue });
       if (saved.catalogueChanged) {
@@ -130,6 +162,26 @@ export function ImplicitsTab({ vocabulary }: ImplicitsTabProps) {
       draft.catalogueChanged = true;
     });
 
+  const editPool = (recipe: (pool: CorruptionPoolModel) => void) =>
+    document.update((draft) => {
+      if (draft.corruptionPool) {
+        recipe(draft.corruptionPool);
+      }
+    });
+
+  const copyPoolModifier = (index: number) =>
+    document.update((draft) => {
+      const entry = draft.corruptionPool?.entries[index];
+      const source = entry ? draft.catalogue.find((candidate) => candidate.id === entry.implicit.modifierId) : undefined;
+      if (!entry || !source) {
+        return;
+      }
+      const copy = copiedModifier(draft.catalogue, source, CORRUPTION_POOL_QUALIFIER, SUBROUTINE_TYPE, new Set(draft.otherFileIds));
+      draft.catalogue.push(copy);
+      entry.implicit = { modifierId: copy.id };
+      draft.catalogueChanged = true;
+    });
+
   return (
     <Stack h="100%" gap={0}>
       <Box px="md" py="xs">
@@ -140,14 +192,14 @@ export function ImplicitsTab({ vocabulary }: ImplicitsTabProps) {
       <Divider />
       <DocumentState state={document.state} onRetry={() => void document.reload()}>
         {(model) => {
-          const usage = modifierUsage([], model.rows, implicitItemType(model.family));
+          const usage = usageOf(model);
           return (
             <ScrollArea style={{ flex: 1 }} type="auto">
               <Stack p="md" gap="md" maw={1000}>
                 <Text size="xs" c="dimmed">
                   {model.family === 'chart'
                     ? 'Edits data/config/exiledSector/star_chart_implicits.csv. Every star chart first rolls one inhabiting faction by weight from chart_factions.csv, edited in the Chart factions tab. Every star chart of a system type also rolls all of that type\'s implicits, uniques included; charts whose system type is "any" use the Any row. Each implicit is a star chart modifier from star_chart_modifiers.csv with the implicit slot; its values can be edited here or in the Modifiers tab, and a modifier shared by several system types changes all of them unless you copy it for one. Charts already rolled keep their values when these change.'
-                    : "Edits data/config/exiledSector/hull_item_implicits.csv. Every hull item of a section rolls all of that section's implicits, uniques included. Each implicit is a hull item modifier from item_modifiers.csv with the implicit slot; its values can be edited here or in the Modifiers tab, and a modifier shared by several sections changes all of them unless you copy it for one section. Subroutines never get implicits. Items already rolled keep their values when these change."}
+                    : "Edits data/config/exiledSector/hull_item_implicits.csv. Every hull item of a section rolls all of that section's implicits, uniques included. Each implicit is a hull item modifier from item_modifiers.csv with the implicit slot; its values can be edited here or in the Modifiers tab, and a modifier shared by several sections changes all of them unless you copy it for one section. Subroutines only get an implicit from a Corrupted Nanoswarm, picked from the subroutine corruption pool below. Items already rolled keep their values when these change."}
                 </Text>
                 {model.rows.map((row) => (
                   <Paper key={row.section} withBorder p="sm">
@@ -172,13 +224,18 @@ export function ImplicitsTab({ vocabulary }: ImplicitsTabProps) {
                           <ImplicitEntryRow
                             key={index}
                             family={model.family}
+                            itemType={implicitItemType(model.family)}
+                            copyLabel={model.family === 'chart' ? 'Copy for this system type' : 'Copy for this section'}
                             implicit={implicit}
                             index={index}
                             count={row.implicits.length}
                             catalogue={model.catalogue}
-                            otherGroupsUsingModifier={(usage.get(implicit.modifierId)?.implicitSections ?? [])
-                              .filter((section) => section !== row.section)
-                              .map((section) => groupLabel(section, model.family))}
+                            otherGroupsUsingModifier={[
+                              ...(usage.get(implicit.modifierId)?.implicitSections ?? [])
+                                .filter((section) => section !== row.section)
+                                .map((section) => groupLabel(section, model.family)),
+                              ...(usage.get(implicit.modifierId)?.inCorruptionPool ? [CORRUPTION_POOL_LABEL.toLowerCase()] : []),
+                            ]}
                             vocabulary={vocabulary}
                             onSelect={(modifierId) =>
                               editRow(row.section, (draft) => {
@@ -200,6 +257,63 @@ export function ImplicitsTab({ vocabulary }: ImplicitsTabProps) {
                     </Stack>
                   </Paper>
                 ))}
+                {model.corruptionPool && (
+                  <Paper withBorder p="sm">
+                    <Stack gap="xs">
+                      <Group justify="space-between">
+                        <Title order={5}>{CORRUPTION_POOL_LABEL}</Title>
+                        <Button
+                          size="xs"
+                          variant="light"
+                          leftSection={<IconPlus size={14} />}
+                          onClick={() => editPool((pool) => void pool.entries.push({ cells: [], implicit: newImplicitOf(model.catalogue, SUBROUTINE_TYPE) }))}
+                        >
+                          Add implicit
+                        </Button>
+                      </Group>
+                      <Text size="xs" c="dimmed">
+                        Edits data/config/exiledSector/{CORRUPTION_POOL_FILE_NAME}. A Corrupted Nanoswarm can add one of these to a subroutine, each equally
+                        likely. Each is an implicit modifier from item_modifiers.csv whose item types include subroutine.
+                      </Text>
+                      {model.corruptionPool.entries.length === 0 ? (
+                        <Text size="sm" c="dimmed">
+                          No implicits.
+                        </Text>
+                      ) : (
+                        model.corruptionPool.entries.map((entry, index, entries) => (
+                          <ImplicitEntryRow
+                            key={index}
+                            family={model.family}
+                            itemType={SUBROUTINE_TYPE}
+                            copyLabel="Copy for subroutines"
+                            implicit={entry.implicit}
+                            index={index}
+                            count={entries.length}
+                            catalogue={model.catalogue}
+                            otherGroupsUsingModifier={(usage.get(entry.implicit.modifierId)?.implicitSections ?? []).map((section) =>
+                              groupLabel(section, model.family),
+                            )}
+                            vocabulary={vocabulary}
+                            onSelect={(modifierId) =>
+                              editPool((pool) => {
+                                pool.entries[index].implicit = { modifierId };
+                              })
+                            }
+                            onEditModifier={(recipe) => editModifier(entry.implicit.modifierId, recipe)}
+                            onCopyModifier={() => copyPoolModifier(index)}
+                            onMove={(from, to) =>
+                              editPool((pool) => {
+                                const [moved] = pool.entries.splice(from, 1);
+                                pool.entries.splice(to, 0, moved);
+                              })
+                            }
+                            onRemove={() => editPool((pool) => void pool.entries.splice(index, 1))}
+                          />
+                        ))
+                      )}
+                    </Stack>
+                  </Paper>
+                )}
               </Stack>
             </ScrollArea>
           );
@@ -211,6 +325,8 @@ export function ImplicitsTab({ vocabulary }: ImplicitsTabProps) {
 
 interface ImplicitEntryRowProps {
   family: ItemFamily;
+  itemType: string;
+  copyLabel: string;
   implicit: ImplicitReference;
   index: number;
   count: number;
@@ -226,6 +342,8 @@ interface ImplicitEntryRowProps {
 
 function ImplicitEntryRow({
   family,
+  itemType,
+  copyLabel,
   implicit,
   index,
   count,
@@ -249,7 +367,7 @@ function ImplicitEntryRow({
             label={implicit.inlineText === undefined ? `Implicit ${index + 1}` : `Implicit ${index + 1} (was written inline as ${implicit.inlineText})`}
             catalogue={catalogue}
             slot="implicit"
-            itemType={implicitItemType(family)}
+            itemType={itemType}
             catalogueFileName={MODIFIER_FILE_NAMES[family]}
             value={implicit.modifierId}
             onChange={onSelect}
@@ -279,7 +397,7 @@ function ImplicitEntryRow({
               {modifier.id} is shared: editing its values also changes the {otherGroupsUsingModifier.join(', ')} implicits.
             </Text>
             <Button size="compact-xs" variant="light" leftSection={<IconCopy size={12} />} onClick={onCopyModifier}>
-              {family === 'chart' ? 'Copy for this system type' : 'Copy for this section'}
+              {copyLabel}
             </Button>
           </Group>
         )}

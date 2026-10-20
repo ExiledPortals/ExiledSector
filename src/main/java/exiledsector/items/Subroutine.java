@@ -4,6 +4,8 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.modifiers.Modifier;
+import exiledsector.modifiers.ModifierLine;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.NodeReplacements;
 import exiledsector.skills.SkillNode;
@@ -70,6 +72,22 @@ public final class Subroutine extends Item {
     @Override
     public ItemType type() {
         return ItemType.SUBROUTINE;
+    }
+
+    @Override
+    Modifier implicitModifier(String modifierId) {
+        Modifier corruptionImplicit = SubroutineImplicits.byId(modifierId);
+        return corruptionImplicit != null ? corruptionImplicit : super.implicitModifier(modifierId);
+    }
+
+    @Override
+    ModifierLine implicitLine(String effectName) {
+        return SubroutineImplicits.line(effectName);
+    }
+
+    @Override
+    List<Modifier> implicitCorruptionPool() {
+        return SubroutineImplicits.corruptionPool();
     }
 
     public SubroutineKind subroutineKind() {

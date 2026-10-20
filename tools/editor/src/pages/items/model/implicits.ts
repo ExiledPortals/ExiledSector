@@ -2,7 +2,11 @@ import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { csvTableFromRows, parseCsvTable, serializeCsvTable, trimmedCsvCells, type CsvTable } from '../../../shared/csv.ts';
 import { ANY_SYSTEM_TYPE, HULL_ITEM_TYPE, normalisedSystemType } from './definitions.ts';
 import { MODIFIER_FILE_NAMES, type ItemFamily } from './itemFamily.ts';
-import { MODIFIER_REFERENCE_MARK, STAR_CHART_TYPE, type ItemModifier } from './modifiers.ts';
+import { MODIFIER_REFERENCE_MARK, STAR_CHART_TYPE, SUBROUTINE_TYPE, type ItemModifier } from './modifiers.ts';
+
+export const CORRUPTION_POOL_RESOURCE = 'subroutine-corruption-implicits';
+export const CORRUPTION_POOL_FILE_NAME = 'subroutine_corruption_implicits.csv';
+export const CORRUPTION_POOL_LABEL = 'Subroutine corruption pool';
 
 export interface ImplicitReference {
   modifierId: string;
@@ -18,6 +22,16 @@ export interface ImplicitRow {
 export interface ImplicitsModel {
   table: CsvTable;
   rows: ImplicitRow[];
+}
+
+export interface CorruptionPoolEntry {
+  cells: string[];
+  implicit: ImplicitReference;
+}
+
+export interface CorruptionPoolModel {
+  table: CsvTable;
+  entries: CorruptionPoolEntry[];
 }
 
 export function sectionKinds(vocabulary: Vocabulary): string[] {
@@ -93,9 +107,65 @@ export function serializeFamilyImplicits(family: ItemFamily, model: ImplicitsMod
   return family === 'chart' ? serializeStarChartImplicitsCsv(model) : serializeImplicitsCsv(model);
 }
 
+function poolReference(text: string): ImplicitReference {
+  const references = parseImplicitReferences(text);
+  if (references.length === 0) {
+    return { modifierId: '' };
+  }
+  return references.length === 1 ? references[0] : { modifierId: '', inlineText: String(text).trim() };
+}
+
+export function parseCorruptionPoolCsv(text: string): CorruptionPoolModel {
+  const table = parseCsvTable(text);
+  return { table, entries: table.rows.map((cells) => ({ cells, implicit: poolReference(trimmedCsvCells(table, cells, ['implicit']).implicit) })) };
+}
+
+export function serializeCorruptionPoolCsv(model: CorruptionPoolModel): string {
+  return serializeCsvTable(csvTableFromRows(model.table, model.entries, (entry) => ({ implicit: formatImplicitReferences([entry.implicit]) })));
+}
+
 export function newImplicit(catalogue: ItemModifier[], family: ItemFamily = 'ship'): ImplicitReference {
-  const itemType = implicitItemType(family);
+  return newImplicitOf(catalogue, implicitItemType(family));
+}
+
+export function newImplicitOf(catalogue: ItemModifier[], itemType: string): ImplicitReference {
   return { modifierId: catalogue.find((modifier) => modifier.slot === 'implicit' && modifier.itemTypes.includes(itemType))?.id ?? '' };
+}
+
+export function validateCorruptionPool(model: CorruptionPoolModel, catalogue: Map<string, ItemModifier>): string[] {
+  const issues: string[] = [];
+  const listed: ItemModifier[] = [];
+  const label = CORRUPTION_POOL_LABEL;
+  for (const { implicit } of model.entries) {
+    if (implicit.inlineText !== undefined) {
+      issues.push(`${label}: "${implicit.inlineText}" is not a single @ID reference; pick an implicit modifier instead`);
+      continue;
+    }
+    if (implicit.modifierId.includes(':')) {
+      issues.push(`${label}: @${implicit.modifierId} has a weight, but every pool entry is equally likely`);
+      continue;
+    }
+    const modifier = catalogue.get(implicit.modifierId);
+    if (!modifier) {
+      issues.push(`${label}: ${implicit.modifierId || '(no modifier)'} is not in ${MODIFIER_FILE_NAMES.ship}`);
+      continue;
+    }
+    if (modifier.slot !== 'implicit') {
+      issues.push(`${label}: ${modifier.id} is a ${modifier.slot}, not an implicit`);
+    }
+    if (!modifier.itemTypes.includes(SUBROUTINE_TYPE)) {
+      issues.push(`${label}: ${modifier.id} does not roll on subroutines`);
+    }
+    for (const earlier of listed) {
+      if (earlier.id === modifier.id) {
+        issues.push(`${label}: ${modifier.id} is listed more than once`);
+      } else if (earlier.lines.some((line) => modifier.lines.some((other) => other.effect === line.effect))) {
+        issues.push(`${label}: ${earlier.id} and ${modifier.id} share an effect`);
+      }
+    }
+    listed.push(modifier);
+  }
+  return issues;
 }
 
 function groupIssues(row: ImplicitRow, family: ItemFamily, vocabulary: Vocabulary, seenGroups: Set<string>): string[] {

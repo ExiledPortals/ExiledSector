@@ -64,6 +64,7 @@ export interface ModifierUsage {
   itemTypes: string[];
   implicitSections: string[];
   doctrineArchives?: string[];
+  inCorruptionPool?: boolean;
 }
 
 export function isTierBandText(text: string | undefined): boolean {
@@ -310,8 +311,8 @@ function itemTypeIssues(label: string, modifier: ItemModifier, vocabulary: Vocab
   for (const itemType of modifier.itemTypes) {
     if (itemType === STAR_CHART_TYPE) {
       issues.push(`${label}: star chart modifiers belong in star_chart_modifiers.csv, not item_modifiers.csv`);
-    } else if (itemType === SUBROUTINE_TYPE) {
-      issues.push(`${label}: subroutines do not roll modifiers, so remove ${SUBROUTINE_TYPE} from its item types`);
+    } else if (itemType === SUBROUTINE_TYPE && modifier.slot !== 'implicit') {
+      issues.push(`${label}: subroutines only roll corrupted implicits, so remove ${SUBROUTINE_TYPE} from its item types or make it an implicit`);
     } else if (itemType === WORMHOLE_ANCHOR_TYPE) {
       issues.push(`${label}: wormhole anchors do not roll modifiers, so remove ${WORMHOLE_ANCHOR_TYPE} from its item types`);
     } else if (!vocabulary.modifierScopes.includes(itemType)) {

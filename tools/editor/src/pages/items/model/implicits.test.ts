@@ -2,11 +2,20 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { buildVocabulary } from '../../../api/vocabulary.ts';
-import { parseImplicitsCsv, serializeImplicitsCsv, validateImplicits } from './implicits.ts';
-import { modifierById, parseModifiersCsv } from './modifiers.ts';
+import {
+  parseCorruptionPoolCsv,
+  parseImplicitsCsv,
+  serializeCorruptionPoolCsv,
+  serializeImplicitsCsv,
+  validateCorruptionPool,
+  validateImplicits,
+} from './implicits.ts';
+import { isUsed, modifierUsage, referenceIssues, renameModifierReferences, usedByText } from './modifierUsage.ts';
+import { modifierById, parseModifiersCsv, validateModifiers } from './modifiers.ts';
 
 const repositoryRoot = path.resolve(import.meta.dirname, '..', '..', '..', '..', '..', '..');
 const implicitsFile = path.join(repositoryRoot, 'data', 'config', 'exiledSector', 'hull_item_implicits.csv');
+const corruptionPoolFile = path.join(repositoryRoot, 'data', 'config', 'exiledSector', 'subroutine_corruption_implicits.csv');
 
 const vocabulary = buildVocabulary({
   effects: [
@@ -73,5 +82,57 @@ describe('hull item implicits', () => {
     const model = parseImplicitsCsv('section,implicits\nshield_generator,@HYBRID_ARMOR_FLUX_CAPACITY\n', vocabulary);
 
     expect(validateImplicits(model, vocabulary, catalogue)).toEqual([]);
+  });
+});
+
+describe('subroutine corruption pool', () => {
+  it('saving the unchanged file reproduces it byte for byte', () => {
+    const text = fs.readFileSync(corruptionPoolFile, 'utf8');
+    expect(serializeCorruptionPoolCsv(parseCorruptionPoolCsv(text))).toBe(text);
+  });
+
+  it('keeps a row listing several references as written instead of dropping any', () => {
+    const text = 'implicit\n@FLUX_CAPACITY_PERCENT_IMPLICIT; @ARMOR_PERCENT_IMPLICIT\n';
+    const model = parseCorruptionPoolCsv(text);
+
+    expect(serializeCorruptionPoolCsv(model)).toBe(text);
+    expect(validateCorruptionPool(model, catalogue)).toEqual([
+      'Subroutine corruption pool: "@FLUX_CAPACITY_PERCENT_IMPLICIT; @ARMOR_PERCENT_IMPLICIT" is not a single @ID reference; pick an implicit modifier instead',
+    ]);
+  });
+
+  it('accepts subroutine implicits and rejects missing, non-implicit, hull item only, weighted and repeated entries', () => {
+    const model = parseCorruptionPoolCsv(
+      'implicit\n@FLUX_CAPACITY_PERCENT_IMPLICIT\n@NOT_THERE\n@ARMOR_PERCENT\n@ARMOR_PERCENT_IMPLICIT\n@FLUX_CAPACITY_PERCENT_IMPLICIT:2\n@FLUX_CAPACITY_PERCENT_IMPLICIT\n',
+    );
+
+    expect(validateCorruptionPool(model, catalogue)).toEqual([
+      'Subroutine corruption pool: NOT_THERE is not in item_modifiers.csv',
+      'Subroutine corruption pool: ARMOR_PERCENT is a prefix, not an implicit',
+      'Subroutine corruption pool: ARMOR_PERCENT_IMPLICIT does not roll on subroutines',
+      'Subroutine corruption pool: ARMOR_PERCENT and ARMOR_PERCENT_IMPLICIT share an effect',
+      'Subroutine corruption pool: @FLUX_CAPACITY_PERCENT_IMPLICIT:2 has a weight, but every pool entry is equally likely',
+      'Subroutine corruption pool: FLUX_CAPACITY_PERCENT_IMPLICIT is listed more than once',
+    ]);
+    expect(validateCorruptionPool(parseCorruptionPoolCsv('implicit\n@FLUX_CAPACITY_PERCENT_IMPLICIT\n'), catalogue)).toEqual([]);
+  });
+
+  it('counts pool entries as uses, renames them and reports dangling references', () => {
+    const pool = parseCorruptionPoolCsv('implicit\n@FLUX_CAPACITY_PERCENT_IMPLICIT\n').entries.map((entry) => entry.implicit);
+    const usage = modifierUsage([], [], 'hull_item', [], pool);
+
+    expect(isUsed(usage.get('FLUX_CAPACITY_PERCENT_IMPLICIT'))).toBe(true);
+    expect(usedByText(usage.get('FLUX_CAPACITY_PERCENT_IMPLICIT'))).toBe('Subroutine corruption pool');
+    expect(usage.get('FLUX_CAPACITY_PERCENT_IMPLICIT')?.itemTypes).toEqual(['subroutine']);
+    const scopedToHullItems = parseModifiersCsv('id,slot,item_types,lines,name\nFLUX_CAPACITY_PERCENT_IMPLICIT,implicit,hull_item,FLUX_CAPACITY_PERCENT:1:2,\n');
+    expect(validateModifiers(scopedToHullItems.modifiers, vocabulary, usage)).toEqual([
+      'FLUX_CAPACITY_PERCENT_IMPLICIT: a subroutine rolls it, so item types must include subroutine',
+    ]);
+
+    expect(renameModifierReferences([], [], 'FLUX_CAPACITY_PERCENT_IMPLICIT', 'FLUX_CAPACITY_PERCENT_SUBROUTINE_IMPLICIT', [], pool)).toBe(1);
+    expect(pool).toEqual([{ modifierId: 'FLUX_CAPACITY_PERCENT_SUBROUTINE_IMPLICIT' }]);
+    expect(referenceIssues([], [], catalogue, [], pool)).toEqual([
+      'The subroutine corruption pool lists FLUX_CAPACITY_PERCENT_SUBROUTINE_IMPLICIT, which is not a modifier',
+    ]);
   });
 });

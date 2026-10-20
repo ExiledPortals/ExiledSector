@@ -121,3 +121,10 @@ The Contraband Modspec Cache (`contraband_modspec_cache`, kind `MODSPEC_CACHE`) 
 subroutine that rolls one to three notables at creation. In an allocated standard socket they are allocated
 with no path and no cost. Its kind keeps it out of generic pools, it has no level gate, and NPCs never
 socket one.
+
+## Corruption
+
+A Corrupted Nanoswarm locks the item and picks one equally likely outcome from its list in `CorruptionOutcome`
+(`ItemCrafting.corrupt`). Unique hull items can also become a rare of their section's base with 3 to 4
+modifiers, keeping their implicits. Subroutines add an implicit from `subroutine_corruption_implicits.csv`
+instead of replacing one, and their rare outcome only corrupts them.

@@ -51,6 +51,7 @@ class EditorRoundTripTest {
     private static final String ITEM_MODIFIERS = "exiledsector/items/ItemModifiers.java";
     private static final String STAR_CHART_DEFINITIONS = "exiledsector/items/StarChartDefinitions.java";
     private static final String STAR_CHART_IMPLICITS = "exiledsector/items/StarChartImplicits.java";
+    private static final String SUBROUTINE_IMPLICITS = "exiledsector/items/SubroutineImplicits.java";
     private static final String STAR_CHART_ITEMS = "exiledsector/items/StarChartItems.java";
     private static final String STAR_CHART_NAMES = "exiledsector/items/StarChartNames.java";
     private static final String CHART_TIERS = "exiledsector/charts/ChartTiers.java";
@@ -67,13 +68,13 @@ class EditorRoundTripTest {
     private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, ITEM_DEFINITIONS, ITEM_DEFINITION,
             ITEM_NAMES, ITEM_DROPS, SALVAGE_COMPAT, ITEM_CRAFTING, HULL_ITEM_IMPLICITS, ITEM_MODIFIERS, STAR_CHART_DEFINITIONS, STAR_CHART_IMPLICITS,
             STAR_CHART_ITEMS, STAR_CHART_NAMES, CHART_TIERS, CHART_POIS, CHART_FACTIONS, CHART_BLOCKED_ABILITIES, CHART_DROPS, CHART_LOOT,
-            CHART_COLONY_ITEMS, WORMHOLE_ANCHOR_DEFINITIONS, DOCTRINE_ARCHIVES, MODSPEC_CACHES);
+            CHART_COLONY_ITEMS, WORMHOLE_ANCHOR_DEFINITIONS, DOCTRINE_ARCHIVES, MODSPEC_CACHES, SUBROUTINE_IMPLICITS);
 
     private static final List<String> EDITED_DATA_PATHS = List.of("data/skilltrees/skill_types.json", "data/skilltrees/ship_skill_tree.json",
             "data/config/exiledSector/item_modifiers", "data/config/exiledSector/item_names", "data/config/exiledSector/item_crafting",
             "data/config/exiledSector/item_salvage", "data/config/exiledSector/hull_item", "data/config/exiledSector/subroutines", "compat/salvage/",
             "data/config/exiledSector/star_chart", "data/config/exiledSector/chart_", "data/config/exiledSector/wormhole_anchors",
-            "data/config/exiledSector/doctrine_archives");
+            "data/config/exiledSector/doctrine_archives", "data/config/exiledSector/subroutine_corruption_implicits");
 
     private record EditorSource(String file, String symbol) {
         String label() {
@@ -141,6 +142,8 @@ class EditorRoundTripTest {
                     List.of(new EditorSource(ITEM_MODIFIERS_MODEL, "serializeModifiersCsv")), true),
             new Pin("star_chart_implicits.csv columns", STAR_CHART_IMPLICITS, List.of("load", "register"),
                     List.of(new EditorSource(HULL_ITEM_IMPLICITS_MODEL, "serializeStarChartImplicitsCsv")), true),
+            new Pin("subroutine_corruption_implicits.csv columns", SUBROUTINE_IMPLICITS, List.of("load", "register"),
+                    List.of(new EditorSource(HULL_ITEM_IMPLICITS_MODEL, "serializeCorruptionPoolCsv")), true),
             new Pin("star_chart_names.json word fields", STAR_CHART_NAMES, List.of("register"),
                     List.of(new EditorSource(ITEM_NAMES_MODEL, "serializeStarChartNames"), new EditorSource(ITEM_NAMES_MODEL, "RARE_NAME_WORD_LISTS"),
                             new EditorSource(ITEM_NAMES_MODEL, "newRareNameWords")), true),

@@ -94,10 +94,10 @@ describe('item modifiers', () => {
     const usage = modifierUsage(definitions(), []);
 
     expect(validateModifiers(modifiers, vocabulary, usage)).toEqual([
-      'HULL_MULT: subroutines do not roll modifiers, so remove subroutine from its item types',
+      'HULL_MULT: subroutines only roll corrupted implicits, so remove subroutine from its item types or make it an implicit',
       'HULL_MULT: a hull_item rolls it, so item types must include hull_item',
       'HULL_MULT: id is used more than once',
-      'HULL_MULT: subroutines do not roll modifiers, so remove subroutine from its item types',
+      'HULL_MULT: subroutines only roll corrupted implicits, so remove subroutine from its item types or make it an implicit',
       'HULL_MULT: a hull_item rolls it, so item types must include hull_item',
       'bad id: id must use only letters, digits and underscores',
       'bad id: slot must be one of implicit, prefix, suffix',
@@ -114,6 +114,12 @@ describe('item modifiers', () => {
       'ARMOR_FLAT: chip can roll it, so it needs a name for their common names',
       'UNNAMED_PERCENT: unknown effect UNNAMED_PERCENT',
     ]);
+  });
+
+  it('lets subroutines roll corrupted implicits', () => {
+    const modifiers = parseModifiersCsv('id,slot,item_types,lines,name\nHULL_MULT_SUBROUTINE_IMPLICIT,implicit,subroutine,HULL_MULT:4:6,\n').modifiers;
+
+    expect(validateModifiers(modifiers, vocabulary, modifierUsage(definitions(), []))).toEqual([]);
   });
 
   it('keeps star chart modifiers out of item_modifiers.csv', () => {

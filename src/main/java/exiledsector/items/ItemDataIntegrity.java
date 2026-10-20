@@ -68,6 +68,12 @@ public final class ItemDataIntegrity {
     public static List<Violation> checkWithStarCharts(JSONArray modifierRows, JSONArray subroutineRows, JSONArray hullItemRows,
                                                       JSONArray implicitRows, JSONArray chartModifierRows, JSONArray chartRows,
                                                       JSONArray chartImplicitRows) throws JSONException {
+        return checkAll(modifierRows, subroutineRows, hullItemRows, implicitRows, chartModifierRows, chartRows, chartImplicitRows, new JSONArray());
+    }
+
+    public static List<Violation> checkAll(JSONArray modifierRows, JSONArray subroutineRows, JSONArray hullItemRows, JSONArray implicitRows,
+                                           JSONArray chartModifierRows, JSONArray chartRows, JSONArray chartImplicitRows,
+                                           JSONArray subroutineImplicitRows) throws JSONException {
         ItemDataIntegrity integrity = new ItemDataIntegrity();
         integrity.checkModifiers(modifierRows, ItemModifiers.DATA_PATH, false);
         integrity.checkModifiers(chartModifierRows, StarChartItems.MODIFIERS_PATH, true);
@@ -76,6 +82,7 @@ public final class ItemDataIntegrity {
         integrity.checkDefinitions(chartRows, StarChartDefinitions.DATA_PATH, ItemType.STAR_CHART);
         integrity.checkImplicits(implicitRows);
         integrity.checkStarChartImplicits(chartImplicitRows);
+        integrity.checkSubroutineImplicits(orEmpty(subroutineImplicitRows));
         integrity.checkNames();
         integrity.checkReferences();
         return List.copyOf(integrity.violations);
@@ -93,8 +100,9 @@ public final class ItemDataIntegrity {
             JSONArray chartModifierRows = orEmpty(ModCsv.rows("id", StarChartItems.MODIFIERS_PATH));
             JSONArray chartRows = orEmpty(ModCsv.rows("id", StarChartDefinitions.DATA_PATH));
             JSONArray chartImplicitRows = orEmpty(ModCsv.rows(StarChartImplicits.SYSTEM_TYPE_COLUMN, StarChartImplicits.DATA_PATH));
-            List<Violation> violations = new ArrayList<>(checkWithStarCharts(modifierRows, subroutineRows, hullItemRows, implicitRows,
-                    chartModifierRows, chartRows, chartImplicitRows));
+            JSONArray subroutineImplicitRows = orEmpty(ModCsv.rows(SubroutineImplicits.IMPLICIT_COLUMN, SubroutineImplicits.DATA_PATH));
+            List<Violation> violations = new ArrayList<>(checkAll(modifierRows, subroutineRows, hullItemRows, implicitRows,
+                    chartModifierRows, chartRows, chartImplicitRows, subroutineImplicitRows));
             JSONArray anchorRows = orEmpty(ModCsv.rows("id", WormholeAnchorDefinitions.DATA_PATH));
             violations.addAll(checkWormholeAnchors(anchorRows, SkillTree.getDeclaredNodes(), definitionIds(orEmpty(subroutineRows), hullItemRows, chartRows)));
             JSONArray doctrineRows = orEmpty(ModCsv.rows(DoctrineArchives.ID_COLUMN, DoctrineArchives.DATA_PATH));
@@ -419,7 +427,7 @@ public final class ItemDataIntegrity {
                 error(file, line, modifierId + " has slot \"" + slotText + "\"; expected implicit, prefix or suffix");
             }
             Set<ModifierScope> scopes = checkScopes(file, line, modifierId, ModCsv.text(row, "item_types"));
-            checkScopesBelongInFile(file, line, modifierId, scopes, starChartFile);
+            checkScopesBelongInFile(file, line, modifierId, scopes, slot, starChartFile);
             if (scopes.contains(ModifierScope.UNIQUE_SUBROUTINE) && slot != null && slot != ModifierSlot.PREFIX) {
                 error(file, line, modifierId + " rolls on " + ModifierScope.UNIQUE_SUBROUTINE.id() + ", so its slot must be "
                         + ModifierSlot.PREFIX.id());
@@ -435,12 +443,13 @@ public final class ItemDataIntegrity {
         });
     }
 
-    private void checkScopesBelongInFile(String file, int line, String modifierId, Set<ModifierScope> scopes, boolean starChartFile) {
+    private void checkScopesBelongInFile(String file, int line, String modifierId, Set<ModifierScope> scopes, ModifierSlot slot,
+                                         boolean starChartFile) {
         if (scopes.isEmpty()) {
             return;
         }
-        if (scopes.contains(ModifierScope.SUBROUTINE)) {
-            error(file, line, modifierId + " rolls on " + ModifierScope.SUBROUTINE.id() + ", but subroutines do not roll modifiers");
+        if (scopes.contains(ModifierScope.SUBROUTINE) && slot != null && slot != ModifierSlot.IMPLICIT) {
+            error(file, line, modifierId + " rolls on " + ModifierScope.SUBROUTINE.id() + ", but subroutines only roll corrupted implicits");
         }
         if (scopes.contains(ModifierScope.WORMHOLE_ANCHOR)) {
             error(file, line, modifierId + " rolls on " + ModifierScope.WORMHOLE_ANCHOR.id() + ", but wormhole anchors do not roll modifiers");
@@ -824,6 +833,12 @@ public final class ItemDataIntegrity {
                 checkImplicitEntry(file, line, systemTypeText, entryText.trim(), implicits, ItemType.STAR_CHART);
             }
         });
+    }
+
+    private void checkSubroutineImplicits(JSONArray rows) throws JSONException {
+        List<ModifierRow> implicits = new ArrayList<>();
+        ModCsv.forEach(rows, (index, row) -> checkImplicitEntry(SubroutineImplicits.DATA_PATH, index + FIRST_DATA_LINE, "the subroutine corruption pool",
+                ModCsv.text(row, SubroutineImplicits.IMPLICIT_COLUMN), implicits, ItemType.SUBROUTINE));
     }
 
     private void checkImplicitEntry(String file, int line, String typeId, String entryText, List<ModifierRow> implicits, ItemType itemType) {
