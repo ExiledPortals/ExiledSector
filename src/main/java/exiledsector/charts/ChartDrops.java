@@ -199,11 +199,16 @@ public final class ChartDrops {
         return run == null ? Loot.NONE : roll(Source.RUN_REWARD, run.tier(), rewardMult, random, uniquesFor(sector));
     }
 
-    public static Loot forBattle(SectorAPI sector, LocationAPI battleLocation, float defeatedDeploymentPoints, Random random) {
+    public static Loot forBattle(SectorAPI sector, LocationAPI battleLocation, float defeatedDeploymentPoints, int highestDefeatedLevel,
+                                 Random random) {
         if (isSystem(battleLocation)) {
             return Loot.NONE;
         }
-        return roll(Source.BATTLE, tierForStrength(Source.BATTLE, defeatedDeploymentPoints), 1f, random, uniquesFor(sector));
+        return roll(Source.BATTLE, battleTier(defeatedDeploymentPoints, highestDefeatedLevel), 1f, random, uniquesFor(sector));
+    }
+
+    static int battleTier(float defeatedDeploymentPoints, int highestDefeatedLevel) {
+        return tierForStrength(Source.BATTLE, defeatedDeploymentPoints) == NO_TIER ? NO_TIER : ChartTiers.tierForLevel(highestDefeatedLevel);
     }
 
     public static Loot forSalvage(SectorAPI sector, LocationAPI salvageLocation, Random random) {

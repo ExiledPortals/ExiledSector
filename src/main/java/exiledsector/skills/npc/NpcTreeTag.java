@@ -91,6 +91,10 @@ public final class NpcTreeTag {
         return null;
     }
 
+    public static int nodesBesidesRoot(ShipSkillData npcTree) {
+        return npcTree == null ? 0 : Math.max(0, npcTree.getAllocatedNodeIds().size() - 1);
+    }
+
     public static void removeAll(ShipVariantAPI variant) {
         for (String tag = find(variant); tag != null; tag = find(variant)) {
             variant.removeTag(tag);

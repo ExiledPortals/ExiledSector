@@ -59,7 +59,7 @@ Chart fleets ignore the faction category, since the chart sets their strength. E
 
 The editor's star chart tier table (`tools/editor/src/pages/items/model/chartTables.ts` and `chartModels.test.ts`) and the `star_charts.md` column list have to follow the column rename, or editor saves will drop the new columns.
 
-## 5. Chart drops outside chart systems
+## 5. Chart drops outside chart systems (done)
 
 This ties back to `chart_loot.md`. Outside sources currently drop charts up to tier 6 (battles) and tier 5 (salvage and tech mining), from defeated deployment points or player level. Under this plan a chart's tier is its fleet level, so outside drops follow what the player actually fought.
 
@@ -78,7 +78,7 @@ In `chart_drops.csv`, `min_strength` and `strength_per_tier` stay as the gate fo
 1. Categories and `npc_levels.csv`, with open-world caps and the capped `NpcBonusScale`. Done in c7a6f882 on `main`: `NpcLevelCategory`, `NpcLevelCaps`, the cap in `NpcFleetLeveller.decide`, `NpcBonusScale.forShip`. Each levelled ship carries its cap as a variant tag (`NpcLevelCaps.TAG_PREFIX`), because vanilla merges a battle side into one fleet with the primary fleet's faction and commander. `PlayerTreePower.logNpcScaling` already logs the caps (section 6).
 2. Chart fleet levels: the column rename, `fleetStrengthRangeFor`, the Fleet Strength % conversion and the editor table. Done in 322df1bc, merged into `main`: `ChartLevelRange`, warden flag `ChartIds.WARDEN_MEMORY_KEY`.
 3. Bounty detection (decompile first), then the bounty cap and the flagship bonus. Done, committed on `main`: `NpcBounties`, `NpcLevelLimit`, `NpcLevelCaps.bountyLimit`.
-4. Outside chart drop tiers from defeated NPC levels.
+4. Outside chart drop tiers from defeated NPC levels. Done, committed on `main`: `ChartTiers.tierForLevel`, `ChartDrops.battleTier`, `NpcTreeTag.nodesBesidesRoot`. The defeated level comes from each lost ship's NPC tree tag, which `ItemLootListener.hold` already decodes. Battle `max_tier` stays 6, so an AI fleet at 35 (tier 7 by `level_min`) still drops tier 6.
 5. Docs and settings text.
 
 Steps 1 and 2 touch different files and can run in parallel. Step 3 needs step 1's category code. Step 4 needs step 2's `level_min` column.

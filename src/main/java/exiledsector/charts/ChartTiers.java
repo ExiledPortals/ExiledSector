@@ -98,6 +98,16 @@ public final class ChartTiers {
         return 0;
     }
 
+    public static int tierForLevel(int level) {
+        int matchingTier = LOWEST_TIER;
+        for (int tier = LOWEST_TIER; tier <= HIGHEST_TIER; tier++) {
+            if (forTier(tier).levelMin() <= level) {
+                matchingTier = tier;
+            }
+        }
+        return matchingTier;
+    }
+
     public static int clamp(int tier) {
         return Math.max(LOWEST_TIER, Math.min(HIGHEST_TIER, tier));
     }
