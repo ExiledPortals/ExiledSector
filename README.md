@@ -172,7 +172,9 @@ Every fleet can have trees, in every faction, including your own faction's fleet
 
 Ships with officers and the flagship always get a tree. Each other ship has a 30% chance. Civilian and mothballed ships are left out. The roll is fixed per ship, so reloading a save won't reroll it.
 
-NPC trees mirror your own fleet. Every combat ship you own has a tree power: its level plus the paid nodes it has allocated. Each NPC ship picks one of your combat ships at random and gets 80 to 120% of that ship's tree power in nodes. Free nodes you leave unallocated still count, since the level does, so an empty tree won't make NPCs any easier. Swap your fleet for fresh ships and the fleets you meet after that are sized to the new one. If your combat ships have tree powers of 20 and 40, each NPC ship gets 16 to 24 or 32 to 48 nodes.
+NPC trees mirror your own fleet. Every combat ship you own has a tree power: its level plus the paid nodes it has allocated. Each NPC ship picks one of your combat ships at random and gets 80 to 120% of that ship's tree power in nodes. Free nodes you leave unallocated still count, since the level does, so an empty tree won't make NPCs any easier. Swap your fleet for fresh ships and the fleets you meet after that are sized to the new one. If your combat ships have tree powers of 20 and 40, each NPC ship gets 16 to 24 or 32 to 48 nodes, before the caps below.
+
+The mirror stops at a cap. Pirates never pass 15 nodes, faction fleets (yours and your allies included) 25, and AI fleets 35, so a ship you keep levelling eventually leaves them behind. Bounty targets climb from their cap toward 25 as the bounties get harder, and the target's flagship gets 3 more on top, because a price on your head is motivating. Star Chart fleets don't look at your fleet at all: tier 1 starts at 26 nodes and tier 15 ends at 50. Outside chart systems, a won battle drops charts of the tier its strongest defeated ship would have in a chart, so pirate and faction fleets only ever drop tier 1.
 
 Every NPC captain reads their ship's specs and makes a plan. The plan is usually sensible and occasionally baffling.
 
@@ -184,7 +186,7 @@ After that it's down to taste. A captain picks notables and keystones that suit 
 
 Other mods can map their own factions to a volume in `data/config/exiledSector/npc_faction_volumes.csv`.
 
-NPC trees also hit harder as your fleet grows. Each NPC ship's node bonuses are added up and multiplied, from 1x while your combat ships average a tree power of 15 up to 3x when they average 60. Word gets around. Only the bonuses grow: drawbacks stay as written, reductions such as damage taken creep toward their limit without passing it, and the 80% cap on damage taken still holds. Logistics, fleet support and campaign stats such as sensors, cargo and burn level don't scale.
+NPC trees also hit harder as your fleet grows. Each NPC ship's node bonuses are added up and multiplied, from 1x while your combat ships average a tree power of 15 up to 3x when they average 60. Word gets around. Your average only counts up to that fleet's cap, so the multiplier stops growing there too. Only the bonuses grow: drawbacks stay as written, reductions such as damage taken creep toward their limit without passing it, and the 80% cap on damage taken still holds. Logistics, fleet support and campaign stats such as sensors, cargo and burn level don't scale.
 
 If you recover a ship that has a tree, it keeps its tree, and the tree becomes a normal player tree. Any nodes the NPC bought with OP beyond the ship's level are dropped, and that OP goes back to the ship's fitting. Reinforced Bulkheads' near-guaranteed recovery is switched off on NPC ships, so levelled enemies aren't free loot.
 
