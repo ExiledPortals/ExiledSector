@@ -12,52 +12,70 @@ Designed to be an overhaul of the simple hullmod system based on the infamous Pa
 
 ## Features
 
-Open the refit screen and click the skill tree button on any of your ships. There's a whole new sector in there:
+Exiled Sector adds three major modules: a skill tree for every ship, hull upgrades (equipment) for ships, and star charts to go and find more of both.
 
-<img src="graphics/description/teaser.gif" alt="The skill tree">
+### The skill tree
 
-- Every ship gets its own tree, with over 300 nodes.
-- Some nodes are travel nodes that let you choose between several options.
+Press the Skill Tree button in the refit screen and every ship in your fleet gets a tree of its own, over 300 nodes of armour, flux, guns and questionable engineering decisions. Ships level up in combat and every level buys a node, so your veteran Lasher eventually stops being a Lasher and starts being a problem.
 
-<img src="graphics/description/teaser_choice.gif" alt="Choice node">
+<img src="graphics/description/skill_tree.gif" alt="The skill tree">
 
-- Nodes start out costing OP: 1 for frigates, 2 for destroyers, 3 for cruisers and 5 for capitals. Ships also earn XP in combat and level up, and every level lets you take a node for free. Veteran ships get their ordnance points back. The crew gets nothing, as is tradition.
-- Some nodes are hidden until you unlock them.
+You might have to travel a bit for the juicy nodes. Slot a Wormhole Anchor into a Subroutine Socket and it tears a hole out past the edge of the tree, to where the sensible nodes stop. Ctrl+click the socket and in you go.
 
-<img src="graphics/description/Unidentified_node.png" alt="Hidden node">
+<img src="graphics/description/wormhole_anchor.gif" alt="Travelling through a Wormhole Anchor">
 
-- Plenty of nodes have effects you won't find anywhere in vanilla.
-- Beams can split between targets, so your Tachyon Lance can finally disappoint several enemies at once.
+Every major faction has a volume of its own, full of nodes that think the way it does. The Hegemony thickens your armour, Tri-Tachyon invoices you for it, and the Luddic Path would quite like your ship to explode, ideally next to someone else's.
 
-<img src="graphics/description/lions_gaze.png" alt="Lion's Gaze">
-<img src="graphics/description/lions_gaze2.png" alt="Lion's Gaze 2">
+<img src="graphics/description/faction_volumes.png" alt="Faction volumes">
 
-- Each faction has its own corner of the tree with thematic nodes. For example, your ship's main goal can be to blow up, and act like it don't know nobody.
+Doctrine Archives are faction playbooks your crew definitely didn't steal. Some rewrite every node around them into faction-related bonuses, others bolt the doctrine on top. Your engineers read the Tri-Tachyon one and now call the reactor a "growth opportunity".
 
-<img src="graphics/description/Ludds_Light.png" alt="Ludd's Light">
-<img src="graphics/description/at_any_cost.png" alt="At Any Cost">
+<img src="graphics/description/doctrine_archive.png" alt="A Doctrine Archive">
 
-- Some nodes are Subroutine Sockets: perfectly good empty rooms that your engineers swear were always part of the design. Allocate one like any other node, then shove a subroutine into it. Hull items turn up at salvage sites, in Tech Mining finds, and in the wreckage of fleets whose captains will not be needing them after you're done.
-- Ctrl+click a socket, or click the Subroutines button, to open the Subroutines panel, a hoard of every subroutine you own, lovingly organised by people who will never be allowed to use any of them. Filter by rarity, search by name, and pick what goes in. Right-click one you don't want to disassemble it into Nanite Feedstock: 3 for a common, 5 for a rare and 10 for a unique, because priceless relics and talented people are, it turns out, mostly reclaimable nanites.
-- The Subroutines panel's Modify button opens the Hull Item Modification workbench beside it, and the skill tree is locked while it's open so nobody gets distracted mid-surgery. Spend Nanite Feedstock there to grow programmable nanoswarms, each built for a specific kind of modification. Click an item in storage to load it onto the workbench, left-click a nanoswarm to use it, and right-click a nanoswarm to grow one. Rare inhibitors can be switched on to keep the next nanoswarm off an item's prefixes or suffixes. 
-- Feedstock and nanoswarms also turn up wherever hull items do. Winning a battle pays out feedstock too, scaled by the enemy deployment points you destroy or disable and by the battle difficulty bonus. Nothing says "salvage rights" like a smoking hull. If your hold is groaning, a LunaLib setting (off by default) has Hull Item Storage swallow all the feedstock and nanoswarms in your cargo whenever you open it, where they weigh nothing and the workbench can still reach them.
+Running Random Assortment of Things, Nightcross Armory or LOST_SECTOR? Explore them to find more ways to blow up your enemies.
 
-<img src="graphics/description/socket_storage.png" alt="Hull Item Storage">
-<img src="graphics/description/crafting.gif" alt="Hull item modification">
+<img src="graphics/description/mod_volumes.png" alt="Volumes from other mods">
 
-- Common hull items are Domain Subroutines in four grades, each rolling one prefix and one suffix.
-- Rare ones roll three or four mods and get a name of their own. If you'd rather not gamble, a LunaLib setting (off by default) rolls every new hull item's mods at the middle of their range.
+### Hull upgrades
 
-<img src="graphics/description/common_socketable.png" alt="A common hull item">
-<img src="graphics/description/rare_socketable.png" alt="A rare hull item">
+Nobody has designed a new hull since the Collapse, and the Domain's blueprints sit behind DRM older than your grandmother's grandmother. So your crew looks at other people's ships, decides they had some good ideas, and welds those ideas onto yours. 
 
-- Unique hull items can be officers, crews and Domain relics with unique effects. They only start turning up once you reach level 15.
+From level 15, Hull Upgrades turn up in wrecks and salvage. Install one, choose a section of the ship, and that section takes hull items of its own.
 
-<img src="graphics/description/unique_socketable.png" alt="A unique hull item">
-<img src="graphics/description/socketed_unique.png" alt="A unique in its socket">
+<img src="graphics/description/hull_upgrades.gif" alt="Installing a Hull Upgrade and unlocking a section">
 
-- From level 15 your ships can take Hull Upgrades as well, one kind per hull size, found in the same places as hull items. Press L in the refit screen to open Hull Items, install an upgrade from its Hull Upgrades tab, and spend the point it gives you to unlock a section of the ship: Bridge, Crew Quarters, Engine Room, Reactor, Armor Plating, Weapon Mount, Shield Generator, Phase Coil or Flight Deck. The last three need shields, a phase cloak or fighter bays to work. A ship holds up to four points, and locking a section again hands its point back, because the yard keeps receipts.
-- Each of those sections has hull items of its own, and the officers, crews and relics that used to squeeze into Subroutine Sockets now live in the section that suits them. Past level 15 every battle you win can leave hull items and the odd spare Hull Upgrade in the wreckage, more of them the stronger the fleet you beat and the harder the fight.
+Hull items come common, rare and unique, rolling prefixes and suffixes the way the Karui ancestors intended.
+
+<img src="graphics/description/hull_item_1.png" alt="A hull item">
+<img src="graphics/description/hull_item_2.png" alt="A hull item">
+<img src="graphics/description/hull_item_3.png" alt="A hull item">
+<img src="graphics/description/hull_item_4.png" alt="A hull item">
+
+Don't like the rolls? Grow nanoswarms from Nanite Feedstock at the crafting bench and set them loose on your items to add, reroll, reshape or freeze their modifiers. Or corrupt one and find out. Results may vary. Results will vary.
+
+<img src="graphics/description/crafting_bench.gif" alt="The crafting bench">
+
+Note: no Path of Building, but the codex should give you what you need.
+
+The loot turns up everywhere you'd expect it to: research stations, orbital labs, derelicts and the smoking remains of anyone who disagreed with you. The crew gets nothing, as is tradition.
+
+<img src="graphics/description/loot.gif" alt="Looting a research station">
+
+### Star charts
+
+Star Charts lead to systems no map shows, cut off from hyperspace and guarded by fleets that weren't expecting company. They come in 15 tiers and drop from hard fights, so the best way to get a better chart is to survive a worse one.
+
+To open one you need a Wormhole Gateway, a colony structure for people who have run out of normal places to kill their crew.
+
+<img src="graphics/description/wormhole_gateway.png" alt="The Wormhole Gateway">
+
+Charts roll modifiers too, and the same nanoswarms work on them. Bigger fleets, nastier bosses, better rewards. You asked for this (I think? Maybe it was me that asked for this).
+
+<img src="graphics/description/chart_crafting.gif" alt="Crafting a Star Chart">
+
+Open the wormhole, fly in, deal with whoever is home and take everything that isn't bolted down. When the run ends the system goes with it, along with anything you forgot to pick up. No it will not bloat your save (I hope).
+
+<img src="graphics/description/chart_opening.gif" alt="Opening a Star Chart">
 
 ## Requirements
 
@@ -78,27 +96,19 @@ Optional:
 
 It should be safe to add to an existing save.
 
-Nodes that copy a vanilla hull mod also place the real hull mod on the ship as a phantom: it costs no OP and does nothing itself, but other mods that check for that hull mod see it. That should make most mods work with the tree's nodes without needing dedicated support. If another mod's hull mod strips one of those phantoms, the tree remembers the clash and refuses that node on such ships, refunding it on yours.
+Nodes that copy a vanilla hull mod also place the real hull mod on the ship as a phantom: it costs no OP and does nothing itself, but other mods that check for that hull mod see it. That should make most mods work with the tree's nodes without needing dedicated support.
 
 These mods have dedicated compatibility. The version listed is the one I last tested against. Newer versions usually work; if one doesn't, `starsector.log` says so at startup and lists anything Exiled Sector can no longer find.
 
 | Mod | Tested version | What Exiled Sector does with it |
 |---|---|---|
 | [Second-in-Command](https://fractalsoftworks.com/forum/index.php?topic=30407.0) | 2.0.0 | Its skills see the hull mods your nodes stand in for, and Reconfiguration waives the Converted Hangar penalties. |
-| Lost Sector | 0.6.2d, 1.0.b | The Kesteven and Frozen Heart areas of the tree appear, and Augmented Systems hulls get the same bonuses from those nodes as from the hull mods. |
+| Lost Sector | 0.6.2d, 1.0.b | REDACTED |
 | [MagicLib](https://fractalsoftworks.com/forum/index.php?topic=25868.0) | 1.5.6 | Required. A hull mod that tries to strip one of your nodes' hull mods through MagicLib is removed instead. |
 | Exotica Technologies | 1.8.7 | The Skill Tree button moves one slot down on the refit screen so it doesn't cover the Exotica button. |
-| Random Assortment of Things | 3.3.1 | The Abyss area of the tree appears, along with the ExoTech Exoship, which warps between notables carrying its own branches. Hull items can also drop from the mod's abyssal structures, abyssal drones and relic sites. |
-| Nightcross Armory | 2.1.6 | The Nightcross and Stargazer areas of the tree appear. |
+| Random Assortment of Things | 3.3.1 | REDACTED |
+| Nightcross Armory | 2.1.6 | REDACTED |
 | [GraphicsLib](https://fractalsoftworks.com/forum/index.php?topic=10982.0) | 1.12.1 | Optional. When its lights and distortion are on, Exiled Sector's combat effects light up: Ludd's Light and Phase Anchor send out shockwaves, Frozen Heart stacks pulse, Ion Bolter arcs, Corrosion Beam motes and redirected Hullbreacher and Refracting shots glow, Repair Coordinator drones throw light as they weld, and Candle's Grace Replica bends space around the ship. The Exiled Sector settings can switch all of this off except the mote glow, which GraphicsLib draws itself. |
-| Industrial Evolution | 4.1.b | Hull items can drop from its orbital laboratories and arsenal stations. Arsenal stations can also turn up in Star Chart systems from tier 5, unless its derelict stations are switched off in its settings. |
-| Knights of Ludd | 1.4.0 | Hull items can drop from its research stations and caches. |
-| Secrets of the Frontier | 0.15.1 | Hull items can drop from its A Promise station and Hypnos laboratory. |
-| Arthr's Ships n Shit | 0.100-dev | Hull items can drop from its Exodyne research stations. |
-| What We Left Behind | 4.5.3 | Hull items can drop from its research stations, Omega derelicts and corrupted caches. |
-| Ship Mastery System | 2.0.8 | Hull items can drop from its concealed stations, nucleus stations and concealed probes. |
-| Unthemed Weapons Collection | 0.7.4 | Hull items can drop from its weapon caches. |
-| DIY Planets | 1.0.30 | Hull items can drop from its Genesis terraforming stations. |
 
 Some weapons from other mods misbehave (often hilariously) when their beams are split, their shots are chained or their shells pierce. These are listed in:
 
