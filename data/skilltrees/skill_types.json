@@ -4211,7 +4211,7 @@
 		{
 			"id": "doctrine_tt_alpha_fire_control",
 			"name": "Alpha-Grade Fire Control",
-			"icon": "graphics/icons/alpha_grade_fire_control.png",
+			"icon": "graphics/icons/doctrine_tt_alpha_fire_control.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4233,7 +4233,7 @@
 		{
 			"id": "doctrine_tt_flux_arbitrage",
 			"name": "Flux Arbitrage",
-			"icon": "graphics/icons/flux_arbitrage.png",
+			"icon": "graphics/icons/doctrine_tt_flux_arbitrage.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4253,7 +4253,7 @@
 		{
 			"id": "doctrine_tt_quarterly_targets",
 			"name": "Quarterly Targets",
-			"icon": "graphics/icons/quarterly_targets.png",
+			"icon": "graphics/icons/doctrine_tt_quarterly_targets.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4273,7 +4273,7 @@
 		{
 			"id": "doctrine_tt_tachyon_lance_licensing",
 			"name": "Tachyon Lance Licensing",
-			"icon": "graphics/icons/beam_damage.png",
+			"icon": "graphics/icons/doctrine_tt_tachyon_lance_licensing.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4296,7 +4296,7 @@
 		{
 			"id": "doctrine_tt_black_ledger_coils",
 			"name": "Black Ledger Coil Tuning",
-			"icon": "graphics/icons/phase_cloak_flux_threshold.png",
+			"icon": "graphics/icons/doctrine_tt_black_ledger_coils.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4317,7 +4317,7 @@
 		{
 			"id": "doctrine_tt_escrowed_emitters",
 			"name": "Escrowed Emitters",
-			"icon": "graphics/icons/shield_damage_taken_multi.png",
+			"icon": "graphics/icons/doctrine_tt_escrowed_emitters.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
