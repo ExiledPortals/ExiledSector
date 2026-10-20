@@ -33,5 +33,12 @@
 				"type": "threatFought"
 			}
 		]
+	},
+	"gate_remnant_fought": {
+		"unlockConditions": [
+			{
+				"type": "remnantFought"
+			}
+		]
 	}
 }

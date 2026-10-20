@@ -2711,15 +2711,15 @@ type|defensive_targeting_array|CRUISER|0	0	Increases the damage fighters launche
 type-detail|defensive_targeting_array|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Defensive Targeting Array</hullmod>
 type|defensive_targeting_array|CAPITAL_SHIP|0	0	Increases the damage fighters launched from this ship deal to other fighters and missiles. Also locks launched fighters to stay near the ship instead of patrolling freely.
 type-detail|defensive_targeting_array|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Defensive Targeting Array</hullmod>
-type|disintegration|null|0	0	Hulls killed by [REDACTED] energy weapons come apart around every impact in a way no human weapon manages, and taking those wrecks apart shows the crew how to tune this ship's energy weapons the same way.
+type|disintegration|null|0	0	Hulls killed by Remnant energy weapons come apart around every impact in a way no human weapon manages, and taking those wrecks apart shows the crew how to tune this ship's energy weapons the same way.
 type|disintegration|null|1	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
-type|disintegration|FRIGATE|0	0	Hulls killed by [REDACTED] energy weapons come apart around every impact in a way no human weapon manages, and taking those wrecks apart shows the crew how to tune this ship's energy weapons the same way.
+type|disintegration|FRIGATE|0	0	Hulls killed by Remnant energy weapons come apart around every impact in a way no human weapon manages, and taking those wrecks apart shows the crew how to tune this ship's energy weapons the same way.
 type|disintegration|FRIGATE|1	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
-type|disintegration|DESTROYER|0	0	Hulls killed by [REDACTED] energy weapons come apart around every impact in a way no human weapon manages, and taking those wrecks apart shows the crew how to tune this ship's energy weapons the same way.
+type|disintegration|DESTROYER|0	0	Hulls killed by Remnant energy weapons come apart around every impact in a way no human weapon manages, and taking those wrecks apart shows the crew how to tune this ship's energy weapons the same way.
 type|disintegration|DESTROYER|1	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
-type|disintegration|CRUISER|0	0	Hulls killed by [REDACTED] energy weapons come apart around every impact in a way no human weapon manages, and taking those wrecks apart shows the crew how to tune this ship's energy weapons the same way.
+type|disintegration|CRUISER|0	0	Hulls killed by Remnant energy weapons come apart around every impact in a way no human weapon manages, and taking those wrecks apart shows the crew how to tune this ship's energy weapons the same way.
 type|disintegration|CRUISER|1	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
-type|disintegration|CAPITAL_SHIP|0	0	Hulls killed by [REDACTED] energy weapons come apart around every impact in a way no human weapon manages, and taking those wrecks apart shows the crew how to tune this ship's energy weapons the same way.
+type|disintegration|CAPITAL_SHIP|0	0	Hulls killed by Remnant energy weapons come apart around every impact in a way no human weapon manages, and taking those wrecks apart shows the crew how to tune this ship's energy weapons the same way.
 type|disintegration|CAPITAL_SHIP|1	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact. This extra damage never reaches the hull.
 type|doctrine_luddic_blessed_plating|null|0	0	Luddic shipwrights bless every plate they hang, and they hang far more of them than any yard would allow. Learning their slow, devout layering lets the crew build this ship's armour and hull up thicker.
 type|doctrine_luddic_blessed_plating|null|1	0	<good>20%</good> increased armor.
@@ -2816,118 +2816,118 @@ type|doctrine_luddic_righteous_fury|CRUISER|2	0	<good>15%</good> increased missi
 type|doctrine_luddic_righteous_fury|CAPITAL_SHIP|0	0	Knights of Ludd gunners load each round with a prayer and fire it as a verdict. Taking up their crude, patient gunnery lets this ship's ballistic and missile weapons strike harder.
 type|doctrine_luddic_righteous_fury|CAPITAL_SHIP|1	0	<good>15%</good> increased ballistic weapon damage.
 type|doctrine_luddic_righteous_fury|CAPITAL_SHIP|2	0	<good>15%</good> increased missile weapon damage.
-type|doctrine_remnant_automated_command|null|0	0	[REDACTED] warships never stand down, their systems cycling at a tempo built for machines that never tire. Copying that cadence into this ship's reactor and fire control would let it fight at the same pace, but the crew would struggle to bring the overdriven systems back to readiness afterwards.
+type|doctrine_remnant_automated_command|null|0	0	Remnant warships never stand down, their systems cycling at a tempo built for machines that never tire. Copying that cadence into this ship's reactor and fire control would let it fight at the same pace, but the crew would struggle to bring the overdriven systems back to readiness afterwards.
 type|doctrine_remnant_automated_command|null|1	0	<good>10%</good> increased timeflow.
 type|doctrine_remnant_automated_command|null|2	0	<good>15%</good> increased flux dissipation.
 type|doctrine_remnant_automated_command|null|3	0	<bad>50%</bad> reduced combat readiness recovery rate.
-type|doctrine_remnant_automated_command|FRIGATE|0	0	[REDACTED] warships never stand down, their systems cycling at a tempo built for machines that never tire. Copying that cadence into this ship's reactor and fire control would let it fight at the same pace, but the crew would struggle to bring the overdriven systems back to readiness afterwards.
+type|doctrine_remnant_automated_command|FRIGATE|0	0	Remnant warships never stand down, their systems cycling at a tempo built for machines that never tire. Copying that cadence into this ship's reactor and fire control would let it fight at the same pace, but the crew would struggle to bring the overdriven systems back to readiness afterwards.
 type|doctrine_remnant_automated_command|FRIGATE|1	0	<good>10%</good> increased timeflow.
 type|doctrine_remnant_automated_command|FRIGATE|2	0	<good>15%</good> increased flux dissipation.
 type|doctrine_remnant_automated_command|FRIGATE|3	0	<bad>50%</bad> reduced combat readiness recovery rate.
-type|doctrine_remnant_automated_command|DESTROYER|0	0	[REDACTED] warships never stand down, their systems cycling at a tempo built for machines that never tire. Copying that cadence into this ship's reactor and fire control would let it fight at the same pace, but the crew would struggle to bring the overdriven systems back to readiness afterwards.
+type|doctrine_remnant_automated_command|DESTROYER|0	0	Remnant warships never stand down, their systems cycling at a tempo built for machines that never tire. Copying that cadence into this ship's reactor and fire control would let it fight at the same pace, but the crew would struggle to bring the overdriven systems back to readiness afterwards.
 type|doctrine_remnant_automated_command|DESTROYER|1	0	<good>10%</good> increased timeflow.
 type|doctrine_remnant_automated_command|DESTROYER|2	0	<good>15%</good> increased flux dissipation.
 type|doctrine_remnant_automated_command|DESTROYER|3	0	<bad>50%</bad> reduced combat readiness recovery rate.
-type|doctrine_remnant_automated_command|CRUISER|0	0	[REDACTED] warships never stand down, their systems cycling at a tempo built for machines that never tire. Copying that cadence into this ship's reactor and fire control would let it fight at the same pace, but the crew would struggle to bring the overdriven systems back to readiness afterwards.
+type|doctrine_remnant_automated_command|CRUISER|0	0	Remnant warships never stand down, their systems cycling at a tempo built for machines that never tire. Copying that cadence into this ship's reactor and fire control would let it fight at the same pace, but the crew would struggle to bring the overdriven systems back to readiness afterwards.
 type|doctrine_remnant_automated_command|CRUISER|1	0	<good>10%</good> increased timeflow.
 type|doctrine_remnant_automated_command|CRUISER|2	0	<good>15%</good> increased flux dissipation.
 type|doctrine_remnant_automated_command|CRUISER|3	0	<bad>50%</bad> reduced combat readiness recovery rate.
-type|doctrine_remnant_automated_command|CAPITAL_SHIP|0	0	[REDACTED] warships never stand down, their systems cycling at a tempo built for machines that never tire. Copying that cadence into this ship's reactor and fire control would let it fight at the same pace, but the crew would struggle to bring the overdriven systems back to readiness afterwards.
+type|doctrine_remnant_automated_command|CAPITAL_SHIP|0	0	Remnant warships never stand down, their systems cycling at a tempo built for machines that never tire. Copying that cadence into this ship's reactor and fire control would let it fight at the same pace, but the crew would struggle to bring the overdriven systems back to readiness afterwards.
 type|doctrine_remnant_automated_command|CAPITAL_SHIP|1	0	<good>10%</good> increased timeflow.
 type|doctrine_remnant_automated_command|CAPITAL_SHIP|2	0	<good>15%</good> increased flux dissipation.
 type|doctrine_remnant_automated_command|CAPITAL_SHIP|3	0	<bad>50%</bad> reduced combat readiness recovery rate.
-type|doctrine_remnant_cold_logic|null|0	0	Machines do not tire. Rewriting this ship's duty cycles the way [REDACTED] cores run their own would keep its readiness higher and slow its decay through a long fight.
+type|doctrine_remnant_cold_logic|null|0	0	Machines do not tire. Rewriting this ship's duty cycles the way Remnant cores run their own would keep its readiness higher and slow its decay through a long fight.
 type|doctrine_remnant_cold_logic|null|1	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
 type|doctrine_remnant_cold_logic|null|2	0	<good>10%</good> increased maximum combat readiness.
-type|doctrine_remnant_cold_logic|FRIGATE|0	0	Machines do not tire. Rewriting this ship's duty cycles the way [REDACTED] cores run their own would keep its readiness higher and slow its decay through a long fight.
+type|doctrine_remnant_cold_logic|FRIGATE|0	0	Machines do not tire. Rewriting this ship's duty cycles the way Remnant cores run their own would keep its readiness higher and slow its decay through a long fight.
 type|doctrine_remnant_cold_logic|FRIGATE|1	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
 type|doctrine_remnant_cold_logic|FRIGATE|2	0	<good>10%</good> increased maximum combat readiness.
-type|doctrine_remnant_cold_logic|DESTROYER|0	0	Machines do not tire. Rewriting this ship's duty cycles the way [REDACTED] cores run their own would keep its readiness higher and slow its decay through a long fight.
+type|doctrine_remnant_cold_logic|DESTROYER|0	0	Machines do not tire. Rewriting this ship's duty cycles the way Remnant cores run their own would keep its readiness higher and slow its decay through a long fight.
 type|doctrine_remnant_cold_logic|DESTROYER|1	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
 type|doctrine_remnant_cold_logic|DESTROYER|2	0	<good>10%</good> increased maximum combat readiness.
-type|doctrine_remnant_cold_logic|CRUISER|0	0	Machines do not tire. Rewriting this ship's duty cycles the way [REDACTED] cores run their own would keep its readiness higher and slow its decay through a long fight.
+type|doctrine_remnant_cold_logic|CRUISER|0	0	Machines do not tire. Rewriting this ship's duty cycles the way Remnant cores run their own would keep its readiness higher and slow its decay through a long fight.
 type|doctrine_remnant_cold_logic|CRUISER|1	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
 type|doctrine_remnant_cold_logic|CRUISER|2	0	<good>10%</good> increased maximum combat readiness.
-type|doctrine_remnant_cold_logic|CAPITAL_SHIP|0	0	Machines do not tire. Rewriting this ship's duty cycles the way [REDACTED] cores run their own would keep its readiness higher and slow its decay through a long fight.
+type|doctrine_remnant_cold_logic|CAPITAL_SHIP|0	0	Machines do not tire. Rewriting this ship's duty cycles the way Remnant cores run their own would keep its readiness higher and slow its decay through a long fight.
 type|doctrine_remnant_cold_logic|CAPITAL_SHIP|1	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
 type|doctrine_remnant_cold_logic|CAPITAL_SHIP|2	0	<good>10%</good> increased maximum combat readiness.
-type|doctrine_remnant_fortress_lattice|null|0	0	[REDACTED] warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.
+type|doctrine_remnant_fortress_lattice|null|0	0	Remnant warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.
 type|doctrine_remnant_fortress_lattice|null|1	0	<good>50%</good> increased shield turn rate.
 type|doctrine_remnant_fortress_lattice|null|2	0	<good>50%</good> increased shield raise rate.
 type|doctrine_remnant_fortress_lattice|null|3	1	<bad>25%</bad> reduced EMP damage taken.
-type|doctrine_remnant_fortress_lattice|FRIGATE|0	0	[REDACTED] warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.
+type|doctrine_remnant_fortress_lattice|FRIGATE|0	0	Remnant warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.
 type|doctrine_remnant_fortress_lattice|FRIGATE|1	0	<good>50%</good> increased shield turn rate.
 type|doctrine_remnant_fortress_lattice|FRIGATE|2	0	<good>50%</good> increased shield raise rate.
 type|doctrine_remnant_fortress_lattice|FRIGATE|3	1	<bad>25%</bad> reduced EMP damage taken.
-type|doctrine_remnant_fortress_lattice|DESTROYER|0	0	[REDACTED] warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.
+type|doctrine_remnant_fortress_lattice|DESTROYER|0	0	Remnant warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.
 type|doctrine_remnant_fortress_lattice|DESTROYER|1	0	<good>50%</good> increased shield turn rate.
 type|doctrine_remnant_fortress_lattice|DESTROYER|2	0	<good>50%</good> increased shield raise rate.
 type|doctrine_remnant_fortress_lattice|DESTROYER|3	1	<bad>25%</bad> reduced EMP damage taken.
-type|doctrine_remnant_fortress_lattice|CRUISER|0	0	[REDACTED] warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.
+type|doctrine_remnant_fortress_lattice|CRUISER|0	0	Remnant warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.
 type|doctrine_remnant_fortress_lattice|CRUISER|1	0	<good>50%</good> increased shield turn rate.
 type|doctrine_remnant_fortress_lattice|CRUISER|2	0	<good>50%</good> increased shield raise rate.
 type|doctrine_remnant_fortress_lattice|CRUISER|3	1	<bad>25%</bad> reduced EMP damage taken.
-type|doctrine_remnant_fortress_lattice|CAPITAL_SHIP|0	0	[REDACTED] warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.
+type|doctrine_remnant_fortress_lattice|CAPITAL_SHIP|0	0	Remnant warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.
 type|doctrine_remnant_fortress_lattice|CAPITAL_SHIP|1	0	<good>50%</good> increased shield turn rate.
 type|doctrine_remnant_fortress_lattice|CAPITAL_SHIP|2	0	<good>50%</good> increased shield raise rate.
 type|doctrine_remnant_fortress_lattice|CAPITAL_SHIP|3	1	<bad>25%</bad> reduced EMP damage taken.
-type|doctrine_remnant_lumen_harmonics|null|0	0	Energy mounts pulled from [REDACTED] wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.
+type|doctrine_remnant_lumen_harmonics|null|0	0	Energy mounts pulled from Remnant wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.
 type|doctrine_remnant_lumen_harmonics|null|1	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|doctrine_remnant_lumen_harmonics|null|2	1	<bad>10%</bad> reduced energy weapon flux cost.
-type|doctrine_remnant_lumen_harmonics|FRIGATE|0	0	Energy mounts pulled from [REDACTED] wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.
+type|doctrine_remnant_lumen_harmonics|FRIGATE|0	0	Energy mounts pulled from Remnant wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.
 type|doctrine_remnant_lumen_harmonics|FRIGATE|1	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|doctrine_remnant_lumen_harmonics|FRIGATE|2	1	<bad>10%</bad> reduced energy weapon flux cost.
-type|doctrine_remnant_lumen_harmonics|DESTROYER|0	0	Energy mounts pulled from [REDACTED] wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.
+type|doctrine_remnant_lumen_harmonics|DESTROYER|0	0	Energy mounts pulled from Remnant wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.
 type|doctrine_remnant_lumen_harmonics|DESTROYER|1	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|doctrine_remnant_lumen_harmonics|DESTROYER|2	1	<bad>10%</bad> reduced energy weapon flux cost.
-type|doctrine_remnant_lumen_harmonics|CRUISER|0	0	Energy mounts pulled from [REDACTED] wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.
+type|doctrine_remnant_lumen_harmonics|CRUISER|0	0	Energy mounts pulled from Remnant wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.
 type|doctrine_remnant_lumen_harmonics|CRUISER|1	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|doctrine_remnant_lumen_harmonics|CRUISER|2	1	<bad>10%</bad> reduced energy weapon flux cost.
-type|doctrine_remnant_lumen_harmonics|CAPITAL_SHIP|0	0	Energy mounts pulled from [REDACTED] wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.
+type|doctrine_remnant_lumen_harmonics|CAPITAL_SHIP|0	0	Energy mounts pulled from Remnant wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.
 type|doctrine_remnant_lumen_harmonics|CAPITAL_SHIP|1	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|doctrine_remnant_lumen_harmonics|CAPITAL_SHIP|2	1	<bad>10%</bad> reduced energy weapon flux cost.
-type|doctrine_remnant_ordo_signal_mesh|null|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. One of the crew's aspiring scientists swears they can decode that chatter, tune this ship's sensors to it and turn it against enemy targeting.
+type|doctrine_remnant_ordo_signal_mesh|null|0	0	A Remnant ordo moves as one mind, its ships murmuring to each other across a constant web of signals. One of the crew's aspiring scientists swears they can decode that chatter, tune this ship's sensors to it and turn it against enemy targeting.
 type|doctrine_remnant_ordo_signal_mesh|null|1	0	<good>+1</good> to ECM rating.
-type|doctrine_remnant_ordo_signal_mesh|FRIGATE|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. One of the crew's aspiring scientists swears they can decode that chatter, tune this ship's sensors to it and turn it against enemy targeting.
+type|doctrine_remnant_ordo_signal_mesh|FRIGATE|0	0	A Remnant ordo moves as one mind, its ships murmuring to each other across a constant web of signals. One of the crew's aspiring scientists swears they can decode that chatter, tune this ship's sensors to it and turn it against enemy targeting.
 type|doctrine_remnant_ordo_signal_mesh|FRIGATE|1	0	<good>+1</good> to ECM rating.
 type|doctrine_remnant_ordo_signal_mesh|FRIGATE|2	0	<good>+10</good> to this ship's sensor strength.
-type|doctrine_remnant_ordo_signal_mesh|DESTROYER|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. One of the crew's aspiring scientists swears they can decode that chatter, tune this ship's sensors to it and turn it against enemy targeting.
+type|doctrine_remnant_ordo_signal_mesh|DESTROYER|0	0	A Remnant ordo moves as one mind, its ships murmuring to each other across a constant web of signals. One of the crew's aspiring scientists swears they can decode that chatter, tune this ship's sensors to it and turn it against enemy targeting.
 type|doctrine_remnant_ordo_signal_mesh|DESTROYER|1	0	<good>+1</good> to ECM rating.
 type|doctrine_remnant_ordo_signal_mesh|DESTROYER|2	0	<good>+15</good> to this ship's sensor strength.
-type|doctrine_remnant_ordo_signal_mesh|CRUISER|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. One of the crew's aspiring scientists swears they can decode that chatter, tune this ship's sensors to it and turn it against enemy targeting.
+type|doctrine_remnant_ordo_signal_mesh|CRUISER|0	0	A Remnant ordo moves as one mind, its ships murmuring to each other across a constant web of signals. One of the crew's aspiring scientists swears they can decode that chatter, tune this ship's sensors to it and turn it against enemy targeting.
 type|doctrine_remnant_ordo_signal_mesh|CRUISER|1	0	<good>+1</good> to ECM rating.
 type|doctrine_remnant_ordo_signal_mesh|CRUISER|2	0	<good>+20</good> to this ship's sensor strength.
-type|doctrine_remnant_ordo_signal_mesh|CAPITAL_SHIP|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. One of the crew's aspiring scientists swears they can decode that chatter, tune this ship's sensors to it and turn it against enemy targeting.
+type|doctrine_remnant_ordo_signal_mesh|CAPITAL_SHIP|0	0	A Remnant ordo moves as one mind, its ships murmuring to each other across a constant web of signals. One of the crew's aspiring scientists swears they can decode that chatter, tune this ship's sensors to it and turn it against enemy targeting.
 type|doctrine_remnant_ordo_signal_mesh|CAPITAL_SHIP|1	0	<good>+1</good> to ECM rating.
 type|doctrine_remnant_ordo_signal_mesh|CAPITAL_SHIP|2	0	<good>+30</good> to this ship's sensor strength.
-type|doctrine_remnant_swarm_logic|null|0	0	[REDACTED] carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.
+type|doctrine_remnant_swarm_logic|null|0	0	Remnant carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.
 type|doctrine_remnant_swarm_logic|null|1	0	<good>25%</good> increased rate at which fighter replacement capability recovers.
 type|doctrine_remnant_swarm_logic|null|2	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-type|doctrine_remnant_swarm_logic|FRIGATE|0	0	[REDACTED] carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.
+type|doctrine_remnant_swarm_logic|FRIGATE|0	0	Remnant carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.
 type|doctrine_remnant_swarm_logic|FRIGATE|1	0	<good>25%</good> increased rate at which fighter replacement capability recovers.
 type|doctrine_remnant_swarm_logic|FRIGATE|2	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-type|doctrine_remnant_swarm_logic|DESTROYER|0	0	[REDACTED] carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.
+type|doctrine_remnant_swarm_logic|DESTROYER|0	0	Remnant carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.
 type|doctrine_remnant_swarm_logic|DESTROYER|1	0	<good>25%</good> increased rate at which fighter replacement capability recovers.
 type|doctrine_remnant_swarm_logic|DESTROYER|2	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-type|doctrine_remnant_swarm_logic|CRUISER|0	0	[REDACTED] carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.
+type|doctrine_remnant_swarm_logic|CRUISER|0	0	Remnant carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.
 type|doctrine_remnant_swarm_logic|CRUISER|1	0	<good>25%</good> increased rate at which fighter replacement capability recovers.
 type|doctrine_remnant_swarm_logic|CRUISER|2	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-type|doctrine_remnant_swarm_logic|CAPITAL_SHIP|0	0	[REDACTED] carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.
+type|doctrine_remnant_swarm_logic|CAPITAL_SHIP|0	0	Remnant carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.
 type|doctrine_remnant_swarm_logic|CAPITAL_SHIP|1	0	<good>25%</good> increased rate at which fighter replacement capability recovers.
 type|doctrine_remnant_swarm_logic|CAPITAL_SHIP|2	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-type|doctrine_remnant_unblinking_watch|null|0	0	[REDACTED] point defence never tires and never flinches. Its tracking routines, recovered from a gutted drone, swing this ship's turrets faster and make its point defence far deadlier to missiles.
+type|doctrine_remnant_unblinking_watch|null|0	0	Remnant point defence never tires and never flinches. Its tracking routines, recovered from a gutted drone, swing this ship's turrets faster and make its point defence far deadlier to missiles.
 type|doctrine_remnant_unblinking_watch|null|1	0	<good>50%</good> increased damage dealt to missiles by point defence weapons.
 type|doctrine_remnant_unblinking_watch|null|2	0	<good>30%</good> increased weapon turn rate.
-type|doctrine_remnant_unblinking_watch|FRIGATE|0	0	[REDACTED] point defence never tires and never flinches. Its tracking routines, recovered from a gutted drone, swing this ship's turrets faster and make its point defence far deadlier to missiles.
+type|doctrine_remnant_unblinking_watch|FRIGATE|0	0	Remnant point defence never tires and never flinches. Its tracking routines, recovered from a gutted drone, swing this ship's turrets faster and make its point defence far deadlier to missiles.
 type|doctrine_remnant_unblinking_watch|FRIGATE|1	0	<good>50%</good> increased damage dealt to missiles by point defence weapons.
 type|doctrine_remnant_unblinking_watch|FRIGATE|2	0	<good>30%</good> increased weapon turn rate.
-type|doctrine_remnant_unblinking_watch|DESTROYER|0	0	[REDACTED] point defence never tires and never flinches. Its tracking routines, recovered from a gutted drone, swing this ship's turrets faster and make its point defence far deadlier to missiles.
+type|doctrine_remnant_unblinking_watch|DESTROYER|0	0	Remnant point defence never tires and never flinches. Its tracking routines, recovered from a gutted drone, swing this ship's turrets faster and make its point defence far deadlier to missiles.
 type|doctrine_remnant_unblinking_watch|DESTROYER|1	0	<good>50%</good> increased damage dealt to missiles by point defence weapons.
 type|doctrine_remnant_unblinking_watch|DESTROYER|2	0	<good>30%</good> increased weapon turn rate.
-type|doctrine_remnant_unblinking_watch|CRUISER|0	0	[REDACTED] point defence never tires and never flinches. Its tracking routines, recovered from a gutted drone, swing this ship's turrets faster and make its point defence far deadlier to missiles.
+type|doctrine_remnant_unblinking_watch|CRUISER|0	0	Remnant point defence never tires and never flinches. Its tracking routines, recovered from a gutted drone, swing this ship's turrets faster and make its point defence far deadlier to missiles.
 type|doctrine_remnant_unblinking_watch|CRUISER|1	0	<good>50%</good> increased damage dealt to missiles by point defence weapons.
 type|doctrine_remnant_unblinking_watch|CRUISER|2	0	<good>30%</good> increased weapon turn rate.
-type|doctrine_remnant_unblinking_watch|CAPITAL_SHIP|0	0	[REDACTED] point defence never tires and never flinches. Its tracking routines, recovered from a gutted drone, swing this ship's turrets faster and make its point defence far deadlier to missiles.
+type|doctrine_remnant_unblinking_watch|CAPITAL_SHIP|0	0	Remnant point defence never tires and never flinches. Its tracking routines, recovered from a gutted drone, swing this ship's turrets faster and make its point defence far deadlier to missiles.
 type|doctrine_remnant_unblinking_watch|CAPITAL_SHIP|1	0	<good>50%</good> increased damage dealt to missiles by point defence weapons.
 type|doctrine_remnant_unblinking_watch|CAPITAL_SHIP|2	0	<good>30%</good> increased weapon turn rate.
 type|doctrine_tt_alpha_fire_control|null|0	0	Fire-control routines lifted from a Tri-Tachyon line ship, written by an Alpha core that never meant to share them. Patched into this ship's targeting, they steady its autofiring weapons and stretch the reach of its energy weapons.
@@ -3783,27 +3783,27 @@ type|live_munitions|CRUISER|2	0	<good>3%</good> increased missile top speed for 
 type|live_munitions|CAPITAL_SHIP|0	0	Each Heartless stack has a <bad>3%</bad> chance to sacrifice a crew member for each missile fired.
 type|live_munitions|CAPITAL_SHIP|1	0	<good>3%</good> increased missile damage for each Heartless stack while the fleet has crew left to give.
 type|live_munitions|CAPITAL_SHIP|2	0	<good>3%</good> increased missile top speed for each Heartless stack while the fleet has crew left to give.
-type|machine_precision|null|0	0	A recovered Gamma core, kept powered just long enough to be questioned, gives up the targeting routines [REDACTED] drones use to lead a target. Patched into this ship's fire control, they make its autofiring weapons far more accurate and stretch every weapon's reach a little.
+type|machine_precision|null|0	0	A recovered Gamma core, kept powered just long enough to be questioned, gives up the targeting routines Remnant drones use to lead a target. Patched into this ship's fire control, they make its autofiring weapons far more accurate and stretch every weapon's reach a little.
 type|machine_precision|null|1	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 type|machine_precision|null|2	0	<good>5%</good> increased energy weapon range.
 type|machine_precision|null|3	0	<good>5%</good> increased ballistic weapon range.
 type|machine_precision|null|4	0	<good>5%</good> increased beam weapon range.
-type|machine_precision|FRIGATE|0	0	A recovered Gamma core, kept powered just long enough to be questioned, gives up the targeting routines [REDACTED] drones use to lead a target. Patched into this ship's fire control, they make its autofiring weapons far more accurate and stretch every weapon's reach a little.
+type|machine_precision|FRIGATE|0	0	A recovered Gamma core, kept powered just long enough to be questioned, gives up the targeting routines Remnant drones use to lead a target. Patched into this ship's fire control, they make its autofiring weapons far more accurate and stretch every weapon's reach a little.
 type|machine_precision|FRIGATE|1	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 type|machine_precision|FRIGATE|2	0	<good>5%</good> increased energy weapon range.
 type|machine_precision|FRIGATE|3	0	<good>5%</good> increased ballistic weapon range.
 type|machine_precision|FRIGATE|4	0	<good>5%</good> increased beam weapon range.
-type|machine_precision|DESTROYER|0	0	A recovered Gamma core, kept powered just long enough to be questioned, gives up the targeting routines [REDACTED] drones use to lead a target. Patched into this ship's fire control, they make its autofiring weapons far more accurate and stretch every weapon's reach a little.
+type|machine_precision|DESTROYER|0	0	A recovered Gamma core, kept powered just long enough to be questioned, gives up the targeting routines Remnant drones use to lead a target. Patched into this ship's fire control, they make its autofiring weapons far more accurate and stretch every weapon's reach a little.
 type|machine_precision|DESTROYER|1	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 type|machine_precision|DESTROYER|2	0	<good>5%</good> increased energy weapon range.
 type|machine_precision|DESTROYER|3	0	<good>5%</good> increased ballistic weapon range.
 type|machine_precision|DESTROYER|4	0	<good>5%</good> increased beam weapon range.
-type|machine_precision|CRUISER|0	0	A recovered Gamma core, kept powered just long enough to be questioned, gives up the targeting routines [REDACTED] drones use to lead a target. Patched into this ship's fire control, they make its autofiring weapons far more accurate and stretch every weapon's reach a little.
+type|machine_precision|CRUISER|0	0	A recovered Gamma core, kept powered just long enough to be questioned, gives up the targeting routines Remnant drones use to lead a target. Patched into this ship's fire control, they make its autofiring weapons far more accurate and stretch every weapon's reach a little.
 type|machine_precision|CRUISER|1	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 type|machine_precision|CRUISER|2	0	<good>5%</good> increased energy weapon range.
 type|machine_precision|CRUISER|3	0	<good>5%</good> increased ballistic weapon range.
 type|machine_precision|CRUISER|4	0	<good>5%</good> increased beam weapon range.
-type|machine_precision|CAPITAL_SHIP|0	0	A recovered Gamma core, kept powered just long enough to be questioned, gives up the targeting routines [REDACTED] drones use to lead a target. Patched into this ship's fire control, they make its autofiring weapons far more accurate and stretch every weapon's reach a little.
+type|machine_precision|CAPITAL_SHIP|0	0	A recovered Gamma core, kept powered just long enough to be questioned, gives up the targeting routines Remnant drones use to lead a target. Patched into this ship's fire control, they make its autofiring weapons far more accurate and stretch every weapon's reach a little.
 type|machine_precision|CAPITAL_SHIP|1	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 type|machine_precision|CAPITAL_SHIP|2	0	<good>5%</good> increased energy weapon range.
 type|machine_precision|CAPITAL_SHIP|3	0	<good>5%</good> increased ballistic weapon range.
@@ -3913,15 +3913,15 @@ type|modular_hull_socket|FRIGATE|0	0	A stripped-out compartment wired straight i
 type|modular_hull_socket|DESTROYER|0	0	A stripped-out compartment wired straight into the ship's computer core. It holds a single subroutine and runs it alongside the ship's own control software.
 type|modular_hull_socket|CRUISER|0	0	A stripped-out compartment wired straight into the ship's computer core. It holds a single subroutine and runs it alongside the ship's own control software.
 type|modular_hull_socket|CAPITAL_SHIP|0	0	A stripped-out compartment wired straight into the ship's computer core. It holds a single subroutine and runs it alongside the ship's own control software.
-type|nanoforge_mending|null|0	0	Stripping the repair nanoforge out of a gutted Nexus shows the crew how the [REDACTED] keep their hulls whole long after a fight should have broken them.
+type|nanoforge_mending|null|0	0	Stripping the repair nanoforge out of a gutted Nexus shows the crew how the Remnant keep their hulls whole long after a fight should have broken them.
 type|nanoforge_mending|null|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-type|nanoforge_mending|FRIGATE|0	0	Stripping the repair nanoforge out of a gutted Nexus shows the crew how the [REDACTED] keep their hulls whole long after a fight should have broken them.
+type|nanoforge_mending|FRIGATE|0	0	Stripping the repair nanoforge out of a gutted Nexus shows the crew how the Remnant keep their hulls whole long after a fight should have broken them.
 type|nanoforge_mending|FRIGATE|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-type|nanoforge_mending|DESTROYER|0	0	Stripping the repair nanoforge out of a gutted Nexus shows the crew how the [REDACTED] keep their hulls whole long after a fight should have broken them.
+type|nanoforge_mending|DESTROYER|0	0	Stripping the repair nanoforge out of a gutted Nexus shows the crew how the Remnant keep their hulls whole long after a fight should have broken them.
 type|nanoforge_mending|DESTROYER|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-type|nanoforge_mending|CRUISER|0	0	Stripping the repair nanoforge out of a gutted Nexus shows the crew how the [REDACTED] keep their hulls whole long after a fight should have broken them.
+type|nanoforge_mending|CRUISER|0	0	Stripping the repair nanoforge out of a gutted Nexus shows the crew how the Remnant keep their hulls whole long after a fight should have broken them.
 type|nanoforge_mending|CRUISER|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
-type|nanoforge_mending|CAPITAL_SHIP|0	0	Stripping the repair nanoforge out of a gutted Nexus shows the crew how the [REDACTED] keep their hulls whole long after a fight should have broken them.
+type|nanoforge_mending|CAPITAL_SHIP|0	0	Stripping the repair nanoforge out of a gutted Nexus shows the crew how the Remnant keep their hulls whole long after a fight should have broken them.
 type|nanoforge_mending|CAPITAL_SHIP|1	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 type-detail|nav_relay|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Nav Relay</hullmod>
 type|nav_relay|FRIGATE|0	0	<good>+2</good> to fleet nav rating.
@@ -4676,15 +4676,15 @@ type|temporary_acceleration|CRUISER|0	0	<good>50%</good> increased maneuverabili
 type|temporary_acceleration|CRUISER|1	0	These effects only last for the first 90 seconds after the ship is deployed.
 type|temporary_acceleration|CAPITAL_SHIP|0	0	<good>50%</good> increased maneuverability.
 type|temporary_acceleration|CAPITAL_SHIP|1	0	These effects only last for the first 90 seconds after the ship is deployed.
-type|terrifying_presence|null|0	0	Sensor logs from fights with [REDACTED] fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.
+type|terrifying_presence|null|0	0	Sensor logs from fights with Remnant fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.
 type|terrifying_presence|null|1	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-type|terrifying_presence|FRIGATE|0	0	Sensor logs from fights with [REDACTED] fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.
+type|terrifying_presence|FRIGATE|0	0	Sensor logs from fights with Remnant fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.
 type|terrifying_presence|FRIGATE|1	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-type|terrifying_presence|DESTROYER|0	0	Sensor logs from fights with [REDACTED] fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.
+type|terrifying_presence|DESTROYER|0	0	Sensor logs from fights with Remnant fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.
 type|terrifying_presence|DESTROYER|1	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-type|terrifying_presence|CRUISER|0	0	Sensor logs from fights with [REDACTED] fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.
+type|terrifying_presence|CRUISER|0	0	Sensor logs from fights with Remnant fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.
 type|terrifying_presence|CRUISER|1	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-type|terrifying_presence|CAPITAL_SHIP|0	0	Sensor logs from fights with [REDACTED] fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.
+type|terrifying_presence|CAPITAL_SHIP|0	0	Sensor logs from fights with Remnant fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.
 type|terrifying_presence|CAPITAL_SHIP|1	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 type|timeflow|null|0	0	<good>2%</good> increased timeflow.
 type|timeflow|FRIGATE|0	0	<good>2%</good> increased timeflow.

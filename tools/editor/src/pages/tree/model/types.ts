@@ -252,6 +252,7 @@ export const UNLOCK_CONDITION_LABELS: Record<string, string> = {
   nightcrossLunarFleetDefeated: 'Nightcross: Stargazer existential threat defeated',
   nightcrossAncientPrototypeFound: 'Nightcross: an Ancient Prototype found',
   threatFought: 'Player has fought a Threat fleet',
+  remnantFought: 'Player has fought a Remnant fleet',
 };
 
 export const PARAMETERISED_UNLOCK_CONDITIONS: ReadonlySet<string> = new Set(['blueprint', 'characterStat', 'minShipLevel', 'memoryFlag']);

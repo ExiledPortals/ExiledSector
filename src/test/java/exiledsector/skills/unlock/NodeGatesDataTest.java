@@ -37,6 +37,7 @@ class NodeGatesDataTest {
     private static final String PASCAL_GATE = "gate_pascal_visited";
     private static final String LUNAR_FLEET_GATE = "gate_lunar_fleet_defeated";
     private static final String THREAT_GATE = "gate_threat_fought";
+    private static final String REMNANT_GATE = "gate_remnant_fought";
     private static final String PROTOTYPE_GATE = "gate_ancient_prototype_found";
     private static final String CANDLES_GRACE_NODE_ID = "gravitational_drag_1";
 
@@ -92,6 +93,14 @@ class NodeGatesDataTest {
     @Test
     void everyThreatNodeAndTheWormholeIntoItWaitUntilTheThreatIsFought() {
         assertTrue(ungatedIn("threat", THREAT_GATE).isEmpty(), "Threat nodes without the gate: " + ungatedIn("threat", THREAT_GATE));
+    }
+
+    @Test
+    void everyRemnantNodeAndTheWormholeIntoItWaitUntilTheRemnantIsFought() {
+        assertEquals(List.of(UnlockConditionType.REMNANT_FOUGHT),
+                NodeGates.all().get(REMNANT_GATE).stream().map(UnlockCondition::getType).toList());
+        assertTrue(ungatedIn(SkillTags.REDACTED_REGION, REMNANT_GATE).isEmpty(),
+                "Remnant nodes without the gate: " + ungatedIn(SkillTags.REDACTED_REGION, REMNANT_GATE));
     }
 
     @Test
