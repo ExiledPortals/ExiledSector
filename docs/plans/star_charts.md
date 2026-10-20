@@ -75,7 +75,7 @@ The seed plus the definition reproduce the same system every time, so a chart is
 
 Tier sets:
 - fleet size, as a percentage of a standard 50 fleet point fleet (about a vanilla heavy patrol), and the warden fleet's size on the same scale;
-- officer levels, fleet quality (d-mods) and fleet strength (the NPC skill-tree size);
+- officer levels, fleet quality (d-mods) and the NPC level range (`level_min`/`level_max`, the NPC skill-tree size);
 - the loot budget;
 - which modifiers can roll, through a minimum-tier filter;
 - the value band each modifier rolls in;
@@ -388,13 +388,13 @@ Left for later phases: drop balance (phase 10).
 
 ## Enemy scaling by tier (planned, agreed 2026-10-19)
 
-Today a chart fleet's ship trees are still sized from the player's fleet. The tier only sets a percentage of a random player ship's tree power (`fleet_strength_min/max`, 50-80% at tier 1 up to 170-240% at tier 15, read in `ChartTiers.fleetStrengthRangeFor` and used in `NpcFleetLeveller.decide`). In the regular sector that is right: enemies are always 80-120% of the player. Inside charts the scaling is inverted. The tier alone decides how strong the enemy is, and nothing inside a chart system reads the player's fleet.
+Chart fleet trees no longer read the player's fleet (built 2026-10-20, see `docs/plans/npc_levels.md` section 4). Each tier sets an absolute level range (`level_min/max`, 26-29 at tier 1 up to 47-50 at tier 15, read in `ChartTiers.fleetStrengthRangeFor` and used in `NpcFleetLeveller.decide`), clamped to the max level, and the warden fleet rolls one level above it. The tier alone decides how strong the enemy is, and nothing inside a chart system reads the player's fleet.
 
 ### Tier-based trees
 
-- Tree size is a share of a full tree (`ShipLevelConfig.maxAllocatedNodesBesidesRoot`), not of the player's ships. `fleet_strength_min/max` become `npc_tree_min/max`, a percent of a full tree, reaching 100% at tier 10.
+- Tree size comes from the tier's `level_min/max` columns, not from the player's ships. This replaced the earlier idea of `npc_tree_min/max` as a percent of a full tree.
 - Everything else in a chart fleet that reads the player reads the tier instead. A new `npc_item_level` column replaces the player level in `NpcItems.rollCount` and `NpcItems.rollSectionItems`.
-- The overflow strength bonus (`STRENGTH_BONUS_MEMORY_KEY`, from fleets cut by the fleet limit or sizes past the cap) adds to the tree percent up to a full tree. Anything left over goes to officer levels.
+- The overflow strength bonus (`STRENGTH_BONUS_MEMORY_KEY`, from fleets cut by the fleet limit or sizes past the cap) scales the tier's levels by `1 + bonus / 100`, clamped to the max level. Anything left over goes to officer levels.
 
 ### Tiers 11 to 15: per-ship strength after full trees
 

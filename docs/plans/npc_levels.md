@@ -68,8 +68,8 @@ In `chart_drops.csv`, `min_strength` and `strength_per_tier` stay as the gate fo
 
 ## Build order
 
-1. Categories and `npc_levels.csv`, with open-world caps and the capped `NpcBonusScale`. Done, uncommitted on `main`: `NpcLevelCategory`, `NpcLevelCaps`, the cap in `NpcFleetLeveller.decide`, `NpcBonusScale.forShip`. Each levelled ship carries its cap as a variant tag (`NpcLevelCaps.TAG_PREFIX`), because vanilla merges a battle side into one fleet with the primary fleet's faction and commander. `PlayerTreePower.logNpcScaling` already logs the caps (section 6).
-2. Chart fleet levels: the column rename, `fleetStrengthRangeFor`, the Fleet Strength % conversion and the editor table. Done, uncommitted in worktree `.claude/worktrees/chart-fleet-levels-11fe8f` (branch `claude/chart-fleet-levels-11fe8f`): `ChartLevelRange`, warden flag `ChartIds.WARDEN_MEMORY_KEY`. Merging it with step 1 conflicts in `NpcFleetLeveller.decide`.
+1. Categories and `npc_levels.csv`, with open-world caps and the capped `NpcBonusScale`. Done in c7a6f882 on `main`: `NpcLevelCategory`, `NpcLevelCaps`, the cap in `NpcFleetLeveller.decide`, `NpcBonusScale.forShip`. Each levelled ship carries its cap as a variant tag (`NpcLevelCaps.TAG_PREFIX`), because vanilla merges a battle side into one fleet with the primary fleet's faction and commander. `PlayerTreePower.logNpcScaling` already logs the caps (section 6).
+2. Chart fleet levels: the column rename, `fleetStrengthRangeFor`, the Fleet Strength % conversion and the editor table. Done in 322df1bc, merged into `main`: `ChartLevelRange`, warden flag `ChartIds.WARDEN_MEMORY_KEY`.
 3. Bounty detection (decompile first), then the bounty cap and the flagship bonus.
 4. Outside chart drop tiers from defeated NPC levels.
 5. Docs and settings text.

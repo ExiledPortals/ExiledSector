@@ -521,14 +521,15 @@ class NpcFleetLevellerTest {
         assertFalse(hullMods.contains("converted_hangar"));
     }
 
-    private int nodesForChartTier(Integer chartTier) {
+    private int levelForChartTier(int chartTier, boolean warden) {
         FleetMemberAPI officered = member("m1", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
         CampaignFleetAPI fleet = fleetOf(officered);
-        if (chartTier != null) {
-            fleet.getMemoryWithoutUpdate().set(ChartIds.TIER_MEMORY_KEY, chartTier);
+        fleet.getMemoryWithoutUpdate().set(ChartIds.TIER_MEMORY_KEY, chartTier);
+        if (warden) {
+            fleet.getMemoryWithoutUpdate().set(ChartIds.WARDEN_MEMORY_KEY, true);
         }
         NpcFleetLeveller.ensure(fleet);
-        return NpcTreeTag.decode(NpcTreeTag.find(officered.getVariant())).getAllocatedNodeIds().size();
+        return NpcTreeTag.decode(NpcTreeTag.find(officered.getVariant())).getAllocatedNodeIds().size() - 1;
     }
 
     @Test
@@ -554,24 +555,25 @@ class NpcFleetLevellerTest {
     }
 
     @Test
-    void chartFleetsSizeTheirTreesByTheChartTierInsteadOfTheSettings() {
+    void chartFleetsRollTheirTiersFixedLevelsWhateverThePlayerFleetIs() {
         String previous = "armor_1";
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 60; i++) {
             String id = "chain_" + i;
             SkillTree.register(new SkillNode(id, type(id, SkillTier.SMALL).build(), List.of(previous), 0f, 0f));
             previous = id;
         }
         when(playerStats.getLevel()).thenReturn(10);
-        lunaSettingsMock.when(() -> LunaSettings.getInt(ExiledSectorModPlugin.MOD_ID, ShipLevelConfig.MAX_ALLOCATED_NODES_FIELD_ID))
-                .thenReturn(40);
 
-        int byTheSettings = nodesForChartTier(null);
-        int tierOne = nodesForChartTier(1);
-        int tierFifteen = nodesForChartTier(15);
+        int tierOne = levelForChartTier(1, false);
+        int tierFifteen = levelForChartTier(15, false);
+        int tierFifteenWarden = levelForChartTier(15, true);
 
-        assertTrue(byTheSettings > 2, "the default tree has " + byTheSettings + " nodes");
-        assertTrue(tierFifteen > byTheSettings, tierFifteen + " vs " + byTheSettings);
-        assertTrue(tierOne < byTheSettings, tierOne + " vs " + byTheSettings);
+        assertTrue(tierOne >= 26 && tierOne <= 29, "tier 1 rolled level " + tierOne);
+        assertTrue(tierFifteen >= 47 && tierFifteen <= ShipLevelConfig.DEFAULT_MAX_LEVEL, "tier 15 rolled level " + tierFifteen);
+        assertEquals(tierFifteen + 1, tierFifteenWarden);
+        lunaSettingsMock.when(() -> LunaSettings.getInt(ExiledSectorModPlugin.MOD_ID, ShipLevelConfig.MAX_LEVEL_FIELD_ID)).thenReturn(20);
+        assertEquals(20, levelForChartTier(15, false));
+        assertEquals(21, levelForChartTier(15, true));
     }
 
     private void registerLongChain() {
