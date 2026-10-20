@@ -224,7 +224,7 @@
 					"magnitude": 1
 				}
 			],
-			"description": "Stripping the repair nanoforge out of a gutted Nexus shows the crew how the [REDACTED] keep their hulls whole long after a fight should have broken them.",
+			"description": "Stripping the repair nanoforge out of a gutted Nexus shows the crew how the Remnant keep their hulls whole long after a fight should have broken them.",
 			"tags": [
 				"hull",
 				"repair"
@@ -241,7 +241,7 @@
 					"magnitude": 20
 				}
 			],
-			"description": "Hulls killed by [REDACTED] energy weapons come apart around every impact in a way no human weapon manages, and taking those wrecks apart shows the crew how to tune this ship's energy weapons the same way.",
+			"description": "Hulls killed by Remnant energy weapons come apart around every impact in a way no human weapon manages, and taking those wrecks apart shows the crew how to tune this ship's energy weapons the same way.",
 			"tags": [
 				"energy",
 				"armour",
@@ -271,7 +271,7 @@
 					"magnitude": 5
 				}
 			],
-			"description": "A recovered Gamma core, kept powered just long enough to be questioned, gives up the targeting routines [REDACTED] drones use to lead a target. Patched into this ship's fire control, they make its autofiring weapons far more accurate and stretch every weapon's reach a little.",
+			"description": "A recovered Gamma core, kept powered just long enough to be questioned, gives up the targeting routines Remnant drones use to lead a target. Patched into this ship's fire control, they make its autofiring weapons far more accurate and stretch every weapon's reach a little.",
 			"tags": [
 				"weapons",
 				"range"
@@ -288,7 +288,7 @@
 					"magnitude": 25
 				}
 			],
-			"description": "Sensor logs from fights with [REDACTED] fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.",
+			"description": "Sensor logs from fights with Remnant fleets show how the drones flood the spectrum with false returns, and rebuilding the ship's ECM suite around those recordings feeds enemy fire control a target that is never quite where it seems.",
 			"tags": [
 				"fleet_support"
 			]
@@ -4507,7 +4507,7 @@
 					"magnitude": 15
 				}
 			],
-			"description": "[REDACTED] carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.",
+			"description": "Remnant carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.",
 			"tags": [
 				"fighter",
 				"req_fighter_bays"
@@ -4528,7 +4528,7 @@
 					"magnitude": 30
 				}
 			],
-			"description": "[REDACTED] point defence never tires and never flinches. Its tracking routines, recovered from a gutted drone, swing this ship's turrets faster and make its point defence far deadlier to missiles.",
+			"description": "Remnant point defence never tires and never flinches. Its tracking routines, recovered from a gutted drone, swing this ship's turrets faster and make its point defence far deadlier to missiles.",
 			"tags": [
 				"point_defense",
 				"weapons"
@@ -4549,7 +4549,7 @@
 					"magnitude": 10
 				}
 			],
-			"description": "Machines do not tire. Rewriting this ship's duty cycles the way [REDACTED] cores run their own would keep its readiness higher and slow its decay through a long fight.",
+			"description": "Machines do not tire. Rewriting this ship's duty cycles the way Remnant cores run their own would keep its readiness higher and slow its decay through a long fight.",
 			"tags": [
 				"combat_readiness"
 			]
@@ -4573,7 +4573,7 @@
 					"magnitude": -25
 				}
 			],
-			"description": "[REDACTED] warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.",
+			"description": "Remnant warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.",
 			"tags": [
 				"shield",
 				"req_shields"
@@ -4594,7 +4594,7 @@
 					"magnitude": -10
 				}
 			],
-			"description": "Energy mounts pulled from [REDACTED] wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.",
+			"description": "Energy mounts pulled from Remnant wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.",
 			"tags": [
 				"energy",
 				"weapons",
@@ -4621,7 +4621,7 @@
 					"capitalShip": 30
 				}
 			],
-			"description": "A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. One of the crew's aspiring scientists swears they can decode that chatter, tune this ship's sensors to it and turn it against enemy targeting.",
+			"description": "A Remnant ordo moves as one mind, its ships murmuring to each other across a constant web of signals. One of the crew's aspiring scientists swears they can decode that chatter, tune this ship's sensors to it and turn it against enemy targeting.",
 			"tags": [
 				"fleet_support"
 			]
@@ -4645,7 +4645,7 @@
 					"magnitude": -50
 				}
 			],
-			"description": "[REDACTED] warships never stand down, their systems cycling at a tempo built for machines that never tire. Copying that cadence into this ship's reactor and fire control would let it fight at the same pace, but the crew would struggle to bring the overdriven systems back to readiness afterwards.",
+			"description": "Remnant warships never stand down, their systems cycling at a tempo built for machines that never tire. Copying that cadence into this ship's reactor and fire control would let it fight at the same pace, but the crew would struggle to bring the overdriven systems back to readiness afterwards.",
 			"tags": [
 				"flux",
 				"combat_readiness"

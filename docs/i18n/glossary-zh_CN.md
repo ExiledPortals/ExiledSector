@@ -45,7 +45,8 @@ The zh_CN catalogue was drafted by Claude and still needs review by a native spe
 | Codex | 百科 | |
 | su (space units) | su | Left untranslated |
 | Hegemony / Tri-Tachyon / Luddic / Sindrian Diktat / Persean League / pirates | 霸主 / 速子科技 / 卢德 / 辛达强权 / 英仙座联盟 / 海盗 | Faction names; check against the official localisation |
-| [REDACTED] | [数据删除] | |
+| Remnant | 残存者 | Check against the official localisation |
+| [REDACTED] | [数据删除] | Stands in for Remnant wherever it shows before the player has fought them |
 
 ## Mod terms
 

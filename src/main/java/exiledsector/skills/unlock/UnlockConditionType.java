@@ -19,7 +19,8 @@ public enum UnlockConditionType {
     NIGHTCROSS_PASCAL_VISITED(new ModGate(NightcrossCompat::isModEnabled, NightcrossUnlocks::isPascalVisited)),
     NIGHTCROSS_LUNAR_FLEET_DEFEATED(new ModGate(NightcrossCompat::isModEnabled, NightcrossUnlocks::isLunarFleetDefeated)),
     NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND(new ModGate(NightcrossCompat::isModEnabled, NightcrossUnlocks::isAncientPrototypeFound)),
-    THREAT_FOUGHT(new ModGate(() -> true, ThreatEncounter::isFought));
+    THREAT_FOUGHT(new ModGate(() -> true, ThreatEncounter::isFought)),
+    REMNANT_FOUGHT(new ModGate(() -> true, RemnantEncounter::isFought));
 
     record ModGate(BooleanSupplier modEnabled, Predicate<SectorAPI> passed) {
 
