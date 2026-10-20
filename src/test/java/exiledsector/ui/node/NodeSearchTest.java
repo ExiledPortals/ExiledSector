@@ -2,11 +2,15 @@ package exiledsector.ui.node;
 
 import exiledsector.i18n.Catalogue;
 import exiledsector.i18n.I18n;
+import exiledsector.i18n.RealCatalogue;
+import exiledsector.items.DoctrineOverrides;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -17,6 +21,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
@@ -101,6 +106,39 @@ class NodeSearchTest {
     }
 
     @Test
+    void effectLinesMatchButTheDescriptionTextDoesNot() {
+        I18n.install(RealCatalogue.english());
+        SkillType type = new SkillType.Builder("bulkheads", "Bulkheads", "", SkillTier.SMALL)
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
+                .descriptionOverride("The crew welded spare plating everywhere.")
+                .build();
+        SkillNode node = new SkillNode("bulkheads_1", type, List.of(), 0f, 0f);
+        NodeSearch search = new NodeSearch();
+
+        search.setQuery("Hull Points");
+        assertTrue(search.matches(node, tree));
+        search.setQuery("welded");
+        assertFalse(search.matches(node, tree));
+    }
+
+    @Test
+    void effectsAnInstalledDoctrineAddsToANodeMatch() {
+        I18n.install(RealCatalogue.english());
+        SkillNode armor = node("armor", "Heavy Armor");
+        NodeSearch search = new NodeSearch();
+        search.setQuery("hull points");
+
+        try (MockedStatic<DoctrineOverrides> doctrines = Mockito.mockStatic(DoctrineOverrides.class)) {
+            doctrines.when(() -> DoctrineOverrides.addedEffects(tree.skillData(), armor, null))
+                    .thenReturn(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)));
+
+            assertTrue(search.matches(armor, tree));
+        }
+        search.setQuery("hull points");
+        assertFalse(search.matches(armor, tree));
+    }
+
+    @Test
     void optionalNodesMatchOnAnyOfTheirOptionNames() {
         SkillType shields = new SkillType.Builder("shields", "Shield Upgrade", "", SkillTier.NOTABLE).build();
         SkillType optional = new SkillType.Builder("pick", "Pick One", "", SkillTier.NOTABLE)
@@ -115,5 +153,43 @@ class NodeSearchTest {
 
             assertTrue(search.matches(node, tree));
         }
+    }
+
+    @Test
+    void nextMatchCyclesThroughMatchesInTreeOrderSkippingTheRest() {
+        NodeSearch search = new NodeSearch();
+        SkillNode armor = node("armor", "Heavy Armor");
+        SkillNode flux = node("flux", "Flux Coil");
+        SkillNode plating = node("plating", "Armor Plating");
+        List<SkillNode> nodes = List.of(armor, flux, plating);
+        search.setQuery("armor");
+
+        assertEquals(armor, search.nextMatch(nodes, tree));
+        assertEquals(plating, search.nextMatch(nodes, tree));
+        assertEquals(armor, search.nextMatch(nodes, tree));
+    }
+
+    @Test
+    void changingTheQueryRestartsFromTheFirstMatch() {
+        NodeSearch search = new NodeSearch();
+        SkillNode armor = node("armor", "Heavy Armor");
+        SkillNode plating = node("plating", "Armor Plating");
+        List<SkillNode> nodes = List.of(armor, plating);
+        search.setQuery("armor");
+        search.nextMatch(nodes, tree);
+
+        search.setQuery("armo");
+
+        assertEquals(armor, search.nextMatch(nodes, tree));
+    }
+
+    @Test
+    void nextMatchIsNullWithoutAQueryOrAnyMatch() {
+        NodeSearch search = new NodeSearch();
+        List<SkillNode> nodes = List.of(node("armor", "Heavy Armor"));
+
+        assertNull(search.nextMatch(nodes, tree));
+        search.setQuery("flux");
+        assertNull(search.nextMatch(nodes, tree));
     }
 }

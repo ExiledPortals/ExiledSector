@@ -17,12 +17,14 @@ final class SkillTreeSearchBar {
     private static final float TEXT_WIDTH = WIDTH - TEXT_PADDING * 2f;
 
     private final NodeSearch nodeSearch;
+    private final Runnable onSubmit;
     private final SkillTreeTextField queryField = new SkillTreeTextField(MAX_QUERY_LENGTH,
             SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
     private final String placeholderText = Translation.text("ui.search.placeholder");
 
-    SkillTreeSearchBar(NodeSearch nodeSearch) {
+    SkillTreeSearchBar(NodeSearch nodeSearch, Runnable onSubmit) {
         this.nodeSearch = nodeSearch;
+        this.onSubmit = onSubmit;
     }
 
     boolean handleClick(PositionAPI canvasPosition, float x, float y) {
@@ -49,7 +51,7 @@ final class SkillTreeSearchBar {
                 nodeSearch.setQuery("");
                 queryField.focus(false);
             }
-            case SUBMIT -> queryField.focus(false);
+            case SUBMIT -> onSubmit.run();
             default -> {
             }
         }

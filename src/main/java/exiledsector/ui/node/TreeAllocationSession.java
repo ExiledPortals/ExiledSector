@@ -218,6 +218,10 @@ public final class TreeAllocationSession {
         return node != null && viewSnapshot().isHidden(node);
     }
 
+    public SkillNode nextSearchMatch() {
+        return nodeSearch.nextMatch(SkillTree.getAllNodes().values(), viewSnapshot());
+    }
+
     String wormholePartner(SkillNode node) {
         return allocator.data().wormholePartner(node);
     }

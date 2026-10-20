@@ -58,8 +58,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final TreeAllocationSession treeSession;
     private final SkillTreeNodeDrawer nodeDrawer;
     private final SkillTreeStatPanel statPanel;
-    private final NodeSearch nodeSearch = new NodeSearch();
-    private final SkillTreeSearchBar searchBar = new SkillTreeSearchBar(nodeSearch);
+    private final NodeSearch nodeSearch;
+    private final SkillTreeSearchBar searchBar;
     private final SkillTreeTemplateController templateUi;
     private final TreeCamera camera = new TreeCamera();
     private final HyperspaceMode hyperspaceMode;
@@ -90,6 +90,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.starfieldRenderer = new SkillTreeStarfieldRenderer(panelStyle);
         this.fleetRenderer = SkillTreeFleetRenderer.forPlayerFleet(member == null ? null : member.getId());
         exoshipView.setPlayerShip(member);
+        this.nodeSearch = new NodeSearch(member == null ? null : member.getHullSpec().getHullSize());
+        this.searchBar = new SkillTreeSearchBar(nodeSearch, this::jumpToNextSearchMatch);
         this.treeSession = new TreeAllocationSession(member, variant, refitButton, nodeSearch);
         this.nodeDrawer = SkillTreeNodeDrawer.attachedTo(treeSession, member, panelStyle, nodeSearch);
         this.templateUi = new SkillTreeTemplateController(member, treeSession, panelStyle);
@@ -464,6 +466,14 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             SkillTreeSounds.wormholeJumped();
         } else {
             treeSession.clickNode(node, ctrlDown);
+        }
+    }
+
+    private void jumpToNextSearchMatch() {
+        SkillNode match = treeSession.nextSearchMatch();
+        if (match != null) {
+            stopFollowing();
+            camera.panTo(match.getOffsetX(), match.getOffsetY());
         }
     }
 
