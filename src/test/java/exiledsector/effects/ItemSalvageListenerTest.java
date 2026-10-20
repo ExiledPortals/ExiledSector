@@ -12,6 +12,8 @@ import exiledsector.charts.ChartIds;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemData;
+import exiledsector.items.ItemType;
+import exiledsector.items.MaterialItems;
 import exiledsector.items.StarChartCurrency;
 import exiledsector.items.StarChartFixtures;
 import exiledsector.charts.ChartContent;
@@ -38,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -164,6 +167,33 @@ class ItemSalvageListenerTest {
             StarChartCurrency.unregisterAll();
             StarChartFixtures.clear();
         }
+    }
+
+    private static List<SpecialItemData> lootFrom(ItemSalvageListener listener, SectorEntityToken station) {
+        CargoAPI loot = mock(CargoAPI.class);
+        listener.reportAboutToShowLootToPlayer(loot, dialogFor(station));
+        ArgumentCaptor<SpecialItemData> specials = ArgumentCaptor.forClass(SpecialItemData.class);
+        verify(loot, Mockito.atLeast(0)).addSpecial(specials.capture(), anyFloat());
+        return specials.getAllValues();
+    }
+
+    @Test
+    void aShowcaseSiteAlsoDropsEverySubroutineAndCraftingMaterialOnce() {
+        SectorEntityToken plainStation = site("station_research", null);
+        SectorEntityToken showcaseStation = site("station_research", null);
+        assertTrue(ItemSalvageListener.canShowcase(showcaseStation));
+        ItemSalvageListener.markShowcase(showcaseStation);
+
+        List<SpecialItemData> plainLoot = lootFrom(listener, plainStation);
+        List<SpecialItemData> showcaseLoot = lootFrom(listener, showcaseStation);
+
+        List<String> materialIds = MaterialItems.ids();
+        long plainItems = plainLoot.stream().filter(special -> !materialIds.contains(special.getId())).count();
+        long showcaseItems = showcaseLoot.stream().filter(special -> !materialIds.contains(special.getId())).count();
+        assertEquals(plainItems + ItemDefinitions.ofType(ItemType.SUBROUTINE).size(), showcaseItems);
+        assertTrue(showcaseLoot.stream().map(SpecialItemData::getId).toList().containsAll(materialIds));
+        assertFalse(ItemSalvageListener.canShowcase(showcaseStation));
+        assertTrue(lootFrom(listener, showcaseStation).isEmpty());
     }
 
     @Test
