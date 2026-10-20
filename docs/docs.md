@@ -733,8 +733,9 @@ is met. It checks on load and on every economy tick, and remembers the grant in 
 
 An anchor has no prefixes, suffixes or implicits and is never corrupted or mirrored: it ignores stored traits,
 and its explicit and implicit lists are always empty. `ItemCrafting.canUse` refuses every currency on it, even
-one a mod extends to the anchor type, so the workbench shows nothing usable. It disassembles into parts like any
-other item.
+one a mod extends to the anchor type, so the workbench shows nothing usable. Every anchor has unique rarity
+(`ItemDefinition.hasUniqueRarity`) without being `unique`, so the unique drop pools, transposition and the
+unique-granting console command never pick one. It disassembles into parts like any other unique.
 
 `canSocketInto` accepts the standard tree socket (`SkillTier.SOCKET`), like a subroutine. Item storage lists
 anchors with the subroutines when a tree socket is being filled, and the tree's storage button ("Socket

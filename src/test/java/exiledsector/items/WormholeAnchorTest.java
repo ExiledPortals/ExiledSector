@@ -138,7 +138,7 @@ class WormholeAnchorTest {
         CargoIconLook look = CargoIconLooks.forItem(anchor(BEACON));
 
         assertNull(look.anchor());
-        assertEquals(ItemRarity.COMMON.color(), look.color());
+        assertEquals(ItemRarity.UNIQUE.color(), look.color());
     }
 
     @Test
@@ -167,8 +167,10 @@ class WormholeAnchorTest {
         assertEquals(List.of(), anchor.skillEffects());
         assertFalse(anchor.corrupted());
         assertFalse(anchor.mirrored());
-        assertEquals(ItemRarity.COMMON, anchor.rarity());
+        assertEquals(ItemRarity.UNIQUE, anchor.rarity());
+        assertFalse(anchor.definition().unique());
         assertEquals(HEGEMONY_ANCHOR + " name", anchor.name());
+        assertNull(anchor.displayName().baseName());
     }
 
     @Test

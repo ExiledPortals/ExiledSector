@@ -613,7 +613,7 @@
     "socketable.wormhole_anchor_abyss.name": "深渊虫洞锚点",
     "socketable.wormhole_anchor_abyss.description": "开启通往深渊星域的虫洞。",
     "socketable.wormhole_anchor_exotech.name": "超空间导航信标",
-    "socketable.wormhole_anchor_exotech.description": "一枚Exo-Tech制造的便携信标，用于引导外星舰的跃迁引擎。将它装入插槽，外星舰就有了可以对接的定位点，Exo-Tech的船体改装也随之触手可及。",
+    "socketable.wormhole_anchor_exotech.description": "开启通往ExoTech 星域的虫洞。",
     "socketable.commonName.both": "{prefix}{noun}·{suffix}",
     "socketable.commonName.prefix": "{prefix}{noun}",
     "socketable.commonName.suffix": "{noun}·{suffix}",

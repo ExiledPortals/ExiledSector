@@ -162,7 +162,7 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
     }
 
     public boolean hasUniqueRarity() {
-        return unique || subroutineKind != null && subroutineKind.uniqueRarity();
+        return unique || type == ItemType.WORMHOLE_ANCHOR || subroutineKind != null && subroutineKind.uniqueRarity();
     }
 
     private static void rejectRepeats(List<PoolEntry> prefixes, List<PoolEntry> suffixes) {
