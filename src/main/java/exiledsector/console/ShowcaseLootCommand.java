@@ -42,7 +42,7 @@ public class ShowcaseLootCommand implements BaseCommand {
         }
         ItemSalvageListener.markShowcase(site);
         Console.showMessage(site.getName() + " (" + Math.round(Misc.getDistance(playerFleet, site))
-                + " su away) will also drop one of every subroutine and crafting material when salvaged.");
+                + " su away) will also drop three Doctrine Archives, three wormhole anchors and every crafting material when salvaged.");
         return CommandResult.SUCCESS;
     }
 

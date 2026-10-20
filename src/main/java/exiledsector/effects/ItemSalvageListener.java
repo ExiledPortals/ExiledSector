@@ -20,10 +20,15 @@ import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemType;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.ItemUnlock;
+import exiledsector.items.SubroutineKind;
+import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.ui.cargo.MaterialDropAnnouncer;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -34,6 +39,7 @@ public class ItemSalvageListener implements ShowLootListener {
     private static final long CHART_SEED_SALT = 0x63686172746470L;
     static final String SHOWCASE_KEY = "$exiledSector_showcaseLoot";
     private static final long SHOWCASE_SEED_SALT = 0x73686F77636173L;
+    static final int SHOWCASE_PICKS = 3;
     private static final Logger LOG = Logger.getLogger(ItemSalvageListener.class);
 
     @Override
@@ -76,13 +82,30 @@ public class ItemSalvageListener implements ShowLootListener {
     }
 
     static void addShowcaseLoot(CargoAPI loot, Random random) {
+        List<ItemDefinition> doctrines = new ArrayList<>();
         for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.SUBROUTINE)) {
-            loot.addSpecial(ItemData.rolled(definition, random.nextLong()).toSpecialItem(), 1f);
+            if (definition.subroutineKind() == SubroutineKind.DOCTRINE) {
+                doctrines.add(definition);
+            } else if (!definition.unique()) {
+                loot.addSpecial(ItemData.rolled(definition, random.nextLong()).toSpecialItem(), 1f);
+            }
         }
+        List<ItemDefinition> anchors = List.copyOf(ItemDefinitions.ofType(ItemType.WORMHOLE_ANCHOR));
+        List<ItemDefinition> activeAnchors = anchors.stream().filter(anchor -> WormholeAnchorDefinitions.areaActive(anchor.id())).toList();
+        addRandomPicks(loot, doctrines, random);
+        addRandomPicks(loot, activeAnchors.isEmpty() ? anchors : activeAnchors, random);
         Map<String, Integer> materials = new LinkedHashMap<>();
         MaterialItems.ids().forEach(itemId -> materials.put(itemId, 1));
         materials.forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
         MaterialDropAnnouncer.announce(materials);
+    }
+
+    private static void addRandomPicks(CargoAPI loot, List<ItemDefinition> definitions, Random random) {
+        List<ItemDefinition> shuffled = new ArrayList<>(definitions);
+        Collections.shuffle(shuffled, random);
+        for (ItemDefinition definition : shuffled.subList(0, Math.min(SHOWCASE_PICKS, shuffled.size()))) {
+            loot.addSpecial(ItemData.rolled(definition, random.nextLong()).toSpecialItem(), 1f);
+        }
     }
 
     static ChartDrops.Loot chartLoot(SectorAPI sector, SectorEntityToken salvageEntity) {
