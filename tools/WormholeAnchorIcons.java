@@ -43,7 +43,12 @@ public final class WormholeAnchorIcons {
                 System.out.println("Skipped " + row.getOrDefault("id", "a row") + ": it has no volume or no color");
                 continue;
             }
-            File iconFile = new File(outputDir, FILE_PREFIX + volume.toLowerCase(Locale.ROOT) + ".png");
+            String iconName = FILE_PREFIX + volume.toLowerCase(Locale.ROOT) + ".png";
+            if (!row.getOrDefault("icon", "").endsWith("/" + iconName)) {
+                System.out.println("Skipped " + row.getOrDefault("id", "a row") + ": its icon is not " + iconName);
+                continue;
+            }
+            File iconFile = new File(outputDir, iconName);
             if (iconFile.exists() && !overwrite) {
                 throw new IOException(iconFile + " already exists; pass --overwrite to replace it");
             }

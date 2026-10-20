@@ -8,6 +8,7 @@ import exiledsector.skills.SkillType;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.npc.RealSkillData;
 import exiledsector.skills.tags.SkillTags;
+import exiledsector.ui.cargo.AnimatedItemIcons;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -70,6 +71,7 @@ class WormholeAnchorDataTest {
         assertEquals(volumes, exitsByVolume.keySet());
         ItemDefinition beacon = ItemDefinitions.get("wormhole_anchor_exotech");
         assertEquals("Hyper-Nav Beacon", beacon.name());
+        assertEquals(AnimatedItemIcons.BEACON_PATH, beacon.icon());
         assertEquals(ItemUnlock.RAT_PLAYER_EXOSHIP.id(), beacon.unlock());
         assertTrue(ItemDefinitions.ofType(ItemType.WORMHOLE_ANCHOR).stream()
                 .filter(definition -> definition != beacon).allMatch(definition -> definition.unlock().isEmpty()));
@@ -77,15 +79,17 @@ class WormholeAnchorDataTest {
     }
 
     @Test
-    void everyShippedAnchorHasItsOwnBakedIconColourAndCrest() throws Exception {
+    void everyShippedAnchorButTheBeaconHasItsOwnBakedIconAndEveryAnchorAColourAndCrest() throws Exception {
         WormholeAnchorDefinitions.register(shippedAnchors());
 
         Set<Color> colors = new HashSet<>();
         for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.WORMHOLE_ANCHOR)) {
             String volume = WormholeAnchorDefinitions.volume(definition.id());
             WormholeAnchorDefinitions.AnchorStyle style = WormholeAnchorDefinitions.style(definition.id());
-            assertEquals("graphics/icons/cargo/exiledSector_wormhole_anchor_" + volume.toLowerCase(Locale.ROOT) + ".png", definition.icon());
-            assertTrue(new File(definition.icon()).isFile(), definition.icon() + " is missing");
+            if (!"exotech".equals(volume)) {
+                assertEquals("graphics/icons/cargo/exiledSector_wormhole_anchor_" + volume.toLowerCase(Locale.ROOT) + ".png", definition.icon());
+                assertTrue(new File(definition.icon()).isFile(), definition.icon() + " is missing");
+            }
             assertNotEquals(WormholeAnchorDefinitions.DEFAULT_COLOR, style.color(), definition.id() + " has no colour");
             assertNotNull(style.crestFactionId(), definition.id() + " has no crest faction");
             colors.add(style.color());

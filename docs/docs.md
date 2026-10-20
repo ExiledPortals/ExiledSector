@@ -765,10 +765,13 @@ only the named volume's, to the player's cargo.
 ### ExoTech and the Exoship
 
 The Exoship is the ExoTech exit. It keeps its carried branches (`ExoshipNodes.isCarried`), its voyage, escorts
-and boarding view, and the ghost-flight and connector rules for carried nodes. The beacon node is gone. The
-Hyper-Nav Beacon item looks like every other anchor (see "Anchor icons"), in ExoTech gold with the ExoTech
-crest. `AnimatedItemIcons` still draws `graphics/stations/buoy00.png` at 1.6 times the icon box with
-`buoy00glow.png` pulsing orange over it, for any data that uses that path, but no anchor does any more.
+and boarding view, and the ghost-flight and connector rules for carried nodes. The beacon node is gone, but
+the Hyper-Nav Beacon item keeps its look: its icon is vanilla's `graphics/stations/buoy00.png`, and
+`AnimatedItemIcons` draws that path at 1.6 times the icon box with `buoy00glow.png` pulsing orange over it,
+wherever item icons are drawn (cargo, sockets, the workbench and the section flair). The glow is steady when
+item animations are set to Calm or Off. The codex and tooltip images show the plain buoy sprite. Because its
+icon animates itself, it gets the usual rarity look in cargo instead of the anchor animation (see "Anchor
+icons"), though item storage still frames it in its ExoTech gold.
 
 ### Anchor icons
 
@@ -781,11 +784,12 @@ so item storage frames it in that colour too.
 The icons are baked, not tinted in game. `tools/WormholeAnchorIcons.java` takes vanilla's
 `graphics/icons/cargo/wormhole_anchor.png`, recolours its purple glow (hue 265 to 345, ramping in with
 saturation) to each row's colour while keeping the brightness, and writes
-`graphics/icons/cargo/exiledSector_wormhole_anchor_<volume>.png`. Rerun it with `--overwrite` after changing a
-colour. The baked icon is what the codex, tooltips, tree sockets and item storage show.
+`graphics/icons/cargo/exiledSector_wormhole_anchor_<volume>.png`. It skips a row whose `icon` is not that file,
+so the Hyper-Nav Beacon keeps its buoy. Rerun it with `--overwrite` after changing a colour. The baked icon is
+what the codex, tooltips, tree sockets and item storage show.
 
 Wherever a `CargoIconLook` is drawn (cargo, the workbench and its tiles), `CargoIconLooks.forItem` gives an anchor
-an anchor look, and `CargoIconFx.render` hands it to `AnchorIconFx` instead of the rarity brackets and glows. All
+an anchor look, unless its icon is one `AnimatedItemIcons` animates itself (the beacon's buoy), and `CargoIconFx.render` hands it to `AnchorIconFx` instead of the rarity brackets and glows. All
 sizes are in an 80 by 80 design box scaled to the icon. When the look is framed, the icon is inset as framed
 items are, a faction-coloured frame with a soft additive inner band surrounds it, and ten small lights
 (`graphics/fx/glow64.png`) sit along each half of the frame, from the top-left corner to the bottom-right one. A

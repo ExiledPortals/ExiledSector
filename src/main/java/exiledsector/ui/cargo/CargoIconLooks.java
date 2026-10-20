@@ -53,7 +53,7 @@ public final class CargoIconLooks {
         if (item == null) {
             return null;
         }
-        if (item instanceof WormholeAnchor anchor) {
+        if (item instanceof WormholeAnchor anchor && !AnimatedItemIcons.isAnimated(anchor.iconPath())) {
             return CargoIconLook.anchor(anchor.color(), new AnchorLook(anchor.crestFactionId()));
         }
         ItemRarity rarity = item.rarity();

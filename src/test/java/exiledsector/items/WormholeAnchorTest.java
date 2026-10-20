@@ -12,6 +12,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.layout.SkillNodeDecoration;
+import exiledsector.ui.cargo.AnimatedItemIcons;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
 import org.json.JSONArray;
@@ -126,6 +127,18 @@ class WormholeAnchorTest {
         assertTrue(look.framed());
         assertEquals(look.anchor(), look.unframed().anchor());
         assertNull(CargoIconLooks.forItem(anchor(ItemFixtures.SUBROUTINE)).anchor());
+    }
+
+    @Test
+    void anAnchorWithAnAnimatedIconKeepsThatIconsOwnLook() throws Exception {
+        WormholeAnchorDefinitions.register(new JSONArray()
+                .put(anchorRow(BEACON, "exotech", "exoship").put("icon", AnimatedItemIcons.BEACON_PATH).put("color", "#FCBE12")
+                        .put("crest_faction", "rat_exotech")));
+
+        CargoIconLook look = CargoIconLooks.forItem(anchor(BEACON));
+
+        assertNull(look.anchor());
+        assertEquals(ItemRarity.COMMON.color(), look.color());
     }
 
     @Test
