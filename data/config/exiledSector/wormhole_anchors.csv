@@ -12,3 +12,4 @@ wormhole_anchor_nightcross,nightcross,nightcross_wormhole_1,Nightcross Wormhole 
 wormhole_anchor_stargazer,stargazer,stargazer_wormhole_1,Stargazer Wormhole Anchor,graphics/icons/cargo/exiledSector_wormhole_anchor_stargazer.png,#960A1E,stargazer,10,Opens a wormhole to the Stargazer volume.,,stargazer,0.06
 wormhole_anchor_abyss,abyss,rat_abyss_wormhole_1,Abyss Wormhole Anchor,graphics/icons/cargo/exiledSector_wormhole_anchor_abyss.png,#C41423,rat_abyssals,10,Opens a wormhole to the Abyss volume.,,rat_abyssals;rat_abyssals_deep;rat_abyssals_primordials,0.06
 wormhole_anchor_exotech,exotech,exoship,Hyper-Nav Beacon,graphics/stations/buoy00.png,#FCBE12,rat_exotech,10,Opens a wormhole to the ExoTech volume.,rat_player_exoship,rat_exotech,0.02
+wormhole_anchor_threat,threat,threat_wormhole_1,Threat Wormhole Anchor,graphics/icons/cargo/exiledSector_wormhole_anchor_threat.png,#829B91,threat,10,Opens a wormhole to the Threat volume.,,threat,0.06

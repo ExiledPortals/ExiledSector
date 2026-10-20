@@ -46,7 +46,8 @@
 
 .modeAddAnchor,
 .modeAddImage,
-.modeAddStar {
+.modeAddStar,
+.modeAddThreatUnit {
   cursor: crosshair;
 }
 
@@ -152,6 +153,26 @@
   stroke-width: 1;
   stroke-dasharray: 4 6;
   opacity: 0.5;
+  pointer-events: none;
+}
+
+.threatUnitOutline {
+  fill: none;
+  stroke: var(--tree-faint);
+  stroke-width: 1.5;
+  stroke-dasharray: 6 6;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.threatUnitOutlineSelected {
+  stroke: var(--tree-accent);
+  opacity: 0.9;
+}
+
+.threatUnitLabel {
+  font-size: 11px;
+  fill: var(--tree-text-dim);
   pointer-events: none;
 }
 

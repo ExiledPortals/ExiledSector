@@ -33,7 +33,7 @@ class AreaToggleDataTest {
         List<SkillNode> nodes = SkillTreeLoader.parseNodes(root, types);
         return new SkillTreeLoader.ParsedTree(nodes, nodes.size(), SkillTreeLoader.parseConnectorCurves(root),
                 SkillTreeLoader.parseHiddenConnectors(root), SkillTreeLoader.parseStaticImages(root),
-                SkillTreeLoader.parseRingBelts(root), SkillTreeLoader.parseStars(root));
+                SkillTreeLoader.parseRingBelts(root), SkillTreeLoader.parseStars(root), SkillTreeLoader.parseThreatUnits(root));
     }
 
     private static void requireOneRegion(String kind, List<? extends SkillTreeObject> objects, List<String> problems) {
@@ -50,6 +50,7 @@ class AreaToggleDataTest {
         SkillTreeLoader.ParsedTree tree = realTree();
         List<String> problems = new ArrayList<>();
         requireOneRegion("star", tree.stars, problems);
+        requireOneRegion("threat unit", tree.threatUnits, problems);
         requireOneRegion("ring belt", tree.ringBelts, problems);
         requireOneRegion("static image", tree.staticImages, problems);
         JSONArray anchors = treeJson().optJSONArray("orbitAnchors");

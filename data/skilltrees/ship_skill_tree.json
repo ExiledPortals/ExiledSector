@@ -7020,6 +7020,130 @@
 			"tags": [
 				"core"
 			]
+		},
+		{
+			"id": "threat_wormhole_1",
+			"type": "wormhole_exit",
+			"connectedTo": [
+				"fragment_swarm_1"
+			],
+			"x": -41802,
+			"y": 17569,
+			"tags": [
+				"threat",
+				"gate_threat_fought"
+			]
+		},
+		{
+			"id": "fragment_swarm_1",
+			"type": "fragment_swarm",
+			"connectedTo": [
+				"threat_wormhole_1",
+				"fragment_swarm_size_1",
+				"fragment_replacement_rate_1"
+			],
+			"x": -41802,
+			"y": 17859,
+			"orbitAnchorId": "anchor_80",
+			"orbitAngle": 270,
+			"tags": [
+				"threat",
+				"gate_threat_fought"
+			]
+		},
+		{
+			"id": "fragment_swarm_size_1",
+			"type": "fragment_swarm_size",
+			"connectedTo": [
+				"fragment_swarm_1",
+				"fragment_swarm_size_2"
+			],
+			"x": -42296,
+			"y": 18061,
+			"orbitAnchorId": "anchor_80",
+			"orbitAngle": -134.55804991720726,
+			"tags": [
+				"threat",
+				"gate_threat_fought"
+			]
+		},
+		{
+			"id": "fragment_coordinator_1",
+			"type": "fragment_coordinator",
+			"connectedTo": [
+				"fragment_swarm_size_2"
+			],
+			"x": -42264,
+			"y": 19094,
+			"orbitAnchorId": "anchor_80",
+			"orbitAngle": 131.02510146841402,
+			"tags": [
+				"threat",
+				"gate_threat_fought"
+			]
+		},
+		{
+			"id": "fragment_replacement_rate_1",
+			"type": "fragment_replacement_rate",
+			"connectedTo": [
+				"fragment_swarm_1",
+				"fragment_replacement_rate_2"
+			],
+			"x": -41263,
+			"y": 18110,
+			"orbitAnchorId": "anchor_80",
+			"orbitAngle": -40.08871116139717,
+			"tags": [
+				"threat",
+				"gate_threat_fought"
+			]
+		},
+		{
+			"id": "secondary_fabricator_1",
+			"type": "secondary_fabricator",
+			"connectedTo": [
+				"fragment_replacement_rate_2"
+			],
+			"x": -41327,
+			"y": 19083,
+			"orbitAnchorId": "anchor_80",
+			"orbitAngle": 47.57358898926441,
+			"tags": [
+				"threat",
+				"gate_threat_fought"
+			]
+		},
+		{
+			"id": "fragment_replacement_rate_2",
+			"type": "fragment_replacement_rate",
+			"connectedTo": [
+				"fragment_replacement_rate_1",
+				"secondary_fabricator_1"
+			],
+			"x": -41098,
+			"y": 18563,
+			"orbitAnchorId": "anchor_80",
+			"orbitAngle": 0,
+			"tags": [
+				"threat",
+				"gate_threat_fought"
+			]
+		},
+		{
+			"id": "fragment_swarm_size_2",
+			"type": "fragment_swarm_size",
+			"connectedTo": [
+				"fragment_swarm_size_1",
+				"fragment_coordinator_1"
+			],
+			"x": -42506,
+			"y": 18563,
+			"orbitAnchorId": "anchor_80",
+			"orbitAngle": 180,
+			"tags": [
+				"threat",
+				"gate_threat_fought"
+			]
 		}
 	],
 	"connectorCurves": [
@@ -9224,6 +9348,42 @@
 			"b": "martyrs_payload_1",
 			"controlX": 5776,
 			"controlY": 10951
+		},
+		{
+			"a": "fragment_replacement_rate_1",
+			"b": "fragment_swarm_1",
+			"controlX": -41505,
+			"controlY": 17925
+		},
+		{
+			"a": "fragment_replacement_rate_1",
+			"b": "fragment_replacement_rate_2",
+			"controlX": -41141,
+			"controlY": 18322
+		},
+		{
+			"a": "fragment_replacement_rate_2",
+			"b": "secondary_fabricator_1",
+			"controlX": -41158,
+			"controlY": 18847
+		},
+		{
+			"a": "fragment_swarm_1",
+			"b": "fragment_swarm_size_1",
+			"controlX": -42069,
+			"controlY": 17912
+		},
+		{
+			"a": "fragment_swarm_size_1",
+			"b": "fragment_swarm_size_2",
+			"controlX": -42451,
+			"controlY": 18291
+		},
+		{
+			"a": "fragment_coordinator_1",
+			"b": "fragment_swarm_size_2",
+			"controlX": -42443,
+			"controlY": 18855
 		}
 	],
 	"hiddenConnectors": [
@@ -9921,6 +10081,12 @@
 			"x": 0,
 			"y": -12176,
 			"radius": 180
+		},
+		{
+			"id": "anchor_80",
+			"x": -41802,
+			"y": 18563,
+			"radius": 704
 		}
 	],
 	"ringBelts": [
@@ -10461,6 +10627,18 @@
 			"color": "#ff0032",
 			"tags": [
 				"abyss"
+			]
+		}
+	],
+	"threatUnits": [
+		{
+			"id": "threat_unit_1",
+			"x": -41802,
+			"y": 18563,
+			"unitType": "fabricator",
+			"length": 600,
+			"tags": [
+				"threat"
 			]
 		}
 	]

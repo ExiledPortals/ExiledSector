@@ -8,6 +8,7 @@ import exiledsector.skills.layout.Rotation;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.layout.Star;
 import exiledsector.skills.layout.StaticImage;
+import exiledsector.skills.layout.ThreatUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -31,7 +32,7 @@ class HyperspaceTest {
     void everyRegionStarIsAnAnchorAndUntaggedStarsAreNot() {
         List<HyperspaceAnchor> anchors = HyperspaceAnchor.collect(
                 List.of(star("sun", 0f, 0f, "core"), star("stray", 5f, 5f, null), star("dictat", -6000f, -4000f, "sindrian_dictat")),
-                List.of());
+                List.of(), List.of());
 
         assertEquals(List.of("sun", "dictat"), anchors.stream().map(HyperspaceAnchor::id).toList());
         assertEquals("sindrian_dictat", anchors.get(1).region());
@@ -40,11 +41,23 @@ class HyperspaceTest {
     @Test
     void aRegionWithoutAStarIsAnchoredOnItsFirstImage() {
         List<HyperspaceAnchor> anchors = HyperspaceAnchor.collect(
-                List.of(star("sun", 0f, 0f, "core")),
+                List.of(star("sun", 0f, 0f, "core")), List.of(),
                 List.of(image("cloud", "core"), image("luddic_nebula", "luddic"), image("luddic_wisp", "luddic")));
 
         assertEquals(List.of("sun", "luddic_nebula"), anchors.stream().map(HyperspaceAnchor::id).toList());
         assertEquals(500f, anchors.get(1).radius());
+    }
+
+    @Test
+    void aStarlessRegionIsAnchoredOnItsThreatUnitBeforeAnyImage() {
+        List<HyperspaceAnchor> anchors = HyperspaceAnchor.collect(
+                List.of(star("sun", 0f, 0f, "core")),
+                List.of(new ThreatUnit("fabricator", 100f, 200f, ThreatUnit.FABRICATOR, 600f, 0f, List.of("threat"))),
+                List.of(image("threat_cloud", "threat")));
+
+        assertEquals(List.of("sun", "fabricator"), anchors.stream().map(HyperspaceAnchor::id).toList());
+        assertEquals(300f, anchors.get(1).radius());
+        assertFalse(anchors.get(1).isStar());
     }
 
     @Test

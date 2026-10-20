@@ -59,6 +59,7 @@ function makeDocument(nodes: TreeNode[], extra: Partial<TreeDocument> = {}): Tre
     anchors: [],
     images: [],
     stars: [],
+    threatUnits: [],
     ...extra,
   };
 }

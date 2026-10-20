@@ -57,7 +57,7 @@ public final class TreeRegionFilter {
         }
         return new SkillTreeLoader.ParsedTree(keptNodes, parsedTree.declaredNodeCount, keptCurves, keptHiddenConnectors,
                 visible(parsedTree.staticImages, disabledRegions), visible(parsedTree.ringBelts, disabledRegions),
-                visible(parsedTree.stars, disabledRegions));
+                visible(parsedTree.stars, disabledRegions), visible(parsedTree.threatUnits, disabledRegions));
     }
 
     private static boolean isDisabled(SkillTreeObject treeObject, Set<String> disabledRegions) {

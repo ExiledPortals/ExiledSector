@@ -4055,6 +4055,125 @@
 			]
 		},
 		{
+			"id": "fragment_swarm",
+			"name": "Fragment Swarm",
+			"icon": "graphics/hullmods/fragment_swarm.png",
+			"tier": "NOTABLE",
+			"vanillaHullMod": "fragment_swarm",
+			"itemCost": {
+				"itemId": "fragment_fabricator",
+				"quantity": 1
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "fragment_swarm"
+				}
+			],
+			"exclusiveHullMods": [
+				"shrouded_lens",
+				"shrouded_mantle",
+				"shrouded_thunderhead"
+			],
+			"phantomHullMods": [
+				"fragment_swarm"
+			],
+			"description": "A fabricator pulled from a Threat wreck still builds fragments when it is fed. Seated in the hull, it keeps a swarm of them roiling around the ship to feed fragment weapons.",
+			"tags": [
+				"weapons",
+				"req_non_phase_hull"
+			]
+		},
+		{
+			"id": "secondary_fabricator",
+			"name": "Secondary Fabricator",
+			"icon": "graphics/hullmods/secondary_fabricator.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "FRAGMENT_REPLACEMENT_RATE_PERCENT",
+					"magnitude": 30
+				}
+			],
+			"itemCost": {
+				"itemId": "fragment_fabricator",
+				"quantity": 1
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "secondary_fabricator"
+				}
+			],
+			"phantomHullMods": [
+				"secondary_fabricator"
+			],
+			"description": "A second Threat fabricator wired in beside the first replaces fragments as fast as the fighting destroys them.",
+			"tags": [
+				"weapons"
+			]
+		},
+		{
+			"id": "fragment_coordinator",
+			"name": "Fragment Coordinator",
+			"icon": "graphics/hullmods/fragment_coordinator.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "FRAGMENT_SWARM_SIZE_PERCENT",
+					"magnitude": 60
+				}
+			],
+			"itemCost": {
+				"itemId": "threat_processing_unit",
+				"quantity": 1
+			},
+			"unlockConditions": [
+				{
+					"type": "blueprint",
+					"category": "hullmod",
+					"id": "fragment_coordinator"
+				}
+			],
+			"phantomHullMods": [
+				"fragment_coordinator"
+			],
+			"description": "Processing units taken from Threat wrecks let the ship's swarm hold together in far greater numbers.",
+			"tags": [
+				"weapons"
+			]
+		},
+		{
+			"id": "fragment_swarm_size",
+			"name": "Fragment Swarm Size",
+			"icon": "graphics/hullmods/fragment_coordinator.png",
+			"effects": [
+				{
+					"effect": "FRAGMENT_SWARM_SIZE_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"weapons"
+			]
+		},
+		{
+			"id": "fragment_replacement_rate",
+			"name": "Fragment Replacement Rate",
+			"icon": "graphics/hullmods/secondary_fabricator.png",
+			"effects": [
+				{
+					"effect": "FRAGMENT_REPLACEMENT_RATE_PERCENT",
+					"magnitude": 5
+				}
+			],
+			"tags": [
+				"weapons"
+			]
+		},
+		{
 			"id": "chronos_adaptability",
 			"name": "Chronos Rhythms",
 			"icon": "graphics/icons/rat_skill_time.png",

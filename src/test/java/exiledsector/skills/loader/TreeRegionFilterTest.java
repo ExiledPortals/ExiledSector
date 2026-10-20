@@ -10,6 +10,7 @@ import exiledsector.skills.layout.Rotation;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.layout.Star;
 import exiledsector.skills.layout.StaticImage;
+import exiledsector.skills.layout.ThreatUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedHashMap;
@@ -49,7 +50,9 @@ class TreeRegionFilterTest {
                         new StaticImage("untagged", 0f, 0f, new StaticImage.Shape(1f, 1f, "a.png", new Rotation(0f, 0f)), List.of())),
                 List.of(new RingBelt("belt", 0f, 0f, new RingBelt.Shape(1f, 2f, "a.png", new Rotation(0f, 0f)), List.of("enigma"))),
                 List.of(new Star("sun", 0f, 0f, 1f, "star_yellow", null, List.of("core")),
-                        new Star("frozen", 0f, 0f, 1f, "star_yellow", null, List.of("enigma"))));
+                        new Star("frozen", 0f, 0f, 1f, "star_yellow", null, List.of("enigma"))),
+                List.of(new ThreatUnit("hive", 0f, 0f, ThreatUnit.HIVE, 1f, 0f, List.of("core")),
+                        new ThreatUnit("lost_fabricator", 0f, 0f, ThreatUnit.FABRICATOR, 1f, 0f, List.of("enigma"))));
     }
 
     @Test
@@ -75,6 +78,7 @@ class TreeRegionFilterTest {
         SkillTreeLoader.ParsedTree filtered = TreeRegionFilter.apply(tree(), Set.of("enigma"));
 
         assertEquals(List.of("sun"), filtered.stars.stream().map(Star::getId).toList());
+        assertEquals(List.of("hive"), filtered.threatUnits.stream().map(ThreatUnit::getId).toList());
         assertEquals(List.of(), filtered.ringBelts);
         assertEquals(List.of("cloud", "untagged"), filtered.staticImages.stream().map(StaticImage::getId).toList());
     }

@@ -25,6 +25,7 @@ import exiledsector.skills.ReleasedNodes;
 import exiledsector.skills.RespecPlan;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.CostItems;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
@@ -479,7 +480,7 @@ final class NodeAllocator {
 
     private static double heldInCargo(String itemId) {
         CargoAPI cargo = PlayerFleet.cargoOrNull();
-        return cargo == null ? 0f : cargo.getCommodityQuantity(itemId);
+        return CostItems.held(cargo, itemId);
     }
 
     private static float refundOf(SkillItemCost refund, String itemId) {
@@ -491,7 +492,7 @@ final class NodeAllocator {
         if (itemCost == null || cargo == null) {
             return;
         }
-        cargo.removeCommodity(itemCost.itemId(), itemCost.quantity());
+        CostItems.remove(cargo, itemCost.itemId(), itemCost.quantity());
         skillData.recordItemCharge(nodeId, itemCost);
     }
 
@@ -538,7 +539,7 @@ final class NodeAllocator {
             case TYPE_CONFLICT -> Translation.msg("node.block.typeAllocated").arg("node", block.conflictingType().getDisplayName()).text();
             case EFFECT_BLOCK -> block.detail();
             case ITEM_COST -> Translation.msg("node.block.itemCost").arg("quantity", block.itemCost().formattedQuantity())
-                    .arg("item", block.itemCost().commodityName())
+                    .arg("item", block.itemCost().itemName())
                     .arg("have", SkillItemCost.formatQuantity((float) heldInCargo(block.itemCost().itemId())
                             + refundOf(refund, block.itemCost().itemId())))
                     .text();

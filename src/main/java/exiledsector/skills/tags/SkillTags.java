@@ -1,6 +1,7 @@
 package exiledsector.skills.tags;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public final class SkillTags {
@@ -14,13 +15,15 @@ public final class SkillTags {
     public static final String ABYSS_REGION = "abyss";
     public static final String EXOTECH_REGION = "exotech";
     public static final String REDACTED_REGION = "REDACTED";
+    public static final String THREAT_REGION = "threat";
+    public static final Set<String> ABYSSAL_REGIONS = Set.of(ABYSS_REGION, THREAT_REGION);
 
     public static final List<String> FACTION_VOLUMES = List.of(
             "luddic", "tritachyon", "hegemony", "sindrian_dictat", "pirate", "REDACTED", "persean_league");
 
     public static final List<String> REGION = List.of(
             "core", "luddic", "tritachyon", "hegemony", "sindrian_dictat", "pirate", "REDACTED", "persean_league", "enigma", "kesteven", "exotech", "abyss",
-            "nightcross", "stargazer");
+            "nightcross", "stargazer", "threat");
 
     public static final List<String> HULL_REQUIREMENT = List.of("req_civilian_hull", "req_non_phase_hull", "req_system_charges");
 
@@ -30,7 +33,7 @@ public final class SkillTags {
             "campaign_only", "player_only"), HULL_REQUIREMENT).flatMap(List::stream).toList();
 
     public static final List<String> GATE = List.of("gate_singularity_defeated", "gate_pascal_visited", "gate_lunar_fleet_defeated",
-            "gate_ancient_prototype_found");
+            "gate_ancient_prototype_found", "gate_threat_fought");
 
     public static final List<String> ALL = Stream.of(THEME, REGION, REQUIREMENT, GATE).flatMap(List::stream).toList();
 

@@ -29,7 +29,8 @@ class HyperspaceDataTest {
         Map<String, SkillType> types = SkillTypeLoader.parseSkillTypes(
                 RealSkillData.readJson(RealSkillData.projectRoot().resolve(RealSkillData.TYPES_FILE)));
         nodes = SkillTreeLoader.parseNodes(root, types);
-        anchors = HyperspaceAnchor.collect(SkillTreeLoader.parseStars(root), SkillTreeLoader.parseStaticImages(root));
+        anchors = HyperspaceAnchor.collect(SkillTreeLoader.parseStars(root), SkillTreeLoader.parseThreatUnits(root),
+                SkillTreeLoader.parseStaticImages(root));
     }
 
     @Test

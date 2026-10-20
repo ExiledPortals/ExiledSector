@@ -25,7 +25,7 @@ final class HyperspaceMode {
     private static final float MARGIN = 60f;
     private static final float RETURN_ZOOM = 0.35f;
     private static final float STAR_SCALE = 1.5f;
-    private static final Set<String> OFF_SCREEN_REGIONS = Set.of(SkillTags.ABYSS_REGION);
+    private static final Set<String> OFF_SCREEN_REGIONS = SkillTags.ABYSSAL_REGIONS;
 
     private final TreeCamera treeCamera;
     private final SkillTreeStatPanel statPanel;
@@ -101,7 +101,7 @@ final class HyperspaceMode {
         Set<String> lockedRegions = HyperspaceAnchor.lockedRegions(SkillTree.getAllNodes().values(), SkillNode::getRegion, nodeHidden);
         hiddenStarIds = SkillTree.getStars().stream().filter(star -> lockedRegions.contains(star.getRegion())).map(Star::getId)
                 .collect(Collectors.toUnmodifiableSet());
-        anchors = HyperspaceAnchor.collect(SkillTree.getStars(), SkillTree.getStaticImages()).stream()
+        anchors = HyperspaceAnchor.collect(SkillTree.getStars(), SkillTree.getThreatUnits(), SkillTree.getStaticImages()).stream()
                 .filter(anchor -> !lockedRegions.contains(anchor.region())).toList();
         if (anchors.isEmpty()) {
             return false;

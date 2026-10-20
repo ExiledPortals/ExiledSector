@@ -17,6 +17,7 @@ import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
 import static exiledsector.skills.skilleffect.StatTarget.bonus;
 import static exiledsector.skills.skilleffect.StatTarget.dynamicMod;
+import static exiledsector.skills.skilleffect.StatTarget.dynamicStat;
 import static exiledsector.skills.skilleffect.StatTarget.liveBonus;
 import static exiledsector.skills.skilleffect.StatTarget.stat;
 
@@ -60,6 +61,8 @@ public enum MiscSkillEffect implements BackedSkillEffect {
     NAV_RATING(FLAT, dynamicMod("coord_maneuvers_flat"), "stat.fleetNavRating", false),
     SYSTEM_CHARGES_FLAT(FLAT, bonus(MutableShipStatsAPI::getSystemUsesBonus), "stat.systemCharges", false),
     SYSTEM_COOLDOWN_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getSystemCooldownBonus), "stat.shipSystemCooldown", true),
+    FRAGMENT_SWARM_SIZE_PERCENT(PERCENT, dynamicMod("fragment_swarm_size_mod"), "stat.fragmentSwarmSize", false),
+    FRAGMENT_REPLACEMENT_RATE_PERCENT(PERCENT, dynamicStat("fragment_swarm_respawn_rate_mult"), "stat.fragmentReplacementRate", false),
     SYSTEM_CHARGE_REGEN_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getSystemRegenBonus), "stat.shipSystemChargeRegeneration", false),
     DAMAGE_TO_FRIGATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getDamageToFrigates), "stat.damageToFrigates", false),
     DAMAGE_TO_DESTROYER_PERCENT(PERCENT, stat(MutableShipStatsAPI::getDamageToDestroyers), "stat.damageToDestroyers", false),

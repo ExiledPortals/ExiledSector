@@ -12,6 +12,7 @@ const MODES: { value: EditorMode; label: string; key: string }[] = [
   { value: 'addAnchor', label: 'Add anchor', key: 'D' },
   { value: 'addImage', label: 'Add image', key: 'F' },
   { value: 'addStar', label: 'Add star', key: 'G' },
+  { value: 'addThreatUnit', label: 'Add Threat unit', key: 'H' },
 ];
 
 const TOOLTIP_HULL_SIZES = [{ value: '', label: 'All sizes' }, ...HULL_SIZE_OPTIONS.map((option) => ({ value: option.value, label: option.value === 'CAPITAL_SHIP' ? 'Capital ship' : option.label }))];

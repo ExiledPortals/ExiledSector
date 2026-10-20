@@ -17,12 +17,16 @@ import {
   imageById,
   RING_BELT_STYLES,
   starById,
+  THREAT_UNIT_SPRITES,
+  THREAT_UNIT_TYPES,
+  threatUnitById,
   typeById,
   VANILLA_STAR_TYPES,
   type AnchorShape,
   type OrbitAnchor,
   type Star,
   type StaticImage,
+  type ThreatUnit,
   type TreeDocument,
 } from '../model/types.ts';
 import { clearSelection, deleteSelection, selectOnly } from '../state/treeActions.ts';
@@ -376,6 +380,82 @@ export function StarInspector({ starId, vocabulary }: { starId: string; vocabula
   );
 }
 
+function editThreatUnit(threatUnitId: string, change: (threatUnit: ThreatUnit) => void): void {
+  editDocument((document) => {
+    const threatUnit = threatUnitById(document, threatUnitId);
+    if (threatUnit) {
+      change(threatUnit);
+    }
+  });
+}
+
+export function ThreatUnitInspector({ threatUnitId, vocabulary }: { threatUnitId: string; vocabulary: Vocabulary }) {
+  const document = useTreeStore((state) => state.document);
+  const threatUnit = threatUnitById(document, threatUnitId);
+  if (!threatUnit) {
+    return null;
+  }
+  const rename = (text: string) => {
+    const newId = text.trim();
+    if (!newId || threatUnitById(document, newId)) {
+      notifyError('Id must be unique and non-empty');
+      return;
+    }
+    editThreatUnit(threatUnitId, (target) => {
+      target.id = newId;
+    });
+    setSelection({ threatUnits: [newId] });
+  };
+
+  return (
+    <Stack gap="sm">
+      <Title order={4}>Threat unit</Title>
+      <CommitTextInput size="xs" label="Threat unit id" value={threatUnit.id} onCommit={rename} />
+      <Group grow gap={6}>
+        <CommitNumberInput size="xs" label="X" value={threatUnit.x} onCommit={(value) => editThreatUnit(threatUnitId, (target) => {
+          target.x = value || 0;
+        })} />
+        <CommitNumberInput size="xs" label="Y" value={threatUnit.y} onCommit={(value) => editThreatUnit(threatUnitId, (target) => {
+          target.y = value || 0;
+        })} />
+      </Group>
+      <Select
+        size="xs"
+        label="Unit type"
+        data={THREAT_UNIT_TYPES.map((value) => ({ value, label: THREAT_UNIT_SPRITES[value].label }))}
+        value={threatUnit.unitType}
+        allowDeselect={false}
+        onChange={(value) => editThreatUnit(threatUnitId, (target) => {
+          target.unitType = value ?? 'fabricator';
+        })}
+      />
+      <Group grow gap={6}>
+        <CommitNumberInput
+          size="xs"
+          label="Length"
+          value={threatUnit.length}
+          onCommit={(value) => editThreatUnit(threatUnitId, (target) => {
+            target.length = Math.max(20, Math.trunc(value) || 20);
+          })}
+        />
+        <CommitNumberInput
+          size="xs"
+          label="Rotation (deg)"
+          value={threatUnit.rotation || 0}
+          onCommit={(value) => editThreatUnit(threatUnitId, (target) => {
+            target.rotation = degreesOrZero(value);
+          })}
+        />
+      </Group>
+      <RegionField vocabulary={vocabulary} tags={threatUnit.tags} onChange={(tags) => editThreatUnit(threatUnitId, (target) => setTags(target, tags))} />
+      <Divider />
+      <Button size="xs" color="red" variant="light" leftSection={<IconTrash size={14} />} onClick={deleteSelection}>
+        Delete this threat unit (Q)
+      </Button>
+    </Stack>
+  );
+}
+
 export function MultiSelectionInspector() {
   const selection = useTreeStore((state) => state.selection);
   const document = useTreeStore((state) => state.document);
@@ -389,6 +469,7 @@ export function MultiSelectionInspector() {
     ...selection.anchors.map((id) => ({ kind: 'anchors' as const, id, label: `${id} (anchor)` })),
     ...selection.images.map((id) => ({ kind: 'images' as const, id, label: `${id} (image)` })),
     ...selection.stars.map((id) => ({ kind: 'stars' as const, id, label: `${id} (star)` })),
+    ...selection.threatUnits.map((id) => ({ kind: 'threatUnits' as const, id, label: `${id} (threat unit)` })),
   ];
   return (
     <Stack gap="sm">

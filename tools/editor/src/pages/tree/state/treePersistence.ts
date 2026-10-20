@@ -84,6 +84,7 @@ function normalizeDraftData(data: TreeDocument): TreeDocument {
     anchors: data.anchors ?? [],
     images: data.images ?? [],
     stars: data.stars ?? [],
+    threatUnits: data.threatUnits ?? [],
   };
   pruneConnectorEntries(document);
   return document;

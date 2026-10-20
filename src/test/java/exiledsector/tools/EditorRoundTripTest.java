@@ -110,6 +110,8 @@ class EditorRoundTripTest {
                     List.of(tree("treeFileObject"), tree("serializeStaticImage")), false),
             new Pin("ship_skill_tree.json stars", TREE_LOADER, List.of("parseStars"),
                     List.of(tree("treeFileObject"), tree("serializeStar")), false),
+            new Pin("ship_skill_tree.json threatUnits", TREE_LOADER, List.of("parseThreatUnits"),
+                    List.of(tree("treeFileObject"), tree("serializeThreatUnit")), false),
             new Pin("subroutines.csv and hull_items.csv row key", ITEM_DEFINITIONS, List.of("rows"),
                     List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "SUBROUTINE_COLUMNS"), new EditorSource(ITEM_DEFINITIONS_MODEL, "HULL_ITEM_COLUMNS")), true),
             new Pin("subroutines.csv columns", ITEM_DEFINITION, List.of("parseSubroutine", "definitionId", "parseShared", "parseCommon"),

@@ -18,7 +18,8 @@ public enum UnlockConditionType {
     RAT_SINGULARITY_DEFEATED(new ModGate(RandomAssortmentCompat::isModEnabled, AbyssSingularity::isGateOpen)),
     NIGHTCROSS_PASCAL_VISITED(new ModGate(NightcrossCompat::isModEnabled, NightcrossUnlocks::isPascalVisited)),
     NIGHTCROSS_LUNAR_FLEET_DEFEATED(new ModGate(NightcrossCompat::isModEnabled, NightcrossUnlocks::isLunarFleetDefeated)),
-    NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND(new ModGate(NightcrossCompat::isModEnabled, NightcrossUnlocks::isAncientPrototypeFound));
+    NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND(new ModGate(NightcrossCompat::isModEnabled, NightcrossUnlocks::isAncientPrototypeFound)),
+    THREAT_FOUGHT(new ModGate(() -> true, ThreatEncounter::isFought));
 
     record ModGate(BooleanSupplier modEnabled, Predicate<SectorAPI> passed) {
 

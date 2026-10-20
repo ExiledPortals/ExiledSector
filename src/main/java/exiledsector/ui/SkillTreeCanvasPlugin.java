@@ -25,6 +25,7 @@ import exiledsector.ui.decoration.SkillTreeRingBeltRenderer;
 import exiledsector.ui.decoration.SkillTreeStarRenderer;
 import exiledsector.ui.decoration.SkillTreeStarfieldRenderer;
 import exiledsector.ui.decoration.SkillTreeStaticImageRenderer;
+import exiledsector.ui.decoration.ThreatUnitRenderer;
 import exiledsector.ui.inspect.ItemCodex;
 import exiledsector.ui.node.DoctrineColors;
 import exiledsector.ui.node.NodeRadiusRingRenderer;
@@ -47,6 +48,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SkillTreeStarfieldRenderer starfieldRenderer;
     private final AbyssDarknessRenderer abyssDarkness = AbyssDarknessRenderer.forActiveTree();
     private final AbyssSerpentRenderer abyssSerpents = AbyssSerpentRenderer.forActiveTree();
+    private final ThreatUnitRenderer threatUnits = ThreatUnitRenderer.forActiveTree();
     private final ExoshipView exoshipView = new ExoshipView();
     private final SkillTreeStaticImageRenderer staticImageRenderer = new SkillTreeStaticImageRenderer();
     private final SkillTreeRingBeltRenderer ringBeltRenderer = new SkillTreeRingBeltRenderer();
@@ -139,6 +141,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         staticImageRenderer.advance(amount);
         ringBeltRenderer.advance(amount);
         abyssSerpents.advance(amount);
+        threatUnits.advance(amount);
         if (camera.isFollowing() && hyperspaceMode.isActive()) {
             stopFollowing();
         }
@@ -505,6 +508,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         ringBeltRenderer.render(viewport, sceneryAlpha * treeAlpha);
         abyssSerpents.render(viewport, sceneryAlpha * treeAlpha);
         staticImageRenderer.render(viewport, sceneryAlpha, hyperspaceMode.anchorIds(), treeAlpha);
+        threatUnits.render(viewport, sceneryAlpha, hyperspaceMode.anchorIds(), treeAlpha);
         boolean pointerOverTree = mouseKnown && !chrome.contains(canvasPosition, mode, mouseX, mouseY);
         boolean shipHovered = pointerOverTree && mode.hoversTree() && exoshipView.shipContains(viewport, mouseX, mouseY);
         boolean treeHovered = pointerOverTree && mode.hoversTree() && !shipHovered;

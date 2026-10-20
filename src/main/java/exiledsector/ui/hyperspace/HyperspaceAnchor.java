@@ -3,6 +3,7 @@ package exiledsector.ui.hyperspace;
 import exiledsector.skills.layout.SkillTreeObject;
 import exiledsector.skills.layout.Star;
 import exiledsector.skills.layout.StaticImage;
+import exiledsector.skills.layout.ThreatUnit;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,7 +17,7 @@ public record HyperspaceAnchor(String id, String region, float x, float y, float
 
     private static final float NEBULA_CORE_FRACTION = 0.25f;
 
-    public static List<HyperspaceAnchor> collect(List<Star> stars, List<StaticImage> images) {
+    public static List<HyperspaceAnchor> collect(List<Star> stars, List<ThreatUnit> threatUnits, List<StaticImage> images) {
         List<HyperspaceAnchor> anchors = new ArrayList<>();
         Set<String> regionsWithStars = new HashSet<>();
         for (Star star : stars) {
@@ -24,6 +25,12 @@ public record HyperspaceAnchor(String id, String region, float x, float y, float
             if (region != null) {
                 anchors.add(of(star, region, star.getRadius(), true));
                 regionsWithStars.add(region);
+            }
+        }
+        for (ThreatUnit unit : threatUnits) {
+            String region = unit.getRegion();
+            if (region != null && regionsWithStars.add(region)) {
+                anchors.add(of(unit, region, unit.getLength() / 2f, false));
             }
         }
         Set<String> regionsWithNebulae = new HashSet<>();

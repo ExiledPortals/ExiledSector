@@ -6,9 +6,11 @@ import { isRegionTag } from '../model/tags.ts';
 import {
   ANCHOR_RECTANGLE_ASPECT,
   anchorById,
+  DEFAULT_THREAT_UNIT_LENGTH,
   imageById,
   nodeById,
   starById,
+  threatUnitById,
   uniqueId,
   type OrbitAnchor,
   type TreeDocument,
@@ -120,6 +122,17 @@ export function addStarAt(x: number, y: number): void {
   setMode('select');
 }
 
+export function addThreatUnitAt(x: number, y: number, vocabulary?: Vocabulary): void {
+  const document = useTreeStore.getState().document;
+  const id = uniqueId('threat_unit', (taken) => Boolean(threatUnitById(document, taken)));
+  const region = vocabulary ? nearestRegionTag(document, vocabulary, x, y) : undefined;
+  editDocument((draft) => {
+    draft.threatUnits.push({ id, x, y, unitType: 'fabricator', length: DEFAULT_THREAT_UNIT_LENGTH, rotation: 0, tags: region ? [region] : undefined });
+  });
+  selectOnly('threatUnits', id);
+  setMode('select');
+}
+
 export function duplicateNode(nodeId: string): void {
   const document = useTreeStore.getState().document;
   const original = nodeById(document, nodeId);
@@ -153,6 +166,7 @@ export function deleteSelection(): void {
     }
     draft.images = draft.images.filter((image) => !selection.images.includes(image.id));
     draft.stars = draft.stars.filter((star) => !selection.stars.includes(star.id));
+    draft.threatUnits = draft.threatUnits.filter((threatUnit) => !selection.threatUnits.includes(threatUnit.id));
   });
   setSelection(EMPTY_SELECTION);
 }

@@ -265,6 +265,31 @@ refused there afterwards. Nodes whose conflicting mod names no cause, like Necro
 `exclusiveHullMods` list instead. A learned entry is never removed, even if a later version of that mod
 drops the conflict.
 
+## Threat volume
+
+The Threat volume holds Fragment Swarm, Secondary Fabricator and Fragment Coordinator, plus small Fragment
+Swarm Size and Fragment Replacement Rate nodes. Fragment Swarm is a passthrough node (`vanillaHullMod`) as
+well as a phantom, because the swarm itself is created in the vanilla hull mod's `advanceInCombat`; the
+phantom alone would apply nothing. Fragment weapons only need the swarm, so they work off the node. The two
+upgrades are plain phantoms whose node effects write the same dynamic stats vanilla uses
+(`fragment_swarm_size_mod` and `fragment_swarm_respawn_rate_mult`) as percentages. They add to the vanilla
+upgrades and to each other, and the Threat Hull's hive and fabricator multipliers apply on top, so Threat
+hulls need no special case. Fragment Swarm is refused on phase hulls and with Shrouded hull mods, as in
+vanilla. The upgrades rely on sitting behind Fragment Swarm in the tree rather than on a requirement check.
+
+Each notable costs the item vanilla consumes on install: a Fragment Fabricator for Fragment Swarm and
+Secondary Fabricator, a Threat Processing Unit for Fragment Coordinator. These are special items, not
+commodities, so `CostItems` decides per item id which cargo calls to use and how to name it. The
+blueprints drop from destroyed Threat fabricators (vanilla `ThreatFIDConfig`).
+
+Every node in the volume carries `gate_threat_fought`, which opens on vanilla's player memory flag
+`$encounteredThreat`. `ThreatFIDConfig` sets it when a battle against a Threat fleet starts, whatever the
+outcome, and never clears it.
+
+The volume has no star. Its centrepiece is a `threatUnits` entry in `ship_skill_tree.json`, a Threat
+Fabricator or Hive sprite drawn by `ThreatUnitRenderer` with a fragment swarm orbiting it. It is also the
+volume's anchor on the hyperspace map, ahead of any nebula image.
+
 ## Generated NPC trees
 
 NPC trees are generated per ship by `NpcSkillTreeBuilder.generate`, seeded from the sector seed, fleet id
