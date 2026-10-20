@@ -56,6 +56,7 @@ import exiledsector.skills.skilleffect.FleetCrewLedger;
 import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.tags.AreaToggles;
 import exiledsector.skills.unlock.NodeGates;
+import exiledsector.skills.unlock.RelockedGates;
 import exiledsector.skills.unlock.RemnantEncounter;
 import exiledsector.items.BattleItemDrops;
 import exiledsector.items.ItemCraftingCosts;
@@ -291,6 +292,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         Global.getSector().getListenerManager().addListener(new TechMiningItemListener(), true);
         Global.getSector().getListenerManager().addListener(new MarketItemStock(), true);
         Global.getSector().addTransientListener(new RemnantEncounter.BattleListener());
+        Global.getSector().getListenerManager().addListener(new RelockedGates.LocationListener(), true);
         if (RandomAssortmentCompat.isModEnabled()) {
             AbyssSingularity.checkSaveOnLoad(Global.getSector());
             Global.getSector().addTransientListener(new AbyssSingularity.BattleListener());

@@ -13,7 +13,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -65,9 +67,25 @@ class RemnantEncounterTest {
     @Test
     void theRemnantGateIsAParameterlessGateThatAlwaysApplies() {
         assertTrue(UnlockConditionType.REMNANT_FOUGHT.isModGate());
-        assertFalse(UnlockConditionType.REMNANT_FOUGHT.modGate().isOpen(sector));
+        assertFalse(UnlockConditionType.REMNANT_FOUGHT.modGate().isOpen(sector, false));
         when(playerMemory.getBoolean(RemnantEncounter.FOUGHT_REMNANT_KEY)).thenReturn(true);
-        assertTrue(UnlockConditionType.REMNANT_FOUGHT.modGate().isOpen(sector));
+        assertTrue(UnlockConditionType.REMNANT_FOUGHT.modGate().isOpen(sector, false));
+        assertFalse(UnlockConditionType.REMNANT_FOUGHT.modGate().isOpen(sector, true));
+    }
+
+    @Test
+    void aRemnantBattleReopensARelockedGate() {
+        Map<String, Object> persistentData = new HashMap<>();
+        when(sector.getPersistentData()).thenReturn(persistentData);
+        when(playerMemory.getBoolean(RemnantEncounter.FOUGHT_REMNANT_KEY)).thenReturn(true);
+        RelockedGates.relock(sector, List.of(UnlockConditionType.REMNANT_FOUGHT));
+
+        RemnantEncounter.recordBattle(sector, battleAgainst("hegemony"));
+        assertTrue(RelockedGates.isRelocked(sector, UnlockConditionType.REMNANT_FOUGHT));
+
+        RemnantEncounter.recordBattle(sector, battleAgainst("remnant"));
+        assertFalse(RelockedGates.isRelocked(sector, UnlockConditionType.REMNANT_FOUGHT));
+        assertTrue(persistentData.isEmpty());
     }
 
     private static BattleAPI battleAgainst(String... factionIds) {

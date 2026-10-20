@@ -25,11 +25,19 @@ public final class RemnantEncounter {
     }
 
     public static void recordBattle(SectorAPI sector, BattleAPI battle) {
-        if (sector == null || battle == null || isFought(sector) || !hasRemnantFleet(battle.getNonPlayerSideSnapshot())) {
+        if (sector == null || battle == null) {
             return;
         }
-        sector.getPlayerMemoryWithoutUpdate().set(FOUGHT_REMNANT_KEY, true);
-        LOG.info("[ExiledSector] The player fought a Remnant fleet; the Remnant volume is now revealed");
+        boolean fought = isFought(sector);
+        if (fought && !RelockedGates.isRelocked(sector, UnlockConditionType.REMNANT_FOUGHT)
+                || !hasRemnantFleet(battle.getNonPlayerSideSnapshot())) {
+            return;
+        }
+        RelockedGates.reopen(sector, UnlockConditionType.REMNANT_FOUGHT);
+        if (!fought) {
+            sector.getPlayerMemoryWithoutUpdate().set(FOUGHT_REMNANT_KEY, true);
+            LOG.info("[ExiledSector] The player fought a Remnant fleet; the Remnant volume is now revealed");
+        }
     }
 
     static boolean hasRemnantFleet(List<CampaignFleetAPI> fleets) {
