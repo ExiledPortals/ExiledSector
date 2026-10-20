@@ -16,23 +16,48 @@ Exiled Sector adds three major modules: a skill tree for every ship, hull upgrad
 
 Press the Skill Tree button in the refit screen and every ship in your fleet gets a tree of its own, over 300 nodes of armour, flux, guns and questionable engineering decisions. Ships level up in combat and every level buys a node, so your veteran Lasher eventually stops being a Lasher and starts being a problem.
 
+<details>
+<summary>The skill tree</summary>
+
 <img src="graphics/description/skill_tree.gif" alt="The skill tree">
+
+</details>
 
 You might have to travel a bit for the juicy nodes. Slot a Wormhole Anchor into a Subroutine Socket and it tears a hole out past the edge of the tree, to where the sensible nodes stop. Ctrl+click the socket and in you go.
 
+<details>
+<summary>Travelling through a Wormhole Anchor</summary>
+
 <img src="graphics/description/wormhole_anchor.gif" alt="Travelling through a Wormhole Anchor">
+
+</details>
 
 Every major faction has a volume of its own, full of nodes that think the way it does. The Hegemony thickens your armour, Tri-Tachyon invoices you for it, and the Luddic Path would quite like your ship to explode, ideally next to someone else's.
 
+<details>
+<summary>Unique faction volume nodes</summary>
+
 <img src="graphics/description/faction_volumes.png" alt="Faction volumes">
+
+</details>
 
 Doctrine Archives are faction playbooks your crew definitely didn't steal. Some rewrite every node around them into faction-related bonuses, others bolt the doctrine on top. Your engineers read the Tri-Tachyon one and now call the reactor a "growth opportunity".
 
-<img src="graphics/description/doctrine_archive.png" alt="A Doctrine Archive">
+<details>
+<summary>Doctrine Archives</summary>
+
+<img src="graphics/description/doctrine_archive.gif" alt="A Doctrine Archive">
+
+</details>
 
 Running Random Assortment of Things, Nightcross Armory or LOST_SECTOR? Explore them to find more ways to blow up your enemies.
 
+<details>
+<summary>Spoilers: volumes from other mods</summary>
+
 <img src="graphics/description/mod_volumes.png" alt="Volumes from other mods">
+
+</details>
 
 ### Hull upgrades
 
@@ -40,24 +65,62 @@ Nobody has designed a new hull since the Collapse, and the Domain's blueprints s
 
 From level 15, Hull Upgrades turn up in wrecks and salvage. Install one, choose a section of the ship, and that section takes hull items of its own.
 
+<details>
+<summary>Installing a Hull Upgrade and unlocking a section</summary>
+
 <img src="graphics/description/hull_upgrades.gif" alt="Installing a Hull Upgrade and unlocking a section">
+
+</details>
 
 Hull items come common, rare and unique, rolling prefixes and suffixes the way the Karui ancestors intended.
 
-<img src="graphics/description/hull_item_1.png" alt="A hull item">
-<img src="graphics/description/hull_item_2.png" alt="A hull item">
-<img src="graphics/description/hull_item_3.png" alt="A hull item">
-<img src="graphics/description/hull_item_4.png" alt="A hull item">
+<details>
+<summary>Hull items</summary>
 
-Don't like the rolls? Grow nanoswarms from Nanite Feedstock at the crafting bench and set them loose on your items to add, reroll, reshape or freeze their modifiers. Or corrupt one and find out. Results may vary. Results will vary.
+<img src="graphics/description/hull_items.gif" alt="Browsing hull items">
 
-<img src="graphics/description/crafting_bench.gif" alt="The crafting bench">
+</details>
+
+<details>
+<summary>Installing hull items</summary>
+
+<img src="graphics/description/hull_item_install.gif" alt="Installing hull items">
+
+</details>
+
+Don't like the rolls? Find nanoswarms (or grow them from Nanite Feedstock) and set them loose on your items at the crafting bench to add, reroll, reshape or freeze their modifiers. Or corrupt one and find out. Results may vary. Results will vary.
+
+<details>
+<summary>The crafting bench</summary>
+
+<img src="graphics/description/crafting_open.gif" alt="Opening the crafting bench">
+
+</details>
+
+<details>
+<summary>Nanoswarm types</summary>
+
+<img src="graphics/description/crafting_nanoswarms.gif" alt="The nanoswarms">
+
+</details>
+
+<details>
+<summary>Using nanoswarms</summary>
+
+<img src="graphics/description/crafting_use.gif" alt="Using nanoswarms on a hull item">
+
+</details>
 
 Note: no Path of Building, but the codex should give you what you need.
 
 The loot turns up everywhere you'd expect it to: research stations, orbital labs, derelicts and the smoking remains of anyone who disagreed with you. The crew gets nothing, as is tradition.
 
+<details>
+<summary>Looting a research station</summary>
+
 <img src="graphics/description/loot.gif" alt="Looting a research station">
+
+</details>
 
 ### Star charts
 
@@ -65,15 +128,16 @@ Star Charts lead to systems no map shows, cut off from hyperspace and guarded by
 
 To open one you need a Wormhole Gateway, a colony structure for people who have run out of normal places to kill their crew.
 
-<img src="graphics/description/wormhole_gateway.png" alt="The Wormhole Gateway">
-
 Charts roll modifiers too, and the same nanoswarms work on them. Bigger fleets, nastier bosses, better rewards. You asked for this (I think? Maybe it was me that asked for this).
 
-<img src="graphics/description/chart_crafting.gif" alt="Crafting a Star Chart">
+<details>
+<summary>Building a Wormhole Gateway and crafting a Star Chart</summary>
+
+<img src="graphics/description/star_charts.gif" alt="Building a Wormhole Gateway and crafting a Star Chart">
+
+</details>
 
 Open the wormhole, fly in, deal with whoever is home and take everything that isn't bolted down. When the run ends the system goes with it, along with anything you forgot to pick up. No it will not bloat your save (I hope).
-
-<img src="graphics/description/chart_opening.gif" alt="Opening a Star Chart">
 
 ## Requirements
 
