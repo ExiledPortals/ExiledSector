@@ -794,9 +794,10 @@ sizes are in an 80 by 80 design box scaled to the icon. When the look is framed,
 items are, a faction-coloured frame with a soft additive inner band surrounds it, and ten small lights
 (`graphics/fx/glow64.png`) sit along each half of the frame, from the top-left corner to the bottom-right one. A
 lit light grows, and slides inward just enough that its glow stays inside the icon box. The
-crest of `crest_faction` (read from the faction spec, so mod crests are never copied) sits in a circle in the
+crest of `crest_faction` (read from the faction spec) sits in a circle in the
 bottom-right corner, drawn as a textured fan with a dark rim, plus a faction-coloured ring when framed. A faction
-that isn't loaded shows no badge.
+that isn't loaded falls back to `graphics/icons/crests/<faction id>.png`, which bundles the crests of the merged
+areas whose mods may be absent (Kesteven, Enigma, Nightcross, Stargazer); with neither, there is no badge.
 
 With item animations on Full, each icon runs a six-second cycle, offset per stack so a cargo grid never pulses in
 step:

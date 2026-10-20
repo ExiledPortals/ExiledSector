@@ -12,13 +12,13 @@ Files: everything prefixed `rat_`, which covers the icons in `graphics/icons`, t
 
 By YukiM. Nightcross's own licence makes its graphics free to use for kitbashing and its code available under GPLv3, and the author confirmed the assets are free to use in Starsector modding.
 
-Files: everything prefixed `na_` in `graphics/icons`, and the repair drone sprite `graphics/fx/na_repair_drone.png` (from the Healing Bolt drone).
+Files: everything prefixed `na_` in `graphics/icons`, the repair drone sprite `graphics/fx/na_repair_drone.png` (from the Healing Bolt drone), and the faction crests `graphics/icons/crests/nightcross.png` and `graphics/icons/crests/stargazer.png`.
 
 ## LOST_SECTOR
 
 Originally by Kissa Mies, now maintained by SirHartley ([github.com/SirHartley/Lost.Sector](https://github.com/SirHartley/Lost.Sector)). LOST_SECTOR is licensed under [Creative Commons Attribution-NonCommercial-ShareAlike 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/), and so are the LOST_SECTOR files here and our changes to them. They may not be used commercially, and anything made from them must be shared under the same licence.
 
-Files: everything prefixed `nskr_` in `graphics/icons` and `graphics/unused`. The `_shifted` icons are hue-shifted copies of the originals. The Kesteven nodes are modelled on LOST_SECTOR hull mods, but their code is Exiled Sector's own and is covered by the GPL.
+Files: everything prefixed `nskr_` in `graphics/icons` and `graphics/unused`, and the faction crests `graphics/icons/crests/enigma.png` and `graphics/icons/crests/kesteven.png`. The `_shifted` icons are hue-shifted copies of the originals. The Kesteven nodes are modelled on LOST_SECTOR hull mods, but their code is Exiled Sector's own and is covered by the GPL.
 
 ## Starsector
 

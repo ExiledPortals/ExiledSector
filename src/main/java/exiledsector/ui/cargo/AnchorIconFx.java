@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +25,7 @@ public final class AnchorIconFx {
     static final String HALO_TEXTURE = "graphics/fx/star_halo.png";
     static final String RING_TEXTURE = "graphics/fx/shields256ringd.png";
     static final String LIGHT_TEXTURE = "graphics/fx/glow64.png";
+    static final String BUNDLED_CREST_DIRECTORY = "graphics/icons/crests/";
     static final float IDLE_WAVE = -10f;
     private static final float DESIGN_SIZE = 80f;
     private static final float DESIGN_CENTRE = 40f;
@@ -405,12 +407,27 @@ public final class AnchorIconFx {
     }
 
     private static String lookUpCrest(String factionId) {
+        String factionCrest = factionCrest(factionId);
+        return factionCrest != null ? factionCrest : bundledCrest(factionId);
+    }
+
+    private static String factionCrest(String factionId) {
         try {
             FactionSpecAPI spec = Global.getSettings().getFactionSpec(factionId);
             String crest = spec == null ? null : spec.getCrest();
-            return crest == null ? "" : crest;
+            return crest == null || crest.isEmpty() ? null : crest;
         } catch (RuntimeException e) {
             LOG.warn("Could not read the crest of faction " + factionId + " for a wormhole anchor badge", e);
+            return null;
+        }
+    }
+
+    private static String bundledCrest(String factionId) {
+        String path = BUNDLED_CREST_DIRECTORY + factionId + ".png";
+        try {
+            Global.getSettings().loadTexture(path);
+            return path;
+        } catch (IOException | RuntimeException e) {
             return "";
         }
     }
