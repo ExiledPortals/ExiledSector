@@ -252,9 +252,9 @@ This mod is in (very) early development.
 
 It is my first mod, and first foray into OpenGL/game development, and is by no means feature complete or bug free.
 
-AI usage: I am a Java software engineer working in the regulatory sector where AI use is heavily restricted at this stage. I started this project as a way to educate myself on the capabilities of LLMs for clean, maintainable code, so that when people asked my opinion I can definitively state that LLMs are not the godsend Sam Altman claims. I still think giving inexperienced devs access to an LLM is like giving an 8 year old a powerdrill. Claude's Opus 5.5 was my chosen model for much of the code.
+AI usage: I am a Java software engineer working in the regulatory sector where AI use is heavily restricted at this stage. I started this project as a way to educate myself on the capabilities of LLMs for clean, maintainable code, so that when people asked my opinion I can definitively state that LLMs are not the godsend Sam Altman claims. I still think giving inexperienced devs access to an LLM is like giving an 8 year old a powerdrill. Claude's Opus 5.5 was used for this project.
 
-The art in the mod comes from starsector-core, royalty-free sources, and other mods whose authors kindly gave permission (see Credits). To my knowledge, I have not used LLM-generated art.
+The art in the mod comes from starsector-core, royalty-free sources, and other mods whose authors kindly gave permission (see Credits).
 
 I am seeking any feedback, bug reports, node suggestions, or faction designs.
 
