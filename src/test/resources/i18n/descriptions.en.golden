@@ -4860,7 +4860,7 @@ summary|option0|FRIGATE|3	1	<bad>100%</bad> less combat readiness loss from bein
 summary|option0|FRIGATE|4	0	<good>220%</good> increased maneuverability.
 summary|option0|FRIGATE|5	0	<good>85%</good> increased hard flux level at which phased speed reaches its minimum.
 summary|option0|FRIGATE|6	0	Converts this ship's shield to omni-directional.
-summary|option0|FRIGATE|7	0	<good>+65</good> to crew capacity.
+summary|option0|FRIGATE|7	0	<good>+70</good> to crew capacity.
 summary|option0|FRIGATE|8	0	<good>+200</good> to beam weapon range.
 summary|option0|FRIGATE|9	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option0|FRIGATE|10	0	<good>100%</good> increased shield turn rate.
@@ -4948,7 +4948,7 @@ summary|option0|FRIGATE|91	0	When this ship isn't flown by you, it flies straigh
 summary|option0|FRIGATE|92	0	<good>+100</good> to shield arc.
 summary|option0|FRIGATE|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option0|FRIGATE|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-summary|option0|FRIGATE|95	0	<good>202%</good> more flux capacity.
+summary|option0|FRIGATE|95	0	<good>214%</good> more flux capacity.
 summary|option0|FRIGATE|96	0	<good>104%</good> more flux dissipation.
 summary|option0|FRIGATE|97	0	<good>80%</good> increased fragment swarm size.
 summary|option0|FRIGATE|98	0	<good>40%</good> increased fragment replacement rate.
@@ -5055,7 +5055,7 @@ summary|option0|FRIGATE|198	1	<bad>-5</bad> to supplies your fleet needs to perf
 summary|option0|FRIGATE|199	0	<good>100%</good> more combat objective capture rate.
 summary|option0|FRIGATE|200	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 summary|option0|FRIGATE|201	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option0|FRIGATE|202	0	<good>80%</good> increased weapon turn rate.
+summary|option0|FRIGATE|202	0	<good>100%</good> increased weapon turn rate.
 summary|option0|FRIGATE|203	0	<bad>15%</bad> less ballistic weapon range.
 summary|option0|FRIGATE|204	0	<bad>15%</bad> less energy weapon range.
 summary|option0|FRIGATE|205	1	<good>25%</good> increased fighter refit time.
@@ -5073,7 +5073,7 @@ summary|option0|DESTROYER|3	1	<bad>100%</bad> less combat readiness loss from be
 summary|option0|DESTROYER|4	0	<good>220%</good> increased maneuverability.
 summary|option0|DESTROYER|5	0	<good>85%</good> increased hard flux level at which phased speed reaches its minimum.
 summary|option0|DESTROYER|6	0	Converts this ship's shield to omni-directional.
-summary|option0|DESTROYER|7	0	<good>+155</good> to crew capacity.
+summary|option0|DESTROYER|7	0	<good>+170</good> to crew capacity.
 summary|option0|DESTROYER|8	0	<good>+200</good> to beam weapon range.
 summary|option0|DESTROYER|9	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option0|DESTROYER|10	0	<good>100%</good> increased shield turn rate.
@@ -5161,7 +5161,7 @@ summary|option0|DESTROYER|91	0	When this ship isn't flown by you, it flies strai
 summary|option0|DESTROYER|92	0	<good>+100</good> to shield arc.
 summary|option0|DESTROYER|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option0|DESTROYER|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-summary|option0|DESTROYER|95	0	<good>202%</good> more flux capacity.
+summary|option0|DESTROYER|95	0	<good>214%</good> more flux capacity.
 summary|option0|DESTROYER|96	0	<good>104%</good> more flux dissipation.
 summary|option0|DESTROYER|97	0	<good>80%</good> increased fragment swarm size.
 summary|option0|DESTROYER|98	0	<good>40%</good> increased fragment replacement rate.
@@ -5268,7 +5268,7 @@ summary|option0|DESTROYER|198	1	<bad>-11</bad> to supplies your fleet needs to p
 summary|option0|DESTROYER|199	0	<good>100%</good> more combat objective capture rate.
 summary|option0|DESTROYER|200	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 summary|option0|DESTROYER|201	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option0|DESTROYER|202	0	<good>80%</good> increased weapon turn rate.
+summary|option0|DESTROYER|202	0	<good>100%</good> increased weapon turn rate.
 summary|option0|DESTROYER|203	0	<bad>15%</bad> less ballistic weapon range.
 summary|option0|DESTROYER|204	0	<bad>15%</bad> less energy weapon range.
 summary|option0|DESTROYER|205	1	<good>25%</good> increased fighter refit time.
@@ -5286,7 +5286,7 @@ summary|option0|CRUISER|3	1	<bad>100%</bad> less combat readiness loss from bein
 summary|option0|CRUISER|4	0	<good>220%</good> increased maneuverability.
 summary|option0|CRUISER|5	0	<good>85%</good> increased hard flux level at which phased speed reaches its minimum.
 summary|option0|CRUISER|6	0	Converts this ship's shield to omni-directional.
-summary|option0|CRUISER|7	0	<good>+260</good> to crew capacity.
+summary|option0|CRUISER|7	0	<good>+285</good> to crew capacity.
 summary|option0|CRUISER|8	0	<good>+200</good> to beam weapon range.
 summary|option0|CRUISER|9	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option0|CRUISER|10	0	<good>100%</good> increased shield turn rate.
@@ -5374,7 +5374,7 @@ summary|option0|CRUISER|91	0	When this ship isn't flown by you, it flies straigh
 summary|option0|CRUISER|92	0	<good>+100</good> to shield arc.
 summary|option0|CRUISER|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option0|CRUISER|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-summary|option0|CRUISER|95	0	<good>202%</good> more flux capacity.
+summary|option0|CRUISER|95	0	<good>214%</good> more flux capacity.
 summary|option0|CRUISER|96	0	<good>104%</good> more flux dissipation.
 summary|option0|CRUISER|97	0	<good>80%</good> increased fragment swarm size.
 summary|option0|CRUISER|98	0	<good>40%</good> increased fragment replacement rate.
@@ -5481,7 +5481,7 @@ summary|option0|CRUISER|198	1	<bad>-20</bad> to supplies your fleet needs to per
 summary|option0|CRUISER|199	0	<good>100%</good> more combat objective capture rate.
 summary|option0|CRUISER|200	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 summary|option0|CRUISER|201	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option0|CRUISER|202	0	<good>80%</good> increased weapon turn rate.
+summary|option0|CRUISER|202	0	<good>100%</good> increased weapon turn rate.
 summary|option0|CRUISER|203	0	<bad>15%</bad> less ballistic weapon range.
 summary|option0|CRUISER|204	0	<bad>15%</bad> less energy weapon range.
 summary|option0|CRUISER|205	1	<good>25%</good> increased fighter refit time.
@@ -5499,7 +5499,7 @@ summary|option0|CAPITAL_SHIP|3	1	<bad>100%</bad> less combat readiness loss from
 summary|option0|CAPITAL_SHIP|4	0	<good>220%</good> increased maneuverability.
 summary|option0|CAPITAL_SHIP|5	0	<good>85%</good> increased hard flux level at which phased speed reaches its minimum.
 summary|option0|CAPITAL_SHIP|6	0	Converts this ship's shield to omni-directional.
-summary|option0|CAPITAL_SHIP|7	0	<good>+525</good> to crew capacity.
+summary|option0|CAPITAL_SHIP|7	0	<good>+575</good> to crew capacity.
 summary|option0|CAPITAL_SHIP|8	0	<good>+200</good> to beam weapon range.
 summary|option0|CAPITAL_SHIP|9	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option0|CAPITAL_SHIP|10	0	<good>100%</good> increased shield turn rate.
@@ -5587,7 +5587,7 @@ summary|option0|CAPITAL_SHIP|91	0	When this ship isn't flown by you, it flies st
 summary|option0|CAPITAL_SHIP|92	0	<good>+100</good> to shield arc.
 summary|option0|CAPITAL_SHIP|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option0|CAPITAL_SHIP|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-summary|option0|CAPITAL_SHIP|95	0	<good>202%</good> more flux capacity.
+summary|option0|CAPITAL_SHIP|95	0	<good>214%</good> more flux capacity.
 summary|option0|CAPITAL_SHIP|96	0	<good>104%</good> more flux dissipation.
 summary|option0|CAPITAL_SHIP|97	0	<good>80%</good> increased fragment swarm size.
 summary|option0|CAPITAL_SHIP|98	0	<good>40%</good> increased fragment replacement rate.
@@ -5694,7 +5694,7 @@ summary|option0|CAPITAL_SHIP|198	1	<bad>-40</bad> to supplies your fleet needs t
 summary|option0|CAPITAL_SHIP|199	0	<good>100%</good> more combat objective capture rate.
 summary|option0|CAPITAL_SHIP|200	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 summary|option0|CAPITAL_SHIP|201	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option0|CAPITAL_SHIP|202	0	<good>80%</good> increased weapon turn rate.
+summary|option0|CAPITAL_SHIP|202	0	<good>100%</good> increased weapon turn rate.
 summary|option0|CAPITAL_SHIP|203	0	<bad>15%</bad> less ballistic weapon range.
 summary|option0|CAPITAL_SHIP|204	0	<bad>15%</bad> less energy weapon range.
 summary|option0|CAPITAL_SHIP|205	1	<good>25%</good> increased fighter refit time.
@@ -5712,7 +5712,7 @@ summary|option1|FRIGATE|3	1	<bad>100%</bad> less combat readiness loss from bein
 summary|option1|FRIGATE|4	0	<good>220%</good> increased maneuverability.
 summary|option1|FRIGATE|5	0	<good>85%</good> increased hard flux level at which phased speed reaches its minimum.
 summary|option1|FRIGATE|6	0	Converts this ship's shield to omni-directional.
-summary|option1|FRIGATE|7	0	<good>+65</good> to crew capacity.
+summary|option1|FRIGATE|7	0	<good>+70</good> to crew capacity.
 summary|option1|FRIGATE|8	0	<good>+200</good> to beam weapon range.
 summary|option1|FRIGATE|9	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option1|FRIGATE|10	0	<good>125%</good> increased shield turn rate.
@@ -5801,7 +5801,7 @@ summary|option1|FRIGATE|92	0	<good>+100</good> to shield arc.
 summary|option1|FRIGATE|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option1|FRIGATE|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
 summary|option1|FRIGATE|95	0	<good>4%</good> more flux capacity.
-summary|option1|FRIGATE|96	0	<good>302%</good> more flux dissipation.
+summary|option1|FRIGATE|96	0	<good>314%</good> more flux dissipation.
 summary|option1|FRIGATE|97	0	<good>80%</good> increased fragment swarm size.
 summary|option1|FRIGATE|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option1|FRIGATE|99	0	<good>100%</good> increased shield arc.
@@ -5907,7 +5907,7 @@ summary|option1|FRIGATE|198	1	<bad>-5</bad> to supplies your fleet needs to perf
 summary|option1|FRIGATE|199	0	<good>100%</good> more combat objective capture rate.
 summary|option1|FRIGATE|200	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 summary|option1|FRIGATE|201	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option1|FRIGATE|202	0	<good>80%</good> increased weapon turn rate.
+summary|option1|FRIGATE|202	0	<good>100%</good> increased weapon turn rate.
 summary|option1|FRIGATE|203	0	<bad>15%</bad> less ballistic weapon range.
 summary|option1|FRIGATE|204	0	<bad>15%</bad> less energy weapon range.
 summary|option1|FRIGATE|205	1	<good>25%</good> increased fighter refit time.
@@ -5925,7 +5925,7 @@ summary|option1|DESTROYER|3	1	<bad>100%</bad> less combat readiness loss from be
 summary|option1|DESTROYER|4	0	<good>220%</good> increased maneuverability.
 summary|option1|DESTROYER|5	0	<good>85%</good> increased hard flux level at which phased speed reaches its minimum.
 summary|option1|DESTROYER|6	0	Converts this ship's shield to omni-directional.
-summary|option1|DESTROYER|7	0	<good>+155</good> to crew capacity.
+summary|option1|DESTROYER|7	0	<good>+170</good> to crew capacity.
 summary|option1|DESTROYER|8	0	<good>+200</good> to beam weapon range.
 summary|option1|DESTROYER|9	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option1|DESTROYER|10	0	<good>125%</good> increased shield turn rate.
@@ -6014,7 +6014,7 @@ summary|option1|DESTROYER|92	0	<good>+100</good> to shield arc.
 summary|option1|DESTROYER|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option1|DESTROYER|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
 summary|option1|DESTROYER|95	0	<good>4%</good> more flux capacity.
-summary|option1|DESTROYER|96	0	<good>302%</good> more flux dissipation.
+summary|option1|DESTROYER|96	0	<good>314%</good> more flux dissipation.
 summary|option1|DESTROYER|97	0	<good>80%</good> increased fragment swarm size.
 summary|option1|DESTROYER|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option1|DESTROYER|99	0	<good>100%</good> increased shield arc.
@@ -6120,7 +6120,7 @@ summary|option1|DESTROYER|198	1	<bad>-11</bad> to supplies your fleet needs to p
 summary|option1|DESTROYER|199	0	<good>100%</good> more combat objective capture rate.
 summary|option1|DESTROYER|200	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 summary|option1|DESTROYER|201	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option1|DESTROYER|202	0	<good>80%</good> increased weapon turn rate.
+summary|option1|DESTROYER|202	0	<good>100%</good> increased weapon turn rate.
 summary|option1|DESTROYER|203	0	<bad>15%</bad> less ballistic weapon range.
 summary|option1|DESTROYER|204	0	<bad>15%</bad> less energy weapon range.
 summary|option1|DESTROYER|205	1	<good>25%</good> increased fighter refit time.
@@ -6138,7 +6138,7 @@ summary|option1|CRUISER|3	1	<bad>100%</bad> less combat readiness loss from bein
 summary|option1|CRUISER|4	0	<good>220%</good> increased maneuverability.
 summary|option1|CRUISER|5	0	<good>85%</good> increased hard flux level at which phased speed reaches its minimum.
 summary|option1|CRUISER|6	0	Converts this ship's shield to omni-directional.
-summary|option1|CRUISER|7	0	<good>+260</good> to crew capacity.
+summary|option1|CRUISER|7	0	<good>+285</good> to crew capacity.
 summary|option1|CRUISER|8	0	<good>+200</good> to beam weapon range.
 summary|option1|CRUISER|9	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option1|CRUISER|10	0	<good>125%</good> increased shield turn rate.
@@ -6227,7 +6227,7 @@ summary|option1|CRUISER|92	0	<good>+100</good> to shield arc.
 summary|option1|CRUISER|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option1|CRUISER|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
 summary|option1|CRUISER|95	0	<good>4%</good> more flux capacity.
-summary|option1|CRUISER|96	0	<good>302%</good> more flux dissipation.
+summary|option1|CRUISER|96	0	<good>314%</good> more flux dissipation.
 summary|option1|CRUISER|97	0	<good>80%</good> increased fragment swarm size.
 summary|option1|CRUISER|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option1|CRUISER|99	0	<good>100%</good> increased shield arc.
@@ -6333,7 +6333,7 @@ summary|option1|CRUISER|198	1	<bad>-20</bad> to supplies your fleet needs to per
 summary|option1|CRUISER|199	0	<good>100%</good> more combat objective capture rate.
 summary|option1|CRUISER|200	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 summary|option1|CRUISER|201	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option1|CRUISER|202	0	<good>80%</good> increased weapon turn rate.
+summary|option1|CRUISER|202	0	<good>100%</good> increased weapon turn rate.
 summary|option1|CRUISER|203	0	<bad>15%</bad> less ballistic weapon range.
 summary|option1|CRUISER|204	0	<bad>15%</bad> less energy weapon range.
 summary|option1|CRUISER|205	1	<good>25%</good> increased fighter refit time.
@@ -6351,7 +6351,7 @@ summary|option1|CAPITAL_SHIP|3	1	<bad>100%</bad> less combat readiness loss from
 summary|option1|CAPITAL_SHIP|4	0	<good>220%</good> increased maneuverability.
 summary|option1|CAPITAL_SHIP|5	0	<good>85%</good> increased hard flux level at which phased speed reaches its minimum.
 summary|option1|CAPITAL_SHIP|6	0	Converts this ship's shield to omni-directional.
-summary|option1|CAPITAL_SHIP|7	0	<good>+525</good> to crew capacity.
+summary|option1|CAPITAL_SHIP|7	0	<good>+575</good> to crew capacity.
 summary|option1|CAPITAL_SHIP|8	0	<good>+200</good> to beam weapon range.
 summary|option1|CAPITAL_SHIP|9	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option1|CAPITAL_SHIP|10	0	<good>125%</good> increased shield turn rate.
@@ -6440,7 +6440,7 @@ summary|option1|CAPITAL_SHIP|92	0	<good>+100</good> to shield arc.
 summary|option1|CAPITAL_SHIP|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option1|CAPITAL_SHIP|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
 summary|option1|CAPITAL_SHIP|95	0	<good>4%</good> more flux capacity.
-summary|option1|CAPITAL_SHIP|96	0	<good>302%</good> more flux dissipation.
+summary|option1|CAPITAL_SHIP|96	0	<good>314%</good> more flux dissipation.
 summary|option1|CAPITAL_SHIP|97	0	<good>80%</good> increased fragment swarm size.
 summary|option1|CAPITAL_SHIP|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option1|CAPITAL_SHIP|99	0	<good>100%</good> increased shield arc.
@@ -6546,7 +6546,7 @@ summary|option1|CAPITAL_SHIP|198	1	<bad>-40</bad> to supplies your fleet needs t
 summary|option1|CAPITAL_SHIP|199	0	<good>100%</good> more combat objective capture rate.
 summary|option1|CAPITAL_SHIP|200	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 summary|option1|CAPITAL_SHIP|201	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option1|CAPITAL_SHIP|202	0	<good>80%</good> increased weapon turn rate.
+summary|option1|CAPITAL_SHIP|202	0	<good>100%</good> increased weapon turn rate.
 summary|option1|CAPITAL_SHIP|203	0	<bad>15%</bad> less ballistic weapon range.
 summary|option1|CAPITAL_SHIP|204	0	<bad>15%</bad> less energy weapon range.
 summary|option1|CAPITAL_SHIP|205	1	<good>25%</good> increased fighter refit time.
@@ -6564,7 +6564,7 @@ summary|option2|FRIGATE|3	1	<bad>100%</bad> less combat readiness loss from bein
 summary|option2|FRIGATE|4	0	<good>220%</good> increased maneuverability.
 summary|option2|FRIGATE|5	0	<good>85%</good> increased hard flux level at which phased speed reaches its minimum.
 summary|option2|FRIGATE|6	0	Converts this ship's shield to omni-directional.
-summary|option2|FRIGATE|7	0	<good>+65</good> to crew capacity.
+summary|option2|FRIGATE|7	0	<good>+70</good> to crew capacity.
 summary|option2|FRIGATE|8	0	<good>+200</good> to beam weapon range.
 summary|option2|FRIGATE|9	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option2|FRIGATE|10	0	<good>125%</good> increased shield turn rate.
@@ -6679,7 +6679,7 @@ summary|option2|FRIGATE|118	0	<good>+90</good> to this ship's sensor strength.
 summary|option2|FRIGATE|119	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option2|FRIGATE|120	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option2|FRIGATE|121	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-summary|option2|FRIGATE|122	0	<good>233%</good> more hull points.
+summary|option2|FRIGATE|122	0	<good>245%</good> more hull points.
 summary|option2|FRIGATE|123	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option2|FRIGATE|124	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
 summary|option2|FRIGATE|125	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
@@ -6759,7 +6759,7 @@ summary|option2|FRIGATE|198	1	<bad>-5</bad> to supplies your fleet needs to perf
 summary|option2|FRIGATE|199	0	<good>100%</good> more combat objective capture rate.
 summary|option2|FRIGATE|200	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 summary|option2|FRIGATE|201	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option2|FRIGATE|202	0	<good>80%</good> increased weapon turn rate.
+summary|option2|FRIGATE|202	0	<good>100%</good> increased weapon turn rate.
 summary|option2|FRIGATE|203	0	<bad>15%</bad> less ballistic weapon range.
 summary|option2|FRIGATE|204	0	<bad>15%</bad> less energy weapon range.
 summary|option2|FRIGATE|205	1	<good>25%</good> increased fighter refit time.
@@ -6777,7 +6777,7 @@ summary|option2|DESTROYER|3	1	<bad>100%</bad> less combat readiness loss from be
 summary|option2|DESTROYER|4	0	<good>220%</good> increased maneuverability.
 summary|option2|DESTROYER|5	0	<good>85%</good> increased hard flux level at which phased speed reaches its minimum.
 summary|option2|DESTROYER|6	0	Converts this ship's shield to omni-directional.
-summary|option2|DESTROYER|7	0	<good>+155</good> to crew capacity.
+summary|option2|DESTROYER|7	0	<good>+170</good> to crew capacity.
 summary|option2|DESTROYER|8	0	<good>+200</good> to beam weapon range.
 summary|option2|DESTROYER|9	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option2|DESTROYER|10	0	<good>125%</good> increased shield turn rate.
@@ -6892,7 +6892,7 @@ summary|option2|DESTROYER|118	0	<good>+110</good> to this ship's sensor strength
 summary|option2|DESTROYER|119	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option2|DESTROYER|120	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option2|DESTROYER|121	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-summary|option2|DESTROYER|122	0	<good>233%</good> more hull points.
+summary|option2|DESTROYER|122	0	<good>245%</good> more hull points.
 summary|option2|DESTROYER|123	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option2|DESTROYER|124	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
 summary|option2|DESTROYER|125	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
@@ -6972,7 +6972,7 @@ summary|option2|DESTROYER|198	1	<bad>-11</bad> to supplies your fleet needs to p
 summary|option2|DESTROYER|199	0	<good>100%</good> more combat objective capture rate.
 summary|option2|DESTROYER|200	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 summary|option2|DESTROYER|201	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option2|DESTROYER|202	0	<good>80%</good> increased weapon turn rate.
+summary|option2|DESTROYER|202	0	<good>100%</good> increased weapon turn rate.
 summary|option2|DESTROYER|203	0	<bad>15%</bad> less ballistic weapon range.
 summary|option2|DESTROYER|204	0	<bad>15%</bad> less energy weapon range.
 summary|option2|DESTROYER|205	1	<good>25%</good> increased fighter refit time.
@@ -6990,7 +6990,7 @@ summary|option2|CRUISER|3	1	<bad>100%</bad> less combat readiness loss from bein
 summary|option2|CRUISER|4	0	<good>220%</good> increased maneuverability.
 summary|option2|CRUISER|5	0	<good>85%</good> increased hard flux level at which phased speed reaches its minimum.
 summary|option2|CRUISER|6	0	Converts this ship's shield to omni-directional.
-summary|option2|CRUISER|7	0	<good>+260</good> to crew capacity.
+summary|option2|CRUISER|7	0	<good>+285</good> to crew capacity.
 summary|option2|CRUISER|8	0	<good>+200</good> to beam weapon range.
 summary|option2|CRUISER|9	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option2|CRUISER|10	0	<good>125%</good> increased shield turn rate.
@@ -7105,7 +7105,7 @@ summary|option2|CRUISER|118	0	<good>+160</good> to this ship's sensor strength.
 summary|option2|CRUISER|119	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option2|CRUISER|120	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option2|CRUISER|121	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-summary|option2|CRUISER|122	0	<good>233%</good> more hull points.
+summary|option2|CRUISER|122	0	<good>245%</good> more hull points.
 summary|option2|CRUISER|123	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option2|CRUISER|124	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
 summary|option2|CRUISER|125	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
@@ -7185,7 +7185,7 @@ summary|option2|CRUISER|198	1	<bad>-20</bad> to supplies your fleet needs to per
 summary|option2|CRUISER|199	0	<good>100%</good> more combat objective capture rate.
 summary|option2|CRUISER|200	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 summary|option2|CRUISER|201	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option2|CRUISER|202	0	<good>80%</good> increased weapon turn rate.
+summary|option2|CRUISER|202	0	<good>100%</good> increased weapon turn rate.
 summary|option2|CRUISER|203	0	<bad>15%</bad> less ballistic weapon range.
 summary|option2|CRUISER|204	0	<bad>15%</bad> less energy weapon range.
 summary|option2|CRUISER|205	1	<good>25%</good> increased fighter refit time.
@@ -7203,7 +7203,7 @@ summary|option2|CAPITAL_SHIP|3	1	<bad>100%</bad> less combat readiness loss from
 summary|option2|CAPITAL_SHIP|4	0	<good>220%</good> increased maneuverability.
 summary|option2|CAPITAL_SHIP|5	0	<good>85%</good> increased hard flux level at which phased speed reaches its minimum.
 summary|option2|CAPITAL_SHIP|6	0	Converts this ship's shield to omni-directional.
-summary|option2|CAPITAL_SHIP|7	0	<good>+525</good> to crew capacity.
+summary|option2|CAPITAL_SHIP|7	0	<good>+575</good> to crew capacity.
 summary|option2|CAPITAL_SHIP|8	0	<good>+200</good> to beam weapon range.
 summary|option2|CAPITAL_SHIP|9	0	<bad>30%</bad> less beam weapon turn rate.
 summary|option2|CAPITAL_SHIP|10	0	<good>125%</good> increased shield turn rate.
@@ -7318,7 +7318,7 @@ summary|option2|CAPITAL_SHIP|118	0	<good>+220</good> to this ship's sensor stren
 summary|option2|CAPITAL_SHIP|119	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option2|CAPITAL_SHIP|120	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option2|CAPITAL_SHIP|121	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-summary|option2|CAPITAL_SHIP|122	0	<good>233%</good> more hull points.
+summary|option2|CAPITAL_SHIP|122	0	<good>245%</good> more hull points.
 summary|option2|CAPITAL_SHIP|123	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option2|CAPITAL_SHIP|124	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
 summary|option2|CAPITAL_SHIP|125	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
@@ -7398,7 +7398,7 @@ summary|option2|CAPITAL_SHIP|198	1	<bad>-40</bad> to supplies your fleet needs t
 summary|option2|CAPITAL_SHIP|199	0	<good>100%</good> more combat objective capture rate.
 summary|option2|CAPITAL_SHIP|200	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
 summary|option2|CAPITAL_SHIP|201	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option2|CAPITAL_SHIP|202	0	<good>80%</good> increased weapon turn rate.
+summary|option2|CAPITAL_SHIP|202	0	<good>100%</good> increased weapon turn rate.
 summary|option2|CAPITAL_SHIP|203	0	<bad>15%</bad> less ballistic weapon range.
 summary|option2|CAPITAL_SHIP|204	0	<bad>15%</bad> less energy weapon range.
 summary|option2|CAPITAL_SHIP|205	1	<good>25%</good> increased fighter refit time.
