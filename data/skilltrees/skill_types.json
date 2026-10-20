@@ -4446,6 +4446,47 @@
 			]
 		},
 		{
+			"id": "doctrine_luddic_penitent_hulls",
+			"name": "Penitent Hulls",
+			"icon": "graphics/icons/reduced_D_mod_effect.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "DMOD_EFFECT_MULT",
+					"magnitude": -25
+				},
+				{
+					"effect": "SUPPLIES_PER_MONTH_MULT",
+					"magnitude": -10
+				}
+			],
+			"description": "Church salvage yards at Gilead send no ship to the breakers while it can still fly, and they keep their scarred hulls flying on patience and very little else. Learning their ways lets the crew live with this ship's damage and run it on less.",
+			"tags": [
+				"d_mods",
+				"logistics"
+			]
+		},
+		{
+			"id": "doctrine_luddic_pilgrim_volunteers",
+			"name": "Pilgrim Volunteers",
+			"icon": "graphics/icons/peak_cr_duration.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "PEAK_CR_DURATION_PERCENT",
+					"magnitude": 20
+				},
+				{
+					"effect": "CREW_LOSS_PERCENT",
+					"magnitude": -25
+				}
+			],
+			"description": "Pilgrims who sign on at Hesperus count it a blessing to stand their stations through the worst of a fight and keep vigil without complaint. With them aboard, this ship holds its peak readiness longer and loses fewer crew in battle.",
+			"tags": [
+				"combat_readiness"
+			]
+		},
+		{
 			"id": "doctrine_luddic_plain_rites",
 			"name": "Plain Rites",
 			"icon": "graphics/icons/combat_readiness.png",

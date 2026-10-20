@@ -2751,6 +2751,36 @@ type|doctrine_luddic_faithful_hands|CRUISER|2	0	<good>25%</good> increased comba
 type|doctrine_luddic_faithful_hands|CAPITAL_SHIP|0	0	The faithful do not trust machines to mend machines. Hand-repair crews drilled in the Church's way can keep this ship's systems fighting through damage and bring it back to readiness faster after battle.
 type|doctrine_luddic_faithful_hands|CAPITAL_SHIP|1	0	<good>25%</good> less weapon and engine repair time.
 type|doctrine_luddic_faithful_hands|CAPITAL_SHIP|2	0	<good>25%</good> increased combat readiness recovery rate.
+type|doctrine_luddic_penitent_hulls|null|0	0	Church salvage yards at Gilead send no ship to the breakers while it can still fly, and they keep their scarred hulls flying on patience and very little else. Learning their ways lets the crew live with this ship's damage and run it on less.
+type|doctrine_luddic_penitent_hulls|null|1	1	<bad>25%</bad> less negative effects from D-mods.
+type|doctrine_luddic_penitent_hulls|null|2	1	<bad>10%</bad> less supply use for maintenance.
+type|doctrine_luddic_penitent_hulls|FRIGATE|0	0	Church salvage yards at Gilead send no ship to the breakers while it can still fly, and they keep their scarred hulls flying on patience and very little else. Learning their ways lets the crew live with this ship's damage and run it on less.
+type|doctrine_luddic_penitent_hulls|FRIGATE|1	1	<bad>25%</bad> less negative effects from D-mods.
+type|doctrine_luddic_penitent_hulls|FRIGATE|2	1	<bad>10%</bad> less supply use for maintenance.
+type|doctrine_luddic_penitent_hulls|DESTROYER|0	0	Church salvage yards at Gilead send no ship to the breakers while it can still fly, and they keep their scarred hulls flying on patience and very little else. Learning their ways lets the crew live with this ship's damage and run it on less.
+type|doctrine_luddic_penitent_hulls|DESTROYER|1	1	<bad>25%</bad> less negative effects from D-mods.
+type|doctrine_luddic_penitent_hulls|DESTROYER|2	1	<bad>10%</bad> less supply use for maintenance.
+type|doctrine_luddic_penitent_hulls|CRUISER|0	0	Church salvage yards at Gilead send no ship to the breakers while it can still fly, and they keep their scarred hulls flying on patience and very little else. Learning their ways lets the crew live with this ship's damage and run it on less.
+type|doctrine_luddic_penitent_hulls|CRUISER|1	1	<bad>25%</bad> less negative effects from D-mods.
+type|doctrine_luddic_penitent_hulls|CRUISER|2	1	<bad>10%</bad> less supply use for maintenance.
+type|doctrine_luddic_penitent_hulls|CAPITAL_SHIP|0	0	Church salvage yards at Gilead send no ship to the breakers while it can still fly, and they keep their scarred hulls flying on patience and very little else. Learning their ways lets the crew live with this ship's damage and run it on less.
+type|doctrine_luddic_penitent_hulls|CAPITAL_SHIP|1	1	<bad>25%</bad> less negative effects from D-mods.
+type|doctrine_luddic_penitent_hulls|CAPITAL_SHIP|2	1	<bad>10%</bad> less supply use for maintenance.
+type|doctrine_luddic_pilgrim_volunteers|null|0	0	Pilgrims who sign on at Hesperus count it a blessing to stand their stations through the worst of a fight and keep vigil without complaint. With them aboard, this ship holds its peak readiness longer and loses fewer crew in battle.
+type|doctrine_luddic_pilgrim_volunteers|null|1	0	<good>20%</good> increased peak combat readiness duration.
+type|doctrine_luddic_pilgrim_volunteers|null|2	1	<bad>25%</bad> reduced crew casualties.
+type|doctrine_luddic_pilgrim_volunteers|FRIGATE|0	0	Pilgrims who sign on at Hesperus count it a blessing to stand their stations through the worst of a fight and keep vigil without complaint. With them aboard, this ship holds its peak readiness longer and loses fewer crew in battle.
+type|doctrine_luddic_pilgrim_volunteers|FRIGATE|1	0	<good>20%</good> increased peak combat readiness duration.
+type|doctrine_luddic_pilgrim_volunteers|FRIGATE|2	1	<bad>25%</bad> reduced crew casualties.
+type|doctrine_luddic_pilgrim_volunteers|DESTROYER|0	0	Pilgrims who sign on at Hesperus count it a blessing to stand their stations through the worst of a fight and keep vigil without complaint. With them aboard, this ship holds its peak readiness longer and loses fewer crew in battle.
+type|doctrine_luddic_pilgrim_volunteers|DESTROYER|1	0	<good>20%</good> increased peak combat readiness duration.
+type|doctrine_luddic_pilgrim_volunteers|DESTROYER|2	1	<bad>25%</bad> reduced crew casualties.
+type|doctrine_luddic_pilgrim_volunteers|CRUISER|0	0	Pilgrims who sign on at Hesperus count it a blessing to stand their stations through the worst of a fight and keep vigil without complaint. With them aboard, this ship holds its peak readiness longer and loses fewer crew in battle.
+type|doctrine_luddic_pilgrim_volunteers|CRUISER|1	0	<good>20%</good> increased peak combat readiness duration.
+type|doctrine_luddic_pilgrim_volunteers|CRUISER|2	1	<bad>25%</bad> reduced crew casualties.
+type|doctrine_luddic_pilgrim_volunteers|CAPITAL_SHIP|0	0	Pilgrims who sign on at Hesperus count it a blessing to stand their stations through the worst of a fight and keep vigil without complaint. With them aboard, this ship holds its peak readiness longer and loses fewer crew in battle.
+type|doctrine_luddic_pilgrim_volunteers|CAPITAL_SHIP|1	0	<good>20%</good> increased peak combat readiness duration.
+type|doctrine_luddic_pilgrim_volunteers|CAPITAL_SHIP|2	1	<bad>25%</bad> reduced crew casualties.
 type|doctrine_luddic_pilgrims_burn|null|0	0	Pilgrim fleets cross the Sector on whatever drives they can keep lit. Their frugal burn discipline lets this ship travel faster on less fuel.
 type|doctrine_luddic_pilgrims_burn|null|1	0	<good>+1</good> to max burn level.
 type|doctrine_luddic_pilgrims_burn|null|2	1	<bad>15%</bad> less fuel consumption rate.
