@@ -4,7 +4,7 @@ public final class SmoothZoom {
 
     public static final float MAX_ZOOM = 2.5f;
     public static final float INSPECT_MAX_ZOOM = 40f;
-    static final float MIN_ZOOM = 0.2f;
+    static final float MIN_ZOOM = 0.1f;
     static final float STEP = 1.1f;
     static final float RESPONSE_PER_SECOND = 12f;
     private static final float SNAP_LOG_DISTANCE = 0.0005f;
