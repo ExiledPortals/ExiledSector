@@ -79,7 +79,8 @@ final class SocketWorkbenchFlair {
             if (iconLook == null) {
                 AnimatedItemIcons.drawAtCenter(ICONS, iconPath, cx, cy, size, size, Color.WHITE, easedLoad * alpha);
             } else {
-                CargoIconFx.render(ICONS, iconPath, iconLook.unframed(), cx - size / 2f, cy - size / 2f, size, size, easedLoad * alpha, 0f,
+                CargoIconLook shownLook = iconLook.anchor() != null ? iconLook : iconLook.unframed();
+                CargoIconFx.render(ICONS, iconPath, shownLook, cx - size / 2f, cy - size / 2f, size, size, easedLoad * alpha, 0f,
                         System.identityHashCode(this), -1f);
             }
         }
