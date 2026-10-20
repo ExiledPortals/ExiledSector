@@ -4621,14 +4621,14 @@
 					"capitalShip": 30
 				}
 			],
-			"description": "A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. Decoding that chatter lets the crew tune this ship's sensors to it and jam enemy targeting with it.",
+			"description": "A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. One of the crew's aspiring scientists swears they can decode that chatter, tune this ship's sensors to it and turn it against enemy targeting.",
 			"tags": [
 				"fleet_support"
 			]
 		},
 		{
 			"id": "doctrine_remnant_automated_command",
-			"name": "Automated Command",
+			"name": "Tireless Cadence",
 			"icon": "graphics/icons/doctrine_remnant_automated_command.png",
 			"tier": "KEYSTONE",
 			"effects": [
@@ -4645,7 +4645,7 @@
 					"magnitude": -50
 				}
 			],
-			"description": "[REDACTED] warships answer to no captain, only to the fight in front of them. Handing combat control to a recovered core's routines would make this ship react faster than any crew could, but nothing aboard would understand the machine well enough to restore it afterwards.",
+			"description": "[REDACTED] warships never stand down, their systems cycling at a tempo built for machines that never tire. Copying that cadence into this ship's reactor and fire control would let it fight at the same pace, but the crew would struggle to bring the overdriven systems back to readiness afterwards.",
 			"tags": [
 				"flux",
 				"combat_readiness"

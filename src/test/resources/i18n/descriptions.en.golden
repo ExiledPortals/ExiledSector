@@ -2816,23 +2816,23 @@ type|doctrine_luddic_righteous_fury|CRUISER|2	0	<good>15%</good> increased missi
 type|doctrine_luddic_righteous_fury|CAPITAL_SHIP|0	0	Knights of Ludd gunners load each round with a prayer and fire it as a verdict. Taking up their crude, patient gunnery lets this ship's ballistic and missile weapons strike harder.
 type|doctrine_luddic_righteous_fury|CAPITAL_SHIP|1	0	<good>15%</good> increased ballistic weapon damage.
 type|doctrine_luddic_righteous_fury|CAPITAL_SHIP|2	0	<good>15%</good> increased missile weapon damage.
-type|doctrine_remnant_automated_command|null|0	0	[REDACTED] warships answer to no captain, only to the fight in front of them. Handing combat control to a recovered core's routines would make this ship react faster than any crew could, but nothing aboard would understand the machine well enough to restore it afterwards.
+type|doctrine_remnant_automated_command|null|0	0	[REDACTED] warships never stand down, their systems cycling at a tempo built for machines that never tire. Copying that cadence into this ship's reactor and fire control would let it fight at the same pace, but the crew would struggle to bring the overdriven systems back to readiness afterwards.
 type|doctrine_remnant_automated_command|null|1	0	<good>10%</good> increased timeflow.
 type|doctrine_remnant_automated_command|null|2	0	<good>15%</good> increased flux dissipation.
 type|doctrine_remnant_automated_command|null|3	0	<bad>50%</bad> reduced combat readiness recovery rate.
-type|doctrine_remnant_automated_command|FRIGATE|0	0	[REDACTED] warships answer to no captain, only to the fight in front of them. Handing combat control to a recovered core's routines would make this ship react faster than any crew could, but nothing aboard would understand the machine well enough to restore it afterwards.
+type|doctrine_remnant_automated_command|FRIGATE|0	0	[REDACTED] warships never stand down, their systems cycling at a tempo built for machines that never tire. Copying that cadence into this ship's reactor and fire control would let it fight at the same pace, but the crew would struggle to bring the overdriven systems back to readiness afterwards.
 type|doctrine_remnant_automated_command|FRIGATE|1	0	<good>10%</good> increased timeflow.
 type|doctrine_remnant_automated_command|FRIGATE|2	0	<good>15%</good> increased flux dissipation.
 type|doctrine_remnant_automated_command|FRIGATE|3	0	<bad>50%</bad> reduced combat readiness recovery rate.
-type|doctrine_remnant_automated_command|DESTROYER|0	0	[REDACTED] warships answer to no captain, only to the fight in front of them. Handing combat control to a recovered core's routines would make this ship react faster than any crew could, but nothing aboard would understand the machine well enough to restore it afterwards.
+type|doctrine_remnant_automated_command|DESTROYER|0	0	[REDACTED] warships never stand down, their systems cycling at a tempo built for machines that never tire. Copying that cadence into this ship's reactor and fire control would let it fight at the same pace, but the crew would struggle to bring the overdriven systems back to readiness afterwards.
 type|doctrine_remnant_automated_command|DESTROYER|1	0	<good>10%</good> increased timeflow.
 type|doctrine_remnant_automated_command|DESTROYER|2	0	<good>15%</good> increased flux dissipation.
 type|doctrine_remnant_automated_command|DESTROYER|3	0	<bad>50%</bad> reduced combat readiness recovery rate.
-type|doctrine_remnant_automated_command|CRUISER|0	0	[REDACTED] warships answer to no captain, only to the fight in front of them. Handing combat control to a recovered core's routines would make this ship react faster than any crew could, but nothing aboard would understand the machine well enough to restore it afterwards.
+type|doctrine_remnant_automated_command|CRUISER|0	0	[REDACTED] warships never stand down, their systems cycling at a tempo built for machines that never tire. Copying that cadence into this ship's reactor and fire control would let it fight at the same pace, but the crew would struggle to bring the overdriven systems back to readiness afterwards.
 type|doctrine_remnant_automated_command|CRUISER|1	0	<good>10%</good> increased timeflow.
 type|doctrine_remnant_automated_command|CRUISER|2	0	<good>15%</good> increased flux dissipation.
 type|doctrine_remnant_automated_command|CRUISER|3	0	<bad>50%</bad> reduced combat readiness recovery rate.
-type|doctrine_remnant_automated_command|CAPITAL_SHIP|0	0	[REDACTED] warships answer to no captain, only to the fight in front of them. Handing combat control to a recovered core's routines would make this ship react faster than any crew could, but nothing aboard would understand the machine well enough to restore it afterwards.
+type|doctrine_remnant_automated_command|CAPITAL_SHIP|0	0	[REDACTED] warships never stand down, their systems cycling at a tempo built for machines that never tire. Copying that cadence into this ship's reactor and fire control would let it fight at the same pace, but the crew would struggle to bring the overdriven systems back to readiness afterwards.
 type|doctrine_remnant_automated_command|CAPITAL_SHIP|1	0	<good>10%</good> increased timeflow.
 type|doctrine_remnant_automated_command|CAPITAL_SHIP|2	0	<good>15%</good> increased flux dissipation.
 type|doctrine_remnant_automated_command|CAPITAL_SHIP|3	0	<bad>50%</bad> reduced combat readiness recovery rate.
@@ -2886,18 +2886,18 @@ type|doctrine_remnant_lumen_harmonics|CRUISER|2	1	<bad>10%</bad> reduced energy 
 type|doctrine_remnant_lumen_harmonics|CAPITAL_SHIP|0	0	Energy mounts pulled from [REDACTED] wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.
 type|doctrine_remnant_lumen_harmonics|CAPITAL_SHIP|1	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|doctrine_remnant_lumen_harmonics|CAPITAL_SHIP|2	1	<bad>10%</bad> reduced energy weapon flux cost.
-type|doctrine_remnant_ordo_signal_mesh|null|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. Decoding that chatter lets the crew tune this ship's sensors to it and jam enemy targeting with it.
+type|doctrine_remnant_ordo_signal_mesh|null|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. One of the crew's aspiring scientists swears they can decode that chatter, tune this ship's sensors to it and turn it against enemy targeting.
 type|doctrine_remnant_ordo_signal_mesh|null|1	0	<good>+1</good> to ECM rating.
-type|doctrine_remnant_ordo_signal_mesh|FRIGATE|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. Decoding that chatter lets the crew tune this ship's sensors to it and jam enemy targeting with it.
+type|doctrine_remnant_ordo_signal_mesh|FRIGATE|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. One of the crew's aspiring scientists swears they can decode that chatter, tune this ship's sensors to it and turn it against enemy targeting.
 type|doctrine_remnant_ordo_signal_mesh|FRIGATE|1	0	<good>+1</good> to ECM rating.
 type|doctrine_remnant_ordo_signal_mesh|FRIGATE|2	0	<good>+10</good> to this ship's sensor strength.
-type|doctrine_remnant_ordo_signal_mesh|DESTROYER|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. Decoding that chatter lets the crew tune this ship's sensors to it and jam enemy targeting with it.
+type|doctrine_remnant_ordo_signal_mesh|DESTROYER|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. One of the crew's aspiring scientists swears they can decode that chatter, tune this ship's sensors to it and turn it against enemy targeting.
 type|doctrine_remnant_ordo_signal_mesh|DESTROYER|1	0	<good>+1</good> to ECM rating.
 type|doctrine_remnant_ordo_signal_mesh|DESTROYER|2	0	<good>+15</good> to this ship's sensor strength.
-type|doctrine_remnant_ordo_signal_mesh|CRUISER|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. Decoding that chatter lets the crew tune this ship's sensors to it and jam enemy targeting with it.
+type|doctrine_remnant_ordo_signal_mesh|CRUISER|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. One of the crew's aspiring scientists swears they can decode that chatter, tune this ship's sensors to it and turn it against enemy targeting.
 type|doctrine_remnant_ordo_signal_mesh|CRUISER|1	0	<good>+1</good> to ECM rating.
 type|doctrine_remnant_ordo_signal_mesh|CRUISER|2	0	<good>+20</good> to this ship's sensor strength.
-type|doctrine_remnant_ordo_signal_mesh|CAPITAL_SHIP|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. Decoding that chatter lets the crew tune this ship's sensors to it and jam enemy targeting with it.
+type|doctrine_remnant_ordo_signal_mesh|CAPITAL_SHIP|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. One of the crew's aspiring scientists swears they can decode that chatter, tune this ship's sensors to it and turn it against enemy targeting.
 type|doctrine_remnant_ordo_signal_mesh|CAPITAL_SHIP|1	0	<good>+1</good> to ECM rating.
 type|doctrine_remnant_ordo_signal_mesh|CAPITAL_SHIP|2	0	<good>+30</good> to this ship's sensor strength.
 type|doctrine_remnant_swarm_logic|null|0	0	[REDACTED] carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.
