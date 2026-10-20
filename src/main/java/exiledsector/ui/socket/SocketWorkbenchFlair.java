@@ -79,7 +79,7 @@ final class SocketWorkbenchFlair {
             if (iconLook == null) {
                 AnimatedItemIcons.drawAtCenter(ICONS, iconPath, cx, cy, size, size, Color.WHITE, easedLoad * alpha);
             } else {
-                CargoIconLook shownLook = iconLook.anchor() != null ? iconLook : iconLook.unframed();
+                CargoIconLook shownLook = iconLook.ownArt() ? iconLook : iconLook.unframed();
                 CargoIconFx.render(ICONS, iconPath, shownLook, cx - size / 2f, cy - size / 2f, size, size, easedLoad * alpha, 0f,
                         System.identityHashCode(this), -1f);
             }

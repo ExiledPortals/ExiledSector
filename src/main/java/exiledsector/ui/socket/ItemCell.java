@@ -61,7 +61,7 @@ public final class ItemCell extends BaseCustomUIPanelPlugin {
     private final Item item;
     private final Look look;
     private final Listener cellListener;
-    private final CargoIconLook anchorLook;
+    private final CargoIconLook ownArtLook;
     private final TileInput tileInput;
     private PositionAPI cellPosition;
 
@@ -70,7 +70,7 @@ public final class ItemCell extends BaseCustomUIPanelPlugin {
         this.look = look;
         this.cellListener = cellListener;
         CargoIconLook cargoLook = CargoIconLooks.forItem(item);
-        this.anchorLook = cargoLook != null && cargoLook.anchor() != null ? cargoLook : null;
+        this.ownArtLook = cargoLook != null && cargoLook.ownArt() ? cargoLook : null;
         this.tileInput = new TileInput(new TileInput.Handler() {
             @Override
             public void entered(PositionAPI enteredPosition) {
@@ -131,8 +131,8 @@ public final class ItemCell extends BaseCustomUIPanelPlugin {
         }
         float iconSize = cellPosition.getWidth() - look.iconInset() * 2f;
         float iconAlpha = (cellListener.dimmed() ? DIMMED_ICON_ALPHA : 1f) * alphaMult;
-        if (anchorLook != null) {
-            CargoIconFx.render(ICONS, item.iconPath(), anchorLook, cellPosition.getCenterX() - iconSize / 2f,
+        if (ownArtLook != null) {
+            CargoIconFx.render(ICONS, item.iconPath(), ownArtLook, cellPosition.getCenterX() - iconSize / 2f,
                     cellPosition.getCenterY() - iconSize / 2f, iconSize, iconSize, iconAlpha, 0f, System.identityHashCode(item), -1f);
             return;
         }
