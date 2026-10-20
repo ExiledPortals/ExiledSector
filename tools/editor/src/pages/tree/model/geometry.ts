@@ -1,5 +1,5 @@
 import { setCurveControl } from './connectors.ts';
-import { ANCHOR_RECTANGLE_ASPECT, nodeById, type AnchorShape, type OrbitAnchor, type TreeDocument, type TreeNode } from './types.ts';
+import { ANCHOR_RECTANGLE_ASPECT, nodeById, tierOf, type AnchorShape, type OrbitAnchor, type SkillType, type Tier, type TreeDocument, type TreeNode } from './types.ts';
 
 export interface Point {
   x: number;
@@ -261,4 +261,22 @@ export function deleteAnchor(document: TreeDocument, anchorId: string): void {
       detachNodeFromAnchor(node);
     }
   }
+}
+
+const RADIUS_EXCLUDED_TYPE_ID = 'exoship';
+const RADIUS_EXCLUDED_REGION_TAG = 'exotech';
+
+export function countNodesWithinRadius(nodes: TreeNode[], typesById: Map<string, SkillType>, centre: TreeNode, distance: number): Map<Tier, number> {
+  const limit = distance * distance;
+  const counts = new Map<Tier, number>();
+  for (const node of nodes) {
+    if (node.id === centre.id || node.type === RADIUS_EXCLUDED_TYPE_ID || (node.tags ?? []).includes(RADIUS_EXCLUDED_REGION_TAG)) {
+      continue;
+    }
+    if ((node.x - centre.x) ** 2 + (node.y - centre.y) ** 2 <= limit) {
+      const tier = tierOf(typesById.get(node.type));
+      counts.set(tier, (counts.get(tier) ?? 0) + 1);
+    }
+  }
+  return counts;
 }

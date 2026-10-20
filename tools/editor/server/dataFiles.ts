@@ -95,6 +95,8 @@ export function resolveDataResource(paths: ProjectPaths, name: string): DataReso
       return { filePath: path.join(skillTreeDir, 'skill_types.json'), check: (text) => checkJsonArrayField(text, 'skillTypes') };
     case 'tree':
       return { filePath: path.join(skillTreeDir, 'ship_skill_tree.json'), check: (text) => checkJsonArrayField(text, 'nodes') };
+    case 'node-radii':
+      return { filePath: path.join(configDir, 'node_radii.json'), check: checkJsonObject };
     case 'subroutines':
       return { filePath: path.join(configDir, 'subroutines.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
     case 'hull-items':
