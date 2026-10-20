@@ -38,7 +38,6 @@ final class HyperspaceMode {
     private final Predicate<SkillNode> nodeHidden;
     private final Supplier<List<SkillTreeTopology.WormholePair>> shipWormholePairs;
     private float mapStarRadius;
-    private boolean reopenStats;
 
     HyperspaceMode(TreeCamera treeCamera, SkillTreeStatPanel statPanel, Predicate<SkillNode> nodeHidden,
                    Supplier<List<SkillTreeTopology.WormholePair>> shipWormholePairs) {
@@ -90,13 +89,6 @@ final class HyperspaceMode {
         }
     }
 
-    void reopenStatsWhenBack() {
-        if (reopenStats && (!hyperspaceTransition.isActive() || (hyperspaceTransition.isLeaving() && hyperspaceTransition.chromeAlpha() >= 1f))) {
-            reopenStats = false;
-            statPanel.open(false);
-        }
-    }
-
     boolean enter(PositionAPI canvasPosition) {
         Set<String> lockedRegions = HyperspaceAnchor.lockedRegions(SkillTree.getAllNodes().values(), SkillNode::getRegion, nodeHidden);
         hiddenStarIds = SkillTree.getStars().stream().filter(star -> lockedRegions.contains(star.getRegion())).map(Star::getId)
@@ -118,7 +110,6 @@ final class HyperspaceMode {
         HyperspaceCamera mapCamera = new HyperspaceCamera(fittedCamera.x(), fittedCamera.y(), Math.min(fittedCamera.zoom(), treeCamera.zoom()));
         hyperspaceTransition.enter(treeCamera.current(), mapCamera);
         SkillTreeSounds.hyperspaceOut();
-        reopenStats = reopenStats || statPanel.isOpen();
         statPanel.close();
         return true;
     }

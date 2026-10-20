@@ -10,25 +10,23 @@ import static org.mockito.Mockito.mock;
 class SkillTreeStatPanelTest {
 
     @Test
-    void theStatsStartOpenAndTheButtonTogglesThem() {
+    void theStatsStartClosedAndTheButtonTogglesThem() {
         SkillTreeStatPanel panel = new SkillTreeStatPanel(mock(FleetMemberAPI.class));
 
-        assertTrue(panel.isOpen());
-        panel.toggle();
         assertFalse(panel.isOpen());
         panel.toggle();
         assertTrue(panel.isOpen());
+        panel.toggle();
+        assertFalse(panel.isOpen());
     }
 
     @Test
-    void openingAndClosingAreIdempotentSoHyperspaceCanCallThemFreely() {
+    void closingIsIdempotentSoHyperspaceCanCallItFreely() {
         SkillTreeStatPanel panel = new SkillTreeStatPanel(mock(FleetMemberAPI.class));
 
+        panel.toggle();
         panel.close();
         panel.close();
         assertFalse(panel.isOpen());
-        panel.open(false);
-        panel.open(false);
-        assertTrue(panel.isOpen());
     }
 }

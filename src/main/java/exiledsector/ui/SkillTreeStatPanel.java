@@ -65,7 +65,7 @@ final class SkillTreeStatPanel {
     private float cachedLayoutWidth;
     private float cachedLayoutHeight;
 
-    private boolean panelOpen = true;
+    private boolean panelOpen;
     private float toggleWidth;
     private PanelLayout drawnLayout;
     private float placedToggleRight = Float.NaN;
@@ -73,11 +73,10 @@ final class SkillTreeStatPanel {
 
     SkillTreeStatPanel(FleetMemberAPI member) {
         this.member = member;
-        panelFrame.openInstantly();
-        toggleButton.setLabel(showLabel);
-        float showWidth = toggleButton.preferredWidth();
         toggleButton.setLabel(hideLabel);
-        toggleWidth = Math.max(ChromeMetrics.MIN_BUTTON_WIDTH, Math.max(showWidth, toggleButton.preferredWidth()));
+        float hideWidth = toggleButton.preferredWidth();
+        toggleButton.setLabel(showLabel);
+        toggleWidth = Math.max(ChromeMetrics.MIN_BUTTON_WIDTH, Math.max(hideWidth, toggleButton.preferredWidth()));
     }
 
     void refresh(ShipOpBudget budget, int revision) {
@@ -98,18 +97,15 @@ final class SkillTreeStatPanel {
         if (panelOpen) {
             close();
         } else {
-            open(true);
+            open();
         }
     }
 
-    void open(boolean withSound) {
-        if (panelOpen) return;
+    private void open() {
         panelOpen = true;
         panelFrame.open();
         toggleButton.setLabel(hideLabel);
-        if (withSound) {
-            SkillTreeSounds.panelOpened();
-        }
+        SkillTreeSounds.panelOpened();
     }
 
     void close() {

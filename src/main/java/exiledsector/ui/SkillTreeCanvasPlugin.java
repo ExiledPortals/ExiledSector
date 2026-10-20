@@ -166,7 +166,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         templateUi.advance(amount, canvasPosition, mode.enables(CanvasMode.Chrome.TEMPLATE_BAR));
         socketPlacement.advance(mode.closesStorage());
         statPanel.refresh(treeSession.budget(), treeSession.statsRevision());
-        hyperspaceMode.reopenStatsWhenBack();
         statPanel.advance(amount);
         chrome.advanceVisibility(amount, mode, hyperspaceMode.chromeAlpha(), hyperspaceMode.treeAlpha());
         chrome.advance(amount, canvasPosition, mode, treeSession.budget(), mouseX, mouseY, mouseKnown);
