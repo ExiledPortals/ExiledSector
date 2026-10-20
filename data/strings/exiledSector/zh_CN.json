@@ -420,7 +420,7 @@
     "effect.FUROR_RATE_OF_FIRE_PERCENT": "对敌舰造成伤害会积累怒意，使武器射速最多提高<good>{value}%</good>，造成{frigate}/{destroyer}/{cruiser}/{capital}点伤害（护卫舰至主力舰）时达到上限。命中护盾按一半计算，EMP按四分之一计算。怒意每秒消退{decay}%。",
     "effect.MALFUNCTION_AURA_PERCENT": "{range} su内的敌舰武器有<good>{value}%</good>几率发生故障。多艘具有此效果的舰船不会叠加，取最强者。",
     "effect.REPAIR_COORDINATOR_ARMOR_PERCENT": "每秒为{range} su内最近的受损友舰修复其总装甲值的<good>{value}%</good>。每场战斗中，每艘具有此效果的舰船对同一艘友舰最多修复其{perShip}%的装甲值，每艘友舰从所有此类舰船处最多共恢复{limit}%的装甲值。过载或主动排散时暂停。",
-    "effect.WING_SCRAMBLE_COPIES": "本舰部署时，用途相同（战斗机、轰炸机、截击机或支援机；突击机视为战斗机）且飞行方式相同的战机联队会互换飞行员，无人机只与无人机互换。每个联队至少保留1架自身的战机，再在其正常联队规模内，为组内每种其他战机轮流补入最多<good>{value}</good>架；剩余的位置仍由自身战机填补，因此联队不会超过其正常规模。阵亡或返航整备的战机由所在联队自己的机库重建，并改训为缺少的机型。",
+    "effect.WING_SCRAMBLE_COPIES": "本舰部署时，用途相同（战斗机、轰炸机、截击机或支援机）的战机联队会互相借调战机。每个联队至少保留1架自身的战机，并在其正常联队规模内，为组内每种其他战机补入最多<good>{value}</good>架。无人机只调往无人机联队。",
     "effect.FIGHTER_WING_SHARED_DAMAGE_PERCENT": "当本舰放出的战机受到小于其最大结构值或幅能容量的打击时，该伤害的<good>{value}%</good>会在整支联队内分摊，无论彼此相距多远：结构伤害由各机的结构值分担，护盾伤害由护盾已展开的僚机的幅能分担。处于相位、正在降落或起飞的僚机，以及最大结构值或幅能容量小于整次打击的僚机，不参与分摊；分摊的幅能也不会使僚机过载。",
     "effect.FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER": "本舰放出的战机所在联队每有一架在场作战的存活战机（不含停靠、降落或起飞中的战机），其受到的伤害便降低<good>{value}%</good>（乘算），最多降低{max}%。",
     "effect.CORROSION_MOTE_DAMAGE_FLAT": "光束武器每在敌舰装甲或船体上持续命中{seconds}秒，就向目标发射一枚追踪星尘微粒，造成<good>{value}</good>点能量伤害和<good>{value}</good>点EMP伤害。本舰同时最多存在{max}枚微粒。",
