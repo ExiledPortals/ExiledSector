@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useRef, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type MouseEvent as ReactMouseEvent, type PointerEvent as ReactPointerEvent } from 'react';
 import { useStaticImages } from '../../../api/images.ts';
+import { useNodeRadii } from '../../../api/nodeRadii.ts';
 import { useVocabulary } from '../../../api/vocabulary.ts';
 import { curveKey, findCurve, setCurveControl, snapCurveToStraightIfClose } from '../model/connectors.ts';
 import {
@@ -24,6 +25,7 @@ import {
   nodeById,
   starById,
   threatUnitById,
+  tierOf,
   typeById,
   type ConnectorCurve,
   type TreeDocument,
@@ -42,6 +44,7 @@ import {
   ImageLayer,
   LabelLayer,
   NodeLayer,
+  SocketRadiusLayer,
   StarHandleLayer,
   StarLayer,
   ThreatUnitHandleLayer,
@@ -235,6 +238,8 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
   const measuredRef = useRef(false);
   const staticImages = useStaticImages();
   const vocabulary = useVocabulary();
+  const nodeRadii = useNodeRadii(vocabulary.data?.radiusSizes);
+  const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
 
   const document = useTreeStore((state) => state.document);
   const view = useTreeStore((state) => state.view);
@@ -248,6 +253,10 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
 
   const matchIds = useMemo(() => matchingNodeIds(document, search), [document, search]);
   const brokenIds = useMemo(() => brokenNodeIds(document), [document]);
+  const hoveredSocket = useMemo(() => {
+    const node = hoveredNodeId ? nodeById(document, hoveredNodeId) : undefined;
+    return node && tierOf(typeById(document, node.type)) === 'SOCKET' ? node : null;
+  }, [document, hoveredNodeId]);
 
   useEffect(() => {
     const frame = frameRef.current;
@@ -482,6 +491,12 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
     }
   };
 
+  const onPointerOver = (event: ReactPointerEvent<SVGSVGElement>) => {
+    if (!dragRef.current) {
+      setHoveredNodeId((event.target as SVGElement).dataset.nodeId ?? null);
+    }
+  };
+
   const onClick = (event: ReactMouseEvent<SVGSVGElement>) => {
     const anchorId = (event.target as SVGElement).dataset.anchorShapeCycle;
     if (anchorId) {
@@ -498,7 +513,7 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
 
   return (
     <div ref={frameRef} className={`${classes.canvasFrame} ${MODE_CLASSES[mode] ?? ''}`}>
-      <svg ref={svgRef} className={classes.stage} onPointerDown={onPointerDown} onClick={onClick} onContextMenu={(event) => event.preventDefault()}>
+      <svg ref={svgRef} className={classes.stage} onPointerDown={onPointerDown} onPointerOver={onPointerOver} onPointerLeave={() => setHoveredNodeId(null)} onClick={onClick} onContextMenu={(event) => event.preventDefault()}>
         <IconClipDefinitions />
         <g transform={rootTransform}>
           <StarLayer stars={document.stars} />
@@ -512,6 +527,9 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
             showCurveHandles={mode === 'select'}
             activeCurveKey={activeDrag?.kind === 'curve' ? activeDrag.key : null}
           />
+          {hoveredSocket && nodeRadii.data ? (
+            <SocketRadiusLayer socket={hoveredSocket} nodes={document.nodes} types={document.types} radii={nodeRadii.data} zoom={view.zoom} />
+          ) : null}
           <NodeLayer nodes={document.nodes} types={document.types} selectedIds={selection.nodes} matchIds={matchIds} brokenIds={brokenIds} />
           {showLabels ? <LabelLayer nodes={document.nodes} types={document.types} matchIds={matchIds} /> : null}
           {showAnchorHandles ? <AnchorHandleLayer items={document.anchors} selectedIds={selection.anchors} activeDrag={activeDrag} /> : null}

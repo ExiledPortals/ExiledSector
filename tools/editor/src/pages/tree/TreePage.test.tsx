@@ -7,7 +7,7 @@ import { buildVocabulary } from '../../api/vocabulary.ts';
 import { renderWithProviders } from '../../test/renderWithProviders.tsx';
 import { readRepositoryFile, startTestServer, type TestServer } from '../../test/testServer.ts';
 import { openAddNode, openTypeEditor, openTypePicker } from './dialogs/treeDialogs.tsx';
-import { nodeById, threatUnitById } from './model/types.ts';
+import { nodeById, threatUnitById, tierOf, typeById } from './model/types.ts';
 import { addNodeOfType, duplicateNode, selectOnly, setMode } from './state/treeActions.ts';
 import { loadTree, saveTree } from './state/treePersistence.ts';
 import { EMPTY_SELECTION, isReservedNodeId, setSelection, useTreeStore } from './state/treeStore.ts';
@@ -18,6 +18,7 @@ const TREE_FILE = 'data/skilltrees/ship_skill_tree.json';
 const VOCABULARY_FILE = 'tools/editor_vocabulary.json';
 const REPLACEMENTS_FILE = 'data/config/exiledSector/node_replacements.csv';
 const RELEASED_NODES_FILE = 'src/test/resources/released_skill_nodes.json';
+const NODE_RADII_FILE = 'data/config/exiledSector/node_radii.json';
 const vocabulary = buildVocabulary(JSON.parse(readRepositoryFile(VOCABULARY_FILE)));
 
 let server: TestServer;
@@ -39,7 +40,7 @@ function commitField(label: string, value: string) {
 }
 
 beforeAll(() => {
-  server = startTestServer([TYPES_FILE, TREE_FILE, VOCABULARY_FILE, REPLACEMENTS_FILE, RELEASED_NODES_FILE]);
+  server = startTestServer([TYPES_FILE, TREE_FILE, VOCABULARY_FILE, REPLACEMENTS_FILE, RELEASED_NODES_FILE, NODE_RADII_FILE]);
 });
 
 beforeEach(() => {
@@ -76,6 +77,28 @@ describe('tree page', () => {
       expect(newId.startsWith('small_flux_optional_')).toBe(true);
       expect(isReservedNodeId(useTreeStore.getState(), newId)).toBe(false);
     }
+  });
+
+  it('rings a hovered socket with each subroutine radius and counts the nodes inside', async () => {
+    const { container } = await renderLoadedTree();
+    const document = useTreeStore.getState().document;
+    const tierOfElement = (element: SVGElement) => {
+      const node = nodeById(document, element.dataset.nodeId ?? '');
+      return node ? tierOf(typeById(document, node.type)) : null;
+    };
+    const socketElement = [...nodeElements(container)].find((element) => tierOfElement(element) === 'SOCKET') as SVGElement;
+    const smallElement = [...nodeElements(container)].find((element) => tierOfElement(element) === 'SMALL') as SVGElement;
+    const radii = JSON.parse(readRepositoryFile(NODE_RADII_FILE)) as { small: number; medium: number; large: number };
+    const radiusLayer = () => container.querySelector('[data-testid="socket-radius-layer"]');
+
+    fireEvent.pointerOver(socketElement);
+    await waitFor(() => expect(radiusLayer()).toBeTruthy());
+    const rings = [...(radiusLayer() as Element).querySelectorAll('circle')].map((ring) => Number(ring.getAttribute('r')));
+    expect(rings).toEqual([radii.small, radii.medium, radii.large]);
+    expect(radiusLayer()?.textContent).toContain(`small ${radii.small}:`);
+
+    fireEvent.pointerOver(smallElement);
+    expect(radiusLayer()).toBeNull();
   });
 
   it('selects a node by clicking it and edits it through the inspector', async () => {

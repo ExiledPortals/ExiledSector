@@ -17,6 +17,7 @@ import {
 import {
   anchorShapeVertices,
   computeAlignmentSnap,
+  countNodesWithinRadius,
   deleteAnchor,
   findSnapAnchor,
   positionOnAnchor,
@@ -27,7 +28,7 @@ import {
 } from './geometry.ts';
 import { serializeUnlockConditions } from './serialization.ts';
 import { replaceGroupTags } from './tags.ts';
-import { nodeById, type TreeDocument, type TreeNode } from './types.ts';
+import { nodeById, type SkillType, type TreeDocument, type TreeNode } from './types.ts';
 import { validateTree } from './validation.ts';
 
 const vocabularyFile = {
@@ -245,5 +246,29 @@ describe('validation and tags', () => {
     expect(vocabulary.parameterlessUnlockConditionTypes).toEqual([]);
     const withGates = buildVocabulary({ ...vocabularyFile, parameterlessUnlockConditionTypes: ['ratPlayerExoship'] });
     expect(withGates.parameterlessUnlockConditionTypes).toEqual(['ratPlayerExoship']);
+  });
+});
+
+describe('socket radius counts', () => {
+  it('counts nodes by tier within the radius, leaving out the centre, the Exoship and ExoTech nodes', () => {
+    const typesById = new Map<string, SkillType>([
+      ['small_a', { id: 'small_a', name: 'Small', tier: 'SMALL' } as SkillType],
+      ['notable_a', { id: 'notable_a', name: 'Notable', tier: 'NOTABLE' } as SkillType],
+      ['socket_a', { id: 'socket_a', name: 'Socket', tier: 'SOCKET' } as SkillType],
+    ]);
+    const node = (id: string, type: string, x: number, y: number, tags?: string[]): TreeNode => ({ id, type, connectedTo: [], x, y, tags });
+    const socket = node('socket', 'socket_a', 0, 0);
+    const nodes = [
+      socket,
+      node('near_small', 'small_a', 300, 400),
+      node('near_notable', 'notable_a', -100, 0),
+      node('far_small', 'small_a', 501, 0),
+      node('exoship', 'exoship', 10, 10),
+      node('carried', 'small_a', 20, 20, ['exotech']),
+    ];
+
+    const counts = countNodesWithinRadius(nodes, typesById, socket, 500);
+
+    expect(Object.fromEntries(counts)).toEqual({ SMALL: 1, NOTABLE: 1 });
   });
 });

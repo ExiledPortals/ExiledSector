@@ -1,7 +1,8 @@
 import { memo, useMemo } from 'react';
+import type { NodeRadius } from '../../../api/nodeRadii.ts';
 import { fileUrl } from '../../../shared/imagePaths.ts';
 import { bezierHandleFor, curveKey, defaultControlPoint } from '../model/connectors.ts';
-import { anchorShapeVertices, positionOnAnchor, rotateAroundOrigin } from '../model/geometry.ts';
+import { anchorShapeVertices, countNodesWithinRadius, positionOnAnchor, rotateAroundOrigin } from '../model/geometry.ts';
 import {
   DEFAULT_STAR_COLOR,
   radiusForTier,
@@ -501,6 +502,41 @@ export const StarHandleLayer = memo(function StarHandleLayer({ items, selectedId
           </g>
         );
       })}
+    </g>
+  );
+});
+
+const RADIUS_LABEL_SCREEN_SIZE = 13;
+
+function describeTierCounts(counts: Map<Tier, number>): string {
+  const parts = (Object.keys(TIER_RADIUS) as Tier[]).flatMap((tier) => {
+    const count = counts.get(tier);
+    return count ? [`${count} ${tier.toLowerCase().replace('_', ' ')}`] : [];
+  });
+  return parts.length > 0 ? parts.join(', ') : 'no nodes';
+}
+
+interface SocketRadiusLayerProps {
+  socket: TreeNode;
+  nodes: TreeNode[];
+  types: SkillType[];
+  radii: NodeRadius[];
+  zoom: number;
+}
+
+export const SocketRadiusLayer = memo(function SocketRadiusLayer({ socket, nodes, types, radii, zoom }: SocketRadiusLayerProps) {
+  const typeMap = useTypeMap(types);
+  const labelSize = RADIUS_LABEL_SCREEN_SIZE / zoom;
+  return (
+    <g pointerEvents="none" data-testid="socket-radius-layer">
+      {radii.map((radius) => (
+        <g key={radius.size}>
+          <circle cx={socket.x} cy={socket.y} r={radius.distance} className={classes.socketRadius} />
+          <text x={socket.x} y={socket.y - radius.distance - labelSize * 0.5} textAnchor="middle" fontSize={labelSize} className={classes.socketRadiusLabel}>
+            {`${radius.size} ${radius.distance}: ${describeTierCounts(countNodesWithinRadius(nodes, typeMap, socket, radius.distance))}`}
+          </text>
+        </g>
+      ))}
     </g>
   );
 });

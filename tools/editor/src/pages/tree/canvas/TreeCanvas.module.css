@@ -205,3 +205,22 @@
   bottom: 10px;
   z-index: 5;
 }
+
+.socketRadius {
+  fill: var(--tree-socket);
+  fill-opacity: 0.04;
+  stroke: var(--tree-socket);
+  stroke-width: 1.5;
+  stroke-dasharray: 8 6;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.8;
+}
+
+.socketRadiusLabel {
+  fill: var(--tree-socket);
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: var(--tree-canvas-bg);
+  stroke-width: 3px;
+  vector-effect: non-scaling-stroke;
+}
