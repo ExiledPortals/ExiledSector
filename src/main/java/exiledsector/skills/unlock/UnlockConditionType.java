@@ -27,8 +27,8 @@ public enum UnlockConditionType {
 
     record ModGate(BooleanSupplier modEnabled, Predicate<SectorAPI> passed) {
 
-        boolean isOpen(SectorAPI sector) {
-            return !modEnabled.getAsBoolean() || passed.test(sector);
+        boolean isOpen(SectorAPI sector, boolean relocked) {
+            return !modEnabled.getAsBoolean() || !relocked && passed.test(sector);
         }
     }
 

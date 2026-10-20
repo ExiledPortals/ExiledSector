@@ -133,6 +133,15 @@ public class ShipSkillData implements WormholePartners {
         unlockedSocketTypes.add(socketTypeId);
     }
 
+    public List<String> clearHullUpgrades() {
+        revision++;
+        List<String> removedItemIds = new ArrayList<>(getSectionItems().values());
+        unlockedSocketTypes = null;
+        frameworkItemsBySocketType = null;
+        frameworkPoints = 0;
+        return removedItemIds;
+    }
+
     public String lockSocketType(String socketTypeId) {
         revision++;
         if (unlockedSocketTypes == null || !unlockedSocketTypes.remove(socketTypeId)) {
@@ -770,6 +779,17 @@ public class ShipSkillData implements WormholePartners {
         }
     }
 
+    public List<SkillItemCost> releaseAnchorExit(String exitNodeId) {
+        if (anchorSocket(exitNodeId) == null || !allocatedNodeIds.contains(exitNodeId)) {
+            return List.of();
+        }
+        revision++;
+        ensureItemChargeLedger();
+        allocatedNodeIds.remove(exitNodeId);
+        release(exitNodeId);
+        return takeItemCharges(List.of(exitNodeId));
+    }
+
     public List<SkillItemCost> deallocateReleasingCharges(SkillNode node) {
         Set<String> allocatedBefore = new LinkedHashSet<>(allocatedNodeIds);
         deallocate(node);
@@ -981,6 +1001,15 @@ public class ShipSkillData implements WormholePartners {
             optionalSelections.clear();
         }
         startingRootId = null;
+        return released;
+    }
+
+    public List<String> resetProgress() {
+        List<String> released = resetAllocations();
+        level = 0;
+        xp = 0f;
+        bankedFreeAllocations = 0;
+        pendingTemplateCredits = 0;
         return released;
     }
 

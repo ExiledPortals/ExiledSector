@@ -16,7 +16,7 @@ import java.util.Set;
 
 public final class NightcrossUnlocks {
 
-    static final String PASCAL_SYSTEM_NAME = "Pascal";
+    public static final String PASCAL_SYSTEM_NAME = "Pascal";
     static final String PASCAL_VISITED_FLAG = "$exiledSector_pascalVisited";
     static final String PROTOTYPE_FOUND_FLAG = "$exiledSector_ancientPrototypeFound";
     static final String LUNAR_FLEET_DEFEATED_SECTOR_FLAG = "$na_defeated_macula";

@@ -37,7 +37,7 @@ class ThreatEncounterTest {
     @Test
     void theThreatGateIsAParameterlessGateThatAlwaysApplies() {
         assertTrue(UnlockConditionType.THREAT_FOUGHT.isModGate());
-        assertTrue(UnlockConditionType.THREAT_FOUGHT.modGate().isOpen(sectorWherePlayerMemoryHasThreat(true)));
-        assertFalse(UnlockConditionType.THREAT_FOUGHT.modGate().isOpen(sectorWherePlayerMemoryHasThreat(false)));
+        assertTrue(UnlockConditionType.THREAT_FOUGHT.modGate().isOpen(sectorWherePlayerMemoryHasThreat(true), false));
+        assertFalse(UnlockConditionType.THREAT_FOUGHT.modGate().isOpen(sectorWherePlayerMemoryHasThreat(false), false));
     }
 }

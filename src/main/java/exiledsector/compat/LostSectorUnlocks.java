@@ -34,7 +34,7 @@ public final class LostSectorUnlocks {
         return false;
     }
 
-    static StarSystemAPI frostSystem(SectorAPI sector) {
+    public static StarSystemAPI frostSystem(SectorAPI sector) {
         SectorEntityToken star = sector.getEntityById(FROST_STAR_ID);
         if (star != null && star.getContainingLocation() instanceof StarSystemAPI system) {
             return system;

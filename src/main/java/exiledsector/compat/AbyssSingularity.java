@@ -13,6 +13,8 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.DerelictShipEntityPlugin;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial;
+import exiledsector.skills.unlock.RelockedGates;
+import exiledsector.skills.unlock.UnlockConditionType;
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -56,12 +58,19 @@ public final class AbyssSingularity {
     }
 
     public static void recordBattle(SectorAPI sector, EngagementResultAPI result) {
-        if (sector == null || result == null || !result.didPlayerWin() || isDefeated(sector)) {
+        if (sector == null || result == null || !result.didPlayerWin()) {
+            return;
+        }
+        boolean defeated = isDefeated(sector);
+        if (defeated && !RelockedGates.isRelocked(sector, UnlockConditionType.RAT_SINGULARITY_DEFEATED)) {
             return;
         }
         EngagementResultForFleetAPI losers = result.getLoserResult();
         if (losers != null && (containsGenesis(losers.getDestroyed()) || containsGenesis(losers.getDisabled()))) {
-            markDefeated(sector, "the player destroyed the Singularity's Genesis-class ship");
+            RelockedGates.reopen(sector, UnlockConditionType.RAT_SINGULARITY_DEFEATED);
+            if (!defeated) {
+                markDefeated(sector, "the player destroyed the Singularity's Genesis-class ship");
+            }
         }
     }
 

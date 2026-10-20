@@ -215,7 +215,7 @@ public final class SocketCustody {
         return SaveData.getOrCreate(LOST_KEY, HashSet::new);
     }
 
-    private static Map<String, FleetMemberAPI> ownedShips() {
+    public static Map<String, FleetMemberAPI> ownedShips() {
         Map<String, FleetMemberAPI> ownedShipsById = new LinkedHashMap<>();
         CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
         if (playerFleet != null) {
