@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import exiledsector.modifiers.ModifierSlot;
+import exiledsector.skills.radius.RadiusSize;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -31,6 +32,35 @@ class ItemRollOddsTest {
         assertEquals(0.25, shares.get("P2"), EXACT);
         assertEquals(0.25, shares.get("S1"), EXACT);
         assertEquals(0.75, shares.get("S2"), EXACT);
+    }
+
+    private static DoctrineArchive augmentingDoctrine(List<PoolEntry> pool, int minLines, int maxLines) {
+        return new DoctrineArchive("odds_doctrine", DoctrineBehaviour.AUGMENT, RadiusSize.LARGE, List.of(), List.of(), List.of(), pool,
+                minLines, maxLines, null);
+    }
+
+    @Test
+    void aDoctrineLineShowsTheChanceThatAnyOneNodeGetsIt() {
+        List<PoolEntry> pool = List.of(PoolEntry.of(ModifierSlot.PREFIX, "D1", 1f, 2f, 3f), PoolEntry.of(ModifierSlot.PREFIX, "D2", 1f, 2f, 1f),
+                PoolEntry.of(ModifierSlot.PREFIX, "D3", 1f, 2f, 0f));
+
+        Map<String, Double> oneLine = ItemRollOdds.doctrineLineChances(augmentingDoctrine(pool, 1, 1));
+        assertEquals(List.of("D1", "D2", "D3"), List.copyOf(oneLine.keySet()));
+        assertEquals(0.75, oneLine.get("D1"), EXACT);
+        assertEquals(0.25, oneLine.get("D2"), EXACT);
+        assertEquals(0.0, oneLine.get("D3"), EXACT);
+
+        Map<String, Double> oneOrTwoLines = ItemRollOdds.doctrineLineChances(augmentingDoctrine(pool, 1, 2));
+        assertEquals(0.875, oneOrTwoLines.get("D1"), EXACT);
+        assertEquals(0.625, oneOrTwoLines.get("D2"), EXACT);
+        assertEquals(0.0, oneOrTwoLines.get("D3"), EXACT);
+
+        List<PoolEntry> even = List.of(PoolEntry.of(ModifierSlot.PREFIX, "E1", 1f, 2f, 1f), PoolEntry.of(ModifierSlot.PREFIX, "E2", 1f, 2f, 1f),
+                PoolEntry.of(ModifierSlot.PREFIX, "E3", 1f, 2f, 1f), PoolEntry.of(ModifierSlot.PREFIX, "E4", 1f, 2f, 1f));
+        Map<String, Double> twoOfFour = ItemRollOdds.doctrineLineChances(augmentingDoctrine(even, 2, 2));
+        twoOfFour.values().forEach(chance -> assertEquals(0.5, chance, EXACT));
+        Map<String, Double> moreLinesThanEntries = ItemRollOdds.doctrineLineChances(augmentingDoctrine(even, 5, 6));
+        moreLinesThanEntries.values().forEach(chance -> assertEquals(1.0, chance, EXACT));
     }
 
     @Test

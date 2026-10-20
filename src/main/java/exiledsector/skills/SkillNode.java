@@ -65,12 +65,9 @@ public class SkillNode extends SkillTreeObject {
     public static NodeDescription describeType(SkillType type, HullSize hullSize) {
         List<DescriptionLine> effects = new ArrayList<>();
         addLine(effects, type.getDescriptionText(), false);
-        List<SkillTypeEffect> described = hullSize == null ? type.getEffects() : type.effectsFor(hullSize);
-        for (SkillTypeEffect effect : WeaponEffectTooltipAggregator.collapse(described)) {
-            addLine(effects, effect.effect().description(effect.magnitude(), hullSize), effect.effect().invertsDescriptionColours());
-        }
-        addLine(effects, describeTemporaryDuration(type), false);
+        effects.addAll(describeEffects(type, hullSize));
 
+        List<SkillTypeEffect> described = describedEffects(type, hullSize);
         List<DescriptionLine> details = new ArrayList<>();
         for (SkillTypeEffect effect : described) {
             addLine(details, effect.effect().deallocationWarning(effect.magnitude()), false);
@@ -84,6 +81,19 @@ public class SkillNode extends SkillTreeObject {
         addLine(details, describeItemCost(type), false);
         addLine(details, describeExclusivity(type), false);
         return new NodeDescription(effects, details);
+    }
+
+    public static List<DescriptionLine> describeEffects(SkillType type, HullSize hullSize) {
+        List<DescriptionLine> effects = new ArrayList<>();
+        for (SkillTypeEffect effect : WeaponEffectTooltipAggregator.collapse(describedEffects(type, hullSize))) {
+            addLine(effects, effect.effect().description(effect.magnitude(), hullSize), effect.effect().invertsDescriptionColours());
+        }
+        addLine(effects, describeTemporaryDuration(type), false);
+        return effects;
+    }
+
+    private static List<SkillTypeEffect> describedEffects(SkillType type, HullSize hullSize) {
+        return hullSize == null ? type.getEffects() : type.effectsFor(hullSize);
     }
 
     private static void addLine(List<DescriptionLine> lines, StyledText text, boolean lowerIsBetter) {

@@ -942,7 +942,10 @@ holding a doctrine is ringed by the keystone aurora belt in that colour, dimmed 
 transformed node shows its replacement's name, icon and tooltip, then "Originally: <name>"; an augmented
 node lists its added lines; both name the doctrine and its revision. The archive's tooltip, and the tooltip
 of a socket holding one, shows "Limited to 1 doctrine archive" under the title, then its firmware revision
-and radius.
+and radius. Its codex entry lists what it can do: a transforming doctrine's replacement types per tier with
+their effects, and an augmenting doctrine's modifiers with each one's chance to land on any one node
+(`ItemRollOdds.doctrineLineChances`, averaged over the line counts and drawn by weight without repeats, as
+`DoctrineRewriter.augmentLines` does). Eligibility filtering on the actual ship is not reflected.
 
 The first draft has augmenting doctrines for the Hegemony (armour, hull and ballistic lines), the Lion's
 Guard of the Sindrian Diktat (combat readiness, range and energy lines) and the Persean League (fighter,

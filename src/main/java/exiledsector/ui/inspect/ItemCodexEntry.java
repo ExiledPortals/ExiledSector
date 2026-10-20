@@ -17,11 +17,20 @@ import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemEffects;
 import exiledsector.items.ItemRarity;
 import exiledsector.items.ItemRollOdds;
+import exiledsector.items.DoctrineArchive;
+import exiledsector.items.DoctrineArchives;
+import exiledsector.items.DoctrineText;
+import exiledsector.items.SubroutineKind;
+import exiledsector.skills.DescriptionLine;
+import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillType;
 import exiledsector.ui.VanillaText;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class ItemCodexEntry extends BoxedCodexEntry {
 
@@ -77,7 +86,10 @@ public class ItemCodexEntry extends BoxedCodexEntry {
             VanillaText.addPara(info, description, PAD, Misc.getGrayColor());
         }
         writeImplicits(info);
-        if (definition.unique()) {
+        DoctrineArchive doctrine = definition.subroutineKind() == SubroutineKind.DOCTRINE ? DoctrineArchives.get(definition.id()) : null;
+        if (doctrine != null) {
+            writeDoctrine(info, doctrine, textWidth);
+        } else if (definition.unique()) {
             writeUnique(info);
         } else {
             writeAffixes(info, textWidth);
@@ -106,6 +118,47 @@ public class ItemCodexEntry extends BoxedCodexEntry {
             for (StyledText effectText : effectTexts(entry.modifier())) {
                 VanillaText.addPara(info, effectText, linePad, Misc.getTextColor());
                 linePad = LINE_PAD;
+            }
+        }
+    }
+
+    private void writeDoctrine(TooltipMakerAPI info, DoctrineArchive doctrine, float textWidth) {
+        VanillaText.addPara(info, DoctrineText.limitLine(), PAD, Misc.getGrayColor());
+        String radiusName = DoctrineText.radiusName(doctrine);
+        if (doctrine.augments()) {
+            VanillaText.addPara(info, Translation.msg("codex.doctrine.augments").arg("lines", lineCountText(doctrine)).arg("radius", radiusName)
+                    .styled(), PAD, Misc.getTextColor());
+            writePool(info, "codex.doctrine.lines", doctrine.modifierPool(), ItemRollOdds.doctrineLineChances(doctrine), textWidth);
+            return;
+        }
+        VanillaText.addPara(info, Translation.msg("codex.doctrine.transforms").arg("radius", radiusName).styled(), PAD, Misc.getTextColor());
+        writeReplacements(info, "codex.doctrine.notables", doctrine.notableTypeIds());
+        writeReplacements(info, "codex.doctrine.keystones", doctrine.keystoneTypeIds());
+        writeReplacements(info, "codex.doctrine.smallNodes", doctrine.smallTypeIds());
+    }
+
+    private static String lineCountText(DoctrineArchive doctrine) {
+        String fewest = NumberText.format(doctrine.minLines());
+        if (doctrine.minLines() == doctrine.maxLines()) {
+            return fewest;
+        }
+        return Translation.msg("codex.socketables.range").arg("low", fewest).arg("high", NumberText.format(doctrine.maxLines())).text();
+    }
+
+    private static void writeReplacements(TooltipMakerAPI info, String headingKey, List<String> typeIds) {
+        List<SkillType> types = typeIds.stream().map(SkillTree::getType).filter(Objects::nonNull).toList();
+        if (types.isEmpty()) {
+            return;
+        }
+        info.addSectionHeading(Translation.text(headingKey), Alignment.MID, PAD);
+        for (SkillType type : types) {
+            VanillaText.plainPara(info, type.getDisplayName(), PAD, Misc.getHighlightColor());
+            List<DescriptionLine> effectLines = SkillNode.describeEffects(type, null);
+            if (effectLines.isEmpty()) {
+                VanillaText.addPara(info, Translation.styled("codex.doctrine.noEffect"), LINE_PAD, Misc.getGrayColor());
+            }
+            for (DescriptionLine effectLine : effectLines) {
+                VanillaText.addPara(info, effectLine.display(), LINE_PAD, Misc.getTextColor());
             }
         }
     }

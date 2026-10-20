@@ -164,18 +164,12 @@ public final class Subroutine extends Item {
             lines.add(Translation.styled("socketable.doctrine.inert"));
             return lines;
         }
-        String radiusName = Translation.text("socketable.doctrine.radius." + archive.radiusSize().dataKey());
-        lines.add(Translation.msg("socketable.doctrine.radiusLine").arg("radius", radiusName).styled());
+        lines.add(Translation.msg("socketable.doctrine.radiusLine").arg("radius", DoctrineText.radiusName(archive)).styled());
         return lines;
     }
 
     @Override
     public StyledText limitLine() {
-        SubroutineKind kind = subroutineKind();
-        if (kind != SubroutineKind.DOCTRINE) {
-            return null;
-        }
-        int limit = kind.socketLimitPerShip();
-        return Translation.msg("socketable.doctrine.limit").count(limit).arg("limit", limit).styled();
+        return subroutineKind() == SubroutineKind.DOCTRINE ? DoctrineText.limitLine() : null;
     }
 }

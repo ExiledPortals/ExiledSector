@@ -14,4 +14,13 @@ public final class DoctrineText {
         String key = rewrite.transformed() ? "socketable.doctrine.transformedBy" : "socketable.doctrine.augmentedBy";
         return Translation.msg(key).arg("doctrine", doctrineName).arg("revision", String.valueOf(rewrite.revision())).styled();
     }
+
+    public static StyledText limitLine() {
+        int limit = SubroutineKind.DOCTRINE.socketLimitPerShip();
+        return Translation.msg("socketable.doctrine.limit").count(limit).arg("limit", limit).styled();
+    }
+
+    public static String radiusName(DoctrineArchive archive) {
+        return Translation.text("socketable.doctrine.radius." + archive.radiusSize().dataKey());
+    }
 }
