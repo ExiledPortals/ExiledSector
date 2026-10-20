@@ -9,37 +9,70 @@ Designed to be an overhaul of the simple hullmod system based on the infamous Pa
 
 [size=14pt][b]Features[/b][/size]
 
-Open the refit screen and click the skill tree button on any of your ships. There's a whole new sector in there:
-[spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/teaser.gif[/img][/spoiler]
-[list][li]Every ship gets its own tree, with over 300 nodes.[/li]
-[li]Some nodes are travel nodes that let you choose between several options.[/li][/list]
-[spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/teaser_choice.gif[/img][/spoiler]
-[list][li]Nodes start out costing OP: 1 for frigates, 2 for destroyers, 3 for cruisers and 5 for capitals. Ships also earn XP in combat and level up, and every level lets you take a node for free. Veteran ships get their ordnance points back. The crew gets nothing, as is tradition.[/li]
-[li]Some nodes are hidden until you unlock them.[/li][/list]
-[spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/Unidentified_node.png[/img][/spoiler]
-[list][li]Plenty of nodes have effects you won't find anywhere in vanilla.[/li]
-[li]Beams can split between targets, so your Tachyon Lance can finally disappoint several enemies at once.[/li][/list]
-[spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/lions_gaze.png[/img]
-[img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/lions_gaze2.png[/img]
-[/spoiler]
-[list][li]Each faction has its own corner of the tree with thematic nodes. For example, your ship's main goal can be to blow up, and act like it don't know nobody.[/li]
-[/list]
-[spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/Ludds_Light.png[/img]
-[img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/at_any_cost.png[/img][/spoiler]
-[list][li]Some nodes are Subroutine Sockets: perfectly good empty rooms that your engineers swear were always part of the design. Allocate one like any other node, then shove a subroutine into it. Hull items turn up at salvage sites, in Tech Mining finds, and in the wreckage of fleets whose captains will not be needing them after you're done.[/li]
-[li]Ctrl+click a socket, or click the Subroutines button, to open the Subroutines panel, a hoard of every subroutine you own, lovingly organised by people who will never be allowed to use any of them. Filter by rarity, search by name, and pick what goes in. Right-click one you don't want to disassemble it into Nanite Feedstock: 3 for a common, 5 for a rare and 10 for a unique, because priceless relics and talented people are, it turns out, mostly reclaimable nanites.[/li]
-[li]The Subroutines panel's Modify button opens the Hull Item Modification workbench beside it, and the skill tree is locked while it's open so nobody gets distracted mid-surgery. Spend Nanite Feedstock there to grow programmable nanoswarms, each built for a specific kind of modification. Click an item in storage to load it onto the workbench, left-click a nanoswarm to use it, and right-click a nanoswarm to grow one. Rare inhibitors can be switched on to keep the next nanoswarm off an item's prefixes or suffixes.[/li]
-[li]Feedstock and nanoswarms also turn up wherever hull items do. Winning a battle pays out feedstock too, scaled by the enemy deployment points you destroy or disable and by the battle difficulty bonus. Nothing says "salvage rights" like a smoking hull. If your hold is groaning, a LunaLib setting (off by default) has Hull Item Storage swallow all the feedstock and nanoswarms in your cargo whenever you open it, where they weigh nothing and the workbench can still reach them.[/li][/list]
-[spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/socket_storage.png[/img]
-[img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/crafting.gif[/img][/spoiler]
-[list][li]Common hull items are Domain Subroutines in four grades, each rolling one prefix and one suffix.[/li]
-[li]Rare ones roll three or four mods and get a name of their own. If you'd rather not gamble, a LunaLib setting (off by default) rolls every new hull item's mods at the middle of their range.[/li][/list]
-[spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/common_socketable.png[/img]
-[img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/rare_socketable.png[/img][/spoiler]
-[list][li]Unique hull items can be officers, crews and Domain relics with unique effects. They only start turning up once you reach level 15.[/li][/list]
-[spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/unique_socketable.png[/img]
-[img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/socketed_unique.png[/img][/spoiler]
-[list][li]From level 15 your ships can take Hull Upgrades as well, one kind per hull size, found in the same places as hull items. Press L in the refit screen to open Hull Items, install an upgrade from its Hull Upgrades tab, and spend the point it gives you to unlock a section of the ship: Bridge, Crew Quarters, Engine Room, Reactor, Armor Plating, Weapon Mount, Shield Generator, Phase Coil or Flight Deck. The last three need shields, a phase cloak or fighter bays to work. A ship holds up to four points, and locking a section again hands its point back, because the yard keeps receipts.[/li][li]Each of those sections has hull items of its own, and the officers, crews and relics that used to squeeze into Subroutine Sockets now live in the section that suits them. Past level 15 every battle you win can leave hull items and the odd spare Hull Upgrade in the wreckage, more of them the stronger the fleet you beat and the harder the fight.[/li][/list]
+Exiled Sector adds three major modules: a skill tree for every ship, hull upgrades (equipment) for ships, and star charts to go and find more of both.
+
+[size=12pt][b]The skill tree[/b][/size]
+
+Press the Skill Tree button in the refit screen and every ship in your fleet gets a tree of its own, over 300 nodes of armour, flux, guns and questionable engineering decisions. Ships level up in combat and every level buys a node, so your veteran Lasher eventually stops being a Lasher and starts being a problem.
+
+[spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/skill_tree.gif[/img][/spoiler]
+
+You might have to travel a bit for the juicy nodes. Slot a Wormhole Anchor into a Subroutine Socket and it tears a hole out past the edge of the tree, to where the sensible nodes stop. Ctrl+click the socket and in you go.
+
+[spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/wormhole_anchor.gif[/img][/spoiler]
+
+Every major faction has a volume of its own, full of nodes that think the way it does. The Hegemony thickens your armour, Tri-Tachyon invoices you for it, and the Luddic Path would quite like your ship to explode, ideally next to someone else's.
+
+[spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/faction_volumes.png[/img][/spoiler]
+
+Doctrine Archives are faction playbooks your crew definitely didn't steal. Some rewrite every node around them into faction-related bonuses, others bolt the doctrine on top. Your engineers read the Tri-Tachyon one and now call the reactor a "growth opportunity".
+
+[spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/doctrine_archive.png[/img][/spoiler]
+
+Running Random Assortment of Things, Nightcross Armory or LOST_SECTOR? Explore them to find more ways to blow up your enemies.
+
+[spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/mod_volumes.png[/img][/spoiler]
+
+[size=12pt][b]Hull upgrades[/b][/size]
+
+Nobody has designed a new hull since the Collapse, and the Domain's blueprints sit behind DRM older than your grandmother's grandmother. So your crew looks at other people's ships, decides they had some good ideas, and welds those ideas onto yours.
+
+From level 15, Hull Upgrades turn up in wrecks and salvage. Install one, choose a section of the ship, and that section takes hull items of its own.
+
+[spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/hull_upgrades.gif[/img][/spoiler]
+
+Hull items come common, rare and unique, rolling prefixes and suffixes the way the Karui ancestors intended.
+
+[spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/hull_item_1.png[/img]
+[img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/hull_item_2.png[/img]
+[img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/hull_item_3.png[/img]
+[img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/hull_item_4.png[/img][/spoiler]
+
+Don't like the rolls? Grow nanoswarms from Nanite Feedstock at the crafting bench and set them loose on your items to add, reroll, reshape or freeze their modifiers. Or corrupt one and find out. Results may vary. Results will vary.
+
+[spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/crafting_bench.gif[/img][/spoiler]
+
+Note: no Path of Building, but the codex should give you what you need.
+
+The loot turns up everywhere you'd expect it to: research stations, orbital labs, derelicts and the smoking remains of anyone who disagreed with you. The crew gets nothing, as is tradition.
+
+[spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/loot.gif[/img][/spoiler]
+
+[size=12pt][b]Star charts[/b][/size]
+
+Star Charts lead to systems no map shows, cut off from hyperspace and guarded by fleets that weren't expecting company. They come in 15 tiers of increasingly poor life choices and turn up on tough enemy fleets and inside other charts, so every run you survive hands you an excuse for a worse one.
+
+To open one you need a Wormhole Gateway, a colony structure for people who have run out of normal places to kill their crew.
+
+[spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/wormhole_gateway.png[/img][/spoiler]
+
+Charts roll modifiers too, and the same nanoswarms work on them. Bigger fleets, nastier bosses, better rewards. You asked for this (I think? Maybe it was me that asked for this).
+
+[spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/chart_crafting.gif[/img][/spoiler]
+
+Open the wormhole, fly in, deal with whoever is home and take everything that isn't bolted down. When the run ends the system goes with it, along with anything you forgot to pick up. No it will not bloat your save (I hope).
+
+[spoiler][img]https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/graphics/description/chart_opening.gif[/img][/spoiler]
 
 [size=14pt][b]Requirements[/b][/size]
 
@@ -62,27 +95,19 @@ Optional:
 [spoiler]
 It should be safe to add to an existing save.
 
-Nodes that copy a vanilla hull mod also place the real hull mod on the ship as a phantom: it costs no OP and does nothing itself, but other mods that check for that hull mod see it. That should make most mods work with the tree's nodes without needing dedicated support. If another mod's hull mod strips one of those phantoms, the tree remembers the clash and refuses that node on such ships, refunding it on yours.
+Nodes that copy a vanilla hull mod also place the real hull mod on the ship as a phantom: it costs no OP and does nothing itself, but other mods that check for that hull mod see it. That should make most mods work with the tree's nodes without needing dedicated support.
 
 These mods have dedicated compatibility. The version listed is the one I last tested against. Newer versions usually work; if one doesn't, [tt]starsector.log[/tt] says so at startup and lists anything Exiled Sector can no longer find.
 
 [table]
 [tr][td][b]Mod[/b][/td][td][b]Tested version[/b][/td][td][b]What Exiled Sector does with it[/b][/td][/tr]
 [tr][td][url=https://fractalsoftworks.com/forum/index.php?topic=30407.0]Second-in-Command[/url][/td][td]2.0.0[/td][td]Its skills see the hull mods your nodes stand in for, and Reconfiguration waives the Converted Hangar penalties.[/td][/tr]
-[tr][td]Lost Sector[/td][td]0.6.2d, 1.0.b[/td][td]The Kesteven and Frozen Heart areas of the tree appear, and Augmented Systems hulls get the same bonuses from those nodes as from the hull mods.[/td][/tr]
+[tr][td]Lost Sector[/td][td]0.6.2d, 1.0.b[/td][td]REDACTED[/td][/tr]
 [tr][td][url=https://fractalsoftworks.com/forum/index.php?topic=25868.0]MagicLib[/url][/td][td]1.5.6[/td][td]Required. A hull mod that tries to strip one of your nodes' hull mods through MagicLib is removed instead.[/td][/tr]
 [tr][td]Exotica Technologies[/td][td]1.8.7[/td][td]The Skill Tree button moves one slot down on the refit screen so it doesn't cover the Exotica button.[/td][/tr]
-[tr][td]Random Assortment of Things[/td][td]3.3.1[/td][td]The Abyss area of the tree appears, along with the ExoTech Exoship, which warps between notables carrying its own branches. Hull items can also drop from the mod's abyssal structures, abyssal drones and relic sites.[/td][/tr]
-[tr][td]Nightcross Armory[/td][td]2.1.6[/td][td]The Nightcross and Stargazer areas of the tree appear.[/td][/tr]
+[tr][td]Random Assortment of Things[/td][td]3.3.1[/td][td]REDACTED[/td][/tr]
+[tr][td]Nightcross Armory[/td][td]2.1.6[/td][td]REDACTED[/td][/tr]
 [tr][td][url=https://fractalsoftworks.com/forum/index.php?topic=10982.0]GraphicsLib[/url][/td][td]1.12.1[/td][td]Optional. When its lights and distortion are on, Exiled Sector's combat effects light up: Ludd's Light and Phase Anchor send out shockwaves, Frozen Heart stacks pulse, Ion Bolter arcs, Corrosion Beam motes and redirected Hullbreacher and Refracting shots glow, Repair Coordinator drones throw light as they weld, and Candle's Grace Replica bends space around the ship. The Exiled Sector settings can switch all of this off except the mote glow, which GraphicsLib draws itself.[/td][/tr]
-[tr][td]Industrial Evolution[/td][td]4.1.b[/td][td]Hull items can drop from its orbital laboratories and arsenal stations. Arsenal stations can also turn up in Star Chart systems from tier 5, unless its derelict stations are switched off in its settings.[/td][/tr]
-[tr][td]Knights of Ludd[/td][td]1.4.0[/td][td]Hull items can drop from its research stations and caches.[/td][/tr]
-[tr][td]Secrets of the Frontier[/td][td]0.15.1[/td][td]Hull items can drop from its A Promise station and Hypnos laboratory.[/td][/tr]
-[tr][td]Arthr's Ships n Shit[/td][td]0.100-dev[/td][td]Hull items can drop from its Exodyne research stations.[/td][/tr]
-[tr][td]What We Left Behind[/td][td]4.5.3[/td][td]Hull items can drop from its research stations, Omega derelicts and corrupted caches.[/td][/tr]
-[tr][td]Ship Mastery System[/td][td]2.0.8[/td][td]Hull items can drop from its concealed stations, nucleus stations and concealed probes.[/td][/tr]
-[tr][td]Unthemed Weapons Collection[/td][td]0.7.4[/td][td]Hull items can drop from its weapon caches.[/td][/tr]
-[tr][td]DIY Planets[/td][td]1.0.30[/td][td]Hull items can drop from its Genesis terraforming stations.[/td][/tr]
 [/table]
 
 Some weapons from other mods misbehave (often hilariously) when their beams are split, their shots are chained or their shells pierce. These are listed in:
@@ -230,7 +255,7 @@ The art in the mod comes from starsector-core, royalty-free sources, and other m
 
 I am seeking any feedback, bug reports, node suggestions, or faction designs.
 
-You can find me on the [url=https://fractalsoftworks.com/forum/index.php?topic=11488.0]Unofficial Starsector Discord[/url] or by direct message @portals_
+You can find me on various Starsector Discords or by direct message @portals_
 [/spoiler]
 
 [size=14pt][b]Credits[/b][/size]
@@ -246,250 +271,5 @@ Exiled Sector is licensed under the [url=https://github.com/ExiledPortals/Exiled
 [/spoiler]
 
 [size=14pt][b]Changelog[/b][/size]
-[spoiler]
-[b]0.8.0[/b]
-[spoiler]
-[list]
-[li]New Hull Upgrades, one per hull size, drop from salvage, Tech Mining and battles from level 15. Click the ship card in the skill tree to zoom in on the ship and install one from the Hull Upgrades panel. Each gives the ship a point (up to 4) to unlock a socket type around the hull.[/li]
-[li]Nine new socket types: Bridge, Crew Quarters, Engine Room, Reactor, Armor Plating, Weapon Mount, Shield Generator, Phase Coil and Flight Deck, each with its own socketables. Shield Generator, Phase Coil and Flight Deck need shields, a phase cloak or fighter bays.[/li]
-[li]Tree sockets are now Subroutine Sockets and only take subroutines. Officers, crews and other specialists already socketed there go back to Socket Storage when you load your save.[/li]
-[li]Half of NPC flagships from level 15 have 2 to 4 sockets unlocked, and destroying one has a 10% chance to drop a Hull Upgrade.[/li]
-[li]Subroutine values are down about 15%. Socketables for the new socket types are at least 20% stronger than the matching subroutine modifiers.[/li]
-[li]Disassembly gives 3 parts for a common and 5 for a rare.[/li]
-[li]Socket Storage has socket type filter chips, and Ctrl-clicking a Subroutine Socket shows only subroutines.[/li]
-[li]New LunaLib settings: keep parts and kernels in Socket Storage, average modifier rolls, and a switch for all skill tree sounds.[/li]
-[li]Energy chain and ballistic pierce drones fire a single pellet from shotgun weapons instead of the whole salvo.[/li]
-[li]Lion's Gaze beam splits no longer target fighters.[/li]
-[li]When a hull mod that can't be removed strips a node's hull mod, as some Safety Overrides combinations do, that node is now refused on that ship and refunded on yours.[/li]
-[/list]
-[/spoiler]
 
-[b]0.7.2[/b]
-[spoiler]
-[list]
-[li]New subroutine rolls: kinetic, high-explosive and fragmentation damage taken; flat armor, hull and flux that scale with hull size; damage to each hull size.[/li]
-[li]NPC skill tree bonuses now scale up to 3x with your fleet's average level once you reach character level 15. This is configurable in LunaLib.[/li]
-[li]Your fleet now flies around the core of the skill tree. Click the ship card to follow your ship.[/li]
-[li]Armor rebalance: subroutines no longer roll percent armor, Heavy Armor is now +30% and small armor nodes are lower. Damage-taken reductions are capped at 80%.[/li]
-[li]Removed the per-d-mod damage roll. It was broken af.[/li]
-[li]Fixed Transposition on uniques below their drop level.[/li]
-[/list]
-[/spoiler]
-
-[b]0.7.1[/b]
-[spoiler]
-[b]Socket Modification workbench[/b]
-[list]
-[li]New Modify button in Socket Storage opens a workbench for crafting and modifying socketables.[/li]
-[li]Synthesise new common subroutines from Socketable Parts.[/li]
-[li]Three new kernels: Augmentation adds an effect, Recalibration rerolls values, and Transposition swaps a unique for another.[/li]
-[/list]
-[b]Socketables[/b]
-[list]
-[li]Destroying a socketable is now disassembling it into Socketable Parts.[/li]
-[li]Disassembly mode breaks down several socketables at once.[/li]
-[li]Parts and kernels drop wherever socketables do, and won battles drop parts[/li]
-[li]New fighter-focused Management Domain Subroutine.[/li]
-[/list]
-[b]Ship levels[/b]
-[list]
-[li]New ships start at your character level instead of 0.[/li]
-[li]Lower-level ships earn catch-up XP.[/li]
-[/list]
-[/spoiler]
-
-[b]0.7.0[/b]
-[spoiler]
-[list]
-[li]The skill tree now has Modular Hull Sockets: empty sections in the ship that you allocate like any other node and then fill with a socketable. Ctrl+clicking a socket opens Socket Storage so you can pick what goes in it.[/li]
-[li]Socket Storage is a new sidebar that holds every socketable you own. Socketables in your cargo move into it when you open it or install something. You can filter by rarity and grade, search by name, kind or tech level, and destroy items you don't want.[/li]
-[li]The common socketables are Domain Subroutines in three grades. Military grade leans towards shields, flux and energy weapons, industrial towards missiles and a mix of flux, armor and shields, and consumer towards armor, speed and ballistics. Their mods are split into prefixes and suffixes.[/li]
-[li]A common socketable rolls two mods, one prefix and one suffix. A rare one rolls three or four mods, split as evenly as possible between prefixes and suffixes. Each mod's value is a whole number inside its range, and F1 shows that range in brackets. The rolls and the name are fixed when the item is created.[/li]
-[li]Unique socketables are something else entirely. You can find officers, research teams, raiding parties and other Domain relics. Uniques only start dropping once you reach level 15.[/li]
-[li]Socketables turn up at salvage sites across the Sector, from derelict probes and survey ships to motherships, research and mining stations, orbital habitats, caches and wrecks. The bigger and more valuable the site, the better your odds, and some sites can hold a unique. Tech Mining can also find socketables.[/li]
-[li]NPC flagships from non-player factions can carry socketables in their own sockets, and the odds grow as you level up. If you destroy or disable a flagship without recovering it, everything it carried drops in the loot. If you recover the ship, the socketable will remain in its tree.[/li]
-[li]If you are lucky enough to have an NPC fleet spawn with a unique, a message tells you what it carries and, if you can identify the fleet, which fleet it is.[/li]
-[li]A full pass fixed effects that didn't do what they said. Fighter armor and engagement range now work, Heavy Ballistics Integration now reduces weapon OP on your own ships, and maneuverability now covers acceleration, deceleration and turning the way vanilla does. Converted Hangar gives the Invictus its second bay, Converted Fighter Bay follows vanilla's built-in wing rule, and shield conversions can no longer be taken on phase ships. Death on Collision ignores asteroids and the ship's own modules. Fighter wings go back to cargo when the bay holding them is removed.[/li]
-[li]The skill tree interface is smoother. Socket Storage and the template list unfold with a short hologram-style animation, the stats panel has a Show/Hide Stats button, and buttons fade in and out. Core UI sounds have been added, and textures load during the game's loading screen, so zooming out to the hyperspace map no longer stutters the first time.[/li]
-[li]Ships lost in combat now have their skill trees cleaned up. Node refunds only go to ships you still own, and installed socketables can no longer be destroyed by accident.[/li]
-[li]There's a fix for a refit screen crash when MagicLib's paintjob button is present. There are new console commands to grant XP to a single ship, every socketable type, or one copy of each unique.[/li]
-[/list]
-[/spoiler]
-
-[b]0.6.0[/b]
-[spoiler]
-[b]New features[/b]
-[list]
-[li]Added a hyperspace map. If you keep scrolling out past the minimum zoom, the view glides out to a map of every region's main star.[/li]
-[li]Added smart respec. Ctrl+Shift+click an allocated node to remove it and every node that depends on it, one at a time at auto-allocate's pace, farthest first, with the clicked node last. Doing this on the starting point clears the tree and returns you to the starting point choice. A click or Escape cancels a respec in progress. It does nothing if any node it would remove has its own removal condition.[/li]
-[li]The starting root can now be chosen again. While it is the only allocated node, click it to undo the choice.[/li]
-[li]Added Lost Sector themed areas to the skill tree (with permission). These new areas are optional, with direct ports of some Kesteven hullmods and some thematic designs of my own.
-[list]
-[li]Auto shows it only when Lost Sector is installed, and On and Off in Lunalib override that.[/li]
-[li]Switching an area off removes its nodes from every ship and refunds their OP, banked allocations and item costs. The change applies on the next save load.[/li]
-[/list][/li]
-[li]The refit screen has a new Skill Tree button (hotkey K) one slot below Build In. With Ship Mastery System installed, it sits directly under the Mastery button. This replaces the old button to open the skill tree.[/li]
-[li]The Exiled Sector Skill Tree hull mod is now visible in the refit screen.
-[list]
-[li]Hovering it lists an aggregate of every bonus from the ship's allocated nodes, up to 25 lines plus a count of the rest.[/li]
-[li]Clicking its icon opens the skill tree.[/li]
-[/list][/li]
-[li]Nodes that copy a vanilla hull mod now place the real hull mod on the ship as a phantom.
-[list]
-[li]The phantom is permanent, costs 0 OP and does nothing by itself, but other mods that check for that hull mod see it.[/li]
-[li]High Resolution Sensors and Phase Field are the exceptions.[/li]
-[li]Phantoms are hidden from the refit screen's installed hull mod lists and from ships' Codex related entries, and their tooltip names the node that provides them. They still appear as hullmods in some areas.[/li]
-[/list][/li]
-[li]Multipliers from the skill tree ("% more / % less") now add together instead of compounding.
-[list]
-[li]For example, 2% + 2% more is now 4% more, and 15% more plus 30% less is 15% less. The total never goes past 100% less.[/li]
-[li]Temporary nodes still apply their own multiplier that can compound.[/li]
-[li]The X panel summary adds them the same way and hides multipliers that cancel out.[/li]
-[/list][/li]
-[li]Added drastically improved NPC fleet generation logic, introducing themed randomness to all NPC fleets.[/li]
-[li]Node tooltips now show only the description, effects and temporary duration.
-[list]
-[li]Press F1 in the skill tree to show or hide the rest: mutual exclusivity, hull requirements, hull sizes, item cost, deallocation warnings and the free-node note.[/li]
-[/list][/li]
-[/list]
-
-[b]Compatibility[/b]
-[list]
-[li]Lost Sector (tested with 0.6.2d) is optional.
-[list]
-[li]With it installed, the Kesteven and Frozen Heart areas appear, controlled by the Optional Areas setting.[/li]
-[li]Kesteven nodes place Lost Sector's own hull mods as phantoms.[/li]
-[li]On hulls with Augmented Systems, these nodes give the same extra bonuses as Lost Sector's hull mods. Volatile Flux Injector's high-flux penalties are halved, and Inertial Supercharger also raises projectile speed by its damage bonus.[/li]
-[/list][/li]
-[li]Second-in-Command changes:
-[list]
-[li]It now sees the real Shield Shunt and Safety Overrides hull mods through their phantoms, so its own Redistribution and Enhanced Overrides bonuses apply.[/li]
-[li]The tree's "counts as" stand-in lines are gone.[/li]
-[li]It also sees Militarized Subsystems as installed.[/li]
-[/list][/li]
-[li]MagicLib: when another hull mod tries to strip one of a node's phantom hull mods through MagicLib, that hull mod is removed instead.[/li]
-[li]Ship Mastery System and other mods that check for Safety Overrides now see it on ships with the node.[/li]
-[li]The skill tree hull mod now applies after every other hull mod, including D-mods and Second-in-Command's controller, so crew-based effects see the final values.[/li]
-[li]Split-beam and refraction drones now copy marker hull mods from the firing ship.
-[list]
-[li]This makes ET-IX's Dawnstar and Daythorn beams, and the misfire checks of ET-IX and Emergent Threats beams, work on drones.[/li]
-[li]The list is in data/config/exiledSector/drone_marker_hullmods.csv, which merges across mods.[/li]
-[/list][/li]
-[li]The beam split and refraction blocklists were re-checked against the new drones.
-[list]
-[li]The Repulser, the energy ball launcher and the Supernova now refract normally, so the refraction blocklist is empty.[/li]
-[li]Devastator, Whiplash, Limited Ammo, SBE, Fermion Decoupler, Electrolaser Pulse and Destiny Spear beams now split normally.[/li]
-[li]Six beam effects stay blocked.[/li]
-[/list][/li]
-[li]At startup, starsector.log gets a self-check line for Lost Sector, Second-in-Command and MagicLib. It says whether each mod is absent, at the tested version, at an untested version, or missing something Exiled Sector relies on.[/li]
-[li]The mod no longer ships a copy of vanilla's Orbitron 20 bold font, which broke campaign UI text alongside font or localisation mods.[/li]
-[/list]
-
-[b]Bug fixes[/b]
-[list]
-[li]Fixed Refracting Projectiles crashing combat on some modded projectiles. Refracted shots also no longer appear on the shield they just hit, or break on special projectiles.[/li]
-[li]Fixed Lion's Gaze split-beam drones staying in battle forever after the firing ship retreated or its wreck was removed.[/li]
-[li]Fixed a crash on loading a save, caused by the tree changing hull mods during the game's OP-cost calculation.[/li]
-[li]Fixed Fighter Replacement nodes speeding up fighter replacement rate decay instead of slowing it.[/li]
-[li]Fixed Phase Anchor's emergency dive trying to trigger on ships without a phase cloak.[/li]
-[li]Fixed XP not being awarded for auto-resolved pursuits.[/li]
-[li]Fixed captured NPC ships losing their skill tree when another fight followed straight away.[/li]
-[li]Fixed two one-way links in the tree. They now unlock from either end.[/li]
-[li]Choice nodes whose chosen option no longer exists, or is no longer offered, are now removed and refunded on load. A skill type that fails to load no longer changes saves.[/li]
-[li]Choice nodes are now checked against the restrictions of both the node and the chosen option, everywhere.[/li]
-[li]Nodes removed from the tree, or from a switched-off area, now also refund their item cost.[/li]
-[li]Tooltip tables now use the current root's accent colour instead of the colour they were first drawn with.[/li]
-[li]Raised the limit on ships that can hold paid skill tree nodes at the same time from 1,000 to 10,000.[/li]
-[/list]
-[/spoiler]
-
-[b]0.5.0[/b]
-[spoiler]
-[b]Features[/b]
-[list]
-[li]You can now save a ship's skill tree as a named template and load it onto any other ship with the same starting node. A loaded template shows its path as green connectors, and the Auto-allocate button fills it in for you, skipping any nodes that are blocked or cost items.[/li]
-[li]Ships now earn more XP from harder fights, using the same difficulty rating vanilla shows before combat. It only ever adds XP, the post-battle report tells you how much, and you can adjust its strength and cap in LunaLib.[/li]
-[li]Improved allocation animations[/li]
-[li]If a future update removes nodes from the tree, your ships get back the OP and free allocations they spent on them. If a ship's starting root is removed, its tree is reset so you can pick a new one, and it keeps its level, XP and banked allocations. Hopefully this makes skill tree iterations not break your saves.[/li]
-[/list]
-
-[b]Bug fixes[/b]
-[list]
-[li]Nodes could end up costing no OP. The hidden hull mods that reserve OP for skill nodes leaked until they ran out, and after that new ships reserved nothing.[/li]
-[li]A giant stretched ship hull could sometimes appear across the skill tree (the HOUND bug).[/li]
-[li]Skills that add OP to every ship in the fleet only counted toward the flagship's skill tree budget. They now count for every ship.[/li]
-[li]Nodes allocated on a ship you had just bought could give no bonuses and reserve no OP. Not 100% sure this is fixed yet.[/li]
-[li]Pressing Escape in the search box closed the whole panel; now it just clears the search.[/li]
-[/list]
-[/spoiler]
-
-[b]0.4.0[/b]
-[spoiler]
-[b]New features[/b]
-[list]
-[li]Some nodes are now limited to certain hull sizes, like their vanilla hull mods.[/li]
-[li]New split notables for things like Expanded Magazines.[/li]
-[li]Balance changes to several nodes.[/li]
-[li]Massive improvements to performance.[/li]
-[/list]
-
-[b]Bug fixes[/b]
-[list]
-[li]Fixed nodes allocated right after choosing a starting point costing no OP.[/li]
-[li]Missile Autoloader and Neural Interface nodes now work in combat.[/li]
-[li]Shared Fate and High Scatter Amp now work as described.[/li]
-[li]Shield Shunt can no longer be taken on phase ships or unshielded ships.[/li]
-[li]UI and tooltip fixes.[/li]
-[/list]
-[/spoiler]
-
-[b]0.3.0[/b]
-[spoiler]
-[b]Features[/b]
-[list]
-[li]First draft Simplified Chinese translation of the whole mod. Node search also matches English names and ids, so you can still search while playing in Chinese.[/li]
-[li]Other languages can now be added more easily.[/li]
-[/list]
-
-[b]Bug fixes[/b]
-[list]
-[li]Fixed a crash to desktop when opening the NPC Scaling tab in the LunaLib settings.[/li]
-[li]Fixed the post-battle salvage bonus not dropping after the ship or node providing it was lost, sold or removed.[/li]
-[li]Terrifying Presence's enemy accuracy penalty now shows in green, since it helps you.[/li]
-[li]Very small numbers no longer display in scientific notation (e.g. 1.0E-4).[/li]
-[/list]
-[/spoiler]
-
-[b]0.2.0[/b]
-[spoiler]
-[b]New features[/b]
-[list]
-[li]The first time you open a ship's skill tree, you now pick where it starts: Low Tech, Midline or High Tech. The choice is permanent, but the other two starting points can still be reached later. They just cost OP like any other node.[/li]
-[li]NPC fleets now have skill trees too. Officers' ships, flagships and a share of the other ships in every faction's fleets get their own trees, and that includes your own faction's fleets and your allies. How developed they are scales with your character level.[/li]
-[li]There are nine NPC builds, three for each starting point, and each one is fitted to the ship it's on. A shieldless hull never gets a shield build, carrier nodes only go on ships with fighter bays, and anything a ship can't use is skipped.[/li]
-[li]When an NPC ship has a hullmod that matches a skill node, it swaps the hullmod out for the node and spends the freed OP on extra nodes.[/li]
-[li]There's a new "NPC Scaling" tab in the LunaLib settings.[/li]
-[li]You can inspect NPC skill trees by pressing X (rebindable) during a fleet encounter or while hovering over a fleet on the map. It shows which ships have trees, along with their build, level, key nodes and combined bonuses.[/li]
-[li]Pressing F2 on a ship's tooltip now opens an "Exiled Sector skill tree" entry in the Codex with the same summary.[/li]
-[li]Recovered NPC ships keep their skill tree as their own. They don't get Reinforced Bulkheads' near-guaranteed recovery, though, so levelled enemies aren't free loot.[/li]
-[li]You can zoom out twice as far on the skill tree screen.[/li]
-[/list]
-
-[b]Bug fixes[/b]
-[list]
-[li]Fixed a crash when playing alongside Second-in-Command.[/li]
-[li]Notable nodes now dim like other nodes when unallocated, when filtered out by search, and while the tree fades in. They were always drawn at full brightness.[/li]
-[li]Notable node rings and wormhole glows now render with the intended glow instead of looking flat.[/li]
-[li]The breathing glow on nodes you can allocate is twice as bright, so available nodes are easier to spot.[/li]
-[li]The solar corona and hyperspace storm resistance tooltip now correctly reads "X% less combat readiness loss", instead of describing its multiplier as a flat decrease.[/li]
-[li]Removed a hullmod blueprint tooltip line meant to point to the matching skill node, which never actually appeared.[/li]
-[/list]
-[/spoiler]
-
-[b]0.1.0[/b]
-[spoiler]
-[list]
-[li]Initial release.[/li]
-[/list]
-[/spoiler]
-[/spoiler]
+Changelog can be found in the [url=https://github.com/ExiledPortals/ExiledSector/releases]Releases[/url] area of the GitHub page.

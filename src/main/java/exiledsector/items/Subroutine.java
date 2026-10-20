@@ -1,8 +1,10 @@
 package exiledsector.items;
 
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.NodeReplacements;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -12,6 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class Subroutine extends Item {
+
+    public record AllocatedNodeEffects(String nodeName, List<StyledText> effectLines) {
+    }
 
     private List<String> rolledNodeIds;
 
@@ -112,6 +117,10 @@ public final class Subroutine extends Item {
     }
 
     public List<StyledText> allocationLines(List<NodeGrantStatus> statuses) {
+        return allocationLines(statuses, false, null);
+    }
+
+    public List<StyledText> allocationLines(List<NodeGrantStatus> statuses, boolean withNodeEffects, HullSize hullSize) {
         if (subroutineKind() != SubroutineKind.MODSPEC_CACHE) {
             return List.of();
         }
@@ -119,8 +128,40 @@ public final class Subroutine extends Item {
         for (String nodeId : currentNodeIds()) {
             NodeGrantStatus status = NodeGrantStatus.find(statuses, nodeId);
             addAllocationLines(lines, nodeId, status != null ? status : idleStatus(nodeId));
+            if (withNodeEffects) {
+                for (StyledText effectLine : nodeEffectLines(nodeId, hullSize)) {
+                    lines.add(Translation.msg("socketable.cache.effectLine").arg("line", effectLine).styled());
+                }
+            }
         }
         return lines;
+    }
+
+    public List<AllocatedNodeEffects> allocatedNodeEffects(HullSize hullSize) {
+        if (subroutineKind() != SubroutineKind.MODSPEC_CACHE) {
+            return List.of();
+        }
+        List<AllocatedNodeEffects> allocated = new ArrayList<>();
+        for (String nodeId : currentNodeIds()) {
+            SkillNode node = SkillTree.getDeclared(nodeId);
+            List<StyledText> effectLines = nodeEffectLines(nodeId, hullSize);
+            if (node != null && !effectLines.isEmpty()) {
+                allocated.add(new AllocatedNodeEffects(node.getDisplayName(), effectLines));
+            }
+        }
+        return allocated;
+    }
+
+    private static List<StyledText> nodeEffectLines(String nodeId, HullSize hullSize) {
+        SkillNode node = SkillTree.getDeclared(nodeId);
+        if (node == null) {
+            return List.of();
+        }
+        List<StyledText> effectLines = new ArrayList<>();
+        for (DescriptionLine effectLine : SkillNode.describeEffects(node.getType(), hullSize)) {
+            effectLines.add(effectLine.display());
+        }
+        return effectLines;
     }
 
     private static NodeGrantStatus idleStatus(String nodeId) {

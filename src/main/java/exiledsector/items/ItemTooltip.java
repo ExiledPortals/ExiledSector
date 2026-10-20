@@ -39,6 +39,12 @@ public final class ItemTooltip {
                 VanillaText.addPara(tooltip, limitLine, LINE_PAD, Misc.getGrayColor());
             }
             addLines(tooltip, item.headerLines(), Misc.getGrayColor());
+            if (showRollRanges && item instanceof Subroutine subroutine) {
+                for (Subroutine.AllocatedNodeEffects allocated : subroutine.allocatedNodeEffects(hullSize)) {
+                    tooltip.addSectionHeading(allocated.nodeName(), Alignment.MID, PAD);
+                    addLines(tooltip, allocated.effectLines(), Misc.getTextColor());
+                }
+            }
             if (item instanceof StarChart chart) {
                 float linePad = PAD;
                 for (StyledText line : chart.lootTotalLines()) {

@@ -4469,7 +4469,7 @@
 		{
 			"id": "doctrine_luddic_pilgrim_volunteers",
 			"name": "Pilgrim Volunteers",
-			"icon": "graphics/icons/peak_cr_duration.png",
+			"icon": "graphics/icons/Pilgrim_volunteers_shifted.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4489,7 +4489,7 @@
 		{
 			"id": "doctrine_luddic_plain_rites",
 			"name": "Plain Rites",
-			"icon": "graphics/icons/combat_readiness.png",
+			"icon": "graphics/icons/plain_rites_shifted.png",
 			"description": "Luddic doctrine calls this refinement vanity. Following it means stripping the system back to plain, honest machinery that offers nothing beyond its purpose."
 		},
 		{

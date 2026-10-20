@@ -206,7 +206,7 @@ final class SkillTreeNodeTooltipRenderer {
                     lines.add(new DescriptionLine(limitLine, false));
                 }
                 subroutine.doctrineLines().forEach(doctrineLine -> lines.add(new DescriptionLine(doctrineLine, false)));
-                subroutine.allocationLines(socketGrantStatuses).forEach(allocationLine -> lines.add(new DescriptionLine(allocationLine, false)));
+                subroutine.allocationLines(socketGrantStatuses, expanded, fleetMember.getHullSpec().getHullSize()).forEach(allocationLine -> lines.add(new DescriptionLine(allocationLine, false)));
             }
             for (StyledText effectLine : socketed.effectLines(expanded, fleetMember.getHullSpec().getHullSize())) {
                 lines.add(new DescriptionLine(effectLine, false));

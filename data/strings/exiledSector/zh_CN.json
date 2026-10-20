@@ -844,6 +844,7 @@
     "socketable.cache.unknownNode": "分配<bad>一个未知节点</bad>（已不在技能树中）",
     "socketable.cache.releaseConfirm.other": "这还会释放依赖于此子程序所分配节点的{count}个节点，并返还{op}点OP。再操作一次以确认。",
     "socketable.cache.grantedBy": "由<hl>{item}</hl>分配。",
+    "socketable.cache.effectLine": "<muted>|</muted> {line}",
     "socketable.socket.kindLimit": "无法安装{name}：这艘舰船安装的同类子程序已达上限（{limit}个）。",
     "socketable.socket.definitionLimit": "无法安装{name}：这艘舰船安装的该子程序已达上限（{limit}个）。",
     "socketable.salvaged": "从残骸中回收了{name}，已放入你的货舱。",

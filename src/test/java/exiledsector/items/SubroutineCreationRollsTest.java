@@ -4,10 +4,13 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
 import exiledsector.i18n.StyledText;
+import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -252,6 +255,27 @@ class SubroutineCreationRollsTest {
         assertTrue(plainLines(known).contains("Allocates Safety Overrides"), plainLines(known).toString());
         assertEquals(List.of("removed_node"), orphaned.rolledNodeIds());
         assertTrue(plainLines(orphaned).contains("Allocates an unknown node (no longer in the skill tree)"), plainLines(orphaned).toString());
+    }
+
+    @Test
+    void theExpandedTooltipListsOnlyTheEffectsOfEachAllocatedNode() {
+        SkillType keystone = new SkillType.Builder("test_keystone", "Safety Overrides", "", SkillTier.KEYSTONE)
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f))).descriptionOverride("Crew notes").build();
+        SkillTree.register(new SkillNode("notable_a", keystone, List.of(), 0f, 0f));
+        SubroutineNodePools.use(SubroutineKind.MODSPEC_CACHE, definition -> List.of("notable_a", "removed_node"));
+        Subroutine volume = stored(VOLUME, 1L);
+        List<String> effectLines = SkillNode.describeEffects(keystone, null).stream().map(DescriptionLine::plain).toList();
+
+        List<Subroutine.AllocatedNodeEffects> allocated = volume.allocatedNodeEffects(null);
+        List<String> expandedLines = volume.allocationLines(List.of(), true, null).stream().map(StyledText::plain).toList();
+
+        assertEquals(1, allocated.size());
+        assertEquals("Safety Overrides", allocated.get(0).nodeName());
+        assertEquals(effectLines, allocated.get(0).effectLines().stream().map(StyledText::plain).toList());
+        assertFalse(effectLines.isEmpty());
+        assertTrue(expandedLines.containsAll(effectLines.stream().map(line -> "| " + line).toList()), expandedLines.toString());
+        assertTrue(expandedLines.stream().noneMatch(line -> line.contains("Crew notes")), expandedLines.toString());
+        assertTrue(stored(BYPASS, 1L).allocatedNodeEffects(null).isEmpty());
     }
 
     @Test
