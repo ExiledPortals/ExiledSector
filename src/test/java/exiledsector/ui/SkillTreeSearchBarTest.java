@@ -22,11 +22,12 @@ class SkillTreeSearchBarTest {
     private NodeSearch search;
     private SkillTreeSearchBar bar;
     private PositionAPI position;
+    private int submits;
 
     @BeforeEach
     void setUp() {
         search = new NodeSearch();
-        bar = new SkillTreeSearchBar(search);
+        bar = new SkillTreeSearchBar(search, () -> submits++);
         position = mock(PositionAPI.class);
         when(position.getX()).thenReturn(0f);
         when(position.getY()).thenReturn(0f);
@@ -102,16 +103,17 @@ class SkillTreeSearchBarTest {
     }
 
     @Test
-    void enterKeepsTheQueryAndReleasesFocus() {
-        for (int enter : new int[]{Keyboard.KEY_RETURN, Keyboard.KEY_NUMPADENTER}) {
-            focus();
-            search.setQuery("armor");
+    void enterSubmitsEachPressAndKeepsTheQueryAndFocus() {
+        focus();
+        search.setQuery("armor");
 
-            bar.handleKey(keyDown(enter, '\r'));
+        bar.handleKey(keyDown(Keyboard.KEY_RETURN, '\r'));
+        bar.handleKey(keyDown(Keyboard.KEY_NUMPADENTER, '\r'));
 
-            assertEquals("armor", search.getQuery());
-            assertFalse(bar.handleKey(keyDown(Keyboard.KEY_NONE, 'a')));
-        }
+        assertEquals(2, submits);
+        assertEquals("armor", search.getQuery());
+        assertTrue(bar.handleKey(keyDown(Keyboard.KEY_NONE, 's')));
+        assertEquals("armors", search.getQuery());
     }
 
     @Test

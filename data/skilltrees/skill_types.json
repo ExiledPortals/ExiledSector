@@ -4271,6 +4271,71 @@
 			]
 		},
 		{
+			"id": "doctrine_tt_tachyon_lance_licensing",
+			"name": "Tachyon Lance Licensing",
+			"icon": "graphics/icons/beam_damage.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "BEAM_WEAPON_DAMAGE_PERCENT",
+					"magnitude": 15
+				},
+				{
+					"effect": "BEAM_WEAPON_RANGE_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"description": "A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked and every one of them copied by a crew that never planned to renew. This ship's beams hit harder and reach further.",
+			"tags": [
+				"energy",
+				"weapons",
+				"range",
+				"req_beam"
+			]
+		},
+		{
+			"id": "doctrine_tt_black_ledger_coils",
+			"name": "Black Ledger Coil Tuning",
+			"icon": "graphics/icons/phase_cloak_flux_threshold.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "PHASE_CLOAK_ACTIVATION_COST_MULT",
+					"magnitude": -25
+				},
+				{
+					"effect": "FLUX_DISSIPATION_WHILE_PHASED_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"description": "Maintenance notes recovered from a Tri-Tachyon phase frigate's wreck, filed under a cost centre that officially does not exist, show the crew how to slip this ship's coils into p-space cheaply and shed heat while it waits there.",
+			"tags": [
+				"phase",
+				"req_phase"
+			]
+		},
+		{
+			"id": "doctrine_tt_escrowed_emitters",
+			"name": "Escrowed Emitters",
+			"icon": "graphics/icons/shield_damage_taken_multi.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "SHIELD_DAMAGE_TAKEN_MULT",
+					"magnitude": -10
+				},
+				{
+					"effect": "SHIELD_UPKEEP_MULT",
+					"magnitude": -25
+				}
+			],
+			"description": "Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. A crew that cracks the lock on a salvaged emitter finds the full rated performance sitting under it. This ship's shields hold up better and cost less flux to keep up.",
+			"tags": [
+				"shield",
+				"req_shields"
+			]
+		},
+		{
 			"id": "doctrine_tt_hostile_takeover",
 			"name": "Hostile Takeover",
 			"icon": "graphics/icons/tactical_superiority.png",
@@ -4381,6 +4446,47 @@
 			]
 		},
 		{
+			"id": "doctrine_luddic_penitent_hulls",
+			"name": "Penitent Hulls",
+			"icon": "graphics/icons/reduced_D_mod_effect.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "DMOD_EFFECT_MULT",
+					"magnitude": -25
+				},
+				{
+					"effect": "SUPPLIES_PER_MONTH_MULT",
+					"magnitude": -10
+				}
+			],
+			"description": "Church salvage yards at Gilead send no ship to the breakers while it can still fly, and they keep their scarred hulls flying on patience and very little else. Learning their ways lets the crew live with this ship's damage and run it on less.",
+			"tags": [
+				"d_mods",
+				"logistics"
+			]
+		},
+		{
+			"id": "doctrine_luddic_pilgrim_volunteers",
+			"name": "Pilgrim Volunteers",
+			"icon": "graphics/icons/peak_cr_duration.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "PEAK_CR_DURATION_PERCENT",
+					"magnitude": 20
+				},
+				{
+					"effect": "CREW_LOSS_PERCENT",
+					"magnitude": -25
+				}
+			],
+			"description": "Pilgrims who sign on at Hesperus count it a blessing to stand their stations through the worst of a fight and keep vigil without complaint. With them aboard, this ship holds its peak readiness longer and loses fewer crew in battle.",
+			"tags": [
+				"combat_readiness"
+			]
+		},
+		{
 			"id": "doctrine_luddic_plain_rites",
 			"name": "Plain Rites",
 			"icon": "graphics/icons/combat_readiness.png",
@@ -4389,7 +4495,7 @@
 		{
 			"id": "doctrine_remnant_swarm_logic",
 			"name": "Swarm Logic",
-			"icon": "graphics/icons/expanded_deck_crew.png",
+			"icon": "graphics/icons/doctrine_remnant_swarm_logic.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4410,7 +4516,7 @@
 		{
 			"id": "doctrine_remnant_unblinking_watch",
 			"name": "Unblinking Watch",
-			"icon": "graphics/icons/pointdefenseai.png",
+			"icon": "graphics/icons/doctrine_remnant_unblinking_watch.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4431,7 +4537,7 @@
 		{
 			"id": "doctrine_remnant_cold_logic",
 			"name": "Cold Logic",
-			"icon": "graphics/icons/hardened_subsystems.png",
+			"icon": "graphics/icons/doctrine_remnant_cold_logic.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4449,9 +4555,81 @@
 			]
 		},
 		{
+			"id": "doctrine_remnant_fortress_lattice",
+			"name": "Fortress Lattice",
+			"icon": "graphics/icons/doctrine_remnant_fortress_lattice.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "SHIELD_TURN_RATE_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "SHIELD_RAISE_RATE_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "EMP_DAMAGE_TAKEN_PERCENT",
+					"magnitude": -25
+				}
+			],
+			"description": "[REDACTED] warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.",
+			"tags": [
+				"shield",
+				"req_shields"
+			]
+		},
+		{
+			"id": "doctrine_remnant_lumen_harmonics",
+			"name": "Lumen Harmonics",
+			"icon": "graphics/icons/doctrine_remnant_lumen_harmonics.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ENERGY_WEAPON_FIRE_RATE_PERCENT",
+					"magnitude": 10
+				},
+				{
+					"effect": "ENERGY_WEAPON_FLUX_COST_PERCENT",
+					"magnitude": -10
+				}
+			],
+			"description": "Energy mounts pulled from [REDACTED] wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.",
+			"tags": [
+				"energy",
+				"weapons",
+				"req_energy"
+			]
+		},
+		{
+			"id": "doctrine_remnant_ordo_signal_mesh",
+			"name": "Ordo Signal Mesh",
+			"icon": "graphics/icons/doctrine_remnant_ordo_signal_mesh.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ELECTRONIC_WARFARE",
+					"magnitude": 1
+				}
+			],
+			"hullSizeEffects": [
+				{
+					"effect": "SENSOR_STRENGTH_FLAT",
+					"frigate": 10,
+					"destroyer": 15,
+					"cruiser": 20,
+					"capitalShip": 30
+				}
+			],
+			"description": "A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. Decoding that chatter lets the crew tune this ship's sensors to it and jam enemy targeting with it.",
+			"tags": [
+				"fleet_support"
+			]
+		},
+		{
 			"id": "doctrine_remnant_automated_command",
 			"name": "Automated Command",
-			"icon": "graphics/icons/dedicated_targeting_core.png",
+			"icon": "graphics/icons/doctrine_remnant_automated_command.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{

@@ -2751,6 +2751,36 @@ type|doctrine_luddic_faithful_hands|CRUISER|2	0	<good>25%</good> increased comba
 type|doctrine_luddic_faithful_hands|CAPITAL_SHIP|0	0	The faithful do not trust machines to mend machines. Hand-repair crews drilled in the Church's way can keep this ship's systems fighting through damage and bring it back to readiness faster after battle.
 type|doctrine_luddic_faithful_hands|CAPITAL_SHIP|1	0	<good>25%</good> less weapon and engine repair time.
 type|doctrine_luddic_faithful_hands|CAPITAL_SHIP|2	0	<good>25%</good> increased combat readiness recovery rate.
+type|doctrine_luddic_penitent_hulls|null|0	0	Church salvage yards at Gilead send no ship to the breakers while it can still fly, and they keep their scarred hulls flying on patience and very little else. Learning their ways lets the crew live with this ship's damage and run it on less.
+type|doctrine_luddic_penitent_hulls|null|1	1	<bad>25%</bad> less negative effects from D-mods.
+type|doctrine_luddic_penitent_hulls|null|2	1	<bad>10%</bad> less supply use for maintenance.
+type|doctrine_luddic_penitent_hulls|FRIGATE|0	0	Church salvage yards at Gilead send no ship to the breakers while it can still fly, and they keep their scarred hulls flying on patience and very little else. Learning their ways lets the crew live with this ship's damage and run it on less.
+type|doctrine_luddic_penitent_hulls|FRIGATE|1	1	<bad>25%</bad> less negative effects from D-mods.
+type|doctrine_luddic_penitent_hulls|FRIGATE|2	1	<bad>10%</bad> less supply use for maintenance.
+type|doctrine_luddic_penitent_hulls|DESTROYER|0	0	Church salvage yards at Gilead send no ship to the breakers while it can still fly, and they keep their scarred hulls flying on patience and very little else. Learning their ways lets the crew live with this ship's damage and run it on less.
+type|doctrine_luddic_penitent_hulls|DESTROYER|1	1	<bad>25%</bad> less negative effects from D-mods.
+type|doctrine_luddic_penitent_hulls|DESTROYER|2	1	<bad>10%</bad> less supply use for maintenance.
+type|doctrine_luddic_penitent_hulls|CRUISER|0	0	Church salvage yards at Gilead send no ship to the breakers while it can still fly, and they keep their scarred hulls flying on patience and very little else. Learning their ways lets the crew live with this ship's damage and run it on less.
+type|doctrine_luddic_penitent_hulls|CRUISER|1	1	<bad>25%</bad> less negative effects from D-mods.
+type|doctrine_luddic_penitent_hulls|CRUISER|2	1	<bad>10%</bad> less supply use for maintenance.
+type|doctrine_luddic_penitent_hulls|CAPITAL_SHIP|0	0	Church salvage yards at Gilead send no ship to the breakers while it can still fly, and they keep their scarred hulls flying on patience and very little else. Learning their ways lets the crew live with this ship's damage and run it on less.
+type|doctrine_luddic_penitent_hulls|CAPITAL_SHIP|1	1	<bad>25%</bad> less negative effects from D-mods.
+type|doctrine_luddic_penitent_hulls|CAPITAL_SHIP|2	1	<bad>10%</bad> less supply use for maintenance.
+type|doctrine_luddic_pilgrim_volunteers|null|0	0	Pilgrims who sign on at Hesperus count it a blessing to stand their stations through the worst of a fight and keep vigil without complaint. With them aboard, this ship holds its peak readiness longer and loses fewer crew in battle.
+type|doctrine_luddic_pilgrim_volunteers|null|1	0	<good>20%</good> increased peak combat readiness duration.
+type|doctrine_luddic_pilgrim_volunteers|null|2	1	<bad>25%</bad> reduced crew casualties.
+type|doctrine_luddic_pilgrim_volunteers|FRIGATE|0	0	Pilgrims who sign on at Hesperus count it a blessing to stand their stations through the worst of a fight and keep vigil without complaint. With them aboard, this ship holds its peak readiness longer and loses fewer crew in battle.
+type|doctrine_luddic_pilgrim_volunteers|FRIGATE|1	0	<good>20%</good> increased peak combat readiness duration.
+type|doctrine_luddic_pilgrim_volunteers|FRIGATE|2	1	<bad>25%</bad> reduced crew casualties.
+type|doctrine_luddic_pilgrim_volunteers|DESTROYER|0	0	Pilgrims who sign on at Hesperus count it a blessing to stand their stations through the worst of a fight and keep vigil without complaint. With them aboard, this ship holds its peak readiness longer and loses fewer crew in battle.
+type|doctrine_luddic_pilgrim_volunteers|DESTROYER|1	0	<good>20%</good> increased peak combat readiness duration.
+type|doctrine_luddic_pilgrim_volunteers|DESTROYER|2	1	<bad>25%</bad> reduced crew casualties.
+type|doctrine_luddic_pilgrim_volunteers|CRUISER|0	0	Pilgrims who sign on at Hesperus count it a blessing to stand their stations through the worst of a fight and keep vigil without complaint. With them aboard, this ship holds its peak readiness longer and loses fewer crew in battle.
+type|doctrine_luddic_pilgrim_volunteers|CRUISER|1	0	<good>20%</good> increased peak combat readiness duration.
+type|doctrine_luddic_pilgrim_volunteers|CRUISER|2	1	<bad>25%</bad> reduced crew casualties.
+type|doctrine_luddic_pilgrim_volunteers|CAPITAL_SHIP|0	0	Pilgrims who sign on at Hesperus count it a blessing to stand their stations through the worst of a fight and keep vigil without complaint. With them aboard, this ship holds its peak readiness longer and loses fewer crew in battle.
+type|doctrine_luddic_pilgrim_volunteers|CAPITAL_SHIP|1	0	<good>20%</good> increased peak combat readiness duration.
+type|doctrine_luddic_pilgrim_volunteers|CAPITAL_SHIP|2	1	<bad>25%</bad> reduced crew casualties.
 type|doctrine_luddic_pilgrims_burn|null|0	0	Pilgrim fleets cross the Sector on whatever drives they can keep lit. Their frugal burn discipline lets this ship travel faster on less fuel.
 type|doctrine_luddic_pilgrims_burn|null|1	0	<good>+1</good> to max burn level.
 type|doctrine_luddic_pilgrims_burn|null|2	1	<bad>15%</bad> less fuel consumption rate.
@@ -2821,6 +2851,55 @@ type|doctrine_remnant_cold_logic|CRUISER|2	0	<good>10%</good> increased maximum 
 type|doctrine_remnant_cold_logic|CAPITAL_SHIP|0	0	Machines do not tire. Rewriting this ship's duty cycles the way [REDACTED] cores run their own would keep its readiness higher and slow its decay through a long fight.
 type|doctrine_remnant_cold_logic|CAPITAL_SHIP|1	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
 type|doctrine_remnant_cold_logic|CAPITAL_SHIP|2	0	<good>10%</good> increased maximum combat readiness.
+type|doctrine_remnant_fortress_lattice|null|0	0	[REDACTED] warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.
+type|doctrine_remnant_fortress_lattice|null|1	0	<good>50%</good> increased shield turn rate.
+type|doctrine_remnant_fortress_lattice|null|2	0	<good>50%</good> increased shield raise rate.
+type|doctrine_remnant_fortress_lattice|null|3	1	<bad>25%</bad> reduced EMP damage taken.
+type|doctrine_remnant_fortress_lattice|FRIGATE|0	0	[REDACTED] warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.
+type|doctrine_remnant_fortress_lattice|FRIGATE|1	0	<good>50%</good> increased shield turn rate.
+type|doctrine_remnant_fortress_lattice|FRIGATE|2	0	<good>50%</good> increased shield raise rate.
+type|doctrine_remnant_fortress_lattice|FRIGATE|3	1	<bad>25%</bad> reduced EMP damage taken.
+type|doctrine_remnant_fortress_lattice|DESTROYER|0	0	[REDACTED] warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.
+type|doctrine_remnant_fortress_lattice|DESTROYER|1	0	<good>50%</good> increased shield turn rate.
+type|doctrine_remnant_fortress_lattice|DESTROYER|2	0	<good>50%</good> increased shield raise rate.
+type|doctrine_remnant_fortress_lattice|DESTROYER|3	1	<bad>25%</bad> reduced EMP damage taken.
+type|doctrine_remnant_fortress_lattice|CRUISER|0	0	[REDACTED] warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.
+type|doctrine_remnant_fortress_lattice|CRUISER|1	0	<good>50%</good> increased shield turn rate.
+type|doctrine_remnant_fortress_lattice|CRUISER|2	0	<good>50%</good> increased shield raise rate.
+type|doctrine_remnant_fortress_lattice|CRUISER|3	1	<bad>25%</bad> reduced EMP damage taken.
+type|doctrine_remnant_fortress_lattice|CAPITAL_SHIP|0	0	[REDACTED] warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.
+type|doctrine_remnant_fortress_lattice|CAPITAL_SHIP|1	0	<good>50%</good> increased shield turn rate.
+type|doctrine_remnant_fortress_lattice|CAPITAL_SHIP|2	0	<good>50%</good> increased shield raise rate.
+type|doctrine_remnant_fortress_lattice|CAPITAL_SHIP|3	1	<bad>25%</bad> reduced EMP damage taken.
+type|doctrine_remnant_lumen_harmonics|null|0	0	Energy mounts pulled from [REDACTED] wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.
+type|doctrine_remnant_lumen_harmonics|null|1	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+type|doctrine_remnant_lumen_harmonics|null|2	1	<bad>10%</bad> reduced energy weapon flux cost.
+type|doctrine_remnant_lumen_harmonics|FRIGATE|0	0	Energy mounts pulled from [REDACTED] wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.
+type|doctrine_remnant_lumen_harmonics|FRIGATE|1	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+type|doctrine_remnant_lumen_harmonics|FRIGATE|2	1	<bad>10%</bad> reduced energy weapon flux cost.
+type|doctrine_remnant_lumen_harmonics|DESTROYER|0	0	Energy mounts pulled from [REDACTED] wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.
+type|doctrine_remnant_lumen_harmonics|DESTROYER|1	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+type|doctrine_remnant_lumen_harmonics|DESTROYER|2	1	<bad>10%</bad> reduced energy weapon flux cost.
+type|doctrine_remnant_lumen_harmonics|CRUISER|0	0	Energy mounts pulled from [REDACTED] wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.
+type|doctrine_remnant_lumen_harmonics|CRUISER|1	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+type|doctrine_remnant_lumen_harmonics|CRUISER|2	1	<bad>10%</bad> reduced energy weapon flux cost.
+type|doctrine_remnant_lumen_harmonics|CAPITAL_SHIP|0	0	Energy mounts pulled from [REDACTED] wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.
+type|doctrine_remnant_lumen_harmonics|CAPITAL_SHIP|1	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+type|doctrine_remnant_lumen_harmonics|CAPITAL_SHIP|2	1	<bad>10%</bad> reduced energy weapon flux cost.
+type|doctrine_remnant_ordo_signal_mesh|null|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. Decoding that chatter lets the crew tune this ship's sensors to it and jam enemy targeting with it.
+type|doctrine_remnant_ordo_signal_mesh|null|1	0	<good>+1</good> to ECM rating.
+type|doctrine_remnant_ordo_signal_mesh|FRIGATE|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. Decoding that chatter lets the crew tune this ship's sensors to it and jam enemy targeting with it.
+type|doctrine_remnant_ordo_signal_mesh|FRIGATE|1	0	<good>+1</good> to ECM rating.
+type|doctrine_remnant_ordo_signal_mesh|FRIGATE|2	0	<good>+10</good> to this ship's sensor strength.
+type|doctrine_remnant_ordo_signal_mesh|DESTROYER|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. Decoding that chatter lets the crew tune this ship's sensors to it and jam enemy targeting with it.
+type|doctrine_remnant_ordo_signal_mesh|DESTROYER|1	0	<good>+1</good> to ECM rating.
+type|doctrine_remnant_ordo_signal_mesh|DESTROYER|2	0	<good>+15</good> to this ship's sensor strength.
+type|doctrine_remnant_ordo_signal_mesh|CRUISER|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. Decoding that chatter lets the crew tune this ship's sensors to it and jam enemy targeting with it.
+type|doctrine_remnant_ordo_signal_mesh|CRUISER|1	0	<good>+1</good> to ECM rating.
+type|doctrine_remnant_ordo_signal_mesh|CRUISER|2	0	<good>+20</good> to this ship's sensor strength.
+type|doctrine_remnant_ordo_signal_mesh|CAPITAL_SHIP|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. Decoding that chatter lets the crew tune this ship's sensors to it and jam enemy targeting with it.
+type|doctrine_remnant_ordo_signal_mesh|CAPITAL_SHIP|1	0	<good>+1</good> to ECM rating.
+type|doctrine_remnant_ordo_signal_mesh|CAPITAL_SHIP|2	0	<good>+30</good> to this ship's sensor strength.
 type|doctrine_remnant_swarm_logic|null|0	0	[REDACTED] carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.
 type|doctrine_remnant_swarm_logic|null|1	0	<good>25%</good> increased rate at which fighter replacement capability recovers.
 type|doctrine_remnant_swarm_logic|null|2	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
@@ -2866,6 +2945,36 @@ type|doctrine_tt_alpha_fire_control|CRUISER|2	0	<good>10%</good> increased energ
 type|doctrine_tt_alpha_fire_control|CAPITAL_SHIP|0	0	Fire-control routines lifted from a Tri-Tachyon line ship, written by an Alpha core that never meant to share them. Patched into this ship's targeting, they steady its autofiring weapons and stretch the reach of its energy weapons.
 type|doctrine_tt_alpha_fire_control|CAPITAL_SHIP|1	0	<good>50%</good> increased target leading accuracy of autofiring weapons.
 type|doctrine_tt_alpha_fire_control|CAPITAL_SHIP|2	0	<good>10%</good> increased energy weapon range.
+type|doctrine_tt_black_ledger_coils|null|0	0	Maintenance notes recovered from a Tri-Tachyon phase frigate's wreck, filed under a cost centre that officially does not exist, show the crew how to slip this ship's coils into p-space cheaply and shed heat while it waits there.
+type|doctrine_tt_black_ledger_coils|null|1	1	<bad>25%</bad> less phase cloak activation cost.
+type|doctrine_tt_black_ledger_coils|null|2	0	<good>25%</good> increased flux dissipation while phased.
+type|doctrine_tt_black_ledger_coils|FRIGATE|0	0	Maintenance notes recovered from a Tri-Tachyon phase frigate's wreck, filed under a cost centre that officially does not exist, show the crew how to slip this ship's coils into p-space cheaply and shed heat while it waits there.
+type|doctrine_tt_black_ledger_coils|FRIGATE|1	1	<bad>25%</bad> less phase cloak activation cost.
+type|doctrine_tt_black_ledger_coils|FRIGATE|2	0	<good>25%</good> increased flux dissipation while phased.
+type|doctrine_tt_black_ledger_coils|DESTROYER|0	0	Maintenance notes recovered from a Tri-Tachyon phase frigate's wreck, filed under a cost centre that officially does not exist, show the crew how to slip this ship's coils into p-space cheaply and shed heat while it waits there.
+type|doctrine_tt_black_ledger_coils|DESTROYER|1	1	<bad>25%</bad> less phase cloak activation cost.
+type|doctrine_tt_black_ledger_coils|DESTROYER|2	0	<good>25%</good> increased flux dissipation while phased.
+type|doctrine_tt_black_ledger_coils|CRUISER|0	0	Maintenance notes recovered from a Tri-Tachyon phase frigate's wreck, filed under a cost centre that officially does not exist, show the crew how to slip this ship's coils into p-space cheaply and shed heat while it waits there.
+type|doctrine_tt_black_ledger_coils|CRUISER|1	1	<bad>25%</bad> less phase cloak activation cost.
+type|doctrine_tt_black_ledger_coils|CRUISER|2	0	<good>25%</good> increased flux dissipation while phased.
+type|doctrine_tt_black_ledger_coils|CAPITAL_SHIP|0	0	Maintenance notes recovered from a Tri-Tachyon phase frigate's wreck, filed under a cost centre that officially does not exist, show the crew how to slip this ship's coils into p-space cheaply and shed heat while it waits there.
+type|doctrine_tt_black_ledger_coils|CAPITAL_SHIP|1	1	<bad>25%</bad> less phase cloak activation cost.
+type|doctrine_tt_black_ledger_coils|CAPITAL_SHIP|2	0	<good>25%</good> increased flux dissipation while phased.
+type|doctrine_tt_escrowed_emitters|null|0	0	Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. A crew that cracks the lock on a salvaged emitter finds the full rated performance sitting under it. This ship's shields hold up better and cost less flux to keep up.
+type|doctrine_tt_escrowed_emitters|null|1	1	<bad>10%</bad> less damage taken by shields.
+type|doctrine_tt_escrowed_emitters|null|2	1	<bad>25%</bad> less shield flux upkeep.
+type|doctrine_tt_escrowed_emitters|FRIGATE|0	0	Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. A crew that cracks the lock on a salvaged emitter finds the full rated performance sitting under it. This ship's shields hold up better and cost less flux to keep up.
+type|doctrine_tt_escrowed_emitters|FRIGATE|1	1	<bad>10%</bad> less damage taken by shields.
+type|doctrine_tt_escrowed_emitters|FRIGATE|2	1	<bad>25%</bad> less shield flux upkeep.
+type|doctrine_tt_escrowed_emitters|DESTROYER|0	0	Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. A crew that cracks the lock on a salvaged emitter finds the full rated performance sitting under it. This ship's shields hold up better and cost less flux to keep up.
+type|doctrine_tt_escrowed_emitters|DESTROYER|1	1	<bad>10%</bad> less damage taken by shields.
+type|doctrine_tt_escrowed_emitters|DESTROYER|2	1	<bad>25%</bad> less shield flux upkeep.
+type|doctrine_tt_escrowed_emitters|CRUISER|0	0	Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. A crew that cracks the lock on a salvaged emitter finds the full rated performance sitting under it. This ship's shields hold up better and cost less flux to keep up.
+type|doctrine_tt_escrowed_emitters|CRUISER|1	1	<bad>10%</bad> less damage taken by shields.
+type|doctrine_tt_escrowed_emitters|CRUISER|2	1	<bad>25%</bad> less shield flux upkeep.
+type|doctrine_tt_escrowed_emitters|CAPITAL_SHIP|0	0	Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. A crew that cracks the lock on a salvaged emitter finds the full rated performance sitting under it. This ship's shields hold up better and cost less flux to keep up.
+type|doctrine_tt_escrowed_emitters|CAPITAL_SHIP|1	1	<bad>10%</bad> less damage taken by shields.
+type|doctrine_tt_escrowed_emitters|CAPITAL_SHIP|2	1	<bad>25%</bad> less shield flux upkeep.
 type|doctrine_tt_flux_arbitrage|null|0	0	Corporate engineers treat flux like capital: borrow hard and repay fast. Their venting schedules, copied from a captured Aurora's maintenance logs, let this ship dump heat faster and bleed it off steadily between volleys.
 type|doctrine_tt_flux_arbitrage|null|1	0	<good>10%</good> increased flux dissipation.
 type|doctrine_tt_flux_arbitrage|null|2	0	<good>25%</good> increased venting speed.
@@ -2916,6 +3025,21 @@ type|doctrine_tt_quarterly_targets|CRUISER|2	0	<good>10%</good> increased damage
 type|doctrine_tt_quarterly_targets|CAPITAL_SHIP|0	0	Tri-Tachyon fleet doctrine ranks every target by the value it carries, and its threat tables push gunners toward the largest hulls on the field. This ship hits cruisers and capital ships harder.
 type|doctrine_tt_quarterly_targets|CAPITAL_SHIP|1	0	<good>10%</good> increased damage to cruisers.
 type|doctrine_tt_quarterly_targets|CAPITAL_SHIP|2	0	<good>10%</good> increased damage to capital ships and stations.
+type|doctrine_tt_tachyon_lance_licensing|null|0	0	A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked and every one of them copied by a crew that never planned to renew. This ship's beams hit harder and reach further.
+type|doctrine_tt_tachyon_lance_licensing|null|1	0	<good>15%</good> increased beam weapon damage.
+type|doctrine_tt_tachyon_lance_licensing|null|2	0	<good>10%</good> increased beam weapon range.
+type|doctrine_tt_tachyon_lance_licensing|FRIGATE|0	0	A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked and every one of them copied by a crew that never planned to renew. This ship's beams hit harder and reach further.
+type|doctrine_tt_tachyon_lance_licensing|FRIGATE|1	0	<good>15%</good> increased beam weapon damage.
+type|doctrine_tt_tachyon_lance_licensing|FRIGATE|2	0	<good>10%</good> increased beam weapon range.
+type|doctrine_tt_tachyon_lance_licensing|DESTROYER|0	0	A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked and every one of them copied by a crew that never planned to renew. This ship's beams hit harder and reach further.
+type|doctrine_tt_tachyon_lance_licensing|DESTROYER|1	0	<good>15%</good> increased beam weapon damage.
+type|doctrine_tt_tachyon_lance_licensing|DESTROYER|2	0	<good>10%</good> increased beam weapon range.
+type|doctrine_tt_tachyon_lance_licensing|CRUISER|0	0	A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked and every one of them copied by a crew that never planned to renew. This ship's beams hit harder and reach further.
+type|doctrine_tt_tachyon_lance_licensing|CRUISER|1	0	<good>15%</good> increased beam weapon damage.
+type|doctrine_tt_tachyon_lance_licensing|CRUISER|2	0	<good>10%</good> increased beam weapon range.
+type|doctrine_tt_tachyon_lance_licensing|CAPITAL_SHIP|0	0	A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked and every one of them copied by a crew that never planned to renew. This ship's beams hit harder and reach further.
+type|doctrine_tt_tachyon_lance_licensing|CAPITAL_SHIP|1	0	<good>15%</good> increased beam weapon damage.
+type|doctrine_tt_tachyon_lance_licensing|CAPITAL_SHIP|2	0	<good>10%</good> increased beam weapon range.
 type|dynamic_grid|null|0	0	Nightcross fits its dynamic coils to almost every hull it builds and never sells them on their own, so the crew pulls a set from a boarded Nightcross wreck and retrofits them into a hull that never shipped with one. The moment the shields come down, the power that fed them is routed to the energy weapons. The warranty, naturally, does not cover third-party installation.
 type|dynamic_grid|null|1	0	Once shields have been down for 0.75/1.1/2/3 seconds (frigate to capital) while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 type|dynamic_grid|null|2	0	<good>25%</good> increased shield raise rate.

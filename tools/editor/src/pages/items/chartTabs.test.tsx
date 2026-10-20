@@ -40,6 +40,7 @@ beforeAll(() => {
     TIERS_FILE,
     DROPS_FILE,
     POIS_FILE,
+    'data/skilltrees/skill_types.json',
     ...['item_modifiers.csv', 'subroutines.csv', 'hull_items.csv', 'hull_item_implicits.csv', 'item_names.json', 'doctrine_archives.csv'].map(config),
   ]);
 });

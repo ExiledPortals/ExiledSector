@@ -1,24 +1,44 @@
 package exiledsector.ui.node;
 
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.i18n.StyledText;
+import exiledsector.items.DoctrineOverrides;
+import exiledsector.skills.DescriptionLine;
+import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.SkillTypeEffect;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.StringJoiner;
 
 public final class NodeSearch {
 
     static final float DIM_ALPHA = 0.2f;
 
+    private final HullSize hullSize;
     private final Map<String, Boolean> matchesByNodeId = new HashMap<>();
+    private final Map<String, String> effectTextByTypeId = new HashMap<>();
     private String query = "";
     private String needle = "";
     private NodeAllocator.Snapshot matchedSnapshot;
     private boolean socketFocus;
     private boolean treeSocketFocus;
+    private int nextMatchIndex;
+
+    public NodeSearch() {
+        this(null);
+    }
+
+    public NodeSearch(HullSize hullSize) {
+        this.hullSize = hullSize;
+    }
 
     public String getQuery() {
         return query;
@@ -28,6 +48,20 @@ public final class NodeSearch {
         this.query = query == null ? "" : query;
         this.needle = this.query.toLowerCase(Locale.ROOT);
         matchesByNodeId.clear();
+        nextMatchIndex = 0;
+    }
+
+    SkillNode nextMatch(Collection<SkillNode> nodes, NodeAllocator.Snapshot allocation) {
+        if (query.isEmpty()) {
+            return null;
+        }
+        List<SkillNode> found = nodes.stream().filter(node -> matches(node, allocation)).toList();
+        if (found.isEmpty()) {
+            return null;
+        }
+        int index = nextMatchIndex % found.size();
+        nextMatchIndex = index + 1;
+        return found.get(index);
     }
 
     public boolean isActive() {
@@ -61,22 +95,46 @@ public final class NodeSearch {
         }
         Boolean matched = matchesByNodeId.get(node.getId());
         if (matched == null) {
-            matched = nameMatches(node, allocation);
+            matched = nodeMatches(node, allocation.skillData());
             matchesByNodeId.put(node.getId(), matched);
         }
         return matched;
     }
 
-    private boolean nameMatches(SkillNode node, NodeAllocator.Snapshot allocation) {
-        if (nameContains(node.resolveEffectiveType(allocation.skillData()), needle)) {
+    private boolean nodeMatches(SkillNode node, ShipSkillData skillData) {
+        if (typeMatches(node.resolveEffectiveType(skillData)) || doctrineEffectsMatch(node, skillData)) {
             return true;
         }
         for (String optionId : node.getType().getOptionalOptionIds()) {
-            if (nameContains(SkillTree.getType(optionId), needle)) {
+            if (typeMatches(SkillTree.getType(optionId))) {
                 return true;
             }
         }
         return false;
+    }
+
+    private boolean typeMatches(SkillType type) {
+        return type != null && (nameContains(type, needle) || effectText(type).contains(needle));
+    }
+
+    private boolean doctrineEffectsMatch(SkillNode node, ShipSkillData skillData) {
+        for (SkillTypeEffect effect : DoctrineOverrides.addedEffects(skillData, node, hullSize)) {
+            StyledText line = effect.effect().description(effect.magnitude(), hullSize);
+            if (line != null && containsIgnoringCase(line.plain(), needle)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String effectText(SkillType type) {
+        return effectTextByTypeId.computeIfAbsent(type.getId(), id -> {
+            StringJoiner lines = new StringJoiner("\n");
+            for (DescriptionLine line : SkillNode.describeEffects(type, hullSize)) {
+                lines.add(line.plain());
+            }
+            return lines.toString().toLowerCase(Locale.ROOT);
+        });
     }
 
     float nodeAlpha(SkillNode node, NodeAllocator.Snapshot allocation) {

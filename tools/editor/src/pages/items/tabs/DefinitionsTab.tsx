@@ -65,7 +65,7 @@ import {
 } from '../model/modifiers.ts';
 import { implicitItemType, parseFamilyImplicits, type ImplicitsModel } from '../model/implicits.ts';
 import { AnchorDefinitionsPanel } from './AnchorDefinitionsPanel.tsx';
-import { DefinitionView } from './DefinitionView.tsx';
+import { DefinitionView, type DoctrineViewSource } from './DefinitionView.tsx';
 import { DoctrineArchivesPanel } from './DoctrineArchivesPanel.tsx';
 import {
   DOCTRINE_ARCHIVE_FILE_NAME,
@@ -76,6 +76,10 @@ import {
   serializeDoctrineArchivesCsv,
   type DoctrineArchivesModel,
 } from '../model/doctrines.ts';
+import { lineEndingOf, type LineEnding } from '../../../shared/lineEndings.ts';
+import { serializeSkillTypesText } from '../../tree/model/serialization.ts';
+import type { SkillType } from '../../tree/model/types.ts';
+import { reloadTreeIfUnchanged } from '../../tree/state/treePersistence.ts';
 import { FamilyOptionSwitch } from './FamilySwitch.tsx';
 import { PoolEntryRow } from './PoolEntryRow.tsx';
 
@@ -88,6 +92,8 @@ function implicitIdsBySection(implicits: ImplicitsModel): Record<string, string[
 }
 
 const LIST_WIDTH = 270;
+const SKILL_TYPES_RESOURCE = 'types';
+const SKILL_TYPES_FILE_NAME = 'skill_types.json';
 
 interface DefinitionsModel extends FamilyDefinitions {
   catalogue: ItemModifier[];
@@ -97,6 +103,12 @@ interface DefinitionsModel extends FamilyDefinitions {
   implicitIdsBySection: Record<string, string[]>;
   doctrines: DoctrineArchivesModel | null;
   doctrinesChanged: boolean;
+  skillTypes: SkillType[] | null;
+  typesText: string;
+  typesKey: string;
+  typesLineEnding: LineEnding;
+  typesChanged: boolean;
+  typesSaveCount: number;
 }
 
 function otherFamily(family: ItemFamily): ItemFamily {
@@ -104,8 +116,38 @@ function otherFamily(family: ItemFamily): ItemFamily {
 }
 
 function definitionFileNames(family: ItemFamily): string[] {
-  const doctrineFiles = family === 'ship' ? [DOCTRINE_ARCHIVE_RESOURCE] : [];
+  const doctrineFiles = family === 'ship' ? [DOCTRINE_ARCHIVE_RESOURCE, SKILL_TYPES_RESOURCE] : [];
   return [...doctrineFiles, ...DEFINITION_RESOURCES[family], ...DEFINITION_RESOURCES[otherFamily(family)], MODIFIER_RESOURCES[family], IMPLICIT_RESOURCES[family], MODIFIER_RESOURCES[otherFamily(family)]];
+}
+
+function loadedSkillTypes(typesFile: { content: string; hash: string } | null) {
+  return {
+    skillTypes: typesFile ? (JSON.parse(typesFile.content) as { skillTypes: SkillType[] }).skillTypes : null,
+    typesText: typesFile?.content ?? '',
+    typesKey: typesFile?.hash ?? '',
+    typesLineEnding: lineEndingOf(typesFile?.content ?? ''),
+    typesChanged: false,
+    typesSaveCount: 0,
+  };
+}
+
+function doctrineViewSource(
+  model: DefinitionsModel,
+  definition: ItemDefinition,
+  onIconPicked: (typeId: string, iconPath: string) => void,
+): DoctrineViewSource | undefined {
+  if (definition.subroutineKind !== DOCTRINE_SUBROUTINE_KIND || !model.skillTypes) {
+    return undefined;
+  }
+  return {
+    archive: model.doctrines?.archives.find((archive) => archive.id === definition.id) ?? null,
+    types: {
+      typesById: new Map(model.skillTypes.map((type) => [type.id, type])),
+      typesJson: model.typesText,
+      typesKey: model.typesKey,
+      onIconPicked,
+    },
+  };
 }
 
 function implicitGroupOf(definition: ItemDefinition, family: ItemFamily, vocabulary: Vocabulary): string {
@@ -148,6 +190,7 @@ function ItemDefinitionsPanel({ vocabulary, family, onFamily }: ItemDefinitionsP
         implicitIdsBySection: implicitIdsBySection(parseFamilyImplicits(family, files[IMPLICIT_RESOURCES[family]].content, vocabulary)),
         doctrines: family === 'ship' ? parseDoctrineArchivesCsv(files[DOCTRINE_ARCHIVE_RESOURCE].content) : null,
         doctrinesChanged: false,
+        ...loadedSkillTypes(family === 'ship' ? files[SKILL_TYPES_RESOURCE] : null),
       };
     },
     serialize: (model) => ({
@@ -156,6 +199,7 @@ function ItemDefinitionsPanel({ vocabulary, family, onFamily }: ItemDefinitionsP
         ? { [MODIFIER_RESOURCES[model.family]]: serializeModifiersCsv({ table: model.catalogueTable, modifiers: model.catalogue }) }
         : {}),
       ...(model.doctrinesChanged && model.doctrines ? { [DOCTRINE_ARCHIVE_RESOURCE]: serializeDoctrineArchivesCsv(model.doctrines) } : {}),
+      ...(model.typesChanged && model.skillTypes ? { [SKILL_TYPES_RESOURCE]: serializeSkillTypesText(model.skillTypes, model.typesLineEnding) } : {}),
     }),
     validate: (model) => [
       ...validateItemDefinitions(model.definitions, vocabulary, modifierById(model.catalogue), model.family, model.otherFamilyIds),
@@ -172,6 +216,9 @@ function ItemDefinitionsPanel({ vocabulary, family, onFamily }: ItemDefinitionsP
       if (model.doctrinesChanged) {
         savedFiles.push(DOCTRINE_ARCHIVE_FILE_NAME);
       }
+      if (model.typesChanged) {
+        savedFiles.push(SKILL_TYPES_FILE_NAME);
+      }
       return `Saved ${savedFiles.length === 1 ? savedFiles[0] : `${savedFiles.slice(0, -1).join(', ')} and ${savedFiles[savedFiles.length - 1]}`}`;
     },
     afterSave: (draft, saved) => {
@@ -183,12 +230,36 @@ function ItemDefinitionsPanel({ vocabulary, family, onFamily }: ItemDefinitionsP
       if (saved.doctrinesChanged) {
         draft.doctrinesChanged = false;
       }
+      if (saved.typesChanged) {
+        draft.typesChanged = false;
+        draft.typesSaveCount += 1;
+      }
     },
   });
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [kindFilter, setKindFilter] = useState('');
   const [viewMode, setViewMode] = useState<DefinitionsViewMode>('edit');
   const definitions = document.state.status === 'ready' ? document.state.model.definitions : [];
+  const typesSaveCount = document.state.status === 'ready' ? document.state.model.typesSaveCount : 0;
+
+  useEffect(() => {
+    if (typesSaveCount > 0) {
+      void reloadTreeIfUnchanged();
+    }
+  }, [typesSaveCount]);
+
+  const updateDocument = document.update;
+  const pickTypeIcon = useCallback(
+    (typeId: string, iconPath: string) =>
+      updateDocument((draft) => {
+        const type = draft.skillTypes?.find((candidate) => candidate.id === typeId);
+        if (type && type.icon !== iconPath) {
+          type.icon = iconPath;
+          draft.typesChanged = true;
+        }
+      }),
+    [updateDocument],
+  );
 
   const addItem = () => {
     document.update((draft) => {
@@ -257,6 +328,7 @@ function ItemDefinitionsPanel({ vocabulary, family, onFamily }: ItemDefinitionsP
                     catalogueFileName={MODIFIER_FILE_NAMES[model.family]}
                     itemType={implicitItemType(model.family)}
                     implicitModifierIds={model.implicitIdsBySection[implicitGroupOf(model.definitions[selectedIndex], model.family, vocabulary)] ?? []}
+                    doctrine={doctrineViewSource(model, model.definitions[selectedIndex], pickTypeIcon)}
                   />
                 ) : model.definitions[selectedIndex] ? (
                   <DefinitionForm

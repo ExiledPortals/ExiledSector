@@ -150,6 +150,13 @@ export async function loadTree(): Promise<void> {
   }
 }
 
+export async function reloadTreeIfUnchanged(): Promise<void> {
+  const state = useTreeStore.getState();
+  if (state.load.status === 'ready' && !state.dirty && !state.saving) {
+    await loadTree();
+  }
+}
+
 export async function reloadTreeFromDisk(): Promise<void> {
   const confirmed = await confirmAction({
     title: 'Reload from disk',
