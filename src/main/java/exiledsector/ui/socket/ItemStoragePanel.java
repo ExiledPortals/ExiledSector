@@ -859,7 +859,7 @@ public final class ItemStoragePanel extends HoloPanel {
         pendingDisassembly = List.of();
     }
 
-    private List<StyledText> cellFooter(ItemStorageRow row) {
+    private List<StyledText> cellFooter(ItemStorageRow row, boolean expanded) {
         if (row.installed()) {
             String installedKey = isSubroutine(row) ? "ui.socketStorage.cell.installed" : "ui.socketStorage.cell.installedFramework";
             return List.of(Translation.msg(installedKey).arg("ship", row.installedShipName()).styled());
@@ -869,8 +869,11 @@ public final class ItemStoragePanel extends HoloPanel {
             String key = markedForDisassembly.contains(row.item()) ? "ui.socketStorage.cell.unmark" : "ui.socketStorage.cell.mark";
             return List.of(Translation.msg(key).count(partCount).arg("count", partCount).styled());
         }
-        return List.of(installHint(row),Translation.msg("ui.socketStorage.cell.disassemble")
-                .count(row.item().rarity().disassemblyParts()).arg("count", row.item().rarity().disassemblyParts()).styled());
+        if (!expanded) {
+            return List.of(installHint(row));
+        }
+        int partCount = row.item().rarity().disassemblyParts();
+        return List.of(installHint(row), Translation.msg("ui.socketStorage.cell.disassemble").count(partCount).arg("count", partCount).styled());
     }
 
     private StyledText installHint(ItemStorageRow row) {
@@ -949,7 +952,7 @@ public final class ItemStoragePanel extends HoloPanel {
         if (isConfirmOpen()) {
             return;
         }
-        hoverTooltip.show(row, row.item(), () -> cellFooter(row), cellPosition);
+        hoverTooltip.show(row, row.item(), expanded -> cellFooter(row, expanded), cellPosition);
     }
 
     private void hideHoverTooltip() {

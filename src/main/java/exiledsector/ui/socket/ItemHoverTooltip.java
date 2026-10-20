@@ -18,7 +18,7 @@ import org.lwjgl.input.Keyboard;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 public final class ItemHoverTooltip {
 
@@ -46,20 +46,23 @@ public final class ItemHoverTooltip {
         return shownPanel != null && shownKey == key;
     }
 
-    public void show(Object key, Item item, Supplier<List<StyledText>> footer, PositionAPI anchor) {
+    public void show(Object key, Item item, Function<Boolean, List<StyledText>> footer, PositionAPI anchor) {
         show(key, item, null, footer, anchor);
     }
 
-    public void show(Object key, Item item, HullSize hullSize, Supplier<List<StyledText>> footer, PositionAPI anchor) {
+    public void show(Object key, Item item, HullSize hullSize, Function<Boolean, List<StyledText>> footer, PositionAPI anchor) {
         String definitionId = item == null ? null : item.definitionId();
         boolean codexLinked = ItemCodex.existingEntryId(definitionId) != null && !Global.getSettings().isShowingCodex();
         String codexDefinitionId = codexLinked ? definitionId : null;
-        Supplier<List<StyledText>> shownFooter = codexDefinitionId == null ? footer : () -> withCodexHint(footer.get());
-        show(key, ItemTooltip.WIDTH, (element, expanded) -> ItemTooltip.write(element, item, hullSize, shownFooter, expanded),
+        show(key, ItemTooltip.WIDTH, (element, expanded) -> ItemTooltip.write(element, item, hullSize,
+                        () -> footerLines(footer.apply(expanded), codexLinked && expanded), expanded),
                 anchor, Placement.BESIDE, PAD, codexDefinitionId);
     }
 
-    private static List<StyledText> withCodexHint(List<StyledText> footerLines) {
+    private static List<StyledText> footerLines(List<StyledText> footerLines, boolean showCodexHint) {
+        if (!showCodexHint) {
+            return footerLines;
+        }
         List<StyledText> lines = new ArrayList<>(footerLines);
         lines.add(Translation.styled("socketable.tooltip.codexHint"));
         return lines;
