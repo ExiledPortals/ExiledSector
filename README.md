@@ -63,7 +63,7 @@ The loot turns up everywhere you'd expect it to: research stations, orbital labs
 
 ### Star charts
 
-Star Charts lead to systems no map shows, cut off from hyperspace and guarded by fleets that weren't expecting company. They come in 15 tiers and drop from hard fights, so the best way to get a better chart is to survive a worse one.
+Star Charts lead to systems no map shows, cut off from hyperspace and guarded by fleets that weren't expecting company. They come in 15 tiers of increasingly poor life choices and turn up on tough enemy fleets and inside other charts, so every run you survive hands you an excuse for a worse one.
 
 To open one you need a Wormhole Gateway, a colony structure for people who have run out of normal places to kill their crew.
 
@@ -268,7 +268,7 @@ The art in the mod comes from starsector-core, royalty-free sources, and other m
 
 I am seeking any feedback, bug reports, node suggestions, or faction designs.
 
-You can find me on the [Unofficial Starsector Discord](https://fractalsoftworks.com/forum/index.php?topic=11488.0) or by direct message @portals_
+You can find me on various Starsector Discords or by direct message @portals_
 
 ## Credits
 
