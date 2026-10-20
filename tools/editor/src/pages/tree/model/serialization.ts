@@ -358,9 +358,13 @@ export interface TreeFileTexts {
   tree: string;
 }
 
+export function serializeSkillTypesText(types: SkillType[], lineEnding: LineEnding): string {
+  return withLineEnding(JSON.stringify(skillTypesFileObject(types), null, '\t'), lineEnding);
+}
+
 export function serializeTreeFiles(document: TreeDocument, lineEndings: TreeLineEndings): TreeFileTexts {
   return {
-    types: withLineEnding(JSON.stringify(skillTypesFileObject(document.types), null, '\t'), lineEndings.types),
+    types: serializeSkillTypesText(document.types, lineEndings.types),
     tree: withLineEnding(JSON.stringify(treeFileObject(document), null, '\t'), lineEndings.tree),
   };
 }

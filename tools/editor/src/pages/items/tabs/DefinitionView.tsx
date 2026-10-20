@@ -5,6 +5,8 @@ import { isNumberText } from '../../../shared/decimalText.ts';
 import { renderMarkup, TOOLTIP_PANEL_CLASS } from '../../../shared/tooltipMarkup.ts';
 import { AFFIX_GROUPS, isTrueText, poolShares, poolWeight, UNIQUE_LINES_GROUP, type ItemDefinition, type PoolEntry } from '../model/definitions.ts';
 import { lineSummary, parseModifierLine, UNIQUE_SUBROUTINE_TYPE, type ItemModifier, type ModifierLine } from '../model/modifiers.ts';
+import { AUGMENT_BEHAVIOUR, doctrineModifierReferences, type DoctrineArchive } from '../model/doctrines.ts';
+import { DoctrineReplacementPools, type DoctrineTypeSource } from './DoctrineArchiveView.tsx';
 
 const RETRY_DELAY_MS = 1500;
 
@@ -14,6 +16,12 @@ interface DefinitionViewProps {
   implicitModifierIds: string[];
   catalogueFileName?: string;
   itemType?: string;
+  doctrine?: DoctrineViewSource;
+}
+
+export interface DoctrineViewSource {
+  archive: DoctrineArchive | null;
+  types: DoctrineTypeSource;
 }
 
 interface ViewRow {
@@ -160,15 +168,69 @@ function uniqueLineRowsOf(entries: PoolEntry[], catalogue: ItemModifier[]): View
   );
 }
 
-export function DefinitionView({ definition, catalogue, implicitModifierIds, catalogueFileName = 'item_modifiers.csv', itemType }: DefinitionViewProps) {
+function doctrineLineRowsOf(archive: DoctrineArchive | null, catalogue: ItemModifier[]): ViewRow[] {
+  if (archive?.behaviour !== AUGMENT_BEHAVIOUR) {
+    return [];
+  }
+  return rowsOf(
+    doctrineModifierReferences(archive).map((reference) => ({ modifierId: reference.modifierId, weight: reference.weight ?? '' })),
+    catalogue,
+    true,
+  );
+}
+
+interface DoctrineSectionProps {
+  doctrine: DoctrineViewSource;
+  rows: ViewRow[];
+  describedByKey: Map<string, string | null>;
+  catalogueFileName: string;
+}
+
+function DoctrineSection({ doctrine, rows, describedByKey, catalogueFileName }: DoctrineSectionProps) {
+  const { archive } = doctrine;
+  if (!archive) {
+    return (
+      <Text size="sm" c="#fc6300">
+        No row in doctrine_archives.csv, so it rewrites nothing.
+      </Text>
+    );
+  }
+  return (
+    <Stack gap="sm">
+      <Text size="xs" c="dimmed">
+        {archive.behaviour || 'No behaviour'} - {archive.radius || 'no'} radius
+      </Text>
+      {archive.behaviour === AUGMENT_BEHAVIOUR ? (
+        <Stack gap={2}>
+          <Group gap="xs" align="baseline">
+            <Text size="sm" fw={600} c="white">
+              Lines added to each node
+            </Text>
+            <Text size="xs" c="dimmed">
+              {archive.minLines === archive.maxLines ? archive.minLines : `${archive.minLines}-${archive.maxLines}`} per node
+            </Text>
+          </Group>
+          <RowsTable rows={rows} describedByKey={describedByKey} showWeights catalogueFileName={catalogueFileName} />
+        </Stack>
+      ) : (
+        <DoctrineReplacementPools archive={archive} source={doctrine.types} />
+      )}
+    </Stack>
+  );
+}
+
+export function DefinitionView({ definition, catalogue, implicitModifierIds, catalogueFileName = 'item_modifiers.csv', itemType, doctrine }: DefinitionViewProps) {
   const implicitRows = rowsOf(
     implicitModifierIds.map((modifierId) => ({ modifierId, weight: '' })),
     catalogue,
     false,
   );
-  const groupRows = AFFIX_GROUPS.map((group) => ({ group, rows: rowsOf(definition[group.key], catalogue, true) }));
+  const groupRows = AFFIX_GROUPS.map((group) => ({ group, rows: rowsOf(definition[group.key], catalogue, true) })).filter(
+    ({ rows }) => !doctrine || rows.length > 0,
+  );
   const uniqueLineRows = uniqueLineRowsOf(definition.lines ?? [], catalogue);
-  const allLines = [...implicitRows, ...uniqueLineRows, ...groupRows.flatMap((entry) => entry.rows)].flatMap((row) => row.modifier?.lines ?? []);
+  const doctrineRows = doctrineLineRowsOf(doctrine?.archive ?? null, catalogue);
+  const allLines = [...implicitRows, ...uniqueLineRows, ...doctrineRows, ...groupRows.flatMap((entry) => entry.rows)].flatMap((row) => row.modifier?.lines ?? []);
   const { describedByKey, note } = useLineDescriptions(allLines, itemType);
 
   return (
@@ -192,6 +254,9 @@ export function DefinitionView({ definition, catalogue, implicitModifierIds, cat
           <Text size="xs" c="dimmed">
             {note}
           </Text>
+        )}
+        {doctrine && (
+          <DoctrineSection doctrine={doctrine} rows={doctrineRows} describedByKey={describedByKey} catalogueFileName={catalogueFileName} />
         )}
         {implicitRows.length > 0 && (
           <Stack gap={2}>

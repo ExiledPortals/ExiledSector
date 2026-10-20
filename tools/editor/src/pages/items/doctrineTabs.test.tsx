@@ -1,5 +1,5 @@
-import { fireEvent, screen, within } from '@testing-library/react';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { fireEvent, screen, waitFor, within } from '@testing-library/react';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { buildVocabulary } from '../../api/vocabulary.ts';
 import { findLabelled } from '../../test/labelledQueries.ts';
 import { renderWithProviders } from '../../test/renderWithProviders.tsx';
@@ -9,6 +9,8 @@ import { DefinitionsTab } from './tabs/DefinitionsTab.tsx';
 const CONFIG_DIR = 'data/config/exiledSector';
 const config = (name: string) => `${CONFIG_DIR}/${name}`;
 const DOCTRINES_FILE = config('doctrine_archives.csv');
+const TYPES_FILE = 'data/skilltrees/skill_types.json';
+const PICKED_ICON = 'graphics/icons/hoarded_arms.png';
 const vocabulary = buildVocabulary(JSON.parse(readRepositoryFile('tools/editor_vocabulary.json')));
 
 let server: TestServer;
@@ -19,6 +21,7 @@ beforeAll(() => {
     'data/skilltrees/skill_types.json',
     'data/skilltrees/ship_skill_tree.json',
     DOCTRINES_FILE,
+    PICKED_ICON,
     ...[
       'item_modifiers.csv',
       'subroutines.csv',
@@ -74,4 +77,49 @@ describe('doctrine archive editing', () => {
     expect(within(refusal).getByText('doctrine_archive_pirate: min lines must be 1 or more and max lines at least min lines')).toBeTruthy();
     expect(server.readProjectFile(DOCTRINES_FILE)).toBe(before);
   }, 90000);
+});
+
+describe('doctrine archive view', () => {
+  it('lists each replacement type with its tooltip effects and saves a changed image to skill_types.json only', async () => {
+    const serverFetch = globalThis.fetch;
+    vi.stubGlobal('fetch', async (input: RequestInfo | URL, init?: RequestInit) => {
+      if (String(input) === '/api/describe') {
+        const { typeId } = JSON.parse(String(init?.body)) as { typeId: string };
+        return new Response(JSON.stringify({ title: typeId, effects: [`<good>effect of</good> ${typeId}`] }), {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        });
+      }
+      return serverFetch(input, init);
+    });
+    try {
+      const typesBefore = server.readProjectFile(TYPES_FILE);
+      const subroutinesBefore = server.readProjectFile(config('subroutines.csv'));
+      renderWithProviders(<DefinitionsTab vocabulary={vocabulary} />);
+      fireEvent.click(await screen.findByText('Tri-Tachyon Doctrine Archive', undefined, { timeout: 30000 }));
+      fireEvent.click(screen.getByText('View'));
+
+      expect(await screen.findByText('Replacement notables')).toBeTruthy();
+      expect(screen.getByText('Replacement keystones')).toBeTruthy();
+      expect(screen.getByText('Hostile Takeover')).toBeTruthy();
+      expect(screen.getByText('Quarterly Targets')).toBeTruthy();
+      const effect = await screen.findByText('effect of', undefined, { timeout: 30000 });
+      expect(effect.parentElement?.textContent).toMatch(/^effect of /);
+      expect(screen.getByText('Same image as Hostile Takeover')).toBeTruthy();
+
+      fireEvent.click(screen.getByLabelText('Change image of Hostile Takeover'));
+      fireEvent.click(await screen.findByTitle(PICKED_ICON, undefined, { timeout: 30000 }));
+      await waitFor(() => expect(screen.queryByText('Same image as Hostile Takeover')).toBeNull());
+
+      fireEvent.click(saveButton());
+      await screen.findByText(/skill_types\.json/, { selector: 'p, div' }, { timeout: 30000 });
+
+      const hostileTakeoverIcon = /("id": "doctrine_tt_hostile_takeover",\s+"name": "Hostile Takeover",\s+"icon": ")graphics\/icons\/tactical_superiority\.png"/;
+      expect(typesBefore).toMatch(hostileTakeoverIcon);
+      expect(server.readProjectFile(TYPES_FILE)).toBe(typesBefore.replace(hostileTakeoverIcon, `$1${PICKED_ICON}"`));
+      expect(server.readProjectFile(config('subroutines.csv'))).toBe(subroutinesBefore);
+    } finally {
+      vi.stubGlobal('fetch', serverFetch);
+    }
+  }, 120000);
 });

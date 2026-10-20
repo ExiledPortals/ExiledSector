@@ -37,6 +37,10 @@ export function TooltipBody({ content, showDetails }: TooltipBodyProps) {
   );
 }
 
+export function TooltipEffects({ content }: { content: TooltipContent }) {
+  return <Groups groups={content.effects} />;
+}
+
 export function TooltipNote({ children }: { children: ReactNode }) {
   return <div className={classes.note}>{children}</div>;
 }

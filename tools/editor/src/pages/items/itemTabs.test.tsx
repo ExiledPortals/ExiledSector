@@ -20,7 +20,7 @@ const vocabulary = buildVocabulary(JSON.parse(readRepositoryFile('tools/editor_v
 let server: TestServer;
 
 beforeAll(() => {
-  server = startTestServer(['tools/editor_vocabulary.json', MODIFIERS_FILE, SUBROUTINES_FILE, HULL_ITEMS_FILE, IMPLICITS_FILE, DOCTRINES_FILE, ...CHART_FILES]);
+  server = startTestServer(['tools/editor_vocabulary.json', 'data/skilltrees/skill_types.json', MODIFIERS_FILE, SUBROUTINES_FILE, HULL_ITEMS_FILE, IMPLICITS_FILE, DOCTRINES_FILE, ...CHART_FILES]);
 });
 
 afterAll(async () => {
