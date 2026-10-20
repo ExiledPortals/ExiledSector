@@ -4363,7 +4363,7 @@
 		{
 			"id": "doctrine_luddic_blessed_plating",
 			"name": "Blessed Plating",
-			"icon": "graphics/icons/heavyarmor.png",
+			"icon": "graphics/icons/doctrine_luddic_blessed_plating.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4384,7 +4384,7 @@
 		{
 			"id": "doctrine_luddic_faithful_hands",
 			"name": "Faithful Hands",
-			"icon": "graphics/icons/autorepair.png",
+			"icon": "graphics/icons/doctrine_luddic_faithful_hands.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4405,7 +4405,7 @@
 		{
 			"id": "doctrine_luddic_pilgrims_burn",
 			"name": "Pilgrim's Burn",
-			"icon": "graphics/icons/augmentedengines.png",
+			"icon": "graphics/icons/doctrine_luddic_pilgrims_burn.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4426,7 +4426,7 @@
 		{
 			"id": "doctrine_luddic_righteous_fury",
 			"name": "Righteous Fury",
-			"icon": "graphics/icons/reckless_assault.png",
+			"icon": "graphics/icons/doctrine_luddic_righteous_fury.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4448,7 +4448,7 @@
 		{
 			"id": "doctrine_luddic_penitent_hulls",
 			"name": "Penitent Hulls",
-			"icon": "graphics/icons/reduced_D_mod_effect.png",
+			"icon": "graphics/icons/doctrine_luddic_penitent_hulls.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
