@@ -4211,7 +4211,7 @@
 		{
 			"id": "doctrine_tt_alpha_fire_control",
 			"name": "Alpha-Grade Fire Control",
-			"icon": "graphics/icons/dedicated_targeting_core.png",
+			"icon": "graphics/icons/alpha_grade_fire_control.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4233,7 +4233,7 @@
 		{
 			"id": "doctrine_tt_flux_arbitrage",
 			"name": "Flux Arbitrage",
-			"icon": "graphics/icons/efficient_vents.png",
+			"icon": "graphics/icons/flux_arbitrage.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4253,7 +4253,7 @@
 		{
 			"id": "doctrine_tt_quarterly_targets",
 			"name": "Quarterly Targets",
-			"icon": "graphics/icons/targetingunit.png",
+			"icon": "graphics/icons/quarterly_targets.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
