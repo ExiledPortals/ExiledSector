@@ -2,13 +2,11 @@
 
 <p align="center"><i>Still sane, exile?</i></p>
 
-Designed to be an overhaul of the simple hullmod system based on the infamous Path of Exile skill tree, Exiled Sector is a Starsector mod that gives every ship in your fleet its own skill tree.
-
 <p align="center">
 <a href="https://trilink.wispborne.com/open.html?mod=%7B%22url%22%3A%22https%3A%2F%2Fraw.githubusercontent.com%2FExiledPortals%2FExiledSector%2Fmain%2FExiledSector.version%22%2C%22id%22%3A%22exiledSector%22%2C%22version%22%3A%220.1.0%22%7D&dep=%7B%22url%22%3A%22https%3A%2F%2Fraw.githubusercontent.com%2FLazyWizard%2Flazylib%2Fmaster%2Fmod%2Flazylib.version%22%2C%22id%22%3A%22lw_lazylib%22%2C%22version%22%3A%223.0.0%22%7D&dep=%7B%22url%22%3A%22https%3A%2F%2Fraw.githubusercontent.com%2FMagicLibStarsector%2FMagicLib%2Fmaster%2Fmagiclib.version%22%2C%22id%22%3A%22MagicLib%22%2C%22version%22%3A%221.5.6%22%7D&dep=%7B%22url%22%3A%22https%3A%2F%2Fraw.githubusercontent.com%2FLukas22041%2FLunaLib%2Fmain%2FLunaLib.version%22%2C%22id%22%3A%22lunalib%22%2C%22version%22%3A%222.0.5%22%7D"><img src="https://trilink.wispborne.com/badges/install-badge.svg" alt="Install with TriOS"></a>
 </p>
 
-<p align="center"><b><a href="https://github.com/ExiledPortals/ExiledSector/releases/latest/download/ExiledSector.zip">Manual download</a></b> | <a href="https://github.com/ExiledPortals/ExiledSector">Source (GitHub)</a></p>
+<p align="center"><b><a href="https://github.com/ExiledPortals/ExiledSector/releases/latest/download/ExiledSector.zip">Manual download</a></b> | <a href="https://github.com/ExiledPortals/ExiledSector">Source & Changelog (GitHub)</a></p>
 
 ## Features
 
@@ -258,7 +256,7 @@ The Chinese translation is a first draft awaiting review by a native speaker. To
 
 ## Disclaimer
 
-This mod is in (very) early development.
+This mod is in early development.
 
 It is my first mod, and first foray into OpenGL/game development, and is by no means feature complete or bug free.
 
