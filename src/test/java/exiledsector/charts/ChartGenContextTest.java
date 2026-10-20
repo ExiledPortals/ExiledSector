@@ -193,6 +193,8 @@ class ChartGenContextTest {
         assertEquals(List.of("Item quantity +23%", "Currency items +47%"), lines);
         ChartGenContext sites = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_STATION_BUDGET_PERCENT, 30f)));
         assertEquals(List.of("Stations +30%"), ChartLootTotals.lines(sites).stream().map(StyledText::plain).toList());
+        assertEquals(List.of("Rarity of hull items and subroutines +25%"),
+                ChartLootTotals.lines(with(ChartEffect.CHART_ITEM_RARITY_PERCENT, 25f)).stream().map(StyledText::plain).toList());
         assertTrue(ChartLootTotals.lines(with(ChartEffect.CHART_FLEET_SIZE_PERCENT, 30f)).isEmpty());
     }
 
@@ -383,5 +385,15 @@ class ChartGenContextTest {
             assertEquals(1f, context.siteBudgetMult(kind), TOLERANCE, kind.name());
         }
         assertEquals(BASE.poiBudget(), context.adjust(BASE).poiBudget(), TOLERANCE);
+    }
+    @Test
+    void rarityAddsUpAndOnlyShiftsTheRarityOfItemChances() {
+        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_ITEM_RARITY_PERCENT, 30f),
+                new AppliedEffect(ChartEffect.CHART_ITEM_RARITY_PERCENT, 20f)));
+
+        assertEquals(1.5f, context.itemChances().rarity(), TOLERANCE);
+        assertEquals(1f, context.itemChances().general(), TOLERANCE);
+        assertEquals(1f, ChartGenContext.none().itemChances().rarity(), TOLERANCE);
+        assertEquals(1.5f, context.itemChances().scaled(2f).rarity(), TOLERANCE);
     }
 }

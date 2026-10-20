@@ -2,6 +2,7 @@ package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import exiledsector.skills.AllocatedNode;
+import exiledsector.skills.AnchorLinks;
 import exiledsector.skills.AllocationGate;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipFacts;
@@ -53,7 +54,7 @@ public final class NpcSkillTreeBuilder {
         }
         Generation generation = new Generation(request, shipData, targetNodeCount, random);
         generation.run();
-        return new NpcTreeBuild(shipData, generation.steps, generation.strippedHullModIds, generation.claimedSockets);
+        return new NpcTreeBuild(shipData, generation.steps, generation.strippedHullModIds);
     }
 
     public static boolean hasRootFor(String designType) {
@@ -179,10 +180,10 @@ public final class NpcSkillTreeBuilder {
         private final Set<String> rejectedNodeIds = new HashSet<>();
         private final List<NpcBuildStep> steps = new ArrayList<>();
         private final List<String> strippedHullModIds = new ArrayList<>();
-        private final List<String> claimedSockets = new ArrayList<>();
-        private final int itemCount;
         private final Predicate<SkillType> lockedWormhole;
-        private final String factionExitId;
+        private final String factionAnchorItemId;
+        private String factionExitId;
+        private String anchorSocketId;
         private int nodeBudget;
         private int nodesSpent;
         private final String hullId;
@@ -201,68 +202,36 @@ public final class NpcSkillTreeBuilder {
             this.relevance = NpcRelevance.of(profile, hullMods.permanent());
             this.installedHullModIds = new TreeSet<>(hullMods.installed());
             this.nodeBudget = Math.min(targetNodeCount, maxNodes);
-            this.itemCount = request.itemCount();
             Predicate<SkillType> lockedTypes = request.lockedTypes();
             this.lockedWormhole = type -> type.getTier().isWormhole() && lockedTypes.test(type);
-            this.factionExitId = factionRegion == null ? null : openableExitOf(topology, factionRegion, lockedWormhole);
+            this.factionAnchorItemId = request.factionAnchorItemId();
+            this.factionExitId = openableExitOf(topology, factionRegion, factionAnchorItemId, lockedWormhole);
         }
 
-        private static String openableExitOf(SkillTreeTopology topology, String region, Predicate<SkillType> lockedWormhole) {
-            for (SkillNode node : topology.sortedById()) {
-                if (node.getType().getTier() == SkillTier.WORMHOLE_EXIT && region.equals(node.getRegion())) {
-                    return lockedWormhole.test(node.getType()) ? null : node.getId();
-                }
-            }
-            return null;
+        private static String openableExitOf(SkillTreeTopology topology, String region, String anchorItemId,
+                                             Predicate<SkillType> lockedWormhole) {
+            String exitId = region == null || anchorItemId == null ? null : AnchorLinks.lookup().exitNodeId(anchorItemId);
+            SkillNode exit = exitId == null ? null : topology.node(exitId);
+            boolean openable = exit != null && exit.getType().getTier() == SkillTier.WORMHOLE_EXIT && region.equals(exit.getRegion())
+                    && !lockedWormhole.test(exit.getType());
+            return openable ? exitId : null;
         }
 
         void run() {
             convertHullMods();
-            claimSockets();
             tasteFactionVolume();
+            closeUnusedFactionVolume();
             pursueGoals();
         }
 
-        private void claimSockets() {
-            for (int i = 0; i < itemCount; i++) {
-                String socketNodeId = unclaimedAllocatedSocket();
-                if (socketNodeId == null) {
-                    socketNodeId = reachSocket();
-                }
-                if (socketNodeId == null) {
-                    steps.add(new NpcBuildStep("", NpcBuildStep.HULL_ITEM_DISCARDED));
-                } else {
-                    claimedSockets.add(socketNodeId);
-                }
-            }
-        }
-
-        private String unclaimedAllocatedSocket() {
+        private String emptyAllocatedSocket() {
             for (String nodeId : shipData.getAllocatedNodeIds()) {
                 SkillNode node = topology.node(nodeId);
-                if (node != null && node.getType().getTier() == SkillTier.SOCKET && !claimedSockets.contains(nodeId)
-                        && !shipData.getImplicitAnchorExits().containsKey(nodeId)) {
+                if (node != null && node.getType().getTier() == SkillTier.SOCKET && shipData.getSocketedItem(nodeId) == null) {
                     return nodeId;
                 }
             }
             return null;
-        }
-
-        private String reachSocket() {
-            while (true) {
-                Search search = search(currentInstalled());
-                String nearestSocketId = null;
-                for (String nodeId : search.reached()) {
-                    if (topology.node(nodeId).getType().getTier() == SkillTier.SOCKET && !rejectedNodeIds.contains(nodeId)
-                            && affordable(search, nodeId, remaining()) && (nearestSocketId == null || search.cost(nodeId) < search.cost(nearestSocketId))) {
-                        nearestSocketId = nodeId;
-                    }
-                }
-                if (nearestSocketId == null || allocatePath(search, nearestSocketId, NpcBuildStep.SOCKET_GOAL, NpcBuildStep.PATH_TO_GOAL)) {
-                    return nearestSocketId;
-                }
-                rejectedNodeIds.add(nearestSocketId);
-            }
         }
 
         private int remaining() {
@@ -560,15 +529,57 @@ public final class NpcSkillTreeBuilder {
         }
 
         private void anchorAllocatedSocket() {
-            if (factionExitId == null || !shipData.getImplicitAnchorExits().isEmpty() || slotsLeft() <= 0) {
+            if (factionExitId == null || anchorSocketId != null || slotsLeft() <= 0) {
                 return;
             }
-            String socketId = unclaimedAllocatedSocket();
-            if (socketId != null) {
-                shipData.setImplicitAnchor(socketId, factionExitId);
-                shipData.openAnchorWormholes(maxNodes + 1);
+            String socketId = emptyAllocatedSocket();
+            if (socketId != null && socketAnchor(socketId)) {
                 steps.add(new NpcBuildStep(factionExitId, NpcBuildStep.WORMHOLE_EXIT));
             }
+        }
+
+        private boolean socketAnchor(String socketId) {
+            shipData.socketItem(socketId, factionAnchorItemId);
+            if (factionExitId.equals(shipData.anchorExit(socketId))) {
+                anchorSocketId = socketId;
+                shipData.openAnchorWormholes(maxNodes + 1);
+                if (shipData.isAllocated(factionExitId)) {
+                    return true;
+                }
+            }
+            releaseAnchor(socketId);
+            return false;
+        }
+
+        private void releaseAnchor(String socketId) {
+            shipData.unsocketItem(socketId);
+            SkillNode exit = topology.node(factionExitId);
+            if (exit != null && shipData.isAllocated(factionExitId)) {
+                shipData.deallocate(exit);
+            }
+            anchorSocketId = null;
+        }
+
+        private void closeUnusedFactionVolume() {
+            if (factionExitId == null || allocatesFactionVolumeNode()) {
+                return;
+            }
+            if (anchorSocketId != null) {
+                steps.removeIf(step -> step.nodeId().equals(factionExitId) && NpcBuildStep.WORMHOLE_EXIT.equals(step.outcome()));
+                steps.add(new NpcBuildStep(factionExitId, NpcBuildStep.ANCHOR_REMOVED));
+                releaseAnchor(anchorSocketId);
+            }
+            factionExitId = null;
+        }
+
+        private boolean allocatesFactionVolumeNode() {
+            for (String nodeId : shipData.getAllocatedNodeIds()) {
+                SkillNode node = topology.node(nodeId);
+                if (node != null && factionRegion.equals(node.getRegion()) && node.getType().getTier() != SkillTier.WORMHOLE_EXIT) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private String jumpTarget(SkillNode node) {
@@ -576,12 +587,12 @@ public final class NpcSkillTreeBuilder {
             if (partnerId != null) {
                 return partnerId;
             }
-            return canTakeImplicitAnchor(node) ? factionExitId : null;
+            return canTakeFactionAnchor(node) ? factionExitId : null;
         }
 
-        private boolean canTakeImplicitAnchor(SkillNode socket) {
-            return factionExitId != null && socket.getType().getTier() == SkillTier.SOCKET && shipData.getImplicitAnchorExits().isEmpty()
-                    && !claimedSockets.contains(socket.getId()) && !shipData.isAllocated(factionExitId);
+        private boolean canTakeFactionAnchor(SkillNode socket) {
+            return factionExitId != null && socket.getType().getTier() == SkillTier.SOCKET && anchorSocketId == null
+                    && shipData.getSocketedItem(socket.getId()) == null && !shipData.isAllocated(factionExitId);
         }
 
         private int pathSize(Search search, String targetId) {
@@ -618,7 +629,13 @@ public final class NpcSkillTreeBuilder {
                 PathStep step = pathSteps.get(i);
                 String outcome = i == pathSteps.size() - 1 ? goalOutcome : pathOutcome;
                 if (step.wormholeExit()) {
-                    anchoredInPath = openImplicitAnchor(search, step.node()) || anchoredInPath;
+                    if (!shipData.isAllocated(step.node().getId())) {
+                        if (!socketAnchor(search.parent(step.node().getId()))) {
+                            undoPath(placedNodes, stepsBefore, anchoredInPath);
+                            return false;
+                        }
+                        anchoredInPath = true;
+                    }
                     steps.add(new NpcBuildStep(step.node().getId(), NpcBuildStep.WORMHOLE_EXIT));
                     continue;
                 }
@@ -638,22 +655,13 @@ public final class NpcSkillTreeBuilder {
             return true;
         }
 
-        private boolean openImplicitAnchor(Search search, SkillNode exit) {
-            if (shipData.isAllocated(exit.getId())) {
-                return false;
-            }
-            shipData.setImplicitAnchor(search.parent(exit.getId()), exit.getId());
-            shipData.openAnchorWormholes(maxNodes + 1);
-            return true;
-        }
-
         private void undoPath(List<SkillNode> placedNodes, int stepsBefore, boolean anchoredInPath) {
             for (int i = placedNodes.size() - 1; i >= 0; i--) {
                 shipData.deallocate(placedNodes.get(i));
                 nodesSpent--;
             }
-            if (anchoredInPath) {
-                shipData.dropImplicitAnchors();
+            if (anchoredInPath && anchorSocketId != null) {
+                releaseAnchor(anchorSocketId);
             }
             steps.subList(stepsBefore, steps.size()).clear();
         }

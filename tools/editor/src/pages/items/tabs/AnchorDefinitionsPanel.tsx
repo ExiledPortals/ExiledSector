@@ -282,10 +282,24 @@ function AnchorForm({ document, anchor, index, vocabulary, nodeFacts, onSelect }
           }}
         />
         <DecimalInput
-          label="Drop chance per 100 DP defeated"
-          description="Rolled once per won battle, capped at one in two"
+          label="Drop chance per won fight"
+          description="Rolled once per won battle in which a matching fleet lost a ship, capped at one in two"
           value={anchor.dropChance}
           onChange={(text) => edit((draft) => void (draft.dropChance = text))}
+        />
+      </Group>
+      <Group grow align="flex-start">
+        <DecimalInput
+          label="Market chance per restock"
+          description="Chance for each open market of a matching faction to stock this anchor when its stock refreshes; blank means never sold"
+          value={anchor.marketChance}
+          onChange={(text) => edit((draft) => void (draft.marketChance = text))}
+        />
+        <DecimalInput
+          label="Price (credits)"
+          description="What markets charge for it and pay for it; blank means 100000"
+          value={anchor.price}
+          onChange={(text) => edit((draft) => void (draft.price = text))}
         />
       </Group>
       <Select

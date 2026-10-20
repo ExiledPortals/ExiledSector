@@ -6,7 +6,6 @@ public record NpcBuildStep(String nodeId, String outcome) {
     public static final String GOAL = "allocated: goal";
     public static final String PATH_TO_GOAL = "allocated: path to goal";
     public static final String FACTION_GOAL = "allocated: faction volume goal";
-    public static final String SOCKET_GOAL = "allocated: socket for a hull item";
     public static final String WORMHOLE_EXIT = "allocated: wormhole exit";
     public static final String PATH_TO_CONVERTED_HULLMOD = "allocated: path to converted hullmod ";
     public static final String CONVERTED_HULLMOD = "allocated: converts hullmod ";
@@ -16,7 +15,7 @@ public record NpcBuildStep(String nodeId, String outcome) {
     public static final String MISSING_OPTION = "missing option";
     public static final String INVALID_OPTION = "invalid option: ";
     public static final String UNEXPECTED_OPTION = "unexpected option: ";
-    public static final String HULL_ITEM_DISCARDED = "hull item discarded, no socket within reach";
+    public static final String ANCHOR_REMOVED = "wormhole anchor removed, no faction volume node within reach";
 
     public boolean isAllocated() {
         return outcome != null && outcome.startsWith(ALLOCATED);

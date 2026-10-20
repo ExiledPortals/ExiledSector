@@ -45,7 +45,6 @@ public class NpcFleetSweepScript implements EveryFrameScript {
             if (isWithin(origin, nearbyFleet.getLocation(), sweepRange)) {
                 NpcFleetLeveller.ensure(nearbyFleet);
             }
-            NpcUniqueAlerts.alertIfSensed(nearbyFleet);
         }
     }
 

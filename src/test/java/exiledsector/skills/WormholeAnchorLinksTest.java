@@ -301,21 +301,6 @@ class WormholeAnchorLinksTest {
     }
 
     @Test
-    void anImplicitAnchorLinksLikeASocketedOneUntilItIsDropped() {
-        ShipSkillData data = shipWithSocket();
-        data.setImplicitAnchor("socket", "exit");
-        data.openAnchorWormholes(100);
-        data.allocate(volumeSmall, 1);
-
-        assertEquals("exit", data.wormholePartner(socket));
-        assertTrue(data.getSocketedItems().isEmpty());
-
-        assertTrue(data.dropImplicitAnchors());
-
-        assertEquals(Set.of("exit", "vol_a"), Set.copyOf(data.releaseUnreachable(topology, "root").nodeIds()));
-    }
-
-    @Test
     void anInertAnchorStaysLinkedButOnlyOpensOnceItCan() {
         ShipSkillData data = shipWithSocket();
         inertItemIds.add(ANCHOR);

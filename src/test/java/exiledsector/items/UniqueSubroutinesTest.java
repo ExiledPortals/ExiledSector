@@ -205,7 +205,6 @@ class UniqueSubroutinesTest {
         Set<String> picked = new HashSet<>();
         for (int trial = 0; trial < TRIALS; trial++) {
             picked.add(idOrBlank(ItemDrops.pickBasic(random)));
-            picked.add(idOrBlank(NpcItems.pickDefinition(random, definition -> true)));
             picked.add(idOrBlank(ItemDrops.pickUnique(random, definition -> true)));
         }
 
@@ -217,20 +216,17 @@ class UniqueSubroutinesTest {
     }
 
     @Test
-    void fleetsOfTheSourceFactionCarryTheirUniqueAtTheUsualShare() {
+    void onlyTheSourceFactionDrawsItsFleetUnique() {
         Random random = new Random(5L);
-        int carried = 0;
-        for (int trial = 0; trial < TRIALS; trial++) {
-            String pickedId = idOrBlank(NpcItems.pickDefinition(random, "pirates", definition -> true));
+        for (int trial = 0; trial < 200; trial++) {
+            String pickedId = idOrBlank(ItemDrops.pickUniqueFrom(UniqueSource.Kind.FACTION, "pirates", random,
+                    ItemDefinition::isUniqueSubroutine));
             assertFalse(pickedId.equals(SITE_RELIC) || pickedId.equals(HULL_RELIC_A), pickedId);
-            if (pickedId.equals(FLEET_RELIC)) {
-                carried++;
-            }
-            assertEquals("", idOrBlank(NpcItems.pickDefinition(random, "hegemony", definition -> true)));
-            assertEquals("", idOrBlank(NpcItems.pickDefinition(random, "pirates", definition -> false)));
+            assertEquals("", idOrBlank(ItemDrops.pickUniqueFrom(UniqueSource.Kind.FACTION, "hegemony", random,
+                    ItemDefinition::isUniqueSubroutine)));
         }
-
-        assertEquals(NpcItems.UNIQUE_SHARE, carried / (float) TRIALS, 0.004f);
+        assertEquals(FLEET_RELIC, idOrBlank(ItemDrops.pickUniqueFrom(UniqueSource.Kind.FACTION, "pirates", random,
+                definition -> definition.id().equals(FLEET_RELIC))));
     }
 
     @Test

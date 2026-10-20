@@ -16,13 +16,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -212,47 +210,4 @@ class HullUpgradeTest {
         assertEquals(Map.of(HullSize.DESTROYER, 2), loaded.upgradeCounts());
     }
 
-    @Test
-    void npcFlagshipsRollTwoToFourDistinctSocketTypesTheirFitAllows() {
-        Random random = new Random(3L);
-        int framed = 0;
-        int trials = 20000;
-        int[] counts = new int[5];
-        Set<ItemKind> seen = EnumSet.noneOf(ItemKind.class);
-        for (int i = 0; i < trials; i++) {
-            ShipSkillData shipData = new ShipSkillData();
-            NpcItems.rollSectionItems(shipData, HullSize.CRUISER, () -> fit(ShieldType.NONE), 20, random);
-            List<String> unlocked = shipData.getUnlockedSocketTypeIds();
-            if (!unlocked.isEmpty()) {
-                framed++;
-                counts[unlocked.size()]++;
-                assertEquals(unlocked.size(), new HashSet<>(unlocked).size());
-                unlocked.forEach(socketTypeId -> seen.add(ItemKind.byId(socketTypeId)));
-            }
-        }
-
-        assertEquals(0.5, framed / (double) trials, 0.02);
-        assertEquals(0.7, counts[2] / (double) framed, 0.02);
-        assertEquals(0.2, counts[3] / (double) framed, 0.02);
-        assertEquals(0.1, counts[4] / (double) framed, 0.02);
-        assertFalse(seen.contains(ItemKind.SHIELD_GENERATOR));
-        assertFalse(seen.contains(ItemKind.PHASE_COIL));
-        assertFalse(seen.contains(ItemKind.FLIGHT_DECK));
-    }
-
-    @Test
-    void aKilledFlagshipWithASectionDropsAnUpgradeOneTimeInTen() {
-        ShipSkillData framed = new ShipSkillData();
-        framed.grantUnlockedSocketType("bridge");
-        Random random = new Random(8L);
-        int drops = 0;
-        for (int i = 0; i < 20000; i++) {
-            if (NpcItems.rollUpgradeDrop(framed, HullSize.CAPITAL_SHIP, random) != null) {
-                drops++;
-            }
-        }
-
-        assertEquals(0.1, drops / 20000.0, 0.01);
-        assertNull(NpcItems.rollUpgradeDrop(new ShipSkillData(), HullSize.CAPITAL_SHIP, new Random(1L)));
-    }
 }

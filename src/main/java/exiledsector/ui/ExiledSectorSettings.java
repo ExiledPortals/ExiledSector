@@ -7,6 +7,7 @@ import exiledsector.compat.SalvageSiteCompat;
 import exiledsector.effects.NpcBonusScale;
 import exiledsector.items.HullUpgradesSetting;
 import exiledsector.ui.cargo.ItemAnimationSetting;
+import exiledsector.items.BattleItemDrops;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemRoller;
@@ -95,6 +96,9 @@ public final class ExiledSectorSettings {
         SettingsCreator.addInt(MOD_ID, ItemDrops.BATTLE_PARTS_FIELD_ID,
                 Translation.text("settings.socketStorage.battleParts.name"), Translation.text("settings.socketStorage.battleParts.tooltip"),
                 ItemDrops.DEFAULT_BATTLE_PARTS_PER_100_DP, 0, ItemDrops.MAX_BATTLE_PARTS_PER_100_DP, MAIN_TAB);
+        SettingsCreator.addInt(MOD_ID, BattleItemDrops.DROP_PERCENT_FIELD_ID,
+                Translation.text("settings.socketStorage.battleItems.name"), Translation.text("settings.socketStorage.battleItems.tooltip"),
+                BattleItemDrops.DEFAULT_DROP_PERCENT, 0, BattleItemDrops.MAX_DROP_PERCENT, MAIN_TAB);
         SettingsCreator.addBoolean(MOD_ID, CraftingMaterials.STORE_FIELD_ID,
                 Translation.text("settings.socketStorage.storeMaterials.name"), Translation.text("settings.socketStorage.storeMaterials.tooltip"),
                 CraftingMaterials.DEFAULT_STORE, MAIN_TAB);

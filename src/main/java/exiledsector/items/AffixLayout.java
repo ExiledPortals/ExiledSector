@@ -88,6 +88,35 @@ final class AffixLayout {
         return limits.maxEffects();
     }
 
+    static int rolledEffectCount(Limits limits, float roll, float rarity) {
+        if (rarity == 1f) {
+            return rolledEffectCount(limits, roll);
+        }
+        List<Float> chances = limits.effectCountChances();
+        float[] weights = new float[limits.maxEffects()];
+        float remainingChance = 1f;
+        for (int index = 0; index < chances.size(); index++) {
+            weights[index] = chances.get(index);
+            remainingChance -= chances.get(index);
+        }
+        weights[limits.maxEffects() - 1] = Math.max(0f, remainingChance);
+        float totalWeight = 0f;
+        for (int index = 0; index < weights.length; index++) {
+            if (index + 1 > limits.commonMaxEffects()) {
+                weights[index] *= Math.max(0f, rarity);
+            }
+            totalWeight += weights[index];
+        }
+        float target = roll * totalWeight;
+        for (int index = 0; index < weights.length; index++) {
+            target -= weights[index];
+            if (target < 0f) {
+                return index + 1;
+            }
+        }
+        return limits.maxEffects();
+    }
+
     static int prefixCount(int effectCount, boolean morePrefixes) {
         int evenShare = effectCount / 2;
         if (effectCount % 2 == 0 || !morePrefixes) {

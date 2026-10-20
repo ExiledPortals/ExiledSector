@@ -1,20 +1,12 @@
 package exiledsector.items;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
-import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.skills.ShipSkillData;
-import exiledsector.skills.tags.ShipProfile;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class SectionItemDropsTest {
 
@@ -49,10 +39,6 @@ class SectionItemDropsTest {
     void tearDown() {
         ItemDrops.clear();
         ItemDefinitions.clear();
-    }
-
-    private static ShipProfile fit(ShieldType shieldType) {
-        return new ShipProfile(HullSize.CRUISER, shieldType, 0, Set.of(), false, 1000f, false);
     }
 
     @Test
@@ -152,75 +138,4 @@ class SectionItemDropsTest {
         assertTrue(ItemDrops.rollSectionItemLoot(null, new Random(1L), 1f).isEmpty());
     }
 
-    @Test
-    void flagshipsBelowLevelFifteenNeverGetASection() {
-        ShipSkillData shipData = new ShipSkillData();
-        Random random = new Random(2L);
-        for (int i = 0; i < 200; i++) {
-            NpcItems.rollSectionItems(shipData, HullSize.CRUISER, () -> fit(ShieldType.FRONT), 14, random);
-        }
-
-        assertEquals(List.of(), shipData.getUnlockedSocketTypeIds());
-    }
-
-    @Test
-    void eachFlagshipSocketRollsTheNpcHullItemChanceForABasicOfItsType() {
-        Random random = new Random(4L);
-        int bridgeSockets = 0;
-        int filledBridgeSockets = 0;
-        for (int i = 0; i < TRIALS; i++) {
-            ShipSkillData shipData = new ShipSkillData();
-            NpcItems.rollSectionItems(shipData, HullSize.CRUISER, () -> fit(ShieldType.FRONT), 20, random);
-            for (String socketTypeId : shipData.getUnlockedSocketTypeIds()) {
-                String itemId = shipData.getSectionItem(socketTypeId);
-                if (ItemKind.BRIDGE.id().equals(socketTypeId)) {
-                    bridgeSockets++;
-                    filledBridgeSockets += itemId == null ? 0 : 1;
-                }
-                if (itemId != null) {
-                    assertEquals(ItemKind.byId(socketTypeId), NpcItems.item(itemId).definition().kind());
-                }
-            }
-        }
-
-        assertEquals(NpcItems.firstChance(20), filledBridgeSockets / (double) bridgeSockets, 0.03);
-    }
-
-    @Test
-    void aCapturedFlagshipKeepsItsUnlockedSocketsAndItsItemsBecomePlayerOwned() {
-        Map<String, Object> persistentData = new HashMap<>();
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
-            globalMock.when(Global::getSector).thenReturn(sector);
-            ShipSkillData shipData = new ShipSkillData();
-            shipData.grantUnlockedSocketType("reactor");
-            shipData.grantUnlockedSocketType("bridge");
-            shipData.installInSection("bridge", NpcItems.id("bridge_basic", 7L));
-
-            NpcItems.claimForPlayer(shipData);
-
-            ItemStore store = ItemStore.get();
-            assertEquals(List.of("reactor", "bridge"), shipData.getUnlockedSocketTypeIds());
-            assertEquals(2, shipData.getHullUpgradePoints());
-            assertEquals(Map.of("bridge", store.owned().get(0).id()), shipData.getSectionItems());
-        }
-    }
-
-    @Test
-    void aFlagshipThatCannotBeClaimedHandsItsItemsToStorage() {
-        Map<String, Object> persistentData = new HashMap<>();
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
-            globalMock.when(Global::getSector).thenReturn(sector);
-            ShipSkillData shipData = new ShipSkillData();
-            shipData.grantUnlockedSocketType("bridge");
-            shipData.installInSection("bridge", NpcItems.id("bridge_basic", 7L));
-
-            NpcItems.storeForPlayer(shipData);
-
-            assertEquals(List.of("bridge_basic"), ItemStore.get().owned().stream().map(Item::definitionId).toList());
-        }
-    }
 }

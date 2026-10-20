@@ -1,7 +1,10 @@
 package exiledsector.items;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.CargoTransferHandlerAPI;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.i18n.I18n;
@@ -19,6 +22,8 @@ import java.util.function.Supplier;
 
 public class ItemPlugin extends BaseSpecialItemPlugin {
 
+    static final String BUY_PRICE_MULT_SETTING = "nonEconItemBuyPriceMult";
+    static final String SELL_PRICE_MULT_SETTING = "nonEconItemSellPriceMult";
     private static final SpriteCache SPRITES = new SpriteCache(ItemPlugin.class);
 
     private final CargoIconAnimation animation = new CargoIconAnimation();
@@ -35,6 +40,18 @@ public class ItemPlugin extends BaseSpecialItemPlugin {
     @Override
     public String getName() {
         return I18n.forGameText(() -> previewItem == null ? Translation.text("socketable.unknown") : previewItem.name());
+    }
+
+    @Override
+    public int getPrice(MarketAPI market, SubmarketAPI submarket) {
+        WormholeAnchorDefinitions.AnchorMarket anchorMarket = previewItem instanceof WormholeAnchor
+                ? WormholeAnchorDefinitions.market(previewItem.definitionId()) : null;
+        if (anchorMarket == null) {
+            return super.getPrice(market, submarket);
+        }
+        boolean forSale = stack != null && ItemData.isMarketListing(stack.getSpecialDataIfSpecial());
+        return forSale ? anchorMarket.price() : WormholeAnchorDefinitions.sellBaseValue(anchorMarket.price(),
+                Global.getSettings().getFloat(BUY_PRICE_MULT_SETTING), Global.getSettings().getFloat(SELL_PRICE_MULT_SETTING));
     }
 
     @Override

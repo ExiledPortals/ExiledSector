@@ -44,6 +44,35 @@ public final class ItemRoller {
         return roll(definition, seed, averageRolls(), rolledTier);
     }
 
+    public static List<RolledModifier> rollWithRarity(ItemDefinition definition, long seed, float rarity) {
+        if (rarity == 1f || definition.unique() || definition.type() == ItemType.STAR_CHART) {
+            return roll(definition, seed);
+        }
+        Random random = Seeds.random(seed);
+        AffixLayout.Limits limits = AffixLayout.limits(definition.type());
+        return rollAffixes(definition, limits, AffixLayout.rolledEffectCount(limits, random.nextFloat(), rarity), random, averageRolls(),
+                TierRange.NO_TIER);
+    }
+
+    public static List<RolledModifier> rollWithEffectCount(ItemDefinition definition, long seed, int effectCount) {
+        if (definition.unique() || definition.type() == ItemType.STAR_CHART) {
+            return roll(definition, seed);
+        }
+        Random random = Seeds.random(seed);
+        random.nextFloat();
+        return rollAffixes(definition, AffixLayout.limits(definition.type()), effectCount, random, averageRolls(), TierRange.NO_TIER);
+    }
+
+    public static boolean canRollEffectCount(ItemDefinition definition, int effectCount) {
+        if (definition.unique() || definition.type() == ItemType.STAR_CHART) {
+            return false;
+        }
+        AffixLayout.Limits limits = AffixLayout.limits(definition.type());
+        int prefixRoom = Math.min(limits.maxPerSide(), AffixLayout.rollableAt(definition.type(), definition.prefixes(), TierRange.NO_TIER).size());
+        int suffixRoom = Math.min(limits.maxPerSide(), AffixLayout.rollableAt(definition.type(), definition.suffixes(), TierRange.NO_TIER).size());
+        return effectCount >= 1 && effectCount <= limits.maxEffects() && effectCount <= prefixRoom + suffixRoom;
+    }
+
     static List<RolledModifier> roll(ItemDefinition definition, long seed, boolean averageRolls) {
         return roll(definition, seed, averageRolls, TierRange.NO_TIER);
     }

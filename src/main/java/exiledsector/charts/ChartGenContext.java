@@ -50,6 +50,7 @@ public final class ChartGenContext {
     private final Map<ChartPoi.Kind, Float> siteBudgetPercents = new EnumMap<>(ChartPoi.Kind.class);
     private int extraPois;
     private float itemPercent;
+    private float itemRarityPercent;
     private final Map<DropType, Float> dropPercents = new EnumMap<>(DropType.class);
     private float wardenSpoilsPercent;
     private float rewardPercent;
@@ -201,6 +202,10 @@ public final class ChartGenContext {
         itemPercent += value;
     }
 
+    void addItemRarityPercent(float value) {
+        itemRarityPercent += value;
+    }
+
     void addDropPercent(DropType type, float value) {
         dropPercents.merge(type, value, Float::sum);
     }
@@ -310,6 +315,10 @@ public final class ChartGenContext {
         return itemPercent;
     }
 
+    public float itemRarityPercent() {
+        return itemRarityPercent;
+    }
+
     public float dropPercent(DropType type) {
         return dropPercents.getOrDefault(type, 0f);
     }
@@ -341,7 +350,8 @@ public final class ChartGenContext {
             }
         });
         float generalMult = multiplier(itemPercent + quantityPercent());
-        return targetedShares.isEmpty() ? ItemChances.of(generalMult) : new ItemChances(generalMult, targetedShares);
+        ItemChances chances = targetedShares.isEmpty() ? ItemChances.of(generalMult) : new ItemChances(generalMult, targetedShares);
+        return chances.withRarity(multiplier(itemRarityPercent));
     }
 
     public float sensorRangeMult() {
@@ -360,10 +370,10 @@ public final class ChartGenContext {
             return factionText + "no chart modifiers";
         }
         return factionText + String.format(Locale.ROOT, "fleet size %+.0f%%, %+d rolled fleet(s), %+d added fleet(s), %+d officer level(s), %+d officer(s), warden size %+.0f%%, "
-                        + "fleet quality %+.0f%%, site budgets %s, %+d point(s) of interest, item drops %+.0f%%, drop types %s, "
+                        + "fleet quality %+.0f%%, site budgets %s, %+d point(s) of interest, item drops %+.0f%%, item rarity %+.0f%%, drop types %s, "
                         + "warden spoils x%.2f, reward x%.2f, sensor range x%.2f, chart quality %d",
                 fleetSizePercent, baseFleets, extraFleets, officerLevelBonus, extraOfficers, wardenSizePercent,
-                fleetQualityPercent, siteBudgetText(), extraPois(), itemPercent, describeDropPercents(), wardenSpoilsMult(), rewardMult(),
+                fleetQualityPercent, siteBudgetText(), extraPois(), itemPercent, itemRarityPercent, describeDropPercents(), wardenSpoilsMult(), rewardMult(),
                 sensorRangeMult(), quality);
     }
 

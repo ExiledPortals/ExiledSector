@@ -141,6 +141,12 @@ public enum ChartEffect implements ModifierEffect {
             context.addItemPercent(value);
         }
     },
+    CHART_ITEM_RARITY_PERCENT(false) {
+        @Override
+        public void beforeGeneration(ChartGenContext context, float value) {
+            context.addItemRarityPercent(value);
+        }
+    },
     CHART_BRIDGE_ITEM_PERCENT(DropType.BRIDGE),
     CHART_CREW_QUARTERS_ITEM_PERCENT(DropType.CREW_QUARTERS),
     CHART_ENGINE_ROOM_ITEM_PERCENT(DropType.ENGINE_ROOM),

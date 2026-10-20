@@ -30,13 +30,13 @@ public final class WormholeAnchorLinks implements AnchorLinks.ExitLookup {
     @Override
     public boolean canOpen(String socketedItemId) {
         WormholeAnchor anchor = anchor(socketedItemId);
-        return anchor != null && anchor.canOpen(Global.getSector());
+        if (anchor == null) {
+            return false;
+        }
+        return NpcItems.isNpcId(socketedItemId) ? anchor.linkedExitNodeId() != null : anchor.canOpen(Global.getSector());
     }
 
     private static WormholeAnchor anchor(String socketedItemId) {
-        if (socketedItemId == null || NpcItems.isNpcId(socketedItemId)) {
-            return null;
-        }
         return ItemStore.lookup(socketedItemId) instanceof WormholeAnchor anchor ? anchor : null;
     }
 

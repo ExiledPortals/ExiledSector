@@ -307,14 +307,18 @@ no-fighter-bays node that replaces it.
 
 Next, `npc_faction_volumes.csv` maps the fleet's faction to one of the seven vanilla faction volumes. If it
 has one, the ship takes one notable or keystone there, weighted by relevance and tier, when the budget
-reaches it. It gets there through an implicit wormhole anchor for its volume (see "Wormhole anchors"): the
-nearest standard socket it can afford is treated as holding that anchor. The ship pays for the socket's path
-and its node slot like a player would, and the volume's exit then opens for free. If the ship already has an
-allocated socket that holds no item, that socket takes the anchor at no cost. No item is created and nothing
-drops from it. The socket holding the implicit anchor is never claimed for a rolled item, so
-`NpcFleetLeveller.decide` never fills it. A faction without a volume gets no anchor, and an exit whose skill
-type is locked for NPCs is never opened. The anchor is stored in the tree tag as an `anchors:` field
-(`socket=exit`), so decoding the tag rebuilds the same link.
+reaches it. It gets there through its faction's real wormhole anchor (see "Wormhole anchors"), which
+`NpcFleetLeveller` passes in as an NPC item id (`NpcItems.anchorFor`, seed 0, so every ship carries the same
+short id). While planning, the nearest standard socket it can afford is treated as able to hold the anchor.
+The ship pays for the socket's path and its node slot like a player would, and once the path is committed the
+anchor is socketed there and the volume's exit opens for free. If the ship already has an allocated socket
+that holds nothing, that socket takes the anchor at no cost. The exit is the one the anchor links to, so the
+planned jump and the real link always agree. A ship only keeps the anchor if it allocates a node in the volume:
+after the faction step, an anchor with nothing behind it is unsocketed, its exit released and the volume closed
+for the rest of the build. A faction without a volume or without an anchor whose area is on gets none, and an
+exit whose skill type is locked for NPCs is never opened. The anchor is stored in the tag's `sockets:` field
+like any socketed item. Older tags with an `anchors:` field (`socket=exit`) decode to the real anchor, and
+any other NPC item or unlocked section in an old tag is dropped.
 
 The rest of the budget goes to goals. Notables and keystones are drawn by seeded weighted random
 (relevance × tier) until their path lengths cover the remaining budget, and the ship then takes the
@@ -324,18 +328,19 @@ notable or keystone fits, and then they fill whatever is left.
 Every step is a breadth-first search from the allocated nodes. A node is traversable only if the ship can
 use it: requirement tags, exclusivity and hull size are checked through `NodeEligibility`, and optional
 nodes pick an option the ship can use. Wormhole nodes are never walked into: the core shortcuts are not
-crossed at all, and an exit is only reached by jumping from the socket that holds the ship's implicit anchor.
+crossed at all, and an exit is only reached by jumping from the socket that holds the ship's anchor.
 
-When the player recovers an NPC ship, its tree becomes the player's, but an implicit anchor is not an item the
-player owns. `ShipTreeSync` drops the implicit anchor while adopting the tree and releases every node it
-reached, so the recovered ship keeps no volume it has no anchor for. The empty socket stays allocated.
+NPC ships carry nothing else: no subroutines, no unlocked sections and no hull items. Their anchor never drops
+when they die. When the player recovers an NPC ship, its tree becomes the player's, but the anchor does not.
+`ShipTreeSync` unsockets it while adopting the tree and releases every node it reached, so the recovered ship
+keeps no volume it has no anchor for. The empty socket stays allocated.
 
 `NpcRelevance` weights theme tags: matching weapon kinds, fighter bays, shields, phase cloaks and heavy armour
 lift their themes, and so do the themes of nodes that own the ship's built-in hull mods.
 
 ## NPC levels
 
-An NPC ship's level is the number of nodes it allocates besides its root (`NpcTreeTag.nodesBesidesRoot`).
+An NPC ship's level is the number of nodes it allocates besides its root (`NpcTreeTag.allocatedNodeCount`, read straight from the tag).
 Open-world fleets roll it as before, 80% to 120% of a random player combat ship's tree power
 (`NpcTreeSize.roll`), then cap it by the fleet's category (`NpcLevelCaps`). The design is in
 `docs/plans/npc_levels.md`.
@@ -403,13 +408,12 @@ built. `BYPASS` is parked: the kind exists but no row uses it, and its design an
 for it are in `docs/plans/bypass_subroutine.md`.
 
 Only some kinds take part in the generic item pools: the drop pickers in `ItemDrops` (salvage sites, battle
-loot, chart loot, tech-mining and the targeted subroutine bonus) and the subroutines NPC trees put in their
-sockets (`NpcItems.pickDefinition`). `SubroutineKind.inGenericPools` decides it per kind, and
-`ItemDrops.isDroppable` applies it to every picker at once. `MODSPEC_CACHE`, `DOCTRINE` and `BYPASS` are left out,
-so NPCs never socket them and nothing drops them by chance; each gets a drop path of its own (modspec
-caches have theirs, see "Modspec caches"). Only `UNIQUE` stays in, and unique subroutines are still
-limited to their own sources. Since no non-unique kind is in the generic pools, the general salvage roll's
-basic pick and an NPC's basic socket roll currently find no subroutine at all.
+loot, chart loot, tech-mining and the targeted subroutine bonus). `SubroutineKind.inGenericPools` decides it per
+kind, and `ItemDrops.isDroppable` applies it to every picker at once. `MODSPEC_CACHE`, `DOCTRINE` and `BYPASS` are
+left out, so nothing drops them by chance; each gets a drop path of its own (modspec caches have theirs, see
+"Modspec caches"). Only `UNIQUE` stays in, and unique subroutines are still limited to their own sources. Since
+no non-unique kind is in the generic pools, the general salvage roll's basic pick currently finds no subroutine
+at all. NPC trees never socket a subroutine (see "Generated NPC trees").
 
 Unique subroutines are hand-made rows with `kind` set to `UNIQUE` and `unique` set to `true`; a `UNIQUE` row
 without the flag is skipped. They are the one subroutine kind that carries plain skill effects. Their `lines`
@@ -432,9 +436,9 @@ within the item's type and skips unique subroutines.
 
 Each unique subroutine names where it comes from in its `source` column, as `faction:FACTION_ID` or
 `site:SALVAGE_SITE_ID`, several separated by `;`. A source restricts the existing unique drop paths rather
-than adding new ones. `faction:` uniques can only be drawn by `NpcItems.pickDefinition` for a fleet of that
-faction, which is the small unique share of the items a levelled NPC flagship carries in its tree sockets;
-the fleet is flagged for the sensor alert, and destroying or recovering the ship drops the item as usual.
+than adding new ones. Unique subroutines are salvage only for now: NPC ships carry no items, so a `faction:` source
+is still read but nothing draws it, and no shipped row uses one. The Halcyon Fire-Control Lattice comes from
+research stations and the Cracked Drive Governor from mining stations.
 `site:` uniques can only be drawn by the unique roll of that `item_salvage.csv` site, so the site needs a
 `uniqueChance` above zero. Unique hull items have no source and still drop from any site with a unique roll.
 `ItemDrops.pickUnique`, which transposition uses, never draws a unique with a source. Like every unique, they
@@ -494,7 +498,7 @@ limited to one per ship and modspec caches and Unique ones are not (`SubroutineK
 leaving out the socket being filled and the item itself, so swapping one for another in the same socket is
 allowed. Installing from the subroutine storage panel checks it and shows the refusal in the panel's notice
 line until the next install attempt, a successful install, or a change of selected item or targeted socket.
-NPC trees skip a socket roll that would break it, and if a transposition turns a socketed subroutine into a
+If a transposition turns a socketed subroutine into a
 kind the ship already has its fill of, `SocketCustody.unsocketIfMisfit` unsockets it.
 
 A definition can also carry its own limit in the `socket_limit` column of `subroutines.csv`: the most copies
@@ -525,8 +529,8 @@ the player allocated is the price. It fits any standard socket and several can s
 socket one.
 
 The row has `unique` set to `true`, so it shows in the unique colour and the codex treats it as a unique, but
-its kind keeps it out of the generic pools (`SubroutineKind.inGenericPools`), so no generic unique roll, NPC
-socket roll or transposition ever picks it; it drops only through its own paths (see "Drops" below). Unlike
+its kind keeps it out of the generic pools (`SubroutineKind.inGenericPools`), so no generic unique roll or
+transposition ever picks it; it drops only through its own paths (see "Drops" below). Unlike
 other uniques it has no player level gate.
 
 ### Definitions and the node pool
@@ -774,7 +778,7 @@ reconnect.
 
 The definitions are in `data/config/exiledSector/wormhole_anchors.csv`, one row per tree volume, with the
 columns `id`, `volume`, `exit_node`, `name`, `icon`, `color`, `crest_faction`, `rarity`, `description`, `unlock`,
-`drop_factions` and `drop_chance`. `volume` is a tree region other than `core`, and `exit_node` is the volume's
+`drop_factions`, `drop_chance`, `market_chance` and `price`. `volume` is a tree region other than `core`, and `exit_node` is the volume's
 exit (`exoship` for ExoTech). `color` and `crest_faction` style the icon (see "Anchor icons"). `WormholeAnchorDefinitions` loads the file after the star charts
 and keeps the volume and exit of each anchor. It skips, with an error in the log, a row whose volume is not a
 region, a row without an exit, a second row for a volume that already has an anchor, and an id that a
@@ -795,9 +799,34 @@ and modspec caches under `modspec_cache`. Each anchor registers its volume, the 
 `drop_factions` (separated by `;`) and its `drop_chance`. A defeated ship counts towards an anchor if its
 fleet's faction maps to the anchor's volume in `npc_faction_volumes.csv`, or is one of its extra factions.
 After a won battle, `ItemLootListener` sums the deployment points the player destroyed or disabled per faction
-and rolls each anchor once: the chance is `drop_chance` per 100 qualifying deployment points, capped at one in
-two. An anchor whose area is off never drops (`FactionFleetDrops.available`). The general drop and NPC pickers
-in `ItemDrops` still skip anchors, so salvage, tech mining, chart loot and NPC sockets never produce one.
+and rolls each anchor once. Anchors register in per-fight mode (`FactionFleetDrops.ChanceMode.PER_FIGHT`): the
+chance is `drop_chance` whenever any qualifying ship was lost, however many, still capped at one in two. A fleet
+that leaves before losing a ship gives nothing, and a lost battle rolls nothing. Modspec caches keep the
+per-100-deployment-points mode. Chart bonuses don't scale anchors. An anchor whose area is off never drops
+(`FactionFleetDrops.available`). NPC ships carry their faction's anchor but never drop it. The general drop
+pickers in `ItemDrops` still skip anchors, so salvage, tech mining and chart loot never produce one.
+
+Anchors are also sold. `MarketItemStock`, a `SubmarketUpdateListener`, runs when the player opens a market. When
+a submarket's weapon and ship stock has just refreshed (`BaseSubmarketPlugin.getSinceSWUpdate()` is 0), each anchor
+whose drop factions include the market's faction rolls its `market_chance` (0.3) in the open and military
+markets, and in RAT's Exoship market (`rat_exoship_market`). Each restock first removes the previous listings, the way vanilla prunes modspecs, so `market_chance` is the chance of an anchor being on sale after any one restock; a copy the player sold there stays. The Hyper-Nav Beacon
+has a chance of 1, so Exo-Tech's Daybreak always sells one after a restock; [REDACTED] and Abyss anchors are
+blank, which means never sold. The clock timestamp of the restock each submarket rolled for is kept in market
+memory (`$exiledSector_itemStockRolledAt_<submarket>`), so reopening a market while the game is paused never
+rolls again. The Exoship market skips that check: RAT advances its plugin as an entity script that runs while
+paused, so its time since restock grows every frame, even in a paused dialog, and reads exactly 0 only straight
+after RAT restocks. That counter alone marks each restock, including one during a long pause at the same game
+time.
+
+The trade screen prices buying and selling from the same `SpecialItemPlugin.getPrice(null, null)`, times
+vanilla's `nonEconItemBuyPriceMult` (1.2) or `nonEconItemSellPriceMult` (0.8), on stacks in its own transaction
+cargo, so the plugin can't tell a sale from a purchase. Market anchors are therefore listed under a second
+special item, `exiledSector_socketable_listing` (`ItemData.toMarketListing`), with the same data. `ItemPlugin`
+prices a listing at the anchor's `price` (default 100000) and every other anchor at its sell value,
+`WormholeAnchorDefinitions.sellBaseValue`, chosen so that selling pays 5% of what buying costs before tariffs.
+`ItemData.of` reads both ids. As a `ColonyInteractionListener`, `MarketItemStock` turns every listing in the
+player's cargo back into an ordinary item after each market transaction and when a market opens or closes, so a
+bought anchor sells for 5% like any other.
 
 The volumes with no vanilla faction take their extra factions from the mods that add them: `kesteven` and
 `enigma` from LOST_SECTOR, `nightcross` and `stargazer` from Nightcross, and the Abyssal factions of RAT for the
@@ -933,8 +962,12 @@ to be allocated to give anything, and only one Doctrine Archive fits on a ship (
 a second is refused, extras are unsocketed when a save loads (`SubroutineSocketLimits`), and restoring an NPC
 tree from its tag skips a socket past the limit. Doctrine Archives have unique rarity (`SubroutineKind.uniqueRarity`,
 read through `ItemDefinition.hasUniqueRarity`) without being `unique` in `subroutines.csv`, so they stay out of
-the unique drop and unlock rules and still take Corrupted Nanoswarms and Replicator Nanoseeds. Nothing drops them
-yet; the console command `ExiledSectorGrantDoctrineArchives [faction]` adds them for testing.
+the unique drop and unlock rules and still take Corrupted Nanoswarms and Replicator Nanoseeds. They drop only from
+the wardens of tier 14 and 15 charts: `ChartFleetLoot` calls `DoctrineArchives.rollForWarden` alongside the
+warden's spoils, at a 50% chance scaled by the share of the warden destroyed and the Hoard. It drops the doctrine
+of the chart's faction, matched directly or through `npc_faction_volumes.csv` (so a Sindrian Diktat chart drops
+the Lions Guard doctrine and a Luddic Path chart the Luddic one), and a random doctrine for a faction without one.
+The console command `ExiledSectorGrantDoctrineArchives [faction]` adds them for testing.
 
 Each doctrine has a row in `data/config/exiledSector/doctrine_archives.csv`, keyed by the subroutine's id.
 `behaviour` is `TRANSFORM` or `AUGMENT`, `radius` is `small`, `medium` or `large` (the sizes from "Node
@@ -1091,6 +1124,44 @@ other sprites (relative to `--ships`, which defaults to the dev install's `graph
 `--preview <file>` writes a sheet of all twelve icons. The rarity colours are copied from `ItemRarity`,
 so change both together.
 
+## Battle item drops
+
+Hull items, unique hull items and Hull Upgrades drop from every won battle through `BattleItemDrops`, sized by
+how much the player beat and how hard the fight was. Nothing comes from what NPC ships carried. The roll needs
+Hull Upgrades on and player level 15 (`ItemUnlock.sectionsOpen`), and a unique also needs `ItemUnlock.canDrop`.
+
+Each destroyed or disabled enemy ship counts as `DP × (1 + allocated nodes / 30)` power, the node count read
+straight from its NPC tree tag (`NpcTreeTag.allocatedNodeCount`, 0 without a tree). Recovered ships still count.
+`ItemLootListener` multiplies each engagement's power by the same difficulty multiplier as XP and battle Feedstock
+and adds it up per source fleet, next to the parts.
+
+`data/config/exiledSector/battle_item_drops.csv` gives each drop a rate per 100 power: `mods_1` to `mods_4` (a
+basic hull item rolled with exactly that many modifiers), `unique` and `hull_upgrade`. For each row the expected
+count is the sum over source fleets of `power / 100 × rate × the fleet's general item chance × the setting`, and
+`ItemDrops.wholeParts` turns it into a count. A fleet's item chances come from `LootContexts.forFleet`: the live
+run's context for a chart fleet, `LootContexts.global()` (no bonus for now) for anything else. A targeted bonus,
+such as Reactor items, adds that section's share on top, like site salvage does. The battle total is capped at
+25, cut in the order `mods_1`, `mods_2`, `hull_upgrade`, `mods_3`, `mods_4`, `unique`, so the rarest drops survive.
+
+A `mods_N` drop picks a basic definition whose prefix and suffix pools can hold N modifiers
+(`ItemRoller.canRollEffectCount`) and rolls it with `ItemData.rolledWithEffectCount`, which stores the rolled
+modifiers on the item. A unique is drawn with `pickUniqueFrom(FACTION, …)` for the faction that lost the most
+deployment points, filtered to hull items. A Hull Upgrade takes the hull size of a defeated ship, weighted by
+power. The LunaLib setting `exiledSector_battleItemDropPercent` (default 100) scales every row.
+
+Without a loot screen, battle drops are announced grouped: one line per rarity when two or more drop, and
+uniques and Hull Upgrades by name. A chart's Rarity bonus multiplies the `mods_3`, `mods_4` and `unique` rows (see
+"Drop bonuses" under "Star Chart loot").
+
+## Market hull items
+
+Every open, military and black market sells hull items. When one of them restocks its weapons and ships (the same
+once-per-restock check as anchors, see "Wormhole anchors"), `MarketItemStock` removes the non-unique hull items in
+its cargo, the way vanilla prunes weapons, and adds a fresh set. `data/config/exiledSector/market_hull_items.csv`
+gives each submarket id a `min_count` and `max_count`. Each item is a basic hull item rolled with exactly one
+modifier (`MarketHullItems.roll`), never a unique. Like every other hull item source, markets only stock them while
+`ItemUnlock.sectionsOpen` holds (Hull Upgrades on and player level 15). They use the shared item price.
+
 ## Star Chart loot
 
 Loot in a chart system has three layers: the sites placed in it, the sources loot comes out of (salvaging a
@@ -1118,6 +1189,13 @@ Evolution arsenal station also needs IndEvo's derelict and derelict station sett
 bonus, plus Salvage for the item types (hull sections, subroutines, star charts), plus Quantity for every
 type except colony items, all divided by 100. Chart quality counts as 1% Quantity per point. The chart
 tooltip lists the totals that aren't zero.
+
+Rarity (`CHART_ITEM_RARITY_PERCENT`, the Treasure suffix) adds up the same way and becomes `ItemChances.rarity`,
+1 plus the total over 100. It means the same thing at every source. Battle drops multiply their `mods_3`,
+`mods_4` and `unique` rows by it. Site salvage, for hull items and subroutines alike, multiplies the weights of the rare effect counts (three and four,
+anything above the type's common maximum) in `AffixLayout.rolledEffectCount` before picking a count
+(`ItemData.rolledWithRarity`), and multiplies the site's unique chance. At a rarity of 1 every roll is exactly
+the usual one, seed for seed.
 
 ### Our items and materials
 
@@ -1152,7 +1230,10 @@ with `BattleAPI.getSourceFleet`. When the battle's loot is built, each chart fle
 `exiledSector_chart_fleet` rule and the `chart_fleet` chart drop once, scaled by the share of its starting
 points destroyed. A running total in fleet memory (`$exiledSector_chartLootDpPaid`) caps a fleet at one
 full roll however many battles it takes. The warden also rolls `exiledSector_chart_warden` and
-`chart_warden`, scaled by the Hoard. Each fleet rolls on its own, so an error only loses that fleet's loot.
+`chart_warden`, scaled by the Hoard. A chart fleet's roll skips hull items, Hull Upgrades and the unique
+(`ItemDrops.rollFleetSalvage`), since those come from battle drops (see "Battle item drops"), which read the
+run's item chances for the chart fleet's share of the battle. The warden roll still includes them. Each fleet
+rolls on its own, so an error only loses that fleet's loot.
 Battles inside a chart system don't roll the general battle chart drop.
 
 The vanilla fleet rows in `chart_loot.csv` are sized per 100 fleet points at spawn and scaled by the bonus;

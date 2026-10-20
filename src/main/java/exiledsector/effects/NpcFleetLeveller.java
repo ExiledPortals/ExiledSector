@@ -11,7 +11,6 @@ import exiledsector.charts.ChartLevelRange;
 import exiledsector.charts.ChartTiers;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
-import exiledsector.skills.FittedShipProfile;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.npc.NpcBuildRequest;
@@ -31,20 +30,14 @@ import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.tags.ShipProfile;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.items.NpcItems;
-import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemData;
-import exiledsector.items.ItemUnlock;
-import exiledsector.items.SubroutineSocketLimits;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Predicate;
 
 public final class NpcFleetLeveller {
 
-    private static final String HULL_ITEM_SEED_SUFFIX = "|socketables";
     private static final String CHART_SEED_PREFIX = "chart|";
 
     private NpcFleetLeveller() {
@@ -56,7 +49,6 @@ public final class NpcFleetLeveller {
         }
         Map<String, String> recordsByMemberId = NpcTreeRecords.of(npcFleet.getMemoryWithoutUpdate());
         String seedPrefix = null;
-        int playerLevel = 0;
         List<Integer> playerShipPowers = List.of();
         String fleetFactionId = npcFleet.getFaction() == null ? null : npcFleet.getFaction().getId();
         String factionRegion = fleetFactionId == null ? null : NpcFactionVolumes.regionFor(fleetFactionId);
@@ -74,7 +66,6 @@ public final class NpcFleetLeveller {
             String memberRecord = recordsByMemberId.get(member.getId());
             if (memberRecord == null) {
                 if (seedPrefix == null) {
-                    playerLevel = Global.getSector().getPlayerStats().getLevel();
                     playerShipPowers = chartLevels != null ? List.of() : PlayerTreePower.current();
                     seedPrefix = chartSeed != null ? CHART_SEED_PREFIX + chartSeed + "|"
                             : Global.getSector().getSeedString() + "|" + npcFleet.getId() + "|";
@@ -83,12 +74,9 @@ public final class NpcFleetLeveller {
                     levelLimit = NpcLevelCaps.limitFor(npcFleet);
                 }
                 String memberSeedKey = chartSeed != null ? String.valueOf(memberIndex) : member.getId();
-                Random itemRandom = member.isFlagship() && carriesItems(npcFleet)
-                        ? Seeds.random(seedPrefix + memberSeedKey + HULL_ITEM_SEED_SUFFIX) : null;
-                memberRecord = decide(member, playerLevel, playerShipPowers, chartLevels, levelLimit, factionRegion, fleetFactionId,
-                        Seeds.random(seedPrefix + memberSeedKey), itemRandom, definition -> ItemUnlock.canDrop(definition, Global.getSector()));
+                memberRecord = decide(member, playerShipPowers, chartLevels, levelLimit, factionRegion,
+                        Seeds.random(seedPrefix + memberSeedKey));
                 recordsByMemberId.put(member.getId(), memberRecord);
-                NpcUniqueAlerts.markIfCarrying(npcFleet, memberRecord);
             }
             if (NpcTreeRecords.isLevelled(memberRecord)) {
                 apply(member, memberRecord);
@@ -111,19 +99,8 @@ public final class NpcFleetLeveller {
         return member.getVariant().getPermaMods().contains(SkillTreeHullMod.ID) || ShipSkillDataManager.hasProgress(member.getId());
     }
 
-    static boolean carriesItems(CampaignFleetAPI fleet) {
-        return fleet.getFaction() != null && !fleet.getFaction().isPlayerFaction();
-    }
-
-    static String decide(FleetMemberAPI member, int playerLevel, List<Integer> playerShipPowers, String factionRegion, Random random,
-                         Random itemRandom, Predicate<ItemDefinition> uniqueAllowed) {
-        return decide(member, playerLevel, playerShipPowers, null, NpcLevelLimit.UNCAPPED, factionRegion, null, random, itemRandom,
-                uniqueAllowed);
-    }
-
-    static String decide(FleetMemberAPI member, int playerLevel, List<Integer> playerShipPowers, ChartLevelRange chartLevels,
-                         NpcLevelLimit levelLimit, String factionRegion, String fleetFactionId, Random random, Random itemRandom,
-                         Predicate<ItemDefinition> uniqueAllowed) {
+    static String decide(FleetMemberAPI member, List<Integer> playerShipPowers, ChartLevelRange chartLevels, NpcLevelLimit levelLimit,
+                         String factionRegion, Random random) {
         if (!NpcShipSelector.isCandidate(member) || !NpcShipSelector.isChosen(member, random)) {
             return NpcTreeRecords.NOT_LEVELLED;
         }
@@ -133,20 +110,9 @@ public final class NpcFleetLeveller {
                         member.isFlagship());
         NpcHullMods hullMods = NpcHullMods.of(member.getVariant());
         String designType = designType(member.getHullSpec());
-        int itemCount = itemRandom == null ? 0 : NpcItems.rollCount(playerLevel, itemRandom);
         NpcTreeBuild treeBuild = NpcSkillTreeBuilder.generate(new NpcBuildRequest(shipProfile, designType, factionRegion, hullMods,
-                NpcFreedOp.of(member, hullMods), nodeCount, itemCount, SkillTypeUnlockStatus.lockedFor(null),
+                NpcFreedOp.of(member, hullMods), nodeCount, NpcItems.anchorFor(factionRegion), SkillTypeUnlockStatus.lockedFor(null),
                 member.getHullSpec().getHullId()), random);
-        for (String socketNodeId : treeBuild.claimedSockets()) {
-            ItemDefinition definition = NpcItems.pickDefinition(itemRandom, fleetFactionId, uniqueAllowed);
-            if (definition != null && !SubroutineSocketLimits.limitReached(definition, socketNodeId, treeBuild.shipData().getSocketedItems())) {
-                treeBuild.shipData().socketItem(socketNodeId, NpcItems.id(ItemData.rolled(definition, itemRandom.nextLong())));
-            }
-        }
-        if (itemRandom != null) {
-            NpcItems.rollSectionItems(treeBuild.shipData(), member.getHullSpec().getHullSize(),
-                    () -> FittedShipProfile.profile(member.getHullSpec(), member.getVariant(), treeBuild.shipData()), playerLevel, itemRandom);
-        }
         return NpcTreeTag.encode(treeBuild.shipData());
     }
 

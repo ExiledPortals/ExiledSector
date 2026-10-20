@@ -30,7 +30,7 @@ The roll stays as it is: 80% to 120% of a random player ship's tree power. The r
 
 Below the cap this is still a mirror, so going from level 5 to level 12 does not make pirates easier. That is intended: the roll does not shrink as the player nears the cap.
 
-Flagship hull item counts (`NpcItems.rollCount`, `rollSectionItems`) follow player character level today and stay as they are.
+Flagship hull item counts used to follow player character level; since `docs/plans/npc_loot.md` NPC ships carry no items at all.
 
 ## 3. Bounties (done)
 
@@ -78,7 +78,7 @@ In `chart_drops.csv`, `min_strength` and `strength_per_tier` stay as the gate fo
 1. Categories and `npc_levels.csv`, with open-world caps and the capped `NpcBonusScale`. Done in c7a6f882 on `main`: `NpcLevelCategory`, `NpcLevelCaps`, the cap in `NpcFleetLeveller.decide`, `NpcBonusScale.forShip`. Each levelled ship carries its cap as a variant tag (`NpcLevelCaps.TAG_PREFIX`), because vanilla merges a battle side into one fleet with the primary fleet's faction and commander. `PlayerTreePower.logNpcScaling` already logs the caps (section 6).
 2. Chart fleet levels: the column rename, `fleetStrengthRangeFor`, the Fleet Strength % conversion and the editor table. Done in 322df1bc, merged into `main`: `ChartLevelRange`, warden flag `ChartIds.WARDEN_MEMORY_KEY`.
 3. Bounty detection (decompile first), then the bounty cap and the flagship bonus. Done, committed on `main`: `NpcBounties`, `NpcLevelLimit`, `NpcLevelCaps.bountyLimit`.
-4. Outside chart drop tiers from defeated NPC levels. Done, committed on `main`: `ChartTiers.tierForLevel`, `ChartDrops.battleTier`, `NpcTreeTag.nodesBesidesRoot`. The defeated level comes from each lost ship's NPC tree tag, which `ItemLootListener.hold` already decodes. Battle `max_tier` stays 6, so an AI fleet at 35 (tier 7 by `level_min`) still drops tier 6.
+4. Outside chart drop tiers from defeated NPC levels. Done, committed on `main`: `ChartTiers.tierForLevel`, `ChartDrops.battleTier`. The defeated level comes from each lost ship's NPC tree tag (`NpcTreeTag.allocatedNodeCount` in `ItemLootListener.holdBattlePower` since the NPC loot merge). Battle `max_tier` stays 6, so an AI fleet at 35 (tier 7 by `level_min`) still drops tier 6.
 5. Docs and settings text. Done, committed on `main`: the NPC Tree Size and NPC Bonus Scaling texts (en and zh_CN), the "NPC levels" section of `docs/docs.md`, and the NPC paragraphs of the README and forum post.
 
 Steps 1 and 2 touch different files and can run in parallel. Step 3 needs step 1's category code. Step 4 needs step 2's `level_min` column.

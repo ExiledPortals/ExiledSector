@@ -37,10 +37,12 @@ class NpcGenerationDataTest {
     @BeforeAll
     static void loadRealTree() throws Exception {
         RealSkillData.load();
+        NpcTestAnchors.install();
     }
 
     @AfterAll
     static void clear() {
+        NpcTestAnchors.uninstall();
         RealSkillData.clear();
     }
 
@@ -61,7 +63,7 @@ class NpcGenerationDataTest {
                     String designType = DESIGN_TYPES.get(combination++ % DESIGN_TYPES.size());
                     String label = archetype.name() + " / " + designType + " / " + faction + " / " + count;
                     NpcTreeBuild build = NpcSkillTreeBuilder.generate(new NpcBuildRequest(archetype.profile(), designType, faction,
-                            NpcHullMods.NONE, NpcFreedOp.NONE, count), new Random(label.hashCode()));
+                            NpcHullMods.NONE, NpcFreedOp.NONE, count, NpcTestAnchors.idFor(faction)), new Random(label.hashCode()));
                     check(label, build, archetype, faction, problems);
                     long charged = build.steps().stream().filter(NpcBuildStep::isCharged).count();
                     if (charged != count) {

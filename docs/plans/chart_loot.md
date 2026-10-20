@@ -128,7 +128,9 @@ Vanilla drop types. When each fleet spawns (`ChartContentGenerator.spawnFleet`),
 
 Our drop types. At spawn, the fleet's memory also records its starting deployment points. When the battle's loot is built (`ItemLootListener`), each defeated chart fleet from this run rolls our drop types once, using a new site rule `exiledSector_chart_fleet` in `item_salvage.csv`. The chance multiplier is `bonus × (DP defeated from this fleet / its starting DP)`. A fleet beaten in two engagements therefore pays out once in total, split across the two.
 
-This replaces the single `system_battle` roll in `chart_drops.csv`. Its chart and cipher chances become rows of the fleet rule. The NPC-carried items and upgrade drops (`NpcItems`) are unchanged. They stack on top.
+This replaces the single `system_battle` roll in `chart_drops.csv`. Its chart and cipher chances become rows of the fleet rule.
+
+Since `docs/plans/npc_loot.md`, NPC ships carry no items, and the fleet rule no longer rolls hull items, Hull Upgrades or the unique (`ItemDrops.rollFleetSalvage`). Fleet hull items come from the battle drop source (`BattleItemDrops`) instead, which reads each chart fleet's item chances from this run through `LootContexts.forFleet`. The warden rule still rolls everything.
 
 `ChartContentListener.reportBattleOccurred` and its TODO are removed, because the work lives in `ItemLootListener`, next to the existing battle loot.
 

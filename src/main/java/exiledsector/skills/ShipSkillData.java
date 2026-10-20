@@ -35,7 +35,6 @@ public class ShipSkillData implements WormholePartners {
     private Map<String, String> frameworkItemsBySocketType;
     private boolean autoAllocateTemplate;
     private transient int pendingTemplateCredits;
-    private Map<String, String> implicitAnchorExits;
     private transient Map<String, String> anchorExitBySocketId;
     private transient Map<String, String> anchorSocketByExitId;
     private transient int anchorLinksRevision;
@@ -299,25 +298,6 @@ public class ShipSkillData implements WormholePartners {
         return pairs;
     }
 
-    public Map<String, String> getImplicitAnchorExits() {
-        return implicitAnchorExits == null ? Map.of() : Collections.unmodifiableMap(implicitAnchorExits);
-    }
-
-    public void setImplicitAnchor(String socketNodeId, String exitNodeId) {
-        revision++;
-        if (implicitAnchorExits == null) implicitAnchorExits = new LinkedHashMap<>();
-        implicitAnchorExits.put(socketNodeId, exitNodeId);
-    }
-
-    public boolean dropImplicitAnchors() {
-        revision++;
-        if (implicitAnchorExits == null || implicitAnchorExits.isEmpty()) {
-            return false;
-        }
-        implicitAnchorExits = null;
-        return true;
-    }
-
     private void refreshAnchorLinks() {
         AnchorLinks.ExitLookup lookup = AnchorLinks.lookup();
         int lookupRevision = lookup.revision();
@@ -327,12 +307,9 @@ public class ShipSkillData implements WormholePartners {
         }
         Map<String, String> exitBySocketId = new LinkedHashMap<>();
         Map<String, String> socketByExitId = new LinkedHashMap<>();
-        if (implicitAnchorExits != null) {
-            new TreeMap<>(implicitAnchorExits).forEach((socketId, exitId) -> link(socketId, exitId, exitBySocketId, socketByExitId));
-        }
         if (socketedItems != null) {
             new TreeMap<>(socketedItems).forEach((socketId, itemId) -> {
-                if (isAllocated(socketId) && !exitBySocketId.containsKey(socketId)) {
+                if (isAllocated(socketId)) {
                     link(socketId, lookup.exitNodeId(itemId), exitBySocketId, socketByExitId);
                 }
             });
@@ -497,9 +474,6 @@ public class ShipSkillData implements WormholePartners {
     }
 
     private boolean canOpen(String socketId, AnchorLinks.ExitLookup lookup) {
-        if (implicitAnchorExits != null && implicitAnchorExits.containsKey(socketId)) {
-            return true;
-        }
         String itemId = getSocketedItem(socketId);
         return itemId != null && lookup.canOpen(itemId);
     }
@@ -583,7 +557,6 @@ public class ShipSkillData implements WormholePartners {
     public void mirrorSocketedItems(ShipSkillData source) {
         revision++;
         socketedItems = source.socketedItems == null ? null : new LinkedHashMap<>(source.socketedItems);
-        implicitAnchorExits = source.implicitAnchorExits == null ? null : new LinkedHashMap<>(source.implicitAnchorExits);
     }
 
     private ShipSkillData releaseCopy() {

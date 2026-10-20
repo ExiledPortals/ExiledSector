@@ -14,7 +14,6 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SubroutineKindPoolsTest {
@@ -52,21 +51,6 @@ class SubroutineKindPoolsTest {
         assertEquals(EnumSet.of(SubroutineKind.UNIQUE), generic);
         assertFalse(SubroutineKind.inGenericPools(ItemDefinitions.get("doctrine_chip")));
         assertTrue(SubroutineKind.inGenericPools(ItemDefinitions.get("plate")));
-    }
-
-    @Test
-    void npcSocketPicksNeverTakeVolumeDoctrineOrBypassSubroutines() {
-        Random random = new Random(3L);
-        Set<String> picked = new HashSet<>();
-        for (int trial = 0; trial < TRIALS; trial++) {
-            ItemDefinition definition = NpcItems.pickDefinition(random, "pirates", candidate -> true);
-            if (definition != null) {
-                picked.add(definition.id());
-            }
-        }
-
-        assertEquals(Set.of("relic"), picked);
-        assertNull(ItemDrops.pickBasic(new Random(5L)));
     }
 
     @Test

@@ -23,6 +23,7 @@ final class ChartLootTotals {
         List<StyledText> lines = new ArrayList<>();
         addLine(lines, Translation.text("chart.totals.quantity"), context.quantityPercent());
         addLine(lines, Translation.text("chart.totals.items"), context.itemPercent());
+        addLine(lines, Translation.text("chart.totals.itemRarity"), context.itemRarityPercent());
         for (DropType type : DropType.values()) {
             addLine(lines, Translation.text(DROP_TYPE_KEY_PREFIX + type.name()), context.dropPercent(type));
         }

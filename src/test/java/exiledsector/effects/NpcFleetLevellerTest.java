@@ -24,7 +24,11 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import exiledsector.ExiledSectorModPlugin;
 import exiledsector.charts.ChartIds;
+import exiledsector.items.NpcItems;
+import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.items.WormholeAnchorLinks;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.AnchorLinks;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillNode;
@@ -41,6 +45,7 @@ import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.SkillNodeOpCost;
 import lunalib.lunaSettings.LunaSettings;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -453,7 +458,7 @@ class NpcFleetLevellerTest {
     }
 
     @Test
-    void aFactionShipAnchorsASocketToReachANotableInItsFactionVolumeAndLeavesThatSocketEmpty() throws Exception {
+    void aFactionShipSocketsItsFactionsRealAnchorToReachANotableInItsVolume() throws Exception {
         SkillTree.register(new SkillNode("socket_1", type("socket", SkillTier.SOCKET).build(), List.of("a_1"), 0f, 0f,
                 SkillNodeDecoration.NONE, List.of("core")));
         SkillTree.register(new SkillNode("gate_far", type("wormhole_exit", SkillTier.WORMHOLE_EXIT).build(), List.of(), 0f, 0f,
@@ -461,16 +466,26 @@ class NpcFleetLevellerTest {
         SkillTree.register(new SkillNode("hegemony_notable", type("pride", SkillTier.NOTABLE).build(), List.of("gate_far"), 0f, 0f,
                 SkillNodeDecoration.NONE, List.of("hegemony")));
         NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
-        FleetMemberAPI officered = member("m1", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
-        CampaignFleetAPI fleet = fleetOf(officered);
-        when(fleet.getFaction().getId()).thenReturn("hegemony");
+        WormholeAnchorDefinitions.register(new JSONArray().put(new JSONObject().put("id", "wormhole_anchor_hegemony").put("volume", "hegemony")
+                .put("exit_node", "gate_far").put("name", "Hegemony Anchor").put("icon", "graphics/icons/nav_relay.png").put("rarity", "10")
+                .put("description", "Opens a wormhole.")));
+        WormholeAnchorLinks.install();
+        try {
+            FleetMemberAPI officered = member("m1", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
+            CampaignFleetAPI fleet = fleetOf(officered);
+            when(fleet.getFaction().getId()).thenReturn("hegemony");
 
-        NpcFleetLeveller.ensure(fleet);
+            NpcFleetLeveller.ensure(fleet);
 
-        String tag = NpcTreeTag.find(officered.getVariant());
-        assertTrue(tag.contains("socket_1") && tag.contains("gate_far") && tag.contains("hegemony_notable"), tag);
-        assertTrue(tag.contains("anchors:socket_1=gate_far"), tag);
-        assertNull(NpcTreeTag.decode(tag).getSocketedItem("socket_1"), tag);
+            String tag = NpcTreeTag.find(officered.getVariant());
+            assertTrue(tag.contains("socket_1") && tag.contains("gate_far") && tag.contains("hegemony_notable"), tag);
+            assertTrue(tag.endsWith("|sockets:socket_1=npc:wormhole_anchor_hegemony/0"), tag);
+            assertEquals("gate_far", NpcTreeTag.decode(tag).anchorExit("socket_1"));
+        } finally {
+            AnchorLinks.install(null);
+            WormholeAnchorDefinitions.clear();
+            NpcItems.clearCache();
+        }
     }
 
     @Test
