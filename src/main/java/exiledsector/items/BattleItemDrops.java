@@ -1,0 +1,240 @@
+package exiledsector.items;
+
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.ModCsv;
+import exiledsector.ModSettings;
+import org.apache.log4j.Logger;
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
+
+public final class BattleItemDrops {
+
+    public static final String DATA_PATH = "data/config/exiledSector/battle_item_drops.csv";
+    public static final String DROP_PERCENT_FIELD_ID = "exiledSector_battleItemDropPercent";
+    public static final int DEFAULT_DROP_PERCENT = 100;
+    public static final int MAX_DROP_PERCENT = 1000;
+    static final String DROP_COLUMN = "drop";
+    static final String RATE_COLUMN = "per_100_power";
+    static final float NODES_PER_DOUBLING = 30f;
+    static final int MAX_ITEMS_PER_BATTLE = 25;
+    private static final float POWER_PER_RATE_STEP = 100f;
+    private static final Logger LOG = Logger.getLogger(BattleItemDrops.class);
+    private static final AtomicReference<Map<Drop, Float>> RATES = new AtomicReference<>(Map.of());
+
+    public enum Drop {
+        MODS_1("mods_1", 1, false),
+        MODS_2("mods_2", 2, false),
+        HULL_UPGRADE("hull_upgrade", 0, false),
+        MODS_3("mods_3", 3, true),
+        MODS_4("mods_4", 4, true),
+        UNIQUE("unique", 0, true);
+
+        private final String id;
+        private final int effectCount;
+        private final boolean rare;
+
+        Drop(String id, int effectCount, boolean rare) {
+            this.id = id;
+            this.effectCount = effectCount;
+            this.rare = rare;
+        }
+
+        public boolean rare() {
+            return rare;
+        }
+
+        public String id() {
+            return id;
+        }
+
+        public int effectCount() {
+            return effectCount;
+        }
+
+        static Drop byIdOrNull(String id) {
+            for (Drop drop : values()) {
+                if (drop.id.equals(id)) {
+                    return drop;
+                }
+            }
+            return null;
+        }
+    }
+
+    public record SourcePower(float power, ItemChances chances) {
+
+        public SourcePower {
+            power = Math.max(0f, power);
+            chances = chances == null ? ItemChances.BASE : chances;
+        }
+    }
+
+    public record Battle(List<SourcePower> sources, Map<HullSize, Float> powerByHullSize, String uniqueFactionId) {
+
+        public Battle {
+            sources = sources == null ? List.of() : List.copyOf(sources);
+            powerByHullSize = powerByHullSize == null ? Map.of() : Map.copyOf(powerByHullSize);
+        }
+
+        public boolean isEmpty() {
+            return sources.stream().noneMatch(source -> source.power() > 0f);
+        }
+    }
+
+    public record Loot(List<ItemData> items, List<HullUpgradeData> upgrades) {
+
+        public static final Loot NONE = new Loot(List.of(), List.of());
+
+        public Loot {
+            items = List.copyOf(items);
+            upgrades = List.copyOf(upgrades);
+        }
+    }
+
+    record Planned(Drop drop, ItemKind kind) {
+    }
+
+    private BattleItemDrops() {
+    }
+
+    public static void load() {
+        ModCsv.load(DROP_COLUMN, DATA_PATH, LOG, BattleItemDrops::register);
+    }
+
+    public static void register(JSONArray rows) throws JSONException {
+        Map<Drop, Float> rates = new EnumMap<>(Drop.class);
+        ModCsv.forEach(rows == null ? new JSONArray() : rows, (index, row) -> {
+            String dropId = ModCsv.text(row, DROP_COLUMN);
+            Drop drop = Drop.byIdOrNull(dropId);
+            float rate = parsedOrNaN(ModCsv.text(row, RATE_COLUMN));
+            if (drop == null) {
+                LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": unknown drop \"" + dropId + "\"");
+            } else if (!(rate >= 0f) || Float.isInfinite(rate)) {
+                LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": " + dropId + " needs a rate of 0 or more");
+            } else {
+                rates.put(drop, rate);
+            }
+        });
+        RATES.set(Collections.unmodifiableMap(rates));
+    }
+
+    private static float parsedOrNaN(String numberText) {
+        try {
+            return Float.parseFloat(numberText);
+        } catch (NumberFormatException e) {
+            return Float.NaN;
+        }
+    }
+
+    public static void clear() {
+        RATES.set(Map.of());
+    }
+
+    public static float rate(Drop drop) {
+        return RATES.get().getOrDefault(drop, 0f);
+    }
+
+    public static float settingMultiplier() {
+        return Math.max(0, ModSettings.intOr(DROP_PERCENT_FIELD_ID, DEFAULT_DROP_PERCENT)) / 100f;
+    }
+
+    public static float shipPower(float deploymentPoints, int allocatedNodeCount) {
+        return Math.max(0f, deploymentPoints) * (1f + Math.max(0, allocatedNodeCount) / NODES_PER_DOUBLING);
+    }
+
+    public static Loot roll(Battle battle, float dropMultiplier, Random random, Predicate<ItemDefinition> uniqueAllowed) {
+        if (battle == null || battle.isEmpty() || !(dropMultiplier > 0f)) {
+            return Loot.NONE;
+        }
+        List<ItemData> items = new ArrayList<>();
+        List<HullUpgradeData> upgrades = new ArrayList<>();
+        for (Planned planned : plan(battle.sources(), dropMultiplier, ItemDrops.sectionKindsWithBasics(), random)) {
+            if (planned.drop() == Drop.HULL_UPGRADE) {
+                upgrades.add(new HullUpgradeData(hullSize(battle.powerByHullSize(), random)));
+            } else if (planned.drop() == Drop.UNIQUE) {
+                ItemDefinition definition = ItemDrops.pickUniqueFrom(UniqueSource.Kind.FACTION, battle.uniqueFactionId(), random,
+                        candidate -> candidate.type() == ItemType.HULL_ITEM && uniqueAllowed.test(candidate));
+                if (definition != null) {
+                    items.add(ItemData.rolled(definition, random.nextLong()));
+                }
+            } else {
+                int effectCount = planned.drop().effectCount();
+                Predicate<ItemDefinition> holdsCount = candidate -> ItemRoller.canRollEffectCount(candidate, effectCount);
+                ItemDefinition definition = planned.kind() == null ? ItemDrops.pickSectionItemBasic(random, holdsCount)
+                        : ItemDrops.pickSectionItemBasic(planned.kind(), random, holdsCount);
+                if (definition != null) {
+                    items.add(ItemData.rolledWithEffectCount(definition, random.nextLong(), effectCount));
+                }
+            }
+        }
+        return new Loot(items, upgrades);
+    }
+
+    static List<Planned> plan(List<SourcePower> sources, float dropMultiplier, List<ItemKind> kindsWithBasics, Random random) {
+        List<Planned> planned = new ArrayList<>();
+        for (Drop drop : Drop.values()) {
+            float expected = 0f;
+            for (SourcePower source : sources) {
+                expected += expected(source, drop, dropMultiplier) * source.chances().general();
+            }
+            addPlanned(planned, drop, null, ItemDrops.wholeParts(expected, random));
+        }
+        for (ItemKind kind : kindsWithBasics) {
+            for (Drop drop : Drop.values()) {
+                if (drop.effectCount() == 0) {
+                    continue;
+                }
+                float expected = 0f;
+                for (SourcePower source : sources) {
+                    expected += expected(source, drop, dropMultiplier) * source.chances().targeted(kind) / kindsWithBasics.size();
+                }
+                addPlanned(planned, drop, kind, ItemDrops.wholeParts(expected, random));
+            }
+        }
+        return capped(planned);
+    }
+
+    private static float expected(SourcePower source, Drop drop, float dropMultiplier) {
+        float rarityMult = drop.rare() ? source.chances().rarity() : 1f;
+        return source.power() / POWER_PER_RATE_STEP * rate(drop) * dropMultiplier * rarityMult;
+    }
+
+    private static void addPlanned(List<Planned> planned, Drop drop, ItemKind kind, int count) {
+        for (int i = 0; i < count; i++) {
+            planned.add(new Planned(drop, kind));
+        }
+    }
+
+    static List<Planned> capped(List<Planned> planned) {
+        if (planned.size() <= MAX_ITEMS_PER_BATTLE) {
+            return planned;
+        }
+        List<Planned> byCutOrder = new ArrayList<>(planned);
+        byCutOrder.sort(Comparator.comparingInt(entry -> entry.drop().ordinal()));
+        return List.copyOf(byCutOrder.subList(byCutOrder.size() - MAX_ITEMS_PER_BATTLE, byCutOrder.size()));
+    }
+
+    static HullSize hullSize(Map<HullSize, Float> powerByHullSize, Random random) {
+        List<HullSize> sizes = new ArrayList<>();
+        for (Map.Entry<HullSize, Float> entry : powerByHullSize.entrySet()) {
+            if (entry.getValue() != null && entry.getValue() > 0f) {
+                sizes.add(entry.getKey());
+            }
+        }
+        if (sizes.isEmpty()) {
+            return HullUpgradeRoller.rollHullSize(random);
+        }
+        sizes.sort(Comparator.naturalOrder());
+        return WeightedPick.pick(sizes, powerByHullSize::get, random);
+    }
+}

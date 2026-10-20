@@ -8,16 +8,12 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.items.DeletedSubroutines;
 import exiledsector.items.NpcItems;
-import exiledsector.items.ItemKind;
-import exiledsector.items.ItemType;
-import exiledsector.items.ItemData;
-import exiledsector.items.SubroutineSocketLimits;
-import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class NpcTreeTag {
 
@@ -29,14 +25,10 @@ public final class NpcTreeTag {
     private static final int CHARGED_NODE_COST = 1;
     static final String GENERATED = "generated";
     static final String SOCKETS_MARKER = "sockets:";
-    static final String UNLOCKED_SECTIONS_MARKER = "frameworkTypes:";
-    private static final String TYPE_SEPARATOR = "+";
-    static final String SECTION_ITEMS_MARKER = "frameworkSockets:";
-    static final String IMPLICIT_ANCHORS_MARKER = "anchors:";
+    static final String LEGACY_ANCHORS_MARKER = "anchors:";
     private static final int MIN_FIELDS = 3;
     private static final int MAX_FIELDS = 7;
     private static final String[] NO_FIELDS = new String[0];
-    private static final Logger LOG = Logger.getLogger(NpcTreeTag.class);
 
     private NpcTreeTag() {
     }
@@ -54,29 +46,7 @@ public final class NpcTreeTag {
                 socketEntries.add(nodeId + OPTION_SEPARATOR + itemId);
             }
         });
-        StringBuilder encodedTag = new StringBuilder(tag);
-        if (!socketEntries.isEmpty()) {
-            encodedTag.append(FIELD_SEPARATOR).append(SOCKETS_MARKER).append(String.join(NODE_SEPARATOR, socketEntries));
-        }
-        if (!shipData.getImplicitAnchorExits().isEmpty()) {
-            List<String> anchorEntries = new ArrayList<>();
-            shipData.getImplicitAnchorExits().forEach((socketNodeId, exitNodeId) -> anchorEntries.add(socketNodeId + OPTION_SEPARATOR + exitNodeId));
-            encodedTag.append(FIELD_SEPARATOR).append(IMPLICIT_ANCHORS_MARKER).append(String.join(NODE_SEPARATOR, anchorEntries));
-        }
-        if (!shipData.getUnlockedSocketTypeIds().isEmpty()) {
-            encodedTag.append(FIELD_SEPARATOR).append(UNLOCKED_SECTIONS_MARKER)
-                    .append(String.join(TYPE_SEPARATOR, shipData.getUnlockedSocketTypeIds()));
-            List<String> sectionEntries = new ArrayList<>();
-            shipData.getSectionItems().forEach((socketTypeId, itemId) -> {
-                if (NpcItems.isNpcId(itemId)) {
-                    sectionEntries.add(socketTypeId + OPTION_SEPARATOR + itemId);
-                }
-            });
-            if (!sectionEntries.isEmpty()) {
-                encodedTag.append(FIELD_SEPARATOR).append(SECTION_ITEMS_MARKER).append(String.join(NODE_SEPARATOR, sectionEntries));
-            }
-        }
-        return encodedTag.toString();
+        return socketEntries.isEmpty() ? tag : tag + FIELD_SEPARATOR + SOCKETS_MARKER + String.join(NODE_SEPARATOR, socketEntries);
     }
 
     public static String find(ShipVariantAPI variant) {
@@ -91,14 +61,18 @@ public final class NpcTreeTag {
         return null;
     }
 
-    public static int nodesBesidesRoot(ShipSkillData npcTree) {
-        return npcTree == null ? 0 : Math.max(0, npcTree.getAllocatedNodeIds().size() - 1);
-    }
-
     public static void removeAll(ShipVariantAPI variant) {
         for (String tag = find(variant); tag != null; tag = find(variant)) {
             variant.removeTag(tag);
         }
+    }
+
+    public static int allocatedNodeCount(String tag) {
+        String[] tagFields = fields(tag);
+        if (tagFields.length == 0 || tagFields[2].isEmpty()) {
+            return 0;
+        }
+        return tagFields[2].split(NODE_SEPARATOR, -1).length - 1;
     }
 
     public static ShipSkillData decode(String tag) {
@@ -118,98 +92,70 @@ public final class NpcTreeTag {
         if (shipData == null) {
             return NpcSkillTreeBuilder.emptyTree();
         }
+        Map<String, String> anchorsBySocketId = new LinkedHashMap<>();
         for (int fieldIndex = MIN_FIELDS; fieldIndex < tagFields.length; fieldIndex++) {
-            if (tagFields[fieldIndex].startsWith(IMPLICIT_ANCHORS_MARKER)) {
-                restoreImplicitAnchors(shipData, tagFields[fieldIndex].substring(IMPLICIT_ANCHORS_MARKER.length()));
+            if (tagFields[fieldIndex].startsWith(SOCKETS_MARKER)) {
+                readAnchors(anchorsBySocketId, tagFields[fieldIndex].substring(SOCKETS_MARKER.length()));
+            } else if (tagFields[fieldIndex].startsWith(LEGACY_ANCHORS_MARKER)) {
+                readLegacyAnchors(anchorsBySocketId, tagFields[fieldIndex].substring(LEGACY_ANCHORS_MARKER.length()));
             }
         }
         for (int i = 1; i < nodeEntries.length; i++) {
-            restore(shipData, nodeEntries[i]);
-        }
-        for (int fieldIndex = MIN_FIELDS; fieldIndex < tagFields.length; fieldIndex++) {
-            restoreField(shipData, tagFields[fieldIndex]);
+            restore(shipData, nodeEntries[i], anchorsBySocketId);
         }
         return shipData;
     }
 
-    private static void restoreField(ShipSkillData shipData, String tagField) {
-        if (tagField.startsWith(SOCKETS_MARKER)) {
-            restoreSockets(shipData, tagField.substring(SOCKETS_MARKER.length()));
-        } else if (tagField.startsWith(UNLOCKED_SECTIONS_MARKER)) {
-            for (String socketTypeId : tagField.substring(UNLOCKED_SECTIONS_MARKER.length()).split("\\" + TYPE_SEPARATOR)) {
-                ItemKind socketType = ItemKind.byIdOrNull(socketTypeId);
-                if (socketType != null && socketType.fitsSection()) {
-                    shipData.grantUnlockedSocketType(socketTypeId);
-                }
-            }
-        } else if (tagField.startsWith(SECTION_ITEMS_MARKER)) {
-            restoreSections(shipData, tagField.substring(SECTION_ITEMS_MARKER.length()));
-        }
-    }
-
-    private static void restoreImplicitAnchors(ShipSkillData shipData, String anchorEntries) {
-        for (String entry : anchorEntries.split(NODE_SEPARATOR)) {
-            int separator = entry.indexOf(OPTION_SEPARATOR);
-            if (separator <= 0) {
-                continue;
-            }
-            String socketNodeId = NodeReplacements.resolve(entry.substring(0, separator));
-            String exitNodeId = entry.substring(separator + 1);
-            SkillNode socket = SkillTree.get(socketNodeId);
-            SkillNode exit = SkillTree.get(exitNodeId);
-            if (socket != null && socket.getType().getTier() == SkillTier.SOCKET && exit != null
-                    && exit.getType().getTier() == SkillTier.WORMHOLE_EXIT) {
-                shipData.setImplicitAnchor(socketNodeId, exitNodeId);
-            }
-        }
-    }
-
-    private static void restoreSections(ShipSkillData shipData, String socketEntries) {
+    private static void readAnchors(Map<String, String> anchorsBySocketId, String socketEntries) {
         for (String entry : socketEntries.split(NODE_SEPARATOR)) {
             int separator = entry.indexOf(OPTION_SEPARATOR);
             String itemId = separator <= 0 ? null : entry.substring(separator + 1);
-            if (itemId != null && NpcItems.item(itemId) != null
-                    && !shipData.installInSection(entry.substring(0, separator), itemId)) {
-                LOG.warn("Skipping an NPC framework socket entry for a socket type the ship has not unlocked: " + entry);
+            if (itemId != null && NpcItems.isAnchor(itemId)) {
+                anchorsBySocketId.putIfAbsent(NodeReplacements.resolve(entry.substring(0, separator)), itemId);
             }
         }
     }
 
-    private static void restoreSockets(ShipSkillData shipData, String socketEntries) {
-        for (String entry : socketEntries.split(NODE_SEPARATOR)) {
+    private static void readLegacyAnchors(Map<String, String> anchorsBySocketId, String anchorEntries) {
+        for (String entry : anchorEntries.split(NODE_SEPARATOR)) {
             int separator = entry.indexOf(OPTION_SEPARATOR);
-            if (separator <= 0) {
-                continue;
-            }
-            String nodeId = NodeReplacements.resolve(entry.substring(0, separator));
-            String itemId = entry.substring(separator + 1);
-            SkillNode node = SkillTree.get(nodeId);
-            ItemData itemData = NpcItems.item(itemId);
-            boolean fitsTreeSocket = itemData != null && !DeletedSubroutines.isDeleted(itemData)
-                    && (itemData.definition() == null || itemData.definition().type() == ItemType.SUBROUTINE);
-            boolean withinLimit = itemData == null || !SubroutineSocketLimits.limitReached(itemData.definition(), nodeId, shipData.getSocketedItems());
-            if (node != null && node.getType().getTier() == SkillTier.SOCKET && fitsTreeSocket && withinLimit) {
-                shipData.socketItem(nodeId, itemId);
+            SkillNode exit = separator <= 0 ? null : SkillTree.get(entry.substring(separator + 1));
+            String anchorItemId = exit == null || exit.getType().getTier() != SkillTier.WORMHOLE_EXIT ? null : NpcItems.anchorFor(exit.getRegion());
+            if (anchorItemId != null) {
+                anchorsBySocketId.putIfAbsent(NodeReplacements.resolve(entry.substring(0, separator)), anchorItemId);
             }
         }
     }
 
-    private static void restore(ShipSkillData shipData, String entry) {
+    private static void restore(ShipSkillData shipData, String entry, Map<String, String> anchorsBySocketId) {
         int optionAt = entry.indexOf(OPTION_SEPARATOR);
         String nodeId = NodeReplacements.resolve(optionAt < 0 ? entry : entry.substring(0, optionAt));
         SkillNode node = SkillTree.get(nodeId);
         if (node == null || shipData.isAllocated(nodeId)) {
             return;
         }
+        if (node.getType().getTier() == SkillTier.WORMHOLE_EXIT && shipData.anchorSocket(nodeId) != null) {
+            shipData.openAnchorWormholes(Integer.MAX_VALUE);
+            if (shipData.isAllocated(nodeId)) {
+                return;
+            }
+        }
         if (optionAt < 0 || !node.getType().isOptional()) {
             if (!node.getType().isOptional()) {
                 shipData.allocate(node, CHARGED_NODE_COST);
+                socketAnchor(shipData, node, anchorsBySocketId.get(nodeId));
             }
             return;
         }
         SkillType optionType = NodeEligibility.validOption(node.getType(), entry.substring(optionAt + 1));
         if (optionType != null) {
             shipData.selectOption(node, optionType, CHARGED_NODE_COST);
+        }
+    }
+
+    private static void socketAnchor(ShipSkillData shipData, SkillNode node, String anchorItemId) {
+        if (anchorItemId != null && node.getType().getTier() == SkillTier.SOCKET) {
+            shipData.socketItem(node.getId(), anchorItemId);
         }
     }
 

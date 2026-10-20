@@ -34,11 +34,13 @@ class NpcSkillTreeBuilderTest {
     @BeforeEach
     void setUp() {
         RealSkillData.clear();
+        NpcTestAnchors.install();
     }
 
     @AfterEach
     void tearDown() {
         RealSkillData.clear();
+        NpcTestAnchors.uninstall();
     }
 
     private static SkillType.Builder builder(String typeId, SkillTier tier) {
@@ -109,7 +111,8 @@ class NpcSkillTreeBuilderTest {
 
     private static NpcTreeBuild generate(ShipProfile profile, String designType, int nodeCount, String factionRegion,
                                          NpcHullMods hullMods, NpcFreedOp freedOp, long seed) {
-        return NpcSkillTreeBuilder.generate(new NpcBuildRequest(profile, designType, factionRegion, hullMods, freedOp, nodeCount),
+        return NpcSkillTreeBuilder.generate(new NpcBuildRequest(profile, designType, factionRegion, hullMods, freedOp, nodeCount,
+                NpcTestAnchors.idFor(factionRegion)),
                 new Random(seed));
     }
 
@@ -117,65 +120,15 @@ class NpcSkillTreeBuilderTest {
         return List.copyOf(build.shipData().getAllocatedNodeIds());
     }
 
-    private static NpcTreeBuild generateWithItems(int nodeCount, int items) {
-        return NpcSkillTreeBuilder.generate(new NpcBuildRequest(BALLISTIC_FRIGATE, null, null, NpcHullMods.NONE, NpcFreedOp.NONE,
-                nodeCount, items), new Random(1L));
-    }
-
     @Test
-    void aRolledHullItemClaimsTheNearestSocketBeforeAnyOtherGoal() {
-        root();
-        SkillType socket = registerType(builder("socket", SkillTier.SOCKET).build());
-        chain("a", 2, ROOT);
-        node("near_socket", socket, "a2");
-        chain("b", 4, ROOT);
-        node("far_socket", socket, "b4");
-        notable("prize", ROOT);
-
-        NpcTreeBuild build = generateWithItems(3, 1);
-
-        assertEquals(List.of("near_socket"), build.claimedSockets());
-        assertTrue(allocated(build).containsAll(List.of("a1", "a2", "near_socket")));
-        assertFalse(allocated(build).contains("prize"));
-    }
-
-    @Test
-    void aHullItemIsDiscardedWhenNoSocketIsWithinTheBudget() {
-        root();
-        SkillType socket = registerType(builder("socket", SkillTier.SOCKET).build());
-        chain("a", 4, ROOT);
-        node("distant_socket", socket, "a4");
-
-        NpcTreeBuild build = generateWithItems(3, 1);
-
-        assertEquals(List.of(), build.claimedSockets());
-        assertFalse(allocated(build).contains("distant_socket"));
-        assertTrue(build.steps().stream().anyMatch(step -> NpcBuildStep.HULL_ITEM_DISCARDED.equals(step.outcome())));
-    }
-
-    @Test
-    void twoHullItemsNeedTwoSocketsAndTheSecondIsDiscardedWithoutOne() {
-        root();
-        SkillType socket = registerType(builder("socket", SkillTier.SOCKET).build());
-        node("only_socket", socket, ROOT);
-        chain("a", 3, ROOT);
-
-        NpcTreeBuild build = generateWithItems(3, 2);
-
-        assertEquals(List.of("only_socket"), build.claimedSockets());
-        assertEquals(1, build.steps().stream().filter(step -> NpcBuildStep.HULL_ITEM_DISCARDED.equals(step.outcome())).count());
-    }
-
-    @Test
-    void withoutARolledHullItemTheBuilderStillNeverAimsForASocket() {
+    void theBuilderNeverAimsForASocketOfItsOwn() {
         root();
         SkillType socket = registerType(builder("socket", SkillTier.SOCKET).build());
         node("lonely_socket", socket, ROOT);
         chain("a", 3, ROOT);
 
-        NpcTreeBuild build = generateWithItems(3, 0);
+        NpcTreeBuild build = generate(3);
 
-        assertEquals(List.of(), build.claimedSockets());
         assertFalse(allocated(build).contains("lonely_socket"));
     }
 
@@ -325,80 +278,6 @@ class NpcSkillTreeBuilderTest {
         assertEquals(List.of(ROOT, "other_root"), allocated(generate(1)));
     }
 
-    @Test
-    void aLockedWormholeExitIsNeverOpenedUntilItUnlocks() {
-        root();
-        small("s1", ROOT);
-        anchorVolume("socket", "s1", "gate_far", "hegemony");
-        node("pride", registerType(builder("pride_type", SkillTier.NOTABLE).build()), List.of("hegemony"), "gate_far");
-        notable("core_notable", ROOT);
-
-        NpcTreeBuild locked = NpcSkillTreeBuilder.generate(new NpcBuildRequest(BALLISTIC_FRIGATE, null, "hegemony", NpcHullMods.NONE,
-                NpcFreedOp.NONE, 3, 0, type -> type.getTier() == SkillTier.WORMHOLE_EXIT), new Random(1L));
-        NpcTreeBuild unlocked = NpcSkillTreeBuilder.generate(new NpcBuildRequest(BALLISTIC_FRIGATE, null, "hegemony", NpcHullMods.NONE,
-                NpcFreedOp.NONE, 3, 0, type -> false), new Random(1L));
-
-        assertFalse(locked.shipData().isAllocated("gate_far") || locked.shipData().isAllocated("pride"));
-        assertTrue(locked.shipData().getImplicitAnchorExits().isEmpty());
-        assertTrue(unlocked.shipData().isAllocated("gate_far") && unlocked.shipData().isAllocated("pride"));
-    }
-
-    @Test
-    void aFactionShipAnchorsTheNearestSocketToReachANotableInItsVolume() {
-        root();
-        small("s1", ROOT);
-        anchorVolume("near_socket", "s1", "gate_far", "hegemony");
-        chain("far", 3, ROOT);
-        anchorVolume("far_socket", "far3", "gate_far", "hegemony");
-        node("pride", registerType(builder("pride_type", SkillTier.NOTABLE).build()), List.of("hegemony"), "gate_far");
-        notable("core_notable", ROOT);
-
-        NpcTreeBuild build = generate(3, "hegemony", NpcHullMods.NONE, NpcFreedOp.NONE, 1L);
-
-        assertTrue(build.shipData().isAllocated("pride"));
-        assertTrue(build.shipData().isAllocated("gate_far"));
-        assertTrue(build.shipData().isFreeNode("gate_far"));
-        assertEquals(Map.of("near_socket", "gate_far"), build.shipData().getImplicitAnchorExits());
-        assertEquals("gate_far", build.shipData().anchorExit("near_socket"));
-        assertTrue(build.claimedSockets().isEmpty());
-        assertFalse(build.shipData().isAllocated("far_socket"));
-        assertTrue(build.steps().stream().anyMatch(step -> step.outcome().equals(NpcBuildStep.FACTION_GOAL)));
-    }
-
-    @Test
-    void anAlreadyAllocatedSocketTakesTheImplicitAnchorAndAnItemClaimsAnother() {
-        root();
-        anchorVolume("socket", ROOT, "gate_far", "hegemony");
-        node("pride", registerType(builder("pride_type", SkillTier.NOTABLE).build()), List.of("hegemony"), "gate_far");
-        node("item_socket", SkillTree.getType("socket"), List.of("core"), ROOT);
-
-        NpcTreeBuild build = NpcSkillTreeBuilder.generate(new NpcBuildRequest(BALLISTIC_FRIGATE, null, "hegemony", NpcHullMods.NONE,
-                NpcFreedOp.NONE, 4, 1), new Random(1L));
-
-        assertTrue(build.shipData().isAllocated("pride"));
-        assertEquals(1, build.claimedSockets().size());
-        String anchorSocket = build.shipData().getImplicitAnchorExits().keySet().iterator().next();
-        assertFalse(build.claimedSockets().contains(anchorSocket));
-        assertEquals("gate_far", build.shipData().getImplicitAnchorExits().get(anchorSocket));
-    }
-
-    @Test
-    void theImplicitAnchorSurvivesTheTreeTag() {
-        root();
-        anchorVolume("socket", ROOT, "gate_far", "hegemony");
-        node("pride", registerType(builder("pride_type", SkillTier.NOTABLE).build()), List.of("hegemony"), "gate_far");
-        NpcTreeBuild build = generate(2, "hegemony", NpcHullMods.NONE, NpcFreedOp.NONE, 1L);
-
-        String tag = NpcTreeTag.encode(build.shipData());
-        ShipSkillData decoded = NpcTreeTag.decode(tag);
-
-        assertTrue(tag.contains(NpcTreeTag.IMPLICIT_ANCHORS_MARKER + "socket=gate_far"), tag);
-        assertTrue(decoded.getSocketedItems().isEmpty());
-        assertEquals(Map.of("socket", "gate_far"), decoded.getImplicitAnchorExits());
-        assertEquals(allocated(build), List.copyOf(decoded.getAllocatedNodeIds()));
-        assertTrue(decoded.isFreeNode("gate_far"));
-        assertEquals("socket", decoded.wormholePartner(SkillTree.get("gate_far")));
-    }
 
     @Test
     void theFactionNotableIsSkippedWhenTheBudgetCannotReachIt() {
@@ -437,7 +316,7 @@ class NpcSkillTreeBuilderTest {
         for (String forbidden : List.of("heg_far", "heg_notable", "tt_far", "short_a")) {
             assertFalse(independent.shipData().isAllocated(forbidden), forbidden);
         }
-        assertTrue(independent.shipData().getImplicitAnchorExits().isEmpty());
+        assertTrue(independent.shipData().getSocketedItems().isEmpty());
     }
 
     @Test

@@ -35,6 +35,7 @@ public final class NpcBuildSimulator {
 
     private static void simulate(String[] args, PrintStream out) throws IOException, JSONException {
         RealSkillData.load();
+        NpcTestAnchors.install();
         Archetype archetype = NpcArchetypes.ALL.stream().filter(a -> a.name().equals(args[0])).findFirst().orElse(null);
         if (archetype == null) {
             out.println("Unknown archetype. Archetypes: " + NpcArchetypes.ALL.stream().map(Archetype::name).toList());
@@ -51,7 +52,7 @@ public final class NpcBuildSimulator {
         NpcHullMods hullMods = new NpcHullMods(costs.keySet(), args.length > 7 ? csv(args[7]) : Set.of());
         NpcFreedOp freedOp = new NpcFreedOp(opCostPerNode, costs, NpcSkillTreeBuilder.MAX_NODE_COUNT);
         NpcTreeBuild build = NpcSkillTreeBuilder.generate(new NpcBuildRequest(archetype.profile(), designType, faction, hullMods,
-                freedOp, Integer.parseInt(args[3])), new Random(Long.parseLong(args[4])));
+                freedOp, Integer.parseInt(args[3]), NpcTestAnchors.idFor(faction)), new Random(Long.parseLong(args[4])));
         out.println(archetype.name() + ", " + designType + ", faction " + faction + ", " + args[3] + " nodes, seed " + args[4]);
         int count = 0;
         for (NpcBuildStep step : build.steps()) {

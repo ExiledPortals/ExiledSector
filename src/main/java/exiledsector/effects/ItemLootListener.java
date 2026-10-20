@@ -11,31 +11,35 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.listeners.ShipRecoveryListener;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.PlayerFleet;
 import exiledsector.charts.ChartDrops;
 import exiledsector.charts.ChartFleetLoot;
+import exiledsector.charts.LootContexts;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
-import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipLevelSystem;
+import exiledsector.items.BattleItemDrops;
 import exiledsector.items.FactionFleetDrops;
 import exiledsector.items.HullUpgradeData;
-import exiledsector.items.HullUpgradesSetting;
-import exiledsector.items.NpcItems;
 import exiledsector.items.Item;
+import exiledsector.items.ItemChances;
 import exiledsector.items.ItemDisassembly;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemData;
+import exiledsector.items.ItemRarity;
+import exiledsector.items.ItemUnlock;
 import exiledsector.ui.CampaignMessages;
 import exiledsector.ui.cargo.MaterialDropAnnouncer;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -46,19 +50,38 @@ import java.util.function.Supplier;
 public class ItemLootListener extends BaseCampaignEventListener implements ShipRecoveryListener {
 
     private static final class Pending {
-        private final Map<String, List<ItemData>> itemsByMemberId = new LinkedHashMap<>();
-        private final Map<String, HullUpgradeData> upgradeByMemberId = new LinkedHashMap<>();
         private final Map<CampaignFleetAPI, Float> chartFleetDeploymentPoints = new LinkedHashMap<>();
         private final Map<String, Float> defeatedDeploymentPointsByFaction = new LinkedHashMap<>();
+        private final Map<CampaignFleetAPI, Float> battlePowerByFleet = new LinkedHashMap<>();
+        private final Map<HullSize, Float> battlePowerByHullSize = new EnumMap<>(HullSize.class);
         private boolean playerWon;
         private float partsEarned;
         private float deploymentPointsDefeated;
         private int highestDefeatedNpcLevel;
 
-        List<ItemData> items() {
-            List<ItemData> allItems = new ArrayList<>();
-            itemsByMemberId.values().forEach(allItems::addAll);
-            return allItems;
+        BattleItemDrops.Battle battleItems() {
+            List<BattleItemDrops.SourcePower> sources = new ArrayList<>();
+            battlePowerByFleet.forEach((fleet, power) -> sources.add(new BattleItemDrops.SourcePower(power, chancesFor(fleet))));
+            return new BattleItemDrops.Battle(sources, battlePowerByHullSize, mostDefeatedFaction());
+        }
+
+        private static ItemChances chancesFor(CampaignFleetAPI fleet) {
+            try {
+                return LootContexts.forFleet(fleet).itemChances();
+            } catch (RuntimeException e) {
+                LOG.error("[ExiledSector] Reading the item chances of a defeated fleet failed", e);
+                return LootContexts.global().itemChances();
+            }
+        }
+
+        private String mostDefeatedFaction() {
+            String mostDefeated = null;
+            for (Map.Entry<String, Float> defeated : defeatedDeploymentPointsByFaction.entrySet()) {
+                if (mostDefeated == null || defeated.getValue() > defeatedDeploymentPointsByFaction.get(mostDefeated)) {
+                    mostDefeated = defeated.getKey();
+                }
+            }
+            return mostDefeated;
         }
     }
 
@@ -88,24 +111,62 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         }
         Pending pendingLoot = pendingByBattle.computeIfAbsent(engagementResult.getBattle(), key -> new Pending());
         pendingLoot.playerWon = engagement.playerWon();
+        if (!pendingLoot.playerWon) {
+            return;
+        }
+        float difficultyMultiplier = ShipLevelSystem.difficultyMultiplier(engagement.difficulty(), ShipLevelConfig.xpDifficultyStrength(),
+                ShipLevelConfig.xpDifficultyMaxMultiplier());
         for (EngagementResultForFleetAPI fleetResult : new EngagementResultForFleetAPI[]{engagementResult.getWinnerResult(), engagementResult.getLoserResult()}) {
             if (fleetResult != null && !fleetResult.isPlayer()) {
-                hold(pendingLoot, fleetResult.getDestroyed(), lootRandom);
-                hold(pendingLoot, fleetResult.getDisabled(), lootRandom);
-                if (engagement.playerWon()) {
-                    holdChartFleetLosses(pendingLoot, engagementResult.getBattle(), fleetResult.getDestroyed());
-                    holdChartFleetLosses(pendingLoot, engagementResult.getBattle(), fleetResult.getDisabled());
-                    holdFactionLosses(pendingLoot, engagementResult.getBattle(), fleetResult.getDestroyed());
-                    holdFactionLosses(pendingLoot, engagementResult.getBattle(), fleetResult.getDisabled());
+                for (List<FleetMemberAPI> lostMembers : List.of(nullToEmpty(fleetResult.getDestroyed()), nullToEmpty(fleetResult.getDisabled()))) {
+                    holdChartFleetLosses(pendingLoot, engagementResult.getBattle(), lostMembers);
+                    holdFactionLosses(pendingLoot, engagementResult.getBattle(), lostMembers);
+                    holdBattlePower(pendingLoot, engagementResult.getBattle(), lostMembers, difficultyMultiplier);
                 }
             }
         }
         float defeatedDp = engagement.enemyDeploymentPointsDefeated();
-        if (pendingLoot.playerWon && defeatedDp > 0f) {
-            float difficultyMultiplier = ShipLevelSystem.difficultyMultiplier(engagement.difficulty(), ShipLevelConfig.xpDifficultyStrength(),
-                    ShipLevelConfig.xpDifficultyMaxMultiplier());
+        if (defeatedDp > 0f) {
             pendingLoot.partsEarned += defeatedDp * ItemDrops.battlePartsPerDeploymentPoint() * difficultyMultiplier;
             pendingLoot.deploymentPointsDefeated += defeatedDp;
+        }
+    }
+
+    private static List<FleetMemberAPI> nullToEmpty(List<FleetMemberAPI> members) {
+        return members == null ? List.of() : members;
+    }
+
+    private static void holdBattlePower(Pending pendingLoot, BattleAPI battle, List<FleetMemberAPI> lostMembers, float difficultyMultiplier) {
+        for (FleetMemberAPI member : lostMembers) {
+            if (member == null) {
+                continue;
+            }
+            String npcTreeTag = NpcTreeTag.find(member.getVariant());
+            int allocatedNodes = npcTreeTag == null ? 0 : NpcTreeTag.allocatedNodeCount(npcTreeTag);
+            pendingLoot.highestDefeatedNpcLevel = Math.max(pendingLoot.highestDefeatedNpcLevel, allocatedNodes);
+            float power = BattleItemDrops.shipPower(member.getDeploymentPointsCost(), allocatedNodes) * difficultyMultiplier;
+            if (!(power > 0f)) {
+                continue;
+            }
+            pendingLoot.battlePowerByFleet.merge(battle.getSourceFleet(member), power, Float::sum);
+            HullSize hullSize = member.getHullSpec() == null ? null : member.getHullSpec().getHullSize();
+            if (hullSize != null) {
+                pendingLoot.battlePowerByHullSize.merge(hullSize, power, Float::sum);
+            }
+        }
+    }
+
+    private BattleItemDrops.Loot battleItemDrops(Pending pendingLoot) {
+        SectorAPI sector = Global.getSector();
+        if (!pendingLoot.playerWon || sector == null || !ItemUnlock.sectionsOpen(sector)) {
+            return BattleItemDrops.Loot.NONE;
+        }
+        try {
+            return BattleItemDrops.roll(pendingLoot.battleItems(), BattleItemDrops.settingMultiplier(), lootRandom,
+                    definition -> ItemUnlock.canDrop(definition, sector));
+        } catch (RuntimeException e) {
+            LOG.error("[ExiledSector] Rolling battle hull item drops failed", e);
+            return BattleItemDrops.Loot.NONE;
         }
     }
 
@@ -185,38 +246,8 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         }
     }
 
-    private static void hold(Pending pendingLoot, List<FleetMemberAPI> lostMembers, Random random) {
-        if (lostMembers == null) {
-            return;
-        }
-        for (FleetMemberAPI member : lostMembers) {
-            String npcTreeTag = member == null ? null : NpcTreeTag.find(member.getVariant());
-            ShipSkillData npcTree = npcTreeTag == null ? null : NpcTreeTag.decode(npcTreeTag);
-            pendingLoot.highestDefeatedNpcLevel = Math.max(pendingLoot.highestDefeatedNpcLevel, NpcTreeTag.nodesBesidesRoot(npcTree));
-            List<ItemData> carriedItems = HullUpgradesSetting.enabled() ? NpcItems.carriedBy(npcTree)
-                    : NpcItems.subroutinesCarriedBy(npcTree);
-            if (!carriedItems.isEmpty()) {
-                pendingLoot.itemsByMemberId.put(member.getId(), carriedItems);
-            }
-            HullUpgradeData droppedUpgrade = !HullUpgradesSetting.enabled() ? null
-                    : NpcItems.rollUpgradeDrop(npcTree, member.getHullSpec() == null ? null : member.getHullSpec().getHullSize(), random);
-            if (droppedUpgrade != null) {
-                pendingLoot.upgradeByMemberId.put(member.getId(), droppedUpgrade);
-            }
-        }
-    }
-
     @Override
     public void reportShipsRecovered(List<FleetMemberAPI> recoveredShips, InteractionDialogAPI dialog) {
-        if (recoveredShips == null) {
-            return;
-        }
-        for (FleetMemberAPI recoveredShip : recoveredShips) {
-            pendingByBattle.values().forEach(pendingLoot -> {
-                pendingLoot.itemsByMemberId.remove(recoveredShip.getId());
-                pendingLoot.upgradeByMemberId.remove(recoveredShip.getId());
-            });
-        }
         ShipTreeSync.fleetChanged(PlayerFleet.orNull());
     }
 
@@ -224,9 +255,10 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
     public void reportEncounterLootGenerated(FleetEncounterContextPlugin encounterPlugin, CargoAPI loot) {
         Pending pendingLoot = encounterPlugin == null ? null : pendingByBattle.remove(encounterPlugin.getBattle());
         if (pendingLoot != null && loot != null) {
-            pendingLoot.items().forEach(item -> loot.addSpecial(item.toSpecialItem(), 1f));
             factionFleetDrops(pendingLoot).forEach(item -> loot.addSpecial(item.toSpecialItem(), 1f));
-            pendingLoot.upgradeByMemberId.values().forEach(upgrade -> loot.addSpecial(upgrade.toSpecialItem(), 1f));
+            BattleItemDrops.Loot battleItems = battleItemDrops(pendingLoot);
+            battleItems.items().forEach(item -> loot.addSpecial(item.toSpecialItem(), 1f));
+            battleItems.upgrades().forEach(upgrade -> loot.addSpecial(upgrade.toSpecialItem(), 1f));
             int wholeParts = ItemDrops.wholeParts(pendingLoot.partsEarned, lootRandom);
             if (wholeParts > 0) {
                 MaterialItems.add(loot, ItemDisassembly.PARTS_ITEM_ID, wholeParts);
@@ -246,16 +278,17 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         if (pendingLoot == null || !pendingLoot.playerWon || playerFleet == null) {
             return;
         }
-        List<ItemData> wonItems = new ArrayList<>(pendingLoot.items());
-        wonItems.addAll(factionFleetDrops(pendingLoot));
-        for (ItemData item : wonItems) {
+        for (ItemData item : factionFleetDrops(pendingLoot)) {
             playerFleet.getCargo().addSpecial(item.toSpecialItem(), 1f);
             Item previewItem = item.preview();
             if (previewItem != null) {
                 announceSalvaged(previewItem::name);
             }
         }
-        for (HullUpgradeData upgrade : pendingLoot.upgradeByMemberId.values()) {
+        BattleItemDrops.Loot battleItems = battleItemDrops(pendingLoot);
+        battleItems.items().forEach(item -> playerFleet.getCargo().addSpecial(item.toSpecialItem(), 1f));
+        announceBattleItems(battleItems.items());
+        for (HullUpgradeData upgrade : battleItems.upgrades()) {
             playerFleet.getCargo().addSpecial(upgrade.toSpecialItem(), 1f);
             announceSalvaged(upgrade::name);
         }
@@ -283,6 +316,25 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         }
         chartLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(playerFleet.getCargo(), itemId, quantity));
         MaterialDropAnnouncer.announce(chartLoot.materials());
+    }
+
+    private static void announceBattleItems(List<ItemData> items) {
+        Map<ItemRarity, List<Item>> previewsByRarity = new EnumMap<>(ItemRarity.class);
+        for (ItemData item : items) {
+            Item previewItem = item.preview();
+            if (previewItem != null) {
+                previewsByRarity.computeIfAbsent(previewItem.rarity(), rarity -> new ArrayList<>()).add(previewItem);
+            }
+        }
+        previewsByRarity.forEach((rarity, previews) -> {
+            if (rarity == ItemRarity.UNIQUE || previews.size() == 1) {
+                previews.forEach(previewItem -> announceSalvaged(previewItem::name));
+            } else if (CampaignMessages.available()) {
+                String messageKey = rarity == ItemRarity.COMMON ? "socketable.salvagedCommon" : "socketable.salvagedRare";
+                String salvageMessage = I18n.forGameText(() -> Translation.msg(messageKey).arg("count", previews.size()).text());
+                CampaignMessages.plain(salvageMessage, Misc.getPositiveHighlightColor());
+            }
+        });
     }
 
     private static void announceSalvaged(Supplier<String> itemName) {

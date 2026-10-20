@@ -7,6 +7,7 @@ import java.util.List;
 public record ItemData(String definitionId, long seed, List<RolledModifier> explicits, FrozenName frozenName, ItemTraits traits) {
 
     public static final String ITEM_ID = "exiledSector_socketable";
+    public static final String LISTING_ITEM_ID = "exiledSector_socketable_listing";
     public static final String STAR_CHART_ITEM_ID = "exiledSector_star_chart";
 
     public ItemData {
@@ -27,6 +28,19 @@ public record ItemData(String definitionId, long seed, List<RolledModifier> expl
             return rolledAtTier(definition, seed, StarChart.LOWEST_TIER);
         }
         List<RolledModifier> modifiers = ItemRoller.roll(definition, seed);
+        return new ItemData(definition.id(), seed, modifiers, ItemNames.freeze(definition, seed, modifiers));
+    }
+
+    public static ItemData rolledWithRarity(ItemDefinition definition, long seed, float rarity) {
+        if (rarity == 1f || definition.type() == ItemType.STAR_CHART) {
+            return rolled(definition, seed);
+        }
+        List<RolledModifier> modifiers = ItemRoller.rollWithRarity(definition, seed, rarity);
+        return new ItemData(definition.id(), seed, modifiers, ItemNames.freeze(definition, seed, modifiers));
+    }
+
+    public static ItemData rolledWithEffectCount(ItemDefinition definition, long seed, int effectCount) {
+        List<RolledModifier> modifiers = ItemRoller.rollWithEffectCount(definition, seed, effectCount);
         return new ItemData(definition.id(), seed, modifiers, ItemNames.freeze(definition, seed, modifiers));
     }
 
@@ -52,7 +66,7 @@ public record ItemData(String definitionId, long seed, List<RolledModifier> expl
     }
 
     public static ItemData of(SpecialItemData special) {
-        return special != null && ITEM_ID.equals(special.getId()) ? parse(special.getData()) : null;
+        return special != null && (ITEM_ID.equals(special.getId()) || LISTING_ITEM_ID.equals(special.getId())) ? parse(special.getData()) : null;
     }
 
     public static ItemData ofStarChart(SpecialItemData special) {
@@ -78,6 +92,14 @@ public record ItemData(String definitionId, long seed, List<RolledModifier> expl
             resolvedName = ItemNames.freeze(definition(), seed, explicits);
         }
         return new SpecialItemData(isStarChart() ? STAR_CHART_ITEM_ID : ITEM_ID, ItemCodec.cargo(this, resolvedName));
+    }
+
+    public SpecialItemData toMarketListing() {
+        return new SpecialItemData(LISTING_ITEM_ID, toSpecialItem().getData());
+    }
+
+    public static boolean isMarketListing(SpecialItemData special) {
+        return special != null && LISTING_ITEM_ID.equals(special.getId());
     }
 
     public String encode() {

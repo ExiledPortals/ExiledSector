@@ -10,6 +10,7 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.npc.RealSkillData;
 import exiledsector.skills.radius.NodeRadii;
 import exiledsector.skills.radius.RadiusSize;
@@ -24,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -225,5 +227,49 @@ class DoctrineArchiveDataTest {
         assertEquals(1, DoctrineArchives.get("doc_b").modifierPool().size());
         assertNull(DoctrineArchives.get("volume_chip"));
         assertNull(DoctrineArchives.get("unknown"));
+    }
+    private static void loadShippedDoctrines() throws Exception {
+        RealSkillData.load();
+        ItemFixtures.registerShippedItems();
+        DoctrineArchives.register(ItemFixtures.shippedRows(DoctrineArchives.DATA_PATH));
+        NpcFactionVolumes.register(ItemFixtures.shippedRows("data/config/exiledSector/npc_faction_volumes.csv"));
+    }
+
+    @Test
+    void onlyWardensOfTierFourteenAndFifteenChartsDropADoctrineArchive() throws Exception {
+        loadShippedDoctrines();
+        try {
+            Random random = new Random(2L);
+            int drops = 0;
+            for (int trial = 0; trial < 2000; trial++) {
+                assertNull(DoctrineArchives.rollForWarden(13, "hegemony", 10f, random, definition -> true));
+                drops += DoctrineArchives.rollForWarden(14, "hegemony", 1f, random, definition -> true) == null ? 0 : 1;
+                assertNotNull(DoctrineArchives.rollForWarden(15, "hegemony", 2f, random, definition -> true));
+            }
+
+            assertEquals(DoctrineArchives.WARDEN_CHANCE, drops / 2000f, 0.04f);
+            assertNull(DoctrineArchives.rollForWarden(15, "hegemony", 2f, random, definition -> false));
+        } finally {
+            NpcFactionVolumes.clear();
+        }
+    }
+
+    @Test
+    void aWardenDropsItsOwnFactionsDoctrineAndAFactionWithoutOneDropsAny() throws Exception {
+        loadShippedDoctrines();
+        try {
+            Random random = new Random(4L);
+            Set<String> independentDrops = new HashSet<>();
+            for (int trial = 0; trial < 300; trial++) {
+                assertEquals("doctrine_archive_sindrian_diktat", DoctrineArchives.pickFor("sindrian_diktat", random, definition -> true).id());
+                assertEquals("doctrine_archive_luddic", DoctrineArchives.pickFor("luddic_path", random, definition -> true).id());
+                assertEquals("doctrine_archive_pirate", DoctrineArchives.pickFor("pirates", random, definition -> true).id());
+                independentDrops.add(DoctrineArchives.pickFor("independent", random, definition -> true).id());
+            }
+
+            assertEquals(TRANSFORM_DOCTRINES.size() + AUGMENT_DOCTRINES.size(), independentDrops.size());
+        } finally {
+            NpcFactionVolumes.clear();
+        }
     }
 }

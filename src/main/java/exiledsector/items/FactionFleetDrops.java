@@ -18,18 +18,23 @@ public final class FactionFleetDrops {
     static final float DEPLOYMENT_POINTS_PER_CHANCE_STEP = 100f;
     private static final AtomicReference<Map<String, Map<String, Source>>> SOURCES_BY_GROUP = new AtomicReference<>(Map.of());
 
-    public record Source(String volume, Set<String> extraFactionIds, float chancePer100DeploymentPoints, boolean anyFaction) {
+    public enum ChanceMode {
+        PER_100_DEPLOYMENT_POINTS, PER_FIGHT
+    }
+
+    public record Source(String volume, Set<String> extraFactionIds, float chance, ChanceMode mode, boolean anyFaction) {
 
         public Source {
             extraFactionIds = extraFactionIds == null ? Set.of() : Set.copyOf(extraFactionIds);
+            mode = mode == null ? ChanceMode.PER_100_DEPLOYMENT_POINTS : mode;
         }
 
-        public Source(String volume, Set<String> extraFactionIds, float chancePer100DeploymentPoints) {
-            this(volume, extraFactionIds, chancePer100DeploymentPoints, false);
+        public static Source perFight(String volume, Set<String> extraFactionIds, float chance) {
+            return new Source(volume, extraFactionIds, chance, ChanceMode.PER_FIGHT, false);
         }
 
         public static Source anyFaction(float chancePer100DeploymentPoints) {
-            return new Source(null, Set.of(), chancePer100DeploymentPoints, true);
+            return new Source(null, Set.of(), chancePer100DeploymentPoints, ChanceMode.PER_100_DEPLOYMENT_POINTS, true);
         }
 
         boolean dropsFrom(String factionId) {
@@ -69,7 +74,13 @@ public final class FactionFleetDrops {
                 qualifyingDeploymentPoints += defeated.getValue();
             }
         }
-        float chance = qualifyingDeploymentPoints / DEPLOYMENT_POINTS_PER_CHANCE_STEP * Math.max(0f, source.chancePer100DeploymentPoints());
+        if (!(qualifyingDeploymentPoints > 0f)) {
+            return 0f;
+        }
+        float chance = Math.max(0f, source.chance());
+        if (source.mode() == ChanceMode.PER_100_DEPLOYMENT_POINTS) {
+            chance *= qualifyingDeploymentPoints / DEPLOYMENT_POINTS_PER_CHANCE_STEP;
+        }
         return Math.min(MAX_CHANCE_PER_BATTLE, chance);
     }
 

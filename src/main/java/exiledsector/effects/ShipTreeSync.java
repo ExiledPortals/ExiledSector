@@ -215,8 +215,7 @@ public final class ShipTreeSync {
         ShipSkillData npcTree = NpcTreeTag.decode(npcTreeTag);
         if (npcTree != null && ShipSkillDataManager.get(member.getId()).isBlank()) {
             npcTree.clearNpcBuild();
-            dropImplicitAnchors(npcTree);
-            NpcItems.claimForPlayer(npcTree);
+            dropNpcAnchors(npcTree);
             npcTree.capLevel(ShipLevelConfig.maxLevel());
             List<String> trimmedNodeIds = new ArrayList<>(npcTree.trimFreeAllocationsToLevel(SkillTree.getAllNodes(), SkillTree.topology()));
             trimmedNodeIds.addAll(npcTree.trimPaidNodes(SkillTree.getAllNodes(), SkillTree.topology()));
@@ -225,16 +224,14 @@ public final class ShipTreeSync {
                         + member.getId() + ", leaving a tree as large as its level.");
             }
             ShipSkillDataManager.put(member.getId(), npcTree);
-        } else if (npcTree != null) {
-            NpcItems.storeForPlayer(npcTree);
         }
 
         clearNpcTree(ownedVariant(member));
         return true;
     }
 
-    static List<String> dropImplicitAnchors(ShipSkillData adoptedTree) {
-        adoptedTree.dropImplicitAnchors();
+    static List<String> dropNpcAnchors(ShipSkillData adoptedTree) {
+        NpcItems.unsocketAll(adoptedTree);
         return adoptedTree.releaseUnreachable(SkillTree.topology(), adoptedTree.resolveStartingRootId(),
                 node -> !SkillTags.CORE_REGION.equals(node.getRegion())).nodeIds();
     }

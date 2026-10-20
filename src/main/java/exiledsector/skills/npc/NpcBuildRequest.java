@@ -6,29 +6,28 @@ import exiledsector.skills.tags.ShipProfile;
 import java.util.function.Predicate;
 
 public record NpcBuildRequest(ShipProfile profile, String designType, String factionRegion, NpcHullMods hullMods,
-                              NpcFreedOp freedOp, int nodeCount, int itemCount, Predicate<SkillType> lockedTypes, String hullId) {
+                              NpcFreedOp freedOp, int nodeCount, String factionAnchorItemId, Predicate<SkillType> lockedTypes, String hullId) {
 
     private static final Predicate<SkillType> NOTHING_LOCKED = type -> false;
 
     public NpcBuildRequest {
         hullMods = hullMods == null ? NpcHullMods.NONE : hullMods;
         freedOp = freedOp == null ? NpcFreedOp.NONE : freedOp;
-        itemCount = Math.max(0, itemCount);
         lockedTypes = lockedTypes == null ? NOTHING_LOCKED : lockedTypes;
     }
 
     public NpcBuildRequest(ShipProfile profile, String designType, String factionRegion, NpcHullMods hullMods, NpcFreedOp freedOp,
-                           int nodeCount, int itemCount, Predicate<SkillType> lockedTypes) {
-        this(profile, designType, factionRegion, hullMods, freedOp, nodeCount, itemCount, lockedTypes, null);
+                           int nodeCount, String factionAnchorItemId, Predicate<SkillType> lockedTypes) {
+        this(profile, designType, factionRegion, hullMods, freedOp, nodeCount, factionAnchorItemId, lockedTypes, null);
     }
 
     public NpcBuildRequest(ShipProfile profile, String designType, String factionRegion, NpcHullMods hullMods, NpcFreedOp freedOp,
-                           int nodeCount, int itemCount) {
-        this(profile, designType, factionRegion, hullMods, freedOp, nodeCount, itemCount, null, null);
+                           int nodeCount, String factionAnchorItemId) {
+        this(profile, designType, factionRegion, hullMods, freedOp, nodeCount, factionAnchorItemId, null, null);
     }
 
     public NpcBuildRequest(ShipProfile profile, String designType, String factionRegion, NpcHullMods hullMods, NpcFreedOp freedOp,
                            int nodeCount) {
-        this(profile, designType, factionRegion, hullMods, freedOp, nodeCount, 0, null, null);
+        this(profile, designType, factionRegion, hullMods, freedOp, nodeCount, null, null, null);
     }
 }

@@ -1,14 +1,16 @@
 package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import exiledsector.skills.AnchorLinks;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.items.NpcItems;
-import exiledsector.items.RolledEffect;
-import exiledsector.items.RolledModifier;
+import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.items.WormholeAnchorLinks;
 import exiledsector.items.ItemDefinitions;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -28,6 +30,8 @@ import static org.mockito.Mockito.when;
 
 class NpcTreeTagTest {
 
+    private static final String HEGEMONY_ANCHOR = "npc:wormhole_anchor_hegemony/0";
+
     @BeforeEach
     void setUp() throws Exception {
         RealSkillData.clear();
@@ -39,10 +43,14 @@ class NpcTreeTagTest {
                 .optionalOptionIds(List.of("flux_option", "hull_option")).build(), "a");
         register("b", type("b_type", SkillTier.NOTABLE), "optional_1");
         registerVolumeSubroutine();
+        registerHegemonyAnchor();
     }
 
     @AfterEach
     void tearDown() {
+        AnchorLinks.install(null);
+        WormholeAnchorDefinitions.clear();
+        NpcItems.clearCache();
         ItemDefinitions.clear();
         RealSkillData.clear();
     }
@@ -53,6 +61,17 @@ class NpcTreeTagTest {
 
     private static void registerVolumeSubroutine() throws Exception {
         ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "volume_subroutine").put("kind", "MODSPEC_CACHE")));
+    }
+
+    private static void registerHegemonyAnchor() throws Exception {
+        SkillTree.register(new SkillNode("hegemony_2", registerType(type("wormhole_exit", SkillTier.WORMHOLE_EXIT)), List.of(), 0f, 0f,
+                SkillNodeDecoration.NONE, List.of("hegemony")));
+        SkillTree.register(new SkillNode("pride", registerType(type("pride_type", SkillTier.NOTABLE)), List.of("hegemony_2"), 0f, 0f,
+                SkillNodeDecoration.NONE, List.of("hegemony")));
+        WormholeAnchorDefinitions.register(new JSONArray().put(new JSONObject().put("id", "wormhole_anchor_hegemony").put("volume", "hegemony")
+                .put("exit_node", "hegemony_2").put("name", "Hegemony Anchor").put("icon", "graphics/icons/nav_relay.png").put("rarity", "10")
+                .put("description", "Opens a wormhole.")));
+        WormholeAnchorLinks.install();
     }
 
     private static SkillType registerType(SkillType type) {
@@ -93,36 +112,70 @@ class NpcTreeTagTest {
         return data;
     }
 
-    @Test
-    void anNpcHullItemSurvivesEncodingAndDecodingInItsSocket() {
+    private static ShipSkillData withOpenHegemonyVolume() {
         ShipSkillData data = withSocket();
-        data.socketItem("socket_1", NpcItems.id("volume_subroutine", -42L));
-
-        String tag = NpcTreeTag.encode(data);
-        ShipSkillData decoded = NpcTreeTag.decode(tag);
-
-        assertEquals("exiledSector_npcTree|generated|2|root,a,socket_1|sockets:socket_1=npc:volume_subroutine/-42", tag);
-        assertEquals("npc:volume_subroutine/-42", decoded.getSocketedItem("socket_1"));
+        data.socketItem("socket_1", HEGEMONY_ANCHOR);
+        data.openAnchorWormholes(100);
+        data.allocate(SkillTree.get("pride"), 1);
+        return data;
     }
 
     @Test
-    void aFlagshipsUnlockedSocketsAndTheirItemsSurviveTheTagAlongsideTreeSockets() {
-        ShipSkillData data = withSocket();
-        data.socketItem("socket_1", NpcItems.id("volume_subroutine", -42L));
-        data.grantUnlockedSocketType("bridge");
-        data.grantUnlockedSocketType("reactor");
-        data.grantUnlockedSocketType("flight_deck");
-        data.installInSection("flight_deck", NpcItems.id("deck_basic", 3L));
+    void anNpcAnchorSurvivesEncodingAndDecodingAndReopensItsExit() {
+        ShipSkillData data = withOpenHegemonyVolume();
 
         String tag = NpcTreeTag.encode(data);
         ShipSkillData decoded = NpcTreeTag.decode(tag);
+        ShipSkillData legacy = NpcTreeTag.decode(NpcTreeTag.LEGACY_PREFIX + tag.substring(NpcTreeTag.PREFIX.length()));
 
-        assertEquals("exiledSector_npcTree|generated|2|root,a,socket_1|sockets:socket_1=npc:volume_subroutine/-42"
-                + "|frameworkTypes:bridge+reactor+flight_deck|frameworkSockets:flight_deck=npc:deck_basic/3", tag);
-        assertEquals("npc:volume_subroutine/-42", decoded.getSocketedItem("socket_1"));
-        assertEquals(List.of("bridge", "reactor", "flight_deck"), decoded.getUnlockedSocketTypeIds());
-        assertEquals(3, decoded.getHullUpgradePoints());
-        assertEquals(Map.of("flight_deck", "npc:deck_basic/3"), decoded.getSectionItems());
+        assertEquals("exiledSector_npcTree|generated|2|root,a,socket_1,hegemony_2,pride|sockets:socket_1=" + HEGEMONY_ANCHOR, tag);
+        for (ShipSkillData restored : List.of(decoded, legacy)) {
+            assertEquals(Map.of("socket_1", HEGEMONY_ANCHOR), restored.getSocketedItems());
+            assertEquals(List.copyOf(data.getAllocatedNodeIds()), List.copyOf(restored.getAllocatedNodeIds()));
+            assertTrue(restored.isFreeNode("hegemony_2"));
+            assertEquals("socket_1", restored.wormholePartner(SkillTree.get("hegemony_2")));
+        }
+    }
+
+    @Test
+    void anOldImplicitAnchorDecodesAsTheVolumesRealAnchor() {
+        withSocket();
+
+        ShipSkillData decoded = NpcTreeTag.decode("exiledSector_npcTree|generated|2|root,a,socket_1,hegemony_2,pride|anchors:socket_1=hegemony_2");
+
+        assertEquals(Map.of("socket_1", HEGEMONY_ANCHOR), decoded.getSocketedItems());
+        assertTrue(decoded.isFreeNode("hegemony_2"));
+        assertEquals("exiledSector_npcTree|generated|2|root,a,socket_1,hegemony_2,pride|sockets:socket_1=" + HEGEMONY_ANCHOR,
+                NpcTreeTag.encode(decoded));
+    }
+
+    @Test
+    void everySavedNpcItemThatIsNotAnAnchorIsDropped() {
+        withSocket();
+
+        for (String itemId : List.of("npc:volume_subroutine/-42", "npc:volume_subroutine/-42/HULL_MULT:5;ARMOR_PERCENT:-0.25",
+                "npc:domain_subroutine_military/5", "npc:not_loaded_subroutine/5")) {
+            ShipSkillData decoded = NpcTreeTag.decode("exiledSector_npcTree|generated|2|root,a,socket_1|sockets:socket_1=" + itemId);
+
+            assertNull(decoded.getSocketedItem("socket_1"), itemId);
+            assertTrue(decoded.isAllocated("socket_1"));
+        }
+    }
+
+    @Test
+    void sectionsAndTheirItemsFromSavedTagsAreDropped() {
+        withSocket();
+
+        ShipSkillData sections = NpcTreeTag.decode("exiledSector_npcTree|generated|2|root,a,socket_1|frameworkTypes:bridge+reactor+flight_deck"
+                + "|frameworkSockets:flight_deck=npc:deck_basic/3");
+        ShipSkillData legacy = NpcTreeTag.decode("exiledSector_npcTree|generated|2|root,a|framework:npcfw:CRUISER/RARE/bridge/1"
+                + "|frameworkSockets:0=npc:x/1");
+
+        for (ShipSkillData decoded : List.of(sections, legacy)) {
+            assertEquals(List.of(), decoded.getUnlockedSocketTypeIds());
+            assertEquals(Map.of(), decoded.getSectionItems());
+        }
+        assertEquals("exiledSector_npcTree|generated|2|root,a,socket_1", NpcTreeTag.encode(sections));
     }
 
     @Test
@@ -140,47 +193,7 @@ class NpcTreeTagTest {
     }
 
     @Test
-    void aSavedTreeSocketHoldingARetiredSubroutineIsDroppedOnRestoreButAnUnloadedOneIsKept() {
-        withSocket();
-
-        ShipSkillData retired = NpcTreeTag.decode("exiledSector_npcTree|generated|2|root,a,socket_1|sockets:socket_1=npc:domain_subroutine_military/5");
-        ShipSkillData unloaded = NpcTreeTag.decode("exiledSector_npcTree|generated|2|root,a,socket_1|sockets:socket_1=npc:not_loaded_subroutine/5");
-
-        assertNull(retired.getSocketedItem("socket_1"));
-        assertTrue(retired.isAllocated("socket_1"));
-        assertEquals("npc:not_loaded_subroutine/5", unloaded.getSocketedItem("socket_1"));
-    }
-
-    @Test
-    void socketsWithoutItemsRoundTripAndTagsFromEarlierSectionBuildsAreIgnored() {
-        ShipSkillData data = withSocket();
-        data.grantUnlockedSocketType("bridge");
-
-        assertEquals(List.of("bridge"), NpcTreeTag.decode(NpcTreeTag.encode(data)).getUnlockedSocketTypeIds());
-        ShipSkillData legacy = NpcTreeTag.decode("exiledSector_npcTree|generated|2|root,a|framework:npcfw:CRUISER/RARE/bridge/1"
-                + "|frameworkSockets:0=npc:x/1");
-        assertEquals(List.of(), legacy.getUnlockedSocketTypeIds());
-        assertEquals(Map.of(), legacy.getSectionItems());
-    }
-
-    @Test
-    void socketTagsAlreadyWrittenIntoSavedFleetsStillDecodeWithTheirRolls() {
-        withSocket();
-        String rolled = "npc:volume_subroutine/-42/HULL_MULT:5;ARMOR_PERCENT:-0.25";
-        String saved = "exiledSector_npcTree|generated|2|root,a,socket_1|sockets:socket_1=" + rolled;
-
-        ShipSkillData decoded = NpcTreeTag.decode(saved);
-        ShipSkillData legacy = NpcTreeTag.decode(NpcTreeTag.LEGACY_PREFIX + saved.substring(NpcTreeTag.PREFIX.length()));
-
-        assertEquals(rolled, decoded.getSocketedItem("socket_1"));
-        assertEquals(rolled, legacy.getSocketedItem("socket_1"));
-        assertEquals(saved, NpcTreeTag.encode(decoded));
-        assertEquals(List.of(new RolledEffect("HULL_MULT", 5f), new RolledEffect("ARMOR_PERCENT", -0.25f)),
-                RolledModifier.lines(NpcItems.item(decoded.getSocketedItem("socket_1")).explicits()));
-    }
-
-    @Test
-    void aTreeWithoutHullItemsKeepsTheThreeFieldFormat() {
+    void aTreeWithoutAnAnchorKeepsTheThreeFieldFormat() {
         assertEquals("exiledSector_npcTree|generated|2|root,a,socket_1", NpcTreeTag.encode(withSocket()));
     }
 

@@ -250,19 +250,19 @@ describe('hull item tabs', () => {
     renderWithProviders(<DefinitionsTab vocabulary={vocabulary} />);
     await screen.findAllByDisplayValue('Halcyon Fire-Control Lattice', undefined, { timeout: 30000 });
 
-    expect(await findLabelled('Drop source')).toHaveProperty('value', 'faction:tritachyon');
+    expect(await findLabelled('Drop source')).toHaveProperty('value', 'site:station_research; site:station_research_remnant');
     expect(await findLabelled('Socket limit per ship')).toHaveProperty('value', '1');
     expect(screen.getAllByDisplayValue('BEAM_WEAPON_RANGE_PERCENT_HALCYON_LATTICE').length).toBeGreaterThan(0);
     expect(screen.getByText('Add line')).not.toBeNull();
     expect(screen.queryByText('Add prefix')).toBeNull();
     expect(screen.queryByText(/Rarity weight/)).toBeNull();
 
-    fireEvent.change(await findLabelled('Drop source'), { target: { value: 'faction:tritachyon; site:station_research' } });
+    fireEvent.change(await findLabelled('Drop source'), { target: { value: 'site:station_research' } });
     fireEvent.click(saveButton());
     await screen.findByText('Saved subroutines.csv and hull_items.csv', undefined, { timeout: 30000 });
 
     expect(server.readProjectFile(SUBROUTINES_FILE)).toBe(
-      subroutinesBefore.replace('_HALCYON_LATTICE,faction:tritachyon,', '_HALCYON_LATTICE,faction:tritachyon; site:station_research,'),
+      subroutinesBefore.replace('_HALCYON_LATTICE,site:station_research; site:station_research_remnant,', '_HALCYON_LATTICE,site:station_research,'),
     );
     expect(server.readProjectFile(HULL_ITEMS_FILE)).toBe(hullItemsBefore);
   }, 90000);

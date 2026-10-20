@@ -88,8 +88,9 @@ its dependants refunded like a respec.
 `NpcSkillTreeBuilder.generate` builds each tree deterministically from the sector seed, fleet id and member
 id and stores it in an `NpcTreeTag`. The design type picks the root. Removable hull mods with an equivalent
 node are stripped and their OP buys those nodes. If `npc_faction_volumes.csv` gives the faction a volume, the
-ship takes one notable or keystone there through an implicit anchor in a socket; no item exists and nothing
-drops, and a recovered ship loses it.
+ship takes one notable or keystone there through its faction's real wormhole anchor (`NpcItems.anchorFor`),
+socketed only if it allocates a node behind it. NPC ships carry nothing else, the anchor never drops, and a
+recovered ship loses it.
 
 The rest of the budget goes to notables and keystones drawn by seeded weight (`NpcRelevance` × tier), then
 small nodes. Every step is a breadth-first search through nodes `NodeEligibility` allows, never crossing

@@ -49,9 +49,9 @@ const TREE = JSON.stringify({
 const nodeFacts = treeNodeFacts(TREE, TYPES, vocabulary);
 
 const CSV =
-  'id,volume,exit_node,name,icon,color,crest_faction,rarity,description,unlock,drop_factions,drop_chance\r\n' +
-  'wormhole_anchor_hegemony,hegemony,hegemony_2,Hegemony Corridor Lock,graphics/icons/nav_relay.png,#F5961E,hegemony,10,"A lock, with a comma.",,,0.06\r\n' +
-  'wormhole_anchor_exotech,exotech,exoship,Hyper-Nav Beacon,graphics/icons/rat_exogrid.png,,,10,A beacon.,rat_player_exoship,rat_exotech;other_exotech,0.02\r\n';
+  'id,volume,exit_node,name,icon,color,crest_faction,rarity,description,unlock,drop_factions,drop_chance,market_chance,price\r\n' +
+  'wormhole_anchor_hegemony,hegemony,hegemony_2,Hegemony Corridor Lock,graphics/icons/nav_relay.png,#F5961E,hegemony,10,"A lock, with a comma.",,,0.06,0.1,100000\r\n' +
+  'wormhole_anchor_exotech,exotech,exoship,Hyper-Nav Beacon,graphics/icons/rat_exogrid.png,,,10,A beacon.,rat_player_exoship,rat_exotech;other_exotech,0.02,,\r\n';
 
 function anchor(overrides: Partial<WormholeAnchor>): WormholeAnchor {
   return {
@@ -68,6 +68,8 @@ function anchor(overrides: Partial<WormholeAnchor>): WormholeAnchor {
     unlock: '',
     dropFactions: '',
     dropChance: '0.06',
+    marketChance: '',
+    price: '',
     ...overrides,
   };
 }
@@ -83,17 +85,21 @@ describe('wormhole anchors', () => {
     expect(model.anchors[0].description).toBe('A lock, with a comma.');
     expect([model.anchors[0].color, model.anchors[0].crestFaction]).toEqual(['#F5961E', 'hegemony']);
     expect([model.anchors[1].color, model.anchors[1].crestFaction]).toEqual(['', '']);
+    expect(model.anchors.map((parsed) => [parsed.marketChance, parsed.price])).toEqual([
+      ['0.1', '100000'],
+      ['', ''],
+    ]);
     expect(serializeWormholeAnchorsCsv(model)).toBe(CSV);
   });
 
   it('keeps columns it does not know and writes edits into their own cells', () => {
     const model = parseWormholeAnchorsCsv(
-      'id,volume,exit_node,name,icon,color,crest_faction,rarity,description,unlock,drop_factions,drop_chance,note\nold,pirate,pirate_wormhole_2,Old,,,,1,,,,0.06,keep me\n',
+      'id,volume,exit_node,name,icon,color,crest_faction,rarity,description,unlock,drop_factions,drop_chance,market_chance,price,note\nold,pirate,pirate_wormhole_2,Old,,,,1,,,,0.06,,,keep me\n',
     );
     model.anchors[0].exitNode = 'pirate_wormhole_3';
 
     expect(serializeWormholeAnchorsCsv(model)).toBe(
-      'id,volume,exit_node,name,icon,color,crest_faction,rarity,description,unlock,drop_factions,drop_chance,note\nold,pirate,pirate_wormhole_3,Old,,,,1,,,,0.06,keep me\n',
+      'id,volume,exit_node,name,icon,color,crest_faction,rarity,description,unlock,drop_factions,drop_chance,market_chance,price,note\nold,pirate,pirate_wormhole_3,Old,,,,1,,,,0.06,,,keep me\n',
     );
   });
 
@@ -112,7 +118,9 @@ describe('wormhole anchors', () => {
       volume: 'pirate',
       exitNode: 'pirate_wormhole_2',
       dropFactions: '',
-      dropChance: '0.06',
+      dropChance: '0.5',
+      marketChance: '',
+      price: '100000',
     });
     expect(newWormholeAnchor(anchors, vocabulary, nodeFacts, ['wormhole_anchor_pirate']).id).toBe('wormhole_anchor_pirate_2');
     expect(missingVolumes(anchors, vocabulary)).toEqual(['pirate']);
@@ -142,7 +150,7 @@ describe('wormhole anchors', () => {
         anchor({ id: 'Bad Id', volume: 'exotech', exitNode: '' }),
         anchor({ id: 'taken', volume: 'exotech', rarity: '-1', unlock: 'made_up' }),
         anchor({ id: 'shortcut_exit', volume: 'hegemony', exitNode: 'hegemony_shortcut' }),
-        anchor({ id: 'bad_drops', volume: 'exotech', exitNode: 'exoship', dropChance: 'often', dropFactions: 'rat exotech;;pirates' }),
+        anchor({ id: 'bad_drops', volume: 'exotech', exitNode: 'exoship', dropChance: 'often', dropFactions: 'rat exotech;;pirates', marketChance: 'rarely', price: '-5' }),
       ],
       vocabulary,
       nodeFacts,
@@ -171,6 +179,8 @@ describe('wormhole anchors', () => {
       'shortcut_exit: exit node hegemony_shortcut is a WORMHOLE node, not a wormhole exit',
       'bad_drops: exotech already has an anchor; each volume has exactly one',
       'bad_drops: drop chance must be a number of 0 or more',
+      'bad_drops: market chance must be a number of 0 or more',
+      'bad_drops: price must be a number of 0 or more',
       'bad_drops: drop factions must be faction ids separated by ;',
     ]);
   });

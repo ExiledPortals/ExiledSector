@@ -76,7 +76,7 @@ class WormholeAnchorSocketingTest {
             SkillTree.register(node);
         }
         WormholeAnchorDefinitions.register(new JSONArray()
-                .put(WormholeAnchorTest.anchorRow(HEGEMONY_ANCHOR, "hegemony", "hegemony_2").put("drop_chance", "0.06"))
+                .put(WormholeAnchorTest.anchorRow(HEGEMONY_ANCHOR, "hegemony", "hegemony_2").put("drop_chance", "0.5"))
                 .put(WormholeAnchorTest.anchorRow(ABYSS_ANCHOR, "abyss", "rat_abyss_wormhole_1")
                         .put("drop_factions", "rat_abyssals;rat_abyssals_deep").put("drop_chance", "0.1"))
                 .put(WormholeAnchorTest.anchorRow(KESTEVEN_ANCHOR, "kesteven", "kesteven_wormhole1").put("drop_factions", "kesteven")
@@ -210,14 +210,23 @@ class WormholeAnchorSocketingTest {
     }
 
     @Test
-    void anAnchorDropsFromItsVolumesFactionsAndItsExtraFactionsScaledByDefeatedDeploymentPoints() {
+    void anAnchorDropsOncePerFightFromItsVolumesFactionsAndItsExtraFactionsWhateverTheirSize() {
         FactionFleetDrops.Source hegemony = FactionFleetDrops.source(HEGEMONY_ANCHOR);
         FactionFleetDrops.Source abyss = FactionFleetDrops.source(ABYSS_ANCHOR);
 
-        assertEquals(0.06f, FactionFleetDrops.chance(hegemony, Map.of("hegemony", 100f)), 1e-6f);
+        assertEquals(FactionFleetDrops.ChanceMode.PER_FIGHT, hegemony.mode());
+        assertEquals(0.5f, FactionFleetDrops.chance(hegemony, Map.of("hegemony", 5f)), 1e-6f);
+        assertEquals(0.5f, FactionFleetDrops.chance(hegemony, Map.of("hegemony", 900f)), 1e-6f);
         assertEquals(0f, FactionFleetDrops.chance(hegemony, Map.of("tritachyon", 500f)), 1e-6f);
-        assertEquals(0.15f, FactionFleetDrops.chance(abyss, Map.of("rat_abyssals", 100f, "rat_abyssals_deep", 50f)), 1e-6f);
-        assertEquals(FactionFleetDrops.MAX_CHANCE_PER_BATTLE, FactionFleetDrops.chance(abyss, Map.of("rat_abyssals", 10000f)), 1e-6f);
+        assertEquals(0f, FactionFleetDrops.chance(hegemony, Map.of("hegemony", 0f)), 1e-6f);
+        assertEquals(0.1f, FactionFleetDrops.chance(abyss, Map.of("rat_abyssals", 100f, "rat_abyssals_deep", 50f)), 1e-6f);
+    }
+
+    @Test
+    void aPerFightChanceIsStillCappedPerBattle() {
+        FactionFleetDrops.Source generous = FactionFleetDrops.Source.perFight("hegemony", Set.of(), 3f);
+
+        assertEquals(FactionFleetDrops.MAX_CHANCE_PER_BATTLE, FactionFleetDrops.chance(generous, Map.of("hegemony", 1f)), 1e-6f);
     }
 
     @Test
@@ -227,8 +236,8 @@ class WormholeAnchorSocketingTest {
                 .put(WormholeAnchorTest.anchorRow(ABYSS_ANCHOR, "abyss", "rat_abyss_wormhole_1").put("drop_chance", "-1")));
 
         assertEquals("hegemony_2", WormholeAnchorDefinitions.exitNodeId(HEGEMONY_ANCHOR));
-        assertEquals(0f, FactionFleetDrops.source(HEGEMONY_ANCHOR).chancePer100DeploymentPoints());
-        assertEquals(0f, FactionFleetDrops.source(ABYSS_ANCHOR).chancePer100DeploymentPoints());
+        assertEquals(0f, FactionFleetDrops.source(HEGEMONY_ANCHOR).chance());
+        assertEquals(0f, FactionFleetDrops.source(ABYSS_ANCHOR).chance());
         assertFalse(WormholeAnchorDefinitions.isValidDropChance("6%"));
         assertTrue(WormholeAnchorDefinitions.isValidDropChance(""));
     }
@@ -251,5 +260,51 @@ class WormholeAnchorSocketingTest {
         assertEquals(0, kestevenDrops);
         assertTrue(hegemonyDrops > 50 && hegemonyDrops < 150, String.valueOf(hegemonyDrops));
         assertEquals(Set.of(), Set.copyOf(FactionFleetDrops.roll(Map.of(), random, definition -> true)));
+    }
+    @Test
+    void eachFactionThatLostAShipRollsItsOwnAnchorAndOneThatLostNothingRollsNone() {
+        Random random = new Random(11L);
+        int hegemonyDrops = 0;
+        int abyssDrops = 0;
+        int trials = 2000;
+        for (int trial = 0; trial < trials; trial++) {
+            for (ItemData dropped : FactionFleetDrops.roll(Map.of("hegemony", 20f, "rat_abyssals", 300f, "kesteven", 0f), random,
+                    definition -> true)) {
+                hegemonyDrops += HEGEMONY_ANCHOR.equals(dropped.definitionId()) ? 1 : 0;
+                abyssDrops += ABYSS_ANCHOR.equals(dropped.definitionId()) ? 1 : 0;
+                assertFalse(KESTEVEN_ANCHOR.equals(dropped.definitionId()));
+            }
+        }
+
+        assertEquals(0.5, hegemonyDrops / (double) trials, 0.04);
+        assertEquals(0.1, abyssDrops / (double) trials, 0.03);
+    }
+    @Test
+    void onlyMarketsOfAnAnchorsFactionsStockItAtItsMarketChanceAndPrice() throws Exception {
+        WormholeAnchorDefinitions.register(new JSONArray()
+                .put(WormholeAnchorTest.anchorRow(HEGEMONY_ANCHOR, "hegemony", "hegemony_2").put("market_chance", "0.25").put("price", "120000"))
+                .put(WormholeAnchorTest.anchorRow(ABYSS_ANCHOR, "abyss", "rat_abyss_wormhole_1").put("drop_factions", "rat_abyssals")));
+        Random random = new Random(4L);
+        int hegemonyStock = 0;
+        int trials = 4000;
+        for (int trial = 0; trial < trials; trial++) {
+            hegemonyStock += WormholeAnchorDefinitions.rollMarketStock("hegemony", random).size();
+            assertTrue(WormholeAnchorDefinitions.rollMarketStock("tritachyon", random).isEmpty());
+            assertTrue(WormholeAnchorDefinitions.rollMarketStock("rat_abyssals", random).isEmpty());
+        }
+
+        assertEquals(0.25, hegemonyStock / (double) trials, 0.03);
+        assertEquals(120000, WormholeAnchorDefinitions.market(HEGEMONY_ANCHOR).price());
+        assertEquals(WormholeAnchorDefinitions.DEFAULT_PRICE, WormholeAnchorDefinitions.market(ABYSS_ANCHOR).price());
+        assertEquals(0f, WormholeAnchorDefinitions.market(ABYSS_ANCHOR).chance());
+    }
+
+    @Test
+    void aBadMarketChanceOrPriceFallsBackToNeverSoldAndTheDefaultPrice() throws Exception {
+        WormholeAnchorDefinitions.register(new JSONArray()
+                .put(WormholeAnchorTest.anchorRow(HEGEMONY_ANCHOR, "hegemony", "hegemony_2").put("market_chance", "often").put("price", "-3")));
+
+        assertEquals(0f, WormholeAnchorDefinitions.market(HEGEMONY_ANCHOR).chance());
+        assertEquals(WormholeAnchorDefinitions.DEFAULT_PRICE, WormholeAnchorDefinitions.market(HEGEMONY_ANCHOR).price());
     }
 }

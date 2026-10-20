@@ -122,7 +122,7 @@ class ModspecCachesTest {
         FactionFleetDrops.Source fleetSource = FactionFleetDrops.source(CACHE);
         assertNotNull(fleetSource);
         assertTrue(fleetSource.anyFaction());
-        assertEquals(0.5f, fleetSource.chancePer100DeploymentPoints(), 1e-6f);
+        assertEquals(0.5f, fleetSource.chance(), 1e-6f);
         assertEquals(0.05f, FactionFleetDrops.chance(fleetSource, Map.of("independent", 10f)), 1e-6f);
         assertNull(FactionFleetDrops.source(TRIPLE_CACHE));
 

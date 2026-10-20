@@ -29,6 +29,7 @@ import exiledsector.effects.ResolvedTree;
 import exiledsector.effects.SkillConflictWarningHullMod;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.effects.SkillTreeInstaller;
+import exiledsector.effects.MarketItemStock;
 import exiledsector.effects.ItemLootListener;
 import exiledsector.effects.ItemSalvageListener;
 import exiledsector.effects.TechMiningItemListener;
@@ -55,7 +56,9 @@ import exiledsector.skills.skilleffect.FleetCrewLedger;
 import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.tags.AreaToggles;
 import exiledsector.skills.unlock.NodeGates;
+import exiledsector.items.BattleItemDrops;
 import exiledsector.items.ItemCraftingCosts;
+import exiledsector.items.MarketHullItems;
 import exiledsector.items.ItemImplicits;
 import exiledsector.items.ItemDataIntegrity;
 import exiledsector.items.ItemModifiers;
@@ -146,6 +149,8 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         NodeReplacements.load();
         NodeGates.load();
         ItemDrops.load();
+        BattleItemDrops.load();
+        MarketHullItems.load();
         UniqueSourceCheck.logUnreachableSources();
         CompatChecks.logAtStartup();
         GraphicsLibCompat.loadLightData();
@@ -281,6 +286,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         Global.getSector().addTransientListener(PlayerEngagementPipeline.create(socketLossListener, itemLootListener));
         Global.getSector().getListenerManager().addListener(new ItemSalvageListener(), true);
         Global.getSector().getListenerManager().addListener(new TechMiningItemListener(), true);
+        Global.getSector().getListenerManager().addListener(new MarketItemStock(), true);
         if (RandomAssortmentCompat.isModEnabled()) {
             AbyssSingularity.checkSaveOnLoad(Global.getSector());
             Global.getSector().addTransientListener(new AbyssSingularity.BattleListener());

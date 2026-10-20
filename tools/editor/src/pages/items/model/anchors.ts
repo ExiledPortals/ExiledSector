@@ -8,10 +8,11 @@ export const WORMHOLE_ANCHOR_FILE_NAME = 'wormhole_anchors.csv';
 export const CORE_REGION = 'core';
 export const WORMHOLE_EXIT_TIER = 'WORMHOLE_EXIT';
 export const DEFAULT_ANCHOR_ICON = 'graphics/icons/nav_relay.png';
-export const DEFAULT_ANCHOR_DROP_CHANCE = '0.06';
+export const DEFAULT_ANCHOR_DROP_CHANCE = '0.5';
+export const DEFAULT_ANCHOR_PRICE = '100000';
 export const DROP_FACTION_SEPARATOR = ';';
 export const ANCHOR_COLOR_PATTERN = /^#[0-9A-Fa-f]{6}$/;
-export const WORMHOLE_ANCHOR_COLUMNS = ['id', 'volume', 'exit_node', 'name', 'icon', 'color', 'crest_faction', 'rarity', 'description', 'unlock', 'drop_factions', 'drop_chance'] as const;
+export const WORMHOLE_ANCHOR_COLUMNS = ['id', 'volume', 'exit_node', 'name', 'icon', 'color', 'crest_faction', 'rarity', 'description', 'unlock', 'drop_factions', 'drop_chance', 'market_chance', 'price'] as const;
 
 export interface WormholeAnchor {
   cells: string[];
@@ -27,6 +28,8 @@ export interface WormholeAnchor {
   unlock: string;
   dropFactions: string;
   dropChance: string;
+  marketChance: string;
+  price: string;
   loadedId?: string;
 }
 
@@ -58,6 +61,8 @@ export function parseWormholeAnchorsCsv(text: string): WormholeAnchorsModel {
       unlock: columns.unlock,
       dropFactions: columns.drop_factions,
       dropChance: columns.drop_chance,
+      marketChance: columns.market_chance,
+      price: columns.price,
       loadedId: columns.id,
     };
   });
@@ -78,6 +83,8 @@ function anchorColumnValues(anchor: WormholeAnchor): Record<(typeof WORMHOLE_ANC
     unlock: anchor.unlock,
     drop_factions: anchor.dropFactions,
     drop_chance: anchor.dropChance,
+    market_chance: anchor.marketChance,
+    price: anchor.price,
   };
 }
 
@@ -131,6 +138,8 @@ export function newWormholeAnchor(anchors: WormholeAnchor[], vocabulary: Vocabul
     unlock: '',
     dropFactions: '',
     dropChance: DEFAULT_ANCHOR_DROP_CHANCE,
+    marketChance: '',
+    price: DEFAULT_ANCHOR_PRICE,
   };
 }
 
@@ -216,6 +225,12 @@ export function validateWormholeAnchors(
     }
     if (anchor.dropChance.trim() !== '' && !(Number.parseFloat(anchor.dropChance) >= 0)) {
       issues.push(`${label}: drop chance must be a number of 0 or more`);
+    }
+    if (anchor.marketChance.trim() !== '' && !(Number.parseFloat(anchor.marketChance) >= 0)) {
+      issues.push(`${label}: market chance must be a number of 0 or more`);
+    }
+    if (anchor.price.trim() !== '' && !(Number.parseFloat(anchor.price) >= 0)) {
+      issues.push(`${label}: price must be a number of 0 or more`);
     }
     if (dropFactionIds(anchor.dropFactions).some((factionId) => !/^[A-Za-z0-9_.-]+$/.test(factionId))) {
       issues.push(`${label}: drop factions must be faction ids separated by ${DROP_FACTION_SEPARATOR}`);

@@ -16,7 +16,11 @@ import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import exiledsector.compat.SecondInCommandCompat;
+import exiledsector.items.NpcItems;
+import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.items.WormholeAnchorLinks;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.AnchorLinks;
 import exiledsector.skills.PhantomHullModStatus;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
@@ -26,8 +30,11 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.layout.SkillNodeDecoration;
+import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.skills.progression.ShipLevelConfig;
 import lunalib.lunaSettings.LunaSettings;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -105,6 +112,9 @@ class ShipTreeSyncTest {
         lunaSettingsMock.close();
         SkillTree.clearNodes();
         PhantomHullModStatus.clear();
+        AnchorLinks.install(null);
+        WormholeAnchorDefinitions.clear();
+        NpcItems.clearCache();
     }
 
     static FleetMemberAPI mockMember(String id, boolean hasHullMod) {
@@ -358,8 +368,9 @@ class ShipTreeSyncTest {
         assertEquals(0, adopted.getBankedFreeAllocations());
     }
 
-    @Test
-    void aRecoveredFactionShipLosesTheVolumeItReachedThroughItsImplicitAnchor() {
+    private static final String HEGEMONY_ANCHOR = "npc:wormhole_anchor_hegemony/0";
+
+    private void registerHegemonyVolume() throws Exception {
         registerNpcTreeNodes();
         SkillTree.register(new SkillNode("socket_1", new SkillType.Builder("socket", "Socket", "a.png", SkillTier.SOCKET).build(),
                 List.of("a_1"), 0f, 0f, SkillNodeDecoration.NONE, List.of("core")));
@@ -367,18 +378,45 @@ class ShipTreeSyncTest {
                 List.of("pride"), 0f, 0f, SkillNodeDecoration.NONE, List.of("hegemony")));
         SkillTree.register(new SkillNode("pride", new SkillType.Builder("pride", "Pride", "a.png", SkillTier.NOTABLE).build(),
                 List.of("gate_far"), 0f, 0f, SkillNodeDecoration.NONE, List.of("hegemony")));
+        WormholeAnchorDefinitions.register(new JSONArray().put(new JSONObject().put("id", "wormhole_anchor_hegemony")
+                .put("volume", "hegemony").put("exit_node", "gate_far").put("name", "Hegemony Anchor")
+                .put("icon", "graphics/icons/nav_relay.png").put("rarity", "10").put("description", "Opens a wormhole.")));
+        WormholeAnchorLinks.install();
+    }
+
+    private ShipSkillData adoptFactionShip(String npcTreeTag) {
         Set<String> hullMods = new HashSet<>(Set.of(SkillTreeHullMod.ID));
-        List<String> tags = new ArrayList<>(List.of("exiledSector_npcTree|generated|5|root_1,a_1,socket_1,gate_far,pride|anchors:socket_1=gate_far"));
-        FleetMemberAPI member = recoveredNpc("captured", hullMods, tags);
+        FleetMemberAPI member = recoveredNpc("captured", hullMods, new ArrayList<>(List.of(npcTreeTag)));
         when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
 
         ShipTreeSync.fleetChanged(playerFleet());
 
-        ShipSkillData adopted = ShipSkillDataManager.get("captured");
+        return ShipSkillDataManager.get("captured");
+    }
+
+    @Test
+    void aRecoveredFactionShipLosesItsAnchorAndTheVolumeBehindIt() throws Exception {
+        registerHegemonyVolume();
+        assertEquals("gate_far", NpcTreeTag.decode("exiledSector_npcTree|generated|5|root_1,a_1,socket_1,gate_far,pride|sockets:socket_1="
+                + HEGEMONY_ANCHOR).anchorExit("socket_1"));
+
+        ShipSkillData adopted = adoptFactionShip("exiledSector_npcTree|generated|5|root_1,a_1,socket_1,gate_far,pride|sockets:socket_1="
+                + HEGEMONY_ANCHOR);
+
         assertEquals(List.of("root_1", "a_1", "socket_1"), List.copyOf(adopted.getAllocatedNodeIds()));
-        assertTrue(adopted.getImplicitAnchorExits().isEmpty());
         assertTrue(adopted.getSocketedItems().isEmpty());
         assertEquals(0, adopted.getSpentOp(1));
+        assertEquals(3, adopted.getBankedFreeAllocations());
+    }
+
+    @Test
+    void aRecoveredShipWithAnOldImplicitAnchorTagLosesTheVolumeToo() throws Exception {
+        registerHegemonyVolume();
+
+        ShipSkillData adopted = adoptFactionShip("exiledSector_npcTree|generated|5|root_1,a_1,socket_1,gate_far,pride|anchors:socket_1=gate_far");
+
+        assertEquals(List.of("root_1", "a_1", "socket_1"), List.copyOf(adopted.getAllocatedNodeIds()));
+        assertTrue(adopted.getSocketedItems().isEmpty());
         assertEquals(3, adopted.getBankedFreeAllocations());
     }
 

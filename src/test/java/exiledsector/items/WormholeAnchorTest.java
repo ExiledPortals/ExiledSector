@@ -276,7 +276,7 @@ class WormholeAnchorTest {
     }
 
     @Test
-    void dropAndNpcPickersNeverPickAnAnchor() throws Exception {
+    void dropPickersNeverPickAnAnchor() throws Exception {
         ItemDefinitions.register(List.of(ItemDefinitions.get(HEGEMONY_ANCHOR), ItemDefinitions.get(ItemFixtures.SUBROUTINE)));
         ItemDrops.register(new JSONArray().put(new JSONObject().put("site", "station").put("chances", "1;1;1").put("uniqueChance", "1")));
         Random random = new Random(3L);
@@ -287,7 +287,6 @@ class WormholeAnchorTest {
             assertNotAnchor(ItemDrops.pickUnique(random, definition -> true), anchorIds);
             assertNotAnchor(ItemDrops.pickSectionItemBasic(random), anchorIds);
             assertNotAnchor(ItemDrops.pickChart(random, definition -> true), anchorIds);
-            assertNotAnchor(NpcItems.pickDefinition(random, definition -> true), anchorIds);
             for (ItemData dropped : ItemDrops.rollSite("station", random, ItemChances.of(1f), 1f, 1f, true).items()) {
                 assertFalse(anchorIds.contains(dropped.definitionId()), dropped.definitionId());
             }

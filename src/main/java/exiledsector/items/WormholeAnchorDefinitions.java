@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
@@ -25,6 +26,10 @@ public final class WormholeAnchorDefinitions {
     static final String EXIT_NODE_COLUMN = "exit_node";
     static final String DROP_FACTIONS_COLUMN = "drop_factions";
     static final String DROP_CHANCE_COLUMN = "drop_chance";
+    static final String MARKET_CHANCE_COLUMN = "market_chance";
+    static final String PRICE_COLUMN = "price";
+    public static final int DEFAULT_PRICE = 100000;
+    static final float SELL_SHARE_OF_BUY_PRICE = 0.05f;
     static final String COLOR_COLUMN = "color";
     static final String CREST_FACTION_COLUMN = "crest_faction";
     static final String LIST_SEPARATOR = ";";
@@ -34,11 +39,15 @@ public final class WormholeAnchorDefinitions {
     private static final Logger LOG = Logger.getLogger(WormholeAnchorDefinitions.class);
     private static final AtomicReference<Map<String, AnchorTarget>> TARGETS_BY_ID = new AtomicReference<>(Map.of());
     private static final AtomicReference<Map<String, AnchorStyle>> STYLES_BY_ID = new AtomicReference<>(Map.of());
+    private static final AtomicReference<Map<String, AnchorMarket>> MARKETS_BY_ID = new AtomicReference<>(Map.of());
 
     public record AnchorTarget(String volume, String exitNodeId) {
     }
 
     public record AnchorStyle(Color color, String crestFactionId) {
+    }
+
+    public record AnchorMarket(float chance, int price) {
     }
 
     private WormholeAnchorDefinitions() {
@@ -52,6 +61,7 @@ public final class WormholeAnchorDefinitions {
         List<ItemDefinition> definitions = new ArrayList<>();
         Map<String, AnchorTarget> targets = new LinkedHashMap<>();
         Map<String, AnchorStyle> styles = new LinkedHashMap<>();
+        Map<String, AnchorMarket> markets = new LinkedHashMap<>();
         Map<String, String> definitionIdsByVolume = new LinkedHashMap<>();
         Map<String, FactionFleetDrops.Source> dropSources = new LinkedHashMap<>();
         ModCsv.forEach(rows == null ? new JSONArray() : rows, (index, row) -> {
@@ -82,7 +92,9 @@ public final class WormholeAnchorDefinitions {
                 definitions.add(definition);
                 targets.put(definition.id(), new AnchorTarget(volume, exitNodeId));
                 styles.put(definition.id(), style(definition.id(), ModCsv.text(row, COLOR_COLUMN), ModCsv.text(row, CREST_FACTION_COLUMN)));
-                dropSources.put(definition.id(), new FactionFleetDrops.Source(volume, dropFactions(ModCsv.text(row, DROP_FACTIONS_COLUMN)), dropChance));
+                markets.put(definition.id(), new AnchorMarket(chance(definition.id(), MARKET_CHANCE_COLUMN, ModCsv.text(row, MARKET_CHANCE_COLUMN)),
+                        price(definition.id(), ModCsv.text(row, PRICE_COLUMN))));
+                dropSources.put(definition.id(), FactionFleetDrops.Source.perFight(volume, dropFactions(ModCsv.text(row, DROP_FACTIONS_COLUMN)), dropChance));
             } catch (IllegalArgumentException e) {
                 LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": " + e.getMessage());
             }
@@ -90,6 +102,7 @@ public final class WormholeAnchorDefinitions {
         ItemDefinitions.registerWormholeAnchors(definitions);
         TARGETS_BY_ID.set(Collections.unmodifiableMap(targets));
         STYLES_BY_ID.set(Collections.unmodifiableMap(styles));
+        MARKETS_BY_ID.set(Collections.unmodifiableMap(markets));
         FactionFleetDrops.register(ItemType.WORMHOLE_ANCHOR, dropSources);
     }
 
@@ -118,15 +131,57 @@ public final class WormholeAnchorDefinitions {
     }
 
     static float dropChance(String definitionId, String chanceText) {
+        return chance(definitionId, DROP_CHANCE_COLUMN, chanceText);
+    }
+
+    static float chance(String definitionId, String column, String chanceText) {
         if (chanceText.isEmpty()) {
             return 0f;
         }
         if (!isValidDropChance(chanceText)) {
-            LOG.error(definitionId + " in " + DATA_PATH + " has the drop chance \"" + chanceText
-                    + "\"; expected a number of 0 or more, so it never drops from fleets");
+            LOG.error(definitionId + " in " + DATA_PATH + " has the " + column + " \"" + chanceText
+                    + "\"; expected a number of 0 or more, so it is never used");
             return 0f;
         }
         return parsedOrNaN(chanceText);
+    }
+
+    static int price(String definitionId, String priceText) {
+        if (priceText.isEmpty()) {
+            return DEFAULT_PRICE;
+        }
+        float price = parsedOrNaN(priceText);
+        if (!(price >= 0f) || price > Integer.MAX_VALUE) {
+            LOG.error(definitionId + " in " + DATA_PATH + " has the price \"" + priceText + "\"; expected a number of 0 or more, so it costs "
+                    + DEFAULT_PRICE);
+            return DEFAULT_PRICE;
+        }
+        return Math.round(price);
+    }
+
+    public static int sellBaseValue(int price, float buyPriceMult, float sellPriceMult) {
+        if (!(sellPriceMult > 0f) || !(buyPriceMult > 0f)) {
+            return Math.round(price * SELL_SHARE_OF_BUY_PRICE);
+        }
+        return Math.round(price * SELL_SHARE_OF_BUY_PRICE * buyPriceMult / sellPriceMult);
+    }
+
+    public static AnchorMarket market(String definitionId) {
+        return definitionId == null ? null : MARKETS_BY_ID.get().get(ItemIdAliases.currentId(definitionId));
+    }
+
+    public static List<ItemDefinition> rollMarketStock(String factionId, Random random) {
+        List<ItemDefinition> stocked = new ArrayList<>();
+        for (Map.Entry<String, AnchorMarket> entry : MARKETS_BY_ID.get().entrySet()) {
+            FactionFleetDrops.Source source = FactionFleetDrops.source(entry.getKey());
+            ItemDefinition definition = ItemDefinitions.get(entry.getKey());
+            float chance = entry.getValue().chance();
+            if (chance > 0f && source != null && source.dropsFrom(factionId) && FactionFleetDrops.available(definition)
+                    && random.nextFloat() < chance) {
+                stocked.add(definition);
+            }
+        }
+        return stocked;
     }
 
     static boolean isValidDropChance(String chanceText) {
@@ -191,6 +246,7 @@ public final class WormholeAnchorDefinitions {
     public static void clear() {
         TARGETS_BY_ID.set(Map.of());
         STYLES_BY_ID.set(Map.of());
+        MARKETS_BY_ID.set(Map.of());
         ItemDefinitions.clearWormholeAnchors();
         FactionFleetDrops.clear(ItemType.WORMHOLE_ANCHOR);
     }

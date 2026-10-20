@@ -238,7 +238,7 @@ public final class ChartDrops {
 
     public static ChartGenContext liveContextAt(LocationAPI location) {
         ChartRun run = liveSystemRun(location);
-        return run == null ? ChartGenContext.none() : ChartRunEffects.contextOf(run);
+        return run == null ? LootContexts.global() : ChartRunEffects.contextOf(run);
     }
 
     static boolean isSystem(LocationAPI location) {
