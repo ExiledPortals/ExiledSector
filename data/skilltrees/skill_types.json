@@ -4057,7 +4057,7 @@
 		{
 			"id": "fragment_swarm",
 			"name": "Fragment Swarm",
-			"icon": "graphics/hullmods/fragment_swarm.png",
+			"icon": "graphics/icons/fragment_swarm.png",
 			"tier": "NOTABLE",
 			"vanillaHullMod": "fragment_swarm",
 			"itemCost": {
@@ -4088,7 +4088,7 @@
 		{
 			"id": "secondary_fabricator",
 			"name": "Secondary Fabricator",
-			"icon": "graphics/hullmods/secondary_fabricator.png",
+			"icon": "graphics/icons/secondary_fabricator.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4118,7 +4118,7 @@
 		{
 			"id": "fragment_coordinator",
 			"name": "Fragment Coordinator",
-			"icon": "graphics/hullmods/fragment_coordinator.png",
+			"icon": "graphics/icons/fragment_coordinator.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4148,7 +4148,7 @@
 		{
 			"id": "fragment_swarm_size",
 			"name": "Fragment Swarm Size",
-			"icon": "graphics/hullmods/fragment_coordinator.png",
+			"icon": "graphics/icons/fragment_coordinator.png",
 			"effects": [
 				{
 					"effect": "FRAGMENT_SWARM_SIZE_PERCENT",
@@ -4162,7 +4162,7 @@
 		{
 			"id": "fragment_replacement_rate",
 			"name": "Fragment Replacement Rate",
-			"icon": "graphics/hullmods/secondary_fabricator.png",
+			"icon": "graphics/icons/secondary_fabricator.png",
 			"effects": [
 				{
 					"effect": "FRAGMENT_REPLACEMENT_RATE_PERCENT",

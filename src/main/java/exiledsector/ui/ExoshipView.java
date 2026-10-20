@@ -55,7 +55,7 @@ final class ExoshipView {
         for (SkillNode node : nodes) {
             String region = node.getRegion();
             if (node.getType().getTier() == SkillTier.NOTABLE && !ExoshipNodes.isCarried(node)
-                    && !SkillTags.ABYSS_REGION.equals(region) && !SkillTags.REDACTED_REGION.equals(region)) {
+                    && !(region != null && SkillTags.ABYSSAL_REGIONS.contains(region)) && !SkillTags.REDACTED_REGION.equals(region)) {
                 anchors.add(new ExoshipVoyage.Anchor(node.getX(), node.getY(), SkillTags.CORE_REGION.equals(region)));
             }
         }
