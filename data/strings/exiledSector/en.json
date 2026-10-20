@@ -606,6 +606,7 @@
     "socketable.anchor.gate.gate_pascal_visited": "<bad>Inert</bad> until your fleet has entered the Pascal system.",
     "socketable.anchor.gate.gate_lunar_fleet_defeated": "<bad>Inert</bad> until the Lunar Fleet is defeated.",
     "socketable.anchor.gate.gate_ancient_prototype_found": "<bad>Inert</bad> until an Ancient Prototype is found.",
+    "socketable.anchor.gate.gate_frozen_heart_visited": "<bad>Inert</bad> until your fleet has entered the Frozen Heart's system.",
     "socketable.anchor.gate.gate_threat_fought": "<bad>Inert</bad> until your fleet has fought the Threat.",
     "socketable.anchor.gate.gate_remnant_fought": "<bad>Inert</bad> until your fleet has fought the [REDACTED].",
     "socketable.anchor.closeConfirm.one": "Closing this wormhole releases {count} node and returns {op} OP. Do it again to confirm.",

@@ -590,6 +590,7 @@
     "socketable.anchor.gate.gate_pascal_visited": "在你的舰队进入帕斯卡星系之前<bad>暂时失效</bad>。",
     "socketable.anchor.gate.gate_lunar_fleet_defeated": "在击败月之舰队之前<bad>暂时失效</bad>。",
     "socketable.anchor.gate.gate_ancient_prototype_found": "在找到远古原型舰之前<bad>暂时失效</bad>。",
+    "socketable.anchor.gate.gate_frozen_heart_visited": "在你的舰队进入冰封之心所在的星系之前<bad>暂时失效</bad>。",
     "socketable.anchor.gate.gate_threat_fought": "在你的舰队与威胁交战之前<bad>暂时失效</bad>。",
     "socketable.anchor.gate.gate_remnant_fought": "在你的舰队与[数据删除]交战之前<bad>暂时失效</bad>。",
     "socketable.anchor.closeConfirm.other": "关闭这个虫洞会释放{count}个节点并返还{op}点OP。再操作一次以确认。",

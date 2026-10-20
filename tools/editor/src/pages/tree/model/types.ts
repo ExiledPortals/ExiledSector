@@ -251,6 +251,7 @@ export const UNLOCK_CONDITION_LABELS: Record<string, string> = {
   nightcrossPascalVisited: 'Nightcross: player has entered Pascal',
   nightcrossLunarFleetDefeated: 'Nightcross: Stargazer existential threat defeated',
   nightcrossAncientPrototypeFound: 'Nightcross: an Ancient Prototype found',
+  lostSectorFrozenHeartVisited: "Lost Sector: the Frozen Heart's system visited",
   threatFought: 'Player has fought a Threat fleet',
   remnantFought: 'Player has fought a Remnant fleet',
 };

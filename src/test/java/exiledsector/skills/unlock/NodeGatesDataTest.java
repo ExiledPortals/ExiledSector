@@ -38,6 +38,7 @@ class NodeGatesDataTest {
     private static final String LUNAR_FLEET_GATE = "gate_lunar_fleet_defeated";
     private static final String THREAT_GATE = "gate_threat_fought";
     private static final String REMNANT_GATE = "gate_remnant_fought";
+    private static final String FROZEN_HEART_GATE = "gate_frozen_heart_visited";
     private static final String PROTOTYPE_GATE = "gate_ancient_prototype_found";
     private static final String CANDLES_GRACE_NODE_ID = "gravitational_drag_1";
 
@@ -93,6 +94,13 @@ class NodeGatesDataTest {
     @Test
     void everyThreatNodeAndTheWormholeIntoItWaitUntilTheThreatIsFought() {
         assertTrue(ungatedIn("threat", THREAT_GATE).isEmpty(), "Threat nodes without the gate: " + ungatedIn("threat", THREAT_GATE));
+    }
+
+    @Test
+    void everyEnigmaNodeAndTheWormholeIntoItWaitForTheFrozenHeartSystemToBeVisited() {
+        assertEquals(List.of(UnlockConditionType.LOST_SECTOR_FROZEN_HEART_VISITED),
+                NodeGates.all().get(FROZEN_HEART_GATE).stream().map(UnlockCondition::getType).toList());
+        assertTrue(ungatedIn("enigma", FROZEN_HEART_GATE).isEmpty(), "Enigma nodes without the gate: " + ungatedIn("enigma", FROZEN_HEART_GATE));
     }
 
     @Test

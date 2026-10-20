@@ -33,7 +33,7 @@ public final class SkillTags {
             "campaign_only", "player_only"), HULL_REQUIREMENT).flatMap(List::stream).toList();
 
     public static final List<String> GATE = List.of("gate_singularity_defeated", "gate_pascal_visited", "gate_lunar_fleet_defeated",
-            "gate_ancient_prototype_found", "gate_threat_fought", "gate_remnant_fought");
+            "gate_ancient_prototype_found", "gate_frozen_heart_visited", "gate_threat_fought", "gate_remnant_fought");
 
     public static final List<String> ALL = Stream.of(THEME, REGION, REQUIREMENT, GATE).flatMap(List::stream).toList();
 

@@ -27,6 +27,13 @@
 			}
 		]
 	},
+	"gate_frozen_heart_visited": {
+		"unlockConditions": [
+			{
+				"type": "lostSectorFrozenHeartVisited"
+			}
+		]
+	},
 	"gate_threat_fought": {
 		"unlockConditions": [
 			{

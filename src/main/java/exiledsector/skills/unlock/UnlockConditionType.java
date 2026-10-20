@@ -2,6 +2,8 @@ package exiledsector.skills.unlock;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.compat.AbyssSingularity;
+import exiledsector.compat.LostSectorCompat;
+import exiledsector.compat.LostSectorUnlocks;
 import exiledsector.compat.NightcrossCompat;
 import exiledsector.compat.NightcrossUnlocks;
 import exiledsector.compat.RandomAssortmentCompat;
@@ -19,6 +21,7 @@ public enum UnlockConditionType {
     NIGHTCROSS_PASCAL_VISITED(new ModGate(NightcrossCompat::isModEnabled, NightcrossUnlocks::isPascalVisited)),
     NIGHTCROSS_LUNAR_FLEET_DEFEATED(new ModGate(NightcrossCompat::isModEnabled, NightcrossUnlocks::isLunarFleetDefeated)),
     NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND(new ModGate(NightcrossCompat::isModEnabled, NightcrossUnlocks::isAncientPrototypeFound)),
+    LOST_SECTOR_FROZEN_HEART_VISITED(new ModGate(LostSectorCompat::isModEnabled, LostSectorUnlocks::isFrozenHeartSystemVisited)),
     THREAT_FOUGHT(new ModGate(() -> true, ThreatEncounter::isFought)),
     REMNANT_FOUGHT(new ModGate(() -> true, RemnantEncounter::isFought));
 
