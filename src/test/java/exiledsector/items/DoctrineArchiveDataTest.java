@@ -74,7 +74,9 @@ class DoctrineArchiveDataTest {
             DoctrineArchive archive = DoctrineArchives.get(definitionId);
             assertNotNull(archive, definitionId);
             assertTrue(archive.transforms(), definitionId);
-            assertTrue(archive.keystoneTypeIds().size() >= 1, definitionId);
+            for (String typeId : archive.keystoneTypeIds()) {
+                assertEquals(SkillTier.KEYSTONE, SkillTree.getType(typeId).getTier(), typeId);
+            }
             for (String typeId : archive.notableTypeIds()) {
                 assertEquals(SkillTier.NOTABLE, SkillTree.getType(typeId).getTier(), typeId);
             }
