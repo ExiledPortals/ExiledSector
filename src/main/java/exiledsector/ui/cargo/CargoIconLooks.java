@@ -2,6 +2,8 @@ package exiledsector.ui.cargo;
 
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.CraftingWard;
+import exiledsector.items.DoctrineArchive;
+import exiledsector.items.DoctrineArchives;
 import exiledsector.items.HullItem;
 import exiledsector.items.ItemCurrencies;
 import exiledsector.items.ItemCurrency;
@@ -9,7 +11,10 @@ import exiledsector.items.Item;
 import exiledsector.items.ItemRarity;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.MaterialTier;
+import exiledsector.items.Subroutine;
+import exiledsector.items.SubroutineKind;
 import exiledsector.items.WormholeAnchor;
+import exiledsector.ui.node.DoctrineColors;
 import exiledsector.ui.section.SectionFlair;
 
 import java.awt.Color;
@@ -56,6 +61,10 @@ public final class CargoIconLooks {
         if (item instanceof WormholeAnchor anchor && !AnimatedItemIcons.isAnimated(anchor.iconPath())) {
             return CargoIconLook.anchor(anchor.color(), new AnchorLook(anchor.crestFactionId()));
         }
+        CargoIconLook doctrineLook = forDoctrine(item);
+        if (doctrineLook != null) {
+            return doctrineLook;
+        }
         ItemRarity rarity = item.rarity();
         CargoIconLook look = switch (rarity) {
             case COMMON -> CargoIconLook.outlined(rarity.color());
@@ -69,6 +78,20 @@ public final class CargoIconLooks {
         }
         return item instanceof HullItem hullItem && hullItem.section() != null
                 ? look.withBadge(SectionFlair.colorOf(hullItem.section())) : look;
+    }
+
+    static CargoIconLook forDoctrine(Item item) {
+        if (!(item instanceof Subroutine subroutine) || subroutine.subroutineKind() != SubroutineKind.DOCTRINE
+                || !subroutine.iconPath().startsWith(DoctrineIconFx.STILL_PREFIX)) {
+            return null;
+        }
+        DoctrineArchive archive = DoctrineArchives.get(subroutine.definitionId());
+        if (archive == null || archive.factionId() == null) {
+            return null;
+        }
+        Color factionColor = DoctrineColors.forFaction(archive.factionId());
+        return CargoIconLook.doctrine(factionColor == null ? item.frameColor() : factionColor,
+                DoctrineLook.of(DoctrineScreen.forFaction(archive.factionId()), archive.factionId()));
     }
 
     public static boolean celebratesDrop(CargoIconLook look) {

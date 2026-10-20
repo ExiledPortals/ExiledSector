@@ -864,7 +864,8 @@ yet; the console command `ExiledSectorGrantDoctrineArchives [faction]` adds them
 
 Each doctrine has a row in `data/config/exiledSector/doctrine_archives.csv`, keyed by the subroutine's id.
 `behaviour` is `TRANSFORM` or `AUGMENT`, `radius` is `small`, `medium` or `large` (the sizes from "Node
-radii"), `faction` is the vanilla faction id whose colour marks the radius, `notables`, `keystones` and
+radii"), `faction` is the vanilla faction id whose colour marks the radius and whose screen and emblem the icon shows
+(see "Doctrine Archive icons"), `notables`, `keystones` and
 `small_nodes` list the skill types a transforming doctrine may put in
 place of each tier, and `modifiers` lists `@ID` or `@ID:weight` references to `item_modifiers.csv` rows
 whose `item_types` include `doctrine`, with `min_lines` and `max_lines` giving how many of them an
@@ -957,6 +958,54 @@ transform. Every doctrine has a large radius. Their notable pools are their own 
 three or four curated `doctrine_*` notables each, Tri-Tachyon and [REDACTED] have a curated keystone each,
 the Luddic doctrine uses its volume's two keystones, and the Luddic doctrine turns small nodes into Plain
 Rites, which gives nothing. Every magnitude is a placeholder.
+
+### Doctrine Archive icons
+
+Every archive is vanilla's hyperspace data tablet with a faction screen. `tools/DoctrineArchiveIcons.java`
+bakes three kinds of file into `graphics/icons/socketables/` from the vanilla install: the neutral frame
+(`exiledSector_doctrine_archive_frame.png`, the tablet in grey with its screen blacked out along the traced
+screen edge, so the bezel stays whole), one emblem per faction (`exiledSector_doctrine_emblem_<faction>.png`,
+the faction crest with its plate background keyed out and its brightness normalised, as a white mask), and
+one still per doctrine (`exiledSector_doctrine_archive_<suffix>.png`, the frame tinted to the faction with
+the emblem and static text on the screen). The faction colour is the `.faction` file's `baseUIColor`, or
+`color` without one, matching what `DoctrineColors` reads in game. Rerun it with `--overwrite` after
+changing a faction or adding a doctrine. The still is the `icon` in `subroutines.csv` and is what the codex,
+tooltips and tree sockets show.
+
+Wherever a `CargoIconLook` is drawn, `CargoIconLooks.forDoctrine` gives a `DOCTRINE` subroutine whose icon
+is one of these stills, and whose archive row names a faction, a doctrine look: the faction's base UI colour
+(the rarity colour if the faction isn't loaded) and a `DoctrineScreen` picked by faction id. A faction
+without a screen of its own gets the plain readout. `DoctrineIconFx` then draws the neutral frame tinted
+40% toward the faction colour, and draws the screen in game, mapped onto the four screen corners so it
+follows the tablet's slant. The screen has a faint glow, a title bar of glyph blocks with a status mark,
+rows of text blocks, the emblem in the faction colour over a dark disc, and three blinking lights on the
+side panel. When framed it also gets the anchors' frame and ten lights a side (`AnchorIconFx.drawFrame` and
+`drawLights`). Each screen runs a six-second cycle, offset per stack, with a key moment where the light wave
+reaches the far corner and the frame and screen flash:
+
+- Hegemony (seal): text scrolls steadily under a scanline. Just before the key the emblem fades, then slams
+  down from 1.7 times its size onto the screen.
+- Tri-Tachyon (decrypt): rows start as flickering scrambled noise and clear over three scan passes, each row
+  needing one, two or three. The emblem jitters and brightens as rows clear, and blips leak at the right edge.
+  The key is when the last pass ends. The screen scrambles again at 94%.
+- Luddic Church (manuscript): no scanline. A cursor copies the page row by row, each paragraph opening with a
+  drop cap and indent, the words slightly uneven. The page is full at the key, when the emblem glows, then
+  clears from 90%.
+- Lion's Guard (drill): rows step up one row on each of eight beats, aligned in a grid. The status mark and a
+  scan band move on the beat, the emblem pulses, and the key is the last beat.
+- Pirates (glitch): text scrolls in stutters, rows jitter sideways, a tear shoves a band of rows aside every
+  1.3 seconds, and some rows are patched in white, amber or green. The screen drops out to noise from 62% and
+  comes back on the key.
+- Persean League (committee): two columns, fixed. Three edits per cycle strike a line through, erase it and
+  rewrite it, and the key is when the third rewrite finishes. The page fades out and back in across the cycle
+  end.
+- [REDACTED] (redacted): solid bars instead of text, a single title bar, bars flickering off now and then.
+  All of them go dark just before the key and come back bright on it. The emblem pulses slowly.
+
+On Calm or Off the icon is the baked still, plus the frame and dim lights when framed, so nothing on the
+screen moves or is redrawn. The workbench's small tiles draw the look unframed; item storage and the item
+loaded on the bench keep the frame. The frame and emblem textures load on first use through `SpriteCache`,
+and an animated icon draws about a hundred quads and allocates only a few colours per frame.
 
 ## Hull Upgrade icons
 

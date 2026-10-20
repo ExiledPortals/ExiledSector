@@ -311,7 +311,7 @@ public final class AnchorIconFx {
         GL11.glVertex2f(gemX + endX * unit, gemY - endY * unit);
     }
 
-    private static void drawFrame(Color color, float cx, float cy, float unit, float alphaMult) {
+    static void drawFrame(Color color, float cx, float cy, float unit, float alphaMult) {
         try (GlScope scope = GlScope.flat().additive()) {
             Misc.setColor(color, 0.16f * alphaMult);
             frameBand(cx, cy, FRAME_GLOW_INNER * unit, FRAME_OUTER * unit);
@@ -337,7 +337,7 @@ public final class AnchorIconFx {
         GL11.glVertex2f(fromX, toY);
     }
 
-    private static void drawLights(SpriteCache sprites, Color color, float cx, float cy, float unit, float wave, float alphaMult) {
+    static void drawLights(SpriteCache sprites, Color color, float cx, float cy, float unit, float wave, float alphaMult) {
         SpriteAPI texture = sprites.texture(LIGHT_TEXTURE);
         if (texture == null) {
             return;
