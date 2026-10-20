@@ -461,5 +461,5 @@ The mirror family, where chart enemies get more damage, armour, speed or faster 
 ### Pool structure
 
 - A `group` column in `star_chart_modifiers.csv`, checked by `AffixLayout`, means at most one modifier per group can roll. Groups cover variants of the same stat, and pairs that together would be miserable rather than interesting.
-- Slots follow Path of Exile (decided 2026-10-19): enemy drawbacks are prefixes and player drawbacks are suffixes. Player drawbacks compete with the loot suffixes for the three suffix slots, so a chart trades targeted loot against the Quantity its player drawbacks pay.
+- Player drawbacks are prefixes, like the enemy drawbacks (decided 2026-10-20, replacing the 2026-10-19 plan to make them suffixes). The first batch is in `docs/plans/chart_fleet_drawbacks.md`.
 - Some drawbacks sit behind a minimum tier, as in Path of Exile, where the nastier modifiers only enter at higher bands.

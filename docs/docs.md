@@ -1048,6 +1048,28 @@ be below 1. On a success the item is picked by the weights in that file and goes
 random station or Domain site, or else any site, as vanilla extra salvage. It is paid once, in the battle
 loot or when the site is salvaged.
 
+## Star Chart drawbacks
+
+Most chart prefixes strengthen the enemy at generation through `ChartGenContext`. The rest act on the player's fleet while it is inside the system, and every one of them covers the whole fleet: every ship and the fighters they launch, never allied fleets.
+
+### Ship drawbacks
+
+`ChartFleetStat` lists each stat and how it is applied. Rolls of one stat are summed first and then turned into one multiplier, clamped to 10%-1000%, so the lines say "more" and "less". `ChartRunScript` puts the run's multipliers into the `ChartFleetConditions` snapshot while the player fleet is inside a live run and clears it when the fleet leaves. `ChartRunEffects.removeFrom` (run close) and `ChartLoadSweep` (every load) also clear it. Each change marks the player fleet's members for a stat update, and nothing is saved.
+
+`SkillTreeHullMod` applies the snapshot after the tree, under `ChartFleetConditions.MOD_ID`, to ships whose fleet member belongs to the player fleet. Because it runs in `applyEffectsBeforeShipCreation`, creation-time stats such as shield arc are covered, and the refit screen shows the reduced values while the fleet is inside. Fighters get the same stats in `applyEffectsToFighterSpawnedByShip`. The per-type damage taken stats only cover armour and hull, so each damage type also sets its shield variant.
+
+### Battle drawbacks
+
+`ChartBattlePlugin` is registered under `plugins` in `data/config/settings.json`, so it starts with every battle. It stays off unless the battle is a campaign battle (not a simulation) and the snapshot holds a battle stat. It refreshes on its first frame and then once a second.
+
+- Deployment points go through the commander's `DEPLOYMENT_POINTS_FRACTION_OF_BATTLE_SIZE_BONUS_MOD`, because the engine recomputes each side's cap every unpaused frame and overwrites `setMaxStrength`. The plugin takes the side's cap without its own share, sets its flat to the wanted percentage of that, and on the first frame also calls `setMaxStrength` so the opening deployment screen shows the new cap. Captured objectives raise the base, and the next refresh follows. The bonus sits on character stats that are saved with the game. So the plugin lifts it when the battle ends, `ChartRunScript` lifts it on the next campaign frame, and every load lifts it from the player.
+- Command point recovery is a flat on the task manager's `getCPRateModifier()`, sized so the total rate is multiplied. That modifier has a base of 0, so a multiplier on it would do nothing.
+- Enemy objective capture is a multiplier on each enemy ship's `SHIP_OBJECTIVE_CAP_RATE_MULT`. The engine uses the side's best ship and floors it at 1, so this only works as a bonus, never to slow the player.
+
+### Hunted
+
+Hunted adds a flat sensor range bonus (`ChartIds.ENEMY_SENSOR_MOD_ID`) to every chart fleet when it spawns. Fleet stat modifiers are saved with the fleet, so the bonus lasts for the run with no further work, and vanilla AI pursues the player once it sees them. The engine drops anything beyond `sensorRangeMax` (5000 su) from detection checks, so fleets further away than that still can't see the player.
+
 ## Reflection
 
 Starsector's script class loader won't load a mod class whose source names `java.lang.reflect` (it also

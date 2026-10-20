@@ -11,6 +11,7 @@ import exiledsector.modifiers.ScaleContext;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
@@ -43,6 +44,7 @@ public final class ChartGenContext {
     private float wardenSizePercent;
     private float fleetQualityPercent;
     private float sensorRangePercent;
+    private float enemySensorRangeBonus;
     private float quantityPercent;
     private final Map<ChartPoi.Kind, Float> siteBudgetPercents = new EnumMap<>(ChartPoi.Kind.class);
     private int extraPois;
@@ -50,6 +52,8 @@ public final class ChartGenContext {
     private final Map<DropType, Float> dropPercents = new EnumMap<>(DropType.class);
     private float wardenSpoilsPercent;
     private float rewardPercent;
+    private final Map<ChartFleetStat, Float> fleetStatPercents = new EnumMap<>(ChartFleetStat.class);
+    private Map<ChartFleetStat, Float> fleetStatMults;
 
     private ChartGenContext(List<AppliedEffect> applied, int quality, String factionId) {
         this.applied = List.copyOf(applied);
@@ -158,6 +162,14 @@ public final class ChartGenContext {
         sensorRangePercent += value;
     }
 
+    void addEnemySensorRangeBonus(float value) {
+        enemySensorRangeBonus += value;
+    }
+
+    public float enemySensorRangeBonus() {
+        return enemySensorRangeBonus;
+    }
+
     void addQuantityPercent(float value) {
         quantityPercent += value;
     }
@@ -190,6 +202,24 @@ public final class ChartGenContext {
 
     void addRewardPercent(float value) {
         rewardPercent += value;
+    }
+
+    void addFleetStatPercent(ChartFleetStat stat, float value) {
+        fleetStatPercents.merge(stat, value, Float::sum);
+    }
+
+    public Map<ChartFleetStat, Float> fleetStatMults() {
+        if (fleetStatMults == null) {
+            Map<ChartFleetStat, Float> mults = new EnumMap<>(ChartFleetStat.class);
+            fleetStatPercents.forEach((stat, percent) -> {
+                float mult = ChartFleetStat.multFor(percent);
+                if (mult != 1f) {
+                    mults.put(stat, mult);
+                }
+            });
+            fleetStatMults = mults.isEmpty() ? Map.of() : Collections.unmodifiableMap(mults);
+        }
+        return fleetStatMults;
     }
 
     public ChartTier adjust(ChartTier base) {

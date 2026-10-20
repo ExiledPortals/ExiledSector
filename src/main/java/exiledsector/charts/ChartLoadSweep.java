@@ -40,6 +40,7 @@ public final class ChartLoadSweep {
 
     static void liftEffectsOutsideSystem(SectorAPI sector) {
         CampaignFleetAPI playerFleet = sector.getPlayerFleet();
+        ChartFleetConditions.clear(playerFleet);
         if (playerFleet == null) {
             return;
         }

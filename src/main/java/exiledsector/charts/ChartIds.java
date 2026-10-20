@@ -31,6 +31,7 @@ public final class ChartIds {
     public static final String WARDEN_LOOT_SITE = PREFIX + "warden";
     public static final String CONTENT_TAG = PREFIX + "content";
     public static final String SENSOR_MOD_ID = PREFIX + "sensor_range";
+    public static final String ENEMY_SENSOR_MOD_ID = PREFIX + "enemy_sensor_range";
 
     private ChartIds() {
     }

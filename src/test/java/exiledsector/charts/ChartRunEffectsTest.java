@@ -70,6 +70,7 @@ class ChartRunEffectsTest {
     @AfterEach
     void tearDown() {
         globalMock.close();
+        ChartFleetConditions.clear(null);
         StarChartFixtures.clear();
     }
 
@@ -189,6 +190,24 @@ class ChartRunEffectsTest {
         assertTrue(ChartRunState.CLOSING.keepsRunEffects());
         assertTrue(ChartRunState.INSIDE.keepsRunEffects());
         assertFalse(ChartRunState.CLOSED.keepsRunEffects());
+    }
+
+    @Test
+    void fleetConditionsLeftOverFromAnotherRunOrSaveAreLifted() {
+        ChartFleetConditions.set(Map.of(ChartFleetStat.TOP_SPEED, 0.8f), playerFleet);
+        storeRun(null).recordArrival();
+        when(playerFleet.getContainingLocation()).thenReturn(system);
+
+        new ChartRunScript().advance(0f);
+        assertFalse(ChartFleetConditions.isActive(), "a run without fleet drawbacks clears the snapshot");
+
+        ChartFleetConditions.set(Map.of(ChartFleetStat.TOP_SPEED, 0.8f), playerFleet);
+        ChartLoadSweep.liftEffectsOutsideSystem(sector);
+        assertFalse(ChartFleetConditions.isActive(), "loading a save always starts from a clean snapshot");
+
+        ChartFleetConditions.set(Map.of(ChartFleetStat.TOP_SPEED, 0.8f), playerFleet);
+        ChartRunEffects.removeFrom(playerFleet);
+        assertFalse(ChartFleetConditions.isActive(), "closing the run lifts the fleet drawbacks");
     }
 
     @Test

@@ -40,6 +40,7 @@ public final class ChartRunEffects {
     }
 
     public static void removeFrom(CampaignFleetAPI fleet) {
+        ChartFleetConditions.clear(fleet);
         MutableFleetStatsAPI stats = fleet == null ? null : fleet.getStats();
         if (stats == null) {
             return;

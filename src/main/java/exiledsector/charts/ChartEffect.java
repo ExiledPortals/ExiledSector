@@ -61,6 +61,26 @@ public enum ChartEffect implements ModifierEffect {
             return Translation.msg(key()).arg("value", Math.abs(magnitude)).styled();
         }
     },
+    CHART_FRAGMENTATION_DAMAGE_TAKEN_PERCENT(ChartFleetStat.FRAGMENTATION_DAMAGE_TAKEN),
+    CHART_KINETIC_DAMAGE_TAKEN_PERCENT(ChartFleetStat.KINETIC_DAMAGE_TAKEN),
+    CHART_HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT(ChartFleetStat.HIGH_EXPLOSIVE_DAMAGE_TAKEN),
+    CHART_ENERGY_DAMAGE_TAKEN_PERCENT(ChartFleetStat.ENERGY_DAMAGE_TAKEN),
+    CHART_TOP_SPEED_PERCENT(ChartFleetStat.TOP_SPEED),
+    CHART_MANEUVERABILITY_PERCENT(ChartFleetStat.MANEUVERABILITY),
+    CHART_SHIELD_ARC_PERCENT(ChartFleetStat.SHIELD_ARC),
+    CHART_PHASE_ACTIVATION_COST_PERCENT(ChartFleetStat.PHASE_ACTIVATION_COST),
+    CHART_FLUX_DISSIPATION_PERCENT(ChartFleetStat.FLUX_DISSIPATION),
+    CHART_WEAPON_RANGE_PERCENT(ChartFleetStat.WEAPON_RANGE),
+    CHART_DEPLOYMENT_POINTS_PERCENT(ChartFleetStat.DEPLOYMENT_POINTS),
+    CHART_ENEMY_DEPLOYMENT_POINTS_PERCENT(ChartFleetStat.ENEMY_DEPLOYMENT_POINTS),
+    CHART_COMMAND_POINT_RATE_PERCENT(ChartFleetStat.COMMAND_POINT_RATE),
+    CHART_ENEMY_OBJECTIVE_CAPTURE_RATE_PERCENT(ChartFleetStat.ENEMY_OBJECTIVE_CAPTURE_RATE),
+    CHART_ENEMY_SENSOR_RANGE_FLAT(false) {
+        @Override
+        public void beforeGeneration(ChartGenContext context, float value) {
+            context.addEnemySensorRangeBonus(value);
+        }
+    },
     CHART_QUANTITY_PERCENT(false) {
         @Override
         public void beforeGeneration(ChartGenContext context, float value) {
@@ -144,15 +164,28 @@ public enum ChartEffect implements ModifierEffect {
 
     private final boolean counted;
     private final DropType dropType;
+    private final ChartFleetStat fleetStat;
 
     ChartEffect(boolean counted) {
         this.counted = counted;
         this.dropType = null;
+        this.fleetStat = null;
     }
 
     ChartEffect(DropType dropType) {
         this.counted = false;
         this.dropType = dropType;
+        this.fleetStat = null;
+    }
+
+    ChartEffect(ChartFleetStat fleetStat) {
+        this.counted = false;
+        this.dropType = null;
+        this.fleetStat = fleetStat;
+    }
+
+    public ChartFleetStat fleetStat() {
+        return fleetStat;
     }
 
     public DropType dropType() {
@@ -174,11 +207,15 @@ public enum ChartEffect implements ModifierEffect {
             int count = Math.round(magnitude);
             return message.count(count).arg("value", count).styled();
         }
-        return message.arg("value", magnitude).styled();
+        return message.arg("value", fleetStat != null ? Math.abs(magnitude) : magnitude).styled();
     }
 
     public void beforeGeneration(ChartGenContext context, float value) {
-        context.addDropPercent(dropType, value);
+        if (fleetStat != null) {
+            context.addFleetStatPercent(fleetStat, value);
+        } else {
+            context.addDropPercent(dropType, value);
+        }
     }
 
     public void afterGeneration(ChartGenerated generated, float value) {

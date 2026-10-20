@@ -20,7 +20,7 @@ public class ChartRunScript implements EveryFrameScript {
     private boolean failureReported;
     private float secondsSinceObjectiveCheck;
     private String effectsRunId;
-    private float cachedSensorRangeMult = 1f;
+    private ChartGenContext cachedContext = ChartGenContext.none();
     private boolean sensorRangeApplied;
     private String sensorSourceText;
 
@@ -36,9 +36,12 @@ public class ChartRunScript implements EveryFrameScript {
 
     @Override
     public void advance(float amount) {
+        if (ChartBattlePlugin.hasCommanderBonuses()) {
+            ChartBattlePlugin.liftCommanderBonuses();
+        }
         ChartRun run = ChartRuns.currentOrNull();
         if (run == null) {
-            if (sensorRangeApplied) {
+            if (sensorRangeApplied || ChartFleetConditions.isActive()) {
                 liftRunEffects(Global.getSector().getPlayerFleet());
             }
             forget();
@@ -137,30 +140,35 @@ public class ChartRunScript implements EveryFrameScript {
     }
 
     void applyRunEffects(CampaignFleetAPI playerFleet, ChartRun run, boolean inside) {
-        if (inside) {
-            float sensorRangeMult = sensorRangeMultFor(run);
-            if (sensorRangeMult != 1f) {
-                ChartRunEffects.applySensorRange(playerFleet, sensorRangeMult, sensorSource());
-                sensorRangeApplied = true;
-                return;
+        if (!inside) {
+            if (sensorRangeApplied || ChartFleetConditions.isActive()) {
+                liftRunEffects(playerFleet);
             }
+            return;
         }
-        if (sensorRangeApplied) {
-            liftRunEffects(playerFleet);
+        ChartGenContext context = contextFor(run);
+        float sensorRangeMult = context.sensorRangeMult();
+        if (sensorRangeMult != 1f) {
+            ChartRunEffects.applySensorRange(playerFleet, sensorRangeMult, sensorSource());
+            sensorRangeApplied = true;
         }
+        ChartFleetConditions.set(context.fleetStatMults(), playerFleet);
     }
 
     private void liftRunEffects(CampaignFleetAPI playerFleet) {
-        ChartRunEffects.removeFrom(playerFleet);
-        sensorRangeApplied = false;
+        if (sensorRangeApplied) {
+            ChartRunEffects.removeFrom(playerFleet);
+            sensorRangeApplied = false;
+        }
+        ChartFleetConditions.clear(playerFleet);
     }
 
-    private float sensorRangeMultFor(ChartRun run) {
+    private ChartGenContext contextFor(ChartRun run) {
         if (!run.runId().equals(effectsRunId)) {
             effectsRunId = run.runId();
-            cachedSensorRangeMult = ChartRunEffects.contextOf(run).sensorRangeMult();
+            cachedContext = ChartRunEffects.contextOf(run);
         }
-        return cachedSensorRangeMult;
+        return cachedContext;
     }
 
     private String sensorSource() {
@@ -175,7 +183,7 @@ public class ChartRunScript implements EveryFrameScript {
         cachedSystem = null;
         closeArmed = false;
         effectsRunId = null;
-        cachedSensorRangeMult = 1f;
+        cachedContext = ChartGenContext.none();
     }
 
     static void blockEscapeAbilities(CampaignFleetAPI playerFleet) {

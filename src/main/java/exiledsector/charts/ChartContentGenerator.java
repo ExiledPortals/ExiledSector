@@ -203,6 +203,12 @@ public final class ChartContentGenerator {
         };
     }
 
+    static void applyEnemySensorRange(CampaignFleetAPI fleet, float sensorRangeBonus) {
+        if (sensorRangeBonus > 0f && fleet.getStats() != null) {
+            fleet.getStats().getSensorRangeMod().modifyFlat(ChartIds.ENEMY_SENSOR_MOD_ID, sensorRangeBonus);
+        }
+    }
+
     static void prepareFleet(CampaignFleetAPI fleet, String runId, int tier, FleetRole role, int strengthBonus, long fleetSeed) {
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();
         memory.set(ChartIds.TIER_MEMORY_KEY, tier);
@@ -409,6 +415,7 @@ public final class ChartContentGenerator {
                 return;
             }
             prepareFleet(fleet, runId, tier, planned.role(), planned.strengthBonus(), fleetSeed);
+            applyEnemySensorRange(fleet, chartContext.enemySensorRangeBonus());
             try {
                 ChartVanillaLoot.addToFleet(fleet, planned.role() == FleetRole.BOSS, chartContext, tier);
             } catch (RuntimeException | LinkageError e) {

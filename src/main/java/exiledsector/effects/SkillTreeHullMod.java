@@ -12,6 +12,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.charts.ChartFleetConditions;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.items.DoctrineOverrides;
@@ -38,6 +39,11 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
 
     @Override
     public void applyEffectsBeforeShipCreation(HullSize hullSize, MutableShipStatsAPI stats, String id) {
+        applyTree(hullSize, stats);
+        ChartFleetConditions.applyToShip(stats);
+    }
+
+    private static void applyTree(HullSize hullSize, MutableShipStatsAPI stats) {
         ShipSkillData shipData = SkillDataResolver.resolve(stats.getFleetMember(), stats.getVariant());
         if (shipData == null) return;
 
@@ -144,6 +150,11 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
 
     @Override
     public void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship, String id) {
+        applyTreeToFighter(fighter, ship);
+        ChartFleetConditions.applyToFighter(fighter, ship);
+    }
+
+    private static void applyTreeToFighter(ShipAPI fighter, ShipAPI ship) {
         ResolvedTree resolvedTree = treeFor(ship);
         if (resolvedTree == null) return;
 
