@@ -14,10 +14,14 @@ import exiledsector.items.MaterialTier;
 import exiledsector.items.Subroutine;
 import exiledsector.items.SubroutineKind;
 import exiledsector.items.WormholeAnchor;
+import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTree;
 import exiledsector.ui.node.DoctrineColors;
 import exiledsector.ui.section.SectionFlair;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class CargoIconLooks {
 
@@ -65,6 +69,10 @@ public final class CargoIconLooks {
         if (doctrineLook != null) {
             return doctrineLook;
         }
+        CargoIconLook cacheLook = forCache(item);
+        if (cacheLook != null) {
+            return cacheLook;
+        }
         ItemRarity rarity = item.rarity();
         CargoIconLook look = switch (rarity) {
             case COMMON -> CargoIconLook.outlined(rarity.color());
@@ -92,6 +100,21 @@ public final class CargoIconLooks {
         Color factionColor = DoctrineColors.forFaction(archive.factionId());
         return CargoIconLook.doctrine(factionColor == null ? item.frameColor() : factionColor,
                 DoctrineLook.of(DoctrineScreen.forFaction(archive.factionId()), archive.factionId()));
+    }
+
+    static CargoIconLook forCache(Item item) {
+        if (!(item instanceof Subroutine subroutine) || subroutine.subroutineKind() != SubroutineKind.MODSPEC_CACHE
+                || !CacheIconFx.STILL_PATH.equals(subroutine.iconPath())) {
+            return null;
+        }
+        List<String> chipIconPaths = new ArrayList<>();
+        for (String nodeId : subroutine.currentNodeIds()) {
+            SkillNode node = SkillTree.getDeclared(nodeId);
+            if (node != null && node.getIconPath() != null) {
+                chipIconPaths.add(node.getIconPath());
+            }
+        }
+        return CargoIconLook.cache(item.frameColor(), new CacheLook(chipIconPaths));
     }
 
     public static boolean celebratesDrop(CargoIconLook look) {

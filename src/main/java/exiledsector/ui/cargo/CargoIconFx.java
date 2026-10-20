@@ -95,6 +95,10 @@ public final class CargoIconFx {
             DoctrineIconFx.render(sprites, iconPath, look, x, y, w, h, alphaMult, phaseSeed);
             return;
         }
+        if (look != null && look.cache() != null) {
+            CacheIconFx.render(sprites, iconPath, look, x, y, w, h, alphaMult, phaseSeed);
+            return;
+        }
         ItemAnimationSetting.Mode mode = ItemAnimationSetting.mode();
         float size = Math.min(w, h);
         float cx = x + w / 2f;
