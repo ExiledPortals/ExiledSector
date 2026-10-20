@@ -4271,6 +4271,71 @@
 			]
 		},
 		{
+			"id": "doctrine_tt_tachyon_lance_licensing",
+			"name": "Tachyon Lance Licensing",
+			"icon": "graphics/icons/beam_damage.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "BEAM_WEAPON_DAMAGE_PERCENT",
+					"magnitude": 15
+				},
+				{
+					"effect": "BEAM_WEAPON_RANGE_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"description": "A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked and every one of them copied by a crew that never planned to renew. This ship's beams hit harder and reach further.",
+			"tags": [
+				"energy",
+				"weapons",
+				"range",
+				"req_beam"
+			]
+		},
+		{
+			"id": "doctrine_tt_black_ledger_coils",
+			"name": "Black Ledger Coil Tuning",
+			"icon": "graphics/icons/phase_cloak_flux_threshold.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "PHASE_CLOAK_ACTIVATION_COST_MULT",
+					"magnitude": -25
+				},
+				{
+					"effect": "FLUX_DISSIPATION_WHILE_PHASED_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"description": "Maintenance notes recovered from a Tri-Tachyon phase frigate's wreck, filed under a cost centre that officially does not exist, show the crew how to slip this ship's coils into p-space cheaply and shed heat while it waits there.",
+			"tags": [
+				"phase",
+				"req_phase"
+			]
+		},
+		{
+			"id": "doctrine_tt_escrowed_emitters",
+			"name": "Escrowed Emitters",
+			"icon": "graphics/icons/shield_damage_taken_multi.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "SHIELD_DAMAGE_TAKEN_MULT",
+					"magnitude": -10
+				},
+				{
+					"effect": "SHIELD_UPKEEP_MULT",
+					"magnitude": -25
+				}
+			],
+			"description": "Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. A crew that cracks the lock on a salvaged emitter finds the full rated performance sitting under it. This ship's shields hold up better and cost less flux to keep up.",
+			"tags": [
+				"shield",
+				"req_shields"
+			]
+		},
+		{
 			"id": "doctrine_tt_hostile_takeover",
 			"name": "Hostile Takeover",
 			"icon": "graphics/icons/tactical_superiority.png",

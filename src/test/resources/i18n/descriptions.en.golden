@@ -2866,6 +2866,36 @@ type|doctrine_tt_alpha_fire_control|CRUISER|2	0	<good>10%</good> increased energ
 type|doctrine_tt_alpha_fire_control|CAPITAL_SHIP|0	0	Fire-control routines lifted from a Tri-Tachyon line ship, written by an Alpha core that never meant to share them. Patched into this ship's targeting, they steady its autofiring weapons and stretch the reach of its energy weapons.
 type|doctrine_tt_alpha_fire_control|CAPITAL_SHIP|1	0	<good>50%</good> increased target leading accuracy of autofiring weapons.
 type|doctrine_tt_alpha_fire_control|CAPITAL_SHIP|2	0	<good>10%</good> increased energy weapon range.
+type|doctrine_tt_black_ledger_coils|null|0	0	Maintenance notes recovered from a Tri-Tachyon phase frigate's wreck, filed under a cost centre that officially does not exist, show the crew how to slip this ship's coils into p-space cheaply and shed heat while it waits there.
+type|doctrine_tt_black_ledger_coils|null|1	1	<bad>25%</bad> less phase cloak activation cost.
+type|doctrine_tt_black_ledger_coils|null|2	0	<good>25%</good> increased flux dissipation while phased.
+type|doctrine_tt_black_ledger_coils|FRIGATE|0	0	Maintenance notes recovered from a Tri-Tachyon phase frigate's wreck, filed under a cost centre that officially does not exist, show the crew how to slip this ship's coils into p-space cheaply and shed heat while it waits there.
+type|doctrine_tt_black_ledger_coils|FRIGATE|1	1	<bad>25%</bad> less phase cloak activation cost.
+type|doctrine_tt_black_ledger_coils|FRIGATE|2	0	<good>25%</good> increased flux dissipation while phased.
+type|doctrine_tt_black_ledger_coils|DESTROYER|0	0	Maintenance notes recovered from a Tri-Tachyon phase frigate's wreck, filed under a cost centre that officially does not exist, show the crew how to slip this ship's coils into p-space cheaply and shed heat while it waits there.
+type|doctrine_tt_black_ledger_coils|DESTROYER|1	1	<bad>25%</bad> less phase cloak activation cost.
+type|doctrine_tt_black_ledger_coils|DESTROYER|2	0	<good>25%</good> increased flux dissipation while phased.
+type|doctrine_tt_black_ledger_coils|CRUISER|0	0	Maintenance notes recovered from a Tri-Tachyon phase frigate's wreck, filed under a cost centre that officially does not exist, show the crew how to slip this ship's coils into p-space cheaply and shed heat while it waits there.
+type|doctrine_tt_black_ledger_coils|CRUISER|1	1	<bad>25%</bad> less phase cloak activation cost.
+type|doctrine_tt_black_ledger_coils|CRUISER|2	0	<good>25%</good> increased flux dissipation while phased.
+type|doctrine_tt_black_ledger_coils|CAPITAL_SHIP|0	0	Maintenance notes recovered from a Tri-Tachyon phase frigate's wreck, filed under a cost centre that officially does not exist, show the crew how to slip this ship's coils into p-space cheaply and shed heat while it waits there.
+type|doctrine_tt_black_ledger_coils|CAPITAL_SHIP|1	1	<bad>25%</bad> less phase cloak activation cost.
+type|doctrine_tt_black_ledger_coils|CAPITAL_SHIP|2	0	<good>25%</good> increased flux dissipation while phased.
+type|doctrine_tt_escrowed_emitters|null|0	0	Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. A crew that cracks the lock on a salvaged emitter finds the full rated performance sitting under it. This ship's shields hold up better and cost less flux to keep up.
+type|doctrine_tt_escrowed_emitters|null|1	1	<bad>10%</bad> less damage taken by shields.
+type|doctrine_tt_escrowed_emitters|null|2	1	<bad>25%</bad> less shield flux upkeep.
+type|doctrine_tt_escrowed_emitters|FRIGATE|0	0	Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. A crew that cracks the lock on a salvaged emitter finds the full rated performance sitting under it. This ship's shields hold up better and cost less flux to keep up.
+type|doctrine_tt_escrowed_emitters|FRIGATE|1	1	<bad>10%</bad> less damage taken by shields.
+type|doctrine_tt_escrowed_emitters|FRIGATE|2	1	<bad>25%</bad> less shield flux upkeep.
+type|doctrine_tt_escrowed_emitters|DESTROYER|0	0	Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. A crew that cracks the lock on a salvaged emitter finds the full rated performance sitting under it. This ship's shields hold up better and cost less flux to keep up.
+type|doctrine_tt_escrowed_emitters|DESTROYER|1	1	<bad>10%</bad> less damage taken by shields.
+type|doctrine_tt_escrowed_emitters|DESTROYER|2	1	<bad>25%</bad> less shield flux upkeep.
+type|doctrine_tt_escrowed_emitters|CRUISER|0	0	Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. A crew that cracks the lock on a salvaged emitter finds the full rated performance sitting under it. This ship's shields hold up better and cost less flux to keep up.
+type|doctrine_tt_escrowed_emitters|CRUISER|1	1	<bad>10%</bad> less damage taken by shields.
+type|doctrine_tt_escrowed_emitters|CRUISER|2	1	<bad>25%</bad> less shield flux upkeep.
+type|doctrine_tt_escrowed_emitters|CAPITAL_SHIP|0	0	Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. A crew that cracks the lock on a salvaged emitter finds the full rated performance sitting under it. This ship's shields hold up better and cost less flux to keep up.
+type|doctrine_tt_escrowed_emitters|CAPITAL_SHIP|1	1	<bad>10%</bad> less damage taken by shields.
+type|doctrine_tt_escrowed_emitters|CAPITAL_SHIP|2	1	<bad>25%</bad> less shield flux upkeep.
 type|doctrine_tt_flux_arbitrage|null|0	0	Corporate engineers treat flux like capital: borrow hard and repay fast. Their venting schedules, copied from a captured Aurora's maintenance logs, let this ship dump heat faster and bleed it off steadily between volleys.
 type|doctrine_tt_flux_arbitrage|null|1	0	<good>10%</good> increased flux dissipation.
 type|doctrine_tt_flux_arbitrage|null|2	0	<good>25%</good> increased venting speed.
@@ -2916,6 +2946,21 @@ type|doctrine_tt_quarterly_targets|CRUISER|2	0	<good>10%</good> increased damage
 type|doctrine_tt_quarterly_targets|CAPITAL_SHIP|0	0	Tri-Tachyon fleet doctrine ranks every target by the value it carries, and its threat tables push gunners toward the largest hulls on the field. This ship hits cruisers and capital ships harder.
 type|doctrine_tt_quarterly_targets|CAPITAL_SHIP|1	0	<good>10%</good> increased damage to cruisers.
 type|doctrine_tt_quarterly_targets|CAPITAL_SHIP|2	0	<good>10%</good> increased damage to capital ships and stations.
+type|doctrine_tt_tachyon_lance_licensing|null|0	0	A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked and every one of them copied by a crew that never planned to renew. This ship's beams hit harder and reach further.
+type|doctrine_tt_tachyon_lance_licensing|null|1	0	<good>15%</good> increased beam weapon damage.
+type|doctrine_tt_tachyon_lance_licensing|null|2	0	<good>10%</good> increased beam weapon range.
+type|doctrine_tt_tachyon_lance_licensing|FRIGATE|0	0	A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked and every one of them copied by a crew that never planned to renew. This ship's beams hit harder and reach further.
+type|doctrine_tt_tachyon_lance_licensing|FRIGATE|1	0	<good>15%</good> increased beam weapon damage.
+type|doctrine_tt_tachyon_lance_licensing|FRIGATE|2	0	<good>10%</good> increased beam weapon range.
+type|doctrine_tt_tachyon_lance_licensing|DESTROYER|0	0	A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked and every one of them copied by a crew that never planned to renew. This ship's beams hit harder and reach further.
+type|doctrine_tt_tachyon_lance_licensing|DESTROYER|1	0	<good>15%</good> increased beam weapon damage.
+type|doctrine_tt_tachyon_lance_licensing|DESTROYER|2	0	<good>10%</good> increased beam weapon range.
+type|doctrine_tt_tachyon_lance_licensing|CRUISER|0	0	A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked and every one of them copied by a crew that never planned to renew. This ship's beams hit harder and reach further.
+type|doctrine_tt_tachyon_lance_licensing|CRUISER|1	0	<good>15%</good> increased beam weapon damage.
+type|doctrine_tt_tachyon_lance_licensing|CRUISER|2	0	<good>10%</good> increased beam weapon range.
+type|doctrine_tt_tachyon_lance_licensing|CAPITAL_SHIP|0	0	A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked and every one of them copied by a crew that never planned to renew. This ship's beams hit harder and reach further.
+type|doctrine_tt_tachyon_lance_licensing|CAPITAL_SHIP|1	0	<good>15%</good> increased beam weapon damage.
+type|doctrine_tt_tachyon_lance_licensing|CAPITAL_SHIP|2	0	<good>10%</good> increased beam weapon range.
 type|dynamic_grid|null|0	0	Nightcross fits its dynamic coils to almost every hull it builds and never sells them on their own, so the crew pulls a set from a boarded Nightcross wreck and retrofits them into a hull that never shipped with one. The moment the shields come down, the power that fed them is routed to the energy weapons. The warranty, naturally, does not cover third-party installation.
 type|dynamic_grid|null|1	0	Once shields have been down for 0.75/1.1/2/3 seconds (frigate to capital) while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 type|dynamic_grid|null|2	0	<good>25%</good> increased shield raise rate.
