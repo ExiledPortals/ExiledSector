@@ -2851,6 +2851,55 @@ type|doctrine_remnant_cold_logic|CRUISER|2	0	<good>10%</good> increased maximum 
 type|doctrine_remnant_cold_logic|CAPITAL_SHIP|0	0	Machines do not tire. Rewriting this ship's duty cycles the way [REDACTED] cores run their own would keep its readiness higher and slow its decay through a long fight.
 type|doctrine_remnant_cold_logic|CAPITAL_SHIP|1	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
 type|doctrine_remnant_cold_logic|CAPITAL_SHIP|2	0	<good>10%</good> increased maximum combat readiness.
+type|doctrine_remnant_fortress_lattice|null|0	0	[REDACTED] warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.
+type|doctrine_remnant_fortress_lattice|null|1	0	<good>50%</good> increased shield turn rate.
+type|doctrine_remnant_fortress_lattice|null|2	0	<good>50%</good> increased shield raise rate.
+type|doctrine_remnant_fortress_lattice|null|3	1	<bad>25%</bad> reduced EMP damage taken.
+type|doctrine_remnant_fortress_lattice|FRIGATE|0	0	[REDACTED] warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.
+type|doctrine_remnant_fortress_lattice|FRIGATE|1	0	<good>50%</good> increased shield turn rate.
+type|doctrine_remnant_fortress_lattice|FRIGATE|2	0	<good>50%</good> increased shield raise rate.
+type|doctrine_remnant_fortress_lattice|FRIGATE|3	1	<bad>25%</bad> reduced EMP damage taken.
+type|doctrine_remnant_fortress_lattice|DESTROYER|0	0	[REDACTED] warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.
+type|doctrine_remnant_fortress_lattice|DESTROYER|1	0	<good>50%</good> increased shield turn rate.
+type|doctrine_remnant_fortress_lattice|DESTROYER|2	0	<good>50%</good> increased shield raise rate.
+type|doctrine_remnant_fortress_lattice|DESTROYER|3	1	<bad>25%</bad> reduced EMP damage taken.
+type|doctrine_remnant_fortress_lattice|CRUISER|0	0	[REDACTED] warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.
+type|doctrine_remnant_fortress_lattice|CRUISER|1	0	<good>50%</good> increased shield turn rate.
+type|doctrine_remnant_fortress_lattice|CRUISER|2	0	<good>50%</good> increased shield raise rate.
+type|doctrine_remnant_fortress_lattice|CRUISER|3	1	<bad>25%</bad> reduced EMP damage taken.
+type|doctrine_remnant_fortress_lattice|CAPITAL_SHIP|0	0	[REDACTED] warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.
+type|doctrine_remnant_fortress_lattice|CAPITAL_SHIP|1	0	<good>50%</good> increased shield turn rate.
+type|doctrine_remnant_fortress_lattice|CAPITAL_SHIP|2	0	<good>50%</good> increased shield raise rate.
+type|doctrine_remnant_fortress_lattice|CAPITAL_SHIP|3	1	<bad>25%</bad> reduced EMP damage taken.
+type|doctrine_remnant_lumen_harmonics|null|0	0	Energy mounts pulled from [REDACTED] wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.
+type|doctrine_remnant_lumen_harmonics|null|1	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+type|doctrine_remnant_lumen_harmonics|null|2	1	<bad>10%</bad> reduced energy weapon flux cost.
+type|doctrine_remnant_lumen_harmonics|FRIGATE|0	0	Energy mounts pulled from [REDACTED] wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.
+type|doctrine_remnant_lumen_harmonics|FRIGATE|1	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+type|doctrine_remnant_lumen_harmonics|FRIGATE|2	1	<bad>10%</bad> reduced energy weapon flux cost.
+type|doctrine_remnant_lumen_harmonics|DESTROYER|0	0	Energy mounts pulled from [REDACTED] wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.
+type|doctrine_remnant_lumen_harmonics|DESTROYER|1	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+type|doctrine_remnant_lumen_harmonics|DESTROYER|2	1	<bad>10%</bad> reduced energy weapon flux cost.
+type|doctrine_remnant_lumen_harmonics|CRUISER|0	0	Energy mounts pulled from [REDACTED] wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.
+type|doctrine_remnant_lumen_harmonics|CRUISER|1	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+type|doctrine_remnant_lumen_harmonics|CRUISER|2	1	<bad>10%</bad> reduced energy weapon flux cost.
+type|doctrine_remnant_lumen_harmonics|CAPITAL_SHIP|0	0	Energy mounts pulled from [REDACTED] wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.
+type|doctrine_remnant_lumen_harmonics|CAPITAL_SHIP|1	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
+type|doctrine_remnant_lumen_harmonics|CAPITAL_SHIP|2	1	<bad>10%</bad> reduced energy weapon flux cost.
+type|doctrine_remnant_ordo_signal_mesh|null|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. Decoding that chatter lets the crew tune this ship's sensors to it and jam enemy targeting with it.
+type|doctrine_remnant_ordo_signal_mesh|null|1	0	<good>+1</good> to ECM rating.
+type|doctrine_remnant_ordo_signal_mesh|FRIGATE|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. Decoding that chatter lets the crew tune this ship's sensors to it and jam enemy targeting with it.
+type|doctrine_remnant_ordo_signal_mesh|FRIGATE|1	0	<good>+1</good> to ECM rating.
+type|doctrine_remnant_ordo_signal_mesh|FRIGATE|2	0	<good>+10</good> to this ship's sensor strength.
+type|doctrine_remnant_ordo_signal_mesh|DESTROYER|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. Decoding that chatter lets the crew tune this ship's sensors to it and jam enemy targeting with it.
+type|doctrine_remnant_ordo_signal_mesh|DESTROYER|1	0	<good>+1</good> to ECM rating.
+type|doctrine_remnant_ordo_signal_mesh|DESTROYER|2	0	<good>+15</good> to this ship's sensor strength.
+type|doctrine_remnant_ordo_signal_mesh|CRUISER|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. Decoding that chatter lets the crew tune this ship's sensors to it and jam enemy targeting with it.
+type|doctrine_remnant_ordo_signal_mesh|CRUISER|1	0	<good>+1</good> to ECM rating.
+type|doctrine_remnant_ordo_signal_mesh|CRUISER|2	0	<good>+20</good> to this ship's sensor strength.
+type|doctrine_remnant_ordo_signal_mesh|CAPITAL_SHIP|0	0	A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. Decoding that chatter lets the crew tune this ship's sensors to it and jam enemy targeting with it.
+type|doctrine_remnant_ordo_signal_mesh|CAPITAL_SHIP|1	0	<good>+1</good> to ECM rating.
+type|doctrine_remnant_ordo_signal_mesh|CAPITAL_SHIP|2	0	<good>+30</good> to this ship's sensor strength.
 type|doctrine_remnant_swarm_logic|null|0	0	[REDACTED] carriers launch their drones like a single thought spread across many bodies. Rebuilding this ship's flight control around their coordination routines lets its wings regroup faster and strike harder.
 type|doctrine_remnant_swarm_logic|null|1	0	<good>25%</good> increased rate at which fighter replacement capability recovers.
 type|doctrine_remnant_swarm_logic|null|2	0	<good>15%</good> increased weapon damage of fighters launched from this ship.

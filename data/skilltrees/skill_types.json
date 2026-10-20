@@ -4495,7 +4495,7 @@
 		{
 			"id": "doctrine_remnant_swarm_logic",
 			"name": "Swarm Logic",
-			"icon": "graphics/icons/expanded_deck_crew.png",
+			"icon": "graphics/icons/doctrine_remnant_swarm_logic.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4516,7 +4516,7 @@
 		{
 			"id": "doctrine_remnant_unblinking_watch",
 			"name": "Unblinking Watch",
-			"icon": "graphics/icons/pointdefenseai.png",
+			"icon": "graphics/icons/doctrine_remnant_unblinking_watch.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4537,7 +4537,7 @@
 		{
 			"id": "doctrine_remnant_cold_logic",
 			"name": "Cold Logic",
-			"icon": "graphics/icons/hardened_subsystems.png",
+			"icon": "graphics/icons/doctrine_remnant_cold_logic.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4555,9 +4555,81 @@
 			]
 		},
 		{
+			"id": "doctrine_remnant_fortress_lattice",
+			"name": "Fortress Lattice",
+			"icon": "graphics/icons/doctrine_remnant_fortress_lattice.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "SHIELD_TURN_RATE_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "SHIELD_RAISE_RATE_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "EMP_DAMAGE_TAKEN_PERCENT",
+					"magnitude": -25
+				}
+			],
+			"description": "[REDACTED] warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.",
+			"tags": [
+				"shield",
+				"req_shields"
+			]
+		},
+		{
+			"id": "doctrine_remnant_lumen_harmonics",
+			"name": "Lumen Harmonics",
+			"icon": "graphics/icons/doctrine_remnant_lumen_harmonics.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ENERGY_WEAPON_FIRE_RATE_PERCENT",
+					"magnitude": 10
+				},
+				{
+					"effect": "ENERGY_WEAPON_FLUX_COST_PERCENT",
+					"magnitude": -10
+				}
+			],
+			"description": "Energy mounts pulled from [REDACTED] wrecks cycle on patterns no human foundry ever wrote. Reworking this ship's firing cycles to match lets its energy weapons fire faster and run cooler.",
+			"tags": [
+				"energy",
+				"weapons",
+				"req_energy"
+			]
+		},
+		{
+			"id": "doctrine_remnant_ordo_signal_mesh",
+			"name": "Ordo Signal Mesh",
+			"icon": "graphics/icons/doctrine_remnant_ordo_signal_mesh.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "ELECTRONIC_WARFARE",
+					"magnitude": 1
+				}
+			],
+			"hullSizeEffects": [
+				{
+					"effect": "SENSOR_STRENGTH_FLAT",
+					"frigate": 10,
+					"destroyer": 15,
+					"cruiser": 20,
+					"capitalShip": 30
+				}
+			],
+			"description": "A [REDACTED] ordo moves as one mind, its ships murmuring to each other across a constant web of signals. Decoding that chatter lets the crew tune this ship's sensors to it and jam enemy targeting with it.",
+			"tags": [
+				"fleet_support"
+			]
+		},
+		{
 			"id": "doctrine_remnant_automated_command",
 			"name": "Automated Command",
-			"icon": "graphics/icons/dedicated_targeting_core.png",
+			"icon": "graphics/icons/doctrine_remnant_automated_command.png",
 			"tier": "KEYSTONE",
 			"effects": [
 				{
