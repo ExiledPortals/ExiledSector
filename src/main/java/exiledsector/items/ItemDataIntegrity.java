@@ -68,12 +68,13 @@ public final class ItemDataIntegrity {
     public static List<Violation> checkWithStarCharts(JSONArray modifierRows, JSONArray subroutineRows, JSONArray hullItemRows,
                                                       JSONArray implicitRows, JSONArray chartModifierRows, JSONArray chartRows,
                                                       JSONArray chartImplicitRows) throws JSONException {
-        return checkAll(modifierRows, subroutineRows, hullItemRows, implicitRows, chartModifierRows, chartRows, chartImplicitRows, new JSONArray());
+        return checkAll(modifierRows, subroutineRows, hullItemRows, implicitRows, chartModifierRows, chartRows, chartImplicitRows, new JSONArray(),
+                new JSONArray());
     }
 
     public static List<Violation> checkAll(JSONArray modifierRows, JSONArray subroutineRows, JSONArray hullItemRows, JSONArray implicitRows,
                                            JSONArray chartModifierRows, JSONArray chartRows, JSONArray chartImplicitRows,
-                                           JSONArray subroutineImplicitRows) throws JSONException {
+                                           JSONArray subroutineImplicitRows, JSONArray hullItemCorruptionRows) throws JSONException {
         ItemDataIntegrity integrity = new ItemDataIntegrity();
         integrity.checkModifiers(modifierRows, ItemModifiers.DATA_PATH, false);
         integrity.checkModifiers(chartModifierRows, StarChartItems.MODIFIERS_PATH, true);
@@ -82,7 +83,9 @@ public final class ItemDataIntegrity {
         integrity.checkDefinitions(chartRows, StarChartDefinitions.DATA_PATH, ItemType.STAR_CHART);
         integrity.checkImplicits(implicitRows);
         integrity.checkStarChartImplicits(chartImplicitRows);
-        integrity.checkSubroutineImplicits(orEmpty(subroutineImplicitRows));
+        integrity.checkCorruptionPool(orEmpty(subroutineImplicitRows), SubroutineImplicits.DATA_PATH, "the subroutine corruption pool", ItemType.SUBROUTINE);
+        integrity.checkCorruptionPool(orEmpty(hullItemCorruptionRows), ItemImplicits.CORRUPTION_DATA_PATH, "the hull item corruption pool",
+                ItemType.HULL_ITEM);
         integrity.checkNames();
         integrity.checkReferences();
         return List.copyOf(integrity.violations);
@@ -101,8 +104,9 @@ public final class ItemDataIntegrity {
             JSONArray chartRows = orEmpty(ModCsv.rows("id", StarChartDefinitions.DATA_PATH));
             JSONArray chartImplicitRows = orEmpty(ModCsv.rows(StarChartImplicits.SYSTEM_TYPE_COLUMN, StarChartImplicits.DATA_PATH));
             JSONArray subroutineImplicitRows = orEmpty(ModCsv.rows(SubroutineImplicits.IMPLICIT_COLUMN, SubroutineImplicits.DATA_PATH));
+            JSONArray hullItemCorruptionRows = orEmpty(ModCsv.rows(CorruptionImplicitPool.IMPLICIT_COLUMN, ItemImplicits.CORRUPTION_DATA_PATH));
             List<Violation> violations = new ArrayList<>(checkAll(modifierRows, subroutineRows, hullItemRows, implicitRows,
-                    chartModifierRows, chartRows, chartImplicitRows, subroutineImplicitRows));
+                    chartModifierRows, chartRows, chartImplicitRows, subroutineImplicitRows, hullItemCorruptionRows));
             JSONArray anchorRows = orEmpty(ModCsv.rows("id", WormholeAnchorDefinitions.DATA_PATH));
             violations.addAll(checkWormholeAnchors(anchorRows, SkillTree.getDeclaredNodes(), definitionIds(orEmpty(subroutineRows), hullItemRows, chartRows)));
             JSONArray doctrineRows = orEmpty(ModCsv.rows(DoctrineArchives.ID_COLUMN, DoctrineArchives.DATA_PATH));
@@ -835,10 +839,10 @@ public final class ItemDataIntegrity {
         });
     }
 
-    private void checkSubroutineImplicits(JSONArray rows) throws JSONException {
+    private void checkCorruptionPool(JSONArray rows, String file, String poolName, ItemType itemType) throws JSONException {
         List<ModifierRow> implicits = new ArrayList<>();
-        ModCsv.forEach(rows, (index, row) -> checkImplicitEntry(SubroutineImplicits.DATA_PATH, index + FIRST_DATA_LINE, "the subroutine corruption pool",
-                ModCsv.text(row, SubroutineImplicits.IMPLICIT_COLUMN), implicits, ItemType.SUBROUTINE));
+        ModCsv.forEach(rows, (index, row) -> checkImplicitEntry(file, index + FIRST_DATA_LINE, poolName,
+                ModCsv.text(row, CorruptionImplicitPool.IMPLICIT_COLUMN), implicits, itemType));
     }
 
     private void checkImplicitEntry(String file, int line, String typeId, String entryText, List<ModifierRow> implicits, ItemType itemType) {

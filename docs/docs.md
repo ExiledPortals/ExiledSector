@@ -125,6 +125,7 @@ socket one.
 ## Corruption
 
 A Corrupted Nanoswarm locks the item and picks one equally likely outcome from its list in `CorruptionOutcome`
-(`ItemCrafting.corrupt`). Unique hull items can also become a rare of their section's base with 3 to 4
+(`ItemCrafting.corrupt`). A replaced hull item implicit comes from `hull_item_corruption_implicits.csv` or any
+section's implicits (`ItemImplicits.corruptionPool`). Unique hull items can also become a rare of their section's base with 3 to 4
 modifiers, keeping their implicits. Subroutines add an implicit from `subroutine_corruption_implicits.csv`
 instead of replacing one, and their rare outcome only corrupts them.
