@@ -71,10 +71,22 @@ public enum ChartEffect implements ModifierEffect {
     CHART_PHASE_ACTIVATION_COST_PERCENT(ChartFleetStat.PHASE_ACTIVATION_COST),
     CHART_FLUX_DISSIPATION_PERCENT(ChartFleetStat.FLUX_DISSIPATION),
     CHART_WEAPON_RANGE_PERCENT(ChartFleetStat.WEAPON_RANGE),
-    CHART_DEPLOYMENT_POINTS_PERCENT(ChartFleetStat.DEPLOYMENT_POINTS),
-    CHART_ENEMY_DEPLOYMENT_POINTS_PERCENT(ChartFleetStat.ENEMY_DEPLOYMENT_POINTS),
+    CHART_DEPLOYMENT_COST_PERCENT(ChartFleetStat.DEPLOYMENT_COST),
+    CHART_ENEMY_DEPLOYMENT_COST_PERCENT(ChartFleetStat.ENEMY_DEPLOYMENT_COST),
     CHART_COMMAND_POINT_RATE_PERCENT(ChartFleetStat.COMMAND_POINT_RATE),
     CHART_ENEMY_OBJECTIVE_CAPTURE_RATE_PERCENT(ChartFleetStat.ENEMY_OBJECTIVE_CAPTURE_RATE),
+    CHART_SMALLER_BATTLES_FLAT(false) {
+        @Override
+        public void beforeGeneration(ChartGenContext context, float value) {
+            context.addBattleSizeBonus(-value);
+        }
+    },
+    CHART_LARGER_BATTLES_FLAT(false) {
+        @Override
+        public void beforeGeneration(ChartGenContext context, float value) {
+            context.addBattleSizeBonus(value);
+        }
+    },
     CHART_ENEMY_SENSOR_RANGE_FLAT(false) {
         @Override
         public void beforeGeneration(ChartGenContext context, float value) {

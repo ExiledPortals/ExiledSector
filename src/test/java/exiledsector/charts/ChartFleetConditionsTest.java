@@ -7,6 +7,8 @@ import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Stats;
+import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.charts.ChartGenContext.AppliedEffect;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -109,6 +111,24 @@ class ChartFleetConditionsTest {
         when(fighter.getMutableStats()).thenReturn(fighterStats.stats);
         ChartFleetConditions.applyToFighter(fighter, carrier);
         assertEquals(0.8f, fighterStats.maxSpeed.getMultStatMod(ChartFleetConditions.MOD_ID).getValue(), 0.0001f);
+    }
+
+    @Test
+    void crampedRaisesTheDeploymentCostOfPlayerShipsAndBattleOnlyStatsLeaveShipsAlone() {
+        ChartFleetConditions.set(Map.of(ChartFleetStat.DEPLOYMENT_COST, 1.25f, ChartFleetStat.ENEMY_DEPLOYMENT_COST, 0.8f,
+                ChartFleetStat.COMMAND_POINT_RATE, 0.7f), playerFleet);
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
+        StatBonus deploymentCost = new StatBonus();
+        when(stats.getFleetMember()).thenReturn(playerMember);
+        when(stats.getDynamic()).thenReturn(dynamic);
+        when(dynamic.getMod(Stats.DEPLOYMENT_POINTS_MOD)).thenReturn(deploymentCost);
+
+        ChartFleetConditions.applyToShip(stats);
+
+        assertEquals(25f, deploymentCost.computeEffective(20f), 0.0001f);
+        assertFalse(ChartFleetStat.ENEMY_DEPLOYMENT_COST.appliesToShips());
+        assertFalse(ChartFleetStat.COMMAND_POINT_RATE.appliesToShips());
     }
 
     @Test

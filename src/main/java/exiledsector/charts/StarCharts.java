@@ -14,8 +14,6 @@ public final class StarCharts {
     }
 
     public static void onGameLoad(SectorAPI sector) {
-        ChartBattlePlugin.liftCommanderBonuses();
-        ChartBattlePlugin.liftFrom(sector.getPlayerPerson());
         ChartLoadSweep.sweep(sector);
         sector.unregisterPlugin(ChartCampaignPlugin.ID);
         sector.registerPlugin(new ChartCampaignPlugin());

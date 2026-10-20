@@ -3,8 +3,7 @@ package exiledsector.charts;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
-import com.fs.starfarer.api.characters.PersonAPI;
+import com.fs.starfarer.api.combat.BattleObjectiveAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatFleetManagerAPI;
 import com.fs.starfarer.api.combat.CombatTaskManagerAPI;
@@ -12,6 +11,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.mission.FleetSide;
@@ -27,62 +27,33 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ChartBattlePluginTest {
 
-    private static final int BATTLE_SIZE = 300;
-
-    private MockedStatic<Global> globalMock;
     private CombatEngineAPI engine;
     private CombatFleetManagerAPI playerManager;
     private CombatFleetManagerAPI enemyManager;
-    private StatBonus playerFraction;
-    private StatBonus enemyFraction;
-    private PersonAPI playerCommander;
 
     @BeforeEach
     void setUp() {
-        SettingsAPI settings = mock(SettingsAPI.class);
-        when(settings.getBattleSize()).thenReturn(BATTLE_SIZE);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
         engine = mock(CombatEngineAPI.class);
         when(engine.isInCampaign()).thenReturn(true);
         playerManager = mock(CombatFleetManagerAPI.class);
         enemyManager = mock(CombatFleetManagerAPI.class);
         when(engine.getFleetManager(FleetSide.PLAYER)).thenReturn(playerManager);
         when(engine.getFleetManager(FleetSide.ENEMY)).thenReturn(enemyManager);
-        playerFraction = new StatBonus();
-        enemyFraction = new StatBonus();
-        playerCommander = commanderWith(playerFraction);
-        when(playerManager.getFleetCommanderPreferPlayer()).thenReturn(playerCommander);
-        PersonAPI enemyCommander = commanderWith(enemyFraction);
-        when(enemyManager.getFleetCommanderPreferPlayer()).thenReturn(enemyCommander);
     }
 
     @AfterEach
     void tearDown() {
-        ChartBattlePlugin.liftCommanderBonuses();
         ChartFleetConditions.clear(null);
-        globalMock.close();
-    }
-
-    private static PersonAPI commanderWith(StatBonus fractionBonus) {
-        PersonAPI commander = mock(PersonAPI.class);
-        MutableCharacterStatsAPI stats = mock(MutableCharacterStatsAPI.class);
-        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
-        when(commander.getStats()).thenReturn(stats);
-        when(stats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getMod(Stats.DEPLOYMENT_POINTS_FRACTION_OF_BATTLE_SIZE_BONUS_MOD)).thenReturn(fractionBonus);
-        return commander;
     }
 
     private ChartBattlePlugin startedPlugin(Map<ChartFleetStat, Float> mults) {
@@ -92,62 +63,62 @@ class ChartBattlePluginTest {
         return plugin;
     }
 
-    @Test
-    void thePlayersDeploymentCapShrinksAtOnceAndStaysStableAfterTheEngineRecomputesIt() {
-        ChartBattlePlugin plugin = startedPlugin(Map.of(ChartFleetStat.DEPLOYMENT_POINTS, 0.8f));
-        when(playerManager.getMaxStrength()).thenReturn(120);
-
-        plugin.advance(0f, List.of());
-
-        assertEquals(-24f / BATTLE_SIZE, playerFraction.getFlatBonus(ChartBattlePlugin.MOD_ID).getValue(), 0.0001f);
-        verify(playerManager).setMaxStrength(96);
-        assertNull(enemyFraction.getFlatBonus(ChartBattlePlugin.MOD_ID));
-
-        when(playerManager.getMaxStrength()).thenReturn(96);
-        plugin.advance(ChartBattlePlugin.REFRESH_SECONDS, List.of());
-        assertEquals(-24f / BATTLE_SIZE, playerFraction.getFlatBonus(ChartBattlePlugin.MOD_ID).getValue(), 0.0001f);
-
-        when(playerManager.getMaxStrength()).thenReturn(126);
-        plugin.advance(ChartBattlePlugin.REFRESH_SECONDS, List.of());
-        assertEquals(-30f / BATTLE_SIZE, playerFraction.getFlatBonus(ChartBattlePlugin.MOD_ID).getValue(), 0.0001f,
-                "a captured objective raises the base, and the penalty follows it");
+    private static DynamicStatsAPI dynamicStatsOf(MutableShipStatsAPI stats) {
+        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
+        when(stats.getDynamic()).thenReturn(dynamic);
+        return dynamic;
     }
 
     @Test
-    void theEnemyCapGrowsAndCommanderBonusesAreLiftedAfterTheBattle() {
-        ChartBattlePlugin plugin = startedPlugin(Map.of(ChartFleetStat.ENEMY_DEPLOYMENT_POINTS, 1.25f));
-        when(enemyManager.getMaxStrength()).thenReturn(160);
+    void battleSizeChangesAreSplitByEachSidesCapAndFollowCapturedObjectives() {
+        when(playerManager.getMaxStrength()).thenReturn(180);
+        when(enemyManager.getMaxStrength()).thenReturn(120);
+        BattleObjectiveAPI objective = mock(BattleObjectiveAPI.class);
+        when(objective.getOwner()).thenReturn(-1);
+        when(objective.getBattleSizeFractionBonus()).thenReturn(0.1f);
+        when(engine.getObjectives()).thenReturn(List.of(objective));
+        ChartFleetConditions.setBattleSizeBonus(-50);
+        ChartBattlePlugin plugin = startedPlugin(Map.of());
 
-        plugin.advance(0f, List.of());
+        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
+            SettingsAPI settings = mock(SettingsAPI.class);
+            when(settings.getBattleSize()).thenReturn(300);
+            globalMock.when(Global::getSettings).thenReturn(settings);
 
-        assertEquals(40f / BATTLE_SIZE, enemyFraction.getFlatBonus(ChartBattlePlugin.MOD_ID).getValue(), 0.0001f);
-        verify(enemyManager).setMaxStrength(200);
-        assertTrue(ChartBattlePlugin.hasCommanderBonuses());
+            plugin.advance(0f, List.of());
+            plugin.advance(ChartBattlePlugin.REFRESH_SECONDS, List.of());
+            verify(engine, times(1)).setMaxFleetPoints(FleetSide.PLAYER, 150);
+            verify(engine, times(1)).setMaxFleetPoints(FleetSide.ENEMY, 100);
 
-        ChartBattlePlugin.liftCommanderBonuses();
-        assertNull(enemyFraction.getFlatBonus(ChartBattlePlugin.MOD_ID));
-        assertFalse(ChartBattlePlugin.hasCommanderBonuses());
+            when(objective.getOwner()).thenReturn(ChartBattlePlugin.PLAYER_OWNER);
+            plugin.advance(ChartBattlePlugin.REFRESH_SECONDS, List.of());
+            verify(engine).setMaxFleetPoints(FleetSide.PLAYER, 180);
+        }
     }
 
     @Test
-    void endingTheBattleLiftsTheBonusesAndStopsThePlugin() {
-        ChartBattlePlugin plugin = startedPlugin(Map.of(ChartFleetStat.DEPLOYMENT_POINTS, 0.8f));
-        when(playerManager.getMaxStrength()).thenReturn(120);
-        plugin.advance(0f, List.of());
-
-        when(engine.isCombatOver()).thenReturn(true);
-        plugin.advance(ChartBattlePlugin.REFRESH_SECONDS, List.of());
-
-        assertNull(playerFraction.getFlatBonus(ChartBattlePlugin.MOD_ID));
+    void battleSizeLinesShowTheirSign() {
+        assertTrue(ChartEffect.CHART_SMALLER_BATTLES_FLAT.description(30f).plain().contains("-30"));
+        assertTrue(ChartEffect.CHART_LARGER_BATTLES_FLAT.description(40f).plain().contains("+40"));
+        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_SMALLER_BATTLES_FLAT, 30f),
+                new AppliedEffect(ChartEffect.CHART_LARGER_BATTLES_FLAT, 45f)));
+        assertEquals(15, context.battleSizeBonus());
     }
 
     @Test
-    void aSavedPlayerCommanderBonusIsLiftedOnLoad() {
-        playerFraction.modifyFlat(ChartBattlePlugin.MOD_ID, -0.1f);
+    void enemyReservesCostLessToDeployFromTheFirstFrame() {
+        FleetMemberAPI reserve = mock(FleetMemberAPI.class);
+        MutableShipStatsAPI reserveStats = mock(MutableShipStatsAPI.class);
+        StatBonus deploymentCost = new StatBonus();
+        when(reserve.getStats()).thenReturn(reserveStats);
+        when(dynamicStatsOf(reserveStats).getMod(Stats.DEPLOYMENT_POINTS_MOD)).thenReturn(deploymentCost);
+        when(enemyManager.getReservesCopy()).thenReturn(List.of(reserve));
+        ChartBattlePlugin plugin = startedPlugin(Map.of(ChartFleetStat.ENEMY_DEPLOYMENT_COST, 0.8f));
 
-        ChartBattlePlugin.liftFrom(playerCommander);
+        plugin.advance(0f, List.of());
 
-        assertNull(playerFraction.getFlatBonus(ChartBattlePlugin.MOD_ID));
+        assertEquals(0.8f, deploymentCost.getMultBonus(ChartBattlePlugin.MOD_ID).getValue(), 0.0001f);
+        assertEquals(16f, deploymentCost.computeEffective(20f), 0.0001f);
     }
 
     @Test
@@ -185,11 +156,9 @@ class ChartBattlePluginTest {
     private static ShipAPI shipWithCaptureRate(int owner, MutableStat captureRate) {
         ShipAPI ship = mock(ShipAPI.class);
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
-        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
         when(ship.getOwner()).thenReturn(owner);
         when(ship.getMutableStats()).thenReturn(stats);
-        when(stats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getStat(Stats.SHIP_OBJECTIVE_CAP_RATE_MULT)).thenReturn(captureRate);
+        when(dynamicStatsOf(stats).getStat(Stats.SHIP_OBJECTIVE_CAP_RATE_MULT)).thenReturn(captureRate);
         return ship;
     }
 
@@ -198,14 +167,13 @@ class ChartBattlePluginTest {
         ChartBattlePlugin onlyShipDrawbacks = startedPlugin(Map.of(ChartFleetStat.TOP_SPEED, 0.8f));
         onlyShipDrawbacks.advance(0f, List.of());
 
-        ChartFleetConditions.set(Map.of(ChartFleetStat.DEPLOYMENT_POINTS, 0.8f), null);
+        ChartFleetConditions.set(Map.of(ChartFleetStat.ENEMY_DEPLOYMENT_COST, 0.8f), null);
         when(engine.isSimulation()).thenReturn(true);
         ChartBattlePlugin simulation = new ChartBattlePlugin();
         simulation.init(engine);
         simulation.advance(0f, List.of());
 
-        verify(playerManager, never()).setMaxStrength(anyInt());
-        verify(playerManager, never()).getMaxStrength();
+        verify(enemyManager, never()).getReservesCopy();
     }
 
     @Test

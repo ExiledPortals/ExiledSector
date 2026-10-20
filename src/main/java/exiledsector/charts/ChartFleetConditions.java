@@ -15,6 +15,7 @@ public final class ChartFleetConditions {
 
     private static Map<ChartFleetStat, Float> activeMults = Map.of();
     private static Map<ChartFleetStat, Float> lastSource = Map.of();
+    private static int battleSizeBonus;
 
     private ChartFleetConditions() {
     }
@@ -24,7 +25,15 @@ public final class ChartFleetConditions {
     }
 
     public static boolean isActive() {
-        return !activeMults.isEmpty();
+        return !activeMults.isEmpty() || battleSizeBonus != 0;
+    }
+
+    public static int battleSizeBonus() {
+        return battleSizeBonus;
+    }
+
+    static void setBattleSizeBonus(int points) {
+        battleSizeBonus = points;
     }
 
     public static float mult(ChartFleetStat stat) {
@@ -46,6 +55,7 @@ public final class ChartFleetConditions {
     }
 
     public static boolean clear(CampaignFleetAPI playerFleet) {
+        battleSizeBonus = 0;
         return set(Map.of(), playerFleet);
     }
 

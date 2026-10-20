@@ -45,6 +45,7 @@ public final class ChartGenContext {
     private float fleetQualityPercent;
     private float sensorRangePercent;
     private float enemySensorRangeBonus;
+    private float battleSizeBonus;
     private float quantityPercent;
     private final Map<ChartPoi.Kind, Float> siteBudgetPercents = new EnumMap<>(ChartPoi.Kind.class);
     private int extraPois;
@@ -168,6 +169,14 @@ public final class ChartGenContext {
 
     public float enemySensorRangeBonus() {
         return enemySensorRangeBonus;
+    }
+
+    void addBattleSizeBonus(float value) {
+        battleSizeBonus += value;
+    }
+
+    public int battleSizeBonus() {
+        return Math.round(battleSizeBonus);
     }
 
     void addQuantityPercent(float value) {
