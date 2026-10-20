@@ -642,6 +642,7 @@
     "socketable.cache.releaseConfirm.one": "This also releases {count} node that depended on the nodes this subroutine allocates, and returns {op} OP. Do it again to confirm.",
     "socketable.cache.releaseConfirm.other": "This also releases {count} nodes that depended on the nodes this subroutine allocates, and returns {op} OP. Do it again to confirm.",
     "socketable.cache.grantedBy": "Allocated by <hl>{item}</hl>.",
+    "socketable.cache.effectLine": "<muted>|</muted> {line}",
     "socketable.socket.kindLimit": "{name} can't be installed: this ship already has the most subroutines of its kind ({limit}).",
     "socketable.socket.definitionLimit": "{name} can't be installed: this ship already has the most copies of it ({limit}).",
     "socketable.salvaged": "Recovered {name} from the wreckage into your cargo.",
