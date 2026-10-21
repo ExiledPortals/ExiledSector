@@ -1,4 +1,4 @@
-<h1 align="center">Exiled Sector</h1>
+<p align="center"><img src="graphics/description/logo.png" alt="Exiled Sector"></p>
 
 <p align="center"><i>Still sane, exile?</i></p>
 
