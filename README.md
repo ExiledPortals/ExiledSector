@@ -116,7 +116,7 @@ Note: no Path of Building, but the codex should give you what you need.
 The loot turns up everywhere you'd expect it to: research stations, orbital labs, derelicts and the smoking remains of anyone who disagreed with you. The crew gets nothing, as is tradition.
 
 <details>
-<summary>Looting a research station</summary>
+<summary>LOOOOOOT</summary>
 
 <img src="graphics/description/loot.gif" alt="Looting a research station">
 
@@ -170,7 +170,7 @@ These mods have dedicated compatibility. The version listed is the one I last te
 | Exotica Technologies | 1.8.7 | The Skill Tree button moves one slot down on the refit screen so it doesn't cover the Exotica button. |
 | Random Assortment of Things | 3.3.1 | REDACTED |
 | Nightcross Armory | 2.1.6 | REDACTED |
-| [GraphicsLib](https://fractalsoftworks.com/forum/index.php?topic=10982.0) | 1.12.1 | Optional. When its lights and distortion are on, Exiled Sector's combat effects light up: Ludd's Light and Phase Anchor send out shockwaves, Frozen Heart stacks pulse, Ion Bolter arcs, Corrosion Beam motes and redirected Hullbreacher and Refracting shots glow, Repair Coordinator drones throw light as they weld, and Candle's Grace Replica bends space around the ship. The Exiled Sector settings can switch all of this off except the mote glow, which GraphicsLib draws itself. |
+| [GraphicsLib](https://fractalsoftworks.com/forum/index.php?topic=10982.0) | 1.12.1 | Optional. When its lights and distortion are on, many of Exiled Sector's combat effects gain shockwaves, glows, lighting and distortion. The Exiled Sector settings can switch almost all of it off. |
 
 Some weapons from other mods misbehave (often hilariously) when their beams are split, their shots are chained or their shells pierce. These are listed in:
 
@@ -240,31 +240,11 @@ Numbers are green when they help your ship and orange when they hurt it.
 <details>
 <summary><b>How do NPC fleets get skill trees?</b></summary>
 
-Every fleet can have trees, in every faction, including your own faction's fleets and your allies. Stations don't get them.
+Every fleet can carry skill trees, your own faction's and your allies' included. Flagships and ships with officers always get one, and other ships have a 30% chance; stations, civilian and mothballed ships never do. On the regular star map NPC trees mirror your fleet: each NPC ship picks one of your combat ships at random and gets 80 to 120% of its tree power (its level plus the paid nodes it has allocated) in nodes. Since the level counts, leaving nodes unallocated won't make enemies any easier.
 
-Ships with officers and the flagship always get a tree. Each other ship has a 30% chance. Civilian and mothballed ships are left out. The roll is fixed per ship, so reloading a save won't reroll it.
+The mirror stops at a cap. Pirates never pass 15 nodes, faction fleets 25 and AI fleets 35, so a ship you keep levelling eventually outgrows them. Bounty targets climb from their cap toward 25 as bounties get harder, and their flagship gets 3 more. An optional bonus multiplier, off by default, can also make NPC node bonuses grow with your fleet's average tree power, again only up to that fleet's cap. Only bonuses scale: drawbacks stay as written, and campaign stats such as sensors, cargo and burn level don't grow.
 
-NPC trees mirror your own fleet. Every combat ship you own has a tree power: its level plus the paid nodes it has allocated. Each NPC ship picks one of your combat ships at random and gets 80 to 120% of that ship's tree power in nodes. Free nodes you leave unallocated still count, since the level does, so an empty tree won't make NPCs any easier. Swap your fleet for fresh ships and the fleets you meet after that are sized to the new one. If your combat ships have tree powers of 20 and 40, each NPC ship gets 16 to 24 or 32 to 48 nodes, before the caps below.
-
-The mirror stops at a cap. Pirates never pass 15 nodes, faction fleets (yours and your allies included) 25, and AI fleets 35, so a ship you keep levelling eventually leaves them behind. Bounty targets climb from their cap toward 25 as the bounties get harder, and the target's flagship gets 3 more on top, because a price on your head is motivating. Star Chart fleets don't look at your fleet at all: tier 1 starts at 26 nodes and tier 15 ends at 50. Outside chart systems, a won battle drops charts of the tier its strongest defeated ship would have in a chart, so pirate and faction fleets only ever drop tier 1.
-
-Every NPC captain reads their ship's specs and makes a plan. The plan is usually sensible and occasionally baffling.
-
-They start from the root that matches their hull's design type (Low Tech, Midline or High Tech), or from wherever their academy, priest or AI author happened to teach. Their first job is replacing refit hullmods the tree offers a node for. The OP that frees up buys extra nodes, but if the node is out of reach they keep the hullmod. Built-in hullmods and S-mods are never touched.
-
-Faction captains owe their volume a visit. Ships from a faction with its own volume cross vast expanses to take one notable or keystone there, if they can afford the trip.
-
-After that it's down to taste. A captain picks notables and keystones that suit their weapons, fighters, shields or phase cloak, armour and built-in hullmods, but their choices are often like the sector: random and brutal. Two captains in identical ships will rarely agree. They take the nearest first, pick up small nodes only on the way, and never (theoretically) take a node their ship can't use.
-
-Other mods can map their own factions to a volume in `data/config/exiledSector/npc_faction_volumes.csv`.
-
-NPC trees also hit harder as your fleet grows. Each NPC ship's node bonuses are added up and multiplied, from 1x while your combat ships average a tree power of 15 up to 3x when they average 60. Word gets around. Your average only counts up to that fleet's cap, so the multiplier stops growing there too. Only the bonuses grow: drawbacks stay as written, reductions such as damage taken creep toward their limit without passing it, and the 80% cap on damage taken still holds. Logistics, fleet support and campaign stats such as sensors, cargo and burn level don't scale.
-
-If you recover a ship that has a tree, it keeps its tree, and the tree becomes a normal player tree. Any nodes the NPC bought with OP beyond the ship's level are dropped, and that OP goes back to the ship's fitting. Reinforced Bulkheads' near-guaranteed recovery is switched off on NPC ships, so levelled enemies aren't free loot.
-
-Press **X** (rebindable) during a fleet encounter, or while hovering over a fleet on the map, to see which ships have trees along with their build, level, key nodes and combined bonuses. Pressing **F2** on a ship's tooltip opens a Codex entry with the same summary. In the refit screen, every ship with a tree also shows an **Exiled Sector Skill Tree** hull mod: hover it for the same summary of that ship's bonuses, or click its icon to open the skill tree.
-
-All of this, including the tree size percentages, can be changed on the **NPC Scaling** tab in LunaLib settings.
+Star Chart fleets ignore your fleet when sizing their trees. Tier 1 ships get 26 to 29 nodes, climbing to 47 to 50 at tier 15, and warden fleets get one more. Higher tiers also bring more and larger fleets, more and better officers and better-quality ships, before the chart's own modifiers add more. Chart fleets have no cap, so if you turn the bonus multiplier on it can reach its full maximum there. All of this, the multiplier included, can be tuned on the **NPC Scaling** tab in LunaLib settings.
 
 </details>
 
@@ -303,8 +283,6 @@ A tree per ship also means that finding a cool new ship, at any point in a playt
 
 One of the things I love most about Starsector is losing myself in designing a ship. Hullmods are the least flexible part of vanilla customisation, and I wanted to replace them with something more interesting.
 
-I also have plans for future features that work much better when each ship has its own tree.
-
 </details>
 
 <details>
@@ -314,7 +292,7 @@ Exiled Sector is available in English and Simplified Chinese. By default it foll
 
 The skill tree screen always shows the chosen language, using a bundled Noto Sans SC font. Text the game draws itself (settings, dialogs, the codex) stays in English unless the game can display Chinese characters.
 
-The Chinese translation is a first draft awaiting review by a native speaker. To add another language, see the [localisation guide](docs/i18n/README.md).
+The Chinese translation is a first draft awaiting review by a native speaker. If any Chinese speakers notice issues, please report them. To add another language, see the [localisation guide](docs/i18n/README.md).
 
 </details>
 
