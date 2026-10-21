@@ -1,0 +1,26 @@
+faction,focus,note
+hegemony,armour:2; ballistic:2; hull:1.5,"Each weight multiplies how likely an NPC ship of the faction picks nodes with that theme tag. Factions without a row build from their hulls alone"
+tritachyon,flux:2; energy:2; shield:1.5; phase:1.5,
+luddic_church,hull:1.5; ballistic:1.5; combat_readiness:1.5,
+luddic_path,d_mods:2; speed:1.5; hull:1.5; dmgtypehighexplosive:1.5,
+sindrian_diktat,missile:2; ballistic:1.5,
+lions_guard,missile:2; ballistic:1.5; armour:1.5,
+pirates,speed:2; missile:1.5; ammo:1.5; d_mods:1.5,
+persean,missile:1.5; ballistic:1.5; fighter:1.5,
+remnant,energy:2; flux:2; shield:1.5; point_defense:1.5,
+omega,energy:2; phase:2; flux:1.5,
+derelict,fighter:2; point_defense:1.5; d_mods:1.5,
+rat_abyssals,energy:2; shield:1.5; dmgtypekinetic:1.5,"Random Assortment of Things: Abyssal drones, energy and beam mounts dealing mostly kinetic and energy damage behind omni shields"
+rat_abyssals_deep,energy:2; shield:1.5; dmgtypekinetic:1.5,Random Assortment of Things
+rat_abyssals_harmony,energy:2; shield:1.5; dmgtypekinetic:1.5,Random Assortment of Things
+rat_abyssals_serenity,energy:2; shield:1.5; dmgtypekinetic:1.5,Random Assortment of Things
+rat_abyssals_solitude,energy:2; flux:1.5; hull:1.5,"Random Assortment of Things: Seraphs (Raguel, Sariel)"
+rat_abyssals_wastes,missile:2; armour:1.5; hull:1.5,"Random Assortment of Things: Abyssal Threat (Prayer, Saint)"
+rat_abyssals_primordials,hull:2; armour:1.5; flux:1.5,Random Assortment of Things: Genesis
+rat_exotech,beam:2; phase:1.5; missile:1.5,"Random Assortment of Things: half the fitted weapons are beams, phase Tylos/Arkas/Gilgamesh"
+nightcross,energy:2; missile:1.5; beam:1.5,Nightcross Armory
+stargazer,beam:2; missile:1.5; flux:1.5,"Nightcross: Stargazer AI hulls, beam-heavy with high flux"
+na_earth,energy:1.5; speed:1.5,"Nightcross: Native Sphere, four small fast hulls"
+kesteven,missile:1.5; beam:1.5; ballistic:1.5; flux:1.5,"LOST_SECTOR: hybrid-mount prototypes with deep flux pools"
+enigma,ballistic:2; missile:1.5; shield:1.5,"LOST_SECTOR: Project Enigma, mostly ballistic behind omni shields"
+prot_ops,ballistic:2; missile:1.5; shield:1.5,"LOST_SECTOR: Prototype Operations, the same prototype hulls as Enigma"

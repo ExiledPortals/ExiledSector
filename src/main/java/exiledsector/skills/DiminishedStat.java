@@ -1,0 +1,89 @@
+package exiledsector.skills;
+
+import exiledsector.skills.skilleffect.DefenseSkillEffect;
+import exiledsector.skills.skilleffect.FluxSkillEffect;
+import exiledsector.skills.skilleffect.MovementSkillEffect;
+import exiledsector.skills.skilleffect.ScopedWeaponEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.StatMode;
+import exiledsector.skills.skilleffect.WeaponStatFamily;
+
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.ToDoubleFunction;
+import java.util.stream.Collectors;
+
+public enum DiminishedStat {
+
+    ARMOUR("exiledSector_diminishingArmour", 50, StatBaseline::armor,
+            Set.of(DefenseSkillEffect.ARMOR_FLAT, DefenseSkillEffect.ARMOR_PERCENT)),
+    HULL("exiledSector_diminishingHull", 50, StatBaseline::hull,
+            Set.of(DefenseSkillEffect.HULL_FLAT, DefenseSkillEffect.HULL_PERCENT, DefenseSkillEffect.HULL_MULT)),
+    FLUX_CAPACITY("exiledSector_diminishingFluxCapacity", 50, StatBaseline::fluxCapacity,
+            Set.of(FluxSkillEffect.FLUX_CAPACITY_FLAT, FluxSkillEffect.FLUX_CAPACITY_PERCENT, FluxSkillEffect.FLUX_CAPACITY_MULT)),
+    FLUX_DISSIPATION("exiledSector_diminishingFluxDissipation", 50, StatBaseline::fluxDissipation,
+            Set.of(FluxSkillEffect.FLUX_DISSIPATION_FLAT, FluxSkillEffect.FLUX_DISSIPATION_PERCENT, FluxSkillEffect.FLUX_DISSIPATION_MULT)),
+    TOP_SPEED("exiledSector_diminishingTopSpeed", 30, StatBaseline::topSpeed,
+            Set.of(MovementSkillEffect.TOP_SPEED_FLAT, MovementSkillEffect.TOP_SPEED_PERCENT, MovementSkillEffect.TOP_SPEED_MULT)),
+    WEAPON_RANGE("exiledSector_diminishingWeaponRange", 30, baseline -> 0f,
+            ScopedWeaponEffect.all().stream()
+                    .filter(effect -> effect.family() == WeaponStatFamily.RANGE && effect.mode() != StatMode.FLAT)
+                    .collect(Collectors.toUnmodifiableSet()));
+
+    private static final Map<SkillEffect, DiminishedStat> BY_EFFECT = byEffect();
+
+    private final String thresholdFieldId;
+    private final int defaultThresholdPercent;
+    private final ToDoubleFunction<StatBaseline> baseValue;
+    private final Set<SkillEffect> effects;
+
+    DiminishedStat(String thresholdFieldId, int defaultThresholdPercent, ToDoubleFunction<StatBaseline> baseValue,
+                   Set<? extends SkillEffect> effects) {
+        this.thresholdFieldId = thresholdFieldId;
+        this.defaultThresholdPercent = defaultThresholdPercent;
+        this.baseValue = baseValue;
+        this.effects = Set.copyOf(effects);
+    }
+
+    private static Map<SkillEffect, DiminishedStat> byEffect() {
+        Map<SkillEffect, DiminishedStat> statsByEffect = new HashMap<>();
+        for (DiminishedStat stat : values()) {
+            stat.effects.forEach(effect -> statsByEffect.put(effect, stat));
+        }
+        return Map.copyOf(statsByEffect);
+    }
+
+    public static DiminishedStat of(SkillEffect effect) {
+        return BY_EFFECT.get(effect);
+    }
+
+    public static Map<DiminishedStat, Integer> defaultThresholds() {
+        Map<DiminishedStat, Integer> thresholds = new EnumMap<>(DiminishedStat.class);
+        for (DiminishedStat stat : values()) {
+            thresholds.put(stat, stat.defaultThresholdPercent);
+        }
+        return thresholds;
+    }
+
+    public String thresholdFieldId() {
+        return thresholdFieldId;
+    }
+
+    public int defaultThresholdPercent() {
+        return defaultThresholdPercent;
+    }
+
+    public String translationKey() {
+        return "diminishing.stat." + name();
+    }
+
+    Set<SkillEffect> effects() {
+        return effects;
+    }
+
+    float baseValue(StatBaseline baseline) {
+        return (float) baseValue.applyAsDouble(baseline);
+    }
+}

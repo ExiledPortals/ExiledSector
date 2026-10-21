@@ -15,6 +15,7 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.npc.NpcBuildRequest;
 import exiledsector.skills.npc.NpcFactionVolumes;
+import exiledsector.skills.npc.NpcFocus;
 import exiledsector.skills.npc.NpcFreedOp;
 import exiledsector.skills.npc.NpcHullMods;
 import exiledsector.skills.npc.NpcLevelCaps;
@@ -74,7 +75,7 @@ public final class NpcFleetLeveller {
                     levelLimit = NpcLevelCaps.limitFor(npcFleet);
                 }
                 String memberSeedKey = chartSeed != null ? String.valueOf(memberIndex) : member.getId();
-                memberRecord = decide(member, playerShipPowers, chartLevels, levelLimit, factionRegion,
+                memberRecord = decide(member, playerShipPowers, chartLevels, levelLimit, fleetFactionId, factionRegion,
                         Seeds.random(seedPrefix + memberSeedKey));
                 recordsByMemberId.put(member.getId(), memberRecord);
             }
@@ -100,7 +101,7 @@ public final class NpcFleetLeveller {
     }
 
     static String decide(FleetMemberAPI member, List<Integer> playerShipPowers, ChartLevelRange chartLevels, NpcLevelLimit levelLimit,
-                         String factionRegion, Random random) {
+                         String fleetFactionId, String factionRegion, Random random) {
         if (!NpcShipSelector.isCandidate(member) || !NpcShipSelector.isChosen(member, random)) {
             return NpcTreeRecords.NOT_LEVELLED;
         }
@@ -112,7 +113,8 @@ public final class NpcFleetLeveller {
         String designType = designType(member.getHullSpec());
         NpcTreeBuild treeBuild = NpcSkillTreeBuilder.generate(new NpcBuildRequest(shipProfile, designType, factionRegion, hullMods,
                 NpcFreedOp.of(member, hullMods), nodeCount, NpcItems.anchorFor(factionRegion), SkillTypeUnlockStatus.lockedFor(null),
-                member.getHullSpec().getHullId()), random);
+                member.getHullSpec().getHullId(), NpcFocus.of(fleetFactionId, member.getHullSpec().getShipSystemId(),
+                member.getHullSpec().getShipDefenseId())), random);
         return NpcTreeTag.encode(treeBuild.shipData());
     }
 
