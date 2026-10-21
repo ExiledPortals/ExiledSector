@@ -15,7 +15,9 @@ import java.util.Set;
 public enum LootAlert {
 
     STANDARD("exiledSector_loot_alert"),
-    VALUABLE("exiledSector_loot_alert_valuable");
+    VALUABLE("exiledSector_loot_alert_valuable"),
+    HULL_UPGRADE("exiledSector_loot_alert_hull_upgrade"),
+    STAR_CHART("exiledSector_loot_alert_star_chart");
 
     private static final Set<String> VALUABLE_CURRENCY_IDS = Set.of(CraftingCurrency.RECALIBRATION.itemId(),
             CraftingCurrency.FIXATION.itemId(), CraftingCurrency.REPLICATION.itemId());
@@ -37,16 +39,19 @@ public enum LootAlert {
 
     static LootAlert of(SpecialItemData special) {
         String itemId = special.getId();
-        if (VALUABLE_CURRENCY_IDS.contains(itemId) || HullUpgradeData.of(special) != null) {
+        if (HullUpgradeData.of(special) != null) {
+            return HULL_UPGRADE;
+        }
+        if (ItemData.STAR_CHART_ITEM_ID.equals(itemId)) {
+            return STAR_CHART;
+        }
+        if (VALUABLE_CURRENCY_IDS.contains(itemId)) {
             return VALUABLE;
         }
         if (MaterialItems.isMaterial(itemId)) {
             return ItemDisassembly.PARTS_ITEM_ID.equals(itemId) ? null : STANDARD;
         }
         ItemData itemData = ItemData.of(special);
-        if (itemData == null) {
-            itemData = ItemData.ofStarChart(special);
-        }
         Item preview = itemData == null ? null : itemData.preview();
         return preview == null ? null : of(preview.rarity());
     }

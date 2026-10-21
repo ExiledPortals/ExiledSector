@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.CraftingWard;
 import exiledsector.items.HullUpgradeData;
+import exiledsector.items.ItemData;
 import exiledsector.items.ItemDisassembly;
 import exiledsector.items.ItemRarity;
 import org.junit.jupiter.api.Test;
@@ -39,8 +40,13 @@ class LootAlertTest {
     }
 
     @Test
-    void hullUpgradesAreValuable() {
-        assertEquals(LootAlert.VALUABLE, LootAlert.of(new HullUpgradeData(HullSize.CRUISER).toSpecialItem()));
+    void hullUpgradesHaveTheirOwnAlert() {
+        assertEquals(LootAlert.HULL_UPGRADE, LootAlert.of(new HullUpgradeData(HullSize.CRUISER).toSpecialItem()));
+    }
+
+    @Test
+    void everyStarChartHasItsOwnAlert() {
+        assertEquals(LootAlert.STAR_CHART, alertFor(ItemData.STAR_CHART_ITEM_ID));
     }
 
     @Test

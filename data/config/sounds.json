@@ -11,4 +11,10 @@
 	"exiledSector_loot_alert_valuable":[
 		{"file":"sounds/exiledSector/poe_alert_06.ogg","pitch":1,"volume":1},
 	],
+	"exiledSector_loot_alert_hull_upgrade":[
+		{"file":"sounds/exiledSector/poe_alert_03.ogg","pitch":1,"volume":1},
+	],
+	"exiledSector_loot_alert_star_chart":[
+		{"file":"sounds/exiledSector/poe_alert_04.ogg","pitch":1,"volume":1},
+	],
 }
