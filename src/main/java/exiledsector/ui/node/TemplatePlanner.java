@@ -132,11 +132,7 @@ final class TemplatePlanner {
         if (currentPlan.isHidden(node) || !currentPlan.gate().allocation(node, option).allowed()) {
             return false;
         }
-        if (option != null) {
-            planData.selectOption(node, option, 0);
-        } else {
-            planData.allocate(node, 0);
-        }
+        planData.allocate(node, option, 0);
         return true;
     }
 
@@ -187,8 +183,9 @@ final class TemplatePlanner {
             for (Iterator<TemplateStep> stepIterator = pendingSteps.iterator(); stepIterator.hasNext(); ) {
                 TemplateStep step = stepIterator.next();
                 SkillNode node = SkillTree.get(step.nodeId());
-                SkillType option = node == null ? null : TemplateStepRules.optionFor(step, node.getType());
-                if (node == null || planData.isAllocated(node.getId()) || node.getType().isOptional() && option == null) {
+                boolean offersOptions = node != null && node.offersOptions(planData);
+                SkillType option = offersOptions ? TemplateStepRules.optionFor(step, node.getType()) : null;
+                if (node == null || planData.isAllocated(node.getId()) || offersOptions && option == null) {
                     stepIterator.remove();
                 } else if (add(node, option)) {
                     stepIterator.remove();

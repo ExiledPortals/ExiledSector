@@ -53,6 +53,11 @@ public final class DoctrineOverrides {
         return rewrite == null ? null : rewrite.replacementType();
     }
 
+    public static SkillNode asTransformed(ShipSkillData data, SkillNode node) {
+        SkillType replacement = replacementType(data, node);
+        return replacement == null ? node : rewrittenNode(node, replacement);
+    }
+
     public static List<SkillTypeEffect> addedEffects(ShipSkillData data, SkillNode node, HullSize hullSize) {
         if (data == null || node == null) {
             return List.of();

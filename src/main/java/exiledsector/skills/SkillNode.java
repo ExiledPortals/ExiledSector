@@ -174,6 +174,10 @@ public class SkillNode extends SkillTreeObject {
         return rewritten != null ? rewritten : resolveBaseType(data);
     }
 
+    public boolean offersOptions(ShipSkillData data) {
+        return type.isOptional() && DoctrineOverrides.replacementType(data, this) == null;
+    }
+
     public SkillType resolveBaseType(ShipSkillData data) {
         if (!type.isOptional()) return type;
         SkillType chosen = NodeEligibility.validOption(type, data.getOptionalSelection(getId()));

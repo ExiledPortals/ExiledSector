@@ -835,6 +835,7 @@
     "socketable.doctrine.originally": "原为：<hl>{node}</hl>",
     "socketable.doctrine.transformedBy": "由<hl>{doctrine}</hl>改写，Rev. {revision}",
     "socketable.doctrine.augmentedBy": "由<hl>{doctrine}</hl>增补，Rev. {revision}",
+    "socketable.doctrine.releaseConfirm.other": "没有这个条令档案，{count}个节点无法保持分配，因此会被释放并返还{op}点OP。再操作一次以确认。",
     "socketable.doctrine.revertConflict": "移除此条令档案或取消分配其插槽，会把节点恢复为与已安装船体改装冲突的原样，因此这些船体改装将被移除：{hullMods}",
     "socketable.cache.allocates": "分配<hl>{node}</hl>",
     "socketable.cache.byPath": "分配<hl>{node}</hl> <bad>（闲置：已分配）</bad>",

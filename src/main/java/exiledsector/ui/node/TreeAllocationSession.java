@@ -24,6 +24,8 @@ import exiledsector.items.HullUpgradeRules;
 import exiledsector.items.SocketCustody;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
+import exiledsector.items.Subroutine;
+import exiledsector.items.SubroutineKind;
 import exiledsector.items.SubroutineRadius;
 import exiledsector.items.SubroutineSocketLimits;
 import exiledsector.items.NodeGrantLinks;
@@ -306,7 +308,7 @@ public final class TreeAllocationSession {
             if (!allocation.isHidden(node)) {
                 SkillTreeSounds.refused();
             }
-        } else if (node.getType().isOptional()) {
+        } else if (allocation.gate().offersOptions(node)) {
             chooseOption(node, ctrlDown);
         } else if (allocator.allocate(node, null, allocation)) {
             afterAllocationChange(node, true);
@@ -316,7 +318,8 @@ public final class TreeAllocationSession {
     private void removeOrSwitchOption(SkillNode node, NodeAllocator.Snapshot allocation) {
         boolean anchorLinked = allocation.skillData().anchorPartner(node.getId()) != null;
         boolean holdsGrant = allocation.skillData().grantedNodesBySocket().containsKey(node.getId());
-        if ((anchorLinked || holdsGrant) && allocation.gate().deallocation(node).allowed()
+        boolean holdsDoctrine = holdsDoctrine(allocation.skillData(), node);
+        if ((anchorLinked || holdsGrant || holdsDoctrine) && allocation.gate().deallocation(node).allowed()
                 && !confirmRelease(DEALLOCATE_ACTION, node, planned -> planned.deallocate(node))) {
             return;
         }
@@ -324,7 +327,7 @@ public final class TreeAllocationSession {
         if (allocator.deallocate(node, allocation)) {
             afterAllocationChange(node, false);
             reportReleased(allocatedBefore, node);
-        } else if (node.getType().isOptional()) {
+        } else if (allocation.gate().offersOptions(node)) {
             dropdownNode = node;
         } else {
             SkillTreeSounds.refused();
@@ -528,7 +531,7 @@ public final class TreeAllocationSession {
         if (plan.skillData().isAllocated(node.getId())) {
             if (planner.remove(node)) {
                 planChanged(node, false);
-            } else if (node.getType().isOptional()) {
+            } else if (plan.gate().offersOptions(node)) {
                 dropdownNode = node;
             } else {
                 SkillTreeSounds.refused();
@@ -537,7 +540,7 @@ public final class TreeAllocationSession {
             if (!plan.isHidden(node)) {
                 SkillTreeSounds.refused();
             }
-        } else if (node.getType().isOptional()) {
+        } else if (plan.gate().offersOptions(node)) {
             chooseOption(node, ctrlDown);
         } else if (planner.add(node, null)) {
             planChanged(node, true);
@@ -705,7 +708,12 @@ public final class TreeAllocationSession {
             return true;
         }
         int returnedOp = skillData.paidNodeCount(released) * snapshot().opCostPerNode();
-        String warningKey = partnerId == null && !grantedNodeIds.isEmpty() ? "socketable.cache.releaseConfirm" : "socketable.anchor.closeConfirm";
+        String warningKey;
+        if (holdsDoctrine(skillData, node)) {
+            warningKey = "socketable.doctrine.releaseConfirm";
+        } else {
+            warningKey = partnerId == null && !grantedNodeIds.isEmpty() ? "socketable.cache.releaseConfirm" : "socketable.anchor.closeConfirm";
+        }
         String warning = Translation.msg(warningKey).count(released.size()).arg("op", returnedOp).text();
         releaseConfirmation.arm(actionKey, node.getId(), warning);
         if (!INSTALL_ACTION.equals(action)) {
@@ -713,6 +721,11 @@ public final class TreeAllocationSession {
         }
         feedback.pulse(node);
         return false;
+    }
+
+    private static boolean holdsDoctrine(ShipSkillData skillData, SkillNode node) {
+        return ItemStore.lookup(skillData.getSocketedItem(node.getId())) instanceof Subroutine subroutine
+                && subroutine.subroutineKind() == SubroutineKind.DOCTRINE;
     }
 
     private void reportReleased(Set<String> allocatedBefore, SkillNode node) {

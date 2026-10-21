@@ -634,6 +634,8 @@
     "socketable.doctrine.originally": "Originally: <hl>{node}</hl>",
     "socketable.doctrine.transformedBy": "Rewritten by <hl>{doctrine}</hl>, Rev. {revision}",
     "socketable.doctrine.augmentedBy": "Augmented by <hl>{doctrine}</hl>, Rev. {revision}",
+    "socketable.doctrine.releaseConfirm.one": "Without this doctrine {count} node can't stay allocated, so it is released and returns {op} OP. Do it again to confirm.",
+    "socketable.doctrine.releaseConfirm.other": "Without this doctrine {count} nodes can't stay allocated, so they are released and return {op} OP. Do it again to confirm.",
     "socketable.doctrine.revertConflict": "Removing this doctrine or unallocating its socket turns its nodes back into originals that conflict with installed hull mods, so these hull mods would be removed: {hullMods}",
     "socketable.cache.allocates": "Allocates <hl>{node}</hl>",
     "socketable.cache.byPath": "Allocates <hl>{node}</hl> <bad>(idle: already allocated)</bad>",

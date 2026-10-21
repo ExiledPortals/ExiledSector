@@ -36,7 +36,7 @@ final class TemplateStepExecutor {
             return verdict;
         }
         SkillNode node = SkillTree.get(step.nodeId());
-        if (!allocator.allocate(node, TemplateStepRules.optionFor(step, node.getType()), currentSnapshot)) {
+        if (!allocator.allocate(node, TemplateStepRules.optionFor(step, node, currentSnapshot.skillData()), currentSnapshot)) {
             logSkip(step, StepVerdict.NOT_ALLOCATABLE);
             return StepVerdict.NOT_ALLOCATABLE;
         }

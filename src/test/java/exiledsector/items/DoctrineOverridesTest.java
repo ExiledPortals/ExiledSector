@@ -5,8 +5,11 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.effects.DoctrineRevertConflicts;
+import exiledsector.effects.DoctrineRevertRelease;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocatedSkillEffects;
+import exiledsector.skills.AllocationGate;
+import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
@@ -268,6 +271,102 @@ class DoctrineOverridesTest {
         assertEquals(Set.of(), DoctrineRevertConflicts.hullModsLostOnRemoval(data, "elsewhere", hullModId -> true));
         data.deallocate(hullModNode);
         assertEquals(Set.of(), DoctrineRevertConflicts.hullModsLostOnRemoval(data, socket.getId(), hullModId -> true));
+    }
+
+    private AllocationGate frigateGate(ShipSkillData data) {
+        ShipFacts frigate = new ShipFacts(HullSize.FRIGATE, ShieldType.FRONT, false, 100f, hullModId -> false);
+        DoctrineOverrides.bindShipFacts(data, () -> frigate);
+        return new AllocationGate(data, SkillTree.topology(), socket.getId(), new AllocationGate.Budget(100, 1, 100),
+                NodeEligibility.Context.of(data, frigate, null));
+    }
+
+    @Test
+    void aTransformedNodeIsCheckedAsItsReplacementNotItsOriginal() {
+        registerType(type("capital_only", SkillTier.NOTABLE, "HULL_MULT", 5f).requiredHullSizes(EnumSet.of(HullSize.CAPITAL_SHIP)).build());
+        SkillNode capitalOnly = node("capital_only_node", "capital_only", 100f, 100f);
+        ShipSkillData data = shipWith(TRANSFORM, 14L);
+        AllocationGate gate = frigateGate(data);
+
+        assertNotEquals("capital_only", capitalOnly.resolveEffectiveType(data).getId());
+        assertTrue(gate.allocation(capitalOnly).allowed());
+
+        data.unsocketItem(socket.getId());
+        assertEquals(NodeEligibility.Kind.WRONG_HULL_SIZE, frigateGate(data).allocation(capitalOnly).block().kind());
+    }
+
+    @Test
+    void aTransformedNodeWhoseOriginalOffersOptionsAllocatesWithoutAskingAndRevertsToTheFirstOption() {
+        registerType(type("opt_a", SkillTier.NOTABLE, "HULL_MULT", 1f).build());
+        registerType(type("opt_b", SkillTier.NOTABLE, "HULL_MULT", 2f).build());
+        registerType(new SkillType.Builder("choice", "Choice", "a.png", SkillTier.NOTABLE).optionalOptionIds(List.of("opt_a", "opt_b")).build());
+        SkillNode choice = node("choice_node", "choice", -100f, 100f);
+        ShipSkillData data = shipWith(TRANSFORM, 14L);
+        AllocationGate gate = frigateGate(data);
+
+        assertFalse(choice.offersOptions(data));
+        assertTrue(gate.options(choice).isEmpty());
+        assertTrue(gate.allocation(choice, null).allowed());
+        assertFalse(gate.allocation(choice, SkillTree.getType("opt_a")).allowed());
+
+        data.allocate(choice, null, 0);
+        assertNotEquals("opt_a", choice.resolveEffectiveType(data).getId());
+        assertEquals(Set.of(choice.getId()), data.getReplacementAllocatedNodeIds());
+
+        data.unsocketItem(socket.getId());
+        assertEquals("opt_a", choice.resolveEffectiveType(data).getId());
+        assertTrue(data.forgetUnknownNodes(SkillTree.getAllNodes(), SkillTree.getAllTypes()).isEmpty());
+        assertTrue(data.isAllocated(choice.getId()));
+    }
+
+    @Test
+    void aRevertedNodeWhoseOriginalIsNotAllowedIsReleased() {
+        registerType(type("capital_only", SkillTier.NOTABLE, "HULL_MULT", 5f).requiredHullSizes(EnumSet.of(HullSize.CAPITAL_SHIP)).build());
+        SkillNode capitalOnly = node("capital_only_node", "capital_only", 100f, 100f);
+        ShipSkillData data = shipWith(TRANSFORM, 14L);
+        frigateGate(data);
+        data.allocate(capitalOnly, null, 0);
+        ShipFacts frigate = new ShipFacts(HullSize.FRIGATE, ShieldType.FRONT, false, 100f, hullModId -> false);
+
+        assertTrue(DoctrineRevertRelease.release(data, frigate, SkillTree.topology(), socket.getId()).nodeIds().isEmpty());
+        assertTrue(data.isAllocated(capitalOnly.getId()));
+
+        data.unsocketItem(socket.getId());
+        assertEquals(List.of(capitalOnly.getId()), DoctrineRevertRelease.release(data, frigate, SkillTree.topology(), socket.getId()).nodeIds());
+        assertFalse(data.isAllocated(capitalOnly.getId()));
+        assertTrue(data.getReplacementAllocatedNodeIds().isEmpty());
+    }
+
+    @Test
+    void twoRevertedOriginalsThatExcludeEachOtherReleaseOnlyOne() {
+        registerType(new SkillType.Builder("rival_a", "A", "a.png", SkillTier.NOTABLE).exclusiveSkillTypeIds(List.of("rival_b")).build());
+        registerType(new SkillType.Builder("rival_b", "B", "a.png", SkillTier.NOTABLE).exclusiveSkillTypeIds(List.of("rival_a")).build());
+        SkillNode first = node("a_rival_node", "rival_a", 100f, 100f);
+        SkillNode second = node("b_rival_node", "rival_b", -100f, 100f);
+        ShipSkillData data = shipWith(TRANSFORM, 14L);
+        frigateGate(data);
+        data.allocate(first, null, 0);
+        data.allocate(second, null, 0);
+        assertEquals(Set.of(first.getId(), second.getId()), data.getReplacementAllocatedNodeIds());
+        ShipFacts frigate = new ShipFacts(HullSize.FRIGATE, ShieldType.FRONT, false, 100f, hullModId -> false);
+
+        data.unsocketItem(socket.getId());
+
+        assertEquals(List.of(first.getId()), DoctrineRevertRelease.release(data, frigate, SkillTree.topology(), socket.getId()).nodeIds());
+        assertTrue(data.isAllocated(second.getId()));
+    }
+
+    @Test
+    void aRevertedNodeWhoseOriginalIsAllowedStaysAndIsNoLongerTracked() {
+        ShipSkillData data = shipWith(TRANSFORM, 14L);
+        frigateGate(data);
+        data.allocate(nearNotable, null, 0);
+        ShipFacts frigate = new ShipFacts(HullSize.FRIGATE, ShieldType.FRONT, false, 100f, hullModId -> false);
+
+        data.unsocketItem(socket.getId());
+
+        assertTrue(DoctrineRevertRelease.release(data, frigate, SkillTree.topology(), socket.getId()).nodeIds().isEmpty());
+        assertTrue(data.isAllocated(nearNotable.getId()));
+        assertTrue(data.getReplacementAllocatedNodeIds().isEmpty());
     }
 
     @Test
