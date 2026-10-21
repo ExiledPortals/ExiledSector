@@ -82,6 +82,15 @@ each frame, so only turrets benefit. Decorative and system slots are left alone.
 on stats the game reads live in combat opt in. Anything else (creation-time stats, campaign stats, listeners,
 conditional effects) makes the loader log an error and ignore the duration.
 
+## Diminishing returns
+
+`EffectTotals` shrinks permanent tree and hull item bonuses to armor, hull, flux capacity, flux dissipation,
+top speed and weapon range once their net total passes a LunaLib threshold, keeping only the efficiency
+percent of the excess (`DiminishingReturns`, `DiminishedStat`). Thresholds are percent of the hull's base
+value (`StatBaseline`), and flat bonuses count as the percent they add. Range counts percent and MULT per
+weapon type, cutting broader scopes only as far as every type they reach allows. Drawbacks, temporary nodes
+and vanilla hull mods passed through by nodes are untouched.
+
 ## Phantom hull mods
 
 A node that recreates a vanilla hull mod also places the real one as a zero-OP perma mod tagged
@@ -111,7 +120,9 @@ socketed only if it allocates a node behind it. NPC ships carry nothing else, th
 recovered ship loses it.
 
 The rest of the budget goes to notables and keystones drawn by seeded weight (`NpcRelevance` × tier), then
-small nodes. Every step is a breadth-first search through nodes `NodeEligibility` allows, never crossing
+small nodes. `NpcRelevance` multiplies theme tag weights by `npc_faction_focus.csv` and
+`npc_ship_system_focus.csv` (by ship system or defense id, `NpcFocus`), which also steers optional nodes'
+option picks. Every step is a breadth-first search through nodes `NodeEligibility` allows, never crossing
 wormholes.
 
 ## NPC levels

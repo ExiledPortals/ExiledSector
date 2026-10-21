@@ -9,10 +9,12 @@ import exiledsector.items.DoctrineOverrides;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocatedSkillEffects;
 import exiledsector.skills.DamageTakenCaps;
+import exiledsector.skills.DiminishingReturns;
 import exiledsector.skills.EffectTotals;
 import exiledsector.skills.ShipSections;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.StatBaseline;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
 
@@ -52,19 +54,24 @@ public final class ResolvedTree {
     private final int shipDataRevision;
     private final DoctrineLayer doctrineLayer;
     private final List<ShipSections.UnlockedSection> sections;
+    private final StatBaseline statBaseline;
+    private final DiminishingReturns.Config diminishing;
     private final List<AllocatedNode> allocatedNodes;
     private final List<Entry> entries;
     private final List<TemporaryNode> temporaryNodes;
     private final Set<String> phantomHullModIds;
 
-    private ResolvedTree(ShipSkillData shipData, HullSize hullSize, float bonusScale, List<ShipSections.UnlockedSection> sections) {
+    private ResolvedTree(ShipSkillData shipData, HullSize hullSize, float bonusScale, List<ShipSections.UnlockedSection> sections,
+                         StatBaseline statBaseline, DiminishingReturns.Config diminishing) {
         this.hullSize = hullSize;
         this.bonusScale = bonusScale;
         this.shipDataRevision = shipData.revision();
         this.doctrineLayer = DoctrineOverrides.layer(shipData);
         this.sections = sections;
+        this.statBaseline = statBaseline;
+        this.diminishing = diminishing;
         this.allocatedNodes = List.copyOf(AllocatedNode.of(shipData));
-        EffectTotals effectTotals = EffectTotals.of(shipData, allocatedNodes, hullSize, bonusScale, sections);
+        EffectTotals effectTotals = EffectTotals.of(shipData, allocatedNodes, hullSize, bonusScale, sections, statBaseline, diminishing);
         List<Entry> resolvedEntries = new ArrayList<>();
         List<TemporaryNode> resolvedTemporaryNodes = new ArrayList<>();
         for (EffectTotals.NodeEffects nodeEffects : effectTotals.nodeEffects()) {
@@ -175,16 +182,22 @@ public final class ResolvedTree {
     }
 
     static ResolvedTree of(ShipSkillData shipData, HullSize hullSize, float bonusScale, List<ShipSections.UnlockedSection> sections) {
+        return of(shipData, hullSize, bonusScale, sections, StatBaseline.NONE, DiminishingReturns.OFF);
+    }
+
+    static ResolvedTree of(ShipSkillData shipData, HullSize hullSize, float bonusScale, List<ShipSections.UnlockedSection> sections,
+                           StatBaseline statBaseline, DiminishingReturns.Config diminishing) {
         if (shipData == null) {
             return null;
         }
         ResolvedTree cachedTree = CACHE.get(shipData);
         if (cachedTree != null && cachedTree.shipDataRevision == shipData.revision() && cachedTree.doctrineLayer == DoctrineOverrides.layer(shipData)
                 && cachedTree.hullSize == hullSize
-                && Float.compare(cachedTree.bonusScale, bonusScale) == 0 && cachedTree.sections.equals(sections)) {
+                && Float.compare(cachedTree.bonusScale, bonusScale) == 0 && cachedTree.sections.equals(sections)
+                && cachedTree.statBaseline.equals(statBaseline) && cachedTree.diminishing.equals(diminishing)) {
             return cachedTree;
         }
-        ResolvedTree resolvedTree = new ResolvedTree(shipData, hullSize, bonusScale, sections);
+        ResolvedTree resolvedTree = new ResolvedTree(shipData, hullSize, bonusScale, sections, statBaseline, diminishing);
         CACHE.put(shipData, resolvedTree);
         return resolvedTree;
     }

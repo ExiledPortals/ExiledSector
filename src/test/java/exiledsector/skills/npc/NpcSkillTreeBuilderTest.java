@@ -347,6 +347,79 @@ class NpcSkillTreeBuilderTest {
         }
     }
 
+    private static NpcTreeBuild generateFocused(int nodeCount, Map<String, Float> focus, long seed) {
+        return NpcSkillTreeBuilder.generate(new NpcBuildRequest(BALLISTIC_FRIGATE, null, null, NpcHullMods.NONE, NpcFreedOp.NONE, nodeCount,
+                null, null, null, focus), new Random(seed));
+    }
+
+    private static int countSelections(String nodeId, String optionId, Map<String, Float> focus) {
+        int selections = 0;
+        for (long seed = 1; seed <= 60; seed++) {
+            if (optionId.equals(generateFocused(1, focus, seed).shipData().getOptionalSelection(nodeId))) {
+                selections++;
+            }
+        }
+        return selections;
+    }
+
+    @Test
+    void factionFocusSteersWhichOptionAnOptionalNodeTakes() {
+        root();
+        registerType(builder("armour_option", SkillTier.SMALL).tags(List.of("armour")).build());
+        registerType(builder("flux_option", SkillTier.SMALL).tags(List.of("flux")).build());
+        node("optional", registerType(builder("optional_type", SkillTier.SMALL)
+                .optionalOptionIds(List.of("armour_option", "flux_option")).build()), ROOT);
+
+        int unfocused = countSelections("optional", "armour_option", Map.of());
+        int focused = countSelections("optional", "armour_option", Map.of("armour", 30f));
+
+        assertTrue(unfocused < 30, "unfocused " + unfocused);
+        assertTrue(focused > 45, "focused " + focused);
+    }
+
+    @Test
+    void factionFocusWeighsAnOptionalNotableByTheOptionItWouldTake() {
+        root();
+        registerType(builder("armour_notable_option", SkillTier.NOTABLE).tags(List.of("armour")).build());
+        registerType(builder("missile_notable_option", SkillTier.NOTABLE).tags(List.of("armour", "missile", "req_missile")).build());
+        node("optional_notable", registerType(builder("optional_notable_type", SkillTier.NOTABLE)
+                .optionalOptionIds(List.of("armour_notable_option", "missile_notable_option")).build()), ROOT);
+        node("flux_notable", registerType(builder("flux_notable_type", SkillTier.NOTABLE).tags(List.of("flux")).build()), ROOT);
+
+        int unfocused = 0;
+        int focused = 0;
+        for (long seed = 1; seed <= 60; seed++) {
+            unfocused += generateFocused(1, Map.of(), seed).shipData().isAllocated("optional_notable") ? 1 : 0;
+            ShipSkillData focusedData = generateFocused(1, Map.of("armour", 30f), seed).shipData();
+            if (focusedData.isAllocated("optional_notable")) {
+                focused++;
+                assertEquals("armour_notable_option", focusedData.getOptionalSelection("optional_notable"));
+            }
+        }
+
+        assertTrue(unfocused < 30, "unfocused " + unfocused);
+        assertTrue(focused > 45, "focused " + focused);
+    }
+
+    @Test
+    void focusMultipliesTheShipsOwnTagWeights() {
+        NpcRelevance plain = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of());
+        NpcRelevance focused = NpcRelevance.of(BALLISTIC_FRIGATE, Set.of(), Map.of("ballistic", 2f, "fighter", 3f));
+
+        assertEquals(plain.of(List.of("ballistic")) * 2f, focused.of(List.of("ballistic")), 0.001f);
+        assertEquals(plain.of(List.of("fighter")) * 3f, focused.of(List.of("fighter")), 0.001f);
+        assertEquals(plain.of(List.of("flux")), focused.of(List.of("flux")), 0.001f);
+    }
+
+    @Test
+    void lightlyArmouredHullsRarelyChaseArmour() {
+        ShipProfile lightFrigate = new ShipProfile(HullSize.FRIGATE, ShieldType.FRONT, 0, Set.of(WeaponKind.ENERGY), false, 100f, false);
+        ShipProfile midFrigate = new ShipProfile(HullSize.FRIGATE, ShieldType.FRONT, 0, Set.of(WeaponKind.ENERGY), false, 200f, false);
+
+        assertEquals(NpcRelevance.LIGHT_ARMOUR_WEIGHT, NpcRelevance.of(lightFrigate, Set.of()).of(List.of("armour")), 0.001f);
+        assertTrue(NpcRelevance.of(midFrigate, Set.of()).of(List.of("armour")) > NpcRelevance.LIGHT_ARMOUR_WEIGHT);
+    }
+
     @Test
     void theSameSeedAlwaysGrowsTheSameTree() {
         root();

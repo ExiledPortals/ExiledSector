@@ -18,6 +18,7 @@ import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.npc.NpcFactionVolumes;
+import exiledsector.skills.npc.NpcFocus;
 import exiledsector.skills.npc.NpcLevelCaps;
 import exiledsector.skills.npc.NpcLevelCategory;
 import exiledsector.skills.skilleffect.FleetCrewLedger;
@@ -100,6 +101,10 @@ class ExiledSectorModPluginTest {
                 .thenReturn(new JSONArray("[{\"ability_id\": \"fracture_jump\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/npc_faction_volumes.csv", "exiledSector"))
                 .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
+        when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/npc_faction_focus.csv", "exiledSector"))
+                .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"focus\": \"armour:2\"}]"));
+        when(settings.getMergedSpreadsheetDataForMod("system", "data/config/exiledSector/npc_ship_system_focus.csv", "exiledSector"))
+                .thenReturn(new JSONArray("[{\"system\": \"damper\", \"focus\": \"armour:2\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("id", "data/config/exiledSector/npc_levels.csv", "exiledSector"))
                 .thenReturn(new JSONArray("[{\"id\": \"remnant\", \"category\": \"ai\", \"cap\": \"\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("id", "data/config/exiledSector/subroutines.csv", "exiledSector"))
@@ -133,6 +138,7 @@ class ExiledSectorModPluginTest {
         loadTree("");
         SkillTree.clearTypes();
         NpcFactionVolumes.clear();
+        NpcFocus.clear();
         NpcLevelCaps.clear();
         ItemDefinitions.clear();
         ItemNames.clear();
@@ -339,6 +345,13 @@ class ExiledSectorModPluginTest {
         new ExiledSectorModPlugin().onApplicationLoad();
 
         assertEquals("hegemony", NpcFactionVolumes.regionFor("hegemony"));
+    }
+
+    @Test
+    void onApplicationLoadLoadsTheNpcFocusMergedAcrossMods() throws Exception {
+        new ExiledSectorModPlugin().onApplicationLoad();
+
+        assertEquals(Map.of("armour", 4f), NpcFocus.of("hegemony", "damper"));
     }
 
     @Test

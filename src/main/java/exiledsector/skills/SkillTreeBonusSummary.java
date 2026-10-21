@@ -7,10 +7,12 @@ import exiledsector.skills.skilleffect.WeaponEffectTooltipAggregator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public final class SkillTreeBonusSummary {
 
-    public record Summary(SkillType root, int level, int nodeCount, List<SkillType> notables, List<DescriptionLine> bonuses) {
+    public record Summary(SkillType root, int level, int nodeCount, List<SkillType> notables, List<DescriptionLine> bonuses,
+                          Set<DiminishedStat> diminishedStats) {
     }
 
     private SkillTreeBonusSummary() {
@@ -25,6 +27,11 @@ public final class SkillTreeBonusSummary {
     }
 
     public static Summary of(ShipSkillData data, HullSize hullSize, float bonusScale, List<ShipSections.UnlockedSection> sections) {
+        return of(data, hullSize, bonusScale, sections, StatBaseline.NONE, DiminishingReturns.OFF);
+    }
+
+    public static Summary of(ShipSkillData data, HullSize hullSize, float bonusScale, List<ShipSections.UnlockedSection> sections,
+                             StatBaseline statBaseline, DiminishingReturns.Config diminishing) {
         SkillType root = null;
         int nodeCount = 0;
         List<SkillType> notables = new ArrayList<>();
@@ -41,8 +48,8 @@ public final class SkillTreeBonusSummary {
                 notables.add(type);
             }
         }
-        EffectTotals effectTotals = EffectTotals.of(data, allocatedNodes, hullSize, bonusScale, sections);
-        return new Summary(root, data.getLevel(), nodeCount, notables, describe(effectTotals.groups()));
+        EffectTotals effectTotals = EffectTotals.of(data, allocatedNodes, hullSize, bonusScale, sections, statBaseline, diminishing);
+        return new Summary(root, data.getLevel(), nodeCount, notables, describe(effectTotals.groups()), effectTotals.diminishedStats());
     }
 
     private static List<DescriptionLine> describe(List<EffectTotals.Group> groups) {

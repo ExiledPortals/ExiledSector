@@ -16,9 +16,11 @@ import exiledsector.charts.ChartFleetConditions;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.items.DoctrineOverrides;
+import exiledsector.skills.DiminishingReturns;
 import exiledsector.skills.ShipSections;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
+import exiledsector.skills.StatBaseline;
 import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.inspect.ShipTreeLookup;
@@ -54,7 +56,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
             DoctrineOverrides.bindShipFacts(shipData, () -> PlayerShipFacts.of(member, variant));
         }
         ResolvedTree resolvedTree = ResolvedTree.of(shipData, hullSize, bonusScale(member, stats.getVariant()),
-                ShipSections.forVariant(shipData, stats.getVariant()));
+                ShipSections.forVariant(shipData, stats.getVariant()), StatBaseline.of(stats.getVariant()), DiminishingReturns.current());
         for (ResolvedTree.Entry entry : resolvedTree.entries()) {
             if (entry instanceof ResolvedTree.VanillaEntry vanillaEntry) {
                 vanillaEntry.effect().applyEffectsBeforeShipCreation(hullSize, stats, vanillaEntry.hullModId());
@@ -228,7 +230,8 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         ShipVariantAPI variant = ship.getVariant();
         FleetMemberAPI member = ship.getMutableStats().getFleetMember();
         ShipSkillData shipData = SkillDataResolver.resolve(member, variant);
-        return ResolvedTree.of(shipData, ship.getHullSize(), bonusScale(member, variant), ShipSections.forVariant(shipData, variant));
+        return ResolvedTree.of(shipData, ship.getHullSize(), bonusScale(member, variant), ShipSections.forVariant(shipData, variant),
+                StatBaseline.of(variant), DiminishingReturns.current());
     }
 
     private static float bonusScale(FleetMemberAPI member, ShipVariantAPI variant) {

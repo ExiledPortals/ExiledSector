@@ -4,6 +4,7 @@ import path from 'node:path';
 export interface ProjectPaths {
   projectRoot: string;
   vanillaCoreDir: string;
+  mainCheckoutRoot?: string;
 }
 
 export function defaultProjectPaths(): ProjectPaths {

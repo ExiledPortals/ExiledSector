@@ -27,8 +27,11 @@ final class NpcRelevance {
             Map.entry("ballistic", 0.1f), Map.entry("energy", 0.1f), Map.entry("beam", 0.1f), Map.entry("missile", 0.1f),
             Map.entry("fighter", 0.1f), Map.entry("phase", 0.1f), Map.entry("shield", 0.1f),
             Map.entry("logistics", 0.15f), Map.entry("fleet_support", 0.2f), Map.entry("d_mods", 0.2f));
+    static final float LIGHT_ARMOUR_WEIGHT = 0.3f;
     private static final Map<HullSize, Float> HEAVY_ARMOUR = Map.of(
             HullSize.FRIGATE, 250f, HullSize.DESTROYER, 600f, HullSize.CRUISER, 1000f, HullSize.CAPITAL_SHIP, 1400f);
+    private static final Map<HullSize, Float> LIGHT_ARMOUR = Map.of(
+            HullSize.FRIGATE, 150f, HullSize.DESTROYER, 450f, HullSize.CRUISER, 800f, HullSize.CAPITAL_SHIP, 1100f);
 
     private final Map<String, Float> weightsByTag;
 
@@ -37,6 +40,10 @@ final class NpcRelevance {
     }
 
     static NpcRelevance of(ShipProfile profile, Collection<String> permanentHullMods) {
+        return of(profile, permanentHullMods, Map.of());
+    }
+
+    static NpcRelevance of(ShipProfile profile, Collection<String> permanentHullMods, Map<String, Float> focus) {
         Map<String, Float> weightsByTag = new HashMap<>(BASE);
         Set<WeaponKind> weaponKinds = profile.weaponKinds();
         focus(weightsByTag, "ballistic", weaponKinds.contains(WeaponKind.BALLISTIC));
@@ -53,6 +60,8 @@ final class NpcRelevance {
         if (profile.baseArmor() >= HEAVY_ARMOUR.getOrDefault(profile.hullSize(), Float.MAX_VALUE)) {
             focus(weightsByTag, "armour", true);
             weightsByTag.merge("hull", 0.7f, Float::sum);
+        } else if (profile.baseArmor() > 0f && profile.baseArmor() <= LIGHT_ARMOUR.getOrDefault(profile.hullSize(), 0f)) {
+            weightsByTag.put("armour", LIGHT_ARMOUR_WEIGHT);
         }
         for (SkillType skillType : SkillTree.getAllTypes().values()) {
             if (ownsAny(skillType, permanentHullMods)) {
@@ -63,6 +72,7 @@ final class NpcRelevance {
                 }
             }
         }
+        focus.forEach((tag, multiplier) -> weightsByTag.put(tag, weightsByTag.getOrDefault(tag, UNTHEMED) * multiplier));
         return new NpcRelevance(Map.copyOf(weightsByTag));
     }
 

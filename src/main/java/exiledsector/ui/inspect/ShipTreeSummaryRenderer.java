@@ -9,6 +9,8 @@ import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.DescriptionLine;
+import exiledsector.skills.DiminishedStat;
+import exiledsector.skills.DiminishingReturns;
 import exiledsector.skills.ShipSections;
 import exiledsector.skills.SkillTreeBonusSummary;
 import exiledsector.skills.SkillTreeBonusSummary.Summary;
@@ -39,7 +41,8 @@ public final class ShipTreeSummaryRenderer {
 
     private static void renderSummary(TooltipMakerAPI info, ShipTreeLookup.ShipTree shipTree, HullSize hullSize, float pad,
                                       int maxBonusLines) {
-        Summary bonusSummary = SkillTreeBonusSummary.of(shipTree.skillData(), hullSize, shipTree.bonusScale(), shipTree.sections());
+        Summary bonusSummary = SkillTreeBonusSummary.of(shipTree.skillData(), hullSize, shipTree.bonusScale(), shipTree.sections(),
+                shipTree.statBaseline(), DiminishingReturns.current());
 
         List<String> headerParts = new ArrayList<>();
         headerParts.add(Translation.msg("summary.level").arg("level", bonusSummary.level()).text());
@@ -90,6 +93,14 @@ public final class ShipTreeSummaryRenderer {
                 VanillaText.addPara(info, Translation.msg("summary.more").count(bonuses.size() - shownBonusCount).styled(), LINE_PAD,
                         Misc.getGrayColor());
             }
+        }
+        if (!bonusSummary.diminishedStats().isEmpty()) {
+            List<StyledText> statNames = new ArrayList<>();
+            for (DiminishedStat stat : bonusSummary.diminishedStats()) {
+                statNames.add(Translation.styled(stat.translationKey()));
+            }
+            VanillaText.addPara(info, Translation.msg("summary.diminished").arg("stats", Translation.list(statNames)).styled(), LINE_PAD,
+                    Misc.getGrayColor());
         }
     }
 

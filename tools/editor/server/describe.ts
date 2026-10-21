@@ -56,13 +56,13 @@ export function defaultToolchain(): DescribeToolchain {
   return { javaHome: findJavaHome(), maven: findMaven() };
 }
 
-function libsDir(projectRoot: string): string {
-  const ownLibs = path.join(projectRoot, 'libs');
-  if (fs.existsSync(path.join(ownLibs, 'starfarer.api.jar'))) {
-    return ownLibs;
+export function libsDir(paths: ProjectPaths): string {
+  const ownLibs = path.join(paths.projectRoot, 'libs');
+  const candidates = [ownLibs, path.join(path.dirname(paths.projectRoot), 'ExiledSector', 'libs')];
+  if (paths.mainCheckoutRoot) {
+    candidates.splice(1, 0, path.join(paths.mainCheckoutRoot, 'libs'));
   }
-  const mainCheckoutLibs = path.join(path.dirname(projectRoot), 'ExiledSector', 'libs');
-  return fs.existsSync(path.join(mainCheckoutLibs, 'starfarer.api.jar')) ? mainCheckoutLibs : ownLibs;
+  return candidates.find((candidate) => fs.existsSync(path.join(candidate, 'starfarer.api.jar'))) ?? ownLibs;
 }
 
 export type DescribeResult = { body: unknown } | { raw: string };
@@ -105,18 +105,31 @@ export class DescribeService {
   private helperLines: readline.Interface | null = null;
   private pendingLine: ((line: string | null) => void) | null = null;
   private queue: Promise<unknown> = Promise.resolve();
-  private readonly classpathFile: string;
   private failedAtMs = 0;
   private readonly buildLogFile = path.join(os.tmpdir(), 'exiledsector-editor-describe-build.log');
-  private readonly buildLockFile: string;
+  private generation = 0;
 
   constructor(
     private readonly paths: ProjectPaths,
     private readonly toolchain: DescribeToolchain = defaultToolchain(),
     private readonly nowMs: () => number = Date.now,
-  ) {
-    this.classpathFile = path.join(paths.projectRoot, 'target', 'editor-describe.classpath');
-    this.buildLockFile = path.join(paths.projectRoot, BUILD_LOCK_FILE);
+  ) {}
+
+  private get classpathFile(): string {
+    return path.join(this.paths.projectRoot, 'target', 'editor-describe.classpath');
+  }
+
+  private get buildLockFile(): string {
+    return path.join(this.paths.projectRoot, BUILD_LOCK_FILE);
+  }
+
+  restartForProject(): void {
+    this.generation++;
+    this.stopHelper();
+    this.status = 'idle';
+    this.message = '';
+    this.failedAtMs = 0;
+    this.startBuild();
   }
 
   startBuild(): void {
@@ -140,8 +153,10 @@ export class DescribeService {
       'dependency:build-classpath',
       '-Dmdep.outputFile=target\\editor-describe.classpath',
       '-Dmdep.includeScope=test',
-      `"-Dlibs.dir=${libsDir(this.paths.projectRoot)}"`,
+      `"-Dlibs.dir=${libsDir(this.paths)}"`,
     ].join(' ');
+    const generation = this.generation;
+    const classpathFile = this.classpathFile;
     const build = spawn(mavenCommandLine, {
       cwd: this.paths.projectRoot,
       shell: true,
@@ -151,13 +166,19 @@ export class DescribeService {
     });
     build.on('exit', (exitCode) => {
       fs.closeSync(buildLog);
-      if (exitCode === 0 && fs.existsSync(this.classpathFile)) {
+      if (generation !== this.generation) {
+        return;
+      }
+      if (exitCode === 0 && fs.existsSync(classpathFile)) {
         this.status = 'built';
       } else {
         this.fail(`Compiling the mod for in-game descriptions failed; see ${this.buildLogFile}`);
       }
     });
     build.on('error', () => {
+      if (generation !== this.generation) {
+        return;
+      }
       this.fail(`Could not run Maven; see ${this.buildLogFile}`);
     });
   }
@@ -237,7 +258,11 @@ export class DescribeService {
     this.helper = helper;
     this.helperLines = readline.createInterface({ input: helper.stdout, crlfDelay: Infinity });
     this.helperLines.on('line', (line) => this.resolveLine(line));
+    const generation = this.generation;
     const readyLine = await this.nextLine(READY_TIMEOUT_MS);
+    if (generation !== this.generation) {
+      return;
+    }
     if (readyLine !== READY_LINE) {
       this.stopHelper();
       this.fail('The description helper did not start; it will be rebuilt on the next hover.');

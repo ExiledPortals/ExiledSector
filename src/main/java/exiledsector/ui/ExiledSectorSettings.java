@@ -14,6 +14,8 @@ import exiledsector.items.ItemRoller;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.LanguageSetting;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.DiminishedStat;
+import exiledsector.skills.DiminishingReturns;
 import exiledsector.skills.npc.NpcTreeConfig;
 import exiledsector.skills.npc.NpcTreeSize;
 import exiledsector.skills.progression.ShipLevelConfig;
@@ -55,6 +57,7 @@ public final class ExiledSectorSettings {
         });
         SettingsCreator.refresh(MOD_ID);
         ModSettingsListener.ensureRegistered(NpcBonusScale.SettingsListener.class, NpcBonusScale.SettingsListener::new);
+        ModSettingsListener.ensureRegistered(DiminishingReturns.SettingsListener.class, DiminishingReturns.SettingsListener::new);
         ModSettingsListener.ensureRegistered(ItemRoller.SettingsListener.class, ItemRoller.SettingsListener::new);
         ItemRoller.reloadSettings();
         ModSettingsListener.ensureRegistered(HullUpgradesSetting.SettingsListener.class, HullUpgradesSetting.SettingsListener::new);
@@ -118,6 +121,18 @@ public final class ExiledSectorSettings {
                 Translation.text("settings.opCost.capital"), "", SkillNodeOpCost.DEFAULT_CAPITAL, 0, 100, MAIN_TAB);
         SettingsCreator.addInt(MOD_ID, SkillNodeOpCost.UNDEFINED_FIELD_ID,
                 Translation.text("settings.opCost.other"), "", SkillNodeOpCost.DEFAULT_UNDEFINED, 0, 100, MAIN_TAB);
+
+        SettingsCreator.addHeader(MOD_ID, "exiledSector_diminishingHeader", Translation.text("settings.diminishing.header"), MAIN_TAB);
+        SettingsCreator.addText(MOD_ID, "exiledSector_diminishingAbout", Translation.text("settings.diminishing.about"), MAIN_TAB);
+        SettingsCreator.addInt(MOD_ID, DiminishingReturns.EFFICIENCY_FIELD_ID,
+                Translation.text("settings.diminishing.efficiency.name"), Translation.text("settings.diminishing.efficiency.tooltip"),
+                DiminishingReturns.DEFAULT_EFFICIENCY_PERCENT, 0, 100, MAIN_TAB);
+        for (DiminishedStat stat : DiminishedStat.values()) {
+            SettingsCreator.addInt(MOD_ID, stat.thresholdFieldId(),
+                    Translation.text("settings.diminishing.threshold." + stat.name()),
+                    Translation.text("settings.diminishing.threshold.tooltip"),
+                    stat.defaultThresholdPercent(), 0, DiminishingReturns.MAX_THRESHOLD_PERCENT, MAIN_TAB);
+        }
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_levelHeader", Translation.text("settings.level.header"), MAIN_TAB);
         SettingsCreator.addText(MOD_ID, "exiledSector_levelAbout", Translation.text("settings.level.about"), MAIN_TAB);

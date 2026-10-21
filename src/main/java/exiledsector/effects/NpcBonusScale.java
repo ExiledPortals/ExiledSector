@@ -18,7 +18,7 @@ public final class NpcBonusScale {
 
     public static final int DEFAULT_LOW_TREE_POWER = 15;
     public static final int DEFAULT_HIGH_TREE_POWER = 60;
-    public static final float DEFAULT_MAX_MULTIPLIER = 3f;
+    public static final float DEFAULT_MAX_MULTIPLIER = 1f;
 
     private static final float MULTIPLIER_STEPS_PER_UNIT = 100f;
     private static final float REFRESH_DAYS = 1f;

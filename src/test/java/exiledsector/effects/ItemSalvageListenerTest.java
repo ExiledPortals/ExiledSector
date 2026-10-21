@@ -12,6 +12,8 @@ import exiledsector.charts.ChartIds;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemData;
+import exiledsector.items.MaterialItems;
+import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.items.StarChartCurrency;
 import exiledsector.items.StarChartFixtures;
 import exiledsector.charts.ChartContent;
@@ -38,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -163,6 +166,52 @@ class ItemSalvageListenerTest {
             ChartDrops.clear();
             StarChartCurrency.unregisterAll();
             StarChartFixtures.clear();
+        }
+    }
+
+    private static List<SpecialItemData> lootFrom(ItemSalvageListener listener, SectorEntityToken station) {
+        CargoAPI loot = mock(CargoAPI.class);
+        listener.reportAboutToShowLootToPlayer(loot, dialogFor(station));
+        ArgumentCaptor<SpecialItemData> specials = ArgumentCaptor.forClass(SpecialItemData.class);
+        verify(loot, Mockito.atLeast(0)).addSpecial(specials.capture(), anyFloat());
+        return specials.getAllValues();
+    }
+
+    private static JSONObject subroutine(String id, String kind, boolean unique) throws Exception {
+        return new JSONObject().put("id", id).put("name", id).put("rarity", "10").put("kind", kind).put("unique", unique);
+    }
+
+    private static JSONObject anchor(String id, String volume) throws Exception {
+        return new JSONObject().put("id", id).put("volume", volume).put("exit_node", volume + "_exit").put("name", id);
+    }
+
+    @Test
+    void aShowcaseSiteAlsoDropsThreeDoctrinesThreeAnchorsTheCacheAndEveryCraftingMaterialOnce() throws Exception {
+        ItemDefinitions.register(new JSONArray().put(subroutine("volume_subroutine", "MODSPEC_CACHE", false))
+                .put(subroutine("doctrine_archive_hegemony", "DOCTRINE", true)).put(subroutine("doctrine_archive_luddic", "DOCTRINE", true))
+                .put(subroutine("doctrine_archive_pirate", "DOCTRINE", true)).put(subroutine("doctrine_archive_remnant", "DOCTRINE", true))
+                .put(subroutine("unique_warden_threat_matrix", "UNIQUE", true)));
+        WormholeAnchorDefinitions.register(new JSONArray().put(anchor("wormhole_anchor_hegemony", "hegemony"))
+                .put(anchor("wormhole_anchor_luddic", "luddic")).put(anchor("wormhole_anchor_pirate", "pirate"))
+                .put(anchor("wormhole_anchor_abyss", "abyss")));
+        try {
+            SectorEntityToken plainStation = site("station_research", null);
+            SectorEntityToken showcaseStation = site("station_research", null);
+            assertTrue(ItemSalvageListener.canShowcase(showcaseStation));
+            ItemSalvageListener.markShowcase(showcaseStation);
+
+            List<SpecialItemData> plainLoot = lootFrom(listener, plainStation);
+            List<SpecialItemData> showcaseLoot = lootFrom(listener, showcaseStation);
+
+            List<String> materialIds = MaterialItems.ids();
+            long plainItems = plainLoot.stream().filter(special -> !materialIds.contains(special.getId())).count();
+            long showcaseItems = showcaseLoot.stream().filter(special -> !materialIds.contains(special.getId())).count();
+            assertEquals(plainItems + 1 + 2L * ItemSalvageListener.SHOWCASE_PICKS, showcaseItems);
+            assertTrue(showcaseLoot.stream().map(SpecialItemData::getId).toList().containsAll(materialIds));
+            assertFalse(ItemSalvageListener.canShowcase(showcaseStation));
+            assertTrue(lootFrom(listener, showcaseStation).isEmpty());
+        } finally {
+            WormholeAnchorDefinitions.clear();
         }
     }
 

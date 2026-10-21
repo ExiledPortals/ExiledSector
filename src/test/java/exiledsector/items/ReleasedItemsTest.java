@@ -168,7 +168,7 @@ class ReleasedItemsTest {
     private static boolean namesEffect(ItemDefinition definition, String effectName) {
         PoolEntry entry = definition.poolEntry(effectName);
         if (entry != null) {
-            return ItemNames.hasName(definition, effectName, entry.slot());
+            return ItemModifiers.hasName(entry.modifier().id()) || ItemNames.hasName(definition, effectName, entry.slot());
         }
         return ItemNames.hasName(definition, effectName, ModifierSlot.PREFIX) || ItemNames.hasName(definition, effectName, ModifierSlot.SUFFIX);
     }
