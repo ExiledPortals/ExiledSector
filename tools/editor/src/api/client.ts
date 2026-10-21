@@ -7,12 +7,26 @@ export interface PostResult<TData = Record<string, unknown>> {
   message: string;
 }
 
+let pageCheckout: string | null = null;
+
+export function setPageCheckout(root: string): void {
+  pageCheckout ??= root;
+}
+
+export function resetPageCheckoutForTests(): void {
+  pageCheckout = null;
+}
+
 export async function postJson<TData = Record<string, unknown>>(url: string, payload: unknown): Promise<PostResult<TData>> {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json', 'X-Skill-Tree-Editor': '1' };
+  if (pageCheckout) {
+    headers['X-Editor-Checkout'] = encodeURIComponent(pageCheckout);
+  }
   let response: Response;
   try {
     response = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'X-Skill-Tree-Editor': '1' },
+      headers,
       body: JSON.stringify(payload),
     });
   } catch {

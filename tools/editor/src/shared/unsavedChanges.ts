@@ -34,3 +34,13 @@ export function registerUnloadCheck(check: () => boolean): () => void {
 export function hasUnsavedWork(): boolean {
   return hasUnsavedChanges() || [...unloadChecks].some((check) => check());
 }
+
+let unloadConfirmed = false;
+
+export function confirmUnload(): void {
+  unloadConfirmed = true;
+}
+
+export function shouldWarnBeforeUnload(): boolean {
+  return !unloadConfirmed && hasUnsavedWork();
+}

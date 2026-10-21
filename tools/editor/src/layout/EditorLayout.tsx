@@ -3,7 +3,8 @@ import { IconBinaryTree, IconCpu, IconLanguage, IconMoon, IconPhoto, IconSun } f
 import { useEffect, type ComponentType } from 'react';
 import { NavLink as RouterNavLink, Outlet, useBlocker } from 'react-router';
 import { confirmAction } from '../shared/dialogs.tsx';
-import { hasUnsavedChanges, hasUnsavedWork } from '../shared/unsavedChanges.ts';
+import { hasUnsavedChanges, shouldWarnBeforeUnload } from '../shared/unsavedChanges.ts';
+import { CheckoutPicker } from './CheckoutPicker.tsx';
 
 interface EditorPageLink {
   path: string;
@@ -50,7 +51,7 @@ function useUnsavedChangesGuard() {
 
   useEffect(() => {
     const warnBeforeUnload = (event: BeforeUnloadEvent) => {
-      if (hasUnsavedWork()) {
+      if (shouldWarnBeforeUnload()) {
         event.preventDefault();
       }
     };
@@ -71,6 +72,7 @@ export function EditorLayout() {
             </Text>
             <ColorSchemeToggle />
           </Group>
+          <CheckoutPicker />
           {PAGE_LINKS.map((link) => (
             <NavLink
               key={link.path}
