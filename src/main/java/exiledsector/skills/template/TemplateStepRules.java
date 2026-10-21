@@ -1,5 +1,6 @@
 package exiledsector.skills.template;
 
+import exiledsector.items.DoctrineOverrides;
 import exiledsector.skills.AllocationGate;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipSkillData;
@@ -24,15 +25,14 @@ public final class TemplateStepRules {
         if (node.getId().equals(rootId) || shipData.isAllocated(node.getId())) {
             return StepVerdict.ALREADY_ALLOCATED;
         }
-        SkillType nodeType = node.getType();
         SkillType optionType = null;
-        if (nodeType.isOptional()) {
-            optionType = optionFor(step, nodeType);
+        if (node.offersOptions(shipData)) {
+            optionType = optionFor(step, node.getType());
             if (optionType == null) {
                 return StepVerdict.NO_OPTION;
             }
         }
-        if (NodeEligibility.itemCost(node, optionType) != null) {
+        if (NodeEligibility.itemCost(DoctrineOverrides.asTransformed(shipData, node), optionType) != null) {
             return StepVerdict.ITEM_COST;
         }
         AllocationGate.Verdict verdict = allocationVerdict.apply(node, optionType);
@@ -49,6 +49,10 @@ public final class TemplateStepRules {
             }
         }
         return null;
+    }
+
+    public static SkillType optionFor(TemplateStep step, SkillNode node, ShipSkillData shipData) {
+        return node.offersOptions(shipData) ? optionFor(step, node.getType()) : null;
     }
 
     public static SkillType optionFor(TemplateStep step, SkillType nodeType) {

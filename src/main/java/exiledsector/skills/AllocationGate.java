@@ -1,5 +1,7 @@
 package exiledsector.skills;
 
+import exiledsector.items.DoctrineOverrides;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -97,7 +99,7 @@ public final class AllocationGate {
     }
 
     public Verdict allocation(SkillNode node, SkillType option) {
-        if (option == null && !node.getType().isOptional()) {
+        if (option == null && !offersOptions(node)) {
             return allocation(node);
         }
         NodeVerdicts verdicts = verdictsFor(node);
@@ -116,7 +118,15 @@ public final class AllocationGate {
             verdicts.optionEligibilities = new HashMap<>();
         }
         return verdicts.optionEligibilities.computeIfAbsent(optionKey(option),
-                key -> Verdict.fromBlock(NodeEligibility.check(node, option, eligibility)));
+                key -> Verdict.fromBlock(NodeEligibility.check(checkedNode(node), option, eligibility)));
+    }
+
+    public boolean offersOptions(SkillNode node) {
+        return node.offersOptions(data);
+    }
+
+    public SkillItemCost itemCost(SkillNode node, SkillType option) {
+        return NodeEligibility.itemCost(checkedNode(node), option);
     }
 
     public Verdict grant(SkillNode node) {
@@ -155,6 +165,9 @@ public final class AllocationGate {
 
     public List<SkillType> options(SkillNode node) {
         List<SkillType> options = new ArrayList<>();
+        if (!offersOptions(node)) {
+            return options;
+        }
         for (String optionId : node.getType().getOptionalOptionIds()) {
             SkillType option = SkillTree.getType(optionId);
             if (option != null) {
@@ -165,7 +178,7 @@ public final class AllocationGate {
     }
 
     private Verdict computeAllocation(SkillNode node) {
-        if (!node.getType().isOptional()) {
+        if (!offersOptions(node)) {
             Verdict placement = placement(node);
             return placement.allowed() ? eligibility(node, null) : placement;
         }
@@ -236,7 +249,11 @@ public final class AllocationGate {
         if (option != null && option.getId().equals(data.getOptionalSelection(node.getId()))) {
             return Verdict.refused(Refusal.SAME_OPTION);
         }
-        return Verdict.fromBlock(NodeEligibility.check(node, option, eligibility.excluding(node.getId(), data)));
+        return Verdict.fromBlock(NodeEligibility.check(checkedNode(node), option, eligibility.excluding(node.getId(), data)));
+    }
+
+    private SkillNode checkedNode(SkillNode node) {
+        return DoctrineOverrides.asTransformed(data, node);
     }
 
     private NodeVerdicts verdictsFor(SkillNode node) {

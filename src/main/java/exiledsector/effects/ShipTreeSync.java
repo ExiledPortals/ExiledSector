@@ -161,6 +161,7 @@ public final class ShipTreeSync {
     private static boolean installTree(FleetMemberAPI member) {
         boolean changed = adoptNpcTree(member);
         changed |= DormantNodeWake.wake(member);
+        changed |= DoctrineRevertRelease.release(member);
         ShipVariantAPI variant = member.getVariant().hasHullMod(SkillTreeHullMod.ID) ? member.getVariant() : ownedVariant(member);
         if (ensureAppliesLast(variant)) {
             changed = true;

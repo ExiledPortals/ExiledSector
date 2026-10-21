@@ -1,5 +1,7 @@
 package exiledsector.skills;
 
+import exiledsector.items.DoctrineOverrides;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,6 +25,7 @@ public class ShipSkillData implements WormholePartners {
     private Set<String> freeNodeIds = new LinkedHashSet<>();
     private Set<String> pairedFreeNodeIds = new LinkedHashSet<>();
     private Set<String> grantFreeNodeIds;
+    private Set<String> replacementAllocatedNodeIds;
     private String startingRootId;
     private boolean npcBuild;
     private transient int revision;
@@ -58,6 +61,11 @@ public class ShipSkillData implements WormholePartners {
     private Set<String> pairedFreeNodeIds() {
         if (pairedFreeNodeIds == null) pairedFreeNodeIds = new LinkedHashSet<>();
         return pairedFreeNodeIds;
+    }
+
+    private Set<String> replacementAllocatedNodeIds() {
+        if (replacementAllocatedNodeIds == null) replacementAllocatedNodeIds = new LinkedHashSet<>();
+        return replacementAllocatedNodeIds;
     }
 
     private Set<String> grantFreeNodeIds() {
@@ -376,8 +384,12 @@ public class ShipSkillData implements WormholePartners {
     }
 
     public void allocateGranted(SkillNode node) {
+        boolean transformed = DoctrineOverrides.replacementType(this, node) != null;
         revision++;
         String nodeId = node.getId();
+        if (transformed) {
+            replacementAllocatedNodeIds().add(nodeId);
+        }
         discardItemCharge(nodeId);
         dormantNodeIds().remove(nodeId);
         allocatedNodeIds.add(nodeId);
@@ -559,6 +571,7 @@ public class ShipSkillData implements WormholePartners {
             copy.optionalSelections.putAll(optionalSelections);
         }
         copy.grantFreeNodeIds = grantFreeNodeIds == null ? null : new LinkedHashSet<>(grantFreeNodeIds);
+        copy.replacementAllocatedNodeIds = replacementAllocatedNodeIds == null ? null : new LinkedHashSet<>(replacementAllocatedNodeIds);
         copy.mirrorSocketedItems(this);
         return copy;
     }
@@ -753,6 +766,39 @@ public class ShipSkillData implements WormholePartners {
         return false;
     }
 
+    public void allocate(SkillNode node, SkillType option, int opCost) {
+        boolean transformed = DoctrineOverrides.replacementType(this, node) != null;
+        SkillType storedOption = option != null || !transformed ? option : firstOption(node.getType());
+        if (storedOption != null) {
+            selectOption(node, storedOption, opCost);
+        } else {
+            allocate(node, opCost);
+        }
+        if (transformed) {
+            replacementAllocatedNodeIds().add(node.getId());
+        }
+    }
+
+    private static SkillType firstOption(SkillType type) {
+        for (String optionId : type.getOptionalOptionIds()) {
+            SkillType option = SkillTree.getType(optionId);
+            if (option != null) {
+                return option;
+            }
+        }
+        return null;
+    }
+
+    public Set<String> getReplacementAllocatedNodeIds() {
+        return replacementAllocatedNodeIds == null ? Set.of() : Collections.unmodifiableSet(replacementAllocatedNodeIds);
+    }
+
+    public void keepAsOriginal(String nodeId) {
+        if (replacementAllocatedNodeIds != null) {
+            replacementAllocatedNodeIds.remove(nodeId);
+        }
+    }
+
     public void allocate(SkillNode node, int opCost) {
         revision++;
         discardItemCharge(node.getId());
@@ -816,6 +862,9 @@ public class ShipSkillData implements WormholePartners {
         }
         if (grantFreeNodeIds != null && grantFreeNodeIds.remove(oldId)) {
             grantFreeNodeIds.add(newId);
+        }
+        if (replacementAllocatedNodeIds != null && replacementAllocatedNodeIds.remove(oldId)) {
+            replacementAllocatedNodeIds.add(newId);
         }
         if (oldId.equals(startingRootId)) {
             startingRootId = newId;
@@ -1032,6 +1081,9 @@ public class ShipSkillData implements WormholePartners {
         }
         if (grantFreeNodeIds != null) {
             grantFreeNodeIds.remove(nodeId);
+        }
+        if (replacementAllocatedNodeIds != null) {
+            replacementAllocatedNodeIds.remove(nodeId);
         }
     }
 

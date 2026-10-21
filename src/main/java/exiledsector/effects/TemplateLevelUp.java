@@ -68,12 +68,8 @@ final class TemplateLevelUp {
                 break;
             }
             SkillNode node = SkillTree.get(nextStep.nodeId());
-            SkillType option = TemplateStepRules.optionFor(nextStep, node.getType());
-            if (option != null) {
-                shipData.selectOption(node, option, opCostPerNode);
-            } else {
-                shipData.allocate(node, opCostPerNode);
-            }
+            SkillType option = TemplateStepRules.optionFor(nextStep, node, shipData);
+            shipData.allocate(node, option, opCostPerNode);
             allocatedCount++;
         }
         return allocatedCount;

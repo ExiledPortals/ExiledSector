@@ -9,6 +9,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.PlayerFleet;
 import exiledsector.effects.DoctrineRevertConflicts;
+import exiledsector.effects.DoctrineRevertRelease;
 import exiledsector.effects.FighterBayOverflow;
 import exiledsector.effects.OpReserveParity;
 import exiledsector.effects.PhantomConflictWatch;
@@ -269,16 +270,12 @@ final class NodeAllocator {
 
     boolean allocate(SkillNode node, SkillType option, Snapshot snapshot) {
         AllocationGate gate = snapshot.gate();
-        SkillItemCost itemCost = NodeEligibility.itemCost(node, option);
+        SkillItemCost itemCost = gate.itemCost(node, option);
         if (!gate.allocation(node, option).allowed() || itemCost != null && heldInCargo(itemCost.itemId()) < itemCost.quantity()) {
             return false;
         }
         ShipSkillData skillData = snapshot.skillData();
-        if (option != null) {
-            skillData.selectOption(node, option, gate.opCostFor(node));
-        } else {
-            skillData.allocate(node, gate.opCostFor(node));
-        }
+        skillData.allocate(node, option, gate.opCostFor(node));
         chargeItems(skillData, node.getId(), itemCost);
         refreshShipStats();
         return true;
@@ -291,7 +288,7 @@ final class NodeAllocator {
         }
         ShipSkillData skillData = snapshot.skillData();
         SkillItemCost refund = skillData.itemCharge(node.getId());
-        SkillItemCost itemCost = NodeEligibility.itemCost(node, option);
+        SkillItemCost itemCost = gate.itemCost(node, option);
         if (itemCost != null && heldInCargo(itemCost.itemId()) + refundOf(refund, itemCost.itemId()) < itemCost.quantity()) {
             return false;
         }
@@ -383,7 +380,10 @@ final class NodeAllocator {
     }
 
     Set<String> previewRelease(Consumer<ShipSkillData> change) {
-        return data().previewRelease(SkillTree.topology(), satisfiedRootId(), change);
+        ShipFacts shipFacts = PlayerShipFacts.of(fleetMember, shipVariant);
+        String rootId = satisfiedRootId();
+        return data().previewRelease(SkillTree.topology(), rootId,
+                change.andThen(planned -> DoctrineRevertRelease.release(planned, shipFacts, SkillTree.topology(), rootId)));
     }
 
     private Set<String> reachable(ShipSkillData skillData) {

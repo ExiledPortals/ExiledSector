@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.PlayerFleet;
+import exiledsector.items.DoctrineOverrides;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipFacts;
@@ -55,10 +56,10 @@ final class DormantNodeWake {
     }
 
     private static boolean isEligible(ShipSkillData shipData, SkillNode dormantNode, ShipFacts shipFacts) {
-        SkillType option = dormantNode.getType().isOptional() ? SkillTree.getType(shipData.getOptionalSelection(dormantNode.getId())) : null;
+        SkillType option = dormantNode.offersOptions(shipData) ? SkillTree.getType(shipData.getOptionalSelection(dormantNode.getId())) : null;
         NodeEligibility.Context context = NodeEligibility.Context.of(shipData, shipFacts, SkillTypeUnlockStatus.lockedFor(shipData),
                 itemId -> Double.MAX_VALUE);
-        return NodeEligibility.check(dormantNode, option, context) == null;
+        return NodeEligibility.check(DoctrineOverrides.asTransformed(shipData, dormantNode), option, context) == null;
     }
 
     private static void refund(ShipSkillData shipData, List<String> releasedNodeIds) {
