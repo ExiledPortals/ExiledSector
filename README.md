@@ -30,7 +30,7 @@ Doctrine Archives are faction playbooks your crew definitely didn't steal. Some 
 
 <img src="graphics/description/doctrine_archive.png" alt="A Doctrine Archive">
 
-Running Random Assortment of Things, Nightcross Armory or LOST_SECTOR? Explore them to find more ways to blow up your enemies.
+Running Random Assortment of Things, Nightcross Armory, Navarchy of Tania or LOST_SECTOR? Explore them to find more ways to blow up your enemies.
 
 <img src="graphics/description/mod_volumes.png" alt="Volumes from other mods">
 
@@ -106,6 +106,7 @@ These mods have dedicated compatibility. The version listed is the one I last te
 | Exotica Technologies | 1.8.7 | The Skill Tree button moves one slot down on the refit screen so it doesn't cover the Exotica button. |
 | Random Assortment of Things | 3.3.1 | REDACTED |
 | Nightcross Armory | 2.1.6 | REDACTED |
+| Navarchy of Tania | 1.3.0 | REDACTED |
 | [GraphicsLib](https://fractalsoftworks.com/forum/index.php?topic=10982.0) | 1.12.1 | Optional. When its lights and distortion are on, Exiled Sector's combat effects light up: Ludd's Light and Phase Anchor send out shockwaves, Frozen Heart stacks pulse, Ion Bolter arcs, Corrosion Beam motes and redirected Hullbreacher and Refracting shots glow, Repair Coordinator drones throw light as they weld, and Candle's Grace Replica bends space around the ship. The Exiled Sector settings can switch all of this off except the mote glow, which GraphicsLib draws itself. |
 
 Some weapons from other mods misbehave (often hilariously) when their beams are split, their shots are chained or their shells pierce. These are listed in:
@@ -270,7 +271,7 @@ You can find me on various Starsector Discords or by direct message @portals_
 
 ## Credits
 
-A big thank you to Lukas04 for letting me build the ExoTech and Abyss areas from Random Assortment of Things, to YukiM for the same in Nightcross Armory, and to Kissa Mies and SirHartley for LOST_SECTOR. The loot alert sounds are from Path of Exile and are copyright Grinding Gear Games. [CREDITS.md](CREDITS.md) lists every borrowed file, who made it and the terms it is used under.
+A big thank you to Lukas04 for letting me build the ExoTech and Abyss areas from Random Assortment of Things, to YukiM for the same in Nightcross Armory, to I Spectros I, whose Navarchy of Tania art the Tania area uses, and to Kissa Mies and SirHartley for LOST_SECTOR. The loot alert sounds are from Path of Exile and are copyright Grinding Gear Games. [CREDITS.md](CREDITS.md) lists every borrowed file, who made it and the terms it is used under.
 
 ## License
 

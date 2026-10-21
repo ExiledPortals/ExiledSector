@@ -135,8 +135,9 @@ class CompatChecksTest {
             assertFalse(target.testedVersions().isEmpty(), target.displayName());
         }
         assertEquals(List.of("Lost Sector", "Second-in-Command", "MagicLib", "Exotica Technologies",
-                "Random Assortment of Things areas", "Nightcross Armory area", "GraphicsLib", "Ashes of the Domain: Vaults of Knowledge"), names.subList(0, 8));
-        assertEquals(8 + SalvageSiteCompat.SOURCES.size(), names.size());
+                "Random Assortment of Things areas", "Nightcross Armory area", "GraphicsLib", "Ashes of the Domain: Vaults of Knowledge", "Navarchy of Tania area"),
+                names.subList(0, 9));
+        assertEquals(9 + SalvageSiteCompat.SOURCES.size(), names.size());
         assertTrue(names.contains("Random Assortment of Things salvage sites"));
     }
 

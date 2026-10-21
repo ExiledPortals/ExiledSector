@@ -203,8 +203,8 @@ class NodeRequirementsTest {
     @Test
     void everyHullRequirementCanBeBothMetAndUnmet() {
         for (String requirement : SkillTags.HULL_REQUIREMENT) {
-            assertNull(NodeRequirements.firstUnmetHullRequirement(List.of(requirement), facts(false, true, hullModId -> true)), requirement);
-            assertEquals(requirement, NodeRequirements.firstUnmetHullRequirement(List.of(requirement), facts(true, false, hullModId -> false)));
+            assertNull(NodeRequirements.firstUnmetHullRequirement(List.of(requirement), facts(false, true, hullModId -> true, true)), requirement);
+            assertEquals(requirement, NodeRequirements.firstUnmetHullRequirement(List.of(requirement), facts(true, false, hullModId -> false, false)));
         }
     }
 
@@ -216,7 +216,18 @@ class NodeRequirementsTest {
         assertNull(NodeRequirements.firstUnmetHullRequirement(List.of("req_system_charges"), facts(true, true, id -> false)));
     }
 
+    @Test
+    void reqModulesNeedsAHullWithStationModules() {
+        assertEquals("req_modules", NodeRequirements.firstUnmetHullRequirement(List.of("req_modules"), facts(false, false, id -> false, false)));
+        assertNull(NodeRequirements.firstUnmetHullRequirement(List.of("req_modules"), facts(false, false, id -> false, true)));
+    }
+
     private static ShipFacts facts(boolean phaseHull, boolean limitedSystemCharges, Predicate<String> hasHullMod) {
-        return new ShipFacts(HullSize.FRIGATE, phaseHull ? ShieldType.PHASE : ShieldType.FRONT, phaseHull, 100f, limitedSystemCharges, hasHullMod);
+        return facts(phaseHull, limitedSystemCharges, hasHullMod, false);
+    }
+
+    private static ShipFacts facts(boolean phaseHull, boolean limitedSystemCharges, Predicate<String> hasHullMod, boolean hasModules) {
+        return new ShipFacts(HullSize.FRIGATE, phaseHull ? ShieldType.PHASE : ShieldType.FRONT, phaseHull, 100f, limitedSystemCharges, hasHullMod,
+                false, null, hasHullMod, hasModules);
     }
 }

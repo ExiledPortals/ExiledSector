@@ -13,3 +13,4 @@ wormhole_anchor_stargazer,stargazer,stargazer_wormhole_1,Stargazer Wormhole Anch
 wormhole_anchor_abyss,abyss,rat_abyss_wormhole_1,Abyss Wormhole Anchor,graphics/icons/cargo/exiledSector_wormhole_anchor_abyss.png,#C41423,rat_abyssals,10,Opens a wormhole to the Abyss volume.,,rat_abyssals;rat_abyssals_deep;rat_abyssals_primordials,0.5,,100000
 wormhole_anchor_exotech,exotech,exoship,Hyper-Nav Beacon,graphics/stations/buoy00.png,#FCBE12,rat_exotech,10,Opens a wormhole to the ExoTech volume.,rat_player_exoship,rat_exotech,0.5,1,100000
 wormhole_anchor_threat,threat,threat_wormhole_1,Threat Wormhole Anchor,graphics/icons/cargo/exiledSector_wormhole_anchor_threat.png,#829B91,threat,10,Opens a wormhole to the Threat volume.,,threat,0.5,,100000
+wormhole_anchor_tania,tania,tania_wormhole_1,Tania Wormhole Anchor,graphics/icons/cargo/exiledSector_wormhole_anchor_tania.png,#2AAECC,navarchy_of_tania,10,Opens a wormhole to the Tania volume.,,navarchy_of_tania,0.5,0.3,100000

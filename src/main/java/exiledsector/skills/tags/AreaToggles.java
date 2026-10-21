@@ -4,6 +4,7 @@ import exiledsector.ModSettings;
 import exiledsector.compat.LostSectorCompat;
 import exiledsector.compat.NightcrossCompat;
 import exiledsector.compat.RandomAssortmentCompat;
+import exiledsector.compat.TaniaCompat;
 
 import java.util.HashSet;
 import java.util.List;
@@ -17,7 +18,9 @@ public final class AreaToggles {
     public static final Set<String> RANDOM_ASSORTMENT_REGIONS = Set.of("exotech", "abyss");
     public static final String NIGHTCROSS_FIELD_ID = "exiledSector_nightcrossArea";
     public static final Set<String> NIGHTCROSS_REGIONS = Set.of("nightcross", "stargazer");
-    public static final List<Set<String>> TOGGLED_AREAS = List.of(LOST_SECTOR_REGIONS, RANDOM_ASSORTMENT_REGIONS, NIGHTCROSS_REGIONS);
+    public static final String TANIA_FIELD_ID = "exiledSector_taniaArea";
+    public static final Set<String> TANIA_REGIONS = Set.of("tania");
+    public static final List<Set<String>> TOGGLED_AREAS = List.of(LOST_SECTOR_REGIONS, RANDOM_ASSORTMENT_REGIONS, NIGHTCROSS_REGIONS, TANIA_REGIONS);
     public static final String AUTO = "Auto";
     public static final String ON = "On";
     public static final String OFF = "Off";
@@ -32,6 +35,7 @@ public final class AreaToggles {
         disabled.addAll(disabledRandomAssortmentRegions(ModSettings.stringOr(RANDOM_ASSORTMENT_FIELD_ID, AUTO),
                 RandomAssortmentCompat.isModEnabled()));
         disabled.addAll(disabledNightcrossRegions(ModSettings.stringOr(NIGHTCROSS_FIELD_ID, AUTO), NightcrossCompat.isModEnabled()));
+        disabled.addAll(disabledTaniaRegions(ModSettings.stringOr(TANIA_FIELD_ID, AUTO), TaniaCompat.isModEnabled()));
         return Set.copyOf(disabled);
     }
 
@@ -45,6 +49,10 @@ public final class AreaToggles {
 
     static Set<String> disabledNightcrossRegions(String nightcrossSetting, boolean nightcrossInstalled) {
         return isShown(nightcrossSetting, nightcrossInstalled) ? Set.of() : NIGHTCROSS_REGIONS;
+    }
+
+    static Set<String> disabledTaniaRegions(String taniaSetting, boolean taniaInstalled) {
+        return taniaInstalled && !OFF.equals(taniaSetting) ? Set.of() : TANIA_REGIONS;
     }
 
     private static boolean isShown(String areaSetting, boolean modInstalled) {

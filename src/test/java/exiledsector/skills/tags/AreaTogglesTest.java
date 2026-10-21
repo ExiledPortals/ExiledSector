@@ -46,6 +46,15 @@ class AreaTogglesTest {
     }
 
     @Test
+    void theTaniaAreaNeedsNavarchyOfTaniaAndCanStillBeSwitchedOff() {
+        assertEquals(Set.of(), AreaToggles.disabledTaniaRegions(AreaToggles.AUTO, true));
+        assertEquals(Set.of("tania"), AreaToggles.disabledTaniaRegions(AreaToggles.AUTO, false));
+        assertEquals(Set.of("tania"), AreaToggles.disabledTaniaRegions(AreaToggles.ON, false));
+        assertEquals(Set.of("tania"), AreaToggles.disabledTaniaRegions(AreaToggles.OFF, true));
+        assertEquals(Set.of(), AreaToggles.disabledTaniaRegions(null, true));
+    }
+
+    @Test
     void everyToggledAreaIsARealRegion() {
         for (Set<String> area : AreaToggles.TOGGLED_AREAS) {
             for (String region : area) {

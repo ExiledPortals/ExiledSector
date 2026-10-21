@@ -58,6 +58,24 @@ kill credit apply.
 `NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT` lowers each refraction's base damage and restores it after the
 hit, rather than using a modifier, so EMP and on-hit effects stay at full strength.
 
+## Module effects
+
+The tree applies only to the parent ship, so `ModuleBonusListener` pushes the `MODULE_*` effects onto each
+living child module on the first combat frame. Module hull and armor are raised as a percent of the module's
+own bonus, then its maximum hull and armor cells are rescaled. `JettisonListener` counts the modules it saw
+alive that have since died, and scales top speed and maneuverability by that count.
+
+## Rise From the Ashes
+
+`RiseFromTheAshesListener` cancels the first hull hit that would kill the ship, sets its hull to a share of
+maximum, restores armor and applies a damage taken multiplier for 6 s. It happens once per fleet member per
+battle, tracked in the combat engine's custom data, so redeploying doesn't reset it.
+
+## Thermo-Accelerator
+
+The rate of fire bonus is ship-wide, and `ThermoAcceleratorListener` stops every hardpoint weapon from firing
+each frame, so only turrets benefit. Decorative and system slots are left alone.
+
 ## Temporary nodes
 
 `temporaryAfterDeploymentSeconds` applies a node's effects only for that long after deployment. Only effects

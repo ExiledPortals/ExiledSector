@@ -46,6 +46,7 @@ class WormholeAnchorDataTest {
             Map.entry("stargazer", "stargazer_wormhole_1"),
             Map.entry("abyss", "rat_abyss_wormhole_1"),
             Map.entry("threat", "threat_wormhole_1"),
+            Map.entry("tania", "tania_wormhole_1"),
             Map.entry("exotech", "exoship"));
 
     @AfterEach

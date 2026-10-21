@@ -23,9 +23,9 @@ public final class SkillTags {
 
     public static final List<String> REGION = List.of(
             "core", "luddic", "tritachyon", "hegemony", "sindrian_dictat", "pirate", "REDACTED", "persean_league", "enigma", "kesteven", "exotech", "abyss",
-            "nightcross", "stargazer", "threat");
+            "nightcross", "stargazer", "threat", "tania");
 
-    public static final List<String> HULL_REQUIREMENT = List.of("req_civilian_hull", "req_non_phase_hull", "req_system_charges");
+    public static final List<String> HULL_REQUIREMENT = List.of("req_civilian_hull", "req_non_phase_hull", "req_system_charges", "req_modules");
 
     public static final List<String> REQUIREMENT = Stream.of(List.of(
             "req_shields", "req_no_shields", "req_phase", "req_fighter_bays", "req_no_fighter_bays", "req_ballistic",

@@ -67,6 +67,14 @@ public final class AnchorIconFx {
     private static final float LOCK_END_DISTANCE = 9f;
     private static final float LOCK_ARM = 3.2f;
     private static final float LOCK_SWING = 0.6f;
+    private static final float PLATE_CLOSED_GAP = 0.6f;
+    private static final float PLATE_WIDTH = 10f;
+    private static final float PLATE_HALF_HEIGHT = 9f;
+    private static final float PLATE_CHAMFER = 3f;
+    private static final float SEAM_BLINK_STEP = 0.02f;
+    private static final Color PLATE_FILL = new Color(88, 116, 124);
+    private static final Color PLATE_TRIM = new Color(176, 104, 58);
+    private static final Color THERMAL_CORE = new Color(255, 70, 40);
     private static final float FRAME_OUTER = 39f;
     private static final float FRAME_LINE_INNER = 37.5f;
     private static final float FRAME_GLOW_INNER = 35f;
@@ -118,16 +126,22 @@ public final class AnchorIconFx {
             drawTunnel(sprites, color, gemX, gemY, reach * unit, t, (TUNNEL_IDLE_ALPHA + TUNNEL_OPEN_ALPHA * openness(cycle)) * alphaMult);
         }
         CargoIconFx.drawIcon(sprites, iconPath, cx, cy, size * inset, alphaMult);
+        AnchorLook anchor = look.anchor();
+        boolean plateShutters = anchor != null && anchor.style() == AnchorLook.Style.PLATE_SHUTTERS;
         if (animated) {
-            drawAperture(sprites, color, gemX, gemY, unit, openness(cycle), alphaMult);
+            Color haloTint = plateShutters ? THERMAL_CORE : lighten(color, 0.35f);
+            drawAperture(sprites, haloTint, gemX, gemY, unit, openness(cycle), alphaMult);
             drawInfallRings(sprites, color, gemX, gemY, unit, reach, cycle, t, alphaMult);
-            drawLockOn(color, gemX, gemY, unit, lockStartDistance(reach), cycle, alphaMult);
+            if (plateShutters) {
+                drawPlateShutters(color, gemX, gemY, unit, lockStartDistance(reach), cycle, alphaMult);
+            } else {
+                drawLockOn(color, gemX, gemY, unit, lockStartDistance(reach), cycle, alphaMult);
+            }
         }
         if (framed) {
             drawFrame(color, cx, cy, unit, alphaMult);
             drawLights(sprites, color, cx, cy, unit, wave, alphaMult);
         }
-        AnchorLook anchor = look.anchor();
         float flash = animated && framed ? badgeFlash(wave) : 0f;
         drawBadge(sprites, crestPath(anchor == null ? null : anchor.crestFactionId()), color, left + BADGE_CENTRE_X * unit,
                 bottom + BADGE_CENTRE_Y * unit, unit, framed, flash, alphaMult);
@@ -236,7 +250,7 @@ public final class AnchorIconFx {
         }
     }
 
-    private static void drawAperture(SpriteCache sprites, Color color, float gemX, float gemY, float unit, float open, float alphaMult) {
+    private static void drawAperture(SpriteCache sprites, Color haloTint, float gemX, float gemY, float unit, float open, float alphaMult) {
         if (open <= 0f) {
             return;
         }
@@ -255,7 +269,7 @@ public final class AnchorIconFx {
             HoloShapes.radialGlow(gemX, gemY, core, radius, Color.BLACK, 0.85f * alphaMult);
         }
         float haloSize = HALO_SIZE * open * unit;
-        SpriteDraw.drawAdditiveAtCenter(sprites, HALO_TEXTURE, gemX, gemY, haloSize, haloSize * SQUASH, lighten(color, 0.35f), 0.9f * alphaMult);
+        SpriteDraw.drawAdditiveAtCenter(sprites, HALO_TEXTURE, gemX, gemY, haloSize, haloSize * SQUASH, haloTint, 0.9f * alphaMult);
     }
 
     private static void drawInfallRings(SpriteCache sprites, Color color, float gemX, float gemY, float unit, float reach, float cycle, float t,
@@ -302,6 +316,69 @@ public final class AnchorIconFx {
             }
             GL11.glEnd();
         }
+    }
+
+    static float plateGap(float cycle, float startDistance) {
+        float closing = 1f - lockTravel(cycle);
+        float parting = smooth(OPEN_START, LOCK_FADE_END, cycle);
+        return PLATE_CLOSED_GAP + (startDistance - PLATE_CLOSED_GAP) * Math.min(1f, closing + parting);
+    }
+
+    static float plateAlpha(float cycle) {
+        return smooth(0f, LOCK_FADE_IN, cycle) * (1f - smooth(LOCK_BLINK_END, LOCK_FADE_END, cycle));
+    }
+
+    static float seamGlow(float cycle) {
+        if (cycle <= LOCK_TRAVEL_END || cycle >= OPEN_START) {
+            return 0f;
+        }
+        return (int) ((cycle - LOCK_TRAVEL_END) / SEAM_BLINK_STEP) % 2 == 0 ? 1f : LOCK_BLINK_DIM;
+    }
+
+    private static void drawPlateShutters(Color color, float gemX, float gemY, float unit, float startDistance, float cycle, float alphaMult) {
+        float alpha = plateAlpha(cycle) * alphaMult;
+        if (alpha <= 0f) {
+            return;
+        }
+        float gap = plateGap(cycle, startDistance);
+        try (GlScope scope = GlScope.flat()) {
+            for (int side = -1; side <= 1; side += 2) {
+                Misc.setColor(PLATE_FILL, 0.9f * alpha);
+                plateOutline(gemX, gemY, unit, side, gap, GL11.GL_POLYGON);
+            }
+            scope.additive().lineWidth(Math.max(1f, 1.2f * unit));
+            for (int side = -1; side <= 1; side += 2) {
+                Misc.setColor(lighten(color, 0.5f), alpha);
+                plateOutline(gemX, gemY, unit, side, gap, GL11.GL_LINE_LOOP);
+                Misc.setColor(PLATE_TRIM, alpha);
+                GL11.glBegin(GL11.GL_LINES);
+                GL11.glVertex2f(gemX + side * (gap + 1f) * unit, gemY + (PLATE_HALF_HEIGHT - PLATE_CHAMFER) * unit);
+                GL11.glVertex2f(gemX + side * (gap + 1f) * unit, gemY - (PLATE_HALF_HEIGHT - PLATE_CHAMFER) * unit);
+                GL11.glEnd();
+            }
+            float seam = seamGlow(cycle) * alpha;
+            if (seam > 0f) {
+                scope.lineWidth(Math.max(1f, 2f * unit));
+                Misc.setColor(THERMAL_CORE, seam);
+                GL11.glBegin(GL11.GL_LINES);
+                GL11.glVertex2f(gemX, gemY + PLATE_HALF_HEIGHT * unit);
+                GL11.glVertex2f(gemX, gemY - PLATE_HALF_HEIGHT * unit);
+                GL11.glEnd();
+            }
+        }
+    }
+
+    private static void plateOutline(float gemX, float gemY, float unit, int side, float gap, int mode) {
+        float inner = gap;
+        float outer = gap + PLATE_WIDTH;
+        GL11.glBegin(mode);
+        GL11.glVertex2f(gemX + side * inner * unit, gemY + (PLATE_HALF_HEIGHT - PLATE_CHAMFER) * unit);
+        GL11.glVertex2f(gemX + side * (inner + PLATE_CHAMFER) * unit, gemY + PLATE_HALF_HEIGHT * unit);
+        GL11.glVertex2f(gemX + side * outer * unit, gemY + PLATE_HALF_HEIGHT * unit);
+        GL11.glVertex2f(gemX + side * outer * unit, gemY - PLATE_HALF_HEIGHT * unit);
+        GL11.glVertex2f(gemX + side * (inner + PLATE_CHAMFER) * unit, gemY - PLATE_HALF_HEIGHT * unit);
+        GL11.glVertex2f(gemX + side * inner * unit, gemY - (PLATE_HALF_HEIGHT - PLATE_CHAMFER) * unit);
+        GL11.glEnd();
     }
 
     private static void chevronArm(float gemX, float gemY, float unit, float tipX, float tipY, float cos, float sin, float armX, float armY) {

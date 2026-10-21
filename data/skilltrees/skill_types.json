@@ -4650,6 +4650,136 @@
 				"flux",
 				"combat_readiness"
 			]
+		},
+		{
+			"id": "tania_module_hull",
+			"name": "Module Hull",
+			"icon": "graphics/icons/tania_module_hull.png",
+			"effects": [
+				{
+					"effect": "MODULE_HULL_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"hull",
+				"req_modules"
+			]
+		},
+		{
+			"id": "tania_module_armor",
+			"name": "Module Armor",
+			"icon": "graphics/icons/tania_module_armor.png",
+			"effects": [
+				{
+					"effect": "MODULE_ARMOR_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"armour",
+				"req_modules"
+			]
+		},
+		{
+			"id": "tania_module_weapon_damage",
+			"name": "Module Weapon Damage",
+			"icon": "graphics/icons/tania_module_weapon_damage.png",
+			"effects": [
+				{
+					"effect": "MODULE_WEAPON_DAMAGE_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"weapons",
+				"req_modules"
+			]
+		},
+		{
+			"id": "tania_plate_fire_control",
+			"name": "Plate Fire Control",
+			"icon": "graphics/icons/tania_plate_fire_control.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "MODULE_WEAPON_RANGE_PERCENT",
+					"magnitude": 20
+				},
+				{
+					"effect": "MODULE_WEAPON_RATE_OF_FIRE_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"description": "Navarchy armor plates carry turrets of their own, slaved to the parent ship's fire control through its flux grid. A Persean League liaison who once served alongside Tania shows the crew how to tune this ship's modules to the same link, so their weapons reach further and fire faster.",
+			"tags": [
+				"weapons",
+				"range",
+				"req_modules"
+			]
+		},
+		{
+			"id": "tania_jettison_protocol",
+			"name": "Jettison Protocol",
+			"icon": "graphics/icons/tania_jettison_protocol.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "TOP_SPEED_PERCENT_PER_DESTROYED_MODULE",
+					"magnitude": 10
+				},
+				{
+					"effect": "MANEUVERABILITY_PERCENT_PER_DESTROYED_MODULE",
+					"magnitude": 20
+				}
+			],
+			"description": "Fighting Navarchy cruisers, the crew watched them blow the bolts on their burning plates and outrun the pursuit. Rigging the same release on this ship lets it cut a wrecked module loose and fly lighter for every one it loses.",
+			"tags": [
+				"speed",
+				"req_modules"
+			]
+		},
+		{
+			"id": "tania_rise_from_the_ashes",
+			"name": "Rise From the Ashes",
+			"icon": "graphics/icons/tania_rise_from_the_ashes.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "RISE_FROM_THE_ASHES_HULL_PERCENT",
+					"magnitude": 25
+				},
+				{
+					"effect": "RISE_FROM_THE_ASHES_ARMOR_RESTORE_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "RISE_FROM_THE_ASHES_DAMAGE_TAKEN_PERCENT",
+					"magnitude": -50
+				}
+			],
+			"description": "Carina rose from the ashes of the Battle of Vela, and the Navarchy drills its Sandgrouse crews for the moment their ship should break. Freed Calypso prisoners who sign on aboard teach the crew those drills: rerouting what is left of the hull and throwing every spare plate over the breach, once, before it gives way.",
+			"tags": [
+				"hull",
+				"armour",
+				"req_non_phase_hull"
+			]
+		},
+		{
+			"id": "tania_thermo_accelerator",
+			"name": "Thermo-Accelerator",
+			"icon": "graphics/icons/tania_thermo_accelerator.png",
+			"tier": "KEYSTONE",
+			"effects": [
+				{
+					"effect": "THERMO_ACCELERATOR_RATE_OF_FIRE_PERCENT",
+					"magnitude": 50
+				}
+			],
+			"description": "The Aetos that broke the Holy Armada's frigate screen at Vela ran its turret feeds far past their rating. The restricted calibration pulled from Aetos wrecks lets the crew do the same on this ship, starving the hardpoints of the power the turrets now draw.",
+			"tags": [
+				"weapons"
+			]
 		}
 	]
 }

@@ -226,7 +226,27 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         public StyledText description(float magnitude) {
             return lostSectorOnly(super.description(magnitude));
         }
-    };
+    },
+    MODULE_HULL_PERCENT(ModuleBonusListener.HULL_PERCENT_KEY, ModuleBonusListener.class, ModuleBonusListener::new),
+    MODULE_ARMOR_PERCENT(ModuleBonusListener.ARMOR_PERCENT_KEY, ModuleBonusListener.class, ModuleBonusListener::new),
+    MODULE_WEAPON_DAMAGE_PERCENT(ModuleBonusListener.WEAPON_DAMAGE_PERCENT_KEY, ModuleBonusListener.class, ModuleBonusListener::new),
+    MODULE_WEAPON_RANGE_PERCENT(ModuleBonusListener.WEAPON_RANGE_PERCENT_KEY, ModuleBonusListener.class, ModuleBonusListener::new),
+    MODULE_WEAPON_RATE_OF_FIRE_PERCENT(ModuleBonusListener.WEAPON_FIRE_RATE_PERCENT_KEY, ModuleBonusListener.class, ModuleBonusListener::new),
+    TOP_SPEED_PERCENT_PER_DESTROYED_MODULE(JettisonListener.TOP_SPEED_PERCENT_PER_MODULE_KEY, JettisonListener.class, JettisonListener::new),
+    MANEUVERABILITY_PERCENT_PER_DESTROYED_MODULE(JettisonListener.MANEUVERABILITY_PERCENT_PER_MODULE_KEY, JettisonListener.class,
+            JettisonListener::new),
+    RISE_FROM_THE_ASHES_HULL_PERCENT(RiseFromTheAshesListener.HULL_PERCENT_KEY, RiseFromTheAshesListener.class, RiseFromTheAshesListener::new),
+    RISE_FROM_THE_ASHES_ARMOR_RESTORE_PERCENT(RiseFromTheAshesListener.ARMOR_RESTORE_PERCENT_KEY, RiseFromTheAshesListener.class,
+            RiseFromTheAshesListener::new),
+    RISE_FROM_THE_ASHES_DAMAGE_TAKEN_PERCENT(RiseFromTheAshesListener.DAMAGE_TAKEN_PERCENT_KEY, RiseFromTheAshesListener.class,
+            RiseFromTheAshesListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.signed(this, magnitude).arg("seconds", RiseFromTheAshesListener.DURATION_SECONDS).styled();
+        }
+    },
+    THERMO_ACCELERATOR_RATE_OF_FIRE_PERCENT(ThermoAcceleratorListener.RATE_OF_FIRE_PERCENT_KEY, ThermoAcceleratorListener.class,
+            ThermoAcceleratorListener::new);
 
     private static StyledText escortDescription(CombatSkillEffect effect, float magnitude) {
         return EffectText.msg(effect).arg("range", EscortListener.ESCORT_RANGE).arg("fade", EscortListener.PROXIMITY_FADE_DISTANCE)

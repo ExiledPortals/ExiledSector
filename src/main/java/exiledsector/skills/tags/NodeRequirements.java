@@ -38,6 +38,7 @@ public final class NodeRequirements {
             case "req_civilian_hull" -> shipFacts.hasHullMod().test(HullMods.CIVGRADE);
             case "req_non_phase_hull" -> !shipFacts.phaseHull();
             case "req_system_charges" -> shipFacts.limitedSystemCharges();
+            case "req_modules" -> shipFacts.hasModules();
             default -> false;
         };
     }
