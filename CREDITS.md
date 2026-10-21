@@ -20,6 +20,12 @@ Originally by Kissa Mies, now maintained by SirHartley ([github.com/SirHartley/L
 
 Files: everything prefixed `nskr_` in `graphics/icons` and `graphics/unused`, and the faction crests `graphics/icons/crests/enigma.png` and `graphics/icons/crests/kesteven.png`. The `_shifted` icons are hue-shifted copies of the originals. The Kesteven nodes are modelled on LOST_SECTOR hull mods, but their code is Exiled Sector's own and is covered by the GPL.
 
+## Path of Exile
+
+The loot alert sounds are from Path of Exile and are copyright Grinding Gear Games.
+
+Files: everything prefixed `poe_` in `sounds/exiledSector`.
+
 ## Starsector
 
 Graphics taken from starsector-core belong to Fractal Softworks and are used as the game's modding terms allow.

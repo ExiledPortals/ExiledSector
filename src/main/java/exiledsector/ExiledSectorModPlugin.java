@@ -97,6 +97,7 @@ import exiledsector.ui.ModificationBenchRefitButton;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.TreeCameraMemory;
 import exiledsector.ui.cargo.CargoCraftingTabListener;
+import exiledsector.ui.cargo.LootAlertListener;
 import exiledsector.ui.chart.WormholeGatewayOption;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
 import exiledsector.ui.inspect.SkillTreeCodexListener;
@@ -292,6 +293,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         Global.getSector().addTransientListener(PlayerEngagementPipeline.create(socketLossListener, itemLootListener));
         Global.getSector().getListenerManager().addListener(new ItemSalvageListener(), true);
         Global.getSector().getListenerManager().addListener(new TechMiningItemListener(), true);
+        Global.getSector().getListenerManager().addListener(new LootAlertListener(), true);
         Global.getSector().getListenerManager().addListener(new MarketItemStock(), true);
         Global.getSector().addTransientListener(new RemnantEncounter.BattleListener());
         Global.getSector().getListenerManager().addListener(new RelockedGates.LocationListener(), true);

@@ -5,4 +5,10 @@
 	"exiledSector_exoship_warp":[
 		{"file":"sounds/exiledSector/rat_exoship_warp.ogg","pitch":1,"volume":1},
 	],
+	"exiledSector_loot_alert":[
+		{"file":"sounds/exiledSector/poe_alert_02.ogg","pitch":1,"volume":1},
+	],
+	"exiledSector_loot_alert_valuable":[
+		{"file":"sounds/exiledSector/poe_alert_06.ogg","pitch":1,"volume":1},
+	],
 }
