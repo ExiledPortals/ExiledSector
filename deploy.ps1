@@ -1,18 +1,12 @@
 $ErrorActionPreference = "Stop"
 
 $projectRoot = $PSScriptRoot
-$mainCheckout = "E:\Dev\ExiledSector"
+$deployCheckouts = @("E:\Dev\ExiledSector-parallel-work", "E:\Dev\ExiledSector")
 $modTarget   = "E:\Dev\Starsector\mods\ExiledSector"
 
-function Get-GitPath([string]$Flag) {
-    $value = git -C $projectRoot rev-parse $Flag
-    if ($LASTEXITCODE -ne 0 -or -not $value) { throw "git rev-parse $Flag failed in $projectRoot" }
-    return [System.IO.Path]::GetFullPath([System.IO.Path]::Combine($projectRoot, $value)).TrimEnd('\')
-}
-
 $resolvedRoot = [System.IO.Path]::GetFullPath($projectRoot).TrimEnd('\')
-if ($resolvedRoot -ne $mainCheckout -or (Get-GitPath "--git-dir") -ne (Get-GitPath "--git-common-dir")) {
-    throw "deploy.ps1 only runs from the main checkout $mainCheckout, not from $resolvedRoot (git worktrees and other checkouts must not overwrite the deployed mod)."
+if ($deployCheckouts -notcontains $resolvedRoot) {
+    throw "deploy.ps1 only runs from $($deployCheckouts -join ' or '), not from $resolvedRoot (other worktrees and checkouts must not overwrite the deployed mod)."
 }
 
 . (Join-Path $projectRoot "build-common.ps1")

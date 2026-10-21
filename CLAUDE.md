@@ -4,7 +4,7 @@ Starsector mod (Java 17, Maven) that gives every ship its own skill tree. Mod id
 
 ## Build and deploy (Windows, PowerShell)
 - Build and test: `mvn -q clean package` (writes `jars/ExiledSector.jar`). If `mvn` isn't on PATH, `build-common.ps1` finds IntelliJ's bundled Maven and sets `JAVA_HOME` to `C:\Program Files\Java\jdk-17`.
-- Deploy to the game: `.\deploy.ps1`. It refuses to run outside the main checkout `E:\Dev\ExiledSector`, so worktrees can't overwrite the deployed mod. Don't work around that check.
+- Deploy to the game: `.\deploy.ps1`. It runs only from the dev checkout `E:\Dev\ExiledSector-parallel-work` (normal deploys) and the main checkout `E:\Dev\ExiledSector` (hotfix testing), so other worktrees can't overwrite the deployed mod. Both share one deploy target, so each deploy replaces the other's build. Don't work around that check.
 - `release.ps1` builds the release zip. Don't run it unless asked.
 - Tests are JUnit 5 + Mockito under `src/test/java`. The surefire `--add-opens` args in `pom.xml` are needed; don't remove them.
 
@@ -16,7 +16,7 @@ Starsector mod (Java 17, Maven) that gives every ship its own skill tree. Mod id
 - `libs/` and `jars/` are gitignored; don't edit or commit them.
 
 ## Git
-- Several worktrees share this repo: `ExiledSector` (main) and `ExiledSector-parallel-work`. Check `git worktree list` and the current branch before committing. Branches are merged back into `main`.
+- Several worktrees share this repo: `ExiledSector` (main) and `ExiledSector-parallel-work`. Check `git worktree list` and the current branch before committing. `parallel-work` is the dev branch: features land there, and it merges into `main` when it's ready. `main` takes only hotfixes, which get merged into `parallel-work` too. Feature worktrees branch from `parallel-work`, not `main`.
 - Don't read or open `hs_err_pid*.log` or `replay_pid*.log` in the repo root. They're JVM crash dumps (gitignored, tens of KB each). If asked about a crash, read only the first ~40 lines.
 
 ## Conventions
