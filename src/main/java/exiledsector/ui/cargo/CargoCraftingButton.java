@@ -81,8 +81,20 @@ public final class CargoCraftingButton extends BaseCustomUIPanelPlugin {
         plugin.buttonContainer = container;
         plugin.craftingButton = button;
         container.addUIElement(element);
-        tradePanel.addComponent(container).belowLeft(transactionPanel, GAP_BELOW_TRANSACTION_PANEL);
+        if (showsMarketTitleRow(tradePanel)) {
+            if (!(UiReflection.call(tradePanel, "getEntityCargoDisplay") instanceof UIComponentAPI marketCargoGrid)) {
+                throw new IllegalStateException("The market screen has no cargo grid to align the Crafting button with");
+            }
+            tradePanel.addComponent(container).inTL(marketCargoGrid.getPosition().getWidth() - BUTTON_WIDTH, 0f);
+        } else {
+            tradePanel.addComponent(container).belowLeft(transactionPanel, GAP_BELOW_TRANSACTION_PANEL);
+        }
         plugin.refreshState();
+    }
+
+    private static boolean showsMarketTitleRow(UIPanelAPI tradePanel) throws Throwable {
+        Object colonyInfoButton = UiReflection.call(tradePanel, "getMarketInfo");
+        return colonyInfoButton != null && UiReflection.children(tradePanel).contains(colonyInfoButton);
     }
 
     static void resetForTests() {

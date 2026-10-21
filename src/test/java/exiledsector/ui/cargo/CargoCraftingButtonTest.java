@@ -13,6 +13,7 @@ import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.CutStyle;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import exiledsector.ui.ModificationBenchCargoLauncher;
 import exiledsector.ui.refit.RefitButtonConfig;
@@ -56,6 +57,8 @@ class CargoCraftingButtonTest {
         public final TransferHandler transfers = new TransferHandler();
         public int cargoViewRefreshes;
         public boolean showingMarketInfo;
+        public Object colonyInfoButton;
+        public Object marketCargoGrid;
 
         public List<Object> getChildrenNonCopy() {
             return children;
@@ -67,6 +70,14 @@ class CargoCraftingButtonTest {
 
         public TransferHandler getTransferHandler() {
             return transfers;
+        }
+
+        public Object getMarketInfo() {
+            return colonyInfoButton;
+        }
+
+        public Object getEntityCargoDisplay() {
+            return marketCargoGrid;
         }
 
         public void updateCargoViews() {
@@ -196,6 +207,30 @@ class CargoCraftingButtonTest {
         verify(button, never()).setShortcut(anyInt(), anyBoolean());
         verify(button, never()).setEnabled(anyBoolean());
         verify(container, never()).setOpacity(anyFloat());
+    }
+
+    @Test
+    void dockedTheButtonSitsInTheMarketTitleRowAlignedWithTheCargoGrids() {
+        Object colonyInfoButton = new Object();
+        UIComponentAPI marketCargoGrid = mock(UIComponentAPI.class, Mockito.RETURNS_DEEP_STUBS);
+        when(marketCargoGrid.getPosition().getWidth()).thenReturn(1204f);
+        tradePanel.colonyInfoButton = colonyInfoButton;
+        tradePanel.marketCargoGrid = marketCargoGrid;
+        tradePanel.children.add(colonyInfoButton);
+
+        CargoCraftingButton.attachIfMissing(tradePanel);
+
+        verify(placement).inTL(1204f - CargoCraftingButton.BUTTON_WIDTH, 0f);
+        verify(placement, never()).belowLeft(any(), anyFloat());
+    }
+
+    @Test
+    void aColonyInfoButtonVanillaLeftOutOfTheLayoutKeepsTheButtonBelowTheTransactionPanel() {
+        tradePanel.colonyInfoButton = new Object();
+
+        CargoCraftingButton.attachIfMissing(tradePanel);
+
+        verify(placement).belowLeft(transactionPanel, CargoCraftingButton.GAP_BELOW_TRANSACTION_PANEL);
     }
 
     @Test
