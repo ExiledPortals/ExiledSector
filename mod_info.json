@@ -11,6 +11,7 @@
     {"id": "MagicLib", "name": "MagicLib"},
     {"id": "lunalib", "name": "LunaLib"}
   ],
-  "jars": ["jars/ExiledSector.jar"],
+  "jars": ["jars/ExiledLib.jar", "jars/ExiledSector-Core.jar", "jars/ExiledSector-SkillTree.jar", "jars/ExiledSector-HullUpgrades.jar",
+    "jars/ExiledSector-StarCharts.jar", "jars/ExiledSector.jar"],
   "modPlugin": "exiledsector.ExiledSectorModPlugin"
 }

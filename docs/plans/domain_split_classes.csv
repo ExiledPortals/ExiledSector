@@ -1,4 +1,5 @@
 class,part
+exiledsector.ExiledSector,core
 exiledsector.ExiledSectorModPlugin,core
 exiledsector.HostMod,lib
 exiledsector.ModCsv,lib
@@ -125,6 +126,7 @@ exiledsector.console.ResetShipLevelCommand,skill-tree
 exiledsector.console.ShowcaseLootCommand,core
 exiledsector.console.UnlockAreasCommand,skill-tree
 exiledsector.domain.Domain,lib
+exiledsector.domain.DomainContributions,core
 exiledsector.domain.ExiledSectorDomain,core
 exiledsector.effects.BattleDifficulty,core
 exiledsector.effects.CombatXpAward,skill-tree

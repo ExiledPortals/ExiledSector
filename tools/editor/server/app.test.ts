@@ -168,7 +168,7 @@ describe('data files', () => {
 describe('reserved node ids', () => {
   it('lists retired ids from node_replacements.csv and released ids, read-only', async () => {
     writeProjectFile('data/config/exiledSector/node_replacements.csv', 'old,new\r\nflux_8,socket_2\r\n\r\nflux_15,socket_1\r\n');
-    writeProjectFile('src/test/resources/released_skill_nodes.json', '{\n  "nodes": ["flux_1", "flux_2"],\n  "roots": []\n}\n');
+    writeProjectFile('exiledsector-skill-tree/src/test/resources/released_skill_nodes.json', '{\n  "nodes": ["flux_1", "flux_2"],\n  "roots": []\n}\n');
 
     const response = await app.inject({ method: 'GET', url: '/api/reserved-node-ids' });
 

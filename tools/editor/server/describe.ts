@@ -13,6 +13,7 @@ const READY_LINE = '{"ready":true}';
 const READY_TIMEOUT_MS = 30000;
 const REQUEST_TIMEOUT_MS = 10000;
 const HELPER_CLASS = 'exiledsector.tools.EditorDescribeServer';
+const HELPER_MODULE = 'exiledsector-mod';
 export const REBUILD_COOLDOWN_MS = 15000;
 export const BUILD_LOCK_FILE = '.maven-build.lock';
 export const BUILD_LOCK_STALE_MS = 10 * 60 * 1000;
@@ -122,7 +123,7 @@ export class DescribeService {
   ) {}
 
   private get classpathFile(): string {
-    return path.join(this.paths.projectRoot, 'target', 'editor-describe.classpath');
+    return path.join(this.paths.projectRoot, HELPER_MODULE, 'target', 'editor-describe.classpath');
   }
 
   private get buildLockFile(): string {
@@ -253,7 +254,8 @@ export class DescribeService {
       this.fail('The compiled mod went missing; it will be rebuilt on the next hover.');
       return;
     }
-    const classpath = 'target\\classes;target\\test-classes;' + fs.readFileSync(this.classpathFile, 'utf8').trim();
+    const moduleTarget = path.join(HELPER_MODULE, 'target');
+    const classpath = `${path.join(moduleTarget, 'classes')};${path.join(moduleTarget, 'test-classes')};${fs.readFileSync(this.classpathFile, 'utf8').trim()}`;
     const helper = spawn(path.join(javaHome, 'bin', 'java.exe'), ['-cp', classpath, HELPER_CLASS], {
       cwd: this.paths.projectRoot,
       windowsHide: true,

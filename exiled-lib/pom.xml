@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>starsector.mods.exiledsector</groupId>
+        <artifactId>ExiledSector</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>exiled-lib</artifactId>
+
+    <properties>
+        <exiledsector.root>${project.basedir}/..</exiledsector.root>
+        <sonar.sources>pom.xml,src/main/java</sonar.sources>
+        <sonar.tests>src/test/java</sonar.tests>
+        <sonar.test.inclusions>src/test/java/**</sonar.test.inclusions>
+        <sonar.exclusions></sonar.exclusions>
+        <sonar.javascript.lcov.reportPaths></sonar.javascript.lcov.reportPaths>
+    </properties>
+
+    <build>
+        <finalName>ExiledLib</finalName>
+    </build>
+
+</project>
