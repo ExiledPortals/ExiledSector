@@ -227,11 +227,11 @@ public enum CombatSkillEffect implements BackedSkillEffect {
             return lostSectorOnly(super.description(magnitude));
         }
     },
-    MODULE_HULL_PERCENT(ModuleBonusListener.HULL_PERCENT_KEY, ModuleBonusListener.class, ModuleBonusListener::new),
-    MODULE_ARMOR_PERCENT(ModuleBonusListener.ARMOR_PERCENT_KEY, ModuleBonusListener.class, ModuleBonusListener::new),
-    MODULE_WEAPON_DAMAGE_PERCENT(ModuleBonusListener.WEAPON_DAMAGE_PERCENT_KEY, ModuleBonusListener.class, ModuleBonusListener::new),
-    MODULE_WEAPON_RANGE_PERCENT(ModuleBonusListener.WEAPON_RANGE_PERCENT_KEY, ModuleBonusListener.class, ModuleBonusListener::new),
-    MODULE_WEAPON_RATE_OF_FIRE_PERCENT(ModuleBonusListener.WEAPON_FIRE_RATE_PERCENT_KEY, ModuleBonusListener.class, ModuleBonusListener::new),
+    MODULE_HULL_PERCENT(ModuleBoost.HULL_PERCENT_KEY),
+    MODULE_ARMOR_PERCENT(ModuleBoost.ARMOR_PERCENT_KEY),
+    MODULE_WEAPON_DAMAGE_PERCENT(ModuleBoost.WEAPON_DAMAGE_PERCENT_KEY),
+    MODULE_WEAPON_RANGE_PERCENT(ModuleBoost.WEAPON_RANGE_PERCENT_KEY),
+    MODULE_WEAPON_RATE_OF_FIRE_PERCENT(ModuleBoost.WEAPON_FIRE_RATE_PERCENT_KEY),
     TOP_SPEED_PERCENT_PER_DESTROYED_MODULE(JettisonListener.TOP_SPEED_PERCENT_PER_MODULE_KEY, JettisonListener.class, JettisonListener::new),
     MANEUVERABILITY_PERCENT_PER_DESTROYED_MODULE(JettisonListener.MANEUVERABILITY_PERCENT_PER_MODULE_KEY, JettisonListener.class,
             JettisonListener::new),
@@ -258,6 +258,10 @@ public enum CombatSkillEffect implements BackedSkillEffect {
     }
 
     private final EffectBacking backing;
+
+    CombatSkillEffect(String magnitudeKey) {
+        this.backing = new ListenerEffect<>(magnitudeKey, null, null);
+    }
 
     <T> CombatSkillEffect(Class<T> listenerType, Function<ShipAPI, ? extends T> listenerFactory) {
         this(null, listenerType, listenerFactory);

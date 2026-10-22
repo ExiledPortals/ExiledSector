@@ -146,13 +146,12 @@ class TaniaListenersTest {
         when(grid.getArmorValue(0, 0)).thenReturn(100f);
         when(grid.getArmorValue(1, 0)).thenReturn(440f);
         when(plate.getArmorGrid()).thenReturn(grid);
-        ShipAPI ship = ship("black_hawk", Map.of(ModuleBonusListener.HULL_PERCENT_KEY, 20f, ModuleBonusListener.ARMOR_PERCENT_KEY, 10f,
-                ModuleBonusListener.WEAPON_DAMAGE_PERCENT_KEY, 15f));
+        ShipAPI ship = ship("black_hawk", Map.of(ModuleBoost.HULL_PERCENT_KEY, 20f, ModuleBoost.ARMOR_PERCENT_KEY, 10f,
+                ModuleBoost.WEAPON_DAMAGE_PERCENT_KEY, 15f));
         withModules(ship, List.of(plate));
 
-        ModuleBonusListener listener = new ModuleBonusListener(ship);
-        listener.advance(0.1f);
-        listener.advance(5f);
+        assertTrue(ModuleBoost.hasModuleBonus(ship.getMutableStats()));
+        ModuleBoost.boost(ship, plate, Map.of(), "exiledSector_moduleShare_black_hawk_");
 
         verify(plate).setMaxHitpoints(1200f);
         verify(plate).setHitpoints(600f);

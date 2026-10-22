@@ -128,6 +128,7 @@ class ModuleTreeShareTest {
     void theFirstTickPushesTheShareOntoLivingModulesOnceUnderTheParentsModId() {
         ShipAPI parent = mock(ShipAPI.class);
         when(parent.getId()).thenReturn("parent");
+        when(parent.getMutableStats()).thenReturn(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS));
         ShipAPI module = module(true);
         ShipAPI wreck = module(false);
         when(parent.getChildModulesCopy()).thenReturn(new ArrayList<>(List.of(module, wreck)));
@@ -139,7 +140,7 @@ class ModuleTreeShareTest {
 
         MutableShipStatsAPI stats = module.getMutableStats();
         verify(stats.getFluxCapacity(), times(1)).modifyPercent("exiledSector_moduleShare_parent_FLUX_CAPACITY_PERCENT", 10f);
-        verify(stats.getArmorBonus(), never()).modifyPercent(anyString(), anyFloat());
+        verify(stats.getArmorBonus(), times(1)).modifyPercent("exiledSector_moduleShare_parent_ARMOR_PERCENT", 5f);
         verify(wreck.getMutableStats().getFluxCapacity(), never()).modifyPercent(anyString(), anyFloat());
     }
 
@@ -168,6 +169,7 @@ class ModuleTreeShareTest {
         ShipAPI module = mock(ShipAPI.class);
         when(module.isAlive()).thenReturn(alive);
         when(module.getVariant()).thenReturn(mock(ShipVariantAPI.class));
+        when(module.getHullSpec()).thenReturn(mock(ShipHullSpecAPI.class));
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS);
         when(module.getMutableStats()).thenReturn(stats);
         return module;

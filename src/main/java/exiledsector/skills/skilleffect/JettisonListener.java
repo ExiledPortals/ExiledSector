@@ -46,7 +46,7 @@ final class JettisonListener extends ShipCombatListener implements AdvanceableLi
         if (!modulesCounted) {
             modulesCounted = true;
             track(ownerShip.getChildModulesCopy());
-            lostBeforeDeployment = Math.max(0, ModuleBonusListener.expectedModuleCount(ownerShip) - trackedModules.size());
+            lostBeforeDeployment = Math.max(0, ModuleBoost.expectedModuleCount(ownerShip) - trackedModules.size());
         }
         int destroyed = lostBeforeDeployment + destroyedCount(trackedModules);
         if (destroyed != appliedCount) {

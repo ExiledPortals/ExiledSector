@@ -4,7 +4,7 @@ Ships with station modules (Navarchy of Tania plates, Knights of Ludd, Roider Un
 
 All numbers are placeholders, like every other magnitude in the mod. `docs/analysis/balance.csv` is left alone.
 
-Status: on branch `module_skill_tree`, step 1 is committed (54875f4a), step 2 is committed (317bcbf7) and step 3 is committed. The Tania volume (Module Hull, Module Armor, Module Weapon Damage, Plate Fire Control, Jettison Protocol, Rise From the Ashes, Thermo-Accelerator) is committed on `parallel-work` (653b7cbd) and is the starting point.
+Status: on branch `module_skill_tree`, step 1 is committed (54875f4a), step 2 is committed (317bcbf7), step 3 is committed (8ab0bb69) and step 4 is built but uncommitted. The Tania volume (Module Hull, Module Armor, Module Weapon Damage, Plate Fire Control, Jettison Protocol, Rise From the Ashes, Thermo-Accelerator) is committed on `parallel-work` (653b7cbd) and is the starting point.
 
 ## Decided so far
 
@@ -53,7 +53,7 @@ Positive "increased" and "more" values scale linearly. The damage-taken caps are
 
 ### Share size
 
-A LunaLib setting, `exiledSector_moduleTreeShare`, from 0 to 100% in steps of 5, default 50%. At 0 nothing is pushed and the listener isn't attached. The Tania module nodes are not scaled by it.
+A LunaLib setting, `exiledSector_moduleTreeShare`, from 0 to 100% in steps of 5, default 50%. At 0 nothing is pushed, and the listener is attached only when the parent has Tania module nodes. The Tania module nodes are not scaled by it.
 
 ### Hull size
 
@@ -302,6 +302,8 @@ Left out of the first build. Each could be added once checked in game.
 - Flags and integers ignore the share (PD flags, beam split, shield conversion, system charges). Each is decided explicitly above.
 - Detached and dead modules at deployment are skipped. A module can't come back mid-battle.
 - Retreat and redeploy build fresh module ships and a fresh listener. The armor clamp keeps the stored status from compounding.
+- The clamp only covers full cells. A damaged cell carried into the next engagement of the same encounter is raised by the boost again, so a plate at +20% armor that ended with a cell at half its boosted value starts the next engagement at 60% of it. Campaign repair clears this between encounters.
+- Modules with 0 base armor get no armor from the share, because cells are rescaled by a ratio and 0 stays 0. That loses ARMOR_FLAT and ARMOR_FLAT_FOR_LOW_BASE_ARMOR, which is largest at 0 base armor.
 - Inactive modules (vanilla Vambraces: 0 OP, no weapons, no bays) only benefit from armor and hull. The share can skip everything else on them to save work.
 - Tania plates halve flux capacity and dissipation and set vent rate to 0. Shared flux works on top of that, but never reaches the parent: Tania's flux grid reads the module's vent and capacitor counts, not its stats.
 - Tania plates overwrite module CR every frame. No CR effects are shared.
@@ -324,7 +326,7 @@ These came up during the research and aren't part of the share itself.
 1. Confirm the refit button issue in game and guard `SkillTreeRefitButton.shouldShow` and the panel against module members and variants. Fix the Shared Fate ally filter. Code done in 54875f4a; in-game check still open.
 2. Add the classification. Each `SkillEffect` gets a `ModuleShare` value: SHARE, SHARE_REBUILD, EXCLUDE (default). Each skill type gets an optional `moduleShare` override (`all`, `none`) for the all-or-nothing nodes, in `skill_types.json` and the editor serialisers. Done in 317bcbf7: `ModuleShare` adds SKIP for the no-op effects, the node rule is `SkillType.moduleSharedEffects`, and the editor type dialog has a "Share with station modules" select.
 3. Build `ModuleTreeShare`: node walk, skip rules, scaling, MULT pooling, damage-taken caps, and the push onto module stats. Done, uncommitted: it works from the parent's resolved per-node effects (after NPC scaling and diminishing returns), caps the module's raw totals before scaling, and pushes only SHARE effects; SHARE_REBUILD effects wait for step 4 and the share is a 50% constant until step 5. Section item effects aren't shared.
-4. Fold `ModuleBonusListener` into it and write one rescaler for hull, armor, ammo and shield arc, with the armor clamp.
+4. Fold `ModuleBonusListener` into it and write one rescaler for hull, armor, ammo and shield arc, with the armor clamp. Done, uncommitted: `ModuleBonusListener` is deleted, the `MODULE_*` effects only write their keys, and `ModuleBoost.boost` applies the share and the Tania values, rescales hull, armor, shield arc (capped at 360) and each weapon's maximum ammo once, then runs the after-creation hooks of the SHARE_REBUILD effects (the PD reclassify) on the module.
 5. Add the LunaLib setting and the tree summary line, in English and Chinese.
 6. Docs: one short `docs/docs.md` section on what modules get and where the code lives.
 7. Test in game on Tania ships (Argentavis for built-in DTC, Black Hawk for capital plates and Phaedra, Aetos for the single hardpoint plate), a vanilla Onslaught Mk.I, and one Knights of Ludd or Roider Union modular ship. Also retreat and redeploy, and two engagements in one encounter.

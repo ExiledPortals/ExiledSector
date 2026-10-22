@@ -1,6 +1,5 @@
 package exiledsector.effects;
 
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
@@ -11,7 +10,7 @@ import exiledsector.skills.EffectTotals;
 import exiledsector.skills.InstalledHullMods;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.SkillTypeEffect;
-import exiledsector.skills.skilleffect.ModuleShare;
+import exiledsector.skills.skilleffect.ModuleBoost;
 import exiledsector.skills.skilleffect.SkillEffect;
 
 import java.util.LinkedHashMap;
@@ -35,8 +34,8 @@ final class ModuleTreeShare implements AdvanceableListener {
     }
 
     static void attach(ShipAPI ship, ResolvedTree resolvedTree) {
-        if (share() <= 0f || ship.isStation() || ship.isStationModule() || ship.getHullSpec() == null
-                || !ShipFacts.hasModuleSlots(ship.getHullSpec())) {
+        if (ship.isStation() || ship.isStationModule() || ship.getHullSpec() == null || !ShipFacts.hasModuleSlots(ship.getHullSpec())
+                || (share() <= 0f && !ModuleBoost.hasModuleBonus(ship.getMutableStats()))) {
             return;
         }
         List<ModuleTreeShare> existing = ship.getListeners(ModuleTreeShare.class);
@@ -56,27 +55,14 @@ final class ModuleTreeShare implements AdvanceableListener {
         shared = true;
         List<ShipAPI> modules = parentShip.getChildModulesCopy();
         if (modules == null) return;
+        float share = share();
+        String modIdPrefix = MOD_ID_PREFIX + parentShip.getId() + "_";
         for (ShipAPI module : modules) {
-            if (module.isAlive() && !module.isHulk() && module.getVariant() != null) {
-                push(module, sharedTotals(parentNodeEffects, parentHullSize, module.getVariant(), share()));
+            if (module.isAlive() && !module.isHulk() && module.getVariant() != null && module.getHullSpec() != null) {
+                Map<SkillEffect, Float> totals = share > 0f ? sharedTotals(parentNodeEffects, parentHullSize, module.getVariant(), share) : Map.of();
+                ModuleBoost.boost(parentShip, module, totals, modIdPrefix);
             }
         }
-    }
-
-    // TODO step 4: rebuild hull, armor, ammo, shield arc and PD reclassify for the SHARE_REBUILD effects
-    private void push(ShipAPI module, Map<SkillEffect, Float> totals) {
-        MutableShipStatsAPI stats = module.getMutableStats();
-        String modIdPrefix = MOD_ID_PREFIX + parentShip.getId() + "_";
-        totals.forEach((effect, magnitude) -> {
-            if (effect.moduleShare() == ModuleShare.SHARE && !effect.appliesAfterOtherEffects()) {
-                effect.apply(stats, modIdPrefix + effect.name(), magnitude);
-            }
-        });
-        totals.forEach((effect, magnitude) -> {
-            if (effect.moduleShare() == ModuleShare.SHARE && effect.appliesAfterOtherEffects()) {
-                effect.apply(stats, modIdPrefix + effect.name(), magnitude);
-            }
-        });
     }
 
     static Map<SkillEffect, Float> sharedTotals(List<EffectTotals.NodeEffects> nodeEffects, HullSize hullSize, ShipVariantAPI moduleVariant,
