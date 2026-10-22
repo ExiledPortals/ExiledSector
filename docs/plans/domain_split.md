@@ -2,7 +2,7 @@
 
 Exiled Sector is one Maven module and one jar, with about 700 classes. It holds three player-facing features and the code they share. This plan splits it into a library mod and four domains:
 
-- Exiled Lib: a separate library mod holding the generic code (the stat effect library, the item framework, helpers and the module framework), which other mods could build on later.
+- Exiled Lib: a separate library mod holding the generic code (the stat effect library, the item framework, helpers and the domain framework), which other mods could build on later.
 - Exiled Sector Core: the shared code that only Exiled Sector needs, such as the core hull mod, the ship record and the loot wiring.
 - Ship Skill Trees: per-ship trees, nodes, levels, NPC trees and tree loot.
 - Hull Upgrades: Hull Upgrades, ship sections and hull items.
@@ -10,21 +10,22 @@ Exiled Sector is one Maven module and one jar, with about 700 classes. It holds 
 
 Exiled Sector stays one mod with one launcher entry, shipping a core jar plus one jar per feature, and it depends on Exiled Lib. Each feature domain depends only on Exiled Lib and Exiled Sector Core, never on another feature domain. Each one is switched on or off in LunaLib without touching the others.
 
-Status: planned, nothing built. It builds on `module_toggles.md`, whose hull upgrade and star chart switches are built and whose skill tree switch is not.
+Status: planned, nothing built. It builds on `module_toggles.md`, whose hull upgrade and star chart switches are built and whose skill tree switch is not. It also covers the station module share (`module_skill_tree.md`), built on branch `module_skill_tree`.
 
 ## Decided
 
 - The library is called Exiled Lib, mod id `exiledLib`. It is its own Starsector mod, with its own `mod_info.json`, version file and jar.
 - Exiled Sector stays one Starsector mod. Its feature domains are switched by LunaLib settings, not by installing separate mods.
 - Until 1.0, Exiled Lib's API can change in any release. Only Exiled Sector saves have to keep loading. Other mods that might use Exiled Lib aren't considered before 1.0.
+- In code, "module" means a station module (`ModuleTreeShare`, `ModuleBoost`, `ModuleShares`, the Module Share setting). The framework that loads and switches the parts is called `Domain`, so the two never share a name.
 
 ## Names
 
 | Part | Maven module | Jar | Owns |
 |---|---|---|---|
-| Exiled Lib | `exiled-lib` | `ExiledLib.jar` (in the `exiledLib` mod) | The stat effect library (`skills/skilleffect`, `modifiers`, `StatBaseline`, `DiminishingReturns`, `EffectTotals`, `ShipHullSizes`, `ShipFacts`). The item framework (`Item`, `ItemStore`, `ItemType`, `ItemDefinition`, rolling, modifiers, implicits, corruption, crafting rules). `ModCsv`, `ModSettings`, `ModSettingsListener`, `Seeds`, `PlayerFleet`, `SaveData`, the `i18n` engine, `ui/util`, generic UI (`TooltipTable`, `VanillaText`, `Fade`, `SmoothZoom`), the module framework and its extension points. |
-| Exiled Sector Core | `exiledsector-core` | `ExiledSector-Core.jar` | The `exiledSector_core` hull mod and its resolve, `ShipSkillData`, the loot listeners and `PlayerEngagementPipeline`, Nanite Feedstock and nanoswarms, the workbench shell, item storage and cargo icons, the refit button column, the settings page, the compat targets two domains use, `console/ConsoleShips`, the shared parts of `ui` and `effects`. |
-| Ship Skill Trees | `exiledsector-skill-tree` | `ExiledSector-SkillTree.jar` | `skills` (except the parts in Exiled Lib), `skills/*`, `ui/node`, `ui/refit` (tree parts), `ui/decoration`, `ui/belt`, `ui/exoship`, `ui/hyperspace`, `ui/inspect` (tree parts), `motes`, the `Item` subclasses that socket into the tree (`Subroutine`, `WormholeAnchor`), Doctrine Archives and Modspec Caches. |
+| Exiled Lib | `exiled-lib` | `ExiledLib.jar` (in the `exiledLib` mod) | The stat effect library (`skills/skilleffect`, `modifiers`, `StatBaseline`, `DiminishingReturns`, `EffectTotals`, `DamageTakenCaps`, `ShipHullSizes`, `ShipFacts`), including each effect's station module class (`ModuleShare`, `ModuleShares`) and the module stat rebuild (`ModuleBoost`). The item framework (`Item`, `ItemStore`, `ItemType`, `ItemDefinition`, rolling, modifiers, implicits, corruption, crafting rules). `ModCsv`, `ModSettings`, `ModSettingsListener`, `Seeds`, `PlayerFleet`, `SaveData`, the `i18n` engine, `ui/util`, generic UI (`TooltipTable`, `VanillaText`, `Fade`, `SmoothZoom`), the domain framework and its extension points. |
+| Exiled Sector Core | `exiledsector-core` | `ExiledSector-Core.jar` | The `exiledSector_core` hull mod and its resolve, `ShipSkillData`, the loot listeners and `PlayerEngagementPipeline`, Nanite Feedstock and nanoswarms, the workbench shell, item storage and cargo icons, the refit button column and its station module tab guard (`RefitModuleTabs`), the settings page, the compat targets two domains use, `console/ConsoleShips`, the shared parts of `ui` and `effects`. |
+| Ship Skill Trees | `exiledsector-skill-tree` | `ExiledSector-SkillTree.jar` | `skills` (except the parts in Exiled Lib), `skills/*`, `ui/node`, `ui/refit` (tree parts), `ui/decoration`, `ui/belt`, `ui/exoship`, `ui/hyperspace`, `ui/inspect` (tree parts), `motes`, the station module share (`ModuleTreeShare`, `ModuleShareSetting`), `TaniaCompat`, the `Item` subclasses that socket into the tree (`Subroutine`, `WormholeAnchor`), Doctrine Archives and Modspec Caches. |
 | Hull Upgrades | `exiledsector-hull-upgrades` | `ExiledSector-HullUpgrades.jar` | `ui/section`, `ui/socket` (section parts), `HullItem`, the `HullUpgrade*` classes and `ShipSections`. |
 | Star Charts | `exiledsector-star-charts` | `ExiledSector-StarCharts.jar` | `charts`, `ui/chart`, `StarChart` and the other `StarChart*` classes in `items`. |
 
@@ -46,7 +47,7 @@ The import map (October 2026) has imports between the domains in every direction
 
 The tangles that matter:
 
-- One hull mod applies everything. `effects/SkillTreeHullMod` (`exiledSector_core`) builds `effects/ResolvedTree` from tree nodes, ship section items (`skills/ShipSections`) and Doctrine overrides, then applies `charts/ChartFleetConditions` on top.
+- One hull mod applies everything. `effects/SkillTreeHullMod` (`exiledSector_core`) builds `effects/ResolvedTree` from tree nodes, ship section items (`skills/ShipSections`) and Doctrine overrides, then applies `charts/ChartFleetConditions` on top. It also attaches `effects/ModuleTreeShare`, which pushes a share of the parent's node effects (after diminishing returns pooled with section items) and the Tania module node bonuses onto station modules through `ModuleBoost`. `ModuleTreeShare` reads package-private parts of `ResolvedTree`, so it sits in `effects`.
 - Hull items and Subroutines reuse the skill effect classes directly. `items/ItemEffects` resolves both through `SkillEffect.byName`. Charts have their own `ChartEffect` and register a resolver in `ItemEffects`.
 - `items/` holds the item framework, but also `StarChart`, `Subroutine`, `WormholeAnchor`, Doctrine Archives and Modspec Caches. Charts depend on `items` because a star chart is an `Item`.
 - `effects/ItemLootListener`, `ItemSalvageListener`, `TechMiningItemListener` and `MarketItemStock` each roll tree loot, hull items and charts in one class. Battle chart tiers come from NPC tree levels (`ChartDrops.battleTier`).
@@ -70,15 +71,15 @@ Exiled Sector Core holds what at least two feature domains need but that is spec
 
 ## Extension points
 
-Exiled Lib defines these interfaces in `exiledlib.module` (`exiledsector.module` until step 7). Exiled Sector Core wires them up, and the feature domains implement them. Once all of them exist, no feature domain needs to import another.
+Exiled Lib defines these interfaces in `exiledlib.domain` (`exiledsector.domain` until step 7). Exiled Sector Core wires them up, and the feature domains implement them. Once all of them exist, no feature domain needs to import another.
 
-- `Module`: id, `enabled()` (its LunaLib switch), `onApplicationLoad`, `onGameLoad`, `configureXStream`, `registerSettings` and `addCodexEntries`. Exiled Sector's mod plugin runs every module's hooks in a fixed order. Discovery is an explicit list, since the sandbox forbids reflection (`ScriptSandboxRestrictionsTest`).
-- `ShipEffectSource`: contributes `SkillEffect` entries and fighter effects to a ship's resolve. The tree contributes allocated nodes, Subroutines, Doctrine and granted nodes. Hull Upgrades contributes section items, and Star Charts contributes fleet conditions. Diminishing returns stay joint across sources, as they are now.
+- `Domain`: id, `enabled()` (its LunaLib switch), `onApplicationLoad`, `onGameLoad`, `configureXStream`, `registerSettings` and `addCodexEntries`. Exiled Sector's mod plugin runs every domain's hooks in a fixed order. Discovery is an explicit list, since the sandbox forbids reflection (`ScriptSandboxRestrictionsTest`).
+- `ShipEffectSource`: contributes `SkillEffect` entries and fighter effects to a ship's resolve. The tree contributes allocated nodes, Subroutines, Doctrine and granted nodes. Hull Upgrades contributes section items, and Star Charts contributes fleet conditions. Diminishing returns stay joint across sources, as they are now. The resolve keeps each source's entries after diminishing returns, so the tree works out the station module share from its own nodes only. Section items and fleet conditions aren't shared onto modules, as now.
 - `LootSource`: rolls a domain's drops for a battle, salvage site, tech mining result or market stock. It gets one shared context (player level, defeated DP, site type).
 - `FleetDifficulty`: reports a defeated fleet's strength. Exiled Sector Core falls back to DP, and the tree reports NPC tree levels. Chart fleets and battle chart tiers use it, which also solves the knock-on effects of turning the tree off (see `module_toggles.md`).
-- `RefitButton`: Exiled Sector Core owns the column and its anchoring, and modules add buttons. MagicLib's paintjob button anchors on our last refit component, so core keeps that component last whichever buttons are present.
-- `BenchMode`: the workbench asks modules for its modes (hull items, star charts) instead of checking `StarChartSettings`.
-- `ItemEffects` already works this way, with one resolver per `ItemType`. Exiled Lib keeps it, and each module registers its resolver.
+- `RefitButton`: Exiled Sector Core owns the column, its anchoring and the station module tab guard, and domains add buttons. MagicLib's paintjob button anchors on our last refit component, so core keeps that component last whichever buttons are present.
+- `BenchMode`: the workbench asks domains for its modes (hull items, star charts) instead of checking `StarChartSettings`.
+- `ItemEffects` already works this way, with one resolver per `ItemType`. Exiled Lib keeps it, and each domain registers its resolver.
 
 ## Save compatibility
 
@@ -106,13 +107,13 @@ Write `docs/plans/domain_split_classes.csv` with a `class,part` row for every ma
 
 The test starts with an allowlist of today's crossings, and the steps below shrink that list to zero. Add the save fixture test here too.
 
-### Step 2: module framework and bootstrap
+### Step 2: domain framework and bootstrap
 
-Add `Module`. Split `ExiledSectorModPlugin`'s loading sequence into core plus three module classes, keeping today's order wherever one domain's load reads another's data. One example is `NodeGrantLinks.install`, which runs after the item definitions load. Split `ExiledSectorSettings` the same way. Each module registers its own section, in today's page order, so the LunaLib page looks the same.
+Add `Domain`. Split `ExiledSectorModPlugin`'s loading sequence into core plus three domain classes, keeping today's order wherever one domain's load reads another's data. One example is `NodeGrantLinks.install`, which runs after the item definitions load. Split `ExiledSectorSettings` the same way. Each domain registers its own section, in today's page order (the Module Share setting goes in the tree's), so the LunaLib page looks the same.
 
 ### Step 3: ship effects
 
-Add `ShipEffectSource` and rebuild `ResolvedTree` on top of it. Move `ShipSections` and section effects to Hull Upgrades, `ChartFleetConditions` to Star Charts, and node and Doctrine resolution to the tree. The resolved effect totals must match the current resolver exactly. Test this on fixed ships before deleting the old path.
+Add `ShipEffectSource` and rebuild `ResolvedTree` on top of it. Move `ShipSections` and section effects to Hull Upgrades, `ChartFleetConditions` to Star Charts, and node and Doctrine resolution and `ModuleTreeShare` to the tree. The resolved effect totals and the station module shares (`ModuleTreeShareTest`) must match the current resolver exactly. Test this on fixed ships before deleting the old path.
 
 ### Step 4: loot and difficulty
 
@@ -141,7 +142,7 @@ Create the `exiledLib` mod folder with its own `mod_info.json` (LazyLib, MagicLi
 
 ### Step 8: switches
 
-Every module's `enabled()` gates its effect sources, loot sources, refit buttons, bench mode and settings section. Hull Upgrades and Star Charts reuse their existing switches. The skill tree switch planned in `module_toggles.md` becomes one more `enabled()`. Its effect source and loot source stop, and `FleetDifficulty` falls back to DP.
+Every domain's `enabled()` gates its effect sources, loot sources, refit buttons, bench mode and settings section. Hull Upgrades and Star Charts reuse their existing switches. The skill tree switch planned in `module_toggles.md` becomes one more `enabled()`. Its effect source, loot source and station module share stop, and `FleetDifficulty` falls back to DP.
 
 ### Step 9: docs
 
