@@ -301,7 +301,8 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
         }
 
         private boolean isAlliedWarship(ShipAPI other) {
-            return other != ownerShip && other.getOwner() == ownerShip.getOwner() && !other.isFighter();
+            return other != ownerShip && other.getOwner() == ownerShip.getOwner() && !other.isFighter()
+                    && !CombatQueries.isSameStation(ownerShip, other);
         }
 
         private boolean canTakeSharedDamageNow(ShipAPI ally) {

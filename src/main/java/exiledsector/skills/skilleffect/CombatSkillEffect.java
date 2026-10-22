@@ -374,13 +374,7 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         private boolean isCollidableShip(ShipAPI other) {
             return other != ownerShip && !other.isFighter() && !other.isHulk() && !other.isShuttlePod()
                     && other.getCollisionClass() != CollisionClass.NONE
-                    && !isSameStation(other);
-        }
-
-        private boolean isSameStation(ShipAPI other) {
-            ShipAPI parent = ownerShip.getParentStation();
-            ShipAPI otherParent = other.getParentStation();
-            return otherParent == ownerShip || parent == other || (parent != null && parent == otherParent);
+                    && !CombatQueries.isSameStation(ownerShip, other);
         }
 
         private boolean isTouching(CombatEntityAPI other) {

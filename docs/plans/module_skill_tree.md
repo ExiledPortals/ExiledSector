@@ -4,7 +4,7 @@ Ships with station modules (Navarchy of Tania plates, Knights of Ludd, Roider Un
 
 All numbers are placeholders, like every other magnitude in the mod. `docs/analysis/balance.csv` is left alone.
 
-Status: planned, nothing built. The Tania volume (Module Hull, Module Armor, Module Weapon Damage, Plate Fire Control, Jettison Protocol, Rise From the Ashes, Thermo-Accelerator) is built but uncommitted on `parallel-work` and is the starting point.
+Status: step 1 in progress on branch `module_skill_tree` (uncommitted). The Tania volume (Module Hull, Module Armor, Module Weapon Damage, Plate Fire Control, Jettison Protocol, Rise From the Ashes, Thermo-Accelerator) is committed on `parallel-work` (653b7cbd) and is the starting point.
 
 ## Decided so far
 
@@ -312,14 +312,14 @@ Left out of the first build. Each could be added once checked in game.
 
 These came up during the research and aren't part of the share itself.
 
-- Shared Fate already treats a ship's own modules as allies (`ShieldSkillEffect.java:303-305`), so a Shared Fate parent sends shield flux into its own plates today. Fix: skip ships whose parent station is the owner, and sibling modules.
-- The refit Skill Tree button has no module guard (`SkillTreeRefitButton.shouldShow`, `SkillTreeRefitButton.java:56`). LunaLib passes the selected module's fake member and variant, and opening the panel there runs `ShipTreeSync.memberChanged`. That would put our hull mod onto the module variant, which can be the global stock variant. Unverified in game; it should be confirmed and guarded first.
+- Shared Fate treated a ship's own modules as allies, so a Shared Fate parent sent shield flux into its own plates. Fixed (uncommitted): it now skips its own modules, its parent and sibling modules through `CombatQueries.isSameStation`, shared with At Any Cost.
+- The refit Skill Tree button had no module guard. Confirmed in code: on a module tab the refit (`coreui.refit.oOOO:187-201`) builds a fake `FleetMember` from the module variant with the parent's fleet data, and LunaLib passes it as the member. Opening the panel there would run `ShipTreeSync.memberChanged` on the module variant, which the campaign refit has already cloned into the parent's variant, so our hull mod would be saved onto the plate. Guarded (uncommitted): `RefitModuleTabs.isModuleTab` (member not in its own fleet's member list) hides the Skill Tree, Hull Upgrades and Modification Bench buttons and refuses their panels and hotkeys. Not yet checked in game; the buttons under the hull mods list stay visible on module tabs but do nothing.
 - Tania's Fixed Frontal Shield blanket-`unmodify()`s shield absorption, shield damage taken, arc, upkeep and unfold rate in its after-creation hook (`tania_Fixed_Frontal_Shield.java:45-60`). Our shield nodes on Tania main ships are therefore probably wiped. Unverified in game; it belongs in the Tania compat notes.
 - Ludd's Light and Repair Coordinator already include a ship's own modules among nearby ships. Ludd's Light hitting friendlies is intended. Repair Coordinator repairing plates is fine.
 
 ## Build order
 
-1. Confirm the refit button issue in game and guard `SkillTreeRefitButton.shouldShow` and the panel against module members and variants. Fix the Shared Fate ally filter.
+1. Confirm the refit button issue in game and guard `SkillTreeRefitButton.shouldShow` and the panel against module members and variants. Fix the Shared Fate ally filter. Code done, uncommitted on `module_skill_tree`; in-game check still open.
 2. Add the classification. Each `SkillEffect` gets a `ModuleShare` value: SHARE, SHARE_REBUILD, EXCLUDE (default). Each skill type gets an optional `moduleShare` override (`all`, `none`) for the all-or-nothing nodes, in `skill_types.json` and the editor serialisers.
 3. Build `ModuleTreeShare`: node walk, skip rules, scaling, MULT pooling, damage-taken caps, and the push onto module stats.
 4. Fold `ModuleBonusListener` into it and write one rescaler for hull, armor, ammo and shield arc, with the armor clamp.

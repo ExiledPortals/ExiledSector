@@ -10,6 +10,7 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.i18n.Translation;
 import exiledsector.items.HullUpgradesSetting;
 import exiledsector.ui.refit.RefitButtonConfig;
+import exiledsector.ui.refit.RefitModuleTabs;
 import exiledsector.ui.refit.RefitScreenLayout;
 import lunalib.lunaRefit.BaseRefitButton;
 import lunalib.lunaRefit.LunaRefitManager;
@@ -54,7 +55,7 @@ public class HullUpgradesRefitButton extends BaseRefitButton {
 
     @Override
     public boolean shouldShow(FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
-        return !RefitButtonConfig.buttonUnderHullMods() && HullUpgradesSetting.enabled();
+        return !RefitButtonConfig.buttonUnderHullMods() && HullUpgradesSetting.enabled() && !RefitModuleTabs.isModuleTab(member);
     }
 
     @Override
@@ -64,7 +65,7 @@ public class HullUpgradesRefitButton extends BaseRefitButton {
 
     @Override
     public boolean hasPanel(FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
-        return true;
+        return !RefitModuleTabs.isModuleTab(member);
     }
 
     @Override

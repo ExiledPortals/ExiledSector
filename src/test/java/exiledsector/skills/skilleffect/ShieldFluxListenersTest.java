@@ -27,7 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyFloat;
@@ -264,6 +266,32 @@ class ShieldFluxListenersTest {
         verify(allyA.getFluxTracker()).increaseFlux(10f, true);
         verify(allyB.getFluxTracker()).increaseFlux(10f, true);
         verifyNoInteractions(fighter.getFluxTracker(), farAlly.getFluxTracker(), enemy.getFluxTracker());
+    }
+
+    @Test
+    void sharedFateNeverSendsFluxIntoItsOwnModulesOrItsParentsOtherModules() {
+        ShipAPI defender = ship(SHARED_PERCENT_KEY, 20f);
+        ShipAPI ownModule = shipAt(100f, 0);
+        when(ownModule.getParentStation()).thenReturn(defender);
+        ShipAPI ally = shipAt(300f, 0);
+        ships.addAll(List.of(defender, ownModule, ally));
+        DamageTakenModifier listener = attachedListener(ShieldSkillEffect.SHIELD_DAMAGE_SHARED_PERCENT, defender, DamageTakenModifier.class);
+        Object projectile = new Object();
+        when(defender.getParamAboutToApplyDamage()).thenReturn(projectile);
+
+        listener.modifyDamageTaken(projectile, defender, damageWithModifier(new MutableStat(1f)), new Vector2f(), true);
+        ((DamageListener) listener).reportDamageApplied(projectile, defender, shieldFlux(80f));
+
+        verify(ally.getFluxTracker()).increaseFlux(20f, true);
+        verify(ownModule.getFluxTracker(), never()).increaseFlux(anyFloat(), anyBoolean());
+
+        ShipAPI parent = shipAt(-100f, 0);
+        ShipAPI sibling = shipAt(200f, 0);
+        when(defender.getParentStation()).thenReturn(parent);
+        when(sibling.getParentStation()).thenReturn(parent);
+        assertTrue(CombatQueries.isSameStation(defender, parent));
+        assertTrue(CombatQueries.isSameStation(defender, sibling));
+        assertFalse(CombatQueries.isSameStation(defender, ally));
     }
 
     @Test
