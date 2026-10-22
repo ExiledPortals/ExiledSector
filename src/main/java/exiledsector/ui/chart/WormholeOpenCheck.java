@@ -20,6 +20,7 @@ public final class WormholeOpenCheck {
 
     public enum Blocker {
         NONE,
+        DISABLED,
         NO_CHART,
         RUN_OPEN,
         NO_FLEET,
@@ -58,6 +59,9 @@ public final class WormholeOpenCheck {
 
     public static Blocker evaluate(Item chart, ItemStore store, boolean openAnywhere, boolean runOpen, CampaignFleetAPI playerFleet,
                                    SectorEntityToken dialogTarget) {
+        if (!StarChartSettings.enabled()) {
+            return Blocker.DISABLED;
+        }
         if (!(chart instanceof StarChart) || chart.definition() == null || store == null || !store.holdsStarCharts()
                 || store.find(chart.id()) != chart) {
             return Blocker.NO_CHART;

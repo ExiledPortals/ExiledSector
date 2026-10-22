@@ -57,12 +57,13 @@ public class WormholeGateway extends BaseIndustry {
 
     @Override
     public boolean isAvailableToBuild() {
-        return market != null && super.isAvailableToBuild() && isUnlockedFor(market) && otherGatewayOf(market) == null;
+        return market != null && StarChartSettings.enabled() && super.isAvailableToBuild() && isUnlockedFor(market)
+                && otherGatewayOf(market) == null;
     }
 
     @Override
     public boolean showWhenUnavailable() {
-        return market != null && super.showWhenUnavailable();
+        return market != null && StarChartSettings.enabled() && super.showWhenUnavailable();
     }
 
     @Override

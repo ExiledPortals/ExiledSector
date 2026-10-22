@@ -9,6 +9,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.listeners.DialogCreatorUI;
 import com.fs.starfarer.api.campaign.listeners.IndustryOptionProvider;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.WormholeGateway;
 import exiledsector.ui.ModificationBenchCargoLauncher;
 import org.junit.jupiter.api.AfterEach;
@@ -78,6 +79,16 @@ class WormholeGatewayOptionTest {
         assertSame(gateway, options.get(0).ind);
         assertSame(provider, options.get(0).provider);
         assertTrue(options.get(0).enabled);
+    }
+
+    @Test
+    void aBuiltGatewayOffersNothingWhileStarChartsAreSwitchedOff() {
+        StarChartSettings.setEnabledForTests(false);
+        try {
+            assertTrue(provider.getIndustryOptions(gateway).isEmpty());
+        } finally {
+            StarChartSettings.setEnabledForTests(StarChartSettings.DEFAULT_ENABLED);
+        }
     }
 
     @Test
