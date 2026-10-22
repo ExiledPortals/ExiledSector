@@ -3,6 +3,7 @@ package exiledsector.skills.loader;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.skills.ModuleShareOverride;
 import exiledsector.skills.ShipHullSizes;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
@@ -429,6 +430,23 @@ class SkillTypeLoaderTest {
 
         assertEquals(1, types.size());
         assertEquals("Second", types.get("a").getDisplayName());
+    }
+
+    @Test
+    void readsTheModuleShareOverrideAndFallsBackToAutoWhenMissingOrUnknown() throws Exception {
+        JSONObject root = new JSONObject("{ \"skillTypes\": ["
+                + "{\"id\": \"all\", \"name\": \"A\", \"icon\": \"a.png\", \"moduleShare\": \"all\"},"
+                + "{\"id\": \"none\", \"name\": \"N\", \"icon\": \"a.png\", \"moduleShare\": \"none\"},"
+                + "{\"id\": \"unknown\", \"name\": \"U\", \"icon\": \"a.png\", \"moduleShare\": \"half\"},"
+                + "{\"id\": \"missing\", \"name\": \"M\", \"icon\": \"a.png\"}"
+                + "] }");
+
+        Map<String, SkillType> types = SkillTypeLoader.parseSkillTypes(root);
+
+        assertEquals(ModuleShareOverride.ALL, types.get("all").getModuleShareOverride());
+        assertEquals(ModuleShareOverride.NONE, types.get("none").getModuleShareOverride());
+        assertEquals(ModuleShareOverride.AUTO, types.get("unknown").getModuleShareOverride());
+        assertEquals(ModuleShareOverride.AUTO, types.get("missing").getModuleShareOverride());
     }
 
     private static Float temporarySecondsFor(String extraFields) throws Exception {

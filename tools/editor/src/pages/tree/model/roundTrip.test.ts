@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { lineEndingOf, withLineEnding } from '../../../shared/lineEndings.ts';
-import { parseTreeDocument, serializeTreeFiles } from './serialization.ts';
+import { parseTreeDocument, serializeTreeFiles, serializeType } from './serialization.ts';
 
 const BYTE_ORDER_MARK = String.fromCharCode(0xfeff);
 const PROJECT_ROOT = path.resolve(import.meta.dirname, '../../../../../..');
@@ -40,6 +40,15 @@ describe('tree files round-trip', () => {
       const texts = serializeTreeFiles(parseTreeDocument(typesText, text), { types: lineEndingOf(typesText), tree: lineEnding });
       expect(texts.tree).toBe(text);
     }
+  });
+});
+
+describe('module share serialisation', () => {
+  it('writes moduleShare last and leaves it out when the type has none', () => {
+    const base = { id: 'a', name: 'A', icon: '', tags: ['armor'] };
+    expect(Object.keys(serializeType({ ...base, moduleShare: 'all' }))).toEqual(['id', 'name', 'icon', 'tags', 'moduleShare']);
+    expect(serializeType({ ...base, moduleShare: 'none' }).moduleShare).toBe('none');
+    expect(serializeType(base)).not.toHaveProperty('moduleShare');
   });
 });
 

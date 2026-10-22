@@ -3,6 +3,7 @@ package exiledsector.skills;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.skills.skilleffect.ModuleShare;
 import exiledsector.skills.unlock.UnlockCondition;
 
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ public class SkillType {
     private final List<String> exclusiveSkillTypeIds;
     private final List<UnlockCondition> unlockConditions;
     private final List<String> tags;
+    private final ModuleShareOverride moduleShareOverride;
 
     private SkillType(Builder builder) {
         this.id = builder.id;
@@ -59,6 +61,7 @@ public class SkillType {
         this.exclusiveSkillTypeIds = builder.exclusiveSkillTypeIds == null ? Collections.emptyList() : builder.exclusiveSkillTypeIds;
         this.unlockConditions = builder.unlockConditions == null ? Collections.emptyList() : builder.unlockConditions;
         this.tags = builder.tags == null ? Collections.emptyList() : builder.tags;
+        this.moduleShareOverride = builder.moduleShareOverride == null ? ModuleShareOverride.AUTO : builder.moduleShareOverride;
     }
 
     public static final class Builder {
@@ -81,6 +84,7 @@ public class SkillType {
         private List<String> exclusiveSkillTypeIds = Collections.emptyList();
         private List<UnlockCondition> unlockConditions = Collections.emptyList();
         private List<String> tags = Collections.emptyList();
+        private ModuleShareOverride moduleShareOverride = ModuleShareOverride.AUTO;
 
         public Builder(String id, String displayName, String iconPath, SkillTier tier) {
             this.id = id;
@@ -161,6 +165,11 @@ public class SkillType {
 
         public Builder tags(List<String> tags) {
             this.tags = tags;
+            return this;
+        }
+
+        public Builder moduleShareOverride(ModuleShareOverride moduleShareOverride) {
+            this.moduleShareOverride = moduleShareOverride;
             return this;
         }
 
@@ -307,6 +316,27 @@ public class SkillType {
 
     public List<String> getTags() {
         return tags;
+    }
+
+    public ModuleShareOverride getModuleShareOverride() {
+        return moduleShareOverride;
+    }
+
+    public List<SkillTypeEffect> moduleSharedEffects(HullSize hullSize) {
+        if (moduleShareOverride == ModuleShareOverride.NONE || vanillaHullModId != null || temporaryAfterDeploymentSeconds != null) {
+            return Collections.emptyList();
+        }
+        List<SkillTypeEffect> shared = new ArrayList<>();
+        for (SkillTypeEffect effect : effectsFor(hullSize)) {
+            ModuleShare share = effect.effect().moduleShare();
+            if (share == ModuleShare.EXCLUDE && moduleShareOverride != ModuleShareOverride.ALL) {
+                return Collections.emptyList();
+            }
+            if (share.isShared()) {
+                shared.add(effect);
+            }
+        }
+        return shared;
     }
 
     public List<SkillTypeEffect> effectsFor(HullSize hullSize) {
