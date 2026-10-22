@@ -15,8 +15,13 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
+import lunalib.lunaSettings.LunaSettings;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +43,19 @@ import static org.mockito.Mockito.when;
 class ModuleTreeShareTest {
 
     private static final float SHARE = 0.5f;
+
+    private MockedStatic<LunaSettings> lunaSettings;
+
+    @BeforeEach
+    void mockSettings() {
+        lunaSettings = Mockito.mockStatic(LunaSettings.class);
+        lunaSettings.when(() -> LunaSettings.getInt("exiledSector", ModuleShareSetting.FIELD_ID)).thenReturn(null);
+    }
+
+    @AfterEach
+    void closeSettings() {
+        lunaSettings.close();
+    }
 
     private static SkillTypeEffect effect(String name, float magnitude) {
         return new SkillTypeEffect(SkillEffect.byName(name), magnitude);
@@ -163,6 +181,23 @@ class ModuleTreeShareTest {
         assertTrue(added.getValue() instanceof AdvanceableListener);
         verify(plain, never()).addListener(any());
         verify(station, never()).addListener(any());
+    }
+
+    @Test
+    void withTheShareOffOnlyShipsWithTaniaModuleNodesAttach() {
+        ShipAPI plain = ship(true);
+        when(plain.getMutableStats()).thenReturn(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS));
+        ShipAPI tania = ship(true);
+        MutableShipStatsAPI taniaStats = mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS);
+        when(taniaStats.getDynamic().getValue("exiledSector_moduleArmorPercent", 0f)).thenReturn(20f);
+        when(tania.getMutableStats()).thenReturn(taniaStats);
+
+        lunaSettings.when(() -> LunaSettings.getInt("exiledSector", ModuleShareSetting.FIELD_ID)).thenReturn(0);
+        ModuleTreeShare.attach(plain, mock(ResolvedTree.class));
+        ModuleTreeShare.attach(tania, mock(ResolvedTree.class));
+
+        verify(plain, never()).addListener(any());
+        verify(tania, times(1)).addListener(any());
     }
 
     private static ShipAPI module(boolean alive) {

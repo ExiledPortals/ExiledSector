@@ -61,7 +61,8 @@ hit, rather than using a modifier, so EMP and on-hit effects stay at full streng
 ## Module effects
 
 The tree applies only to the parent ship. On the parent's first combat frame `ModuleTreeShare` gives each
-living child module half of the parent's shareable tree effects, plus the `MODULE_*` effects at full strength.
+living child module a share of the parent's shareable tree effects (`ModuleShareSetting`, 50% by default), plus
+the `MODULE_*` effects at full strength.
 `ModuleBoost` applies both, then rescales the module's maximum hull, armor cells, shield arc (up to 360) and
 each weapon's maximum ammo once; cells above their maximum are clamped first so armor carried from an earlier
 engagement isn't raised again. `JettisonListener` counts the modules it saw alive that have since

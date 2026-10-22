@@ -4,6 +4,7 @@ import exiledsector.ModSettingsListener;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.compat.CombatGlow;
 import exiledsector.compat.SalvageSiteCompat;
+import exiledsector.effects.ModuleShareSetting;
 import exiledsector.effects.NpcBonusScale;
 import exiledsector.items.HullUpgradesSetting;
 import exiledsector.ui.cargo.ItemAnimationSetting;
@@ -133,6 +134,11 @@ public final class ExiledSectorSettings {
                     Translation.text("settings.diminishing.threshold.tooltip"),
                     stat.defaultThresholdPercent(), 0, DiminishingReturns.MAX_THRESHOLD_PERCENT, MAIN_TAB);
         }
+
+        SettingsCreator.addHeader(MOD_ID, "exiledSector_modulesHeader", Translation.text("settings.modules.header"), MAIN_TAB);
+        SettingsCreator.addInt(MOD_ID, ModuleShareSetting.FIELD_ID,
+                Translation.text("settings.modules.share.name"), Translation.text("settings.modules.share.tooltip"),
+                ModuleShareSetting.DEFAULT_PERCENT, 0, ModuleShareSetting.MAX_PERCENT, MAIN_TAB);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_levelHeader", Translation.text("settings.level.header"), MAIN_TAB);
         SettingsCreator.addText(MOD_ID, "exiledSector_levelAbout", Translation.text("settings.level.about"), MAIN_TAB);

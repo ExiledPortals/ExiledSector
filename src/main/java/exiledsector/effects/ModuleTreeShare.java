@@ -20,7 +20,6 @@ import java.util.Map;
 final class ModuleTreeShare implements AdvanceableListener {
 
     static final String MOD_ID_PREFIX = "exiledSector_moduleShare_";
-    static final float DEFAULT_SHARE = 0.5f;
 
     private final ShipAPI parentShip;
     private final List<EffectTotals.NodeEffects> parentNodeEffects;
@@ -44,9 +43,8 @@ final class ModuleTreeShare implements AdvanceableListener {
         }
     }
 
-    // TODO step 5: read the LunaLib setting exiledSector_moduleTreeShare
     static float share() {
-        return DEFAULT_SHARE;
+        return ModuleShareSetting.share();
     }
 
     @Override
