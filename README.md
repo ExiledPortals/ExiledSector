@@ -63,7 +63,7 @@ Running Random Assortment of Things, Nightcross Armory or LOST_SECTOR? Explore t
 
 Nobody has designed a new hull since the Collapse, and the Domain's blueprints sit behind DRM older than your grandmother's grandmother. So your crew looks at other people's ships, decides they had some good ideas, and welds those ideas onto yours. 
 
-Once you reach level 15 (or earlier, if you lower it in LunaLib settings), Hull Upgrades turn up in wrecks and salvage. Install one, choose a section of the ship, and that section takes hull items of its own.
+Once you reach level 15, Hull Upgrades turn up in wrecks and salvage. Install one, choose a section of the ship, and that section takes hull items of its own.
 
 <details>
 <summary>Installing a Hull Upgrade and unlocking a section</summary>
