@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.effects.PlayerFleetStats;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -50,7 +51,7 @@ public final class ChartFleetConditions {
             return false;
         }
         activeMults = next.isEmpty() ? Map.of() : new EnumMap<>(next);
-        markForStatUpdate(playerFleet);
+        PlayerFleetStats.markForStatUpdate(playerFleet);
         return true;
     }
 
@@ -83,15 +84,5 @@ public final class ChartFleetConditions {
         FleetDataAPI fleetData = member == null ? null : member.getFleetData();
         CampaignFleetAPI fleet = fleetData == null ? null : fleetData.getFleet();
         return fleet != null && fleet.isPlayerFleet();
-    }
-
-    private static void markForStatUpdate(CampaignFleetAPI playerFleet) {
-        FleetDataAPI fleetData = playerFleet == null ? null : playerFleet.getFleetData();
-        if (fleetData == null) {
-            return;
-        }
-        for (FleetMemberAPI member : fleetData.getMembersListCopy()) {
-            member.setStatUpdateNeeded(true);
-        }
     }
 }

@@ -711,6 +711,56 @@ class ShipTreeSyncTest {
         assertEquals(List.of("militarized_subsystems_1"), List.copyOf(ShipSkillDataManager.get("ship").getAllocatedNodeIds()));
     }
 
+    private static SkillNode hideNodeThenReturnItsArea(String shipId) {
+        SkillNode root = new SkillNode("root_1", new SkillType.Builder("root", "Root", "a.png", SkillTier.ROOT).build(), List.of(), 0f, 0f);
+        SkillNode hidden = new SkillNode("hidden_1", new SkillType.Builder("hidden", "Hidden", "a.png", SkillTier.SMALL).build(),
+                List.of("root_1"), 0f, 0f);
+        ShipSkillData shipData = ShipSkillDataManager.get(shipId);
+        ShipTrees.chooseStartingRoot(shipData, root);
+        ShipTrees.allocate(shipData, hidden, 1);
+        ShipTrees.forgetUnknownNodes(shipData, Map.of("root_1", root), Map.of("root_1", root, "hidden_1", hidden), Map.of());
+        SkillTree.register(root);
+        SkillTree.register(hidden);
+        return hidden;
+    }
+
+    private static FleetMemberAPI shipWithOp(String id, int totalOp, int usedOp) {
+        FleetMemberAPI member = mockMember(id, true);
+        when(member.getHullSpec().getOrdnancePoints(any())).thenReturn(totalOp);
+        when(member.getVariant().computeOPCost(any())).thenReturn(usedOp);
+        return member;
+    }
+
+    @Test
+    void withTheTreeSwitchedOffAReturningHiddenNodeStaysDormantOnAShipFilledWithTheFreedOp() {
+        SkillNode hidden = hideNodeThenReturnItsArea("ship");
+        FleetMemberAPI member = shipWithOp("ship", 100, 100);
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+        SkillTreeSetting.setEnabledForTests(false);
+
+        ShipTreeSync.fleetChanged(playerFleet());
+
+        ShipSkillData shipData = ShipSkillDataManager.get("ship");
+        assertEquals(Set.of(hidden.getId()), shipData.getDormantNodeIds());
+        assertFalse(shipData.isAllocated(hidden.getId()));
+    }
+
+    @Test
+    void aReturningHiddenNodeHeldWhileTheTreeWasOffWakesOnceItIsBackOn() {
+        SkillNode hidden = hideNodeThenReturnItsArea("ship");
+        FleetMemberAPI member = shipWithOp("ship", 100, 0);
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+        SkillTreeSetting.setEnabledForTests(false);
+        ShipTreeSync.fleetChanged(playerFleet());
+        SkillTreeSetting.setEnabledForTests(true);
+
+        ShipTreeSync.fleetChanged(playerFleet());
+
+        ShipSkillData shipData = ShipSkillDataManager.get("ship");
+        assertTrue(shipData.getDormantNodeIds().isEmpty());
+        assertTrue(shipData.isAllocated(hidden.getId()));
+    }
+
     @Test
     void switchingTheTreeMarksEveryPlayerShipForAStatRebuildAndAsksForAFleetPass() {
         FleetMemberAPI member = mockMember("ship", true);

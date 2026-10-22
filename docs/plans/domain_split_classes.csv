@@ -362,6 +362,7 @@ exiledsector.effects.PhantomHullMods,skill-tree
 exiledsector.effects.PhantomInstallSync,skill-tree
 exiledsector.effects.PlayerEngagement,core
 exiledsector.effects.PlayerEngagementPipeline,core
+exiledsector.effects.PlayerFleetStats,core
 exiledsector.effects.PlayerShipFacts,skill-tree
 exiledsector.effects.PlayerTreePower,skill-tree
 exiledsector.effects.ResolvedTree,core

@@ -61,7 +61,7 @@ Tests: `ChartDropsTest`, `WormholeGatewayTest`, `WormholeGatewayOptionTest`, `Wo
 
 A LunaLib boolean, `exiledSector_skillTreeEnabled` (`skills/SkillTreeSetting`), default on, under a Skill Tree header at the top of the tree's settings. It is `SkillTreeDomain.enabled()`, so the domain framework drops the tree's effect source (node, Subroutine, Doctrine and granted node effects, fit effects, the station module share) and loot source (faction fleet drops, warden Doctrine Archives, showcase items, Anchor market stock). When it is off:
 
-- `ShipTreeSync` strips phantom and OP reserve hull mods from player ships at the next fleet pass, as if no node were allocated. Nodes, level and XP stay in each record, and switching back marks every player ship for a stat rebuild, which puts them back.
+- `ShipTreeSync` strips phantom and OP reserve hull mods from player ships at the next fleet pass, as if no node were allocated. Nodes, level and XP stay in each record, and switching back marks every player ship for a stat rebuild, which puts them back. If the player used the freed OP meanwhile, the ship goes over its OP until they remove something. Dormant node wakes wait until the tree is back on.
 - No combat XP, no level floor, no Hyperspace Navigation Beacon grant.
 - Subroutines leave the generic item pools and Modspec Cache salvage.
 - The Skill Tree button and its K key are hidden; the column re-anchors the buttons below it and parks the hidden one off screen. The LunaLib entry, the tree chip and the panel open call refuse too.

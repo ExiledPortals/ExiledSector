@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import exiledlib.ModSettings;
 import exiledlib.ModSettingsListener;
+import exiledsector.effects.PlayerFleetStats;
 
 public final class HullUpgradesSetting {
 
@@ -29,8 +30,13 @@ public final class HullUpgradesSetting {
     }
 
     public static void reloadSettings() {
-        enabledSetting = ModSettings.booleanOr(ENABLED_FIELD_ID, DEFAULT_ENABLED);
+        boolean enabled = ModSettings.booleanOr(ENABLED_FIELD_ID, DEFAULT_ENABLED);
+        boolean switched = enabled != enabledSetting;
+        enabledSetting = enabled;
         unlockLevelSetting = clampLevel(ModSettings.intOr(UNLOCK_LEVEL_FIELD_ID, DEFAULT_UNLOCK_LEVEL));
+        if (switched) {
+            PlayerFleetStats.markForStatUpdate();
+        }
     }
 
     public static boolean enabled() {

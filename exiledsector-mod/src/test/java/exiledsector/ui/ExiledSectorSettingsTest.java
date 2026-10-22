@@ -41,7 +41,7 @@ class ExiledSectorSettingsTest {
 
     @BeforeEach
     void setUp() {
-        lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
+        lunaSettingsMock = Mockito.mockStatic(LunaSettings.class, invocation -> null);
         settingsCreatorMock = Mockito.mockStatic(LunaSettings.SettingsCreator.class, invocation -> {
             if (invocation.getMethod().getName().equals("addHeader") && ExiledSectorSettings.MAIN_TAB.equals(invocation.getArgument(3))) {
                 mainTabHeaders.add(invocation.getArgument(1));
@@ -61,11 +61,6 @@ class ExiledSectorSettingsTest {
     void tearDown() {
         settingsCreatorMock.close();
         lunaSettingsMock.close();
-        HullUpgradesSetting.setEnabledForTests(HullUpgradesSetting.DEFAULT_ENABLED);
-        HullUpgradesSetting.setUnlockLevelForTests(HullUpgradesSetting.DEFAULT_UNLOCK_LEVEL);
-        UniqueSubroutinesSetting.setUnlockLevelForTests(UniqueSubroutinesSetting.DEFAULT_UNLOCK_LEVEL);
-        StarChartSettings.setEnabledForTests(StarChartSettings.DEFAULT_ENABLED);
-        SkillTreeSetting.setEnabledForTests(SkillTreeSetting.DEFAULT_ENABLED);
     }
 
     @Test

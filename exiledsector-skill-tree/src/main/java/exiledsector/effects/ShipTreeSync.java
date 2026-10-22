@@ -67,12 +67,7 @@ public final class ShipTreeSync {
 
     public static void treeSwitched() {
         requestPlayerFleetSync();
-        SectorAPI sector = Global.getSector();
-        CampaignFleetAPI playerFleet = sector == null ? null : sector.getPlayerFleet();
-        if (playerFleet == null || playerFleet.getFleetData() == null) return;
-
-        playerFleet.getFleetData().getMembersListCopy().forEach(member -> member.setStatUpdateNeeded(true));
-        playerFleet.getFleetData().setSyncNeeded();
+        PlayerFleetStats.markForStatUpdate();
     }
 
     public static void afterPlayerEngagement(CampaignFleetAPI playerFleet) {
@@ -178,7 +173,9 @@ public final class ShipTreeSync {
 
     private static boolean installTree(FleetMemberAPI member) {
         boolean changed = adoptNpcTree(member);
-        changed |= DormantNodeWake.wake(member);
+        if (SkillTreeSetting.enabled()) {
+            changed |= DormantNodeWake.wake(member);
+        }
         changed |= DoctrineRevertRelease.release(member);
         ShipVariantAPI variant = member.getVariant().hasHullMod(SkillTreeHullMod.ID) ? member.getVariant() : ownedVariant(member);
         if (ensureAppliesLast(variant)) {
