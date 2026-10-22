@@ -30,6 +30,7 @@ import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
@@ -46,7 +47,6 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
             Tags.WING_RAPID_REFORM, Tags.WING_LEADER_NO_SWARM, Tags.WING_WINGMEN_NO_SWARM, Tags.WING_MATCH_LEADER_FACING,
             Tags.WING_ATTACK_AT_AN_ANGLE, Tags.WING_KEEP_AT_RANGE, Tags.WING_TARGET_ESCORT_TARGET, Tags.SWARM_FIGHTER);
     static final float MAX_WAIT_FOR_LAUNCH_SECONDS = 4f;
-    static final float ROUTING_INTERVAL_SECONDS = 0.25f;
     static final float LAUNCHED_WING_CREW = 100000f;
     static final float MIN_WING_MEMBER_READINESS = 0.01f;
     static final float LAUNCH_JITTER = 10f;
@@ -63,9 +63,11 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
     private final Map<ShipAPI, String> typeByFighter = new IdentityHashMap<>();
     private final Set<String> unlaunchableTypes = new HashSet<>();
     private final Map<String, FleetMemberAPI> temporaryMemberByType = new HashMap<>();
+    private final Set<ShipAPI> speedMatchedFighters = Collections.newSetFromMap(new IdentityHashMap<>());
     private List<List<FighterLaunchBayAPI>> bayGroups;
+    private List<Float> groupBaseSpeeds;
     private float secondsWaited;
-    private float secondsSinceRouting;
+    private boolean routingNeeded;
 
     WingScrambleListener(ShipAPI ownerShip) {
         super(ownerShip);
@@ -73,7 +75,7 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
 
     @Override
     public void advance(float amount) {
-        if (bayGroups != null && bayGroups.isEmpty() || ownerShip.isFighter() || !ownerIsAliveNotHulk()) {
+        if (bayGroups != null && (bayGroups.isEmpty() || !routingNeeded) || ownerShip.isFighter() || !ownerIsAliveNotHulk()) {
             return;
         }
         CombatEngineAPI engine = Global.getCombatEngine();
@@ -94,18 +96,18 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
                 return;
             }
             bayGroups = WingScramble.groups(bays, WingScrambleListener::doctrineGroupOf);
+            groupBaseSpeeds = bayGroups.stream().map(WingScrambleListener::averageBaseSpeedOf).toList();
             Float longestBaseRange = bayGroups.isEmpty() ? null : longestBaseRangeOf(bays);
             if (longestBaseRange != null) {
                 matchRangeTo(ownerShip.getMutableStats().getFighterWingRange(), longestBaseRange);
             }
-            secondsSinceRouting = ROUTING_INTERVAL_SECONDS;
-        } else {
-            secondsSinceRouting += amount;
         }
-        if (secondsSinceRouting >= ROUTING_INTERVAL_SECONDS) {
-            secondsSinceRouting = 0f;
-            routeAll(engine, copiesPerType);
-        }
+        routingNeeded = false;
+        routeAll(engine, copiesPerType);
+    }
+
+    void fighterLaunched() {
+        routingNeeded = true;
     }
 
     static Float longestBaseRangeOf(List<FighterLaunchBayAPI> bays) {
@@ -170,10 +172,39 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
                 || variant != null && variant.hasHullMod(INDEPENDENT_FIGHTER_HULL_MOD);
     }
 
+    static Float averageBaseSpeedOf(List<FighterLaunchBayAPI> group) {
+        float speedTotal = 0f;
+        int fighterCount = 0;
+        for (FighterLaunchBayAPI bay : group) {
+            FighterWingSpecAPI spec = bay.getWing() == null ? null : bay.getWing().getSpec();
+            ShipVariantAPI variant = spec == null ? null : spec.getVariant();
+            if (variant != null && variant.getHullSpec() != null && variant.getHullSpec().getEngineSpec() != null && spec.getNumFighters() > 0) {
+                speedTotal += variant.getHullSpec().getEngineSpec().getMaxSpeed() * spec.getNumFighters();
+                fighterCount += spec.getNumFighters();
+            }
+        }
+        return fighterCount > 0 ? speedTotal / fighterCount : null;
+    }
+
+    static void matchSpeeds(List<WingScramble.Host<ShipAPI, FighterLaunchBayAPI, String>> hosts, Float baseSpeed, Set<ShipAPI> matchedFighters) {
+        if (baseSpeed == null) {
+            return;
+        }
+        for (WingScramble.Host<ShipAPI, FighterLaunchBayAPI, String> host : hosts) {
+            for (ShipAPI fighter : host.members()) {
+                if (matchedFighters.add(fighter)) {
+                    fighter.getMutableStats().getMaxSpeed().setBaseValue(baseSpeed);
+                }
+            }
+        }
+    }
+
     private void routeAll(CombatEngineAPI engine, int copiesPerType) {
         typeByFighter.keySet().removeIf(fighter -> !fighter.isAlive() || !engine.isEntityInPlay(fighter));
-        for (List<FighterLaunchBayAPI> group : bayGroups) {
-            List<WingScramble.Host<ShipAPI, FighterLaunchBayAPI, String>> hosts = hostsOf(group);
+        speedMatchedFighters.removeIf(fighter -> !fighter.isAlive() || !engine.isEntityInPlay(fighter));
+        for (int groupIndex = 0; groupIndex < bayGroups.size(); groupIndex++) {
+            List<WingScramble.Host<ShipAPI, FighterLaunchBayAPI, String>> hosts = hostsOf(bayGroups.get(groupIndex));
+            matchSpeeds(hosts, groupBaseSpeeds.get(groupIndex), speedMatchedFighters);
             if (hosts.size() < 2) {
                 continue;
             }
