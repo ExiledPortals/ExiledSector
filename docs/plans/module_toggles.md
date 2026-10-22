@@ -4,7 +4,7 @@ Exiled Sector has three modules: the skill tree, hull upgrades and star charts. 
 
 The level-15 gate is deliberate, so new players aren't hit with all three modules at once. 15 stays the default.
 
-Status: steps 1 to 4 built on `main` (cherry-picked from `claude/loving-hofstadter-a8f91e`, which branched from `parallel-work`). The skill tree off switch is built, uncommitted on `parallel-work`, as step 8 of `domain_split.md`.
+Status: steps 1 to 4 built on `main` (cherry-picked from `claude/loving-hofstadter-a8f91e`, which branched from `parallel-work`). The skill tree off switch is built and committed on `parallel-work`, as step 8 of `domain_split.md`.
 
 ## Decided
 
