@@ -14,6 +14,7 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.npc.NpcLevelCaps;
 import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.skills.tags.SkillTags;
@@ -49,14 +50,29 @@ public final class ShipTreeSync {
     public static boolean fleetChanged(CampaignFleetAPI fleet) {
         if (fleet == null || fleet.getFleetData() == null) return false;
 
+        boolean treeEnabled = SkillTreeSetting.enabled();
         boolean changed = false;
         for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
             changed |= installTree(member);
+            if (!treeEnabled && syncVariant(member, member.getVariant())) {
+                member.setStatUpdateNeeded(true);
+                changed = true;
+            }
         }
         if (changed) {
             fleet.getFleetData().setSyncNeeded();
         }
         return changed;
+    }
+
+    public static void treeSwitched() {
+        requestPlayerFleetSync();
+        SectorAPI sector = Global.getSector();
+        CampaignFleetAPI playerFleet = sector == null ? null : sector.getPlayerFleet();
+        if (playerFleet == null || playerFleet.getFleetData() == null) return;
+
+        playerFleet.getFleetData().getMembersListCopy().forEach(member -> member.setStatUpdateNeeded(true));
+        playerFleet.getFleetData().setSyncNeeded();
     }
 
     public static void afterPlayerEngagement(CampaignFleetAPI playerFleet) {
@@ -107,10 +123,15 @@ public final class ShipTreeSync {
 
     static boolean syncVariant(FleetMemberAPI member, ShipVariantAPI variant, List<AllocatedNode> allocatedNodes,
                                Set<String> phantomHullModIds) {
+        if (!SkillTreeSetting.enabled()) {
+            allocatedNodes = List.of();
+            phantomHullModIds = Set.of();
+        }
         boolean isNpcTree = SkillDataResolver.isNpcTree(variant);
+        boolean reserveChanged = false;
         if (!isNpcTree) {
             SkillDataResolver.syncShipTag(member, variant);
-            OpReserveHullMods.sync(member, variant);
+            reserveChanged = OpReserveHullMods.sync(member, variant);
         }
         PhantomConflictWatch.inspect(member, variant, phantomHullModIds, !isNpcTree);
         Set<String> placeableHullModIds = PhantomConflictWatch.withoutLearnedConflicts(phantomHullModIds, variant);
@@ -121,7 +142,7 @@ public final class ShipTreeSync {
         } else {
             HullModConflictResolver.removeConflicts(allocatedNodes, variant);
         }
-        return phantomsChanged;
+        return phantomsChanged || reserveChanged;
     }
 
     static void raiseToLevelFloor(CampaignFleetAPI fleet) {
@@ -138,7 +159,7 @@ public final class ShipTreeSync {
     static int currentLevelFloor() {
         SectorAPI sector = Global.getSector();
         MutableCharacterStatsAPI playerStats = sector == null ? null : sector.getPlayerStats();
-        if (playerStats == null) return 0;
+        if (playerStats == null || !SkillTreeSetting.enabled()) return 0;
         return ShipLevelSystem.levelFloor(playerStats.getLevel(), ShipLevelConfig.levelFloorPercent(), ShipLevelConfig.maxLevel());
     }
 

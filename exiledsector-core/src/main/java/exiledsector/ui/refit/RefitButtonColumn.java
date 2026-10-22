@@ -33,6 +33,7 @@ public final class RefitButtonColumn {
     static final float GAP_BELOW_BUILD_IN = 3f;
     static final float GAP_BETWEEN_BUTTONS = 3f;
     static final float X_ALIGN_OFFSET = -5f;
+    static final float HIDDEN_OFFSET = -10000f;
     private static final Logger LOG = Logger.getLogger(RefitButtonColumn.class);
     private static final List<ButtonSpec> DOMAIN_BUTTONS = new CopyOnWriteArrayList<>();
 
@@ -41,9 +42,10 @@ public final class RefitButtonColumn {
     private RefitButtonColumn() {
     }
 
-    public static void register(ButtonSpec button) {
-        if (!DOMAIN_BUTTONS.contains(button)) {
-            DOMAIN_BUTTONS.add(button);
+    public static void register(ButtonSpec button, BooleanSupplier domainEnabled) {
+        if (DOMAIN_BUTTONS.stream().noneMatch(registered -> registered.id().equals(button.id()))) {
+            DOMAIN_BUTTONS.add(new ButtonSpec(button.id(), button.labelKey(), button.hotkey(),
+                    () -> domainEnabled.getAsBoolean() && button.wanted().getAsBoolean(), button.press()));
         }
     }
 
@@ -58,26 +60,49 @@ public final class RefitButtonColumn {
         try {
             List<CustomPanelAPI> attachedContainers = attached(widget);
             if (!attachedContainers.isEmpty()) {
-                attachedContainers.forEach(container -> ((ColumnButton) container.getPlugin()).showWanted(container));
+                boolean changed = false;
+                for (CustomPanelAPI container : attachedContainers) {
+                    changed |= ((ColumnButton) container.getPlugin()).showWanted(container);
+                }
+                if (changed && call(widget, "getPerm") instanceof ButtonAPI buildIn) {
+                    stack(attachedContainers, buildIn);
+                }
                 return;
             }
             if (!RefitButtonConfig.buttonUnderHullMods() || !(call(widget, "getPerm") instanceof ButtonAPI buildIn)) return;
             PositionAPI buildInPosition = buildIn.getPosition();
             float buttonWidth = buildInPosition.getWidth();
             float buttonHeight = buildInPosition.getHeight();
-            CustomPanelAPI above = null;
+            List<CustomPanelAPI> containers = new ArrayList<>();
             for (ButtonSpec button : buttons()) {
                 CustomPanelAPI container = create(button, buttonWidth, buttonHeight);
-                if (above == null) {
-                    widget.addComponent(container).belowMid(buildIn, gapBelowBuildIn(buttonHeight)).setXAlignOffset(X_ALIGN_OFFSET);
-                } else {
-                    widget.addComponent(container).belowMid(above, GAP_BETWEEN_BUTTONS);
-                }
-                ((ColumnButton) container.getPlugin()).showWanted(container);
-                above = container;
+                ColumnButton plugin = (ColumnButton) container.getPlugin();
+                plugin.placement = widget.addComponent(container);
+                plugin.showWanted(container);
+                containers.add(container);
             }
+            stack(containers, buildIn);
         } catch (Throwable e) {
             disable(e);
+        }
+    }
+
+    static void stack(List<CustomPanelAPI> containers, ButtonAPI buildIn) {
+        CustomPanelAPI above = null;
+        for (CustomPanelAPI container : containers) {
+            ColumnButton plugin = (ColumnButton) container.getPlugin();
+            if (plugin.placement == null || !plugin.buttonShown) continue;
+            if (above == null) {
+                plugin.placement.belowMid(buildIn, gapBelowBuildIn(buildIn.getPosition().getHeight())).setXAlignOffset(X_ALIGN_OFFSET);
+            } else {
+                plugin.placement.belowMid(above, GAP_BETWEEN_BUTTONS);
+            }
+            above = container;
+        }
+        if (above == null) return;
+        for (CustomPanelAPI container : containers) {
+            ColumnButton plugin = (ColumnButton) container.getPlugin();
+            if (plugin.placement != null && !plugin.buttonShown) plugin.placement.inTL(HIDDEN_OFFSET, HIDDEN_OFFSET);
         }
     }
 
@@ -122,6 +147,7 @@ public final class RefitButtonColumn {
 
         private final ButtonSpec button;
         private ButtonAPI buttonApi;
+        private PositionAPI placement;
         private boolean buttonShown = true;
 
         ColumnButton(ButtonSpec button) {
@@ -132,12 +158,13 @@ public final class RefitButtonColumn {
             return button;
         }
 
-        void showWanted(CustomPanelAPI container) {
+        boolean showWanted(CustomPanelAPI container) {
             boolean visible = button.wanted().getAsBoolean();
-            if (visible == buttonShown) return;
+            if (visible == buttonShown) return false;
             buttonShown = visible;
             container.setOpacity(visible ? 1f : 0f);
             if (buttonApi != null) buttonApi.setEnabled(visible);
+            return true;
         }
 
         @Override

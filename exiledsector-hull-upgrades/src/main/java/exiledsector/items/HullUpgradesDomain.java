@@ -24,6 +24,11 @@ import static exiledsector.ExiledSector.MOD_ID;
 public final class HullUpgradesDomain implements ExiledSectorDomain {
 
     @Override
+    public boolean enabled() {
+        return HullUpgradesSetting.enabled();
+    }
+
+    @Override
     public List<ItemTypeSupport> itemTypes() {
         return List.of(HullItem.SUPPORT);
     }

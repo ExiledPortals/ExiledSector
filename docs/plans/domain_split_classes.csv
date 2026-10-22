@@ -498,6 +498,7 @@ exiledsector.skills.SkillTier,skill-tree
 exiledsector.skills.SkillTree,skill-tree
 exiledsector.skills.SkillTreeBonusSummary,skill-tree
 exiledsector.skills.SkillTreeDomain,skill-tree
+exiledsector.skills.SkillTreeSetting,skill-tree
 exiledsector.skills.SkillTreeTopology,skill-tree
 exiledsector.skills.SkillType,skill-tree
 exiledsector.skills.TreeSearch,skill-tree

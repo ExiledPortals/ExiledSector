@@ -10,7 +10,7 @@
 
 ## Features
 
-Exiled Sector adds three major modules: a skill tree for every ship, hull upgrades (equipment) for ships, and star charts to go and find more of both. Hull upgrades and star charts can each be switched off in LunaLib settings if you'd rather run without them.
+Exiled Sector adds three major modules: a skill tree for every ship, hull upgrades (equipment) for ships, and star charts to go and find more of both. The skill tree, hull upgrades and star charts can each be switched off in LunaLib settings if you'd rather run without them.
 
 ### The skill tree
 

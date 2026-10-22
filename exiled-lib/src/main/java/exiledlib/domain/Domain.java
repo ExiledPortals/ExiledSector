@@ -9,6 +9,10 @@ import java.util.List;
 
 public interface Domain {
 
+    default boolean enabled() {
+        return true;
+    }
+
     default List<ItemTypeSupport> itemTypes() {
         return List.of();
     }

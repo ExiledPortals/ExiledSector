@@ -1,6 +1,7 @@
 package exiledsector.skills.npc;
 
 import exiledlib.ModSettings;
+import exiledsector.skills.SkillTreeSetting;
 
 public final class NpcTreeConfig {
 
@@ -18,7 +19,7 @@ public final class NpcTreeConfig {
     }
 
     public static boolean isEnabled() {
-        return bool(ENABLED_FIELD_ID, DEFAULT_ENABLED);
+        return SkillTreeSetting.enabled() && bool(ENABLED_FIELD_ID, DEFAULT_ENABLED);
     }
 
     public static boolean levelsOfficeredShips() {

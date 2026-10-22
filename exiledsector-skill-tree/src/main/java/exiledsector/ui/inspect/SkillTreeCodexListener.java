@@ -9,6 +9,7 @@ import com.fs.starfarer.api.impl.codex.CodexEntryPlugin;
 import exiledlib.i18n.I18n;
 import exiledsector.skills.InstalledHullMods;
 import exiledsector.skills.PhantomHullModStatus;
+import exiledsector.skills.SkillTreeSetting;
 import exiledlib.items.Item;
 import exiledlib.items.ItemStore;
 import org.apache.log4j.Logger;
@@ -28,7 +29,7 @@ public class SkillTreeCodexListener implements CodexEventListener {
             for (CodexEntryPlugin entry : new ArrayList<>(CodexDataV2.ENTRIES.values())) {
                 if (entry.getParam() instanceof FleetMemberAPI member) {
                     unlinkPhantomHullMods(entry, member);
-                    if (!hasSkillTreeEntry(entry)) {
+                    if (SkillTreeSetting.enabled() && !hasSkillTreeEntry(entry)) {
                         attach(entry, member);
                     }
                 }

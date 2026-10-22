@@ -102,6 +102,11 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
     public static final List<String> LOCALISED_HULLMODS = List.of(SkillConflictWarningHullMod.ID);
 
     @Override
+    public boolean enabled() {
+        return SkillTreeSetting.enabled();
+    }
+
+    @Override
     public List<ShipEffectSource> shipEffectSources() {
         return List.of(SkillTreeEffectSource.INSTANCE);
     }
@@ -129,6 +134,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
 
     @Override
     public void reloadSettings() {
+        SkillTreeSetting.reloadSettings();
         UniqueSubroutinesSetting.reloadSettings();
     }
 

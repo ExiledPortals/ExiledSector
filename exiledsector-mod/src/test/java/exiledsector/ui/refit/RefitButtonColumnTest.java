@@ -14,6 +14,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import exiledsector.compat.ExoticaCompat;
 import exiledsector.items.HullUpgradesSetting;
+import exiledsector.skills.SkillTreeSetting;
 import exiledsector.ui.HullUpgradesRefitButton;
 import exiledsector.ui.ModificationBenchRefitButton;
 import exiledsector.ui.SkillTreeRefitButton;
@@ -147,6 +148,7 @@ class RefitButtonColumnTest {
         globalMock.close();
         RefitButtonColumn.resetForTests();
         HullUpgradesSetting.setEnabledForTests(HullUpgradesSetting.DEFAULT_ENABLED);
+        SkillTreeSetting.setEnabledForTests(SkillTreeSetting.DEFAULT_ENABLED);
     }
 
     @Test
@@ -286,6 +288,26 @@ class RefitButtonColumnTest {
         verify(hullUpgradesContainer).setOpacity(0f);
         verify(hullUpgradesButton).setEnabled(false);
         hullUpgradesButtonMock.verify(() -> HullUpgradesRefitButton.openPanel(null), never());
+    }
+
+    @Test
+    void switchingTheSkillTreeOffParksItsButtonOffScreenAndMovesTheOthersUpUnderBuildIn() {
+        RefitButtonColumn.attach(widget);
+        widget.children.add(container);
+        widget.children.add(hullUpgradesContainer);
+        widget.children.add(benchContainer);
+        SkillTreeSetting.setEnabledForTests(false);
+
+        RefitButtonColumn.attach(widget);
+        skillTreePlugin.buttonPressed(SkillTreeRefitButton.COLUMN_BUTTON.id());
+
+        verify(widget, never()).removeComponent(any());
+        verify(container).setOpacity(0f);
+        verify(button).setEnabled(false);
+        verify(placement).inTL(RefitButtonColumn.HIDDEN_OFFSET, RefitButtonColumn.HIDDEN_OFFSET);
+        verify(placement, times(2)).belowMid(buildIn, RefitButtonColumn.GAP_BELOW_BUILD_IN);
+        verify(placement, times(2)).belowMid(hullUpgradesContainer, RefitButtonColumn.GAP_BETWEEN_BUTTONS);
+        refitButtonMock.verify(() -> SkillTreeRefitButton.openPanel(null), never());
     }
 
     @Test

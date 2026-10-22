@@ -9,6 +9,7 @@ import exiledlib.skills.ShipFacts;
 import exiledlib.skills.ShipSystemCharges;
 import exiledlib.skills.SkillTypeEffect;
 import exiledsector.ExiledSector;
+import exiledsector.domain.ExiledSectorDomain;
 import exiledlib.skills.skilleffect.FighterSkillEffect;
 import exiledlib.skills.skilleffect.ShieldSkillEffect;
 import exiledlib.skills.skilleffect.SkillEffect;
@@ -35,7 +36,7 @@ public final class FittedShipProfile {
 
     private static List<SkillTypeEffect> fitEffects(ShipSkillData shipData, HullSize hullSize) {
         List<SkillTypeEffect> fitEffects = new ArrayList<>();
-        ExiledSector.domains().forEach(domain -> fitEffects.addAll(domain.fitEffects(shipData, hullSize)));
+        ExiledSector.domains().stream().filter(ExiledSectorDomain::enabled).forEach(domain -> fitEffects.addAll(domain.fitEffects(shipData, hullSize)));
         return fitEffects;
     }
 

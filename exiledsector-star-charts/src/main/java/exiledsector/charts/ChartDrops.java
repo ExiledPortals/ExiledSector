@@ -9,6 +9,7 @@ import exiledlib.items.ItemData;
 import exiledlib.items.ItemDefinition;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemUnlock;
+import exiledsector.loot.LootSources;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -209,7 +210,11 @@ public final class ChartDrops {
     }
 
     static int battleTier(float defeatedDeploymentPoints, int highestDefeatedLevel) {
-        return tierForStrength(Source.BATTLE, defeatedDeploymentPoints) == NO_TIER ? NO_TIER : ChartTiers.tierForLevel(highestDefeatedLevel);
+        int strengthTier = tierForStrength(Source.BATTLE, defeatedDeploymentPoints);
+        if (strengthTier == NO_TIER) {
+            return NO_TIER;
+        }
+        return LootSources.shipLevelsRated() ? ChartTiers.tierForLevel(highestDefeatedLevel) : strengthTier;
     }
 
     public static Loot forSalvage(SectorAPI sector, LocationAPI salvageLocation, Random random) {

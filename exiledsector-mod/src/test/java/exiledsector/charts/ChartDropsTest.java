@@ -16,6 +16,7 @@ import exiledlib.items.ItemDefinitions;
 import exiledsector.items.ItemUnlock;
 import exiledsector.items.StarChartCurrency;
 import exiledsector.items.StarChartFixtures;
+import exiledsector.skills.SkillTreeSetting;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -248,6 +249,22 @@ class ChartDropsTest {
             assertEquals(6, tierOf(ChartDrops.roll(ChartDrops.Source.BATTLE, ChartDrops.battleTier(400f, 35), 100f, new Random(1L),
                     anyUnique()).charts().get(0)));
         } finally {
+            ChartTiers.resetForTests();
+        }
+    }
+
+    @Test
+    void withTheSkillTreeOffABattleDropsATierPerStrengthPerTierOfDeploymentPointsDefeated() throws Exception {
+        ChartDrops.register(ChartContentDataTest.csvRows(ChartDrops.PATH));
+        ChartTiers.register(ChartContentDataTest.csvRows(ChartTiers.PATH));
+        SkillTreeSetting.setEnabledForTests(false);
+        try {
+            assertEquals(ChartDrops.NO_TIER, ChartDrops.battleTier(0f, 40));
+            assertEquals(1, ChartDrops.battleTier(150f, 35));
+            assertEquals(3, ChartDrops.battleTier(400f, 35));
+            assertEquals(6, ChartDrops.battleTier(5000f, 0));
+        } finally {
+            SkillTreeSetting.setEnabledForTests(SkillTreeSetting.DEFAULT_ENABLED);
             ChartTiers.resetForTests();
         }
     }

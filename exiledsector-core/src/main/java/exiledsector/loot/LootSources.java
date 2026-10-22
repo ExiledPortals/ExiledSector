@@ -18,7 +18,7 @@ import java.util.function.Predicate;
 public final class LootSources {
 
     private static final DomainContributions<LootSource> SOURCES = new DomainContributions<>(ExiledSectorDomain::lootSources);
-    private static final DomainContributions<FleetDifficulty> DIFFICULTIES = new DomainContributions<>(ExiledSectorDomain::fleetDifficulties);
+    private static final DomainContributions<FleetDifficulty> DIFFICULTIES = DomainContributions.fromEveryDomain(ExiledSectorDomain::fleetDifficulties);
 
     private LootSources() {
     }
@@ -62,6 +62,15 @@ public final class LootSources {
             }
         }
         return 1f;
+    }
+
+    public static boolean shipLevelsRated() {
+        for (FleetDifficulty difficulty : DIFFICULTIES.all()) {
+            if (difficulty.ratesShipLevels()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static int shipLevel(FleetMemberAPI member) {

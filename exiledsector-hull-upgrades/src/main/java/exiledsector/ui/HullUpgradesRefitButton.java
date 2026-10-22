@@ -20,8 +20,7 @@ import org.lwjgl.input.Keyboard;
 public class HullUpgradesRefitButton extends BaseRefitButton {
 
     public static final RefitButtonColumn.ButtonSpec COLUMN_BUTTON = new RefitButtonColumn.ButtonSpec("exiledSector_hullUpgradesButton",
-            "ui.hullUpgradesRefitButton", () -> Keyboard.KEY_L, () -> RefitButtonConfig.buttonUnderHullMods() && HullUpgradesSetting.enabled(),
-            () -> openPanel(null));
+            "ui.hullUpgradesRefitButton", () -> Keyboard.KEY_L, RefitButtonConfig::buttonUnderHullMods, () -> openPanel(null));
     static final String ICON_PATH = "graphics/icons/hull_upgrades/hull_upgrade_cruiser_unique.png";
 
     public static void addButton() {

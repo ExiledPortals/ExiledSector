@@ -16,6 +16,7 @@ import exiledlib.items.ItemDefinition;
 import exiledlib.items.ItemDefinitions;
 import exiledsector.items.ItemUnlock;
 import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.tags.SkillTags;
 import exiledlib.ui.CampaignMessages;
 import org.apache.log4j.Logger;
@@ -37,7 +38,8 @@ public class HyperNavBeaconGrant implements EconomyTickListener {
     public static boolean grantOnce(SectorAPI sector) {
         MemoryAPI sectorMemory = sector == null ? null : sector.getMemoryWithoutUpdate();
         CampaignFleetAPI playerFleet = sector == null ? null : sector.getPlayerFleet();
-        if (sectorMemory == null || playerFleet == null || sectorMemory.getBoolean(GRANTED_KEY) || !RandomAssortmentCompat.isModEnabled()) {
+        if (sectorMemory == null || playerFleet == null || sectorMemory.getBoolean(GRANTED_KEY) || !RandomAssortmentCompat.isModEnabled()
+                || !SkillTreeSetting.enabled()) {
             return false;
         }
         String beaconId = WormholeAnchorDefinitions.definitionIdFor(SkillTags.EXOTECH_REGION);

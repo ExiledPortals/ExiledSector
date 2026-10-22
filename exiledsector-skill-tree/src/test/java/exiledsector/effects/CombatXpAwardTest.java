@@ -24,6 +24,7 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.progression.ShipLevelConfig;
 import lunalib.lunaSettings.LunaSettings;
@@ -104,6 +105,7 @@ class CombatXpAwardTest {
         globalMock.close();
         lunaSettingsMock.close();
         SkillTree.clearNodes();
+        SkillTreeSetting.setEnabledForTests(SkillTreeSetting.DEFAULT_ENABLED);
     }
 
     private static void syncTreesThenAwardXp(EngagementResultAPI result) {
@@ -163,6 +165,17 @@ class CombatXpAwardTest {
 
         assertEquals(40f, ShipSkillDataManager.get("ship-a").getXp());
         assertEquals(40f, ShipSkillDataManager.get("ship-b").getXp());
+    }
+
+    @Test
+    void withTheTreeSwitchedOffNoShipEarnsXp() {
+        List<FleetMemberAPI> members = List.of(member("ship-a"));
+        when(fleetData.getMembersListCopy()).thenReturn(members);
+        SkillTreeSetting.setEnabledForTests(false);
+
+        syncTreesThenAwardXp(engagement(true, 40f));
+
+        assertEquals(0f, ShipSkillDataManager.get("ship-a").getXp());
     }
 
     @Test

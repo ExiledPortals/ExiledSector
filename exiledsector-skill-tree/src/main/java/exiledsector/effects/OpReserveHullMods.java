@@ -8,6 +8,7 @@ import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillDataResolver;
+import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.progression.SkillNodeOpCost;
 import org.apache.log4j.Logger;
 
@@ -47,23 +48,24 @@ public final class OpReserveHullMods {
         return reserveIds;
     }
 
-    public static void sync(FleetMemberAPI member, ShipVariantAPI variant) {
-        if (member == null || variant == null || SkillDataResolver.isNpcTree(variant)) return;
+    public static boolean sync(FleetMemberAPI member, ShipVariantAPI variant) {
+        if (member == null || variant == null || SkillDataResolver.isNpcTree(variant)) return false;
 
         ShipSkillData shipData = ShipSkillDataManager.find(member.getId());
         if (shipData == null) {
-            removeMatching(variant, hullModId -> hullModId.startsWith(LEGACY_ID_PREFIX));
-            return;
+            return removeMatching(variant, hullModId -> hullModId.startsWith(LEGACY_ID_PREFIX));
         }
-        int opSpent = ShipTrees.getSpentOp(shipData, SkillNodeOpCost.perNode(member.getHullSpec()));
+        int opSpent = SkillTreeSetting.enabled() ? ShipTrees.getSpentOp(shipData, SkillNodeOpCost.perNode(member.getHullSpec())) : 0;
         reportIfCapped(member, opSpent);
         List<String> wantedReserveIds = reserveHullModsFor(opSpent);
-        removeMatching(variant, hullModId -> isReserveHullMod(hullModId) && !wantedReserveIds.contains(hullModId));
+        boolean changed = removeMatching(variant, hullModId -> isReserveHullMod(hullModId) && !wantedReserveIds.contains(hullModId));
         for (String reserveId : wantedReserveIds) {
             if (!variant.hasHullMod(reserveId) && Global.getSettings().getHullModSpec(reserveId) != null) {
                 variant.addMod(reserveId);
+                changed = true;
             }
         }
+        return changed;
     }
 
     public static void forgetLegacySlots(Map<String, Object> persistentData) {
@@ -71,7 +73,7 @@ public final class OpReserveHullMods {
         persistentData.remove(LEGACY_NEXT_SLOT_KEY);
     }
 
-    private static void removeMatching(ShipVariantAPI variant, Predicate<String> filter) {
+    private static boolean removeMatching(ShipVariantAPI variant, Predicate<String> filter) {
         List<String> removedIds = null;
         for (String hullModId : variant.getHullMods()) {
             if (filter.test(hullModId)) {
@@ -81,9 +83,11 @@ public final class OpReserveHullMods {
                 removedIds.add(hullModId);
             }
         }
-        if (removedIds != null) {
-            removedIds.forEach(variant::removeMod);
+        if (removedIds == null) {
+            return false;
         }
+        removedIds.forEach(variant::removeMod);
+        return true;
     }
 
     private static void reportIfCapped(FleetMemberAPI member, int opSpent) {

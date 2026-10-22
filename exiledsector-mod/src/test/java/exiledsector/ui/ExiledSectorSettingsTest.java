@@ -8,6 +8,7 @@ import exiledlib.i18n.LanguageSetting;
 import exiledlib.i18n.PseudoLeaks;
 import exiledlib.i18n.PseudoLocale;
 import exiledlib.i18n.RealCatalogue;
+import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.npc.NpcTreeConfig;
 import exiledsector.skills.npc.NpcTreeSize;
 import exiledsector.skills.progression.ShipLevelConfig;
@@ -64,6 +65,7 @@ class ExiledSectorSettingsTest {
         HullUpgradesSetting.setUnlockLevelForTests(HullUpgradesSetting.DEFAULT_UNLOCK_LEVEL);
         UniqueSubroutinesSetting.setUnlockLevelForTests(UniqueSubroutinesSetting.DEFAULT_UNLOCK_LEVEL);
         StarChartSettings.setEnabledForTests(StarChartSettings.DEFAULT_ENABLED);
+        SkillTreeSetting.setEnabledForTests(SkillTreeSetting.DEFAULT_ENABLED);
     }
 
     @Test
@@ -97,6 +99,12 @@ class ExiledSectorSettingsTest {
                 eq(ShipLevelConfig.XP_DIFFICULTY_STRENGTH_FIELD_ID), anyString(), anyString(), eq(1.0), eq(0.0), eq(5.0), eq("")));
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addDouble(eq("exiledSector"),
                 eq(ShipLevelConfig.XP_DIFFICULTY_MAX_MULTIPLIER_FIELD_ID), anyString(), anyString(), eq(6.0), eq(1.0), eq(20.0), eq("")));
+    }
+
+    @Test
+    void registersTheSkillTreeToggleSwitchedOnByDefault() {
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addBoolean(eq("exiledSector"),
+                eq(SkillTreeSetting.ENABLED_FIELD_ID), anyString(), anyString(), eq(true), eq("")));
     }
 
     @Test
@@ -205,7 +213,7 @@ class ExiledSectorSettingsTest {
     void groupsTheMainTabByDomainWithCoreFirst() {
         assertEquals(List.of("exiledSector_header", "exiledSector_refitHeader", "exiledSector_soundsHeader", "exiledSector_combatEffectsHeader",
                 "exiledSector_socketStorageHeader", "exiledSector_diminishingHeader", "exiledSector_energyChainHeader",
-                "exiledSector_opCostHeader", "exiledSector_modulesHeader", "exiledSector_levelHeader", "exiledSector_hiddenNodesHeader",
+                "exiledSector_skillTreeHeader", "exiledSector_opCostHeader", "exiledSector_modulesHeader", "exiledSector_levelHeader", "exiledSector_hiddenNodesHeader",
                 "exiledSector_unlockConditionsHeader", "exiledSector_areasHeader",
                 "exiledSector_hullUpgradesHeader", "exiledSector_starChartsHeader"), mainTabHeaders);
     }

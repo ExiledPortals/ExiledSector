@@ -9,6 +9,10 @@ public interface FleetDifficulty {
         return null;
     }
 
+    default boolean ratesShipLevels() {
+        return false;
+    }
+
     default int shipLevel(FleetMemberAPI member) {
         return 0;
     }

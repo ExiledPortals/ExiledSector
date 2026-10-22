@@ -8,6 +8,7 @@ import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledlib.i18n.Translation;
+import exiledsector.skills.SkillTreeSetting;
 import exiledsector.ui.refit.RefitButtonColumn;
 import exiledsector.ui.refit.RefitButtonConfig;
 import exiledsector.ui.refit.RefitModuleTabs;
@@ -31,6 +32,9 @@ public class SkillTreeRefitButton extends BaseRefitButton {
     }
 
     public static boolean openPanel(InputEventAPI event) {
+        if (!SkillTreeSetting.enabled()) {
+            return false;
+        }
         return RefitPanelLauncher.open(SkillTreeRefitButton.class, event, context -> {
             RefitPanelBackgroundPlugin backgroundPlugin = new RefitPanelBackgroundPlugin(context.corePanel(), true);
             return new RefitPanelLauncher.Background(backgroundPlugin, backgroundPlugin::setPanel);
@@ -59,7 +63,7 @@ public class SkillTreeRefitButton extends BaseRefitButton {
 
     @Override
     public boolean shouldShow(FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
-        return !RefitButtonConfig.buttonUnderHullMods() && !RefitModuleTabs.isModuleTab(member);
+        return !RefitButtonConfig.buttonUnderHullMods() && SkillTreeSetting.enabled() && !RefitModuleTabs.isModuleTab(member);
     }
 
     @Override

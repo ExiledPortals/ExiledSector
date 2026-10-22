@@ -18,6 +18,7 @@ import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
 import exiledsector.loot.FleetDifficulty;
 import exiledsector.loot.LootSource;
+import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipLevelSystem;
@@ -137,7 +138,15 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty {
     }
 
     @Override
+    public boolean ratesShipLevels() {
+        return SkillTreeSetting.enabled();
+    }
+
+    @Override
     public int shipLevel(FleetMemberAPI member) {
+        if (!SkillTreeSetting.enabled()) {
+            return 0;
+        }
         String npcTreeTag = NpcTreeTag.find(member.getVariant());
         return npcTreeTag == null ? 0 : NpcTreeTag.allocatedNodeCount(npcTreeTag);
     }

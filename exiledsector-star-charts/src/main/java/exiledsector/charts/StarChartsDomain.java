@@ -32,6 +32,11 @@ import static exiledsector.ExiledSector.MOD_ID;
 public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
+    public boolean enabled() {
+        return StarChartSettings.enabled() || Global.getSector() != null && ChartRuns.hasRun();
+    }
+
+    @Override
     public List<ShipEffectSource> shipEffectSources() {
         return List.of(ChartFleetConditionSource.INSTANCE);
     }

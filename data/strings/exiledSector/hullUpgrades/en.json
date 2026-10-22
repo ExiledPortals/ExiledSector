@@ -45,7 +45,7 @@
     "ui.hullUpgradesRefitButton": "Hull Items",
     "settings.hullUpgrades.header": "Hull Upgrades",
     "settings.socketStorage.hullUpgrades.name": "Hull Upgrades",
-    "settings.socketStorage.hullUpgrades.tooltip": "When off, Hull Upgrades and every hull item except Subroutines stop dropping from battles, salvage and tech mining, and the refit screen's Hull Items button is hidden. Subroutines and the skill tree work as normal. Sections your ships already have unlocked keep working, and switching this back on lets you manage them again.",
+    "settings.socketStorage.hullUpgrades.tooltip": "When off, Hull Upgrades and every hull item except Subroutines stop dropping from battles, salvage and tech mining, and the refit screen's Hull Items button is hidden. Subroutines and the skill tree work as normal. Sections your ships already have unlocked stop working but are kept, and switching this back on restores them.",
     "settings.socketStorage.hullUpgradesLevel.name": "Hull Upgrades From Player Level",
     "settings.socketStorage.hullUpgradesLevel.tooltip": "The player level at which Hull Upgrades and hull items start dropping. Default 15.",
     "settings.socketStorage.battleItems.name": "Hull Item Drops From Battles",

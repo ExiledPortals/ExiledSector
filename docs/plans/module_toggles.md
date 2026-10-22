@@ -1,10 +1,10 @@
 # Module toggles: plan
 
-Exiled Sector has three modules: the skill tree, hull upgrades and star charts. Players asked to pick which ones a run uses, and to get hull upgrade loot before player level 15. This plan adds an unlock level setting for hull upgrades and an on/off switch for star charts, and plans an off switch for the skill tree that is not built yet.
+Exiled Sector has three modules: the skill tree, hull upgrades and star charts. Players asked to pick which ones a run uses, and to get hull upgrade loot before player level 15. This plan adds an unlock level setting for hull upgrades and on/off switches for star charts and the skill tree.
 
 The level-15 gate is deliberate, so new players aren't hit with all three modules at once. 15 stays the default.
 
-Status: steps 1 to 4 built on `main` (cherry-picked from `claude/loving-hofstadter-a8f91e`, which branched from `parallel-work`). The skill tree off switch is planned, not built.
+Status: steps 1 to 4 built on `main` (cherry-picked from `claude/loving-hofstadter-a8f91e`, which branched from `parallel-work`). The skill tree off switch is built, uncommitted on `parallel-work`, as step 8 of `domain_split.md`.
 
 ## Decided
 
@@ -15,7 +15,7 @@ Status: steps 1 to 4 built on `main` (cherry-picked from `claude/loving-hofstadt
 
 ## What exists
 
-- Hull upgrades already have a switch, `exiledSector_hullUpgradesEnabled` (`items/HullUpgradesSetting`). When it is off, Hull Upgrades and hull items stop dropping and the Hull Items refit button is hidden. Sections already unlocked keep working and nothing is removed.
+- Hull upgrades already have a switch, `exiledSector_hullUpgradesEnabled` (`items/HullUpgradesSetting`). When it is off, Hull Upgrades and hull items stop dropping and the Hull Items refit button is hidden. Since step 8 of `domain_split.md`, sections already unlocked also stop applying, but nothing is removed and switching back on restores them.
 - The level gate is hardcoded in `items/ItemUnlock`: `SECTION_ITEM_MIN_PLAYER_LEVEL = 15` for Hull Upgrades and hull items (`sectionsOpen`), and `UNIQUE_MIN_PLAYER_LEVEL = 15` for every unique item in `canDrop`. Unique hull items only come from pools that `sectionsOpen` already gates, so in practice the unique gate only decides when unique Subroutines (skill tree loot) can drop.
 - NPC trees have their own switch, `exiledSector_npcTreesEnabled`. It only stops new trees; fleets that already have one keep it.
 - Star charts have no switch. The Wormhole Gateway is a colony structure (`data/campaign/industries.csv`, `charts/WormholeGateway`), gated on the Janus flag or on the Vaults of Knowledge row when AoTD is installed.
@@ -55,37 +55,18 @@ Tests: `ChartDropsTest`, `WormholeGatewayTest`, `WormholeGatewayOptionTest`, `Wo
 
 ## Step 4: docs (done)
 
-`docs/docs.md` covers mechanics not evident from tooltips, so these settings need nothing there. README and `docs/forum_post.bbcode` say after the three-module intro that hull upgrades and star charts can be switched off, and the "From level 15" line says the level can be lowered. The skill tree joins that sentence once its switch is built.
+`docs/docs.md` covers mechanics not evident from tooltips, so these settings need nothing there. README and `docs/forum_post.bbcode` say after the three-module intro that hull upgrades and star charts can be switched off, and the "From level 15" line says the level can be lowered. The skill tree joined that sentence with its switch.
 
-## Skill tree off switch (planned, not built)
+## Skill tree off switch (done)
 
-### Why it is harder
+A LunaLib boolean, `exiledSector_skillTreeEnabled` (`skills/SkillTreeSetting`), default on, under a Skill Tree header at the top of the tree's settings. It is `SkillTreeDomain.enabled()`, so the domain framework drops the tree's effect source (node, Subroutine, Doctrine and granted node effects, fit effects, the station module share) and loot source (faction fleet drops, warden Doctrine Archives, showcase items, Anchor market stock). When it is off:
 
-The tree, hull upgrades and chart effects all run through one hull mod, `exiledSector_core` (`SkillTreeHullMod`), which every player ship carries. Its resolved tree includes the hull item section effects, and it also applies the player fleet's chart conditions. Hull upgrade state (`frameworkPoints`, unlocked sections, section items) lives in the same `ShipSkillData` record as the nodes, level and XP. So the tree can't be switched off by removing the hull mod or the record.
+- `ShipTreeSync` strips phantom and OP reserve hull mods from player ships at the next fleet pass, as if no node were allocated. Nodes, level and XP stay in each record, and switching back marks every player ship for a stat rebuild, which puts them back.
+- No combat XP, no level floor, no Hyperspace Navigation Beacon grant.
+- Subroutines leave the generic item pools and Modspec Cache salvage.
+- The Skill Tree button and its K key are hidden; the column re-anchors the buttons below it and parks the hidden one off screen. The LunaLib entry, the tree chip and the panel open call refuse too.
+- No new NPC trees. Fleets already levelled keep theirs, including their phantom hull mods, until they despawn.
+- The codex adds no tree entry to ship pages, and the NPC inspect key does nothing.
+- Battle chart drops take their tier from defeated deployment points (`strength_per_tier` in the battle row of `chart_drops.csv`), and battle hull item power falls back to plain DP. Chart fleets keep their size, quality and officer scaling but get no tree levels.
 
-### Proposed behaviour
-
-A LunaLib boolean, `exiledSector_skillTreeEnabled`, default on. When it is off:
-
-- The core hull mod stays. Its resolve skips node effects (allocated nodes, socketed Subroutines, Doctrine Archives, granted nodes) and keeps section effects and chart conditions.
-- Phantom hull mods are removed by `PhantomInstallSync`, as if no node were allocated, and the OP reserve hull mods are removed the same way.
-- Nodes, level and XP stay in each ship's record, untouched and unrefunded. Combat XP and the level floor are skipped while it is off. Switching back on restores every tree at the next sync.
-- The Skill Tree refit button and its K keybind are hidden, not removed: the Hull Items and bench buttons anchor below it, and MagicLib's paintjob button anchors on our last refit component. Both need re-anchoring when it is hidden.
-- Tree loot stops dropping: Subroutines (including uniques), Wormhole Anchors, Doctrine Archives and Contraband Modspec Caches, from battles, salvage, showcases, markets and faction fleet drops.
-- NPC trees switch off with it, whatever the NPC tree setting says. Existing NPC trees on fleets already levelled stay until those fleets despawn, as the NPC switch does today.
-
-### Knock-on effects to solve before building
-
-- Chart fleets get their difficulty from NPC trees (`NpcFleetLeveller`, `ChartTiers.fleetStrengthRangeFor`). Without trees they keep their size, quality and officer scaling but lose the tree levels, so higher tiers need another source of difficulty.
-- Battle chart drops pick their tier from the highest defeated NPC tree level (`ItemLootListener`, `ChartDrops.battleTier`). Without trees that collapses to tier 1 and needs a DP-based fallback.
-- Battle hull item drops weigh ship power as DP times (1 + nodes / 30) (`BattleItemDrops.shipPower`). That falls back to plain DP, which is acceptable.
-- The Hull Upgrades screen reuses the tree's allocation session (`HullUpgradesScreen`, `NodeAllocator`). It must keep working with the tree off.
-- The codex and NPC inspect screen show tree pages that should be hidden.
-
-### Build order (later)
-
-1. Setting and cached flag, resolve that skips node effects, phantom and OP reserve removal. Tests that a ship with nodes and sections keeps only section effects, and gets everything back when switched on.
-2. Skip XP and level floor; hide the refit button and keybind, re-anchor the buttons below it.
-3. Gate tree loot.
-4. NPC trees and the chart difficulty and drop-tier fallbacks.
-5. Codex and inspect screens, README and forum post.
+Known gaps: Anchor listings already on a market stay until the tree is back on, and the core hull mod tooltip loses its Hull Upgrades lines, since they are drawn by the tree's summary.

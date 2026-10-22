@@ -9,6 +9,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.SectorEntityToken.VisibilityLevel;
 import com.fs.starfarer.api.campaign.listeners.CampaignInputListener;
 import com.fs.starfarer.api.input.InputEventAPI;
+import exiledsector.skills.SkillTreeSetting;
 
 import java.util.List;
 
@@ -22,7 +23,8 @@ public class NpcTreeInspectInput implements CampaignInputListener {
     @Override
     public void processCampaignInputPreCore(List<InputEventAPI> events) {
         for (InputEventAPI event : events) {
-            if (!event.isConsumed() && event.isKeyDownEvent() && event.getEventValue() == NpcInspectConfig.key() && tryOpen()) {
+            if (!event.isConsumed() && event.isKeyDownEvent() && event.getEventValue() == NpcInspectConfig.key()
+                    && SkillTreeSetting.enabled() && tryOpen()) {
                 event.consume();
             }
         }

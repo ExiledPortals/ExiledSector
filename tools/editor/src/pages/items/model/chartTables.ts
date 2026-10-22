@@ -469,7 +469,7 @@ export const CHART_DROP_SPEC: ChartTableSpec = {
   noun: 'chart drop',
   keyColumn: 'source',
   description:
-    'One row per drop source. Chance is the expected number of charts (1 = one chart, 0.04 = a 4% chance); extra chance adds a second chart; tier-up is each chart\'s chance to be one tier higher; the currency chance gives a chart-only cipher and only works inside chart systems. Outside chart systems, strength is difficulty-scaled enemy deployment points for battles and player level for salvage and tech mining: the drop needs at least min strength and gains a tier per strength-per-tier above it. Battle chance is per 100 deployment points and its tier comes from the strongest defeated NPC level. A missing source never drops charts.',
+    'One row per drop source. Chance is the expected number of charts (1 = one chart, 0.04 = a 4% chance); extra chance adds a second chart; tier-up is each chart\'s chance to be one tier higher; the currency chance gives a chart-only cipher and only works inside chart systems. Outside chart systems, strength is difficulty-scaled enemy deployment points for battles and player level for salvage and tech mining: the drop needs at least min strength and gains a tier per strength-per-tier above it. Battle chance is per 100 deployment points and its tier comes from the strongest defeated NPC level, or from strength per tier while the skill tree is switched off. A missing source never drops charts.',
   columns: columnsOf(CHART_DROP_COLUMNS, {
     source: { label: 'Source', kind: 'choice', choices: (vocabulary) => vocabulary.chartDropSources.map((source) => source.id) },
     chance: { label: 'Chance %', kind: 'fraction' },

@@ -18,6 +18,7 @@ import exiledlib.modifiers.Modifier;
 import exiledlib.modifiers.ModifierLine;
 import exiledlib.skills.DescriptionLine;
 import exiledsector.skills.NodeReplacements;
+import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -85,12 +86,12 @@ public final class Subroutine extends Item implements NodeSocketable {
 
         @Override
         public boolean inGenericPools(ItemDefinition definition) {
-            return SubroutineKind.inGenericPools(definition);
+            return SkillTreeSetting.enabled() && SubroutineKind.inGenericPools(definition);
         }
 
         @Override
         public List<ItemData> rollSalvage(Random random, float chance) {
-            return ModspecCaches.rollSalvage(random, chance);
+            return SkillTreeSetting.enabled() ? ModspecCaches.rollSalvage(random, chance) : List.of();
         }
 
         @Override

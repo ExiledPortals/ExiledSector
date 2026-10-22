@@ -28,6 +28,7 @@ import exiledlib.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.SkillType;
 import exiledlib.skills.SkillTypeEffect;
 import exiledsector.skills.layout.SkillNodeDecoration;
@@ -112,6 +113,7 @@ class ShipTreeSyncTest {
         globalMock.close();
         lunaSettingsMock.close();
         SkillTree.clearNodes();
+        SkillTreeSetting.setEnabledForTests(SkillTreeSetting.DEFAULT_ENABLED);
         PhantomHullModStatus.clear();
         AnchorLinks.install(null);
         WormholeAnchorDefinitions.clear();
@@ -672,6 +674,53 @@ class ShipTreeSyncTest {
         assertEquals(List.of("root_1", "a_1"), List.copyOf(data.getAllocatedNodeIds()));
         assertEquals(10, data.getLevel());
         assertEquals(9, data.getBankedFreeAllocations());
+    }
+
+    @Test
+    void withTheTreeSwitchedOffNewShipsAreNotRaisedToThePlayersLevel() {
+        playerLevel(15);
+        SkillTreeSetting.setEnabledForTests(false);
+        FleetMemberAPI member = mockMember("bought", true);
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+
+        ShipTreeSync.raiseToLevelFloor(playerFleet());
+
+        assertEquals(0, ShipSkillDataManager.get("bought").getLevel());
+        verify(fleetData, never()).setSyncNeeded();
+    }
+
+    @Test
+    void withTheTreeSwitchedOffAFleetPassStripsThePhantomsAndTheReserveButKeepsTheNodes() {
+        ShipTrees.allocate(ShipSkillDataManager.get("ship"), registerMilitarizedNode(), 1);
+        FleetMemberAPI member = mockMember("ship", true);
+        ShipVariantAPI variant = member.getVariant();
+        when(variant.getHullMods()).thenReturn(List.of(MILITARIZED_SUBSYSTEMS, "exiledSector_opReserve_1", SkillTreeHullMod.ID));
+        when(variant.getTags()).thenReturn(List.of("exiledSector_installed_" + MILITARIZED_SUBSYSTEMS));
+        when(variant.hasTag("exiledSector_installed_" + MILITARIZED_SUBSYSTEMS)).thenReturn(true);
+        when(variant.hasHullMod(MILITARIZED_SUBSYSTEMS)).thenReturn(true);
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+        SkillTreeSetting.setEnabledForTests(false);
+
+        assertTrue(ShipTreeSync.fleetChanged(playerFleet()));
+
+        verify(variant).removePermaMod(MILITARIZED_SUBSYSTEMS);
+        verify(variant).removeMod("exiledSector_opReserve_1");
+        verify(variant, never()).addPermaMod(MILITARIZED_SUBSYSTEMS);
+        verify(member).setStatUpdateNeeded(true);
+        verify(fleetData).setSyncNeeded();
+        assertEquals(List.of("militarized_subsystems_1"), List.copyOf(ShipSkillDataManager.get("ship").getAllocatedNodeIds()));
+    }
+
+    @Test
+    void switchingTheTreeMarksEveryPlayerShipForAStatRebuildAndAsksForAFleetPass() {
+        FleetMemberAPI member = mockMember("ship", true);
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+
+        ShipTreeSync.treeSwitched();
+
+        verify(member).setStatUpdateNeeded(true);
+        verify(fleetData).setSyncNeeded();
+        assertTrue(ShipTreeSync.takePlayerFleetSyncRequest());
     }
 
     @Test

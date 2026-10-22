@@ -5,6 +5,7 @@ import exiledsector.effects.ModuleShareSetting;
 import exiledsector.effects.NpcBonusScale;
 import exiledlib.i18n.Translation;
 import exiledsector.items.UniqueSubroutinesSetting;
+import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.npc.NpcTreeConfig;
 import exiledsector.skills.npc.NpcTreeSize;
 import exiledsector.skills.progression.ShipLevelConfig;
@@ -32,9 +33,15 @@ public final class SkillTreeSettings {
         registerNpcScaling();
         ModSettingsListener.ensureRegistered(NpcBonusScale.SettingsListener.class, NpcBonusScale.SettingsListener::new);
         ModSettingsListener.ensureRegistered(UniqueSubroutinesSetting.SettingsListener.class, UniqueSubroutinesSetting.SettingsListener::new);
+        ModSettingsListener.ensureRegistered(SkillTreeSetting.SettingsListener.class, SkillTreeSetting.SettingsListener::new);
     }
 
     private static void registerMain() {
+        SettingsCreator.addHeader(MOD_ID, "exiledSector_skillTreeHeader", Translation.text("settings.skillTree.header"), MAIN_TAB);
+        SettingsCreator.addBoolean(MOD_ID, SkillTreeSetting.ENABLED_FIELD_ID,
+                Translation.text("settings.skillTree.enabled.name"), Translation.text("settings.skillTree.enabled.tooltip"),
+                SkillTreeSetting.DEFAULT_ENABLED, MAIN_TAB);
+
         SettingsCreator.addHeader(MOD_ID, "exiledSector_opCostHeader", Translation.text("settings.opCost.header"), MAIN_TAB);
         SettingsCreator.addText(MOD_ID, "exiledSector_opCostAbout", Translation.text("settings.opCost.about"), MAIN_TAB);
         SettingsCreator.addInt(MOD_ID, SkillNodeOpCost.FRIGATE_FIELD_ID,

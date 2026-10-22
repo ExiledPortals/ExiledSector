@@ -11,6 +11,7 @@ import exiledlib.i18n.Message;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipLevelSystem;
 import exiledlib.ui.VanillaText;
@@ -27,7 +28,7 @@ public final class CombatXpAward {
 
     public static void award(PlayerEngagement engagement) {
         CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
-        if (playerFleet == null) {
+        if (playerFleet == null || !SkillTreeSetting.enabled()) {
             return;
         }
         float defeatedDp = engagement.enemyDeploymentPointsDefeated();

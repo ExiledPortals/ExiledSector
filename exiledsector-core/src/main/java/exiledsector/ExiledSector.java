@@ -37,8 +37,8 @@ public final class ExiledSector {
         installing.forEach(domain -> domain.itemTypes().forEach(ItemTypes::register));
         installing.forEach(domain -> domain.itemDataRules().forEach(ItemDataIntegrity::registerRules));
         installing.forEach(domain -> domain.itemIconLooks().forEach(CargoIconLooks::register));
-        installing.forEach(domain -> domain.benchModes().forEach(BenchModes::register));
-        installing.forEach(domain -> domain.refitButtons().forEach(RefitButtonColumn::register));
+        installing.forEach(domain -> domain.benchModes().forEach(mode -> BenchModes.register(mode, domain::enabled)));
+        installing.forEach(domain -> domain.refitButtons().forEach(button -> RefitButtonColumn.register(button, domain::enabled)));
         ItemStore.absorbStacksWith(HullUpgradeData::absorbInto);
         installedDomains = installing;
     }
