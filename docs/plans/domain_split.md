@@ -10,7 +10,7 @@ Exiled Sector is one Maven module and one jar, with about 700 classes. It holds 
 
 Exiled Sector stays one mod with one launcher entry, shipping a core jar plus one jar per feature, and it depends on Exiled Lib. Each feature domain depends only on Exiled Lib and Exiled Sector Core, never on another feature domain. Each one is switched on or off in LunaLib without touching the others.
 
-Status: planned, nothing built. It builds on `module_toggles.md`, whose hull upgrade and star chart switches are built and whose skill tree switch is not. It also covers the station module share (`module_skill_tree.md`), built on branch `module_skill_tree`.
+Status: step 1 built (uncommitted on `parallel-work`), steps 2 to 9 planned. It builds on `module_toggles.md`, whose hull upgrade and star chart switches are built and whose skill tree switch is not. It also covers the station module share (`module_skill_tree.md`), built on branch `module_skill_tree` and merged into `parallel-work` on 2026-10-22, and the skill tree's faction fleets and Nexerelin compat (uncommitted on `parallel-work`).
 
 ## Decided
 
@@ -23,11 +23,13 @@ Status: planned, nothing built. It builds on `module_toggles.md`, whose hull upg
 
 | Part | Maven module | Jar | Owns |
 |---|---|---|---|
-| Exiled Lib | `exiled-lib` | `ExiledLib.jar` (in the `exiledLib` mod) | The stat effect library (`skills/skilleffect`, `modifiers`, `StatBaseline`, `DiminishingReturns`, `EffectTotals`, `DamageTakenCaps`, `ShipHullSizes`, `ShipFacts`), including each effect's station module class (`ModuleShare`, `ModuleShares`) and the module stat rebuild (`ModuleBoost`). The item framework (`Item`, `ItemStore`, `ItemType`, `ItemDefinition`, rolling, modifiers, implicits, corruption, crafting rules). `ModCsv`, `ModSettings`, `ModSettingsListener`, `Seeds`, `PlayerFleet`, `SaveData`, the `i18n` engine, `ui/util`, generic UI (`TooltipTable`, `VanillaText`, `Fade`, `SmoothZoom`), the domain framework and its extension points. |
+| Exiled Lib | `exiled-lib` | `ExiledLib.jar` (in the `exiledLib` mod) | The stat effect library (`skills/skilleffect`, `modifiers`, `StatBaseline`, `DiminishingReturns`, `EffectTotals`, `DamageTakenCaps`, `ShipHullSizes`, `ShipFacts`), including each effect's station module class (`ModuleShare`, `ModuleShares`) and the module stat rebuild (`ModuleBoost`). The item framework (`Item`, `ItemStore`, `ItemType`, `ItemDefinition`, rolling, modifiers, implicits, corruption, crafting rules). `ModCsv`, `ModSettings`, `ModSettingsListener`, `Seeds`, `PlayerFleet`, `SaveData`, the `i18n` engine, `ui/util`, generic UI (`TooltipTable`, `VanillaText`, `Fade`, `SmoothZoom`, `SkillTreePanelStyle`), `motes` and the combat compat the effects use (GraphicsLib glow, Second-in-Command), the domain framework and its extension points. |
 | Exiled Sector Core | `exiledsector-core` | `ExiledSector-Core.jar` | The `exiledSector_core` hull mod and its resolve, `ShipSkillData`, the loot listeners and `PlayerEngagementPipeline`, Nanite Feedstock and nanoswarms, the workbench shell, item storage and cargo icons, the refit button column and its station module tab guard (`RefitModuleTabs`), the settings page, the compat targets two domains use, `console/ConsoleShips`, the shared parts of `ui` and `effects`. |
-| Ship Skill Trees | `exiledsector-skill-tree` | `ExiledSector-SkillTree.jar` | `skills` (except the parts in Exiled Lib), `skills/*`, `ui/node`, `ui/refit` (tree parts), `ui/decoration`, `ui/belt`, `ui/exoship`, `ui/hyperspace`, `ui/inspect` (tree parts), `motes`, the station module share (`ModuleTreeShare`, `ModuleShareSetting`), `TaniaCompat`, the `Item` subclasses that socket into the tree (`Subroutine`, `WormholeAnchor`), Doctrine Archives and Modspec Caches. |
+| Ship Skill Trees | `exiledsector-skill-tree` | `ExiledSector-SkillTree.jar` | `skills` (except the parts in Exiled Lib), `skills/*`, `ui/node`, `ui/refit` (tree parts), `ui/decoration` (including the faction fleets and their battles), `ui/belt`, `ui/exoship`, `ui/hyperspace`, `ui/inspect` (tree parts), the station module share (`ModuleTreeShare`, `ModuleShareSetting`), `TaniaCompat`, `NexerelinCompat`, the `Item` subclasses that socket into the tree (`Subroutine`, `WormholeAnchor`), Doctrine Archives and Modspec Caches. |
 | Hull Upgrades | `exiledsector-hull-upgrades` | `ExiledSector-HullUpgrades.jar` | `ui/section`, `ui/socket` (section parts), `HullItem`, the `HullUpgrade*` classes and `ShipSections`. |
 | Star Charts | `exiledsector-star-charts` | `ExiledSector-StarCharts.jar` | `charts`, `ui/chart`, `StarChart` and the other `StarChart*` classes in `items`. |
+
+The table is a summary. `domain_split_classes.csv` assigns every class and wins where they differ.
 
 `Item` and the rest of the item framework live in Exiled Lib. Each feature domain owns only its own `Item` subclasses and the code that drops, shows or applies them.
 
@@ -53,6 +55,8 @@ The tangles that matter:
 - `effects/ItemLootListener`, `ItemSalvageListener`, `TechMiningItemListener` and `MarketItemStock` each roll tree loot, hull items and charts in one class. Battle chart tiers come from NPC tree levels (`ChartDrops.battleTier`).
 - Chart fleets get their difficulty from NPC trees (`NpcFleetLeveller`, `ChartTiers.fleetStrengthRangeFor`).
 - `ExiledSectorModPlugin` loads all four domains in one interleaved sequence, and `ui/ExiledSectorSettings` registers every LunaLib setting.
+- `compat/CompatChecks` lists every compat target, so core imports compat classes that belong to the domains: `TaniaCompat`, `NexerelinCompat` and `LostSectorCompat` (tree) and `VaultsOfKnowledgeCompat` (charts).
+- The faction fleets on the tree canvas (`FactionFleetRenderer`, `FleetBattle`) read vanilla faction relations, `NpcFactionVolumes` and Nexerelin alliances. All of that stays inside the tree.
 - `skills/ShipSkillData` is the per-ship record. It holds tree fields (nodes, level, XP), socket fields (`socketedItems`, `chargedItemIds`) and section fields (`frameworkPoints`, `unlockedSocketTypes`, `frameworkItemsBySocketType`). Every field is a string or number collection.
 - `items/ItemStore` is one class for both hull item storage and chart storage (`exiledSector_socketables`, `exiledSector_starCharts`).
 - `en.json` and `zh_CN.json` hold every domain's strings in one file per language.
@@ -73,7 +77,7 @@ Exiled Sector Core holds what at least two feature domains need but that is spec
 
 Exiled Lib defines these interfaces in `exiledlib.domain` (`exiledsector.domain` until step 7). Exiled Sector Core wires them up, and the feature domains implement them. Once all of them exist, no feature domain needs to import another.
 
-- `Domain`: id, `enabled()` (its LunaLib switch), `onApplicationLoad`, `onGameLoad`, `configureXStream`, `registerSettings` and `addCodexEntries`. Exiled Sector's mod plugin runs every domain's hooks in a fixed order. Discovery is an explicit list, since the sandbox forbids reflection (`ScriptSandboxRestrictionsTest`).
+- `Domain`: id, `enabled()` (its LunaLib switch), `onApplicationLoad`, `onGameLoad`, `configureXStream`, `registerSettings`, `addCodexEntries` and `compatTargets()`, which `CompatChecks` logs at startup instead of keeping its own list. Exiled Sector's mod plugin runs every domain's hooks in a fixed order. Discovery is an explicit list, since the sandbox forbids reflection (`ScriptSandboxRestrictionsTest`).
 - `ShipEffectSource`: contributes `SkillEffect` entries and fighter effects to a ship's resolve. The tree contributes allocated nodes, Subroutines, Doctrine and granted nodes. Hull Upgrades contributes section items, and Star Charts contributes fleet conditions. Diminishing returns stay joint across sources, as they are now. The resolve keeps each source's entries after diminishing returns, so the tree works out the station module share from its own nodes only. Section items and fleet conditions aren't shared onto modules, as now.
 - `LootSource`: rolls a domain's drops for a battle, salvage site, tech mining result or market stock. It gets one shared context (player level, defeated DP, site type).
 - `FleetDifficulty`: reports a defeated fleet's strength. Exiled Sector Core falls back to DP, and the tree reports NPC tree levels. Chart fleets and battle chart tiers use it, which also solves the knock-on effects of turning the tree off (see `module_toggles.md`).
@@ -87,8 +91,9 @@ Only Exiled Sector saves have to keep loading. A save loads as long as every per
 
 - Steps 1 to 6 keep every package, so moving a class to another Maven module changes nothing in saves.
 - Aliased classes (`ItemSaveAliases`, `ChartSaveAliases`, `ShipSkillData`) can move freely, as long as their alias registration moves with them.
-- Classes saved by full name with no alias need a legacy-name alias before they change package. That covers `CorruptionOutcome`, the `SkillTreeTemplateStore` contents, the `RelockedGates` value, `ChartCampaignPlugin`, and every intel and script added to the sector. XStream accepts the old dotted name as an alias, so `exiledsector.items.CorruptionOutcome` can map to `exiledlib.items.CorruptionOutcome`. Step 1 lists every such class.
-- A save fixture test, in the style of `ShipSkillDataSaveAliasTest`, loads a save written by today's build and must still load after every step.
+- No class is saved by its full name today. Every persisted root and every polymorphic element (ship records, item stores, items, rolled modifiers, the chart run, the objective intel, the wormhole plugin, the Gateway) has an alias. Enum and record fields such as `CorruptionOutcome` and `ModifierSlot` are written under their field names. The template store and relocked gates hold only strings, and `ChartCampaignPlugin` is transient. A class that later gets saved by full name needs an alias before it changes package.
+- `SaveFixtureTest` loads `src/test/resources/save_fixture.xml`, written by the build before step 2, and fails if the fixture or its resave names any class by its Java name. It must pass after every step.
+- Data files name classes by full name: the hull mod scripts, the special item plugins (`ItemPlugin`, `MaterialItemPlugin`, `HullUpgradeItemPlugin`, `StarChartItemPlugin`), the chart wormhole entity plugin, `ChartBattlePlugin` in `settings.json`, the Gateway industry, `MoteImpactSound` as a projectile's `onHitEffect`, and the console commands. A package rename has to update these strings too.
 - `ShipSkillData` stays one class in Exiled Sector Core. Its domain fields are only string and number collections, so it carries no domain types.
 - Persistent data keys don't change.
 - Package renames change code only, never string literals (`TranslationKeyReferencesTest` guards the translation keys).
@@ -97,19 +102,19 @@ Only Exiled Sector saves have to keep loading. A save loads as long as every per
 
 Steps 1 to 5 happen inside today's single Maven module, so the game keeps running after every step, and each step can be merged and tested on its own.
 
-### Step 1: assign every class
+### Step 1: assign every class (done, uncommitted on `parallel-work`)
 
-Write `docs/plans/domain_split_classes.csv` with a `class,part` row for every main class (lib, core, tree, hull upgrades or charts), and list the persisted classes saved by full name. Add `DomainBoundaryTest`, a plain JUnit test that scans source imports like `ScriptSandboxRestrictionsTest` does (no new build plugins). It fails on any of these imports:
+`docs/plans/domain_split_classes.csv` gives every main class one part: `lib`, `core`, `skill-tree`, `hull-upgrades` or `star-charts`. `DomainBoundaryTest` fails when a class is missing from the CSV, and when a class reaches across a boundary that isn't in `src/test/resources/domain_boundary_allowlist.txt`:
 
-- Exiled Lib importing anything from Exiled Sector.
-- Exiled Sector Core importing a feature domain.
-- One feature domain importing another.
+- Exiled Lib using anything from Exiled Sector.
+- Exiled Sector Core using a feature domain.
+- One feature domain using another.
 
-The test starts with an allowlist of today's crossings, and the steps below shrink that list to zero. Add the save fixture test here too.
+It reads imports and same-package class names from the source, like `ScriptSandboxRestrictionsTest`, with no build plugins. It also fails on allowlist entries that no longer cross, so the list only shrinks. It starts at 311 crossings, 153 of them core to the tree. The mod plugin has 56, and `ItemDataIntegrity`, `CargoIconLooks`, `SkillTreeHullMod`, the settings page and `ShipSkillData` have 13 to 17 each. A new class needs a CSV row. The save fixture test is described under Save compatibility.
 
 ### Step 2: domain framework and bootstrap
 
-Add `Domain`. Split `ExiledSectorModPlugin`'s loading sequence into core plus three domain classes, keeping today's order wherever one domain's load reads another's data. One example is `NodeGrantLinks.install`, which runs after the item definitions load. Split `ExiledSectorSettings` the same way. Each domain registers its own section, in today's page order (the Module Share setting goes in the tree's), so the LunaLib page looks the same.
+Add `Domain`. Split `ExiledSectorModPlugin`'s loading sequence into core plus three domain classes, keeping today's order wherever one domain's load reads another's data. One example is `NodeGrantLinks.install`, which runs after the item definitions load. Split `ExiledSectorSettings` the same way. Each domain registers its own section, in today's page order (the Module Share setting goes in the tree's), so the LunaLib page looks the same. Move each compat target into its domain's `compatTargets()`, keeping today's log order (`CompatChecksTest` pins it).
 
 ### Step 3: ship effects
 
@@ -138,7 +143,7 @@ Update `build-common.ps1`, `deploy.ps1` and `release.ps1` for the new jars and `
 
 ### Step 7: Exiled Lib as its own mod
 
-Create the `exiledLib` mod folder with its own `mod_info.json` (LazyLib, MagicLib and LunaLib as needed), version file, jar and string catalogue. Add `exiledLib` to Exiled Sector's dependencies. Move the library classes to `exiledlib.*` packages, registering a legacy-name alias for every persisted class that moves, and run the save fixture test. Deploy writes both mod folders, and the release zip holds both, so players still download one file.
+Create the `exiledLib` mod folder with its own `mod_info.json` (LazyLib, MagicLib and LunaLib as needed), version file, jar and string catalogue. Add `exiledLib` to Exiled Sector's dependencies. Move the library classes to `exiledlib.*` packages, registering a legacy-name alias for any persisted class saved by full name, updating the class names in data files, and run the save fixture test. Deploy writes both mod folders, and the release zip holds both, so players still download one file.
 
 ### Step 8: switches
 
