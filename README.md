@@ -63,7 +63,7 @@ Running Random Assortment of Things, Nightcross Armory, Navarchy of Tania or LOS
 
 Nobody has designed a new hull since the Collapse, and the Domain's blueprints sit behind DRM older than your grandmother's grandmother. So your crew looks at other people's ships, decides they had some good ideas, and welds those ideas onto yours. 
 
-From level 15, Hull Upgrades turn up in wrecks and salvage. Install one, choose a section of the ship, and that section takes hull items of its own.
+Once you reach level 15, Hull Upgrades turn up in wrecks and salvage. Install one, choose a section of the ship, and that section takes hull items of its own.
 
 <details>
 <summary>Installing a Hull Upgrade and unlocking a section</summary>
@@ -211,6 +211,13 @@ Every number in this section can be changed in LunaLib settings.
 </details>
 
 <details>
+<summary><b>Do I have to build a tree for every ship?</b></summary>
+
+Yes, but you don't have to click through every one. In the skill tree screen, "Save as new template" saves a ship's nodes and the order they were taken in. "Load template" puts that plan on another ship with the same starting point, and with Auto-allocate on, every level-up takes the next template node for you. Template mode lets you plan a template without spending any points. Nodes that cost items are always left for you to allocate.
+
+</details>
+
+<details>
 <summary><b>What's the difference between "increases" and "more"?</b></summary>
 
 They're two different kinds of modifier, and they stack very differently. If you've played Path of Exile, it's a similar convention.
@@ -247,6 +254,8 @@ The mirror stops at a cap. Pirates never pass 15 nodes, faction fleets 25 and AI
 
 Star Chart fleets ignore your fleet when sizing their trees. Tier 1 ships get 26 to 29 nodes, climbing to 47 to 50 at tier 15, and warden fleets get one more. Higher tiers also bring more and larger fleets, more and better officers and better-quality ships, before the chart's own modifiers add more. Chart fleets have no cap, so if you turn the bonus multiplier on it can reach its full maximum there. All of this, the multiplier included, can be tuned on the **NPC Scaling** tab in LunaLib settings.
 
+NPC ships don't all build the same way. Each faction leans towards its own themes: the Hegemony towards armour and ballistics, Tri-Tachyon towards flux, energy and phase, pirates towards speed and missiles. A ship's own system and defence steer it too. Bonuses to armour, hull, flux, speed and range only partly count once they pass a threshold, on your ships and theirs, so each bonus past the threshold adds less. To skip NPC trees entirely, switch them off on the NPC Scaling tab.
+
 </details>
 
 <details>
@@ -261,6 +270,34 @@ Wormholes come in linked pairs. Allocate one end and the other end comes free. I
 Hullmod nodes unlock when you learn the matching hullmod blueprint. Neural Interface also unlocks if you have the relevant Neural Link skill.
 
 If you'd rather skip all of this, LunaLib settings can reveal hidden nodes, or switch off each kind of unlock condition.
+
+</details>
+
+<details>
+<summary><b>When do Hull Upgrades and Star Charts start?</b></summary>
+
+Exiled Sector is meant as an endgame expansion, so the extra modules wait until the skill tree has had time to sink in. Hull Upgrades and unique hull items start dropping once your character (not your ship) reaches level 15. Star Charts need a Wormhole Gateway, which you can only build once the Janus Device gives you access to the Gate network. With Ashes of the Domain installed, you unlock it on the Vaults of Knowledge tree instead. Hull Upgrades can be switched off in LunaLib settings.
+
+</details>
+
+<details>
+<summary><b>Does it work with faction mods?</b></summary>
+
+Most of it should just work. Nodes that copy a hull mod place the real hull mod on the ship (see Compatibility), so other mods that check for it, such as Second-in-Command, still work. Nexerelin fleets get skill trees like any other NPC fleet. Random Assortment of Things, Nightcross Armory and LOST_SECTOR each have a volume of their own on the tree, unlocked by playing their content. Exiled Sector's loot also drops in other mods' loot pools, such as Industrial.evolution and RAT's Abyss. Mods I haven't tested probably work. If one doesn't, please report it.
+
+</details>
+
+<details>
+<summary><b>Can I add my favourite faction to the tree?</b></summary>
+
+Not easily yet. A volume needs placement, circular icons, thematic descriptions, new effect code and a wormhole anchor, and the existing ones have bespoke visuals I'd like to keep. The repo has an editor in `tools/editor`, but the format will change before 1.0. Until then, suggestions and pull requests are welcome, and more faction volumes are coming as mod authors give permission.
+
+</details>
+
+<details>
+<summary><b>Can I update mid-run?</b></summary>
+
+Every release on GitHub ends with "Save compatible." or "Not save compatible." If you update, LunaLib keeps your old values for any setting I've rebalanced. Reset the Exiled Sector settings to their defaults in LunaLib to pick up the new ones. When in doubt, load your save, look around, and quit without saving.
 
 </details>
 

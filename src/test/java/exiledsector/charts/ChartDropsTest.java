@@ -109,7 +109,6 @@ class ChartDropsTest {
             assertTrue(rule.chance() > 0f, source.id());
             assertEquals(source.insideSystem(), rule.currencyChance() > 0f, source.id());
             if (!source.insideSystem()) {
-                assertTrue(rule.chance() <= 0.1f, source.id() + " must stay rare");
                 assertTrue(rule.maxTier() <= 6, source.id() + " must leave the high tiers to the sustain loop");
                 assertEquals(0f, rule.tierUpChance(), source.id());
             }
@@ -149,12 +148,12 @@ class ChartDropsTest {
     }
 
     @Test
-    void theRewardMultiplierScalesHowManyChartsDropUpToTheCap() throws Exception {
+    void theRewardMultiplierScalesHowManyChartsDropWithoutACap() throws Exception {
         ChartDrops.register(new JSONArray().put(rule("run_reward", 1f, 0.25f, 0f, 0f)));
 
         assertEquals(1.25, averageCharts(1f), 0.05);
         assertEquals(2.5, averageCharts(2f), 0.05);
-        assertEquals(ChartDrops.MAX_CHARTS_PER_DROP, averageCharts(10f), 0.0);
+        assertEquals(11.0, averageCharts(10f), 0.0);
         assertEquals(0.0, averageCharts(0f), 0.0);
     }
 
@@ -209,8 +208,8 @@ class ChartDropsTest {
     void outsideSystemsTheStrengthOnlyGatesTheDropAndSalvageAndTechMiningStayAtTierOne() throws Exception {
         ChartDrops.register(ChartContentDataTest.csvRows(ChartDrops.PATH));
 
-        assertEquals(ChartDrops.NO_TIER, ChartDrops.tierForStrength(ChartDrops.Source.BATTLE, 100f));
-        assertEquals(1, ChartDrops.tierForStrength(ChartDrops.Source.BATTLE, 150f));
+        assertEquals(ChartDrops.NO_TIER, ChartDrops.tierForStrength(ChartDrops.Source.BATTLE, 0f));
+        assertEquals(1, ChartDrops.tierForStrength(ChartDrops.Source.BATTLE, 1f));
         assertEquals(ChartDrops.NO_TIER, ChartDrops.tierForStrength(ChartDrops.Source.SALVAGE, 4f));
         assertEquals(1, ChartDrops.tierForStrength(ChartDrops.Source.SALVAGE, 5f));
         assertEquals(1, ChartDrops.tierForStrength(ChartDrops.Source.SALVAGE, 60f));
@@ -224,7 +223,7 @@ class ChartDropsTest {
         ChartDrops.register(ChartContentDataTest.csvRows(ChartDrops.PATH));
         ChartTiers.register(ChartContentDataTest.csvRows(ChartTiers.PATH));
         try {
-            assertEquals(ChartDrops.NO_TIER, ChartDrops.battleTier(100f, 40));
+            assertEquals(ChartDrops.NO_TIER, ChartDrops.battleTier(0f, 40));
             assertEquals(1, ChartDrops.battleTier(400f, 0));
             assertEquals(1, ChartDrops.battleTier(400f, 15));
             assertEquals(1, ChartDrops.battleTier(400f, 25));
@@ -232,6 +231,29 @@ class ChartDropsTest {
             assertEquals(7, ChartDrops.battleTier(400f, 35));
             assertEquals(6, tierOf(ChartDrops.roll(ChartDrops.Source.BATTLE, ChartDrops.battleTier(400f, 35), 100f, new Random(1L),
                     anyUnique()).charts().get(0)));
+        } finally {
+            ChartTiers.resetForTests();
+        }
+    }
+
+    @Test
+    void battleChartsScaleWithTheDifficultyScaledDeploymentPointsDefeated() throws Exception {
+        ChartDrops.register(ChartContentDataTest.csvRows(ChartDrops.PATH));
+        ChartTiers.register(ChartContentDataTest.csvRows(ChartTiers.PATH));
+        try {
+            LocationAPI outside = mock(LocationAPI.class);
+            for (int roll = 0; roll < 50; roll++) {
+                assertEquals(1, ChartDrops.forBattle(sector, outside, 500f, 0, new Random(roll)).charts().size());
+                assertEquals(2, ChartDrops.forBattle(sector, outside, 1000f, 0, new Random(roll)).charts().size());
+                assertEquals(10, ChartDrops.forBattle(sector, outside, 5000f, 0, new Random(roll)).charts().size());
+            }
+            Random random = new Random(3L);
+            int trials = 4000;
+            int drops = 0;
+            for (int roll = 0; roll < trials; roll++) {
+                drops += ChartDrops.forBattle(sector, outside, 100f, 0, random).charts().size();
+            }
+            assertEquals(0.2f, drops / (float) trials, 0.03f);
         } finally {
             ChartTiers.resetForTests();
         }

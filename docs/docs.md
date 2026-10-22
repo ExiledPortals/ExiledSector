@@ -140,9 +140,9 @@ because battles merge fleets. Chart fleets are uncapped.
 ### Chart fleets
 
 Chart ships roll a level in their tier's `level_min` to `level_max` from `star_chart_tiers.csv`, scaled by
-Fleet Strength %, and wardens roll one higher. Outside charts, a won battle that meets `chart_drops.csv`'s
-`min_strength` drops a chart of the highest tier whose `level_min` the strongest defeated NPC reached
-(`ChartDrops.battleTier`).
+Fleet Strength %, and wardens roll one higher. Outside charts, a won battle's chart chance is `chart_drops.csv`'s
+battle chance per 100 enemy deployment points defeated, scaled by battle difficulty, at the highest tier whose
+`level_min` the strongest defeated NPC reached (`ChartDrops.forBattle`).
 
 ## Modspec caches
 

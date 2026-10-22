@@ -57,6 +57,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         private boolean playerWon;
         private float partsEarned;
         private float deploymentPointsDefeated;
+        private float chartStrengthDefeated;
         private int highestDefeatedNpcLevel;
 
         BattleItemDrops.Battle battleItems() {
@@ -129,6 +130,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         if (defeatedDp > 0f) {
             pendingLoot.partsEarned += defeatedDp * ItemDrops.battlePartsPerDeploymentPoint() * difficultyMultiplier;
             pendingLoot.deploymentPointsDefeated += defeatedDp;
+            pendingLoot.chartStrengthDefeated += defeatedDp * difficultyMultiplier;
         }
     }
 
@@ -179,7 +181,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         ItemDrops.SiteLoot chartLoot = ItemDrops.SiteLoot.NONE;
         if (pendingLoot.playerWon) {
             try {
-                ChartDrops.Loot battleLoot = ChartDrops.forBattle(sector, playerFleet.getContainingLocation(), pendingLoot.deploymentPointsDefeated,
+                ChartDrops.Loot battleLoot = ChartDrops.forBattle(sector, playerFleet.getContainingLocation(), pendingLoot.chartStrengthDefeated,
                         pendingLoot.highestDefeatedNpcLevel, chartRandom);
                 chartLoot = chartLoot.plus(battleLoot.charts(), List.of(), battleLoot.currencies());
             } catch (RuntimeException e) {

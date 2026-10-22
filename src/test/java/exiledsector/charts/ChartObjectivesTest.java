@@ -83,7 +83,7 @@ class ChartObjectivesTest {
     }
 
     @Test
-    void destroyingEveryGuardianCompletesClearAndPaysTheRewardOnce() {
+    void destroyingEveryGuardianCompletesClearAndGrantsTheRewardOnce() {
         ChartRun run = openRun(ChartObjective.CLEAR, List.of("g1", "g2"));
 
         assertTrue(ChartObjectives.fleetGone(sector, fleet("g1", true), FleetDespawnReason.DESTROYED_BY_BATTLE));

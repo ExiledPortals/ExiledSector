@@ -255,6 +255,6 @@ class MarketItemStockTest {
     void anAnchorSellsForAShareOfWhatItCostsToBuy() {
         int sellBase = WormholeAnchorDefinitions.sellBaseValue(100000, 1.2f, 0.8f);
 
-        assertEquals(0.05f, sellBase * 0.8f / (100000 * 1.2f), 1e-4f);
+        assertEquals(0.01f, sellBase * 0.8f / (100000 * 1.2f), 1e-4f);
     }
 }

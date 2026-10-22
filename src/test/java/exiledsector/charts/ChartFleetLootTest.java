@@ -107,7 +107,7 @@ class ChartFleetLootTest {
     }
 
     @Test
-    void aFleetBeatenOverSeveralBattlesPaysOutOnceInTotal() {
+    void aFleetBeatenOverSeveralBattlesDropsItsLootOnceInTotal() {
         CampaignFleetAPI fleet = ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f);
 
         assertEquals(0.4f, ChartFleetLoot.claimShare(fleet, 40f), 1e-6f);
@@ -196,7 +196,7 @@ class ChartFleetLootTest {
             when(drones.getMemoryWithoutUpdate()).thenReturn(wipedByVanilla);
             assertTrue(ChartFleetLoot.adoptDefender(drones, system));
             Mockito.verify(drones, Mockito.times(1)).addDropRandom(Mockito.any(SalvageEntityGenDataSpec.DropData.class));
-            assertEquals(1, chartCount(ChartFleetLoot.roll(sector, drones, 40f, new Random(3L))), "a rematch pays only the half not yet paid");
+            assertEquals(1, chartCount(ChartFleetLoot.roll(sector, drones, 40f, new Random(3L))), "a rematch drops only the half not yet dropped");
             assertTrue(ChartFleetLoot.roll(sector, drones, 40f, new Random(3L)).isEmpty());
         } finally {
             ChartLoot.clear();
