@@ -24,6 +24,7 @@ exiledsector.charts.ChartEffects,star-charts
 exiledsector.charts.ChartFaction,star-charts
 exiledsector.charts.ChartFactionEffect,star-charts
 exiledsector.charts.ChartFactions,star-charts
+exiledsector.charts.ChartFleetConditionSource,star-charts
 exiledsector.charts.ChartFleetConditions,star-charts
 exiledsector.charts.ChartFleetLoot,star-charts
 exiledsector.charts.ChartFleetSpread,star-charts
@@ -122,6 +123,7 @@ exiledsector.console.ResetShipLevelCommand,skill-tree
 exiledsector.console.ShowcaseLootCommand,core
 exiledsector.console.UnlockAreasCommand,skill-tree
 exiledsector.domain.Domain,lib
+exiledsector.domain.ExiledSectorDomain,core
 exiledsector.effects.BattleDifficulty,skill-tree
 exiledsector.effects.CombatXpAward,skill-tree
 exiledsector.effects.DoctrineRevertConflicts,skill-tree
@@ -153,10 +155,14 @@ exiledsector.effects.PlayerShipFacts,skill-tree
 exiledsector.effects.PlayerTreePower,skill-tree
 exiledsector.effects.ResolvedTree,core
 exiledsector.effects.ShipCombatPlan,skill-tree
+exiledsector.effects.ShipEffectContext,core
+exiledsector.effects.ShipEffectSource,core
+exiledsector.effects.ShipEffectSources,core
 exiledsector.effects.ShipLevelScript,skill-tree
 exiledsector.effects.ShipTreeSync,skill-tree
 exiledsector.effects.SkillConflictWarningHullMod,skill-tree
 exiledsector.effects.SkillConflictWarnings,skill-tree
+exiledsector.effects.SkillTreeEffectSource,skill-tree
 exiledsector.effects.SkillTreeHullMod,core
 exiledsector.effects.SkillTreeInstaller,skill-tree
 exiledsector.effects.SkillTreeOpSpentHullMod,skill-tree
@@ -198,6 +204,7 @@ exiledsector.items.FactionFleetDrops,skill-tree
 exiledsector.items.FrozenName,lib
 exiledsector.items.HullItem,hull-upgrades
 exiledsector.items.HullUpgradeData,hull-upgrades
+exiledsector.items.HullUpgradeEffectSource,hull-upgrades
 exiledsector.items.HullUpgradeItemPlugin,hull-upgrades
 exiledsector.items.HullUpgradeRoller,hull-upgrades
 exiledsector.items.HullUpgradeRules,hull-upgrades
@@ -303,6 +310,7 @@ exiledsector.skills.DamageTakenCaps,lib
 exiledsector.skills.DescriptionLine,lib
 exiledsector.skills.DiminishedStat,lib
 exiledsector.skills.DiminishingReturns,lib
+exiledsector.skills.EffectContribution,lib
 exiledsector.skills.EffectTotals,lib
 exiledsector.skills.ExoshipNodes,skill-tree
 exiledsector.skills.FittedShipProfile,skill-tree
@@ -316,7 +324,7 @@ exiledsector.skills.NodeDescription,skill-tree
 exiledsector.skills.NodeEligibility,skill-tree
 exiledsector.skills.NodeGrants,skill-tree
 exiledsector.skills.NodeReplacements,skill-tree
-exiledsector.skills.NpcBonusScaling,skill-tree
+exiledsector.skills.NpcBonusScaling,lib
 exiledsector.skills.PhantomHullModStatus,skill-tree
 exiledsector.skills.ReleasedNodes,skill-tree
 exiledsector.skills.RespecPlan,skill-tree

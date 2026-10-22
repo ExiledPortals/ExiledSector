@@ -22,11 +22,11 @@ final class ModuleTreeShare implements AdvanceableListener {
     static final String MOD_ID_PREFIX = "exiledSector_moduleShare_";
 
     private final ShipAPI parentShip;
-    private final List<EffectTotals.NodeEffects> parentNodeEffects;
+    private final List<SkillTreeEffectSource.NodeEffects> parentNodeEffects;
     private final HullSize parentHullSize;
     private boolean shared;
 
-    ModuleTreeShare(ShipAPI parentShip, List<EffectTotals.NodeEffects> parentNodeEffects, HullSize parentHullSize) {
+    ModuleTreeShare(ShipAPI parentShip, List<SkillTreeEffectSource.NodeEffects> parentNodeEffects, HullSize parentHullSize) {
         this.parentShip = parentShip;
         this.parentNodeEffects = parentNodeEffects;
         this.parentHullSize = parentHullSize;
@@ -39,7 +39,7 @@ final class ModuleTreeShare implements AdvanceableListener {
         }
         List<ModuleTreeShare> existing = ship.getListeners(ModuleTreeShare.class);
         if (existing == null || existing.isEmpty()) {
-            ship.addListener(new ModuleTreeShare(ship, resolvedTree.nodeEffects(), resolvedTree.hullSize()));
+            ship.addListener(new ModuleTreeShare(ship, SkillTreeEffectSource.nodeEffects(resolvedTree), resolvedTree.hullSize()));
         }
     }
 
@@ -63,10 +63,10 @@ final class ModuleTreeShare implements AdvanceableListener {
         }
     }
 
-    static Map<SkillEffect, Float> sharedTotals(List<EffectTotals.NodeEffects> nodeEffects, HullSize hullSize, ShipVariantAPI moduleVariant,
+    static Map<SkillEffect, Float> sharedTotals(List<SkillTreeEffectSource.NodeEffects> nodeEffects, HullSize hullSize, ShipVariantAPI moduleVariant,
                                                 float share) {
         Map<SkillEffect, Float> sums = new LinkedHashMap<>();
-        for (EffectTotals.NodeEffects node : nodeEffects) {
+        for (SkillTreeEffectSource.NodeEffects node : nodeEffects) {
             if (!node.node().effectiveType().sharesWithModules(hullSize) || hasOwnCopy(moduleVariant, node.node())) {
                 continue;
             }

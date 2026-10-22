@@ -2,7 +2,8 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
 import exiledsector.ModSettingsListener;
-import exiledsector.domain.Domain;
+import exiledsector.domain.ExiledSectorDomain;
+import exiledsector.effects.ShipEffectSource;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipSections;
 import exiledsector.ui.ExiledSectorSettings;
@@ -13,7 +14,12 @@ import java.util.List;
 
 import static exiledsector.ExiledSectorModPlugin.MOD_ID;
 
-public final class HullUpgradesDomain implements Domain {
+public final class HullUpgradesDomain implements ExiledSectorDomain {
+
+    @Override
+    public List<ShipEffectSource> shipEffectSources() {
+        return List.of(HullUpgradeEffectSource.INSTANCE);
+    }
 
     @Override
     public void onApplicationLoad() {

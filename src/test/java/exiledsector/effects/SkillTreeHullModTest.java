@@ -615,7 +615,7 @@ class SkillTreeHullModTest {
 
     private static boolean syncPhantoms(FleetMemberAPI member, ShipVariantAPI variant) {
         List<AllocatedNode> allocatedNodes = AllocatedNode.of(SkillDataResolver.resolve(member, variant));
-        return PhantomInstallSync.sync(ResolvedTree.phantomHullModIdsOf(allocatedNodes), variant);
+        return PhantomInstallSync.sync(SkillTreeEffectSource.phantomHullModIdsOf(allocatedNodes), variant);
     }
 
     private static ShipVariantAPI variantWithTreeInstalledMilitarizedSubsystems(boolean permanent) {

@@ -1,6 +1,7 @@
 package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.effects.SkillTreeEffectSource;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.FluxSkillEffect;
 import exiledsector.skills.skilleffect.ScopedWeaponEffect;
@@ -74,7 +75,7 @@ class DiminishingReturnsTest {
     }
 
     private EffectTotals totals(DiminishingReturns.Config config) {
-        return EffectTotals.of(data, AllocatedNode.of(data), HullSize.CRUISER, 1f, List.of(), CRUISER, config);
+        return EffectTotals.of(SkillTreeEffectSource.contributions(data, HullSize.CRUISER), 1f, CRUISER, config);
     }
 
     @Test
@@ -173,7 +174,7 @@ class DiminishingReturnsTest {
         allocate("armour_1", armour);
         allocate("armour_2", armour);
 
-        EffectTotals totals = EffectTotals.of(data, AllocatedNode.of(data), HullSize.CRUISER, 1f);
+        EffectTotals totals = EffectTotals.of(SkillTreeEffectSource.contributions(data, HullSize.CRUISER), 1f);
 
         assertEquals(160f, totals.groups().get(0).totals().get(DefenseSkillEffect.ARMOR_PERCENT), 0.001f);
     }

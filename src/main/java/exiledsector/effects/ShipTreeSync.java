@@ -101,15 +101,11 @@ public final class ShipTreeSync {
         if (shipData == null) return false;
 
         List<AllocatedNode> allocatedNodes = AllocatedNode.of(shipData);
-        return syncVariant(member, variant, allocatedNodes, ResolvedTree.phantomHullModIdsOf(allocatedNodes));
+        return syncVariant(member, variant, allocatedNodes, SkillTreeEffectSource.phantomHullModIdsOf(allocatedNodes));
     }
 
-    static void syncVariant(FleetMemberAPI member, ShipVariantAPI variant, ResolvedTree resolvedTree) {
-        syncVariant(member, variant, resolvedTree.allocated(), resolvedTree.phantomHullModIds());
-    }
-
-    private static boolean syncVariant(FleetMemberAPI member, ShipVariantAPI variant, List<AllocatedNode> allocatedNodes,
-                                       Set<String> phantomHullModIds) {
+    static boolean syncVariant(FleetMemberAPI member, ShipVariantAPI variant, List<AllocatedNode> allocatedNodes,
+                               Set<String> phantomHullModIds) {
         boolean isNpcTree = SkillDataResolver.isNpcTree(variant);
         if (!isNpcTree) {
             SkillDataResolver.syncShipTag(member, variant);

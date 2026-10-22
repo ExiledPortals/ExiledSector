@@ -16,7 +16,7 @@ import exiledsector.compat.NightcrossCompat;
 import exiledsector.compat.NightcrossUnlocks;
 import exiledsector.compat.RandomAssortmentCompat;
 import exiledsector.compat.TaniaCompat;
-import exiledsector.domain.Domain;
+import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.effects.HyperNavBeaconGrant;
 import exiledsector.effects.NpcBonusScale;
 import exiledsector.effects.NpcFleetDialogListener;
@@ -27,6 +27,8 @@ import exiledsector.effects.PhantomConflictWatch;
 import exiledsector.effects.PhantomHullMods;
 import exiledsector.effects.PlayerTreePower;
 import exiledsector.effects.SkillConflictWarningHullMod;
+import exiledsector.effects.ShipEffectSource;
+import exiledsector.effects.SkillTreeEffectSource;
 import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.SpecLocalisation;
@@ -67,9 +69,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-public final class SkillTreeDomain implements Domain {
+public final class SkillTreeDomain implements ExiledSectorDomain {
 
     public static final List<String> LOCALISED_HULLMODS = List.of(SkillConflictWarningHullMod.ID);
+
+    @Override
+    public List<ShipEffectSource> shipEffectSources() {
+        return List.of(SkillTreeEffectSource.INSTANCE);
+    }
 
     @Override
     public void onApplicationLoad() {

@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.tags.ShipProfile;
+import exiledsector.items.HullUpgradeEffectSource;
 import exiledsector.items.NpcItems;
 import exiledsector.items.ItemDefinitions;
 import org.json.JSONArray;
@@ -62,12 +63,12 @@ class ShipSectionsTest {
     @Test
     void everySocketedSectionItemCountsOnceWhenItsSocketIsActive() {
         List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
-        EffectTotals totals = EffectTotals.of(shipData, List.of(), HullSize.CRUISER, 1f, slots);
+        EffectTotals totals = EffectTotals.of(HullUpgradeEffectSource.contributions(shipData, slots, HullSize.CRUISER), 1f);
 
         assertEquals(2, slots.size());
         assertTrue(slots.stream().allMatch(ShipSections.UnlockedSection::active));
         assertEquals(15f, hullPercent(totals), 1e-4f);
-        assertEquals(2, totals.sectionEffects().size());
+        assertEquals(2, totals.contributions().size());
     }
 
     @Test
@@ -77,7 +78,7 @@ class ShipSectionsTest {
         assertTrue(slots.get(0).active());
         assertFalse(slots.get(1).active());
         assertEquals("req_shields", slots.get(1).unmetRequirement());
-        assertEquals(5f, hullPercent(EffectTotals.of(shipData, List.of(), HullSize.CRUISER, 1f, slots)), 1e-4f);
+        assertEquals(5f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(shipData, slots, HullSize.CRUISER), 1f)), 1e-4f);
     }
 
     @Test
@@ -104,7 +105,7 @@ class ShipSectionsTest {
         List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
 
         assertFalse(slots.get(0).appliesItem());
-        assertEquals(10f, hullPercent(EffectTotals.of(shipData, List.of(), HullSize.CRUISER, 1f, slots)), 1e-4f);
+        assertEquals(10f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(shipData, slots, HullSize.CRUISER), 1f)), 1e-4f);
     }
 
     @Test
@@ -112,7 +113,7 @@ class ShipSectionsTest {
         shipData.markNpcBuild();
         List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
 
-        assertEquals(30f, hullPercent(EffectTotals.of(shipData, List.of(), HullSize.CRUISER, 2f, slots)), 1e-4f);
+        assertEquals(30f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(shipData, slots, HullSize.CRUISER), 2f)), 1e-4f);
     }
 
     @Test

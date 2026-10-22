@@ -71,9 +71,9 @@ class NpcBonusScalingTest {
                 new SkillTypeEffect(DefenseSkillEffect.ARMOR_PERCENT, 30f),
                 new SkillTypeEffect(DefenseSkillEffect.ARMOR_PERCENT, -10f));
 
-        Map<String, Float> magnitudes = magnitudesByModId(ResolvedTree.of(shipData, HullSize.CRUISER, 3f), DefenseSkillEffect.ARMOR_PERCENT);
+        Map<String, Float> magnitudes = magnitudesByModId(ResolvedTrees.of(shipData, HullSize.CRUISER, 3f), DefenseSkillEffect.ARMOR_PERCENT);
 
-        assertEquals(30f, magnitude(ResolvedTree.of(shipData, HullSize.CRUISER, 3f), DefenseSkillEffect.HULL_PERCENT), TOLERANCE);
+        assertEquals(30f, magnitude(ResolvedTrees.of(shipData, HullSize.CRUISER, 3f), DefenseSkillEffect.HULL_PERCENT), TOLERANCE);
         assertEquals(Map.of("exiledSector_skill_node_2_ARMOR_PERCENT", 90f, "exiledSector_skill_node_3_ARMOR_PERCENT", -10f), magnitudes);
     }
 
@@ -83,7 +83,7 @@ class NpcBonusScalingTest {
                 new SkillTypeEffect(DefenseSkillEffect.HULL_MULT, 5f),
                 new SkillTypeEffect(DefenseSkillEffect.HULL_MULT, 5f));
 
-        assertEquals(30f, magnitude(ResolvedTree.of(shipData, HullSize.CRUISER, 3f), DefenseSkillEffect.HULL_MULT), TOLERANCE);
+        assertEquals(30f, magnitude(ResolvedTrees.of(shipData, HullSize.CRUISER, 3f), DefenseSkillEffect.HULL_MULT), TOLERANCE);
     }
 
     @Test
@@ -92,7 +92,7 @@ class NpcBonusScalingTest {
                 new SkillTypeEffect(DefenseSkillEffect.ENERGY_DAMAGE_TAKEN_PERCENT, -20f),
                 new SkillTypeEffect(DefenseSkillEffect.ENERGY_DAMAGE_TAKEN_PERCENT, -20f));
 
-        float scaledTotal = magnitudesByModId(ResolvedTree.of(shipData, HullSize.CRUISER, 3f), DefenseSkillEffect.ENERGY_DAMAGE_TAKEN_PERCENT)
+        float scaledTotal = magnitudesByModId(ResolvedTrees.of(shipData, HullSize.CRUISER, 3f), DefenseSkillEffect.ENERGY_DAMAGE_TAKEN_PERCENT)
                 .values().stream().reduce(0f, Float::sum);
 
         assertEquals(-100f * (1f - (float) Math.pow(0.6f, 3)), scaledTotal, TOLERANCE);
@@ -106,7 +106,7 @@ class NpcBonusScalingTest {
 
         float scaledReduction = -100f * (1f - (float) Math.pow(0.75f, 3));
 
-        assertEquals(scaledReduction + 15f, magnitude(ResolvedTree.of(shipData, HullSize.CRUISER, 3f), DefenseSkillEffect.REPAIR_TIME_MULT), TOLERANCE);
+        assertEquals(scaledReduction + 15f, magnitude(ResolvedTrees.of(shipData, HullSize.CRUISER, 3f), DefenseSkillEffect.REPAIR_TIME_MULT), TOLERANCE);
         assertTrue(DefenseSkillEffect.REPAIR_TIME_MULT.lowerIsBetter());
         assertFalse(DefenseSkillEffect.REPAIR_TIME_MULT.invertsDescriptionColours());
     }
@@ -117,7 +117,7 @@ class NpcBonusScalingTest {
                 new SkillTypeEffect(DefenseSkillEffect.ENERGY_DAMAGE_TAKEN_PERCENT, -30f),
                 new SkillTypeEffect(DefenseSkillEffect.ENERGY_DAMAGE_TAKEN_PERCENT, -30f));
 
-        Map<String, Float> magnitudes = magnitudesByModId(ResolvedTree.of(shipData, HullSize.CRUISER, 3f), DefenseSkillEffect.ENERGY_DAMAGE_TAKEN_PERCENT);
+        Map<String, Float> magnitudes = magnitudesByModId(ResolvedTrees.of(shipData, HullSize.CRUISER, 3f), DefenseSkillEffect.ENERGY_DAMAGE_TAKEN_PERCENT);
 
         assertEquals(Map.of("exiledSector_skillCapped_ENERGY_DAMAGE_TAKEN_PERCENT", -80f), magnitudes);
     }
@@ -128,7 +128,7 @@ class NpcBonusScalingTest {
         allocate(shipData, List.of(), new SkillTypeEffect(LogisticsSkillEffect.BURN_LEVEL_FLAT, 1f));
         allocate(shipData, List.of(), new SkillTypeEffect(CombatSkillEffect.DISINTEGRATION_ARMOR_DAMAGE_PERCENT, 20f));
 
-        ResolvedTree resolvedTree = ResolvedTree.of(shipData, HullSize.CRUISER, 3f);
+        ResolvedTree resolvedTree = ResolvedTrees.of(shipData, HullSize.CRUISER, 3f);
 
         assertEquals(10f, magnitude(resolvedTree, DefenseSkillEffect.HULL_PERCENT), TOLERANCE);
         assertEquals(1f, magnitude(resolvedTree, LogisticsSkillEffect.BURN_LEVEL_FLAT), TOLERANCE);
@@ -141,7 +141,7 @@ class NpcBonusScalingTest {
         SkillEffect rangeThreshold = SkillEffect.byName("WEAPON_RANGE_THRESHOLD_FLAT");
         ShipSkillData shipData = shipWith(List.of(), new SkillTypeEffect(sensorStrength, 50f), new SkillTypeEffect(rangeThreshold, 450f));
 
-        ResolvedTree resolvedTree = ResolvedTree.of(shipData, HullSize.CRUISER, 3f);
+        ResolvedTree resolvedTree = ResolvedTrees.of(shipData, HullSize.CRUISER, 3f);
 
         assertEquals(50f, magnitude(resolvedTree, sensorStrength), TOLERANCE);
         assertEquals(450f, magnitude(resolvedTree, rangeThreshold), TOLERANCE);
@@ -151,7 +151,7 @@ class NpcBonusScalingTest {
     void aScaleOfOneLeavesEveryMagnitudeUnchanged() {
         ShipSkillData shipData = shipWith(List.of(), new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f));
 
-        assertEquals(10f, magnitude(ResolvedTree.of(shipData, HullSize.CRUISER, 1f), DefenseSkillEffect.HULL_PERCENT), TOLERANCE);
+        assertEquals(10f, magnitude(ResolvedTrees.of(shipData, HullSize.CRUISER, 1f), DefenseSkillEffect.HULL_PERCENT), TOLERANCE);
     }
 
     @Test

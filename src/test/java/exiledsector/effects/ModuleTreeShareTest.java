@@ -8,7 +8,6 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import exiledsector.skills.AllocatedNode;
-import exiledsector.skills.EffectTotals;
 import exiledsector.skills.ModuleShareOverride;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -61,15 +60,15 @@ class ModuleTreeShareTest {
         return new SkillTypeEffect(SkillEffect.byName(name), magnitude);
     }
 
-    private static EffectTotals.NodeEffects node(SkillType.Builder type, SkillTypeEffect... resolvedEffects) {
+    private static SkillTreeEffectSource.NodeEffects node(SkillType.Builder type, SkillTypeEffect... resolvedEffects) {
         SkillType skillType = type.effects(List.of(resolvedEffects)).build();
         SkillNode skillNode = mock(SkillNode.class);
         when(skillNode.getType()).thenReturn(skillType);
         when(skillNode.getId()).thenReturn(skillType.getId());
-        return new EffectTotals.NodeEffects(new AllocatedNode(skillNode, skillType), List.of(resolvedEffects));
+        return new SkillTreeEffectSource.NodeEffects(new AllocatedNode(skillNode, skillType), List.of(resolvedEffects));
     }
 
-    private static EffectTotals.NodeEffects node(SkillTypeEffect... resolvedEffects) {
+    private static SkillTreeEffectSource.NodeEffects node(SkillTypeEffect... resolvedEffects) {
         return node(type("node"), resolvedEffects);
     }
 
@@ -77,11 +76,11 @@ class ModuleTreeShareTest {
         return new SkillType.Builder(id, id, "icon.png", SkillTier.SMALL);
     }
 
-    private static Map<SkillEffect, Float> totals(ShipVariantAPI moduleVariant, EffectTotals.NodeEffects... nodes) {
+    private static Map<SkillEffect, Float> totals(ShipVariantAPI moduleVariant, SkillTreeEffectSource.NodeEffects... nodes) {
         return ModuleTreeShare.sharedTotals(List.of(nodes), HullSize.CRUISER, moduleVariant, SHARE);
     }
 
-    private static Map<SkillEffect, Float> totals(EffectTotals.NodeEffects... nodes) {
+    private static Map<SkillEffect, Float> totals(SkillTreeEffectSource.NodeEffects... nodes) {
         return totals(mock(ShipVariantAPI.class), nodes);
     }
 
@@ -133,9 +132,9 @@ class ModuleTreeShareTest {
         when(builtInTargetingCore.hasHullMod("dedicated_targeting_core")).thenReturn(true);
         ShipVariantAPI fittedExclusive = mock(ShipVariantAPI.class);
         when(fittedExclusive.hasHullMod("targetingunit")).thenReturn(true);
-        EffectTotals.NodeEffects targetingCore = node(type("dtc").phantomHullModIds(List.of("dedicated_targeting_core"))
+        SkillTreeEffectSource.NodeEffects targetingCore = node(type("dtc").phantomHullModIds(List.of("dedicated_targeting_core"))
                 .exclusiveHullModIds(List.of("targetingunit")), effect("BALLISTIC_WEAPON_RANGE_PERCENT", 40f));
-        EffectTotals.NodeEffects flux = node(effect("FLUX_CAPACITY_PERCENT", 10f));
+        SkillTreeEffectSource.NodeEffects flux = node(effect("FLUX_CAPACITY_PERCENT", 10f));
 
         assertEquals(Map.of(SkillEffect.byName("FLUX_CAPACITY_PERCENT"), 5f), totals(builtInTargetingCore, targetingCore, flux));
         assertEquals(Map.of(SkillEffect.byName("FLUX_CAPACITY_PERCENT"), 5f), totals(fittedExclusive, targetingCore, flux));

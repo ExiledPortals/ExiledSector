@@ -1,6 +1,5 @@
 package exiledsector.skills;
 
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.StatMode;
 
@@ -14,7 +13,6 @@ import java.util.stream.Stream;
 
 public final class NpcBonusScaling {
 
-    static final Set<String> UNSCALED_NODE_TAGS = Set.of("logistics", "fleet_support", "campaign_only");
     static final Set<String> CAMPAIGN_EFFECTS = Set.of("BURN_LEVEL_FLAT", "FUEL_CAPACITY_PERCENT", "FUEL_CAPACITY_MULT", "FUEL_CAPACITY_FLAT",
             "CARGO_CAPACITY_PERCENT", "CARGO_CAPACITY_MULT", "CARGO_CAPACITY_FLAT", "CREW_CAPACITY_PERCENT", "CREW_CAPACITY_MULT", "CREW_CAPACITY_FLAT", "SENSOR_PROFILE_PERCENT",
             "SENSOR_PROFILE_MULT", "SENSOR_STRENGTH_PERCENT", "SENSOR_STRENGTH_FLAT", "CR_RECOVERY_RATE_PERCENT", "REPAIR_RATE_PER_DAY_PERCENT",
@@ -35,23 +33,15 @@ public final class NpcBonusScaling {
         this.factors = factors;
     }
 
-    public static NpcBonusScaling of(float bonusScale, ShipSkillData shipData, List<AllocatedNode> allocatedNodes, HullSize hullSize) {
-        return of(bonusScale, shipData, allocatedNodes, hullSize, List.of());
-    }
-
-    public static NpcBonusScaling of(float bonusScale, ShipSkillData shipData, List<AllocatedNode> allocatedNodes, HullSize hullSize,
-                                     List<ShipSections.UnlockedSection> sections) {
+    public static NpcBonusScaling of(float bonusScale, List<EffectContribution> contributions) {
         if (Float.compare(bonusScale, 1f) == 0) {
             return NONE;
         }
         Map<SkillEffect, Float> bonusTotals = new HashMap<>();
-        for (AllocatedNode node : allocatedNodes) {
-            if (scalesNode(node)) {
-                addScalableBonuses(bonusTotals, AllocatedSkillEffects.treeEffects(shipData, node, hullSize));
+        for (EffectContribution contribution : contributions) {
+            if (contribution.countsTowardBonusScale()) {
+                addScalableBonuses(bonusTotals, contribution.effects());
             }
-        }
-        for (ShipSections.UnlockedSection slot : sections) {
-            addScalableBonuses(bonusTotals, ShipSections.appliedEffects(shipData, slot, hullSize));
         }
         Map<SkillEffect, Float> effectFactors = new HashMap<>();
         bonusTotals.forEach((effect, bonusTotal) -> effectFactors.put(effect, factor(effect.statMode(), bonusTotal, bonusScale)));
@@ -66,16 +56,8 @@ public final class NpcBonusScaling {
         }
     }
 
-    public float scaled(AllocatedNode node, SkillEffect effect, float magnitude) {
-        if (Float.compare(bonusScale, 1f) == 0 || AllocatedSkillEffects.isVanillaPassthrough(node)
-                || !isScalableBonus(effect, magnitude) || !scalesNode(node)) {
-            return magnitude;
-        }
-        return magnitude * factors.getOrDefault(effect, 1f);
-    }
-
-    public float scaledSectionItem(SkillEffect effect, float magnitude) {
-        if (Float.compare(bonusScale, 1f) == 0 || !isScalableBonus(effect, magnitude)) {
+    public float scaled(EffectContribution contribution, SkillEffect effect, float magnitude) {
+        if (Float.compare(bonusScale, 1f) == 0 || !contribution.bonusScaled() || !isScalableBonus(effect, magnitude)) {
             return magnitude;
         }
         return magnitude * factors.getOrDefault(effect, 1f);
@@ -86,10 +68,6 @@ public final class NpcBonusScaling {
             return false;
         }
         return (magnitude > 0f) != effect.lowerIsBetter();
-    }
-
-    static boolean scalesNode(AllocatedNode node) {
-        return Collections.disjoint(node.node().effectiveTags(node.effectiveType()), UNSCALED_NODE_TAGS);
     }
 
     public static float factor(StatMode mode, float bonusTotal, float bonusScale) {

@@ -37,15 +37,15 @@ class ResolvedTreeSectionsTest {
         shipData.installInSection("bridge", NpcItems.id("officer", 1L));
         List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> null);
 
-        ResolvedTree resolvedTree = ResolvedTree.of(shipData, HullSize.CRUISER, 1f, slots);
+        ResolvedTree resolvedTree = ResolvedTrees.of(shipData, HullSize.CRUISER, 1f, slots);
 
         List<ResolvedTree.EffectEntry> effectEntries = resolvedTree.entries().stream()
                 .filter(ResolvedTree.EffectEntry.class::isInstance).map(ResolvedTree.EffectEntry.class::cast).toList();
         assertEquals(List.of(new ResolvedTree.EffectEntry(DefenseSkillEffect.HULL_PERCENT, "exiledSector_framework_bridge_HULL_PERCENT", 5f)),
                 effectEntries);
-        assertSame(resolvedTree, ResolvedTree.of(shipData, HullSize.CRUISER, 1f, ShipSections.of(shipData, () -> null)));
+        assertSame(resolvedTree, ResolvedTrees.of(shipData, HullSize.CRUISER, 1f, ShipSections.of(shipData, () -> null)));
         List<ShipSections.UnlockedSection> inactiveSlots = List.of(new ShipSections.UnlockedSection(ShipSection.BRIDGE, slots.get(0).item(), "req_test"),
                 slots.get(1));
-        assertNotSame(resolvedTree, ResolvedTree.of(shipData, HullSize.CRUISER, 1f, inactiveSlots));
+        assertNotSame(resolvedTree, ResolvedTrees.of(shipData, HullSize.CRUISER, 1f, inactiveSlots));
     }
 }

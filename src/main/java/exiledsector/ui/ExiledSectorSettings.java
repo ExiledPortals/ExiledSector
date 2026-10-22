@@ -38,7 +38,7 @@ public final class ExiledSectorSettings {
         SettingsCreator.refresh(MOD_ID);
     }
 
-    public static void register(List<Domain> domains) {
+    public static void register(List<? extends Domain> domains) {
         I18n.forGameText(() -> {
             registerGeneral();
             domains.forEach(Domain::registerSettings);

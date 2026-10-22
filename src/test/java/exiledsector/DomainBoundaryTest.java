@@ -29,7 +29,7 @@ class DomainBoundaryTest {
     private static final Set<String> FEATURES = Set.of("skill-tree", "hull-upgrades", "star-charts");
     private static final String ARROW = " -> ";
     private static final String COMPOSITION_ROOT = "exiledsector.ExiledSectorModPlugin";
-    private static final Pattern DOMAIN_CLASS = Pattern.compile("\\bclass\\s+\\w+\\s+implements\\s+Domain\\b");
+    private static final Pattern DOMAIN_CLASS = Pattern.compile("\\bclass\\s+\\w+\\s+implements\\s+(?:ExiledSector)?Domain\\b");
 
     private static final Pattern LITERAL_OR_COMMENT = Pattern.compile(
             "\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)+'|//[^\\n]*|/\\*.*?\\*/", Pattern.DOTALL);

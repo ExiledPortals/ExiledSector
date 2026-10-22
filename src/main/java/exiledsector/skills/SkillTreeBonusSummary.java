@@ -1,6 +1,7 @@
 package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.effects.SkillTreeEffectSource;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.skilleffect.WeaponEffectTooltipAggregator;
@@ -26,11 +27,11 @@ public final class SkillTreeBonusSummary {
         return of(data, hullSize, bonusScale, List.of());
     }
 
-    public static Summary of(ShipSkillData data, HullSize hullSize, float bonusScale, List<ShipSections.UnlockedSection> sections) {
-        return of(data, hullSize, bonusScale, sections, StatBaseline.NONE, DiminishingReturns.OFF);
+    public static Summary of(ShipSkillData data, HullSize hullSize, float bonusScale, List<EffectContribution> otherContributions) {
+        return of(data, hullSize, bonusScale, otherContributions, StatBaseline.NONE, DiminishingReturns.OFF);
     }
 
-    public static Summary of(ShipSkillData data, HullSize hullSize, float bonusScale, List<ShipSections.UnlockedSection> sections,
+    public static Summary of(ShipSkillData data, HullSize hullSize, float bonusScale, List<EffectContribution> otherContributions,
                              StatBaseline statBaseline, DiminishingReturns.Config diminishing) {
         SkillType root = null;
         int nodeCount = 0;
@@ -48,7 +49,9 @@ public final class SkillTreeBonusSummary {
                 notables.add(type);
             }
         }
-        EffectTotals effectTotals = EffectTotals.of(data, allocatedNodes, hullSize, bonusScale, sections, statBaseline, diminishing);
+        List<EffectContribution> contributions = new ArrayList<>(SkillTreeEffectSource.contributions(data, hullSize));
+        contributions.addAll(otherContributions);
+        EffectTotals effectTotals = EffectTotals.of(contributions, bonusScale, statBaseline, diminishing);
         return new Summary(root, data.getLevel(), nodeCount, notables, describe(effectTotals.groups()), effectTotals.diminishedStats());
     }
 

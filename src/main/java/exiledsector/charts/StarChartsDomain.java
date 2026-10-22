@@ -5,7 +5,8 @@ import com.thoughtworks.xstream.XStream;
 import exiledsector.ModSettingsListener;
 import exiledsector.compat.CompatTarget;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
-import exiledsector.domain.Domain;
+import exiledsector.domain.ExiledSectorDomain;
+import exiledsector.effects.ShipEffectSource;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.SpecLocalisation;
 import exiledsector.i18n.Translation;
@@ -20,7 +21,12 @@ import java.util.List;
 
 import static exiledsector.ExiledSectorModPlugin.MOD_ID;
 
-public final class StarChartsDomain implements Domain {
+public final class StarChartsDomain implements ExiledSectorDomain {
+
+    @Override
+    public List<ShipEffectSource> shipEffectSources() {
+        return List.of(ChartFleetConditionSource.INSTANCE);
+    }
 
     @Override
     public void onApplicationLoad() {

@@ -12,13 +12,10 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.charts.ChartFleetConditions;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
-import exiledsector.items.DoctrineOverrides;
 import exiledsector.skills.DiminishingReturns;
 import exiledsector.skills.ShipFacts;
-import exiledsector.skills.ShipSections;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.StatBaseline;
@@ -28,6 +25,7 @@ import exiledsector.ui.inspect.ShipTreeLookup;
 import exiledsector.ui.inspect.ShipTreeSummaryRenderer;
 import exiledsector.ui.refit.PhantomHullModRefitHider;
 
+import java.util.List;
 import java.util.Map;
 
 public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect {
@@ -42,22 +40,20 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
 
     @Override
     public void applyEffectsBeforeShipCreation(HullSize hullSize, MutableShipStatsAPI stats, String id) {
-        applyTree(hullSize, stats);
-        ChartFleetConditions.applyToShip(stats);
+        List<ShipEffectSource> sources = ShipEffectSources.all();
+        applyResolved(hullSize, stats, sources);
+        sources.forEach(source -> source.applyToShip(stats));
     }
 
-    private static void applyTree(HullSize hullSize, MutableShipStatsAPI stats) {
-        ShipSkillData shipData = SkillDataResolver.resolve(stats.getFleetMember(), stats.getVariant());
-        if (shipData == null) return;
-
+    private static void applyResolved(HullSize hullSize, MutableShipStatsAPI stats, List<ShipEffectSource> sources) {
         FleetMemberAPI member = stats.getFleetMember();
         ShipVariantAPI variant = stats.getVariant();
-        if (member != null && variant != null && !shipData.isNpcBuild() && !shipData.getSocketedItems().isEmpty()
-                && !SkillDataResolver.isNpcTree(variant)) {
-            DoctrineOverrides.bindShipFacts(shipData, () -> PlayerShipFacts.of(member, variant));
-        }
-        ResolvedTree resolvedTree = ResolvedTree.of(shipData, hullSize, bonusScale(member, stats.getVariant()),
-                ShipSections.forVariant(shipData, stats.getVariant()), StatBaseline.of(stats.getVariant()), DiminishingReturns.current());
+        ShipSkillData shipData = SkillDataResolver.resolve(member, variant);
+        if (shipData == null) return;
+
+        ShipEffectContext context = new ShipEffectContext(shipData, member, variant, hullSize);
+        sources.forEach(source -> source.beforeStatsApplied(context));
+        ResolvedTree resolvedTree = ResolvedTree.of(context, StatBaseline.of(variant), DiminishingReturns.current(), sources);
         for (ResolvedTree.Entry entry : resolvedTree.entries()) {
             if (entry instanceof ResolvedTree.VanillaEntry vanillaEntry) {
                 vanillaEntry.effect().applyEffectsBeforeShipCreation(hullSize, stats, vanillaEntry.hullModId());
@@ -71,7 +67,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
             }
         }
         if (isOpCostPass(stats)) return;
-        ShipTreeSync.syncVariant(stats.getFleetMember(), stats.getVariant(), resolvedTree);
+        sources.forEach(source -> source.afterStatsApplied(context, resolvedTree));
     }
 
     @Override
@@ -91,11 +87,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
                 effectEntry.effect().applyAfterShipCreation(ship, effectEntry.modId(), effectEntry.magnitude());
             }
         }
-        ModuleTreeShare.attach(ship, resolvedTree);
-        boolean playerTree = !SkillDataResolver.isNpcTree(ship.getVariant());
-        FleetMemberAPI member = memberOf(ship);
-        PhantomConflictWatch.inspect(member, ship.getVariant(), resolvedTree.phantomHullModIds(), playerTree);
-        HullModConflictResolver.removeHullModsThatTriedToStripAPhantom(resolvedTree.allocated(), ship.getVariant(), playerTree);
+        ShipEffectSources.all().forEach(source -> source.afterShipCreation(ship, resolvedTree));
     }
 
     @Override
@@ -156,7 +148,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     @Override
     public void applyEffectsToFighterSpawnedByShip(ShipAPI fighter, ShipAPI ship, String id) {
         applyTreeToFighter(fighter, ship);
-        ChartFleetConditions.applyToFighter(fighter, ship);
+        ShipEffectSources.all().forEach(source -> source.applyToFighter(fighter, ship));
     }
 
     private static void applyTreeToFighter(ShipAPI fighter, ShipAPI ship) {
@@ -233,11 +225,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         ShipVariantAPI variant = ship.getVariant();
         FleetMemberAPI member = ship.getMutableStats().getFleetMember();
         ShipSkillData shipData = SkillDataResolver.resolve(member, variant);
-        return ResolvedTree.of(shipData, ship.getHullSize(), bonusScale(member, variant), ShipSections.forVariant(shipData, variant),
-                StatBaseline.of(variant), DiminishingReturns.current());
-    }
-
-    private static float bonusScale(FleetMemberAPI member, ShipVariantAPI variant) {
-        return SkillDataResolver.isNpcTree(variant) ? NpcBonusScale.forShip(member, variant) : 1f;
+        return ResolvedTree.of(new ShipEffectContext(shipData, member, variant, ship.getHullSize()), StatBaseline.of(variant),
+                DiminishingReturns.current());
     }
 }

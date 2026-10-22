@@ -10,7 +10,7 @@ Exiled Sector is one Maven module and one jar, with about 700 classes. It holds 
 
 Exiled Sector stays one mod with one launcher entry, shipping a core jar plus one jar per feature, and it depends on Exiled Lib. Each feature domain depends only on Exiled Lib and Exiled Sector Core, never on another feature domain. Each one is switched on or off in LunaLib without touching the others.
 
-Status: step 1 built (committed on `parallel-work`), step 2 built (committed on `parallel-work`), steps 3 to 9 planned. It builds on `module_toggles.md`, whose hull upgrade and star chart switches are built and whose skill tree switch is not. It also covers the station module share (`module_skill_tree.md`), built on branch `module_skill_tree` and merged into `parallel-work` on 2026-10-22, and the skill tree's faction fleets and Nexerelin compat (committed on `parallel-work`).
+Status: step 1 built (committed on `parallel-work`), step 2 built (committed on `parallel-work`), step 3 built (committed on `parallel-work`), steps 4 to 9 planned. It builds on `module_toggles.md`, whose hull upgrade and star chart switches are built and whose skill tree switch is not. It also covers the station module share (`module_skill_tree.md`), built on branch `module_skill_tree` and merged into `parallel-work` on 2026-10-22, and the skill tree's faction fleets and Nexerelin compat (committed on `parallel-work`).
 
 ## Decided
 
@@ -75,10 +75,10 @@ Exiled Sector Core holds what at least two feature domains need but that is spec
 
 ## Extension points
 
-Exiled Lib defines these interfaces in `exiledlib.domain` (`exiledsector.domain` until step 7). Exiled Sector Core wires them up, and the feature domains implement them. Once all of them exist, no feature domain needs to import another.
+Exiled Lib defines `Domain` in `exiledlib.domain` (`exiledsector.domain` until step 7). The other extension points take Exiled Sector types such as the ship record, so they live in Exiled Sector Core, and a domain offers them through `ExiledSectorDomain`, which extends `Domain`. Exiled Sector Core wires them up, and the feature domains implement them. Once all of them exist, no feature domain needs to import another.
 
 - `Domain` (built in step 2): load, settings, codex, XStream and game load hooks, plus `compatTargets()`. Step 8 adds `enabled()`. Exiled Sector's mod plugin runs every domain's hooks in a fixed order. Discovery is an explicit list, since the sandbox forbids reflection (`ScriptSandboxRestrictionsTest`).
-- `ShipEffectSource`: contributes `SkillEffect` entries and fighter effects to a ship's resolve. The tree contributes allocated nodes, Subroutines, Doctrine and granted nodes. Hull Upgrades contributes section items, and Star Charts contributes fleet conditions. Diminishing returns stay joint across sources, as they are now. The resolve keeps each source's entries after diminishing returns, so the tree works out the station module share from its own nodes only. Section items and fleet conditions aren't shared onto modules, as now.
+- `ShipEffectSource` (built in step 3): contributes `SkillEffect` entries and fighter effects to a ship's resolve. The tree contributes allocated nodes, Subroutines, Doctrine and granted nodes. Hull Upgrades contributes section items, and Star Charts contributes fleet conditions. Diminishing returns stay joint across sources, as they are now. The resolve keeps each source's entries after diminishing returns, so the tree works out the station module share from its own nodes only. Section items and fleet conditions aren't shared onto modules, as now.
 - `LootSource`: rolls a domain's drops for a battle, salvage site, tech mining result or market stock. It gets one shared context (player level, defeated DP, site type).
 - `FleetDifficulty`: reports a defeated fleet's strength. Exiled Sector Core falls back to DP, and the tree reports NPC tree levels. Chart fleets and battle chart tiers use it, which also solves the knock-on effects of turning the tree off (see `module_toggles.md`).
 - `RefitButton`: Exiled Sector Core owns the column, its anchoring and the station module tab guard, and domains add buttons. MagicLib's paintjob button anchors on our last refit component, so core keeps that component last whichever buttons are present.
@@ -118,9 +118,11 @@ It reads imports and same-package class names from the source, like `ScriptSandb
 
 Each domain registers its own settings, so the page is grouped by domain: core, then the tree, a new Hull Upgrades header, then Star Charts. Unique Subroutines level moved under Ship Leveling. Setting ids and defaults are unchanged. Compat targets come from `CompatChecks.coreTargets()` plus each domain's, and the log is grouped the same way. The allowlist went from 311 to 234 crossings, and the plugin has none left.
 
-### Step 3: ship effects
+### Step 3: ship effects (done, committed on `parallel-work`)
 
-Add `ShipEffectSource` and rebuild `ResolvedTree` on top of it. Move `ShipSections` and section effects to Hull Upgrades, `ChartFleetConditions` to Star Charts, and node and Doctrine resolution and `ModuleTreeShare` to the tree. The resolved effect totals and the station module shares (`ModuleTreeShareTest`) must match the current resolver exactly. Test this on fixed ships before deleting the old path.
+Each source returns `EffectContribution` records: the effects plus their mod id prefix, duration, vanilla hull mod and NPC scaling flags. `EffectTotals` scales, diminishes and totals them without knowing where they came from, and `ResolvedTree` turns them into entries. Its cache key is built from each source's `cacheKey`. `SkillTreeEffectSource` owns node and Doctrine resolution, the NPC bonus scale, doctrine fact binding, tree sync, the station module share and the phantom conflict checks. `HullUpgradeEffectSource` owns section items, and `ChartFleetConditionSource` applies the fleet conditions. `SkillTreeHullMod` resolves and applies the entries, then calls each source's hooks.
+
+Before the old path was deleted, a test compared the old and new resolvers on 24 fixed ships built from the real tree and items. It covered every entry, mod id, magnitude, temporary node, shown total, diminished stat, phantom id and station module share, including temporary nodes, damage-taken caps, pooled multipliers, hull items, diminishing returns and NPC scaling. They matched exactly. The allowlist went from 234 to 214 crossings.
 
 ### Step 4: loot and difficulty
 

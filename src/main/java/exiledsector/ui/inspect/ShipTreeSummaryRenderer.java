@@ -15,6 +15,7 @@ import exiledsector.skills.DiminishingReturns;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSections;
 import exiledsector.skills.SkillTreeBonusSummary;
+import exiledsector.items.HullUpgradeEffectSource;
 import exiledsector.skills.SkillTreeBonusSummary.Summary;
 import exiledsector.skills.SkillType;
 import exiledsector.items.Item;
@@ -44,7 +45,8 @@ public final class ShipTreeSummaryRenderer {
 
     private static void renderSummary(TooltipMakerAPI info, ShipTreeLookup.ShipTree shipTree, HullSize hullSize, boolean hasModuleSlots,
                                       float pad, int maxBonusLines) {
-        Summary bonusSummary = SkillTreeBonusSummary.of(shipTree.skillData(), hullSize, shipTree.bonusScale(), shipTree.sections(),
+        Summary bonusSummary = SkillTreeBonusSummary.of(shipTree.skillData(), hullSize, shipTree.bonusScale(),
+                HullUpgradeEffectSource.contributions(shipTree.skillData(), shipTree.sections(), hullSize),
                 shipTree.statBaseline(), DiminishingReturns.current());
 
         List<String> headerParts = new ArrayList<>();

@@ -10,6 +10,7 @@ import exiledsector.compat.CompatChecks;
 import exiledsector.compat.CompatTarget;
 import exiledsector.compat.GraphicsLibCompat;
 import exiledsector.domain.Domain;
+import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.effects.ItemLootListener;
 import exiledsector.effects.ItemSalvageListener;
 import exiledsector.effects.MarketItemStock;
@@ -61,7 +62,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
     public static final String MOD_ID = "exiledSector";
     static final String SHIP_SKILL_DATA_ALIAS = "exiledSector.ShipSkillData";
     public static final List<String> LOCALISED_HULLMODS = List.of(SkillTreeHullMod.ID);
-    public static final List<Domain> DOMAINS = List.of(new SkillTreeDomain(), new HullUpgradesDomain(), new StarChartsDomain());
+    public static final List<ExiledSectorDomain> DOMAINS = List.of(new SkillTreeDomain(), new HullUpgradesDomain(), new StarChartsDomain());
 
     @Override
     public void onApplicationLoad() throws Exception {

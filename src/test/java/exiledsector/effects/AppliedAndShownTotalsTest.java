@@ -63,7 +63,7 @@ class AppliedAndShownTotalsTest {
         allocate(DefenseSkillEffect.EMP_DAMAGE_TAKEN_PERCENT, -50f);
         allocate(DefenseSkillEffect.EMP_DAMAGE_TAKEN_MULT, -70f);
 
-        Map<SkillEffect, Float> applied = appliedPermanentTotals(ResolvedTree.of(shipData, HullSize.CRUISER));
+        Map<SkillEffect, Float> applied = appliedPermanentTotals(ResolvedTrees.of(shipData, HullSize.CRUISER));
 
         assertEquals(-DamageTakenCaps.MAX_REDUCTION_PERCENT, applied.get(DefenseSkillEffect.ENERGY_DAMAGE_TAKEN_PERCENT), TOLERANCE);
         assertEquals(-DamageTakenCaps.MAX_REDUCTION_PERCENT, applied.get(DefenseSkillEffect.EMP_DAMAGE_TAKEN_MULT), TOLERANCE);
@@ -77,7 +77,7 @@ class AppliedAndShownTotalsTest {
         allocate(DefenseSkillEffect.KINETIC_DAMAGE_TAKEN_PERCENT, -50f);
         allocateTemporary(DefenseSkillEffect.KINETIC_DAMAGE_TAKEN_PERCENT, -30f);
 
-        ResolvedTree resolvedTree = ResolvedTree.of(shipData, HullSize.CRUISER);
+        ResolvedTree resolvedTree = ResolvedTrees.of(shipData, HullSize.CRUISER);
 
         assertEquals(-DamageTakenCaps.MAX_REDUCTION_PERCENT,
                 appliedPermanentTotals(resolvedTree).get(DefenseSkillEffect.KINETIC_DAMAGE_TAKEN_PERCENT), TOLERANCE);
@@ -90,7 +90,7 @@ class AppliedAndShownTotalsTest {
         allocate(FluxSkillEffect.FLUX_CAPACITY_MULT, -75f);
         allocate(FluxSkillEffect.FLUX_CAPACITY_MULT, -50f);
 
-        assertEquals(-100f, appliedPermanentTotals(ResolvedTree.of(shipData, HullSize.CRUISER)).get(FluxSkillEffect.FLUX_CAPACITY_MULT),
+        assertEquals(-100f, appliedPermanentTotals(ResolvedTrees.of(shipData, HullSize.CRUISER)).get(FluxSkillEffect.FLUX_CAPACITY_MULT),
                 TOLERANCE);
         assertShownTotalsMatchApplied(HullSize.CRUISER, 1f);
     }
@@ -102,7 +102,7 @@ class AppliedAndShownTotalsTest {
         allocate(WeaponSkillEffect.WEAPON_DAMAGE_MULT_PER_DMOD, 4f);
         allocate(WeaponSkillEffect.WEAPON_DAMAGE_MULT_PER_DMOD, 6f);
 
-        Map<String, Float> pooled = magnitudesByModId(ResolvedTree.of(shipData, HullSize.CRUISER));
+        Map<String, Float> pooled = magnitudesByModId(ResolvedTrees.of(shipData, HullSize.CRUISER));
 
         assertEquals(-10f, pooled.get(ResolvedTree.MULTIPLIER_MOD_ID_PREFIX + "ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD"), TOLERANCE);
         assertEquals(10f, pooled.get(ResolvedTree.MULTIPLIER_MOD_ID_PREFIX + "WEAPON_DAMAGE_MULT_PER_DMOD"), TOLERANCE);
@@ -114,7 +114,7 @@ class AppliedAndShownTotalsTest {
         allocateTemporary(FluxSkillEffect.FLUX_CAPACITY_MULT, 10f);
         allocateTemporary(FluxSkillEffect.FLUX_CAPACITY_MULT, 10f);
 
-        assertEquals(21f, appliedTemporaryTotals(ResolvedTree.of(shipData, HullSize.CRUISER)).get(FluxSkillEffect.FLUX_CAPACITY_MULT),
+        assertEquals(21f, appliedTemporaryTotals(ResolvedTrees.of(shipData, HullSize.CRUISER)).get(FluxSkillEffect.FLUX_CAPACITY_MULT),
                 TOLERANCE);
         assertShownTotalsMatchApplied(HullSize.CRUISER, 1f);
     }
@@ -128,7 +128,7 @@ class AppliedAndShownTotalsTest {
         allocate(DefenseSkillEffect.ENERGY_DAMAGE_TAKEN_PERCENT, -30f);
         allocate(DefenseSkillEffect.FRAGMENTATION_DAMAGE_TAKEN_PERCENT, -20f);
 
-        Map<SkillEffect, Float> applied = appliedPermanentTotals(ResolvedTree.of(shipData, HullSize.CRUISER, 3f));
+        Map<SkillEffect, Float> applied = appliedPermanentTotals(ResolvedTrees.of(shipData, HullSize.CRUISER, 3f));
 
         assertEquals(30f, applied.get(DefenseSkillEffect.HULL_PERCENT), TOLERANCE);
         assertEquals(80f, applied.get(DefenseSkillEffect.ARMOR_PERCENT), TOLERANCE);
@@ -138,7 +138,7 @@ class AppliedAndShownTotalsTest {
     }
 
     private void assertShownTotalsMatchApplied(HullSize hullSize, float bonusScale) {
-        ResolvedTree resolvedTree = ResolvedTree.of(shipData, hullSize, bonusScale);
+        ResolvedTree resolvedTree = ResolvedTrees.of(shipData, hullSize, bonusScale);
         List<String> expected = new ArrayList<>();
         appliedPermanentTotals(resolvedTree).forEach((effect, total) -> addExpectedLine(expected, "", effect, total));
         appliedTemporaryTotals(resolvedTree).forEach((effect, total) -> addExpectedLine(expected, TEMPORARY_PREFIX, effect, total));
