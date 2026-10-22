@@ -4,6 +4,9 @@ import java.util.List;
 
 public record ItemTraits(int tier, int quality, CorruptionOutcome corruption, List<RolledModifier> implicits, boolean mirrored) {
 
+    public static final int LOWEST_TIER = 1;
+    public static final int HIGHEST_TIER = 15;
+
     public ItemTraits {
         implicits = implicits == null ? null : List.copyOf(implicits);
     }

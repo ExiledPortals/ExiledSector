@@ -211,7 +211,7 @@ class ItemSalvageListenerTest {
             List<String> materialIds = MaterialItems.ids();
             long plainItems = plainLoot.stream().filter(special -> !materialIds.contains(special.getId())).count();
             long showcaseItems = showcaseLoot.stream().filter(special -> !materialIds.contains(special.getId())).count();
-            assertEquals(plainItems + 1 + 2L * ItemSalvageListener.SHOWCASE_PICKS, showcaseItems);
+            assertEquals(plainItems + 1 + 2L * SkillTreeLootSource.SHOWCASE_PICKS, showcaseItems);
             assertTrue(showcaseLoot.stream().map(SpecialItemData::getId).toList().containsAll(materialIds));
             assertFalse(ItemSalvageListener.canShowcase(showcaseStation));
             assertTrue(lootFrom(listener, showcaseStation).isEmpty());

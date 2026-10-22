@@ -22,9 +22,6 @@ import java.util.List;
 public final class AbyssSingularity {
 
     static final String DEFEATED_FLAG = "$exiledSector_singularityDefeated";
-    static final String GENESIS_HULL_ID = "rat_genesis";
-    static final String GENESIS_WRECK_VARIANT_ID = "rat_genesis_Hull";
-    static final String REQUIEM_SKILL_ID = "rat_abyssal_requiem";
     static final String ABYSS_WRECK_TAG = "rat_abyss_wreck";
     private static final Logger LOG = Logger.getLogger(AbyssSingularity.class);
     private static volatile Boolean genesisHullKnown;
@@ -43,10 +40,10 @@ public final class AbyssSingularity {
     static boolean canDetectDefeat() {
         Boolean known = genesisHullKnown;
         if (known == null) {
-            known = CompatTarget.specExists(() -> Global.getSettings().getHullSpec(GENESIS_HULL_ID));
+            known = CompatTarget.specExists(() -> Global.getSettings().getHullSpec(RandomAssortmentCompat.GENESIS_HULL_ID));
             genesisHullKnown = known;
             if (!known) {
-                LOG.warn("[ExiledSector] Random Assortment of Things has no " + GENESIS_HULL_ID
+                LOG.warn("[ExiledSector] Random Assortment of Things has no " + RandomAssortmentCompat.GENESIS_HULL_ID
                         + " hull, so the Singularity win can't be detected; the Abyss unlocks so its area stays usable.");
             }
         }
@@ -102,12 +99,13 @@ public final class AbyssSingularity {
     }
 
     private static boolean isGenesisHull(ShipHullSpecAPI hullSpec) {
-        return hullSpec != null && (GENESIS_HULL_ID.equals(hullSpec.getHullId()) || GENESIS_HULL_ID.equals(hullSpec.getBaseHullId()));
+        return hullSpec != null && (RandomAssortmentCompat.GENESIS_HULL_ID.equals(hullSpec.getHullId())
+                || RandomAssortmentCompat.GENESIS_HULL_ID.equals(hullSpec.getBaseHullId()));
     }
 
     private static boolean playerHasRequiem(SectorAPI sector) {
         PersonAPI player = sector.getPlayerPerson();
-        return player != null && player.getStats() != null && player.getStats().getSkillLevel(REQUIEM_SKILL_ID) > 0f;
+        return player != null && player.getStats() != null && player.getStats().getSkillLevel(RandomAssortmentCompat.REQUIEM_SKILL_ID) > 0f;
     }
 
     private static boolean genesisWreckExists(SectorAPI sector) {
@@ -127,7 +125,7 @@ public final class AbyssSingularity {
             return false;
         }
         ShipRecoverySpecial.PerShipData ship = derelict.getData().ship;
-        if (GENESIS_WRECK_VARIANT_ID.equals(ship.variantId)) {
+        if (RandomAssortmentCompat.GENESIS_WRECK_VARIANT_ID.equals(ship.variantId)) {
             return true;
         }
         try {

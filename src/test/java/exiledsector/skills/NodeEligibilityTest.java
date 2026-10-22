@@ -27,7 +27,7 @@ class NodeEligibilityTest {
         RealSkillData.clear();
         SkillNode root = node("root", type("root_type", SkillTier.ROOT).build());
         data = new ShipSkillData();
-        data.chooseStartingRoot(root);
+        ShipTrees.chooseStartingRoot(data, root);
     }
 
     @AfterEach
@@ -138,7 +138,7 @@ class NodeEligibilityTest {
                 .exclusiveSkillTypeIds(List.of("slot_type")).build()));
         SkillType hull = registered(type("hull", SkillTier.SMALL).build());
         SkillNode slot = optionalNode("slot", type("slot_type", SkillTier.SMALL), hull);
-        data.allocate(guard, 0);
+        ShipTrees.allocate(data, guard, 0);
 
         NodeEligibility.Block block = check(slot, hull, FRONT_SHIELDED_FRIGATE);
 
@@ -151,7 +151,7 @@ class NodeEligibilityTest {
         SkillType hull = registered(type("hull", SkillTier.SMALL).build());
         SkillNode slot = optionalNode("slot", type("slot_type", SkillTier.SMALL).exclusiveSkillTypeIds(List.of("later_type")), hull);
         SkillNode later = node("later", registered(type("later_type", SkillTier.SMALL).build()));
-        data.selectOption(slot, hull, 0);
+        ShipTrees.selectOption(data, slot, hull, 0);
 
         assertEquals(NodeEligibility.Kind.TYPE_CONFLICT, check(later, null, FRONT_SHIELDED_FRIGATE).kind());
     }
@@ -163,7 +163,7 @@ class NodeEligibilityTest {
         ShipFacts unshielded = facts(ShieldType.NONE, Set.of());
 
         assertNull(check(convert, null, unshielded));
-        data.allocate(makeshift, 0);
+        ShipTrees.allocate(data, makeshift, 0);
 
         NodeEligibility.Block block = check(convert, null, unshielded);
         assertEquals(NodeEligibility.Kind.EFFECT_BLOCK, block.kind());

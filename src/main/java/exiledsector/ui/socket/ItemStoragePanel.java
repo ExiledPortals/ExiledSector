@@ -24,7 +24,7 @@ import exiledsector.items.ItemRarity;
 import exiledsector.items.ItemStore;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.VanillaText;
-import exiledsector.ui.section.SectionFlair;
+import exiledsector.ui.cargo.CargoIconLooks;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -681,7 +681,8 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private static Color typeColor(ItemKind socketType) {
-        return socketType.fitsSection() ? SectionFlair.colorOf(socketType) : Misc.getBasePlayerColor();
+        Color kindColor = CargoIconLooks.kindColor(socketType);
+        return kindColor != null ? kindColor : Misc.getBasePlayerColor();
     }
 
     private static float addChip(TooltipMakerAPI element, String label, Object chipId, ChipColors colors, boolean checked, float chipLeft,

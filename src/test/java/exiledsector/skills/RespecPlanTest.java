@@ -34,8 +34,8 @@ class RespecPlanTest {
             if (!data.isAllocated(step.getId())) {
                 continue;
             }
-            assertTrue(data.canDeallocate(step, topology, "root"), "removing " + step.getId() + " would strand other nodes");
-            data.deallocate(step);
+            assertTrue(ShipTrees.canDeallocate(data, step, topology, "root"), "removing " + step.getId() + " would strand other nodes");
+            ShipTrees.deallocate(data, step);
         }
     }
 
@@ -49,9 +49,9 @@ class RespecPlanTest {
         SkillNode e = node("e", "root");
         SkillTreeTopology topology = SkillTreeTopology.of(List.of(root, a, b, c, d, e));
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
+        ShipTrees.chooseStartingRoot(data, root);
         for (SkillNode allocated : List.of(a, b, c, d, e)) {
-            data.allocate(allocated, 1);
+            ShipTrees.allocate(data, allocated, 1);
         }
 
         List<SkillNode> plan = RespecPlan.of(data, topology, "root", a);
@@ -68,9 +68,9 @@ class RespecPlanTest {
         SkillNode shared = node("shared", "a", "b");
         SkillTreeTopology topology = SkillTreeTopology.of(List.of(root, a, b, shared));
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
+        ShipTrees.chooseStartingRoot(data, root);
         for (SkillNode allocated : List.of(a, b, shared)) {
-            data.allocate(allocated, 1);
+            ShipTrees.allocate(data, allocated, 1);
         }
 
         assertEquals(List.of("a"), ids(RespecPlan.of(data, topology, "root", a)));
@@ -86,11 +86,11 @@ class RespecPlanTest {
         SkillNode y = node("y", "x");
         SkillTreeTopology topology = SkillTreeTopology.of(List.of(root, p, near, far, x, y));
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
-        data.allocate(p, 1);
-        data.allocate(near, 1);
-        data.allocate(x, 1);
-        data.allocate(y, 1);
+        ShipTrees.chooseStartingRoot(data, root);
+        ShipTrees.allocate(data, p, 1);
+        ShipTrees.allocate(data, near, 1);
+        ShipTrees.allocate(data, x, 1);
+        ShipTrees.allocate(data, y, 1);
 
         List<SkillNode> plan = RespecPlan.of(data, topology, "root", p);
 
@@ -106,9 +106,9 @@ class RespecPlanTest {
         SkillNode e = node("e", "root");
         SkillTreeTopology topology = SkillTreeTopology.of(List.of(root, a, b, e));
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
+        ShipTrees.chooseStartingRoot(data, root);
         for (SkillNode allocated : List.of(a, b, e)) {
-            data.allocate(allocated, 1);
+            ShipTrees.allocate(data, allocated, 1);
         }
 
         List<SkillNode> plan = RespecPlan.of(data, topology, "root", root);
@@ -123,7 +123,7 @@ class RespecPlanTest {
         SkillNode root = root("root");
         SkillNode a = node("a", "root");
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
+        ShipTrees.chooseStartingRoot(data, root);
 
         assertEquals(List.of(), RespecPlan.of(data, SkillTreeTopology.of(List.of(root, a)), "root", a));
     }

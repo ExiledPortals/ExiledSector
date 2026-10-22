@@ -20,15 +20,15 @@ public final class RespecPlan {
         }
         Set<String> removed = new LinkedHashSet<>();
         removed.add(selected.getId());
-        String pairedId = data.wormholePartner(selected);
+        String pairedId = ShipTrees.wormholePartner(data, selected);
         if (pairedId != null && data.isAllocated(pairedId)) {
             removed.add(pairedId);
         }
         Set<String> dependents = dependents(data, topology, startingRootId, selected, removed);
-        Set<String> grantedDependents = new LinkedHashSet<>(data.grantOnlyNodeIds(topology, startingRootId));
+        Set<String> grantedDependents = new LinkedHashSet<>(ShipTrees.grantOnlyNodeIds(data, topology, startingRootId));
         grantedDependents.retainAll(dependents);
         dependents.removeAll(grantedDependents);
-        Map<String, Integer> distanceById = distancesAwayFrom(removed, dependents, topology, data);
+        Map<String, Integer> distanceById = distancesAwayFrom(removed, dependents, topology, ShipTrees.wormholePartners(data));
 
         List<String> ordered = new ArrayList<>(dependents);
         ordered.sort(Comparator.comparingInt((String id) -> distanceById.getOrDefault(id, Integer.MAX_VALUE)).reversed()
@@ -40,7 +40,7 @@ public final class RespecPlan {
             if (node == null || !covered.add(id)) {
                 continue;
             }
-            String partnerId = data.wormholePartner(node);
+            String partnerId = ShipTrees.wormholePartner(data, node);
             if (partnerId != null) {
                 covered.add(partnerId);
             }
@@ -69,8 +69,8 @@ public final class RespecPlan {
         if (selected.getId().equals(startingRootId)) {
             dependents = new HashSet<>(data.getAllocatedNodeIds());
         } else {
-            dependents = data.reachableAllocatedNodeIds(topology, startingRootId, Set.of());
-            dependents.removeAll(data.reachableAllocatedNodeIds(topology, startingRootId, removed));
+            dependents = ShipTrees.reachableAllocatedNodeIds(data, topology, startingRootId, Set.of());
+            dependents.removeAll(ShipTrees.reachableAllocatedNodeIds(data, topology, startingRootId, removed));
         }
         dependents.removeAll(removed);
         return dependents;

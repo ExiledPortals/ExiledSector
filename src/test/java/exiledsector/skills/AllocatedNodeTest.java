@@ -37,8 +37,8 @@ class AllocatedNodeTest {
     @Test
     void walksAllocatedNodesInAllocationOrderWithTheirChosenOptionResolved() {
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
-        data.selectOption(optional, hullOption, 0);
+        ShipTrees.chooseStartingRoot(data, root);
+        ShipTrees.selectOption(data, optional, hullOption, 0);
 
         List<AllocatedNode> allocated = AllocatedNode.of(data);
 
@@ -48,7 +48,7 @@ class AllocatedNodeTest {
     @Test
     void skipsAllocatedIdsThatAreNoLongerInTheTree() {
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
+        ShipTrees.chooseStartingRoot(data, root);
         SkillTree.unregister("root_1");
 
         assertTrue(AllocatedNode.of(data).isEmpty());

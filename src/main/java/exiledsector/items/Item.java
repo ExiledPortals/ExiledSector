@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
@@ -12,7 +13,6 @@ import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
 import exiledsector.modifiers.ScaleContext;
 import exiledsector.modifiers.TierRange;
-import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
 
@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Random;
 
 public abstract class Item {
+
+    public static final Color CORRUPTED_FRAME_COLOR = new Color(255, 75, 70);
 
     private final String id;
     private String definitionId;
@@ -60,15 +62,9 @@ public abstract class Item {
     static Item create(String id, String definitionId, long seed, List<RolledModifier> explicitModifiers) {
         ItemDefinition definition = ItemDefinitions.get(definitionId);
         ItemType type = definition == null ? null : definition.type();
-        if (type == null) {
-            return new UnresolvedItem(id, definitionId, seed, explicitModifiers);
-        }
-        return switch (type) {
-            case SUBROUTINE -> new Subroutine(id, definitionId, seed, explicitModifiers);
-            case HULL_ITEM -> new HullItem(id, definitionId, seed, explicitModifiers);
-            case STAR_CHART -> new StarChart(id, definitionId, seed, explicitModifiers);
-            case WORMHOLE_ANCHOR -> new WormholeAnchor(id, definitionId, seed);
-        };
+        ItemTypeSupport support = ItemTypes.of(type);
+        return support == null ? new UnresolvedItem(id, definitionId, seed, explicitModifiers)
+                : support.create(id, definitionId, seed, explicitModifiers);
     }
 
     static Item create(String id, String definitionId, long seed, List<RolledModifier> explicitModifiers, ItemTraits traits) {
@@ -120,15 +116,8 @@ public abstract class Item {
         if (definedType == type()) {
             return this;
         }
-        if (definedType == null) {
-            return new UnresolvedItem(this);
-        }
-        return switch (definedType) {
-            case SUBROUTINE -> new Subroutine(this);
-            case HULL_ITEM -> new HullItem(this);
-            case STAR_CHART -> new StarChart(this);
-            case WORMHOLE_ANCHOR -> new WormholeAnchor(this);
-        };
+        ItemTypeSupport support = ItemTypes.of(definedType);
+        return support == null ? new UnresolvedItem(this) : support.convert(this);
     }
 
     public ItemKind kind() {
@@ -288,7 +277,7 @@ public abstract class Item {
     }
 
     public Color frameColor() {
-        return corrupted() ? CraftingCurrency.CORRUPTION.color() : rarity().color();
+        return corrupted() ? CORRUPTED_FRAME_COLOR : rarity().color();
     }
 
     public ItemRarity rarity() {
@@ -329,12 +318,10 @@ public abstract class Item {
         return lines;
     }
 
-    public boolean canSocketInto(SkillNode socket) {
-        return false;
+    void keepWhenUnresolved(UnresolvedItem unresolved) {
     }
 
-    public boolean canSocketInto(ShipSection section) {
-        return false;
+    void writeTooltipSections(TooltipMakerAPI tooltip, HullSize hullSize, boolean showRollRanges) {
     }
 
     public List<SkillTypeEffect> skillEffects() {

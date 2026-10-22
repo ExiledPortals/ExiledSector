@@ -68,7 +68,7 @@ class AllocatedSkillEffectsTest {
         SkillTree.register(node);
 
         FleetMemberAPI member = memberWithHullSize(HullSize.CRUISER);
-        ShipSkillDataManager.get("ship-a").allocate(node, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), node, 1);
 
         List<SkillEffect> effects = AllocatedSkillEffects.forMember(member);
 
@@ -86,7 +86,7 @@ class AllocatedSkillEffectsTest {
         SkillTree.register(node);
 
         FleetMemberAPI member = memberWithHullSize(HullSize.CRUISER);
-        ShipSkillDataManager.get("ship-a").allocate(node, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), node, 1);
 
         List<SkillEffect> effects = AllocatedSkillEffects.forMember(member);
 

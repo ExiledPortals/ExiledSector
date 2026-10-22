@@ -11,11 +11,10 @@ import com.fs.starfarer.api.campaign.listeners.ShipRecoveryListener;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.ExiledSectorModPlugin;
 import exiledsector.PlayerFleet;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
-import exiledsector.skills.progression.ShipLevelConfig;
-import exiledsector.skills.progression.ShipLevelSystem;
 import exiledsector.items.HullUpgradeData;
 import exiledsector.items.Item;
 import exiledsector.items.ItemDisassembly;
@@ -77,8 +76,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         if (!engagement.playerWon()) {
             return;
         }
-        float difficultyMultiplier = ShipLevelSystem.difficultyMultiplier(engagement.difficulty(), ShipLevelConfig.xpDifficultyStrength(),
-                ShipLevelConfig.xpDifficultyMaxMultiplier());
+        float difficultyMultiplier = LootSources.difficultyMultiplier(engagement.difficulty());
         List<FleetMemberAPI> lostEnemies = new ArrayList<>();
         for (EngagementResultForFleetAPI fleetResult : new EngagementResultForFleetAPI[]{engagementResult.getWinnerResult(), engagementResult.getLoserResult()}) {
             if (fleetResult != null && !fleetResult.isPlayer()) {
@@ -101,7 +99,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
 
     @Override
     public void reportShipsRecovered(List<FleetMemberAPI> recoveredShips, InteractionDialogAPI dialog) {
-        ShipTreeSync.fleetChanged(PlayerFleet.orNull());
+        ExiledSectorModPlugin.DOMAINS.forEach(domain -> domain.fleetChanged(PlayerFleet.orNull()));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
+import exiledsector.skills.ShipTrees;
 import org.mockito.Mockito;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
@@ -67,7 +68,7 @@ class ItemDisassemblyTest {
         SkillTree.register(socket);
         Item item = store.add(ItemDefinitions.get(ItemFixtures.MILITARY), 7L);
         ShipSkillData data = new ShipSkillData();
-        data.allocate(socket, 3);
+        ShipTrees.allocate(data, socket, 3);
         data.socketItem("socket", item.id());
         ships.put("ship-a", data);
 

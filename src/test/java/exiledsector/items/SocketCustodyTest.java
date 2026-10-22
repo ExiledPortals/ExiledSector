@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import exiledsector.skills.AnchorLinks;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -47,7 +48,7 @@ class SocketCustodyTest {
     private Item install(String shipId) {
         Item item = store.add(ItemDefinitions.get(ItemFixtures.SUBROUTINE), shipId.hashCode());
         ShipSkillData data = new ShipSkillData();
-        data.allocate(socket, 3);
+        ShipTrees.allocate(data, socket, 3);
         data.socketItem("socket", item.id());
         ships.put(shipId, data);
         return item;
@@ -98,11 +99,11 @@ class SocketCustodyTest {
         });
         try {
             ShipSkillData data = new ShipSkillData();
-            data.chooseStartingRoot(root);
-            data.allocate(anchorSocket, 1);
+            ShipTrees.chooseStartingRoot(data, root);
+            ShipTrees.allocate(data, anchorSocket, 1);
             data.socketItem("anchor_socket", "anchor_item");
-            data.openAnchorWormholes(10);
-            data.allocate(volumeNode, 1);
+            ShipTrees.openAnchorWormholes(data, 10);
+            ShipTrees.allocate(data, volumeNode, 1);
             ships.put("ship-a", data);
 
             SocketCustody.reconcile(ships, Set.of(), lost, store);

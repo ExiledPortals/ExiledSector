@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-record FleetHullVisuals(float centerX, float centerY, List<EngineFlame> flames, List<ShipAnchors.Anchor> outline) {
+record FleetHullVisuals(float centerX, float centerY, List<EngineFlame> flames, List<HullPoint> outline) {
 
     record EngineFlame(float forwardOffset, float leftOffset, float angleDeg, float width, float length, Color color) {
     }
@@ -62,14 +62,14 @@ record FleetHullVisuals(float centerX, float centerY, List<EngineFlame> flames, 
         return null;
     }
 
-    private static List<ShipAnchors.Anchor> outline(JSONObject hullFile) {
+    private static List<HullPoint> outline(JSONObject hullFile) {
         JSONArray bounds = hullFile == null ? null : hullFile.optJSONArray("bounds");
         if (bounds == null || bounds.length() < 6) {
             return List.of();
         }
-        List<ShipAnchors.Anchor> outline = new ArrayList<>(bounds.length() / 2);
+        List<HullPoint> outline = new ArrayList<>(bounds.length() / 2);
         for (int i = 0; i + 1 < bounds.length(); i += 2) {
-            outline.add(new ShipAnchors.Anchor((float) bounds.optDouble(i, 0.0), (float) bounds.optDouble(i + 1, 0.0)));
+            outline.add(new HullPoint((float) bounds.optDouble(i, 0.0), (float) bounds.optDouble(i + 1, 0.0)));
         }
         return List.copyOf(outline);
     }

@@ -2,6 +2,7 @@ package exiledsector.i18n;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
+import exiledsector.HostMod;
 import exiledsector.ModSettings;
 
 import java.util.List;
@@ -10,7 +11,6 @@ import java.util.Set;
 
 public final class LanguageSetting {
 
-    public static final String FIELD_ID = "exiledSector_language";
     public static final String AUTO = "Auto";
     public static final String ENGLISH = "English";
     public static final String SIMPLIFIED_CHINESE = "Simplified Chinese";
@@ -22,8 +22,12 @@ public final class LanguageSetting {
     private LanguageSetting() {
     }
 
+    public static String fieldId() {
+        return HostMod.settingId("language");
+    }
+
     public static String selected() {
-        return ModSettings.stringOr(FIELD_ID, AUTO);
+        return ModSettings.stringOr(fieldId(), AUTO);
     }
 
     public static Languages resolve(String option, Locale jvmLocale, boolean gameRendersCjk) {

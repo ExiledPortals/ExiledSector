@@ -2,7 +2,7 @@ package exiledsector.items;
 
 import exiledsector.skills.NodeGrants;
 import exiledsector.skills.ShipSkillData;
-import exiledsector.skills.SkillItemCost;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -70,10 +70,10 @@ class NodeGrantCustodyTest {
 
     private ShipSkillData shipWithGrant() {
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
-        data.allocate(socket, 1);
+        ShipTrees.chooseStartingRoot(data, root);
+        ShipTrees.allocate(data, socket, 1);
         data.socketItem("socket", CACHE_ID);
-        data.allocateGranted(notable);
+        ShipTrees.allocateGranted(data, notable);
         ships.put("ship-a", data);
         return data;
     }
@@ -81,7 +81,7 @@ class NodeGrantCustodyTest {
     @Test
     void aShipLeavingCustodyLosesItsSubroutineAndTheNotableItGranted() {
         ShipSkillData data = shipWithGrant();
-        List<SkillItemCost> refunds = new ArrayList<>();
+        List<CargoRefund> refunds = new ArrayList<>();
 
         SocketCustody.reconcile(ships, Set.of(), new HashSet<>(), new ItemStore(), refunds::add);
 
@@ -94,7 +94,7 @@ class NodeGrantCustodyTest {
     @Test
     void aShipDestroyedInBattleRefundsNothingForItsGrantedNotable() {
         ShipSkillData data = shipWithGrant();
-        List<SkillItemCost> refunds = new ArrayList<>();
+        List<CargoRefund> refunds = new ArrayList<>();
 
         Set<String> lostForGood = SocketCustody.reconcile(ships, Set.of(), new HashSet<>(Set.of("ship-a")), new ItemStore(), refunds::add);
 
@@ -106,10 +106,10 @@ class NodeGrantCustodyTest {
     @Test
     void aNotablePaidForByPathStaysWhenTheSubroutineLeaves() {
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
-        data.allocate(socket, 1);
-        data.allocate(pathNode, 1);
-        data.allocate(notable, 1);
+        ShipTrees.chooseStartingRoot(data, root);
+        ShipTrees.allocate(data, socket, 1);
+        ShipTrees.allocate(data, pathNode, 1);
+        ShipTrees.allocate(data, notable, 1);
         data.socketItem("socket", CACHE_ID);
         ships.put("ship-a", data);
 
@@ -121,7 +121,7 @@ class NodeGrantCustodyTest {
     @Test
     void aGrantedNotableReachedByPathLeavesWithTheSubroutine() {
         ShipSkillData data = shipWithGrant();
-        data.allocate(pathNode, 1);
+        ShipTrees.allocate(data, pathNode, 1);
 
         SocketCustody.reconcile(ships, Set.of(), new HashSet<>(), new ItemStore(), refund -> { });
 

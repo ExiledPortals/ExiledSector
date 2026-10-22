@@ -58,17 +58,13 @@ class WormholePartnersTest {
     }
 
     private ShipSkillData linkedSocketToExit() {
-        ShipSkillData data = new ShipSkillData() {
-            @Override
-            public String wormholePartner(SkillNode node) {
-                return switch (node.getId()) {
-                    case "socket" -> "exit";
-                    case "exit" -> "socket";
-                    default -> super.wormholePartner(node);
-                };
-            }
-        };
-        data.chooseStartingRoot(root);
+        socket = new SkillNode("socket", node("socket", SkillTier.WORMHOLE).getType(), List.of("root"), 0f, 0f,
+                new SkillNodeDecoration(null, null, null, null, "exit"));
+        exit = new SkillNode("exit", node("exit", SkillTier.WORMHOLE).getType(), List.of("far_side"), 0f, 0f,
+                new SkillNodeDecoration(null, null, null, null, "socket"));
+        topology = SkillTreeTopology.of(List.of(root, socket, farSide, exit, beyondExit));
+        ShipSkillData data = new ShipSkillData();
+        ShipTrees.chooseStartingRoot(data, root);
         return data;
     }
 
@@ -93,8 +89,8 @@ class WormholePartnersTest {
     void aShipsPartnerIsTheStaticPairing() {
         ShipSkillData data = new ShipSkillData();
 
-        assertEquals("wormhole_b", data.wormholePartner(paired("wormhole_a", SkillTier.WORMHOLE, "wormhole_b")));
-        assertNull(data.wormholePartner(socket));
+        assertEquals("wormhole_b", ShipTrees.wormholePartner(data, paired("wormhole_a", SkillTier.WORMHOLE, "wormhole_b")));
+        assertNull(ShipTrees.wormholePartner(data, socket));
     }
 
     @Test
@@ -102,19 +98,19 @@ class WormholePartnersTest {
         SkillTreeTopology pairedTopology = SkillTreeTopology.of(List.of(
                 paired("wormhole_a", SkillTier.WORMHOLE, "wormhole_b"), paired("wormhole_b", SkillTier.WORMHOLE, "wormhole_a")));
 
-        assertSame(pairedTopology.wormholePairs(), new ShipSkillData().wormholePairs(pairedTopology));
+        assertSame(pairedTopology.wormholePairs(), ShipTrees.wormholePairs(new ShipSkillData(), pairedTopology));
     }
 
     @Test
     void allocatingAnEndGrantsTheShipsPartnerForFreeAndDeallocatingReleasesIt() {
         ShipSkillData data = linkedSocketToExit();
 
-        data.allocate(socket, 1);
+        ShipTrees.allocate(data, socket, 1);
 
         assertTrue(data.isAllocated("exit"));
         assertTrue(data.isFreeNode("exit"));
 
-        data.deallocate(socket);
+        ShipTrees.deallocate(data, socket);
 
         assertFalse(data.isAllocated("exit"));
     }
@@ -122,11 +118,11 @@ class WormholePartnersTest {
     @Test
     void reachabilityCrossesTheShipsPartnerSoRemovingTheEntranceWouldStrandNodesBeyondTheExit() {
         ShipSkillData data = linkedSocketToExit();
-        data.allocate(socket, 1);
-        data.allocate(beyondExit, 1);
+        ShipTrees.allocate(data, socket, 1);
+        ShipTrees.allocate(data, beyondExit, 1);
 
-        assertTrue(data.reachableAllocatedNodeIds(topology, "root", Set.of()).contains("beyond_exit"));
-        assertFalse(data.canDeallocate(socket, topology, "root"));
+        assertTrue(ShipTrees.reachableAllocatedNodeIds(data, topology, "root", Set.of()).contains("beyond_exit"));
+        assertFalse(ShipTrees.canDeallocate(data, socket, topology, "root"));
     }
 
     @Test
@@ -139,8 +135,8 @@ class WormholePartnersTest {
     @Test
     void aRespecRemovesWhatLiesBeyondTheShipsPartnerFirst() {
         ShipSkillData data = linkedSocketToExit();
-        data.allocate(socket, 1);
-        data.allocate(beyondExit, 1);
+        ShipTrees.allocate(data, socket, 1);
+        ShipTrees.allocate(data, beyondExit, 1);
 
         List<String> planIds = RespecPlan.of(data, topology, "root", socket).stream().map(SkillNode::getId).toList();
 

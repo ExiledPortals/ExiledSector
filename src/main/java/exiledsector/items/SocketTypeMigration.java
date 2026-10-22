@@ -19,8 +19,7 @@ public final class SocketTypeMigration {
 
     public static void run() {
         List<Item> returnedItems = returnMisfits(ShipSkillDataManager.all(), ItemStore.get());
-        SubroutineSocketLimits.unsocketExtras(ShipSkillDataManager.all(), ItemStore.get());
-        WormholeAnchorSocketLimits.unsocketExtras(ShipSkillDataManager.all(), ItemStore.get());
+        SocketCustody.custodies().forEach(custody -> custody.enforceLimits(ShipSkillDataManager.all(), ItemStore.get()));
         if (returnedItems.isEmpty() || !CampaignMessages.available()) {
             return;
         }
@@ -32,19 +31,8 @@ public final class SocketTypeMigration {
     static List<Item> returnMisfits(Map<String, ShipSkillData> shipDataById, ItemStore store) {
         List<Item> returnedItems = new ArrayList<>();
         for (ShipSkillData shipData : shipDataById.values()) {
-            for (Map.Entry<String, String> socketedEntry : List.copyOf(shipData.getSocketedItems().entrySet())) {
-                Item item = store.find(socketedEntry.getValue());
-                if (item != null && item.kind() != null && !SocketCustody.fitsTreeSocket(item)) {
-                    shipData.unsocketItem(socketedEntry.getKey());
-                    returnedItems.add(item);
-                }
-            }
-            for (Map.Entry<String, String> slotEntry : List.copyOf(shipData.getSectionItems().entrySet())) {
-                Item item = store.find(slotEntry.getValue());
-                if (item != null && item.kind() != null && !SocketCustody.fitsSection(item, slotEntry.getKey())) {
-                    shipData.removeFromSection(slotEntry.getKey());
-                    returnedItems.add(item);
-                }
+            for (ShipCustody custody : SocketCustody.custodies()) {
+                returnedItems.addAll(custody.returnMisfits(shipData, store));
             }
         }
         return returnedItems;

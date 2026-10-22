@@ -9,7 +9,7 @@ public abstract class ModSettingsListener implements LunaSettingsListener {
 
     @Override
     public final void settingsChanged(String modId) {
-        if (ExiledSectorModPlugin.MOD_ID.equals(modId)) {
+        if (HostMod.id().equals(modId)) {
             reload();
         }
     }

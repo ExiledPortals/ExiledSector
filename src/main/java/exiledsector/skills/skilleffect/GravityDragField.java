@@ -4,7 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import exiledsector.compat.CombatGlow;
-import exiledsector.compat.NightcrossCompat;
+import exiledsector.compat.NightcrossGravityDrag;
 import exiledsector.i18n.Translation;
 
 import java.util.IdentityHashMap;
@@ -147,7 +147,7 @@ final class GravityDragField extends AuraField<GravityDragListener> {
         Map<ShipAPI, Float> timeMultByTarget = new IdentityHashMap<>();
         shownPercentByTarget.clear();
         ownReductions.forEach((target, ownPercent) -> {
-            float nightcrossPercent = NightcrossCompat.gravityDragPercentOn(target);
+            float nightcrossPercent = NightcrossGravityDrag.percentOn(target);
             timeMultByTarget.put(target, ownTimeMult(ownPercent, nightcrossPercent));
             shownPercentByTarget.put(target, shownPercent(ownPercent, nightcrossPercent));
         });

@@ -50,7 +50,7 @@ public record RefitScreenLayout(float frameX, float frameY, float frameWidth, fl
     }
 
     private static RefitScreenLayout measured(CampaignUIAPI campaignUI) throws Throwable {
-        Object tab = UiReflection.call(PhantomHullModRefitHider.coreUI(campaignUI), "getCurrentTab");
+        Object tab = UiReflection.call(UiReflection.coreUI(campaignUI), "getCurrentTab");
         Object refitPanel = UiReflection.call(tab, "getRefitPanel");
         if (refitPanel == null) {
             refitPanel = UiReflection.childWithMethod(tab, "getShipDisplay", 0);

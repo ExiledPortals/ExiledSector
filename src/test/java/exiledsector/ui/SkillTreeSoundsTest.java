@@ -2,7 +2,6 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SoundPlayerAPI;
-import exiledsector.skills.SkillTier;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,12 +40,12 @@ class SkillTreeSoundsTest {
     }
 
     @Test
-    void biggerNodesPlayAHigherTierOfTheVanillaSkillSound() {
-        SkillTreeSounds.allocated(SkillTier.SMALL);
+    void biggerNodeSizesPlayAHigherTierOfTheVanillaSkillSound() {
+        SkillTreeSounds.allocated(SkillTreeSounds.NodeSize.SMALL);
         SkillTreeSounds.resetForTests();
-        SkillTreeSounds.allocated(SkillTier.NOTABLE);
+        SkillTreeSounds.allocated(SkillTreeSounds.NodeSize.MEDIUM);
         SkillTreeSounds.resetForTests();
-        SkillTreeSounds.allocated(SkillTier.KEYSTONE);
+        SkillTreeSounds.allocated(SkillTreeSounds.NodeSize.LARGE);
 
         verify(player).playUISound(SkillTreeSounds.ALLOCATE_SMALL, 1f, 1f);
         verify(player).playUISound(SkillTreeSounds.ALLOCATE_MEDIUM, 1f, 1f);
@@ -56,7 +55,7 @@ class SkillTreeSoundsTest {
     @Test
     void aBurstOfNodeChangesFromAutoAllocateOrRespecPlaysOnlyOneSound() {
         for (int i = 0; i < 20; i++) {
-            SkillTreeSounds.allocated(SkillTier.SMALL);
+            SkillTreeSounds.allocated(SkillTreeSounds.NodeSize.SMALL);
             SkillTreeSounds.deallocated();
         }
 
@@ -92,7 +91,7 @@ class SkillTreeSoundsTest {
     void turningSkillTreeSoundsOffInLunaLibSilencesEverySound() {
         lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", SkillTreeSounds.ENABLED_FIELD_ID)).thenReturn(false);
 
-        SkillTreeSounds.allocated(SkillTier.KEYSTONE);
+        SkillTreeSounds.allocated(SkillTreeSounds.NodeSize.LARGE);
         SkillTreeSounds.refused();
         SkillTreeSounds.hyperspaceOut();
         SkillTreeSounds.socketed();

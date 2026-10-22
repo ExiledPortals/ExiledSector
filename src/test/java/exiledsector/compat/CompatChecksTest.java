@@ -136,9 +136,9 @@ class CompatChecksTest {
             assertFalse(target.testedVersions().isEmpty(), target.displayName());
         }
         int salvageSites = SalvageSiteCompat.SOURCES.size();
-        assertEquals(List.of("Second-in-Command", "Random Assortment of Things areas", "GraphicsLib"), names.subList(0, 3));
-        assertEquals(List.of("Lost Sector", "MagicLib", "Exotica Technologies", "Nightcross Armory area", "Navarchy of Tania area", "Nexerelin",
-                "Ashes of the Domain: Vaults of Knowledge"), names.subList(3 + salvageSites, names.size()));
+        assertEquals(List.of("Second-in-Command", "Random Assortment of Things areas", "GraphicsLib", "Exotica Technologies"), names.subList(0, 4));
+        assertEquals(List.of("Lost Sector", "MagicLib", "Nightcross Armory area", "Navarchy of Tania area", "Nexerelin",
+                "Ashes of the Domain: Vaults of Knowledge"), names.subList(4 + salvageSites, names.size()));
         assertTrue(names.contains("Random Assortment of Things salvage sites"));
     }
 
@@ -262,10 +262,10 @@ class CompatChecksTest {
         when(target.getMutableStats()).thenReturn(stats);
         when(stats.getTimeMult()).thenReturn(timeMult);
 
-        assertEquals(0f, NightcrossCompat.gravityDragPercentOn(target), 0.0001f);
-        timeMult.modifyMult("target" + NightcrossCompat.GRAVITY_DRAG_MOD_SUFFIX, 0.85f);
+        assertEquals(0f, NightcrossGravityDrag.percentOn(target), 0.0001f);
+        timeMult.modifyMult("target" + NightcrossGravityDrag.MOD_SUFFIX, 0.85f);
         timeMult.modifyMult("unrelated", 0.5f);
-        assertEquals(15f, NightcrossCompat.gravityDragPercentOn(target), 0.0001f);
+        assertEquals(15f, NightcrossGravityDrag.percentOn(target), 0.0001f);
     }
 
     @Test

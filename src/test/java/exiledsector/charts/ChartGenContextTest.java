@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.ChartContentPlan.FleetRole;
 import exiledsector.charts.ChartContentPlan.PlannedFleet;
 import exiledsector.charts.ChartGenContext.AppliedEffect;
+import exiledsector.i18n.RealCatalogue;
 import exiledsector.i18n.StyledText;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
@@ -18,9 +19,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -222,8 +220,8 @@ class ChartGenContextTest {
 
     @Test
     void everyEffectDescribesItselfInEnglishAndChinese() throws Exception {
-        JSONObject english = new JSONObject(Files.readString(Path.of("data/strings/exiledSector/en.json"), StandardCharsets.UTF_8));
-        JSONObject chinese = new JSONObject(Files.readString(Path.of("data/strings/exiledSector/zh_CN.json"), StandardCharsets.UTF_8));
+        JSONObject english = new JSONObject(RealCatalogue.entries("en"));
+        JSONObject chinese = new JSONObject(RealCatalogue.entries("zh_CN"));
         for (ChartEffect effect : ChartEffect.values()) {
             String key = effect.key();
             assertTrue(english.has(key) || english.has(key + ".other") && english.has(key + ".one"), key);

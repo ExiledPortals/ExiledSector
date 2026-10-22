@@ -9,6 +9,7 @@ import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ReleasedNodes;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
@@ -35,7 +36,7 @@ public final class DoctrineRevertRelease {
             return false;
         }
         ReleasedNodes released = release(shipData, PlayerShipFacts.of(member, member.getVariant()), SkillTree.topology(),
-                shipData.resolveStartingRootId());
+                ShipTrees.resolveStartingRootId(shipData));
         if (released.nodeIds().isEmpty()) {
             return false;
         }
@@ -64,7 +65,7 @@ public final class DoctrineRevertRelease {
             return ReleasedNodes.NONE;
         }
         Set<String> allocatedBefore = new LinkedHashSet<>(shipData.getAllocatedNodeIds());
-        Set<String> reachableBefore = shipData.reachableAllocatedNodeIds(topology, rootId);
+        Set<String> reachableBefore = ShipTrees.reachableAllocatedNodeIds(shipData, topology, rootId);
         List<SkillItemCost> charges = new ArrayList<>();
         for (SkillNode node : reverted) {
             NodeEligibility.Context eligibility = NodeEligibility.Context.of(shipData, shipFacts, SkillTypeUnlockStatus.lockedFor(shipData),
@@ -73,13 +74,13 @@ public final class DoctrineRevertRelease {
             if (NodeEligibility.check(node, option, eligibility.excluding(node.getId(), shipData)) == null) {
                 shipData.keepAsOriginal(node.getId());
             } else {
-                charges.addAll(shipData.deallocateReleasingCharges(node));
+                charges.addAll(ShipTrees.deallocateReleasingCharges(shipData, node));
             }
         }
         if (allocatedBefore.equals(shipData.getAllocatedNodeIds())) {
             return ReleasedNodes.NONE;
         }
-        charges.addAll(shipData.releaseNewlyStranded(topology, rootId, reachableBefore).charges());
+        charges.addAll(ShipTrees.releaseNewlyStranded(shipData, topology, rootId, reachableBefore).charges());
         allocatedBefore.removeAll(shipData.getAllocatedNodeIds());
         return new ReleasedNodes(List.copyOf(allocatedBefore), charges);
     }

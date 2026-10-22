@@ -6,6 +6,7 @@ import exiledsector.skills.tags.SkillTags;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -57,6 +58,11 @@ public final class WormholeAnchorDefinitions {
         ModCsv.load("id", DATA_PATH, LOG, WormholeAnchorDefinitions::register);
     }
 
+    static ItemDefinition parseDefinition(JSONObject row) {
+        return ItemDefinition.parseCommon(row, null, ItemType.WORMHOLE_ANCHOR, new ItemDefinition.Pools(List.of(), List.of()), null, false,
+                List.of());
+    }
+
     public static void register(JSONArray rows) throws JSONException {
         List<ItemDefinition> definitions = new ArrayList<>();
         Map<String, AnchorTarget> targets = new LinkedHashMap<>();
@@ -66,7 +72,7 @@ public final class WormholeAnchorDefinitions {
         Map<String, FactionFleetDrops.Source> dropSources = new LinkedHashMap<>();
         ModCsv.forEach(rows == null ? new JSONArray() : rows, (index, row) -> {
             try {
-                ItemDefinition definition = ItemDefinition.parseWormholeAnchor(row);
+                ItemDefinition definition = parseDefinition(row);
                 String volume = ModCsv.text(row, VOLUME_COLUMN);
                 if (!isVolume(volume)) {
                     throw new IllegalArgumentException(definition.id() + " has volume \"" + volume + "\"; expected a tree region other than "

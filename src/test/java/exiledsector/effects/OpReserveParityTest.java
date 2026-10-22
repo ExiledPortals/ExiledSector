@@ -9,6 +9,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
@@ -135,7 +136,7 @@ class OpReserveParityTest {
     @Test
     void theShortFormWorksOutThePaidNodeOpFromTheShipsSavedTree() {
         SkillType type = new SkillType.Builder("t", "t", "a.png", SkillTier.SMALL).effects(List.of()).build();
-        ShipSkillDataManager.get("saved-tree").allocate(new SkillNode("armor_1", type, List.of(), 0f, 0f), 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("saved-tree"), new SkillNode("armor_1", type, List.of(), 0f, 0f), 1);
         ShipVariantAPI variant = cruiserWith();
         FleetMemberAPI member = member("saved-tree", variant);
         ShipHullSpecAPI hull = mock(ShipHullSpecAPI.class);

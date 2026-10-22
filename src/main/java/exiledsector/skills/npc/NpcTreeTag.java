@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.NodeReplacements;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -134,22 +135,22 @@ public final class NpcTreeTag {
         if (node == null || shipData.isAllocated(nodeId)) {
             return;
         }
-        if (node.getType().getTier() == SkillTier.WORMHOLE_EXIT && shipData.anchorSocket(nodeId) != null) {
-            shipData.openAnchorWormholes(Integer.MAX_VALUE);
+        if (node.getType().getTier() == SkillTier.WORMHOLE_EXIT && ShipTrees.anchorSocket(shipData, nodeId) != null) {
+            ShipTrees.openAnchorWormholes(shipData, Integer.MAX_VALUE);
             if (shipData.isAllocated(nodeId)) {
                 return;
             }
         }
         if (optionAt < 0 || !node.getType().isOptional()) {
             if (!node.getType().isOptional()) {
-                shipData.allocate(node, CHARGED_NODE_COST);
+                ShipTrees.allocate(shipData, node, CHARGED_NODE_COST);
                 socketAnchor(shipData, node, anchorsBySocketId.get(nodeId));
             }
             return;
         }
         SkillType optionType = NodeEligibility.validOption(node.getType(), entry.substring(optionAt + 1));
         if (optionType != null) {
-            shipData.selectOption(node, optionType, CHARGED_NODE_COST);
+            ShipTrees.selectOption(shipData, node, optionType, CHARGED_NODE_COST);
         }
     }
 

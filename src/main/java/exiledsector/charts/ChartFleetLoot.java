@@ -8,11 +8,12 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledsector.items.DoctrineArchives;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDrops;
+import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
+import exiledsector.loot.LootSources;
 
 import java.util.List;
 import java.util.Map;
@@ -136,10 +137,10 @@ public final class ChartFleetLoot {
         if (fleet.getId() != null && fleet.getId().equals(run.bossFleetId())) {
             fleetLoot = fleetLoot.plus(roll(sector, run, context, ChartIds.WARDEN_LOOT_SITE, ChartDrops.Source.CHART_WARDEN,
                     share * context.wardenSpoilsMult(), random));
-            ItemData doctrine = DoctrineArchives.rollForWarden(run.tier(), run.contentFaction(), share * context.wardenSpoilsMult(), random,
+            List<ItemData> wardenDrops = LootSources.wardenDrops(run.tier(), run.contentFaction(), share * context.wardenSpoilsMult(), random,
                     definition -> ItemUnlock.canDrop(definition, sector));
-            if (doctrine != null) {
-                fleetLoot = fleetLoot.plus(List.of(doctrine), List.of(), Map.of());
+            if (!wardenDrops.isEmpty()) {
+                fleetLoot = fleetLoot.plus(wardenDrops, List.of(), Map.of());
             }
         }
         return fleetLoot;
@@ -152,7 +153,7 @@ public final class ChartFleetLoot {
         float currencyMult = context.dropMult(DropType.CURRENCY) * chanceMult;
         ItemDrops.SiteLoot siteLoot = source == ChartDrops.Source.CHART_FLEET
                 ? ItemDrops.rollFleetSalvage(siteId, random, chances, feedstockMult, currencyMult)
-                : ItemDrops.rollSite(siteId, random, chances, feedstockMult, currencyMult, ItemUnlock.sectionsOpen(sector));
+                : ItemDrops.rollSite(siteId, random, chances, feedstockMult, currencyMult, ItemUnlock.available(ItemType.HULL_ITEM, sector));
         ChartDrops.Loot chartLoot = ChartDrops.roll(source, run.tier(), context.dropMult(DropType.STAR_CHART) * chanceMult,
                 context.dropMult(DropType.CURRENCY) * chanceMult, random, ChartDrops.uniquesFor(sector));
         return siteLoot.plus(chartLoot.charts(), List.of(), chartLoot.currencies());

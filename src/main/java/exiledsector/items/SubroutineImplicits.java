@@ -12,7 +12,7 @@ public final class SubroutineImplicits {
 
     static final String DATA_PATH = "data/config/exiledSector/subroutine_corruption_implicits.csv";
     static final String IMPLICIT_COLUMN = CorruptionImplicitPool.IMPLICIT_COLUMN;
-    private static final CorruptionImplicitPool CORRUPTION_POOL = new CorruptionImplicitPool(DATA_PATH, ItemType.SUBROUTINE,
+    private static final CorruptionImplicitPool CORRUPTION_POOL = new CorruptionImplicitPool(() -> DATA_PATH, ItemType.SUBROUTINE,
             Logger.getLogger(SubroutineImplicits.class));
 
     private SubroutineImplicits() {

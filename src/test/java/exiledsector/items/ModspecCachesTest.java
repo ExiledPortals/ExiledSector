@@ -153,7 +153,7 @@ class ModspecCachesTest {
                         .put(ModspecCaches.DROP_CHANCE_COLUMN, "0.1"))
                 .put(ItemFixtures.subroutineRow("doctrine_chip", SubroutineKind.DOCTRINE).put(ModspecCaches.SALVAGE_CHANCE_COLUMN, "0.1"));
 
-        List<String> messages = ItemDataIntegrity.checkModspecCaches(checkedRows, treeNodes).stream()
+        List<String> messages = SubroutineDataRules.checkModspecCaches(checkedRows, treeNodes).stream()
                 .filter(violation -> violation.severity() == Severity.ERROR).map(Violation::message).toList();
 
         assertEquals(List.of(
@@ -171,10 +171,10 @@ class ModspecCachesTest {
         ItemDefinitions.clear();
         RealSkillData.load();
         ItemFixtures.registerShippedItems();
-        JSONArray shippedRows = ItemFixtures.shippedRows(ItemDefinitions.SUBROUTINES_PATH);
+        JSONArray shippedRows = ItemFixtures.shippedRows(SubroutineDefinitions.dataPath());
         ModspecCaches.register(shippedRows);
 
-        assertEquals(List.of(), ItemDataIntegrity.checkModspecCaches(shippedRows, SkillTree.getDeclaredNodes()));
+        assertEquals(List.of(), SubroutineDataRules.checkModspecCaches(shippedRows, SkillTree.getDeclaredNodes()));
         assertEquals(1, ModspecCaches.bases().size());
         ModspecCaches.CacheBase base = ModspecCaches.bases().iterator().next();
         ItemDefinition definition = ItemDefinitions.get(base.definitionId());

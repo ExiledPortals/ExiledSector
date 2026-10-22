@@ -39,19 +39,7 @@ public final class ItemTooltip {
                 VanillaText.addPara(tooltip, limitLine, LINE_PAD, Misc.getGrayColor());
             }
             addLines(tooltip, item.headerLines(), Misc.getGrayColor());
-            if (showRollRanges && item instanceof Subroutine subroutine) {
-                for (Subroutine.AllocatedNodeEffects allocated : subroutine.allocatedNodeEffects(hullSize)) {
-                    tooltip.addSectionHeading(allocated.nodeName(), Alignment.MID, PAD);
-                    addLines(tooltip, allocated.effectLines(), Misc.getTextColor());
-                }
-            }
-            if (item instanceof StarChart chart) {
-                float linePad = PAD;
-                for (StyledText line : chart.lootTotalLines()) {
-                    VanillaText.addPara(tooltip, line, linePad, Misc.getTextColor()).setAlignment(Alignment.MID);
-                    linePad = LINE_PAD;
-                }
-            }
+            item.writeTooltipSections(tooltip, hullSize, showRollRanges);
             List<StyledText> implicitLines = item.implicitLines(showRollRanges);
             if (!implicitLines.isEmpty()) {
                 tooltip.addSectionHeading(Translation.text("hullItem.tooltip.implicit"), Alignment.MID, PAD);
@@ -77,6 +65,19 @@ public final class ItemTooltip {
             addLines(tooltip, footer.get(), Misc.getGrayColor());
             tooltip.setParaFontDefault();
         });
+    }
+
+    static void addSection(TooltipMakerAPI tooltip, String heading, List<StyledText> lines) {
+        tooltip.addSectionHeading(heading, Alignment.MID, PAD);
+        addLines(tooltip, lines, Misc.getTextColor());
+    }
+
+    static void addCentredLines(TooltipMakerAPI tooltip, List<StyledText> lines) {
+        float linePad = PAD;
+        for (StyledText line : lines) {
+            VanillaText.addPara(tooltip, line, linePad, Misc.getTextColor()).setAlignment(Alignment.MID);
+            linePad = LINE_PAD;
+        }
     }
 
     private static void addLines(TooltipMakerAPI tooltip, List<StyledText> lines, Color color) {

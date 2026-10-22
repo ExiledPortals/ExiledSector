@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -47,8 +48,8 @@ class SocketTypeMigrationTest {
 
     private ShipSkillData shipWith(Item inFirst, Item inSecond) {
         ShipSkillData shipData = new ShipSkillData();
-        shipData.allocate(firstSocket, 3);
-        shipData.allocate(secondSocket, 3);
+        ShipTrees.allocate(shipData, firstSocket, 3);
+        ShipTrees.allocate(shipData, secondSocket, 3);
         shipData.socketItem(firstSocket.getId(), inFirst.id());
         shipData.socketItem(secondSocket.getId(), inSecond.id());
         ships.put("ship", shipData);
@@ -60,11 +61,11 @@ class SocketTypeMigrationTest {
         Item chip = store.add(ItemDefinitions.get("chip"), 1L);
         Item gunners = store.add(ItemDefinitions.get("gunners"), 2L);
 
-        assertTrue(chip.canSocketInto(firstSocket));
-        assertFalse(gunners.canSocketInto(firstSocket));
-        assertTrue(gunners.canSocketInto(ShipSection.WEAPON_MOUNT));
-        assertFalse(gunners.canSocketInto(ShipSection.BRIDGE));
-        assertFalse(chip.canSocketInto(ShipSection.BRIDGE));
+        assertTrue(NodeSocketable.fits(chip, firstSocket));
+        assertFalse(NodeSocketable.fits(gunners, firstSocket));
+        assertTrue(HullItem.fits(gunners, ShipSection.WEAPON_MOUNT));
+        assertFalse(HullItem.fits(gunners, ShipSection.BRIDGE));
+        assertFalse(HullItem.fits(chip, ShipSection.BRIDGE));
     }
 
     @Test

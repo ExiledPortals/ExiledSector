@@ -25,12 +25,9 @@ public final class SkillTags {
             "core", "luddic", "tritachyon", "hegemony", "sindrian_dictat", "pirate", "REDACTED", "persean_league", "enigma", "kesteven", "exotech", "abyss",
             "nightcross", "stargazer", "threat", "tania");
 
-    public static final List<String> HULL_REQUIREMENT = List.of("req_civilian_hull", "req_non_phase_hull", "req_system_charges", "req_modules");
+    public static final List<String> HULL_REQUIREMENT = NodeRequirements.HULL_TAGS;
 
-    public static final List<String> REQUIREMENT = Stream.of(List.of(
-            "req_shields", "req_no_shields", "req_phase", "req_fighter_bays", "req_no_fighter_bays", "req_ballistic",
-            "req_missile", "req_energy", "req_beam", "req_offensive_beam", "req_non_beam_energy", "req_flagship",
-            "campaign_only", "player_only"), HULL_REQUIREMENT).flatMap(List::stream).toList();
+    public static final List<String> REQUIREMENT = NodeRequirements.TAGS;
 
     public static final List<String> GATE = List.of("gate_singularity_defeated", "gate_pascal_visited", "gate_lunar_fleet_defeated",
             "gate_ancient_prototype_found", "gate_frozen_heart_visited", "gate_threat_fought", "gate_remnant_fought");
@@ -45,10 +42,10 @@ public final class SkillTags {
     }
 
     public static boolean isRequirement(String tag) {
-        return tag != null && REQUIREMENT.contains(tag);
+        return NodeRequirements.isRequirement(tag);
     }
 
     public static boolean isHullRequirement(String tag) {
-        return tag != null && HULL_REQUIREMENT.contains(tag);
+        return NodeRequirements.isHullRequirement(tag);
     }
 }

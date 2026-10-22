@@ -103,7 +103,7 @@ class WormholeAnchorDataTest {
     void theShippedAnchorsPassTheIntegrityCheckAgainstTheShippedTree() throws Exception {
         RealSkillData.load();
 
-        List<Violation> violations = ItemDataIntegrity.checkWormholeAnchors(shippedAnchors(), SkillTree.getDeclaredNodes(),
+        List<Violation> violations = WormholeAnchorDataRules.checkWormholeAnchors(shippedAnchors(), SkillTree.getDeclaredNodes(),
                 otherShippedIds());
 
         assertEquals(List.of(), violations);
@@ -111,7 +111,7 @@ class WormholeAnchorDataTest {
 
     private static Set<String> otherShippedIds() throws Exception {
         Set<String> ids = new TreeSet<>();
-        for (String path : List.of(ItemDefinitions.SUBROUTINES_PATH, ItemDefinitions.HULL_ITEMS_PATH, StarChartDefinitions.DATA_PATH)) {
+        for (String path : List.of(SubroutineDefinitions.dataPath(), HullItem.definitionsPath(), StarChartDefinitions.DATA_PATH)) {
             JSONArray rows = ItemFixtures.shippedRows(path);
             for (int index = 0; rows != null && index < rows.length(); index++) {
                 ids.add(rows.getJSONObject(index).getString("id"));
@@ -142,7 +142,7 @@ class WormholeAnchorDataTest {
                         .put("color", "orange"))
                 .put(new JSONObject().put("volume", "enigma"));
 
-        List<String> messages = ItemDataIntegrity.checkWormholeAnchors(rows, tree, Set.of("taken")).stream()
+        List<String> messages = WormholeAnchorDataRules.checkWormholeAnchors(rows, tree, Set.of("taken")).stream()
                 .map(violation -> "line " + violation.line() + ": " + violation.message()).toList();
 
         assertEquals(List.of(
@@ -164,7 +164,7 @@ class WormholeAnchorDataTest {
     void aModifierMayNotRollOnAnchors() throws Exception {
         JSONArray modifiers = new JSONArray().put(ItemFixtures.modifierRow("HULL_MULT", "prefix", "wormhole_anchor", "HULL_MULT:1:2", "Sturdy"));
 
-        List<String> messages = ItemDataIntegrity.check(modifiers, new JSONArray(), new JSONArray(), new JSONArray()).stream()
+        List<String> messages = ItemDataChecks.check(modifiers, new JSONArray(), new JSONArray(), new JSONArray()).stream()
                 .map(Violation::message).toList();
 
         assertTrue(messages.contains("HULL_MULT rolls on wormhole_anchor, but wormhole anchors do not roll modifiers"), messages.toString());

@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.HostMod;
 import exiledsector.ModCsv;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
@@ -20,20 +21,29 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public final class ItemImplicits {
 
-    static final String DATA_PATH = "data/config/exiledSector/hull_item_implicits.csv";
-    static final String CORRUPTION_DATA_PATH = "data/config/exiledSector/hull_item_corruption_implicits.csv";
+    static final String DATA_FILE = "hull_item_implicits.csv";
+    static final String CORRUPTION_DATA_FILE = "hull_item_corruption_implicits.csv";
     private static final String ENTRY_SEPARATOR = ";";
     private static final long IMPLICIT_SEED_SALT = 0x5DEECE66DL;
     private static final Logger LOG = Logger.getLogger(ItemImplicits.class);
     private static final AtomicReference<Map<ItemKind, List<Modifier>>> BY_TYPE = new AtomicReference<>();
     private static final AtomicReference<CorruptionPool> CORRUPTION_POOL = new AtomicReference<>();
-    private static final CorruptionImplicitPool CORRUPTION_ONLY_IMPLICITS = new CorruptionImplicitPool(CORRUPTION_DATA_PATH, ItemType.HULL_ITEM, LOG);
+    private static final CorruptionImplicitPool CORRUPTION_ONLY_IMPLICITS = new CorruptionImplicitPool(ItemImplicits::corruptionDataPath,
+            ItemType.HULL_ITEM, LOG);
 
     private ItemImplicits() {
     }
 
+    static String corruptionDataPath() {
+        return HostMod.configPath(CORRUPTION_DATA_FILE);
+    }
+
+    static String dataPath() {
+        return HostMod.configPath(DATA_FILE);
+    }
+
     public static void load() {
-        ModCsv.load("section", DATA_PATH, LOG, ItemImplicits::register);
+        ModCsv.load("section", dataPath(), LOG, ItemImplicits::register);
         CORRUPTION_ONLY_IMPLICITS.load();
     }
 
@@ -51,7 +61,7 @@ public final class ItemImplicits {
                     throw new IllegalArgumentException(kind.id() + " is listed more than once");
                 }
             } catch (IllegalArgumentException e) {
-                LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": " + e.getMessage());
+                LOG.error("Skipping row " + (index + 1) + " of " + dataPath() + ": " + e.getMessage());
             }
         });
         BY_TYPE.set(Collections.unmodifiableMap(loaded));

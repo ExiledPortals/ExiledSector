@@ -52,7 +52,7 @@ public final class SectionFlair {
     }
 
     public static Color colorOf(ItemKind itemType) {
-        return itemType == null ? Misc.getBasePlayerColor() : colorOf(itemType.section());
+        return itemType == null ? Misc.getBasePlayerColor() : colorOf(ShipSection.of(itemType));
     }
 
     public static Color inactiveColor() {

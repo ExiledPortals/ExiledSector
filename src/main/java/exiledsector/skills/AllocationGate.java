@@ -63,7 +63,7 @@ public final class AllocationGate {
         this.rootId = rootId;
         this.budget = budget;
         this.eligibility = eligibility;
-        this.spentOp = data.getSpentOp(budget.opCostPerNode());
+        this.spentOp = ShipTrees.getSpentOp(data, budget.opCostPerNode());
     }
 
     public ShipSkillData data() {
@@ -142,7 +142,7 @@ public final class AllocationGate {
 
     public Set<String> grantOnlyNodeIds() {
         if (grantOnlyNodeIds == null) {
-            grantOnlyNodeIds = data.grantOnlyNodeIds(topology, rootId);
+            grantOnlyNodeIds = ShipTrees.grantOnlyNodeIds(data, topology, rootId);
         }
         return grantOnlyNodeIds;
     }
@@ -202,7 +202,7 @@ public final class AllocationGate {
         if (!isConnected(node)) {
             return Verdict.refused(Refusal.NOT_CONNECTED);
         }
-        String pairedId = data.wormholePartner(node);
+        String pairedId = ShipTrees.wormholePartner(data, node);
         int slotsNeeded = pairedId != null && !data.isAllocated(pairedId) ? 2 : 1;
         if (data.usedNodeSlots() + slotsNeeded > budget.maxAllocatedNodes()) {
             return Verdict.refused(Refusal.NODE_CAP);
@@ -239,7 +239,7 @@ public final class AllocationGate {
         if (grantOnlyNodeIds().contains(node.getId())) {
             return Verdict.refused(Refusal.HELD_BY_SUBROUTINE);
         }
-        return data.canDeallocate(node, topology, rootId) ? Verdict.GRANTED : Verdict.refused(Refusal.STRANDS_NODES);
+        return ShipTrees.canDeallocate(data, node, topology, rootId) ? Verdict.GRANTED : Verdict.refused(Refusal.STRANDS_NODES);
     }
 
     private Verdict computeOptionSwitch(SkillNode node, SkillType option) {

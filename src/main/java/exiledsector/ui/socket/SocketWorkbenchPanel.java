@@ -11,7 +11,6 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.charts.StarChartSettings;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.items.MaterialItems;
@@ -31,7 +30,6 @@ import exiledsector.items.ItemStore;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
 import exiledsector.items.SlottedLine;
-import exiledsector.items.StarChart;
 import exiledsector.modifiers.ModifierSlot;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
@@ -39,15 +37,11 @@ import exiledsector.ui.TooltipExpansion;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
-import exiledsector.ui.chart.StarChartCrafting;
-import exiledsector.ui.chart.StarChartOpening;
-import exiledsector.ui.chart.WormholeOpenCheck;
 import exiledsector.ui.util.GLDraw;
 import com.fs.starfarer.api.input.InputEventAPI;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Locale;
@@ -539,35 +533,39 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private boolean chartUsable(ItemCurrency currency) {
         CraftingMaterials materials = playerMaterials();
-        StarChartCrafting.Refusal refusal = StarChartCrafting.refusal(currency, loadedItem, benchMode.store(), materials, allowedUniques(),
+        BenchModeSupport.Refusal refusal = modeSupport().refusal(currency, loadedItem, benchMode.store(), materials, allowedUniques(),
                 activeWards);
-        if (refusal != StarChartCrafting.Refusal.NO_CHART && refusal != StarChartCrafting.Refusal.NONE_OWNED && droppedMissingWards(materials)) {
+        if (refusal.checksWards() && droppedMissingWards(materials)) {
             return false;
         }
-        if (refusal == StarChartCrafting.Refusal.NONE) {
+        if (refusal.allowed()) {
             return true;
         }
-        showNotice(chartRefusalText(currency, refusal));
+        showNotice(refusalText(currency, refusal.noticeKey()));
         return false;
     }
 
-    private String chartRefusalText(ItemCurrency currency, StarChartCrafting.Refusal refusal) {
-        return Translation.msg(refusal.noticeKey()).arg("name", MaterialItems.displayName(currency.itemId()))
+    private String refusalText(ItemCurrency currency, String noticeKey) {
+        return Translation.msg(noticeKey).arg("name", MaterialItems.displayName(currency.itemId()))
                 .arg("target", loadedItem == null ? "" : loadedItem.name()).text();
+    }
+
+    private BenchModeSupport modeSupport() {
+        return BenchModes.of(benchMode);
     }
 
     private void applyChartUse(ItemCurrency currency) {
         String nameBefore = loadedItem.name();
         Set<CraftingWard> spentWards = ItemCrafting.wardsSpentBy(currency, loadedItem, activeWards);
-        StarChartCrafting.Used used = StarChartCrafting.use(currency, loadedItem, benchMode.store(), playerMaterials(), craftingRandom,
-                allowedUniques(), activeWards);
+        BenchModeSupport.Use used = modeSupport().use(currency, loadedItem, benchMode.store(), playerMaterials(), craftingRandom,
+                allowedUniques(), activeWards, nameBefore);
         if (used == null) {
-            showNotice(chartRefusalText(currency, StarChartCrafting.Refusal.CANNOT_USE));
+            showNotice(refusalText(currency, modeSupport().cannotUseNoticeKey()));
             return;
         }
         activeWards.removeAll(spentWards);
         loadedItem = used.selectedAfter();
-        noticeText = withSpentWards(StarChartCrafting.usedNotice(currency, nameBefore, used), spentWards);
+        noticeText = withSpentWards(used.notice(), spentWards);
         SkillTreeSounds.socketed();
         socketFlair.flash(used.result().frameColor());
         afterChange();
@@ -675,7 +673,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private List<ItemCurrency> currencies() {
         if (benchMode == BenchMode.STAR_CHARTS) {
-            return StarChartCrafting.currencies().stream().sorted(Comparator.comparingDouble(ItemCurrency::dropWeight).reversed()).toList();
+            return modeSupport().currencies();
         }
         return List.of(CraftingCurrency.values());
     }
@@ -697,8 +695,8 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         return detailsBottom - BenchScene.detailsTop(benchMode);
     }
 
-    private WormholeOpenCheck.Blocker openBlocker() {
-        return WormholeOpenCheck.current(Global.getSector(), benchMode.store(), loadedItem);
+    private BenchModeSupport.OpenCheck openBlocker() {
+        return modeSupport().openCheck(Global.getSector(), benchMode.store(), loadedItem);
     }
 
     private void rebuildOpenButton() {
@@ -709,7 +707,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             }
             return;
         }
-        WormholeOpenCheck.Blocker blocker = openBlocker();
+        BenchModeSupport.OpenCheck blocker = openBlocker();
         float buttonWidth = BenchScene.DETAILS_WIDTH * sceneScale;
         float plateBottom = artY(BenchScene.CHART_DETAILS_BOTTOM) + PLATE_PAD;
         float buttonTop = Math.max(artY(BenchScene.OPEN_BUTTON_TOP), plateBottom + PLATE_PAD);
@@ -730,7 +728,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private void openPressed() {
         hoverTooltip.hide();
-        WormholeOpenCheck.Blocker blocker = openBlocker();
+        BenchModeSupport.OpenCheck blocker = openBlocker();
         if (!blocker.allowsOpening()) {
             SkillTreeSounds.refused();
             showWarning(Translation.text(blocker.reasonKey()));
@@ -740,7 +738,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         }
         pendingChart = loadedItem;
         Item confirmedChart = pendingChart;
-        int entries = StarChartSettings.wormholeEntries();
+        int entries = modeSupport().openEntries();
         openConfirm(OPEN_CONFIRM_HEIGHT, element -> writeOpenConfirm(element, confirmedChart, entries), "chart.ui.open.confirm.yes",
                 Control.CONFIRM_OPEN, "chart.ui.open.confirm.no", Control.CANCEL_CONFIRM);
     }
@@ -759,8 +757,8 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         if (chart == null || chart != loadedItem) {
             return;
         }
-        StarChartOpening.Outcome outcome = StarChartOpening.open(StarChartOpening.FROM_STORE, Global.getSector(), benchMode.store(), chart,
-                StarChartSettings.wormholeEntries(), craftingRandom);
+        BenchModeSupport.OpenOutcome outcome = modeSupport().open(Global.getSector(), benchMode.store(), chart, modeSupport().openEntries(),
+                craftingRandom);
         String message = Translation.msg(outcome.messageKey()).arg("name", chart.name()).text();
         if (!outcome.opened()) {
             SkillTreeSounds.refused();
@@ -943,10 +941,10 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         if (ownedCount == 0) {
             hints.add(Translation.text(currency.synthesisable() ? "ui.workbench.tile.noneOwned" : "ui.workbench.tile.noneFound"));
         } else if (benchMode == BenchMode.STAR_CHARTS) {
-            StarChartCrafting.Refusal refusal = StarChartCrafting.refusal(currency, loadedItem, benchMode.store(), playerMaterials(), allowedUniques(),
+            BenchModeSupport.Refusal refusal = modeSupport().refusal(currency, loadedItem, benchMode.store(), playerMaterials(), allowedUniques(),
                     activeWards);
-            hints.add(refusal == StarChartCrafting.Refusal.NONE
-                    ? Translation.msg("chart.ui.currency.use").arg("target", loadedItem.name()).text() : chartRefusalText(currency, refusal));
+            hints.add(refusal.allowed()
+                    ? Translation.msg("chart.ui.currency.use").arg("target", loadedItem.name()).text() : refusalText(currency, refusal.noticeKey()));
         } else if (loadedItem != null && ItemCrafting.canUse(currency, loadedItem, allowedUniques(), activeWards)) {
             hints.add(Translation.msg("ui.workbench.tile.use").arg("target", loadedItem.name()).text());
         } else if (loadedItem != null && ItemCrafting.canUse(currency, loadedItem, allowedUniques())) {
@@ -968,7 +966,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     }
 
     private String modeDescriptionKey(ItemCurrency currency) {
-        return benchMode == BenchMode.STAR_CHARTS ? StarChartCrafting.currencyDescriptionKey(currency) : descriptionKey(currency);
+        return benchMode == BenchMode.STAR_CHARTS ? modeSupport().currencyDescriptionKey(currency) : descriptionKey(currency);
     }
 
     static String usedNoticeKey(CraftingCurrency currency, CorruptionOutcome outcome, ItemNature nature) {
@@ -1016,12 +1014,10 @@ public final class SocketWorkbenchPanel extends HoloPanel {
                 }
             }
             float paraPad = GAP * 2f;
-            if (loadedItem instanceof StarChart chart) {
-                float linePad = paraPad;
-                for (StyledText line : chart.lootTotalLines()) {
-                    centred(VanillaText.addPara(element, line, linePad, Misc.getTextColor()));
-                    linePad = LINE_PAD;
-                }
+            float linePad = paraPad;
+            for (StyledText line : BenchModes.detailLines(loadedItem)) {
+                centred(VanillaText.addPara(element, line, linePad, Misc.getTextColor()));
+                linePad = LINE_PAD;
             }
             addDetailSection(element, "hullItem.tooltip.implicit", loadedItem.implicitLines(detailsShowRollRanges), paraPad);
             if (detailsShowRollRanges) {

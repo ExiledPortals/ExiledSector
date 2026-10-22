@@ -3,6 +3,7 @@ package exiledsector.items;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -121,8 +122,8 @@ class NpcItemsTest {
         SkillTree.register(new SkillNode("socket_a", socketType, List.of("root"), 0f, 0f));
         SkillTree.register(new SkillNode("socket_b", socketType, List.of("root"), 0f, 0f));
         ShipSkillData data = NpcSkillTreeBuilder.rootedTree(SkillTree.get("root"), 2);
-        data.allocate(SkillTree.get("socket_a"), 1);
-        data.allocate(SkillTree.get("socket_b"), 1);
+        ShipTrees.allocate(data, SkillTree.get("socket_a"), 1);
+        ShipTrees.allocate(data, SkillTree.get("socket_b"), 1);
         data.socketItem("socket_a", NpcItems.id(HEGEMONY_ANCHOR, 0L));
         data.socketItem("socket_b", "socketable_7");
 

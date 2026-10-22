@@ -12,6 +12,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.layout.SkillNodeDecoration;
+import exiledsector.ui.cargo.AnchorLook;
 import exiledsector.ui.cargo.AnimatedItemIcons;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
@@ -123,10 +124,10 @@ class WormholeAnchorTest {
         assertEquals(WormholeAnchorDefinitions.DEFAULT_COLOR, WormholeAnchorDefinitions.style("missing_anchor").color());
         CargoIconLook look = CargoIconLooks.forItem(hegemony);
         assertEquals(hegemony.color(), look.color());
-        assertEquals("hegemony", look.anchor().crestFactionId());
+        assertEquals("hegemony", ((AnchorLook) look.art()).crestFactionId());
         assertTrue(look.framed());
-        assertEquals(look.anchor(), look.unframed().anchor());
-        assertNull(CargoIconLooks.forItem(anchor(ItemFixtures.SUBROUTINE)).anchor());
+        assertEquals(look.art(), look.unframed().art());
+        assertFalse(CargoIconLooks.forItem(anchor(ItemFixtures.SUBROUTINE)).art() instanceof AnchorLook);
     }
 
     @Test
@@ -137,7 +138,7 @@ class WormholeAnchorTest {
 
         CargoIconLook look = CargoIconLooks.forItem(anchor(BEACON));
 
-        assertNull(look.anchor());
+        assertFalse(look.art() instanceof AnchorLook);
         assertEquals(ItemRarity.UNIQUE.color(), look.color());
     }
 
@@ -243,13 +244,13 @@ class WormholeAnchorTest {
         Item abyss = anchor(ABYSS_ANCHOR);
         SkillNode exit = SkillTree.get("hegemony_2");
 
-        assertTrue(hegemony.canSocketInto(socket));
-        assertFalse(hegemony.canSocketInto(exit));
-        assertFalse(hegemony.canSocketInto((SkillNode) null));
-        assertFalse(hegemony.canSocketInto(ShipSection.BRIDGE));
-        assertFalse(abyss.canSocketInto(socket), "the abyss exit is not in the active tree, as when its area is off");
-        assertTrue(SocketCustody.fitsTreeSocket(hegemony));
-        assertTrue(SocketCustody.fitsTreeSocket(abyss));
+        assertTrue(NodeSocketable.fits(hegemony, socket));
+        assertFalse(NodeSocketable.fits(hegemony, exit));
+        assertFalse(NodeSocketable.fits(hegemony, null));
+        assertFalse(HullItem.fits(hegemony, ShipSection.BRIDGE));
+        assertFalse(NodeSocketable.fits(abyss, socket), "the abyss exit is not in the active tree, as when its area is off");
+        assertTrue(TreeSocketCustody.fitsTreeSocket(hegemony));
+        assertTrue(TreeSocketCustody.fitsTreeSocket(abyss));
     }
 
     @Test

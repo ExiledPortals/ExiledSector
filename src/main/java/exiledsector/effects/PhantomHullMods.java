@@ -84,7 +84,7 @@ public final class PhantomHullMods {
     }
 
     public static HullModEffect vanillaEffect(HullModEffect effect) {
-        return effect instanceof PhantomHullModEffect phantomEffect ? phantomEffect.original() : effect;
+        return WrappingHullModEffect.unwrapped(effect);
     }
 
     static HullModEffect createOriginal(String hullModId) {

@@ -8,6 +8,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.tags.ShipProfile;
 import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
@@ -173,7 +174,7 @@ class HullUpgradeTest {
         Item officer = store.add(ItemDefinitions.get("officer"), 1L);
         HullUpgradeRules.socket(shipData, ShipSection.BRIDGE, officer, ships);
 
-        shipData.resetAllocations();
+        ShipTrees.resetAllocations(shipData);
         assertEquals(List.of("bridge"), shipData.getUnlockedSocketTypeIds());
         Item transposed = Item.withEffects(officer.id(), "chip", 3L, List.of());
         store.replace(officer, transposed);

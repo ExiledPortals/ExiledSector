@@ -124,8 +124,8 @@ public final class DoctrineIconFx {
     private DoctrineIconFx() {
     }
 
-    static void render(SpriteCache sprites, String iconPath, CargoIconLook look, float x, float y, float w, float h, float alphaMult, int phaseSeed) {
-        DoctrineLook doctrine = look.doctrine();
+    static void render(DoctrineLook doctrine, SpriteCache sprites, String iconPath, CargoIconLook look, float x, float y, float w, float h,
+                       float alphaMult, int phaseSeed) {
         DoctrineScreen screen = doctrine.screen();
         boolean animated = ItemAnimationSetting.mode() == ItemAnimationSetting.Mode.FULL;
         float size = Math.min(w, h);

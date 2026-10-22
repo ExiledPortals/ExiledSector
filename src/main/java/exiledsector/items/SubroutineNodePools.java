@@ -86,7 +86,7 @@ public final class SubroutineNodePools {
     }
 
     private static Pool pool(ItemDefinition definition) {
-        SubroutineKind kind = definition == null ? null : definition.subroutineKind();
+        SubroutineKind kind = SubroutineKind.of(definition);
         return kind == null || !kind.rollsNode() ? null : POOLS_BY_KIND.get(kind);
     }
 

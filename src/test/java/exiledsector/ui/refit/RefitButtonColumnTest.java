@@ -44,7 +44,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
-class SkillTreeModsButtonTest {
+class RefitButtonColumnTest {
 
     public abstract static class ModWidget implements UIPanelAPI {
         public final List<Object> children = new ArrayList<>();
@@ -76,10 +76,12 @@ class SkillTreeModsButtonTest {
     private ButtonAPI benchButton;
     private CustomUIPanelPlugin benchPlugin;
     private MockedStatic<ModificationBenchRefitButton> benchButtonMock;
+    private int createdButtons;
 
     @BeforeEach
     void setUp() {
-        SkillTreeModsButton.resetForTests();
+        RefitButtonColumn.resetForTests();
+        createdButtons = 0;
         widget = mock(ModWidget.class, withSettings().useConstructor().defaultAnswer(CALLS_REAL_METHODS));
         buildIn = mock(ButtonAPI.class);
         PositionAPI buildInPosition = mock(PositionAPI.class);
@@ -111,16 +113,17 @@ class SkillTreeModsButtonTest {
         SettingsAPI settings = mock(SettingsAPI.class);
         when(settings.createCustom(anyFloat(), anyFloat(), any())).thenAnswer(invocation -> {
             CustomUIPanelPlugin created = invocation.getArgument(2);
-            if (created instanceof ModificationBenchModsButton) {
-                benchPlugin = created;
-                when(benchContainer.getPlugin()).thenReturn(created);
-                return benchContainer;
-            }
-            CustomPanelAPI target = created instanceof HullUpgradesModsButton ? hullUpgradesContainer : container;
-            if (created instanceof HullUpgradesModsButton) {
-                hullUpgradesPlugin = created;
-            } else {
+            createdButtons++;
+            CustomPanelAPI target;
+            if (createdButtons == 1) {
                 skillTreePlugin = created;
+                target = container;
+            } else if (createdButtons == 2) {
+                hullUpgradesPlugin = created;
+                target = hullUpgradesContainer;
+            } else {
+                benchPlugin = created;
+                target = benchContainer;
             }
             when(target.getPlugin()).thenReturn(created);
             return target;
@@ -142,20 +145,18 @@ class SkillTreeModsButtonTest {
         benchButtonMock.close();
         refitButtonMock.close();
         globalMock.close();
-        SkillTreeModsButton.resetForTests();
-        HullUpgradesModsButton.resetForTests();
-        ModificationBenchModsButton.resetForTests();
+        RefitButtonColumn.resetForTests();
         HullUpgradesSetting.setEnabledForTests(HullUpgradesSetting.DEFAULT_ENABLED);
     }
 
     @Test
     void theButtonSitsOneSlotBelowBuildInWithBuildInsSizeAndTheKHotkey() {
-        SkillTreeModsButton.attach(widget);
+        RefitButtonColumn.attach(widget);
 
         verify(container).createUIElement(150f, 25f, false);
         verify(button).setShortcut(Keyboard.KEY_K, true);
-        verify(placement).belowMid(buildIn, SkillTreeModsButton.GAP_BELOW_BUILD_IN);
-        verify(placement).setXAlignOffset(SkillTreeModsButton.X_ALIGN_OFFSET);
+        verify(placement).belowMid(buildIn, RefitButtonColumn.GAP_BELOW_BUILD_IN);
+        verify(placement).setXAlignOffset(RefitButtonColumn.X_ALIGN_OFFSET);
     }
 
     @Test
@@ -164,28 +165,28 @@ class SkillTreeModsButtonTest {
         when(modManager.isModEnabled(ExoticaCompat.MOD_ID)).thenReturn(true);
         when(Global.getSettings().getModManager()).thenReturn(modManager);
 
-        SkillTreeModsButton.attach(widget);
+        RefitButtonColumn.attach(widget);
 
         verify(placement).belowMid(buildIn, 31f);
-        verify(placement).setXAlignOffset(SkillTreeModsButton.X_ALIGN_OFFSET);
+        verify(placement).setXAlignOffset(RefitButtonColumn.X_ALIGN_OFFSET);
     }
 
     @Test
     void theButtonIsStyledLikeTheOtherHullModButtons() {
         TooltipMakerAPI element = container.createUIElement(150f, 25f, false);
-        SkillTreeModsButton.attach(widget);
+        RefitButtonColumn.attach(widget);
 
         verify(element).setButtonFontOrbitron20();
-        verify(element).addButton(any(), eq(SkillTreeModsButton.BUTTON_ID), any(), any(), eq(Alignment.MID), eq(CutStyle.BOTTOM),
+        verify(element).addButton(any(), eq(SkillTreeRefitButton.COLUMN_BUTTON.id()), any(), any(), eq(Alignment.MID), eq(CutStyle.BOTTOM),
                 eq(150f), eq(25f), eq(0f));
     }
 
     @Test
     void aWidgetThatAlreadyHasTheButtonDoesNotGetASecondOne() {
-        SkillTreeModsButton.attach(widget);
+        RefitButtonColumn.attach(widget);
         widget.children.add(container);
 
-        SkillTreeModsButton.attach(widget);
+        RefitButtonColumn.attach(widget);
 
         verify(widget, times(3)).addComponent(any());
     }
@@ -194,16 +195,16 @@ class SkillTreeModsButtonTest {
     void aRefitScreenWithoutABuildInButtonGetsNoButton() {
         widget.perm = null;
 
-        SkillTreeModsButton.attach(widget);
+        RefitButtonColumn.attach(widget);
 
         verify(widget, never()).addComponent(any());
     }
 
     @Test
     void pressingTheButtonOpensTheSkillTree() {
-        SkillTreeModsButton.attach(widget);
+        RefitButtonColumn.attach(widget);
 
-        skillTreePlugin.buttonPressed(SkillTreeModsButton.BUTTON_ID);
+        skillTreePlugin.buttonPressed(SkillTreeRefitButton.COLUMN_BUTTON.id());
         skillTreePlugin.buttonPressed("somethingElse");
 
         refitButtonMock.verify(() -> SkillTreeRefitButton.openPanel(null), times(1));
@@ -211,12 +212,12 @@ class SkillTreeModsButtonTest {
 
     @Test
     void turningTheSettingOffHidesTheButtonWithoutRemovingItSinceOtherModsMayAnchorOnIt() {
-        SkillTreeModsButton.attach(widget);
+        RefitButtonColumn.attach(widget);
         widget.children.add(container);
         buttonUnderHullMods(false);
 
-        SkillTreeModsButton.attach(widget);
-        skillTreePlugin.buttonPressed(SkillTreeModsButton.BUTTON_ID);
+        RefitButtonColumn.attach(widget);
+        skillTreePlugin.buttonPressed(SkillTreeRefitButton.COLUMN_BUTTON.id());
 
         verify(widget, never()).removeComponent(any());
         verify(container).setOpacity(0f);
@@ -224,7 +225,7 @@ class SkillTreeModsButtonTest {
         refitButtonMock.verify(() -> SkillTreeRefitButton.openPanel(null), never());
 
         buttonUnderHullMods(true);
-        SkillTreeModsButton.attach(widget);
+        RefitButtonColumn.attach(widget);
 
         verify(container).setOpacity(1f);
         verify(widget, times(3)).addComponent(any());
@@ -234,7 +235,7 @@ class SkillTreeModsButtonTest {
     void withTheSettingOffANewRefitScreenGetsNoButton() {
         buttonUnderHullMods(false);
 
-        SkillTreeModsButton.attach(widget);
+        RefitButtonColumn.attach(widget);
 
         verify(widget, never()).addComponent(any());
     }
@@ -253,19 +254,19 @@ class SkillTreeModsButtonTest {
 
     @Test
     void theHullUpgradesButtonSitsRightBelowTheSkillTreeButtonWithTheLHotkey() {
-        SkillTreeModsButton.attach(widget);
+        RefitButtonColumn.attach(widget);
 
         verify(hullUpgradesContainer).createUIElement(150f, 25f, false);
         verify(hullUpgradesButton).setShortcut(Keyboard.KEY_L, true);
-        verify(placement).belowMid(container, HullUpgradesModsButton.GAP_BELOW_SKILL_TREE);
+        verify(placement).belowMid(container, RefitButtonColumn.GAP_BETWEEN_BUTTONS);
     }
 
     @Test
     void pressingTheHullUpgradesButtonOpensTheHullUpgradesScreen() {
-        SkillTreeModsButton.attach(widget);
+        RefitButtonColumn.attach(widget);
 
-        hullUpgradesPlugin.buttonPressed(HullUpgradesModsButton.BUTTON_ID);
-        hullUpgradesPlugin.buttonPressed(SkillTreeModsButton.BUTTON_ID);
+        hullUpgradesPlugin.buttonPressed(HullUpgradesRefitButton.COLUMN_BUTTON.id());
+        hullUpgradesPlugin.buttonPressed(SkillTreeRefitButton.COLUMN_BUTTON.id());
 
         hullUpgradesButtonMock.verify(() -> HullUpgradesRefitButton.openPanel(null), times(1));
         refitButtonMock.verify(() -> SkillTreeRefitButton.openPanel(null), never());
@@ -273,13 +274,13 @@ class SkillTreeModsButtonTest {
 
     @Test
     void switchingHullUpgradesOffHidesItsButtonWithoutRemovingIt() {
-        SkillTreeModsButton.attach(widget);
+        RefitButtonColumn.attach(widget);
         widget.children.add(container);
         widget.children.add(hullUpgradesContainer);
         HullUpgradesSetting.setEnabledForTests(false);
 
-        SkillTreeModsButton.attach(widget);
-        hullUpgradesPlugin.buttonPressed(HullUpgradesModsButton.BUTTON_ID);
+        RefitButtonColumn.attach(widget);
+        hullUpgradesPlugin.buttonPressed(HullUpgradesRefitButton.COLUMN_BUTTON.id());
 
         verify(widget, never()).removeComponent(any());
         verify(hullUpgradesContainer).setOpacity(0f);
@@ -289,28 +290,28 @@ class SkillTreeModsButtonTest {
 
     @Test
     void theModificationBenchButtonSitsRightBelowTheHullItemsButtonWithNoHotkeyByDefault() {
-        SkillTreeModsButton.attach(widget);
+        RefitButtonColumn.attach(widget);
 
         verify(benchContainer).createUIElement(150f, 25f, false);
         verify(benchButton, never()).setShortcut(anyInt(), anyBoolean());
-        verify(placement).belowMid(hullUpgradesContainer, ModificationBenchModsButton.GAP_BELOW_HULL_ITEMS);
+        verify(placement).belowMid(hullUpgradesContainer, RefitButtonColumn.GAP_BETWEEN_BUTTONS);
     }
 
     @Test
     void aBoundCraftingKeyBecomesTheBenchButtonShortcut() {
         lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", RefitButtonConfig.BENCH_KEYBIND_FIELD_ID)).thenReturn(Keyboard.KEY_J);
 
-        SkillTreeModsButton.attach(widget);
+        RefitButtonColumn.attach(widget);
 
         verify(benchButton).setShortcut(Keyboard.KEY_J, true);
     }
 
     @Test
     void pressingTheModificationBenchButtonOpensTheBench() {
-        SkillTreeModsButton.attach(widget);
+        RefitButtonColumn.attach(widget);
 
-        benchPlugin.buttonPressed(ModificationBenchModsButton.BUTTON_ID);
-        benchPlugin.buttonPressed(HullUpgradesModsButton.BUTTON_ID);
+        benchPlugin.buttonPressed(RefitButtonColumn.BENCH_BUTTON.id());
+        benchPlugin.buttonPressed(HullUpgradesRefitButton.COLUMN_BUTTON.id());
 
         benchButtonMock.verify(() -> ModificationBenchRefitButton.openPanel(null), times(1));
         hullUpgradesButtonMock.verify(() -> HullUpgradesRefitButton.openPanel(null), never());
@@ -318,13 +319,13 @@ class SkillTreeModsButtonTest {
 
     @Test
     void turningTheSettingOffHidesTheBenchButtonWithoutRemovingIt() {
-        SkillTreeModsButton.attach(widget);
+        RefitButtonColumn.attach(widget);
         widget.children.add(container);
         widget.children.add(hullUpgradesContainer);
         widget.children.add(benchContainer);
         buttonUnderHullMods(false);
 
-        SkillTreeModsButton.attach(widget);
+        RefitButtonColumn.attach(widget);
 
         verify(widget, never()).removeComponent(any());
         verify(benchContainer).setOpacity(0f);

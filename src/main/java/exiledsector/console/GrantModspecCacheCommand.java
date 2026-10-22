@@ -96,7 +96,7 @@ public class GrantModspecCacheCommand implements BaseCommand {
     static List<ItemDefinition> modspecCaches() {
         List<ItemDefinition> caches = new ArrayList<>();
         for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.SUBROUTINE)) {
-            if (definition.subroutineKind() == SubroutineKind.MODSPEC_CACHE) {
+            if (SubroutineKind.of(definition) == SubroutineKind.MODSPEC_CACHE) {
                 caches.add(definition);
             }
         }

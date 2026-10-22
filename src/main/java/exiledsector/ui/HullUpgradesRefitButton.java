@@ -9,14 +9,19 @@ import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.i18n.Translation;
 import exiledsector.items.HullUpgradesSetting;
+import exiledsector.ui.refit.RefitButtonColumn;
 import exiledsector.ui.refit.RefitButtonConfig;
 import exiledsector.ui.refit.RefitModuleTabs;
 import exiledsector.ui.refit.RefitScreenLayout;
 import lunalib.lunaRefit.BaseRefitButton;
 import lunalib.lunaRefit.LunaRefitManager;
+import org.lwjgl.input.Keyboard;
 
 public class HullUpgradesRefitButton extends BaseRefitButton {
 
+    public static final RefitButtonColumn.ButtonSpec COLUMN_BUTTON = new RefitButtonColumn.ButtonSpec("exiledSector_hullUpgradesButton",
+            "ui.hullUpgradesRefitButton", () -> Keyboard.KEY_L, () -> RefitButtonConfig.buttonUnderHullMods() && HullUpgradesSetting.enabled(),
+            () -> openPanel(null));
     static final String ICON_PATH = "graphics/icons/hull_upgrades/hull_upgrade_cruiser_unique.png";
 
     public static void addButton() {

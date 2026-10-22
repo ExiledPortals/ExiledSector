@@ -5,6 +5,7 @@ import path from 'node:path';
 import readline from 'node:readline';
 import { readDataFile, resolveDataResource } from './dataFiles.ts';
 import type { ProjectPaths } from './paths.ts';
+import { STRING_CATALOGUE_RESOURCES } from './stringCatalogues.ts';
 
 export type DescribeStatus = 'idle' | 'waiting' | 'building' | 'built' | 'ready' | 'failed';
 
@@ -91,11 +92,16 @@ export function describeRequestWithStrings(paths: ProjectPaths, requestBody: unk
     return requestBody;
   }
   const body = (requestBody ?? {}) as Record<string, unknown>;
-  const stringsResource = resolveDataResource(paths, 'strings-en');
-  if ('strings' in body || !stringsResource || !fs.existsSync(stringsResource.filePath)) {
+  if ('strings' in body) {
     return JSON.stringify(body);
   }
-  return JSON.stringify({ ...body, strings: JSON.parse(readDataFile(stringsResource.filePath).content) as unknown });
+  const catalogueFiles = STRING_CATALOGUE_RESOURCES.map((name) => resolveDataResource(paths, name)?.filePath)
+    .filter((filePath): filePath is string => filePath !== undefined && fs.existsSync(filePath));
+  if (catalogueFiles.length === 0) {
+    return JSON.stringify(body);
+  }
+  const strings = Object.assign({}, ...catalogueFiles.map((filePath) => JSON.parse(readDataFile(filePath).content) as Record<string, unknown>));
+  return JSON.stringify({ ...body, strings });
 }
 
 export class DescribeService {

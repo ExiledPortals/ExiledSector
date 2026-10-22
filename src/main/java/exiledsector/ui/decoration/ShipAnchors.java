@@ -12,23 +12,24 @@ import java.util.Map;
 
 public final class ShipAnchors {
 
-    public record Anchor(float forward, float left) {
-    }
-
-    static final Anchor CENTRE = new Anchor(0f, 0f);
+    static final HullPoint CENTRE = new HullPoint(0f, 0f);
     static final float ARMOR_RAY_FORWARD = 0.35f;
     static final float ARMOR_EDGE_INSET = 0.85f;
     static final int PULL_IN_STEPS = 10;
     private static final float PARALLEL_TOLERANCE = 1e-6f;
 
-    private final Map<ShipSection, Anchor> anchorsBySection;
+    private final Map<ShipSection, HullPoint> anchorsBySection;
 
-    private ShipAnchors(Map<ShipSection, Anchor> anchorsBySection) {
+    private ShipAnchors(Map<ShipSection, HullPoint> anchorsBySection) {
         this.anchorsBySection = anchorsBySection;
     }
 
-    public Anchor forSection(ShipSection section) {
+    public HullPoint forSection(ShipSection section) {
         return anchorsBySection.getOrDefault(section, CENTRE);
+    }
+
+    public static ShipAnchors of(RefitShipPortrait portrait) {
+        return of(portrait.hullSpec(), portrait.visuals(), portrait.spriteWidth(), portrait.spriteHeight());
     }
 
     static ShipAnchors of(ShipHullSpecAPI hullSpec, FleetHullVisuals visuals, float spriteWidth, float spriteHeight) {
@@ -37,17 +38,17 @@ public final class ShipAnchors {
         float rearExtent = Math.max(1f, centreY);
         float halfBeam = Math.max(1f, spriteWidth / 2f);
         List<WeaponSlotAPI> weaponSlots = hullSpec == null ? List.of() : hullSpec.getAllWeaponSlotsCopy();
-        Map<ShipSection, Anchor> anchors = new EnumMap<>(ShipSection.class);
-        anchors.put(ShipSection.BRIDGE, new Anchor(frontExtent * 0.45f, 0f));
-        anchors.put(ShipSection.CREW_QUARTERS, new Anchor(frontExtent * 0.1f, halfBeam * 0.4f));
-        anchors.put(ShipSection.REACTOR, new Anchor(-rearExtent * 0.25f, 0f));
-        anchors.put(ShipSection.ARMOR_PLATING, new Anchor(frontExtent * 0.3f, halfBeam * 0.85f));
-        anchors.put(ShipSection.PHASE_COIL, new Anchor(-rearExtent * 0.05f, -halfBeam * 0.35f));
+        Map<ShipSection, HullPoint> anchors = new EnumMap<>(ShipSection.class);
+        anchors.put(ShipSection.BRIDGE, new HullPoint(frontExtent * 0.45f, 0f));
+        anchors.put(ShipSection.CREW_QUARTERS, new HullPoint(frontExtent * 0.1f, halfBeam * 0.4f));
+        anchors.put(ShipSection.REACTOR, new HullPoint(-rearExtent * 0.25f, 0f));
+        anchors.put(ShipSection.ARMOR_PLATING, new HullPoint(frontExtent * 0.3f, halfBeam * 0.85f));
+        anchors.put(ShipSection.PHASE_COIL, new HullPoint(-rearExtent * 0.05f, -halfBeam * 0.35f));
         anchors.put(ShipSection.ENGINE_ROOM, engineAnchor(visuals, rearExtent));
         anchors.put(ShipSection.WEAPON_MOUNT, weaponAnchor(weaponSlots, frontExtent));
         anchors.put(ShipSection.FLIGHT_DECK, launchBayAnchor(weaponSlots, halfBeam));
         anchors.put(ShipSection.SHIELD_GENERATOR, shieldAnchor(hullSpec, frontExtent, halfBeam));
-        List<Anchor> outline = visuals.outline();
+        List<HullPoint> outline = visuals.outline();
         if (outline.size() >= 3) {
             anchors.put(ShipSection.ARMOR_PLATING, armorAnchor(outline, anchors.get(ShipSection.ARMOR_PLATING)));
             if (contains(outline, CENTRE)) {
@@ -57,15 +58,15 @@ public final class ShipAnchors {
         return new ShipAnchors(anchors);
     }
 
-    static Anchor armorAnchor(List<Anchor> outline, Anchor fallback) {
-        Anchor armorEdge = rayExit(outline, ARMOR_RAY_FORWARD, 1f);
+    static HullPoint armorAnchor(List<HullPoint> outline, HullPoint fallback) {
+        HullPoint armorEdge = rayExit(outline, ARMOR_RAY_FORWARD, 1f);
         return armorEdge == null ? fallback : scaled(armorEdge, ARMOR_EDGE_INSET);
     }
 
-    private static Anchor engineAnchor(FleetHullVisuals visuals, float rearExtent) {
+    private static HullPoint engineAnchor(FleetHullVisuals visuals, float rearExtent) {
         List<FleetHullVisuals.EngineFlame> flames = visuals.flames();
         if (flames.isEmpty()) {
-            return new Anchor(-rearExtent * 0.8f, 0f);
+            return new HullPoint(-rearExtent * 0.8f, 0f);
         }
         float forwardTotal = 0f;
         float leftTotal = 0f;
@@ -73,10 +74,10 @@ public final class ShipAnchors {
             forwardTotal += flame.forwardOffset();
             leftTotal += flame.leftOffset();
         }
-        return new Anchor(forwardTotal / flames.size() * 0.9f, leftTotal / flames.size());
+        return new HullPoint(forwardTotal / flames.size() * 0.9f, leftTotal / flames.size());
     }
 
-    private static Anchor weaponAnchor(List<WeaponSlotAPI> weaponSlots, float frontExtent) {
+    private static HullPoint weaponAnchor(List<WeaponSlotAPI> weaponSlots, float frontExtent) {
         WeaponSlotAPI largestSlot = null;
         for (WeaponSlotAPI slot : weaponSlots) {
             if (isWeaponMount(slot) && (largestSlot == null || slot.getSlotSize().ordinal() > largestSlot.getSlotSize().ordinal()
@@ -84,7 +85,7 @@ public final class ShipAnchors {
                 largestSlot = slot;
             }
         }
-        return largestSlot == null ? new Anchor(frontExtent * 0.6f, 0f) : anchorAt(largestSlot.getLocation());
+        return largestSlot == null ? new HullPoint(frontExtent * 0.6f, 0f) : anchorAt(largestSlot.getLocation());
     }
 
     private static boolean isWeaponMount(WeaponSlotAPI slot) {
@@ -92,7 +93,7 @@ public final class ShipAnchors {
                 && !slot.isStationModule() && slot.getWeaponType() != WeaponType.LAUNCH_BAY;
     }
 
-    private static Anchor launchBayAnchor(List<WeaponSlotAPI> weaponSlots, float halfBeam) {
+    private static HullPoint launchBayAnchor(List<WeaponSlotAPI> weaponSlots, float halfBeam) {
         float forwardTotal = 0f;
         float leftTotal = 0f;
         int bayCount = 0;
@@ -103,22 +104,22 @@ public final class ShipAnchors {
                 bayCount++;
             }
         }
-        return bayCount == 0 ? new Anchor(0f, -halfBeam * 0.45f) : new Anchor(forwardTotal / bayCount, leftTotal / bayCount);
+        return bayCount == 0 ? new HullPoint(0f, -halfBeam * 0.45f) : new HullPoint(forwardTotal / bayCount, leftTotal / bayCount);
     }
 
-    private static Anchor shieldAnchor(ShipHullSpecAPI hullSpec, float frontExtent, float halfBeam) {
+    private static HullPoint shieldAnchor(ShipHullSpecAPI hullSpec, float frontExtent, float halfBeam) {
         ShipHullSpecAPI.ShieldSpecAPI shieldSpec = hullSpec == null ? null : hullSpec.getShieldSpec();
         if (shieldSpec != null && (shieldSpec.getCenterX() != 0f || shieldSpec.getCenterY() != 0f)) {
-            return new Anchor(shieldSpec.getCenterX(), shieldSpec.getCenterY());
+            return new HullPoint(shieldSpec.getCenterX(), shieldSpec.getCenterY());
         }
-        return new Anchor(frontExtent * 0.15f, -halfBeam * 0.2f);
+        return new HullPoint(frontExtent * 0.15f, -halfBeam * 0.2f);
     }
 
-    static boolean contains(List<Anchor> outline, Anchor point) {
+    static boolean contains(List<HullPoint> outline, HullPoint point) {
         boolean inside = false;
         for (int i = 0, j = outline.size() - 1; i < outline.size(); j = i++) {
-            Anchor current = outline.get(i);
-            Anchor previous = outline.get(j);
+            HullPoint current = outline.get(i);
+            HullPoint previous = outline.get(j);
             boolean straddles = (current.left() > point.left()) != (previous.left() > point.left());
             if (straddles && point.forward() < (previous.forward() - current.forward()) * (point.left() - current.left())
                     / (previous.left() - current.left()) + current.forward()) {
@@ -128,10 +129,10 @@ public final class ShipAnchors {
         return inside;
     }
 
-    static Anchor rayExit(List<Anchor> outline, float directionForward, float directionLeft) {
+    static HullPoint rayExit(List<HullPoint> outline, float directionForward, float directionLeft) {
         float furthest = -1f;
         for (int i = 0, j = outline.size() - 1; i < outline.size(); j = i++) {
-            Anchor start = outline.get(j);
+            HullPoint start = outline.get(j);
             float edgeForward = outline.get(i).forward() - start.forward();
             float edgeLeft = outline.get(i).left() - start.left();
             float denominator = directionForward * edgeLeft - directionLeft * edgeForward;
@@ -144,12 +145,12 @@ public final class ShipAnchors {
                 furthest = Math.max(furthest, rayDistance);
             }
         }
-        return furthest > 0f ? new Anchor(directionForward * furthest, directionLeft * furthest) : null;
+        return furthest > 0f ? new HullPoint(directionForward * furthest, directionLeft * furthest) : null;
     }
 
-    static Anchor pullInside(List<Anchor> outline, Anchor anchor) {
+    static HullPoint pullInside(List<HullPoint> outline, HullPoint anchor) {
         for (int step = 0; step < PULL_IN_STEPS; step++) {
-            Anchor candidate = scaled(anchor, 1f - step / (float) PULL_IN_STEPS);
+            HullPoint candidate = scaled(anchor, 1f - step / (float) PULL_IN_STEPS);
             if (contains(outline, candidate)) {
                 return candidate;
             }
@@ -157,11 +158,11 @@ public final class ShipAnchors {
         return CENTRE;
     }
 
-    private static Anchor scaled(Anchor anchor, float share) {
-        return new Anchor(anchor.forward() * share, anchor.left() * share);
+    private static HullPoint scaled(HullPoint anchor, float share) {
+        return new HullPoint(anchor.forward() * share, anchor.left() * share);
     }
 
-    private static Anchor anchorAt(Vector2f location) {
-        return new Anchor(location.x, location.y);
+    private static HullPoint anchorAt(Vector2f location) {
+        return new HullPoint(location.x, location.y);
     }
 }

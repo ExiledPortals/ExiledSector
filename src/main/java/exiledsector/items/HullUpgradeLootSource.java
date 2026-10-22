@@ -103,7 +103,7 @@ public final class HullUpgradeLootSource implements LootSource {
 
     private BattleItemDrops.Loot battleItemDrops(BattleLoot battle) {
         SectorAPI sector = Global.getSector();
-        if (!battle.playerWon() || sector == null || !ItemUnlock.sectionsOpen(sector)) {
+        if (!battle.playerWon() || sector == null || !HullUpgradesSetting.sectionsOpen(sector)) {
             return BattleItemDrops.Loot.NONE;
         }
         try {
@@ -117,7 +117,7 @@ public final class HullUpgradeLootSource implements LootSource {
 
     @Override
     public void addTechMiningFinds(TechMiningItemListener.Find find) {
-        ItemDrops.SectionItemLoot sectionItemLoot = ItemUnlock.sectionsOpen(find.sector())
+        ItemDrops.SectionItemLoot sectionItemLoot = HullUpgradesSetting.sectionsOpen(find.sector())
                 ? ItemDrops.rollSectionItemLoot(find.dropSite(), find.random(), find.chanceMult()) : ItemDrops.SectionItemLoot.NONE;
         find.items().addAll(sectionItemLoot.items());
         find.upgrades().addAll(sectionItemLoot.upgrades());
@@ -136,7 +136,7 @@ public final class HullUpgradeLootSource implements LootSource {
                 cargo.removeStack(stack);
             }
         }
-        if (!ItemUnlock.sectionsOpen(Global.getSector())) {
+        if (!HullUpgradesSetting.sectionsOpen(Global.getSector())) {
             return;
         }
         for (ItemData item : MarketHullItems.roll(submarketId, random)) {

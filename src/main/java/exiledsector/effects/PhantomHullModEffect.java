@@ -23,7 +23,7 @@ import exiledsector.ui.refit.PhantomHullModRefitHider;
 
 import java.awt.Color;
 
-public final class PhantomHullModEffect extends BaseHullMod {
+public final class PhantomHullModEffect extends BaseHullMod implements WrappingHullModEffect {
 
     private HullModEffect originalEffect = new BaseHullMod();
     private boolean wrapsOriginal;
@@ -47,7 +47,8 @@ public final class PhantomHullModEffect extends BaseHullMod {
         return wrapsOriginal;
     }
 
-    HullModEffect original() {
+    @Override
+    public HullModEffect original() {
         return originalEffect;
     }
 

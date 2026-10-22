@@ -103,8 +103,8 @@ public final class AnchorIconFx {
     private AnchorIconFx() {
     }
 
-    static void render(SpriteCache sprites, String iconPath, CargoIconLook look, float x, float y, float w, float h, float alphaMult,
-                       int phaseSeed) {
+    static void render(AnchorLook anchor, SpriteCache sprites, String iconPath, CargoIconLook look, float x, float y, float w, float h,
+                       float alphaMult, int phaseSeed) {
         boolean animated = ItemAnimationSetting.mode() == ItemAnimationSetting.Mode.FULL;
         float size = Math.min(w, h);
         float unit = size / DESIGN_SIZE;
@@ -126,7 +126,6 @@ public final class AnchorIconFx {
             drawTunnel(sprites, color, gemX, gemY, reach * unit, t, (TUNNEL_IDLE_ALPHA + TUNNEL_OPEN_ALPHA * openness(cycle)) * alphaMult);
         }
         CargoIconFx.drawIcon(sprites, iconPath, cx, cy, size * inset, alphaMult);
-        AnchorLook anchor = look.anchor();
         boolean plateShutters = anchor != null && anchor.style() == AnchorLook.Style.PLATE_SHUTTERS;
         if (animated) {
             Color haloTint = plateShutters ? THERMAL_CORE : lighten(color, 0.35f);

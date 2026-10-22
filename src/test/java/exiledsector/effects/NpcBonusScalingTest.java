@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.NpcBonusScaling;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -180,7 +181,7 @@ class NpcBonusScalingTest {
                 .effects(List.of(effect)).tags(tags).build();
         SkillNode node = new SkillNode("node_" + nodeCount, type, List.of(), 0f, 0f);
         SkillTree.register(node);
-        shipData.allocate(node, 1);
+        ShipTrees.allocate(shipData, node, 1);
     }
 
     private static Map<String, Float> magnitudesByModId(ResolvedTree resolvedTree, SkillEffect effect) {

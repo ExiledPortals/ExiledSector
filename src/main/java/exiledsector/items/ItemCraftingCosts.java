@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.HostMod;
 import exiledsector.ModCsv;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -11,15 +12,19 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public final class ItemCraftingCosts {
 
-    static final String DATA_PATH = "data/config/exiledSector/item_crafting.csv";
+    static final String DATA_FILE = "item_crafting.csv";
     private static final Logger LOG = Logger.getLogger(ItemCraftingCosts.class);
     private static final AtomicReference<Map<String, Integer>> COSTS = new AtomicReference<>(Map.of());
 
     private ItemCraftingCosts() {
     }
 
+    static String dataPath() {
+        return HostMod.configPath(DATA_FILE);
+    }
+
     public static void load() {
-        ModCsv.load("item", DATA_PATH, LOG, ItemCraftingCosts::register);
+        ModCsv.load("item", dataPath(), LOG, ItemCraftingCosts::register);
     }
 
     public static void register(JSONArray rows) throws JSONException {

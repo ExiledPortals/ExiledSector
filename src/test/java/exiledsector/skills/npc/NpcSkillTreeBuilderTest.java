@@ -3,6 +3,7 @@ package exiledsector.skills.npc;
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -184,7 +185,7 @@ class NpcSkillTreeBuilderTest {
 
         assertEquals(8, build.shipData().getAllocatedNodeIds().size());
         assertEquals(7, build.shipData().getLevel());
-        assertEquals(0, build.shipData().getSpentOp(1));
+        assertEquals(0, ShipTrees.getSpentOp(build.shipData(), 1));
     }
 
     @Test
@@ -206,7 +207,7 @@ class NpcSkillTreeBuilderTest {
 
         assertEquals(List.of("heavyarmor"), build.strippedHullModIds());
         assertEquals(List.of(ROOT, "armor_node", "n1", "n2", "n3"), allocated(build));
-        assertEquals(6, build.shipData().getSpentOp(2));
+        assertEquals(6, ShipTrees.getSpentOp(build.shipData(), 2));
         assertTrue(build.steps().get(0).outcome().startsWith(NpcBuildStep.CONVERTED_HULLMOD));
     }
 
@@ -222,7 +223,7 @@ class NpcSkillTreeBuilderTest {
         assertTrue(build.strippedHullModIds().isEmpty());
         assertTrue(build.steps().stream().anyMatch(step -> step.outcome().equals(NpcBuildStep.HULLMOD_KEPT + "heavyarmor")));
         assertEquals(3, build.shipData().getAllocatedNodeIds().size());
-        assertEquals(0, build.shipData().getSpentOp(2));
+        assertEquals(0, ShipTrees.getSpentOp(build.shipData(), 2));
     }
 
     @Test
@@ -265,9 +266,9 @@ class NpcSkillTreeBuilderTest {
         ShipSkillData decoded = NpcTreeTag.decode(NpcTreeTag.encode(build.shipData()));
 
         assertEquals(List.of(ROOT, "other_root", "notable"), allocated(build));
-        assertEquals(ROOT, build.shipData().resolveStartingRootId());
+        assertEquals(ROOT, ShipTrees.resolveStartingRootId(build.shipData()));
         assertEquals(allocated(build), List.copyOf(decoded.getAllocatedNodeIds()));
-        assertEquals(ROOT, decoded.resolveStartingRootId());
+        assertEquals(ROOT, ShipTrees.resolveStartingRootId(decoded));
     }
 
     @Test

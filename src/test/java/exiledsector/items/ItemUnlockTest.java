@@ -78,12 +78,12 @@ class ItemUnlockTest {
 
     @Test
     void hullSocketsOpenAtLevelFifteenUnlessHullUpgradesAreSwitchedOff() {
-        assertFalse(ItemUnlock.sectionsOpen(14));
-        assertTrue(ItemUnlock.sectionsOpen(15));
+        assertFalse(HullUpgradesSetting.sectionsOpen(14));
+        assertTrue(HullUpgradesSetting.sectionsOpen(15));
 
         HullUpgradesSetting.setEnabledForTests(false);
         try {
-            assertFalse(ItemUnlock.sectionsOpen(50));
+            assertFalse(HullUpgradesSetting.sectionsOpen(50));
         } finally {
             HullUpgradesSetting.setEnabledForTests(HullUpgradesSetting.DEFAULT_ENABLED);
         }
@@ -93,8 +93,8 @@ class ItemUnlockTest {
     void theHullUpgradesLevelSettingMovesTheSectionGate() {
         HullUpgradesSetting.setUnlockLevelForTests(5);
         try {
-            assertFalse(ItemUnlock.sectionsOpen(4));
-            assertTrue(ItemUnlock.sectionsOpen(5));
+            assertFalse(HullUpgradesSetting.sectionsOpen(4));
+            assertTrue(HullUpgradesSetting.sectionsOpen(5));
         } finally {
             HullUpgradesSetting.setUnlockLevelForTests(HullUpgradesSetting.DEFAULT_UNLOCK_LEVEL);
         }
@@ -210,7 +210,7 @@ class ItemUnlockTest {
     @Test
     void everyShippedConditionIsKnown() throws Exception {
         JSONArray rows = new JSONArray();
-        for (String dataPath : List.of(ItemDefinitions.SUBROUTINES_PATH, ItemDefinitions.HULL_ITEMS_PATH)) {
+        for (String dataPath : List.of(SubroutineDefinitions.dataPath(), HullItem.definitionsPath())) {
             String csv = Files.readString(RealSkillData.projectRoot().resolve(dataPath), StandardCharsets.UTF_8);
             JSONArray fileRows = CDL.toJSONArray(csv.replace("\r\n", "\n"));
             for (int i = 0; fileRows != null && i < fileRows.length(); i++) {

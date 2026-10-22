@@ -29,21 +29,7 @@ public class SkillTreeFleetRenderer {
     static final float SOLO_FADE_SECONDS = 0.4f;
     private static final Random FLIGHT_RANDOM = new Random();
     private record FleetShip(String memberId, String spritePath, float width, float height, FleetShipDrift drift,
-                             FleetHullVisuals visuals, HullEngines engines, ShipAnchors anchors) {
-    }
-
-    public record InspectedShip(float screenX, float screenY, float screenScale, float longestSidePixels, float facingDeg,
-                                ShipAnchors anchors) {
-
-        public float anchorScreenX(ShipAnchors.Anchor anchor) {
-            double facing = Math.toRadians(facingDeg);
-            return screenX + HullFrame.rotatedX(anchor.forward(), anchor.left(), (float) Math.cos(facing), (float) Math.sin(facing)) * screenScale;
-        }
-
-        public float anchorScreenY(ShipAnchors.Anchor anchor) {
-            double facing = Math.toRadians(facingDeg);
-            return screenY + HullFrame.rotatedY(anchor.forward(), anchor.left(), (float) Math.cos(facing), (float) Math.sin(facing)) * screenScale;
-        }
+                             FleetHullVisuals visuals, HullEngines engines) {
     }
 
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeFleetRenderer.class);
@@ -133,8 +119,7 @@ public class SkillTreeFleetRenderer {
             float maxOffset = FleetShipDrift.maxOffset(fleetRadius, largestSizeNum, sizeNum, onlyLargest);
             FleetShipDrift drift = new FleetShipDrift(motion, maxOffset, flight.facingDeg(), random);
             FleetHullVisuals visuals = FleetHullVisuals.of(member.getHullSpec());
-            ships.add(new FleetShip(member.getId(), spritePath, texture.getWidth(), texture.getHeight(), drift, visuals, HullEngines.of(visuals),
-                    ShipAnchors.of(member.getHullSpec(), visuals, texture.getWidth(), texture.getHeight())));
+            ships.add(new FleetShip(member.getId(), spritePath, texture.getWidth(), texture.getHeight(), drift, visuals, HullEngines.of(visuals)));
             largestSprite = Math.max(largestSprite, Math.max(texture.getWidth(), texture.getHeight()) * motion.scaleMult());
         }
         ships.sort(Comparator.comparingDouble(ship -> -ship.width() * ship.height()));
@@ -159,15 +144,6 @@ public class SkillTreeFleetRenderer {
 
     public float soloLongestSide() {
         return soloShip == null ? 0f : Math.max(soloShip.width(), soloShip.height()) * soloShip.drift().motion().scaleMult();
-    }
-
-    public InspectedShip inspectedShip(TreeViewport viewport) {
-        if (soloShip == null) {
-            return null;
-        }
-        float screenScale = soloShip.drift().motion().scaleMult() * viewport.zoom();
-        return new InspectedShip(viewport.screenX(focusX()), viewport.screenY(focusY()), screenScale,
-                Math.max(soloShip.width(), soloShip.height()) * screenScale, soloShip.drift().facingDeg(), soloShip.anchors());
     }
 
     public void advance(float amount) {

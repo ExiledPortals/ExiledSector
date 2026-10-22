@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
@@ -11,14 +12,89 @@ import exiledsector.skills.NodeReplacements;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
-public final class Subroutine extends Item {
+public final class Subroutine extends Item implements NodeSocketable {
 
     public record AllocatedNodeEffects(String nodeName, List<StyledText> effectLines) {
     }
+
+    public static final ItemTypeSupport SUPPORT = new ItemTypeSupport() {
+        @Override
+        public ItemType type() {
+            return ItemType.SUBROUTINE;
+        }
+
+        @Override
+        public Class<? extends Item> itemClass() {
+            return Subroutine.class;
+        }
+
+        @Override
+        public String saveAlias() {
+            return "exiledSector.Subroutine";
+        }
+
+        @Override
+        public Item create(String id, String definitionId, long seed, List<RolledModifier> explicitModifiers) {
+            return new Subroutine(id, definitionId, seed, explicitModifiers);
+        }
+
+        @Override
+        public Item convert(Item source) {
+            return new Subroutine(source);
+        }
+
+        @Override
+        public String definitionsPath() {
+            return SubroutineDefinitions.dataPath();
+        }
+
+        @Override
+        public ItemDefinition parseDefinition(JSONObject row) {
+            return SubroutineDefinitions.parse(row);
+        }
+
+        @Override
+        public int uniqueMinPlayerLevel() {
+            return UniqueSubroutinesSetting.unlockLevel();
+        }
+
+        @Override
+        public boolean ownsItemId(String itemId) {
+            return NpcItems.isNpcId(itemId);
+        }
+
+        @Override
+        public Item resolveItem(String itemId) {
+            return NpcItems.resolve(itemId);
+        }
+
+        @Override
+        public boolean inGenericPools(ItemDefinition definition) {
+            return SubroutineKind.inGenericPools(definition);
+        }
+
+        @Override
+        public List<ItemData> rollSalvage(Random random, float chance) {
+            return ModspecCaches.rollSalvage(random, chance);
+        }
+
+        @Override
+        public boolean uniqueRarity(ItemDefinition definition) {
+            SubroutineKind kind = SubroutineKind.of(definition);
+            return kind != null && kind.uniqueRarity();
+        }
+
+        @Override
+        public boolean lockedFromCurrency(ItemDefinition definition) {
+            return SubroutineKind.isUnique(definition);
+        }
+    };
 
     private List<String> rolledNodeIds;
 
@@ -70,6 +146,20 @@ public final class Subroutine extends Item {
     }
 
     @Override
+    void keepWhenUnresolved(UnresolvedItem unresolved) {
+        unresolved.keepRolledNodeIds(rolledNodeIds());
+    }
+
+    @Override
+    void writeTooltipSections(TooltipMakerAPI tooltip, HullSize hullSize, boolean showRollRanges) {
+        if (showRollRanges) {
+            for (AllocatedNodeEffects allocated : allocatedNodeEffects(hullSize)) {
+                ItemTooltip.addSection(tooltip, allocated.nodeName(), allocated.effectLines());
+            }
+        }
+    }
+
+    @Override
     public ItemType type() {
         return ItemType.SUBROUTINE;
     }
@@ -92,7 +182,7 @@ public final class Subroutine extends Item {
 
     public SubroutineKind subroutineKind() {
         ItemDefinition definition = definition();
-        return definition == null ? null : definition.subroutineKind();
+        return SubroutineKind.of(definition);
     }
 
     public List<String> rolledNodeIds() {

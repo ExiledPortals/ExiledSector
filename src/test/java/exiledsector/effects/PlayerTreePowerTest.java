@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
@@ -51,10 +52,10 @@ class PlayerTreePowerTest {
     void aShipsTreePowerIsItsLevelPlusItsPaidNodes() {
         ShipSkillData shipData = levelled("veteran", 3);
         for (int node = 0; node < 5; node++) {
-            shipData.allocate(new SkillNode("node_" + node, SMALL, List.of(), 0f, 0f), 1);
+            ShipTrees.allocate(shipData, new SkillNode("node_" + node, SMALL, List.of(), 0f, 0f), 1);
         }
 
-        assertEquals(2, shipData.paidNodeCount());
+        assertEquals(2, ShipTrees.paidNodeCount(shipData));
         assertEquals(5, PlayerTreePower.shipPower(shipData, 0, 1));
     }
 
@@ -62,12 +63,12 @@ class PlayerTreePowerTest {
     void atZeroOpPerNodeTheTreeIsCountedOnceRatherThanOnTopOfTheLevel() {
         ShipSkillData shipData = levelled("free-nodes", 10);
         for (int node = 0; node < 10; node++) {
-            shipData.allocate(new SkillNode("node_" + node, SMALL, List.of(), 0f, 0f), 0);
+            ShipTrees.allocate(shipData, new SkillNode("node_" + node, SMALL, List.of(), 0f, 0f), 0);
         }
 
         assertEquals(10, PlayerTreePower.shipPower(shipData, 0, 0));
         for (int node = 10; node < 14; node++) {
-            shipData.allocate(new SkillNode("node_" + node, SMALL, List.of(), 0f, 0f), 0);
+            ShipTrees.allocate(shipData, new SkillNode("node_" + node, SMALL, List.of(), 0f, 0f), 0);
         }
         assertEquals(14, PlayerTreePower.shipPower(shipData, 0, 0));
     }

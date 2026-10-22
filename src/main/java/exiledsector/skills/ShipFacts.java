@@ -6,7 +6,6 @@ import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
-import exiledsector.skills.tags.ShipProfile;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -51,21 +50,7 @@ public record ShipFacts(HullSize hullSize, ShieldType hullShieldType, boolean ph
                 hasModuleSlots(hullSpec));
     }
 
-    public static ShipFacts of(ShipProfile profile, Predicate<String> hasHullMod) {
-        return of(profile, hasHullMod, null);
-    }
-
-    public static ShipFacts of(ShipProfile profile, Predicate<String> hasHullMod, String hullId) {
-        return of(profile, hasHullMod, hullId, hasHullMod);
-    }
-
-    public static ShipFacts of(ShipProfile profile, Predicate<String> hasHullMod, String hullId, Predicate<String> hasFixedHullMod) {
-        return new ShipFacts(profile.hullSize(), profile.shieldType(), profile.phaseHull(),
-                profile.baseArmor(), profile.limitedSystemCharges(), hasHullMod, profile.onlyBuiltInWings(), hullId, hasFixedHullMod,
-                hasModuleSlots(hullId));
-    }
-
-    static boolean hasModuleSlots(String hullId) {
+    public static boolean hasModuleSlots(String hullId) {
         SettingsAPI settings = Global.getSettings();
         if (hullId == null || settings == null) {
             return false;

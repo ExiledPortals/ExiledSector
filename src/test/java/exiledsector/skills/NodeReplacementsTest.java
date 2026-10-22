@@ -55,12 +55,12 @@ class NodeReplacementsTest {
     @Test
     void aRemovedNodeIsSwappedForItsReplacementKeepingItsPlaceAndFreeStatus() {
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
+        ShipTrees.chooseStartingRoot(data, root);
         data.addFreeAllocationCredit();
-        data.allocate(new SkillNode("removed", kept.getType(), List.of(), 0f, 0f), 3);
-        data.allocate(kept, 3);
+        ShipTrees.allocate(data, new SkillNode("removed", kept.getType(), List.of(), 0f, 0f), 3);
+        ShipTrees.allocate(data, kept, 3);
 
-        assertTrue(data.replaceNode("removed", "socket"));
+        assertTrue(ShipTrees.replaceNode(data, "removed", "socket"));
 
         assertEquals(List.of("root", "socket", "kept"), List.copyOf(data.getAllocatedNodeIds()));
         assertTrue(data.isFreeNode("socket"));
@@ -70,10 +70,10 @@ class NodeReplacementsTest {
     @Test
     void nothingIsSwappedWhenTheReplacementIsAlreadyAllocated() {
         ShipSkillData data = new ShipSkillData();
-        data.allocate(new SkillNode("removed", kept.getType(), List.of(), 0f, 0f), 3);
-        data.allocate(socket, 3);
+        ShipTrees.allocate(data, new SkillNode("removed", kept.getType(), List.of(), 0f, 0f), 3);
+        ShipTrees.allocate(data, socket, 3);
 
-        assertFalse(data.replaceNode("removed", "socket"));
+        assertFalse(ShipTrees.replaceNode(data, "removed", "socket"));
         assertEquals(Set.of("removed", "socket"), data.getAllocatedNodeIds());
     }
 

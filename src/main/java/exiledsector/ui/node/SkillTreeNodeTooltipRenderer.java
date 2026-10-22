@@ -9,6 +9,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.NodeDescription;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
@@ -172,7 +173,7 @@ final class SkillTreeNodeTooltipRenderer {
         if (node.getType().getTier() == SkillTier.SOCKET || !skillData.isAllocated(node.getId())) {
             return null;
         }
-        String grantingSocketId = skillData.grantingSocket(node.getId());
+        String grantingSocketId = ShipTrees.grantingSocket(skillData, node.getId());
         NodeGrantStatus grantStatus = grantingSocketId == null ? null : allocation.nodeGrantStatus(grantingSocketId, node.getId());
         if (grantStatus == null || grantStatus.state() != NodeGrantStatus.State.ACTIVE) {
             return null;

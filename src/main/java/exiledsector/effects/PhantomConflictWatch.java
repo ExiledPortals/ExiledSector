@@ -18,6 +18,7 @@ import exiledsector.skills.InstalledHullMods;
 import exiledsector.skills.LearnedPhantomConflicts;
 import exiledsector.skills.RespecPlan;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.ui.CampaignMessages;
@@ -169,8 +170,8 @@ public final class PhantomConflictWatch {
             if (!data.isAllocated(provider.getId())) {
                 continue;
             }
-            for (SkillNode released : RespecPlan.of(data, SkillTree.topology(), data.resolveStartingRootId(), provider)) {
-                data.deallocateReleasingCharges(released).forEach(charged -> charged.refundTo(cargo));
+            for (SkillNode released : RespecPlan.of(data, SkillTree.topology(), ShipTrees.resolveStartingRootId(data), provider)) {
+                ShipTrees.deallocateReleasingCharges(data, released).forEach(charged -> charged.refundTo(cargo));
             }
         }
         ShipTreeSync.memberChanged(member, member.getVariant());

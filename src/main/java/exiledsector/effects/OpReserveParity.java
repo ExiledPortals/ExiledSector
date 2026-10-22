@@ -6,6 +6,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.progression.ShipOpBudget;
 import exiledsector.skills.progression.SkillNodeOpCost;
@@ -42,7 +43,7 @@ public final class OpReserveParity {
         if (member == null || variant == null || SkillDataResolver.isNpcTree(variant)) return;
 
         ShipSkillData shipData = ShipSkillDataManager.find(member.getId());
-        int spentOp = shipData == null ? 0 : shipData.getSpentOp(SkillNodeOpCost.perNode(member.getHullSpec()));
+        int spentOp = shipData == null ? 0 : ShipTrees.getSpentOp(shipData, SkillNodeOpCost.perNode(member.getHullSpec()));
         warnIfOutOfSync(member, variant, spentOp, reservedOp(variant), moment);
     }
 

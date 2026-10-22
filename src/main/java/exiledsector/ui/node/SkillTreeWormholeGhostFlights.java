@@ -3,6 +3,7 @@ package exiledsector.ui.node;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeTopology;
@@ -33,7 +34,7 @@ final class SkillTreeWormholeGhostFlights {
 
     void advance(float amount, ShipSkillData skillData) {
         flights.removeIf(flight -> flight.advance(amount));
-        for (SkillTreeTopology.WormholePair pair : skillData.wormholePairs(SkillTree.topology())) {
+        for (SkillTreeTopology.WormholePair pair : ShipTrees.wormholePairs(skillData, SkillTree.topology())) {
             if (skillData.isAllocated(pair.first().getId()) && skillData.isAllocated(pair.second().getId())
                     && !ExoshipNodes.isCarried(pair.first()) && !ExoshipNodes.isCarried(pair.second())) {
                 scheduleFlights(pair, amount);

@@ -1,6 +1,7 @@
 package exiledsector.i18n;
 
 import exiledsector.ExiledSectorModPlugin;
+import exiledsector.HostMod;
 import exiledsector.skills.SkillTreeDomain;
 import exiledsector.skills.npc.RealSkillData;
 import org.json.CDL;
@@ -106,10 +107,13 @@ class CatalogueLintTest {
 
     private static Set<String> localesOnDisk() throws IOException {
         Set<String> locales = new TreeSet<>();
-        Path directory = RealSkillData.projectRoot().resolve(I18n.CATALOGUE_DIRECTORY);
-        try (DirectoryStream<Path> files = Files.newDirectoryStream(directory, "*.json")) {
-            for (Path file : files) {
-                locales.add(file.getFileName().toString().replaceFirst("\\.json$", ""));
+        List<String> directories = new ArrayList<>(List.of(I18n.LIBRARY_STRINGS_DIRECTORY));
+        directories.addAll(HostMod.get().stringsDirectories());
+        for (String directory : directories) {
+            try (DirectoryStream<Path> files = Files.newDirectoryStream(RealSkillData.projectRoot().resolve(directory), "*.json")) {
+                for (Path file : files) {
+                    locales.add(file.getFileName().toString().replaceFirst("\\.json$", ""));
+                }
             }
         }
         return locales;
@@ -121,8 +125,10 @@ class CatalogueLintTest {
         Map<String, String> sources = dataSources();
         List<String> problems = new ArrayList<>(CatalogueLint.englishProblems(english));
         for (String locale : localesOnDisk()) {
-            String content = Files.readString(RealCatalogue.file(locale), StandardCharsets.UTF_8);
-            problems.addAll(CatalogueLint.rawFileProblems(locale + ".json", content));
+            for (Path file : RealCatalogue.files(locale)) {
+                String content = Files.readString(file, StandardCharsets.UTF_8);
+                problems.addAll(CatalogueLint.rawFileProblems(RealSkillData.projectRoot().relativize(file).toString(), content));
+            }
             if (!locale.equals(LocaleChain.ENGLISH)) {
                 problems.addAll(CatalogueLint.translationProblems(locale, english, RealCatalogue.entries(locale), sources));
             }

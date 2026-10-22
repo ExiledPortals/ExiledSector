@@ -53,86 +53,86 @@ class ShipSkillDataItemChargeTest {
     @Test
     void aRecordedChargeIsTakenExactlyOnce() {
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
-        data.allocate(lobster, 3);
-        data.recordItemCharge("lobster", LOBSTERS);
+        ShipTrees.chooseStartingRoot(data, root);
+        ShipTrees.allocate(data, lobster, 3);
+        ShipTrees.recordItemCharge(data, "lobster", LOBSTERS);
 
-        data.deallocate(lobster);
+        ShipTrees.deallocate(data, lobster);
 
-        assertEquals(LOBSTERS, data.takeItemCharge("lobster"));
-        assertNull(data.takeItemCharge("lobster"));
+        assertEquals(LOBSTERS, ShipTrees.takeItemCharge(data, "lobster"));
+        assertNull(ShipTrees.takeItemCharge(data, "lobster"));
     }
 
     @Test
     void reallocatingANodeForgetsAChargeNobodyTookWhenItWasReleased() {
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
-        data.allocate(lobster, 3);
-        data.recordItemCharge("lobster", LOBSTERS);
-        data.deallocate(lobster);
+        ShipTrees.chooseStartingRoot(data, root);
+        ShipTrees.allocate(data, lobster, 3);
+        ShipTrees.recordItemCharge(data, "lobster", LOBSTERS);
+        ShipTrees.deallocate(data, lobster);
 
-        data.allocate(lobster, 3);
+        ShipTrees.allocate(data, lobster, 3);
 
-        assertNull(data.itemCharge("lobster"));
+        assertNull(ShipTrees.itemCharge(data, "lobster"));
     }
 
     @Test
     void aReplacedNodeKeepsItsCharge() {
         node("lobster_v2", SkillTier.SMALL, LOBSTERS);
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
-        data.allocate(lobster, 3);
-        data.recordItemCharge("lobster", LOBSTERS);
+        ShipTrees.chooseStartingRoot(data, root);
+        ShipTrees.allocate(data, lobster, 3);
+        ShipTrees.recordItemCharge(data, "lobster", LOBSTERS);
 
-        assertTrue(data.replaceNode("lobster", "lobster_v2"));
+        assertTrue(ShipTrees.replaceNode(data, "lobster", "lobster_v2"));
 
-        assertNull(data.itemCharge("lobster"));
-        assertEquals(LOBSTERS, data.itemCharge("lobster_v2"));
+        assertNull(ShipTrees.itemCharge(data, "lobster"));
+        assertEquals(LOBSTERS, ShipTrees.itemCharge(data, "lobster_v2"));
     }
 
     @Test
     void aSaveFromBeforeTheLedgerTreatsItsAllocatedItemNodesAsCharged() {
         ShipSkillData written = new ShipSkillData();
-        written.chooseStartingRoot(root);
-        written.allocate(lobster, 3);
+        ShipTrees.chooseStartingRoot(written, root);
+        ShipTrees.allocate(written, lobster, 3);
 
         ShipSkillData loaded = roundTripWithoutTheLedger(written);
 
-        assertEquals(LOBSTERS, loaded.itemCharge("lobster"));
-        assertNull(loaded.itemCharge("root"));
+        assertEquals(LOBSTERS, ShipTrees.itemCharge(loaded, "lobster"));
+        assertNull(ShipTrees.itemCharge(loaded, "root"));
     }
 
     @Test
     void aLegacySavesChargeFollowsANodeReplacedOnLoad() {
         node("lobster_v2", SkillTier.SMALL, null);
         ShipSkillData written = new ShipSkillData();
-        written.chooseStartingRoot(root);
-        written.allocate(lobster, 3);
+        ShipTrees.chooseStartingRoot(written, root);
+        ShipTrees.allocate(written, lobster, 3);
         ShipSkillData loaded = roundTripWithoutTheLedger(written);
 
-        assertTrue(loaded.replaceNode("lobster", "lobster_v2"));
+        assertTrue(ShipTrees.replaceNode(loaded, "lobster", "lobster_v2"));
 
-        assertEquals(LOBSTERS, loaded.itemCharge("lobster_v2"));
+        assertEquals(LOBSTERS, ShipTrees.itemCharge(loaded, "lobster_v2"));
     }
 
     @Test
     void anNpcBuildFromBeforeTheLedgerWasNeverCharged() {
         ShipSkillData written = new ShipSkillData();
         written.markNpcBuild();
-        written.chooseStartingRoot(root);
-        written.allocate(lobster, 3);
+        ShipTrees.chooseStartingRoot(written, root);
+        ShipTrees.allocate(written, lobster, 3);
 
-        assertNull(roundTripWithoutTheLedger(written).itemCharge("lobster"));
+        assertNull(ShipTrees.itemCharge(roundTripWithoutTheLedger(written), "lobster"));
     }
 
     @Test
     void forgettingNodesFromALegacySaveStillLeavesTheirChargesToRefund() {
         ShipSkillData written = new ShipSkillData();
-        written.chooseStartingRoot(root);
-        written.allocate(lobster, 3);
+        ShipTrees.chooseStartingRoot(written, root);
+        ShipTrees.allocate(written, lobster, 3);
         ShipSkillData loaded = roundTripWithoutTheLedger(written);
 
-        assertEquals(List.of("lobster"), loaded.forgetUnknownNodes(Map.of("root", root), SkillTree.getAllTypes()));
-        assertEquals(LOBSTERS, loaded.takeItemCharge("lobster"));
+        assertEquals(List.of("lobster"), ShipTrees.forgetUnknownNodes(loaded, Map.of("root", root), SkillTree.getAllTypes()));
+        assertEquals(LOBSTERS, ShipTrees.takeItemCharge(loaded, "lobster"));
     }
 }

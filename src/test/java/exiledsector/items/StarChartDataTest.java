@@ -46,15 +46,15 @@ class StarChartDataTest {
 
     private static List<String> chartErrors(JSONArray itemModifiers, JSONArray chartModifiers, JSONArray charts, JSONArray chartImplicits)
             throws JSONException {
-        return ItemDataIntegrity.checkWithStarCharts(itemModifiers, new JSONArray(), new JSONArray(), new JSONArray(), chartModifiers, charts,
+        return ItemDataChecks.checkWithStarCharts(itemModifiers, new JSONArray(), new JSONArray(), new JSONArray(), chartModifiers, charts,
                 chartImplicits).stream().filter(violation -> violation.severity() == Severity.ERROR).map(Violation::message).toList();
     }
 
     @Test
     void theShippedChartDataHasNoIntegrityErrors() throws Exception {
-        List<Violation> violations = ItemDataIntegrity.checkWithStarCharts(ItemFixtures.shippedRows(ItemModifiers.DATA_PATH),
-                ItemFixtures.shippedRows(ItemDefinitions.SUBROUTINES_PATH), ItemFixtures.shippedRows(ItemDefinitions.HULL_ITEMS_PATH),
-                ItemFixtures.shippedRows(ItemImplicits.DATA_PATH), ItemFixtures.shippedRows(StarChartItems.MODIFIERS_PATH),
+        List<Violation> violations = ItemDataChecks.checkWithStarCharts(ItemFixtures.shippedRows(ItemModifiers.dataPath()),
+                ItemFixtures.shippedRows(SubroutineDefinitions.dataPath()), ItemFixtures.shippedRows(HullItem.definitionsPath()),
+                ItemFixtures.shippedRows(ItemImplicits.dataPath()), ItemFixtures.shippedRows(StarChartItems.MODIFIERS_PATH),
                 ItemFixtures.shippedRows(StarChartDefinitions.DATA_PATH), ItemFixtures.shippedRows(StarChartImplicits.DATA_PATH));
 
         assertEquals(List.of(), violations.stream().filter(violation -> violation.severity() == Severity.ERROR).toList());
@@ -114,7 +114,7 @@ class StarChartDataTest {
         JSONArray hullItems = new JSONArray().put(ItemFixtures.row("chip", "bridge", "@HULL_MULT:5:t3"));
 
         List<String> errors = chartErrors(itemModifiers, chartModifiers, charts, implicits);
-        List<String> shipErrors = ItemDataIntegrity.checkWithStarCharts(itemModifiers, new JSONArray(), hullItems, new JSONArray(),
+        List<String> shipErrors = ItemDataChecks.checkWithStarCharts(itemModifiers, new JSONArray(), hullItems, new JSONArray(),
                 new JSONArray(), new JSONArray(), new JSONArray()).stream().map(Violation::message).toList();
 
         assertTrue(errors.contains("HULL_MULT gives HULL_MULT tier bands, but only star chart modifiers in " + StarChartItems.MODIFIERS_PATH

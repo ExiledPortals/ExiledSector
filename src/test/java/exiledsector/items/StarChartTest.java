@@ -51,7 +51,7 @@ class StarChartTest {
     @BeforeEach
     void setUp() throws Exception {
         ItemFixtures.registerShippedItems();
-        ItemImplicits.register(ItemFixtures.shippedRows(ItemImplicits.DATA_PATH));
+        ItemImplicits.register(ItemFixtures.shippedRows(ItemImplicits.dataPath()));
         StarChartFixtures.registerShipped();
     }
 
@@ -296,7 +296,7 @@ class StarChartTest {
         assertTrue(chartStore.owned().stream().allMatch(item -> item.type() == ItemType.STAR_CHART));
         assertFalse(hullStore.holdsStarCharts());
         assertTrue(chartStore.holdsStarCharts());
-        assertTrue(ItemStore.STAR_CHART_DATA_KEY != null && !ItemStore.STAR_CHART_DATA_KEY.equals(ItemStore.DATA_KEY));
+        assertTrue(ItemStore.starChartDataKey() != null && !ItemStore.starChartDataKey().equals(ItemStore.dataKey()));
     }
 
     @Test

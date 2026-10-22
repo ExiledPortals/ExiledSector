@@ -43,13 +43,9 @@ public enum ItemUnlock {
         return null;
     }
 
-    public static boolean sectionsOpen(SectorAPI sector) {
-        MutableCharacterStatsAPI playerStats = sector == null ? null : sector.getPlayerStats();
-        return playerStats != null && sectionsOpen(playerStats.getLevel());
-    }
-
-    public static boolean sectionsOpen(int playerLevel) {
-        return HullUpgradesSetting.enabled() && playerLevel >= HullUpgradesSetting.unlockLevel();
+    public static boolean available(ItemType type, SectorAPI sector) {
+        ItemTypeSupport support = ItemTypes.of(type);
+        return support != null && support.available(sector);
     }
 
     public static boolean canDrop(ItemDefinition definition, SectorAPI sector) {
@@ -67,7 +63,8 @@ public enum ItemUnlock {
     }
 
     static int uniqueMinPlayerLevel(ItemDefinition definition) {
-        return definition.type() == ItemType.HULL_ITEM ? HullUpgradesSetting.unlockLevel() : UniqueSubroutinesSetting.unlockLevel();
+        ItemTypeSupport support = ItemTypes.of(definition.type());
+        return support == null ? 0 : support.uniqueMinPlayerLevel();
     }
 
     public static boolean unlockConditionMet(ItemDefinition definition, SectorAPI sector) {
@@ -96,7 +93,7 @@ public enum ItemUnlock {
         }
         try {
             int tier = Integer.parseInt(unlockId.substring(CLEARED_CHART_TIER_PREFIX.length()));
-            return tier >= StarChart.LOWEST_TIER && tier <= StarChart.HIGHEST_TIER ? tier : NO_CLEARED_TIER;
+            return tier >= ItemTraits.LOWEST_TIER && tier <= ItemTraits.HIGHEST_TIER ? tier : NO_CLEARED_TIER;
         } catch (NumberFormatException e) {
             return NO_CLEARED_TIER;
         }
@@ -109,7 +106,7 @@ public enum ItemUnlock {
 
     public static boolean recordChartCleared(SectorAPI sector, int tier) {
         MemoryAPI sectorMemory = sector == null ? null : sector.getMemoryWithoutUpdate();
-        int clearedTier = StarChart.clampTier(tier);
+        int clearedTier = Math.max(ItemTraits.LOWEST_TIER, Math.min(ItemTraits.HIGHEST_TIER, tier));
         if (sectorMemory == null || highestClearedChartTier(sector) >= clearedTier) {
             return false;
         }

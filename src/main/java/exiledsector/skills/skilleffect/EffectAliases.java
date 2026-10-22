@@ -1,5 +1,6 @@
 package exiledsector.skills.skilleffect;
 
+import exiledsector.HostMod;
 import exiledsector.ModCsv;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -11,7 +12,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public final class EffectAliases {
 
-    public static final String DATA_PATH = "data/config/exiledSector/effect_aliases.csv";
+    public static final String DATA_FILE = "effect_aliases.csv";
     private static final String ALIAS_COLUMN = "alias";
     private static final String EFFECT_COLUMN = "effect";
     private static final Logger LOG = Logger.getLogger(EffectAliases.class);
@@ -20,8 +21,12 @@ public final class EffectAliases {
     private EffectAliases() {
     }
 
+    public static String dataPath() {
+        return HostMod.configPath(DATA_FILE);
+    }
+
     public static void load() {
-        ModCsv.load(ALIAS_COLUMN, DATA_PATH, LOG, EffectAliases::register);
+        ModCsv.load(ALIAS_COLUMN, dataPath(), LOG, EffectAliases::register);
     }
 
     public static void register(JSONArray rows) throws JSONException {
@@ -34,9 +39,9 @@ public final class EffectAliases {
                     return;
                 }
                 if (!SkillEffectRegistry.contains(currentName)) {
-                    LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": " + currentName + " is not a skill effect");
+                    LOG.error("Skipping row " + (index + 1) + " of " + dataPath() + ": " + currentName + " is not a skill effect");
                 } else if (SkillEffectRegistry.contains(alias)) {
-                    LOG.warn("Skipping row " + (index + 1) + " of " + DATA_PATH + ": " + alias + " is still a skill effect of its own");
+                    LOG.warn("Skipping row " + (index + 1) + " of " + dataPath() + ": " + alias + " is still a skill effect of its own");
                 } else {
                     loaded.put(alias, currentName);
                 }

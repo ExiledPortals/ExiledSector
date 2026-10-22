@@ -55,7 +55,7 @@ class SocketedEffectsTest {
     void anInstalledItemsEffectsFlowThroughItsSocketNode() {
         Item item = ItemStore.get().add(new ItemData("chip", 4L, List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledEffect("HULL_MULT", 5f))), null));
         ShipSkillData data = new ShipSkillData();
-        data.allocate(socket, 3);
+        ShipTrees.allocate(data, socket, 3);
         AllocatedNode allocated = AllocatedNode.of(data).get(0);
         assertTrue(AllocatedSkillEffects.appliedEffects(data, allocated, null).isEmpty());
 
@@ -71,7 +71,7 @@ class SocketedEffectsTest {
                 .put("lines", "HULL_MULT:5:5; TOP_SPEED_PERCENT:-4:-4").put("source", "faction:pirates")));
         Item relic = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get("relic"), 9L));
         ShipSkillData data = new ShipSkillData();
-        data.allocate(socket, 3);
+        ShipTrees.allocate(data, socket, 3);
 
         assertTrue(AllocatedSkillEffects.forData(data, null).isEmpty());
 
@@ -81,7 +81,7 @@ class SocketedEffectsTest {
         assertEquals(List.of("HULL_MULT", "TOP_SPEED_PERCENT"), applied.stream().map(effect -> effect.effect().name()).toList());
         assertEquals(List.of(5f, -4f), applied.stream().map(SkillTypeEffect::magnitude).toList());
 
-        data.deallocate(socket);
+        ShipTrees.deallocate(data, socket);
 
         assertTrue(AllocatedSkillEffects.forData(data, null).isEmpty());
     }
@@ -90,7 +90,7 @@ class SocketedEffectsTest {
     void aDestroyedItemNoLongerContributesAnything() {
         Item item = ItemStore.get().add(new ItemData("chip", 4L, List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledEffect("HULL_MULT", 5f))), null));
         ShipSkillData data = new ShipSkillData();
-        data.allocate(socket, 3);
+        ShipTrees.allocate(data, socket, 3);
         data.socketItem("socket", item.id());
 
         ItemStore.get().remove(item);

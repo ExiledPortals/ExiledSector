@@ -16,19 +16,19 @@ public final class RefitShipPortrait {
     private final float spriteHeight;
     private final FleetHullVisuals visuals;
     private final HullEngines engines;
-    private final ShipAnchors anchors;
+    private final ShipHullSpecAPI hullSpec;
     private FleetMemberAPI member;
     private ShipVariantAPI variant;
     private VanillaShipView vanillaView;
     private boolean vanillaViewTried;
 
-    private RefitShipPortrait(String spritePath, float spriteWidth, float spriteHeight, FleetHullVisuals visuals, ShipAnchors anchors) {
+    private RefitShipPortrait(String spritePath, float spriteWidth, float spriteHeight, FleetHullVisuals visuals, ShipHullSpecAPI hullSpec) {
         this.spritePath = spritePath;
         this.spriteWidth = spriteWidth;
         this.spriteHeight = spriteHeight;
         this.visuals = visuals;
         this.engines = HullEngines.of(visuals);
-        this.anchors = anchors;
+        this.hullSpec = hullSpec;
     }
 
     public static RefitShipPortrait of(FleetMemberAPI member, ShipVariantAPI variant) {
@@ -50,8 +50,23 @@ public final class RefitShipPortrait {
             return null;
         }
         FleetHullVisuals visuals = FleetHullVisuals.of(hullSpec);
-        return new RefitShipPortrait(spritePath, texture.getWidth(), texture.getHeight(), visuals,
-                ShipAnchors.of(hullSpec, visuals, texture.getWidth(), texture.getHeight()));
+        return new RefitShipPortrait(spritePath, texture.getWidth(), texture.getHeight(), visuals, hullSpec);
+    }
+
+    ShipHullSpecAPI hullSpec() {
+        return hullSpec;
+    }
+
+    FleetHullVisuals visuals() {
+        return visuals;
+    }
+
+    float spriteWidth() {
+        return spriteWidth;
+    }
+
+    float spriteHeight() {
+        return spriteHeight;
     }
 
     public float halfWidthPixels(float zoom) {
@@ -62,9 +77,9 @@ public final class RefitShipPortrait {
         return spriteHeight * zoom / 2f;
     }
 
-    public SkillTreeFleetRenderer.InspectedShip at(float imageCentreX, float imageCentreY, float zoom) {
-        return new SkillTreeFleetRenderer.InspectedShip(pivotX(imageCentreX, zoom), pivotY(imageCentreY, zoom), zoom,
-                Math.max(spriteWidth, spriteHeight) * zoom, REFIT_FACING_DEG, anchors);
+    public InspectedShip at(float imageCentreX, float imageCentreY, float zoom) {
+        return new InspectedShip(pivotX(imageCentreX, zoom), pivotY(imageCentreY, zoom), zoom,
+                Math.max(spriteWidth, spriteHeight) * zoom, REFIT_FACING_DEG);
     }
 
     public void draw(float imageCentreX, float imageCentreY, float zoom, float alpha) {

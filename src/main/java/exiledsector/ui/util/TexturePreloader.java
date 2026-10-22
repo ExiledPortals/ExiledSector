@@ -1,12 +1,13 @@
 package exiledsector.ui.util;
 
 import com.fs.starfarer.api.Global;
+import exiledsector.HostMod;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 
 public final class TexturePreloader {
 
-    public static final String LIST_PATH = "data/config/exiledSector/texture_preload.csv";
+    static final String LIST_FILE = "texture_preload.csv";
     private static final Logger LOG = Logger.getLogger(TexturePreloader.class);
 
     @FunctionalInterface
@@ -17,12 +18,13 @@ public final class TexturePreloader {
     private TexturePreloader() {
     }
 
-    public static void preloadAll(String modId) {
+    public static void preloadAll() {
+        String listPath = HostMod.configPath(LIST_FILE);
         JSONArray textureRows;
         try {
-            textureRows = Global.getSettings().loadCSV(LIST_PATH, modId);
+            textureRows = Global.getSettings().loadCSV(listPath, HostMod.id());
         } catch (Exception e) {
-            LOG.warn("No texture preload list at " + LIST_PATH + "; textures will load the first time they are drawn", e);
+            LOG.warn("No texture preload list at " + listPath + "; textures will load the first time they are drawn", e);
             return;
         }
         if (textureRows == null) {

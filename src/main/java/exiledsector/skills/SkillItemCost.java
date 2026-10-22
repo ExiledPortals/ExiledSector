@@ -2,13 +2,15 @@ package exiledsector.skills;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
 import exiledsector.i18n.NumberText;
+import exiledsector.items.CargoRefund;
 
-public record SkillItemCost(String itemId, float quantity) {
+public record SkillItemCost(String itemId, float quantity) implements CargoRefund {
 
     public String itemName() {
         return CostItems.displayName(itemId);
     }
 
+    @Override
     public void refundTo(CargoAPI cargo) {
         if (cargo != null) {
             CostItems.add(cargo, itemId, quantity);

@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -15,11 +16,56 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class WormholeAnchor extends Item {
+public final class WormholeAnchor extends Item implements NodeSocketable {
 
     public enum Inertness {
         AREA_OFF, LOCKED, GATED, EXIT_LOCKED
     }
+
+    public static final ItemTypeSupport SUPPORT = new ItemTypeSupport() {
+        @Override
+        public ItemType type() {
+            return ItemType.WORMHOLE_ANCHOR;
+        }
+
+        @Override
+        public Class<? extends Item> itemClass() {
+            return WormholeAnchor.class;
+        }
+
+        @Override
+        public String saveAlias() {
+            return "exiledSector.WormholeAnchor";
+        }
+
+        @Override
+        public Item create(String id, String definitionId, long seed, List<RolledModifier> explicitModifiers) {
+            return new WormholeAnchor(id, definitionId, seed);
+        }
+
+        @Override
+        public Item convert(Item source) {
+            return new WormholeAnchor(source);
+        }
+
+        @Override
+        public boolean uniqueRarity(ItemDefinition definition) {
+            return true;
+        }
+
+        @Override
+        public Integer cargoPrice(Item item, boolean forSale) {
+            WormholeAnchorDefinitions.AnchorMarket anchorMarket = WormholeAnchorDefinitions.market(item.definitionId());
+            if (anchorMarket == null) {
+                return null;
+            }
+            return forSale ? anchorMarket.price() : WormholeAnchorDefinitions.sellBaseValue(anchorMarket.price(),
+                    Global.getSettings().getFloat(BUY_PRICE_MULT_SETTING), Global.getSettings().getFloat(SELL_PRICE_MULT_SETTING));
+        }
+    };
+
+    static final String BUY_PRICE_MULT_SETTING = "nonEconItemBuyPriceMult";
+    static final String SELL_PRICE_MULT_SETTING = "nonEconItemSellPriceMult";
 
     WormholeAnchor(String id, String definitionId, long seed) {
         super(id, definitionId, seed, List.of());
@@ -173,7 +219,7 @@ public final class WormholeAnchor extends Item {
         String volume = volume();
         String volumeName = volumeName(volume);
         lines.add(Translation.msg("socketable.anchor.volume").arg("volume", volumeName).styled());
-        boolean linked = exitNodeId.equals(shipData.anchorExit(socketNodeId));
+        boolean linked = exitNodeId.equals(ShipTrees.anchorExit(shipData, socketNodeId));
         Inertness inertness = inertness(Global.getSector());
         if (linked && shipData.isAllocated(exitNodeId)) {
             lines.add(Translation.msg("socketable.anchor.open").arg("volume", volumeName).styled());

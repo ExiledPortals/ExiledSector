@@ -55,7 +55,7 @@ public final class ItemCrafting {
     }
 
     public static boolean isLockedFromCurrency(ItemDefinition definition) {
-        return definition != null && definition.isUniqueSubroutine();
+        return definition != null && ItemTypes.lockedFromCurrency(definition);
     }
 
     public static boolean wardBlocksTransposition(Item item, Set<ModifierSlot> guarded) {
@@ -294,11 +294,11 @@ public final class ItemCrafting {
     }
 
     static List<CorruptionOutcome> corruptionOutcomes(Item item) {
-        if (item instanceof Subroutine) {
+        if (item.type() == ItemType.SUBROUTINE) {
             return CorruptionOutcome.SUBROUTINE_OUTCOMES;
         }
         ItemDefinition definition = item.definition();
-        boolean uniqueHullItem = item instanceof HullItem && definition != null && definition.unique();
+        boolean uniqueHullItem = item.type() == ItemType.HULL_ITEM && definition != null && definition.unique();
         return uniqueHullItem ? CorruptionOutcome.UNIQUE_HULL_ITEM_OUTCOMES : CorruptionOutcome.NANOSWARM_OUTCOMES;
     }
 
@@ -341,7 +341,7 @@ public final class ItemCrafting {
 
     static Item reforgeAsRareBase(ItemStore store, Item item, Random random) {
         ItemDefinition uniqueDefinition = item.definition();
-        if (!(item instanceof HullItem) || uniqueDefinition == null || !uniqueDefinition.unique()) {
+        if (item.type() != ItemType.HULL_ITEM || uniqueDefinition == null || !uniqueDefinition.unique()) {
             return null;
         }
         List<ItemDefinition> bases = ItemDefinitions.ofType(ItemType.HULL_ITEM).stream()
@@ -492,7 +492,7 @@ public final class ItemCrafting {
 
     private static boolean otherUnique(ItemDefinition definition, ItemDefinition currentDefinition, int tier,
                                        Predicate<ItemDefinition> allowedUniques) {
-        boolean tierAllowed = definition.type() != ItemType.STAR_CHART || StarChartDefinitions.rollsAtTier(definition.id(), tier);
+        boolean tierAllowed = ItemTypes.rollsAtTier(definition, tier);
         return definition.unique() && definition.type() == currentDefinition.type() && !isLockedFromCurrency(definition)
                 && !definition.id().equals(currentDefinition.id()) && definition.rarity() > 0f && tierAllowed && allowedUniques.test(definition);
     }

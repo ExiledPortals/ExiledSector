@@ -5,6 +5,7 @@ import exiledsector.PlayerFleet;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ReleasedNodes;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeTopology;
@@ -55,7 +56,7 @@ public final class WormholeAnchorMigration {
         int nodeCount = 0;
         for (Map.Entry<String, ShipSkillData> shipEntry : shipDataById.entrySet()) {
             ShipSkillData shipData = shipEntry.getValue();
-            ReleasedNodes released = shipData.releaseUnreachable(topology, shipData.resolveStartingRootId(topology.sortedById()),
+            ReleasedNodes released = ShipTrees.releaseUnreachable(shipData, topology, ShipTrees.resolveStartingRootId(shipData, topology.sortedById()),
                     node -> !SkillTags.CORE_REGION.equals(node.getRegion()));
             if (released.isEmpty()) {
                 continue;

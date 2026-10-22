@@ -21,7 +21,7 @@ Starsector mod (Java 17, Maven) that gives every ship its own skill tree. Mod id
 - Don't read or open `hs_err_pid*.log` or `replay_pid*.log` in the repo root. They're JVM crash dumps (gitignored, tens of KB each). If asked about a crash, read only the first ~40 lines.
 
 ## Conventions
-- User-facing text goes through `exiledsector.i18n` (`I18n.forGameText(() -> Translation.msg("key")...)`), with message keys under `data/strings/exiledSector`, not hardcoded literals.
+- User-facing text goes through `exiledsector.i18n` (`I18n.forGameText(() -> Translation.msg("key")...)`), with message keys in the catalogue of the class's part (`data/strings/exiledLib/` or `data/strings/exiledSector/<part>/`), not hardcoded literals.
 - Magnitudes are placeholders pending balance (`docs/analysis/balance.csv`). Don't treat current values as intended.
 - Update `docs/docs.md` when you change how an effect behaves. Keep it short: one or two short paragraphs per section at most, less is better. Say what it does and where the code lives, no edge cases or rationale. Shorten an existing section rather than grow it. Describe only what is built, never planned or missing features (those go in `docs/plans/`).
 - Every modifier, effect and stat line follows `docs/tooltip_wording.md` (increased/reduced vs more/less by how the value stacks in code, "+N to", "additional", category names, no "loot") and keeps every description short: less is more, never over-explain. Read it before writing or changing one.

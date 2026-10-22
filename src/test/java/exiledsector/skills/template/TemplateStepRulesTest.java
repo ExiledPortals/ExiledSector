@@ -2,6 +2,7 @@ package exiledsector.skills.template;
 
 import exiledsector.skills.AllocationGate;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -34,7 +35,7 @@ class TemplateStepRulesTest {
         SkillTree.registerType(type("pricey", SkillTier.SMALL).itemCost(new SkillItemCost("alpha_core", 1f)).build());
         node("slot", type("slot_type", SkillTier.SMALL).optionalOptionIds(List.of("hull", "pricey")).build());
         data = new ShipSkillData();
-        data.chooseStartingRoot(root);
+        ShipTrees.chooseStartingRoot(data, root);
     }
 
     @AfterEach
@@ -64,7 +65,7 @@ class TemplateStepRulesTest {
 
     @Test
     void unknownRootAndAlreadyAllocatedNodesAreNotAttempted() {
-        data.allocate(SkillTree.get("armor"), 1);
+        ShipTrees.allocate(data, SkillTree.get("armor"), 1);
 
         assertEquals(StepVerdict.UNKNOWN_NODE, verdict("removed_by_update", null));
         assertEquals(StepVerdict.ALREADY_ALLOCATED, verdict("root", null));

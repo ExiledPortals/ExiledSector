@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.i18n.StyledText;
 import exiledsector.skills.AnchorLinks;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -119,8 +120,8 @@ class WormholeAnchorSocketingTest {
 
     private ShipSkillData shipWithSocket() {
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
-        data.allocate(socket, 1);
+        ShipTrees.chooseStartingRoot(data, root);
+        ShipTrees.allocate(data, socket, 1);
         return data;
     }
 
@@ -158,7 +159,7 @@ class WormholeAnchorSocketingTest {
         anchor(HEGEMONY_ANCHOR, "socketable_1");
         anchor(HEGEMONY_ANCHOR, "socketable_4");
         ShipSkillData data = shipWithSocket();
-        data.allocate(secondSocket, 1);
+        ShipTrees.allocate(data, secondSocket, 1);
         data.socketItem("socket", "socketable_1");
         data.socketItem("socket_b", "socketable_4");
         WormholeAnchor first = (WormholeAnchor) itemsById.get("socketable_1");
@@ -167,7 +168,7 @@ class WormholeAnchorSocketingTest {
         assertEquals("Closed: opening the wormhole to the Hegemony volume needs a free node slot.",
                 plain(first.socketStatusLines(data, "socket")).get(1));
 
-        data.openAnchorWormholes(100);
+        ShipTrees.openAnchorWormholes(data, 100);
 
         assertEquals("The wormhole to the Hegemony volume is open. Ctrl click the socket to travel through it.",
                 plain(first.socketStatusLines(data, "socket")).get(1));
@@ -198,7 +199,7 @@ class WormholeAnchorSocketingTest {
         Item second = store.add(ItemDefinitions.get(HEGEMONY_ANCHOR), 2L);
         store.add(ItemDefinitions.get(ABYSS_ANCHOR), 3L);
         ShipSkillData data = shipWithSocket();
-        data.allocate(secondSocket, 1);
+        ShipTrees.allocate(data, secondSocket, 1);
         data.socketItem("socket_b", first.id());
         data.socketItem("socket", second.id());
 

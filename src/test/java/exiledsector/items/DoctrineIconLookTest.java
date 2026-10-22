@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.skills.npc.RealSkillData;
+import exiledsector.ui.cargo.AnchorLook;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
 import exiledsector.ui.cargo.DoctrineIconFx;
@@ -22,7 +23,6 @@ import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -79,13 +79,13 @@ class DoctrineIconLookTest {
     void aDoctrineArchiveWithItsStillIconShowsItsFactionScreenInTheFactionUiColour() {
         CargoIconLook look = CargoIconLooks.forItem(doctrine(HEGEMONY));
 
-        assertEquals(DoctrineLook.of(DoctrineScreen.SEAL, "hegemony"), look.doctrine());
+        assertEquals(DoctrineLook.of(DoctrineScreen.SEAL, "hegemony"), look.art());
         assertEquals(HEGEMONY_UI, look.color());
         assertTrue(look.framed());
         assertTrue(look.ownArt());
-        assertNull(look.anchor());
-        assertEquals(look.doctrine(), look.unframed().doctrine());
-        assertEquals(DoctrineIconFx.EMBLEM_PREFIX + "hegemony.png", look.doctrine().emblemPath());
+        assertFalse(look.art() instanceof AnchorLook);
+        assertEquals(look.art(), look.unframed().art());
+        assertEquals(DoctrineIconFx.EMBLEM_PREFIX + "hegemony.png", ((DoctrineLook) look.art()).emblemPath());
     }
 
     @Test
@@ -93,20 +93,20 @@ class DoctrineIconLookTest {
         Item modded = doctrine(MODDED);
         CargoIconLook look = CargoIconLooks.forItem(modded);
 
-        assertEquals(DoctrineScreen.READOUT, look.doctrine().screen());
+        assertEquals(DoctrineScreen.READOUT, ((DoctrineLook) look.art()).screen());
         assertEquals(modded.frameColor(), look.color());
     }
 
     @Test
     void aDoctrineWithAnotherIconOrNoArchiveRowKeepsTheRarityLook() {
-        assertNull(CargoIconLooks.forItem(doctrine(PLAIN_ICON)).doctrine());
-        assertNull(CargoIconLooks.forItem(doctrine(NO_ARCHIVE)).doctrine());
+        assertFalse(CargoIconLooks.forItem(doctrine(PLAIN_ICON)).art() instanceof DoctrineLook);
+        assertFalse(CargoIconLooks.forItem(doctrine(NO_ARCHIVE)).art() instanceof DoctrineLook);
         assertFalse(CargoIconLooks.forItem(doctrine(PLAIN_ICON)).ownArt());
     }
 
     @Test
     void everyShippedDoctrineUsesItsBakedStillAndHasAnEmblemForItsFaction() throws Exception {
-        JSONArray subroutines = ItemFixtures.shippedRows(ItemDefinitions.SUBROUTINES_PATH);
+        JSONArray subroutines = ItemFixtures.shippedRows(SubroutineDefinitions.dataPath());
         JSONArray archives = ItemFixtures.shippedRows(DoctrineArchives.DATA_PATH);
         assertTrue(Files.isRegularFile(RealSkillData.projectRoot().resolve(DoctrineIconFx.STILL_PREFIX + "frame.png")));
         int checked = 0;

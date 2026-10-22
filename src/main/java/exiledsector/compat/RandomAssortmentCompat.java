@@ -19,6 +19,9 @@ public final class RandomAssortmentCompat {
     public static final CompatTarget TARGET = new CompatTarget("Random Assortment of Things areas", List.of(MOD_ID), TESTED_VERSIONS,
             RandomAssortmentCompat::missingFeatures);
 
+    static final String GENESIS_HULL_ID = "rat_genesis";
+    static final String GENESIS_WRECK_VARIANT_ID = "rat_genesis_Hull";
+    static final String REQUIEM_SKILL_ID = "rat_abyssal_requiem";
     static final String EXO_UTILS_CLASS = "assortment_of_things.exotech.ExoUtils";
     static final String EXO_DATA_CLASS = "assortment_of_things.exotech.ExoData";
     static final ApiMember EXO_UTILS_INSTANCE = ApiMember.staticGetter(EXO_UTILS_CLASS, "INSTANCE", EXO_UTILS_CLASS);
@@ -63,15 +66,15 @@ public final class RandomAssortmentCompat {
                     + "Hyper-Nav Beacon (both stay locked without them)");
         }
         SettingsAPI settings = Global.getSettings();
-        if (!CompatTarget.specExists(() -> settings.getHullSpec(AbyssSingularity.GENESIS_HULL_ID))) {
-            missing.add("the Genesis-class hull " + AbyssSingularity.GENESIS_HULL_ID
+        if (!CompatTarget.specExists(() -> settings.getHullSpec(GENESIS_HULL_ID))) {
+            missing.add("the Genesis-class hull " + GENESIS_HULL_ID
                     + ", used to unlock the Abyss when the Singularity is beaten (the Abyss unlocks without it)");
         }
-        if (!CompatTarget.specExists(() -> settings.doesVariantExist(AbyssSingularity.GENESIS_WRECK_VARIANT_ID) ? Boolean.TRUE : null)) {
-            missing.add("the variant " + AbyssSingularity.GENESIS_WRECK_VARIANT_ID + ", used to spot saves that already beat the Singularity");
+        if (!CompatTarget.specExists(() -> settings.doesVariantExist(GENESIS_WRECK_VARIANT_ID) ? Boolean.TRUE : null)) {
+            missing.add("the variant " + GENESIS_WRECK_VARIANT_ID + ", used to spot saves that already beat the Singularity");
         }
-        if (!CompatTarget.specExists(() -> settings.getSkillSpec(AbyssSingularity.REQUIEM_SKILL_ID))) {
-            missing.add("the skill " + AbyssSingularity.REQUIEM_SKILL_ID + ", used to spot saves that already beat the Singularity");
+        if (!CompatTarget.specExists(() -> settings.getSkillSpec(REQUIEM_SKILL_ID))) {
+            missing.add("the skill " + REQUIEM_SKILL_ID + ", used to spot saves that already beat the Singularity");
         }
         for (String commodityId : REQUIRED_COMMODITY_IDS) {
             if (!CompatTarget.specExists(() -> settings.getCommoditySpec(commodityId))) {

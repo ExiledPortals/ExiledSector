@@ -4,7 +4,8 @@ import { stringsSaved } from '../../api/describe.ts';
 import { DataToolbar } from '../../shared/DataToolbar.tsx';
 import { DocumentState } from '../../shared/DocumentState.tsx';
 import { useDataDocument } from '../../shared/useDataDocument.ts';
-import { currentStrings, editedEntries, markStringsSaved, parseStrings, serializeStrings, validateStrings, type StringsModel } from './model/strings.ts';
+import { STRING_CATALOGUE_RESOURCES } from '../../../server/stringCatalogues.ts';
+import { currentStrings, editedEntries, markStringsSaved, parseStringFiles, serializeStringFiles, validateStrings, type StringsModel } from './model/strings.ts';
 import { StringEditor } from './StringEditor.tsx';
 import { StringList } from './StringList.tsx';
 import { TooltipPreview } from './TooltipPreview.tsx';
@@ -41,14 +42,14 @@ export function TextPage() {
   const document = useDataDocument<StringsModel>({
     key: 'text',
     noun: 'text',
-    fileNames: ['strings-en'],
-    parse: (files) => parseStrings(files['strings-en'].content),
-    serialize: (model) => ({ 'strings-en': serializeStrings(model) }),
+    fileNames: STRING_CATALOGUE_RESOURCES,
+    parse: (files) => parseStringFiles(Object.fromEntries(STRING_CATALOGUE_RESOURCES.map((name) => [name, files[name].content]))),
+    serialize: serializeStringFiles,
     validate: validateStrings,
     savedMessage: (model) => {
       stringsSaved();
       const count = editedEntries(model).length;
-      return `Saved ${count} string${count === 1 ? '' : 's'} to en.json`;
+      return `Saved ${count} string${count === 1 ? '' : 's'} to the English catalogues`;
     },
     afterSave: markStringsSaved,
   });
@@ -66,7 +67,7 @@ export function TextPage() {
       <Box px="md" py="xs">
         <DataToolbar document={document}>
           <Text size="xs" c="dimmed">
-            English wording in data/strings/exiledSector/en.json
+            English wording in the en.json catalogues under data/strings
           </Text>
         </DataToolbar>
       </Box>

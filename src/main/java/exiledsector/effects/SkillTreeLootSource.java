@@ -6,25 +6,35 @@ import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.items.DoctrineArchives;
 import exiledsector.items.FactionFleetDrops;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
+import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ItemType;
+import exiledsector.items.SubroutineKind;
 import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
 import exiledsector.loot.FleetDifficulty;
 import exiledsector.loot.LootSource;
 import exiledsector.skills.npc.NpcTreeTag;
+import exiledsector.skills.progression.ShipLevelConfig;
+import exiledsector.skills.progression.ShipLevelSystem;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Predicate;
 
 public final class SkillTreeLootSource implements LootSource, FleetDifficulty {
 
     public static final SkillTreeLootSource INSTANCE = new SkillTreeLootSource();
+    static final int SHOWCASE_PICKS = 3;
     private static final Logger LOG = Logger.getLogger(SkillTreeLootSource.class);
 
     private SkillTreeLootSource() {
@@ -72,6 +82,37 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty {
     }
 
     @Override
+    public List<ItemData> wardenDrops(int chartTier, String wardenFactionId, float chanceMult, Random random,
+                                      Predicate<ItemDefinition> allowed) {
+        ItemData doctrine = DoctrineArchives.rollForWarden(chartTier, wardenFactionId, chanceMult, random, allowed);
+        return doctrine == null ? List.of() : List.of(doctrine);
+    }
+
+    @Override
+    public void addShowcaseLoot(CargoAPI loot, Random random) {
+        List<ItemDefinition> doctrines = new ArrayList<>();
+        for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.SUBROUTINE)) {
+            if (SubroutineKind.of(definition) == SubroutineKind.DOCTRINE) {
+                doctrines.add(definition);
+            } else if (!definition.unique()) {
+                loot.addSpecial(ItemData.rolled(definition, random.nextLong()).toSpecialItem(), 1f);
+            }
+        }
+        List<ItemDefinition> anchors = List.copyOf(ItemDefinitions.ofType(ItemType.WORMHOLE_ANCHOR));
+        List<ItemDefinition> activeAnchors = anchors.stream().filter(anchor -> WormholeAnchorDefinitions.areaActive(anchor.id())).toList();
+        addRandomPicks(loot, doctrines, random);
+        addRandomPicks(loot, activeAnchors.isEmpty() ? anchors : activeAnchors, random);
+    }
+
+    private static void addRandomPicks(CargoAPI loot, List<ItemDefinition> definitions, Random random) {
+        List<ItemDefinition> shuffled = new ArrayList<>(definitions);
+        Collections.shuffle(shuffled, random);
+        for (ItemDefinition definition : shuffled.subList(0, Math.min(SHOWCASE_PICKS, shuffled.size()))) {
+            loot.addSpecial(ItemData.rolled(definition, random.nextLong()).toSpecialItem(), 1f);
+        }
+    }
+
+    @Override
     public void stockSubmarket(SubmarketAPI submarket, CargoAPI cargo, Random random) {
         if (MarketItemStock.ANCHOR_SUBMARKETS.contains(submarket.getSpecId())) {
             stockAnchors(submarket.getMarket(), cargo, random);
@@ -87,6 +128,12 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty {
         for (ItemDefinition definition : WormholeAnchorDefinitions.rollMarketStock(market.getFactionId(), random)) {
             cargo.addSpecial(ItemData.rolled(definition, random.nextLong()).toMarketListing(), 1f);
         }
+    }
+
+    @Override
+    public Float difficultyMultiplier(float battleDifficulty) {
+        return ShipLevelSystem.difficultyMultiplier(battleDifficulty, ShipLevelConfig.xpDifficultyStrength(),
+                ShipLevelConfig.xpDifficultyMaxMultiplier());
     }
 
     @Override

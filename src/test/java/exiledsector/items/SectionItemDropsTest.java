@@ -43,9 +43,9 @@ class SectionItemDropsTest {
 
     @Test
     void sectionItemsOpenAtPlayerLevelFifteen() {
-        assertFalse(ItemUnlock.sectionsOpen(14));
-        assertTrue(ItemUnlock.sectionsOpen(15));
-        assertFalse(ItemUnlock.sectionsOpen((SectorAPI) null));
+        assertFalse(HullUpgradesSetting.sectionsOpen(14));
+        assertTrue(HullUpgradesSetting.sectionsOpen(15));
+        assertFalse(HullUpgradesSetting.sectionsOpen((SectorAPI) null));
     }
 
     @Test

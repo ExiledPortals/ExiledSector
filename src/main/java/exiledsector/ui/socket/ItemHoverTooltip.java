@@ -11,7 +11,6 @@ import exiledsector.i18n.Translation;
 import exiledsector.items.Item;
 import exiledsector.items.ItemTooltip;
 import exiledsector.ui.TooltipExpansion;
-import exiledsector.ui.inspect.ItemCodex;
 import exiledsector.ui.util.FramedPanelPlugin;
 import org.lwjgl.input.Keyboard;
 
@@ -52,7 +51,7 @@ public final class ItemHoverTooltip {
 
     public void show(Object key, Item item, HullSize hullSize, Function<Boolean, List<StyledText>> footer, PositionAPI anchor) {
         String definitionId = item == null ? null : item.definitionId();
-        boolean codexLinked = ItemCodex.existingEntryId(definitionId) != null && !Global.getSettings().isShowingCodex();
+        boolean codexLinked = ItemCodexLink.existingEntryId(definitionId) != null && !Global.getSettings().isShowingCodex();
         String codexDefinitionId = codexLinked ? definitionId : null;
         show(key, ItemTooltip.WIDTH, (element, expanded) -> ItemTooltip.write(element, item, hullSize,
                         () -> footerLines(footer.apply(expanded), codexLinked && expanded), expanded),
@@ -83,7 +82,7 @@ public final class ItemHoverTooltip {
         boolean expanded = TooltipExpansion.isExpandedOrHeld();
         FramedPanelPlugin panelPlugin = new FramedPanelPlugin();
         if (codexDefinitionId != null) {
-            panelPlugin.onKeyDown(Keyboard.KEY_F2, () -> ItemCodex.open(codexDefinitionId));
+            panelPlugin.onKeyDown(Keyboard.KEY_F2, () -> ItemCodexLink.open(codexDefinitionId));
         }
         CustomPanelAPI tooltipPanel = Global.getSettings().createCustom(tooltipWidth, anchor.getHeight(), panelPlugin);
         TooltipMakerAPI element = tooltipPanel.createUIElement(tooltipWidth - innerPad * 2f, 0f, false);

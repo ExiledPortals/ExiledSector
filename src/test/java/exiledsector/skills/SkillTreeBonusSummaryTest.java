@@ -24,7 +24,7 @@ class SkillTreeBonusSummaryTest {
         SkillNode root = register("root_1", new SkillType.Builder("root", "Low Tech", "a.png", SkillTier.ROOT)
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f))).build());
         data = new ShipSkillData();
-        data.chooseStartingRoot(root);
+        ShipTrees.chooseStartingRoot(data, root);
     }
 
     @AfterEach
@@ -45,7 +45,7 @@ class SkillTreeBonusSummaryTest {
     }
 
     private void allocate(String nodeId, SkillType type) {
-        data.allocate(register(nodeId, type), 0);
+        ShipTrees.allocate(data, register(nodeId, type), 0);
     }
 
     private static List<String> texts(Summary summary) {
@@ -166,7 +166,7 @@ class SkillTreeBonusSummaryTest {
         SkillTree.registerType(hullOption);
         SkillNode optional = register("optional_1", new SkillType.Builder("optional", "Optional", "a.png", SkillTier.SMALL)
                 .optionalOptionIds(List.of("hull_option")).build());
-        data.selectOption(optional, hullOption, 0);
+        ShipTrees.selectOption(data, optional, hullOption, 0);
 
         Summary summary = SkillTreeBonusSummary.of(data, HullSize.CRUISER);
 

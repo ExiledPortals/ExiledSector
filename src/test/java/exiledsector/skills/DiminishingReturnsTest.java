@@ -34,7 +34,7 @@ class DiminishingReturnsTest {
         SkillTree.clearTypes();
         SkillNode root = register("root_1", new SkillType.Builder("root", "Root", "a.png", SkillTier.ROOT).build());
         data = new ShipSkillData();
-        data.chooseStartingRoot(root);
+        ShipTrees.chooseStartingRoot(data, root);
     }
 
     @AfterEach
@@ -59,7 +59,7 @@ class DiminishingReturnsTest {
     }
 
     private void allocate(String nodeId, SkillType.Builder type) {
-        data.allocate(register(nodeId, type.build()), 0);
+        ShipTrees.allocate(data, register(nodeId, type.build()), 0);
     }
 
     private static SkillType.Builder small(String id, SkillTypeEffect... effects) {

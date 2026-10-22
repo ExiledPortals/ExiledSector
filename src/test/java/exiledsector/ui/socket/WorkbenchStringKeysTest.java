@@ -1,18 +1,16 @@
 package exiledsector.ui.socket;
 
+import exiledsector.i18n.RealCatalogue;
 import exiledsector.items.CorruptionOutcome;
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.CraftingWard;
 import exiledsector.items.ItemNature;
 import exiledsector.items.MaterialItems;
 import exiledsector.modifiers.ModifierSlot;
-import exiledsector.skills.npc.RealSkillData;
 import org.json.JSONObject;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +21,7 @@ class WorkbenchStringKeysTest {
     @ParameterizedTest
     @ValueSource(strings = {"en", "zh_CN"})
     void everyKeyTheWorkbenchBuildsForAKernelOrOutcomeExists(String language) throws Exception {
-        JSONObject catalogue = new JSONObject(Files.readString(
-                RealSkillData.projectRoot().resolve("data/strings/exiledSector/" + language + ".json"), StandardCharsets.UTF_8));
+        JSONObject catalogue = new JSONObject(RealCatalogue.entries(language));
         List<String> missing = new ArrayList<>();
         for (String itemId : MaterialItems.ids()) {
             require(catalogue, "material." + itemId + ".name", missing);

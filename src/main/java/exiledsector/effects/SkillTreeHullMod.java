@@ -11,19 +11,15 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import com.fs.starfarer.api.util.Misc;
+import exiledsector.ExiledSectorModPlugin;
+import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
+import exiledsector.persistence.ShipRecords;
 import exiledsector.skills.DiminishingReturns;
-import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
-import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.StatBaseline;
 import exiledsector.skills.skilleffect.FleetWideEffects;
-import exiledsector.ui.VanillaText;
-import exiledsector.ui.inspect.ShipTreeLookup;
-import exiledsector.ui.inspect.ShipTreeSummaryRenderer;
-import exiledsector.ui.refit.PhantomHullModRefitHider;
 
 import java.util.List;
 import java.util.Map;
@@ -32,9 +28,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
 
     public static final String ID = "exiledSector_core";
 
-    private static final float TOOLTIP_PAD = 10f;
     private static final float TOOLTIP_WIDTH = 480f;
-    private static final int MAX_TOOLTIP_BONUS_LINES = 25;
     private static final int DISPLAY_SORT_ORDER = 0;
     private static final String COMBAT_PLAN_KEY = "exiledSector_combatPlan";
 
@@ -48,7 +42,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     private static void applyResolved(HullSize hullSize, MutableShipStatsAPI stats, List<ShipEffectSource> sources) {
         FleetMemberAPI member = stats.getFleetMember();
         ShipVariantAPI variant = stats.getVariant();
-        ShipSkillData shipData = SkillDataResolver.resolve(member, variant);
+        ShipSkillData shipData = ShipRecords.resolve(member, variant);
         if (shipData == null) return;
 
         ShipEffectContext context = new ShipEffectContext(shipData, member, variant, hullSize);
@@ -99,7 +93,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         return stats.getFleetMember() == null;
     }
 
-    static FleetMemberAPI memberOf(ShipAPI ship) {
+    public static FleetMemberAPI memberOf(ShipAPI ship) {
         FleetMemberAPI shipMember = ship.getFleetMember();
         return shipMember != null ? shipMember : ship.getMutableStats().getFleetMember();
     }
@@ -108,15 +102,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, HullSize hullSize, ShipAPI ship, float width, boolean isForModSpec) {
         if (ship == null || isForModSpec) return;
 
-        FleetMemberAPI member = memberOf(ship);
-        ShipTreeLookup.ShipTree shipTree = ShipTreeLookup.forShip(member, ship.getVariant());
-        if (shipTree == null) {
-            I18n.forGameText(() -> VanillaText.addPara(tooltip, Translation.styled("hullmod.exiledSector_core.noTree"), TOOLTIP_PAD,
-                    Misc.getGrayColor()));
-            return;
-        }
-        boolean hasModuleSlots = ship.getHullSpec() != null && ShipFacts.hasModuleSlots(ship.getHullSpec());
-        ShipTreeSummaryRenderer.render(tooltip, shipTree, hullSize, hasModuleSlots, TOOLTIP_PAD, MAX_TOOLTIP_BONUS_LINES);
+        ExiledSectorModPlugin.DOMAINS.forEach(domain -> domain.describeShip(tooltip, hullSize, ship));
     }
 
     @Override
@@ -141,7 +127,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
 
     @Override
     public int getDisplayCategoryIndex() {
-        PhantomHullModRefitHider.requestRefresh();
+        ExiledSectorModPlugin.DOMAINS.forEach(ExiledSectorDomain::refitScreenListed);
         return super.getDisplayCategoryIndex();
     }
 
@@ -173,7 +159,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     public void onFleetSync(CampaignFleetAPI fleet) {
         if (fleet != null && fleet.isPlayerFleet()) {
             FleetWideEffects.markPhaseFieldStale();
-            ShipTreeSync.requestPlayerFleetSync();
+            ExiledSectorModPlugin.DOMAINS.forEach(ExiledSectorDomain::playerFleetSynced);
         }
         FleetWideEffects.applyAlwaysCountingSensorStrength(fleet);
     }
@@ -224,7 +210,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     private static ResolvedTree treeFor(ShipAPI ship) {
         ShipVariantAPI variant = ship.getVariant();
         FleetMemberAPI member = ship.getMutableStats().getFleetMember();
-        ShipSkillData shipData = SkillDataResolver.resolve(member, variant);
+        ShipSkillData shipData = ShipRecords.resolve(member, variant);
         return ResolvedTree.of(new ShipEffectContext(shipData, member, variant, ship.getHullSize()), StatBaseline.of(variant),
                 DiminishingReturns.current());
     }

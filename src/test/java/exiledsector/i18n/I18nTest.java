@@ -57,7 +57,7 @@ class I18nTest {
     }
 
     private static RuntimeException notFound(String locale) {
-        return new RuntimeException("Error loading [data/strings/exiledSector/" + locale
+        return new RuntimeException("Error loading [data/strings/exiledSector/core/" + locale
                 + ".json] resource, not found in [../mods/ExiledSector,CLASSPATH]");
     }
 
@@ -70,10 +70,10 @@ class I18nTest {
 
     @Test
     void loadsTheLocaleOverEnglishAndSkipsFilesNoModProvides() throws Exception {
-        when(settings.getMergedJSON("data/strings/exiledSector/en.json"))
+        when(settings.getMergedJSON("data/strings/exiledSector/core/en.json"))
                 .thenReturn(new JSONObject("{\"a\":\"English A\",\"b\":\"English B\"}"));
-        when(settings.getMergedJSON("data/strings/exiledSector/zh.json")).thenThrow(notFound("zh"));
-        when(settings.getMergedJSON("data/strings/exiledSector/zh_CN.json"))
+        when(settings.getMergedJSON("data/strings/exiledSector/core/zh.json")).thenThrow(notFound("zh"));
+        when(settings.getMergedJSON("data/strings/exiledSector/core/zh_CN.json"))
                 .thenReturn(new JSONObject("{\"a\":\"中文甲\"}"));
 
         I18n.load("zh_CN");
@@ -85,8 +85,20 @@ class I18nTest {
     }
 
     @Test
+    void mergesTheLibraryCatalogueWithEveryPartCatalogue() throws Exception {
+        when(settings.getMergedJSON("data/strings/exiledLib/en.json")).thenReturn(new JSONObject("{\"a\":\"Library A\"}"));
+        when(settings.getMergedJSON("data/strings/exiledSector/starCharts/en.json")).thenReturn(new JSONObject("{\"b\":\"Charts B\"}"));
+
+        I18n.load("en");
+
+        assertEquals("Library A", Translation.text("a"));
+        assertEquals("Charts B", Translation.text("b"));
+        assertEquals(List.of(), errors);
+    }
+
+    @Test
     void aMissingEnglishFileLeavesAnEmptyCatalogueAndIsReported() throws Exception {
-        when(settings.getMergedJSON("data/strings/exiledSector/en.json")).thenThrow(notFound("en"));
+        when(settings.getMergedJSON("data/strings/exiledSector/core/en.json")).thenThrow(notFound("en"));
 
         I18n.load("en");
 
@@ -96,23 +108,23 @@ class I18nTest {
 
     @Test
     void aBrokenTranslationFileIsReportedAndItsStringsFallBackToEnglish() throws Exception {
-        when(settings.getMergedJSON("data/strings/exiledSector/en.json")).thenReturn(new JSONObject("{\"a\":\"English A\"}"));
-        when(settings.getMergedJSON("data/strings/exiledSector/zh.json")).thenThrow(notFound("zh"));
-        when(settings.getMergedJSON("data/strings/exiledSector/zh_CN.json"))
-                .thenThrow(new JSONException("mods/ExiledSector (data/strings/exiledSector/zh_CN.json)\nExpected a ',' or '}'"));
+        when(settings.getMergedJSON("data/strings/exiledSector/core/en.json")).thenReturn(new JSONObject("{\"a\":\"English A\"}"));
+        when(settings.getMergedJSON("data/strings/exiledSector/core/zh.json")).thenThrow(notFound("zh"));
+        when(settings.getMergedJSON("data/strings/exiledSector/core/zh_CN.json"))
+                .thenThrow(new JSONException("mods/ExiledSector (data/strings/exiledSector/core/zh_CN.json)\nExpected a ',' or '}'"));
 
         I18n.load("zh_CN");
 
         assertEquals("English A", Translation.text("a"));
         assertEquals(1, errors.size());
         assertTrue(errors.get(0).getRenderedMessage().contains("zh_CN"));
-        assertTrue(errors.get(0).getRenderedMessage().contains("data/strings/exiledSector/zh_CN.json"));
+        assertTrue(errors.get(0).getRenderedMessage().contains("data/strings/exiledSector/core/zh_CN.json"));
     }
 
     @Test
     void anUnexpectedFailureReadingATranslationIsReportedRatherThanTreatedAsMissing() throws Exception {
-        when(settings.getMergedJSON("data/strings/exiledSector/en.json")).thenReturn(new JSONObject("{\"a\":\"English A\"}"));
-        when(settings.getMergedJSON("data/strings/exiledSector/ru.json")).thenThrow(new IllegalStateException("disk on fire"));
+        when(settings.getMergedJSON("data/strings/exiledSector/core/en.json")).thenReturn(new JSONObject("{\"a\":\"English A\"}"));
+        when(settings.getMergedJSON("data/strings/exiledSector/core/ru.json")).thenThrow(new IllegalStateException("disk on fire"));
 
         I18n.load("ru");
 
@@ -136,7 +148,7 @@ class I18nTest {
 
     @Test
     void ignoresValuesThatAreNotText() throws Exception {
-        when(settings.getMergedJSON("data/strings/exiledSector/en.json"))
+        when(settings.getMergedJSON("data/strings/exiledSector/core/en.json"))
                 .thenReturn(new JSONObject("{\"a\":\"text\",\"b\":3,\"c\":{\"d\":\"e\"}}"));
 
         I18n.load("en");

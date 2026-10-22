@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
+import exiledsector.ExiledSectorModPlugin;
 import exiledsector.skills.skilleffect.FighterSkillEffect;
 import exiledsector.skills.skilleffect.ShieldSkillEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
@@ -21,13 +22,18 @@ public final class FittedShipProfile {
 
     public static ShipProfile profile(ShipHullSpecAPI hullSpec, ShipVariantAPI variant, ShipSkillData shipData) {
         HullSize hullSize = hullSpec.getHullSize();
-        List<SkillTypeEffect> treeEffects = shipData == null ? List.of()
-                : AllocatedSkillEffects.treeEffects(shipData, AllocatedNode.of(shipData), hullSize);
-        List<SkillEffect> treeEffectsInOrder = new ArrayList<>(treeEffects.size());
-        treeEffects.forEach(effect -> treeEffectsInOrder.add(effect.effect()));
-        ShieldType shieldType = ShieldSkillEffect.resolveDisplayShieldType(fittedShieldType(hullSpec.getShieldType(), variant), treeEffectsInOrder);
-        return new ShipProfile(hullSize, shieldType, fighterBays(hullSpec.getFighterBays(), variant, treeEffects), Set.of(), false,
+        List<SkillTypeEffect> fitEffects = shipData == null ? List.of() : fitEffects(shipData, hullSize);
+        List<SkillEffect> fitEffectsInOrder = new ArrayList<>(fitEffects.size());
+        fitEffects.forEach(effect -> fitEffectsInOrder.add(effect.effect()));
+        ShieldType shieldType = ShieldSkillEffect.resolveDisplayShieldType(fittedShieldType(hullSpec.getShieldType(), variant), fitEffectsInOrder);
+        return new ShipProfile(hullSize, shieldType, fighterBays(hullSpec.getFighterBays(), variant, fitEffects), Set.of(), false,
                 hullSpec.getArmorRating(), hullSpec.isPhase(), ShipSystemCharges.limited(hullSpec), ShipFacts.onlyBuiltInWings(hullSpec));
+    }
+
+    private static List<SkillTypeEffect> fitEffects(ShipSkillData shipData, HullSize hullSize) {
+        List<SkillTypeEffect> fitEffects = new ArrayList<>();
+        ExiledSectorModPlugin.DOMAINS.forEach(domain -> fitEffects.addAll(domain.fitEffects(shipData, hullSize)));
+        return fitEffects;
     }
 
     public static ShieldType fittedShieldType(ShieldType hullShieldType, ShipVariantAPI variant) {
@@ -43,10 +49,10 @@ public final class FittedShipProfile {
         return hullShieldType;
     }
 
-    static int fighterBays(int hullBays, ShipVariantAPI variant, List<SkillTypeEffect> treeEffects) {
+    static int fighterBays(int hullBays, ShipVariantAPI variant, List<SkillTypeEffect> fitEffects) {
         boolean baysRemoved = variant != null && variant.hasHullMod(HullMods.CONVERTED_BAY);
         float addedBays = variant != null && variant.hasHullMod(HullMods.CONVERTED_HANGAR) ? 1f : 0f;
-        for (SkillTypeEffect effect : treeEffects) {
+        for (SkillTypeEffect effect : fitEffects) {
             SkillEffect skillEffect = effect.effect();
             if (skillEffect == FighterSkillEffect.REMOVE_ALL_FIGHTER_BAYS) {
                 baysRemoved = true;

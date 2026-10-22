@@ -10,6 +10,7 @@ import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.effects.ModuleShareSetting;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -55,8 +56,8 @@ class ShipTreeSummaryRendererTest {
         SkillTree.register(root);
         SkillTree.register(armor);
         data = new ShipSkillData();
-        data.chooseStartingRoot(root);
-        data.allocate(armor, 0);
+        ShipTrees.chooseStartingRoot(data, root);
+        ShipTrees.allocate(data, armor, 0);
         data.incrementLevel();
 
         info = mock(TooltipMakerAPI.class);

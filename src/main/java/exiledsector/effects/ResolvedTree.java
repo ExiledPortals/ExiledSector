@@ -106,7 +106,7 @@ public final class ResolvedTree {
 
     private static void addVanillaEntry(String vanillaHullModId, List<Entry> resolvedEntries) {
         HullModSpecAPI hullModSpec = Global.getSettings().getHullModSpec(vanillaHullModId);
-        HullModEffect vanillaEffect = hullModSpec == null ? null : PhantomHullMods.vanillaEffect(hullModSpec.getEffect());
+        HullModEffect vanillaEffect = hullModSpec == null ? null : WrappingHullModEffect.unwrapped(hullModSpec.getEffect());
         if (vanillaEffect != null) {
             resolvedEntries.add(new VanillaEntry(vanillaEffect, vanillaHullModId));
         }

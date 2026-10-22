@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -16,8 +17,6 @@ import java.util.function.Function;
 
 public final class ItemDefinitions {
 
-    static final String SUBROUTINES_PATH = "data/config/exiledSector/subroutines.csv";
-    static final String HULL_ITEMS_PATH = "data/config/exiledSector/hull_items.csv";
     private static final String ID_COLUMN = "id";
     private static final Logger LOG = Logger.getLogger(ItemDefinitions.class);
     private static final AtomicReference<Map<String, ItemDefinition>> BY_ID = new AtomicReference<>(Map.of());
@@ -28,8 +27,14 @@ public final class ItemDefinitions {
     }
 
     public static void load() {
+        Map<ItemType, JSONArray> rowsByType = new EnumMap<>(ItemType.class);
+        for (ItemTypeSupport support : ItemTypes.all()) {
+            if (support.definitionsPath() != null) {
+                rowsByType.put(support.type(), rows(support.definitionsPath()));
+            }
+        }
         try {
-            register(rows(SUBROUTINES_PATH), rows(HULL_ITEMS_PATH));
+            register(rowsByType);
         } catch (JSONException e) {
             LOG.error("Failed to load the item definitions", e);
         }
@@ -46,17 +51,37 @@ public final class ItemDefinitions {
     }
 
     public static void register(JSONArray subroutineRows, JSONArray hullItemRows) throws JSONException {
+        Map<ItemType, JSONArray> rowsByType = new EnumMap<>(ItemType.class);
+        rowsByType.put(ItemType.SUBROUTINE, subroutineRows);
+        rowsByType.put(ItemType.HULL_ITEM, hullItemRows);
+        register(rowsByType);
+    }
+
+    public static void register(Map<ItemType, JSONArray> rowsByType) throws JSONException {
         Map<String, ItemDefinition> loaded = new LinkedHashMap<>();
-        addRows(loaded, subroutineRows, SUBROUTINES_PATH, ItemDefinition::parseSubroutine);
-        addRows(loaded, hullItemRows, HULL_ITEMS_PATH, ItemDefinition::parseHullItem);
+        for (ItemType type : ItemType.values()) {
+            JSONArray rows = rowsByType.get(type);
+            if (rows != null) {
+                ItemTypeSupport support = support(type);
+                addRows(loaded, rows, support.definitionsPath(), support::parseDefinition);
+            }
+        }
         BY_ID.set(Collections.unmodifiableMap(loaded));
     }
 
     public static void register(JSONArray rows) throws JSONException {
         Map<String, ItemDefinition> loaded = new LinkedHashMap<>();
         addRows(loaded, rows, "item rows",
-                row -> row.has(ItemDefinition.SECTION_COLUMN) ? ItemDefinition.parseHullItem(row) : ItemDefinition.parseSubroutine(row));
+                row -> support(row.has(ItemDefinition.SECTION_COLUMN) ? ItemType.HULL_ITEM : ItemType.SUBROUTINE).parseDefinition(row));
         BY_ID.set(Collections.unmodifiableMap(loaded));
+    }
+
+    private static ItemTypeSupport support(ItemType type) {
+        ItemTypeSupport support = ItemTypes.of(type);
+        if (support == null) {
+            throw new IllegalStateException("No domain supports " + type.id() + " items");
+        }
+        return support;
     }
 
     private static void addRows(Map<String, ItemDefinition> loaded, JSONArray rows, String source,

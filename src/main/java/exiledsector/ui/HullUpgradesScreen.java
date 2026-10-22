@@ -1,5 +1,6 @@
 package exiledsector.ui;
 
+import exiledsector.items.HullItem;
 import exiledsector.items.ShipSection;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
@@ -12,11 +13,10 @@ import exiledsector.skills.ShipSections;
 import exiledsector.items.SocketCustody;
 import exiledsector.items.ItemKind;
 import exiledsector.items.Item;
+import exiledsector.ui.decoration.InspectedShip;
 import exiledsector.ui.decoration.RefitShipPortrait;
-import exiledsector.ui.decoration.SkillTreeFleetRenderer;
+import exiledsector.ui.decoration.ShipAnchors;
 import exiledsector.ui.section.SectionLayout;
-import exiledsector.ui.node.NodeSearch;
-import exiledsector.ui.node.TreeAllocationSession;
 import exiledsector.ui.refit.RefitScreenLayout;
 import exiledsector.ui.socket.HullUpgradePanel;
 import exiledsector.ui.socket.SocketPanelPlacement;
@@ -48,11 +48,12 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     private final RefitScreenLayout layout;
     private final RefitBackdrop backdrop = new RefitBackdrop();
     private final RefitShipPortrait portrait;
+    private final ShipAnchors sectionAnchors;
     private final SectionLayout.ShipExtent shipExtent;
     private final HullUpgradesLayout screenLayout;
     private final Consumer<SocketPanelTab> tabListener = this::switchTab;
     private CustomPanelAPI hostPanel;
-    private TreeAllocationSession treeSession;
+    private SectionEditor sectionEditor;
     private SectionsDisplay sectionsDisplay;
     private ItemStoragePanel storagePanel;
     private HullUpgradePanel upgradesPanel;
@@ -77,6 +78,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         this.refitButton = refitButton;
         this.layout = layout;
         this.portrait = RefitShipPortrait.of(member, variant);
+        this.sectionAnchors = portrait == null ? null : ShipAnchors.of(portrait);
         this.shipExtent = portrait == null ? SectionLayout.ShipExtent.square(0f)
                 : new SectionLayout.ShipExtent(portrait.halfWidthPixels(layout.shipZoom()), portrait.halfLengthPixels(layout.shipZoom()));
         this.screenLayout = HullUpgradesLayout.of(layout, shipExtent);
@@ -85,8 +87,8 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     void attach(CustomPanelAPI panel) {
         hostPanel = panel;
         ownedShips = SocketCustody.reconcile();
-        treeSession = new TreeAllocationSession(member, variant, refitButton, new NodeSearch());
-        sectionsDisplay = new SectionsDisplay(panel, treeSession, SectionLayout.Arrangement.LEFT_ABOVE_BELOW);
+        sectionEditor = new SectionEditor(member, variant, refitButton);
+        sectionsDisplay = new SectionsDisplay(panel, sectionEditor, SectionLayout.Arrangement.LEFT_ABOVE_BELOW);
         sectionsDisplay.refreshIfChanged();
     }
 
@@ -106,7 +108,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         if (sectionsDisplay.refreshIfChanged() && upgradesPanel != null) {
             upgradesPanel.update(sectionsDisplay.panelView());
         }
-        if (storagePanel != null && treeSession.statsRevision() != storageRevision) {
+        if (storagePanel != null && sectionEditor.revision() != storageRevision) {
             refreshStorage();
         }
         bayDim = Fade.step(bayDim, bay != null, amount / OPEN_SECONDS);
@@ -166,7 +168,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
             }
         }, kindFilter, tabListener, SHOWN_TABS);
         storagePanel.setModifyHandler(this::openBay);
-        storageRevision = treeSession.statsRevision();
+        storageRevision = sectionEditor.revision();
     }
 
     private void openBay() {
@@ -240,7 +242,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
     }
 
     private void refreshStorage() {
-        storageRevision = treeSession.statsRevision();
+        storageRevision = sectionEditor.revision();
         storagePanel.refresh(SocketCustody.shipNames(ownedShips));
         if (placingItem != null) {
             storagePanel.setSelected(placingItem, placingHint(placingItem));
@@ -253,7 +255,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
             return;
         }
         if (targetedSection != null) {
-            if (!treeSession.installInSection(targetedSection, item)) {
+            if (!sectionEditor.installInSection(targetedSection, item)) {
                 SkillTreeSounds.refused();
             }
             return;
@@ -266,7 +268,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
 
     private String placingHint(Item item) {
         ItemKind itemType = item.kind();
-        String key = treeSession.isSectionUnlocked(itemType.section()) ? "ui.socketStorage.placingHintFramework"
+        String key = sectionEditor.isSectionUnlocked(ShipSection.of(itemType)) ? "ui.socketStorage.placingHintFramework"
                 : "ui.socketStorage.placingHintFrameworkLocked";
         return Translation.msg(key).arg("name", item.name()).arg("type", itemType.displayName()).text();
     }
@@ -322,7 +324,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         }
         ShipSection section = sectionsDisplay.sections().get(sectionIndex).section();
         if (placingItem != null) {
-            if (placingItem.canSocketInto(section) && treeSession.installInSection(section, placingItem)) {
+            if (HullItem.fits(placingItem, section) && sectionEditor.installInSection(section, placingItem)) {
                 stopPlacing();
             } else {
                 SkillTreeSounds.refused();
@@ -347,7 +349,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         }
         ShipSections.UnlockedSection unlocked = sectionsDisplay.sections().get(sectionIndex);
         if (unlocked.item() != null) {
-            treeSession.removeFromSection(unlocked.section());
+            sectionEditor.removeFromSection(unlocked.section());
         }
     }
 
@@ -421,8 +423,8 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         }
         float shipX = shipCentreX();
         portrait.draw(shipX, layout.shipCentreY(), layout.shipZoom(), frameAlpha);
-        SkillTreeFleetRenderer.InspectedShip ship = portrait.at(shipX, layout.shipCentreY(), layout.shipZoom());
-        sectionsDisplay.render(ship, shipExtent, alphaMult * Fade.smooth(contentLevel), screenLayout.sectionBounds(), placingItem, targetedSection);
+        InspectedShip ship = portrait.at(shipX, layout.shipCentreY(), layout.shipZoom());
+        sectionsDisplay.render(ship, sectionAnchors, shipExtent, alphaMult * Fade.smooth(contentLevel), screenLayout.sectionBounds(), placingItem, targetedSection);
         if (bayDim > 0f) {
             GLDraw.fillQuad(0f, 0f, Global.getSettings().getScreenWidth(), Global.getSettings().getScreenHeight(), Color.BLACK,
                     BAY_BACKDROP_ALPHA * Fade.smooth(bayDim) * alphaMult);

@@ -9,6 +9,7 @@ import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
@@ -31,7 +32,7 @@ final class DormantNodeWake {
     static boolean wake(FleetMemberAPI member) {
         ShipSkillData shipData = ShipSkillDataManager.find(member.getId());
         Map<String, SkillNode> tree = SkillTree.getAllNodes();
-        if (shipData == null || !shipData.hasReturningDormantNodes(tree)) {
+        if (shipData == null || !ShipTrees.hasReturningDormantNodes(shipData, tree)) {
             return false;
         }
         ShipVariantAPI variant = member.getVariant();
@@ -39,7 +40,7 @@ final class DormantNodeWake {
         int opCostPerNode = SkillNodeOpCost.perNode(member.getHullSpec());
         int totalOp = OpReserveParity.availableOp(opBudget, OpReserveParity.reservedOp(variant));
         ShipFacts shipFacts = PlayerShipFacts.of(member, variant);
-        List<String> releasedNodeIds = shipData.wakeDormantNodes(tree, ShipLevelConfig.maxAllocatedNodes(),
+        List<String> releasedNodeIds = ShipTrees.wakeDormantNodes(shipData, tree, ShipLevelConfig.maxAllocatedNodes(),
                 dormantNode -> fitsTheOpBudget(shipData, dormantNode, opCostPerNode, totalOp) && isEligible(shipData, dormantNode, shipFacts));
         refund(shipData, releasedNodeIds);
         if (!releasedNodeIds.isEmpty()) {
@@ -52,7 +53,7 @@ final class DormantNodeWake {
 
     private static boolean fitsTheOpBudget(ShipSkillData shipData, SkillNode dormantNode, int opCostPerNode, int totalOp) {
         return shipData.isFreeNode(dormantNode.getId()) || shipData.getBankedFreeAllocations() > 0
-                || shipData.getSpentOp(opCostPerNode) + opCostPerNode <= totalOp;
+                || ShipTrees.getSpentOp(shipData, opCostPerNode) + opCostPerNode <= totalOp;
     }
 
     private static boolean isEligible(ShipSkillData shipData, SkillNode dormantNode, ShipFacts shipFacts) {
@@ -64,6 +65,6 @@ final class DormantNodeWake {
 
     private static void refund(ShipSkillData shipData, List<String> releasedNodeIds) {
         CargoAPI cargo = PlayerFleet.cargoOrNull();
-        shipData.takeItemCharges(releasedNodeIds).forEach(charged -> charged.refundTo(cargo));
+        ShipTrees.takeItemCharges(shipData, releasedNodeIds).forEach(charged -> charged.refundTo(cargo));
     }
 }

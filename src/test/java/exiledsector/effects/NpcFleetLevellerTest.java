@@ -30,6 +30,7 @@ import exiledsector.items.WormholeAnchorLinks;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AnchorLinks;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -226,7 +227,7 @@ class NpcFleetLevellerTest {
 
         String tag = NpcTreeTag.find(officered.getVariant());
         int opCostPerNode = SkillNodeOpCost.perNode(HullSize.DESTROYER);
-        assertEquals(10 / opCostPerNode * opCostPerNode, NpcTreeTag.decode(tag).getSpentOp(opCostPerNode));
+        assertEquals(10 / opCostPerNode * opCostPerNode, ShipTrees.getSpentOp(NpcTreeTag.decode(tag), opCostPerNode));
         assertFalse(hullMods.contains("heavyarmor"));
     }
 
@@ -480,7 +481,7 @@ class NpcFleetLevellerTest {
             String tag = NpcTreeTag.find(officered.getVariant());
             assertTrue(tag.contains("socket_1") && tag.contains("gate_far") && tag.contains("hegemony_notable"), tag);
             assertTrue(tag.endsWith("|sockets:socket_1=npc:wormhole_anchor_hegemony/0"), tag);
-            assertEquals("gate_far", NpcTreeTag.decode(tag).anchorExit("socket_1"));
+            assertEquals("gate_far", ShipTrees.anchorExit(NpcTreeTag.decode(tag), "socket_1"));
         } finally {
             AnchorLinks.install(null);
             WormholeAnchorDefinitions.clear();

@@ -10,6 +10,7 @@ import exiledsector.skills.AllocationGate;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
@@ -38,7 +39,7 @@ final class TemplateLevelUp {
         int allocatedCount = shipData.isAutoAllocatingTemplate() ? allocateTemplateSteps(member, variant, shipData) : 0;
         int unspentCredits = Math.max(0, pendingCredits - allocatedCount);
         for (int i = 0; i < unspentCredits; i++) {
-            shipData.refundBankedCreditAsOp(SkillTree.getAllNodes().values());
+            ShipTrees.refundBankedCreditAsOp(shipData, SkillTree.getAllNodes().values());
         }
         if (allocatedCount > 0 || unspentCredits > 0) {
             member.setStatUpdateNeeded(true);
@@ -50,7 +51,7 @@ final class TemplateLevelUp {
     }
 
     private static int allocateTemplateSteps(FleetMemberAPI member, ShipVariantAPI variant, ShipSkillData shipData) {
-        String rootId = shipData.resolveStartingRootId();
+        String rootId = ShipTrees.resolveStartingRootId(shipData);
         SkillTreeTemplate template = SkillTreeTemplateStore.assignedTo(member.getId(), rootId);
         int opCostPerNode = SkillNodeOpCost.perNode(member.getHullSpec());
         if (template == null || opCostPerNode <= 0) {
@@ -69,7 +70,7 @@ final class TemplateLevelUp {
             }
             SkillNode node = SkillTree.get(nextStep.nodeId());
             SkillType option = TemplateStepRules.optionFor(nextStep, node, shipData);
-            shipData.allocate(node, option, opCostPerNode);
+            ShipTrees.allocate(shipData, node, option, opCostPerNode);
             allocatedCount++;
         }
         return allocatedCount;

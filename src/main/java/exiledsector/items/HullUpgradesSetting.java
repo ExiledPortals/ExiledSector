@@ -1,5 +1,7 @@
 package exiledsector.items;
 
+import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import exiledsector.ModSettings;
 import exiledsector.ModSettingsListener;
 
@@ -37,6 +39,15 @@ public final class HullUpgradesSetting {
 
     public static int unlockLevel() {
         return unlockLevelSetting;
+    }
+
+    public static boolean sectionsOpen(SectorAPI sector) {
+        MutableCharacterStatsAPI playerStats = sector == null ? null : sector.getPlayerStats();
+        return playerStats != null && sectionsOpen(playerStats.getLevel());
+    }
+
+    public static boolean sectionsOpen(int playerLevel) {
+        return enabled() && playerLevel >= unlockLevel();
     }
 
     static int clampLevel(int level) {

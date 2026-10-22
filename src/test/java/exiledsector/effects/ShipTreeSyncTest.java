@@ -23,6 +23,7 @@ import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AnchorLinks;
 import exiledsector.skills.PhantomHullModStatus;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -289,7 +290,7 @@ class ShipTreeSyncTest {
         SkillTree.register(hullNode);
 
         FleetMemberAPI member = mockMember("ship-a", true);
-        ShipSkillDataManager.get("ship-a").allocate(hullNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), hullNode, 1);
         StatBonus hullBonus = mock(StatBonus.class);
         when(member.getStats().getHullBonus()).thenReturn(hullBonus);
         when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
@@ -348,7 +349,7 @@ class ShipTreeSyncTest {
         ShipSkillData adopted = ShipSkillDataManager.get("captured");
         assertEquals(List.of("root_1", "a_1"), List.copyOf(adopted.getAllocatedNodeIds()));
         assertEquals(1, adopted.getLevel());
-        assertEquals(0, adopted.paidNodeCount());
+        assertEquals(0, ShipTrees.paidNodeCount(adopted));
     }
 
     @Test
@@ -364,7 +365,7 @@ class ShipTreeSyncTest {
 
         ShipSkillData adopted = ShipSkillDataManager.get("captured");
         assertEquals(List.of("root_1", "a_1", "b_1"), List.copyOf(adopted.getAllocatedNodeIds()));
-        assertEquals(0, adopted.paidNodeCount());
+        assertEquals(0, ShipTrees.paidNodeCount(adopted));
         assertEquals(0, adopted.getBankedFreeAllocations());
     }
 
@@ -397,15 +398,15 @@ class ShipTreeSyncTest {
     @Test
     void aRecoveredFactionShipLosesItsAnchorAndTheVolumeBehindIt() throws Exception {
         registerHegemonyVolume();
-        assertEquals("gate_far", NpcTreeTag.decode("exiledSector_npcTree|generated|5|root_1,a_1,socket_1,gate_far,pride|sockets:socket_1="
-                + HEGEMONY_ANCHOR).anchorExit("socket_1"));
+        assertEquals("gate_far", ShipTrees.anchorExit(NpcTreeTag.decode("exiledSector_npcTree|generated|5|root_1,a_1,socket_1,gate_far,pride|sockets:socket_1="
+                + HEGEMONY_ANCHOR), "socket_1"));
 
         ShipSkillData adopted = adoptFactionShip("exiledSector_npcTree|generated|5|root_1,a_1,socket_1,gate_far,pride|sockets:socket_1="
                 + HEGEMONY_ANCHOR);
 
         assertEquals(List.of("root_1", "a_1", "socket_1"), List.copyOf(adopted.getAllocatedNodeIds()));
         assertTrue(adopted.getSocketedItems().isEmpty());
-        assertEquals(0, adopted.getSpentOp(1));
+        assertEquals(0, ShipTrees.getSpentOp(adopted, 1));
         assertEquals(3, adopted.getBankedFreeAllocations());
     }
 
@@ -432,11 +433,11 @@ class ShipTreeSyncTest {
 
         ShipSkillData adopted = ShipSkillDataManager.get("recovered");
         assertEquals(List.of("root_1", "a_1"), List.copyOf(adopted.getAllocatedNodeIds()));
-        assertEquals("root_1", adopted.resolveStartingRootId(SkillTree.getAllNodes().values()));
+        assertEquals("root_1", ShipTrees.resolveStartingRootId(adopted, SkillTree.getAllNodes().values()));
         assertEquals(3, adopted.getLevel());
         assertEquals(2, adopted.getBankedFreeAllocations());
         assertTrue(adopted.isFreeNode("a_1"));
-        assertEquals(0, adopted.getSpentOp(1));
+        assertEquals(0, ShipTrees.getSpentOp(adopted, 1));
         assertFalse(adopted.isNpcBuild());
         assertTrue(tags.isEmpty());
         verify(member.getVariant()).removeMod(SkillTreeHullMod.ID);
@@ -584,7 +585,7 @@ class ShipTreeSyncTest {
 
     @Test
     void thePanelMakesTreeInstalledHullModsPermanentAgainOnTheRefitCopyItEdits() {
-        ShipSkillDataManager.get("ship").allocate(registerMilitarizedNode(), 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship"), registerMilitarizedNode(), 1);
         FleetMemberAPI member = mockMember("ship", true);
         ShipVariantAPI refitCopy = mock(ShipVariantAPI.class);
         when(refitCopy.hasHullMod(SkillTreeHullMod.ID)).thenReturn(true);
@@ -598,7 +599,7 @@ class ShipTreeSyncTest {
 
     @Test
     void syncingAVariantPlacesTheShipTagTheReserveAndThePhantomsInOnePass() {
-        ShipSkillDataManager.get("ship").allocate(registerMilitarizedNode(), 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship"), registerMilitarizedNode(), 1);
         when(settings.getHullModSpec(startsWith("exiledSector_opReserve_"))).thenReturn(mock(HullModSpecAPI.class));
         FleetMemberAPI member = mockMember("ship", true);
         ShipVariantAPI variant = member.getVariant();

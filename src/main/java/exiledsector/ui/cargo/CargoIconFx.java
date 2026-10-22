@@ -87,16 +87,8 @@ public final class CargoIconFx {
 
     public static void render(SpriteCache sprites, String iconPath, CargoIconLook look, float x, float y, float w, float h,
                               float alphaMult, float glowMult, int phaseSeed, float burstAge) {
-        if (look != null && look.anchor() != null) {
-            AnchorIconFx.render(sprites, iconPath, look, x, y, w, h, alphaMult, phaseSeed);
-            return;
-        }
-        if (look != null && look.doctrine() != null) {
-            DoctrineIconFx.render(sprites, iconPath, look, x, y, w, h, alphaMult, phaseSeed);
-            return;
-        }
-        if (look != null && look.cache() != null) {
-            CacheIconFx.render(sprites, iconPath, look, x, y, w, h, alphaMult, phaseSeed);
+        if (look != null && look.art() != null) {
+            look.art().render(sprites, iconPath, look, x, y, w, h, alphaMult, phaseSeed);
             return;
         }
         ItemAnimationSetting.Mode mode = ItemAnimationSetting.mode();

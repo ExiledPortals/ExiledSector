@@ -1,5 +1,7 @@
 package exiledsector.items;
 
+import com.fs.starfarer.api.campaign.CargoAPI;
+import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.i18n.Translation;
@@ -22,6 +24,20 @@ public record HullUpgradeData(HullSize hullSize) {
 
     public static HullUpgradeData of(SpecialItemData special) {
         return special != null && ITEM_ID.equals(special.getId()) ? parse(special.getData()) : null;
+    }
+
+    public static Integer absorbInto(ItemStore store, CargoAPI cargo, CargoStackAPI stack) {
+        HullUpgradeData upgrade = of(stack.getSpecialDataIfSpecial());
+        if (upgrade == null) {
+            return null;
+        }
+        int stackCount = Math.round(stack.getSize());
+        if (stackCount < 1) {
+            return 0;
+        }
+        store.addUpgrades(upgrade.hullSize(), stackCount);
+        cargo.removeStack(stack);
+        return stackCount;
     }
 
     public String encode() {

@@ -14,10 +14,6 @@ public final class ItemSaveAliases {
             "exiledSector.SocketableStore", ItemStore.class,
             "exiledSector.RolledEffect", RolledEffect.class,
             "exiledSector.FrozenName", FrozenName.class,
-            "exiledSector.Subroutine", Subroutine.class,
-            "exiledSector.HullItem", HullItem.class,
-            "exiledSector.StarChart", StarChart.class,
-            "exiledSector.WormholeAnchor", WormholeAnchor.class,
             "exiledSector.RolledModifier", RolledModifier.class,
             "exiledSector.ModifierSlot", ModifierSlot.class);
 
@@ -28,5 +24,6 @@ public final class ItemSaveAliases {
         LEGACY_ITEM_ALIASES.forEach(legacyAlias -> xstream.alias(legacyAlias, UnresolvedItem.class));
         xstream.alias(UNRESOLVED_ITEM_ALIAS, UnresolvedItem.class);
         ALIASES.forEach(xstream::alias);
+        ItemTypes.all().forEach(support -> xstream.alias(support.saveAlias(), support.itemClass()));
     }
 }

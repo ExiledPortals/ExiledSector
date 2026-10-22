@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.NodeDescription;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -136,9 +137,9 @@ class DescriptionGoldenTest {
             }
             List<String> options = node.getType().getOptionalOptionIds();
             if (options.isEmpty()) {
-                data.allocate(node, 0);
+                ShipTrees.allocate(data, node, 0);
             } else {
-                data.selectOption(node, SkillTree.getType(options.get(Math.min(option, options.size() - 1))), 0);
+                ShipTrees.selectOption(data, node, SkillTree.getType(options.get(Math.min(option, options.size() - 1))), 0);
             }
         }
         return data;

@@ -9,17 +9,18 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.PlayerFleet;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.items.HullItem;
 import exiledsector.skills.ShipSections;
 import exiledsector.items.HullUpgradeRules;
 import exiledsector.items.HullUpgradeTooltip;
 import exiledsector.items.ShipSection;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
+import exiledsector.ui.decoration.HullPoint;
+import exiledsector.ui.decoration.InspectedShip;
 import exiledsector.ui.decoration.ShipAnchors;
-import exiledsector.ui.decoration.SkillTreeFleetRenderer;
 import exiledsector.ui.section.SectionFlair;
 import exiledsector.ui.section.SectionLayout;
-import exiledsector.ui.node.TreeAllocationSession;
 import exiledsector.ui.socket.HullUpgradePanel;
 import exiledsector.ui.socket.ItemHoverTooltip;
 import exiledsector.ui.util.Fade;
@@ -53,7 +54,7 @@ final class SectionsDisplay {
     private static final float OTHER_SECTION_DIM = 0.3f;
 
     private final CustomPanelAPI hostPanel;
-    private final TreeAllocationSession treeSession;
+    private final SectionEditor sectionEditor;
     private final SectionLayout.Arrangement arrangement;
     private final ItemHoverTooltip hoverTooltip;
     private final TextLabel[] typeLabels = new TextLabel[MAX_SECTIONS];
@@ -72,9 +73,9 @@ final class SectionsDisplay {
     private List<SectionLayout.Placement> placements = List.of();
     private int renderedSections;
 
-    SectionsDisplay(CustomPanelAPI hostPanel, TreeAllocationSession treeSession, SectionLayout.Arrangement arrangement) {
+    SectionsDisplay(CustomPanelAPI hostPanel, SectionEditor sectionEditor, SectionLayout.Arrangement arrangement) {
         this.hostPanel = hostPanel;
-        this.treeSession = treeSession;
+        this.sectionEditor = sectionEditor;
         this.arrangement = arrangement;
         this.hoverTooltip = new ItemHoverTooltip(hostPanel);
         for (int i = 0; i < MAX_SECTIONS; i++) {
@@ -88,7 +89,7 @@ final class SectionsDisplay {
     }
 
     boolean refreshIfChanged() {
-        int revision = treeSession.statsRevision();
+        int revision = sectionEditor.revision();
         ItemStore store = upgradeStore();
         int upgradeRevision = store == null ? 0 : store.upgradeRevision();
         if (revision == shownRevision && upgradeRevision == shownUpgradeRevision) {
@@ -97,7 +98,7 @@ final class SectionsDisplay {
         shownRevision = revision;
         shownUpgradeRevision = upgradeRevision;
         shownUpgradeCounts = store == null ? Map.of() : store.upgradeCounts();
-        unlockedSections = treeSession.sections();
+        unlockedSections = sectionEditor.sections();
         if (unlockedSections.size() > MAX_SECTIONS) {
             unlockedSections = unlockedSections.subList(0, MAX_SECTIONS);
         }
@@ -184,7 +185,7 @@ final class SectionsDisplay {
         hostPanel.addComponent(tooltipAnchor).inTL(sectionCentreX[hovered] - radius - hostPosition.getX(),
                 hostPosition.getY() + hostPosition.getHeight() - sectionCentreY[hovered] - radius);
         tooltipSection = hovered;
-        hoverTooltip.show(hoveredSection, hoveredSection.item(), treeSession.hullSize(), expanded -> tooltipFooter(hoveredSection), tooltipAnchor.getPosition());
+        hoverTooltip.show(hoveredSection, hoveredSection.item(), sectionEditor.hullSize(), expanded -> tooltipFooter(hoveredSection), tooltipAnchor.getPosition());
     }
 
     private static List<StyledText> tooltipFooter(ShipSections.UnlockedSection unlocked) {
@@ -210,15 +211,15 @@ final class SectionsDisplay {
         return new HullUpgradePanel.Listener() {
             @Override
             public void installUpgrade() {
-                treeSession.installUpgrade();
+                sectionEditor.installUpgrade();
             }
 
             @Override
             public void toggleSection(ShipSection section) {
-                if (treeSession.isSectionUnlocked(section)) {
-                    treeSession.lockSection(section);
+                if (sectionEditor.isSectionUnlocked(section)) {
+                    sectionEditor.lockSection(section);
                 } else {
-                    treeSession.unlockSection(section);
+                    sectionEditor.unlockSection(section);
                 }
             }
 
@@ -230,10 +231,10 @@ final class SectionsDisplay {
     }
 
     HullUpgradePanel.View panelView() {
-        HullSize hullSize = treeSession.hullSize();
+        HullSize hullSize = sectionEditor.hullSize();
         int upgradesInStorage = shownUpgradeCounts.getOrDefault(hullSize, 0);
         HullUpgradeRules.UpgradeBlock upgradeBlock = null;
-        if (treeSession.hullUpgradePoints() >= HullUpgradeRules.MAX_POINTS) {
+        if (sectionEditor.hullUpgradePoints() >= HullUpgradeRules.MAX_POINTS) {
             upgradeBlock = HullUpgradeRules.UpgradeBlock.AT_MAX_POINTS;
         } else if (upgradesInStorage <= 0) {
             upgradeBlock = HullUpgradeRules.UpgradeBlock.NONE_IN_STORAGE;
@@ -242,12 +243,12 @@ final class SectionsDisplay {
         for (ShipSection section : ShipSection.all()) {
             sectionEntries.add(sectionEntry(section));
         }
-        return new HullUpgradePanel.View(hullSize, treeSession.hullUpgradePoints(), treeSession.unspentHullUpgradePoints(), upgradesInStorage,
+        return new HullUpgradePanel.View(hullSize, sectionEditor.hullUpgradePoints(), sectionEditor.unspentHullUpgradePoints(), upgradesInStorage,
                 upgradeBlock, List.copyOf(sectionEntries));
     }
 
     private HullUpgradePanel.SectionEntry sectionEntry(ShipSection section) {
-        if (treeSession.isSectionUnlocked(section)) {
+        if (sectionEditor.isSectionUnlocked(section)) {
             String itemIcon = null;
             for (ShipSections.UnlockedSection unlocked : unlockedSections) {
                 if (unlocked.section() == section && unlocked.item() != null) {
@@ -256,26 +257,26 @@ final class SectionsDisplay {
             }
             return new HullUpgradePanel.SectionEntry(section, HullUpgradePanel.SectionState.UNLOCKED, null, itemIcon);
         }
-        String unmetRequirement = treeSession.unmetRequirement(section);
+        String unmetRequirement = sectionEditor.unmetRequirement(section);
         if (unmetRequirement != null) {
             return new HullUpgradePanel.SectionEntry(section, HullUpgradePanel.SectionState.RESTRICTED,
                     HullUpgradeTooltip.requirementText(unmetRequirement), null);
         }
-        HullUpgradePanel.SectionState state = treeSession.unspentHullUpgradePoints() > 0 ? HullUpgradePanel.SectionState.AVAILABLE
+        HullUpgradePanel.SectionState state = sectionEditor.unspentHullUpgradePoints() > 0 ? HullUpgradePanel.SectionState.AVAILABLE
                 : HullUpgradePanel.SectionState.NO_POINTS;
         return new HullUpgradePanel.SectionEntry(section, state, null, null);
     }
 
-    void render(SkillTreeFleetRenderer.InspectedShip ship, SectionLayout.ShipExtent extent, float alpha, SectionBounds bounds,
+    void render(InspectedShip ship, ShipAnchors sectionAnchors, SectionLayout.ShipExtent extent, float alpha, SectionBounds bounds,
                 Item placing, ShipSection targetedSection) {
         renderedSections = 0;
-        if (ship == null || unlockedSections.isEmpty() || alpha <= 0f) {
+        if (ship == null || sectionAnchors == null || unlockedSections.isEmpty() || alpha <= 0f) {
             return;
         }
         if (placements.size() != unlockedSections.size()) {
-            List<ShipAnchors.Anchor> anchors = new ArrayList<>(unlockedSections.size());
-            unlockedSections.forEach(unlocked -> anchors.add(ship.anchors().forSection(unlocked.section())));
-            placements = SectionLayout.place(anchors, arrangement);
+            List<HullPoint> sectionPoints = new ArrayList<>(unlockedSections.size());
+            unlockedSections.forEach(unlocked -> sectionPoints.add(sectionAnchors.forSection(unlocked.section())));
+            placements = SectionLayout.place(sectionPoints, arrangement);
         }
         for (int i = 0; i < unlockedSections.size(); i++) {
             ShipSections.UnlockedSection unlocked = unlockedSections.get(i);
@@ -284,11 +285,11 @@ final class SectionsDisplay {
             float sectionY = bounds.clampY(SectionLayout.sectionY(placement, ship.screenY(), extent));
             sectionCentreX[i] = sectionX;
             sectionCentreY[i] = sectionY;
-            ShipAnchors.Anchor anchor = ship.anchors().forSection(unlocked.section());
+            HullPoint anchor = sectionAnchors.forSection(unlocked.section());
             Color accent = unlocked.active() ? SectionFlair.colorOf(unlocked.section()) : SectionFlair.inactiveColor();
             SectionFlair.LeaderPath path = new SectionFlair.LeaderPath(SectionLayout.edgeX(placement, sectionX),
                     SectionLayout.edgeY(placement, sectionY), SectionLayout.elbowX(placement, sectionX),
-                    SectionLayout.elbowY(placement, sectionY), ship.anchorScreenX(anchor), ship.anchorScreenY(anchor));
+                    SectionLayout.elbowY(placement, sectionY), ship.pointScreenX(anchor), ship.pointScreenY(anchor));
             SectionFlair.leader(path, accent, elapsedSeconds + i * 0.37f,
                     alpha * 0.9f * placingDim(placing, unlocked.section()));
         }
@@ -296,7 +297,7 @@ final class SectionsDisplay {
         float radius = SectionLayout.SECTION_RADIUS;
         for (int i = 0; i < renderedSections; i++) {
             ShipSections.UnlockedSection unlocked = unlockedSections.get(i);
-            boolean selected = placing != null ? placing.canSocketInto(unlocked.section()) : targetedSection == unlocked.section();
+            boolean selected = placing != null ? HullItem.fits(placing, unlocked.section()) : targetedSection == unlocked.section();
             SectionFlair.SectionLook look = new SectionFlair.SectionLook(hoverLevels[i], selected, unlocked.active(),
                     unlocked.item() == null ? null : unlocked.item().iconPath());
             float sectionAlpha = alpha * placingDim(placing, unlocked.section());
@@ -308,7 +309,7 @@ final class SectionsDisplay {
     }
 
     private static float placingDim(Item placing, ShipSection section) {
-        return placing == null || placing.canSocketInto(section) ? 1f : OTHER_SECTION_DIM;
+        return placing == null || HullItem.fits(placing, section) ? 1f : OTHER_SECTION_DIM;
     }
 
     private static void drawCentred(TextLabel label, float centreX, float top, float alpha) {

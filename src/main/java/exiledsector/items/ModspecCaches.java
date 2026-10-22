@@ -64,7 +64,7 @@ public final class ModspecCaches {
     }
 
     public static void load() {
-        ModCsv.load(ID_COLUMN, ItemDefinitions.SUBROUTINES_PATH, LOG, ModspecCaches::register);
+        ModCsv.load(ID_COLUMN, SubroutineDefinitions.dataPath(), LOG, ModspecCaches::register);
     }
 
     public static void register(JSONArray rows) throws JSONException {
@@ -72,7 +72,7 @@ public final class ModspecCaches {
         Map<String, FactionFleetDrops.Source> fleetSources = new LinkedHashMap<>();
         ModCsv.forEach(rows == null ? new JSONArray() : rows, (index, row) -> {
             ItemDefinition definition = ItemDefinitions.get(ModCsv.text(row, ID_COLUMN));
-            if (definition == null || definition.subroutineKind() != SubroutineKind.MODSPEC_CACHE) {
+            if (definition == null || SubroutineKind.of(definition) != SubroutineKind.MODSPEC_CACHE) {
                 return;
             }
             try {
@@ -82,11 +82,11 @@ public final class ModspecCaches {
                     fleetSources.put(definition.id(), FactionFleetDrops.Source.anyFaction(base.dropChance()));
                 }
             } catch (IllegalArgumentException e) {
-                LOG.error("Row " + (index + 1) + " of " + ItemDefinitions.SUBROUTINES_PATH + " allocates nothing: " + e.getMessage());
+                LOG.error("Row " + (index + 1) + " of " + SubroutineDefinitions.dataPath() + " allocates nothing: " + e.getMessage());
             }
         });
         for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.SUBROUTINE)) {
-            if (definition.subroutineKind() == SubroutineKind.MODSPEC_CACHE && !bases.containsKey(definition.id())) {
+            if (SubroutineKind.of(definition) == SubroutineKind.MODSPEC_CACHE && !bases.containsKey(definition.id())) {
                 LOG.error(definition.id() + " is a " + SubroutineKind.MODSPEC_CACHE.id() + " subroutine with no usable row, so it rolls no node");
             }
         }
@@ -134,7 +134,7 @@ public final class ModspecCaches {
             return 0f;
         }
         if (!isValidChance(chanceText)) {
-            LOG.error(definitionId + " in " + ItemDefinitions.SUBROUTINES_PATH + " has the " + column + " \"" + chanceText
+            LOG.error(definitionId + " in " + SubroutineDefinitions.dataPath() + " has the " + column + " \"" + chanceText
                     + "\"; expected a number of 0 or more, so it never drops that way");
             return 0f;
         }

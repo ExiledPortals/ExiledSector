@@ -6,8 +6,13 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.ExiledSectorModPlugin;
 import exiledsector.items.ItemChances;
+import exiledsector.items.ItemData;
+import exiledsector.items.ItemDefinition;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.function.Predicate;
 
 public final class LootSources {
 
@@ -43,6 +48,23 @@ public final class LootSources {
             }
         }
         return LootModifiers.NONE;
+    }
+
+    public static List<ItemData> wardenDrops(int chartTier, String wardenFactionId, float chanceMult, Random random,
+                                             Predicate<ItemDefinition> allowed) {
+        List<ItemData> drops = new ArrayList<>();
+        ALL.forEach(source -> drops.addAll(source.wardenDrops(chartTier, wardenFactionId, chanceMult, random, allowed)));
+        return drops;
+    }
+
+    public static float difficultyMultiplier(float battleDifficulty) {
+        for (FleetDifficulty difficulty : DIFFICULTIES) {
+            Float multiplier = difficulty.difficultyMultiplier(battleDifficulty);
+            if (multiplier != null) {
+                return multiplier;
+            }
+        }
+        return 1f;
     }
 
     public static int shipLevel(FleetMemberAPI member) {

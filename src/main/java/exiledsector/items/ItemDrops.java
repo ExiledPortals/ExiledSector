@@ -137,7 +137,7 @@ public final class ItemDrops {
         }
         rollTargeted(rule, random, chances.targeted(ItemKind.SUBROUTINE), chances.rarity(), 1, ItemKind.SUBROUTINE, droppedItems);
         if (!rule.chances().isEmpty()) {
-            droppedItems.addAll(ModspecCaches.rollSalvage(random, rule.chances().get(0) * chances.general()));
+            droppedItems.addAll(ItemTypes.rollSalvage(random, rule.chances().get(0) * chances.general()));
         }
         return droppedItems;
     }
@@ -382,7 +382,7 @@ public final class ItemDrops {
     }
 
     private static boolean isDroppable(ItemDefinition definition) {
-        return definition.type() != ItemType.WORMHOLE_ANCHOR && SubroutineKind.inGenericPools(definition) && definition.rarity() > 0f
+        return definition.type() != ItemType.WORMHOLE_ANCHOR && ItemTypes.inGenericPools(definition) && definition.rarity() > 0f
                 && SAFE_ID.matcher(definition.id()).matches();
     }
 
@@ -397,7 +397,7 @@ public final class ItemDrops {
     }
 
     public static ItemDefinition pickChartAtTier(Random random, int tier, Predicate<ItemDefinition> filter) {
-        return pickChart(random, definition -> StarChartDefinitions.rollsAtTier(definition.id(), tier) && filter.test(definition));
+        return pickChart(random, definition -> ItemTypes.rollsAtTier(definition, tier) && filter.test(definition));
     }
 
     public static ItemDefinition pickChart(Random random, Predicate<ItemDefinition> filter) {

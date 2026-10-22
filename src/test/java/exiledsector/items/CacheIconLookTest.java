@@ -7,8 +7,10 @@ import exiledsector.skills.SkillType;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.npc.RealSkillData;
 import exiledsector.ui.cargo.CacheIconFx;
+import exiledsector.ui.cargo.CacheLook;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
+import exiledsector.ui.cargo.DoctrineLook;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -22,7 +24,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CacheIconLookTest {
@@ -69,30 +70,30 @@ class CacheIconLookTest {
             expected.add("graphics/icons/" + nodeId + ".png");
         }
         assertEquals(3, expected.size());
-        assertEquals(expected, look.cache().chipIconPaths());
+        assertEquals(expected, ((CacheLook) look.art()).chipIconPaths());
         assertEquals(cache.frameColor(), look.color());
         assertEquals(CraftingCurrency.CORRUPTION.color(), look.color());
         assertTrue(look.framed());
         assertTrue(look.ownArt());
-        assertNull(look.doctrine());
-        assertEquals(look.cache(), look.unframed().cache());
+        assertFalse(look.art() instanceof DoctrineLook);
+        assertEquals(look.art(), look.unframed().art());
     }
 
     @Test
     void aCacheWithAnotherIconKeepsTheCorruptedRarityLook() {
         CargoIconLook look = CargoIconLooks.forItem(new ItemStore().add(ItemDefinitions.get(PLAIN_CACHE), 11L));
 
-        assertNull(look.cache());
+        assertFalse(look.art() instanceof CacheLook);
         assertFalse(look.ownArt());
     }
 
     @Test
     void theShippedCacheUsesTheBakedStill() throws Exception {
-        JSONArray subroutines = ItemFixtures.shippedRows(ItemDefinitions.SUBROUTINES_PATH);
+        JSONArray subroutines = ItemFixtures.shippedRows(SubroutineDefinitions.dataPath());
         int caches = 0;
         for (int row = 0; row < subroutines.length(); row++) {
             JSONObject subroutine = subroutines.getJSONObject(row);
-            if (SubroutineKind.MODSPEC_CACHE.id().equals(subroutine.optString(ItemDefinition.SUBROUTINE_KIND_COLUMN))) {
+            if (SubroutineKind.MODSPEC_CACHE.id().equals(subroutine.optString(SubroutineDefinitions.SUBROUTINE_KIND_COLUMN))) {
                 assertEquals(CacheIconFx.STILL_PATH, subroutine.getString("icon"), subroutine.getString("id"));
                 caches++;
             }

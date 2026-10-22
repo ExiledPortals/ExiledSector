@@ -23,6 +23,8 @@ class DomainBoundaryTest {
 
     private static final Path MAIN_SOURCES = Path.of("src/main/java");
     private static final Path CLASS_PARTS = Path.of("docs/plans/domain_split_classes.csv");
+    private static final Path DATA_FILES = Path.of("data");
+    private static final Path FILE_PARTS = Path.of("docs/plans/domain_split_files.csv");
     private static final Path ALLOWED_CROSSINGS = Path.of("src/test/resources/domain_boundary_allowlist.txt");
     private static final String LIB = "lib";
     private static final String CORE = "core";
@@ -57,6 +59,30 @@ class DomainBoundaryTest {
 
         assertTrue(problems.isEmpty(), CLASS_PARTS + " must assign every main class to one of lib, core, "
                 + String.join(", ", new TreeSet<>(FEATURES)) + ":\n" + String.join("\n", problems));
+    }
+
+    @Test
+    void everyDataFileBelongsToExactlyOnePart() throws IOException {
+        Set<String> files;
+        try (Stream<Path> paths = Files.walk(DATA_FILES)) {
+            files = new TreeSet<>(paths.filter(Files::isRegularFile).map(path -> path.toString().replace('\\', '/')).toList());
+        }
+        List<String> problems = new ArrayList<>();
+        Set<String> listed = new TreeSet<>();
+        List<String> rows = Files.readAllLines(FILE_PARTS);
+        for (String row : rows.subList(1, rows.size())) {
+            String[] cells = row.split(",", -1);
+            if (cells.length != 2 || !isPart(cells[1])) {
+                problems.add("Malformed row: " + row);
+            } else if (!listed.add(cells[0])) {
+                problems.add("Listed twice: " + cells[0]);
+            } else if (!files.contains(cells[0])) {
+                problems.add("No such data file: " + cells[0]);
+            }
+        }
+        files.stream().filter(file -> !listed.contains(file)).forEach(file -> problems.add("Not assigned to a part: " + file));
+
+        assertTrue(problems.isEmpty(), FILE_PARTS + " must assign every data file to one part:\n" + String.join("\n", problems));
     }
 
     @Test

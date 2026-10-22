@@ -11,6 +11,7 @@ import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.InstalledHullMods;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.npc.NpcLevelCaps;
@@ -214,8 +215,8 @@ public final class ShipTreeSync {
             npcTree.clearNpcBuild();
             dropNpcAnchors(npcTree);
             npcTree.capLevel(ShipLevelConfig.maxLevel());
-            List<String> trimmedNodeIds = new ArrayList<>(npcTree.trimFreeAllocationsToLevel(SkillTree.getAllNodes(), SkillTree.topology()));
-            trimmedNodeIds.addAll(npcTree.trimPaidNodes(SkillTree.getAllNodes(), SkillTree.topology()));
+            List<String> trimmedNodeIds = new ArrayList<>(ShipTrees.trimFreeAllocationsToLevel(npcTree, SkillTree.getAllNodes(), SkillTree.topology()));
+            trimmedNodeIds.addAll(ShipTrees.trimPaidNodes(npcTree, SkillTree.getAllNodes(), SkillTree.topology()));
             if (!trimmedNodeIds.isEmpty()) {
                 Logger.getLogger(ShipTreeSync.class).info("[ExiledSector] Trimmed the nodes " + trimmedNodeIds + " from captured ship "
                         + member.getId() + ", leaving a tree as large as its level.");
@@ -229,7 +230,7 @@ public final class ShipTreeSync {
 
     static List<String> dropNpcAnchors(ShipSkillData adoptedTree) {
         NpcItems.unsocketAll(adoptedTree);
-        return adoptedTree.releaseUnreachable(SkillTree.topology(), adoptedTree.resolveStartingRootId(),
+        return ShipTrees.releaseUnreachable(adoptedTree, SkillTree.topology(), ShipTrees.resolveStartingRootId(adoptedTree),
                 node -> !SkillTags.CORE_REGION.equals(node.getRegion())).nodeIds();
     }
 

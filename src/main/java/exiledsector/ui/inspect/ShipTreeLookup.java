@@ -6,7 +6,6 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.effects.NpcBonusScale;
 import exiledsector.persistence.ShipSkillDataManager;
-import exiledsector.skills.ShipSections;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.StatBaseline;
@@ -16,7 +15,7 @@ import java.util.List;
 
 public final class ShipTreeLookup {
 
-    public record ShipTree(ShipSkillData skillData, List<String> buildThemes, float bonusScale, List<ShipSections.UnlockedSection> sections,
+    public record ShipTree(ShipSkillData skillData, List<String> buildThemes, float bonusScale, ShipVariantAPI variant,
                            StatBaseline statBaseline) {
 
         public ShipTree(ShipSkillData skillData, List<String> buildThemes) {
@@ -24,7 +23,7 @@ public final class ShipTreeLookup {
         }
 
         public ShipTree(ShipSkillData skillData, List<String> buildThemes, float bonusScale) {
-            this(skillData, buildThemes, bonusScale, List.of(), StatBaseline.NONE);
+            this(skillData, buildThemes, bonusScale, null, StatBaseline.NONE);
         }
     }
 
@@ -50,7 +49,7 @@ public final class ShipTreeLookup {
         }
         ShipSkillData skillData = member == null ? null : ShipSkillDataManager.find(member.getId());
         return skillData == null || skillData.isBlank() ? null
-                : new ShipTree(skillData, List.of(), 1f, ShipSections.forVariant(skillData, variant), StatBaseline.of(variant));
+                : new ShipTree(skillData, List.of(), 1f, variant, StatBaseline.of(variant));
     }
 
     public static boolean isLevelledNpc(FleetMemberAPI member) {
@@ -60,7 +59,7 @@ public final class ShipTreeLookup {
     private static ShipTree npcTree(FleetMemberAPI member, ShipVariantAPI variant) {
         ShipSkillData skillData = SkillDataResolver.resolve(member, variant);
         return new ShipTree(skillData, NpcBuildLabel.mainThemes(skillData), NpcBonusScale.forShip(member, variant),
-                ShipSections.forVariant(skillData, variant), StatBaseline.of(variant));
+                variant, StatBaseline.of(variant));
     }
 
     private static boolean isInPlayerFleet(FleetMemberAPI member) {

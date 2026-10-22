@@ -1,5 +1,6 @@
 package exiledsector.skills;
 
+import exiledsector.HostMod;
 import exiledsector.ModSettings;
 import exiledsector.ModSettingsListener;
 import exiledsector.skills.skilleffect.ScopedWeaponEffect;
@@ -17,7 +18,6 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public final class DiminishingReturns {
 
-    public static final String EFFICIENCY_FIELD_ID = "exiledSector_diminishingEfficiency";
     public static final int DEFAULT_EFFICIENCY_PERCENT = 50;
     public static final int MAX_THRESHOLD_PERCENT = 500;
     public static final Config OFF = new Config(100, DiminishedStat.defaultThresholds());
@@ -44,7 +44,7 @@ public final class DiminishingReturns {
             for (DiminishedStat stat : DiminishedStat.values()) {
                 thresholds.put(stat, ModSettings.intOr(stat.thresholdFieldId(), stat.defaultThresholdPercent()));
             }
-            return new Config(ModSettings.intOr(EFFICIENCY_FIELD_ID, DEFAULT_EFFICIENCY_PERCENT), thresholds);
+            return new Config(ModSettings.intOr(efficiencyFieldId(), DEFAULT_EFFICIENCY_PERCENT), thresholds);
         }
 
         boolean isOff() {
@@ -80,6 +80,10 @@ public final class DiminishingReturns {
     }
 
     private DiminishingReturns() {
+    }
+
+    public static String efficiencyFieldId() {
+        return HostMod.settingId("diminishingEfficiency");
     }
 
     public static Config current() {

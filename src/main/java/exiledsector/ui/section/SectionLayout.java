@@ -1,6 +1,6 @@
 package exiledsector.ui.section;
 
-import exiledsector.ui.decoration.ShipAnchors;
+import exiledsector.ui.decoration.HullPoint;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -42,11 +42,11 @@ public final class SectionLayout {
     private SectionLayout() {
     }
 
-    public static List<Placement> place(List<ShipAnchors.Anchor> anchors, Arrangement arrangement) {
+    public static List<Placement> place(List<HullPoint> anchors, Arrangement arrangement) {
         return arrangement == Arrangement.LEFT_ABOVE_BELOW ? placeLeftAboveBelow(anchors) : placeBothSides(anchors);
     }
 
-    static List<Placement> placeBothSides(List<ShipAnchors.Anchor> anchors) {
+    static List<Placement> placeBothSides(List<HullPoint> anchors) {
         int sectionCount = anchors.size();
         boolean[] leftSide = new boolean[sectionCount];
         List<Integer> leftSlots = new ArrayList<>();
@@ -85,7 +85,7 @@ public final class SectionLayout {
         return List.of(placements);
     }
 
-    static List<Placement> placeLeftAboveBelow(List<ShipAnchors.Anchor> anchors) {
+    static List<Placement> placeLeftAboveBelow(List<HullPoint> anchors) {
         List<Integer> slots = new ArrayList<>();
         for (int slot = 0; slot < anchors.size(); slot++) {
             slots.add(slot);
@@ -102,7 +102,7 @@ public final class SectionLayout {
         return List.of(placements);
     }
 
-    private static List<Integer> frontToBack(List<ShipAnchors.Anchor> anchors, List<Integer> slots) {
+    private static List<Integer> frontToBack(List<HullPoint> anchors, List<Integer> slots) {
         List<Integer> ordered = new ArrayList<>(slots);
         ordered.sort(Comparator.comparingDouble(slot -> -anchors.get(slot).forward()));
         return ordered;

@@ -47,9 +47,9 @@ class ShipFactsModulesTest {
         try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
             global.when(Global::getSettings).thenReturn(settings);
 
-            assertTrue(ShipFacts.of(profile, id -> false, "tania_argentavis_main").hasModules());
-            assertFalse(ShipFacts.of(profile, id -> false, "eagle").hasModules());
-            assertFalse(ShipFacts.of(profile, id -> false, null).hasModules());
+            assertTrue(profile.facts(id -> false, "tania_argentavis_main").hasModules());
+            assertFalse(profile.facts(id -> false, "eagle").hasModules());
+            assertFalse(profile.facts(id -> false, null).hasModules());
         }
     }
 }

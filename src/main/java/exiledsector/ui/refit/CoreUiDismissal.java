@@ -23,7 +23,7 @@ public final class CoreUiDismissal {
             return false;
         }
         try {
-            return dismissCore(PhantomHullModRefitHider.coreUI(campaignUI));
+            return dismissCore(UiReflection.coreUI(campaignUI));
         } catch (Throwable e) {
             LOG.warn("[ExiledSector] Could not close the refit screen after opening a Star Chart wormhole; close it by hand", e);
             return false;

@@ -14,16 +14,22 @@ public final class UnresolvedItem extends Item {
 
     UnresolvedItem(Item source) {
         super(source);
-        if (source instanceof StarChart chart) {
-            chartTier = chart.tier();
-            chartQuality = chart.quality();
-        } else if (source instanceof Subroutine subroutine) {
-            rolledNodeIds = subroutine.rolledNodeIds();
-        } else if (source instanceof UnresolvedItem unresolved) {
-            chartTier = unresolved.chartTier;
-            chartQuality = unresolved.chartQuality;
-            rolledNodeIds = unresolved.rolledNodeIds;
-        }
+        source.keepWhenUnresolved(this);
+    }
+
+    @Override
+    void keepWhenUnresolved(UnresolvedItem unresolved) {
+        unresolved.keepChart(chartTier, chartQuality);
+        unresolved.keepRolledNodeIds(rolledNodeIds);
+    }
+
+    void keepChart(Integer tier, Integer quality) {
+        chartTier = tier;
+        chartQuality = quality;
+    }
+
+    void keepRolledNodeIds(List<String> nodeIds) {
+        rolledNodeIds = nodeIds;
     }
 
     @Override

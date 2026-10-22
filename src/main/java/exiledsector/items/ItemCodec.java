@@ -272,7 +272,7 @@ final class ItemCodec {
             return null;
         }
         List<RolledModifier> implicits = json.has(IMPLICITS_KEY) ? decodeModifiers(json.getString(IMPLICITS_KEY), definitionId) : null;
-        return new ItemTraits(json.optInt(TIER_KEY, StarChart.LOWEST_TIER), json.optInt(QUALITY_KEY, 0), corruption(json), implicits,
+        return new ItemTraits(json.optInt(TIER_KEY, ItemTraits.LOWEST_TIER), json.optInt(QUALITY_KEY, 0), corruption(json), implicits,
                 json.optBoolean(MIRRORED_KEY, false));
     }
 

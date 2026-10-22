@@ -2,6 +2,7 @@ package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.items.NodeSocketable;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.items.DoctrineOverrides;
@@ -60,7 +61,7 @@ public final class AllocatedSkillEffects {
     public static List<SkillTypeEffect> appliedEffects(ShipSkillData data, AllocatedNode allocated, HullSize hullSize) {
         List<SkillTypeEffect> applied = appliedEffects(data, allocated.effectiveType(), hullSize);
         Item socketed = ItemStore.lookup(data.getSocketedItem(allocated.node().getId()));
-        if (socketed != null && socketed.canSocketInto(allocated.node())) {
+        if (socketed != null && NodeSocketable.fits(socketed, allocated.node())) {
             for (SkillTypeEffect effect : socketed.skillEffects(hullSize)) {
                 if (appliesTo(data, effect.effect())) {
                     applied.add(effect);

@@ -7,6 +7,7 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDrops;
+import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
 import exiledsector.items.MaterialItems;
 import exiledsector.ui.CampaignMessages;
@@ -76,7 +77,7 @@ public final class ChartRewards {
         }
         Map<String, Integer> materials = ItemDrops.rollMaterials(REWARD_SITE, random, chanceMult);
         materials.forEach((itemId, quantity) -> MaterialItems.add(cargo, itemId, quantity));
-        if (ItemUnlock.sectionsOpen(sector)) {
+        if (ItemUnlock.available(ItemType.HULL_ITEM, sector)) {
             ItemDrops.SectionItemLoot sectionLoot = ItemDrops.rollSectionItemLoot(REWARD_SITE, random, chanceMult);
             for (ItemData item : sectionLoot.items()) {
                 cargo.addSpecial(item.toSpecialItem(), 1f);

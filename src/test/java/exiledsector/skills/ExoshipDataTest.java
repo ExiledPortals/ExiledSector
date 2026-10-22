@@ -108,15 +108,15 @@ class ExoshipDataTest {
         SkillNode socket = SkillTree.getAllNodes().values().stream().filter(node -> node.getType().getTier() == SkillTier.SOCKET)
                 .findFirst().orElseThrow();
         ShipSkillData shipData = new ShipSkillData();
-        shipData.allocate(socket, 1);
+        ShipTrees.allocate(shipData, socket, 1);
 
         shipData.socketItem(socket.getId(), BEACON_ITEM_ID);
-        shipData.openAnchorWormholes(Integer.MAX_VALUE);
+        ShipTrees.openAnchorWormholes(shipData, Integer.MAX_VALUE);
 
         assertTrue(shipData.isAllocated(exoship.getId()));
         assertTrue(shipData.isFreeNode(exoship.getId()));
-        assertEquals(exoship.getId(), shipData.wormholePartner(socket));
-        assertEquals(socket.getId(), shipData.wormholePartner(exoship));
+        assertEquals(exoship.getId(), ShipTrees.wormholePartner(shipData, socket));
+        assertEquals(socket.getId(), ShipTrees.wormholePartner(shipData, exoship));
         List<SkillNode> hub = exoship.getConnectedNodeIds().stream().map(SkillTree::get).filter(ExoshipNodes::isCarried).toList();
         assertFalse(hub.isEmpty());
         for (SkillNode hubNode : hub) {

@@ -63,7 +63,7 @@ public class GrantDoctrineArchivesCommand implements BaseCommand {
     static List<ItemDefinition> matchingDoctrines(String requestedFaction) {
         List<ItemDefinition> matching = new ArrayList<>();
         for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.SUBROUTINE)) {
-            if (definition.subroutineKind() == SubroutineKind.DOCTRINE
+            if (SubroutineKind.of(definition) == SubroutineKind.DOCTRINE
                     && (requestedFaction.isEmpty() || definition.id().toLowerCase(Locale.ROOT).contains(requestedFaction))) {
                 matching.add(definition);
             }

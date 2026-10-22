@@ -8,6 +8,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
 import exiledsector.modifiers.ModifierSlot;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -87,7 +88,7 @@ class DeletedSubroutinesTest {
         ShipSkillData shipData = new ShipSkillData();
         List<SkillNode> sockets = List.of(socket, secondSocket);
         for (int index = 0; index < socketedItemIds.length; index++) {
-            shipData.allocate(sockets.get(index), 3);
+            ShipTrees.allocate(shipData, sockets.get(index), 3);
             shipData.socketItem(sockets.get(index).getId(), socketedItemIds[index]);
         }
         shipDataById.put(shipId, shipData);
@@ -104,7 +105,7 @@ class DeletedSubroutinesTest {
         assertNull(store.find("socketable_1").definition());
         assertEquals(UnresolvedItem.class, store.find("socketable_2").getClass());
         assertEquals(Subroutine.class, store.find("socketable_3").getClass());
-        assertEquals(SubroutineKind.MODSPEC_CACHE, store.find("socketable_3").definition().subroutineKind());
+        assertEquals(SubroutineKind.MODSPEC_CACHE, SubroutineKind.of(store.find("socketable_3").definition()));
     }
 
     @Test

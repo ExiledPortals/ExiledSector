@@ -1,11 +1,14 @@
 import { describe, expect, it } from 'vitest';
+import { STRING_CATALOGUES } from '../../../../server/stringCatalogues.ts';
 import { readRepositoryFile } from '../../../test/testServer.ts';
 import {
   analyseTemplate,
   currentStrings,
   editedEntries,
   markStringsSaved,
+  parseStringFiles,
   parseStrings,
+  serializeStringFiles,
   serializeStrings,
   stringIssues,
   validateStrings,
@@ -27,11 +30,23 @@ function issuesFor(model: StringsModel, key: string) {
 }
 
 describe('English strings file', () => {
-  it('round-trips the real en.json byte for byte', () => {
-    const text = readRepositoryFile('data/strings/exiledSector/en.json');
-    const model = parseStrings(text);
-    expect(model.entries.length).toBe(Object.keys(JSON.parse(text) as object).length);
-    expect(serializeStrings(model)).toBe(text);
+  it('round-trips every real en.json catalogue byte for byte', () => {
+    const texts = Object.fromEntries(STRING_CATALOGUES.map((catalogue) => [catalogue.file, readRepositoryFile(catalogue.file)]));
+    const model = parseStringFiles(texts);
+    const keyCount = Object.values(texts).reduce((total, text) => total + Object.keys(JSON.parse(text) as object).length, 0);
+    expect(model.entries.length).toBe(keyCount);
+    expect(serializeStringFiles(model)).toEqual(texts);
+  });
+
+  it('saves an edit only into the file that holds the key', () => {
+    const model = parseStringFiles({ first: SAMPLE, second: '{\n    "other": "text"\n}\n' });
+    const texts = serializeStringFiles(edit(model, 'other', 'changed'));
+    expect(texts.first).toBe(SAMPLE);
+    expect(texts.second).toBe('{\n    "other": "changed"\n}\n');
+  });
+
+  it('refuses a key that two catalogues both define', () => {
+    expect(() => parseStringFiles({ first: SAMPLE, second: '{\n    "stat.armor": "plating"\n}\n' })).toThrow(/stat\.armor is in both first and second/);
   });
 
   it('rewrites only the edited line and keeps blank lines and line endings', () => {

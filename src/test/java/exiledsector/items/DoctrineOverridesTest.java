@@ -12,6 +12,7 @@ import exiledsector.skills.AllocationGate;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -133,9 +134,9 @@ class DoctrineOverridesTest {
 
     private ShipSkillData shipWith(String definitionId, long seed, SkillNode... allocated) {
         ShipSkillData data = new ShipSkillData();
-        data.allocate(socket, 0);
+        ShipTrees.allocate(data, socket, 0);
         for (SkillNode node : allocated) {
-            data.allocate(node, 0);
+            ShipTrees.allocate(data, node, 0);
         }
         Item doctrine = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(definitionId), seed));
         data.socketItem(socket.getId(), doctrine.id());
@@ -194,7 +195,7 @@ class DoctrineOverridesTest {
     @Test
     void aDoctrineInAnUnallocatedSocketRewritesNothing() {
         ShipSkillData data = shipWith(TRANSFORM, 9L, nearNotable);
-        data.deallocate(socket);
+        ShipTrees.deallocate(data, socket);
 
         assertEquals("original", nearNotable.resolveEffectiveType(data).getId());
         assertTrue(DoctrineOverrides.layer(data).isEmpty());
@@ -269,7 +270,7 @@ class DoctrineOverridesTest {
         assertEquals(Set.of("rival_mod"), DoctrineRevertConflicts.hullModsLostOnRemoval(data, socket.getId(), hullModId -> true));
         assertEquals(Set.of(), DoctrineRevertConflicts.hullModsLostOnRemoval(data, socket.getId(), hullModId -> false));
         assertEquals(Set.of(), DoctrineRevertConflicts.hullModsLostOnRemoval(data, "elsewhere", hullModId -> true));
-        data.deallocate(hullModNode);
+        ShipTrees.deallocate(data, hullModNode);
         assertEquals(Set.of(), DoctrineRevertConflicts.hullModsLostOnRemoval(data, socket.getId(), hullModId -> true));
     }
 
@@ -308,13 +309,13 @@ class DoctrineOverridesTest {
         assertTrue(gate.allocation(choice, null).allowed());
         assertFalse(gate.allocation(choice, SkillTree.getType("opt_a")).allowed());
 
-        data.allocate(choice, null, 0);
+        ShipTrees.allocate(data, choice, null, 0);
         assertNotEquals("opt_a", choice.resolveEffectiveType(data).getId());
         assertEquals(Set.of(choice.getId()), data.getReplacementAllocatedNodeIds());
 
         data.unsocketItem(socket.getId());
         assertEquals("opt_a", choice.resolveEffectiveType(data).getId());
-        assertTrue(data.forgetUnknownNodes(SkillTree.getAllNodes(), SkillTree.getAllTypes()).isEmpty());
+        assertTrue(ShipTrees.forgetUnknownNodes(data, SkillTree.getAllNodes(), SkillTree.getAllTypes()).isEmpty());
         assertTrue(data.isAllocated(choice.getId()));
     }
 
@@ -324,7 +325,7 @@ class DoctrineOverridesTest {
         SkillNode capitalOnly = node("capital_only_node", "capital_only", 100f, 100f);
         ShipSkillData data = shipWith(TRANSFORM, 14L);
         frigateGate(data);
-        data.allocate(capitalOnly, null, 0);
+        ShipTrees.allocate(data, capitalOnly, null, 0);
         ShipFacts frigate = new ShipFacts(HullSize.FRIGATE, ShieldType.FRONT, false, 100f, hullModId -> false);
 
         assertTrue(DoctrineRevertRelease.release(data, frigate, SkillTree.topology(), socket.getId()).nodeIds().isEmpty());
@@ -344,8 +345,8 @@ class DoctrineOverridesTest {
         SkillNode second = node("b_rival_node", "rival_b", -100f, 100f);
         ShipSkillData data = shipWith(TRANSFORM, 14L);
         frigateGate(data);
-        data.allocate(first, null, 0);
-        data.allocate(second, null, 0);
+        ShipTrees.allocate(data, first, null, 0);
+        ShipTrees.allocate(data, second, null, 0);
         assertEquals(Set.of(first.getId(), second.getId()), data.getReplacementAllocatedNodeIds());
         ShipFacts frigate = new ShipFacts(HullSize.FRIGATE, ShieldType.FRONT, false, 100f, hullModId -> false);
 
@@ -359,7 +360,7 @@ class DoctrineOverridesTest {
     void aRevertedNodeWhoseOriginalIsAllowedStaysAndIsNoLongerTracked() {
         ShipSkillData data = shipWith(TRANSFORM, 14L);
         frigateGate(data);
-        data.allocate(nearNotable, null, 0);
+        ShipTrees.allocate(data, nearNotable, null, 0);
         ShipFacts frigate = new ShipFacts(HullSize.FRIGATE, ShieldType.FRONT, false, 100f, hullModId -> false);
 
         data.unsocketItem(socket.getId());
@@ -404,7 +405,7 @@ class DoctrineOverridesTest {
         DoctrineLayer first = DoctrineOverrides.layer(data);
 
         assertSame(first, DoctrineOverrides.layer(data));
-        data.deallocate(nearNotable);
+        ShipTrees.deallocate(data, nearNotable);
         assertNotSameLayer(first, DoctrineOverrides.layer(data));
     }
 
@@ -415,7 +416,7 @@ class DoctrineOverridesTest {
     @Test
     void aShipWithoutSocketedItemsHasNoLayer() {
         ShipSkillData data = new ShipSkillData();
-        data.allocate(nearNotable, 0);
+        ShipTrees.allocate(data, nearNotable, 0);
 
         assertTrue(DoctrineOverrides.layer(data).isEmpty());
         assertEquals("original", nearNotable.resolveEffectiveType(data).getId());

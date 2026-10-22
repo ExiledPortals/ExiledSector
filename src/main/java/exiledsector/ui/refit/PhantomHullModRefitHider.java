@@ -5,7 +5,6 @@ import com.fs.starfarer.api.GameState;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CoreUITabId;
-import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.listeners.CharacterStatsRefreshListener;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
@@ -54,23 +53,17 @@ public class PhantomHullModRefitHider implements CharacterStatsRefreshListener {
         failed = false;
         pendingHide = null;
         SkillTreeChipClickTarget.resetForTests();
-        SkillTreeModsButton.resetForTests();
+        RefitButtonColumn.resetForTests();
     }
 
     private static void hideInRefitScreen(CampaignUIAPI campaignUI) {
         if (failed) return;
         try {
-            hidePhantomRows(coreUI(campaignUI));
+            hidePhantomRows(UiReflection.coreUI(campaignUI));
         } catch (Throwable e) {
             failed = true;
             LOG.error("[ExiledSector] Could not hide phantom hull mods in the refit screen; they stay visible until the game is restarted", e);
         }
-    }
-
-    public static Object coreUI(CampaignUIAPI campaignUI) throws Throwable {
-        InteractionDialogAPI dialog = campaignUI.getCurrentInteractionDialog();
-        Object dialogCore = call(dialog, "getCoreUI");
-        return dialogCore != null ? dialogCore : call(campaignUI, "getCore");
     }
 
     static void hidePhantomRows(Object coreUi) throws Throwable {
@@ -82,7 +75,7 @@ public class PhantomHullModRefitHider implements CharacterStatsRefreshListener {
         Object refitMods = call(modDisplay, "getMods");
         hidePhantomRows(refitMods, variant);
         attachChipClick(refitMods);
-        SkillTreeModsButton.attach(refitMods);
+        RefitButtonColumn.attach(refitMods);
         for (Object dialog : UiReflection.children(coreUi)) {
             for (Object child : UiReflection.children(dialog)) {
                 if (child != modDisplay && child.getClass() == modDisplay.getClass()) {

@@ -19,10 +19,12 @@ import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.ExiledSectorModPlugin;
+import exiledsector.persistence.ShipRecords;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.PhantomHullModStatus;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.progression.SkillNodeOpCost;
 import exiledsector.skills.skilleffect.DefenseSkillEffect;
@@ -109,7 +111,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(hullNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), hullNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(member);
@@ -129,7 +131,7 @@ class SkillTreeHullModTest {
                     .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_MULT, hullMultMagnitudes[i]))).build();
             SkillNode node = new SkillNode("hull_mult_node_" + i, type, List.of(), 0f, 0f);
             SkillTree.register(node);
-            ShipSkillDataManager.get("ship-a").allocate(node, 1);
+            ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), node, 1);
         }
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(member);
@@ -184,7 +186,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").selectOption(slotNode, hullOption, 1);
+        ShipTrees.selectOption(ShipSkillDataManager.get("ship-a"), slotNode, hullOption, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(member);
@@ -209,7 +211,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(multiNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), multiNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(member);
@@ -234,7 +236,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(doubledNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), doubledNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(member);
@@ -260,7 +262,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(cosmeticNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), cosmeticNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(member);
@@ -283,7 +285,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(keystoneNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), keystoneNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(member);
@@ -326,7 +328,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(frontNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), frontNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(member);
@@ -367,7 +369,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(hullNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), hullNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(member);
@@ -401,7 +403,7 @@ class SkillTreeHullModTest {
                 .build();
         SkillNode hullNode = new SkillNode("hull_1", hullType, List.of(), 0f, 0f);
         SkillTree.register(hullNode);
-        ShipSkillDataManager.get("ship-a").allocate(hullNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), hullNode, 1);
 
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         RealVariantTags.attach(variant);
@@ -433,7 +435,7 @@ class SkillTreeHullModTest {
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
         ShipSkillData data = ShipSkillDataManager.get("ship-a");
-        data.allocate(frontNode, 1);
+        ShipTrees.allocate(data, frontNode, 1);
 
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         RealVariantTags.attach(variant);
@@ -447,7 +449,7 @@ class SkillTreeHullModTest {
         HullModConflictResolver.removeConflicts(member, variant);
         verify(variant).addMod("exiledSector_conflictWarning");
 
-        data.deallocate(frontNode);
+        ShipTrees.deallocate(data, frontNode);
         when(variant.hasHullMod("adaptiveshields")).thenReturn(false);
         when(variant.hasHullMod("exiledSector_conflictWarning")).thenReturn(true);
 
@@ -492,7 +494,7 @@ class SkillTreeHullModTest {
 
     @Test
     void syncInstalledHullModsInstallsTheHullModAsATaggedPermaModWhileTheNodeIsAllocated() {
-        ShipSkillDataManager.get("ship-a").allocate(registerMilitarizedNode(), 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), registerMilitarizedNode(), 1);
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.getTags()).thenReturn(List.of());
 
@@ -530,7 +532,7 @@ class SkillTreeHullModTest {
     @Test
     void aPhantomHullModIsPlacedAsATaggedPermaModOnlyOnceItsVanillaEffectIsWrapped() {
         PhantomHullMods.clearForTests();
-        ShipSkillDataManager.get("ship-a").allocate(registerPhantomSafetyOverridesNode(), 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), registerPhantomSafetyOverridesNode(), 1);
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.getTags()).thenReturn(List.of());
 
@@ -558,7 +560,7 @@ class SkillTreeHullModTest {
 
     @Test
     void aHullModThatTriesToStripAPhantomIsRemovedInsteadAndThePlayerIsWarned() {
-        ShipSkillDataManager.get("ship-a").allocate(registerPhantomSafetyOverridesNode(), 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), registerPhantomSafetyOverridesNode(), 1);
         makeSafetyOverridesAPhantom();
         when(Global.getSettings().getHullModSpec("nskr_volatile")).thenReturn(mock(HullModSpecAPI.class));
         ShipVariantAPI variant = variantWhereAModTriedToStripThePhantomFor("nskr_volatile");
@@ -574,7 +576,7 @@ class SkillTreeHullModTest {
 
     @Test
     void aPermanentHullModThatTriesToStripAPhantomIsNeverReportedAsRemoved() {
-        ShipSkillDataManager.get("ship-a").allocate(registerPhantomSafetyOverridesNode(), 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), registerPhantomSafetyOverridesNode(), 1);
         makeSafetyOverridesAPhantom();
         when(Global.getSettings().getHullModSpec("nskr_volatile")).thenReturn(mock(HullModSpecAPI.class));
         ShipVariantAPI variant = variantWhereAModTriedToStripThePhantomFor("nskr_volatile");
@@ -589,7 +591,7 @@ class SkillTreeHullModTest {
 
     @Test
     void aStripAttemptAgainstAHullModTheTreeDoesNotProvideIsLeftToMagicLib() {
-        ShipSkillDataManager.get("ship-a").allocate(registerMilitarizedNode(), 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), registerMilitarizedNode(), 1);
         makeSafetyOverridesAPhantom();
         when(Global.getSettings().getHullModSpec("nskr_volatile")).thenReturn(mock(HullModSpecAPI.class));
         ShipVariantAPI variant = variantWhereAModTriedToStripThePhantomFor("nskr_volatile");
@@ -629,7 +631,7 @@ class SkillTreeHullModTest {
 
     @Test
     void syncMakesOnlyTheTreesOwnCopiesThatTheBuildInDialogMadeNormalPermanentAgain() {
-        ShipSkillDataManager.get("ship-a").allocate(registerMilitarizedNode(), 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), registerMilitarizedNode(), 1);
         ShipVariantAPI demoted = variantWithTreeInstalledMilitarizedSubsystems(false);
         ShipVariantAPI intact = variantWithTreeInstalledMilitarizedSubsystems(true);
 
@@ -643,7 +645,7 @@ class SkillTreeHullModTest {
 
     @Test
     void aCopyOfTheHullModThePlayerInstalledThemselvesIsNeitherTakenOverNorMadePermanent() {
-        ShipSkillDataManager.get("ship-a").allocate(registerMilitarizedNode(), 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), registerMilitarizedNode(), 1);
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.hasHullMod("militarized_subsystems")).thenReturn(true);
         when(variant.getPermaMods()).thenReturn(new LinkedHashSet<>());
@@ -670,7 +672,7 @@ class SkillTreeHullModTest {
 
     @Test
     void removeHullModsConflictingWithAllocatedSkillsLeavesAHullModTheSkillTreeInstalledItself() {
-        ShipSkillDataManager.get("ship-a").allocate(registerMilitarizedNode(), 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), registerMilitarizedNode(), 1);
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.hasHullMod("militarized_subsystems")).thenReturn(true);
         when(variant.hasTag("exiledSector_installed_militarized_subsystems")).thenReturn(true);
@@ -688,7 +690,7 @@ class SkillTreeHullModTest {
                 .build();
         SkillNode targetingNode = new SkillNode("targetingunit_1", targetingType, List.of(), 0f, 0f);
         SkillTree.register(targetingNode);
-        ShipSkillDataManager.get("ship-a").allocate(targetingNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), targetingNode, 1);
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
         when(variant.getHullSpec()).thenReturn(hullSpec);
@@ -711,7 +713,7 @@ class SkillTreeHullModTest {
                 .build();
         SkillNode slotNode = new SkillNode("slot_1", slotType, List.of(), 0f, 0f);
         SkillTree.register(slotNode);
-        ShipSkillDataManager.get("ship-a").selectOption(slotNode, plain, 1);
+        ShipTrees.selectOption(ShipSkillDataManager.get("ship-a"), slotNode, plain, 1);
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.hasHullMod("heavyarmor")).thenReturn(true);
         when(variant.getHullMods()).thenReturn(new LinkedHashSet<>(List.of("heavyarmor")));
@@ -753,14 +755,14 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(frontNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), frontNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(member);
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(stats.getVariant()).thenReturn(variant);
         when(variant.hasHullMod("adaptiveshields")).thenReturn(false);
-        when(variant.hasTag(SkillDataResolver.SHIP_TAG_PREFIX + "ship-a")).thenReturn(true);
+        when(variant.hasTag(ShipRecords.SHIP_TAG_PREFIX + "ship-a")).thenReturn(true);
 
         SettingsAPI settings = mock(SettingsAPI.class);
         globalMock.when(Global::getSettings).thenReturn(settings);
@@ -785,7 +787,7 @@ class SkillTreeHullModTest {
                 .todo(null)
                 .build();
         SkillNode node = new SkillNode("armor_1", type, List.of(), 0f, 0f);
-        ShipSkillDataManager.get("ship-a").allocate(node, 4);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), node, 4);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getFleetMember()).thenReturn(member);
@@ -868,7 +870,7 @@ class SkillTreeHullModTest {
         when(hull.getHullSize()).thenReturn(HullSize.FRIGATE);
         when(member.getHullSpec()).thenReturn(hull);
         SkillType type = new SkillType.Builder("t", "t", "a.png", SkillTier.SMALL).effects(List.of()).build();
-        ShipSkillDataManager.get("ship-a").allocate(new SkillNode("armor_1", type, List.of(), 0f, 0f), 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), new SkillNode("armor_1", type, List.of(), 0f, 0f), 1);
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.getHullMods()).thenReturn(List.of("hardenedshieldemitter", "exiledSector_opSpent_7", "exiledSector_opReserve_30"));
         SettingsAPI settings = mock(SettingsAPI.class);
@@ -912,7 +914,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(keystoneNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), keystoneNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);
@@ -936,7 +938,7 @@ class SkillTreeHullModTest {
                 .build();
         SkillNode keystoneNode = new SkillNode(hullModId + "_1", keystoneType, List.of(), 0f, 0f);
         SkillTree.register(keystoneNode);
-        ShipSkillDataManager.get("ship-a").allocate(keystoneNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), keystoneNode, 1);
 
         SettingsAPI settings = mock(SettingsAPI.class);
         globalMock.when(Global::getSettings).thenReturn(settings);
@@ -972,7 +974,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(hullNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), hullNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);
@@ -998,7 +1000,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(passthroughNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), passthroughNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);
@@ -1031,7 +1033,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(fighterNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), fighterNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);
@@ -1070,7 +1072,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(listenerNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), listenerNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);
@@ -1096,8 +1098,8 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(readerNode, 1);
-        ShipSkillDataManager.get("ship-a").allocate(reshaperNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), readerNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), reshaperNode, 1);
         ShipAPI ship = mockShip(member, mock(MutableShipStatsAPI.class));
 
         new SkillTreeHullMod().applyEffectsAfterShipCreation(ship, "exiledSector_core");
@@ -1150,7 +1152,7 @@ class SkillTreeHullModTest {
         SkillNode node = registerTemporaryHullNode();
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(node, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), node, 1);
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         StatBonus hull = mock(StatBonus.class);
         when(stats.getHullBonus()).thenReturn(hull);
@@ -1167,7 +1169,7 @@ class SkillTreeHullModTest {
         SkillNode node = registerTemporaryHullNode();
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(node, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), node, 1);
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         StatBonus hull = mock(StatBonus.class);
         when(stats.getHullBonus()).thenReturn(hull);
@@ -1188,7 +1190,7 @@ class SkillTreeHullModTest {
         SkillNode node = registerTemporaryHullNode();
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(node, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), node, 1);
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = withRealCustomData(mockShip(member, stats));
         SkillTreeHullMod hullMod = new SkillTreeHullMod();
@@ -1213,7 +1215,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(ventNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), ventNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);
@@ -1242,7 +1244,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(ventNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), ventNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);
@@ -1270,7 +1272,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(hullNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), hullNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);
@@ -1306,7 +1308,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(phaseNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), phaseNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);
@@ -1346,7 +1348,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(phaseNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), phaseNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);
@@ -1385,7 +1387,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(opsNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), opsNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);
@@ -1416,7 +1418,7 @@ class SkillTreeHullModTest {
 
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship-a");
-        ShipSkillDataManager.get("ship-a").allocate(opsNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), opsNode, 1);
 
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);
@@ -1459,8 +1461,8 @@ class SkillTreeHullModTest {
         SkillNode bulkheadsNode = new SkillNode("reinforcedhull_1", bulkheads, List.of(), 0f, 0f);
         SkillTree.register(bulkheadsNode);
         ShipSkillDataManager.get("npc-ship").markNpcBuild();
-        ShipSkillDataManager.get("npc-ship").allocate(bulkheadsNode, 1);
-        ShipSkillDataManager.get("player-ship").allocate(bulkheadsNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("npc-ship"), bulkheadsNode, 1);
+        ShipTrees.allocate(ShipSkillDataManager.get("player-ship"), bulkheadsNode, 1);
         StatBonus npcHull = mock(StatBonus.class);
         StatBonus npcRecovery = mock(StatBonus.class);
         StatBonus playerHull = mock(StatBonus.class);
@@ -1657,7 +1659,7 @@ class SkillTreeHullModTest {
                     .effects(List.of(nodeEffects[i])).build();
             SkillNode node = new SkillNode("damage_taken_node_" + i, type, List.of(), 0f, 0f);
             SkillTree.register(node);
-            ShipSkillDataManager.get("ship-a").allocate(node, 1);
+            ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), node, 1);
         }
         DamageTakenStats damageTaken = new DamageTakenStats(mock(MutableStat.class), mock(MutableStat.class), mock(MutableStat.class));
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);

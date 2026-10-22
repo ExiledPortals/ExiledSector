@@ -83,18 +83,18 @@ class WormholeAnchorLinksTest {
 
     private ShipSkillData shipWithSocket() {
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
-        data.allocate(coreNode, 1);
-        data.allocate(socket, 1);
+        ShipTrees.chooseStartingRoot(data, root);
+        ShipTrees.allocate(data, coreNode, 1);
+        ShipTrees.allocate(data, socket, 1);
         return data;
     }
 
     private ShipSkillData shipWithOpenVolume() {
         ShipSkillData data = shipWithSocket();
         data.socketItem("socket", ANCHOR);
-        data.openAnchorWormholes(100);
-        data.allocate(volumeSmall, 1);
-        data.allocate(volumeNotable, 1);
+        ShipTrees.openAnchorWormholes(data, 100);
+        ShipTrees.allocate(data, volumeSmall, 1);
+        ShipTrees.allocate(data, volumeNotable, 1);
         return data;
     }
 
@@ -109,93 +109,93 @@ class WormholeAnchorLinksTest {
         ShipSkillData data = shipWithSocket();
         data.socketItem("socket", ANCHOR);
 
-        assertEquals("exit", data.wormholePartner(socket));
-        assertEquals("socket", data.wormholePartner(exit));
-        assertEquals("exit", data.anchorExit("socket"));
+        assertEquals("exit", ShipTrees.wormholePartner(data, socket));
+        assertEquals("socket", ShipTrees.wormholePartner(data, exit));
+        assertEquals("exit", ShipTrees.anchorExit(data, "socket"));
 
-        data.deallocate(socket);
+        ShipTrees.deallocate(data, socket);
 
-        assertNull(data.wormholePartner(socket));
-        assertNull(data.wormholePartner(exit));
+        assertNull(ShipTrees.wormholePartner(data, socket));
+        assertNull(ShipTrees.wormholePartner(data, exit));
     }
 
     @Test
     void openingAllocatesTheExitAtNoCostButNeedsAFreeNodeSlot() {
         ShipSkillData data = shipWithSocket();
         data.socketItem("socket", ANCHOR);
-        int paidBefore = data.paidNodeCount();
+        int paidBefore = ShipTrees.paidNodeCount(data);
 
-        assertEquals(List.of(), data.openAnchorWormholes(data.getAllocatedNodeIds().size()));
+        assertEquals(List.of(), ShipTrees.openAnchorWormholes(data, data.getAllocatedNodeIds().size()));
         assertFalse(data.isAllocated("exit"));
 
-        assertEquals(List.of("exit"), data.openAnchorWormholes(data.getAllocatedNodeIds().size() + 1));
+        assertEquals(List.of("exit"), ShipTrees.openAnchorWormholes(data, data.getAllocatedNodeIds().size() + 1));
         assertTrue(data.isAllocated("exit"));
         assertTrue(data.isFreeNode("exit"));
-        assertEquals(paidBefore, data.paidNodeCount());
+        assertEquals(paidBefore, ShipTrees.paidNodeCount(data));
     }
 
     @Test
     void aSecondAnchorForTheSameExitStaysInert() {
         ShipSkillData data = shipWithSocket();
-        data.allocate(secondSocket, 1);
+        ShipTrees.allocate(data, secondSocket, 1);
         data.socketItem("socket", ANCHOR);
         data.socketItem("socket_b", SECOND_ANCHOR);
 
-        assertEquals("exit", data.anchorExit("socket"));
-        assertNull(data.anchorExit("socket_b"));
-        assertEquals("socket", data.anchorSocket("exit"));
+        assertEquals("exit", ShipTrees.anchorExit(data, "socket"));
+        assertNull(ShipTrees.anchorExit(data, "socket_b"));
+        assertEquals("socket", ShipTrees.anchorSocket(data, "exit"));
     }
 
     @Test
     void anExitIsNeverAllocatedByAPathFromInsideItsVolume() {
         ShipSkillData data = shipWithSocket();
-        data.allocate(volumeSmall, 1);
+        ShipTrees.allocate(data, volumeSmall, 1);
 
         assertEquals(AllocationGate.Refusal.NOT_CONNECTED, gate(data, 100).allocation(exit).refusal());
-        assertFalse(data.reachableAllocatedNodeIds(topology, "root", Set.of()).contains("vol_a"));
+        assertFalse(ShipTrees.reachableAllocatedNodeIds(data, topology, "root", Set.of()).contains("vol_a"));
     }
 
     @Test
     void theReachabilitySearchOnlyEntersAnExitThroughItsAnchor() {
         ShipSkillData data = shipWithOpenVolume();
 
-        assertTrue(data.reachableAllocatedNodeIds(topology, "root", Set.of()).containsAll(List.of("exit", "vol_a", "vol_b")));
+        assertTrue(ShipTrees.reachableAllocatedNodeIds(data, topology, "root", Set.of()).containsAll(List.of("exit", "vol_a", "vol_b")));
 
         data.unsocketItem("socket");
 
-        assertFalse(data.reachableAllocatedNodeIds(topology, "root", Set.of()).contains("exit"));
+        assertFalse(ShipTrees.reachableAllocatedNodeIds(data, topology, "root", Set.of()).contains("exit"));
     }
 
     @Test
     void removingTheAnchorReleasesEveryNodeReachedThroughItAndRefundsThem() {
         ShipSkillData data = shipWithSocket();
         data.socketItem("socket", ANCHOR);
-        data.openAnchorWormholes(100);
+        ShipTrees.openAnchorWormholes(data, 100);
         data.addFreeAllocationCredit();
-        data.allocate(volumeSmall, 1);
-        data.allocate(volumeNotable, 1);
-        data.recordItemCharge("vol_b", new SkillItemCost("alpha_core", 1f));
-        int paidBefore = data.paidNodeCount();
+        ShipTrees.allocate(data, volumeSmall, 1);
+        ShipTrees.allocate(data, volumeNotable, 1);
+        ShipTrees.recordItemCharge(data, "vol_b", new SkillItemCost("alpha_core", 1f));
+        int paidBefore = ShipTrees.paidNodeCount(data);
 
         data.unsocketItem("socket");
-        ReleasedNodes released = data.releaseUnreachable(topology, "root");
+        ReleasedNodes released = ShipTrees.releaseUnreachable(data, topology, "root");
 
         assertEquals(Set.of("exit", "vol_a", "vol_b"), Set.copyOf(released.nodeIds()));
         assertEquals(List.of(new SkillItemCost("alpha_core", 1f)), released.charges());
         assertTrue(data.isAllocated("socket") && data.isAllocated("core_a"));
         assertEquals(1, data.getBankedFreeAllocations());
-        assertEquals(paidBefore - 1, data.paidNodeCount());
+        assertEquals(paidBefore - 1, ShipTrees.paidNodeCount(data));
     }
 
     @Test
     void deallocatingTheSocketIsAlwaysAllowedAndReleasesTheVolume() {
         ShipSkillData data = shipWithOpenVolume();
 
-        assertTrue(data.canDeallocate(socket, topology, "root"));
+        assertTrue(ShipTrees.canDeallocate(data, socket, topology, "root"));
         assertTrue(gate(data, 100).deallocation(socket).allowed());
 
-        data.deallocate(socket);
-        ReleasedNodes released = data.releaseUnreachable(topology, "root");
+        ShipTrees.deallocate(data, socket);
+        ReleasedNodes released = ShipTrees.releaseUnreachable(data, topology, "root");
 
         assertFalse(data.isAllocated("exit"));
         assertEquals(Set.of("vol_a", "vol_b"), Set.copyOf(released.nodeIds()));
@@ -206,32 +206,32 @@ class WormholeAnchorLinksTest {
     void deallocatingTheExitClosesTheWormholeAndTakesItsSocketWithIt() {
         ShipSkillData data = shipWithOpenVolume();
 
-        assertTrue(data.canDeallocate(exit, topology, "root"));
+        assertTrue(ShipTrees.canDeallocate(data, exit, topology, "root"));
 
-        data.deallocate(exit);
+        ShipTrees.deallocate(data, exit);
 
         assertFalse(data.isAllocated("socket"));
         assertTrue(data.getSocketedItems().isEmpty());
-        assertEquals(Set.of("vol_a", "vol_b"), Set.copyOf(data.releaseUnreachable(topology, "root").nodeIds()));
+        assertEquals(Set.of("vol_a", "vol_b"), Set.copyOf(ShipTrees.releaseUnreachable(data, topology, "root").nodeIds()));
     }
 
     @Test
     void anOrdinaryNodeThatWouldStrandTheVolumeIsStillRefused() {
         ShipSkillData data = shipWithOpenVolume();
 
-        assertFalse(data.canDeallocate(coreNode, topology, "root"));
-        assertFalse(data.canDeallocate(volumeSmall, topology, "root"));
-        assertTrue(data.canDeallocate(volumeNotable, topology, "root"));
+        assertFalse(ShipTrees.canDeallocate(data, coreNode, topology, "root"));
+        assertFalse(ShipTrees.canDeallocate(data, volumeSmall, topology, "root"));
+        assertTrue(ShipTrees.canDeallocate(data, volumeNotable, topology, "root"));
     }
 
     @Test
     void aPreviewNamesWhatClosingWouldReleaseWithoutChangingTheShip() {
         ShipSkillData data = shipWithOpenVolume();
 
-        Set<String> released = data.previewRelease(topology, "root", planned -> planned.unsocketItem("socket"));
+        Set<String> released = ShipTrees.previewRelease(data, topology, "root", planned -> planned.unsocketItem("socket"));
 
         assertEquals(Set.of("exit", "vol_a", "vol_b"), released);
-        assertEquals(2, data.paidNodeCount(released));
+        assertEquals(2, ShipTrees.paidNodeCount(data, released));
         assertTrue(data.isAllocated("vol_b"));
         assertEquals(ANCHOR, data.getSocketedItem("socket"));
     }
@@ -239,14 +239,14 @@ class WormholeAnchorLinksTest {
     @Test
     void thePlanningCopySeesTheSameLinksAndFollowsTheLiveSockets() {
         ShipSkillData data = shipWithOpenVolume();
-        ShipSkillData plan = data.planningCopy();
+        ShipSkillData plan = ShipTrees.planningCopy(data);
 
-        assertEquals("exit", plan.wormholePartner(socket));
+        assertEquals("exit", ShipTrees.wormholePartner(plan, socket));
 
         data.unsocketItem("socket");
         plan.mirrorSocketedItems(data);
 
-        assertNull(plan.wormholePartner(socket));
+        assertNull(ShipTrees.wormholePartner(plan, socket));
     }
 
     @Test
@@ -254,11 +254,11 @@ class WormholeAnchorLinksTest {
         ShipSkillData data = shipWithSocket();
         data.socketItem("socket", ANCHOR);
 
-        assertTrue(data.wormholePairs(topology).isEmpty());
+        assertTrue(ShipTrees.wormholePairs(data, topology).isEmpty());
 
-        data.openAnchorWormholes(100);
+        ShipTrees.openAnchorWormholes(data, 100);
 
-        assertEquals(List.of(new SkillTreeTopology.WormholePair(socket, exit)), data.wormholePairs(topology));
+        assertEquals(List.of(new SkillTreeTopology.WormholePair(socket, exit)), ShipTrees.wormholePairs(data, topology));
     }
 
     @Test
@@ -280,10 +280,10 @@ class WormholeAnchorLinksTest {
         Map<String, SkillNode> coreOnly = new LinkedHashMap<>(fullTree);
         coreOnly.keySet().removeAll(List.of("exit", "vol_a", "vol_b"));
 
-        data.forgetUnknownNodes(coreOnly, fullTree, Map.of());
+        ShipTrees.forgetUnknownNodes(data, coreOnly, fullTree, Map.of());
         assertTrue(data.getDormantNodeIds().containsAll(List.of("exit", "vol_a", "vol_b")));
 
-        data.wakeDormantNodes(fullTree, 100, dormantNode -> true);
+        ShipTrees.wakeDormantNodes(data, fullTree, 100, dormantNode -> true);
 
         assertTrue(data.isAllocated("exit") && data.isAllocated("vol_a") && data.isAllocated("vol_b"));
     }
@@ -296,7 +296,7 @@ class WormholeAnchorLinksTest {
             tree.put(node.getId(), node);
         }
 
-        assertEquals(List.of("vol_b", "vol_a"), data.trimPaidNodes(tree, topology));
+        assertEquals(List.of("vol_b", "vol_a"), ShipTrees.trimPaidNodes(data, tree, topology));
         assertTrue(data.isAllocated("socket") && data.isAllocated("exit"));
     }
 
@@ -306,42 +306,42 @@ class WormholeAnchorLinksTest {
         inertItemIds.add(ANCHOR);
         data.socketItem("socket", ANCHOR);
 
-        assertEquals("exit", data.anchorExit("socket"));
-        assertEquals(List.of(), data.openAnchorWormholes(100));
+        assertEquals("exit", ShipTrees.anchorExit(data, "socket"));
+        assertEquals(List.of(), ShipTrees.openAnchorWormholes(data, 100));
 
         inertItemIds.clear();
 
-        assertEquals(List.of("exit"), data.openAnchorWormholes(100));
+        assertEquals(List.of("exit"), ShipTrees.openAnchorWormholes(data, 100));
     }
 
     @Test
     void anOpenWormholeWhoseAnchorReadsInertKeepsItsVolumeThroughOtherChanges() {
         ShipSkillData data = shipWithOpenVolume();
-        data.allocate(secondSocket, 1);
+        ShipTrees.allocate(data, secondSocket, 1);
         inertItemIds.add(ANCHOR);
         lookupRevision++;
 
-        Set<String> reachableBefore = data.reachableAllocatedNodeIds(topology, "root");
-        data.deallocate(secondSocket);
-        ReleasedNodes released = data.releaseNewlyStranded(topology, "root", reachableBefore);
+        Set<String> reachableBefore = ShipTrees.reachableAllocatedNodeIds(data, topology, "root");
+        ShipTrees.deallocate(data, secondSocket);
+        ReleasedNodes released = ShipTrees.releaseNewlyStranded(data, topology, "root", reachableBefore);
 
         assertTrue(released.isEmpty());
-        assertEquals("exit", data.wormholePartner(socket));
+        assertEquals("exit", ShipTrees.wormholePartner(data, socket));
         assertTrue(data.isAllocated("exit") && data.isAllocated("vol_a") && data.isAllocated("vol_b"));
-        assertEquals(Set.of("vol_b"), data.previewRelease(topology, "root", planned -> planned.deallocate(volumeNotable)));
+        assertEquals(Set.of("vol_b"), ShipTrees.previewRelease(data, topology, "root", planned -> ShipTrees.deallocate(planned, volumeNotable)));
     }
 
     @Test
     void aVolumeNoLinkReachesIsLeftAloneByUnrelatedChanges() {
         ShipSkillData data = shipWithOpenVolume();
-        data.allocate(secondSocket, 1);
+        ShipTrees.allocate(data, secondSocket, 1);
         exitByItemId.clear();
         lookupRevision++;
 
-        Set<String> reachableBefore = data.reachableAllocatedNodeIds(topology, "root");
-        data.deallocate(secondSocket);
+        Set<String> reachableBefore = ShipTrees.reachableAllocatedNodeIds(data, topology, "root");
+        ShipTrees.deallocate(data, secondSocket);
 
-        assertTrue(data.releaseNewlyStranded(topology, "root", reachableBefore).isEmpty());
+        assertTrue(ShipTrees.releaseNewlyStranded(data, topology, "root", reachableBefore).isEmpty());
         assertTrue(data.isAllocated("vol_a") && data.isAllocated("vol_b"));
     }
 
@@ -351,11 +351,11 @@ class WormholeAnchorLinksTest {
         exitByItemId.remove(ANCHOR);
         data.socketItem("socket", ANCHOR);
 
-        assertNull(data.anchorExit("socket"));
+        assertNull(ShipTrees.anchorExit(data, "socket"));
 
         exitByItemId.put(ANCHOR, "exit");
         lookupRevision++;
 
-        assertEquals("exit", data.anchorExit("socket"));
+        assertEquals("exit", ShipTrees.anchorExit(data, "socket"));
     }
 }

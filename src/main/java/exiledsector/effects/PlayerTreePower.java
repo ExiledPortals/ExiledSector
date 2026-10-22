@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.npc.NpcLevelCaps;
 import exiledsector.skills.npc.NpcLevelCategory;
 import exiledsector.skills.npc.NpcTreeSize;
@@ -96,11 +97,11 @@ public final class PlayerTreePower {
         if (opCostPerNode <= 0) {
             return Math.max(level, allocatedBesidesRoot(shipData));
         }
-        return level + shipData.paidNodeCount();
+        return level + ShipTrees.paidNodeCount(shipData);
     }
 
     private static int allocatedBesidesRoot(ShipSkillData shipData) {
-        String startingRoot = shipData.resolveStartingRootId();
+        String startingRoot = ShipTrees.resolveStartingRootId(shipData);
         int allocated = shipData.getAllocatedNodeIds().size();
         return startingRoot != null && shipData.getAllocatedNodeIds().contains(startingRoot) ? allocated - 1 : allocated;
     }

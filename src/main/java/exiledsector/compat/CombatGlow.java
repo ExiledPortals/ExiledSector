@@ -5,6 +5,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.ViewportAPI;
+import exiledsector.HostMod;
 import exiledsector.ModSettings;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -12,7 +13,6 @@ import java.awt.Color;
 
 public final class CombatGlow {
 
-    public static final String ENABLED_FIELD_ID = "exiledSector_graphicsLibEffects";
     public static final boolean DEFAULT_ENABLED = true;
     static final int MAX_LIVE_LIGHTS = 20;
     static final int MAX_LIVE_RIPPLES = 6;
@@ -77,6 +77,10 @@ public final class CombatGlow {
     }
 
     private CombatGlow() {
+    }
+
+    public static String enabledFieldId() {
+        return HostMod.settingId("graphicsLibEffects");
     }
 
     public static void flash(Vector2f location, CombatEntityAPI attachedTo, Color color, float size, float intensity, float fadeSeconds) {
@@ -149,7 +153,7 @@ public final class CombatGlow {
         if (stored instanceof Battle battle) {
             return battle.renderer == null || GraphicsLibCompat.isBridgeBroken() ? null : battle;
         }
-        boolean wanted = GraphicsLibCompat.isModEnabled() && ModSettings.booleanOr(ENABLED_FIELD_ID, DEFAULT_ENABLED);
+        boolean wanted = GraphicsLibCompat.isModEnabled() && ModSettings.booleanOr(enabledFieldId(), DEFAULT_ENABLED);
         Battle battle = new Battle(wanted ? GraphicsLibCompat.activeRenderer() : null);
         engine.getCustomData().put(CUSTOM_DATA_KEY, battle);
         return battle.renderer == null ? null : battle;

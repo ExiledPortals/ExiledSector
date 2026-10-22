@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ItemNamesTest {
 
-    private static final Path NAMES = Path.of(ItemNames.NAMES_PATH);
+    private static final Path NAMES = Path.of(ItemNames.namesPath());
     private static final RolledEffect DISSIPATION = new RolledEffect("FLUX_DISSIPATION_MULT", 5f);
     private static final RolledEffect SHIELDING = new RolledEffect("SHIELD_DAMAGE_TAKEN_MULT", -12f);
     private static final RolledEffect HULL = new RolledEffect("HULL_MULT", 5f);
@@ -162,8 +162,8 @@ class ItemNamesTest {
 
     @Test
     void everyShippedPoolModifierHasANameAndEveryCommonHullItemHasRareNameWords() throws Exception {
-        ItemModifiers.register(csvRows(ItemModifiers.DATA_PATH));
-        ItemDefinitions.register(csvRows(ItemDefinitions.SUBROUTINES_PATH), csvRows(ItemDefinitions.HULL_ITEMS_PATH));
+        ItemModifiers.register(csvRows(ItemModifiers.dataPath()));
+        ItemDefinitions.register(csvRows(SubroutineDefinitions.dataPath()), csvRows(HullItem.definitionsPath()));
         JSONObject words = new JSONObject(Files.readString(RealSkillData.projectRoot().resolve(NAMES), StandardCharsets.UTF_8));
         for (ItemDefinition definition : ItemDefinitions.all()) {
             if (definition.unique() || definition.type() == ItemType.SUBROUTINE) {

@@ -54,7 +54,7 @@ class AbyssSingularityTest {
         SettingsAPI settings = mock(SettingsAPI.class);
         ModManagerAPI modManager = mock(ModManagerAPI.class);
         when(settings.getModManager()).thenReturn(modManager);
-        when(settings.getHullSpec(AbyssSingularity.GENESIS_HULL_ID)).thenReturn(mock(ShipHullSpecAPI.class));
+        when(settings.getHullSpec(RandomAssortmentCompat.GENESIS_HULL_ID)).thenReturn(mock(ShipHullSpecAPI.class));
         AbyssSingularity.clearCachedDetection();
         when(modManager.isModEnabled(RandomAssortmentCompat.MOD_ID)).thenReturn(true);
 
@@ -118,7 +118,7 @@ class AbyssSingularityTest {
     void theAbyssStaysGatedUntilTheSingularityIsBeaten() {
         assertTrue(SkillTypeUnlockStatus.isLocked(ABYSS_GATE, null));
 
-        AbyssSingularity.recordBattle(sector, battle(true, List.of(shipOfHull("rat_genesis_serpent_head"), shipOfHull(AbyssSingularity.GENESIS_HULL_ID)), List.of()));
+        AbyssSingularity.recordBattle(sector, battle(true, List.of(shipOfHull("rat_genesis_serpent_head"), shipOfHull(RandomAssortmentCompat.GENESIS_HULL_ID)), List.of()));
 
         assertTrue(AbyssSingularity.isDefeated(sector));
         assertFalse(SkillTypeUnlockStatus.isLocked(ABYSS_GATE, null));
@@ -126,7 +126,7 @@ class AbyssSingularityTest {
 
     @Test
     void ifRatRenamesTheGenesisHullTheAbyssUnlocksBecauseTheWinCanNoLongerBeSeen() {
-        when(Global.getSettings().getHullSpec(AbyssSingularity.GENESIS_HULL_ID)).thenReturn(null);
+        when(Global.getSettings().getHullSpec(RandomAssortmentCompat.GENESIS_HULL_ID)).thenReturn(null);
         AbyssSingularity.clearCachedDetection();
 
         assertFalse(SkillTypeUnlockStatus.isLocked(ABYSS_GATE, null));
@@ -134,14 +134,14 @@ class AbyssSingularityTest {
 
     @Test
     void aDisabledGenesisCountsAsBeaten() {
-        AbyssSingularity.recordBattle(sector, battle(true, List.of(), List.of(shipOfHull(AbyssSingularity.GENESIS_HULL_ID))));
+        AbyssSingularity.recordBattle(sector, battle(true, List.of(), List.of(shipOfHull(RandomAssortmentCompat.GENESIS_HULL_ID))));
 
         assertTrue(AbyssSingularity.isDefeated(sector));
     }
 
     @Test
     void losingOrWinningAnotherFightDoesNotUnlockIt() {
-        AbyssSingularity.recordBattle(sector, battle(false, List.of(shipOfHull(AbyssSingularity.GENESIS_HULL_ID)), List.of()));
+        AbyssSingularity.recordBattle(sector, battle(false, List.of(shipOfHull(RandomAssortmentCompat.GENESIS_HULL_ID)), List.of()));
         AbyssSingularity.recordBattle(sector, battle(true, List.of(shipOfHull("rat_genesis_serpent_head"), shipOfHull("onslaught")), List.of()));
 
         assertFalse(AbyssSingularity.isDefeated(sector));
@@ -149,7 +149,7 @@ class AbyssSingularityTest {
 
     @Test
     void aSaveThatAlreadyBeatTheSingularityIsRecognisedByItsRequiemSkill() {
-        when(playerStats.getSkillLevel(AbyssSingularity.REQUIEM_SKILL_ID)).thenReturn(2f);
+        when(playerStats.getSkillLevel(RandomAssortmentCompat.REQUIEM_SKILL_ID)).thenReturn(2f);
 
         AbyssSingularity.checkSaveOnLoad(sector);
 
@@ -158,7 +158,7 @@ class AbyssSingularityTest {
 
     @Test
     void aSaveThatAlreadyBeatTheSingularityIsRecognisedByTheGenesisWreck() {
-        addWreck(AbyssSingularity.GENESIS_WRECK_VARIANT_ID);
+        addWreck(RandomAssortmentCompat.GENESIS_WRECK_VARIANT_ID);
 
         AbyssSingularity.checkSaveOnLoad(sector);
 

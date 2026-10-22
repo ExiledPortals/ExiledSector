@@ -3,6 +3,7 @@ package exiledsector.items;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierSlot;
 import com.fs.starfarer.api.Global;
+import exiledsector.HostMod;
 import exiledsector.Seeds;
 import exiledsector.i18n.Message;
 import exiledsector.i18n.Translation;
@@ -22,11 +23,9 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static exiledsector.ExiledSectorModPlugin.MOD_ID;
-
 public final class ItemNames {
 
-    static final String NAMES_PATH = "data/config/exiledSector/item_names.json";
+    static final String NAMES_FILE = "item_names.json";
     static final float COMPOUND_CHANCE = 0.3f;
     static final float MODEL_CHANCE = 0.4f;
     private static final long NAME_SALT = 0x6E616D6573L;
@@ -42,11 +41,15 @@ public final class ItemNames {
     private ItemNames() {
     }
 
+    static String namesPath() {
+        return HostMod.configPath(NAMES_FILE);
+    }
+
     public static void load() {
         try {
-            registerWords(Global.getSettings().getMergedJSONForMod(NAMES_PATH, MOD_ID));
+            registerWords(Global.getSettings().getMergedJSONForMod(namesPath(), HostMod.id()));
         } catch (IOException | JSONException e) {
-            LOG.error("Failed to load " + NAMES_PATH, e);
+            LOG.error("Failed to load " + namesPath(), e);
         }
     }
 
@@ -237,7 +240,7 @@ public final class ItemNames {
         try {
             return Style.valueOf(styleName.trim().toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException e) {
-            LOG.warn("Unknown name style \"" + styleName + "\" for " + definitionId + " in " + NAMES_PATH + " - using codename");
+            LOG.warn("Unknown name style \"" + styleName + "\" for " + definitionId + " in " + namesPath() + " - using codename");
             return Style.CODENAME;
         }
     }

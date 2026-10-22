@@ -26,10 +26,10 @@ class ItemImplicitsTest {
 
     @BeforeEach
     void loadRealData() throws Exception {
-        EffectAliases.register(csvRows(EffectAliases.DATA_PATH));
-        ItemModifiers.register(csvRows(ItemModifiers.DATA_PATH));
-        ItemDefinitions.register(csvRows(ItemDefinitions.SUBROUTINES_PATH), csvRows(ItemDefinitions.HULL_ITEMS_PATH));
-        ItemImplicits.register(csvRows(ItemImplicits.DATA_PATH));
+        EffectAliases.register(csvRows(EffectAliases.dataPath()));
+        ItemModifiers.register(csvRows(ItemModifiers.dataPath()));
+        ItemDefinitions.register(csvRows(SubroutineDefinitions.dataPath()), csvRows(HullItem.definitionsPath()));
+        ItemImplicits.register(csvRows(ItemImplicits.dataPath()));
     }
 
     @AfterEach
@@ -73,7 +73,7 @@ class ItemImplicitsTest {
 
     @Test
     void uniquesGetTheirTypeImplicitsAndSubroutinesGetNone() throws Exception {
-        ItemDefinitions.register(new JSONArray().put(ItemFixtures.subroutineRow(ItemFixtures.SUBROUTINE)), csvRows(ItemDefinitions.HULL_ITEMS_PATH));
+        ItemDefinitions.register(new JSONArray().put(ItemFixtures.subroutineRow(ItemFixtures.SUBROUTINE)), csvRows(HullItem.definitionsPath()));
         ItemDefinition unique = ItemDefinitions.all().stream()
                 .filter(definition -> definition.unique() && definition.kind() == ItemKind.WEAPON_MOUNT).findFirst().orElseThrow();
         ItemDefinition subroutine = ItemDefinitions.get(ItemFixtures.SUBROUTINE);

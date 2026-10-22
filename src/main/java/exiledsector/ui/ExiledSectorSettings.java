@@ -5,7 +5,6 @@ import exiledsector.compat.CombatGlow;
 import exiledsector.compat.SalvageSiteCompat;
 import exiledsector.domain.Domain;
 import exiledsector.ui.cargo.ItemAnimationSetting;
-import exiledsector.items.BattleItemDrops;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemRoller;
@@ -32,7 +31,7 @@ public final class ExiledSectorSettings {
     public static void registerLanguage() {
         I18n.forGameText(() -> {
             SettingsCreator.addHeader(MOD_ID, "exiledSector_header", Translation.text("settings.header"), MAIN_TAB);
-            SettingsCreator.addRadio(MOD_ID, LanguageSetting.FIELD_ID, Translation.text("settings.language.name"),
+            SettingsCreator.addRadio(MOD_ID, LanguageSetting.fieldId(), Translation.text("settings.language.name"),
                     Translation.text("settings.language.tooltip"), LanguageSetting.AUTO, String.join(",", LanguageSetting.OPTIONS), MAIN_TAB);
         });
         SettingsCreator.refresh(MOD_ID);
@@ -68,7 +67,7 @@ public final class ExiledSectorSettings {
                 SkillTreeSounds.DEFAULT_ENABLED, MAIN_TAB);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_combatEffectsHeader", Translation.text("settings.combatEffects.header"), MAIN_TAB);
-        SettingsCreator.addBoolean(MOD_ID, CombatGlow.ENABLED_FIELD_ID,
+        SettingsCreator.addBoolean(MOD_ID, CombatGlow.enabledFieldId(),
                 Translation.text("settings.combatEffects.graphicsLib.name"), Translation.text("settings.combatEffects.graphicsLib.tooltip"),
                 CombatGlow.DEFAULT_ENABLED, MAIN_TAB);
 
@@ -82,19 +81,16 @@ public final class ExiledSectorSettings {
         SettingsCreator.addInt(MOD_ID, ItemDrops.BATTLE_PARTS_FIELD_ID,
                 Translation.text("settings.socketStorage.battleParts.name"), Translation.text("settings.socketStorage.battleParts.tooltip"),
                 ItemDrops.DEFAULT_BATTLE_PARTS_PER_100_DP, 0, ItemDrops.MAX_BATTLE_PARTS_PER_100_DP, MAIN_TAB);
-        SettingsCreator.addInt(MOD_ID, BattleItemDrops.DROP_PERCENT_FIELD_ID,
-                Translation.text("settings.socketStorage.battleItems.name"), Translation.text("settings.socketStorage.battleItems.tooltip"),
-                BattleItemDrops.DEFAULT_DROP_PERCENT, 0, BattleItemDrops.MAX_DROP_PERCENT, MAIN_TAB);
         SettingsCreator.addBoolean(MOD_ID, CraftingMaterials.STORE_FIELD_ID,
                 Translation.text("settings.socketStorage.storeMaterials.name"), Translation.text("settings.socketStorage.storeMaterials.tooltip"),
                 CraftingMaterials.DEFAULT_STORE, MAIN_TAB);
-        SettingsCreator.addBoolean(MOD_ID, ItemRoller.AVERAGE_ROLLS_FIELD_ID,
+        SettingsCreator.addBoolean(MOD_ID, ItemRoller.averageRollsFieldId(),
                 Translation.text("settings.socketStorage.averageRolls.name"), Translation.text("settings.socketStorage.averageRolls.tooltip"),
                 ItemRoller.DEFAULT_AVERAGE_ROLLS, MAIN_TAB);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_diminishingHeader", Translation.text("settings.diminishing.header"), MAIN_TAB);
         SettingsCreator.addText(MOD_ID, "exiledSector_diminishingAbout", Translation.text("settings.diminishing.about"), MAIN_TAB);
-        SettingsCreator.addInt(MOD_ID, DiminishingReturns.EFFICIENCY_FIELD_ID,
+        SettingsCreator.addInt(MOD_ID, DiminishingReturns.efficiencyFieldId(),
                 Translation.text("settings.diminishing.efficiency.name"), Translation.text("settings.diminishing.efficiency.tooltip"),
                 DiminishingReturns.DEFAULT_EFFICIENCY_PERCENT, 0, 100, MAIN_TAB);
         for (DiminishedStat stat : DiminishedStat.values()) {
@@ -105,7 +101,7 @@ public final class ExiledSectorSettings {
         }
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_energyChainHeader", Translation.text("settings.energyChain.header"), MAIN_TAB);
-        SettingsCreator.addInt(MOD_ID, MaxChainCountConfig.FIELD_ID,
+        SettingsCreator.addInt(MOD_ID, MaxChainCountConfig.fieldId(),
                 Translation.text("settings.energyChain.maxChainCount.name"), Translation.text("settings.energyChain.maxChainCount.tooltip"),
                 MaxChainCountConfig.DEFAULT, 1, 20, MAIN_TAB);
     }

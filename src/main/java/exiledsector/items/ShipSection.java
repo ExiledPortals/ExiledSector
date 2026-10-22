@@ -35,6 +35,10 @@ public enum ShipSection {
         return Arrays.stream(values()).filter(section -> section.id.equals(id)).findFirst().orElse(null);
     }
 
+    public static ShipSection of(ItemKind kind) {
+        return kind == null || !kind.fitsSection() ? null : byIdOrNull(kind.id());
+    }
+
     public String id() {
         return id;
     }

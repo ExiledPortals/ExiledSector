@@ -43,6 +43,8 @@ class EditorRoundTripTest {
     private static final String TREE_LOADER = "exiledsector/skills/loader/SkillTreeLoader.java";
     private static final String ITEM_DEFINITIONS = "exiledsector/items/ItemDefinitions.java";
     private static final String ITEM_DEFINITION = "exiledsector/items/ItemDefinition.java";
+    private static final String SUBROUTINE_DEFINITIONS = "exiledsector/items/SubroutineDefinitions.java";
+    private static final String HULL_ITEM = "exiledsector/items/HullItem.java";
     private static final String ITEM_NAMES = "exiledsector/items/ItemNames.java";
     private static final String ITEM_DROPS = "exiledsector/items/ItemDrops.java";
     private static final String SALVAGE_COMPAT = "exiledsector/compat/SalvageSiteCompat.java";
@@ -66,7 +68,7 @@ class EditorRoundTripTest {
     private static final String DOCTRINE_ARCHIVES = "exiledsector/items/DoctrineArchives.java";
     private static final String MODSPEC_CACHES = "exiledsector/items/ModspecCaches.java";
 
-    private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, ITEM_DEFINITIONS, ITEM_DEFINITION,
+    private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, ITEM_DEFINITIONS, ITEM_DEFINITION, SUBROUTINE_DEFINITIONS, HULL_ITEM,
             ITEM_NAMES, ITEM_DROPS, SALVAGE_COMPAT, ITEM_CRAFTING, HULL_ITEM_IMPLICITS, ITEM_MODIFIERS, STAR_CHART_DEFINITIONS, STAR_CHART_IMPLICITS,
             STAR_CHART_ITEMS, STAR_CHART_NAMES, CHART_TIERS, CHART_POIS, CHART_FACTIONS, CHART_BLOCKED_ABILITIES, CHART_DROPS, CHART_LOOT,
             CHART_COLONY_ITEMS, WORMHOLE_ANCHOR_DEFINITIONS, DOCTRINE_ARCHIVES, MODSPEC_CACHES, SUBROUTINE_IMPLICITS,
@@ -117,9 +119,13 @@ class EditorRoundTripTest {
                     List.of(tree("treeFileObject"), tree("serializeThreatUnit")), false),
             new Pin("subroutines.csv and hull_items.csv row key", ITEM_DEFINITIONS, List.of("rows"),
                     List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "SUBROUTINE_COLUMNS"), new EditorSource(ITEM_DEFINITIONS_MODEL, "HULL_ITEM_COLUMNS")), true),
-            new Pin("subroutines.csv columns", ITEM_DEFINITION, List.of("parseSubroutine", "definitionId", "parseShared", "parseCommon"),
+            new Pin("subroutines.csv columns", SUBROUTINE_DEFINITIONS, List.of("parse"),
                     List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "SUBROUTINE_COLUMNS")), true),
-            new Pin("hull_items.csv columns", ITEM_DEFINITION, List.of("parse", "parseHullItem", "definitionId", "parseShared", "parseCommon"),
+            new Pin("subroutines.csv shared item columns", ITEM_DEFINITION, List.of("definitionId", "parseShared", "parseCommon"),
+                    List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "SUBROUTINE_COLUMNS")), true),
+            new Pin("hull_items.csv columns", HULL_ITEM, List.of("parseDefinition"),
+                    List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "HULL_ITEM_COLUMNS")), true),
+            new Pin("hull_items.csv shared item columns", ITEM_DEFINITION, List.of("parse", "definitionId", "parseShared", "parseCommon"),
                     List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "HULL_ITEM_COLUMNS")), true),
             new Pin("item_modifiers.csv columns", ITEM_MODIFIERS, List.of("load", "catalogueOf", "parse"),
                     List.of(new EditorSource(ITEM_MODIFIERS_MODEL, "serializeModifiersCsv")), true),

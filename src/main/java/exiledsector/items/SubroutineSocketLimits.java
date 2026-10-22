@@ -127,6 +127,6 @@ public final class SubroutineSocketLimits {
     }
 
     private static SubroutineKind kindOf(ItemDefinition definition) {
-        return definition == null || definition.type() != ItemType.SUBROUTINE ? null : definition.subroutineKind();
+        return definition == null || definition.type() != ItemType.SUBROUTINE ? null : SubroutineKind.of(definition);
     }
 }

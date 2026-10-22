@@ -60,7 +60,7 @@ class GraphicsLibCompatTest {
     void graphicsLibIsCheckedAtStartupButNeverRequired() throws IOException {
         assertTrue(ExiledSectorModPlugin.compatTargets().contains(GraphicsLibCompat.TARGET));
         assertFalse(Files.readString(Path.of("mod_info.json")).contains(GraphicsLibCompat.MOD_ID));
-        assertTrue(Files.exists(Path.of(GraphicsLibCompat.LIGHT_DATA_PATH)));
+        assertTrue(Files.exists(Path.of(ExiledSectorModPlugin.LIGHT_DATA_PATH)));
     }
 
     @Test

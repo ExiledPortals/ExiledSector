@@ -7,6 +7,7 @@ import exiledsector.skills.AllocationGate;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -85,7 +86,7 @@ public final class NpcSkillTreeBuilder {
 
     public static ShipSkillData rootedTree(SkillNode rootNode, int startingLevel) {
         ShipSkillData shipData = emptyTree();
-        if (rootNode == null || !shipData.chooseStartingRoot(rootNode)) {
+        if (rootNode == null || !ShipTrees.chooseStartingRoot(shipData, rootNode)) {
             return null;
         }
         for (int i = 0; i < startingLevel; i++) {
@@ -449,12 +450,12 @@ public final class NpcSkillTreeBuilder {
                 List<String> tags = node.effectiveType().getTags();
                 shieldInvested |= tags.contains(SHIELD_THEME) || tags.contains(SHIELD_REQUIREMENT);
             }
-            ShipFacts fittedFacts = ShipFacts.of(fittedProfile, fitInstalled::contains, hullId,
+            ShipFacts fittedFacts = fittedProfile.facts(fitInstalled::contains, hullId,
                     hullModId -> fitInstalled.contains(hullModId) && hullMods.permanent().contains(hullModId));
             NodeEligibility.Context eligibility = new NodeEligibility.Context(allocatedNodes, shieldType, fittedFacts,
                     lockedWormhole, fittedProfile);
             AllocationGate.Budget budget = new AllocationGate.Budget(Integer.MAX_VALUE, freedOp.opCostPerNode(), maxNodes + 1);
-            return new State(new AllocationGate(shipData, topology, shipData.resolveStartingRootId(), budget, eligibility), shieldInvested);
+            return new State(new AllocationGate(shipData, topology, ShipTrees.resolveStartingRootId(shipData), budget, eligibility), shieldInvested);
         }
 
         private boolean traversable(SkillNode node, State fitState, Map<String, SkillType> searchOptions) {
@@ -540,9 +541,9 @@ public final class NpcSkillTreeBuilder {
 
         private boolean socketAnchor(String socketId) {
             shipData.socketItem(socketId, factionAnchorItemId);
-            if (factionExitId.equals(shipData.anchorExit(socketId))) {
+            if (factionExitId.equals(ShipTrees.anchorExit(shipData, socketId))) {
                 anchorSocketId = socketId;
-                shipData.openAnchorWormholes(maxNodes + 1);
+                ShipTrees.openAnchorWormholes(shipData, maxNodes + 1);
                 if (shipData.isAllocated(factionExitId)) {
                     return true;
                 }
@@ -555,7 +556,7 @@ public final class NpcSkillTreeBuilder {
             shipData.unsocketItem(socketId);
             SkillNode exit = topology.node(factionExitId);
             if (exit != null && shipData.isAllocated(factionExitId)) {
-                shipData.deallocate(exit);
+                ShipTrees.deallocate(shipData, exit);
             }
             anchorSocketId = null;
         }
@@ -583,7 +584,7 @@ public final class NpcSkillTreeBuilder {
         }
 
         private String jumpTarget(SkillNode node) {
-            String partnerId = shipData.wormholePartner(node);
+            String partnerId = ShipTrees.wormholePartner(shipData, node);
             if (partnerId != null) {
                 return partnerId;
             }
@@ -645,9 +646,9 @@ public final class NpcSkillTreeBuilder {
                 }
                 placedNodes.add(step.node());
                 if (step.option() != null) {
-                    shipData.selectOption(step.node(), step.option(), freedOp.opCostPerNode());
+                    ShipTrees.selectOption(shipData, step.node(), step.option(), freedOp.opCostPerNode());
                 } else {
-                    shipData.allocate(step.node(), freedOp.opCostPerNode());
+                    ShipTrees.allocate(shipData, step.node(), freedOp.opCostPerNode());
                 }
                 nodesSpent++;
                 steps.add(new NpcBuildStep(step.node().getId(), nodesSpent > freeNodeCount ? outcome + NpcBuildStep.FREED_OP_SUFFIX : outcome));
@@ -657,7 +658,7 @@ public final class NpcSkillTreeBuilder {
 
         private void undoPath(List<SkillNode> placedNodes, int stepsBefore, boolean anchoredInPath) {
             for (int i = placedNodes.size() - 1; i >= 0; i--) {
-                shipData.deallocate(placedNodes.get(i));
+                ShipTrees.deallocate(shipData, placedNodes.get(i));
                 nodesSpent--;
             }
             if (anchoredInPath && anchorSocketId != null) {

@@ -18,7 +18,6 @@ public final class GraphicsLibCompat {
     public static final List<String> TESTED_VERSIONS = List.of("1.12.1");
     public static final CompatTarget TARGET = new CompatTarget("GraphicsLib", List.of(MOD_ID), TESTED_VERSIONS,
             GraphicsLibCompat::missingFeatures);
-    static final String LIGHT_DATA_PATH = "data/lights/exiledsector_lights.csv";
     private static final String LIGHT = "org.dark.shaders.light.";
     private static final String DISTORTION = "org.dark.shaders.distortion.";
     private static final String VECTOR = "org.lwjgl.util.vector.Vector2f";
@@ -61,12 +60,12 @@ public final class GraphicsLibCompat {
         return TARGET.isEnabled();
     }
 
-    public static void loadLightData() {
+    public static void loadLightData(String lightDataPath) {
         if (!isModEnabled()) {
             return;
         }
         try {
-            GraphicsLibGlow.loadLightData(LIGHT_DATA_PATH);
+            GraphicsLibGlow.loadLightData(lightDataPath);
         } catch (LinkageError | RuntimeException e) {
             reportBroken(e);
         }

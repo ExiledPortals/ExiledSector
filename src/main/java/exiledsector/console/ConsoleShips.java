@@ -1,9 +1,9 @@
 package exiledsector.console;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.ExiledSectorModPlugin;
 import exiledsector.PlayerFleet;
 import exiledsector.effects.FighterBayOverflow;
-import exiledsector.effects.ShipTreeSync;
 import exiledsector.skills.skilleffect.FleetWideEffects;
 import org.lazywizard.console.Console;
 
@@ -52,7 +52,7 @@ final class ConsoleShips {
     }
 
     static void treeChanged(FleetMemberAPI member) {
-        ShipTreeSync.memberChanged(member, null);
+        ExiledSectorModPlugin.DOMAINS.forEach(domain -> domain.memberChanged(member, null));
         FleetWideEffects.markPhaseFieldStale();
         member.setStatUpdateNeeded(true);
         member.updateStats();

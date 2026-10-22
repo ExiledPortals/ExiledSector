@@ -9,14 +9,13 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
+import exiledsector.ExiledSectorModPlugin;
 import exiledsector.PlayerFleet;
 import exiledsector.persistence.SaveData;
 import exiledsector.persistence.ShipSkillDataManager;
-import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.ShipSkillData;
-import exiledsector.skills.SkillItemCost;
-import exiledsector.skills.SkillTree;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -64,7 +63,7 @@ public final class SocketCustody {
     }
 
     static Set<String> reconcile(Map<String, ShipSkillData> shipDataById, Set<String> ownedShipIds, Set<String> lostInCombat, ItemStore store,
-                                 Consumer<SkillItemCost> refund) {
+                                 Consumer<CargoRefund> refund) {
         lostInCombat.removeIf(ownedShipIds::contains);
         Set<String> lostForGood = new HashSet<>(lostInCombat);
         lostForGood.retainAll(shipDataById.keySet());
@@ -73,38 +72,22 @@ public final class SocketCustody {
                 return;
             }
             boolean destroyed = lostInCombat.contains(shipId);
-            Set<String> grantOnlyBefore = destroyed ? Set.of() : grantOnlyNodeIds(shipData);
-            for (String nodeId : Set.copyOf(shipData.getSocketedItems().keySet())) {
-                String itemId = shipData.unsocketItem(nodeId);
-                NodeGrantStatus.forget(itemId);
-                Item item = store.find(itemId);
-                if (destroyed && item != null) {
-                    store.remove(item);
-                }
-            }
-            if (!destroyed) {
-                shipData.releaseUngrantedFreeNodes(SkillTree.topology(), shipData.resolveStartingRootId(), grantOnlyBefore).charges().forEach(refund);
-            }
-            for (String socketTypeId : Set.copyOf(shipData.getSectionItems().keySet())) {
-                Item item = store.find(shipData.removeFromSection(socketTypeId));
-                if (destroyed && item != null) {
-                    store.remove(item);
-                }
+            for (ShipCustody custody : custodies()) {
+                custody.release(shipData, destroyed, store).forEach(refund);
             }
         });
         lostInCombat.removeIf(shipId -> !shipDataById.containsKey(shipId) || !holdsSocketItems(shipDataById.get(shipId)));
         return lostForGood;
     }
 
-    private static Set<String> grantOnlyNodeIds(ShipSkillData shipData) {
-        if (shipData.grantedNodesBySocket().isEmpty()) {
-            return Set.of();
-        }
-        return shipData.grantOnlyNodeIds(SkillTree.topology(), shipData.resolveStartingRootId());
+    static boolean holdsSocketItems(ShipSkillData shipData) {
+        return custodies().stream().anyMatch(custody -> custody.holdsItems(shipData));
     }
 
-    static boolean holdsSocketItems(ShipSkillData shipData) {
-        return !shipData.getSocketedItems().isEmpty() || !shipData.getSectionItems().isEmpty();
+    static List<ShipCustody> custodies() {
+        List<ShipCustody> custodies = new ArrayList<>();
+        ExiledSectorModPlugin.DOMAINS.forEach(domain -> custodies.addAll(domain.shipCustodies()));
+        return custodies;
     }
 
     public static Map<String, FleetMemberAPI> reconcile() {
@@ -123,7 +106,7 @@ public final class SocketCustody {
 
     private static void forget(Set<String> lostShipIds) {
         lostShipIds.forEach(ShipSkillDataManager::remove);
-        lostShipIds.forEach(SkillTreeTemplateStore::clearAssignment);
+        lostShipIds.forEach(shipId -> custodies().forEach(custody -> custody.forgetShip(shipId)));
         Global.getLogger(SocketCustody.class).info("[ExiledSector] Forgot the skill trees of ships lost in combat: " + lostShipIds);
     }
 
@@ -157,31 +140,14 @@ public final class SocketCustody {
         }
     }
 
-    static boolean fitsTreeSocket(Item item) {
-        return item instanceof Subroutine || item instanceof WormholeAnchor;
-    }
-
-    static boolean fitsSection(Item item, String socketTypeId) {
-        return item.canSocketInto(ShipSection.byIdOrNull(socketTypeId));
-    }
-
     public static boolean unsocketIfMisfit(Item item) {
         return unsocketIfMisfit(ShipSkillDataManager.all(), item);
     }
 
     static boolean unsocketIfMisfit(Map<String, ShipSkillData> shipDataById, Item item) {
-        String itemId = item.id();
         for (ShipSkillData shipData : shipDataById.values()) {
-            for (Map.Entry<String, String> socketedEntry : List.copyOf(shipData.getSocketedItems().entrySet())) {
-                if (socketedEntry.getValue().equals(itemId) && (!fitsTreeSocket(item)
-                        || SubroutineSocketLimits.limitReached(item, socketedEntry.getKey(), shipData.getSocketedItems()))) {
-                    shipData.unsocketItem(socketedEntry.getKey());
-                    return true;
-                }
-            }
-            for (Map.Entry<String, String> slotEntry : List.copyOf(shipData.getSectionItems().entrySet())) {
-                if (slotEntry.getValue().equals(itemId) && !fitsSection(item, slotEntry.getKey())) {
-                    shipData.removeFromSection(slotEntry.getKey());
+            for (ShipCustody custody : custodies()) {
+                if (custody.unsocketIfMisfit(shipData, item)) {
                     return true;
                 }
             }

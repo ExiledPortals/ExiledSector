@@ -64,7 +64,7 @@ public final class DoctrineArchives {
             }
         });
         for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.SUBROUTINE)) {
-            if (definition.subroutineKind() == SubroutineKind.DOCTRINE && !loaded.containsKey(definition.id())) {
+            if (SubroutineKind.of(definition) == SubroutineKind.DOCTRINE && !loaded.containsKey(definition.id())) {
                 LOG.error(definition.id() + " is a " + SubroutineKind.DOCTRINE.id() + " subroutine with no row in " + DATA_PATH
                         + ", so it rewrites nothing");
             }
@@ -79,9 +79,9 @@ public final class DoctrineArchives {
             throw new IllegalArgumentException("a row has no id");
         }
         ItemDefinition definition = ItemDefinitions.get(definitionId);
-        if (definition == null || definition.subroutineKind() != SubroutineKind.DOCTRINE) {
+        if (definition == null || SubroutineKind.of(definition) != SubroutineKind.DOCTRINE) {
             throw new IllegalArgumentException(definitionId + " is not a " + SubroutineKind.DOCTRINE.id() + " subroutine in "
-                    + ItemDefinitions.SUBROUTINES_PATH);
+                    + SubroutineDefinitions.dataPath());
         }
         String behaviourText = ModCsv.text(row, BEHAVIOUR_COLUMN);
         DoctrineBehaviour behaviour = DoctrineBehaviour.byIdOrNull(behaviourText);

@@ -2,32 +2,30 @@ package exiledsector.ui.cargo;
 
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.CraftingWard;
-import exiledsector.items.DoctrineArchive;
-import exiledsector.items.DoctrineArchives;
-import exiledsector.items.HullItem;
 import exiledsector.items.ItemCurrencies;
 import exiledsector.items.ItemCurrency;
 import exiledsector.items.Item;
+import exiledsector.items.ItemKind;
 import exiledsector.items.ItemRarity;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.MaterialTier;
-import exiledsector.items.Subroutine;
-import exiledsector.items.SubroutineKind;
-import exiledsector.items.WormholeAnchor;
-import exiledsector.skills.SkillNode;
-import exiledsector.skills.SkillTree;
-import exiledsector.ui.node.DoctrineColors;
-import exiledsector.ui.section.SectionFlair;
 
 import java.awt.Color;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class CargoIconLooks {
 
     private static final float CORRUPTED_GLOW = 0.45f;
+    private static final List<ItemIconLooks> ITEM_LOOKS = new CopyOnWriteArrayList<>();
 
     private CargoIconLooks() {
+    }
+
+    public static void register(ItemIconLooks itemLooks) {
+        if (!ITEM_LOOKS.contains(itemLooks)) {
+            ITEM_LOOKS.add(itemLooks);
+        }
     }
 
     public static CargoIconLook forMaterial(String itemId) {
@@ -62,16 +60,11 @@ public final class CargoIconLooks {
         if (item == null) {
             return null;
         }
-        if (item instanceof WormholeAnchor anchor && !AnimatedItemIcons.isAnimated(anchor.iconPath())) {
-            return CargoIconLook.anchor(anchor.color(), new AnchorLook(anchor.crestFactionId()));
-        }
-        CargoIconLook doctrineLook = forDoctrine(item);
-        if (doctrineLook != null) {
-            return doctrineLook;
-        }
-        CargoIconLook cacheLook = forCache(item);
-        if (cacheLook != null) {
-            return cacheLook;
+        for (ItemIconLooks itemLooks : ITEM_LOOKS) {
+            CargoIconLook ownLook = itemLooks.ownLook(item);
+            if (ownLook != null) {
+                return ownLook;
+            }
         }
         ItemRarity rarity = item.rarity();
         CargoIconLook look = switch (rarity) {
@@ -84,37 +77,20 @@ public final class CargoIconLooks {
         } else if (item.corrupted()) {
             look = CargoIconLook.charged(CraftingCurrency.CORRUPTION.color(), Math.max(CORRUPTED_GLOW, look.glow()));
         }
-        return item instanceof HullItem hullItem && hullItem.section() != null
-                ? look.withBadge(SectionFlair.colorOf(hullItem.section())) : look;
+        for (ItemIconLooks itemLooks : ITEM_LOOKS) {
+            look = itemLooks.decorated(item, look);
+        }
+        return look;
     }
 
-    static CargoIconLook forDoctrine(Item item) {
-        if (!(item instanceof Subroutine subroutine) || subroutine.subroutineKind() != SubroutineKind.DOCTRINE
-                || !subroutine.iconPath().startsWith(DoctrineIconFx.STILL_PREFIX)) {
-            return null;
-        }
-        DoctrineArchive archive = DoctrineArchives.get(subroutine.definitionId());
-        if (archive == null || archive.factionId() == null) {
-            return null;
-        }
-        Color factionColor = DoctrineColors.forFaction(archive.factionId());
-        return CargoIconLook.doctrine(factionColor == null ? item.frameColor() : factionColor,
-                DoctrineLook.of(DoctrineScreen.forFaction(archive.factionId()), archive.factionId()));
-    }
-
-    static CargoIconLook forCache(Item item) {
-        if (!(item instanceof Subroutine subroutine) || subroutine.subroutineKind() != SubroutineKind.MODSPEC_CACHE
-                || !CacheIconFx.STILL_PATH.equals(subroutine.iconPath())) {
-            return null;
-        }
-        List<String> chipIconPaths = new ArrayList<>();
-        for (String nodeId : subroutine.currentNodeIds()) {
-            SkillNode node = SkillTree.getDeclared(nodeId);
-            if (node != null && node.getIconPath() != null) {
-                chipIconPaths.add(node.getIconPath());
+    public static Color kindColor(ItemKind kind) {
+        for (ItemIconLooks itemLooks : ITEM_LOOKS) {
+            Color color = itemLooks.kindColor(kind);
+            if (color != null) {
+                return color;
             }
         }
-        return CargoIconLook.cache(item.frameColor(), new CacheLook(chipIconPaths));
+        return null;
     }
 
     public static boolean celebratesDrop(CargoIconLook look) {

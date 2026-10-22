@@ -9,27 +9,25 @@ import java.util.stream.Collectors;
 
 public enum ItemKind {
 
-    SUBROUTINE("subroutine", ItemType.SUBROUTINE, null),
-    BRIDGE("bridge", ItemType.HULL_ITEM, ShipSection.BRIDGE),
-    CREW_QUARTERS("crew_quarters", ItemType.HULL_ITEM, ShipSection.CREW_QUARTERS),
-    ENGINE_ROOM("engine_room", ItemType.HULL_ITEM, ShipSection.ENGINE_ROOM),
-    REACTOR("reactor", ItemType.HULL_ITEM, ShipSection.REACTOR),
-    ARMOR_PLATING("armor_plating", ItemType.HULL_ITEM, ShipSection.ARMOR_PLATING),
-    WEAPON_MOUNT("weapon_mount", ItemType.HULL_ITEM, ShipSection.WEAPON_MOUNT),
-    SHIELD_GENERATOR("shield_generator", ItemType.HULL_ITEM, ShipSection.SHIELD_GENERATOR),
-    PHASE_COIL("phase_coil", ItemType.HULL_ITEM, ShipSection.PHASE_COIL),
-    FLIGHT_DECK("flight_deck", ItemType.HULL_ITEM, ShipSection.FLIGHT_DECK);
+    SUBROUTINE("subroutine", ItemType.SUBROUTINE),
+    BRIDGE("bridge", ItemType.HULL_ITEM),
+    CREW_QUARTERS("crew_quarters", ItemType.HULL_ITEM),
+    ENGINE_ROOM("engine_room", ItemType.HULL_ITEM),
+    REACTOR("reactor", ItemType.HULL_ITEM),
+    ARMOR_PLATING("armor_plating", ItemType.HULL_ITEM),
+    WEAPON_MOUNT("weapon_mount", ItemType.HULL_ITEM),
+    SHIELD_GENERATOR("shield_generator", ItemType.HULL_ITEM),
+    PHASE_COIL("phase_coil", ItemType.HULL_ITEM),
+    FLIGHT_DECK("flight_deck", ItemType.HULL_ITEM);
 
     private static final List<ItemKind> SECTION_ITEM_TYPES = Arrays.stream(values()).filter(ItemKind::fitsSection).toList();
 
     private final String id;
     private final ItemType type;
-    private final ShipSection section;
 
-    ItemKind(String id, ItemType type, ShipSection section) {
+    ItemKind(String id, ItemType type) {
         this.id = id;
         this.type = type;
-        this.section = section;
     }
 
     public ItemType type() {
@@ -63,12 +61,8 @@ public enum ItemKind {
         return id;
     }
 
-    public ShipSection section() {
-        return section;
-    }
-
     public boolean fitsSection() {
-        return section != null;
+        return type == ItemType.HULL_ITEM;
     }
 
     public List<Modifier> implicits() {

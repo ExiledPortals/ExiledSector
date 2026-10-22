@@ -197,7 +197,7 @@ class ExiledSectorSettingsTest {
 
     @Test
     void offersTheLanguageChoiceAsARadioDefaultingToAuto() {
-        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addRadio(eq("exiledSector"), eq(LanguageSetting.FIELD_ID),
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addRadio(eq("exiledSector"), eq(LanguageSetting.fieldId()),
                 anyString(), anyString(), eq(LanguageSetting.AUTO), eq("Auto,English,Simplified Chinese"), eq("")));
     }
 

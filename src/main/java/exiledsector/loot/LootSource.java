@@ -8,8 +8,12 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import exiledsector.effects.TechMiningItemListener;
 import exiledsector.items.ItemChances;
+import exiledsector.items.ItemData;
+import exiledsector.items.ItemDefinition;
 
+import java.util.List;
 import java.util.Random;
+import java.util.function.Predicate;
 
 public interface LootSource {
 
@@ -31,6 +35,14 @@ public interface LootSource {
     }
 
     default void addSalvageLoot(SectorAPI sector, SectorEntityToken salvageEntity, CargoAPI loot) {
+    }
+
+    default List<ItemData> wardenDrops(int chartTier, String wardenFactionId, float chanceMult, Random random,
+                                       Predicate<ItemDefinition> allowed) {
+        return List.of();
+    }
+
+    default void addShowcaseLoot(CargoAPI loot, Random random) {
     }
 
     default void addTechMiningFinds(TechMiningItemListener.Find find) {

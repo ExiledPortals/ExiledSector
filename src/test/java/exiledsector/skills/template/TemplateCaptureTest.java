@@ -1,6 +1,7 @@
 package exiledsector.skills.template;
 
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -35,7 +36,7 @@ class TemplateCaptureTest {
         RealSkillData.clear();
         root = register(new SkillNode("root", type("root", SkillTier.ROOT).build(), List.of(), 0f, 0f));
         data = new ShipSkillData();
-        data.chooseStartingRoot(root);
+        ShipTrees.chooseStartingRoot(data, root);
     }
 
     @AfterEach
@@ -68,8 +69,8 @@ class TemplateCaptureTest {
     void anAlreadyValidOrderIsKeptAndTheStartingRootIsLeftOut() {
         SkillNode a = node("a", "root");
         SkillNode b = node("b", "a");
-        data.allocate(a, 1);
-        data.allocate(b, 1);
+        ShipTrees.allocate(data, a, 1);
+        ShipTrees.allocate(data, b, 1);
 
         assertEquals(List.of("a", "b"), ids(capture()));
     }
@@ -78,8 +79,8 @@ class TemplateCaptureTest {
     void aChildAllocatedBeforeItsParentIsMovedAfterIt() {
         SkillNode a = node("a", "root");
         SkillNode b = node("b", "a");
-        data.allocate(b, 1);
-        data.allocate(a, 1);
+        ShipTrees.allocate(data, b, 1);
+        ShipTrees.allocate(data, a, 1);
 
         assertEquals(List.of("a", "b"), ids(capture()));
     }
@@ -89,9 +90,9 @@ class TemplateCaptureTest {
         SkillNode left = node("left", "root");
         SkillNode right = node("right", "root");
         SkillNode rightChild = node("right_child", "right");
-        data.allocate(right, 1);
-        data.allocate(rightChild, 1);
-        data.allocate(left, 1);
+        ShipTrees.allocate(data, right, 1);
+        ShipTrees.allocate(data, rightChild, 1);
+        ShipTrees.allocate(data, left, 1);
 
         assertEquals(List.of("right", "right_child", "left"), ids(capture()));
     }
@@ -103,8 +104,8 @@ class TemplateCaptureTest {
         SkillNode slot = register(new SkillNode("slot", type("slot_type", SkillTier.SMALL).optionalOptionIds(List.of("hull")).build(),
                 List.of("root"), 0f, 0f));
         SkillNode plain = node("plain", "root");
-        data.selectOption(slot, option, 1);
-        data.allocate(plain, 1);
+        ShipTrees.selectOption(data, slot, option, 1);
+        ShipTrees.allocate(data, plain, 1);
 
         assertEquals(List.of(new TemplateStep("slot", "hull"), new TemplateStep("plain", null)), capture());
     }
@@ -116,8 +117,8 @@ class TemplateCaptureTest {
                 new SkillNodeDecoration(null, null, null, null, "far")));
         register(new SkillNode("far", wormholeType, List.of("near"), 0f, 0f, new SkillNodeDecoration(null, null, null, null, "near")));
         SkillNode beyond = node("beyond", "far");
-        data.allocate(beyond, 1);
-        data.allocate(near, 1);
+        ShipTrees.allocate(data, beyond, 1);
+        ShipTrees.allocate(data, near, 1);
 
         assertEquals(List.of("near", "far", "beyond"), ids(capture()));
     }
@@ -127,9 +128,9 @@ class TemplateCaptureTest {
         SkillNode a = node("a", "root");
         SkillNode stranded = node("stranded", "missing_parent");
         SkillNode unregistered = new SkillNode("gone", type("gone_type", SkillTier.SMALL).build(), List.of("root"), 0f, 0f);
-        data.allocate(stranded, 1);
-        data.allocate(unregistered, 1);
-        data.allocate(a, 1);
+        ShipTrees.allocate(data, stranded, 1);
+        ShipTrees.allocate(data, unregistered, 1);
+        ShipTrees.allocate(data, a, 1);
 
         assertEquals(List.of("a", "stranded"), ids(capture()));
     }
@@ -143,9 +144,9 @@ class TemplateCaptureTest {
             List<String> shuffled = new ArrayList<>(connected);
             Collections.shuffle(shuffled, new Random(seed));
             ShipSkillData shuffledData = new ShipSkillData();
-            shuffledData.chooseStartingRoot(SkillTree.get(rootId));
+            ShipTrees.chooseStartingRoot(shuffledData, SkillTree.get(rootId));
             for (String nodeId : shuffled) {
-                shuffledData.allocate(SkillTree.get(nodeId), 1);
+                ShipTrees.allocate(shuffledData, SkillTree.get(nodeId), 1);
             }
 
             List<TemplateStep> steps = TemplateCapture.capture(shuffledData, rootId, SkillTree.getAllNodes());

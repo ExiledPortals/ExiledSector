@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.HostMod;
 import exiledsector.ModCsv;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -11,7 +12,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public final class ItemIdAliases {
 
-    static final String DATA_PATH = "data/config/exiledSector/item_id_aliases.csv";
+    static final String DATA_FILE = "item_id_aliases.csv";
     private static final String ALIAS_COLUMN = "alias";
     private static final Logger LOG = Logger.getLogger(ItemIdAliases.class);
     private static final AtomicReference<Map<String, String>> CURRENT_IDS_BY_ALIAS = new AtomicReference<>(Map.of());
@@ -19,8 +20,12 @@ public final class ItemIdAliases {
     private ItemIdAliases() {
     }
 
+    static String dataPath() {
+        return HostMod.configPath(DATA_FILE);
+    }
+
     public static void load() {
-        ModCsv.load(ALIAS_COLUMN, DATA_PATH, LOG, ItemIdAliases::register);
+        ModCsv.load(ALIAS_COLUMN, dataPath(), LOG, ItemIdAliases::register);
     }
 
     public static void register(JSONArray rows) throws JSONException {
@@ -33,7 +38,7 @@ public final class ItemIdAliases {
                     return;
                 }
                 if (loaded.putIfAbsent(alias, currentId) != null) {
-                    LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": " + alias + " is listed more than once");
+                    LOG.error("Skipping row " + (index + 1) + " of " + dataPath() + ": " + alias + " is listed more than once");
                 }
             });
         }

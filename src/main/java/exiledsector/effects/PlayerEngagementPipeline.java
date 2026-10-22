@@ -2,7 +2,7 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
-import exiledsector.PlayerFleet;
+import exiledsector.ExiledSectorModPlugin;
 import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.items.SocketLossListener;
 
@@ -35,8 +35,7 @@ public final class PlayerEngagementPipeline extends BaseCampaignEventListener {
     public static PlayerEngagementPipeline create(SocketLossListener socketLossListener, ItemLootListener itemLootListener) {
         Map<Stage, Step> stepsByStage = new EnumMap<>(Stage.class);
         stepsByStage.put(Stage.RECORD_LOSSES, engagement -> socketLossListener.reportPlayerEngagement(engagement.result()));
-        stepsByStage.put(Stage.SYNC_TREES, engagement -> ShipTreeSync.afterPlayerEngagement(PlayerFleet.orNull()));
-        stepsByStage.put(Stage.AWARD_XP, CombatXpAward::award);
+        ExiledSectorModPlugin.DOMAINS.forEach(domain -> stepsByStage.putAll(domain.engagementSteps()));
         stepsByStage.put(Stage.SETTLE_CREW, engagement -> FleetCrewLedgerSettlement.schedule());
         stepsByStage.put(Stage.HOLD_LOOT, itemLootListener::holdLoot);
         stepsByStage.put(Stage.SALVAGE_BONUS, engagement -> FleetWideEffects.recomputeSalvageBonus(engagement.playerLossIds()));

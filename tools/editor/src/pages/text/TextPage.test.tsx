@@ -1,16 +1,17 @@
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { renderWithProviders } from '../../test/renderWithProviders.tsx';
+import { STRING_CATALOGUES } from '../../../server/stringCatalogues.ts';
 import { readRepositoryFile, startTestServer, type TestServer } from '../../test/testServer.ts';
 import { TextPage } from './TextPage.tsx';
 
-const STRINGS_FILE = 'data/strings/exiledSector/en.json';
+const STRINGS_FILE = 'data/strings/exiledLib/en.json';
 const TYPES_FILE = 'data/skilltrees/skill_types.json';
 
 let server: TestServer;
 
 beforeAll(() => {
-  server = startTestServer([STRINGS_FILE, TYPES_FILE]);
+  server = startTestServer([...STRING_CATALOGUES.map((catalogue) => catalogue.file), TYPES_FILE]);
 });
 
 afterAll(async () => {
@@ -72,7 +73,7 @@ describe('text page', () => {
       await waitFor(() => expect(saveStarted).toBe(true));
       fireEvent.change(await openString('stat.armor'), { target: { value: 'plating' } });
       saveGate.release?.();
-      await screen.findByText('Saved 1 string to en.json');
+      await screen.findByText('Saved 1 string to the English catalogues');
       expect(server.readProjectFile(STRINGS_FILE)).toContain('"stat.acceleration": "quickening"');
       expect(screen.getByText('Unsaved changes')).toBeTruthy();
       expect(server.readProjectFile(STRINGS_FILE)).toContain('"stat.armor": "armor"');

@@ -55,7 +55,7 @@ public final class HullUpgradeRules {
     }
 
     public static boolean canSocket(ShipSkillData shipData, ShipSection section, Item item, Map<String, ShipSkillData> shipDataById) {
-        return shipData.isSocketTypeUnlocked(section.id()) && item.canSocketInto(section)
+        return shipData.isSocketTypeUnlocked(section.id()) && HullItem.fits(item, section)
                 && !SocketCustody.isInstalled(shipDataById, item);
     }
 

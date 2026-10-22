@@ -388,7 +388,7 @@ class SkillNodeTest {
         SkillTree.registerType(hullOption);
         SkillNode node = new SkillNode("slot_1", placeholder, List.of(), 0f, 0f);
         ShipSkillData data = new ShipSkillData();
-        data.selectOption(node, hullOption, 1);
+        ShipTrees.selectOption(data, node, hullOption, 1);
 
         assertSame(hullOption, node.resolveEffectiveType(data));
     }
@@ -427,7 +427,7 @@ class SkillNodeTest {
         SkillType placeholder = taggedType("slot", List.of("hull"), List.of("hull"));
         SkillNode node = taggedNode(placeholder, List.of("pirate"));
         ShipSkillData data = new ShipSkillData();
-        data.selectOption(node, hullOption, 1);
+        ShipTrees.selectOption(data, node, hullOption, 1);
 
         assertEquals(List.of("pirate", "hull", "req_ballistic"), List.copyOf(node.effectiveTags(data)));
     }
@@ -471,8 +471,8 @@ class SkillNodeTest {
         SkillNode listed = new SkillNode("listed", slot, List.of(), 0f, 0f);
         SkillNode unlisted = new SkillNode("unlisted", slot, List.of(), 0f, 0f);
         ShipSkillData data = new ShipSkillData();
-        data.selectOption(listed, hull, 0);
-        data.selectOption(unlisted, armor, 0);
+        ShipTrees.selectOption(data, listed, hull, 0);
+        ShipTrees.selectOption(data, unlisted, armor, 0);
 
         assertSame(hull, listed.resolveEffectiveType(data));
         assertSame(slot, unlisted.resolveEffectiveType(data));

@@ -71,7 +71,7 @@ class UniqueSubroutinesTest {
 
     private static JSONObject uniqueRow(String id, String lines, String source) throws JSONException {
         return ItemFixtures.subroutineRow(id, SubroutineKind.UNIQUE).put("name", "Relic").put("unique", "true")
-                .put(ItemDefinition.UNIQUE_LINES_COLUMN, lines).put(ItemDefinition.UNIQUE_SOURCE_COLUMN, source);
+                .put(SubroutineDefinitions.UNIQUE_LINES_COLUMN, lines).put(SubroutineDefinitions.UNIQUE_SOURCE_COLUMN, source);
     }
 
     private static XStream xstream() {
@@ -91,12 +91,12 @@ class UniqueSubroutinesTest {
         ItemDefinition definition = ItemDefinitions.get(FLEET_RELIC);
 
         assertTrue(definition.unique());
-        assertTrue(definition.isUniqueSubroutine());
+        assertTrue(SubroutineKind.isUnique(definition));
         assertEquals(ItemType.SUBROUTINE, definition.type());
         assertEquals(List.of("TOP_SPEED_PERCENT", "SENSOR_PROFILE_PERCENT", "HULL_PERCENT"), definition.pool().stream().map(PoolEntry::effectName).toList());
         assertTrue(definition.suffixes().isEmpty());
         assertEquals(List.of(new UniqueSource(UniqueSource.Kind.FACTION, "pirates")), definition.uniqueSources());
-        assertFalse(ItemDefinitions.get(ItemFixtures.SUBROUTINE).isUniqueSubroutine());
+        assertFalse(SubroutineKind.isUnique(ItemDefinitions.get(ItemFixtures.SUBROUTINE)));
         assertTrue(ItemDefinitions.get(HULL_RELIC_A).uniqueSources().isEmpty());
     }
 
@@ -105,7 +105,7 @@ class UniqueSubroutinesTest {
         ItemDefinitions.register(new JSONArray()
                 .put(uniqueRow("hull_scoped", "@HULL_MULT; TOP_SPEED_PERCENT:1:1", "site:station"))
                 .put(uniqueRow("flagless", "TOP_SPEED_PERCENT:1:1", "site:station").put("unique", ""))
-                .put(ItemFixtures.subroutineRow("volume_lines").put(ItemDefinition.UNIQUE_LINES_COLUMN, "TOP_SPEED_PERCENT:1:1"))
+                .put(ItemFixtures.subroutineRow("volume_lines").put(SubroutineDefinitions.UNIQUE_LINES_COLUMN, "TOP_SPEED_PERCENT:1:1"))
                 .put(uniqueRow("badly_sourced", "TOP_SPEED_PERCENT:1:1", "colony:jangala")));
 
         assertEquals(List.of("TOP_SPEED_PERCENT"), ItemDefinitions.get("hull_scoped").pool().stream().map(PoolEntry::effectName).toList());
@@ -117,11 +117,11 @@ class UniqueSubroutinesTest {
     @Test
     void theSocketLimitColumnLoadsAndABadValueSkipsTheRow() throws Exception {
         ItemDefinitions.register(new JSONArray()
-                .put(uniqueRow("once", "TOP_SPEED_PERCENT:1:1", "site:station").put(ItemDefinition.SOCKET_LIMIT_COLUMN, " 1 "))
+                .put(uniqueRow("once", "TOP_SPEED_PERCENT:1:1", "site:station").put(SubroutineDefinitions.SOCKET_LIMIT_COLUMN, " 1 "))
                 .put(uniqueRow("blank", "TOP_SPEED_PERCENT:1:1", "site:station"))
-                .put(uniqueRow("zero", "TOP_SPEED_PERCENT:1:1", "site:station").put(ItemDefinition.SOCKET_LIMIT_COLUMN, "0"))
-                .put(uniqueRow("negative", "TOP_SPEED_PERCENT:1:1", "site:station").put(ItemDefinition.SOCKET_LIMIT_COLUMN, "-1"))
-                .put(uniqueRow("fractional", "TOP_SPEED_PERCENT:1:1", "site:station").put(ItemDefinition.SOCKET_LIMIT_COLUMN, "1.5")));
+                .put(uniqueRow("zero", "TOP_SPEED_PERCENT:1:1", "site:station").put(SubroutineDefinitions.SOCKET_LIMIT_COLUMN, "0"))
+                .put(uniqueRow("negative", "TOP_SPEED_PERCENT:1:1", "site:station").put(SubroutineDefinitions.SOCKET_LIMIT_COLUMN, "-1"))
+                .put(uniqueRow("fractional", "TOP_SPEED_PERCENT:1:1", "site:station").put(SubroutineDefinitions.SOCKET_LIMIT_COLUMN, "1.5")));
 
         assertEquals(1, ItemDefinitions.get("once").socketLimit());
         assertTrue(ItemDefinitions.get("once").limitsSocketsPerShip());
@@ -220,10 +220,10 @@ class UniqueSubroutinesTest {
         Random random = new Random(5L);
         for (int trial = 0; trial < 200; trial++) {
             String pickedId = idOrBlank(ItemDrops.pickUniqueFrom(UniqueSource.Kind.FACTION, "pirates", random,
-                    ItemDefinition::isUniqueSubroutine));
+                    SubroutineKind::isUnique));
             assertFalse(pickedId.equals(SITE_RELIC) || pickedId.equals(HULL_RELIC_A), pickedId);
             assertEquals("", idOrBlank(ItemDrops.pickUniqueFrom(UniqueSource.Kind.FACTION, "hegemony", random,
-                    ItemDefinition::isUniqueSubroutine)));
+                    SubroutineKind::isUnique)));
         }
         assertEquals(FLEET_RELIC, idOrBlank(ItemDrops.pickUniqueFrom(UniqueSource.Kind.FACTION, "pirates", random,
                 definition -> definition.id().equals(FLEET_RELIC))));
@@ -233,8 +233,8 @@ class UniqueSubroutinesTest {
     void onlyTheSourceSiteDropsASiteUnique() {
         Random random = new Random(6L);
         for (int trial = 0; trial < 200; trial++) {
-            List<ItemData> fromStation = ItemDrops.roll("station", random, 1f, ItemDefinition::isUniqueSubroutine);
-            List<ItemData> fromElsewhere = ItemDrops.roll("elsewhere", random, 1f, ItemDefinition::isUniqueSubroutine);
+            List<ItemData> fromStation = ItemDrops.roll("station", random, 1f, SubroutineKind::isUnique);
+            List<ItemData> fromElsewhere = ItemDrops.roll("elsewhere", random, 1f, SubroutineKind::isUnique);
 
             assertEquals(List.of(SITE_RELIC), fromStation.stream().map(ItemData::definitionId).toList());
             assertTrue(fromElsewhere.isEmpty(), fromElsewhere.toString());
@@ -265,15 +265,15 @@ class UniqueSubroutinesTest {
 
     @Test
     void theShippedUniqueSubroutinesLoadWithLinesAndASource() throws Exception {
-        ItemModifiers.register(ItemFixtures.shippedRows(ItemModifiers.DATA_PATH));
-        ItemDefinitions.register(ItemFixtures.shippedRows(ItemDefinitions.SUBROUTINES_PATH), ItemFixtures.shippedRows(ItemDefinitions.HULL_ITEMS_PATH));
-        JSONArray shippedRows = ItemFixtures.shippedRows(ItemDefinitions.SUBROUTINES_PATH);
+        ItemModifiers.register(ItemFixtures.shippedRows(ItemModifiers.dataPath()));
+        ItemDefinitions.register(ItemFixtures.shippedRows(SubroutineDefinitions.dataPath()), ItemFixtures.shippedRows(HullItem.definitionsPath()));
+        JSONArray shippedRows = ItemFixtures.shippedRows(SubroutineDefinitions.dataPath());
 
-        List<ItemDefinition> uniques = ItemDefinitions.ofType(ItemType.SUBROUTINE).stream().filter(ItemDefinition::isUniqueSubroutine).toList();
+        List<ItemDefinition> uniques = ItemDefinitions.ofType(ItemType.SUBROUTINE).stream().filter(SubroutineKind::isUnique).toList();
 
         int uniqueRows = 0;
         for (int index = 0; index < shippedRows.length(); index++) {
-            if (SubroutineKind.UNIQUE.id().equals(shippedRows.getJSONObject(index).optString(ItemDefinition.SUBROUTINE_KIND_COLUMN))) {
+            if (SubroutineKind.UNIQUE.id().equals(shippedRows.getJSONObject(index).optString(SubroutineDefinitions.SUBROUTINE_KIND_COLUMN))) {
                 uniqueRows++;
             }
         }

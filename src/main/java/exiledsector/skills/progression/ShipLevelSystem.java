@@ -5,6 +5,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import java.util.ArrayList;
@@ -101,7 +102,7 @@ public final class ShipLevelSystem {
         shipData.incrementLevel();
         if (shipData.isAutoAllocatingTemplate()) {
             shipData.bankLevelUpForTemplate();
-        } else if (!shipData.convertMostRecentAllocationToFree(allNodes)) {
+        } else if (!ShipTrees.convertMostRecentAllocationToFree(shipData, allNodes)) {
             shipData.addFreeAllocationCredit();
         }
     }

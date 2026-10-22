@@ -1,6 +1,6 @@
 package exiledsector.ui.section;
 
-import exiledsector.ui.decoration.ShipAnchors;
+import exiledsector.ui.decoration.HullPoint;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -16,7 +16,7 @@ class SectionLayoutTest {
     @Test
     void socketsGoOnTheSideOfTheirAnchorAndStayBalanced() {
         List<SectionLayout.Placement> placements = SectionLayout.place(List.of(
-                new ShipAnchors.Anchor(10f, 20f), new ShipAnchors.Anchor(-30f, 15f), new ShipAnchors.Anchor(40f, 5f), new ShipAnchors.Anchor(0f, -25f)),
+                new HullPoint(10f, 20f), new HullPoint(-30f, 15f), new HullPoint(40f, 5f), new HullPoint(0f, -25f)),
                 SectionLayout.Arrangement.BOTH_SIDES);
 
         long leftCount = placements.stream().filter(SectionLayout.Placement::leftSide).count();
@@ -30,7 +30,7 @@ class SectionLayoutTest {
     @Test
     void centrelineAnchorsAlternateAndRowsRunFrontToBack() {
         List<SectionLayout.Placement> placements = SectionLayout.place(List.of(
-                new ShipAnchors.Anchor(-20f, 0f), new ShipAnchors.Anchor(30f, 0f), new ShipAnchors.Anchor(50f, 0f)),
+                new HullPoint(-20f, 0f), new HullPoint(30f, 0f), new HullPoint(50f, 0f)),
                 SectionLayout.Arrangement.BOTH_SIDES);
 
         assertEquals(2, placements.stream().filter(SectionLayout.Placement::leftSide).count());
@@ -60,7 +60,7 @@ class SectionLayoutTest {
     @Test
     void theRefitArrangementPutsTheBowSocketAboveTheSternSocketBelowAndTheRestOnTheLeft() {
         List<SectionLayout.Placement> placements = SectionLayout.place(List.of(
-                new ShipAnchors.Anchor(-40f, 10f), new ShipAnchors.Anchor(60f, 0f), new ShipAnchors.Anchor(10f, -15f), new ShipAnchors.Anchor(20f, 30f)),
+                new HullPoint(-40f, 10f), new HullPoint(60f, 0f), new HullPoint(10f, -15f), new HullPoint(20f, 30f)),
                 SectionLayout.Arrangement.LEFT_ABOVE_BELOW);
 
         assertEquals(SectionLayout.Side.ABOVE, placements.get(1).side());
@@ -74,7 +74,7 @@ class SectionLayoutTest {
     @Test
     void twoSocketsInTheRefitArrangementBothGoOnTheLeft() {
         List<SectionLayout.Placement> placements = SectionLayout.place(List.of(
-                new ShipAnchors.Anchor(-40f, 10f), new ShipAnchors.Anchor(60f, 0f)), SectionLayout.Arrangement.LEFT_ABOVE_BELOW);
+                new HullPoint(-40f, 10f), new HullPoint(60f, 0f)), SectionLayout.Arrangement.LEFT_ABOVE_BELOW);
 
         assertTrue(placements.stream().allMatch(SectionLayout.Placement::leftSide));
     }

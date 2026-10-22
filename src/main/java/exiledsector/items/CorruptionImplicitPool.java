@@ -12,23 +12,24 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Supplier;
 
 final class CorruptionImplicitPool {
 
     static final String IMPLICIT_COLUMN = "implicit";
-    private final String dataPath;
+    private final Supplier<String> dataPath;
     private final ItemType itemType;
     private final Logger log;
     private final AtomicReference<List<Modifier>> implicits = new AtomicReference<>(List.of());
 
-    CorruptionImplicitPool(String dataPath, ItemType itemType, Logger log) {
+    CorruptionImplicitPool(Supplier<String> dataPath, ItemType itemType, Logger log) {
         this.dataPath = dataPath;
         this.itemType = itemType;
         this.log = log;
     }
 
     void load() {
-        ModCsv.load(IMPLICIT_COLUMN, dataPath, log, this::register);
+        ModCsv.load(IMPLICIT_COLUMN, dataPath.get(), log, this::register);
     }
 
     void register(JSONArray rows) throws JSONException {
@@ -40,7 +41,7 @@ final class CorruptionImplicitPool {
                     throw new IllegalArgumentException(implicit.id() + " is listed more than once");
                 }
             } catch (IllegalArgumentException e) {
-                log.error("Skipping row " + (index + 1) + " of " + dataPath + ": " + e.getMessage());
+                log.error("Skipping row " + (index + 1) + " of " + dataPath.get() + ": " + e.getMessage());
             }
         });
         implicits.set(List.copyOf(byId.values()));

@@ -1,6 +1,5 @@
 package exiledsector.ui.node;
 
-import exiledsector.items.ShipSection;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.characters.SkillSpecAPI;
@@ -10,7 +9,6 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.PlayerFleet;
 import exiledsector.effects.DoctrineRevertConflicts;
 import exiledsector.effects.DoctrineRevertRelease;
-import exiledsector.effects.FighterBayOverflow;
 import exiledsector.effects.OpReserveParity;
 import exiledsector.effects.PhantomConflictWatch;
 import exiledsector.effects.PlayerShipFacts;
@@ -18,8 +16,6 @@ import exiledsector.effects.ShipTreeSync;
 import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocationGate;
-import exiledsector.skills.FittedShipProfile;
-import exiledsector.skills.ShipSections;
 import exiledsector.skills.HullModNames;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ReleasedNodes;
@@ -27,6 +23,7 @@ import exiledsector.skills.RespecPlan;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.CostItems;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
@@ -34,15 +31,11 @@ import exiledsector.skills.SkillType;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipOpBudget;
 import exiledsector.skills.progression.SkillNodeOpCost;
-import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.unlock.NodeGates;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
-import exiledsector.skills.tags.ShipProfile;
 import exiledsector.items.DoctrineOverrides;
-import exiledsector.items.HullUpgradeRules;
-import exiledsector.items.Item;
-import exiledsector.items.ItemStore;
 import exiledsector.items.NodeGrantStatus;
+import exiledsector.ui.refit.ShipEditSession;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -148,7 +141,7 @@ final class NodeAllocator {
             if (!skillData.isAllocated(node.getId())) {
                 return allocationRefusalReason(node, option);
             }
-            return reason(node.getId() + '/' + option.getId(), gate.optionSwitch(node, option), skillData.itemCharge(node.getId()));
+            return reason(node.getId() + '/' + option.getId(), gate.optionSwitch(node, option), ShipTrees.itemCharge(skillData, node.getId()));
         }
 
         private String reason(String key, AllocationGate.Verdict verdict, SkillItemCost refund) {
@@ -167,7 +160,7 @@ final class NodeAllocator {
         }
 
         private List<NodeGrantStatus> computeNodeGrantStatuses(String socketId) {
-            List<String> grantedNodeIds = skillData.grantedNodesBySocket().getOrDefault(socketId, List.of());
+            List<String> grantedNodeIds = ShipTrees.grantedNodesBySocket(skillData).getOrDefault(socketId, List.of());
             List<NodeGrantStatus> statuses = new ArrayList<>(grantedNodeIds.size());
             for (String grantedNodeId : grantedNodeIds) {
                 statuses.add(computeNodeGrantStatus(socketId, grantedNodeId));
@@ -187,7 +180,7 @@ final class NodeAllocator {
                 if (!skillData.isGrantFree(grantedNodeId)) {
                     return NodeGrantStatus.of(grantedNodeId, NodeGrantStatus.State.BY_PATH);
                 }
-                String grantingSocketId = skillData.grantingSocket(grantedNodeId);
+                String grantingSocketId = ShipTrees.grantingSocket(skillData, grantedNodeId);
                 return grantingSocketId == null || grantingSocketId.equals(socketId) ? NodeGrantStatus.of(grantedNodeId, NodeGrantStatus.State.ACTIVE)
                         : NodeGrantStatus.of(grantedNodeId, NodeGrantStatus.State.DUPLICATE);
             }
@@ -202,13 +195,14 @@ final class NodeAllocator {
     private final FleetMemberAPI fleetMember;
     private final ShipVariantAPI shipVariant;
     private final Supplier<SkillNode> startingRootSupplier;
-    private int statsRevision;
+    private final ShipEditSession shipEdit;
     private boolean variantHullModsRefreshed;
 
     NodeAllocator(FleetMemberAPI fleetMember, ShipVariantAPI shipVariant, Supplier<SkillNode> startingRootSupplier) {
         this.fleetMember = fleetMember;
         this.shipVariant = shipVariant;
         this.startingRootSupplier = startingRootSupplier;
+        this.shipEdit = new ShipEditSession(fleetMember, shipVariant);
     }
 
     ShipSkillData data() {
@@ -235,7 +229,7 @@ final class NodeAllocator {
         ShipOpBudget opBudget = ShipOpBudget.of(fleetMember, shipVariant);
         int opCostPerNode = SkillNodeOpCost.perNode(fleetMember.getHullSpec());
         int reservedOp = OpReserveParity.reservedOp(shipVariant);
-        OpReserveParity.warnIfOutOfSync(fleetMember, shipVariant, skillData.getSpentOp(opCostPerNode), reservedOp, "while allocating nodes");
+        OpReserveParity.warnIfOutOfSync(fleetMember, shipVariant, ShipTrees.getSpentOp(skillData, opCostPerNode), reservedOp, "while allocating nodes");
         int totalOpBudget = OpReserveParity.availableOp(opBudget, reservedOp);
         AllocationGate.Budget budget = new AllocationGate.Budget(totalOpBudget, opCostPerNode, ShipLevelConfig.maxAllocatedNodes());
         ShipFacts shipFacts = PlayerShipFacts.of(fleetMember, shipVariant);
@@ -243,7 +237,7 @@ final class NodeAllocator {
         NodeEligibility.Context eligibility = NodeEligibility.Context.of(skillData, shipFacts,
                 SkillTypeUnlockStatus.lockedFor(skillData), NodeAllocator::heldInCargo);
         AllocationGate gate = new AllocationGate(skillData, SkillTree.topology(), satisfiedRootId(), budget, eligibility);
-        return new Snapshot(skillData, opBudget, statsRevision, hiddenNodeIds(skillData), gate, this::describe);
+        return new Snapshot(skillData, opBudget, shipEdit.revision(), hiddenNodeIds(skillData), gate, this::describe);
     }
 
     Snapshot planningSnapshot(ShipSkillData planData, Snapshot liveSnapshot) {
@@ -275,10 +269,9 @@ final class NodeAllocator {
             return false;
         }
         ShipSkillData skillData = snapshot.skillData();
-        skillData.allocate(node, option, gate.opCostFor(node));
+        ShipTrees.allocate(skillData, node, option, gate.opCostFor(node));
         chargeItems(skillData, node.getId(), itemCost);
-        refreshShipStats();
-        return true;
+        return changed(true);
     }
 
     boolean switchOption(SkillNode node, SkillType option, Snapshot snapshot) {
@@ -287,19 +280,18 @@ final class NodeAllocator {
             return false;
         }
         ShipSkillData skillData = snapshot.skillData();
-        SkillItemCost refund = skillData.itemCharge(node.getId());
+        SkillItemCost refund = ShipTrees.itemCharge(skillData, node.getId());
         SkillItemCost itemCost = gate.itemCost(node, option);
         if (itemCost != null && heldInCargo(itemCost.itemId()) + refundOf(refund, itemCost.itemId()) < itemCost.quantity()) {
             return false;
         }
         if (refund != null) {
-            skillData.takeItemCharge(node.getId());
+            ShipTrees.takeItemCharge(skillData, node.getId());
             refund.refundTo(PlayerFleet.cargoOrNull());
         }
-        skillData.selectOption(node, option, gate.opCostFor(node));
+        ShipTrees.selectOption(skillData, node, option, gate.opCostFor(node));
         chargeItems(skillData, node.getId(), itemCost);
-        refreshShipStats();
-        return true;
+        return changed(true);
     }
 
     boolean deallocate(SkillNode node, Snapshot snapshot) {
@@ -309,10 +301,9 @@ final class NodeAllocator {
         CargoAPI cargo = PlayerFleet.cargoOrNull();
         ShipSkillData skillData = snapshot.skillData();
         Set<String> reachableBefore = reachable(skillData);
-        skillData.deallocateReleasingCharges(node).forEach(charged -> charged.refundTo(cargo));
+        ShipTrees.deallocateReleasingCharges(skillData, node).forEach(charged -> charged.refundTo(cargo));
         releaseStranded(skillData, reachableBefore);
-        refreshShipStats();
-        return true;
+        return changed(true);
     }
 
     boolean socketItem(SkillNode node, String itemId) {
@@ -322,7 +313,7 @@ final class NodeAllocator {
             return false;
         }
         releaseStranded(skillData, reachableBefore);
-        skillData.openAnchorWormholes(ShipLevelConfig.maxAllocatedNodes());
+        ShipTrees.openAnchorWormholes(skillData, ShipLevelConfig.maxAllocatedNodes());
         return changed(true);
     }
 
@@ -337,16 +328,16 @@ final class NodeAllocator {
     }
 
     boolean openAnchorWormholes() {
-        return changed(!data().openAnchorWormholes(ShipLevelConfig.maxAllocatedNodes()).isEmpty());
+        return changed(!ShipTrees.openAnchorWormholes(data(), ShipLevelConfig.maxAllocatedNodes()).isEmpty());
     }
 
     boolean grantSocketedNodes() {
         ShipSkillData skillData = data();
-        ReleasedNodes ungranted = skillData.releaseUngrantedFreeNodes(SkillTree.topology(), satisfiedRootId());
+        ReleasedNodes ungranted = ShipTrees.releaseUngrantedFreeNodes(skillData, SkillTree.topology(), satisfiedRootId());
         CargoAPI cargo = PlayerFleet.cargoOrNull();
         ungranted.charges().forEach(refund -> refund.refundTo(cargo));
         boolean changedAny = !ungranted.nodeIds().isEmpty();
-        Map<String, List<String>> grantedNodesBySocket = skillData.grantedNodesBySocket();
+        Map<String, List<String>> grantedNodesBySocket = ShipTrees.grantedNodesBySocket(skillData);
         if (grantedNodesBySocket.isEmpty()) {
             NodeGrantStatus.rememberForShip(fleetMember.getId(), Map.of());
             return changed(changedAny);
@@ -359,7 +350,7 @@ final class NodeAllocator {
                 continue;
             }
             if (snapshot().gate().grant(grantedNode).allowed()) {
-                skillData.allocateGranted(grantedNode);
+                ShipTrees.allocateGranted(skillData, grantedNode);
                 changedAny = true;
             }
         }
@@ -370,7 +361,7 @@ final class NodeAllocator {
 
     private void rememberGrantStatuses(ShipSkillData skillData, Snapshot snapshot) {
         Map<String, List<NodeGrantStatus>> statusesByItemId = new LinkedHashMap<>();
-        for (String socketId : skillData.grantedNodesBySocket().keySet()) {
+        for (String socketId : ShipTrees.grantedNodesBySocket(skillData).keySet()) {
             String itemId = skillData.getSocketedItem(socketId);
             if (itemId != null) {
                 statusesByItemId.put(itemId, snapshot.nodeGrantStatuses(socketId));
@@ -382,62 +373,22 @@ final class NodeAllocator {
     Set<String> previewRelease(Consumer<ShipSkillData> change) {
         ShipFacts shipFacts = PlayerShipFacts.of(fleetMember, shipVariant);
         String rootId = satisfiedRootId();
-        return data().previewRelease(SkillTree.topology(), rootId,
+        return ShipTrees.previewRelease(data(), SkillTree.topology(), rootId,
                 change.andThen(planned -> DoctrineRevertRelease.release(planned, shipFacts, SkillTree.topology(), rootId)));
     }
 
     private Set<String> reachable(ShipSkillData skillData) {
-        return skillData.reachableAllocatedNodeIds(SkillTree.topology(), satisfiedRootId());
+        return ShipTrees.reachableAllocatedNodeIds(skillData, SkillTree.topology(), satisfiedRootId());
     }
 
     private void releaseStranded(ShipSkillData skillData, Set<String> reachableBefore) {
         CargoAPI cargo = PlayerFleet.cargoOrNull();
-        skillData.releaseNewlyStranded(SkillTree.topology(), satisfiedRootId(), reachableBefore).charges()
+        ShipTrees.releaseNewlyStranded(skillData, SkillTree.topology(), satisfiedRootId(), reachableBefore).charges()
                 .forEach(charged -> charged.refundTo(cargo));
     }
 
-    boolean installUpgrade() {
-        return changed(HullUpgradeRules.installUpgrade(data(), hullSize(), ItemStore.get()));
-    }
-
-    boolean unlockSection(ShipSection section) {
-        return changed(HullUpgradeRules.unlock(data(), section, currentFit()));
-    }
-
-    boolean lockSection(ShipSection section) {
-        return changed(HullUpgradeRules.lock(data(), section));
-    }
-
-    boolean installInSection(ShipSection section, Item item) {
-        return changed(HullUpgradeRules.socket(data(), section, item, ShipSkillDataManager.all()));
-    }
-
-    boolean removeFromSection(ShipSection section) {
-        return changed(data().removeFromSection(section.id()) != null);
-    }
-
-    List<ShipSections.UnlockedSection> sections() {
-        return ShipSections.forVariant(data(), shipVariant);
-    }
-
-    HullUpgradeRules.UnlockBlock unlockBlock(ShipSection section) {
-        return HullUpgradeRules.unlockBlock(data(), section, currentFit());
-    }
-
-    String unmetRequirement(ShipSection section) {
-        return ShipSections.unmetRequirement(section, currentFit());
-    }
-
-    private ShipProfile currentFit() {
-        return FittedShipProfile.profile(fleetMember.getHullSpec(), shipVariant, data());
-    }
-
-    HullSize hullSize() {
-        return fleetMember.getHullSpec().getHullSize();
-    }
-
     boolean chooseStartingRoot(SkillNode root) {
-        return changed(data().chooseStartingRoot(root));
+        return changed(ShipTrees.chooseStartingRoot(data(), root));
     }
 
     boolean canUnchooseStartingRoot(SkillNode node) {
@@ -445,7 +396,7 @@ final class NodeAllocator {
     }
 
     boolean unchooseStartingRoot(SkillNode node) {
-        return changed(canUnchooseStartingRoot(node) && data().unchooseStartingRoot());
+        return changed(canUnchooseStartingRoot(node) && ShipTrees.unchooseStartingRoot(data()));
     }
 
     List<SkillNode> respecPlan(SkillNode node) {
@@ -457,25 +408,11 @@ final class NodeAllocator {
     }
 
     private boolean changed(boolean applied) {
-        if (!applied) {
+        if (!shipEdit.changed(applied)) {
             return false;
         }
-        refreshShipStats();
-        return true;
-    }
-
-    private void refreshShipStats() {
-        statsRevision++;
-        ShipTreeSync.memberChanged(fleetMember, shipVariant);
-        FleetWideEffects.markPhaseFieldStale();
-        fleetMember.setStatUpdateNeeded(true);
-        fleetMember.updateStats();
         variantHullModsRefreshed = true;
-        returnUnhousedWings();
-    }
-
-    private void returnUnhousedWings() {
-        FighterBayOverflow.returnUnhousedWingsAndAnnounce(fleetMember, shipVariant, PlayerFleet.cargoOrNull());
+        return true;
     }
 
     private static double heldInCargo(String itemId) {
@@ -493,7 +430,7 @@ final class NodeAllocator {
             return;
         }
         CostItems.remove(cargo, itemCost.itemId(), itemCost.quantity());
-        skillData.recordItemCharge(nodeId, itemCost);
+        ShipTrees.recordItemCharge(skillData, nodeId, itemCost);
     }
 
     private void refreshVariantHullModsOnce() {

@@ -9,6 +9,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -122,14 +123,14 @@ class ShipLevelSystemTest {
     void awardXpAtTheThresholdLevelsUpAndConvertsTheMostRecentAllocationToFree() {
         ShipSkillData data = new ShipSkillData();
         SkillNode a = node("a");
-        data.allocate(a, OP_COST_PER_NODE);
+        ShipTrees.allocate(data, a, OP_COST_PER_NODE);
 
         ShipLevelSystem.awardXp(data, XP_BASE, curve(NO_GROWTH_CUTOFF, 50), List.of(a));
 
         assertEquals(1, data.getLevel());
         assertEquals(0f, data.getXp());
         assertTrue(data.isFreeNode("a"));
-        assertEquals(0, data.getSpentOp(OP_COST_PER_NODE));
+        assertEquals(0, ShipTrees.getSpentOp(data, OP_COST_PER_NODE));
     }
 
     @Test
@@ -147,8 +148,8 @@ class ShipLevelSystemTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode a = node("a");
         SkillNode b = node("b");
-        data.allocate(a, OP_COST_PER_NODE);
-        data.allocate(b, OP_COST_PER_NODE);
+        ShipTrees.allocate(data, a, OP_COST_PER_NODE);
+        ShipTrees.allocate(data, b, OP_COST_PER_NODE);
 
         ShipLevelSystem.awardXp(data, 300f, curve(NO_GROWTH_CUTOFF, 50), List.of(a, b));
 
@@ -325,7 +326,7 @@ class ShipLevelSystemTest {
     void raisingToALevelGrantsEachLevelUpWithoutTouchingXp() {
         SkillNode paid = node("paid");
         ShipSkillData data = new ShipSkillData();
-        data.allocate(paid, OP_COST_PER_NODE);
+        ShipTrees.allocate(data, paid, OP_COST_PER_NODE);
         data.addXp(12f);
 
         assertTrue(ShipLevelSystem.raiseToLevel(data, 3, List.of(paid)));

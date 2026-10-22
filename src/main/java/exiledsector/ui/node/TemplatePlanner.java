@@ -1,6 +1,7 @@
 package exiledsector.ui.node;
 
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
@@ -45,7 +46,7 @@ final class TemplatePlanner {
     }
 
     void start(SkillTreeTemplate template) {
-        planData = liveSnapshotSupplier.get().skillData().planningCopy();
+        planData = ShipTrees.planningCopy(liveSnapshotSupplier.get().skillData());
         editedTemplateId = template == null ? null : template.id();
         templateSteps = template == null ? List.of() : template.steps();
         planSnapshot = null;
@@ -132,7 +133,7 @@ final class TemplatePlanner {
         if (currentPlan.isHidden(node) || !currentPlan.gate().allocation(node, option).allowed()) {
             return false;
         }
-        planData.allocate(node, option, 0);
+        ShipTrees.allocate(planData, node, option, 0);
         return true;
     }
 
@@ -140,7 +141,7 @@ final class TemplatePlanner {
         if (!isPlannedOnly(node) || !snapshot().gate().deallocation(node).allowed()) {
             return false;
         }
-        planData.deallocate(node);
+        ShipTrees.deallocate(planData, node);
         return true;
     }
 
@@ -148,7 +149,7 @@ final class TemplatePlanner {
         if (!isPlannedOnly(node) || !snapshot().gate().optionSwitch(node, option).allowed()) {
             return false;
         }
-        planData.selectOption(node, option, 0);
+        ShipTrees.selectOption(planData, node, option, 0);
         return true;
     }
 
@@ -166,7 +167,7 @@ final class TemplatePlanner {
         List<TemplateStep> steps = new ArrayList<>(TemplateCapture.capture(orderedNodeIds, nodeId -> {
             String templateOption = templateOptionsByNodeId.get(nodeId);
             return templateOption != null && liveData.isAllocated(nodeId) ? templateOption : planData.getOptionalSelection(nodeId);
-        }, planData, startingRootId, SkillTree.getAllNodes()));
+        }, ShipTrees.wormholePartners(planData), startingRootId, SkillTree.getAllNodes()));
         for (TemplateStep carriedStep : carriedSteps) {
             if (!planData.isAllocated(carriedStep.nodeId())) {
                 steps.add(carriedStep);

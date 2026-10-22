@@ -1,10 +1,12 @@
 package exiledsector.ui.inspect;
 
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.effects.ModuleShareSetting;
+import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
@@ -12,10 +14,9 @@ import exiledsector.i18n.Translation;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.DiminishedStat;
 import exiledsector.skills.DiminishingReturns;
+import exiledsector.skills.EffectContribution;
 import exiledsector.skills.ShipFacts;
-import exiledsector.skills.ShipSections;
 import exiledsector.skills.SkillTreeBonusSummary;
-import exiledsector.items.HullUpgradeEffectSource;
 import exiledsector.skills.SkillTreeBonusSummary.Summary;
 import exiledsector.skills.SkillType;
 import exiledsector.items.Item;
@@ -30,8 +31,21 @@ public final class ShipTreeSummaryRenderer {
     private static final float LINE_PAD = 3f;
     private static final float SECTION_PAD = 10f;
     private static final String BULLET = "    - ";
+    private static final float HULL_MOD_TOOLTIP_PAD = 10f;
+    private static final int MAX_HULL_MOD_BONUS_LINES = 25;
 
     private ShipTreeSummaryRenderer() {
+    }
+
+    public static void renderForCoreHullMod(TooltipMakerAPI tooltip, HullSize hullSize, ShipAPI ship) {
+        ShipTreeLookup.ShipTree shipTree = ShipTreeLookup.forShip(SkillTreeHullMod.memberOf(ship), ship.getVariant());
+        if (shipTree == null) {
+            I18n.forGameText(() -> VanillaText.addPara(tooltip, Translation.styled("hullmod.exiledSector_core.noTree"), HULL_MOD_TOOLTIP_PAD,
+                    Misc.getGrayColor()));
+            return;
+        }
+        boolean hasModuleSlots = ship.getHullSpec() != null && ShipFacts.hasModuleSlots(ship.getHullSpec());
+        render(tooltip, shipTree, hullSize, hasModuleSlots, HULL_MOD_TOOLTIP_PAD, MAX_HULL_MOD_BONUS_LINES);
     }
 
     public static void render(TooltipMakerAPI info, FleetMemberAPI member, ShipTreeLookup.ShipTree shipTree, float pad) {
@@ -46,7 +60,7 @@ public final class ShipTreeSummaryRenderer {
     private static void renderSummary(TooltipMakerAPI info, ShipTreeLookup.ShipTree shipTree, HullSize hullSize, boolean hasModuleSlots,
                                       float pad, int maxBonusLines) {
         Summary bonusSummary = SkillTreeBonusSummary.of(shipTree.skillData(), hullSize, shipTree.bonusScale(),
-                HullUpgradeEffectSource.contributions(shipTree.skillData(), shipTree.sections(), hullSize),
+                partContributions(shipTree, hullSize),
                 shipTree.statBaseline(), DiminishingReturns.current());
 
         List<String> headerParts = new ArrayList<>();
@@ -85,7 +99,7 @@ public final class ShipTreeSummaryRenderer {
             VanillaText.addPara(info, Translation.msg("summary.sockets").arg("names", Translation.list(socketedNames)).styled(), LINE_PAD,
                     Misc.getTextColor());
         }
-        renderSections(info, shipTree);
+        renderPartLines(info, shipTree);
         renderModuleShare(info, hasModuleSlots);
 
         if (!bonusSummary.bonuses().isEmpty()) {
@@ -121,28 +135,20 @@ public final class ShipTreeSummaryRenderer {
         }
     }
 
-    private static void renderSections(TooltipMakerAPI info, ShipTreeLookup.ShipTree shipTree) {
-        int hullUpgradePoints = shipTree.skillData().getHullUpgradePoints();
-        if (hullUpgradePoints <= 0) {
-            return;
+    private static List<EffectContribution> partContributions(ShipTreeLookup.ShipTree shipTree, HullSize hullSize) {
+        List<EffectContribution> contributions = new ArrayList<>();
+        for (ShipSummaryPart part : ShipSummaryParts.all()) {
+            contributions.addAll(part.contributions(shipTree.skillData(), shipTree.variant(), hullSize));
         }
-        List<StyledText> socketTexts = new ArrayList<>();
-        for (ShipSections.UnlockedSection slot : shipTree.sections()) {
-            socketTexts.add(sectionText(slot));
-        }
-        StyledText sockets = socketTexts.isEmpty() ? Translation.styled("summary.frameworkNone") : Translation.list(socketTexts);
-        VanillaText.addPara(info, Translation.msg("summary.framework").arg("used", shipTree.skillData().getUnlockedSocketTypeIds().size())
-                .arg("points", hullUpgradePoints).arg("sockets", sockets).styled(), LINE_PAD, Misc.getTextColor());
+        return contributions;
     }
 
-    private static StyledText sectionText(ShipSections.UnlockedSection slot) {
-        if (!slot.active()) {
-            return Translation.msg("summary.frameworkSocket.inactive").arg("type", slot.section().displayName()).styled();
+    private static void renderPartLines(TooltipMakerAPI info, ShipTreeLookup.ShipTree shipTree) {
+        for (ShipSummaryPart part : ShipSummaryParts.all()) {
+            StyledText line = part.line(shipTree.skillData(), shipTree.variant());
+            if (line != null) {
+                VanillaText.addPara(info, line, LINE_PAD, Misc.getTextColor());
+            }
         }
-        if (slot.item() == null) {
-            return StyledText.of(slot.section().displayName());
-        }
-        return Translation.msg("summary.frameworkSocket.filled").arg("type", slot.section().displayName())
-                .arg("item", StyledText.styled(slot.item().name(), Style.HIGHLIGHT)).styled();
     }
 }

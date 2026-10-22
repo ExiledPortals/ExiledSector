@@ -2,6 +2,7 @@ package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import exiledsector.items.HullItem;
 import exiledsector.skills.tags.NodeRequirements;
 import exiledsector.skills.tags.ShipProfile;
 import exiledsector.items.ShipSection;
@@ -27,7 +28,7 @@ public final class ShipSections {
         }
 
         public boolean appliesItem() {
-            return item != null && active() && item.canSocketInto(section);
+            return item != null && active() && HullItem.fits(item, section);
         }
     }
 
@@ -95,7 +96,7 @@ public final class ShipSections {
         }
         List<SkillTypeEffect> applied = new ArrayList<>();
         for (SkillTypeEffect effect : section.item().skillEffects(hullSize)) {
-            if (AllocatedSkillEffects.appliesTo(shipData, effect.effect())) {
+            if (!shipData.isNpcBuild() || effect.effect().appliesToNpcShips()) {
                 applied.add(effect);
             }
         }

@@ -47,10 +47,10 @@ class ReleasedItemsTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        EffectAliases.register(csvRows(EffectAliases.DATA_PATH));
-        ItemIdAliases.register(csvRows(ItemIdAliases.DATA_PATH));
-        ItemModifiers.register(csvRows(ItemModifiers.DATA_PATH));
-        ItemDefinitions.register(csvRows(ItemDefinitions.SUBROUTINES_PATH), csvRows(ItemDefinitions.HULL_ITEMS_PATH));
+        EffectAliases.register(csvRows(EffectAliases.dataPath()));
+        ItemIdAliases.register(csvRows(ItemIdAliases.dataPath()));
+        ItemModifiers.register(csvRows(ItemModifiers.dataPath()));
+        ItemDefinitions.register(csvRows(SubroutineDefinitions.dataPath()), csvRows(HullItem.definitionsPath()));
     }
 
     @AfterEach
@@ -83,7 +83,7 @@ class ReleasedItemsTest {
 
     @Test
     void everyItemIdAliasPointsAtALoadedDefinitionAndNoAliasIsStillADefinition() throws Exception {
-        JSONArray aliases = csvRows(ItemIdAliases.DATA_PATH);
+        JSONArray aliases = csvRows(ItemIdAliases.dataPath());
         assertTrue(aliases.length() > 0);
         for (int i = 0; i < aliases.length(); i++) {
             String alias = aliases.getJSONObject(i).getString("alias");
@@ -113,7 +113,7 @@ class ReleasedItemsTest {
         ledger().forEach(entry -> releasedDefinitions.add(entry.definitionId()));
         List<String> missing = releasedDefinitions.stream().filter(id -> ItemDefinitions.get(id) == null).toList();
 
-        assertEquals(List.of(), missing, "These socketable ids shipped in a release but no longer load from " + ItemDefinitions.SUBROUTINES_PATH + " or " + ItemDefinitions.HULL_ITEMS_PATH
+        assertEquals(List.of(), missing, "These socketable ids shipped in a release but no longer load from " + SubroutineDefinitions.dataPath() + " or " + HullItem.definitionsPath()
                 + ". Every owned copy shows as Unknown, applies with no pool rules, disassembles as a common and NPC ships carrying"
                 + " them stop dropping them. Restore the row or fix its parse error (see the log).");
     }
@@ -123,7 +123,7 @@ class ReleasedItemsTest {
         List<ReleasedPoolEffect> gone = ledger().stream().filter(entry -> new RolledEffect(entry.effectName(), 0f).effect() == null).toList();
 
         assertEquals(List.of(), gone, "These pool effects shipped in a release but are no longer skill effects. Items that rolled them"
-                + " silently lose the bonus. Keep the effect, or add a row to " + EffectAliases.DATA_PATH + " naming its replacement.");
+                + " silently lose the bonus. Keep the effect, or add a row to " + EffectAliases.dataPath() + " naming its replacement.");
     }
 
     @Test
@@ -135,9 +135,9 @@ class ReleasedItemsTest {
                 .toList();
 
         assertEquals(List.of(), dropped, "These pool effects shipped in a release but are no longer in their definition's pool in "
-                + ItemDefinitions.SUBROUTINES_PATH + " or " + ItemDefinitions.HULL_ITEMS_PATH + ". Items that rolled them keep their stored value but lose its roll range, cannot"
+                + SubroutineDefinitions.dataPath() + " or " + HullItem.definitionsPath() + ". Items that rolled them keep their stored value but lose its roll range, cannot"
                 + " recalibrate it and only guess its prefix or suffix side when augmented. If the effect was renamed, add a row to "
-                + EffectAliases.DATA_PATH + "; if it left the pool on purpose, set retiredAfter to the last release that had it in "
+                + EffectAliases.dataPath() + "; if it left the pool on purpose, set retiredAfter to the last release that had it in "
                 + LEDGER + ".");
     }
 
@@ -160,7 +160,7 @@ class ReleasedItemsTest {
                 .filter(entry -> !namesEffect(ItemDefinitions.get(entry.definitionId()), entry.currentEffectName()))
                 .toList();
 
-        assertEquals(List.of(), nameless, "These pool effects shipped in a release but no named modifier in " + ItemModifiers.DATA_PATH
+        assertEquals(List.of(), nameless, "These pool effects shipped in a release but no named modifier in " + ItemModifiers.dataPath()
                 + " covers them. Common items keep the effect in their frozen name, so the name loses that word. Keep a named modifier"
                 + " for the effect in the slot it had, even after it leaves the pool.");
     }

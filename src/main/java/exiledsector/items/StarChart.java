@@ -1,5 +1,7 @@
 package exiledsector.items;
 
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.modifiers.Modifier;
@@ -15,10 +17,59 @@ import java.util.function.Function;
 
 public final class StarChart extends Item {
 
-    public static final int LOWEST_TIER = 1;
-    public static final int HIGHEST_TIER = 15;
+    public static final int LOWEST_TIER = ItemTraits.LOWEST_TIER;
+    public static final int HIGHEST_TIER = ItemTraits.HIGHEST_TIER;
     public static final int LOWEST_QUALITY = 0;
     public static final int HIGHEST_QUALITY = 20;
+
+    public static final ItemTypeSupport SUPPORT = new ItemTypeSupport() {
+        @Override
+        public ItemType type() {
+            return ItemType.STAR_CHART;
+        }
+
+        @Override
+        public Class<? extends Item> itemClass() {
+            return StarChart.class;
+        }
+
+        @Override
+        public String saveAlias() {
+            return "exiledSector.StarChart";
+        }
+
+        @Override
+        public Item create(String id, String definitionId, long seed, List<RolledModifier> explicitModifiers) {
+            return new StarChart(id, definitionId, seed, explicitModifiers);
+        }
+
+        @Override
+        public Item convert(Item source) {
+            return new StarChart(source);
+        }
+
+        @Override
+        public int lowestTier(String definitionId) {
+            return StarChartDefinitions.minTier(definitionId);
+        }
+
+        @Override
+        public int rolledTier(String definitionId, int tier) {
+            return StarChartDefinitions.tierAtLeastMinimum(definitionId, tier);
+        }
+
+        @Override
+        public boolean rollsAtTier(String definitionId, int tier) {
+            return StarChartDefinitions.rollsAtTier(definitionId, tier);
+        }
+
+        @Override
+        public ItemTraits traitsAtTier(ItemDefinition definition, long seed, int tier) {
+            List<RolledModifier> implicits = StarChartImplicits.isLoaded()
+                    ? StarChartImplicits.roll(StarChartDefinitions.systemType(definition.id()), seed) : List.of();
+            return new ItemTraits(tier, 0, null, implicits.isEmpty() ? null : implicits);
+        }
+    };
 
     private static volatile Function<StarChart, List<StyledText>> lootTotals = chart -> List.of();
 
@@ -46,6 +97,16 @@ public final class StarChart extends Item {
 
     public static int clampQuality(int quality) {
         return Math.max(LOWEST_QUALITY, Math.min(HIGHEST_QUALITY, quality));
+    }
+
+    @Override
+    void keepWhenUnresolved(UnresolvedItem unresolved) {
+        unresolved.keepChart(tier(), quality());
+    }
+
+    @Override
+    void writeTooltipSections(TooltipMakerAPI tooltip, HullSize hullSize, boolean showRollRanges) {
+        ItemTooltip.addCentredLines(tooltip, lootTotalLines());
     }
 
     @Override

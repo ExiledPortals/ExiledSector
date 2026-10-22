@@ -1,8 +1,9 @@
 # Localisation
 
-All player-visible text lives in message catalogues under `data/strings/exiledSector/`. `en.json` holds
-the English source for everything the Java code shows, and `zh_CN.json` holds the Simplified Chinese
-translation.
+All player-visible text lives in message catalogues, one folder per part: `data/strings/exiledLib/` for the
+library, and `core/`, `skillTree/`, `hullUpgrades/` and `starCharts/` under `data/strings/exiledSector/`. In
+each folder `en.json` holds the English source and `zh_CN.json` the Simplified Chinese translation. The
+game merges every folder into one catalogue, so a key lives in exactly one of them.
 
 A few kinds of text keep their English source in the data files instead: skill type names and
 descriptions in `data/skilltrees/skill_types.json`, and our hull mods' names and descriptions in
@@ -52,7 +53,7 @@ isn't empty.
 
 ## Adding a language from another mod
 
-A translation mod can ship its own `data/strings/exiledSector/<locale>.json`, for example `ru.json` or
+A translation mod can ship its own `<locale>.json` in each catalogue folder, for example `ru.json` or
 `ja.json`, and Starsector merges it into our catalogue. The same mechanism lets a mod override individual
 keys of a language that already exists.
 
@@ -63,7 +64,7 @@ the glyphs, set `meta.fakeBold` to `false`.
 The test-scope `BitmapFontGenerator` can build a suitable atlas:
 
 ```
-java -cp target/test-classes;target/classes exiledsector.i18n.BitmapFontGenerator <font.ttf|.otf> graphics/fonts/exiledSector/<name>.fnt 17 20 2048 1024 data/strings/exiledSector/en.json data/strings/exiledSector/<locale>.json
+java -cp target/test-classes;target/classes exiledsector.i18n.BitmapFontGenerator <font.ttf|.otf> graphics/fonts/exiledSector/<name>.fnt 17 20 2048 1024 data/strings/exiledLib/<locale>.json data/strings/exiledSector/core/<locale>.json data/strings/exiledSector/skillTree/<locale>.json data/strings/exiledSector/hullUpgrades/<locale>.json data/strings/exiledSector/starCharts/<locale>.json
 ```
 
 The arguments are, in order: the source font, the output `.fnt` path, the glyph size in pixels, the line

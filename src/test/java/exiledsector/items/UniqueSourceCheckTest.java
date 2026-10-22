@@ -45,8 +45,8 @@ class UniqueSourceCheckTest {
     }
 
     private static JSONObject uniqueRow(String id, String source) throws JSONException {
-        return ItemFixtures.subroutineRow(id, SubroutineKind.UNIQUE).put("unique", "true").put(ItemDefinition.UNIQUE_LINES_COLUMN, "HULL_MULT:1:1")
-                .put(ItemDefinition.UNIQUE_SOURCE_COLUMN, source);
+        return ItemFixtures.subroutineRow(id, SubroutineKind.UNIQUE).put("unique", "true").put(SubroutineDefinitions.UNIQUE_LINES_COLUMN, "HULL_MULT:1:1")
+                .put(SubroutineDefinitions.UNIQUE_SOURCE_COLUMN, source);
     }
 
     @Test

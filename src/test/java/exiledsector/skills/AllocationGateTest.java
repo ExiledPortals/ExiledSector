@@ -32,7 +32,7 @@ class AllocationGateTest {
         RealSkillData.clear();
         root = node("root", type("root_type", SkillTier.ROOT).build());
         data = new ShipSkillData();
-        data.chooseStartingRoot(root);
+        ShipTrees.chooseStartingRoot(data, root);
     }
 
     @AfterEach
@@ -156,8 +156,8 @@ class AllocationGateTest {
         SkillNode bridge = node("bridge", type("bridge_type", SkillTier.SMALL).build(), "root", "leaf");
         SkillNode leaf = node("leaf", type("leaf_type", SkillTier.SMALL).build(), "bridge");
         SkillNode loose = node("loose", type("loose_type", SkillTier.SMALL).build(), "root");
-        data.allocate(bridge, OP_PER_NODE);
-        data.allocate(leaf, OP_PER_NODE);
+        ShipTrees.allocate(data, bridge, OP_PER_NODE);
+        ShipTrees.allocate(data, leaf, OP_PER_NODE);
 
         AllocationGate gate = gate();
         assertEquals(AllocationGate.Refusal.STARTING_ROOT, refusal(gate.deallocation(root)));
@@ -173,7 +173,7 @@ class AllocationGateTest {
         SkillType second = registered(type("second_option", SkillTier.SMALL).build());
         SkillNode choice = optional("choice", first, second);
         SkillNode other = optional("other", first, second);
-        data.selectOption(choice, first, OP_PER_NODE);
+        ShipTrees.selectOption(data, choice, first, OP_PER_NODE);
 
         AllocationGate gate = gate();
         assertEquals(AllocationGate.Refusal.SAME_OPTION, refusal(gate.optionSwitch(choice, first)));
@@ -188,7 +188,7 @@ class AllocationGateTest {
         SkillType otherFrontConversion = registered(type("other_front_conversion", SkillTier.SMALL)
                 .effects(List.of(new SkillTypeEffect(ShieldSkillEffect.CONVERT_SHIELD_TO_FRONT, 1f))).build());
         SkillNode choice = optional("choice", frontConversion, otherFrontConversion);
-        data.selectOption(choice, frontConversion, OP_PER_NODE);
+        ShipTrees.selectOption(data, choice, frontConversion, OP_PER_NODE);
         NodeEligibility.Context eligibility = NodeEligibility.Context.of(data,
                 new ShipFacts(HullSize.FRIGATE, ShieldType.OMNI, false, 100f, hullModId -> false), null, itemId -> 0);
         AllocationGate gate = new AllocationGate(data, SkillTree.topology(), "root", new AllocationGate.Budget(AMPLE_OP, OP_PER_NODE,
@@ -203,8 +203,8 @@ class AllocationGateTest {
         SkillType first = registered(type("first_option", SkillTier.SMALL).itemCost(new SkillItemCost("alpha_core", 1f)).build());
         SkillType second = registered(type("second_option", SkillTier.SMALL).itemCost(new SkillItemCost("alpha_core", 1f)).build());
         SkillNode choice = optional("choice", first, second);
-        data.selectOption(choice, first, OP_PER_NODE);
-        data.recordItemCharge("choice", first.getItemCost());
+        ShipTrees.selectOption(data, choice, first, OP_PER_NODE);
+        ShipTrees.recordItemCharge(data, "choice", first.getItemCost());
         Map<String, Double> cargo = Map.of("alpha_core", 0d);
 
         assertTrue(gate(AMPLE_OP, AMPLE_NODE_CAP, itemId -> cargo.getOrDefault(itemId, 0d), null).optionSwitch(choice, second).allowed());

@@ -1,6 +1,5 @@
 package exiledsector.items;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.CargoTransferHandlerAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
@@ -10,7 +9,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.ui.inspect.ItemCodex;
+import exiledsector.ui.socket.ItemCodexLink;
 import exiledsector.ui.util.SpriteCache;
 import exiledsector.ui.cargo.CargoIconAnimation;
 import exiledsector.ui.cargo.CargoIconFx;
@@ -22,8 +21,6 @@ import java.util.function.Supplier;
 
 public class ItemPlugin extends BaseSpecialItemPlugin {
 
-    static final String BUY_PRICE_MULT_SETTING = "nonEconItemBuyPriceMult";
-    static final String SELL_PRICE_MULT_SETTING = "nonEconItemSellPriceMult";
     private static final SpriteCache SPRITES = new SpriteCache(ItemPlugin.class);
 
     private final CargoIconAnimation animation = new CargoIconAnimation();
@@ -44,14 +41,10 @@ public class ItemPlugin extends BaseSpecialItemPlugin {
 
     @Override
     public int getPrice(MarketAPI market, SubmarketAPI submarket) {
-        WormholeAnchorDefinitions.AnchorMarket anchorMarket = previewItem instanceof WormholeAnchor
-                ? WormholeAnchorDefinitions.market(previewItem.definitionId()) : null;
-        if (anchorMarket == null) {
-            return super.getPrice(market, submarket);
-        }
+        ItemTypeSupport support = previewItem == null ? null : ItemTypes.of(previewItem.type());
         boolean forSale = stack != null && ItemData.isMarketListing(stack.getSpecialDataIfSpecial());
-        return forSale ? anchorMarket.price() : WormholeAnchorDefinitions.sellBaseValue(anchorMarket.price(),
-                Global.getSettings().getFloat(BUY_PRICE_MULT_SETTING), Global.getSettings().getFloat(SELL_PRICE_MULT_SETTING));
+        Integer price = support == null ? null : support.cargoPrice(previewItem, forSale);
+        return price == null ? super.getPrice(market, submarket) : price;
     }
 
     @Override
@@ -66,7 +59,7 @@ public class ItemPlugin extends BaseSpecialItemPlugin {
 
     @Override
     public void createTooltip(TooltipMakerAPI tooltip, boolean expanded, CargoTransferHandlerAPI transferHandler, Object stackSource) {
-        String codexEntryId = previewItem == null ? null : ItemCodex.existingEntryId(previewItem.definitionId());
+        String codexEntryId = previewItem == null ? null : ItemCodexLink.existingEntryId(previewItem.definitionId());
         if (codexEntryId != null) {
             tooltip.setCodexEntryId(codexEntryId);
         }

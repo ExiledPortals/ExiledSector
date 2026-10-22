@@ -14,6 +14,7 @@ import exiledsector.skills.ShipSystemCharges;
 
 import java.util.EnumSet;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public record ShipProfile(HullSize hullSize, ShieldAPI.ShieldType shieldType, int fighterBays,
                           Set<WeaponKind> weaponKinds, boolean flagship, float baseArmor, boolean phaseHull,
@@ -39,6 +40,19 @@ public record ShipProfile(HullSize hullSize, ShieldAPI.ShieldType shieldType, in
                 fighterBays(member, hullSpec),
                 fittedWeaponKinds(member.getVariant()), member.isFlagship(), hullSpec.getArmorRating(),
                 hullSpec.isPhase(), ShipSystemCharges.limited(hullSpec), ShipFacts.onlyBuiltInWings(hullSpec));
+    }
+
+    public ShipFacts facts(Predicate<String> hasHullMod) {
+        return facts(hasHullMod, null);
+    }
+
+    public ShipFacts facts(Predicate<String> hasHullMod, String hullId) {
+        return facts(hasHullMod, hullId, hasHullMod);
+    }
+
+    public ShipFacts facts(Predicate<String> hasHullMod, String hullId, Predicate<String> hasFixedHullMod) {
+        return new ShipFacts(hullSize, shieldType, phaseHull, baseArmor, limitedSystemCharges, hasHullMod, onlyBuiltInWings, hullId,
+                hasFixedHullMod, ShipFacts.hasModuleSlots(hullId));
     }
 
     private static int fighterBays(FleetMemberAPI member, ShipHullSpecAPI hullSpec) {

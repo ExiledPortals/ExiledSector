@@ -1,14 +1,13 @@
 package exiledsector.ui.node;
 
 import exiledsector.i18n.Translation;
-import exiledsector.items.ShipSection;
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.items.NodeSocketable;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocationGate;
-import exiledsector.skills.ShipSections;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -20,7 +19,6 @@ import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.StepVerdict;
 import exiledsector.skills.template.TemplateCapture;
 import exiledsector.skills.template.TemplateStep;
-import exiledsector.items.HullUpgradeRules;
 import exiledsector.items.SocketCustody;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
@@ -91,8 +89,16 @@ public final class TreeAllocationSession {
         allocator.grantSocketedNodes();
     }
 
+    static SkillTreeSounds.NodeSize allocationSound(SkillTier tier) {
+        return switch (tier) {
+            case KEYSTONE, ROOT -> SkillTreeSounds.NodeSize.LARGE;
+            case NOTABLE, WORMHOLE, WORMHOLE_EXIT -> SkillTreeSounds.NodeSize.MEDIUM;
+            case SMALL, SOCKET -> SkillTreeSounds.NodeSize.SMALL;
+        };
+    }
+
     private static StartingRootChoice initialRootChoice(ShipSkillData skillData) {
-        String startingRootId = skillData.resolveStartingRootId();
+        String startingRootId = ShipTrees.resolveStartingRootId(skillData);
         SkillNode startingRoot = startingRootId == null ? null : SkillTree.get(startingRootId);
         if (startingRoot != null) {
             return StartingRootChoice.alreadyChosen(startingRoot);
@@ -225,11 +231,11 @@ public final class TreeAllocationSession {
     }
 
     String wormholePartner(SkillNode node) {
-        return allocator.data().wormholePartner(node);
+        return ShipTrees.wormholePartner(allocator.data(), node);
     }
 
     public List<SkillTreeTopology.WormholePair> wormholePairs() {
-        return viewSnapshot().skillData().wormholePairs(SkillTree.topology());
+        return ShipTrees.wormholePairs(viewSnapshot().skillData(), SkillTree.topology());
     }
 
     public Item socketedItem(SkillNode node) {
@@ -316,11 +322,11 @@ public final class TreeAllocationSession {
     }
 
     private void removeOrSwitchOption(SkillNode node, NodeAllocator.Snapshot allocation) {
-        boolean anchorLinked = allocation.skillData().anchorPartner(node.getId()) != null;
-        boolean holdsGrant = allocation.skillData().grantedNodesBySocket().containsKey(node.getId());
+        boolean anchorLinked = ShipTrees.anchorPartner(allocation.skillData(), node.getId()) != null;
+        boolean holdsGrant = ShipTrees.grantedNodesBySocket(allocation.skillData()).containsKey(node.getId());
         boolean holdsDoctrine = holdsDoctrine(allocation.skillData(), node);
         if ((anchorLinked || holdsGrant || holdsDoctrine) && allocation.gate().deallocation(node).allowed()
-                && !confirmRelease(DEALLOCATE_ACTION, node, planned -> planned.deallocate(node))) {
+                && !confirmRelease(DEALLOCATE_ACTION, node, planned -> ShipTrees.deallocate(planned, node))) {
             return;
         }
         Set<String> allocatedBefore = Set.copyOf(allocation.skillData().getAllocatedNodeIds());
@@ -341,7 +347,7 @@ public final class TreeAllocationSession {
         ShipSkillData liveData = allocator.data();
         String pairedId = wormholePartner(node);
         SkillNode paired = pairedId == null ? null : SkillTree.get(pairedId);
-        boolean closedAnchorWormhole = liveData.anchorPartner(node.getId()) != null
+        boolean closedAnchorWormhole = ShipTrees.anchorPartner(liveData, node.getId()) != null
                 && !(liveData.isAllocated(node.getId()) && liveData.isAllocated(pairedId));
         if (paired == null || closedAnchorWormhole) {
             return null;
@@ -417,7 +423,7 @@ public final class TreeAllocationSession {
         lastChosenOptionalOption = chosenOption;
         if (wasAllocated) {
             refreshAfterAllocation();
-            SkillTreeSounds.allocated(node.getType().getTier());
+            SkillTreeSounds.allocated(allocationSound(node.getType().getTier()));
             feedback.pulse(node);
         } else {
             afterAllocationChange(node, true);
@@ -562,7 +568,7 @@ public final class TreeAllocationSession {
 
     private void planChanged(SkillNode node, boolean plannedNow) {
         if (plannedNow) {
-            SkillTreeSounds.allocated(node.getType().getTier());
+            SkillTreeSounds.allocated(allocationSound(node.getType().getTier()));
             feedback.pulse(node);
         } else {
             SkillTreeSounds.deallocated();
@@ -664,7 +670,7 @@ public final class TreeAllocationSession {
     }
 
     public boolean installInSocket(SkillNode node, Item item) {
-        if (isBusy() || node == null || item == null || !item.canSocketInto(node)
+        if (isBusy() || node == null || item == null || !NodeSocketable.fits(item, node)
                 || SocketCustody.installations(ShipSkillDataManager.all()).containsKey(item.id())
                 || blockingSocketRefusal(node, item) != null
                 || !confirmRelease(INSTALL_ACTION, node, planned -> planned.socketItem(node.getId(), item.id()))) {
@@ -698,16 +704,16 @@ public final class TreeAllocationSession {
         ShipSkillData skillData = allocator.data();
         Set<String> released = new LinkedHashSet<>(allocator.previewRelease(change));
         released.remove(node.getId());
-        String partnerId = skillData.anchorPartner(node.getId());
+        String partnerId = ShipTrees.anchorPartner(skillData, node.getId());
         if (partnerId != null) {
             released.remove(partnerId);
         }
-        List<String> grantedNodeIds = skillData.grantedNodesBySocket().getOrDefault(node.getId(), List.of());
+        List<String> grantedNodeIds = ShipTrees.grantedNodesBySocket(skillData).getOrDefault(node.getId(), List.of());
         grantedNodeIds.stream().filter(skillData::isGrantFree).forEach(released::remove);
         if (released.isEmpty()) {
             return true;
         }
-        int returnedOp = skillData.paidNodeCount(released) * snapshot().opCostPerNode();
+        int returnedOp = ShipTrees.paidNodeCount(skillData, released) * snapshot().opCostPerNode();
         String warningKey;
         if (holdsDoctrine(skillData, node)) {
             warningKey = "socketable.doctrine.releaseConfirm";
@@ -737,60 +743,8 @@ public final class TreeAllocationSession {
         }
     }
 
-    public List<ShipSections.UnlockedSection> sections() {
-        return allocator.sections();
-    }
-
-    public int hullUpgradePoints() {
-        return allocator.data().getHullUpgradePoints();
-    }
-
-    public int unspentHullUpgradePoints() {
-        return allocator.data().getUnspentHullUpgradePoints();
-    }
-
-    public boolean isSectionUnlocked(ShipSection section) {
-        return allocator.data().isSocketTypeUnlocked(section.id());
-    }
-
-    public HullSize hullSize() {
-        return allocator.hullSize();
-    }
-
-    public HullUpgradeRules.UnlockBlock unlockBlock(ShipSection section) {
-        return allocator.unlockBlock(section);
-    }
-
-    public String unmetRequirement(ShipSection section) {
-        return allocator.unmetRequirement(section);
-    }
-
-    public boolean installUpgrade() {
-        return applySectionChange(allocator::installUpgrade, SkillTreeSounds::socketed);
-    }
-
-    public boolean unlockSection(ShipSection section) {
-        return applySectionChange(() -> allocator.unlockSection(section), SkillTreeSounds::socketed);
-    }
-
-    public boolean lockSection(ShipSection section) {
-        return applySectionChange(() -> allocator.lockSection(section), () -> { });
-    }
-
-    public boolean installInSection(ShipSection section, Item item) {
-        return applySectionChange(() -> allocator.installInSection(section, item), SkillTreeSounds::socketed);
-    }
-
-    public boolean removeFromSection(ShipSection section) {
-        return applySectionChange(() -> allocator.removeFromSection(section), () -> { });
-    }
-
     private boolean apply(BooleanSupplier change, Runnable afterChange) {
         return !isBusy() && applyChange(change, afterChange);
-    }
-
-    private boolean applySectionChange(BooleanSupplier change, Runnable afterChange) {
-        return autoAllocateRun == null && respecRun == null && applyChange(change, afterChange);
     }
 
     private boolean applyChange(BooleanSupplier change, Runnable afterChange) {
@@ -814,7 +768,7 @@ public final class TreeAllocationSession {
     private void afterAllocationChange(SkillNode node, boolean isAllocatedNow) {
         refreshAfterAllocation();
         if (isAllocatedNow) {
-            SkillTreeSounds.allocated(node.getType().getTier());
+            SkillTreeSounds.allocated(allocationSound(node.getType().getTier()));
             feedback.allocated(node);
         } else {
             SkillTreeSounds.deallocated();

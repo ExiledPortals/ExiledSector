@@ -1,6 +1,7 @@
 package exiledsector.skills.npc;
 
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -46,7 +47,7 @@ class NpcLevelCapTest {
     private static ShipSkillData overCapTree() {
         ShipSkillData data = NpcSkillTreeBuilder.rootedTree(SkillTree.get("root"), OVER_CAP_NODES);
         for (int index = 0; index < OVER_CAP_NODES; index++) {
-            data.allocate(SkillTree.get("chain_" + index), 1);
+            ShipTrees.allocate(data, SkillTree.get("chain_" + index), 1);
         }
         return data;
     }
@@ -68,7 +69,7 @@ class NpcLevelCapTest {
         ShipSkillData data = overCapTree();
         data.capLevel(MAX_LEVEL);
 
-        List<String> removed = data.trimFreeAllocationsToLevel(SkillTree.getAllNodes(), SkillTree.topology());
+        List<String> removed = ShipTrees.trimFreeAllocationsToLevel(data, SkillTree.getAllNodes(), SkillTree.topology());
 
         assertEquals(9, removed.size());
         assertEquals(MAX_LEVEL + 1, data.getAllocatedNodeIds().size());
@@ -80,10 +81,10 @@ class NpcLevelCapTest {
     @Test
     void unspentFreeAllocationsBeyondTheLevelAreDroppedOnCapture() {
         ShipSkillData data = NpcSkillTreeBuilder.rootedTree(SkillTree.get("root"), OVER_CAP_NODES);
-        data.allocate(SkillTree.get("chain_0"), 1);
+        ShipTrees.allocate(data, SkillTree.get("chain_0"), 1);
         data.capLevel(MAX_LEVEL);
 
-        List<String> removed = data.trimFreeAllocationsToLevel(SkillTree.getAllNodes(), SkillTree.topology());
+        List<String> removed = ShipTrees.trimFreeAllocationsToLevel(data, SkillTree.getAllNodes(), SkillTree.topology());
 
         assertTrue(removed.isEmpty());
         assertEquals(MAX_LEVEL - 1, data.getBankedFreeAllocations());
@@ -92,10 +93,10 @@ class NpcLevelCapTest {
     @Test
     void aTreeWithinItsLevelIsLeftAlone() {
         ShipSkillData data = NpcSkillTreeBuilder.rootedTree(SkillTree.get("root"), 3);
-        data.allocate(SkillTree.get("chain_0"), 1);
-        data.allocate(SkillTree.get("chain_1"), 1);
+        ShipTrees.allocate(data, SkillTree.get("chain_0"), 1);
+        ShipTrees.allocate(data, SkillTree.get("chain_1"), 1);
 
-        List<String> removed = data.trimFreeAllocationsToLevel(SkillTree.getAllNodes(), SkillTree.topology());
+        List<String> removed = ShipTrees.trimFreeAllocationsToLevel(data, SkillTree.getAllNodes(), SkillTree.topology());
 
         assertTrue(removed.isEmpty());
         assertEquals(1, data.getBankedFreeAllocations());

@@ -25,7 +25,7 @@ public final class CombatXpAward {
     private CombatXpAward() {
     }
 
-    static void award(PlayerEngagement engagement) {
+    public static void award(PlayerEngagement engagement) {
         CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
         if (playerFleet == null) {
             return;

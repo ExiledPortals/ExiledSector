@@ -13,6 +13,7 @@ import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.InstalledHullMods;
 import exiledsector.skills.LearnedPhantomConflicts;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -210,9 +211,9 @@ class PhantomConflictWatchTest {
             SkillTree.register(node);
         }
         ShipSkillData data = ShipSkillDataManager.get(memberId);
-        data.chooseStartingRoot(root);
-        data.allocate(overrides, 3);
-        data.allocate(beyond, 3);
+        ShipTrees.chooseStartingRoot(data, root);
+        ShipTrees.allocate(data, overrides, 3);
+        ShipTrees.allocate(data, beyond, 3);
         return data;
     }
 

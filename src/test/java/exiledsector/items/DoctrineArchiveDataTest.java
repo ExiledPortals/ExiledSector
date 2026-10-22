@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.items.ItemDataIntegrity.Severity;
 import exiledsector.items.ItemDataIntegrity.Violation;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -50,8 +51,8 @@ class DoctrineArchiveDataTest {
 
     private static List<Violation> checkShipped() throws Exception {
         RealSkillData.load();
-        return ItemDataIntegrity.checkDoctrineArchives(ItemFixtures.shippedRows(ItemModifiers.DATA_PATH),
-                ItemFixtures.shippedRows(ItemDefinitions.SUBROUTINES_PATH), ItemFixtures.shippedRows(DoctrineArchives.DATA_PATH), SkillTree.getAllTypes());
+        return SubroutineDataRules.checkDoctrineArchives(ItemFixtures.shippedRows(ItemModifiers.dataPath()),
+                ItemFixtures.shippedRows(SubroutineDefinitions.dataPath()), ItemFixtures.shippedRows(DoctrineArchives.DATA_PATH), SkillTree.getAllTypes());
     }
 
     @Test
@@ -66,7 +67,7 @@ class DoctrineArchiveDataTest {
         DoctrineArchives.register(ItemFixtures.shippedRows(DoctrineArchives.DATA_PATH));
 
         Set<String> doctrineDefinitions = ItemDefinitions.ofType(ItemType.SUBROUTINE).stream()
-                .filter(definition -> definition.subroutineKind() == SubroutineKind.DOCTRINE).map(ItemDefinition::id).collect(Collectors.toSet());
+                .filter(definition -> SubroutineKind.of(definition) == SubroutineKind.DOCTRINE).map(ItemDefinition::id).collect(Collectors.toSet());
         Set<String> expected = new HashSet<>(TRANSFORM_DOCTRINES);
         expected.addAll(AUGMENT_DOCTRINES);
         assertEquals(expected, doctrineDefinitions);
@@ -109,7 +110,7 @@ class DoctrineArchiveDataTest {
                 int rewrittenNodes = 0;
                 for (SkillNode socket : sockets) {
                     ShipSkillData data = new ShipSkillData();
-                    data.allocate(socket, 0);
+                    ShipTrees.allocate(data, socket, 0);
                     Item doctrine = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(archive.definitionId()), 4471L));
                     data.socketItem(socket.getId(), doctrine.id());
                     DoctrineLayer layer = DoctrineOverrides.layer(data);
@@ -171,7 +172,7 @@ class DoctrineArchiveDataTest {
     }
 
     private static List<String> errors(JSONArray doctrineRows) throws Exception {
-        return ItemDataIntegrity.checkDoctrineArchives(modifiers(), subroutines(), doctrineRows, types()).stream()
+        return SubroutineDataRules.checkDoctrineArchives(modifiers(), subroutines(), doctrineRows, types()).stream()
                 .filter(violation -> violation.severity() == Severity.ERROR).map(Violation::message).toList();
     }
 
@@ -200,7 +201,7 @@ class DoctrineArchiveDataTest {
         assertTrue(errors.contains("doc_b is a doctrine, but HULL_PERCENT_PLATE only rolls on hull_item"), errors.toString());
         assertTrue(errors.contains("doc_b lists FLUX_CAPACITY_PERCENT_TEST_DOCTRINE in its prefix slot, but it is a suffix"), errors.toString());
         assertTrue(errors.contains("doc_b lists \"ARMOR_PERCENT:1:2\" inline; reference a modifier as @ID or @ID:weight"), errors.toString());
-        assertTrue(errors.contains("volume_chip is not a DOCTRINE subroutine in " + ItemDefinitions.SUBROUTINES_PATH), errors.toString());
+        assertTrue(errors.contains("volume_chip is not a DOCTRINE subroutine in " + SubroutineDefinitions.dataPath()), errors.toString());
         assertTrue(errors.contains("volume_chip has behaviour \"SHUFFLE\"; expected one of TRANSFORM, AUGMENT"), errors.toString());
     }
 
@@ -209,7 +210,7 @@ class DoctrineArchiveDataTest {
         List<String> errors = errors(new JSONArray().put(row("doc_a", "TRANSFORM", "large").put("notables", "notable_a")));
 
         assertTrue(errors.contains("doc_b is a DOCTRINE subroutine with no row in " + DoctrineArchives.DATA_PATH), errors.toString());
-        List<String> modifierErrors = ItemDataIntegrity.check(modifiers(), new JSONArray(), new JSONArray(), new JSONArray()).stream()
+        List<String> modifierErrors = ItemDataChecks.check(modifiers(), new JSONArray(), new JSONArray(), new JSONArray()).stream()
                 .filter(violation -> violation.severity() == Severity.ERROR).map(Violation::message).toList();
         assertTrue(modifierErrors.contains("FLUX_CAPACITY_PERCENT_TEST_DOCTRINE rolls on doctrine, so its slot must be prefix"), modifierErrors.toString());
     }

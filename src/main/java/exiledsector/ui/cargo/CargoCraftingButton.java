@@ -13,7 +13,6 @@ import com.fs.starfarer.api.ui.UIPanelAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.Translation;
 import exiledsector.ui.ModificationBenchCargoLauncher;
-import exiledsector.ui.refit.PhantomHullModRefitHider;
 import exiledsector.ui.refit.RefitButtonConfig;
 import exiledsector.ui.refit.UiReflection;
 import org.apache.log4j.Logger;
@@ -45,7 +44,7 @@ public final class CargoCraftingButton extends BaseCustomUIPanelPlugin {
     static UIPanelAPI tradePanel(CampaignUIAPI campaignUI) {
         if (failed) return null;
         try {
-            Object cargoTab = UiReflection.call(PhantomHullModRefitHider.coreUI(campaignUI), "getCurrentTab");
+            Object cargoTab = UiReflection.call(UiReflection.coreUI(campaignUI), "getCurrentTab");
             if (Boolean.TRUE.equals(UiReflection.call(cargoTab, "isLootMode"))) return null;
             return UiReflection.call(cargoTab, "getTradePanel") instanceof UIPanelAPI panel ? panel : null;
         } catch (Throwable e) {

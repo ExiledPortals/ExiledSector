@@ -2,6 +2,7 @@ package exiledsector.ui.node;
 
 import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 
@@ -19,7 +20,7 @@ final class SocketWormholes {
     private boolean primed;
 
     void advance(float amount, ShipSkillData skillData) {
-        Map<String, String> linkedExits = skillData.anchorExitsBySocket();
+        Map<String, String> linkedExits = ShipTrees.anchorExitsBySocket(skillData);
         for (Map.Entry<String, String> link : linkedExits.entrySet()) {
             SkillNode exit = SkillTree.get(link.getValue());
             if (exit != null && !ExoshipNodes.isExoship(exit)) {

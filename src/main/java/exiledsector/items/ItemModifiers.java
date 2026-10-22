@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.HostMod;
 import exiledsector.ModCsv;
 import exiledsector.i18n.Translation;
 import exiledsector.modifiers.Modifier;
@@ -25,7 +26,7 @@ import java.util.regex.Pattern;
 
 public final class ItemModifiers {
 
-    static final String DATA_PATH = "data/config/exiledSector/item_modifiers.csv";
+    static final String DATA_FILE = "item_modifiers.csv";
     static final String REFERENCE_MARK = "@";
     static final Pattern ID_PATTERN = Pattern.compile("[A-Za-z0-9_]+");
     private static final String LINE_SEPARATOR = ";";
@@ -61,12 +62,16 @@ public final class ItemModifiers {
     private ItemModifiers() {
     }
 
+    static String dataPath() {
+        return HostMod.configPath(DATA_FILE);
+    }
+
     public static void load() {
-        ModCsv.load("id", DATA_PATH, LOG, ItemModifiers::register);
+        ModCsv.load("id", dataPath(), LOG, ItemModifiers::register);
     }
 
     public static void register(JSONArray rows) throws JSONException {
-        SHIP_ITEM_PART.set(catalogueOf(rows, DATA_PATH, itemTypes -> true));
+        SHIP_ITEM_PART.set(catalogueOf(rows, dataPath(), itemTypes -> true));
         LOADED.set(Catalogue.merged(SHIP_ITEM_PART.get(), STAR_CHART_PART.get()));
     }
 
@@ -196,7 +201,7 @@ public final class ItemModifiers {
     static Modifier referenced(String referenceId, ModifierSlot expectedSlot, ModifierScope scope) {
         Modifier modifier = get(referenceId);
         if (modifier == null) {
-            throw new IllegalArgumentException("no modifier " + referenceId + " in " + DATA_PATH);
+            throw new IllegalArgumentException("no modifier " + referenceId + " in " + dataPath());
         }
         if (modifier.slot() != expectedSlot) {
             throw new IllegalArgumentException("modifier " + referenceId + " is in the " + modifier.slot().id() + " slot, not the " + expectedSlot.id() + " slot");

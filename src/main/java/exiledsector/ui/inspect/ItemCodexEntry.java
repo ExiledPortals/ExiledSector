@@ -86,7 +86,7 @@ public class ItemCodexEntry extends BoxedCodexEntry {
             VanillaText.addPara(info, description, PAD, Misc.getGrayColor());
         }
         writeImplicits(info);
-        DoctrineArchive doctrine = definition.subroutineKind() == SubroutineKind.DOCTRINE ? DoctrineArchives.get(definition.id()) : null;
+        DoctrineArchive doctrine = SubroutineKind.of(definition) == SubroutineKind.DOCTRINE ? DoctrineArchives.get(definition.id()) : null;
         if (doctrine != null) {
             writeDoctrine(info, doctrine, textWidth);
         } else if (definition.unique()) {
@@ -128,7 +128,7 @@ public class ItemCodexEntry extends BoxedCodexEntry {
         if (doctrine.augments()) {
             VanillaText.addPara(info, Translation.msg("codex.doctrine.augments").arg("lines", lineCountText(doctrine)).arg("radius", radiusName)
                     .styled(), PAD, Misc.getTextColor());
-            writePool(info, "codex.doctrine.lines", doctrine.modifierPool(), ItemRollOdds.doctrineLineChances(doctrine), textWidth);
+            writePool(info, "codex.doctrine.lines", doctrine.modifierPool(), doctrine.lineChances(), textWidth);
             return;
         }
         VanillaText.addPara(info, Translation.msg("codex.doctrine.transforms").arg("radius", radiusName).styled(), PAD, Misc.getTextColor());

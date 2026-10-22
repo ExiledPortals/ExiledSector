@@ -57,8 +57,14 @@ class ItemStoreTest {
         ItemStore store = ItemStore.get();
 
         assertTrue(store.owned().isEmpty());
-        assertSame(store, persistentData.get(ItemStore.DATA_KEY));
+        assertSame(store, persistentData.get(ItemStore.dataKey()));
         assertSame(store, ItemStore.get());
+    }
+
+    @Test
+    void theStoresKeepTheSaveKeysOlderSavesUse() {
+        assertEquals("exiledSector_socketables", ItemStore.dataKey());
+        assertEquals("exiledSector_starCharts", ItemStore.starChartDataKey());
     }
 
     @Test

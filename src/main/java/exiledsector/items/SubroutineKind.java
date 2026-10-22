@@ -36,7 +36,7 @@ public enum SubroutineKind {
     }
 
     public static boolean inGenericPools(ItemDefinition definition) {
-        SubroutineKind kind = definition == null ? null : definition.subroutineKind();
+        SubroutineKind kind = of(definition);
         return kind == null || kind.inGenericPools();
     }
 
@@ -58,6 +58,14 @@ public enum SubroutineKind {
 
     public boolean limitsSocketsPerShip() {
         return socketLimitPerShip != UNLIMITED_PER_SHIP;
+    }
+
+    public static SubroutineKind of(ItemDefinition definition) {
+        return definition != null && definition.subtype() instanceof SubroutineKind kind ? kind : null;
+    }
+
+    public static boolean isUnique(ItemDefinition definition) {
+        return of(definition) == UNIQUE;
     }
 
     public static SubroutineKind byIdOrNull(String id) {

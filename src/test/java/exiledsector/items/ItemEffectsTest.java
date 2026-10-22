@@ -129,7 +129,7 @@ class ItemEffectsTest {
     }
 
     private static List<String> errors(JSONArray modifiers, JSONArray hullItems) throws JSONException {
-        return ItemDataIntegrity.check(modifiers, new JSONArray(), hullItems, new JSONArray()).stream()
+        return ItemDataChecks.check(modifiers, new JSONArray(), hullItems, new JSONArray()).stream()
                 .filter(violation -> violation.severity() == Severity.ERROR).map(Violation::message).toList();
     }
 }

@@ -43,8 +43,8 @@ class ShipSkillDataSocketTest {
 
     private ShipSkillData socketed() {
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
-        data.allocate(socket, 3);
+        ShipTrees.chooseStartingRoot(data, root);
+        ShipTrees.allocate(data, socket, 3);
         assertTrue(data.socketItem("socket", "socketable_1"));
         return data;
     }
@@ -94,7 +94,7 @@ class ShipSkillDataSocketTest {
     void deallocatingTheSocketEmptiesIt() {
         ShipSkillData data = socketed();
 
-        data.deallocate(socket);
+        ShipTrees.deallocate(data, socket);
 
         assertEquals(Map.of(), data.getSocketedItems());
     }
@@ -103,7 +103,7 @@ class ShipSkillDataSocketTest {
     void aRespecOrResetEmptiesEverySocket() {
         ShipSkillData data = socketed();
 
-        data.resetAllocations();
+        ShipTrees.resetAllocations(data);
 
         assertEquals(Map.of(), data.getSocketedItems());
     }
@@ -112,7 +112,7 @@ class ShipSkillDataSocketTest {
     void anAreaToggleThatRemovesTheSocketEmptiesIt() {
         ShipSkillData data = socketed();
 
-        data.forgetUnknownNodes(Map.of("root", root), Map.of());
+        ShipTrees.forgetUnknownNodes(data, Map.of("root", root), Map.of());
 
         assertEquals(Map.of(), data.getSocketedItems());
     }
@@ -122,7 +122,7 @@ class ShipSkillDataSocketTest {
         ShipSkillData data = socketed();
         SkillNode retyped = node("socket", SkillTier.SMALL, List.of("root"));
 
-        data.forgetUnknownNodes(Map.of("root", root, "socket", retyped), Map.of());
+        ShipTrees.forgetUnknownNodes(data, Map.of("root", root, "socket", retyped), Map.of());
 
         assertTrue(data.isAllocated("socket"));
         assertEquals(Map.of(), data.getSocketedItems());

@@ -40,7 +40,7 @@ final class ItemFixtures {
     }
 
     static JSONObject withKind(JSONObject row, String kind) throws JSONException {
-        return ItemKind.SUBROUTINE.id().equals(kind) ? row.put(ItemDefinition.SUBROUTINE_KIND_COLUMN, SubroutineKind.MODSPEC_CACHE.id()) : row.put("section", kind);
+        return ItemKind.SUBROUTINE.id().equals(kind) ? row.put(SubroutineDefinitions.SUBROUTINE_KIND_COLUMN, SubroutineKind.MODSPEC_CACHE.id()) : row.put("section", kind);
     }
 
     static JSONObject subroutineRow(String id) throws JSONException {
@@ -53,7 +53,7 @@ final class ItemFixtures {
                 .put("name", "Test Subroutine")
                 .put("icon", "graphics/icons/cargo/chip1.png")
                 .put("rarity", "20")
-                .put(ItemDefinition.SUBROUTINE_KIND_COLUMN, subroutineKind.id());
+                .put(SubroutineDefinitions.SUBROUTINE_KIND_COLUMN, subroutineKind.id());
     }
 
     static final String EVERY_ITEM_TYPE = "hull_item";
@@ -72,8 +72,8 @@ final class ItemFixtures {
     }
 
     static void registerShippedItems() throws Exception {
-        ItemModifiers.register(shippedRows(ItemModifiers.DATA_PATH));
-        ItemDefinitions.register(shippedRows(ItemDefinitions.SUBROUTINES_PATH), shippedRows(ItemDefinitions.HULL_ITEMS_PATH));
+        ItemModifiers.register(shippedRows(ItemModifiers.dataPath()));
+        ItemDefinitions.register(shippedRows(SubroutineDefinitions.dataPath()), shippedRows(HullItem.definitionsPath()));
     }
 
     static void registerModifierNames(String... idSlotLinesNames) throws JSONException {

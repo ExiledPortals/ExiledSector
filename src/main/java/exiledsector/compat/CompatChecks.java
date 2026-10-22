@@ -27,7 +27,8 @@ public final class CompatChecks {
     }
 
     public static List<CompatTarget> coreTargets() {
-        List<CompatTarget> targets = new ArrayList<>(List.of(SecondInCommandCompat.TARGET, RandomAssortmentCompat.TARGET, GraphicsLibCompat.TARGET));
+        List<CompatTarget> targets = new ArrayList<>(List.of(SecondInCommandCompat.TARGET, RandomAssortmentCompat.TARGET, GraphicsLibCompat.TARGET,
+                ExoticaCompat.TARGET));
         targets.addAll(SalvageSiteCompat.targets());
         return targets;
     }

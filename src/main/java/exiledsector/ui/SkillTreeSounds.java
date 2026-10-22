@@ -3,7 +3,6 @@ package exiledsector.ui;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SoundPlayerAPI;
 import exiledsector.ModSettings;
-import exiledsector.skills.SkillTier;
 
 public final class SkillTreeSounds {
 
@@ -30,11 +29,15 @@ public final class SkillTreeSounds {
     private SkillTreeSounds() {
     }
 
-    public static void allocated(SkillTier tier) {
-        playNodeSound(switch (tier) {
-            case KEYSTONE, ROOT -> ALLOCATE_LARGE;
-            case NOTABLE, WORMHOLE, WORMHOLE_EXIT -> ALLOCATE_MEDIUM;
-            case SMALL, SOCKET -> ALLOCATE_SMALL;
+    public enum NodeSize {
+        SMALL, MEDIUM, LARGE
+    }
+
+    public static void allocated(NodeSize size) {
+        playNodeSound(switch (size) {
+            case LARGE -> ALLOCATE_LARGE;
+            case MEDIUM -> ALLOCATE_MEDIUM;
+            case SMALL -> ALLOCATE_SMALL;
         });
     }
 

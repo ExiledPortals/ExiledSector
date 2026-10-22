@@ -39,7 +39,7 @@ class ItemDefinitionsTest {
         ItemDefinition definition = ItemFixtures.registerMilitary();
 
         assertEquals(ItemKind.BRIDGE, definition.kind());
-        assertNull(definition.subroutineKind());
+        assertNull(SubroutineKind.of(definition));
         assertEquals(20f, definition.rarity());
         assertEquals(List.of("FLUX_CAPACITY_MULT", "FLUX_DISSIPATION_MULT", "BEAM_WEAPON_DAMAGE_PERCENT"),
                 definition.prefixes().stream().map(PoolEntry::effectName).toList());
@@ -67,8 +67,8 @@ class ItemDefinitionsTest {
                 .put(row("zero_weight", MILITARY_SECTION, "HULL_MULT:1:2:0"))
                 .put(row("duplicate_effect", MILITARY_SECTION, "HULL_MULT:1:2; HULL_MULT:3:4"))
                 .put(row("both_sides", MILITARY_SECTION, "HULL_MULT:1:2", "HULL_MULT:3:4"))
-                .put(subroutineRow("unknown_subroutine_kind").put(ItemDefinition.SUBROUTINE_KIND_COLUMN, "EXPANSION"))
-                .put(subroutineRow("no_subroutine_kind").put(ItemDefinition.SUBROUTINE_KIND_COLUMN, "")));
+                .put(subroutineRow("unknown_subroutine_kind").put(SubroutineDefinitions.SUBROUTINE_KIND_COLUMN, "EXPANSION"))
+                .put(subroutineRow("no_subroutine_kind").put(SubroutineDefinitions.SUBROUTINE_KIND_COLUMN, "")));
 
         assertNotNull(ItemDefinitions.get(MILITARY));
         assertEquals(1, ItemDefinitions.all().size());
@@ -79,15 +79,15 @@ class ItemDefinitionsTest {
     void aSubroutineReadsItsKindFromItsRowAndRollsNoPrefixesOrSuffixes() throws Exception {
         ItemDefinitions.register(new JSONArray()
                 .put(subroutineRow("volume", SubroutineKind.MODSPEC_CACHE).put("prefixes", "HULL_MULT:4:6").put("suffixes", "ARMOR_PERCENT:6:9"))
-                .put(subroutineRow("bypass").put(ItemDefinition.SUBROUTINE_KIND_COLUMN, " bypass ")), new JSONArray());
+                .put(subroutineRow("bypass").put(SubroutineDefinitions.SUBROUTINE_KIND_COLUMN, " bypass ")), new JSONArray());
 
         ItemDefinition volume = ItemDefinitions.get("volume");
         assertEquals(ItemKind.SUBROUTINE, volume.kind());
         assertEquals(ItemType.SUBROUTINE, volume.type());
-        assertEquals(SubroutineKind.MODSPEC_CACHE, volume.subroutineKind());
+        assertEquals(SubroutineKind.MODSPEC_CACHE, SubroutineKind.of(volume));
         assertTrue(volume.pool().isEmpty());
         assertEquals(List.of(), ItemRoller.roll(volume, 3L));
-        assertEquals(SubroutineKind.BYPASS, ItemDefinitions.get("bypass").subroutineKind());
+        assertEquals(SubroutineKind.BYPASS, SubroutineKind.of(ItemDefinitions.get("bypass")));
     }
 
     @Test
@@ -144,8 +144,8 @@ class ItemDefinitionsTest {
 
     @Test
     void theShippedDefinitionsAllLoadAndOnlyHullItemsRollAffixes() throws Exception {
-        JSONArray subroutineRows = ItemFixtures.shippedRows(ItemDefinitions.SUBROUTINES_PATH);
-        JSONArray hullItemRows = ItemFixtures.shippedRows(ItemDefinitions.HULL_ITEMS_PATH);
+        JSONArray subroutineRows = ItemFixtures.shippedRows(SubroutineDefinitions.dataPath());
+        JSONArray hullItemRows = ItemFixtures.shippedRows(HullItem.definitionsPath());
         int subroutineRowCount = subroutineRows == null ? 0 : subroutineRows.length();
 
         ItemFixtures.registerShippedItems();
@@ -154,9 +154,9 @@ class ItemDefinitionsTest {
         assertTrue(ItemDefinitions.all().stream().allMatch(definition -> definition.type() != null));
         assertEquals(subroutineRowCount, ItemDefinitions.all().stream().filter(definition -> definition.type() == ItemType.SUBROUTINE).count());
         for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.SUBROUTINE)) {
-            assertNotNull(definition.subroutineKind(), definition.id());
+            assertNotNull(SubroutineKind.of(definition), definition.id());
             assertTrue(definition.suffixes().isEmpty(), definition.id() + " is a subroutine, so it rolls no suffixes");
-            assertEquals(definition.isUniqueSubroutine(), !definition.prefixes().isEmpty(),
+            assertEquals(SubroutineKind.isUnique(definition), !definition.prefixes().isEmpty(),
                     definition.id() + " lists fixed lines only if it is a unique subroutine, and subroutines roll no prefixes");
         }
         for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.HULL_ITEM)) {

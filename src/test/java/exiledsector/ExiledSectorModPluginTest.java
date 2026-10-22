@@ -15,6 +15,7 @@ import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
@@ -166,8 +167,8 @@ class ExiledSectorModPluginTest {
 
     private static ShipSkillData shipWithARemovedNode() {
         ShipSkillData data = ShipSkillDataManager.get("ship");
-        data.chooseStartingRoot(SkillTree.get("root"));
-        data.allocate(SkillTree.get("armor"), 3);
+        ShipTrees.chooseStartingRoot(data, SkillTree.get("root"));
+        ShipTrees.allocate(data, SkillTree.get("armor"), 3);
         data.getAllocatedNodeIds().add("removed_by_update");
         return data;
     }
@@ -186,8 +187,8 @@ class ExiledSectorModPluginTest {
     void aShipResetBecauseItsRootWasRemovedIsForgottenOnTheNextLoad() throws Exception {
         loadTree(NODES);
         ShipSkillData data = ShipSkillDataManager.get("rootless");
-        data.chooseStartingRoot(new SkillNode("removed_root", SkillTree.getType("root_type"), List.of(), 0f, 0f));
-        data.allocate(SkillTree.get("armor"), 3);
+        ShipTrees.chooseStartingRoot(data, new SkillNode("removed_root", SkillTree.getType("root_type"), List.of(), 0f, 0f));
+        ShipTrees.allocate(data, SkillTree.get("armor"), 3);
 
         new ExiledSectorModPlugin().onGameLoad(false);
 
@@ -203,8 +204,8 @@ class ExiledSectorModPluginTest {
         loadTree(TYPES.replace(" ] }", ", { \"id\": \"slot\", \"name\": \"Slot\", \"icon\": \"a.png\", \"optionalOptions\": [\"armor\"] } ] }"),
                 NODES + ", { \"id\": \"slot_1\", \"type\": \"slot\", \"connectedTo\": [\"root\"] }");
         ShipSkillData data = ShipSkillDataManager.get("ship");
-        data.chooseStartingRoot(SkillTree.get("root"));
-        data.selectOption(SkillTree.get("slot_1"), SkillTree.getType("armor"), 3);
+        ShipTrees.chooseStartingRoot(data, SkillTree.get("root"));
+        ShipTrees.selectOption(data, SkillTree.get("slot_1"), SkillTree.getType("armor"), 3);
 
         new ExiledSectorModPlugin().onGameLoad(false);
 
@@ -360,7 +361,7 @@ class ExiledSectorModPluginTest {
         new ExiledSectorModPlugin().onApplicationLoad();
 
         assertEquals(ItemKind.SUBROUTINE, ItemDefinitions.get("chip").kind());
-        assertEquals(SubroutineKind.MODSPEC_CACHE, ItemDefinitions.get("chip").subroutineKind());
+        assertEquals(SubroutineKind.MODSPEC_CACHE, SubroutineKind.of(ItemDefinitions.get("chip")));
     }
 
     @Test

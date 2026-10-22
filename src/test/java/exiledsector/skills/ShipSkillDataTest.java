@@ -52,10 +52,10 @@ class ShipSkillDataTest {
         AllocationGate gate = gate(data, allNodes, rootId, totalOp, opCost, maxAllocatedNodes);
         if (data.isAllocated(node.getId())) {
             if (gate.deallocation(node).allowed()) {
-                data.deallocate(node);
+                ShipTrees.deallocate(data, node);
             }
         } else if (gate.allocation(node).allowed()) {
-            data.allocate(node, gate.opCostFor(node));
+            ShipTrees.allocate(data, node, gate.opCostFor(node));
         }
     }
 
@@ -84,7 +84,7 @@ class ShipSkillDataTest {
     void startsWithNoProgress() {
         ShipSkillData data = new ShipSkillData();
 
-        assertEquals(0, data.getSpentOp(3));
+        assertEquals(0, ShipTrees.getSpentOp(data, 3));
         assertTrue(data.getAllocatedNodeIds().isEmpty());
     }
 
@@ -93,10 +93,10 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode node = node("armor_1", List.of());
 
-        data.allocate(node, 3);
+        ShipTrees.allocate(data, node, 3);
 
         assertTrue(data.isAllocated("armor_1"));
-        assertEquals(3, data.getSpentOp(3));
+        assertEquals(3, ShipTrees.getSpentOp(data, 3));
     }
 
     @Test
@@ -105,44 +105,44 @@ class ShipSkillDataTest {
         SkillNode root = rootNode("root_low_tech_1", List.of());
         SkillTree.register(root);
 
-        data.allocate(root, 0);
-        data.allocate(node("armor_1", List.of("root_low_tech_1")), 3);
+        ShipTrees.allocate(data, root, 0);
+        ShipTrees.allocate(data, node("armor_1", List.of("root_low_tech_1")), 3);
 
         assertTrue(data.isAllocated("root_low_tech_1"));
-        assertEquals(3, data.getSpentOp(3));
+        assertEquals(3, ShipTrees.getSpentOp(data, 3));
     }
 
     @Test
     void spentOpPricesEveryPaidNodeAtTheCurrentCostSoRefundsNeverDrift() {
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(rootNode("root_low_tech_1", List.of()));
+        ShipTrees.chooseStartingRoot(data, rootNode("root_low_tech_1", List.of()));
         SkillNode a = node("a", List.of());
         SkillNode b = node("b", List.of());
-        data.allocate(a, 1);
-        data.allocate(b, 1);
+        ShipTrees.allocate(data, a, 1);
+        ShipTrees.allocate(data, b, 1);
         data.addFreeAllocationCredit();
-        data.allocate(node("c", List.of()), 1);
+        ShipTrees.allocate(data, node("c", List.of()), 1);
 
-        assertEquals(2, data.getSpentOp(1));
-        assertEquals(6, data.getSpentOp(3));
+        assertEquals(2, ShipTrees.getSpentOp(data, 1));
+        assertEquals(6, ShipTrees.getSpentOp(data, 3));
 
-        data.deallocate(a);
-        assertEquals(3, data.getSpentOp(3));
-        data.deallocate(b);
-        assertEquals(0, data.getSpentOp(3));
-        assertEquals(0, data.getSpentOp(1));
+        ShipTrees.deallocate(data, a);
+        assertEquals(3, ShipTrees.getSpentOp(data, 3));
+        ShipTrees.deallocate(data, b);
+        assertEquals(0, ShipTrees.getSpentOp(data, 3));
+        assertEquals(0, ShipTrees.getSpentOp(data, 1));
     }
 
     @Test
     void deallocateRefundsTheOpCost() {
         ShipSkillData data = new ShipSkillData();
         SkillNode node = node("armor_1", List.of());
-        data.allocate(node, 3);
+        ShipTrees.allocate(data, node, 3);
 
-        data.deallocate(node);
+        ShipTrees.deallocate(data, node);
 
         assertFalse(data.isAllocated("armor_1"));
-        assertEquals(0, data.getSpentOp(3));
+        assertEquals(0, ShipTrees.getSpentOp(data, 3));
     }
 
     @Test
@@ -170,7 +170,7 @@ class ShipSkillDataTest {
     void canAllocateIsTrueOnceEveryPrerequisiteIsAllocated() {
         ShipSkillData data = new ShipSkillData();
         SkillNode parent = node("parent", List.of());
-        data.allocate(parent, 1);
+        ShipTrees.allocate(data, parent, 1);
 
         assertTrue(canAllocate(data, node("child", List.of("parent")), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
     }
@@ -186,7 +186,7 @@ class ShipSkillDataTest {
     void canAllocateIsTrueWithMultiplePrerequisitesWhenOnlyOneIsAllocated() {
         ShipSkillData data = new ShipSkillData();
         SkillNode b = node("b", List.of());
-        data.allocate(b, 1);
+        ShipTrees.allocate(data, b, 1);
 
         assertTrue(canAllocate(data, node("a", List.of("b", "c")), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
     }
@@ -196,8 +196,8 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode b = node("b", List.of());
         SkillNode c = node("c", List.of());
-        data.allocate(b, 1);
-        data.allocate(c, 1);
+        ShipTrees.allocate(data, b, 1);
+        ShipTrees.allocate(data, c, 1);
 
         assertTrue(canAllocate(data, node("a", List.of("b", "c")), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP));
     }
@@ -206,7 +206,7 @@ class ShipSkillDataTest {
     void canAllocateIsTrueWhenSpendingTheLastRemainingOpBudget() {
         ShipSkillData data = new ShipSkillData();
         SkillNode a = node("a", List.of());
-        data.allocate(a, 1);
+        ShipTrees.allocate(data, a, 1);
 
         assertTrue(canAllocate(data, node("b", List.of()), null, 2, 1, AMPLE_NODE_CAP));
     }
@@ -215,7 +215,7 @@ class ShipSkillDataTest {
     void canAllocateIsFalseWhenTheBudgetIsExhausted() {
         ShipSkillData data = new ShipSkillData();
         SkillNode a = node("a", List.of());
-        data.allocate(a, 1);
+        ShipTrees.allocate(data, a, 1);
 
         assertFalse(canAllocate(data, node("b", List.of()), null, 1, 1, AMPLE_NODE_CAP));
     }
@@ -224,7 +224,7 @@ class ShipSkillDataTest {
     void canAllocateAllowsAZeroCostNodeEvenWhenTheBudgetIsFullySpent() {
         ShipSkillData data = new ShipSkillData();
         SkillNode a = node("a", List.of());
-        data.allocate(a, 1);
+        ShipTrees.allocate(data, a, 1);
 
         assertTrue(canAllocate(data, rootNode("root_low_tech_1", List.of()), null, 1, 0, AMPLE_NODE_CAP));
     }
@@ -233,9 +233,9 @@ class ShipSkillDataTest {
     void canDeallocateIsTrueWhenNoAllocatedNodeDependsOnIt() {
         ShipSkillData data = new ShipSkillData();
         SkillNode parent = node("parent", List.of());
-        data.allocate(parent, 1);
+        ShipTrees.allocate(data, parent, 1);
 
-        assertTrue(data.canDeallocate(parent, List.of(parent), null));
+        assertTrue(ShipTrees.canDeallocate(data, parent, List.of(parent), null));
     }
 
     @Test
@@ -243,10 +243,10 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode parent = node("parent", List.of());
         SkillNode child = node("child", List.of("parent"));
-        data.allocate(parent, 1);
-        data.allocate(child, 1);
+        ShipTrees.allocate(data, parent, 1);
+        ShipTrees.allocate(data, child, 1);
 
-        assertFalse(data.canDeallocate(parent, List.of(parent, child), null));
+        assertFalse(ShipTrees.canDeallocate(data, parent, List.of(parent, child), null));
     }
 
     @Test
@@ -255,11 +255,11 @@ class ShipSkillDataTest {
         SkillNode b = node("b", List.of());
         SkillNode c = node("c", List.of());
         SkillNode a = node("a", List.of("b", "c"));
-        data.allocate(b, 1);
-        data.allocate(c, 1);
-        data.allocate(a, 1);
+        ShipTrees.allocate(data, b, 1);
+        ShipTrees.allocate(data, c, 1);
+        ShipTrees.allocate(data, a, 1);
 
-        assertTrue(data.canDeallocate(b, List.of(a, b, c), null));
+        assertTrue(ShipTrees.canDeallocate(data, b, List.of(a, b, c), null));
     }
 
     @Test
@@ -268,10 +268,10 @@ class ShipSkillDataTest {
         SkillNode b = node("b", List.of());
         SkillNode c = node("c", List.of());
         SkillNode a = node("a", List.of("b", "c"));
-        data.allocate(b, 1);
-        data.allocate(a, 1);
+        ShipTrees.allocate(data, b, 1);
+        ShipTrees.allocate(data, a, 1);
 
-        assertFalse(data.canDeallocate(b, List.of(a, b, c), null));
+        assertFalse(ShipTrees.canDeallocate(data, b, List.of(a, b, c), null));
     }
 
     @Test
@@ -300,7 +300,7 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode a = node("a", List.of());
         SkillNode b = node("b", List.of());
-        data.allocate(a, 1);
+        ShipTrees.allocate(data, a, 1);
 
         toggle(data, b, List.of(a, b), null, 1, 1, AMPLE_NODE_CAP);
 
@@ -311,7 +311,7 @@ class ShipSkillDataTest {
     void toggleDeallocatesAnAllocatedNodeWithNoAllocatedChildren() {
         ShipSkillData data = new ShipSkillData();
         SkillNode root = node("root", List.of());
-        data.allocate(root, 1);
+        ShipTrees.allocate(data, root, 1);
 
         toggle(data, root, List.of(root), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP);
 
@@ -323,8 +323,8 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode parent = node("parent", List.of());
         SkillNode child = node("child", List.of("parent"));
-        data.allocate(parent, 1);
-        data.allocate(child, 1);
+        ShipTrees.allocate(data, parent, 1);
+        ShipTrees.allocate(data, child, 1);
 
         toggle(data, parent, List.of(parent, child), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP);
 
@@ -334,7 +334,7 @@ class ShipSkillDataTest {
     @Test
     void isSatisfiedIsTrueForAnAllocatedNode() {
         ShipSkillData data = new ShipSkillData();
-        data.allocate(node("hull_1", List.of()), 1);
+        ShipTrees.allocate(data, node("hull_1", List.of()), 1);
 
         assertTrue(data.isSatisfied("hull_1", null));
     }
@@ -374,10 +374,10 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode b = node("b", List.of());
         SkillNode a = node("a", List.of("b", "root_low_tech_1"));
-        data.allocate(b, 1);
-        data.allocate(a, 1);
+        ShipTrees.allocate(data, b, 1);
+        ShipTrees.allocate(data, a, 1);
 
-        assertTrue(data.canDeallocate(b, List.of(a, b), "root_low_tech_1"));
+        assertTrue(ShipTrees.canDeallocate(data, b, List.of(a, b), "root_low_tech_1"));
     }
 
     @Test
@@ -386,11 +386,11 @@ class ShipSkillDataTest {
         SkillNode a = node("a", List.of());
         SkillNode b = node("b", List.of("a", "x"));
         SkillNode x = node("x", List.of("b"));
-        data.allocate(a, 1);
-        data.allocate(b, 1);
-        data.allocate(x, 1);
+        ShipTrees.allocate(data, a, 1);
+        ShipTrees.allocate(data, b, 1);
+        ShipTrees.allocate(data, x, 1);
 
-        assertFalse(data.canDeallocate(a, List.of(a, b, x), null));
+        assertFalse(ShipTrees.canDeallocate(data, a, List.of(a, b, x), null));
     }
 
     @Test
@@ -400,12 +400,12 @@ class ShipSkillDataTest {
         SkillNode a2 = node("a2", List.of());
         SkillNode b = node("b", List.of("a1", "x"));
         SkillNode x = node("x", List.of("b", "a2"));
-        data.allocate(a1, 1);
-        data.allocate(a2, 1);
-        data.allocate(b, 1);
-        data.allocate(x, 1);
+        ShipTrees.allocate(data, a1, 1);
+        ShipTrees.allocate(data, a2, 1);
+        ShipTrees.allocate(data, b, 1);
+        ShipTrees.allocate(data, x, 1);
 
-        assertTrue(data.canDeallocate(a1, List.of(a1, a2, b, x), null));
+        assertTrue(ShipTrees.canDeallocate(data, a1, List.of(a1, a2, b, x), null));
     }
 
     @Test
@@ -414,11 +414,11 @@ class ShipSkillDataTest {
         SkillNode a = node("a", List.of("root_low_tech_1", "b", "c"));
         SkillNode b = node("b", List.of("a", "c"));
         SkillNode c = node("c", List.of("a", "b"));
-        data.allocate(a, 1);
-        data.allocate(b, 1);
-        data.allocate(c, 1);
+        ShipTrees.allocate(data, a, 1);
+        ShipTrees.allocate(data, b, 1);
+        ShipTrees.allocate(data, c, 1);
 
-        assertTrue(data.canDeallocate(b, List.of(a, b, c), "root_low_tech_1"));
+        assertTrue(ShipTrees.canDeallocate(data, b, List.of(a, b, c), "root_low_tech_1"));
     }
 
     @Test
@@ -427,11 +427,11 @@ class ShipSkillDataTest {
         SkillNode a = node("a", List.of("root_low_tech_1", "b", "c"));
         SkillNode b = node("b", List.of("a", "c"));
         SkillNode c = node("c", List.of("a", "b"));
-        data.allocate(a, 1);
-        data.allocate(b, 1);
-        data.allocate(c, 1);
+        ShipTrees.allocate(data, a, 1);
+        ShipTrees.allocate(data, b, 1);
+        ShipTrees.allocate(data, c, 1);
 
-        assertFalse(data.canDeallocate(a, List.of(a, b, c), "root_low_tech_1"));
+        assertFalse(ShipTrees.canDeallocate(data, a, List.of(a, b, c), "root_low_tech_1"));
     }
 
     @Test
@@ -439,10 +439,10 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode leaf = node("leaf", List.of("root_low_tech_1"));
         SkillNode orphan = node("orphan", List.of("nothingThatExists"));
-        data.allocate(leaf, 1);
-        data.allocate(orphan, 1);
+        ShipTrees.allocate(data, leaf, 1);
+        ShipTrees.allocate(data, orphan, 1);
 
-        assertTrue(data.canDeallocate(leaf, List.of(leaf, orphan), "root_low_tech_1"));
+        assertTrue(ShipTrees.canDeallocate(data, leaf, List.of(leaf, orphan), "root_low_tech_1"));
     }
 
     @Test
@@ -460,14 +460,14 @@ class ShipSkillDataTest {
 
         ShipSkillData data = new ShipSkillData();
         for (SkillNode n : ring) {
-            data.allocate(n, 1);
+            ShipTrees.allocate(data, n, 1);
         }
 
         for (int i = 1; i < ringSize; i++) {
-            assertTrue(data.canDeallocate(ring.get(i), ring, "root_low_tech_1"),
+            assertTrue(ShipTrees.canDeallocate(data, ring.get(i), ring, "root_low_tech_1"),
                     "expected ring" + i + " to be deallocatable");
         }
-        assertFalse(data.canDeallocate(ring.get(0), ring, "root_low_tech_1"),
+        assertFalse(ShipTrees.canDeallocate(data, ring.get(0), ring, "root_low_tech_1"),
                 "ring0 is the sole bridge to root and must not be deallocatable while the rest of the ring is allocated");
     }
 
@@ -481,11 +481,11 @@ class ShipSkillDataTest {
         SkillNode descendant = node("descendant", List.of("secondRoot"));
 
         ShipSkillData data = new ShipSkillData();
-        data.allocate(bridge, 1);
-        data.allocate(secondRoot, 1);
-        data.allocate(descendant, 1);
+        ShipTrees.allocate(data, bridge, 1);
+        ShipTrees.allocate(data, secondRoot, 1);
+        ShipTrees.allocate(data, descendant, 1);
 
-        assertFalse(data.canDeallocate(bridge, List.of(bridge, secondRoot, descendant), "root_low_tech_1"));
+        assertFalse(ShipTrees.canDeallocate(data, bridge, List.of(bridge, secondRoot, descendant), "root_low_tech_1"));
     }
 
     @Test
@@ -498,11 +498,11 @@ class ShipSkillDataTest {
         SkillNode bridgeB = node("bridgeB", List.of("root_low_tech_1", "secondRoot"));
 
         ShipSkillData data = new ShipSkillData();
-        data.allocate(bridgeA, 1);
-        data.allocate(bridgeB, 1);
-        data.allocate(secondRoot, 1);
+        ShipTrees.allocate(data, bridgeA, 1);
+        ShipTrees.allocate(data, bridgeB, 1);
+        ShipTrees.allocate(data, secondRoot, 1);
 
-        assertTrue(data.canDeallocate(bridgeA, List.of(bridgeA, bridgeB, secondRoot), "root_low_tech_1"));
+        assertTrue(ShipTrees.canDeallocate(data, bridgeA, List.of(bridgeA, bridgeB, secondRoot), "root_low_tech_1"));
     }
 
     @Test
@@ -532,11 +532,11 @@ class ShipSkillDataTest {
         String satisfiedRootId = "root_high_tech_1";
         for (SkillNode n : List.of(n10, n7, n5, n25, n9, n13, n14, rootLowTech, n11, n12, n8, n6, n3)) {
             assertTrue(canAllocate(data, n, satisfiedRootId, AMPLE_BUDGET, 1, AMPLE_NODE_CAP), "expected to be able to allocate " + n.getId());
-            data.allocate(n, 1);
+            ShipTrees.allocate(data, n, 1);
         }
 
         for (SkillNode n : allNodes) {
-            assertTrue(data.canDeallocate(n, allNodes, satisfiedRootId),
+            assertTrue(ShipTrees.canDeallocate(data, n, allNodes, satisfiedRootId),
                     "expected " + n.getId() + " to be deallocatable (ring has two independent paths to root_high_tech_1)");
         }
     }
@@ -554,15 +554,15 @@ class ShipSkillDataTest {
 
         ShipSkillData data = new ShipSkillData();
         for (SkillNode n : ring) {
-            data.allocate(n, 1);
+            ShipTrees.allocate(data, n, 1);
         }
 
         for (SkillNode n : ring) {
             if (n == bridge) continue;
-            assertTrue(data.canDeallocate(n, ring, "small_flux_optional_25"),
+            assertTrue(ShipTrees.canDeallocate(data, n, ring, "small_flux_optional_25"),
                     "expected " + n.getId() + " to be deallocatable");
         }
-        assertFalse(data.canDeallocate(bridge, ring, "small_flux_optional_25"),
+        assertFalse(ShipTrees.canDeallocate(data, bridge, ring, "small_flux_optional_25"),
                 "shield_turn_raise_rate_optional_1 is the ring's sole bridge and must stay blocked while the rest of the ring is allocated");
     }
 
@@ -578,15 +578,15 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode root = rootNode("root", List.of());
         SkillNode slot = node("slot_1", List.of("root"));
-        data.chooseStartingRoot(root);
+        ShipTrees.chooseStartingRoot(data, root);
         data.addFreeAllocationCredit();
-        data.selectOption(slot, new SkillType.Builder("hull", "Hull", "a.png", SkillTier.SMALL).effects(List.of()).build(), 1);
+        ShipTrees.selectOption(data, slot, new SkillType.Builder("hull", "Hull", "a.png", SkillTier.SMALL).effects(List.of()).build(), 1);
         data.addFreeAllocationCredit();
 
-        ShipSkillData plan = data.planningCopy();
-        plan.allocate(node("armor_1", List.of("slot_1")), 0);
+        ShipSkillData plan = ShipTrees.planningCopy(data);
+        ShipTrees.allocate(plan, node("armor_1", List.of("slot_1")), 0);
 
-        assertEquals("root", plan.resolveStartingRootId());
+        assertEquals("root", ShipTrees.resolveStartingRootId(plan));
         assertEquals("hull", plan.getOptionalSelection("slot_1"));
         assertEquals(Set.of("root", "slot_1", "armor_1"), plan.getAllocatedNodeIds());
         assertEquals(0, plan.getBankedFreeAllocations());
@@ -602,11 +602,11 @@ class ShipSkillDataTest {
                 .effects(List.of())
                 .build();
 
-        data.selectOption(slot, chosenOption, 1);
+        ShipTrees.selectOption(data, slot, chosenOption, 1);
 
         assertTrue(data.isAllocated("slot_1"));
         assertEquals("hull", data.getOptionalSelection("slot_1"));
-        assertEquals(1, data.getSpentOp(1));
+        assertEquals(1, ShipTrees.getSpentOp(data, 1));
     }
 
     @Test
@@ -618,12 +618,12 @@ class ShipSkillDataTest {
                 .effects(List.of())
                 .build();
 
-        data.selectOption(slot, chosenOption, 1);
+        ShipTrees.selectOption(data, slot, chosenOption, 1);
 
         assertTrue(data.isAllocated("slot_1"));
         assertTrue(data.isFreeNode("slot_1"));
         assertEquals(0, data.getBankedFreeAllocations());
-        assertEquals(0, data.getSpentOp(1));
+        assertEquals(0, ShipTrees.getSpentOp(data, 1));
     }
 
     @Test
@@ -635,13 +635,13 @@ class ShipSkillDataTest {
                 .effects(List.of())
                 .build();
         SkillTree.registerType(chosenOption);
-        data.selectOption(slot, chosenOption, 1);
+        ShipTrees.selectOption(data, slot, chosenOption, 1);
 
-        data.deallocate(slot);
+        ShipTrees.deallocate(data, slot);
 
         assertFalse(data.isAllocated("slot_1"));
         assertEquals(1, data.getBankedFreeAllocations());
-        assertEquals(0, data.getSpentOp(1));
+        assertEquals(0, ShipTrees.getSpentOp(data, 1));
     }
 
     @Test
@@ -652,13 +652,13 @@ class ShipSkillDataTest {
                 .effects(List.of())
                 .build();
         SkillTree.registerType(chosenOption);
-        data.selectOption(slot, chosenOption, 1);
+        ShipTrees.selectOption(data, slot, chosenOption, 1);
 
-        data.deallocate(slot);
+        ShipTrees.deallocate(data, slot);
 
         assertFalse(data.isAllocated("slot_1"));
         assertNull(data.getOptionalSelection("slot_1"));
-        assertEquals(0, data.getSpentOp(1));
+        assertEquals(0, ShipTrees.getSpentOp(data, 1));
     }
 
     @Test
@@ -669,7 +669,7 @@ class ShipSkillDataTest {
                 .effects(List.of())
                 .build();
         SkillTree.registerType(chosenOption);
-        data.selectOption(slot, chosenOption, 1);
+        ShipTrees.selectOption(data, slot, chosenOption, 1);
 
         toggle(data, slot, List.of(slot), null, AMPLE_BUDGET, 1, AMPLE_NODE_CAP);
 
@@ -689,13 +689,13 @@ class ShipSkillDataTest {
                 .build();
         SkillTree.registerType(hullOption);
         SkillTree.registerType(armorOption);
-        data.selectOption(slot, hullOption, 1);
+        ShipTrees.selectOption(data, slot, hullOption, 1);
 
-        data.selectOption(slot, armorOption, 1);
+        ShipTrees.selectOption(data, slot, armorOption, 1);
 
         assertTrue(data.isAllocated("slot_1"));
         assertEquals("armor", data.getOptionalSelection("slot_1"));
-        assertEquals(1, data.getSpentOp(1));
+        assertEquals(1, ShipTrees.getSpentOp(data, 1));
     }
 
     @Test
@@ -706,11 +706,11 @@ class ShipSkillDataTest {
                 .effects(List.of())
                 .build();
         SkillTree.registerType(hullOption);
-        data.selectOption(slot, hullOption, 1);
+        ShipTrees.selectOption(data, slot, hullOption, 1);
 
-        data.selectOption(slot, hullOption, 1);
+        ShipTrees.selectOption(data, slot, hullOption, 1);
 
-        assertEquals(1, data.getSpentOp(1));
+        assertEquals(1, ShipTrees.getSpentOp(data, 1));
     }
 
     @Test
@@ -727,15 +727,15 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode a = node("a", List.of());
         SkillNode b = node("b", List.of());
-        data.allocate(a, 3);
-        data.allocate(b, 3);
+        ShipTrees.allocate(data, a, 3);
+        ShipTrees.allocate(data, b, 3);
 
-        boolean converted = data.convertMostRecentAllocationToFree(List.of(a, b));
+        boolean converted = ShipTrees.convertMostRecentAllocationToFree(data, List.of(a, b));
 
         assertTrue(converted);
         assertTrue(data.isFreeNode("b"));
         assertFalse(data.isFreeNode("a"));
-        assertEquals(3, data.getSpentOp(3));
+        assertEquals(3, ShipTrees.getSpentOp(data, 3));
     }
 
     @Test
@@ -743,15 +743,15 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode root = rootNode("root_low_tech_1", List.of());
         SkillNode a = node("a", List.of("root_low_tech_1"));
-        data.allocate(a, 3);
-        data.chooseStartingRoot(root);
+        ShipTrees.allocate(data, a, 3);
+        ShipTrees.chooseStartingRoot(data, root);
 
-        boolean converted = data.convertMostRecentAllocationToFree(List.of(a, root));
+        boolean converted = ShipTrees.convertMostRecentAllocationToFree(data, List.of(a, root));
 
         assertTrue(converted);
         assertTrue(data.isFreeNode("a"));
         assertFalse(data.isFreeNode("root_low_tech_1"));
-        assertEquals(0, data.getSpentOp(3));
+        assertEquals(0, ShipTrees.getSpentOp(data, 3));
     }
 
     @Test
@@ -759,14 +759,14 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode startingRoot = rootNode("root_low_tech_1", List.of());
         SkillNode otherRoot = rootNode("root_high_tech_1", List.of());
-        data.chooseStartingRoot(startingRoot);
-        data.allocate(otherRoot, 3);
+        ShipTrees.chooseStartingRoot(data, startingRoot);
+        ShipTrees.allocate(data, otherRoot, 3);
 
-        boolean converted = data.convertMostRecentAllocationToFree(List.of(startingRoot, otherRoot));
+        boolean converted = ShipTrees.convertMostRecentAllocationToFree(data, List.of(startingRoot, otherRoot));
 
         assertTrue(converted);
         assertTrue(data.isFreeNode("root_high_tech_1"));
-        assertEquals(0, data.getSpentOp(3));
+        assertEquals(0, ShipTrees.getSpentOp(data, 3));
     }
 
     @Test
@@ -774,15 +774,15 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode a = node("a", List.of());
         SkillNode b = node("b", List.of());
-        data.allocate(a, 3);
-        data.allocate(b, 3);
-        data.convertMostRecentAllocationToFree(List.of(a, b));
+        ShipTrees.allocate(data, a, 3);
+        ShipTrees.allocate(data, b, 3);
+        ShipTrees.convertMostRecentAllocationToFree(data, List.of(a, b));
 
-        boolean convertedAgain = data.convertMostRecentAllocationToFree(List.of(a, b));
+        boolean convertedAgain = ShipTrees.convertMostRecentAllocationToFree(data, List.of(a, b));
 
         assertTrue(convertedAgain);
         assertTrue(data.isFreeNode("a"));
-        assertEquals(0, data.getSpentOp(3));
+        assertEquals(0, ShipTrees.getSpentOp(data, 3));
     }
 
     @Test
@@ -790,26 +790,26 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode a = wormholeNode("wormhole_a", List.of(), "wormhole_b");
         SkillNode b = wormholeNode("wormhole_b", List.of(), "wormhole_a");
-        data.allocate(a, 3);
+        ShipTrees.allocate(data, a, 3);
 
-        boolean converted = data.convertMostRecentAllocationToFree(List.of(a, b));
+        boolean converted = ShipTrees.convertMostRecentAllocationToFree(data, List.of(a, b));
 
         assertTrue(converted);
         assertTrue(data.isFreeNode("wormhole_a"));
-        assertEquals(0, data.getSpentOp(3));
+        assertEquals(0, ShipTrees.getSpentOp(data, 3));
 
-        data.deallocate(a);
+        ShipTrees.deallocate(data, a);
 
-        assertEquals(0, data.getSpentOp(3));
+        assertEquals(0, ShipTrees.getSpentOp(data, 3));
     }
 
     @Test
     void convertMostRecentAllocationToFreeReturnsFalseWhenNothingIsEligible() {
         ShipSkillData data = new ShipSkillData();
         SkillNode root = rootNode("root_low_tech_1", List.of());
-        data.allocate(root, 0);
+        ShipTrees.allocate(data, root, 0);
 
-        assertFalse(data.convertMostRecentAllocationToFree(List.of(root)));
+        assertFalse(ShipTrees.convertMostRecentAllocationToFree(data, List.of(root)));
     }
 
     @Test
@@ -818,11 +818,11 @@ class ShipSkillDataTest {
         data.addFreeAllocationCredit();
         SkillNode a = node("a", List.of());
 
-        data.allocate(a, 3);
+        ShipTrees.allocate(data, a, 3);
 
         assertTrue(data.isFreeNode("a"));
         assertEquals(0, data.getBankedFreeAllocations());
-        assertEquals(0, data.getSpentOp(3));
+        assertEquals(0, ShipTrees.getSpentOp(data, 3));
     }
 
     @Test
@@ -831,7 +831,7 @@ class ShipSkillDataTest {
         data.addFreeAllocationCredit();
         SkillNode root = rootNode("root_low_tech_1", List.of());
 
-        data.allocate(root, 0);
+        ShipTrees.allocate(data, root, 0);
 
         assertFalse(data.isFreeNode("root_low_tech_1"));
         assertEquals(1, data.getBankedFreeAllocations());
@@ -842,20 +842,20 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         data.addFreeAllocationCredit();
         SkillNode a = node("a", List.of());
-        data.allocate(a, 3);
+        ShipTrees.allocate(data, a, 3);
 
-        data.deallocate(a);
+        ShipTrees.deallocate(data, a);
 
         assertFalse(data.isAllocated("a"));
         assertEquals(1, data.getBankedFreeAllocations());
-        assertEquals(0, data.getSpentOp(3));
+        assertEquals(0, ShipTrees.getSpentOp(data, 3));
     }
 
     @Test
     void canAllocateIsFalseOnceTheNodeCapIsReached() {
         ShipSkillData data = new ShipSkillData();
         SkillNode a = node("a", List.of());
-        data.allocate(a, 1);
+        ShipTrees.allocate(data, a, 1);
 
         assertFalse(canAllocate(data, node("b", List.of()), null, AMPLE_BUDGET, 1, 1));
     }
@@ -864,7 +864,7 @@ class ShipSkillDataTest {
     void canAllocateIsTrueBelowTheNodeCap() {
         ShipSkillData data = new ShipSkillData();
         SkillNode a = node("a", List.of());
-        data.allocate(a, 1);
+        ShipTrees.allocate(data, a, 1);
 
         assertTrue(canAllocate(data, node("b", List.of()), null, AMPLE_BUDGET, 1, 2));
     }
@@ -874,13 +874,13 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode a = wormholeNode("wormhole_a", List.of(), "wormhole_b");
 
-        data.allocate(a, 3);
+        ShipTrees.allocate(data, a, 3);
 
         assertTrue(data.isAllocated("wormhole_a"));
         assertTrue(data.isAllocated("wormhole_b"));
         assertTrue(data.isFreeNode("wormhole_b"));
         assertFalse(data.isFreeNode("wormhole_a"));
-        assertEquals(3, data.getSpentOp(3));
+        assertEquals(3, ShipTrees.getSpentOp(data, 3));
     }
 
     @Test
@@ -888,25 +888,25 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode a = wormholeNode("wormhole_a", List.of(), "wormhole_b");
         SkillNode b = wormholeNode("wormhole_b", List.of(), "wormhole_a");
-        data.allocate(b, 3);
+        ShipTrees.allocate(data, b, 3);
 
-        data.allocate(a, 3);
+        ShipTrees.allocate(data, a, 3);
 
         assertEquals(2, data.getAllocatedNodeIds().size());
-        assertEquals(3, data.getSpentOp(3));
+        assertEquals(3, ShipTrees.getSpentOp(data, 3));
     }
 
     @Test
     void deallocatingAWormholeAlsoDeallocatesItsPair() {
         ShipSkillData data = new ShipSkillData();
         SkillNode a = wormholeNode("wormhole_a", List.of(), "wormhole_b");
-        data.allocate(a, 3);
+        ShipTrees.allocate(data, a, 3);
 
-        data.deallocate(a);
+        ShipTrees.deallocate(data, a);
 
         assertFalse(data.isAllocated("wormhole_a"));
         assertFalse(data.isAllocated("wormhole_b"));
-        assertEquals(0, data.getSpentOp(3));
+        assertEquals(0, ShipTrees.getSpentOp(data, 3));
         assertEquals(0, data.getBankedFreeAllocations());
     }
 
@@ -915,13 +915,13 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode a = wormholeNode("wormhole_a", List.of(), "wormhole_b");
         SkillNode b = wormholeNode("wormhole_b", List.of(), "wormhole_a");
-        data.allocate(a, 3);
+        ShipTrees.allocate(data, a, 3);
 
-        data.deallocate(b);
+        ShipTrees.deallocate(data, b);
 
         assertFalse(data.isAllocated("wormhole_a"));
         assertFalse(data.isAllocated("wormhole_b"));
-        assertEquals(0, data.getSpentOp(3));
+        assertEquals(0, ShipTrees.getSpentOp(data, 3));
         assertEquals(0, data.getBankedFreeAllocations());
     }
 
@@ -931,10 +931,10 @@ class ShipSkillDataTest {
         SkillNode a = wormholeNode("wormhole_a", List.of(), "wormhole_b");
 
         for (int i = 0; i < 3; i++) {
-            data.allocate(a, 3);
-            data.deallocate(a);
+            ShipTrees.allocate(data, a, 3);
+            ShipTrees.deallocate(data, a);
 
-            assertEquals(0, data.getSpentOp(3));
+            assertEquals(0, ShipTrees.getSpentOp(data, 3));
             assertEquals(0, data.getBankedFreeAllocations());
         }
     }
@@ -944,10 +944,10 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode plain = node("armor_1", List.of());
 
-        data.allocate(plain, 3);
+        ShipTrees.allocate(data, plain, 3);
 
         assertEquals(1, data.getAllocatedNodeIds().size());
-        assertEquals(3, data.getSpentOp(3));
+        assertEquals(3, ShipTrees.getSpentOp(data, 3));
     }
 
     @Test
@@ -975,11 +975,11 @@ class ShipSkillDataTest {
         SkillNode a = wormholeNode("wormhole_a", List.of(), "wormhole_b");
         SkillNode b = wormholeNode("wormhole_b", List.of(), "wormhole_a");
         SkillNode child = node("child", List.of("wormhole_b"));
-        data.allocate(a, 1);
-        data.allocate(child, 1);
+        ShipTrees.allocate(data, a, 1);
+        ShipTrees.allocate(data, child, 1);
 
-        assertFalse(data.canDeallocate(a, List.of(a, b, child), null));
-        assertFalse(data.canDeallocate(b, List.of(a, b, child), null));
+        assertFalse(ShipTrees.canDeallocate(data, a, List.of(a, b, child), null));
+        assertFalse(ShipTrees.canDeallocate(data, b, List.of(a, b, child), null));
     }
 
     @Test
@@ -987,9 +987,9 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
         SkillNode a = wormholeNode("wormhole_a", List.of(), "wormhole_b");
         SkillNode b = wormholeNode("wormhole_b", List.of(), "wormhole_a");
-        data.allocate(a, 1);
+        ShipTrees.allocate(data, a, 1);
 
-        assertTrue(data.canDeallocate(a, List.of(a, b), null));
+        assertTrue(ShipTrees.canDeallocate(data, a, List.of(a, b), null));
     }
 
     @Test
@@ -997,11 +997,11 @@ class ShipSkillDataTest {
         SkillNode root = rootNode("root_a", List.of());
         ShipSkillData data = new ShipSkillData();
 
-        assertTrue(data.chooseStartingRoot(root));
+        assertTrue(ShipTrees.chooseStartingRoot(data, root));
 
         assertTrue(data.isAllocated("root_a"));
-        assertEquals(0, data.getSpentOp(3));
-        assertEquals("root_a", data.resolveStartingRootId(List.of(root)));
+        assertEquals(0, ShipTrees.getSpentOp(data, 3));
+        assertEquals("root_a", ShipTrees.resolveStartingRootId(data, List.of(root)));
     }
 
     @Test
@@ -1009,12 +1009,12 @@ class ShipSkillDataTest {
         SkillNode first = rootNode("root_a", List.of());
         SkillNode second = rootNode("root_b", List.of());
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(first);
+        ShipTrees.chooseStartingRoot(data, first);
 
-        assertFalse(data.chooseStartingRoot(second));
+        assertFalse(ShipTrees.chooseStartingRoot(data, second));
 
         assertFalse(data.isAllocated("root_b"));
-        assertEquals("root_a", data.resolveStartingRootId(List.of(first, second)));
+        assertEquals("root_a", ShipTrees.resolveStartingRootId(data, List.of(first, second)));
     }
 
     @Test
@@ -1022,15 +1022,15 @@ class ShipSkillDataTest {
         SkillNode first = rootNode("root_a", List.of());
         SkillNode second = rootNode("root_b", List.of());
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(first);
+        ShipTrees.chooseStartingRoot(data, first);
 
         assertTrue(data.canUnchooseStartingRoot());
-        assertTrue(data.unchooseStartingRoot());
+        assertTrue(ShipTrees.unchooseStartingRoot(data));
 
         assertFalse(data.isAllocated("root_a"));
-        assertNull(data.resolveStartingRootId(List.of(first, second)));
-        assertTrue(data.chooseStartingRoot(second));
-        assertEquals("root_b", data.resolveStartingRootId(List.of(first, second)));
+        assertNull(ShipTrees.resolveStartingRootId(data, List.of(first, second)));
+        assertTrue(ShipTrees.chooseStartingRoot(data, second));
+        assertEquals("root_b", ShipTrees.resolveStartingRootId(data, List.of(first, second)));
     }
 
     @Test
@@ -1038,14 +1038,14 @@ class ShipSkillDataTest {
         SkillNode root = rootNode("root_a", List.of());
         SkillNode next = node("small", List.of("root_a"));
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
-        data.allocate(next, 3);
+        ShipTrees.chooseStartingRoot(data, root);
+        ShipTrees.allocate(data, next, 3);
 
         assertFalse(data.canUnchooseStartingRoot());
-        assertFalse(data.unchooseStartingRoot());
+        assertFalse(ShipTrees.unchooseStartingRoot(data));
 
         assertTrue(data.isAllocated("root_a"));
-        assertEquals("root_a", data.resolveStartingRootId(List.of(root, next)));
+        assertEquals("root_a", ShipTrees.resolveStartingRootId(data, List.of(root, next)));
     }
 
     @Test
@@ -1053,22 +1053,22 @@ class ShipSkillDataTest {
         ShipSkillData data = new ShipSkillData();
 
         assertFalse(data.canUnchooseStartingRoot());
-        assertFalse(data.unchooseStartingRoot());
+        assertFalse(ShipTrees.unchooseStartingRoot(data));
     }
 
     @Test
     void onlyARootNodeCanBeTheStartingRoot() {
         ShipSkillData data = new ShipSkillData();
 
-        assertFalse(data.chooseStartingRoot(node("small", List.of())));
-        assertNull(data.resolveStartingRootId(List.of()));
+        assertFalse(ShipTrees.chooseStartingRoot(data, node("small", List.of())));
+        assertNull(ShipTrees.resolveStartingRootId(data, List.of()));
     }
 
     @Test
     void aShipThatNeverOpenedItsTreeHasNoStartingRoot() {
         SkillNode root = rootNode("root_a", List.of());
 
-        assertNull(new ShipSkillData().resolveStartingRootId(List.of(root)));
+        assertNull(ShipTrees.resolveStartingRootId(new ShipSkillData(), List.of(root)));
     }
 
     @Test
@@ -1077,12 +1077,12 @@ class ShipSkillDataTest {
         SkillNode reachedLater = rootNode("root_b", List.of("small"));
         SkillNode small = node("small", List.of("root_a"));
         ShipSkillData data = new ShipSkillData();
-        data.allocate(autoAllocated, 0);
-        data.allocate(small, 1);
-        data.allocate(reachedLater, 0);
+        ShipTrees.allocate(data, autoAllocated, 0);
+        ShipTrees.allocate(data, small, 1);
+        ShipTrees.allocate(data, reachedLater, 0);
 
-        assertEquals("root_a", data.resolveStartingRootId(List.of(reachedLater, small, autoAllocated)));
-        assertFalse(data.chooseStartingRoot(reachedLater));
+        assertEquals("root_a", ShipTrees.resolveStartingRootId(data, List.of(reachedLater, small, autoAllocated)));
+        assertFalse(ShipTrees.chooseStartingRoot(data, reachedLater));
     }
 
     @Test
@@ -1110,7 +1110,7 @@ class ShipSkillDataTest {
         assertTrue(new ShipSkillData().isBlank());
 
         ShipSkillData allocated = new ShipSkillData();
-        allocated.allocate(node("a", List.of()), 0);
+        ShipTrees.allocate(allocated, node("a", List.of()), 0);
         ShipSkillData levelled = new ShipSkillData();
         levelled.incrementLevel();
         ShipSkillData experienced = new ShipSkillData();
@@ -1129,19 +1129,19 @@ class ShipSkillDataTest {
         SkillNode root = rootNode("root", List.of());
         SkillNode kept = node("kept", List.of("root"));
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
-        data.allocate(kept, 3);
-        data.allocate(node("gone", List.of("root")), 3);
+        ShipTrees.chooseStartingRoot(data, root);
+        ShipTrees.allocate(data, kept, 3);
+        ShipTrees.allocate(data, node("gone", List.of("root")), 3);
         data.addFreeAllocationCredit();
-        data.allocate(node("free_gone", List.of("root")), 3);
+        ShipTrees.allocate(data, node("free_gone", List.of("root")), 3);
         Map<String, SkillNode> tree = Map.of("root", root, "kept", kept);
 
-        assertEquals(List.of("gone", "free_gone"), data.forgetUnknownNodes(tree, Map.of()));
+        assertEquals(List.of("gone", "free_gone"), ShipTrees.forgetUnknownNodes(data, tree, Map.of()));
         assertEquals(List.of("root", "kept"), List.copyOf(data.getAllocatedNodeIds()));
         assertEquals(1, data.getBankedFreeAllocations());
-        assertEquals(3, data.getSpentOp(3));
-        assertFalse(data.hasLostStartingRoot(tree));
-        assertEquals(List.of(), data.forgetUnknownNodes(tree, Map.of()));
+        assertEquals(3, ShipTrees.getSpentOp(data, 3));
+        assertFalse(ShipTrees.hasLostStartingRoot(data, tree));
+        assertEquals(List.of(), ShipTrees.forgetUnknownNodes(data, tree, Map.of()));
     }
 
     @Test
@@ -1150,24 +1150,24 @@ class ShipSkillDataTest {
         SkillNode bridge = node("bridge", List.of("root"));
         SkillNode hidden = node("hidden", List.of("bridge"));
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
-        data.allocate(bridge, 3);
-        data.allocate(hidden, 3);
+        ShipTrees.chooseStartingRoot(data, root);
+        ShipTrees.allocate(data, bridge, 3);
+        ShipTrees.allocate(data, hidden, 3);
         Map<String, SkillNode> declared = Map.of("root", root, "bridge", bridge, "hidden", hidden);
         Map<String, SkillNode> shown = Map.of("root", root, "bridge", bridge);
 
-        assertEquals(List.of(), data.forgetUnknownNodes(shown, declared, Map.of()));
+        assertEquals(List.of(), ShipTrees.forgetUnknownNodes(data, shown, declared, Map.of()));
 
         assertEquals(List.of("root", "bridge"), List.copyOf(data.getAllocatedNodeIds()));
         assertEquals(Set.of("hidden"), data.getDormantNodeIds());
-        assertEquals(3, data.getSpentOp(3));
-        assertEquals(List.of(), data.wakeDormantNodes(shown, 10, dormantNode -> true));
+        assertEquals(3, ShipTrees.getSpentOp(data, 3));
+        assertEquals(List.of(), ShipTrees.wakeDormantNodes(data, shown, 10, dormantNode -> true));
         assertEquals(Set.of("hidden"), data.getDormantNodeIds());
 
-        assertEquals(List.of(), data.wakeDormantNodes(declared, 10, dormantNode -> true));
+        assertEquals(List.of(), ShipTrees.wakeDormantNodes(data, declared, 10, dormantNode -> true));
         assertTrue(data.isAllocated("hidden"));
         assertTrue(data.getDormantNodeIds().isEmpty());
-        assertEquals(6, data.getSpentOp(3));
+        assertEquals(6, ShipTrees.getSpentOp(data, 3));
     }
 
     @Test
@@ -1180,24 +1180,24 @@ class ShipSkillDataTest {
         Map<String, SkillNode> declared = Map.of("root", root, "bridge", bridge, "first", first, "second", second, "filler", filler);
 
         ShipSkillData stranded = new ShipSkillData();
-        stranded.chooseStartingRoot(root);
-        stranded.allocate(bridge, 3);
+        ShipTrees.chooseStartingRoot(stranded, root);
+        ShipTrees.allocate(stranded, bridge, 3);
         stranded.addFreeAllocationCredit();
-        stranded.allocate(first, 3);
-        stranded.forgetUnknownNodes(Map.of("root", root, "bridge", bridge), declared, Map.of());
-        stranded.deallocate(bridge);
-        assertEquals(List.of("first"), stranded.wakeDormantNodes(declared, 10, dormantNode -> true));
+        ShipTrees.allocate(stranded, first, 3);
+        ShipTrees.forgetUnknownNodes(stranded, Map.of("root", root, "bridge", bridge), declared, Map.of());
+        ShipTrees.deallocate(stranded, bridge);
+        assertEquals(List.of("first"), ShipTrees.wakeDormantNodes(stranded, declared, 10, dormantNode -> true));
         assertFalse(stranded.isAllocated("first"));
         assertEquals(1, stranded.getBankedFreeAllocations());
 
         ShipSkillData capped = new ShipSkillData();
-        capped.chooseStartingRoot(root);
-        capped.allocate(bridge, 3);
-        capped.allocate(first, 3);
-        capped.allocate(second, 3);
-        capped.forgetUnknownNodes(Map.of("root", root, "bridge", bridge, "filler", filler), declared, Map.of());
-        capped.allocate(filler, 3);
-        assertEquals(List.of("second"), capped.wakeDormantNodes(declared, 4, dormantNode -> true));
+        ShipTrees.chooseStartingRoot(capped, root);
+        ShipTrees.allocate(capped, bridge, 3);
+        ShipTrees.allocate(capped, first, 3);
+        ShipTrees.allocate(capped, second, 3);
+        ShipTrees.forgetUnknownNodes(capped, Map.of("root", root, "bridge", bridge, "filler", filler), declared, Map.of());
+        ShipTrees.allocate(capped, filler, 3);
+        assertEquals(List.of("second"), ShipTrees.wakeDormantNodes(capped, declared, 4, dormantNode -> true));
         assertEquals(List.of("root", "bridge", "filler", "first"), List.copyOf(capped.getAllocatedNodeIds()));
     }
 
@@ -1207,15 +1207,15 @@ class ShipSkillDataTest {
         SkillNode entrance = wormholeNode("entrance", List.of("root"), "exit");
         SkillNode exit = wormholeNode("exit", List.of("entrance"), "entrance");
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
-        data.allocate(entrance, 3);
+        ShipTrees.chooseStartingRoot(data, root);
+        ShipTrees.allocate(data, entrance, 3);
         assertTrue(data.isAllocated("exit"));
         Map<String, SkillNode> declared = Map.of("root", root, "entrance", entrance, "exit", exit);
-        data.forgetUnknownNodes(Map.of("root", root, "entrance", entrance), declared, Map.of());
+        ShipTrees.forgetUnknownNodes(data, Map.of("root", root, "entrance", entrance), declared, Map.of());
 
-        assertEquals(List.of(), data.wakeDormantNodes(declared, 3, dormantNode -> true));
+        assertEquals(List.of(), ShipTrees.wakeDormantNodes(data, declared, 3, dormantNode -> true));
         assertTrue(data.isAllocated("exit"));
-        assertEquals(3, data.getSpentOp(3));
+        assertEquals(3, ShipTrees.getSpentOp(data, 3));
     }
 
     @Test
@@ -1225,15 +1225,15 @@ class ShipSkillDataTest {
         SkillNode exit = wormholeNode("exit", List.of("entrance"), "entrance");
         SkillNode filler = node("filler", List.of("root"));
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
-        data.allocate(entrance, 3);
+        ShipTrees.chooseStartingRoot(data, root);
+        ShipTrees.allocate(data, entrance, 3);
         Map<String, SkillNode> declared = Map.of("root", root, "entrance", entrance, "exit", exit, "filler", filler);
-        data.forgetUnknownNodes(Map.of("root", root, "entrance", entrance, "filler", filler), declared, Map.of());
-        data.allocate(filler, 3);
+        ShipTrees.forgetUnknownNodes(data, Map.of("root", root, "entrance", entrance, "filler", filler), declared, Map.of());
+        ShipTrees.allocate(data, filler, 3);
 
-        assertEquals(List.of("exit", "entrance"), data.wakeDormantNodes(declared, 3, dormantNode -> true));
+        assertEquals(List.of("exit", "entrance"), ShipTrees.wakeDormantNodes(data, declared, 3, dormantNode -> true));
         assertEquals(List.of("root", "filler"), List.copyOf(data.getAllocatedNodeIds()));
-        assertEquals(3, data.getSpentOp(3));
+        assertEquals(3, ShipTrees.getSpentOp(data, 3));
     }
 
     @Test
@@ -1242,14 +1242,14 @@ class ShipSkillDataTest {
         SkillNode bridge = node("bridge", List.of("root"));
         SkillNode refused = node("refused", List.of("bridge"));
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
-        data.allocate(bridge, 3);
+        ShipTrees.chooseStartingRoot(data, root);
+        ShipTrees.allocate(data, bridge, 3);
         data.addFreeAllocationCredit();
-        data.allocate(refused, 3);
+        ShipTrees.allocate(data, refused, 3);
         Map<String, SkillNode> declared = Map.of("root", root, "bridge", bridge, "refused", refused);
-        data.forgetUnknownNodes(Map.of("root", root, "bridge", bridge), declared, Map.of());
+        ShipTrees.forgetUnknownNodes(data, Map.of("root", root, "bridge", bridge), declared, Map.of());
 
-        assertEquals(List.of("refused"), data.wakeDormantNodes(declared, 10, dormantNode -> false));
+        assertEquals(List.of("refused"), ShipTrees.wakeDormantNodes(data, declared, 10, dormantNode -> false));
         assertFalse(data.isAllocated("refused"));
         assertEquals(1, data.getBankedFreeAllocations());
     }
@@ -1260,17 +1260,17 @@ class ShipSkillDataTest {
         SkillNode bridge = node("bridge", List.of("root"));
         SkillNode hidden = node("hidden", List.of("bridge"));
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
-        data.allocate(bridge, 3);
-        data.allocate(hidden, 3);
+        ShipTrees.chooseStartingRoot(data, root);
+        ShipTrees.allocate(data, bridge, 3);
+        ShipTrees.allocate(data, hidden, 3);
         Map<String, SkillNode> declared = Map.of("root", root, "bridge", bridge, "hidden", hidden);
-        data.forgetUnknownNodes(Map.of("root", root, "bridge", bridge), declared, Map.of());
+        ShipTrees.forgetUnknownNodes(data, Map.of("root", root, "bridge", bridge), declared, Map.of());
         data.addFreeAllocationCredit();
 
-        assertEquals(List.of(), data.wakeDormantNodes(declared, 10, dormantNode -> true));
+        assertEquals(List.of(), ShipTrees.wakeDormantNodes(data, declared, 10, dormantNode -> true));
         assertTrue(data.isFreeNode("hidden"));
         assertEquals(0, data.getBankedFreeAllocations());
-        assertEquals(3, data.getSpentOp(3));
+        assertEquals(3, ShipTrees.getSpentOp(data, 3));
     }
 
     @Test
@@ -1278,21 +1278,21 @@ class ShipSkillDataTest {
         SkillNode root = rootNode("root", List.of());
         SkillNode hidden = node("hidden", List.of("root"));
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
+        ShipTrees.chooseStartingRoot(data, root);
         data.addFreeAllocationCredit();
-        data.allocate(hidden, 3);
-        data.forgetUnknownNodes(Map.of("root", root), Map.of("root", root, "hidden", hidden), Map.of());
+        ShipTrees.allocate(data, hidden, 3);
+        ShipTrees.forgetUnknownNodes(data, Map.of("root", root), Map.of("root", root, "hidden", hidden), Map.of());
 
         assertFalse(data.isBlank());
-        assertEquals(List.of("root", "hidden"), data.resetAllocations());
+        assertEquals(List.of("root", "hidden"), ShipTrees.resetAllocations(data));
         assertTrue(data.getDormantNodeIds().isEmpty());
         assertEquals(1, data.getBankedFreeAllocations());
 
         ShipSkillData removed = new ShipSkillData();
-        removed.chooseStartingRoot(root);
-        removed.allocate(hidden, 3);
-        removed.forgetUnknownNodes(Map.of("root", root), Map.of("root", root, "hidden", hidden), Map.of());
-        assertEquals(List.of("hidden"), removed.forgetUnknownNodes(Map.of("root", root), Map.of("root", root), Map.of()));
+        ShipTrees.chooseStartingRoot(removed, root);
+        ShipTrees.allocate(removed, hidden, 3);
+        ShipTrees.forgetUnknownNodes(removed, Map.of("root", root), Map.of("root", root, "hidden", hidden), Map.of());
+        assertEquals(List.of("hidden"), ShipTrees.forgetUnknownNodes(removed, Map.of("root", root), Map.of("root", root), Map.of()));
         assertTrue(removed.getDormantNodeIds().isEmpty());
     }
 
@@ -1301,11 +1301,11 @@ class ShipSkillDataTest {
         SkillNode root = rootNode("root", List.of());
         SkillNode hidden = node("hidden", List.of("root"));
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
-        data.allocate(hidden, 3);
-        data.forgetUnknownNodes(Map.of("root", root), Map.of("root", root, "hidden", hidden), Map.of());
+        ShipTrees.chooseStartingRoot(data, root);
+        ShipTrees.allocate(data, hidden, 3);
+        ShipTrees.forgetUnknownNodes(data, Map.of("root", root), Map.of("root", root, "hidden", hidden), Map.of());
 
-        assertTrue(data.replaceNode("hidden", "renamed"));
+        assertTrue(ShipTrees.replaceNode(data, "hidden", "renamed"));
         assertEquals(Set.of("renamed"), data.getDormantNodeIds());
     }
 
@@ -1315,15 +1315,15 @@ class ShipSkillDataTest {
         SkillNode newRoot = rootNode("new_root", List.of());
         SkillNode child = node("child", List.of("new_root"));
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(oldRoot);
-        data.allocate(child, 3);
+        ShipTrees.chooseStartingRoot(data, oldRoot);
+        ShipTrees.allocate(data, child, 3);
 
-        assertTrue(data.replaceNode("old_root", "new_root"));
+        assertTrue(ShipTrees.replaceNode(data, "old_root", "new_root"));
         Map<String, SkillNode> tree = Map.of("new_root", newRoot, "child", child);
-        assertTrue(data.forgetUnknownNodes(tree, Map.of()).isEmpty());
+        assertTrue(ShipTrees.forgetUnknownNodes(data, tree, Map.of()).isEmpty());
 
-        assertFalse(data.hasLostStartingRoot(tree));
-        assertEquals("new_root", data.resolveStartingRootId());
+        assertFalse(ShipTrees.hasLostStartingRoot(data, tree));
+        assertEquals("new_root", ShipTrees.resolveStartingRootId(data));
         assertEquals(Set.of("new_root", "child"), data.getAllocatedNodeIds());
     }
 
@@ -1332,19 +1332,19 @@ class ShipSkillDataTest {
         SkillNode root = rootNode("root", List.of());
         SkillNode child = node("child", List.of("root"));
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
+        ShipTrees.chooseStartingRoot(data, root);
         data.addFreeAllocationCredit();
-        data.allocate(child, 3);
+        ShipTrees.allocate(data, child, 3);
         data.incrementLevel();
 
-        assertTrue(data.hasLostStartingRoot(Map.of("child", child)));
-        assertTrue(data.hasLostStartingRoot(Map.of("root", node("root", List.of()), "child", child)));
-        assertEquals(List.of("root", "child"), data.resetAllocations());
+        assertTrue(ShipTrees.hasLostStartingRoot(data, Map.of("child", child)));
+        assertTrue(ShipTrees.hasLostStartingRoot(data, Map.of("root", node("root", List.of()), "child", child)));
+        assertEquals(List.of("root", "child"), ShipTrees.resetAllocations(data));
 
         assertTrue(data.getAllocatedNodeIds().isEmpty());
         assertEquals(1, data.getBankedFreeAllocations());
         assertEquals(1, data.getLevel());
-        assertTrue(data.chooseStartingRoot(root));
+        assertTrue(ShipTrees.chooseStartingRoot(data, root));
     }
 
     @Test
@@ -1352,13 +1352,13 @@ class ShipSkillDataTest {
         SkillNode root = rootNode("root", List.of());
         SkillNode child = node("child", List.of("root"));
         ShipSkillData legacy = new ShipSkillData();
-        legacy.allocate(root, 0);
-        legacy.allocate(child, 3);
+        ShipTrees.allocate(legacy, root, 0);
+        ShipTrees.allocate(legacy, child, 3);
 
-        assertFalse(legacy.hasLostStartingRoot(Map.of("root", root, "child", child)));
-        legacy.forgetUnknownNodes(Map.of("child", child), Map.of());
-        assertTrue(legacy.hasLostStartingRoot(Map.of("child", child)));
-        assertFalse(new ShipSkillData().hasLostStartingRoot(Map.of()));
+        assertFalse(ShipTrees.hasLostStartingRoot(legacy, Map.of("root", root, "child", child)));
+        ShipTrees.forgetUnknownNodes(legacy, Map.of("child", child), Map.of());
+        assertTrue(ShipTrees.hasLostStartingRoot(legacy, Map.of("child", child)));
+        assertFalse(ShipTrees.hasLostStartingRoot(new ShipSkillData(), Map.of()));
     }
 
     private static SkillType plainType(String id) {
@@ -1381,21 +1381,21 @@ class ShipSkillDataTest {
         SkillNode plain = node("plain", List.of("root"));
         SkillNode unchosen = new SkillNode("unchosen", optionalType("slot", "hull"), List.of("root"), 0f, 0f);
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
-        data.selectOption(kept, hull, 3);
-        data.allocate(unchosen, 3);
-        data.selectOption(unlisted, armor, 3);
+        ShipTrees.chooseStartingRoot(data, root);
+        ShipTrees.selectOption(data, kept, hull, 3);
+        ShipTrees.allocate(data, unchosen, 3);
+        ShipTrees.selectOption(data, unlisted, armor, 3);
         data.addFreeAllocationCredit();
-        data.selectOption(missingType, removed, 3);
-        data.allocate(plain, 3);
-        data.selectOption(plain, hull, 3);
+        ShipTrees.selectOption(data, missingType, removed, 3);
+        ShipTrees.allocate(data, plain, 3);
+        ShipTrees.selectOption(data, plain, hull, 3);
         Map<String, SkillNode> tree = Map.of("root", root, "kept", kept, "unlisted", unlisted, "missing_type", missingType,
                 "plain", plain, "unchosen", unchosen);
 
-        assertEquals(List.of("unchosen", "unlisted", "missing_type"), data.forgetUnknownNodes(tree, Map.of("hull", hull, "armor", armor)));
+        assertEquals(List.of("unchosen", "unlisted", "missing_type"), ShipTrees.forgetUnknownNodes(data, tree, Map.of("hull", hull, "armor", armor)));
         assertEquals(List.of("root", "kept", "plain"), List.copyOf(data.getAllocatedNodeIds()));
         assertEquals(1, data.getBankedFreeAllocations());
-        assertEquals(6, data.getSpentOp(3));
+        assertEquals(6, ShipTrees.getSpentOp(data, 3));
         assertEquals("hull", data.getOptionalSelection("kept"));
         assertNull(data.getOptionalSelection("plain"));
     }

@@ -1,5 +1,8 @@
 package exiledsector.ui.refit;
 
+import com.fs.starfarer.api.campaign.CampaignUIAPI;
+import com.fs.starfarer.api.campaign.InteractionDialogAPI;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -40,6 +43,12 @@ public final class UiReflection {
 
     public static Object call(Object target, String name) throws Throwable {
         return call(target, name, NO_ARGS);
+    }
+
+    public static Object coreUI(CampaignUIAPI campaignUI) throws Throwable {
+        InteractionDialogAPI dialog = campaignUI.getCurrentInteractionDialog();
+        Object dialogCore = call(dialog, "getCoreUI");
+        return dialogCore != null ? dialogCore : call(campaignUI, "getCore");
     }
 
     public static <T> T callReturning(Object target, Class<T> returnType, Object... args) throws Throwable {

@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.DamageTakenCaps;
 import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -46,7 +47,7 @@ class AppliedAndShownTotalsTest {
         SkillNode root = register(new SkillType.Builder("root", "Low Tech", "a.png", SkillTier.ROOT)
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f))).build());
         shipData = new ShipSkillData();
-        shipData.chooseStartingRoot(root);
+        ShipTrees.chooseStartingRoot(shipData, root);
     }
 
     @AfterEach
@@ -209,7 +210,7 @@ class AppliedAndShownTotalsTest {
     }
 
     private void allocate(SkillType type) {
-        shipData.allocate(register(type), 0);
+        ShipTrees.allocate(shipData, register(type), 0);
     }
 
     private SkillNode register(SkillType type) {

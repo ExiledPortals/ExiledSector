@@ -1,14 +1,9 @@
 package exiledsector.ui.socket;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
-import exiledsector.charts.StarChartSettings;
 import exiledsector.items.Item;
-import exiledsector.items.ItemStore;
 import exiledsector.ui.SkillTreeSounds;
-import exiledsector.ui.chart.StarChartBrowser;
 
-import java.util.List;
 import java.util.function.Function;
 
 public final class ModificationBay {
@@ -28,11 +23,10 @@ public final class ModificationBay {
 
     private final CustomPanelAPI hostPanel;
     private final Listener bayListener;
-    private final StarChartBrowser chartBrowser = new StarChartBrowser();
     private Function<Item, String> installedShipLookup;
     private SocketWorkbenchPanel benchPanel;
     private ItemStoragePanel storagePanel;
-    private StarChartStoragePanel chartStoragePanel;
+    private BenchModeSupport.PickerSession chartPicker;
     private SocketPanelPlacement drawerPlacement;
     private SocketPanelPlacement sidePlacement;
     private BenchMode benchMode = BenchMode.HULL_ITEMS;
@@ -106,11 +100,8 @@ public final class ModificationBay {
                     storagePanel.refresh(installedShipLookup);
                     storagePanel.setSelected(loaded);
                 }
-                if (chartStoragePanel != null) {
-                    ItemStore chartStore = ItemStore.starChartsIfCreated();
-                    chartBrowser.reload(chartStore == null ? List.of() : chartStore.owned());
-                    chartBrowser.select(loaded);
-                    chartStoragePanel.refresh();
+                if (chartPicker != null) {
+                    chartPicker.changed(loaded);
                 }
             }
 
@@ -137,7 +128,7 @@ public final class ModificationBay {
 
             @Override
             public boolean offersModeSwitch() {
-                return !modeLocked && StarChartSettings.enabled();
+                return !modeLocked && BenchModes.enabled(BenchMode.STAR_CHARTS);
             }
 
             @Override
@@ -173,23 +164,21 @@ public final class ModificationBay {
             storagePanel = null;
             swapped.swapOut();
         }
-        if (chartStoragePanel != null) {
-            StarChartStoragePanel swapped = chartStoragePanel;
-            chartStoragePanel = null;
-            swapped.swapOut();
+        if (chartPicker != null) {
+            chartPicker.swapOut();
         }
     }
 
     private boolean pickerOpen() {
-        return storagePanel != null || chartStoragePanel != null;
+        return storagePanel != null || chartPicker != null && chartPicker.isOpen();
     }
 
     private void closePicker() {
         if (storagePanel != null) {
             storagePanel.close();
         }
-        if (chartStoragePanel != null) {
-            chartStoragePanel.close();
+        if (chartPicker != null) {
+            chartPicker.close();
         }
     }
 
@@ -214,28 +203,31 @@ public final class ModificationBay {
     }
 
     private void openChartStorage(SocketPanelPlacement placement) {
-        int moved = StarChartBrowser.prepare(Global.getSector(), chartBrowser);
-        if (benchPanel != null && benchPanel.loaded() != null) {
-            chartBrowser.select(benchPanel.loaded());
+        BenchModeSupport chartBench = BenchModes.of(BenchMode.STAR_CHARTS);
+        if (chartBench == null) {
+            return;
         }
-        chartStoragePanel = StarChartStoragePanel.open(hostPanel, placement, chartBrowser, new StarChartStoragePanel.Listener() {
+        if (chartPicker == null) {
+            chartPicker = chartBench.pickerSession();
+        }
+        chartPicker.open(hostPanel, placement, benchPanel == null ? null : benchPanel.loaded(), new BenchModeSupport.PickerListener() {
             @Override
-            public void chartClicked(Item chart) {
-                if (benchPanel == null) {
-                    return;
-                }
-                chartBrowser.select(chart);
+            public boolean accepting() {
+                return benchPanel != null;
+            }
+
+            @Override
+            public void picked(Item chart) {
                 benchPanel.load(chart);
-                if (drawer && chartStoragePanel != null) {
-                    chartStoragePanel.close();
-                } else if (chartStoragePanel != null) {
-                    chartStoragePanel.refresh();
+                if (drawer) {
+                    chartPicker.close();
+                } else {
+                    chartPicker.refresh();
                 }
             }
 
             @Override
             public void closed() {
-                chartStoragePanel = null;
                 if (!drawer) {
                     close();
                 }
@@ -245,7 +237,7 @@ public final class ModificationBay {
             public void pressedInside() {
                 bayListener.pressedInside();
             }
-        }, StarChartBrowser.movedNotice(moved));
+        });
     }
 
     private void openStorage(SocketPanelPlacement placement) {
@@ -302,8 +294,8 @@ public final class ModificationBay {
         if (storagePanel != null) {
             storagePanel.refresh(lookup);
         }
-        if (chartStoragePanel != null) {
-            chartStoragePanel.refresh();
+        if (chartPicker != null) {
+            chartPicker.refresh();
         }
         if (benchPanel != null) {
             benchPanel.refresh();
@@ -312,7 +304,7 @@ public final class ModificationBay {
 
     public boolean contains(float x, float y) {
         return (benchPanel != null && benchPanel.contains(x, y)) || (storagePanel != null && storagePanel.contains(x, y))
-                || (chartStoragePanel != null && chartStoragePanel.contains(x, y));
+                || (chartPicker != null && chartPicker.contains(x, y));
     }
 
     public boolean isOpen() {

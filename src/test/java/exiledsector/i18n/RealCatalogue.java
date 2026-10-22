@@ -9,6 +9,8 @@ import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,15 +29,19 @@ public final class RealCatalogue {
         return CACHE.computeIfAbsent(locale, RealCatalogue::load);
     }
 
-    public static Path file(String locale) {
-        return RealSkillData.projectRoot().resolve(I18n.path(locale));
+    public static List<Path> files(String locale) {
+        return I18n.paths(locale).stream().map(RealSkillData.projectRoot()::resolve).filter(Files::isRegularFile).toList();
     }
 
     public static Map<String, String> entries(String locale) {
-        Path path = file(locale);
-        if (!Files.isRegularFile(path)) {
-            return Map.of();
+        Map<String, String> entries = new LinkedHashMap<>();
+        for (Path path : files(locale)) {
+            entries.putAll(readEntries(path));
         }
+        return entries;
+    }
+
+    private static Map<String, String> readEntries(Path path) {
         try {
             return I18n.flatten(new JSONObject(Files.readString(path, StandardCharsets.UTF_8)));
         } catch (IOException e) {

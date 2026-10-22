@@ -3,6 +3,7 @@ package exiledsector.skills.npc;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import exiledsector.skills.AnchorLinks;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -90,9 +91,9 @@ class NpcTreeTagTest {
         for (int i = 0; i < Math.min(nodeCount, order.size()); i++) {
             SkillNode node = SkillTree.get(order.get(i));
             if (node.getType().isOptional()) {
-                data.selectOption(node, SkillTree.getType("hull_option"), 1);
+                ShipTrees.selectOption(data, node, SkillTree.getType("hull_option"), 1);
             } else {
-                data.allocate(node, 1);
+                ShipTrees.allocate(data, node, 1);
             }
         }
         return data;
@@ -107,16 +108,16 @@ class NpcTreeTagTest {
     private static ShipSkillData withSocket() {
         register("socket_1", type("socket", SkillTier.SOCKET), "a");
         ShipSkillData data = NpcSkillTreeBuilder.rootedTree(SkillTree.get("root"), 2);
-        data.allocate(SkillTree.get("a"), 1);
-        data.allocate(SkillTree.get("socket_1"), 1);
+        ShipTrees.allocate(data, SkillTree.get("a"), 1);
+        ShipTrees.allocate(data, SkillTree.get("socket_1"), 1);
         return data;
     }
 
     private static ShipSkillData withOpenHegemonyVolume() {
         ShipSkillData data = withSocket();
         data.socketItem("socket_1", HEGEMONY_ANCHOR);
-        data.openAnchorWormholes(100);
-        data.allocate(SkillTree.get("pride"), 1);
+        ShipTrees.openAnchorWormholes(data, 100);
+        ShipTrees.allocate(data, SkillTree.get("pride"), 1);
         return data;
     }
 
@@ -133,7 +134,7 @@ class NpcTreeTagTest {
             assertEquals(Map.of("socket_1", HEGEMONY_ANCHOR), restored.getSocketedItems());
             assertEquals(List.copyOf(data.getAllocatedNodeIds()), List.copyOf(restored.getAllocatedNodeIds()));
             assertTrue(restored.isFreeNode("hegemony_2"));
-            assertEquals("socket_1", restored.wormholePartner(SkillTree.get("hegemony_2")));
+            assertEquals("socket_1", ShipTrees.wormholePartner(restored, SkillTree.get("hegemony_2")));
         }
     }
 
@@ -229,22 +230,22 @@ class NpcTreeTagTest {
         assertTrue(restored.isFreeNode("a"));
         assertTrue(restored.isFreeNode("b"));
         assertFalse(restored.isFreeNode("root"));
-        assertEquals(0, restored.getSpentOp(1));
+        assertEquals(0, ShipTrees.getSpentOp(restored, 1));
         assertTrue(restored.isNpcBuild());
     }
 
     @Test
     void nodesChargedWithFreedOpStayChargedThroughTheTag() {
         ShipSkillData built = NpcSkillTreeBuilder.rootedTree(SkillTree.get("root"), 1);
-        built.allocate(SkillTree.get("a"), 3);
-        built.selectOption(SkillTree.get("optional_1"), SkillTree.getType("hull_option"), 3);
-        built.allocate(SkillTree.get("b"), 3);
+        ShipTrees.allocate(built, SkillTree.get("a"), 3);
+        ShipTrees.selectOption(built, SkillTree.get("optional_1"), SkillTree.getType("hull_option"), 3);
+        ShipTrees.allocate(built, SkillTree.get("b"), 3);
 
         String tag = NpcTreeTag.encode(built);
         ShipSkillData restored = NpcTreeTag.decode(tag);
 
         assertEquals("exiledSector_npcTree|generated|1|root,a,optional_1=hull_option,b", tag);
-        assertEquals(6, restored.getSpentOp(3));
+        assertEquals(6, ShipTrees.getSpentOp(restored, 3));
         assertEquals(0, restored.getBankedFreeAllocations());
         assertTrue(restored.isFreeNode("a"));
         assertFalse(restored.isFreeNode("b"));
@@ -255,13 +256,13 @@ class NpcTreeTagTest {
     @Test
     void tagsSavedWithAPerNodeCostStillDecodeToTheSameTree() {
         ShipSkillData built = NpcSkillTreeBuilder.rootedTree(SkillTree.get("root"), 1);
-        built.allocate(SkillTree.get("a"), 3);
-        built.allocate(SkillTree.get("b"), 3);
+        ShipTrees.allocate(built, SkillTree.get("a"), 3);
+        ShipTrees.allocate(built, SkillTree.get("b"), 3);
 
         ShipSkillData restored = NpcTreeTag.decode("exiledSector_npcTree|bulwark|1|root,a,b|3");
 
         assertEquals(List.copyOf(built.getAllocatedNodeIds()), List.copyOf(restored.getAllocatedNodeIds()));
-        assertEquals(built.getSpentOp(3), restored.getSpentOp(3));
+        assertEquals(ShipTrees.getSpentOp(built, 3), ShipTrees.getSpentOp(restored, 3));
         assertTrue(restored.isFreeNode("a"));
         assertFalse(restored.isFreeNode("b"));
     }

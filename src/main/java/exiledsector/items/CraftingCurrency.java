@@ -9,7 +9,7 @@ public enum CraftingCurrency implements ItemCurrency {
     AUGMENTATION("exiledSector_augmentation_kernel", 10, 6, MaterialTier.MINOR, new Color(90, 170, 255)),
     ATTUNEMENT("exiledSector_attunement_kernel", 15, 4, MaterialTier.MINOR, new Color(185, 125, 255)),
     SUBSTITUTION("exiledSector_substitution_kernel", 20, 3, MaterialTier.MAJOR, new Color(255, 195, 80)),
-    CORRUPTION("exiledSector_corruption_kernel", 50, 1.5f, MaterialTier.EXOTIC, new Color(255, 75, 70)),
+    CORRUPTION("exiledSector_corruption_kernel", 50, 1.5f, MaterialTier.EXOTIC, Item.CORRUPTED_FRAME_COLOR),
     TRANSPOSITION("exiledSector_transposition_kernel", 0, 0.4f, MaterialTier.MYTHIC, new Color(255, 140, 50)),
     RECALIBRATION("exiledSector_recalibration_kernel", 0, 0.3f, MaterialTier.MYTHIC, new Color(110, 235, 140)),
     FIXATION("exiledSector_fixation_kernel", 0, 0.2f, MaterialTier.MYTHIC, new Color(230, 80, 175)),

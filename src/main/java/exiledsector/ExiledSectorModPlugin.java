@@ -22,7 +22,7 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.LanguageSetting;
 import exiledsector.i18n.Languages;
 import exiledsector.i18n.SpecLocalisation;
-import exiledsector.items.BattleItemDrops;
+import exiledsector.items.HullUpgradeData;
 import exiledsector.items.HullUpgradesDomain;
 import exiledsector.items.ItemCraftingCosts;
 import exiledsector.items.ItemDataIntegrity;
@@ -34,10 +34,12 @@ import exiledsector.items.ItemModifiers;
 import exiledsector.items.ItemNames;
 import exiledsector.items.ItemSaveAliases;
 import exiledsector.items.ItemStore;
+import exiledsector.items.ItemTypes;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.MaterialMigration;
 import exiledsector.items.SocketCustody;
 import exiledsector.items.SocketLossListener;
+import exiledsector.items.SocketTypeMigration;
 import exiledsector.items.UniqueSourceCheck;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
@@ -49,7 +51,10 @@ import exiledsector.skills.skilleffect.FleetWideEffects;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.ModificationBenchRefitButton;
 import exiledsector.ui.cargo.CargoCraftingTabListener;
+import exiledsector.ui.cargo.CargoIconLooks;
 import exiledsector.ui.cargo.LootAlertListener;
+import exiledsector.ui.refit.RefitButtonColumn;
+import exiledsector.ui.socket.BenchModes;
 import exiledsector.ui.util.TexturePreloader;
 
 import java.util.ArrayList;
@@ -60,9 +65,22 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
 
     public static final String LOG_TAG = "ExiledSector";
     public static final String MOD_ID = "exiledSector";
+    public static final HostMod HOST = HostMod.register(
+            new HostMod(MOD_ID, "data/config/exiledSector/", List.of("data/strings/exiledSector/core/", "data/strings/exiledSector/skillTree/",
+                    "data/strings/exiledSector/hullUpgrades/", "data/strings/exiledSector/starCharts/"), "exiledSector_"));
+    public static final String LIGHT_DATA_PATH = "data/lights/exiledsector_lights.csv";
     static final String SHIP_SKILL_DATA_ALIAS = "exiledSector.ShipSkillData";
     public static final List<String> LOCALISED_HULLMODS = List.of(SkillTreeHullMod.ID);
     public static final List<ExiledSectorDomain> DOMAINS = List.of(new SkillTreeDomain(), new HullUpgradesDomain(), new StarChartsDomain());
+
+    static {
+        DOMAINS.forEach(domain -> domain.itemTypes().forEach(ItemTypes::register));
+        DOMAINS.forEach(domain -> domain.itemDataRules().forEach(ItemDataIntegrity::registerRules));
+        DOMAINS.forEach(domain -> domain.itemIconLooks().forEach(CargoIconLooks::register));
+        DOMAINS.forEach(domain -> domain.benchModes().forEach(BenchModes::register));
+        DOMAINS.forEach(domain -> domain.refitButtons().forEach(RefitButtonColumn::register));
+        ItemStore.absorbStacksWith(HullUpgradeData::absorbInto);
+    }
 
     @Override
     public void onApplicationLoad() throws Exception {
@@ -84,11 +102,10 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         ItemCraftingCosts.load();
         ItemNames.load();
         ItemDrops.load();
-        BattleItemDrops.load();
         UniqueSourceCheck.logUnreachableSources();
         CompatChecks.logAtStartup(compatTargets());
-        GraphicsLibCompat.loadLightData();
-        TexturePreloader.preloadAll(MOD_ID);
+        GraphicsLibCompat.loadLightData(LIGHT_DATA_PATH);
+        TexturePreloader.preloadAll();
     }
 
     public static List<CompatTarget> compatTargets() {
@@ -151,6 +168,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         sector.getListenerManager().addListener(new LootAlertListener(), true);
         sector.getListenerManager().addListener(new MarketItemStock(), true);
         DOMAINS.forEach(Domain::afterLootListeners);
+        SocketTypeMigration.run();
         SocketCustody.reconcile();
         DOMAINS.forEach(Domain::afterSocketCustody);
     }

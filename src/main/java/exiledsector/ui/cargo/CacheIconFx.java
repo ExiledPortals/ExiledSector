@@ -106,7 +106,8 @@ public final class CacheIconFx {
     private CacheIconFx() {
     }
 
-    static void render(SpriteCache sprites, String iconPath, CargoIconLook look, float x, float y, float w, float h, float alphaMult, int phaseSeed) {
+    static void render(CacheLook cache, SpriteCache sprites, String iconPath, CargoIconLook look, float x, float y, float w, float h,
+                       float alphaMult, int phaseSeed) {
         boolean animated = ItemAnimationSetting.mode() == ItemAnimationSetting.Mode.FULL;
         float size = Math.min(w, h);
         float unit = size / DESIGN_SIZE;
@@ -140,7 +141,7 @@ public final class CacheIconFx {
         drawCrackle(sprites, color, crackleAlpha(cycle), phaseSeed, t, scale, alphaMult);
         drawBurst(sprites, color, flash, t, scale, alphaMult);
         drawDust(sprites, cycle, scale, alphaMult);
-        drawChips(sprites, look.cache().chipIconPaths(), color, cx, cy, scale, unit, cycle, t, phaseSeed, alphaMult);
+        drawChips(sprites, cache.chipIconPaths(), color, cx, cy, scale, unit, cycle, t, phaseSeed, alphaMult);
         if (framed) {
             AnchorIconFx.drawFrame(flash > 0.01f ? AnchorIconFx.lighten(color, 0.6f * flash) : color, cx, cy, unit, alphaMult);
             AnchorIconFx.drawLights(sprites, color, cx, cy, unit, DoctrineIconFx.wave(cycle, CRACK_KEY), alphaMult);

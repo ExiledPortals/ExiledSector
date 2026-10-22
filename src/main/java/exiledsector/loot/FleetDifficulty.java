@@ -5,6 +5,10 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 
 public interface FleetDifficulty {
 
+    default Float difficultyMultiplier(float battleDifficulty) {
+        return null;
+    }
+
     default int shipLevel(FleetMemberAPI member) {
         return 0;
     }

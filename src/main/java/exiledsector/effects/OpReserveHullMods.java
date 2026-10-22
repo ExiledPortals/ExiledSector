@@ -6,6 +6,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.RetiredReserveIds;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.progression.SkillNodeOpCost;
 import org.apache.log4j.Logger;
@@ -54,7 +55,7 @@ public final class OpReserveHullMods {
             removeMatching(variant, hullModId -> hullModId.startsWith(LEGACY_ID_PREFIX));
             return;
         }
-        int opSpent = shipData.getSpentOp(SkillNodeOpCost.perNode(member.getHullSpec()));
+        int opSpent = ShipTrees.getSpentOp(shipData, SkillNodeOpCost.perNode(member.getHullSpec()));
         reportIfCapped(member, opSpent);
         List<String> wantedReserveIds = reserveHullModsFor(opSpent);
         removeMatching(variant, hullModId -> isReserveHullMod(hullModId) && !wantedReserveIds.contains(hullModId));

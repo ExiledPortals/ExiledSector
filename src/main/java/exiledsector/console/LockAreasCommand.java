@@ -7,6 +7,7 @@ import exiledsector.items.NodeGrantStatus;
 import exiledsector.items.SocketCustody;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
@@ -84,21 +85,21 @@ public class LockAreasCommand implements BaseCommand {
         int allocatedBefore = shipData.getAllocatedNodeIds().size();
         Set<String> socketedItemIdsBefore = new HashSet<>(shipData.getSocketedItems().values());
         List<SkillItemCost> charges = new ArrayList<>();
-        String startingRootId = shipData.resolveStartingRootId();
+        String startingRootId = ShipTrees.resolveStartingRootId(shipData);
         if (startingRootId == null || lockedNodeIds.contains(startingRootId)) {
-            charges.addAll(shipData.takeItemCharges(shipData.resetAllocations()));
+            charges.addAll(ShipTrees.takeItemCharges(shipData, ShipTrees.resetAllocations(shipData)));
         } else {
             SkillTreeTopology topology = SkillTree.topology();
-            Set<String> reachableBefore = shipData.reachableAllocatedNodeIds(topology, startingRootId);
+            Set<String> reachableBefore = ShipTrees.reachableAllocatedNodeIds(shipData, topology, startingRootId);
             for (String nodeId : lockedNodeIds) {
                 SkillNode node = topology.node(nodeId);
                 if (node == null || !shipData.isAllocated(nodeId)) {
                     continue;
                 }
-                charges.addAll(shipData.anchorSocket(nodeId) != null ? shipData.releaseAnchorExit(nodeId)
-                        : shipData.deallocateReleasingCharges(node));
+                charges.addAll(ShipTrees.anchorSocket(shipData, nodeId) != null ? ShipTrees.releaseAnchorExit(shipData, nodeId)
+                        : ShipTrees.deallocateReleasingCharges(shipData, node));
             }
-            charges.addAll(shipData.releaseNewlyStranded(topology, startingRootId, reachableBefore).charges());
+            charges.addAll(ShipTrees.releaseNewlyStranded(shipData, topology, startingRootId, reachableBefore).charges());
         }
         charges.forEach(charged -> charged.refundTo(PlayerFleet.cargoOrNull()));
         socketedItemIdsBefore.removeAll(shipData.getSocketedItems().values());

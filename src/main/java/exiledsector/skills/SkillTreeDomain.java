@@ -1,14 +1,19 @@
 package exiledsector.skills;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.thoughtworks.xstream.XStream;
 import exiledsector.ExiledSectorModPlugin;
 import exiledsector.PlayerFleet;
 import exiledsector.compat.AbyssSingularity;
 import exiledsector.compat.CompatTarget;
-import exiledsector.compat.ExoticaCompat;
 import exiledsector.compat.LostSectorCompat;
 import exiledsector.compat.MagicLibCompat;
 import exiledsector.compat.NexerelinCompat;
@@ -17,6 +22,7 @@ import exiledsector.compat.NightcrossUnlocks;
 import exiledsector.compat.RandomAssortmentCompat;
 import exiledsector.compat.TaniaCompat;
 import exiledsector.domain.ExiledSectorDomain;
+import exiledsector.effects.CombatXpAward;
 import exiledsector.effects.HyperNavBeaconGrant;
 import exiledsector.effects.NpcBonusScale;
 import exiledsector.effects.NpcFleetDialogListener;
@@ -25,7 +31,9 @@ import exiledsector.effects.NpcFleetSweepScript;
 import exiledsector.effects.OpReserveHullMods;
 import exiledsector.effects.PhantomConflictWatch;
 import exiledsector.effects.PhantomHullMods;
+import exiledsector.effects.PlayerEngagementPipeline;
 import exiledsector.effects.PlayerTreePower;
+import exiledsector.effects.ShipTreeSync;
 import exiledsector.effects.SkillConflictWarningHullMod;
 import exiledsector.effects.ShipEffectSource;
 import exiledsector.effects.SkillTreeEffectSource;
@@ -36,13 +44,21 @@ import exiledsector.i18n.SpecLocalisation;
 import exiledsector.items.DeletedSubroutines;
 import exiledsector.items.DoctrineArchives;
 import exiledsector.items.DoctrineOverrides;
+import exiledsector.items.ItemDataRules;
+import exiledsector.items.ItemTypeSupport;
 import exiledsector.items.ModspecCaches;
 import exiledsector.items.NodeGrantLinks;
 import exiledsector.items.NodeGrantStatus;
 import exiledsector.items.NpcItems;
+import exiledsector.items.ShipCustody;
 import exiledsector.items.SocketCustody;
+import exiledsector.items.Subroutine;
+import exiledsector.items.SubroutineDataRules;
 import exiledsector.items.SubroutineImplicits;
+import exiledsector.items.TreeSocketCustody;
 import exiledsector.items.UniqueSubroutinesSetting;
+import exiledsector.items.WormholeAnchor;
+import exiledsector.items.WormholeAnchorDataRules;
 import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.items.WormholeAnchorLinks;
 import exiledsector.items.WormholeAnchorMigration;
@@ -59,16 +75,24 @@ import exiledsector.skills.tags.AreaToggles;
 import exiledsector.skills.unlock.NodeGates;
 import exiledsector.skills.unlock.RelockedGates;
 import exiledsector.skills.unlock.RemnantEncounter;
+import exiledsector.skills.unlock.UnlockConditionOverrides;
+import exiledsector.skills.unlock.UnlockConditionType;
 import exiledsector.ui.SkillTreeRefitButton;
 import exiledsector.ui.SkillTreeSettings;
 import exiledsector.ui.TreeCameraMemory;
+import exiledsector.ui.cargo.ItemIconLooks;
+import exiledsector.ui.cargo.SkillTreeIconLooks;
 import exiledsector.ui.inspect.ItemCodex;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
+import exiledsector.ui.inspect.ShipTreeSummaryRenderer;
 import exiledsector.ui.inspect.SkillTreeCodexListener;
 import exiledsector.ui.refit.PhantomHullModRefitHider;
+import exiledsector.ui.refit.RefitButtonColumn;
+import exiledsector.ui.socket.ItemCodexLink;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -134,6 +158,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
     @Override
     public void addCodexEntries() {
         ItemCodex.addEntries();
+        ItemCodexLink.register(ItemCodex.LINK);
     }
 
     @Override
@@ -197,8 +222,79 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
     }
 
     @Override
+    public List<ItemTypeSupport> itemTypes() {
+        return List.of(Subroutine.SUPPORT, WormholeAnchor.SUPPORT);
+    }
+
+    @Override
+    public List<ItemDataRules> itemDataRules() {
+        return List.of(SubroutineDataRules.INSTANCE, WormholeAnchorDataRules.INSTANCE);
+    }
+
+    @Override
+    public List<ItemIconLooks> itemIconLooks() {
+        return List.of(SkillTreeIconLooks.INSTANCE);
+    }
+
+    @Override
+    public List<RefitButtonColumn.ButtonSpec> refitButtons() {
+        return List.of(SkillTreeRefitButton.COLUMN_BUTTON);
+    }
+
+    @Override
+    public Map<PlayerEngagementPipeline.Stage, PlayerEngagementPipeline.Step> engagementSteps() {
+        return Map.of(PlayerEngagementPipeline.Stage.SYNC_TREES, engagement -> ShipTreeSync.afterPlayerEngagement(PlayerFleet.orNull()),
+                PlayerEngagementPipeline.Stage.AWARD_XP, CombatXpAward::award);
+    }
+
+    @Override
+    public void fleetChanged(CampaignFleetAPI fleet) {
+        ShipTreeSync.fleetChanged(fleet);
+    }
+
+    @Override
+    public void memberChanged(FleetMemberAPI member, ShipVariantAPI editedVariant) {
+        ShipTreeSync.memberChanged(member, editedVariant);
+    }
+
+    @Override
+    public List<SkillTypeEffect> fitEffects(ShipSkillData shipData, HullSize hullSize) {
+        return AllocatedSkillEffects.treeEffects(shipData, AllocatedNode.of(shipData), hullSize);
+    }
+
+    @Override
+    public ShipSkillData shipRecord(ShipVariantAPI variant) {
+        return SkillDataResolver.npcRecord(variant);
+    }
+
+    @Override
+    public void describeShip(TooltipMakerAPI tooltip, HullSize hullSize, ShipAPI ship) {
+        ShipTreeSummaryRenderer.renderForCoreHullMod(tooltip, hullSize, ship);
+    }
+
+    @Override
+    public void refitScreenListed() {
+        PhantomHullModRefitHider.requestRefresh();
+    }
+
+    @Override
+    public void playerFleetSynced() {
+        ShipTreeSync.requestPlayerFleetSync();
+    }
+
+    @Override
+    public List<ShipCustody> shipCustodies() {
+        return List.of(TreeSocketCustody.INSTANCE);
+    }
+
+    @Override
+    public boolean ignoresMemoryFlagUnlocks() {
+        return UnlockConditionOverrides.isDisabled(UnlockConditionType.MEMORY_FLAG);
+    }
+
+    @Override
     public List<CompatTarget> compatTargets() {
-        return List.of(LostSectorCompat.TARGET, MagicLibCompat.TARGET, ExoticaCompat.TARGET, NightcrossCompat.TARGET, TaniaCompat.TARGET,
+        return List.of(LostSectorCompat.TARGET, MagicLibCompat.TARGET, NightcrossCompat.TARGET, TaniaCompat.TARGET,
                 NexerelinCompat.TARGET);
     }
 
@@ -215,8 +311,8 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
             Global.getLogger(SkillTreeDomain.class).warn(ExiledSectorModPlugin.LOG_TAG + ": the skill tree did not load completely, so saved allocations were left as they are.");
             return;
         }
-        ShipSkillDataManager.replaceRemovedNodes(SkillTree.getDeclaredNodes(), NodeReplacements.all());
-        ShipSkillDataManager.forgetUnknownNodes(SkillTree.getAllNodes(), SkillTree.getDeclaredNodes(), SkillTree.getAllTypes(),
+        ShipTreeRepairs.replaceRemovedNodes(SkillTree.getDeclaredNodes(), NodeReplacements.all());
+        ShipTreeRepairs.forgetUnknownNodes(SkillTree.getAllNodes(), SkillTree.getDeclaredNodes(), SkillTree.getAllTypes(),
                 new OwnedShips(), charged -> charged.refundTo(PlayerFleet.cargoOrNull()));
     }
 

@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import exiledsector.skills.AnchorLinks;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -56,12 +57,12 @@ class WormholeAnchorMigrationTest {
 
     private ShipSkillData oldSaveShip() {
         ShipSkillData data = new ShipSkillData();
-        data.chooseStartingRoot(root);
-        data.allocate(coreSmall, 1);
-        data.allocate(strandedCore, 1);
-        data.allocate(exit, 0);
-        data.allocate(volumeSmall, 1);
-        data.recordItemCharge("heg_a", new SkillItemCost("alpha_core", 1f));
+        ShipTrees.chooseStartingRoot(data, root);
+        ShipTrees.allocate(data, coreSmall, 1);
+        ShipTrees.allocate(data, strandedCore, 1);
+        ShipTrees.allocate(data, exit, 0);
+        ShipTrees.allocate(data, volumeSmall, 1);
+        ShipTrees.recordItemCharge(data, "heg_a", new SkillItemCost("alpha_core", 1f));
         return data;
     }
 
@@ -119,12 +120,12 @@ class WormholeAnchorMigrationTest {
         });
         try {
             ShipSkillData data = new ShipSkillData();
-            data.chooseStartingRoot(root);
-            data.allocate(coreSmall, 1);
-            data.allocate(socket, 1);
+            ShipTrees.chooseStartingRoot(data, root);
+            ShipTrees.allocate(data, coreSmall, 1);
+            ShipTrees.allocate(data, socket, 1);
             data.socketItem("socket", "anchor");
-            data.allocate(volumeSmall, 1);
-            data.allocate(exit, 0);
+            ShipTrees.allocate(data, volumeSmall, 1);
+            ShipTrees.allocate(data, exit, 0);
 
             assertEquals(new WormholeAnchorMigration.Summary(0, 0),
                     WormholeAnchorMigration.runOnce(new HashMap<>(), Map.of("owned", data), topology, shipId -> true, refund -> { }));

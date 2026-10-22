@@ -3,10 +3,15 @@ package exiledsector.domain;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.thoughtworks.xstream.XStream;
 import exiledsector.compat.CompatTarget;
+import exiledsector.items.ItemTypeSupport;
 
 import java.util.List;
 
 public interface Domain {
+
+    default List<ItemTypeSupport> itemTypes() {
+        return List.of();
+    }
 
     default void onApplicationLoad() {
     }

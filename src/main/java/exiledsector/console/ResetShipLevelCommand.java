@@ -7,6 +7,7 @@ import exiledsector.PlayerFleet;
 import exiledsector.items.NodeGrantStatus;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import org.lazywizard.console.BaseCommand;
 import org.lazywizard.console.CommonStrings;
 import org.lazywizard.console.Console;
@@ -37,9 +38,9 @@ public class ResetShipLevelCommand implements BaseCommand {
 
         ShipSkillData shipData = ShipSkillDataManager.get(member.getId());
         List<String> socketedItemIds = List.copyOf(shipData.getSocketedItems().values());
-        List<String> releasedNodeIds = shipData.resetProgress();
+        List<String> releasedNodeIds = ShipTrees.resetProgress(shipData);
         socketedItemIds.forEach(NodeGrantStatus::forget);
-        shipData.takeItemCharges(releasedNodeIds).forEach(charged -> charged.refundTo(PlayerFleet.cargoOrNull()));
+        ShipTrees.takeItemCharges(shipData, releasedNodeIds).forEach(charged -> charged.refundTo(PlayerFleet.cargoOrNull()));
         ConsoleShips.treeChanged(member);
 
         String message = "Reset " + ConsoleShips.describe(member) + ": removed " + releasedNodeIds.size()

@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -53,14 +54,14 @@ class SubroutineSocketLimitsTest {
                 .put(subroutineRow(BYPASS, SubroutineKind.BYPASS))
                 .put(subroutineRow(DOCTRINE, SubroutineKind.DOCTRINE))
                 .put(subroutineRow(UNIQUE, SubroutineKind.UNIQUE).put("unique", "true"))
-                .put(subroutineRow(LIMITED_UNIQUE, SubroutineKind.UNIQUE).put("unique", "true").put(ItemDefinition.SOCKET_LIMIT_COLUMN, "1"))
-                .put(subroutineRow(UNLIMITED_UNIQUE, SubroutineKind.UNIQUE).put("unique", "true").put(ItemDefinition.SOCKET_LIMIT_COLUMN, "0"))
+                .put(subroutineRow(LIMITED_UNIQUE, SubroutineKind.UNIQUE).put("unique", "true").put(SubroutineDefinitions.SOCKET_LIMIT_COLUMN, "1"))
+                .put(subroutineRow(UNLIMITED_UNIQUE, SubroutineKind.UNIQUE).put("unique", "true").put(SubroutineDefinitions.SOCKET_LIMIT_COLUMN, "0"))
                 .put(ItemFixtures.row(HULL_ITEM, "armor_plating", "HULL_MULT:4:6")));
         SkillType socketType = new SkillType.Builder("socket_type", "Socket", "", SkillTier.SOCKET).build();
         for (String socketId : List.of("socket_1", "socket_2", "socket_3")) {
             SkillNode socket = new SkillNode(socketId, socketType, List.of(), 0f, 0f);
             SkillTree.register(socket);
-            shipData.allocate(socket, 1);
+            ShipTrees.allocate(shipData, socket, 1);
         }
     }
 
@@ -80,7 +81,7 @@ class SubroutineSocketLimitsTest {
     void aSecondDoctrineOrBypassOnOneShipIsRefusedWithAReasonThePlayerCanRead() {
         for (String definitionId : List.of(DOCTRINE, BYPASS)) {
             ShipSkillData ship = new ShipSkillData();
-            SkillTree.getAllNodes().values().forEach(socket -> ship.allocate(socket, 1));
+            SkillTree.getAllNodes().values().forEach(socket -> ShipTrees.allocate(ship, socket, 1));
             Item first = owned(definitionId, 1L);
             Item second = owned(definitionId, 2L);
             assertNull(SubroutineSocketLimits.refusal(first, "socket_1", ship.getSocketedItems()));
@@ -98,7 +99,7 @@ class SubroutineSocketLimitsTest {
     void volumeAndUniqueSubroutinesHaveNoPerShipLimit() {
         for (String definitionId : List.of(VOLUME, UNIQUE)) {
             ShipSkillData ship = new ShipSkillData();
-            SkillTree.getAllNodes().values().forEach(socket -> ship.allocate(socket, 1));
+            SkillTree.getAllNodes().values().forEach(socket -> ShipTrees.allocate(ship, socket, 1));
             ship.socketItem("socket_1", owned(definitionId, 1L).id());
             ship.socketItem("socket_2", owned(definitionId, 2L).id());
 
@@ -143,7 +144,7 @@ class SubroutineSocketLimitsTest {
         Item secondDoctrine = owned(DOCTRINE, 2L);
         Item firstVolume = owned(VOLUME, 4L);
         ShipSkillData otherShip = new ShipSkillData();
-        SkillTree.getAllNodes().values().forEach(socket -> otherShip.allocate(socket, 1));
+        SkillTree.getAllNodes().values().forEach(socket -> ShipTrees.allocate(otherShip, socket, 1));
         Item otherShipBypass = owned(BYPASS, 5L);
         shipData.socketItem("socket_3", thirdDoctrine.id());
         shipData.socketItem("socket_1", firstDoctrine.id());
@@ -194,7 +195,7 @@ class SubroutineSocketLimitsTest {
     void aBlankOrZeroSocketLimitIsUnlimited() {
         for (String definitionId : List.of(UNIQUE, UNLIMITED_UNIQUE)) {
             ShipSkillData ship = new ShipSkillData();
-            SkillTree.getAllNodes().values().forEach(socket -> ship.allocate(socket, 1));
+            SkillTree.getAllNodes().values().forEach(socket -> ShipTrees.allocate(ship, socket, 1));
             ship.socketItem("socket_1", owned(definitionId, 1L).id());
             ship.socketItem("socket_2", owned(definitionId, 2L).id());
 

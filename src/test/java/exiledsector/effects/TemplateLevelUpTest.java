@@ -8,6 +8,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -68,7 +69,7 @@ class TemplateLevelUpTest {
         member = ShipTreeSyncTest.mockMember("planned", true);
         when(member.getHullSpec().getHullSize()).thenReturn(HullSize.FRIGATE);
         shipData = ShipSkillDataManager.get("planned");
-        shipData.chooseStartingRoot(root);
+        ShipTrees.chooseStartingRoot(shipData, root);
     }
 
     @AfterEach
@@ -129,7 +130,7 @@ class TemplateLevelUpTest {
     @Test
     void withTheToggleOffLevelUpsRefundTheMostRecentNodeAsBefore() {
         assignTemplate("first", "second");
-        shipData.allocate(SkillTree.get("first"), 1);
+        ShipTrees.allocate(shipData, SkillTree.get("first"), 1);
 
         levelUp(1);
         assertEquals(0, TemplateLevelUp.spendFreeAllocations(member));
@@ -141,7 +142,7 @@ class TemplateLevelUpTest {
 
     @Test
     void aLevelUpTheTemplateCannotUseStillRefundsTheLatestNodeAsBefore() {
-        shipData.allocate(SkillTree.get("first"), 1);
+        ShipTrees.allocate(shipData, SkillTree.get("first"), 1);
         shipData.setAutoAllocateTemplate(true);
 
         levelUp(1);

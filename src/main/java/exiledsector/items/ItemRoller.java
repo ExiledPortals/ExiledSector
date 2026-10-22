@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.HostMod;
 import exiledsector.ModSettings;
 import exiledsector.ModSettingsListener;
 import exiledsector.Seeds;
@@ -11,7 +12,6 @@ import java.util.Random;
 
 public final class ItemRoller {
 
-    public static final String AVERAGE_ROLLS_FIELD_ID = "exiledSector_averageSocketableRolls";
     public static final boolean DEFAULT_AVERAGE_ROLLS = false;
 
     private static volatile boolean averageRollsSetting = DEFAULT_AVERAGE_ROLLS;
@@ -27,8 +27,12 @@ public final class ItemRoller {
     private ItemRoller() {
     }
 
+    public static String averageRollsFieldId() {
+        return HostMod.settingId("averageSocketableRolls");
+    }
+
     public static void reloadSettings() {
-        averageRollsSetting = ModSettings.booleanOr(AVERAGE_ROLLS_FIELD_ID, DEFAULT_AVERAGE_ROLLS);
+        averageRollsSetting = ModSettings.booleanOr(averageRollsFieldId(), DEFAULT_AVERAGE_ROLLS);
     }
 
     public static boolean averageRolls() {
@@ -40,7 +44,7 @@ public final class ItemRoller {
     }
 
     public static List<RolledModifier> rollAtTier(ItemDefinition definition, long seed, int tier) {
-        int rolledTier = definition.type() == ItemType.STAR_CHART ? StarChartDefinitions.tierAtLeastMinimum(definition.id(), tier) : tier;
+        int rolledTier = ItemTypes.rolledTier(definition, tier);
         return roll(definition, seed, averageRolls(), rolledTier);
     }
 

@@ -1,6 +1,7 @@
 package exiledsector.skills.template;
 
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.WormholePartners;
@@ -19,12 +20,12 @@ public final class TemplateCapture {
     }
 
     public static List<TemplateStep> capture(ShipSkillData shipData, String startingRootId, Map<String, SkillNode> nodesById) {
-        return capture(pathAllocatedNodeIds(shipData, shipData.getAllocatedNodeIds(), startingRootId), shipData::getOptionalSelection, shipData,
+        return capture(pathAllocatedNodeIds(shipData, shipData.getAllocatedNodeIds(), startingRootId), shipData::getOptionalSelection, ShipTrees.wormholePartners(shipData),
                 startingRootId, nodesById);
     }
 
     public static List<String> pathAllocatedNodeIds(ShipSkillData shipData, Collection<String> orderedNodeIds, String startingRootId) {
-        Set<String> grantOnlyNodeIds = shipData.grantOnlyNodeIds(SkillTree.topology(), startingRootId);
+        Set<String> grantOnlyNodeIds = ShipTrees.grantOnlyNodeIds(shipData, SkillTree.topology(), startingRootId);
         List<String> pathNodeIds = new ArrayList<>(orderedNodeIds);
         pathNodeIds.removeAll(grantOnlyNodeIds);
         return pathNodeIds;

@@ -44,22 +44,22 @@ class ItemRollOddsTest {
         List<PoolEntry> pool = List.of(PoolEntry.of(ModifierSlot.PREFIX, "D1", 1f, 2f, 3f), PoolEntry.of(ModifierSlot.PREFIX, "D2", 1f, 2f, 1f),
                 PoolEntry.of(ModifierSlot.PREFIX, "D3", 1f, 2f, 0f));
 
-        Map<String, Double> oneLine = ItemRollOdds.doctrineLineChances(augmentingDoctrine(pool, 1, 1));
+        Map<String, Double> oneLine = augmentingDoctrine(pool, 1, 1).lineChances();
         assertEquals(List.of("D1", "D2", "D3"), List.copyOf(oneLine.keySet()));
         assertEquals(0.75, oneLine.get("D1"), EXACT);
         assertEquals(0.25, oneLine.get("D2"), EXACT);
         assertEquals(0.0, oneLine.get("D3"), EXACT);
 
-        Map<String, Double> oneOrTwoLines = ItemRollOdds.doctrineLineChances(augmentingDoctrine(pool, 1, 2));
+        Map<String, Double> oneOrTwoLines = augmentingDoctrine(pool, 1, 2).lineChances();
         assertEquals(0.875, oneOrTwoLines.get("D1"), EXACT);
         assertEquals(0.625, oneOrTwoLines.get("D2"), EXACT);
         assertEquals(0.0, oneOrTwoLines.get("D3"), EXACT);
 
         List<PoolEntry> even = List.of(PoolEntry.of(ModifierSlot.PREFIX, "E1", 1f, 2f, 1f), PoolEntry.of(ModifierSlot.PREFIX, "E2", 1f, 2f, 1f),
                 PoolEntry.of(ModifierSlot.PREFIX, "E3", 1f, 2f, 1f), PoolEntry.of(ModifierSlot.PREFIX, "E4", 1f, 2f, 1f));
-        Map<String, Double> twoOfFour = ItemRollOdds.doctrineLineChances(augmentingDoctrine(even, 2, 2));
+        Map<String, Double> twoOfFour = augmentingDoctrine(even, 2, 2).lineChances();
         twoOfFour.values().forEach(chance -> assertEquals(0.5, chance, EXACT));
-        Map<String, Double> moreLinesThanEntries = ItemRollOdds.doctrineLineChances(augmentingDoctrine(even, 5, 6));
+        Map<String, Double> moreLinesThanEntries = augmentingDoctrine(even, 5, 6).lineChances();
         moreLinesThanEntries.values().forEach(chance -> assertEquals(1.0, chance, EXACT));
     }
 

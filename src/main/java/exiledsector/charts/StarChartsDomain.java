@@ -10,13 +10,19 @@ import exiledsector.effects.ShipEffectSource;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.SpecLocalisation;
 import exiledsector.i18n.Translation;
+import exiledsector.items.ItemDataRules;
+import exiledsector.items.ItemTypeSupport;
 import exiledsector.items.MaterialItems;
+import exiledsector.items.StarChart;
 import exiledsector.items.StarChartCurrency;
+import exiledsector.items.StarChartDataRules;
 import exiledsector.items.StarChartItems;
 import exiledsector.loot.FleetDifficulty;
 import exiledsector.loot.LootSource;
 import exiledsector.ui.ExiledSectorSettings;
+import exiledsector.ui.chart.StarChartBench;
 import exiledsector.ui.chart.WormholeGatewayOption;
+import exiledsector.ui.socket.BenchModeSupport;
 import lunalib.lunaSettings.LunaSettings.SettingsCreator;
 
 import java.util.List;
@@ -97,6 +103,21 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     @Override
     public void afterSocketCustody() {
         StarCharts.onGameLoad(Global.getSector());
+    }
+
+    @Override
+    public List<ItemTypeSupport> itemTypes() {
+        return List.of(StarChart.SUPPORT);
+    }
+
+    @Override
+    public List<ItemDataRules> itemDataRules() {
+        return List.of(StarChartDataRules.INSTANCE);
+    }
+
+    @Override
+    public List<BenchModeSupport> benchModes() {
+        return List.of(StarChartBench.INSTANCE);
     }
 
     @Override

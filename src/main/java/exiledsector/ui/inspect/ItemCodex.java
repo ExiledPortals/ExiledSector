@@ -15,6 +15,7 @@ import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemUnlock;
 import exiledsector.ui.VanillaText;
+import exiledsector.ui.socket.ItemCodexLink;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
@@ -30,6 +31,17 @@ public final class ItemCodex {
 
     public static final String CATEGORY_ID = "exiledSector_socketables";
     static final String ENTRY_PREFIX = "exiledSector_socketable_";
+    public static final ItemCodexLink.Codex LINK = new ItemCodexLink.Codex() {
+        @Override
+        public String existingEntryId(String definitionId) {
+            return ItemCodex.existingEntryId(definitionId);
+        }
+
+        @Override
+        public boolean open(String definitionId) {
+            return ItemCodex.open(definitionId);
+        }
+    };
 
     private static volatile UnlockState unlockState = UnlockState.NONE;
 

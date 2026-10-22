@@ -7,7 +7,6 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.codex.CodexDataV2;
 import com.fs.starfarer.api.impl.codex.CodexEntryPlugin;
 import exiledsector.i18n.I18n;
-import exiledsector.skills.ShipSections;
 import exiledsector.skills.InstalledHullMods;
 import exiledsector.skills.PhantomHullModStatus;
 import exiledsector.items.Item;
@@ -68,10 +67,8 @@ public class SkillTreeCodexListener implements CodexEventListener {
                 installed.add(item);
             }
         }
-        for (ShipSections.UnlockedSection slot : shipTree.sections()) {
-            if (slot.item() != null) {
-                installed.add(slot.item());
-            }
+        for (ShipSummaryPart part : ShipSummaryParts.all()) {
+            installed.addAll(part.installedItems(shipTree.skillData(), shipTree.variant()));
         }
         for (Item item : installed) {
             CodexEntryPlugin itemEntry = CodexDataV2.getEntry(ItemCodex.entryId(item.definitionId()));

@@ -1,21 +1,23 @@
 package exiledsector.i18n;
 
 import com.fs.starfarer.api.Global;
+import exiledsector.HostMod;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 public final class I18n {
 
-    public static final String CATALOGUE_DIRECTORY = "data/strings/exiledSector/";
-
+    public static final String LIBRARY_STRINGS_DIRECTORY = "data/strings/exiledLib/";
     private static final String MISSING_FILE_MESSAGE = "resource, not found in";
     private static final Logger LOG = Logger.getLogger(I18n.class);
     private static final ThreadLocal<Boolean> GAME_TEXT = new ThreadLocal<>();
@@ -82,25 +84,36 @@ public final class I18n {
                 + languages.game());
     }
 
-    public static String path(String locale) {
-        return CATALOGUE_DIRECTORY + locale + ".json";
+    public static List<String> paths(String locale) {
+        List<String> paths = new ArrayList<>();
+        paths.add(LIBRARY_STRINGS_DIRECTORY + locale + ".json");
+        paths.addAll(HostMod.stringsPaths(locale + ".json"));
+        return paths;
     }
 
     private static Catalogue read(String locale) {
-        return Catalogue.compose(locale, I18n::readFile);
+        return Catalogue.compose(locale, I18n::readFiles);
     }
 
-    private static Map<String, String> readFile(String locale) {
+    private static Map<String, String> readFiles(String locale) {
+        Map<String, String> entries = new LinkedHashMap<>();
+        for (String path : paths(locale)) {
+            entries.putAll(readFile(locale, path));
+        }
+        return entries;
+    }
+
+    private static Map<String, String> readFile(String locale, String path) {
         try {
-            JSONObject json = Global.getSettings().getMergedJSON(path(locale));
+            JSONObject json = Global.getSettings().getMergedJSON(path);
             return json == null ? Map.of() : flatten(json);
         } catch (RuntimeException e) {
             if (!isMissingFile(e) || LocaleChain.ENGLISH.equals(locale)) {
-                logUnreadable(locale, e);
+                logUnreadable(locale, path, e);
             }
             return Map.of();
         } catch (IOException | JSONException e) {
-            logUnreadable(locale, e);
+            logUnreadable(locale, path, e);
             return Map.of();
         }
     }
@@ -109,8 +122,8 @@ public final class I18n {
         return e.getMessage() != null && e.getMessage().contains(MISSING_FILE_MESSAGE);
     }
 
-    private static void logUnreadable(String locale, Exception e) {
-        LOG.error("Failed to load Exiled Sector strings for " + locale + " from " + path(locale)
+    private static void logUnreadable(String locale, String path, Exception e) {
+        LOG.error("Failed to load Exiled Sector strings for " + locale + " from " + path
                 + "; those strings fall back to English", e);
     }
 
