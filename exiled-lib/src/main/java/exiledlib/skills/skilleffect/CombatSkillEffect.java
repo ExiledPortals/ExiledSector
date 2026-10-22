@@ -190,7 +190,14 @@ public enum CombatSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).arg("value", magnitude).arg("range", MalfunctionAuraField.RANGE).styled();
         }
     },
-    WING_SCRAMBLE_COPIES(WingScrambleListener.COPIES_KEY, WingScrambleListener.class, WingScrambleListener::new),
+    WING_SCRAMBLE_COPIES(WingScrambleListener.COPIES_KEY, WingScrambleListener.class, WingScrambleListener::new) {
+        @Override
+        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
+            for (WingScrambleListener listener : parentShip.getListeners(WingScrambleListener.class)) {
+                listener.fighterLaunched();
+            }
+        }
+    },
     REPAIR_COORDINATOR_ARMOR_PERCENT(RepairCoordinatorListener.ARMOR_REPAIR_PERCENT_KEY, RepairCoordinatorListener.class,
             RepairCoordinatorListener::new) {
         @Override

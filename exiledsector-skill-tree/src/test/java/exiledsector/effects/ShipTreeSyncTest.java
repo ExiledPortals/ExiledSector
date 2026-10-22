@@ -628,6 +628,20 @@ class ShipTreeSyncTest {
     }
 
     @Test
+    void aSimulatorStandInSharingAShipsVariantLeavesItsTagAndPhantomsAlone() {
+        ShipTrees.allocate(ShipSkillDataManager.get("ship"), registerMilitarizedNode(), 1);
+        FleetMemberAPI standIn = mockMember("sim-copy", true);
+        ShipVariantAPI sharedVariant = standIn.getVariant();
+        when(sharedVariant.getTags()).thenReturn(List.of("exiledSector_ship_ship"));
+
+        assertFalse(ShipTreeSync.syncVariant(standIn, sharedVariant));
+
+        verify(sharedVariant, never()).removeTag(anyString());
+        verify(sharedVariant, never()).removePermaMod(anyString());
+        verify(sharedVariant, never()).addPermaMod(anyString());
+    }
+
+    @Test
     void levelUpsMarkTheLevelledShipsForAStatRebuildSoTheirReserveIsRepriced() {
         FleetMemberAPI levelled = mockMember("levelled", true);
 

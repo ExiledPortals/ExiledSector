@@ -21,11 +21,19 @@ public final class ShipRecords {
             }
         }
         if (member == null) {
-            String shipId = taggedShipId(variant);
-            return shipId == null ? null : ShipSkillDataManager.find(shipId);
+            return taggedTree(variant);
         }
         ShipSkillData saved = ShipSkillDataManager.find(member.getId());
-        return saved != null ? saved : new ShipSkillData();
+        if (saved != null) {
+            return saved;
+        }
+        ShipSkillData borrowed = member.getFleetData() == null ? taggedTree(variant) : null;
+        return borrowed != null ? borrowed : new ShipSkillData();
+    }
+
+    public static ShipSkillData taggedTree(ShipVariantAPI variant) {
+        String shipId = taggedShipId(variant);
+        return shipId == null ? null : ShipSkillDataManager.find(shipId);
     }
 
     static String taggedShipId(ShipVariantAPI variant) {

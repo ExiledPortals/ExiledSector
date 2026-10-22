@@ -35,6 +35,11 @@ public final class SkillDataResolver {
         return npcTag == null ? null : NPC_TREES.computeIfAbsent(npcTag, SkillDataResolver::decodeOrEmpty);
     }
 
+    public static boolean borrowsShipTree(FleetMemberAPI member, ShipVariantAPI variant) {
+        return member != null && member.getFleetData() == null && NpcTreeTag.find(variant) == null
+                && ShipSkillDataManager.find(member.getId()) == null && ShipRecords.taggedTree(variant) != null;
+    }
+
     public static boolean isNpcTree(ShipVariantAPI variant) {
         return NpcTreeTag.find(variant) != null;
     }

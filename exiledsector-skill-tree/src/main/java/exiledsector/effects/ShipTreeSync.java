@@ -118,6 +118,7 @@ public final class ShipTreeSync {
 
     static boolean syncVariant(FleetMemberAPI member, ShipVariantAPI variant, List<AllocatedNode> allocatedNodes,
                                Set<String> phantomHullModIds) {
+        if (SkillDataResolver.borrowsShipTree(member, variant)) return false;
         if (!SkillTreeSetting.enabled()) {
             allocatedNodes = List.of();
             phantomHullModIds = Set.of();

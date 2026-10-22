@@ -14,8 +14,11 @@ import com.fs.starfarer.api.combat.DeployedFleetMemberAPI;
 import com.fs.starfarer.api.combat.FighterLaunchBayAPI;
 import com.fs.starfarer.api.combat.FighterWingAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.CrewCompositionAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.FleetMemberType;
@@ -32,6 +35,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -181,6 +185,125 @@ class WingScrambleListenerTest {
 
         assertThrows(IllegalStateException.class, () -> listener.launchCopy(engine, GUN_PLATFORM, hostBay));
 
+        verify(gunPlatformSpec).setNumFighters(GUN_PLATFORM_WING_SIZE);
+        verify(fleetManager).setSuppressDeploymentMessages(false);
+    }
+
+    private static FighterLaunchBayAPI bayWithRange(float range) {
+        FighterWingSpecAPI spec = mock(FighterWingSpecAPI.class);
+        when(spec.getRange()).thenReturn(range);
+        FighterWingAPI wing = mock(FighterWingAPI.class);
+        when(wing.getSpec()).thenReturn(spec);
+        FighterLaunchBayAPI bay = mock(FighterLaunchBayAPI.class);
+        when(bay.getWing()).thenReturn(wing);
+        return bay;
+    }
+
+    @Test
+    void theLongestBaseRangeIsFoundOnlyWhenTheWingsDiffer() {
+        assertEquals(4000f, WingScrambleListener.longestBaseRangeOf(List.of(bayWithRange(2500f), bayWithRange(4000f), bayWithRange(3000f))));
+        assertNull(WingScrambleListener.longestBaseRangeOf(List.of(bayWithRange(4000f), bayWithRange(4000f))));
+    }
+
+    @Test
+    void everyWingReachesWhatTheLongestWingWouldWithTheCarriersOtherRangeBonuses() {
+        StatBonus wingRange = new StatBonus();
+        wingRange.modifyPercent("hull mod", 25f);
+        wingRange.modifyFlat("officer", 200f);
+        wingRange.modifyMult("system", 1.5f);
+        float longestWingRange = wingRange.computeEffective(4000f);
+
+        WingScrambleListener.matchRangeTo(wingRange, 4000f);
+
+        assertEquals(longestWingRange, wingRange.computeEffective(2500f), 0.01f);
+        assertEquals(longestWingRange, wingRange.computeEffective(4000f), 0.01f);
+    }
+
+    private static FighterLaunchBayAPI bayWithSpeed(float maxSpeed, int wingSize) {
+        ShipHullSpecAPI.EngineSpecAPI engineSpec = mock(ShipHullSpecAPI.EngineSpecAPI.class);
+        when(engineSpec.getMaxSpeed()).thenReturn(maxSpeed);
+        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
+        when(hullSpec.getEngineSpec()).thenReturn(engineSpec);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(variant.getHullSpec()).thenReturn(hullSpec);
+        FighterWingSpecAPI spec = mock(FighterWingSpecAPI.class);
+        when(spec.getVariant()).thenReturn(variant);
+        when(spec.getNumFighters()).thenReturn(wingSize);
+        FighterWingAPI wing = mock(FighterWingAPI.class);
+        when(wing.getSpec()).thenReturn(spec);
+        FighterLaunchBayAPI bay = mock(FighterLaunchBayAPI.class);
+        when(bay.getWing()).thenReturn(wing);
+        return bay;
+    }
+
+    @Test
+    void theGroupSpeedIsTheAverageOverEveryFighterOfItsWingsAtFullStrength() {
+        assertEquals(220f, WingScrambleListener.averageBaseSpeedOf(List.of(bayWithSpeed(250f, 3), bayWithSpeed(175f, 2))), 0.01f);
+    }
+
+    @Test
+    void everyFighterInTheGroupGetsTheGroupSpeedAsItsBaseOnceAndKeepsItsModifiers() {
+        ShipAPI talon = fighter();
+        MutableStat talonSpeed = new MutableStat(250f);
+        talonSpeed.modifyPercent("carrier skill", 20f);
+        MutableShipStatsAPI talonStats = mock(MutableShipStatsAPI.class);
+        when(talonStats.getMaxSpeed()).thenReturn(talonSpeed);
+        when(talon.getMutableStats()).thenReturn(talonStats);
+        ShipAPI broadsword = fighter();
+        MutableStat broadswordSpeed = new MutableStat(175f);
+        MutableShipStatsAPI broadswordStats = mock(MutableShipStatsAPI.class);
+        when(broadswordStats.getMaxSpeed()).thenReturn(broadswordSpeed);
+        when(broadsword.getMutableStats()).thenReturn(broadswordStats);
+        List<WingScramble.Host<ShipAPI, FighterLaunchBayAPI, String>> hosts = List.of(
+                new WingScramble.Host<>(hostBay, "talon_wing", 2, 0, List.of(talon)),
+                new WingScramble.Host<>(hostBay, "broadsword_wing", 3, 0, List.of(broadsword)));
+        Set<ShipAPI> matched = new HashSet<>();
+
+        WingScrambleListener.matchSpeeds(hosts, 220f, matched);
+        talonSpeed.setBaseValue(250f);
+        WingScrambleListener.matchSpeeds(hosts, 220f, matched);
+
+        assertEquals(250f, talonSpeed.getBaseValue());
+        assertEquals(220f, broadswordSpeed.getModifiedValue(), 0.01f);
+        assertEquals(Set.of(talon, broadsword), matched);
+    }
+
+    @Test
+    void aGroupWithoutASpeedLeavesItsFightersAlone() {
+        ShipAPI fighter = fighter();
+        Set<ShipAPI> matched = new HashSet<>();
+
+        WingScrambleListener.matchSpeeds(List.of(new WingScramble.Host<>(hostBay, "talon_wing", 2, 0, List.of(fighter))), null, matched);
+
+        assertTrue(matched.isEmpty());
+        verify(fighter, never()).getMutableStats();
+    }
+
+    @Test
+    void aFighterLaunchedByTheCarrierFlagsItsDoctrineForRouting() {
+        WingScrambleListener listener = mock(WingScrambleListener.class);
+        when(carrier.getListeners(WingScrambleListener.class)).thenReturn(List.of(listener));
+
+        CombatSkillEffect.WING_SCRAMBLE_COPIES.applyToFighterSpawnedByShip(fighter(), carrier, "wing_scramble", 1f);
+
+        verify(listener).fighterLaunched();
+    }
+
+    @Test
+    void aCopyWhoseHullModThrowsWhileSettlingInStillLeavesItsSourcelessWingAndJoinsTheHost() {
+        ShipAPI leader = fighter();
+        FighterWingAPI spawnedWing = spawnedWingOf(leader);
+        when(fleetManager.spawnFleetMember(eq(wingMember), any(Vector2f.class), anyFloat(), eq(0f)))
+                .thenThrow(new NullPointerException("getSourceShip() is null"));
+        when(fleetManager.getShipFor(wingMember)).thenReturn(leader);
+
+        ShipAPI copy = new WingScrambleListener(carrier).launchCopy(engine, GUN_PLATFORM, hostBay);
+
+        assertSame(leader, copy);
+        verify(spawnedWing).removeMember(leader);
+        verify(fleetManager).removeDeployed(spawnedWing, false);
+        verify(leader).setWing(hostWing);
+        verify(hostWing).addMember(leader);
         verify(gunPlatformSpec).setNumFighters(GUN_PLATFORM_WING_SIZE);
         verify(fleetManager).setSuppressDeploymentMessages(false);
     }
@@ -365,7 +488,7 @@ class WingScrambleListenerTest {
     }
 
     @Test
-    void assaultWingsGroupWithFightersButDronesAndIndependentWingsStayApart() {
+    void assaultWingsAndDronesGroupWithFightersButIndependentWingsStayApart() {
         Object fighters = WingScrambleListener.doctrineGroupOf(bayWith(WingRole.FIGHTER, Set.of(), false, true));
         Object assault = WingScrambleListener.doctrineGroupOf(bayWith(WingRole.ASSAULT, Set.of(), false, true));
         Object drones = WingScrambleListener.doctrineGroupOf(bayWith(WingRole.FIGHTER, Set.of(Tags.AUTOMATED_FIGHTER), false, true));
@@ -374,7 +497,7 @@ class WingScrambleListenerTest {
         Object bombers = WingScrambleListener.doctrineGroupOf(bayWith(WingRole.BOMBER, Set.of(), false, true));
 
         assertEquals(fighters, assault);
-        assertNotEquals(fighters, drones);
+        assertEquals(fighters, drones);
         assertNotEquals(fighters, independent);
         assertNotEquals(fighters, escorts);
         assertNotEquals(fighters, bombers);

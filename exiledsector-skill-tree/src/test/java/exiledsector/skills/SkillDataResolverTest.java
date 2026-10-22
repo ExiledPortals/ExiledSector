@@ -1,5 +1,6 @@
 package exiledsector.skills;
 
+import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.ShipRecords;
@@ -137,6 +138,38 @@ class SkillDataResolverTest {
 
         assertSame(saved, SkillDataResolver.resolve(null, variantWithTags(ShipRecords.SHIP_TAG_PREFIX + "ship-a")));
         assertNull(SkillDataResolver.resolve(null, variantWithTags(ShipRecords.SHIP_TAG_PREFIX + "sold")));
+    }
+
+    @Test
+    void aStandInMemberOutsideAnyFleetBorrowsTheTreeItsVariantIsTaggedWith() {
+        ShipSkillData saved = new ShipSkillData();
+        dataManagerMock.when(() -> ShipSkillDataManager.find("ship-a")).thenReturn(saved);
+        ShipVariantAPI variant = variantWithTags(ShipRecords.SHIP_TAG_PREFIX + "ship-a");
+
+        assertSame(saved, SkillDataResolver.resolve(member("sim-copy"), variant));
+        assertTrue(SkillDataResolver.borrowsShipTree(member("sim-copy"), variant));
+    }
+
+    @Test
+    void aMemberInAFleetNeverBorrowsTheTreeOfACopiedShipTag() {
+        dataManagerMock.when(() -> ShipSkillDataManager.find("ship-a")).thenReturn(new ShipSkillData());
+        ShipVariantAPI variant = variantWithTags(ShipRecords.SHIP_TAG_PREFIX + "ship-a");
+        FleetMemberAPI fleetMember = member("ship-b");
+        when(fleetMember.getFleetData()).thenReturn(mock(FleetDataAPI.class));
+
+        assertTrue(SkillDataResolver.resolve(fleetMember, variant).isBlank());
+        assertFalse(SkillDataResolver.borrowsShipTree(fleetMember, variant));
+    }
+
+    @Test
+    void aMemberWithItsOwnTreeOrAnUntaggedVariantBorrowsNothing() {
+        dataManagerMock.when(() -> ShipSkillDataManager.find("ship-a")).thenReturn(new ShipSkillData());
+        dataManagerMock.when(() -> ShipSkillDataManager.find("ship-b")).thenReturn(new ShipSkillData());
+
+        assertFalse(SkillDataResolver.borrowsShipTree(member("ship-b"), variantWithTags(ShipRecords.SHIP_TAG_PREFIX + "ship-a")));
+        assertFalse(SkillDataResolver.borrowsShipTree(member("sim-copy"), variantWithTags()));
+        assertFalse(SkillDataResolver.borrowsShipTree(member("sim-copy"), variantWithTags(ShipRecords.SHIP_TAG_PREFIX + "sold")));
+        assertFalse(SkillDataResolver.borrowsShipTree(null, variantWithTags(ShipRecords.SHIP_TAG_PREFIX + "ship-a")));
     }
 
     @Test
