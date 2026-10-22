@@ -16,6 +16,7 @@ import com.fs.starfarer.api.combat.FighterWingAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.CrewCompositionAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.FleetMemberType;
@@ -183,6 +184,36 @@ class WingScrambleListenerTest {
 
         verify(gunPlatformSpec).setNumFighters(GUN_PLATFORM_WING_SIZE);
         verify(fleetManager).setSuppressDeploymentMessages(false);
+    }
+
+    private static FighterLaunchBayAPI bayWithRange(float range) {
+        FighterWingSpecAPI spec = mock(FighterWingSpecAPI.class);
+        when(spec.getRange()).thenReturn(range);
+        FighterWingAPI wing = mock(FighterWingAPI.class);
+        when(wing.getSpec()).thenReturn(spec);
+        FighterLaunchBayAPI bay = mock(FighterLaunchBayAPI.class);
+        when(bay.getWing()).thenReturn(wing);
+        return bay;
+    }
+
+    @Test
+    void theLongestBaseRangeIsFoundOnlyWhenTheWingsDiffer() {
+        assertEquals(4000f, WingScrambleListener.longestBaseRangeOf(List.of(bayWithRange(2500f), bayWithRange(4000f), bayWithRange(3000f))));
+        assertNull(WingScrambleListener.longestBaseRangeOf(List.of(bayWithRange(4000f), bayWithRange(4000f))));
+    }
+
+    @Test
+    void everyWingReachesWhatTheLongestWingWouldWithTheCarriersOtherRangeBonuses() {
+        StatBonus wingRange = new StatBonus();
+        wingRange.modifyPercent("hull mod", 25f);
+        wingRange.modifyFlat("officer", 200f);
+        wingRange.modifyMult("system", 1.5f);
+        float longestWingRange = wingRange.computeEffective(4000f);
+
+        WingScrambleListener.matchRangeTo(wingRange, 4000f);
+
+        assertEquals(longestWingRange, wingRange.computeEffective(2500f), 0.01f);
+        assertEquals(longestWingRange, wingRange.computeEffective(4000f), 0.01f);
     }
 
     @Test
@@ -384,7 +415,7 @@ class WingScrambleListenerTest {
     }
 
     @Test
-    void assaultWingsGroupWithFightersButDronesAndIndependentWingsStayApart() {
+    void assaultWingsAndDronesGroupWithFightersButIndependentWingsStayApart() {
         Object fighters = WingScrambleListener.doctrineGroupOf(bayWith(WingRole.FIGHTER, Set.of(), false, true));
         Object assault = WingScrambleListener.doctrineGroupOf(bayWith(WingRole.ASSAULT, Set.of(), false, true));
         Object drones = WingScrambleListener.doctrineGroupOf(bayWith(WingRole.FIGHTER, Set.of(Tags.AUTOMATED_FIGHTER), false, true));
@@ -393,7 +424,7 @@ class WingScrambleListenerTest {
         Object bombers = WingScrambleListener.doctrineGroupOf(bayWith(WingRole.BOMBER, Set.of(), false, true));
 
         assertEquals(fighters, assault);
-        assertNotEquals(fighters, drones);
+        assertEquals(fighters, drones);
         assertNotEquals(fighters, independent);
         assertNotEquals(fighters, escorts);
         assertNotEquals(fighters, bombers);

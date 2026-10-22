@@ -15,6 +15,7 @@ import com.fs.starfarer.api.combat.FighterLaunchBayAPI;
 import com.fs.starfarer.api.combat.FighterWingAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.fleet.CrewCompositionAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -39,8 +40,9 @@ import java.util.Set;
 final class WingScrambleListener extends ShipCombatListener implements AdvanceableListener {
 
     static final String COPIES_KEY = "exiledSector_wingScrambleCopies";
+    static final String RANGE_MOD_ID = "exiledSector_wingScrambleRange";
     static final String INDEPENDENT_FIGHTER_HULL_MOD = "rat_exo_fighter_independence";
-    static final List<String> BEHAVIOUR_TAGS = List.of(Tags.AUTOMATED_FIGHTER, Tags.WING_INDEPENDENT_OF_CARRIER, Tags.WING_STAY_IN_FRONT_OF_SHIP,
+    static final List<String> BEHAVIOUR_TAGS = List.of(Tags.WING_INDEPENDENT_OF_CARRIER, Tags.WING_STAY_IN_FRONT_OF_SHIP,
             Tags.WING_RAPID_REFORM, Tags.WING_LEADER_NO_SWARM, Tags.WING_WINGMEN_NO_SWARM, Tags.WING_MATCH_LEADER_FACING,
             Tags.WING_ATTACK_AT_AN_ANGLE, Tags.WING_KEEP_AT_RANGE, Tags.WING_TARGET_ESCORT_TARGET, Tags.SWARM_FIGHTER);
     static final float MAX_WAIT_FOR_LAUNCH_SECONDS = 4f;
@@ -92,6 +94,10 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
                 return;
             }
             bayGroups = WingScramble.groups(bays, WingScrambleListener::doctrineGroupOf);
+            Float longestBaseRange = bayGroups.isEmpty() ? null : longestBaseRangeOf(bays);
+            if (longestBaseRange != null) {
+                matchRangeTo(ownerShip.getMutableStats().getFighterWingRange(), longestBaseRange);
+            }
             secondsSinceRouting = ROUTING_INTERVAL_SECONDS;
         } else {
             secondsSinceRouting += amount;
@@ -100,6 +106,25 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
             secondsSinceRouting = 0f;
             routeAll(engine, copiesPerType);
         }
+    }
+
+    static Float longestBaseRangeOf(List<FighterLaunchBayAPI> bays) {
+        float longest = Float.NEGATIVE_INFINITY;
+        float shortest = Float.POSITIVE_INFINITY;
+        for (FighterLaunchBayAPI bay : bays) {
+            FighterWingSpecAPI spec = bay.getWing() == null ? null : bay.getWing().getSpec();
+            if (spec != null) {
+                longest = Math.max(longest, spec.getRange());
+                shortest = Math.min(shortest, spec.getRange());
+            }
+        }
+        return longest > shortest ? longest : null;
+    }
+
+    static void matchRangeTo(StatBonus wingRange, float baseRange) {
+        float otherPercent = wingRange.getPercentMod();
+        wingRange.modifyPercent(RANGE_MOD_ID, -100f - otherPercent);
+        wingRange.modifyFlat(RANGE_MOD_ID, baseRange * (1f + otherPercent / 100f));
     }
 
     static boolean everyBayHasAWing(List<FighterLaunchBayAPI> bays) {
