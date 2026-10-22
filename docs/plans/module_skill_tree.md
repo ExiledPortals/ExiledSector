@@ -4,7 +4,7 @@ Ships with station modules (Navarchy of Tania plates, Knights of Ludd, Roider Un
 
 All numbers are placeholders, like every other magnitude in the mod. `docs/analysis/balance.csv` is left alone.
 
-Status: on branch `module_skill_tree`, step 1 is committed (54875f4a) and step 2 is built but uncommitted. The Tania volume (Module Hull, Module Armor, Module Weapon Damage, Plate Fire Control, Jettison Protocol, Rise From the Ashes, Thermo-Accelerator) is committed on `parallel-work` (653b7cbd) and is the starting point.
+Status: on branch `module_skill_tree`, step 1 is committed (54875f4a), step 2 is committed (317bcbf7) and step 3 is committed. The Tania volume (Module Hull, Module Armor, Module Weapon Damage, Plate Fire Control, Jettison Protocol, Rise From the Ashes, Thermo-Accelerator) is committed on `parallel-work` (653b7cbd) and is the starting point.
 
 ## Decided so far
 
@@ -46,7 +46,7 @@ The share is computed from the parent's allocated nodes, not from the pooled tre
 
 1. Skip it if it is a temporary node, a vanilla passthrough (`vanillaHullMod`), or classed EXCLUDE as a whole (see "Nodes shared all or nothing").
 2. Skip it on a module that already has any of the node's phantom hull mods of its own (`InstalledHullMods.hasHullModOfItsOwn` on the module variant) or any hull mod in the node's `exclusiveHullMods`. Example: an Argentavis plate has Dedicated Targeting Core built in, so the parent's Dedicated Targeting Core node gives it nothing instead of +70% range.
-3. Take the node's effects at the parent's hull size, keep only the effects classed SHARE or SHARE-REBUILD, multiply each magnitude by the share, and pool MULT effects the same way `ResolvedTree` does.
+3. Take the node's effects at the parent's hull size and keep only the effects classed SHARE or SHARE-REBUILD. Sum them over all shared nodes, pool and floor MULT effects the same way `ResolvedTree` does, apply the damage-taken caps, then multiply each total by the share.
 4. Apply the pooled result to the module's stats under one mod id per effect (`exiledSector_moduleShare_<parentId>_<effect>`).
 
 Positive "increased" and "more" values scale linearly. The damage-taken caps are re-applied to the module's pooled totals, so a parent sitting at the 80% cap gives the module half of the cap, not half of the raw total.
@@ -322,8 +322,8 @@ These came up during the research and aren't part of the share itself.
 ## Build order
 
 1. Confirm the refit button issue in game and guard `SkillTreeRefitButton.shouldShow` and the panel against module members and variants. Fix the Shared Fate ally filter. Code done in 54875f4a; in-game check still open.
-2. Add the classification. Each `SkillEffect` gets a `ModuleShare` value: SHARE, SHARE_REBUILD, EXCLUDE (default). Each skill type gets an optional `moduleShare` override (`all`, `none`) for the all-or-nothing nodes, in `skill_types.json` and the editor serialisers. Done, uncommitted: `ModuleShare` adds SKIP for the no-op effects, the node rule is `SkillType.moduleSharedEffects`, and the editor type dialog has a "Share with station modules" select.
-3. Build `ModuleTreeShare`: node walk, skip rules, scaling, MULT pooling, damage-taken caps, and the push onto module stats.
+2. Add the classification. Each `SkillEffect` gets a `ModuleShare` value: SHARE, SHARE_REBUILD, EXCLUDE (default). Each skill type gets an optional `moduleShare` override (`all`, `none`) for the all-or-nothing nodes, in `skill_types.json` and the editor serialisers. Done in 317bcbf7: `ModuleShare` adds SKIP for the no-op effects, the node rule is `SkillType.moduleSharedEffects`, and the editor type dialog has a "Share with station modules" select.
+3. Build `ModuleTreeShare`: node walk, skip rules, scaling, MULT pooling, damage-taken caps, and the push onto module stats. Done, uncommitted: it works from the parent's resolved per-node effects (after NPC scaling and diminishing returns), caps the module's raw totals before scaling, and pushes only SHARE effects; SHARE_REBUILD effects wait for step 4 and the share is a 50% constant until step 5. Section item effects aren't shared.
 4. Fold `ModuleBonusListener` into it and write one rescaler for hull, armor, ammo and shield arc, with the armor clamp.
 5. Add the LunaLib setting and the tree summary line, in English and Chinese.
 6. Docs: one short `docs/docs.md` section on what modules get and where the code lives.
@@ -347,3 +347,5 @@ These came up during the research and aren't part of the share itself.
 - Should the share be per node with all-or-nothing everywhere, instead of per effect with the listed exceptions?
 - Should inactive modules (pure armor) get only armor and hull?
 - Should the share be shown per stat in a tooltip, or only as the one summary line?
+- EMP cap jump. EMP is the only cap that mixes a PERCENT and a MULT effect. A parent just under it (-40% and -66% more) gives a module about 46% less EMP damage, while a parent just over it gives the module 40% less. Scaling the combined damage factor instead of each entry would remove the jump.
+- The all-or-nothing check reads the node type's own effects. Effects a socketed item or doctrine adds to a node are shared one by one, so an added SHARE effect could reach a module without an excluded partner. No current item or doctrine pairs them that way.

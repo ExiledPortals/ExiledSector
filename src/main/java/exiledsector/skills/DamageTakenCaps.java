@@ -4,6 +4,7 @@ import exiledsector.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,7 +32,16 @@ public final class DamageTakenCaps {
         return damageTakenFactor < 1f - MAX_REDUCTION_PERCENT / 100f;
     }
 
-    static List<Cap> reachedBy(Map<SkillEffect, Float> totals) {
+    public static Map<SkillEffect, Float> capped(Map<SkillEffect, Float> totals, List<Cap> reachedCaps) {
+        Map<SkillEffect, Float> capped = new LinkedHashMap<>(totals);
+        for (Cap cap : reachedCaps) {
+            cap.contributingEffects().forEach(capped::remove);
+            capped.put(cap.cappedEffect(), -MAX_REDUCTION_PERCENT);
+        }
+        return capped;
+    }
+
+    public static List<Cap> reachedBy(Map<SkillEffect, Float> totals) {
         List<Cap> reachedCaps = new ArrayList<>();
         for (Cap cap : CAPS) {
             float percentTotal = 0f;

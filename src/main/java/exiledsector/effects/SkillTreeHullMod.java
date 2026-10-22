@@ -90,6 +90,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
                 effectEntry.effect().applyAfterShipCreation(ship, effectEntry.modId(), effectEntry.magnitude());
             }
         }
+        ModuleTreeShare.attach(ship, resolvedTree);
         boolean playerTree = !SkillDataResolver.isNpcTree(ship.getVariant());
         FleetMemberAPI member = memberOf(ship);
         PhantomConflictWatch.inspect(member, ship.getVariant(), resolvedTree.phantomHullModIds(), playerTree);

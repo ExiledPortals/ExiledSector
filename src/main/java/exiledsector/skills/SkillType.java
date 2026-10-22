@@ -322,21 +322,19 @@ public class SkillType {
         return moduleShareOverride;
     }
 
-    public List<SkillTypeEffect> moduleSharedEffects(HullSize hullSize) {
+    public boolean sharesWithModules(HullSize hullSize) {
         if (moduleShareOverride == ModuleShareOverride.NONE || vanillaHullModId != null || temporaryAfterDeploymentSeconds != null) {
+            return false;
+        }
+        return moduleShareOverride == ModuleShareOverride.ALL
+                || effectsFor(hullSize).stream().noneMatch(effect -> effect.effect().moduleShare() == ModuleShare.EXCLUDE);
+    }
+
+    public List<SkillTypeEffect> moduleSharedEffects(HullSize hullSize) {
+        if (!sharesWithModules(hullSize)) {
             return Collections.emptyList();
         }
-        List<SkillTypeEffect> shared = new ArrayList<>();
-        for (SkillTypeEffect effect : effectsFor(hullSize)) {
-            ModuleShare share = effect.effect().moduleShare();
-            if (share == ModuleShare.EXCLUDE && moduleShareOverride != ModuleShareOverride.ALL) {
-                return Collections.emptyList();
-            }
-            if (share.isShared()) {
-                shared.add(effect);
-            }
-        }
-        return shared;
+        return effectsFor(hullSize).stream().filter(effect -> effect.effect().moduleShare().isShared()).toList();
     }
 
     public List<SkillTypeEffect> effectsFor(HullSize hullSize) {

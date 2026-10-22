@@ -57,6 +57,7 @@ public final class ResolvedTree {
     private final StatBaseline statBaseline;
     private final DiminishingReturns.Config diminishing;
     private final List<AllocatedNode> allocatedNodes;
+    private final List<EffectTotals.NodeEffects> nodeEffects;
     private final List<Entry> entries;
     private final List<TemporaryNode> temporaryNodes;
     private final Set<String> phantomHullModIds;
@@ -72,6 +73,7 @@ public final class ResolvedTree {
         this.diminishing = diminishing;
         this.allocatedNodes = List.copyOf(AllocatedNode.of(shipData));
         EffectTotals effectTotals = EffectTotals.of(shipData, allocatedNodes, hullSize, bonusScale, sections, statBaseline, diminishing);
+        this.nodeEffects = effectTotals.nodeEffects();
         List<Entry> resolvedEntries = new ArrayList<>();
         List<TemporaryNode> resolvedTemporaryNodes = new ArrayList<>();
         for (EffectTotals.NodeEffects nodeEffects : effectTotals.nodeEffects()) {
@@ -220,6 +222,14 @@ public final class ResolvedTree {
 
     List<AllocatedNode> allocated() {
         return allocatedNodes;
+    }
+
+    HullSize hullSize() {
+        return hullSize;
+    }
+
+    List<EffectTotals.NodeEffects> nodeEffects() {
+        return nodeEffects;
     }
 
     List<Entry> entries() {

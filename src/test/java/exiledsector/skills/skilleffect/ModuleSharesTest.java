@@ -56,6 +56,19 @@ class ModuleSharesTest {
     }
 
     @Test
+    void sharedEffectsNeedNoCombatTickBecauseTheShareOnlyCallsApply() {
+        Set<String> advancing = new TreeSet<>();
+        for (String name : ModuleShares.classifiedNames()) {
+            SkillEffect effect = SkillEffect.byName(name);
+            if (effect.moduleShare() == ModuleShare.SHARE && effect.advancesInCombat()) {
+                advancing.add(name);
+            }
+        }
+
+        assertTrue(advancing.isEmpty(), "These SHARE effects need a combat tick the share never runs: " + advancing);
+    }
+
+    @Test
     void effectsLeftOutOfTheTableAreExcluded() {
         for (String name : SkillEffectRegistry.names()) {
             if (!ModuleShares.classifiedNames().contains(name)) {
