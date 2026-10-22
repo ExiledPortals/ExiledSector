@@ -33,11 +33,19 @@ public final class SkillDataResolver {
             return NPC_TREES.computeIfAbsent(npcTag, SkillDataResolver::decodeOrEmpty);
         }
         if (member == null) {
-            String shipId = taggedShipId(variant);
-            return shipId == null ? null : ShipSkillDataManager.find(shipId);
+            return taggedTree(variant);
         }
         ShipSkillData saved = ShipSkillDataManager.find(member.getId());
-        return saved != null ? saved : new ShipSkillData();
+        if (saved != null) {
+            return saved;
+        }
+        ShipSkillData borrowed = member.getFleetData() == null ? taggedTree(variant) : null;
+        return borrowed != null ? borrowed : new ShipSkillData();
+    }
+
+    public static boolean borrowsShipTree(FleetMemberAPI member, ShipVariantAPI variant) {
+        return member != null && member.getFleetData() == null && NpcTreeTag.find(variant) == null
+                && ShipSkillDataManager.find(member.getId()) == null && taggedTree(variant) != null;
     }
 
     public static boolean isNpcTree(ShipVariantAPI variant) {
@@ -73,6 +81,11 @@ public final class SkillDataResolver {
 
     public static void clearCache() {
         NPC_TREES.clear();
+    }
+
+    private static ShipSkillData taggedTree(ShipVariantAPI variant) {
+        String shipId = taggedShipId(variant);
+        return shipId == null ? null : ShipSkillDataManager.find(shipId);
     }
 
     private static String taggedShipId(ShipVariantAPI variant) {

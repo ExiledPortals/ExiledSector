@@ -110,6 +110,7 @@ public final class ShipTreeSync {
 
     private static boolean syncVariant(FleetMemberAPI member, ShipVariantAPI variant, List<AllocatedNode> allocatedNodes,
                                        Set<String> phantomHullModIds) {
+        if (SkillDataResolver.borrowsShipTree(member, variant)) return false;
         boolean isNpcTree = SkillDataResolver.isNpcTree(variant);
         if (!isNpcTree) {
             SkillDataResolver.syncShipTag(member, variant);
