@@ -78,21 +78,21 @@ class TaniaListenersTest {
     }
 
     @Test
-    void thermoAcceleratorRaisesRateOfFireAndKeepsOnlyRealHardpointsFromFiring() {
+    void thermoAcceleratorCutsWeaponFluxCostAndKeepsOnlyRealHardpointsFromFiring() {
         WeaponAPI hardpoint = weapon(true, false, false);
         WeaponAPI turret = weapon(false, false, false);
         WeaponAPI decorative = weapon(true, true, false);
         WeaponAPI system = weapon(true, false, true);
-        ShipAPI ship = ship("aetos", Map.of(ThermoAcceleratorListener.RATE_OF_FIRE_PERCENT_KEY, 50f));
+        ShipAPI ship = ship("aetos", Map.of(ThermoAcceleratorListener.FLUX_COST_REDUCTION_PERCENT_KEY, 50f));
         when(ship.getAllWeapons()).thenReturn(List.of(hardpoint, turret, decorative, system));
 
         ThermoAcceleratorListener listener = new ThermoAcceleratorListener(ship);
         listener.advance(0.1f);
 
         String modId = "exiledSector_thermoAccelerator_aetos";
-        verify(ship.getMutableStats().getBallisticRoFMult()).modifyPercent(modId, 50f);
-        verify(ship.getMutableStats().getEnergyRoFMult()).modifyPercent(modId, 50f);
-        verify(ship.getMutableStats().getMissileRoFMult()).modifyPercent(modId, 50f);
+        verify(ship.getMutableStats().getBallisticWeaponFluxCostMod()).modifyPercent(modId, -50f);
+        verify(ship.getMutableStats().getEnergyWeaponFluxCostMod()).modifyPercent(modId, -50f);
+        verify(ship.getMutableStats().getMissileWeaponFluxCostMod()).modifyPercent(modId, -50f);
         verify(hardpoint).setForceNoFireOneFrame(true);
         verify(turret, never()).setForceNoFireOneFrame(true);
         verify(decorative, never()).setForceNoFireOneFrame(true);
@@ -161,9 +161,10 @@ class TaniaListenersTest {
     }
 
     @Test
-    void solarisOverdriveFreesWeaponFluxAfterTheSystemStartsThenWaitsOutItsCooldown() {
+    void solarisOverdriveFreesWeaponFluxAndSpeedsProjectilesAfterTheSystemStartsThenWaitsOutItsCooldown() {
         ShipSystemAPI system = mock(ShipSystemAPI.class);
-        ShipAPI ship = ship("aracari", Map.of(SolarisOverdriveListener.SECONDS_KEY, 4f));
+        ShipAPI ship = ship("aracari", Map.of(SolarisOverdriveListener.SECONDS_KEY, 4f,
+                SolarisOverdriveListener.PROJECTILE_SPEED_PERCENT_KEY, 50f));
         when(ship.getSystem()).thenReturn(system);
         SolarisOverdriveListener listener = new SolarisOverdriveListener(ship);
         String modId = "exiledSector_solarisOverdrive_aracari";
@@ -175,10 +176,12 @@ class TaniaListenersTest {
         assertTrue(listener.overdriven());
         verify(ship.getMutableStats().getBallisticWeaponFluxCostMod()).modifyMult(modId, 0f);
         verify(ship.getMutableStats().getEnergyWeaponFluxCostMod()).modifyMult(modId, 0f);
+        verify(ship.getMutableStats().getBallisticProjectileSpeedMult()).modifyPercent(modId, 50f);
 
         listener.advance(4f);
         assertFalse(listener.overdriven());
         verify(ship.getMutableStats().getBallisticWeaponFluxCostMod()).unmodify(modId);
+        verify(ship.getMutableStats().getBallisticProjectileSpeedMult()).unmodify(modId);
 
         when(system.isActive()).thenReturn(false);
         listener.advance(0.1f);

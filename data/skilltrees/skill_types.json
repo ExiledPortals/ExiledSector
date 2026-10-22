@@ -4755,6 +4755,10 @@
 				{
 					"effect": "SOLARIS_OVERDRIVE_SECONDS_FLAT",
 					"magnitude": 4
+				},
+				{
+					"effect": "SOLARIS_OVERDRIVE_PROJECTILE_SPEED_PERCENT",
+					"magnitude": 50
 				}
 			],
 			"description": "The Aracari's Solaris Phalanx primes thermo-dynamic flux cores until its guns fire without drawing on the grid. A deserter from an Aracari engine room walks the crew through a smaller version, keyed to this ship's own system.",
@@ -4796,11 +4800,11 @@
 			"tier": "KEYSTONE",
 			"effects": [
 				{
-					"effect": "THERMO_ACCELERATOR_RATE_OF_FIRE_PERCENT",
+					"effect": "THERMO_ACCELERATOR_FLUX_COST_REDUCTION_PERCENT",
 					"magnitude": 50
 				}
 			],
-			"description": "The Aetos that broke the Holy Armada's frigate screen at Vela ran its turret feeds far past their rating. The restricted calibration pulled from Aetos wrecks lets the crew do the same on this ship, starving the hardpoints of the power the turrets now draw.",
+			"description": "The Aetos that broke the Holy Armada's frigate screen at Vela ran its turrets on power stripped from its hardpoints. The restricted calibration pulled from Aetos wrecks lets the crew do the same on this ship, leaving the hardpoints dead so the turrets fire cooler.",
 			"tags": [
 				"weapons"
 			]

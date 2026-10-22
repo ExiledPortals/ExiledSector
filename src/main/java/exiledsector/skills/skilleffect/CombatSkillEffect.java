@@ -239,14 +239,16 @@ public enum CombatSkillEffect implements BackedSkillEffect {
             return EffectText.signed(this, magnitude).arg("seconds", RiseFromTheAshesListener.DURATION_SECONDS).styled();
         }
     },
-    THERMO_ACCELERATOR_RATE_OF_FIRE_PERCENT(ThermoAcceleratorListener.RATE_OF_FIRE_PERCENT_KEY, ThermoAcceleratorListener.class,
+    THERMO_ACCELERATOR_FLUX_COST_REDUCTION_PERCENT(ThermoAcceleratorListener.FLUX_COST_REDUCTION_PERCENT_KEY, ThermoAcceleratorListener.class,
             ThermoAcceleratorListener::new),
     SOLARIS_OVERDRIVE_SECONDS_FLAT(SolarisOverdriveListener.SECONDS_KEY, SolarisOverdriveListener.class, SolarisOverdriveListener::new) {
         @Override
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", magnitude).arg("cooldown", SolarisOverdriveListener.COOLDOWN_SECONDS).styled();
         }
-    };
+    },
+    SOLARIS_OVERDRIVE_PROJECTILE_SPEED_PERCENT(SolarisOverdriveListener.PROJECTILE_SPEED_PERCENT_KEY, SolarisOverdriveListener.class,
+            SolarisOverdriveListener::new);
 
     private static StyledText escortDescription(CombatSkillEffect effect, float magnitude) {
         return EffectText.msg(effect).arg("range", EscortListener.ESCORT_RANGE).arg("fade", EscortListener.PROXIMITY_FADE_DISTANCE)
