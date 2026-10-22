@@ -195,7 +195,6 @@ class ChartContentDataTest {
 
         ChartFaction remnant = ChartFactions.resolve("remnant", ChartFactions.all(), everyFaction, new Random(1));
         assertEquals("remnant", remnant.factionId());
-        assertEquals(15f, remnant.fleetQualityBonus());
         assertEquals(ChartFaction.unlisted("diableavionics"), ChartFactions.resolve("diableavionics", ChartFactions.all(), everyFaction, new Random(1)));
         assertNotEquals("diableavionics", ChartFactions.resolve("diableavionics", ChartFactions.all(), id -> !id.equals("diableavionics"),
                 new Random(1)).factionId());

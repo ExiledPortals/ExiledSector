@@ -177,7 +177,7 @@ class ChartContentPlannerTest {
                 long ordinary = plan.count(FleetRole.GUARD) + plan.count(FleetRole.PATROL);
                 assertTrue(ordinary >= tierData.fleetsMin() && ordinary <= tierData.fleetsMax(), "tier " + tier + ": " + ordinary + " fleets");
                 assertEquals(tierData.boss() ? 1 : 0, plan.count(FleetRole.BOSS), "tier " + tier);
-                float fleetSize = tierData.fleetSize() + plan.faction().fleetSizeBonus();
+                float fleetSize = tierData.fleetSize();
                 float expectedPoints = ordinary * ChartTier.fleetPoints(fleetSize);
                 float spent = plan.fleetPoints(FleetRole.GUARD) + plan.fleetPoints(FleetRole.PATROL);
                 float minimumPoints = ChartTier.fleetPoints(ChartContentPlanner.MIN_FLEET_SIZE);
@@ -222,7 +222,7 @@ class ChartContentPlannerTest {
     @Test
     void theChartsFactionInhabitsTheSystemWhenItIsLoaded() {
         ChartTier tier = new ChartTier(8, 200f, 3, 3, 0, 0, 60f, 100, 100, 0f, 0f, 0f, 0f, true, 400f, 1f, 0f);
-        List<ChartFaction> factions = List.of(new ChartFaction("pirates", 10f, 0f, 0f), new ChartFaction("remnant", 1f, -10f, 15f));
+        List<ChartFaction> factions = List.of(new ChartFaction("pirates", 10f), new ChartFaction("remnant", 1f));
         ChartGenContext remnantChart = ChartGenContext.of(List.of(), 0, "remnant");
 
         for (long seed = 0; seed < 20; seed++) {
@@ -231,22 +231,6 @@ class ChartContentPlannerTest {
             assertEquals("pirates", ChartContentPlanner.plan(seed, tier, List.of(), factions, id -> !id.equals("remnant"), remnantChart)
                     .faction().factionId());
         }
-    }
-
-    @Test
-    void aFactionsFleetSizeBonusAddsToEveryFleetAndTheWarden() {
-        ChartTier tier = new ChartTier(8, 200f, 3, 3, 0, 0, 60f, 100, 100, 0f, 0f, 0f, 0f, true, 400f, 1f, 0f);
-        ChartFaction plain = new ChartFaction("hegemony", 1f, 0f, 0f);
-        ChartFaction bigger = new ChartFaction("derelict", 1f, 20f, -10f);
-
-        ChartContentPlan plainPlan = ChartContentPlanner.plan(3L, tier, List.of(), List.of(plain), EVERY_FACTION);
-        ChartContentPlan biggerPlan = ChartContentPlanner.plan(3L, tier, List.of(), List.of(bigger), EVERY_FACTION);
-
-        assertEquals(3 * ChartTier.fleetPoints(200f), plainPlan.fleetPoints(FleetRole.GUARD) + plainPlan.fleetPoints(FleetRole.PATROL), 0.5f);
-        assertEquals(3 * ChartTier.fleetPoints(220f), biggerPlan.fleetPoints(FleetRole.GUARD) + biggerPlan.fleetPoints(FleetRole.PATROL), 0.5f);
-        assertEquals(ChartTier.fleetPoints(400f), plainPlan.fleetPoints(FleetRole.BOSS), 0.01f);
-        assertEquals(ChartTier.fleetPoints(420f), biggerPlan.fleetPoints(FleetRole.BOSS), 0.01f);
-        assertEquals(0.5f, biggerPlan.fleets().get(0).quality(), 0.001f);
     }
 
     @Test

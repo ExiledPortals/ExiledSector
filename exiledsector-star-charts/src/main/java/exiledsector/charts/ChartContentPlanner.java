@@ -53,7 +53,7 @@ final class ChartContentPlanner {
         List<PlannedPoi> plannedPois = spendLoot(tier, pois, ChartLayoutGenerator.derivedRandom(seed, LOOT_SALT));
         plannedPois = addExtraPois(tier, pois, plannedPois, chartContext.extraPois(), ChartLayoutGenerator.derivedRandom(seed, EXTRA_POI_SALT));
         List<PlannedFleet> plannedFleets = new ArrayList<>();
-        plannedPois = planFleets(tier, faction, objective, plannedPois, plannedFleets, ChartLayoutGenerator.derivedRandom(seed, FLEET_SALT),
+        plannedPois = planFleets(tier, objective, plannedPois, plannedFleets, ChartLayoutGenerator.derivedRandom(seed, FLEET_SALT),
                 chartContext.extraFleets(), fleetLimit);
         return new ChartContentPlan(tier.tier(), faction, objective, plannedPois, plannedFleets);
     }
@@ -143,11 +143,10 @@ final class ChartContentPlanner {
         return Math.max(0.0001f, remaining / expectedPicks);
     }
 
-    static List<PlannedPoi> planFleets(ChartTier tier, ChartFaction faction, ChartObjective objective, List<PlannedPoi> pois,
+    static List<PlannedPoi> planFleets(ChartTier tier, ChartObjective objective, List<PlannedPoi> pois,
                                        List<PlannedFleet> fleets, Random random, int extraFleets, int fleetLimit) {
-        float tierFleetSize = tier.fleetSize() + faction.fleetSizeBonus();
         int rolledFleets = tier.fleetsMin() + random.nextInt(tier.fleetsMax() - tier.fleetsMin() + 1);
-        ChartFleetSpread spread = ChartFleetSpread.of(rolledFleets, tierFleetSize, extraFleets, fleetLimit);
+        ChartFleetSpread spread = ChartFleetSpread.of(rolledFleets, tier.fleetSize(), extraFleets, fleetLimit);
         int fleetCount = spread.fleets();
         float fleetSize = spread.fleetSize();
         float[] shares = new float[fleetCount];
@@ -167,7 +166,7 @@ final class ChartContentPlanner {
         if (objective == ChartObjective.CLEAR && guardCount == 0) {
             guardCount = 1;
         }
-        float quality = Math.max(0f, Math.min(MAX_QUALITY, tier.fleetQuality() + faction.fleetQualityBonus()));
+        float quality = Math.max(0f, Math.min(MAX_QUALITY, tier.fleetQuality()));
         for (int i = 0; i < fleetCount; i++) {
             float sizePercent = Math.max(MIN_FLEET_SIZE, fleetSize * shares[i] * fleetCount / shareTotal);
             boolean guard = i < guardCount;
@@ -183,13 +182,13 @@ final class ChartContentPlanner {
             }
         }
         if (tier.boss()) {
-            fleets.add(plannedBoss(tier, faction, quality, mostValuableIndex(guardedPois)));
+            fleets.add(plannedBoss(tier, quality, mostValuableIndex(guardedPois)));
         }
         return guardedPois;
     }
 
-    static PlannedFleet plannedBoss(ChartTier tier, ChartFaction faction, float fleetQuality, int targetPoi) {
-        float wardenSize = Math.max(MIN_FLEET_SIZE, tier.wardenSize() + faction.fleetSizeBonus());
+    static PlannedFleet plannedBoss(ChartTier tier, float fleetQuality, int targetPoi) {
+        float wardenSize = Math.max(MIN_FLEET_SIZE, tier.wardenSize());
         return new PlannedFleet(FleetRole.BOSS, targetPoi, ChartTier.fleetPoints(Math.min(WARDEN_SIZE_CAP, wardenSize)),
                 Math.max(0f, Math.min(MAX_QUALITY, fleetQuality + BOSS_QUALITY_BONUS)) / ChartTier.PERCENT,
                 tier.officerLevelBonus() + BOSS_OFFICER_LEVEL_BONUS, tier.officerCountBonus() + BOSS_OFFICER_COUNT_BONUS,

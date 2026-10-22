@@ -222,7 +222,7 @@ describe('review findings', () => {
   });
 
   it('warns about the values the faction, point of interest and drop loaders change', () => {
-    expect(CHART_FACTION_SPEC.warnings(chartTable(CHART_FACTION_SPEC, 'faction,weight,fleet_size_bonus\npirates,0,-20\n'), vocabulary)).toEqual([
+    expect(CHART_FACTION_SPEC.warnings(chartTable(CHART_FACTION_SPEC, 'faction,weight\npirates,0\n'), vocabulary)).toEqual([
       'pirates: a weight of 0 or less means it is never picked',
     ]);
     expect(CHART_POI_SPEC.warnings(chartTable(CHART_POI_SPEC, 'id,kind,entity,cost\nfree,cache,supply_cache,0\n'), vocabulary)).toEqual([

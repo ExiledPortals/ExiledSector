@@ -42,9 +42,7 @@ public final class ChartFactions {
                 if (factionId.isEmpty()) {
                     return;
                 }
-                loaded.put(factionId, new ChartFaction(factionId, csv.number(row, "weight", 1f, factionId),
-                        csv.number(row, "fleet_size_bonus", 0f, factionId),
-                        csv.number(row, "fleet_quality_bonus", 0f, factionId)));
+                loaded.put(factionId, new ChartFaction(factionId, csv.number(row, "weight", 1f, factionId)));
             });
         }
         csv.report(LOG);

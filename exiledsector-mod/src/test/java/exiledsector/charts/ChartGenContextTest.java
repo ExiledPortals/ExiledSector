@@ -244,7 +244,6 @@ class ChartGenContextTest {
 
     @Test
     void wardenSizeModifiersAddUpAndOverflowPastTheCapIntoFleetStrength() {
-        ChartFaction plainFaction = new ChartFaction("pirates", 1f, 0f, 0f);
         boolean sawOverflow = false;
         boolean sawUnderCap = false;
         for (int tier = 10; tier <= 15; tier++) {
@@ -255,7 +254,7 @@ class ChartGenContextTest {
             assertEquals(700f, vigil.wardenSizePercent(), TOLERANCE, "tier " + tier);
             for (ChartGenContext context : List.of(ChartGenContext.none(), vigil, vigilAndWarded)) {
                 float wardenSize = base.wardenSize() + context.wardenSizePercent();
-                PlannedFleet warden = ChartContentPlanner.plannedBoss(context.adjust(base), plainFaction, 50f, 0);
+                PlannedFleet warden = ChartContentPlanner.plannedBoss(context.adjust(base), 50f, 0);
                 assertEquals(ChartTier.fleetPoints(Math.min(ChartContentPlanner.WARDEN_SIZE_CAP, wardenSize)), warden.combatPoints(), TOLERANCE,
                         "tier " + tier);
                 assertEquals(ChartContentPlanner.overflowStrength(wardenSize, ChartContentPlanner.WARDEN_SIZE_CAP), warden.strengthBonus(), "tier " + tier);
@@ -279,12 +278,12 @@ class ChartGenContextTest {
         ChartTier base = ChartTiers.forTier(12);
         for (long seed = 0; seed < 20; seed++) {
             ChartContentPlan plan = plan(vigil, seed, 12);
-            float wardenSize = base.wardenSize() + plan.faction().fleetSizeBonus() + vigil.wardenSizePercent();
+            float wardenSize = base.wardenSize() + vigil.wardenSizePercent();
             assertEquals(ChartTier.fleetPoints(Math.min(ChartContentPlanner.WARDEN_SIZE_CAP, wardenSize)), plan.fleetPoints(FleetRole.BOSS), TOLERANCE,
                     "seed " + seed);
         }
         ChartContentPlan plainPlan = plan(ChartGenContext.none(), 3L, 12);
-        assertEquals(ChartTier.fleetPoints(base.wardenSize() + plainPlan.faction().fleetSizeBonus()), plainPlan.fleetPoints(FleetRole.BOSS), TOLERANCE);
+        assertEquals(ChartTier.fleetPoints(base.wardenSize()), plainPlan.fleetPoints(FleetRole.BOSS), TOLERANCE);
     }
 
     @Test

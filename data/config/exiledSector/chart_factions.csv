@@ -1,12 +1,12 @@
-faction,weight,fleet_size_bonus,fleet_quality_bonus,note
-pirates,10,0,-10,
-luddic_path,6,0,-5,
-independent,5,0,0,
-mercenary,3,0,10,
-hegemony,6,0,0,
-sindrian_diktat,4,0,0,
-persean,4,0,0,
-luddic_church,3,0,0,
-tritachyon,5,-10,10,"Fewer, better ships"
-remnant,4,-10,15,
-derelict,3,10,-10,"Domain-era drones"
+faction,weight,note
+pirates,10,
+luddic_path,6,
+independent,5,
+mercenary,3,
+hegemony,6,
+sindrian_diktat,4,
+persean,4,
+luddic_church,3,
+tritachyon,5,
+remnant,4,
+derelict,3,"Domain-era drones"

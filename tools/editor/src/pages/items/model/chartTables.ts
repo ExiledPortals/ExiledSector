@@ -60,7 +60,7 @@ export const CHART_TIER_COLUMNS = [
   'note',
 ] as const;
 export const CHART_POI_COLUMNS = ['id', 'kind', 'entity', 'salvage_spec', 'derelict_type', 'cost', 'weight', 'min_tier', 'max_tier', 'guarded', 'requires_mod', 'note'] as const;
-export const CHART_FACTION_COLUMNS = ['faction', 'weight', 'fleet_size_bonus', 'fleet_quality_bonus', 'note'] as const;
+export const CHART_FACTION_COLUMNS = ['faction', 'weight', 'note'] as const;
 export const CHART_BLOCKED_ABILITY_COLUMNS = ['ability_id', 'note'] as const;
 export const CHART_DROP_COLUMNS = [
   'source',
@@ -396,15 +396,13 @@ export const CHART_FACTION_SPEC: ChartTableSpec = {
   noun: 'chart faction',
   keyColumn: 'faction',
   description:
-    'Which factions can inhabit a system. Every Star Chart rolls one of them by weight as its implicit when it drops, and keeps it. A chart whose faction is not installed gets a random one when its wormhole opens. The fleet size bonus adds percentage points to the tier fleet size and warden size; the fleet quality bonus adds percentage points to the tier fleet quality.',
+    'Which factions can inhabit a system. Every Star Chart rolls one of them by weight as its implicit when it drops, and keeps it. A chart whose faction is not installed gets a random one when its wormhole opens.',
   columns: columnsOf(CHART_FACTION_COLUMNS, {
     faction: { label: 'Faction id', kind: 'text' },
     weight: { label: 'Weight', kind: 'number' },
-    fleet_size_bonus: { label: 'Fleet size bonus', kind: 'number', help: 'Percentage points added to fleet size and warden size' },
-    fleet_quality_bonus: { label: 'Fleet quality bonus', kind: 'number', help: 'Percentage points added to fleet quality' },
     note: NOTE_COLUMN,
   }),
-  newRow: () => ({ faction: '', weight: '1', fleet_size_bonus: '0', fleet_quality_bonus: '0' }),
+  newRow: () => ({ faction: '', weight: '1' }),
   issues: (model, vocabulary) => {
     const issues: string[] = [];
     model.rows.forEach((row, index) => {

@@ -285,6 +285,27 @@ Exiled Sector is meant as an endgame expansion, so the extra modules wait until 
 </details>
 
 <details>
+<summary><b>How do Star Charts get harder?</b></summary>
+
+Each tier brings more fleets, bigger fleets and better ships, crewed by more and better officers, with the ships themselves further along their skill trees. From tier 4 every chart is also guarded by a warden, a boss fleet that grows with each tier. A chart's modifiers push it further still: some add fleet size, quality or strength, others make the warden bigger. Higher tiers drop more to make up for it, including a small chance of colony items from tier 6.
+
+A few tiers for comparison, with numbers still being balanced:
+
+| | Tier 1 | Tier 4 | Tier 10 | Tier 15 |
+|---|---|---|---|---|
+| Fleet size (each fleet) | 100 | 160 | 335 | 550 |
+| Number of fleets | 2–3 | 3–4 | 5–6 | 6–7 |
+| Fleet quality | 30 | 45 | 75 | 100 |
+| Ship skill tree level | 26–29 | 31–34 | 40–43 | 47–50 |
+| Officer level / extra officers | +0 / +0 | +1 / +1 | +3 / +3 | +5 / +5 |
+| Warden fleet size | none | 300 | 660 | 1100 |
+| Colony item chance | 0 | 0 | 1.5% | 4% |
+
+Battles outside charts drop charts up to tier 6, at a tier set by the strongest NPC ship you beat. Past that you climb from inside: finishing a chart's objective drops another chart, often a tier higher, and chart fleets and salvage drop charts at the chart's own tier.
+
+</details>
+
+<details>
 <summary><b>Does it work with faction mods?</b></summary>
 
 Most of it should just work. Nodes that copy a hull mod place the real hull mod on the ship (see Compatibility), so other mods that check for it, such as Second-in-Command, still work. Nexerelin fleets get skill trees like any other NPC fleet. Random Assortment of Things, Nightcross Armory and LOST_SECTOR each have a volume of their own on the tree, unlocked by playing their content. Exiled Sector's loot also drops in other mods' loot pools, such as Industrial.evolution and RAT's Abyss. Mods I haven't tested probably work. If one doesn't, please report it.
