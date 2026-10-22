@@ -32,7 +32,7 @@
     "chart.intel.tier": "A tier {tier} chart, held by {faction}.",
     "chart.intel.progress": "Progress: {done} of {total}",
     "chart.intel.complete": "Objective complete. The reward has been delivered.",
-    "chart.intel.reward": "Completing the objective pays a one-time reward.",
+    "chart.intel.reward": "Completing the objective grants a one-time reward.",
     "chart.reward.message": "Star Chart objective complete: {objective}. You received {credits} credits.",
     "chart.reward.items.one": "{count} hull item was recovered from the system.",
     "chart.reward.items.other": "{count} hull items were recovered from the system.",
