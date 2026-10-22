@@ -7,7 +7,7 @@
     <parent>
         <groupId>starsector.mods.exiledsector</groupId>
         <artifactId>ExiledSector</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.9.5</version>
     </parent>
 
     <artifactId>exiledsector-star-charts</artifactId>
@@ -30,7 +30,6 @@
         <dependency>
             <groupId>starsector.mods.exiledsector</groupId>
             <artifactId>exiled-lib</artifactId>
-            <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
