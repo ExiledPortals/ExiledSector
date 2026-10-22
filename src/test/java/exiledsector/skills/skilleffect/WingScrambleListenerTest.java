@@ -185,6 +185,25 @@ class WingScrambleListenerTest {
         verify(fleetManager).setSuppressDeploymentMessages(false);
     }
 
+    @Test
+    void aCopyWhoseHullModThrowsWhileSettlingInStillLeavesItsSourcelessWingAndJoinsTheHost() {
+        ShipAPI leader = fighter();
+        FighterWingAPI spawnedWing = spawnedWingOf(leader);
+        when(fleetManager.spawnFleetMember(eq(wingMember), any(Vector2f.class), anyFloat(), eq(0f)))
+                .thenThrow(new NullPointerException("getSourceShip() is null"));
+        when(fleetManager.getShipFor(wingMember)).thenReturn(leader);
+
+        ShipAPI copy = new WingScrambleListener(carrier).launchCopy(engine, GUN_PLATFORM, hostBay);
+
+        assertSame(leader, copy);
+        verify(spawnedWing).removeMember(leader);
+        verify(fleetManager).removeDeployed(spawnedWing, false);
+        verify(leader).setWing(hostWing);
+        verify(hostWing).addMember(leader);
+        verify(gunPlatformSpec).setNumFighters(GUN_PLATFORM_WING_SIZE);
+        verify(fleetManager).setSuppressDeploymentMessages(false);
+    }
+
     public abstract static class FleetManagerWithDeploymentRecord implements CombatFleetManagerAPI {
         public abstract List<DeployedFleetMemberAPI> getAllEverDeployed();
     }

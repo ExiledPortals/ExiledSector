@@ -53,6 +53,7 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
     static final String TAKEOFF_SOUND = "fighter_takeoff";
     private static final Logger LOG = Logger.getLogger(WingScrambleListener.class);
     private static final Set<String> REPORTED_UNLAUNCHABLE_TYPES = new HashSet<>();
+    private static final Set<String> REPORTED_SETTLING_ERROR_TYPES = new HashSet<>();
 
     record DoctrineGroup(WingRole role, List<String> behaviourTags) {
     }
@@ -285,6 +286,14 @@ final class WingScrambleListener extends ShipCombatListener implements Advanceab
         ShipAPI spawned;
         try {
             spawned = fleetManager.spawnFleetMember(wingMember, new Vector2f(launchLocation), launchFacing, 0f);
+        } catch (RuntimeException e) {
+            spawned = fleetManager.getShipFor(wingMember);
+            if (spawned == null) {
+                throw e;
+            }
+            if (REPORTED_SETTLING_ERROR_TYPES.add(wingSpecId)) {
+                LOG.warn("Wing " + wingSpecId + " threw while settling in after spawning; Coalition Flight Doctrine adopts the copy anyway", e);
+            }
         } finally {
             spec.setNumFighters(normalWingSize);
             fleetManager.setSuppressDeploymentMessages(wasSuppressed);
