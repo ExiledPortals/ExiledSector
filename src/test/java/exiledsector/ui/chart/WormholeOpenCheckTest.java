@@ -116,6 +116,18 @@ class WormholeOpenCheckTest {
     }
 
     @Test
+    void switchingStarChartsOffBlocksOpeningBeforeAnythingElse() {
+        StarChartSettings.setEnabledForTests(false);
+        try {
+            assertEquals(Blocker.DISABLED, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet, colony(true, true)));
+            assertEquals(Blocker.DISABLED, WormholeOpenCheck.evaluate(null, store, true, true, playerFleet));
+            assertFalse(Blocker.DISABLED.allowsOpening());
+        } finally {
+            StarChartSettings.setEnabledForTests(StarChartSettings.DEFAULT_ENABLED);
+        }
+    }
+
+    @Test
     void anOpenRunBlocksOpening() {
         assertEquals(Blocker.RUN_OPEN, WormholeOpenCheck.evaluate(chart, store, true, true, playerFleet));
     }

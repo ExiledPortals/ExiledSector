@@ -87,6 +87,18 @@ class WormholeGatewayTest {
     }
 
     @Test
+    void switchingStarChartsOffHidesItFromTheBuildMenu() {
+        MarketAPI colony = colony("Home");
+        StarChartSettings.setEnabledForTests(false);
+        try {
+            assertFalse(gatewayOn(colony).isAvailableToBuild());
+            assertFalse(gatewayOn(colony).showWhenUnavailable());
+        } finally {
+            StarChartSettings.setEnabledForTests(StarChartSettings.DEFAULT_ENABLED);
+        }
+    }
+
+    @Test
     void onlyOneGatewayIsAllowedPerFaction() {
         MarketAPI first = colony("Home");
         MarketAPI second = colony("Outpost");

@@ -1,9 +1,12 @@
 package exiledsector.charts;
 
 import exiledsector.ModSettings;
+import exiledsector.ModSettingsListener;
 
 public final class StarChartSettings {
 
+    public static final String ENABLED_FIELD_ID = "exiledSector_starChartsEnabled";
+    public static final boolean DEFAULT_ENABLED = true;
     public static final String ENTRIES_FIELD_ID = "exiledSector_starChartEntries";
     public static final int DEFAULT_ENTRIES = 1;
     public static final int MIN_ENTRIES = 1;
@@ -15,7 +18,29 @@ public final class StarChartSettings {
     public static final String OPEN_ANYWHERE_FIELD_ID = "exiledSector_starChartOpenAnywhereDev";
     public static final boolean DEFAULT_OPEN_ANYWHERE = false;
 
+    private static volatile boolean enabledSetting = DEFAULT_ENABLED;
+
+    public static final class SettingsListener extends ModSettingsListener {
+
+        @Override
+        protected void reload() {
+            reloadSettings();
+        }
+    }
+
     private StarChartSettings() {
+    }
+
+    public static void reloadSettings() {
+        enabledSetting = ModSettings.booleanOr(ENABLED_FIELD_ID, DEFAULT_ENABLED);
+    }
+
+    public static boolean enabled() {
+        return enabledSetting;
+    }
+
+    public static void setEnabledForTests(boolean enabled) {
+        enabledSetting = enabled;
     }
 
     public static int wormholeEntries() {

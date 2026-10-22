@@ -229,7 +229,7 @@ describe('review findings', () => {
       'free: a cost or weight of 0 or less means it is never placed',
     ]);
     const drops = chartTable(CHART_DROP_SPEC, 'source,chance\nrun_reward,6\nbattle,0\n');
-    expect(CHART_DROP_SPEC.warnings(drops, vocabulary)).toEqual(['run_reward: at most 4 charts drop at once, so a chance above 400% is capped']);
+    expect(CHART_DROP_SPEC.warnings(drops, vocabulary)).toEqual([]);
   });
 
   it('warns that unique charts ignore pool tier ranges and that non-uniques ignore drop conditions, and flags an empty weight', () => {

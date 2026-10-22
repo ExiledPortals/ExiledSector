@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.CargoTransferHandlerAPI;
 import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import exiledsector.charts.StarChartSettings;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
@@ -52,6 +53,9 @@ public class StarChartItemPlugin extends BaseSpecialItemPlugin {
     }
 
     private List<StyledText> footerLines() {
+        if (!StarChartSettings.enabled()) {
+            return List.of(Translation.styled("chart.item.storage"), Translation.styled("chart.item.disabled"));
+        }
         return List.of(Translation.styled("chart.item.storage"));
     }
 

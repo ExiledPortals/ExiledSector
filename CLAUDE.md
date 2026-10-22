@@ -5,6 +5,7 @@ Starsector mod (Java 17, Maven) that gives every ship its own skill tree. Mod id
 ## Build and deploy (Windows, PowerShell)
 - Build and test: `mvn -q clean package` (writes `jars/ExiledSector.jar`). If `mvn` isn't on PATH, `build-common.ps1` finds IntelliJ's bundled Maven and sets `JAVA_HOME` to `C:\Program Files\Java\jdk-17`.
 - Deploy to the game: `.\deploy.ps1`. It runs only from the dev checkout `E:\Dev\ExiledSector-parallel-work` (normal deploys) and the main checkout `E:\Dev\ExiledSector` (hotfix testing), so other worktrees can't overwrite the deployed mod. Both share one deploy target, so each deploy replaces the other's build. Don't work around that check.
+- Python is not installed (`python` only opens the Microsoft Store). Don't write Python scripts; use PowerShell, Git Bash tools or the Edit tool.
 - `release.ps1` builds the release zip. Don't run it unless asked.
 - Tests are JUnit 5 + Mockito under `src/test/java`. The surefire `--add-opens` args in `pom.xml` are needed; don't remove them.
 

@@ -2,6 +2,7 @@ package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
+import exiledsector.charts.StarChartSettings;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
 import exiledsector.ui.SkillTreeSounds;
@@ -136,7 +137,7 @@ public final class ModificationBay {
 
             @Override
             public boolean offersModeSwitch() {
-                return !modeLocked;
+                return !modeLocked && StarChartSettings.enabled();
             }
 
             @Override

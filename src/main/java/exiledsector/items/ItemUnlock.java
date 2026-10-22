@@ -17,8 +17,6 @@ public enum ItemUnlock {
     DEFEATED_ZIGGURAT("defeated_ziggurat", sector -> sector.getMemoryWithoutUpdate().getBoolean("$defeatedZiggurat")),
     RAT_PLAYER_EXOSHIP("rat_player_exoship", sector -> RandomAssortmentCompat.isModEnabled() && RandomAssortmentCompat.exoshipConfirmedRecovered());
 
-    public static final int UNIQUE_MIN_PLAYER_LEVEL = 15;
-    public static final int SECTION_ITEM_MIN_PLAYER_LEVEL = 15;
     private static final String LATCH_PREFIX = "$exiledSector_socketUnlock_";
     public static final String CLEARED_CHART_TIER_PREFIX = "cleared_chart_tier_";
     static final String CLEARED_CHART_TIER_KEY = "$exiledSector_chartsClearedTier";
@@ -51,7 +49,7 @@ public enum ItemUnlock {
     }
 
     public static boolean sectionsOpen(int playerLevel) {
-        return HullUpgradesSetting.enabled() && playerLevel >= SECTION_ITEM_MIN_PLAYER_LEVEL;
+        return HullUpgradesSetting.enabled() && playerLevel >= HullUpgradesSetting.unlockLevel();
     }
 
     public static boolean canDrop(ItemDefinition definition, SectorAPI sector) {
@@ -62,10 +60,14 @@ public enum ItemUnlock {
             return false;
         }
         MutableCharacterStatsAPI playerStats = sector.getPlayerStats();
-        if (playerStats == null || playerStats.getLevel() < UNIQUE_MIN_PLAYER_LEVEL) {
+        if (playerStats == null || playerStats.getLevel() < uniqueMinPlayerLevel(definition)) {
             return false;
         }
         return unlockConditionMet(definition, sector);
+    }
+
+    static int uniqueMinPlayerLevel(ItemDefinition definition) {
+        return definition.type() == ItemType.HULL_ITEM ? HullUpgradesSetting.unlockLevel() : UniqueSubroutinesSetting.unlockLevel();
     }
 
     public static boolean unlockConditionMet(ItemDefinition definition, SectorAPI sector) {

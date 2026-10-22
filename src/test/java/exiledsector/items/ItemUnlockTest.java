@@ -90,6 +90,38 @@ class ItemUnlockTest {
     }
 
     @Test
+    void theHullUpgradesLevelSettingMovesTheSectionGate() {
+        HullUpgradesSetting.setUnlockLevelForTests(5);
+        try {
+            assertFalse(ItemUnlock.sectionsOpen(4));
+            assertTrue(ItemUnlock.sectionsOpen(5));
+        } finally {
+            HullUpgradesSetting.setUnlockLevelForTests(HullUpgradesSetting.DEFAULT_UNLOCK_LEVEL);
+        }
+    }
+
+    @Test
+    void uniqueHullItemsFollowTheHullUpgradesLevelAndUniqueSubroutinesTheirOwn() throws Exception {
+        ItemDefinitions.register(new JSONArray()
+                .put(ItemFixtures.row("open_unique", "crew_quarters", "HULL_MULT:4:6").put("unique", "true"))
+                .put(ItemFixtures.subroutineRow("unique_subroutine", SubroutineKind.UNIQUE).put("unique", "true")));
+        when(player.getLevel()).thenReturn(5);
+        HullUpgradesSetting.setUnlockLevelForTests(5);
+        try {
+            assertTrue(canDrop("open_unique"));
+            assertFalse(canDrop("unique_subroutine"));
+
+            UniqueSubroutinesSetting.setUnlockLevelForTests(5);
+            HullUpgradesSetting.setUnlockLevelForTests(15);
+            assertTrue(canDrop("unique_subroutine"));
+            assertFalse(canDrop("open_unique"));
+        } finally {
+            HullUpgradesSetting.setUnlockLevelForTests(HullUpgradesSetting.DEFAULT_UNLOCK_LEVEL);
+            UniqueSubroutinesSetting.setUnlockLevelForTests(UniqueSubroutinesSetting.DEFAULT_UNLOCK_LEVEL);
+        }
+    }
+
+    @Test
     void uniquesNeverDropBeforePlayerLevelFifteenButBasicsAlwaysCan() {
         when(player.getLevel()).thenReturn(14);
 

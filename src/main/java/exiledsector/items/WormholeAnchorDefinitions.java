@@ -29,7 +29,7 @@ public final class WormholeAnchorDefinitions {
     static final String MARKET_CHANCE_COLUMN = "market_chance";
     static final String PRICE_COLUMN = "price";
     public static final int DEFAULT_PRICE = 100000;
-    static final float SELL_SHARE_OF_BUY_PRICE = 0.05f;
+    static final float SELL_SHARE_OF_BUY_PRICE = 0.01f;
     static final String COLOR_COLUMN = "color";
     static final String CREST_FACTION_COLUMN = "crest_faction";
     static final String LIST_SEPARATOR = ";";
@@ -94,7 +94,7 @@ public final class WormholeAnchorDefinitions {
                 styles.put(definition.id(), style(definition.id(), ModCsv.text(row, COLOR_COLUMN), ModCsv.text(row, CREST_FACTION_COLUMN)));
                 markets.put(definition.id(), new AnchorMarket(chance(definition.id(), MARKET_CHANCE_COLUMN, ModCsv.text(row, MARKET_CHANCE_COLUMN)),
                         price(definition.id(), ModCsv.text(row, PRICE_COLUMN))));
-                dropSources.put(definition.id(), FactionFleetDrops.Source.perFight(volume, dropFactions(ModCsv.text(row, DROP_FACTIONS_COLUMN)), dropChance));
+                dropSources.put(definition.id(), FactionFleetDrops.Source.forVolume(volume, dropFactions(ModCsv.text(row, DROP_FACTIONS_COLUMN)), dropChance));
             } catch (IllegalArgumentException e) {
                 LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": " + e.getMessage());
             }

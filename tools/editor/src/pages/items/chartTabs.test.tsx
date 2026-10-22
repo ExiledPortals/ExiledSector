@@ -213,7 +213,7 @@ describe('star chart editing', () => {
     fireEvent.click(within(dialog).getByRole('button', { name: 'Save anyway' }));
     await screen.findByText('Saved chart_drops.csv', undefined, { timeout: 30000 });
 
-    expect(server.readProjectFile(DROPS_FILE)).toBe(before.replace('battle,0.01,0,0,0,150', 'battle,0.01,0,0,0.05,150'));
+    expect(server.readProjectFile(DROPS_FILE)).toBe(before.replace('battle,0.2,0,0,0,', 'battle,0.2,0,0,0.05,'));
   }, 90000);
 
   it('refuses to save a point of interest without an entity type', async () => {

@@ -282,8 +282,8 @@ function AnchorForm({ document, anchor, index, vocabulary, nodeFacts, onSelect }
           }}
         />
         <DecimalInput
-          label="Drop chance per won fight"
-          description="Rolled once per won battle in which a matching fleet lost a ship, capped at one in two"
+          label="Drop chance per 100 DP"
+          description="Rolled once per won battle, scaled by the DP of matching ships defeated, capped at one in two"
           value={anchor.dropChance}
           onChange={(text) => edit((draft) => void (draft.dropChance = text))}
         />
