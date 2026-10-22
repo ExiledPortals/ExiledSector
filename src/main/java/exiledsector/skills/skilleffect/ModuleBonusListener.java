@@ -17,14 +17,8 @@ final class ModuleBonusListener extends ShipCombatListener implements Advanceabl
 
     static final String HULL_PERCENT_KEY = "exiledSector_moduleHullPercent";
     static final String ARMOR_PERCENT_KEY = "exiledSector_moduleArmorPercent";
-    static final String WEAPON_DAMAGE_PERCENT_KEY = "exiledSector_moduleWeaponDamagePercent";
-    static final String WEAPON_RANGE_PERCENT_KEY = "exiledSector_moduleWeaponRangePercent";
-    static final String WEAPON_FIRE_RATE_PERCENT_KEY = "exiledSector_moduleWeaponFireRatePercent";
     private static final String MOD_ID_PREFIX = "exiledSector_moduleBonus_";
     private static final float CHECK_SECONDS = 1f;
-    private static final StatTarget WEAPON_DAMAGE = WeaponStatFamily.DAMAGE.target(WeaponScope.ALL);
-    private static final StatTarget WEAPON_RANGE = WeaponStatFamily.RANGE.target(WeaponScope.ALL);
-    private static final StatTarget WEAPON_FIRE_RATE = WeaponStatFamily.FIRE_RATE.target(WeaponScope.ALL);
 
     private final Set<ShipAPI> boostedModules = Collections.newSetFromMap(new IdentityHashMap<>());
     private final IntervalUtil checkInterval = new IntervalUtil(CHECK_SECONDS, CHECK_SECONDS);
@@ -77,9 +71,6 @@ final class ModuleBonusListener extends ShipCombatListener implements Advanceabl
             ArmorCells.update(grid, current -> Math.min(current, maxArmorInCell) * armorFactor);
             module.syncWithArmorGridState();
         }
-        applyIfSet(WEAPON_DAMAGE, stats, magnitude(WEAPON_DAMAGE_PERCENT_KEY));
-        applyIfSet(WEAPON_RANGE, stats, magnitude(WEAPON_RANGE_PERCENT_KEY));
-        applyIfSet(WEAPON_FIRE_RATE, stats, magnitude(WEAPON_FIRE_RATE_PERCENT_KEY));
     }
 
     private float raise(StatBonus bonus, float base, float percent) {
@@ -90,11 +81,5 @@ final class ModuleBonusListener extends ShipCombatListener implements Advanceabl
         bonus.modifyPercent(modId, percent);
         float after = bonus.computeEffective(base);
         return before > 0f ? after / before : 1f;
-    }
-
-    private void applyIfSet(StatTarget target, MutableShipStatsAPI stats, float percent) {
-        if (percent != 0f) {
-            target.apply(stats, modId, StatMode.PERCENT, percent);
-        }
     }
 }

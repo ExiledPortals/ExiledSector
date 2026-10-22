@@ -37,6 +37,7 @@ final class SkillEffectRegistry {
                 MiscSkillEffect.values(),
                 DefenseSkillEffect.values(),
                 CombatSkillEffect.values(),
+                HullModInteractionEffect.values(),
                 CompatSkillEffect.values()
         };
         for (SkillEffect[] group : groups) {

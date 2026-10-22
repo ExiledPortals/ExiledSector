@@ -3,9 +3,11 @@ package exiledsector.skills.skilleffect;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ArmorGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
+import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipSystemAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.WeaponAPI;
@@ -16,6 +18,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +32,7 @@ import static org.mockito.ArgumentMatchers.floatThat;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -96,40 +100,7 @@ class TaniaListenersTest {
     }
 
     @Test
-    void jettisonCountsEachDestroyedModuleOnceItWasSeenAlive() {
-        ShipAPI first = module(true);
-        ShipAPI second = module(true);
-        ShipAPI ship = ship("merite", Map.of(JettisonListener.TOP_SPEED_PERCENT_PER_MODULE_KEY, 10f));
-        withModules(ship, List.of(first, second));
-        JettisonListener listener = new JettisonListener(ship);
-
-        listener.advance(0.3f);
-        verify(ship.getMutableStats().getMaxSpeed(), never()).modifyPercent(Mockito.anyString(), anyFloat());
-
-        when(first.isAlive()).thenReturn(false);
-        listener.advance(0.3f);
-        verify(ship.getMutableStats().getMaxSpeed()).modifyPercent("exiledSector_jettison_merite", 10f);
-
-        when(second.isHulk()).thenReturn(true);
-        listener.advance(0.3f);
-        verify(ship.getMutableStats().getMaxSpeed()).modifyPercent("exiledSector_jettison_merite", 20f);
-        assertEquals(2, JettisonListener.destroyedCount(List.of(first, second)));
-    }
-
-    @Test
-    void jettisonCountsModulesAlreadyLostWhenTheShipDeploys() {
-        ShipAPI survivor = module(true);
-        ShipAPI ship = ship("argentavis", Map.of(JettisonListener.TOP_SPEED_PERCENT_PER_MODULE_KEY, 10f));
-        withModules(ship, List.of(survivor, module(true)));
-        when(ship.getChildModulesCopy()).thenReturn(List.of(survivor));
-
-        new JettisonListener(ship).advance(0.3f);
-
-        verify(ship.getMutableStats().getMaxSpeed()).modifyPercent("exiledSector_jettison_argentavis", 10f);
-    }
-
-    @Test
-    void moduleBonusesScaleModuleHullAndArmorAndRaiseModuleWeaponStats() {
+    void moduleBonusesScaleModuleHullAndArmor() {
         ShipAPI plate = module(true);
         MutableShipStatsAPI plateStats = mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS);
         when(plate.getMutableStats()).thenReturn(plateStats);
@@ -146,8 +117,7 @@ class TaniaListenersTest {
         when(grid.getArmorValue(0, 0)).thenReturn(100f);
         when(grid.getArmorValue(1, 0)).thenReturn(440f);
         when(plate.getArmorGrid()).thenReturn(grid);
-        ShipAPI ship = ship("black_hawk", Map.of(ModuleBonusListener.HULL_PERCENT_KEY, 20f, ModuleBonusListener.ARMOR_PERCENT_KEY, 10f,
-                ModuleBonusListener.WEAPON_DAMAGE_PERCENT_KEY, 15f));
+        ShipAPI ship = ship("black_hawk", Map.of(ModuleBonusListener.HULL_PERCENT_KEY, 20f, ModuleBonusListener.ARMOR_PERCENT_KEY, 10f));
         withModules(ship, List.of(plate));
 
         ModuleBonusListener listener = new ModuleBonusListener(ship);
@@ -158,9 +128,6 @@ class TaniaListenersTest {
         verify(plate).setHitpoints(600f);
         verify(grid).setArmorValue(eq(0), eq(0), floatThat(armor -> Math.abs(armor - 110f) < 0.01f));
         verify(grid).setArmorValue(eq(1), eq(0), floatThat(armor -> Math.abs(armor - 440f) < 0.01f));
-        verify(plateStats.getBallisticWeaponDamageMult()).modifyPercent("exiledSector_moduleBonus_black_hawk", 15f);
-        verify(plateStats.getEnergyWeaponDamageMult()).modifyPercent("exiledSector_moduleBonus_black_hawk", 15f);
-        verify(plateStats.getBallisticWeaponRangeBonus(), never()).modifyPercent(Mockito.anyString(), anyFloat());
     }
 
     @Test
@@ -191,5 +158,71 @@ class TaniaListenersTest {
             verify(ship.getMutableStats().getHullDamageTakenMult()).unmodify("exiledSector_riseFromTheAshes_sandgrouse");
             verify(ship, never()).setJitterUnder(Mockito.any(), Mockito.any(), anyFloat(), anyInt(), anyFloat(), anyFloat());
         }
+    }
+
+    @Test
+    void solarisOverdriveFreesWeaponFluxAfterTheSystemStartsThenWaitsOutItsCooldown() {
+        ShipSystemAPI system = mock(ShipSystemAPI.class);
+        ShipAPI ship = ship("aracari", Map.of(SolarisOverdriveListener.SECONDS_KEY, 4f));
+        when(ship.getSystem()).thenReturn(system);
+        SolarisOverdriveListener listener = new SolarisOverdriveListener(ship);
+        String modId = "exiledSector_solarisOverdrive_aracari";
+
+        listener.advance(0.1f);
+        assertFalse(listener.overdriven());
+        when(system.isActive()).thenReturn(true);
+        listener.advance(0.1f);
+        assertTrue(listener.overdriven());
+        verify(ship.getMutableStats().getBallisticWeaponFluxCostMod()).modifyMult(modId, 0f);
+        verify(ship.getMutableStats().getEnergyWeaponFluxCostMod()).modifyMult(modId, 0f);
+
+        listener.advance(4f);
+        assertFalse(listener.overdriven());
+        verify(ship.getMutableStats().getBallisticWeaponFluxCostMod()).unmodify(modId);
+
+        when(system.isActive()).thenReturn(false);
+        listener.advance(0.1f);
+        when(system.isActive()).thenReturn(true);
+        listener.advance(0.1f);
+        assertFalse(listener.overdriven());
+        verify(ship.getMutableStats().getBallisticWeaponFluxCostMod(), times(1)).modifyMult(modId, 0f);
+    }
+
+    @Test
+    void hullModInteractionsNeedTheHullModAndBuiltInOnesNeedItAsAnSMod() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS);
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(stats.getVariant()).thenReturn(variant);
+        when(variant.hasHullMod("ballistic_rangefinder")).thenReturn(true);
+        when(variant.hasHullMod("blast_doors")).thenReturn(true);
+        when(variant.getSMods()).thenReturn(new LinkedHashSet<>(List.of("additional_berthing")));
+
+        HullModInteractionEffect.RANGEFINDER_BALLISTIC_WEAPON_DAMAGE_PERCENT.apply(stats, "frame", 5f);
+        HullModInteractionEffect.ECM_BALLISTIC_WEAPON_RANGE_PERCENT.apply(stats, "frame", 5f);
+        HullModInteractionEffect.BUILT_IN_BLAST_DOORS_HULL_PERCENT.apply(stats, "frame", 12.5f);
+        HullModInteractionEffect.BUILT_IN_BERTHING_PEAK_CR_PERCENT.apply(stats, "frame", 12.5f);
+
+        verify(stats.getBallisticWeaponDamageMult()).modifyPercent("frame", 5f);
+        verify(stats.getBallisticWeaponRangeBonus()).unmodify("frame");
+        verify(stats.getHullBonus()).unmodify("frame");
+        verify(stats.getPeakCRDuration()).modifyPercent("frame", 12.5f);
+    }
+
+    @Test
+    void builtInAuxiliaryThrustersAddTopSpeedOnlyDuringTheZeroFluxBoost() {
+        FluxTrackerAPI flux = mock(FluxTrackerAPI.class);
+        ShipAPI ship = ship("sandgrouse", Map.of());
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(variant.getSMods()).thenReturn(new LinkedHashSet<>(List.of("auxiliarythrusters")));
+        when(ship.getVariant()).thenReturn(variant);
+        when(ship.getFluxTracker()).thenReturn(flux);
+        HullModInteractionEffect effect = HullModInteractionEffect.BUILT_IN_AUX_THRUSTERS_ZERO_FLUX_TOP_SPEED_PERCENT;
+
+        assertTrue(effect.advancesInCombat());
+        effect.advanceInCombat(ship, "frame", 7.5f);
+        verify(ship.getMutableStats().getMaxSpeed()).unmodify("frame");
+        when(flux.isEngineBoostActive()).thenReturn(true);
+        effect.advanceInCombat(ship, "frame", 7.5f);
+        verify(ship.getMutableStats().getMaxSpeed()).modifyPercent("frame", 7.5f);
     }
 }

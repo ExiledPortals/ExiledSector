@@ -4,14 +4,14 @@ Ships with station modules (Navarchy of Tania plates, Knights of Ludd, Roider Un
 
 All numbers are placeholders, like every other magnitude in the mod. `docs/analysis/balance.csv` is left alone.
 
-Status: planned, nothing built. The Tania volume (Module Hull, Module Armor, Module Weapon Damage, Plate Fire Control, Jettison Protocol, Rise From the Ashes, Thermo-Accelerator) is built but uncommitted on `parallel-work` and is the starting point.
+Status: planned, nothing built. The Tania volume is built on `parallel-work`. Since its 2026-10-22 redesign it has no module nodes; `MODULE_HULL_PERCENT` and `MODULE_ARMOR_PERCENT` remain as unused building blocks.
 
 ## Decided so far
 
 - The parent pushes a share of its resolved tree onto each module at deployment. The tree hull mod is not put on module variants, and phantom hull mods are never placed on modules.
 - Only effects known to be static and useful on a module are shared. Everything else stays on the parent.
 - A node whose hull mod the module already has (fitted by the player or built in) gives that module no share.
-- The Tania module nodes keep applying only to modules, at full strength, on top of the share. Jettison Protocol, Rise From the Ashes and Thermo-Accelerator stay parent-only.
+- The Tania nodes stay parent-only.
 
 ## How modules work in the engine
 

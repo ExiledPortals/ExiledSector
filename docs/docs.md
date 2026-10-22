@@ -62,8 +62,13 @@ hit, rather than using a modifier, so EMP and on-hit effects stay at full streng
 
 The tree applies only to the parent ship, so `ModuleBonusListener` pushes the `MODULE_*` effects onto each
 living child module on the first combat frame. Module hull and armor are raised as a percent of the module's
-own bonus, then its maximum hull and armor cells are rescaled. `JettisonListener` counts the modules it saw
-alive that have since died, and scales top speed and maneuverability by that count.
+own bonus, then its maximum hull and armor cells are rescaled.
+
+## Hull mod interactions
+
+`HullModInteractionEffect` (Ancient Frame) applies each bonus only while its hull mod is installed, or for the
+built-in lines only while it is an s-mod. Phantom hull mods from nodes count as installed. The Auxiliary Thrusters
+line is checked every combat frame against the zero-flux boost.
 
 ## Rise From the Ashes
 

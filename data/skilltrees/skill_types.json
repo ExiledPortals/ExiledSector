@@ -4652,91 +4652,115 @@
 			]
 		},
 		{
-			"id": "tania_module_hull",
-			"name": "Module Hull",
-			"icon": "graphics/icons/tania_module_hull.png",
+			"id": "tania_weapon_fire_rate",
+			"name": "Weapon Fire Rate",
+			"icon": "graphics/icons/tania_weapon_fire_rate.png",
 			"effects": [
 				{
-					"effect": "MODULE_HULL_PERCENT",
-					"magnitude": 10
+					"effect": "WEAPON_FIRE_RATE_PERCENT",
+					"magnitude": 3
 				}
 			],
 			"tags": [
-				"hull",
-				"req_modules"
+				"weapons"
 			]
 		},
 		{
-			"id": "tania_module_armor",
-			"name": "Module Armor",
-			"icon": "graphics/icons/tania_module_armor.png",
-			"effects": [
-				{
-					"effect": "MODULE_ARMOR_PERCENT",
-					"magnitude": 10
-				}
-			],
-			"tags": [
-				"armour",
-				"req_modules"
-			]
-		},
-		{
-			"id": "tania_module_weapon_damage",
-			"name": "Module Weapon Damage",
-			"icon": "graphics/icons/tania_module_weapon_damage.png",
-			"effects": [
-				{
-					"effect": "MODULE_WEAPON_DAMAGE_PERCENT",
-					"magnitude": 10
-				}
-			],
-			"tags": [
-				"weapons",
-				"req_modules"
-			]
-		},
-		{
-			"id": "tania_plate_fire_control",
-			"name": "Plate Fire Control",
-			"icon": "graphics/icons/tania_plate_fire_control.png",
+			"id": "tania_ancient_frame",
+			"name": "Ancient Frame",
+			"icon": "graphics/icons/tania_ancient_frame.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "MODULE_WEAPON_RANGE_PERCENT",
-					"magnitude": 20
+					"effect": "RANGEFINDER_BALLISTIC_WEAPON_DAMAGE_PERCENT",
+					"magnitude": 5
 				},
 				{
-					"effect": "MODULE_WEAPON_RATE_OF_FIRE_PERCENT",
+					"effect": "TARGETING_CORE_BALLISTIC_WEAPON_DAMAGE_PERCENT",
+					"magnitude": 5
+				},
+				{
+					"effect": "TARGETING_CORE_BALLISTIC_PROJECTILE_SPEED_PERCENT",
+					"magnitude": 15
+				},
+				{
+					"effect": "FIRE_CONTROL_FLUX_DISSIPATION_MULT",
+					"magnitude": 10
+				},
+				{
+					"effect": "POINT_DEFENSE_AI_DAMAGE_TO_FIGHTERS_MULT",
 					"magnitude": 25
-				}
-			],
-			"description": "Navarchy armor plates carry turrets of their own, slaved to the parent ship's fire control through its flux grid. A Persean League liaison who once served alongside Tania shows the crew how to tune this ship's modules to the same link, so their weapons reach further and fire faster.",
-			"tags": [
-				"weapons",
-				"range",
-				"req_modules"
-			]
-		},
-		{
-			"id": "tania_jettison_protocol",
-			"name": "Jettison Protocol",
-			"icon": "graphics/icons/tania_jettison_protocol.png",
-			"tier": "NOTABLE",
-			"effects": [
+				},
 				{
-					"effect": "TOP_SPEED_PERCENT_PER_DESTROYED_MODULE",
+					"effect": "ECM_BALLISTIC_WEAPON_RANGE_PERCENT",
+					"magnitude": 5
+				},
+				{
+					"effect": "NAV_RELAY_TOP_SPEED_PERCENT",
+					"magnitude": 5
+				},
+				{
+					"effect": "BULKHEADS_EMP_DAMAGE_TAKEN_MULT",
+					"magnitude": -15
+				},
+				{
+					"effect": "BUILT_IN_BLAST_DOORS_HULL_PERCENT",
+					"magnitude": 15
+				},
+				{
+					"effect": "BUILT_IN_INSULATED_ENGINE_ACCELERATION_PERCENT",
+					"magnitude": 25
+				},
+				{
+					"effect": "BUILT_IN_INSULATED_ENGINE_TURN_RATE_PERCENT",
+					"magnitude": 15
+				},
+				{
+					"effect": "BUILT_IN_ARMORED_MOUNTS_RECOIL_MULT",
+					"magnitude": -15
+				},
+				{
+					"effect": "BUILT_IN_FUEL_TANKS_TOP_SPEED_PERCENT",
 					"magnitude": 10
 				},
 				{
-					"effect": "MANEUVERABILITY_PERCENT_PER_DESTROYED_MODULE",
-					"magnitude": 20
+					"effect": "BUILT_IN_BERTHING_PEAK_CR_PERCENT",
+					"magnitude": 15
+				},
+				{
+					"effect": "BUILT_IN_SENSORS_DAMAGE_TO_HULL_PERCENT",
+					"magnitude": 5
+				},
+				{
+					"effect": "BUILT_IN_EFFICIENCY_OVERHAUL_CR_LOSS_MULT",
+					"magnitude": -10
+				},
+				{
+					"effect": "BUILT_IN_AUX_THRUSTERS_ZERO_FLUX_TOP_SPEED_PERCENT",
+					"magnitude": 10
 				}
 			],
-			"description": "Fighting Navarchy cruisers, the crew watched them blow the bolts on their burning plates and outrun the pursuit. Rigging the same release on this ship lets it cut a wrecked module loose and fly lighter for every one it loses.",
+			"description": "Navarchy hulls are older than most of the shipyards that service them, so their crews learned to wring more out of every standard hull mod bolted to them. Engineers lent by a Navarchy commission teach the crew to rework this ship's hull mods the same way.",
 			"tags": [
-				"speed",
-				"req_modules"
+				"weapons",
+				"speed"
+			]
+		},
+		{
+			"id": "tania_solaris_overdrive",
+			"name": "Solaris Overdrive",
+			"icon": "graphics/icons/tania_solaris_overdrive.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "SOLARIS_OVERDRIVE_SECONDS_FLAT",
+					"magnitude": 4
+				}
+			],
+			"description": "The Aracari's Solaris Phalanx primes thermo-dynamic flux cores until its guns fire without drawing on the grid. A deserter from an Aracari engine room walks the crew through a smaller version, keyed to this ship's own system.",
+			"tags": [
+				"weapons",
+				"flux"
 			]
 		},
 		{

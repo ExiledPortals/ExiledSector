@@ -229,12 +229,6 @@ public enum CombatSkillEffect implements BackedSkillEffect {
     },
     MODULE_HULL_PERCENT(ModuleBonusListener.HULL_PERCENT_KEY, ModuleBonusListener.class, ModuleBonusListener::new),
     MODULE_ARMOR_PERCENT(ModuleBonusListener.ARMOR_PERCENT_KEY, ModuleBonusListener.class, ModuleBonusListener::new),
-    MODULE_WEAPON_DAMAGE_PERCENT(ModuleBonusListener.WEAPON_DAMAGE_PERCENT_KEY, ModuleBonusListener.class, ModuleBonusListener::new),
-    MODULE_WEAPON_RANGE_PERCENT(ModuleBonusListener.WEAPON_RANGE_PERCENT_KEY, ModuleBonusListener.class, ModuleBonusListener::new),
-    MODULE_WEAPON_RATE_OF_FIRE_PERCENT(ModuleBonusListener.WEAPON_FIRE_RATE_PERCENT_KEY, ModuleBonusListener.class, ModuleBonusListener::new),
-    TOP_SPEED_PERCENT_PER_DESTROYED_MODULE(JettisonListener.TOP_SPEED_PERCENT_PER_MODULE_KEY, JettisonListener.class, JettisonListener::new),
-    MANEUVERABILITY_PERCENT_PER_DESTROYED_MODULE(JettisonListener.MANEUVERABILITY_PERCENT_PER_MODULE_KEY, JettisonListener.class,
-            JettisonListener::new),
     RISE_FROM_THE_ASHES_HULL_PERCENT(RiseFromTheAshesListener.HULL_PERCENT_KEY, RiseFromTheAshesListener.class, RiseFromTheAshesListener::new),
     RISE_FROM_THE_ASHES_ARMOR_RESTORE_PERCENT(RiseFromTheAshesListener.ARMOR_RESTORE_PERCENT_KEY, RiseFromTheAshesListener.class,
             RiseFromTheAshesListener::new),
@@ -246,7 +240,13 @@ public enum CombatSkillEffect implements BackedSkillEffect {
         }
     },
     THERMO_ACCELERATOR_RATE_OF_FIRE_PERCENT(ThermoAcceleratorListener.RATE_OF_FIRE_PERCENT_KEY, ThermoAcceleratorListener.class,
-            ThermoAcceleratorListener::new);
+            ThermoAcceleratorListener::new),
+    SOLARIS_OVERDRIVE_SECONDS_FLAT(SolarisOverdriveListener.SECONDS_KEY, SolarisOverdriveListener.class, SolarisOverdriveListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("cooldown", SolarisOverdriveListener.COOLDOWN_SECONDS).styled();
+        }
+    };
 
     private static StyledText escortDescription(CombatSkillEffect effect, float magnitude) {
         return EffectText.msg(effect).arg("range", EscortListener.ESCORT_RANGE).arg("fade", EscortListener.PROXIMITY_FADE_DISTANCE)
