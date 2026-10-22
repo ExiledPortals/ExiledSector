@@ -1,7 +1,6 @@
 package exiledsector.ui;
 
-import exiledlib.ui.SkillTreePanelStyle;
-import exiledlib.ui.util.TextLabel;
+import exiledsector.ui.util.TextLabel;
 
 final class SkillTreeInfoTooltipRenderer {
 

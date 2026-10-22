@@ -1,7 +1,7 @@
 package exiledsector.ui;
 
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledlib.ui.util.Rects;
+import exiledsector.ui.util.Rects;
 
 record ScreenRect(float left, float bottom, float width, float height) {
 

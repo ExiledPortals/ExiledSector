@@ -8,7 +8,7 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeTopology;
 import exiledsector.ui.TreeViewport;
-import exiledlib.ui.util.SpriteCache;
+import exiledlib.skills.skilleffect.SpriteCache;
 
 import java.util.ArrayList;
 import java.util.HashMap;

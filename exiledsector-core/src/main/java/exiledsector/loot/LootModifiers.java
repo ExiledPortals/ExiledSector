@@ -1,6 +1,6 @@
 package exiledsector.loot;
 
-import exiledlib.items.ItemChances;
+import exiledsector.items.ItemChances;
 
 public record LootModifiers(ItemChances itemChances, float feedstockMult, float currencyMult) {
 

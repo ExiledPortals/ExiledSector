@@ -14,12 +14,12 @@ import exiledlib.Seeds;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
 import exiledsector.items.HullUpgradeData;
-import exiledlib.items.Item;
+import exiledsector.items.Item;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.MaterialItems;
-import exiledlib.items.ItemData;
+import exiledsector.items.ItemData;
 import exiledsector.loot.LootSources;
-import exiledlib.ui.CampaignMessages;
+import exiledsector.ui.CampaignMessages;
 
 import java.util.ArrayList;
 import java.util.List;

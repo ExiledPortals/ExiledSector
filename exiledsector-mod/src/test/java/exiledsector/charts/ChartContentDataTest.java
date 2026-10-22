@@ -2,7 +2,7 @@ package exiledsector.charts;
 
 import exiledlib.ProjectFiles;
 import exiledsector.items.StarChartImplicits;
-import exiledlib.modifiers.Modifier;
+import exiledsector.modifiers.Modifier;
 import exiledsector.skills.progression.ShipLevelConfig;
 import org.json.CDL;
 import org.json.JSONArray;

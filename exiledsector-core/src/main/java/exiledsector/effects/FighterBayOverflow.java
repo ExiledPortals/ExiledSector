@@ -8,7 +8,7 @@ import com.fs.starfarer.api.loading.FighterWingSpecAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
-import exiledlib.ui.CampaignMessages;
+import exiledsector.ui.CampaignMessages;
 
 import java.util.ArrayList;
 import java.util.List;

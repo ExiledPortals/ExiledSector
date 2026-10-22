@@ -1,8 +1,8 @@
 package exiledsector.ui.section;
 
 import exiledsector.items.HullItem;
-import exiledlib.items.Item;
-import exiledlib.items.ItemKind;
+import exiledsector.items.Item;
+import exiledsector.items.ItemKind;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.ItemIconLooks;
 

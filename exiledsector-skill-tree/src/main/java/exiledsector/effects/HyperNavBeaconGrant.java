@@ -10,15 +10,15 @@ import exiledlib.Seeds;
 import exiledsector.compat.RandomAssortmentCompat;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
-import exiledlib.items.Item;
-import exiledlib.items.ItemData;
-import exiledlib.items.ItemDefinition;
-import exiledlib.items.ItemDefinitions;
+import exiledsector.items.Item;
+import exiledsector.items.ItemData;
+import exiledsector.items.ItemDefinition;
+import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemUnlock;
 import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.tags.SkillTags;
-import exiledlib.ui.CampaignMessages;
+import exiledsector.ui.CampaignMessages;
 import org.apache.log4j.Logger;
 
 public class HyperNavBeaconGrant implements EconomyTickListener {

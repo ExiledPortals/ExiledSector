@@ -2,8 +2,6 @@ package exiledsector.items;
 
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
-import exiledlib.items.ItemDefinition;
-import exiledlib.items.ItemDefinitions;
 
 public final class DoctrineText {
 

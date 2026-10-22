@@ -1,14 +1,6 @@
 package exiledsector.items;
 
 import exiledlib.ProjectFiles;
-import exiledlib.items.FrozenName;
-import exiledlib.items.ItemData;
-import exiledlib.items.ItemDefinition;
-import exiledlib.items.ItemDefinitions;
-import exiledlib.items.ItemKind;
-import exiledlib.items.ItemModifiers;
-import exiledlib.items.RolledEffect;
-import exiledlib.items.RolledModifier;
 import org.json.CDL;
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -1,6 +1,6 @@
 package exiledsector.domain;
 
-import exiledlib.items.ItemDefinition;
+import exiledsector.items.ItemDefinition;
 import exiledsector.effects.ShipEffectSources;
 import exiledsector.effects.SkillTreeEffectSource;
 import exiledsector.effects.SkillTreeLootSource;

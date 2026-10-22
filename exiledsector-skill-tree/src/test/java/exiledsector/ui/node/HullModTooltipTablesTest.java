@@ -7,7 +7,7 @@ import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
-import exiledlib.ui.TooltipTable;
+import exiledsector.ui.TooltipTable;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

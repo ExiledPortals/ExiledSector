@@ -11,12 +11,12 @@ import exiledsector.skills.SkillTreeTopology;
 import exiledsector.skills.SkillType;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.items.DoctrineRewrite;
-import exiledlib.items.Item;
-import exiledlib.items.ItemStore;
-import exiledlib.ui.SkillTreePanelStyle;
+import exiledsector.items.Item;
+import exiledsector.items.ItemStore;
+import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.TreeLayers;
 import exiledsector.ui.TreeViewport;
-import exiledlib.ui.util.TextLabel;
+import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.awt.Color;

@@ -23,7 +23,7 @@ import exiledsector.charts.ChartContentPlan.FleetRole;
 import exiledsector.charts.ChartContentPlan.PlannedFleet;
 import exiledsector.charts.ChartContentPlan.PlannedPoi;
 import exiledlib.i18n.Translation;
-import exiledlib.items.WeightedPick;
+import exiledsector.items.WeightedPick;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 

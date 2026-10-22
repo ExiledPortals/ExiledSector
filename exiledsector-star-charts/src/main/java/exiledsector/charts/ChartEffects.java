@@ -1,11 +1,11 @@
 package exiledsector.charts;
 
 import com.fs.starfarer.api.Global;
-import exiledlib.items.ItemEffects;
-import exiledlib.items.ItemType;
+import exiledsector.items.ItemEffects;
+import exiledsector.items.ItemType;
 import exiledsector.items.StarChart;
 import exiledlib.modifiers.ModifierEffect;
-import exiledlib.modifiers.ModifierEffects;
+import exiledsector.modifiers.ModifierEffects;
 
 public final class ChartEffects implements ModifierEffects {
 

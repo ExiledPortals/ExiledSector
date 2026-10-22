@@ -18,7 +18,7 @@ import exiledlib.i18n.I18n;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
 import exiledsector.skills.InstalledHullMods;
-import exiledlib.ui.VanillaText;
+import exiledsector.ui.VanillaText;
 import exiledsector.ui.refit.PhantomHullModRefitHider;
 
 import java.awt.Color;

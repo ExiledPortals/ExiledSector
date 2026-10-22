@@ -5,9 +5,9 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.CraftingWard;
 import exiledsector.items.HullUpgradeData;
-import exiledlib.items.ItemData;
+import exiledsector.items.ItemData;
 import exiledsector.items.ItemDisassembly;
-import exiledlib.items.ItemRarity;
+import exiledsector.items.ItemRarity;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

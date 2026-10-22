@@ -1,12 +1,6 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.items.ItemChances;
-import exiledlib.items.ItemData;
-import exiledlib.items.ItemDefinition;
-import exiledlib.items.ItemDefinitions;
-import exiledlib.items.ItemKind;
-import exiledlib.items.ItemRoller;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;

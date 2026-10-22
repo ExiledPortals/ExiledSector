@@ -14,13 +14,13 @@ import exiledsector.charts.ChartEffect;
 import exiledsector.charts.ChartPoi;
 import exiledsector.charts.ChartTiers;
 import exiledsector.items.DoctrineBehaviour;
-import exiledlib.items.ItemKind;
-import exiledlib.items.ItemType;
+import exiledsector.items.ItemKind;
+import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
-import exiledlib.items.ModifierScope;
+import exiledsector.items.ModifierScope;
 import exiledsector.items.StarChartDefinitions;
 import exiledsector.items.SubroutineKind;
-import exiledlib.items.UniqueSource;
+import exiledsector.items.UniqueSource;
 import org.json.JSONObject;
 
 import java.nio.file.Path;

@@ -1,8 +1,5 @@
 package exiledsector.items;
 
-import exiledlib.items.ItemDefinition;
-import exiledlib.items.ItemDefinitions;
-import exiledlib.items.ItemType;
 import exiledsector.items.ItemDataIntegrity.Violation;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;

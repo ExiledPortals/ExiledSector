@@ -1,11 +1,6 @@
 package exiledsector.items;
 
 import exiledlib.i18n.Translation;
-import exiledlib.items.Item;
-import exiledlib.items.ItemData;
-import exiledlib.items.ItemDefinition;
-import exiledlib.items.ItemStore;
-import exiledlib.items.ItemType;
 import exiledsector.skills.ShipSkillData;
 import org.apache.log4j.Logger;
 

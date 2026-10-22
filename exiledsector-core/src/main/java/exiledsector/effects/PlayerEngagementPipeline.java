@@ -2,7 +2,6 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
-import exiledlib.effects.FleetCrewLedgerSettlement;
 import exiledsector.ExiledSector;
 import exiledlib.skills.skilleffect.FleetWideEffects;
 import exiledsector.items.SocketLossListener;

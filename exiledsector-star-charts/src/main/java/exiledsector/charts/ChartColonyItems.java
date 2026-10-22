@@ -2,7 +2,7 @@ package exiledsector.charts;
 
 import exiledlib.ModCsv;
 import exiledsector.items.MaterialItems;
-import exiledlib.items.WeightedPick;
+import exiledsector.items.WeightedPick;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;

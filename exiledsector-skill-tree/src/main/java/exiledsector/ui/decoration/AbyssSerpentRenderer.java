@@ -5,9 +5,9 @@ import exiledsector.skills.layout.StaticImage;
 import exiledsector.skills.layout.Star;
 import exiledsector.skills.tags.SkillTags;
 import exiledsector.ui.TreeViewport;
-import exiledlib.ui.util.SpriteCache;
-import exiledlib.ui.util.SpriteDraw;
-import exiledlib.ui.util.WobblyOrbit;
+import exiledlib.skills.skilleffect.SpriteCache;
+import exiledsector.ui.util.SpriteDraw;
+import exiledsector.ui.util.WobblyOrbit;
 
 import java.awt.Color;
 import java.util.List;

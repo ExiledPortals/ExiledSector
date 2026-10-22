@@ -4,8 +4,8 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.SkillTree;
 import exiledsector.ui.TreeViewport;
-import exiledlib.ui.util.Fade;
-import exiledlib.ui.util.GlScope;
+import exiledlib.skills.skilleffect.Fade;
+import exiledsector.ui.util.GlScope;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;

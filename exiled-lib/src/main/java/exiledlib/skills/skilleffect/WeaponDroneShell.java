@@ -4,7 +4,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
-import exiledlib.ui.util.FallbackSupport;
 import org.apache.log4j.Logger;
 
 import java.util.function.Consumer;

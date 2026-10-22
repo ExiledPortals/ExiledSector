@@ -1,7 +1,7 @@
 package exiledsector.ui.decoration;
 
 import exiledsector.ui.TreeViewport;
-import exiledlib.ui.util.TexturedQuadBatch;
+import exiledsector.ui.util.TexturedQuadBatch;
 
 import java.awt.Color;
 import java.util.ArrayList;

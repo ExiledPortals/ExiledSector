@@ -10,8 +10,8 @@ import exiledlib.i18n.I18n;
 import exiledsector.skills.InstalledHullMods;
 import exiledsector.skills.PhantomHullModStatus;
 import exiledsector.skills.SkillTreeSetting;
-import exiledlib.items.Item;
-import exiledlib.items.ItemStore;
+import exiledsector.items.Item;
+import exiledsector.items.ItemStore;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;

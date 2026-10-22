@@ -1,10 +1,9 @@
 package exiledsector.ui;
 
-import exiledlib.ui.SkillTreePanelStyle;
-import exiledlib.ui.util.BorderedPanel;
-import exiledlib.ui.util.Fade;
-import exiledlib.ui.util.GLDraw;
-import exiledlib.ui.util.TextLabel;
+import exiledsector.ui.util.BorderedPanel;
+import exiledlib.skills.skilleffect.Fade;
+import exiledsector.ui.util.GLDraw;
+import exiledsector.ui.util.TextLabel;
 
 import java.awt.Color;
 

@@ -1,15 +1,10 @@
 package exiledsector.items;
 
-import exiledlib.items.ItemDefinitions;
-import exiledlib.items.ItemImplicits;
-import exiledlib.items.ItemModifiers;
-import exiledlib.items.ItemType;
-import exiledlib.items.PoolEntry;
 import exiledsector.charts.ChartEffects;
 import exiledsector.items.ItemDataIntegrity.Severity;
 import exiledsector.items.ItemDataIntegrity.Violation;
-import exiledlib.modifiers.ModifierSlot;
-import exiledlib.modifiers.TierRange;
+import exiledsector.modifiers.ModifierSlot;
+import exiledsector.modifiers.TierRange;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

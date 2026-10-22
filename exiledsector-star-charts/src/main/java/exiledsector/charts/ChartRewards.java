@@ -5,12 +5,12 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
-import exiledlib.items.ItemData;
+import exiledsector.items.ItemData;
 import exiledsector.items.ItemDrops;
-import exiledlib.items.ItemType;
+import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
 import exiledsector.items.MaterialItems;
-import exiledlib.ui.CampaignMessages;
+import exiledsector.ui.CampaignMessages;
 import exiledsector.ui.cargo.MaterialDropAnnouncer;
 import org.apache.log4j.Logger;
 

@@ -6,7 +6,7 @@ import exiledlib.i18n.Style;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
 import exiledsector.items.HullUpgradeEffectSource;
-import exiledlib.items.Item;
+import exiledsector.items.Item;
 import exiledlib.skills.EffectContribution;
 import exiledsector.skills.ShipSections;
 import exiledsector.skills.ShipSkillData;

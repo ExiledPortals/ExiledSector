@@ -1,6 +1,5 @@
 package exiledsector.ui;
 
-import exiledlib.ui.SmoothZoom;
 import exiledsector.ui.hyperspace.HyperspaceCamera;
 
 import java.util.HashMap;

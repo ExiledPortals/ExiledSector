@@ -6,9 +6,8 @@ import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
-import exiledlib.items.ItemTooltip;
-import exiledlib.ui.util.SpriteCache;
-import exiledlib.ui.util.SpriteDraw;
+import exiledlib.skills.skilleffect.SpriteCache;
+import exiledsector.ui.util.SpriteDraw;
 
 import java.util.List;
 

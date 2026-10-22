@@ -2,7 +2,6 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
 import exiledlib.ModSettingsListener;
-import exiledlib.items.ItemTypeSupport;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.effects.ShipEffectSource;
 import exiledlib.i18n.Translation;

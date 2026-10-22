@@ -1,6 +1,5 @@
 package exiledsector.items;
 
-import exiledlib.items.PoolEntry;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.radius.RadiusSize;
 

@@ -1,7 +1,6 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.Global;
-import exiledlib.items.ItemNames;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;

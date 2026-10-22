@@ -5,7 +5,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
-import exiledlib.items.ItemData;
+import exiledsector.items.ItemData;
 import exiledsector.items.StarChartFixtures;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -122,7 +122,7 @@ class StarChartCommandsTest {
 
     @Test
     void listingAbsorbsCargoChartsAndDescribesThem() {
-        ItemData chart = ItemData.rolledAtTier(exiledlib.items.ItemDefinitions.get("unique_chart_wardens_vigil"), 2L, 5);
+        ItemData chart = ItemData.rolledAtTier(exiledsector.items.ItemDefinitions.get("unique_chart_wardens_vigil"), 2L, 5);
         com.fs.starfarer.api.campaign.CargoStackAPI stack = mock(com.fs.starfarer.api.campaign.CargoStackAPI.class);
         when(stack.getSpecialDataIfSpecial()).thenReturn(chart.toSpecialItem());
         when(stack.getSize()).thenReturn(1f);

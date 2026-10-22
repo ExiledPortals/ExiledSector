@@ -10,9 +10,9 @@ import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
-import exiledlib.items.Item;
-import exiledlib.items.ItemRarity;
-import exiledlib.ui.VanillaText;
+import exiledsector.items.Item;
+import exiledsector.items.ItemRarity;
+import exiledsector.ui.VanillaText;
 import exiledsector.ui.chart.StarChartBrowser;
 
 import java.awt.Color;

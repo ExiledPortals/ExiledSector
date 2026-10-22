@@ -2,8 +2,8 @@ package exiledsector.charts;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.items.ItemDrops;
-import exiledlib.items.ItemKind;
-import exiledlib.items.ItemType;
+import exiledsector.items.ItemKind;
+import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
 
 public enum DropType {

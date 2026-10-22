@@ -5,10 +5,10 @@ import com.fs.starfarer.api.ui.CustomPanelAPI;
 import exiledlib.i18n.StyledText;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.CraftingWard;
-import exiledlib.items.Item;
+import exiledsector.items.Item;
 import exiledsector.items.ItemCurrency;
-import exiledlib.items.ItemDefinition;
-import exiledlib.items.ItemStore;
+import exiledsector.items.ItemDefinition;
+import exiledsector.items.ItemStore;
 
 import java.util.List;
 import java.util.Random;

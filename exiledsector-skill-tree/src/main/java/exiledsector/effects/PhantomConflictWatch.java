@@ -21,7 +21,7 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
-import exiledlib.ui.CampaignMessages;
+import exiledsector.ui.CampaignMessages;
 import org.magiclib.util.MagicIncompatibleHullmods;
 
 import java.util.ArrayList;

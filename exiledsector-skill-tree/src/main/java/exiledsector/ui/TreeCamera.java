@@ -1,10 +1,9 @@
 package exiledsector.ui;
 
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledlib.ui.SmoothZoom;
 import exiledsector.ui.hyperspace.HyperspaceCamera;
 import exiledsector.ui.node.TreeAllocationSession;
-import exiledlib.ui.util.Fade;
+import exiledlib.skills.skilleffect.Fade;
 
 final class TreeCamera {
 

@@ -6,7 +6,7 @@ import exiledsector.skills.layout.RingBelt;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.belt.RadialBand;
 import exiledsector.ui.belt.RingBeltRenderer;
-import exiledlib.ui.util.SpriteCache;
+import exiledlib.skills.skilleffect.SpriteCache;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;

@@ -1,6 +1,5 @@
 package exiledsector.items;
 
-import exiledlib.items.ItemDefinition;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;

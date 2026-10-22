@@ -1,9 +1,6 @@
 package exiledsector.items;
 
 import exiledlib.ModCsv;
-import exiledlib.items.CorruptionImplicitPool;
-import exiledlib.items.ItemImplicits;
-import exiledlib.items.ItemType;
 import org.json.JSONException;
 
 import java.io.IOException;

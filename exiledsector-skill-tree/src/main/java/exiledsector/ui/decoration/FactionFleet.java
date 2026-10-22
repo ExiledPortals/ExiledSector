@@ -1,6 +1,6 @@
 package exiledsector.ui.decoration;
 
-import exiledlib.ui.util.Fade;
+import exiledlib.skills.skilleffect.Fade;
 
 import java.awt.Color;
 import java.util.ArrayList;

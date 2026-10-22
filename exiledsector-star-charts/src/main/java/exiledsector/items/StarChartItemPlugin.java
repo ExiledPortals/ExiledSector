@@ -4,10 +4,6 @@ import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.CargoTransferHandlerAPI;
 import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import exiledlib.items.Item;
-import exiledlib.items.ItemData;
-import exiledlib.items.ItemDefinition;
-import exiledlib.items.ItemTooltip;
 import exiledsector.charts.StarChartSettings;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.StyledText;
@@ -16,7 +12,7 @@ import exiledsector.ui.cargo.CargoIconAnimation;
 import exiledsector.ui.cargo.CargoIconFx;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
-import exiledlib.ui.util.SpriteCache;
+import exiledlib.skills.skilleffect.SpriteCache;
 
 import java.util.List;
 

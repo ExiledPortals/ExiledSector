@@ -1,14 +1,7 @@
 package exiledsector.items;
 
 import exiledlib.ProjectFiles;
-import exiledlib.items.ItemDefinition;
-import exiledlib.items.ItemDefinitions;
-import exiledlib.items.ItemIdAliases;
-import exiledlib.items.ItemModifiers;
-import exiledlib.items.ItemNames;
-import exiledlib.items.PoolEntry;
-import exiledlib.items.RolledEffect;
-import exiledlib.modifiers.ModifierSlot;
+import exiledsector.modifiers.ModifierSlot;
 import exiledlib.skills.skilleffect.EffectAliases;
 import org.json.CDL;
 import org.json.JSONArray;

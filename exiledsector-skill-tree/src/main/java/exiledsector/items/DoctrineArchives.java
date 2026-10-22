@@ -1,15 +1,7 @@
 package exiledsector.items;
 
 import exiledlib.ModCsv;
-import exiledlib.items.ItemData;
-import exiledlib.items.ItemDefinition;
-import exiledlib.items.ItemDefinitions;
-import exiledlib.items.ItemIdAliases;
-import exiledlib.items.ItemModifiers;
-import exiledlib.items.ItemType;
-import exiledlib.items.ModifierScope;
-import exiledlib.items.PoolEntry;
-import exiledlib.modifiers.ModifierSlot;
+import exiledsector.modifiers.ModifierSlot;
 import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.radius.RadiusSize;
 import org.apache.log4j.Logger;

@@ -1,7 +1,5 @@
 package exiledsector.items;
 
-import exiledlib.items.Item;
-import exiledlib.items.ItemStore;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 

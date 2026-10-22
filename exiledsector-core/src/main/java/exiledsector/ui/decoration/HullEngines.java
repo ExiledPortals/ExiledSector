@@ -2,9 +2,9 @@ package exiledsector.ui.decoration;
 
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
-import exiledlib.ui.util.SpriteCache;
-import exiledlib.ui.util.SpriteDraw;
-import exiledlib.ui.util.TexturedQuadBatch;
+import exiledlib.skills.skilleffect.SpriteCache;
+import exiledsector.ui.util.SpriteDraw;
+import exiledsector.ui.util.TexturedQuadBatch;
 import java.awt.Color;
 
 public final class HullEngines {

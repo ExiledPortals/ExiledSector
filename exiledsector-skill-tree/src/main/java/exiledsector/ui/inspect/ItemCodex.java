@@ -11,10 +11,10 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.ExiledSector;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
-import exiledlib.items.ItemDefinition;
-import exiledlib.items.ItemDefinitions;
+import exiledsector.items.ItemDefinition;
+import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemUnlock;
-import exiledlib.ui.VanillaText;
+import exiledsector.ui.VanillaText;
 import exiledsector.ui.socket.ItemCodexLink;
 import org.apache.log4j.Logger;
 

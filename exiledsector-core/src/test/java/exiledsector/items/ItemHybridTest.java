@@ -1,21 +1,10 @@
 package exiledsector.items;
 
 import exiledlib.i18n.StyledText;
-import exiledlib.items.Item;
-import exiledlib.items.ItemDefinition;
-import exiledlib.items.ItemDefinitions;
-import exiledlib.items.ItemKind;
-import exiledlib.items.ItemRarity;
-import exiledlib.items.ItemRoller;
-import exiledlib.items.PoolEntry;
-import exiledlib.items.RolledEffect;
-import exiledlib.items.RolledModifier;
-import exiledlib.items.SlottedLine;
-import exiledlib.items.SlottedRoll;
-import exiledlib.modifiers.Modifier;
-import exiledlib.modifiers.ModifierCategory;
-import exiledlib.modifiers.ModifierLine;
-import exiledlib.modifiers.ModifierSlot;
+import exiledsector.modifiers.Modifier;
+import exiledsector.modifiers.ModifierCategory;
+import exiledsector.modifiers.ModifierLine;
+import exiledsector.modifiers.ModifierSlot;
 import exiledlib.skills.SkillTypeEffect;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

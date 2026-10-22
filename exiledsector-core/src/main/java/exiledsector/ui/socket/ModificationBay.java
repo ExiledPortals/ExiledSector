@@ -1,7 +1,7 @@
 package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.ui.CustomPanelAPI;
-import exiledlib.items.Item;
+import exiledsector.items.Item;
 import exiledsector.ui.SkillTreeSounds;
 
 import java.util.function.Function;

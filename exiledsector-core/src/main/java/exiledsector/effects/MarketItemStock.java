@@ -14,7 +14,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import com.fs.starfarer.api.impl.campaign.submarkets.BaseSubmarketPlugin;
 import exiledlib.PlayerFleet;
-import exiledlib.items.ItemData;
+import exiledsector.items.ItemData;
 import exiledsector.loot.LootSource;
 import exiledsector.loot.LootSources;
 import org.apache.log4j.Logger;

@@ -3,11 +3,11 @@ package exiledsector.ui;
 import exiledlib.ModSettingsListener;
 import exiledlib.compat.CombatGlow;
 import exiledsector.compat.SalvageSiteCompat;
-import exiledlib.domain.Domain;
+import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.ui.cargo.ItemAnimationSetting;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.ItemDrops;
-import exiledlib.items.ItemRoller;
+import exiledsector.items.ItemRoller;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.LanguageSetting;
 import exiledlib.i18n.Translation;
@@ -37,10 +37,10 @@ public final class ExiledSectorSettings {
         SettingsCreator.refresh(MOD_ID);
     }
 
-    public static void register(List<? extends Domain> domains) {
+    public static void register(List<? extends ExiledSectorDomain> domains) {
         I18n.forGameText(() -> {
             registerGeneral();
-            domains.forEach(Domain::registerSettings);
+            domains.forEach(ExiledSectorDomain::registerSettings);
         });
         SettingsCreator.refresh(MOD_ID);
         ModSettingsListener.ensureRegistered(DiminishingReturns.SettingsListener.class, DiminishingReturns.SettingsListener::new);
@@ -48,7 +48,7 @@ public final class ExiledSectorSettings {
         ItemRoller.reloadSettings();
         ModSettingsListener.ensureRegistered(ItemAnimationSetting.SettingsListener.class, ItemAnimationSetting.SettingsListener::new);
         ItemAnimationSetting.reloadSettings();
-        domains.forEach(Domain::reloadSettings);
+        domains.forEach(ExiledSectorDomain::reloadSettings);
     }
 
     private static void registerGeneral() {

@@ -1,6 +1,5 @@
 package exiledsector.items;
 
-import exiledlib.items.ItemStore;
 import exiledsector.skills.NodeGrants;
 
 import java.util.List;

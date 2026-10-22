@@ -1,6 +1,5 @@
 package exiledsector.items;
 
-import exiledlib.items.ItemType;
 
 import java.util.ArrayList;
 import java.util.HashSet;

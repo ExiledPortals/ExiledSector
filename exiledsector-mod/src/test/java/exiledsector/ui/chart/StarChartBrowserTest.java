@@ -1,10 +1,10 @@
 package exiledsector.ui.chart;
 
-import exiledlib.items.Item;
-import exiledlib.items.ItemData;
-import exiledlib.items.ItemDefinitions;
-import exiledlib.items.ItemRarity;
-import exiledlib.items.ItemStore;
+import exiledsector.items.Item;
+import exiledsector.items.ItemData;
+import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ItemRarity;
+import exiledsector.items.ItemStore;
 import exiledsector.items.StarChartFixtures;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

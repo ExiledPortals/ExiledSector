@@ -11,8 +11,8 @@ import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import exiledlib.i18n.Translation;
 import exiledlib.skills.ShipHullSizes;
 import exiledsector.skills.SkillType;
-import exiledlib.ui.TooltipTable;
-import exiledlib.ui.TooltipTable.Row;
+import exiledsector.ui.TooltipTable;
+import exiledsector.ui.TooltipTable.Row;
 
 import java.util.ArrayList;
 import java.util.Comparator;

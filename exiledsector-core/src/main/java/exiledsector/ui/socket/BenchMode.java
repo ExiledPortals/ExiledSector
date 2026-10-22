@@ -1,7 +1,7 @@
 package exiledsector.ui.socket;
 
 import exiledlib.i18n.Translation;
-import exiledlib.items.ItemStore;
+import exiledsector.items.ItemStore;
 
 public enum BenchMode {
     HULL_ITEMS("graphics/ui/exiledSector/modification_bench.png", 159f, 83.3f, 58f, 42f, 68.5f, 112f, 243.5f, 112f,

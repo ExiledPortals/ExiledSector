@@ -1,12 +1,9 @@
 package exiledsector.items;
 
 import exiledlib.ModCsv;
-import exiledlib.items.ItemType;
-import exiledlib.items.ModifierScope;
-import exiledlib.items.PoolEntry;
-import exiledlib.modifiers.ModifierLine;
-import exiledlib.modifiers.TierRange;
-import exiledlib.modifiers.ValueScaling;
+import exiledsector.modifiers.ModifierLine;
+import exiledsector.modifiers.TierRange;
+import exiledsector.modifiers.ValueScaling;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

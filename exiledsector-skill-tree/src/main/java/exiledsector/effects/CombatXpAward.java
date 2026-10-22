@@ -14,7 +14,7 @@ import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipLevelSystem;
-import exiledlib.ui.VanillaText;
+import exiledsector.ui.VanillaText;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

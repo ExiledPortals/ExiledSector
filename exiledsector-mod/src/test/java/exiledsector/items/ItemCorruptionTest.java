@@ -1,17 +1,7 @@
 package exiledsector.items;
 
-import exiledlib.items.AffixLayout;
-import exiledlib.items.CorruptionOutcome;
-import exiledlib.items.Item;
-import exiledlib.items.ItemDefinitions;
-import exiledlib.items.ItemImplicits;
-import exiledlib.items.ItemModifiers;
-import exiledlib.items.ItemNames;
-import exiledlib.items.ItemRarity;
-import exiledlib.items.ItemStore;
-import exiledlib.items.RolledModifier;
-import exiledlib.modifiers.Modifier;
-import exiledlib.modifiers.ModifierLine;
+import exiledsector.modifiers.Modifier;
+import exiledsector.modifiers.ModifierLine;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;

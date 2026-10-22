@@ -4,12 +4,12 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.FactionSpecAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledlib.ui.util.GlScope;
-import exiledlib.ui.util.HoloShapes;
-import exiledlib.ui.util.SpriteCache;
-import exiledlib.ui.util.SpriteDraw;
-import exiledlib.ui.util.TexturedQuadBatch;
-import exiledlib.ui.util.UnitCircle;
+import exiledsector.ui.util.GlScope;
+import exiledsector.ui.util.HoloShapes;
+import exiledlib.skills.skilleffect.SpriteCache;
+import exiledsector.ui.util.SpriteDraw;
+import exiledsector.ui.util.TexturedQuadBatch;
+import exiledsector.ui.util.UnitCircle;
 import org.apache.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 

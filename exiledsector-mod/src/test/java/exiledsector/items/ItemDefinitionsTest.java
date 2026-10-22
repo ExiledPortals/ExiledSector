@@ -1,14 +1,6 @@
 package exiledsector.items;
 
-import exiledlib.items.Item;
-import exiledlib.items.ItemDefinition;
-import exiledlib.items.ItemDefinitions;
-import exiledlib.items.ItemKind;
-import exiledlib.items.ItemModifiers;
-import exiledlib.items.ItemRoller;
-import exiledlib.items.ItemType;
-import exiledlib.items.PoolEntry;
-import exiledlib.modifiers.ModifierSlot;
+import exiledsector.modifiers.ModifierSlot;
 import exiledsector.skills.npc.RealSkillData;
 import org.json.CDL;
 import org.json.JSONArray;

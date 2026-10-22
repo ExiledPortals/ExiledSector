@@ -18,11 +18,11 @@ import exiledsector.items.CraftingMaterials;
 import exiledsector.items.ItemCrafting;
 import exiledsector.items.ItemDisassembly;
 import exiledsector.items.MaterialItems;
-import exiledlib.ui.SkillTreePanelStyle;
-import exiledlib.ui.VanillaText;
-import exiledlib.ui.util.FramedPanelPlugin;
-import exiledlib.ui.util.HoloFrame;
-import exiledlib.ui.util.Rects;
+import exiledsector.ui.SkillTreePanelStyle;
+import exiledsector.ui.VanillaText;
+import exiledsector.ui.util.FramedPanelPlugin;
+import exiledsector.ui.util.HoloFrame;
+import exiledsector.ui.util.Rects;
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;

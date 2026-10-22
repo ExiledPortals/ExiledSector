@@ -2,10 +2,10 @@ package exiledsector.charts;
 
 import exiledlib.ModCsv;
 import exiledsector.items.StarChartImplicits;
-import exiledlib.items.WeightedPick;
-import exiledlib.modifiers.Modifier;
-import exiledlib.modifiers.ModifierLine;
-import exiledlib.modifiers.ModifierSlot;
+import exiledsector.items.WeightedPick;
+import exiledsector.modifiers.Modifier;
+import exiledsector.modifiers.ModifierLine;
+import exiledsector.modifiers.ModifierSlot;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;

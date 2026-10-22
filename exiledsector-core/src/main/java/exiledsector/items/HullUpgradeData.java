@@ -5,7 +5,6 @@ import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledlib.i18n.Translation;
-import exiledlib.items.ItemStore;
 import exiledlib.skills.ShipHullSizes;
 
 import java.util.Locale;

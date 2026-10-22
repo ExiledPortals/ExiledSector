@@ -1,6 +1,6 @@
 package exiledsector.ui.socket;
 
-import exiledlib.items.ItemRarity;
+import exiledsector.items.ItemRarity;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

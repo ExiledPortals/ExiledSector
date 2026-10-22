@@ -8,8 +8,6 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ViewportAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledlib.compat.CombatGlow;
-import exiledlib.ui.util.Fade;
-import exiledlib.ui.util.SpriteCache;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;

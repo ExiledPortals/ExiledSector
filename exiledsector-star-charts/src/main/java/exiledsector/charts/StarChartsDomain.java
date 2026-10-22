@@ -11,7 +11,7 @@ import exiledlib.i18n.I18n;
 import exiledlib.i18n.SpecLocalisation;
 import exiledlib.i18n.Translation;
 import exiledsector.items.ItemDataRules;
-import exiledlib.items.ItemTypeSupport;
+import exiledsector.items.ItemTypeSupport;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.StarChart;
 import exiledsector.items.StarChartCurrency;

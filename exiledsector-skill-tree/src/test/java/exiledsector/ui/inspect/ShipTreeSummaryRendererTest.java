@@ -17,7 +17,7 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledlib.skills.SkillTypeEffect;
 import exiledlib.skills.skilleffect.DefenseSkillEffect;
-import exiledlib.ui.SkillTreePanelStyle;
+import exiledsector.ui.SkillTreePanelStyle;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

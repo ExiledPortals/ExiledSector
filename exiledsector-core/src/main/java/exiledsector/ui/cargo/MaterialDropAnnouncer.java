@@ -5,7 +5,7 @@ import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.MaterialTier;
-import exiledlib.ui.CampaignMessages;
+import exiledsector.ui.CampaignMessages;
 
 import java.util.Map;
 

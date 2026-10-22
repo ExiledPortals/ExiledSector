@@ -1,8 +1,5 @@
 package exiledsector.items;
 
-import exiledlib.items.ItemImplicits;
-import exiledlib.items.ItemModifiers;
-import exiledlib.items.ItemType;
 import org.json.JSONArray;
 import org.json.JSONException;
 

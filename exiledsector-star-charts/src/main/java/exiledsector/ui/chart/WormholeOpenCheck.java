@@ -10,8 +10,8 @@ import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartRuns;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.WormholeGateway;
-import exiledlib.items.Item;
-import exiledlib.items.ItemStore;
+import exiledsector.items.Item;
+import exiledsector.items.ItemStore;
 import exiledsector.items.StarChart;
 
 import java.util.Locale;

@@ -1,8 +1,7 @@
 package exiledsector.ui;
 
 import com.fs.starfarer.api.input.InputEventAPI;
-import exiledlib.ui.SkillTreePanelStyle;
-import exiledlib.ui.util.TextLabel;
+import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 import org.lwjgl.input.Keyboard;
 

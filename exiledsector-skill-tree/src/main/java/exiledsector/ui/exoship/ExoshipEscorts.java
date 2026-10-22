@@ -6,10 +6,10 @@ import exiledsector.compat.RandomAssortmentCompat;
 import exiledlib.skills.HullSizeTable;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.decoration.HullEngines;
-import exiledlib.ui.util.Fade;
-import exiledlib.ui.util.SpriteCache;
-import exiledlib.ui.util.TexturedQuadBatch;
-import exiledlib.ui.util.WobblyOrbit;
+import exiledlib.skills.skilleffect.Fade;
+import exiledlib.skills.skilleffect.SpriteCache;
+import exiledsector.ui.util.TexturedQuadBatch;
+import exiledsector.ui.util.WobblyOrbit;
 
 import java.util.Arrays;
 

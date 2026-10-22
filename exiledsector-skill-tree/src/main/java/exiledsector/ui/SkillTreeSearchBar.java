@@ -3,10 +3,9 @@ package exiledsector.ui;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledlib.i18n.Translation;
-import exiledlib.ui.SkillTreePanelStyle;
 import exiledsector.ui.node.NodeSearch;
-import exiledlib.ui.util.BorderedPanel;
-import exiledlib.ui.util.Rects;
+import exiledsector.ui.util.BorderedPanel;
+import exiledsector.ui.util.Rects;
 
 import java.util.function.ToDoubleFunction;
 

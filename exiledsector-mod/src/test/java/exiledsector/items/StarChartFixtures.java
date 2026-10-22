@@ -1,8 +1,5 @@
 package exiledsector.items;
 
-import exiledlib.items.ItemData;
-import exiledlib.items.ItemDefinition;
-import exiledlib.items.ItemDefinitions;
 import exiledsector.charts.ChartEffects;
 import exiledsector.charts.ChartFactions;
 

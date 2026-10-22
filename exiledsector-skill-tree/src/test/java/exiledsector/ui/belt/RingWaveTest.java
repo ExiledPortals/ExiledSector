@@ -1,6 +1,6 @@
 package exiledsector.ui.belt;
 
-import exiledlib.ui.util.UnitCircle;
+import exiledsector.ui.util.UnitCircle;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

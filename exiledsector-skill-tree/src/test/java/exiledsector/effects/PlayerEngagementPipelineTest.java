@@ -12,7 +12,6 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
-import exiledlib.effects.FleetCrewLedgerSettlement;
 import exiledsector.effects.PlayerEngagementPipeline.Stage;
 import exiledsector.effects.PlayerEngagementPipeline.Step;
 import exiledlib.skills.skilleffect.FleetWideEffects;

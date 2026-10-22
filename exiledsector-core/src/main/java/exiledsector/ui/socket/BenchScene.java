@@ -1,7 +1,7 @@
 package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
-import exiledlib.ui.util.SpriteCache;
+import exiledlib.skills.skilleffect.SpriteCache;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;

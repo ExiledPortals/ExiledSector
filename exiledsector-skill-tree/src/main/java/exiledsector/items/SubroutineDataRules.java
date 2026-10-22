@@ -1,13 +1,8 @@
 package exiledsector.items;
 
 import exiledlib.ModCsv;
-import exiledlib.items.ItemEffects;
-import exiledlib.items.ItemModifiers;
-import exiledlib.items.ItemType;
-import exiledlib.items.ModifierScope;
-import exiledlib.items.UniqueSource;
-import exiledlib.modifiers.ModifierLine;
-import exiledlib.modifiers.ModifierSlot;
+import exiledsector.modifiers.ModifierLine;
+import exiledsector.modifiers.ModifierSlot;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;

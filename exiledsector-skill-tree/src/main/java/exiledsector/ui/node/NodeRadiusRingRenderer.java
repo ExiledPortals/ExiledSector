@@ -7,11 +7,11 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.radius.NodeRadii;
 import exiledsector.skills.radius.NodeRadiusCache;
 import exiledsector.skills.radius.RadiusSize;
-import exiledlib.ui.SkillTreePanelStyle;
+import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.TreeLayers;
 import exiledsector.ui.TreeViewport;
-import exiledlib.ui.util.GlScope;
-import exiledlib.ui.util.UnitCircle;
+import exiledsector.ui.util.GlScope;
+import exiledsector.ui.util.UnitCircle;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;

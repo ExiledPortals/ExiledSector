@@ -8,10 +8,10 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
-import exiledlib.items.Item;
-import exiledlib.items.ItemTooltip;
-import exiledlib.ui.TooltipExpansion;
-import exiledlib.ui.util.FramedPanelPlugin;
+import exiledsector.items.Item;
+import exiledsector.items.ItemTooltip;
+import exiledsector.ui.TooltipExpansion;
+import exiledsector.ui.util.FramedPanelPlugin;
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;

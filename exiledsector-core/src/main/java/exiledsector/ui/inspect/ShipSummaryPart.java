@@ -3,7 +3,7 @@ package exiledsector.ui.inspect;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import exiledlib.i18n.StyledText;
-import exiledlib.items.Item;
+import exiledsector.items.Item;
 import exiledlib.skills.EffectContribution;
 import exiledsector.skills.ShipSkillData;
 

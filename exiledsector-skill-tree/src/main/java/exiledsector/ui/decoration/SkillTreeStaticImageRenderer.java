@@ -3,8 +3,8 @@ package exiledsector.ui.decoration;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.layout.StaticImage;
 import exiledsector.ui.TreeViewport;
-import exiledlib.ui.util.SpriteCache;
-import exiledlib.ui.util.SpriteDraw;
+import exiledlib.skills.skilleffect.SpriteCache;
+import exiledsector.ui.util.SpriteDraw;
 
 import java.util.List;
 import java.util.Set;

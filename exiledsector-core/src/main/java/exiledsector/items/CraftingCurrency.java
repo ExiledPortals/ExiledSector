@@ -1,10 +1,5 @@
 package exiledsector.items;
 
-import exiledlib.items.CraftingContext;
-import exiledlib.items.Item;
-import exiledlib.items.ItemCraftingCosts;
-import exiledlib.items.ItemType;
-import exiledlib.items.RolledModifier;
 
 import java.awt.Color;
 import java.util.Locale;

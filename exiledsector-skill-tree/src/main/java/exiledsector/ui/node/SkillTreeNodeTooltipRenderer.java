@@ -17,17 +17,17 @@ import exiledlib.skills.SkillTypeEffect;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.items.DoctrineRewrite;
 import exiledsector.items.DoctrineText;
-import exiledlib.items.Item;
-import exiledlib.items.ItemStore;
+import exiledsector.items.Item;
+import exiledsector.items.ItemStore;
 import exiledsector.items.Subroutine;
 import exiledsector.items.NodeGrantStatus;
 import exiledsector.items.WormholeAnchor;
-import exiledlib.ui.SkillTreePanelStyle;
-import exiledlib.ui.SkillTreeTooltipTable;
-import exiledlib.ui.TooltipExpansion;
-import exiledlib.ui.TooltipTable;
+import exiledsector.ui.SkillTreePanelStyle;
+import exiledsector.ui.SkillTreeTooltipTable;
+import exiledsector.ui.TooltipExpansion;
+import exiledsector.ui.TooltipTable;
 import exiledsector.ui.inspect.ItemCodex;
-import exiledlib.ui.util.TextLabel;
+import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.util.ArrayList;
@@ -36,12 +36,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import static exiledlib.ui.SkillTreePanelStyle.NODE_TOOLTIP_MAX_TEXT_WIDTH;
-import static exiledlib.ui.SkillTreePanelStyle.TOOLTIP_BODY_COLOR;
-import static exiledlib.ui.SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
-import static exiledlib.ui.SkillTreePanelStyle.TOOLTIP_FLAVOUR_FONT_SIZE;
-import static exiledlib.ui.SkillTreePanelStyle.TOOLTIP_TITLE_COLOR;
-import static exiledlib.ui.SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE;
+import static exiledsector.ui.SkillTreePanelStyle.NODE_TOOLTIP_MAX_TEXT_WIDTH;
+import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_COLOR;
+import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
+import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_FLAVOUR_FONT_SIZE;
+import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_TITLE_COLOR;
+import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE;
 
 final class SkillTreeNodeTooltipRenderer {
 

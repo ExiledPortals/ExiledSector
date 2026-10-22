@@ -15,8 +15,8 @@ import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.tags.SkillTags;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.hyperspace.HyperspaceAnchor;
-import exiledlib.ui.util.SpriteCache;
-import exiledlib.ui.util.TexturedQuadBatch;
+import exiledlib.skills.skilleffect.SpriteCache;
+import exiledsector.ui.util.TexturedQuadBatch;
 import org.apache.log4j.Logger;
 
 import java.awt.Color;

@@ -3,11 +3,11 @@ package exiledsector.ui.socket;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledlib.ui.SkillTreePanelStyle;
+import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.cargo.CargoIconFx;
 import exiledsector.ui.cargo.CargoIconLook;
-import exiledlib.ui.util.GLDraw;
-import exiledlib.ui.util.SpriteCache;
+import exiledsector.ui.util.GLDraw;
+import exiledlib.skills.skilleffect.SpriteCache;
 
 import java.awt.Color;
 import java.util.List;

@@ -9,7 +9,7 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import exiledsector.ui.SkillTreeRefitButton;
-import exiledlib.ui.util.Rects;
+import exiledsector.ui.util.Rects;
 import org.apache.log4j.Logger;
 
 import java.util.List;

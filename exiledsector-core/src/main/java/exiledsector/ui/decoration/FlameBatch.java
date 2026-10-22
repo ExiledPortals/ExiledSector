@@ -1,7 +1,7 @@
 package exiledsector.ui.decoration;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
-import exiledlib.ui.util.GlScope;
+import exiledsector.ui.util.GlScope;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;

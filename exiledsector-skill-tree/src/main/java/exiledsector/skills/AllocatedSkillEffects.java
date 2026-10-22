@@ -7,8 +7,8 @@ import exiledsector.items.NodeSocketable;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledlib.skills.skilleffect.SkillEffect;
 import exiledsector.items.DoctrineOverrides;
-import exiledlib.items.Item;
-import exiledlib.items.ItemStore;
+import exiledsector.items.Item;
+import exiledsector.items.ItemStore;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,12 +1,12 @@
 package exiledsector.ui.socket;
 
 import exiledlib.i18n.RealCatalogue;
-import exiledlib.items.CorruptionOutcome;
+import exiledsector.items.CorruptionOutcome;
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.CraftingWard;
-import exiledlib.items.ItemNature;
+import exiledsector.items.ItemNature;
 import exiledsector.items.MaterialItems;
-import exiledlib.modifiers.ModifierSlot;
+import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONObject;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

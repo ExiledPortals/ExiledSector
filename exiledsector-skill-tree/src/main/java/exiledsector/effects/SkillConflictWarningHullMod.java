@@ -11,7 +11,7 @@ import exiledlib.i18n.Translation;
 import exiledsector.skills.HullModNames;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledlib.ui.VanillaText;
+import exiledsector.ui.VanillaText;
 
 import java.awt.Color;
 

@@ -6,9 +6,9 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.domain.DomainContributions;
 import exiledsector.domain.ExiledSectorDomain;
-import exiledlib.items.ItemChances;
-import exiledlib.items.ItemData;
-import exiledlib.items.ItemDefinition;
+import exiledsector.items.ItemChances;
+import exiledsector.items.ItemData;
+import exiledsector.items.ItemDefinition;
 
 import java.util.ArrayList;
 import java.util.List;

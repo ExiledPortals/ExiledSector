@@ -2,7 +2,6 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledlib.ui.SmoothZoom;
 import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -10,7 +9,7 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.tags.SkillTags;
 import exiledsector.ui.exoship.ExoshipRenderer;
 import exiledsector.ui.exoship.ExoshipVoyage;
-import exiledlib.ui.util.Fade;
+import exiledlib.skills.skilleffect.Fade;
 
 import java.util.ArrayList;
 import java.util.Collection;

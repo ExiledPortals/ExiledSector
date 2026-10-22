@@ -8,9 +8,9 @@ import com.fs.starfarer.api.util.Misc;
 import exiledlib.PlayerFleet;
 import exiledsector.skills.SkillTree;
 import exiledsector.ui.TreeViewport;
-import exiledlib.ui.util.Fade;
-import exiledlib.ui.util.SpriteCache;
-import exiledlib.ui.util.TexturedQuadBatch;
+import exiledlib.skills.skilleffect.Fade;
+import exiledlib.skills.skilleffect.SpriteCache;
+import exiledsector.ui.util.TexturedQuadBatch;
 
 import java.util.ArrayList;
 import java.util.Comparator;

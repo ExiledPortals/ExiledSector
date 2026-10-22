@@ -1,7 +1,5 @@
 package exiledsector.items;
 
-import exiledlib.items.ItemImplicits;
-import exiledlib.items.ItemModifiers;
 import exiledsector.items.ItemDataIntegrity.Severity;
 import exiledsector.items.ItemDataIntegrity.Violation;
 import org.json.JSONArray;

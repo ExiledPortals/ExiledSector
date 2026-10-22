@@ -7,8 +7,8 @@ import exiledsector.items.HullItem;
 import exiledsector.skills.tags.NodeRequirements;
 import exiledsector.skills.tags.ShipProfile;
 import exiledsector.items.ShipSection;
-import exiledlib.items.Item;
-import exiledlib.items.ItemStore;
+import exiledsector.items.Item;
+import exiledsector.items.ItemStore;
 
 import java.util.ArrayList;
 import java.util.Collection;

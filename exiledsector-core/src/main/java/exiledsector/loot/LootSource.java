@@ -7,9 +7,9 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import exiledsector.effects.TechMiningItemListener;
-import exiledlib.items.ItemChances;
-import exiledlib.items.ItemData;
-import exiledlib.items.ItemDefinition;
+import exiledsector.items.ItemChances;
+import exiledsector.items.ItemData;
+import exiledsector.items.ItemDefinition;
 
 import java.util.List;
 import java.util.Random;

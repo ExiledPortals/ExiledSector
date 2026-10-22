@@ -4,9 +4,9 @@ import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.layout.ThreatUnit;
 import exiledsector.ui.TreeViewport;
-import exiledlib.ui.util.SpriteCache;
-import exiledlib.ui.util.SpriteDraw;
-import exiledlib.ui.util.TexturedQuadBatch;
+import exiledlib.skills.skilleffect.SpriteCache;
+import exiledsector.ui.util.SpriteDraw;
+import exiledsector.ui.util.TexturedQuadBatch;
 
 import java.awt.Color;
 import java.util.List;

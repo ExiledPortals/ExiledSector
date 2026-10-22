@@ -4,7 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledlib.ui.util.GlScope;
+import exiledsector.ui.util.GlScope;
 import org.apache.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 

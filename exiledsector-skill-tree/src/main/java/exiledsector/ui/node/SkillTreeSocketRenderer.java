@@ -3,8 +3,8 @@ package exiledsector.ui.node;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.ui.cargo.AnimatedItemIcons;
-import exiledlib.ui.util.SpriteCache;
-import exiledlib.ui.util.SpriteDraw;
+import exiledlib.skills.skilleffect.SpriteCache;
+import exiledsector.ui.util.SpriteDraw;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;

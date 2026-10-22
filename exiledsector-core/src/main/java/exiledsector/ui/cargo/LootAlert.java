@@ -4,10 +4,10 @@ import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.HullUpgradeData;
-import exiledlib.items.Item;
-import exiledlib.items.ItemData;
+import exiledsector.items.Item;
+import exiledsector.items.ItemData;
 import exiledsector.items.ItemDisassembly;
-import exiledlib.items.ItemRarity;
+import exiledsector.items.ItemRarity;
 import exiledsector.items.MaterialItems;
 
 import java.util.Set;

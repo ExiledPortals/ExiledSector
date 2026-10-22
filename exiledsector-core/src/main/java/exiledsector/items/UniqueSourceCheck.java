@@ -2,9 +2,6 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.FactionSpecAPI;
-import exiledlib.items.ItemDefinition;
-import exiledlib.items.ItemDefinitions;
-import exiledlib.items.UniqueSource;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;

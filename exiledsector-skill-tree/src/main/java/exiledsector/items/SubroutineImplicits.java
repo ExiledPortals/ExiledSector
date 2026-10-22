@@ -1,9 +1,7 @@
 package exiledsector.items;
 
-import exiledlib.items.CorruptionImplicitPool;
-import exiledlib.items.ItemType;
-import exiledlib.modifiers.Modifier;
-import exiledlib.modifiers.ModifierLine;
+import exiledsector.modifiers.Modifier;
+import exiledsector.modifiers.ModifierLine;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;

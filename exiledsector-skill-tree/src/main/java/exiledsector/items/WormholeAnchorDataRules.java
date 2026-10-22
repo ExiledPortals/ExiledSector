@@ -1,7 +1,6 @@
 package exiledsector.items;
 
 import exiledlib.ModCsv;
-import exiledlib.items.ItemType;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;

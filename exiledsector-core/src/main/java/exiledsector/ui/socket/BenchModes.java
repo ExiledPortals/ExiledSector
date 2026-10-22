@@ -1,7 +1,7 @@
 package exiledsector.ui.socket;
 
 import exiledlib.i18n.StyledText;
-import exiledlib.items.Item;
+import exiledsector.items.Item;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -3,7 +3,7 @@ package exiledsector.charts;
 import exiledsector.charts.ChartContentPlan.FleetRole;
 import exiledsector.charts.ChartContentPlan.PlannedFleet;
 import exiledsector.charts.ChartContentPlan.PlannedPoi;
-import exiledlib.items.WeightedPick;
+import exiledsector.items.WeightedPick;
 
 import java.util.ArrayList;
 import java.util.EnumMap;

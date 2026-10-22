@@ -15,9 +15,9 @@ import exiledsector.effects.NpcFleetLeveller;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
-import exiledlib.items.Item;
-import exiledlib.items.ItemStore;
-import exiledlib.ui.VanillaText;
+import exiledsector.items.Item;
+import exiledsector.items.ItemStore;
+import exiledsector.ui.VanillaText;
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;

@@ -3,8 +3,8 @@ package exiledsector.ui.chart;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.ChartRunActions;
 import exiledsector.charts.ChartRunActions.OpenResult;
-import exiledlib.items.Item;
-import exiledlib.items.ItemStore;
+import exiledsector.items.Item;
+import exiledsector.items.ItemStore;
 
 import java.util.Locale;
 import java.util.Random;

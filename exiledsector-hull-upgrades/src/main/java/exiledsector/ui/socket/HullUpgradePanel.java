@@ -19,9 +19,9 @@ import exiledsector.items.HullUpgradeData;
 import exiledsector.items.HullUpgradeTooltip;
 import exiledsector.items.HullUpgradesSetting;
 import exiledsector.items.ShipSection;
-import exiledlib.items.ItemRarity;
-import exiledlib.ui.SkillTreePanelStyle;
-import exiledlib.ui.VanillaText;
+import exiledsector.items.ItemRarity;
+import exiledsector.ui.SkillTreePanelStyle;
+import exiledsector.ui.VanillaText;
 import exiledsector.ui.section.SectionFlair;
 
 import java.awt.Color;

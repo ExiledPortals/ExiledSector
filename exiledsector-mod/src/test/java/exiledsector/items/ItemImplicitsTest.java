@@ -1,20 +1,10 @@
 package exiledsector.items;
 
 import exiledlib.ProjectFiles;
-import exiledlib.items.Item;
-import exiledlib.items.ItemDefinition;
-import exiledlib.items.ItemDefinitions;
-import exiledlib.items.ItemImplicits;
-import exiledlib.items.ItemKind;
-import exiledlib.items.ItemModifiers;
-import exiledlib.items.ItemRarity;
-import exiledlib.items.RolledEffect;
-import exiledlib.items.RolledModifier;
-import exiledlib.items.SlottedRoll;
 import exiledlib.skills.SkillTypeEffect;
-import exiledlib.modifiers.Modifier;
-import exiledlib.modifiers.ModifierCategory;
-import exiledlib.modifiers.ModifierSlot;
+import exiledsector.modifiers.Modifier;
+import exiledsector.modifiers.ModifierCategory;
+import exiledsector.modifiers.ModifierSlot;
 import exiledlib.skills.skilleffect.EffectAliases;
 import org.json.CDL;
 import org.json.JSONArray;

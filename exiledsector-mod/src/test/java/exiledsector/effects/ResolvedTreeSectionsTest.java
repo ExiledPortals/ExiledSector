@@ -6,7 +6,7 @@ import exiledsector.skills.ShipSections;
 import exiledsector.skills.ShipSkillData;
 import exiledlib.skills.skilleffect.DefenseSkillEffect;
 import exiledsector.items.NpcItems;
-import exiledlib.items.ItemDefinitions;
+import exiledsector.items.ItemDefinitions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;

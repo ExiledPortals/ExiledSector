@@ -1,11 +1,9 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.items.ItemEffects;
-import exiledlib.items.ItemType;
 import exiledlib.modifiers.ModifierEffect;
-import exiledlib.modifiers.ScaleContext;
-import exiledlib.modifiers.TierRange;
+import exiledsector.modifiers.ScaleContext;
+import exiledsector.modifiers.TierRange;
 import exiledsector.skills.SkillType;
 import exiledlib.skills.SkillTypeEffect;
 import exiledlib.skills.skilleffect.SkillEffect;

@@ -1,8 +1,5 @@
 package exiledsector.items;
 
-import exiledlib.items.Item;
-import exiledlib.items.ItemDefinitions;
-import exiledlib.items.ItemStore;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;

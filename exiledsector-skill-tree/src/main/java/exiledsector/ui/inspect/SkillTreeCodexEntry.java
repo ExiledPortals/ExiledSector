@@ -6,7 +6,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
 import exiledsector.skills.progression.ShipLevelConfig;
-import exiledlib.ui.VanillaText;
+import exiledsector.ui.VanillaText;
 
 public class SkillTreeCodexEntry extends BoxedCodexEntry {
 

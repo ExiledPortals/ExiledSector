@@ -11,8 +11,8 @@ import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.util.MutableValue;
-import exiledlib.items.ItemData;
-import exiledlib.items.ItemDefinitions;
+import exiledsector.items.ItemData;
+import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemUnlock;
 import exiledsector.items.StarChartCurrency;
 import exiledsector.items.StarChartFixtures;
@@ -97,7 +97,7 @@ class ChartDropsTest {
         return chart.preview().tier();
     }
 
-    private static Predicate<exiledlib.items.ItemDefinition> anyUnique() {
+    private static Predicate<exiledsector.items.ItemDefinition> anyUnique() {
         return definition -> true;
     }
 

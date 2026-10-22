@@ -19,9 +19,9 @@ import exiledlib.skills.ShipFacts;
 import exiledsector.skills.SkillTreeBonusSummary;
 import exiledsector.skills.SkillTreeBonusSummary.Summary;
 import exiledsector.skills.SkillType;
-import exiledlib.items.Item;
-import exiledlib.items.ItemStore;
-import exiledlib.ui.VanillaText;
+import exiledsector.items.Item;
+import exiledsector.items.ItemStore;
+import exiledsector.ui.VanillaText;
 
 import java.util.ArrayList;
 import java.util.List;

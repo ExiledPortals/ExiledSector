@@ -7,10 +7,10 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeTopology;
 import exiledsector.skills.layout.ConnectorCurve;
-import exiledlib.ui.SkillTreePanelStyle;
+import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.TreeLayers;
 import exiledsector.ui.TreeViewport;
-import exiledlib.ui.util.LineBatch;
+import exiledsector.ui.util.LineBatch;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;

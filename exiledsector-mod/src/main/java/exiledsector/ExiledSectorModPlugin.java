@@ -10,7 +10,6 @@ import exiledsector.charts.StarChartsDomain;
 import exiledsector.compat.CompatChecks;
 import exiledlib.compat.CompatTarget;
 import exiledlib.compat.GraphicsLibCompat;
-import exiledlib.domain.Domain;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.effects.ItemLootListener;
 import exiledsector.effects.ItemSalvageListener;
@@ -24,16 +23,16 @@ import exiledlib.i18n.LanguageSetting;
 import exiledlib.i18n.Languages;
 import exiledlib.i18n.SpecLocalisation;
 import exiledsector.items.HullUpgradesDomain;
-import exiledlib.items.ItemCraftingCosts;
+import exiledsector.items.ItemCraftingCosts;
 import exiledsector.items.ItemDataIntegrity;
-import exiledlib.items.ItemDefinitions;
+import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDrops;
-import exiledlib.items.ItemIdAliases;
-import exiledlib.items.ItemImplicits;
-import exiledlib.items.ItemModifiers;
-import exiledlib.items.ItemNames;
+import exiledsector.items.ItemIdAliases;
+import exiledsector.items.ItemImplicits;
+import exiledsector.items.ItemModifiers;
+import exiledsector.items.ItemNames;
 import exiledsector.items.ItemSaveAliases;
-import exiledlib.items.ItemStore;
+import exiledsector.items.ItemStore;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.MaterialMigration;
 import exiledsector.items.SocketCustody;
@@ -51,7 +50,7 @@ import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.ModificationBenchRefitButton;
 import exiledsector.ui.cargo.CargoCraftingTabListener;
 import exiledsector.ui.cargo.LootAlertListener;
-import exiledlib.ui.util.TexturePreloader;
+import exiledsector.ui.util.TexturePreloader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,17 +74,17 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         loadLanguage();
         Global.getLogger(ExiledSectorModPlugin.class).info(ExiledSector.LOG_TAG + " loaded");
         localiseGameText();
-        DOMAINS.forEach(Domain::onApplicationLoad);
+        DOMAINS.forEach(ExiledSectorDomain::onApplicationLoad);
         ModificationBenchRefitButton.addButton();
         ExiledSectorSettings.register(DOMAINS);
         EffectAliases.load();
         CsvIdList.loadAll();
-        DOMAINS.forEach(Domain::loadData);
+        DOMAINS.forEach(ExiledSectorDomain::loadData);
         ItemIdAliases.load();
         ItemModifiers.load();
         ItemDefinitions.load();
         ItemImplicits.load();
-        DOMAINS.forEach(Domain::loadItems);
+        DOMAINS.forEach(ExiledSectorDomain::loadItems);
         ItemDataIntegrity.logLoaded();
         ItemCraftingCosts.load();
         ItemNames.load();
@@ -122,7 +121,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
 
     @Override
     public void onAboutToLinkCodexEntries() {
-        DOMAINS.forEach(Domain::addCodexEntries);
+        DOMAINS.forEach(ExiledSectorDomain::addCodexEntries);
     }
 
     @Override
@@ -143,7 +142,7 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         MaterialMigration.run(savedCargoes);
         ShipSkillDataManager.removeBlankRecords();
         FleetWideEffects.markPhaseFieldStale();
-        DOMAINS.forEach(Domain::afterSaveRepair);
+        DOMAINS.forEach(ExiledSectorDomain::afterSaveRepair);
         sector.getListenerManager().addListener(new CargoCraftingTabListener(), true);
         SocketLossListener socketLossListener = new SocketLossListener();
         sector.getListenerManager().addListener(socketLossListener, true);
@@ -155,9 +154,9 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         sector.getListenerManager().addListener(new TechMiningItemListener(), true);
         sector.getListenerManager().addListener(new LootAlertListener(), true);
         sector.getListenerManager().addListener(new MarketItemStock(), true);
-        DOMAINS.forEach(Domain::afterLootListeners);
+        DOMAINS.forEach(ExiledSectorDomain::afterLootListeners);
         SocketTypeMigration.run();
         SocketCustody.reconcile();
-        DOMAINS.forEach(Domain::afterSocketCustody);
+        DOMAINS.forEach(ExiledSectorDomain::afterSocketCustody);
     }
 }

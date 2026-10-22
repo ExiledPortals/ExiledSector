@@ -5,11 +5,10 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
 import exiledlib.skills.ShipHullSizes;
-import exiledlib.ui.SkillTreePanelStyle;
 import exiledsector.skills.template.SkillTreeTemplate;
-import exiledlib.ui.util.GLDraw;
-import exiledlib.ui.util.HoloFrame;
-import exiledlib.ui.util.TextLabel;
+import exiledsector.ui.util.GLDraw;
+import exiledsector.ui.util.HoloFrame;
+import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.awt.Color;

@@ -1,7 +1,6 @@
 package exiledlib.i18n;
 
 import exiledlib.ProjectFiles;
-import exiledlib.ui.SkillTreePanelStyle;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -53,14 +52,6 @@ class FontCoverageTest {
         assertTrue(Integer.parseInt(metadata.get(31)) <= MAX_ATLAS_SIZE && Integer.parseInt(metadata.get(33)) <= MAX_ATLAS_SIZE);
         assertTrue(Files.isRegularFile(fnt.resolveSibling(metadata.get(50).replace("\"", ""))), "atlas image");
         assertTrue(Files.isRegularFile(fnt.resolveSibling("OFL.txt")), "font licence");
-    }
-
-    @Test
-    void chineseBodyTextDrawsAtTheAtlasNativeSize() throws IOException {
-        List<String> metadata = metadata(fontFile(LocaleChain.SIMPLIFIED_CHINESE));
-
-        assertEquals(String.valueOf((int) SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE), metadata.get(27),
-                "LazyFont scales text by font size / line height");
     }
 
     @Test

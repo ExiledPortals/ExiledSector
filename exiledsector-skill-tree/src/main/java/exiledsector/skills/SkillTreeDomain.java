@@ -46,7 +46,7 @@ import exiledsector.items.DeletedSubroutines;
 import exiledsector.items.DoctrineArchives;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.items.ItemDataRules;
-import exiledlib.items.ItemTypeSupport;
+import exiledsector.items.ItemTypeSupport;
 import exiledsector.items.ModspecCaches;
 import exiledsector.items.NodeGrantLinks;
 import exiledsector.items.NodeGrantStatus;

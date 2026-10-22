@@ -1,11 +1,6 @@
 package exiledsector.items;
 
-import exiledlib.items.ItemDefinition;
-import exiledlib.items.ItemKind;
-import exiledlib.items.ItemRollOdds;
-import exiledlib.items.PoolEntry;
-import exiledlib.items.RolledEffect;
-import exiledlib.modifiers.ModifierSlot;
+import exiledsector.modifiers.ModifierSlot;
 import exiledsector.skills.radius.RadiusSize;
 import org.junit.jupiter.api.Test;
 

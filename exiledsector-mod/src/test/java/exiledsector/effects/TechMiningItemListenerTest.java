@@ -8,7 +8,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import exiledsector.charts.StarChartLootSource;
 import exiledsector.charts.ChartDrops;
-import exiledlib.items.ItemData;
+import exiledsector.items.ItemData;
 import exiledsector.items.StarChartFixtures;
 import org.json.JSONArray;
 import org.json.JSONObject;

@@ -3,7 +3,7 @@ package exiledsector.charts;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledlib.items.ItemStore;
+import exiledsector.items.ItemStore;
 import org.apache.log4j.Logger;
 
 public final class StarCharts {

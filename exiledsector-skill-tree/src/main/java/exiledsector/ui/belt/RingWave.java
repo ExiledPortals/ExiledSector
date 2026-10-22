@@ -1,6 +1,6 @@
 package exiledsector.ui.belt;
 
-import exiledlib.ui.util.UnitCircle;
+import exiledsector.ui.util.UnitCircle;
 
 final class RingWave {
 

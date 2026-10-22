@@ -2,8 +2,6 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.items.Item;
-import exiledlib.items.ItemStore;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.NodeEligibility;
 import exiledlib.skills.ShipFacts;

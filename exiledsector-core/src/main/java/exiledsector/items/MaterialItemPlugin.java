@@ -5,13 +5,12 @@ import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledlib.i18n.Translation;
-import exiledlib.items.ItemType;
-import exiledlib.ui.VanillaText;
+import exiledsector.ui.VanillaText;
 import exiledsector.ui.cargo.CargoIconAnimation;
 import exiledsector.ui.cargo.CargoIconFx;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
-import exiledlib.ui.util.SpriteCache;
+import exiledlib.skills.skilleffect.SpriteCache;
 
 public class MaterialItemPlugin extends BaseSpecialItemPlugin {
 
