@@ -10,7 +10,7 @@
 
 ## Features
 
-Exiled Sector adds three major modules: a skill tree for every ship, hull upgrades (equipment) for ships, and star charts to go and find more of both.
+Exiled Sector adds three major modules: a skill tree for every ship, hull upgrades (equipment) for ships, and star charts to go and find more of both. The skill tree, hull upgrades and star charts can each be switched off in LunaLib settings if you'd rather run without them.
 
 ### The skill tree
 
@@ -145,6 +145,9 @@ Open the wormhole, fly in, deal with whoever is home and take everything that is
 - [LazyLib](https://fractalsoftworks.com/forum/index.php?topic=5444.0)
 - [MagicLib](https://fractalsoftworks.com/forum/index.php?topic=25868.0)
 - [LunaLib](https://fractalsoftworks.com/forum/index.php?topic=25658.0)
+- Exiled Lib, which comes in the same download
+
+The download holds two mod folders, `ExiledSector` and `ExiledLib`. Extract both into your `mods` folder and enable both in the launcher.
 
 Optional:
 
@@ -171,6 +174,7 @@ These mods have dedicated compatibility. The version listed is the one I last te
 | Random Assortment of Things | 3.3.1 | REDACTED |
 | Nightcross Armory | 2.1.6 | REDACTED |
 | Navarchy of Tania | 1.3.0 | REDACTED |
+| Nexerelin | 0.12.2d | Faction fleets roaming the skill tree count factions in their alliance as allies, so they travel to those volumes too. |
 | [GraphicsLib](https://fractalsoftworks.com/forum/index.php?topic=10982.0) | 1.12.1 | Optional. When its lights and distortion are on, many of Exiled Sector's combat effects gain shockwaves, glows, lighting and distortion. The Exiled Sector settings can switch almost all of it off. |
 
 Some weapons from other mods misbehave (often hilariously) when their beams are split, their shots are chained or their shells pierce. These are listed in:
@@ -277,6 +281,27 @@ If you'd rather skip all of this, LunaLib settings can reveal hidden nodes, or s
 <summary><b>When do Hull Upgrades and Star Charts start?</b></summary>
 
 Exiled Sector is meant as an endgame expansion, so the extra modules wait until the skill tree has had time to sink in. Hull Upgrades and unique hull items start dropping once your character (not your ship) reaches level 15. Star Charts need a Wormhole Gateway, which you can only build once the Janus Device gives you access to the Gate network. With Ashes of the Domain installed, you unlock it on the Vaults of Knowledge tree instead. Hull Upgrades can be switched off in LunaLib settings.
+
+</details>
+
+<details>
+<summary><b>How do Star Charts get harder?</b></summary>
+
+Each tier brings more fleets, bigger fleets and better ships, crewed by more and better officers, with the ships themselves further along their skill trees. From tier 4 every chart is also guarded by a warden, a boss fleet that grows with each tier. A chart's modifiers push it further still: some add fleet size, quality or strength, others make the warden bigger. Higher tiers drop more to make up for it, including a small chance of colony items from tier 6.
+
+A few tiers for comparison, with numbers still being balanced:
+
+| | Tier 1 | Tier 4 | Tier 10 | Tier 15 |
+|---|---|---|---|---|
+| Fleet size (each fleet) | 100 | 160 | 335 | 550 |
+| Number of fleets | 2–3 | 3–4 | 5–6 | 6–7 |
+| Fleet quality | 30 | 45 | 75 | 100 |
+| Ship skill tree level | 26–29 | 31–34 | 40–43 | 47–50 |
+| Officer level / extra officers | +0 / +0 | +1 / +1 | +3 / +3 | +5 / +5 |
+| Warden fleet size | none | 300 | 660 | 1100 |
+| Colony item chance | 0 | 0 | 1.5% | 4% |
+
+Battles outside charts drop charts up to tier 6, at a tier set by the strongest NPC ship you beat. Past that you climb from inside: finishing a chart's objective drops another chart, often a tier higher, and chart fleets and salvage drop charts at the chart's own tier.
 
 </details>
 

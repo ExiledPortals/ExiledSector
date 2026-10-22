@@ -2,6 +2,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { resolveSalvagePath, toProjectRelative, type ProjectPaths } from './paths.ts';
+import { stringCatalogueFile } from './stringCatalogues.ts';
 
 export interface DataFile {
   content: string;
@@ -151,8 +152,6 @@ export function resolveDataResource(paths: ProjectPaths, name: string): DataReso
       return { filePath: path.join(configDir, 'chart_colony_items.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
     case 'chart-loot':
       return { filePath: path.join(configDir, 'chart_loot.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
-    case 'strings-en':
-      return { filePath: path.join(paths.projectRoot, 'data', 'strings', 'exiledSector', 'en.json'), check: checkStringCatalogue };
     case 'commodities':
       return {
         filePath: path.join(paths.projectRoot, 'data', 'campaign', 'commodities.csv'),
@@ -165,6 +164,10 @@ export function resolveDataResource(paths: ProjectPaths, name: string): DataReso
       };
     default:
       break;
+  }
+  const stringCatalogue = stringCatalogueFile(name);
+  if (stringCatalogue) {
+    return { filePath: path.join(paths.projectRoot, ...stringCatalogue.split('/')), check: checkStringCatalogue };
   }
   if (name.startsWith('salvage:')) {
     const salvagePath = resolveSalvagePath(paths, name.slice('salvage:'.length));

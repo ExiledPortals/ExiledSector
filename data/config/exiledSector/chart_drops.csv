@@ -3,7 +3,7 @@ run_reward,1,0.25,0.4,0.75,,,15,"Finishing a chart objective: one chart and a ch
 system_salvage,0.04,0,0.3,0.12,,,15,"Each salvaged point of interest inside a chart system, at the run tier, scaled by the chart quantity multiplier"
 chart_fleet,0.04,0,0.3,0.15,,,15,"Each defeated fleet of the live chart run, at the run tier, scaled by the chart star chart and currency bonuses and by the share of the fleet's starting deployment points destroyed"
 chart_warden,0.5,0.25,0.4,0.6,,,15,"The warden's spoils, on top of its chart_fleet roll; also scaled by the Hoard"
-battle,0.2,0,0,0,,,6,"Won battles outside chart systems: chance per 100 enemy deployment points defeated, scaled by battle difficulty (above 1 the whole part drops for sure); tier set by the highest defeated NPC level against level_min, from tier 1 up to tier 6"
+battle,0.2,0,0,0,,200,6,"Won battles outside chart systems: chance per 100 enemy deployment points defeated, scaled by battle difficulty (above 1 the whole part drops for sure); tier set by the highest defeated NPC level against level_min, or with the skill tree off by one tier per strength_per_tier deployment points defeated, from tier 1 up to tier 6"
 salvage,0.004,0,0,0,5,3,1,"Salvage sites that can hold hull items, outside chart systems, from player level 5; always tier 1"
 techmining_first_find,1,0,0,0,1,3,1,"A colony's first tech mining find; always tier 1"
 techmining_monthly,0.2,0,0,0,1,3,1,"Each later month of tech mining, fading with the tech mining decay"

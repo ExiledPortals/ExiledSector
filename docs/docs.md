@@ -60,9 +60,12 @@ hit, rather than using a modifier, so EMP and on-hit effects stay at full streng
 
 ## Module effects
 
-The tree applies only to the parent ship, so `ModuleBonusListener` pushes the `MODULE_*` effects onto each
-living child module on the first combat frame. Module hull and armor are raised as a percent of the module's
-own bonus, then its maximum hull and armor cells are rescaled.
+The tree applies only to the parent ship. On the parent's first combat frame `ModuleTreeShare` gives each
+living child module a share of the parent's shareable tree effects (`ModuleShareSetting`, 50% by default), plus
+the `MODULE_*` effects at full strength.
+`ModuleBoost` applies both, then rescales the module's maximum hull, armor cells, shield arc (up to 360) and
+each weapon's maximum ammo once; cells above their maximum are clamped first so armor carried from an earlier
+engagement isn't raised again.
 
 ## Hull mod interactions
 
@@ -147,7 +150,8 @@ because battles merge fleets. Chart fleets are uncapped.
 Chart ships roll a level in their tier's `level_min` to `level_max` from `star_chart_tiers.csv`, scaled by
 Fleet Strength %, and wardens roll one higher. Outside charts, a won battle's chart chance is `chart_drops.csv`'s
 battle chance per 100 enemy deployment points defeated, scaled by battle difficulty, at the highest tier whose
-`level_min` the strongest defeated NPC reached (`ChartDrops.forBattle`).
+`level_min` the strongest defeated NPC reached (`ChartDrops.forBattle`). With the skill tree switched off, the
+tier instead rises one per `strength_per_tier` deployment points defeated.
 
 ## Modspec caches
 

@@ -3,6 +3,7 @@ $ErrorActionPreference = "Stop"
 $projectRoot = $PSScriptRoot
 $deployCheckouts = @("E:\Dev\ExiledSector-parallel-work", "E:\Dev\ExiledSector")
 $modTarget   = "E:\Dev\Starsector\mods\ExiledSector"
+$libraryTarget = "E:\Dev\Starsector\mods\ExiledLib"
 
 $resolvedRoot = [System.IO.Path]::GetFullPath($projectRoot).TrimEnd('\')
 if ($deployCheckouts -notcontains $resolvedRoot) {
@@ -15,12 +16,14 @@ Invoke-ModBuild -ProjectRoot $projectRoot
 
 $stageDir = Join-Path ([System.IO.Path]::GetTempPath()) ("ExiledSector-deploy-" + [Guid]::NewGuid().ToString("N"))
 try {
-    Copy-ModFiles -ProjectRoot $projectRoot -Destination $stageDir
-    Sync-FolderMirror -Source $stageDir -Destination $modTarget
+    Copy-ModFiles -ProjectRoot $projectRoot -Destination (Join-Path $stageDir "ExiledSector")
+    Copy-LibraryModFiles -ProjectRoot $projectRoot -Destination (Join-Path $stageDir "ExiledLib")
+    Sync-FolderMirror -Source (Join-Path $stageDir "ExiledSector") -Destination $modTarget
+    Sync-FolderMirror -Source (Join-Path $stageDir "ExiledLib") -Destination $libraryTarget
 } finally {
     if (Test-Path -LiteralPath $stageDir) {
         [System.IO.Directory]::Delete($stageDir, $true)
     }
 }
 
-Write-Host "Deployed ExiledSector to $modTarget"
+Write-Host "Deployed ExiledSector to $modTarget and ExiledLib to $libraryTarget"

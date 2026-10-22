@@ -1,4 +1,6 @@
 $ModRootFiles = @("mod_info.json", "ExiledSector.version", "LICENSE", "CREDITS.md")
+$LibraryModFolder = "exiled-lib\mod"
+$LibraryModRootFiles = @("mod_info.json", "ExiledLib.version")
 
 function Get-MavenCommand {
     $mvnCmd = Get-Command mvn -ErrorAction SilentlyContinue
@@ -53,6 +55,20 @@ function Copy-ModFiles {
     Write-TexturePreloadList -ProjectRoot $ProjectRoot -Destination $Destination -ExcludedFolders ($excludedGraphics + "fonts")
 }
 
+function Copy-LibraryModFiles {
+    param([string]$ProjectRoot, [string]$Destination)
+
+    $libraryMod = Join-Path $ProjectRoot $LibraryModFolder
+    New-Item -ItemType Directory -Force -Path $Destination | Out-Null
+    foreach ($file in $LibraryModRootFiles) {
+        Copy-Item -Path (Join-Path $libraryMod $file) -Destination $Destination -Force
+    }
+    Copy-Item -Path (Join-Path $ProjectRoot "LICENSE") -Destination $Destination -Force
+    foreach ($folder in @("jars", "data")) {
+        Copy-Item -Path (Join-Path $libraryMod $folder) -Destination $Destination -Recurse -Force
+    }
+}
+
 function Sync-FolderMirror {
     param([string]$Source, [string]$Destination)
 
@@ -90,7 +106,7 @@ function Save-ReleasedSkillNodes {
     $rootLines = ($roots | ForEach-Object { "    `"$_`"" }) -join ",`n"
     $text = "{`n  `"nodes`": [`n$nodeLines`n  ],`n  `"roots`": [`n$rootLines`n  ]`n}`n"
 
-    $ledgerFile = Join-Path $ProjectRoot "src\test\resources\released_skill_nodes.json"
+    $ledgerFile = Join-Path $ProjectRoot "exiledsector-skill-tree\src\test\resources\released_skill_nodes.json"
     $before = if (Test-Path $ledgerFile) { [System.IO.File]::ReadAllText($ledgerFile).Replace("`r`n", "`n") } else { "" }
     if ($before -ne $text) {
         [System.IO.File]::WriteAllText($ledgerFile, $text, (New-Object System.Text.UTF8Encoding($false)))
@@ -119,7 +135,7 @@ function Save-ReleasedItems {
     param([string]$ProjectRoot, [string]$Version)
 
     $configDir = Join-Path $ProjectRoot "data\config\exiledSector"
-    $ledgerFile = Join-Path $ProjectRoot "src\test\resources\released_items.csv"
+    $ledgerFile = Join-Path $ProjectRoot "exiledsector-mod\src\test\resources\released_items.csv"
     $header = "definition,effect,firstRelease,retiredAfter"
     $rows = @{}
     if (Test-Path $ledgerFile) {

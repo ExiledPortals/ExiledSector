@@ -21,7 +21,7 @@ function replacedNodeIds(paths: ProjectPaths): string[] {
 }
 
 function releasedNodeIds(paths: ProjectPaths): string[] {
-  const releasedPath = path.join(paths.projectRoot, 'src', 'test', 'resources', 'released_skill_nodes.json');
+  const releasedPath = path.join(paths.projectRoot, 'exiledsector-skill-tree', 'src', 'test', 'resources', 'released_skill_nodes.json');
   if (!fs.existsSync(releasedPath)) {
     return [];
   }

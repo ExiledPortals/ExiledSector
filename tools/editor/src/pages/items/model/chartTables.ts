@@ -60,7 +60,7 @@ export const CHART_TIER_COLUMNS = [
   'note',
 ] as const;
 export const CHART_POI_COLUMNS = ['id', 'kind', 'entity', 'salvage_spec', 'derelict_type', 'cost', 'weight', 'min_tier', 'max_tier', 'guarded', 'requires_mod', 'note'] as const;
-export const CHART_FACTION_COLUMNS = ['faction', 'weight', 'fleet_size_bonus', 'fleet_quality_bonus', 'note'] as const;
+export const CHART_FACTION_COLUMNS = ['faction', 'weight', 'note'] as const;
 export const CHART_BLOCKED_ABILITY_COLUMNS = ['ability_id', 'note'] as const;
 export const CHART_DROP_COLUMNS = [
   'source',
@@ -396,15 +396,13 @@ export const CHART_FACTION_SPEC: ChartTableSpec = {
   noun: 'chart faction',
   keyColumn: 'faction',
   description:
-    'Which factions can inhabit a system. Every Star Chart rolls one of them by weight as its implicit when it drops, and keeps it. A chart whose faction is not installed gets a random one when its wormhole opens. The fleet size bonus adds percentage points to the tier fleet size and warden size; the fleet quality bonus adds percentage points to the tier fleet quality.',
+    'Which factions can inhabit a system. Every Star Chart rolls one of them by weight as its implicit when it drops, and keeps it. A chart whose faction is not installed gets a random one when its wormhole opens.',
   columns: columnsOf(CHART_FACTION_COLUMNS, {
     faction: { label: 'Faction id', kind: 'text' },
     weight: { label: 'Weight', kind: 'number' },
-    fleet_size_bonus: { label: 'Fleet size bonus', kind: 'number', help: 'Percentage points added to fleet size and warden size' },
-    fleet_quality_bonus: { label: 'Fleet quality bonus', kind: 'number', help: 'Percentage points added to fleet quality' },
     note: NOTE_COLUMN,
   }),
-  newRow: () => ({ faction: '', weight: '1', fleet_size_bonus: '0', fleet_quality_bonus: '0' }),
+  newRow: () => ({ faction: '', weight: '1' }),
   issues: (model, vocabulary) => {
     const issues: string[] = [];
     model.rows.forEach((row, index) => {
@@ -469,7 +467,7 @@ export const CHART_DROP_SPEC: ChartTableSpec = {
   noun: 'chart drop',
   keyColumn: 'source',
   description:
-    'One row per drop source. Chance is the expected number of charts (1 = one chart, 0.04 = a 4% chance); extra chance adds a second chart; tier-up is each chart\'s chance to be one tier higher; the currency chance gives a chart-only cipher and only works inside chart systems. Outside chart systems, strength is difficulty-scaled enemy deployment points for battles and player level for salvage and tech mining: the drop needs at least min strength and gains a tier per strength-per-tier above it. Battle chance is per 100 deployment points and its tier comes from the strongest defeated NPC level. A missing source never drops charts.',
+    'One row per drop source. Chance is the expected number of charts (1 = one chart, 0.04 = a 4% chance); extra chance adds a second chart; tier-up is each chart\'s chance to be one tier higher; the currency chance gives a chart-only cipher and only works inside chart systems. Outside chart systems, strength is difficulty-scaled enemy deployment points for battles and player level for salvage and tech mining: the drop needs at least min strength and gains a tier per strength-per-tier above it. Battle chance is per 100 deployment points and its tier comes from the strongest defeated NPC level, or from strength per tier while the skill tree is switched off. A missing source never drops charts.',
   columns: columnsOf(CHART_DROP_COLUMNS, {
     source: { label: 'Source', kind: 'choice', choices: (vocabulary) => vocabulary.chartDropSources.map((source) => source.id) },
     chance: { label: 'Chance %', kind: 'fraction' },

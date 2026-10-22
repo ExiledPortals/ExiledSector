@@ -17,7 +17,7 @@ const TYPES_FILE = 'data/skilltrees/skill_types.json';
 const TREE_FILE = 'data/skilltrees/ship_skill_tree.json';
 const VOCABULARY_FILE = 'tools/editor_vocabulary.json';
 const REPLACEMENTS_FILE = 'data/config/exiledSector/node_replacements.csv';
-const RELEASED_NODES_FILE = 'src/test/resources/released_skill_nodes.json';
+const RELEASED_NODES_FILE = 'exiledsector-skill-tree/src/test/resources/released_skill_nodes.json';
 const NODE_RADII_FILE = 'data/config/exiledSector/node_radii.json';
 const vocabulary = buildVocabulary(JSON.parse(readRepositoryFile(VOCABULARY_FILE)));
 

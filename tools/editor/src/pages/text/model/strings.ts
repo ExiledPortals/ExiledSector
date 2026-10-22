@@ -4,12 +4,18 @@ export interface StringEntry {
   key: string;
   value: string;
   savedValue: string;
+  file: string;
   lineIndex: number;
 }
 
-export interface StringsModel {
+export interface StringsFile {
+  name: string;
   lines: string[];
   lineEnding: LineEnding;
+}
+
+export interface StringsModel {
+  files: StringsFile[];
   entries: StringEntry[];
 }
 
@@ -34,7 +40,7 @@ const IDENTIFIER = /^[A-Za-z][A-Za-z0-9_]*$/;
 const TAG_LIKE = /^\/?[A-Za-z]+$/;
 const UNSPACED_SU = /[0-9}]su(?![A-Za-z])/;
 
-export function parseStrings(text: string): StringsModel {
+export function parseStrings(text: string, file = 'strings'): StringsModel {
   const lineEnding = lineEndingOf(text);
   const lines = text.split(lineEnding);
   const entries: StringEntry[] = [];
@@ -49,19 +55,42 @@ export function parseStrings(text: string): StringsModel {
     }
     const key = JSON.parse(match[1].trim().slice(0, -1)) as string;
     const value = JSON.parse(match[2]) as string;
-    entries.push({ key, value, savedValue: value, lineIndex });
+    entries.push({ key, value, savedValue: value, file, lineIndex });
   });
   const parsedCount = Object.keys(JSON.parse(text) as Record<string, unknown>).length;
   if (parsedCount !== entries.length) {
     throw new Error(`found ${entries.length} entry lines but the file has ${parsedCount} keys`);
   }
-  return { lines, lineEnding, entries };
+  return { files: [{ name: file, lines, lineEnding }], entries };
 }
 
-export function serializeStrings(model: StringsModel): string {
-  const lines = [...model.lines];
+export function parseStringFiles(texts: Record<string, string>): StringsModel {
+  const model: StringsModel = { files: [], entries: [] };
+  const fileByKey = new Map<string, string>();
+  for (const [name, text] of Object.entries(texts)) {
+    let parsed: StringsModel;
+    try {
+      parsed = parseStrings(text, name);
+    } catch (error) {
+      throw new Error(`${name}: ${error instanceof Error ? error.message : String(error)}`);
+    }
+    for (const entry of parsed.entries) {
+      const otherFile = fileByKey.get(entry.key);
+      if (otherFile) {
+        throw new Error(`${entry.key} is in both ${otherFile} and ${name}`);
+      }
+      fileByKey.set(entry.key, name);
+    }
+    model.files.push(...parsed.files);
+    model.entries.push(...parsed.entries);
+  }
+  return model;
+}
+
+function serializeFile(model: StringsModel, file: StringsFile): string {
+  const lines = [...file.lines];
   for (const entry of model.entries) {
-    if (entry.value === entry.savedValue) {
+    if (entry.file !== file.name || entry.value === entry.savedValue) {
       continue;
     }
     const match = ENTRY_LINE.exec(lines[entry.lineIndex]);
@@ -69,11 +98,24 @@ export function serializeStrings(model: StringsModel): string {
       lines[entry.lineIndex] = match[1] + JSON.stringify(entry.value) + match[3];
     }
   }
-  return lines.join(model.lineEnding);
+  return lines.join(file.lineEnding);
+}
+
+export function serializeStringFiles(model: StringsModel): Record<string, string> {
+  return Object.fromEntries(model.files.map((file) => [file.name, serializeFile(model, file)]));
+}
+
+export function serializeStrings(model: StringsModel): string {
+  return serializeFile(model, model.files[0]);
 }
 
 export function markStringsSaved(model: StringsModel, saved: StringsModel): void {
-  model.lines = serializeStrings(saved).split(saved.lineEnding);
+  for (const file of model.files) {
+    const savedFile = saved.files.find((candidate) => candidate.name === file.name);
+    if (savedFile) {
+      file.lines = serializeFile(saved, savedFile).split(savedFile.lineEnding);
+    }
+  }
   const savedValues = new Map(saved.entries.map((entry) => [entry.key, entry.value]));
   for (const entry of model.entries) {
     entry.savedValue = savedValues.get(entry.key) ?? entry.savedValue;

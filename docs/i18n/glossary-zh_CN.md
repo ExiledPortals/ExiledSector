@@ -1,6 +1,6 @@
 # Simplified Chinese glossary
 
-The zh_CN catalogue was drafted by Claude and still needs review by a native speaker. It follows the terms the Chinese Starsector community uses for vanilla concepts where they are well established. Change a term here first, then apply it across `data/strings/exiledSector/zh_CN.json` so the whole catalogue stays consistent.
+The zh_CN catalogue was drafted by Claude and still needs review by a native speaker. It follows the terms the Chinese Starsector community uses for vanilla concepts where they are well established. Change a term here first, then apply it across every `zh_CN.json` catalogue (see the README) so the whole catalogue stays consistent.
 
 ## Core game terms
 

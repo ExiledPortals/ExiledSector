@@ -139,19 +139,19 @@ describe('data files', () => {
     expect(refused.json().message).toContain('must start with the id column');
   });
 
-  it('saves the English strings only when every value is text and none contains a hash', async () => {
+  it('saves an English catalogue only when every value is text and none contains a hash', async () => {
     const original = '{\r\n    "stat.armor": "armor"\r\n}\r\n';
-    writeProjectFile('data/strings/exiledSector/en.json', original);
-    const loaded = (await app.inject({ method: 'GET', url: '/api/files?names=strings-en' })).json().files['strings-en'];
+    writeProjectFile('data/strings/exiledSector/core/en.json', original);
+    const loaded = (await app.inject({ method: 'GET', url: '/api/files?names=strings-en:core' })).json().files['strings-en:core'];
     expect(loaded.content).toBe(original);
     const save = (content: string) =>
-      app.inject({ method: 'POST', url: '/api/files', headers: EDITOR_HEADERS, payload: { files: { 'strings-en': { content, baseHash: loaded.hash } } } });
+      app.inject({ method: 'POST', url: '/api/files', headers: EDITOR_HEADERS, payload: { files: { 'strings-en:core': { content, baseHash: loaded.hash } } } });
 
     expect((await save('{"stat.armor": "armour #1"}')).json().message).toContain("contains '#'");
     expect((await save('{"stat.armor": 3}')).json().message).toContain('not text');
     const reworded = original.replace('"armor"', '"plating"');
     expect((await save(reworded)).statusCode).toBe(200);
-    expect(fs.readFileSync(path.join(projectRoot, 'data/strings/exiledSector/en.json'), 'utf8')).toBe(reworded);
+    expect(fs.readFileSync(path.join(projectRoot, 'data/strings/exiledSector/core/en.json'), 'utf8')).toBe(reworded);
   });
 
   it('lists salvage files with the default first', async () => {
@@ -168,7 +168,7 @@ describe('data files', () => {
 describe('reserved node ids', () => {
   it('lists retired ids from node_replacements.csv and released ids, read-only', async () => {
     writeProjectFile('data/config/exiledSector/node_replacements.csv', 'old,new\r\nflux_8,socket_2\r\n\r\nflux_15,socket_1\r\n');
-    writeProjectFile('src/test/resources/released_skill_nodes.json', '{\n  "nodes": ["flux_1", "flux_2"],\n  "roots": []\n}\n');
+    writeProjectFile('exiledsector-skill-tree/src/test/resources/released_skill_nodes.json', '{\n  "nodes": ["flux_1", "flux_2"],\n  "roots": []\n}\n');
 
     const response = await app.inject({ method: 'GET', url: '/api/reserved-node-ids' });
 
@@ -324,10 +324,14 @@ describe('describe', () => {
     expect(needsRebuild('idle', false, false, 0)).toBe(false);
   });
 
-  it('sends the saved English strings with a request that has none, and keeps strings a request brings', () => {
+  it('sends every saved English catalogue with a request that has none, and keeps strings a request brings', () => {
     expect(JSON.parse(describeRequestWithStrings(paths, { typeId: 'a' }))).toEqual({ typeId: 'a' });
-    writeProjectFile('data/strings/exiledSector/en.json', '{"stat.armor": "armor"}');
-    expect(JSON.parse(describeRequestWithStrings(paths, { typeId: 'a' }))).toEqual({ typeId: 'a', strings: { 'stat.armor': 'armor' } });
+    writeProjectFile('exiled-lib/mod/data/strings/exiledLib/en.json', '{"stat.armor": "armor"}');
+    writeProjectFile('data/strings/exiledSector/starCharts/en.json', '{"chart.name": "chart"}');
+    expect(JSON.parse(describeRequestWithStrings(paths, { typeId: 'a' }))).toEqual({
+      typeId: 'a',
+      strings: { 'stat.armor': 'armor', 'chart.name': 'chart' },
+    });
     const ownStrings = { typeId: 'a', strings: { 'stat.armor': 'plating' } };
     expect(JSON.parse(describeRequestWithStrings(paths, ownStrings))).toEqual(ownStrings);
   });

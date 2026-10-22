@@ -800,7 +800,8 @@
 			"tags": [
 				"armour",
 				"weapons"
-			]
+			],
+			"moduleShare": "all"
 		},
 		{
 			"id": "autorepair",
@@ -1085,7 +1086,8 @@
 			],
 			"tags": [
 				"missile"
-			]
+			],
+			"moduleShare": "all"
 		},
 		{
 			"id": "ecm",
@@ -1592,7 +1594,8 @@
 				"energy",
 				"range",
 				"req_energy"
-			]
+			],
+			"moduleShare": "all"
 		},
 		{
 			"id": "energy_flux_cost",
@@ -2176,7 +2179,8 @@
 			],
 			"tags": [
 				"flux"
-			]
+			],
+			"moduleShare": "all"
 		},
 		{
 			"id": "stabilizedshieldemitter",
@@ -2238,7 +2242,8 @@
 			"tags": [
 				"speed",
 				"range"
-			]
+			],
+			"moduleShare": "none"
 		},
 		{
 			"id": "additional_berthing",
@@ -3219,7 +3224,8 @@
 			],
 			"tags": [
 				"flux"
-			]
+			],
+			"moduleShare": "all"
 		},
 		{
 			"id": "weapon_durability",
@@ -3392,7 +3398,8 @@
 				"energy",
 				"range",
 				"req_non_beam_energy"
-			]
+			],
+			"moduleShare": "all"
 		},
 		{
 			"id": "beam_split_reduced_damage",
@@ -3841,7 +3848,8 @@
 			"tags": [
 				"flux",
 				"speed"
-			]
+			],
+			"moduleShare": "all"
 		},
 		{
 			"id": "coil_efficiency",
@@ -3978,7 +3986,8 @@
 			"tags": [
 				"armour",
 				"weapons"
-			]
+			],
+			"moduleShare": "all"
 		},
 		{
 			"id": "abyssal_grid",
@@ -4248,7 +4257,8 @@
 			"description": "Corporate engineers treat flux like capital: borrow hard and repay fast. Their venting schedules, copied from a captured Aurora's maintenance logs, let this ship dump heat faster and bleed it off steadily between volleys.",
 			"tags": [
 				"flux"
-			]
+			],
+			"moduleShare": "all"
 		},
 		{
 			"id": "doctrine_tt_quarterly_targets",
@@ -4532,7 +4542,8 @@
 			"tags": [
 				"point_defense",
 				"weapons"
-			]
+			],
+			"moduleShare": "all"
 		},
 		{
 			"id": "doctrine_remnant_cold_logic",
@@ -4577,7 +4588,8 @@
 			"tags": [
 				"shield",
 				"req_shields"
-			]
+			],
+			"moduleShare": "all"
 		},
 		{
 			"id": "doctrine_remnant_lumen_harmonics",

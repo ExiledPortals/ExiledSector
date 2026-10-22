@@ -5,6 +5,7 @@ import path from 'node:path';
 import readline from 'node:readline';
 import { readDataFile, resolveDataResource } from './dataFiles.ts';
 import type { ProjectPaths } from './paths.ts';
+import { STRING_CATALOGUE_RESOURCES } from './stringCatalogues.ts';
 
 export type DescribeStatus = 'idle' | 'waiting' | 'building' | 'built' | 'ready' | 'failed';
 
@@ -12,6 +13,7 @@ const READY_LINE = '{"ready":true}';
 const READY_TIMEOUT_MS = 30000;
 const REQUEST_TIMEOUT_MS = 10000;
 const HELPER_CLASS = 'exiledsector.tools.EditorDescribeServer';
+const HELPER_MODULE = 'exiledsector-mod';
 export const REBUILD_COOLDOWN_MS = 15000;
 export const BUILD_LOCK_FILE = '.maven-build.lock';
 export const BUILD_LOCK_STALE_MS = 10 * 60 * 1000;
@@ -91,11 +93,16 @@ export function describeRequestWithStrings(paths: ProjectPaths, requestBody: unk
     return requestBody;
   }
   const body = (requestBody ?? {}) as Record<string, unknown>;
-  const stringsResource = resolveDataResource(paths, 'strings-en');
-  if ('strings' in body || !stringsResource || !fs.existsSync(stringsResource.filePath)) {
+  if ('strings' in body) {
     return JSON.stringify(body);
   }
-  return JSON.stringify({ ...body, strings: JSON.parse(readDataFile(stringsResource.filePath).content) as unknown });
+  const catalogueFiles = STRING_CATALOGUE_RESOURCES.map((name) => resolveDataResource(paths, name)?.filePath)
+    .filter((filePath): filePath is string => filePath !== undefined && fs.existsSync(filePath));
+  if (catalogueFiles.length === 0) {
+    return JSON.stringify(body);
+  }
+  const strings = Object.assign({}, ...catalogueFiles.map((filePath) => JSON.parse(readDataFile(filePath).content) as Record<string, unknown>));
+  return JSON.stringify({ ...body, strings });
 }
 
 export class DescribeService {
@@ -116,7 +123,7 @@ export class DescribeService {
   ) {}
 
   private get classpathFile(): string {
-    return path.join(this.paths.projectRoot, 'target', 'editor-describe.classpath');
+    return path.join(this.paths.projectRoot, HELPER_MODULE, 'target', 'editor-describe.classpath');
   }
 
   private get buildLockFile(): string {
@@ -247,7 +254,8 @@ export class DescribeService {
       this.fail('The compiled mod went missing; it will be rebuilt on the next hover.');
       return;
     }
-    const classpath = 'target\\classes;target\\test-classes;' + fs.readFileSync(this.classpathFile, 'utf8').trim();
+    const moduleTarget = path.join(HELPER_MODULE, 'target');
+    const classpath = `${path.join(moduleTarget, 'classes')};${path.join(moduleTarget, 'test-classes')};${fs.readFileSync(this.classpathFile, 'utf8').trim()}`;
     const helper = spawn(path.join(javaHome, 'bin', 'java.exe'), ['-cp', classpath, HELPER_CLASS], {
       cwd: this.paths.projectRoot,
       windowsHide: true,

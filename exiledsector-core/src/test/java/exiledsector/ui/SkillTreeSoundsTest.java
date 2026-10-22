@@ -1,0 +1,103 @@
+package exiledsector.ui;
+
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.SoundPlayerAPI;
+import lunalib.lunaSettings.LunaSettings;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+class SkillTreeSoundsTest {
+
+    private MockedStatic<Global> globalMock;
+    private MockedStatic<LunaSettings> lunaSettingsMock;
+    private SoundPlayerAPI player;
+
+    @BeforeEach
+    void setUp() {
+        SkillTreeSounds.resetForTests();
+        player = mock(SoundPlayerAPI.class);
+        globalMock = Mockito.mockStatic(Global.class);
+        globalMock.when(Global::getSoundPlayer).thenReturn(player);
+        lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean(anyString(), anyString())).thenReturn(null);
+    }
+
+    @AfterEach
+    void tearDown() {
+        globalMock.close();
+        lunaSettingsMock.close();
+        SkillTreeSounds.resetForTests();
+    }
+
+    @Test
+    void biggerNodeSizesPlayAHigherTierOfTheVanillaSkillSound() {
+        SkillTreeSounds.allocated(SkillTreeSounds.NodeSize.SMALL);
+        SkillTreeSounds.resetForTests();
+        SkillTreeSounds.allocated(SkillTreeSounds.NodeSize.MEDIUM);
+        SkillTreeSounds.resetForTests();
+        SkillTreeSounds.allocated(SkillTreeSounds.NodeSize.LARGE);
+
+        verify(player).playUISound(SkillTreeSounds.ALLOCATE_SMALL, 1f, 1f);
+        verify(player).playUISound(SkillTreeSounds.ALLOCATE_MEDIUM, 1f, 1f);
+        verify(player).playUISound(SkillTreeSounds.ALLOCATE_LARGE, 1f, 1f);
+    }
+
+    @Test
+    void aBurstOfNodeChangesFromAutoAllocateOrRespecPlaysOnlyOneSound() {
+        for (int i = 0; i < 20; i++) {
+            SkillTreeSounds.allocated(SkillTreeSounds.NodeSize.SMALL);
+            SkillTreeSounds.deallocated();
+        }
+
+        verify(player, times(1)).playUISound(anyString(), eq(1f), eq(1f));
+    }
+
+    @Test
+    void mapStorageAndSocketSoundsAreNotThrottled() {
+        SkillTreeSounds.hyperspaceOut();
+        SkillTreeSounds.hyperspaceIn();
+        SkillTreeSounds.wormholeJumped();
+        SkillTreeSounds.panelOpened();
+        SkillTreeSounds.socketed();
+        SkillTreeSounds.socketed();
+
+        verify(player).playUISound(SkillTreeSounds.HYPERSPACE_OUT, 1f, 1f);
+        verify(player).playUISound(SkillTreeSounds.HYPERSPACE_IN, 1f, 1f);
+        verify(player).playUISound(SkillTreeSounds.WORMHOLE_JUMP, 1f, 1f);
+        verify(player).playUISound(SkillTreeSounds.PANEL_OPEN, 1f, 1f);
+        verify(player, times(2)).playUISound(SkillTreeSounds.SOCKET, 1f, 1f);
+    }
+
+    @Test
+    void nothingPlaysWithoutASoundPlayer() {
+        globalMock.when(Global::getSoundPlayer).thenReturn(null);
+
+        SkillTreeSounds.socketed();
+
+        verify(player, never()).playUISound(anyString(), eq(1f), eq(1f));
+    }
+
+    @Test
+    void turningSkillTreeSoundsOffInLunaLibSilencesEverySound() {
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", SkillTreeSounds.ENABLED_FIELD_ID)).thenReturn(false);
+
+        SkillTreeSounds.allocated(SkillTreeSounds.NodeSize.LARGE);
+        SkillTreeSounds.refused();
+        SkillTreeSounds.hyperspaceOut();
+        SkillTreeSounds.socketed();
+        SkillTreeSounds.crafted();
+        SkillTreeSounds.play("ui_button_pressed");
+
+        verify(player, never()).playUISound(anyString(), eq(1f), eq(1f));
+    }
+}
