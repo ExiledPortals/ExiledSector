@@ -1,6 +1,6 @@
 package exiledsector.skills.loader;
 
-import exiledsector.ProjectFiles;
+import exiledlib.ProjectFiles;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.layout.SkillTreeObject;

@@ -1,6 +1,6 @@
 package exiledsector.skills.npc;
 
-import exiledsector.ProjectFiles;
+import exiledlib.ProjectFiles;
 import org.json.CDL;
 import org.json.JSONArray;
 import org.json.JSONException;

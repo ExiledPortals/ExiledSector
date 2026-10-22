@@ -1,6 +1,14 @@
 package exiledsector.items;
 
-import exiledsector.modifiers.ModifierSlot;
+import exiledlib.items.Item;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemDefinitions;
+import exiledlib.items.ItemKind;
+import exiledlib.items.ItemModifiers;
+import exiledlib.items.ItemRoller;
+import exiledlib.items.ItemType;
+import exiledlib.items.PoolEntry;
+import exiledlib.modifiers.ModifierSlot;
 import exiledsector.skills.npc.RealSkillData;
 import org.json.CDL;
 import org.json.JSONArray;
@@ -31,7 +39,7 @@ class ItemDefinitionsTest {
     void tearDown() {
         ItemDefinitions.clear();
         ItemModifiers.clear();
-        exiledsector.skills.skilleffect.EffectAliases.clear();
+        exiledlib.skills.skilleffect.EffectAliases.clear();
     }
 
     @Test
@@ -99,7 +107,7 @@ class ItemDefinitionsTest {
 
     @Test
     void aRenamedEffectInAPoolResolvesToItsCurrentName() throws Exception {
-        exiledsector.skills.skilleffect.EffectAliases.register(new JSONArray()
+        exiledlib.skills.skilleffect.EffectAliases.register(new JSONArray()
                 .put(new org.json.JSONObject().put("alias", "OLD_HULL_MULT").put("effect", "HULL_MULT")));
 
         ItemDefinitions.register(new JSONArray().put(row("x", "crew_quarters", "OLD_HULL_MULT:4:6")));

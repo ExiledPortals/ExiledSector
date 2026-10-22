@@ -1,5 +1,6 @@
 package exiledsector;
 
+import exiledlib.ProjectFiles;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -22,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class DomainBoundaryTest {
 
     private static final Path CLASS_PARTS = Path.of("docs/plans/domain_split_classes.csv");
-    private static final Path DATA_FILES = Path.of("data");
+    private static final List<Path> DATA_FILES = List.of(Path.of("data"), ProjectFiles.LIBRARY_MOD.resolve("data"));
     private static final Path FILE_PARTS = Path.of("docs/plans/domain_split_files.csv");
     private static final Path ALLOWED_CROSSINGS = Path.of("exiledsector-mod/src/test/resources/domain_boundary_allowlist.txt");
     private static final String LIB = "lib";
@@ -38,7 +39,7 @@ class DomainBoundaryTest {
     private static final Pattern LITERAL_OR_COMMENT = Pattern.compile(
             "\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)+'|//[^\\n]*|/\\*.*?\\*/", Pattern.DOTALL);
     private static final Pattern HEADER_LINE = Pattern.compile("^\\s*(?:package|import)\\s[^;]*;", Pattern.MULTILINE);
-    private static final Pattern MOD_IMPORT = Pattern.compile("^\\s*import\\s+(?:static\\s+)?(exiledsector\\.[\\w.]+)\\s*;", Pattern.MULTILINE);
+    private static final Pattern MOD_IMPORT = Pattern.compile("^\\s*import\\s+(?:static\\s+)?(exiled(?:sector|lib)\\.[\\w.]+)\\s*;", Pattern.MULTILINE);
     private static final Pattern TYPE_NAME = Pattern.compile("\\b[A-Z]\\w*\\b");
 
     @Test
@@ -79,9 +80,11 @@ class DomainBoundaryTest {
 
     @Test
     void everyDataFileBelongsToExactlyOnePart() throws IOException {
-        Set<String> files;
-        try (Stream<Path> paths = Files.walk(DATA_FILES)) {
-            files = new TreeSet<>(paths.filter(Files::isRegularFile).map(path -> path.toString().replace('\\', '/')).toList());
+        Set<String> files = new TreeSet<>();
+        for (Path dataFiles : DATA_FILES) {
+            try (Stream<Path> paths = Files.walk(dataFiles)) {
+                paths.filter(Files::isRegularFile).forEach(path -> files.add(path.toString().replace('\\', '/')));
+            }
         }
         List<String> problems = new ArrayList<>();
         Set<String> listed = new TreeSet<>();

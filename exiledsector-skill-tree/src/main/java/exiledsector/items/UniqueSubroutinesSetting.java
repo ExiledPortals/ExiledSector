@@ -1,7 +1,7 @@
 package exiledsector.items;
 
-import exiledsector.ModSettings;
-import exiledsector.ModSettingsListener;
+import exiledlib.ModSettings;
+import exiledlib.ModSettingsListener;
 
 public final class UniqueSubroutinesSetting {
 

@@ -9,9 +9,11 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
+import exiledlib.items.Item;
+import exiledlib.items.ItemStore;
 import exiledsector.ExiledSector;
-import exiledsector.PlayerFleet;
-import exiledsector.persistence.SaveData;
+import exiledlib.PlayerFleet;
+import exiledlib.persistence.SaveData;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 

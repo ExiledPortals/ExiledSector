@@ -2,12 +2,13 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.Translation;
+import exiledlib.ui.SkillTreePanelStyle;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.TemplateNames;
-import exiledsector.ui.util.BorderedPanel;
-import exiledsector.ui.util.HoloFrame;
-import exiledsector.ui.util.TextLabel;
+import exiledlib.ui.util.BorderedPanel;
+import exiledlib.ui.util.HoloFrame;
+import exiledlib.ui.util.TextLabel;
 
 import java.awt.Color;
 import java.util.Collection;

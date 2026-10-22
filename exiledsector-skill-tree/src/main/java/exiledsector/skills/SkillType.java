@@ -1,9 +1,11 @@
 package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.i18n.StyledText;
-import exiledsector.i18n.Translation;
-import exiledsector.skills.skilleffect.ModuleShare;
+import exiledlib.i18n.StyledText;
+import exiledlib.i18n.Translation;
+import exiledlib.skills.HullSizeSkillEffect;
+import exiledlib.skills.SkillTypeEffect;
+import exiledlib.skills.skilleffect.ModuleShare;
 import exiledsector.skills.unlock.UnlockCondition;
 
 import java.util.ArrayList;

@@ -2,9 +2,9 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledsector.compat.SecondInCommandCompat;
+import exiledlib.compat.SecondInCommandCompat;
 import exiledsector.skills.InstalledHullMods;
-import exiledsector.skills.ShipFacts;
+import exiledlib.skills.ShipFacts;
 
 public final class PlayerShipFacts {
 

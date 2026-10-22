@@ -2,10 +2,10 @@ package exiledsector.console;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import exiledsector.items.ItemData;
-import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemDefinitions;
-import exiledsector.items.ItemType;
+import exiledlib.items.ItemData;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemDefinitions;
+import exiledlib.items.ItemType;
 import exiledsector.items.ModspecCaches;
 import exiledsector.items.SubroutineKind;
 import org.lazywizard.console.BaseCommand;

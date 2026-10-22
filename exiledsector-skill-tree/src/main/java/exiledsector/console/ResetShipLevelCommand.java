@@ -3,7 +3,7 @@ package exiledsector.console;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledsector.PlayerFleet;
+import exiledlib.PlayerFleet;
 import exiledsector.items.NodeGrantStatus;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;

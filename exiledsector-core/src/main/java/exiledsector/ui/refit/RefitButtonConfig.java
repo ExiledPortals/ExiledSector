@@ -1,6 +1,6 @@
 package exiledsector.ui.refit;
 
-import exiledsector.ModSettings;
+import exiledlib.ModSettings;
 
 public final class RefitButtonConfig {
 

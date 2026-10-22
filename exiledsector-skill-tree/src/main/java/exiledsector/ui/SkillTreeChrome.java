@@ -4,13 +4,14 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.Translation;
+import exiledlib.ui.SkillTreePanelStyle;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipLevelSystem;
 import exiledsector.skills.progression.ShipOpBudget;
 import exiledsector.skills.progression.SkillNodeOpCost;
-import exiledsector.ui.util.BorderedPanel;
+import exiledlib.ui.util.BorderedPanel;
 
 final class SkillTreeChrome {
 

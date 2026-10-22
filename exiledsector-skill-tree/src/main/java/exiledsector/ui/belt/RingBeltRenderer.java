@@ -2,7 +2,7 @@ package exiledsector.ui.belt;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledsector.ui.TreeViewport;
-import exiledsector.ui.util.UnitCircle;
+import exiledlib.ui.util.UnitCircle;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;

@@ -1,10 +1,14 @@
 package exiledsector.items;
 
-import exiledsector.ModCsv;
-import exiledsector.Seeds;
-import exiledsector.modifiers.Modifier;
-import exiledsector.modifiers.ModifierLine;
-import exiledsector.modifiers.ModifierSlot;
+import exiledlib.ModCsv;
+import exiledlib.Seeds;
+import exiledlib.items.ItemModifiers;
+import exiledlib.items.ItemType;
+import exiledlib.items.RolledModifier;
+import exiledlib.items.WeightedPick;
+import exiledlib.modifiers.Modifier;
+import exiledlib.modifiers.ModifierLine;
+import exiledlib.modifiers.ModifierSlot;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;

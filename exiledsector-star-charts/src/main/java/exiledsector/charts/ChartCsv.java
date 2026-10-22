@@ -1,6 +1,6 @@
 package exiledsector.charts;
 
-import exiledsector.ModCsv;
+import exiledlib.ModCsv;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 

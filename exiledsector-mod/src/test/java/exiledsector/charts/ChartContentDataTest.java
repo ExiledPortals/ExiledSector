@@ -1,8 +1,8 @@
 package exiledsector.charts;
 
-import exiledsector.ProjectFiles;
+import exiledlib.ProjectFiles;
 import exiledsector.items.StarChartImplicits;
-import exiledsector.modifiers.Modifier;
+import exiledlib.modifiers.Modifier;
 import exiledsector.skills.progression.ShipLevelConfig;
 import org.json.CDL;
 import org.json.JSONArray;

@@ -18,6 +18,8 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledlib.effects.RealVariantTags;
+import exiledlib.effects.RecordingHullModEffect;
 import exiledsector.ExiledSector;
 import exiledsector.persistence.ShipRecords;
 import exiledsector.persistence.ShipSkillDataManager;
@@ -27,16 +29,16 @@ import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.progression.SkillNodeOpCost;
-import exiledsector.skills.skilleffect.DefenseSkillEffect;
-import exiledsector.skills.skilleffect.FluxSkillEffect;
-import exiledsector.skills.skilleffect.LogisticsSkillEffect;
-import exiledsector.skills.skilleffect.MiscSkillEffect;
-import exiledsector.skills.skilleffect.PhaseSkillEffect;
+import exiledlib.skills.skilleffect.DefenseSkillEffect;
+import exiledlib.skills.skilleffect.FluxSkillEffect;
+import exiledlib.skills.skilleffect.LogisticsSkillEffect;
+import exiledlib.skills.skilleffect.MiscSkillEffect;
+import exiledlib.skills.skilleffect.PhaseSkillEffect;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.skills.SkillTypeEffect;
+import exiledlib.skills.SkillTypeEffect;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -1020,7 +1022,7 @@ class SkillTreeHullModTest {
 
     @Test
     void fighterSpawnCallsApplyToFighterSpawnedByShipOnNonPassthroughEffects() {
-        exiledsector.skills.skilleffect.SkillEffect fighterEffect = mock(exiledsector.skills.skilleffect.SkillEffect.class);
+        exiledlib.skills.skilleffect.SkillEffect fighterEffect = mock(exiledlib.skills.skilleffect.SkillEffect.class);
         when(fighterEffect.name()).thenReturn("TEST_EFFECT");
         SkillType fighterType = new SkillType.Builder("fighter_weapon_damage", "Fighter Weapon Damage", "graphics/hullmods/fighter_uplink2.png", SkillTier.SMALL)
                 .effects(List.of(new SkillTypeEffect(fighterEffect, 15f)))
@@ -1059,7 +1061,7 @@ class SkillTreeHullModTest {
 
     @Test
     void afterShipCreationCallsApplyAfterShipCreationOnNonPassthroughEffects() {
-        exiledsector.skills.skilleffect.SkillEffect listenerEffect = mock(exiledsector.skills.skilleffect.SkillEffect.class);
+        exiledlib.skills.skilleffect.SkillEffect listenerEffect = mock(exiledlib.skills.skilleffect.SkillEffect.class);
         when(listenerEffect.name()).thenReturn("TEST_EFFECT");
         SkillType listenerType = new SkillType.Builder("high_scatter_amp", "High Scatter Amplifier", "graphics/hullmods/high_scatter_amp.png", SkillTier.NOTABLE)
                 .effects(List.of(new SkillTypeEffect(listenerEffect, 50f)))
@@ -1084,9 +1086,9 @@ class SkillTreeHullModTest {
 
     @Test
     void damageReshapingEffectsAreAppliedBeforeEveryOtherEffectWhateverTheAllocationOrder() {
-        exiledsector.skills.skilleffect.SkillEffect reader = mock(exiledsector.skills.skilleffect.SkillEffect.class);
+        exiledlib.skills.skilleffect.SkillEffect reader = mock(exiledlib.skills.skilleffect.SkillEffect.class);
         when(reader.name()).thenReturn("READER");
-        exiledsector.skills.skilleffect.SkillEffect reshaper = mock(exiledsector.skills.skilleffect.SkillEffect.class);
+        exiledlib.skills.skilleffect.SkillEffect reshaper = mock(exiledlib.skills.skilleffect.SkillEffect.class);
         when(reshaper.name()).thenReturn("RESHAPER");
         when(reshaper.reshapesDealtDamage()).thenReturn(true);
         SkillNode readerNode = new SkillNode("reader_1", new SkillType.Builder("reader", "Reader", "a.png", SkillTier.NOTABLE)
@@ -1630,7 +1632,7 @@ class SkillTreeHullModTest {
     @Test
     void combatHooksReadTheNpcTreeFromTheShipsVariant() {
         registerNpcRoot();
-        exiledsector.skills.skilleffect.SkillEffect listenerEffect = mock(exiledsector.skills.skilleffect.SkillEffect.class);
+        exiledlib.skills.skilleffect.SkillEffect listenerEffect = mock(exiledlib.skills.skilleffect.SkillEffect.class);
         when(listenerEffect.name()).thenReturn("TEST_EFFECT");
         when(listenerEffect.appliesToNpcShips()).thenReturn(true);
         SkillType listenerType = new SkillType.Builder("listener", "Listener", "a.png", SkillTier.NOTABLE)

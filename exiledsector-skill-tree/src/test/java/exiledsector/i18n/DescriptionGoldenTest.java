@@ -1,8 +1,10 @@
 package exiledsector.i18n;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.ProjectFiles;
-import exiledsector.skills.DescriptionLine;
+import exiledlib.ProjectFiles;
+import exiledlib.i18n.HeadlessGameText;
+import exiledlib.i18n.StyledText;
+import exiledlib.skills.DescriptionLine;
 import exiledsector.skills.NodeDescription;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
@@ -12,9 +14,9 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeBonusSummary;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.npc.RealSkillData;
-import exiledsector.skills.skilleffect.CompatSkillEffect;
-import exiledsector.skills.skilleffect.SkillEffect;
-import exiledsector.skills.skilleffect.SkillEffectNames;
+import exiledlib.skills.skilleffect.CompatSkillEffect;
+import exiledlib.skills.skilleffect.SkillEffect;
+import exiledlib.skills.skilleffect.SkillEffectNames;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

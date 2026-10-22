@@ -2,12 +2,12 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledsector.PlayerFleet;
+import exiledlib.PlayerFleet;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ReleasedNodes;
-import exiledsector.skills.ShipFacts;
+import exiledlib.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillItemCost;

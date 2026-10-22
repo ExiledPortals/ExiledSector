@@ -1,6 +1,6 @@
 package exiledsector.charts;
 
-import exiledsector.persistence.SaveData;
+import exiledlib.persistence.SaveData;
 
 public final class ChartRuns {
 

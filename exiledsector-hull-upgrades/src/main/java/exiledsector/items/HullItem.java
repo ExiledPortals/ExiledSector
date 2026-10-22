@@ -1,7 +1,13 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledsector.HostMod;
+import exiledlib.HostMod;
+import exiledlib.items.Item;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemKind;
+import exiledlib.items.ItemType;
+import exiledlib.items.ItemTypeSupport;
+import exiledlib.items.RolledModifier;
 import org.json.JSONObject;
 
 import java.util.List;

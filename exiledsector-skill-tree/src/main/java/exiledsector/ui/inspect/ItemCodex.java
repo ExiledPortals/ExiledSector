@@ -9,12 +9,12 @@ import com.fs.starfarer.api.impl.codex.CodexEntryV2;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.ExiledSector;
-import exiledsector.i18n.I18n;
-import exiledsector.i18n.Translation;
-import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemDefinitions;
+import exiledlib.i18n.I18n;
+import exiledlib.i18n.Translation;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemDefinitions;
 import exiledsector.items.ItemUnlock;
-import exiledsector.ui.VanillaText;
+import exiledlib.ui.VanillaText;
 import exiledsector.ui.socket.ItemCodexLink;
 import org.apache.log4j.Logger;
 

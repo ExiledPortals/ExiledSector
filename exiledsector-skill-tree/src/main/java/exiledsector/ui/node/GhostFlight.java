@@ -4,8 +4,8 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import exiledsector.ui.TreeViewport;
-import exiledsector.ui.util.FallbackSupport;
-import exiledsector.ui.util.SpriteDraw;
+import exiledlib.ui.util.FallbackSupport;
+import exiledlib.ui.util.SpriteDraw;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 

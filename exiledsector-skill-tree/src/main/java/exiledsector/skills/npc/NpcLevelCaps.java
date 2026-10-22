@@ -8,7 +8,7 @@ import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
-import exiledsector.ModCsv;
+import exiledlib.ModCsv;
 import exiledsector.loot.LootSources;
 import exiledsector.skills.progression.ShipLevelConfig;
 import org.apache.log4j.Logger;

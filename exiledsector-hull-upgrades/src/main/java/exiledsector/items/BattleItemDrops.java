@@ -1,8 +1,16 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.ModCsv;
-import exiledsector.ModSettings;
+import exiledlib.ModCsv;
+import exiledlib.ModSettings;
+import exiledlib.items.ItemChances;
+import exiledlib.items.ItemData;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemKind;
+import exiledlib.items.ItemRoller;
+import exiledlib.items.ItemType;
+import exiledlib.items.UniqueSource;
+import exiledlib.items.WeightedPick;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;

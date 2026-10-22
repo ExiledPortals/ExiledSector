@@ -1,5 +1,10 @@
 package exiledsector.items;
 
+import exiledlib.items.CorruptionOutcome;
+import exiledlib.items.ItemChances;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemDefinitions;
+import exiledlib.items.ItemStore;
 import exiledsector.items.ItemDataIntegrity.Severity;
 import exiledsector.items.ItemDataIntegrity.Violation;
 import exiledsector.skills.SkillNode;

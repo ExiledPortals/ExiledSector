@@ -2,13 +2,13 @@ package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
-import exiledsector.i18n.StyledText;
+import exiledlib.i18n.StyledText;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.CraftingWard;
-import exiledsector.items.Item;
+import exiledlib.items.Item;
 import exiledsector.items.ItemCurrency;
-import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemStore;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemStore;
 
 import java.util.List;
 import java.util.Random;

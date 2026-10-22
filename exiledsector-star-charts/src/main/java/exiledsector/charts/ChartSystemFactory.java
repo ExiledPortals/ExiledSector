@@ -8,7 +8,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.Translation;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;

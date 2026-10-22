@@ -1,6 +1,6 @@
 package exiledsector.ui.node;
 
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.Translation;
 import exiledsector.items.NodeSocketable;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -20,8 +20,8 @@ import exiledsector.skills.template.StepVerdict;
 import exiledsector.skills.template.TemplateCapture;
 import exiledsector.skills.template.TemplateStep;
 import exiledsector.items.SocketCustody;
-import exiledsector.items.Item;
-import exiledsector.items.ItemStore;
+import exiledlib.items.Item;
+import exiledlib.items.ItemStore;
 import exiledsector.items.Subroutine;
 import exiledsector.items.SubroutineKind;
 import exiledsector.items.SubroutineRadius;
@@ -30,7 +30,7 @@ import exiledsector.items.NodeGrantLinks;
 import exiledsector.items.WormholeAnchor;
 import exiledsector.items.WormholeAnchorLinks;
 import exiledsector.items.WormholeAnchorSocketLimits;
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.Translation;
 import exiledsector.ui.SkillTreeSounds;
 import lunalib.lunaRefit.BaseRefitButton;
 

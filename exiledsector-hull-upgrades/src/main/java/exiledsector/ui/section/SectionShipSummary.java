@@ -2,12 +2,12 @@ package exiledsector.ui.section;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import exiledsector.i18n.Style;
-import exiledsector.i18n.StyledText;
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.Style;
+import exiledlib.i18n.StyledText;
+import exiledlib.i18n.Translation;
 import exiledsector.items.HullUpgradeEffectSource;
-import exiledsector.items.Item;
-import exiledsector.skills.EffectContribution;
+import exiledlib.items.Item;
+import exiledlib.skills.EffectContribution;
 import exiledsector.skills.ShipSections;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.ui.inspect.ShipSummaryPart;

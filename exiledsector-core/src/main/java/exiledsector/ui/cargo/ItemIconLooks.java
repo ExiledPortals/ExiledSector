@@ -1,7 +1,7 @@
 package exiledsector.ui.cargo;
 
-import exiledsector.items.Item;
-import exiledsector.items.ItemKind;
+import exiledlib.items.Item;
+import exiledlib.items.ItemKind;
 
 import java.awt.Color;
 

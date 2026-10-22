@@ -6,9 +6,9 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledsector.i18n.I18n;
-import exiledsector.i18n.StyledText;
-import exiledsector.items.Item;
+import exiledlib.i18n.I18n;
+import exiledlib.i18n.StyledText;
+import exiledlib.items.Item;
 import exiledsector.ui.socket.ItemCell;
 import exiledsector.ui.socket.ItemHoverTooltip;
 

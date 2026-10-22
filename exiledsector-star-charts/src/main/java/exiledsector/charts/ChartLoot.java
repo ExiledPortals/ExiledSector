@@ -2,7 +2,7 @@ package exiledsector.charts;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.impl.campaign.procgen.DropGroupRow;
-import exiledsector.ModCsv;
+import exiledlib.ModCsv;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -1,6 +1,8 @@
 package exiledsector.items;
 
-import exiledsector.ProjectFiles;
+import exiledlib.ProjectFiles;
+import exiledlib.items.ItemDefinitions;
+import exiledlib.items.ItemStore;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;

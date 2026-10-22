@@ -1,6 +1,12 @@
 package exiledsector.items;
 
-import exiledsector.modifiers.ModifierSlot;
+import exiledlib.items.FrozenName;
+import exiledlib.items.ItemStore;
+import exiledlib.items.ItemTypes;
+import exiledlib.items.RolledEffect;
+import exiledlib.items.RolledModifier;
+import exiledlib.items.UnresolvedItem;
+import exiledlib.modifiers.ModifierSlot;
 import com.thoughtworks.xstream.XStream;
 
 import java.util.List;

@@ -1,5 +1,7 @@
 package exiledsector.skills;
 
+import exiledlib.skills.DescriptionLine;
+
 import java.util.ArrayList;
 import java.util.List;
 

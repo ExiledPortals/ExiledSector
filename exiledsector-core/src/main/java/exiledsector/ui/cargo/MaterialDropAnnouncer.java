@@ -1,11 +1,11 @@
 package exiledsector.ui.cargo;
 
 import com.fs.starfarer.api.Global;
-import exiledsector.i18n.I18n;
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.I18n;
+import exiledlib.i18n.Translation;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.MaterialTier;
-import exiledsector.ui.CampaignMessages;
+import exiledlib.ui.CampaignMessages;
 
 import java.util.Map;
 

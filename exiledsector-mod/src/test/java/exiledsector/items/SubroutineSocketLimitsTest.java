@@ -2,6 +2,10 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledlib.items.Item;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemDefinitions;
+import exiledlib.items.ItemStore;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;

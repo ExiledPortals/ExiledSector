@@ -1,8 +1,8 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
-import exiledsector.ModSettings;
-import exiledsector.persistence.SaveData;
+import exiledlib.ModSettings;
+import exiledlib.persistence.SaveData;
 
 import java.util.HashMap;
 import java.util.Map;

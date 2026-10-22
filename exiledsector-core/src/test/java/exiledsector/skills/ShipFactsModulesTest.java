@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
+import exiledlib.skills.ShipFacts;
 import exiledsector.skills.tags.ShipProfile;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;

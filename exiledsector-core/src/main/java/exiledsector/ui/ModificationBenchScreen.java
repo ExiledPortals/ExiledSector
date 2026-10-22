@@ -8,8 +8,8 @@ import com.fs.starfarer.api.ui.CustomPanelAPI;
 import exiledsector.items.SocketCustody;
 import exiledsector.ui.socket.ModificationBay;
 import exiledsector.ui.socket.SocketPanelPlacement;
-import exiledsector.ui.util.Fade;
-import exiledsector.ui.util.GLDraw;
+import exiledlib.ui.util.Fade;
+import exiledlib.ui.util.GLDraw;
 import lunalib.lunaRefit.BaseRefitButton;
 import org.lwjgl.input.Keyboard;
 

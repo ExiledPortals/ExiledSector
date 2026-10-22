@@ -1,6 +1,6 @@
 package exiledsector.ui.inspect;
 
-import exiledsector.ModSettings;
+import exiledlib.ModSettings;
 import org.lwjgl.input.Keyboard;
 
 public final class NpcInspectConfig {

@@ -8,11 +8,11 @@ import com.fs.starfarer.api.impl.hullmods.BallisticRangefinder;
 import com.fs.starfarer.api.impl.hullmods.MissileAutoloader;
 import com.fs.starfarer.api.impl.hullmods.MissileAutoloader.ReloadCapacityData;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
-import exiledsector.i18n.Translation;
-import exiledsector.skills.ShipHullSizes;
+import exiledlib.i18n.Translation;
+import exiledlib.skills.ShipHullSizes;
 import exiledsector.skills.SkillType;
-import exiledsector.ui.TooltipTable;
-import exiledsector.ui.TooltipTable.Row;
+import exiledlib.ui.TooltipTable;
+import exiledlib.ui.TooltipTable.Row;
 
 import java.util.ArrayList;
 import java.util.Comparator;

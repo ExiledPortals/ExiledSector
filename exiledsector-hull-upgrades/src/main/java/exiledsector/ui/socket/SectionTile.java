@@ -6,8 +6,8 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.items.ShipSection;
 import exiledsector.ui.socket.HullUpgradePanel.SectionState;
 import exiledsector.ui.section.SectionFlair;
-import exiledsector.ui.util.Fade;
-import exiledsector.ui.util.GLDraw;
+import exiledlib.ui.util.Fade;
+import exiledlib.ui.util.GLDraw;
 
 import java.awt.Color;
 import java.util.List;

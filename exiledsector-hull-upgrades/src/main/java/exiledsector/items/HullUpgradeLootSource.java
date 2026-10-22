@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledlib.items.ItemData;
 import exiledsector.effects.ItemLootListener;
 import exiledsector.effects.TechMiningItemListener;
 import exiledsector.loot.BattleEngagement;

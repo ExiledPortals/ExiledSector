@@ -1,10 +1,11 @@
 package exiledsector;
 
+import exiledlib.HostMod;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.items.HullUpgradeData;
 import exiledsector.items.ItemDataIntegrity;
-import exiledsector.items.ItemStore;
-import exiledsector.items.ItemTypes;
+import exiledlib.items.ItemStore;
+import exiledlib.items.ItemTypes;
 import exiledsector.ui.cargo.CargoIconLooks;
 import exiledsector.ui.refit.RefitButtonColumn;
 import exiledsector.ui.socket.BenchModes;

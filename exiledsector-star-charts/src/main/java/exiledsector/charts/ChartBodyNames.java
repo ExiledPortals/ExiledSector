@@ -3,8 +3,8 @@ package exiledsector.charts;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
-import exiledsector.i18n.I18n;
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.I18n;
+import exiledlib.i18n.Translation;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;

@@ -1,7 +1,7 @@
 # Localisation
 
-All player-visible text lives in message catalogues, one folder per part: `data/strings/exiledLib/` for the
-library, and `core/`, `skillTree/`, `hullUpgrades/` and `starCharts/` under `data/strings/exiledSector/`. In
+All player-visible text lives in message catalogues, one folder per part: `data/strings/exiledLib/` in the
+Exiled Lib mod (`exiled-lib/mod/` in this repo) for the library, and `core/`, `skillTree/`, `hullUpgrades/` and `starCharts/` under `data/strings/exiledSector/`. In
 each folder `en.json` holds the English source and `zh_CN.json` the Simplified Chinese translation. The
 game merges every folder into one catalogue, so a key lives in exactly one of them.
 
@@ -64,7 +64,7 @@ the glyphs, set `meta.fakeBold` to `false`.
 The test-scope `BitmapFontGenerator` can build a suitable atlas:
 
 ```
-java -cp target/test-classes;target/classes exiledsector.i18n.BitmapFontGenerator <font.ttf|.otf> graphics/fonts/exiledSector/<name>.fnt 17 20 2048 1024 data/strings/exiledLib/<locale>.json data/strings/exiledSector/core/<locale>.json data/strings/exiledSector/skillTree/<locale>.json data/strings/exiledSector/hullUpgrades/<locale>.json data/strings/exiledSector/starCharts/<locale>.json
+java -cp exiled-lib/target/test-classes;exiled-lib/target/classes exiledlib.i18n.BitmapFontGenerator <font.ttf|.otf> graphics/fonts/exiledSector/<name>.fnt 17 20 2048 1024 exiled-lib/mod/data/strings/exiledLib/<locale>.json data/strings/exiledSector/core/<locale>.json data/strings/exiledSector/skillTree/<locale>.json data/strings/exiledSector/hullUpgrades/<locale>.json data/strings/exiledSector/starCharts/<locale>.json
 ```
 
 The arguments are, in order: the source font, the output `.fnt` path, the glyph size in pixels, the line

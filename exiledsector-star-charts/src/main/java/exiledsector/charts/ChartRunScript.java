@@ -6,7 +6,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.characters.AbilityPlugin;
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.Translation;
 import org.apache.log4j.Logger;
 
 public class ChartRunScript implements EveryFrameScript {

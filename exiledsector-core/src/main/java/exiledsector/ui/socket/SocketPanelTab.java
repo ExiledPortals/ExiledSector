@@ -1,6 +1,6 @@
 package exiledsector.ui.socket;
 
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.Translation;
 
 public enum SocketPanelTab {
     HULL_ITEMS("ui.socketPanel.tab.socketables"),

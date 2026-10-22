@@ -2,7 +2,9 @@ package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.skills.skilleffect.ShieldSkillEffect;
+import exiledlib.skills.ShipFacts;
+import exiledlib.skills.SkillTypeEffect;
+import exiledlib.skills.skilleffect.ShieldSkillEffect;
 import exiledsector.skills.tags.NodeRequirements;
 import exiledsector.skills.tags.ShipProfile;
 import exiledsector.skills.unlock.NodeGates;

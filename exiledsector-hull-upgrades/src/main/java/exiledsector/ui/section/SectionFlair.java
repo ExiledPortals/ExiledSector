@@ -1,13 +1,13 @@
 package exiledsector.ui.section;
 
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.items.ItemKind;
+import exiledlib.items.ItemKind;
 import exiledsector.items.ShipSection;
-import exiledsector.ui.util.GLDraw;
-import exiledsector.ui.util.GlScope;
-import exiledsector.ui.util.HoloShapes;
+import exiledlib.ui.util.GLDraw;
+import exiledlib.ui.util.GlScope;
+import exiledlib.ui.util.HoloShapes;
 import exiledsector.ui.cargo.AnimatedItemIcons;
-import exiledsector.ui.util.SpriteCache;
+import exiledlib.ui.util.SpriteCache;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;

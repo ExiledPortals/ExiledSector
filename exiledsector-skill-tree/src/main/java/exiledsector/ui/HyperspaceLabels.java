@@ -1,10 +1,11 @@
 package exiledsector.ui;
 
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.Translation;
+import exiledlib.ui.SkillTreePanelStyle;
 import exiledsector.ui.hyperspace.HyperspaceAnchor;
 import exiledsector.ui.hyperspace.HyperspaceCamera;
-import exiledsector.ui.util.BorderedPanel;
-import exiledsector.ui.util.TextLabel;
+import exiledlib.ui.util.BorderedPanel;
+import exiledlib.ui.util.TextLabel;
 
 import java.awt.Color;
 import java.util.HashMap;

@@ -3,7 +3,7 @@ package exiledsector.ui;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledsector.ui.hyperspace.HyperspaceRoute;
 import exiledsector.ui.node.GhostFlight;
-import exiledsector.ui.util.SpriteCache;
+import exiledlib.ui.util.SpriteCache;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,7 @@
 package exiledsector.persistence;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledlib.persistence.SaveData;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.TemplateCodec;
 import exiledsector.skills.template.TemplateNames;

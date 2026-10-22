@@ -12,12 +12,12 @@ import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.effects.NpcFleetLeveller;
-import exiledsector.i18n.I18n;
-import exiledsector.i18n.StyledText;
-import exiledsector.i18n.Translation;
-import exiledsector.items.Item;
-import exiledsector.items.ItemStore;
-import exiledsector.ui.VanillaText;
+import exiledlib.i18n.I18n;
+import exiledlib.i18n.StyledText;
+import exiledlib.i18n.Translation;
+import exiledlib.items.Item;
+import exiledlib.items.ItemStore;
+import exiledlib.ui.VanillaText;
 import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;

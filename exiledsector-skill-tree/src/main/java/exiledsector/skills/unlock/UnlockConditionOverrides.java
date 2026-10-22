@@ -1,6 +1,6 @@
 package exiledsector.skills.unlock;
 
-import exiledsector.ModSettings;
+import exiledlib.ModSettings;
 
 public final class UnlockConditionOverrides {
 

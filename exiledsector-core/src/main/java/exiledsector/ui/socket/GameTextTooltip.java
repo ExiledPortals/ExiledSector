@@ -1,7 +1,7 @@
 package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import exiledsector.i18n.I18n;
+import exiledlib.i18n.I18n;
 
 import java.util.function.Consumer;
 

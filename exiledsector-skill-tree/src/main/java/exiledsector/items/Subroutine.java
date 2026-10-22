@@ -2,12 +2,21 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import exiledsector.i18n.Style;
-import exiledsector.i18n.StyledText;
-import exiledsector.i18n.Translation;
-import exiledsector.modifiers.Modifier;
-import exiledsector.modifiers.ModifierLine;
-import exiledsector.skills.DescriptionLine;
+import exiledlib.i18n.Style;
+import exiledlib.i18n.StyledText;
+import exiledlib.i18n.Translation;
+import exiledlib.items.CorruptionOutcome;
+import exiledlib.items.Item;
+import exiledlib.items.ItemData;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemTooltip;
+import exiledlib.items.ItemType;
+import exiledlib.items.ItemTypeSupport;
+import exiledlib.items.RolledModifier;
+import exiledlib.items.UnresolvedItem;
+import exiledlib.modifiers.Modifier;
+import exiledlib.modifiers.ModifierLine;
+import exiledlib.skills.DescriptionLine;
 import exiledsector.skills.NodeReplacements;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -139,19 +148,19 @@ public final class Subroutine extends Item implements NodeSocketable {
     }
 
     @Override
-    void copyTraitsFrom(Item source) {
+    public void copyTraitsFrom(Item source) {
         if (source instanceof Subroutine subroutine && subroutine.rolledNodeIds != null && subroutine.definitionId().equals(definitionId())) {
             rolledNodeIds = new ArrayList<>(subroutine.rolledNodeIds);
         }
     }
 
     @Override
-    void keepWhenUnresolved(UnresolvedItem unresolved) {
+    public void keepWhenUnresolved(UnresolvedItem unresolved) {
         unresolved.keepRolledNodeIds(rolledNodeIds());
     }
 
     @Override
-    void writeTooltipSections(TooltipMakerAPI tooltip, HullSize hullSize, boolean showRollRanges) {
+    public void writeTooltipSections(TooltipMakerAPI tooltip, HullSize hullSize, boolean showRollRanges) {
         if (showRollRanges) {
             for (AllocatedNodeEffects allocated : allocatedNodeEffects(hullSize)) {
                 ItemTooltip.addSection(tooltip, allocated.nodeName(), allocated.effectLines());
@@ -165,18 +174,18 @@ public final class Subroutine extends Item implements NodeSocketable {
     }
 
     @Override
-    Modifier implicitModifier(String modifierId) {
+    public Modifier implicitModifier(String modifierId) {
         Modifier corruptionImplicit = SubroutineImplicits.byId(modifierId);
         return corruptionImplicit != null ? corruptionImplicit : super.implicitModifier(modifierId);
     }
 
     @Override
-    ModifierLine implicitLine(String effectName) {
+    public ModifierLine implicitLine(String effectName) {
         return SubroutineImplicits.line(effectName);
     }
 
     @Override
-    List<Modifier> implicitCorruptionPool() {
+    public List<Modifier> implicitCorruptionPool() {
         return SubroutineImplicits.corruptionPool();
     }
 

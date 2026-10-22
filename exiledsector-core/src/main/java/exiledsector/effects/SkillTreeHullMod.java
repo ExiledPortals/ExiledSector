@@ -13,13 +13,13 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.ExiledSector;
 import exiledsector.domain.ExiledSectorDomain;
-import exiledsector.i18n.I18n;
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.I18n;
+import exiledlib.i18n.Translation;
 import exiledsector.persistence.ShipRecords;
-import exiledsector.skills.DiminishingReturns;
+import exiledlib.skills.DiminishingReturns;
 import exiledsector.skills.ShipSkillData;
-import exiledsector.skills.StatBaseline;
-import exiledsector.skills.skilleffect.FleetWideEffects;
+import exiledlib.skills.StatBaseline;
+import exiledlib.skills.skilleffect.FleetWideEffects;
 
 import java.util.List;
 import java.util.Map;

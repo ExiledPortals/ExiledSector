@@ -1,8 +1,8 @@
 package exiledsector.tools;
 
-import exiledsector.i18n.HeadlessGameText;
-import exiledsector.i18n.I18n;
-import exiledsector.i18n.RealCatalogue;
+import exiledlib.i18n.HeadlessGameText;
+import exiledlib.i18n.I18n;
+import exiledlib.i18n.RealCatalogue;
 import exiledsector.skills.npc.RealSkillData;
 
 import java.io.BufferedReader;

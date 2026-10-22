@@ -2,6 +2,11 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
+import exiledlib.items.Item;
+import exiledlib.items.ItemData;
+import exiledlib.items.ItemDefinitions;
+import exiledlib.items.ItemIdAliases;
+import exiledlib.items.ItemStore;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import org.apache.log4j.Logger;

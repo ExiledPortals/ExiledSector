@@ -2,13 +2,14 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledsector.i18n.StyledText;
-import exiledsector.i18n.Translation;
-import exiledsector.skills.ShipHullSizes;
+import exiledlib.i18n.StyledText;
+import exiledlib.i18n.Translation;
+import exiledlib.skills.ShipHullSizes;
+import exiledlib.ui.SkillTreePanelStyle;
 import exiledsector.skills.template.SkillTreeTemplate;
-import exiledsector.ui.util.GLDraw;
-import exiledsector.ui.util.HoloFrame;
-import exiledsector.ui.util.TextLabel;
+import exiledlib.ui.util.GLDraw;
+import exiledlib.ui.util.HoloFrame;
+import exiledlib.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.awt.Color;

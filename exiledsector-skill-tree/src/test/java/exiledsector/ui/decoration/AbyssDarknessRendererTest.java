@@ -1,6 +1,6 @@
 package exiledsector.ui.decoration;
 
-import exiledsector.ProjectFiles;
+import exiledlib.ProjectFiles;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;

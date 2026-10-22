@@ -1,7 +1,9 @@
 package exiledsector.items;
 
-import exiledsector.Seeds;
-import exiledsector.modifiers.ModifierLine;
+import exiledlib.Seeds;
+import exiledlib.items.PoolEntry;
+import exiledlib.items.WeightedPick;
+import exiledlib.modifiers.ModifierLine;
 
 import java.util.ArrayList;
 import java.util.Comparator;

@@ -1,6 +1,6 @@
 package exiledsector.ui.cargo;
 
-import exiledsector.ui.util.SpriteCache;
+import exiledlib.ui.util.SpriteCache;
 
 public record DoctrineLook(DoctrineScreen screen, String factionId, String emblemPath) implements IconArt {
 

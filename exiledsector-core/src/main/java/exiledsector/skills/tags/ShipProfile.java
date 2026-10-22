@@ -9,8 +9,8 @@ import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
 import exiledsector.skills.FittedShipProfile;
-import exiledsector.skills.ShipFacts;
-import exiledsector.skills.ShipSystemCharges;
+import exiledlib.skills.ShipFacts;
+import exiledlib.skills.ShipSystemCharges;
 
 import java.util.EnumSet;
 import java.util.Set;

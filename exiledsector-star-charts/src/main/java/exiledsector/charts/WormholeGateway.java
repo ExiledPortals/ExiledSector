@@ -10,8 +10,8 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.ExiledSector;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
 import exiledsector.domain.ExiledSectorDomain;
-import exiledsector.i18n.I18n;
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.I18n;
+import exiledlib.i18n.Translation;
 import org.apache.log4j.Logger;
 
 import java.util.List;

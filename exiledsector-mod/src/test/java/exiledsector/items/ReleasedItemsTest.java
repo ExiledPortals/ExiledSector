@@ -1,8 +1,15 @@
 package exiledsector.items;
 
-import exiledsector.ProjectFiles;
-import exiledsector.modifiers.ModifierSlot;
-import exiledsector.skills.skilleffect.EffectAliases;
+import exiledlib.ProjectFiles;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemDefinitions;
+import exiledlib.items.ItemIdAliases;
+import exiledlib.items.ItemModifiers;
+import exiledlib.items.ItemNames;
+import exiledlib.items.PoolEntry;
+import exiledlib.items.RolledEffect;
+import exiledlib.modifiers.ModifierSlot;
+import exiledlib.skills.skilleffect.EffectAliases;
 import org.json.CDL;
 import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;

@@ -12,7 +12,7 @@ import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.items.NpcItems;
 import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.items.WormholeAnchorLinks;
-import exiledsector.items.ItemDefinitions;
+import exiledlib.items.ItemDefinitions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;

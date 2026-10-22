@@ -1,6 +1,16 @@
 package exiledsector.items;
 
-import exiledsector.ProjectFiles;
+import exiledlib.ProjectFiles;
+import exiledlib.items.AffixLayout;
+import exiledlib.items.ItemData;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemDefinitions;
+import exiledlib.items.ItemModifiers;
+import exiledlib.items.ItemNames;
+import exiledlib.items.ItemRarity;
+import exiledlib.items.ItemRoller;
+import exiledlib.items.ItemType;
+import exiledlib.items.RolledModifier;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;

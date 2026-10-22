@@ -7,7 +7,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
-import exiledsector.items.ItemData;
+import exiledlib.items.ItemData;
 import exiledsector.items.StarChart;
 import exiledsector.items.StarChartFixtures;
 import org.junit.jupiter.api.AfterEach;

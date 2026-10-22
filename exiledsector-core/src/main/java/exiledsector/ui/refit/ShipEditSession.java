@@ -4,12 +4,12 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.ExiledSector;
-import exiledsector.PlayerFleet;
+import exiledlib.PlayerFleet;
 import exiledsector.effects.FighterBayOverflow;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.FittedShipProfile;
 import exiledsector.skills.ShipSkillData;
-import exiledsector.skills.skilleffect.FleetWideEffects;
+import exiledlib.skills.skilleffect.FleetWideEffects;
 import exiledsector.skills.tags.ShipProfile;
 
 public final class ShipEditSession {

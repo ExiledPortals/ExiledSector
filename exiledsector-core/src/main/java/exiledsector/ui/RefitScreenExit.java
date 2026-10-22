@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledlib.ui.CampaignMessages;
 import exiledsector.ui.refit.CoreUiDismissal;
 import lunalib.backend.ui.refit.RefitButtonAdder;
 import lunalib.lunaRefit.BaseRefitButton;

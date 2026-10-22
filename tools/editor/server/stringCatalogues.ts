@@ -1,5 +1,5 @@
 export const STRING_CATALOGUES = [
-  { part: 'lib', file: 'data/strings/exiledLib/en.json' },
+  { part: 'lib', file: 'exiled-lib/mod/data/strings/exiledLib/en.json' },
   { part: 'core', file: 'data/strings/exiledSector/core/en.json' },
   { part: 'skill-tree', file: 'data/strings/exiledSector/skillTree/en.json' },
   { part: 'hull-upgrades', file: 'data/strings/exiledSector/hullUpgrades/en.json' },

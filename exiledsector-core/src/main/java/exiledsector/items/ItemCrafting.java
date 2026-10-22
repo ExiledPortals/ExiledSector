@@ -1,8 +1,23 @@
 package exiledsector.items;
 
-import exiledsector.modifiers.Modifier;
-import exiledsector.modifiers.ModifierLine;
-import exiledsector.modifiers.ModifierSlot;
+import exiledlib.items.AffixLayout;
+import exiledlib.items.CorruptionOutcome;
+import exiledlib.items.CraftingContext;
+import exiledlib.items.Item;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemDefinitions;
+import exiledlib.items.ItemRarity;
+import exiledlib.items.ItemRoller;
+import exiledlib.items.ItemStore;
+import exiledlib.items.ItemType;
+import exiledlib.items.ItemTypes;
+import exiledlib.items.PoolEntry;
+import exiledlib.items.RolledEffect;
+import exiledlib.items.RolledModifier;
+import exiledlib.items.WeightedPick;
+import exiledlib.modifiers.Modifier;
+import exiledlib.modifiers.ModifierLine;
+import exiledlib.modifiers.ModifierSlot;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;

@@ -1,7 +1,7 @@
 package exiledsector.charts;
 
 import com.fs.starfarer.api.impl.campaign.ids.Abilities;
-import exiledsector.ModCsv;
+import exiledlib.ModCsv;
 import org.apache.log4j.Logger;
 
 import java.util.HashSet;

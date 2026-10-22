@@ -2,7 +2,7 @@ package exiledsector.ui.cargo;
 
 import exiledsector.items.DoctrineArchive;
 import exiledsector.items.DoctrineArchives;
-import exiledsector.items.Item;
+import exiledlib.items.Item;
 import exiledsector.items.Subroutine;
 import exiledsector.items.SubroutineKind;
 import exiledsector.items.WormholeAnchor;

@@ -1,6 +1,14 @@
 package exiledsector.items;
 
-import exiledsector.modifiers.ModifierSlot;
+import exiledlib.items.AffixLayout;
+import exiledlib.items.Item;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemDefinitions;
+import exiledlib.items.ItemRarity;
+import exiledlib.items.PoolEntry;
+import exiledlib.items.RolledEffect;
+import exiledlib.items.RolledModifier;
+import exiledlib.modifiers.ModifierSlot;
 import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

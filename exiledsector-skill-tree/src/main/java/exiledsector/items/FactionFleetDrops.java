@@ -1,5 +1,9 @@
 package exiledsector.items;
 
+import exiledlib.items.ItemData;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemDefinitions;
+import exiledlib.items.ItemType;
 import exiledsector.skills.npc.NpcFactionVolumes;
 
 import java.util.ArrayList;

@@ -1,6 +1,7 @@
 package exiledsector.items;
 
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.Translation;
+import exiledlib.items.ItemKind;
 
 import java.util.Arrays;
 import java.util.List;

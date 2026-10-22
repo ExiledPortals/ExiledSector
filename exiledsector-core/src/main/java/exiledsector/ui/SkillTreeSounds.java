@@ -2,7 +2,7 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SoundPlayerAPI;
-import exiledsector.ModSettings;
+import exiledlib.ModSettings;
 
 public final class SkillTreeSounds {
 

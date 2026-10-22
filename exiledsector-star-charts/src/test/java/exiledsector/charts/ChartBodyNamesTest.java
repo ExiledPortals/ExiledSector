@@ -1,6 +1,7 @@
 package exiledsector.charts;
 
 import com.fs.starfarer.api.campaign.PlanetAPI;
+import exiledlib.charts.FakeSystem;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;

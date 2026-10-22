@@ -1,7 +1,7 @@
 package exiledsector.ui.cargo;
 
-import exiledsector.ModSettings;
-import exiledsector.ModSettingsListener;
+import exiledlib.ModSettings;
+import exiledlib.ModSettingsListener;
 
 import java.util.List;
 

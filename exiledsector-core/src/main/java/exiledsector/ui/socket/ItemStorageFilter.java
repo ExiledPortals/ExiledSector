@@ -1,7 +1,7 @@
 package exiledsector.ui.socket;
 
-import exiledsector.items.ItemKind;
-import exiledsector.items.ItemRarity;
+import exiledlib.items.ItemKind;
+import exiledlib.items.ItemRarity;
 
 import java.util.EnumSet;
 import java.util.Set;

@@ -1,13 +1,13 @@
 package exiledsector.ui.inspect;
 
-import exiledsector.modifiers.ModifierSlot;
+import exiledlib.modifiers.ModifierSlot;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import exiledsector.items.PoolEntry;
-import exiledsector.items.ItemKind;
-import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemDefinitions;
+import exiledlib.items.PoolEntry;
+import exiledlib.items.ItemKind;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemDefinitions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

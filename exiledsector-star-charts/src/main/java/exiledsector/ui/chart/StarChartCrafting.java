@@ -1,16 +1,16 @@
 package exiledsector.ui.chart;
 
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.Translation;
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.CraftingWard;
-import exiledsector.items.Item;
+import exiledlib.items.Item;
 import exiledsector.items.ItemCrafting;
 import exiledsector.items.ItemCurrencies;
 import exiledsector.items.ItemCurrency;
-import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemStore;
-import exiledsector.items.ItemType;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemStore;
+import exiledlib.items.ItemType;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.StarChart;
 import exiledsector.items.StarChartCurrency;

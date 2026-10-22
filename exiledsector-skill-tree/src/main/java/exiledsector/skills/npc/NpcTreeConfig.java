@@ -1,6 +1,6 @@
 package exiledsector.skills.npc;
 
-import exiledsector.ModSettings;
+import exiledlib.ModSettings;
 
 public final class NpcTreeConfig {
 

@@ -1,6 +1,9 @@
 package exiledsector.i18n;
 
-import exiledsector.ProjectFiles;
+import exiledlib.ProjectFiles;
+import exiledlib.i18n.I18n;
+import exiledlib.i18n.LocaleChain;
+import exiledlib.i18n.RealCatalogue;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -50,7 +53,7 @@ class TranslationKeyReferencesTest {
         Map<String, String> partByClass = classParts();
         Map<String, JSONObject> catalogueByPart = new HashMap<>();
         for (Map.Entry<String, String> catalogue : CATALOGUE_BY_PART.entrySet()) {
-            Path file = ProjectFiles.projectRoot().resolve(catalogue.getValue());
+            Path file = ProjectFiles.gameFile(catalogue.getValue());
             catalogueByPart.put(catalogue.getKey(), new JSONObject(Files.readString(file, StandardCharsets.UTF_8)));
         }
         List<String> misplaced = new ArrayList<>();

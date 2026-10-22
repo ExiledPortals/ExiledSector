@@ -2,8 +2,15 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledsector.i18n.StyledText;
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.StyledText;
+import exiledlib.i18n.Translation;
+import exiledlib.items.CorruptionOutcome;
+import exiledlib.items.Item;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemTraits;
+import exiledlib.items.ItemType;
+import exiledlib.items.ItemTypeSupport;
+import exiledlib.items.RolledModifier;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
@@ -139,7 +146,7 @@ public final class WormholeAnchor extends Item implements NodeSocketable {
     }
 
     @Override
-    void applyTraits(ItemTraits traits) {
+    public void applyTraits(ItemTraits traits) {
     }
 
     @Override

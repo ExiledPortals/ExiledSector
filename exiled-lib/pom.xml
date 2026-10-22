@@ -14,6 +14,7 @@
 
     <properties>
         <exiledsector.root>${project.basedir}/..</exiledsector.root>
+        <mod.jars.dir>${project.basedir}/mod/jars</mod.jars.dir>
         <sonar.sources>pom.xml,src/main/java</sonar.sources>
         <sonar.tests>src/test/java</sonar.tests>
         <sonar.test.inclusions>src/test/java/**</sonar.test.inclusions>

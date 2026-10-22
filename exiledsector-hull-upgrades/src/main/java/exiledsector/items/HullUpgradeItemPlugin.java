@@ -4,10 +4,11 @@ import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.CargoTransferHandlerAPI;
 import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import exiledsector.i18n.I18n;
-import exiledsector.i18n.Translation;
-import exiledsector.ui.util.SpriteCache;
-import exiledsector.ui.util.SpriteDraw;
+import exiledlib.i18n.I18n;
+import exiledlib.i18n.Translation;
+import exiledlib.items.ItemTooltip;
+import exiledlib.ui.util.SpriteCache;
+import exiledlib.ui.util.SpriteDraw;
 
 import java.util.List;
 

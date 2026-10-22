@@ -3,9 +3,9 @@ package exiledsector.ui.socket;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledsector.ui.util.GLDraw;
+import exiledlib.ui.util.GLDraw;
 import exiledsector.ui.cargo.AnimatedItemIcons;
-import exiledsector.ui.util.SpriteCache;
+import exiledlib.ui.util.SpriteCache;
 
 import java.awt.Color;
 import java.util.List;

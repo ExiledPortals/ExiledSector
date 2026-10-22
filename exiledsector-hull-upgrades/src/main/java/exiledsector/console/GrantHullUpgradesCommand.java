@@ -3,7 +3,7 @@ package exiledsector.console;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.skills.ShipHullSizes;
+import exiledlib.skills.ShipHullSizes;
 import exiledsector.items.HullUpgradeData;
 import org.lazywizard.console.BaseCommand;
 import org.lazywizard.console.CommonStrings;

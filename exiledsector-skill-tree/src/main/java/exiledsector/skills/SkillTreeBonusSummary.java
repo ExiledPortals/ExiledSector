@@ -1,10 +1,17 @@
 package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledlib.skills.DescriptionLine;
+import exiledlib.skills.DiminishedStat;
+import exiledlib.skills.DiminishingReturns;
+import exiledlib.skills.EffectContribution;
+import exiledlib.skills.EffectTotals;
+import exiledlib.skills.SkillTypeEffect;
+import exiledlib.skills.StatBaseline;
 import exiledsector.effects.SkillTreeEffectSource;
-import exiledsector.i18n.StyledText;
-import exiledsector.i18n.Translation;
-import exiledsector.skills.skilleffect.WeaponEffectTooltipAggregator;
+import exiledlib.i18n.StyledText;
+import exiledlib.i18n.Translation;
+import exiledlib.skills.skilleffect.WeaponEffectTooltipAggregator;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,6 +1,10 @@
 package exiledsector.items;
 
-import exiledsector.ModCsv;
+import exiledlib.ModCsv;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemDefinitions;
+import exiledlib.items.ItemIdAliases;
+import exiledlib.items.ItemType;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -1,6 +1,6 @@
 package exiledsector.ui.hyperspace;
 
-import exiledsector.ProjectFiles;
+import exiledlib.ProjectFiles;
 import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;

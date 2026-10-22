@@ -4,13 +4,14 @@ import com.fs.starfarer.api.campaign.CargoTransferHandlerAPI;
 import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.i18n.Translation;
-import exiledsector.ui.VanillaText;
+import exiledlib.i18n.Translation;
+import exiledlib.items.ItemType;
+import exiledlib.ui.VanillaText;
 import exiledsector.ui.cargo.CargoIconAnimation;
 import exiledsector.ui.cargo.CargoIconFx;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
-import exiledsector.ui.util.SpriteCache;
+import exiledlib.ui.util.SpriteCache;
 
 public class MaterialItemPlugin extends BaseSpecialItemPlugin {
 

@@ -1,7 +1,7 @@
 package exiledsector.skills.tags;
 
-import exiledsector.ModSettings;
-import exiledsector.compat.LostSectorCompat;
+import exiledlib.ModSettings;
+import exiledlib.compat.LostSectorCompat;
 import exiledsector.compat.NightcrossCompat;
 import exiledsector.compat.RandomAssortmentCompat;
 import exiledsector.compat.TaniaCompat;

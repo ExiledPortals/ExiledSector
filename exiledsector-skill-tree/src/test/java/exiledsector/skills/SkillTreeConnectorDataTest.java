@@ -1,6 +1,6 @@
 package exiledsector.skills;
 
-import exiledsector.ProjectFiles;
+import exiledlib.ProjectFiles;
 import exiledsector.skills.loader.WormholePairValidator;
 import exiledsector.skills.npc.RealSkillData;
 import org.json.JSONArray;

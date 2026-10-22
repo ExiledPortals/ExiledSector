@@ -1,9 +1,13 @@
 package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledlib.skills.DamageTakenCaps;
+import exiledlib.skills.DescriptionLine;
+import exiledlib.skills.HullSizeSkillEffect;
+import exiledlib.skills.SkillTypeEffect;
 import exiledsector.skills.SkillTreeBonusSummary.Summary;
-import exiledsector.skills.skilleffect.DefenseSkillEffect;
-import exiledsector.skills.skilleffect.FluxSkillEffect;
+import exiledlib.skills.skilleffect.DefenseSkillEffect;
+import exiledlib.skills.skilleffect.FluxSkillEffect;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

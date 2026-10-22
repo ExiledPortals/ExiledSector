@@ -2,7 +2,7 @@ package exiledsector.skills.tags;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
-import exiledsector.skills.ShipFacts;
+import exiledlib.skills.ShipFacts;
 
 import java.util.Collection;
 import java.util.List;

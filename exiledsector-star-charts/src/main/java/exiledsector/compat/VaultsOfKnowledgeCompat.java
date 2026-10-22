@@ -1,6 +1,9 @@
 package exiledsector.compat;
 
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import exiledlib.compat.ApiMember;
+import exiledlib.compat.CompatTarget;
+import exiledlib.compat.OptionalApi;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 

@@ -1,16 +1,16 @@
 package exiledsector.ui.node;
 
-import exiledsector.i18n.Catalogue;
-import exiledsector.i18n.I18n;
-import exiledsector.i18n.RealCatalogue;
+import exiledlib.i18n.Catalogue;
+import exiledlib.i18n.I18n;
+import exiledlib.i18n.RealCatalogue;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.skills.SkillTypeEffect;
-import exiledsector.skills.skilleffect.DefenseSkillEffect;
+import exiledlib.skills.SkillTypeEffect;
+import exiledlib.skills.skilleffect.DefenseSkillEffect;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;

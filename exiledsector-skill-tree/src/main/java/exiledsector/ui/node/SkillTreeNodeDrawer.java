@@ -1,7 +1,7 @@
 package exiledsector.ui.node;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.Translation;
 import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
@@ -11,12 +11,12 @@ import exiledsector.skills.SkillTreeTopology;
 import exiledsector.skills.SkillType;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.items.DoctrineRewrite;
-import exiledsector.items.Item;
-import exiledsector.items.ItemStore;
-import exiledsector.ui.SkillTreePanelStyle;
+import exiledlib.items.Item;
+import exiledlib.items.ItemStore;
+import exiledlib.ui.SkillTreePanelStyle;
 import exiledsector.ui.TreeLayers;
 import exiledsector.ui.TreeViewport;
-import exiledsector.ui.util.TextLabel;
+import exiledlib.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.awt.Color;

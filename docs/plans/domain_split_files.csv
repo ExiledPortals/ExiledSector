@@ -62,8 +62,6 @@ data/lights/exiledsector_lights.csv,core
 data/skilltrees/ship_skill_tree.json,skill-tree
 data/skilltrees/skill_types.json,skill-tree
 data/strings/descriptions.csv,core
-data/strings/exiledLib/en.json,lib
-data/strings/exiledLib/zh_CN.json,lib
 data/strings/exiledSector/core/en.json,core
 data/strings/exiledSector/core/zh_CN.json,core
 data/strings/exiledSector/hullUpgrades/en.json,hull-upgrades
@@ -76,3 +74,6 @@ data/strings/tips.json,skill-tree
 data/weapons/exiledsector_stardust_mote_launcher.wpn,core
 data/weapons/proj/exiledsector_stardust_mote.proj,core
 data/weapons/weapon_data.csv,core
+exiled-lib/mod/data/config/version/version_files.csv,lib
+exiled-lib/mod/data/strings/exiledLib/en.json,lib
+exiled-lib/mod/data/strings/exiledLib/zh_CN.json,lib

@@ -1,10 +1,10 @@
 package exiledsector.tools;
 
-import exiledsector.ProjectFiles;
-import exiledsector.i18n.HeadlessGameText;
-import exiledsector.i18n.LocaleChain;
-import exiledsector.i18n.RealCatalogue;
-import exiledsector.i18n.Translation;
+import exiledlib.ProjectFiles;
+import exiledlib.i18n.HeadlessGameText;
+import exiledlib.i18n.LocaleChain;
+import exiledlib.i18n.RealCatalogue;
+import exiledlib.i18n.Translation;
 import exiledsector.skills.npc.RealSkillData;
 import org.json.JSONArray;
 import org.json.JSONObject;

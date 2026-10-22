@@ -10,7 +10,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.items.ItemDrops;
-import exiledsector.items.ItemType;
+import exiledlib.items.ItemType;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.ItemUnlock;
 import exiledsector.loot.LootModifiers;

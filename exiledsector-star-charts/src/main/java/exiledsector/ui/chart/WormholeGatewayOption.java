@@ -8,7 +8,7 @@ import com.fs.starfarer.api.campaign.listeners.IndustryOptionProvider;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.WormholeGateway;
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.Translation;
 import exiledsector.ui.ModificationBenchCargoLauncher;
 
 import java.util.List;

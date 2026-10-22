@@ -2,9 +2,9 @@ package exiledsector.console;
 
 import com.fs.starfarer.api.Global;
 import exiledsector.charts.StarCharts;
-import exiledsector.i18n.StyledText;
-import exiledsector.items.Item;
-import exiledsector.items.ItemStore;
+import exiledlib.i18n.StyledText;
+import exiledlib.items.Item;
+import exiledlib.items.ItemStore;
 import exiledsector.items.StarChart;
 import org.lazywizard.console.BaseCommand;
 import org.lazywizard.console.CommonStrings;

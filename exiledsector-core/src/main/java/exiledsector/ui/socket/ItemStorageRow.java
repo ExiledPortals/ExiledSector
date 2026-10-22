@@ -1,10 +1,10 @@
 package exiledsector.ui.socket;
 
-import exiledsector.i18n.StyledText;
-import exiledsector.items.Item;
-import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemName;
-import exiledsector.items.ItemRarity;
+import exiledlib.i18n.StyledText;
+import exiledlib.items.Item;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemName;
+import exiledlib.items.ItemRarity;
 
 import java.util.Locale;
 import java.util.function.Function;

@@ -2,9 +2,9 @@ package exiledsector.ui.decoration;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledsector.ui.SkillTreePanelStyle;
-import exiledsector.ui.util.SpriteCache;
-import exiledsector.ui.util.TexturedQuadBatch;
+import exiledlib.ui.SkillTreePanelStyle;
+import exiledlib.ui.util.SpriteCache;
+import exiledlib.ui.util.TexturedQuadBatch;
 
 import java.awt.Color;
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
 package exiledsector.ui.inspect;
 
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.Translation;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;

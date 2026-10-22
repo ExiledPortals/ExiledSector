@@ -14,11 +14,11 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.i18n.I18n;
-import exiledsector.i18n.StyledText;
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.I18n;
+import exiledlib.i18n.StyledText;
+import exiledlib.i18n.Translation;
 import exiledsector.skills.InstalledHullMods;
-import exiledsector.ui.VanillaText;
+import exiledlib.ui.VanillaText;
 import exiledsector.ui.refit.PhantomHullModRefitHider;
 
 import java.awt.Color;

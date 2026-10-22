@@ -1,7 +1,13 @@
 package exiledsector.items;
 
-import exiledsector.HostMod;
-import exiledsector.modifiers.ModifierSlot;
+import exiledlib.HostMod;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemKind;
+import exiledlib.items.ItemType;
+import exiledlib.items.ModifierScope;
+import exiledlib.items.PoolEntry;
+import exiledlib.items.UniqueSource;
+import exiledlib.modifiers.ModifierSlot;
 import org.json.JSONObject;
 
 import java.util.List;

@@ -2,11 +2,11 @@ package exiledsector.ui.chart;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.StarCharts;
-import exiledsector.i18n.I18n;
-import exiledsector.i18n.Translation;
-import exiledsector.items.Item;
-import exiledsector.items.ItemRarity;
-import exiledsector.items.ItemStore;
+import exiledlib.i18n.I18n;
+import exiledlib.i18n.Translation;
+import exiledlib.items.Item;
+import exiledlib.items.ItemRarity;
+import exiledlib.items.ItemStore;
 import exiledsector.items.StarChart;
 
 import java.util.ArrayList;

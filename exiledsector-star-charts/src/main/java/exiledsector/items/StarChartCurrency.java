@@ -1,6 +1,16 @@
 package exiledsector.items;
 
-import exiledsector.modifiers.ModifierSlot;
+import exiledlib.items.AffixLayout;
+import exiledlib.items.CraftingContext;
+import exiledlib.items.Item;
+import exiledlib.items.ItemCraftingCosts;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemRoller;
+import exiledlib.items.ItemTraits;
+import exiledlib.items.ItemType;
+import exiledlib.items.PoolEntry;
+import exiledlib.items.RolledModifier;
+import exiledlib.modifiers.ModifierSlot;
 
 import java.awt.Color;
 import java.util.ArrayList;

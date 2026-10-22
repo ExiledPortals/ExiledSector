@@ -1,5 +1,6 @@
 package exiledsector.ui;
 
+import exiledlib.ui.SmoothZoom;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

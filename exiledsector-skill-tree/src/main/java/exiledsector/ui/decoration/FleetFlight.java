@@ -1,6 +1,6 @@
 package exiledsector.ui.decoration;
 
-import exiledsector.ui.util.Fade;
+import exiledlib.ui.util.Fade;
 
 import java.util.Random;
 import java.util.function.UnaryOperator;

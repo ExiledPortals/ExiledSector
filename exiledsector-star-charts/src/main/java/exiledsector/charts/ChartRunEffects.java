@@ -2,8 +2,8 @@ package exiledsector.charts;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
-import exiledsector.items.Item;
-import exiledsector.items.ItemData;
+import exiledlib.items.Item;
+import exiledlib.items.ItemData;
 import exiledsector.items.StarChart;
 
 public final class ChartRunEffects {

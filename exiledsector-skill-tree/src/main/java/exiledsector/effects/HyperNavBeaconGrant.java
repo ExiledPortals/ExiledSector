@@ -6,18 +6,18 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.listeners.EconomyTickListener;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.Seeds;
+import exiledlib.Seeds;
 import exiledsector.compat.RandomAssortmentCompat;
-import exiledsector.i18n.I18n;
-import exiledsector.i18n.Translation;
-import exiledsector.items.Item;
-import exiledsector.items.ItemData;
-import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemDefinitions;
+import exiledlib.i18n.I18n;
+import exiledlib.i18n.Translation;
+import exiledlib.items.Item;
+import exiledlib.items.ItemData;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemDefinitions;
 import exiledsector.items.ItemUnlock;
 import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.skills.tags.SkillTags;
-import exiledsector.ui.CampaignMessages;
+import exiledlib.ui.CampaignMessages;
 import org.apache.log4j.Logger;
 
 public class HyperNavBeaconGrant implements EconomyTickListener {

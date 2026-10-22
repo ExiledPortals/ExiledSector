@@ -1,7 +1,7 @@
 package exiledsector.ui.chart;
 
 import exiledsector.charts.ChartRunActions.OpenResult;
-import exiledsector.i18n.RealCatalogue;
+import exiledlib.i18n.RealCatalogue;
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.StarChartCurrency;
 import org.junit.jupiter.params.ParameterizedTest;

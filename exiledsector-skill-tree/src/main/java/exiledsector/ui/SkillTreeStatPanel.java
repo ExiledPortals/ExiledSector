@@ -5,16 +5,17 @@ import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.Translation;
+import exiledlib.ui.SkillTreePanelStyle;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedSkillEffects;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.progression.ShipOpBudget;
-import exiledsector.skills.skilleffect.ShieldSkillEffect;
-import exiledsector.ui.util.FallbackSupport;
-import exiledsector.ui.util.HoloFrame;
-import exiledsector.ui.util.Rects;
-import exiledsector.ui.util.TextLabel;
+import exiledlib.skills.skilleffect.ShieldSkillEffect;
+import exiledlib.ui.util.FallbackSupport;
+import exiledlib.ui.util.HoloFrame;
+import exiledlib.ui.util.Rects;
+import exiledlib.ui.util.TextLabel;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
 
@@ -27,9 +28,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
-import static exiledsector.ui.SkillTreePanelStyle.FONT_LINE_HEIGHT_FACTOR;
-import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
-import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE;
+import static exiledlib.ui.SkillTreePanelStyle.FONT_LINE_HEIGHT_FACTOR;
+import static exiledlib.ui.SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
+import static exiledlib.ui.SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE;
 
 final class SkillTreeStatPanel {
 

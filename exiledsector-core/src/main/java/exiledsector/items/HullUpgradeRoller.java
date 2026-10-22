@@ -3,7 +3,7 @@ package exiledsector.items;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 
 import java.util.Random;
-import exiledsector.skills.ShipHullSizes;
+import exiledlib.skills.ShipHullSizes;
 
 public final class HullUpgradeRoller {
 

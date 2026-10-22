@@ -1,9 +1,9 @@
 package exiledsector.ui;
 
-import exiledsector.ModSettingsListener;
+import exiledlib.ModSettingsListener;
 import exiledsector.effects.ModuleShareSetting;
 import exiledsector.effects.NpcBonusScale;
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.Translation;
 import exiledsector.items.UniqueSubroutinesSetting;
 import exiledsector.skills.npc.NpcTreeConfig;
 import exiledsector.skills.npc.NpcTreeSize;

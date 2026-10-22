@@ -1,8 +1,17 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.Global;
-import exiledsector.ModCsv;
-import exiledsector.ModSettings;
+import exiledlib.ModCsv;
+import exiledlib.ModSettings;
+import exiledlib.items.ItemChances;
+import exiledlib.items.ItemData;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemDefinitions;
+import exiledlib.items.ItemKind;
+import exiledlib.items.ItemType;
+import exiledlib.items.ItemTypes;
+import exiledlib.items.UniqueSource;
+import exiledlib.items.WeightedPick;
 import exiledsector.compat.SalvageSiteCompat;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;

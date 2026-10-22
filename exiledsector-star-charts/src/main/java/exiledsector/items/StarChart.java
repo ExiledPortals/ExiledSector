@@ -2,11 +2,22 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import exiledsector.i18n.StyledText;
-import exiledsector.i18n.Translation;
-import exiledsector.modifiers.Modifier;
-import exiledsector.modifiers.ModifierEffects;
-import exiledsector.modifiers.ModifierLine;
+import exiledlib.i18n.StyledText;
+import exiledlib.i18n.Translation;
+import exiledlib.items.Item;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemModifiers;
+import exiledlib.items.ItemTooltip;
+import exiledlib.items.ItemTraits;
+import exiledlib.items.ItemType;
+import exiledlib.items.ItemTypeSupport;
+import exiledlib.items.ModifierScope;
+import exiledlib.items.RolledEffect;
+import exiledlib.items.RolledModifier;
+import exiledlib.items.UnresolvedItem;
+import exiledlib.modifiers.Modifier;
+import exiledlib.modifiers.ModifierEffects;
+import exiledlib.modifiers.ModifierLine;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -100,12 +111,12 @@ public final class StarChart extends Item {
     }
 
     @Override
-    void keepWhenUnresolved(UnresolvedItem unresolved) {
+    public void keepWhenUnresolved(UnresolvedItem unresolved) {
         unresolved.keepChart(tier(), quality());
     }
 
     @Override
-    void writeTooltipSections(TooltipMakerAPI tooltip, HullSize hullSize, boolean showRollRanges) {
+    public void writeTooltipSections(TooltipMakerAPI tooltip, HullSize hullSize, boolean showRollRanges) {
         ItemTooltip.addCentredLines(tooltip, lootTotalLines());
     }
 
@@ -128,7 +139,7 @@ public final class StarChart extends Item {
     }
 
     @Override
-    void applyTraits(ItemTraits traits) {
+    public void applyTraits(ItemTraits traits) {
         super.applyTraits(traits);
         tier = StarChartDefinitions.tierAtLeastMinimum(definitionId(), traits.tier());
         quality = clampQuality(traits.quality());
@@ -138,7 +149,7 @@ public final class StarChart extends Item {
     }
 
     @Override
-    void copyTraitsFrom(Item source) {
+    public void copyTraitsFrom(Item source) {
         if (source instanceof StarChart chart) {
             tier = chart.tier();
             quality = chart.quality();
@@ -169,7 +180,7 @@ public final class StarChart extends Item {
     }
 
     @Override
-    Modifier implicitModifier(String modifierId) {
+    public Modifier implicitModifier(String modifierId) {
         for (Modifier implicit : StarChartImplicits.forSystemType(systemType())) {
             if (implicit.id().equals(modifierId)) {
                 return implicit;
@@ -180,7 +191,7 @@ public final class StarChart extends Item {
     }
 
     @Override
-    Modifier explicitModifier(String modifierId) {
+    public Modifier explicitModifier(String modifierId) {
         Modifier poolModifier = super.explicitModifier(modifierId);
         return poolModifier != null ? poolModifier : catalogueModifier(modifierId);
     }
@@ -190,22 +201,22 @@ public final class StarChart extends Item {
     }
 
     @Override
-    StyledText unresolvedLine(ModifierEffects effects, RolledEffect effect) {
+    public StyledText unresolvedLine(ModifierEffects effects, RolledEffect effect) {
         return effect.effect(effects) == null ? null : Translation.styled("chart.item.unresolvedModifier");
     }
 
     @Override
-    ModifierLine implicitLine(String effectName) {
+    public ModifierLine implicitLine(String effectName) {
         return StarChartImplicits.line(systemType(), effectName);
     }
 
     @Override
-    List<Modifier> implicitCorruptionPool() {
+    public List<Modifier> implicitCorruptionPool() {
         return StarChartImplicits.corruptionPool();
     }
 
     @Override
-    boolean implicitCanVary(RolledModifier implicit) {
+    public boolean implicitCanVary(RolledModifier implicit) {
         if (StarChartImplicits.sharedChoice(implicit.modifierId()) != null) {
             return StarChartImplicits.sharedChoiceCanVary(implicit.modifierId());
         }
@@ -213,7 +224,7 @@ public final class StarChart extends Item {
     }
 
     @Override
-    RolledModifier rerolledImplicit(RolledModifier implicit, Random random) {
+    public RolledModifier rerolledImplicit(RolledModifier implicit, Random random) {
         if (StarChartImplicits.sharedChoice(implicit.modifierId()) != null) {
             RolledModifier rerolled = StarChartImplicits.rollSharedChoice(random);
             return rerolled == null ? implicit : rerolled;

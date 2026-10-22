@@ -1,11 +1,13 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.i18n.I18n;
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.I18n;
+import exiledlib.i18n.Translation;
+import exiledlib.items.Item;
+import exiledlib.items.ItemStore;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
-import exiledsector.ui.CampaignMessages;
+import exiledlib.ui.CampaignMessages;
 
 import java.util.ArrayList;
 import java.util.List;

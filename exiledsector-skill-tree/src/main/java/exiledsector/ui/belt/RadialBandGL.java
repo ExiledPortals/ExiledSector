@@ -2,8 +2,8 @@ package exiledsector.ui.belt;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.ui.util.GlScope;
-import exiledsector.ui.util.UnitCircle;
+import exiledlib.ui.util.GlScope;
+import exiledlib.ui.util.UnitCircle;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;

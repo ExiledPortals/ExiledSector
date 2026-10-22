@@ -1,7 +1,7 @@
 package exiledsector.skills;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
-import exiledsector.i18n.NumberText;
+import exiledlib.i18n.NumberText;
 import exiledsector.items.CargoRefund;
 
 public record SkillItemCost(String itemId, float quantity) implements CargoRefund {

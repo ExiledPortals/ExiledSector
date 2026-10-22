@@ -4,13 +4,13 @@ import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.items.Item;
+import exiledlib.items.Item;
 import exiledsector.ui.cargo.CargoIconFx;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
-import exiledsector.ui.util.GLDraw;
+import exiledlib.ui.util.GLDraw;
 import exiledsector.ui.cargo.AnimatedItemIcons;
-import exiledsector.ui.util.SpriteCache;
+import exiledlib.ui.util.SpriteCache;
 
 import java.awt.Color;
 import java.util.List;

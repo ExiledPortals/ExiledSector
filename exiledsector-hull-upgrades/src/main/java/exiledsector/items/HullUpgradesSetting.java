@@ -2,8 +2,8 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
-import exiledsector.ModSettings;
-import exiledsector.ModSettingsListener;
+import exiledlib.ModSettings;
+import exiledlib.ModSettingsListener;
 
 public final class HullUpgradesSetting {
 

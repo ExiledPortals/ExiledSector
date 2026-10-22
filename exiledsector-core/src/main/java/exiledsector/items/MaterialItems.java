@@ -4,8 +4,8 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
-import exiledsector.i18n.Translation;
-import exiledsector.ui.util.SpriteCache;
+import exiledlib.i18n.Translation;
+import exiledlib.ui.util.SpriteCache;
 
 import java.awt.Color;
 import java.util.ArrayList;

@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledsector.modifiers.ModifierSlot;
+import exiledlib.modifiers.ModifierSlot;
 
 import java.awt.Color;
 import java.util.Collection;

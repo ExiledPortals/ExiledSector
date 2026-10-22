@@ -1,5 +1,8 @@
 package exiledsector.compat;
 
+import exiledlib.compat.ApiMember;
+import exiledlib.compat.CompatTarget;
+import exiledlib.compat.OptionalApi;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 

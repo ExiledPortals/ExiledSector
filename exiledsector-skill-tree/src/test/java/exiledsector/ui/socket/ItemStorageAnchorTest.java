@@ -1,9 +1,9 @@
 package exiledsector.ui.socket;
 
-import exiledsector.items.Item;
-import exiledsector.items.ItemData;
-import exiledsector.items.ItemDefinitions;
-import exiledsector.items.ItemKind;
+import exiledlib.items.Item;
+import exiledlib.items.ItemData;
+import exiledlib.items.ItemDefinitions;
+import exiledlib.items.ItemKind;
 import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.skills.SkillTree;
 import org.json.JSONArray;

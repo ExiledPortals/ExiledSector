@@ -1,11 +1,11 @@
 package exiledsector.ui.socket;
 
-import exiledsector.ui.util.Fade;
-import exiledsector.ui.util.GLDraw;
-import exiledsector.ui.util.GlScope;
-import exiledsector.ui.util.HoloShapes;
+import exiledlib.ui.util.Fade;
+import exiledlib.ui.util.GLDraw;
+import exiledlib.ui.util.GlScope;
+import exiledlib.ui.util.HoloShapes;
 import exiledsector.ui.cargo.AnimatedItemIcons;
-import exiledsector.ui.util.SpriteCache;
+import exiledlib.ui.util.SpriteCache;
 import exiledsector.ui.cargo.CargoIconFx;
 import exiledsector.ui.cargo.CargoIconLook;
 

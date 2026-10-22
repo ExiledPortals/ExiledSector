@@ -4,9 +4,9 @@ import exiledsector.items.CraftingCurrency;
 import exiledsector.items.CraftingWard;
 import exiledsector.items.ItemCurrencies;
 import exiledsector.items.ItemCurrency;
-import exiledsector.items.Item;
-import exiledsector.items.ItemKind;
-import exiledsector.items.ItemRarity;
+import exiledlib.items.Item;
+import exiledlib.items.ItemKind;
+import exiledlib.items.ItemRarity;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.MaterialTier;
 

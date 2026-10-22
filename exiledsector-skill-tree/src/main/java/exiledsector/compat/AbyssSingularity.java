@@ -13,6 +13,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.DerelictShipEntityPlugin;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial;
+import exiledlib.compat.CompatTarget;
 import exiledsector.skills.unlock.RelockedGates;
 import exiledsector.skills.unlock.UnlockConditionType;
 import org.apache.log4j.Logger;

@@ -6,11 +6,11 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.codex.CodexDataV2;
 import com.fs.starfarer.api.impl.codex.CodexEntryPlugin;
-import exiledsector.i18n.I18n;
+import exiledlib.i18n.I18n;
 import exiledsector.skills.InstalledHullMods;
 import exiledsector.skills.PhantomHullModStatus;
-import exiledsector.items.Item;
-import exiledsector.items.ItemStore;
+import exiledlib.items.Item;
+import exiledlib.items.ItemStore;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;

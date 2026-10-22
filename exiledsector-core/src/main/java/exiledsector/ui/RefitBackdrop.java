@@ -2,8 +2,8 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.Global;
 import exiledsector.ui.refit.RefitScreenLayout;
-import exiledsector.ui.util.GLDraw;
-import exiledsector.ui.util.GlScope;
+import exiledlib.ui.util.GLDraw;
+import exiledlib.ui.util.GlScope;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;

@@ -1,19 +1,19 @@
 package exiledsector.ui;
 
-import exiledsector.ModSettingsListener;
-import exiledsector.compat.CombatGlow;
+import exiledlib.ModSettingsListener;
+import exiledlib.compat.CombatGlow;
 import exiledsector.compat.SalvageSiteCompat;
-import exiledsector.domain.Domain;
+import exiledlib.domain.Domain;
 import exiledsector.ui.cargo.ItemAnimationSetting;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.ItemDrops;
-import exiledsector.items.ItemRoller;
-import exiledsector.i18n.I18n;
-import exiledsector.i18n.LanguageSetting;
-import exiledsector.i18n.Translation;
-import exiledsector.skills.DiminishedStat;
-import exiledsector.skills.DiminishingReturns;
-import exiledsector.skills.skilleffect.MaxChainCountConfig;
+import exiledlib.items.ItemRoller;
+import exiledlib.i18n.I18n;
+import exiledlib.i18n.LanguageSetting;
+import exiledlib.i18n.Translation;
+import exiledlib.skills.DiminishedStat;
+import exiledlib.skills.DiminishingReturns;
+import exiledlib.skills.skilleffect.MaxChainCountConfig;
 import exiledsector.ui.refit.RefitButtonConfig;
 import lunalib.lunaSettings.LunaSettings.SettingsCreator;
 

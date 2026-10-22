@@ -3,6 +3,8 @@ package exiledsector.items;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.FactionSpecAPI;
+import exiledlib.items.ItemDefinitions;
+import exiledlib.items.ItemModifiers;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;

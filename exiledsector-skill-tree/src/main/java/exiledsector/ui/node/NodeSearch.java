@@ -1,15 +1,15 @@
 package exiledsector.ui.node;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.i18n.StyledText;
+import exiledlib.i18n.StyledText;
 import exiledsector.items.DoctrineOverrides;
-import exiledsector.skills.DescriptionLine;
+import exiledlib.skills.DescriptionLine;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.skills.SkillTypeEffect;
+import exiledlib.skills.SkillTypeEffect;
 
 import java.util.Collection;
 import java.util.HashMap;

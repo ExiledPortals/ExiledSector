@@ -326,7 +326,7 @@ describe('describe', () => {
 
   it('sends every saved English catalogue with a request that has none, and keeps strings a request brings', () => {
     expect(JSON.parse(describeRequestWithStrings(paths, { typeId: 'a' }))).toEqual({ typeId: 'a' });
-    writeProjectFile('data/strings/exiledLib/en.json', '{"stat.armor": "armor"}');
+    writeProjectFile('exiled-lib/mod/data/strings/exiledLib/en.json', '{"stat.armor": "armor"}');
     writeProjectFile('data/strings/exiledSector/starCharts/en.json', '{"chart.name": "chart"}');
     expect(JSON.parse(describeRequestWithStrings(paths, { typeId: 'a' }))).toEqual({
       typeId: 'a',

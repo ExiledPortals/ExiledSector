@@ -8,10 +8,10 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledsector.items.ItemChances;
-import exiledsector.items.ItemData;
+import exiledlib.items.ItemChances;
+import exiledlib.items.ItemData;
 import exiledsector.items.ItemDrops;
-import exiledsector.items.ItemType;
+import exiledlib.items.ItemType;
 import exiledsector.items.ItemUnlock;
 import exiledsector.loot.LootSources;
 

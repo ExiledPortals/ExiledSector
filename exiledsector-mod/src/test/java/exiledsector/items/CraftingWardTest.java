@@ -1,7 +1,13 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
-import exiledsector.modifiers.ModifierSlot;
+import exiledlib.items.Item;
+import exiledlib.items.ItemDefinitions;
+import exiledlib.items.ItemNames;
+import exiledlib.items.ItemStore;
+import exiledlib.items.RolledEffect;
+import exiledlib.items.RolledModifier;
+import exiledlib.modifiers.ModifierSlot;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;

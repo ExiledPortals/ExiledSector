@@ -1,6 +1,10 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
+import exiledlib.items.Item;
+import exiledlib.items.ItemDefinitions;
+import exiledlib.items.ItemRarity;
+import exiledlib.items.ItemStore;
 import exiledsector.skills.ShipTrees;
 import org.mockito.Mockito;
 import exiledsector.skills.ShipSkillData;

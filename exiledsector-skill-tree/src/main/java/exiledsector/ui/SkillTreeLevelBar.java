@@ -2,7 +2,7 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.progression.ShipLevelConfig;

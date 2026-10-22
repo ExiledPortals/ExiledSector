@@ -1,10 +1,10 @@
 package exiledsector.charts;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledsector.i18n.Message;
-import exiledsector.i18n.StyledText;
-import exiledsector.i18n.Translation;
-import exiledsector.modifiers.ModifierEffect;
+import exiledlib.i18n.Message;
+import exiledlib.i18n.StyledText;
+import exiledlib.i18n.Translation;
+import exiledlib.modifiers.ModifierEffect;
 
 public enum ChartEffect implements ModifierEffect {
 

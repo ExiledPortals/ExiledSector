@@ -1,6 +1,7 @@
 package exiledsector.skills;
 
-import exiledsector.skills.skilleffect.DefenseSkillEffect;
+import exiledlib.skills.SkillTypeEffect;
+import exiledlib.skills.skilleffect.DefenseSkillEffect;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

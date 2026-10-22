@@ -1,5 +1,7 @@
 package exiledsector.items;
 
+import exiledlib.items.ItemDefinition;
+
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.stream.Collectors;

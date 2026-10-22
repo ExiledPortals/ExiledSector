@@ -1,6 +1,13 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
+import exiledlib.items.CraftingContext;
+import exiledlib.items.Item;
+import exiledlib.items.ItemDefinitions;
+import exiledlib.items.ItemStore;
+import exiledlib.items.ItemType;
+import exiledlib.items.RolledModifier;
+import exiledlib.items.WeightedPick;
 import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

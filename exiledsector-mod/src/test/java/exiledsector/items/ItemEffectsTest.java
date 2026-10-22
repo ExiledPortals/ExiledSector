@@ -1,13 +1,20 @@
 package exiledsector.items;
 
-import exiledsector.i18n.Style;
-import exiledsector.i18n.StyledText;
+import exiledlib.i18n.Style;
+import exiledlib.i18n.StyledText;
+import exiledlib.items.Item;
+import exiledlib.items.ItemDefinitions;
+import exiledlib.items.ItemEffects;
+import exiledlib.items.ItemModifiers;
+import exiledlib.items.ItemStore;
+import exiledlib.items.ItemType;
+import exiledlib.items.RolledEffect;
 import exiledsector.items.ItemDataIntegrity.Severity;
 import exiledsector.items.ItemDataIntegrity.Violation;
-import exiledsector.modifiers.ModifierEffect;
-import exiledsector.modifiers.ModifierEffects;
-import exiledsector.modifiers.ModifierLine;
-import exiledsector.skills.skilleffect.SkillEffect;
+import exiledlib.modifiers.ModifierEffect;
+import exiledlib.modifiers.ModifierEffects;
+import exiledlib.modifiers.ModifierLine;
+import exiledlib.skills.skilleffect.SkillEffect;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.jupiter.api.AfterEach;

@@ -1,9 +1,9 @@
 package exiledsector.tools;
 
 import exiledsector.skills.SkillTier;
-import exiledsector.skills.skilleffect.SkillEffect;
-import exiledsector.skills.skilleffect.SkillEffectNames;
-import exiledsector.skills.skilleffect.StatMode;
+import exiledlib.skills.skilleffect.SkillEffect;
+import exiledlib.skills.skilleffect.SkillEffectNames;
+import exiledlib.skills.skilleffect.StatMode;
 import exiledsector.skills.radius.RadiusSize;
 import exiledsector.skills.tags.SkillTags;
 import exiledsector.skills.unlock.BlueprintCategory;
@@ -14,13 +14,13 @@ import exiledsector.charts.ChartEffect;
 import exiledsector.charts.ChartPoi;
 import exiledsector.charts.ChartTiers;
 import exiledsector.items.DoctrineBehaviour;
-import exiledsector.items.ItemKind;
-import exiledsector.items.ItemType;
+import exiledlib.items.ItemKind;
+import exiledlib.items.ItemType;
 import exiledsector.items.ItemUnlock;
-import exiledsector.items.ModifierScope;
+import exiledlib.items.ModifierScope;
 import exiledsector.items.StarChartDefinitions;
 import exiledsector.items.SubroutineKind;
-import exiledsector.items.UniqueSource;
+import exiledlib.items.UniqueSource;
 import org.json.JSONObject;
 
 import java.nio.file.Path;

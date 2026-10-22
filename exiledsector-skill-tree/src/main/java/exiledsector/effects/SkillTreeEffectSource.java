@@ -7,11 +7,11 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocatedSkillEffects;
-import exiledsector.skills.EffectContribution;
+import exiledlib.skills.EffectContribution;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillType;
-import exiledsector.skills.SkillTypeEffect;
+import exiledlib.skills.SkillTypeEffect;
 
 import java.util.ArrayList;
 import java.util.Collections;

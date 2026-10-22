@@ -1,6 +1,8 @@
 package exiledsector.items;
 
-import exiledsector.modifiers.ModifierLine;
+import exiledlib.items.ItemType;
+import exiledlib.items.ModifierScope;
+import exiledlib.modifiers.ModifierLine;
 import org.json.JSONException;
 import org.json.JSONObject;
 

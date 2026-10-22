@@ -1,8 +1,15 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.i18n.StyledText;
-import exiledsector.skills.SkillTypeEffect;
+import exiledlib.i18n.StyledText;
+import exiledlib.items.Item;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemDefinitions;
+import exiledlib.items.ItemRoller;
+import exiledlib.items.PoolEntry;
+import exiledlib.items.RolledEffect;
+import exiledlib.items.RolledModifier;
+import exiledlib.skills.SkillTypeEffect;
 import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;

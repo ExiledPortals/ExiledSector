@@ -3,7 +3,7 @@ package exiledsector.charts;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
-import exiledsector.ModCsv;
+import exiledlib.ModCsv;
 import exiledsector.compat.IndustrialEvolutionCompat;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;

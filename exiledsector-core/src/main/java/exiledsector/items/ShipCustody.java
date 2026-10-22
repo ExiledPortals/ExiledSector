@@ -1,5 +1,7 @@
 package exiledsector.items;
 
+import exiledlib.items.Item;
+import exiledlib.items.ItemStore;
 import exiledsector.skills.ShipSkillData;
 
 import java.util.List;

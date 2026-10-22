@@ -1,7 +1,7 @@
 package exiledsector.ui;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.skills.ShipHullSizes;
+import exiledlib.skills.ShipHullSizes;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.TemplateFilter;
 

@@ -1,0 +1,11 @@
+{
+    "masterVersionFile":"https://raw.githubusercontent.com/ExiledPortals/ExiledSector/main/exiled-lib/mod/ExiledLib.version",
+    "modName":"Exiled Lib",
+    "modVersion":
+    {
+        "major":0,
+        "minor":9,
+        "patch":5
+    },
+    "directDownloadURL":"https://github.com/ExiledPortals/ExiledSector/releases/latest/download/ExiledSector.zip"
+}

@@ -1,7 +1,7 @@
 package exiledsector.charts;
 
-import exiledsector.i18n.StyledText;
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.StyledText;
+import exiledlib.i18n.Translation;
 import exiledsector.items.StarChart;
 
 import java.util.ArrayList;

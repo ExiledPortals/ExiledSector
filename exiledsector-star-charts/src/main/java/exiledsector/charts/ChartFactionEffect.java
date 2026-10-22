@@ -2,9 +2,9 @@ package exiledsector.charts;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.FactionSpecAPI;
-import exiledsector.i18n.StyledText;
-import exiledsector.i18n.Translation;
-import exiledsector.modifiers.ModifierEffect;
+import exiledlib.i18n.StyledText;
+import exiledlib.i18n.Translation;
+import exiledlib.modifiers.ModifierEffect;
 
 import java.util.Locale;
 

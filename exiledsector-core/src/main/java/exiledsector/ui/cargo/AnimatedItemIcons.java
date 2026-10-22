@@ -1,7 +1,7 @@
 package exiledsector.ui.cargo;
 
-import exiledsector.ui.util.SpriteCache;
-import exiledsector.ui.util.SpriteDraw;
+import exiledlib.ui.util.SpriteCache;
+import exiledlib.ui.util.SpriteDraw;
 
 import java.awt.Color;
 

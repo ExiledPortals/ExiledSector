@@ -2,9 +2,9 @@ package exiledsector.console;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.ExiledSector;
-import exiledsector.PlayerFleet;
+import exiledlib.PlayerFleet;
 import exiledsector.effects.FighterBayOverflow;
-import exiledsector.skills.skilleffect.FleetWideEffects;
+import exiledlib.skills.skilleffect.FleetWideEffects;
 import org.lazywizard.console.Console;
 
 import java.util.ArrayList;

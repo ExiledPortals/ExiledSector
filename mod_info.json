@@ -9,9 +9,10 @@
   "dependencies": [
     {"id": "lw_lazylib", "name": "LazyLib"},
     {"id": "MagicLib", "name": "MagicLib"},
-    {"id": "lunalib", "name": "LunaLib"}
+    {"id": "lunalib", "name": "LunaLib"},
+    {"id": "exiledLib", "name": "Exiled Lib"}
   ],
-  "jars": ["jars/ExiledLib.jar", "jars/ExiledSector-Core.jar", "jars/ExiledSector-SkillTree.jar", "jars/ExiledSector-HullUpgrades.jar",
+  "jars": ["jars/ExiledSector-Core.jar", "jars/ExiledSector-SkillTree.jar", "jars/ExiledSector-HullUpgrades.jar",
     "jars/ExiledSector-StarCharts.jar", "jars/ExiledSector.jar"],
   "modPlugin": "exiledsector.ExiledSectorModPlugin"
 }

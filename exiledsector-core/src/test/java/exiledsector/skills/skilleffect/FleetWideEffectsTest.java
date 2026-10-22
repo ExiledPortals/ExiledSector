@@ -15,6 +15,8 @@ import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import com.fs.starfarer.api.fleet.RepairTrackerAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
 import com.fs.starfarer.api.impl.hullmods.PhaseField;
+import exiledlib.skills.skilleffect.FleetWideEffects;
+import exiledlib.skills.skilleffect.LogisticsSkillEffect;
 import exiledsector.effects.SkillTreeHullMod;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

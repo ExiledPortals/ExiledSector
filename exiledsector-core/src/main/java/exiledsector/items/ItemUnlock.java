@@ -5,6 +5,11 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.impl.campaign.intel.misc.GateHaulerIntel;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemTraits;
+import exiledlib.items.ItemType;
+import exiledlib.items.ItemTypeSupport;
+import exiledlib.items.ItemTypes;
 import exiledsector.compat.RandomAssortmentCompat;
 
 import java.util.function.Predicate;

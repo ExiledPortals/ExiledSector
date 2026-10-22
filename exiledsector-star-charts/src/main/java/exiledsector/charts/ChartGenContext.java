@@ -1,13 +1,13 @@
 package exiledsector.charts;
 
-import exiledsector.items.Item;
-import exiledsector.items.ItemChances;
-import exiledsector.items.ItemKind;
-import exiledsector.items.SlottedRoll;
+import exiledlib.items.Item;
+import exiledlib.items.ItemChances;
+import exiledlib.items.ItemKind;
+import exiledlib.items.SlottedRoll;
 import exiledsector.items.StarChart;
-import exiledsector.modifiers.ModifierEffect;
-import exiledsector.modifiers.ModifierEffects;
-import exiledsector.modifiers.ScaleContext;
+import exiledlib.modifiers.ModifierEffect;
+import exiledlib.modifiers.ModifierEffects;
+import exiledlib.modifiers.ScaleContext;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;

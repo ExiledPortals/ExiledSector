@@ -8,11 +8,11 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.i18n.StyledText;
-import exiledsector.i18n.Translation;
-import exiledsector.items.Item;
-import exiledsector.items.ItemRarity;
-import exiledsector.ui.VanillaText;
+import exiledlib.i18n.StyledText;
+import exiledlib.i18n.Translation;
+import exiledlib.items.Item;
+import exiledlib.items.ItemRarity;
+import exiledlib.ui.VanillaText;
 import exiledsector.ui.chart.StarChartBrowser;
 
 import java.awt.Color;

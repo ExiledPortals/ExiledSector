@@ -5,7 +5,7 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.Translation;
 
 import java.util.HashMap;
 import java.util.List;

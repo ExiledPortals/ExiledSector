@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledlib.items.Item;
 import exiledsector.skills.radius.RadiusSize;
 
 public final class SubroutineRadius {

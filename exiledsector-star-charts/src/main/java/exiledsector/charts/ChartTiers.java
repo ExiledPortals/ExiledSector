@@ -1,7 +1,7 @@
 package exiledsector.charts;
 
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import exiledsector.ModCsv;
+import exiledlib.ModCsv;
 import exiledsector.loot.FleetLevelRange;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;

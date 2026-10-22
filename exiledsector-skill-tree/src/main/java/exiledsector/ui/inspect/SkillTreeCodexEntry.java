@@ -3,10 +3,10 @@ package exiledsector.ui.inspect;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.i18n.I18n;
-import exiledsector.i18n.Translation;
+import exiledlib.i18n.I18n;
+import exiledlib.i18n.Translation;
 import exiledsector.skills.progression.ShipLevelConfig;
-import exiledsector.ui.VanillaText;
+import exiledlib.ui.VanillaText;
 
 public class SkillTreeCodexEntry extends BoxedCodexEntry {
 

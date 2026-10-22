@@ -6,7 +6,7 @@ import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import exiledsector.ProjectFiles;
+import exiledlib.ProjectFiles;
 import exiledsector.compat.NightcrossCompat;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;

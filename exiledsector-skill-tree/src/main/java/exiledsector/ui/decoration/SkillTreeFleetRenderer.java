@@ -5,12 +5,12 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.PlayerFleet;
+import exiledlib.PlayerFleet;
 import exiledsector.skills.SkillTree;
 import exiledsector.ui.TreeViewport;
-import exiledsector.ui.util.Fade;
-import exiledsector.ui.util.SpriteCache;
-import exiledsector.ui.util.TexturedQuadBatch;
+import exiledlib.ui.util.Fade;
+import exiledlib.ui.util.SpriteCache;
+import exiledlib.ui.util.TexturedQuadBatch;
 
 import java.util.ArrayList;
 import java.util.Comparator;

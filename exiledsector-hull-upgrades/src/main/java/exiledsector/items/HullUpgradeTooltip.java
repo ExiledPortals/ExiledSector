@@ -2,10 +2,12 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.i18n.StyledText;
-import exiledsector.i18n.Translation;
-import exiledsector.skills.ShipHullSizes;
-import exiledsector.ui.VanillaText;
+import exiledlib.i18n.StyledText;
+import exiledlib.i18n.Translation;
+import exiledlib.items.ItemRarity;
+import exiledlib.items.ItemTooltip;
+import exiledlib.skills.ShipHullSizes;
+import exiledlib.ui.VanillaText;
 
 import java.util.List;
 import java.util.function.Supplier;

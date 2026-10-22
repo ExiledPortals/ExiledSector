@@ -2,7 +2,7 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import exiledsector.skills.EffectContribution;
+import exiledlib.skills.EffectContribution;
 
 import java.util.List;
 

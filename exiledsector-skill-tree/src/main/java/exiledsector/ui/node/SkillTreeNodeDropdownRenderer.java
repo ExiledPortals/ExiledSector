@@ -3,11 +3,11 @@ package exiledsector.ui.node;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.ui.SkillTreePanelStyle;
+import exiledlib.ui.SkillTreePanelStyle;
 import exiledsector.ui.TreeViewport;
-import exiledsector.ui.util.GLDraw;
-import exiledsector.ui.util.Rects;
-import exiledsector.ui.util.TextLabel;
+import exiledlib.ui.util.GLDraw;
+import exiledlib.ui.util.Rects;
+import exiledlib.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.util.ArrayList;
@@ -16,10 +16,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import static exiledsector.ui.SkillTreePanelStyle.FONT_LINE_HEIGHT_FACTOR;
-import static exiledsector.ui.SkillTreePanelStyle.GLOW_COLOR;
-import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_COLOR;
-import static exiledsector.ui.SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
+import static exiledlib.ui.SkillTreePanelStyle.FONT_LINE_HEIGHT_FACTOR;
+import static exiledlib.ui.SkillTreePanelStyle.GLOW_COLOR;
+import static exiledlib.ui.SkillTreePanelStyle.TOOLTIP_BODY_COLOR;
+import static exiledlib.ui.SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
 
 final class SkillTreeNodeDropdownRenderer {
 

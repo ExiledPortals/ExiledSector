@@ -1,6 +1,6 @@
 package exiledsector.ui.cargo;
 
-import exiledsector.ui.util.SpriteCache;
+import exiledlib.ui.util.SpriteCache;
 
 import java.util.List;
 

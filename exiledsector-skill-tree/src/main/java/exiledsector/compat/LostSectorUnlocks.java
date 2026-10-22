@@ -3,6 +3,7 @@ package exiledsector.compat;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
+import exiledlib.compat.CompatTarget;
 import org.apache.log4j.Logger;
 
 public final class LostSectorUnlocks {

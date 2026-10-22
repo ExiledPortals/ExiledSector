@@ -1,8 +1,20 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
-import exiledsector.i18n.Style;
-import exiledsector.modifiers.ModifierSlot;
+import exiledlib.i18n.Style;
+import exiledlib.items.Item;
+import exiledlib.items.ItemCraftingCosts;
+import exiledlib.items.ItemDefinition;
+import exiledlib.items.ItemDefinitions;
+import exiledlib.items.ItemImplicits;
+import exiledlib.items.ItemKind;
+import exiledlib.items.ItemNames;
+import exiledlib.items.ItemRarity;
+import exiledlib.items.ItemStore;
+import exiledlib.items.PoolEntry;
+import exiledlib.items.RolledEffect;
+import exiledlib.items.RolledModifier;
+import exiledlib.modifiers.ModifierSlot;
 import org.mockito.Mockito;
 import org.json.JSONArray;
 import org.json.JSONObject;

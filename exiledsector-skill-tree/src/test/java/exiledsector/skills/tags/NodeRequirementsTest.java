@@ -3,8 +3,8 @@ package exiledsector.skills.tags;
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
-import exiledsector.skills.ShipFacts;
-import exiledsector.skills.ShipHullSizes;
+import exiledlib.skills.ShipFacts;
+import exiledlib.skills.ShipHullSizes;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
