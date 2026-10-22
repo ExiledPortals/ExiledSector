@@ -26,8 +26,8 @@ public final class ChartDrops {
 
     static final String PATH = "data/config/exiledSector/chart_drops.csv";
     static final String SOURCE_COLUMN = "source";
-    static final int MAX_CHARTS_PER_DROP = 4;
     static final int NO_TIER = 0;
+    static final float BATTLE_DEPLOYMENT_POINTS_PER_CHANCE = 100f;
     private static final Logger LOG = Logger.getLogger(ChartDrops.class);
     private static volatile Map<Source, Rule> rules = Map.of();
 
@@ -179,7 +179,7 @@ public final class ChartDrops {
         if (count > 0 && random.nextFloat() < rule.extraChance() * chanceMult) {
             count++;
         }
-        return Math.min(MAX_CHARTS_PER_DROP, count);
+        return count;
     }
 
     public static int tierForStrength(Source source, float strength) {
@@ -199,12 +199,13 @@ public final class ChartDrops {
         return run == null ? Loot.NONE : roll(Source.RUN_REWARD, run.tier(), rewardMult, random, uniquesFor(sector));
     }
 
-    public static Loot forBattle(SectorAPI sector, LocationAPI battleLocation, float defeatedDeploymentPoints, int highestDefeatedLevel,
+    public static Loot forBattle(SectorAPI sector, LocationAPI battleLocation, float difficultyScaledDeploymentPoints, int highestDefeatedLevel,
                                  Random random) {
         if (isSystem(battleLocation)) {
             return Loot.NONE;
         }
-        return roll(Source.BATTLE, battleTier(defeatedDeploymentPoints, highestDefeatedLevel), 1f, random, uniquesFor(sector));
+        return roll(Source.BATTLE, battleTier(difficultyScaledDeploymentPoints, highestDefeatedLevel),
+                difficultyScaledDeploymentPoints / BATTLE_DEPLOYMENT_POINTS_PER_CHANCE, random, uniquesFor(sector));
     }
 
     static int battleTier(float defeatedDeploymentPoints, int highestDefeatedLevel) {

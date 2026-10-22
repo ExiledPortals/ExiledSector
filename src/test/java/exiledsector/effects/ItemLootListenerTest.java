@@ -316,7 +316,7 @@ class ItemLootListenerTest {
         StarChartFixtures.registerShipped();
         ChartDrops.register(new JSONArray()
                 .put(new JSONObject().put("source", "chart_fleet").put("chance", "1"))
-                .put(new JSONObject().put("source", "battle").put("chance", "1").put("min_strength", "150").put("strength_per_tier", "100")
+                .put(new JSONObject().put("source", "battle").put("chance", "0.25").put("min_strength", "150").put("strength_per_tier", "100")
                         .put("max_tier", "6")));
         try {
             SectorAPI sector = Global.getSector();
@@ -357,7 +357,7 @@ class ItemLootListenerTest {
             assertEquals(List.of(), starCharts(weakLoot));
 
             BattleAPI strongBattle = mock(BattleAPI.class);
-            chartListener.holdLoot(PlayerEngagement.of(engagement(strongBattle, List.of(warship("c", 200f), warship("d", 160f)), List.of()), 1f));
+            chartListener.holdLoot(PlayerEngagement.of(engagement(strongBattle, List.of(warship("c", 200f), warship("d", 200f)), List.of()), 1f));
             chartListener.reportBattleFinished(null, strongBattle);
             List<SpecialItemData> strongCharts = starCharts(playerCargo);
             assertEquals(1, strongCharts.size());

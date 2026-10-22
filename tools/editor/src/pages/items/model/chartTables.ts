@@ -79,7 +79,6 @@ export const CHART_LOOT_COLUMNS =['id', 'drop_type', 'scope', 'group', 'mode', '
 export const CHART_LOOT_MODES = ['random', 'value'];
 export const ALWAYS_BLOCKED_ABILITY = 'fracture_jump';
 const DEFAULT_MAX_LEVEL = 50;
-const MAX_CHARTS_PER_DROP = 4;
 
 type ColumnDetails = Omit<ChartColumn, 'column'>;
 
@@ -470,7 +469,7 @@ export const CHART_DROP_SPEC: ChartTableSpec = {
   noun: 'chart drop',
   keyColumn: 'source',
   description:
-    'One row per drop source. Chance is the expected number of charts (1 = one chart, 0.04 = a 4% chance); extra chance adds a second chart; tier-up is each chart\'s chance to be one tier higher; the currency chance gives a chart-only cipher and only works inside chart systems. Outside chart systems, strength is enemy deployment points for battles and player level for salvage and tech mining: the drop needs at least min strength and gains a tier per strength-per-tier above it. A missing source never drops charts.',
+    'One row per drop source. Chance is the expected number of charts (1 = one chart, 0.04 = a 4% chance); extra chance adds a second chart; tier-up is each chart\'s chance to be one tier higher; the currency chance gives a chart-only cipher and only works inside chart systems. Outside chart systems, strength is difficulty-scaled enemy deployment points for battles and player level for salvage and tech mining: the drop needs at least min strength and gains a tier per strength-per-tier above it. Battle chance is per 100 deployment points and its tier comes from the strongest defeated NPC level. A missing source never drops charts.',
   columns: columnsOf(CHART_DROP_COLUMNS, {
     source: { label: 'Source', kind: 'choice', choices: (vocabulary) => vocabulary.chartDropSources.map((source) => source.id) },
     chance: { label: 'Chance %', kind: 'fraction' },
@@ -504,9 +503,6 @@ export const CHART_DROP_SPEC: ChartTableSpec = {
       const source = dropSource(row, vocabulary);
       warnings.push(...roundedIntegerWarnings(CHART_DROP_SPEC.columns, row, label));
       warnings.push(...negativeWarnings(row, label, ['chance', 'extra_chance', 'tier_up_chance', 'currency_chance', 'min_strength', 'strength_per_tier']));
-      if (numberValue(row, 'chance', 0) > MAX_CHARTS_PER_DROP) {
-        warnings.push(`${label}: at most ${MAX_CHARTS_PER_DROP} charts drop at once, so a chance above ${MAX_CHARTS_PER_DROP * 100}% is capped`);
-      }
       if (numberValue(row, 'tier_up_chance', 0) > 1) {
         warnings.push(`${label}: tier_up_chance above 100% counts as 100%`);
       }
