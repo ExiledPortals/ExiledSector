@@ -1,5 +1,6 @@
 package exiledsector.compat;
 
+import exiledsector.ExiledSectorModPlugin;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
@@ -129,15 +130,15 @@ class CompatChecksTest {
     @Test
     void everyCompatTargetNamesItsModAndTheVersionsItWasTestedAgainst() {
         List<String> names = new ArrayList<>();
-        for (CompatTarget target : CompatChecks.targets()) {
+        for (CompatTarget target : ExiledSectorModPlugin.compatTargets()) {
             names.add(target.displayName());
             assertFalse(target.modIds().isEmpty(), target.displayName());
             assertFalse(target.testedVersions().isEmpty(), target.displayName());
         }
-        assertEquals(List.of("Lost Sector", "Second-in-Command", "MagicLib", "Exotica Technologies",
-                "Random Assortment of Things areas", "Nightcross Armory area", "GraphicsLib", "Ashes of the Domain: Vaults of Knowledge", "Navarchy of Tania area",
-                "Nexerelin"), names.subList(0, 10));
-        assertEquals(10 + SalvageSiteCompat.SOURCES.size(), names.size());
+        int salvageSites = SalvageSiteCompat.SOURCES.size();
+        assertEquals(List.of("Second-in-Command", "Random Assortment of Things areas", "GraphicsLib"), names.subList(0, 3));
+        assertEquals(List.of("Lost Sector", "MagicLib", "Exotica Technologies", "Nightcross Armory area", "Navarchy of Tania area", "Nexerelin",
+                "Ashes of the Domain: Vaults of Knowledge"), names.subList(3 + salvageSites, names.size()));
         assertTrue(names.contains("Random Assortment of Things salvage sites"));
     }
 

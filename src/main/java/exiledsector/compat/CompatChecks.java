@@ -26,20 +26,18 @@ public final class CompatChecks {
     private CompatChecks() {
     }
 
-    public static List<CompatTarget> targets() {
-        List<CompatTarget> targets = new ArrayList<>(List.of(LostSectorCompat.TARGET, SecondInCommandCompat.TARGET, MagicLibCompat.TARGET, ExoticaCompat.TARGET,
-                RandomAssortmentCompat.TARGET, NightcrossCompat.TARGET, GraphicsLibCompat.TARGET, VaultsOfKnowledgeCompat.TARGET,
-                TaniaCompat.TARGET, NexerelinCompat.TARGET));
+    public static List<CompatTarget> coreTargets() {
+        List<CompatTarget> targets = new ArrayList<>(List.of(SecondInCommandCompat.TARGET, RandomAssortmentCompat.TARGET, GraphicsLibCompat.TARGET));
         targets.addAll(SalvageSiteCompat.targets());
         return targets;
     }
 
-    public static void logAtStartup() {
+    public static void logAtStartup(List<CompatTarget> targets) {
         SettingsAPI settings = Global.getSettings();
         ModManagerAPI modManager = settings == null ? null : settings.getModManager();
         if (modManager == null) return;
 
-        for (CompatTarget target : targets()) {
+        for (CompatTarget target : targets) {
             check(target, modId -> modManager.isModEnabled(modId) ? versionOf(modManager, modId) : null).forEach(CompatChecks::log);
         }
         checkEngine(ENGINE_MEMBERS, settings.getScriptClassLoader()).forEach(CompatChecks::log);

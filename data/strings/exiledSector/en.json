@@ -983,6 +983,7 @@
     "settings.combatEffects.graphicsLib.name": "GraphicsLib Lighting",
     "settings.combatEffects.graphicsLib.tooltip": "When GraphicsLib is installed with its lights or distortion on, Exiled Sector's combat effects add their own lights and shockwaves. Turn off to keep GraphicsLib's effects but not ours. Corrosion Beam motes keep their glow either way, because GraphicsLib draws it from its own light data. Takes effect from the next battle.",
     "settings.socketStorage.header": "Hull Items",
+    "settings.hullUpgrades.header": "Hull Upgrades",
     "settings.socketStorage.hullUpgrades.name": "Hull Upgrades",
     "settings.socketStorage.hullUpgrades.tooltip": "When off, Hull Upgrades and every hull item except Subroutines stop dropping from battles, salvage and tech mining, and the refit screen's Hull Items button is hidden. Subroutines and the skill tree work as normal. Sections your ships already have unlocked keep working, and switching this back on lets you manage them again.",
     "settings.socketStorage.hullUpgradesLevel.name": "Hull Upgrades From Player Level",

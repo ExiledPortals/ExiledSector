@@ -56,6 +56,6 @@ class HullUpgradesSettingTest {
         configure(0, 99);
 
         assertEquals(HullUpgradesSetting.MIN_UNLOCK_LEVEL, HullUpgradesSetting.unlockLevel());
-        assertEquals(HullUpgradesSetting.MAX_UNLOCK_LEVEL, UniqueSubroutinesSetting.unlockLevel());
+        assertEquals(UniqueSubroutinesSetting.MAX_UNLOCK_LEVEL, UniqueSubroutinesSetting.unlockLevel());
     }
 }

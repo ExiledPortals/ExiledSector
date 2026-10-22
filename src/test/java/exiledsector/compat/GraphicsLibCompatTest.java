@@ -1,5 +1,6 @@
 package exiledsector.compat;
 
+import exiledsector.ExiledSectorModPlugin;
 import com.fs.starfarer.api.GameState;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModManagerAPI;
@@ -57,7 +58,7 @@ class GraphicsLibCompatTest {
 
     @Test
     void graphicsLibIsCheckedAtStartupButNeverRequired() throws IOException {
-        assertTrue(CompatChecks.targets().contains(GraphicsLibCompat.TARGET));
+        assertTrue(ExiledSectorModPlugin.compatTargets().contains(GraphicsLibCompat.TARGET));
         assertFalse(Files.readString(Path.of("mod_info.json")).contains(GraphicsLibCompat.MOD_ID));
         assertTrue(Files.exists(Path.of(GraphicsLibCompat.LIGHT_DATA_PATH)));
     }

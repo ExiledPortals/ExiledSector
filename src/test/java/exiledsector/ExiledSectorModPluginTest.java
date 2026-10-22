@@ -3,6 +3,7 @@ package exiledsector;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
@@ -22,6 +23,7 @@ import exiledsector.skills.npc.NpcFocus;
 import exiledsector.skills.npc.NpcLevelCaps;
 import exiledsector.skills.npc.NpcLevelCategory;
 import exiledsector.skills.skilleffect.FleetCrewLedger;
+import exiledsector.skills.unlock.RemnantEncounter;
 import exiledsector.items.SocketLossListener;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemKind;
@@ -319,6 +321,27 @@ class ExiledSectorModPluginTest {
 
         verify(sector).addTransientListener(any(PlayerEngagementPipeline.class));
         verify(sector, never()).addTransientListener(any(SocketLossListener.class));
+    }
+
+    @Test
+    void onApplicationLoadLocalisesTheStarChartCiphersOnceTheyAreRegistered() throws Exception {
+        SpecialItemSpecAPI cipherSpec = mock(SpecialItemSpecAPI.class);
+        when(settings.getSpecialItemSpec(StarChartCurrency.values()[0].itemId())).thenReturn(cipherSpec);
+
+        new ExiledSectorModPlugin().onApplicationLoad();
+
+        verify(cipherSpec).setName(any());
+        verify(cipherSpec).setDesc(any());
+    }
+
+    @Test
+    void onGameLoadAddsTheTreesBattleListenersAfterTheEngagementPipelineSoUnlocksLandAfterXp() {
+        new ExiledSectorModPlugin().onGameLoad(false);
+
+        InOrder order = inOrder(sector);
+        order.verify(sector).addTransientListener(any(NpcFleetDialogListener.class));
+        order.verify(sector).addTransientListener(any(PlayerEngagementPipeline.class));
+        order.verify(sector).addTransientListener(any(RemnantEncounter.BattleListener.class));
     }
 
     @Test

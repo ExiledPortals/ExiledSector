@@ -3,173 +3,97 @@ package exiledsector;
 import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
-import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
-import com.fs.starfarer.api.loading.HullModSpecAPI;
-import com.fs.starfarer.api.loading.IndustrySpecAPI;
+import com.fs.starfarer.api.campaign.SectorAPI;
 import com.thoughtworks.xstream.XStream;
-import exiledsector.charts.ChartSaveAliases;
-import exiledsector.charts.StarCharts;
-import exiledsector.charts.WormholeGateway;
-import exiledsector.compat.AbyssSingularity;
+import exiledsector.charts.StarChartsDomain;
 import exiledsector.compat.CompatChecks;
+import exiledsector.compat.CompatTarget;
 import exiledsector.compat.GraphicsLibCompat;
-import exiledsector.compat.NightcrossCompat;
-import exiledsector.compat.NightcrossUnlocks;
-import exiledsector.compat.RandomAssortmentCompat;
-import exiledsector.effects.NpcBonusScale;
-import exiledsector.effects.NpcFleetDialogListener;
-import exiledsector.effects.NpcFleetInflationListener;
-import exiledsector.effects.NpcFleetSweepScript;
-import exiledsector.effects.OpReserveHullMods;
-import exiledsector.effects.PhantomConflictWatch;
-import exiledsector.effects.PhantomHullMods;
-import exiledsector.effects.PlayerEngagementPipeline;
-import exiledsector.effects.PlayerTreePower;
-import exiledsector.effects.ResolvedTree;
-import exiledsector.effects.SkillConflictWarningHullMod;
-import exiledsector.effects.SkillTreeHullMod;
-import exiledsector.effects.SkillTreeInstaller;
-import exiledsector.effects.MarketItemStock;
+import exiledsector.domain.Domain;
 import exiledsector.effects.ItemLootListener;
 import exiledsector.effects.ItemSalvageListener;
+import exiledsector.effects.MarketItemStock;
+import exiledsector.effects.PlayerEngagementPipeline;
+import exiledsector.effects.ResolvedTree;
+import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.effects.TechMiningItemListener;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.LanguageSetting;
 import exiledsector.i18n.Languages;
-import exiledsector.i18n.Translation;
-import exiledsector.persistence.RetiredReserveIds;
+import exiledsector.i18n.SpecLocalisation;
+import exiledsector.items.BattleItemDrops;
+import exiledsector.items.HullUpgradesDomain;
+import exiledsector.items.ItemCraftingCosts;
+import exiledsector.items.ItemDataIntegrity;
+import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ItemDrops;
+import exiledsector.items.ItemIdAliases;
+import exiledsector.items.ItemImplicits;
+import exiledsector.items.ItemModifiers;
+import exiledsector.items.ItemNames;
+import exiledsector.items.ItemSaveAliases;
+import exiledsector.items.ItemStore;
+import exiledsector.items.MaterialItems;
+import exiledsector.items.MaterialMigration;
+import exiledsector.items.SocketCustody;
+import exiledsector.items.SocketLossListener;
+import exiledsector.items.UniqueSourceCheck;
 import exiledsector.persistence.ShipSkillDataManager;
-import exiledsector.persistence.SkillTreeTemplateStore;
-import exiledsector.skills.ShipSections;
-import exiledsector.skills.LearnedPhantomConflicts;
-import exiledsector.skills.NodeReplacements;
 import exiledsector.skills.ShipSkillData;
-import exiledsector.skills.SkillDataResolver;
-import exiledsector.skills.SkillTree;
-import exiledsector.skills.SkillType;
-import exiledsector.skills.npc.NpcFactionVolumes;
-import exiledsector.skills.npc.NpcFocus;
-import exiledsector.skills.npc.NpcLevelCaps;
-import exiledsector.skills.radius.NodeRadii;
+import exiledsector.skills.SkillTreeDomain;
 import exiledsector.skills.skilleffect.CsvIdList;
 import exiledsector.skills.skilleffect.EffectAliases;
 import exiledsector.skills.skilleffect.FleetCrewLedger;
 import exiledsector.skills.skilleffect.FleetWideEffects;
-import exiledsector.skills.tags.AreaToggles;
-import exiledsector.skills.unlock.NodeGates;
-import exiledsector.skills.unlock.RelockedGates;
-import exiledsector.skills.unlock.RemnantEncounter;
-import exiledsector.items.BattleItemDrops;
-import exiledsector.items.ItemCraftingCosts;
-import exiledsector.items.MarketHullItems;
-import exiledsector.items.ItemImplicits;
-import exiledsector.items.SubroutineImplicits;
-import exiledsector.items.ItemDataIntegrity;
-import exiledsector.items.ItemModifiers;
-import exiledsector.items.ItemIdAliases;
-import exiledsector.items.ItemDefinitions;
-import exiledsector.items.MaterialItems;
-import exiledsector.items.DeletedSubroutines;
-import exiledsector.items.DoctrineArchives;
-import exiledsector.items.DoctrineOverrides;
-import exiledsector.items.MaterialMigration;
-import exiledsector.items.ItemNames;
-import exiledsector.items.ModspecCaches;
-import exiledsector.items.NodeGrantLinks;
-import exiledsector.items.NodeGrantStatus;
-import exiledsector.items.NpcItems;
-import exiledsector.items.ItemDrops;
-import exiledsector.items.SocketCustody;
-import exiledsector.items.SocketLossListener;
-import exiledsector.items.ItemSaveAliases;
-import exiledsector.items.ItemStore;
-import exiledsector.items.SocketTypeMigration;
-import exiledsector.items.WormholeAnchorLinks;
-import exiledsector.items.WormholeAnchorMigration;
-import exiledsector.effects.HyperNavBeaconGrant;
-import exiledsector.items.StarChartCurrency;
-import exiledsector.items.StarChartItems;
-import exiledsector.items.UniqueSourceCheck;
-import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.ui.ExiledSectorSettings;
-import exiledsector.ui.HullUpgradesRefitButton;
 import exiledsector.ui.ModificationBenchRefitButton;
-import exiledsector.ui.SkillTreeRefitButton;
-import exiledsector.ui.TreeCameraMemory;
 import exiledsector.ui.cargo.CargoCraftingTabListener;
 import exiledsector.ui.cargo.LootAlertListener;
-import exiledsector.ui.chart.WormholeGatewayOption;
-import exiledsector.ui.inspect.NpcTreeInspectInput;
-import exiledsector.ui.inspect.SkillTreeCodexListener;
-import exiledsector.ui.inspect.ItemCodex;
-import exiledsector.ui.refit.PhantomHullModRefitHider;
 import exiledsector.ui.util.TexturePreloader;
 
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
-import java.util.function.Predicate;
 
 public class ExiledSectorModPlugin extends BaseModPlugin {
 
     public static final String LOG_TAG = "ExiledSector";
     public static final String MOD_ID = "exiledSector";
     static final String SHIP_SKILL_DATA_ALIAS = "exiledSector.ShipSkillData";
-    public static final List<String> LOCALISED_HULLMODS = List.of(SkillTreeHullMod.ID, SkillConflictWarningHullMod.ID);
+    public static final List<String> LOCALISED_HULLMODS = List.of(SkillTreeHullMod.ID);
+    public static final List<Domain> DOMAINS = List.of(new SkillTreeDomain(), new HullUpgradesDomain(), new StarChartsDomain());
 
     @Override
     public void onApplicationLoad() throws Exception {
         loadLanguage();
         Global.getLogger(ExiledSectorModPlugin.class).info(LOG_TAG + " loaded");
-        StarChartCurrency.registerAll();
-        localiseHullModText();
-        SkillTreeRefitButton.addButton();
-        HullUpgradesRefitButton.addButton();
+        localiseGameText();
+        DOMAINS.forEach(Domain::onApplicationLoad);
         ModificationBenchRefitButton.addButton();
-        ExiledSectorSettings.register();
+        ExiledSectorSettings.register(DOMAINS);
         EffectAliases.load();
-        NodeRadii.load();
-        SkillTree.load();
-        SkillTree.applyDisabledRegions(AreaToggles.disabledRegions());
-        PhantomHullMods.install(phantomHullModIds());
-        LearnedPhantomConflicts.load();
         CsvIdList.loadAll();
-        StarCharts.loadData();
-        NpcFactionVolumes.load();
-        NpcFocus.load();
-        NpcLevelCaps.load();
+        DOMAINS.forEach(Domain::loadData);
         ItemIdAliases.load();
         ItemModifiers.load();
         ItemDefinitions.load();
         ItemImplicits.load();
-        SubroutineImplicits.load();
-        StarChartItems.load();
-        WormholeAnchorDefinitions.load();
-        WormholeAnchorLinks.install();
-        DoctrineArchives.load();
-        ModspecCaches.load();
-        NodeGrantLinks.install();
+        DOMAINS.forEach(Domain::loadItems);
         ItemDataIntegrity.logLoaded();
         ItemCraftingCosts.load();
         ItemNames.load();
-        NodeReplacements.load();
-        NodeGates.load();
         ItemDrops.load();
         BattleItemDrops.load();
-        MarketHullItems.load();
         UniqueSourceCheck.logUnreachableSources();
-        CompatChecks.logAtStartup();
+        CompatChecks.logAtStartup(compatTargets());
         GraphicsLibCompat.loadLightData();
         TexturePreloader.preloadAll(MOD_ID);
     }
 
-    private static Set<String> phantomHullModIds() {
-        Set<String> ids = new LinkedHashSet<>();
-        for (SkillType type : SkillTree.getAllTypes().values()) {
-            ids.addAll(type.getPhantomHullModIds());
-        }
-        return ids;
+    public static List<CompatTarget> compatTargets() {
+        List<CompatTarget> targets = new ArrayList<>(CompatChecks.coreTargets());
+        DOMAINS.forEach(domain -> targets.addAll(domain.compatTargets()));
+        return targets;
     }
 
     private static void loadLanguage() {
@@ -183,134 +107,50 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         }
     }
 
-    private static void localiseHullModText() {
+    private static void localiseGameText() {
         I18n.forGameText(() -> {
-            LOCALISED_HULLMODS.forEach(ExiledSectorModPlugin::localise);
-            MaterialItems.ids().forEach(ExiledSectorModPlugin::localiseMaterial);
-            localiseIndustry(WormholeGateway.ID);
+            LOCALISED_HULLMODS.forEach(SpecLocalisation::hullMod);
+            MaterialItems.ids().forEach(MaterialItems::localise);
         });
-    }
-
-    private static void localiseIndustry(String industryId) {
-        IndustrySpecAPI industrySpec = Global.getSettings().getIndustrySpec(industryId);
-        if (industrySpec != null) {
-            industrySpec.setName(Translation.data("industry." + industryId + ".name", industrySpec.getName()));
-            industrySpec.setDesc(Translation.data("industry." + industryId + ".description", industrySpec.getDesc()));
-        }
-    }
-
-    private static void localiseMaterial(String itemId) {
-        SpecialItemSpecAPI materialSpec = MaterialItems.spec(itemId);
-        if (materialSpec != null) {
-            materialSpec.setName(Translation.data("material." + itemId + ".name", materialSpec.getName()));
-            materialSpec.setDesc(Translation.data("material." + itemId + ".description", materialSpec.getDesc()));
-        }
-    }
-
-    private static void localise(String hullModId) {
-        HullModSpecAPI hullModSpec = Global.getSettings().getHullModSpec(hullModId);
-        if (hullModSpec == null) {
-            return;
-        }
-        hullModSpec.setDisplayName(Translation.data("hullmod." + hullModId + ".name", hullModSpec.getDisplayName()));
-        hullModSpec.setDescriptionFormat(Translation.data("hullmod." + hullModId + ".description", hullModSpec.getDescriptionFormat()));
-    }
-
-    private static void forgetUnknownNodes() {
-        if (!SkillTree.isLoadedCompletely()) {
-            Global.getLogger(ExiledSectorModPlugin.class).warn(LOG_TAG + ": the skill tree did not load completely, so saved allocations were left as they are.");
-            return;
-        }
-        ShipSkillDataManager.replaceRemovedNodes(SkillTree.getDeclaredNodes(), NodeReplacements.all());
-        ShipSkillDataManager.forgetUnknownNodes(SkillTree.getAllNodes(), SkillTree.getDeclaredNodes(), SkillTree.getAllTypes(),
-                new OwnedShips(), charged -> charged.refundTo(PlayerFleet.cargoOrNull()));
-    }
-
-    private static final class OwnedShips implements Predicate<String> {
-
-        private Set<String> ownedShipIds;
-
-        @Override
-        public boolean test(String shipId) {
-            if (ownedShipIds == null) {
-                ownedShipIds = SocketCustody.ownedShipIds();
-            }
-            return ownedShipIds.contains(shipId);
-        }
     }
 
     @Override
     public void onAboutToLinkCodexEntries() {
-        ItemCodex.addEntries();
+        DOMAINS.forEach(Domain::addCodexEntries);
     }
 
     @Override
     public void configureXStream(XStream xStream) {
         ItemSaveAliases.register(xStream);
-        RetiredReserveIds.register(xStream);
-        ChartSaveAliases.register(xStream);
+        DOMAINS.forEach(domain -> domain.configureXStream(xStream));
         xStream.alias(SHIP_SKILL_DATA_ALIAS, ShipSkillData.class);
     }
 
     @Override
     public void onGameLoad(boolean newGame) {
-        SkillTree.applyDisabledRegions(AreaToggles.disabledRegions());
-        SkillDataResolver.clearCache();
+        SectorAPI sector = Global.getSector();
         ResolvedTree.clearCache();
-        DoctrineOverrides.clearCache();
-        NodeGrantLinks.refresh();
-        NodeGrantStatus.forgetAll();
-        PhantomConflictWatch.clearPendingReverts();
-        TreeCameraMemory.forgetAll();
         FleetCrewLedger.discardPending();
-        ShipSections.clearCache();
-        NpcBonusScale.invalidate();
-        NpcItems.clearCache();
-        List<CargoAPI> savedCargoes = MaterialMigration.savedCargoes(Global.getSector());
-        DeletedSubroutines.removeFromSave(savedCargoes);
+        List<CargoAPI> savedCargoes = MaterialMigration.savedCargoes(sector);
+        DOMAINS.forEach(domain -> domain.onGameLoad(newGame, savedCargoes));
         ItemStore.get().freezeNames();
         MaterialMigration.run(savedCargoes);
-        OpReserveHullMods.forgetLegacySlots(Global.getSector().getPersistentData());
         ShipSkillDataManager.removeBlankRecords();
-        forgetUnknownNodes();
-        SkillTreeTemplateStore.pruneAssignments(ShipSkillDataManager::hasProgress);
         FleetWideEffects.markPhaseFieldStale();
-        Global.getSector().removeScriptsOfClass(SkillTreeInstaller.class);
-        Global.getSector().addTransientScript(new SkillTreeInstaller());
-        Global.getSector().addTransientScript(new NpcFleetSweepScript());
-        Global.getSector().addTransientListener(new NpcFleetDialogListener());
-        Global.getSector().getListenerManager().addListener(new NpcFleetInflationListener(), true);
-        Global.getSector().getListenerManager().addListener(new NpcTreeInspectInput(), true);
-        Global.getSector().getListenerManager().addListener(new SkillTreeCodexListener(), true);
-        Global.getSector().getListenerManager().addListener(new PhantomHullModRefitHider(), true);
-        Global.getSector().getListenerManager().addListener(new CargoCraftingTabListener(), true);
-        Global.getSector().getListenerManager().addListener(new WormholeGatewayOption(), true);
+        DOMAINS.forEach(Domain::afterSaveRepair);
+        sector.getListenerManager().addListener(new CargoCraftingTabListener(), true);
         SocketLossListener socketLossListener = new SocketLossListener();
-        Global.getSector().getListenerManager().addListener(socketLossListener, true);
+        sector.getListenerManager().addListener(socketLossListener, true);
         ItemLootListener itemLootListener = new ItemLootListener();
-        Global.getSector().addTransientListener(itemLootListener);
-        Global.getSector().getListenerManager().addListener(itemLootListener, true);
-        Global.getSector().addTransientListener(PlayerEngagementPipeline.create(socketLossListener, itemLootListener));
-        Global.getSector().getListenerManager().addListener(new ItemSalvageListener(), true);
-        Global.getSector().getListenerManager().addListener(new TechMiningItemListener(), true);
-        Global.getSector().getListenerManager().addListener(new LootAlertListener(), true);
-        Global.getSector().getListenerManager().addListener(new MarketItemStock(), true);
-        Global.getSector().addTransientListener(new RemnantEncounter.BattleListener());
-        Global.getSector().getListenerManager().addListener(new RelockedGates.LocationListener(), true);
-        if (RandomAssortmentCompat.isModEnabled()) {
-            AbyssSingularity.checkSaveOnLoad(Global.getSector());
-            Global.getSector().addTransientListener(new AbyssSingularity.BattleListener());
-        }
-        if (NightcrossCompat.isModEnabled()) {
-            NightcrossUnlocks.checkSaveOnLoad(Global.getSector());
-            Global.getSector().getListenerManager().addListener(new NightcrossUnlocks.DiscoveryListener(), true);
-        }
-        SocketTypeMigration.run();
+        sector.addTransientListener(itemLootListener);
+        sector.getListenerManager().addListener(itemLootListener, true);
+        sector.addTransientListener(PlayerEngagementPipeline.create(socketLossListener, itemLootListener));
+        sector.getListenerManager().addListener(new ItemSalvageListener(), true);
+        sector.getListenerManager().addListener(new TechMiningItemListener(), true);
+        sector.getListenerManager().addListener(new LootAlertListener(), true);
+        sector.getListenerManager().addListener(new MarketItemStock(), true);
+        DOMAINS.forEach(Domain::afterLootListeners);
         SocketCustody.reconcile();
-        WormholeAnchorMigration.run();
-        Global.getSector().getListenerManager().addListener(new HyperNavBeaconGrant(), true);
-        HyperNavBeaconGrant.grantOnce(Global.getSector());
-        StarCharts.onGameLoad(Global.getSector());
-        PlayerTreePower.logNpcScaling();
+        DOMAINS.forEach(Domain::afterSocketCustody);
     }
 }

@@ -1429,6 +1429,7 @@
     "settings.combatEffects.graphicsLib.name": "GraphicsLib 光效",
     "settings.combatEffects.graphicsLib.tooltip": "安装了 GraphicsLib 并开启其光照或扭曲效果时，Exiled Sector 的战斗特效会加入自己的光照和冲击波。关闭后保留 GraphicsLib 自身的效果，但不再显示本模组的效果。腐蚀光束的微粒光晕由 GraphicsLib 根据其自身光照数据绘制，因此始终保留。从下一场战斗开始生效。",
     "settings.socketStorage.header": "船体物品",
+    "settings.hullUpgrades.header": "船体升级",
     "settings.socketStorage.hullUpgrades.name": "船体升级",
     "settings.socketStorage.hullUpgrades.tooltip": "关闭后，船体升级以及除子程序以外的所有船体物品都不再从战斗、打捞和技术采掘中掉落，改装界面的船体物品按钮也会隐藏。子程序和技能树照常运作。舰船已解锁的舱段会继续生效，重新开启此选项后即可再次管理它们。",
     "settings.socketStorage.hullUpgradesLevel.name": "船体升级解锁等级",

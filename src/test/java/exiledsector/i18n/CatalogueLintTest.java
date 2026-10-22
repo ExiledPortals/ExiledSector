@@ -1,6 +1,7 @@
 package exiledsector.i18n;
 
 import exiledsector.ExiledSectorModPlugin;
+import exiledsector.skills.SkillTreeDomain;
 import exiledsector.skills.npc.RealSkillData;
 import org.json.CDL;
 import org.json.JSONArray;
@@ -95,7 +96,7 @@ class CatalogueLintTest {
         for (int i = 0; i < hullMods.length(); i++) {
             JSONObject hullMod = hullMods.getJSONObject(i);
             String id = hullMod.optString("id");
-            if (ExiledSectorModPlugin.LOCALISED_HULLMODS.contains(id)) {
+            if (ExiledSectorModPlugin.LOCALISED_HULLMODS.contains(id) || SkillTreeDomain.LOCALISED_HULLMODS.contains(id)) {
                 sources.put("hullmod." + id + ".name", hullMod.getString("name"));
                 sources.put("hullmod." + id + ".description", hullMod.getString("desc"));
             }

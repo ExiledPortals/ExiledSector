@@ -75,6 +75,7 @@ exiledsector.charts.DropType,star-charts
 exiledsector.charts.LootContexts,star-charts
 exiledsector.charts.StarChartSettings,star-charts
 exiledsector.charts.StarCharts,star-charts
+exiledsector.charts.StarChartsDomain,star-charts
 exiledsector.charts.VanillaChartContentEngine,star-charts
 exiledsector.charts.VanillaChartLayoutEngine,star-charts
 exiledsector.charts.WormholeGateway,star-charts
@@ -120,6 +121,7 @@ exiledsector.console.RemoveHullSocketsCommand,hull-upgrades
 exiledsector.console.ResetShipLevelCommand,skill-tree
 exiledsector.console.ShowcaseLootCommand,core
 exiledsector.console.UnlockAreasCommand,skill-tree
+exiledsector.domain.Domain,lib
 exiledsector.effects.BattleDifficulty,skill-tree
 exiledsector.effects.CombatXpAward,skill-tree
 exiledsector.effects.DoctrineRevertConflicts,skill-tree
@@ -169,6 +171,7 @@ exiledsector.i18n.Message,lib
 exiledsector.i18n.NumberText,lib
 exiledsector.i18n.Plurals,lib
 exiledsector.i18n.PseudoLocale,lib
+exiledsector.i18n.SpecLocalisation,lib
 exiledsector.i18n.Style,lib
 exiledsector.i18n.StyledText,lib
 exiledsector.i18n.Template,lib
@@ -199,6 +202,7 @@ exiledsector.items.HullUpgradeItemPlugin,hull-upgrades
 exiledsector.items.HullUpgradeRoller,hull-upgrades
 exiledsector.items.HullUpgradeRules,hull-upgrades
 exiledsector.items.HullUpgradeTooltip,hull-upgrades
+exiledsector.items.HullUpgradesDomain,hull-upgrades
 exiledsector.items.HullUpgradesSetting,hull-upgrades
 exiledsector.items.Item,lib
 exiledsector.items.ItemChances,lib
@@ -327,6 +331,7 @@ exiledsector.skills.SkillNode,skill-tree
 exiledsector.skills.SkillTier,skill-tree
 exiledsector.skills.SkillTree,skill-tree
 exiledsector.skills.SkillTreeBonusSummary,skill-tree
+exiledsector.skills.SkillTreeDomain,skill-tree
 exiledsector.skills.SkillTreeTopology,skill-tree
 exiledsector.skills.SkillType,skill-tree
 exiledsector.skills.SkillTypeEffect,lib
@@ -527,6 +532,7 @@ exiledsector.ui.SkillTreePanelStyle,lib
 exiledsector.ui.SkillTreeReadoutBar,skill-tree
 exiledsector.ui.SkillTreeRefitButton,skill-tree
 exiledsector.ui.SkillTreeSearchBar,skill-tree
+exiledsector.ui.SkillTreeSettings,skill-tree
 exiledsector.ui.SkillTreeSounds,core
 exiledsector.ui.SkillTreeStatPanel,skill-tree
 exiledsector.ui.SkillTreeTemplateBar,skill-tree

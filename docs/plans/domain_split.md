@@ -10,7 +10,7 @@ Exiled Sector is one Maven module and one jar, with about 700 classes. It holds 
 
 Exiled Sector stays one mod with one launcher entry, shipping a core jar plus one jar per feature, and it depends on Exiled Lib. Each feature domain depends only on Exiled Lib and Exiled Sector Core, never on another feature domain. Each one is switched on or off in LunaLib without touching the others.
 
-Status: step 1 built (uncommitted on `parallel-work`), steps 2 to 9 planned. It builds on `module_toggles.md`, whose hull upgrade and star chart switches are built and whose skill tree switch is not. It also covers the station module share (`module_skill_tree.md`), built on branch `module_skill_tree` and merged into `parallel-work` on 2026-10-22, and the skill tree's faction fleets and Nexerelin compat (uncommitted on `parallel-work`).
+Status: step 1 built (committed on `parallel-work`), step 2 built (committed on `parallel-work`), steps 3 to 9 planned. It builds on `module_toggles.md`, whose hull upgrade and star chart switches are built and whose skill tree switch is not. It also covers the station module share (`module_skill_tree.md`), built on branch `module_skill_tree` and merged into `parallel-work` on 2026-10-22, and the skill tree's faction fleets and Nexerelin compat (committed on `parallel-work`).
 
 ## Decided
 
@@ -77,7 +77,7 @@ Exiled Sector Core holds what at least two feature domains need but that is spec
 
 Exiled Lib defines these interfaces in `exiledlib.domain` (`exiledsector.domain` until step 7). Exiled Sector Core wires them up, and the feature domains implement them. Once all of them exist, no feature domain needs to import another.
 
-- `Domain`: id, `enabled()` (its LunaLib switch), `onApplicationLoad`, `onGameLoad`, `configureXStream`, `registerSettings`, `addCodexEntries` and `compatTargets()`, which `CompatChecks` logs at startup instead of keeping its own list. Exiled Sector's mod plugin runs every domain's hooks in a fixed order. Discovery is an explicit list, since the sandbox forbids reflection (`ScriptSandboxRestrictionsTest`).
+- `Domain` (built in step 2): load, settings, codex, XStream and game load hooks, plus `compatTargets()`. Step 8 adds `enabled()`. Exiled Sector's mod plugin runs every domain's hooks in a fixed order. Discovery is an explicit list, since the sandbox forbids reflection (`ScriptSandboxRestrictionsTest`).
 - `ShipEffectSource`: contributes `SkillEffect` entries and fighter effects to a ship's resolve. The tree contributes allocated nodes, Subroutines, Doctrine and granted nodes. Hull Upgrades contributes section items, and Star Charts contributes fleet conditions. Diminishing returns stay joint across sources, as they are now. The resolve keeps each source's entries after diminishing returns, so the tree works out the station module share from its own nodes only. Section items and fleet conditions aren't shared onto modules, as now.
 - `LootSource`: rolls a domain's drops for a battle, salvage site, tech mining result or market stock. It gets one shared context (player level, defeated DP, site type).
 - `FleetDifficulty`: reports a defeated fleet's strength. Exiled Sector Core falls back to DP, and the tree reports NPC tree levels. Chart fleets and battle chart tiers use it, which also solves the knock-on effects of turning the tree off (see `module_toggles.md`).
@@ -102,7 +102,7 @@ Only Exiled Sector saves have to keep loading. A save loads as long as every per
 
 Steps 1 to 5 happen inside today's single Maven module, so the game keeps running after every step, and each step can be merged and tested on its own.
 
-### Step 1: assign every class (done, uncommitted on `parallel-work`)
+### Step 1: assign every class (done, committed on `parallel-work`)
 
 `docs/plans/domain_split_classes.csv` gives every main class one part: `lib`, `core`, `skill-tree`, `hull-upgrades` or `star-charts`. `DomainBoundaryTest` fails when a class is missing from the CSV, and when a class reaches across a boundary that isn't in `src/test/resources/domain_boundary_allowlist.txt`:
 
@@ -112,9 +112,11 @@ Steps 1 to 5 happen inside today's single Maven module, so the game keeps runnin
 
 It reads imports and same-package class names from the source, like `ScriptSandboxRestrictionsTest`, with no build plugins. It also fails on allowlist entries that no longer cross, so the list only shrinks. It starts at 311 crossings, 153 of them core to the tree. The mod plugin has 56, and `ItemDataIntegrity`, `CargoIconLooks`, `SkillTreeHullMod`, the settings page and `ShipSkillData` have 13 to 17 each. A new class needs a CSV row. The save fixture test is described under Save compatibility.
 
-### Step 2: domain framework and bootstrap
+### Step 2: domain framework and bootstrap (done, committed on `parallel-work`)
 
-Add `Domain`. Split `ExiledSectorModPlugin`'s loading sequence into core plus three domain classes, keeping today's order wherever one domain's load reads another's data. One example is `NodeGrantLinks.install`, which runs after the item definitions load. Split `ExiledSectorSettings` the same way. Each domain registers its own section, in today's page order (the Module Share setting goes in the tree's), so the LunaLib page looks the same. Move each compat target into its domain's `compatTargets()`, keeping today's log order (`CompatChecksTest` pins it).
+`exiledsector.domain.Domain` is implemented by `SkillTreeDomain`, `HullUpgradesDomain` and `StarChartsDomain`, which `ExiledSectorModPlugin.DOMAINS` lists in that order. The plugin keeps the core steps and calls each hook between them, so load steps that read another domain's data keep their order. For example, the item framework loads between `loadData` and `loadItems`. Game load has four hooks because core's save repair, loot listeners and socket custody sit between tree steps. The tree's battle listeners stay after the engagement pipeline (`ExiledSectorModPluginTest` pins it). The plugin is the composition root, the one class `DomainBoundaryTest` lets use every domain.
+
+Each domain registers its own settings, so the page is grouped by domain: core, then the tree, a new Hull Upgrades header, then Star Charts. Unique Subroutines level moved under Ship Leveling. Setting ids and defaults are unchanged. Compat targets come from `CompatChecks.coreTargets()` plus each domain's, and the log is grouped the same way. The allowlist went from 311 to 234 crossings, and the plugin has none left.
 
 ### Step 3: ship effects
 
@@ -137,7 +139,7 @@ Split the strings into one catalogue per part and language, with `data/strings/e
 
 ### Step 6: Maven modules
 
-Turn `pom.xml` into a parent pom with five child modules. The game jar dependencies stay in the parent, and the surefire `--add-opens` args move with the tests. Tests move with their classes, and shared test fixtures come from a test jar. The allowlist must be empty by now, and Maven then enforces the boundaries at compile time. `DomainBoundaryTest` stays as a cheap guard.
+Turn `pom.xml` into a parent pom with a child module per part. The game jar dependencies stay in the parent, and the surefire `--add-opens` args move with the tests. Tests move with their classes, and shared test fixtures come from a test jar. The allowlist must be empty by now, and Maven then enforces the boundaries at compile time. The mod plugin lists every domain, so it moves to one more small module that depends on the other five. `DomainBoundaryTest` stays as a cheap guard.
 
 Update `build-common.ps1`, `deploy.ps1` and `release.ps1` for the new jars and `mod_info.json`'s `jars` list. The release zip's required file check lists every jar. Until step 7, `ExiledLib.jar` ships inside the Exiled Sector mod folder.
 

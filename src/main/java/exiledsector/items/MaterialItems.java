@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
+import exiledsector.i18n.Translation;
 import exiledsector.ui.util.SpriteCache;
 
 import java.awt.Color;
@@ -77,6 +78,14 @@ public final class MaterialItems {
             return Global.getSettings().getSpecialItemSpec(itemId);
         } catch (RuntimeException missingSpec) {
             return null;
+        }
+    }
+
+    public static void localise(String itemId) {
+        SpecialItemSpecAPI materialSpec = spec(itemId);
+        if (materialSpec != null) {
+            materialSpec.setName(Translation.data("material." + itemId + ".name", materialSpec.getName()));
+            materialSpec.setDesc(Translation.data("material." + itemId + ".description", materialSpec.getDesc()));
         }
     }
 

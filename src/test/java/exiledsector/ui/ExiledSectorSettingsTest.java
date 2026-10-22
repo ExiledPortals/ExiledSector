@@ -1,5 +1,6 @@
 package exiledsector.ui;
 
+import exiledsector.ExiledSectorModPlugin;
 import exiledsector.ui.cargo.ItemAnimationSetting;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.i18n.I18n;
@@ -25,6 +26,7 @@ import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -34,11 +36,15 @@ class ExiledSectorSettingsTest {
     private MockedStatic<LunaSettings.SettingsCreator> settingsCreatorMock;
     private MockedStatic<LunaSettings> lunaSettingsMock;
     private final List<String> registeredTexts = new ArrayList<>();
+    private final List<String> mainTabHeaders = new ArrayList<>();
 
     @BeforeEach
     void setUp() {
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
         settingsCreatorMock = Mockito.mockStatic(LunaSettings.SettingsCreator.class, invocation -> {
+            if (invocation.getMethod().getName().equals("addHeader") && ExiledSectorSettings.MAIN_TAB.equals(invocation.getArgument(3))) {
+                mainTabHeaders.add(invocation.getArgument(1));
+            }
             for (Object argument : invocation.getArguments()) {
                 if (argument instanceof String text) {
                     registeredTexts.add(text);
@@ -47,7 +53,7 @@ class ExiledSectorSettingsTest {
             return Mockito.RETURNS_DEFAULTS.answer(invocation);
         });
         ExiledSectorSettings.registerLanguage();
-        ExiledSectorSettings.register();
+        ExiledSectorSettings.register(ExiledSectorModPlugin.DOMAINS);
     }
 
     @AfterEach
@@ -65,24 +71,24 @@ class ExiledSectorSettingsTest {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addInt(eq("exiledSector"),
                 eq(NpcTreeSize.MIN_PERCENT_FIELD_ID), anyString(), anyString(),
                 eq(NpcTreeSize.DEFAULT_MIN_PERCENT), eq(NpcTreeSize.LOWEST_PERCENT), eq(NpcTreeSize.HIGHEST_PERCENT),
-                eq(ExiledSectorSettings.npcScalingTab())));
+                eq(SkillTreeSettings.npcScalingTab())));
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addInt(eq("exiledSector"),
                 eq(NpcTreeSize.MAX_PERCENT_FIELD_ID), anyString(), anyString(),
                 eq(NpcTreeSize.DEFAULT_MAX_PERCENT), eq(NpcTreeSize.LOWEST_PERCENT), eq(NpcTreeSize.HIGHEST_PERCENT),
-                eq(ExiledSectorSettings.npcScalingTab())));
+                eq(SkillTreeSettings.npcScalingTab())));
     }
 
     @Test
     void registersTheNpcTreeTogglesOnTheNpcScalingTab() {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addBoolean(eq("exiledSector"),
-                eq(NpcTreeConfig.ENABLED_FIELD_ID), anyString(), anyString(), eq(true), eq(ExiledSectorSettings.npcScalingTab())));
+                eq(NpcTreeConfig.ENABLED_FIELD_ID), anyString(), anyString(), eq(true), eq(SkillTreeSettings.npcScalingTab())));
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addBoolean(eq("exiledSector"),
-                eq(NpcTreeConfig.OFFICERED_SHIPS_FIELD_ID), anyString(), anyString(), eq(true), eq(ExiledSectorSettings.npcScalingTab())));
+                eq(NpcTreeConfig.OFFICERED_SHIPS_FIELD_ID), anyString(), anyString(), eq(true), eq(SkillTreeSettings.npcScalingTab())));
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addBoolean(eq("exiledSector"),
-                eq(NpcTreeConfig.FLAGSHIP_FIELD_ID), anyString(), anyString(), eq(true), eq(ExiledSectorSettings.npcScalingTab())));
+                eq(NpcTreeConfig.FLAGSHIP_FIELD_ID), anyString(), anyString(), eq(true), eq(SkillTreeSettings.npcScalingTab())));
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addInt(eq("exiledSector"),
                 eq(NpcTreeConfig.OTHER_SHIP_CHANCE_FIELD_ID), anyString(), anyString(), eq(30), eq(0), eq(100),
-                eq(ExiledSectorSettings.npcScalingTab())));
+                eq(SkillTreeSettings.npcScalingTab())));
     }
 
     @Test
@@ -172,7 +178,7 @@ class ExiledSectorSettingsTest {
         I18n.install(RealCatalogue.of(PseudoLocale.LOCALE));
         registeredTexts.clear();
         ExiledSectorSettings.registerLanguage();
-        ExiledSectorSettings.register();
+        ExiledSectorSettings.register(ExiledSectorModPlugin.DOMAINS);
         String options = String.join(",", LanguageSetting.OPTIONS);
         String areaOptions = String.join(",", AreaToggles.OPTIONS);
         for (String text : registeredTexts) {
@@ -196,9 +202,18 @@ class ExiledSectorSettingsTest {
     }
 
     @Test
+    void groupsTheMainTabByDomainWithCoreFirst() {
+        assertEquals(List.of("exiledSector_header", "exiledSector_refitHeader", "exiledSector_soundsHeader", "exiledSector_combatEffectsHeader",
+                "exiledSector_socketStorageHeader", "exiledSector_diminishingHeader", "exiledSector_energyChainHeader",
+                "exiledSector_opCostHeader", "exiledSector_modulesHeader", "exiledSector_levelHeader", "exiledSector_hiddenNodesHeader",
+                "exiledSector_unlockConditionsHeader", "exiledSector_areasHeader",
+                "exiledSector_hullUpgradesHeader", "exiledSector_starChartsHeader"), mainTabHeaders);
+    }
+
+    @Test
     void registersTheInspectKeybindOnTheNpcScalingTab() {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addKeybind(eq("exiledSector"),
                 eq(NpcInspectConfig.KEYBIND_FIELD_ID), anyString(), anyString(), eq(NpcInspectConfig.DEFAULT_KEY),
-                eq(ExiledSectorSettings.npcScalingTab())));
+                eq(SkillTreeSettings.npcScalingTab())));
     }
 }

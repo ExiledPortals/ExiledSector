@@ -1,0 +1,215 @@
+package exiledsector.skills;
+
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CargoAPI;
+import com.fs.starfarer.api.campaign.SectorAPI;
+import com.thoughtworks.xstream.XStream;
+import exiledsector.ExiledSectorModPlugin;
+import exiledsector.PlayerFleet;
+import exiledsector.compat.AbyssSingularity;
+import exiledsector.compat.CompatTarget;
+import exiledsector.compat.ExoticaCompat;
+import exiledsector.compat.LostSectorCompat;
+import exiledsector.compat.MagicLibCompat;
+import exiledsector.compat.NexerelinCompat;
+import exiledsector.compat.NightcrossCompat;
+import exiledsector.compat.NightcrossUnlocks;
+import exiledsector.compat.RandomAssortmentCompat;
+import exiledsector.compat.TaniaCompat;
+import exiledsector.domain.Domain;
+import exiledsector.effects.HyperNavBeaconGrant;
+import exiledsector.effects.NpcBonusScale;
+import exiledsector.effects.NpcFleetDialogListener;
+import exiledsector.effects.NpcFleetInflationListener;
+import exiledsector.effects.NpcFleetSweepScript;
+import exiledsector.effects.OpReserveHullMods;
+import exiledsector.effects.PhantomConflictWatch;
+import exiledsector.effects.PhantomHullMods;
+import exiledsector.effects.PlayerTreePower;
+import exiledsector.effects.SkillConflictWarningHullMod;
+import exiledsector.effects.SkillTreeInstaller;
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.SpecLocalisation;
+import exiledsector.items.DeletedSubroutines;
+import exiledsector.items.DoctrineArchives;
+import exiledsector.items.DoctrineOverrides;
+import exiledsector.items.ModspecCaches;
+import exiledsector.items.NodeGrantLinks;
+import exiledsector.items.NodeGrantStatus;
+import exiledsector.items.NpcItems;
+import exiledsector.items.SocketCustody;
+import exiledsector.items.SubroutineImplicits;
+import exiledsector.items.UniqueSubroutinesSetting;
+import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.items.WormholeAnchorLinks;
+import exiledsector.items.WormholeAnchorMigration;
+import exiledsector.persistence.RetiredReserveIds;
+import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.persistence.SkillTreeTemplateStore;
+import exiledsector.skills.npc.NpcFactionVolumes;
+import exiledsector.skills.npc.NpcFocus;
+import exiledsector.skills.npc.NpcLevelCaps;
+import exiledsector.skills.radius.NodeRadii;
+import exiledsector.skills.tags.AreaToggles;
+import exiledsector.skills.unlock.NodeGates;
+import exiledsector.skills.unlock.RelockedGates;
+import exiledsector.skills.unlock.RemnantEncounter;
+import exiledsector.ui.SkillTreeRefitButton;
+import exiledsector.ui.SkillTreeSettings;
+import exiledsector.ui.TreeCameraMemory;
+import exiledsector.ui.inspect.ItemCodex;
+import exiledsector.ui.inspect.NpcTreeInspectInput;
+import exiledsector.ui.inspect.SkillTreeCodexListener;
+import exiledsector.ui.refit.PhantomHullModRefitHider;
+
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.function.Predicate;
+
+public final class SkillTreeDomain implements Domain {
+
+    public static final List<String> LOCALISED_HULLMODS = List.of(SkillConflictWarningHullMod.ID);
+
+    @Override
+    public void onApplicationLoad() {
+        I18n.forGameText(() -> LOCALISED_HULLMODS.forEach(SpecLocalisation::hullMod));
+        SkillTreeRefitButton.addButton();
+    }
+
+    @Override
+    public void registerSettings() {
+        SkillTreeSettings.register();
+    }
+
+    @Override
+    public void reloadSettings() {
+        UniqueSubroutinesSetting.reloadSettings();
+    }
+
+    @Override
+    public void loadData() {
+        NodeRadii.load();
+        SkillTree.load();
+        SkillTree.applyDisabledRegions(AreaToggles.disabledRegions());
+        PhantomHullMods.install(phantomHullModIds());
+        LearnedPhantomConflicts.load();
+        NpcFactionVolumes.load();
+        NpcFocus.load();
+        NpcLevelCaps.load();
+        NodeReplacements.load();
+        NodeGates.load();
+    }
+
+    @Override
+    public void loadItems() {
+        SubroutineImplicits.load();
+        WormholeAnchorDefinitions.load();
+        WormholeAnchorLinks.install();
+        DoctrineArchives.load();
+        ModspecCaches.load();
+        NodeGrantLinks.install();
+    }
+
+    @Override
+    public void addCodexEntries() {
+        ItemCodex.addEntries();
+    }
+
+    @Override
+    public void configureXStream(XStream xstream) {
+        RetiredReserveIds.register(xstream);
+    }
+
+    @Override
+    public void onGameLoad(boolean newGame, List<CargoAPI> savedCargoes) {
+        SkillTree.applyDisabledRegions(AreaToggles.disabledRegions());
+        SkillDataResolver.clearCache();
+        DoctrineOverrides.clearCache();
+        NodeGrantLinks.refresh();
+        NodeGrantStatus.forgetAll();
+        PhantomConflictWatch.clearPendingReverts();
+        TreeCameraMemory.forgetAll();
+        NpcBonusScale.invalidate();
+        NpcItems.clearCache();
+        SectorAPI sector = Global.getSector();
+        DeletedSubroutines.removeFromSave(savedCargoes);
+        OpReserveHullMods.forgetLegacySlots(sector.getPersistentData());
+    }
+
+    @Override
+    public void afterSaveRepair() {
+        forgetUnknownNodes();
+        SkillTreeTemplateStore.pruneAssignments(ShipSkillDataManager::hasProgress);
+        SectorAPI sector = Global.getSector();
+        sector.removeScriptsOfClass(SkillTreeInstaller.class);
+        sector.addTransientScript(new SkillTreeInstaller());
+        sector.addTransientScript(new NpcFleetSweepScript());
+        sector.addTransientListener(new NpcFleetDialogListener());
+        sector.getListenerManager().addListener(new NpcFleetInflationListener(), true);
+        sector.getListenerManager().addListener(new NpcTreeInspectInput(), true);
+        sector.getListenerManager().addListener(new SkillTreeCodexListener(), true);
+        sector.getListenerManager().addListener(new PhantomHullModRefitHider(), true);
+    }
+
+    @Override
+    public void afterLootListeners() {
+        SectorAPI sector = Global.getSector();
+        sector.addTransientListener(new RemnantEncounter.BattleListener());
+        sector.getListenerManager().addListener(new RelockedGates.LocationListener(), true);
+        if (RandomAssortmentCompat.isModEnabled()) {
+            AbyssSingularity.checkSaveOnLoad(sector);
+            sector.addTransientListener(new AbyssSingularity.BattleListener());
+        }
+        if (NightcrossCompat.isModEnabled()) {
+            NightcrossUnlocks.checkSaveOnLoad(sector);
+            sector.getListenerManager().addListener(new NightcrossUnlocks.DiscoveryListener(), true);
+        }
+    }
+
+    @Override
+    public void afterSocketCustody() {
+        WormholeAnchorMigration.run();
+        SectorAPI sector = Global.getSector();
+        sector.getListenerManager().addListener(new HyperNavBeaconGrant(), true);
+        HyperNavBeaconGrant.grantOnce(sector);
+        PlayerTreePower.logNpcScaling();
+    }
+
+    @Override
+    public List<CompatTarget> compatTargets() {
+        return List.of(LostSectorCompat.TARGET, MagicLibCompat.TARGET, ExoticaCompat.TARGET, NightcrossCompat.TARGET, TaniaCompat.TARGET,
+                NexerelinCompat.TARGET);
+    }
+
+    private static Set<String> phantomHullModIds() {
+        Set<String> ids = new LinkedHashSet<>();
+        for (SkillType type : SkillTree.getAllTypes().values()) {
+            ids.addAll(type.getPhantomHullModIds());
+        }
+        return ids;
+    }
+
+    private static void forgetUnknownNodes() {
+        if (!SkillTree.isLoadedCompletely()) {
+            Global.getLogger(SkillTreeDomain.class).warn(ExiledSectorModPlugin.LOG_TAG + ": the skill tree did not load completely, so saved allocations were left as they are.");
+            return;
+        }
+        ShipSkillDataManager.replaceRemovedNodes(SkillTree.getDeclaredNodes(), NodeReplacements.all());
+        ShipSkillDataManager.forgetUnknownNodes(SkillTree.getAllNodes(), SkillTree.getDeclaredNodes(), SkillTree.getAllTypes(),
+                new OwnedShips(), charged -> charged.refundTo(PlayerFleet.cargoOrNull()));
+    }
+
+    private static final class OwnedShips implements Predicate<String> {
+
+        private Set<String> ownedShipIds;
+
+        @Override
+        public boolean test(String shipId) {
+            if (ownedShipIds == null) {
+                ownedShipIds = SocketCustody.ownedShipIds();
+            }
+            return ownedShipIds.contains(shipId);
+        }
+    }
+}

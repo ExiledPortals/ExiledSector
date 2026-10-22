@@ -28,6 +28,8 @@ class DomainBoundaryTest {
     private static final String CORE = "core";
     private static final Set<String> FEATURES = Set.of("skill-tree", "hull-upgrades", "star-charts");
     private static final String ARROW = " -> ";
+    private static final String COMPOSITION_ROOT = "exiledsector.ExiledSectorModPlugin";
+    private static final Pattern DOMAIN_CLASS = Pattern.compile("\\bclass\\s+\\w+\\s+implements\\s+Domain\\b");
 
     private static final Pattern LITERAL_OR_COMMENT = Pattern.compile(
             "\"(?:[^\"\\\\\\n]|\\\\.)*\"|'(?:[^'\\\\\\n]|\\\\.)+'|//[^\\n]*|/\\*.*?\\*/", Pattern.DOTALL);
@@ -66,7 +68,8 @@ class DomainBoundaryTest {
             String sourcePart = parts.get(source.getKey());
             for (String target : references(source.getKey(), source.getValue(), classes.keySet())) {
                 String targetPart = parts.get(target);
-                if (sourcePart != null && targetPart != null && !mayReach(sourcePart, targetPart)) {
+                boolean listsADomain = source.getKey().equals(COMPOSITION_ROOT) && isDomain(classes.get(target));
+                if (sourcePart != null && targetPart != null && !listsADomain && !mayReach(sourcePart, targetPart)) {
                     crossings.add(source.getKey() + ARROW + target);
                 }
             }
@@ -79,8 +82,12 @@ class DomainBoundaryTest {
         cleared.removeAll(crossings);
 
         assertTrue(added.isEmpty(), "Lib may only use lib, core may only use lib and core, and a feature domain may only use lib, core "
-                + "and itself. These new crossings break that (see docs/plans/domain_split.md):\n" + String.join("\n", added));
+                + "and itself, though the mod plugin lists every Domain. These new crossings break that (see docs/plans/domain_split.md):\n" + String.join("\n", added));
         assertTrue(cleared.isEmpty(), "These crossings are gone, so remove them from " + ALLOWED_CROSSINGS + ":\n" + String.join("\n", cleared));
+    }
+
+    private static boolean isDomain(Path file) throws IOException {
+        return DOMAIN_CLASS.matcher(Files.readString(file)).find();
     }
 
     private static boolean isPart(String part) {
