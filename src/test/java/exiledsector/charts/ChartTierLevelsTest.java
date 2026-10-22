@@ -2,6 +2,7 @@ package exiledsector.charts;
 
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.ExiledSectorModPlugin;
+import exiledsector.skills.npc.NpcNodeRange;
 import exiledsector.skills.progression.ShipLevelConfig;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
@@ -45,6 +46,10 @@ class ChartTierLevelsTest {
                 .thenReturn(maxAllocatedNodes);
     }
 
+    private static NpcNodeRange range(MemoryAPI fleetMemory) {
+        return NpcNodeRange.of(ChartTiers.fleetStrengthRangeFor(fleetMemory), ShipLevelConfig.maxLevel(), ShipLevelConfig.maxAllocatedNodesBesidesRoot());
+    }
+
     private static MemoryAPI chartFleet(int tier, Integer strengthBonus, boolean warden) {
         MemoryAPI fleetMemory = mock(MemoryAPI.class);
         when(fleetMemory.get(ChartIds.TIER_MEMORY_KEY)).thenReturn(tier);
@@ -55,51 +60,51 @@ class ChartTierLevelsTest {
 
     @Test
     void tierOneStartsAboveTheFactionCapAndTierFifteenReachesTheMaxLevel() {
-        ChartLevelRange tierOne = ChartTiers.fleetStrengthRangeFor(chartFleet(1, null, false));
-        ChartLevelRange tierFifteen = ChartTiers.fleetStrengthRangeFor(chartFleet(15, null, false));
+        NpcNodeRange tierOne = range(chartFleet(1, null, false));
+        NpcNodeRange tierFifteen = range(chartFleet(15, null, false));
 
-        assertEquals(new ChartLevelRange(26, 29), tierOne);
+        assertEquals(new NpcNodeRange(26, 29), tierOne);
         assertTrue(tierOne.min() > OPEN_WORLD_FACTION_CAP);
-        assertEquals(new ChartLevelRange(47, ShipLevelConfig.DEFAULT_MAX_LEVEL), tierFifteen);
+        assertEquals(new NpcNodeRange(47, ShipLevelConfig.DEFAULT_MAX_LEVEL), tierFifteen);
     }
 
     @Test
     void aLowerMaxLevelClampsEveryTier() {
         setMaxLevel(20);
 
-        assertEquals(new ChartLevelRange(20, 20), ChartTiers.fleetStrengthRangeFor(chartFleet(1, null, false)));
-        assertEquals(new ChartLevelRange(20, 20), ChartTiers.fleetStrengthRangeFor(chartFleet(15, null, false)));
+        assertEquals(new NpcNodeRange(20, 20), range(chartFleet(1, null, false)));
+        assertEquals(new NpcNodeRange(20, 20), range(chartFleet(15, null, false)));
     }
 
     @Test
     void aSmallerTreeCapClampsEveryTier() {
         setMaxAllocatedNodes(28);
 
-        assertEquals(new ChartLevelRange(26, 27), ChartTiers.fleetStrengthRangeFor(chartFleet(1, null, false)));
-        assertEquals(new ChartLevelRange(27, 27), ChartTiers.fleetStrengthRangeFor(chartFleet(15, null, true)));
+        assertEquals(new NpcNodeRange(26, 27), range(chartFleet(1, null, false)));
+        assertEquals(new NpcNodeRange(27, 27), range(chartFleet(15, null, true)));
     }
 
     @Test
     void theFleetStrengthBonusScalesTheLevelsUpToTheMaxLevel() {
         ChartTier seventh = ChartTiers.forTier(7);
 
-        assertEquals(new ChartLevelRange(Math.round(seventh.levelMin() * 1.2f), Math.round(seventh.levelMax() * 1.2f)),
-                ChartTiers.fleetStrengthRangeFor(chartFleet(7, 20, false)));
-        assertEquals(new ChartLevelRange(ShipLevelConfig.DEFAULT_MAX_LEVEL, ShipLevelConfig.DEFAULT_MAX_LEVEL),
-                ChartTiers.fleetStrengthRangeFor(chartFleet(15, 80, false)));
-        assertEquals(ChartTiers.fleetStrengthRangeFor(chartFleet(7, null, false)), ChartTiers.fleetStrengthRangeFor(chartFleet(7, -30, false)));
+        assertEquals(new NpcNodeRange(Math.round(seventh.levelMin() * 1.2f), Math.round(seventh.levelMax() * 1.2f)),
+                range(chartFleet(7, 20, false)));
+        assertEquals(new NpcNodeRange(ShipLevelConfig.DEFAULT_MAX_LEVEL, ShipLevelConfig.DEFAULT_MAX_LEVEL),
+                range(chartFleet(15, 80, false)));
+        assertEquals(range(chartFleet(7, null, false)), range(chartFleet(7, -30, false)));
     }
 
     @Test
     void wardenShipsRollOneLevelAboveTheTierEvenPastTheMaxLevel() {
         ChartTier seventh = ChartTiers.forTier(7);
 
-        assertEquals(new ChartLevelRange(seventh.levelMin() + 1, seventh.levelMax() + 1), ChartTiers.fleetStrengthRangeFor(chartFleet(7, null, true)));
-        assertEquals(new ChartLevelRange(48, ShipLevelConfig.DEFAULT_MAX_LEVEL + 1), ChartTiers.fleetStrengthRangeFor(chartFleet(15, null, true)));
-        assertEquals(new ChartLevelRange(ShipLevelConfig.DEFAULT_MAX_LEVEL + 1, ShipLevelConfig.DEFAULT_MAX_LEVEL + 1),
-                ChartTiers.fleetStrengthRangeFor(chartFleet(15, 80, true)));
+        assertEquals(new NpcNodeRange(seventh.levelMin() + 1, seventh.levelMax() + 1), range(chartFleet(7, null, true)));
+        assertEquals(new NpcNodeRange(48, ShipLevelConfig.DEFAULT_MAX_LEVEL + 1), range(chartFleet(15, null, true)));
+        assertEquals(new NpcNodeRange(ShipLevelConfig.DEFAULT_MAX_LEVEL + 1, ShipLevelConfig.DEFAULT_MAX_LEVEL + 1),
+                range(chartFleet(15, 80, true)));
         setMaxLevel(20);
-        assertEquals(new ChartLevelRange(21, 21), ChartTiers.fleetStrengthRangeFor(chartFleet(15, null, true)));
+        assertEquals(new NpcNodeRange(21, 21), range(chartFleet(15, null, true)));
     }
 
     @Test
@@ -108,14 +113,14 @@ class ChartTierLevelsTest {
         MemoryAPI garbled = mock(MemoryAPI.class);
         when(garbled.get(ChartIds.TIER_MEMORY_KEY)).thenReturn("fifteen");
 
-        assertNull(ChartTiers.fleetStrengthRangeFor(notAChartFleet));
-        assertNull(ChartTiers.fleetStrengthRangeFor(garbled));
-        assertNull(ChartTiers.fleetStrengthRangeFor(null));
+        assertNull(range(notAChartFleet));
+        assertNull(range(garbled));
+        assertNull(range(null));
     }
 
     @Test
     void aLevelRangeRollsEveryLevelInsideItAndNothingElse() {
-        ChartLevelRange range = new ChartLevelRange(26, 29);
+        NpcNodeRange range = new NpcNodeRange(26, 29);
         Random random = new Random(7);
         boolean[] seen = new boolean[4];
         for (int roll = 0; roll < 200; roll++) {
@@ -126,6 +131,6 @@ class ChartTierLevelsTest {
         for (boolean levelSeen : seen) {
             assertTrue(levelSeen);
         }
-        assertEquals(new ChartLevelRange(5, 5), new ChartLevelRange(5, 2));
+        assertEquals(new NpcNodeRange(5, 5), new NpcNodeRange(5, 2));
     }
 }

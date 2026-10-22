@@ -36,7 +36,6 @@ exiledsector.charts.ChartLayout,star-charts
 exiledsector.charts.ChartLayoutEngine,star-charts
 exiledsector.charts.ChartLayoutGenerator,star-charts
 exiledsector.charts.ChartLayoutRequest,star-charts
-exiledsector.charts.ChartLevelRange,star-charts
 exiledsector.charts.ChartLoadSweep,star-charts
 exiledsector.charts.ChartLoot,star-charts
 exiledsector.charts.ChartLootTotals,star-charts
@@ -74,6 +73,7 @@ exiledsector.charts.ChartWormholePlugin,star-charts
 exiledsector.charts.ChartWormholeVisual,star-charts
 exiledsector.charts.DropType,star-charts
 exiledsector.charts.LootContexts,star-charts
+exiledsector.charts.StarChartLootSource,star-charts
 exiledsector.charts.StarChartSettings,star-charts
 exiledsector.charts.StarCharts,star-charts
 exiledsector.charts.StarChartsDomain,star-charts
@@ -165,6 +165,7 @@ exiledsector.effects.SkillConflictWarnings,skill-tree
 exiledsector.effects.SkillTreeEffectSource,skill-tree
 exiledsector.effects.SkillTreeHullMod,core
 exiledsector.effects.SkillTreeInstaller,skill-tree
+exiledsector.effects.SkillTreeLootSource,skill-tree
 exiledsector.effects.SkillTreeOpSpentHullMod,skill-tree
 exiledsector.effects.TechMiningItemListener,core
 exiledsector.effects.TemplateLevelUp,skill-tree
@@ -206,6 +207,7 @@ exiledsector.items.HullItem,hull-upgrades
 exiledsector.items.HullUpgradeData,hull-upgrades
 exiledsector.items.HullUpgradeEffectSource,hull-upgrades
 exiledsector.items.HullUpgradeItemPlugin,hull-upgrades
+exiledsector.items.HullUpgradeLootSource,hull-upgrades
 exiledsector.items.HullUpgradeRoller,hull-upgrades
 exiledsector.items.HullUpgradeRules,hull-upgrades
 exiledsector.items.HullUpgradeTooltip,hull-upgrades
@@ -284,6 +286,13 @@ exiledsector.items.WormholeAnchorDefinitions,skill-tree
 exiledsector.items.WormholeAnchorLinks,skill-tree
 exiledsector.items.WormholeAnchorMigration,skill-tree
 exiledsector.items.WormholeAnchorSocketLimits,skill-tree
+exiledsector.loot.BattleEngagement,core
+exiledsector.loot.BattleLoot,core
+exiledsector.loot.FleetDifficulty,core
+exiledsector.loot.FleetLevelRange,core
+exiledsector.loot.LootModifiers,core
+exiledsector.loot.LootSource,core
+exiledsector.loot.LootSources,core
 exiledsector.modifiers.Modifier,lib
 exiledsector.modifiers.ModifierCategory,lib
 exiledsector.modifiers.ModifierEffect,lib
@@ -368,6 +377,7 @@ exiledsector.skills.npc.NpcHullMods,skill-tree
 exiledsector.skills.npc.NpcLevelCaps,skill-tree
 exiledsector.skills.npc.NpcLevelCategory,skill-tree
 exiledsector.skills.npc.NpcLevelLimit,skill-tree
+exiledsector.skills.npc.NpcNodeRange,skill-tree
 exiledsector.skills.npc.NpcRelevance,skill-tree
 exiledsector.skills.npc.NpcShipSelector,skill-tree
 exiledsector.skills.npc.NpcSkillTreeBuilder,skill-tree

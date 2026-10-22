@@ -5,6 +5,7 @@ import exiledsector.ModSettingsListener;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.effects.ShipEffectSource;
 import exiledsector.i18n.Translation;
+import exiledsector.loot.LootSource;
 import exiledsector.skills.ShipSections;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.HullUpgradesRefitButton;
@@ -19,6 +20,11 @@ public final class HullUpgradesDomain implements ExiledSectorDomain {
     @Override
     public List<ShipEffectSource> shipEffectSources() {
         return List.of(HullUpgradeEffectSource.INSTANCE);
+    }
+
+    @Override
+    public List<LootSource> lootSources() {
+        return List.of(HullUpgradeLootSource.INSTANCE);
     }
 
     @Override

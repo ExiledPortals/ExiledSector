@@ -4,15 +4,11 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.listeners.ShowLootListener;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.charts.ChartDrops;
-import exiledsector.charts.ChartGenContext;
-import exiledsector.charts.DropType;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
@@ -22,8 +18,9 @@ import exiledsector.items.MaterialItems;
 import exiledsector.items.ItemUnlock;
 import exiledsector.items.SubroutineKind;
 import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.loot.LootModifiers;
+import exiledsector.loot.LootSources;
 import exiledsector.ui.cargo.MaterialDropAnnouncer;
-import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,11 +33,9 @@ public class ItemSalvageListener implements ShowLootListener {
 
     static final String ROLLED_KEY = "$exiledSector_socketablesRolled";
     private static final long SEED_SALT = 0x736F636B65746BL;
-    private static final long CHART_SEED_SALT = 0x63686172746470L;
     static final String SHOWCASE_KEY = "$exiledSector_showcaseLoot";
     private static final long SHOWCASE_SEED_SALT = 0x73686F77636173L;
     static final int SHOWCASE_PICKS = 3;
-    private static final Logger LOG = Logger.getLogger(ItemSalvageListener.class);
 
     @Override
     public void reportAboutToShowLootToPlayer(CargoAPI loot, InteractionDialogAPI dialog) {
@@ -55,17 +50,14 @@ public class ItemSalvageListener implements ShowLootListener {
         }
         entityMemory.set(ROLLED_KEY, true);
         Random random = new Random(Misc.getSalvageSeed(salvageEntity) ^ SEED_SALT);
-        ChartGenContext chartContext = chartContext(salvageEntity);
-        ItemDrops.SiteLoot siteLoot = ItemDrops.rollSite(siteId, random, chartContext.itemChances(), chartContext.dropMult(DropType.FEEDSTOCK),
-                chartContext.dropMult(DropType.CURRENCY), ItemUnlock.sectionsOpen(Global.getSector()));
+        LootModifiers modifiers = LootSources.modifiersAt(salvageEntity.getContainingLocation());
+        ItemDrops.SiteLoot siteLoot = ItemDrops.rollSite(siteId, random, modifiers.itemChances(), modifiers.feedstockMult(), modifiers.currencyMult(),
+                ItemUnlock.sectionsOpen(Global.getSector()));
         siteLoot.items().forEach(item -> loot.addSpecial(item.toSpecialItem(), 1f));
         siteLoot.upgrades().forEach(upgrade -> loot.addSpecial(upgrade.toSpecialItem(), 1f));
         siteLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
         MaterialDropAnnouncer.announce(siteLoot.materials());
-        ChartDrops.Loot chartLoot = chartLoot(Global.getSector(), salvageEntity);
-        chartLoot.charts().forEach(chart -> loot.addSpecial(chart.toSpecialItem(), 1f));
-        chartLoot.currencies().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
-        MaterialDropAnnouncer.announce(chartLoot.currencies());
+        LootSources.all().forEach(source -> source.addSalvageLoot(Global.getSector(), salvageEntity, loot));
         if (entityMemory.getBoolean(SHOWCASE_KEY)) {
             entityMemory.unset(SHOWCASE_KEY);
             addShowcaseLoot(loot, new Random(Misc.getSalvageSeed(salvageEntity) ^ SHOWCASE_SEED_SALT));
@@ -105,28 +97,6 @@ public class ItemSalvageListener implements ShowLootListener {
         Collections.shuffle(shuffled, random);
         for (ItemDefinition definition : shuffled.subList(0, Math.min(SHOWCASE_PICKS, shuffled.size()))) {
             loot.addSpecial(ItemData.rolled(definition, random.nextLong()).toSpecialItem(), 1f);
-        }
-    }
-
-    static ChartDrops.Loot chartLoot(SectorAPI sector, SectorEntityToken salvageEntity) {
-        if (sector == null) {
-            return ChartDrops.Loot.NONE;
-        }
-        try {
-            Random chartRandom = new Random(Misc.getSalvageSeed(salvageEntity) ^ CHART_SEED_SALT);
-            return ChartDrops.forSalvage(sector, salvageEntity.getContainingLocation(), chartRandom);
-        } catch (RuntimeException e) {
-            LOG.error("[ExiledSector] Rolling Star Chart salvage drops failed", e);
-            return ChartDrops.Loot.NONE;
-        }
-    }
-
-    static ChartGenContext chartContext(SectorEntityToken salvageEntity) {
-        try {
-            return ChartDrops.liveContextAt(salvageEntity.getContainingLocation());
-        } catch (RuntimeException e) {
-            LOG.error("[ExiledSector] Reading the Star Chart loot bonuses failed", e);
-            return ChartGenContext.none();
         }
     }
 

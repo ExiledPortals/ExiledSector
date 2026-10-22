@@ -10,7 +10,7 @@ Exiled Sector is one Maven module and one jar, with about 700 classes. It holds 
 
 Exiled Sector stays one mod with one launcher entry, shipping a core jar plus one jar per feature, and it depends on Exiled Lib. Each feature domain depends only on Exiled Lib and Exiled Sector Core, never on another feature domain. Each one is switched on or off in LunaLib without touching the others.
 
-Status: step 1 built (committed on `parallel-work`), step 2 built (committed on `parallel-work`), step 3 built (committed on `parallel-work`), steps 4 to 9 planned. It builds on `module_toggles.md`, whose hull upgrade and star chart switches are built and whose skill tree switch is not. It also covers the station module share (`module_skill_tree.md`), built on branch `module_skill_tree` and merged into `parallel-work` on 2026-10-22, and the skill tree's faction fleets and Nexerelin compat (committed on `parallel-work`).
+Status: step 1 built (committed on `parallel-work`), step 2 built (committed on `parallel-work`), step 3 built (committed on `parallel-work`), step 4 built (committed on `parallel-work`), steps 5 to 9 planned. It builds on `module_toggles.md`, whose hull upgrade and star chart switches are built and whose skill tree switch is not. It also covers the station module share (`module_skill_tree.md`), built on branch `module_skill_tree` and merged into `parallel-work` on 2026-10-22, and the skill tree's faction fleets and Nexerelin compat (committed on `parallel-work`).
 
 ## Decided
 
@@ -79,8 +79,8 @@ Exiled Lib defines `Domain` in `exiledlib.domain` (`exiledsector.domain` until s
 
 - `Domain` (built in step 2): load, settings, codex, XStream and game load hooks, plus `compatTargets()`. Step 8 adds `enabled()`. Exiled Sector's mod plugin runs every domain's hooks in a fixed order. Discovery is an explicit list, since the sandbox forbids reflection (`ScriptSandboxRestrictionsTest`).
 - `ShipEffectSource` (built in step 3): contributes `SkillEffect` entries and fighter effects to a ship's resolve. The tree contributes allocated nodes, Subroutines, Doctrine and granted nodes. Hull Upgrades contributes section items, and Star Charts contributes fleet conditions. Diminishing returns stay joint across sources, as they are now. The resolve keeps each source's entries after diminishing returns, so the tree works out the station module share from its own nodes only. Section items and fleet conditions aren't shared onto modules, as now.
-- `LootSource`: rolls a domain's drops for a battle, salvage site, tech mining result or market stock. It gets one shared context (player level, defeated DP, site type).
-- `FleetDifficulty`: reports a defeated fleet's strength. Exiled Sector Core falls back to DP, and the tree reports NPC tree levels. Chart fleets and battle chart tiers use it, which also solves the knock-on effects of turning the tree off (see `module_toggles.md`).
+- `LootSource` (built in step 4): records each player engagement and rolls a domain's drops for a battle, salvage site, tech mining result or market stock. Core keeps the per-battle state and the shared random, so draws stay in today's order. A source can also report the item chances and drop multipliers at a fleet or location.
+- `FleetDifficulty` (built in step 4): the tree reports a defeated ship's NPC tree level (0 without a tree), which battle hull items and battle chart tiers use. Star Charts reports a chart fleet's raw level range and seed, and the tree clamps the range to its own level caps. This also solves the knock-on effects of turning the tree off (see `module_toggles.md`).
 - `RefitButton`: Exiled Sector Core owns the column, its anchoring and the station module tab guard, and domains add buttons. MagicLib's paintjob button anchors on our last refit component, so core keeps that component last whichever buttons are present.
 - `BenchMode`: the workbench asks domains for its modes (hull items, star charts) instead of checking `StarChartSettings`.
 - `ItemEffects` already works this way, with one resolver per `ItemType`. Exiled Lib keeps it, and each domain registers its resolver.
@@ -124,9 +124,9 @@ Each source returns `EffectContribution` records: the effects plus their mod id 
 
 Before the old path was deleted, a test compared the old and new resolvers on 24 fixed ships built from the real tree and items. It covered every entry, mod id, magnitude, temporary node, shown total, diminished stat, phantom id and station module share, including temporary nodes, damage-taken caps, pooled multipliers, hull items, diminishing returns and NPC scaling. They matched exactly. The allowlist went from 234 to 214 crossings.
 
-### Step 4: loot and difficulty
+### Step 4: loot and difficulty (done, committed on `parallel-work`)
 
-Add `LootSource` and `FleetDifficulty`, and split the four loot listeners into one core listener per event, plus a loot source per domain. `ChartDrops.battleTier` and `ChartTiers` read `FleetDifficulty`.
+The four loot listeners stay in core and call `SkillTreeLootSource` (faction fleet drops, market wormhole anchors), `HullUpgradeLootSource` (battle hull items, tech mining section loot, market hull items) and `StarChartLootSource` (battle, fleet, salvage and tech mining charts, and loot modifiers). `ChartLevelRange` moved into the tree as `NpcNodeRange`. The one visible change is that battle Nanite Feedstock is now added and announced after the star chart loot instead of before it. The allowlist went from 214 to 198 crossings.
 
 ### Step 5: untangle the rest
 

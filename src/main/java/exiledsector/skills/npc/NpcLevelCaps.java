@@ -9,7 +9,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import exiledsector.ModCsv;
-import exiledsector.charts.ChartIds;
+import exiledsector.loot.LootSources;
 import exiledsector.skills.progression.ShipLevelConfig;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -206,6 +206,6 @@ public final class NpcLevelCaps {
     }
 
     private static boolean isChartFleet(MemoryAPI fleetMemory) {
-        return fleetMemory != null && fleetMemory.get(ChartIds.TIER_MEMORY_KEY) instanceof Number;
+        return LootSources.levelRange(fleetMemory) != null;
     }
 }

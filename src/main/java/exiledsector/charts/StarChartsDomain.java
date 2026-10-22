@@ -13,6 +13,8 @@ import exiledsector.i18n.Translation;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.StarChartCurrency;
 import exiledsector.items.StarChartItems;
+import exiledsector.loot.FleetDifficulty;
+import exiledsector.loot.LootSource;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.chart.WormholeGatewayOption;
 import lunalib.lunaSettings.LunaSettings.SettingsCreator;
@@ -26,6 +28,16 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     @Override
     public List<ShipEffectSource> shipEffectSources() {
         return List.of(ChartFleetConditionSource.INSTANCE);
+    }
+
+    @Override
+    public List<LootSource> lootSources() {
+        return List.of(StarChartLootSource.INSTANCE);
+    }
+
+    @Override
+    public List<FleetDifficulty> fleetDifficulties() {
+        return List.of(StarChartLootSource.INSTANCE);
     }
 
     @Override

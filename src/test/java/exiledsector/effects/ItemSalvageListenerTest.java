@@ -8,6 +8,9 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.charts.StarChartLootSource;
+import exiledsector.charts.DropType;
+import exiledsector.loot.LootModifiers;
 import exiledsector.charts.ChartIds;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDrops;
@@ -119,8 +122,10 @@ class ItemSalvageListenerTest {
         when(outside.getContainingLocation()).thenReturn(mock(LocationAPI.class));
         SectorEntityToken nowhere = mock(SectorEntityToken.class);
 
-        assertSame(ChartGenContext.none(), ItemSalvageListener.chartContext(outside));
-        assertSame(ChartGenContext.none(), ItemSalvageListener.chartContext(nowhere));
+        LootModifiers none = new LootModifiers(ChartGenContext.none().itemChances(), ChartGenContext.none().dropMult(DropType.FEEDSTOCK),
+                ChartGenContext.none().dropMult(DropType.CURRENCY));
+        assertEquals(none, StarChartLootSource.INSTANCE.modifiersAt(outside.getContainingLocation()));
+        assertEquals(none, StarChartLootSource.INSTANCE.modifiersAt(nowhere.getContainingLocation()));
     }
 
     @Test
@@ -217,6 +222,6 @@ class ItemSalvageListenerTest {
 
     @Test
     void outsideSystemsChartSalvageNeedsASectorAndItsOwnRule() {
-        assertTrue(ItemSalvageListener.chartLoot(null, site("station_research", null)).isEmpty());
+        assertTrue(StarChartLootSource.salvageLoot(null, site("station_research", null)).isEmpty());
     }
 }

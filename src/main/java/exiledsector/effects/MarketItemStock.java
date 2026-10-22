@@ -15,10 +15,8 @@ import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import com.fs.starfarer.api.impl.campaign.submarkets.BaseSubmarketPlugin;
 import exiledsector.PlayerFleet;
 import exiledsector.items.ItemData;
-import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemUnlock;
-import exiledsector.items.MarketHullItems;
-import exiledsector.items.WormholeAnchorDefinitions;
+import exiledsector.loot.LootSource;
+import exiledsector.loot.LootSources;
 import org.apache.log4j.Logger;
 
 import java.util.Random;
@@ -50,11 +48,8 @@ public class MarketItemStock implements SubmarketUpdateListener, ColonyInteracti
                 return;
             }
             CargoAPI cargo = submarket.getCargo();
-            if (ANCHOR_SUBMARKETS.contains(submarket.getSpecId())) {
-                stockAnchors(submarket.getMarket(), cargo);
-            }
-            if (MarketHullItems.stocks(submarket.getSpecId())) {
-                stockHullItems(submarket.getSpecId(), cargo);
+            for (LootSource source : LootSources.all()) {
+                source.stockSubmarket(submarket, cargo, random);
             }
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Stocking market items failed", e);
@@ -81,31 +76,6 @@ public class MarketItemStock implements SubmarketUpdateListener, ColonyInteracti
         }
         marketMemory.set(rolledKey, restockTimestamp);
         return true;
-    }
-
-    private void stockAnchors(MarketAPI market, CargoAPI cargo) {
-        for (CargoStackAPI stack : cargo.getStacksCopy()) {
-            if (stack.isSpecialStack() && ItemData.isMarketListing(stack.getSpecialDataIfSpecial())) {
-                cargo.removeStack(stack);
-            }
-        }
-        for (ItemDefinition definition : WormholeAnchorDefinitions.rollMarketStock(market.getFactionId(), random)) {
-            cargo.addSpecial(ItemData.rolled(definition, random.nextLong()).toMarketListing(), 1f);
-        }
-    }
-
-    private void stockHullItems(String submarketId, CargoAPI cargo) {
-        for (CargoStackAPI stack : cargo.getStacksCopy()) {
-            if (stack.isSpecialStack() && MarketHullItems.isStock(ItemData.of(stack.getSpecialDataIfSpecial()))) {
-                cargo.removeStack(stack);
-            }
-        }
-        if (!ItemUnlock.sectionsOpen(Global.getSector())) {
-            return;
-        }
-        for (ItemData item : MarketHullItems.roll(submarketId, random)) {
-            cargo.addSpecial(item.toSpecialItem(), 1f);
-        }
     }
 
     static void unlistBought(CargoAPI cargo) {

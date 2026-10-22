@@ -30,6 +30,7 @@ import exiledsector.effects.SkillConflictWarningHullMod;
 import exiledsector.effects.ShipEffectSource;
 import exiledsector.effects.SkillTreeEffectSource;
 import exiledsector.effects.SkillTreeInstaller;
+import exiledsector.effects.SkillTreeLootSource;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.SpecLocalisation;
 import exiledsector.items.DeletedSubroutines;
@@ -45,6 +46,8 @@ import exiledsector.items.UniqueSubroutinesSetting;
 import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.items.WormholeAnchorLinks;
 import exiledsector.items.WormholeAnchorMigration;
+import exiledsector.loot.FleetDifficulty;
+import exiledsector.loot.LootSource;
 import exiledsector.persistence.RetiredReserveIds;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
@@ -76,6 +79,16 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
     @Override
     public List<ShipEffectSource> shipEffectSources() {
         return List.of(SkillTreeEffectSource.INSTANCE);
+    }
+
+    @Override
+    public List<LootSource> lootSources() {
+        return List.of(SkillTreeLootSource.INSTANCE);
+    }
+
+    @Override
+    public List<FleetDifficulty> fleetDifficulties() {
+        return List.of(SkillTreeLootSource.INSTANCE);
     }
 
     @Override

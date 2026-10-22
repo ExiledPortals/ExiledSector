@@ -2,7 +2,7 @@ package exiledsector.charts;
 
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.ModCsv;
-import exiledsector.skills.progression.ShipLevelConfig;
+import exiledsector.loot.FleetLevelRange;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -122,26 +122,19 @@ public final class ChartTiers {
         return loaded != null ? loaded : ChartTier.fallback(clamped);
     }
 
-    public static ChartLevelRange fleetStrengthRangeFor(MemoryAPI fleetMemory) {
+    public static FleetLevelRange fleetStrengthRangeFor(MemoryAPI fleetMemory) {
         Object storedTier = fleetMemory == null ? null : fleetMemory.get(ChartIds.TIER_MEMORY_KEY);
         if (!(storedTier instanceof Number tierNumber)) {
             return null;
         }
         ChartTier tier = forTier(tierNumber.intValue());
         int bonus = fleetMemory.get(ChartIds.STRENGTH_BONUS_MEMORY_KEY) instanceof Number storedBonus ? Math.max(0, storedBonus.intValue()) : 0;
-        int maxLevel = ShipLevelConfig.maxLevel();
-        int lowest = scaledLevel(tier.levelMin(), bonus, maxLevel);
-        int highest = scaledLevel(tier.levelMax(), bonus, maxLevel);
-        int nodeCap = ShipLevelConfig.maxAllocatedNodesBesidesRoot();
-        if (Boolean.TRUE.equals(fleetMemory.get(ChartIds.WARDEN_MEMORY_KEY))) {
-            return new ChartLevelRange(Math.min(nodeCap, lowest + WARDEN_EXTRA_LEVELS), Math.min(nodeCap, highest + WARDEN_EXTRA_LEVELS));
-        }
-        return new ChartLevelRange(Math.min(nodeCap, lowest), Math.min(nodeCap, highest));
+        int extraLevels = Boolean.TRUE.equals(fleetMemory.get(ChartIds.WARDEN_MEMORY_KEY)) ? WARDEN_EXTRA_LEVELS : 0;
+        return new FleetLevelRange(scaledLevel(tier.levelMin(), bonus), scaledLevel(tier.levelMax(), bonus), extraLevels);
     }
 
-    static int scaledLevel(int level, int strengthBonusPercent, int maxLevel) {
-        int scaled = Math.round(level * (1f + strengthBonusPercent / ChartTier.PERCENT));
-        return Math.max(0, Math.min(maxLevel, scaled));
+    static int scaledLevel(int level, int strengthBonusPercent) {
+        return Math.round(level * (1f + strengthBonusPercent / ChartTier.PERCENT));
     }
 
     static void resetForTests() {

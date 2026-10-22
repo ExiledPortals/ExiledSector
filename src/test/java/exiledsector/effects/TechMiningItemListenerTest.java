@@ -6,6 +6,7 @@ import com.fs.starfarer.api.impl.campaign.econ.impl.TechMining;
 import org.junit.jupiter.api.Test;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
+import exiledsector.charts.StarChartLootSource;
 import exiledsector.charts.ChartDrops;
 import exiledsector.items.ItemData;
 import exiledsector.items.StarChartFixtures;
@@ -68,11 +69,11 @@ class TechMiningItemListenerTest {
             when(playerStats.getLevel()).thenReturn(30);
             when(sector.getPlayerStats()).thenReturn(playerStats);
 
-            List<ItemData> firstFind = TechMiningItemListener.chartsFound(sector, "colony", 0, 1f);
+            List<ItemData> firstFind = StarChartLootSource.techMiningCharts(sector, "colony", 0, 1f);
             assertEquals(1, firstFind.size());
             assertEquals(5, firstFind.get(0).preview().tier());
-            assertEquals(firstFind.get(0).seed(), TechMiningItemListener.chartsFound(sector, "colony", 0, 1f).get(0).seed());
-            assertEquals(List.of(), TechMiningItemListener.chartsFound(sector, "colony", 3, 1f));
+            assertEquals(firstFind.get(0).seed(), StarChartLootSource.techMiningCharts(sector, "colony", 0, 1f).get(0).seed());
+            assertEquals(List.of(), StarChartLootSource.techMiningCharts(sector, "colony", 3, 1f));
         } finally {
             ChartDrops.clear();
             StarChartFixtures.clear();

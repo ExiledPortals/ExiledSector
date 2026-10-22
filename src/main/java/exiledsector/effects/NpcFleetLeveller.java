@@ -6,9 +6,6 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.Seeds;
-import exiledsector.charts.ChartIds;
-import exiledsector.charts.ChartLevelRange;
-import exiledsector.charts.ChartTiers;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.ShipSkillData;
@@ -31,6 +28,8 @@ import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.tags.ShipProfile;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.items.NpcItems;
+import exiledsector.loot.LootSources;
+import exiledsector.skills.npc.NpcNodeRange;
 
 import java.util.List;
 import java.util.Map;
@@ -53,9 +52,10 @@ public final class NpcFleetLeveller {
         List<Integer> playerShipPowers = List.of();
         String fleetFactionId = npcFleet.getFaction() == null ? null : npcFleet.getFaction().getId();
         String factionRegion = fleetFactionId == null ? null : NpcFactionVolumes.regionFor(fleetFactionId);
-        ChartLevelRange chartLevels = ChartTiers.fleetStrengthRangeFor(npcFleet.getMemoryWithoutUpdate());
+        NpcNodeRange chartLevels = NpcNodeRange.of(LootSources.levelRange(npcFleet.getMemoryWithoutUpdate()), ShipLevelConfig.maxLevel(),
+                ShipLevelConfig.maxAllocatedNodesBesidesRoot());
         NpcLevelLimit levelLimit = null;
-        String chartSeed = ChartIds.fleetSeed(npcFleet.getMemoryWithoutUpdate());
+        String chartSeed = LootSources.levelSeed(npcFleet.getMemoryWithoutUpdate());
         List<FleetMemberAPI> members = npcFleet.getFleetData().getMembersListCopy();
         for (int memberIndex = 0; memberIndex < members.size(); memberIndex++) {
             FleetMemberAPI member = members.get(memberIndex);
@@ -100,7 +100,7 @@ public final class NpcFleetLeveller {
         return member.getVariant().getPermaMods().contains(SkillTreeHullMod.ID) || ShipSkillDataManager.hasProgress(member.getId());
     }
 
-    static String decide(FleetMemberAPI member, List<Integer> playerShipPowers, ChartLevelRange chartLevels, NpcLevelLimit levelLimit,
+    static String decide(FleetMemberAPI member, List<Integer> playerShipPowers, NpcNodeRange chartLevels, NpcLevelLimit levelLimit,
                          String fleetFactionId, String factionRegion, Random random) {
         if (!NpcShipSelector.isCandidate(member) || !NpcShipSelector.isChosen(member, random)) {
             return NpcTreeRecords.NOT_LEVELLED;
