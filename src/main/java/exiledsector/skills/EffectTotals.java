@@ -103,7 +103,7 @@ public final class EffectTotals {
         List<DamageTakenCaps.Cap> reachedCaps = DamageTakenCaps.reachedBy(permanentTotals);
         List<Group> groups = new ArrayList<>();
         totalsByDuration.forEach((duration, durationTotals) -> groups.add(PERMANENT.equals(duration)
-                ? new Group(null, Collections.unmodifiableMap(cappedTotals(permanentTotals, reachedCaps)))
+                ? new Group(null, Collections.unmodifiableMap(DamageTakenCaps.capped(permanentTotals, reachedCaps)))
                 : new Group(duration.temporarySeconds(), Collections.unmodifiableMap(durationTotals))));
         return new EffectTotals(List.copyOf(resolvedNodeEffects), List.copyOf(resolvedSectionEffects), Collections.unmodifiableMap(pooledMultipliers),
                 List.copyOf(reachedCaps), diminishedStatsOf(diminishingRatios), List.copyOf(groups));
@@ -155,19 +155,10 @@ public final class EffectTotals {
         return Collections.unmodifiableList(scaledEffects);
     }
 
-    private static Map<SkillEffect, Float> permanentTotals(Map<SkillEffect, Float> sums) {
+    public static Map<SkillEffect, Float> permanentTotals(Map<SkillEffect, Float> sums) {
         Map<SkillEffect, Float> totals = new LinkedHashMap<>();
         sums.forEach((effect, sum) -> totals.put(effect, effect.isMultiplicative() ? SkillEffect.addedMultiplier(sum) : sum));
         return totals;
-    }
-
-    private static Map<SkillEffect, Float> cappedTotals(Map<SkillEffect, Float> permanentTotals, List<DamageTakenCaps.Cap> reachedCaps) {
-        Map<SkillEffect, Float> capped = new LinkedHashMap<>(permanentTotals);
-        for (DamageTakenCaps.Cap cap : reachedCaps) {
-            cap.contributingEffects().forEach(capped::remove);
-            capped.put(cap.cappedEffect(), -DamageTakenCaps.MAX_REDUCTION_PERCENT);
-        }
-        return capped;
     }
 
     static float compounded(float firstMultiplier, float secondMultiplier) {

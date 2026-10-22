@@ -186,6 +186,9 @@ export function serializeType(type: SkillType): Record<string, unknown> {
   if (type.tags?.length) {
     out.tags = type.tags;
   }
+  if (type.moduleShare) {
+    out.moduleShare = type.moduleShare;
+  }
   return out;
 }
 

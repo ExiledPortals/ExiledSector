@@ -5,6 +5,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
+import exiledsector.charts.StarChartSettings;
 import exiledsector.ui.refit.UiReflection;
 import org.apache.log4j.Logger;
 
@@ -21,7 +22,7 @@ public final class ModificationBenchCargoLauncher {
     }
 
     public static boolean openStarCharts(CampaignUIAPI campaignUI) {
-        return open(campaignUI, true, null);
+        return StarChartSettings.enabled() && open(campaignUI, true, null);
     }
 
     // java:S1181: UiReflection declares Throwable, and a changed engine may only cost the core UI Crafting window, never the game

@@ -12,6 +12,7 @@ import exiledsector.skills.npc.NpcTreeSize;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.tags.AreaToggles;
 import exiledsector.items.HullUpgradesSetting;
+import exiledsector.items.UniqueSubroutinesSetting;
 import exiledsector.ui.inspect.NpcInspectConfig;
 import exiledsector.ui.refit.RefitButtonConfig;
 import lunalib.lunaSettings.LunaSettings;
@@ -53,6 +54,10 @@ class ExiledSectorSettingsTest {
     void tearDown() {
         settingsCreatorMock.close();
         lunaSettingsMock.close();
+        HullUpgradesSetting.setEnabledForTests(HullUpgradesSetting.DEFAULT_ENABLED);
+        HullUpgradesSetting.setUnlockLevelForTests(HullUpgradesSetting.DEFAULT_UNLOCK_LEVEL);
+        UniqueSubroutinesSetting.setUnlockLevelForTests(UniqueSubroutinesSetting.DEFAULT_UNLOCK_LEVEL);
+        StarChartSettings.setEnabledForTests(StarChartSettings.DEFAULT_ENABLED);
     }
 
     @Test
@@ -92,6 +97,20 @@ class ExiledSectorSettingsTest {
     void registersTheHullUpgradesToggleSwitchedOnByDefault() {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addBoolean(eq("exiledSector"),
                 eq(HullUpgradesSetting.ENABLED_FIELD_ID), anyString(), anyString(), eq(true), eq("")));
+    }
+
+    @Test
+    void registersTheHullUpgradeAndUniqueSubroutineLevelsDefaultingToFifteen() {
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addInt(eq("exiledSector"),
+                eq(HullUpgradesSetting.UNLOCK_LEVEL_FIELD_ID), anyString(), anyString(), eq(15), eq(1), eq(15), eq("")));
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addInt(eq("exiledSector"),
+                eq(UniqueSubroutinesSetting.UNLOCK_LEVEL_FIELD_ID), anyString(), anyString(), eq(15), eq(1), eq(15), eq("")));
+    }
+
+    @Test
+    void registersTheStarChartsToggleSwitchedOnByDefault() {
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addBoolean(eq("exiledSector"),
+                eq(StarChartSettings.ENABLED_FIELD_ID), anyString(), anyString(), eq(true), eq("")));
     }
 
     @Test

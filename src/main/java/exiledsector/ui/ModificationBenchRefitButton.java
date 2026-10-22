@@ -9,6 +9,7 @@ import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.i18n.Translation;
 import exiledsector.ui.refit.RefitButtonConfig;
+import exiledsector.ui.refit.RefitModuleTabs;
 import lunalib.lunaRefit.BaseRefitButton;
 import lunalib.lunaRefit.LunaRefitManager;
 
@@ -49,12 +50,12 @@ public class ModificationBenchRefitButton extends BaseRefitButton {
 
     @Override
     public boolean shouldShow(FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
-        return !RefitButtonConfig.buttonUnderHullMods();
+        return !RefitButtonConfig.buttonUnderHullMods() && !RefitModuleTabs.isModuleTab(member);
     }
 
     @Override
     public boolean hasPanel(FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
-        return true;
+        return !RefitModuleTabs.isModuleTab(member);
     }
 
     @Override

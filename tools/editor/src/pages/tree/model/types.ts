@@ -45,6 +45,7 @@ export interface SkillType {
   description?: string;
   todo?: string;
   tags?: string[];
+  moduleShare?: string;
 }
 
 export interface TreeNode {
@@ -239,6 +240,12 @@ export const HULL_SIZE_OPTIONS = [
   { value: 'DESTROYER', label: 'Destroyer' },
   { value: 'CRUISER', label: 'Cruiser' },
   { value: 'CAPITAL_SHIP', label: 'Capital' },
+];
+
+export const MODULE_SHARE_OPTIONS = [
+  { value: 'auto', label: 'Auto (all or nothing by effect)' },
+  { value: 'all', label: 'All shareable effects' },
+  { value: 'none', label: 'None' },
 ];
 
 export const UNLOCK_CONDITION_LABELS: Record<string, string> = {

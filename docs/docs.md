@@ -60,10 +60,13 @@ hit, rather than using a modifier, so EMP and on-hit effects stay at full streng
 
 ## Module effects
 
-The tree applies only to the parent ship, so `ModuleBonusListener` pushes the `MODULE_*` effects onto each
-living child module on the first combat frame. Module hull and armor are raised as a percent of the module's
-own bonus, then its maximum hull and armor cells are rescaled. `JettisonListener` counts the modules it saw
-alive that have since died, and scales top speed and maneuverability by that count.
+The tree applies only to the parent ship. On the parent's first combat frame `ModuleTreeShare` gives each
+living child module a share of the parent's shareable tree effects (`ModuleShareSetting`, 50% by default), plus
+the `MODULE_*` effects at full strength.
+`ModuleBoost` applies both, then rescales the module's maximum hull, armor cells, shield arc (up to 360) and
+each weapon's maximum ammo once; cells above their maximum are clamped first so armor carried from an earlier
+engagement isn't raised again. `JettisonListener` counts the modules it saw alive that have since
+died, and scales top speed and maneuverability by that count.
 
 ## Rise From the Ashes
 

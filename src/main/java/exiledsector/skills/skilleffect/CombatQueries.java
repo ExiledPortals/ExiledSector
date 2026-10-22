@@ -34,6 +34,12 @@ public final class CombatQueries {
         return other.getOwner() != source.getOwner() && other.getOwner() != Misc.OWNER_NEUTRAL;
     }
 
+    static boolean isSameStation(ShipAPI ship, ShipAPI other) {
+        ShipAPI parent = ship.getParentStation();
+        ShipAPI otherParent = other.getParentStation();
+        return otherParent == ship || parent == other || (parent != null && parent == otherParent);
+    }
+
     static float distanceSquared(Vector2f a, Vector2f b) {
         float deltaX = a.x - b.x;
         float deltaY = a.y - b.y;

@@ -2,6 +2,8 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.campaign.FleetDataAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import lunalib.lunaRefit.BaseRefitButton;
 import lunalib.lunaRefit.LunaRefitManager;
 import org.junit.jupiter.api.AfterEach;
@@ -9,7 +11,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -39,6 +44,19 @@ class SkillTreeRefitButtonTest {
     @Test
     void hasPanelSoClickingOpensTheOverlay() {
         assertTrue(button.hasPanel(null, null, null));
+    }
+
+    @Test
+    void hasNoPanelOnAModuleTab() {
+        FleetMemberAPI parent = mock(FleetMemberAPI.class);
+        FleetMemberAPI module = mock(FleetMemberAPI.class);
+        FleetDataAPI fleetData = mock(FleetDataAPI.class);
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(parent));
+        when(parent.getFleetData()).thenReturn(fleetData);
+        when(module.getFleetData()).thenReturn(fleetData);
+
+        assertTrue(button.hasPanel(parent, null, null));
+        assertFalse(button.hasPanel(module, null, null));
     }
 
     @Test

@@ -30,6 +30,21 @@ class StarChartSettingsTest {
     }
 
     @Test
+    void starChartsAreOnUnlessSwitchedOff() {
+        try {
+            lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.ENABLED_FIELD_ID)).thenReturn(null);
+            StarChartSettings.reloadSettings();
+            assertTrue(StarChartSettings.enabled());
+
+            lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.ENABLED_FIELD_ID)).thenReturn(false);
+            StarChartSettings.reloadSettings();
+            assertFalse(StarChartSettings.enabled());
+        } finally {
+            StarChartSettings.setEnabledForTests(StarChartSettings.DEFAULT_ENABLED);
+        }
+    }
+
+    @Test
     void defaultsToOneEntry() {
         configure(null);
 

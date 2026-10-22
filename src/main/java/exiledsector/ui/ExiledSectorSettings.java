@@ -4,6 +4,7 @@ import exiledsector.ModSettingsListener;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.compat.CombatGlow;
 import exiledsector.compat.SalvageSiteCompat;
+import exiledsector.effects.ModuleShareSetting;
 import exiledsector.effects.NpcBonusScale;
 import exiledsector.items.HullUpgradesSetting;
 import exiledsector.ui.cargo.ItemAnimationSetting;
@@ -11,6 +12,7 @@ import exiledsector.items.BattleItemDrops;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemRoller;
+import exiledsector.items.UniqueSubroutinesSetting;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.LanguageSetting;
 import exiledsector.i18n.Translation;
@@ -62,6 +64,10 @@ public final class ExiledSectorSettings {
         ItemRoller.reloadSettings();
         ModSettingsListener.ensureRegistered(HullUpgradesSetting.SettingsListener.class, HullUpgradesSetting.SettingsListener::new);
         HullUpgradesSetting.reloadSettings();
+        ModSettingsListener.ensureRegistered(UniqueSubroutinesSetting.SettingsListener.class, UniqueSubroutinesSetting.SettingsListener::new);
+        UniqueSubroutinesSetting.reloadSettings();
+        ModSettingsListener.ensureRegistered(StarChartSettings.SettingsListener.class, StarChartSettings.SettingsListener::new);
+        StarChartSettings.reloadSettings();
         ModSettingsListener.ensureRegistered(ItemAnimationSetting.SettingsListener.class, ItemAnimationSetting.SettingsListener::new);
         ItemAnimationSetting.reloadSettings();
     }
@@ -90,6 +96,13 @@ public final class ExiledSectorSettings {
         SettingsCreator.addBoolean(MOD_ID, HullUpgradesSetting.ENABLED_FIELD_ID,
                 Translation.text("settings.socketStorage.hullUpgrades.name"), Translation.text("settings.socketStorage.hullUpgrades.tooltip"),
                 HullUpgradesSetting.DEFAULT_ENABLED, MAIN_TAB);
+        SettingsCreator.addInt(MOD_ID, HullUpgradesSetting.UNLOCK_LEVEL_FIELD_ID,
+                Translation.text("settings.socketStorage.hullUpgradesLevel.name"), Translation.text("settings.socketStorage.hullUpgradesLevel.tooltip"),
+                HullUpgradesSetting.DEFAULT_UNLOCK_LEVEL, HullUpgradesSetting.MIN_UNLOCK_LEVEL, HullUpgradesSetting.MAX_UNLOCK_LEVEL, MAIN_TAB);
+        SettingsCreator.addInt(MOD_ID, UniqueSubroutinesSetting.UNLOCK_LEVEL_FIELD_ID,
+                Translation.text("settings.socketStorage.uniqueSubroutinesLevel.name"),
+                Translation.text("settings.socketStorage.uniqueSubroutinesLevel.tooltip"),
+                UniqueSubroutinesSetting.DEFAULT_UNLOCK_LEVEL, HullUpgradesSetting.MIN_UNLOCK_LEVEL, HullUpgradesSetting.MAX_UNLOCK_LEVEL, MAIN_TAB);
         SettingsCreator.addRadio(MOD_ID, ItemAnimationSetting.FIELD_ID, Translation.text("settings.socketStorage.itemAnimations.name"),
                 Translation.text("settings.socketStorage.itemAnimations.tooltip"), ItemAnimationSetting.FULL,
                 String.join(",", ItemAnimationSetting.OPTIONS), MAIN_TAB);
@@ -133,6 +146,11 @@ public final class ExiledSectorSettings {
                     Translation.text("settings.diminishing.threshold.tooltip"),
                     stat.defaultThresholdPercent(), 0, DiminishingReturns.MAX_THRESHOLD_PERCENT, MAIN_TAB);
         }
+
+        SettingsCreator.addHeader(MOD_ID, "exiledSector_modulesHeader", Translation.text("settings.modules.header"), MAIN_TAB);
+        SettingsCreator.addInt(MOD_ID, ModuleShareSetting.FIELD_ID,
+                Translation.text("settings.modules.share.name"), Translation.text("settings.modules.share.tooltip"),
+                ModuleShareSetting.DEFAULT_PERCENT, 0, ModuleShareSetting.MAX_PERCENT, MAIN_TAB);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_levelHeader", Translation.text("settings.level.header"), MAIN_TAB);
         SettingsCreator.addText(MOD_ID, "exiledSector_levelAbout", Translation.text("settings.level.about"), MAIN_TAB);
@@ -205,6 +223,9 @@ public final class ExiledSectorSettings {
                 MaxChainCountConfig.DEFAULT, 1, 20, MAIN_TAB);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_starChartsHeader", Translation.text("settings.starCharts.header"), MAIN_TAB);
+        SettingsCreator.addBoolean(MOD_ID, StarChartSettings.ENABLED_FIELD_ID,
+                Translation.text("settings.starCharts.enabled.name"), Translation.text("settings.starCharts.enabled.tooltip"),
+                StarChartSettings.DEFAULT_ENABLED, MAIN_TAB);
         SettingsCreator.addInt(MOD_ID, StarChartSettings.ENTRIES_FIELD_ID,
                 Translation.text("settings.starCharts.entries.name"), Translation.text("settings.starCharts.entries.tooltip"),
                 StarChartSettings.DEFAULT_ENTRIES, StarChartSettings.MIN_ENTRIES, StarChartSettings.MAX_ENTRIES, MAIN_TAB);

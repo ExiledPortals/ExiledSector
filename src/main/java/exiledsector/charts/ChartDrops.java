@@ -147,7 +147,7 @@ public final class ChartDrops {
 
     public static Loot roll(Source source, int tier, float chartMult, float currencyMult, Random random, Predicate<ItemDefinition> allowedUniques) {
         Rule rule = rule(source);
-        if (rule == null || tier == NO_TIER || !(chartMult > 0f) && !(currencyMult > 0f)) {
+        if (!StarChartSettings.enabled() || rule == null || tier == NO_TIER || !(chartMult > 0f) && !(currencyMult > 0f)) {
             return Loot.NONE;
         }
         int baseTier = Math.min(rule.maxTier(), ChartTiers.clamp(tier));

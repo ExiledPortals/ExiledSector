@@ -17,6 +17,7 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.skills.DiminishingReturns;
+import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSections;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
@@ -90,6 +91,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
                 effectEntry.effect().applyAfterShipCreation(ship, effectEntry.modId(), effectEntry.magnitude());
             }
         }
+        ModuleTreeShare.attach(ship, resolvedTree);
         boolean playerTree = !SkillDataResolver.isNpcTree(ship.getVariant());
         FleetMemberAPI member = memberOf(ship);
         PhantomConflictWatch.inspect(member, ship.getVariant(), resolvedTree.phantomHullModIds(), playerTree);
@@ -121,7 +123,8 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
                     Misc.getGrayColor()));
             return;
         }
-        ShipTreeSummaryRenderer.render(tooltip, shipTree, hullSize, TOOLTIP_PAD, MAX_TOOLTIP_BONUS_LINES);
+        boolean hasModuleSlots = ship.getHullSpec() != null && ShipFacts.hasModuleSlots(ship.getHullSpec());
+        ShipTreeSummaryRenderer.render(tooltip, shipTree, hullSize, hasModuleSlots, TOOLTIP_PAD, MAX_TOOLTIP_BONUS_LINES);
     }
 
     @Override

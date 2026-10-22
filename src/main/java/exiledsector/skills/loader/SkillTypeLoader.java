@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.CostItems;
 import exiledsector.skills.HullSizeSkillEffect;
+import exiledsector.skills.ModuleShareOverride;
 import exiledsector.skills.ShipHullSizes;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillTier;
@@ -101,7 +102,21 @@ public final class SkillTypeLoader {
                 .exclusiveSkillTypeIds(exclusiveSkillTypeIds)
                 .unlockConditions(unlockConditions)
                 .tags(tags)
+                .moduleShareOverride(parseModuleShareOverride(typeId, typeJson.optString("moduleShare", null)))
                 .build();
+    }
+
+    private static ModuleShareOverride parseModuleShareOverride(String typeId, String moduleShare) {
+        if (moduleShare == null || moduleShare.isEmpty()) {
+            return ModuleShareOverride.AUTO;
+        }
+        for (ModuleShareOverride override : ModuleShareOverride.values()) {
+            if (override != ModuleShareOverride.AUTO && override.name().equalsIgnoreCase(moduleShare)) {
+                return override;
+            }
+        }
+        logTypeError(typeId, "has unknown moduleShare \"" + moduleShare + "\" - expected \"all\" or \"none\"; ignoring it.");
+        return ModuleShareOverride.AUTO;
     }
 
     private static SkillItemCost parseItemCost(JSONObject itemCostJson) throws JSONException {

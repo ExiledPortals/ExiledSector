@@ -7,7 +7,7 @@ import { EffectSelect } from '../../../shared/EffectSelect.tsx';
 import { ImagePickButton } from '../../../shared/ImagePickButton.tsx';
 import { RowButtons } from '../../../shared/MoveButtons.tsx';
 import { TYPE_TAG_GROUPS } from '../model/tags.ts';
-import { HULL_SIZE_OPTIONS, tierOf, UNLOCK_CONDITION_LABELS, type SkillType, type UnlockCondition } from '../model/types.ts';
+import { HULL_SIZE_OPTIONS, MODULE_SHARE_OPTIONS, tierOf, UNLOCK_CONDITION_LABELS, type SkillType, type UnlockCondition } from '../model/types.ts';
 import { TagGroupsField } from './TagGroupsField.tsx';
 import type { TypeFormSection } from './typeFormSections.ts';
 
@@ -470,6 +470,24 @@ export function TypeForm(props: TypeFormProps) {
               ))}
             </Group>
           </Checkbox.Group>
+        );
+      case 'moduleShare':
+        return (
+          <Select
+            key={section}
+            size="xs"
+            label="Share with station modules"
+            data={MODULE_SHARE_OPTIONS}
+            value={type.moduleShare ?? 'auto'}
+            allowDeselect={false}
+            onChange={(value) => onEdit((draft) => {
+              if (value && value !== 'auto') {
+                draft.moduleShare = value;
+              } else {
+                delete draft.moduleShare;
+              }
+            })}
+          />
         );
       case 'optionalOptions':
         return <OptionalOptions key={section} type={type} onEdit={onEdit} allTypes={props.allTypes} onEditOptionType={props.onEditOptionType} />;

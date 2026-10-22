@@ -64,6 +64,10 @@ public interface SkillEffect extends ModifierEffect {
         return true;
     }
 
+    default ModuleShare moduleShare() {
+        return ModuleShares.of(this);
+    }
+
     default StyledText deallocationWarning(float magnitude) {
         return null;
     }

@@ -4,7 +4,7 @@ Ships with station modules (Navarchy of Tania plates, Knights of Ludd, Roider Un
 
 All numbers are placeholders, like every other magnitude in the mod. `docs/analysis/balance.csv` is left alone.
 
-Status: planned, nothing built. The Tania volume (Module Hull, Module Armor, Module Weapon Damage, Plate Fire Control, Jettison Protocol, Rise From the Ashes, Thermo-Accelerator) is built but uncommitted on `parallel-work` and is the starting point.
+Status: on branch `module_skill_tree`, step 1 is committed (54875f4a), step 2 is committed (317bcbf7), step 3 is committed (8ab0bb69), step 4 is committed (582fae8e) and step 5 is committed. The Tania volume (Module Hull, Module Armor, Module Weapon Damage, Plate Fire Control, Jettison Protocol, Rise From the Ashes, Thermo-Accelerator) is committed on `parallel-work` (653b7cbd) and is the starting point.
 
 ## Decided so far
 
@@ -46,14 +46,14 @@ The share is computed from the parent's allocated nodes, not from the pooled tre
 
 1. Skip it if it is a temporary node, a vanilla passthrough (`vanillaHullMod`), or classed EXCLUDE as a whole (see "Nodes shared all or nothing").
 2. Skip it on a module that already has any of the node's phantom hull mods of its own (`InstalledHullMods.hasHullModOfItsOwn` on the module variant) or any hull mod in the node's `exclusiveHullMods`. Example: an Argentavis plate has Dedicated Targeting Core built in, so the parent's Dedicated Targeting Core node gives it nothing instead of +70% range.
-3. Take the node's effects at the parent's hull size, keep only the effects classed SHARE or SHARE-REBUILD, multiply each magnitude by the share, and pool MULT effects the same way `ResolvedTree` does.
+3. Take the node's effects at the parent's hull size and keep only the effects classed SHARE or SHARE-REBUILD. Sum them over all shared nodes, pool and floor MULT effects the same way `ResolvedTree` does, apply the damage-taken caps, then multiply each total by the share.
 4. Apply the pooled result to the module's stats under one mod id per effect (`exiledSector_moduleShare_<parentId>_<effect>`).
 
 Positive "increased" and "more" values scale linearly. The damage-taken caps are re-applied to the module's pooled totals, so a parent sitting at the 80% cap gives the module half of the cap, not half of the raw total.
 
 ### Share size
 
-A LunaLib setting, `exiledSector_moduleTreeShare`, from 0 to 100% in steps of 5, default 50%. At 0 nothing is pushed and the listener isn't attached. The Tania module nodes are not scaled by it.
+A LunaLib setting, `exiledSector_moduleTreeShare`, from 0 to 100% in steps of 5, default 50%. At 0 nothing is pushed, and the listener is attached only when the parent has Tania module nodes. The Tania module nodes are not scaled by it.
 
 ### Hull size
 
@@ -109,11 +109,13 @@ Some nodes pair an upside with a downside on different effects. A per-effect whi
 | frontshield | creates a front shield, speed ×0.8 | EXCLUDE | Creating shields on plates is structural, and Tania blocks makeshift shields. |
 | shield_shunt | armor +15%, removes the shield | EXCLUDE | Removing module shields is destructive; giving shieldless plates the armor alone is free value vanilla never allows. |
 | reckless_assault | includes armor -10%, crew loss +50% | Share the combat effects, both signs | Penalties on whitelisted stats travel with the node. |
-| exogrid | includes vent -25%, dissipation -5 per vent | Share both | Same rule. |
+| exogrid | includes vent -25%, dissipation -5 per vent | Share the dissipation penalty; vent left out | Same rule, but vent rate is excluded until tested. Tania plates have vent 0 anyway. |
 | seraphs_grace | repair time -20%, shield damage taken +20% (pooled MULT) | Share both | Same rule. |
 | torpedo_specialisation | missile speed +30%, missile maneuver -30% | Share both | Same rule. |
 
 General rule: a node is shared only if every effect on it is SHARE, SHARE-REBUILD, or a no-op on modules (movement, campaign). A node whose upside is an excluded effect is excluded whole, so its penalty never travels alone.
+
+Built in step 2 as `SkillType.moduleSharedEffects`, with the effect values in `ModuleShares`: SHARE, SHARE_REBUILD, SKIP (no-op or parent-only, doesn't block the node) and EXCLUDE (misbehaves or NEEDS-TEST, blocks the node). The `moduleShare` field on a skill type overrides the rule. `none` is set on unstable_injector, whose shareable effects are all penalties. `all` shares the shareable part and leaves the rest on the parent. It is set on armoredweapons, eccm, nskr_acoils, fluxbreakers, exogrid and seraphs_grace (as decided above), and on vent_rate_and_emp_damage, optimised_lenses, doctrine_tt_flux_arbitrage, doctrine_remnant_unblinking_watch and doctrine_remnant_fortress_lattice, whose excluded effects are all upsides. Under the rule, dynamic_grid (only its +10% shield damage taken would land) and doctrine_tt_hostile_takeover (its peak CR cost is excluded, so the damage would come free) share nothing.
 
 ## Catalogue 1: phantom hull mod nodes on modules
 
@@ -135,7 +137,7 @@ Parent phantoms already reach Tania plates in two cases: the plate hull mod chec
 | adaptive_coils | Nothing reacts. | Phase flux threshold; modules never phase. | EXCLUDE (no-op) |
 | advancedoptics | Nothing reacts. | Beam range and beam turn; works on module beams, mostly no-op on Tania composite slots. | SHARE (both effects) |
 | turretgyros | Nothing reacts; the plate's s-mod bonus reads the parent's s-mods only. | Weapon turn rate, live. | SHARE (NEEDS-TEST: turn rate live) |
-| armoredweapons | Nothing reacts. | Armor % (rebuild), weapon durability (fixed at build), turn ×0.75, recoil ×0.75. | SHARE armor, turn and recoil; durability left out |
+| armoredweapons | Nothing reacts. | Armor % (rebuild), weapon durability (fixed at build), turn ×0.75, recoil ×0.75. | SHARE armor and recoil; turn and durability left out (both NEEDS-TEST) |
 | autorepair | Nothing reacts. | Weapon repair time works; engine part is a no-op. | SHARE |
 | auxiliarythrusters | Nothing reacts. | Modules have speed and acceleration 0. | EXCLUDE (no-op) |
 | ballistic_rangefinder | Vanilla passthrough runs on the module: its range listener sizes off the largest ballistic slot. Tania slots are composite, so no listener; on modules with real ballistic slots each module gets its own. Argentavis mains already have it built in. | Passthrough, not shareable. | EXCLUDE |
@@ -300,6 +302,8 @@ Left out of the first build. Each could be added once checked in game.
 - Flags and integers ignore the share (PD flags, beam split, shield conversion, system charges). Each is decided explicitly above.
 - Detached and dead modules at deployment are skipped. A module can't come back mid-battle.
 - Retreat and redeploy build fresh module ships and a fresh listener. The armor clamp keeps the stored status from compounding.
+- The clamp only covers full cells. A damaged cell carried into the next engagement of the same encounter is raised by the boost again, so a plate at +20% armor that ended with a cell at half its boosted value starts the next engagement at 60% of it. Campaign repair clears this between encounters.
+- Modules with 0 base armor get no armor from the share, because cells are rescaled by a ratio and 0 stays 0. That loses ARMOR_FLAT and ARMOR_FLAT_FOR_LOW_BASE_ARMOR, which is largest at 0 base armor.
 - Inactive modules (vanilla Vambraces: 0 OP, no weapons, no bays) only benefit from armor and hull. The share can skip everything else on them to save work.
 - Tania plates halve flux capacity and dissipation and set vent rate to 0. Shared flux works on top of that, but never reaches the parent: Tania's flux grid reads the module's vent and capacitor counts, not its stats.
 - Tania plates overwrite module CR every frame. No CR effects are shared.
@@ -312,18 +316,18 @@ Left out of the first build. Each could be added once checked in game.
 
 These came up during the research and aren't part of the share itself.
 
-- Shared Fate already treats a ship's own modules as allies (`ShieldSkillEffect.java:303-305`), so a Shared Fate parent sends shield flux into its own plates today. Fix: skip ships whose parent station is the owner, and sibling modules.
-- The refit Skill Tree button has no module guard (`SkillTreeRefitButton.shouldShow`, `SkillTreeRefitButton.java:56`). LunaLib passes the selected module's fake member and variant, and opening the panel there runs `ShipTreeSync.memberChanged`. That would put our hull mod onto the module variant, which can be the global stock variant. Unverified in game; it should be confirmed and guarded first.
+- Shared Fate treated a ship's own modules as allies, so a Shared Fate parent sent shield flux into its own plates. Fixed (54875f4a): it now skips its own modules, its parent and sibling modules through `CombatQueries.isSameStation`, shared with At Any Cost.
+- The refit Skill Tree button had no module guard. Confirmed in code: on a module tab the refit (`coreui.refit.oOOO:187-201`) builds a fake `FleetMember` from the module variant with the parent's fleet data, and LunaLib passes it as the member. Opening the panel there would run `ShipTreeSync.memberChanged` on the module variant, which the campaign refit has already cloned into the parent's variant, so our hull mod would be saved onto the plate. Guarded (54875f4a): `RefitModuleTabs.isModuleTab` (member not in its own fleet's member list) hides the Skill Tree, Hull Upgrades and Modification Bench buttons and refuses their panels and hotkeys. Not yet checked in game; the buttons under the hull mods list stay visible on module tabs but do nothing.
 - Tania's Fixed Frontal Shield blanket-`unmodify()`s shield absorption, shield damage taken, arc, upkeep and unfold rate in its after-creation hook (`tania_Fixed_Frontal_Shield.java:45-60`). Our shield nodes on Tania main ships are therefore probably wiped. Unverified in game; it belongs in the Tania compat notes.
 - Ludd's Light and Repair Coordinator already include a ship's own modules among nearby ships. Ludd's Light hitting friendlies is intended. Repair Coordinator repairing plates is fine.
 
 ## Build order
 
-1. Confirm the refit button issue in game and guard `SkillTreeRefitButton.shouldShow` and the panel against module members and variants. Fix the Shared Fate ally filter.
-2. Add the classification. Each `SkillEffect` gets a `ModuleShare` value: SHARE, SHARE_REBUILD, EXCLUDE (default). Each skill type gets an optional `moduleShare` override (`all`, `none`) for the all-or-nothing nodes, in `skill_types.json` and the editor serialisers.
-3. Build `ModuleTreeShare`: node walk, skip rules, scaling, MULT pooling, damage-taken caps, and the push onto module stats.
-4. Fold `ModuleBonusListener` into it and write one rescaler for hull, armor, ammo and shield arc, with the armor clamp.
-5. Add the LunaLib setting and the tree summary line, in English and Chinese.
+1. Confirm the refit button issue in game and guard `SkillTreeRefitButton.shouldShow` and the panel against module members and variants. Fix the Shared Fate ally filter. Code done in 54875f4a; in-game check still open.
+2. Add the classification. Each `SkillEffect` gets a `ModuleShare` value: SHARE, SHARE_REBUILD, EXCLUDE (default). Each skill type gets an optional `moduleShare` override (`all`, `none`) for the all-or-nothing nodes, in `skill_types.json` and the editor serialisers. Done in 317bcbf7: `ModuleShare` adds SKIP for the no-op effects, the node rule is `SkillType.moduleSharedEffects`, and the editor type dialog has a "Share with station modules" select.
+3. Build `ModuleTreeShare`: node walk, skip rules, scaling, MULT pooling, damage-taken caps, and the push onto module stats. Done, uncommitted: it works from the parent's resolved per-node effects (after NPC scaling and diminishing returns), caps the module's raw totals before scaling, and pushes only SHARE effects; SHARE_REBUILD effects wait for step 4 and the share is a 50% constant until step 5. Section item effects aren't shared.
+4. Fold `ModuleBonusListener` into it and write one rescaler for hull, armor, ammo and shield arc, with the armor clamp. Done, uncommitted: `ModuleBonusListener` is deleted, the `MODULE_*` effects only write their keys, and `ModuleBoost.boost` applies the share and the Tania values, rescales hull, armor, shield arc (capped at 360) and each weapon's maximum ammo once, then runs the after-creation hooks of the SHARE_REBUILD effects (the PD reclassify) on the module. Committed in 582fae8e.
+5. Add the LunaLib setting and the tree summary line, in English and Chinese. Done and committed: `ModuleShareSetting` ("Module Share" under a new Station Modules header, 0 to 100, default 50; LunaLib's int slider has no step, so any whole percent works), and "This ship's modules have N% of its weapon, flux and defense bonuses." in the tree summary of ships with module slots, hidden at 0.
 6. Docs: one short `docs/docs.md` section on what modules get and where the code lives.
 7. Test in game on Tania ships (Argentavis for built-in DTC, Black Hawk for capital plates and Phaedra, Aetos for the single hardpoint plate), a vanilla Onslaught Mk.I, and one Knights of Ludd or Roider Union modular ship. Also retreat and redeploy, and two engagements in one encounter.
 8. Later, one at a time: the NEEDS-TEST listeners.
@@ -345,3 +349,5 @@ These came up during the research and aren't part of the share itself.
 - Should the share be per node with all-or-nothing everywhere, instead of per effect with the listed exceptions?
 - Should inactive modules (pure armor) get only armor and hull?
 - Should the share be shown per stat in a tooltip, or only as the one summary line?
+- EMP cap jump. EMP is the only cap that mixes a PERCENT and a MULT effect. A parent just under it (-40% and -66% more) gives a module about 46% less EMP damage, while a parent just over it gives the module 40% less. Scaling the combined damage factor instead of each entry would remove the jump.
+- The all-or-nothing check reads the node type's own effects. Effects a socketed item or doctrine adds to a node are shared one by one, so an added SHARE effect could reach a module without an excluded partner. No current item or doctrine pairs them that way.

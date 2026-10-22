@@ -37,6 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -125,6 +126,21 @@ class ChartDropsTest {
         for (int roll = 0; roll < 200; roll++) {
             assertTrue(ChartDrops.roll(ChartDrops.Source.BATTLE, 3, 1f, new Random(roll), anyUnique()).currencies().isEmpty());
         }
+    }
+
+    @Test
+    void nothingDropsWhileStarChartsAreSwitchedOff() throws Exception {
+        ChartDrops.register(new JSONArray().put(rule("run_reward", 1f, 1f, 0f, 1f)).put(rule("chart_warden", 1f, 1f, 0f, 1f)));
+        StarChartSettings.setEnabledForTests(false);
+        try {
+            for (int roll = 0; roll < 50; roll++) {
+                assertSame(ChartDrops.Loot.NONE, ChartDrops.roll(ChartDrops.Source.RUN_REWARD, 5, 1f, new Random(roll), anyUnique()));
+                assertSame(ChartDrops.Loot.NONE, ChartDrops.roll(ChartDrops.Source.CHART_WARDEN, 5, 2f, new Random(roll), anyUnique()));
+            }
+        } finally {
+            StarChartSettings.setEnabledForTests(StarChartSettings.DEFAULT_ENABLED);
+        }
+        assertEquals(2, ChartDrops.roll(ChartDrops.Source.RUN_REWARD, 5, 1f, new Random(1L), anyUnique()).charts().size());
     }
 
     @Test

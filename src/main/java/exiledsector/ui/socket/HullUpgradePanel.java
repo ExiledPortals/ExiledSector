@@ -17,6 +17,7 @@ import exiledsector.skills.ShipHullSizes;
 import exiledsector.items.HullUpgradeRules;
 import exiledsector.items.HullUpgradeData;
 import exiledsector.items.HullUpgradeTooltip;
+import exiledsector.items.HullUpgradesSetting;
 import exiledsector.items.ShipSection;
 import exiledsector.items.ItemRarity;
 import exiledsector.ui.SkillTreePanelStyle;
@@ -266,7 +267,7 @@ public final class HullUpgradePanel extends HoloPanel {
         return switch (block) {
             case AT_MAX_POINTS -> Translation.msg("framework.panel.upgradeAtMax").arg("max", HullUpgradeRules.MAX_POINTS).text();
             case NONE_IN_STORAGE -> Translation.msg("framework.panel.upgradeNone")
-                    .arg("size", ShipHullSizes.displayName(view.hullSize())).text();
+                    .arg("size", ShipHullSizes.displayName(view.hullSize())).arg("level", HullUpgradesSetting.unlockLevel()).text();
         };
     }
 
