@@ -210,23 +210,22 @@ class WormholeAnchorSocketingTest {
     }
 
     @Test
-    void anAnchorDropsOncePerFightFromItsVolumesFactionsAndItsExtraFactionsWhateverTheirSize() {
+    void anAnchorDropsPer100DeploymentPointsDefeatedFromItsVolumesFactionsAndItsExtraFactions() {
         FactionFleetDrops.Source hegemony = FactionFleetDrops.source(HEGEMONY_ANCHOR);
         FactionFleetDrops.Source abyss = FactionFleetDrops.source(ABYSS_ANCHOR);
 
-        assertEquals(FactionFleetDrops.ChanceMode.PER_FIGHT, hegemony.mode());
-        assertEquals(0.5f, FactionFleetDrops.chance(hegemony, Map.of("hegemony", 5f)), 1e-6f);
-        assertEquals(0.5f, FactionFleetDrops.chance(hegemony, Map.of("hegemony", 900f)), 1e-6f);
+        assertEquals(0.025f, FactionFleetDrops.chance(hegemony, Map.of("hegemony", 5f)), 1e-6f);
+        assertEquals(FactionFleetDrops.MAX_CHANCE_PER_BATTLE, FactionFleetDrops.chance(hegemony, Map.of("hegemony", 900f)), 1e-6f);
         assertEquals(0f, FactionFleetDrops.chance(hegemony, Map.of("tritachyon", 500f)), 1e-6f);
         assertEquals(0f, FactionFleetDrops.chance(hegemony, Map.of("hegemony", 0f)), 1e-6f);
-        assertEquals(0.1f, FactionFleetDrops.chance(abyss, Map.of("rat_abyssals", 100f, "rat_abyssals_deep", 50f)), 1e-6f);
+        assertEquals(0.15f, FactionFleetDrops.chance(abyss, Map.of("rat_abyssals", 100f, "rat_abyssals_deep", 50f)), 1e-6f);
     }
 
     @Test
-    void aPerFightChanceIsStillCappedPerBattle() {
-        FactionFleetDrops.Source generous = FactionFleetDrops.Source.perFight("hegemony", Set.of(), 3f);
+    void anAnchorChanceIsCappedPerBattle() {
+        FactionFleetDrops.Source generous = FactionFleetDrops.Source.forVolume("hegemony", Set.of(), 3f);
 
-        assertEquals(FactionFleetDrops.MAX_CHANCE_PER_BATTLE, FactionFleetDrops.chance(generous, Map.of("hegemony", 1f)), 1e-6f);
+        assertEquals(FactionFleetDrops.MAX_CHANCE_PER_BATTLE, FactionFleetDrops.chance(generous, Map.of("hegemony", 100f)), 1e-6f);
     }
 
     @Test
@@ -276,8 +275,8 @@ class WormholeAnchorSocketingTest {
             }
         }
 
-        assertEquals(0.5, hegemonyDrops / (double) trials, 0.04);
-        assertEquals(0.1, abyssDrops / (double) trials, 0.03);
+        assertEquals(0.1, hegemonyDrops / (double) trials, 0.03);
+        assertEquals(0.3, abyssDrops / (double) trials, 0.04);
     }
     @Test
     void onlyMarketsOfAnAnchorsFactionsStockItAtItsMarketChanceAndPrice() throws Exception {
