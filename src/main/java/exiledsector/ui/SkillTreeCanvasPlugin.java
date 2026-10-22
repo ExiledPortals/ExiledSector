@@ -20,6 +20,7 @@ import exiledsector.items.Item;
 import exiledsector.items.SubroutineRadius;
 import exiledsector.ui.decoration.AbyssDarknessRenderer;
 import exiledsector.ui.decoration.AbyssSerpentRenderer;
+import exiledsector.ui.decoration.FactionFleetRenderer;
 import exiledsector.ui.decoration.SkillTreeFleetRenderer;
 import exiledsector.ui.decoration.SkillTreeRingBeltRenderer;
 import exiledsector.ui.decoration.SkillTreeStarRenderer;
@@ -53,6 +54,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final SkillTreeStaticImageRenderer staticImageRenderer = new SkillTreeStaticImageRenderer();
     private final SkillTreeRingBeltRenderer ringBeltRenderer = new SkillTreeRingBeltRenderer();
     private final SkillTreeFleetRenderer fleetRenderer;
+    private final FactionFleetRenderer factionFleets;
     private final SkillTreeStarRenderer starRenderer = new SkillTreeStarRenderer();
     private final NodeRadiusRingRenderer radiusRingRenderer = new NodeRadiusRingRenderer();
     private final TreeAllocationSession treeSession;
@@ -93,6 +95,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.nodeSearch = new NodeSearch(member == null ? null : member.getHullSpec().getHullSize());
         this.searchBar = new SkillTreeSearchBar(nodeSearch, this::jumpToNextSearchMatch);
         this.treeSession = new TreeAllocationSession(member, variant, refitButton, nodeSearch);
+        this.factionFleets = FactionFleetRenderer.forActiveTree(treeSession::isHidden);
         this.nodeDrawer = SkillTreeNodeDrawer.attachedTo(treeSession, member, panelStyle, nodeSearch);
         this.templateUi = new SkillTreeTemplateController(member, treeSession, panelStyle);
         this.statPanel = new SkillTreeStatPanel(member);
@@ -144,6 +147,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         ringBeltRenderer.advance(amount);
         abyssSerpents.advance(amount);
         threatUnits.advance(amount);
+        factionFleets.advance(amount);
         if (camera.isFollowing() && hyperspaceMode.isActive()) {
             stopFollowing();
         }
@@ -518,6 +522,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         abyssSerpents.render(viewport, sceneryAlpha * treeAlpha);
         staticImageRenderer.render(viewport, sceneryAlpha, hyperspaceMode.anchorIds(), treeAlpha);
         threatUnits.render(viewport, sceneryAlpha, hyperspaceMode.anchorIds(), treeAlpha);
+        factionFleets.render(viewport, sceneryAlpha * treeAlpha);
         boolean pointerOverTree = mouseKnown && !chrome.contains(canvasPosition, mode, mouseX, mouseY);
         boolean shipHovered = pointerOverTree && mode.hoversTree() && exoshipView.shipContains(viewport, mouseX, mouseY);
         boolean treeHovered = pointerOverTree && mode.hoversTree() && !shipHovered;

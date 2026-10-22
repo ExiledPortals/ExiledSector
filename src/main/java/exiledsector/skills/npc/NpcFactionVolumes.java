@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -45,6 +46,11 @@ public final class NpcFactionVolumes {
 
     public static String regionFor(String factionId) {
         return factionId == null ? null : REGION_BY_FACTION.get().get(factionId);
+    }
+
+    public static List<String> factionsIn(String region) {
+        return REGION_BY_FACTION.get().entrySet().stream().filter(entry -> entry.getValue().equals(region)).map(Map.Entry::getKey)
+                .sorted().toList();
     }
 
     public static void clear() {

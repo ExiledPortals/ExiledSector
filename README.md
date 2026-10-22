@@ -171,6 +171,7 @@ These mods have dedicated compatibility. The version listed is the one I last te
 | Random Assortment of Things | 3.3.1 | REDACTED |
 | Nightcross Armory | 2.1.6 | REDACTED |
 | Navarchy of Tania | 1.3.0 | REDACTED |
+| Nexerelin | 0.12.2d | Faction fleets roaming the skill tree count factions in their alliance as allies, so they travel to those volumes too. |
 | [GraphicsLib](https://fractalsoftworks.com/forum/index.php?topic=10982.0) | 1.12.1 | Optional. When its lights and distortion are on, many of Exiled Sector's combat effects gain shockwaves, glows, lighting and distortion. The Exiled Sector settings can switch almost all of it off. |
 
 Some weapons from other mods misbehave (often hilariously) when their beams are split, their shots are chained or their shells pierce. These are listed in:

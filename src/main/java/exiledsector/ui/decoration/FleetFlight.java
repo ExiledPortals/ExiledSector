@@ -3,6 +3,7 @@ package exiledsector.ui.decoration;
 import exiledsector.ui.util.Fade;
 
 import java.util.Random;
+import java.util.function.UnaryOperator;
 
 final class FleetFlight {
 
@@ -14,9 +15,11 @@ final class FleetFlight {
     static final float IDLE_SPEED_DECAY_PER_SECOND = 1.5f;
     static final float ENGINE_FADE_SECONDS = 0.5f;
     static final float MOVING_SPEED = 5f;
+    static final float HOLD_DISTANCE = 40f;
+    static final float HOLD_SLOWING_SECONDS = 2.5f;
     private static final int WAYPOINT_ATTEMPTS = 8;
 
-    private final CoreVolume coreVolume;
+    private final UnaryOperator<RoamVolume> nextVolume;
     private final Random random;
     private final float travelSpeed;
     private final float[] point = new float[2];
@@ -29,16 +32,25 @@ final class FleetFlight {
     private float idleSecondsLeft;
     private float engineLevel;
     private float facingDeg;
+    private RoamVolume roamVolume;
+    private boolean holding;
+    private float faceTowardX;
+    private float faceTowardY;
 
-    FleetFlight(CoreVolume coreVolume, float travelSpeed, Random random) {
-        this.coreVolume = coreVolume;
+    FleetFlight(RoamVolume roamVolume, float travelSpeed, Random random) {
+        this(roamVolume, travelSpeed, random, UnaryOperator.identity());
+    }
+
+    FleetFlight(RoamVolume roamVolume, float travelSpeed, Random random, UnaryOperator<RoamVolume> nextVolume) {
+        this.roamVolume = roamVolume;
+        this.nextVolume = nextVolume;
         this.travelSpeed = travelSpeed;
         this.random = random;
-        coreVolume.randomPoint(random, point);
+        roamVolume.randomPoint(random, point);
         positionX = point[0];
         positionY = point[1];
         facingDeg = random.nextFloat() * 360f;
-        pickWaypoint();
+        pickWaypoint(roamVolume);
     }
 
     void advance(float amount) {
@@ -48,31 +60,61 @@ final class FleetFlight {
             velocityX *= decay;
             velocityY *= decay;
         } else {
-            steerTowardWaypoint(amount);
+            steerTowardWaypoint(amount, holding ? Math.min(1f, distanceToWaypoint() / (travelSpeed * HOLD_SLOWING_SECONDS)) : 1f);
         }
         positionX += velocityX * amount;
         positionY += velocityY * amount;
         float speed = (float) Math.hypot(velocityX, velocityY);
         if (speed > MOVING_SPEED) {
             facingDeg = (float) Math.toDegrees(Math.atan2(-velocityY, velocityX));
+        } else if (holding) {
+            facingDeg = (float) Math.toDegrees(Math.atan2(-(faceTowardY - positionY), faceTowardX - positionX));
         }
         boolean thrusting = idleSecondsLeft <= 0f && speed > MOVING_SPEED;
         float engineStep = amount / ENGINE_FADE_SECONDS;
         engineLevel = Fade.step(engineLevel, thrusting, engineStep);
-        if (idleSecondsLeft <= 0f && Math.hypot(waypointX - positionX, waypointY - positionY) < ARRIVAL_DISTANCE) {
+        if (!holding && idleSecondsLeft <= 0f && distanceToWaypoint() < ARRIVAL_DISTANCE) {
             if (random.nextFloat() < IDLE_CHANCE) {
                 idleSecondsLeft = MIN_IDLE_SECONDS + random.nextFloat() * (MAX_IDLE_SECONDS - MIN_IDLE_SECONDS);
             }
-            pickWaypoint();
+            RoamVolume leaving = roamVolume;
+            roamVolume = nextVolume.apply(roamVolume);
+            if (!holding) {
+                pickWaypoint(leaving);
+            }
         }
     }
 
-    private void steerTowardWaypoint(float amount) {
+    void holdAt(float holdX, float holdY, float towardX, float towardY) {
+        holding = true;
+        idleSecondsLeft = 0f;
+        waypointX = holdX;
+        waypointY = holdY;
+        faceTowardX = towardX;
+        faceTowardY = towardY;
+    }
+
+    void release(RoamVolume destination) {
+        holding = false;
+        RoamVolume leaving = roamVolume;
+        roamVolume = destination;
+        pickWaypoint(leaving);
+    }
+
+    boolean isAtHold() {
+        return holding && distanceToWaypoint() < HOLD_DISTANCE;
+    }
+
+    private float distanceToWaypoint() {
+        return (float) Math.hypot(waypointX - positionX, waypointY - positionY);
+    }
+
+    private void steerTowardWaypoint(float amount, float speedFraction) {
         float towardX = waypointX - positionX;
         float towardY = waypointY - positionY;
         float distance = (float) Math.hypot(towardX, towardY);
-        float desiredX = distance > 0f ? towardX / distance * travelSpeed : 0f;
-        float desiredY = distance > 0f ? towardY / distance * travelSpeed : 0f;
+        float desiredX = distance > 0f ? towardX / distance * travelSpeed * speedFraction : 0f;
+        float desiredY = distance > 0f ? towardY / distance * travelSpeed * speedFraction : 0f;
         float changeX = desiredX - velocityX;
         float changeY = desiredY - velocityY;
         float change = (float) Math.hypot(changeX, changeY);
@@ -85,15 +127,20 @@ final class FleetFlight {
         velocityY += changeY;
     }
 
-    private void pickWaypoint() {
+    private void pickWaypoint(RoamVolume leaving) {
         for (int attempt = 0; attempt < WAYPOINT_ATTEMPTS; attempt++) {
-            coreVolume.randomPoint(random, point);
-            if (coreVolume.segmentClearsStar(positionX, positionY, point[0], point[1])) {
+            roamVolume.randomPoint(random, point);
+            if (leaving.segmentClearsStar(positionX, positionY, point[0], point[1])
+                    && roamVolume.segmentClearsStar(positionX, positionY, point[0], point[1])) {
                 break;
             }
         }
         waypointX = point[0];
         waypointY = point[1];
+    }
+
+    RoamVolume roamVolume() {
+        return roamVolume;
     }
 
     float positionX() {

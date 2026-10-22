@@ -29,7 +29,7 @@ public final class CompatChecks {
     public static List<CompatTarget> targets() {
         List<CompatTarget> targets = new ArrayList<>(List.of(LostSectorCompat.TARGET, SecondInCommandCompat.TARGET, MagicLibCompat.TARGET, ExoticaCompat.TARGET,
                 RandomAssortmentCompat.TARGET, NightcrossCompat.TARGET, GraphicsLibCompat.TARGET, VaultsOfKnowledgeCompat.TARGET,
-                TaniaCompat.TARGET));
+                TaniaCompat.TARGET, NexerelinCompat.TARGET));
         targets.addAll(SalvageSiteCompat.targets());
         return targets;
     }

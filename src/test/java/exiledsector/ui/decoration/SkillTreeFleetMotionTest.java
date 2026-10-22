@@ -23,7 +23,7 @@ class SkillTreeFleetMotionTest {
     private static final float TOLERANCE = 0.001f;
     private static final float FRAME_SECONDS = 1f / 60f;
 
-    private static final CoreVolume CORE = new CoreVolume(0f, 0f, 375f, 4050f);
+    private static final RoamVolume CORE = new RoamVolume(0f, 0f, 375f, 4050f);
 
     @Test
     void theCoreVolumeSpansFromAroundTheCoreStarToTheOutermostCoreRingBelt() {
@@ -34,15 +34,15 @@ class SkillTreeFleetMotionTest {
                 new RingBelt("outer", 0f, 0f, new RingBelt.Shape(3600f, 4050f, "a.png", new Rotation(0f, -0.8f)), List.of("core")),
                 new RingBelt("faction", 0f, -13000f, new RingBelt.Shape(100f, 900f, "a.png", new Rotation(0f, 0f)), List.of("tritachyon")));
 
-        assertEquals(CORE, CoreVolume.of(stars, ringBelts));
+        assertEquals(CORE, RoamVolume.core(stars, ringBelts));
     }
 
     @Test
     void withoutCoreRingBeltsTheVolumeFallsBackToADefaultRadius() {
-        CoreVolume coreVolume = CoreVolume.of(List.of(), List.of());
+        RoamVolume roamVolume = RoamVolume.core(List.of(), List.of());
 
-        assertEquals(CoreVolume.DEFAULT_OUTER_RADIUS, coreVolume.outerRadius(), TOLERANCE);
-        assertEquals(CoreVolume.DEFAULT_STAR_RADIUS * CoreVolume.STAR_CLEARANCE_MULT, coreVolume.innerRadius(), TOLERANCE);
+        assertEquals(RoamVolume.DEFAULT_OUTER_RADIUS, roamVolume.outerRadius(), TOLERANCE);
+        assertEquals(RoamVolume.DEFAULT_STAR_RADIUS * RoamVolume.STAR_CLEARANCE_MULT, roamVolume.innerRadius(), TOLERANCE);
     }
 
     @Test
