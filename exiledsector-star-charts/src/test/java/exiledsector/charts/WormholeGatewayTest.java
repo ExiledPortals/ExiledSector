@@ -4,7 +4,9 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.econ.EconomyAPI;
+import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Industries;
@@ -184,5 +186,40 @@ class WormholeGatewayTest {
     @Test
     void reportsWhetherTheDockedColonysGatewayWorks() {
         assertEquals(WormholeGateway.Status.NONE, WormholeGateway.statusAt(null));
+    }
+
+    private static SectorEntityToken dockedAtGateway(MarketAPI market, boolean functional) {
+        Industry gateway = mock(Industry.class);
+        when(gateway.isFunctional()).thenReturn(functional);
+        when(market.getIndustry(WormholeGateway.INDUSTRY_ID)).thenReturn(gateway);
+        SectorEntityToken dockedAt = mock(SectorEntityToken.class);
+        when(dockedAt.getMarket()).thenReturn(market);
+        return dockedAt;
+    }
+
+    @Test
+    void anAutonomousColonyOfThePlayerFactionStillOpensWormholes() {
+        MarketAPI autonomous = colony("Autonomous");
+        when(autonomous.isPlayerOwned()).thenReturn(false);
+
+        assertEquals(WormholeGateway.Status.WORKING, WormholeGateway.statusAt(dockedAtGateway(autonomous, true)));
+        assertEquals(WormholeGateway.Status.INACTIVE, WormholeGateway.statusAt(dockedAtGateway(autonomous, false)));
+    }
+
+    @Test
+    void aPlayerOwnedColonyUnderACommissionFactionOpensWormholes() {
+        MarketAPI commissioned = colony("Commissioned");
+        when(commissioned.getFactionId()).thenReturn("hegemony");
+        when(commissioned.isPlayerOwned()).thenReturn(true);
+
+        assertEquals(WormholeGateway.Status.WORKING, WormholeGateway.statusAt(dockedAtGateway(commissioned, true)));
+    }
+
+    @Test
+    void anotherFactionsColonyNeverOpensWormholes() {
+        MarketAPI theirs = colony("Theirs");
+        when(theirs.getFactionId()).thenReturn("hegemony");
+
+        assertEquals(WormholeGateway.Status.NONE, WormholeGateway.statusAt(dockedAtGateway(theirs, true)));
     }
 }
