@@ -67,10 +67,10 @@ class RemnantEncounterTest {
     @Test
     void theRemnantGateIsAParameterlessGateThatAlwaysApplies() {
         assertTrue(UnlockConditionType.REMNANT_FOUGHT.isModGate());
-        assertFalse(UnlockConditionType.REMNANT_FOUGHT.modGate().isOpen(sector, false));
+        assertFalse(UnlockConditionType.REMNANT_FOUGHT.modGate().isOpen(sector, null, false));
         when(playerMemory.getBoolean(RemnantEncounter.FOUGHT_REMNANT_KEY)).thenReturn(true);
-        assertTrue(UnlockConditionType.REMNANT_FOUGHT.modGate().isOpen(sector, false));
-        assertFalse(UnlockConditionType.REMNANT_FOUGHT.modGate().isOpen(sector, true));
+        assertTrue(UnlockConditionType.REMNANT_FOUGHT.modGate().isOpen(sector, null, false));
+        assertFalse(UnlockConditionType.REMNANT_FOUGHT.modGate().isOpen(sector, null, true));
     }
 
     @Test

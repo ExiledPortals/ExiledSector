@@ -106,29 +106,50 @@ public final class WormholeAnchor extends Item implements NodeSocketable {
     }
 
     public boolean unlocked(SectorAPI sector) {
-        ItemDefinition definition = definition();
+        return unlocked(definitionId(), sector);
+    }
+
+    private static boolean unlocked(String definitionId, SectorAPI sector) {
+        ItemDefinition definition = ItemDefinitions.get(definitionId);
         return definition != null && ItemUnlock.unlockConditionMet(definition, sector);
     }
 
     public Inertness inertness(SectorAPI sector) {
-        SkillNode exitNode = exitNode();
+        return inertness(definitionId(), sector);
+    }
+
+    static Inertness inertness(String definitionId, SectorAPI sector) {
+        SkillNode exitNode = exitNode(definitionId);
         if (exitNode == null) {
             return Inertness.AREA_OFF;
         }
-        if (AnchorJanusGate.withholds(definitionId(), sector)) {
+        if (AnchorJanusGate.withholds(definitionId, sector)) {
             return Inertness.JANUS;
         }
-        if (!unlocked(sector)) {
+        if (!unlocked(definitionId, sector)) {
             return Inertness.LOCKED;
         }
         if (NodeGates.isLocked(exitNode, null)) {
             return Inertness.GATED;
         }
-        return SkillTypeUnlockStatus.isLocked(exitNode.getType(), null) ? Inertness.EXIT_LOCKED : null;
+        return exitTypeLocked(exitNode) ? Inertness.EXIT_LOCKED : null;
+    }
+
+    static boolean obtainable(String definitionId, SectorAPI sector) {
+        Inertness inertness = inertness(definitionId, sector);
+        if (inertness != Inertness.GATED) {
+            return inertness == null;
+        }
+        SkillNode exitNode = exitNode(definitionId);
+        return !NodeGates.withholdsAnchor(exitNode) && !exitTypeLocked(exitNode);
+    }
+
+    private static boolean exitTypeLocked(SkillNode exitNode) {
+        return SkillTypeUnlockStatus.isLocked(exitNode.getType(), null);
     }
 
     public String linkedExitNodeId() {
-        return exitNode() == null ? null : exitNodeId();
+        return exitNode(definitionId()) == null ? null : exitNodeId();
     }
 
     public boolean canOpen(SectorAPI sector) {
@@ -136,7 +157,11 @@ public final class WormholeAnchor extends Item implements NodeSocketable {
     }
 
     private SkillNode exitNode() {
-        String exitNodeId = exitNodeId();
+        return exitNode(definitionId());
+    }
+
+    private static SkillNode exitNode(String definitionId) {
+        String exitNodeId = WormholeAnchorDefinitions.exitNodeId(definitionId);
         SkillNode exitNode = exitNodeId == null ? null : SkillTree.get(exitNodeId);
         return exitNode != null && exitNode.getType().getTier() == SkillTier.WORMHOLE_EXIT ? exitNode : null;
     }

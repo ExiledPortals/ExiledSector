@@ -72,7 +72,7 @@ public class ItemSalvageListener implements ShowLootListener {
         MaterialDropAnnouncer.announce(materials);
     }
 
-    static String siteId(SectorEntityToken salvageEntity) {
+    public static String siteId(SectorEntityToken salvageEntity) {
         MemoryAPI entityMemory = salvageEntity.getMemoryWithoutUpdate();
         if (entityMemory != null && entityMemory.contains(MemFlags.SALVAGE_SPEC_ID_OVERRIDE)) {
             return entityMemory.getString(MemFlags.SALVAGE_SPEC_ID_OVERRIDE);

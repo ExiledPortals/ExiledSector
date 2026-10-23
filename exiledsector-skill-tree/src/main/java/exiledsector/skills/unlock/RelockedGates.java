@@ -5,7 +5,6 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.listeners.CurrentLocationChangedListener;
 import exiledsector.compat.LostSectorUnlocks;
-import exiledsector.compat.NightcrossUnlocks;
 import org.apache.log4j.Logger;
 
 import java.util.Collection;
@@ -31,9 +30,9 @@ public final class RelockedGates {
         Set<UnlockConditionType> openAreaGates = new LinkedHashSet<>();
         NodeGates.all().values().forEach(conditions -> conditions.forEach(condition -> {
             UnlockConditionType conditionType = condition.getType();
-            if (conditionType.isModGate() && conditionType.modGate().modEnabled().getAsBoolean()
+            if (conditionType.isModGate() && conditionType.modGate().modEnabled().test(condition.getKey())
                     && !UnlockConditionOverrides.isDisabled(conditionType) && !isRelocked(sector, conditionType)
-                    && conditionType.modGate().passed().test(sector)) {
+                    && conditionType.modGate().passed().test(sector, condition.getKey())) {
                 openAreaGates.add(conditionType);
             }
         }));
@@ -84,9 +83,6 @@ public final class RelockedGates {
     static void recordLocation(SectorAPI sector, LocationAPI location) {
         if (location == null || stored(sector) == null) {
             return;
-        }
-        if (location == sector.getStarSystem(NightcrossUnlocks.PASCAL_SYSTEM_NAME)) {
-            reopen(sector, UnlockConditionType.NIGHTCROSS_PASCAL_VISITED);
         }
         if (location == LostSectorUnlocks.frostSystem(sector)) {
             reopen(sector, UnlockConditionType.LOST_SECTOR_FROZEN_HEART_VISITED);

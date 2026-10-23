@@ -18,6 +18,7 @@ export interface UnlockCondition {
   statId?: string;
   level?: number;
   key?: string;
+  volume?: string;
 }
 
 export interface ItemCost {
@@ -255,7 +256,7 @@ export const UNLOCK_CONDITION_LABELS: Record<string, string> = {
   memoryFlag: 'Game state (memory flag)',
   ratPlayerExoship: 'RAT: player owns an Exoship',
   ratSingularityDefeated: 'RAT: Singularity defeated',
-  nightcrossPascalVisited: 'Nightcross: player has entered Pascal',
+  anchorFound: "A volume's wormhole anchor found",
   nightcrossLunarFleetDefeated: 'Nightcross: Stargazer existential threat defeated',
   nightcrossAncientPrototypeFound: 'Nightcross: an Ancient Prototype found',
   lostSectorFrozenHeartVisited: "Lost Sector: the Frozen Heart's system visited",
@@ -263,7 +264,7 @@ export const UNLOCK_CONDITION_LABELS: Record<string, string> = {
   remnantFought: 'Player has fought a Remnant fleet',
 };
 
-export const PARAMETERISED_UNLOCK_CONDITIONS: ReadonlySet<string> = new Set(['blueprint', 'characterStat', 'minShipLevel', 'memoryFlag']);
+export const PARAMETERISED_UNLOCK_CONDITIONS: ReadonlySet<string> = new Set(['blueprint', 'characterStat', 'minShipLevel', 'memoryFlag', 'anchorFound']);
 
 export function isAuroraBelt(node: Pick<TreeNode, 'ringBeltPath'>): boolean {
   return !node.ringBeltPath || node.ringBeltPath === AURORA_RING_BELT_PATH;

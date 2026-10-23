@@ -19,6 +19,8 @@ import exiledsector.loot.LootSource;
 import exiledsector.loot.LootSources;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -82,6 +84,7 @@ public class MarketItemStock implements SubmarketUpdateListener, ColonyInteracti
         if (cargo == null) {
             return;
         }
+        List<ItemData> boughtItems = new ArrayList<>();
         for (CargoStackAPI stack : cargo.getStacksCopy()) {
             SpecialItemData special = stack.isSpecialStack() ? stack.getSpecialDataIfSpecial() : null;
             ItemData itemData = ItemData.isMarketListing(special) ? ItemData.of(special) : null;
@@ -89,7 +92,11 @@ public class MarketItemStock implements SubmarketUpdateListener, ColonyInteracti
                 float size = stack.getSize();
                 cargo.removeStack(stack);
                 cargo.addSpecial(itemData.toSpecialItem(), size);
+                boughtItems.add(itemData);
             }
+        }
+        if (!boughtItems.isEmpty()) {
+            LootSources.all().forEach(source -> source.itemsBought(boughtItems));
         }
     }
 

@@ -127,6 +127,35 @@ class NodeGatesTest {
     }
 
     @Test
+    void aGateWithholdsItsAnchorsByDefaultAndCanHandThemOutFreely() throws Exception {
+        NodeGates.register(new JSONObject("{\"" + GATE_TAG + "\": {\"unlockConditions\": [{\"type\": \"memoryFlag\", \"key\": \"" + FLAG
+                + "\"}]}, \"gate_free\": {\"anchors\": \"free\", \"rewardAnchor\": true, \"unlockConditions\": [{\"type\": \"memoryFlag\", \"key\": \""
+                + FLAG + "\"}]}, \"gate_typo\": {\"anchors\": \"sometimes\", \"unlockConditions\": []}}"));
+
+        assertEquals(NodeGates.AnchorRule.WITHHELD, NodeGates.gate(GATE_TAG).anchorRule());
+        assertFalse(NodeGates.gate(GATE_TAG).rewardAnchor());
+        assertEquals(NodeGates.AnchorRule.FREE, NodeGates.gate("gate_free").anchorRule());
+        assertTrue(NodeGates.gate("gate_free").rewardAnchor());
+        assertEquals(NodeGates.AnchorRule.WITHHELD, NodeGates.gate("gate_typo").anchorRule());
+        assertNull(NodeGates.gate("gate_missing"));
+    }
+
+    @Test
+    void onlyAClosedWithheldGateOnTheExitHoldsItsAnchorBack() throws Exception {
+        NodeGates.register(new JSONObject("{\"" + GATE_TAG + "\": {\"unlockConditions\": [{\"type\": \"memoryFlag\", \"key\": \"" + FLAG
+                + "\"}]}, \"gate_free\": {\"anchors\": \"free\", \"unlockConditions\": [{\"type\": \"memoryFlag\", \"key\": \"" + FLAG + "\"}]}}"));
+
+        assertTrue(NodeGates.withholdsAnchor(node("abyss", GATE_TAG)));
+        assertFalse(NodeGates.withholdsAnchor(node("nightcross", "gate_free")));
+        assertFalse(NodeGates.withholdsAnchor(node("hegemony")));
+        assertFalse(NodeGates.withholdsAnchor(null));
+
+        when(sectorMemory.getBoolean(FLAG)).thenReturn(true);
+
+        assertFalse(NodeGates.withholdsAnchor(node("abyss", GATE_TAG)));
+    }
+
+    @Test
     void registeringReplacesEveryPreviousGate() throws Exception {
         NodeGates.register(new JSONObject("{\"gate_other\": {\"unlockConditions\": []}}"));
 

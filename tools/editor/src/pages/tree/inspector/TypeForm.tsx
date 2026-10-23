@@ -206,6 +206,11 @@ function UnlockConditionParameters({ condition, index, onEdit, vocabulary }: { c
       target.key = text.trim();
     })} />;
   }
+  if (condition.type === 'anchorFound') {
+    return <CommitTextInput size="xs" style={{ flex: 2 }} label="Volume" placeholder="nightcross" value={condition.volume ?? ''} onCommit={(text) => edit((target) => {
+      target.volume = text.trim();
+    })} />;
+  }
   return (
     <>
       <Select
@@ -271,7 +276,7 @@ function UnlockConditionRows({ type, onEdit, vocabulary }: Pick<TypeFormProps, '
           w="fit-content"
           leftSection={<IconPlus size={14} />}
           onClick={() => onEdit((draft) => {
-            (draft.unlockConditions ??= []).push({ type: 'blueprint', category: 'hullmod', id: '', statId: '', level: 1, key: '' });
+            (draft.unlockConditions ??= []).push({ type: 'blueprint', category: 'hullmod', id: '', statId: '', level: 1, key: '', volume: '' });
           })}
         >
           Add condition

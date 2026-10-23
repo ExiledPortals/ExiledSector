@@ -381,8 +381,8 @@
     "gate": ["gate_singularity_defeated", "gate_pascal_visited", "gate_lunar_fleet_defeated", "gate_ancient_prototype_found", "gate_frozen_heart_visited", "gate_threat_fought", "gate_remnant_fought"]
   },
   "tiers": ["SMALL", "NOTABLE", "KEYSTONE", "WORMHOLE", "WORMHOLE_EXIT", "ROOT", "SOCKET"],
-  "unlockConditionTypes": ["blueprint", "characterStat", "minShipLevel", "memoryFlag", "ratPlayerExoship", "ratSingularityDefeated", "nightcrossPascalVisited", "nightcrossLunarFleetDefeated", "nightcrossAncientPrototypeFound", "lostSectorFrozenHeartVisited", "threatFought", "remnantFought"],
-  "parameterlessUnlockConditionTypes": ["ratPlayerExoship", "ratSingularityDefeated", "nightcrossPascalVisited", "nightcrossLunarFleetDefeated", "nightcrossAncientPrototypeFound", "lostSectorFrozenHeartVisited", "threatFought", "remnantFought"],
+  "unlockConditionTypes": ["blueprint", "characterStat", "minShipLevel", "memoryFlag", "ratPlayerExoship", "ratSingularityDefeated", "anchorFound", "nightcrossLunarFleetDefeated", "nightcrossAncientPrototypeFound", "lostSectorFrozenHeartVisited", "threatFought", "remnantFought"],
+  "parameterlessUnlockConditionTypes": ["ratPlayerExoship", "ratSingularityDefeated", "nightcrossLunarFleetDefeated", "nightcrossAncientPrototypeFound", "lostSectorFrozenHeartVisited", "threatFought", "remnantFought"],
   "blueprintCategories": ["hullmod"],
   "itemTypes": ["subroutine", "hull_item", "star_chart", "wormhole_anchor"],
   "itemKinds": [{"id": "subroutine", "type": "subroutine"}, {"id": "bridge", "type": "hull_item"}, {"id": "crew_quarters", "type": "hull_item"}, {"id": "engine_room", "type": "hull_item"}, {"id": "reactor", "type": "hull_item"}, {"id": "armor_plating", "type": "hull_item"}, {"id": "weapon_mount", "type": "hull_item"}, {"id": "shield_generator", "type": "hull_item"}, {"id": "phase_coil", "type": "hull_item"}, {"id": "flight_deck", "type": "hull_item"}],

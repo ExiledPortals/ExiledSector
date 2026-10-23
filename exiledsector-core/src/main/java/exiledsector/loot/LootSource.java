@@ -50,4 +50,7 @@ public interface LootSource {
 
     default void stockSubmarket(SubmarketAPI submarket, CargoAPI cargo, Random random) {
     }
+
+    default void itemsBought(List<ItemData> boughtItems) {
+    }
 }

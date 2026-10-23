@@ -102,7 +102,7 @@ public final class FactionFleetDrops {
             return false;
         }
         if (definition.type() == ItemType.WORMHOLE_ANCHOR) {
-            return WormholeAnchorDefinitions.areaActive(definition.id()) && !AnchorJanusGate.withholds(definition.id(), Global.getSector());
+            return WormholeAnchorDefinitions.obtainable(definition.id(), Global.getSector());
         }
         return true;
     }

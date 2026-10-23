@@ -1,8 +1,10 @@
 package exiledsector.items;
 
+import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledlib.ModCsv;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.tags.SkillTags;
+import exiledsector.skills.unlock.AnchorFinds;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,6 +12,7 @@ import org.json.JSONObject;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -247,6 +250,19 @@ public final class WormholeAnchorDefinitions {
     public static boolean areaActive(String definitionId) {
         String exitNodeId = exitNodeId(definitionId);
         return exitNodeId != null && SkillTree.get(exitNodeId) != null;
+    }
+
+    public static boolean obtainable(String definitionId, SectorAPI sector) {
+        return WormholeAnchor.obtainable(definitionId, sector);
+    }
+
+    public static void recordFound(Collection<ItemData> items, SectorAPI sector, String reason) {
+        for (ItemData item : items) {
+            ItemDefinition definition = item == null ? null : item.definition();
+            if (definition != null && definition.type() == ItemType.WORMHOLE_ANCHOR) {
+                AnchorFinds.record(sector, volume(definition.id()), reason);
+            }
+        }
     }
 
     public static void clear() {

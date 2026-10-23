@@ -46,7 +46,8 @@ public final class SkillTypeUnlockStatus {
                 case CHARACTER_STAT -> hasCharacterStat(condition);
                 case MIN_SHIP_LEVEL -> hasMinShipLevel(condition, shipData);
                 case MEMORY_FLAG -> hasMemoryFlag(condition);
-                default -> type.isModGate() && type.modGate().isOpen(Global.getSector(), RelockedGates.isRelocked(Global.getSector(), type));
+                default -> type.isModGate()
+                        && type.modGate().isOpen(Global.getSector(), condition.getKey(), RelockedGates.isRelocked(Global.getSector(), type));
             };
         } catch (RuntimeException e) {
             Logger.getLogger(SkillTypeUnlockStatus.class).error("Failed to check unlock condition " + condition

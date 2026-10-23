@@ -126,6 +126,8 @@ class ExiledSectorModPluginTest {
                 .thenReturn(new JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("site", "data/config/exiledSector/item_salvage.csv", "exiledSector"))
                 .thenReturn(new JSONArray());
+        when(settings.getMergedSpreadsheetDataForMod("site", "data/config/exiledSector/anchor_salvage.csv", "exiledSector"))
+                .thenReturn(new JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("item", "data/config/exiledSector/item_crafting.csv", "exiledSector"))
                 .thenReturn(new JSONArray());
 

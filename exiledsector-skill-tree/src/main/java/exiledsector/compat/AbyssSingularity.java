@@ -87,7 +87,7 @@ public final class AbyssSingularity {
         CompatTarget.raiseSectorFlag(sector, DEFEATED_FLAG, LOG, "Unlocking the Abyss area: " + reason);
     }
 
-    static boolean containsGenesis(List<FleetMemberAPI> members) {
+    public static boolean containsGenesis(List<FleetMemberAPI> members) {
         if (members == null) {
             return false;
         }

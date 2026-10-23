@@ -120,6 +120,8 @@ export function serializeUnlockConditions(conditions: UnlockCondition[] | undefi
       out.push({ type: 'minShipLevel', level: condition.level });
     } else if (condition.type === 'memoryFlag' && condition.key) {
       out.push({ type: 'memoryFlag', key: condition.key });
+    } else if (condition.type === 'anchorFound' && condition.volume) {
+      out.push({ type: 'anchorFound', volume: condition.volume });
     } else if (condition.type === 'blueprint' && condition.id) {
       out.push({ type: 'blueprint', category: condition.category || 'hullmod', id: condition.id });
     } else if (condition.type && !PARAMETERISED_UNLOCK_CONDITIONS.has(condition.type)) {

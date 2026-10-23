@@ -253,6 +253,7 @@ class MarketItemStockTest {
         SpecialItemData converted = added(playerCargo, 1).get(0);
         assertEquals(ItemData.ITEM_ID, converted.getId());
         assertEquals(anchor.definitionId(), ItemData.of(converted).definitionId());
+        verify(Global.getSector().getMemoryWithoutUpdate()).set("$exiledSector_anchorFound_hegemony", true);
     }
 
     @Test

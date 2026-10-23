@@ -6,7 +6,7 @@ A wormhole anchor can drop, be stocked or be salvaged while its area is still lo
 
 The opposite also happens: an area can be open while its anchor can never be found, because the factions that drop and sell it aren't in the game. Those anchors move to salvage and ruins (see "Factionless volumes").
 
-Status: planned, not built.
+Status: built and tested 2026-10-23, uncommitted on parallel-work. Not yet checked in game.
 
 ## Where the code lives
 
@@ -149,11 +149,11 @@ No core change: `ItemLootListener.holdLoot` already passes every engagement to t
 
 ## Build order
 
-1. Gate rules in `NodeGates` and `obtainable`, routed through drops, markets and the showcase (step 1).
-2. Factionless anchors from salvage and tech mining ("Factionless volumes"). It needs `obtainable`, and step 3 records its finds.
-3. `ANCHOR_FOUND`, the find recording, the `LootSource` purchase hook, the save migration and the Nightcross gate change (step 3).
-4. The Abyss and Stargazer rewards (step 2).
-5. Docs (step 4).
+1. Done: Gate rules in `NodeGates` and `obtainable`, routed through drops, markets and the showcase (step 1).
+2. Done: Factionless anchors from salvage and tech mining ("Factionless volumes"). It needs `obtainable`, and step 3 records its finds.
+3. Done: `ANCHOR_FOUND`, the find recording, the `LootSource` purchase hook, the save migration and the Nightcross gate change (step 3).
+4. Done: The Abyss and Stargazer rewards (step 2).
+5. Done: Docs (step 4).
 
 ## Tests
 

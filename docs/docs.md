@@ -157,10 +157,17 @@ socket one.
 
 ## Wormhole anchors
 
-Until the player has the Janus Device (`$playerCanUseGates`, read by `JanusDevice` in core), anchors don't
-drop, stock or show in showcase salvage, and held ones are inert (`AnchorJanusGate`). Wormholes already open
-stay open. The Hyper-Nav Beacon and NPC anchors are exempt, and the "Allow Wormhole Anchors Before the Janus
-Device" setting lifts the gate.
+An anchor drops, stocks or shows in showcase salvage only while it is obtainable
+(`WormholeAnchorDefinitions.obtainable`, sharing its checks with `WormholeAnchor.inertness`): the player has the
+Janus Device (`JanusDevice`, `AnchorJanusGate`, lifted by the "Allow Wormhole Anchors Before the Janus Device"
+setting, Hyper-Nav Beacon exempt), its own unlock is met, and no closed `withheld` gate holds its exit. Each gate
+in `node_gates.json` sets `anchors` (`withheld` by default, or `free`) and `rewardAnchor`. Nightcross is `free`
+and opens on `anchorFound` once any of its anchors reaches the player (`AnchorFinds`). The Singularity and Lunar
+Fleet battles add one area anchor to their loot once per save (`GateRewardAnchors`). NPC anchors ignore all of
+this, and open wormholes stay open.
+
+An anchor whose factions are all missing, or whose playable factions Nexerelin has all eliminated, drops from the
+salvage and tech mining sites in `anchor_salvage.csv` instead (`FactionlessAnchors`).
 
 ## Corruption
 
