@@ -109,6 +109,9 @@ final class SkillTreeNodeRingRenderer {
     private static final float WORMHOLE_GLOW_SIZE_RATIO = 1.3f;
     private static final float WORMHOLE_GLOW_ALPHA = 0.67f;
 
+    private static final float GRANT_RING_GAP = NODE_CONNECTOR_GLOW_HALO_THICKNESS / 2f + 2f;
+    private static final float GRANT_RING_ALPHA = 0.9f;
+
     private static final float REACH_FOOTPRINT_RATIO = 2f;
     private static final float KEYSTONE_BELT_REACH_MARGIN = 1.3f;
 
@@ -171,10 +174,11 @@ final class SkillTreeNodeRingRenderer {
     }
 
     void draw(float cx, float cy, float footprintSize, float alphaMult, RingState ringState, float zoom, SkillNode node) {
-        draw(cx, cy, footprintSize, alphaMult, ringState, zoom, node, null);
+        draw(cx, cy, footprintSize, alphaMult, ringState, zoom, node, null, null);
     }
 
-    void draw(float cx, float cy, float footprintSize, float alphaMult, RingState ringState, float zoom, SkillNode node, Color doctrineColor) {
+    void draw(float cx, float cy, float footprintSize, float alphaMult, RingState ringState, float zoom, SkillNode node, Color doctrineColor,
+              Color grantColor) {
         boolean allocated = ringState.allocated;
         SkillTier tier = node.getType().getTier();
         String nodeId = node.getId();
@@ -214,6 +218,9 @@ final class SkillTreeNodeRingRenderer {
             drawPulseOutline(cx, cy, halfSize, nodeId, zoom, alphaMult, SOCKET_OUTLINE_RADII);
         } else if (!tier.isWormhole()) {
             drawNodeDonut(cx, cy, ringRadius, scale, zoom, allocated, alphaMult);
+            if (grantColor != null) {
+                drawGrantRing(cx, cy, ringRadius, scale, zoom, grantColor, alphaMult);
+            }
             if (ringState.breathing) {
                 drawBreathingOutline(cx, cy, ringRadius, scale, zoom, alphaMult, CIRCLE_OUTLINE_RADII);
             }
@@ -265,6 +272,11 @@ final class SkillTreeNodeRingRenderer {
         GL11.glLineWidth(NODE_CONNECTOR_LINE_THICKNESS * scale * zoom);
         drawRingOutline(cx, cy, radius - gapRadius, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA);
         drawRingOutline(cx, cy, radius + gapRadius, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA);
+    }
+
+    private static void drawGrantRing(float cx, float cy, float donutRadius, float scale, float zoom, Color grantColor, float alphaMult) {
+        GL11.glLineWidth(NODE_CONNECTOR_LINE_THICKNESS * scale * zoom);
+        drawOutline(cx, cy, donutRadius + GRANT_RING_GAP * scale * zoom, CIRCLE_OUTLINE_RADII, grantColor, alphaMult * GRANT_RING_ALPHA);
     }
 
     private void drawNotableRingStack(float cx, float cy, float outerRadius, String nodeId, float alpha, Color accentColor) {

@@ -14,6 +14,7 @@ import exiledsector.ui.util.LineBatch;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
+import java.util.List;
 import java.util.Set;
 
 import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_ALPHA;
@@ -40,6 +41,7 @@ final class SkillTreeNodeConnectorRenderer {
     private static final int BLACK_RGB = Color.BLACK.getRGB();
     private static final float EDGE_CULL_MARGIN = NODE_CONNECTOR_GLOW_HALO_THICKNESS + NODE_CONNECTOR_PARALLEL_GAP;
     private static final float EXOSHIP_ENDPOINT_SHARE = 0.4f;
+    private static final float GRANT_TETHER_ALPHA = 0.35f;
 
     private final SkillTreePanelStyle panelStyle;
     private final NodeSearch nodeSearch;
@@ -47,6 +49,7 @@ final class SkillTreeNodeConnectorRenderer {
     private final LineBatch dullLines = new LineBatch(NODE_CONNECTOR_LINE_THICKNESS);
     private final LineBatch glowHaloLines = new LineBatch(NODE_CONNECTOR_GLOW_HALO_THICKNESS);
     private final LineBatch glowLines = new LineBatch(NODE_CONNECTOR_GLOW_LINE_THICKNESS);
+    private final LineBatch tetherLines = new LineBatch(NODE_CONNECTOR_GLOW_LINE_THICKNESS);
     private final Segment scratchSegment = new Segment();
     private final Segment scratchPart = new Segment();
     private final float[] cumulativeArcLength = new float[CURVE_ARC_SAMPLES + 1];
@@ -81,6 +84,45 @@ final class SkillTreeNodeConnectorRenderer {
         }
 
         flushBatch();
+        GL11.glDisable(GL11.GL_BLEND);
+    }
+
+    void drawGrantTethers(TreeLayers layers, SkillNode socket, List<String> grantedNodeIds, Color tetherColor) {
+        if (socket == null || tetherColor == null || grantedNodeIds.isEmpty()) {
+            return;
+        }
+        exoshipRadius = layers.exoshipRadius();
+        TreeViewport socketViewport = layers.viewportFor(socket);
+        float socketX = socketViewport.screenX(socket.getOffsetX());
+        float socketY = socketViewport.screenY(socket.getOffsetY());
+        int tetherRgb = tetherColor.getRGB();
+        tetherLines.clear();
+        for (int grantedIndex = 0; grantedIndex < grantedNodeIds.size(); grantedIndex++) {
+            SkillNode granted = SkillTree.get(grantedNodeIds.get(grantedIndex));
+            if (granted == null) {
+                continue;
+            }
+            TreeViewport grantedViewport = layers.viewportFor(granted);
+            float grantedX = grantedViewport.screenX(granted.getOffsetX());
+            float grantedY = grantedViewport.screenY(granted.getOffsetY());
+            float towardX = grantedX - socketX;
+            float towardY = grantedY - socketY;
+            float tetherLength = (float) Math.sqrt(towardX * towardX + towardY * towardY);
+            float socketRadius = endpointRadius(socket, socketViewport.zoom(), towardX, towardY);
+            float grantedRadius = endpointRadius(granted, grantedViewport.zoom(), -towardX, -towardY);
+            if (tetherLength <= socketRadius + grantedRadius) {
+                continue;
+            }
+            float dirX = towardX / tetherLength;
+            float dirY = towardY / tetherLength;
+            float tetherAlpha = GRANT_TETHER_ALPHA * Math.min(layers.alphaFor(socket), layers.alphaFor(granted));
+            tetherLines.add(socketX + dirX * socketRadius, socketY + dirY * socketRadius, tetherRgb,
+                    grantedX - dirX * grantedRadius, grantedY - dirY * grantedRadius, tetherRgb, tetherAlpha);
+        }
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        tetherLines.flush();
         GL11.glDisable(GL11.GL_BLEND);
     }
 

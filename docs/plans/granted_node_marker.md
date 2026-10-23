@@ -4,7 +4,7 @@ A Contraband Modspec Cache in an allocated socket allocates one to three notable
 
 This plan gives granted nodes a marker on the tree and ties them visibly to their socket.
 
-Status: planned, not built.
+Status: steps 1 to 4 built, uncommitted on the granted marker worktree. Not yet checked in game.
 
 ## Where the code lives
 
@@ -40,16 +40,18 @@ Technical details: the grant ring reuses the ring renderer's circle-outline help
 
 ## Steps
 
-1. A cached granted-node colour map, rebuilt when the tree revision or the socketed items change (`SkillTreeNodeDrawer` or a small `GrantMarkers` helper next to it).
-2. The grant ring in `SkillTreeNodeRingRenderer`, called from `renderNode` for `ACTIVE` grants.
-3. The hover tether, drawn in the connection-line pass for the hovered socket or granted node.
-4. No `docs/docs.md` change (it doesn't cover UI). README only if it describes the cache's look.
+1. (done, uncommitted on the granted marker worktree) A cached granted-node colour map, rebuilt when the tree revision or the socketed items change. Built as `ui/node/GrantMarkers`: `refresh(snapshot)` rebuilds only when the ship data, its revision or the grant lookup (or its revision) changes, and also keeps each socket's active granted nodes and colour for the tether. Tested in `GrantMarkersTest`.
+2. (done, uncommitted on the granted marker worktree) The grant ring in `SkillTreeNodeRingRenderer`, called from `renderNode` for `ACTIVE` grants. `draw` takes a `grantColor` and draws one thin outline just outside the node's halo, inside the same blended pass as the donut.
+3. (done, uncommitted on the granted marker worktree) The hover tether, for the hovered socket or granted node. `SkillTreeNodeConnectorRenderer.drawGrantTethers` draws it just before the node pass, with its ends cut at the node edges like connectors. The hover check only tests the sockets and nodes in the grant map, and is skipped while a dropdown is open or the root is moving.
+4. (done, uncommitted on the granted marker worktree) No `docs/docs.md` change (it doesn't cover UI). The README doesn't describe the cache's look, so it's unchanged.
 
-## Decisions to confirm
+## Decided (provisional, recommended options)
 
-- The colour: the granting item's frame colour (recommended), or one fixed "granted" colour from the panel style for every granting item.
-- The tether: on hover only (recommended), or always shown while the tree is open. Always-on adds lines across the whole tree when several caches are socketed.
-- Whether the marker also shows on granted nodes that are `READY` but not yet allocated (for example no free slot), dimmed, or only on `ACTIVE` ones (recommended).
+These were built with the recommended option for each. The owner hasn't confirmed them yet, so any can still change.
+
+- The colour: the granting item's frame colour (`Item.frameColor()`), not one fixed "granted" colour.
+- The tether: on hover only, not always shown while the tree is open.
+- The marker: only on `ACTIVE` grants, not on `READY` ones that aren't allocated yet.
 
 ## Tests
 
