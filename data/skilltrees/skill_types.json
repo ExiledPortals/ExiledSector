@@ -4683,11 +4683,52 @@
 			"effects": [
 				{
 					"effect": "BALLISTIC_COUNTS_AS_ENERGY"
+				},
+				{
+					"effect": "BALLISTIC_WEAPON_FLUX_COST_PERCENT",
+					"magnitude": 25
 				}
 			],
 			"description": "Fafnir cannons fire conventional shells on Gauss-rifle propulsion fed straight from the flux grid. Fafnir breech schematics salvaged from Navarchy wrecks show the crew how to wire this ship's ballistic mounts onto the same grid, so they draw on everything tuned for its energy weapons.",
 			"tags": [
 				"weapons"
+			]
+		},
+		{
+			"id": "tania_dysis_drive",
+			"name": "Dysis Drive",
+			"icon": "graphics/icons/tania_dysis_drive.png",
+			"tier": "NOTABLE",
+			"hullSizeEffects": [
+				{
+					"effect": "FLUX_SCALED_TOP_SPEED_FLAT",
+					"frigate": 50,
+					"destroyer": 40,
+					"cruiser": 30,
+					"capitalShip": 20
+				}
+			],
+			"description": "The Black Hawk's Dysis Drive throws the ship forward hardest while its flux grid runs cold. Engineers lent by a Navarchy commission teach the crew to tune this ship's engines the same way, so it surges ahead at low flux and drags once the grid fills.",
+			"tags": [
+				"speed",
+				"flux"
+			]
+		},
+		{
+			"id": "tania_carina_charge",
+			"name": "Carina Charge",
+			"icon": "graphics/icons/tania_carina_charge.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT",
+					"magnitude": 0.08
+				}
+			],
+			"description": "Navarchy captains close on their targets at full burn, trusting old armor to take the blow while every gun fires into the point of contact. Crews who have fought beside Navarchy fleets drill this ship's gunners to fire the same way, so its shots land harder the faster it charges in.",
+			"tags": [
+				"weapons",
+				"speed"
 			]
 		},
 		{

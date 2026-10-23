@@ -7309,11 +7309,10 @@
 			"id": "tania_solaris_overdrive_1",
 			"type": "tania_solaris_overdrive",
 			"connectedTo": [
-				"tania_top_speed_2",
-				"tania_thermo_accelerator_1"
+				"ballistic_projectile_speed_7"
 			],
-			"x": 716,
-			"y": 19475,
+			"x": -1128,
+			"y": 19106,
 			"tags": [
 				"tania"
 			]
@@ -7355,8 +7354,8 @@
 				"maneuverability_percent_5",
 				"tania_wormhole_1"
 			],
-			"x": 716,
-			"y": 18444,
+			"x": 650,
+			"y": 18452,
 			"tags": [
 				"tania"
 			]
@@ -7365,8 +7364,7 @@
 			"id": "tania_rise_from_the_ashes_1",
 			"type": "tania_rise_from_the_ashes",
 			"connectedTo": [
-				"tania_hull_3",
-				"tania_thermo_accelerator_1"
+				"tania_hull_3"
 			],
 			"x": 0,
 			"y": 19492,
@@ -7379,7 +7377,8 @@
 			"type": "hull",
 			"connectedTo": [
 				"tania_small_flux_optional_3",
-				"tania_hull_3"
+				"tania_hull_3",
+				"tania_thermo_accelerator_1"
 			],
 			"x": 0,
 			"y": 18805,
@@ -7392,7 +7391,8 @@
 			"type": "hull",
 			"connectedTo": [
 				"tania_hull_2",
-				"tania_rise_from_the_ashes_1"
+				"tania_rise_from_the_ashes_1",
+				"armor_12"
 			],
 			"x": 0,
 			"y": 19138,
@@ -7405,10 +7405,11 @@
 			"type": "top_speed",
 			"connectedTo": [
 				"maneuverability_percent_5",
-				"tania_solaris_overdrive_1"
+				"top_speed_9",
+				"tania_carina_charge_1"
 			],
-			"x": 716,
-			"y": 19111,
+			"x": 650,
+			"y": 19114,
 			"tags": [
 				"tania"
 			]
@@ -7418,7 +7419,9 @@
 			"type": "tania_weapon_fire_rate",
 			"connectedTo": [
 				"tania_small_flux_optional_1",
-				"tania_weapon_fire_rate_2"
+				"tania_weapon_fire_rate_2",
+				"ballistic_projectile_speed_7",
+				"ballistic_damage_9"
 			],
 			"x": -645,
 			"y": 18825,
@@ -7431,7 +7434,8 @@
 			"type": "tania_weapon_fire_rate",
 			"connectedTo": [
 				"tania_weapon_fire_rate_1",
-				"tania_fafnir_breeches_1"
+				"tania_fafnir_breeches_1",
+				"ballistic_damage_8"
 			],
 			"x": -645,
 			"y": 19118,
@@ -7443,8 +7447,7 @@
 			"id": "tania_fafnir_breeches_1",
 			"type": "tania_fafnir_breeches",
 			"connectedTo": [
-				"tania_weapon_fire_rate_2",
-				"tania_thermo_accelerator_1"
+				"tania_weapon_fire_rate_2"
 			],
 			"x": -645,
 			"y": 19477,
@@ -7469,13 +7472,11 @@
 			"id": "tania_thermo_accelerator_1",
 			"type": "tania_thermo_accelerator",
 			"connectedTo": [
-				"tania_solaris_overdrive_1",
-				"tania_rise_from_the_ashes_1",
-				"tania_fafnir_breeches_1"
+				"tania_hull_2"
 			],
-			"x": 0,
-			"y": 20073,
-			"ringBeltColor": "#4d9ec0",
+			"x": 266,
+			"y": 19069,
+			"ringBeltColor": "#d27937",
 			"tags": [
 				"tania"
 			]
@@ -7485,10 +7486,109 @@
 			"type": "maneuverability_percent",
 			"connectedTo": [
 				"tania_small_flux_optional_2",
+				"tania_top_speed_2",
+				"maneuverability_percent_6"
+			],
+			"x": 650,
+			"y": 18789,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"id": "maneuverability_percent_6",
+			"type": "maneuverability_percent",
+			"connectedTo": [
+				"maneuverability_percent_5"
+			],
+			"x": 342,
+			"y": 18634,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"id": "top_speed_9",
+			"type": "top_speed",
+			"connectedTo": [
+				"tania_top_speed_2",
+				"tania_dysis_drive_1"
+			],
+			"x": 859,
+			"y": 19338,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"id": "armor_12",
+			"type": "armor",
+			"connectedTo": [
+				"tania_hull_3"
+			],
+			"x": -221,
+			"y": 18929,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"id": "ballistic_damage_8",
+			"type": "ballistic_damage",
+			"connectedTo": [
+				"tania_weapon_fire_rate_2"
+			],
+			"x": -859,
+			"y": 19310,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"id": "ballistic_projectile_speed_7",
+			"type": "ballistic_projectile_speed",
+			"connectedTo": [
+				"tania_weapon_fire_rate_1",
+				"tania_solaris_overdrive_1"
+			],
+			"x": -943,
+			"y": 18825,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"id": "ballistic_damage_9",
+			"type": "ballistic_damage",
+			"connectedTo": [
+				"tania_weapon_fire_rate_1"
+			],
+			"x": -410,
+			"y": 19030,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"id": "tania_dysis_drive_1",
+			"type": "tania_dysis_drive",
+			"connectedTo": [
+				"top_speed_9"
+			],
+			"x": 1027,
+			"y": 19110,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"id": "tania_carina_charge_1",
+			"type": "tania_carina_charge",
+			"connectedTo": [
 				"tania_top_speed_2"
 			],
-			"x": 716,
-			"y": 18784,
+			"x": 650,
+			"y": 19504,
 			"tags": [
 				"tania"
 			]
