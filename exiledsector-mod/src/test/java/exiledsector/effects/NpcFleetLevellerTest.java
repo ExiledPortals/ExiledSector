@@ -537,12 +537,12 @@ class NpcFleetLevellerTest {
         assertFalse(hullMods.contains("converted_hangar"));
     }
 
-    private int levelForChartTier(int chartTier, boolean warden) {
+    private int levelForChartTier(int chartTier, boolean boss) {
         FleetMemberAPI officered = member("m1", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
         CampaignFleetAPI fleet = fleetOf(officered);
         fleet.getMemoryWithoutUpdate().set(ChartIds.TIER_MEMORY_KEY, chartTier);
-        if (warden) {
-            fleet.getMemoryWithoutUpdate().set(ChartIds.WARDEN_MEMORY_KEY, true);
+        if (boss) {
+            fleet.getMemoryWithoutUpdate().set(ChartIds.BOSS_MEMORY_KEY, true);
         }
         NpcFleetLeveller.ensure(fleet);
         return NpcTreeTag.decode(NpcTreeTag.find(officered.getVariant())).getAllocatedNodeIds().size() - 1;
@@ -582,11 +582,11 @@ class NpcFleetLevellerTest {
 
         int tierOne = levelForChartTier(1, false);
         int tierFifteen = levelForChartTier(15, false);
-        int tierFifteenWarden = levelForChartTier(15, true);
+        int tierFifteenBoss = levelForChartTier(15, true);
 
         assertTrue(tierOne >= 26 && tierOne <= 29, "tier 1 rolled level " + tierOne);
         assertTrue(tierFifteen >= 47 && tierFifteen <= ShipLevelConfig.DEFAULT_MAX_LEVEL, "tier 15 rolled level " + tierFifteen);
-        assertEquals(tierFifteen + 1, tierFifteenWarden);
+        assertEquals(tierFifteen + 1, tierFifteenBoss);
         lunaSettingsMock.when(() -> LunaSettings.getInt(ExiledSector.MOD_ID, ShipLevelConfig.MAX_LEVEL_FIELD_ID)).thenReturn(20);
         assertEquals(20, levelForChartTier(15, false));
         assertEquals(21, levelForChartTier(15, true));

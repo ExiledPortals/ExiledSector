@@ -104,7 +104,7 @@ final class ChartVanillaLoot {
         return whole + (random.nextFloat() < expected - whole ? 1 : 0);
     }
 
-    static void addToFleet(CampaignFleetAPI fleet, boolean warden, ChartGenContext context, int tier) {
+    static void addToFleet(CampaignFleetAPI fleet, boolean boss, ChartGenContext context, int tier) {
         float fleetPointSteps = fleet.getFleetPoints() / FLEET_POINTS_PER_STEP;
         if (!(fleetPointSteps > 0f)) {
             return;
@@ -112,9 +112,9 @@ final class ChartVanillaLoot {
         for (ChartLoot.Entry entry : ChartLoot.entriesFor(ChartLoot.FLEET_SCOPE, tier)) {
             addToFleet(fleet, entry, fleetPointSteps * context.dropMult(entry.type()));
         }
-        if (warden) {
-            for (ChartLoot.Entry entry : ChartLoot.entriesFor(ChartLoot.WARDEN_SCOPE, tier)) {
-                addToFleet(fleet, entry, fleetPointSteps * context.dropMult(entry.type()) * context.wardenSpoilsMult());
+        if (boss) {
+            for (ChartLoot.Entry entry : ChartLoot.entriesFor(ChartLoot.BOSS_SCOPE, tier)) {
+                addToFleet(fleet, entry, fleetPointSteps * context.dropMult(entry.type()) * context.bossSpoilsMult());
             }
         }
     }

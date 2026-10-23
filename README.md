@@ -260,7 +260,7 @@ Every fleet can carry skill trees, your own faction's and your allies' included.
 
 The mirror stops at a cap. Pirates never pass 15 nodes, faction fleets 25 and AI fleets 35, so a ship you keep levelling eventually outgrows them. Bounty targets climb from their cap toward 25 as bounties get harder, and their flagship gets 3 more. An optional bonus multiplier, off by default, can also make NPC node bonuses grow with your fleet's average tree power, again only up to that fleet's cap. Only bonuses scale: drawbacks stay as written, and campaign stats such as sensors, cargo and burn level don't grow.
 
-Star Chart fleets ignore your fleet when sizing their trees. Tier 1 ships get 26 to 29 nodes, climbing to 47 to 50 at tier 15, and warden fleets get one more. Higher tiers also bring more and larger fleets, more and better officers and better-quality ships, before the chart's own modifiers add more. Chart fleets have no cap, so if you turn the bonus multiplier on it can reach its full maximum there. All of this, the multiplier included, can be tuned on the **NPC Scaling** tab in LunaLib settings.
+Star Chart fleets ignore your fleet when sizing their trees. Tier 1 ships get 26 to 29 nodes, climbing to 47 to 50 at tier 15, and Star Chart Bosses get one more. Higher tiers also bring more and larger fleets, more and better officers and better-quality ships, before the chart's own modifiers add more. Chart fleets have no cap, so if you turn the bonus multiplier on it can reach its full maximum there. All of this, the multiplier included, can be tuned on the **NPC Scaling** tab in LunaLib settings.
 
 NPC ships don't all build the same way. Each faction leans towards its own themes: the Hegemony towards armour and ballistics, Tri-Tachyon towards flux, energy and phase, pirates towards speed and missiles. A ship's own system and defence steer it too. Bonuses to armour, hull, flux, speed and range only partly count once they pass a threshold, on your ships and theirs, so each bonus past the threshold adds less. To skip NPC trees entirely, switch them off on the NPC Scaling tab.
 
@@ -291,7 +291,7 @@ Exiled Sector is meant as an endgame expansion, so the extra modules wait until 
 <details>
 <summary><b>How do Star Charts get harder?</b></summary>
 
-Each tier brings more fleets, bigger fleets and better ships, crewed by more and better officers, with the ships themselves further along their skill trees. From tier 4 every chart is also guarded by a warden, a boss fleet that grows with each tier. A chart's modifiers push it further still: some add fleet size, quality or strength, others make the warden bigger. Higher tiers drop more to make up for it, including a small chance of colony items from tier 6.
+Each tier brings more fleets, bigger fleets and better ships, crewed by more and better officers, with the ships themselves further along their skill trees. Every chart is also guarded by a Star Chart Boss, a large fleet that grows with each tier. A chart's modifiers push it further still: some add fleet size, quality or strength, others make the boss bigger. Higher tiers drop more to make up for it, including a small chance of colony items from tier 6.
 
 A few tiers for comparison, with numbers still being balanced:
 
@@ -302,7 +302,7 @@ A few tiers for comparison, with numbers still being balanced:
 | Fleet quality | 30 | 45 | 75 | 100 |
 | Ship skill tree level | 26–29 | 31–34 | 40–43 | 47–50 |
 | Officer level / extra officers | +0 / +0 | +1 / +1 | +3 / +3 | +5 / +5 |
-| Warden fleet size | none | 300 | 660 | 1100 |
+| Boss fleet size | 180 | 300 | 660 | 1100 |
 | Colony item chance | 0 | 0 | 1.5% | 4% |
 
 Battles outside charts drop charts up to tier 6, at a tier set by the strongest NPC ship you beat. Past that you climb from inside: finishing a chart's objective drops another chart, often a tier higher, and chart fleets and salvage drop charts at the chart's own tier.

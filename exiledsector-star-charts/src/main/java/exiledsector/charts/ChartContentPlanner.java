@@ -22,7 +22,7 @@ final class ChartContentPlanner {
     static final int MAX_POIS = 24;
     static final int MAX_FLEETS = 15;
     static final float FLEET_SIZE_CAP = 600f;
-    static final float WARDEN_SIZE_CAP = 1200f;
+    static final float BOSS_SIZE_CAP = 1200f;
     static final float MIN_FLEET_SIZE = 30f;
     static final float SHARE_SPREAD = 0.25f;
     static final int MAX_OVERFLOW_STRENGTH = 50;
@@ -188,11 +188,11 @@ final class ChartContentPlanner {
     }
 
     static PlannedFleet plannedBoss(ChartTier tier, float fleetQuality, int targetPoi) {
-        float wardenSize = Math.max(MIN_FLEET_SIZE, tier.wardenSize());
-        return new PlannedFleet(FleetRole.BOSS, targetPoi, ChartTier.fleetPoints(Math.min(WARDEN_SIZE_CAP, wardenSize)),
+        float bossSize = Math.max(MIN_FLEET_SIZE, tier.bossSize());
+        return new PlannedFleet(FleetRole.BOSS, targetPoi, ChartTier.fleetPoints(Math.min(BOSS_SIZE_CAP, bossSize)),
                 Math.max(0f, Math.min(MAX_QUALITY, fleetQuality + BOSS_QUALITY_BONUS)) / ChartTier.PERCENT,
                 tier.officerLevelBonus() + BOSS_OFFICER_LEVEL_BONUS, tier.officerCountBonus() + BOSS_OFFICER_COUNT_BONUS,
-                overflowStrength(wardenSize, WARDEN_SIZE_CAP));
+                overflowStrength(bossSize, BOSS_SIZE_CAP));
     }
 
     static int overflowStrength(float sizePercent, float cap) {

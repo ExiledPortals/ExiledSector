@@ -77,7 +77,7 @@ Several separate categories in one roll are listed: "hull items, subroutines and
 
 ## Banned words
 
-Never write "loot", "spoils" or "rewards" for things the player picks up. Use "items" with a category, "salvage" for vanilla's post-battle salvage screen, and "completion reward" only for the one-time Star Chart objective reward. Item quantity is always "quantity of items found in the system" or "quantity of items dropped by Chart Wardens".
+Never write "loot", "spoils" or "rewards" for things the player picks up. Use "items" with a category, "salvage" for vanilla's post-battle salvage screen, and "completion reward" only for the one-time Star Chart objective reward. Item quantity is always "quantity of items found in the system" or "quantity of items dropped by Star Chart Bosses".
 
 ## Chances
 
@@ -89,7 +89,7 @@ Conditions go after the value and stat: "while phased", "while in the system", "
 
 ## Capitalisation
 
-Follow Starsector's own style. Stats and generic nouns are lowercase (flux capacity, sensor range, items, currency items, points of interest). Proper names keep their capitals: Star Charts, Chart Wardens, Nanite Feedstock, Bridge items, Domain, hull mod and faction names.
+Follow Starsector's own style. Stats and generic nouns are lowercase (flux capacity, sensor range, items, currency items, points of interest). Proper names keep their capitals: Star Charts, Star Chart Bosses, Nanite Feedstock, Bridge items, Domain, hull mod and faction names.
 
 ## Chinese
 

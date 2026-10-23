@@ -240,26 +240,26 @@ class DoctrineArchiveDataTest {
     }
 
     @Test
-    void onlyWardensOfTierFourteenAndFifteenChartsDropADoctrineArchive() throws Exception {
+    void onlyBossesOfTierFourteenAndFifteenChartsDropADoctrineArchive() throws Exception {
         loadShippedDoctrines();
         try {
             Random random = new Random(2L);
             int drops = 0;
             for (int trial = 0; trial < 2000; trial++) {
-                assertNull(DoctrineArchives.rollForWarden(13, "hegemony", 10f, random, definition -> true));
-                drops += DoctrineArchives.rollForWarden(14, "hegemony", 1f, random, definition -> true) == null ? 0 : 1;
-                assertNotNull(DoctrineArchives.rollForWarden(15, "hegemony", 2f, random, definition -> true));
+                assertNull(DoctrineArchives.rollForBoss(13, "hegemony", 10f, random, definition -> true));
+                drops += DoctrineArchives.rollForBoss(14, "hegemony", 1f, random, definition -> true) == null ? 0 : 1;
+                assertNotNull(DoctrineArchives.rollForBoss(15, "hegemony", 2f, random, definition -> true));
             }
 
-            assertEquals(DoctrineArchives.WARDEN_CHANCE, drops / 2000f, 0.04f);
-            assertNull(DoctrineArchives.rollForWarden(15, "hegemony", 2f, random, definition -> false));
+            assertEquals(DoctrineArchives.BOSS_CHANCE, drops / 2000f, 0.04f);
+            assertNull(DoctrineArchives.rollForBoss(15, "hegemony", 2f, random, definition -> false));
         } finally {
             NpcFactionVolumes.clear();
         }
     }
 
     @Test
-    void aWardenDropsItsOwnFactionsDoctrineAndAFactionWithoutOneDropsAny() throws Exception {
+    void aBossDropsItsOwnFactionsDoctrineAndAFactionWithoutOneDropsAny() throws Exception {
         loadShippedDoctrines();
         try {
             Random random = new Random(4L);

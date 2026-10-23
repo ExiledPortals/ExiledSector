@@ -41,7 +41,7 @@ class StarChartCurrencyTest {
 
     private static final String SINGLE = "star_chart_single";
     private static final String SILENT_REACH = "unique_chart_silent_reach";
-    private static final String WARDENS_VIGIL = "unique_chart_wardens_vigil";
+    private static final String BOSS_VIGIL = "unique_chart_boss_vigil";
     private static final String FLEET_SIZE = "HYBRID_CHART_FLEET_SIZE";
     private static final Predicate<ItemDefinition> ANY_UNIQUE = definition -> true;
 
@@ -168,7 +168,7 @@ class StarChartCurrencyTest {
             while (ItemCrafting.canUse(CraftingCurrency.AUGMENTATION, chart, ANY_UNIQUE)) {
                 use(CraftingCurrency.AUGMENTATION, chart, seed);
             }
-            assertFalse(has(chart, "HYBRID_CHART_WARDEN_SIZE"), "seed " + seed);
+            assertFalse(has(chart, "CHART_COLONY_ITEM_PERCENT"), "seed " + seed);
         }
     }
 
@@ -201,7 +201,7 @@ class StarChartCurrencyTest {
         Item transposed = use(CraftingCurrency.TRANSPOSITION, highTier, 1L);
 
         assertNotNull(transposed);
-        assertEquals(WARDENS_VIGIL, transposed.definitionId());
+        assertEquals(BOSS_VIGIL, transposed.definitionId());
         assertEquals(6, transposed.tier());
         assertSame(transposed, store.find(transposed.id()));
         assertNotSame(highTier, store.find(highTier.id()));
@@ -313,7 +313,7 @@ class StarChartCurrencyTest {
             List<RolledModifier> before = List.copyOf(chart.explicits());
             assertSame(chart, use(StarChartCurrency.REFORGE, chart, seed));
             assertNotEquals(before, chart.explicits());
-            assertFalse(has(chart, "HYBRID_CHART_WARDEN_SIZE"));
+            assertFalse(has(chart, "CHART_COLONY_ITEM_PERCENT"));
             assertEquals(chart.explicits().size() <= 2 ? ItemRarity.COMMON : ItemRarity.RARE, chart.rarity());
             assertEquals(3, chart.tier());
             counts.merge(chart.explicits().size(), 1, Integer::sum);
@@ -426,7 +426,7 @@ class StarChartCurrencyTest {
         assertFalse(ItemCrafting.canUse(StarChartCurrency.CARTOGRAPHY, top, ANY_UNIQUE));
         assertNull(use(StarChartCurrency.CARTOGRAPHY, top, 2L));
 
-        StarChart vigil = stored(WARDENS_VIGIL, 3L, 1);
+        StarChart vigil = stored(BOSS_VIGIL, 3L, 1);
         assertEquals(4, vigil.tier());
         use(StarChartCurrency.CARTOGRAPHY, vigil, 1L);
         assertEquals(5, vigil.tier());

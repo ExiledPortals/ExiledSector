@@ -23,7 +23,7 @@ public final class ChartLoot {
     static final String PATH = "data/config/exiledSector/chart_loot.csv";
     static final String ID_COLUMN = "id";
     static final String FLEET_SCOPE = "fleet";
-    static final String WARDEN_SCOPE = "warden";
+    static final String BOSS_SCOPE = "boss";
     static final List<String> SCOPES = scopes();
     static final Set<String> COLONY_ITEM_GROUPS = Set.of("rare_tech", "rare_tech_low", "rare_tech_mothership", "nanoforge_always");
     static final List<String> VANILLA_TYPE_NAMES = Arrays.stream(DropType.values()).filter(DropType::isVanilla)
@@ -64,7 +64,7 @@ public final class ChartLoot {
     private static List<String> scopes() {
         List<String> scopes = new ArrayList<>(ChartPois.KIND_NAMES);
         scopes.add(FLEET_SCOPE);
-        scopes.add(WARDEN_SCOPE);
+        scopes.add(BOSS_SCOPE);
         return List.copyOf(scopes);
     }
 

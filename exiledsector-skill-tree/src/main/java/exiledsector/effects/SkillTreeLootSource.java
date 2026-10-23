@@ -102,9 +102,9 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty {
     }
 
     @Override
-    public List<ItemData> wardenDrops(int chartTier, String wardenFactionId, float chanceMult, Random random,
+    public List<ItemData> bossDrops(int chartTier, String bossFactionId, float chanceMult, Random random,
                                       Predicate<ItemDefinition> allowed) {
-        ItemData doctrine = DoctrineArchives.rollForWarden(chartTier, wardenFactionId, chanceMult, random, allowed);
+        ItemData doctrine = DoctrineArchives.rollForBoss(chartTier, bossFactionId, chanceMult, random, allowed);
         return doctrine == null ? List.of() : List.of(doctrine);
     }
 

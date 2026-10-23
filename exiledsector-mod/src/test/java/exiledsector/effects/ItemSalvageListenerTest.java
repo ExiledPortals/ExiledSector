@@ -198,7 +198,7 @@ class ItemSalvageListenerTest {
         ItemDefinitions.register(new JSONArray().put(subroutine("volume_subroutine", "MODSPEC_CACHE", false))
                 .put(subroutine("doctrine_archive_hegemony", "DOCTRINE", true)).put(subroutine("doctrine_archive_luddic", "DOCTRINE", true))
                 .put(subroutine("doctrine_archive_pirate", "DOCTRINE", true)).put(subroutine("doctrine_archive_remnant", "DOCTRINE", true))
-                .put(subroutine("unique_warden_threat_matrix", "UNIQUE", true)));
+                .put(subroutine("unique_boss_threat_matrix", "UNIQUE", true)));
         WormholeAnchorDefinitions.register(new JSONArray().put(anchor("wormhole_anchor_hegemony", "hegemony"))
                 .put(anchor("wormhole_anchor_luddic", "luddic")).put(anchor("wormhole_anchor_pirate", "pirate"))
                 .put(anchor("wormhole_anchor_abyss", "abyss")));

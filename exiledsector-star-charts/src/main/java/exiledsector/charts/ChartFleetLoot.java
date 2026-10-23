@@ -138,12 +138,12 @@ public final class ChartFleetLoot {
         }
         ItemDrops.SiteLoot fleetLoot = roll(sector, run, context, ChartIds.FLEET_LOOT_SITE, ChartDrops.Source.CHART_FLEET, share, random);
         if (fleet.getId() != null && fleet.getId().equals(run.bossFleetId())) {
-            fleetLoot = fleetLoot.plus(roll(sector, run, context, ChartIds.WARDEN_LOOT_SITE, ChartDrops.Source.CHART_WARDEN,
-                    share * context.wardenSpoilsMult(), random));
-            List<ItemData> wardenDrops = LootSources.wardenDrops(run.tier(), run.contentFaction(), share * context.wardenSpoilsMult(), random,
+            fleetLoot = fleetLoot.plus(roll(sector, run, context, ChartIds.BOSS_LOOT_SITE, ChartDrops.Source.CHART_BOSS,
+                    share * context.bossSpoilsMult(), random));
+            List<ItemData> bossDrops = LootSources.bossDrops(run.tier(), run.contentFaction(), share * context.bossSpoilsMult(), random,
                     definition -> ItemUnlock.canDrop(definition, sector));
-            if (!wardenDrops.isEmpty()) {
-                fleetLoot = fleetLoot.plus(wardenDrops, List.of(), Map.of());
+            if (!bossDrops.isEmpty()) {
+                fleetLoot = fleetLoot.plus(bossDrops, List.of(), Map.of());
             }
         }
         return fleetLoot;

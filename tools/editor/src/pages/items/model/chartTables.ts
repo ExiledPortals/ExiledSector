@@ -53,7 +53,7 @@ export const CHART_TIER_COLUMNS = [
   'station_budget',
   'derelict_budget',
   'boss',
-  'warden_size',
+  'boss_size',
   'weight_clear',
   'weight_boss',
   'colony_item_chance',
@@ -205,7 +205,7 @@ export const CHART_TIER_SPEC: ChartTableSpec = {
   noun: 'chart tier',
   keyColumn: 'tier',
   description:
-    'One row per tier from 1 to 15. A blank value, or a missing tier, uses the built-in value. Fleet size and warden size are percents of a standard fleet of 50 fleet points (about a vanilla heavy patrol); each site budget is spent on points of interest of its kind, in the order domain, stations, derelicts, caches, until the 24-site cap; a leftover smaller than the cheapest site of its kind buys one more with the matching chance; the two weights pick the objective.',
+    'One row per tier from 1 to 15. A blank value, or a missing tier, uses the built-in value. Fleet size and boss size are percents of a standard fleet of 50 fleet points (about a vanilla heavy patrol); each site budget is spent on points of interest of its kind, in the order domain, stations, derelicts, caches, until the 24-site cap; a leftover smaller than the cheapest site of its kind buys one more with the matching chance; the two weights pick the objective.',
   columns: columnsOf(CHART_TIER_COLUMNS, {
     tier: { label: 'Tier', kind: 'integer' },
     fleet_size: {
@@ -225,7 +225,7 @@ export const CHART_TIER_SPEC: ChartTableSpec = {
     level_min: {
       label: 'Level min',
       kind: 'integer',
-      help: 'Lowest enemy ship level (skill tree nodes besides the root), clamped to the max level setting. Warden ships roll one level higher.',
+      help: 'Lowest enemy ship level (skill tree nodes besides the root), clamped to the max level setting. Boss ships roll one level higher.',
     },
     level_max: { label: 'Level max', kind: 'integer' },
     cache_budget: { label: 'Cache budget', kind: 'number', help: 'Spent on cache points of interest by their cost' },
@@ -237,7 +237,7 @@ export const CHART_TIER_SPEC: ChartTableSpec = {
     station_budget: { label: 'Station budget', kind: 'number', help: 'Spent on station points of interest by their cost' },
     derelict_budget: { label: 'Derelict budget', kind: 'number', help: 'Spent on derelict ship points of interest by their cost' },
     boss: { label: 'Boss', kind: 'flag' },
-    warden_size: { label: 'Warden size %', kind: 'number', help: 'Size of the warden fleet, where 100% is a standard fleet of 50 fleet points, capped at 1200%' },
+    boss_size: { label: 'Boss size %', kind: 'number', help: 'Size of the boss fleet, where 100% is a standard fleet of 50 fleet points, capped at 1200%' },
     weight_clear: { label: 'Clear weight', kind: 'number' },
     weight_boss: { label: 'Boss weight', kind: 'number' },
     colony_item_chance: {
@@ -286,7 +286,7 @@ export const CHART_TIER_SPEC: ChartTableSpec = {
           'domain_budget',
           'station_budget',
           'derelict_budget',
-          'warden_size',
+          'boss_size',
           'weight_clear',
           'weight_boss',
           'colony_item_chance',
@@ -311,9 +311,9 @@ export const CHART_TIER_SPEC: ChartTableSpec = {
           warnings.push(`${label}: ${column} is above the default max level (${DEFAULT_MAX_LEVEL}), so it is clamped to the max level setting`);
         }
       }
-      const wardenSize = numberValue(row, 'warden_size', builtIn?.wardenSize ?? 0);
-      if (isYes(value(row, 'boss')) && !(wardenSize > 0)) {
-        warnings.push(`${label}: boss is yes but warden_size is ${value(row, 'warden_size') === '' ? 'blank and the built-in value is 0' : '0'}, so there is no boss`);
+      const bossSize = numberValue(row, 'boss_size', builtIn?.bossSize ?? 0);
+      if (isYes(value(row, 'boss')) && !(bossSize > 0)) {
+        warnings.push(`${label}: boss is yes but boss_size is ${value(row, 'boss_size') === '' ? 'blank and the built-in value is 0' : '0'}, so there is no boss`);
       }
     });
     const missing: number[] = [];
@@ -531,14 +531,14 @@ export const CHART_LOOT_SPEC: ChartTableSpec = {
   noun: 'chart loot row',
   keyColumn: 'id',
   description:
-    'Vanilla loot in chart systems. A row with no scope puts a vanilla drop group under a drop type, so that type\'s bonus scales every site entry from that group (groups that are not listed, such as colony items, are never scaled). A row with a scope adds a base entry: to every site of that category, to every chart fleet (fleet), or to the warden on top of its fleet rows (warden). Random rows roll the group amount times; value rows give that much value from it. Fleet and warden amounts are per 100 fleet points, and every base entry is scaled by its drop type bonus. Groups the game has not loaded are skipped.',
+    'Vanilla loot in chart systems. A row with no scope puts a vanilla drop group under a drop type, so that type\'s bonus scales every site entry from that group (groups that are not listed, such as colony items, are never scaled). A row with a scope adds a base entry: to every site of that category, to every chart fleet (fleet), or to the boss on top of its fleet rows (boss). Random rows roll the group amount times; value rows give that much value from it. Fleet and boss amounts are per 100 fleet points, and every base entry is scaled by its drop type bonus. Groups the game has not loaded are skipped.',
   columns: columnsOf(CHART_LOOT_COLUMNS, {
     id: { label: 'Id', kind: 'text', help: 'Any unique name; by convention the group for mappings and scope_group for base entries' },
     drop_type: { label: 'Drop type', kind: 'choice', choices: (vocabulary) => vocabulary.chartLootDropTypes },
     scope: { label: 'Scope', kind: 'choice', choices: (vocabulary) => vocabulary.chartLootScopes },
     group: { label: 'Drop group', kind: 'text', help: 'A vanilla (or modded) drop group from drop_groups.csv' },
     mode: { label: 'Mode', kind: 'choice', choices: () => CHART_LOOT_MODES },
-    amount: { label: 'Amount', kind: 'number', help: 'Chances for random rows, value for value rows; per 100 fleet points for fleet and warden' },
+    amount: { label: 'Amount', kind: 'number', help: 'Chances for random rows, value for value rows; per 100 fleet points for fleet and boss' },
     min_tier: { label: 'Min tier', kind: 'integer' },
     note: NOTE_COLUMN,
   }),
@@ -609,7 +609,7 @@ export const CHART_COLONY_ITEM_SPEC: ChartTableSpec = {
   fileName: 'chart_colony_items.csv',
   noun: 'colony item',
   keyColumn: 'id',
-  description: `Colony items a chart run can hide. Each run makes one roll at its tier's colony item chance, raised by the Colony Item bonus and bent under a soft ceiling, and on a success one of these items (picked by weight) goes to the warden, or to a station or Domain site. The ${CHART_COLONY_ITEM_CEILING_ID} row is not an item: its value is that ceiling, which no bonus reaches. Items the game has not loaded are skipped.`,
+  description: `Colony items a chart run can hide. Each run makes one roll at its tier's colony item chance, raised by the Colony Item bonus and bent under a soft ceiling, and on a success one of these items (picked by weight) goes to the boss, or to a station or Domain site. The ${CHART_COLONY_ITEM_CEILING_ID} row is not an item: its value is that ceiling, which no bonus reaches. Items the game has not loaded are skipped.`,
   columns: columnsOf(CHART_COLONY_ITEM_COLUMNS, {
     id: { label: 'Item id', kind: 'text', help: `A special item id from special_items.csv, or ${CHART_COLONY_ITEM_CEILING_ID}` },
     value: { label: 'Weight / ceiling', kind: 'number' },

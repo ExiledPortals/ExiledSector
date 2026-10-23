@@ -2,14 +2,14 @@ package exiledsector.charts;
 
 public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax, int officerLevelBonus, int officerCountBonus,
                         float fleetQuality, int levelMin, int levelMax, float cacheBudget, float domainBudget,
-                        float stationBudget, float derelictBudget, boolean boss, float wardenSize, float clearWeight, float bossWeight) {
+                        float stationBudget, float derelictBudget, boolean boss, float bossSize, float clearWeight, float bossWeight) {
 
     public static final float FLEET_SIZE_BASE_POINTS = 50f;
     static final float PERCENT = 100f;
     static final float FALLBACK_FIRST_TIER_FLEET_SIZE = 100f;
     static final float FALLBACK_FLEET_SIZE_PER_TIER = 32f;
-    static final float FALLBACK_FIRST_WARDEN_SIZE = 300f;
-    static final float FALLBACK_WARDEN_SIZE_PER_TIER = 70f;
+    static final float FALLBACK_FIRST_TIER_BOSS_SIZE = 180f;
+    static final float FALLBACK_BOSS_SIZE_PER_TIER = 65f;
     static final float FALLBACK_POI_BUDGET_PER_TIER = 3f;
     static final float FALLBACK_FIRST_TIER_POI_BUDGET = 6f;
     static final float FALLBACK_CACHE_SHARE = 0.35f;
@@ -18,7 +18,6 @@ public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax,
     static final float FALLBACK_DERELICT_SHARE = 0.3f;
     static final int FALLBACK_FIRST_DOMAIN_TIER = 2;
     static final int FALLBACK_FIRST_STATION_TIER = 3;
-    static final int FALLBACK_FIRST_BOSS_TIER = 4;
     static final int FALLBACK_FIRST_TIER_LEVEL = 26;
     static final float FALLBACK_LEVELS_PER_TIER = 1.5f;
     static final int FALLBACK_LEVEL_SPREAD = 3;
@@ -38,8 +37,8 @@ public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax,
         domainBudget = Math.max(0f, domainBudget);
         stationBudget = Math.max(0f, stationBudget);
         derelictBudget = Math.max(0f, derelictBudget);
-        wardenSize = Math.max(0f, wardenSize);
-        boss = boss && wardenSize > 0f;
+        bossSize = Math.max(0f, bossSize);
+        boss = boss && bossSize > 0f;
         clearWeight = Math.max(0f, clearWeight);
         bossWeight = Math.max(0f, bossWeight);
     }
@@ -70,15 +69,13 @@ public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax,
 
     static ChartTier fallback(int tier) {
         int steps = Math.max(0, tier - 1);
-        boolean hasBoss = tier >= FALLBACK_FIRST_BOSS_TIER;
         int levelMin = FALLBACK_FIRST_TIER_LEVEL + Math.round(FALLBACK_LEVELS_PER_TIER * steps);
         float poiBudget = FALLBACK_FIRST_TIER_POI_BUDGET + FALLBACK_POI_BUDGET_PER_TIER * steps;
         return new ChartTier(tier, FALLBACK_FIRST_TIER_FLEET_SIZE + FALLBACK_FLEET_SIZE_PER_TIER * steps, 2 + steps / 3,
                 4 + steps / 3,
                 steps / 3, steps / 3, Math.min(100f, 30f + 5f * steps), levelMin, levelMin + FALLBACK_LEVEL_SPREAD,
                 poiBudget * FALLBACK_CACHE_SHARE, tier >= FALLBACK_FIRST_DOMAIN_TIER ? poiBudget * FALLBACK_DOMAIN_SHARE : 0f,
-                tier >= FALLBACK_FIRST_STATION_TIER ? poiBudget * FALLBACK_STATION_SHARE : 0f, poiBudget * FALLBACK_DERELICT_SHARE, hasBoss,
-                hasBoss ? FALLBACK_FIRST_WARDEN_SIZE + FALLBACK_WARDEN_SIZE_PER_TIER * (tier - FALLBACK_FIRST_BOSS_TIER) : 0f,
-                1f, hasBoss ? 1f : 0f);
+                tier >= FALLBACK_FIRST_STATION_TIER ? poiBudget * FALLBACK_STATION_SHARE : 0f, poiBudget * FALLBACK_DERELICT_SHARE, true,
+                FALLBACK_FIRST_TIER_BOSS_SIZE + FALLBACK_BOSS_SIZE_PER_TIER * steps, 1f, 1f);
     }
 }

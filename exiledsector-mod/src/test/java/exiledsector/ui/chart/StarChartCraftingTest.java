@@ -181,7 +181,7 @@ class StarChartCraftingTest {
         Item unique = store.add(ItemData.rolledAtTier(ItemDefinitions.get("unique_chart_silent_reach"), 3L, 8));
         StarChartCrafting.Used transposed = StarChartCrafting.use(CraftingCurrency.TRANSPOSITION, unique, store, materials, new Random(1L),
                 definition -> true);
-        assertEquals("unique_chart_wardens_vigil", transposed.selectedAfter().definitionId());
+        assertEquals("unique_chart_boss_vigil", transposed.selectedAfter().definitionId());
         assertSame(transposed.selectedAfter(), store.find(unique.id()));
         assertEquals(8, transposed.selectedAfter().tier());
     }
