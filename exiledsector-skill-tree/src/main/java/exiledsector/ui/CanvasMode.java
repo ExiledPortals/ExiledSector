@@ -1,12 +1,12 @@
 package exiledsector.ui;
 
 enum CanvasMode {
-    ROOT_CHOICE, MODAL, WORKBENCH, HYPERSPACE, EXOSHIP_VIEW, ALLOCATION_RUN, TREE;
+    ROOT_CHOICE, MODAL, WORKBENCH, HYPERSPACE, EXOSHIP_VIEW, TREE;
 
     enum Chrome { STATS_TOGGLE, READOUTS, SEARCH, TEMPLATE_BAR, STORAGE_BUTTON }
 
     static CanvasMode resolve(boolean rootChoiceLocked, boolean modalBlocking, boolean workbenchOpen, boolean hyperspaceActive,
-                              boolean viewingExoship, boolean allocationRunning) {
+                              boolean viewingExoship) {
         if (rootChoiceLocked) {
             return ROOT_CHOICE;
         }
@@ -22,7 +22,7 @@ enum CanvasMode {
         if (viewingExoship) {
             return EXOSHIP_VIEW;
         }
-        return allocationRunning ? ALLOCATION_RUN : TREE;
+        return TREE;
     }
 
     boolean shows(Chrome chrome) {
@@ -41,7 +41,7 @@ enum CanvasMode {
 
     boolean enables(Chrome chrome) {
         return switch (this) {
-            case TREE, ALLOCATION_RUN -> true;
+            case TREE -> true;
             case ROOT_CHOICE -> chrome == Chrome.STATS_TOGGLE || chrome == Chrome.READOUTS;
             case HYPERSPACE -> chrome == Chrome.READOUTS;
             case EXOSHIP_VIEW -> chrome != Chrome.TEMPLATE_BAR && chrome != Chrome.SEARCH;
@@ -55,7 +55,7 @@ enum CanvasMode {
     }
 
     boolean hoversTree() {
-        return this == TREE || this == ALLOCATION_RUN || this == ROOT_CHOICE || this == EXOSHIP_VIEW;
+        return this == TREE || this == ROOT_CHOICE || this == EXOSHIP_VIEW;
     }
 
     boolean closesStorage() {

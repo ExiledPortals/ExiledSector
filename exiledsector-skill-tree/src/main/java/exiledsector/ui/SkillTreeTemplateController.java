@@ -79,7 +79,7 @@ final class SkillTreeTemplateController {
         SkillTreeTemplate template = treeSession.template();
         boolean planning = treeSession.isPlanning();
         barState = TemplateBarState.of(templateRootId != null, treeSession.allocatedNodeCount(), template != null,
-                treeSession.isAutoAllocating(), !barLive, planning, treeSession.isAutoAllocateOn());
+                !barLive, planning, treeSession.isAutoAllocateOn());
         templateBar.update(barState, statusText(template, planning));
         AutoAllocateRun.Summary summary = treeSession.takeLastRunSummary();
         if (summary != null) {
@@ -229,7 +229,7 @@ final class SkillTreeTemplateController {
         boolean autoAllocate = !treeSession.isAutoAllocateOn();
         treeSession.setAutoAllocate(autoAllocate);
         if (autoAllocate && treeSession.template() != null && treeSession.hasPointsLeft()) {
-            treeSession.startAutoAllocate();
+            treeSession.autoAllocate();
         }
     }
 

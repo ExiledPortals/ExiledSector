@@ -14,16 +14,17 @@ import exiledsector.items.DoctrineRewrite;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
 import exiledsector.ui.SkillTreePanelStyle;
+import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.TreeLayers;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
-import java.util.function.Consumer;
 
 import static exiledsector.ui.node.SkillTreeNodeGeometry.ICON_INSET_RATIO;
 import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_SIZE;
@@ -62,9 +63,8 @@ public final class SkillTreeNodeDrawer {
     private final SkillTreeNodeDropdownRenderer dropdownRenderer;
     private final WormholeOpenness wormholeOpenness = new WormholeOpenness();
     private final SocketWormholes socketWormholes = new SocketWormholes();
-    private final ConnectorFills connectorFills = new ConnectorFills();
+    private final AllocationAnimation allocationAnimation;
     private final GrantMarkers grantMarkers = GrantMarkers.fromItemStore();
-    private final Consumer<String> startPulse;
     private final TreeFeedback feedback = new DrawerFeedback();
     private final TextLabel startingRootPrompt = new TextLabel(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE,
             SkillTreePanelStyle.TOOLTIP_TITLE_COLOR, LazyFont.TextAnchor.BOTTOM_CENTER).set(Translation.text("ui.node.startingRootPrompt"));
@@ -74,7 +74,7 @@ public final class SkillTreeNodeDrawer {
         this.panelStyle = panelStyle;
         this.nodeSearch = nodeSearch;
         this.ringRenderer = new SkillTreeNodeRingRenderer(panelStyle, wormholeOpenness);
-        this.startPulse = ringRenderer::startPulse;
+        this.allocationAnimation = new AllocationAnimation(new AnimatedTree(), new AnimationSounds());
         this.connectorRenderer = new SkillTreeNodeConnectorRenderer(panelStyle, nodeSearch, wormholeOpenness, socketWormholes);
         this.tooltipRenderer = new SkillTreeNodeTooltipRenderer(member, panelStyle);
         this.rootAffinityNumber = new RootAffinityNumber(member.getHullSpec().getHullSize());
@@ -89,18 +89,6 @@ public final class SkillTreeNodeDrawer {
         return drawer;
     }
 
-    private boolean startFillsInto(SkillNode node) {
-        NodeAllocator.Snapshot allocation = session.snapshot();
-        boolean started = false;
-        for (SkillNode neighbour : SkillTree.topology().drawnNeighbours(node.getId())) {
-            if (allocation.skillData().isSatisfied(neighbour.getId(), allocation.satisfiedRootId())) {
-                connectorFills.start(neighbour.getId(), node.getId());
-                started = true;
-            }
-        }
-        return started;
-    }
-
     public void advance(float amount) {
         ringRenderer.advance(amount);
         rootCircuitRenderer.advance(amount);
@@ -109,7 +97,7 @@ public final class SkillTreeNodeDrawer {
         if (targetedSocketId != null && !ringRenderer.isPulsing(targetedSocketId)) {
             ringRenderer.startPulse(targetedSocketId);
         }
-        connectorFills.advance(amount, startPulse);
+        allocationAnimation.advance(amount);
         ghostRenderer.advance(amount);
         socketRenderer.advance(amount);
         ShipSkillData drawnData = session.viewSnapshot().skillData();
@@ -142,7 +130,7 @@ public final class SkillTreeNodeDrawer {
             }
         }
 
-        connectorRenderer.draw(shownLayers, allocation, session.templateNodeIds(), session.plannedOnlyNodeIds(), connectorFills);
+        connectorRenderer.draw(shownLayers, allocation, session.templateNodeIds(), session.plannedOnlyNodeIds(), allocationAnimation);
         wormholeGhostFlights.draw(viewport, shownLayers.treeAlpha() * nodeSearch.backgroundAlpha());
 
         boolean choosing = rootChoice.phase() == StartingRootChoice.Phase.CHOOSING;
@@ -177,7 +165,7 @@ public final class SkillTreeNodeDrawer {
             return;
         }
 
-        boolean allocated = skillData.isAllocated(node.getId());
+        boolean allocated = allocationAnimation.shown(node.getId(), skillData.isAllocated(node.getId()));
         boolean live = allocated && !session.isPlannedOnly(node);
         boolean breathing = !allocated && allocation.canAllocate(node);
         SkillType effectiveType = node.resolveEffectiveType(skillData);
@@ -233,7 +221,7 @@ public final class SkillTreeNodeDrawer {
         if (!viewport.isVisible(nodeX, nodeY, reach)) {
             return;
         }
-        boolean allocated = allocation.skillData().isAllocated(node.getId());
+        boolean allocated = allocationAnimation.shown(node.getId(), allocation.skillData().isAllocated(node.getId()));
         boolean breathing = choosing || (!allocated && allocation.canAllocate(node));
         float nodeAlpha = alphaMult * nodeSearch.nodeAlpha(node, allocation);
         float rootRadius = donutRadius(footprintSize);
@@ -368,26 +356,13 @@ public final class SkillTreeNodeDrawer {
     private final class DrawerFeedback implements TreeFeedback {
 
         @Override
-        public void allocated(SkillNode node) {
-            if (startFillsInto(node)) {
-                connectorFills.schedulePulse(node.getId());
-            } else {
-                ringRenderer.startPulse(node.getId());
-            }
+        public void allocated(String originId, Collection<String> nodeIds) {
+            allocationAnimation.allocated(nodeIds, originId);
         }
 
         @Override
-        public void deallocated(SkillNode node) {
-            connectorFills.cancel(node.getId());
-            String partnerId = session.wormholePartner(node);
-            if (partnerId != null) {
-                connectorFills.cancel(partnerId);
-            }
-        }
-
-        @Override
-        public void released(Collection<String> releasedNodeIds) {
-            releasedNodeIds.forEach(connectorFills::cancel);
+        public void deallocated(String originId, Collection<String> nodeIds) {
+            allocationAnimation.deallocated(nodeIds, originId);
         }
 
         @Override
@@ -398,6 +373,48 @@ public final class SkillTreeNodeDrawer {
         @Override
         public void rootChanged(SkillNode chosenRoot) {
             panelStyle.setAccentIconPath(chosenRoot != null ? chosenRoot.getType().getIconPath() : null);
+        }
+    }
+
+    private final class AnimatedTree implements AllocationAnimation.Tree {
+
+        @Override
+        public List<String> neighbours(String nodeId) {
+            List<SkillNode> drawn = SkillTree.topology().drawnNeighbours(nodeId);
+            SkillNode node = SkillTree.get(nodeId);
+            String partnerId = node == null ? null : session.wormholePartner(node);
+            List<String> neighbourIds = new ArrayList<>(drawn.size() + 1);
+            for (SkillNode neighbour : drawn) {
+                neighbourIds.add(neighbour.getId());
+            }
+            if (partnerId != null) {
+                neighbourIds.add(partnerId);
+            }
+            return neighbourIds;
+        }
+
+        @Override
+        public boolean isSatisfied(String nodeId) {
+            NodeAllocator.Snapshot allocation = session.snapshot();
+            return allocation.skillData().isSatisfied(nodeId, allocation.satisfiedRootId());
+        }
+    }
+
+    private final class AnimationSounds implements AllocationAnimation.Listener {
+
+        @Override
+        public void started(String nodeId, boolean allocating) {
+            SkillNode node = SkillTree.get(nodeId);
+            if (!allocating) {
+                SkillTreeSounds.deallocated();
+            } else if (node != null) {
+                SkillTreeSounds.allocated(TreeAllocationSession.allocationSound(node.getType().getTier()));
+            }
+        }
+
+        @Override
+        public void lit(String nodeId) {
+            ringRenderer.startPulse(nodeId);
         }
     }
 }

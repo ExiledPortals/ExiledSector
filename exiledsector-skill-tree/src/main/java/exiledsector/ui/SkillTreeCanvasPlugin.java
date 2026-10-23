@@ -131,7 +131,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private CanvasMode mode() {
         return CanvasMode.resolve(treeSession.isStartingRootInputLocked(), templateUi.isModalOpen(), socketPlacement.isWorkbenchOpen(),
-                hyperspaceMode.isActive(), exoshipView.isActive(), treeSession.isAutoAllocating() || treeSession.isRespeccing());
+                hyperspaceMode.isActive(), exoshipView.isActive());
     }
 
     @Override
@@ -179,7 +179,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private void rememberCamera(CanvasMode mode) {
-        if ((mode == CanvasMode.TREE || mode == CanvasMode.ALLOCATION_RUN) && treeSession.getStartingRoot() != null) {
+        if (mode == CanvasMode.TREE && treeSession.getStartingRoot() != null) {
             cameraMemory.save(camera.centreTreeX(), camera.centreTreeY(), camera.zoom());
         }
     }
@@ -227,9 +227,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
                 case WORKBENCH -> handleWorkbenchEvent(event, mode);
                 case HYPERSPACE -> hyperspaceMode.handleEvent(event, canvasPosition,
                         event.isLMBDownEvent() && chrome.contains(canvasPosition, mode, event.getX(), event.getY()));
-                case EXOSHIP_VIEW -> handleExoshipViewEvent(event, mode);
-                case ALLOCATION_RUN -> handleAllocationRunEvent(event, mode);
-                case TREE -> handleTreeEvent(event, mode);
+                case EXOSHIP_VIEW, TREE -> handleTreeEvent(event, mode);
             }
         }
     }
@@ -244,17 +242,13 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     }
 
     private boolean escape(CanvasMode mode) {
-        EscapeAction action = EscapeAction.resolve(mode, treeSession.isAutoAllocating() || treeSession.isRespeccing(),
-                socketPlacement.isEngaged(), treeSession.isDropdownOpen(), templateUi.isPlanning() && !searchBar.isFocused());
+        EscapeAction action = EscapeAction.resolve(mode, socketPlacement.isEngaged(), treeSession.isDropdownOpen(),
+                templateUi.isPlanning() && !searchBar.isFocused());
         switch (action) {
             case NONE -> {
                 return false;
             }
             case SOCKET_PLACEMENT -> socketPlacement.escape();
-            case CANCEL_ALLOCATION -> {
-                treeSession.cancelAutoAllocate();
-                treeSession.cancelRespec();
-            }
             case CLOSE_DROPDOWN -> treeSession.closeDropdown();
             case STOP_FOLLOWING -> stopFollowing();
             case EXIT_TEMPLATE_MODE -> templateUi.exitTemplateMode();
@@ -315,14 +309,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         }
     }
 
-    private void handleExoshipViewEvent(InputEventAPI event, CanvasMode mode) {
-        if (treeSession.isAutoAllocating() || treeSession.isRespeccing()) {
-            handleAllocationRunEvent(event, mode);
-        } else {
-            handleTreeEvent(event, mode);
-        }
-    }
-
     private void boardExoship() {
         if (!exoshipView.isBoardable()) {
             return;
@@ -343,16 +329,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         camera.stopInspecting();
         camera.stopFollowing();
         exoshipView.leave();
-    }
-
-    private void handleAllocationRunEvent(InputEventAPI event, CanvasMode mode) {
-        if (event.isLMBDownEvent() && canvasPosition.containsEvent(event)) {
-            treeSession.cancelAutoAllocate();
-            treeSession.cancelRespec();
-            consume(event);
-        } else {
-            handleTreeEvent(event, mode);
-        }
     }
 
     private void handleTreeEvent(InputEventAPI event, CanvasMode mode) {
@@ -451,7 +427,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             return;
         }
         if (ctrlDown && shiftDown && treeSession.isAllocated(node)) {
-            treeSession.startRespec(node);
+            treeSession.respec(node);
             return;
         }
         if (jumpTarget == null && socketPlacement.handleSocketClick(node, ctrlDown, canvasPosition, chrome.shipCardFrame(canvasPosition))) {

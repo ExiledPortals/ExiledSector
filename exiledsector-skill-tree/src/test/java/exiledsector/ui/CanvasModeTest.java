@@ -14,17 +14,16 @@ class CanvasModeTest {
 
     @Test
     void rootChoiceOutranksEveryOtherMode() {
-        assertEquals(CanvasMode.ROOT_CHOICE, CanvasMode.resolve(true, true, true, true, true, true));
+        assertEquals(CanvasMode.ROOT_CHOICE, CanvasMode.resolve(true, true, true, true, true));
     }
 
     @Test
     void modesResolveInPriorityOrder() {
-        assertEquals(CanvasMode.MODAL, CanvasMode.resolve(false, true, true, true, true, true));
-        assertEquals(CanvasMode.WORKBENCH, CanvasMode.resolve(false, false, true, true, true, true));
-        assertEquals(CanvasMode.HYPERSPACE, CanvasMode.resolve(false, false, false, true, true, true));
-        assertEquals(CanvasMode.EXOSHIP_VIEW, CanvasMode.resolve(false, false, false, false, true, true));
-        assertEquals(CanvasMode.ALLOCATION_RUN, CanvasMode.resolve(false, false, false, false, false, true));
-        assertEquals(CanvasMode.TREE, CanvasMode.resolve(false, false, false, false, false, false));
+        assertEquals(CanvasMode.MODAL, CanvasMode.resolve(false, true, true, true, true));
+        assertEquals(CanvasMode.WORKBENCH, CanvasMode.resolve(false, false, true, true, true));
+        assertEquals(CanvasMode.HYPERSPACE, CanvasMode.resolve(false, false, false, true, true));
+        assertEquals(CanvasMode.EXOSHIP_VIEW, CanvasMode.resolve(false, false, false, false, true));
+        assertEquals(CanvasMode.TREE, CanvasMode.resolve(false, false, false, false, false));
     }
 
     @Test
@@ -33,9 +32,8 @@ class CanvasModeTest {
     }
 
     @Test
-    void theTreeAndARunningAllocationEnableAllChrome() {
+    void theTreeEnablesAllChrome() {
         assertEquals(EnumSet.allOf(CanvasMode.Chrome.class), enabledIn(CanvasMode.TREE));
-        assertEquals(EnumSet.allOf(CanvasMode.Chrome.class), enabledIn(CanvasMode.ALLOCATION_RUN));
     }
 
     @Test
@@ -76,7 +74,6 @@ class CanvasModeTest {
     @Test
     void onlyTreeLikeModesHoverNodes() {
         assertTrue(CanvasMode.TREE.hoversTree());
-        assertTrue(CanvasMode.ALLOCATION_RUN.hoversTree());
         assertTrue(CanvasMode.ROOT_CHOICE.hoversTree());
         assertFalse(CanvasMode.MODAL.hoversTree());
         assertFalse(CanvasMode.WORKBENCH.hoversTree());

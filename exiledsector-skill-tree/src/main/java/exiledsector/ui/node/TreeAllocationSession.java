@@ -4,6 +4,7 @@ import exiledlib.i18n.Translation;
 import exiledsector.items.NodeSocketable;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.effects.PhantomConflictWatch;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocationGate;
 import exiledsector.skills.ShipSkillData;
@@ -57,7 +58,6 @@ public final class TreeAllocationSession {
     private final TemplateStepExecutor stepExecutor;
     private final Function<TemplateStep, StepVerdict> attemptStep;
     private final BooleanSupplier pointsLeftCheck;
-    private final Predicate<SkillNode> respecStep = this::removeForRespec;
     private final Predicate<SkillType> dropdownOptionUsable = this::isDropdownOptionUsable;
     private final TemplatePlanner planner;
     private final ReleaseConfirmation releaseConfirmation = new ReleaseConfirmation();
@@ -70,9 +70,7 @@ public final class TreeAllocationSession {
     private String targetedSocketId;
     private SkillTreeTemplate template;
     private Set<String> templateNodeIds = Set.of();
-    private AutoAllocateRun autoAllocateRun;
     private AutoAllocateRun.Summary lastRunSummary;
-    private RespecRun respecRun;
     private Runnable planChangeListener = () -> {
     };
 
@@ -81,7 +79,7 @@ public final class TreeAllocationSession {
         this.nodeSearch = nodeSearch;
         this.rootChoice = initialRootChoice(ShipSkillDataManager.get(member.getId()));
         this.allocator = new NodeAllocator(member, variant, () -> rootChoice.rootForAllocation());
-        this.stepExecutor = new TemplateStepExecutor(allocator, this::snapshot, node -> afterAllocationChange(node, true));
+        this.stepExecutor = new TemplateStepExecutor(allocator, this::snapshot, node -> settleAllocation());
         this.attemptStep = stepExecutor::attempt;
         this.pointsLeftCheck = stepExecutor::hasPointsLeft;
         this.planner = new TemplatePlanner(allocator, this::snapshot);
@@ -152,14 +150,15 @@ public final class TreeAllocationSession {
     }
 
     public void advance(float amount) {
-        if (allocator.applyPendingPhantomConflicts()) {
-            refreshAfterAllocation();
-            SkillTreeSounds.refused();
+        if (PhantomConflictWatch.hasPendingReverts()) {
+            Set<String> allocatedBefore = allocatedNodeIds();
+            if (allocator.applyPendingPhantomConflicts()) {
+                afterAllocationChange(allocatedBefore, null);
+                SkillTreeSounds.refused();
+            }
         }
         rootChoice.advance(amount);
         releaseConfirmation.advance(amount);
-        advanceAutoAllocate(amount);
-        advanceRespec(amount);
     }
 
     public SkillNode getStartingRoot() {
@@ -199,17 +198,18 @@ public final class TreeAllocationSession {
     }
 
     public void chooseStartingRoot(SkillNode root) {
+        Set<String> allocatedBefore = allocatedNodeIds();
         if (!isChoosingStartingRoot() || !allocator.chooseStartingRoot(root)) {
             return;
         }
         rootChoice.choose(root);
         feedback.rootChanged(root);
-        afterAllocationChange(root, true);
+        afterAllocationChange(allocatedBefore, root);
     }
 
-    private void unchooseStartingRoot(SkillNode root) {
+    private boolean unchooseStartingRoot(SkillNode root) {
         if (!allocator.unchooseStartingRoot(root)) {
-            return;
+            return false;
         }
         dropdownNode = null;
         stopPlanning();
@@ -217,7 +217,7 @@ public final class TreeAllocationSession {
         nodeSearch.setQuery("");
         rootChoice = StartingRootChoice.returning(SkillTree.topology().roots(), root);
         feedback.rootChanged(null);
-        afterAllocationChange(root, false);
+        return true;
     }
 
     public boolean isAllocated(SkillNode node) {
@@ -299,7 +299,7 @@ public final class TreeAllocationSession {
     }
 
     public boolean isBusy() {
-        return isStartingRootInputLocked() || autoAllocateRun != null || respecRun != null;
+        return isStartingRootInputLocked();
     }
 
     public void clickNode(SkillNode node, boolean ctrlDown) {
@@ -310,8 +310,11 @@ public final class TreeAllocationSession {
         if (isBusy()) {
             return;
         }
+        Set<String> allocatedBefore = allocatedNodeIds();
         if (allocator.canUnchooseStartingRoot(node)) {
-            unchooseStartingRoot(node);
+            if (unchooseStartingRoot(node)) {
+                afterAllocationChange(allocatedBefore, node);
+            }
             return;
         }
         NodeAllocator.Snapshot allocation = snapshot();
@@ -324,7 +327,7 @@ public final class TreeAllocationSession {
         } else if (allocation.gate().offersOptions(node)) {
             chooseOption(node, ctrlDown);
         } else if (allocator.allocate(node, null, allocation)) {
-            afterAllocationChange(node, true);
+            afterAllocationChange(allocatedBefore, node);
         }
     }
 
@@ -336,10 +339,9 @@ public final class TreeAllocationSession {
                 && !confirmRelease(DEALLOCATE_ACTION, node, planned -> ShipTrees.deallocate(planned, node))) {
             return;
         }
-        Set<String> allocatedBefore = Set.copyOf(allocation.skillData().getAllocatedNodeIds());
+        Set<String> allocatedBefore = allocatedNodeIds();
         if (allocator.deallocate(node, allocation)) {
-            afterAllocationChange(node, false);
-            reportReleased(allocatedBefore, node);
+            afterAllocationChange(allocatedBefore, node);
         } else if (allocation.gate().offersOptions(node)) {
             dropdownNode = node;
         } else {
@@ -418,6 +420,7 @@ public final class TreeAllocationSession {
             return;
         }
         NodeAllocator.Snapshot allocation = snapshot();
+        Set<String> allocatedBefore = allocatedNodeIds();
         boolean wasAllocated = allocation.skillData().isAllocated(node.getId());
         if (optionVerdict(node, chosenOption, allocation).refusal() == AllocationGate.Refusal.SAME_OPTION) {
             return;
@@ -433,11 +436,11 @@ public final class TreeAllocationSession {
             SkillTreeSounds.allocated(allocationSound(node.getType().getTier()));
             feedback.pulse(node);
         } else {
-            afterAllocationChange(node, true);
+            afterAllocationChange(allocatedBefore, node);
         }
     }
 
-    public boolean startRespec(SkillNode node) {
+    public boolean respec(SkillNode node) {
         if (isBusy() || planner.isActive()) {
             return false;
         }
@@ -446,35 +449,19 @@ public final class TreeAllocationSession {
             return false;
         }
         dropdownNode = null;
-        respecRun = new RespecRun(respecPlan);
+        Set<String> allocatedBefore = allocatedNodeIds();
+        for (SkillNode step : respecPlan) {
+            if (!removeForRespec(step)) {
+                break;
+            }
+        }
+        afterAllocationChange(allocatedBefore, node);
         return true;
-    }
-
-    public boolean isRespeccing() {
-        return respecRun != null;
-    }
-
-    public void cancelRespec() {
-        if (respecRun != null) {
-            respecRun.cancel();
-            respecRun = null;
-        }
-    }
-
-    private void advanceRespec(float amount) {
-        if (respecRun == null || rootChoice.isInputLocked()) {
-            return;
-        }
-        respecRun.advance(amount, respecStep);
-        if (respecRun.isFinished()) {
-            respecRun = null;
-        }
     }
 
     private boolean removeForRespec(SkillNode node) {
         if (allocator.canUnchooseStartingRoot(node)) {
-            unchooseStartingRoot(node);
-            return true;
+            return unchooseStartingRoot(node);
         }
         if (!allocator.data().isAllocated(node.getId())) {
             return true;
@@ -482,12 +469,11 @@ public final class TreeAllocationSession {
         if (!allocator.deallocate(node, snapshot())) {
             return false;
         }
-        afterAllocationChange(node, false);
+        settleAllocation();
         return true;
     }
 
     public void setTemplate(SkillTreeTemplate newTemplate) {
-        cancelAutoAllocate();
         this.template = newTemplate;
         this.templateNodeIds = newTemplate == null ? Set.of() : newTemplate.nodeIds();
         if (planner.isActive()) {
@@ -587,20 +573,14 @@ public final class TreeAllocationSession {
         return template;
     }
 
-    public boolean startAutoAllocate() {
+    public boolean autoAllocate() {
         if (template == null || isBusy() || planner.isActive()) {
             return false;
         }
         dropdownNode = null;
-        ShipSkillData skillData = snapshot().skillData();
-        int pendingStepCount = 0;
-        for (TemplateStep step : template.steps()) {
-            if (SkillTree.get(step.nodeId()) != null && !skillData.isAllocated(step.nodeId())) {
-                pendingStepCount++;
-            }
-        }
-        autoAllocateRun = new AutoAllocateRun(template.steps(), pendingStepCount);
-        lastRunSummary = null;
+        Set<String> allocatedBefore = allocatedNodeIds();
+        lastRunSummary = AutoAllocateRun.run(template.steps(), attemptStep, pointsLeftCheck);
+        afterAllocationChange(allocatedBefore, null);
         return true;
     }
 
@@ -610,32 +590,6 @@ public final class TreeAllocationSession {
 
     public void setAutoAllocate(boolean autoAllocate) {
         allocator.data().setAutoAllocateTemplate(autoAllocate);
-        if (!autoAllocate) {
-            cancelAutoAllocate();
-        }
-    }
-
-    public boolean isAutoAllocating() {
-        return autoAllocateRun != null;
-    }
-
-    public void cancelAutoAllocate() {
-        if (autoAllocateRun != null) {
-            autoAllocateRun.cancel();
-            lastRunSummary = autoAllocateRun.summary();
-            autoAllocateRun = null;
-        }
-    }
-
-    private void advanceAutoAllocate(float amount) {
-        if (autoAllocateRun == null || rootChoice.isInputLocked()) {
-            return;
-        }
-        autoAllocateRun.advance(amount, attemptStep, pointsLeftCheck);
-        if (autoAllocateRun.isFinished()) {
-            lastRunSummary = autoAllocateRun.summary();
-            autoAllocateRun = null;
-        }
     }
 
     public AutoAllocateRun.Summary takeLastRunSummary() {
@@ -683,20 +637,19 @@ public final class TreeAllocationSession {
                 || !confirmRelease(INSTALL_ACTION, node, planned -> planned.socketItem(node.getId(), item.id()))) {
             return false;
         }
-        Set<String> allocatedBefore = Set.copyOf(allocator.data().getAllocatedNodeIds());
-        return apply(() -> allocator.socketItem(node, item.id()), () -> {
-            SkillTreeSounds.socketed();
-            feedback.pulse(node);
-            reportReleased(allocatedBefore, node);
-        });
+        if (!apply(node, () -> allocator.socketItem(node, item.id()))) {
+            return false;
+        }
+        SkillTreeSounds.socketed();
+        feedback.pulse(node);
+        return true;
     }
 
     public boolean emptySocket(SkillNode node) {
         if (isBusy() || node == null || !confirmRelease(EMPTY_ACTION, node, planned -> planned.unsocketItem(node.getId()))) {
             return false;
         }
-        Set<String> allocatedBefore = Set.copyOf(allocator.data().getAllocatedNodeIds());
-        return apply(() -> allocator.unsocketItem(node), () -> reportReleased(allocatedBefore, node));
+        return apply(node, () -> allocator.unsocketItem(node));
     }
 
     public String releaseWarning(SkillNode node) {
@@ -741,45 +694,48 @@ public final class TreeAllocationSession {
                 && subroutine.subroutineKind() == SubroutineKind.DOCTRINE;
     }
 
-    private void reportReleased(Set<String> allocatedBefore, SkillNode node) {
-        Set<String> released = new LinkedHashSet<>(allocatedBefore);
-        released.removeAll(allocator.data().getAllocatedNodeIds());
-        released.remove(node.getId());
-        if (!released.isEmpty()) {
-            feedback.released(released);
+    private boolean apply(SkillNode node, BooleanSupplier change) {
+        if (isBusy()) {
+            return false;
         }
-    }
-
-    private boolean apply(BooleanSupplier change, Runnable afterChange) {
-        return !isBusy() && applyChange(change, afterChange);
-    }
-
-    private boolean applyChange(BooleanSupplier change, Runnable afterChange) {
+        Set<String> allocatedBefore = allocatedNodeIds();
         if (!change.getAsBoolean()) {
             return false;
         }
-        refreshAfterAllocation();
-        afterChange.run();
+        afterAllocationChange(allocatedBefore, node);
         return true;
     }
 
-    private void refreshAfterAllocation() {
+    private Set<String> allocatedNodeIds() {
+        return Set.copyOf(allocator.data().getAllocatedNodeIds());
+    }
+
+    private void settleAllocation() {
         allocator.openAnchorWormholes();
         allocator.grantSocketedNodes();
         allocationSnapshot = null;
+    }
+
+    private void refreshAfterAllocation() {
+        settleAllocation();
         if (refitButton != null) {
             refitButton.refreshVariant();
         }
     }
 
-    private void afterAllocationChange(SkillNode node, boolean isAllocatedNow) {
+    private void afterAllocationChange(Set<String> allocatedBefore, SkillNode origin) {
         refreshAfterAllocation();
-        if (isAllocatedNow) {
-            SkillTreeSounds.allocated(allocationSound(node.getType().getTier()));
-            feedback.allocated(node);
-        } else {
-            SkillTreeSounds.deallocated();
-            feedback.deallocated(node);
+        Set<String> allocatedNow = allocator.data().getAllocatedNodeIds();
+        Set<String> released = new LinkedHashSet<>(allocatedBefore);
+        released.removeAll(allocatedNow);
+        Set<String> added = new LinkedHashSet<>(allocatedNow);
+        added.removeAll(allocatedBefore);
+        String originId = origin == null ? null : origin.getId();
+        if (!released.isEmpty()) {
+            feedback.deallocated(originId, released);
+        }
+        if (!added.isEmpty()) {
+            feedback.allocated(originId, added);
         }
     }
 }
