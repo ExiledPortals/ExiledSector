@@ -85,7 +85,7 @@ class ChartRunEffectsTest {
 
     @Test
     void theRunReadsItsChartBackFromTheStoredData() {
-        StarChart chart = StarChartFixtures.chart("unique_chart_silent_reach", 9L, 6);
+        StarChart chart = StarChartFixtures.chart(StarChartFixtures.TEST_UNIQUE, 9L, 6);
         ChartRun run = storeRun(chart);
 
         StarChart restored = ChartRunEffects.chartOf(run);
@@ -100,7 +100,7 @@ class ChartRunEffectsTest {
 
     @Test
     void theSensorPenaltyHoldsOnlyWhileTheFleetIsInsideAndLiftsOnLeaving() {
-        ChartRun run = storeRun(StarChartFixtures.chart("unique_chart_silent_reach", 9L, 6));
+        ChartRun run = storeRun(StarChartFixtures.chart(StarChartFixtures.TEST_UNIQUE, 9L, 6));
         run.recordArrival();
         ChartRunScript watchdog = new ChartRunScript();
         when(playerFleet.getContainingLocation()).thenReturn(system);
@@ -135,7 +135,7 @@ class ChartRunEffectsTest {
 
     @Test
     void theRunEndingLiftsThePenaltyEvenIfTheWatchdogMissedTheExit() {
-        ChartRun run = storeRun(StarChartFixtures.chart("unique_chart_silent_reach", 9L, 6));
+        ChartRun run = storeRun(StarChartFixtures.chart(StarChartFixtures.TEST_UNIQUE, 9L, 6));
         run.recordArrival();
         ChartRunScript watchdog = new ChartRunScript();
         when(playerFleet.getContainingLocation()).thenReturn(system);
@@ -149,7 +149,7 @@ class ChartRunEffectsTest {
 
     @Test
     void closingARunAndLoadingASaveBothLiftThePenalty() {
-        ChartRun run = storeRun(StarChartFixtures.chart("unique_chart_silent_reach", 9L, 6));
+        ChartRun run = storeRun(StarChartFixtures.chart(StarChartFixtures.TEST_UNIQUE, 9L, 6));
         sensorRange.modifyMult(ChartIds.SENSOR_MOD_ID, 0.5f);
 
         ChartRunCloser.close(sector, run.runId(), null);
@@ -163,7 +163,7 @@ class ChartRunEffectsTest {
 
     @Test
     void loadingASaveMadeInsideKeepsThePenaltyForTheWatchdogToRenew() {
-        ChartRun run = storeRun(StarChartFixtures.chart("unique_chart_silent_reach", 9L, 6));
+        ChartRun run = storeRun(StarChartFixtures.chart(StarChartFixtures.TEST_UNIQUE, 9L, 6));
         run.recordArrival();
         when(playerFleet.getContainingLocation()).thenReturn(system);
         sensorRange.modifyMult(ChartIds.SENSOR_MOD_ID, 0.5f);
@@ -175,7 +175,7 @@ class ChartRunEffectsTest {
 
     @Test
     void aClosingRunKeepsThePenaltyInsideForBothTheWatchdogAndTheLoadSweep() {
-        ChartRun run = storeRun(StarChartFixtures.chart("unique_chart_silent_reach", 9L, 6));
+        ChartRun run = storeRun(StarChartFixtures.chart(StarChartFixtures.TEST_UNIQUE, 9L, 6));
         run.recordArrival();
         run.beginClosing();
         when(playerFleet.getContainingLocation()).thenReturn(system);

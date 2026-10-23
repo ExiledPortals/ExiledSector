@@ -50,8 +50,8 @@ import static org.mockito.Mockito.when;
 class ChartDropsTest {
 
     private static final String RUN_ID = "dropRun";
-    private static final String BOSS_VIGIL = "unique_chart_boss_vigil";
-    private static final String SILENT_REACH = "unique_chart_silent_reach";
+    private static final String GATED_UNIQUE = StarChartFixtures.TEST_GATED_UNIQUE;
+    private static final String UNGATED_UNIQUE = StarChartFixtures.TEST_UNIQUE;
     private static final Set<String> CHART_CURRENCY_IDS = Set.of(StarChartCurrency.REFORGE.itemId(), StarChartCurrency.ANNULMENT.itemId(),
             StarChartCurrency.CARTOGRAPHY.itemId());
 
@@ -187,17 +187,17 @@ class ChartDropsTest {
     @Test
     void uniqueChartsNeedTheirUnlockAndTheirMinimumTier() throws Exception {
         ChartDrops.register(new JSONArray().put(rule("run_reward", 1f, 0f, 0f, 0f)));
-        assertEquals(ItemUnlock.CLEARED_CHART_TIER_PREFIX + "3", ItemDefinitions.get(BOSS_VIGIL).unlock());
+        assertEquals(ItemUnlock.CLEARED_CHART_TIER_PREFIX + "3", ItemDefinitions.get(GATED_UNIQUE).unlock());
 
         Set<String> lockedDrops = dropIds(6);
-        assertFalse(lockedDrops.contains(BOSS_VIGIL));
-        assertTrue(lockedDrops.contains(SILENT_REACH));
+        assertFalse(lockedDrops.contains(GATED_UNIQUE));
+        assertTrue(lockedDrops.contains(UNGATED_UNIQUE));
 
         assertTrue(ItemUnlock.recordChartCleared(sector, 3));
         assertFalse(ItemUnlock.recordChartCleared(sector, 2));
         assertEquals(3, ItemUnlock.highestClearedChartTier(sector));
-        assertTrue(dropIds(6).contains(BOSS_VIGIL));
-        assertFalse(dropIds(3).contains(BOSS_VIGIL), "the vigil never rolls below its minimum tier");
+        assertTrue(dropIds(6).contains(GATED_UNIQUE));
+        assertFalse(dropIds(3).contains(GATED_UNIQUE), "the gated unique never rolls below its minimum tier");
     }
 
     private Set<String> dropIds(int tier) {
