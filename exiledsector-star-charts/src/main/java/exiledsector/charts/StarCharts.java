@@ -51,5 +51,6 @@ public final class StarCharts {
         ChartLoot.load();
         ChartColonyItems.load();
         ChartFactions.load();
+        ChartExpansions.load();
     }
 }

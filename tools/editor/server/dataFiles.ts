@@ -150,6 +150,8 @@ export function resolveDataResource(paths: ProjectPaths, name: string): DataReso
       return { filePath: path.join(configDir, 'chart_drops.csv'), check: (text) => checkCsvHeader(text, 'source,', 'the source column') };
     case 'chart-colony-items':
       return { filePath: path.join(configDir, 'chart_colony_items.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
+    case 'chart-expansions':
+      return { filePath: path.join(configDir, 'chart_expansions.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
     case 'chart-loot':
       return { filePath: path.join(configDir, 'chart_loot.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
     case 'commodities':

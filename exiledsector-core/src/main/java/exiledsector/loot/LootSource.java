@@ -34,6 +34,10 @@ public interface LootSource {
         return null;
     }
 
+    default LootModifiers modifiersFor(SectorEntityToken site) {
+        return site == null ? null : modifiersAt(site.getContainingLocation());
+    }
+
     default void addSalvageLoot(SectorAPI sector, SectorEntityToken salvageEntity, CargoAPI loot) {
     }
 

@@ -121,7 +121,7 @@ Decided 2026-10-23: failed nodes can be attempted again. The infestation design 
 ## Build order
 
 1. [ ] Move the generic canvas classes to core, with no behaviour change.
-2. [ ] Expansion framework (step 1 of `chart_expansions/overview.md`) with the atlas hooks: `ChartExpansion`, `chart_expansions.csv` with icon and intel columns, the per-expansion hash roll, expansion requests in `ChartContentPlan`, run state and cleanup, and a test-only expansion that places nothing.
+2. [~] Expansion framework (step 1 of `chart_expansions/overview.md`; built without the atlas hooks and per-node roll, see there) with the atlas hooks: `ChartExpansion`, `chart_expansions.csv` with icon and intel columns, the per-expansion hash roll, expansion requests in `ChartContentPlan`, run state and cleanup, and a test-only expansion that places nothing.
 3. [ ] Atlas generator as pure, unit-tested Java (layouts limited to vanilla star, planet and terrain types, see Foiler mods compatibility): lattice, voids, regions, factions, layouts, boss and expansion markers, special sites. Determinism and connectivity tests, plus a test that adding an expansion moves no other roll. New CSVs added to the editor serialisers.
 4. [ ] `AtlasState`, reachability and visibility.
 5. [ ] Chart and system split: node traits feed `ChartGenContext` and `ChartLayoutRequest`, stored charts converted.

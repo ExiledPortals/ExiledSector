@@ -91,7 +91,8 @@ final class EditorVocabulary {
                 .append("],\n");
         json.append("  \"chartLootDropTypes\": ").append(list(ChartEditorVocabulary.lootDropTypes())).append(",\n");
         json.append("  \"chartLootScopes\": ").append(list(ChartEditorVocabulary.lootScopes())).append(",\n");
-        json.append("  \"chartColonyItemGroups\": ").append(list(ChartEditorVocabulary.colonyItemGroups())).append("\n");
+        json.append("  \"chartColonyItemGroups\": ").append(list(ChartEditorVocabulary.colonyItemGroups())).append(",\n");
+        json.append("  \"chartExpansions\": ").append(list(ChartEditorVocabulary.expansionIds())).append("\n");
         return json.append("}\n").toString();
     }
 

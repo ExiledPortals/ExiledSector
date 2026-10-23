@@ -14,6 +14,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,6 +42,16 @@ class ChartOpenCommandTest {
         OpenArguments reversed = OpenArguments.parse("Single 9");
         assertEquals(9L, reversed.seed());
         assertEquals(StarSystemType.SINGLE, reversed.systemType());
+    }
+
+    @Test
+    void theWordBreachAddsASpatialBreachInAnyPosition() {
+        OpenArguments breach = OpenArguments.parse("BREACH 77 tier=4");
+        assertTrue(breach.breach());
+        assertEquals(77L, breach.seed());
+        assertEquals(4, breach.tier());
+        assertFalse(OpenArguments.parse("77 tier=4").breach());
+        assertNotNull(OpenArguments.parse("breach breach").problem());
     }
 
     @Test

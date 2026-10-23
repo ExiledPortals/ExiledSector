@@ -94,8 +94,11 @@ public final class ChartPois {
     }
 
     static boolean requirementMet(ChartPoi poi) {
-        String modId = poi.requiredMod();
-        if (modId.isEmpty()) {
+        return modRequirementMet(poi.requiredMod());
+    }
+
+    static boolean modRequirementMet(String modId) {
+        if (modId == null || modId.isEmpty()) {
             return true;
         }
         SettingsAPI settings = Global.getSettings();

@@ -160,6 +160,21 @@ battle chance per 100 enemy deployment points defeated, scaled by battle difficu
 `level_min` the strongest defeated NPC reached (`ChartDrops.forBattle`). With the skill tree switched off, the
 tier instead rises one per `strength_per_tier` deployment points defeated.
 
+## Chart expansions
+
+A chart's `CHART_<EXPANSION>_CHANCE` lines sum into a per-expansion chance in `ChartGenContext`, rolled on its
+own seed per expansion when the content is planned (`ChartExpansions.planned`), and only for ids that have a row in
+`chart_expansions.csv` in tier range with their `requires_mod` loaded. Each planned `ChartExpansion` (package
+`charts.expansion`) places its entities after the sites and fleets, and the run record keeps the ids that placed.
+
+The Spatial Breach (`SpatialBreach`, `BreachTerrainPlugin`, numbers in `BreachRules`) is a terrain field that grows
+each day to a tier-based maximum. Every 0.1 days fleets inside lose sensor range and burn level, and the player fleet
+also burns fuel while its ships use more supplies (`BreachSupplyBuff`), all stronger toward the core. Caches planned
+at creation form once the field reaches them, with item rarity raised by depth, and content sites it covers get a
+smaller rarity bonus
+(`StarChartLootSource.modifiersFor`). Closing the core removes the field and its unlooted caches and drops salvage
+and items scaled by how far it grew (`BreachCoreDialog`).
+
 ## Modspec caches
 
 The Contraband Modspec Cache (`contraband_modspec_cache`, kind `MODSPEC_CACHE`) is a corrupted unique

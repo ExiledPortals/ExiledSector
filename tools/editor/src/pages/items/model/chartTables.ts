@@ -74,6 +74,7 @@ export const CHART_DROP_COLUMNS = [
   'note',
 ] as const;
 export const CHART_COLONY_ITEM_COLUMNS = ['id', 'value', 'note'] as const;
+export const CHART_EXPANSION_COLUMNS = ['id', 'weight', 'min_tier', 'max_tier', 'requires_mod', 'icon', 'intel', 'note'] as const;
 export const CHART_COLONY_ITEM_CEILING_ID = 'ceiling';
 export const CHART_LOOT_COLUMNS =['id', 'drop_type', 'scope', 'group', 'mode', 'amount', 'min_tier', 'note'] as const;
 export const CHART_LOOT_MODES = ['random', 'value'];
@@ -642,6 +643,43 @@ export const CHART_COLONY_ITEM_SPEC: ChartTableSpec = {
   summary: (row) => (value(row, 'id') === CHART_COLONY_ITEM_CEILING_ID ? `ceiling ${value(row, 'value')}` : `weight ${value(row, 'value')}`),
 };
 
+export const CHART_EXPANSION_SPEC: ChartTableSpec = {
+  resource: 'chart-expansions',
+  fileName: 'chart_expansions.csv',
+  noun: 'chart expansion',
+  keyColumn: 'id',
+  description:
+    'Expansions a Star Chart run can contain, such as the Spatial Breach. A run gets one when its chart has a matching chance line (CHART_<EXPANSION>_CHANCE) and the run tier is in range. Each id needs an expansion class in the mod, and rows for an id without one are skipped. Weight, icon and intel are kept for the atlas and are not used yet.',
+  columns: columnsOf(CHART_EXPANSION_COLUMNS, {
+    id: { label: 'Expansion', kind: 'choice', choices: (vocabulary) => vocabulary.chartExpansions },
+    weight: { label: 'Weight', kind: 'number' },
+    min_tier: { label: 'Min tier', kind: 'integer' },
+    max_tier: { label: 'Max tier', kind: 'integer' },
+    requires_mod: { label: 'Requires mod', kind: 'text', help: 'Optional mod id; the expansion only appears while that mod is enabled' },
+    icon: { label: 'Icon', kind: 'text', help: 'Sprite path for the atlas marker' },
+    intel: { label: 'Intel', kind: 'text', help: 'Reserved for the Outer Reach Intel item' },
+    note: NOTE_COLUMN,
+  }),
+  newRow: () => ({ id: '', weight: '1', min_tier: '1', max_tier: '15' }),
+  issues: (model, vocabulary) => {
+    const issues: string[] = [];
+    model.rows.forEach((row, index) => {
+      const label = rowLabel(CHART_EXPANSION_SPEC, row, index);
+      if (value(row, 'id') === '') {
+        issues.push(`${label}: needs an expansion id`);
+      }
+      issues.push(...columnFormatIssues(CHART_EXPANSION_SPEC.columns, row, label, vocabulary));
+    });
+    return [...issues, ...duplicateKeyIssues(CHART_EXPANSION_SPEC, model)];
+  },
+  warnings: (model, vocabulary) =>
+    model.rows.flatMap((row, index) => {
+      const label = rowLabel(CHART_EXPANSION_SPEC, row, index);
+      return [...roundedIntegerWarnings(CHART_EXPANSION_SPEC.columns, row, label), ...tierSpanWarnings(row, label, vocabulary)];
+    }),
+  summary: tierSpanSummary,
+};
+
 export const CHART_TABLE_SPECS: ChartTableSpec[] = [
   CHART_TIER_SPEC,
   CHART_POI_SPEC,
@@ -650,4 +688,5 @@ export const CHART_TABLE_SPECS: ChartTableSpec[] = [
   CHART_LOOT_SPEC,
   CHART_COLONY_ITEM_SPEC,
   CHART_BLOCKED_ABILITY_SPEC,
+  CHART_EXPANSION_SPEC,
 ];

@@ -15,6 +15,9 @@ import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec.DropD
 import exiledsector.charts.ChartContentGenerator.Hazard;
 import exiledsector.charts.ChartContentPlan.FleetRole;
 import exiledsector.charts.ChartContentPlan.PlannedFleet;
+import exiledsector.charts.expansion.ChartExpansion;
+import exiledsector.charts.expansion.ExpansionSite;
+import exiledsector.charts.expansion.SpatialBreach;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -369,4 +372,56 @@ class ChartContentGeneratorTest {
             ChartLoot.clear();
         }
     }
+
+    @Test
+    void aPlannedExpansionIsGeneratedWithThePlacedSitesAndRecorded() {
+        ChartExpansionsTest.PlacesNothing expansion = new ChartExpansionsTest.PlacesNothing();
+        ChartExpansions.useForTests(List.of(expansion), List.of(new ChartExpansions.Definition(SpatialBreach.ID, 1f, 1, 15, "", "")));
+        try {
+            ChartGenContext breach = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_CHANCE, 100f)));
+
+            ChartContent content = ChartContentGenerator.generate(sector, system, RUN_ID, 42L, 10, WORMHOLE, breach);
+
+            assertEquals(List.of(SpatialBreach.ID), content.expansions());
+            assertEquals(1, expansion.sites.size());
+            ExpansionSite site = expansion.sites.get(0);
+            assertEquals(RUN_ID, site.runId());
+            assertEquals(10, site.tier());
+            assertEquals(content.pois(), site.pois().size());
+            assertFalse(site.isClear(new Vector2f()), "the star is a hazard");
+            assertFalse(site.isClear(new Vector2f(WORMHOLE)), "the wormhole needs clearance");
+            assertTrue(site.isClear(new Vector2f(-4000f, 3000f)));
+            assertEquals(site.random(5L).nextLong(), site.random(5L).nextLong());
+        } finally {
+            ChartExpansions.resetForTests();
+        }
+    }
+
+    @Test
+    void aFailingExpansionIsLeftOutAndTheRestOfTheContentStays() {
+        ChartExpansion failing = new ChartExpansion() {
+            @Override
+            public String id() {
+                return SpatialBreach.ID;
+            }
+
+            @Override
+            public void generate(ExpansionSite site) {
+                throw new IllegalStateException("test failure");
+            }
+        };
+        ChartExpansions.useForTests(List.of(failing), List.of(new ChartExpansions.Definition(SpatialBreach.ID, 1f, 1, 15, "", "")));
+        try {
+            ChartGenContext breach = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_CHANCE, 100f)));
+
+            ChartContent content = ChartContentGenerator.generate(sector, system, RUN_ID, 42L, 10, WORMHOLE, breach);
+
+            assertEquals(List.of(), content.expansions());
+            assertTrue(content.fleets() > 0);
+            assertTrue(content.pois() > 0);
+        } finally {
+            ChartExpansions.resetForTests();
+        }
+    }
+
 }

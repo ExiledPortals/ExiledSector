@@ -5,6 +5,7 @@ import {
   CHART_BLOCKED_ABILITY_SPEC,
   CHART_COLONY_ITEM_SPEC,
   CHART_DROP_SPEC,
+  CHART_EXPANSION_SPEC,
   CHART_FACTION_SPEC,
   CHART_LOOT_SPEC,
   CHART_POI_SPEC,
@@ -52,6 +53,7 @@ export function ItemsPage() {
         <Tabs.Tab value="chart-loot">Chart loot</Tabs.Tab>
         <Tabs.Tab value="chart-colony-items">Chart colony items</Tabs.Tab>
         <Tabs.Tab value="chart-blocked-abilities">Chart blocked abilities</Tabs.Tab>
+        <Tabs.Tab value="chart-expansions">Chart expansions</Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value="definitions" style={PANEL_STYLE}>
         <DefinitionsTab vocabulary={vocabulary.data} />
@@ -91,6 +93,9 @@ export function ItemsPage() {
       </Tabs.Panel>
       <Tabs.Panel value="chart-blocked-abilities" style={PANEL_STYLE}>
         <ChartTableTab spec={CHART_BLOCKED_ABILITY_SPEC} vocabulary={vocabulary.data} />
+      </Tabs.Panel>
+      <Tabs.Panel value="chart-expansions" style={PANEL_STYLE}>
+        <ChartTableTab spec={CHART_EXPANSION_SPEC} vocabulary={vocabulary.data} />
       </Tabs.Panel>
     </Tabs>
   );

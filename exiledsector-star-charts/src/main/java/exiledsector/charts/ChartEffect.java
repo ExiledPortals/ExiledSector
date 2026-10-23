@@ -1,6 +1,7 @@
 package exiledsector.charts;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledsector.charts.expansion.SpatialBreach;
 import exiledlib.i18n.Message;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
@@ -176,9 +177,42 @@ public enum ChartEffect implements ModifierEffect {
         public void beforeGeneration(ChartGenContext context, float value) {
             context.addRewardPercent(value);
         }
+    },
+    CHART_BREACH_CHANCE(false) {
+        @Override
+        public void beforeGeneration(ChartGenContext context, float value) {
+            context.addExpansionChance(SpatialBreach.ID, value);
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            if (magnitude >= ChartGenContext.PERCENT) {
+                return Translation.msg(key()).styled();
+            }
+            return Translation.msg(key() + CHANCE_SUFFIX).arg("value", magnitude).styled();
+        }
+    },
+    CHART_BREACH_GROWTH_PERCENT(false) {
+        @Override
+        public void beforeGeneration(ChartGenContext context, float value) {
+            context.addExpansionPercent(SpatialBreach.GROWTH_KEY, value);
+        }
+    },
+    CHART_BREACH_CACHE_PERCENT(false) {
+        @Override
+        public void beforeGeneration(ChartGenContext context, float value) {
+            context.addExpansionPercent(SpatialBreach.CACHE_KEY, value);
+        }
+    },
+    CHART_BREACH_CORE_ITEM_PERCENT(false) {
+        @Override
+        public void beforeGeneration(ChartGenContext context, float value) {
+            context.addExpansionPercent(SpatialBreach.CORE_ITEM_KEY, value);
+        }
     };
 
     static final String KEY_PREFIX = "chart.effect.";
+    static final String CHANCE_SUFFIX = ".chance";
 
     private final boolean counted;
     private final DropType dropType;

@@ -4,12 +4,14 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.ui.SectorMapAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
+import exiledsector.charts.expansion.ChartExpansion;
 
 import java.awt.Color;
 import java.util.Set;
@@ -111,6 +113,14 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
         info.addPara(safe(I18n.forGameText(() -> Translation.msg("chart.intel.tier").arg("tier", tier).arg("faction", faction).text())),
                 PARAGRAPH_PAD);
         info.addPara(safe(progressText(run)), PARAGRAPH_PAD);
+        StarSystemAPI system = Global.getSector().getStarSystem(run.systemId());
+        for (String expansionId : run.expansionIds()) {
+            ChartExpansion expansion = ChartExpansions.byId(expansionId);
+            if (expansion == null || !expansion.isActiveIn(system)) {
+                continue;
+            }
+            info.addPara(safe(Translation.gameText("chart.expansion." + expansionId + ".intel")), PARAGRAPH_PAD);
+        }
         if (!run.isObjectiveComplete()) {
             info.addPara(safe(Translation.gameText("chart.intel.reward")), PARAGRAPH_PAD);
         }

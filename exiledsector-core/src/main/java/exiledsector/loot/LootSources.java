@@ -1,7 +1,7 @@
 package exiledsector.loot;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.LocationAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.domain.DomainContributions;
@@ -37,9 +37,9 @@ public final class LootSources {
         return LootModifiers.NONE.itemChances();
     }
 
-    public static LootModifiers modifiersAt(LocationAPI location) {
+    public static LootModifiers modifiersFor(SectorEntityToken site) {
         for (LootSource source : SOURCES.all()) {
-            LootModifiers modifiers = source.modifiersAt(location);
+            LootModifiers modifiers = source.modifiersFor(site);
             if (modifiers != null) {
                 return modifiers;
             }

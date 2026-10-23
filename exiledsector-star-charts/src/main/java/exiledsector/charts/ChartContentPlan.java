@@ -2,7 +2,8 @@ package exiledsector.charts;
 
 import java.util.List;
 
-public record ChartContentPlan(int tier, ChartFaction faction, ChartObjective objective, List<PlannedPoi> pois, List<PlannedFleet> fleets) {
+public record ChartContentPlan(int tier, ChartFaction faction, ChartObjective objective, List<PlannedPoi> pois, List<PlannedFleet> fleets,
+                               List<String> expansions) {
 
     public enum FleetRole {
         GUARD,
@@ -24,6 +25,11 @@ public record ChartContentPlan(int tier, ChartFaction faction, ChartObjective ob
     public ChartContentPlan {
         pois = List.copyOf(pois);
         fleets = List.copyOf(fleets);
+        expansions = expansions == null ? List.of() : List.copyOf(expansions);
+    }
+
+    public ChartContentPlan(int tier, ChartFaction faction, ChartObjective objective, List<PlannedPoi> pois, List<PlannedFleet> fleets) {
+        this(tier, faction, objective, pois, fleets, List.of());
     }
 
     public float lootSpent() {

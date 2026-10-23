@@ -2,6 +2,7 @@ package exiledsector.charts;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
+import exiledsector.charts.expansion.BreachTerrainPlugin;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.StarChart;
@@ -41,6 +42,7 @@ public final class ChartRunEffects {
 
     public static void removeFrom(CampaignFleetAPI fleet) {
         ChartFleetConditions.clear(fleet);
+        BreachTerrainPlugin.liftFrom(fleet);
         MutableFleetStatsAPI stats = fleet == null ? null : fleet.getStats();
         if (stats == null) {
             return;

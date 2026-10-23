@@ -1,5 +1,7 @@
 package exiledsector.charts;
 
+import exiledsector.charts.expansion.ChartExpansion;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +24,10 @@ public final class ChartEditorVocabulary {
 
     public static List<String> colonyItemGroups() {
         return ChartLoot.COLONY_ITEM_GROUPS.stream().sorted().toList();
+    }
+
+    public static List<String> expansionIds() {
+        return ChartExpansions.BUILT_IN.stream().map(ChartExpansion::id).toList();
     }
 
     public static List<String> tierDefaultsJson() {

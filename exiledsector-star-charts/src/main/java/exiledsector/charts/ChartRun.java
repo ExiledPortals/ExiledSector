@@ -35,6 +35,7 @@ public final class ChartRun {
     private boolean objectiveComplete;
     private boolean rewardClaimed;
     private String chartData;
+    private String expansions;
 
     public ChartRun(String runId, String originLocationId, float originX, float originY, int entriesAllowed) {
         this.runId = runId;
@@ -139,6 +140,7 @@ public final class ChartRun {
         bossFleetId = content.bossFleetId();
         contentFleets = content.fleets();
         contentPois = content.pois();
+        expansions = join(content.expansions());
         objectiveComplete = false;
         rewardClaimed = false;
     }
@@ -177,6 +179,14 @@ public final class ChartRun {
 
     public int contentPois() {
         return contentPois;
+    }
+
+    public List<String> expansionIds() {
+        return split(expansions);
+    }
+
+    public boolean hasExpansion(String expansionId) {
+        return expansionIds().contains(expansionId);
     }
 
     public List<String> objectiveTargetIds() {

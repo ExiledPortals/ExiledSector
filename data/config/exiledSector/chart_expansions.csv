@@ -1,0 +1,2 @@
+id,weight,min_tier,max_tier,requires_mod,icon,intel,note
+spatial_breach,1,1,15,,graphics/icons/icon_portal.png,,"A growing tear into hyperspace: drains, breach caches and a core that closes it"

@@ -1,15 +1,15 @@
 # Chart expansion: Spatial Breach
 
-A tear into hyperspace opens somewhere in the system and grows each day. Inside, the fleet burns more fuel, slowly loses CR and sees less, but breach-touched caches form there that exist only while it's open. Reaching its core closes it for a large reward. There are no fights: the pressure is time and logistics.
+A tear into hyperspace opens somewhere in the system and grows each day. Inside, the fleet burns fuel, uses more supplies and sees less, but breach-touched caches form there that exist only while it's open. Reaching its core closes it for a large reward. There are no fights: the pressure is time and logistics.
 
-Status: planned, nothing built. See `overview.md` for the shared framework.
+Status: built and tested 2026-10-23, uncommitted on parallel-work, ahead of the atlas (see overview.md for what the framework still lacks). Not yet checked in game; the visuals especially need a look.
 
 ## How it plays
 
 The breach is a custom terrain field that starts small and grows each day to a maximum radius, then stops. The chart itself still has no timer; the breach is the only thing that changes with time, and it never forces you out. Inside it:
 
 - fuel use is increased;
-- CR drains while you're inside, the way a star's corona does;
+- each ship in your fleet uses more supplies per day (changed from a CR drain on 2026-10-24: draining CR wasn't fun);
 - sensor range and burn level are reduced.
 
 All of these get stronger toward the core. Visuals borrow from vanilla hyperspace storms and abyssal hyperspace.
@@ -25,16 +25,18 @@ The core is an entity at the centre. Interacting with it closes the breach: the 
 - `CHART_BREACH_CHANCE`: Area contains a Spatial Breach.
 - `CHART_BREACH_GROWTH_PERCENT`: increased breach growth rate.
 - `CHART_BREACH_CACHE_PERCENT`: increased breach cache quantity.
-- `CHART_BREACH_CORE_REWARD_PERCENT`: increased breach core reward.
+- `CHART_BREACH_CORE_ITEM_PERCENT`: increased quantity of items found in the breach core (renamed from `CORE_REWARD`, since tooltips never say "reward" for found items).
+
+The single line is `CHART_BREACH_CHANCE` at 100. The three tuning lines only roll as hybrids that also carry `CHART_BREACH_CHANCE` (`HYBRID_CHART_BREACH_GROWTH` prefix, `HYBRID_CHART_BREACH_CACHES` and `HYBRID_CHART_BREACH_CORE` suffixes), so a tuning line never sits on a chart without a breach.
 
 ## Build order
 
-1. [ ] Breach terrain plugin with growth and the fuel, CR, sensor and burn effects.
-2. [ ] Breach cache spawning by depth and breach-touched POIs.
-3. [ ] Core entity, closing, core reward.
-4. [ ] Visuals.
-5. [ ] Chart modifier lines, strings.
+1. [x] Breach terrain plugin with growth and the fuel, CR, sensor and burn effects (`BreachTerrainPlugin`, `BreachRules`). Sensor and burn apply to every fleet; the supply increase (a `BreachSupplyBuff` on each ship, refreshed each tick) and the fuel drain apply only to the player fleet.
+2. [x] Breach cache spawning by depth and breach-touched POIs (`ChartSites.addCache`, rarity through `LootSource.modifiersFor`).
+3. [x] Core entity, closing, core reward (`BreachCoreDialog`, salvage from the station loot tables plus items from the `exiledSector_chart_breach_core` salvage rule).
+4. [x] Visuals: vanilla `fx_radial` and `wormhole_corona`/`wormhole_ring` sprites, tinted, on the field, map and core. Placeholder quality.
+5. [x] Chart modifier lines, strings (en and zh_CN).
 
 ## Open questions
 
-- Growth and drains should update on a slow timer, not per frame.
+- Growth and drains should update on a slow timer, not per frame. Done: every 0.1 days.

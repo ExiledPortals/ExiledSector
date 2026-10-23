@@ -5,6 +5,7 @@ import {
   CHART_BLOCKED_ABILITY_SPEC,
   CHART_COLONY_ITEM_SPEC,
   CHART_DROP_SPEC,
+  CHART_EXPANSION_SPEC,
   CHART_FACTION_SPEC,
   CHART_LOOT_SPEC,
   CHART_POI_SPEC,
@@ -44,6 +45,7 @@ const vocabulary = buildVocabulary({
   chartLootDropTypes: ['weapon', 'resource', 'blueprint', 'ai_core'],
   chartLootScopes: ['cache', 'domain', 'station', 'derelict', 'fleet', 'boss'],
   chartColonyItemGroups: ['rare_tech'],
+  chartExpansions: ['spatial_breach'],
 });
 
 const CHART_MODIFIERS_CSV =
@@ -330,6 +332,21 @@ describe('chart tables', () => {
     expect(CHART_COLONY_ITEM_SPEC.warnings(chartTable(CHART_COLONY_ITEM_SPEC, 'id,value\nsynchrotron,10\n'), vocabulary)).toEqual([
       'No ceiling row, so the ceiling is 25%',
     ]);
+  });
+
+  it('round-trips the chart expansion table and flags unknown expansions and swapped tiers', () => {
+    const text =
+      'id,weight,min_tier,max_tier,requires_mod,icon,intel,note\r\n' +
+      'spatial_breach,1,1,15,,graphics/icons/icon_portal.png,,"A growing tear, with caches"\r\n' +
+      'unbuilt,1,9,4,,,,\r\n' +
+      ',1,,,,,,\r\n';
+    const model = chartTable(CHART_EXPANSION_SPEC, text);
+    expect(serializeChartTable(model, CHART_EXPANSION_SPEC.columns)).toBe(text);
+    const issues = CHART_EXPANSION_SPEC.issues(model, vocabulary);
+    expect(issues).toContain('row 3: needs an expansion id');
+    expect(issues.some((issue) => issue.startsWith('unbuilt:'))).toBe(true);
+    expect(CHART_EXPANSION_SPEC.warnings(model, vocabulary)).toContain('unbuilt: min_tier is above max_tier, so the game swaps them');
+    expect(CHART_EXPANSION_SPEC.summary?.(model.rows[0], vocabulary)).toBe('tiers 1-15');
   });
 
   it('mirrors the chart loot loader: one drop type per group, base entries need a scope, mode and amount', () => {

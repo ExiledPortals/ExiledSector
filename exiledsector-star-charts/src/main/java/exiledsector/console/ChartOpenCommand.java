@@ -2,6 +2,7 @@ package exiledsector.console;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
+import exiledsector.charts.ChartEffect;
 import exiledsector.charts.ChartGenContext;
 import exiledsector.charts.ChartLayoutGenerator;
 import exiledsector.charts.ChartLayoutRequest;
@@ -27,6 +28,7 @@ import java.util.regex.Pattern;
 public class ChartOpenCommand implements BaseCommand {
 
     static final int DEFAULT_TIER = ChartTiers.LOWEST_TIER;
+    static final String BREACH_WORD = "breach";
     static final Pattern EXPLICIT_TIER = Pattern.compile("(?:tier|t)=?(-?\\d+)", Pattern.CASE_INSENSITIVE);
 
     private final Random random;
@@ -47,14 +49,16 @@ public class ChartOpenCommand implements BaseCommand {
         }
         OpenArguments arguments = OpenArguments.parse(args);
         if (arguments.problem() != null) {
-            Console.showMessage(arguments.problem() + "\nUsage: ExiledSectorChartOpen [seed] [type] [tier], where type is one of "
-                    + ChartLayoutGenerator.ALLOWED_TYPES + " and tier is " + ChartTiers.LOWEST_TIER + " to " + ChartTiers.HIGHEST_TIER
-                    + " (default " + DEFAULT_TIER + "). All are optional and can come in any order; write the tier as tier=N when the"
-                    + " seed is also a small number.");
+            Console.showMessage(arguments.problem() + "\nUsage: ExiledSectorChartOpen [seed] [type] [tier] [breach], where type is one of "
+                    + ChartLayoutGenerator.ALLOWED_TYPES + ", tier is " + ChartTiers.LOWEST_TIER + " to " + ChartTiers.HIGHEST_TIER
+                    + " (default " + DEFAULT_TIER + ") and breach adds a Spatial Breach. All are optional and can come in any order; write"
+                    + " the tier as tier=N when the seed is also a small number.");
             return CommandResult.BAD_SYNTAX;
         }
+        ChartGenContext chartContext = arguments.breach()
+                ? ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_CHANCE, 100f))) : null;
         ChartLayoutRequest layoutRequest = new ChartLayoutRequest(arguments.seed() != null ? arguments.seed() : random.nextLong(),
-                arguments.systemType(), arguments.tierOrDefault());
+                arguments.systemType(), arguments.tierOrDefault(), chartContext);
         int entries = StarChartSettings.wormholeEntries();
         OpenResult result = ChartRunActions.openBesidePlayer(Global.getSector(), entries, random, layoutRequest);
         switch (result) {
@@ -104,10 +108,15 @@ public class ChartOpenCommand implements BaseCommand {
         return "Tier " + run.tier() + ", held by " + (run.contentFaction() == null ? "nobody" : run.contentFaction()) + ": "
                 + run.contentFleets() + " fleet(s), " + run.contentPois() + " point(s) of interest"
                 + (run.bossFleetId() != null ? ", a boss fleet" : "")
+                + (run.expansionIds().isEmpty() ? "" : ", expansions " + String.join(", ", run.expansionIds()))
                 + ". Objective: " + objective + ".";
     }
 
-    record OpenArguments(Long seed, StarSystemType systemType, Integer tier, String problem) {
+    record OpenArguments(Long seed, StarSystemType systemType, Integer tier, String problem, boolean breach) {
+
+        OpenArguments(Long seed, StarSystemType systemType, Integer tier, String problem) {
+            this(seed, systemType, tier, problem, false);
+        }
 
         static OpenArguments parse(String args) {
             if (args == null || args.isBlank()) {
@@ -115,12 +124,15 @@ public class ChartOpenCommand implements BaseCommand {
             }
             StarSystemType systemType = null;
             Integer explicitTier = null;
+            boolean breach = false;
             List<Long> numbers = new ArrayList<>();
             for (String token : args.trim().split("\\s+")) {
                 Matcher tierMatch = EXPLICIT_TIER.matcher(token);
                 StarSystemType type = ChartLayoutGenerator.parseType(token);
                 Long number = parseNumber(token);
-                if (type != null && systemType == null) {
+                if (BREACH_WORD.equalsIgnoreCase(token) && !breach) {
+                    breach = true;
+                } else if (type != null && systemType == null) {
                     systemType = type;
                 } else if (tierMatch.matches() && explicitTier == null) {
                     Long tierNumber = parseNumber(tierMatch.group(1));
@@ -131,10 +143,12 @@ public class ChartOpenCommand implements BaseCommand {
                 } else if (number != null) {
                     numbers.add(number);
                 } else {
-                    return problem("Can't use \"" + token + "\": give at most one seed, one system type and one tier.");
+                    return problem("Can't use \"" + token + "\": give at most one seed, one system type, one tier and one breach.");
                 }
             }
-            return assign(numbers, systemType, explicitTier);
+            OpenArguments assigned = assign(numbers, systemType, explicitTier);
+            return !breach || assigned.problem() != null ? assigned
+                    : new OpenArguments(assigned.seed(), assigned.systemType(), assigned.tier(), null, true);
         }
 
         private static OpenArguments assign(List<Long> numbers, StarSystemType systemType, Integer explicitTier) {

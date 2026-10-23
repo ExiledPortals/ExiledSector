@@ -5,6 +5,9 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.thoughtworks.xstream.XStream;
+import exiledsector.charts.expansion.BreachCorePlugin;
+import exiledsector.charts.expansion.BreachSupplyBuff;
+import exiledsector.charts.expansion.BreachTerrainPlugin;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
@@ -51,6 +54,9 @@ class ChartPersistenceGuardTest {
         assertTrue(ChartSaveAliases.ALIASES.containsValue(ChartWormholePlugin.class));
         assertTrue(ChartSaveAliases.ALIASES.containsValue(ChartObjectiveIntel.class));
         assertTrue(ChartSaveAliases.ALIASES.containsValue(WormholeGateway.class));
+        assertTrue(ChartSaveAliases.ALIASES.containsValue(BreachTerrainPlugin.class));
+        assertTrue(ChartSaveAliases.ALIASES.containsValue(BreachCorePlugin.class));
+        assertTrue(ChartSaveAliases.ALIASES.containsValue(BreachSupplyBuff.class));
         ChartSaveAliases.ALIASES.keySet().forEach(alias -> assertTrue(alias.startsWith("exiledSector."), alias));
     }
 
@@ -79,6 +85,25 @@ class ChartPersistenceGuardTest {
         for (Field field : ChartContentListener.class.getDeclaredFields()) {
             if (!Modifier.isStatic(field.getModifiers())) {
                 assertTrue(field.getType().isPrimitive(), field.getName());
+            }
+        }
+    }
+
+    @Test
+    void theBreachSavesOnlyNumbersAndTextAndKeepsItsSpritesOutOfTheSave() {
+        for (Field field : BreachSupplyBuff.class.getDeclaredFields()) {
+            assertTrue(field.getType().isPrimitive() || field.getType() == String.class, field.getName() + ": " + field.getType().getName());
+        }
+        for (Field field : BreachTerrainPlugin.class.getDeclaredFields()) {
+            if (Modifier.isStatic(field.getModifiers()) || Modifier.isTransient(field.getModifiers())) {
+                continue;
+            }
+            Class<?> type = field.getType().isArray() ? field.getType().getComponentType() : field.getType();
+            assertTrue(type.isPrimitive() || type == String.class, field.getName() + ": " + field.getType().getName());
+        }
+        for (Field field : BreachCorePlugin.class.getDeclaredFields()) {
+            if (!Modifier.isStatic(field.getModifiers())) {
+                assertTrue(Modifier.isTransient(field.getModifiers()), field.getName() + " would be written to the save");
             }
         }
     }

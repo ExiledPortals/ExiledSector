@@ -22,6 +22,8 @@ import com.fs.starfarer.api.impl.campaign.terrain.StarCoronaTerrainPlugin;
 import exiledsector.charts.ChartContentPlan.FleetRole;
 import exiledsector.charts.ChartContentPlan.PlannedFleet;
 import exiledsector.charts.ChartContentPlan.PlannedPoi;
+import exiledsector.charts.expansion.ChartExpansion;
+import exiledsector.charts.expansion.ExpansionSite;
 import exiledlib.i18n.Translation;
 import exiledsector.items.WeightedPick;
 import org.apache.log4j.Logger;
@@ -87,6 +89,7 @@ public final class ChartContentGenerator {
             build.placePois(plan);
             build.spawnFleets(plan);
             build.placeColonyItem(plan);
+            build.generateExpansions(plan);
             return build.settle(plan);
         } catch (RuntimeException | LinkageError e) {
             report("generate the content", seed, e);
@@ -261,6 +264,10 @@ public final class ChartContentGenerator {
         }
     }
 
+    static ChartContentEngine engine() {
+        return engine;
+    }
+
     static void useEngineForTests(ChartContentEngine testEngine) {
         engine = testEngine;
         REPORTED_FAILURES.clear();
@@ -287,6 +294,7 @@ public final class ChartContentGenerator {
         private final List<CampaignFleetAPI> fleets = new ArrayList<>();
         private final List<String> guardFleetIds = new ArrayList<>();
         private final Set<SectorEntityToken> usedFoci = new LinkedHashSet<>();
+        private final List<String> expansions = new ArrayList<>();
         private List<Hazard> hazards = List.of();
         private String bossFleetId;
 
@@ -472,6 +480,23 @@ public final class ChartContentGenerator {
             }
         }
 
+        void generateExpansions(ChartContentPlan plan) {
+            for (String expansionId : plan.expansions()) {
+                ChartExpansion expansion = ChartExpansions.byId(expansionId);
+                if (expansion == null) {
+                    continue;
+                }
+                try {
+                    expansion.generate(new ExpansionSite(system, runId, tier, chartContext, poiEntities, innerWormhole,
+                            point -> isClear(new ChartSpot(null, point, null, 1f), hazards, innerWormhole, POI_WORMHOLE_CLEARANCE),
+                            salt -> ChartLayoutGenerator.derivedRandom(seed ^ ((long) expansionId.hashCode() << 32), salt)));
+                    expansions.add(expansionId);
+                } catch (RuntimeException | LinkageError e) {
+                    report("generate the " + expansionId + " expansion", seed, e);
+                }
+            }
+        }
+
         ChartContent settle(ChartContentPlan plan) {
             ChartObjective objective = settleObjective(plan.objective(), !guardFleetIds.isEmpty(), bossFleetId != null);
             List<String> targets = objective == null ? List.of() : switch (objective) {
@@ -484,7 +509,7 @@ public final class ChartContentGenerator {
                     placedPois++;
                 }
             }
-            return new ChartContent(tier, plan.faction().factionId(), objective, targets, bossFleetId, fleets.size(), placedPois);
+            return new ChartContent(tier, plan.faction().factionId(), objective, targets, bossFleetId, fleets.size(), placedPois, expansions);
         }
 
         void removeEverything() {

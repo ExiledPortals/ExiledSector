@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -56,6 +57,8 @@ public final class ChartGenContext {
     private float rewardPercent;
     private final Map<ChartFleetStat, Float> fleetStatPercents = new EnumMap<>(ChartFleetStat.class);
     private Map<ChartFleetStat, Float> fleetStatMults;
+    private final Map<String, Float> expansionChances = new LinkedHashMap<>();
+    private final Map<String, Float> expansionPercents = new LinkedHashMap<>();
 
     private ChartGenContext(List<AppliedEffect> applied, int quality, String factionId) {
         this.applied = List.copyOf(applied);
@@ -222,6 +225,26 @@ public final class ChartGenContext {
         fleetStatPercents.merge(stat, value, Float::sum);
     }
 
+    void addExpansionChance(String expansionId, float percent) {
+        expansionChances.merge(expansionId, percent, Float::sum);
+    }
+
+    void addExpansionPercent(String tuningKey, float value) {
+        expansionPercents.merge(tuningKey, value, Float::sum);
+    }
+
+    public float expansionChance(String expansionId) {
+        return expansionChances.getOrDefault(expansionId, 0f);
+    }
+
+    public float expansionPercent(String tuningKey) {
+        return expansionPercents.getOrDefault(tuningKey, 0f);
+    }
+
+    public float expansionMult(String tuningKey) {
+        return multiplier(expansionPercent(tuningKey));
+    }
+
     public Map<ChartFleetStat, Float> fleetStatMults() {
         if (fleetStatMults == null) {
             Map<ChartFleetStat, Float> mults = new EnumMap<>(ChartFleetStat.class);
@@ -371,10 +394,10 @@ public final class ChartGenContext {
         }
         return factionText + String.format(Locale.ROOT, "fleet size %+.0f%%, %+d rolled fleet(s), %+d added fleet(s), %+d officer level(s), %+d officer(s), boss size %+.0f%%, "
                         + "fleet quality %+.0f%%, site budgets %s, %+d point(s) of interest, item drops %+.0f%%, item rarity %+.0f%%, drop types %s, "
-                        + "boss spoils x%.2f, reward x%.2f, sensor range x%.2f, chart quality %d",
+                        + "boss spoils x%.2f, reward x%.2f, sensor range x%.2f, chart quality %d, expansions %s",
                 fleetSizePercent, baseFleets, extraFleets, officerLevelBonus, extraOfficers, bossSizePercent,
                 fleetQualityPercent, siteBudgetText(), extraPois(), itemPercent, itemRarityPercent, describeDropPercents(), bossSpoilsMult(), rewardMult(),
-                sensorRangeMult(), quality);
+                sensorRangeMult(), quality, expansionChances.isEmpty() ? "none" : expansionChances.toString());
     }
 
     private String describeDropPercents() {

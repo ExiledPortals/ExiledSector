@@ -63,6 +63,7 @@ class EditorRoundTripTest {
     private static final String CHART_DROPS = "exiledsector/charts/ChartDrops.java";
     private static final String CHART_LOOT = "exiledsector/charts/ChartLoot.java";
     private static final String CHART_COLONY_ITEMS = "exiledsector/charts/ChartColonyItems.java";
+    private static final String CHART_EXPANSIONS = "exiledsector/charts/ChartExpansions.java";
     private static final String WORMHOLE_ANCHOR_DEFINITIONS = "exiledsector/items/WormholeAnchorDefinitions.java";
     private static final String DOCTRINE_ARCHIVES = "exiledsector/items/DoctrineArchives.java";
     private static final String MODSPEC_CACHES = "exiledsector/items/ModspecCaches.java";
@@ -70,7 +71,7 @@ class EditorRoundTripTest {
     private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, ITEM_DEFINITIONS, ITEM_DEFINITION, SUBROUTINE_DEFINITIONS, HULL_ITEM,
             ITEM_NAMES, ITEM_DROPS, SALVAGE_COMPAT, ITEM_CRAFTING, HULL_ITEM_IMPLICITS, ITEM_MODIFIERS, STAR_CHART_DEFINITIONS, STAR_CHART_IMPLICITS,
             STAR_CHART_ITEMS, STAR_CHART_NAMES, CHART_TIERS, CHART_POIS, CHART_FACTIONS, CHART_BLOCKED_ABILITIES, CHART_DROPS, CHART_LOOT,
-            CHART_COLONY_ITEMS, WORMHOLE_ANCHOR_DEFINITIONS, DOCTRINE_ARCHIVES, MODSPEC_CACHES, SUBROUTINE_IMPLICITS,
+            CHART_COLONY_ITEMS, CHART_EXPANSIONS, WORMHOLE_ANCHOR_DEFINITIONS, DOCTRINE_ARCHIVES, MODSPEC_CACHES, SUBROUTINE_IMPLICITS,
             CORRUPTION_IMPLICIT_POOL);
 
     private static final List<String> EDITED_DATA_PATHS = List.of("data/skilltrees/skill_types.json", "data/skilltrees/ship_skill_tree.json",
@@ -169,6 +170,8 @@ class EditorRoundTripTest {
                     List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_LOOT_COLUMNS")), true),
             new Pin("chart_colony_items.csv columns", CHART_COLONY_ITEMS, List.of("load", "register"),
                     List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_COLONY_ITEM_COLUMNS")), true),
+            new Pin("chart_expansions.csv columns", CHART_EXPANSIONS, List.of("load", "register", "parse"),
+                    List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_EXPANSION_COLUMNS")), true),
             new Pin("wormhole_anchors.csv columns", WORMHOLE_ANCHOR_DEFINITIONS, List.of("load", "register"),
                     List.of(new EditorSource(WORMHOLE_ANCHORS_MODEL, "WORMHOLE_ANCHOR_COLUMNS")), true),
             new Pin("wormhole_anchors.csv shared item columns", ITEM_DEFINITION, List.of("definitionId", "parseCommon"),

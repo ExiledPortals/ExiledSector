@@ -11,6 +11,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledlib.PlayerFleet;
 import exiledlib.Seeds;
+import exiledsector.charts.expansion.SpatialBreach;
 import exiledsector.effects.ItemLootListener;
 import exiledsector.effects.TechMiningItemListener;
 import exiledsector.items.ItemChances;
@@ -141,6 +142,23 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
             context = ChartGenContext.none();
         }
         return new LootModifiers(context.itemChances(), context.dropMult(DropType.FEEDSTOCK), context.dropMult(DropType.CURRENCY));
+    }
+
+    @Override
+    public LootModifiers modifiersFor(SectorEntityToken site) {
+        LootModifiers modifiers = site == null ? null : modifiersAt(site.getContainingLocation());
+        MemoryAPI memory = site == null ? null : site.getMemoryWithoutUpdate();
+        if (modifiers == null || memory == null) {
+            return modifiers;
+        }
+        ItemChances chances = modifiers.itemChances();
+        if (memory.contains(SpatialBreach.ITEM_MULT_KEY)) {
+            chances = chances.scaled(memory.getFloat(SpatialBreach.ITEM_MULT_KEY));
+        }
+        if (memory.contains(SpatialBreach.RARITY_KEY)) {
+            chances = chances.withRarity(chances.rarity() * (1f + memory.getFloat(SpatialBreach.RARITY_KEY) / ChartGenContext.PERCENT));
+        }
+        return chances == modifiers.itemChances() ? modifiers : new LootModifiers(chances, modifiers.feedstockMult(), modifiers.currencyMult());
     }
 
     @Override

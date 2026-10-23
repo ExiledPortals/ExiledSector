@@ -13,7 +13,7 @@ Chart expansions are events and mechanics that a star chart can roll on top of i
 | Stasis Vaults | `stasis_vaults.md` | optional, one per vault |
 | Asteroid Stream (Industrial Evolution only) | `asteroid_stream.md` | none |
 
-Status: planned, nothing built.
+Status: the framework is built without its atlas parts (2026-10-23, uncommitted on parallel-work), and the Spatial Breach is built on it.
 
 ## The fight budget
 
@@ -35,5 +35,5 @@ Players favour one expansion over the others with intel and atlas passives (`../
 
 The atlas comes first. These steps sit inside `../atlas.md`'s build order (its steps 2, 12 and 13).
 
-1. [ ] Expansion framework: `ChartExpansion` with its atlas hooks, `chart_expansions.csv`, the per-node roll, run requests, tooltip line, run state and cleanup, with one test expansion that places nothing.
+1. [~] Expansion framework: `ChartExpansion` with its atlas hooks, `chart_expansions.csv`, the per-node roll, run requests, tooltip line, run state and cleanup, with one test expansion that places nothing. Built: `ChartExpansion`/`ExpansionSite` (package `charts.expansion`), `ChartExpansions` (loads `chart_expansions.csv`, rolls each expansion on its own seed from `CHART_<EXPANSION>_CHANCE` lines), plan and run records, the intel line, cleanup through the run tag, the test expansion (`ChartExpansionsTest.PlacesNothing`) and the editor table. Not built: the atlas hooks, the per-node roll and the icon/intel columns' use, which wait for the atlas.
 2. [ ] Expansions one at a time, each to its own plan's build order. Suggested order: Relay Network, Faction Skirmish, Excavation Sites, The Hunter, Supply Convoy, Stasis Vaults, Spatial Breach, Asteroid Stream.

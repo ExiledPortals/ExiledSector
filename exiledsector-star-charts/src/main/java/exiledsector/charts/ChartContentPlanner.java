@@ -55,7 +55,7 @@ final class ChartContentPlanner {
         List<PlannedFleet> plannedFleets = new ArrayList<>();
         plannedPois = planFleets(tier, objective, plannedPois, plannedFleets, ChartLayoutGenerator.derivedRandom(seed, FLEET_SALT),
                 chartContext.extraFleets(), fleetLimit);
-        return new ChartContentPlan(tier.tier(), faction, objective, plannedPois, plannedFleets);
+        return new ChartContentPlan(tier.tier(), faction, objective, plannedPois, plannedFleets, ChartExpansions.planned(seed, tier.tier(), chartContext));
     }
 
     static ChartObjective pickObjective(ChartTier tier, Random random) {
