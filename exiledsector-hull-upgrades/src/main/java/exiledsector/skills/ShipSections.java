@@ -91,16 +91,7 @@ public final class ShipSections {
         return NodeRequirements.firstUnmet(List.of(section.requirementTag()), fit);
     }
 
-    public static List<SkillTypeEffect> appliedEffects(ShipSkillData shipData, UnlockedSection section, HullSize hullSize) {
-        if (!section.appliesItem()) {
-            return List.of();
-        }
-        List<SkillTypeEffect> applied = new ArrayList<>();
-        for (SkillTypeEffect effect : section.item().skillEffects(hullSize)) {
-            if (!shipData.isNpcBuild() || effect.effect().appliesToNpcShips()) {
-                applied.add(effect);
-            }
-        }
-        return applied;
+    public static List<SkillTypeEffect> appliedEffects(UnlockedSection section, HullSize hullSize) {
+        return section.appliesItem() ? section.item().skillEffects(hullSize) : List.of();
     }
 }

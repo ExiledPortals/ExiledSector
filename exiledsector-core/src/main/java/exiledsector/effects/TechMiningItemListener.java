@@ -13,11 +13,11 @@ import com.fs.starfarer.api.util.Misc;
 import exiledlib.Seeds;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
-import exiledsector.items.HullUpgradeData;
 import exiledsector.items.Item;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.ItemData;
+import exiledsector.items.RefitSchematic;
 import exiledsector.loot.LootSources;
 import exiledsector.ui.CampaignMessages;
 
@@ -33,7 +33,7 @@ public class TechMiningItemListener implements EconomyTickListener {
     private static final String DECAY_SETTING = "techMiningDecay";
 
     public record Find(SectorAPI sector, MarketAPI market, int minedMonths, String dropSite, float chanceMult, Random random, List<ItemData> items,
-                       List<HullUpgradeData> upgrades) {
+                       List<RefitSchematic> upgrades) {
     }
 
     @Override
@@ -81,7 +81,7 @@ public class TechMiningItemListener implements EconomyTickListener {
     }
 
     private static void deliver(MarketAPI minedMarket, List<ItemData> foundItems, Map<String, Integer> foundMaterials,
-                                List<HullUpgradeData> foundUpgrades) {
+                                List<RefitSchematic> foundUpgrades) {
         if (foundItems.isEmpty() && foundMaterials.isEmpty() && foundUpgrades.isEmpty()) {
             return;
         }
@@ -102,9 +102,9 @@ public class TechMiningItemListener implements EconomyTickListener {
                 announce(minedMarket, storageMarket, preview::name);
             }
         }
-        for (HullUpgradeData upgrade : foundUpgrades) {
-            storageCargo.addSpecial(upgrade.toSpecialItem(), 1f);
-            announce(minedMarket, storageMarket, upgrade::name);
+        for (RefitSchematic schematic : foundUpgrades) {
+            storageCargo.addSpecial(schematic.toSpecialItem(), 1f);
+            announce(minedMarket, storageMarket, schematic::displayName);
         }
         for (Map.Entry<String, Integer> material : foundMaterials.entrySet()) {
             MaterialItems.add(storageCargo, material.getKey(), material.getValue());

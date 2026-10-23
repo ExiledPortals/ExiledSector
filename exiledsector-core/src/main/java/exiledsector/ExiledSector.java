@@ -2,10 +2,10 @@ package exiledsector;
 
 import exiledlib.HostMod;
 import exiledsector.domain.ExiledSectorDomain;
-import exiledsector.items.HullUpgradeData;
 import exiledsector.items.ItemDataIntegrity;
 import exiledsector.items.ItemStore;
 import exiledsector.items.ItemTypes;
+import exiledsector.items.RefitSchematic;
 import exiledsector.ui.cargo.CargoIconLooks;
 import exiledsector.ui.refit.RefitButtonColumn;
 import exiledsector.ui.socket.BenchModes;
@@ -39,7 +39,7 @@ public final class ExiledSector {
         installing.forEach(domain -> domain.itemIconLooks().forEach(CargoIconLooks::register));
         installing.forEach(domain -> domain.benchModes().forEach(mode -> BenchModes.register(mode, domain::enabled)));
         installing.forEach(domain -> domain.refitButtons().forEach(button -> RefitButtonColumn.register(button, domain::enabled)));
-        ItemStore.absorbStacksWith(HullUpgradeData::absorbInto);
+        ItemStore.absorbStacksWith(RefitSchematic::absorbInto);
         installedDomains = installing;
     }
 

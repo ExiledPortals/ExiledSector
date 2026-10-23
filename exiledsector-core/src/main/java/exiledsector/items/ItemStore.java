@@ -4,14 +4,13 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledlib.HostMod;
 import exiledsector.persistence.SaveData;
-import exiledlib.skills.ShipHullSizes;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,13 +34,14 @@ public final class ItemStore {
     private final List<Item> owned = new ArrayList<>();
     private long nextId = 1;
     private Map<String, Integer> hullUpgrades;
+    private Map<String, Integer> refitSchematics;
     private boolean holdsStarCharts;
     // XStream skips transient fields, so this lookup index is rebuilt after loading instead of being written into saves
     @SuppressWarnings("java:S2065")
     private transient Map<String, Item> byId;
     // java:S2065: XStream skips transient fields, so this change counter restarts after loading instead of being written into saves
     @SuppressWarnings("java:S2065")
-    private transient int upgradeRevision;
+    private transient int schematicRevision;
 
     public ItemStore() {
     }
@@ -182,48 +182,68 @@ public final class ItemStore {
         return removed;
     }
 
-    public int upgradeCount(HullSize hullSize) {
-        return hullUpgrades == null || hullSize == null ? 0 : hullUpgrades.getOrDefault(hullSize.name(), 0);
+    public int schematicCount(RefitSchematic schematic) {
+        return refitSchematics == null || schematic == null ? 0 : refitSchematics.getOrDefault(schematic.name(), 0);
     }
 
-    public int upgradeRevision() {
-        return upgradeRevision;
+    public int schematicRevision() {
+        return schematicRevision;
     }
 
-    public Map<HullSize, Integer> upgradeCounts() {
-        Map<HullSize, Integer> counts = new LinkedHashMap<>();
-        for (HullSize hullSize : ShipHullSizes.ORDER) {
-            int count = upgradeCount(hullSize);
+    public Map<RefitSchematic, Integer> schematicCounts() {
+        Map<RefitSchematic, Integer> counts = new EnumMap<>(RefitSchematic.class);
+        for (RefitSchematic schematic : RefitSchematic.values()) {
+            int count = schematicCount(schematic);
             if (count > 0) {
-                counts.put(hullSize, count);
+                counts.put(schematic, count);
             }
         }
         return counts;
     }
 
-    public void addUpgrades(HullSize hullSize, int count) {
-        if (hullSize == null || count <= 0) {
+    public void addSchematics(RefitSchematic schematic, int count) {
+        if (schematic == null || count <= 0) {
             return;
         }
-        if (hullUpgrades == null) {
-            hullUpgrades = new LinkedHashMap<>();
+        if (refitSchematics == null) {
+            refitSchematics = new LinkedHashMap<>();
         }
-        hullUpgrades.merge(hullSize.name(), count, Integer::sum);
-        upgradeRevision++;
+        refitSchematics.merge(schematic.name(), count, Integer::sum);
+        schematicRevision++;
     }
 
-    public boolean takeUpgrade(HullSize hullSize) {
-        int count = upgradeCount(hullSize);
+    public boolean takeSchematic(RefitSchematic schematic) {
+        int count = schematicCount(schematic);
         if (count <= 0) {
             return false;
         }
         if (count == 1) {
-            hullUpgrades.remove(hullSize.name());
+            refitSchematics.remove(schematic.name());
         } else {
-            hullUpgrades.put(hullSize.name(), count - 1);
+            refitSchematics.put(schematic.name(), count - 1);
         }
-        upgradeRevision++;
+        schematicRevision++;
         return true;
+    }
+
+    public int convertLegacyHullUpgrades() {
+        if (hullUpgrades == null) {
+            return 0;
+        }
+        int legacyCount = 0;
+        for (Integer count : hullUpgrades.values()) {
+            legacyCount += count == null ? 0 : Math.max(0, count);
+        }
+        hullUpgrades = null;
+        addSchematics(RefitSchematic.STANDARD, legacyCount);
+        return legacyCount;
+    }
+
+    void addLegacyHullUpgrades(String hullSizeName, int count) {
+        if (hullUpgrades == null) {
+            hullUpgrades = new LinkedHashMap<>();
+        }
+        hullUpgrades.merge(hullSizeName, count, Integer::sum);
     }
 
     public int absorbFrom(CargoAPI cargo) {

@@ -69,6 +69,7 @@ public final class HullUpgradesDomain implements ExiledSectorDomain {
 
     @Override
     public void onApplicationLoad() {
+        HullUpgradePoints.install();
         HullUpgradesRefitButton.addButton();
     }
 
@@ -82,6 +83,9 @@ public final class HullUpgradesDomain implements ExiledSectorDomain {
                 Translation.text("settings.socketStorage.hullUpgradesLevel.name"), Translation.text("settings.socketStorage.hullUpgradesLevel.tooltip"),
                 HullUpgradesSetting.DEFAULT_UNLOCK_LEVEL, HullUpgradesSetting.MIN_UNLOCK_LEVEL, HullUpgradesSetting.MAX_UNLOCK_LEVEL,
                 ExiledSectorSettings.MAIN_TAB);
+        SettingsCreator.addRadio(MOD_ID, HullUpgradesSetting.POINTS_FIELD_ID,
+                Translation.text("settings.socketStorage.hullUpgradePoints.name"), Translation.text("settings.socketStorage.hullUpgradePoints.tooltip"),
+                HullUpgradesSetting.REFIT_SCHEMATICS, String.join(",", HullUpgradesSetting.POINTS_OPTIONS), ExiledSectorSettings.MAIN_TAB);
         SettingsCreator.addInt(MOD_ID, BattleItemDrops.DROP_PERCENT_FIELD_ID,
                 Translation.text("settings.socketStorage.battleItems.name"), Translation.text("settings.socketStorage.battleItems.tooltip"),
                 BattleItemDrops.DEFAULT_DROP_PERCENT, 0, BattleItemDrops.MAX_DROP_PERCENT, ExiledSectorSettings.MAIN_TAB);
@@ -102,5 +106,7 @@ public final class HullUpgradesDomain implements ExiledSectorDomain {
     @Override
     public void onGameLoad(boolean newGame, List<CargoAPI> savedCargoes) {
         ShipSections.clearCache();
+        HullUpgradeMigration.runOnSave(savedCargoes);
+        HullUpgradePoints.markChanged();
     }
 }

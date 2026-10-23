@@ -2,15 +2,13 @@ package exiledsector.console;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.skills.ShipHullSizes;
-import exiledsector.items.HullUpgradeData;
+import exiledsector.items.RefitSchematic;
 import org.lazywizard.console.BaseCommand;
 import org.lazywizard.console.CommonStrings;
 import org.lazywizard.console.Console;
 
 
-public class GrantHullUpgradesCommand implements BaseCommand {
+public class GrantRefitSchematicsCommand implements BaseCommand {
 
     static final int DEFAULT_COPIES = 3;
     static final int MAX_COPIES = 50;
@@ -36,12 +34,12 @@ public class GrantHullUpgradesCommand implements BaseCommand {
             Console.showMessage("No player fleet found.");
             return CommandResult.ERROR;
         }
-        for (HullSize hullSize : ShipHullSizes.ORDER) {
+        for (RefitSchematic schematic : RefitSchematic.values()) {
             for (int i = 0; i < copies; i++) {
-                playerFleet.getCargo().addSpecial(new HullUpgradeData(hullSize).toSpecialItem(), 1f);
+                playerFleet.getCargo().addSpecial(schematic.toSpecialItem(), 1f);
             }
         }
-        Console.showMessage("Added " + copies + (copies == 1 ? " Hull Upgrade" : " Hull Upgrades") + " for each hull size to your cargo.");
+        Console.showMessage("Added " + copies + (copies == 1 ? " Refit Schematic" : " Refit Schematics") + " of each tier to your cargo.");
         return CommandResult.SUCCESS;
     }
 }

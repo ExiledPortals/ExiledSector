@@ -1118,11 +1118,14 @@ class ShipSkillDataTest {
         experienced.addXp(1f);
         ShipSkillData credited = new ShipSkillData();
         credited.addFreeAllocationCredit();
+        ShipSkillData sectioned = new ShipSkillData();
+        sectioned.unlockSocketType("bridge");
 
         assertFalse(allocated.isBlank());
         assertFalse(levelled.isBlank());
         assertFalse(experienced.isBlank());
         assertFalse(credited.isBlank());
+        assertFalse(sectioned.isBlank());
     }
 
     @Test

@@ -1,6 +1,5 @@
 package exiledsector.items;
 
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.ShipSections;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.tags.ShipProfile;
@@ -9,27 +8,33 @@ import java.util.Map;
 
 public final class HullUpgradeRules {
 
-    public static final int MAX_POINTS = 4;
-
     public enum UnlockBlock {NO_POINTS, ALREADY_UNLOCKED, UNMET_REQUIREMENT}
 
-    public enum UpgradeBlock {AT_MAX_POINTS, NONE_IN_STORAGE}
+    public enum UpgradeBlock {STAR_CHART_PROGRESS, AT_MAX_POINTS, WRONG_TIER, NONE_IN_STORAGE}
 
     private HullUpgradeRules() {
     }
 
-    public static UpgradeBlock upgradeBlock(ShipSkillData shipData, int upgradesInStorage) {
-        if (shipData.getHullUpgradePoints() >= MAX_POINTS) {
+    public static UpgradeBlock upgradeBlock(ShipSkillData shipData, RefitSchematic schematic, int schematicsInStorage) {
+        if (!HullUpgradePoints.schematicsInUse()) {
+            return UpgradeBlock.STAR_CHART_PROGRESS;
+        }
+        int shipPoints = HullUpgradePoints.of(shipData);
+        if (shipPoints >= HullUpgradePoints.MOST_POINTS) {
             return UpgradeBlock.AT_MAX_POINTS;
         }
-        return upgradesInStorage <= 0 ? UpgradeBlock.NONE_IN_STORAGE : null;
+        if (shipPoints != schematic.requiredPoints()) {
+            return UpgradeBlock.WRONG_TIER;
+        }
+        return schematicsInStorage <= 0 ? UpgradeBlock.NONE_IN_STORAGE : null;
     }
 
-    public static boolean installUpgrade(ShipSkillData shipData, HullSize shipHullSize, ItemStore store) {
-        if (upgradeBlock(shipData, store.upgradeCount(shipHullSize)) != null || !store.takeUpgrade(shipHullSize)) {
+    public static boolean applySchematic(ShipSkillData shipData, RefitSchematic schematic, ItemStore store) {
+        if (upgradeBlock(shipData, schematic, store.schematicCount(schematic)) != null || !store.takeSchematic(schematic)) {
             return false;
         }
-        return shipData.addHullUpgradePoint(MAX_POINTS);
+        shipData.setStoredHullUpgradePoints(schematic.points());
+        return true;
     }
 
     public static UnlockBlock unlockBlock(ShipSkillData shipData, ShipSection section, ShipProfile currentFit) {
@@ -39,7 +44,7 @@ public final class HullUpgradeRules {
         if (ShipSections.unmetRequirement(section, currentFit) != null) {
             return UnlockBlock.UNMET_REQUIREMENT;
         }
-        return shipData.getUnspentHullUpgradePoints() <= 0 ? UnlockBlock.NO_POINTS : null;
+        return HullUpgradePoints.unspent(shipData) <= 0 ? UnlockBlock.NO_POINTS : null;
     }
 
     public static boolean unlock(ShipSkillData shipData, ShipSection section, ShipProfile currentFit) {

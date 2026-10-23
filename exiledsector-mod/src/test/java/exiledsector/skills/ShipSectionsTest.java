@@ -64,7 +64,7 @@ class ShipSectionsTest {
     @Test
     void everySocketedSectionItemCountsOnceWhenItsSocketIsActive() {
         List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
-        EffectTotals totals = EffectTotals.of(HullUpgradeEffectSource.contributions(shipData, slots, HullSize.CRUISER), 1f);
+        EffectTotals totals = EffectTotals.of(HullUpgradeEffectSource.contributions(slots,HullSize.CRUISER), 1f);
 
         assertEquals(2, slots.size());
         assertTrue(slots.stream().allMatch(ShipSections.UnlockedSection::active));
@@ -79,7 +79,7 @@ class ShipSectionsTest {
         assertTrue(slots.get(0).active());
         assertFalse(slots.get(1).active());
         assertEquals("req_shields", slots.get(1).unmetRequirement());
-        assertEquals(5f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(shipData, slots, HullSize.CRUISER), 1f)), 1e-4f);
+        assertEquals(5f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(slots,HullSize.CRUISER), 1f)), 1e-4f);
     }
 
     @Test
@@ -106,15 +106,14 @@ class ShipSectionsTest {
         List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
 
         assertFalse(slots.get(0).appliesItem());
-        assertEquals(10f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(shipData, slots, HullSize.CRUISER), 1f)), 1e-4f);
+        assertEquals(10f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(slots,HullSize.CRUISER), 1f)), 1e-4f);
     }
 
     @Test
-    void theNpcBonusMultiplierScalesSectionItems() {
-        shipData.markNpcBuild();
+    void theBonusMultiplierScalesSectionItems() {
         List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
 
-        assertEquals(30f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(shipData, slots, HullSize.CRUISER), 2f)), 1e-4f);
+        assertEquals(30f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(slots,HullSize.CRUISER), 2f)), 1e-4f);
     }
 
     @Test

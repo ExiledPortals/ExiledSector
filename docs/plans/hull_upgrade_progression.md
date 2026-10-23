@@ -5,7 +5,7 @@ Hull upgrade points let a ship unlock its sections (bridge, reactor, flight deck
 - Refit schematics (the default): every ship starts with one point. Four tiers of a new currency item raise a ship's points one step at a time, up to five, in the style of Path of Exile 2's Jeweller's Orbs.
 - Star Chart progress: every ship starts with one point, and clearing the first tier 5, 10 and 15 Star Charts raises every player ship to two, three and four.
 
-Status: planned, not built.
+Status: built, uncommitted on the hull upgrade worktree (branch `hull-upgrade-progression`).
 
 ## Today
 
@@ -118,13 +118,13 @@ Saves with today's Hull Upgrades:
 
 ## Build order
 
-1. `HullUpgradePoints`, the setting, and the point reads moved onto it.
-2. The schematic items, `ItemStore` per tier, and applying them on the panel.
-3. Sources switched to schematics.
-4. Star Chart progress mode, its panel text and message.
-5. NPC leftovers removed.
-6. Migration of old upgrades.
-7. Strings and docs.
+1. Done (uncommitted on the hull upgrade worktree): `HullUpgradePoints`, the setting, and the point reads moved onto it.
+2. Done (uncommitted on the hull upgrade worktree): the schematic items, `ItemStore` per tier, and applying them on the panel. `RefitSchematic` lives in core `items/` because core's loot records carry it; it is not an `ItemCurrency`.
+3. Done (uncommitted on the hull upgrade worktree): sources switched to schematics.
+4. Done (uncommitted on the hull upgrade worktree): Star Chart progress mode, its panel text and message (`ItemUnlock.addChartClearListener`).
+5. Done (uncommitted on the hull upgrade worktree): NPC leftovers removed.
+6. Done (uncommitted on the hull upgrade worktree): migration of old upgrades (`HullUpgradeMigration`).
+7. Done (uncommitted on the hull upgrade worktree): strings and docs.
 
 ## Tests
 
