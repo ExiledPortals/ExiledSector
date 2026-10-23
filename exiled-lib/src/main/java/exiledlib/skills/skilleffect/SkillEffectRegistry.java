@@ -5,7 +5,6 @@ import exiledlib.skills.skilleffect.battle.BattleSkillEffect;
 import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
 import exiledlib.skills.skilleffect.fighter.FighterSkillEffect;
 import exiledlib.skills.skilleffect.flux.FluxSkillEffect;
-import exiledlib.skills.skilleffect.hullmod.HullModInteractionEffect;
 import exiledlib.skills.skilleffect.logistics.LogisticsSkillEffect;
 import exiledlib.skills.skilleffect.movement.MovementSkillEffect;
 import exiledlib.skills.skilleffect.onhit.OnHitSkillEffect;
@@ -59,8 +58,7 @@ final class SkillEffectRegistry {
                 BattleSkillEffect.values(),
                 ReadinessSkillEffect.values(),
                 LogisticsSkillEffect.values(),
-                SpecialSkillEffect.values(),
-                HullModInteractionEffect.values()
+                SpecialSkillEffect.values()
         };
         for (SkillEffect[] group : groups) {
             for (SkillEffect effect : group) {

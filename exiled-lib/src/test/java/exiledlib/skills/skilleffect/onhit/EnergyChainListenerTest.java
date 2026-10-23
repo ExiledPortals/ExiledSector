@@ -9,10 +9,12 @@ import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.CombatListenerManagerAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledlib.skills.skilleffect.CsvIdList;
+import exiledlib.skills.skilleffect.weapon.BallisticAsEnergy;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -231,6 +233,22 @@ class EnergyChainListenerTest {
 
         verify(damage, never()).setDamage(anyFloat());
         verify(drones, never()).launch(any(), any(), any(), any(), any(), any());
+    }
+
+    @Test
+    void ballisticShotsRefractWhileBallisticCountsAsEnergy() {
+        StatBonus flag = new StatBonus();
+        flag.modifyFlat("fafnir", 1f);
+        when(ship.getMutableStats().getDynamic().getMod(BallisticAsEnergy.KEY)).thenReturn(flag);
+        WeaponAPI gun = weapon("gun", false, WeaponAPI.WeaponType.BALLISTIC);
+        when(gun.getShip()).thenReturn(ship);
+        ShipAPI hit = enemy(new Vector2f(0f, 0f));
+        ShipAPI near = enemy(new Vector2f(100f, 0f));
+        stubShips(ship, hit, near);
+
+        listener.modifyDamageDealt(shot(gun, null), hit, damage(100f), new Vector2f(), true);
+
+        assertEquals(1, launchedLink(gun, hit, near).chainCount());
     }
 
     @Test

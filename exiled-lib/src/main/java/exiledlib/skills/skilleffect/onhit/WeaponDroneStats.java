@@ -3,6 +3,7 @@ package exiledlib.skills.skilleffect.onhit;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.StatBonus;
+import exiledlib.skills.skilleffect.weapon.BallisticAsEnergy;
 
 import java.util.List;
 import java.util.function.Function;
@@ -38,7 +39,7 @@ final class WeaponDroneStats {
             MutableShipStatsAPI::getBeamPDWeaponRangeBonus,
             MutableShipStatsAPI::getHitStrengthBonus);
 
-    private static final List<String> DYNAMIC_MODS = List.of(BeamHardFluxListener.HARD_FLUX_PERCENT_KEY);
+    private static final List<String> DYNAMIC_MODS = List.of(BeamHardFluxListener.HARD_FLUX_PERCENT_KEY, BallisticAsEnergy.KEY);
 
     private WeaponDroneStats() {
     }

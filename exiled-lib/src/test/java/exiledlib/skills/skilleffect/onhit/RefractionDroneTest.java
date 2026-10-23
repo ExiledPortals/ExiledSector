@@ -193,6 +193,20 @@ class RefractionDroneTest {
     }
 
     @Test
+    void aBallisticDroneStretchesItsBallisticRangeStat() {
+        StatBonus ballisticRange = new StatBonus();
+        when(droneShip.getMutableStats().getBallisticWeaponRangeBonus()).thenReturn(ballisticRange);
+        when(weapon.getType()).thenReturn(WeaponAPI.WeaponType.BALLISTIC);
+        when(weapon.getRange()).thenAnswer(invocation -> ballisticRange.computeEffective(600f));
+
+        drone.launch(chain, shieldedShipAtOrigin(100f), new Vector2f(100f, 0f), target(new Vector2f(-500f, 0f), new Vector2f()),
+                link(), 1000f);
+
+        assertEquals(1000f, weapon.getRange(), 0.01f);
+        assertEquals(0f, rangeBonus.getFlatBonus(), 0.01f);
+    }
+
+    @Test
     void aDroneThatAlreadyReachesTheRangeGetsNoExtraBonus() {
         rangeBonus.modifyFlat(RefractionDrone.RANGE_MATCH_MOD_ID, 50f);
 

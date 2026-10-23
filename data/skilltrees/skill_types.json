@@ -4676,84 +4676,18 @@
 			]
 		},
 		{
-			"id": "tania_ancient_frame",
-			"name": "Ancient Frame",
-			"icon": "graphics/icons/tania_ancient_frame.png",
+			"id": "tania_fafnir_breeches",
+			"name": "Fafnir Breeches",
+			"icon": "graphics/icons/tania_fafnir_breeches.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "RANGEFINDER_BALLISTIC_WEAPON_DAMAGE_PERCENT",
-					"magnitude": 5
-				},
-				{
-					"effect": "TARGETING_CORE_BALLISTIC_WEAPON_DAMAGE_PERCENT",
-					"magnitude": 5
-				},
-				{
-					"effect": "TARGETING_CORE_BALLISTIC_PROJECTILE_SPEED_PERCENT",
-					"magnitude": 15
-				},
-				{
-					"effect": "FIRE_CONTROL_FLUX_DISSIPATION_MULT",
-					"magnitude": 10
-				},
-				{
-					"effect": "POINT_DEFENSE_AI_DAMAGE_TO_FIGHTERS_MULT",
-					"magnitude": 25
-				},
-				{
-					"effect": "ECM_BALLISTIC_WEAPON_RANGE_PERCENT",
-					"magnitude": 5
-				},
-				{
-					"effect": "NAV_RELAY_TOP_SPEED_PERCENT",
-					"magnitude": 5
-				},
-				{
-					"effect": "BULKHEADS_EMP_DAMAGE_TAKEN_MULT",
-					"magnitude": -15
-				},
-				{
-					"effect": "BUILT_IN_BLAST_DOORS_HULL_PERCENT",
-					"magnitude": 15
-				},
-				{
-					"effect": "BUILT_IN_INSULATED_ENGINE_ACCELERATION_PERCENT",
-					"magnitude": 25
-				},
-				{
-					"effect": "BUILT_IN_INSULATED_ENGINE_TURN_RATE_PERCENT",
-					"magnitude": 15
-				},
-				{
-					"effect": "BUILT_IN_ARMORED_MOUNTS_RECOIL_MULT",
-					"magnitude": -15
-				},
-				{
-					"effect": "BUILT_IN_FUEL_TANKS_TOP_SPEED_PERCENT",
-					"magnitude": 10
-				},
-				{
-					"effect": "BUILT_IN_BERTHING_PEAK_CR_PERCENT",
-					"magnitude": 15
-				},
-				{
-					"effect": "BUILT_IN_SENSORS_DAMAGE_TO_HULL_PERCENT",
-					"magnitude": 5
-				},
-				{
-					"effect": "BUILT_IN_EFFICIENCY_OVERHAUL_CR_LOSS_MULT",
-					"magnitude": -10
-				},
-				{
-					"effect": "BUILT_IN_AUX_THRUSTERS_ZERO_FLUX_TOP_SPEED_PERCENT",
-					"magnitude": 10
+					"effect": "BALLISTIC_COUNTS_AS_ENERGY"
 				}
 			],
-			"description": "Navarchy hulls are older than most of the shipyards that service them, so their crews learned to wring more out of every standard hull mod bolted to them. Engineers lent by a Navarchy commission teach the crew to rework this ship's hull mods the same way.",
+			"description": "Fafnir cannons fire conventional shells on Gauss-rifle propulsion fed straight from the flux grid. Fafnir breech schematics salvaged from Navarchy wrecks show the crew how to wire this ship's ballistic mounts onto the same grid, so they draw on everything tuned for its energy weapons.",
 			"tags": [
-				"weapons",
-				"speed"
+				"weapons"
 			]
 		},
 		{

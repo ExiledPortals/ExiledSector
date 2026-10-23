@@ -67,11 +67,12 @@ the `MODULE_*` effects at full strength.
 each weapon's maximum ammo once; cells above their maximum are clamped first so armor carried from an earlier
 engagement isn't raised again.
 
-## Hull mod interactions
+## Ballistic counts as energy
 
-`HullModInteractionEffect` (Ancient Frame) applies each bonus only while its hull mod is installed, or for the
-built-in lines only while it is an s-mod. Phantom hull mods from nodes count as installed. The Auxiliary Thrusters
-line is checked every combat frame against the zero-flux boost.
+`BALLISTIC_COUNTS_AS_ENERGY` (Fafnir Breeches) makes `BallisticEnergyMirror` copy every energy and non-beam energy
+weapon effect from the ship's sources into a ballistic one before diminishing returns. Energy checks in Dynamic Grid,
+energy range per sensor strength, Disintegration, Ion Arc and energy chains also accept ballistic weapons
+(`BallisticAsEnergy`). Vanilla and other mods' energy bonuses don't reach ballistics.
 
 ## Rise From the Ashes
 

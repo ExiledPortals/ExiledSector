@@ -130,6 +130,12 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
             }
         }
     },
+    BALLISTIC_COUNTS_AS_ENERGY {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(BallisticAsEnergy.KEY).modifyFlat(modId, 1f);
+        }
+    },
     MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT(MediumEnergySlotRangeListener.RANGE_FLAT_KEY,
             MediumEnergySlotRangeListener.class, ship -> new MediumEnergySlotRangeListener()),
     NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT(InertialSuperchargerListener.DAMAGE_PERCENT_PER_SPEED_KEY,
@@ -188,6 +194,11 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     private static void applySensorRange(MutableShipStatsAPI stats, String modId, float magnitude) {
         float rangeBonus = stats.getSensorStrength().getModifiedValue() * magnitude;
         WeaponStatFamily.RANGE.target(WeaponScope.ENERGY).apply(stats, modId, StatMode.FLAT, rangeBonus);
+        if (BallisticAsEnergy.active(stats)) {
+            WeaponStatFamily.RANGE.target(WeaponScope.BALLISTIC).apply(stats, modId, StatMode.FLAT, rangeBonus);
+        } else {
+            WeaponStatFamily.RANGE.target(WeaponScope.BALLISTIC).remove(stats, modId);
+        }
     }
 
     @Override
