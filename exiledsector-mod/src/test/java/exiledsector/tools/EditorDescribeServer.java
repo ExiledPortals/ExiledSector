@@ -3,6 +3,10 @@ package exiledsector.tools;
 import exiledlib.i18n.HeadlessGameText;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.RealCatalogue;
+import exiledsector.ExiledSector;
+import exiledsector.charts.StarChartsDomain;
+import exiledsector.items.HullUpgradesDomain;
+import exiledsector.skills.SkillTreeDomain;
 import exiledsector.skills.npc.RealSkillData;
 
 import java.io.BufferedReader;
@@ -11,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 public final class EditorDescribeServer {
 
@@ -20,6 +25,7 @@ public final class EditorDescribeServer {
     public static void main(String[] args) throws Exception {
         PrintStream protocolOut = new PrintStream(new FileOutputStream(FileDescriptor.out), true, StandardCharsets.UTF_8);
         System.setOut(System.err);
+        ExiledSector.install(List.of(new SkillTreeDomain(), new HullUpgradesDomain(), new StarChartsDomain()));
         try (HeadlessGameText ignored = HeadlessGameText.install(() -> true)) {
             I18n.install(RealCatalogue.english());
             RealSkillData.load();
