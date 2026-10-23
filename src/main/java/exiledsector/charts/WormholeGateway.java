@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
+import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
 import exiledsector.i18n.I18n;
@@ -28,7 +29,7 @@ public class WormholeGateway extends BaseIndustry {
 
     public static Status statusAt(SectorEntityToken dockedAt) {
         MarketAPI market = dockedAt == null ? null : dockedAt.getMarket();
-        if (market == null || !market.isPlayerOwned()) {
+        if (market == null || !market.isPlayerOwned() && !Factions.PLAYER.equals(market.getFactionId())) {
             return Status.NONE;
         }
         Industry gateway = market.getIndustry(ID);
