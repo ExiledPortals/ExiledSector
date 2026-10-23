@@ -34,7 +34,7 @@ The single line is `CHART_BREACH_CHANCE` at 100. The three tuning lines only rol
 1. [x] Breach terrain plugin with growth and the fuel, CR, sensor and burn effects (`BreachTerrainPlugin`, `BreachRules`). Sensor and burn apply to every fleet; the supply increase (a `BreachSupplyBuff` on each ship, refreshed each tick) and the fuel drain apply only to the player fleet.
 2. [x] Breach cache spawning by depth and breach-touched POIs (`ChartSites.addCache`, rarity through `LootSource.modifiersFor`).
 3. [x] Core entity, closing, core reward (`BreachCoreDialog`, salvage from the station loot tables plus items from the `exiledSector_chart_breach_core` salvage rule).
-4. [x] Visuals: vanilla `fx_radial` and `wormhole_corona`/`wormhole_ring` sprites, tinted, on the field, map and core. Placeholder quality.
+4. [x] Visuals (reworked 2026-10-24 on parallel-work, after RAT's Primordial Sea): the field is a pitch-black tear (`BreachFieldRenderer`, TERRAIN_1, under planets and fleets) with dark cracks from vanilla `emp_arcs` fading outward and a near-black aurora rim (the doctrine socket belt, `AuroraBeltRenderer.renderShaded`). The core is vanilla's black hole look: a black centre, a pink `star_halo` corona and a spinning `wormhole_ring`. The map still draws a tinted `fx_radial` glow. Later the black backdrop becomes the atlas hyperspace view, clipped to the tear. Not yet checked in game.
 5. [x] Chart modifier lines, strings (en and zh_CN).
 
 ## Open questions

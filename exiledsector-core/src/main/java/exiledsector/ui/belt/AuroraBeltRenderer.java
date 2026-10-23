@@ -20,6 +20,16 @@ public final class AuroraBeltRenderer {
 
     public static void render(SpriteAPI texture, RadialBand band, Color color, float alphaMult, float elapsedSeconds,
                               float detailScale) {
+        render(texture, band, color, alphaMult, elapsedSeconds, detailScale, GL11.GL_ONE);
+    }
+
+    public static void renderShaded(SpriteAPI texture, RadialBand band, Color color, float alphaMult, float elapsedSeconds,
+                                    float detailScale) {
+        render(texture, band, color, alphaMult, elapsedSeconds, detailScale, GL11.GL_ONE_MINUS_SRC_ALPHA);
+    }
+
+    private static void render(SpriteAPI texture, RadialBand band, Color color, float alphaMult, float elapsedSeconds,
+                               float detailScale, int blendDstFactor) {
         float phaseRad = RadialBandMaths.phaseRad(elapsedSeconds, PHASE_DEG_PER_SEC);
 
         float circumference = RadialBandMaths.circumference(band);
@@ -33,7 +43,7 @@ public final class AuroraBeltRenderer {
         float texPerSegment = tileCount / segments;
         float wobble = RadialBandMaths.wobbleAmplitude(band, MAX_WOBBLE_FREQUENCY);
 
-        RadialBandGL.begin(texture, band.center().x, band.center().y, GL11.GL_SRC_ALPHA, GL11.GL_ONE, color, alphaMult);
+        RadialBandGL.begin(texture, band.center().x, band.center().y, GL11.GL_SRC_ALPHA, blendDstFactor, color, alphaMult);
 
         for (int iter = 0; iter < 2; iter++) {
             float bandIndex = iter == 0 ? 1f : 0f;

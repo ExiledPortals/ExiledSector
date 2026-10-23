@@ -43,15 +43,10 @@ public class BreachTerrainPlugin extends BaseTerrain {
     static final float PERCENT = 100f;
     static final float RENDER_MARGIN = 500f;
     static final float TOOLTIP_PAD = 10f;
-    static final float SWIRL_DEGREES_PER_SECOND = 6f;
+    static final float ANIMATION_WRAP_SECONDS = 3600f;
     static final float BODY_ALPHA = 0.45f;
-    static final float SWIRL_ALPHA = 0.6f;
-    static final float SWIRL_SCALE = 2.3f;
-    static final float CORE_GLOW_SHARE = 0.35f;
     static final float MAP_ALPHA = 0.5f;
     static final Color BODY_COLOUR = new Color(120, 60, 200);
-    static final Color SWIRL_COLOUR = new Color(200, 90, 255);
-    static final Color CORE_COLOUR = new Color(255, 200, 255);
     private static final Logger LOG = Logger.getLogger(BreachTerrainPlugin.class);
 
     public record Params(String runId, int tier, BreachRules.Growth growth, List<BreachRules.CacheSite> caches, float coreItemMult, long seed) {
@@ -71,9 +66,8 @@ public class BreachTerrainPlugin extends BaseTerrain {
     private boolean[] cacheFormed;
     private boolean closed;
     private transient float daysSinceTick;
-    private transient float swirlAngle;
+    private transient float elapsedSeconds;
     private transient SpriteAPI bodySprite;
-    private transient SpriteAPI swirlSprite;
 
     @Override
     public void init(String terrainId, SectorEntityToken entity, Object param) {
@@ -153,7 +147,7 @@ public class BreachTerrainPlugin extends BaseTerrain {
             return;
         }
         super.advance(amount);
-        swirlAngle = (swirlAngle + SWIRL_DEGREES_PER_SECOND * amount) % 360f;
+        elapsedSeconds = (elapsedSeconds + amount) % ANIMATION_WRAP_SECONDS;
         daysSinceTick += Global.getSector().getClock().convertToDays(amount);
         if (daysSinceTick < TICK_DAYS) {
             return;
@@ -324,27 +318,15 @@ public class BreachTerrainPlugin extends BaseTerrain {
 
     @Override
     public EnumSet<CampaignEngineLayers> getActiveLayers() {
-        return EnumSet.of(CampaignEngineLayers.TERRAIN_7);
+        return EnumSet.of(CampaignEngineLayers.TERRAIN_1);
     }
 
     @Override
     public void render(CampaignEngineLayers layer, ViewportAPI viewport) {
-        if (closed || entity == null || !loadSprites()) {
+        if (closed || entity == null) {
             return;
         }
-        Vector2f centre = entity.getLocation();
-        float alpha = viewport.getAlphaMult();
-        drawBody(centre.x, centre.y, radius * 2f, alpha);
-        swirlSprite.setSize(radius * SWIRL_SCALE, radius * SWIRL_SCALE);
-        swirlSprite.setColor(SWIRL_COLOUR);
-        swirlSprite.setAlphaMult(alpha * SWIRL_ALPHA);
-        swirlSprite.setAdditiveBlend();
-        swirlSprite.setAngle(swirlAngle);
-        swirlSprite.renderAtCenter(centre.x, centre.y);
-        swirlSprite.setAngle(-swirlAngle * 1.5f);
-        swirlSprite.setSize(radius * SWIRL_SCALE * CORE_GLOW_SHARE * 2f, radius * SWIRL_SCALE * CORE_GLOW_SHARE * 2f);
-        swirlSprite.setColor(CORE_COLOUR);
-        swirlSprite.renderAtCenter(centre.x, centre.y);
+        BreachFieldRenderer.render(entity.getLocation(), radius, viewport.getAlphaMult(), elapsedSeconds, viewport.getViewMult());
     }
 
     @Override
@@ -365,17 +347,15 @@ public class BreachTerrainPlugin extends BaseTerrain {
     }
 
     private boolean loadSprites() {
-        if (bodySprite != null && swirlSprite != null) {
+        if (bodySprite != null) {
             return true;
         }
         try {
             bodySprite = Global.getSettings().getSprite("misc", "fx_radial");
-            swirlSprite = Global.getSettings().getSprite("misc", "wormhole_corona");
         } catch (RuntimeException e) {
             bodySprite = null;
-            swirlSprite = null;
         }
-        return bodySprite != null && swirlSprite != null;
+        return bodySprite != null;
     }
 
     @Override
