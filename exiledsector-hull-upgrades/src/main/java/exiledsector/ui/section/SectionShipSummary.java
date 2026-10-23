@@ -6,6 +6,7 @@ import exiledlib.i18n.Style;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
 import exiledsector.items.HullUpgradeEffectSource;
+import exiledsector.items.HullUpgradePoints;
 import exiledsector.items.Item;
 import exiledlib.skills.EffectContribution;
 import exiledsector.skills.ShipSections;
@@ -24,13 +25,13 @@ public final class SectionShipSummary implements ShipSummaryPart {
 
     @Override
     public List<EffectContribution> contributions(ShipSkillData shipData, ShipVariantAPI variant, HullSize hullSize) {
-        return HullUpgradeEffectSource.contributions(shipData, sections(shipData, variant), hullSize);
+        return HullUpgradeEffectSource.contributions(sections(shipData, variant), hullSize);
     }
 
     @Override
     public StyledText line(ShipSkillData shipData, ShipVariantAPI variant) {
-        int hullUpgradePoints = shipData.getHullUpgradePoints();
-        if (hullUpgradePoints <= 0) {
+        int hullUpgradePoints = HullUpgradePoints.of(shipData);
+        if (shipData.getUnlockedSocketTypeIds().isEmpty() && hullUpgradePoints <= HullUpgradePoints.STARTING_POINTS) {
             return null;
         }
         List<StyledText> socketTexts = new ArrayList<>();

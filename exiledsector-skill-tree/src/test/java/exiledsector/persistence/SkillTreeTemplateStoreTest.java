@@ -27,7 +27,7 @@ import static org.mockito.Mockito.when;
 
 class SkillTreeTemplateStoreTest {
 
-    private static final List<TemplateStep> STEPS = List.of(new TemplateStep("armor_1", null), new TemplateStep("slot_2", "hull"));
+    private static final List<TemplateStep> STEPS = List.of(new TemplateStep("armor_1", null), new TemplateStep("slot_2", "affinity_low_tech"));
 
     private MockedStatic<Global> globalMock;
     private Map<String, Object> persistentData;

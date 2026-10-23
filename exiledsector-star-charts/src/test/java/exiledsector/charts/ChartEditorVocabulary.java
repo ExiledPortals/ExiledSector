@@ -30,7 +30,7 @@ public final class ChartEditorVocabulary {
             ChartTier fallback = ChartTier.fallback(tier);
             defaults.add("{\"tier\": " + tier + ", \"fleetsMin\": " + fallback.fleetsMin() + ", \"fleetsMax\": " + fallback.fleetsMax()
                     + ", \"levelMin\": " + fallback.levelMin() + ", \"levelMax\": " + fallback.levelMax()
-                    + ", \"wardenSize\": " + fallback.wardenSize() + "}");
+                    + ", \"bossSize\": " + fallback.bossSize() + "}");
         }
         return defaults;
     }

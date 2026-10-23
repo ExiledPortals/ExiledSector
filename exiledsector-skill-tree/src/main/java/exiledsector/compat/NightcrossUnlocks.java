@@ -10,6 +10,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledlib.compat.CompatTarget;
+import exiledsector.loot.BattleEngagement;
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public final class NightcrossUnlocks {
     static final String PROTOTYPE_FOUND_FLAG = "$exiledSector_ancientPrototypeFound";
     static final String LUNAR_FLEET_DEFEATED_SECTOR_FLAG = "$na_defeated_macula";
     static final String LUNAR_FLEET_DEFEATED_PLAYER_FLAG = "$defeatedLunarFleet";
+    static final String LUNAR_FLEET_MEMORY_KEY = "$SDFStargazerLunarFleet";
     static final String PROTOTYPE_DEFENDERS_DEFEATED_FLAG = "$na_defeatedAutoUnitFleet";
     static final List<String> PROTOTYPE_WRECK_IDS = List.of("na_mare_x_wreck", "na_sop_x_wreck", "na_macula_x_wreck");
     static final Set<String> PROTOTYPE_HULL_IDS = Set.of("na_mare_proto", "na_sop_proto", "na_macula_proto");
@@ -30,22 +32,16 @@ public final class NightcrossUnlocks {
     private NightcrossUnlocks() {
     }
 
-    public static boolean isPascalVisited(SectorAPI sector) {
+    public static boolean pascalVisitedBeforeAnchors(SectorAPI sector) {
         if (sector == null) {
             return false;
         }
-        if (sector.getMemoryWithoutUpdate().getBoolean(PASCAL_VISITED_FLAG)) {
-            return true;
-        }
+        MemoryAPI sectorMemory = sector.getMemoryWithoutUpdate();
         StarSystemAPI pascal = sector.getStarSystem(PASCAL_SYSTEM_NAME);
-        if (pascal == null) {
+        if (sectorMemory != null && sectorMemory.getBoolean(PASCAL_VISITED_FLAG)) {
             return true;
         }
-        if (pascal.isEnteredByPlayer()) {
-            record(sector, PASCAL_VISITED_FLAG, "the player has entered Pascal");
-            return true;
-        }
-        return false;
+        return pascal == null ? NightcrossCompat.isModEnabled() : pascal.isEnteredByPlayer();
     }
 
     public static boolean isLunarFleetDefeated(SectorAPI sector) {
@@ -55,6 +51,20 @@ public final class NightcrossUnlocks {
         MemoryAPI playerMemory = sector.getPlayerMemoryWithoutUpdate();
         return sector.getMemoryWithoutUpdate().getBoolean(LUNAR_FLEET_DEFEATED_SECTOR_FLAG)
                 || playerMemory != null && playerMemory.getBoolean(LUNAR_FLEET_DEFEATED_PLAYER_FLAG);
+    }
+
+    public static boolean lunarFleetBeatenIn(BattleEngagement engagement) {
+        if (engagement == null || engagement.battle() == null || engagement.lostEnemies().isEmpty()) {
+            return false;
+        }
+        for (FleetMemberAPI lost : engagement.lostEnemies()) {
+            CampaignFleetAPI sourceFleet = lost == null ? null : engagement.battle().getSourceFleet(lost);
+            if (sourceFleet != null && sourceFleet.getMemoryWithoutUpdate() != null
+                    && sourceFleet.getMemoryWithoutUpdate().getBoolean(LUNAR_FLEET_MEMORY_KEY)) {
+                return sourceFleet.getFleetData() == null || engagement.lostEnemies().containsAll(sourceFleet.getFleetData().getMembersListCopy());
+            }
+        }
+        return false;
     }
 
     public static boolean isAncientPrototypeFound(SectorAPI sector) {
@@ -69,7 +79,6 @@ public final class NightcrossUnlocks {
         if (sector == null) {
             return;
         }
-        isPascalVisited(sector);
         if (isAncientPrototypeFound(sector)) {
             return;
         }

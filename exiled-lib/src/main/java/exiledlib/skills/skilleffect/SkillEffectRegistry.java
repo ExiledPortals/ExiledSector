@@ -14,7 +14,7 @@ import exiledlib.skills.skilleffect.readiness.ReadinessSkillEffect;
 import exiledlib.skills.skilleffect.shield.ShieldSkillEffect;
 import exiledlib.skills.skilleffect.shipsystem.ShipSystemSkillEffect;
 import exiledlib.skills.skilleffect.special.SpecialSkillEffect;
-import exiledlib.skills.skilleffect.stationmodule.StationModuleSkillEffect;
+import exiledlib.skills.skilleffect.hullmodule.StationModuleSkillEffect;
 import exiledlib.skills.skilleffect.weapon.ScopedWeaponEffect;
 import exiledlib.skills.skilleffect.weapon.WeaponSkillEffect;
 

@@ -67,7 +67,7 @@ class SaveFixtureTest {
     @SuppressWarnings("unchecked")
     private static Map<String, Object> load() throws IOException {
         SettingsAPI settings = mock(SettingsAPI.class);
-        when(settings.getIndustrySpec(WormholeGateway.ID)).thenReturn(mock(IndustrySpecAPI.class));
+        when(settings.getIndustrySpec(WormholeGateway.INDUSTRY_ID)).thenReturn(mock(IndustrySpecAPI.class));
         try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
             global.when(Global::getSettings).thenReturn(settings);
             return (Map<String, Object>) xstream().fromXML(Files.readString(FIXTURE, StandardCharsets.UTF_8));

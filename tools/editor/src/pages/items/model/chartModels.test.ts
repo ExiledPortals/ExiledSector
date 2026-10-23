@@ -42,7 +42,7 @@ const vocabulary = buildVocabulary({
     { id: 'battle', insideSystem: false },
   ],
   chartLootDropTypes: ['weapon', 'resource', 'blueprint', 'ai_core'],
-  chartLootScopes: ['cache', 'domain', 'station', 'derelict', 'fleet', 'warden'],
+  chartLootScopes: ['cache', 'domain', 'station', 'derelict', 'fleet', 'boss'],
   chartColonyItemGroups: ['rare_tech'],
 });
 
@@ -210,14 +210,14 @@ describe('star chart definitions', () => {
 });
 
 describe('review findings', () => {
-  const withDefaults = { ...vocabulary, chartTierDefaults: [{ tier: 10, fleetsMin: 5, fleetsMax: 7, levelMin: 40, levelMax: 43, wardenSize: 0 }] };
+  const withDefaults = { ...vocabulary, chartTierDefaults: [{ tier: 10, fleetsMin: 5, fleetsMax: 7, levelMin: 40, levelMax: 43, bossSize: 0 }] };
 
   it('compares blank tier cells against the built-in values', () => {
-    const model = chartTable(CHART_TIER_SPEC, 'tier,fleets_min,fleets_max,boss,warden_size,level_min,level_max\n10,,3,yes,,,35\n');
+    const model = chartTable(CHART_TIER_SPEC, 'tier,fleets_min,fleets_max,boss,boss_size,level_min,level_max\n10,,3,yes,,,35\n');
     expect(CHART_TIER_SPEC.warnings(model, withDefaults).slice(0, 3)).toEqual([
       'tier 10: fleets_max is below fleets_min (built-in 5), so it is raised to fleets_min',
       'tier 10: level_min (40) is above level_max (35), counting built-in values for blanks, so the game swaps them',
-      'tier 10: boss is yes but warden_size is blank and the built-in value is 0, so there is no boss',
+      'tier 10: boss is yes but boss_size is blank and the built-in value is 0, so there is no boss',
     ]);
   });
 
@@ -340,14 +340,14 @@ describe('chart tables', () => {
       'goods_again,resource,,goods,,,,\r\n' +
       'fleet_weapons1,weapon,fleet,weapons1,random,1,1,\r\n' +
       'bad_scope,weapon,vault,weapons1,random,1,1,\r\n' +
-      'no_mode,ai_core,warden,weapons1,,2,20,\r\n' +
+      'no_mode,ai_core,boss,weapons1,,2,20,\r\n' +
       'coins,currency,,basic,,,,\r\n' +
       'colony,resource,,rare_tech,,,,\r\n';
     const model = chartTable(CHART_LOOT_SPEC, text);
     expect(serializeChartTable(model, CHART_LOOT_SPEC.columns)).toBe(text);
     expect(CHART_LOOT_SPEC.issues(model, vocabulary)).toEqual([
       'goods_again: group goods already belongs to weapon',
-      'bad_scope: scope must be one of cache, domain, station, derelict, fleet, warden',
+      'bad_scope: scope must be one of cache, domain, station, derelict, fleet, boss',
       'no_mode: a base entry needs a mode, random or value',
       'coins: drop_type must be one of weapon, resource, blueprint, ai_core',
       "colony: group rare_tech holds colony items, which only come from the run's single capped roll",
@@ -361,7 +361,7 @@ describe('chart tables', () => {
   it('mirrors the tier loader', () => {
     const model = chartTable(
       CHART_TIER_SPEC,
-      'tier,fleet_size,fleets_min,fleets_max,boss,warden_size,level_min,level_max\n' +
+      'tier,fleet_size,fleets_min,fleets_max,boss,boss_size,level_min,level_max\n' +
         '1,60,2,1,yes,0,30,28\n' +
         '16,x,1.5,3,maybe,,,\n',
     );
@@ -373,7 +373,7 @@ describe('chart tables', () => {
     expect(CHART_TIER_SPEC.warnings(model, vocabulary)).toEqual([
       'tier 1: fleets_max is below fleets_min, so it is raised to fleets_min',
       'tier 1: level_min (30) is above level_max (28), counting built-in values for blanks, so the game swaps them',
-      'tier 1: boss is yes but warden_size is 0, so there is no boss',
+      'tier 1: boss is yes but boss_size is 0, so there is no boss',
       'tier 16: fleets_min 1.5 is rounded to a whole number',
       'No row for tier 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15; the game uses built-in values for them',
     ]);

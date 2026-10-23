@@ -14,7 +14,7 @@ Exiled Sector adds three major modules: a skill tree for every ship, hull upgrad
 
 ### The skill tree
 
-Press the Skill Tree button in the refit screen and every ship in your fleet gets a tree of its own, over 300 nodes of armour, flux, guns and questionable engineering decisions. Ships level up in combat and every level buys a node, so your veteran Lasher eventually stops being a Lasher and starts being a problem.
+Press the Skill Tree button in the refit screen and every ship in your fleet gets a tree of its own, over 300 nodes of armour, flux, guns and questionable engineering decisions. Ships level up in combat and every level buys a node, so your veteran Lasher eventually stops being a Lasher and starts being a problem. The small nodes along the tree's main paths grant Low Tech, High Tech or Midline affinity, which adds up across the ship into hull, armour, flux and cargo bonuses.
 
 <details>
 <summary>The skill tree</summary>
@@ -23,7 +23,7 @@ Press the Skill Tree button in the refit screen and every ship in your fleet get
 
 </details>
 
-You might have to travel a bit for the juicy nodes. Slot a Wormhole Anchor into a Subroutine Socket and it tears a hole out past the edge of the tree, to where the sensible nodes stop. Ctrl+click the socket and in you go.
+You might have to travel a bit for the juicy nodes. Slot a Wormhole Anchor into a Subroutine Socket and it tears a hole out past the edge of the tree, to where the sensible nodes stop. Ctrl+click the socket and in you go. Anchors only turn up once you have the Janus Device, unless you allow them earlier in the mod settings. Story-locked areas only drop their anchors once you can open them, except Nightcross, whose anchor is what opens it. An area turned on without its mod, or whose faction Nexerelin has eliminated, has its anchor in salvage and ruins.
 
 <details>
 <summary>Travelling through a Wormhole Anchor</summary>
@@ -63,12 +63,16 @@ Running Random Assortment of Things, Nightcross Armory, Navarchy of Tania or LOS
 
 Nobody has designed a new hull since the Collapse, and the Domain's blueprints sit behind DRM older than your grandmother's grandmother. So your crew looks at other people's ships, decides they had some good ideas, and welds those ideas onto yours. 
 
-Once you reach level 15, Hull Upgrades turn up in wrecks and salvage. Install one, choose a section of the ship, and that section takes hull items of its own.
+Every ship starts with one Hull Upgrade point. Spend it on a section of the ship, and that section takes hull items of its own.
+
+By default, Refit Schematics turn up in wrecks and salvage once you reach level 15, and each one raises a ship by a point, from Scrapped to Domain, up to five.
+
+Switch Hull Upgrade Points to Star Chart Progress in LunaLib settings and every ship gains a point instead as you clear tier 5, 10 and 15 Star Charts.
 
 <details>
-<summary>Installing a Hull Upgrade and unlocking a section</summary>
+<summary>Unlocking a section</summary>
 
-<img src="graphics/description/hull_upgrades.gif" alt="Installing a Hull Upgrade and unlocking a section">
+<img src="graphics/description/hull_upgrades.gif" alt="Unlocking a section">
 
 </details>
 
@@ -252,11 +256,11 @@ Numbers are green when they help your ship and orange when they hurt it.
 <details>
 <summary><b>How do NPC fleets get skill trees?</b></summary>
 
-Every fleet can carry skill trees, your own faction's and your allies' included. Flagships and ships with officers always get one, and other ships have a 30% chance; stations, civilian and mothballed ships never do. On the regular star map NPC trees mirror your fleet: each NPC ship picks one of your combat ships at random and gets 80 to 120% of its tree power (its level plus the paid nodes it has allocated) in nodes. Since the level counts, leaving nodes unallocated won't make enemies any easier.
+Every fleet can carry skill trees, your own faction's and your allies' included. Flagships, ships with officers and combat stations (your colonies' included) always get one, and other ships have a 30% chance; civilian and mothballed ships never do. On the regular star map NPC trees mirror your fleet: each NPC ship picks one of your combat ships at random and gets 80 to 120% of its tree power (its level plus the paid nodes it has allocated) in nodes. Since the level counts, leaving nodes unallocated won't make enemies any easier.
 
 The mirror stops at a cap. Pirates never pass 15 nodes, faction fleets 25 and AI fleets 35, so a ship you keep levelling eventually outgrows them. Bounty targets climb from their cap toward 25 as bounties get harder, and their flagship gets 3 more. An optional bonus multiplier, off by default, can also make NPC node bonuses grow with your fleet's average tree power, again only up to that fleet's cap. Only bonuses scale: drawbacks stay as written, and campaign stats such as sensors, cargo and burn level don't grow.
 
-Star Chart fleets ignore your fleet when sizing their trees. Tier 1 ships get 26 to 29 nodes, climbing to 47 to 50 at tier 15, and warden fleets get one more. Higher tiers also bring more and larger fleets, more and better officers and better-quality ships, before the chart's own modifiers add more. Chart fleets have no cap, so if you turn the bonus multiplier on it can reach its full maximum there. All of this, the multiplier included, can be tuned on the **NPC Scaling** tab in LunaLib settings.
+Star Chart fleets ignore your fleet when sizing their trees. Tier 1 ships get 26 to 29 nodes, climbing to 47 to 50 at tier 15, and Star Chart Bosses get one more. Higher tiers also bring more and larger fleets, more and better officers and better-quality ships, before the chart's own modifiers add more. Chart fleets have no cap, so if you turn the bonus multiplier on it can reach its full maximum there. All of this, the multiplier included, can be tuned on the **NPC Scaling** tab in LunaLib settings.
 
 NPC ships don't all build the same way. Each faction leans towards its own themes: the Hegemony towards armour and ballistics, Tri-Tachyon towards flux, energy and phase, pirates towards speed and missiles. A ship's own system and defence steer it too. Bonuses to armour, hull, flux, speed and range only partly count once they pass a threshold, on your ships and theirs, so each bonus past the threshold adds less. To skip NPC trees entirely, switch them off on the NPC Scaling tab.
 
@@ -280,14 +284,14 @@ If you'd rather skip all of this, LunaLib settings can reveal hidden nodes, or s
 <details>
 <summary><b>When do Hull Upgrades and Star Charts start?</b></summary>
 
-Exiled Sector is meant as an endgame expansion, so the extra modules wait until the skill tree has had time to sink in. Hull Upgrades and unique hull items start dropping once your character (not your ship) reaches level 15. Star Charts need a Wormhole Gateway, which you can only build once the Janus Device gives you access to the Gate network. With Ashes of the Domain installed, you unlock it on the Vaults of Knowledge tree instead. Hull Upgrades can be switched off in LunaLib settings.
+Exiled Sector is meant as an endgame expansion, so the extra modules wait until the skill tree has had time to sink in. Refit Schematics and unique hull items start dropping once your character (not your ship) reaches level 15. Star Charts need a Wormhole Gateway, which you can only build once the Janus Device gives you access to the Gate network. With Ashes of the Domain installed, you unlock it on the Vaults of Knowledge tree instead. Hull Upgrades can be switched off in LunaLib settings.
 
 </details>
 
 <details>
 <summary><b>How do Star Charts get harder?</b></summary>
 
-Each tier brings more fleets, bigger fleets and better ships, crewed by more and better officers, with the ships themselves further along their skill trees. From tier 4 every chart is also guarded by a warden, a boss fleet that grows with each tier. A chart's modifiers push it further still: some add fleet size, quality or strength, others make the warden bigger. Higher tiers drop more to make up for it, including a small chance of colony items from tier 6.
+Each tier brings more fleets, bigger fleets and better ships, crewed by more and better officers, with the ships themselves further along their skill trees. Every chart is also guarded by a Star Chart Boss, a large fleet that grows with each tier. A chart's modifiers push it further still: some add fleet size, quality or strength, others make the boss bigger. Higher tiers drop more to make up for it, including a small chance of colony items from tier 6.
 
 A few tiers for comparison, with numbers still being balanced:
 
@@ -298,7 +302,7 @@ A few tiers for comparison, with numbers still being balanced:
 | Fleet quality | 30 | 45 | 75 | 100 |
 | Ship skill tree level | 26–29 | 31–34 | 40–43 | 47–50 |
 | Officer level / extra officers | +0 / +0 | +1 / +1 | +3 / +3 | +5 / +5 |
-| Warden fleet size | none | 300 | 660 | 1100 |
+| Boss fleet size | 180 | 300 | 660 | 1100 |
 | Colony item chance | 0 | 0 | 1.5% | 4% |
 
 Battles outside charts drop charts up to tier 6, at a tier set by the strongest NPC ship you beat. Past that you climb from inside: finishing a chart's objective drops another chart, often a tier higher, and chart fleets and salvage drop charts at the chart's own tier.

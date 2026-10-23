@@ -16,11 +16,13 @@ import exiledsector.ui.cargo.AnchorLook;
 import exiledsector.ui.cargo.AnimatedItemIcons;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
+import lunalib.lunaSettings.LunaSettings;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.awt.Color;
@@ -37,6 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -47,12 +51,15 @@ class WormholeAnchorTest {
     private static final String HEGEMONY_ANCHOR = "wormhole_anchor_hegemony";
     private static final String ABYSS_ANCHOR = "wormhole_anchor_abyss";
     private static final String BEACON = "wormhole_anchor_exotech";
+    private MockedStatic<LunaSettings> lunaSettingsMock;
 
     private final CargoAPI cargo = mock(CargoAPI.class);
     private SkillNode socket;
 
     @BeforeEach
     void setUp() throws Exception {
+        lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean(anyString(), eq(AnchorJanusGate.ALLOW_BEFORE_JANUS_FIELD_ID))).thenReturn(true);
         SkillTree.clearNodes();
         SkillType socketType = new SkillType.Builder("socket_type", "Socket", "", SkillTier.SOCKET).build();
         SkillType wormholeType = new SkillType.Builder("wormhole_exit_type", "Wormhole Exit", "", SkillTier.WORMHOLE_EXIT).build();
@@ -69,6 +76,7 @@ class WormholeAnchorTest {
 
     @AfterEach
     void tearDown() {
+        lunaSettingsMock.close();
         SkillTree.clearNodes();
         WormholeAnchorDefinitions.clear();
         ItemDefinitions.clear();

@@ -18,7 +18,7 @@ import java.util.function.Predicate;
 
 public record ShipProfile(HullSize hullSize, ShieldAPI.ShieldType shieldType, int fighterBays,
                           Set<WeaponKind> weaponKinds, boolean flagship, float baseArmor, boolean phaseHull,
-                          boolean limitedSystemCharges, boolean onlyBuiltInWings) {
+                          boolean limitedSystemCharges, boolean onlyBuiltInWings, boolean station) {
 
     public ShipProfile {
         weaponKinds = weaponKinds == null ? Set.of() : Set.copyOf(weaponKinds);
@@ -34,12 +34,17 @@ public record ShipProfile(HullSize hullSize, ShieldAPI.ShieldType shieldType, in
         this(hullSize, shieldType, fighterBays, weaponKinds, flagship, baseArmor, phaseHull, limitedSystemCharges, false);
     }
 
+    public ShipProfile(HullSize hullSize, ShieldAPI.ShieldType shieldType, int fighterBays, Set<WeaponKind> weaponKinds,
+                       boolean flagship, float baseArmor, boolean phaseHull, boolean limitedSystemCharges, boolean onlyBuiltInWings) {
+        this(hullSize, shieldType, fighterBays, weaponKinds, flagship, baseArmor, phaseHull, limitedSystemCharges, onlyBuiltInWings, false);
+    }
+
     public static ShipProfile of(FleetMemberAPI member) {
         ShipHullSpecAPI hullSpec = member.getHullSpec();
         return new ShipProfile(hullSpec.getHullSize(), FittedShipProfile.fittedShieldType(hullSpec.getShieldType(), member.getVariant()),
                 fighterBays(member, hullSpec),
                 fittedWeaponKinds(member.getVariant()), member.isFlagship(), hullSpec.getArmorRating(),
-                hullSpec.isPhase(), ShipSystemCharges.limited(hullSpec), ShipFacts.onlyBuiltInWings(hullSpec));
+                hullSpec.isPhase(), ShipSystemCharges.limited(hullSpec), ShipFacts.onlyBuiltInWings(hullSpec), member.isStation());
     }
 
     public ShipFacts facts(Predicate<String> hasHullMod) {
@@ -56,7 +61,22 @@ public record ShipProfile(HullSize hullSize, ShieldAPI.ShieldType shieldType, in
     }
 
     private static int fighterBays(FleetMemberAPI member, ShipHullSpecAPI hullSpec) {
-        return member.getStats() != null ? member.getNumFlightDecks() : hullSpec.getFighterBays();
+        int ownBays = member.getStats() != null ? member.getNumFlightDecks() : hullSpec.getFighterBays();
+        return member.isStation() ? ownBays + moduleFighterBays(member.getVariant()) : ownBays;
+    }
+
+    private static int moduleFighterBays(ShipVariantAPI variant) {
+        if (variant == null || variant.getModuleSlots() == null) {
+            return 0;
+        }
+        int moduleBays = 0;
+        for (String slotId : variant.getModuleSlots()) {
+            ShipVariantAPI moduleVariant = variant.getModuleVariant(slotId);
+            if (moduleVariant != null && moduleVariant.getHullSpec() != null) {
+                moduleBays += moduleVariant.getHullSpec().getFighterBays();
+            }
+        }
+        return moduleBays;
     }
 
     private static Set<WeaponKind> fittedWeaponKinds(ShipVariantAPI variant) {

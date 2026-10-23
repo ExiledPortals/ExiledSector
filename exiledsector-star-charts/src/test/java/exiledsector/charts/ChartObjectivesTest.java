@@ -122,7 +122,7 @@ class ChartObjectivesTest {
     }
 
     @Test
-    void killingTheWardenCompletesBossEvenWhenAnotherFleetDidIt() {
+    void killingTheBossCompletesTheBossObjectiveEvenWhenAnotherFleetDidIt() {
         ChartRun run = openRun(ChartObjective.BOSS, List.of("boss"));
 
         assertTrue(ChartObjectives.fleetGone(sector, fleet("boss", true), FleetDespawnReason.DESTROYED_BY_BATTLE));

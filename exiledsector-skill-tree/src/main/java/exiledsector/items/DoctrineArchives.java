@@ -36,8 +36,8 @@ public final class DoctrineArchives {
     static final String MIN_LINES_COLUMN = "min_lines";
     static final String MAX_LINES_COLUMN = "max_lines";
     static final int DEFAULT_LINES = 1;
-    public static final int WARDEN_MIN_TIER = 14;
-    static final float WARDEN_CHANCE = 0.5f;
+    public static final int BOSS_MIN_TIER = 14;
+    static final float BOSS_CHANCE = 0.5f;
     private static final String ENTRY_SEPARATOR = ";";
     private static final Pattern WHOLE_NUMBER = Pattern.compile("\\d{1,4}");
     private static final Logger LOG = Logger.getLogger(DoctrineArchives.class);
@@ -175,13 +175,13 @@ public final class DoctrineArchives {
         return BY_ID.get().values();
     }
 
-    public static ItemData rollForWarden(int chartTier, String wardenFactionId, float chanceMult, Random random,
+    public static ItemData rollForBoss(int chartTier, String bossFactionId, float chanceMult, Random random,
                                          Predicate<ItemDefinition> allowed) {
-        float chance = Math.min(1f, WARDEN_CHANCE * Math.max(0f, chanceMult));
-        if (chartTier < WARDEN_MIN_TIER || !(random.nextFloat() < chance)) {
+        float chance = Math.min(1f, BOSS_CHANCE * Math.max(0f, chanceMult));
+        if (chartTier < BOSS_MIN_TIER || !(random.nextFloat() < chance)) {
             return null;
         }
-        ItemDefinition definition = pickFor(wardenFactionId, random, allowed);
+        ItemDefinition definition = pickFor(bossFactionId, random, allowed);
         return definition == null ? null : ItemData.rolled(definition, random.nextLong());
     }
 

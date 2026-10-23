@@ -95,7 +95,7 @@ describe('star chart editing', () => {
 
     expect((await screen.findAllByDisplayValue('t3+', undefined, { timeout: 30000 })).length).toBeGreaterThan(0);
     expect(screen.queryByText(/Not in star_chart_modifiers.csv/)).toBeNull();
-    fireEvent.click(screen.getByText("The Warden's Vigil"));
+    fireEvent.click(screen.getByText("The Boss's Vigil"));
     const minTier = await findLabelled('Minimum tier');
     expect(minTier).toHaveProperty('value', '4');
     const before = server.readProjectFile(STAR_CHARTS_FILE);
@@ -104,7 +104,7 @@ describe('star chart editing', () => {
     fireEvent.click(saveButton());
     await screen.findByText('Saved star_charts.csv', undefined, { timeout: 30000 });
 
-    expect(server.readProjectFile(STAR_CHARTS_FILE)).toBe(before.replace("The Warden's Vigil,graphics/icons/colony_management.png,1,true,4,", "The Warden's Vigil,graphics/icons/colony_management.png,1,true,5,"));
+    expect(server.readProjectFile(STAR_CHARTS_FILE)).toBe(before.replace("The Boss's Vigil,graphics/icons/colony_management.png,1,true,4,", "The Boss's Vigil,graphics/icons/colony_management.png,1,true,5,"));
   }, 90000);
 
   it('edits a star chart description under StrictMode', async () => {
@@ -115,7 +115,7 @@ describe('star chart editing', () => {
     );
     await screen.findAllByDisplayValue('Halcyon Fire-Control Lattice', undefined, { timeout: 30000 });
     await switchToStarCharts();
-    fireEvent.click(await screen.findByText("The Warden's Vigil", undefined, { timeout: 30000 }));
+    fireEvent.click(await screen.findByText("The Boss's Vigil", undefined, { timeout: 30000 }));
     const description = (await findLabelled('Tooltip description (optional)')) as HTMLTextAreaElement;
     const edited = `${description.value} Edited.`;
 
@@ -197,7 +197,7 @@ describe('star chart editing', () => {
     fireEvent.click(saveButton());
     await screen.findByText('Saved star_chart_tiers.csv', undefined, { timeout: 30000 });
 
-    expect(server.readProjectFile(TIERS_FILE)).toBe(before.replace('1,100,2,3,0,0,30,26,29,3.5,0,0,2.5,no,0,1,0,0,"A couple', '1,110,2,3,0,0,30,26,29,3.5,0,0,2.5,no,0,1,0,0,"A couple'));
+    expect(server.readProjectFile(TIERS_FILE)).toBe(before.replace('1,100,2,3,0,0,30,26,29,3.5,0,0,2.5,yes,180,3,1,0,"A couple', '1,110,2,3,0,0,30,26,29,3.5,0,0,2.5,yes,180,3,1,0,"A couple'));
   }, 90000);
 
   it('warns before saving a cipher chance on a drop source outside chart systems', async () => {

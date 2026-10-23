@@ -48,7 +48,7 @@ class ChartLootTest {
                 .put(row("derelict_weapons1", "weapon", "derelict", "weapons1", "random", "2", "1"))
                 .put(row("derelict_basic", "resource", "derelict", "basic", "value", "1500", "6"))
                 .put(row("fleet_weapons1", "weapon", "fleet", "weapons1", "random", "1", "1"))
-                .put(row("warden_ai_cores3", "ai_core", "warden", "ai_cores3", "random", "2", "1")), KNOWN_GROUPS::contains);
+                .put(row("boss_ai_cores3", "ai_core", "boss", "ai_cores3", "random", "2", "1")), KNOWN_GROUPS::contains);
     }
 
     private static DropData drop(String group, int chances, int value) {
@@ -90,7 +90,7 @@ class ChartLootTest {
                 assertEquals(entry.type(), ChartLoot.typeOfGroup(entry.group()), entry.toString());
             }
         }
-        assertTrue(ChartLoot.entriesFor(ChartLoot.WARDEN_SCOPE, ChartTiers.HIGHEST_TIER).size() >= 4);
+        assertTrue(ChartLoot.entriesFor(ChartLoot.BOSS_SCOPE, ChartTiers.HIGHEST_TIER).size() >= 4);
         assertNull(ChartLoot.typeOfGroup("rare_tech"), "colony item groups are never mapped, so no bonus scales them");
     }
 
@@ -181,26 +181,26 @@ class ChartLootTest {
     }
 
     @Test
-    void fleetEntriesScaleWithFleetPointsAndOnlyTheWardenGetsSpoilsScaledByTheHoard() throws Exception {
+    void fleetEntriesScaleWithFleetPointsAndOnlyTheBossGetsSpoilsScaledByTheHoard() throws Exception {
         registerTable();
         CampaignFleetAPI guard = mock(CampaignFleetAPI.class);
         when(guard.getFleetPoints()).thenReturn(250);
-        CampaignFleetAPI warden = mock(CampaignFleetAPI.class);
-        when(warden.getFleetPoints()).thenReturn(400);
-        ChartGenContext hoard = context(ChartEffect.CHART_WARDEN_SPOILS_PERCENT, 50f);
+        CampaignFleetAPI boss = mock(CampaignFleetAPI.class);
+        when(boss.getFleetPoints()).thenReturn(400);
+        ChartGenContext hoard = context(ChartEffect.CHART_BOSS_SPOILS_PERCENT, 50f);
 
         ChartVanillaLoot.addToFleet(guard, false, hoard, 8);
-        ChartVanillaLoot.addToFleet(warden, true, hoard, 8);
+        ChartVanillaLoot.addToFleet(boss, true, hoard, 8);
 
         List<DropData> guardDrops = randomDropsAddedTo(guard);
         assertEquals(1, guardDrops.size());
         assertEquals("weapons1", guardDrops.get(0).group);
         assertEquals(2.5f, guardDrops.get(0).valueMult, 1e-5f);
-        List<DropData> wardenDrops = randomDropsAddedTo(warden);
-        assertEquals(2, wardenDrops.size());
-        assertEquals(4f, wardenDrops.get(0).valueMult, 1e-5f);
-        assertEquals("ai_cores3", wardenDrops.get(1).group);
-        assertEquals(2f * 4f * 1.5f, wardenDrops.get(1).valueMult, 1e-5f);
+        List<DropData> bossDrops = randomDropsAddedTo(boss);
+        assertEquals(2, bossDrops.size());
+        assertEquals(4f, bossDrops.get(0).valueMult, 1e-5f);
+        assertEquals("ai_cores3", bossDrops.get(1).group);
+        assertEquals(2f * 4f * 1.5f, bossDrops.get(1).valueMult, 1e-5f);
     }
 
     @Test

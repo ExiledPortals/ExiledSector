@@ -32,7 +32,11 @@ public final class ChartObjectives {
         if (run == null || fleet == null || !DEFEAT_REASONS.contains(reason) || !ChartIds.belongsToRun(fleet, run.runId())) {
             return false;
         }
-        return run.recordTargetGone(fleet.getId()) && progressed(sector, run);
+        if (!run.recordTargetGone(fleet.getId())) {
+            return false;
+        }
+        progressed(sector, run);
+        return true;
     }
 
     public static boolean reconcile(SectorAPI sector) {
@@ -60,13 +64,16 @@ public final class ChartObjectives {
                 changed = true;
             }
         }
-        return changed && progressed(sector, run);
+        if (changed) {
+            progressed(sector, run);
+        }
+        return changed;
     }
 
-    private static boolean progressed(SectorAPI sector, ChartRun run) {
+    private static void progressed(SectorAPI sector, ChartRun run) {
         updateIntel(sector, run);
         if (!run.markObjectiveComplete()) {
-            return true;
+            return;
         }
         try {
             ChartRewards.grant(sector, run);
@@ -74,7 +81,6 @@ public final class ChartObjectives {
             LOG.error("[ExiledSector] Delivering the Star Chart reward for run " + run.runId() + " failed", e);
         }
         updateIntel(sector, run);
-        return true;
     }
 
     private static void updateIntel(SectorAPI sector, ChartRun run) {

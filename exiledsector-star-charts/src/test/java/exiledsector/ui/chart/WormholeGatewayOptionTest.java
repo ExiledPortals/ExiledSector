@@ -52,7 +52,7 @@ class WormholeGatewayOptionTest {
         launcherMock = Mockito.mockStatic(ModificationBenchCargoLauncher.class);
         market = mock(MarketAPI.class, Mockito.RETURNS_DEEP_STUBS);
         when(market.isPlayerOwned()).thenReturn(true);
-        gateway = industry(WormholeGateway.ID, market);
+        gateway = industry(WormholeGateway.INDUSTRY_ID, market);
     }
 
     @AfterEach
@@ -94,7 +94,7 @@ class WormholeGatewayOptionTest {
     @Test
     void otherStructuresAndOtherFactionsGatewaysOfferNothing() {
         assertTrue(provider.getIndustryOptions(industry("population", market)).isEmpty());
-        assertTrue(provider.getIndustryOptions(industry(WormholeGateway.ID, null)).isEmpty());
+        assertTrue(provider.getIndustryOptions(industry(WormholeGateway.INDUSTRY_ID, null)).isEmpty());
         assertTrue(provider.getIndustryOptions(null).isEmpty());
 
         when(market.isPlayerOwned()).thenReturn(false);

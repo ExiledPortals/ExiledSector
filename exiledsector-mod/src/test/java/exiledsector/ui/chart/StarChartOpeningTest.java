@@ -155,7 +155,7 @@ class StarChartOpeningTest {
         when(dialog.getInteractionTarget()).thenReturn(colony);
         when(colony.getMarket()).thenReturn(market);
         when(market.isPlayerOwned()).thenReturn(true);
-        when(market.getIndustry(WormholeGateway.ID)).thenReturn(gateway);
+        when(market.getIndustry(WormholeGateway.INDUSTRY_ID)).thenReturn(gateway);
         when(gateway.isFunctional()).thenReturn(true);
     }
 }

@@ -37,7 +37,7 @@ public interface LootSource {
     default void addSalvageLoot(SectorAPI sector, SectorEntityToken salvageEntity, CargoAPI loot) {
     }
 
-    default List<ItemData> wardenDrops(int chartTier, String wardenFactionId, float chanceMult, Random random,
+    default List<ItemData> bossDrops(int chartTier, String bossFactionId, float chanceMult, Random random,
                                        Predicate<ItemDefinition> allowed) {
         return List.of();
     }
@@ -49,5 +49,8 @@ public interface LootSource {
     }
 
     default void stockSubmarket(SubmarketAPI submarket, CargoAPI cargo, Random random) {
+    }
+
+    default void itemsBought(List<ItemData> boughtItems) {
     }
 }

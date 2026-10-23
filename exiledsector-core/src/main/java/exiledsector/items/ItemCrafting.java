@@ -108,7 +108,8 @@ public final class ItemCrafting {
     }
 
     static boolean canAugment(Item item) {
-        return !AffixLayout.openSides(item.definition(), item.explicits(), item.tier()).isEmpty();
+        ItemDefinition definition = item.definition();
+        return definition != null && !AffixLayout.openSides(definition, item.explicits(), item.tier()).isEmpty();
     }
 
     static RolledModifier augment(Item item, Random random) {

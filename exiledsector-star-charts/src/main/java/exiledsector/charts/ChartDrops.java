@@ -36,7 +36,7 @@ public final class ChartDrops {
         RUN_REWARD(true),
         SYSTEM_SALVAGE(true),
         CHART_FLEET(true),
-        CHART_WARDEN(true),
+        CHART_BOSS(true),
         BATTLE(false),
         SALVAGE(false),
         TECHMINING_FIRST_FIND(false),

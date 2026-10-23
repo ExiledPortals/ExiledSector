@@ -259,7 +259,8 @@ class SkillTypeUnlockStatusTest {
         globalMock.when(Global::getSettings).thenReturn(settings);
         when(sector.getMemoryWithoutUpdate()).thenThrow(new IllegalStateException("memory gone"));
 
-        assertFalse(SkillTypeUnlockStatus.isLocked(typeWithConditions(UnlockCondition.modGate(UnlockConditionType.NIGHTCROSS_PASCAL_VISITED)), null));
+        assertFalse(SkillTypeUnlockStatus.isLocked(typeWithConditions(UnlockCondition.modGate(UnlockConditionType.NIGHTCROSS_LUNAR_FLEET_DEFEATED)), null));
+        assertFalse(SkillTypeUnlockStatus.isLocked(typeWithConditions(UnlockCondition.anchorFound("nightcross")), null));
         assertTrue(SkillTypeUnlockStatus.isLocked(typeWithConditions(UnlockCondition.memoryFlag("someFlag")), null));
     }
 
@@ -268,10 +269,12 @@ class SkillTypeUnlockStatusTest {
         for (UnlockConditionType type : UnlockConditionType.values()) {
             assertNotNull(type.overrideFieldId(), type.name());
             assertEquals(type.isModGate(), type.failsOpen(), type.name());
-            if (type.isModGate()) {
+            if (type.isModGate() && !type.takesVolume()) {
                 assertSame(type, UnlockCondition.modGate(type).getType());
             }
         }
         assertThrows(IllegalArgumentException.class, () -> UnlockCondition.modGate(UnlockConditionType.MEMORY_FLAG));
+        assertThrows(IllegalArgumentException.class, () -> UnlockCondition.modGate(UnlockConditionType.ANCHOR_FOUND));
+        assertSame(UnlockConditionType.ANCHOR_FOUND, UnlockCondition.anchorFound("nightcross").getType());
     }
 }

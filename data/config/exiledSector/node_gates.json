@@ -1,5 +1,7 @@
 {
 	"gate_singularity_defeated": {
+		"anchors": "withheld",
+		"rewardAnchor": true,
 		"unlockConditions": [
 			{
 				"type": "ratSingularityDefeated"
@@ -7,13 +9,17 @@
 		]
 	},
 	"gate_pascal_visited": {
+		"anchors": "free",
 		"unlockConditions": [
 			{
-				"type": "nightcrossPascalVisited"
+				"type": "anchorFound",
+				"volume": "nightcross"
 			}
 		]
 	},
 	"gate_lunar_fleet_defeated": {
+		"anchors": "withheld",
+		"rewardAnchor": true,
 		"unlockConditions": [
 			{
 				"type": "nightcrossLunarFleetDefeated"
@@ -28,6 +34,7 @@
 		]
 	},
 	"gate_frozen_heart_visited": {
+		"anchors": "withheld",
 		"unlockConditions": [
 			{
 				"type": "lostSectorFrozenHeartVisited"
@@ -35,6 +42,7 @@
 		]
 	},
 	"gate_threat_fought": {
+		"anchors": "withheld",
 		"unlockConditions": [
 			{
 				"type": "threatFought"
@@ -42,6 +50,7 @@
 		]
 	},
 	"gate_remnant_fought": {
+		"anchors": "withheld",
 		"unlockConditions": [
 			{
 				"type": "remnantFought"

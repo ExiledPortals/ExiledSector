@@ -9,13 +9,10 @@ interface TreeFeedback {
     TreeFeedback NONE = new TreeFeedback() {
     };
 
-    default void allocated(SkillNode node) {
+    default void allocated(String originId, Collection<String> nodeIds) {
     }
 
-    default void deallocated(SkillNode node) {
-    }
-
-    default void released(Collection<String> releasedNodeIds) {
+    default void deallocated(String originId, Collection<String> nodeIds) {
     }
 
     default void pulse(SkillNode node) {

@@ -32,6 +32,7 @@ import exiledsector.skills.npc.NpcLevelCaps;
 import exiledsector.skills.npc.NpcLevelCategory;
 import exiledsector.skills.unlock.RemnantEncounter;
 import exiledsector.ui.SkillTreeRefitButton;
+import exiledsector.ui.decoration.TreeFleetFactions;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
 import exiledsector.ui.inspect.SkillTreeCodexListener;
 import lunalib.lunaRefit.BaseRefitButton;
@@ -104,6 +105,8 @@ class ExiledSectorModPluginTest {
                 .thenReturn(new JSONArray("[{\"ability_id\": \"fracture_jump\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/npc_faction_volumes.csv", "exiledSector"))
                 .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
+        when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/tree_fleet_factions.csv", "exiledSector"))
+                .thenReturn(new JSONArray("[{\"faction\": \"threat\", \"region\": \"threat\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("faction", "data/config/exiledSector/npc_faction_focus.csv", "exiledSector"))
                 .thenReturn(new JSONArray("[{\"faction\": \"hegemony\", \"focus\": \"armour:2\"}]"));
         when(settings.getMergedSpreadsheetDataForMod("system", "data/config/exiledSector/npc_ship_system_focus.csv", "exiledSector"))
@@ -123,6 +126,8 @@ class ExiledSectorModPluginTest {
                 .thenReturn(new JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("site", "data/config/exiledSector/item_salvage.csv", "exiledSector"))
                 .thenReturn(new JSONArray());
+        when(settings.getMergedSpreadsheetDataForMod("site", "data/config/exiledSector/anchor_salvage.csv", "exiledSector"))
+                .thenReturn(new JSONArray());
         when(settings.getMergedSpreadsheetDataForMod("item", "data/config/exiledSector/item_crafting.csv", "exiledSector"))
                 .thenReturn(new JSONArray());
 
@@ -141,6 +146,7 @@ class ExiledSectorModPluginTest {
         loadTree("");
         SkillTree.clearTypes();
         NpcFactionVolumes.clear();
+        TreeFleetFactions.clear();
         NpcFocus.clear();
         NpcLevelCaps.clear();
         ItemDefinitions.clear();

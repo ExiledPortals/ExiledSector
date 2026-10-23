@@ -14,6 +14,7 @@ import exiledsector.ui.util.LineBatch;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
+import java.util.List;
 import java.util.Set;
 
 import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_ALPHA;
@@ -40,6 +41,7 @@ final class SkillTreeNodeConnectorRenderer {
     private static final int BLACK_RGB = Color.BLACK.getRGB();
     private static final float EDGE_CULL_MARGIN = NODE_CONNECTOR_GLOW_HALO_THICKNESS + NODE_CONNECTOR_PARALLEL_GAP;
     private static final float EXOSHIP_ENDPOINT_SHARE = 0.4f;
+    private static final float GRANT_TETHER_ALPHA = 0.35f;
 
     private final SkillTreePanelStyle panelStyle;
     private final NodeSearch nodeSearch;
@@ -47,6 +49,7 @@ final class SkillTreeNodeConnectorRenderer {
     private final LineBatch dullLines = new LineBatch(NODE_CONNECTOR_LINE_THICKNESS);
     private final LineBatch glowHaloLines = new LineBatch(NODE_CONNECTOR_GLOW_HALO_THICKNESS);
     private final LineBatch glowLines = new LineBatch(NODE_CONNECTOR_GLOW_LINE_THICKNESS);
+    private final LineBatch tetherLines = new LineBatch(NODE_CONNECTOR_GLOW_LINE_THICKNESS);
     private final Segment scratchSegment = new Segment();
     private final Segment scratchPart = new Segment();
     private final float[] cumulativeArcLength = new float[CURVE_ARC_SAMPLES + 1];
@@ -63,7 +66,7 @@ final class SkillTreeNodeConnectorRenderer {
     }
 
     void draw(TreeLayers layers, NodeAllocator.Snapshot allocation, Set<String> templateNodeIds, Set<String> plannedOnlyNodeIds,
-              ConnectorFills connectorFills) {
+              AllocationAnimation allocationAnimation) {
         TemplateHighlight templateHighlight = new TemplateHighlight(templateNodeIds, plannedOnlyNodeIds);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
@@ -76,7 +79,7 @@ final class SkillTreeNodeConnectorRenderer {
             float alphaMult = carried ? layers.carriedAlpha() : layers.treeAlpha();
             if (alphaMult > 0f && carried == ExoshipNodes.isCarried(connector.to())) {
                 drawConnector(connector, carried ? layers.carriedViewport() : layers.treeViewport(), allocation, templateHighlight,
-                        connectorFills, alphaMult);
+                        allocationAnimation, alphaMult);
             }
         }
 
@@ -84,8 +87,47 @@ final class SkillTreeNodeConnectorRenderer {
         GL11.glDisable(GL11.GL_BLEND);
     }
 
+    void drawGrantTethers(TreeLayers layers, SkillNode socket, List<String> grantedNodeIds, Color tetherColor) {
+        if (socket == null || tetherColor == null || grantedNodeIds.isEmpty()) {
+            return;
+        }
+        exoshipRadius = layers.exoshipRadius();
+        TreeViewport socketViewport = layers.viewportFor(socket);
+        float socketX = socketViewport.screenX(socket.getOffsetX());
+        float socketY = socketViewport.screenY(socket.getOffsetY());
+        int tetherRgb = tetherColor.getRGB();
+        tetherLines.clear();
+        for (int grantedIndex = 0; grantedIndex < grantedNodeIds.size(); grantedIndex++) {
+            SkillNode granted = SkillTree.get(grantedNodeIds.get(grantedIndex));
+            if (granted == null) {
+                continue;
+            }
+            TreeViewport grantedViewport = layers.viewportFor(granted);
+            float grantedX = grantedViewport.screenX(granted.getOffsetX());
+            float grantedY = grantedViewport.screenY(granted.getOffsetY());
+            float towardX = grantedX - socketX;
+            float towardY = grantedY - socketY;
+            float tetherLength = (float) Math.sqrt(towardX * towardX + towardY * towardY);
+            float socketRadius = endpointRadius(socket, socketViewport.zoom(), towardX, towardY);
+            float grantedRadius = endpointRadius(granted, grantedViewport.zoom(), -towardX, -towardY);
+            if (tetherLength <= socketRadius + grantedRadius) {
+                continue;
+            }
+            float dirX = towardX / tetherLength;
+            float dirY = towardY / tetherLength;
+            float tetherAlpha = GRANT_TETHER_ALPHA * Math.min(layers.alphaFor(socket), layers.alphaFor(granted));
+            tetherLines.add(socketX + dirX * socketRadius, socketY + dirY * socketRadius, tetherRgb,
+                    grantedX - dirX * grantedRadius, grantedY - dirY * grantedRadius, tetherRgb, tetherAlpha);
+        }
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        tetherLines.flush();
+        GL11.glDisable(GL11.GL_BLEND);
+    }
+
     private void drawConnector(SkillTreeTopology.Connector connector, TreeViewport viewport, NodeAllocator.Snapshot allocation,
-                               TemplateHighlight templateHighlight, ConnectorFills connectorFills, float alphaMult) {
+                               TemplateHighlight templateHighlight, AllocationAnimation allocationAnimation, float alphaMult) {
         if (!viewport.overlaps(viewport.screenX(connector.minX()) - EDGE_CULL_MARGIN, viewport.screenY(connector.maxY()) - EDGE_CULL_MARGIN,
                 viewport.screenX(connector.maxX()) + EDGE_CULL_MARGIN, viewport.screenY(connector.minY()) + EDGE_CULL_MARGIN)) {
             return;
@@ -109,7 +151,10 @@ final class SkillTreeNodeConnectorRenderer {
                 endpointRadius(node, zoom, nodeTowardX - nodeX, nodeTowardY - nodeY));
         ConnectorEndpoint otherEndpoint = new ConnectorEndpoint(otherX, otherY,
                 endpointRadius(other, zoom, otherTowardX - otherX, otherTowardY - otherY));
-        boolean bothSatisfied = skillData.isSatisfied(node.getId(), satisfiedRootId) && skillData.isSatisfied(other.getId(), satisfiedRootId)
+        AllocationAnimation.FillRange animatedRange = allocationAnimation.animatedRange(other.getId(), node.getId());
+        boolean bothShown = allocationAnimation.shown(node.getId(), skillData.isSatisfied(node.getId(), satisfiedRootId))
+                && allocationAnimation.shown(other.getId(), skillData.isSatisfied(other.getId(), satisfiedRootId));
+        boolean bothSatisfied = (bothShown || animatedRange != null)
                 && !templateHighlight.plannedOnlyNodeIds().contains(node.getId()) && !templateHighlight.plannedOnlyNodeIds().contains(other.getId());
         boolean nodeInTemplate = templateHighlight.templateNodeIds().contains(node.getId());
         boolean otherInTemplate = templateHighlight.templateNodeIds().contains(other.getId());
@@ -120,7 +165,7 @@ final class SkillTreeNodeConnectorRenderer {
                 isWormhole(node) || allocation.isHidden(node),
                 isOpenWormhole(other, skillData, satisfiedRootId),
                 isOpenWormhole(node, skillData, satisfiedRootId));
-        ConnectorFills.FillRange fillRange = bothSatisfied ? connectorFills.filledRange(other.getId(), node.getId()) : ConnectorFills.FillRange.FULL;
+        AllocationAnimation.FillRange fillRange = bothSatisfied && animatedRange != null ? animatedRange : AllocationAnimation.FillRange.FULL;
         EdgeFill edgeFill = fillRange.isFull() ? EdgeFill.NONE : new EdgeFill(fillRange, ConnectorKind.of(false, nodeInTemplate, otherInTemplate));
 
         LineStyle lineStyle = new LineStyle(fade, edgeFill, zoom, alphaMult * nodeSearch.connectorAlpha(node, other, allocation));
@@ -225,7 +270,7 @@ final class SkillTreeNodeConnectorRenderer {
     }
 
     private void drawPartiallyFilledSegment(Segment s, SegmentFade segmentFade) {
-        ConnectorFills.FillRange fillRange = segmentFade.edgeFill().fillRange();
+        AllocationAnimation.FillRange fillRange = segmentFade.edgeFill().fillRange();
         float fillStart = Math.max(s.progress1, Math.min(s.progress2, fillRange.startFraction()));
         float fillEnd = Math.max(s.progress1, Math.min(s.progress2, fillRange.endFraction()));
         if (segmentFade.fade().glowTipFading()) {
@@ -482,8 +527,8 @@ final class SkillTreeNodeConnectorRenderer {
     private record TemplateHighlight(Set<String> templateNodeIds, Set<String> plannedOnlyNodeIds) {
     }
 
-    private record EdgeFill(ConnectorFills.FillRange fillRange, ConnectorKind unfilledKind) {
-        static final EdgeFill NONE = new EdgeFill(ConnectorFills.FillRange.FULL, ConnectorKind.GLOW);
+    private record EdgeFill(AllocationAnimation.FillRange fillRange, ConnectorKind unfilledKind) {
+        static final EdgeFill NONE = new EdgeFill(AllocationAnimation.FillRange.FULL, ConnectorKind.GLOW);
     }
 
     private record QuadraticCurve(float x0, float y0, float cx, float cy, float x2, float y2) {

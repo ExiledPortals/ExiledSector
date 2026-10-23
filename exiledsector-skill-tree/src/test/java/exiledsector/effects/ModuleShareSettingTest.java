@@ -23,4 +23,19 @@ class ModuleShareSettingTest {
         assertEquals(1f, shareFor(150), 1e-6f);
         assertEquals(0f, shareFor(-5), 1e-6f);
     }
+
+    @Test
+    void stationsUseTheirOwnShareThatDefaultsToTheFullBonus() {
+        try (MockedStatic<LunaSettings> lunaSettings = Mockito.mockStatic(LunaSettings.class)) {
+            lunaSettings.when(() -> LunaSettings.getInt("exiledSector", ModuleShareSetting.FIELD_ID)).thenReturn(30);
+            lunaSettings.when(() -> LunaSettings.getInt("exiledSector", ModuleShareSetting.STATION_FIELD_ID)).thenReturn(null);
+            assertEquals(1f, ModuleShareSetting.shareFor(true), 1e-6f);
+            assertEquals(0.3f, ModuleShareSetting.shareFor(false), 1e-6f);
+
+            lunaSettings.when(() -> LunaSettings.getInt("exiledSector", ModuleShareSetting.STATION_FIELD_ID)).thenReturn(150);
+            assertEquals(100, ModuleShareSetting.stationPercent());
+            lunaSettings.when(() -> LunaSettings.getInt("exiledSector", ModuleShareSetting.STATION_FIELD_ID)).thenReturn(40);
+            assertEquals(0.4f, ModuleShareSetting.shareFor(true), 1e-6f);
+        }
+    }
 }

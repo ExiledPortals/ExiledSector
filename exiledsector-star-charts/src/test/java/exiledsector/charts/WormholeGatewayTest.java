@@ -4,12 +4,15 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.econ.EconomyAPI;
+import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import com.fs.starfarer.api.loading.IndustrySpecAPI;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
+import exiledsector.items.JanusDevice;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,14 +46,14 @@ class WormholeGatewayTest {
     @BeforeEach
     void setUp() {
         SettingsAPI settings = mock(SettingsAPI.class);
-        when(settings.getIndustrySpec(WormholeGateway.ID)).thenReturn(mock(IndustrySpecAPI.class));
+        when(settings.getIndustrySpec(WormholeGateway.INDUSTRY_ID)).thenReturn(mock(IndustrySpecAPI.class));
         when(settings.getModManager()).thenReturn(modManager);
         SectorAPI sector = mock(SectorAPI.class);
         EconomyAPI economy = mock(EconomyAPI.class);
         when(economy.getMarketsCopy()).thenAnswer(invocation -> new ArrayList<>(markets));
         when(sector.getEconomy()).thenReturn(economy);
         when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
-        when(sectorMemory.getBoolean(WormholeGateway.JANUS_FLAG)).thenReturn(true);
+        when(sectorMemory.getBoolean(JanusDevice.FLAG)).thenReturn(true);
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSettings).thenReturn(settings);
         globalMock.when(Global::getSector).thenReturn(sector);
@@ -74,7 +77,7 @@ class WormholeGatewayTest {
 
     private static WormholeGateway gatewayOn(MarketAPI market) {
         WormholeGateway gateway = new WormholeGateway();
-        gateway.init(WormholeGateway.ID, market);
+        gateway.init(WormholeGateway.INDUSTRY_ID, market);
         return gateway;
     }
 
@@ -102,7 +105,7 @@ class WormholeGatewayTest {
     void onlyOneGatewayIsAllowedPerFaction() {
         MarketAPI first = colony("Home");
         MarketAPI second = colony("Outpost");
-        when(first.hasIndustry(WormholeGateway.ID)).thenReturn(true);
+        when(first.hasIndustry(WormholeGateway.INDUSTRY_ID)).thenReturn(true);
 
         WormholeGateway secondGateway = gatewayOn(second);
 
@@ -116,7 +119,7 @@ class WormholeGatewayTest {
     void theBuildMenuTooltipsCloneOfTheColonyIsNotAnotherGateway() {
         MarketAPI colony = colony("Home");
         when(colony.getId()).thenReturn("home");
-        when(colony.hasIndustry(WormholeGateway.ID)).thenReturn(true);
+        when(colony.hasIndustry(WormholeGateway.INDUSTRY_ID)).thenReturn(true);
         MarketAPI tooltipClone = mock(MarketAPI.class);
         when(tooltipClone.getId()).thenReturn("home");
         when(tooltipClone.getFactionId()).thenReturn(PLAYER_FACTION);
@@ -130,27 +133,27 @@ class WormholeGatewayTest {
     void anotherFactionsGatewayDoesNotCount() {
         MarketAPI theirs = colony("Theirs");
         when(theirs.getFactionId()).thenReturn("hegemony");
-        when(theirs.hasIndustry(WormholeGateway.ID)).thenReturn(true);
+        when(theirs.hasIndustry(WormholeGateway.INDUSTRY_ID)).thenReturn(true);
 
         assertTrue(gatewayOn(colony("Home")).isAvailableToBuild());
     }
 
     @Test
     void withoutVaultsOfKnowledgeItNeedsTheJanusDeviceLikeTheTreeWormholes() {
-        when(sectorMemory.getBoolean(WormholeGateway.JANUS_FLAG)).thenReturn(false);
+        when(sectorMemory.getBoolean(JanusDevice.FLAG)).thenReturn(false);
         WormholeGateway gateway = gatewayOn(colony("Home"));
 
         assertFalse(gateway.isAvailableToBuild());
         assertEquals("Requires the Janus Device.", gateway.getUnavailableReason());
 
-        when(sectorMemory.getBoolean(WormholeGateway.JANUS_FLAG)).thenReturn(true);
+        when(sectorMemory.getBoolean(JanusDevice.FLAG)).thenReturn(true);
         assertTrue(gateway.isAvailableToBuild());
     }
 
     @Test
     void withVaultsOfKnowledgeTheResearchReplacesTheJanusDevice() {
         when(modManager.isModEnabled(VaultsOfKnowledgeCompat.MOD_ID)).thenReturn(true);
-        when(sectorMemory.getBoolean(WormholeGateway.JANUS_FLAG)).thenReturn(false);
+        when(sectorMemory.getBoolean(JanusDevice.FLAG)).thenReturn(false);
 
         assertTrue(WormholeGateway.isUnlockedFor(colony("Home")));
     }
@@ -166,7 +169,7 @@ class WormholeGatewayTest {
     void worksWithANullMarketForTooltipsAndPluginInstances() {
         WormholeGateway gateway = new WormholeGateway();
 
-        assertDoesNotThrow(() -> gateway.init(WormholeGateway.ID, null));
+        assertDoesNotThrow(() -> gateway.init(WormholeGateway.INDUSTRY_ID, null));
         assertFalse(gateway.isAvailableToBuild());
         assertFalse(gateway.showWhenUnavailable());
         assertNotNull(gateway.getUnavailableReason());
@@ -184,5 +187,40 @@ class WormholeGatewayTest {
     @Test
     void reportsWhetherTheDockedColonysGatewayWorks() {
         assertEquals(WormholeGateway.Status.NONE, WormholeGateway.statusAt(null));
+    }
+
+    private static SectorEntityToken dockedAtGateway(MarketAPI market, boolean functional) {
+        Industry gateway = mock(Industry.class);
+        when(gateway.isFunctional()).thenReturn(functional);
+        when(market.getIndustry(WormholeGateway.INDUSTRY_ID)).thenReturn(gateway);
+        SectorEntityToken dockedAt = mock(SectorEntityToken.class);
+        when(dockedAt.getMarket()).thenReturn(market);
+        return dockedAt;
+    }
+
+    @Test
+    void anAutonomousColonyOfThePlayerFactionStillOpensWormholes() {
+        MarketAPI autonomous = colony("Autonomous");
+        when(autonomous.isPlayerOwned()).thenReturn(false);
+
+        assertEquals(WormholeGateway.Status.WORKING, WormholeGateway.statusAt(dockedAtGateway(autonomous, true)));
+        assertEquals(WormholeGateway.Status.INACTIVE, WormholeGateway.statusAt(dockedAtGateway(autonomous, false)));
+    }
+
+    @Test
+    void aPlayerOwnedColonyUnderACommissionFactionOpensWormholes() {
+        MarketAPI commissioned = colony("Commissioned");
+        when(commissioned.getFactionId()).thenReturn("hegemony");
+        when(commissioned.isPlayerOwned()).thenReturn(true);
+
+        assertEquals(WormholeGateway.Status.WORKING, WormholeGateway.statusAt(dockedAtGateway(commissioned, true)));
+    }
+
+    @Test
+    void anotherFactionsColonyNeverOpensWormholes() {
+        MarketAPI theirs = colony("Theirs");
+        when(theirs.getFactionId()).thenReturn("hegemony");
+
+        assertEquals(WormholeGateway.Status.NONE, WormholeGateway.statusAt(dockedAtGateway(theirs, true)));
     }
 }

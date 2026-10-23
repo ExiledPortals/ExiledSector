@@ -40,7 +40,7 @@ import static org.mockito.Mockito.when;
 class ChartFleetLootTest {
 
     private static final String RUN_ID = "fleetLootRun";
-    private static final String WARDEN_ID = "warden";
+    private static final String BOSS_ID = "boss";
 
     private MockedStatic<Global> globalMock;
     private SectorAPI sector;
@@ -76,7 +76,7 @@ class ChartFleetLootTest {
 
     private ChartRun storeLiveRun(int tier) {
         ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(tier, "hegemony", ChartObjective.BOSS, List.of(WARDEN_ID), WARDEN_ID, 4, 6));
+        run.recordContent(new ChartContent(tier, "hegemony", ChartObjective.BOSS, List.of(BOSS_ID), BOSS_ID, 4, 6));
         run.recordArrival();
         ChartRuns.store(run);
         return run;
@@ -215,24 +215,24 @@ class ChartFleetLootTest {
     }
 
     @Test
-    void onlyTheWardenCarriesSpoilsAndTheHoardScalesOnlyThem() throws Exception {
-        ChartDrops.register(new JSONArray().put(rule("chart_fleet", 1f)).put(rule("chart_warden", 1f)));
+    void onlyTheBossCarriesSpoilsAndTheHoardScalesOnlyThem() throws Exception {
+        ChartDrops.register(new JSONArray().put(rule("chart_fleet", 1f)).put(rule("chart_boss", 1f)));
         ChartRun run = storeLiveRun(6);
-        ChartGenContext hoard = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_WARDEN_SPOILS_PERCENT, 100f)));
+        ChartGenContext hoard = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_BOSS_SPOILS_PERCENT, 100f)));
 
         ItemDrops.SiteLoot guardLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 80f), run, hoard, 80f,
                 new Random(1L));
-        ItemDrops.SiteLoot plainWardenLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(WARDEN_ID, RUN_ID, 200f), run,
+        ItemDrops.SiteLoot plainBossLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
                 ChartGenContext.none(), 200f, new Random(1L));
-        ItemDrops.SiteLoot hoardWardenLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(WARDEN_ID, RUN_ID, 200f), run, hoard, 200f,
+        ItemDrops.SiteLoot hoardBossLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, hoard, 200f,
                 new Random(1L));
 
         assertEquals(1, chartCount(guardLoot));
-        assertEquals(2, chartCount(plainWardenLoot));
-        assertEquals(3, chartCount(hoardWardenLoot));
+        assertEquals(2, chartCount(plainBossLoot));
+        assertEquals(3, chartCount(hoardBossLoot));
     }
     @Test
-    void chartFleetsLeaveHullItemsToBattleDropsWhileTheWardenStillCarriesThem() throws Exception {
+    void chartFleetsLeaveHullItemsToBattleDropsWhileTheBossStillCarriesThem() throws Exception {
         when(sector.getPlayerStats().getLevel()).thenReturn(15);
         ItemDefinitions.register(new JSONArray()
                 .put(new JSONObject().put("id", "bridge_basic").put("section", "bridge").put("rarity", "10").put("prefixes", "HULL_PERCENT:4:6"))
@@ -240,20 +240,20 @@ class ChartFleetLootTest {
                         .put("prefixes", "HULL_PERCENT:4:6")));
         ItemDrops.register(new JSONArray()
                 .put(new JSONObject().put("site", ChartIds.FLEET_LOOT_SITE).put("chances", "1;1;1").put("uniqueChance", "1"))
-                .put(new JSONObject().put("site", ChartIds.WARDEN_LOOT_SITE).put("chances", "1;1;1").put("uniqueChance", "1")));
+                .put(new JSONObject().put("site", ChartIds.BOSS_LOOT_SITE).put("chances", "1;1;1").put("uniqueChance", "1")));
         try {
             ChartRun run = storeLiveRun(6);
 
             ItemDrops.SiteLoot guardLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 80f), run,
                     ChartGenContext.none(), 80f, new Random(1L));
-            ItemDrops.SiteLoot wardenLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(WARDEN_ID, RUN_ID, 200f), run,
+            ItemDrops.SiteLoot bossLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
                     ChartGenContext.none(), 200f, new Random(1L));
 
             assertTrue(guardLoot.upgrades().isEmpty());
             assertTrue(guardLoot.items().stream().noneMatch(item -> ItemDefinitions.get(item.definitionId()) != null), guardLoot.toString());
             assertFalse(guardLoot.materials().isEmpty());
-            assertFalse(wardenLoot.upgrades().isEmpty());
-            assertTrue(wardenLoot.items().stream().anyMatch(item -> "bridge_basic".equals(item.definitionId())));
+            assertFalse(bossLoot.upgrades().isEmpty());
+            assertTrue(bossLoot.items().stream().anyMatch(item -> "bridge_basic".equals(item.definitionId())));
         } finally {
             ItemDrops.clear();
             ItemDefinitions.clear();

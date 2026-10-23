@@ -12,6 +12,7 @@ import exiledsector.charts.StarChartLootSource;
 import exiledsector.charts.DropType;
 import exiledsector.loot.LootModifiers;
 import exiledsector.charts.ChartIds;
+import exiledsector.items.AnchorJanusGate;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemData;
@@ -35,6 +36,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import lunalib.lunaSettings.LunaSettings;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -49,6 +51,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -195,11 +198,12 @@ class ItemSalvageListenerTest {
         ItemDefinitions.register(new JSONArray().put(subroutine("volume_subroutine", "MODSPEC_CACHE", false))
                 .put(subroutine("doctrine_archive_hegemony", "DOCTRINE", true)).put(subroutine("doctrine_archive_luddic", "DOCTRINE", true))
                 .put(subroutine("doctrine_archive_pirate", "DOCTRINE", true)).put(subroutine("doctrine_archive_remnant", "DOCTRINE", true))
-                .put(subroutine("unique_warden_threat_matrix", "UNIQUE", true)));
+                .put(subroutine("unique_boss_threat_matrix", "UNIQUE", true)));
         WormholeAnchorDefinitions.register(new JSONArray().put(anchor("wormhole_anchor_hegemony", "hegemony"))
                 .put(anchor("wormhole_anchor_luddic", "luddic")).put(anchor("wormhole_anchor_pirate", "pirate"))
                 .put(anchor("wormhole_anchor_abyss", "abyss")));
-        try {
+        try (MockedStatic<LunaSettings> lunaSettingsMock = Mockito.mockStatic(LunaSettings.class)) {
+            lunaSettingsMock.when(() -> LunaSettings.getBoolean(anyString(), eq(AnchorJanusGate.ALLOW_BEFORE_JANUS_FIELD_ID))).thenReturn(true);
             SectorEntityToken plainStation = site("station_research", null);
             SectorEntityToken showcaseStation = site("station_research", null);
             assertTrue(ItemSalvageListener.canShowcase(showcaseStation));

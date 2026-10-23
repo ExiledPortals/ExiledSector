@@ -4,6 +4,7 @@ import exiledlib.ModSettingsListener;
 import exiledsector.effects.ModuleShareSetting;
 import exiledsector.effects.NpcBonusScale;
 import exiledlib.i18n.Translation;
+import exiledsector.items.AnchorJanusGate;
 import exiledsector.items.UniqueSubroutinesSetting;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.npc.NpcTreeConfig;
@@ -59,6 +60,9 @@ public final class SkillTreeSettings {
         SettingsCreator.addInt(MOD_ID, ModuleShareSetting.FIELD_ID,
                 Translation.text("settings.modules.share.name"), Translation.text("settings.modules.share.tooltip"),
                 ModuleShareSetting.DEFAULT_PERCENT, 0, ModuleShareSetting.MAX_PERCENT, MAIN_TAB);
+        SettingsCreator.addInt(MOD_ID, ModuleShareSetting.STATION_FIELD_ID,
+                Translation.text("settings.modules.stationShare.name"), Translation.text("settings.modules.stationShare.tooltip"),
+                ModuleShareSetting.DEFAULT_STATION_PERCENT, 0, ModuleShareSetting.MAX_PERCENT, MAIN_TAB);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_levelHeader", Translation.text("settings.level.header"), MAIN_TAB);
         SettingsCreator.addText(MOD_ID, "exiledSector_levelAbout", Translation.text("settings.level.about"), MAIN_TAB);
@@ -118,6 +122,9 @@ public final class SkillTreeSettings {
                 Translation.text("settings.unlock.minShipLevel"), "", UnlockConditionOverrides.DEFAULT_DISABLED, MAIN_TAB);
         SettingsCreator.addBoolean(MOD_ID, UnlockConditionOverrides.DISABLE_MEMORY_FLAG_FIELD_ID,
                 Translation.text("settings.unlock.gameState"), "", UnlockConditionOverrides.DEFAULT_DISABLED, MAIN_TAB);
+        SettingsCreator.addBoolean(MOD_ID, AnchorJanusGate.ALLOW_BEFORE_JANUS_FIELD_ID,
+                Translation.text("settings.unlock.anchorsBeforeJanus"), Translation.text("settings.unlock.anchorsBeforeJanus.tooltip"),
+                AnchorJanusGate.DEFAULT_ALLOW_BEFORE_JANUS, MAIN_TAB);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_areasHeader", Translation.text("settings.areas.header"), MAIN_TAB);
         SettingsCreator.addText(MOD_ID, "exiledSector_areasAbout", Translation.text("settings.areas.about"), MAIN_TAB);
@@ -147,6 +154,9 @@ public final class SkillTreeSettings {
         SettingsCreator.addInt(MOD_ID, NpcTreeConfig.OTHER_SHIP_CHANCE_FIELD_ID,
                 Translation.text("settings.npc.otherShipChance.name"), Translation.text("settings.npc.otherShipChance.tooltip"),
                 NpcTreeConfig.DEFAULT_OTHER_SHIP_CHANCE_PERCENT, 0, 100, npcTab);
+        SettingsCreator.addBoolean(MOD_ID, NpcTreeConfig.STATIONS_FIELD_ID,
+                Translation.text("settings.npc.stations.name"), Translation.text("settings.npc.stations.tooltip"),
+                NpcTreeConfig.DEFAULT_STATIONS, npcTab);
         SettingsCreator.addKeybind(MOD_ID, NpcInspectConfig.KEYBIND_FIELD_ID,
                 Translation.text("settings.npc.inspectKey.name"), Translation.text("settings.npc.inspectKey.tooltip"),
                 NpcInspectConfig.DEFAULT_KEY, npcTab);

@@ -86,6 +86,8 @@ class ExiledSectorSettingsTest {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addInt(eq("exiledSector"),
                 eq(NpcTreeConfig.OTHER_SHIP_CHANCE_FIELD_ID), anyString(), anyString(), eq(30), eq(0), eq(100),
                 eq(SkillTreeSettings.npcScalingTab())));
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addBoolean(eq("exiledSector"),
+                eq(NpcTreeConfig.STATIONS_FIELD_ID), anyString(), anyString(), eq(true), eq(SkillTreeSettings.npcScalingTab())));
     }
 
     @Test
@@ -188,7 +190,8 @@ class ExiledSectorSettingsTest {
             boolean untranslated = text.isEmpty() || text.startsWith("exiledSector") || text.equals(options)
                     || LanguageSetting.OPTIONS.contains(text) || text.equals(areaOptions) || text.equals(String.join(",", AreaToggles.REQUIRED_MOD_OPTIONS))
                     || AreaToggles.OPTIONS.contains(text) || ItemAnimationSetting.OPTIONS.contains(text)
-                    || text.equals(String.join(",", ItemAnimationSetting.OPTIONS));
+                    || text.equals(String.join(",", ItemAnimationSetting.OPTIONS)) || HullUpgradesSetting.POINTS_OPTIONS.contains(text)
+                    || text.equals(String.join(",", HullUpgradesSetting.POINTS_OPTIONS));
             assertFalse(!untranslated && PseudoLeaks.hasLeak(text), () -> "Hardcoded settings text: " + text);
         }
     }

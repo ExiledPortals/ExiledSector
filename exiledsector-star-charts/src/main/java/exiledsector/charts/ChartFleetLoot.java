@@ -26,7 +26,7 @@ public final class ChartFleetLoot {
 
     static void recordStart(CampaignFleetAPI fleet) {
         float startDeploymentPoints = deploymentPoints(fleet);
-        if (startDeploymentPoints > 0f) {
+        if (fleet != null && startDeploymentPoints > 0f) {
             fleet.getMemoryWithoutUpdate().set(ChartIds.START_DP_MEMORY_KEY, startDeploymentPoints);
         }
     }
@@ -97,7 +97,10 @@ public final class ChartFleetLoot {
 
     static float claimShare(CampaignFleetAPI fleet, float defeatedDeploymentPoints) {
         MemoryAPI ledger = ledgerOf(fleet);
-        float startDeploymentPoints = ledger == null ? 0f : ledger.getFloat(ChartIds.START_DP_MEMORY_KEY);
+        if (ledger == null) {
+            return 0f;
+        }
+        float startDeploymentPoints = ledger.getFloat(ChartIds.START_DP_MEMORY_KEY);
         if (!(startDeploymentPoints > 0f) || !(defeatedDeploymentPoints > 0f)) {
             return 0f;
         }
@@ -135,12 +138,12 @@ public final class ChartFleetLoot {
         }
         ItemDrops.SiteLoot fleetLoot = roll(sector, run, context, ChartIds.FLEET_LOOT_SITE, ChartDrops.Source.CHART_FLEET, share, random);
         if (fleet.getId() != null && fleet.getId().equals(run.bossFleetId())) {
-            fleetLoot = fleetLoot.plus(roll(sector, run, context, ChartIds.WARDEN_LOOT_SITE, ChartDrops.Source.CHART_WARDEN,
-                    share * context.wardenSpoilsMult(), random));
-            List<ItemData> wardenDrops = LootSources.wardenDrops(run.tier(), run.contentFaction(), share * context.wardenSpoilsMult(), random,
+            fleetLoot = fleetLoot.plus(roll(sector, run, context, ChartIds.BOSS_LOOT_SITE, ChartDrops.Source.CHART_BOSS,
+                    share * context.bossSpoilsMult(), random));
+            List<ItemData> bossDrops = LootSources.bossDrops(run.tier(), run.contentFaction(), share * context.bossSpoilsMult(), random,
                     definition -> ItemUnlock.canDrop(definition, sector));
-            if (!wardenDrops.isEmpty()) {
-                fleetLoot = fleetLoot.plus(wardenDrops, List.of(), Map.of());
+            if (!bossDrops.isEmpty()) {
+                fleetLoot = fleetLoot.plus(bossDrops, List.of(), Map.of());
             }
         }
         return fleetLoot;

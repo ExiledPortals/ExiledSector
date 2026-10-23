@@ -89,21 +89,13 @@ public class ShipSkillData {
         return socketedItems == null ? null : socketedItems.remove(nodeId);
     }
 
-    public int getHullUpgradePoints() {
+    public int getStoredHullUpgradePoints() {
         return frameworkPoints;
     }
 
-    public int getUnspentHullUpgradePoints() {
-        return Math.max(0, frameworkPoints - getUnlockedSocketTypeIds().size());
-    }
-
-    public boolean addHullUpgradePoint(int maxPoints) {
+    public void setStoredHullUpgradePoints(int storedPoints) {
         revision++;
-        if (frameworkPoints >= maxPoints) {
-            return false;
-        }
-        frameworkPoints++;
-        return true;
+        frameworkPoints = Math.max(0, storedPoints);
     }
 
     public List<String> getUnlockedSocketTypeIds() {
@@ -116,7 +108,7 @@ public class ShipSkillData {
 
     public boolean unlockSocketType(String socketTypeId) {
         revision++;
-        if (socketTypeId == null || isSocketTypeUnlocked(socketTypeId) || getUnspentHullUpgradePoints() <= 0) {
+        if (socketTypeId == null || isSocketTypeUnlocked(socketTypeId)) {
             return false;
         }
         if (unlockedSocketTypes == null) unlockedSocketTypes = new ArrayList<>();
@@ -285,7 +277,9 @@ public class ShipSkillData {
     }
 
     public boolean isBlank() {
-        return allocatedNodeIds.isEmpty() && getDormantNodeIds().isEmpty() && level == 0 && xp == 0f && bankedFreeAllocations == 0 && frameworkPoints == 0;
+        return allocatedNodeIds.isEmpty() && getDormantNodeIds().isEmpty() && level == 0 && xp == 0f && bankedFreeAllocations == 0 && frameworkPoints == 0
+                && (unlockedSocketTypes == null || unlockedSocketTypes.isEmpty())
+                && (frameworkItemsBySocketType == null || frameworkItemsBySocketType.isEmpty());
     }
 
     public Set<String> getDormantNodeIds() {

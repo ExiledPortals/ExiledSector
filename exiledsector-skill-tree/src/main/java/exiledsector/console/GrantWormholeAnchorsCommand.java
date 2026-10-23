@@ -51,12 +51,16 @@ public class GrantWormholeAnchorsCommand implements BaseCommand {
             return requestedVolume.isEmpty() ? CommandResult.ERROR : CommandResult.BAD_SYNTAX;
         }
         List<String> inertIds = new ArrayList<>();
+        List<ItemData> grantedItems = new ArrayList<>();
         for (ItemDefinition definition : grantedDefinitions) {
-            playerFleet.getCargo().addSpecial(ItemData.rolled(definition, random.nextLong()).toSpecialItem(), 1f);
+            ItemData granted = ItemData.rolled(definition, random.nextLong());
+            playerFleet.getCargo().addSpecial(granted.toSpecialItem(), 1f);
+            grantedItems.add(granted);
             if (!WormholeAnchorDefinitions.areaActive(definition.id())) {
                 inertIds.add(definition.id());
             }
         }
+        WormholeAnchorDefinitions.recordFound(grantedItems, Global.getSector(), "granted by the console");
         Console.showMessage("Added " + grantedDefinitions.size() + (grantedDefinitions.size() == 1 ? " wormhole anchor" : " wormhole anchors")
                 + " to your cargo." + (inertIds.isEmpty() ? "" : " Inert because their area is off: " + String.join(", ", inertIds) + "."));
         return CommandResult.SUCCESS;

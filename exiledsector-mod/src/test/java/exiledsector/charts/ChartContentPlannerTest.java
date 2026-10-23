@@ -176,7 +176,7 @@ class ChartContentPlannerTest {
                 ChartContentPlan plan = plan(seed, tier);
                 long ordinary = plan.count(FleetRole.GUARD) + plan.count(FleetRole.PATROL);
                 assertTrue(ordinary >= tierData.fleetsMin() && ordinary <= tierData.fleetsMax(), "tier " + tier + ": " + ordinary + " fleets");
-                assertEquals(tierData.boss() ? 1 : 0, plan.count(FleetRole.BOSS), "tier " + tier);
+                assertEquals(1, plan.count(FleetRole.BOSS), "tier " + tier + " has one boss");
                 float fleetSize = tierData.fleetSize();
                 float expectedPoints = ordinary * ChartTier.fleetPoints(fleetSize);
                 float spent = plan.fleetPoints(FleetRole.GUARD) + plan.fleetPoints(FleetRole.PATROL);
@@ -187,7 +187,7 @@ class ChartContentPlannerTest {
                     assertTrue(spent <= expectedPoints + 1f, "tier " + tier);
                 }
                 for (PlannedFleet fleet : plan.fleets()) {
-                    float cap = ChartTier.fleetPoints(fleet.role() == FleetRole.BOSS ? ChartContentPlanner.WARDEN_SIZE_CAP : ChartContentPlanner.FLEET_SIZE_CAP);
+                    float cap = ChartTier.fleetPoints(fleet.role() == FleetRole.BOSS ? ChartContentPlanner.BOSS_SIZE_CAP : ChartContentPlanner.FLEET_SIZE_CAP);
                     assertTrue(fleet.combatPoints() <= cap, fleet.toString());
                     assertTrue(fleet.combatPoints() >= minimumPoints, fleet.toString());
                     assertTrue(fleet.quality() <= ChartContentPlanner.MAX_QUALITY / ChartTier.PERCENT);
@@ -207,14 +207,14 @@ class ChartContentPlannerTest {
 
         assertEquals(2, plan.count(FleetRole.GUARD) + plan.count(FleetRole.PATROL));
         for (PlannedFleet fleet : plan.fleets()) {
-            boolean warden = fleet.role() == FleetRole.BOSS;
-            assertEquals(ChartTier.fleetPoints(warden ? ChartContentPlanner.WARDEN_SIZE_CAP : ChartContentPlanner.FLEET_SIZE_CAP), fleet.combatPoints(), 0.01f);
+            boolean boss = fleet.role() == FleetRole.BOSS;
+            assertEquals(ChartTier.fleetPoints(boss ? ChartContentPlanner.BOSS_SIZE_CAP : ChartContentPlanner.FLEET_SIZE_CAP), fleet.combatPoints(), 0.01f);
             assertTrue(fleet.strengthBonus() > 0, fleet.toString());
             assertTrue(fleet.strengthBonus() <= ChartContentPlanner.MAX_OVERFLOW_STRENGTH, fleet.toString());
-            assertEquals(warden ? 0.65f : 0.5f, fleet.quality(), 0.001f);
-            assertEquals(warden ? 1 + ChartContentPlanner.BOSS_OFFICER_LEVEL_BONUS : 1, fleet.officerLevelBonus());
+            assertEquals(boss ? 0.65f : 0.5f, fleet.quality(), 0.001f);
+            assertEquals(boss ? 1 + ChartContentPlanner.BOSS_OFFICER_LEVEL_BONUS : 1, fleet.officerLevelBonus());
         }
-        assertEquals(ChartContentPlanner.MAX_OVERFLOW_STRENGTH, ChartContentPlanner.overflowStrength(2000f, ChartContentPlanner.WARDEN_SIZE_CAP));
+        assertEquals(ChartContentPlanner.MAX_OVERFLOW_STRENGTH, ChartContentPlanner.overflowStrength(2000f, ChartContentPlanner.BOSS_SIZE_CAP));
         assertEquals(25, ChartContentPlanner.overflowStrength(750f, ChartContentPlanner.FLEET_SIZE_CAP));
         assertEquals(0, ChartContentPlanner.overflowStrength(600f, ChartContentPlanner.FLEET_SIZE_CAP));
     }
@@ -242,34 +242,37 @@ class ChartContentPlannerTest {
         assertEquals(ChartObjective.CLEAR, noLoot.objective());
         assertEquals(1, noLoot.count(FleetRole.GUARD));
         assertFalse(noLoot.fleets().get(0).guardsPoi());
-        for (long seed = 0; seed < 20; seed++) {
+        int clearPlans = 0;
+        for (long seed = 0; seed < 40; seed++) {
             ChartContentPlan plan = plan(seed, 1);
-            assertEquals(ChartObjective.CLEAR, plan.objective());
-            assertTrue(plan.count(FleetRole.GUARD) >= 1);
-            for (PlannedFleet fleet : plan.fleets()) {
-                if (fleet.guardsPoi()) {
-                    assertTrue(plan.pois().get(fleet.poiIndex()).guarded());
+            if (plan.objective() == ChartObjective.CLEAR) {
+                clearPlans++;
+                assertTrue(plan.count(FleetRole.GUARD) >= 1);
+                for (PlannedFleet fleet : plan.fleets()) {
+                    if (fleet.guardsPoi()) {
+                        assertTrue(plan.pois().get(fleet.poiIndex()).guarded());
+                    }
                 }
             }
         }
+        assertTrue(clearPlans > 0);
     }
 
     @Test
-    void objectivesFollowTheTierWeightsAndWhatTheTierCanHave() {
-        Set<ChartObjective> seenAtFifteen = EnumSet.noneOf(ChartObjective.class);
-        for (long seed = 0; seed < 200; seed++) {
-            seenAtFifteen.add(plan(seed, 15).objective());
-            for (int tier = ChartTiers.LOWEST_TIER; tier <= 3; tier++) {
-                assertEquals(ChartObjective.CLEAR, plan(seed, tier).objective(), "tier " + tier + " seed " + seed);
+    void objectivesFollowTheTierWeightsAndEveryTierCanRollEither() {
+        for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
+            Set<ChartObjective> seen = EnumSet.noneOf(ChartObjective.class);
+            for (long seed = 0; seed < 200; seed++) {
+                seen.add(plan(seed, tier).objective());
             }
+            assertEquals(EnumSet.allOf(ChartObjective.class), seen, "tier " + tier);
         }
-        assertEquals(EnumSet.allOf(ChartObjective.class), seenAtFifteen);
         ChartTier noWeights = new ChartTier(6, 200f, 3, 3, 0, 0, 50f, 100, 100, 20f, 0f, 0f, 0f, false, 0f, 0f, 5f);
         assertEquals(ChartObjective.CLEAR, ChartContentPlanner.pickObjective(noWeights, new Random(3)));
     }
 
     @Test
-    void theWardenGuardsTheMostValuableSite() {
+    void theBossGuardsTheMostValuableSite() {
         int checked = 0;
         for (long seed = 0; seed < 50; seed++) {
             ChartContentPlan plan = plan(seed, 12);

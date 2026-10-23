@@ -21,7 +21,7 @@ final class ResolvedTrees {
 
         @Override
         public List<EffectContribution> contributions(ShipEffectContext context) {
-            return HullUpgradeEffectSource.contributions(context.shipData(), sections, context.hullSize());
+            return HullUpgradeEffectSource.contributions(sections, context.hullSize());
         }
     }
 

@@ -32,10 +32,14 @@ public final class UnlockCondition {
     }
 
     public static UnlockCondition modGate(UnlockConditionType type) {
-        if (!type.isModGate()) {
-            throw new IllegalArgumentException(type + " takes parameters, so it is not a mod gate");
+        if (!type.isModGate() || type.takesVolume()) {
+            throw new IllegalArgumentException(type + " takes parameters, so it is not a parameterless mod gate");
         }
         return new UnlockCondition(type, null, null, 0);
+    }
+
+    public static UnlockCondition anchorFound(String volume) {
+        return new UnlockCondition(UnlockConditionType.ANCHOR_FOUND, null, volume, 0);
     }
 
     public UnlockConditionType getType() {

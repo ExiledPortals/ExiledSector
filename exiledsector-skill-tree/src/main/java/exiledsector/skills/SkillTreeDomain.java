@@ -24,6 +24,7 @@ import exiledsector.compat.RandomAssortmentCompat;
 import exiledsector.compat.TaniaCompat;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.effects.CombatXpAward;
+import exiledsector.effects.GateRewardAnchors;
 import exiledsector.effects.HyperNavBeaconGrant;
 import exiledsector.effects.NpcBonusScale;
 import exiledsector.effects.NpcFleetDialogListener;
@@ -42,9 +43,11 @@ import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.effects.SkillTreeLootSource;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.SpecLocalisation;
+import exiledsector.items.AnchorFindMigration;
 import exiledsector.items.DeletedSubroutines;
 import exiledsector.items.DoctrineArchives;
 import exiledsector.items.DoctrineOverrides;
+import exiledsector.items.FactionlessAnchors;
 import exiledsector.items.ItemDataRules;
 import exiledsector.items.ItemTypeSupport;
 import exiledsector.items.ModspecCaches;
@@ -83,6 +86,7 @@ import exiledsector.ui.SkillTreeSettings;
 import exiledsector.ui.TreeCameraMemory;
 import exiledsector.ui.cargo.ItemIconLooks;
 import exiledsector.ui.cargo.SkillTreeIconLooks;
+import exiledsector.ui.decoration.TreeFleetFactions;
 import exiledsector.ui.inspect.ItemCodex;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
 import exiledsector.ui.inspect.ShipTreeSummaryRenderer;
@@ -146,6 +150,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
         PhantomHullMods.install(phantomHullModIds());
         LearnedPhantomConflicts.load();
         NpcFactionVolumes.load();
+        TreeFleetFactions.load();
         NpcFocus.load();
         NpcLevelCaps.load();
         NodeReplacements.load();
@@ -156,6 +161,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
     public void loadItems() {
         SubroutineImplicits.load();
         WormholeAnchorDefinitions.load();
+        FactionlessAnchors.load();
         WormholeAnchorLinks.install();
         DoctrineArchives.load();
         ModspecCaches.load();
@@ -191,6 +197,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
 
     @Override
     public void afterSaveRepair() {
+        AffinityOptions.migrateAll(ShipSkillDataManager.all().values());
         forgetUnknownNodes();
         SkillTreeTemplateStore.pruneAssignments(ShipSkillDataManager::hasProgress);
         SectorAPI sector = Global.getSector();
@@ -223,6 +230,10 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
     public void afterSocketCustody() {
         WormholeAnchorMigration.run();
         SectorAPI sector = Global.getSector();
+        AnchorFindMigration.run(sector);
+        GateRewardAnchors.markOpenGatesGrantedOnce(sector);
+        sector.getListenerManager().addListener(new GateRewardAnchors(), true);
+        GateRewardAnchors.grantMissed(sector);
         sector.getListenerManager().addListener(new HyperNavBeaconGrant(), true);
         HyperNavBeaconGrant.grantOnce(sector);
         PlayerTreePower.logNpcScaling();

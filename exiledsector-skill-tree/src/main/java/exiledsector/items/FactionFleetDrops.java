@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import com.fs.starfarer.api.Global;
 import exiledsector.skills.npc.NpcFactionVolumes;
 
 import java.util.ArrayList;
@@ -101,7 +102,7 @@ public final class FactionFleetDrops {
             return false;
         }
         if (definition.type() == ItemType.WORMHOLE_ANCHOR) {
-            return WormholeAnchorDefinitions.areaActive(definition.id());
+            return WormholeAnchorDefinitions.obtainable(definition.id(), Global.getSector());
         }
         return true;
     }

@@ -1,6 +1,7 @@
 package exiledsector.skills.template;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.skills.AffinityOptions;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -82,7 +83,7 @@ public final class TemplateCodec {
                 steps.add(new TemplateStep(entry, null));
             } else if (separator > 0) {
                 String optionTypeId = entry.substring(separator + 1);
-                steps.add(new TemplateStep(entry.substring(0, separator), optionTypeId.isEmpty() ? null : optionTypeId));
+                steps.add(new TemplateStep(entry.substring(0, separator), optionTypeId.isEmpty() ? null : AffinityOptions.currentOptionId(optionTypeId)));
             }
         }
         return steps;

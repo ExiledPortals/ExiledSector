@@ -50,11 +50,11 @@ class ChartTierLevelsTest {
         return NpcNodeRange.of(ChartTiers.fleetStrengthRangeFor(fleetMemory), ShipLevelConfig.maxLevel(), ShipLevelConfig.maxAllocatedNodesBesidesRoot());
     }
 
-    private static MemoryAPI chartFleet(int tier, Integer strengthBonus, boolean warden) {
+    private static MemoryAPI chartFleet(int tier, Integer strengthBonus, boolean boss) {
         MemoryAPI fleetMemory = mock(MemoryAPI.class);
         when(fleetMemory.get(ChartIds.TIER_MEMORY_KEY)).thenReturn(tier);
         when(fleetMemory.get(ChartIds.STRENGTH_BONUS_MEMORY_KEY)).thenReturn(strengthBonus);
-        when(fleetMemory.get(ChartIds.WARDEN_MEMORY_KEY)).thenReturn(warden ? Boolean.TRUE : null);
+        when(fleetMemory.get(ChartIds.BOSS_MEMORY_KEY)).thenReturn(boss ? Boolean.TRUE : null);
         return fleetMemory;
     }
 
@@ -96,7 +96,7 @@ class ChartTierLevelsTest {
     }
 
     @Test
-    void wardenShipsRollOneLevelAboveTheTierEvenPastTheMaxLevel() {
+    void bossShipsRollOneLevelAboveTheTierEvenPastTheMaxLevel() {
         ChartTier seventh = ChartTiers.forTier(7);
 
         assertEquals(new NpcNodeRange(seventh.levelMin() + 1, seventh.levelMax() + 1), range(chartFleet(7, null, true)));

@@ -59,7 +59,7 @@ final class EditorVocabulary {
         json.append("  \"unlockConditionTypes\": ")
                 .append(list(Arrays.stream(UnlockConditionType.values()).map(type -> camelCase(type.name())).toList())).append(",\n");
         json.append("  \"parameterlessUnlockConditionTypes\": ")
-                .append(list(Arrays.stream(UnlockConditionType.values()).filter(UnlockConditionType::isModGate)
+                .append(list(Arrays.stream(UnlockConditionType.values()).filter(type -> type.isModGate() && !type.takesVolume())
                         .map(type -> camelCase(type.name())).toList())).append(",\n");
         json.append("  \"blueprintCategories\": ")
                 .append(list(Arrays.stream(BlueprintCategory.values()).map(category -> camelCase(category.name())).toList())).append(",\n");

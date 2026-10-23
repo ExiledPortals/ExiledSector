@@ -120,6 +120,23 @@ class ShipTreeSummaryRendererTest {
     }
 
     @Test
+    void stationsShowTheStationModuleShare() {
+        WeaponSlotAPI moduleSlot = mock(WeaponSlotAPI.class);
+        when(moduleSlot.isStationModule()).thenReturn(true);
+        when(member.getHullSpec().getAllWeaponSlotsCopy()).thenReturn(List.of(moduleSlot));
+        when(member.isStation()).thenReturn(true);
+
+        try (MockedStatic<LunaSettings> lunaSettings = Mockito.mockStatic(LunaSettings.class)) {
+            lunaSettings.when(() -> LunaSettings.getInt("exiledSector", ModuleShareSetting.FIELD_ID)).thenReturn(30);
+            lunaSettings.when(() -> LunaSettings.getInt("exiledSector", ModuleShareSetting.STATION_FIELD_ID)).thenReturn(null);
+            ShipTreeSummaryRenderer.render(info, member, new ShipTreeLookup.ShipTree(data, List.of()), 5f);
+        }
+
+        verify(info).addPara(eq("%s"), anyFloat(), (Color) any(), (Color) any(),
+                eq("This ship's modules have 100% of its weapon, flux and defense bonuses."));
+    }
+
+    @Test
     void shipsWithoutModuleSlotsNeverShowTheModuleShare() {
         ShipTreeSummaryRenderer.render(info, member, new ShipTreeLookup.ShipTree(data, List.of()), 5f);
 

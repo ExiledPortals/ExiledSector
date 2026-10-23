@@ -4,10 +4,10 @@ import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.CraftingWard;
-import exiledsector.items.HullUpgradeData;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDisassembly;
 import exiledsector.items.ItemRarity;
+import exiledsector.items.RefitSchematic;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,8 +40,11 @@ class LootAlertTest {
     }
 
     @Test
-    void hullUpgradesHaveTheirOwnAlert() {
-        assertEquals(LootAlert.HULL_UPGRADE, LootAlert.of(new HullUpgradeData(HullSize.CRUISER).toSpecialItem()));
+    void everyRefitSchematicTierAndAnOldHullUpgradeHaveTheirOwnAlert() {
+        for (RefitSchematic schematic : RefitSchematic.values()) {
+            assertEquals(LootAlert.REFIT_SCHEMATIC, LootAlert.of(schematic.toSpecialItem()));
+        }
+        assertEquals(LootAlert.REFIT_SCHEMATIC, LootAlert.of(new SpecialItemData(RefitSchematic.ITEM_ID, HullSize.CRUISER.name())));
     }
 
     @Test

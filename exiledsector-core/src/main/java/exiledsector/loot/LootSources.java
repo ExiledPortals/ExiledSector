@@ -47,10 +47,10 @@ public final class LootSources {
         return LootModifiers.NONE;
     }
 
-    public static List<ItemData> wardenDrops(int chartTier, String wardenFactionId, float chanceMult, Random random,
+    public static List<ItemData> bossDrops(int chartTier, String bossFactionId, float chanceMult, Random random,
                                              Predicate<ItemDefinition> allowed) {
         List<ItemData> drops = new ArrayList<>();
-        SOURCES.all().forEach(source -> drops.addAll(source.wardenDrops(chartTier, wardenFactionId, chanceMult, random, allowed)));
+        SOURCES.all().forEach(source -> drops.addAll(source.bossDrops(chartTier, bossFactionId, chanceMult, random, allowed)));
         return drops;
     }
 

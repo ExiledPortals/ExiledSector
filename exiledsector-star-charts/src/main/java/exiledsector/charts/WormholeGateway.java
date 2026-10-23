@@ -6,22 +6,21 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
+import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.ExiledSector;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
 import exiledsector.domain.ExiledSectorDomain;
+import exiledsector.items.JanusDevice;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
-import org.apache.log4j.Logger;
 
 import java.util.List;
 
 public class WormholeGateway extends BaseIndustry {
 
-    public static final String ID = "exiledSector_wormhole_gateway";
-    public static final String JANUS_FLAG = "$playerCanUseGates";
+    public static final String INDUSTRY_ID = "exiledSector_wormhole_gateway";
     private static final float TOOLTIP_PAD = 10f;
-    private static final Logger LOG = Logger.getLogger(WormholeGateway.class);
 
     public enum Status {
         NONE, INACTIVE, WORKING
@@ -29,10 +28,10 @@ public class WormholeGateway extends BaseIndustry {
 
     public static Status statusAt(SectorEntityToken dockedAt) {
         MarketAPI market = dockedAt == null ? null : dockedAt.getMarket();
-        if (market == null || !market.isPlayerOwned()) {
+        if (market == null || !market.isPlayerOwned() && !Factions.PLAYER.equals(market.getFactionId())) {
             return Status.NONE;
         }
-        Industry gateway = market.getIndustry(ID);
+        Industry gateway = market.getIndustry(INDUSTRY_ID);
         if (gateway == null) {
             return Status.NONE;
         }
@@ -57,15 +56,8 @@ public class WormholeGateway extends BaseIndustry {
     }
 
     private static boolean janusDeviceKnown() {
-        if (ExiledSector.domains().stream().anyMatch(ExiledSectorDomain::ignoresMemoryFlagUnlocks)) {
-            return true;
-        }
-        try {
-            return Global.getSector().getMemoryWithoutUpdate().getBoolean(JANUS_FLAG);
-        } catch (RuntimeException e) {
-            LOG.error("[ExiledSector] Failed to check " + JANUS_FLAG + "; leaving the Wormhole Gateway locked", e);
-            return false;
-        }
+        return ExiledSector.domains().stream().anyMatch(ExiledSectorDomain::ignoresMemoryFlagUnlocks)
+                || JanusDevice.obtained(Global.getSector());
     }
 
     @Override
@@ -102,7 +94,7 @@ public class WormholeGateway extends BaseIndustry {
         }
         List<MarketAPI> markets = sector.getEconomy().getMarketsCopy();
         for (MarketAPI factionMarket : markets) {
-            if (!isSameColony(factionMarket, market) && market.getFactionId().equals(factionMarket.getFactionId()) && factionMarket.hasIndustry(ID)) {
+            if (!isSameColony(factionMarket, market) && market.getFactionId().equals(factionMarket.getFactionId()) && factionMarket.hasIndustry(INDUSTRY_ID)) {
                 return factionMarket;
             }
         }

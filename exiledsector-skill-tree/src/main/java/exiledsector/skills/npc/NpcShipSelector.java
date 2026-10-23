@@ -11,12 +11,15 @@ public final class NpcShipSelector {
     }
 
     public static boolean isCandidate(FleetMemberAPI member) {
-        return member != null && !member.isFighterWing() && !member.isStation() && !member.isCivilian()
+        return member != null && !member.isFighterWing() && (!member.isStation() || NpcTreeConfig.levelsStations()) && !member.isCivilian()
                 && !member.isMothballed() && member.getVariant() != null;
     }
 
     public static boolean isChosen(FleetMemberAPI member, Random random) {
         boolean chanceRoll = random.nextFloat() < NpcTreeConfig.otherShipChance();
+        if (member.isStation()) {
+            return true;
+        }
         if (NpcTreeConfig.levelsOfficeredShips() && hasOfficer(member)) {
             return true;
         }

@@ -14,7 +14,6 @@ final class BenchScene {
     static final float SLOT_RADIUS = 24f;
     static final float TILE_SIZE = 15f;
     static final float SOCKET_GLOW_SHARE = 1.05f;
-    static final float DETAILS_LEFT = 95f;
     static final float DETAILS_SOCKET_GAP = 2.5f;
     static final float DETAILS_WIDTH = 130f;
     static final float DETAILS_BOTTOM = 176f;
@@ -38,6 +37,10 @@ final class BenchScene {
 
     static float socketBottom(BenchMode mode) {
         return mode.socketY() + SLOT_RADIUS * SOCKET_GLOW_SHARE;
+    }
+
+    static float detailsLeft(BenchMode mode) {
+        return mode.socketX() - DETAILS_WIDTH / 2f;
     }
 
     static float detailsTop(BenchMode mode) {

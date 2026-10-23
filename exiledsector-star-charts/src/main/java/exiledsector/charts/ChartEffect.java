@@ -38,10 +38,10 @@ public enum ChartEffect implements ModifierEffect {
             context.addExtraOfficers(Math.round(value));
         }
     },
-    CHART_WARDEN_SIZE_PERCENT(false) {
+    CHART_BOSS_SIZE_PERCENT(false) {
         @Override
         public void beforeGeneration(ChartGenContext context, float value) {
-            context.addWardenSizePercent(value);
+            context.addBossSizePercent(value);
         }
     },
     CHART_FLEET_QUALITY_PERCENT(false) {
@@ -165,10 +165,10 @@ public enum ChartEffect implements ModifierEffect {
     CHART_BLUEPRINT_PERCENT(DropType.BLUEPRINT),
     CHART_AI_CORE_PERCENT(DropType.AI_CORE),
     CHART_COLONY_ITEM_PERCENT(DropType.COLONY_ITEM),
-    CHART_WARDEN_SPOILS_PERCENT(false) {
+    CHART_BOSS_SPOILS_PERCENT(false) {
         @Override
         public void beforeGeneration(ChartGenContext context, float value) {
-            context.addWardenSpoilsPercent(value);
+            context.addBossSpoilsPercent(value);
         }
     },
     CHART_REWARD_PERCENT(false) {

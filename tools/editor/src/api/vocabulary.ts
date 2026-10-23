@@ -42,7 +42,7 @@ export interface ChartTierDefault {
   fleetsMax: number;
   levelMin: number;
   levelMax: number;
-  wardenSize: number;
+  bossSize: number;
 }
 
 export interface ChartDropSource {

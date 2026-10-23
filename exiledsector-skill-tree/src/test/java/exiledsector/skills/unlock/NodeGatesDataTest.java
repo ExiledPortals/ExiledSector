@@ -62,6 +62,17 @@ class NodeGatesDataTest {
     }
 
     @Test
+    void eachWormholeGateHandsOutItsAnchorsByItsOwnRule() {
+        assertEquals(NodeGates.AnchorRule.FREE, NodeGates.gate(PASCAL_GATE).anchorRule());
+        for (String withheldGate : List.of(ABYSS_GATE, LUNAR_FLEET_GATE, FROZEN_HEART_GATE, THREAT_GATE, REMNANT_GATE)) {
+            assertEquals(NodeGates.AnchorRule.WITHHELD, NodeGates.gate(withheldGate).anchorRule(), withheldGate);
+        }
+        Set<String> rewardGates = NodeGates.all().keySet().stream().filter(gateTag -> NodeGates.gate(gateTag).rewardAnchor())
+                .collect(Collectors.toSet());
+        assertEquals(Set.of(ABYSS_GATE, LUNAR_FLEET_GATE), rewardGates);
+    }
+
+    @Test
     void theAbyssGateWaitsForTheSingularityToBeDefeated() {
         assertEquals(List.of(UnlockConditionType.RAT_SINGULARITY_DEFEATED),
                 NodeGates.all().get(ABYSS_GATE).stream().map(UnlockCondition::getType).toList());
@@ -78,9 +89,10 @@ class NodeGatesDataTest {
     }
 
     @Test
-    void theNightcrossGatesWaitForPascalTheLunarFleetAndAnAncientPrototype() {
-        assertEquals(List.of(UnlockConditionType.NIGHTCROSS_PASCAL_VISITED),
-                NodeGates.all().get(PASCAL_GATE).stream().map(UnlockCondition::getType).toList());
+    void theNightcrossGatesWaitForAFoundAnchorTheLunarFleetAndAnAncientPrototype() {
+        List<UnlockCondition> pascalConditions = NodeGates.all().get(PASCAL_GATE);
+        assertEquals(List.of(UnlockConditionType.ANCHOR_FOUND), pascalConditions.stream().map(UnlockCondition::getType).toList());
+        assertEquals("nightcross", pascalConditions.get(0).getKey());
         assertEquals(List.of(UnlockConditionType.NIGHTCROSS_LUNAR_FLEET_DEFEATED),
                 NodeGates.all().get(LUNAR_FLEET_GATE).stream().map(UnlockCondition::getType).toList());
         assertEquals(List.of(UnlockConditionType.NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND),

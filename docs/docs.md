@@ -61,7 +61,7 @@ hit, rather than using a modifier, so EMP and on-hit effects stay at full streng
 ## Module effects
 
 The tree applies only to the parent ship. On the parent's first combat frame `ModuleTreeShare` gives each
-living child module a share of the parent's shareable tree effects (`ModuleShareSetting`, 50% by default), plus
+living child module a share of the parent's shareable tree effects (`ModuleShareSetting`, 50% by default, 100% for stations), plus
 the `MODULE_*` effects at full strength.
 `ModuleBoost` applies both, then rescales the module's maximum hull, armor cells, shield arc (up to 360) and
 each weapon's maximum ammo once; cells above their maximum are clamped first so armor carried from an earlier
@@ -89,6 +89,13 @@ each frame, so only turrets benefit. Decorative and system slots are left alone.
 `temporaryAfterDeploymentSeconds` applies a node's effects only for that long after deployment. Only effects
 on stats the game reads live in combat opt in. Anything else (creation-time stats, campaign stats, listeners,
 conditional effects) makes the loader log an error and ignore the duration.
+
+## Affinity
+
+Roots and `small_flux_optional` nodes grant Low Tech, High Tech or Midline affinity (`*_AFFINITY_FLAT`), which
+apply no stat themselves. `EffectTotals` sums each ship's permanent affinity first and turns it into tree MULT
+bonuses for every whole step of 5 and 10, from the one table in `AffinitySteps`, so diminishing returns, NPC
+scaling and the summary see the stat bonuses. `ModuleTreeShare` steps the shared nodes' affinity the same way.
 
 ## Diminishing returns
 
@@ -133,6 +140,11 @@ small nodes. `NpcRelevance` multiplies theme tag weights by `npc_faction_focus.c
 option picks. Every step is a breadth-first search through nodes `NodeEligibility` allows, never crossing
 wormholes.
 
+Station fleets (market stations and the Remnant Nexus) are levelled like any other fleet while
+`NpcTreeConfig.levelsStations` is on, and the station is always chosen. A station's `ShipProfile` counts its
+modules' fighter bays, and `NpcStationNodes` stops it aiming for nodes or options whose every effect is movement,
+phase, ship system, or fighter without bays.
+
 ## NPC levels
 
 An NPC's level is its node count besides the root. Open-world ships roll 80% to 120% of a random player combat
@@ -148,7 +160,7 @@ because battles merge fleets. Chart fleets are uncapped.
 ### Chart fleets
 
 Chart ships roll a level in their tier's `level_min` to `level_max` from `star_chart_tiers.csv`, scaled by
-Fleet Strength %, and wardens roll one higher. Outside charts, a won battle's chart chance is `chart_drops.csv`'s
+Fleet Strength %, and bosses roll one higher. Outside charts, a won battle's chart chance is `chart_drops.csv`'s
 battle chance per 100 enemy deployment points defeated, scaled by battle difficulty, at the highest tier whose
 `level_min` the strongest defeated NPC reached (`ChartDrops.forBattle`). With the skill tree switched off, the
 tier instead rises one per `strength_per_tier` deployment points defeated.
@@ -160,6 +172,20 @@ subroutine that rolls one to three notables at creation. In an allocated standar
 with no path and no cost. Its kind keeps it out of generic pools, it has no level gate, and NPCs never
 socket one.
 
+## Wormhole anchors
+
+An anchor drops, stocks or shows in showcase salvage only while it is obtainable
+(`WormholeAnchorDefinitions.obtainable`, sharing its checks with `WormholeAnchor.inertness`): the player has the
+Janus Device (`JanusDevice`, `AnchorJanusGate`, lifted by the "Allow Wormhole Anchors Before the Janus Device"
+setting, Hyper-Nav Beacon exempt), its own unlock is met, and no closed `withheld` gate holds its exit. Each gate
+in `node_gates.json` sets `anchors` (`withheld` by default, or `free`) and `rewardAnchor`. Nightcross is `free`
+and opens on `anchorFound` once any of its anchors reaches the player (`AnchorFinds`). The Singularity and Lunar
+Fleet battles add one area anchor to their loot once per save (`GateRewardAnchors`). NPC anchors ignore all of
+this, and open wormholes stay open.
+
+An anchor whose factions are all missing, or whose playable factions Nexerelin has all eliminated, drops from the
+salvage and tech mining sites in `anchor_salvage.csv` instead (`FactionlessAnchors`).
+
 ## Corruption
 
 A Corrupted Nanoswarm locks the item and picks one equally likely outcome from its list in `CorruptionOutcome`
@@ -167,3 +193,12 @@ A Corrupted Nanoswarm locks the item and picks one equally likely outcome from i
 section's implicits (`ItemImplicits.corruptionPool`). Unique hull items can also become a rare of their section's base with 3 to 4
 modifiers, keeping their implicits. Subroutines add an implicit from `subroutine_corruption_implicits.csv`
 instead of replacing one, and their rare outcome only corrupts them.
+
+## Hull upgrade points
+
+`HullUpgradePoints` decides a player ship's points from the LunaLib "Hull Upgrade Points" setting; NPC ships
+have none. With Refit Schematics a ship has its stored points (`ShipSkillData.frameworkPoints`), at least 1. A
+schematic only applies to a ship with exactly one point fewer than its tier (Scrapped 2, Standard 3, Military
+4, Domain 5) and sets the points to that tier (`HullUpgradeRules.applySchematic`). With Star Chart Progress
+every ship has 1, plus one each once the highest cleared chart tier reaches 5, 10 and 15, schematics stop
+dropping, and stored points are kept for switching back. Switching never locks an unlocked section.

@@ -61,6 +61,7 @@ class WormholeAnchorSocketingTest {
         sectorMemory = mock(MemoryAPI.class);
         SectorAPI sector = mock(SectorAPI.class);
         when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
+        when(sectorMemory.getBoolean(JanusDevice.FLAG)).thenReturn(true);
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
         NodeGates.register(new JSONObject("{\"" + GATE_TAG + "\": {\"unlockConditions\": [{\"type\": \"memoryFlag\", \"key\": \"" + GATE_FLAG + "\"}]}}"));

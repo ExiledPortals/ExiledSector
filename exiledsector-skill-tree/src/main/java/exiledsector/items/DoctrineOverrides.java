@@ -115,6 +115,9 @@ public final class DoctrineOverrides {
             return buildLayer(data);
         } finally {
             building.remove(data);
+            if (building.isEmpty()) {
+                BUILDING.remove();
+            }
         }
     }
 

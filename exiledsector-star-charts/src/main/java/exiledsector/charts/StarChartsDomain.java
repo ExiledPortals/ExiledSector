@@ -58,7 +58,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
             for (StarChartCurrency currency : StarChartCurrency.values()) {
                 MaterialItems.localise(currency.itemId());
             }
-            SpecLocalisation.industry(WormholeGateway.ID);
+            SpecLocalisation.industry(WormholeGateway.INDUSTRY_ID);
         });
     }
 

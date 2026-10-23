@@ -5,7 +5,7 @@ import exiledlib.ProjectFiles;
 import exiledlib.skills.SkillTypeEffect;
 import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
 import exiledlib.skills.skilleffect.shield.ShieldSkillEffect;
-import exiledlib.skills.skilleffect.stationmodule.ModuleShare;
+import exiledlib.skills.skilleffect.hullmodule.ModuleShare;
 import exiledsector.skills.loader.SkillTypeLoader;
 import exiledsector.skills.npc.RealSkillData;
 import org.junit.jupiter.api.BeforeAll;

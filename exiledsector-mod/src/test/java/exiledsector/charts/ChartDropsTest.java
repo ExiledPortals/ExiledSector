@@ -50,7 +50,7 @@ import static org.mockito.Mockito.when;
 class ChartDropsTest {
 
     private static final String RUN_ID = "dropRun";
-    private static final String WARDENS_VIGIL = "unique_chart_wardens_vigil";
+    private static final String BOSS_VIGIL = "unique_chart_boss_vigil";
     private static final String SILENT_REACH = "unique_chart_silent_reach";
     private static final Set<String> CHART_CURRENCY_IDS = Set.of(StarChartCurrency.REFORGE.itemId(), StarChartCurrency.ANNULMENT.itemId(),
             StarChartCurrency.CARTOGRAPHY.itemId());
@@ -131,12 +131,12 @@ class ChartDropsTest {
 
     @Test
     void nothingDropsWhileStarChartsAreSwitchedOff() throws Exception {
-        ChartDrops.register(new JSONArray().put(rule("run_reward", 1f, 1f, 0f, 1f)).put(rule("chart_warden", 1f, 1f, 0f, 1f)));
+        ChartDrops.register(new JSONArray().put(rule("run_reward", 1f, 1f, 0f, 1f)).put(rule("chart_boss", 1f, 1f, 0f, 1f)));
         StarChartSettings.setEnabledForTests(false);
         try {
             for (int roll = 0; roll < 50; roll++) {
                 assertSame(ChartDrops.Loot.NONE, ChartDrops.roll(ChartDrops.Source.RUN_REWARD, 5, 1f, new Random(roll), anyUnique()));
-                assertSame(ChartDrops.Loot.NONE, ChartDrops.roll(ChartDrops.Source.CHART_WARDEN, 5, 2f, new Random(roll), anyUnique()));
+                assertSame(ChartDrops.Loot.NONE, ChartDrops.roll(ChartDrops.Source.CHART_BOSS, 5, 2f, new Random(roll), anyUnique()));
             }
         } finally {
             StarChartSettings.setEnabledForTests(StarChartSettings.DEFAULT_ENABLED);
@@ -187,17 +187,17 @@ class ChartDropsTest {
     @Test
     void uniqueChartsNeedTheirUnlockAndTheirMinimumTier() throws Exception {
         ChartDrops.register(new JSONArray().put(rule("run_reward", 1f, 0f, 0f, 0f)));
-        assertEquals(ItemUnlock.CLEARED_CHART_TIER_PREFIX + "3", ItemDefinitions.get(WARDENS_VIGIL).unlock());
+        assertEquals(ItemUnlock.CLEARED_CHART_TIER_PREFIX + "3", ItemDefinitions.get(BOSS_VIGIL).unlock());
 
         Set<String> lockedDrops = dropIds(6);
-        assertFalse(lockedDrops.contains(WARDENS_VIGIL));
+        assertFalse(lockedDrops.contains(BOSS_VIGIL));
         assertTrue(lockedDrops.contains(SILENT_REACH));
 
         assertTrue(ItemUnlock.recordChartCleared(sector, 3));
         assertFalse(ItemUnlock.recordChartCleared(sector, 2));
         assertEquals(3, ItemUnlock.highestClearedChartTier(sector));
-        assertTrue(dropIds(6).contains(WARDENS_VIGIL));
-        assertFalse(dropIds(3).contains(WARDENS_VIGIL), "the vigil never rolls below its minimum tier");
+        assertTrue(dropIds(6).contains(BOSS_VIGIL));
+        assertFalse(dropIds(3).contains(BOSS_VIGIL), "the vigil never rolls below its minimum tier");
     }
 
     private Set<String> dropIds(int tier) {

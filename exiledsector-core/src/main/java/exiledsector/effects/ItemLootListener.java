@@ -15,13 +15,13 @@ import exiledsector.ExiledSector;
 import exiledlib.PlayerFleet;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
-import exiledsector.items.HullUpgradeData;
 import exiledsector.items.Item;
 import exiledsector.items.ItemDisassembly;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemRarity;
+import exiledsector.items.RefitSchematic;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
 import exiledsector.loot.LootSources;
@@ -143,9 +143,9 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
 
     public static void deliverSiteLoot(CargoAPI cargo, ItemDrops.SiteLoot siteLoot) {
         deliverItems(cargo, siteLoot.items());
-        for (HullUpgradeData upgrade : siteLoot.upgrades()) {
-            cargo.addSpecial(upgrade.toSpecialItem(), 1f);
-            announceSalvaged(upgrade::name);
+        for (RefitSchematic schematic : siteLoot.upgrades()) {
+            cargo.addSpecial(schematic.toSpecialItem(), 1f);
+            announceSalvaged(schematic::displayName);
         }
         siteLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(cargo, itemId, quantity));
         MaterialDropAnnouncer.announce(siteLoot.materials());

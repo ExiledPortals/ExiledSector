@@ -49,9 +49,16 @@ public enum SpecialSkillEffect implements BackedSkillEffect {
     SERAPHIM_HEAL_PERCENT(SeraphimListener.HEAL_PERCENT_KEY, SeraphimListener.class, SeraphimListener::new),
     SERAPHIM_HEAL_CAP_PERCENT(SeraphimListener.HEAL_CAP_PERCENT_KEY, SeraphimListener.class, SeraphimListener::new),
     SERAPHIM_DAMAGE_BONUS_PERCENT(SeraphimListener.DAMAGE_BONUS_PERCENT_KEY, SeraphimListener.class, SeraphimListener::new),
-    SERAPHIM_FULL_BONUS_DAMAGE_FLAT(SeraphimListener.FULL_BONUS_DAMAGE_KEY, SeraphimListener.class, SeraphimListener::new);
+    SERAPHIM_FULL_BONUS_DAMAGE_FLAT(SeraphimListener.FULL_BONUS_DAMAGE_KEY, SeraphimListener.class, SeraphimListener::new),
+    LOW_TECH_AFFINITY_FLAT(new AffinityTally()),
+    HIGH_TECH_AFFINITY_FLAT(new AffinityTally()),
+    MIDLINE_AFFINITY_FLAT(new AffinityTally());
 
     private final EffectBacking backing;
+
+    SpecialSkillEffect(EffectBacking backing) {
+        this.backing = backing;
+    }
 
     <T> SpecialSkillEffect(Class<T> listenerType, Function<ShipAPI, ? extends T> listenerFactory) {
         this(null, listenerType, listenerFactory);

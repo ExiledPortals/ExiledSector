@@ -41,7 +41,7 @@ public final class ChartGenContext {
     private int extraFleets;
     private int officerLevelBonus;
     private int extraOfficers;
-    private float wardenSizePercent;
+    private float bossSizePercent;
     private float fleetQualityPercent;
     private float sensorRangePercent;
     private float enemySensorRangeBonus;
@@ -52,7 +52,7 @@ public final class ChartGenContext {
     private float itemPercent;
     private float itemRarityPercent;
     private final Map<DropType, Float> dropPercents = new EnumMap<>(DropType.class);
-    private float wardenSpoilsPercent;
+    private float bossSpoilsPercent;
     private float rewardPercent;
     private final Map<ChartFleetStat, Float> fleetStatPercents = new EnumMap<>(ChartFleetStat.class);
     private Map<ChartFleetStat, Float> fleetStatMults;
@@ -152,8 +152,8 @@ public final class ChartGenContext {
         extraOfficers += value;
     }
 
-    void addWardenSizePercent(float value) {
-        wardenSizePercent += value;
+    void addBossSizePercent(float value) {
+        bossSizePercent += value;
     }
 
     void addFleetQualityPercent(float value) {
@@ -210,8 +210,8 @@ public final class ChartGenContext {
         dropPercents.merge(type, value, Float::sum);
     }
 
-    void addWardenSpoilsPercent(float value) {
-        wardenSpoilsPercent += value;
+    void addBossSpoilsPercent(float value) {
+        bossSpoilsPercent += value;
     }
 
     void addRewardPercent(float value) {
@@ -246,7 +246,7 @@ public final class ChartGenContext {
                 base.officerCountBonus() + extraOfficers, base.fleetQuality() + fleetQualityPercent, base.levelMin(), base.levelMax(),
                 base.cacheBudget() * siteBudgetMult(ChartPoi.Kind.CACHE), base.domainBudget() * siteBudgetMult(ChartPoi.Kind.DOMAIN),
                 base.stationBudget() * siteBudgetMult(ChartPoi.Kind.STATION), base.derelictBudget() * siteBudgetMult(ChartPoi.Kind.DERELICT),
-                base.boss(), base.boss() ? Math.max(0f, base.wardenSize() + wardenSizePercent) : base.wardenSize(),
+                base.boss(), base.boss() ? Math.max(0f, base.bossSize() + bossSizePercent) : base.bossSize(),
                 base.clearWeight(), base.bossWeight());
     }
 
@@ -278,8 +278,8 @@ public final class ChartGenContext {
         return fleetQualityPercent;
     }
 
-    public float wardenSizePercent() {
-        return wardenSizePercent;
+    public float bossSizePercent() {
+        return bossSizePercent;
     }
 
     private float qualityQuantityPercent() {
@@ -334,12 +334,12 @@ public final class ChartGenContext {
         return multiplier(percent);
     }
 
-    public float wardenSpoilsPercent() {
-        return wardenSpoilsPercent;
+    public float bossSpoilsPercent() {
+        return bossSpoilsPercent;
     }
 
-    public float wardenSpoilsMult() {
-        return multiplier(wardenSpoilsPercent);
+    public float bossSpoilsMult() {
+        return multiplier(bossSpoilsPercent);
     }
 
     public ItemChances itemChances() {
@@ -369,11 +369,11 @@ public final class ChartGenContext {
         if (isEmpty()) {
             return factionText + "no chart modifiers";
         }
-        return factionText + String.format(Locale.ROOT, "fleet size %+.0f%%, %+d rolled fleet(s), %+d added fleet(s), %+d officer level(s), %+d officer(s), warden size %+.0f%%, "
+        return factionText + String.format(Locale.ROOT, "fleet size %+.0f%%, %+d rolled fleet(s), %+d added fleet(s), %+d officer level(s), %+d officer(s), boss size %+.0f%%, "
                         + "fleet quality %+.0f%%, site budgets %s, %+d point(s) of interest, item drops %+.0f%%, item rarity %+.0f%%, drop types %s, "
-                        + "warden spoils x%.2f, reward x%.2f, sensor range x%.2f, chart quality %d",
-                fleetSizePercent, baseFleets, extraFleets, officerLevelBonus, extraOfficers, wardenSizePercent,
-                fleetQualityPercent, siteBudgetText(), extraPois(), itemPercent, itemRarityPercent, describeDropPercents(), wardenSpoilsMult(), rewardMult(),
+                        + "boss spoils x%.2f, reward x%.2f, sensor range x%.2f, chart quality %d",
+                fleetSizePercent, baseFleets, extraFleets, officerLevelBonus, extraOfficers, bossSizePercent,
+                fleetQualityPercent, siteBudgetText(), extraPois(), itemPercent, itemRarityPercent, describeDropPercents(), bossSpoilsMult(), rewardMult(),
                 sensorRangeMult(), quality);
     }
 

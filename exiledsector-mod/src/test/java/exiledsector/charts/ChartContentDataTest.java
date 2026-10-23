@@ -77,17 +77,18 @@ class ChartContentDataTest {
                 }
                 assertTrue(current.levelMin() > previous.levelMin(), "the lowest level rises at tier " + tier);
                 assertTrue(current.levelMax() > previous.levelMax(), "the highest level rises at tier " + tier);
+                assertTrue(current.bossSize() > previous.bossSize(), "boss size rises at tier " + tier);
             }
+            assertTrue(current.boss(), "tier " + tier + " has a boss");
+            assertTrue(current.weightFor(ChartObjective.BOSS) > 0f, "tier " + tier + " can roll the boss objective");
+            assertTrue(current.weightFor(ChartObjective.CLEAR) > 0f, "tier " + tier + " can roll the clear objective");
+            assertTrue(ChartTier.fallback(tier).boss(), "built-in tier " + tier + " has a boss");
+            assertTrue(ChartTier.fallback(tier).weightFor(ChartObjective.BOSS) > 0f, "built-in tier " + tier + " can roll the boss objective");
             assertTrue(current.levelMax() <= ShipLevelConfig.DEFAULT_MAX_LEVEL, "tier " + tier + " fits under the default max level");
             assertTrue(current.fleetSize() <= ChartContentPlanner.FLEET_SIZE_CAP, "tier " + tier + " fleets fit under the size cap");
-            assertTrue(current.wardenSize() <= ChartContentPlanner.WARDEN_SIZE_CAP, "tier " + tier + " warden fits under the size cap");
+            assertTrue(current.bossSize() <= ChartContentPlanner.BOSS_SIZE_CAP, "tier " + tier + " boss fits under the size cap");
             previous = current;
         }
-        assertFalse(ChartTiers.forTier(1).boss());
-        assertTrue(ChartTiers.forTier(3).weightFor(ChartObjective.CLEAR) > 0f);
-        assertEquals(0f, ChartTiers.forTier(3).weightFor(ChartObjective.BOSS), "tier 3 has no warden, so it is Clear only");
-        assertTrue(ChartTiers.forTier(15).boss());
-        assertTrue(ChartTiers.forTier(15).wardenSize() > 0f);
     }
 
     @Test

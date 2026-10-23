@@ -20,7 +20,7 @@ public final class ChartTiers {
     static final String TIER_COLUMN = "tier";
     private static final Logger LOG = Logger.getLogger(ChartTiers.class);
     static final float MAX_COLONY_ITEM_CHANCE = 1f;
-    static final int WARDEN_EXTRA_LEVELS = 1;
+    static final int BOSS_EXTRA_LEVELS = 1;
     private static volatile Map<Integer, ChartTier> tiers = Map.of();
     private static volatile Map<Integer, Float> colonyItemChances = Map.of();
 
@@ -61,7 +61,7 @@ public final class ChartTiers {
                         csv.number(row, "station_budget", fallback.stationBudget(), label),
                         csv.number(row, "derelict_budget", fallback.derelictBudget(), label),
                         csv.flag(row, "boss", fallback.boss(), label),
-                        csv.number(row, "warden_size", fallback.wardenSize(), label),
+                        csv.number(row, "boss_size", fallback.bossSize(), label),
                         csv.number(row, "weight_clear", fallback.clearWeight(), label),
                         csv.number(row, "weight_boss", fallback.bossWeight(), label)));
                 float colonyItemChance = csv.number(row, "colony_item_chance", 0f, label);
@@ -129,7 +129,7 @@ public final class ChartTiers {
         }
         ChartTier tier = forTier(tierNumber.intValue());
         int bonus = fleetMemory.get(ChartIds.STRENGTH_BONUS_MEMORY_KEY) instanceof Number storedBonus ? Math.max(0, storedBonus.intValue()) : 0;
-        int extraLevels = Boolean.TRUE.equals(fleetMemory.get(ChartIds.WARDEN_MEMORY_KEY)) ? WARDEN_EXTRA_LEVELS : 0;
+        int extraLevels = Boolean.TRUE.equals(fleetMemory.get(ChartIds.BOSS_MEMORY_KEY)) ? BOSS_EXTRA_LEVELS : 0;
         return new FleetLevelRange(scaledLevel(tier.levelMin(), bonus), scaledLevel(tier.levelMax(), bonus), extraLevels);
     }
 

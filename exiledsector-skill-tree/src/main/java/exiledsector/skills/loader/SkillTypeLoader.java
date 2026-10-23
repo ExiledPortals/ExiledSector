@@ -201,6 +201,9 @@ public final class SkillTypeLoader {
 
     private static UnlockCondition parseUnlockCondition(JSONObject conditionJson) throws JSONException {
         UnlockConditionType conditionType = UnlockConditionType.valueOf(toEnumName(conditionJson.getString("type")));
+        if (conditionType.takesVolume()) {
+            return UnlockCondition.anchorFound(conditionJson.getString("volume"));
+        }
         if (conditionType.isModGate()) {
             return UnlockCondition.modGate(conditionType);
         }

@@ -9,6 +9,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.layout.SkillNodeDecoration;
+import exiledsector.items.HullUpgradePoints;
 import exiledsector.items.NpcItems;
 import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.items.WormholeAnchorLinks;
@@ -232,6 +233,22 @@ class NpcTreeTagTest {
         assertFalse(restored.isFreeNode("root"));
         assertEquals(0, ShipTrees.getSpentOp(restored, 1));
         assertTrue(restored.isNpcBuild());
+    }
+
+    @Test
+    void anNpcBuildHasNoHullUpgradesBeforeAndAfterTheTagAndACapturedShipStartsAtThePlayersPoints() {
+        ShipSkillData built = build(5);
+        ShipSkillData restored = NpcTreeTag.decode(NpcTreeTag.encode(built));
+
+        for (ShipSkillData npcShip : List.of(built, restored)) {
+            assertEquals(0, npcShip.getStoredHullUpgradePoints());
+            assertEquals(List.of(), npcShip.getUnlockedSocketTypeIds());
+            assertEquals(Map.of(), npcShip.getSectionItems());
+            assertEquals(0, HullUpgradePoints.of(npcShip));
+        }
+        restored.clearNpcBuild();
+        assertEquals(HullUpgradePoints.STARTING_POINTS, HullUpgradePoints.of(restored));
+        assertEquals(HullUpgradePoints.STARTING_POINTS, HullUpgradePoints.unspent(restored));
     }
 
     @Test

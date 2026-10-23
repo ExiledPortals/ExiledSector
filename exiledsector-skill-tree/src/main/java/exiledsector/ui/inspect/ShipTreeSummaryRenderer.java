@@ -1,6 +1,7 @@
 package exiledsector.ui.inspect;
 
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -44,20 +45,25 @@ public final class ShipTreeSummaryRenderer {
                     Misc.getGrayColor()));
             return;
         }
-        boolean hasModuleSlots = ship.getHullSpec() != null && ShipFacts.hasModuleSlots(ship.getHullSpec());
-        render(tooltip, shipTree, hullSize, hasModuleSlots, HULL_MOD_TOOLTIP_PAD, MAX_HULL_MOD_BONUS_LINES);
+        render(tooltip, shipTree, hullSize, moduleSharePercent(ship.getHullSpec(), ship.isStation()), HULL_MOD_TOOLTIP_PAD,
+                MAX_HULL_MOD_BONUS_LINES);
     }
 
     public static void render(TooltipMakerAPI info, FleetMemberAPI member, ShipTreeLookup.ShipTree shipTree, float pad) {
-        render(info, shipTree, member.getHullSpec().getHullSize(), ShipFacts.hasModuleSlots(member.getHullSpec()), pad, Integer.MAX_VALUE);
+        render(info, shipTree, member.getHullSpec().getHullSize(), moduleSharePercent(member.getHullSpec(), member.isStation()), pad,
+                Integer.MAX_VALUE);
     }
 
-    public static void render(TooltipMakerAPI info, ShipTreeLookup.ShipTree shipTree, HullSize hullSize, boolean hasModuleSlots, float pad,
+    private static int moduleSharePercent(ShipHullSpecAPI hullSpec, boolean station) {
+        return hullSpec != null && ShipFacts.hasModuleSlots(hullSpec) ? ModuleShareSetting.percentFor(station) : 0;
+    }
+
+    public static void render(TooltipMakerAPI info, ShipTreeLookup.ShipTree shipTree, HullSize hullSize, int moduleSharePercent, float pad,
                               int maxBonusLines) {
-        I18n.forGameText(() -> renderSummary(info, shipTree, hullSize, hasModuleSlots, pad, maxBonusLines));
+        I18n.forGameText(() -> renderSummary(info, shipTree, hullSize, moduleSharePercent, pad, maxBonusLines));
     }
 
-    private static void renderSummary(TooltipMakerAPI info, ShipTreeLookup.ShipTree shipTree, HullSize hullSize, boolean hasModuleSlots,
+    private static void renderSummary(TooltipMakerAPI info, ShipTreeLookup.ShipTree shipTree, HullSize hullSize, int moduleSharePercent,
                                       float pad, int maxBonusLines) {
         Summary bonusSummary = SkillTreeBonusSummary.of(shipTree.skillData(), hullSize, shipTree.bonusScale(),
                 partContributions(shipTree, hullSize),
@@ -100,7 +106,7 @@ public final class ShipTreeSummaryRenderer {
                     Misc.getTextColor());
         }
         renderPartLines(info, shipTree);
-        renderModuleShare(info, hasModuleSlots);
+        renderModuleShare(info, moduleSharePercent);
 
         if (!bonusSummary.bonuses().isEmpty()) {
             VanillaText.addPara(info, Translation.styled("summary.bonuses"), SECTION_PAD, Misc.getTextColor());
@@ -124,11 +130,7 @@ public final class ShipTreeSummaryRenderer {
         }
     }
 
-    private static void renderModuleShare(TooltipMakerAPI info, boolean hasModuleSlots) {
-        if (!hasModuleSlots) {
-            return;
-        }
-        int moduleSharePercent = ModuleShareSetting.percent();
+    private static void renderModuleShare(TooltipMakerAPI info, int moduleSharePercent) {
         if (moduleSharePercent > 0) {
             VanillaText.addPara(info, Translation.msg("summary.moduleShare").arg("percent", moduleSharePercent).styled(), LINE_PAD,
                     Misc.getTextColor());

@@ -46,7 +46,7 @@ class StarChartTest {
     private static final String SINGLE = "star_chart_single";
     private static final String BINARY = "star_chart_binary_far";
     private static final String SILENT_REACH = "unique_chart_silent_reach";
-    private static final String WARDENS_VIGIL = "unique_chart_wardens_vigil";
+    private static final String BOSS_VIGIL = "unique_chart_boss_vigil";
 
     @BeforeEach
     void setUp() throws Exception {
@@ -133,7 +133,7 @@ class StarChartTest {
         Item unique = store.add(ItemData.rolledAtTier(ItemDefinitions.get(SILENT_REACH), 12L, 13));
         Item transposed = ItemCrafting.transpose(store, unique, new Random(5), definition -> true);
         assertNotNull(transposed);
-        assertEquals(WARDENS_VIGIL, transposed.definitionId());
+        assertEquals(BOSS_VIGIL, transposed.definitionId());
         assertEquals(13, transposed.tier());
         assertEquals(ItemType.STAR_CHART, transposed.type());
     }
@@ -155,14 +155,18 @@ class StarChartTest {
     @Test
     void chartRollsRespectMinimumTierGates() {
         ItemDefinition single = ItemDefinitions.get(SINGLE);
-        boolean bossAtHighTier = false;
+        boolean extraOfficersAtHighTier = false;
+        boolean bossSizeAtTierOne = false;
         for (long seed = 0; seed < 400; seed++) {
-            assertFalse(modifierIds(StarChartFixtures.chart(SINGLE, seed, 1)).contains("HYBRID_CHART_WARDEN_SIZE"), "seed " + seed);
             assertFalse(modifierIds(StarChartFixtures.chart(SINGLE, seed, 2)).contains("HYBRID_CHART_EXTRA_OFFICERS"), "seed " + seed);
-            bossAtHighTier |= modifierIds(StarChartFixtures.chart(SINGLE, seed, 10)).contains("HYBRID_CHART_WARDEN_SIZE");
+            extraOfficersAtHighTier |= modifierIds(StarChartFixtures.chart(SINGLE, seed, 10)).contains("HYBRID_CHART_EXTRA_OFFICERS");
+            bossSizeAtTierOne |= modifierIds(StarChartFixtures.chart(SINGLE, seed, 1)).contains("HYBRID_CHART_BOSS_SIZE");
         }
-        assertTrue(bossAtHighTier);
-        assertEquals(TierRange.atLeast(4), single.poolEntryFor("HYBRID_CHART_WARDEN_SIZE").tiers());
+        assertTrue(extraOfficersAtHighTier);
+        assertTrue(bossSizeAtTierOne, "every tier has a boss, so its size prefix rolls from tier 1");
+        assertEquals(TierRange.atLeast(3), single.poolEntryFor("HYBRID_CHART_EXTRA_OFFICERS").tiers());
+        assertEquals(TierRange.ANY, single.poolEntryFor("HYBRID_CHART_BOSS_SIZE").tiers());
+        assertEquals(TierRange.ANY, single.poolEntryFor("CHART_BOSS_SPOILS_PERCENT").tiers());
         assertEquals(TierRange.ANY, single.poolEntryFor("HYBRID_CHART_FLEET_SIZE").tiers());
     }
 
@@ -182,8 +186,8 @@ class StarChartTest {
 
     @Test
     void tierBandsScaleTheShownValuesWithTheChartsTier() {
-        StarChart lowTier = StarChartFixtures.chart(WARDENS_VIGIL, 3L, 1);
-        StarChart highTier = StarChartFixtures.chart(WARDENS_VIGIL, 3L, 12);
+        StarChart lowTier = StarChartFixtures.chart(BOSS_VIGIL, 3L, 1);
+        StarChart highTier = StarChartFixtures.chart(BOSS_VIGIL, 3L, 12);
         String lowText = lowTier.effectLines().get(0).plain();
         String highText = highTier.effectLines().get(0).plain();
 
@@ -196,7 +200,7 @@ class StarChartTest {
     @Test
     void everyChartRollsOneInhabitingFactionAsItsOnlyImplicit() {
         Set<String> factionImplicits = new HashSet<>();
-        for (String definitionId : List.of(SINGLE, BINARY, WARDENS_VIGIL)) {
+        for (String definitionId : List.of(SINGLE, BINARY, BOSS_VIGIL)) {
             for (long seed = 0; seed < 40; seed++) {
                 List<RolledModifier> implicits = StarChartFixtures.chart(definitionId, seed, 5).implicits();
                 assertEquals(1, implicits.size(), definitionId + " " + implicits);
@@ -305,7 +309,7 @@ class StarChartTest {
         ItemData hullItem = ItemData.rolled(ItemDefinitions.all().iterator().next(), 4L);
         CargoStackAPI chartStack = stack(chart.toSpecialItem(), 2f);
         CargoStackAPI hullStack = stack(hullItem.toSpecialItem(), 1f);
-        CargoStackAPI upgradeStack = stack(new HullUpgradeData(com.fs.starfarer.api.combat.ShipAPI.HullSize.CRUISER).toSpecialItem(), 1f);
+        CargoStackAPI upgradeStack = stack(RefitSchematic.MILITARY.toSpecialItem(), 1f);
         CargoAPI cargo = mock(CargoAPI.class);
         when(cargo.getStacksCopy()).thenReturn(new ArrayList<>(List.of(chartStack, hullStack, upgradeStack)));
 
@@ -319,7 +323,7 @@ class StarChartTest {
         assertTrue(chartStore.owned().stream().allMatch(item -> item.tier() == 5));
         assertTrue(ItemStore.carriesStarCharts(cargo));
         assertEquals(1, hullStore.owned().size());
-        assertEquals(1, hullStore.upgradeCount(com.fs.starfarer.api.combat.ShipAPI.HullSize.CRUISER));
+        assertEquals(1, hullStore.schematicCount(RefitSchematic.MILITARY));
     }
 
     @Test
@@ -410,13 +414,13 @@ class StarChartTest {
 
     @Test
     void aRollWhoseModifierLeftThePoolFallsBackToTheCatalogueOrIsDroppedAndFlagged() {
-        List<RolledModifier> movedExplicits = List.of(new RolledModifier("HYBRID_CHART_WARDEN_SIZE", ModifierSlot.PREFIX,
-                List.of(new RolledEffect("CHART_WARDEN_SIZE_PERCENT", 100f), new RolledEffect("CHART_QUANTITY_PERCENT", 0f))));
+        List<RolledModifier> movedExplicits = List.of(new RolledModifier("HYBRID_CHART_BOSS_SIZE", ModifierSlot.PREFIX,
+                List.of(new RolledEffect("CHART_BOSS_SIZE_PERCENT", 100f), new RolledEffect("CHART_QUANTITY_PERCENT", 0f))));
         StarChart moved = (StarChart) Item.create(null, SILENT_REACH, 4L, movedExplicits, ItemTraits.ofTier(12));
         ChartGenContext movedContext = ChartGenContext.from(moved);
 
-        assertNull(moved.definition().poolEntryFor("HYBRID_CHART_WARDEN_SIZE"));
-        assertTrue(movedContext.applied().contains(new AppliedEffect(ChartEffect.CHART_WARDEN_SIZE_PERCENT, 540f)), movedContext.applied().toString());
+        assertNull(moved.definition().poolEntryFor("HYBRID_CHART_BOSS_SIZE"));
+        assertTrue(movedContext.applied().contains(new AppliedEffect(ChartEffect.CHART_BOSS_SIZE_PERCENT, 540f)), movedContext.applied().toString());
         assertTrue(movedContext.applied().contains(new AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, 8f)), movedContext.applied().toString());
         assertTrue(moved.effectLines().get(0).plain().contains("540%"), moved.effectLines().toString());
 
@@ -443,28 +447,28 @@ class StarChartTest {
 
     @Test
     void uniqueChartsNeverExistBelowTheirMinimumTier() {
-        ItemDefinition vigil = ItemDefinitions.get(WARDENS_VIGIL);
+        ItemDefinition vigil = ItemDefinitions.get(BOSS_VIGIL);
 
-        assertEquals(4, StarChartDefinitions.minTier(WARDENS_VIGIL));
+        assertEquals(4, StarChartDefinitions.minTier(BOSS_VIGIL));
         assertEquals(StarChart.LOWEST_TIER, StarChartDefinitions.minTier(SILENT_REACH));
         assertEquals(StarChart.LOWEST_TIER, StarChartDefinitions.minTier(SINGLE));
         assertEquals(4, ItemData.rolledAtTier(vigil, 3L, 1).traits().tier());
         assertEquals(4, ItemData.rolledAtTier(vigil, 3L, 1).preview().tier());
         assertEquals(4, ItemData.rolled(vigil, 3L).preview().tier());
-        assertEquals(4, new ItemData(WARDENS_VIGIL, 3L).preview().tier());
+        assertEquals(4, new ItemData(BOSS_VIGIL, 3L).preview().tier());
         assertEquals(9, ItemData.rolledAtTier(vigil, 3L, 9).preview().tier());
-        ItemData lowTierData = new ItemData(WARDENS_VIGIL, 3L, null, null, ItemTraits.ofTier(2));
+        ItemData lowTierData = new ItemData(BOSS_VIGIL, 3L, null, null, ItemTraits.ofTier(2));
         assertEquals(4, lowTierData.preview().tier());
         assertEquals(4, ItemStore.forStarCharts().add(lowTierData).tier());
-        assertEquals(4, ItemData.ofStarChart(new SpecialItemData(ItemData.STAR_CHART_ITEM_ID, WARDENS_VIGIL + "|5")).preview().tier());
-        assertTrue(exiledsector.charts.ChartTiers.forTier(StarChartDefinitions.minTier(WARDENS_VIGIL)).boss(),
-                "the Warden's Vigil boss prefix always has a warden to strengthen");
+        assertEquals(4, ItemData.ofStarChart(new SpecialItemData(ItemData.STAR_CHART_ITEM_ID, BOSS_VIGIL + "|5")).preview().tier());
+        assertTrue(exiledsector.charts.ChartTiers.forTier(StarChartDefinitions.minTier(BOSS_VIGIL)).boss(),
+                "the Boss's Vigil boss prefix always has a boss to strengthen");
 
         Random random = new Random(5);
         boolean vigilAtTierFour = false;
         for (int draw = 0; draw < 1000; draw++) {
-            assertNotEquals(WARDENS_VIGIL, ItemDrops.pickChartAtTier(random, 3, definition -> true).id());
-            vigilAtTierFour |= WARDENS_VIGIL.equals(ItemDrops.pickChartAtTier(random, 4, definition -> true).id());
+            assertNotEquals(BOSS_VIGIL, ItemDrops.pickChartAtTier(random, 3, definition -> true).id());
+            vigilAtTierFour |= BOSS_VIGIL.equals(ItemDrops.pickChartAtTier(random, 4, definition -> true).id());
         }
         assertTrue(vigilAtTierFour);
 
@@ -482,7 +486,7 @@ class StarChartTest {
             Item chart = new ItemData(SINGLE, seed).preview();
             assertEquals(StarChart.LOWEST_TIER, chart.tier());
             Set<String> ids = modifierIds(chart);
-            assertFalse(ids.contains("HYBRID_CHART_WARDEN_SIZE") || ids.contains("HYBRID_CHART_EXTRA_OFFICERS"), "seed " + seed + ": " + ids);
+            assertFalse(ids.contains("HYBRID_CHART_EXTRA_OFFICERS"), "seed " + seed + ": " + ids);
         }
     }
 
@@ -531,9 +535,10 @@ class StarChartTest {
     void rollOddsLeaveOutEntriesGatedAboveTheTier() {
         ItemDefinition single = ItemDefinitions.get(SINGLE);
 
-        assertFalse(ItemRollOdds.weightShares(single, 1).containsKey("HYBRID_CHART_WARDEN_SIZE"));
-        assertTrue(ItemRollOdds.weightShares(single, 4).containsKey("HYBRID_CHART_WARDEN_SIZE"));
-        assertTrue(ItemRollOdds.weightShares(single).containsKey("HYBRID_CHART_WARDEN_SIZE"));
+        assertFalse(ItemRollOdds.weightShares(single, 1).containsKey("HYBRID_CHART_EXTRA_OFFICERS"));
+        assertTrue(ItemRollOdds.weightShares(single, 3).containsKey("HYBRID_CHART_EXTRA_OFFICERS"));
+        assertTrue(ItemRollOdds.weightShares(single).containsKey("HYBRID_CHART_EXTRA_OFFICERS"));
+        assertTrue(ItemRollOdds.weightShares(single, 1).containsKey("HYBRID_CHART_BOSS_SIZE"));
         double prefixShare = ItemRollOdds.weightShares(single, 1).entrySet().stream()
                 .filter(entry -> single.poolEntryFor(entry.getKey()).slot() == ModifierSlot.PREFIX).mapToDouble(java.util.Map.Entry::getValue).sum();
         assertEquals(1.0, prefixShare, 1e-9);

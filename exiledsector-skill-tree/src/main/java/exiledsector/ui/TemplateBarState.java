@@ -6,26 +6,25 @@ record TemplateBarState(boolean visible, boolean templateModeEnabled, boolean pl
     static final TemplateBarState HIDDEN = new TemplateBarState(false, false, false, false, false, false, false,
             "ui.template.button.save", "ui.template.hint.save", "ui.template.hint.autoOff");
 
-    private static final TemplateBarState[] VISIBLE_STATES = new TemplateBarState[64];
+    private static final TemplateBarState[] VISIBLE_STATES = new TemplateBarState[32];
 
     static {
         for (int i = 0; i < VISIBLE_STATES.length; i++) {
-            VISIBLE_STATES[i] = visible((i & 1) != 0, (i & 2) != 0, (i & 4) != 0, (i & 8) != 0, (i & 16) != 0, (i & 32) != 0);
+            VISIBLE_STATES[i] = visible((i & 1) != 0, (i & 2) != 0, (i & 4) != 0, (i & 8) != 0, (i & 16) != 0);
         }
     }
 
-    static TemplateBarState of(boolean rootChosen, int allocatedCount, boolean hasTemplate, boolean running, boolean inert,
-                               boolean planning, boolean autoOn) {
+    static TemplateBarState of(boolean rootChosen, int allocatedCount, boolean hasTemplate, boolean inert, boolean planning,
+                               boolean autoOn) {
         if (!rootChosen) {
             return HIDDEN;
         }
-        return VISIBLE_STATES[(allocatedCount > 1 ? 1 : 0) | (hasTemplate ? 2 : 0) | (running ? 4 : 0) | (inert ? 8 : 0)
-                | (planning ? 16 : 0) | (autoOn ? 32 : 0)];
+        return VISIBLE_STATES[(allocatedCount > 1 ? 1 : 0) | (hasTemplate ? 2 : 0) | (inert ? 4 : 0) | (planning ? 8 : 0)
+                | (autoOn ? 16 : 0)];
     }
 
-    private static TemplateBarState visible(boolean hasNodes, boolean hasTemplate, boolean running, boolean inert, boolean planning,
-                                            boolean autoOn) {
-        boolean live = !running && !inert;
+    private static TemplateBarState visible(boolean hasNodes, boolean hasTemplate, boolean inert, boolean planning, boolean autoOn) {
+        boolean live = !inert;
         String saveLabel;
         String saveHint;
         boolean saveEnabled;

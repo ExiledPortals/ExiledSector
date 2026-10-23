@@ -9,7 +9,7 @@ import java.util.List;
 public record ApiMember(Kind kind, String className, String memberName, String typeName, List<String> parameterClassNames) {
 
     enum Kind {
-        STATIC_METHOD, INSTANCE_METHOD, CONSTRUCTOR, STATIC_GETTER
+        STATIC_METHOD, INSTANCE_METHOD, CONSTRUCTOR, STATIC_GETTER, INSTANCE_GETTER
     }
 
     static final String VOID = "void";
@@ -34,6 +34,10 @@ public record ApiMember(Kind kind, String className, String memberName, String t
         return new ApiMember(Kind.STATIC_GETTER, className, fieldName, fieldClassName, List.of());
     }
 
+    public static ApiMember instanceGetter(String className, String fieldName, String fieldClassName) {
+        return new ApiMember(Kind.INSTANCE_GETTER, className, fieldName, fieldClassName, List.of());
+    }
+
     public String displayName() {
         return kind == Kind.CONSTRUCTOR ? className + " constructor" : className + "." + memberName;
     }
@@ -44,6 +48,7 @@ public record ApiMember(Kind kind, String className, String memberName, String t
         MethodHandles.Lookup lookup = MethodHandles.publicLookup();
         return switch (kind) {
             case STATIC_GETTER -> lookup.findStaticGetter(owner, memberName, type);
+            case INSTANCE_GETTER -> lookup.findGetter(owner, memberName, type);
             case STATIC_METHOD -> lookup.findStatic(owner, memberName, methodType(type, loader));
             case INSTANCE_METHOD -> lookup.findVirtual(owner, memberName, methodType(type, loader));
             case CONSTRUCTOR -> lookup.findConstructor(owner, methodType(type, loader));

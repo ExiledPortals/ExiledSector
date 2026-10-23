@@ -103,7 +103,7 @@ public class ChartOpenCommand implements BaseCommand {
                 : run.objective().name() + " (" + run.objectiveTargetIds().size() + " target(s))";
         return "Tier " + run.tier() + ", held by " + (run.contentFaction() == null ? "nobody" : run.contentFaction()) + ": "
                 + run.contentFleets() + " fleet(s), " + run.contentPois() + " point(s) of interest"
-                + (run.bossFleetId() != null ? ", a warden fleet" : "")
+                + (run.bossFleetId() != null ? ", a boss fleet" : "")
                 + ". Objective: " + objective + ".";
     }
 

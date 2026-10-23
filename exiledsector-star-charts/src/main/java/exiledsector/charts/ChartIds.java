@@ -22,14 +22,14 @@ public final class ChartIds {
     public static final String TIER_MEMORY_KEY = "$exiledSector_chartTier";
     public static final String SEED_MEMORY_KEY = "$exiledSector_chartSeed";
     public static final String STRENGTH_BONUS_MEMORY_KEY = "$exiledSector_chartStrengthBonus";
-    public static final String WARDEN_MEMORY_KEY = "$exiledSector_chartWarden";
+    public static final String BOSS_MEMORY_KEY = "$exiledSector_chartBoss";
     public static final String START_DP_MEMORY_KEY = "$exiledSector_chartStartDp";
     public static final String LOOT_DP_PAID_MEMORY_KEY = "$exiledSector_chartLootDpPaid";
     public static final String DEFENDED_SITE_MEMORY_KEY = "$exiledSector_chartDefendedSite";
     public static final String DEFENDER_LOOT_ADDED_MEMORY_KEY = "$exiledSector_chartDefenderLootAdded";
     public static final String VANILLA_DEFENDER_FLEET_MEMORY_KEY = "$defenderFleet";
     public static final String FLEET_LOOT_SITE = PREFIX + "fleet";
-    public static final String WARDEN_LOOT_SITE = PREFIX + "warden";
+    public static final String BOSS_LOOT_SITE = PREFIX + "boss";
     public static final String CONTENT_TAG = PREFIX + "content";
     public static final String SENSOR_MOD_ID = PREFIX + "sensor_range";
     public static final String ENEMY_SENSOR_MOD_ID = PREFIX + "enemy_sensor_range";

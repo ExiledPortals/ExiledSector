@@ -11,6 +11,7 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.skills.unlock.AnchorFinds;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.skills.unlock.UnlockCondition;
 import exiledsector.skills.unlock.UnlockConditionType;
@@ -37,7 +38,7 @@ import static org.mockito.Mockito.when;
 
 class NightcrossUnlocksTest {
 
-    private static final List<UnlockCondition> PASCAL_GATE = List.of(UnlockCondition.modGate(UnlockConditionType.NIGHTCROSS_PASCAL_VISITED));
+    private static final List<UnlockCondition> PASCAL_GATE = List.of(UnlockCondition.anchorFound("nightcross"));
     private static final List<UnlockCondition> LUNAR_FLEET_GATE = List.of(UnlockCondition.modGate(UnlockConditionType.NIGHTCROSS_LUNAR_FLEET_DEFEATED));
     private static final List<UnlockCondition> PROTOTYPE_GATE = List.of(UnlockCondition.modGate(UnlockConditionType.NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND));
 
@@ -100,32 +101,32 @@ class NightcrossUnlocksTest {
     }
 
     @Test
-    void theNightcrossAreaOpensOnceThePlayerHasEnteredPascal() {
+    void theNightcrossAreaOpensOnceANightcrossAnchorIsFoundNotOnEnteringPascal() {
+        when(pascal.isEnteredByPlayer()).thenReturn(true);
         assertTrue(SkillTypeUnlockStatus.isLocked(PASCAL_GATE, null));
+
+        AnchorFinds.record(sector, "nightcross", "test");
+
+        assertFalse(SkillTypeUnlockStatus.isLocked(PASCAL_GATE, null));
+    }
+
+    @Test
+    void aSaveThatEnteredPascalBeforeAnchorsCountsAsHavingFoundOne() {
+        assertFalse(NightcrossUnlocks.pascalVisitedBeforeAnchors(sector));
 
         when(pascal.isEnteredByPlayer()).thenReturn(true);
+        assertTrue(NightcrossUnlocks.pascalVisitedBeforeAnchors(sector));
 
-        assertFalse(SkillTypeUnlockStatus.isLocked(PASCAL_GATE, null));
         when(pascal.isEnteredByPlayer()).thenReturn(false);
-        assertTrue(NightcrossUnlocks.isPascalVisited(sector), "the visit is remembered");
+        sectorMemory.set(NightcrossUnlocks.PASCAL_VISITED_FLAG, true);
+        assertTrue(NightcrossUnlocks.pascalVisitedBeforeAnchors(sector));
     }
 
     @Test
-    void aSectorWithoutPascalLeavesTheNightcrossAreaOpen() {
+    void aRandomSectorWithoutPascalCountsAsVisitedLikeBefore() {
         when(sector.getStarSystem(NightcrossUnlocks.PASCAL_SYSTEM_NAME)).thenReturn(null);
 
-        assertFalse(SkillTypeUnlockStatus.isLocked(PASCAL_GATE, null));
-    }
-
-    @Test
-    void pascalMissingAtLoadDoesNotRecordAVisitSoTheGateClosesOnceNightcrossCreatesIt() {
-        when(sector.getStarSystem(NightcrossUnlocks.PASCAL_SYSTEM_NAME)).thenReturn(null);
-        NightcrossUnlocks.checkSaveOnLoad(sector);
-        assertFalse(sectorMemory.getBoolean(NightcrossUnlocks.PASCAL_VISITED_FLAG));
-
-        when(sector.getStarSystem(NightcrossUnlocks.PASCAL_SYSTEM_NAME)).thenReturn(pascal);
-
-        assertTrue(SkillTypeUnlockStatus.isLocked(PASCAL_GATE, null));
+        assertTrue(NightcrossUnlocks.pascalVisitedBeforeAnchors(sector));
     }
 
     @Test

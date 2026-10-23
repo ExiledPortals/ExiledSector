@@ -310,7 +310,7 @@ class ChartContentGeneratorTest {
     }
 
     @Test
-    void aRolledColonyItemGoesToTheWardenOnceAndTheSameSeedPicksTheSameItem() throws Exception {
+    void aRolledColonyItemGoesToTheBossOnceAndTheSameSeedPicksTheSameItem() throws Exception {
         try {
             ChartGenContext context = certainColonyItem();
 

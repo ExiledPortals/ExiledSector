@@ -12,8 +12,6 @@ import exiledlib.skills.skilleffect.render.SpriteCache;
 import exiledsector.compat.NexerelinCompat;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
-import exiledsector.skills.npc.NpcFactionVolumes;
-import exiledsector.skills.tags.SkillTags;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.hyperspace.HyperspaceAnchor;
 import exiledsector.ui.util.TexturedQuadBatch;
@@ -86,7 +84,7 @@ public final class FactionFleetRenderer {
         }
         Collection<SkillNode> nodes = SkillTree.getAllNodes().values();
         Set<String> lockedRegions = HyperspaceAnchor.lockedRegions(nodes, SkillNode::getRegion, nodeHidden);
-        for (String region : SkillTags.FACTION_VOLUMES) {
+        for (String region : TreeFleetFactions.regions()) {
             RoamVolume volume = lockedRegions.contains(region) ? null : RoamVolume.region(region, SkillTree.getStars(), nodes);
             if (volume != null) {
                 renderer.volumesByRegion.put(region, volume);
@@ -179,7 +177,7 @@ public final class FactionFleetRenderer {
 
     private FactionFleet spawn(String region) {
         RoamVolume home = volumesByRegion.get(region);
-        List<String> factionIds = NpcFactionVolumes.factionsIn(region).stream()
+        List<String> factionIds = TreeFleetFactions.factionsIn(region).stream()
                 .filter(factionId -> !hullsByFaction.computeIfAbsent(factionId, FactionFleetRenderer::roamingHulls).isEmpty()).toList();
         if (home == null || factionIds.isEmpty()) {
             return null;
@@ -202,7 +200,7 @@ public final class FactionFleetRenderer {
     private List<RoamVolume> alliedVolumes(String factionId, String homeRegion) {
         return volumesByRegion.entrySet().stream()
                 .filter(entry -> !entry.getKey().equals(homeRegion)
-                        && NpcFactionVolumes.factionsIn(entry.getKey()).stream().anyMatch(other -> allied(factionId, other)))
+                        && TreeFleetFactions.factionsIn(entry.getKey()).stream().anyMatch(other -> allied(factionId, other)))
                 .map(Map.Entry::getValue).toList();
     }
 

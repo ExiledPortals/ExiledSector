@@ -68,11 +68,9 @@ class NpcShipSelectorTest {
     }
 
     @Test
-    void fightersStationsCiviliansMothballedAndVariantlessShipsAreNotCandidates() {
+    void fightersCiviliansMothballedAndVariantlessShipsAreNotCandidates() {
         FleetMemberAPI fighter = member(false, false);
         when(fighter.isFighterWing()).thenReturn(true);
-        FleetMemberAPI station = member(false, false);
-        when(station.isStation()).thenReturn(true);
         FleetMemberAPI civilian = member(false, false);
         when(civilian.isCivilian()).thenReturn(true);
         FleetMemberAPI mothballed = member(false, false);
@@ -81,11 +79,31 @@ class NpcShipSelectorTest {
         when(variantless.getVariant()).thenReturn(null);
 
         assertFalse(NpcShipSelector.isCandidate(fighter));
-        assertFalse(NpcShipSelector.isCandidate(station));
         assertFalse(NpcShipSelector.isCandidate(civilian));
         assertFalse(NpcShipSelector.isCandidate(mothballed));
         assertFalse(NpcShipSelector.isCandidate(variantless));
         assertFalse(NpcShipSelector.isCandidate(null));
+    }
+
+    @Test
+    void stationsAreCandidatesUnlessTheStationToggleIsOff() {
+        FleetMemberAPI station = member(false, false);
+        when(station.isStation()).thenReturn(true);
+
+        assertTrue(NpcShipSelector.isCandidate(station));
+        configure(NpcTreeConfig.STATIONS_FIELD_ID, false);
+        assertFalse(NpcShipSelector.isCandidate(station));
+    }
+
+    @Test
+    void aStationIsAlwaysChosenWhateverTheOtherToggles() {
+        configure(NpcTreeConfig.OFFICERED_SHIPS_FIELD_ID, false);
+        configure(NpcTreeConfig.FLAGSHIP_FIELD_ID, false);
+        lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", NpcTreeConfig.OTHER_SHIP_CHANCE_FIELD_ID)).thenReturn(0);
+        FleetMemberAPI station = member(false, false);
+        when(station.isStation()).thenReturn(true);
+
+        assertTrue(NpcShipSelector.isChosen(station, rolling(0.99f)));
     }
 
     @Test

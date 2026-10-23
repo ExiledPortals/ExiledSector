@@ -39,6 +39,19 @@ public final class AreaToggles {
         return Set.copyOf(disabled);
     }
 
+    public static boolean modInstalledFor(String region) {
+        if (LOST_SECTOR_REGIONS.contains(region)) {
+            return LostSectorCompat.isModEnabled();
+        }
+        if (RANDOM_ASSORTMENT_REGIONS.contains(region)) {
+            return RandomAssortmentCompat.isModEnabled();
+        }
+        if (NIGHTCROSS_REGIONS.contains(region)) {
+            return NightcrossCompat.isModEnabled();
+        }
+        return !TANIA_REGIONS.contains(region) || TaniaCompat.isModEnabled();
+    }
+
     static Set<String> disabledRegions(String lostSectorSetting, boolean lostSectorInstalled) {
         return isShown(lostSectorSetting, lostSectorInstalled) ? Set.of() : LOST_SECTOR_REGIONS;
     }

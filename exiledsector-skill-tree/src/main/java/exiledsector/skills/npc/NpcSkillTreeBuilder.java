@@ -1,8 +1,10 @@
 package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
+import exiledlib.skills.AffinitySteps;
 import exiledlib.skills.ShipFacts;
 import exiledlib.skills.SkillTypeEffect;
+import exiledlib.skills.skilleffect.SkillEffect;
 import exiledlib.skills.skilleffect.shield.ShieldSkillEffect;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocationGate;
@@ -322,7 +324,7 @@ public final class NpcSkillTreeBuilder {
                 SkillNode node = topology.node(nodeId);
                 SkillTier tier = node.getType().getTier();
                 if ((tier == SkillTier.NOTABLE || tier == SkillTier.KEYSTONE) && factionRegion.equals(node.getRegion())
-                        && !rejectedNodeIds.contains(nodeId) && affordable(search, nodeId, remaining())) {
+                        && !rejectedNodeIds.contains(nodeId) && !wastedOnStation(search, nodeId) && affordable(search, nodeId, remaining())) {
                     candidates.add(nodeId);
                 }
             }
@@ -374,7 +376,7 @@ public final class NpcSkillTreeBuilder {
             for (String nodeId : search.reached()) {
                 SkillTier tier = topology.node(nodeId).getType().getTier();
                 if ((tier == SkillTier.NOTABLE || tier == SkillTier.KEYSTONE) && !chosenGoals.contains(nodeId) && !rejectedNodeIds.contains(nodeId)
-                        && affordable(search, nodeId, remaining())) {
+                        && !wastedOnStation(search, nodeId) && affordable(search, nodeId, remaining())) {
                     goalPool.add(nodeId);
                 }
             }
@@ -391,7 +393,8 @@ public final class NpcSkillTreeBuilder {
             int nearestCost = Integer.MAX_VALUE;
             List<String> candidates = new ArrayList<>();
             for (String nodeId : search.reached()) {
-                if (!isFillTier(topology.node(nodeId).getType().getTier()) || rejectedNodeIds.contains(nodeId) || !affordable(search, nodeId, remaining())) {
+                if (!isFillTier(topology.node(nodeId).getType().getTier()) || rejectedNodeIds.contains(nodeId) || wastedOnStation(search, nodeId)
+                        || !affordable(search, nodeId, remaining())) {
                     continue;
                 }
                 int nodeCost = search.cost(nodeId);
@@ -415,6 +418,10 @@ public final class NpcSkillTreeBuilder {
 
         private static boolean isFillTier(SkillTier tier) {
             return tier == SkillTier.SMALL || tier == SkillTier.ROOT;
+        }
+
+        private boolean wastedOnStation(Search search, String nodeId) {
+            return NpcStationNodes.isWasted(AllocatedNode.planned(topology.node(nodeId), search.options().get(nodeId)).effectiveType(), profile);
         }
 
         private float tierWeight(String nodeId) {
@@ -444,7 +451,8 @@ public final class NpcSkillTreeBuilder {
                 }
             }
             ShipProfile fittedProfile = new ShipProfile(profile.hullSize(), shieldType, Math.max(0, fighterBays), profile.weaponKinds(),
-                    profile.flagship(), profile.baseArmor(), profile.phaseHull(), profile.limitedSystemCharges(), profile.onlyBuiltInWings());
+                    profile.flagship(), profile.baseArmor(), profile.phaseHull(), profile.limitedSystemCharges(), profile.onlyBuiltInWings(),
+                    profile.station());
             boolean shieldInvested = false;
             for (AllocatedNode node : allocatedNodes) {
                 List<String> tags = node.effectiveType().getTags();
@@ -521,12 +529,38 @@ public final class NpcSkillTreeBuilder {
                     options.add(optionType);
                 }
             }
-            SkillType pickedOption = weightedPick(options, optionType -> relevance.of(optionType.getTags()), random);
+            if (options.stream().anyMatch(optionType -> !NpcStationNodes.isWasted(optionType, profile))) {
+                options.removeIf(optionType -> NpcStationNodes.isWasted(optionType, profile));
+            }
+            SkillType rootAffinityOption = rootAffinityOption(options);
+            SkillType pickedOption = rootAffinityOption != null ? rootAffinityOption
+                    : weightedPick(options, optionType -> relevance.of(optionType.getTags()), random);
             if (pickedOption != null) {
                 searchOptions.put(node.getId(), pickedOption);
                 chosenOptions.put(node.getId(), pickedOption);
             }
             return pickedOption;
+        }
+
+        private SkillType rootAffinityOption(List<SkillType> options) {
+            SkillNode root = topology.node(ShipTrees.resolveStartingRootId(shipData));
+            Set<SkillEffect> rootAffinities = root == null ? Set.of() : affinitiesOf(root.getType());
+            for (SkillType option : options) {
+                if (!Collections.disjoint(affinitiesOf(option), rootAffinities)) {
+                    return option;
+                }
+            }
+            return null;
+        }
+
+        private static Set<SkillEffect> affinitiesOf(SkillType type) {
+            Set<SkillEffect> affinities = new HashSet<>();
+            for (SkillTypeEffect effect : type.getEffects()) {
+                if (AffinitySteps.isAffinity(effect.effect())) {
+                    affinities.add(effect.effect());
+                }
+            }
+            return affinities;
         }
 
         private void anchorAllocatedSocket() {

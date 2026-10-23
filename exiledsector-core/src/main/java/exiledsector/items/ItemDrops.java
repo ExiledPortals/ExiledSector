@@ -218,7 +218,7 @@ public final class ItemDrops {
         return definition.type() == ItemType.SUBROUTINE && !definition.unique() && isDroppable(definition);
     }
 
-    public record SectionItemLoot(List<ItemData> items, List<HullUpgradeData> upgrades) {
+    public record SectionItemLoot(List<ItemData> items, List<RefitSchematic> upgrades) {
 
         public static final SectionItemLoot NONE = new SectionItemLoot(List.of(), List.of());
 
@@ -227,7 +227,7 @@ public final class ItemDrops {
         }
     }
 
-    public record SiteLoot(List<ItemData> items, List<HullUpgradeData> upgrades, Map<String, Integer> materials) {
+    public record SiteLoot(List<ItemData> items, List<RefitSchematic> upgrades, Map<String, Integer> materials) {
 
         public static final SiteLoot NONE = new SiteLoot(List.of(), List.of(), Map.of());
 
@@ -241,13 +241,13 @@ public final class ItemDrops {
             return items.isEmpty() && upgrades.isEmpty() && materials.isEmpty();
         }
 
-        public SiteLoot plus(List<ItemData> moreItems, List<HullUpgradeData> moreUpgrades, Map<String, Integer> moreMaterials) {
+        public SiteLoot plus(List<ItemData> moreItems, List<RefitSchematic> moreUpgrades, Map<String, Integer> moreMaterials) {
             if (moreItems.isEmpty() && moreUpgrades.isEmpty() && moreMaterials.isEmpty()) {
                 return this;
             }
             List<ItemData> allItems = new ArrayList<>(items);
             allItems.addAll(moreItems);
-            List<HullUpgradeData> allUpgrades = new ArrayList<>(upgrades);
+            List<RefitSchematic> allUpgrades = new ArrayList<>(upgrades);
             allUpgrades.addAll(moreUpgrades);
             Map<String, Integer> allMaterials = new LinkedHashMap<>(materials);
             moreMaterials.forEach((itemId, quantity) -> allMaterials.merge(itemId, quantity, Integer::sum));
@@ -263,7 +263,7 @@ public final class ItemDrops {
                                     boolean sectionsOpen) {
         List<ItemData> droppedItems = new ArrayList<>(roll(siteId, random, chances));
         Map<String, Integer> droppedMaterials = rollMaterials(siteId, random, feedstockMult, currencyMult);
-        List<HullUpgradeData> droppedUpgrades = new ArrayList<>();
+        List<RefitSchematic> droppedUpgrades = new ArrayList<>();
         if (sectionsOpen) {
             SectionItemLoot sectionItemLoot = rollSectionItemLoot(siteId, random, chances);
             droppedItems.addAll(sectionItemLoot.items());
@@ -287,9 +287,9 @@ public final class ItemDrops {
             return SectionItemLoot.NONE;
         }
         List<ItemData> droppedItems = rollCascade(rule, random, chances.general(), chances.rarity(), ItemDrops::pickSectionItemBasic);
-        List<HullUpgradeData> droppedUpgrades = new ArrayList<>();
-        if (random.nextFloat() < rule.chances().get(0) * chances.general()) {
-            droppedUpgrades.add(new HullUpgradeData(HullUpgradeRoller.rollHullSize(random)));
+        List<RefitSchematic> droppedUpgrades = new ArrayList<>();
+        if (random.nextFloat() < rule.chances().get(0) * chances.general() && RefitSchematic.dropsAllowed()) {
+            droppedUpgrades.add(RefitSchematic.roll(random));
         }
         List<ItemKind> kindsWithBasics = sectionKindsWithBasics();
         for (ItemKind kind : kindsWithBasics) {

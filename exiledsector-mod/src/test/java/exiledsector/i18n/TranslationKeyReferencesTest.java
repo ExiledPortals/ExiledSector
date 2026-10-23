@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TranslationKeyReferencesTest {
 
-    private static final Path CLASS_PARTS = Path.of("docs/plans/domain_split_classes.csv");
     private static final Pattern LITERAL_KEY = Pattern.compile("Translation\\.(?:text|msg|styled|gameText)\\(\\s*\"([^\"]+)\"");
     private static final List<String> PLURAL_FORMS = List.of(".one", ".other");
     private static final String METADATA_PREFIX = "meta.";
@@ -35,12 +34,19 @@ class TranslationKeyReferencesTest {
             "skill-tree", "data/strings/exiledSector/skillTree/en.json",
             "hull-upgrades", "data/strings/exiledSector/hullUpgrades/en.json",
             "star-charts", "data/strings/exiledSector/starCharts/en.json");
+    private static final Map<String, String> PART_BY_MODULE = Map.of(
+            "exiled-lib", LIB,
+            "exiledsector-core", CORE,
+            "exiledsector-skill-tree", "skill-tree",
+            "exiledsector-hull-upgrades", "hull-upgrades",
+            "exiledsector-star-charts", "star-charts",
+            "exiledsector-mod", CORE);
 
     @Test
     void everyLiteralKeyTheCodeLooksUpExistsInTheEnglishCatalogue() throws IOException, JSONException {
         JSONObject english = new JSONObject(RealCatalogue.entries(LocaleChain.ENGLISH));
         List<String> missing = new ArrayList<>();
-        forEachLiteralKey((source, key) -> {
+        forEachLiteralKey((source, file, key) -> {
             if (!isDefined(english, key)) {
                 missing.add(source + ": " + key);
             }
@@ -50,15 +56,14 @@ class TranslationKeyReferencesTest {
 
     @Test
     void everyLiteralKeyLivesInTheCatalogueOfItsClassesPartOrBelow() throws IOException, JSONException {
-        Map<String, String> partByClass = classParts();
         Map<String, JSONObject> catalogueByPart = new HashMap<>();
         for (Map.Entry<String, String> catalogue : CATALOGUE_BY_PART.entrySet()) {
             Path file = ProjectFiles.gameFile(catalogue.getValue());
             catalogueByPart.put(catalogue.getKey(), new JSONObject(Files.readString(file, StandardCharsets.UTF_8)));
         }
         List<String> misplaced = new ArrayList<>();
-        forEachLiteralKey((source, key) -> {
-            String part = partByClass.get(className(source));
+        forEachLiteralKey((source, file, key) -> {
+            String part = partOf(file);
             if (part != null && reachableParts(part).stream().noneMatch(reachable -> isDefined(catalogueByPart.get(reachable), key))) {
                 misplaced.add(source + " (" + part + "): " + key);
             }
@@ -67,7 +72,7 @@ class TranslationKeyReferencesTest {
     }
 
     private interface KeyVisitor {
-        void visit(String source, String key);
+        void visit(String source, Path file, String key);
     }
 
     private static void forEachLiteralKey(KeyVisitor visitor) throws IOException {
@@ -76,24 +81,14 @@ class TranslationKeyReferencesTest {
             while (matcher.find()) {
                 String key = matcher.group(1);
                 if (!key.endsWith(".") && !key.startsWith(METADATA_PREFIX)) {
-                    visitor.visit(source.getKey(), key);
+                    visitor.visit(source.getKey(), source.getValue(), key);
                 }
             }
         }
     }
 
-    private static Map<String, String> classParts() throws IOException {
-        Map<String, String> partByClass = new HashMap<>();
-        List<String> rows = Files.readAllLines(CLASS_PARTS);
-        for (String row : rows.subList(1, rows.size())) {
-            String[] cells = row.split(",", -1);
-            partByClass.put(cells[0], cells[1]);
-        }
-        return partByClass;
-    }
-
-    private static String className(String relative) {
-        return relative.substring(0, relative.length() - ".java".length()).replace('/', '.');
+    private static String partOf(Path source) {
+        return PART_BY_MODULE.get(ProjectFiles.projectRoot().relativize(source.toAbsolutePath()).getName(0).toString());
     }
 
     private static List<String> reachableParts(String part) {
