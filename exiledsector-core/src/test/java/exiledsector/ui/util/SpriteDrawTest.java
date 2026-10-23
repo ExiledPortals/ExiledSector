@@ -1,9 +1,9 @@
 package exiledsector.ui.util;
 
-import exiledlib.skills.skilleffect.SpriteCache;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
+import exiledlib.skills.skilleffect.render.SpriteCache;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

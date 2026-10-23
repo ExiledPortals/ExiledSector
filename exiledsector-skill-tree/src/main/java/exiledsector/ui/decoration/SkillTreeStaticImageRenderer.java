@@ -1,9 +1,9 @@
 package exiledsector.ui.decoration;
 
+import exiledlib.skills.skilleffect.render.SpriteCache;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.layout.StaticImage;
 import exiledsector.ui.TreeViewport;
-import exiledlib.skills.skilleffect.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
 
 import java.util.List;

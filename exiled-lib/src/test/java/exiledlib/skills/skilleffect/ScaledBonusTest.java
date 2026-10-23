@@ -4,6 +4,8 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledlib.skills.skilleffect.weapon.WeaponScope;
+import exiledlib.skills.skilleffect.weapon.WeaponStatFamily;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

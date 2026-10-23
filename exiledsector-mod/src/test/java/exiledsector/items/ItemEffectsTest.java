@@ -2,12 +2,12 @@ package exiledsector.items;
 
 import exiledlib.i18n.Style;
 import exiledlib.i18n.StyledText;
+import exiledlib.modifiers.ModifierEffect;
+import exiledlib.skills.skilleffect.SkillEffect;
 import exiledsector.items.ItemDataIntegrity.Severity;
 import exiledsector.items.ItemDataIntegrity.Violation;
-import exiledlib.modifiers.ModifierEffect;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
-import exiledlib.skills.skilleffect.SkillEffect;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.junit.jupiter.api.AfterEach;

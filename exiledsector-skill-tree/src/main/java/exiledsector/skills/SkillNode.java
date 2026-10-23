@@ -7,10 +7,10 @@ import exiledlib.i18n.Translation;
 import exiledlib.skills.DescriptionLine;
 import exiledlib.skills.ShipHullSizes;
 import exiledlib.skills.SkillTypeEffect;
+import exiledlib.skills.skilleffect.weapon.WeaponEffectTooltipAggregator;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.layout.SkillTreeObject;
-import exiledlib.skills.skilleffect.WeaponEffectTooltipAggregator;
 import exiledsector.skills.tags.SkillTags;
 
 import java.util.ArrayList;

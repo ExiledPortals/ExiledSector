@@ -5,7 +5,7 @@ import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
 import exiledlib.skills.HullSizeSkillEffect;
 import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.ModuleShare;
+import exiledlib.skills.skilleffect.stationmodule.ModuleShare;
 import exiledsector.skills.unlock.UnlockCondition;
 
 import java.util.ArrayList;

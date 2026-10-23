@@ -2,15 +2,15 @@ package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledlib.skills.SkillTypeEffect;
+import exiledlib.skills.skilleffect.shield.ShieldSkillEffect;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledlib.skills.SkillTypeEffect;
 import exiledsector.skills.layout.SkillNodeDecoration;
-import exiledlib.skills.skilleffect.ShieldSkillEffect;
 import exiledsector.skills.tags.ShipProfile;
 import exiledsector.skills.tags.WeaponKind;
 import org.junit.jupiter.api.AfterEach;

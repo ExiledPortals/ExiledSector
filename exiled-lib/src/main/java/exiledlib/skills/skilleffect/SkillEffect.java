@@ -6,6 +6,8 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import exiledlib.i18n.StyledText;
 import exiledlib.modifiers.ModifierEffect;
 import exiledlib.skills.ShipFacts;
+import exiledlib.skills.skilleffect.stationmodule.ModuleShare;
+import exiledlib.skills.skilleffect.stationmodule.ModuleShares;
 
 public interface SkillEffect extends ModifierEffect {
 

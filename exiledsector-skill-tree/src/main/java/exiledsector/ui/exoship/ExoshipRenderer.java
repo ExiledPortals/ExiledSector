@@ -2,9 +2,9 @@ package exiledsector.ui.exoship;
 
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
+import exiledlib.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.decoration.HullEngines;
-import exiledlib.skills.skilleffect.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
 
 import java.awt.Color;

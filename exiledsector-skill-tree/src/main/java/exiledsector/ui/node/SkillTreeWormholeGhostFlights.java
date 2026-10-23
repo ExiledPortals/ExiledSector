@@ -1,6 +1,7 @@
 package exiledsector.ui.node;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
+import exiledlib.skills.skilleffect.render.SpriteCache;
 import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
@@ -8,7 +9,6 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeTopology;
 import exiledsector.ui.TreeViewport;
-import exiledlib.skills.skilleffect.SpriteCache;
 
 import java.util.ArrayList;
 import java.util.HashMap;

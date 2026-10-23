@@ -6,7 +6,7 @@ import exiledlib.i18n.Translation;
 
 import java.util.function.Supplier;
 
-final class PlayerStatus {
+public final class PlayerStatus {
 
     private final String statusKey;
     private final String iconPath;
@@ -14,25 +14,25 @@ final class PlayerStatus {
     private String title;
     private String text;
 
-    PlayerStatus(String statusKey, String iconPath, String titleKey) {
+    public PlayerStatus(String statusKey, String iconPath, String titleKey) {
         this.statusKey = statusKey;
         this.iconPath = iconPath;
         this.titleKey = titleKey;
     }
 
-    boolean needsText() {
+    public boolean needsText() {
         return text == null;
     }
 
-    void setText(Supplier<String> gameText) {
+    public void setText(Supplier<String> gameText) {
         text = I18n.forGameText(gameText);
     }
 
-    void invalidate() {
+    public void invalidate() {
         text = null;
     }
 
-    void show(CombatEngineAPI engine, boolean debuff) {
+    public void show(CombatEngineAPI engine, boolean debuff) {
         if (title == null) {
             title = Translation.gameText(titleKey);
         }

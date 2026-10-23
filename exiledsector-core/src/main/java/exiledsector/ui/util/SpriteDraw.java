@@ -1,7 +1,7 @@
 package exiledsector.ui.util;
 
-import exiledlib.skills.skilleffect.SpriteCache;
 import com.fs.starfarer.api.graphics.SpriteAPI;
+import exiledlib.skills.skilleffect.render.SpriteCache;
 
 import java.awt.Color;
 

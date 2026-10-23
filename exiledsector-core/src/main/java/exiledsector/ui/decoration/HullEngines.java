@@ -2,7 +2,7 @@ package exiledsector.ui.decoration;
 
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
-import exiledlib.skills.skilleffect.SpriteCache;
+import exiledlib.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.TexturedQuadBatch;
 import java.awt.Color;

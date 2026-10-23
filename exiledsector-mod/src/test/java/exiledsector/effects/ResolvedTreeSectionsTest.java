@@ -1,12 +1,12 @@
 package exiledsector.effects;
 
-import exiledsector.items.ShipSection;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
+import exiledsector.items.ItemDefinitions;
+import exiledsector.items.NpcItems;
+import exiledsector.items.ShipSection;
 import exiledsector.skills.ShipSections;
 import exiledsector.skills.ShipSkillData;
-import exiledlib.skills.skilleffect.DefenseSkillEffect;
-import exiledsector.items.NpcItems;
-import exiledsector.items.ItemDefinitions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;

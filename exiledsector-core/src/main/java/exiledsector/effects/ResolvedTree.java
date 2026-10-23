@@ -8,10 +8,10 @@ import exiledlib.skills.DamageTakenCaps;
 import exiledlib.skills.DiminishingReturns;
 import exiledlib.skills.EffectContribution;
 import exiledlib.skills.EffectTotals;
-import exiledsector.skills.ShipSkillData;
 import exiledlib.skills.SkillTypeEffect;
 import exiledlib.skills.StatBaseline;
 import exiledlib.skills.skilleffect.SkillEffect;
+import exiledsector.skills.ShipSkillData;
 
 import java.util.ArrayList;
 import java.util.Collections;

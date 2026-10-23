@@ -1,7 +1,7 @@
 package exiledsector.items;
 
-import exiledsector.modifiers.ModifierSlot;
 import exiledlib.skills.skilleffect.EffectAliases;
+import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;

@@ -1,13 +1,13 @@
 package exiledsector.ui.socket;
 
-import exiledlib.skills.skilleffect.Fade;
+import exiledlib.skills.skilleffect.render.Fade;
+import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.ui.cargo.AnimatedItemIcons;
+import exiledsector.ui.cargo.CargoIconFx;
+import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloShapes;
-import exiledsector.ui.cargo.AnimatedItemIcons;
-import exiledlib.skills.skilleffect.SpriteCache;
-import exiledsector.ui.cargo.CargoIconFx;
-import exiledsector.ui.cargo.CargoIconLook;
 
 import java.awt.Color;
 

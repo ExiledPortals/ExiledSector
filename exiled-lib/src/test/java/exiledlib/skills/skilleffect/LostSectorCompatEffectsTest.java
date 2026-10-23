@@ -7,6 +7,9 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import exiledlib.compat.LostSectorCompat;
+import exiledlib.skills.skilleffect.flux.FluxSkillEffect;
+import exiledlib.skills.skilleffect.shipsystem.ShipSystemSkillEffect;
+import exiledlib.skills.skilleffect.weapon.WeaponSkillEffect;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,9 +31,9 @@ import static org.mockito.Mockito.when;
 
 class LostSectorCompatEffectsTest {
 
-    private static final List<SkillEffect> AUGMENTED_EFFECTS = List.of(CompatSkillEffect.AUGMENTED_SYSTEM_REGEN_PERCENT,
-            CombatSkillEffect.AUGMENTED_FLUX_SCALED_PENALTY_REDUCTION_PERCENT,
-            CombatSkillEffect.AUGMENTED_INERTIAL_PROJECTILE_SPEED_PERCENT);
+    private static final List<SkillEffect> AUGMENTED_EFFECTS = List.of(ShipSystemSkillEffect.AUGMENTED_SYSTEM_REGEN_PERCENT,
+            FluxSkillEffect.AUGMENTED_FLUX_SCALED_PENALTY_REDUCTION_PERCENT,
+            WeaponSkillEffect.AUGMENTED_INERTIAL_PROJECTILE_SPEED_PERCENT);
 
     private MockedStatic<Global> globalMock;
     private ModManagerAPI mods;
@@ -92,8 +95,8 @@ class LostSectorCompatEffectsTest {
         when(plain.getVariant()).thenReturn(plainVariant);
         when(plain.getSystemRegenBonus()).thenReturn(plainRegen);
 
-        CompatSkillEffect.AUGMENTED_SYSTEM_REGEN_PERCENT.apply(augmented, "node", 10f);
-        CompatSkillEffect.AUGMENTED_SYSTEM_REGEN_PERCENT.apply(plain, "node", 10f);
+        ShipSystemSkillEffect.AUGMENTED_SYSTEM_REGEN_PERCENT.apply(augmented, "node", 10f);
+        ShipSystemSkillEffect.AUGMENTED_SYSTEM_REGEN_PERCENT.apply(plain, "node", 10f);
 
         verify(augmentedRegen).modifyPercent("node", 10f);
         verify(plainRegen, never()).modifyPercent(anyString(), anyFloat());

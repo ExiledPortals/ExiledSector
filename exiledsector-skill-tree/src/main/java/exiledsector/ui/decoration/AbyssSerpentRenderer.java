@@ -1,11 +1,11 @@
 package exiledsector.ui.decoration;
 
+import exiledlib.skills.skilleffect.render.SpriteCache;
 import exiledsector.skills.SkillTree;
-import exiledsector.skills.layout.StaticImage;
 import exiledsector.skills.layout.Star;
+import exiledsector.skills.layout.StaticImage;
 import exiledsector.skills.tags.SkillTags;
 import exiledsector.ui.TreeViewport;
-import exiledlib.skills.skilleffect.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.WobblyOrbit;
 

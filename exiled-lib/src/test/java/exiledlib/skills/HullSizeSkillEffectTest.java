@@ -1,7 +1,7 @@
 package exiledlib.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.skills.skilleffect.DefenseSkillEffect;
+import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

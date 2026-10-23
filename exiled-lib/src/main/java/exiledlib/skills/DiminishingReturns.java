@@ -3,10 +3,10 @@ package exiledlib.skills;
 import exiledlib.HostMod;
 import exiledlib.ModSettings;
 import exiledlib.ModSettingsListener;
-import exiledlib.skills.skilleffect.ScopedWeaponEffect;
 import exiledlib.skills.skilleffect.SkillEffect;
 import exiledlib.skills.skilleffect.StatMode;
-import exiledlib.skills.skilleffect.WeaponScope;
+import exiledlib.skills.skilleffect.weapon.ScopedWeaponEffect;
+import exiledlib.skills.skilleffect.weapon.WeaponScope;
 
 import java.util.Arrays;
 import java.util.Comparator;

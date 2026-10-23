@@ -4,7 +4,7 @@ import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.FighterSkillEffect;
+import exiledlib.skills.skilleffect.fighter.FighterSkillEffect;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

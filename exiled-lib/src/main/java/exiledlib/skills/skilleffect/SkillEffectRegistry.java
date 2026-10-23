@@ -1,5 +1,22 @@
 package exiledlib.skills.skilleffect;
 
+import exiledlib.skills.skilleffect.aura.AuraSkillEffect;
+import exiledlib.skills.skilleffect.battle.BattleSkillEffect;
+import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
+import exiledlib.skills.skilleffect.fighter.FighterSkillEffect;
+import exiledlib.skills.skilleffect.flux.FluxSkillEffect;
+import exiledlib.skills.skilleffect.logistics.LogisticsSkillEffect;
+import exiledlib.skills.skilleffect.movement.MovementSkillEffect;
+import exiledlib.skills.skilleffect.onhit.OnHitSkillEffect;
+import exiledlib.skills.skilleffect.phase.PhaseSkillEffect;
+import exiledlib.skills.skilleffect.readiness.ReadinessSkillEffect;
+import exiledlib.skills.skilleffect.shield.ShieldSkillEffect;
+import exiledlib.skills.skilleffect.shipsystem.ShipSystemSkillEffect;
+import exiledlib.skills.skilleffect.special.SpecialSkillEffect;
+import exiledlib.skills.skilleffect.stationmodule.StationModuleSkillEffect;
+import exiledlib.skills.skilleffect.weapon.ScopedWeaponEffect;
+import exiledlib.skills.skilleffect.weapon.WeaponSkillEffect;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,15 +46,19 @@ final class SkillEffectRegistry {
         SkillEffect[][] groups = {
                 MovementSkillEffect.values(),
                 FluxSkillEffect.values(),
-                WeaponSkillEffect.values(),
-                ShieldSkillEffect.values(),
-                LogisticsSkillEffect.values(),
-                FighterSkillEffect.values(),
-                PhaseSkillEffect.values(),
-                MiscSkillEffect.values(),
                 DefenseSkillEffect.values(),
-                CombatSkillEffect.values(),
-                CompatSkillEffect.values()
+                ShieldSkillEffect.values(),
+                PhaseSkillEffect.values(),
+                ShipSystemSkillEffect.values(),
+                WeaponSkillEffect.values(),
+                OnHitSkillEffect.values(),
+                FighterSkillEffect.values(),
+                AuraSkillEffect.values(),
+                StationModuleSkillEffect.values(),
+                BattleSkillEffect.values(),
+                ReadinessSkillEffect.values(),
+                LogisticsSkillEffect.values(),
+                SpecialSkillEffect.values()
         };
         for (SkillEffect[] group : groups) {
             for (SkillEffect effect : group) {

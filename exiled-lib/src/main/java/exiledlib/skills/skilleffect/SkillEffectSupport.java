@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-final class SkillEffectSupport {
+public final class SkillEffectSupport {
 
     static final int MAX_COUNTED_DMODS = 5;
     static final String NON_LOGISTICS_DMOD_EFFECT_MULT = "exiledSector_nonLogisticsDModEffectMult";
@@ -27,19 +27,19 @@ final class SkillEffectSupport {
     private SkillEffectSupport() {
     }
 
-    static void applyMult(MutableStat stat, String modId, float magnitude) {
+    public static void applyMult(MutableStat stat, String modId, float magnitude) {
         stat.modifyMult(modId, multFrom(magnitude));
     }
 
-    static void applyMult(StatBonus stat, String modId, float magnitude) {
+    public static void applyMult(StatBonus stat, String modId, float magnitude) {
         stat.modifyMult(modId, multFrom(magnitude));
     }
 
-    static float multFrom(float magnitude) {
+    public static float multFrom(float magnitude) {
         return 1f + magnitude / 100f;
     }
 
-    static <T> T ensureListener(ShipAPI ship, Class<T> listenerType, Function<ShipAPI, ? extends T> listenerFactory) {
+    public static <T> T ensureListener(ShipAPI ship, Class<T> listenerType, Function<ShipAPI, ? extends T> listenerFactory) {
         List<T> existing = ship.getListeners(listenerType);
         if (existing != null && !existing.isEmpty()) {
             return existing.get(0);
@@ -49,12 +49,12 @@ final class SkillEffectSupport {
         return created;
     }
 
-    static <T> T existingEngineListener(Class<T> listenerType) {
+    public static <T> T existingEngineListener(Class<T> listenerType) {
         List<T> existing = Global.getCombatEngine().getListenerManager().getListeners(listenerType);
         return existing.isEmpty() ? null : existing.get(0);
     }
 
-    static <T> T ensureEngineListener(Class<T> listenerType, Supplier<? extends T> listenerFactory) {
+    public static <T> T ensureEngineListener(Class<T> listenerType, Supplier<? extends T> listenerFactory) {
         T existing = existingEngineListener(listenerType);
         if (existing != null) {
             return existing;
@@ -64,7 +64,7 @@ final class SkillEffectSupport {
         return created;
     }
 
-    static float compoundMultPerDMod(MutableShipStatsAPI stats, float magnitudePerDMod) {
+    public static float compoundMultPerDMod(MutableShipStatsAPI stats, float magnitudePerDMod) {
         return (float) Math.pow(multFrom(magnitudePerDMod), Math.min(countDMods(stats), MAX_COUNTED_DMODS));
     }
 
@@ -72,20 +72,20 @@ final class SkillEffectSupport {
         return dModSpecs(stats.getVariant()).size();
     }
 
-    static void applyDModEffectMult(MutableShipStatsAPI stats, String modId, float magnitude) {
+    public static void applyDModEffectMult(MutableShipStatsAPI stats, String modId, float magnitude) {
         applyMult(stats.getDynamic().getStat(Stats.DMOD_EFFECT_MULT), modId, magnitude);
         reapplyDMods(stats);
         refreshLogisticsDModCopies(stats);
     }
 
-    static void applyNonLogisticsDModEffectMult(MutableShipStatsAPI stats, String modId, float magnitude) {
+    public static void applyNonLogisticsDModEffectMult(MutableShipStatsAPI stats, String modId, float magnitude) {
         applyMult(stats.getDynamic().getStat(Stats.DMOD_EFFECT_MULT), modId, magnitude);
         applyMult(stats.getDynamic().getStat(NON_LOGISTICS_DMOD_EFFECT_MULT), modId, magnitude);
         reapplyDMods(stats);
         refreshLogisticsDModCopies(stats);
     }
 
-    static void applyLogisticsDModEffectMult(MutableShipStatsAPI stats, String modId, float magnitude) {
+    public static void applyLogisticsDModEffectMult(MutableShipStatsAPI stats, String modId, float magnitude) {
         applyMult(stats.getDynamic().getStat(LOGISTICS_DMOD_EFFECT_MULT), modId, magnitude);
         refreshLogisticsDModCopies(stats);
     }

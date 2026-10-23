@@ -1,8 +1,8 @@
 package exiledsector.items;
 
 import exiledlib.modifiers.ModifierEffect;
-import exiledsector.modifiers.ModifierEffects;
 import exiledlib.skills.skilleffect.SkillEffect;
+import exiledsector.modifiers.ModifierEffects;
 
 import java.util.ArrayList;
 import java.util.Collection;

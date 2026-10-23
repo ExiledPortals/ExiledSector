@@ -3,20 +3,20 @@ package exiledsector.effects;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.persistence.ShipSkillDataManager;
 import exiledlib.skills.NpcBonusScaling;
+import exiledlib.skills.SkillTypeEffect;
+import exiledlib.skills.skilleffect.SkillEffect;
+import exiledlib.skills.skilleffect.StatMode;
+import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
+import exiledlib.skills.skilleffect.logistics.LogisticsSkillEffect;
+import exiledlib.skills.skilleffect.onhit.OnHitSkillEffect;
+import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.CombatSkillEffect;
-import exiledlib.skills.skilleffect.DefenseSkillEffect;
-import exiledlib.skills.skilleffect.LogisticsSkillEffect;
-import exiledlib.skills.skilleffect.SkillEffect;
-import exiledlib.skills.skilleffect.StatMode;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -127,13 +127,13 @@ class NpcBonusScalingTest {
     void logisticsNodesCountedEffectsAndListenerEffectsAreNotScaled() {
         ShipSkillData shipData = shipWith(List.of("logistics"), new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f));
         allocate(shipData, List.of(), new SkillTypeEffect(LogisticsSkillEffect.BURN_LEVEL_FLAT, 1f));
-        allocate(shipData, List.of(), new SkillTypeEffect(CombatSkillEffect.DISINTEGRATION_ARMOR_DAMAGE_PERCENT, 20f));
+        allocate(shipData, List.of(), new SkillTypeEffect(OnHitSkillEffect.DISINTEGRATION_ARMOR_DAMAGE_PERCENT, 20f));
 
         ResolvedTree resolvedTree = ResolvedTrees.of(shipData, HullSize.CRUISER, 3f);
 
         assertEquals(10f, magnitude(resolvedTree, DefenseSkillEffect.HULL_PERCENT), TOLERANCE);
         assertEquals(1f, magnitude(resolvedTree, LogisticsSkillEffect.BURN_LEVEL_FLAT), TOLERANCE);
-        assertEquals(20f, magnitude(resolvedTree, CombatSkillEffect.DISINTEGRATION_ARMOR_DAMAGE_PERCENT), TOLERANCE);
+        assertEquals(20f, magnitude(resolvedTree, OnHitSkillEffect.DISINTEGRATION_ARMOR_DAMAGE_PERCENT), TOLERANCE);
     }
 
     @Test

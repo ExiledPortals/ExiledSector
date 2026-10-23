@@ -9,12 +9,12 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
-import exiledsector.ui.socket.ItemCodexLink;
-import exiledlib.skills.skilleffect.SpriteCache;
+import exiledlib.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.cargo.CargoIconAnimation;
 import exiledsector.ui.cargo.CargoIconFx;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
+import exiledsector.ui.socket.ItemCodexLink;
 
 import java.util.List;
 import java.util.function.Supplier;

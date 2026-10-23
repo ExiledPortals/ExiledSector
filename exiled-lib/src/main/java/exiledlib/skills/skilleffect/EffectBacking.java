@@ -4,8 +4,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import exiledlib.i18n.StyledText;
 
-sealed interface EffectBacking permits SimpleStatEffect, ConditionalStatEffect, ListenerEffect, PerDModMultEffect, FighterSkillEffect.RoleBacking,
-        CompatSkillEffect.WaivedPenalty {
+public interface EffectBacking {
 
     default void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
     }

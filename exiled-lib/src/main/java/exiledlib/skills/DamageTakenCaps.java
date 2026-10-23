@@ -1,7 +1,7 @@
 package exiledlib.skills;
 
-import exiledlib.skills.skilleffect.DefenseSkillEffect;
 import exiledlib.skills.skilleffect.SkillEffect;
+import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

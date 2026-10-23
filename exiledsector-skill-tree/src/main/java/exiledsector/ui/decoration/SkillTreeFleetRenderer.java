@@ -6,10 +6,10 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledlib.PlayerFleet;
+import exiledlib.skills.skilleffect.render.Fade;
+import exiledlib.skills.skilleffect.render.SpriteCache;
 import exiledsector.skills.SkillTree;
 import exiledsector.ui.TreeViewport;
-import exiledlib.skills.skilleffect.Fade;
-import exiledlib.skills.skilleffect.SpriteCache;
 import exiledsector.ui.util.TexturedQuadBatch;
 
 import java.util.ArrayList;
