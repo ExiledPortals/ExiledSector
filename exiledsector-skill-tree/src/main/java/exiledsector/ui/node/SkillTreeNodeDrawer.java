@@ -243,7 +243,7 @@ public final class SkillTreeNodeDrawer {
 
         Color tint = choosing ? ALLOCATED_TINT : iconTint(node, allocation, allocated);
         iconRenderer.drawIcon(node.getType().getIconPath(), nodeX, nodeY, footprintSize * ROOT_ICON_SHARE, nodeAlpha * ROOT_ICON_ALPHA, tint);
-        rootAffinityNumber.draw(node, allocation.skillData(), choosing, nodeX, nodeY, rootRadius, nodeAlpha);
+        rootAffinityNumber.draw(node, allocation.skillData(), rootChoice.phase() != StartingRootChoice.Phase.CHOSEN,nodeX, nodeY, rootRadius, nodeAlpha);
     }
 
     private Color iconTint(SkillNode node, NodeAllocator.Snapshot allocation, boolean allocated) {

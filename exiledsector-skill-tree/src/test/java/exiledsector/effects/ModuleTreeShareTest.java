@@ -7,6 +7,8 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
+import exiledlib.skills.EffectContribution;
+import exiledlib.skills.EffectTotals;
 import exiledlib.skills.SkillTypeEffect;
 import exiledlib.skills.skilleffect.SkillEffect;
 import exiledsector.skills.AllocatedNode;
@@ -77,7 +79,7 @@ class ModuleTreeShareTest {
     }
 
     private static Map<SkillEffect, Float> totals(ShipVariantAPI moduleVariant, SkillTreeEffectSource.NodeEffects... nodes) {
-        return ModuleTreeShare.sharedTotals(List.of(nodes), HullSize.CRUISER, moduleVariant, SHARE);
+        return ModuleTreeShare.sharedTotals(List.of(nodes), Map.of(), HullSize.CRUISER, moduleVariant, SHARE);
     }
 
     private static Map<SkillEffect, Float> totals(SkillTreeEffectSource.NodeEffects... nodes) {
@@ -142,6 +144,24 @@ class ModuleTreeShareTest {
     }
 
     @Test
+    void affinityBonusesReachTheModuleScaledTheWayTheParentsWere() {
+        SkillTypeEffect lowTech = effect("LOW_TECH_AFFINITY_FLAT", 30f);
+        EffectTotals parentTotals = EffectTotals.of(List.of(EffectContribution.scaledPermanent("node", "prefix_", List.of(lowTech))), 0.5f);
+        Map<SkillEffect, Float> ratios = ModuleTreeShare.affinityBonusRatios(parentTotals.contributions());
+        float parentHull = parentTotals.pooledMultipliers().get(SkillEffect.byName("HULL_MULT"));
+
+        assertTrue(ratios.get(SkillEffect.byName("HULL_MULT")) < 1f);
+        Map<SkillEffect, Float> moduleTotals = ModuleTreeShare.sharedTotals(List.of(node(lowTech)), ratios, HullSize.CRUISER,
+                mock(ShipVariantAPI.class), SHARE);
+        assertEquals(parentHull * SHARE, total(moduleTotals, "HULL_MULT"), 1e-4f);
+    }
+
+    @Test
+    void anUnscaledParentSharesItsSteppedAffinityBonuses() {
+        assertEquals(6f, total(totals(node(effect("LOW_TECH_AFFINITY_FLAT", 30f))), "HULL_MULT"), 1e-4f);
+    }
+
+    @Test
     void theFirstTickPushesTheShareOntoLivingModulesOnceUnderTheParentsModId() {
         ShipAPI parent = mock(ShipAPI.class);
         when(parent.getId()).thenReturn("parent");
@@ -150,7 +170,7 @@ class ModuleTreeShareTest {
         ShipAPI wreck = module(false);
         when(parent.getChildModulesCopy()).thenReturn(new ArrayList<>(List.of(module, wreck)));
         ModuleTreeShare share = new ModuleTreeShare(parent, List.of(node(effect("FLUX_CAPACITY_PERCENT", 20f), effect("ARMOR_PERCENT", 10f))),
-                HullSize.CRUISER);
+                Map.of(), HullSize.CRUISER);
 
         share.advance(0.1f);
         share.advance(0.1f);

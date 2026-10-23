@@ -48,7 +48,7 @@ Affinity is a reusable stepped bonus, so it lives in Exiled Lib, in the `special
 Following `docs/tooltip_wording.md`:
 
 - An affinity node: "+5 to Low Tech Affinity".
-- A root: "+10 to Low Tech Affinity", then the ship's three affinity totals and the bonuses they currently grant: "2% more hull for every 5 Low Tech Affinity", and so on, each with its current total in brackets.
+- A root: "+10 to Low Tech Affinity", then, on the chosen root, the ship's three affinity totals and the bonuses they currently grant: "2% more hull for every 5 Low Tech Affinity", and so on, each with its current total in brackets.
 - The ship summary gets one line per affinity type the ship has, with its total.
 
 ## Migration
@@ -97,13 +97,13 @@ Each root has its own colour, taken from its icon's main colour: orange for Low 
 
 ### Performance
 
-A visible root draws about 200 textured quads per frame in eight batches. Sparks are skipped when the root is under 12 px across, and nothing is drawn when it's off screen. Everything stays in GL11 on the render thread, with no `glGet` calls (Fast Rendering compatibility). The clock is the tree panel's own accumulated `advance` time, so it pauses with the panel.
+A visible root draws about 200 textured quads per frame in nine batches. Sparks are skipped when the root is under 24 px across, and nothing is drawn when it's off screen. Everything stays in GL11 on the render thread, with no `glGet` calls (Fast Rendering compatibility). The clock is the tree panel's own accumulated `advance` time, so it pauses with the panel.
 
 ### Root icon and affinity number
 
 - The root icons are vanilla's own Low Tech, High Tech and Midline art and are never redrawn. The core only enhances them: the icon draws smaller and dimmer inside the core, as a backdrop for the number.
 - The ship's affinity total for that root's type is drawn in the centre in white with a dark outline, so it reads on any icon or glow. It has a minimum size so it stays readable zoomed out.
-- While the player is still choosing a root, each root shows the affinity the ship would start with (10).
+- Until a chosen root is in place (choosing, flying, or returning after a reset), each root shows the affinity the ship would start with (10).
 - The number's labels are rebuilt only when the total changes or the zoom crosses a 2 px font step.
 
 ## Strings and docs

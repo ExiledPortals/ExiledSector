@@ -37,12 +37,12 @@ final class RootAffinityNumber {
         this.hullSize = hullSize;
     }
 
-    void draw(SkillNode root, ShipSkillData shipData, boolean choosing, float centerX, float centerY, float rootRadius, float alphaMult) {
+    void draw(SkillNode root, ShipSkillData shipData, boolean rootPending, float centerX, float centerY, float rootRadius, float alphaMult) {
         SkillTypeEffect rootAffinity = rootAffinity(root.getType());
         if (rootAffinity == null) {
             return;
         }
-        float total = choosing ? rootAffinity.magnitude() : totalsFor(shipData).getOrDefault(rootAffinity.effect(), 0f);
+        float total = rootPending ? rootAffinity.magnitude() : totalsFor(shipData).getOrDefault(rootAffinity.effect(), 0f);
         int fontSize = Math.round(Math.max(MIN_FONT_SIZE, rootRadius * FONT_SIZE_PER_ROOT_RADIUS) / FONT_SIZE_STEP) * FONT_SIZE_STEP;
         SizedLabel sized = labelsByRootId.get(root.getId());
         if (sized == null || sized.fontSize() != fontSize) {
