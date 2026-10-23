@@ -91,6 +91,21 @@ The Star Charts window keeps its storage and crafting, and its Open Wormhole but
 
 `AtlasState` stores the seed, the generator version, a map from packed cell coordinates to a state byte (completed, failed, markers spent), completed special ids, atlas points and key fragments: a few hundred entries in a long game. Chart systems keep the zero-trace rule. A generator change reshuffles unvisited nodes only, because state is keyed by coordinates.
 
+## Foiler mods compatibility
+
+Everything in the atlas and the chart expansions must work with Foiler's mods (`foilerHydro`, `foilerTerrain`, `foilerGunFX`, `foilerHyperspaceH`, kept at `E:\Dev\other mods\foilers`). Terrain FX rebuilds each battle's background from the campaign location. It sorts terrain by vanilla classes, reads star and planet specs, never uses system ids or hyperspace links, and holds campaign objects only until shortly after combat, so chart systems need no cleanup hook for it. Audited 2026-10-23 against Hydrofoil 1.11.2 and Terrain FX 1.07.
+
+Rules for what we add:
+
+- Never build a chart mechanic on combat nebula tiles (`CombatNebulaAPI`): Terrain FX clears every tile and draws its own clouds. Combat effects of expansion terrain live in our own plugin logic.
+- Custom terrain (Spatial Breach, infestation visuals) extends `BaseTerrain` or `BaseTiledTerrain`, never `HyperspaceTerrainPlugin`, which would switch the battle to hyperspace mode. Extending `NebulaTerrainPlugin` is allowed and gets nebula weather tinted from our texture.
+- Preload every texture that chart or combat visuals use at load time. Hydrofoil unloads textures it loaded itself after combat, so a texture first loaded lazily during a battle can be deleted under us.
+- Chart systems get no vanilla jump points and no `system_abyssal` tag.
+- Layouts use only vanilla star, planet and terrain types. Black hole, neutron star and nebula layouts are tested in game with Terrain FX on, since those are its fragile paths.
+- Atlas UI tints don't assume vanilla's blue hyperspace textures, which Hot Hyperspace recolours.
+- Chart entities that orbit planets can get proper backgrounds through a shipped `data/config/foilerterrainfx.json` (`customEntities` keyed by texture or one unique tag, complete entries only, since one malformed entry drops the rest of the file).
+- `foilerTerrain` and `foilerHydro` get CompatTarget self-checks.
+
 ## Unchanged
 
 Star Chart Progress for hull upgrade points (highest cleared tier), the entries setting, chart crafting and currency, the loot framework, and the console commands.
@@ -107,11 +122,11 @@ Decided 2026-10-23: failed nodes can be attempted again. The infestation design 
 
 1. [ ] Move the generic canvas classes to core, with no behaviour change.
 2. [ ] Expansion framework (step 1 of `chart_expansions/overview.md`) with the atlas hooks: `ChartExpansion`, `chart_expansions.csv` with icon and intel columns, the per-expansion hash roll, expansion requests in `ChartContentPlan`, run state and cleanup, and a test-only expansion that places nothing.
-3. [ ] Atlas generator as pure, unit-tested Java: lattice, voids, regions, factions, layouts, boss and expansion markers, special sites. Determinism and connectivity tests, plus a test that adding an expansion moves no other roll. New CSVs added to the editor serialisers.
+3. [ ] Atlas generator as pure, unit-tested Java (layouts limited to vanilla star, planet and terrain types, see Foiler mods compatibility): lattice, voids, regions, factions, layouts, boss and expansion markers, special sites. Determinism and connectivity tests, plus a test that adding an expansion moves no other roll. New CSVs added to the editor serialisers.
 4. [ ] `AtlasState`, reachability and visibility.
 5. [ ] Chart and system split: node traits feed `ChartGenContext` and `ChartLayoutRequest`, stored charts converted.
 6. [ ] Atlas panel: canvas, node drawer, tooltips, the Outer Reach Atlas button, node selection and the moved Open Wormhole confirmation. Markers drawn from the expansion data, checked with the test expansion.
-7. [ ] Completion and failure wired through the objectives and `ChartRunCloser`.
+7. [ ] Completion and failure wired through the objectives and `ChartRunCloser`. CompatTarget self-checks for `foilerTerrain` and `foilerHydro`, and an in-game pass of black hole, neutron star and nebula layouts with Terrain FX on.
 8. [ ] Chart supply: tier floor, three-into-one combine, Gateway vendor.
 9. [ ] Sensor Arrays and reveal.
 10. [ ] Infestations, Nexus and Cleansed nodes.
