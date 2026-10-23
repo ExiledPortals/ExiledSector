@@ -21,15 +21,16 @@ final class ChartContentPlanner {
     static final long EXTRA_POI_SALT = 0x43484558545241L;
     static final int MAX_POIS = 24;
     static final int MAX_FLEETS = 15;
-    static final float FLEET_SIZE_CAP = 600f;
-    static final float WARDEN_SIZE_CAP = 1200f;
+    static final float FLEET_SIZE_CAP = 1200f;
+    static final float WARDEN_SIZE_CAP = 2400f;
     static final float MIN_FLEET_SIZE = 30f;
     static final float SHARE_SPREAD = 0.25f;
     static final int MAX_OVERFLOW_STRENGTH = 50;
     static final float BOSS_QUALITY_BONUS = 15f;
     static final int BOSS_OFFICER_LEVEL_BONUS = 2;
     static final int BOSS_OFFICER_COUNT_BONUS = 2;
-    static final float MAX_QUALITY = 150f;
+    static final float MAX_QUALITY = 300f;
+    static final float QUALITY_PERCENT_PER_SMOD = 50f;
     static final int NO_POI = -1;
     static final List<ChartPoi.Kind> SPEND_ORDER = List.of(ChartPoi.Kind.DOMAIN, ChartPoi.Kind.STATION, ChartPoi.Kind.DERELICT, ChartPoi.Kind.CACHE);
 
@@ -174,7 +175,8 @@ final class ChartContentPlanner {
             int poiIndex = guard && i < guardedIndices.size() ? guardedIndices.get(i) : NO_POI;
             fleets.add(new PlannedFleet(guard ? FleetRole.GUARD : FleetRole.PATROL, poiIndex, ChartTier.fleetPoints(Math.min(FLEET_SIZE_CAP, sizePercent)),
                     quality / ChartTier.PERCENT, tier.officerLevelBonus(), tier.officerCountBonus(),
-                    Math.min(MAX_OVERFLOW_STRENGTH, spread.strengthBonus() + overflowStrength(sizePercent, FLEET_SIZE_CAP))));
+                    Math.min(MAX_OVERFLOW_STRENGTH, spread.strengthBonus() + overflowStrength(sizePercent, FLEET_SIZE_CAP)),
+                    averageSMods(quality)));
         }
         for (int i = 0; i < guardedPois.size(); i++) {
             PlannedPoi planned = guardedPois.get(i);
@@ -190,10 +192,15 @@ final class ChartContentPlanner {
 
     static PlannedFleet plannedBoss(ChartTier tier, ChartFaction faction, float fleetQuality, int targetPoi) {
         float wardenSize = Math.max(MIN_FLEET_SIZE, tier.wardenSize() + faction.fleetSizeBonus());
+        float bossQuality = Math.max(0f, Math.min(MAX_QUALITY, fleetQuality + BOSS_QUALITY_BONUS));
         return new PlannedFleet(FleetRole.BOSS, targetPoi, ChartTier.fleetPoints(Math.min(WARDEN_SIZE_CAP, wardenSize)),
-                Math.max(0f, Math.min(MAX_QUALITY, fleetQuality + BOSS_QUALITY_BONUS)) / ChartTier.PERCENT,
+                bossQuality / ChartTier.PERCENT,
                 tier.officerLevelBonus() + BOSS_OFFICER_LEVEL_BONUS, tier.officerCountBonus() + BOSS_OFFICER_COUNT_BONUS,
-                overflowStrength(wardenSize, WARDEN_SIZE_CAP));
+                overflowStrength(wardenSize, WARDEN_SIZE_CAP), averageSMods(bossQuality));
+    }
+
+    static int averageSMods(float qualityPercent) {
+        return Math.max(0, Math.round((qualityPercent - ChartTier.PERCENT) / QUALITY_PERCENT_PER_SMOD));
     }
 
     static int overflowStrength(float sizePercent, float cap) {
