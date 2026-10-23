@@ -57,6 +57,7 @@ public final class SkillTreeNodeDrawer {
     private final WormholeOpenness wormholeOpenness = new WormholeOpenness();
     private final SocketWormholes socketWormholes = new SocketWormholes();
     private final ConnectorFills connectorFills = new ConnectorFills();
+    private final GrantMarkers grantMarkers = GrantMarkers.fromItemStore();
     private final Consumer<String> startPulse;
     private final TreeFeedback feedback = new DrawerFeedback();
     private final TextLabel startingRootPrompt = new TextLabel(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE,
@@ -118,6 +119,12 @@ public final class SkillTreeNodeDrawer {
         TreeViewport viewport = layers.treeViewport();
         float alphaMult = layers.treeAlpha();
         TreeLayers shownLayers = layers.withAlpha(rootChoice.treeAlpha());
+        grantMarkers.refresh(allocation);
+        String tetheredSocketId = hovered ? hoveredGrantSocketId(layers, rootChoice, mouseX, mouseY) : null;
+        if (tetheredSocketId != null) {
+            connectorRenderer.drawGrantTethers(shownLayers, SkillTree.get(tetheredSocketId), grantMarkers.grantedBy(tetheredSocketId),
+                    grantMarkers.colorForSocket(tetheredSocketId));
+        }
 
         for (SkillNode node : SkillTree.topology().nonRoots()) {
             float nodeAlpha = shownLayers.alphaFor(node);
@@ -189,8 +196,9 @@ public final class SkillTreeNodeDrawer {
                     iconTint(node, allocation, allocated), socketAlpha);
         }
         Color notableDoctrineColor = rewrite != null && tier == SkillTier.NOTABLE ? DoctrineColors.forDoctrine(rewrite.doctrineDefinitionId()) : null;
+        Color grantColor = allocated ? grantMarkers.colorFor(node.getId()) : null;
         ringRenderer.draw(nodeX, nodeY, footprintSize, nodeAlpha, SkillTreeNodeRingRenderer.RingState.of(live, breathing), zoom, node,
-                notableDoctrineColor);
+                notableDoctrineColor, grantColor);
 
         if (tier == SkillTier.SOCKET) {
             if (live && socketAlpha > 0f) {
@@ -271,19 +279,43 @@ public final class SkillTreeNodeDrawer {
         }
         boolean choosing = rootChoice.phase() == StartingRootChoice.Phase.CHOOSING;
         for (SkillNode node : SkillTree.getAllNodes().values()) {
-            if ((choosing && node.getType().getTier() != SkillTier.ROOT) || !layers.isInteractive(node)) {
-                continue;
-            }
-            TreeViewport viewport = layers.viewportFor(node);
-            float nodeX = viewport.screenX(rootChoice.offsetX(node));
-            float nodeY = viewport.screenY(rootChoice.offsetY(node));
-            float halfSize = ExoshipNodes.isExoship(node) ? layers.exoshipRadius() * viewport.zoom() * EXOSHIP_HIT_SHARE
-                    : NODE_SIZE * viewport.zoom() * node.getType().getTier().getSizeMultiplier() / 2f;
-            if (Math.abs(screenX - nodeX) <= halfSize && Math.abs(screenY - nodeY) <= halfSize) {
+            if ((!choosing || node.getType().getTier() == SkillTier.ROOT) && isUnder(layers, rootChoice, node, screenX, screenY)) {
                 return node;
             }
         }
         return null;
+    }
+
+    private String hoveredGrantSocketId(TreeLayers layers, StartingRootChoice rootChoice, float screenX, float screenY) {
+        if (grantMarkers.isEmpty() || rootChoice.isMoving() || session.dropdownNode() != null) {
+            return null;
+        }
+        List<String> grantingSocketIds = grantMarkers.grantingSocketIds();
+        for (int socketIndex = 0; socketIndex < grantingSocketIds.size(); socketIndex++) {
+            String socketId = grantingSocketIds.get(socketIndex);
+            if (isUnder(layers, rootChoice, SkillTree.get(socketId), screenX, screenY)) {
+                return socketId;
+            }
+            List<String> grantedNodeIds = grantMarkers.grantedBy(socketId);
+            for (int grantedIndex = 0; grantedIndex < grantedNodeIds.size(); grantedIndex++) {
+                if (isUnder(layers, rootChoice, SkillTree.get(grantedNodeIds.get(grantedIndex)), screenX, screenY)) {
+                    return socketId;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static boolean isUnder(TreeLayers layers, StartingRootChoice rootChoice, SkillNode node, float screenX, float screenY) {
+        if (node == null || !layers.isInteractive(node)) {
+            return false;
+        }
+        TreeViewport viewport = layers.viewportFor(node);
+        float nodeX = viewport.screenX(rootChoice.offsetX(node));
+        float nodeY = viewport.screenY(rootChoice.offsetY(node));
+        float halfSize = ExoshipNodes.isExoship(node) ? layers.exoshipRadius() * viewport.zoom() * EXOSHIP_HIT_SHARE
+                : NODE_SIZE * viewport.zoom() * node.getType().getTier().getSizeMultiplier() / 2f;
+        return Math.abs(screenX - nodeX) <= halfSize && Math.abs(screenY - nodeY) <= halfSize;
     }
 
     public SkillNode findSocketAt(TreeLayers layers, float screenX, float screenY) {
