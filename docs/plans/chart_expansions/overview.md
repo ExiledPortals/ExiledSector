@@ -13,7 +13,7 @@ Chart expansions are events and mechanics that a star chart can roll on top of i
 | Stasis Vaults | `stasis_vaults.md` | optional, one per vault |
 | Asteroid Stream (Industrial Evolution only) | `asteroid_stream.md` | none |
 
-Status: the framework is built without its atlas parts (2026-10-23, uncommitted on parallel-work), and the Spatial Breach is built on it.
+Status: the framework is built without its atlas parts (2026-10-23, commit bd01ea16 on parallel-work), and the Spatial Breach is built on it.
 
 ## The fight budget
 
