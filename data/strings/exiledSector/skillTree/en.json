@@ -193,7 +193,7 @@
     "ui.node.lockedHint": "Hullmod blueprints would be a good place to start searching.",
     "ui.node.optionalHint": "Click to choose an option.",
     "ui.node.affinity.total": "{affinity}: <hl>{total}</hl>",
-    "ui.node.affinity.bonus": "<good>{value}%</good> more {stat} for every {step} {affinity} (<good>{current}%</good>)",
+    "ui.node.affinity.perStep": "<good>{value}%</good> more {stat} for every {step} {affinity}",
     "affinity.LOW_TECH_AFFINITY_FLAT.name": "Low Tech Affinity",
     "affinity.HIGH_TECH_AFFINITY_FLAT.name": "High Tech Affinity",
     "affinity.MIDLINE_AFFINITY_FLAT.name": "Midline Affinity",
