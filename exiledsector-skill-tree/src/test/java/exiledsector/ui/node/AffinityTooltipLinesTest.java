@@ -1,6 +1,8 @@
 package exiledsector.ui.node;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledlib.skills.DescriptionLine;
+import exiledsector.skills.NodeDescription;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
@@ -14,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AffinityTooltipLinesTest {
 
@@ -29,20 +30,42 @@ class AffinityTooltipLinesTest {
     }
 
     @Test
-    void aRootShowsEveryAffinityTotalAndTheBonusesOnlyOfAffinitiesTheShipHas() {
-        SkillNode lowTechRoot = SkillTree.getAllNodes().values().stream()
-                .filter(node -> node.getType().getTier() == SkillTier.ROOT && "root_low_tech".equals(node.getType().getId())).findFirst().orElseThrow();
+    void aRootShowsOnlyTheBonusesItsAffinityCurrentlyGrants() {
         ShipSkillData data = new ShipSkillData();
-        assertTrue(ShipTrees.chooseStartingRoot(data, lowTechRoot));
+        ShipTrees.chooseStartingRoot(data, root("root_low_tech"));
 
-        List<String> lines = AffinityTooltipLines.forShip(data, HullSize.CRUISER).stream().map(line -> line.text().plain()).toList();
+        NodeDescription description = AffinityTooltipLines.forRoot(root("root_low_tech").getType(), data, HullSize.CRUISER);
 
-        assertEquals("Low Tech Affinity: 10", lines.get(0));
-        assertTrue(lines.contains("2% more hull points for every 5 Low Tech Affinity (4%)"), lines.toString());
-        assertTrue(lines.contains("2% more armor for every 10 Low Tech Affinity (2%)"), lines.toString());
-        assertTrue(lines.contains("1% more cargo capacity for every 5 Low Tech Affinity (2%)"), lines.toString());
-        assertTrue(lines.contains("High Tech Affinity: 0"), lines.toString());
-        assertEquals("Midline Affinity: 0", lines.get(lines.size() - 1));
-        assertEquals(8, lines.size());
+        assertEquals(List.of("Low Tech Affinity: 10", "4% more hull points.", "2% more armor.", "2% more cargo capacity.",
+                "2% more fuel capacity.", "2% more crew capacity."), plain(description.effects()));
+    }
+
+    @Test
+    void anotherRootShowsItsOwnAffinityTotalWithoutBonusesBelowAStep() {
+        ShipSkillData data = new ShipSkillData();
+        ShipTrees.chooseStartingRoot(data, root("root_low_tech"));
+
+        NodeDescription description = AffinityTooltipLines.forRoot(root("root_high_tech").getType(), data, HullSize.CRUISER);
+
+        assertEquals(List.of("High Tech Affinity: 0"), plain(description.effects()));
+    }
+
+    @Test
+    void theDetailsListWhatEveryStepOfTheRootsAffinityGives() {
+        NodeDescription description = AffinityTooltipLines.forRoot(root("root_high_tech").getType(), new ShipSkillData(), HullSize.CRUISER);
+
+        assertEquals(List.of(), description.effects());
+        assertEquals(List.of("2% more flux capacity for every 5 High Tech Affinity", "2% more flux dissipation for every 10 High Tech Affinity",
+                "1% more cargo capacity for every 5 High Tech Affinity", "1% more fuel capacity for every 5 High Tech Affinity",
+                "1% more crew capacity for every 5 High Tech Affinity"), plain(description.details()));
+    }
+
+    private static SkillNode root(String typeId) {
+        return SkillTree.getAllNodes().values().stream()
+                .filter(node -> node.getType().getTier() == SkillTier.ROOT && typeId.equals(node.getType().getId())).findFirst().orElseThrow();
+    }
+
+    private static List<String> plain(List<DescriptionLine> lines) {
+        return lines.stream().map(DescriptionLine::plain).toList();
     }
 }

@@ -25,6 +25,8 @@ Combat readiness makes back-to-back fleet battles miserable, so a chart is built
 
 Each expansion is one class behind a shared interface (`ChartExpansion` in `exiledsector-star-charts`, package `exiledsector.charts.expansion`) with three parts: plan (reads the chart's budget, decides what to place), generate (places entities and fleets in `ChartSystemFactory`), and run (its state in `ChartRunState`, its scripts removed by `ChartRunCloser` so the chart leaves no save trace). Rewards go through the existing loot framework (`ChartLoot`, `ChartRewards`) so chart loot modifiers apply to them.
 
+Every expansion follows the Foiler mods compatibility rules in `../atlas.md`: no combat nebula tiles, custom terrain on `BaseTerrain`, textures preloaded.
+
 Chart modifiers get two new kinds of line per expansion: `CHART_<EXPANSION>_CHANCE` ("Area contains a Relay Network") and the expansion's own tuning lines, listed in each plan. They go in `star_chart_modifiers.csv` and the `prefixes`/`suffixes` pools of `star_charts.csv` like every other chart line, and follow `docs/tooltip_wording.md`.
 
 Players favour one expansion over the others with intel and atlas passives (`../atlas.md`).

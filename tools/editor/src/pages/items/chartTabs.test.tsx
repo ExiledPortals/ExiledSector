@@ -95,16 +95,16 @@ describe('star chart editing', () => {
 
     expect((await screen.findAllByDisplayValue('t3+', undefined, { timeout: 30000 })).length).toBeGreaterThan(0);
     expect(screen.queryByText(/Not in star_chart_modifiers.csv/)).toBeNull();
-    fireEvent.click(screen.getByText("The Boss's Vigil"));
+    fireEvent.click(screen.getByText("Wide Trinary Chart"));
     const minTier = await findLabelled('Minimum tier');
-    expect(minTier).toHaveProperty('value', '4');
+    expect(minTier).toHaveProperty('value', '');
     const before = server.readProjectFile(STAR_CHARTS_FILE);
 
     fireEvent.change(minTier, { target: { value: '5' } });
     fireEvent.click(saveButton());
     await screen.findByText('Saved star_charts.csv', undefined, { timeout: 30000 });
 
-    expect(server.readProjectFile(STAR_CHARTS_FILE)).toBe(before.replace("The Boss's Vigil,graphics/icons/colony_management.png,1,true,4,", "The Boss's Vigil,graphics/icons/colony_management.png,1,true,5,"));
+    expect(server.readProjectFile(STAR_CHARTS_FILE)).toBe(before.replace("Wide Trinary Chart,graphics/icons/colony_management.png,4,,,", "Wide Trinary Chart,graphics/icons/colony_management.png,4,,5,"));
   }, 90000);
 
   it('edits a star chart description under StrictMode', async () => {
@@ -115,7 +115,7 @@ describe('star chart editing', () => {
     );
     await screen.findAllByDisplayValue('Halcyon Fire-Control Lattice', undefined, { timeout: 30000 });
     await switchToStarCharts();
-    fireEvent.click(await screen.findByText("The Boss's Vigil", undefined, { timeout: 30000 }));
+    fireEvent.click(await screen.findByText("Wide Trinary Chart", undefined, { timeout: 30000 }));
     const description = (await findLabelled('Tooltip description (optional)')) as HTMLTextAreaElement;
     const edited = `${description.value} Edited.`;
 

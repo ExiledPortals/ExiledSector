@@ -99,7 +99,7 @@ class StarChartCommandsTest {
         verify(cargo, times(50)).addSpecial(added.capture(), anyFloat());
         for (SpecialItemData special : added.getAllValues()) {
             ItemData chart = ItemData.ofStarChart(special);
-            assertNotEquals("unique_chart_boss_vigil", chart.definitionId(), "the Boss's Vigil starts at tier 4");
+            assertNotEquals(StarChartFixtures.TEST_GATED_UNIQUE, chart.definitionId(), "the gated unique starts at tier 4");
             assertEquals(3, chart.preview().tier());
         }
     }
@@ -122,7 +122,7 @@ class StarChartCommandsTest {
 
     @Test
     void listingAbsorbsCargoChartsAndDescribesThem() {
-        ItemData chart = ItemData.rolledAtTier(exiledsector.items.ItemDefinitions.get("unique_chart_boss_vigil"), 2L, 5);
+        ItemData chart = ItemData.rolledAtTier(exiledsector.items.ItemDefinitions.get(StarChartFixtures.TEST_GATED_UNIQUE), 2L, 5);
         com.fs.starfarer.api.campaign.CargoStackAPI stack = mock(com.fs.starfarer.api.campaign.CargoStackAPI.class);
         when(stack.getSpecialDataIfSpecial()).thenReturn(chart.toSpecialItem());
         when(stack.getSize()).thenReturn(1f);
@@ -133,7 +133,7 @@ class StarChartCommandsTest {
         ArgumentCaptor<String> shown = ArgumentCaptor.forClass(String.class);
         consoleMock.verify(() -> Console.showMessage(shown.capture()));
         assertTrue(shown.getValue().contains("Moved 1 Star Chart"), shown.getValue());
-        assertTrue(shown.getValue().contains("1. The Boss's Vigil [unique, tier 5, TRINARY_2FAR]"), shown.getValue());
+        assertTrue(shown.getValue().contains("1. Test Gated Unique Chart [unique, tier 5, TRINARY_2FAR]"), shown.getValue());
         assertTrue(shown.getValue().contains("implicit: "), shown.getValue());
         verify(cargo).removeStack(stack);
     }

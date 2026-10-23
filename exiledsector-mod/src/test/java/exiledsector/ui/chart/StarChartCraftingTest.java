@@ -144,7 +144,7 @@ class StarChartCraftingTest {
         CraftingMaterials materials = CraftingMaterials.cargoOnly(cargo);
         when(cargo.getQuantity(eq(CargoAPI.CargoItemType.SPECIAL), any())).thenReturn(100f);
         Item topTier = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart_single"), 3L, 15));
-        Item unique = store.add(ItemData.rolledAtTier(ItemDefinitions.get("unique_chart_silent_reach"), 3L, 2));
+        Item unique = store.add(ItemData.rolledAtTier(ItemDefinitions.get(StarChartFixtures.TEST_UNIQUE), 3L, 2));
 
         assertEquals(Refusal.MAX_TIER, StarChartCrafting.refusal(StarChartCurrency.CARTOGRAPHY, topTier, store, materials, definition -> true));
         assertEquals(Refusal.UNIQUE, StarChartCrafting.refusal(StarChartCurrency.REFORGE, unique, store, materials, definition -> true));
@@ -178,10 +178,10 @@ class StarChartCraftingTest {
 
         assertSame(chart, raised.selectedAfter());
         assertEquals(7, chart.tier());
-        Item unique = store.add(ItemData.rolledAtTier(ItemDefinitions.get("unique_chart_silent_reach"), 3L, 8));
+        Item unique = store.add(ItemData.rolledAtTier(ItemDefinitions.get(StarChartFixtures.TEST_UNIQUE), 3L, 8));
         StarChartCrafting.Used transposed = StarChartCrafting.use(CraftingCurrency.TRANSPOSITION, unique, store, materials, new Random(1L),
                 definition -> true);
-        assertEquals("unique_chart_boss_vigil", transposed.selectedAfter().definitionId());
+        assertEquals(StarChartFixtures.TEST_GATED_UNIQUE, transposed.selectedAfter().definitionId());
         assertSame(transposed.selectedAfter(), store.find(unique.id()));
         assertEquals(8, transposed.selectedAfter().tier());
     }

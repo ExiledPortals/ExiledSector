@@ -40,8 +40,8 @@ import static org.mockito.Mockito.when;
 class StarChartCurrencyTest {
 
     private static final String SINGLE = "star_chart_single";
-    private static final String SILENT_REACH = "unique_chart_silent_reach";
-    private static final String BOSS_VIGIL = "unique_chart_boss_vigil";
+    private static final String UNGATED_UNIQUE = StarChartFixtures.TEST_UNIQUE;
+    private static final String GATED_UNIQUE = StarChartFixtures.TEST_GATED_UNIQUE;
     private static final String FLEET_SIZE = "HYBRID_CHART_FLEET_SIZE";
     private static final Predicate<ItemDefinition> ANY_UNIQUE = definition -> true;
 
@@ -193,15 +193,15 @@ class StarChartCurrencyTest {
 
     @Test
     void transpositionOnlyPicksAUniqueThatRollsAtTheChartsTier() {
-        StarChart lowTier = stored(SILENT_REACH, 5L, 2);
+        StarChart lowTier = stored(UNGATED_UNIQUE, 5L, 2);
         assertFalse(ItemCrafting.canUse(CraftingCurrency.TRANSPOSITION, lowTier, ANY_UNIQUE));
         assertNull(use(CraftingCurrency.TRANSPOSITION, lowTier, 1L));
 
-        StarChart highTier = stored(SILENT_REACH, 5L, 6);
+        StarChart highTier = stored(UNGATED_UNIQUE, 5L, 6);
         Item transposed = use(CraftingCurrency.TRANSPOSITION, highTier, 1L);
 
         assertNotNull(transposed);
-        assertEquals(BOSS_VIGIL, transposed.definitionId());
+        assertEquals(GATED_UNIQUE, transposed.definitionId());
         assertEquals(6, transposed.tier());
         assertSame(transposed, store.find(transposed.id()));
         assertNotSame(highTier, store.find(highTier.id()));
@@ -323,7 +323,7 @@ class StarChartCurrencyTest {
 
     @Test
     void reforgeAndAnnulmentRefuseUniqueCorruptedAndMirroredCharts() {
-        StarChart unique = stored(SILENT_REACH, 4L, 3);
+        StarChart unique = stored(UNGATED_UNIQUE, 4L, 3);
         StarChart chart = storedWith(SINGLE, 4, candidate -> candidate.explicits().size() >= 2);
         Item mirror = store.addMirrorOf(chart);
         StarChart corrupted = stored(SINGLE, 5L, 4);
@@ -426,10 +426,10 @@ class StarChartCurrencyTest {
         assertFalse(ItemCrafting.canUse(StarChartCurrency.CARTOGRAPHY, top, ANY_UNIQUE));
         assertNull(use(StarChartCurrency.CARTOGRAPHY, top, 2L));
 
-        StarChart vigil = stored(BOSS_VIGIL, 3L, 1);
-        assertEquals(4, vigil.tier());
-        use(StarChartCurrency.CARTOGRAPHY, vigil, 1L);
-        assertEquals(5, vigil.tier());
+        StarChart gatedUnique = stored(GATED_UNIQUE, 3L, 1);
+        assertEquals(4, gatedUnique.tier());
+        use(StarChartCurrency.CARTOGRAPHY, gatedUnique, 1L);
+        assertEquals(5, gatedUnique.tier());
     }
 
     @Test

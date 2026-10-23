@@ -48,7 +48,7 @@ Affinity is a reusable stepped bonus, so it lives in Exiled Lib, in the `special
 Following `docs/tooltip_wording.md`:
 
 - An affinity node: "+5 to Low Tech Affinity".
-- A root: "+10 to Low Tech Affinity", then, on the chosen root, the ship's three affinity totals and the bonuses they currently grant: "2% more hull for every 5 Low Tech Affinity", and so on, each with its current total in brackets.
+- A root: "+10 to Low Tech Affinity", then, once the ship has a root, the ship's total of that root's affinity and the bonuses it currently grants ("4% more hull points."). F1 adds what each step gives: "2% more hull for every 5 Low Tech Affinity", and so on (2026-10-23).
 - The ship summary gets one line per affinity type the ship has, with its total.
 
 ## Migration

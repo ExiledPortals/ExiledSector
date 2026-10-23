@@ -236,8 +236,10 @@ final class SkillTreeNodeTooltipRenderer {
             NodeDescription description = SkillNode.describeMechanics(effectiveType, fleetMember.getHullSpec().getHullSize());
             effects.addAll(description.effects());
             details.addAll(description.details());
-            if (node.getType().getTier() == SkillTier.ROOT && skillData.isAllocated(node.getId())) {
-                effects.addAll(AffinityTooltipLines.forShip(skillData, fleetMember.getHullSpec().getHullSize()));
+            if (node.getType().getTier() == SkillTier.ROOT) {
+                NodeDescription affinity = AffinityTooltipLines.forRoot(node.getType(), skillData, fleetMember.getHullSpec().getHullSize());
+                effects.addAll(affinity.effects());
+                details.addAll(affinity.details());
             }
         }
         if (allocatedSocket) {
