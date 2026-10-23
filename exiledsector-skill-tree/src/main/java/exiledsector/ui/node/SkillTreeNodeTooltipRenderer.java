@@ -27,6 +27,7 @@ import exiledsector.ui.SkillTreeTooltipTable;
 import exiledsector.ui.TooltipExpansion;
 import exiledsector.ui.TooltipTable;
 import exiledsector.ui.inspect.ItemCodex;
+import exiledsector.ui.util.ItalicTextLabel;
 import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;
 
@@ -55,7 +56,7 @@ final class SkillTreeNodeTooltipRenderer {
     private final Map<String, TextLabel> typeTooltipBodies = new HashMap<>();
     private final Map<TextLabel, Boolean> expandableBodies = new HashMap<>();
     private final Map<Boolean, TextLabel> footers = new HashMap<>();
-    private final Map<String, TextLabel> flavours = new HashMap<>();
+    private final Map<String, ItalicTextLabel> flavours = new HashMap<>();
     private final Map<String, List<SkillTreeTooltipTable>> tablesByType = new HashMap<>();
 
     SkillTreeNodeTooltipRenderer(FleetMemberAPI fleetMember, SkillTreePanelStyle panelStyle) {
@@ -98,7 +99,7 @@ final class SkillTreeNodeTooltipRenderer {
                 expanded, tooltipWarning != null ? tooltipWarning : refusalReason);
 
         List<SkillTreeTooltipTable> tables = showOptionalHint || hidden ? List.of() : tablesFor(font, effectiveType);
-        TextLabel flavour = hidden || socketed != null ? null : flavourFor(effectiveType);
+        ItalicTextLabel flavour = hidden || socketed != null ? null : flavourFor(effectiveType);
         panelStyle.drawTitleBodyTooltip(title, flavour, body, tables, footer(body, expanded), mouseX, mouseY, alphaMult);
     }
 
@@ -110,7 +111,7 @@ final class SkillTreeNodeTooltipRenderer {
         TextLabel title = typeTooltipTitles.computeIfAbsent(type.getId(), id -> titleLabel()).refresh(type.getId(),
                 label -> label.setWrapped(type.getDisplayName(), NODE_TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT));
         TextLabel body = body(typeTooltipBodies, type.getId(), List.of(type.getId(), expanded, refusalReason == null ? "" : refusalReason),
-                () -> SkillNode.describeType(type, fleetMember.getHullSpec().getHullSize()), expanded, refusalReason);
+                () -> SkillNode.describeMechanics(type, fleetMember.getHullSpec().getHullSize()), expanded, refusalReason);
 
         panelStyle.drawTitleBodyTooltip(title, flavourFor(type), body, tablesFor(font, type), footer(body, expanded), mouseX, mouseY, alphaMult);
     }
@@ -142,13 +143,20 @@ final class SkillTreeNodeTooltipRenderer {
                 List.of(plainLine(Boolean.TRUE.equals(footerExpanded) ? "ui.tooltip.collapseHint" : "ui.tooltip.expandHint"))));
     }
 
-    private TextLabel flavourFor(SkillType type) {
-        String flavour = type.getFlavourText();
-        if (flavour == null) {
+    private ItalicTextLabel flavourFor(SkillType type) {
+        List<String> paragraphs = new ArrayList<>();
+        StyledText description = type.getDescriptionText();
+        if (description != null && !description.isEmpty()) {
+            paragraphs.add(description.plain());
+        }
+        if (type.getFlavourText() != null) {
+            paragraphs.add(type.getFlavourText());
+        }
+        if (paragraphs.isEmpty()) {
             return null;
         }
-        return flavours.computeIfAbsent(type.getId(), id -> new TextLabel(TOOLTIP_FLAVOUR_FONT_SIZE, Misc.getGrayColor())
-                .setWrapped(flavour, NODE_TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT));
+        return flavours.computeIfAbsent(type.getId(), id -> new ItalicTextLabel(TOOLTIP_FLAVOUR_FONT_SIZE, Misc.getGrayColor())
+                .setWrapped(String.join("\n\n", paragraphs), NODE_TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT));
     }
 
     private List<SkillTreeTooltipTable> tablesFor(LazyFont font, SkillType type) {
@@ -222,7 +230,7 @@ final class SkillTreeNodeTooltipRenderer {
         if (showOptionalHint) {
             effects.add(plainLine("ui.node.optionalHint"));
         } else {
-            NodeDescription description = SkillNode.describeType(effectiveType, fleetMember.getHullSpec().getHullSize());
+            NodeDescription description = SkillNode.describeMechanics(effectiveType, fleetMember.getHullSpec().getHullSize());
             effects.addAll(description.effects());
             details.addAll(description.details());
         }

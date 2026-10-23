@@ -66,9 +66,15 @@ public class SkillNode extends SkillTreeObject {
     }
 
     public static NodeDescription describeType(SkillType type, HullSize hullSize) {
+        NodeDescription mechanics = describeMechanics(type, hullSize);
         List<DescriptionLine> effects = new ArrayList<>();
         addLine(effects, type.getDescriptionText(), false);
-        effects.addAll(describeEffects(type, hullSize));
+        effects.addAll(mechanics.effects());
+        return new NodeDescription(effects, mechanics.details());
+    }
+
+    public static NodeDescription describeMechanics(SkillType type, HullSize hullSize) {
+        List<DescriptionLine> effects = describeEffects(type, hullSize);
 
         List<SkillTypeEffect> described = describedEffects(type, hullSize);
         List<DescriptionLine> details = new ArrayList<>();

@@ -8,6 +8,7 @@ import exiledlib.i18n.Translation;
 import exiledlib.skills.DescriptionLine;
 import exiledlib.skills.skilleffect.render.FallbackSupport;
 import exiledsector.ui.util.GLDraw;
+import exiledsector.ui.util.ItalicTextLabel;
 import exiledsector.ui.util.TextLabel;
 import org.apache.log4j.Logger;
 import org.lazywizard.lazylib.ui.LazyFont;
@@ -116,7 +117,7 @@ public final class SkillTreePanelStyle {
         drawTitleBodyTooltip(title, null, body, List.of(), null, mouseX, mouseY, alphaMult);
     }
 
-    public void drawTitleBodyTooltip(TextLabel title, TextLabel flavour, TextLabel body, List<SkillTreeTooltipTable> tables,
+    public void drawTitleBodyTooltip(TextLabel title, ItalicTextLabel flavour, TextLabel body, List<SkillTreeTooltipTable> tables,
                                      TextLabel footer, float mouseX, float mouseY, float alphaMult) {
         float contentWidth = Math.max(title.width(), body.width());
         float flavourHeight = 0f;
