@@ -1,0 +1,139 @@
+# Code review 2026-10-23: plan
+
+Status: review done, nothing fixed yet. Seven read-only reviewers covered one module each (skill tree split into logic and UI) plus one for cross-module duplication. Each finding was re-read by its reviewer; CONFIRMED means the code was re-checked and the failure follows, PLAUSIBLE means it depends on engine behaviour or data that wasn't verified. Findings marked (checked) were also re-checked in the main session.
+
+Paths are relative to each module's `src/main/java/exiledsector/` (or `exiledlib/` for Exiled Lib) unless given in full.
+
+## Bugs
+
+Most severe first within each module.
+
+### Skill tree
+
+1. CONFIRMED (checked). `effects/GateRewardAnchors.markOpenGatesGrantedOnce` marks a reward gate granted when `isLocked(conditions, null)` is false. That is also true when the gate's mod is missing (`ModGate.isOpen` returns true without the mod) and when the ignore-unlocks override is on, and the migration runs on new games too. A player who starts without Nightcross or RAT and adds it later never gets the Lunar Fleet or Singularity reward anchor. Fix: mark only gates whose boss is already beaten.
+2. CONFIRMED. `GateRewardAnchors.grantMissed` has no `SkillTreeSetting.enabled()` check (`HyperNavBeaconGrant` has one), and its listener is registered for every domain. With the tree off, beating either boss still drops an anchor and burns the once-per-save grant.
+3. CONFIRMED. Renamed nodes aren't migrated for templates: `skills/template/TemplateStepRules` uses `SkillTree.get(step.nodeId())` and `persistence/SkillTreeTemplateStore` compares the raw root id, neither through `NodeReplacements`. A template step on one of the 17 renamed nodes becomes `UNKNOWN_NODE` and auto-allocate stops there. `skills/npc/NpcTreeTag` resolves its root entry without `NodeReplacements.resolve` too (latent).
+4. CONFIRMED. `skills/unlock/NodeGates.register` throws on the first malformed gate and `load` then sets an empty map, which opens every gated area. Skip the bad gate instead (or fail closed).
+5. CONFIRMED (console only). `console/LockAreasCommand.relockOpenAreas` relocks `threatFought`, `nightcrossLunarFleetDefeated` and `nightcrossAncientPrototypeFound`, but nothing calls `RelockedGates.reopen` for them, so they stay locked for the save despite the message saying they reopen.
+6. CONFIRMED, low. `skills/loader/SkillTreeLoader` parses each layout section (ring belts, stars, connector curves...) in one try, so one bad entry drops the whole section. Nodes are tolerant per entry.
+7. PLAUSIBLE, not measured. NPC tree building: every goal in `NpcSkillTreeBuilder` runs a fresh `search()` that rebuilds `state()` and a new `AllocationGate`, each path step builds another state, and `SkillType.getExclusiveHullModIds()` allocates a new list per call. It runs synchronously on fleet inflation; 20-30 ship fleets at caps 25-35 may hitch. Fix: precompute exclusive sets per `SkillType` at load, reuse `State` within `allocatePath`.
+8. PLAUSIBLE, low. `ui/SocketPlacement.refreshButtonLabel` returns early when the total owned item count is unchanged, so removing one subroutine and adding another item in the same frame leaves "Subroutines (N)" stale.
+9. PLAUSIBLE, low. `ui/inspect/NpcTreeInspectInput` only checks the dialog plugin isn't `NpcFleetInspectPlugin`; pressing the key again while its custom visual is open may open it twice.
+
+### Skill tree UI per-frame cost
+
+All PLAUSIBLE as FPS costs (not measured), CONFIRMED as code paths.
+
+10. `ui/node/SkillTreeNodeRingRenderer` draws 21 unbatched `Sprite.render` calls per visible notable per frame (two 10-ring stacks plus a glow), about 2,500 renders fully zoomed out, plus 2-4 unbatched 32-vertex `GL_LINE_LOOP`s per node with about 10 GL state changes. Batch through core `TexturedQuadBatch` and `LineBatch` (see abstractions), or skip the stacks below a few pixels.
+11. `ui/node/SkillTreeWormholeGhostFlights` calls `ShipTrees.wormholePairs()` every frame, which allocates a new list and pair records; cache on `skillData.revision()`.
+12. `ui/node/RootAffinityNumber` draws each root number 9 times (outline copies), each a LazyFont `glPushAttrib(GL_ALL_ATTRIB_BITS)`, and builds a string per frame.
+13. `ui/node/NodeRadiusRingRenderer.drawBand` does 6 trig calls per vertex for 514 vertices per frame while a radius item is socketed; `UnitCircle`/`RingWave` exist for this.
+14. `ui/node/NodeAllocator.grantSocketedNodes` takes a full `snapshot()` per granted node after every allocation click.
+15. `ui/node/AllocationAnimation` builds a `SkillTree.curveKey` string per connector per frame for 3 s after a click.
+16. `ui/node/SkillTreeNodeTooltipRenderer.flavourFor` builds its paragraphs before checking the label cache.
+
+### Hull upgrades
+
+17. CONFIRMED (checked). `console/GrantHullItemsCommand` loops over `ItemDefinitions.all()`, which holds subroutines too, so it grants every Modspec Cache, Doctrine Archive and unique subroutine. Use `ofType(ItemType.HULL_ITEM)`; its test only registers hull rows.
+18. CONFIRMED (labels), PLAUSIBLE (stats). `ui/SectionsDisplay` refreshes only on `ShipEditSession.revision()`, but crafting in the screen's own bay bumps only `ShipSkillData.revision`. After transposing or corrupting an installed item the section keeps the old name and colour, and an item the craft unsocketed is still drawn. Track the data revision too and refresh the variant.
+19. PLAUSIBLE. `items/HullUpgradeLootSource` restock removes every non-unique hull item stack from the submarket, including ones the player sold, because stock is added with `toSpecialItem()`. Anchors use `toMarketListing()` and remove only listings. Not checked whether vanilla prunes player-sold specials anyway.
+
+### Star Charts
+
+20. PLAUSIBLE, strong. `charts/ChartBattlePlugin.refreshEnemyDeploymentCost` puts a `modifyMult` on the enemy members' `DEPLOYMENT_POINTS_MOD` and never removes it (checked). The fleet's start DP is recorded unmodified, lost members' DP is read with the modifier on (`StarChartLootSource.recordEngagement`), so "enemy ships have N% less deployment cost" permanently cuts fleet loot and the boss share. Assumes combat uses the campaign member objects. Fix: read base DP for both, or unmodify at combat end.
+21. PLAUSIBLE, low. `charts/ChartLoadSweep` only rebuilds a missing inner wormhole on the ADOPT path; on KEEP with the player inside, a missing exit strands them (no jump points, Transverse Jump disabled). One line: `ensureInnerWormhole` in KEEP.
+22. CONFIRMED, low. `charts/ChartRunCloser.unsetChartKeys` clears `$exiledSector_chart_<runId>*`, which nothing writes; the only per-run key is `fleetRunKey` (`$exiledSector_chart_run_<runId>`). No trace today; fix the prefix or delete the step.
+23. PLAUSIBLE, latent crash. Translated text goes to `addPara` unescaped in `charts/WormholeGateway`, `ui/chart/WormholeGatewayOption` and `charts/ChartWormholeDialog`. No current string has a `%`. Use `VanillaText.plainPara`/`addPara`.
+
+### Core
+
+24. CONFIRMED. `items/MaterialItemPlugin` adds "chart.ui.currency.alsoStarCharts" to kernel tooltips even with Star Charts off, because `StarChartCurrency.registerAll()` runs whatever the switch says. Showcase loot also hands out chart ciphers with charts off (dev tool).
+25. PLAUSIBLE, latent. Transposition can be offered and then do nothing: `ItemCrafting.canTranspose`/`otherUnique` checks fewer conditions than `ItemDrops.pickUnique` (sources, generic pools), so if every peer unique is source-restricted, the confirm opens and `applyUse` returns silently. Corruption's MODIFIERS_RANDOMISED falls back to NOTHING the same way. Can't trigger with current data. Fix: one candidate predicate, and the failure notice `applyChartUse` already has.
+26. PLAUSIBLE, design call. `ui/cargo/MaterialDropAnnouncer` plays a vanilla tier sound and `LootAlertListener` then plays the PoE alert for the same stack. The older sound looks like a leftover from before the 2026-10-21 PoE sounds.
+27. PLAUSIBLE, small leak. Static `activeWatcher` fields in `ui/cargo/LootAlertListener` and `ui/cargo/CargoCraftingTabListener` hold the previous save's cargo after a reload; both listeners are re-registered each load, so an instance field works.
+28. PLAUSIBLE, perf. `persistence/ShipRecords` returns a new `ShipSkillData()` per call for members with no record, and `effects/ResolvedTree` caches by identity, so those ships rebuild their tree on every hull mod hook and fighter spawn.
+29. PLAUSIBLE, latent crash. `ui/socket/ItemStoragePanel` builds a format pattern from the translated `raritySeparator`.
+30. CONFIRMED, low cost. Per-frame reflection in `ui/cargo/CargoCraftingTabListener` and `CargoCraftingButton.advance`; `CraftingMaterials.forPlayer` reruns `MaterialMigration.convert` on every tooltip hover; `SocketCustody.ownedShips` walks every entity in every location on each reconcile.
+
+### Exiled Lib and the plugin
+
+31. PLAUSIBLE, latent. `exiledlib/HostMod` keeps one static host slot. A second mod using Exiled Lib would overwrite ours, so `HostMod.configPath` and the string folders point at its files and no hull items load.
+32. PLAUSIBLE. The plugin calls `afterSaveRepair`/`afterSocketCustody` for every domain, and `SkillTreeDomain` adds `NpcFleetSweepScript`, `NpcFleetInflationListener` and `GateRewardAnchors` there without an enabled check (bug 2 is the visible case). Star Charts does the same, which looks intended because its load sweep must still clean up.
+
+### Exiled Lib effects
+
+33. CONFIRMED (checked). Fighter listeners keep only the first source's magnitude: `fighter/WingNumbersDamageListener.attach`, `WingSharedFateListener` and `BomberPayloadDetonation` pass the magnitude into the constructor and return early when the fighter already has the listener, while `ResolvedTree` makes one entry per contribution. A node plus the `FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER` hull item modifier gives only the first value; the shared-damage tooltip shows the sum. `FIGHTER_FOCUS_FIRE_*` does it right (a carrier dynamic mod the fighter reads). Fix with abstraction 21.
+34. CONFIRMED path, PLAUSIBLE cost. `onhit/BeamSplitListener` runs `hostilesNear` (new list and identity set) and `nearestFirst` on every `modifyDamageDealt`, which is every frame per beam; `SplitBeamDrones` adds `List.copyOf`, a `BeamClaim`, a `SplitKey` and several `Vector2f`s per target. Cache targets per beam for 0.1-0.25 s as `SharedShieldDamageListener.nearbyAllies` does.
+35. PLAUSIBLE (listener order). Rise From the Ashes and the Phase Anchor dive can both fire on one lethal hit: the engine ORs every `HullDamageAboutToBeTakenListener`, so if the dive sets HP to 1 first, `RiseFromTheAshesListener` still spends its once-per-battle use on a ship already diving away. Both can be allocated on a phase hull. Fix with abstraction 24.
+36. PLAUSIBLE. `aura/TerrifyingPresenceListener` changes enemy stats from the owner's listener; if the owner leaves play without the retreat flag, enemies keep the accuracy penalty for the battle. `AuraField` already prunes sources no longer in play.
+37. CONFIRMED formula, engine use assumed. `StatTarget` per-weapon max ammo is `(int)(base*(1+pct)*mult) + flat` and regen `(base+flat)*(1+pct)*mult`, while `StatBonus`/`MutableStat` compute `(base*(1+pct)+flat)*mult`. Spec 10, +5 flat, x2 gives 25 instead of 30.
+38. PLAUSIBLE edge. At a pooled -100% MULT, `fighter/FighterSkillEffect` divides by zero on both replacement-rate stats and `StatMode.MULT.inverse` returns Infinity for the compensated non-beam energy damage and range (beam stats become NaN).
+39. PLAUSIBLE, unreachable today. `SkillEffectSupport` d-mod copies: the early return when logistics and non-logistics compound to equal values leaves an earlier call's copies in place. Run the copy pass with `copyEffect = 0` instead.
+40. CONFIRMED, minor. `shield/SharedShieldDamageListener` caps sharing at 90% but `SHIELD_DAMAGE_SHARED_PERCENT` prints the raw value; node plus the "Linked" modifier can pass 90.
+41. CONFIRMED, low. Hot-path allocations: `FighterWingAPI.getWingMembers()` copies a list on every fighter hit (`WingNumbersDamageListener`, `WingSharedFateListener`); `SecondInCommandCompat.fleetFor` copies the player fleet list on every `WaivedPenalty.apply` (O(n^2) per sync with SiC); `SeraphsGraceListener` builds three `List.of` per stack change.
+
+## Abstractions
+
+Highest payoff first. Line counts are the reviewers' estimates.
+
+1. Console command base. 19-21 commands across all four Exiled Sector modules repeat the campaign-only guard and 12-14 the "No player fleet found." check; about 8 hand-roll `n == 1 ? " x" : " xs"`, 6 repeat the rolled-item grant loop, 4 repeat count parsing. Add `PlayerFleetCommand implements BaseCommand` in core `console/` (final `runCommand` does the guards, then `run(String args, CampaignFleetAPI fleet)`), plus `ConsoleShips.grantItems(cargo, defs, seed, singular, plural)`, `ConsoleArgs.count(args, default, min, max)` and `SubroutineKind.definitions(kind)` (4 identical filter loops). About 150 lines, low risk; tests asserting exact text keep their strings.
+2. Storage grid and chip row. `StarChartStoragePanel` (star charts, `ui/socket`) copies `ItemStoragePanel`'s `columnsFor`, `chipWidth`, chip-row counting and placement, `addChip`, the grid loop and their constants, and `innerWidth()` appears three times. The copies already drift (`CHIP_TEXT_PADDING` 28 vs 24). Add core `ui/socket/ItemGrid` (`columnsFor`, `build(root, w, h, items, cell, emptyText)`), `ChipFlow` (`rowsFor`, `place`) and `HoloPanel.innerWidth()`. About 90 lines, low risk.
+3. Exiled Sector-only code in Exiled Lib. `exiledlib.skills` classes with no lib users besides each other: `EffectTotals`, `EffectContribution`, `SkillTypeEffect`, `NpcBonusScaling`, `DiminishingReturns` (owns LunaLib setting ids), `DiminishedStat`, `StatBaseline`, `DamageTakenCaps`, `HullSizeSkillEffect`, `ShipHullSizes`, `DescriptionLine`, `weapon/WeaponEffectTooltipAggregator`; also `i18n/TextWrapper`, `Seeds`, `i18n/SpecLocalisation`, `i18n/LanguageSetting`. About 1,260 lines; their tests already sit outside lib. Move the aggregation set to core `effects`, `TextWrapper` to core `ui/util`, the tooltip aggregator and `DescriptionLine` to core `ui` or skill tree. `AffinitySteps` is borderline (it backs `*_AFFINITY_FLAT`) and can stay. Medium risk: many imports. Check each is unused by lib effects before moving.
+4. Star Charts and skill tree knowledge in core. `ItemDefinitions.registerStarCharts`/`registerWormholeAnchors` and the if-chains in `get`/`ofType`/`clear*`, `ItemModifiers.registerStarCharts`, `ItemStore.starCharts`, `ItemDrops.pickChartCurrency`/`pickChartAtTier` (used only by star charts), about 10 `benchMode == STAR_CHARTS` branches in `SocketWorkbenchPanel` and `ModificationBay` with `chart.ui.*` keys, `ModificationBenchCargoLauncher.openStarCharts`, `MarketItemStock.ANCHOR_SUBMARKETS`/`EXOSHIP_SUBMARKET`, `ItemUnlock.RAT_PLAYER_EXOSHIP`, `AnimatedItemIcons.BEACON_PATH`. Replace with `ItemDefinitions.registerOwnType(ItemType, defs)`/`clearOwnType` on an `EnumMap`, an `ItemModifiers.registerPart`, and `BenchModeSupport` methods (`titleKey`, `emptyKey`, `currencies`, `showsHeaderLines`, `offersOpening`) with a core default for hull items. Move the chart-only picks to `ChartDrops`. The bench files had uncommitted edits during the review (mode-switch removal), so do this after they land. Medium risk.
+5. Domain hooks on `DomainContributions`. `ExiledSector.install` pushes into four static registries (`CargoIconLooks`, `ItemDataIntegrity.registerRules`, `BenchModes`, `RefitButtonColumn`); the last two re-implement enabled gating. `SocketCustody.custodies()` and `PlayerEngagementPipeline` rebuild their lists every call. `SkillTreeHullMod` and `FittedShipProfile` filter `enabled()` inline; `memberChanged`, `fleetChanged`, `engagementSteps` and `playerFleetSynced` don't filter. Pull everything through `DomainContributions`, add `ExiledSector.enabledDomains()`, and decide one gating rule. About 40 lines; also closes bugs 2 and 32 by construction.
+6. CSV row reading. Move star charts' `ChartCsv` (number, integer, flag readers, problem logging) to core as `data/CsvRows`, and add `ModCsv.forEachRow(rows, path, log, parser)` (the "Skipping row N of PATH" try/catch in 9+ classes), `ModCsv.entries(text)` (three identical `;` list splitters) and one `chance` reader. Sites include `BattleItemDrops`, `MarketHullItems`, `NpcFocus`, `NpcLevelCaps`, `ItemCraftingCosts`, `ItemDrops`, `ChartTiers`, `ChartDrops`, `ChartPois`, `ChartLoot`, `ChartColonyItems`, `ChartFactions`, `DoctrineArchives`, `WormholeAnchorDefinitions`, `ModspecCaches`, `FactionlessAnchors`. `BattleItemDrops.parsedOrNaN` equals `WormholeAnchorDefinitions`'. About 150 lines; medium risk, the parsers differ on decimals for integers and log wording changes.
+7. `@ID[:weight][:tMIN-MAX]` entry parsing, re-implemented 7 times: `CorruptionImplicitPool`, `ItemImplicits` (private), `StarChartImplicits`, `PoolEntry`, `ItemDataIntegrity` (two places), `SubroutineDataRules`. Add core `items/ModifierReference.parse(entry)` with `shapeProblem(allowWeight, allowTier)` and make `ItemImplicits.referencedImplicit` public. About 50 lines.
+8. Parser and integrity check share validators. `SubroutineDataRules` re-implements `DoctrineArchives.parse` and `ModspecCaches.parse` and has drifted (hardcoded radius names). Give each a `problems(row, types)`; `parse` throws the first, the integrity check reports all. About 50 lines.
+9. `ChartEffect` constant bodies. 22 constants override `beforeGeneration` only to call one `context.addX(value)`. One constructor taking a `(context, value)` contribution lambda. About 100 lines, low risk (saved by name).
+10. Refit buttons. `ModificationBenchRefitButton` (core), `HullUpgradesRefitButton` and `SkillTreeRefitButton` repeat panel size, `shouldShow`, `hasPanel`, `addButton` and `initPanel`; only Hull Upgrades overrides `isClickable`. An abstract core `FullScreenRefitButton` with `buttonKey()`, `iconPath()`, `enabled()`. About 60 lines; keep class names (LunaLib registers instances; never remove refit components).
+11. Cargo item plugins. `StarChartItemPlugin` duplicates `ItemPlugin` except decode, unknown-name key and footer; `MaterialItemPlugin` and `HullUpgradeItemPlugin` repeat the sprite, `CargoIconAnimation`, lazy look and `CargoIconFx.render`. Make `ItemPlugin` extensible (`decode`, `unknownNameKey`, `footer`) and add an `AnimatedCargoItemPlugin` base. About 65 lines.
+12. Node decoration batching in the skill tree UI. Route `SkillTreeNodeRingRenderer`'s ring stacks, corona and glows, `SkillTreeNodeGhostRenderer` and `GhostFlight` through `TexturedQuadBatch`, and the outline loops through `LineBatch.addLoop` keyed by tier and blend. Fixes bug 10.
+13. Domain on/off switches. `SkillTreeSetting`, `HullUpgradesSetting`, `StarChartSettings` repeat field id, volatile cache, listener, reload callback, test setter and the header/boolean/listener registration. A core `domain/DomainSwitch(fieldId, defaultOn, onSwitched)`. About 35 lines.
+14. Battle loss tallies. `HullUpgradeLootSource` and `SkillTreeLootSource` repeat "defeated DP by faction"; hull upgrades and `StarChartLootSource` repeat a per-source-fleet variant. Compute both once on `loot/BattleEngagement`. About 25 lines.
+15. Loot delivery. `ItemSalvageListener` repeats `ItemLootListener.addSiteLoot`; `TechMiningItemListener.deliver` mirrors `deliverSiteLoot`; `HullUpgradeLootSource.addEncounterLoot` re-implements the items-and-upgrades loop and `BattleItemDrops.Loot` duplicates `ItemDrops.SectionItemLoot`. One `SiteLootDelivery.deliver` and `ItemLootListener.addSectionLoot`. About 45 lines.
+16. Node id migration. `NodeReplacements.resolve`, `Subroutine.currentNodeId`, `ShipTreeRepairs.replaceRemovedNodes` and `NpcTreeTag` resolve renamed nodes three different ways, templates not at all. One `NodeReplacements.current(id)` on the declared tree. Fixes bug 3.
+17. Gate trigger recording. Setting a gate flag and calling `RelockedGates.reopen` is scattered over `AbyssSingularity`, `RemnantEncounter`, `AnchorFinds`, `RelockedGates.recordLocation`/`LostSectorUnlocks`, and missing for Nightcross, Threat and the Prototype. `GateTriggers.record(sector, type, flagKey, reason)` plus the three missing listeners fixes bug 5 and the `compat` <-> `skills.unlock` package cycle.
+18. Link caches and socket limits in the skill tree. Eight transient caches on `ShipSkillData` share one staleness test with `ShipTrees.refreshAnchorLinks`/`refreshGrantLinks`; `NodeGrants`/`AnchorLinks` and `NodeGrantLinks`/`WormholeAnchorLinks` are identical pairs. `SubroutineSocketLimits` and `WormholeAnchorSocketLimits` share the "count other sockets" and "keep first N" loops. Core `LinkCache<T>` and `SocketPeers`. About 80 lines.
+19. Smaller ones, each 20-40 lines: storage placement state shared by `HullUpgradesScreen` and `SocketPlacement` (core `StoragePlacement<T>`); private-field reflection in `ChartUsedNames`, `ChartSalvorsTally`, `ChartTopographyScans` (`PrivateField<O,T>`); run-bound cleanup loops in `ChartRunCloser` and `ChartLoadSweep.removeOrphanIntel`; one cached chart context in `ChartRunEffects` instead of a rebuild per call plus `ChartRunScript`'s own cache; fleet ship build and draw shared by `SkillTreeFleetRenderer` and `FactionFleetRenderer`; `GhostFlightPool` for `HyperspaceGhostFlights` and `SkillTreeWormholeGhostFlights`; the ship-changed sequence in `ConsoleShips.treeChanged` and `ShipEditSession.changed`; a `BasicItemTypeSupport` for the four anonymous `ItemTypeSupport`s; `TransientScripts.nextFrame(Runnable)`; `MaterialItems.descriptionKey`.
+21. Carrier-keyed fighter listener backing in Exiled Lib. `FIGHTER_WING_SHARED_DAMAGE_PERCENT`, `FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER`, `BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT` and the two `FIGHTER_FOCUS_FIRE_*` bodies plus three `attach`/`arm` statics become one `FighterListenerEffect<T>(magnitudeKey, type, (fighter, carrier) -> listener)` backing: `apply` writes the carrier's dynamic mod, the fighter hook calls `ensureListener`, listeners read the carrier's value. Fixes bug 33; about 60 lines; tests that construct listeners with a magnitude need updating.
+22. `ScaledBonus.Tracker` for "quantise, compare to last applied, re-apply": `FurorListener`, `InertialSuperchargerListener`, `JettisonListener`, `LiveMunitionsListener`, `DynamicGridListener`, `SeraphimListener`, and the hand-written halves of `SeraphsGraceListener` and `AbsorbReserveListener`. About 50 lines.
+23. `WeaponStatFamily.FIRE_RATE/AMMO_REGEN.target(WeaponScope.ALL)` instead of hand-built ballistic/energy/missile trios in `FurorListener`, `FighterSkillEffect`, `PhaseSkillEffect` (two), `FluxScaledVolatilityListener`, `SeraphsGraceListener`. `WeaponScope.matches` instead of the type checks in `EnergyChainListener`, `IonArcListener` and `BallisticPierceListener`.
+24. One lethal-hit owner: `special/LethalHitArbiter`, a single `HullDamageAboutToBeTakenListener` per ship where savers (Rise From the Ashes, Phase Anchor dive) register by priority and the first save wins, and reactors (Ludd's Light) still fire. Fixes bug 35. Medium risk; Ludd's Light firing on the first lethal blow is intended and must stay.
+25. `PlayerStatus.showIfPlayer(owner, debuff, text)` for the identical status blocks in `RiseFromTheAshesListener`, `TerminalDescentListener`, `FluxScaledVolatilityListener` and nearly `GravityDragField`. Move Terrifying Presence onto `AuraField` (fixes bug 36).
+26. Small helper reuse: `PlayerFleet.orNull()` (20 inline calls), `Fade.smooth` (re-implemented in `AnchorIconFx` and `SocketWormholes`), a `CompatTarget.isModEnabled(String)` for `ChartPois`, `ColorUtil.parseHexColor` instead of `WormholeAnchorDefinitions`' own.
+
+## Structure
+
+- `SkillEffect` carries skill tree allocation hooks (`blockAllocationReason(ShipFacts, ...)`, `deallocationWarning`, `appliesToNpcShips`) and extends the item framework's `ModifierEffect`. Lower priority; a core registry could hold the allocation rules.
+- Exiled Lib hard-codes its host: 7 `"[ExiledSector]"` log prefixes and 117 `"exiledSector_"` key literals in 52 lib files although `HostMod.dataKey` exists (`AffinitySteps` uses `exiledLib_`). Check saves and `skill_types.json` before renaming any key.
+- `ui/decoration/RefitShipPortrait`, `InspectedShip` and `ui/RefitBackdrop` in core are used only by hull upgrades and belong there.
+- 16 of the 19 chart test files in `exiledsector-mod` import nothing outside core, lib and star charts and may belong in `exiledsector-star-charts`; confirm they don't need the other domains installed.
+- `StarChartDefinitions.SYSTEM_TYPES` restates `ChartLayoutGenerator.ALLOWED_TYPES` as strings; derive one from the other.
+- `skills/ShipTrees` (893 lines) mixes allocation, link caches, the charge ledger, dormancy and trimming; split into `ShipTreeLinks`, `ItemChargeLedger`, `DormantNodes`.
+- `SkillTreeTopology`'s constructor reads drawing data from `SkillTree` statics, so graph-only users pay for it.
+- `effects/SkillTreeInstaller` must keep its class name: old saves reference it.
+- Dead code in the skill tree UI: `TreeCamera.inspect()` and the follow-offset members, `SmoothZoom.aimBeyondMax`/`INSPECT_MAX_ZOOM`, `SkillTreeFleetRenderer`'s solo members, `GrantMarkers.colorByNodeId()`. `TreeAllocationSession` imports `Translation` twice.
+- `GhostFlight` sits in `ui.node` but `ui.HyperspaceGhostFlights` uses it.
+- `ModificationBay.open()` returns `offersWormholeOpening() == true` in hull item mode, harmless only because `showsOpenButton` also checks the mode.
+
+## Test suite
+
+1. `MockSector` in Exiled Lib's test jar: opens the `Global` static mock and a `SectorAPI` with a real persistent data map, optional player fleet and cargo. 94 test files mock `SectorAPI` by hand. About 500 lines. Don't auto-register it as an extension.
+2. Console test fixture in core's test jar (package `exiledsector.console`): the identical 8-line setUp in 9 tests and the granted-items captor in 4.
+3. Split `ItemFixtures`: hull and modifier row builders to core's test jar as `HullItemRows`, subroutine rows stay in mod. Then `BattleItemDropsTest` can move to hull upgrades.
+4. `AnchorRows` in skill tree's tests for five near-identical `anchorRow` copies.
+5. Optional: a reset extension for item registries (63 tearDowns call `ItemDefinitions.clear()`). Medium risk if tests share state.
+
+## Build order
+
+1. [ ] Bugs 1, 2, 4, 17, 20, 21, 22, 40 (small, confirmed or strong), and 33 with abstraction 21.
+2. [ ] Bugs 3 with abstraction 16, bug 5 with abstraction 17.
+3. [ ] Bugs 18, 19, 24, 31, and decide 26.
+4. [ ] Abstraction 1 (console base) with test suite item 2.
+5. [ ] Abstractions 5 and 13 (domain hooks and switches).
+6. [ ] Abstraction 4 after the bench edits land, then 2 and 11.
+7. [ ] Abstractions 6, 7, 8 (data parsing).
+8. [ ] Abstraction 3 (lib boundary).
+9. [ ] Skill tree UI cost: bugs 10-16 with abstraction 12; measure before and after.
+10. [ ] Exiled Lib: bugs 34-39 and 41 with abstractions 22-25.
+11. [ ] The remaining abstractions and test suite items.
