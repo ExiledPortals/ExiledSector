@@ -188,7 +188,8 @@ class ExiledSectorSettingsTest {
             boolean untranslated = text.isEmpty() || text.startsWith("exiledSector") || text.equals(options)
                     || LanguageSetting.OPTIONS.contains(text) || text.equals(areaOptions) || text.equals(String.join(",", AreaToggles.REQUIRED_MOD_OPTIONS))
                     || AreaToggles.OPTIONS.contains(text) || ItemAnimationSetting.OPTIONS.contains(text)
-                    || text.equals(String.join(",", ItemAnimationSetting.OPTIONS));
+                    || text.equals(String.join(",", ItemAnimationSetting.OPTIONS)) || HullUpgradesSetting.POINTS_OPTIONS.contains(text)
+                    || text.equals(String.join(",", HullUpgradesSetting.POINTS_OPTIONS));
             assertFalse(!untranslated && PseudoLeaks.hasLeak(text), () -> "Hardcoded settings text: " + text);
         }
     }

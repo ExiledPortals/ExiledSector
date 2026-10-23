@@ -7,6 +7,8 @@ import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.impl.campaign.intel.misc.GateHaulerIntel;
 import exiledsector.compat.RandomAssortmentCompat;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
 public enum ItemUnlock {
@@ -21,6 +23,12 @@ public enum ItemUnlock {
     public static final String CLEARED_CHART_TIER_PREFIX = "cleared_chart_tier_";
     static final String CLEARED_CHART_TIER_KEY = "$exiledSector_chartsClearedTier";
     static final int NO_CLEARED_TIER = 0;
+    private static final List<ChartClearListener> CHART_CLEAR_LISTENERS = new CopyOnWriteArrayList<>();
+
+    @FunctionalInterface
+    public interface ChartClearListener {
+        void clearedTierRaised(SectorAPI sector, int previousTier, int clearedTier);
+    }
 
     private final String id;
     private final Predicate<SectorAPI> condition;
@@ -107,11 +115,23 @@ public enum ItemUnlock {
     public static boolean recordChartCleared(SectorAPI sector, int tier) {
         MemoryAPI sectorMemory = sector == null ? null : sector.getMemoryWithoutUpdate();
         int clearedTier = Math.max(ItemTraits.LOWEST_TIER, Math.min(ItemTraits.HIGHEST_TIER, tier));
-        if (sectorMemory == null || highestClearedChartTier(sector) >= clearedTier) {
+        int previousTier = highestClearedChartTier(sector);
+        if (sectorMemory == null || previousTier >= clearedTier) {
             return false;
         }
         sectorMemory.set(CLEARED_CHART_TIER_KEY, clearedTier);
+        CHART_CLEAR_LISTENERS.forEach(listener -> listener.clearedTierRaised(sector, previousTier, clearedTier));
         return true;
+    }
+
+    public static void addChartClearListener(ChartClearListener listener) {
+        if (listener != null && !CHART_CLEAR_LISTENERS.contains(listener)) {
+            CHART_CLEAR_LISTENERS.add(listener);
+        }
+    }
+
+    public static void removeChartClearListener(ChartClearListener listener) {
+        CHART_CLEAR_LISTENERS.remove(listener);
     }
 
     boolean isMet(SectorAPI sector) {

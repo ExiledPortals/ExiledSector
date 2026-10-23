@@ -63,12 +63,16 @@ Running Random Assortment of Things, Nightcross Armory, Navarchy of Tania or LOS
 
 Nobody has designed a new hull since the Collapse, and the Domain's blueprints sit behind DRM older than your grandmother's grandmother. So your crew looks at other people's ships, decides they had some good ideas, and welds those ideas onto yours. 
 
-Once you reach level 15, Hull Upgrades turn up in wrecks and salvage. Install one, choose a section of the ship, and that section takes hull items of its own.
+Every ship starts with one Hull Upgrade point. Spend it on a section of the ship, and that section takes hull items of its own.
+
+By default, Refit Schematics turn up in wrecks and salvage once you reach level 15, and each one raises a ship by a point, from Scrapped to Domain, up to five.
+
+Switch Hull Upgrade Points to Star Chart Progress in LunaLib settings and every ship gains a point instead as you clear tier 5, 10 and 15 Star Charts.
 
 <details>
-<summary>Installing a Hull Upgrade and unlocking a section</summary>
+<summary>Unlocking a section</summary>
 
-<img src="graphics/description/hull_upgrades.gif" alt="Installing a Hull Upgrade and unlocking a section">
+<img src="graphics/description/hull_upgrades.gif" alt="Unlocking a section">
 
 </details>
 
@@ -280,7 +284,7 @@ If you'd rather skip all of this, LunaLib settings can reveal hidden nodes, or s
 <details>
 <summary><b>When do Hull Upgrades and Star Charts start?</b></summary>
 
-Exiled Sector is meant as an endgame expansion, so the extra modules wait until the skill tree has had time to sink in. Hull Upgrades and unique hull items start dropping once your character (not your ship) reaches level 15. Star Charts need a Wormhole Gateway, which you can only build once the Janus Device gives you access to the Gate network. With Ashes of the Domain installed, you unlock it on the Vaults of Knowledge tree instead. Hull Upgrades can be switched off in LunaLib settings.
+Exiled Sector is meant as an endgame expansion, so the extra modules wait until the skill tree has had time to sink in. Refit Schematics and unique hull items start dropping once your character (not your ship) reaches level 15. Star Charts need a Wormhole Gateway, which you can only build once the Janus Device gives you access to the Gate network. With Ashes of the Domain installed, you unlock it on the Vaults of Knowledge tree instead. Hull Upgrades can be switched off in LunaLib settings.
 
 </details>
 

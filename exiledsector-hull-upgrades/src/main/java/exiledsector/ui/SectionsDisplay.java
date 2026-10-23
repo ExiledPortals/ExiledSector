@@ -2,7 +2,7 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -11,10 +11,11 @@ import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
 import exiledlib.skills.skilleffect.render.Fade;
 import exiledsector.items.HullItem;
-import exiledsector.items.HullUpgradeRules;
+import exiledsector.items.HullUpgradePoints;
 import exiledsector.items.HullUpgradeTooltip;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
+import exiledsector.items.RefitSchematic;
 import exiledsector.items.ShipSection;
 import exiledsector.skills.ShipSections;
 import exiledsector.ui.decoration.HullPoint;
@@ -46,7 +47,7 @@ final class SectionsDisplay {
         }
     }
 
-    static final int MAX_SECTIONS = HullUpgradeRules.MAX_POINTS;
+    static final int MAX_SECTIONS = HullUpgradePoints.MOST_POINTS;
     private static final float HOVER_SECONDS = 0.15f;
     private static final float LABEL_GAP = 8f;
     private static final float LABEL_FONT_SIZE = SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE;
@@ -66,9 +67,10 @@ final class SectionsDisplay {
     private int tooltipSection = -1;
     private float elapsedSeconds;
     private int shownRevision = Integer.MIN_VALUE;
+    private int shownPointsRevision = Integer.MIN_VALUE;
     private ItemStore upgradeStore;
-    private int shownUpgradeRevision = Integer.MIN_VALUE;
-    private Map<HullSize, Integer> shownUpgradeCounts = Map.of();
+    private int shownSchematicRevision = Integer.MIN_VALUE;
+    private Map<RefitSchematic, Integer> shownSchematicCounts = Map.of();
     private List<ShipSections.UnlockedSection> unlockedSections = List.of();
     private List<SectionLayout.Placement> placements = List.of();
     private int renderedSections;
@@ -90,14 +92,16 @@ final class SectionsDisplay {
 
     boolean refreshIfChanged() {
         int revision = sectionEditor.revision();
+        int pointsRevision = HullUpgradePoints.revision();
         ItemStore store = upgradeStore();
-        int upgradeRevision = store == null ? 0 : store.upgradeRevision();
-        if (revision == shownRevision && upgradeRevision == shownUpgradeRevision) {
+        int schematicRevision = store == null ? 0 : store.schematicRevision();
+        if (revision == shownRevision && pointsRevision == shownPointsRevision && schematicRevision == shownSchematicRevision) {
             return false;
         }
         shownRevision = revision;
-        shownUpgradeRevision = upgradeRevision;
-        shownUpgradeCounts = store == null ? Map.of() : store.upgradeCounts();
+        shownPointsRevision = pointsRevision;
+        shownSchematicRevision = schematicRevision;
+        shownSchematicCounts = store == null ? Map.of() : store.schematicCounts();
         unlockedSections = sectionEditor.sections();
         if (unlockedSections.size() > MAX_SECTIONS) {
             unlockedSections = unlockedSections.subList(0, MAX_SECTIONS);
@@ -113,8 +117,8 @@ final class SectionsDisplay {
         ItemStore store = upgradeStore();
         if (playerFleet != null && store != null) {
             store.absorbFrom(playerFleet.getCargo());
-            shownUpgradeRevision = store.upgradeRevision();
-            shownUpgradeCounts = store.upgradeCounts();
+            shownSchematicRevision = store.schematicRevision();
+            shownSchematicCounts = store.schematicCounts();
         }
     }
 
@@ -210,8 +214,8 @@ final class SectionsDisplay {
     HullUpgradePanel.Listener panelListener(Runnable closed) {
         return new HullUpgradePanel.Listener() {
             @Override
-            public void installUpgrade() {
-                sectionEditor.installUpgrade();
+            public void applySchematic(RefitSchematic schematic) {
+                sectionEditor.applySchematic(schematic);
             }
 
             @Override
@@ -231,20 +235,21 @@ final class SectionsDisplay {
     }
 
     HullUpgradePanel.View panelView() {
-        HullSize hullSize = sectionEditor.hullSize();
-        int upgradesInStorage = shownUpgradeCounts.getOrDefault(hullSize, 0);
-        HullUpgradeRules.UpgradeBlock upgradeBlock = null;
-        if (sectionEditor.hullUpgradePoints() >= HullUpgradeRules.MAX_POINTS) {
-            upgradeBlock = HullUpgradeRules.UpgradeBlock.AT_MAX_POINTS;
-        } else if (upgradesInStorage <= 0) {
-            upgradeBlock = HullUpgradeRules.UpgradeBlock.NONE_IN_STORAGE;
+        List<HullUpgradePanel.SchematicEntry> schematicEntries = new ArrayList<>();
+        for (RefitSchematic schematic : RefitSchematic.values()) {
+            int schematicsInStorage = shownSchematicCounts.getOrDefault(schematic, 0);
+            schematicEntries.add(new HullUpgradePanel.SchematicEntry(schematic, schematicsInStorage,
+                    sectionEditor.schematicBlock(schematic, schematicsInStorage)));
         }
         List<HullUpgradePanel.SectionEntry> sectionEntries = new ArrayList<>();
         for (ShipSection section : ShipSection.all()) {
             sectionEntries.add(sectionEntry(section));
         }
-        return new HullUpgradePanel.View(hullSize, sectionEditor.hullUpgradePoints(), sectionEditor.unspentHullUpgradePoints(), upgradesInStorage,
-                upgradeBlock, List.copyOf(sectionEntries));
+        SectorAPI sector = Global.getSector();
+        HullUpgradePanel.ChartProgress chartProgress = HullUpgradePoints.schematicsInUse() ? null
+                : new HullUpgradePanel.ChartProgress(HullUpgradePoints.chartsEnabled(), HullUpgradePoints.nextChartTier(sector));
+        return new HullUpgradePanel.View(sectionEditor.hullUpgradePoints(), sectionEditor.unspentHullUpgradePoints(), HullUpgradePoints.maxPoints(),
+                List.copyOf(schematicEntries), chartProgress, List.copyOf(sectionEntries));
     }
 
     private HullUpgradePanel.SectionEntry sectionEntry(ShipSection section) {

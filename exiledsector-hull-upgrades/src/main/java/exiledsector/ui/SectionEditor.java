@@ -3,9 +3,11 @@ package exiledsector.ui;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.items.HullUpgradePoints;
 import exiledsector.items.HullUpgradeRules;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
+import exiledsector.items.RefitSchematic;
 import exiledsector.items.ShipSection;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSections;
@@ -34,11 +36,15 @@ final class SectionEditor {
     }
 
     int hullUpgradePoints() {
-        return data().getHullUpgradePoints();
+        return HullUpgradePoints.of(data());
     }
 
     int unspentHullUpgradePoints() {
-        return data().getUnspentHullUpgradePoints();
+        return HullUpgradePoints.unspent(data());
+    }
+
+    HullUpgradeRules.UpgradeBlock schematicBlock(RefitSchematic schematic, int schematicsInStorage) {
+        return HullUpgradeRules.upgradeBlock(data(), schematic, schematicsInStorage);
     }
 
     boolean isSectionUnlocked(ShipSection section) {
@@ -57,8 +63,8 @@ final class SectionEditor {
         return ShipSections.unmetRequirement(section, shipEdit.currentFit());
     }
 
-    boolean installUpgrade() {
-        return apply(HullUpgradeRules.installUpgrade(data(), hullSize(), ItemStore.get()), true);
+    boolean applySchematic(RefitSchematic schematic) {
+        return apply(HullUpgradeRules.applySchematic(data(), schematic, ItemStore.get()), true);
     }
 
     boolean unlockSection(ShipSection section) {

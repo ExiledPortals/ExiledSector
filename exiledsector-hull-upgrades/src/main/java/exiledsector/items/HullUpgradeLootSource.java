@@ -6,7 +6,6 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.effects.ItemLootListener;
 import exiledsector.effects.TechMiningItemListener;
@@ -17,7 +16,6 @@ import exiledsector.loot.LootSources;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,12 +29,11 @@ public final class HullUpgradeLootSource implements LootSource {
     private static final class Losses {
         private final Map<String, Float> defeatedDeploymentPointsByFaction = new LinkedHashMap<>();
         private final Map<CampaignFleetAPI, Float> battlePowerByFleet = new LinkedHashMap<>();
-        private final Map<HullSize, Float> battlePowerByHullSize = new EnumMap<>(HullSize.class);
 
         BattleItemDrops.Battle battleItems() {
             List<BattleItemDrops.SourcePower> sources = new ArrayList<>();
             battlePowerByFleet.forEach((fleet, power) -> sources.add(new BattleItemDrops.SourcePower(power, LootSources.itemChancesFor(fleet))));
-            return new BattleItemDrops.Battle(sources, battlePowerByHullSize, mostDefeatedFaction());
+            return new BattleItemDrops.Battle(sources, mostDefeatedFaction());
         }
 
         private String mostDefeatedFaction() {
@@ -76,10 +73,6 @@ public final class HullUpgradeLootSource implements LootSource {
                 continue;
             }
             losses.battlePowerByFleet.merge(engagement.battle().getSourceFleet(member), power, Float::sum);
-            HullSize hullSize = member.getHullSpec() == null ? null : member.getHullSpec().getHullSize();
-            if (hullSize != null) {
-                losses.battlePowerByHullSize.merge(hullSize, power, Float::sum);
-            }
         }
     }
 
@@ -95,9 +88,9 @@ public final class HullUpgradeLootSource implements LootSource {
         BattleItemDrops.Loot battleItems = battleItemDrops(battle);
         battleItems.items().forEach(item -> playerCargo.addSpecial(item.toSpecialItem(), 1f));
         ItemLootListener.announceBattleItems(battleItems.items());
-        for (HullUpgradeData upgrade : battleItems.upgrades()) {
-            playerCargo.addSpecial(upgrade.toSpecialItem(), 1f);
-            ItemLootListener.announceSalvaged(upgrade::name);
+        for (RefitSchematic schematic : battleItems.upgrades()) {
+            playerCargo.addSpecial(schematic.toSpecialItem(), 1f);
+            ItemLootListener.announceSalvaged(schematic::displayName);
         }
     }
 

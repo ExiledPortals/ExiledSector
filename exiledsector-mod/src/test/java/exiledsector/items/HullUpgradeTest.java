@@ -65,9 +65,10 @@ class HullUpgradeTest {
 
     private ShipSkillData shipWithPoints(String shipId, int points) {
         ShipSkillData shipData = new ShipSkillData();
-        store.addUpgrades(HullSize.CRUISER, points);
-        for (int i = 0; i < points; i++) {
-            assertTrue(HullUpgradeRules.installUpgrade(shipData, HullSize.CRUISER, store));
+        for (int shipPoints = HullUpgradePoints.STARTING_POINTS; shipPoints < points; shipPoints++) {
+            RefitSchematic schematic = RefitSchematic.forShipPoints(shipPoints);
+            store.addSchematics(schematic, 1);
+            assertTrue(HullUpgradeRules.applySchematic(shipData, schematic, store));
         }
         ships.put(shipId, shipData);
         return shipData;
@@ -82,34 +83,16 @@ class HullUpgradeTest {
     }
 
     @Test
-    void upgradeCargoDataRoundTrips() {
-        HullUpgradeData upgrade = new HullUpgradeData(HullSize.CAPITAL_SHIP);
-
-        assertEquals(upgrade, HullUpgradeData.of(upgrade.toSpecialItem()));
-        assertEquals(new HullUpgradeData(HullSize.CRUISER), HullUpgradeData.parse("CRUISER"));
-        assertNull(HullUpgradeData.parse("FIGHTER"));
-        assertNull(HullUpgradeData.parse(""));
-        assertEquals("graphics/icons/hull_upgrades/hull_upgrade_capital_unique.png", upgrade.iconPath());
-    }
-
-    @Test
-    void installingAnUpgradeUsesOneUpAndGrantsAPointUpToFour() {
-        ShipSkillData shipData = new ShipSkillData();
-        store.addUpgrades(HullSize.CRUISER, 6);
-        store.addUpgrades(HullSize.FRIGATE, 1);
-
-        for (int i = 0; i < HullUpgradeRules.MAX_POINTS; i++) {
-            assertTrue(HullUpgradeRules.installUpgrade(shipData, HullSize.CRUISER, store));
+    void schematicCargoDataRoundTripsAndOldHullUpgradesReadAsStandard() {
+        for (RefitSchematic schematic : RefitSchematic.values()) {
+            assertEquals(schematic, RefitSchematic.of(schematic.toSpecialItem()));
         }
-
-        assertFalse(HullUpgradeRules.installUpgrade(shipData, HullSize.CRUISER, store));
-        assertEquals(4, shipData.getHullUpgradePoints());
-        assertEquals(2, store.upgradeCount(HullSize.CRUISER));
-        assertEquals(HullUpgradeRules.UpgradeBlock.AT_MAX_POINTS, HullUpgradeRules.upgradeBlock(shipData, 2));
-        ShipSkillData destroyer = new ShipSkillData();
-        assertFalse(HullUpgradeRules.installUpgrade(destroyer, HullSize.DESTROYER, store));
-        assertEquals(HullUpgradeRules.UpgradeBlock.NONE_IN_STORAGE, HullUpgradeRules.upgradeBlock(destroyer, 0));
-        assertFalse(shipData.isBlank());
+        assertEquals(RefitSchematic.STANDARD, RefitSchematic.parse("CRUISER"));
+        assertEquals(RefitSchematic.STANDARD, RefitSchematic.parse("CAPITAL_SHIP"));
+        assertEquals(RefitSchematic.DOMAIN, RefitSchematic.parse("domain"));
+        assertNull(RefitSchematic.parse("FIGHTER"));
+        assertNull(RefitSchematic.parse(""));
+        assertEquals("graphics/icons/hull_upgrades/refit_schematic_military.png", RefitSchematic.MILITARY.iconPath());
     }
 
     @Test
@@ -121,12 +104,13 @@ class HullUpgradeTest {
         assertEquals(HullUpgradeRules.UnlockBlock.ALREADY_UNLOCKED, HullUpgradeRules.unlockBlock(shipData, ShipSection.BRIDGE, fit(ShieldType.NONE)));
         assertTrue(HullUpgradeRules.unlock(shipData, ShipSection.SHIELD_GENERATOR, fit(ShieldType.FRONT)));
         assertEquals(HullUpgradeRules.UnlockBlock.NO_POINTS, HullUpgradeRules.unlockBlock(shipData, ShipSection.REACTOR, fit(ShieldType.FRONT)));
+        assertFalse(HullUpgradeRules.unlock(shipData, ShipSection.REACTOR, fit(ShieldType.FRONT)));
 
         Item officer = store.add(ItemDefinitions.get("officer"), 1L);
         assertTrue(HullUpgradeRules.socket(shipData, ShipSection.BRIDGE, officer, ships));
         assertTrue(HullUpgradeRules.lock(shipData, ShipSection.BRIDGE));
 
-        assertEquals(1, shipData.getUnspentHullUpgradePoints());
+        assertEquals(1, HullUpgradePoints.unspent(shipData));
         assertEquals(List.of("shield_generator"), shipData.getUnlockedSocketTypeIds());
         assertFalse(SocketCustody.isInstalled(ships, officer));
         assertEquals(List.of(officer), store.owned());
@@ -164,7 +148,7 @@ class HullUpgradeTest {
 
         assertEquals(Map.of(), sold.getSectionItems());
         assertEquals(List.of(kept), store.owned());
-        assertEquals(1, sold.getHullUpgradePoints());
+        assertEquals(1, HullUpgradePoints.of(sold));
     }
 
     @Test
@@ -185,30 +169,32 @@ class HullUpgradeTest {
     }
 
     @Test
-    void theUpgradeRevisionMovesOnlyWhenTheCountsChange() {
-        int startRevision = store.upgradeRevision();
+    void theSchematicRevisionMovesOnlyWhenTheCountsChange() {
+        int startRevision = store.schematicRevision();
 
-        store.addUpgrades(HullSize.FRIGATE, 0);
-        assertFalse(store.takeUpgrade(HullSize.FRIGATE));
-        assertEquals(startRevision, store.upgradeRevision());
+        store.addSchematics(RefitSchematic.SCRAPPED, 0);
+        assertFalse(store.takeSchematic(RefitSchematic.SCRAPPED));
+        assertEquals(startRevision, store.schematicRevision());
 
-        store.addUpgrades(HullSize.FRIGATE, 2);
-        int afterAdding = store.upgradeRevision();
+        store.addSchematics(RefitSchematic.SCRAPPED, 2);
+        int afterAdding = store.schematicRevision();
         assertNotEquals(startRevision, afterAdding);
 
-        assertTrue(store.takeUpgrade(HullSize.FRIGATE));
-        assertNotEquals(afterAdding, store.upgradeRevision());
+        assertTrue(store.takeSchematic(RefitSchematic.SCRAPPED));
+        assertNotEquals(afterAdding, store.schematicRevision());
     }
 
     @Test
-    void upgradeCountsSurviveASave() {
-        store.addUpgrades(HullSize.DESTROYER, 3);
+    void schematicCountsAndAppliedPointsSurviveASave() {
+        store.addSchematics(RefitSchematic.MILITARY, 3);
+        ShipSkillData shipData = shipWithPoints("ship", 4);
 
         ItemStore loaded = (ItemStore) xstream().fromXML(xstream().toXML(store));
+        ShipSkillData loadedShip = (ShipSkillData) xstream().fromXML(xstream().toXML(shipData));
 
-        assertEquals(3, loaded.upgradeCount(HullSize.DESTROYER));
-        assertTrue(loaded.takeUpgrade(HullSize.DESTROYER));
-        assertEquals(Map.of(HullSize.DESTROYER, 2), loaded.upgradeCounts());
+        assertEquals(3, loaded.schematicCount(RefitSchematic.MILITARY));
+        assertTrue(loaded.takeSchematic(RefitSchematic.MILITARY));
+        assertEquals(Map.of(RefitSchematic.MILITARY, 2), loaded.schematicCounts());
+        assertEquals(4, HullUpgradePoints.of(loadedShip));
     }
-
 }

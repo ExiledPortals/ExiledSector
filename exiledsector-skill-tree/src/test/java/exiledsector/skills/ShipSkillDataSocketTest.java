@@ -63,7 +63,7 @@ class ShipSkillDataSocketTest {
         ShipSkillData data = socketed();
         assertEquals(List.of("socketable_1"), data.getInstalledItemIds());
 
-        data.addHullUpgradePoint(4);
+        data.setStoredHullUpgradePoints(1);
         assertTrue(data.unlockSocketType("bridge"));
         assertTrue(data.installInSection("bridge", "socketable_2"));
 

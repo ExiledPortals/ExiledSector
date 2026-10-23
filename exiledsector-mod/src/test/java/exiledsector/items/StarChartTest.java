@@ -305,7 +305,7 @@ class StarChartTest {
         ItemData hullItem = ItemData.rolled(ItemDefinitions.all().iterator().next(), 4L);
         CargoStackAPI chartStack = stack(chart.toSpecialItem(), 2f);
         CargoStackAPI hullStack = stack(hullItem.toSpecialItem(), 1f);
-        CargoStackAPI upgradeStack = stack(new HullUpgradeData(com.fs.starfarer.api.combat.ShipAPI.HullSize.CRUISER).toSpecialItem(), 1f);
+        CargoStackAPI upgradeStack = stack(RefitSchematic.MILITARY.toSpecialItem(), 1f);
         CargoAPI cargo = mock(CargoAPI.class);
         when(cargo.getStacksCopy()).thenReturn(new ArrayList<>(List.of(chartStack, hullStack, upgradeStack)));
 
@@ -319,7 +319,7 @@ class StarChartTest {
         assertTrue(chartStore.owned().stream().allMatch(item -> item.tier() == 5));
         assertTrue(ItemStore.carriesStarCharts(cargo));
         assertEquals(1, hullStore.owned().size());
-        assertEquals(1, hullStore.upgradeCount(com.fs.starfarer.api.combat.ShipAPI.HullSize.CRUISER));
+        assertEquals(1, hullStore.schematicCount(RefitSchematic.MILITARY));
     }
 
     @Test
