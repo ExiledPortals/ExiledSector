@@ -14,6 +14,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import com.fs.starfarer.api.impl.campaign.submarkets.BaseSubmarketPlugin;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
+import exiledsector.items.JanusDevice;
 import exiledsector.items.MarketHullItems;
 import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.skills.SkillNode;
@@ -74,6 +75,9 @@ class MarketItemStockTest {
         SectorAPI sector = mock(SectorAPI.class);
         when(sector.getClock()).thenReturn(clock);
         when(sector.getPlayerStats()).thenReturn(playerStats);
+        MemoryAPI sectorMemory = mock(MemoryAPI.class);
+        when(sectorMemory.getBoolean(JanusDevice.FLAG)).thenReturn(true);
+        when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSector).thenReturn(sector);
         SkillType exitType = new SkillType.Builder("wormhole_exit", "exit", "a.png", SkillTier.WORMHOLE_EXIT).build();

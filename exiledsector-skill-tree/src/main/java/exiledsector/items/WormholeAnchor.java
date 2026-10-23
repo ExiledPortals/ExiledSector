@@ -19,7 +19,7 @@ import java.util.List;
 public final class WormholeAnchor extends Item implements NodeSocketable {
 
     public enum Inertness {
-        AREA_OFF, LOCKED, GATED, EXIT_LOCKED
+        AREA_OFF, JANUS, LOCKED, GATED, EXIT_LOCKED
     }
 
     public static final ItemTypeSupport SUPPORT = new ItemTypeSupport() {
@@ -114,6 +114,9 @@ public final class WormholeAnchor extends Item implements NodeSocketable {
         SkillNode exitNode = exitNode();
         if (exitNode == null) {
             return Inertness.AREA_OFF;
+        }
+        if (AnchorJanusGate.withholds(definitionId(), sector)) {
+            return Inertness.JANUS;
         }
         if (!unlocked(sector)) {
             return Inertness.LOCKED;
@@ -237,6 +240,7 @@ public final class WormholeAnchor extends Item implements NodeSocketable {
         String volumeName = volume == null ? "" : volumeName(volume);
         return switch (inertness) {
             case AREA_OFF -> Translation.msg("socketable.anchor.areaOff").arg("volume", volumeName).styled();
+            case JANUS -> Translation.styled("socketable.anchor.janus");
             case LOCKED -> {
                 ItemDefinition definition = definition();
                 boolean exoship = definition != null && ItemUnlock.RAT_PLAYER_EXOSHIP.id().equals(definition.unlock());

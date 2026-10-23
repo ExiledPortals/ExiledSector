@@ -1,11 +1,13 @@
 package exiledsector.effects;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.items.AnchorJanusGate;
 import exiledsector.items.DoctrineArchives;
 import exiledsector.items.FactionFleetDrops;
 import exiledsector.items.ItemData;
@@ -101,8 +103,10 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty {
         }
         List<ItemDefinition> anchors = List.copyOf(ItemDefinitions.ofType(ItemType.WORMHOLE_ANCHOR));
         List<ItemDefinition> activeAnchors = anchors.stream().filter(anchor -> WormholeAnchorDefinitions.areaActive(anchor.id())).toList();
+        List<ItemDefinition> offeredAnchors = (activeAnchors.isEmpty() ? anchors : activeAnchors).stream()
+                .filter(anchor -> !AnchorJanusGate.withholds(anchor.id(), Global.getSector())).toList();
         addRandomPicks(loot, doctrines, random);
-        addRandomPicks(loot, activeAnchors.isEmpty() ? anchors : activeAnchors, random);
+        addRandomPicks(loot, offeredAnchors, random);
     }
 
     private static void addRandomPicks(CargoAPI loot, List<ItemDefinition> definitions, Random random) {

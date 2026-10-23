@@ -12,6 +12,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import com.fs.starfarer.api.loading.IndustrySpecAPI;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
+import exiledsector.items.JanusDevice;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,7 +53,7 @@ class WormholeGatewayTest {
         when(economy.getMarketsCopy()).thenAnswer(invocation -> new ArrayList<>(markets));
         when(sector.getEconomy()).thenReturn(economy);
         when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
-        when(sectorMemory.getBoolean(WormholeGateway.JANUS_FLAG)).thenReturn(true);
+        when(sectorMemory.getBoolean(JanusDevice.FLAG)).thenReturn(true);
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSettings).thenReturn(settings);
         globalMock.when(Global::getSector).thenReturn(sector);
@@ -139,20 +140,20 @@ class WormholeGatewayTest {
 
     @Test
     void withoutVaultsOfKnowledgeItNeedsTheJanusDeviceLikeTheTreeWormholes() {
-        when(sectorMemory.getBoolean(WormholeGateway.JANUS_FLAG)).thenReturn(false);
+        when(sectorMemory.getBoolean(JanusDevice.FLAG)).thenReturn(false);
         WormholeGateway gateway = gatewayOn(colony("Home"));
 
         assertFalse(gateway.isAvailableToBuild());
         assertEquals("Requires the Janus Device.", gateway.getUnavailableReason());
 
-        when(sectorMemory.getBoolean(WormholeGateway.JANUS_FLAG)).thenReturn(true);
+        when(sectorMemory.getBoolean(JanusDevice.FLAG)).thenReturn(true);
         assertTrue(gateway.isAvailableToBuild());
     }
 
     @Test
     void withVaultsOfKnowledgeTheResearchReplacesTheJanusDevice() {
         when(modManager.isModEnabled(VaultsOfKnowledgeCompat.MOD_ID)).thenReturn(true);
-        when(sectorMemory.getBoolean(WormholeGateway.JANUS_FLAG)).thenReturn(false);
+        when(sectorMemory.getBoolean(JanusDevice.FLAG)).thenReturn(false);
 
         assertTrue(WormholeGateway.isUnlockedFor(colony("Home")));
     }

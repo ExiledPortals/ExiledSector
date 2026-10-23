@@ -155,6 +155,13 @@ subroutine that rolls one to three notables at creation. In an allocated standar
 with no path and no cost. Its kind keeps it out of generic pools, it has no level gate, and NPCs never
 socket one.
 
+## Wormhole anchors
+
+Until the player has the Janus Device (`$playerCanUseGates`, read by `JanusDevice` in core), anchors don't
+drop, stock or show in showcase salvage, and held ones are inert (`AnchorJanusGate`). Wormholes already open
+stay open. The Hyper-Nav Beacon and NPC anchors are exempt, and the "Allow Wormhole Anchors Before the Janus
+Device" setting lifts the gate.
+
 ## Corruption
 
 A Corrupted Nanoswarm locks the item and picks one equally likely outcome from its list in `CorruptionOutcome`

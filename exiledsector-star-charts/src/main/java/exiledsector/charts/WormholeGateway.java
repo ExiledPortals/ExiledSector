@@ -11,18 +11,16 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.ExiledSector;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
 import exiledsector.domain.ExiledSectorDomain;
+import exiledsector.items.JanusDevice;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
-import org.apache.log4j.Logger;
 
 import java.util.List;
 
 public class WormholeGateway extends BaseIndustry {
 
     public static final String INDUSTRY_ID = "exiledSector_wormhole_gateway";
-    public static final String JANUS_FLAG = "$playerCanUseGates";
     private static final float TOOLTIP_PAD = 10f;
-    private static final Logger LOG = Logger.getLogger(WormholeGateway.class);
 
     public enum Status {
         NONE, INACTIVE, WORKING
@@ -58,15 +56,8 @@ public class WormholeGateway extends BaseIndustry {
     }
 
     private static boolean janusDeviceKnown() {
-        if (ExiledSector.domains().stream().anyMatch(ExiledSectorDomain::ignoresMemoryFlagUnlocks)) {
-            return true;
-        }
-        try {
-            return Global.getSector().getMemoryWithoutUpdate().getBoolean(JANUS_FLAG);
-        } catch (RuntimeException e) {
-            LOG.error("[ExiledSector] Failed to check " + JANUS_FLAG + "; leaving the Wormhole Gateway locked", e);
-            return false;
-        }
+        return ExiledSector.domains().stream().anyMatch(ExiledSectorDomain::ignoresMemoryFlagUnlocks)
+                || JanusDevice.obtained(Global.getSector());
     }
 
     @Override

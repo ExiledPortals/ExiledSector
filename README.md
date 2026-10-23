@@ -23,7 +23,7 @@ Press the Skill Tree button in the refit screen and every ship in your fleet get
 
 </details>
 
-You might have to travel a bit for the juicy nodes. Slot a Wormhole Anchor into a Subroutine Socket and it tears a hole out past the edge of the tree, to where the sensible nodes stop. Ctrl+click the socket and in you go.
+You might have to travel a bit for the juicy nodes. Slot a Wormhole Anchor into a Subroutine Socket and it tears a hole out past the edge of the tree, to where the sensible nodes stop. Ctrl+click the socket and in you go. Anchors only turn up once you have the Janus Device, unless you allow them earlier in the mod settings.
 
 <details>
 <summary>Travelling through a Wormhole Anchor</summary>

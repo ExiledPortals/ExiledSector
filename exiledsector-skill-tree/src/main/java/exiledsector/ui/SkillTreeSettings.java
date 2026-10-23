@@ -4,6 +4,7 @@ import exiledlib.ModSettingsListener;
 import exiledsector.effects.ModuleShareSetting;
 import exiledsector.effects.NpcBonusScale;
 import exiledlib.i18n.Translation;
+import exiledsector.items.AnchorJanusGate;
 import exiledsector.items.UniqueSubroutinesSetting;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.npc.NpcTreeConfig;
@@ -118,6 +119,9 @@ public final class SkillTreeSettings {
                 Translation.text("settings.unlock.minShipLevel"), "", UnlockConditionOverrides.DEFAULT_DISABLED, MAIN_TAB);
         SettingsCreator.addBoolean(MOD_ID, UnlockConditionOverrides.DISABLE_MEMORY_FLAG_FIELD_ID,
                 Translation.text("settings.unlock.gameState"), "", UnlockConditionOverrides.DEFAULT_DISABLED, MAIN_TAB);
+        SettingsCreator.addBoolean(MOD_ID, AnchorJanusGate.ALLOW_BEFORE_JANUS_FIELD_ID,
+                Translation.text("settings.unlock.anchorsBeforeJanus"), Translation.text("settings.unlock.anchorsBeforeJanus.tooltip"),
+                AnchorJanusGate.DEFAULT_ALLOW_BEFORE_JANUS, MAIN_TAB);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_areasHeader", Translation.text("settings.areas.header"), MAIN_TAB);
         SettingsCreator.addText(MOD_ID, "exiledSector_areasAbout", Translation.text("settings.areas.about"), MAIN_TAB);
