@@ -21,15 +21,17 @@ Combat readiness makes back-to-back fleet battles miserable, so a chart is built
 
 ## How an expansion plugs in
 
-`ChartContentPlan` gains a list of planned expansions next to its POIs and fleets. Each chart rolls at most one expansion by default, chosen by weight and tier from a new `data/config/exiledSector/chart_expansions.csv` (`id,weight,min_tier,max_tier,requires_mod,note`). The roll is frozen at chart creation like the rest of the chart and shown in its tooltip.
+`ChartContentPlan` gains a list of planned expansions next to its POIs and fleets. Expansions are defined in a new `data/config/exiledSector/chart_expansions.csv` (`id,weight,min_tier,max_tier,requires_mod,icon,intel,note`). Each atlas node rolls at most one, shown as a marker on the atlas; the chart's chance lines, intel and atlas passives can add more when the run opens. `../atlas.md` (Expansions) has the roll and the atlas hooks.
 
 Each expansion is one class behind a shared interface (`ChartExpansion` in `exiledsector-star-charts`, package `exiledsector.charts.expansion`) with three parts: plan (reads the chart's budget, decides what to place), generate (places entities and fleets in `ChartSystemFactory`), and run (its state in `ChartRunState`, its scripts removed by `ChartRunCloser` so the chart leaves no save trace). Rewards go through the existing loot framework (`ChartLoot`, `ChartRewards`) so chart loot modifiers apply to them.
 
 Chart modifiers get two new kinds of line per expansion: `CHART_<EXPANSION>_CHANCE` ("Area contains a Relay Network") and the expansion's own tuning lines, listed in each plan. They go in `star_chart_modifiers.csv` and the `prefixes`/`suffixes` pools of `star_charts.csv` like every other chart line, and follow `docs/tooltip_wording.md`.
 
-How players favour one expansion over the others is left to the atlas plan.
+Players favour one expansion over the others with intel and atlas passives (`../atlas.md`).
 
 ## Build order
 
-1. [ ] Expansion framework: `ChartExpansion`, `chart_expansions.csv`, planner roll, tooltip line, run state and cleanup, with one test expansion that places nothing.
+The atlas comes first. These steps sit inside `../atlas.md`'s build order (its steps 2, 12 and 13).
+
+1. [ ] Expansion framework: `ChartExpansion` with its atlas hooks, `chart_expansions.csv`, the per-node roll, run requests, tooltip line, run state and cleanup, with one test expansion that places nothing.
 2. [ ] Expansions one at a time, each to its own plan's build order. Suggested order: Relay Network, Faction Skirmish, Excavation Sites, The Hunter, Supply Convoy, Stasis Vaults, Spatial Breach, Asteroid Stream.
