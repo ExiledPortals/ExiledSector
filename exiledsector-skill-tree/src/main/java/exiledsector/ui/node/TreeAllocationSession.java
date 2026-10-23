@@ -19,6 +19,8 @@ import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.StepVerdict;
 import exiledsector.skills.template.TemplateCapture;
 import exiledsector.skills.template.TemplateStep;
+import exiledsector.skills.unlock.NodeGates;
+import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.items.SocketCustody;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
@@ -224,6 +226,11 @@ public final class TreeAllocationSession {
 
     public boolean isHidden(SkillNode node) {
         return node != null && viewSnapshot().isHidden(node);
+    }
+
+    public boolean isLocked(SkillNode node) {
+        ShipSkillData skillData = allocator.data();
+        return node != null && (SkillTypeUnlockStatus.isLocked(node.getType(), skillData) || NodeGates.isLocked(node, skillData));
     }
 
     public SkillNode nextSearchMatch() {

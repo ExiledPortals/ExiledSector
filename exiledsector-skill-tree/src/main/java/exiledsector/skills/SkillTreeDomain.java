@@ -83,6 +83,7 @@ import exiledsector.ui.SkillTreeSettings;
 import exiledsector.ui.TreeCameraMemory;
 import exiledsector.ui.cargo.ItemIconLooks;
 import exiledsector.ui.cargo.SkillTreeIconLooks;
+import exiledsector.ui.decoration.TreeFleetFactions;
 import exiledsector.ui.inspect.ItemCodex;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
 import exiledsector.ui.inspect.ShipTreeSummaryRenderer;
@@ -146,6 +147,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
         PhantomHullMods.install(phantomHullModIds());
         LearnedPhantomConflicts.load();
         NpcFactionVolumes.load();
+        TreeFleetFactions.load();
         NpcFocus.load();
         NpcLevelCaps.load();
         NodeReplacements.load();

@@ -95,7 +95,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.nodeSearch = new NodeSearch(member == null ? null : member.getHullSpec().getHullSize());
         this.searchBar = new SkillTreeSearchBar(nodeSearch, this::jumpToNextSearchMatch);
         this.treeSession = new TreeAllocationSession(member, variant, refitButton, nodeSearch);
-        this.factionFleets = FactionFleetRenderer.forActiveTree(treeSession::isHidden);
+        this.factionFleets = FactionFleetRenderer.forActiveTree(treeSession::isLocked);
         this.nodeDrawer = SkillTreeNodeDrawer.attachedTo(treeSession, member, panelStyle, nodeSearch);
         this.templateUi = new SkillTreeTemplateController(member, treeSession, panelStyle);
         this.statPanel = new SkillTreeStatPanel(member);
