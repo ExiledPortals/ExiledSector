@@ -4,7 +4,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import exiledlib.i18n.StyledText;
 
-interface BackedSkillEffect extends SkillEffect {
+public interface BackedSkillEffect extends SkillEffect {
 
     EffectBacking backing();
 

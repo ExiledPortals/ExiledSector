@@ -62,12 +62,12 @@ public enum StatMode {
         this.descriptionKey = descriptionKey;
     }
 
-    StyledText description(float magnitude, String statName) {
+    public StyledText description(float magnitude, String statName) {
         return Translation.msg(descriptionKey + (magnitude >= 0 ? ".up" : ".down")).arg("stat", statName)
                 .arg("value", Math.abs(magnitude)).styled();
     }
 
-    StyledText describeStat(float magnitude, String statKey) {
+    public StyledText describeStat(float magnitude, String statKey) {
         return description(magnitude, Translation.text(statKey));
     }
 

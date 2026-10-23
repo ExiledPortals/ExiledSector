@@ -6,7 +6,7 @@ import exiledlib.i18n.Style;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
 import exiledlib.skills.DescriptionLine;
-import exiledlib.skills.skilleffect.FallbackSupport;
+import exiledlib.skills.skilleffect.render.FallbackSupport;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.TextLabel;
 import org.apache.log4j.Logger;

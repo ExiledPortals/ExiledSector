@@ -2,9 +2,9 @@ package exiledsector.ui.decoration;
 
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledlib.skills.skilleffect.render.Fade;
 import exiledsector.skills.SkillTree;
 import exiledsector.ui.TreeViewport;
-import exiledlib.skills.skilleffect.Fade;
 import exiledsector.ui.util.GlScope;
 import org.lwjgl.opengl.GL11;
 

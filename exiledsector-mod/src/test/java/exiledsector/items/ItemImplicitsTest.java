@@ -2,10 +2,10 @@ package exiledsector.items;
 
 import exiledlib.ProjectFiles;
 import exiledlib.skills.SkillTypeEffect;
+import exiledlib.skills.skilleffect.EffectAliases;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierCategory;
 import exiledsector.modifiers.ModifierSlot;
-import exiledlib.skills.skilleffect.EffectAliases;
 import org.json.CDL;
 import org.json.JSONArray;
 import org.json.JSONObject;

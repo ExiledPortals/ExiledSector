@@ -1,5 +1,7 @@
 package exiledlib.skills.skilleffect;
 
+import exiledlib.skills.skilleffect.fighter.FighterSkillEffect;
+import exiledlib.skills.skilleffect.phase.PhaseSkillEffect;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,7 +21,7 @@ class SkillEffectStackingTest {
     @Test
     void stackingFollowsTheStatModeRatherThanTheName() {
         assertTrue(PhaseSkillEffect.COMBAT_BOOST_WHILE_PHASED.isMultiplicative());
-        assertTrue(CompatSkillEffect.CONVERTED_HANGAR_REFIT_TIME_MULT.isMultiplicative());
+        assertTrue(FighterSkillEffect.CONVERTED_HANGAR_REFIT_TIME_MULT.isMultiplicative());
         assertEquals(StatMode.PERCENT, FighterSkillEffect.FIGHTER_WEAPON_DAMAGE_PERCENT.statMode());
     }
 }

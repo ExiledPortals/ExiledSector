@@ -1,9 +1,9 @@
 package exiledsector.ui;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
+import exiledlib.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.hyperspace.HyperspaceRoute;
 import exiledsector.ui.node.GhostFlight;
-import exiledlib.skills.skilleffect.SpriteCache;
 
 import java.util.ArrayList;
 import java.util.List;

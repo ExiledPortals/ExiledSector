@@ -2,30 +2,30 @@ package exiledlib.skills.skilleffect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 
-final class ScaledBonus {
+public final class ScaledBonus {
 
-    record Part(StatTarget target, String perUnitKey, StatMode mode, float fixedPerUnit) {
+    public record Part(StatTarget target, String perUnitKey, StatMode mode, float fixedPerUnit) {
     }
 
     private final Part[] parts;
 
-    ScaledBonus(Part... parts) {
+    public ScaledBonus(Part... parts) {
         this.parts = parts.clone();
     }
 
-    static Part percent(StatTarget target) {
+    public static Part percent(StatTarget target) {
         return new Part(target, null, StatMode.PERCENT, 1f);
     }
 
-    static Part percent(StatTarget target, String perUnitKey) {
+    public static Part percent(StatTarget target, String perUnitKey) {
         return new Part(target, perUnitKey, StatMode.PERCENT, 1f);
     }
 
-    static Part fixed(StatTarget target, StatMode mode, float perUnit) {
+    public static Part fixed(StatTarget target, StatMode mode, float perUnit) {
         return new Part(target, null, mode, perUnit);
     }
 
-    void apply(MutableShipStatsAPI stats, String modId, float scale) {
+    public void apply(MutableShipStatsAPI stats, String modId, float scale) {
         if (scale <= 0f) {
             remove(stats, modId);
             return;
@@ -36,7 +36,7 @@ final class ScaledBonus {
         }
     }
 
-    void remove(MutableShipStatsAPI stats, String modId) {
+    public void remove(MutableShipStatsAPI stats, String modId) {
         for (Part part : parts) {
             part.target().remove(stats, modId);
         }

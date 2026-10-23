@@ -8,11 +8,11 @@ import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import exiledlib.skills.ShipFacts;
 import exiledlib.skills.ShipSystemCharges;
 import exiledlib.skills.SkillTypeEffect;
+import exiledlib.skills.skilleffect.SkillEffect;
+import exiledlib.skills.skilleffect.fighter.FighterSkillEffect;
+import exiledlib.skills.skilleffect.shield.ShieldSkillEffect;
 import exiledsector.ExiledSector;
 import exiledsector.domain.ExiledSectorDomain;
-import exiledlib.skills.skilleffect.FighterSkillEffect;
-import exiledlib.skills.skilleffect.ShieldSkillEffect;
-import exiledlib.skills.skilleffect.SkillEffect;
 import exiledsector.skills.tags.ShipProfile;
 
 import java.util.ArrayList;

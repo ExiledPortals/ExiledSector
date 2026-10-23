@@ -1,6 +1,6 @@
 package exiledsector.ui.hyperspace;
 
-import exiledlib.skills.skilleffect.Fade;
+import exiledlib.skills.skilleffect.render.Fade;
 
 public final class HyperspaceTransition {
 

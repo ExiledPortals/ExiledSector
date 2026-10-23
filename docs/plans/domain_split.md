@@ -186,7 +186,7 @@ Move these out, from `exiledlib.*` to the same path under `exiledsector.*`, each
 - `items`, and `persistence/SaveData`, whose only user is `ItemStore`.
 - `modifiers`, except `ModifierEffect`, which `SkillEffect` extends.
 - `domain/Domain`, merged into `ExiledSectorDomain`.
-- All of `ui` and `ui/util`. A mod using lib's skill effects draws its own tooltips and panels, so lib gives effect text as `StyledText` with `Style` marks and the drawing mod picks the colours. The combat drawing helpers the drone effects use (`Fade`, `SpriteCache`, `FallbackSupport`) stay in lib, moved into `skills/skilleffect` next to `RepairDroneRenderer` and `WeaponDroneShell`.
+- All of `ui` and `ui/util`. A mod using lib's skill effects draws its own tooltips and panels, so lib gives effect text as `StyledText` with `Style` marks and the drawing mod picks the colours. The combat drawing helpers the drone effects use (`Fade`, `SpriteCache`, `FallbackSupport`) stay in lib, in `skills/skilleffect/render`.
 - `effects/FleetCrewLedgerSettlement`, which core's engagement pipeline runs and which prints its result through `VanillaText`. Lib keeps `FleetCrewLedger`, and a mod using it settles the crew change from `FleetCrewLedger.drain()` itself.
 
 Also in lib, `DiminishedStat` reads its setting ids through `HostMod.settingId`, like the other lib settings. The ids stay the same.

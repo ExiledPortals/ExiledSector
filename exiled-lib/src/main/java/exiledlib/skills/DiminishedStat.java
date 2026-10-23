@@ -1,13 +1,13 @@
 package exiledlib.skills;
 
 import exiledlib.HostMod;
-import exiledlib.skills.skilleffect.DefenseSkillEffect;
-import exiledlib.skills.skilleffect.FluxSkillEffect;
-import exiledlib.skills.skilleffect.MovementSkillEffect;
-import exiledlib.skills.skilleffect.ScopedWeaponEffect;
 import exiledlib.skills.skilleffect.SkillEffect;
 import exiledlib.skills.skilleffect.StatMode;
-import exiledlib.skills.skilleffect.WeaponStatFamily;
+import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
+import exiledlib.skills.skilleffect.flux.FluxSkillEffect;
+import exiledlib.skills.skilleffect.movement.MovementSkillEffect;
+import exiledlib.skills.skilleffect.weapon.ScopedWeaponEffect;
+import exiledlib.skills.skilleffect.weapon.WeaponStatFamily;
 
 import java.util.EnumMap;
 import java.util.HashMap;

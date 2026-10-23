@@ -14,11 +14,10 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipCommand;
-import com.fs.starfarer.api.combat.ShipSystemAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipSystemAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
-import com.fs.starfarer.api.util.DynamicStatsAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
@@ -26,20 +25,22 @@ import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.RepairTrackerAPI;
 import com.fs.starfarer.api.loading.BeamWeaponSpecAPI;
-import exiledlib.skills.skilleffect.CombatSkillEffect;
-import exiledlib.skills.skilleffect.DefenseSkillEffect;
-import exiledlib.skills.skilleffect.FighterSkillEffect;
-import exiledlib.skills.skilleffect.FluxSkillEffect;
-import exiledlib.skills.skilleffect.LogisticsSkillEffect;
-import exiledlib.skills.skilleffect.MiscSkillEffect;
-import exiledlib.skills.skilleffect.MovementSkillEffect;
-import exiledlib.skills.skilleffect.PhaseSkillEffect;
-import exiledlib.skills.skilleffect.ScopedWeaponEffect;
-import exiledlib.skills.skilleffect.ShieldSkillEffect;
+import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledlib.skills.skilleffect.SkillEffect;
 import exiledlib.skills.skilleffect.StatMode;
-import exiledlib.skills.skilleffect.WeaponScope;
-import exiledlib.skills.skilleffect.WeaponStatFamily;
+import exiledlib.skills.skilleffect.battle.BattleSkillEffect;
+import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
+import exiledlib.skills.skilleffect.fighter.FighterSkillEffect;
+import exiledlib.skills.skilleffect.flux.FluxSkillEffect;
+import exiledlib.skills.skilleffect.logistics.LogisticsSkillEffect;
+import exiledlib.skills.skilleffect.movement.MovementSkillEffect;
+import exiledlib.skills.skilleffect.onhit.OnHitSkillEffect;
+import exiledlib.skills.skilleffect.phase.PhaseSkillEffect;
+import exiledlib.skills.skilleffect.readiness.ReadinessSkillEffect;
+import exiledlib.skills.skilleffect.shield.ShieldSkillEffect;
+import exiledlib.skills.skilleffect.weapon.ScopedWeaponEffect;
+import exiledlib.skills.skilleffect.weapon.WeaponScope;
+import exiledlib.skills.skilleffect.weapon.WeaponStatFamily;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 import org.magiclib.plugins.MagicFakeBeamPlugin;
@@ -564,7 +565,7 @@ class SkillEffectTest {
         MutableStat absorptionMult = mock(MutableStat.class);
         when(stats.getShieldAbsorptionMult()).thenReturn(absorptionMult);
 
-        DefenseSkillEffect.SHIELD_ABSORPTION_PERCENT.apply(stats, "mod_id", -10f);
+        ShieldSkillEffect.SHIELD_ABSORPTION_PERCENT.apply(stats, "mod_id", -10f);
 
         verify(absorptionMult).modifyPercent("mod_id", -10f);
     }
@@ -630,7 +631,7 @@ class SkillEffectTest {
         StatBonus peakCrDuration = mock(StatBonus.class);
         when(stats.getPeakCRDuration()).thenReturn(peakCrDuration);
 
-        MiscSkillEffect.PEAK_CR_DURATION_PERCENT.apply(stats, "mod_id", 20f);
+        ReadinessSkillEffect.PEAK_CR_DURATION_PERCENT.apply(stats, "mod_id", 20f);
 
         verify(peakCrDuration).modifyPercent("mod_id", 20f);
     }
@@ -677,7 +678,7 @@ class SkillEffectTest {
         MutableStat crRecoveryRate = mock(MutableStat.class);
         when(stats.getBaseCRRecoveryRatePercentPerDay()).thenReturn(crRecoveryRate);
 
-        LogisticsSkillEffect.CR_RECOVERY_RATE_PERCENT.apply(stats, "mod_id", 15f);
+        ReadinessSkillEffect.CR_RECOVERY_RATE_PERCENT.apply(stats, "mod_id", 15f);
 
         verify(crRecoveryRate).modifyPercent("mod_id", 15f);
     }
@@ -709,12 +710,12 @@ class SkillEffectTest {
 
     @Test
     void describeUsesIncreasesForAPositiveBidirectionalMagnitude() {
-        assertEquals("20% increased peak combat readiness duration.", MiscSkillEffect.PEAK_CR_DURATION_PERCENT.description(20f).plain());
+        assertEquals("20% increased peak combat readiness duration.", ReadinessSkillEffect.PEAK_CR_DURATION_PERCENT.description(20f).plain());
     }
 
     @Test
     void describeUsesDecreasesForANegativeBidirectionalMagnitude() {
-        assertEquals("20% reduced peak combat readiness duration.", MiscSkillEffect.PEAK_CR_DURATION_PERCENT.description(-20f).plain());
+        assertEquals("20% reduced peak combat readiness duration.", ReadinessSkillEffect.PEAK_CR_DURATION_PERCENT.description(-20f).plain());
     }
 
     @Test
@@ -1127,7 +1128,7 @@ class SkillEffectTest {
         StatBonus hardFluxPercent = mock(StatBonus.class);
         when(dynamic.getMod("exiledSector_beamDamageHardFluxPercent")).thenReturn(hardFluxPercent);
 
-        ShieldSkillEffect.BEAM_WEAPON_HARD_FLUX_PERCENT.apply(stats, "mod_id", 50f);
+        OnHitSkillEffect.BEAM_WEAPON_HARD_FLUX_PERCENT.apply(stats, "mod_id", 50f);
 
         verify(hardFluxPercent).modifyFlat("mod_id", 50f);
     }
@@ -1137,7 +1138,7 @@ class SkillEffectTest {
         ShipAPI ship = mock(ShipAPI.class);
         when(ship.getListeners(any())).thenReturn(List.of());
 
-        ShieldSkillEffect.BEAM_WEAPON_HARD_FLUX_PERCENT.applyAfterShipCreation(ship, "mod_id", 50f);
+        OnHitSkillEffect.BEAM_WEAPON_HARD_FLUX_PERCENT.applyAfterShipCreation(ship, "mod_id", 50f);
 
         verify(ship).addListener(any(DamageDealtModifier.class));
     }
@@ -1147,7 +1148,7 @@ class SkillEffectTest {
         ShipAPI ship = mock(ShipAPI.class);
         when(ship.getListeners(any())).thenReturn(List.of(new Object()));
 
-        ShieldSkillEffect.BEAM_WEAPON_HARD_FLUX_PERCENT.applyAfterShipCreation(ship, "mod_id", 50f);
+        OnHitSkillEffect.BEAM_WEAPON_HARD_FLUX_PERCENT.applyAfterShipCreation(ship, "mod_id", 50f);
 
         verify(ship, never()).addListener(any());
     }
@@ -1392,7 +1393,7 @@ class SkillEffectTest {
         StatBonus splitTargets = mock(StatBonus.class);
         when(dynamic.getMod("exiledSector_beamSplitTargets")).thenReturn(splitTargets);
 
-        CombatSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.apply(stats, "mod_id", 1f);
+        OnHitSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.apply(stats, "mod_id", 1f);
 
         verify(splitTargets).modifyFlat("mod_id", 1f);
     }
@@ -1402,11 +1403,11 @@ class SkillEffectTest {
         assertEquals("Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. "
                         + "The target acquisition range is half the beam weapon's range. "
                         + "Split beams also carry the weapon's special beam effects.",
-                CombatSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.description(1f).plain());
+                OnHitSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.description(1f).plain());
         assertEquals("Beam weapon hits split their damage evenly across the target and up to 3 additional nearby enemy ships. Fighters are never chosen. "
                         + "The target acquisition range is half the beam weapon's range. "
                         + "Split beams also carry the weapon's special beam effects.",
-                CombatSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.description(3f).plain());
+                OnHitSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.description(3f).plain());
     }
 
     @Test
@@ -1414,7 +1415,7 @@ class SkillEffectTest {
         ShipAPI ship = mock(ShipAPI.class);
         when(ship.getListeners(any())).thenReturn(List.of());
 
-        CombatSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.applyAfterShipCreation(ship, "mod_id", 1f);
+        OnHitSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.applyAfterShipCreation(ship, "mod_id", 1f);
 
         verify(ship).addListener(any(DamageDealtModifier.class));
     }
@@ -1424,14 +1425,14 @@ class SkillEffectTest {
         ShipAPI ship = mock(ShipAPI.class);
         when(ship.getListeners(any())).thenReturn(List.of(new Object()));
 
-        CombatSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.applyAfterShipCreation(ship, "mod_id", 1f);
+        OnHitSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.applyAfterShipCreation(ship, "mod_id", 1f);
 
         verify(ship, never()).addListener(any());
     }
 
     private DamageDealtModifier captureBeamSplitListener(ShipAPI ship) {
         when(ship.getListeners(any())).thenReturn(List.of());
-        CombatSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.applyAfterShipCreation(ship, "mod_id", 1f);
+        OnHitSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.applyAfterShipCreation(ship, "mod_id", 1f);
         ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
         verify(ship).addListener(captor.capture());
         return (DamageDealtModifier) captor.getValue();
@@ -2014,6 +2015,6 @@ class SkillEffectTest {
     @Test
     void commandPointRecoveryIsDescribedAsAPercentage() {
         assertEquals("250% increased command point recovery rate while this ship is the flagship.",
-                MiscSkillEffect.COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP.description(250f).plain());
+                BattleSkillEffect.COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP.description(250f).plain());
     }
 }

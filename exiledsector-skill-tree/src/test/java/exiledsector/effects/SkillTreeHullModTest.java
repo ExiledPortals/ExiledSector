@@ -9,8 +9,8 @@ import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
-import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
@@ -20,6 +20,12 @@ import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledlib.effects.RealVariantTags;
 import exiledlib.effects.RecordingHullModEffect;
+import exiledlib.skills.SkillTypeEffect;
+import exiledlib.skills.skilleffect.battle.BattleSkillEffect;
+import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
+import exiledlib.skills.skilleffect.flux.FluxSkillEffect;
+import exiledlib.skills.skilleffect.logistics.LogisticsSkillEffect;
+import exiledlib.skills.skilleffect.phase.PhaseSkillEffect;
 import exiledsector.ExiledSector;
 import exiledsector.persistence.ShipRecords;
 import exiledsector.persistence.ShipSkillDataManager;
@@ -28,17 +34,11 @@ import exiledsector.skills.PhantomHullModStatus;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillDataResolver;
-import exiledsector.skills.progression.SkillNodeOpCost;
-import exiledlib.skills.skilleffect.DefenseSkillEffect;
-import exiledlib.skills.skilleffect.FluxSkillEffect;
-import exiledlib.skills.skilleffect.LogisticsSkillEffect;
-import exiledlib.skills.skilleffect.MiscSkillEffect;
-import exiledlib.skills.skilleffect.PhaseSkillEffect;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledlib.skills.SkillTypeEffect;
+import exiledsector.skills.progression.SkillNodeOpCost;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -1379,7 +1379,7 @@ class SkillTreeHullModTest {
     @Test
     void advanceInCombatGrantsCommandPointRecoveryWhenFlagship() {
         SkillType opsType = new SkillType.Builder("operations_center", "Operations Center", "graphics/icons/notable_hullmods/operations_center.png", SkillTier.NOTABLE)
-                .effects(List.of(new SkillTypeEffect(MiscSkillEffect.COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP, 250f)))
+                .effects(List.of(new SkillTypeEffect(BattleSkillEffect.COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP, 250f)))
                 .vanillaHullModId(null)
                 .descriptionOverride(null)
                 .todo(null)
@@ -1410,7 +1410,7 @@ class SkillTreeHullModTest {
     @Test
     void advanceInCombatWithholdsCommandPointRecoveryWhenNotFlagship() {
         SkillType opsType = new SkillType.Builder("operations_center", "Operations Center", "graphics/icons/notable_hullmods/operations_center.png", SkillTier.NOTABLE)
-                .effects(List.of(new SkillTypeEffect(MiscSkillEffect.COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP, 250f)))
+                .effects(List.of(new SkillTypeEffect(BattleSkillEffect.COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP, 250f)))
                 .vanillaHullModId(null)
                 .descriptionOverride(null)
                 .todo(null)

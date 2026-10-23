@@ -5,12 +5,13 @@ import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.WeaponAPI;
+import exiledlib.skills.skilleffect.weapon.WeaponScope;
 
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
-sealed interface StatTarget {
+public sealed interface StatTarget {
 
     void apply(MutableShipStatsAPI stats, String modId, StatMode mode, float magnitude);
 

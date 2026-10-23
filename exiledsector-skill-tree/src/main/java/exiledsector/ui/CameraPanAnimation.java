@@ -1,6 +1,6 @@
 package exiledsector.ui;
 
-import exiledlib.skills.skilleffect.Fade;
+import exiledlib.skills.skilleffect.render.Fade;
 
 final class CameraPanAnimation {
 

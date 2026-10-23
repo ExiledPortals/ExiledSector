@@ -1,11 +1,13 @@
 package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
-import exiledsector.skills.AllocatedNode;
-import exiledsector.skills.AnchorLinks;
-import exiledsector.skills.AllocationGate;
-import exiledsector.skills.NodeEligibility;
 import exiledlib.skills.ShipFacts;
+import exiledlib.skills.SkillTypeEffect;
+import exiledlib.skills.skilleffect.shield.ShieldSkillEffect;
+import exiledsector.skills.AllocatedNode;
+import exiledsector.skills.AllocationGate;
+import exiledsector.skills.AnchorLinks;
+import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
@@ -13,9 +15,7 @@ import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeTopology;
 import exiledsector.skills.SkillType;
-import exiledlib.skills.SkillTypeEffect;
 import exiledsector.skills.TreeSearch;
-import exiledlib.skills.skilleffect.ShieldSkillEffect;
 import exiledsector.skills.tags.ShipProfile;
 import exiledsector.skills.tags.SkillTags;
 

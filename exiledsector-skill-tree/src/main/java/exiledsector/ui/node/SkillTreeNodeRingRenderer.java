@@ -2,6 +2,7 @@ package exiledsector.ui.node;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledlib.skills.skilleffect.render.SpriteCache;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.ui.SkillTreePanelStyle;
@@ -11,7 +12,6 @@ import exiledsector.ui.belt.RadialBand;
 import exiledsector.ui.belt.RingBeltRenderer;
 import exiledsector.ui.belt.WormholeBandRenderer;
 import exiledsector.ui.util.ColorUtil;
-import exiledlib.skills.skilleffect.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.UnitCircle;
 import org.apache.log4j.Logger;

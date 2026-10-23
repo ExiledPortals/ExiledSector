@@ -1,8 +1,8 @@
 package exiledsector.ui.node;
 
+import exiledlib.skills.skilleffect.render.Fade;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
-import exiledlib.skills.skilleffect.Fade;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.HashMap;

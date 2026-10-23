@@ -5,7 +5,7 @@ import exiledlib.i18n.StyledText;
 
 import java.util.function.Predicate;
 
-record ConditionalStatEffect(StatMode mode, StatTarget target, String statKey, Predicate<ShipAPI> condition)
+public record ConditionalStatEffect(StatMode mode, StatTarget target, String statKey, Predicate<ShipAPI> condition)
         implements EffectBacking {
 
     @Override

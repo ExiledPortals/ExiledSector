@@ -1,17 +1,17 @@
 package exiledsector.effects;
 
-import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
-import exiledsector.skills.AllocatedNode;
 import exiledlib.skills.DamageTakenCaps;
 import exiledlib.skills.EffectTotals;
-import exiledsector.skills.InstalledHullMods;
 import exiledlib.skills.ShipFacts;
 import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.ModuleBoost;
 import exiledlib.skills.skilleffect.SkillEffect;
+import exiledlib.skills.skilleffect.stationmodule.ModuleBoost;
+import exiledsector.skills.AllocatedNode;
+import exiledsector.skills.InstalledHullMods;
 
 import java.util.LinkedHashMap;
 import java.util.List;

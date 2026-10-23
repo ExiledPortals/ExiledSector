@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
-final class NearbyWrecks {
+public final class NearbyWrecks {
 
     private static final float SEARCH_MARGIN = 500f;
 
@@ -16,12 +16,12 @@ final class NearbyWrecks {
     private final Predicate<ShipAPI> wreckFilter;
     private Set<ShipAPI> aliveNearby = new HashSet<>();
 
-    NearbyWrecks(ShipAPI ownerShip, Predicate<ShipAPI> wreckFilter) {
+    public NearbyWrecks(ShipAPI ownerShip, Predicate<ShipAPI> wreckFilter) {
         this.ownerShip = ownerShip;
         this.wreckFilter = wreckFilter;
     }
 
-    List<ShipAPI> newWithin(float range) {
+    public List<ShipAPI> newWithin(float range) {
         List<ShipAPI> wrecks = new ArrayList<>();
         Set<ShipAPI> stillAlive = new HashSet<>();
         for (ShipAPI other : CombatQueries.shipsNear(ownerShip.getLocation(), range + SEARCH_MARGIN, other -> other != ownerShip)) {

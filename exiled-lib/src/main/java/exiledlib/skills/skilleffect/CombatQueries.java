@@ -26,7 +26,7 @@ public final class CombatQueries {
     private CombatQueries() {
     }
 
-    static boolean isAliveNotHulk(ShipAPI ship) {
+    public static boolean isAliveNotHulk(ShipAPI ship) {
         return ship.isAlive() && !ship.isHulk();
     }
 
@@ -34,23 +34,23 @@ public final class CombatQueries {
         return other.getOwner() != source.getOwner() && other.getOwner() != Misc.OWNER_NEUTRAL;
     }
 
-    static boolean isSameStation(ShipAPI ship, ShipAPI other) {
+    public static boolean isSameStation(ShipAPI ship, ShipAPI other) {
         ShipAPI parent = ship.getParentStation();
         ShipAPI otherParent = other.getParentStation();
         return otherParent == ship || parent == other || (parent != null && parent == otherParent);
     }
 
-    static float distanceSquared(Vector2f a, Vector2f b) {
+    public static float distanceSquared(Vector2f a, Vector2f b) {
         float deltaX = a.x - b.x;
         float deltaY = a.y - b.y;
         return deltaX * deltaX + deltaY * deltaY;
     }
 
-    static boolean withinRadius(Vector2f a, Vector2f b, float radius) {
+    public static boolean withinRadius(Vector2f a, Vector2f b, float radius) {
         return distanceSquared(a, b) <= radius * radius;
     }
 
-    static ShipAPI attackingShip(Object reportedSource, Object damageParam) {
+    public static ShipAPI attackingShip(Object reportedSource, Object damageParam) {
         ShipAPI reported = shipBehind(reportedSource);
         return reported != null ? reported : shipBehind(damageParam);
     }
@@ -65,11 +65,11 @@ public final class CombatQueries {
         return damageSource instanceof BeamAPI beam ? beam.getSource() : null;
     }
 
-    static float hitDamage(DamageAPI damage) {
+    public static float hitDamage(DamageAPI damage) {
         return damage.isDps() ? damage.getDamage() * damage.getDpsDuration() : damage.getDamage();
     }
 
-    static List<ShipAPI> shipsMatching(Predicate<ShipAPI> filter) {
+    public static List<ShipAPI> shipsMatching(Predicate<ShipAPI> filter) {
         List<ShipAPI> result = new ArrayList<>();
         for (ShipAPI ship : Global.getCombatEngine().getShips()) {
             if (filter.test(ship)) {
@@ -79,7 +79,7 @@ public final class CombatQueries {
         return result;
     }
 
-    static List<ShipAPI> shipsNear(Vector2f loc, float radius, Predicate<ShipAPI> filter) {
+    public static List<ShipAPI> shipsNear(Vector2f loc, float radius, Predicate<ShipAPI> filter) {
         List<ShipAPI> result = new ArrayList<>();
         Set<ShipAPI> seen = Collections.newSetFromMap(new IdentityHashMap<>(8));
         Iterator<Object> iterator = objectsNear(Global.getCombatEngine().getShipGrid(), loc, radius);
@@ -107,12 +107,12 @@ public final class CombatQueries {
         return nearest;
     }
 
-    static List<ShipAPI> hostilesNear(ShipAPI owner, Vector2f point, float radius, Predicate<ShipAPI> extraFilter) {
+    public static List<ShipAPI> hostilesNear(ShipAPI owner, Vector2f point, float radius, Predicate<ShipAPI> extraFilter) {
         return shipsNear(point, radius, other -> extraFilter.test(other) && isAliveNotHulk(other)
                 && other.getCollisionClass() != CollisionClass.NONE && isHostile(owner, other) && withinRadius(other.getLocation(), point, radius));
     }
 
-    static List<ShipAPI> nearestFirst(List<ShipAPI> ships, Vector2f point, int count) {
+    public static List<ShipAPI> nearestFirst(List<ShipAPI> ships, Vector2f point, int count) {
         int shipCount = ships.size();
         int keptCount = Math.max(0, Math.min(count, shipCount));
         float[] distancesSquared = new float[shipCount];
@@ -136,7 +136,7 @@ public final class CombatQueries {
         return keptCount == shipCount ? ships : ships.subList(0, keptCount);
     }
 
-    static boolean anyNear(CollisionGridAPI grid, Vector2f loc, float radius, Predicate<Object> test) {
+    public static boolean anyNear(CollisionGridAPI grid, Vector2f loc, float radius, Predicate<Object> test) {
         Iterator<Object> iterator = objectsNear(grid, loc, radius);
         while (iterator.hasNext()) {
             if (test.test(iterator.next())) {
@@ -146,11 +146,11 @@ public final class CombatQueries {
         return false;
     }
 
-    static Iterator<Object> objectsNear(CollisionGridAPI grid, Vector2f loc, float radius) {
+    public static Iterator<Object> objectsNear(CollisionGridAPI grid, Vector2f loc, float radius) {
         return grid.getCheckIterator(loc, radius * 2f, radius * 2f);
     }
 
-    static ShipAPI biggestEnemyShip(ShipAPI source) {
+    public static ShipAPI biggestEnemyShip(ShipAPI source) {
         ShipAPI biggestShip = null;
         ShipAPI biggestStation = null;
         for (ShipAPI candidate : Global.getCombatEngine().getShips()) {
@@ -194,7 +194,7 @@ public final class CombatQueries {
         return ship.getHullSpec() == null ? 0f : ship.getHullSpec().getFleetPoints();
     }
 
-    static boolean boundsOverlap(CombatEntityAPI first, CombatEntityAPI second) {
+    public static boolean boundsOverlap(CombatEntityAPI first, CombatEntityAPI second) {
         BoundsAPI firstBounds = first.getExactBounds();
         BoundsAPI secondBounds = second.getExactBounds();
         if (firstBounds == null || secondBounds == null) {

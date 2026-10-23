@@ -3,12 +3,12 @@ package exiledsector.skills;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledlib.skills.SkillTypeEffect;
-import exiledsector.items.NodeSocketable;
-import exiledsector.persistence.ShipSkillDataManager;
 import exiledlib.skills.skilleffect.SkillEffect;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
+import exiledsector.items.NodeSocketable;
+import exiledsector.persistence.ShipSkillDataManager;
 
 import java.util.ArrayList;
 import java.util.List;

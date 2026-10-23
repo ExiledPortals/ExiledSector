@@ -5,6 +5,10 @@ import exiledlib.ProjectFiles;
 import exiledlib.i18n.HeadlessGameText;
 import exiledlib.i18n.StyledText;
 import exiledlib.skills.DescriptionLine;
+import exiledlib.skills.skilleffect.SkillEffect;
+import exiledlib.skills.skilleffect.SkillEffectNames;
+import exiledlib.skills.skilleffect.fighter.FighterSkillEffect;
+import exiledlib.skills.skilleffect.shipsystem.ShipSystemSkillEffect;
 import exiledsector.skills.NodeDescription;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
@@ -14,9 +18,6 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeBonusSummary;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.npc.RealSkillData;
-import exiledlib.skills.skilleffect.CompatSkillEffect;
-import exiledlib.skills.skilleffect.SkillEffect;
-import exiledlib.skills.skilleffect.SkillEffectNames;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -88,7 +89,9 @@ class DescriptionGoldenTest {
             }
         }
         secondInCommandEnabled = false;
-        for (CompatSkillEffect effect : CompatSkillEffect.values()) {
+        for (SkillEffect effect : List.of(ShipSystemSkillEffect.AUGMENTED_SYSTEM_REGEN_PERCENT, FighterSkillEffect.CONVERTED_HANGAR_REFIT_TIME_MULT,
+                FighterSkillEffect.CONVERTED_HANGAR_REPLACEMENT_RATE_MULT, FighterSkillEffect.CONVERTED_HANGAR_RELAUNCH_TIME_FLAT,
+                FighterSkillEffect.CONVERTED_HANGAR_MIN_CREW_FLAT)) {
             for (float magnitude : SAMPLE_MAGNITUDES) {
                 addLine(lines, "effect-noSiC|" + effect.name() + "|" + magnitude, effect.description(magnitude), effect.invertsDescriptionColours());
             }

@@ -1,0 +1,124 @@
+package exiledlib.skills.skilleffect.flux;
+
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
+import exiledlib.compat.LostSectorCompat;
+import exiledlib.i18n.StyledText;
+import exiledlib.skills.skilleffect.BackedSkillEffect;
+import exiledlib.skills.skilleffect.ConditionalStatEffect;
+import exiledlib.skills.skilleffect.EffectBacking;
+import exiledlib.skills.skilleffect.ListenerEffect;
+import exiledlib.skills.skilleffect.SimpleStatEffect;
+import exiledlib.skills.skilleffect.StatMode;
+import exiledlib.skills.skilleffect.StatTarget;
+
+import java.util.function.Function;
+
+import static exiledlib.skills.skilleffect.StatMode.FLAT;
+import static exiledlib.skills.skilleffect.StatMode.MULT;
+import static exiledlib.skills.skilleffect.StatMode.PERCENT;
+import static exiledlib.skills.skilleffect.StatTarget.liveStat;
+import static exiledlib.skills.skilleffect.StatTarget.stat;
+
+public enum FluxSkillEffect implements BackedSkillEffect {
+
+    FLUX_CAPACITY_PERCENT(PERCENT, liveStat(MutableShipStatsAPI::getFluxCapacity), StatNames.FLUX_CAPACITY, false),
+    FLUX_CAPACITY_FLAT(FLAT, liveStat(MutableShipStatsAPI::getFluxCapacity), StatNames.FLUX_CAPACITY, false),
+    FLUX_CAPACITY_MULT(MULT, liveStat(MutableShipStatsAPI::getFluxCapacity), StatNames.FLUX_CAPACITY, false),
+    FLUX_DISSIPATION_PERCENT(PERCENT, liveStat(MutableShipStatsAPI::getFluxDissipation), StatNames.FLUX_DISSIPATION, false),
+    FLUX_DISSIPATION_FLAT(FLAT, liveStat(MutableShipStatsAPI::getFluxDissipation), StatNames.FLUX_DISSIPATION, false),
+    FLUX_DISSIPATION_MULT(MULT, liveStat(MutableShipStatsAPI::getFluxDissipation), StatNames.FLUX_DISSIPATION, false),
+    VENT_RATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getVentRateMult), "stat.ventingSpeed", false),
+    VENT_RATE_MULT(MULT, stat(MutableShipStatsAPI::getVentRateMult), "stat.ventingSpeed", false),
+    ZERO_FLUX_SPEED_FLAT(FLAT, liveStat(MutableShipStatsAPI::getZeroFluxSpeedBoost), "stat.zeroFluxSpeedBoost", false),
+    ZERO_FLUX_ALWAYS_ON {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getZeroFluxMinimumFluxLevel().modifyFlat(modId, 2f);
+        }
+    },
+    ZERO_FLUX_BOOST_FLUX_LEVEL_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getZeroFluxMinimumFluxLevel().modifyFlat(modId, magnitude / 100f);
+        }
+    },
+    FLUX_DISSIPATION_WHILE_VENTING_PERCENT(new ConditionalStatEffect(PERCENT, stat(MutableShipStatsAPI::getFluxDissipation),
+            "stat.fluxDissipationWhileVenting", ship -> ship.getFluxTracker().isVenting())),
+    FLUX_DISSIPATION_PER_FLUX_VENT_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            ShipVariantAPI variant = stats.getVariant();
+            int vents = variant == null ? 0 : variant.getNumFluxVents();
+            stats.getFluxDissipation().modifyFlat(modId + VENT_MOD_SUFFIX, vents * magnitude);
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return FLAT.describeStat(magnitude, "stat.fluxDissipationPerFluxVent");
+        }
+    },
+    FLUX_CAPACITOR_EFFECTIVENESS_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            ShipVariantAPI variant = stats.getVariant();
+            int capacitors = variant == null ? 0 : variant.getNumFluxCapacitors();
+            stats.getFluxCapacity().modifyFlat(modId + CAPACITOR_MOD_SUFFIX, capacitors * fluxPerCapacitor() * magnitude / 100f);
+        }
+    },
+    FLUX_SCALED_TOP_SPEED_FLAT(FluxScaledVolatilityListener.TOP_SPEED_KEY,
+            FluxScaledVolatilityListener.class, FluxScaledVolatilityListener::new),
+    FLUX_SCALED_RATE_OF_FIRE_PERCENT(FluxScaledVolatilityListener.RATE_OF_FIRE_KEY,
+            FluxScaledVolatilityListener.class, FluxScaledVolatilityListener::new),
+    AUGMENTED_FLUX_SCALED_PENALTY_REDUCTION_PERCENT(FluxScaledVolatilityListener.AUGMENTED_PENALTY_REDUCTION_KEY,
+            FluxScaledVolatilityListener.class, FluxScaledVolatilityListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return LostSectorCompat.isModEnabled() ? super.description(magnitude) : null;
+        }
+    };
+
+    private static final String CAPACITOR_MOD_SUFFIX = "_capacitors";
+    private static final String VENT_MOD_SUFFIX = "_vents";
+    private static final String FLUX_PER_CAPACITOR_SETTING = "fluxPerCapacitor";
+    private static final float DEFAULT_FLUX_PER_CAPACITOR = 200f;
+
+    private static float fluxPerCapacitor() {
+        SettingsAPI settings = Global.getSettings();
+        return settings == null ? DEFAULT_FLUX_PER_CAPACITOR : settings.getFloat(FLUX_PER_CAPACITOR_SETTING);
+    }
+
+    private final EffectBacking backing;
+
+    FluxSkillEffect() {
+        this((EffectBacking) null);
+    }
+
+    FluxSkillEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
+        this(new SimpleStatEffect(mode, target, statKey, lowerIsBetter));
+    }
+
+    <T> FluxSkillEffect(String magnitudeKey, Class<T> listenerType, Function<ShipAPI, ? extends T> listenerFactory) {
+        this(new ListenerEffect<>(magnitudeKey, listenerType, listenerFactory));
+    }
+
+    FluxSkillEffect(EffectBacking backing) {
+        this.backing = backing;
+    }
+
+    @Override
+    public EffectBacking backing() {
+        return backing;
+    }
+
+    private static final class StatNames {
+        static final String FLUX_CAPACITY = "stat.fluxCapacity";
+        static final String FLUX_DISSIPATION = "stat.fluxDissipation";
+
+        private StatNames() {
+        }
+    }
+}

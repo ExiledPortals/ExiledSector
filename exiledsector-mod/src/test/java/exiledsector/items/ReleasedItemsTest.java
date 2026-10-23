@@ -1,8 +1,8 @@
 package exiledsector.items;
 
 import exiledlib.ProjectFiles;
-import exiledsector.modifiers.ModifierSlot;
 import exiledlib.skills.skilleffect.EffectAliases;
+import exiledsector.modifiers.ModifierSlot;
 import org.json.CDL;
 import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;

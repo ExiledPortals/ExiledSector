@@ -12,7 +12,7 @@ import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
-import exiledlib.skills.skilleffect.CompatSkillEffect;
+import exiledlib.skills.skilleffect.fighter.FighterSkillEffect;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -118,7 +118,7 @@ class SecondInCommandCompatTest {
         enableSecondInCommandWith();
         MutableShipStatsAPI stats = mockStats();
 
-        CompatSkillEffect.CONVERTED_HANGAR_MIN_CREW_FLAT.apply(stats, "node", 20f);
+        FighterSkillEffect.CONVERTED_HANGAR_MIN_CREW_FLAT.apply(stats, "node", 20f);
 
         verify(stats.getMinCrewMod()).modifyFlat("node", 20f);
     }
@@ -128,7 +128,7 @@ class SecondInCommandCompatTest {
         enableSecondInCommandWith(SecondInCommandCompat.RECONFIGURATION_SKILL_ID);
         MutableShipStatsAPI stats = mockStats();
 
-        CompatSkillEffect.CONVERTED_HANGAR_MIN_CREW_FLAT.apply(stats, "node", 20f);
+        FighterSkillEffect.CONVERTED_HANGAR_MIN_CREW_FLAT.apply(stats, "node", 20f);
 
         verify(stats.getMinCrewMod()).modifyFlat("node", 0f);
     }
@@ -142,14 +142,14 @@ class SecondInCommandCompatTest {
         when(dynamic.getMod(Stats.CONVERTED_HANGAR_NO_CREW_INCREASE)).thenReturn(waiver);
         when(waiver.computeEffective(0f)).thenReturn(1f);
 
-        CompatSkillEffect.CONVERTED_HANGAR_MIN_CREW_FLAT.apply(stats, "node", 20f);
+        FighterSkillEffect.CONVERTED_HANGAR_MIN_CREW_FLAT.apply(stats, "node", 20f);
 
         verify(stats.getMinCrewMod()).modifyFlat("node", 0f);
     }
 
     @Test
     void convertedHangarPenaltiesSupportTemporaryGating() {
-        assertTrue(CompatSkillEffect.CONVERTED_HANGAR_REFIT_TIME_MULT.supportsTemporaryGating());
+        assertTrue(FighterSkillEffect.CONVERTED_HANGAR_REFIT_TIME_MULT.supportsTemporaryGating());
     }
 
     @Test

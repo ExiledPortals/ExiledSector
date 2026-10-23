@@ -1,7 +1,7 @@
 package exiledsector.ui;
 
+import exiledlib.skills.skilleffect.render.Fade;
 import exiledsector.ui.util.BorderedPanel;
-import exiledlib.skills.skilleffect.Fade;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.TextLabel;
 

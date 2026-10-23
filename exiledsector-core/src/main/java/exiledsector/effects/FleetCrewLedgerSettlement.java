@@ -12,8 +12,8 @@ import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
 import com.fs.starfarer.api.util.Misc;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
-import exiledlib.skills.skilleffect.FleetCrewLedger;
-import exiledlib.skills.skilleffect.FleetCrewLedger.CrewChange;
+import exiledlib.skills.skilleffect.logistics.FleetCrewLedger.CrewChange;
+import exiledlib.skills.skilleffect.logistics.FleetCrewLedger;
 import exiledsector.ui.VanillaText;
 
 import java.awt.Color;
