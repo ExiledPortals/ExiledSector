@@ -192,6 +192,7 @@ public final class ChartContentGenerator {
         params.withOfficers = true;
         params.officerLevelBonus = planned.officerLevelBonus();
         params.officerNumberBonus = planned.officerCountBonus();
+        params.averageSMods = planned.averageSMods() > 0 ? planned.averageSMods() : null;
         if (planned.role() == FleetRole.BOSS) {
             params.forceAllowPhaseShipsEtc = true;
         }

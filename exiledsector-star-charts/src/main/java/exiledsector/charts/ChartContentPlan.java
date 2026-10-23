@@ -15,7 +15,7 @@ public record ChartContentPlan(int tier, ChartFaction faction, ChartObjective ob
     }
 
     public record PlannedFleet(FleetRole role, int poiIndex, float combatPoints, float quality, int officerLevelBonus, int officerCountBonus,
-                               int strengthBonus) {
+                               int strengthBonus, int averageSMods) {
 
         public boolean guardsPoi() {
             return poiIndex >= 0;

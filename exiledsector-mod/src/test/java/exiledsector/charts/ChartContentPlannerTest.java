@@ -201,7 +201,7 @@ class ChartContentPlannerTest {
 
     @Test
     void fleetsOverTheSizeCapAreCappedAndTurnTheRestIntoFleetStrength() {
-        ChartTier huge = new ChartTier(15, 1200f, 2, 2, 1, 1, 50f, 100, 100, 0f, 0f, 0f, 0f, true, 2000f, 1f, 0f);
+        ChartTier huge = new ChartTier(15, 4800f, 2, 2, 1, 1, 50f, 100, 100, 0f, 0f, 0f, 0f, true, 4000f, 1f, 0f);
 
         ChartContentPlan plan = ChartContentPlanner.plan(5L, huge, List.of(), List.of(), EVERY_FACTION);
 
@@ -214,9 +214,17 @@ class ChartContentPlannerTest {
             assertEquals(boss ? 0.65f : 0.5f, fleet.quality(), 0.001f);
             assertEquals(boss ? 1 + ChartContentPlanner.BOSS_OFFICER_LEVEL_BONUS : 1, fleet.officerLevelBonus());
         }
-        assertEquals(ChartContentPlanner.MAX_OVERFLOW_STRENGTH, ChartContentPlanner.overflowStrength(2000f, ChartContentPlanner.BOSS_SIZE_CAP));
-        assertEquals(25, ChartContentPlanner.overflowStrength(750f, ChartContentPlanner.FLEET_SIZE_CAP));
-        assertEquals(0, ChartContentPlanner.overflowStrength(600f, ChartContentPlanner.FLEET_SIZE_CAP));
+        assertEquals(ChartContentPlanner.MAX_OVERFLOW_STRENGTH, ChartContentPlanner.overflowStrength(4000f, ChartContentPlanner.BOSS_SIZE_CAP));
+        assertEquals(25, ChartContentPlanner.overflowStrength(1500f, ChartContentPlanner.FLEET_SIZE_CAP));
+        assertEquals(0, ChartContentPlanner.overflowStrength(1200f, ChartContentPlanner.FLEET_SIZE_CAP));
+    }
+
+    @Test
+    void fleetQualityPastOneHundredPercentAddsAnSModPerFiftyPercent() {
+        assertEquals(0, ChartContentPlanner.averageSMods(100f));
+        assertEquals(0, ChartContentPlanner.averageSMods(60f));
+        assertEquals(1, ChartContentPlanner.averageSMods(150f));
+        assertEquals(2, ChartContentPlanner.averageSMods(215f));
     }
 
     @Test

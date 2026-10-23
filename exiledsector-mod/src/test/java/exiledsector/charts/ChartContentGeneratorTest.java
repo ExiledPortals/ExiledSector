@@ -186,7 +186,7 @@ class ChartContentGeneratorTest {
 
     @Test
     void fleetParametersFollowThePlanWithoutAnyMarketOrHyperspaceLocation() {
-        PlannedFleet planned = new PlannedFleet(FleetRole.BOSS, 0, 250f, 0.9f, 3, 2, 2);
+        PlannedFleet planned = new PlannedFleet(FleetRole.BOSS, 0, 250f, 0.9f, 3, 2, 2, 0);
 
         FleetParamsV3 params = ChartContentGenerator.fleetParams("hegemony", planned, new Random(5));
 
