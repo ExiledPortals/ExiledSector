@@ -81,8 +81,9 @@ final class SkillTreeNodeTooltipRenderer {
         int anchorStateRevision = socketed instanceof WormholeAnchor ? skillData.revision() : 0;
         Item grantingItem = hidden ? null : grantingItem(node, allocation);
         DoctrineRewrite rewrite = hidden ? null : DoctrineOverrides.rewrite(skillData, node.getId());
+        int affinityRevision = node.getType().getTier() == SkillTier.ROOT ? skillData.revision() : 0;
         List<Object> signature = List.of(effectiveType.getId(), hidden, showOptionalHint, expanded, allocatedSocket,
-                socketed == null ? "" : socketed.id(), refusalReason == null ? "" : refusalReason, anchorStateRevision,
+                socketed == null ? "" : socketed.id(), refusalReason == null ? "" : refusalReason, anchorStateRevision, affinityRevision,
                 rewrite == null ? "" : rewrite, tooltipWarning == null ? "" : tooltipWarning,
                 socketGrantStatuses, grantingItem == null ? "" : grantingItem.id());
 
@@ -233,6 +234,9 @@ final class SkillTreeNodeTooltipRenderer {
             NodeDescription description = SkillNode.describeMechanics(effectiveType, fleetMember.getHullSpec().getHullSize());
             effects.addAll(description.effects());
             details.addAll(description.details());
+            if (node.getType().getTier() == SkillTier.ROOT) {
+                effects.addAll(AffinityTooltipLines.forShip(skillData, fleetMember.getHullSpec().getHullSize()));
+            }
         }
         if (allocatedSocket) {
             effects.add(plainLine("ui.node.socket.installHint"));

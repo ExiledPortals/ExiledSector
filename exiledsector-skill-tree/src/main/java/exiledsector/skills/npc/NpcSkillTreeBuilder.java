@@ -1,8 +1,10 @@
 package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
+import exiledlib.skills.AffinitySteps;
 import exiledlib.skills.ShipFacts;
 import exiledlib.skills.SkillTypeEffect;
+import exiledlib.skills.skilleffect.SkillEffect;
 import exiledlib.skills.skilleffect.shield.ShieldSkillEffect;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocationGate;
@@ -521,12 +523,35 @@ public final class NpcSkillTreeBuilder {
                     options.add(optionType);
                 }
             }
-            SkillType pickedOption = weightedPick(options, optionType -> relevance.of(optionType.getTags()), random);
+            SkillType rootAffinityOption = rootAffinityOption(options);
+            SkillType pickedOption = rootAffinityOption != null ? rootAffinityOption
+                    : weightedPick(options, optionType -> relevance.of(optionType.getTags()), random);
             if (pickedOption != null) {
                 searchOptions.put(node.getId(), pickedOption);
                 chosenOptions.put(node.getId(), pickedOption);
             }
             return pickedOption;
+        }
+
+        private SkillType rootAffinityOption(List<SkillType> options) {
+            SkillNode root = topology.node(ShipTrees.resolveStartingRootId(shipData));
+            Set<SkillEffect> rootAffinities = root == null ? Set.of() : affinitiesOf(root.getType());
+            for (SkillType option : options) {
+                if (!Collections.disjoint(affinitiesOf(option), rootAffinities)) {
+                    return option;
+                }
+            }
+            return null;
+        }
+
+        private static Set<SkillEffect> affinitiesOf(SkillType type) {
+            Set<SkillEffect> affinities = new HashSet<>();
+            for (SkillTypeEffect effect : type.getEffects()) {
+                if (AffinitySteps.isAffinity(effect.effect())) {
+                    affinities.add(effect.effect());
+                }
+            }
+            return affinities;
         }
 
         private void anchorAllocatedSocket() {

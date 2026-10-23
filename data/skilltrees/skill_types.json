@@ -2552,17 +2552,8 @@
 			"tier": "ROOT",
 			"effects": [
 				{
-					"effect": "HULL_PERCENT",
+					"effect": "LOW_TECH_AFFINITY_FLAT",
 					"magnitude": 10
-				}
-			],
-			"hullSizeEffects": [
-				{
-					"effect": "ARMOR_FLAT",
-					"frigate": 30,
-					"destroyer": 70,
-					"cruiser": 100,
-					"capitalShip": 120
 				}
 			]
 		},
@@ -2573,12 +2564,8 @@
 			"tier": "ROOT",
 			"effects": [
 				{
-					"effect": "HULL_PERCENT",
-					"magnitude": 5
-				},
-				{
-					"effect": "FLUX_CAPACITY_PERCENT",
-					"magnitude": 5
+					"effect": "MIDLINE_AFFINITY_FLAT",
+					"magnitude": 10
 				}
 			]
 		},
@@ -2589,41 +2576,9 @@
 			"tier": "ROOT",
 			"effects": [
 				{
-					"effect": "FLUX_DISSIPATION_PERCENT",
+					"effect": "HIGH_TECH_AFFINITY_FLAT",
 					"magnitude": 10
 				}
-			],
-			"hullSizeEffects": [
-				{
-					"effect": "FLUX_CAPACITY_FLAT",
-					"frigate": 50,
-					"destroyer": 100,
-					"cruiser": 150,
-					"capitalShip": 200
-				}
-			]
-		},
-		{
-			"id": "fuel_crew_cargo",
-			"name": "Fuel, Crew and Cargo",
-			"icon": "graphics/icons/increased_cargo.png",
-			"effects": [
-				{
-					"effect": "FUEL_CAPACITY_MULT",
-					"magnitude": 1
-				},
-				{
-					"effect": "CREW_CAPACITY_MULT",
-					"magnitude": 1
-				},
-				{
-					"effect": "CARGO_CAPACITY_MULT",
-					"magnitude": 1
-				}
-			],
-			"tags": [
-				"logistics",
-				"campaign_only"
 			]
 		},
 		{
@@ -2660,13 +2615,56 @@
 		},
 		{
 			"id": "small_flux_optional",
-			"name": "Caps, Vents, Hull or Logistics",
+			"name": "Affinity",
 			"icon": "graphics/icons/small_flux_optional.png",
 			"optionalOptions": [
-				"flux_capacity",
-				"flux_dissipation",
+				"affinity_low_tech",
+				"affinity_high_tech",
+				"affinity_midline"
+			],
+			"tags": [
+				"flux",
+				"hull"
+			]
+		},
+		{
+			"id": "affinity_low_tech",
+			"name": "Low Tech Affinity",
+			"icon": "graphics/icons/root_low_tech.png",
+			"effects": [
+				{
+					"effect": "LOW_TECH_AFFINITY_FLAT",
+					"magnitude": 5
+				}
+			],
+			"tags": [
 				"hull",
-				"fuel_crew_cargo"
+				"armour"
+			]
+		},
+		{
+			"id": "affinity_high_tech",
+			"name": "High Tech Affinity",
+			"icon": "graphics/icons/root_high_tech.png",
+			"effects": [
+				{
+					"effect": "HIGH_TECH_AFFINITY_FLAT",
+					"magnitude": 5
+				}
+			],
+			"tags": [
+				"flux"
+			]
+		},
+		{
+			"id": "affinity_midline",
+			"name": "Midline Affinity",
+			"icon": "graphics/icons/root_midline.png",
+			"effects": [
+				{
+					"effect": "MIDLINE_AFFINITY_FLAT",
+					"magnitude": 5
+				}
 			],
 			"tags": [
 				"flux",

@@ -40,8 +40,9 @@ public final class EffectTotals {
         return of(contributions, bonusScale, StatBaseline.NONE, DiminishingReturns.OFF);
     }
 
-    public static EffectTotals of(List<EffectContribution> contributions, float bonusScale, StatBaseline baseline,
+    public static EffectTotals of(List<EffectContribution> treeContributions, float bonusScale, StatBaseline baseline,
                                   DiminishingReturns.Config diminishing) {
+        List<EffectContribution> contributions = AffinitySteps.withSteppedBonuses(treeContributions);
         NpcBonusScaling scaling = NpcBonusScaling.of(bonusScale, contributions);
         List<EffectContribution> scaledContributions = new ArrayList<>();
         for (EffectContribution contribution : contributions) {

@@ -1,8 +1,8 @@
 # Attributes: plan
 
-The 108 "Caps, Vents, Hull or Logistics" nodes become affinity nodes. Each one offers 5 Low Tech, 5 High Tech or 5 Midline affinity. Affinity adds up across the ship and grants stat bonuses in steps. The three roots grant 10 affinity of their own type instead of their current bonuses. Each root is redrawn as a glowing processor core whose circuit traces pulse outward, with the root's affinity total written in its centre.
+The 108 "Caps, Vents, Hull or Logistics" nodes become affinity nodes. Each one offers 5 Low Tech, 5 High Tech or 5 Midline affinity. Affinity adds up across the ship and grants stat bonuses in steps. The three roots grant 10 affinity of their own type instead of their current bonuses. Each root becomes a glowing processor core around its existing icon whose circuit traces pulse outward, with the root's affinity total written in its centre.
 
-Status: planned, not built.
+Status: built and tested 2026-10-23, committed on parallel-work. Not yet checked in game.
 
 Reference image for the root art: `docs/plans/images/attributes_root_circuit_reference.jpg`.
 
@@ -39,7 +39,7 @@ Affinity is a reusable stepped bonus, so it lives in Exiled Lib, in the `special
 ### Node types
 
 - Three new option types: `affinity_low_tech`, `affinity_high_tech` and `affinity_midline`, each giving 5 of its affinity. Each uses its root's icon (`graphics/icons/root_low_tech.png` and so on). Icons must be circular copies: check the root icons are, and make circular copies with the editor's "Make circular copy" if not.
-- `small_flux_optional` keeps its id (saves and `released_skill_nodes.json` refer to it). Its `optionalOptions` become the three affinity types, its name becomes "Affinity", and its own icon (shown before a choice is made) gets new art combining the three root icons.
+- `small_flux_optional` keeps its id (saves and `released_skill_nodes.json` refer to it). Its `optionalOptions` become the three affinity types, and its name becomes "Affinity". Before a choice is made the tree draws it as the usual optional-node pie split of its three options' icons, which are the root icons.
 - The four old option types stay in `skill_types.json` only while anything still refers to them (the migration below). Delete them afterwards if nothing else uses them.
 - The roots' `effects` and `hullSizeEffects` become a single `*_AFFINITY_FLAT` of 10.
 
@@ -69,44 +69,42 @@ Saved tree templates that name the old options are mapped the same way (`skills/
 
 ## Root art and animation
 
-The three roots become processor cores, following the reference image. For a novice: the tree is drawn with OpenGL, and every frame each layer is drawn in order, back to front. The root adds two layers below its icon: a still picture of the circuit, and small glowing dots ("sparks") that move along the circuit lines. Additive blending means a spark's colour is added to what's under it, so it brightens the line instead of covering it.
+The three roots become round glowing processor cores, following the reference image. For a novice: the tree is drawn with OpenGL, and every frame each layer is drawn in order, back to front. The circuit is drawn live the way vanilla beams are: each trace segment is a thin bright strip with a wider soft glow strip under it, all with additive blending, which adds light to what's underneath instead of covering it.
 
 ### Shape
 
-A dark disc with a thin bright rim, its middle left empty so the root's icon shows through. Pin stubs ring the disc's edge at even angles. From each pin a thin cyan circuit trace runs outward, bending at 45° or 90° once or twice, and ends in a small solder dot. The traces fan out in every direction.
+A round core with a glowing rim. Four bundles of nine parallel traces leave the core at the top, right, bottom and left. Each bundle splays out with 45° bends (outer traces bend first so traces never cross), then most bend back to run parallel and end at varied lengths in a bright solder dot.
 
-The trace shapes are data: a list of polylines in `data/config/exiledSector/root_circuit.json`, in units of the root's radius, so the drawing and the spark paths always match. The circuit must fit inside the gap around the roots. Measure the space to the nearest node and connectors in `ship_skill_tree.json` and keep the traces inside it. The culling reach in `SkillTreeNodeRingRenderer.reach` grows to cover the traces, so a root at the screen edge still draws them.
+The trace shapes are data: polylines in `data/config/exiledSector/root_circuit.json`, in units of the root's radius, so the drawing and the spark paths always match. The circuit stays inside the gap around the roots (2.4 radii; the nearest unrelated connector is about 2.45 radii away), and the culling reach covers it.
 
-### Static layer
+### Layers
 
-One sprite, `graphics/ui/exiledSector/root_circuit.png`: the rim, the pins and every trace as crisp, dim lines in neutral white, with a faint constant halo baked in so the lines look live between pulses. It's never animated. Python isn't available, so the sprite is made by a PowerShell script (`tools/make-root-circuit.ps1`) that reads `root_circuit.json` and draws it with `System.Drawing` (anti-aliased lines, plus a blurred copy for the halo), so changing a trace only means rerunning the script. Each root draws it tinted with its own colour (see "Root colours").
+All textures are vanilla (`starsector-core/graphics/fx`), tinted with the root's colour: `star_halo` (a wide faint halo), `owner_glow` (the core's glow), `beamfringeb` and `beamcorec` (each trace's glow and its near-white line), `hit_glow_small` and `particlealpha32sq` (the solder dots), `shields256ringc` (the rim) and `particlealpha64sq` (the sparks). Each layer is one batch with one texture bind (`TexturedQuadBatch`), in `RootCircuitRenderer`.
+
+### Reveal
+
+While the player is choosing a root, and while the chosen root flies to its place, only the core and its rim show. Once the chosen root arrives, the traces grow out from the rim at a fixed speed with a spark riding each tip, each solder dot fades in as its trace completes, and the halo brightens with the growth (`RootCircuitGrowth`). Sparks start once it's complete. Opening the tree on a ship that already has a root shows the whole circuit at once. Unchosen roots show only their core.
 
 ### Root colours
 
-Each root has its own colour for its circuit, sparks and affinity number, so the three roots read apart while choosing. The placeholder colours are amber for Low Tech, cyan for High Tech and green for Midline. The final colours come from each root icon's main colour. They sit in one place in code next to the circuit renderer, and the affinity node tooltips and summary lines use the same colours.
+Each root has its own colour, taken from its icon's main colour: orange for Low Tech, gold for Midline, blue for High Tech (`RootColours`).
 
 ### Sparks
 
-At regular intervals a bright glow runs down each trace:
+- Every trace fires on the same interval (a placeholder of 5 seconds). Phase offsets are scattered across traces by the golden ratio, so only a few sparks are in flight at a time rather than a bundle firing at once.
+- A spark has a hot near-white head and a short tail of smaller, fainter copies along the path behind it, so it follows bends. It fades out at the solder dot.
+- Every spark moves at the same speed, so a longer trace takes longer. The position comes from `(time - phase) mod interval`, so nothing is stored per spark.
 
-- A small soft spark leaves the pin and travels along the trace, following every bend, to the solder dot. It has a hot head, near white with a touch of the root's colour, and a short tail that fades behind it. The line under it briefly brightens as it passes, and it fades out at the solder dot.
-- The spark is one small glow sprite (`graphics/ui/exiledSector/circuit_spark.png`, a soft radial gradient) drawn with additive blending and tinted with the root's colour. The tail is three or four more copies of the same sprite behind the head along the path, each smaller and fainter. The brightening comes from the additive head and tail themselves, with no extra line drawing.
-- Every trace fires on the same fixed interval (a placeholder of 2.5 seconds), and each has its own phase offset: its angle around the core divided by a full turn, times the interval. So sparks leave the core in a steady rotating rhythm rather than all at once.
-- Every spark moves at the same speed (in root radii per second), so a longer trace just takes longer. If a trip takes longer than the interval, a trace can have two sparks in flight at once. The position comes from `(time - phase) mod interval` for each spark in flight, so nothing is stored per spark.
-- Positions along a trace come from cumulative segment lengths, computed once when `root_circuit.json` loads.
+### Performance
 
-### Drawing order and performance
-
-Circuit sprite, then sparks, then the root's ring, icon and number. Connectors and other nodes stay above the circuit. A visible root draws one sprite plus about four spark sprites per trace each frame. Sparks are skipped when the root is off screen, or so zoomed out that the root is only a few pixels across. That keeps the per-frame cost small.
-
-Technical details: `Sprite.render` sets its own blend function and turns `GL_BLEND` off after drawing. Set additive blending on the spark sprite with `setAdditiveBlend()`, and re-enable `GL_BLEND` before any raw GL that follows. Everything stays in GL11 on the render thread, with no `glGet` calls (Fast Rendering compatibility). The animation clock is the tree panel's own accumulated `advance` time, not wall-clock time, so it pauses with the panel.
+A visible root draws about 200 textured quads per frame in eight batches. Sparks are skipped when the root is under 12 px across, and nothing is drawn when it's off screen. Everything stays in GL11 on the render thread, with no `glGet` calls (Fast Rendering compatibility). The clock is the tree panel's own accumulated `advance` time, so it pauses with the panel.
 
 ### Root icon and affinity number
 
-- The root icon is redrawn to sit inside the core's empty middle: smaller and dimmer than now, as a backdrop for the number. The three icon files keep their paths, and the affinity nodes use the same art.
-- The ship's affinity total for that root's type is drawn in the centre with `SkillTreePanelStyle.font()`, centred, sized so three digits fit inside the core's inner disc. It has a minimum on-screen size so it stays readable when zoomed out, even if it then spills slightly past the disc.
+- The root icons are vanilla's own Low Tech, High Tech and Midline art and are never redrawn. The core only enhances them: the icon draws smaller and dimmer inside the core, as a backdrop for the number.
+- The ship's affinity total for that root's type is drawn in the centre in white with a dark outline, so it reads on any icon or glow. It has a minimum size so it stays readable zoomed out.
 - While the player is still choosing a root, each root shows the affinity the ship would start with (10).
-- The number's `DrawableString` is cached and rebuilt only when the total or the font size changes, not every frame.
+- The number's labels are rebuilt only when the total changes or the zoom crosses a 2 px font step.
 
 ## Strings and docs
 
@@ -123,15 +121,15 @@ Technical details: `Sprite.render` sets its own blend function and turns `GL_BLE
 
 ## Build order
 
-1. The three affinity effects and the stepped conversion in Exiled Lib, with tests.
-2. The option types, `small_flux_optional`'s new options, and the new root effects.
-3. Migration of saved selections, templates and NPC tags.
-4. NPC option picking.
-5. Tooltips and the summary line.
-6. `root_circuit.json`, the PowerShell sprite script and the static circuit layer.
-7. Sparks.
-8. Root icon redraw and the affinity number.
-9. Strings and docs.
+1. Done: The three affinity effects and the stepped conversion in Exiled Lib, with tests.
+2. Done: The option types, `small_flux_optional`'s new options, and the new root effects.
+3. Done: Migration of saved selections, templates and NPC tags.
+4. Done: NPC option picking.
+5. Done: Tooltips and the summary line.
+6. Done: `root_circuit.json` and the live circuit layers drawn from vanilla fx textures, with the reveal on choosing a root.
+7. Done: Sparks.
+8. Done: Root icon placement and the affinity number.
+9. Done: Strings and docs.
 
 ## Tests
 
@@ -142,6 +140,7 @@ Each test goes in the lowest module that sees every class it uses.
 - `small_flux_optional` offers exactly the three affinity types. Each option gives 5 of its affinity.
 - The migration maps each old option once, leaves new selections alone, and covers templates and NPC tags.
 - NPC builds pick their root's affinity.
-- `root_circuit.json` loads: every trace starts on the rim, has one or two bends at 45° or 90°, and stays inside the measured space. Phase offsets are evenly spread over the interval.
+- `root_circuit.json` loads: every trace starts on the rim, has at most two bends at 45° or 90°, and stays inside the measured space. Phase offsets are scattered over the whole interval.
+- The reveal: nothing grows while choosing or flying, growth starts when the chosen root arrives, other roots stay bare, and a ship that already has a root shows the whole circuit.
 - Spark positions: at the phase offset a spark sits on the pin, after `length / speed` seconds it sits on the solder dot, and with a trip longer than the interval two sparks are in flight.
 - `EditorRoundTripTest` and `TranslationKeyReferencesTest` still pass with the new types and keys.

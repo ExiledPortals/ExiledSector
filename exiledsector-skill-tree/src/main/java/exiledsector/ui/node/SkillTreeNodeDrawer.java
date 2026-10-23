@@ -27,6 +27,7 @@ import java.util.function.Consumer;
 
 import static exiledsector.ui.node.SkillTreeNodeGeometry.ICON_INSET_RATIO;
 import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_SIZE;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.donutRadius;
 
 public final class SkillTreeNodeDrawer {
 
@@ -39,6 +40,8 @@ public final class SkillTreeNodeDrawer {
     private static final Color AUGMENTED_UNALLOCATED_TINT = scaled(AUGMENTED_TINT, UNALLOCATED_TINT_SCALE);
     private static final float EXOSHIP_HIT_SHARE = 0.6f;
     private static final float SOCKET_COLLAPSE_SHARE = 0.4f;
+    private static final float ROOT_ICON_SHARE = 0.68f;
+    private static final float ROOT_ICON_ALPHA = 0.3f;
     private static final float SOCKET_WORMHOLE_START_SCALE = 0.3f;
 
     private final TreeAllocationSession session;
@@ -46,6 +49,9 @@ public final class SkillTreeNodeDrawer {
     private final NodeSearch nodeSearch;
     private final SkillTreeNodeRingRenderer ringRenderer;
     private final SkillTreeNodeIconRenderer iconRenderer = new SkillTreeNodeIconRenderer();
+    private final RootCircuitRenderer rootCircuitRenderer = new RootCircuitRenderer();
+    private final RootCircuitGrowth rootCircuitGrowth = new RootCircuitGrowth();
+    private final RootAffinityNumber rootAffinityNumber;
     private final SkillTreeSocketRenderer socketRenderer = new SkillTreeSocketRenderer();
     private SkillTreeTopology socketTopology;
     private List<SkillNode> socketNodesCache = List.of();
@@ -71,6 +77,7 @@ public final class SkillTreeNodeDrawer {
         this.startPulse = ringRenderer::startPulse;
         this.connectorRenderer = new SkillTreeNodeConnectorRenderer(panelStyle, nodeSearch, wormholeOpenness, socketWormholes);
         this.tooltipRenderer = new SkillTreeNodeTooltipRenderer(member, panelStyle);
+        this.rootAffinityNumber = new RootAffinityNumber(member.getHullSpec().getHullSize());
         this.dropdownRenderer = new SkillTreeNodeDropdownRenderer(panelStyle);
     }
 
@@ -96,6 +103,8 @@ public final class SkillTreeNodeDrawer {
 
     public void advance(float amount) {
         ringRenderer.advance(amount);
+        rootCircuitRenderer.advance(amount);
+        rootCircuitGrowth.advance(amount, session.rootChoice());
         String targetedSocketId = session.targetedSocketId();
         if (targetedSocketId != null && !ringRenderer.isPulsing(targetedSocketId)) {
             ringRenderer.startPulse(targetedSocketId);
@@ -220,16 +229,21 @@ public final class SkillTreeNodeDrawer {
         float nodeX = viewport.screenX(rootChoice.offsetX(node));
         float nodeY = viewport.screenY(rootChoice.offsetY(node));
         float footprintSize = NODE_SIZE * zoom * SkillTier.ROOT.getSizeMultiplier();
-        if (!viewport.isVisible(nodeX, nodeY, ringRenderer.reach(footprintSize, node))) {
+        float reach = Math.max(ringRenderer.reach(footprintSize, node), rootCircuitRenderer.reachRadius(donutRadius(footprintSize)));
+        if (!viewport.isVisible(nodeX, nodeY, reach)) {
             return;
         }
         boolean allocated = allocation.skillData().isAllocated(node.getId());
         boolean breathing = choosing || (!allocated && allocation.canAllocate(node));
         float nodeAlpha = alphaMult * nodeSearch.nodeAlpha(node, allocation);
+        float rootRadius = donutRadius(footprintSize);
+        Color rootColour = RootColours.of(node.getType().getId());
+        rootCircuitRenderer.draw(nodeX, nodeY, rootRadius, nodeAlpha, rootColour, rootCircuitGrowth.grownRadii(node, rootChoice));
         ringRenderer.draw(nodeX, nodeY, footprintSize, nodeAlpha, SkillTreeNodeRingRenderer.RingState.of(allocated, breathing), zoom, node);
 
         Color tint = choosing ? ALLOCATED_TINT : iconTint(node, allocation, allocated);
-        iconRenderer.drawIcon(node.getType().getIconPath(), nodeX, nodeY, footprintSize, nodeAlpha, tint);
+        iconRenderer.drawIcon(node.getType().getIconPath(), nodeX, nodeY, footprintSize * ROOT_ICON_SHARE, nodeAlpha * ROOT_ICON_ALPHA, tint);
+        rootAffinityNumber.draw(node, allocation.skillData(), choosing, nodeX, nodeY, rootRadius, nodeAlpha);
     }
 
     private Color iconTint(SkillNode node, NodeAllocator.Snapshot allocation, boolean allocated) {

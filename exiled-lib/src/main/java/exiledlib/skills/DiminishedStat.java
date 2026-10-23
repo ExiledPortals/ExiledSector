@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public enum DiminishedStat {
 
     ARMOUR("diminishingArmour", 50, StatBaseline::armor,
-            Set.of(DefenseSkillEffect.ARMOR_FLAT, DefenseSkillEffect.ARMOR_PERCENT)),
+            Set.of(DefenseSkillEffect.ARMOR_FLAT, DefenseSkillEffect.ARMOR_PERCENT, DefenseSkillEffect.ARMOR_MULT)),
     HULL("diminishingHull", 50, StatBaseline::hull,
             Set.of(DefenseSkillEffect.HULL_FLAT, DefenseSkillEffect.HULL_PERCENT, DefenseSkillEffect.HULL_MULT)),
     FLUX_CAPACITY("diminishingFluxCapacity", 50, StatBaseline::fluxCapacity,

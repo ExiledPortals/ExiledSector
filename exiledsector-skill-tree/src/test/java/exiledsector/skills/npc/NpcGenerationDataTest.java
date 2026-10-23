@@ -2,6 +2,7 @@ package exiledsector.skills.npc;
 
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -68,6 +69,33 @@ class NpcGenerationDataTest {
                     long charged = build.steps().stream().filter(NpcBuildStep::isCharged).count();
                     if (charged != count) {
                         problems.add(label + ": allocated " + charged + " of " + count);
+                    }
+                }
+            }
+        }
+
+        assertTrue(problems.isEmpty(), problems.size() + " problems:\n" + String.join("\n", problems));
+    }
+
+    @Test
+    void everyAffinityNodeAnNpcTakesMatchesItsRoot() {
+        List<String> problems = new ArrayList<>();
+        for (Archetype archetype : NpcArchetypes.ALL) {
+            for (String designType : DESIGN_TYPES) {
+                String label = archetype.name() + " / " + designType;
+                NpcTreeBuild build = NpcSkillTreeBuilder.generate(new NpcBuildRequest(archetype.profile(), designType, null,
+                        NpcHullMods.NONE, NpcFreedOp.NONE, 30, null), new Random(label.hashCode()));
+                ShipSkillData data = build.shipData();
+                SkillNode root = SkillTree.get(ShipTrees.resolveStartingRootId(data));
+                Set<String> rootEffects = new TreeSet<>();
+                root.getType().getEffects().forEach(effect -> rootEffects.add(effect.effect().name()));
+                for (String nodeId : data.getAllocatedNodeIds()) {
+                    SkillNode node = SkillTree.get(nodeId);
+                    if (node != null && "small_flux_optional".equals(node.getType().getId())) {
+                        SkillType option = SkillTree.getType(data.getOptionalSelection(nodeId));
+                        if (option == null || option.getEffects().stream().noneMatch(effect -> rootEffects.contains(effect.effect().name()))) {
+                            problems.add(label + ": " + nodeId + " took " + data.getOptionalSelection(nodeId) + " on " + root.getId());
+                        }
                     }
                 }
             }

@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
+import exiledlib.skills.AffinitySteps;
 import exiledlib.skills.DamageTakenCaps;
 import exiledlib.skills.EffectTotals;
 import exiledlib.skills.ShipFacts;
@@ -66,6 +67,7 @@ final class ModuleTreeShare implements AdvanceableListener {
     static Map<SkillEffect, Float> sharedTotals(List<SkillTreeEffectSource.NodeEffects> nodeEffects, HullSize hullSize, ShipVariantAPI moduleVariant,
                                                 float share) {
         Map<SkillEffect, Float> sums = new LinkedHashMap<>();
+        Map<SkillEffect, Float> affinityTotals = new LinkedHashMap<>();
         for (SkillTreeEffectSource.NodeEffects node : nodeEffects) {
             if (!node.node().effectiveType().sharesWithModules(hullSize) || hasOwnCopy(moduleVariant, node.node())) {
                 continue;
@@ -73,7 +75,14 @@ final class ModuleTreeShare implements AdvanceableListener {
             for (SkillTypeEffect effect : node.effects()) {
                 if (effect.effect().moduleShare().isShared()) {
                     sums.merge(effect.effect(), effect.magnitude(), Float::sum);
+                } else if (AffinitySteps.isAffinity(effect.effect())) {
+                    affinityTotals.merge(effect.effect(), effect.magnitude(), Float::sum);
                 }
+            }
+        }
+        for (SkillTypeEffect bonus : AffinitySteps.bonuses(affinityTotals)) {
+            if (bonus.effect().moduleShare().isShared()) {
+                sums.merge(bonus.effect(), bonus.magnitude(), Float::sum);
             }
         }
         Map<SkillEffect, Float> totals = EffectTotals.permanentTotals(sums);

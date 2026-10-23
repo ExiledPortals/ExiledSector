@@ -48,6 +48,7 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
     },
     BREAK_PROBABILITY_PERCENT(PERCENT, stat(MutableShipStatsAPI::getBreakProb), "stat.chanceOfThisShipBreakingApartWhenDestroyed", true),
     ARMOR_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getArmorBonus), "stat.armor", false),
+    ARMOR_MULT(MULT, bonus(MutableShipStatsAPI::getArmorBonus), "stat.armor", false),
     ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD(new PerDModMultEffect(liveStat(MutableShipStatsAPI::getArmorDamageTakenMult),
             "stat.armorDamageTakenPerDMod", true)),
     ARMOR_FLAT_FOR_LOW_BASE_ARMOR {

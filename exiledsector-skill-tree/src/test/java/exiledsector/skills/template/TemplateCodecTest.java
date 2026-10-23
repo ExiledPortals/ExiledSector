@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 class TemplateCodecTest {
 
     private static final SkillTreeTemplate TEMPLATE = new SkillTreeTemplate("id-1", "Brawler \"v2\", =final= 装甲", "root_low_tech_1",
-            HullSize.CRUISER, List.of(new TemplateStep("armor_1", null), new TemplateStep("slot_3", "hull"), new TemplateStep("flux_2", null)));
+            HullSize.CRUISER, List.of(new TemplateStep("armor_1", null), new TemplateStep("slot_3", "affinity_low_tech"), new TemplateStep("flux_2", null)));
 
     @Test
     void aTemplateSurvivesARoundTripWithItsNameOrderAndOptions() {

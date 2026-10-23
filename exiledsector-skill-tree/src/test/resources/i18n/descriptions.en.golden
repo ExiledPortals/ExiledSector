@@ -28,6 +28,12 @@ effect|ARMOR_FLAT_FOR_LOW_BASE_ARMOR|12.5	0	Up to <good>+5000/8750/11250/15000</
 effect|ARMOR_FLAT_FOR_LOW_BASE_ARMOR|100.0	0	Up to <good>+40000/70000/90000/120000</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+15000/30000/40000/50000</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
 effect|ARMOR_FLAT_FOR_LOW_BASE_ARMOR|-10.0	0	Up to <good>+-4000/-7000/-9000/-12000</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+-1500/-3000/-4000/-5000</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
 effect|ARMOR_FLAT_FOR_LOW_BASE_ARMOR|-12.5	0	Up to <good>+-5000/-8750/-11250/-15000</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+-1875/-3750/-5000/-6250</good> at <hl>400/700/900/1200</hl> base armor (frigate/destroyer/cruiser/capital ship). Can't be allocated on phase ships or on hulls with more base armor than that.
+effect|ARMOR_MULT|1.0	0	<good>1%</good> more armor.
+effect|ARMOR_MULT|10.0	0	<good>10%</good> more armor.
+effect|ARMOR_MULT|12.5	0	<good>12.5%</good> more armor.
+effect|ARMOR_MULT|100.0	0	<good>100%</good> more armor.
+effect|ARMOR_MULT|-10.0	0	<bad>10%</bad> less armor.
+effect|ARMOR_MULT|-12.5	0	<bad>12.5%</bad> less armor.
 effect|ARMOR_PERCENT|1.0	0	<good>1%</good> increased armor.
 effect|ARMOR_PERCENT|10.0	0	<good>10%</good> increased armor.
 effect|ARMOR_PERCENT|12.5	0	<good>12.5%</good> increased armor.
@@ -1108,6 +1114,12 @@ effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased h
 effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|100.0	1	<good>100%</good> increased high-explosive damage taken.
 effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|-10.0	1	<bad>10%</bad> reduced high-explosive damage taken.
 effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced high-explosive damage taken.
+effect|HIGH_TECH_AFFINITY_FLAT|1.0	0	<good>+1</good> to High Tech Affinity.
+effect|HIGH_TECH_AFFINITY_FLAT|10.0	0	<good>+10</good> to High Tech Affinity.
+effect|HIGH_TECH_AFFINITY_FLAT|12.5	0	<good>+12.5</good> to High Tech Affinity.
+effect|HIGH_TECH_AFFINITY_FLAT|100.0	0	<good>+100</good> to High Tech Affinity.
+effect|HIGH_TECH_AFFINITY_FLAT|-10.0	0	<bad>-10</bad> to High Tech Affinity.
+effect|HIGH_TECH_AFFINITY_FLAT|-12.5	0	<bad>-12.5</bad> to High Tech Affinity.
 effect|HULL_FLAT|1.0	0	<good>+1</good> to hull points.
 effect|HULL_FLAT|10.0	0	<good>+10</good> to hull points.
 effect|HULL_FLAT|12.5	0	<good>+12.5</good> to hull points.
@@ -1174,6 +1186,12 @@ effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|12.5	1	<good>12.5%</good> more negati
 effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|100.0	1	<good>100%</good> more negative effects from logistics D-mods per D-mod, up to 5 D-mods.
 effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|-10.0	1	<bad>10%</bad> less negative effects from logistics D-mods per D-mod, up to 5 D-mods.
 effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|-12.5	1	<bad>12.5%</bad> less negative effects from logistics D-mods per D-mod, up to 5 D-mods.
+effect|LOW_TECH_AFFINITY_FLAT|1.0	0	<good>+1</good> to Low Tech Affinity.
+effect|LOW_TECH_AFFINITY_FLAT|10.0	0	<good>+10</good> to Low Tech Affinity.
+effect|LOW_TECH_AFFINITY_FLAT|12.5	0	<good>+12.5</good> to Low Tech Affinity.
+effect|LOW_TECH_AFFINITY_FLAT|100.0	0	<good>+100</good> to Low Tech Affinity.
+effect|LOW_TECH_AFFINITY_FLAT|-10.0	0	<bad>-10</bad> to Low Tech Affinity.
+effect|LOW_TECH_AFFINITY_FLAT|-12.5	0	<bad>-12.5</bad> to Low Tech Affinity.
 effect|MALFUNCTION_AURA_PERCENT|1.0	0	Enemy ships within 1000 su have a <good>1%</good> chance of weapon malfunctions. Several ships with this effect don't stack; the strongest applies.
 effect|MALFUNCTION_AURA_PERCENT|10.0	0	Enemy ships within 1000 su have a <good>10%</good> chance of weapon malfunctions. Several ships with this effect don't stack; the strongest applies.
 effect|MALFUNCTION_AURA_PERCENT|12.5	0	Enemy ships within 1000 su have a <good>12.5%</good> chance of weapon malfunctions. Several ships with this effect don't stack; the strongest applies.
@@ -1204,6 +1222,12 @@ effect|MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT|12.5	0	<good>+12.5</good> to the bas
 effect|MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT|100.0	0	<good>+100</good> to the base range of weapons in medium energy slots.
 effect|MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT|-10.0	0	<good>+-10</good> to the base range of weapons in medium energy slots.
 effect|MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT|-12.5	0	<good>+-12.5</good> to the base range of weapons in medium energy slots.
+effect|MIDLINE_AFFINITY_FLAT|1.0	0	<good>+1</good> to Midline Affinity.
+effect|MIDLINE_AFFINITY_FLAT|10.0	0	<good>+10</good> to Midline Affinity.
+effect|MIDLINE_AFFINITY_FLAT|12.5	0	<good>+12.5</good> to Midline Affinity.
+effect|MIDLINE_AFFINITY_FLAT|100.0	0	<good>+100</good> to Midline Affinity.
+effect|MIDLINE_AFFINITY_FLAT|-10.0	0	<bad>-10</bad> to Midline Affinity.
+effect|MIDLINE_AFFINITY_FLAT|-12.5	0	<bad>-12.5</bad> to Midline Affinity.
 effect|MIN_CREW_FLAT|1.0	1	<good>+1</good> to minimum crew required.
 effect|MIN_CREW_FLAT|10.0	1	<good>+10</good> to minimum crew required.
 effect|MIN_CREW_FLAT|12.5	1	<good>+12.5</good> to minimum crew required.
@@ -2381,6 +2405,21 @@ type-detail|advancedshieldemitter|CRUISER|0	0	Mutually exclusive with <hullmod>h
 type|advancedshieldemitter|CAPITAL_SHIP|0	0	<good>50%</good> increased shield turn rate.
 type|advancedshieldemitter|CAPITAL_SHIP|1	0	<good>50%</good> increased shield raise rate.
 type-detail|advancedshieldemitter|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Accelerated Shields</hullmod>
+type|affinity_high_tech|null|0	0	<good>+5</good> to High Tech Affinity.
+type|affinity_high_tech|FRIGATE|0	0	<good>+5</good> to High Tech Affinity.
+type|affinity_high_tech|DESTROYER|0	0	<good>+5</good> to High Tech Affinity.
+type|affinity_high_tech|CRUISER|0	0	<good>+5</good> to High Tech Affinity.
+type|affinity_high_tech|CAPITAL_SHIP|0	0	<good>+5</good> to High Tech Affinity.
+type|affinity_low_tech|null|0	0	<good>+5</good> to Low Tech Affinity.
+type|affinity_low_tech|FRIGATE|0	0	<good>+5</good> to Low Tech Affinity.
+type|affinity_low_tech|DESTROYER|0	0	<good>+5</good> to Low Tech Affinity.
+type|affinity_low_tech|CRUISER|0	0	<good>+5</good> to Low Tech Affinity.
+type|affinity_low_tech|CAPITAL_SHIP|0	0	<good>+5</good> to Low Tech Affinity.
+type|affinity_midline|null|0	0	<good>+5</good> to Midline Affinity.
+type|affinity_midline|FRIGATE|0	0	<good>+5</good> to Midline Affinity.
+type|affinity_midline|DESTROYER|0	0	<good>+5</good> to Midline Affinity.
+type|affinity_midline|CRUISER|0	0	<good>+5</good> to Midline Affinity.
+type|affinity_midline|CAPITAL_SHIP|0	0	<good>+5</good> to Midline Affinity.
 type|all_must_serve|null|0	0	Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.
 type|all_must_serve|null|1	0	Takes <good>10%</good> of each such wreck's skeleton crew. They can feed Live Munitions straight away; after combat, win or lose, the rest join your fleet if there is room.
 type|all_must_serve|FRIGATE|0	0	Enemy ships destroyed within 1500 su of this ship have their survivors pressed into service. Each wreck is only claimed once.
@@ -3563,21 +3602,6 @@ type|fuel_core_overload|FRIGATE|0	0	When this ship is destroyed, it detonates vi
 type|fuel_core_overload|DESTROYER|0	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
 type|fuel_core_overload|CRUISER|0	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
 type|fuel_core_overload|CAPITAL_SHIP|0	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 2000% of its maximum fuel capacity to nearby ships, tapering off with distance.
-type|fuel_crew_cargo|null|0	0	<good>1%</good> more fuel capacity.
-type|fuel_crew_cargo|null|1	0	<good>1%</good> more crew capacity.
-type|fuel_crew_cargo|null|2	0	<good>1%</good> more cargo capacity.
-type|fuel_crew_cargo|FRIGATE|0	0	<good>1%</good> more fuel capacity.
-type|fuel_crew_cargo|FRIGATE|1	0	<good>1%</good> more crew capacity.
-type|fuel_crew_cargo|FRIGATE|2	0	<good>1%</good> more cargo capacity.
-type|fuel_crew_cargo|DESTROYER|0	0	<good>1%</good> more fuel capacity.
-type|fuel_crew_cargo|DESTROYER|1	0	<good>1%</good> more crew capacity.
-type|fuel_crew_cargo|DESTROYER|2	0	<good>1%</good> more cargo capacity.
-type|fuel_crew_cargo|CRUISER|0	0	<good>1%</good> more fuel capacity.
-type|fuel_crew_cargo|CRUISER|1	0	<good>1%</good> more crew capacity.
-type|fuel_crew_cargo|CRUISER|2	0	<good>1%</good> more cargo capacity.
-type|fuel_crew_cargo|CAPITAL_SHIP|0	0	<good>1%</good> more fuel capacity.
-type|fuel_crew_cargo|CAPITAL_SHIP|1	0	<good>1%</good> more crew capacity.
-type|fuel_crew_cargo|CAPITAL_SHIP|2	0	<good>1%</good> more cargo capacity.
 type|fuel_flat|FRIGATE|0	0	<good>+5</good> to fuel capacity.
 type|fuel_flat|DESTROYER|0	0	<good>+15</good> to fuel capacity.
 type|fuel_flat|CRUISER|0	0	<good>+25</good> to fuel capacity.
@@ -4401,34 +4425,21 @@ type|restriction_breeds_creativity|CRUISER|0	0	Captured pirate hulls show the cr
 type|restriction_breeds_creativity|CRUISER|1	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 type|restriction_breeds_creativity|CAPITAL_SHIP|0	0	Captured pirate hulls show the crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Each d-mod this ship carries makes its armour shrug off a little more damage.
 type|restriction_breeds_creativity|CAPITAL_SHIP|1	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-type|root_high_tech|null|0	0	<good>10%</good> increased flux dissipation.
-type|root_high_tech|FRIGATE|0	0	<good>10%</good> increased flux dissipation.
-type|root_high_tech|FRIGATE|1	0	<good>+50</good> to flux capacity.
-type|root_high_tech|DESTROYER|0	0	<good>10%</good> increased flux dissipation.
-type|root_high_tech|DESTROYER|1	0	<good>+100</good> to flux capacity.
-type|root_high_tech|CRUISER|0	0	<good>10%</good> increased flux dissipation.
-type|root_high_tech|CRUISER|1	0	<good>+150</good> to flux capacity.
-type|root_high_tech|CAPITAL_SHIP|0	0	<good>10%</good> increased flux dissipation.
-type|root_high_tech|CAPITAL_SHIP|1	0	<good>+200</good> to flux capacity.
-type|root_low_tech|null|0	0	<good>10%</good> increased hull points.
-type|root_low_tech|FRIGATE|0	0	<good>10%</good> increased hull points.
-type|root_low_tech|FRIGATE|1	0	<good>+30</good> to armor.
-type|root_low_tech|DESTROYER|0	0	<good>10%</good> increased hull points.
-type|root_low_tech|DESTROYER|1	0	<good>+70</good> to armor.
-type|root_low_tech|CRUISER|0	0	<good>10%</good> increased hull points.
-type|root_low_tech|CRUISER|1	0	<good>+100</good> to armor.
-type|root_low_tech|CAPITAL_SHIP|0	0	<good>10%</good> increased hull points.
-type|root_low_tech|CAPITAL_SHIP|1	0	<good>+120</good> to armor.
-type|root_midline|null|0	0	<good>5%</good> increased hull points.
-type|root_midline|null|1	0	<good>5%</good> increased flux capacity.
-type|root_midline|FRIGATE|0	0	<good>5%</good> increased hull points.
-type|root_midline|FRIGATE|1	0	<good>5%</good> increased flux capacity.
-type|root_midline|DESTROYER|0	0	<good>5%</good> increased hull points.
-type|root_midline|DESTROYER|1	0	<good>5%</good> increased flux capacity.
-type|root_midline|CRUISER|0	0	<good>5%</good> increased hull points.
-type|root_midline|CRUISER|1	0	<good>5%</good> increased flux capacity.
-type|root_midline|CAPITAL_SHIP|0	0	<good>5%</good> increased hull points.
-type|root_midline|CAPITAL_SHIP|1	0	<good>5%</good> increased flux capacity.
+type|root_high_tech|null|0	0	<good>+10</good> to High Tech Affinity.
+type|root_high_tech|FRIGATE|0	0	<good>+10</good> to High Tech Affinity.
+type|root_high_tech|DESTROYER|0	0	<good>+10</good> to High Tech Affinity.
+type|root_high_tech|CRUISER|0	0	<good>+10</good> to High Tech Affinity.
+type|root_high_tech|CAPITAL_SHIP|0	0	<good>+10</good> to High Tech Affinity.
+type|root_low_tech|null|0	0	<good>+10</good> to Low Tech Affinity.
+type|root_low_tech|FRIGATE|0	0	<good>+10</good> to Low Tech Affinity.
+type|root_low_tech|DESTROYER|0	0	<good>+10</good> to Low Tech Affinity.
+type|root_low_tech|CRUISER|0	0	<good>+10</good> to Low Tech Affinity.
+type|root_low_tech|CAPITAL_SHIP|0	0	<good>+10</good> to Low Tech Affinity.
+type|root_midline|null|0	0	<good>+10</good> to Midline Affinity.
+type|root_midline|FRIGATE|0	0	<good>+10</good> to Midline Affinity.
+type|root_midline|DESTROYER|0	0	<good>+10</good> to Midline Affinity.
+type|root_midline|CRUISER|0	0	<good>+10</good> to Midline Affinity.
+type|root_midline|CAPITAL_SHIP|0	0	<good>+10</good> to Midline Affinity.
 type|safety_overrides|null|0	0	Allows the zero-flux speed boost to take effect regardless of flux level.
 type|safety_overrides|null|1	0	<good>100%</good> more flux dissipation.
 type|safety_overrides|null|2	0	<bad>67%</bad> less peak combat readiness duration.
@@ -5097,7 +5108,7 @@ summary|option0|FRIGATE|69	1	<bad>20%</bad> less minimum crew required.
 summary|option0|FRIGATE|70	1	<bad>40%</bad> less supply use for maintenance.
 summary|option0|FRIGATE|71	1	<bad>30%</bad> less fuel consumption rate.
 summary|option0|FRIGATE|72	0	<good>50%</good> increased repair rate per day.
-summary|option0|FRIGATE|73	0	<good>25%</good> increased flux dissipation.
+summary|option0|FRIGATE|73	0	<good>15%</good> increased flux dissipation.
 summary|option0|FRIGATE|74	0	<good>+50</good> to flux dissipation.
 summary|option0|FRIGATE|75	1	<bad>60%</bad> less EMP damage taken.
 summary|option0|FRIGATE|76	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
@@ -5119,8 +5130,8 @@ summary|option0|FRIGATE|91	0	When this ship isn't flown by you, it flies straigh
 summary|option0|FRIGATE|92	0	<good>+100</good> to shield arc.
 summary|option0|FRIGATE|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option0|FRIGATE|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-summary|option0|FRIGATE|95	0	<good>220%</good> more flux capacity.
-summary|option0|FRIGATE|96	0	<good>104%</good> more flux dissipation.
+summary|option0|FRIGATE|95	0	<good>8%</good> more flux capacity.
+summary|option0|FRIGATE|96	0	<good>106%</good> more flux dissipation.
 summary|option0|FRIGATE|97	0	<good>80%</good> increased fragment swarm size.
 summary|option0|FRIGATE|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option0|FRIGATE|99	0	<good>100%</good> increased shield arc.
@@ -5146,7 +5157,7 @@ summary|option0|FRIGATE|118	0	<good>+90</good> to this ship's sensor strength.
 summary|option0|FRIGATE|119	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option0|FRIGATE|120	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option0|FRIGATE|121	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-summary|option0|FRIGATE|122	0	<good>41%</good> more hull points.
+summary|option0|FRIGATE|122	0	<good>257%</good> more hull points.
 summary|option0|FRIGATE|123	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option0|FRIGATE|124	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
 summary|option0|FRIGATE|125	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
@@ -5184,7 +5195,7 @@ summary|option0|FRIGATE|156	0	Top speed changes with flux, from <good>+50</good>
 summary|option0|FRIGATE|157	0	<good>+105</good> to range from which combat objectives can be captured.
 summary|option0|FRIGATE|158	0	<good>250%</good> increased command point recovery rate while this ship is the flagship.
 summary|option0|FRIGATE|159	0	<good>+100</good> to non-beam energy weapon range.
-summary|option0|FRIGATE|160	0	<good>+650</good> to flux capacity.
+summary|option0|FRIGATE|160	0	<good>+600</good> to flux capacity.
 summary|option0|FRIGATE|161	0	<good>50%</good> increased damage dealt to missiles by point defence weapons.
 summary|option0|FRIGATE|162	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 summary|option0|FRIGATE|163	1	<bad>100%</bad> less phase cloak activation cost.
@@ -5205,49 +5216,55 @@ summary|option0|FRIGATE|177	0	If disabled, this ship is almost always recoverabl
 summary|option0|FRIGATE|178	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 summary|option0|FRIGATE|179	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 summary|option0|FRIGATE|180	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option0|FRIGATE|181	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option0|FRIGATE|182	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option0|FRIGATE|183	0	<bad>100%</bad> less venting speed.
-summary|option0|FRIGATE|184	0	<good>+141</good> to top speed.
-summary|option0|FRIGATE|185	0	<good>+100</good> to acceleration.
-summary|option0|FRIGATE|186	0	<good>+100</good> to deceleration.
-summary|option0|FRIGATE|187	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-summary|option0|FRIGATE|188	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
-summary|option0|FRIGATE|189	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-summary|option0|FRIGATE|190	0	The full Seraph Hunting Routines damage bonus is reached after dealing 75000 armor and hull damage.
-summary|option0|FRIGATE|191	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-summary|option0|FRIGATE|192	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
-summary|option0|FRIGATE|193	1	<bad>20%</bad> reduced weapon and engine repair time.
-summary|option0|FRIGATE|194	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option0|FRIGATE|195	0	Removes this ship's shield entirely.
-summary|option0|FRIGATE|196	1	<bad>60%</bad> less shield flux upkeep.
-summary|option0|FRIGATE|197	1	<bad>-7</bad> to heavy machinery your fleet needs to perform surveys.
-summary|option0|FRIGATE|198	1	<bad>-5</bad> to supplies your fleet needs to perform surveys.
-summary|option0|FRIGATE|199	0	<good>100%</good> more combat objective capture rate.
-summary|option0|FRIGATE|200	0	<good>10%</good> increased top speed for each of this ship's destroyed modules.
-summary|option0|FRIGATE|201	0	<good>20%</good> increased maneuverability for each of this ship's destroyed modules.
-summary|option0|FRIGATE|202	0	This ship's modules have <good>10%</good> increased armor.
-summary|option0|FRIGATE|203	0	This ship's modules have <good>10%</good> increased hull points.
-summary|option0|FRIGATE|204	0	This ship's modules have <good>10%</good> increased weapon damage.
-summary|option0|FRIGATE|205	0	This ship's modules have <good>20%</good> increased weapon range.
-summary|option0|FRIGATE|206	0	This ship's modules have <good>25%</good> increased weapon rate of fire.
-summary|option0|FRIGATE|207	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
-summary|option0|FRIGATE|208	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
-summary|option0|FRIGATE|209	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
-summary|option0|FRIGATE|210	0	Turret weapons have <good>50%</good> increased rate of fire. Hardpoint weapons can't fire.
-summary|option0|FRIGATE|211	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-summary|option0|FRIGATE|212	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option0|FRIGATE|213	0	<good>100%</good> increased weapon turn rate.
-summary|option0|FRIGATE|214	0	<bad>15%</bad> less ballistic weapon range.
-summary|option0|FRIGATE|215	0	<bad>15%</bad> less energy weapon range.
-summary|option0|FRIGATE|216	1	<good>25%</good> increased fighter refit time.
-summary|option0|FRIGATE|217	0	<good>15%</good> increased energy weapon damage.
-summary|option0|FRIGATE|218	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
-summary|option0|FRIGATE|219	0	<good>3%</good> increased post-battle salvage recovered by your fleet.
-summary|option0|FRIGATE|220	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other fighters. Each wing keeps at least 1 of its own fighters and fills the rest of its normal wing size with up to <good>1</good> of every other fighter type in its group. All its wings use the engagement range of its longest-ranged wing. Fighters in each group fly at the group's average top speed.
-summary|option0|FRIGATE|221	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option0|FRIGATE|222	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option0|FRIGATE|223	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option0|FRIGATE|181	0	<good>+10</good> to High Tech Affinity.
+summary|option0|FRIGATE|182	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option0|FRIGATE|183	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option0|FRIGATE|184	0	<bad>100%</bad> less venting speed.
+summary|option0|FRIGATE|185	0	<good>+141</good> to top speed.
+summary|option0|FRIGATE|186	0	<good>+100</good> to acceleration.
+summary|option0|FRIGATE|187	0	<good>+100</good> to deceleration.
+summary|option0|FRIGATE|188	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
+summary|option0|FRIGATE|189	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
+summary|option0|FRIGATE|190	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+summary|option0|FRIGATE|191	0	The full Seraph Hunting Routines damage bonus is reached after dealing 75000 armor and hull damage.
+summary|option0|FRIGATE|192	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+summary|option0|FRIGATE|193	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
+summary|option0|FRIGATE|194	1	<bad>20%</bad> reduced weapon and engine repair time.
+summary|option0|FRIGATE|195	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option0|FRIGATE|196	0	Removes this ship's shield entirely.
+summary|option0|FRIGATE|197	1	<bad>60%</bad> less shield flux upkeep.
+summary|option0|FRIGATE|198	0	<good>+540</good> to Low Tech Affinity.
+summary|option0|FRIGATE|199	1	<bad>-7</bad> to heavy machinery your fleet needs to perform surveys.
+summary|option0|FRIGATE|200	1	<bad>-5</bad> to supplies your fleet needs to perform surveys.
+summary|option0|FRIGATE|201	0	<good>100%</good> more combat objective capture rate.
+summary|option0|FRIGATE|202	0	<good>10%</good> increased top speed for each of this ship's destroyed modules.
+summary|option0|FRIGATE|203	0	<good>20%</good> increased maneuverability for each of this ship's destroyed modules.
+summary|option0|FRIGATE|204	0	This ship's modules have <good>10%</good> increased armor.
+summary|option0|FRIGATE|205	0	This ship's modules have <good>10%</good> increased hull points.
+summary|option0|FRIGATE|206	0	This ship's modules have <good>10%</good> increased weapon damage.
+summary|option0|FRIGATE|207	0	This ship's modules have <good>20%</good> increased weapon range.
+summary|option0|FRIGATE|208	0	This ship's modules have <good>25%</good> increased weapon rate of fire.
+summary|option0|FRIGATE|209	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
+summary|option0|FRIGATE|210	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
+summary|option0|FRIGATE|211	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
+summary|option0|FRIGATE|212	0	Turret weapons have <good>50%</good> increased rate of fire. Hardpoint weapons can't fire.
+summary|option0|FRIGATE|213	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+summary|option0|FRIGATE|214	0	<bad>30%</bad> reduced missile maneuverability.
+summary|option0|FRIGATE|215	0	<good>100%</good> increased weapon turn rate.
+summary|option0|FRIGATE|216	0	<bad>15%</bad> less ballistic weapon range.
+summary|option0|FRIGATE|217	0	<bad>15%</bad> less energy weapon range.
+summary|option0|FRIGATE|218	1	<good>25%</good> increased fighter refit time.
+summary|option0|FRIGATE|219	0	<good>15%</good> increased energy weapon damage.
+summary|option0|FRIGATE|220	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+summary|option0|FRIGATE|221	0	<good>3%</good> increased post-battle salvage recovered by your fleet.
+summary|option0|FRIGATE|222	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other fighters. Each wing keeps at least 1 of its own fighters and fills the rest of its normal wing size with up to <good>1</good> of every other fighter type in its group. All its wings use the engagement range of its longest-ranged wing. Fighters in each group fly at the group's average top speed.
+summary|option0|FRIGATE|223	0	<good>110%</good> more cargo capacity.
+summary|option0|FRIGATE|224	0	<good>110%</good> more fuel capacity.
+summary|option0|FRIGATE|225	0	<good>110%</good> more crew capacity.
+summary|option0|FRIGATE|226	0	<good>108%</good> more armor.
+summary|option0|FRIGATE|227	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option0|FRIGATE|228	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option0|FRIGATE|229	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option0|DESTROYER|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option0|DESTROYER|1	0	<good>+100</good> to energy weapon range.
 summary|option0|DESTROYER|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -5321,7 +5338,7 @@ summary|option0|DESTROYER|69	1	<bad>20%</bad> less minimum crew required.
 summary|option0|DESTROYER|70	1	<bad>40%</bad> less supply use for maintenance.
 summary|option0|DESTROYER|71	1	<bad>30%</bad> less fuel consumption rate.
 summary|option0|DESTROYER|72	0	<good>50%</good> increased repair rate per day.
-summary|option0|DESTROYER|73	0	<good>25%</good> increased flux dissipation.
+summary|option0|DESTROYER|73	0	<good>15%</good> increased flux dissipation.
 summary|option0|DESTROYER|74	0	<good>+50</good> to flux dissipation.
 summary|option0|DESTROYER|75	1	<bad>60%</bad> less EMP damage taken.
 summary|option0|DESTROYER|76	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
@@ -5343,8 +5360,8 @@ summary|option0|DESTROYER|91	0	When this ship isn't flown by you, it flies strai
 summary|option0|DESTROYER|92	0	<good>+100</good> to shield arc.
 summary|option0|DESTROYER|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option0|DESTROYER|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-summary|option0|DESTROYER|95	0	<good>220%</good> more flux capacity.
-summary|option0|DESTROYER|96	0	<good>104%</good> more flux dissipation.
+summary|option0|DESTROYER|95	0	<good>8%</good> more flux capacity.
+summary|option0|DESTROYER|96	0	<good>106%</good> more flux dissipation.
 summary|option0|DESTROYER|97	0	<good>80%</good> increased fragment swarm size.
 summary|option0|DESTROYER|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option0|DESTROYER|99	0	<good>100%</good> increased shield arc.
@@ -5370,7 +5387,7 @@ summary|option0|DESTROYER|118	0	<good>+110</good> to this ship's sensor strength
 summary|option0|DESTROYER|119	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option0|DESTROYER|120	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option0|DESTROYER|121	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-summary|option0|DESTROYER|122	0	<good>41%</good> more hull points.
+summary|option0|DESTROYER|122	0	<good>257%</good> more hull points.
 summary|option0|DESTROYER|123	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option0|DESTROYER|124	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
 summary|option0|DESTROYER|125	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
@@ -5408,7 +5425,7 @@ summary|option0|DESTROYER|156	0	Top speed changes with flux, from <good>+40</goo
 summary|option0|DESTROYER|157	0	<good>+105</good> to range from which combat objectives can be captured.
 summary|option0|DESTROYER|158	0	<good>250%</good> increased command point recovery rate while this ship is the flagship.
 summary|option0|DESTROYER|159	0	<good>+100</good> to non-beam energy weapon range.
-summary|option0|DESTROYER|160	0	<good>+700</good> to flux capacity.
+summary|option0|DESTROYER|160	0	<good>+600</good> to flux capacity.
 summary|option0|DESTROYER|161	0	<good>50%</good> increased damage dealt to missiles by point defence weapons.
 summary|option0|DESTROYER|162	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 summary|option0|DESTROYER|163	1	<bad>100%</bad> less phase cloak activation cost.
@@ -5429,49 +5446,55 @@ summary|option0|DESTROYER|177	0	If disabled, this ship is almost always recovera
 summary|option0|DESTROYER|178	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 summary|option0|DESTROYER|179	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 summary|option0|DESTROYER|180	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option0|DESTROYER|181	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option0|DESTROYER|182	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option0|DESTROYER|183	0	<bad>100%</bad> less venting speed.
-summary|option0|DESTROYER|184	0	<good>+105</good> to top speed.
-summary|option0|DESTROYER|185	0	<good>+60</good> to acceleration.
-summary|option0|DESTROYER|186	0	<good>+60</good> to deceleration.
-summary|option0|DESTROYER|187	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-summary|option0|DESTROYER|188	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
-summary|option0|DESTROYER|189	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-summary|option0|DESTROYER|190	0	The full Seraph Hunting Routines damage bonus is reached after dealing 125000 armor and hull damage.
-summary|option0|DESTROYER|191	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-summary|option0|DESTROYER|192	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
-summary|option0|DESTROYER|193	1	<bad>20%</bad> reduced weapon and engine repair time.
-summary|option0|DESTROYER|194	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option0|DESTROYER|195	0	Removes this ship's shield entirely.
-summary|option0|DESTROYER|196	1	<bad>60%</bad> less shield flux upkeep.
-summary|option0|DESTROYER|197	1	<bad>-13</bad> to heavy machinery your fleet needs to perform surveys.
-summary|option0|DESTROYER|198	1	<bad>-11</bad> to supplies your fleet needs to perform surveys.
-summary|option0|DESTROYER|199	0	<good>100%</good> more combat objective capture rate.
-summary|option0|DESTROYER|200	0	<good>10%</good> increased top speed for each of this ship's destroyed modules.
-summary|option0|DESTROYER|201	0	<good>20%</good> increased maneuverability for each of this ship's destroyed modules.
-summary|option0|DESTROYER|202	0	This ship's modules have <good>10%</good> increased armor.
-summary|option0|DESTROYER|203	0	This ship's modules have <good>10%</good> increased hull points.
-summary|option0|DESTROYER|204	0	This ship's modules have <good>10%</good> increased weapon damage.
-summary|option0|DESTROYER|205	0	This ship's modules have <good>20%</good> increased weapon range.
-summary|option0|DESTROYER|206	0	This ship's modules have <good>25%</good> increased weapon rate of fire.
-summary|option0|DESTROYER|207	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
-summary|option0|DESTROYER|208	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
-summary|option0|DESTROYER|209	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
-summary|option0|DESTROYER|210	0	Turret weapons have <good>50%</good> increased rate of fire. Hardpoint weapons can't fire.
-summary|option0|DESTROYER|211	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-summary|option0|DESTROYER|212	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option0|DESTROYER|213	0	<good>100%</good> increased weapon turn rate.
-summary|option0|DESTROYER|214	0	<bad>15%</bad> less ballistic weapon range.
-summary|option0|DESTROYER|215	0	<bad>15%</bad> less energy weapon range.
-summary|option0|DESTROYER|216	1	<good>25%</good> increased fighter refit time.
-summary|option0|DESTROYER|217	0	<good>15%</good> increased energy weapon damage.
-summary|option0|DESTROYER|218	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
-summary|option0|DESTROYER|219	0	<good>6%</good> increased post-battle salvage recovered by your fleet.
-summary|option0|DESTROYER|220	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other fighters. Each wing keeps at least 1 of its own fighters and fills the rest of its normal wing size with up to <good>1</good> of every other fighter type in its group. All its wings use the engagement range of its longest-ranged wing. Fighters in each group fly at the group's average top speed.
-summary|option0|DESTROYER|221	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option0|DESTROYER|222	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option0|DESTROYER|223	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option0|DESTROYER|181	0	<good>+10</good> to High Tech Affinity.
+summary|option0|DESTROYER|182	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option0|DESTROYER|183	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option0|DESTROYER|184	0	<bad>100%</bad> less venting speed.
+summary|option0|DESTROYER|185	0	<good>+105</good> to top speed.
+summary|option0|DESTROYER|186	0	<good>+60</good> to acceleration.
+summary|option0|DESTROYER|187	0	<good>+60</good> to deceleration.
+summary|option0|DESTROYER|188	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
+summary|option0|DESTROYER|189	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
+summary|option0|DESTROYER|190	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+summary|option0|DESTROYER|191	0	The full Seraph Hunting Routines damage bonus is reached after dealing 125000 armor and hull damage.
+summary|option0|DESTROYER|192	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+summary|option0|DESTROYER|193	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
+summary|option0|DESTROYER|194	1	<bad>20%</bad> reduced weapon and engine repair time.
+summary|option0|DESTROYER|195	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option0|DESTROYER|196	0	Removes this ship's shield entirely.
+summary|option0|DESTROYER|197	1	<bad>60%</bad> less shield flux upkeep.
+summary|option0|DESTROYER|198	0	<good>+540</good> to Low Tech Affinity.
+summary|option0|DESTROYER|199	1	<bad>-13</bad> to heavy machinery your fleet needs to perform surveys.
+summary|option0|DESTROYER|200	1	<bad>-11</bad> to supplies your fleet needs to perform surveys.
+summary|option0|DESTROYER|201	0	<good>100%</good> more combat objective capture rate.
+summary|option0|DESTROYER|202	0	<good>10%</good> increased top speed for each of this ship's destroyed modules.
+summary|option0|DESTROYER|203	0	<good>20%</good> increased maneuverability for each of this ship's destroyed modules.
+summary|option0|DESTROYER|204	0	This ship's modules have <good>10%</good> increased armor.
+summary|option0|DESTROYER|205	0	This ship's modules have <good>10%</good> increased hull points.
+summary|option0|DESTROYER|206	0	This ship's modules have <good>10%</good> increased weapon damage.
+summary|option0|DESTROYER|207	0	This ship's modules have <good>20%</good> increased weapon range.
+summary|option0|DESTROYER|208	0	This ship's modules have <good>25%</good> increased weapon rate of fire.
+summary|option0|DESTROYER|209	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
+summary|option0|DESTROYER|210	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
+summary|option0|DESTROYER|211	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
+summary|option0|DESTROYER|212	0	Turret weapons have <good>50%</good> increased rate of fire. Hardpoint weapons can't fire.
+summary|option0|DESTROYER|213	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+summary|option0|DESTROYER|214	0	<bad>30%</bad> reduced missile maneuverability.
+summary|option0|DESTROYER|215	0	<good>100%</good> increased weapon turn rate.
+summary|option0|DESTROYER|216	0	<bad>15%</bad> less ballistic weapon range.
+summary|option0|DESTROYER|217	0	<bad>15%</bad> less energy weapon range.
+summary|option0|DESTROYER|218	1	<good>25%</good> increased fighter refit time.
+summary|option0|DESTROYER|219	0	<good>15%</good> increased energy weapon damage.
+summary|option0|DESTROYER|220	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+summary|option0|DESTROYER|221	0	<good>6%</good> increased post-battle salvage recovered by your fleet.
+summary|option0|DESTROYER|222	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other fighters. Each wing keeps at least 1 of its own fighters and fills the rest of its normal wing size with up to <good>1</good> of every other fighter type in its group. All its wings use the engagement range of its longest-ranged wing. Fighters in each group fly at the group's average top speed.
+summary|option0|DESTROYER|223	0	<good>110%</good> more cargo capacity.
+summary|option0|DESTROYER|224	0	<good>110%</good> more fuel capacity.
+summary|option0|DESTROYER|225	0	<good>110%</good> more crew capacity.
+summary|option0|DESTROYER|226	0	<good>108%</good> more armor.
+summary|option0|DESTROYER|227	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option0|DESTROYER|228	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option0|DESTROYER|229	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option0|CRUISER|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option0|CRUISER|1	0	<good>+100</good> to energy weapon range.
 summary|option0|CRUISER|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -5545,7 +5568,7 @@ summary|option0|CRUISER|69	1	<bad>20%</bad> less minimum crew required.
 summary|option0|CRUISER|70	1	<bad>40%</bad> less supply use for maintenance.
 summary|option0|CRUISER|71	1	<bad>30%</bad> less fuel consumption rate.
 summary|option0|CRUISER|72	0	<good>50%</good> increased repair rate per day.
-summary|option0|CRUISER|73	0	<good>25%</good> increased flux dissipation.
+summary|option0|CRUISER|73	0	<good>15%</good> increased flux dissipation.
 summary|option0|CRUISER|74	0	<good>+50</good> to flux dissipation.
 summary|option0|CRUISER|75	1	<bad>60%</bad> less EMP damage taken.
 summary|option0|CRUISER|76	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
@@ -5567,8 +5590,8 @@ summary|option0|CRUISER|91	0	When this ship isn't flown by you, it flies straigh
 summary|option0|CRUISER|92	0	<good>+100</good> to shield arc.
 summary|option0|CRUISER|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option0|CRUISER|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-summary|option0|CRUISER|95	0	<good>220%</good> more flux capacity.
-summary|option0|CRUISER|96	0	<good>104%</good> more flux dissipation.
+summary|option0|CRUISER|95	0	<good>8%</good> more flux capacity.
+summary|option0|CRUISER|96	0	<good>106%</good> more flux dissipation.
 summary|option0|CRUISER|97	0	<good>80%</good> increased fragment swarm size.
 summary|option0|CRUISER|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option0|CRUISER|99	0	<good>100%</good> increased shield arc.
@@ -5594,7 +5617,7 @@ summary|option0|CRUISER|118	0	<good>+160</good> to this ship's sensor strength.
 summary|option0|CRUISER|119	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option0|CRUISER|120	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option0|CRUISER|121	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-summary|option0|CRUISER|122	0	<good>41%</good> more hull points.
+summary|option0|CRUISER|122	0	<good>257%</good> more hull points.
 summary|option0|CRUISER|123	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option0|CRUISER|124	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
 summary|option0|CRUISER|125	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
@@ -5632,7 +5655,7 @@ summary|option0|CRUISER|156	0	Top speed changes with flux, from <good>+30</good>
 summary|option0|CRUISER|157	0	<good>+105</good> to range from which combat objectives can be captured.
 summary|option0|CRUISER|158	0	<good>250%</good> increased command point recovery rate while this ship is the flagship.
 summary|option0|CRUISER|159	0	<good>+100</good> to non-beam energy weapon range.
-summary|option0|CRUISER|160	0	<good>+750</good> to flux capacity.
+summary|option0|CRUISER|160	0	<good>+600</good> to flux capacity.
 summary|option0|CRUISER|161	0	<good>50%</good> increased damage dealt to missiles by point defence weapons.
 summary|option0|CRUISER|162	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 summary|option0|CRUISER|163	1	<bad>100%</bad> less phase cloak activation cost.
@@ -5653,49 +5676,55 @@ summary|option0|CRUISER|177	0	If disabled, this ship is almost always recoverabl
 summary|option0|CRUISER|178	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 summary|option0|CRUISER|179	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 summary|option0|CRUISER|180	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option0|CRUISER|181	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option0|CRUISER|182	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option0|CRUISER|183	0	<bad>100%</bad> less venting speed.
-summary|option0|CRUISER|184	0	<good>+79</good> to top speed.
-summary|option0|CRUISER|185	0	<good>+40</good> to acceleration.
-summary|option0|CRUISER|186	0	<good>+40</good> to deceleration.
-summary|option0|CRUISER|187	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-summary|option0|CRUISER|188	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
-summary|option0|CRUISER|189	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-summary|option0|CRUISER|190	0	The full Seraph Hunting Routines damage bonus is reached after dealing 175000 armor and hull damage.
-summary|option0|CRUISER|191	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-summary|option0|CRUISER|192	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
-summary|option0|CRUISER|193	1	<bad>20%</bad> reduced weapon and engine repair time.
-summary|option0|CRUISER|194	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option0|CRUISER|195	0	Removes this ship's shield entirely.
-summary|option0|CRUISER|196	1	<bad>60%</bad> less shield flux upkeep.
-summary|option0|CRUISER|197	1	<bad>-22</bad> to heavy machinery your fleet needs to perform surveys.
-summary|option0|CRUISER|198	1	<bad>-20</bad> to supplies your fleet needs to perform surveys.
-summary|option0|CRUISER|199	0	<good>100%</good> more combat objective capture rate.
-summary|option0|CRUISER|200	0	<good>10%</good> increased top speed for each of this ship's destroyed modules.
-summary|option0|CRUISER|201	0	<good>20%</good> increased maneuverability for each of this ship's destroyed modules.
-summary|option0|CRUISER|202	0	This ship's modules have <good>10%</good> increased armor.
-summary|option0|CRUISER|203	0	This ship's modules have <good>10%</good> increased hull points.
-summary|option0|CRUISER|204	0	This ship's modules have <good>10%</good> increased weapon damage.
-summary|option0|CRUISER|205	0	This ship's modules have <good>20%</good> increased weapon range.
-summary|option0|CRUISER|206	0	This ship's modules have <good>25%</good> increased weapon rate of fire.
-summary|option0|CRUISER|207	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
-summary|option0|CRUISER|208	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
-summary|option0|CRUISER|209	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
-summary|option0|CRUISER|210	0	Turret weapons have <good>50%</good> increased rate of fire. Hardpoint weapons can't fire.
-summary|option0|CRUISER|211	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-summary|option0|CRUISER|212	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option0|CRUISER|213	0	<good>100%</good> increased weapon turn rate.
-summary|option0|CRUISER|214	0	<bad>15%</bad> less ballistic weapon range.
-summary|option0|CRUISER|215	0	<bad>15%</bad> less energy weapon range.
-summary|option0|CRUISER|216	1	<good>25%</good> increased fighter refit time.
-summary|option0|CRUISER|217	0	<good>15%</good> increased energy weapon damage.
-summary|option0|CRUISER|218	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
-summary|option0|CRUISER|219	0	<good>10%</good> increased post-battle salvage recovered by your fleet.
-summary|option0|CRUISER|220	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other fighters. Each wing keeps at least 1 of its own fighters and fills the rest of its normal wing size with up to <good>1</good> of every other fighter type in its group. All its wings use the engagement range of its longest-ranged wing. Fighters in each group fly at the group's average top speed.
-summary|option0|CRUISER|221	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option0|CRUISER|222	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option0|CRUISER|223	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option0|CRUISER|181	0	<good>+10</good> to High Tech Affinity.
+summary|option0|CRUISER|182	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option0|CRUISER|183	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option0|CRUISER|184	0	<bad>100%</bad> less venting speed.
+summary|option0|CRUISER|185	0	<good>+79</good> to top speed.
+summary|option0|CRUISER|186	0	<good>+40</good> to acceleration.
+summary|option0|CRUISER|187	0	<good>+40</good> to deceleration.
+summary|option0|CRUISER|188	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
+summary|option0|CRUISER|189	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
+summary|option0|CRUISER|190	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+summary|option0|CRUISER|191	0	The full Seraph Hunting Routines damage bonus is reached after dealing 175000 armor and hull damage.
+summary|option0|CRUISER|192	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+summary|option0|CRUISER|193	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
+summary|option0|CRUISER|194	1	<bad>20%</bad> reduced weapon and engine repair time.
+summary|option0|CRUISER|195	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option0|CRUISER|196	0	Removes this ship's shield entirely.
+summary|option0|CRUISER|197	1	<bad>60%</bad> less shield flux upkeep.
+summary|option0|CRUISER|198	0	<good>+540</good> to Low Tech Affinity.
+summary|option0|CRUISER|199	1	<bad>-22</bad> to heavy machinery your fleet needs to perform surveys.
+summary|option0|CRUISER|200	1	<bad>-20</bad> to supplies your fleet needs to perform surveys.
+summary|option0|CRUISER|201	0	<good>100%</good> more combat objective capture rate.
+summary|option0|CRUISER|202	0	<good>10%</good> increased top speed for each of this ship's destroyed modules.
+summary|option0|CRUISER|203	0	<good>20%</good> increased maneuverability for each of this ship's destroyed modules.
+summary|option0|CRUISER|204	0	This ship's modules have <good>10%</good> increased armor.
+summary|option0|CRUISER|205	0	This ship's modules have <good>10%</good> increased hull points.
+summary|option0|CRUISER|206	0	This ship's modules have <good>10%</good> increased weapon damage.
+summary|option0|CRUISER|207	0	This ship's modules have <good>20%</good> increased weapon range.
+summary|option0|CRUISER|208	0	This ship's modules have <good>25%</good> increased weapon rate of fire.
+summary|option0|CRUISER|209	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
+summary|option0|CRUISER|210	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
+summary|option0|CRUISER|211	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
+summary|option0|CRUISER|212	0	Turret weapons have <good>50%</good> increased rate of fire. Hardpoint weapons can't fire.
+summary|option0|CRUISER|213	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+summary|option0|CRUISER|214	0	<bad>30%</bad> reduced missile maneuverability.
+summary|option0|CRUISER|215	0	<good>100%</good> increased weapon turn rate.
+summary|option0|CRUISER|216	0	<bad>15%</bad> less ballistic weapon range.
+summary|option0|CRUISER|217	0	<bad>15%</bad> less energy weapon range.
+summary|option0|CRUISER|218	1	<good>25%</good> increased fighter refit time.
+summary|option0|CRUISER|219	0	<good>15%</good> increased energy weapon damage.
+summary|option0|CRUISER|220	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+summary|option0|CRUISER|221	0	<good>10%</good> increased post-battle salvage recovered by your fleet.
+summary|option0|CRUISER|222	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other fighters. Each wing keeps at least 1 of its own fighters and fills the rest of its normal wing size with up to <good>1</good> of every other fighter type in its group. All its wings use the engagement range of its longest-ranged wing. Fighters in each group fly at the group's average top speed.
+summary|option0|CRUISER|223	0	<good>110%</good> more cargo capacity.
+summary|option0|CRUISER|224	0	<good>110%</good> more fuel capacity.
+summary|option0|CRUISER|225	0	<good>110%</good> more crew capacity.
+summary|option0|CRUISER|226	0	<good>108%</good> more armor.
+summary|option0|CRUISER|227	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option0|CRUISER|228	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option0|CRUISER|229	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option0|CAPITAL_SHIP|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option0|CAPITAL_SHIP|1	0	<good>+100</good> to energy weapon range.
 summary|option0|CAPITAL_SHIP|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -5769,7 +5798,7 @@ summary|option0|CAPITAL_SHIP|69	1	<bad>20%</bad> less minimum crew required.
 summary|option0|CAPITAL_SHIP|70	1	<bad>40%</bad> less supply use for maintenance.
 summary|option0|CAPITAL_SHIP|71	1	<bad>30%</bad> less fuel consumption rate.
 summary|option0|CAPITAL_SHIP|72	0	<good>50%</good> increased repair rate per day.
-summary|option0|CAPITAL_SHIP|73	0	<good>25%</good> increased flux dissipation.
+summary|option0|CAPITAL_SHIP|73	0	<good>15%</good> increased flux dissipation.
 summary|option0|CAPITAL_SHIP|74	0	<good>+50</good> to flux dissipation.
 summary|option0|CAPITAL_SHIP|75	1	<bad>60%</bad> less EMP damage taken.
 summary|option0|CAPITAL_SHIP|76	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
@@ -5791,8 +5820,8 @@ summary|option0|CAPITAL_SHIP|91	0	When this ship isn't flown by you, it flies st
 summary|option0|CAPITAL_SHIP|92	0	<good>+100</good> to shield arc.
 summary|option0|CAPITAL_SHIP|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option0|CAPITAL_SHIP|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-summary|option0|CAPITAL_SHIP|95	0	<good>220%</good> more flux capacity.
-summary|option0|CAPITAL_SHIP|96	0	<good>104%</good> more flux dissipation.
+summary|option0|CAPITAL_SHIP|95	0	<good>8%</good> more flux capacity.
+summary|option0|CAPITAL_SHIP|96	0	<good>106%</good> more flux dissipation.
 summary|option0|CAPITAL_SHIP|97	0	<good>80%</good> increased fragment swarm size.
 summary|option0|CAPITAL_SHIP|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option0|CAPITAL_SHIP|99	0	<good>100%</good> increased shield arc.
@@ -5818,7 +5847,7 @@ summary|option0|CAPITAL_SHIP|118	0	<good>+220</good> to this ship's sensor stren
 summary|option0|CAPITAL_SHIP|119	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option0|CAPITAL_SHIP|120	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option0|CAPITAL_SHIP|121	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-summary|option0|CAPITAL_SHIP|122	0	<good>41%</good> more hull points.
+summary|option0|CAPITAL_SHIP|122	0	<good>257%</good> more hull points.
 summary|option0|CAPITAL_SHIP|123	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option0|CAPITAL_SHIP|124	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
 summary|option0|CAPITAL_SHIP|125	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
@@ -5856,7 +5885,7 @@ summary|option0|CAPITAL_SHIP|156	0	Top speed changes with flux, from <good>+20</
 summary|option0|CAPITAL_SHIP|157	0	<good>+105</good> to range from which combat objectives can be captured.
 summary|option0|CAPITAL_SHIP|158	0	<good>250%</good> increased command point recovery rate while this ship is the flagship.
 summary|option0|CAPITAL_SHIP|159	0	<good>+100</good> to non-beam energy weapon range.
-summary|option0|CAPITAL_SHIP|160	0	<good>+800</good> to flux capacity.
+summary|option0|CAPITAL_SHIP|160	0	<good>+600</good> to flux capacity.
 summary|option0|CAPITAL_SHIP|161	0	<good>50%</good> increased damage dealt to missiles by point defence weapons.
 summary|option0|CAPITAL_SHIP|162	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 summary|option0|CAPITAL_SHIP|163	1	<bad>100%</bad> less phase cloak activation cost.
@@ -5877,49 +5906,55 @@ summary|option0|CAPITAL_SHIP|177	0	If disabled, this ship is almost always recov
 summary|option0|CAPITAL_SHIP|178	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 summary|option0|CAPITAL_SHIP|179	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 summary|option0|CAPITAL_SHIP|180	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option0|CAPITAL_SHIP|181	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option0|CAPITAL_SHIP|182	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option0|CAPITAL_SHIP|183	0	<bad>100%</bad> less venting speed.
-summary|option0|CAPITAL_SHIP|184	0	<good>+69</good> to top speed.
-summary|option0|CAPITAL_SHIP|185	0	<good>+20</good> to acceleration.
-summary|option0|CAPITAL_SHIP|186	0	<good>+20</good> to deceleration.
-summary|option0|CAPITAL_SHIP|187	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-summary|option0|CAPITAL_SHIP|188	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
-summary|option0|CAPITAL_SHIP|189	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-summary|option0|CAPITAL_SHIP|190	0	The full Seraph Hunting Routines damage bonus is reached after dealing 225000 armor and hull damage.
-summary|option0|CAPITAL_SHIP|191	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-summary|option0|CAPITAL_SHIP|192	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
-summary|option0|CAPITAL_SHIP|193	1	<bad>20%</bad> reduced weapon and engine repair time.
-summary|option0|CAPITAL_SHIP|194	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option0|CAPITAL_SHIP|195	0	Removes this ship's shield entirely.
-summary|option0|CAPITAL_SHIP|196	1	<bad>60%</bad> less shield flux upkeep.
-summary|option0|CAPITAL_SHIP|197	1	<bad>-42</bad> to heavy machinery your fleet needs to perform surveys.
-summary|option0|CAPITAL_SHIP|198	1	<bad>-40</bad> to supplies your fleet needs to perform surveys.
-summary|option0|CAPITAL_SHIP|199	0	<good>100%</good> more combat objective capture rate.
-summary|option0|CAPITAL_SHIP|200	0	<good>10%</good> increased top speed for each of this ship's destroyed modules.
-summary|option0|CAPITAL_SHIP|201	0	<good>20%</good> increased maneuverability for each of this ship's destroyed modules.
-summary|option0|CAPITAL_SHIP|202	0	This ship's modules have <good>10%</good> increased armor.
-summary|option0|CAPITAL_SHIP|203	0	This ship's modules have <good>10%</good> increased hull points.
-summary|option0|CAPITAL_SHIP|204	0	This ship's modules have <good>10%</good> increased weapon damage.
-summary|option0|CAPITAL_SHIP|205	0	This ship's modules have <good>20%</good> increased weapon range.
-summary|option0|CAPITAL_SHIP|206	0	This ship's modules have <good>25%</good> increased weapon rate of fire.
-summary|option0|CAPITAL_SHIP|207	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
-summary|option0|CAPITAL_SHIP|208	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
-summary|option0|CAPITAL_SHIP|209	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
-summary|option0|CAPITAL_SHIP|210	0	Turret weapons have <good>50%</good> increased rate of fire. Hardpoint weapons can't fire.
-summary|option0|CAPITAL_SHIP|211	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-summary|option0|CAPITAL_SHIP|212	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option0|CAPITAL_SHIP|213	0	<good>100%</good> increased weapon turn rate.
-summary|option0|CAPITAL_SHIP|214	0	<bad>15%</bad> less ballistic weapon range.
-summary|option0|CAPITAL_SHIP|215	0	<bad>15%</bad> less energy weapon range.
-summary|option0|CAPITAL_SHIP|216	1	<good>25%</good> increased fighter refit time.
-summary|option0|CAPITAL_SHIP|217	0	<good>15%</good> increased energy weapon damage.
-summary|option0|CAPITAL_SHIP|218	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
-summary|option0|CAPITAL_SHIP|219	0	<good>15%</good> increased post-battle salvage recovered by your fleet.
-summary|option0|CAPITAL_SHIP|220	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other fighters. Each wing keeps at least 1 of its own fighters and fills the rest of its normal wing size with up to <good>1</good> of every other fighter type in its group. All its wings use the engagement range of its longest-ranged wing. Fighters in each group fly at the group's average top speed.
-summary|option0|CAPITAL_SHIP|221	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option0|CAPITAL_SHIP|222	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option0|CAPITAL_SHIP|223	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option0|CAPITAL_SHIP|181	0	<good>+10</good> to High Tech Affinity.
+summary|option0|CAPITAL_SHIP|182	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option0|CAPITAL_SHIP|183	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option0|CAPITAL_SHIP|184	0	<bad>100%</bad> less venting speed.
+summary|option0|CAPITAL_SHIP|185	0	<good>+69</good> to top speed.
+summary|option0|CAPITAL_SHIP|186	0	<good>+20</good> to acceleration.
+summary|option0|CAPITAL_SHIP|187	0	<good>+20</good> to deceleration.
+summary|option0|CAPITAL_SHIP|188	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
+summary|option0|CAPITAL_SHIP|189	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
+summary|option0|CAPITAL_SHIP|190	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+summary|option0|CAPITAL_SHIP|191	0	The full Seraph Hunting Routines damage bonus is reached after dealing 225000 armor and hull damage.
+summary|option0|CAPITAL_SHIP|192	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+summary|option0|CAPITAL_SHIP|193	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
+summary|option0|CAPITAL_SHIP|194	1	<bad>20%</bad> reduced weapon and engine repair time.
+summary|option0|CAPITAL_SHIP|195	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option0|CAPITAL_SHIP|196	0	Removes this ship's shield entirely.
+summary|option0|CAPITAL_SHIP|197	1	<bad>60%</bad> less shield flux upkeep.
+summary|option0|CAPITAL_SHIP|198	0	<good>+540</good> to Low Tech Affinity.
+summary|option0|CAPITAL_SHIP|199	1	<bad>-42</bad> to heavy machinery your fleet needs to perform surveys.
+summary|option0|CAPITAL_SHIP|200	1	<bad>-40</bad> to supplies your fleet needs to perform surveys.
+summary|option0|CAPITAL_SHIP|201	0	<good>100%</good> more combat objective capture rate.
+summary|option0|CAPITAL_SHIP|202	0	<good>10%</good> increased top speed for each of this ship's destroyed modules.
+summary|option0|CAPITAL_SHIP|203	0	<good>20%</good> increased maneuverability for each of this ship's destroyed modules.
+summary|option0|CAPITAL_SHIP|204	0	This ship's modules have <good>10%</good> increased armor.
+summary|option0|CAPITAL_SHIP|205	0	This ship's modules have <good>10%</good> increased hull points.
+summary|option0|CAPITAL_SHIP|206	0	This ship's modules have <good>10%</good> increased weapon damage.
+summary|option0|CAPITAL_SHIP|207	0	This ship's modules have <good>20%</good> increased weapon range.
+summary|option0|CAPITAL_SHIP|208	0	This ship's modules have <good>25%</good> increased weapon rate of fire.
+summary|option0|CAPITAL_SHIP|209	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
+summary|option0|CAPITAL_SHIP|210	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
+summary|option0|CAPITAL_SHIP|211	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
+summary|option0|CAPITAL_SHIP|212	0	Turret weapons have <good>50%</good> increased rate of fire. Hardpoint weapons can't fire.
+summary|option0|CAPITAL_SHIP|213	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+summary|option0|CAPITAL_SHIP|214	0	<bad>30%</bad> reduced missile maneuverability.
+summary|option0|CAPITAL_SHIP|215	0	<good>100%</good> increased weapon turn rate.
+summary|option0|CAPITAL_SHIP|216	0	<bad>15%</bad> less ballistic weapon range.
+summary|option0|CAPITAL_SHIP|217	0	<bad>15%</bad> less energy weapon range.
+summary|option0|CAPITAL_SHIP|218	1	<good>25%</good> increased fighter refit time.
+summary|option0|CAPITAL_SHIP|219	0	<good>15%</good> increased energy weapon damage.
+summary|option0|CAPITAL_SHIP|220	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+summary|option0|CAPITAL_SHIP|221	0	<good>15%</good> increased post-battle salvage recovered by your fleet.
+summary|option0|CAPITAL_SHIP|222	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other fighters. Each wing keeps at least 1 of its own fighters and fills the rest of its normal wing size with up to <good>1</good> of every other fighter type in its group. All its wings use the engagement range of its longest-ranged wing. Fighters in each group fly at the group's average top speed.
+summary|option0|CAPITAL_SHIP|223	0	<good>110%</good> more cargo capacity.
+summary|option0|CAPITAL_SHIP|224	0	<good>110%</good> more fuel capacity.
+summary|option0|CAPITAL_SHIP|225	0	<good>110%</good> more crew capacity.
+summary|option0|CAPITAL_SHIP|226	0	<good>108%</good> more armor.
+summary|option0|CAPITAL_SHIP|227	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option0|CAPITAL_SHIP|228	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option0|CAPITAL_SHIP|229	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option1|FRIGATE|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option1|FRIGATE|1	0	<good>+100</good> to energy weapon range.
 summary|option1|FRIGATE|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -5993,7 +6028,7 @@ summary|option1|FRIGATE|69	1	<bad>20%</bad> less minimum crew required.
 summary|option1|FRIGATE|70	1	<bad>40%</bad> less supply use for maintenance.
 summary|option1|FRIGATE|71	1	<bad>30%</bad> less fuel consumption rate.
 summary|option1|FRIGATE|72	0	<good>50%</good> increased repair rate per day.
-summary|option1|FRIGATE|73	0	<good>25%</good> increased flux dissipation.
+summary|option1|FRIGATE|73	0	<good>15%</good> increased flux dissipation.
 summary|option1|FRIGATE|74	0	<good>+50</good> to flux dissipation.
 summary|option1|FRIGATE|75	1	<bad>60%</bad> less EMP damage taken.
 summary|option1|FRIGATE|76	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
@@ -6015,8 +6050,8 @@ summary|option1|FRIGATE|91	0	When this ship isn't flown by you, it flies straigh
 summary|option1|FRIGATE|92	0	<good>+100</good> to shield arc.
 summary|option1|FRIGATE|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option1|FRIGATE|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-summary|option1|FRIGATE|95	0	<good>4%</good> more flux capacity.
-summary|option1|FRIGATE|96	0	<good>320%</good> more flux dissipation.
+summary|option1|FRIGATE|95	0	<good>224%</good> more flux capacity.
+summary|option1|FRIGATE|96	0	<good>214%</good> more flux dissipation.
 summary|option1|FRIGATE|97	0	<good>80%</good> increased fragment swarm size.
 summary|option1|FRIGATE|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option1|FRIGATE|99	0	<good>100%</good> increased shield arc.
@@ -6080,7 +6115,7 @@ summary|option1|FRIGATE|156	0	Top speed changes with flux, from <good>+50</good>
 summary|option1|FRIGATE|157	0	<good>+105</good> to range from which combat objectives can be captured.
 summary|option1|FRIGATE|158	0	<good>250%</good> increased command point recovery rate while this ship is the flagship.
 summary|option1|FRIGATE|159	0	<good>+100</good> to non-beam energy weapon range.
-summary|option1|FRIGATE|160	0	<good>+650</good> to flux capacity.
+summary|option1|FRIGATE|160	0	<good>+600</good> to flux capacity.
 summary|option1|FRIGATE|161	0	<good>50%</good> increased damage dealt to missiles by point defence weapons.
 summary|option1|FRIGATE|162	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 summary|option1|FRIGATE|163	1	<bad>100%</bad> less phase cloak activation cost.
@@ -6101,49 +6136,53 @@ summary|option1|FRIGATE|177	0	If disabled, this ship is almost always recoverabl
 summary|option1|FRIGATE|178	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 summary|option1|FRIGATE|179	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 summary|option1|FRIGATE|180	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option1|FRIGATE|181	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option1|FRIGATE|182	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option1|FRIGATE|183	0	<bad>100%</bad> less venting speed.
-summary|option1|FRIGATE|184	0	<good>+141</good> to top speed.
-summary|option1|FRIGATE|185	0	<good>+100</good> to acceleration.
-summary|option1|FRIGATE|186	0	<good>+100</good> to deceleration.
-summary|option1|FRIGATE|187	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-summary|option1|FRIGATE|188	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
-summary|option1|FRIGATE|189	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-summary|option1|FRIGATE|190	0	The full Seraph Hunting Routines damage bonus is reached after dealing 75000 armor and hull damage.
-summary|option1|FRIGATE|191	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-summary|option1|FRIGATE|192	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
-summary|option1|FRIGATE|193	1	<bad>20%</bad> reduced weapon and engine repair time.
-summary|option1|FRIGATE|194	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option1|FRIGATE|195	0	Removes this ship's shield entirely.
-summary|option1|FRIGATE|196	1	<bad>60%</bad> less shield flux upkeep.
-summary|option1|FRIGATE|197	1	<bad>-7</bad> to heavy machinery your fleet needs to perform surveys.
-summary|option1|FRIGATE|198	1	<bad>-5</bad> to supplies your fleet needs to perform surveys.
-summary|option1|FRIGATE|199	0	<good>100%</good> more combat objective capture rate.
-summary|option1|FRIGATE|200	0	<good>10%</good> increased top speed for each of this ship's destroyed modules.
-summary|option1|FRIGATE|201	0	<good>20%</good> increased maneuverability for each of this ship's destroyed modules.
-summary|option1|FRIGATE|202	0	This ship's modules have <good>10%</good> increased armor.
-summary|option1|FRIGATE|203	0	This ship's modules have <good>10%</good> increased hull points.
-summary|option1|FRIGATE|204	0	This ship's modules have <good>10%</good> increased weapon damage.
-summary|option1|FRIGATE|205	0	This ship's modules have <good>20%</good> increased weapon range.
-summary|option1|FRIGATE|206	0	This ship's modules have <good>25%</good> increased weapon rate of fire.
-summary|option1|FRIGATE|207	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
-summary|option1|FRIGATE|208	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
-summary|option1|FRIGATE|209	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
-summary|option1|FRIGATE|210	0	Turret weapons have <good>50%</good> increased rate of fire. Hardpoint weapons can't fire.
-summary|option1|FRIGATE|211	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-summary|option1|FRIGATE|212	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option1|FRIGATE|213	0	<good>100%</good> increased weapon turn rate.
-summary|option1|FRIGATE|214	0	<bad>15%</bad> less ballistic weapon range.
-summary|option1|FRIGATE|215	0	<bad>15%</bad> less energy weapon range.
-summary|option1|FRIGATE|216	1	<good>25%</good> increased fighter refit time.
-summary|option1|FRIGATE|217	0	<good>15%</good> increased energy weapon damage.
-summary|option1|FRIGATE|218	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
-summary|option1|FRIGATE|219	0	<good>3%</good> increased post-battle salvage recovered by your fleet.
-summary|option1|FRIGATE|220	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other fighters. Each wing keeps at least 1 of its own fighters and fills the rest of its normal wing size with up to <good>1</good> of every other fighter type in its group. All its wings use the engagement range of its longest-ranged wing. Fighters in each group fly at the group's average top speed.
-summary|option1|FRIGATE|221	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option1|FRIGATE|222	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option1|FRIGATE|223	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option1|FRIGATE|181	0	<good>+550</good> to High Tech Affinity.
+summary|option1|FRIGATE|182	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option1|FRIGATE|183	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option1|FRIGATE|184	0	<bad>100%</bad> less venting speed.
+summary|option1|FRIGATE|185	0	<good>+141</good> to top speed.
+summary|option1|FRIGATE|186	0	<good>+100</good> to acceleration.
+summary|option1|FRIGATE|187	0	<good>+100</good> to deceleration.
+summary|option1|FRIGATE|188	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
+summary|option1|FRIGATE|189	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
+summary|option1|FRIGATE|190	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+summary|option1|FRIGATE|191	0	The full Seraph Hunting Routines damage bonus is reached after dealing 75000 armor and hull damage.
+summary|option1|FRIGATE|192	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+summary|option1|FRIGATE|193	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
+summary|option1|FRIGATE|194	1	<bad>20%</bad> reduced weapon and engine repair time.
+summary|option1|FRIGATE|195	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option1|FRIGATE|196	0	Removes this ship's shield entirely.
+summary|option1|FRIGATE|197	1	<bad>60%</bad> less shield flux upkeep.
+summary|option1|FRIGATE|198	1	<bad>-7</bad> to heavy machinery your fleet needs to perform surveys.
+summary|option1|FRIGATE|199	1	<bad>-5</bad> to supplies your fleet needs to perform surveys.
+summary|option1|FRIGATE|200	0	<good>100%</good> more combat objective capture rate.
+summary|option1|FRIGATE|201	0	<good>10%</good> increased top speed for each of this ship's destroyed modules.
+summary|option1|FRIGATE|202	0	<good>20%</good> increased maneuverability for each of this ship's destroyed modules.
+summary|option1|FRIGATE|203	0	This ship's modules have <good>10%</good> increased armor.
+summary|option1|FRIGATE|204	0	This ship's modules have <good>10%</good> increased hull points.
+summary|option1|FRIGATE|205	0	This ship's modules have <good>10%</good> increased weapon damage.
+summary|option1|FRIGATE|206	0	This ship's modules have <good>20%</good> increased weapon range.
+summary|option1|FRIGATE|207	0	This ship's modules have <good>25%</good> increased weapon rate of fire.
+summary|option1|FRIGATE|208	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
+summary|option1|FRIGATE|209	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
+summary|option1|FRIGATE|210	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
+summary|option1|FRIGATE|211	0	Turret weapons have <good>50%</good> increased rate of fire. Hardpoint weapons can't fire.
+summary|option1|FRIGATE|212	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+summary|option1|FRIGATE|213	0	<bad>30%</bad> reduced missile maneuverability.
+summary|option1|FRIGATE|214	0	<good>100%</good> increased weapon turn rate.
+summary|option1|FRIGATE|215	0	<bad>15%</bad> less ballistic weapon range.
+summary|option1|FRIGATE|216	0	<bad>15%</bad> less energy weapon range.
+summary|option1|FRIGATE|217	1	<good>25%</good> increased fighter refit time.
+summary|option1|FRIGATE|218	0	<good>15%</good> increased energy weapon damage.
+summary|option1|FRIGATE|219	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+summary|option1|FRIGATE|220	0	<good>3%</good> increased post-battle salvage recovered by your fleet.
+summary|option1|FRIGATE|221	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other fighters. Each wing keeps at least 1 of its own fighters and fills the rest of its normal wing size with up to <good>1</good> of every other fighter type in its group. All its wings use the engagement range of its longest-ranged wing. Fighters in each group fly at the group's average top speed.
+summary|option1|FRIGATE|222	0	<good>110%</good> more cargo capacity.
+summary|option1|FRIGATE|223	0	<good>110%</good> more fuel capacity.
+summary|option1|FRIGATE|224	0	<good>110%</good> more crew capacity.
+summary|option1|FRIGATE|225	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option1|FRIGATE|226	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option1|FRIGATE|227	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option1|DESTROYER|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option1|DESTROYER|1	0	<good>+100</good> to energy weapon range.
 summary|option1|DESTROYER|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -6217,7 +6256,7 @@ summary|option1|DESTROYER|69	1	<bad>20%</bad> less minimum crew required.
 summary|option1|DESTROYER|70	1	<bad>40%</bad> less supply use for maintenance.
 summary|option1|DESTROYER|71	1	<bad>30%</bad> less fuel consumption rate.
 summary|option1|DESTROYER|72	0	<good>50%</good> increased repair rate per day.
-summary|option1|DESTROYER|73	0	<good>25%</good> increased flux dissipation.
+summary|option1|DESTROYER|73	0	<good>15%</good> increased flux dissipation.
 summary|option1|DESTROYER|74	0	<good>+50</good> to flux dissipation.
 summary|option1|DESTROYER|75	1	<bad>60%</bad> less EMP damage taken.
 summary|option1|DESTROYER|76	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
@@ -6239,8 +6278,8 @@ summary|option1|DESTROYER|91	0	When this ship isn't flown by you, it flies strai
 summary|option1|DESTROYER|92	0	<good>+100</good> to shield arc.
 summary|option1|DESTROYER|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option1|DESTROYER|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-summary|option1|DESTROYER|95	0	<good>4%</good> more flux capacity.
-summary|option1|DESTROYER|96	0	<good>320%</good> more flux dissipation.
+summary|option1|DESTROYER|95	0	<good>224%</good> more flux capacity.
+summary|option1|DESTROYER|96	0	<good>214%</good> more flux dissipation.
 summary|option1|DESTROYER|97	0	<good>80%</good> increased fragment swarm size.
 summary|option1|DESTROYER|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option1|DESTROYER|99	0	<good>100%</good> increased shield arc.
@@ -6304,7 +6343,7 @@ summary|option1|DESTROYER|156	0	Top speed changes with flux, from <good>+40</goo
 summary|option1|DESTROYER|157	0	<good>+105</good> to range from which combat objectives can be captured.
 summary|option1|DESTROYER|158	0	<good>250%</good> increased command point recovery rate while this ship is the flagship.
 summary|option1|DESTROYER|159	0	<good>+100</good> to non-beam energy weapon range.
-summary|option1|DESTROYER|160	0	<good>+700</good> to flux capacity.
+summary|option1|DESTROYER|160	0	<good>+600</good> to flux capacity.
 summary|option1|DESTROYER|161	0	<good>50%</good> increased damage dealt to missiles by point defence weapons.
 summary|option1|DESTROYER|162	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 summary|option1|DESTROYER|163	1	<bad>100%</bad> less phase cloak activation cost.
@@ -6325,49 +6364,53 @@ summary|option1|DESTROYER|177	0	If disabled, this ship is almost always recovera
 summary|option1|DESTROYER|178	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 summary|option1|DESTROYER|179	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 summary|option1|DESTROYER|180	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option1|DESTROYER|181	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option1|DESTROYER|182	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option1|DESTROYER|183	0	<bad>100%</bad> less venting speed.
-summary|option1|DESTROYER|184	0	<good>+105</good> to top speed.
-summary|option1|DESTROYER|185	0	<good>+60</good> to acceleration.
-summary|option1|DESTROYER|186	0	<good>+60</good> to deceleration.
-summary|option1|DESTROYER|187	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-summary|option1|DESTROYER|188	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
-summary|option1|DESTROYER|189	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-summary|option1|DESTROYER|190	0	The full Seraph Hunting Routines damage bonus is reached after dealing 125000 armor and hull damage.
-summary|option1|DESTROYER|191	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-summary|option1|DESTROYER|192	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
-summary|option1|DESTROYER|193	1	<bad>20%</bad> reduced weapon and engine repair time.
-summary|option1|DESTROYER|194	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option1|DESTROYER|195	0	Removes this ship's shield entirely.
-summary|option1|DESTROYER|196	1	<bad>60%</bad> less shield flux upkeep.
-summary|option1|DESTROYER|197	1	<bad>-13</bad> to heavy machinery your fleet needs to perform surveys.
-summary|option1|DESTROYER|198	1	<bad>-11</bad> to supplies your fleet needs to perform surveys.
-summary|option1|DESTROYER|199	0	<good>100%</good> more combat objective capture rate.
-summary|option1|DESTROYER|200	0	<good>10%</good> increased top speed for each of this ship's destroyed modules.
-summary|option1|DESTROYER|201	0	<good>20%</good> increased maneuverability for each of this ship's destroyed modules.
-summary|option1|DESTROYER|202	0	This ship's modules have <good>10%</good> increased armor.
-summary|option1|DESTROYER|203	0	This ship's modules have <good>10%</good> increased hull points.
-summary|option1|DESTROYER|204	0	This ship's modules have <good>10%</good> increased weapon damage.
-summary|option1|DESTROYER|205	0	This ship's modules have <good>20%</good> increased weapon range.
-summary|option1|DESTROYER|206	0	This ship's modules have <good>25%</good> increased weapon rate of fire.
-summary|option1|DESTROYER|207	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
-summary|option1|DESTROYER|208	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
-summary|option1|DESTROYER|209	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
-summary|option1|DESTROYER|210	0	Turret weapons have <good>50%</good> increased rate of fire. Hardpoint weapons can't fire.
-summary|option1|DESTROYER|211	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-summary|option1|DESTROYER|212	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option1|DESTROYER|213	0	<good>100%</good> increased weapon turn rate.
-summary|option1|DESTROYER|214	0	<bad>15%</bad> less ballistic weapon range.
-summary|option1|DESTROYER|215	0	<bad>15%</bad> less energy weapon range.
-summary|option1|DESTROYER|216	1	<good>25%</good> increased fighter refit time.
-summary|option1|DESTROYER|217	0	<good>15%</good> increased energy weapon damage.
-summary|option1|DESTROYER|218	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
-summary|option1|DESTROYER|219	0	<good>6%</good> increased post-battle salvage recovered by your fleet.
-summary|option1|DESTROYER|220	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other fighters. Each wing keeps at least 1 of its own fighters and fills the rest of its normal wing size with up to <good>1</good> of every other fighter type in its group. All its wings use the engagement range of its longest-ranged wing. Fighters in each group fly at the group's average top speed.
-summary|option1|DESTROYER|221	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option1|DESTROYER|222	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option1|DESTROYER|223	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option1|DESTROYER|181	0	<good>+550</good> to High Tech Affinity.
+summary|option1|DESTROYER|182	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option1|DESTROYER|183	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option1|DESTROYER|184	0	<bad>100%</bad> less venting speed.
+summary|option1|DESTROYER|185	0	<good>+105</good> to top speed.
+summary|option1|DESTROYER|186	0	<good>+60</good> to acceleration.
+summary|option1|DESTROYER|187	0	<good>+60</good> to deceleration.
+summary|option1|DESTROYER|188	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
+summary|option1|DESTROYER|189	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
+summary|option1|DESTROYER|190	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+summary|option1|DESTROYER|191	0	The full Seraph Hunting Routines damage bonus is reached after dealing 125000 armor and hull damage.
+summary|option1|DESTROYER|192	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+summary|option1|DESTROYER|193	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
+summary|option1|DESTROYER|194	1	<bad>20%</bad> reduced weapon and engine repair time.
+summary|option1|DESTROYER|195	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option1|DESTROYER|196	0	Removes this ship's shield entirely.
+summary|option1|DESTROYER|197	1	<bad>60%</bad> less shield flux upkeep.
+summary|option1|DESTROYER|198	1	<bad>-13</bad> to heavy machinery your fleet needs to perform surveys.
+summary|option1|DESTROYER|199	1	<bad>-11</bad> to supplies your fleet needs to perform surveys.
+summary|option1|DESTROYER|200	0	<good>100%</good> more combat objective capture rate.
+summary|option1|DESTROYER|201	0	<good>10%</good> increased top speed for each of this ship's destroyed modules.
+summary|option1|DESTROYER|202	0	<good>20%</good> increased maneuverability for each of this ship's destroyed modules.
+summary|option1|DESTROYER|203	0	This ship's modules have <good>10%</good> increased armor.
+summary|option1|DESTROYER|204	0	This ship's modules have <good>10%</good> increased hull points.
+summary|option1|DESTROYER|205	0	This ship's modules have <good>10%</good> increased weapon damage.
+summary|option1|DESTROYER|206	0	This ship's modules have <good>20%</good> increased weapon range.
+summary|option1|DESTROYER|207	0	This ship's modules have <good>25%</good> increased weapon rate of fire.
+summary|option1|DESTROYER|208	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
+summary|option1|DESTROYER|209	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
+summary|option1|DESTROYER|210	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
+summary|option1|DESTROYER|211	0	Turret weapons have <good>50%</good> increased rate of fire. Hardpoint weapons can't fire.
+summary|option1|DESTROYER|212	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+summary|option1|DESTROYER|213	0	<bad>30%</bad> reduced missile maneuverability.
+summary|option1|DESTROYER|214	0	<good>100%</good> increased weapon turn rate.
+summary|option1|DESTROYER|215	0	<bad>15%</bad> less ballistic weapon range.
+summary|option1|DESTROYER|216	0	<bad>15%</bad> less energy weapon range.
+summary|option1|DESTROYER|217	1	<good>25%</good> increased fighter refit time.
+summary|option1|DESTROYER|218	0	<good>15%</good> increased energy weapon damage.
+summary|option1|DESTROYER|219	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+summary|option1|DESTROYER|220	0	<good>6%</good> increased post-battle salvage recovered by your fleet.
+summary|option1|DESTROYER|221	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other fighters. Each wing keeps at least 1 of its own fighters and fills the rest of its normal wing size with up to <good>1</good> of every other fighter type in its group. All its wings use the engagement range of its longest-ranged wing. Fighters in each group fly at the group's average top speed.
+summary|option1|DESTROYER|222	0	<good>110%</good> more cargo capacity.
+summary|option1|DESTROYER|223	0	<good>110%</good> more fuel capacity.
+summary|option1|DESTROYER|224	0	<good>110%</good> more crew capacity.
+summary|option1|DESTROYER|225	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option1|DESTROYER|226	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option1|DESTROYER|227	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option1|CRUISER|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option1|CRUISER|1	0	<good>+100</good> to energy weapon range.
 summary|option1|CRUISER|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -6441,7 +6484,7 @@ summary|option1|CRUISER|69	1	<bad>20%</bad> less minimum crew required.
 summary|option1|CRUISER|70	1	<bad>40%</bad> less supply use for maintenance.
 summary|option1|CRUISER|71	1	<bad>30%</bad> less fuel consumption rate.
 summary|option1|CRUISER|72	0	<good>50%</good> increased repair rate per day.
-summary|option1|CRUISER|73	0	<good>25%</good> increased flux dissipation.
+summary|option1|CRUISER|73	0	<good>15%</good> increased flux dissipation.
 summary|option1|CRUISER|74	0	<good>+50</good> to flux dissipation.
 summary|option1|CRUISER|75	1	<bad>60%</bad> less EMP damage taken.
 summary|option1|CRUISER|76	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
@@ -6463,8 +6506,8 @@ summary|option1|CRUISER|91	0	When this ship isn't flown by you, it flies straigh
 summary|option1|CRUISER|92	0	<good>+100</good> to shield arc.
 summary|option1|CRUISER|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option1|CRUISER|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-summary|option1|CRUISER|95	0	<good>4%</good> more flux capacity.
-summary|option1|CRUISER|96	0	<good>320%</good> more flux dissipation.
+summary|option1|CRUISER|95	0	<good>224%</good> more flux capacity.
+summary|option1|CRUISER|96	0	<good>214%</good> more flux dissipation.
 summary|option1|CRUISER|97	0	<good>80%</good> increased fragment swarm size.
 summary|option1|CRUISER|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option1|CRUISER|99	0	<good>100%</good> increased shield arc.
@@ -6528,7 +6571,7 @@ summary|option1|CRUISER|156	0	Top speed changes with flux, from <good>+30</good>
 summary|option1|CRUISER|157	0	<good>+105</good> to range from which combat objectives can be captured.
 summary|option1|CRUISER|158	0	<good>250%</good> increased command point recovery rate while this ship is the flagship.
 summary|option1|CRUISER|159	0	<good>+100</good> to non-beam energy weapon range.
-summary|option1|CRUISER|160	0	<good>+750</good> to flux capacity.
+summary|option1|CRUISER|160	0	<good>+600</good> to flux capacity.
 summary|option1|CRUISER|161	0	<good>50%</good> increased damage dealt to missiles by point defence weapons.
 summary|option1|CRUISER|162	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 summary|option1|CRUISER|163	1	<bad>100%</bad> less phase cloak activation cost.
@@ -6549,49 +6592,53 @@ summary|option1|CRUISER|177	0	If disabled, this ship is almost always recoverabl
 summary|option1|CRUISER|178	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 summary|option1|CRUISER|179	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 summary|option1|CRUISER|180	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option1|CRUISER|181	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option1|CRUISER|182	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option1|CRUISER|183	0	<bad>100%</bad> less venting speed.
-summary|option1|CRUISER|184	0	<good>+79</good> to top speed.
-summary|option1|CRUISER|185	0	<good>+40</good> to acceleration.
-summary|option1|CRUISER|186	0	<good>+40</good> to deceleration.
-summary|option1|CRUISER|187	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-summary|option1|CRUISER|188	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
-summary|option1|CRUISER|189	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-summary|option1|CRUISER|190	0	The full Seraph Hunting Routines damage bonus is reached after dealing 175000 armor and hull damage.
-summary|option1|CRUISER|191	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-summary|option1|CRUISER|192	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
-summary|option1|CRUISER|193	1	<bad>20%</bad> reduced weapon and engine repair time.
-summary|option1|CRUISER|194	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option1|CRUISER|195	0	Removes this ship's shield entirely.
-summary|option1|CRUISER|196	1	<bad>60%</bad> less shield flux upkeep.
-summary|option1|CRUISER|197	1	<bad>-22</bad> to heavy machinery your fleet needs to perform surveys.
-summary|option1|CRUISER|198	1	<bad>-20</bad> to supplies your fleet needs to perform surveys.
-summary|option1|CRUISER|199	0	<good>100%</good> more combat objective capture rate.
-summary|option1|CRUISER|200	0	<good>10%</good> increased top speed for each of this ship's destroyed modules.
-summary|option1|CRUISER|201	0	<good>20%</good> increased maneuverability for each of this ship's destroyed modules.
-summary|option1|CRUISER|202	0	This ship's modules have <good>10%</good> increased armor.
-summary|option1|CRUISER|203	0	This ship's modules have <good>10%</good> increased hull points.
-summary|option1|CRUISER|204	0	This ship's modules have <good>10%</good> increased weapon damage.
-summary|option1|CRUISER|205	0	This ship's modules have <good>20%</good> increased weapon range.
-summary|option1|CRUISER|206	0	This ship's modules have <good>25%</good> increased weapon rate of fire.
-summary|option1|CRUISER|207	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
-summary|option1|CRUISER|208	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
-summary|option1|CRUISER|209	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
-summary|option1|CRUISER|210	0	Turret weapons have <good>50%</good> increased rate of fire. Hardpoint weapons can't fire.
-summary|option1|CRUISER|211	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-summary|option1|CRUISER|212	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option1|CRUISER|213	0	<good>100%</good> increased weapon turn rate.
-summary|option1|CRUISER|214	0	<bad>15%</bad> less ballistic weapon range.
-summary|option1|CRUISER|215	0	<bad>15%</bad> less energy weapon range.
-summary|option1|CRUISER|216	1	<good>25%</good> increased fighter refit time.
-summary|option1|CRUISER|217	0	<good>15%</good> increased energy weapon damage.
-summary|option1|CRUISER|218	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
-summary|option1|CRUISER|219	0	<good>10%</good> increased post-battle salvage recovered by your fleet.
-summary|option1|CRUISER|220	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other fighters. Each wing keeps at least 1 of its own fighters and fills the rest of its normal wing size with up to <good>1</good> of every other fighter type in its group. All its wings use the engagement range of its longest-ranged wing. Fighters in each group fly at the group's average top speed.
-summary|option1|CRUISER|221	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option1|CRUISER|222	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option1|CRUISER|223	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option1|CRUISER|181	0	<good>+550</good> to High Tech Affinity.
+summary|option1|CRUISER|182	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option1|CRUISER|183	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option1|CRUISER|184	0	<bad>100%</bad> less venting speed.
+summary|option1|CRUISER|185	0	<good>+79</good> to top speed.
+summary|option1|CRUISER|186	0	<good>+40</good> to acceleration.
+summary|option1|CRUISER|187	0	<good>+40</good> to deceleration.
+summary|option1|CRUISER|188	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
+summary|option1|CRUISER|189	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
+summary|option1|CRUISER|190	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+summary|option1|CRUISER|191	0	The full Seraph Hunting Routines damage bonus is reached after dealing 175000 armor and hull damage.
+summary|option1|CRUISER|192	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+summary|option1|CRUISER|193	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
+summary|option1|CRUISER|194	1	<bad>20%</bad> reduced weapon and engine repair time.
+summary|option1|CRUISER|195	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option1|CRUISER|196	0	Removes this ship's shield entirely.
+summary|option1|CRUISER|197	1	<bad>60%</bad> less shield flux upkeep.
+summary|option1|CRUISER|198	1	<bad>-22</bad> to heavy machinery your fleet needs to perform surveys.
+summary|option1|CRUISER|199	1	<bad>-20</bad> to supplies your fleet needs to perform surveys.
+summary|option1|CRUISER|200	0	<good>100%</good> more combat objective capture rate.
+summary|option1|CRUISER|201	0	<good>10%</good> increased top speed for each of this ship's destroyed modules.
+summary|option1|CRUISER|202	0	<good>20%</good> increased maneuverability for each of this ship's destroyed modules.
+summary|option1|CRUISER|203	0	This ship's modules have <good>10%</good> increased armor.
+summary|option1|CRUISER|204	0	This ship's modules have <good>10%</good> increased hull points.
+summary|option1|CRUISER|205	0	This ship's modules have <good>10%</good> increased weapon damage.
+summary|option1|CRUISER|206	0	This ship's modules have <good>20%</good> increased weapon range.
+summary|option1|CRUISER|207	0	This ship's modules have <good>25%</good> increased weapon rate of fire.
+summary|option1|CRUISER|208	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
+summary|option1|CRUISER|209	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
+summary|option1|CRUISER|210	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
+summary|option1|CRUISER|211	0	Turret weapons have <good>50%</good> increased rate of fire. Hardpoint weapons can't fire.
+summary|option1|CRUISER|212	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+summary|option1|CRUISER|213	0	<bad>30%</bad> reduced missile maneuverability.
+summary|option1|CRUISER|214	0	<good>100%</good> increased weapon turn rate.
+summary|option1|CRUISER|215	0	<bad>15%</bad> less ballistic weapon range.
+summary|option1|CRUISER|216	0	<bad>15%</bad> less energy weapon range.
+summary|option1|CRUISER|217	1	<good>25%</good> increased fighter refit time.
+summary|option1|CRUISER|218	0	<good>15%</good> increased energy weapon damage.
+summary|option1|CRUISER|219	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+summary|option1|CRUISER|220	0	<good>10%</good> increased post-battle salvage recovered by your fleet.
+summary|option1|CRUISER|221	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other fighters. Each wing keeps at least 1 of its own fighters and fills the rest of its normal wing size with up to <good>1</good> of every other fighter type in its group. All its wings use the engagement range of its longest-ranged wing. Fighters in each group fly at the group's average top speed.
+summary|option1|CRUISER|222	0	<good>110%</good> more cargo capacity.
+summary|option1|CRUISER|223	0	<good>110%</good> more fuel capacity.
+summary|option1|CRUISER|224	0	<good>110%</good> more crew capacity.
+summary|option1|CRUISER|225	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option1|CRUISER|226	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option1|CRUISER|227	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option1|CAPITAL_SHIP|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option1|CAPITAL_SHIP|1	0	<good>+100</good> to energy weapon range.
 summary|option1|CAPITAL_SHIP|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -6665,7 +6712,7 @@ summary|option1|CAPITAL_SHIP|69	1	<bad>20%</bad> less minimum crew required.
 summary|option1|CAPITAL_SHIP|70	1	<bad>40%</bad> less supply use for maintenance.
 summary|option1|CAPITAL_SHIP|71	1	<bad>30%</bad> less fuel consumption rate.
 summary|option1|CAPITAL_SHIP|72	0	<good>50%</good> increased repair rate per day.
-summary|option1|CAPITAL_SHIP|73	0	<good>25%</good> increased flux dissipation.
+summary|option1|CAPITAL_SHIP|73	0	<good>15%</good> increased flux dissipation.
 summary|option1|CAPITAL_SHIP|74	0	<good>+50</good> to flux dissipation.
 summary|option1|CAPITAL_SHIP|75	1	<bad>60%</bad> less EMP damage taken.
 summary|option1|CAPITAL_SHIP|76	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
@@ -6687,8 +6734,8 @@ summary|option1|CAPITAL_SHIP|91	0	When this ship isn't flown by you, it flies st
 summary|option1|CAPITAL_SHIP|92	0	<good>+100</good> to shield arc.
 summary|option1|CAPITAL_SHIP|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option1|CAPITAL_SHIP|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-summary|option1|CAPITAL_SHIP|95	0	<good>4%</good> more flux capacity.
-summary|option1|CAPITAL_SHIP|96	0	<good>320%</good> more flux dissipation.
+summary|option1|CAPITAL_SHIP|95	0	<good>224%</good> more flux capacity.
+summary|option1|CAPITAL_SHIP|96	0	<good>214%</good> more flux dissipation.
 summary|option1|CAPITAL_SHIP|97	0	<good>80%</good> increased fragment swarm size.
 summary|option1|CAPITAL_SHIP|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option1|CAPITAL_SHIP|99	0	<good>100%</good> increased shield arc.
@@ -6752,7 +6799,7 @@ summary|option1|CAPITAL_SHIP|156	0	Top speed changes with flux, from <good>+20</
 summary|option1|CAPITAL_SHIP|157	0	<good>+105</good> to range from which combat objectives can be captured.
 summary|option1|CAPITAL_SHIP|158	0	<good>250%</good> increased command point recovery rate while this ship is the flagship.
 summary|option1|CAPITAL_SHIP|159	0	<good>+100</good> to non-beam energy weapon range.
-summary|option1|CAPITAL_SHIP|160	0	<good>+800</good> to flux capacity.
+summary|option1|CAPITAL_SHIP|160	0	<good>+600</good> to flux capacity.
 summary|option1|CAPITAL_SHIP|161	0	<good>50%</good> increased damage dealt to missiles by point defence weapons.
 summary|option1|CAPITAL_SHIP|162	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 summary|option1|CAPITAL_SHIP|163	1	<bad>100%</bad> less phase cloak activation cost.
@@ -6773,49 +6820,53 @@ summary|option1|CAPITAL_SHIP|177	0	If disabled, this ship is almost always recov
 summary|option1|CAPITAL_SHIP|178	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 summary|option1|CAPITAL_SHIP|179	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 summary|option1|CAPITAL_SHIP|180	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option1|CAPITAL_SHIP|181	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option1|CAPITAL_SHIP|182	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option1|CAPITAL_SHIP|183	0	<bad>100%</bad> less venting speed.
-summary|option1|CAPITAL_SHIP|184	0	<good>+69</good> to top speed.
-summary|option1|CAPITAL_SHIP|185	0	<good>+20</good> to acceleration.
-summary|option1|CAPITAL_SHIP|186	0	<good>+20</good> to deceleration.
-summary|option1|CAPITAL_SHIP|187	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-summary|option1|CAPITAL_SHIP|188	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
-summary|option1|CAPITAL_SHIP|189	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-summary|option1|CAPITAL_SHIP|190	0	The full Seraph Hunting Routines damage bonus is reached after dealing 225000 armor and hull damage.
-summary|option1|CAPITAL_SHIP|191	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-summary|option1|CAPITAL_SHIP|192	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
-summary|option1|CAPITAL_SHIP|193	1	<bad>20%</bad> reduced weapon and engine repair time.
-summary|option1|CAPITAL_SHIP|194	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option1|CAPITAL_SHIP|195	0	Removes this ship's shield entirely.
-summary|option1|CAPITAL_SHIP|196	1	<bad>60%</bad> less shield flux upkeep.
-summary|option1|CAPITAL_SHIP|197	1	<bad>-42</bad> to heavy machinery your fleet needs to perform surveys.
-summary|option1|CAPITAL_SHIP|198	1	<bad>-40</bad> to supplies your fleet needs to perform surveys.
-summary|option1|CAPITAL_SHIP|199	0	<good>100%</good> more combat objective capture rate.
-summary|option1|CAPITAL_SHIP|200	0	<good>10%</good> increased top speed for each of this ship's destroyed modules.
-summary|option1|CAPITAL_SHIP|201	0	<good>20%</good> increased maneuverability for each of this ship's destroyed modules.
-summary|option1|CAPITAL_SHIP|202	0	This ship's modules have <good>10%</good> increased armor.
-summary|option1|CAPITAL_SHIP|203	0	This ship's modules have <good>10%</good> increased hull points.
-summary|option1|CAPITAL_SHIP|204	0	This ship's modules have <good>10%</good> increased weapon damage.
-summary|option1|CAPITAL_SHIP|205	0	This ship's modules have <good>20%</good> increased weapon range.
-summary|option1|CAPITAL_SHIP|206	0	This ship's modules have <good>25%</good> increased weapon rate of fire.
-summary|option1|CAPITAL_SHIP|207	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
-summary|option1|CAPITAL_SHIP|208	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
-summary|option1|CAPITAL_SHIP|209	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
-summary|option1|CAPITAL_SHIP|210	0	Turret weapons have <good>50%</good> increased rate of fire. Hardpoint weapons can't fire.
-summary|option1|CAPITAL_SHIP|211	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-summary|option1|CAPITAL_SHIP|212	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option1|CAPITAL_SHIP|213	0	<good>100%</good> increased weapon turn rate.
-summary|option1|CAPITAL_SHIP|214	0	<bad>15%</bad> less ballistic weapon range.
-summary|option1|CAPITAL_SHIP|215	0	<bad>15%</bad> less energy weapon range.
-summary|option1|CAPITAL_SHIP|216	1	<good>25%</good> increased fighter refit time.
-summary|option1|CAPITAL_SHIP|217	0	<good>15%</good> increased energy weapon damage.
-summary|option1|CAPITAL_SHIP|218	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
-summary|option1|CAPITAL_SHIP|219	0	<good>15%</good> increased post-battle salvage recovered by your fleet.
-summary|option1|CAPITAL_SHIP|220	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other fighters. Each wing keeps at least 1 of its own fighters and fills the rest of its normal wing size with up to <good>1</good> of every other fighter type in its group. All its wings use the engagement range of its longest-ranged wing. Fighters in each group fly at the group's average top speed.
-summary|option1|CAPITAL_SHIP|221	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option1|CAPITAL_SHIP|222	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option1|CAPITAL_SHIP|223	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option1|CAPITAL_SHIP|181	0	<good>+550</good> to High Tech Affinity.
+summary|option1|CAPITAL_SHIP|182	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option1|CAPITAL_SHIP|183	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option1|CAPITAL_SHIP|184	0	<bad>100%</bad> less venting speed.
+summary|option1|CAPITAL_SHIP|185	0	<good>+69</good> to top speed.
+summary|option1|CAPITAL_SHIP|186	0	<good>+20</good> to acceleration.
+summary|option1|CAPITAL_SHIP|187	0	<good>+20</good> to deceleration.
+summary|option1|CAPITAL_SHIP|188	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
+summary|option1|CAPITAL_SHIP|189	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
+summary|option1|CAPITAL_SHIP|190	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+summary|option1|CAPITAL_SHIP|191	0	The full Seraph Hunting Routines damage bonus is reached after dealing 225000 armor and hull damage.
+summary|option1|CAPITAL_SHIP|192	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+summary|option1|CAPITAL_SHIP|193	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
+summary|option1|CAPITAL_SHIP|194	1	<bad>20%</bad> reduced weapon and engine repair time.
+summary|option1|CAPITAL_SHIP|195	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option1|CAPITAL_SHIP|196	0	Removes this ship's shield entirely.
+summary|option1|CAPITAL_SHIP|197	1	<bad>60%</bad> less shield flux upkeep.
+summary|option1|CAPITAL_SHIP|198	1	<bad>-42</bad> to heavy machinery your fleet needs to perform surveys.
+summary|option1|CAPITAL_SHIP|199	1	<bad>-40</bad> to supplies your fleet needs to perform surveys.
+summary|option1|CAPITAL_SHIP|200	0	<good>100%</good> more combat objective capture rate.
+summary|option1|CAPITAL_SHIP|201	0	<good>10%</good> increased top speed for each of this ship's destroyed modules.
+summary|option1|CAPITAL_SHIP|202	0	<good>20%</good> increased maneuverability for each of this ship's destroyed modules.
+summary|option1|CAPITAL_SHIP|203	0	This ship's modules have <good>10%</good> increased armor.
+summary|option1|CAPITAL_SHIP|204	0	This ship's modules have <good>10%</good> increased hull points.
+summary|option1|CAPITAL_SHIP|205	0	This ship's modules have <good>10%</good> increased weapon damage.
+summary|option1|CAPITAL_SHIP|206	0	This ship's modules have <good>20%</good> increased weapon range.
+summary|option1|CAPITAL_SHIP|207	0	This ship's modules have <good>25%</good> increased weapon rate of fire.
+summary|option1|CAPITAL_SHIP|208	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
+summary|option1|CAPITAL_SHIP|209	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
+summary|option1|CAPITAL_SHIP|210	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
+summary|option1|CAPITAL_SHIP|211	0	Turret weapons have <good>50%</good> increased rate of fire. Hardpoint weapons can't fire.
+summary|option1|CAPITAL_SHIP|212	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+summary|option1|CAPITAL_SHIP|213	0	<bad>30%</bad> reduced missile maneuverability.
+summary|option1|CAPITAL_SHIP|214	0	<good>100%</good> increased weapon turn rate.
+summary|option1|CAPITAL_SHIP|215	0	<bad>15%</bad> less ballistic weapon range.
+summary|option1|CAPITAL_SHIP|216	0	<bad>15%</bad> less energy weapon range.
+summary|option1|CAPITAL_SHIP|217	1	<good>25%</good> increased fighter refit time.
+summary|option1|CAPITAL_SHIP|218	0	<good>15%</good> increased energy weapon damage.
+summary|option1|CAPITAL_SHIP|219	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+summary|option1|CAPITAL_SHIP|220	0	<good>15%</good> increased post-battle salvage recovered by your fleet.
+summary|option1|CAPITAL_SHIP|221	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other fighters. Each wing keeps at least 1 of its own fighters and fills the rest of its normal wing size with up to <good>1</good> of every other fighter type in its group. All its wings use the engagement range of its longest-ranged wing. Fighters in each group fly at the group's average top speed.
+summary|option1|CAPITAL_SHIP|222	0	<good>110%</good> more cargo capacity.
+summary|option1|CAPITAL_SHIP|223	0	<good>110%</good> more fuel capacity.
+summary|option1|CAPITAL_SHIP|224	0	<good>110%</good> more crew capacity.
+summary|option1|CAPITAL_SHIP|225	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option1|CAPITAL_SHIP|226	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option1|CAPITAL_SHIP|227	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option2|FRIGATE|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option2|FRIGATE|1	0	<good>+100</good> to energy weapon range.
 summary|option2|FRIGATE|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -6889,7 +6940,7 @@ summary|option2|FRIGATE|69	1	<bad>20%</bad> less minimum crew required.
 summary|option2|FRIGATE|70	1	<bad>40%</bad> less supply use for maintenance.
 summary|option2|FRIGATE|71	1	<bad>30%</bad> less fuel consumption rate.
 summary|option2|FRIGATE|72	0	<good>50%</good> increased repair rate per day.
-summary|option2|FRIGATE|73	0	<good>25%</good> increased flux dissipation.
+summary|option2|FRIGATE|73	0	<good>15%</good> increased flux dissipation.
 summary|option2|FRIGATE|74	0	<good>+50</good> to flux dissipation.
 summary|option2|FRIGATE|75	1	<bad>60%</bad> less EMP damage taken.
 summary|option2|FRIGATE|76	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
@@ -6911,8 +6962,8 @@ summary|option2|FRIGATE|91	0	When this ship isn't flown by you, it flies straigh
 summary|option2|FRIGATE|92	0	<good>+100</good> to shield arc.
 summary|option2|FRIGATE|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option2|FRIGATE|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-summary|option2|FRIGATE|95	0	<good>4%</good> more flux capacity.
-summary|option2|FRIGATE|96	0	<good>104%</good> more flux dissipation.
+summary|option2|FRIGATE|95	0	<good>224%</good> more flux capacity.
+summary|option2|FRIGATE|96	0	<good>160%</good> more flux dissipation.
 summary|option2|FRIGATE|97	0	<good>80%</good> increased fragment swarm size.
 summary|option2|FRIGATE|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option2|FRIGATE|99	0	<good>100%</good> increased shield arc.
@@ -6976,7 +7027,7 @@ summary|option2|FRIGATE|156	0	Top speed changes with flux, from <good>+50</good>
 summary|option2|FRIGATE|157	0	<good>+105</good> to range from which combat objectives can be captured.
 summary|option2|FRIGATE|158	0	<good>250%</good> increased command point recovery rate while this ship is the flagship.
 summary|option2|FRIGATE|159	0	<good>+100</good> to non-beam energy weapon range.
-summary|option2|FRIGATE|160	0	<good>+650</good> to flux capacity.
+summary|option2|FRIGATE|160	0	<good>+600</good> to flux capacity.
 summary|option2|FRIGATE|161	0	<good>50%</good> increased damage dealt to missiles by point defence weapons.
 summary|option2|FRIGATE|162	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 summary|option2|FRIGATE|163	1	<bad>100%</bad> less phase cloak activation cost.
@@ -6997,49 +7048,55 @@ summary|option2|FRIGATE|177	0	If disabled, this ship is almost always recoverabl
 summary|option2|FRIGATE|178	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 summary|option2|FRIGATE|179	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 summary|option2|FRIGATE|180	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option2|FRIGATE|181	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option2|FRIGATE|182	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option2|FRIGATE|183	0	<bad>100%</bad> less venting speed.
-summary|option2|FRIGATE|184	0	<good>+141</good> to top speed.
-summary|option2|FRIGATE|185	0	<good>+100</good> to acceleration.
-summary|option2|FRIGATE|186	0	<good>+100</good> to deceleration.
-summary|option2|FRIGATE|187	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-summary|option2|FRIGATE|188	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
-summary|option2|FRIGATE|189	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-summary|option2|FRIGATE|190	0	The full Seraph Hunting Routines damage bonus is reached after dealing 75000 armor and hull damage.
-summary|option2|FRIGATE|191	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-summary|option2|FRIGATE|192	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
-summary|option2|FRIGATE|193	1	<bad>20%</bad> reduced weapon and engine repair time.
-summary|option2|FRIGATE|194	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option2|FRIGATE|195	0	Removes this ship's shield entirely.
-summary|option2|FRIGATE|196	1	<bad>60%</bad> less shield flux upkeep.
-summary|option2|FRIGATE|197	1	<bad>-7</bad> to heavy machinery your fleet needs to perform surveys.
-summary|option2|FRIGATE|198	1	<bad>-5</bad> to supplies your fleet needs to perform surveys.
-summary|option2|FRIGATE|199	0	<good>100%</good> more combat objective capture rate.
-summary|option2|FRIGATE|200	0	<good>10%</good> increased top speed for each of this ship's destroyed modules.
-summary|option2|FRIGATE|201	0	<good>20%</good> increased maneuverability for each of this ship's destroyed modules.
-summary|option2|FRIGATE|202	0	This ship's modules have <good>10%</good> increased armor.
-summary|option2|FRIGATE|203	0	This ship's modules have <good>10%</good> increased hull points.
-summary|option2|FRIGATE|204	0	This ship's modules have <good>10%</good> increased weapon damage.
-summary|option2|FRIGATE|205	0	This ship's modules have <good>20%</good> increased weapon range.
-summary|option2|FRIGATE|206	0	This ship's modules have <good>25%</good> increased weapon rate of fire.
-summary|option2|FRIGATE|207	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
-summary|option2|FRIGATE|208	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
-summary|option2|FRIGATE|209	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
-summary|option2|FRIGATE|210	0	Turret weapons have <good>50%</good> increased rate of fire. Hardpoint weapons can't fire.
-summary|option2|FRIGATE|211	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-summary|option2|FRIGATE|212	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option2|FRIGATE|213	0	<good>100%</good> increased weapon turn rate.
-summary|option2|FRIGATE|214	0	<bad>15%</bad> less ballistic weapon range.
-summary|option2|FRIGATE|215	0	<bad>15%</bad> less energy weapon range.
-summary|option2|FRIGATE|216	1	<good>25%</good> increased fighter refit time.
-summary|option2|FRIGATE|217	0	<good>15%</good> increased energy weapon damage.
-summary|option2|FRIGATE|218	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
-summary|option2|FRIGATE|219	0	<good>3%</good> increased post-battle salvage recovered by your fleet.
-summary|option2|FRIGATE|220	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other fighters. Each wing keeps at least 1 of its own fighters and fills the rest of its normal wing size with up to <good>1</good> of every other fighter type in its group. All its wings use the engagement range of its longest-ranged wing. Fighters in each group fly at the group's average top speed.
-summary|option2|FRIGATE|221	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option2|FRIGATE|222	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option2|FRIGATE|223	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option2|FRIGATE|181	0	<good>+10</good> to High Tech Affinity.
+summary|option2|FRIGATE|182	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option2|FRIGATE|183	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option2|FRIGATE|184	0	<bad>100%</bad> less venting speed.
+summary|option2|FRIGATE|185	0	<good>+141</good> to top speed.
+summary|option2|FRIGATE|186	0	<good>+100</good> to acceleration.
+summary|option2|FRIGATE|187	0	<good>+100</good> to deceleration.
+summary|option2|FRIGATE|188	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
+summary|option2|FRIGATE|189	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
+summary|option2|FRIGATE|190	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+summary|option2|FRIGATE|191	0	The full Seraph Hunting Routines damage bonus is reached after dealing 75000 armor and hull damage.
+summary|option2|FRIGATE|192	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+summary|option2|FRIGATE|193	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
+summary|option2|FRIGATE|194	1	<bad>20%</bad> reduced weapon and engine repair time.
+summary|option2|FRIGATE|195	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option2|FRIGATE|196	0	Removes this ship's shield entirely.
+summary|option2|FRIGATE|197	1	<bad>60%</bad> less shield flux upkeep.
+summary|option2|FRIGATE|198	0	<good>+540</good> to Midline Affinity.
+summary|option2|FRIGATE|199	1	<bad>-7</bad> to heavy machinery your fleet needs to perform surveys.
+summary|option2|FRIGATE|200	1	<bad>-5</bad> to supplies your fleet needs to perform surveys.
+summary|option2|FRIGATE|201	0	<good>100%</good> more combat objective capture rate.
+summary|option2|FRIGATE|202	0	<good>10%</good> increased top speed for each of this ship's destroyed modules.
+summary|option2|FRIGATE|203	0	<good>20%</good> increased maneuverability for each of this ship's destroyed modules.
+summary|option2|FRIGATE|204	0	This ship's modules have <good>10%</good> increased armor.
+summary|option2|FRIGATE|205	0	This ship's modules have <good>10%</good> increased hull points.
+summary|option2|FRIGATE|206	0	This ship's modules have <good>10%</good> increased weapon damage.
+summary|option2|FRIGATE|207	0	This ship's modules have <good>20%</good> increased weapon range.
+summary|option2|FRIGATE|208	0	This ship's modules have <good>25%</good> increased weapon rate of fire.
+summary|option2|FRIGATE|209	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
+summary|option2|FRIGATE|210	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
+summary|option2|FRIGATE|211	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
+summary|option2|FRIGATE|212	0	Turret weapons have <good>50%</good> increased rate of fire. Hardpoint weapons can't fire.
+summary|option2|FRIGATE|213	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+summary|option2|FRIGATE|214	0	<bad>30%</bad> reduced missile maneuverability.
+summary|option2|FRIGATE|215	0	<good>100%</good> increased weapon turn rate.
+summary|option2|FRIGATE|216	0	<bad>15%</bad> less ballistic weapon range.
+summary|option2|FRIGATE|217	0	<bad>15%</bad> less energy weapon range.
+summary|option2|FRIGATE|218	1	<good>25%</good> increased fighter refit time.
+summary|option2|FRIGATE|219	0	<good>15%</good> increased energy weapon damage.
+summary|option2|FRIGATE|220	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+summary|option2|FRIGATE|221	0	<good>3%</good> increased post-battle salvage recovered by your fleet.
+summary|option2|FRIGATE|222	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other fighters. Each wing keeps at least 1 of its own fighters and fills the rest of its normal wing size with up to <good>1</good> of every other fighter type in its group. All its wings use the engagement range of its longest-ranged wing. Fighters in each group fly at the group's average top speed.
+summary|option2|FRIGATE|223	0	<good>110%</good> more cargo capacity.
+summary|option2|FRIGATE|224	0	<good>110%</good> more fuel capacity.
+summary|option2|FRIGATE|225	0	<good>110%</good> more crew capacity.
+summary|option2|FRIGATE|226	0	<good>54%</good> more armor.
+summary|option2|FRIGATE|227	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option2|FRIGATE|228	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option2|FRIGATE|229	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option2|DESTROYER|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option2|DESTROYER|1	0	<good>+100</good> to energy weapon range.
 summary|option2|DESTROYER|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -7113,7 +7170,7 @@ summary|option2|DESTROYER|69	1	<bad>20%</bad> less minimum crew required.
 summary|option2|DESTROYER|70	1	<bad>40%</bad> less supply use for maintenance.
 summary|option2|DESTROYER|71	1	<bad>30%</bad> less fuel consumption rate.
 summary|option2|DESTROYER|72	0	<good>50%</good> increased repair rate per day.
-summary|option2|DESTROYER|73	0	<good>25%</good> increased flux dissipation.
+summary|option2|DESTROYER|73	0	<good>15%</good> increased flux dissipation.
 summary|option2|DESTROYER|74	0	<good>+50</good> to flux dissipation.
 summary|option2|DESTROYER|75	1	<bad>60%</bad> less EMP damage taken.
 summary|option2|DESTROYER|76	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
@@ -7135,8 +7192,8 @@ summary|option2|DESTROYER|91	0	When this ship isn't flown by you, it flies strai
 summary|option2|DESTROYER|92	0	<good>+100</good> to shield arc.
 summary|option2|DESTROYER|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option2|DESTROYER|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-summary|option2|DESTROYER|95	0	<good>4%</good> more flux capacity.
-summary|option2|DESTROYER|96	0	<good>104%</good> more flux dissipation.
+summary|option2|DESTROYER|95	0	<good>224%</good> more flux capacity.
+summary|option2|DESTROYER|96	0	<good>160%</good> more flux dissipation.
 summary|option2|DESTROYER|97	0	<good>80%</good> increased fragment swarm size.
 summary|option2|DESTROYER|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option2|DESTROYER|99	0	<good>100%</good> increased shield arc.
@@ -7200,7 +7257,7 @@ summary|option2|DESTROYER|156	0	Top speed changes with flux, from <good>+40</goo
 summary|option2|DESTROYER|157	0	<good>+105</good> to range from which combat objectives can be captured.
 summary|option2|DESTROYER|158	0	<good>250%</good> increased command point recovery rate while this ship is the flagship.
 summary|option2|DESTROYER|159	0	<good>+100</good> to non-beam energy weapon range.
-summary|option2|DESTROYER|160	0	<good>+700</good> to flux capacity.
+summary|option2|DESTROYER|160	0	<good>+600</good> to flux capacity.
 summary|option2|DESTROYER|161	0	<good>50%</good> increased damage dealt to missiles by point defence weapons.
 summary|option2|DESTROYER|162	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 summary|option2|DESTROYER|163	1	<bad>100%</bad> less phase cloak activation cost.
@@ -7221,49 +7278,55 @@ summary|option2|DESTROYER|177	0	If disabled, this ship is almost always recovera
 summary|option2|DESTROYER|178	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 summary|option2|DESTROYER|179	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 summary|option2|DESTROYER|180	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option2|DESTROYER|181	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option2|DESTROYER|182	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option2|DESTROYER|183	0	<bad>100%</bad> less venting speed.
-summary|option2|DESTROYER|184	0	<good>+105</good> to top speed.
-summary|option2|DESTROYER|185	0	<good>+60</good> to acceleration.
-summary|option2|DESTROYER|186	0	<good>+60</good> to deceleration.
-summary|option2|DESTROYER|187	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-summary|option2|DESTROYER|188	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
-summary|option2|DESTROYER|189	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-summary|option2|DESTROYER|190	0	The full Seraph Hunting Routines damage bonus is reached after dealing 125000 armor and hull damage.
-summary|option2|DESTROYER|191	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-summary|option2|DESTROYER|192	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
-summary|option2|DESTROYER|193	1	<bad>20%</bad> reduced weapon and engine repair time.
-summary|option2|DESTROYER|194	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option2|DESTROYER|195	0	Removes this ship's shield entirely.
-summary|option2|DESTROYER|196	1	<bad>60%</bad> less shield flux upkeep.
-summary|option2|DESTROYER|197	1	<bad>-13</bad> to heavy machinery your fleet needs to perform surveys.
-summary|option2|DESTROYER|198	1	<bad>-11</bad> to supplies your fleet needs to perform surveys.
-summary|option2|DESTROYER|199	0	<good>100%</good> more combat objective capture rate.
-summary|option2|DESTROYER|200	0	<good>10%</good> increased top speed for each of this ship's destroyed modules.
-summary|option2|DESTROYER|201	0	<good>20%</good> increased maneuverability for each of this ship's destroyed modules.
-summary|option2|DESTROYER|202	0	This ship's modules have <good>10%</good> increased armor.
-summary|option2|DESTROYER|203	0	This ship's modules have <good>10%</good> increased hull points.
-summary|option2|DESTROYER|204	0	This ship's modules have <good>10%</good> increased weapon damage.
-summary|option2|DESTROYER|205	0	This ship's modules have <good>20%</good> increased weapon range.
-summary|option2|DESTROYER|206	0	This ship's modules have <good>25%</good> increased weapon rate of fire.
-summary|option2|DESTROYER|207	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
-summary|option2|DESTROYER|208	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
-summary|option2|DESTROYER|209	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
-summary|option2|DESTROYER|210	0	Turret weapons have <good>50%</good> increased rate of fire. Hardpoint weapons can't fire.
-summary|option2|DESTROYER|211	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-summary|option2|DESTROYER|212	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option2|DESTROYER|213	0	<good>100%</good> increased weapon turn rate.
-summary|option2|DESTROYER|214	0	<bad>15%</bad> less ballistic weapon range.
-summary|option2|DESTROYER|215	0	<bad>15%</bad> less energy weapon range.
-summary|option2|DESTROYER|216	1	<good>25%</good> increased fighter refit time.
-summary|option2|DESTROYER|217	0	<good>15%</good> increased energy weapon damage.
-summary|option2|DESTROYER|218	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
-summary|option2|DESTROYER|219	0	<good>6%</good> increased post-battle salvage recovered by your fleet.
-summary|option2|DESTROYER|220	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other fighters. Each wing keeps at least 1 of its own fighters and fills the rest of its normal wing size with up to <good>1</good> of every other fighter type in its group. All its wings use the engagement range of its longest-ranged wing. Fighters in each group fly at the group's average top speed.
-summary|option2|DESTROYER|221	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option2|DESTROYER|222	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option2|DESTROYER|223	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option2|DESTROYER|181	0	<good>+10</good> to High Tech Affinity.
+summary|option2|DESTROYER|182	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option2|DESTROYER|183	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option2|DESTROYER|184	0	<bad>100%</bad> less venting speed.
+summary|option2|DESTROYER|185	0	<good>+105</good> to top speed.
+summary|option2|DESTROYER|186	0	<good>+60</good> to acceleration.
+summary|option2|DESTROYER|187	0	<good>+60</good> to deceleration.
+summary|option2|DESTROYER|188	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
+summary|option2|DESTROYER|189	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
+summary|option2|DESTROYER|190	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+summary|option2|DESTROYER|191	0	The full Seraph Hunting Routines damage bonus is reached after dealing 125000 armor and hull damage.
+summary|option2|DESTROYER|192	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+summary|option2|DESTROYER|193	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
+summary|option2|DESTROYER|194	1	<bad>20%</bad> reduced weapon and engine repair time.
+summary|option2|DESTROYER|195	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option2|DESTROYER|196	0	Removes this ship's shield entirely.
+summary|option2|DESTROYER|197	1	<bad>60%</bad> less shield flux upkeep.
+summary|option2|DESTROYER|198	0	<good>+540</good> to Midline Affinity.
+summary|option2|DESTROYER|199	1	<bad>-13</bad> to heavy machinery your fleet needs to perform surveys.
+summary|option2|DESTROYER|200	1	<bad>-11</bad> to supplies your fleet needs to perform surveys.
+summary|option2|DESTROYER|201	0	<good>100%</good> more combat objective capture rate.
+summary|option2|DESTROYER|202	0	<good>10%</good> increased top speed for each of this ship's destroyed modules.
+summary|option2|DESTROYER|203	0	<good>20%</good> increased maneuverability for each of this ship's destroyed modules.
+summary|option2|DESTROYER|204	0	This ship's modules have <good>10%</good> increased armor.
+summary|option2|DESTROYER|205	0	This ship's modules have <good>10%</good> increased hull points.
+summary|option2|DESTROYER|206	0	This ship's modules have <good>10%</good> increased weapon damage.
+summary|option2|DESTROYER|207	0	This ship's modules have <good>20%</good> increased weapon range.
+summary|option2|DESTROYER|208	0	This ship's modules have <good>25%</good> increased weapon rate of fire.
+summary|option2|DESTROYER|209	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
+summary|option2|DESTROYER|210	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
+summary|option2|DESTROYER|211	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
+summary|option2|DESTROYER|212	0	Turret weapons have <good>50%</good> increased rate of fire. Hardpoint weapons can't fire.
+summary|option2|DESTROYER|213	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+summary|option2|DESTROYER|214	0	<bad>30%</bad> reduced missile maneuverability.
+summary|option2|DESTROYER|215	0	<good>100%</good> increased weapon turn rate.
+summary|option2|DESTROYER|216	0	<bad>15%</bad> less ballistic weapon range.
+summary|option2|DESTROYER|217	0	<bad>15%</bad> less energy weapon range.
+summary|option2|DESTROYER|218	1	<good>25%</good> increased fighter refit time.
+summary|option2|DESTROYER|219	0	<good>15%</good> increased energy weapon damage.
+summary|option2|DESTROYER|220	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+summary|option2|DESTROYER|221	0	<good>6%</good> increased post-battle salvage recovered by your fleet.
+summary|option2|DESTROYER|222	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other fighters. Each wing keeps at least 1 of its own fighters and fills the rest of its normal wing size with up to <good>1</good> of every other fighter type in its group. All its wings use the engagement range of its longest-ranged wing. Fighters in each group fly at the group's average top speed.
+summary|option2|DESTROYER|223	0	<good>110%</good> more cargo capacity.
+summary|option2|DESTROYER|224	0	<good>110%</good> more fuel capacity.
+summary|option2|DESTROYER|225	0	<good>110%</good> more crew capacity.
+summary|option2|DESTROYER|226	0	<good>54%</good> more armor.
+summary|option2|DESTROYER|227	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option2|DESTROYER|228	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option2|DESTROYER|229	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option2|CRUISER|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option2|CRUISER|1	0	<good>+100</good> to energy weapon range.
 summary|option2|CRUISER|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -7337,7 +7400,7 @@ summary|option2|CRUISER|69	1	<bad>20%</bad> less minimum crew required.
 summary|option2|CRUISER|70	1	<bad>40%</bad> less supply use for maintenance.
 summary|option2|CRUISER|71	1	<bad>30%</bad> less fuel consumption rate.
 summary|option2|CRUISER|72	0	<good>50%</good> increased repair rate per day.
-summary|option2|CRUISER|73	0	<good>25%</good> increased flux dissipation.
+summary|option2|CRUISER|73	0	<good>15%</good> increased flux dissipation.
 summary|option2|CRUISER|74	0	<good>+50</good> to flux dissipation.
 summary|option2|CRUISER|75	1	<bad>60%</bad> less EMP damage taken.
 summary|option2|CRUISER|76	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
@@ -7359,8 +7422,8 @@ summary|option2|CRUISER|91	0	When this ship isn't flown by you, it flies straigh
 summary|option2|CRUISER|92	0	<good>+100</good> to shield arc.
 summary|option2|CRUISER|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option2|CRUISER|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-summary|option2|CRUISER|95	0	<good>4%</good> more flux capacity.
-summary|option2|CRUISER|96	0	<good>104%</good> more flux dissipation.
+summary|option2|CRUISER|95	0	<good>224%</good> more flux capacity.
+summary|option2|CRUISER|96	0	<good>160%</good> more flux dissipation.
 summary|option2|CRUISER|97	0	<good>80%</good> increased fragment swarm size.
 summary|option2|CRUISER|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option2|CRUISER|99	0	<good>100%</good> increased shield arc.
@@ -7424,7 +7487,7 @@ summary|option2|CRUISER|156	0	Top speed changes with flux, from <good>+30</good>
 summary|option2|CRUISER|157	0	<good>+105</good> to range from which combat objectives can be captured.
 summary|option2|CRUISER|158	0	<good>250%</good> increased command point recovery rate while this ship is the flagship.
 summary|option2|CRUISER|159	0	<good>+100</good> to non-beam energy weapon range.
-summary|option2|CRUISER|160	0	<good>+750</good> to flux capacity.
+summary|option2|CRUISER|160	0	<good>+600</good> to flux capacity.
 summary|option2|CRUISER|161	0	<good>50%</good> increased damage dealt to missiles by point defence weapons.
 summary|option2|CRUISER|162	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 summary|option2|CRUISER|163	1	<bad>100%</bad> less phase cloak activation cost.
@@ -7445,49 +7508,55 @@ summary|option2|CRUISER|177	0	If disabled, this ship is almost always recoverabl
 summary|option2|CRUISER|178	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 summary|option2|CRUISER|179	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 summary|option2|CRUISER|180	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option2|CRUISER|181	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option2|CRUISER|182	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option2|CRUISER|183	0	<bad>100%</bad> less venting speed.
-summary|option2|CRUISER|184	0	<good>+79</good> to top speed.
-summary|option2|CRUISER|185	0	<good>+40</good> to acceleration.
-summary|option2|CRUISER|186	0	<good>+40</good> to deceleration.
-summary|option2|CRUISER|187	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-summary|option2|CRUISER|188	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
-summary|option2|CRUISER|189	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-summary|option2|CRUISER|190	0	The full Seraph Hunting Routines damage bonus is reached after dealing 175000 armor and hull damage.
-summary|option2|CRUISER|191	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-summary|option2|CRUISER|192	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
-summary|option2|CRUISER|193	1	<bad>20%</bad> reduced weapon and engine repair time.
-summary|option2|CRUISER|194	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option2|CRUISER|195	0	Removes this ship's shield entirely.
-summary|option2|CRUISER|196	1	<bad>60%</bad> less shield flux upkeep.
-summary|option2|CRUISER|197	1	<bad>-22</bad> to heavy machinery your fleet needs to perform surveys.
-summary|option2|CRUISER|198	1	<bad>-20</bad> to supplies your fleet needs to perform surveys.
-summary|option2|CRUISER|199	0	<good>100%</good> more combat objective capture rate.
-summary|option2|CRUISER|200	0	<good>10%</good> increased top speed for each of this ship's destroyed modules.
-summary|option2|CRUISER|201	0	<good>20%</good> increased maneuverability for each of this ship's destroyed modules.
-summary|option2|CRUISER|202	0	This ship's modules have <good>10%</good> increased armor.
-summary|option2|CRUISER|203	0	This ship's modules have <good>10%</good> increased hull points.
-summary|option2|CRUISER|204	0	This ship's modules have <good>10%</good> increased weapon damage.
-summary|option2|CRUISER|205	0	This ship's modules have <good>20%</good> increased weapon range.
-summary|option2|CRUISER|206	0	This ship's modules have <good>25%</good> increased weapon rate of fire.
-summary|option2|CRUISER|207	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
-summary|option2|CRUISER|208	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
-summary|option2|CRUISER|209	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
-summary|option2|CRUISER|210	0	Turret weapons have <good>50%</good> increased rate of fire. Hardpoint weapons can't fire.
-summary|option2|CRUISER|211	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-summary|option2|CRUISER|212	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option2|CRUISER|213	0	<good>100%</good> increased weapon turn rate.
-summary|option2|CRUISER|214	0	<bad>15%</bad> less ballistic weapon range.
-summary|option2|CRUISER|215	0	<bad>15%</bad> less energy weapon range.
-summary|option2|CRUISER|216	1	<good>25%</good> increased fighter refit time.
-summary|option2|CRUISER|217	0	<good>15%</good> increased energy weapon damage.
-summary|option2|CRUISER|218	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
-summary|option2|CRUISER|219	0	<good>10%</good> increased post-battle salvage recovered by your fleet.
-summary|option2|CRUISER|220	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other fighters. Each wing keeps at least 1 of its own fighters and fills the rest of its normal wing size with up to <good>1</good> of every other fighter type in its group. All its wings use the engagement range of its longest-ranged wing. Fighters in each group fly at the group's average top speed.
-summary|option2|CRUISER|221	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option2|CRUISER|222	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option2|CRUISER|223	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option2|CRUISER|181	0	<good>+10</good> to High Tech Affinity.
+summary|option2|CRUISER|182	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option2|CRUISER|183	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option2|CRUISER|184	0	<bad>100%</bad> less venting speed.
+summary|option2|CRUISER|185	0	<good>+79</good> to top speed.
+summary|option2|CRUISER|186	0	<good>+40</good> to acceleration.
+summary|option2|CRUISER|187	0	<good>+40</good> to deceleration.
+summary|option2|CRUISER|188	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
+summary|option2|CRUISER|189	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
+summary|option2|CRUISER|190	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+summary|option2|CRUISER|191	0	The full Seraph Hunting Routines damage bonus is reached after dealing 175000 armor and hull damage.
+summary|option2|CRUISER|192	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+summary|option2|CRUISER|193	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
+summary|option2|CRUISER|194	1	<bad>20%</bad> reduced weapon and engine repair time.
+summary|option2|CRUISER|195	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option2|CRUISER|196	0	Removes this ship's shield entirely.
+summary|option2|CRUISER|197	1	<bad>60%</bad> less shield flux upkeep.
+summary|option2|CRUISER|198	0	<good>+540</good> to Midline Affinity.
+summary|option2|CRUISER|199	1	<bad>-22</bad> to heavy machinery your fleet needs to perform surveys.
+summary|option2|CRUISER|200	1	<bad>-20</bad> to supplies your fleet needs to perform surveys.
+summary|option2|CRUISER|201	0	<good>100%</good> more combat objective capture rate.
+summary|option2|CRUISER|202	0	<good>10%</good> increased top speed for each of this ship's destroyed modules.
+summary|option2|CRUISER|203	0	<good>20%</good> increased maneuverability for each of this ship's destroyed modules.
+summary|option2|CRUISER|204	0	This ship's modules have <good>10%</good> increased armor.
+summary|option2|CRUISER|205	0	This ship's modules have <good>10%</good> increased hull points.
+summary|option2|CRUISER|206	0	This ship's modules have <good>10%</good> increased weapon damage.
+summary|option2|CRUISER|207	0	This ship's modules have <good>20%</good> increased weapon range.
+summary|option2|CRUISER|208	0	This ship's modules have <good>25%</good> increased weapon rate of fire.
+summary|option2|CRUISER|209	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
+summary|option2|CRUISER|210	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
+summary|option2|CRUISER|211	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
+summary|option2|CRUISER|212	0	Turret weapons have <good>50%</good> increased rate of fire. Hardpoint weapons can't fire.
+summary|option2|CRUISER|213	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+summary|option2|CRUISER|214	0	<bad>30%</bad> reduced missile maneuverability.
+summary|option2|CRUISER|215	0	<good>100%</good> increased weapon turn rate.
+summary|option2|CRUISER|216	0	<bad>15%</bad> less ballistic weapon range.
+summary|option2|CRUISER|217	0	<bad>15%</bad> less energy weapon range.
+summary|option2|CRUISER|218	1	<good>25%</good> increased fighter refit time.
+summary|option2|CRUISER|219	0	<good>15%</good> increased energy weapon damage.
+summary|option2|CRUISER|220	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+summary|option2|CRUISER|221	0	<good>10%</good> increased post-battle salvage recovered by your fleet.
+summary|option2|CRUISER|222	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other fighters. Each wing keeps at least 1 of its own fighters and fills the rest of its normal wing size with up to <good>1</good> of every other fighter type in its group. All its wings use the engagement range of its longest-ranged wing. Fighters in each group fly at the group's average top speed.
+summary|option2|CRUISER|223	0	<good>110%</good> more cargo capacity.
+summary|option2|CRUISER|224	0	<good>110%</good> more fuel capacity.
+summary|option2|CRUISER|225	0	<good>110%</good> more crew capacity.
+summary|option2|CRUISER|226	0	<good>54%</good> more armor.
+summary|option2|CRUISER|227	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option2|CRUISER|228	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option2|CRUISER|229	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option2|CAPITAL_SHIP|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option2|CAPITAL_SHIP|1	0	<good>+100</good> to energy weapon range.
 summary|option2|CAPITAL_SHIP|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -7561,7 +7630,7 @@ summary|option2|CAPITAL_SHIP|69	1	<bad>20%</bad> less minimum crew required.
 summary|option2|CAPITAL_SHIP|70	1	<bad>40%</bad> less supply use for maintenance.
 summary|option2|CAPITAL_SHIP|71	1	<bad>30%</bad> less fuel consumption rate.
 summary|option2|CAPITAL_SHIP|72	0	<good>50%</good> increased repair rate per day.
-summary|option2|CAPITAL_SHIP|73	0	<good>25%</good> increased flux dissipation.
+summary|option2|CAPITAL_SHIP|73	0	<good>15%</good> increased flux dissipation.
 summary|option2|CAPITAL_SHIP|74	0	<good>+50</good> to flux dissipation.
 summary|option2|CAPITAL_SHIP|75	1	<bad>60%</bad> less EMP damage taken.
 summary|option2|CAPITAL_SHIP|76	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
@@ -7583,8 +7652,8 @@ summary|option2|CAPITAL_SHIP|91	0	When this ship isn't flown by you, it flies st
 summary|option2|CAPITAL_SHIP|92	0	<good>+100</good> to shield arc.
 summary|option2|CAPITAL_SHIP|93	0	<good>20%</good> increased top speed of fighters launched from this ship.
 summary|option2|CAPITAL_SHIP|94	0	<good>15%</good> increased weapon damage of fighters launched from this ship.
-summary|option2|CAPITAL_SHIP|95	0	<good>4%</good> more flux capacity.
-summary|option2|CAPITAL_SHIP|96	0	<good>104%</good> more flux dissipation.
+summary|option2|CAPITAL_SHIP|95	0	<good>224%</good> more flux capacity.
+summary|option2|CAPITAL_SHIP|96	0	<good>160%</good> more flux dissipation.
 summary|option2|CAPITAL_SHIP|97	0	<good>80%</good> increased fragment swarm size.
 summary|option2|CAPITAL_SHIP|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option2|CAPITAL_SHIP|99	0	<good>100%</good> increased shield arc.
@@ -7648,7 +7717,7 @@ summary|option2|CAPITAL_SHIP|156	0	Top speed changes with flux, from <good>+20</
 summary|option2|CAPITAL_SHIP|157	0	<good>+105</good> to range from which combat objectives can be captured.
 summary|option2|CAPITAL_SHIP|158	0	<good>250%</good> increased command point recovery rate while this ship is the flagship.
 summary|option2|CAPITAL_SHIP|159	0	<good>+100</good> to non-beam energy weapon range.
-summary|option2|CAPITAL_SHIP|160	0	<good>+800</good> to flux capacity.
+summary|option2|CAPITAL_SHIP|160	0	<good>+600</good> to flux capacity.
 summary|option2|CAPITAL_SHIP|161	0	<good>50%</good> increased damage dealt to missiles by point defence weapons.
 summary|option2|CAPITAL_SHIP|162	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 summary|option2|CAPITAL_SHIP|163	1	<bad>100%</bad> less phase cloak activation cost.
@@ -7669,46 +7738,52 @@ summary|option2|CAPITAL_SHIP|177	0	If disabled, this ship is almost always recov
 summary|option2|CAPITAL_SHIP|178	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 summary|option2|CAPITAL_SHIP|179	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 summary|option2|CAPITAL_SHIP|180	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option2|CAPITAL_SHIP|181	0	Allows the zero-flux speed boost to take effect regardless of flux level.
-summary|option2|CAPITAL_SHIP|182	0	<bad>67%</bad> less peak combat readiness duration.
-summary|option2|CAPITAL_SHIP|183	0	<bad>100%</bad> less venting speed.
-summary|option2|CAPITAL_SHIP|184	0	<good>+69</good> to top speed.
-summary|option2|CAPITAL_SHIP|185	0	<good>+20</good> to acceleration.
-summary|option2|CAPITAL_SHIP|186	0	<good>+20</good> to deceleration.
-summary|option2|CAPITAL_SHIP|187	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
-summary|option2|CAPITAL_SHIP|188	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
-summary|option2|CAPITAL_SHIP|189	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-summary|option2|CAPITAL_SHIP|190	0	The full Seraph Hunting Routines damage bonus is reached after dealing 225000 armor and hull damage.
-summary|option2|CAPITAL_SHIP|191	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
-summary|option2|CAPITAL_SHIP|192	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
-summary|option2|CAPITAL_SHIP|193	1	<bad>20%</bad> reduced weapon and engine repair time.
-summary|option2|CAPITAL_SHIP|194	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-summary|option2|CAPITAL_SHIP|195	0	Removes this ship's shield entirely.
-summary|option2|CAPITAL_SHIP|196	1	<bad>60%</bad> less shield flux upkeep.
-summary|option2|CAPITAL_SHIP|197	1	<bad>-42</bad> to heavy machinery your fleet needs to perform surveys.
-summary|option2|CAPITAL_SHIP|198	1	<bad>-40</bad> to supplies your fleet needs to perform surveys.
-summary|option2|CAPITAL_SHIP|199	0	<good>100%</good> more combat objective capture rate.
-summary|option2|CAPITAL_SHIP|200	0	<good>10%</good> increased top speed for each of this ship's destroyed modules.
-summary|option2|CAPITAL_SHIP|201	0	<good>20%</good> increased maneuverability for each of this ship's destroyed modules.
-summary|option2|CAPITAL_SHIP|202	0	This ship's modules have <good>10%</good> increased armor.
-summary|option2|CAPITAL_SHIP|203	0	This ship's modules have <good>10%</good> increased hull points.
-summary|option2|CAPITAL_SHIP|204	0	This ship's modules have <good>10%</good> increased weapon damage.
-summary|option2|CAPITAL_SHIP|205	0	This ship's modules have <good>20%</good> increased weapon range.
-summary|option2|CAPITAL_SHIP|206	0	This ship's modules have <good>25%</good> increased weapon rate of fire.
-summary|option2|CAPITAL_SHIP|207	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
-summary|option2|CAPITAL_SHIP|208	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
-summary|option2|CAPITAL_SHIP|209	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
-summary|option2|CAPITAL_SHIP|210	0	Turret weapons have <good>50%</good> increased rate of fire. Hardpoint weapons can't fire.
-summary|option2|CAPITAL_SHIP|211	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-summary|option2|CAPITAL_SHIP|212	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option2|CAPITAL_SHIP|213	0	<good>100%</good> increased weapon turn rate.
-summary|option2|CAPITAL_SHIP|214	0	<bad>15%</bad> less ballistic weapon range.
-summary|option2|CAPITAL_SHIP|215	0	<bad>15%</bad> less energy weapon range.
-summary|option2|CAPITAL_SHIP|216	1	<good>25%</good> increased fighter refit time.
-summary|option2|CAPITAL_SHIP|217	0	<good>15%</good> increased energy weapon damage.
-summary|option2|CAPITAL_SHIP|218	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
-summary|option2|CAPITAL_SHIP|219	0	<good>15%</good> increased post-battle salvage recovered by your fleet.
-summary|option2|CAPITAL_SHIP|220	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other fighters. Each wing keeps at least 1 of its own fighters and fills the rest of its normal wing size with up to <good>1</good> of every other fighter type in its group. All its wings use the engagement range of its longest-ranged wing. Fighters in each group fly at the group's average top speed.
-summary|option2|CAPITAL_SHIP|221	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option2|CAPITAL_SHIP|222	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option2|CAPITAL_SHIP|223	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option2|CAPITAL_SHIP|181	0	<good>+10</good> to High Tech Affinity.
+summary|option2|CAPITAL_SHIP|182	0	Allows the zero-flux speed boost to take effect regardless of flux level.
+summary|option2|CAPITAL_SHIP|183	0	<bad>67%</bad> less peak combat readiness duration.
+summary|option2|CAPITAL_SHIP|184	0	<bad>100%</bad> less venting speed.
+summary|option2|CAPITAL_SHIP|185	0	<good>+69</good> to top speed.
+summary|option2|CAPITAL_SHIP|186	0	<good>+20</good> to acceleration.
+summary|option2|CAPITAL_SHIP|187	0	<good>+20</good> to deceleration.
+summary|option2|CAPITAL_SHIP|188	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
+summary|option2|CAPITAL_SHIP|189	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
+summary|option2|CAPITAL_SHIP|190	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
+summary|option2|CAPITAL_SHIP|191	0	The full Seraph Hunting Routines damage bonus is reached after dealing 225000 armor and hull damage.
+summary|option2|CAPITAL_SHIP|192	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
+summary|option2|CAPITAL_SHIP|193	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
+summary|option2|CAPITAL_SHIP|194	1	<bad>20%</bad> reduced weapon and engine repair time.
+summary|option2|CAPITAL_SHIP|195	0	Disperses 35% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+summary|option2|CAPITAL_SHIP|196	0	Removes this ship's shield entirely.
+summary|option2|CAPITAL_SHIP|197	1	<bad>60%</bad> less shield flux upkeep.
+summary|option2|CAPITAL_SHIP|198	0	<good>+540</good> to Midline Affinity.
+summary|option2|CAPITAL_SHIP|199	1	<bad>-42</bad> to heavy machinery your fleet needs to perform surveys.
+summary|option2|CAPITAL_SHIP|200	1	<bad>-40</bad> to supplies your fleet needs to perform surveys.
+summary|option2|CAPITAL_SHIP|201	0	<good>100%</good> more combat objective capture rate.
+summary|option2|CAPITAL_SHIP|202	0	<good>10%</good> increased top speed for each of this ship's destroyed modules.
+summary|option2|CAPITAL_SHIP|203	0	<good>20%</good> increased maneuverability for each of this ship's destroyed modules.
+summary|option2|CAPITAL_SHIP|204	0	This ship's modules have <good>10%</good> increased armor.
+summary|option2|CAPITAL_SHIP|205	0	This ship's modules have <good>10%</good> increased hull points.
+summary|option2|CAPITAL_SHIP|206	0	This ship's modules have <good>10%</good> increased weapon damage.
+summary|option2|CAPITAL_SHIP|207	0	This ship's modules have <good>20%</good> increased weapon range.
+summary|option2|CAPITAL_SHIP|208	0	This ship's modules have <good>25%</good> increased weapon rate of fire.
+summary|option2|CAPITAL_SHIP|209	0	Once per battle, the hit that would destroy this ship instead leaves it with <good>25%</good> of its maximum hull points.
+summary|option2|CAPITAL_SHIP|210	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
+summary|option2|CAPITAL_SHIP|211	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
+summary|option2|CAPITAL_SHIP|212	0	Turret weapons have <good>50%</good> increased rate of fire. Hardpoint weapons can't fire.
+summary|option2|CAPITAL_SHIP|213	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+summary|option2|CAPITAL_SHIP|214	0	<bad>30%</bad> reduced missile maneuverability.
+summary|option2|CAPITAL_SHIP|215	0	<good>100%</good> increased weapon turn rate.
+summary|option2|CAPITAL_SHIP|216	0	<bad>15%</bad> less ballistic weapon range.
+summary|option2|CAPITAL_SHIP|217	0	<bad>15%</bad> less energy weapon range.
+summary|option2|CAPITAL_SHIP|218	1	<good>25%</good> increased fighter refit time.
+summary|option2|CAPITAL_SHIP|219	0	<good>15%</good> increased energy weapon damage.
+summary|option2|CAPITAL_SHIP|220	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+summary|option2|CAPITAL_SHIP|221	0	<good>15%</good> increased post-battle salvage recovered by your fleet.
+summary|option2|CAPITAL_SHIP|222	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other fighters. Each wing keeps at least 1 of its own fighters and fills the rest of its normal wing size with up to <good>1</good> of every other fighter type in its group. All its wings use the engagement range of its longest-ranged wing. Fighters in each group fly at the group's average top speed.
+summary|option2|CAPITAL_SHIP|223	0	<good>110%</good> more cargo capacity.
+summary|option2|CAPITAL_SHIP|224	0	<good>110%</good> more fuel capacity.
+summary|option2|CAPITAL_SHIP|225	0	<good>110%</good> more crew capacity.
+summary|option2|CAPITAL_SHIP|226	0	<good>54%</good> more armor.
+summary|option2|CAPITAL_SHIP|227	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option2|CAPITAL_SHIP|228	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option2|CAPITAL_SHIP|229	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.

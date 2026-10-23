@@ -85,6 +85,13 @@ each frame, so only turrets benefit. Decorative and system slots are left alone.
 on stats the game reads live in combat opt in. Anything else (creation-time stats, campaign stats, listeners,
 conditional effects) makes the loader log an error and ignore the duration.
 
+## Affinity
+
+Roots and `small_flux_optional` nodes grant Low Tech, High Tech or Midline affinity (`*_AFFINITY_FLAT`), which
+apply no stat themselves. `EffectTotals` sums each ship's permanent affinity first and turns it into tree MULT
+bonuses for every whole step of 5 and 10, from the one table in `AffinitySteps`, so diminishing returns, NPC
+scaling and the summary see the stat bonuses. `ModuleTreeShare` steps the shared nodes' affinity the same way.
+
 ## Diminishing returns
 
 `EffectTotals` shrinks permanent tree and hull item bonuses to armor, hull, flux capacity, flux dissipation,
