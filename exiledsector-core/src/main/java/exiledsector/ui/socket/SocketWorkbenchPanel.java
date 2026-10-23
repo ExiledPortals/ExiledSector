@@ -262,7 +262,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         BenchScene.drawArt(benchMode, artLeft, artBottom, sceneScale, contentAlpha);
         float vignette = Math.min(artWidth, artHeight) * VIGNETTE_SHARE;
         GLDraw.innerGlow(artLeft, artBottom, artWidth, artHeight, vignette, PLATE_COLOR, contentAlpha);
-        drawPlate(BenchScene.DETAILS_LEFT, BenchScene.detailsTop(benchMode), BenchScene.DETAILS_WIDTH, detailsArtHeight(), contentAlpha);
+        drawPlate(BenchScene.detailsLeft(benchMode), BenchScene.detailsTop(benchMode), BenchScene.DETAILS_WIDTH, detailsArtHeight(), contentAlpha);
         Color subjectColor = loadedItem == null ? null : loadedItem.frameColor();
         socketFlair.render(socketScreenX(), socketScreenY(), slotRadius(), SkillTreePanelStyle.GLOW_COLOR, subjectColor,
                 loadedItem == null ? null : loadedItem.iconPath(), loadedLook, contentAlpha);
@@ -551,7 +551,11 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     }
 
     private BenchModeSupport modeSupport() {
-        return BenchModes.of(benchMode);
+        BenchModeSupport support = BenchModes.of(benchMode);
+        if (support == null) {
+            throw new IllegalStateException("No domain supports the " + benchMode + " bench mode");
+        }
+        return support;
     }
 
     private void applyChartUse(ItemCurrency currency) {
@@ -723,7 +727,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         element.addTooltipToPrevious(new GameTextTooltip(TOOLTIP_WIDTH, tooltip -> VanillaText.plainPara(tooltip, tooltipText, 0f,
                 Misc.getTextColor())), TooltipMakerAPI.TooltipLocation.BELOW);
         element.setButtonFontDefault();
-        openElement = replaceElement(openElement, element, artX(BenchScene.DETAILS_LEFT), buttonTop);
+        openElement = replaceElement(openElement, element, artX(BenchScene.detailsLeft(benchMode)), buttonTop);
     }
 
     private void openPressed() {
@@ -1027,7 +1031,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
                 addDetailSection(element, "socketable.tooltip.primaryData", loadedItem.effectLines(false), paraPad);
             }
         }
-        detailsElement = placedComponent(replaceElement(detailsElement, element, artX(BenchScene.DETAILS_LEFT), artY(BenchScene.detailsTop(benchMode))));
+        detailsElement = placedComponent(replaceElement(detailsElement, element, artX(BenchScene.detailsLeft(benchMode)), artY(BenchScene.detailsTop(benchMode))));
     }
 
     private static void addDetailSection(TooltipMakerAPI element, String headingKey, List<StyledText> lines, float headingPad) {

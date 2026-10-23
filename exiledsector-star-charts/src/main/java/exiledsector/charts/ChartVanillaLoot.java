@@ -72,7 +72,7 @@ final class ChartVanillaLoot {
 
     static DropData scaledRandomCopy(DropData existingDrop, ChartGenContext context, Random random) {
         float extraShare = extraShare(existingDrop, context);
-        if (!(extraShare > 0f) || existingDrop.chances <= 0) {
+        if (existingDrop == null || !(extraShare > 0f) || existingDrop.chances <= 0) {
             return null;
         }
         int chances = stochasticRound(existingDrop.chances * extraShare, random);
@@ -88,7 +88,7 @@ final class ChartVanillaLoot {
 
     static DropData scaledValueCopy(DropData existingDrop, ChartGenContext context) {
         float extraShare = extraShare(existingDrop, context);
-        if (!(extraShare > 0f)) {
+        if (existingDrop == null || !(extraShare > 0f)) {
             return null;
         }
         DropData extraDrop = existingDrop.clone();

@@ -42,7 +42,7 @@ final class SectionEditor {
     }
 
     boolean isSectionUnlocked(ShipSection section) {
-        return data().isSocketTypeUnlocked(section.id());
+        return section != null && data().isSocketTypeUnlocked(section.id());
     }
 
     HullSize hullSize() {

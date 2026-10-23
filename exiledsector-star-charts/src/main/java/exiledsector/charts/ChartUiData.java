@@ -26,7 +26,11 @@ final class ChartUiData {
     // java:S1181: MethodHandle.invoke declares Throwable, and a changed engine may only cost the map reset, never the close
     @SuppressWarnings("java:S1181")
     static LocationAPI campaignMapLocation(Object uiData) {
-        if (uiData == null || !resolve(uiData.getClass()) || mapLocationGetter == null) {
+        if (uiData == null) {
+            return null;
+        }
+        resolve(uiData.getClass());
+        if (mapLocationGetter == null) {
             return null;
         }
         try {
@@ -40,7 +44,11 @@ final class ChartUiData {
     // java:S1181: MethodHandle.invoke declares Throwable, and a changed engine may only cost the map reset, never the close
     @SuppressWarnings("java:S1181")
     static boolean forgetCampaignMapLocation(Object uiData) {
-        if (uiData == null || !resolve(uiData.getClass()) || mapLocationSetter == null) {
+        if (uiData == null) {
+            return false;
+        }
+        resolve(uiData.getClass());
+        if (mapLocationSetter == null) {
             return false;
         }
         try {
@@ -55,7 +63,11 @@ final class ChartUiData {
     // java:S1181: MethodHandle.invoke declares Throwable, and a changed engine may only cost the course reset, never the close
     @SuppressWarnings("java:S1181")
     static boolean forgetCourseTarget(Object uiData) {
-        if (uiData == null || !resolve(uiData.getClass()) || courseTargetSetter == null) {
+        if (uiData == null) {
+            return false;
+        }
+        resolve(uiData.getClass());
+        if (courseTargetSetter == null) {
             return false;
         }
         try {
@@ -67,9 +79,9 @@ final class ChartUiData {
         }
     }
 
-    private static synchronized boolean resolve(Class<?> uiDataClass) {
+    private static synchronized void resolve(Class<?> uiDataClass) {
         if (uiDataClass == resolvedUiDataClass) {
-            return true;
+            return;
         }
         resolvedUiDataClass = uiDataClass;
         MethodHandles.Lookup lookup = MethodHandles.publicLookup();
@@ -79,7 +91,6 @@ final class ChartUiData {
         if (mapLocationGetter == null || mapLocationSetter == null) {
             reportFailure(uiDataClass.getName() + " has no public " + GET_MAP_LOCATION + "/" + SET_MAP_LOCATION, null);
         }
-        return true;
     }
 
     private static MethodHandle find(MethodHandles.Lookup lookup, Class<?> owner, String name, MethodType type) {

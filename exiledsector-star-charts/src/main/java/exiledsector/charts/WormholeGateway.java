@@ -18,7 +18,7 @@ import java.util.List;
 
 public class WormholeGateway extends BaseIndustry {
 
-    public static final String ID = "exiledSector_wormhole_gateway";
+    public static final String INDUSTRY_ID = "exiledSector_wormhole_gateway";
     public static final String JANUS_FLAG = "$playerCanUseGates";
     private static final float TOOLTIP_PAD = 10f;
     private static final Logger LOG = Logger.getLogger(WormholeGateway.class);
@@ -32,7 +32,7 @@ public class WormholeGateway extends BaseIndustry {
         if (market == null || !market.isPlayerOwned()) {
             return Status.NONE;
         }
-        Industry gateway = market.getIndustry(ID);
+        Industry gateway = market.getIndustry(INDUSTRY_ID);
         if (gateway == null) {
             return Status.NONE;
         }
@@ -102,7 +102,7 @@ public class WormholeGateway extends BaseIndustry {
         }
         List<MarketAPI> markets = sector.getEconomy().getMarketsCopy();
         for (MarketAPI factionMarket : markets) {
-            if (!isSameColony(factionMarket, market) && market.getFactionId().equals(factionMarket.getFactionId()) && factionMarket.hasIndustry(ID)) {
+            if (!isSameColony(factionMarket, market) && market.getFactionId().equals(factionMarket.getFactionId()) && factionMarket.hasIndustry(INDUSTRY_ID)) {
                 return factionMarket;
             }
         }

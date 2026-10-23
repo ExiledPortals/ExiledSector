@@ -79,7 +79,7 @@ public final class ItemDefinitions {
     private static ItemTypeSupport support(ItemType type) {
         ItemTypeSupport support = ItemTypes.of(type);
         if (support == null) {
-            throw new IllegalStateException("No domain supports " + type.id() + " items");
+            throw new IllegalStateException("No domain supports " + type + " items");
         }
         return support;
     }

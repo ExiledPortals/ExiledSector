@@ -46,15 +46,19 @@ class ModuleSharesTest {
 
     @Test
     void nothingIsSharedWithoutARebuildWhenItsStatIsFixedAtBuild() {
-        Pattern fixedAtBuild = Pattern.compile("^(ARMOR|HULL|SHIELD_ARC)_.*|.*_AMMO_PERCENT|.*FIGHTER_BAYS.*|.*DURABILITY.*");
         Set<String> sharedLive = new TreeSet<>();
         for (String name : ModuleShares.classifiedNames()) {
-            if (fixedAtBuild.matcher(name).matches() && SkillEffect.byName(name).moduleShare() == ModuleShare.SHARE) {
+            if (fixedAtBuild(name) && SkillEffect.byName(name).moduleShare() == ModuleShare.SHARE) {
                 sharedLive.add(name);
             }
         }
 
         assertTrue(sharedLive.isEmpty(), "These effects change stats fixed at ship build; make them SHARE_REBUILD or exclude them: " + sharedLive);
+    }
+
+    private static boolean fixedAtBuild(String name) {
+        return name.startsWith("ARMOR_") || name.startsWith("HULL_") || name.startsWith("SHIELD_ARC_") || name.endsWith("_AMMO_PERCENT")
+                || name.contains("FIGHTER_BAYS") || name.contains("DURABILITY");
     }
 
     @Test

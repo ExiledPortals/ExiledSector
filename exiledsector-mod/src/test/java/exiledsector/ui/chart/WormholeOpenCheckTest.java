@@ -83,7 +83,7 @@ class WormholeOpenCheckTest {
         if (gatewayFunctional != null) {
             Industry gateway = mock(Industry.class);
             when(gateway.isFunctional()).thenReturn(gatewayFunctional);
-            when(market.getIndustry(WormholeGateway.ID)).thenReturn(gateway);
+            when(market.getIndustry(WormholeGateway.INDUSTRY_ID)).thenReturn(gateway);
         }
         return colony;
     }

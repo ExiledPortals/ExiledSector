@@ -26,7 +26,7 @@ public final class ChartFleetLoot {
 
     static void recordStart(CampaignFleetAPI fleet) {
         float startDeploymentPoints = deploymentPoints(fleet);
-        if (startDeploymentPoints > 0f) {
+        if (fleet != null && startDeploymentPoints > 0f) {
             fleet.getMemoryWithoutUpdate().set(ChartIds.START_DP_MEMORY_KEY, startDeploymentPoints);
         }
     }
@@ -97,7 +97,10 @@ public final class ChartFleetLoot {
 
     static float claimShare(CampaignFleetAPI fleet, float defeatedDeploymentPoints) {
         MemoryAPI ledger = ledgerOf(fleet);
-        float startDeploymentPoints = ledger == null ? 0f : ledger.getFloat(ChartIds.START_DP_MEMORY_KEY);
+        if (ledger == null) {
+            return 0f;
+        }
+        float startDeploymentPoints = ledger.getFloat(ChartIds.START_DP_MEMORY_KEY);
         if (!(startDeploymentPoints > 0f) || !(defeatedDeploymentPoints > 0f)) {
             return 0f;
         }

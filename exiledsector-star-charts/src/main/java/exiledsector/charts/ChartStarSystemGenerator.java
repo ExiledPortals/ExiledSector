@@ -50,7 +50,7 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
     }
 
     private void addFarStars(GenResult result) {
-        float primaryOrbitalRadius = result != null ? result.orbitalWidth * 0.5f : star.getRadius();
+        float primaryOrbitalRadius = primaryOrbitalRadius(result);
         float orbitAngle = random.nextFloat() * 360f;
         float baseOrbitRadius = primaryOrbitalRadius + BINARY_PAD;
         float orbitDays = baseOrbitRadius / (3f + random.nextFloat() * 2f);
@@ -62,6 +62,13 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
             addFarStar(secondary, orbitAngle, baseOrbitRadius, orbitDays);
             addFarStar(tertiary, orbitAngle + 60f + 180f * random.nextFloat(), baseOrbitRadius, orbitDays);
         }
+    }
+
+    private float primaryOrbitalRadius(GenResult result) {
+        if (result != null) {
+            return result.orbitalWidth * 0.5f;
+        }
+        return star == null ? 0f : star.getRadius();
     }
 
     @Override

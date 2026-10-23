@@ -144,7 +144,7 @@ public enum StarChartCurrency implements ItemCurrency {
 
     static boolean canReforge(StarChart chart, Set<ModifierSlot> guarded) {
         ItemDefinition definition = chart.definition();
-        return !definition.unique() && (rerollable(definition, definition.prefixes(), ModifierSlot.PREFIX, chart.tier(), guarded)
+        return definition != null && !definition.unique() && (rerollable(definition, definition.prefixes(), ModifierSlot.PREFIX, chart.tier(), guarded)
                 || rerollable(definition, definition.suffixes(), ModifierSlot.SUFFIX, chart.tier(), guarded));
     }
 
@@ -158,6 +158,9 @@ public enum StarChartCurrency implements ItemCurrency {
 
     static StarChart reforge(StarChart chart, Random random, Set<ModifierSlot> guarded) {
         ItemDefinition definition = chart.definition();
+        if (definition == null) {
+            return null;
+        }
         for (int attempt = 0; attempt < MAX_REFORGE_ATTEMPTS; attempt++) {
             List<RolledModifier> rerolled = keepGuarded(chart.explicits(), ItemRoller.rollAtTier(definition, random.nextLong(), chart.tier()), guarded);
             if (!rerolled.equals(chart.explicits())) {
@@ -188,7 +191,8 @@ public enum StarChartCurrency implements ItemCurrency {
 
     static List<Integer> annullable(StarChart chart, Set<ModifierSlot> guarded) {
         List<Integer> removable = new ArrayList<>();
-        if (chart.definition().unique()) {
+        ItemDefinition definition = chart.definition();
+        if (definition == null || definition.unique()) {
             return removable;
         }
         List<RolledModifier> explicits = chart.explicits();

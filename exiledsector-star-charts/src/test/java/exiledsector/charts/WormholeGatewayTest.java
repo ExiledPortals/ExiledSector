@@ -43,7 +43,7 @@ class WormholeGatewayTest {
     @BeforeEach
     void setUp() {
         SettingsAPI settings = mock(SettingsAPI.class);
-        when(settings.getIndustrySpec(WormholeGateway.ID)).thenReturn(mock(IndustrySpecAPI.class));
+        when(settings.getIndustrySpec(WormholeGateway.INDUSTRY_ID)).thenReturn(mock(IndustrySpecAPI.class));
         when(settings.getModManager()).thenReturn(modManager);
         SectorAPI sector = mock(SectorAPI.class);
         EconomyAPI economy = mock(EconomyAPI.class);
@@ -74,7 +74,7 @@ class WormholeGatewayTest {
 
     private static WormholeGateway gatewayOn(MarketAPI market) {
         WormholeGateway gateway = new WormholeGateway();
-        gateway.init(WormholeGateway.ID, market);
+        gateway.init(WormholeGateway.INDUSTRY_ID, market);
         return gateway;
     }
 
@@ -102,7 +102,7 @@ class WormholeGatewayTest {
     void onlyOneGatewayIsAllowedPerFaction() {
         MarketAPI first = colony("Home");
         MarketAPI second = colony("Outpost");
-        when(first.hasIndustry(WormholeGateway.ID)).thenReturn(true);
+        when(first.hasIndustry(WormholeGateway.INDUSTRY_ID)).thenReturn(true);
 
         WormholeGateway secondGateway = gatewayOn(second);
 
@@ -116,7 +116,7 @@ class WormholeGatewayTest {
     void theBuildMenuTooltipsCloneOfTheColonyIsNotAnotherGateway() {
         MarketAPI colony = colony("Home");
         when(colony.getId()).thenReturn("home");
-        when(colony.hasIndustry(WormholeGateway.ID)).thenReturn(true);
+        when(colony.hasIndustry(WormholeGateway.INDUSTRY_ID)).thenReturn(true);
         MarketAPI tooltipClone = mock(MarketAPI.class);
         when(tooltipClone.getId()).thenReturn("home");
         when(tooltipClone.getFactionId()).thenReturn(PLAYER_FACTION);
@@ -130,7 +130,7 @@ class WormholeGatewayTest {
     void anotherFactionsGatewayDoesNotCount() {
         MarketAPI theirs = colony("Theirs");
         when(theirs.getFactionId()).thenReturn("hegemony");
-        when(theirs.hasIndustry(WormholeGateway.ID)).thenReturn(true);
+        when(theirs.hasIndustry(WormholeGateway.INDUSTRY_ID)).thenReturn(true);
 
         assertTrue(gatewayOn(colony("Home")).isAvailableToBuild());
     }
@@ -166,7 +166,7 @@ class WormholeGatewayTest {
     void worksWithANullMarketForTooltipsAndPluginInstances() {
         WormholeGateway gateway = new WormholeGateway();
 
-        assertDoesNotThrow(() -> gateway.init(WormholeGateway.ID, null));
+        assertDoesNotThrow(() -> gateway.init(WormholeGateway.INDUSTRY_ID, null));
         assertFalse(gateway.isAvailableToBuild());
         assertFalse(gateway.showWhenUnavailable());
         assertNotNull(gateway.getUnavailableReason());

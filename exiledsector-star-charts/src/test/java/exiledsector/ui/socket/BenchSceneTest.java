@@ -70,8 +70,8 @@ class BenchSceneTest {
         }
         assertTrue(BenchScene.DETAILS_BOTTOM <= BenchScene.ART_HEIGHT);
         for (BenchMode mode : BenchMode.values()) {
-            assertTrue(BenchScene.DETAILS_LEFT - BenchScene.TILE_SIZE / 2f > mode.leftConsoleX(), mode + " left console overlaps the plate");
-            assertTrue(BenchScene.DETAILS_LEFT + BenchScene.DETAILS_WIDTH + BenchScene.TILE_SIZE / 2f < mode.rightConsoleX(),
+            assertTrue(BenchScene.detailsLeft(mode) - BenchScene.TILE_SIZE / 2f > mode.leftConsoleX(), mode + " left console overlaps the plate");
+            assertTrue(BenchScene.detailsLeft(mode) + BenchScene.DETAILS_WIDTH + BenchScene.TILE_SIZE / 2f < mode.rightConsoleX(),
                     mode + " right console overlaps the plate");
         }
     }
