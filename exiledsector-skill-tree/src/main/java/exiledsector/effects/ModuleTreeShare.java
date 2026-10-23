@@ -9,7 +9,7 @@ import exiledlib.skills.EffectTotals;
 import exiledlib.skills.ShipFacts;
 import exiledlib.skills.SkillTypeEffect;
 import exiledlib.skills.skilleffect.SkillEffect;
-import exiledlib.skills.skilleffect.stationmodule.ModuleBoost;
+import exiledlib.skills.skilleffect.hullmodule.ModuleBoost;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.InstalledHullMods;
 

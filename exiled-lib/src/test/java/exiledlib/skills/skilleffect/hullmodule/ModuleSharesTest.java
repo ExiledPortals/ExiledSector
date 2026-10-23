@@ -1,4 +1,4 @@
-package exiledlib.skills.skilleffect.stationmodule;
+package exiledlib.skills.skilleffect.hullmodule;
 
 import exiledlib.skills.skilleffect.SkillEffect;
 import exiledlib.skills.skilleffect.SkillEffectNames;

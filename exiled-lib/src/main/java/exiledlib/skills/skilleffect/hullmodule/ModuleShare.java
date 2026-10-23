@@ -1,4 +1,4 @@
-package exiledlib.skills.skilleffect.stationmodule;
+package exiledlib.skills.skilleffect.hullmodule;
 
 public enum ModuleShare {
     SHARE,
