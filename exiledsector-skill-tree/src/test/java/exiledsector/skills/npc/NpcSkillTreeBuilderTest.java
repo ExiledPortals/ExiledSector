@@ -3,6 +3,7 @@ package exiledsector.skills.npc;
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledlib.skills.SkillTypeEffect;
+import exiledlib.skills.skilleffect.SkillEffect;
 import exiledlib.skills.skilleffect.shield.ShieldSkillEffect;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -31,6 +33,8 @@ class NpcSkillTreeBuilderTest {
     private static final ShipProfile BALLISTIC_FRIGATE =
             new ShipProfile(HullSize.FRIGATE, ShieldType.FRONT, 0, Set.of(WeaponKind.BALLISTIC), false, 0f, false);
     private static final String ROOT = "root";
+    private static final ShipProfile STATION =
+            new ShipProfile(HullSize.CAPITAL_SHIP, ShieldType.NONE, 0, Set.of(WeaponKind.BALLISTIC), true, 1600f, false, false, false, true);
 
     @BeforeEach
     void setUp() {
@@ -487,5 +491,73 @@ class NpcSkillTreeBuilderTest {
 
         assertTrue(build.shipData().isAllocated("lions_gaze"));
         assertTrue(build.steps().stream().anyMatch(step -> step.outcome().equals(NpcBuildStep.FACTION_GOAL)));
+    }
+
+    private static SkillType effectType(String typeId, SkillTier tier, String... effectNames) {
+        List<SkillTypeEffect> effects = Arrays.stream(effectNames).map(name -> new SkillTypeEffect(SkillEffect.byName(name), 10f)).toList();
+        return registerType(builder(typeId, tier).effects(effects).build());
+    }
+
+    private static void stationChoices() {
+        root();
+        node("speed", effectType("speed_type", SkillTier.NOTABLE, "TOP_SPEED_PERCENT"), ROOT);
+        node("cloak", effectType("cloak_type", SkillTier.NOTABLE, "PHASE_CLOAK_COOLDOWN_PERCENT"), ROOT);
+        node("system", effectType("system_type", SkillTier.NOTABLE, "SYSTEM_COOLDOWN_PERCENT"), ROOT);
+        node("wings", effectType("wings_type", SkillTier.NOTABLE, "FIGHTER_WEAPON_DAMAGE_PERCENT"), ROOT);
+        node("capacitors", effectType("capacitors_type", SkillTier.NOTABLE, "FLUX_CAPACITY_PERCENT"), ROOT);
+        node("speed_small", effectType("speed_small_type", SkillTier.SMALL, "MANEUVERABILITY_PERCENT"), ROOT);
+        node("flux_small", effectType("flux_small_type", SkillTier.SMALL, "FLUX_DISSIPATION_PERCENT"), ROOT);
+    }
+
+    @Test
+    void stationsNeverTakeMovementPhaseShipSystemOrFighterNodesWithoutBays() {
+        stationChoices();
+
+        for (long seed = 1; seed <= 20; seed++) {
+            List<String> allocated = allocated(generate(STATION, null, 2, null, NpcHullMods.NONE, NpcFreedOp.NONE, seed));
+
+            assertEquals(Set.of(ROOT, "capacitors", "flux_small"), Set.copyOf(allocated), "seed " + seed);
+        }
+    }
+
+    @Test
+    void stationsWithHangarModulesCanTakeFighterNodesAndOtherShipsKeepTheFullChoice() {
+        stationChoices();
+        ShipProfile carrierStation = new ShipProfile(HullSize.CAPITAL_SHIP, ShieldType.NONE, 4, Set.of(WeaponKind.BALLISTIC), true, 1600f,
+                false, false, false, true);
+        ShipProfile cruiser = new ShipProfile(HullSize.CRUISER, ShieldType.FRONT, 0, Set.of(WeaponKind.BALLISTIC), false, 0f, false);
+        boolean stationTookWings = false;
+        boolean cruiserTookMovement = false;
+        for (long seed = 1; seed <= 40; seed++) {
+            stationTookWings |= allocated(generate(carrierStation, null, 1, null, NpcHullMods.NONE, NpcFreedOp.NONE, seed)).contains("wings");
+            List<String> cruiserNodes = allocated(generate(cruiser, null, 1, null, NpcHullMods.NONE, NpcFreedOp.NONE, seed));
+            cruiserTookMovement |= cruiserNodes.contains("speed") || cruiserNodes.contains("speed_small");
+        }
+
+        assertTrue(stationTookWings);
+        assertTrue(cruiserTookMovement);
+    }
+
+    @Test
+    void aStationKeepsNodesWhoseMovementEffectComesWithAUsefulOne() {
+        root();
+        node("mixed", effectType("mixed_type", SkillTier.NOTABLE, "TOP_SPEED_PERCENT", "FLUX_CAPACITY_PERCENT"), ROOT);
+
+        assertTrue(allocated(generate(STATION, null, 1, null, NpcHullMods.NONE, NpcFreedOp.NONE, 1L)).contains("mixed"));
+    }
+
+    @Test
+    void aStationsOptionalNodeTakesTheOptionItCanUse() {
+        root();
+        effectType("speed_option", SkillTier.SMALL, "TOP_SPEED_PERCENT");
+        effectType("flux_option", SkillTier.SMALL, "FLUX_CAPACITY_PERCENT");
+        node("optional", registerType(builder("optional_type", SkillTier.SMALL)
+                .optionalOptionIds(List.of("speed_option", "flux_option")).build()), ROOT);
+
+        for (long seed = 1; seed <= 10; seed++) {
+            ShipSkillData data = generate(STATION, null, 1, null, NpcHullMods.NONE, NpcFreedOp.NONE, seed).shipData();
+
+            assertEquals("flux_option", data.getOptionalSelection("optional"), "seed " + seed);
+        }
     }
 }

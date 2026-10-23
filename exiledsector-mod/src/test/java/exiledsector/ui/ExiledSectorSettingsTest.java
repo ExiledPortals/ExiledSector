@@ -86,6 +86,8 @@ class ExiledSectorSettingsTest {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addInt(eq("exiledSector"),
                 eq(NpcTreeConfig.OTHER_SHIP_CHANCE_FIELD_ID), anyString(), anyString(), eq(30), eq(0), eq(100),
                 eq(SkillTreeSettings.npcScalingTab())));
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addBoolean(eq("exiledSector"),
+                eq(NpcTreeConfig.STATIONS_FIELD_ID), anyString(), anyString(), eq(true), eq(SkillTreeSettings.npcScalingTab())));
     }
 
     @Test

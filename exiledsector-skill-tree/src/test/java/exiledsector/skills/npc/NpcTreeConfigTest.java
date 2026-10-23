@@ -31,6 +31,7 @@ class NpcTreeConfigTest {
         assertTrue(NpcTreeConfig.levelsOfficeredShips());
         assertTrue(NpcTreeConfig.levelsFlagship());
         assertEquals(0.3f, NpcTreeConfig.otherShipChance(), 0.0001f);
+        assertTrue(NpcTreeConfig.levelsStations());
     }
 
     @Test
@@ -39,11 +40,13 @@ class NpcTreeConfigTest {
         lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", NpcTreeConfig.OFFICERED_SHIPS_FIELD_ID)).thenReturn(false);
         lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", NpcTreeConfig.FLAGSHIP_FIELD_ID)).thenReturn(false);
         lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", NpcTreeConfig.OTHER_SHIP_CHANCE_FIELD_ID)).thenReturn(75);
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", NpcTreeConfig.STATIONS_FIELD_ID)).thenReturn(false);
 
         assertFalse(NpcTreeConfig.isEnabled());
         assertFalse(NpcTreeConfig.levelsOfficeredShips());
         assertFalse(NpcTreeConfig.levelsFlagship());
         assertEquals(0.75f, NpcTreeConfig.otherShipChance(), 0.0001f);
+        assertFalse(NpcTreeConfig.levelsStations());
     }
 
     @Test

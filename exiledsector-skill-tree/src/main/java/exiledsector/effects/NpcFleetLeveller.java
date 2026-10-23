@@ -92,7 +92,7 @@ public final class NpcFleetLeveller {
     }
 
     static boolean isLevellable(CampaignFleetAPI fleet) {
-        return fleet != null && !fleet.isPlayerFleet() && !fleet.isStationMode()
+        return fleet != null && !fleet.isPlayerFleet() && (!fleet.isStationMode() || NpcTreeConfig.levelsStations())
                 && fleet.getContainingLocation() != null && fleet.getFleetData() != null;
     }
 

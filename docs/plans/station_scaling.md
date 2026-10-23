@@ -4,7 +4,7 @@ Player ships and NPC ships both get much stronger through their skill trees, but
 
 This plan gives stations generated skill trees, scaled like NPC fleets, and shares them with the station's modules.
 
-Status: planned, not built.
+Status: built and tested 2026-10-23, committed on parallel-work. Not yet checked in game.
 
 ## Where the code lives
 
@@ -35,11 +35,11 @@ A new LunaLib toggle on the NPC tab, "Skill Trees for Stations", default on. Tur
 
 ## Steps
 
-1. Lift the filters behind the toggle: `isLevellable` lets station-mode fleets through, `NpcShipSelector` accepts station members, and `isChosen` always picks a station.
-2. Add the station profile to `ShipProfile` / `NpcFocus` and have the builder skip the useless parts.
-3. Let `ModuleTreeShare.attach` take station parents, with the station share setting. Check that the existing `ModuleShares` classification of each effect holds for station modules too (for example hull and armor rescaling on modules that never move).
-4. Check rebuilds: a market station that's destroyed and rebuilt, or upgraded (orbital station to battlestation to star fortress), gets new members. `decide` keys records by member, so the new hull should be levelled on the next sweep. Confirm, and test it.
-5. Docs: a short "Stations" paragraph in `docs/docs.md` under "Generated NPC trees", and update "Module effects" for station parents. README and `docs/forum_post.bbcode`: one line that stations now get skill trees.
+1. Done: Lift the filters behind the toggle: `isLevellable` lets station-mode fleets through, `NpcShipSelector` accepts station members, and `isChosen` always picks a station.
+2. Done: Add the station profile and have the builder skip the useless parts. Built as a `station` flag on `ShipProfile` (whose fighter bays count the station's modules) and `skills/npc/NpcStationNodes`, which the builder uses to skip goals, fills and options whose every effect is movement, phase, ship system, or fighter without bays. `NpcFocus` is unchanged: a weight can't rule a node out.
+3. Done: Let `ModuleTreeShare.attach` take station parents, with the station share setting. Check that the existing `ModuleShares` classification of each effect holds for station modules too (for example hull and armor rescaling on modules that never move).
+4. Done: Check rebuilds: a market station that's destroyed and rebuilt, or upgraded (orbital station to battlestation to star fortress), gets new members. `decide` keys records by member, so the new hull should be levelled on the next sweep. Confirm, and test it.
+5. Done: Docs: a short "Stations" paragraph in `docs/docs.md` under "Generated NPC trees", and update "Module effects" for station parents. README and `docs/forum_post.bbcode`: one line that stations now get skill trees.
 
 ## Decided
 

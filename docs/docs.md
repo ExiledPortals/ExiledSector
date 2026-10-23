@@ -61,7 +61,7 @@ hit, rather than using a modifier, so EMP and on-hit effects stay at full streng
 ## Module effects
 
 The tree applies only to the parent ship. On the parent's first combat frame `ModuleTreeShare` gives each
-living child module a share of the parent's shareable tree effects (`ModuleShareSetting`, 50% by default), plus
+living child module a share of the parent's shareable tree effects (`ModuleShareSetting`, 50% by default, 100% for stations), plus
 the `MODULE_*` effects at full strength.
 `ModuleBoost` applies both, then rescales the module's maximum hull, armor cells, shield arc (up to 360) and
 each weapon's maximum ammo once; cells above their maximum are clamped first so armor carried from an earlier
@@ -134,6 +134,11 @@ small nodes. `NpcRelevance` multiplies theme tag weights by `npc_faction_focus.c
 `npc_ship_system_focus.csv` (by ship system or defense id, `NpcFocus`), which also steers optional nodes'
 option picks. Every step is a breadth-first search through nodes `NodeEligibility` allows, never crossing
 wormholes.
+
+Station fleets (market stations and the Remnant Nexus) are levelled like any other fleet while
+`NpcTreeConfig.levelsStations` is on, and the station is always chosen. A station's `ShipProfile` counts its
+modules' fighter bays, and `NpcStationNodes` stops it aiming for nodes or options whose every effect is movement,
+phase, ship system, or fighter without bays.
 
 ## NPC levels
 

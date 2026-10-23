@@ -316,7 +316,7 @@ class NpcFleetLevellerTest {
     }
 
     @Test
-    void playerStationAndLocationlessFleetsAreNeverLevelled() {
+    void playerAndLocationlessFleetsAreNeverLevelledAndStationsFollowTheirToggle() {
         CampaignFleetAPI ordinary = fleetOf();
         CampaignFleetAPI player = fleetOf();
         when(player.isPlayerFleet()).thenReturn(true);
@@ -326,9 +326,13 @@ class NpcFleetLevellerTest {
 
         assertTrue(NpcFleetLeveller.isLevellable(ordinary));
         assertFalse(NpcFleetLeveller.isLevellable(player));
-        assertFalse(NpcFleetLeveller.isLevellable(station));
+        assertTrue(NpcFleetLeveller.isLevellable(station));
         assertFalse(NpcFleetLeveller.isLevellable(temporary));
         assertFalse(NpcFleetLeveller.isLevellable(null));
+
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", NpcTreeConfig.STATIONS_FIELD_ID)).thenReturn(false);
+        assertFalse(NpcFleetLeveller.isLevellable(station));
+        assertTrue(NpcFleetLeveller.isLevellable(ordinary));
     }
 
     @Test
@@ -683,5 +687,65 @@ class NpcFleetLevellerTest {
         NpcFleetLeveller.ensure(fleet);
 
         assertTrue(nodesBesidesRoot(NpcTreeTag.find(officered.getVariant())) > 15);
+    }
+
+    private static FleetMemberAPI stationMember(String id) {
+        FleetMemberAPI station = member(id, statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), false);
+        when(station.isStation()).thenReturn(true);
+        return station;
+    }
+
+    private CampaignFleetAPI stationFleet(List<FleetMemberAPI> members, boolean aiCommander) {
+        CampaignFleetAPI stationFleet = fleet("station-1", members, location, new Vector2f(100f, 0f));
+        when(stationFleet.isStationMode()).thenReturn(true);
+        PersonAPI commander = mock(PersonAPI.class);
+        when(commander.isAICore()).thenReturn(aiCommander);
+        when(stationFleet.getCommander()).thenReturn(commander);
+        return stationFleet;
+    }
+
+    private static String capTag(FleetMemberAPI member) {
+        return member.getVariant().getTags().stream().filter(tag -> tag.startsWith(NpcLevelCaps.TAG_PREFIX)).findFirst().orElse(null);
+    }
+
+    @Test
+    void aStationIsLevelledWhateverTheChoiceTogglesAndAnUpgradedStationGetsItsOwnTree() {
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", NpcTreeConfig.OFFICERED_SHIPS_FIELD_ID)).thenReturn(false);
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", NpcTreeConfig.FLAGSHIP_FIELD_ID)).thenReturn(false);
+        setOtherShipChance(0);
+        FleetMemberAPI orbitalStation = stationMember("orbital");
+        List<FleetMemberAPI> members = new ArrayList<>(List.of(orbitalStation));
+        CampaignFleetAPI stationFleet = stationFleet(members, false);
+
+        NpcFleetLeveller.ensure(stationFleet);
+        FleetMemberAPI battlestation = stationMember("battlestation");
+        members.set(0, battlestation);
+        NpcFleetLeveller.ensure(stationFleet);
+
+        assertNotNull(NpcTreeTag.find(orbitalStation.getVariant()));
+        assertNotNull(NpcTreeTag.find(battlestation.getVariant()));
+        assertTrue(NpcTreeRecords.isLevelled(records(stationFleet).get("battlestation")));
+    }
+
+    @Test
+    void anAiCommandedStationTakesTheAiCapAndAMarketStationItsFactions() {
+        FleetMemberAPI nexus = stationMember("nexus");
+        FleetMemberAPI marketStation = stationMember("market");
+
+        NpcFleetLeveller.ensure(stationFleet(List.of(nexus), true));
+        NpcFleetLeveller.ensure(stationFleet(List.of(marketStation), false));
+
+        assertEquals(NpcLevelCaps.TAG_PREFIX + "35", capTag(nexus));
+        assertEquals(NpcLevelCaps.TAG_PREFIX + "25", capTag(marketStation));
+    }
+
+    @Test
+    void turningStationsOffLeavesAStationFleetUntouched() {
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", NpcTreeConfig.STATIONS_FIELD_ID)).thenReturn(false);
+        FleetMemberAPI station = stationMember("orbital");
+
+        NpcFleetLeveller.ensure(stationFleet(List.of(station), false));
+
+        assertNull(NpcTreeTag.find(station.getVariant()));
     }
 }

@@ -39,8 +39,8 @@ final class ModuleTreeShare implements AdvanceableListener {
     }
 
     static void attach(ShipAPI ship, ResolvedTree resolvedTree) {
-        if (ship.isStation() || ship.isStationModule() || ship.getHullSpec() == null || !ShipFacts.hasModuleSlots(ship.getHullSpec())
-                || (share() <= 0f && !ModuleBoost.hasModuleBonus(ship.getMutableStats()))) {
+        if (ship.isStationModule() || ship.getHullSpec() == null || !ShipFacts.hasModuleSlots(ship.getHullSpec())
+                || (share(ship) <= 0f && !ModuleBoost.hasModuleBonus(ship.getMutableStats()))) {
             return;
         }
         List<ModuleTreeShare> existing = ship.getListeners(ModuleTreeShare.class);
@@ -66,8 +66,8 @@ final class ModuleTreeShare implements AdvanceableListener {
         return ratios;
     }
 
-    static float share() {
-        return ModuleShareSetting.share();
+    static float share(ShipAPI parentShip) {
+        return ModuleShareSetting.shareFor(parentShip.isStation());
     }
 
     @Override
@@ -76,7 +76,7 @@ final class ModuleTreeShare implements AdvanceableListener {
         shared = true;
         List<ShipAPI> modules = parentShip.getChildModulesCopy();
         if (modules == null) return;
-        float share = share();
+        float share = share(parentShip);
         String modIdPrefix = MOD_ID_PREFIX + parentShip.getId() + "_";
         for (ShipAPI module : modules) {
             if (module.isAlive() && !module.isHulk() && module.getVariant() != null && module.getHullSpec() != null) {

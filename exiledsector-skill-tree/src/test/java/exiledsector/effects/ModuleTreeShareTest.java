@@ -51,6 +51,7 @@ class ModuleTreeShareTest {
     void mockSettings() {
         lunaSettings = Mockito.mockStatic(LunaSettings.class);
         lunaSettings.when(() -> LunaSettings.getInt("exiledSector", ModuleShareSetting.FIELD_ID)).thenReturn(null);
+        lunaSettings.when(() -> LunaSettings.getInt("exiledSector", ModuleShareSetting.STATION_FIELD_ID)).thenReturn(null);
     }
 
     @AfterEach
@@ -182,7 +183,7 @@ class ModuleTreeShareTest {
     }
 
     @Test
-    void attachesOnceAndOnlyToShipsWithModuleSlots() {
+    void attachesOnceAndOnlyToShipsAndStationsWithModuleSlots() {
         ShipAPI modular = ship(true);
         ShipAPI plain = ship(false);
         ShipAPI station = ship(true);
@@ -199,7 +200,27 @@ class ModuleTreeShareTest {
         verify(modular, times(1)).addListener(added.capture());
         assertTrue(added.getValue() instanceof AdvanceableListener);
         verify(plain, never()).addListener(any());
-        verify(station, never()).addListener(any());
+        verify(station, times(1)).addListener(any());
+    }
+
+    @Test
+    void aStationsModulesGetTheStationShare() {
+        ShipAPI station = mock(ShipAPI.class);
+        when(station.getId()).thenReturn("station");
+        when(station.isStation()).thenReturn(true);
+        when(station.getMutableStats()).thenReturn(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS));
+        ShipAPI module = module(true);
+        when(station.getChildModulesCopy()).thenReturn(new ArrayList<>(List.of(module)));
+        new ModuleTreeShare(station, List.of(node(effect("FLUX_CAPACITY_PERCENT", 20f))), Map.of(), HullSize.CAPITAL_SHIP).advance(0.1f);
+
+        verify(module.getMutableStats().getFluxCapacity()).modifyPercent("exiledSector_moduleShare_station_FLUX_CAPACITY_PERCENT", 20f);
+
+        lunaSettings.when(() -> LunaSettings.getInt("exiledSector", ModuleShareSetting.STATION_FIELD_ID)).thenReturn(25);
+        ShipAPI quarterModule = module(true);
+        when(station.getChildModulesCopy()).thenReturn(new ArrayList<>(List.of(quarterModule)));
+        new ModuleTreeShare(station, List.of(node(effect("FLUX_CAPACITY_PERCENT", 20f))), Map.of(), HullSize.CAPITAL_SHIP).advance(0.1f);
+
+        verify(quarterModule.getMutableStats().getFluxCapacity()).modifyPercent("exiledSector_moduleShare_station_FLUX_CAPACITY_PERCENT", 5f);
     }
 
     @Test
