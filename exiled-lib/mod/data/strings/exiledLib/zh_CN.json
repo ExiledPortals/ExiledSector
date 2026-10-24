@@ -99,7 +99,7 @@
     "effect.PD_BEST_TARGET_LEADING": "无论战备值如何，点防御武器都具有最佳的目标预判。",
     "effect.PD_RECLASSIFY_SMALL_WEAPONS": "所有小型的非导弹、非打击型武器都会被视为点防御武器，自动瞄准导弹，并受点防御属性修正的影响。",
     "effect.BALLISTIC_COUNTS_AS_ENERGY": "实弹武器同样受本舰能量武器属性修正的影响。",
-    "effect.BALLISTIC_SLOTS_HYBRID": "实弹槽位也可以安装能量武器。",
+    "effect.BALLISTIC_SLOTS_HYBRID": "将本舰体上所有实弹武器槽位改为混合武器槽位。",
     "effect.OBJECTIVE_CAPTURE_RATE_MULT.more": "战场目标占领速度提高<good>{value}%</good>（乘算）。",
     "effect.OBJECTIVE_CAPTURE_RATE_MULT.less": "战场目标占领速度降低<bad>{value}%</bad>（乘算）。",
     "stat.commandPointRecoveryWhileFlagship": "本舰担任旗舰时的指挥点恢复速度",

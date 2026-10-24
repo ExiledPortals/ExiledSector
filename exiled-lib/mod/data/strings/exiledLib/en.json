@@ -96,7 +96,7 @@
     "effect.PD_BEST_TARGET_LEADING": "Point-defense weapons get the best possible target leading, regardless of combat readiness.",
     "effect.PD_RECLASSIFY_SMALL_WEAPONS": "All small non-missile, non-strike weapons are classified as point-defense, automatically target missiles, and are affected by point-defense stat modifiers.",
     "effect.BALLISTIC_COUNTS_AS_ENERGY": "Ballistic weapons also gain this ship's energy weapon modifiers.",
-    "effect.BALLISTIC_SLOTS_HYBRID": "Ballistic slots also accept energy weapons.",
+    "effect.BALLISTIC_SLOTS_HYBRID": "Converts all Ballistic weapon mounts on this hull to Hybrid weapon mounts.",
     "effect.OBJECTIVE_CAPTURE_RATE_MULT.more": "<good>{value}%</good> more combat objective capture rate.",
     "effect.OBJECTIVE_CAPTURE_RATE_MULT.less": "<bad>{value}%</bad> less combat objective capture rate.",
     "stat.commandPointRecoveryWhileFlagship": "command point recovery rate while this ship is the flagship",
