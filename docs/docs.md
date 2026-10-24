@@ -69,10 +69,17 @@ engagement isn't raised again.
 
 ## Ballistic counts as energy
 
-`BALLISTIC_COUNTS_AS_ENERGY` (Fafnir Breeches) makes `BallisticEnergyMirror` copy every energy and non-beam energy
+`BALLISTIC_COUNTS_AS_ENERGY` makes `BallisticEnergyMirror` copy every energy and non-beam energy
 weapon effect from the ship's sources into a ballistic one before diminishing returns. Energy checks in Dynamic Grid,
 energy range per sensor strength, Disintegration, Ion Arc and energy chains also accept ballistic weapons
 (`BallisticAsEnergy`). Vanilla and other mods' energy bonuses don't reach ballistics.
+
+## Hybrid ballistic slots
+
+`BALLISTIC_SLOTS_HYBRID` (Fafnir Breeches) gives the variant its own copy of the hull spec with every non-built-in
+ballistic slot retyped to hybrid (`HybridBallisticSlots`). Saves keep only the hull id, so the copy is rebuilt each
+time hull mods apply. `SkillTreeHullMod` swaps the slots back once the effect is gone, and `UnfitWeapons` returns
+weapons that no longer fit to cargo.
 
 ## Rise From the Ashes
 

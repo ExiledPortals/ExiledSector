@@ -7,6 +7,7 @@ import exiledlib.PlayerFleet;
 import exiledlib.skills.skilleffect.logistics.FleetWideEffects;
 import exiledsector.ExiledSector;
 import exiledsector.effects.FighterBayOverflow;
+import exiledsector.effects.UnfitWeapons;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.FittedShipProfile;
 import exiledsector.skills.ShipSkillData;
@@ -57,6 +58,7 @@ public final class ShipEditSession {
         member.setStatUpdateNeeded(true);
         member.updateStats();
         FighterBayOverflow.returnUnhousedWingsAndAnnounce(member, variant, PlayerFleet.cargoOrNull());
+        UnfitWeapons.returnUnfitWeaponsAndAnnounce(member, variant, PlayerFleet.cargoOrNull());
         return true;
     }
 }

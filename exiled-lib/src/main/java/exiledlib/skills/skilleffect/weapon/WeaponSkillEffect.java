@@ -136,6 +136,12 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
             stats.getDynamic().getMod(BallisticAsEnergy.KEY).modifyFlat(modId, 1f);
         }
     },
+    BALLISTIC_SLOTS_HYBRID {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            HybridBallisticSlots.convert(stats.getVariant());
+        }
+    },
     MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT(MediumEnergySlotRangeListener.RANGE_FLAT_KEY,
             MediumEnergySlotRangeListener.class, ship -> new MediumEnergySlotRangeListener()),
     NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT(InertialSuperchargerListener.DAMAGE_PERCENT_PER_SPEED_KEY,

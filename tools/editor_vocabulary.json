@@ -11,6 +11,7 @@
     {"name": "AUGMENTED_INERTIAL_PROJECTILE_SPEED_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "AUGMENTED_SYSTEM_REGEN_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "BALLISTIC_COUNTS_AS_ENERGY", "statMode": null, "lowerIsBetter": false},
+    {"name": "BALLISTIC_SLOTS_HYBRID", "statMode": null, "lowerIsBetter": false},
     {"name": "BALLISTIC_WEAPON_AMMO_FLAT", "statMode": "FLAT", "lowerIsBetter": false},
     {"name": "BALLISTIC_WEAPON_AMMO_MULT", "statMode": "MULT", "lowerIsBetter": false},
     {"name": "BALLISTIC_WEAPON_AMMO_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},

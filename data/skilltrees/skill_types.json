@@ -4682,14 +4682,14 @@
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "BALLISTIC_COUNTS_AS_ENERGY"
+					"effect": "BALLISTIC_SLOTS_HYBRID"
 				},
 				{
 					"effect": "BALLISTIC_WEAPON_FLUX_COST_PERCENT",
 					"magnitude": 25
 				}
 			],
-			"description": "Fafnir cannons fire conventional shells on Gauss-rifle propulsion fed straight from the flux grid. Fafnir breech schematics salvaged from Navarchy wrecks show the crew how to wire this ship's ballistic mounts onto the same grid, so they draw on everything tuned for its energy weapons.",
+			"description": "Fafnir cannons fire conventional shells on Gauss-rifle propulsion fed straight from the flux grid. Fafnir breech schematics salvaged from Navarchy wrecks show the crew how to wire this ship's ballistic mounts onto the same grid, so they can take energy weapons as well.",
 			"tags": [
 				"weapons"
 			]
