@@ -66,7 +66,7 @@ public final class StarChartDefinitions {
                 LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": " + e.getMessage());
             }
         });
-        ItemDefinitions.registerStarCharts(definitions);
+        ItemDefinitions.registerOwnType(ItemType.STAR_CHART, definitions);
         SYSTEM_TYPE_BY_ID.set(Collections.unmodifiableMap(systemTypes));
         MIN_TIER_BY_ID.set(Collections.unmodifiableMap(minTiers));
     }
@@ -114,6 +114,6 @@ public final class StarChartDefinitions {
     public static void clear() {
         SYSTEM_TYPE_BY_ID.set(Map.of());
         MIN_TIER_BY_ID.set(Map.of());
-        ItemDefinitions.clearStarCharts();
+        ItemDefinitions.clearOwnType(ItemType.STAR_CHART);
     }
 }

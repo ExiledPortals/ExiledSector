@@ -54,6 +54,11 @@ public final class WormholeAnchor extends Item implements NodeSocketable {
         }
 
         @Override
+        public boolean inGenericPools(ItemDefinition definition) {
+            return false;
+        }
+
+        @Override
         public Integer cargoPrice(Item item, boolean forSale) {
             WormholeAnchorDefinitions.AnchorMarket anchorMarket = WormholeAnchorDefinitions.market(item.definitionId());
             if (anchorMarket == null) {

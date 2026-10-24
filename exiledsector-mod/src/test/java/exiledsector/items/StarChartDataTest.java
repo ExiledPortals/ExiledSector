@@ -63,7 +63,7 @@ class StarChartDataTest {
 
     @Test
     void poolEntriesCanBeGatedToATierRange() throws Exception {
-        ItemModifiers.registerStarCharts(new JSONArray().put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:t1=1/t6=2", "Discovery")),
+        ItemModifiers.registerPart(ModifierScope.STAR_CHART, new JSONArray().put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:t1=1/t6=2", "Discovery")),
                 StarChartItems.MODIFIERS_PATH);
 
         assertEquals(TierRange.between(3, 15), PoolEntry.parse("@CHART_EXTRA_POIS:4:t3-15", ModifierSlot.SUFFIX, ItemType.STAR_CHART).tiers());
@@ -81,7 +81,7 @@ class StarChartDataTest {
     @Test
     void chartModifiersLoadIntoTheSharedCatalogueWithoutDisturbingShipModifiers() throws Exception {
         ItemModifiers.register(new JSONArray().put(ItemFixtures.modifierRow("HULL_MULT", "prefix", "HULL_MULT:4:6", "Reinforced")));
-        ItemModifiers.registerStarCharts(new JSONArray()
+        ItemModifiers.registerPart(ModifierScope.STAR_CHART, new JSONArray()
                 .put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:t1=1/t6=2", "Discovery"))
                 .put(chartModifier("HULL_MULT", "suffix", "CHART_EXTRA_POIS:1:2", "Copy"))
                 .put(ItemFixtures.modifierRow("CHART_REWARD_PERCENT", "suffix", "subroutine;star_chart", "CHART_REWARD_PERCENT:1:2", "Mixed")),
@@ -133,7 +133,7 @@ class StarChartDataTest {
 
     @Test
     void chartsCanStartAtAMinimumTierAndTheDataCheckRejectsBadOnes() throws Exception {
-        ItemModifiers.registerStarCharts(new JSONArray().put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:t1=1", "Discovery")),
+        ItemModifiers.registerPart(ModifierScope.STAR_CHART, new JSONArray().put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:t1=1", "Discovery")),
                 StarChartItems.MODIFIERS_PATH);
         StarChartDefinitions.register(new JSONArray()
                 .put(chart("chart_low", "SINGLE", "", "@CHART_EXTRA_POIS"))
@@ -166,7 +166,7 @@ class StarChartDataTest {
     @Test
     void chartDefinitionsNeedAKnownSystemTypeAndCannotShadowAShipItem() throws Exception {
         ItemFixtures.registerMilitary();
-        ItemModifiers.registerStarCharts(new JSONArray().put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:t1=1", "Discovery")),
+        ItemModifiers.registerPart(ModifierScope.STAR_CHART, new JSONArray().put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:t1=1", "Discovery")),
                 StarChartItems.MODIFIERS_PATH);
         StarChartDefinitions.register(new JSONArray()
                 .put(chart("chart_ok", "binary_far", "", "@CHART_EXTRA_POIS"))

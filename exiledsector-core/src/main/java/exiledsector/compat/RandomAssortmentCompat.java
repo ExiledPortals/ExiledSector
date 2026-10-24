@@ -15,6 +15,7 @@ import java.util.List;
 public final class RandomAssortmentCompat {
 
     public static final String MOD_ID = "assortment_of_things";
+    public static final String EXOSHIP_SUBMARKET = "rat_exoship_market";
     public static final List<String> TESTED_VERSIONS = List.of("3.3.1");
     public static final List<String> REQUIRED_HULL_MOD_IDS = List.of("rat_exogrid", "rat_hypatia_hullmod", "rat_abyssal_grid",
             "rat_abyssal_core", "rat_seraphs_grace", "rat_raphaels_grace");

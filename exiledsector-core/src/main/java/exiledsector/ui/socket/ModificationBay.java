@@ -26,7 +26,7 @@ public final class ModificationBay {
     private Function<Item, String> installedShipLookup;
     private SocketWorkbenchPanel benchPanel;
     private ItemStoragePanel storagePanel;
-    private BenchModeSupport.PickerSession chartPicker;
+    private BenchModeSupport.PickerSession modePicker;
     private SocketPanelPlacement drawerPlacement;
     private BenchMode benchMode = BenchMode.HULL_ITEMS;
     private boolean hullItemsOnly;
@@ -54,10 +54,10 @@ public final class ModificationBay {
         return bay;
     }
 
-    public static ModificationBay openStarChartsOnly(CustomPanelAPI hostPanel, SocketPanelPlacement area, Function<Item, String> installedShipLookup,
-                                                     Listener bayListener) {
+    public static ModificationBay openMode(CustomPanelAPI hostPanel, SocketPanelPlacement area, BenchMode mode, Function<Item, String> installedShipLookup,
+                                           Listener bayListener) {
         ModificationBay bay = new ModificationBay(hostPanel, installedShipLookup, bayListener);
-        bay.benchMode = BenchMode.STAR_CHARTS;
+        bay.benchMode = mode;
         bay.layOut(area);
         return bay;
     }
@@ -95,8 +95,8 @@ public final class ModificationBay {
                     storagePanel.refresh(installedShipLookup);
                     storagePanel.setSelected(loaded);
                 }
-                if (chartPicker != null) {
-                    chartPicker.changed(loaded);
+                if (modePicker != null) {
+                    modePicker.changed(loaded);
                 }
             }
 
@@ -135,15 +135,15 @@ public final class ModificationBay {
     }
 
     private boolean pickerOpen() {
-        return storagePanel != null || chartPicker != null && chartPicker.isOpen();
+        return storagePanel != null || modePicker != null && modePicker.isOpen();
     }
 
     private void closePicker() {
         if (storagePanel != null) {
             storagePanel.close();
         }
-        if (chartPicker != null) {
-            chartPicker.close();
+        if (modePicker != null) {
+            modePicker.close();
         }
     }
 
@@ -160,34 +160,31 @@ public final class ModificationBay {
     }
 
     private void openPicker(SocketPanelPlacement placement) {
-        if (benchMode == BenchMode.STAR_CHARTS) {
-            openChartStorage(placement);
+        BenchModeSupport modeSupport = BenchModes.of(benchMode);
+        if (modeSupport != null) {
+            openModePicker(modeSupport, placement);
         } else {
             openStorage(placement);
         }
     }
 
-    private void openChartStorage(SocketPanelPlacement placement) {
-        BenchModeSupport chartBench = BenchModes.of(BenchMode.STAR_CHARTS);
-        if (chartBench == null) {
-            return;
+    private void openModePicker(BenchModeSupport modeSupport, SocketPanelPlacement placement) {
+        if (modePicker == null) {
+            modePicker = modeSupport.pickerSession();
         }
-        if (chartPicker == null) {
-            chartPicker = chartBench.pickerSession();
-        }
-        chartPicker.open(hostPanel, placement, benchPanel == null ? null : benchPanel.loaded(), new BenchModeSupport.PickerListener() {
+        modePicker.open(hostPanel, placement, benchPanel == null ? null : benchPanel.loaded(), new BenchModeSupport.PickerListener() {
             @Override
             public boolean accepting() {
                 return benchPanel != null;
             }
 
             @Override
-            public void picked(Item chart) {
-                benchPanel.load(chart);
+            public void picked(Item item) {
+                benchPanel.load(item);
                 if (drawer) {
-                    chartPicker.close();
+                    modePicker.close();
                 } else {
-                    chartPicker.refresh();
+                    modePicker.refresh();
                 }
             }
 
@@ -259,8 +256,8 @@ public final class ModificationBay {
         if (storagePanel != null) {
             storagePanel.refresh(lookup);
         }
-        if (chartPicker != null) {
-            chartPicker.refresh();
+        if (modePicker != null) {
+            modePicker.refresh();
         }
         if (benchPanel != null) {
             benchPanel.refresh();
@@ -269,7 +266,7 @@ public final class ModificationBay {
 
     public boolean contains(float x, float y) {
         return (benchPanel != null && benchPanel.contains(x, y)) || (storagePanel != null && storagePanel.contains(x, y))
-                || (chartPicker != null && chartPicker.contains(x, y));
+                || (modePicker != null && modePicker.contains(x, y));
     }
 
     public boolean isOpen() {

@@ -19,21 +19,21 @@ public final class ModificationBenchCargoLauncher {
     }
 
     public static boolean open(CampaignUIAPI campaignUI, Runnable afterClose) {
-        return open(campaignUI, false, afterClose);
+        return open(campaignUI, null, afterClose);
     }
 
-    public static boolean openStarCharts(CampaignUIAPI campaignUI) {
-        return BenchModes.enabled(BenchMode.STAR_CHARTS) && open(campaignUI, true, null);
+    public static boolean openMode(CampaignUIAPI campaignUI, BenchMode mode) {
+        return BenchModes.enabled(mode) && open(campaignUI, mode, null);
     }
 
     // java:S1181: UiReflection declares Throwable, and a changed engine may only cost the core UI Crafting window, never the game
     @SuppressWarnings("java:S1181")
-    private static boolean open(CampaignUIAPI campaignUI, boolean starChartsOnly, Runnable afterClose) {
+    private static boolean open(CampaignUIAPI campaignUI, BenchMode onlyMode, Runnable afterClose) {
         try {
             UIPanelAPI hostPanel = hostPanel(campaignUI);
             if (hostPanel == null || benchOpenIn(hostPanel)) return false;
             CargoHost host = new CargoHost(hostPanel, afterClose);
-            ModificationBenchScreen screen = new ModificationBenchScreen(host, starChartsOnly);
+            ModificationBenchScreen screen = new ModificationBenchScreen(host, onlyMode);
             CustomPanelAPI panel = Global.getSettings().createCustom(Global.getSettings().getScreenWidth(), Global.getSettings().getScreenHeight(), screen);
             host.benchPanel = panel;
             hostPanel.addComponent(panel).inTL(0f, 0f);

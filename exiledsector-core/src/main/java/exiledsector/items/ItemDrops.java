@@ -196,17 +196,6 @@ public final class ItemDrops {
         return WeightedPick.pick(kernelDrops, KernelDrop::weight, random).itemId();
     }
 
-    public static String pickChartCurrency(Random random) {
-        List<KernelDrop> chartDrops = new ArrayList<>();
-        for (ItemCurrency currency : ItemCurrencies.forType(ItemType.STAR_CHART)) {
-            if (!currency.dropsFromShipLoot() && currency.dropWeight() > 0f) {
-                chartDrops.add(new KernelDrop(currency.itemId(), currency.dropWeight()));
-            }
-        }
-        KernelDrop picked = WeightedPick.pick(chartDrops, KernelDrop::weight, random);
-        return picked == null ? null : picked.itemId();
-    }
-
     private record KernelDrop(String itemId, float weight) {
     }
 
@@ -382,7 +371,7 @@ public final class ItemDrops {
     }
 
     private static boolean isDroppable(ItemDefinition definition) {
-        return definition.type() != ItemType.WORMHOLE_ANCHOR && ItemTypes.inGenericPools(definition) && definition.rarity() > 0f
+        return ItemTypes.inGenericPools(definition) && definition.rarity() > 0f
                 && SAFE_ID.matcher(definition.id()).matches();
     }
 
@@ -396,13 +385,9 @@ public final class ItemDrops {
                 && allowedUniques.test(definition));
     }
 
-    public static ItemDefinition pickChartAtTier(Random random, int tier, Predicate<ItemDefinition> filter) {
-        return pickChart(random, definition -> ItemTypes.rollsAtTier(definition, tier) && filter.test(definition));
-    }
-
-    public static ItemDefinition pickChart(Random random, Predicate<ItemDefinition> filter) {
+    public static ItemDefinition pickOfType(Random random, ItemType type, Predicate<ItemDefinition> filter) {
         List<ItemDefinition> candidates = new ArrayList<>();
-        for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.STAR_CHART)) {
+        for (ItemDefinition definition : ItemDefinitions.ofType(type)) {
             if (filter.test(definition) && isDroppable(definition)) {
                 candidates.add(definition);
             }

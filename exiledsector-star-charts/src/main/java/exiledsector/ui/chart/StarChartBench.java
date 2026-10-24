@@ -11,6 +11,7 @@ import exiledsector.items.Item;
 import exiledsector.items.ItemCurrency;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemStore;
+import exiledsector.items.ItemType;
 import exiledsector.items.StarChart;
 import exiledsector.ui.socket.BenchMode;
 import exiledsector.ui.socket.BenchModeSupport;
@@ -26,6 +27,8 @@ import java.util.function.Predicate;
 public final class StarChartBench implements BenchModeSupport {
 
     public static final StarChartBench INSTANCE = new StarChartBench();
+    private static final OpenTexts OPEN_TEXTS = new OpenTexts("chart.ui.open.button", "chart.ui.open.tooltip", "chart.ui.open.confirm.title",
+            "chart.ui.open.confirm.body", "chart.ui.open.confirm.entries", "chart.ui.open.confirm.yes", "chart.ui.open.confirm.no");
 
     private StarChartBench() {
     }
@@ -36,8 +39,38 @@ public final class StarChartBench implements BenchModeSupport {
     }
 
     @Override
+    public ItemType itemType() {
+        return ItemType.STAR_CHART;
+    }
+
+    @Override
     public boolean enabled() {
         return StarChartSettings.enabled();
+    }
+
+    @Override
+    public ItemStore store() {
+        return ItemStore.starChartsIfCreated();
+    }
+
+    @Override
+    public String titleKey() {
+        return "chart.ui.bench.title";
+    }
+
+    @Override
+    public String emptyKey() {
+        return "chart.ui.bench.empty";
+    }
+
+    @Override
+    public String useHintKey() {
+        return "chart.ui.currency.use";
+    }
+
+    @Override
+    public OpenTexts openTexts() {
+        return OPEN_TEXTS;
     }
 
     @Override

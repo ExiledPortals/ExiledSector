@@ -63,7 +63,7 @@ class ModificationBayModeTest {
 
     @Test
     void theStarChartsOnlyBayOpensOnCharts() {
-        ModificationBay bay = ModificationBay.openStarChartsOnly(mock(CustomPanelAPI.class), SIDE_BY_SIDE_AREA, item -> null, bayListener);
+        ModificationBay bay = ModificationBay.openMode(mock(CustomPanelAPI.class), SIDE_BY_SIDE_AREA, BenchMode.STAR_CHARTS, item -> null, bayListener);
 
         assertEquals(BenchMode.STAR_CHARTS, openedMode.get());
         assertEquals(BenchMode.STAR_CHARTS, bay.mode());

@@ -4,6 +4,7 @@ import exiledlib.i18n.StyledText;
 import exiledsector.domain.DomainContributions;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.items.Item;
+import exiledsector.items.ItemType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,11 @@ public final class BenchModes {
 
     public static BenchModeSupport of(BenchMode mode) {
         return mode == null ? null : EVERY_SUPPORT.all().stream().filter(support -> support.mode() == mode).findFirst().orElse(null);
+    }
+
+    public static BenchMode modeFor(ItemType type) {
+        return EVERY_SUPPORT.all().stream().filter(support -> support.itemType() == type).map(BenchModeSupport::mode).findFirst()
+                .orElse(BenchMode.HULL_ITEMS);
     }
 
     public static boolean enabled(BenchMode mode) {

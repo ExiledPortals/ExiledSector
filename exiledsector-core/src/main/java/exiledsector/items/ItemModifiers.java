@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -33,7 +34,7 @@ public final class ItemModifiers {
     private static final Logger LOG = Logger.getLogger(ItemModifiers.class);
     private static final AtomicReference<Catalogue> LOADED = new AtomicReference<>(Catalogue.EMPTY);
     private static final AtomicReference<Catalogue> SHIP_ITEM_PART = new AtomicReference<>(Catalogue.EMPTY);
-    private static final AtomicReference<Catalogue> STAR_CHART_PART = new AtomicReference<>(Catalogue.EMPTY);
+    private static final Map<ModifierScope, Catalogue> PARTS_BY_SCOPE = new EnumMap<>(ModifierScope.class);
 
     private record Catalogue(Map<String, Modifier> modifiersById, Map<String, String> namesById, Map<String, Set<ModifierScope>> scopesById) {
         static final Catalogue EMPTY = new Catalogue(Map.of(), Map.of(), Map.of());
@@ -72,14 +73,26 @@ public final class ItemModifiers {
 
     public static void register(JSONArray rows) throws JSONException {
         SHIP_ITEM_PART.set(catalogueOf(rows, dataPath(), itemTypes -> true));
-        LOADED.set(Catalogue.merged(SHIP_ITEM_PART.get(), STAR_CHART_PART.get()));
+        mergeParts();
     }
 
-    public static void registerStarCharts(JSONArray rows, String sourcePath) throws JSONException {
-        Catalogue shipItemModifiers = SHIP_ITEM_PART.get();
-        STAR_CHART_PART.set(catalogueOf(rows == null ? new JSONArray() : rows, sourcePath, scopes -> scopes.equals(Set.of(ModifierScope.STAR_CHART)),
-                shipItemModifiers.modifiersById().keySet()));
-        LOADED.set(Catalogue.merged(shipItemModifiers, STAR_CHART_PART.get()));
+    public static void registerPart(ModifierScope scope, JSONArray rows, String sourcePath) throws JSONException {
+        Catalogue part = catalogueOf(rows == null ? new JSONArray() : rows, sourcePath, scopes -> scopes.equals(Set.of(scope)),
+                SHIP_ITEM_PART.get().modifiersById().keySet());
+        synchronized (PARTS_BY_SCOPE) {
+            PARTS_BY_SCOPE.put(scope, part);
+        }
+        mergeParts();
+    }
+
+    private static void mergeParts() {
+        synchronized (PARTS_BY_SCOPE) {
+            Catalogue merged = SHIP_ITEM_PART.get();
+            for (Catalogue part : PARTS_BY_SCOPE.values()) {
+                merged = Catalogue.merged(merged, part);
+            }
+            LOADED.set(merged);
+        }
     }
 
     private static Catalogue catalogueOf(JSONArray rows, String sourcePath, Predicate<Set<ModifierScope>> allowedScopes) throws JSONException {
@@ -252,14 +265,18 @@ public final class ItemModifiers {
         return null;
     }
 
-    public static void clearStarCharts() {
-        STAR_CHART_PART.set(Catalogue.EMPTY);
-        LOADED.set(SHIP_ITEM_PART.get());
+    public static void clearPart(ModifierScope scope) {
+        synchronized (PARTS_BY_SCOPE) {
+            PARTS_BY_SCOPE.remove(scope);
+        }
+        mergeParts();
     }
 
     public static void clear() {
-        LOADED.set(Catalogue.EMPTY);
         SHIP_ITEM_PART.set(Catalogue.EMPTY);
-        STAR_CHART_PART.set(Catalogue.EMPTY);
+        synchronized (PARTS_BY_SCOPE) {
+            PARTS_BY_SCOPE.clear();
+        }
+        LOADED.set(Catalogue.EMPTY);
     }
 }

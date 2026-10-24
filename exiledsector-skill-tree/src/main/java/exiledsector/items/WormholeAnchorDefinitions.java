@@ -108,7 +108,7 @@ public final class WormholeAnchorDefinitions {
                 LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": " + e.getMessage());
             }
         });
-        ItemDefinitions.registerWormholeAnchors(definitions);
+        ItemDefinitions.registerOwnType(ItemType.WORMHOLE_ANCHOR, definitions);
         TARGETS_BY_ID.set(Collections.unmodifiableMap(targets));
         STYLES_BY_ID.set(Collections.unmodifiableMap(styles));
         MARKETS_BY_ID.set(Collections.unmodifiableMap(markets));
@@ -269,7 +269,7 @@ public final class WormholeAnchorDefinitions {
         TARGETS_BY_ID.set(Map.of());
         STYLES_BY_ID.set(Map.of());
         MARKETS_BY_ID.set(Map.of());
-        ItemDefinitions.clearWormholeAnchors();
+        ItemDefinitions.clearOwnType(ItemType.WORMHOLE_ANCHOR);
         FactionFleetDrops.clear(ItemType.WORMHOLE_ANCHOR);
     }
 }

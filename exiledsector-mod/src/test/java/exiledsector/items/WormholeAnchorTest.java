@@ -295,7 +295,7 @@ class WormholeAnchorTest {
             assertNotAnchor(ItemDrops.pickBasic(random), anchorIds);
             assertNotAnchor(ItemDrops.pickUnique(random, definition -> true), anchorIds);
             assertNotAnchor(ItemDrops.pickSectionItemBasic(random), anchorIds);
-            assertNotAnchor(ItemDrops.pickChart(random, definition -> true), anchorIds);
+            assertNotAnchor(ItemDrops.pickOfType(random, ItemType.STAR_CHART, definition -> true), anchorIds);
             for (ItemData dropped : ItemDrops.rollSite("station", random, ItemChances.of(1f), 1f, 1f, true).items()) {
                 assertFalse(anchorIds.contains(dropped.definitionId()), dropped.definitionId());
             }

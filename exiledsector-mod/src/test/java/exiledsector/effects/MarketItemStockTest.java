@@ -12,6 +12,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import com.fs.starfarer.api.impl.campaign.submarkets.BaseSubmarketPlugin;
+import exiledsector.compat.RandomAssortmentCompat;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.JanusDevice;
@@ -201,9 +202,9 @@ class MarketItemStockTest {
     void theExoshipMarketRollsOnEveryRestockOfItsOwnCounterEvenAtTheSameGameTime() {
         CargoAPI cargo = emptyCargo();
 
-        listener.reportSubmarketCargoAndShipsUpdated(submarket(MarketItemStock.EXOSHIP_SUBMARKET, "hegemony", 0f, cargo));
-        listener.reportSubmarketCargoAndShipsUpdated(submarket(MarketItemStock.EXOSHIP_SUBMARKET, "hegemony", 0.01f, cargo));
-        listener.reportSubmarketCargoAndShipsUpdated(submarket(MarketItemStock.EXOSHIP_SUBMARKET, "hegemony", 0f, cargo));
+        listener.reportSubmarketCargoAndShipsUpdated(submarket(RandomAssortmentCompat.EXOSHIP_SUBMARKET, "hegemony", 0f, cargo));
+        listener.reportSubmarketCargoAndShipsUpdated(submarket(RandomAssortmentCompat.EXOSHIP_SUBMARKET, "hegemony", 0.01f, cargo));
+        listener.reportSubmarketCargoAndShipsUpdated(submarket(RandomAssortmentCompat.EXOSHIP_SUBMARKET, "hegemony", 0f, cargo));
 
         verify(cargo, times(2)).addSpecial(any(), anyFloat());
     }

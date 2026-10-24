@@ -14,14 +14,14 @@ public final class StarChartItems {
     }
 
     public static void load() {
-        ModCsv.load("id", MODIFIERS_PATH, LOG, rows -> ItemModifiers.registerStarCharts(rows, MODIFIERS_PATH));
+        ModCsv.load("id", MODIFIERS_PATH, LOG, rows -> ItemModifiers.registerPart(ModifierScope.STAR_CHART, rows, MODIFIERS_PATH));
         StarChartImplicits.load();
         StarChartDefinitions.load();
         StarChartNames.load();
     }
 
     public static void register(JSONArray modifierRows, JSONArray implicitRows, JSONArray definitionRows) throws JSONException {
-        ItemModifiers.registerStarCharts(modifierRows, MODIFIERS_PATH);
+        ItemModifiers.registerPart(ModifierScope.STAR_CHART, modifierRows, MODIFIERS_PATH);
         StarChartImplicits.register(implicitRows);
         StarChartDefinitions.register(definitionRows);
     }
@@ -30,6 +30,6 @@ public final class StarChartItems {
         StarChartNames.clear();
         StarChartDefinitions.clear();
         StarChartImplicits.clear();
-        ItemModifiers.clearStarCharts();
+        ItemModifiers.clearPart(ModifierScope.STAR_CHART);
     }
 }

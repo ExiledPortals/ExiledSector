@@ -11,6 +11,7 @@ import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import exiledsector.items.SocketCustody;
+import exiledsector.ui.socket.BenchMode;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
@@ -122,12 +124,12 @@ class ModificationBenchCargoLauncherTest {
     @Test
     void theStarChartsEntryLocksTheBenchToStarChartsAndTheInventoryEntryDoesNot() {
         ModificationBenchCargoLauncher.open(campaignUI, null);
-        assertFalse(((ModificationBenchScreen) benchPlugin).starChartsOnly());
+        assertNull(((ModificationBenchScreen) benchPlugin).onlyMode());
         corePanel.children.clear();
 
-        assertTrue(ModificationBenchCargoLauncher.openStarCharts(campaignUI));
+        assertTrue(ModificationBenchCargoLauncher.openMode(campaignUI, BenchMode.STAR_CHARTS));
 
-        assertTrue(((ModificationBenchScreen) benchPlugin).starChartsOnly());
+        assertEquals(BenchMode.STAR_CHARTS, ((ModificationBenchScreen) benchPlugin).onlyMode());
     }
 
     @Test

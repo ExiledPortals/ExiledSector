@@ -1,10 +1,10 @@
 package exiledsector.console;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import exiledsector.charts.ChartDrops;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemType;
 import exiledsector.items.StarChart;
 import org.lazywizard.console.Console;
@@ -68,7 +68,7 @@ public class GrantStarChartsCommand extends PlayerFleetCommand {
         }
         List<String> names = new ArrayList<>();
         for (int i = 0; i < arguments.count(); i++) {
-            ItemDefinition definition = ItemDrops.pickChartAtTier(random, arguments.tier(), chart -> true);
+            ItemDefinition definition = ChartDrops.pickChartAtTier(random, arguments.tier(), chart -> true);
             if (definition == null) {
                 break;
             }

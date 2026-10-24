@@ -5,10 +5,15 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import exiledlib.ModCsv;
+import exiledsector.items.ItemCurrencies;
+import exiledsector.items.ItemCurrency;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDrops;
+import exiledsector.items.ItemType;
+import exiledsector.items.ItemTypes;
 import exiledsector.items.ItemUnlock;
+import exiledsector.items.WeightedPick;
 import exiledsector.loot.LootSources;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -156,19 +161,31 @@ public final class ChartDrops {
         int chartCount = chartMult > 0f ? chartCount(rule, chartMult, random) : 0;
         for (int i = 0; i < chartCount; i++) {
             int dropTier = random.nextFloat() < rule.tierUpChance() ? Math.min(rule.maxTier(), baseTier + 1) : baseTier;
-            ItemDefinition definition = ItemDrops.pickChartAtTier(random, dropTier, allowedUniques);
+            ItemDefinition definition = pickChartAtTier(random, dropTier, allowedUniques);
             if (definition != null) {
                 charts.add(ItemData.rolledAtTier(definition, random.nextLong(), dropTier));
             }
         }
         Map<String, Integer> currencies = new LinkedHashMap<>();
         if (source.insideSystem() && random.nextFloat() < rule.currencyChance() * Math.max(0f, currencyMult)) {
-            String currencyId = ItemDrops.pickChartCurrency(random);
+            String currencyId = pickChartCurrency(random);
             if (currencyId != null) {
                 currencies.merge(currencyId, 1, Integer::sum);
             }
         }
         return charts.isEmpty() && currencies.isEmpty() ? Loot.NONE : new Loot(charts, currencies);
+    }
+
+    public static ItemDefinition pickChartAtTier(Random random, int tier, Predicate<ItemDefinition> filter) {
+        return ItemDrops.pickOfType(random, ItemType.STAR_CHART, definition -> ItemTypes.rollsAtTier(definition, tier) && filter.test(definition));
+    }
+
+    public static String pickChartCurrency(Random random) {
+        List<ItemCurrency> currencies = ItemCurrencies.forType(ItemType.STAR_CHART).stream()
+                .filter(currency -> !currency.dropsFromShipLoot() && currency.dropWeight() > 0f)
+                .toList();
+        ItemCurrency picked = WeightedPick.pick(currencies, ItemCurrency::dropWeight, random);
+        return picked == null ? null : picked.itemId();
     }
 
     static int chartCount(Rule rule, float chanceMult, Random random) {
