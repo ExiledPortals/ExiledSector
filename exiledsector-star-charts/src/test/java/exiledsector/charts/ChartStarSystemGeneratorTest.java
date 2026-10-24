@@ -76,14 +76,14 @@ class ChartStarSystemGeneratorTest {
     }
 
     private static ChartLayoutRecipe recipe(Map<String, Float> stars, Map<String, Float> categories) {
-        return new ChartLayoutRecipe(stars, categories, List.of(), List.of(), Float.NaN, null, 0f, Map.of(), -1, -1, Float.NaN, "", false);
+        return new ChartLayoutRecipe(new ChartLook(List.of(), List.of(), Float.NaN, null, 0f, stars, categories, false, ""), ChartShape.ANY);
     }
 
     @Test
     void starsSkipBlackHolesAndNeutronStarsAndFollowTheRegionWeights() {
-        ChartStarSystemGenerator ordinary = new ChartStarSystemGenerator(StarAge.OLD, StarSystemType.SINGLE, ChartLayoutRecipe.ORDINARY);
+        ChartStarSystemGenerator ordinary = new ChartStarSystemGenerator(StarAge.OLD, StarSystemType.SINGLE, ChartLayoutRecipe.ORDINARY, null);
         ChartStarSystemGenerator dwarfsOnly = new ChartStarSystemGenerator(StarAge.OLD, StarSystemType.SINGLE,
-                recipe(Map.of("star_yellow", 0f), Map.of()));
+                recipe(Map.of("star_yellow", 0f), Map.of()), null);
         Set<String> seen = new HashSet<>();
 
         for (int pick = 0; pick < 200; pick++) {
@@ -108,8 +108,8 @@ class ChartStarSystemGeneratorTest {
     @Test
     void categoriesSkipMagneticFieldsAndFollowTheRecipeWeights() {
         ChartStarSystemGenerator frozenOnly = spy(new ChartStarSystemGenerator(StarAge.OLD, StarSystemType.SINGLE,
-                recipe(Map.of(), Map.of("cat_barren", 0f))));
-        ChartStarSystemGenerator ordinary = spy(new ChartStarSystemGenerator(StarAge.OLD, StarSystemType.SINGLE, ChartLayoutRecipe.ORDINARY));
+                recipe(Map.of(), Map.of("cat_barren", 0f)), null));
+        ChartStarSystemGenerator ordinary = spy(new ChartStarSystemGenerator(StarAge.OLD, StarSystemType.SINGLE, ChartLayoutRecipe.ORDINARY, null));
         doReturn(false).when(frozenOnly).isCategoryEmpty(any(), any(), any(), anyBoolean());
         doReturn(false).when(ordinary).isCategoryEmpty(any(), any(), any(), anyBoolean());
         GenContext context = new GenContext(ordinary, null, null, null, null, 0, StarAge.OLD.name(), 0f, 1000f, null, -1);

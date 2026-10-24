@@ -15,8 +15,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ChartLayoutRecipeTest {
 
-    private static ChartLayoutRecipe recipe(Map<String, Float> stars, Map<String, Float> categories, Color tint, float strength) {
-        return new ChartLayoutRecipe(stars, categories, List.of(), List.of(), Float.NaN, tint, strength, Map.of(), -1, -1, Float.NaN, "", false);
+    private static ChartLook look(Map<String, Float> stars, Map<String, Float> planets, Color tint, float strength) {
+        return new ChartLook(List.of(), List.of(), Float.NaN, tint, strength, stars, planets, false, "");
+    }
+
+    private static ChartLayoutRecipe recipe(Map<String, Float> stars, Map<String, Float> planets, Color tint, float strength) {
+        return new ChartLayoutRecipe(look(stars, planets, tint, strength), ChartShape.ANY);
     }
 
     @Test
@@ -33,21 +37,29 @@ class ChartLayoutRecipeTest {
     }
 
     @Test
+    void aLayoutsTerrainWeightsMultiplyTheRegionsPlanetWeights() {
+        ChartLayoutRecipe ringed = new ChartLayoutRecipe(look(Map.of(), Map.of("cat_terrain_rings", 3f), null, 0f),
+                new ChartShape(Map.of(), -1, -1, Float.NaN, Map.of("cat_terrain_rings", 2f, "cat_giant", 4f), ""));
+
+        assertEquals(6f, ringed.categoryWeight("cat_terrain_rings", 1f));
+        assertEquals(4f, ringed.categoryWeight("cat_giant", 1f));
+    }
+
+    @Test
     void theLightTintBlendsTowardsItsColourByItsStrength() {
         Color light = new Color(200, 100, 0, 255);
 
-        assertEquals(new Color(150, 100, 50, 255), recipe(Map.of(), Map.of(), new Color(100, 100, 100), 0.5f).tinted(light));
-        assertSame(light, recipe(Map.of(), Map.of(), null, 0.5f).tinted(light));
-        assertSame(light, recipe(Map.of(), Map.of(), Color.RED, 0f).tinted(light));
+        assertEquals(new Color(150, 100, 50, 255), look(Map.of(), Map.of(), new Color(100, 100, 100), 0.5f).tinted(light));
+        assertSame(light, look(Map.of(), Map.of(), null, 0.5f).tinted(light));
+        assertSame(light, look(Map.of(), Map.of(), Color.RED, 0f).tinted(light));
     }
 
     @Test
     void orbitSettingsFallBackToVanillaUnlessALayoutSetsThem() {
-        ChartLayoutRecipe set = new ChartLayoutRecipe(Map.of(), Map.of(), List.of(), List.of(), Float.NaN, null, 0f, Map.of(), 5, 3, 9000f, "",
-                false);
+        ChartShape set = new ChartShape(Map.of(), 5, 3, 9000f, Map.of(), "");
 
-        assertFalse(ChartLayoutRecipe.ORDINARY.setsOrbits());
-        assertEquals(ChartLayoutRecipe.VANILLA_ORBIT_RADIUS, ChartLayoutRecipe.ORDINARY.orbitRadiusLimit());
+        assertFalse(ChartShape.ANY.setsOrbits());
+        assertEquals(ChartShape.VANILLA_ORBIT_RADIUS, ChartShape.ANY.orbitRadiusLimit());
         assertTrue(set.setsOrbits());
         assertEquals(5, set.maxOrbits());
         assertEquals(9000f, set.orbitRadiusLimit());
@@ -55,8 +67,8 @@ class ChartLayoutRecipeTest {
 
     @Test
     void aRecipesSystemTypeWeightsDecideTheTypeUnlessTheRequestNamesOne() {
-        ChartLayoutRecipe trinary = new ChartLayoutRecipe(Map.of(), Map.of(), List.of(), List.of(), Float.NaN, null, 0f,
-                Map.of(StarSystemType.TRINARY_2FAR, 1f), -1, -1, Float.NaN, "", false);
+        ChartLayoutRecipe trinary = new ChartLayoutRecipe(ChartLook.PLAIN,
+                new ChartShape(Map.of(StarSystemType.TRINARY_2FAR, 1f), -1, -1, Float.NaN, Map.of(), ""));
 
         for (long seed = 0; seed < 20; seed++) {
             assertEquals(StarSystemType.TRINARY_2FAR, ChartLayoutGenerator.typeFor(new ChartLayoutRequest(seed, null).withRecipe(trinary)));

@@ -48,28 +48,8 @@ public final class ChartPhenomena {
     }
 
     static List<String> register(JSONArray rows) throws JSONException {
-        Map<String, Definition> loaded = new LinkedHashMap<>();
         CsvRows csv = new CsvRows(PATH);
-        if (rows != null) {
-            ModCsv.forEach(rows, (index, row) -> {
-                String id = ModCsv.text(row, ID_COLUMN);
-                if (id.isEmpty()) {
-                    return;
-                }
-                ChartPhenomenon phenomenon = built(id);
-                if (phenomenon == null) {
-                    csv.skipRow(id, "no phenomenon has this id");
-                    return;
-                }
-                Definition definition = parse(csv, row, id);
-                if (definition.kind() != phenomenon.kind()) {
-                    csv.problem(id, "kind", definition.kind() + " (this phenomenon is " + phenomenon.kind() + ")");
-                    definition = new Definition(id, definition.weight(), definition.minTier(), definition.maxTier(), definition.requiredMod(),
-                            definition.icon(), phenomenon.kind());
-                }
-                loaded.put(id, definition);
-            });
-        }
+        Map<String, Definition> loaded = BuiltInTable.rows(rows, csv, "phenomenon", id -> built(id) != null, ChartPhenomena::parse);
         csv.report(LOG);
         definitions = Map.copyOf(loaded);
         LOG.info("[ExiledSector] Star Charts can roll " + loaded.size() + " phenomenon/phenomena");
@@ -77,11 +57,14 @@ public final class ChartPhenomena {
     }
 
     private static Definition parse(CsvRows csv, JSONObject row, String id) {
-        int minTier = ChartTiers.clamp(csv.integer(row, "min_tier", ChartTiers.LOWEST_TIER, id));
-        int maxTier = ChartTiers.clamp(csv.integer(row, "max_tier", ChartTiers.HIGHEST_TIER, id));
-        ChartPhenomenon.Kind kind = ChartPhenomenon.Kind.parse(ModCsv.text(row, "kind"));
-        return new Definition(id, csv.number(row, "weight", 1f, id), Math.min(minTier, maxTier), Math.max(minTier, maxTier),
-                ModCsv.text(row, "requires_mod"), ModCsv.text(row, "icon"), kind == null ? ChartPhenomenon.Kind.OVERLAY : kind);
+        BuiltInTable.TierRange tiers = BuiltInTable.TierRange.parse(csv, row, id);
+        ChartPhenomenon.Kind builtKind = built(id).kind();
+        String kindText = ModCsv.text(row, "kind");
+        if (!kindText.isEmpty() && ChartPhenomenon.Kind.parse(kindText) != builtKind) {
+            csv.problem(id, "kind", kindText + " (this phenomenon is " + builtKind + ")");
+        }
+        return new Definition(id, csv.number(row, "weight", 1f, id), tiers.minTier(), tiers.maxTier(), ModCsv.text(row, "requires_mod"),
+                ModCsv.text(row, "icon"), builtKind);
     }
 
     public static Collection<Definition> definitions() {
@@ -112,7 +95,7 @@ public final class ChartPhenomena {
             if (chance <= 0f || definition.kind() != ChartPhenomenon.Kind.OVERLAY || availableAt(definition.id(), tier) == null) {
                 continue;
             }
-            float roll = ChartLayoutGenerator.derivedRandom(seed ^ ((long) definition.id().hashCode() << 32), ROLL_SALT).nextFloat();
+            float roll = BuiltInTable.rollFor(seed, definition.id(), ROLL_SALT).nextFloat();
             if (roll < chance && roll < winningRoll) {
                 winner = definition.id();
                 winningRoll = roll;
@@ -122,12 +105,7 @@ public final class ChartPhenomena {
     }
 
     static ChartPhenomenon built(String id) {
-        for (ChartPhenomenon phenomenon : BUILT_IN) {
-            if (phenomenon.id().equals(id)) {
-                return phenomenon;
-            }
-        }
-        return null;
+        return BuiltInTable.find(BUILT_IN, ChartPhenomenon::id, id);
     }
 
     static void useForTests(List<Definition> testDefinitions) {

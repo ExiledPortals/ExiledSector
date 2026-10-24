@@ -37,11 +37,12 @@ class ChartRunTest {
     }
 
     @Test
-    void theGuaranteedBossTierUpIsGrantedOncePerRun() {
+    void theGuaranteedBossTierUpIsRememberedOnceGranted() {
         ChartRun run = run(1);
 
-        assertTrue(run.claimBossTierUp());
-        assertFalse(run.claimBossTierUp());
+        assertFalse(run.isBossTierUpGranted());
+        run.grantBossTierUp();
+        assertTrue(run.isBossTierUpGranted());
     }
 
     @Test
@@ -183,7 +184,7 @@ class ChartRunTest {
         ChartRun run = new ChartRun("abc", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
         assertFalse(run.hasLayout());
 
-        run.recordLayout(new ChartLayout(-9L, StarSystemType.TRINARY_2CLOSE, true, new Vector2f()));
+        run.recordLayout(new ChartLayout(-9L, StarSystemType.TRINARY_2CLOSE, true, new Vector2f(), null));
 
         assertTrue(run.hasLayout());
         assertEquals(-9L, run.layoutSeed());

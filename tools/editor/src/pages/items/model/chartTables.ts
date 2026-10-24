@@ -109,6 +109,7 @@ export const CHART_PHENOMENON_KINDS = ['star', 'overlay'];
 export const ATLAS_MARKER_IDS = ['void', 'powerful_boss', 'expansion', 'phenomenon'];
 export const ATLAS_SPECIAL_COLUMNS = ['id', 'kind', 'placement', 'chance', 'min_steps', 'radius', 'count', 'steps', 'requires_mod', 'unlock', 'faction', 'note'] as const;
 export const ATLAS_SPECIAL_PLACEMENTS = ['chunk', 'fixed'];
+export const ATLAS_SPECIAL_KINDS = ['infestation', 'sensor_array', 'bastion', 'unique'];
 const ATLAS_MOST_RADIUS = 7;
 export const CHART_COLONY_ITEM_CEILING_ID = 'ceiling';
 export const CHART_LOOT_COLUMNS =['id', 'drop_type', 'scope', 'group', 'mode', 'amount', 'min_tier', 'note'] as const;
@@ -1008,7 +1009,7 @@ export const ATLAS_SPECIAL_SPEC: ChartTableSpec = {
     'Special atlas sites. A chunk site rolls its chance once per 8 by 8 chunk and lands on one of its systems at least min_steps cells out. A fixed site sits count times at steps cells from the Gateway, evenly spread around it, in every save. Infestation sites infest every system within radius cells; for sensor arrays radius is the reveal in lanes.',
   columns: columnsOf(ATLAS_SPECIAL_COLUMNS, {
     id: { label: 'Site id', kind: 'text' },
-    kind: { label: 'Kind', kind: 'text', help: 'infestation, sensor_array, bastion or unique' },
+    kind: { label: 'Kind', kind: 'choice', choices: () => ATLAS_SPECIAL_KINDS },
     placement: { label: 'Placement', kind: 'choice', choices: () => ATLAS_SPECIAL_PLACEMENTS },
     chance: { label: 'Chance per chunk', kind: 'fraction' },
     min_steps: { label: 'Min steps', kind: 'number' },

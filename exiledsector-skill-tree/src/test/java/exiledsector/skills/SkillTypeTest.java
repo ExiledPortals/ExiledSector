@@ -68,7 +68,7 @@ class SkillTypeTest {
                 .phantomHullModIds(List.of("militarized_subsystems"))
                 .build();
 
-        assertEquals(List.of("frontshield", "militarized_subsystems"), type.getExclusiveHullModIds());
+        assertEquals(List.of("frontshield", "militarized_subsystems"), type.getExclusiveAndOwnHullModIds());
         assertEquals(List.of("militarized_subsystems"), type.getPhantomHullModIds());
     }
 

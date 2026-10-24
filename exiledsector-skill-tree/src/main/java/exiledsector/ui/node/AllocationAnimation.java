@@ -56,7 +56,7 @@ final class AllocationAnimation {
                     sources.add(neighbourId);
                 }
             }
-            timersByNodeId.put(nodeId, NodeTimer.allocating(ring.getValue() * ringSeconds, sources));
+            timersByNodeId.put(nodeId, NodeTimer.forAllocation(ring.getValue() * ringSeconds, sources));
         }
     }
 
@@ -65,7 +65,7 @@ final class AllocationAnimation {
         int lastRing = ringCount(ringById) - 1;
         float ringSeconds = ringSeconds(lastRing + 1);
         for (Map.Entry<String, Integer> ring : ringById.entrySet()) {
-            timersByNodeId.put(ring.getKey(), NodeTimer.deallocating((lastRing - ring.getValue()) * ringSeconds));
+            timersByNodeId.put(ring.getKey(), NodeTimer.forDeallocation((lastRing - ring.getValue()) * ringSeconds));
         }
     }
 
@@ -259,11 +259,11 @@ final class AllocationAnimation {
             this.sources = sources;
         }
 
-        static NodeTimer allocating(float delaySeconds, List<String> sources) {
+        static NodeTimer forAllocation(float delaySeconds, List<String> sources) {
             return new NodeTimer(true, delaySeconds, sources);
         }
 
-        static NodeTimer deallocating(float delaySeconds) {
+        static NodeTimer forDeallocation(float delaySeconds) {
             return new NodeTimer(false, delaySeconds, List.of());
         }
     }

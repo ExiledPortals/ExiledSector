@@ -37,12 +37,12 @@ public final class AtlasProgress {
         if (special == null) {
             return;
         }
-        if (AtlasReach.SENSOR_ARRAY.equals(special.kind())) {
+        if (special.kind() == AtlasSpecial.Kind.SENSOR_ARRAY) {
             state.addAtlasPoints(1);
         } else if (special.infests()) {
             cleanse(generator, state, cell, special);
             state.addAtlasPoints(1);
-        } else if (AtlasReach.BASTION.equals(special.kind())) {
+        } else if (special.kind() == AtlasSpecial.Kind.BASTION) {
             state.addKeyFragment();
             state.addAtlasPoints(1);
         }
@@ -51,7 +51,7 @@ public final class AtlasProgress {
     static void cleanse(AtlasGenerator generator, AtlasState state, AtlasCell nexus, AtlasSpecial special) {
         int reach = (int) Math.ceil(special.radius()) + 1;
         for (AtlasCell cell : nexus.around(reach)) {
-            if (special.id().equals(generator.node(cell).infestationId())) {
+            if (!generator.isVoid(cell) && nexus.equals(generator.infestationSource(cell))) {
                 state.add(cell, AtlasState.CLEANSED);
             }
         }
@@ -67,7 +67,7 @@ public final class AtlasProgress {
 
     public static void opened(SectorAPI sector, AtlasGenerator generator, AtlasCell cell) {
         AtlasSpecial special = generator.specialAt(cell);
-        if (special != null && AtlasReach.BASTION.equals(special.kind())) {
+        if (AtlasSpecial.ofKind(special, AtlasSpecial.Kind.BASTION)) {
             AtlasState.get(sector).add(cell, AtlasState.ATTEMPTED);
         }
     }

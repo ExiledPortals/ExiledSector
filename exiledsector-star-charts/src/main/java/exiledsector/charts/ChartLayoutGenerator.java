@@ -69,12 +69,8 @@ public final class ChartLayoutGenerator {
         if (request.systemType() != null) {
             return request.systemType();
         }
-        Map<StarSystemType, Float> weights = request.recipe().systemTypeWeights();
+        Map<StarSystemType, Float> weights = request.recipe().shape().systemTypeWeights();
         return pickType(derivedRandom(request.seed(), TYPE_SALT), weights.isEmpty() ? TYPE_WEIGHTS : weights);
-    }
-
-    static StarSystemType pickType(Random typeRandom) {
-        return pickType(typeRandom, TYPE_WEIGHTS);
     }
 
     static StarSystemType pickType(Random typeRandom, Map<StarSystemType, Float> weights) {
@@ -110,7 +106,7 @@ public final class ChartLayoutGenerator {
         long seed = request.seed();
         String phenomenonId = request.phenomenonId().isEmpty() ? ChartPhenomena.rolledOverlay(seed, request.tier(), request.chartContext()) : request.phenomenonId();
         ChartPhenomenon phenomenon = ChartPhenomena.availableAt(phenomenonId, request.tier());
-        StarSystemType systemType = phenomenon != null && phenomenon.systemType() != null ? phenomenon.systemType() : typeFor(request);
+        StarSystemType systemType = ChartPhenomenon.systemTypeOr(phenomenon, typeFor(request));
         Set<Object> namesBefore = ChartUsedNames.snapshot();
         Built built;
         try {
@@ -124,9 +120,9 @@ public final class ChartLayoutGenerator {
         }
         removeJumpPoints(system);
         removeHyperspacePresence(system);
-        prepareMarkets(system, sector.getEconomy(), request.recipe().keepRuins());
-        if (!request.recipe().musicSetId().isEmpty()) {
-            system.getMemoryWithoutUpdate().set(MusicPlayerPluginImpl.MUSIC_SET_MEM_KEY, request.recipe().musicSetId());
+        prepareMarkets(system, sector.getEconomy(), request.recipe().look().keepRuins());
+        if (!request.recipe().look().musicSetId().isEmpty()) {
+            system.getMemoryWithoutUpdate().set(MusicPlayerPluginImpl.MUSIC_SET_MEM_KEY, request.recipe().look().musicSetId());
         }
         ChartBodyNames.assign(system, ChartBodyNames.designation(derivedRandom(seed, NAME_SALT)));
         system.updateAllOrbits();

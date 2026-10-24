@@ -35,8 +35,8 @@ class ChartFeaturesTest {
         List<String> problems = ChartFeatures.register(new JSONArray().put(new JSONObject().put("id", "crystal_spire")));
 
         assertEquals(1, problems.size());
-        assertNull(ChartFeatures.byId(RingedGiant.ID));
-        ChartFeatures.register(new JSONArray().put(new JSONObject().put("id", RingedGiant.ID)));
-        assertSame(RingedGiant.INSTANCE, ChartFeatures.byId(RingedGiant.ID));
+        assertNull(ChartFeatures.byId(RingedGiant.FEATURE_ID));
+        ChartFeatures.register(new JSONArray().put(new JSONObject().put("id", RingedGiant.FEATURE_ID)));
+        assertSame(RingedGiant.INSTANCE, ChartFeatures.byId(RingedGiant.FEATURE_ID));
     }
 }

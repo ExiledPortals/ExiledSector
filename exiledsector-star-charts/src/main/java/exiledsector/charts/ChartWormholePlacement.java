@@ -54,10 +54,6 @@ final class ChartWormholePlacement {
         return outermost;
     }
 
-    static Vector2f place(List<Band> blocked, Random placementRandom) {
-        return place(blocked, placementRandom, null);
-    }
-
     static Vector2f place(List<Band> blocked, Random placementRandom, Vector2f avoid) {
         double angle = placementRandom.nextDouble() * Math.PI * 2d;
         if (avoid != null && avoid.lengthSquared() > 0f) {

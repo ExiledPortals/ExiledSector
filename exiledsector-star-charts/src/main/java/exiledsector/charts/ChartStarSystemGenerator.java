@@ -18,6 +18,7 @@ import exiledsector.charts.feature.ChartFeature;
 import exiledsector.charts.feature.FeatureSite;
 import exiledsector.charts.phenomenon.ChartPhenomenon;
 import exiledsector.charts.phenomenon.PhenomenonSite;
+import exiledsector.charts.phenomenon.StellarFlares;
 import exiledsector.compat.UnknownSkiesCompat;
 
 import java.util.ArrayList;
@@ -40,24 +41,20 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
     private SectorEntityToken featureAnchor;
     private boolean primaryForced;
 
-    ChartStarSystemGenerator(StarAge age, StarSystemType chartType, ChartLayoutRecipe recipe) {
-        this(age, chartType, recipe, null);
-    }
-
     ChartStarSystemGenerator(StarAge age, StarSystemType chartType, ChartLayoutRecipe recipe, ChartPhenomenon phenomenon) {
         super(new CustomConstellationParams(age));
         this.phenomenon = phenomenon;
-        systemType = phenomenon != null && phenomenon.systemType() != null ? phenomenon.systemType() : chartType;
+        systemType = ChartPhenomenon.systemTypeOr(phenomenon, chartType);
         this.recipe = recipe == null ? ChartLayoutRecipe.ORDINARY : recipe;
     }
 
     @Override
     public void pickNebulaAndBackground() {
-        float nebulaChance = Float.isNaN(recipe.nebulaChance()) ? constellationAgeData.getProbNebula() : recipe.nebulaChance();
+        float nebulaChance = Float.isNaN(recipe.look().nebulaChance()) ? constellationAgeData.getProbNebula() : recipe.look().nebulaChance();
         boolean hasNebula = nebulaChance > random.nextFloat() || systemType == StarSystemType.NEBULA;
         String picked = hasNebula ? nebulaTypes.get(constellationAge) : null;
         nebulaType = picked == null || !BACKGROUNDS_BY_NEBULA.containsKey(picked) ? NEBULA_NONE : picked;
-        List<String> pool = NEBULA_NONE.equals(nebulaType) ? recipe.backgrounds() : recipe.nebulaBackgrounds();
+        List<String> pool = NEBULA_NONE.equals(nebulaType) ? recipe.look().backgrounds() : recipe.look().nebulaBackgrounds();
         List<String> backgrounds = new ArrayList<>(pool.isEmpty() ? BACKGROUNDS_BY_NEBULA.get(nebulaType) : pool);
         backgrounds.addAll(UnknownSkiesCompat.backgrounds(constellationAge, !NEBULA_NONE.equals(nebulaType)));
         backgroundName = backgrounds.get(random.nextInt(backgrounds.size()));
@@ -131,11 +128,11 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
 
     @Override
     protected GenResult addPlanetsAndTerrain(float maxOrbitRadius) {
-        float orbitLimit = Math.min(maxOrbitRadius, recipe.orbitRadiusLimit());
-        if (!recipe.setsOrbits()) {
+        float orbitLimit = Math.min(maxOrbitRadius, recipe.shape().orbitRadiusLimit());
+        if (!recipe.shape().setsOrbits()) {
             return super.addPlanetsAndTerrain(orbitLimit);
         }
-        int numOrbits = Math.round(getNormalRandom(recipe.minOrbits(), recipe.maxOrbits()));
+        int numOrbits = Math.round(getNormalRandom(recipe.shape().minOrbits(), recipe.shape().maxOrbits()));
         if (numOrbits <= 0) {
             return null;
         }
@@ -164,11 +161,11 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
         if (!addStars(starId)) {
             throw new IllegalStateException("no star type could be picked for a " + systemType + " Star Chart layout");
         }
-        removeFlares();
-        for (PlanetAPI body : Arrays.asList(star, secondary, tertiary)) {
+        for (PlanetAPI body : pickedStars()) {
+            StellarFlares.setFlareChance(body, 0f);
             UnknownSkiesCompat.varyStar(body, random);
         }
-        system.setLightColor(recipe.tinted(system.getLightColor()));
+        system.setLightColor(recipe.look().tinted(system.getLightColor()));
         updateAgeAfterPickingStar();
         GenResult result = addPlanetsAndTerrain(MAX_ORBIT_RADIUS);
         featureAnchor = buildFeature();
@@ -178,7 +175,7 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
             hideNebulaCentre();
         }
         if (phenomenon != null) {
-            phenomenon.shape(new PhenomenonSite(system, systemCenter != null ? systemCenter : star, visibleStars(),
+            phenomenon.shape(new PhenomenonSite(system, centre(), visibleStars(),
                     ChartWormholePlacement.outermost(system, List.of()), random));
         }
         system.setAge(starAge);
@@ -205,7 +202,7 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
 
     private List<PlanetAPI> visibleStars() {
         List<PlanetAPI> stars = new ArrayList<>();
-        for (PlanetAPI body : Arrays.asList(star, secondary, tertiary)) {
+        for (PlanetAPI body : pickedStars()) {
             if (body != null && system.getPlanets().contains(body)) {
                 stars.add(body);
             }
@@ -218,8 +215,8 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
     }
 
     private SectorEntityToken buildFeature() {
-        ChartFeature feature = ChartFeatures.byId(recipe.featureId());
-        SectorEntityToken centre = systemCenter != null ? systemCenter : star;
+        ChartFeature feature = ChartFeatures.byId(recipe.shape().featureId());
+        SectorEntityToken centre = centre();
         if (feature == null || centre == null) {
             return null;
         }
@@ -228,13 +225,12 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
                 planet -> PlanetConditionGenerator.generateConditionsForPlanet(planet, age)));
     }
 
-    private void removeFlares() {
-        for (PlanetAPI body : Arrays.asList(star, secondary, tertiary)) {
-            StarCoronaTerrainPlugin corona = body == null ? null : Misc.getCoronaFor(body);
-            if (corona != null && corona.getParams() != null) {
-                corona.getParams().flareProbability = 0f;
-            }
-        }
+    private List<PlanetAPI> pickedStars() {
+        return Arrays.asList(star, secondary, tertiary);
+    }
+
+    private SectorEntityToken centre() {
+        return systemCenter != null ? systemCenter : star;
     }
 
     private static float frequency(StarGenDataSpec data, StarAge age) {

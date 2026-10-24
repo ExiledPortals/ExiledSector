@@ -25,8 +25,8 @@ class AtlasOpeningTest {
     private static AtlasRules rules() {
         List<AtlasRegion> regions = List.of(new AtlasRegion(AtlasRegion.NORMAL, 1f, 0, "", "", Map.of(), Map.of(), Map.of()));
         List<AtlasSpecial> specials = List.of(
-                new AtlasSpecial("nexus", AtlasSpecial.INFESTATION, AtlasSpecial.Placement.CHUNK, 1f, 3f, 2.5f, 1, 1f, "", "", "remnant"),
-                new AtlasSpecial("bastion", AtlasReach.BASTION, AtlasSpecial.Placement.FIXED, 0f, 1f, 0f, 3, 25f, "", ""));
+                new AtlasSpecial("nexus", AtlasSpecial.Kind.INFESTATION, AtlasSpecial.Placement.CHUNK, 1f, 3f, 2.5f, 1, 1f, "", "", "remnant"),
+                new AtlasSpecial("bastion", AtlasSpecial.Kind.BASTION, AtlasSpecial.Placement.FIXED, 0f, 1f, 0f, 3, 25f, "", "", ""));
         return new AtlasRules(regions, Map.of("compact", 1f), Map.of("pirates", 1f), new AtlasMarkerRule(0.3f, 0f, 0.3f),
                 new AtlasMarkerRule(1f, 0f, 1f), new AtlasMarkerRule(1f, 0f, 1f), AtlasMarkerRule.NEVER, specials,
                 List.of(new AtlasMarkerCandidate("relay", 1f, "")), List.of());
@@ -88,7 +88,7 @@ class AtlasOpeningTest {
         AtlasCell nexus = findInfested(generator, true);
         AtlasCell infested = null;
         for (AtlasCell cell : nexus.around(3)) {
-            if (!cell.equals(nexus) && "nexus".equals(generator.node(cell).infestationId())) {
+            if (!cell.equals(nexus) && nexus.equals(generator.infestationSource(cell))) {
                 infested = cell;
             }
         }
@@ -101,6 +101,36 @@ class AtlasOpeningTest {
         assertEquals(2, state.atlasPoints());
         AtlasProgress.complete(generator, state, nexus, 7);
         assertEquals(2, state.atlasPoints());
+    }
+
+    @Test
+    void clearingANexusLeavesTheZoneOfANeighbouringNexusOfTheSameKindInfested() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator generator = new AtlasGenerator(SEED, rules(), AtlasUnlocks.NONE, state);
+        AtlasCell nexus = null;
+        AtlasCell neighbourZone = null;
+        for (AtlasCell cell : AtlasCell.ORIGIN.around(20)) {
+            AtlasSpecial special = generator.specialAt(cell);
+            if (special == null || !special.infests() || nexus != null) {
+                continue;
+            }
+            for (AtlasCell near : cell.around(4)) {
+                AtlasCell source = generator.infestationSource(near);
+                if (source != null && !source.equals(cell)) {
+                    nexus = cell;
+                    neighbourZone = near;
+                }
+            }
+        }
+        assertNotNull(nexus);
+
+        AtlasProgress.complete(generator, state, nexus, 7);
+
+        assertFalse(state.has(neighbourZone, AtlasState.CLEANSED));
+        for (AtlasCell cell : nexus.around(4)) {
+            boolean ownZone = !generator.isVoid(cell) && nexus.equals(generator.infestationSource(cell));
+            assertEquals(ownZone, state.has(cell, AtlasState.CLEANSED), cell.toString());
+        }
     }
 
     @Test

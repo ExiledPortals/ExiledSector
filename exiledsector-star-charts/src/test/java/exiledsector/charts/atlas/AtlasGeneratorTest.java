@@ -39,9 +39,9 @@ class AtlasGeneratorTest {
             region("expanse", 3f, 0, "", THREAT_FLAG, Map.of("remnant", 1f), Map.of()));
 
     private static final List<AtlasSpecial> SPECIALS = List.of(
-            new AtlasSpecial("sensor", "sensor_array", AtlasSpecial.Placement.CHUNK, 0.5f, 4f, 6f, 1, 1f, "", ""),
-            new AtlasSpecial("nexus", AtlasSpecial.INFESTATION, AtlasSpecial.Placement.CHUNK, 0.3f, 6f, 2.5f, 1, 1f, "", ""),
-            new AtlasSpecial("bastion", "bastion", AtlasSpecial.Placement.FIXED, 0f, 1f, 0f, 3, 25f, "", ""));
+            new AtlasSpecial("sensor", AtlasSpecial.Kind.SENSOR_ARRAY, AtlasSpecial.Placement.CHUNK, 0.5f, 4f, 6f, 1, 1f, "", "", ""),
+            new AtlasSpecial("nexus", AtlasSpecial.Kind.INFESTATION, AtlasSpecial.Placement.CHUNK, 0.3f, 6f, 2.5f, 1, 1f, "", "", ""),
+            new AtlasSpecial("bastion", AtlasSpecial.Kind.BASTION, AtlasSpecial.Placement.FIXED, 0f, 1f, 0f, 3, 25f, "", "", ""));
 
     private static AtlasRules rules(List<AtlasRegion> regions) {
         return new AtlasRules(regions, Map.of("compact", 1f, "sprawling", 2f, "ringed", 1f),
@@ -57,7 +57,17 @@ class AtlasGeneratorTest {
     }
 
     private static AtlasGenerator generator(AtlasRules rules) {
-        return new AtlasGenerator(SEED, rules, AtlasUnlocks.NONE);
+        return new AtlasGenerator(SEED, rules, AtlasUnlocks.NONE, AtlasMemory.NONE);
+    }
+
+    private static AtlasRules withExpansions(AtlasRules rules, List<AtlasMarkerCandidate> expansions) {
+        return new AtlasRules(rules.regions(), rules.layoutWeights(), rules.factionWeights(), rules.voidRule(), rules.powerfulBossRule(),
+                rules.expansionRule(), rules.phenomenonRule(), rules.specials(), expansions, rules.phenomena());
+    }
+
+    private static AtlasRules withPhenomena(AtlasRules rules, List<AtlasMarkerCandidate> phenomena) {
+        return new AtlasRules(rules.regions(), rules.layoutWeights(), rules.factionWeights(), rules.voidRule(), rules.powerfulBossRule(),
+                rules.expansionRule(), rules.phenomenonRule(), rules.specials(), rules.expansions(), phenomena);
     }
 
     private static List<AtlasNode> scan(AtlasGenerator generator) {
@@ -106,7 +116,7 @@ class AtlasGeneratorTest {
 
     @Test
     void anotherSeedBuildsAnotherAtlas() {
-        assertNotEquals(scan(generator(rules())), scan(new AtlasGenerator(SEED + 1, rules(), AtlasUnlocks.NONE)));
+        assertNotEquals(scan(generator(rules())), scan(new AtlasGenerator(SEED + 1, rules(), AtlasUnlocks.NONE, AtlasMemory.NONE)));
     }
 
     @Test
@@ -229,8 +239,8 @@ class AtlasGeneratorTest {
         AtlasMarkerCandidate borderLoving = new AtlasMarkerCandidate("relay", 1f, "", (traits, weight) -> traits.bordersOtherTerritory() ? weight * 4f : 0f);
         List<AtlasRegion> withExtra = new ArrayList<>(REGIONS);
         withExtra.add(region("furnace", 6f, 0, "", "", Map.of("hegemony", 1f), Map.of()));
-        List<AtlasNode> before = scan(generator(rules().withExpansions(List.of(borderLoving))));
-        List<AtlasNode> after = scan(generator(rules(withExtra).withExpansions(List.of(borderLoving))));
+        List<AtlasNode> before = scan(generator(withExpansions(rules(), List.of(borderLoving))));
+        List<AtlasNode> after = scan(generator(withExpansions(rules(withExtra), List.of(borderLoving))));
         int bordered = 0;
         for (int index = 0; index < before.size(); index++) {
             AtlasNode was = before.get(index);
@@ -297,7 +307,7 @@ class AtlasGeneratorTest {
             for (AtlasBiome other : biomes) {
                 if (other != biome) {
                     double gap = Math.hypot(other.centreX() - biome.centreX(), other.centreY() - biome.centreY()) - biome.radius() - other.radius();
-                    assertTrue(gap >= AtlasGenerator.BIOME_GAP, "biomes " + gap + " apart");
+                    assertTrue(gap >= AtlasBiomes.BIOME_GAP, "biomes " + gap + " apart");
                 }
             }
         }
@@ -329,7 +339,7 @@ class AtlasGeneratorTest {
     @Test
     void lockedBiomesStayNormalUnlessRevealedAfterTheUnlock() {
         AtlasGenerator locked = generator(rules());
-        AtlasGenerator unlocked = new AtlasGenerator(SEED, rules(), new AtlasUnlocks(RAT::equals, Set.of(THREAT_FLAG)));
+        AtlasGenerator unlocked = new AtlasGenerator(SEED, rules(), new AtlasUnlocks(RAT::equals, Set.of(THREAT_FLAG)), AtlasMemory.NONE);
         int opened = 0;
         Map<Long, String> unlockedSites = new HashMap<>();
         for (AtlasBiome biome : biomes(unlocked)) {
@@ -434,7 +444,7 @@ class AtlasGeneratorTest {
         List<AtlasMarkerCandidate> morePhenomena = new ArrayList<>(base.phenomena());
         morePhenomena.add(new AtlasMarkerCandidate("nebula", 1f, ""));
         List<AtlasNode> before = scan(generator(base));
-        List<AtlasNode> after = scan(generator(base.withExpansions(moreExpansions).withPhenomena(morePhenomena)));
+        List<AtlasNode> after = scan(generator(withPhenomena(withExpansions(base, moreExpansions), morePhenomena)));
         int convoys = 0;
         int nebulae = 0;
         for (int index = 0; index < before.size(); index++) {
@@ -481,7 +491,7 @@ class AtlasGeneratorTest {
                 far += marked;
             }
         }
-        for (AtlasNode node : scan(generator(rules().withExpansions(List.of(new AtlasMarkerCandidate("relay", 1f, RAT)))))) {
+        for (AtlasNode node : scan(generator(withExpansions(rules(), List.of(new AtlasMarkerCandidate("relay", 1f, RAT)))))) {
             assertNull(node.expansionId());
         }
 
@@ -490,7 +500,7 @@ class AtlasGeneratorTest {
 
     @Test
     void theExpansionHookShapesTheRoll() {
-        AtlasRules vetoed = rules().withExpansions(List.of(new AtlasMarkerCandidate("relay", 1f, "",
+        AtlasRules vetoed = withExpansions(rules(), List.of(new AtlasMarkerCandidate("relay", 1f, "",
                 (traits, weight) -> "badlands".equals(traits.regionId()) ? weight : 0f)));
         int inBadlands = 0;
         for (AtlasNode node : scan(generator(vetoed))) {
@@ -506,7 +516,7 @@ class AtlasGeneratorTest {
     @Test
     void bastionsSitAtFixedBearingsInEverySave() {
         for (long seed = 1; seed <= 3; seed++) {
-            AtlasGenerator generator = new AtlasGenerator(seed, rules(), AtlasUnlocks.NONE);
+            AtlasGenerator generator = new AtlasGenerator(seed, rules(), AtlasUnlocks.NONE, AtlasMemory.NONE);
             for (int index = 0; index < 3; index++) {
                 double bearing = Math.PI / 2.0 + 2.0 * Math.PI * index / 3;
                 AtlasNode bastion = generator.node(AtlasCell.nearest((float) (25 * Math.cos(bearing)), (float) (25 * Math.sin(bearing))));

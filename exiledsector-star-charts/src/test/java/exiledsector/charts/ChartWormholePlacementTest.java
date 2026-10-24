@@ -168,7 +168,7 @@ class ChartWormholePlacementTest {
                 new ChartWormholePlacement.Band(1810f, 2160f), new ChartWormholePlacement.Band(2400f, 2600f));
         for (long seed = 0; seed < 200; seed++) {
             Random random = new Random(seed);
-            Vector2f placed = ChartWormholePlacement.place(blocked, random);
+            Vector2f placed = ChartWormholePlacement.place(blocked, random, null);
             float arrival = new Vector2f(placed.x + ChartSystemFactory.ENTRY_OFFSET, placed.y).length();
             assertTrue(ChartWormholePlacement.isClear(blocked, placed.length()), "seed " + seed + " wormhole at " + placed.length());
             assertTrue(ChartWormholePlacement.isClear(blocked, arrival), "seed " + seed + " arrival at " + arrival);

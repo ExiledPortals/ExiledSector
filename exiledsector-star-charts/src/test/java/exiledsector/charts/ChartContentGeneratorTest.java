@@ -419,13 +419,13 @@ class ChartContentGeneratorTest {
     @Test
     void aPlannedExpansionIsGeneratedWithThePlacedSitesAndRecorded() {
         ChartExpansionsTest.PlacesNothing expansion = new ChartExpansionsTest.PlacesNothing();
-        ChartExpansions.useForTests(List.of(expansion), List.of(new ChartExpansions.Definition(SpatialBreach.ID, 1f, 1, 15, "", "")));
+        ChartExpansions.useForTests(List.of(expansion), List.of(new ChartExpansions.Definition(SpatialBreach.EXPANSION_ID, 1f, 1, 15, "", "")));
         try {
             ChartGenContext breach = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_CHANCE, 100f)));
 
             ChartContent content = ChartContentGenerator.generate(sector, system, RUN_ID, 42L, 10, WORMHOLE, breach);
 
-            assertEquals(List.of(SpatialBreach.ID), content.expansions());
+            assertEquals(List.of(SpatialBreach.EXPANSION_ID), content.expansions());
             assertEquals(1, expansion.sites.size());
             ExpansionSite site = expansion.sites.get(0);
             assertEquals(RUN_ID, site.runId());
@@ -445,7 +445,7 @@ class ChartContentGeneratorTest {
         ChartExpansion failing = new ChartExpansion() {
             @Override
             public String id() {
-                return SpatialBreach.ID;
+                return SpatialBreach.EXPANSION_ID;
             }
 
             @Override
@@ -453,7 +453,7 @@ class ChartContentGeneratorTest {
                 throw new IllegalStateException("test failure");
             }
         };
-        ChartExpansions.useForTests(List.of(failing), List.of(new ChartExpansions.Definition(SpatialBreach.ID, 1f, 1, 15, "", "")));
+        ChartExpansions.useForTests(List.of(failing), List.of(new ChartExpansions.Definition(SpatialBreach.EXPANSION_ID, 1f, 1, 15, "", "")));
         try {
             ChartGenContext breach = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_CHANCE, 100f)));
 

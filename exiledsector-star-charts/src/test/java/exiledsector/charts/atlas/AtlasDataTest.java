@@ -76,19 +76,20 @@ class AtlasDataTest {
 
         assertEquals(2, layoutProblems.size());
         assertEquals(1, regionProblems.size());
-        assertEquals(Map.of(StarSystemType.SINGLE, 3f, StarSystemType.BINARY_FAR, 1f), recipe.systemTypeWeights());
-        assertEquals(4, recipe.minOrbits());
-        assertEquals(6, recipe.maxOrbits());
-        assertEquals(12000f, recipe.orbitRadiusLimit());
-        assertEquals("ringed_giant", recipe.featureId());
-        assertEquals(List.of("a.jpg", "b.jpg"), recipe.backgrounds());
-        assertEquals(0.3f, recipe.nebulaChance());
-        assertEquals(new Color(0xA0, 0xC8, 0xFF), recipe.lightTint());
-        assertEquals(Map.of("star_red_dwarf", 2f), recipe.starWeights());
-        assertEquals(Map.of("cat_frozen", 4f, "cat_terrain_rings", 6f), recipe.categoryWeights());
-        assertTrue(recipe.keepRuins());
-        assertFalse(plain.setsOrbits());
-        assertTrue(plain.systemTypeWeights().isEmpty());
+        assertEquals(Map.of(StarSystemType.SINGLE, 3f, StarSystemType.BINARY_FAR, 1f), recipe.shape().systemTypeWeights());
+        assertEquals(4, recipe.shape().minOrbits());
+        assertEquals(6, recipe.shape().maxOrbits());
+        assertEquals(12000f, recipe.shape().orbitRadiusLimit());
+        assertEquals("ringed_giant", recipe.shape().featureId());
+        assertEquals(List.of("a.jpg", "b.jpg"), recipe.look().backgrounds());
+        assertEquals(0.3f, recipe.look().nebulaChance());
+        assertEquals(new Color(0xA0, 0xC8, 0xFF), recipe.look().lightTint());
+        assertEquals(Map.of("star_red_dwarf", 2f), recipe.look().starWeights());
+        assertEquals(4f, recipe.categoryWeight("cat_frozen", 1f));
+        assertEquals(6f, recipe.categoryWeight("cat_terrain_rings", 1f));
+        assertTrue(recipe.look().keepRuins());
+        assertFalse(plain.shape().setsOrbits());
+        assertTrue(plain.shape().systemTypeWeights().isEmpty());
     }
 
     @Test

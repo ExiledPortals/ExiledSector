@@ -761,9 +761,8 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         if (openedItem == null || openedItem != loadedItem) {
             return;
         }
-        BenchModeSupport.OpenOutcome outcome = openedTarget == null
-                ? modeSupport().open(Global.getSector(), modeStore(), openedItem, modeSupport().openEntries(), craftingRandom)
-                : modeSupport().openAt(Global.getSector(), modeStore(), openedItem, modeSupport().openEntries(), craftingRandom, openedTarget);
+        BenchModeSupport.OpenOutcome outcome = modeSupport().openAt(Global.getSector(), modeStore(), openedItem, modeSupport().openEntries(),
+                craftingRandom, openedTarget);
         String message = Translation.msg(outcome.messageKey()).arg("name", openedItem.name()).text();
         if (!outcome.opened()) {
             SkillTreeSounds.refused();

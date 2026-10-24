@@ -186,7 +186,7 @@ class SkillTypeLoaderTest {
 
         SkillType hull = SkillTypeLoader.parseSkillTypes(root).get("hull");
 
-        assertTrue(hull.getExclusiveHullModIds().isEmpty());
+        assertTrue(hull.getExclusiveAndOwnHullModIds().isEmpty());
     }
 
     @Test
@@ -200,9 +200,9 @@ class SkillTypeLoaderTest {
 
         SkillType heavyArmor = SkillTypeLoader.parseSkillTypes(root).get("heavyarmor");
 
-        assertEquals(2, heavyArmor.getExclusiveHullModIds().size());
-        assertEquals("armoredcladding", heavyArmor.getExclusiveHullModIds().get(0));
-        assertEquals("heavyarmor", heavyArmor.getExclusiveHullModIds().get(1));
+        assertEquals(2, heavyArmor.getExclusiveAndOwnHullModIds().size());
+        assertEquals("armoredcladding", heavyArmor.getExclusiveAndOwnHullModIds().get(0));
+        assertEquals("heavyarmor", heavyArmor.getExclusiveAndOwnHullModIds().get(1));
     }
 
     @Test
@@ -245,8 +245,8 @@ class SkillTypeLoaderTest {
 
         SkillType escortPackage = SkillTypeLoader.parseSkillTypes(root).get("escort_package");
 
-        assertEquals(1, escortPackage.getExclusiveHullModIds().size());
-        assertEquals("escort_package", escortPackage.getExclusiveHullModIds().get(0));
+        assertEquals(1, escortPackage.getExclusiveAndOwnHullModIds().size());
+        assertEquals("escort_package", escortPackage.getExclusiveAndOwnHullModIds().get(0));
     }
 
     @Test
@@ -477,7 +477,7 @@ class SkillTypeLoaderTest {
         SkillType type = SkillTypeLoader.parseSkillTypes(root).get("so");
 
         assertEquals(List.of("safetyoverrides"), type.getPhantomHullModIds());
-        assertEquals(List.of("safetyoverrides"), type.getExclusiveHullModIds());
+        assertEquals(List.of("safetyoverrides"), type.getExclusiveAndOwnHullModIds());
     }
 
     @Test

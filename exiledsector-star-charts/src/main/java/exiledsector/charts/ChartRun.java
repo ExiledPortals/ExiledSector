@@ -163,6 +163,10 @@ public final class ChartRun {
         return AtlasRunNode.decode(atlasNode);
     }
 
+    String atlasNodeData() {
+        return atlasNode;
+    }
+
     public String chartData() {
         return chartData;
     }
@@ -250,12 +254,12 @@ public final class ChartRun {
         return true;
     }
 
-    public boolean claimBossTierUp() {
-        if (bossTierUpGranted) {
-            return false;
-        }
+    public boolean isBossTierUpGranted() {
+        return bossTierUpGranted;
+    }
+
+    public void grantBossTierUp() {
         bossTierUpGranted = true;
-        return true;
     }
 
     public boolean isRewardClaimed() {

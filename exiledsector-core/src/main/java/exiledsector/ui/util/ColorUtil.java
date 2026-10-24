@@ -28,6 +28,10 @@ public final class ColorUtil {
         }
     }
 
+    public static Color parseHexColorOrNull(String hex) {
+        return parseHexColor(hex, null);
+    }
+
     private static Color parseHexColorOrThrow(String hex) {
         String cleaned = hex.startsWith("#") ? hex.substring(1) : hex;
         if (cleaned.length() == 6) cleaned = "FF" + cleaned;

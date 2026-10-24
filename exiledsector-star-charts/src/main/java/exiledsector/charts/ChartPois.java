@@ -71,10 +71,9 @@ public final class ChartPois {
             csv.skipRow(id, "a derelict needs derelict_type " + DERELICT_TYPES);
             return null;
         }
-        int minTier = ChartTiers.clamp(csv.integer(row, "min_tier", ChartTiers.LOWEST_TIER, id));
-        int maxTier = ChartTiers.clamp(csv.integer(row, "max_tier", ChartTiers.HIGHEST_TIER, id));
+        BuiltInTable.TierRange tiers = BuiltInTable.TierRange.parse(csv, row, id);
         return new ChartPoi(id, kind, entityType, ModCsv.text(row, "salvage_spec"), derelictType, csv.number(row, "cost", 1f, id),
-                csv.number(row, "weight", 1f, id), Math.min(minTier, maxTier), Math.max(minTier, maxTier), csv.flag(row, "guarded", false, id),
+                csv.number(row, "weight", 1f, id), tiers.minTier(), tiers.maxTier(), csv.flag(row, "guarded", false, id),
                 ModCsv.text(row, "requires_mod"), CsvRows.entries(ModCsv.text(row, "planet_categories")));
     }
 
@@ -96,7 +95,7 @@ public final class ChartPois {
         return modRequirementMet(poi.requiredMod());
     }
 
-    static boolean modRequirementMet(String modId) {
+    public static boolean modRequirementMet(String modId) {
         if (modId == null || modId.isEmpty()) {
             return true;
         }

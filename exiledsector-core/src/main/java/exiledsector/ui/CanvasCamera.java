@@ -124,6 +124,10 @@ public class CanvasCamera {
         return true;
     }
 
+    public void scrollAt(boolean in, float screenX, float screenY, PositionAPI canvasPosition) {
+        scroll(in, screenX - (canvasPosition.getX() + canvasPosition.getWidth() / 2f), screenY - (canvasPosition.getY() + canvasPosition.getHeight() / 2f));
+    }
+
     public void scroll(boolean in, float pivotX, float pivotY) {
         zoomPivotX = pivotX;
         zoomPivotY = pivotY;

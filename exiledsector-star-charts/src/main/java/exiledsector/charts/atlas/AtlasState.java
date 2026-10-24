@@ -21,6 +21,7 @@ public final class AtlasState implements AtlasMemory {
     public static final int CLEANSED = 8;
     public static final int ATTEMPTED = 16;
     static final String FLAG_SEPARATOR = ",";
+    private static final Random SEEDS = new Random();
 
     private final long seed;
     private final int generatorVersion;
@@ -41,7 +42,7 @@ public final class AtlasState implements AtlasMemory {
         if (data.get(PERSISTENT_KEY) instanceof AtlasState existing) {
             return existing.repaired();
         }
-        AtlasState created = new AtlasState(new Random().nextLong());
+        AtlasState created = new AtlasState(SEEDS.nextLong());
         data.put(PERSISTENT_KEY, created);
         return created;
     }
@@ -137,6 +138,10 @@ public final class AtlasState implements AtlasMemory {
         }
         atlasPoints++;
         return true;
+    }
+
+    public Set<Integer> clearedTiers() {
+        return new TreeSet<>(clearedTiers);
     }
 
     public void addAtlasPoints(int points) {

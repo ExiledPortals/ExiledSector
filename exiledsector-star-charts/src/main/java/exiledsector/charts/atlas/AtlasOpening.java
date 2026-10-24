@@ -45,7 +45,7 @@ public final class AtlasOpening {
             return Blocker.NOT_REACHABLE;
         }
         AtlasSpecial special = generator.specialAt(cell);
-        if (special != null && AtlasReach.BASTION.equals(special.kind()) && (chart == null || chart.tier() < ChartTiers.HIGHEST_TIER)) {
+        if (AtlasSpecial.ofKind(special, AtlasSpecial.Kind.BASTION) && (chart == null || chart.tier() < ChartTiers.HIGHEST_TIER)) {
             return Blocker.BASTION_NEEDS_TOP_TIER;
         }
         if (special != null && special.infests() && explicitModifiers(chart) < NEXUS_MODIFIERS) {
@@ -70,34 +70,34 @@ public final class AtlasOpening {
             effects.addAll(AtlasData.nodeEffects(POWERFUL_BOSS));
             bossTierUp = true;
         }
-        String factionId = node.factionId();
         AtlasSpecial special = generator.specialAt(cell);
         if (node.infestationId() != null) {
-            AtlasSpecial infestation = generator.rules().special(node.infestationId());
-            if (state.has(cell, AtlasState.CLEANSED)) {
-                effects.addAll(AtlasData.nodeEffects(CLEANSED));
-            } else {
-                effects.addAll(AtlasData.nodeEffects(INFESTED));
-                if (infestation != null && !infestation.factionId().isEmpty()) {
-                    factionId = infestation.factionId();
-                }
-            }
+            effects.addAll(AtlasData.nodeEffects(state.has(cell, AtlasState.CLEANSED) ? CLEANSED : INFESTED));
         }
         if (special != null) {
-            effects.addAll(AtlasData.nodeEffects(special.infests() ? NEXUS : special.kind()));
+            effects.addAll(AtlasData.nodeEffects(special.infests() ? NEXUS : special.kind().key()));
         }
         String expansionId = spent || node.expansionId() == null ? "" : node.expansionId();
-        String phenomenonId = node.phenomenonId() == null ? "" : node.phenomenonId();
-        ChartPhenomena.Definition phenomenon = ChartPhenomena.definition(phenomenonId);
-        if (spent && phenomenon != null && phenomenon.kind() == ChartPhenomenon.Kind.OVERLAY) {
-            phenomenonId = "";
-        }
-        return new AtlasRunNode(cell.pack(), factionId, effects, expansionId, phenomenonId, bossTierUp);
+        return new AtlasRunNode(cell.pack(), factionFor(generator, state, cell, node), effects, expansionId, phenomenonFor(state, cell, node), bossTierUp);
     }
 
-    public static ChartLayoutRequest request(AtlasGenerator generator, AtlasState state, AtlasCell cell, StarChart chart) {
+    public static String factionFor(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasNode node) {
+        if (node.infestationId() == null || state.has(cell, AtlasState.CLEANSED)) {
+            return node.factionId();
+        }
+        AtlasSpecial infestation = generator.rules().special(node.infestationId());
+        return infestation == null || infestation.factionId().isEmpty() ? node.factionId() : infestation.factionId();
+    }
+
+    public static String phenomenonFor(AtlasState state, AtlasCell cell, AtlasNode node) {
+        String phenomenonId = node.phenomenonId() == null ? "" : node.phenomenonId();
+        ChartPhenomena.Definition phenomenon = ChartPhenomena.definition(phenomenonId);
+        boolean spent = state.has(cell, AtlasState.MARKERS_SPENT);
+        return spent && phenomenon != null && phenomenon.kind() == ChartPhenomenon.Kind.OVERLAY ? "" : phenomenonId;
+    }
+
+    public static ChartLayoutRequest request(AtlasGenerator generator, AtlasState state, AtlasCell cell, StarChart chart, AtlasRunNode runNode) {
         AtlasNode node = generator.node(cell);
-        AtlasRunNode runNode = runNode(generator, state, cell);
         long layoutSeed = AtlasHash.of(state.seed(), LAYOUT_SEED_SALT, cell.gridX(), cell.gridY());
         return new ChartLayoutRequest(layoutSeed, null, chart.tier(), ChartGenContext.from(chart).withAtlasNode(runNode),
                 AtlasData.recipeFor(node.regionId(), node.layoutId()), runNode.phenomenonId(), chart.seed());

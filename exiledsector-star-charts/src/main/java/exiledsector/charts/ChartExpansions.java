@@ -47,21 +47,8 @@ public final class ChartExpansions {
     }
 
     static List<String> register(JSONArray rows) throws JSONException {
-        Map<String, Definition> loaded = new LinkedHashMap<>();
         CsvRows csv = new CsvRows(PATH);
-        if (rows != null) {
-            ModCsv.forEach(rows, (index, row) -> {
-                String id = ModCsv.text(row, ID_COLUMN);
-                if (id.isEmpty()) {
-                    return;
-                }
-                if (byId(id) == null) {
-                    csv.skipRow(id, "no expansion has this id");
-                    return;
-                }
-                loaded.put(id, parse(csv, row, id));
-            });
-        }
+        Map<String, Definition> loaded = BuiltInTable.rows(rows, csv, "expansion", id -> byId(id) != null, ChartExpansions::parse);
         csv.report(LOG);
         definitions = Map.copyOf(loaded);
         LOG.info("[ExiledSector] Star Charts can roll " + loaded.size() + " expansion(s)");
@@ -69,22 +56,13 @@ public final class ChartExpansions {
     }
 
     private static Definition parse(CsvRows csv, JSONObject row, String id) {
-        int minTier = ChartTiers.clamp(csv.integer(row, "min_tier", ChartTiers.LOWEST_TIER, id));
-        int maxTier = ChartTiers.clamp(csv.integer(row, "max_tier", ChartTiers.HIGHEST_TIER, id));
-        return new Definition(id, csv.number(row, "weight", 1f, id), Math.min(minTier, maxTier), Math.max(minTier, maxTier),
-                ModCsv.text(row, "requires_mod"), ModCsv.text(row, "icon"));
+        BuiltInTable.TierRange tiers = BuiltInTable.TierRange.parse(csv, row, id);
+        return new Definition(id, csv.number(row, "weight", 1f, id), tiers.minTier(), tiers.maxTier(), ModCsv.text(row, "requires_mod"),
+                ModCsv.text(row, "icon"));
     }
 
     public static ChartExpansion byId(String id) {
-        if (id == null) {
-            return null;
-        }
-        for (ChartExpansion expansion : expansions) {
-            if (expansion.id().equals(id)) {
-                return expansion;
-            }
-        }
-        return null;
+        return BuiltInTable.find(expansions, ChartExpansion::id, id);
     }
 
     public static Collection<Definition> definitions() {
@@ -115,7 +93,7 @@ public final class ChartExpansions {
     }
 
     static Random rollFor(long seed, String expansionId) {
-        return ChartLayoutGenerator.derivedRandom(seed ^ ((long) expansionId.hashCode() << 32), ROLL_SALT);
+        return BuiltInTable.rollFor(seed, expansionId, ROLL_SALT);
     }
 
     static void useForTests(List<ChartExpansion> testExpansions, List<Definition> testDefinitions) {

@@ -283,7 +283,7 @@ public final class DoctrineOverrides {
             for (String typeId : archive.replacementPool(tier)) {
                 SkillType type = SkillTree.getType(typeId);
                 if (type != null) {
-                    relevantHullModIds.addAll(type.getExclusiveHullModIds());
+                    relevantHullModIds.addAll(type.getExclusiveAndOwnHullModIds());
                     relevantHullModIds.addAll(type.getPhantomHullModIds());
                 }
             }

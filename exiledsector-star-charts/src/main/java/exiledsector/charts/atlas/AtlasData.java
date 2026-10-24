@@ -3,7 +3,6 @@ package exiledsector.charts.atlas;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import exiledlib.ModCsv;
-import exiledlib.compat.CompatTarget;
 import exiledsector.charts.ChartExpansions;
 import exiledsector.charts.ChartFaction;
 import exiledsector.charts.ChartFactions;
@@ -12,9 +11,13 @@ import exiledsector.charts.ChartFeatures;
 import exiledsector.charts.ChartGenContext;
 import exiledsector.charts.ChartLayoutGenerator;
 import exiledsector.charts.ChartLayoutRecipe;
+import exiledsector.charts.ChartLook;
 import exiledsector.charts.ChartPhenomena;
+import exiledsector.charts.ChartPois;
+import exiledsector.charts.ChartShape;
 import exiledsector.charts.expansion.ChartExpansion;
 import exiledsector.data.CsvRows;
+import exiledsector.ui.util.ColorUtil;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -23,13 +26,13 @@ import org.json.JSONObject;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 public final class AtlasData {
 
@@ -43,11 +46,11 @@ public final class AtlasData {
     static final String POWERFUL_BOSS_MARKER = "powerful_boss";
     static final String EXPANSION_MARKER = "expansion";
     static final String PHENOMENON_MARKER = "phenomenon";
-    static final String WEIGHT_SEPARATOR = ":";
     private static final Logger LOG = Logger.getLogger(AtlasData.class);
+    private static final Pattern HEX_COLOUR = Pattern.compile("#?([0-9a-fA-F]{6}|[0-9a-fA-F]{8})");
     private static volatile Map<String, AtlasLayout> layouts = Map.of();
     private static volatile Map<String, Float> layoutWeights = Map.of();
-    private static volatile Map<String, AtlasRegionLook> looks = Map.of();
+    private static volatile Map<String, ChartLook> looks = Map.of();
     private static volatile List<AtlasRegion> regions = List.of();
     private static volatile Map<String, AtlasMarkerRule> markerRules = Map.of();
     private static volatile List<AtlasSpecial> specials = List.of();
@@ -89,7 +92,7 @@ public final class AtlasData {
     }
 
     public static Color regionTint(String regionId) {
-        AtlasRegionLook look = regionId == null ? null : looks.get(regionId);
+        ChartLook look = regionId == null ? null : looks.get(regionId);
         return look == null ? null : look.lightTint();
     }
 
@@ -102,20 +105,9 @@ public final class AtlasData {
     }
 
     public static ChartLayoutRecipe recipeFor(String regionId, String layoutId) {
-        AtlasRegionLook look = regionId == null ? AtlasRegionLook.PLAIN : looks.getOrDefault(regionId, AtlasRegionLook.PLAIN);
-        return recipe(look, layoutId == null ? null : layouts.get(layoutId));
-    }
-
-    static ChartLayoutRecipe recipe(AtlasRegionLook look, AtlasLayout layout) {
-        Map<String, Float> categories = new HashMap<>(look.planetWeights());
-        if (layout == null) {
-            return new ChartLayoutRecipe(look.starWeights(), categories, look.backgrounds(), look.nebulaBackgrounds(), look.nebulaChance(),
-                    look.lightTint(), look.lightTintStrength(), Map.of(), -1, -1, Float.NaN, "", look.keepRuins(), look.musicSetId());
-        }
-        layout.terrainWeights().forEach((category, weight) -> categories.merge(category, weight, (first, second) -> first * second));
-        return new ChartLayoutRecipe(look.starWeights(), categories, look.backgrounds(), look.nebulaBackgrounds(), look.nebulaChance(),
-                look.lightTint(), look.lightTintStrength(), layout.systemTypeWeights(), layout.minOrbits(), layout.maxOrbits(),
-                layout.maxOrbitRadius(), layout.featureId(), look.keepRuins(), look.musicSetId());
+        ChartLook look = regionId == null ? ChartLook.PLAIN : looks.getOrDefault(regionId, ChartLook.PLAIN);
+        AtlasLayout layout = layoutId == null ? null : layouts.get(layoutId);
+        return new ChartLayoutRecipe(look, layout == null ? ChartShape.ANY : layout.shape());
     }
 
     public static AtlasUnlocks unlocksFor(SectorAPI sector, AtlasRules rules) {
@@ -131,7 +123,7 @@ public final class AtlasData {
                 }
             }
         }
-        return new AtlasUnlocks(CompatTarget::isModEnabled, unlocked);
+        return new AtlasUnlocks(ChartPois::modRequirementMet, unlocked);
     }
 
     private static AtlasMarkerRule rule(Map<String, AtlasMarkerRule> rules, String id) {
@@ -147,7 +139,7 @@ public final class AtlasData {
     static List<String> registerLayouts(JSONArray rows) throws JSONException {
         Map<String, AtlasLayout> loaded = new LinkedHashMap<>();
         CsvRows csv = new CsvRows(LAYOUTS_PATH);
-        forEachRow(rows, (id, row) -> {
+        CsvRows.forEachIdRow(rows, ID_COLUMN, (id, row) -> {
             int minOrbits = csv.integer(row, "min_orbits", -1, id);
             int maxOrbits = csv.integer(row, "max_orbits", minOrbits, id);
             if (minOrbits < 0 && maxOrbits >= 0) {
@@ -161,8 +153,8 @@ public final class AtlasData {
                 csv.problem(id, "feature", feature + " (no feature class, or no row in atlas_features.csv)");
                 feature = "";
             }
-            loaded.put(id, new AtlasLayout(id, csv.number(row, "weight", 1f, id), systemTypes(csv, row, id), minOrbits, maxOrbits,
-                    csv.number(row, "max_orbit_radius", Float.NaN, id), categoryWeights(csv, row, "terrain", id), feature));
+            loaded.put(id, new AtlasLayout(id, csv.number(row, "weight", 1f, id), new ChartShape(systemTypes(csv, row, id), minOrbits, maxOrbits,
+                    csv.number(row, "max_orbit_radius", Float.NaN, id), categoryWeights(csv, row, "terrain", id), feature)));
         });
         csv.report(LOG);
         Map<String, Float> weights = new LinkedHashMap<>();
@@ -174,7 +166,7 @@ public final class AtlasData {
 
     private static Map<StarSystemType, Float> systemTypes(CsvRows csv, JSONObject row, String rowId) {
         Map<StarSystemType, Float> types = new EnumMap<>(StarSystemType.class);
-        weights(csv, row, "system_types", rowId, null).forEach((name, weight) -> {
+        csv.weights(row, "system_types", rowId, null).forEach((name, weight) -> {
             StarSystemType type = ChartLayoutGenerator.parseType(name);
             if (type == null) {
                 csv.problem(rowId, "system_types", name + " (not a chart system type)");
@@ -186,7 +178,7 @@ public final class AtlasData {
     }
 
     private static Map<String, Float> categoryWeights(CsvRows csv, JSONObject row, String column, String rowId) {
-        Map<String, Float> categories = weights(csv, row, column, rowId, null);
+        Map<String, Float> categories = csv.weights(row, column, rowId, null);
         for (String category : List.copyOf(categories.keySet())) {
             if (ChartLayoutRecipe.PHENOMENON_CATEGORIES.contains(category)) {
                 csv.problem(rowId, column, category + " (only phenomena add it)");
@@ -196,8 +188,8 @@ public final class AtlasData {
         return categories;
     }
 
-    private static AtlasRegionLook look(CsvRows csv, JSONObject row, String rowId) {
-        Map<String, Float> stars = weights(csv, row, "stars", rowId, null);
+    private static ChartLook look(CsvRows csv, JSONObject row, String rowId) {
+        Map<String, Float> stars = csv.weights(row, "stars", rowId, null);
         for (String star : List.copyOf(stars.keySet())) {
             if (ChartLayoutRecipe.PHENOMENON_STARS.contains(star)) {
                 csv.problem(rowId, "stars", star + " (only phenomena add it)");
@@ -209,33 +201,29 @@ public final class AtlasData {
             csv.problem(rowId, "nebula_chance", nebulaChance + " (needs 0 to 1)");
             nebulaChance = Math.max(0f, Math.min(1f, nebulaChance));
         }
-        return new AtlasRegionLook(CsvRows.entries(ModCsv.text(row, "backgrounds")), CsvRows.entries(ModCsv.text(row, "nebula_backgrounds")),
+        return new ChartLook(CsvRows.entries(ModCsv.text(row, "backgrounds")), CsvRows.entries(ModCsv.text(row, "nebula_backgrounds")),
                 nebulaChance, colour(csv, row, "light_tint", rowId), csv.number(row, "light_tint_strength", 0f, rowId), stars,
                 categoryWeights(csv, row, "planets", rowId), csv.flag(row, "keep_ruins", false, rowId), ModCsv.text(row, "music"));
     }
 
     private static Color colour(CsvRows csv, JSONObject row, String column, String rowId) {
         String text = ModCsv.text(row, column);
-        if (text.isEmpty()) {
-            return null;
-        }
-        try {
-            return Color.decode(text.startsWith("#") ? text : "#" + text);
-        } catch (NumberFormatException e) {
+        Color colour = HEX_COLOUR.matcher(text).matches() ? ColorUtil.parseHexColorOrNull(text) : null;
+        if (colour == null && !text.isEmpty()) {
             csv.problem(rowId, column, text);
-            return null;
         }
+        return colour;
     }
 
     static List<String> registerRegions(JSONArray rows, Set<String> knownFactions) throws JSONException {
         Map<String, AtlasRegion> loaded = new LinkedHashMap<>();
-        Map<String, AtlasRegionLook> loadedLooks = new LinkedHashMap<>();
+        Map<String, ChartLook> loadedLooks = new LinkedHashMap<>();
         CsvRows csv = new CsvRows(REGIONS_PATH);
         Set<String> layoutIds = layoutWeights.keySet();
-        forEachRow(rows, (id, row) -> {
+        CsvRows.forEachIdRow(rows, ID_COLUMN, (id, row) -> {
             loaded.put(id, new AtlasRegion(id, csv.number(row, "weight", 1f, id), csv.integer(row, "min_steps", 0, id),
-                    ModCsv.text(row, "requires_mod"), ModCsv.text(row, "unlock"), weights(csv, row, "layouts", id, layoutIds),
-                    weights(csv, row, "factions", id, knownFactions), weights(csv, row, "markers", id, null)));
+                    ModCsv.text(row, "requires_mod"), ModCsv.text(row, "unlock"), csv.weights(row, "layouts", id, layoutIds),
+                    csv.weights(row, "factions", id, knownFactions), csv.weights(row, "markers", id, null)));
             loadedLooks.put(id, look(csv, row, id));
         });
         AtlasRegion normal = loaded.get(AtlasRegion.NORMAL);
@@ -255,7 +243,7 @@ public final class AtlasData {
     static List<String> registerMarkers(JSONArray rows) throws JSONException {
         Map<String, AtlasMarkerRule> loaded = new LinkedHashMap<>();
         CsvRows csv = new CsvRows(MARKERS_PATH);
-        forEachRow(rows, (id, row) -> {
+        CsvRows.forEachIdRow(rows, ID_COLUMN, (id, row) -> {
             if (!List.of(VOID_MARKER, POWERFUL_BOSS_MARKER, EXPANSION_MARKER, PHENOMENON_MARKER).contains(id)) {
                 csv.skipRow(id, "no atlas marker has this id");
                 return;
@@ -271,7 +259,7 @@ public final class AtlasData {
     static List<String> registerSpecials(JSONArray rows) throws JSONException {
         List<AtlasSpecial> loaded = new ArrayList<>();
         CsvRows csv = new CsvRows(SPECIALS_PATH);
-        forEachRow(rows, (id, row) -> {
+        CsvRows.forEachIdRow(rows, ID_COLUMN, (id, row) -> {
             String placementText = ModCsv.text(row, "placement").toUpperCase(Locale.ROOT);
             AtlasSpecial.Placement placement;
             try {
@@ -280,11 +268,16 @@ public final class AtlasData {
                 csv.skipRow(id, "placement must be chunk or fixed");
                 return;
             }
+            AtlasSpecial.Kind kind = AtlasSpecial.Kind.parse(ModCsv.text(row, "kind"));
+            if (kind == null) {
+                csv.skipRow(id, "kind must be infestation, sensor_array, bastion or unique");
+                return;
+            }
             float radius = csv.number(row, "radius", 0f, id);
             if (radius > AtlasSpecial.MOST_RADIUS) {
                 csv.problem(id, "radius", radius + " (at most " + AtlasSpecial.MOST_RADIUS + ")");
             }
-            loaded.add(new AtlasSpecial(id, ModCsv.text(row, "kind"), placement, csv.number(row, "chance", 0f, id), csv.number(row, "min_steps", 1f, id),
+            loaded.add(new AtlasSpecial(id, kind, placement, csv.number(row, "chance", 0f, id), csv.number(row, "min_steps", 1f, id),
                     radius, csv.integer(row, "count", 1, id), csv.number(row, "steps", 1f, id), ModCsv.text(row, "requires_mod"),
                     ModCsv.text(row, "unlock"), ModCsv.text(row, "faction")));
         });
@@ -300,10 +293,10 @@ public final class AtlasData {
     static List<String> registerNodeEffects(JSONArray rows) throws JSONException {
         Map<String, List<ChartGenContext.AppliedEffect>> loaded = new LinkedHashMap<>();
         CsvRows csv = new CsvRows(NODE_EFFECTS_PATH);
-        forEachRow(rows, (id, row) -> {
+        CsvRows.forEachIdRow(rows, ID_COLUMN, (id, row) -> {
             List<ChartGenContext.AppliedEffect> effects = new ArrayList<>();
-            weights(csv, row, "effects", id, null, true).forEach((name, value) -> {
-                ChartEffect effect = chartEffect(name);
+            csv.weights(row, "effects", id, null, true).forEach((name, value) -> {
+                ChartEffect effect = ChartEffect.byNameOrNull(name);
                 if (effect == null) {
                     csv.problem(id, "effects", name + " (not a chart effect)");
                 } else {
@@ -315,51 +308,6 @@ public final class AtlasData {
         csv.report(LOG);
         nodeEffects = Map.copyOf(loaded);
         return csv.problems();
-    }
-
-    private static ChartEffect chartEffect(String name) {
-        try {
-            return ChartEffect.valueOf(name.toUpperCase(Locale.ROOT));
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
-    }
-
-    static Map<String, Float> weights(CsvRows csv, JSONObject row, String column, String rowId, Set<String> knownIds) {
-        return weights(csv, row, column, rowId, knownIds, false);
-    }
-
-    static Map<String, Float> weights(CsvRows csv, JSONObject row, String column, String rowId, Set<String> knownIds, boolean negativeAllowed) {
-        Map<String, Float> weights = new LinkedHashMap<>();
-        for (String entry : CsvRows.entries(ModCsv.text(row, column))) {
-            int separator = entry.indexOf(WEIGHT_SEPARATOR);
-            String id = separator < 0 ? entry : entry.substring(0, separator).trim();
-            float weight = separator < 0 ? 1f : CsvRows.numberOrNaN(entry.substring(separator + 1).trim());
-            if (id.isEmpty() || Float.isNaN(weight) || Float.isInfinite(weight) || weight < 0f && !negativeAllowed) {
-                csv.problem(rowId, column, entry);
-            } else if (knownIds != null && !knownIds.contains(id)) {
-                csv.problem(rowId, column, entry + " (unknown id)");
-            } else {
-                weights.put(id, weight);
-            }
-        }
-        return weights;
-    }
-
-    private interface IdRowHandler {
-        void accept(String id, JSONObject row) throws JSONException;
-    }
-
-    private static void forEachRow(JSONArray rows, IdRowHandler handler) throws JSONException {
-        if (rows == null) {
-            return;
-        }
-        ModCsv.forEach(rows, (index, row) -> {
-            String id = ModCsv.text(row, ID_COLUMN);
-            if (!id.isEmpty()) {
-                handler.accept(id, row);
-            }
-        });
     }
 
     static void resetForTests() {

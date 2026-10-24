@@ -7,7 +7,7 @@ import java.util.List;
 
 public final class TwinWorlds implements ChartFeature {
 
-    public static final String ID = "twin_worlds";
+    public static final String FEATURE_ID = "twin_worlds";
     public static final TwinWorlds INSTANCE = new TwinWorlds();
     static final float GAP = 1600f;
     static final List<String> WORLD_TYPES = List.of("arid", "desert", "barren", "toxic", "frozen", "rocky_metallic", "tundra", "barren_venuslike");
@@ -17,7 +17,7 @@ public final class TwinWorlds implements ChartFeature {
 
     @Override
     public String id() {
-        return ID;
+        return FEATURE_ID;
     }
 
     @Override

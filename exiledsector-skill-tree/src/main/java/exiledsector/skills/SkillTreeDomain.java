@@ -234,6 +234,9 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
     public void afterSocketCustody() {
         WormholeAnchorMigration.run();
         SectorAPI sector = Global.getSector();
+        if (sector == null) {
+            return;
+        }
         AnchorFindMigration.run(sector);
         GateRewardAnchors.markOpenGatesGrantedOnce(sector);
         sector.getListenerManager().addListener(new GateRewardAnchors(), true);

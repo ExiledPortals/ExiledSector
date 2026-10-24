@@ -9,7 +9,7 @@ import java.util.List;
 
 public final class RingedGiant implements ChartFeature {
 
-    public static final String ID = "ringed_giant";
+    public static final String FEATURE_ID = "ringed_giant";
     public static final RingedGiant INSTANCE = new RingedGiant();
     static final float GAP = 600f;
     static final float BAND_WIDTH = 256f;
@@ -22,7 +22,7 @@ public final class RingedGiant implements ChartFeature {
 
     @Override
     public String id() {
-        return ID;
+        return FEATURE_ID;
     }
 
     @Override

@@ -29,9 +29,9 @@ class AtlasReachTest {
                 new AtlasRegion("graveyard", 10f, 0, "", "", Map.of(), Map.of(), Map.of()),
                 new AtlasRegion("expanse", 10f, 0, "", THREAT, Map.of(), Map.of(), Map.of()));
         List<AtlasSpecial> specials = List.of(
-                new AtlasSpecial("sensor", AtlasReach.SENSOR_ARRAY, AtlasSpecial.Placement.CHUNK, 1f, 1f, 6f, 1, 1f, "", ""),
-                new AtlasSpecial("threat_nexus", AtlasSpecial.INFESTATION, AtlasSpecial.Placement.CHUNK, 1f, 1f, 2.5f, 1, 1f, "", THREAT),
-                new AtlasSpecial("bastion", AtlasReach.BASTION, AtlasSpecial.Placement.FIXED, 0f, 1f, 0f, 3, 25f, "", ""));
+                new AtlasSpecial("sensor", AtlasSpecial.Kind.SENSOR_ARRAY, AtlasSpecial.Placement.CHUNK, 1f, 1f, 6f, 1, 1f, "", "", ""),
+                new AtlasSpecial("threat_nexus", AtlasSpecial.Kind.INFESTATION, AtlasSpecial.Placement.CHUNK, 1f, 1f, 2.5f, 1, 1f, "", THREAT, ""),
+                new AtlasSpecial("bastion", AtlasSpecial.Kind.BASTION, AtlasSpecial.Placement.FIXED, 0f, 1f, 0f, 3, 25f, "", "", ""));
         return new AtlasRules(regions, Map.of("compact", 1f), Map.of("pirates", 1f), new AtlasMarkerRule(0.5f, 0f, 0.5f),
                 AtlasMarkerRule.NEVER, AtlasMarkerRule.NEVER, AtlasMarkerRule.NEVER, specials, List.of(), List.of());
     }

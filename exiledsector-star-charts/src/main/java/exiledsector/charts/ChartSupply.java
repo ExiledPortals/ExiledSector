@@ -46,8 +46,12 @@ public final class ChartSupply {
         return store.add(ItemData.rolledAtTier(definition, random.nextLong(), tier + 1));
     }
 
+    public static boolean canAfford(SectorAPI sector) {
+        return sector != null && sector.getPlayerFleet() != null && sector.getPlayerFleet().getCargo().getCredits().get() >= VENDOR_PRICE;
+    }
+
     public static Item buyFromGateway(SectorAPI sector, Random random) {
-        if (sector == null || sector.getPlayerFleet() == null || sector.getPlayerFleet().getCargo().getCredits().get() < VENDOR_PRICE) {
+        if (!canAfford(sector)) {
             return null;
         }
         ItemDefinition definition = ChartDrops.pickChartAtTier(random, VENDOR_TIER, candidate -> !candidate.unique());

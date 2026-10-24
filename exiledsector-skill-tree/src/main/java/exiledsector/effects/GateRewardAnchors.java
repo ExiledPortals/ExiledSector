@@ -68,8 +68,13 @@ public final class GateRewardAnchors implements EconomyTickListener {
         }
     }
 
+    private static List<UnlockCondition> conditionsOf(String gateTag) {
+        NodeGates.Gate gate = NodeGates.gate(gateTag);
+        return gate == null ? List.of() : gate.conditions();
+    }
+
     private static boolean bossBeatenIn(String gateTag, BattleEngagement engagement) {
-        for (UnlockCondition condition : NodeGates.gate(gateTag).conditions()) {
+        for (UnlockCondition condition : conditionsOf(gateTag)) {
             Predicate<BattleEngagement> beaten = BOSS_BEATEN_IN.get(condition.getType());
             if (beaten != null && beaten.test(engagement)) {
                 return true;
@@ -118,7 +123,7 @@ public final class GateRewardAnchors implements EconomyTickListener {
     }
 
     private static boolean bossBeaten(String gateTag, SectorAPI sector) {
-        for (UnlockCondition condition : NodeGates.gate(gateTag).conditions()) {
+        for (UnlockCondition condition : conditionsOf(gateTag)) {
             if (condition.getType().metWithModInstalled(sector, condition.getKey())) {
                 return true;
             }

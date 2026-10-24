@@ -26,6 +26,17 @@ public final class HoloShapes {
         GL11.glLineWidth(1f);
     }
 
+    public static void disc(float cx, float cy, float radius, Color color, float alpha) {
+        Misc.setColor(color, alpha);
+        GL11.glBegin(GL11.GL_TRIANGLE_FAN);
+        GL11.glVertex2f(cx, cy);
+        for (int i = 0; i <= CIRCLE_STEPS; i++) {
+            int index = i % CIRCLE_STEPS;
+            GL11.glVertex2f(cx + UNIT_CIRCLE.cos(index) * radius, cy + UNIT_CIRCLE.sin(index) * radius);
+        }
+        GL11.glEnd();
+    }
+
     public static void arcSegments(float cx, float cy, float radius, int segments, float fill, float rotationDeg, float width, Color color,
                                    float alpha) {
         float slot = TWO_PI / segments;

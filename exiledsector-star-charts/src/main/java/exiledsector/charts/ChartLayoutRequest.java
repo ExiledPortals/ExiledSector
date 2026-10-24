@@ -18,15 +18,6 @@ public record ChartLayoutRequest(long seed, StarSystemType systemType, int tier,
         phenomenonId = phenomenonId == null ? "" : phenomenonId;
     }
 
-    public ChartLayoutRequest(long seed, StarSystemType systemType, int tier, ChartGenContext chartContext, ChartLayoutRecipe recipe,
-                              String phenomenonId) {
-        this(seed, systemType, tier, chartContext, recipe, phenomenonId, null);
-    }
-
-    public ChartLayoutRequest(long seed, StarSystemType systemType, int tier, ChartGenContext chartContext, ChartLayoutRecipe recipe) {
-        this(seed, systemType, tier, chartContext, recipe, null, null);
-    }
-
     public long contentSeed() {
         return chartSeed == null ? seed : chartSeed;
     }
@@ -36,7 +27,7 @@ public record ChartLayoutRequest(long seed, StarSystemType systemType, int tier,
     }
 
     public ChartLayoutRequest(long seed, StarSystemType systemType, int tier) {
-        this(seed, systemType, tier, null, null);
+        this(seed, systemType, tier, null);
     }
 
     public ChartLayoutRequest(long seed, StarSystemType systemType) {

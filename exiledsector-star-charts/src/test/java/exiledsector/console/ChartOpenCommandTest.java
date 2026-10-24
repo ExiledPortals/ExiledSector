@@ -115,7 +115,7 @@ class ChartOpenCommandTest {
     @Test
     void theLayoutDescriptionNamesTheSeedTypeAndHowToReopenIt() {
         ChartRun run = new ChartRun("abc", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordLayout(new ChartLayout(77L, StarSystemType.BINARY_CLOSE, false, new Vector2f()));
+        run.recordLayout(new ChartLayout(77L, StarSystemType.BINARY_CLOSE, false, new Vector2f(), null));
 
         String described = ChartOpenCommand.describeLayout(run);
 

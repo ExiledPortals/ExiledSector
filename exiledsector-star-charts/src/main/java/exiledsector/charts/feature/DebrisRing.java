@@ -10,7 +10,7 @@ import java.awt.Color;
 
 public final class DebrisRing implements ChartFeature {
 
-    public static final String ID = "debris_ring";
+    public static final String FEATURE_ID = "debris_ring";
     public static final DebrisRing INSTANCE = new DebrisRing();
     static final float GAP = 1400f;
     static final float BELT_WIDTH = 600f;
@@ -22,7 +22,7 @@ public final class DebrisRing implements ChartFeature {
 
     @Override
     public String id() {
-        return ID;
+        return FEATURE_ID;
     }
 
     @Override

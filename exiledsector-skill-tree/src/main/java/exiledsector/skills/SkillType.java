@@ -257,7 +257,7 @@ public class SkillType {
         return optionalOptionIdSet.contains(typeId);
     }
 
-    public List<String> getExclusiveHullModIds() {
+    public List<String> getExclusiveAndOwnHullModIds() {
         return exclusiveAndOwnHullModIds;
     }
 

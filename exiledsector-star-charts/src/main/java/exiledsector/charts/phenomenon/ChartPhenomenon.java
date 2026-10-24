@@ -35,6 +35,10 @@ public interface ChartPhenomenon {
         return null;
     }
 
+    static StarSystemType systemTypeOr(ChartPhenomenon phenomenon, StarSystemType fallback) {
+        return phenomenon != null && phenomenon.systemType() != null ? phenomenon.systemType() : fallback;
+    }
+
     default void shape(PhenomenonSite site) {
     }
 }

@@ -42,14 +42,4 @@ public record AtlasRules(List<AtlasRegion> regions, Map<String, Float> layoutWei
         }
         return null;
     }
-
-    public AtlasRules withExpansions(List<AtlasMarkerCandidate> replacement) {
-        return new AtlasRules(regions, layoutWeights, factionWeights, voidRule, powerfulBossRule, expansionRule, phenomenonRule, specials,
-                replacement, phenomena);
-    }
-
-    public AtlasRules withPhenomena(List<AtlasMarkerCandidate> replacement) {
-        return new AtlasRules(regions, layoutWeights, factionWeights, voidRule, powerfulBossRule, expansionRule, phenomenonRule, specials,
-                expansions, replacement);
-    }
 }

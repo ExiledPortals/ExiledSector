@@ -459,9 +459,10 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         boolean scrollingIn = event.getEventValue() > 0;
         if (!scrollingIn && mode.entersHyperspaceOnScrollOut() && camera.isSettledAtMinimum() && !camera.isPanning()) {
             enterHyperspace();
+        } else if (scrollingIn) {
+            camera.scrollAt(true, event.getX(), event.getY(), canvasPosition);
         } else {
-            camera.scroll(scrollingIn, scrollingIn ? event.getX() - (canvasPosition.getX() + canvasPosition.getWidth() / 2f) : 0f,
-                    scrollingIn ? event.getY() - (canvasPosition.getY() + canvasPosition.getHeight() / 2f) : 0f);
+            camera.scroll(false, 0f, 0f);
         }
         event.consume();
     }

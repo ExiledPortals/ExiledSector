@@ -9,8 +9,6 @@ import java.util.Set;
 public final class AtlasReach {
 
     public static final int VISIBLE_LANES = 2;
-    public static final String SENSOR_ARRAY = "sensor_array";
-    public static final String BASTION = "bastion";
 
     private AtlasReach() {
     }
@@ -67,12 +65,12 @@ public final class AtlasReach {
 
     static int revealLanes(AtlasGenerator generator, AtlasCell completed) {
         AtlasSpecial special = generator.specialAt(completed);
-        return special != null && SENSOR_ARRAY.equals(special.kind()) ? Math.round(special.radius()) : 0;
+        return AtlasSpecial.ofKind(special, AtlasSpecial.Kind.SENSOR_ARRAY) ? Math.round(special.radius()) : 0;
     }
 
     public static boolean isSpentBastion(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
         AtlasSpecial special = generator.specialAt(cell);
-        return special != null && BASTION.equals(special.kind()) && state.has(cell, AtlasState.ATTEMPTED);
+        return AtlasSpecial.ofKind(special, AtlasSpecial.Kind.BASTION) && state.has(cell, AtlasState.ATTEMPTED);
     }
 
     public static Set<AtlasCell> refreshReveal(AtlasGenerator generator, AtlasState state) {

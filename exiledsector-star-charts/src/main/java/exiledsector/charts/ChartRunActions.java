@@ -66,8 +66,9 @@ public final class ChartRunActions {
         if (!AtlasOpening.check(generator, state, cell, chart).allowsOpening()) {
             return OpenResult.NOT_REACHABLE;
         }
-        OpenResult result = openBesidePlayer(sector, entriesAllowed, random, AtlasOpening.request(generator, state, cell, chart),
-                ItemData.of(chart).encode(), AtlasOpening.runNode(generator, state, cell));
+        AtlasRunNode runNode = AtlasOpening.runNode(generator, state, cell);
+        OpenResult result = openBesidePlayer(sector, entriesAllowed, random, AtlasOpening.request(generator, state, cell, chart, runNode),
+                ItemData.of(chart).encode(), runNode);
         if (result == OpenResult.OPENED) {
             store.remove(chart);
             AtlasProgress.opened(sector, generator, cell);

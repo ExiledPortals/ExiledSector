@@ -11,7 +11,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -31,21 +30,8 @@ public final class ChartFeatures {
     }
 
     static List<String> register(JSONArray rows) throws JSONException {
-        Set<String> loaded = new LinkedHashSet<>();
         CsvRows csv = new CsvRows(PATH);
-        if (rows != null) {
-            ModCsv.forEach(rows, (index, row) -> {
-                String id = ModCsv.text(row, ID_COLUMN);
-                if (id.isEmpty()) {
-                    return;
-                }
-                if (built(id) == null) {
-                    csv.skipRow(id, "no feature has this id");
-                    return;
-                }
-                loaded.add(id);
-            });
-        }
+        Set<String> loaded = BuiltInTable.rows(rows, csv, "feature", ChartFeatures::isKnown, (rowCsv, row, id) -> id).keySet();
         csv.report(LOG);
         listed = Set.copyOf(loaded);
         return csv.problems();
@@ -60,12 +46,7 @@ public final class ChartFeatures {
     }
 
     private static ChartFeature built(String id) {
-        for (ChartFeature feature : BUILT_IN) {
-            if (feature.id().equals(id)) {
-                return feature;
-            }
-        }
-        return null;
+        return BuiltInTable.find(BUILT_IN, ChartFeature::id, id);
     }
 
     static void useForTests(Set<String> ids) {

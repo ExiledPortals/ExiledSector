@@ -43,7 +43,7 @@ public final class DoctrineRevertConflicts {
             if (!rewrite.transformed() || node == null || !data.isAllocated(node.getId())) {
                 continue;
             }
-            Set<String> keptByReplacement = new LinkedHashSet<>(rewrite.replacementType().getExclusiveHullModIds());
+            Set<String> keptByReplacement = new LinkedHashSet<>(rewrite.replacementType().getExclusiveAndOwnHullModIds());
             for (String hullModId : new AllocatedNode(node, rewrite.originalType()).exclusiveHullModIds()) {
                 if (!keptByReplacement.contains(hullModId) && removableInstalledHullMod.test(hullModId)) {
                     lostHullModIds.add(hullModId);

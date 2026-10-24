@@ -30,11 +30,9 @@ public class WormholeGatewayOption extends BaseIndustryOptionProvider {
                 || !industry.getMarket().isPlayerOwned()) {
             return List.of();
         }
-        IndustryOptionProvider.IndustryOptionData buy = new IndustryOptionProvider.IndustryOptionData(
-                I18n.forGameText(() -> Translation.msg("chart.gateway.option.buy").arg("tier", ChartSupply.VENDOR_TIER)
-                        .arg("credits", Misc.getDGSCredits(ChartSupply.VENDOR_PRICE)).text()), BUY_STAR_CHART, industry, this);
-        buy.enabled = Global.getSector().getPlayerFleet() != null
-                && Global.getSector().getPlayerFleet().getCargo().getCredits().get() >= ChartSupply.VENDOR_PRICE;
+        IndustryOptionProvider.IndustryOptionData buy = new IndustryOptionProvider.IndustryOptionData(buyText("chart.gateway.option.buy"),
+                BUY_STAR_CHART, industry, this);
+        buy.enabled = ChartSupply.canAfford(Global.getSector());
         return List.of(new IndustryOptionProvider.IndustryOptionData(Translation.gameText("chart.gateway.option.open"), OPEN_STAR_CHARTS, industry, this),
                 buy);
     }
@@ -44,9 +42,13 @@ public class WormholeGatewayOption extends BaseIndustryOptionProvider {
         if (option.id == OPEN_STAR_CHARTS) {
             VanillaText.plainPara(tooltip, Translation.gameText("chart.gateway.option.tooltip"), 0f, Misc.getTextColor());
         } else if (option.id == BUY_STAR_CHART) {
-            VanillaText.plainPara(tooltip, I18n.forGameText(() -> Translation.msg("chart.gateway.option.buy.tooltip").arg("tier", ChartSupply.VENDOR_TIER)
-                    .arg("credits", Misc.getDGSCredits(ChartSupply.VENDOR_PRICE)).text()), 0f, Misc.getTextColor());
+            VanillaText.plainPara(tooltip, buyText("chart.gateway.option.buy.tooltip"), 0f, Misc.getTextColor());
         }
+    }
+
+    private static String buyText(String key) {
+        return I18n.forGameText(() -> Translation.msg(key).arg("tier", ChartSupply.VENDOR_TIER).arg("credits", Misc.getDGSCredits(ChartSupply.VENDOR_PRICE))
+                .text());
     }
 
     @Override

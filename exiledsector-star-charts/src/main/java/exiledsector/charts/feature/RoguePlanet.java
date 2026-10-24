@@ -6,7 +6,7 @@ import java.util.List;
 
 public final class RoguePlanet implements ChartFeature {
 
-    public static final String ID = "rogue_planet";
+    public static final String FEATURE_ID = "rogue_planet";
     public static final RoguePlanet INSTANCE = new RoguePlanet();
     static final float GAP = 4000f;
     static final List<String> ROGUE_TYPES = List.of("frozen", "frozen2", "barren", "rocky_ice", "cryovolcanic");
@@ -16,7 +16,7 @@ public final class RoguePlanet implements ChartFeature {
 
     @Override
     public String id() {
-        return ID;
+        return FEATURE_ID;
     }
 
     @Override

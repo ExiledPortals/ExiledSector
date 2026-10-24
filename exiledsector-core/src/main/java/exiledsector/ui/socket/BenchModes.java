@@ -18,7 +18,7 @@ public final class BenchModes {
     }
 
     public static BenchModeSupport of(BenchMode mode) {
-        return mode == null ? null : EVERY_SUPPORT.all().stream().filter(support -> support.mode() == mode).findFirst().orElse(null);
+        return EVERY_SUPPORT.all().stream().filter(support -> support.mode() == mode).findFirst().orElse(null);
     }
 
     public static BenchMode modeFor(ItemType type) {

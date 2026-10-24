@@ -71,45 +71,13 @@ public enum ChartEffect implements ModifierEffect {
     CHART_COLONY_ITEM_PERCENT(DropType.COLONY_ITEM),
     CHART_BOSS_SPOILS_PERCENT(false, ChartGenContext::addBossSpoilsPercent),
     CHART_REWARD_PERCENT(false, ChartGenContext::addRewardPercent),
-    CHART_BREACH_CHANCE(false, (context, value) -> context.addExpansionChance(SpatialBreach.ID, value)) {
-        @Override
-        public StyledText description(float magnitude) {
-            if (magnitude >= ChartGenContext.PERCENT) {
-                return Translation.msg(key()).styled();
-            }
-            return Translation.msg(key() + CHANCE_SUFFIX).arg("value", magnitude).styled();
-        }
-    },
+    CHART_BREACH_CHANCE(new Chance((context, value) -> context.addExpansionChance(SpatialBreach.EXPANSION_ID, value))),
     CHART_BREACH_GROWTH_PERCENT(false, (context, value) -> context.addExpansionPercent(SpatialBreach.GROWTH_KEY, value)),
     CHART_BREACH_CACHE_PERCENT(false, (context, value) -> context.addExpansionPercent(SpatialBreach.CACHE_KEY, value)),
     CHART_BREACH_CORE_ITEM_PERCENT(false, (context, value) -> context.addExpansionPercent(SpatialBreach.CORE_ITEM_KEY, value)),
-    CHART_ASTEROID_STORM_CHANCE(false, (context, value) -> context.addPhenomenonChance(AsteroidStorm.ID, value)) {
-        @Override
-        public StyledText description(float magnitude) {
-            if (magnitude >= ChartGenContext.PERCENT) {
-                return Translation.msg(key()).styled();
-            }
-            return Translation.msg(key() + CHANCE_SUFFIX).arg("value", magnitude).styled();
-        }
-    },
-    CHART_MAGNETIC_STORM_CHANCE(false, (context, value) -> context.addPhenomenonChance(MagneticStorm.ID, value)) {
-        @Override
-        public StyledText description(float magnitude) {
-            if (magnitude >= ChartGenContext.PERCENT) {
-                return Translation.msg(key()).styled();
-            }
-            return Translation.msg(key() + CHANCE_SUFFIX).arg("value", magnitude).styled();
-        }
-    },
-    CHART_STELLAR_FLARES_CHANCE(false, (context, value) -> context.addPhenomenonChance(StellarFlares.ID, value)) {
-        @Override
-        public StyledText description(float magnitude) {
-            if (magnitude >= ChartGenContext.PERCENT) {
-                return Translation.msg(key()).styled();
-            }
-            return Translation.msg(key() + CHANCE_SUFFIX).arg("value", magnitude).styled();
-        }
-    };
+    CHART_ASTEROID_STORM_CHANCE(new Chance((context, value) -> context.addPhenomenonChance(AsteroidStorm.PHENOMENON_ID, value))),
+    CHART_MAGNETIC_STORM_CHANCE(new Chance((context, value) -> context.addPhenomenonChance(MagneticStorm.PHENOMENON_ID, value))),
+    CHART_STELLAR_FLARES_CHANCE(new Chance((context, value) -> context.addPhenomenonChance(StellarFlares.PHENOMENON_ID, value)));
 
     static final String KEY_PREFIX = "chart.effect.";
     static final String CHANCE_SUFFIX = ".chance";
@@ -118,28 +86,37 @@ public enum ChartEffect implements ModifierEffect {
         void addTo(ChartGenContext context, float value);
     }
 
+    private record Chance(Contribution contribution) {
+    }
+
     private final boolean counted;
     private final DropType dropType;
     private final ChartFleetStat fleetStat;
     private final Contribution contribution;
+    private final boolean chance;
 
     ChartEffect(boolean counted, Contribution contribution) {
-        this(counted, null, null, contribution);
+        this(counted, null, null, contribution, false);
+    }
+
+    ChartEffect(Chance chance) {
+        this(false, null, null, chance.contribution(), true);
     }
 
     ChartEffect(DropType dropType) {
-        this(false, dropType, null, (context, value) -> context.addDropPercent(dropType, value));
+        this(false, dropType, null, (context, value) -> context.addDropPercent(dropType, value), false);
     }
 
     ChartEffect(ChartFleetStat fleetStat) {
-        this(false, null, fleetStat, (context, value) -> context.addFleetStatPercent(fleetStat, value));
+        this(false, null, fleetStat, (context, value) -> context.addFleetStatPercent(fleetStat, value), false);
     }
 
-    ChartEffect(boolean counted, DropType dropType, ChartFleetStat fleetStat, Contribution contribution) {
+    ChartEffect(boolean counted, DropType dropType, ChartFleetStat fleetStat, Contribution contribution, boolean chance) {
         this.counted = counted;
         this.dropType = dropType;
         this.fleetStat = fleetStat;
         this.contribution = contribution;
+        this.chance = chance;
     }
 
     public ChartFleetStat fleetStat() {
@@ -160,7 +137,13 @@ public enum ChartEffect implements ModifierEffect {
 
     @Override
     public StyledText description(float magnitude) {
+        if (chance && magnitude < ChartGenContext.PERCENT) {
+            return Translation.msg(key() + CHANCE_SUFFIX).arg("value", magnitude).styled();
+        }
         Message message = Translation.msg(key());
+        if (chance) {
+            return message.styled();
+        }
         if (counted) {
             int count = Math.round(magnitude);
             return message.count(count).arg("value", count).styled();
@@ -180,7 +163,7 @@ public enum ChartEffect implements ModifierEffect {
             return null;
         }
         for (ChartEffect effect : values()) {
-            if (effect.name().equals(effectName)) {
+            if (effect.name().equalsIgnoreCase(effectName.trim())) {
                 return effect;
             }
         }

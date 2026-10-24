@@ -8,7 +8,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 final class RootCircuit {
 
@@ -21,6 +23,24 @@ final class RootCircuit {
     private static RootCircuit loaded;
 
     record Trace(float[] xs, float[] ys, float[] distances, float phaseSeconds, float[] segmentAngles) {
+
+        @Override
+        public boolean equals(Object other) {
+            return other instanceof Trace trace && Arrays.equals(xs, trace.xs) && Arrays.equals(ys, trace.ys)
+                    && Arrays.equals(distances, trace.distances) && Float.compare(phaseSeconds, trace.phaseSeconds) == 0
+                    && Arrays.equals(segmentAngles, trace.segmentAngles);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(Arrays.hashCode(xs), Arrays.hashCode(ys), Arrays.hashCode(distances), phaseSeconds, Arrays.hashCode(segmentAngles));
+        }
+
+        @Override
+        public String toString() {
+            return "Trace[xs=" + Arrays.toString(xs) + ", ys=" + Arrays.toString(ys) + ", distances=" + Arrays.toString(distances)
+                    + ", phaseSeconds=" + phaseSeconds + ", segmentAngles=" + Arrays.toString(segmentAngles) + "]";
+        }
 
         float length() {
             return distances[distances.length - 1];

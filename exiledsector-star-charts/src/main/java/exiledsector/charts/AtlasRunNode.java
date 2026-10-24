@@ -2,7 +2,6 @@ package exiledsector.charts;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public record AtlasRunNode(long cell, String factionId, List<ChartGenContext.AppliedEffect> effects, String expansionId, String phenomenonId,
                            boolean guaranteedBossTierUp) {
@@ -42,21 +41,13 @@ public record AtlasRunNode(long cell, String factionId, List<ChartGenContext.App
                 if (separator <= 0) {
                     continue;
                 }
-                ChartEffect effect = parseEffect(part.substring(0, separator));
+                ChartEffect effect = ChartEffect.byNameOrNull(part.substring(0, separator));
                 if (effect != null) {
                     effects.add(new ChartGenContext.AppliedEffect(effect, Float.parseFloat(part.substring(separator + 1))));
                 }
             }
             return new AtlasRunNode(Long.parseLong(fields[0]), fields[1], effects, fields[3], fields[4], Boolean.parseBoolean(fields[5]));
         } catch (NumberFormatException e) {
-            return null;
-        }
-    }
-
-    static ChartEffect parseEffect(String name) {
-        try {
-            return ChartEffect.valueOf(name.trim().toUpperCase(Locale.ROOT));
-        } catch (IllegalArgumentException e) {
             return null;
         }
     }

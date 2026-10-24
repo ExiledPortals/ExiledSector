@@ -157,9 +157,12 @@ public final class ChartFleetLoot {
         ItemDrops.SiteLoot siteLoot = source == ChartDrops.Source.CHART_FLEET
                 ? ItemDrops.rollFleetSalvage(siteId, random, chances, feedstockMult, currencyMult)
                 : ItemDrops.rollSite(siteId, random, chances, feedstockMult, currencyMult, ItemUnlock.available(ItemType.HULL_ITEM, sector));
+        boolean offerTierUp = source == ChartDrops.Source.CHART_BOSS && context.guaranteedBossTierUp() && !run.isBossTierUpGranted();
         ChartDrops.Loot chartLoot = ChartDrops.roll(source, run.tier(), context.dropMult(DropType.STAR_CHART) * chanceMult,
-                context.dropMult(DropType.CURRENCY) * chanceMult, random, ChartDrops.uniquesFor(sector),
-                source == ChartDrops.Source.CHART_BOSS && context.guaranteedBossTierUp() && run.claimBossTierUp());
+                context.dropMult(DropType.CURRENCY) * chanceMult, random, ChartDrops.uniquesFor(sector), offerTierUp);
+        if (offerTierUp && !chartLoot.charts().isEmpty()) {
+            run.grantBossTierUp();
+        }
         return siteLoot.plus(chartLoot.charts(), List.of(), chartLoot.currencies());
     }
 }

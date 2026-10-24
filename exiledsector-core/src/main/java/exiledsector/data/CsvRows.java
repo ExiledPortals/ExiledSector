@@ -7,13 +7,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 public final class CsvRows {
 
     public static final String LIST_SEPARATOR = ";";
+    public static final String WEIGHT_SEPARATOR = ":";
     static final Set<String> YES = Set.of("yes", "true", "y", "1");
     static final Set<String> NO = Set.of("no", "false", "n", "0");
     static final int MAX_LOGGED_PROBLEMS = 20;
@@ -21,8 +24,24 @@ public final class CsvRows {
     private final String path;
     private final List<String> problems = new ArrayList<>();
 
+    public interface IdRowHandler {
+        void accept(String id, JSONObject row) throws JSONException;
+    }
+
     public CsvRows(String path) {
         this.path = path;
+    }
+
+    public static void forEachIdRow(JSONArray rows, String idColumn, IdRowHandler handler) throws JSONException {
+        if (rows == null) {
+            return;
+        }
+        ModCsv.forEach(rows, (index, row) -> {
+            String id = ModCsv.text(row, idColumn);
+            if (!id.isEmpty()) {
+                handler.accept(id, row);
+            }
+        });
     }
 
     public static void forEachRow(JSONArray rows, String path, Logger log, ModCsv.RowHandler parser) throws JSONException {
@@ -108,6 +127,27 @@ public final class CsvRows {
         }
         problem(rowLabel, column, text);
         return fallback;
+    }
+
+    public Map<String, Float> weights(JSONObject row, String column, String rowLabel, Set<String> knownIds) {
+        return weights(row, column, rowLabel, knownIds, false);
+    }
+
+    public Map<String, Float> weights(JSONObject row, String column, String rowLabel, Set<String> knownIds, boolean negativeAllowed) {
+        Map<String, Float> weights = new LinkedHashMap<>();
+        for (String entry : entries(ModCsv.text(row, column))) {
+            int separator = entry.indexOf(WEIGHT_SEPARATOR);
+            String id = separator < 0 ? entry : entry.substring(0, separator).trim();
+            float weight = separator < 0 ? 1f : numberOrNaN(entry.substring(separator + 1).trim());
+            if (id.isEmpty() || Float.isNaN(weight) || Float.isInfinite(weight) || weight < 0f && !negativeAllowed) {
+                problem(rowLabel, column, entry);
+            } else if (knownIds != null && !knownIds.contains(id)) {
+                problem(rowLabel, column, entry + " (unknown id)");
+            } else {
+                weights.put(id, weight);
+            }
+        }
+        return weights;
     }
 
     public void problem(String rowLabel, String column, String text) {

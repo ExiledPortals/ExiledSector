@@ -8,7 +8,7 @@ import java.awt.Color;
 
 public final class AsteroidStorm implements ChartPhenomenon {
 
-    public static final String ID = "asteroid_storm";
+    public static final String PHENOMENON_ID = "asteroid_storm";
     public static final AsteroidStorm INSTANCE = new AsteroidStorm();
     static final float BELT_WIDTH = 500f;
     static final int BELTS = 2;
@@ -20,7 +20,7 @@ public final class AsteroidStorm implements ChartPhenomenon {
 
     @Override
     public String id() {
-        return ID;
+        return PHENOMENON_ID;
     }
 
     @Override

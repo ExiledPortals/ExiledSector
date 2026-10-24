@@ -44,8 +44,8 @@ public record AllocatedNode(SkillNode node, SkillType effectiveType) {
     }
 
     public Set<String> exclusiveHullModIds() {
-        Set<String> ids = new LinkedHashSet<>(declaredType().getExclusiveHullModIds());
-        ids.addAll(effectiveType.getExclusiveHullModIds());
+        Set<String> ids = new LinkedHashSet<>(declaredType().getExclusiveAndOwnHullModIds());
+        ids.addAll(effectiveType.getExclusiveAndOwnHullModIds());
         return ids;
     }
 }

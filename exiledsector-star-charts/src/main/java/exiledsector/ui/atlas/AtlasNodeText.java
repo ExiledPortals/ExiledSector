@@ -69,7 +69,8 @@ public final class AtlasNodeText {
             return lines;
         }
         lines.add(new Line(regionName(node.regionId()), Tone.TITLE));
-        lines.add(new Line(Translation.msg("chart.atlas.node.faction").arg("faction", factionName(node.factionId())).text(), Tone.PLAIN));
+        lines.add(new Line(Translation.msg("chart.atlas.node.faction").arg("faction", factionName(AtlasOpening.factionFor(generator, state, cell, node))).text(),
+                Tone.PLAIN));
         lines.add(new Line(Translation.msg("chart.atlas.node.layout").arg("layout", name("layout", node.layoutId())).text(), Tone.PLAIN));
         lines.addAll(markers(generator, state, cell, node));
         lines.add(stateLine(generator, state, cell, chart, reachable));
@@ -89,9 +90,9 @@ public final class AtlasNodeText {
         if (node.expansionId() != null && !spent) {
             lines.add(new Line(Translation.msg("chart.atlas.node.expansion").arg("expansion", name("expansion", node.expansionId())).text(), Tone.MARKER));
         }
-        if (node.phenomenonId() != null) {
-            lines.add(new Line(Translation.msg("chart.atlas.node.phenomenon").arg("phenomenon", name("phenomenon", node.phenomenonId())).text(),
-                    Tone.MARKER));
+        String phenomenonId = AtlasOpening.phenomenonFor(state, cell, node);
+        if (!phenomenonId.isEmpty()) {
+            lines.add(new Line(Translation.msg("chart.atlas.node.phenomenon").arg("phenomenon", name("phenomenon", phenomenonId)).text(), Tone.MARKER));
         }
         if (node.infestationId() != null) {
             lines.add(state.has(cell, AtlasState.CLEANSED)
@@ -122,7 +123,7 @@ public final class AtlasNodeText {
         AtlasNode node = generator.node(cell);
         List<String> lines = new ArrayList<>();
         lines.add(Translation.msg("chart.atlas.confirm.system").arg("region", regionName(node.regionId()))
-                .arg("faction", factionName(node.factionId())).text());
+                .arg("faction", factionName(AtlasOpening.factionFor(generator, state, cell, node))).text());
         for (Line marker : markers(generator, state, cell, node)) {
             lines.add(marker.text());
         }

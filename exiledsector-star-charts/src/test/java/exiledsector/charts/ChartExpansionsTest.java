@@ -28,7 +28,7 @@ class ChartExpansionsTest {
 
         @Override
         public String id() {
-            return SpatialBreach.ID;
+            return SpatialBreach.EXPANSION_ID;
         }
 
         @Override
@@ -48,7 +48,7 @@ class ChartExpansionsTest {
 
     private static void useTestExpansion(int minTier, int maxTier, String requiredMod) {
         ChartExpansions.useForTests(List.of(new PlacesNothing()),
-                List.of(new ChartExpansions.Definition(SpatialBreach.ID, 1f, minTier, maxTier, requiredMod, "")));
+                List.of(new ChartExpansions.Definition(SpatialBreach.EXPANSION_ID, 1f, minTier, maxTier, requiredMod, "")));
     }
 
     @Test
@@ -58,7 +58,7 @@ class ChartExpansionsTest {
         List<String> problems = ChartExpansions.register(CDL.toJSONArray(text.replace("\r\n", "\n")));
 
         assertEquals(List.of(), problems);
-        ChartExpansions.Definition breach = ChartExpansions.definition(SpatialBreach.ID);
+        ChartExpansions.Definition breach = ChartExpansions.definition(SpatialBreach.EXPANSION_ID);
         assertNotNull(breach);
         assertTrue(breach.allowedAt(ChartTiers.LOWEST_TIER) && breach.allowedAt(ChartTiers.HIGHEST_TIER));
     }
@@ -78,7 +78,7 @@ class ChartExpansionsTest {
         useTestExpansion(1, 15, "");
 
         for (long seed = 0; seed < 20; seed++) {
-            assertEquals(List.of(SpatialBreach.ID), ChartExpansions.planned(seed, 5, withBreachChance(100f)));
+            assertEquals(List.of(SpatialBreach.EXPANSION_ID), ChartExpansions.planned(seed, 5, withBreachChance(100f)));
             assertEquals(List.of(), ChartExpansions.planned(seed, 5, ChartGenContext.none()));
         }
     }
@@ -101,7 +101,7 @@ class ChartExpansionsTest {
     void anExpansionOutsideItsTiersOrWithoutItsModIsNeverPlanned() {
         useTestExpansion(6, 10, "");
         assertEquals(List.of(), ChartExpansions.planned(1L, 5, withBreachChance(100f)));
-        assertEquals(List.of(SpatialBreach.ID), ChartExpansions.planned(1L, 6, withBreachChance(100f)));
+        assertEquals(List.of(SpatialBreach.EXPANSION_ID), ChartExpansions.planned(1L, 6, withBreachChance(100f)));
         assertEquals(List.of(), ChartExpansions.planned(1L, 11, withBreachChance(100f)));
 
         useTestExpansion(1, 15, "some_missing_mod");
@@ -125,7 +125,7 @@ class ChartExpansionsTest {
         assertEquals(1.4f, context.expansionMult(SpatialBreach.GROWTH_KEY), 0.001f);
         assertEquals(1.5f, context.expansionMult(SpatialBreach.CACHE_KEY), 0.001f);
         assertEquals(1.25f, context.expansionMult(SpatialBreach.CORE_ITEM_KEY), 0.001f);
-        assertEquals(200f, context.expansionChance(SpatialBreach.ID), 0.001f);
+        assertEquals(200f, context.expansionChance(SpatialBreach.EXPANSION_ID), 0.001f);
         assertEquals(1f, ChartGenContext.none().expansionMult(SpatialBreach.GROWTH_KEY));
     }
 }
