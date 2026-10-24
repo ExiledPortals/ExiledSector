@@ -201,6 +201,15 @@ class LogisticsDModEffectsTest {
     }
 
     @Test
+    void anEarlierCopyIsClearedOnceBothEffectsMatch() {
+        DefenseSkillEffect.LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD.apply(stats, "logistics", 30f);
+        DefenseSkillEffect.NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD.apply(stats, "combat", 30f);
+
+        assertEquals(-10f * 1.3f * 1.3f, cargoPenaltyPercent(), EPSILON);
+        assertEquals(-10f * 1.3f * 1.3f, speedPenaltyPercent(), EPSILON);
+    }
+
+    @Test
     void theExtraCopyNeverAddsRecoveryCostDiscountsOrBurnLevelPenalties() {
         DefenseSkillEffect.LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD.apply(stats, "mod_id", 30f);
 

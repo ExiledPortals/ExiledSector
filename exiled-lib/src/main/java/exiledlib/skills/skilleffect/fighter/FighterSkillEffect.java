@@ -55,7 +55,7 @@ public enum FighterSkillEffect implements BackedSkillEffect {
 
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            float mult = 1f / SkillEffectSupport.multFrom(magnitude);
+            float mult = SkillEffectSupport.inverseMultFrom(magnitude);
             stats.getDynamic().getStat("replacement_rate_decrease_mult").modifyMult(modId, mult);
             stats.getDynamic().getStat("replacement_rate_increase_mult").modifyMult(modId, mult);
         }

@@ -1875,6 +1875,7 @@ class SkillEffectTest {
             verify(damage.getModifier(), never()).modifyMult(anyString(), anyFloat());
 
             when(beam.getWeapon().getRange()).thenReturn(1400f);
+            when(engine.getTotalElapsedTime(false)).thenReturn(1f);
             listener.modifyDamageDealt(beam, primaryTarget, damage, point, false);
             verify(damage.getModifier()).modifyMult("exiledSector_beamSplitShare", 1f / 2);
         }

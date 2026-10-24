@@ -4,7 +4,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
-import com.fs.starfarer.api.combat.FighterWingAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import exiledlib.skills.skilleffect.CombatQueries;
@@ -20,6 +19,7 @@ final class WingNumbersDamageListener implements DamageTakenModifier {
 
     private final ShipAPI fighter;
     private final ShipAPI carrier;
+    private final WingMemberCache wingMembers = new WingMemberCache();
 
     WingNumbersDamageListener(ShipAPI fighter, ShipAPI carrier) {
         this.fighter = fighter;
@@ -37,7 +37,8 @@ final class WingNumbersDamageListener implements DamageTakenModifier {
         if (WingSharedFateListener.isApplyingSharedDamage() || reductionPercentPerFighter <= 0f) {
             return null;
         }
-        float mult = damageTakenMult(reductionPercentPerFighter, fightersOutWithWing(fighter, Global.getCombatEngine()));
+        CombatEngineAPI engine = Global.getCombatEngine();
+        float mult = damageTakenMult(reductionPercentPerFighter, fightersOutWithWing(fighter, wingMembers.membersOf(fighter, engine), engine));
         if (mult >= 1f) {
             return null;
         }
@@ -45,13 +46,8 @@ final class WingNumbersDamageListener implements DamageTakenModifier {
         return REDUCTION_MOD_ID;
     }
 
-    static int fightersOutWithWing(ShipAPI fighter, CombatEngineAPI engine) {
+    static int fightersOutWithWing(ShipAPI fighter, List<ShipAPI> members, CombatEngineAPI engine) {
         int count = CombatQueries.isAliveNotHulk(fighter) ? 1 : 0;
-        FighterWingAPI wing = fighter.getWing();
-        if (wing == null) {
-            return count;
-        }
-        List<ShipAPI> members = wing.getWingMembers();
         for (int i = 0; i < members.size(); i++) {
             ShipAPI member = members.get(i);
             if (member != fighter && WingSharedFateListener.isOutWithWing(member, engine)) {

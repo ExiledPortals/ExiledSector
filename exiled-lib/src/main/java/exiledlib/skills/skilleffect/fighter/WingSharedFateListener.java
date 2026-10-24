@@ -37,6 +37,7 @@ final class WingSharedFateListener implements DamageTakenModifier, DamageListene
     private final ShipAPI fighter;
     private final ShipAPI carrier;
     private final List<ShipAPI> recipients = new ArrayList<>();
+    private final WingMemberCache wingMembers = new WingMemberCache();
     private Object pendingParam;
     private float pendingRatio;
     private float pendingKeptFraction;
@@ -121,11 +122,7 @@ final class WingSharedFateListener implements DamageTakenModifier, DamageListene
     }
 
     private void collectRecipients(CombatEngineAPI engine, boolean shieldHit) {
-        FighterWingAPI wing = fighter.getWing();
-        if (wing == null) {
-            return;
-        }
-        List<ShipAPI> members = wing.getWingMembers();
+        List<ShipAPI> members = wingMembers.membersOf(fighter, engine);
         for (int i = 0; i < members.size(); i++) {
             ShipAPI member = members.get(i);
             if (member != fighter && canReceive(member, engine, shieldHit)) {

@@ -245,8 +245,8 @@ public sealed interface StatTarget {
         private void overrideWeapon(WeaponAPI weapon, MutableShipStatsAPI stats, StatBonus child) {
             if (regeneration) {
                 MutableStat energy = stats.getEnergyAmmoRegenMult();
-                float pooled = (energy.getBaseValue() + energy.getFlatMod())
-                        * (1f + (energy.getPercentMod() + child.getPercentMod()) / 100f)
+                float base = energy.getBaseValue();
+                float pooled = (base + base * (energy.getPercentMod() + child.getPercentMod()) / 100f + energy.getFlatMod())
                         * energy.getMult() * child.getMult();
                 float current = energy.getModifiedValue();
                 if (current > 0f) {

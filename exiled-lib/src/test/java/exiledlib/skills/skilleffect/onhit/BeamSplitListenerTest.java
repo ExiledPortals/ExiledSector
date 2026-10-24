@@ -37,6 +37,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -130,6 +131,28 @@ class BeamSplitListenerTest {
         assertTrue(flagDuringHit[0]);
         assertFalse(BeamSplitListener.isApplyingSimulatedHit());
         verify(flux).setHardFlux(45f);
+    }
+
+    @Test
+    void aBeamReusesItsSplitTargetsBrieflyAndSearchesAgainWhenOneDies() {
+        ShipAPI firing = shipAt(0f, 0);
+        when(firing.getMutableStats().getDynamic().getValue(BeamSplitListener.TARGETS_KEY, 0f)).thenReturn(1f);
+        ShipAPI primary = shipAt(100f, 1);
+        ShipAPI splitTarget = shipAt(200f, 1);
+        ships.addAll(List.of(firing, primary, splitTarget));
+        splitTargetFlux(splitTarget, 100f, 100f, new boolean[1]);
+        CollisionGridAPI shipGrid = engine.getShipGrid();
+        BeamSplitListener listener = new BeamSplitListener(firing);
+        BeamAPI beam = beamFrom(simulatedWeapon());
+
+        when(engine.getTotalElapsedTime(false)).thenReturn(1f, 1.1f);
+        listener.modifyDamageDealt(beam, primary, tick(true), new Vector2f(100f, 0f), true);
+        listener.modifyDamageDealt(beam, primary, tick(true), new Vector2f(100f, 0f), true);
+        verify(shipGrid, times(1)).getCheckIterator(any(), anyFloat(), anyFloat());
+
+        when(splitTarget.isAlive()).thenReturn(false);
+        listener.modifyDamageDealt(beam, primary, tick(true), new Vector2f(100f, 0f), true);
+        verify(shipGrid, times(2)).getCheckIterator(any(), anyFloat(), anyFloat());
     }
 
     @Test

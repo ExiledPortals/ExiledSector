@@ -274,6 +274,22 @@ class WeaponScopeHierarchyTest {
     }
 
     @Test
+    void beamAmmoRegenAddsTheShipWideFlatRegenAlongsideThePercentAsTheEngineDoes() {
+        MutableStat energyRegen = new MutableStat(1f);
+        energyRegen.modifyPercent("energy", 20f);
+        energyRegen.modifyFlat("energy", 0.5f);
+        MutableShipStatsAPI stats = statsWithDynamicMod("exiledSector_BEAM_AMMO_REGEN", new StatBonus());
+        when(stats.getEnergyAmmoRegenMult()).thenReturn(energyRegen);
+        WeaponAPI beam = regeneratingWeapon(true, 2f);
+
+        SkillEffect effect = SkillEffect.byName("BEAM_WEAPON_AMMO_REGEN_PERCENT");
+        effect.apply(stats, "mod_id", 30f);
+        effect.applyAfterShipCreation(shipWith(stats, beam), "mod_id", 30f);
+
+        verify(beam.getAmmoTracker()).setAmmoPerSecond(2f * 2f / energyRegen.getModifiedValue());
+    }
+
+    @Test
     void ammoRegenLeavesWeaponsAloneWhenTheShipWideEnergyRegenIsZero() {
         MutableStat energyRegen = new MutableStat(1f);
         energyRegen.modifyMult("energy", 0f);

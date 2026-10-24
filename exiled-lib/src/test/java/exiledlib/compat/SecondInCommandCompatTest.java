@@ -26,6 +26,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -95,6 +96,23 @@ class SecondInCommandCompatTest {
         SCUtils.ACTIVE_SKILLS.add(SecondInCommandCompat.RECONFIGURATION_SKILL_ID);
 
         assertTrue(SecondInCommandCompat.isSkillActive(member, SecondInCommandCompat.RECONFIGURATION_SKILL_ID));
+    }
+
+    @Test
+    void anAllyShipInThePlayerFleetReadsThePlayerFleetWithoutCopyingItsMembersEveryTime() {
+        enableSecondInCommandWith(SecondInCommandCompat.RECONFIGURATION_SKILL_ID);
+        FleetDataAPI playerFleetData = Global.getSector().getPlayerFleet().getFleetData();
+        FleetMemberAPI allyMember = mock(FleetMemberAPI.class);
+        FleetDataAPI allyFleetData = mock(FleetDataAPI.class);
+        when(allyMember.getId()).thenReturn("ally");
+        when(allyMember.getFleetData()).thenReturn(allyFleetData);
+        when(allyFleetData.getFleet()).thenReturn(mock(CampaignFleetAPI.class));
+        when(playerFleetData.getMembersListCopy()).thenReturn(List.of(member, allyMember));
+        when(playerFleetData.getNumMembers()).thenReturn(2);
+
+        assertTrue(SecondInCommandCompat.isSkillActive(allyMember, SecondInCommandCompat.RECONFIGURATION_SKILL_ID));
+        assertTrue(SecondInCommandCompat.isSkillActive(allyMember, SecondInCommandCompat.RECONFIGURATION_SKILL_ID));
+        verify(playerFleetData, times(1)).getMembersListCopy();
     }
 
     @Test

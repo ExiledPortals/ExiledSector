@@ -37,6 +37,13 @@ class SkillEffectSupportTest {
     }
 
     @Test
+    void theInverseMultUndoesAReductionAndStaysFiniteAtAFullOne() {
+        assertEquals(2f, SkillEffectSupport.inverseMultFrom(-50f), 0.0001f);
+        assertEquals(100f, StatMode.MULT.inverse(-50f), 0.01f);
+        assertEquals(1f / SkillEffectSupport.MIN_INVERTED_MULT, SkillEffectSupport.inverseMultFrom(-100f), 0.0001f);
+    }
+
+    @Test
     void applyMultOnAMutableStatUsesTheConvertedMultiplier() {
         MutableStat stat = mock(MutableStat.class);
 

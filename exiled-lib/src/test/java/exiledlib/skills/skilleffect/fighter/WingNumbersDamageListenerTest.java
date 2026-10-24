@@ -67,7 +67,7 @@ class WingNumbersDamageListenerTest {
         when(engine.isEntityInPlay(any())).thenReturn(true);
         when(engine.isEntityInPlay(removed)).thenReturn(false);
 
-        assertEquals(3, WingNumbersDamageListener.fightersOutWithWing(hit, engine), "the struck fighter, the flying one and the phased one");
+        assertEquals(3, WingNumbersDamageListener.fightersOutWithWing(hit, new WingMemberCache().membersOf(hit, engine), engine), "the struck fighter, the flying one and the phased one");
     }
 
     @Test
@@ -90,6 +90,8 @@ class WingNumbersDamageListenerTest {
 
     @Test
     void aFighterWithoutAWingCountsOnlyItself() {
-        assertEquals(1, WingNumbersDamageListener.fightersOutWithWing(flyingFighter(), null));
+        ShipAPI fighter = flyingFighter();
+
+        assertEquals(1, WingNumbersDamageListener.fightersOutWithWing(fighter, new WingMemberCache().membersOf(fighter, null), null));
     }
 }

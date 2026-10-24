@@ -17,7 +17,9 @@ import org.lwjgl.util.vector.Vector2f;
 import org.magiclib.plugins.MagicFakeBeamPlugin;
 import org.magiclib.util.MagicFakeBeam;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 final class BeamSplitListener extends ShipCombatListener implements DamageDealtModifier, DroneSpawner {
 
@@ -27,11 +29,21 @@ final class BeamSplitListener extends ShipCombatListener implements DamageDealtM
     private static final float SPLIT_RADIUS_MULT_OF_BEAM_RANGE = 0.5f;
     private static final float SIMULATED_BEAM_FULL_DURATION = 0.05f;
     private static final float SIMULATED_BEAM_FADE_DURATION = 0.15f;
+    private static final float TARGET_REFRESH_SECONDS = 0.2f;
+    private static final float FORGOTTEN_BEAM_SECONDS = 1f;
 
     private static boolean applyingSimulatedHit;
 
     private final SplitBeamDrones drones;
+    private final Map<BeamAPI, SplitTargets> targetsByBeam = new HashMap<>();
     private boolean processingSplit;
+
+    private static final class SplitTargets {
+        private ShipAPI primaryTarget;
+        private int count;
+        private float foundAt;
+        private List<ShipAPI> ships = List.of();
+    }
 
     static boolean isApplyingSimulatedHit() {
         return applyingSimulatedHit;
@@ -62,7 +74,7 @@ final class BeamSplitListener extends ShipCombatListener implements DamageDealtM
         }
         int splitCount = Math.round(magnitude(TARGETS_KEY));
         List<ShipAPI> splitTargets = splitCount <= 0 ? List.of()
-                : findNearbyEnemies(primaryTarget, point, weapon.getRange() * SPLIT_RADIUS_MULT_OF_BEAM_RANGE, splitCount);
+                : splitTargets(beam, primaryTarget, point, splitCount);
         if (splitTargets.isEmpty()) {
             drones.claim(beam, splitTargets);
             return null;
@@ -99,6 +111,31 @@ final class BeamSplitListener extends ShipCombatListener implements DamageDealtM
         WeaponAPI.DerivedWeaponStatsAPI stats = weapon.getDerivedStats();
         float dps = stats.getDps();
         return dps > 0f ? stats.getEmpPerSecond() / dps : 0f;
+    }
+
+    private List<ShipAPI> splitTargets(BeamAPI beam, ShipAPI primaryTarget, Vector2f point, int count) {
+        float now = Global.getCombatEngine().getTotalElapsedTime(false);
+        SplitTargets cached = targetsByBeam.get(beam);
+        if (cached != null && cached.primaryTarget == primaryTarget && cached.count == count && now >= cached.foundAt
+                && now - cached.foundAt < TARGET_REFRESH_SECONDS && allAlive(cached.ships)) {
+            return cached.ships;
+        }
+        targetsByBeam.values().removeIf(entry -> now < entry.foundAt || now - entry.foundAt > FORGOTTEN_BEAM_SECONDS);
+        cached = targetsByBeam.computeIfAbsent(beam, key -> new SplitTargets());
+        cached.primaryTarget = primaryTarget;
+        cached.count = count;
+        cached.foundAt = now;
+        cached.ships = List.copyOf(findNearbyEnemies(primaryTarget, point, beam.getWeapon().getRange() * SPLIT_RADIUS_MULT_OF_BEAM_RANGE, count));
+        return cached.ships;
+    }
+
+    private static boolean allAlive(List<ShipAPI> ships) {
+        for (ShipAPI ship : ships) {
+            if (!CombatQueries.isAliveNotHulk(ship)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private List<ShipAPI> findNearbyEnemies(ShipAPI primaryTarget, Vector2f point, float radius, int count) {

@@ -1,5 +1,7 @@
 package exiledlib.compat;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CampaignClockAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
@@ -8,8 +10,11 @@ import exiledlib.PlayerFleet;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public final class SecondInCommandCompat {
 
@@ -30,6 +35,11 @@ public final class SecondInCommandCompat {
     private static final OptionalApi SKILL_API = new OptionalApi(List.of(IS_SKILL_ACTIVE, GET_FLEET_DATA),
             Logger.getLogger(SecondInCommandCompat.class), Level.ERROR,
             "Second-in-Command skill lookup failed; disabling compatibility checks", OptionalApi.RuntimeFailure.DISABLE);
+
+    private static WeakReference<FleetDataAPI> cachedPlayerFleetData = new WeakReference<>(null);
+    private static long cachedPlayerFleetAt;
+    private static int cachedPlayerMemberCount = -1;
+    private static Set<String> cachedPlayerMemberIds = Set.of();
 
     private SecondInCommandCompat() {
     }
@@ -54,6 +64,8 @@ public final class SecondInCommandCompat {
 
     public static void clearCachedLookups() {
         SKILL_API.reset();
+        cachedPlayerFleetData = new WeakReference<>(null);
+        cachedPlayerMemberIds = Set.of();
     }
 
     public static boolean hasDeactivatedSMod(ShipVariantAPI variant, String hullModId) {
@@ -77,7 +89,24 @@ public final class SecondInCommandCompat {
         CampaignFleetAPI playerFleet = PlayerFleet.orNull();
         boolean joinedAllyFleet = playerFleet != null && memberFleet != playerFleet
                 && playerFleet.getFleetData() != null
-                && playerFleet.getFleetData().getMembersListCopy().contains(member);
+                && inPlayerFleet(playerFleet.getFleetData(), member);
         return joinedAllyFleet ? playerFleet : memberFleet;
+    }
+
+    private static boolean inPlayerFleet(FleetDataAPI playerFleetData, FleetMemberAPI member) {
+        CampaignClockAPI clock = Global.getSector().getClock();
+        long now = clock == null ? Long.MIN_VALUE : clock.getTimestamp();
+        int memberCount = playerFleetData.getNumMembers();
+        if (cachedPlayerFleetData.get() != playerFleetData || now != cachedPlayerFleetAt || memberCount != cachedPlayerMemberCount) {
+            Set<String> memberIds = new HashSet<>();
+            for (FleetMemberAPI playerMember : playerFleetData.getMembersListCopy()) {
+                memberIds.add(playerMember.getId());
+            }
+            cachedPlayerFleetData = new WeakReference<>(playerFleetData);
+            cachedPlayerFleetAt = now;
+            cachedPlayerMemberCount = memberCount;
+            cachedPlayerMemberIds = memberIds;
+        }
+        return cachedPlayerMemberIds.contains(member.getId());
     }
 }
