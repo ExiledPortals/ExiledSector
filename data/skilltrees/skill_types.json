@@ -4744,6 +4744,10 @@
 				{
 					"effect": "SOLARIS_OVERDRIVE_PROJECTILE_SPEED_PERCENT",
 					"magnitude": 50
+				},
+				{
+					"effect": "SOLARIS_OVERDRIVE_RATE_OF_FIRE_PERCENT",
+					"magnitude": 25
 				}
 			],
 			"description": "The Aracari's Solaris Phalanx primes thermo-dynamic flux cores until its guns fire without drawing on the grid. A deserter from an Aracari engine room walks the crew through a smaller version, keyed to this ship's own system.",

@@ -169,6 +169,8 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
         }
     },
     SOLARIS_OVERDRIVE_PROJECTILE_SPEED_PERCENT(SolarisOverdriveListener.PROJECTILE_SPEED_PERCENT_KEY, SolarisOverdriveListener.class,
+            SolarisOverdriveListener::new),
+    SOLARIS_OVERDRIVE_RATE_OF_FIRE_PERCENT(SolarisOverdriveListener.RATE_OF_FIRE_PERCENT_KEY, SolarisOverdriveListener.class,
             SolarisOverdriveListener::new);
 
     private static final String LARGE_BALLISTIC_OP_COST_KEY = "large_ballistic_mod";

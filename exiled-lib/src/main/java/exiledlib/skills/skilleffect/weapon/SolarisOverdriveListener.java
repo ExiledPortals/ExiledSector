@@ -19,7 +19,8 @@ final class SolarisOverdriveListener extends ShipCombatListener implements Advan
 
     static final String SECONDS_KEY = "exiledSector_solarisOverdriveSeconds";
     static final String PROJECTILE_SPEED_PERCENT_KEY = "exiledSector_solarisOverdriveProjectileSpeedPercent";
-    static final float COOLDOWN_SECONDS = 20f;
+    static final String RATE_OF_FIRE_PERCENT_KEY = "exiledSector_solarisOverdriveRateOfFirePercent";
+    static final float COOLDOWN_SECONDS = 60f;
     private static final String MOD_ID_PREFIX = "exiledSector_solarisOverdrive_";
     private static final String STATUS_ICON = "graphics/icons/hullsys/ammo_feeder.png";
     private static final Color WEAPON_GLOW_COLOR = new Color(255, 170, 60, 200);
@@ -27,7 +28,8 @@ final class SolarisOverdriveListener extends ShipCombatListener implements Advan
             WeaponAPI.WeaponType.ENERGY, WeaponAPI.WeaponType.MISSILE);
     private static final ScaledBonus OVERDRIVE_BONUS = new ScaledBonus(
             ScaledBonus.fixed(WeaponStatFamily.FLUX_COST.target(WeaponScope.ALL), StatMode.MULT, -100f),
-            ScaledBonus.percent(WeaponStatFamily.PROJECTILE_SPEED.target(WeaponScope.ALL), PROJECTILE_SPEED_PERCENT_KEY));
+            ScaledBonus.percent(WeaponStatFamily.PROJECTILE_SPEED.target(WeaponScope.ALL), PROJECTILE_SPEED_PERCENT_KEY),
+            ScaledBonus.percent(WeaponStatFamily.FIRE_RATE.target(WeaponScope.ALL), RATE_OF_FIRE_PERCENT_KEY));
 
     private final PlayerStatus status;
     private boolean systemWasActive;

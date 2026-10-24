@@ -318,6 +318,7 @@
     {"name": "SHIELD_UPKEEP_PERCENT", "statMode": "PERCENT", "lowerIsBetter": true},
     {"name": "SHIP_RECOVERY_CHANCE_BONUS", "statMode": null, "lowerIsBetter": false},
     {"name": "SOLARIS_OVERDRIVE_PROJECTILE_SPEED_PERCENT", "statMode": null, "lowerIsBetter": false},
+    {"name": "SOLARIS_OVERDRIVE_RATE_OF_FIRE_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "SOLARIS_OVERDRIVE_SECONDS_FLAT", "statMode": null, "lowerIsBetter": false},
     {"name": "SUPPLIES_PER_MONTH_MULT", "statMode": "MULT", "lowerIsBetter": true},
     {"name": "SUPPORT_ROLE_ARMOR_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
