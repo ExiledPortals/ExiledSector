@@ -5,7 +5,6 @@ import exiledlib.Seeds;
 import exiledsector.data.CsvRows;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
-import exiledsector.modifiers.ModifierSlot;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -68,14 +67,7 @@ public final class StarChartImplicits {
             if (trimmed.isEmpty()) {
                 continue;
             }
-            if (!ItemModifiers.isReference(trimmed)) {
-                throw new IllegalArgumentException("implicit \"" + trimmed + "\" must reference a modifier as @ID");
-            }
-            String referenceId = trimmed.substring(ItemModifiers.REFERENCE_MARK.length()).trim();
-            if (referenceId.contains(":")) {
-                throw new IllegalArgumentException("implicit \"" + trimmed + "\" has a weight, but implicits always roll");
-            }
-            Modifier implicit = ItemModifiers.referenced(referenceId, ModifierSlot.IMPLICIT, ItemType.STAR_CHART);
+            Modifier implicit = ItemImplicits.referencedImplicit(trimmed, ItemType.STAR_CHART);
             for (Modifier existing : implicits) {
                 if (existing.id().equals(implicit.id())) {
                     throw new IllegalArgumentException(implicit.id() + " is listed more than once");

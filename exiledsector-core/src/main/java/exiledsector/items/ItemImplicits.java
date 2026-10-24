@@ -94,12 +94,15 @@ public final class ItemImplicits {
         return List.copyOf(implicits);
     }
 
-    private static Modifier referencedImplicit(String entryText, ItemType itemType) {
-        String referenceId = entryText.substring(ItemModifiers.REFERENCE_MARK.length()).trim();
-        if (referenceId.contains(":")) {
+    public static Modifier referencedImplicit(String entryText, ItemType itemType) {
+        if (!ItemModifiers.isReference(entryText)) {
+            throw new IllegalArgumentException("implicit \"" + entryText + "\" must reference a modifier as @ID");
+        }
+        ModifierReference reference = ModifierReference.parse(entryText);
+        if (!reference.hasShape(false, false)) {
             throw new IllegalArgumentException("implicit \"" + entryText + "\" has a weight, but implicits always roll");
         }
-        return ItemModifiers.referenced(referenceId, ModifierSlot.IMPLICIT, itemType);
+        return ItemModifiers.referenced(reference.id(), ModifierSlot.IMPLICIT, itemType);
     }
 
     private static void addImplicit(List<Modifier> implicits, Modifier implicit) {

@@ -35,7 +35,6 @@ public final class ItemDataIntegrity {
 
     static final String HYBRID_ID_PREFIX = "HYBRID_";
     static final String ENTRY_SEPARATOR = ";";
-    static final String WEIGHT_SEPARATOR = ":";
     static final int FIRST_DATA_LINE = 2;
     private static final Logger LOG = Logger.getLogger(ItemDataIntegrity.class);
     private static final DomainContributions<ItemDataRules> RULES = DomainContributions.fromEveryDomain(ExiledSectorDomain::itemDataRules);
@@ -299,20 +298,18 @@ public final class ItemDataIntegrity {
                 error(file, line, definitionId + " lists \"" + trimmed + "\" inline; reference a modifier as @ID or @ID:weight");
                 continue;
             }
-            String[] fields = trimmed.substring(ItemModifiers.REFERENCE_MARK.length()).split(WEIGHT_SEPARATOR, -1);
-            boolean tierGated = fields.length >= 2 && PoolEntry.isTierRangeText(fields[fields.length - 1]);
-            int weightFields = fields.length - 1 - (tierGated ? 1 : 0);
-            if (weightFields > 1 || fields.length > 3) {
+            ModifierReference reference = ModifierReference.parse(trimmed);
+            if (!reference.hasShape(true, true)) {
                 error(file, line, definitionId + " entry \"" + trimmed + "\" is not @ID, @ID:weight, @ID:tMIN-MAX or @ID:weight:tMIN-MAX");
                 continue;
             }
-            if (weightFields == 1) {
-                checkWeight(file, line, definitionId, trimmed, fields[1]);
+            if (reference.weightText() != null) {
+                checkWeight(file, line, definitionId, trimmed, reference.weightText());
             }
-            if (tierGated) {
-                checkTierGate(file, line, definitionId, trimmed, fields[fields.length - 1], itemType);
+            if (reference.tierText() != null) {
+                checkTierGate(file, line, definitionId, trimmed, reference.tierText(), itemType);
             }
-            ModifierRow modifier = referencedModifier(file, line, definitionId, fields[0].trim(), slot, ModifierScope.of(itemType));
+            ModifierRow modifier = referencedModifier(file, line, definitionId, reference.id(), slot, ModifierScope.of(itemType));
             if (modifier == null) {
                 continue;
             }
@@ -414,12 +411,12 @@ public final class ItemDataIntegrity {
             error(file, line, typeId + " lists \"" + entryText + "\" inline; reference a modifier as @ID");
             return;
         }
-        String referenceId = entryText.substring(ItemModifiers.REFERENCE_MARK.length()).trim();
-        if (referenceId.contains(WEIGHT_SEPARATOR)) {
+        ModifierReference reference = ModifierReference.parse(entryText);
+        if (!reference.hasShape(false, false)) {
             error(file, line, typeId + " entry \"" + entryText + "\" has a weight, but implicits always roll");
             return;
         }
-        ModifierRow implicit = referencedModifier(file, line, typeId, referenceId, ModifierSlot.IMPLICIT, ModifierScope.of(itemType));
+        ModifierRow implicit = referencedModifier(file, line, typeId, reference.id(), ModifierSlot.IMPLICIT, ModifierScope.of(itemType));
         if (implicit == null) {
             return;
         }

@@ -4,7 +4,6 @@ import exiledlib.ModCsv;
 import exiledsector.data.CsvRows;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
-import exiledsector.modifiers.ModifierSlot;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,23 +35,12 @@ public final class CorruptionImplicitPool {
     public void register(JSONArray rows) throws JSONException {
         Map<String, Modifier> byId = new LinkedHashMap<>();
         CsvRows.forEachRow(rows, dataPath.get(), log, (index, row) -> {
-            Modifier implicit = referencedImplicit(ModCsv.text(row, IMPLICIT_COLUMN));
+            Modifier implicit = ItemImplicits.referencedImplicit(ModCsv.text(row, IMPLICIT_COLUMN), itemType);
             if (byId.putIfAbsent(implicit.id(), implicit) != null) {
                 throw new IllegalArgumentException(implicit.id() + " is listed more than once");
             }
         });
         implicits.set(List.copyOf(byId.values()));
-    }
-
-    private Modifier referencedImplicit(String entryText) {
-        if (!ItemModifiers.isReference(entryText)) {
-            throw new IllegalArgumentException("implicit \"" + entryText + "\" must reference a modifier as @ID");
-        }
-        String referenceId = entryText.substring(ItemModifiers.REFERENCE_MARK.length()).trim();
-        if (referenceId.contains(":")) {
-            throw new IllegalArgumentException("implicit \"" + entryText + "\" has a weight, but every pool entry is equally likely");
-        }
-        return ItemModifiers.referenced(referenceId, ModifierSlot.IMPLICIT, itemType);
     }
 
     public List<Modifier> implicits() {

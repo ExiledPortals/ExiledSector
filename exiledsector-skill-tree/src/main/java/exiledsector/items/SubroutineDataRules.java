@@ -24,7 +24,6 @@ import java.util.Set;
 
 import static exiledsector.items.ItemDataIntegrity.ENTRY_SEPARATOR;
 import static exiledsector.items.ItemDataIntegrity.FIRST_DATA_LINE;
-import static exiledsector.items.ItemDataIntegrity.WEIGHT_SEPARATOR;
 
 public final class SubroutineDataRules implements ItemDataRules {
 
@@ -146,13 +145,13 @@ public final class SubroutineDataRules implements ItemDataRules {
 
     private static ItemDataIntegrity.ModifierRow referencedUniqueLine(ItemDataIntegrity integrity, String file, int line, String definitionId,
                                                                       String entryText) {
-        String referenceText = entryText.substring(ItemModifiers.REFERENCE_MARK.length()).trim();
-        if (referenceText.contains(WEIGHT_SEPARATOR)) {
+        ModifierReference reference = ModifierReference.parse(entryText);
+        if (!reference.hasShape(false, false)) {
             integrity.error(file, line, definitionId + " line \"" + entryText
                     + "\" has a weight or tier range, but every unique subroutine line always rolls");
             return null;
         }
-        return integrity.referencedModifier(file, line, definitionId, referenceText, ModifierSlot.PREFIX, ModifierScope.UNIQUE_SUBROUTINE);
+        return integrity.referencedModifier(file, line, definitionId, reference.id(), ModifierSlot.PREFIX, ModifierScope.UNIQUE_SUBROUTINE);
     }
 
     private static ItemDataIntegrity.ModifierRow inlineUniqueLine(ItemDataIntegrity integrity, String file, int line, String definitionId,
@@ -355,15 +354,15 @@ public final class SubroutineDataRules implements ItemDataRules {
                 integrity.error(file, line, definitionId + " lists \"" + trimmed + "\" inline; reference a modifier as @ID or @ID:weight");
                 continue;
             }
-            String[] fields = trimmed.substring(ItemModifiers.REFERENCE_MARK.length()).split(WEIGHT_SEPARATOR, -1);
-            if (fields.length > 2) {
+            ModifierReference reference = ModifierReference.parse(trimmed);
+            if (!reference.hasShape(true, false)) {
                 integrity.error(file, line, definitionId + " entry \"" + trimmed + "\" is not @ID or @ID:weight");
                 continue;
             }
-            if (fields.length == 2) {
-                integrity.checkWeight(file, line, definitionId, trimmed, fields[1]);
+            if (reference.weightText() != null) {
+                integrity.checkWeight(file, line, definitionId, trimmed, reference.weightText());
             }
-            ItemDataIntegrity.ModifierRow modifier = integrity.referencedModifier(file, line, definitionId, fields[0].trim(), ModifierSlot.PREFIX,
+            ItemDataIntegrity.ModifierRow modifier = integrity.referencedModifier(file, line, definitionId, reference.id(), ModifierSlot.PREFIX,
                     ModifierScope.DOCTRINE);
             if (modifier != null) {
                 integrity.checkRepeats(file, line, definitionId, modifier, pool);

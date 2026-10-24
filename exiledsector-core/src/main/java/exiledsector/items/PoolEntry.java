@@ -13,7 +13,6 @@ import java.util.regex.Pattern;
 
 public record PoolEntry(Modifier modifier, float weight, TierRange tiers) {
 
-    private static final String WEIGHT_SEPARATOR = ":";
     private static final String TIER_MARK = "t";
     private static final Pattern TIER_RANGE = Pattern.compile("t(\\d+)(?:(\\+)|-(\\d+))?");
 
@@ -52,16 +51,14 @@ public record PoolEntry(Modifier modifier, float weight, TierRange tiers) {
     }
 
     private static PoolEntry parseReference(String entryText, ModifierSlot slot, ModifierScope scope) {
-        String[] fields = entryText.substring(ItemModifiers.REFERENCE_MARK.length()).split(WEIGHT_SEPARATOR, -1);
-        boolean tierGated = fields.length >= 2 && isTierRangeText(fields[fields.length - 1]);
-        int weightFields = fields.length - 1 - (tierGated ? 1 : 0);
-        if (weightFields > 1 || fields.length > 3) {
+        ModifierReference reference = ModifierReference.parse(entryText);
+        if (!reference.hasShape(true, true)) {
             throw new IllegalArgumentException("entry \"" + entryText + "\" is not @MODIFIER_ID, @MODIFIER_ID:weight, @MODIFIER_ID:tMIN-MAX "
                     + "or @MODIFIER_ID:weight:tMIN-MAX");
         }
-        Modifier referencedModifier = ItemModifiers.referenced(fields[0].trim(), slot, scope);
-        float weight = parseWeight(weightFields == 1 ? fields[1] : null, entryText);
-        TierRange tiers = tierGated ? parseTierRange(fields[fields.length - 1], entryText) : TierRange.ANY;
+        Modifier referencedModifier = ItemModifiers.referenced(reference.id(), slot, scope);
+        float weight = parseWeight(reference.weightText(), entryText);
+        TierRange tiers = reference.tierText() != null ? parseTierRange(reference.tierText(), entryText) : TierRange.ANY;
         return new PoolEntry(referencedModifier, weight, tiers);
     }
 
