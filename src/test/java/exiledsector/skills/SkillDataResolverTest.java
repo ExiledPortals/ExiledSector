@@ -172,6 +172,17 @@ class SkillDataResolverTest {
     }
 
     @Test
+    void aShipTaggedWithItsOwnIdWhoseTreeIsNotInTheSectorHasItsSavedTreeOutOfReach() {
+        dataManagerMock.when(() -> ShipSkillDataManager.find("ship-b")).thenReturn(new ShipSkillData());
+
+        assertTrue(SkillDataResolver.savedTreeOutOfReach(member("ship-a"), variantWithTags(SkillDataResolver.SHIP_TAG_PREFIX + "ship-a")));
+        assertFalse(SkillDataResolver.savedTreeOutOfReach(member("ship-b"), variantWithTags(SkillDataResolver.SHIP_TAG_PREFIX + "ship-b")));
+        assertFalse(SkillDataResolver.savedTreeOutOfReach(member("sim-copy"), variantWithTags(SkillDataResolver.SHIP_TAG_PREFIX + "ship-a")));
+        assertFalse(SkillDataResolver.savedTreeOutOfReach(member("ship-a"), variantWithTags()));
+        assertFalse(SkillDataResolver.savedTreeOutOfReach(null, variantWithTags(SkillDataResolver.SHIP_TAG_PREFIX + "ship-a")));
+    }
+
+    @Test
     void syncingTheShipTagReplacesAStaleTagAndForgetsTheCachedOpCostStats() {
         dataManagerMock.when(() -> ShipSkillDataManager.find("ship-a")).thenReturn(new ShipSkillData());
         ShipVariantAPI variant = variantWithTags(SkillDataResolver.SHIP_TAG_PREFIX + "copied-from");

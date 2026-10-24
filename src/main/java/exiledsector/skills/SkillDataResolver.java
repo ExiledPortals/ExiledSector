@@ -48,6 +48,11 @@ public final class SkillDataResolver {
                 && ShipSkillDataManager.find(member.getId()) == null && taggedTree(variant) != null;
     }
 
+    public static boolean savedTreeOutOfReach(FleetMemberAPI member, ShipVariantAPI variant) {
+        return member != null && NpcTreeTag.find(variant) == null && member.getId().equals(taggedShipId(variant))
+                && ShipSkillDataManager.find(member.getId()) == null;
+    }
+
     public static boolean isNpcTree(ShipVariantAPI variant) {
         return NpcTreeTag.find(variant) != null;
     }

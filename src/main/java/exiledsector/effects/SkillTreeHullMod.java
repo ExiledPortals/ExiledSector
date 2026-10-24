@@ -51,6 +51,9 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
 
         FleetMemberAPI member = stats.getFleetMember();
         ShipVariantAPI variant = stats.getVariant();
+        if (SkillDataResolver.savedTreeOutOfReach(member, variant)) {
+            FighterBayOverflow.keepBaysForFittedWings(stats, variant);
+        }
         if (member != null && variant != null && !shipData.isNpcBuild() && !shipData.getSocketedItems().isEmpty()
                 && !SkillDataResolver.isNpcTree(variant)) {
             DoctrineOverrides.bindShipFacts(shipData, () -> PlayerShipFacts.of(member, variant));

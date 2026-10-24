@@ -80,6 +80,24 @@ class FighterBayOverflowTest {
     }
 
     @Test
+    void keptBaysCoverEveryFittedWingSlot() {
+        fitted(0, "talon_wing", null, "wasp_wing");
+
+        FighterBayOverflow.keepBaysForFittedWings(member.getStats(), variant);
+
+        assertEquals(3f, bays.getModifiedValue());
+    }
+
+    @Test
+    void keptBaysNeverLowerTheBayCount() {
+        fitted(4, "talon_wing");
+
+        FighterBayOverflow.keepBaysForFittedWings(member.getStats(), variant);
+
+        assertEquals(4f, bays.getModifiedValue());
+    }
+
+    @Test
     void withNoCargoToReturnItToNothingIsRemoved() {
         fitted(1, "talon_wing", "wasp_wing");
 

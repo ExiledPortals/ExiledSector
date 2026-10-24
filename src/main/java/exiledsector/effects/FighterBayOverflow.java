@@ -2,6 +2,7 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.FighterWingSpecAPI;
@@ -15,7 +16,19 @@ import java.util.List;
 
 public final class FighterBayOverflow {
 
+    private static final String KEPT_BAYS_MOD_ID = "exiledSector_keptBays";
+
     private FighterBayOverflow() {
+    }
+
+    public static void keepBaysForFittedWings(MutableShipStatsAPI stats, ShipVariantAPI variant) {
+        if (stats == null || variant == null || variant.getWings() == null) {
+            return;
+        }
+        int missingBays = variant.getWings().size() - Math.round(stats.getNumFighterBays().getModifiedValue());
+        if (missingBays > 0) {
+            stats.getNumFighterBays().modifyFlat(KEPT_BAYS_MOD_ID, missingBays);
+        }
     }
 
     public static List<String> returnUnhousedWings(FleetMemberAPI member, ShipVariantAPI variant, CargoAPI cargo) {
