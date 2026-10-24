@@ -103,16 +103,16 @@ Highest payoff first. Line counts are the reviewers' estimates.
 ## Structure
 
 - Refuted: moving `SkillEffect`'s `blockAllocationReason(ShipFacts, ...)`, `deallocationWarning` and `appliesToNpcShips` into a core registry. They say which ships an effect can work on (shielded, phase, built-in wings only, low base armor), which effects mean nothing on NPC ships, and what removing one breaks (fighter bays), and five lib effect enums implement them; a mod reusing the effects needs that to avoid applying them where they do nothing. `ModifierEffect` is lib's (`exiledlib.modifiers`), not core's item framework.
-- Exiled Lib hard-codes its host: 7 `"[ExiledSector]"` log prefixes and 117 `"exiledSector_"` key literals in 52 lib files although `HostMod.dataKey` exists (`AffinitySteps` uses `exiledLib_`). Check saves and `skill_types.json` before renaming any key.
-- `ui/decoration/RefitShipPortrait`, `InspectedShip` and `ui/RefitBackdrop` in core are used only by hull upgrades and belong there.
-- 16 of the 19 chart test files in `exiledsector-mod` import nothing outside core, lib and star charts and may belong in `exiledsector-star-charts`; confirm they don't need the other domains installed.
-- `StarChartDefinitions.SYSTEM_TYPES` restates `ChartLayoutGenerator.ALLOWED_TYPES` as strings; derive one from the other.
-- `skills/ShipTrees` (893 lines) mixes allocation, link caches, the charge ledger, dormancy and trimming; split into `ShipTreeLinks`, `ItemChargeLedger`, `DormantNodes`.
-- `SkillTreeTopology`'s constructor reads drawing data from `SkillTree` statics, so graph-only users pay for it.
+- DONE (parallel-work): keys that only live in combat or are rebuilt with the ship stats use an `exiledLib_` prefix and the log prefix is `[ExiledLib]`; the three fleet stat mod ids (saved with the fleet) and the split beam drone hull id (host data) go through `HostMod.dataKey`, so their values are unchanged; lib i18n logs name the host through `HostMod.id()`. Originally: Exiled Lib hard-codes its host: 7 `"[ExiledSector]"` log prefixes and 117 `"exiledSector_"` key literals in 52 lib files although `HostMod.dataKey` exists (`AffinitySteps` uses `exiledLib_`). Check saves and `skill_types.json` before renaming any key.
+- DONE (parallel-work): `ui/decoration/RefitShipPortrait`, `InspectedShip` and `ui/RefitBackdrop` moved from core to hull upgrades, their only user.
+- DONE (parallel-work): 18 chart tests and `StarChartFixtures` moved to `exiledsector-star-charts`, with the shipped chart tables read through its new `ChartTables`; the hull item case of `ChartFleetLootTest` stays in mod as `ChartFleetHullItemsTest`. Kept in mod: tests that read skill tree or hull upgrade classes or register their items (`ChartContentDataTest`, `ChartDropsTest`, `ChartTierLevelsTest`, `StarChartTest`, `StarChartCurrencyTest`, `StarChartNamesTest`, `StarChartDataTest`, `StarChartProgressPointsTest`). Originally: 16 of the 19 chart test files in `exiledsector-mod` import nothing outside core, lib and star charts and may belong in `exiledsector-star-charts`; confirm they don't need the other domains installed.
+- DONE (parallel-work): `SYSTEM_TYPES` is built from `ALLOWED_TYPES`. Originally: `StarChartDefinitions.SYSTEM_TYPES` restates `ChartLayoutGenerator.ALLOWED_TYPES` as strings; derive one from the other.
+- DONE (parallel-work): `ShipTreeLinks` (anchor, wormhole and grant links), `DormantNodes` (`WakeCheck`, waking) and `ItemChargeLedger` split out; `ShipTrees` keeps allocation, release, reachability and trimming (606 lines). Originally: `skills/ShipTrees` (893 lines) mixes allocation, link caches, the charge ledger, dormancy and trimming; split into `ShipTreeLinks`, `ItemChargeLedger`, `DormantNodes`.
+- DONE (parallel-work): connectors and drawn neighbours are built on first use, so graph-only topologies never read the drawing data. Originally: `SkillTreeTopology`'s constructor reads drawing data from `SkillTree` statics, so graph-only users pay for it.
 - `effects/SkillTreeInstaller` must keep its class name: old saves reference it.
-- Dead code in the skill tree UI: `TreeCamera.inspect()` and the follow-offset members, `SmoothZoom.aimBeyondMax`/`INSPECT_MAX_ZOOM`, `SkillTreeFleetRenderer`'s solo members, `GrantMarkers.colorByNodeId()`. `TreeAllocationSession` imports `Translation` twice.
-- `GhostFlight` sits in `ui.node` but `ui.HyperspaceGhostFlights` uses it.
-- `ModificationBay.open()` returns `offersWormholeOpening() == true` in hull item mode, harmless only because `showsOpenButton` also checks the mode.
+- DONE (parallel-work): removed `TreeCamera.inspect`/`stopInspecting`/`setFollowOffset`/`isFollowSettled` and the follow offset, `SmoothZoom.aimBeyondMax`/`INSPECT_MAX_ZOOM`, the fleet renderer's solo mode (the viewed ship keeps its vanilla art, now named `viewedShip`), `GrantMarkers.colorByNodeId()` (its tests read `colorFor`) and the duplicate import. Originally: dead code in the skill tree UI: `TreeCamera.inspect()` and the follow-offset members, `SmoothZoom.aimBeyondMax`/`INSPECT_MAX_ZOOM`, `SkillTreeFleetRenderer`'s solo members, `GrantMarkers.colorByNodeId()`. `TreeAllocationSession` imports `Translation` twice.
+- DONE (parallel-work): `GhostFlight` and `GhostFlightPool` moved to `ui.decoration`, which owns the ghost texture path. Originally: `GhostFlight` sits in `ui.node` but `ui.HyperspaceGhostFlights` uses it.
+- DONE (parallel-work): the bay offers an opening only when its mode has opening texts. Originally: `ModificationBay.open()` returns `offersWormholeOpening() == true` in hull item mode, harmless only because `showsOpenButton` also checks the mode.
 
 ## Test suite
 
@@ -120,7 +120,7 @@ Highest payoff first. Line counts are the reviewers' estimates.
 2. DONE (a8bc9e5e): `ConsoleFixture` (sector, fleet, cargo, `granted`, `verifyNothingGranted`), used by the 8 console tests. Originally: console test fixture in core's test jar (package `exiledsector.console`): the identical 8-line setUp in 9 tests and the granted-items captor in 4.
 3. DONE (parallel-work): core's `HullItemRows` holds the hull and modifier rows, shipped rows, `data` and `registerMilitary`; `ItemFixtures` keeps the subroutine rows, `registerShippedItems` and `registerMilitaryAndSubroutine`; `BattleItemDropsTest` is in hull upgrades. Originally: Split `ItemFixtures`: hull and modifier row builders to core's test jar as `HullItemRows`, subroutine rows stay in mod. Then `BattleItemDropsTest` can move to hull upgrades.
 4. DONE (parallel-work): `exiledsector.items.AnchorRows.row`; the three tests with default chances keep a one-line wrapper, and the mod tests use it too. Originally: `AnchorRows` in skill tree's tests for five near-identical `anchorRow` copies.
-5. Optional: a reset extension for item registries (63 tearDowns call `ItemDefinitions.clear()`). Medium risk if tests share state.
+5. WON'T DO (owner decision). Originally: optional, a reset extension for item registries (63 tearDowns call `ItemDefinitions.clear()`). Medium risk if tests share state.
 
 ## Build order
 
@@ -134,4 +134,4 @@ Highest payoff first. Line counts are the reviewers' estimates.
 8. [x] Refuted: moving `Seeds` and `SpecLocalisation` to core (abstraction 3). Both are generic (a seeded `Random`; spec localisation for any host's hull mods and industries through lib's `Translation`), so they stay in lib.
 9. [x] Skill tree UI cost: bugs 10-16 with abstraction 12. Bugs 10-16 done (10-15 in bac5457a, 16 in parallel-work); abstraction 12 done for the ring, ghost and ghost flight sprites; marked complete by the owner without an in-game measurement.
 10. [x] Exiled Lib: bugs 34-39 and 41 with abstractions 22-25 (parallel-work). 41's Seraph's Grace lists went with abstraction 22.
-11. [ ] The remaining abstractions and test suite items. Done: 9, 10, 14, 15, 18 (partly), 19, 21, 26 (partly). 16 and 17 done as cleanup. Test suite items 1-4 done (parallel-work); open: the optional item 5.
+11. [x] The remaining abstractions and test suite items. Done: 9, 10, 14, 15, 18 (partly), 19, 21, 26 (partly). 16 and 17 done as cleanup. Test suite items 1-4 done (parallel-work); item 5 won't do.

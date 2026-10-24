@@ -1,4 +1,4 @@
-package exiledsector.ui.node;
+package exiledsector.ui.decoration;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
@@ -13,7 +13,7 @@ import java.util.Random;
 
 public final class GhostFlight {
 
-    public static final String TEXTURE_PATH = SkillTreeNodeGhostRenderer.GHOST_TEXTURE_PATH;
+    public static final String TEXTURE_PATH = "graphics/icons/fleet_triangle.png";
     private static final int GHOSTS_PER_FLIGHT = 3;
     private static final float MIN_FLIGHT_SECONDS = 2.5f;
     private static final float FADE_SECONDS = 0.6f;

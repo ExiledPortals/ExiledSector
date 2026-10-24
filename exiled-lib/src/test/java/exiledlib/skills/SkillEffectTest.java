@@ -1126,7 +1126,7 @@ class SkillEffectTest {
         com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
         when(stats.getDynamic()).thenReturn(dynamic);
         StatBonus hardFluxPercent = mock(StatBonus.class);
-        when(dynamic.getMod("exiledSector_beamDamageHardFluxPercent")).thenReturn(hardFluxPercent);
+        when(dynamic.getMod("exiledLib_beamDamageHardFluxPercent")).thenReturn(hardFluxPercent);
 
         OnHitSkillEffect.BEAM_WEAPON_HARD_FLUX_PERCENT.apply(stats, "mod_id", 50f);
 
@@ -1159,7 +1159,7 @@ class SkillEffectTest {
         com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
         when(stats.getDynamic()).thenReturn(dynamic);
         StatBonus crPenalty = mock(StatBonus.class);
-        when(dynamic.getMod("exiledSector_phaseAnchorCrPenaltyPercent")).thenReturn(crPenalty);
+        when(dynamic.getMod("exiledLib_phaseAnchorCrPenaltyPercent")).thenReturn(crPenalty);
 
         PhaseSkillEffect.PHASE_ANCHOR_EMERGENCY_DIVE.apply(stats, "mod_id", 100f);
 
@@ -1197,7 +1197,7 @@ class SkillEffectTest {
         com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
         when(ship.getMutableStats()).thenReturn(stats);
         when(stats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue("exiledSector_phaseAnchorCrPenaltyPercent", 0f)).thenReturn(magnitude);
+        when(dynamic.getValue("exiledLib_phaseAnchorCrPenaltyPercent", 0f)).thenReturn(magnitude);
         when(ship.getListeners(any())).thenReturn(List.of());
         PhaseSkillEffect.PHASE_ANCHOR_EMERGENCY_DIVE.applyAfterShipCreation(ship, "mod_id", magnitude);
         ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
@@ -1399,7 +1399,7 @@ class SkillEffectTest {
         com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
         when(stats.getDynamic()).thenReturn(dynamic);
         StatBonus splitTargets = mock(StatBonus.class);
-        when(dynamic.getMod("exiledSector_beamSplitTargets")).thenReturn(splitTargets);
+        when(dynamic.getMod("exiledLib_beamSplitTargets")).thenReturn(splitTargets);
 
         OnHitSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.apply(stats, "mod_id", 1f);
 
@@ -1490,7 +1490,7 @@ class SkillEffectTest {
         com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
         when(ship.getMutableStats()).thenReturn(shipStats);
         when(shipStats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue("exiledSector_beamSplitTargets", 0f)).thenReturn(0f);
+        when(dynamic.getValue("exiledLib_beamSplitTargets", 0f)).thenReturn(0f);
 
         DamageDealtModifier listener = captureBeamSplitListener(ship);
 
@@ -1526,7 +1526,7 @@ class SkillEffectTest {
         com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
         when(ship.getMutableStats()).thenReturn(shipStats);
         when(shipStats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue("exiledSector_beamSplitTargets", 0f)).thenReturn(2f);
+        when(dynamic.getValue("exiledLib_beamSplitTargets", 0f)).thenReturn(2f);
 
         DamageDealtModifier listener = captureBeamSplitListener(ship);
 
@@ -1558,7 +1558,7 @@ class SkillEffectTest {
 
             listener.modifyDamageDealt(beam, primaryTarget, damage, point, false);
 
-            verify(damage.getModifier()).modifyMult("exiledSector_beamSplitShare", 1f / 3);
+            verify(damage.getModifier()).modifyMult("exiledLib_beamSplitShare", 1f / 3);
             verify(engine).applyDamage(eq(beam), eq(enemy1), any(Vector2f.class), eq(30f), eq(DamageType.ENERGY),
                     eq(0f), eq(false), eq(true), eq(ship), eq(false));
             verify(engine).applyDamage(eq(beam), eq(enemy2), any(Vector2f.class), eq(30f), eq(DamageType.ENERGY),
@@ -1574,7 +1574,7 @@ class SkillEffectTest {
         com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
         when(ship.getMutableStats()).thenReturn(shipStats);
         when(shipStats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue("exiledSector_beamSplitTargets", 0f)).thenReturn(1f);
+        when(dynamic.getValue("exiledLib_beamSplitTargets", 0f)).thenReturn(1f);
 
         DamageDealtModifier listener = captureBeamSplitListener(ship);
 
@@ -1621,7 +1621,7 @@ class SkillEffectTest {
         com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
         when(ship.getMutableStats()).thenReturn(shipStats);
         when(shipStats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue("exiledSector_beamSplitTargets", 0f)).thenReturn(2f);
+        when(dynamic.getValue("exiledLib_beamSplitTargets", 0f)).thenReturn(2f);
 
         DamageDealtModifier listener = captureBeamSplitListener(ship);
 
@@ -1655,8 +1655,8 @@ class SkillEffectTest {
             verify(engine).applyDamage(eq(beam), eq(enemy1), any(Vector2f.class), org.mockito.AdditionalMatchers.eq(3f, 0.0001f), eq(DamageType.ENERGY),
                     anyFloat(), eq(false), eq(true), eq(ship), eq(false));
         }
-        verify(damage.getModifier()).modifyMult("exiledSector_beamSplitShare", 1f / 3);
-        assertEquals("exiledSector_beamSplitShare", returnedModifierId);
+        verify(damage.getModifier()).modifyMult("exiledLib_beamSplitShare", 1f / 3);
+        assertEquals("exiledLib_beamSplitShare", returnedModifierId);
     }
 
     @Test
@@ -1668,7 +1668,7 @@ class SkillEffectTest {
         com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
         when(ship.getMutableStats()).thenReturn(shipStats);
         when(shipStats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue("exiledSector_beamSplitTargets", 0f)).thenReturn(1f);
+        when(dynamic.getValue("exiledLib_beamSplitTargets", 0f)).thenReturn(1f);
 
         DamageDealtModifier listener = captureBeamSplitListener(ship);
 
@@ -1726,8 +1726,8 @@ class SkillEffectTest {
             split.advance(1f);
             verify(engine).removeEntity(drone);
         }
-        verify(damage.getModifier()).modifyMult("exiledSector_beamSplitShare", 1f / 2);
-        assertEquals("exiledSector_beamSplitShare", returnedModifierId);
+        verify(damage.getModifier()).modifyMult("exiledLib_beamSplitShare", 1f / 2);
+        assertEquals("exiledLib_beamSplitShare", returnedModifierId);
     }
 
     @Test
@@ -1738,7 +1738,7 @@ class SkillEffectTest {
         com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
         when(ship.getMutableStats()).thenReturn(shipStats);
         when(shipStats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue("exiledSector_beamSplitTargets", 0f)).thenReturn(2f);
+        when(dynamic.getValue("exiledLib_beamSplitTargets", 0f)).thenReturn(2f);
 
         DamageDealtModifier listener = captureBeamSplitListener(ship);
 
@@ -1793,7 +1793,7 @@ class SkillEffectTest {
         com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
         when(ship.getMutableStats()).thenReturn(shipStats);
         when(shipStats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue("exiledSector_beamSplitTargets", 0f)).thenReturn(2f);
+        when(dynamic.getValue("exiledLib_beamSplitTargets", 0f)).thenReturn(2f);
 
         DamageDealtModifier listener = captureBeamSplitListener(ship);
 
@@ -1825,7 +1825,7 @@ class SkillEffectTest {
 
             listener.modifyDamageDealt(beam, primaryTarget, damage, point, false);
 
-            verify(damage.getModifier()).modifyMult("exiledSector_beamSplitShare", 1f / 2);
+            verify(damage.getModifier()).modifyMult("exiledLib_beamSplitShare", 1f / 2);
             verify(engine).applyDamage(eq(beam), eq(enemyInRange), any(Vector2f.class), eq(45f), eq(DamageType.ENERGY),
                     eq(0f), eq(false), eq(true), eq(ship), eq(false));
             verify(engine, never()).applyDamage(eq(beam), eq(enemyOutOfRange), any(Vector2f.class), anyFloat(), any(),
@@ -1841,7 +1841,7 @@ class SkillEffectTest {
         com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
         when(ship.getMutableStats()).thenReturn(shipStats);
         when(shipStats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue("exiledSector_beamSplitTargets", 0f)).thenReturn(1f);
+        when(dynamic.getValue("exiledLib_beamSplitTargets", 0f)).thenReturn(1f);
 
         DamageDealtModifier listener = captureBeamSplitListener(ship);
 
@@ -1877,7 +1877,7 @@ class SkillEffectTest {
             when(beam.getWeapon().getRange()).thenReturn(1400f);
             when(engine.getTotalElapsedTime(false)).thenReturn(1f);
             listener.modifyDamageDealt(beam, primaryTarget, damage, point, false);
-            verify(damage.getModifier()).modifyMult("exiledSector_beamSplitShare", 1f / 2);
+            verify(damage.getModifier()).modifyMult("exiledLib_beamSplitShare", 1f / 2);
         }
     }
 
@@ -1889,7 +1889,7 @@ class SkillEffectTest {
         com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
         when(ship.getMutableStats()).thenReturn(shipStats);
         when(shipStats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue("exiledSector_beamSplitTargets", 0f)).thenReturn(1f);
+        when(dynamic.getValue("exiledLib_beamSplitTargets", 0f)).thenReturn(1f);
 
         DamageDealtModifier listener = captureBeamSplitListener(ship);
 
@@ -1922,7 +1922,7 @@ class SkillEffectTest {
 
             listener.modifyDamageDealt(beam, primaryTarget, damage, point, false);
 
-            verify(damage.getModifier()).modifyMult("exiledSector_beamSplitShare", 1f / 2);
+            verify(damage.getModifier()).modifyMult("exiledLib_beamSplitShare", 1f / 2);
             verify(engine).applyDamage(eq(beam), eq(enemy), any(Vector2f.class), eq(40f), eq(DamageType.ENERGY),
                     eq(8f), eq(false), eq(true), eq(ship), eq(false));
         }
@@ -1936,7 +1936,7 @@ class SkillEffectTest {
         com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
         when(ship.getMutableStats()).thenReturn(shipStats);
         when(shipStats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue("exiledSector_beamSplitTargets", 0f)).thenReturn(1f);
+        when(dynamic.getValue("exiledLib_beamSplitTargets", 0f)).thenReturn(1f);
 
         DamageDealtModifier listener = captureBeamSplitListener(ship);
 

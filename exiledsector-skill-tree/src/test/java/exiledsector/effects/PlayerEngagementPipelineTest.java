@@ -192,7 +192,7 @@ class PlayerEngagementPipelineTest {
         when(member.getId()).thenReturn(id);
         when(member.getStats()).thenReturn(stats);
         when(stats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getValue("exiledSector_postBattleSalvageContribution", 0f)).thenReturn(percent);
+        when(dynamic.getValue("exiledLib_postBattleSalvageContribution", 0f)).thenReturn(percent);
         return member;
     }
 

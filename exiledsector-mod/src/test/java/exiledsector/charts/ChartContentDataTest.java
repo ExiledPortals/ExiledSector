@@ -1,16 +1,12 @@
 package exiledsector.charts;
 
-import exiledlib.ProjectFiles;
 import exiledsector.items.StarChartImplicits;
 import exiledsector.modifiers.Modifier;
 import exiledsector.skills.progression.ShipLevelConfig;
-import org.json.CDL;
 import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -32,20 +28,9 @@ class ChartContentDataTest {
         ChartFactions.resetForTests();
     }
 
-    static JSONArray csvRows(String dataPath) throws Exception {
-        String csv = Files.readString(ProjectFiles.projectRoot().resolve(dataPath), StandardCharsets.UTF_8);
-        return CDL.toJSONArray(csv.replace("\r\n", "\n"));
-    }
-
-    static void loadShippedTables() throws Exception {
-        ChartTiers.register(csvRows(ChartTiers.PATH));
-        ChartPois.register(csvRows(ChartPois.PATH));
-        ChartFactions.register(csvRows(ChartFactions.PATH));
-    }
-
     @Test
     void eachShippedSiteBudgetStartsAtItsFirstSiteAndTheDomainBudgetAffordsTheMothership() throws Exception {
-        loadShippedTables();
+        ChartTables.loadShipped();
 
         for (ChartPoi.Kind kind : ChartPoi.Kind.values()) {
             List<ChartPoi> members = ChartPois.ofKind(ChartPois.all(), kind);
@@ -63,7 +48,7 @@ class ChartContentDataTest {
 
     @Test
     void theShippedTierTableCoversEveryTierAndGetsHarderEachTier() throws Exception {
-        ChartTiers.register(csvRows(ChartTiers.PATH));
+        ChartTiers.register(ChartTables.csvRows(ChartTiers.PATH));
 
         ChartTier previous = null;
         for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
@@ -121,7 +106,7 @@ class ChartContentDataTest {
 
     @Test
     void theShippedPointsOfInterestAllParse() throws Exception {
-        JSONArray rows = csvRows(ChartPois.PATH);
+        JSONArray rows = ChartTables.csvRows(ChartPois.PATH);
         ChartPois.register(rows);
 
         assertEquals(rows.length(), ChartPois.all().size());
@@ -136,9 +121,9 @@ class ChartContentDataTest {
 
     @Test
     void everyChartSalvageSpecHasAHullItemDropRule() throws Exception {
-        ChartPois.register(csvRows(ChartPois.PATH));
+        ChartPois.register(ChartTables.csvRows(ChartPois.PATH));
         Set<String> dropSites = new HashSet<>();
-        JSONArray salvageRows = csvRows("data/config/exiledSector/item_salvage.csv");
+        JSONArray salvageRows = ChartTables.csvRows("data/config/exiledSector/item_salvage.csv");
         for (int i = 0; i < salvageRows.length(); i++) {
             dropSites.add(salvageRows.getJSONObject(i).optString("site"));
         }
@@ -152,7 +137,7 @@ class ChartContentDataTest {
 
     private static Set<String> compatDropSites(String modId) throws Exception {
         Set<String> sites = new HashSet<>();
-        JSONArray rows = csvRows("data/config/exiledSector/compat/salvage/" + modId + ".csv");
+        JSONArray rows = ChartTables.csvRows("data/config/exiledSector/compat/salvage/" + modId + ".csv");
         for (int i = 0; i < rows.length(); i++) {
             sites.add(rows.getJSONObject(i).optString("site"));
         }
@@ -176,7 +161,7 @@ class ChartContentDataTest {
 
     @Test
     void onlyVanillaFactionsAreListedAndUnloadedOnesAreSkipped() throws Exception {
-        ChartFactions.register(csvRows(ChartFactions.PATH));
+        ChartFactions.register(ChartTables.csvRows(ChartFactions.PATH));
         Set<String> vanilla = Set.of("pirates", "hegemony", "remnant", "luddic_path", "independent", "mercenary", "sindrian_diktat",
                 "persean", "luddic_church", "tritachyon", "derelict");
 
@@ -191,7 +176,7 @@ class ChartContentDataTest {
 
     @Test
     void aChartsFactionIsUsedWhenLoadedAndRandomOtherwise() throws Exception {
-        ChartFactions.register(csvRows(ChartFactions.PATH));
+        ChartFactions.register(ChartTables.csvRows(ChartFactions.PATH));
         Predicate<String> everyFaction = id -> true;
 
         ChartFaction remnant = ChartFactions.resolve("remnant", ChartFactions.all(), everyFaction, new Random(1));
@@ -204,7 +189,7 @@ class ChartContentDataTest {
 
     @Test
     void everyListedFactionIsAWeightedChartImplicit() throws Exception {
-        ChartFactions.register(csvRows(ChartFactions.PATH));
+        ChartFactions.register(ChartTables.csvRows(ChartFactions.PATH));
 
         List<String> implicitIds = StarChartImplicits.sharedChoices().stream().map(Modifier::id).toList();
         assertEquals(ChartFactions.all().size(), implicitIds.size());

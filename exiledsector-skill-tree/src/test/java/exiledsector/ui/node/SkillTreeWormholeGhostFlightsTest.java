@@ -1,7 +1,7 @@
 package exiledsector.ui.node;
 
 import exiledsector.skills.ShipSkillData;
-import exiledsector.skills.ShipTrees;
+import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 class SkillTreeWormholeGhostFlightsTest {
 
     private MockedStatic<SkillTree> skillTreeMock;
-    private MockedStatic<ShipTrees> shipTreesMock;
+    private MockedStatic<ShipTreeLinks> shipTreeLinksMock;
     private ShipSkillData data;
 
     private static SkillNode wormhole(String id, String pairedId, float x) {
@@ -43,18 +43,18 @@ class SkillTreeWormholeGhostFlightsTest {
         nodes.put(b.getId(), b);
         SkillTreeTopology topology = SkillTreeTopology.of(nodes.values());
         skillTreeMock = Mockito.mockStatic(SkillTree.class);
-        shipTreesMock = Mockito.mockStatic(ShipTrees.class);
+        shipTreeLinksMock = Mockito.mockStatic(ShipTreeLinks.class);
         skillTreeMock.when(SkillTree::topology).thenReturn(topology);
         skillTreeMock.when(() -> SkillTree.get("wormhole_a")).thenReturn(a);
         skillTreeMock.when(() -> SkillTree.get("wormhole_b")).thenReturn(b);
         data = mock(ShipSkillData.class);
-        shipTreesMock.when(() -> ShipTrees.wormholePairs(data, topology)).thenReturn(topology.wormholePairs());
+        shipTreeLinksMock.when(() -> ShipTreeLinks.wormholePairs(data, topology)).thenReturn(topology.wormholePairs());
     }
 
     @AfterEach
     void tearDown() {
         skillTreeMock.close();
-        shipTreesMock.close();
+        shipTreeLinksMock.close();
     }
 
     @Test

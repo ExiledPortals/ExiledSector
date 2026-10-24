@@ -44,7 +44,7 @@ public final class ShipTreeRepairs {
 
     private static void refundCharges(ShipSkillData shipData, List<String> releasedNodeIds, BooleanSupplier ownedShip,
                                       Consumer<SkillItemCost> refund) {
-        List<SkillItemCost> charges = ShipTrees.takeItemCharges(shipData, releasedNodeIds);
+        List<SkillItemCost> charges = ItemChargeLedger.takeItemCharges(shipData, releasedNodeIds);
         if (!charges.isEmpty() && ownedShip.getAsBoolean()) {
             charges.forEach(refund);
         }

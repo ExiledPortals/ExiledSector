@@ -17,14 +17,14 @@ import static exiledlib.skills.skilleffect.StatTarget.stat;
 
 final class TerminalDescentListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String HULL_DAMAGE_TAKEN_PERCENT_KEY = "exiledSector_terminalDescentHullDamageTakenPercent";
-    static final String FLUX_DISSIPATION_PERCENT_KEY = "exiledSector_terminalDescentFluxDissipationPercent";
-    static final String SYSTEM_REGEN_PERCENT_KEY = "exiledSector_terminalDescentSystemRegenPercent";
-    static final String SHIELD_DAMAGE_TAKEN_PERCENT_KEY = "exiledSector_terminalDescentShieldDamageTakenPercent";
+    static final String HULL_DAMAGE_TAKEN_PERCENT_KEY = "exiledLib_terminalDescentHullDamageTakenPercent";
+    static final String FLUX_DISSIPATION_PERCENT_KEY = "exiledLib_terminalDescentFluxDissipationPercent";
+    static final String SYSTEM_REGEN_PERCENT_KEY = "exiledLib_terminalDescentSystemRegenPercent";
+    static final String SHIELD_DAMAGE_TAKEN_PERCENT_KEY = "exiledLib_terminalDescentShieldDamageTakenPercent";
     static final float ENTER_BELOW_HULL_FRACTION = 0.25f;
     static final float LEAVE_ABOVE_HULL_FRACTION = 0.4f;
     private static final String STATUS_ICON = "graphics/icons/hullsys/damper_field.png";
-    private static final String MOD_ID_PREFIX = "exiledSector_terminalDescent_";
+    private static final String MOD_ID_PREFIX = "exiledLib_terminalDescent_";
     private static final ScaledBonus DESCENT_STATS = new ScaledBonus(
             percent(stat(MutableShipStatsAPI::getHullDamageTakenMult), HULL_DAMAGE_TAKEN_PERCENT_KEY),
             percent(stat(MutableShipStatsAPI::getFluxDissipation), FLUX_DISSIPATION_PERCENT_KEY),

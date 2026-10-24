@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.hullmods.PhaseField;
+import exiledlib.HostMod;
 import exiledlib.PlayerFleet;
 import exiledlib.i18n.Translation;
 
@@ -14,14 +15,14 @@ import java.util.Set;
 
 public final class FleetWideEffects {
 
-    static final String POST_BATTLE_SALVAGE_CONTRIBUTION_KEY = "exiledSector_postBattleSalvageContribution";
-    static final String PHASE_FIELD_CONTRIBUTION_KEY = "exiledSector_phaseFieldContributionPercent";
-    static final String SENSOR_STRENGTH_ALWAYS_COUNTS_KEY = "exiledSector_sensorStrengthAlwaysCounts";
-    private static final String SENSOR_STRENGTH_ALWAYS_COUNTS_MOD_ID = "exiledSector_sensorStrengthAlwaysCounts";
+    static final String POST_BATTLE_SALVAGE_CONTRIBUTION_KEY = "exiledLib_postBattleSalvageContribution";
+    static final String PHASE_FIELD_CONTRIBUTION_KEY = "exiledLib_phaseFieldContributionPercent";
+    static final String SENSOR_STRENGTH_ALWAYS_COUNTS_KEY = "exiledLib_sensorStrengthAlwaysCounts";
+    private static final String SENSOR_STRENGTH_ALWAYS_COUNTS_FLEET_MOD = "sensorStrengthAlwaysCounts";
     private static final String MAX_SENSOR_SHIPS_SETTING = "maxSensorShips";
     private static final int DEFAULT_MAX_SENSOR_SHIPS = 5;
-    private static final String POST_BATTLE_SALVAGE_FLEET_MOD_ID = "exiledSector_postBattleSalvage";
-    private static final String EXTENDED_PHASE_FIELD_MOD_ID = "exiledSector_extendedPhaseField";
+    private static final String POST_BATTLE_SALVAGE_FLEET_MOD = "postBattleSalvage";
+    private static final String EXTENDED_PHASE_FIELD_FLEET_MOD = "extendedPhaseField";
 
     private static boolean phaseFieldStale = true;
     private static Boolean lastTransponderOn;
@@ -42,7 +43,7 @@ public final class FleetWideEffects {
             totalPercent += member.getStats().getDynamic().getValue(POST_BATTLE_SALVAGE_CONTRIBUTION_KEY, 0f);
         }
         playerFleet.getStats().getDynamic().getStat(Stats.BATTLE_SALVAGE_MULT_FLEET)
-                .modifyFlat(POST_BATTLE_SALVAGE_FLEET_MOD_ID, totalPercent / 100f);
+                .modifyFlat(HostMod.dataKey(POST_BATTLE_SALVAGE_FLEET_MOD), totalPercent / 100f);
     }
 
     public static void applyAlwaysCountingSensorStrength(CampaignFleetAPI fleet) {
@@ -64,10 +65,10 @@ public final class FleetWideEffects {
         }
         float extra = any ? strengthLeftOutOfTheTop(strengths, alwaysCounts, maxSensorShips()) : 0f;
         if (extra > 0f) {
-            fleet.getStats().getSensorStrengthMod().modifyFlat(SENSOR_STRENGTH_ALWAYS_COUNTS_MOD_ID, extra,
+            fleet.getStats().getSensorStrengthMod().modifyFlat(HostMod.dataKey(SENSOR_STRENGTH_ALWAYS_COUNTS_FLEET_MOD), extra,
                     Translation.gameText("fleet.sensorStrengthAlwaysCounts"));
         } else {
-            fleet.getStats().getSensorStrengthMod().unmodifyFlat(SENSOR_STRENGTH_ALWAYS_COUNTS_MOD_ID);
+            fleet.getStats().getSensorStrengthMod().unmodifyFlat(HostMod.dataKey(SENSOR_STRENGTH_ALWAYS_COUNTS_FLEET_MOD));
         }
     }
 
@@ -120,7 +121,7 @@ public final class FleetWideEffects {
         playerFleet.getStats().getDetectedRangeMod().unmodifyMult(PhaseField.MOD_KEY);
 
         if (playerFleet.isTransponderOn()) {
-            playerFleet.getStats().getDetectedRangeMod().unmodifyMult(EXTENDED_PHASE_FIELD_MOD_ID);
+            playerFleet.getStats().getDetectedRangeMod().unmodifyMult(HostMod.dataKey(EXTENDED_PHASE_FIELD_FLEET_MOD));
             return;
         }
 
@@ -137,7 +138,7 @@ public final class FleetWideEffects {
         }
 
         if (phaseSensorValues.isEmpty()) {
-            playerFleet.getStats().getDetectedRangeMod().unmodifyMult(EXTENDED_PHASE_FIELD_MOD_ID);
+            playerFleet.getStats().getDetectedRangeMod().unmodifyMult(HostMod.dataKey(EXTENDED_PHASE_FIELD_FLEET_MOD));
             return;
         }
 
@@ -153,7 +154,7 @@ public final class FleetWideEffects {
         float mult = Math.max(PhaseField.MIN_FIELD_MULT, Math.min(1f, totalProfile / total));
 
         playerFleet.getStats().getDetectedRangeMod()
-                .modifyMult(EXTENDED_PHASE_FIELD_MOD_ID, mult, Translation.gameText("modifier.phaseSensorNetworks"));
+                .modifyMult(HostMod.dataKey(EXTENDED_PHASE_FIELD_FLEET_MOD), mult, Translation.gameText("modifier.phaseSensorNetworks"));
     }
 
     private static Float phaseSensorContribution(FleetMemberAPI member) {

@@ -115,8 +115,8 @@ class ExoshipDataTest {
 
         assertTrue(shipData.isAllocated(exoship.getId()));
         assertTrue(shipData.isFreeNode(exoship.getId()));
-        assertEquals(exoship.getId(), ShipTrees.wormholePartner(shipData, socket));
-        assertEquals(socket.getId(), ShipTrees.wormholePartner(shipData, exoship));
+        assertEquals(exoship.getId(), ShipTreeLinks.wormholePartner(shipData, socket));
+        assertEquals(socket.getId(), ShipTreeLinks.wormholePartner(shipData, exoship));
         List<SkillNode> hub = exoship.getConnectedNodeIds().stream().map(SkillTree::get).filter(ExoshipNodes::isCarried).toList();
         assertFalse(hub.isEmpty());
         for (SkillNode hubNode : hub) {

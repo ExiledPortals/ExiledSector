@@ -13,9 +13,9 @@ import org.lwjgl.util.vector.Vector2f;
 
 final class EscortListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String MANEUVER_BONUS_KEY = "exiledSector_escortManeuverBonusPercent";
-    static final String SPEED_BONUS_KEY = "exiledSector_escortSpeedBonusPercent";
-    static final String WEAPON_RANGE_BONUS_KEY = "exiledSector_escortWeaponRangeBonusPercent";
+    static final String MANEUVER_BONUS_KEY = "exiledLib_escortManeuverBonusPercent";
+    static final String SPEED_BONUS_KEY = "exiledLib_escortSpeedBonusPercent";
+    static final String WEAPON_RANGE_BONUS_KEY = "exiledLib_escortWeaponRangeBonusPercent";
     private static final ScaledBonus ESCORT_BONUS = new ScaledBonus(
             ScaledBonus.percent(Maneuverability.target(), MANEUVER_BONUS_KEY),
             ScaledBonus.percent(StatTarget.liveStat(MutableShipStatsAPI::getMaxSpeed), SPEED_BONUS_KEY),
@@ -29,7 +29,7 @@ final class EscortListener extends ShipCombatListener implements AdvanceableList
     private static final float SEARCH_MARGIN = 300f;
     private static final float EASE_SECONDS = 0.5f;
     private static final float MAG_SNAP = 0.001f;
-    private static final String ESCORT_BONUS_MOD_ID = "exiledSector_escortBonus";
+    private static final String ESCORT_BONUS_MOD_ID = "exiledLib_escortBonus";
 
     private final IntervalUtil retargetInterval = new IntervalUtil(0.9f, 1.1f);
     private float targetMag;

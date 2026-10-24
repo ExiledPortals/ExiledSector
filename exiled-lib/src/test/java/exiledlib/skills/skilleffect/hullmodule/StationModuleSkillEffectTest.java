@@ -74,7 +74,7 @@ class StationModuleSkillEffectTest {
         withModules(ship, List.of(plate));
 
         assertTrue(ModuleBoost.hasModuleBonus(ship.getMutableStats()));
-        ModuleBoost.boost(ship, plate, Map.of(), "exiledSector_moduleShare_black_hawk_");
+        ModuleBoost.boost(ship, plate, Map.of(), "exiledLib_moduleShare_black_hawk_");
 
         verify(plate).setMaxHitpoints(1200f);
         verify(plate).setHitpoints(600f);

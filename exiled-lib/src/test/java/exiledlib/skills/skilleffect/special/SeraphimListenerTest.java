@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 
 class SeraphimListenerTest {
 
-    private static final String SERAPHIM_MOD_ID = "exiledSector_seraphim_hunter";
+    private static final String SERAPHIM_MOD_ID = "exiledLib_seraphim_hunter";
 
     private static ShipAPI ship(String id, int owner, Map<String, Float> magnitudes) {
         ShipAPI ship = mock(ShipAPI.class);

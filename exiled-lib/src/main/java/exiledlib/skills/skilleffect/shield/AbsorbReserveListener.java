@@ -17,11 +17,11 @@ import static exiledlib.skills.skilleffect.StatTarget.stat;
 
 final class AbsorbReserveListener extends ShipCombatListener implements DamageListener, AdvanceableListener {
 
-    static final String RATE_OF_FIRE_PERCENT_KEY = "exiledSector_absorbRateOfFirePercent";
+    static final String RATE_OF_FIRE_PERCENT_KEY = "exiledLib_absorbRateOfFirePercent";
     static final float FULL_RESERVE = 500f;
     static final float MAX_RESERVE = 1000f;
     static final float DRAIN_PER_SECOND = 100f;
-    private static final String MOD_ID_PREFIX = "exiledSector_absorbReserve_";
+    private static final String MOD_ID_PREFIX = "exiledLib_absorbReserve_";
     private static final ScaledBonus RATE_OF_FIRE = new ScaledBonus(
             percent(all(stat(MutableShipStatsAPI::getBallisticRoFMult), stat(MutableShipStatsAPI::getEnergyRoFMult))),
             fixed(stat(MutableShipStatsAPI::getBeamWeaponFluxCostMult), StatMode.MULT, 1f));

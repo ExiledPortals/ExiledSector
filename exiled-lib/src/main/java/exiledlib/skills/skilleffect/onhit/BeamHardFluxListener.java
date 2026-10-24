@@ -13,7 +13,7 @@ import org.lwjgl.util.vector.Vector2f;
 
 final class BeamHardFluxListener implements DamageDealtModifier {
 
-    static final String HARD_FLUX_PERCENT_KEY = "exiledSector_beamDamageHardFluxPercent";
+    static final String HARD_FLUX_PERCENT_KEY = "exiledLib_beamDamageHardFluxPercent";
 
     @Override
     public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {

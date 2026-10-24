@@ -37,13 +37,13 @@ import static org.mockito.Mockito.when;
 
 class EscortListenerTest {
 
-    private static final String MANEUVER_BONUS_KEY = "exiledSector_escortManeuverBonusPercent";
+    private static final String MANEUVER_BONUS_KEY = "exiledLib_escortManeuverBonusPercent";
 
-    private static final String SPEED_BONUS_KEY = "exiledSector_escortSpeedBonusPercent";
+    private static final String SPEED_BONUS_KEY = "exiledLib_escortSpeedBonusPercent";
 
-    private static final String WEAPON_RANGE_BONUS_KEY = "exiledSector_escortWeaponRangeBonusPercent";
+    private static final String WEAPON_RANGE_BONUS_KEY = "exiledLib_escortWeaponRangeBonusPercent";
 
-    private static final String ESCORT_BONUS_MOD_ID = "exiledSector_escortBonus";
+    private static final String ESCORT_BONUS_MOD_ID = "exiledLib_escortBonus";
 
     private final List<ShipAPI> ships = new ArrayList<>();
 

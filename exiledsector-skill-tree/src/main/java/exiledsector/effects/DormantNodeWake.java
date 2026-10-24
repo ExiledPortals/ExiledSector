@@ -6,6 +6,8 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledlib.PlayerFleet;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.DormantNodes;
+import exiledsector.skills.ItemChargeLedger;
 import exiledsector.skills.NodeEligibility;
 import exiledlib.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
@@ -32,7 +34,7 @@ final class DormantNodeWake {
     static boolean wake(FleetMemberAPI member) {
         ShipSkillData shipData = ShipSkillDataManager.find(member.getId());
         Map<String, SkillNode> tree = SkillTree.getAllNodes();
-        if (shipData == null || !ShipTrees.hasReturningDormantNodes(shipData, tree)) {
+        if (shipData == null || !DormantNodes.hasReturningDormantNodes(shipData, tree)) {
             return false;
         }
         ShipVariantAPI variant = member.getVariant();
@@ -40,7 +42,7 @@ final class DormantNodeWake {
         int opCostPerNode = SkillNodeOpCost.perNode(member.getHullSpec());
         int totalOp = OpReserveParity.availableOp(opBudget, OpReserveParity.reservedOp(variant));
         ShipFacts shipFacts = PlayerShipFacts.of(member, variant);
-        List<String> releasedNodeIds = ShipTrees.wakeDormantNodes(shipData, tree, ShipLevelConfig.maxAllocatedNodes(),
+        List<String> releasedNodeIds = DormantNodes.wakeDormantNodes(shipData, tree, ShipLevelConfig.maxAllocatedNodes(),
                 dormantNode -> fitsTheOpBudget(shipData, dormantNode, opCostPerNode, totalOp) && isEligible(shipData, dormantNode, shipFacts));
         refund(shipData, releasedNodeIds);
         if (!releasedNodeIds.isEmpty()) {
@@ -65,6 +67,6 @@ final class DormantNodeWake {
 
     private static void refund(ShipSkillData shipData, List<String> releasedNodeIds) {
         CargoAPI cargo = PlayerFleet.cargoOrNull();
-        ShipTrees.takeItemCharges(shipData, releasedNodeIds).forEach(charged -> charged.refundTo(cargo));
+        ItemChargeLedger.takeItemCharges(shipData, releasedNodeIds).forEach(charged -> charged.refundTo(cargo));
     }
 }

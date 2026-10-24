@@ -123,7 +123,8 @@ public final class ModificationBay {
 
             @Override
             public boolean offersWormholeOpening() {
-                return !hullItemsOnly;
+                BenchModeSupport modeSupport = BenchModes.of(benchMode);
+                return !hullItemsOnly && modeSupport != null && modeSupport.openTexts() != null;
             }
 
             @Override

@@ -36,7 +36,7 @@ class SolarisOverdriveListenerTest {
                 SolarisOverdriveListener.PROJECTILE_SPEED_PERCENT_KEY, 50f, SolarisOverdriveListener.RATE_OF_FIRE_PERCENT_KEY, 25f));
         when(ship.getSystem()).thenReturn(system);
         SolarisOverdriveListener listener = new SolarisOverdriveListener(ship);
-        String modId = "exiledSector_solarisOverdrive_aracari";
+        String modId = "exiledLib_solarisOverdrive_aracari";
 
         listener.advance(0.1f);
         assertFalse(listener.overdriven());

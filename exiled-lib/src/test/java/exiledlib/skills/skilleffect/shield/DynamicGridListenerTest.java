@@ -45,7 +45,7 @@ class DynamicGridListenerTest {
         when(ship.getFluxTracker()).thenReturn(flux);
         when(ship.getHullSize()).thenReturn(HullSize.CRUISER);
         DynamicGridListener grid = new DynamicGridListener(ship);
-        String modId = "exiledSector_dynamicGrid_grid";
+        String modId = "exiledLib_dynamicGrid_grid";
 
         grid.advance(1.5f);
         assertFalse(grid.bonusActive());
@@ -73,7 +73,7 @@ class DynamicGridListenerTest {
         when(ship.getHullSize()).thenReturn(HullSize.FRIGATE);
         when(ship.getMutableStats().getDynamic().getMod(BallisticAsEnergy.KEY).computeEffective(0f)).thenReturn(1f);
         DynamicGridListener grid = new DynamicGridListener(ship);
-        String modId = "exiledSector_dynamicGrid_grid";
+        String modId = "exiledLib_dynamicGrid_grid";
 
         grid.advance(1f);
 

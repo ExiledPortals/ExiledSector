@@ -21,11 +21,11 @@ import static exiledlib.skills.skilleffect.StatTarget.stat;
 
 public final class SeraphimListener extends ShipCombatListener {
 
-    static final String HEAL_PERCENT_KEY = "exiledSector_seraphimHealPercent";
-    static final String HEAL_CAP_PERCENT_KEY = "exiledSector_seraphimHealCapPercent";
-    static final String DAMAGE_BONUS_PERCENT_KEY = "exiledSector_seraphimDamageBonusPercent";
-    static final String FULL_BONUS_DAMAGE_KEY = "exiledSector_seraphimFullBonusDamage";
-    private static final String MOD_ID_PREFIX = "exiledSector_seraphim_";
+    static final String HEAL_PERCENT_KEY = "exiledLib_seraphimHealPercent";
+    static final String HEAL_CAP_PERCENT_KEY = "exiledLib_seraphimHealCapPercent";
+    static final String DAMAGE_BONUS_PERCENT_KEY = "exiledLib_seraphimDamageBonusPercent";
+    static final String FULL_BONUS_DAMAGE_KEY = "exiledLib_seraphimFullBonusDamage";
+    private static final String MOD_ID_PREFIX = "exiledLib_seraphim_";
     private static final float ZERO_FLUX_ALWAYS_ON_LEVEL = 2f;
     private static final ScaledBonus DAMAGE_BONUS = new ScaledBonus(percent(all(stat(MutableShipStatsAPI::getBallisticWeaponDamageMult),
             stat(MutableShipStatsAPI::getEnergyWeaponDamageMult))));

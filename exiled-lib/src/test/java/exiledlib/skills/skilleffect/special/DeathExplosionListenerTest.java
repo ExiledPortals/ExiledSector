@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 
 class DeathExplosionListenerTest {
 
-    private static final String FUEL_DAMAGE_PERCENT_KEY = "exiledSector_explodeOnDeathFuelDamagePercent";
+    private static final String FUEL_DAMAGE_PERCENT_KEY = "exiledLib_explodeOnDeathFuelDamagePercent";
 
     private final List<ShipAPI> ships = new ArrayList<>();
 

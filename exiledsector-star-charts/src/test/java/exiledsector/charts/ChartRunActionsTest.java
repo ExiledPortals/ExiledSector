@@ -131,7 +131,7 @@ class ChartRunActionsTest {
 
     @Test
     void openingRecordsTheTiersContentAndPostsTheObjectiveIntel() throws Exception {
-        ChartContentDataTest.loadShippedTables();
+        ChartTables.loadShipped();
         FakeChartContentEngine content = FakeChartContentEngine.install(new FakeChartContentEngine().offering(-4000f, 0f, 0f, 5000f));
         when(sector.getFaction(anyString())).thenReturn(mock(FactionAPI.class));
         IntelManagerAPI intelManager = mock(IntelManagerAPI.class);

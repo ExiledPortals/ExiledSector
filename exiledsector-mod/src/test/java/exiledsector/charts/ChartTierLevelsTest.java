@@ -28,7 +28,7 @@ class ChartTierLevelsTest {
     @BeforeEach
     void setUp() throws Exception {
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class, invocation -> null);
-        ChartTiers.register(ChartContentDataTest.csvRows(ChartTiers.PATH));
+        ChartTiers.register(ChartTables.csvRows(ChartTiers.PATH));
     }
 
     @AfterEach

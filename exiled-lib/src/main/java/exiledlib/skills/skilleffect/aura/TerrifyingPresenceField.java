@@ -10,8 +10,8 @@ import java.util.Map;
 final class TerrifyingPresenceField extends AuraField<TerrifyingPresenceListener> {
 
     static final float RANGE = 1000f;
-    static final String MOD_ID = "exiledSector_terrifyingPresence";
-    private static final String CUSTOM_DATA_KEY = "exiledSector_terrifyingPresenceField";
+    static final String MOD_ID = "exiledLib_terrifyingPresence";
+    private static final String CUSTOM_DATA_KEY = "exiledLib_terrifyingPresenceField";
 
     private final AppliedAuraValues appliedPenalty = new AppliedAuraValues(AppliedAuraValues.Change.EXACT);
 

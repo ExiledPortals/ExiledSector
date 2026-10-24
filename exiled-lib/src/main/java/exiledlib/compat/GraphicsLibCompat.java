@@ -93,7 +93,7 @@ public final class GraphicsLibCompat {
 
     public static void reportBroken(Throwable cause) {
         if (!bridgeBroken) {
-            LOG.warn("[ExiledSector] GraphicsLib lighting for Exiled Sector effects is off: the installed GraphicsLib didn't accept our calls.",
+            LOG.warn("[ExiledLib] GraphicsLib lighting for Exiled Lib effects is off: the installed GraphicsLib didn't accept our calls.",
                     cause);
         }
         bridgeBroken = true;

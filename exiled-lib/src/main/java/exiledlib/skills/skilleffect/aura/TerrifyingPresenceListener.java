@@ -5,7 +5,7 @@ import exiledlib.skills.skilleffect.ShipCombatListener;
 
 final class TerrifyingPresenceListener extends ShipCombatListener implements AuraField.Source {
 
-    static final String ACCURACY_PENALTY_PERCENT_KEY = "exiledSector_terrifyingPresenceAccuracyPenaltyPercent";
+    static final String ACCURACY_PENALTY_PERCENT_KEY = "exiledLib_terrifyingPresenceAccuracyPenaltyPercent";
 
     TerrifyingPresenceListener(ShipAPI ownerShip) {
         super(ownerShip);

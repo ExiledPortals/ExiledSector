@@ -55,12 +55,12 @@ class ShipSkillDataItemChargeTest {
         ShipSkillData data = new ShipSkillData();
         ShipTrees.chooseStartingRoot(data, root);
         ShipTrees.allocate(data, lobster, 3);
-        ShipTrees.recordItemCharge(data, "lobster", LOBSTERS);
+        ItemChargeLedger.recordItemCharge(data, "lobster", LOBSTERS);
 
         ShipTrees.deallocate(data, lobster);
 
-        assertEquals(LOBSTERS, ShipTrees.takeItemCharge(data, "lobster"));
-        assertNull(ShipTrees.takeItemCharge(data, "lobster"));
+        assertEquals(LOBSTERS, ItemChargeLedger.takeItemCharge(data, "lobster"));
+        assertNull(ItemChargeLedger.takeItemCharge(data, "lobster"));
     }
 
     @Test
@@ -68,12 +68,12 @@ class ShipSkillDataItemChargeTest {
         ShipSkillData data = new ShipSkillData();
         ShipTrees.chooseStartingRoot(data, root);
         ShipTrees.allocate(data, lobster, 3);
-        ShipTrees.recordItemCharge(data, "lobster", LOBSTERS);
+        ItemChargeLedger.recordItemCharge(data, "lobster", LOBSTERS);
         ShipTrees.deallocate(data, lobster);
 
         ShipTrees.allocate(data, lobster, 3);
 
-        assertNull(ShipTrees.itemCharge(data, "lobster"));
+        assertNull(ItemChargeLedger.itemCharge(data, "lobster"));
     }
 
     @Test
@@ -82,12 +82,12 @@ class ShipSkillDataItemChargeTest {
         ShipSkillData data = new ShipSkillData();
         ShipTrees.chooseStartingRoot(data, root);
         ShipTrees.allocate(data, lobster, 3);
-        ShipTrees.recordItemCharge(data, "lobster", LOBSTERS);
+        ItemChargeLedger.recordItemCharge(data, "lobster", LOBSTERS);
 
         assertTrue(ShipTrees.replaceNode(data, "lobster", "lobster_v2"));
 
-        assertNull(ShipTrees.itemCharge(data, "lobster"));
-        assertEquals(LOBSTERS, ShipTrees.itemCharge(data, "lobster_v2"));
+        assertNull(ItemChargeLedger.itemCharge(data, "lobster"));
+        assertEquals(LOBSTERS, ItemChargeLedger.itemCharge(data, "lobster_v2"));
     }
 
     @Test
@@ -98,8 +98,8 @@ class ShipSkillDataItemChargeTest {
 
         ShipSkillData loaded = roundTripWithoutTheLedger(written);
 
-        assertEquals(LOBSTERS, ShipTrees.itemCharge(loaded, "lobster"));
-        assertNull(ShipTrees.itemCharge(loaded, "root"));
+        assertEquals(LOBSTERS, ItemChargeLedger.itemCharge(loaded, "lobster"));
+        assertNull(ItemChargeLedger.itemCharge(loaded, "root"));
     }
 
     @Test
@@ -112,7 +112,7 @@ class ShipSkillDataItemChargeTest {
 
         assertTrue(ShipTrees.replaceNode(loaded, "lobster", "lobster_v2"));
 
-        assertEquals(LOBSTERS, ShipTrees.itemCharge(loaded, "lobster_v2"));
+        assertEquals(LOBSTERS, ItemChargeLedger.itemCharge(loaded, "lobster_v2"));
     }
 
     @Test
@@ -122,7 +122,7 @@ class ShipSkillDataItemChargeTest {
         ShipTrees.chooseStartingRoot(written, root);
         ShipTrees.allocate(written, lobster, 3);
 
-        assertNull(ShipTrees.itemCharge(roundTripWithoutTheLedger(written), "lobster"));
+        assertNull(ItemChargeLedger.itemCharge(roundTripWithoutTheLedger(written), "lobster"));
     }
 
     @Test
@@ -133,6 +133,6 @@ class ShipSkillDataItemChargeTest {
         ShipSkillData loaded = roundTripWithoutTheLedger(written);
 
         assertEquals(List.of("lobster"), ShipTrees.forgetUnknownNodes(loaded, Map.of("root", root), SkillTree.getAllTypes()));
-        assertEquals(LOBSTERS, ShipTrees.takeItemCharge(loaded, "lobster"));
+        assertEquals(LOBSTERS, ItemChargeLedger.takeItemCharge(loaded, "lobster"));
     }
 }

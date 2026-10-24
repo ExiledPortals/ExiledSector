@@ -41,8 +41,8 @@ import java.util.Set;
 
 final class WingScrambleListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String COPIES_KEY = "exiledSector_wingScrambleCopies";
-    static final String RANGE_MOD_ID = "exiledSector_wingScrambleRange";
+    static final String COPIES_KEY = "exiledLib_wingScrambleCopies";
+    static final String RANGE_MOD_ID = "exiledLib_wingScrambleRange";
     static final String INDEPENDENT_FIGHTER_HULL_MOD = "rat_exo_fighter_independence";
     static final List<String> BEHAVIOUR_TAGS = List.of(Tags.WING_INDEPENDENT_OF_CARRIER, Tags.WING_STAY_IN_FRONT_OF_SHIP,
             Tags.WING_RAPID_REFORM, Tags.WING_LEADER_NO_SWARM, Tags.WING_WINGMEN_NO_SWARM, Tags.WING_MATCH_LEADER_FACING,

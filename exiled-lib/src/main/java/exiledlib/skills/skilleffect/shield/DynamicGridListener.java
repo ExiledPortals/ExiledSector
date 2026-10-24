@@ -17,9 +17,9 @@ import static exiledlib.skills.skilleffect.StatTarget.stat;
 
 final class DynamicGridListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String ENERGY_BONUS_PERCENT_KEY = "exiledSector_dynamicGridEnergyBonusPercent";
+    static final String ENERGY_BONUS_PERCENT_KEY = "exiledLib_dynamicGridEnergyBonusPercent";
     static final HullSizeTable SHIELDS_DOWN_SECONDS = new HullSizeTable(0.75f, 0.75f, 1.1f, 2f, 3f, 3f);
-    private static final String MOD_ID_PREFIX = "exiledSector_dynamicGrid_";
+    private static final String MOD_ID_PREFIX = "exiledLib_dynamicGrid_";
     private static final ScaledBonus ENERGY_BONUS = new ScaledBonus(percent(stat(MutableShipStatsAPI::getEnergyRoFMult)),
             percent(scaled(bonus(MutableShipStatsAPI::getEnergyWeaponFluxCostMod), -1f)));
     private static final ScaledBonus BALLISTIC_BONUS = new ScaledBonus(percent(stat(MutableShipStatsAPI::getBallisticRoFMult)),

@@ -51,7 +51,7 @@ class ThermoAcceleratorListenerTest {
         ThermoAcceleratorListener listener = new ThermoAcceleratorListener(ship);
         listener.advance(0.1f);
 
-        String modId = "exiledSector_thermoAccelerator_aetos";
+        String modId = "exiledLib_thermoAccelerator_aetos";
         verify(ship.getMutableStats().getBallisticWeaponFluxCostMod()).modifyPercent(modId, -50f);
         verify(ship.getMutableStats().getEnergyWeaponFluxCostMod()).modifyPercent(modId, -50f);
         verify(ship.getMutableStats().getMissileWeaponFluxCostMod()).modifyPercent(modId, -50f);

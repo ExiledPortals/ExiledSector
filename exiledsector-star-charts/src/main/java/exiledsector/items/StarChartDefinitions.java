@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import exiledlib.ModCsv;
+import exiledsector.charts.ChartLayoutGenerator;
 import exiledsector.data.CsvRows;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -20,8 +21,7 @@ public final class StarChartDefinitions {
     static final String SYSTEM_TYPE_COLUMN = "system_type";
     static final String MIN_TIER_COLUMN = "min_tier";
     public static final String ANY_SYSTEM_TYPE = "any";
-    public static final List<String> SYSTEM_TYPES = List.of("SINGLE", "BINARY_CLOSE", "BINARY_FAR", "TRINARY_2CLOSE", "TRINARY_1CLOSE_1FAR",
-            "TRINARY_2FAR");
+    public static final List<String> SYSTEM_TYPES = ChartLayoutGenerator.ALLOWED_TYPES.stream().map(Enum::name).toList();
     private static final Logger LOG = Logger.getLogger(StarChartDefinitions.class);
     private static final AtomicReference<Map<String, String>> SYSTEM_TYPE_BY_ID = new AtomicReference<>(Map.of());
     private static final AtomicReference<Map<String, Integer>> MIN_TIER_BY_ID = new AtomicReference<>(Map.of());

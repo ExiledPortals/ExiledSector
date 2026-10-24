@@ -86,15 +86,15 @@ class InertialSuperchargerListenerTest {
         ship.getVelocity().set(151f, 0f);
         listener.advance(0.016f);
 
-        verify(ballistic, times(1)).modifyPercent("exiledSector_inertialSupercharger_a", 12f);
-        verify(energy, times(1)).modifyPercent("exiledSector_inertialSupercharger_a", 12f);
-        verify(beam, times(1)).modifyPercent("exiledSector_inertialSupercharger_a", -12f);
+        verify(ballistic, times(1)).modifyPercent("exiledLib_inertialSupercharger_a", 12f);
+        verify(energy, times(1)).modifyPercent("exiledLib_inertialSupercharger_a", 12f);
+        verify(beam, times(1)).modifyPercent("exiledLib_inertialSupercharger_a", -12f);
 
         ship.getVelocity().set(0f, 0f);
         listener.advance(0.016f);
 
-        verify(ballistic).unmodify("exiledSector_inertialSupercharger_a");
-        verify(beam).unmodify("exiledSector_inertialSupercharger_a");
+        verify(ballistic).unmodify("exiledLib_inertialSupercharger_a");
+        verify(beam).unmodify("exiledLib_inertialSupercharger_a");
     }
 
     private void enableLostSector(boolean enabled) {
@@ -130,8 +130,8 @@ class InertialSuperchargerListenerTest {
         ship.getVelocity().set(0f, 0f);
         listener.advance(0.016f);
 
-        verify(ship.getMutableStats().getProjectileSpeedMult()).modifyPercent("exiledSector_inertialSupercharger_a", 12f);
-        verify(ship.getMutableStats().getProjectileSpeedMult()).unmodify("exiledSector_inertialSupercharger_a");
+        verify(ship.getMutableStats().getProjectileSpeedMult()).modifyPercent("exiledLib_inertialSupercharger_a", 12f);
+        verify(ship.getMutableStats().getProjectileSpeedMult()).unmodify("exiledLib_inertialSupercharger_a");
     }
 
     @Test

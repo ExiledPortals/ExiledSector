@@ -15,7 +15,7 @@ final class RepairCoordinatorField extends AuraField<RepairCoordinatorListener> 
     static final float RANGE = 1000f;
     static final float MAX_REPAIR_PERCENT_PER_COORDINATOR = 10f;
     static final float MAX_REPAIR_PERCENT_OF_ARMOR = 30f;
-    private static final String CUSTOM_DATA_KEY = "exiledSector_repairCoordinatorField";
+    private static final String CUSTOM_DATA_KEY = "exiledLib_repairCoordinatorField";
 
     private final Map<ShipAPI, Float> repairedArmorByAlly = new IdentityHashMap<>();
 

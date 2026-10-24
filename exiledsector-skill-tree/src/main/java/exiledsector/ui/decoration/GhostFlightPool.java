@@ -1,4 +1,4 @@
-package exiledsector.ui.node;
+package exiledsector.ui.decoration;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledlib.skills.skilleffect.render.SpriteCache;

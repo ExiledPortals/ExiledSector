@@ -25,7 +25,7 @@ class ChartContentPlannerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        ChartContentDataTest.loadShippedTables();
+        ChartTables.loadShipped();
     }
 
     @AfterEach

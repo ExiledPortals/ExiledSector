@@ -17,10 +17,10 @@ final class GravityDragField extends AuraField<GravityDragListener> {
 
     static final float RANGE = 1500f;
     static final float MAX_TOTAL_REDUCTION_PERCENT = 25f;
-    static final String MOD_ID = "exiledSector_gravityDrag";
+    static final String MOD_ID = "exiledLib_gravityDrag";
     static final String STATUS_ICON = "graphics/icons/na_gravitational_drag.png";
-    private static final String CUSTOM_DATA_KEY = "exiledSector_gravityDragField";
-    private static final String STATUS_KEY = "exiledSector_gravityDragStatus";
+    private static final String CUSTOM_DATA_KEY = "exiledLib_gravityDragField";
+    private static final String STATUS_KEY = "exiledLib_gravityDragStatus";
     private static final float CHANGE_EPSILON = 0.0005f;
     private static final float MIN_SHOWN_PERCENT = 0.5f;
     private static final float LENS_SIZE_SHARE = 2.5f;

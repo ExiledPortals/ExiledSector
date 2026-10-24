@@ -57,7 +57,7 @@ class ChartContentGeneratorTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        ChartContentDataTest.loadShippedTables();
+        ChartTables.loadShipped();
         sector = mock(SectorAPI.class);
         when(sector.getFaction(anyString())).thenReturn(mock(FactionAPI.class));
         system = mock(StarSystemAPI.class);

@@ -80,7 +80,7 @@ public final class I18n {
         Catalogue uiCatalogue = read(languages.ui());
         Catalogue gameCatalogue = languages.game().equals(languages.ui()) ? uiCatalogue : read(languages.game());
         install(uiCatalogue, gameCatalogue);
-        LOG.info("Exiled Sector language " + languages.ui() + " (" + uiCatalogue.size() + " strings), game-rendered text "
+        LOG.info(HostMod.id() + " language " + languages.ui() + " (" + uiCatalogue.size() + " strings), game-rendered text "
                 + languages.game());
     }
 
@@ -123,7 +123,7 @@ public final class I18n {
     }
 
     private static void logUnreadable(String locale, String path, Exception e) {
-        LOG.error("Failed to load Exiled Sector strings for " + locale + " from " + path
+        LOG.error("Failed to load " + HostMod.id() + " strings for " + locale + " from " + path
                 + "; those strings fall back to English", e);
     }
 
@@ -136,7 +136,7 @@ public final class I18n {
             if (value instanceof String text) {
                 entries.put(key, text);
             } else {
-                LOG.warn("Ignoring non-text Exiled Sector string " + key + " in a catalogue file");
+                LOG.warn("Ignoring non-text " + HostMod.id() + " string " + key + " in a catalogue file");
             }
         }
         return entries;

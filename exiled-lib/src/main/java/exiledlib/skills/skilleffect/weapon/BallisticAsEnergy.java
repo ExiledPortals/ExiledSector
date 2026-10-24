@@ -7,7 +7,7 @@ import exiledlib.skills.skilleffect.SkillEffect;
 
 public final class BallisticAsEnergy {
 
-    public static final String KEY = "exiledSector_ballisticCountsAsEnergy";
+    public static final String KEY = "exiledLib_ballisticCountsAsEnergy";
 
     private BallisticAsEnergy() {
     }

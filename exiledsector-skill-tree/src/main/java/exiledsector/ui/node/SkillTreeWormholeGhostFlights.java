@@ -2,11 +2,13 @@ package exiledsector.ui.node;
 
 import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.ShipSkillData;
-import exiledsector.skills.ShipTrees;
+import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeTopology;
 import exiledsector.ui.TreeViewport;
+import exiledsector.ui.decoration.GhostFlight;
+import exiledsector.ui.decoration.GhostFlightPool;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +47,7 @@ final class SkillTreeWormholeGhostFlights {
     private List<SkillTreeTopology.WormholePair> pairsFor(ShipSkillData skillData) {
         SkillTreeTopology topology = SkillTree.topology();
         if (skillData != pairsShip || skillData.revision() != pairsRevision || topology != pairsTopology) {
-            pairs = ShipTrees.wormholePairs(skillData, topology);
+            pairs = ShipTreeLinks.wormholePairs(skillData, topology);
             pairsShip = skillData;
             pairsRevision = skillData.revision();
             pairsTopology = topology;

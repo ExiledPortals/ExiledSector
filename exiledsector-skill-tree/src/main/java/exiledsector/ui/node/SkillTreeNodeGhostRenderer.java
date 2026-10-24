@@ -2,6 +2,7 @@ package exiledsector.ui.node;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.ui.decoration.GhostFlight;
 import exiledsector.ui.util.TexturedQuadBatch;
 
 import java.awt.Color;
@@ -12,8 +13,6 @@ import java.util.Map;
 import java.util.Random;
 
 final class SkillTreeNodeGhostRenderer {
-
-    static final String GHOST_TEXTURE_PATH = "graphics/icons/fleet_triangle.png";
 
     private static final int GHOST_COUNT = 3;
     private static final float GHOST_SIZE_RATIO = 0.4f;
@@ -33,7 +32,7 @@ final class SkillTreeNodeGhostRenderer {
     }
 
     void draw(float cx, float cy, float footprintSize, float alphaMult, String nodeId) {
-        SpriteAPI sprite = spriteCache.sprite(GHOST_TEXTURE_PATH);
+        SpriteAPI sprite = spriteCache.sprite(GhostFlight.TEXTURE_PATH);
         if (sprite == null) return;
 
         List<GhostInstance> ghosts = ghostsByNode.computeIfAbsent(nodeId, id -> generateGhosts(id));

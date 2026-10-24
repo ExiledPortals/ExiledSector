@@ -636,7 +636,7 @@ class SplitBeamDronesTest {
         String key = BeamHardFluxListener.HARD_FLUX_PERCENT_KEY;
         StatBonus sourceHardFlux = new StatBonus();
         StatBonus droneHardFlux = new StatBonus();
-        sourceHardFlux.modifyFlat("exiledSector_skill_beam_1", 50f);
+        sourceHardFlux.modifyFlat("exiledLib_skill_beam_1", 50f);
         droneHardFlux.modifyFlat("stale", 10f);
         when(source.getDynamic().getMod(key)).thenReturn(sourceHardFlux);
         when(drone.getDynamic().getMod(key)).thenReturn(droneHardFlux);
@@ -657,8 +657,8 @@ class SplitBeamDronesTest {
         String projectileResult = shareListener.modifyDamageDealt(new Object(), mock(CombatEntityAPI.class),
                 projectileHit, new Vector2f(), true);
 
-        assertEquals("exiledSector_splitBeamDroneShare", beamResult);
-        verify(beamHit.getModifier()).modifyMult("exiledSector_splitBeamDroneShare", 1f);
+        assertEquals("exiledLib_splitBeamDroneShare", beamResult);
+        verify(beamHit.getModifier()).modifyMult("exiledLib_splitBeamDroneShare", 1f);
         assertEquals(null, projectileResult);
     }
 }

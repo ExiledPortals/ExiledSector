@@ -34,7 +34,7 @@ class ChartPoiModRequirementTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        ChartContentDataTest.loadShippedTables();
+        ChartTables.loadShipped();
         SettingsAPI settings = mock(SettingsAPI.class);
         when(settings.getModManager()).thenReturn(modManager);
         globalMock = Mockito.mockStatic(Global.class);

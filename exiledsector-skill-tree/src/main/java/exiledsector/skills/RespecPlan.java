@@ -20,7 +20,7 @@ public final class RespecPlan {
         }
         Set<String> removed = new LinkedHashSet<>();
         removed.add(selected.getId());
-        String pairedId = ShipTrees.wormholePartner(data, selected);
+        String pairedId = ShipTreeLinks.wormholePartner(data, selected);
         if (pairedId != null && data.isAllocated(pairedId)) {
             removed.add(pairedId);
         }
@@ -28,7 +28,7 @@ public final class RespecPlan {
         Set<String> grantedDependents = new LinkedHashSet<>(ShipTrees.grantOnlyNodeIds(data, topology, startingRootId));
         grantedDependents.retainAll(dependents);
         dependents.removeAll(grantedDependents);
-        Map<String, Integer> distanceById = distancesAwayFrom(removed, dependents, topology, ShipTrees.wormholePartners(data));
+        Map<String, Integer> distanceById = distancesAwayFrom(removed, dependents, topology, ShipTreeLinks.wormholePartners(data));
 
         List<String> ordered = new ArrayList<>(dependents);
         ordered.sort(Comparator.comparingInt((String id) -> distanceById.getOrDefault(id, Integer.MAX_VALUE)).reversed()
@@ -40,7 +40,7 @@ public final class RespecPlan {
             if (node == null || !covered.add(id)) {
                 continue;
             }
-            String partnerId = ShipTrees.wormholePartner(data, node);
+            String partnerId = ShipTreeLinks.wormholePartner(data, node);
             if (partnerId != null) {
                 covered.add(partnerId);
             }

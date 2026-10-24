@@ -17,12 +17,14 @@ import exiledlib.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocationGate;
 import exiledsector.skills.HullModNames;
+import exiledsector.skills.ItemChargeLedger;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ReleasedNodes;
 import exiledsector.skills.RespecPlan;
 import exiledlib.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.CostItems;
+import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
@@ -141,7 +143,7 @@ final class NodeAllocator {
             if (!skillData.isAllocated(node.getId())) {
                 return allocationRefusalReason(node, option);
             }
-            return reason(node.getId() + '/' + option.getId(), gate.optionSwitch(node, option), ShipTrees.itemCharge(skillData, node.getId()));
+            return reason(node.getId() + '/' + option.getId(), gate.optionSwitch(node, option), ItemChargeLedger.itemCharge(skillData, node.getId()));
         }
 
         private String reason(String key, AllocationGate.Verdict verdict, SkillItemCost refund) {
@@ -160,7 +162,7 @@ final class NodeAllocator {
         }
 
         private List<NodeGrantStatus> computeNodeGrantStatuses(String socketId) {
-            List<String> grantedNodeIds = ShipTrees.grantedNodesBySocket(skillData).getOrDefault(socketId, List.of());
+            List<String> grantedNodeIds = ShipTreeLinks.grantedNodesBySocket(skillData).getOrDefault(socketId, List.of());
             List<NodeGrantStatus> statuses = new ArrayList<>(grantedNodeIds.size());
             for (String grantedNodeId : grantedNodeIds) {
                 statuses.add(computeNodeGrantStatus(socketId, grantedNodeId));
@@ -180,7 +182,7 @@ final class NodeAllocator {
                 if (!skillData.isGrantFree(grantedNodeId)) {
                     return NodeGrantStatus.of(grantedNodeId, NodeGrantStatus.State.BY_PATH);
                 }
-                String grantingSocketId = ShipTrees.grantingSocket(skillData, grantedNodeId);
+                String grantingSocketId = ShipTreeLinks.grantingSocket(skillData, grantedNodeId);
                 return grantingSocketId == null || grantingSocketId.equals(socketId) ? NodeGrantStatus.of(grantedNodeId, NodeGrantStatus.State.ACTIVE)
                         : NodeGrantStatus.of(grantedNodeId, NodeGrantStatus.State.DUPLICATE);
             }
@@ -280,13 +282,13 @@ final class NodeAllocator {
             return false;
         }
         ShipSkillData skillData = snapshot.skillData();
-        SkillItemCost refund = ShipTrees.itemCharge(skillData, node.getId());
+        SkillItemCost refund = ItemChargeLedger.itemCharge(skillData, node.getId());
         SkillItemCost itemCost = gate.itemCost(node, option);
         if (itemCost != null && heldInCargo(itemCost.itemId()) + refundOf(refund, itemCost.itemId()) < itemCost.quantity()) {
             return false;
         }
         if (refund != null) {
-            ShipTrees.takeItemCharge(skillData, node.getId());
+            ItemChargeLedger.takeItemCharge(skillData, node.getId());
             refund.refundTo(PlayerFleet.cargoOrNull());
         }
         ShipTrees.selectOption(skillData, node, option, gate.opCostFor(node));
@@ -337,7 +339,7 @@ final class NodeAllocator {
         CargoAPI cargo = PlayerFleet.cargoOrNull();
         ungranted.charges().forEach(refund -> refund.refundTo(cargo));
         boolean changedAny = !ungranted.nodeIds().isEmpty();
-        Map<String, List<String>> grantedNodesBySocket = ShipTrees.grantedNodesBySocket(skillData);
+        Map<String, List<String>> grantedNodesBySocket = ShipTreeLinks.grantedNodesBySocket(skillData);
         if (grantedNodesBySocket.isEmpty()) {
             NodeGrantStatus.rememberForShip(fleetMember.getId(), Map.of());
             return changed(changedAny);
@@ -366,7 +368,7 @@ final class NodeAllocator {
 
     private void rememberGrantStatuses(ShipSkillData skillData, Snapshot snapshot) {
         Map<String, List<NodeGrantStatus>> statusesByItemId = new LinkedHashMap<>();
-        for (String socketId : ShipTrees.grantedNodesBySocket(skillData).keySet()) {
+        for (String socketId : ShipTreeLinks.grantedNodesBySocket(skillData).keySet()) {
             String itemId = skillData.getSocketedItem(socketId);
             if (itemId != null) {
                 statusesByItemId.put(itemId, snapshot.nodeGrantStatuses(socketId));
@@ -435,7 +437,7 @@ final class NodeAllocator {
             return;
         }
         CostItems.remove(cargo, itemCost.itemId(), itemCost.quantity());
-        ShipTrees.recordItemCharge(skillData, nodeId, itemCost);
+        ItemChargeLedger.recordItemCharge(skillData, nodeId, itemCost);
     }
 
     private void refreshVariantHullModsOnce() {

@@ -21,7 +21,7 @@ import java.util.Random;
 
 final class CorrosionMoteListener extends ShipCombatListener implements DamageDealtModifier {
 
-    static final String MOTE_DAMAGE_KEY = "exiledSector_corrosionMoteDamage";
+    static final String MOTE_DAMAGE_KEY = "exiledLib_corrosionMoteDamage";
     static final float CONTACT_SECONDS_PER_MOTE = 2f;
     static final float MOTE_FLIGHT_SECONDS = 8f;
     private static final float LAUNCH_SPREAD_DEGREES = 15f;

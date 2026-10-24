@@ -115,7 +115,7 @@ class NodeGrantTest {
     void aGrantedNotableIsReachableWithoutAPathButDoesNotConnectTheNodesBeyondIt() {
         ShipSkillData data = shipWithGrantedNotable();
 
-        assertEquals(Map.of("socket", List.of("notable")), ShipTrees.grantedNodesBySocket(data));
+        assertEquals(Map.of("socket", List.of("notable")), ShipTreeLinks.grantedNodesBySocket(data));
         assertTrue(ShipTrees.reachableAllocatedNodeIds(data, topology, "root").contains("notable"));
         assertFalse(ShipTrees.pathReachableAllocatedNodeIds(data, topology, "root").contains("notable"));
         assertEquals(Set.of("notable"), ShipTrees.grantOnlyNodeIds(data, topology, "root"));
@@ -160,8 +160,8 @@ class NodeGrantTest {
         ShipTrees.allocateGranted(data, notable);
         ShipTrees.allocateGranted(data, farNotable);
 
-        assertEquals(Map.of("socket", List.of("notable", "far_notable")), ShipTrees.grantedNodesBySocket(data));
-        assertEquals("socket", ShipTrees.grantingSocket(data, "far_notable"));
+        assertEquals(Map.of("socket", List.of("notable", "far_notable")), ShipTreeLinks.grantedNodesBySocket(data));
+        assertEquals("socket", ShipTreeLinks.grantingSocket(data, "far_notable"));
         assertEquals(Set.of("notable", "far_notable"), ShipTrees.grantOnlyNodeIds(data, topology, "root"));
         assertEquals(Set.of("notable", "far_notable"), ShipTrees.previewRelease(data, topology, "root", planned -> planned.unsocketItem("socket")));
     }
@@ -240,7 +240,7 @@ class NodeGrantTest {
         ShipTrees.allocate(data, secondSocket, 1);
         data.socketItem("socket_b", SECOND_CACHE);
 
-        assertEquals("socket", ShipTrees.grantingSocket(data, "notable"));
+        assertEquals("socket", ShipTreeLinks.grantingSocket(data, "notable"));
         assertEquals(Set.of(), ShipTrees.previewRelease(data, topology, "root", planned -> planned.unsocketItem("socket")));
     }
 
@@ -273,7 +273,7 @@ class NodeGrantTest {
         ShipTrees.forgetUnknownNodes(data, withoutVolume, nodesById, types());
         assertTrue(data.getDormantNodeIds().contains("notable"));
 
-        assertEquals(List.of(), ShipTrees.wakeDormantNodes(data, nodesById, slots, dormant -> true));
+        assertEquals(List.of(), DormantNodes.wakeDormantNodes(data, nodesById, slots, dormant -> true));
         assertTrue(data.isAllocated("notable"));
         assertTrue(data.isGrantFree("notable"));
     }
@@ -304,7 +304,7 @@ class NodeGrantTest {
         ShipTrees.forgetUnknownNodes(data, withoutVolume, nodesById, types());
         data.unsocketItem("socket");
 
-        assertEquals(List.of("notable"), ShipTrees.wakeDormantNodes(data, nodesById, 100, dormant -> true));
+        assertEquals(List.of("notable"), DormantNodes.wakeDormantNodes(data, nodesById, 100, dormant -> true));
         assertFalse(data.isAllocated("notable"));
         assertFalse(data.isGrantFree("notable"));
     }
@@ -322,7 +322,7 @@ class NodeGrantTest {
         ShipTrees.forgetUnknownNodes(data, withoutVolume, nodesById, types());
         assertEquals(Set.of("notable", "beyond"), data.getDormantNodeIds());
 
-        assertEquals(List.of("beyond"), ShipTrees.wakeDormantNodes(data, nodesById, 100, dormant -> true));
+        assertEquals(List.of("beyond"), DormantNodes.wakeDormantNodes(data, nodesById, 100, dormant -> true));
 
         assertTrue(data.isAllocated("notable"));
         assertFalse(data.isAllocated("beyond"));
@@ -338,7 +338,7 @@ class NodeGrantTest {
         withoutBeyond.remove("beyond");
         ShipTrees.forgetUnknownNodes(data, withoutBeyond, nodesById, types());
 
-        assertEquals(List.of(), ShipTrees.wakeDormantNodes(data, nodesById, 100, dormant -> true));
+        assertEquals(List.of(), DormantNodes.wakeDormantNodes(data, nodesById, 100, dormant -> true));
         assertTrue(data.isAllocated("beyond"));
     }
 

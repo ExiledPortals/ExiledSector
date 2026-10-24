@@ -10,7 +10,7 @@ import java.util.Map;
 
 final class RepairCoordinatorListener extends ShipCombatListener implements AuraField.Source {
 
-    static final String ARMOR_REPAIR_PERCENT_KEY = "exiledSector_repairCoordinatorArmorPercent";
+    static final String ARMOR_REPAIR_PERCENT_KEY = "exiledLib_repairCoordinatorArmorPercent";
 
     private final Map<ShipAPI, Float> armorRepairedByAlly = new IdentityHashMap<>();
     private ShipAPI repairTarget;

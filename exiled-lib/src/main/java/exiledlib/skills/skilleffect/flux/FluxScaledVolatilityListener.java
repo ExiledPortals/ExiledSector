@@ -21,11 +21,11 @@ import java.util.Locale;
 
 final class FluxScaledVolatilityListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String TOP_SPEED_KEY = "exiledSector_fluxScaledTopSpeed";
-    static final String RATE_OF_FIRE_KEY = "exiledSector_fluxScaledRateOfFire";
-    static final String AUGMENTED_PENALTY_REDUCTION_KEY = "exiledSector_fluxScaledAugmentedPenaltyReduction";
-    private static final String MOD_ID_PREFIX = "exiledSector_fluxScaled_";
-    private static final String STATUS_KEY = "exiledSector_fluxScaledStatus";
+    static final String TOP_SPEED_KEY = "exiledLib_fluxScaledTopSpeed";
+    static final String RATE_OF_FIRE_KEY = "exiledLib_fluxScaledRateOfFire";
+    static final String AUGMENTED_PENALTY_REDUCTION_KEY = "exiledLib_fluxScaledAugmentedPenaltyReduction";
+    private static final String MOD_ID_PREFIX = "exiledLib_fluxScaled_";
+    private static final String STATUS_KEY = "exiledLib_fluxScaledStatus";
     private static final String STATUS_ICON = "graphics/icons/hullsys/high_energy_focus.png";
     private static final float RATIO_STEP = 0.02f;
     private static final StatTarget RATE_OF_FIRE = WeaponStatFamily.FIRE_RATE.target(WeaponScope.ALL);

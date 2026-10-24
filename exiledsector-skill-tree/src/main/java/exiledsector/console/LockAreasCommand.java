@@ -6,7 +6,9 @@ import exiledlib.PlayerFleet;
 import exiledsector.items.NodeGrantStatus;
 import exiledsector.items.SocketCustody;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.ItemChargeLedger;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
@@ -81,7 +83,7 @@ public class LockAreasCommand extends CampaignCommand {
         List<SkillItemCost> charges = new ArrayList<>();
         String startingRootId = ShipTrees.resolveStartingRootId(shipData);
         if (startingRootId == null || lockedNodeIds.contains(startingRootId)) {
-            charges.addAll(ShipTrees.takeItemCharges(shipData, ShipTrees.resetAllocations(shipData)));
+            charges.addAll(ItemChargeLedger.takeItemCharges(shipData, ShipTrees.resetAllocations(shipData)));
         } else {
             SkillTreeTopology topology = SkillTree.topology();
             Set<String> reachableBefore = ShipTrees.reachableAllocatedNodeIds(shipData, topology, startingRootId);
@@ -90,7 +92,7 @@ public class LockAreasCommand extends CampaignCommand {
                 if (node == null || !shipData.isAllocated(nodeId)) {
                     continue;
                 }
-                charges.addAll(ShipTrees.anchorSocket(shipData, nodeId) != null ? ShipTrees.releaseAnchorExit(shipData, nodeId)
+                charges.addAll(ShipTreeLinks.anchorSocket(shipData, nodeId) != null ? ShipTrees.releaseAnchorExit(shipData, nodeId)
                         : ShipTrees.deallocateReleasingCharges(shipData, node));
             }
             charges.addAll(ShipTrees.releaseNewlyStranded(shipData, topology, startingRootId, reachableBefore).charges());

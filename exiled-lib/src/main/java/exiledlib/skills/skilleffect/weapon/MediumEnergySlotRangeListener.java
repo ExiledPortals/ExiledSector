@@ -7,7 +7,7 @@ import com.fs.starfarer.api.loading.WeaponSlotAPI;
 
 final class MediumEnergySlotRangeListener implements WeaponBaseRangeModifier {
 
-    static final String RANGE_FLAT_KEY = "exiledSector_mediumEnergySlotRangeFlat";
+    static final String RANGE_FLAT_KEY = "exiledLib_mediumEnergySlotRangeFlat";
 
     @Override
     public float getWeaponBaseRangePercentMod(ShipAPI ship, WeaponAPI weapon) {

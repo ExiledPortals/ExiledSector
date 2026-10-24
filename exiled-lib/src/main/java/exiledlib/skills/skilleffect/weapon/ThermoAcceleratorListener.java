@@ -12,8 +12,8 @@ import java.util.List;
 
 final class ThermoAcceleratorListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String FLUX_COST_REDUCTION_PERCENT_KEY = "exiledSector_thermoAcceleratorFluxCostReductionPercent";
-    private static final String MOD_ID_PREFIX = "exiledSector_thermoAccelerator_";
+    static final String FLUX_COST_REDUCTION_PERCENT_KEY = "exiledLib_thermoAcceleratorFluxCostReductionPercent";
+    private static final String MOD_ID_PREFIX = "exiledLib_thermoAccelerator_";
 
     private final List<WeaponAPI> hardpointWeapons;
 

@@ -8,6 +8,7 @@ import exiledsector.effects.PhantomConflictWatch;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocationGate;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -33,7 +34,6 @@ import exiledsector.items.NodeGrantLinks;
 import exiledsector.items.WormholeAnchor;
 import exiledsector.items.WormholeAnchorLinks;
 import exiledsector.items.WormholeAnchorSocketLimits;
-import exiledlib.i18n.Translation;
 import exiledsector.ui.SkillTreeSounds;
 import lunalib.lunaRefit.BaseRefitButton;
 
@@ -238,11 +238,11 @@ public final class TreeAllocationSession {
     }
 
     String wormholePartner(SkillNode node) {
-        return ShipTrees.wormholePartner(allocator.data(), node);
+        return ShipTreeLinks.wormholePartner(allocator.data(), node);
     }
 
     public List<SkillTreeTopology.WormholePair> wormholePairs() {
-        return ShipTrees.wormholePairs(viewSnapshot().skillData(), SkillTree.topology());
+        return ShipTreeLinks.wormholePairs(viewSnapshot().skillData(), SkillTree.topology());
     }
 
     public Item socketedItem(SkillNode node) {
@@ -332,8 +332,8 @@ public final class TreeAllocationSession {
     }
 
     private void removeOrSwitchOption(SkillNode node, NodeAllocator.Snapshot allocation) {
-        boolean anchorLinked = ShipTrees.anchorPartner(allocation.skillData(), node.getId()) != null;
-        boolean holdsGrant = ShipTrees.grantedNodesBySocket(allocation.skillData()).containsKey(node.getId());
+        boolean anchorLinked = ShipTreeLinks.anchorPartner(allocation.skillData(), node.getId()) != null;
+        boolean holdsGrant = ShipTreeLinks.grantedNodesBySocket(allocation.skillData()).containsKey(node.getId());
         boolean holdsDoctrine = holdsDoctrine(allocation.skillData(), node);
         if ((anchorLinked || holdsGrant || holdsDoctrine) && allocation.gate().deallocation(node).allowed()
                 && !confirmRelease(DEALLOCATE_ACTION, node, planned -> ShipTrees.deallocate(planned, node))) {
@@ -356,7 +356,7 @@ public final class TreeAllocationSession {
         ShipSkillData liveData = allocator.data();
         String pairedId = wormholePartner(node);
         SkillNode paired = pairedId == null ? null : SkillTree.get(pairedId);
-        boolean closedAnchorWormhole = ShipTrees.anchorPartner(liveData, node.getId()) != null
+        boolean closedAnchorWormhole = ShipTreeLinks.anchorPartner(liveData, node.getId()) != null
                 && !(liveData.isAllocated(node.getId()) && liveData.isAllocated(pairedId));
         if (paired == null || closedAnchorWormhole) {
             return null;
@@ -664,11 +664,11 @@ public final class TreeAllocationSession {
         ShipSkillData skillData = allocator.data();
         Set<String> released = new LinkedHashSet<>(allocator.previewRelease(change));
         released.remove(node.getId());
-        String partnerId = ShipTrees.anchorPartner(skillData, node.getId());
+        String partnerId = ShipTreeLinks.anchorPartner(skillData, node.getId());
         if (partnerId != null) {
             released.remove(partnerId);
         }
-        List<String> grantedNodeIds = ShipTrees.grantedNodesBySocket(skillData).getOrDefault(node.getId(), List.of());
+        List<String> grantedNodeIds = ShipTreeLinks.grantedNodesBySocket(skillData).getOrDefault(node.getId(), List.of());
         grantedNodeIds.stream().filter(skillData::isGrantFree).forEach(released::remove);
         if (released.isEmpty()) {
             return true;

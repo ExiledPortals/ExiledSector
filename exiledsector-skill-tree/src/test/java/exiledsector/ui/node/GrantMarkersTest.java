@@ -127,7 +127,8 @@ class GrantMarkersTest {
 
         grantMarkers.refresh(snapshotOf(data));
 
-        assertEquals(Map.of("notable", CACHE_COLOR, "far_notable", SECOND_CACHE_COLOR), grantMarkers.colorByNodeId());
+        assertEquals(CACHE_COLOR, grantMarkers.colorFor("notable"));
+        assertEquals(SECOND_CACHE_COLOR, grantMarkers.colorFor("far_notable"));
         assertEquals(List.of("socket", "socket_b"), grantMarkers.grantingSocketIds());
         assertEquals(List.of("notable"), grantMarkers.grantedBy("socket"));
         assertEquals(List.of("far_notable"), grantMarkers.grantedBy("socket_b"));
@@ -161,7 +162,8 @@ class GrantMarkersTest {
         grantMarkers.refresh(allocation);
 
         assertEquals(NodeGrantStatus.State.BY_PATH, allocation.nodeGrantStatus("socket", "notable").state());
-        assertEquals(Map.of("far_notable", DOUBLE_CACHE_COLOR), grantMarkers.colorByNodeId());
+        assertNull(grantMarkers.colorFor("notable"));
+        assertEquals(DOUBLE_CACHE_COLOR, grantMarkers.colorFor("far_notable"));
         assertEquals(List.of("far_notable"), grantMarkers.grantedBy("socket"));
     }
 
@@ -175,7 +177,8 @@ class GrantMarkersTest {
 
         grantMarkers.refresh(snapshotOf(data));
 
-        assertEquals(Map.of("notable", CACHE_COLOR, "far_notable", DOUBLE_CACHE_COLOR), grantMarkers.colorByNodeId());
+        assertEquals(CACHE_COLOR, grantMarkers.colorFor("notable"));
+        assertEquals(DOUBLE_CACHE_COLOR, grantMarkers.colorFor("far_notable"));
         assertEquals(List.of("notable"), grantMarkers.grantedBy("socket"));
         assertEquals(List.of("far_notable"), grantMarkers.grantedBy("socket_b"));
     }
@@ -186,10 +189,10 @@ class GrantMarkersTest {
         data.socketItem("socket", CACHE);
         ShipTrees.allocateGranted(data, notable);
         grantMarkers.refresh(snapshotOf(data));
-        Map<String, Color> firstFrame = grantMarkers.colorByNodeId();
+        List<String> firstFrame = grantMarkers.grantingSocketIds();
 
         grantMarkers.refresh(snapshotOf(data));
-        assertSame(firstFrame, grantMarkers.colorByNodeId());
+        assertSame(firstFrame, grantMarkers.grantingSocketIds());
 
         data.unsocketItem("socket");
         data.socketItem("socket", SECOND_CACHE);
@@ -197,8 +200,9 @@ class GrantMarkersTest {
         ShipTrees.allocateGranted(data, farNotable);
         grantMarkers.refresh(snapshotOf(data));
 
-        assertNotSame(firstFrame, grantMarkers.colorByNodeId());
-        assertEquals(Map.of("far_notable", SECOND_CACHE_COLOR), grantMarkers.colorByNodeId());
+        assertNotSame(firstFrame, grantMarkers.grantingSocketIds());
+        assertNull(grantMarkers.colorFor("notable"));
+        assertEquals(SECOND_CACHE_COLOR, grantMarkers.colorFor("far_notable"));
         assertEquals(List.of("far_notable"), grantMarkers.grantedBy("socket"));
         assertEquals(SECOND_CACHE_COLOR, grantMarkers.colorForSocket("socket"));
     }

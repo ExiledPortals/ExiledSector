@@ -9,9 +9,9 @@ import java.util.Map;
 
 record ChainLink(List<ShipAPI> hitSoFar, int chainCount, float dealtMult) {
 
-    static final String HIT_LIST_KEY = "exiledSector_energyChainHitList";
-    static final String COUNT_KEY = "exiledSector_energyChainCount";
-    static final String DEALT_MULT_KEY = "exiledSector_energyChainDealtMult";
+    static final String HIT_LIST_KEY = "exiledLib_energyChainHitList";
+    static final String COUNT_KEY = "exiledLib_energyChainCount";
+    static final String DEALT_MULT_KEY = "exiledLib_energyChainDealtMult";
 
     // unchecked: the hit list is only ever written by tag() as List<ShipAPI>
     @SuppressWarnings("unchecked")

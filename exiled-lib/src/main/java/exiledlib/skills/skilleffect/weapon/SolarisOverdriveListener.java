@@ -17,11 +17,11 @@ import java.util.EnumSet;
 
 final class SolarisOverdriveListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String SECONDS_KEY = "exiledSector_solarisOverdriveSeconds";
-    static final String PROJECTILE_SPEED_PERCENT_KEY = "exiledSector_solarisOverdriveProjectileSpeedPercent";
-    static final String RATE_OF_FIRE_PERCENT_KEY = "exiledSector_solarisOverdriveRateOfFirePercent";
+    static final String SECONDS_KEY = "exiledLib_solarisOverdriveSeconds";
+    static final String PROJECTILE_SPEED_PERCENT_KEY = "exiledLib_solarisOverdriveProjectileSpeedPercent";
+    static final String RATE_OF_FIRE_PERCENT_KEY = "exiledLib_solarisOverdriveRateOfFirePercent";
     static final float COOLDOWN_SECONDS = 60f;
-    private static final String MOD_ID_PREFIX = "exiledSector_solarisOverdrive_";
+    private static final String MOD_ID_PREFIX = "exiledLib_solarisOverdrive_";
     private static final String STATUS_ICON = "graphics/icons/hullsys/ammo_feeder.png";
     private static final Color WEAPON_GLOW_COLOR = new Color(255, 170, 60, 200);
     private static final EnumSet<WeaponAPI.WeaponType> GLOWING_WEAPONS = EnumSet.of(WeaponAPI.WeaponType.BALLISTIC,

@@ -51,15 +51,15 @@ class RiseFromTheAshesListenerTest {
 
             assertTrue(listener.saveFromLethalHit(ship, 300f));
             verify(ship).setHitpoints(500f);
-            verify(ship.getMutableStats().getHullDamageTakenMult()).modifyMult("exiledSector_riseFromTheAshes_sandgrouse", 0.5f);
+            verify(ship.getMutableStats().getHullDamageTakenMult()).modifyMult("exiledLib_riseFromTheAshes_sandgrouse", 0.5f);
             assertTrue(listener.rising());
-            assertTrue(customData.containsKey("exiledSector_riseFromTheAshesUsed_member_7"));
+            assertTrue(customData.containsKey("exiledLib_riseFromTheAshesUsed_member_7"));
 
             assertFalse(new RiseFromTheAshesListener(ship).saveFromLethalHit(ship, 300f));
 
             listener.advance(RiseFromTheAshesListener.DURATION_SECONDS + 0.1f);
             assertFalse(listener.rising());
-            verify(ship.getMutableStats().getHullDamageTakenMult()).unmodify("exiledSector_riseFromTheAshes_sandgrouse");
+            verify(ship.getMutableStats().getHullDamageTakenMult()).unmodify("exiledLib_riseFromTheAshes_sandgrouse");
             verify(ship, never()).setJitterUnder(Mockito.any(), Mockito.any(), anyFloat(), anyInt(), anyFloat(), anyFloat());
         }
     }
