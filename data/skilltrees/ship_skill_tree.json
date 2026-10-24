@@ -7306,16 +7306,13 @@
 			]
 		},
 		{
-			"id": "tania_jettison_protocol_1",
-			"type": "tania_jettison_protocol",
+			"id": "tania_solaris_overdrive_1",
+			"type": "tania_solaris_overdrive",
 			"connectedTo": [
-				"tania_top_speed_1",
-				"tania_top_speed_3"
+				"ballistic_projectile_speed_7"
 			],
-			"x": 5,
-			"y": 18631,
-			"orbitAnchorId": "tania_jettison",
-			"orbitAngle": 270,
+			"x": -1128,
+			"y": 19106,
 			"tags": [
 				"tania"
 			]
@@ -7324,14 +7321,14 @@
 			"id": "tania_wormhole_1",
 			"type": "wormhole_exit",
 			"connectedTo": [
+				"tania_small_flux_optional_3",
 				"tania_small_flux_optional_1",
-				"tania_small_flux_optional_2",
-				"tania_thermo_accelerator_1"
+				"tania_small_flux_optional_2"
 			],
-			"x": 1204,
+			"x": 0,
 			"y": 18000,
-			"orbitAnchorId": "tania_inner",
-			"orbitAngle": 0,
+			"orbitAnchorId": "mod_star_ring",
+			"orbitAngle": 90,
 			"wormholeColor": "#2aaecc",
 			"tags": [
 				"tania"
@@ -7341,29 +7338,11 @@
 			"id": "tania_small_flux_optional_1",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"tania_wormhole_1",
-				"tania_module_armor_1",
-				"tania_small_flux_optional_3"
+				"tania_weapon_fire_rate_1",
+				"tania_wormhole_1"
 			],
-			"x": 0,
-			"y": 16796,
-			"orbitAnchorId": "tania_inner",
-			"orbitAngle": 270,
-			"tags": [
-				"tania"
-			]
-		},
-		{
-			"id": "tania_plate_fire_control_1",
-			"type": "tania_plate_fire_control",
-			"connectedTo": [
-				"tania_module_hull_1",
-				"tania_module_weapon_damage_1"
-			],
-			"x": -2,
-			"y": 17377,
-			"orbitAnchorId": "tania_plates",
-			"orbitAngle": 90,
+			"x": -645,
+			"y": 18474,
 			"tags": [
 				"tania"
 			]
@@ -7372,14 +7351,11 @@
 			"id": "tania_small_flux_optional_2",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"tania_wormhole_1",
-				"tania_top_speed_2",
-				"tania_small_flux_optional_3"
+				"maneuverability_percent_5",
+				"tania_wormhole_1"
 			],
-			"x": 0,
-			"y": 19204,
-			"orbitAnchorId": "tania_inner",
-			"orbitAngle": 90,
+			"x": 650,
+			"y": 18452,
 			"tags": [
 				"tania"
 			]
@@ -7388,75 +7364,25 @@
 			"id": "tania_rise_from_the_ashes_1",
 			"type": "tania_rise_from_the_ashes",
 			"connectedTo": [
-				"tania_hull_3",
-				"tania_hull_1"
+				"tania_hull_3"
 			],
-			"x": -622,
-			"y": 17996,
-			"orbitAnchorId": "tania_ashes",
-			"orbitAngle": 0,
+			"x": 0,
+			"y": 19492,
 			"tags": [
-				"tania"
-			]
-		},
-		{
-			"id": "tania_hull_1",
-			"type": "hull",
-			"connectedTo": [
-				"tania_hull_2",
-				"tania_rise_from_the_ashes_1"
-			],
-			"x": -802,
-			"y": 18176,
-			"orbitAnchorId": "tania_ashes",
-			"orbitAngle": 90,
-			"tags": [
-				"tania"
-			]
-		},
-		{
-			"id": "tania_module_armor_1",
-			"type": "tania_module_armor",
-			"connectedTo": [
-				"tania_module_hull_1",
-				"tania_small_flux_optional_1",
-				"tania_module_weapon_damage_1"
-			],
-			"x": -2,
-			"y": 17017,
-			"orbitAnchorId": "tania_plates",
-			"orbitAngle": 270,
-			"tags": [
-				"tania"
-			]
-		},
-		{
-			"id": "tania_module_hull_1",
-			"type": "tania_module_hull",
-			"connectedTo": [
-				"tania_plate_fire_control_1",
-				"tania_module_armor_1"
-			],
-			"x": 178,
-			"y": 17197,
-			"orbitAnchorId": "tania_plates",
-			"orbitAngle": 0,
-			"tags": [
-				"tania"
+				"tania",
+				"gate_frost_fire_defeated"
 			]
 		},
 		{
 			"id": "tania_hull_2",
 			"type": "hull",
 			"connectedTo": [
-				"tania_hull_1",
+				"tania_small_flux_optional_3",
 				"tania_hull_3",
-				"tania_small_flux_optional_3"
+				"tania_thermo_accelerator_1"
 			],
-			"x": -982,
-			"y": 17996,
-			"orbitAnchorId": "tania_ashes",
-			"orbitAngle": 180,
+			"x": 0,
+			"y": 18805,
 			"tags": [
 				"tania"
 			]
@@ -7465,28 +7391,12 @@
 			"id": "tania_hull_3",
 			"type": "hull",
 			"connectedTo": [
+				"tania_hull_2",
 				"tania_rise_from_the_ashes_1",
-				"tania_hull_2"
+				"armor_12"
 			],
-			"x": -802,
-			"y": 17816,
-			"orbitAnchorId": "tania_ashes",
-			"orbitAngle": 270,
-			"tags": [
-				"tania"
-			]
-		},
-		{
-			"id": "tania_top_speed_1",
-			"type": "top_speed",
-			"connectedTo": [
-				"tania_top_speed_2",
-				"tania_jettison_protocol_1"
-			],
-			"x": -175,
-			"y": 18811,
-			"orbitAnchorId": "tania_jettison",
-			"orbitAngle": 180,
+			"x": 0,
+			"y": 19138,
 			"tags": [
 				"tania"
 			]
@@ -7495,60 +7405,67 @@
 			"id": "tania_top_speed_2",
 			"type": "top_speed",
 			"connectedTo": [
-				"tania_top_speed_1",
-				"tania_small_flux_optional_2",
-				"tania_top_speed_3"
+				"maneuverability_percent_5",
+				"top_speed_9",
+				"tania_carina_charge_1"
 			],
-			"x": 5,
-			"y": 18991,
-			"orbitAnchorId": "tania_jettison",
-			"orbitAngle": 90,
+			"x": 650,
+			"y": 19114,
 			"tags": [
 				"tania"
 			]
 		},
 		{
-			"id": "tania_top_speed_3",
-			"type": "top_speed",
+			"id": "tania_weapon_fire_rate_1",
+			"type": "tania_weapon_fire_rate",
 			"connectedTo": [
-				"tania_jettison_protocol_1",
-				"tania_top_speed_2"
+				"tania_small_flux_optional_1",
+				"tania_weapon_fire_rate_2",
+				"ballistic_projectile_speed_7",
+				"ballistic_damage_9"
 			],
-			"x": 185,
-			"y": 18811,
-			"orbitAnchorId": "tania_jettison",
-			"orbitAngle": 0,
+			"x": -645,
+			"y": 18825,
 			"tags": [
 				"tania"
 			]
 		},
 		{
-			"id": "tania_module_weapon_damage_1",
-			"type": "tania_module_weapon_damage",
+			"id": "tania_weapon_fire_rate_2",
+			"type": "tania_weapon_fire_rate",
 			"connectedTo": [
-				"tania_module_armor_1",
-				"tania_plate_fire_control_1"
+				"tania_weapon_fire_rate_1",
+				"tania_fafnir_breeches_1",
+				"ballistic_damage_8"
 			],
-			"x": -182,
-			"y": 17197,
-			"orbitAnchorId": "tania_plates",
-			"orbitAngle": 180,
+			"x": -645,
+			"y": 19118,
 			"tags": [
 				"tania"
+			]
+		},
+		{
+			"id": "tania_fafnir_breeches_1",
+			"type": "tania_fafnir_breeches",
+			"connectedTo": [
+				"tania_weapon_fire_rate_2"
+			],
+			"x": -645,
+			"y": 19477,
+			"tags": [
+				"tania",
+				"gate_last_strive_completed"
 			]
 		},
 		{
 			"id": "tania_small_flux_optional_3",
 			"type": "small_flux_optional",
 			"connectedTo": [
-				"tania_small_flux_optional_2",
 				"tania_hull_2",
-				"tania_small_flux_optional_1"
+				"tania_wormhole_1"
 			],
-			"x": -1204,
-			"y": 18000,
-			"orbitAnchorId": "tania_inner",
-			"orbitAngle": 180,
+			"x": 0,
+			"y": 18449,
 			"tags": [
 				"tania"
 			]
@@ -7557,13 +7474,126 @@
 			"id": "tania_thermo_accelerator_1",
 			"type": "tania_thermo_accelerator",
 			"connectedTo": [
-				"tania_wormhole_1"
+				"tania_hull_2"
 			],
-			"x": 790,
-			"y": 18001,
-			"ringBeltColor": "#2aaecc",
+			"x": 266,
+			"y": 19069,
+			"ringBeltColor": "#d27937",
 			"tags": [
 				"tania"
+			]
+		},
+		{
+			"id": "maneuverability_percent_5",
+			"type": "maneuverability_percent",
+			"connectedTo": [
+				"tania_small_flux_optional_2",
+				"tania_top_speed_2",
+				"maneuverability_percent_6"
+			],
+			"x": 650,
+			"y": 18789,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"id": "maneuverability_percent_6",
+			"type": "maneuverability_percent",
+			"connectedTo": [
+				"maneuverability_percent_5"
+			],
+			"x": 342,
+			"y": 18634,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"id": "top_speed_9",
+			"type": "top_speed",
+			"connectedTo": [
+				"tania_top_speed_2",
+				"tania_dysis_drive_1"
+			],
+			"x": 859,
+			"y": 19338,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"id": "armor_12",
+			"type": "armor",
+			"connectedTo": [
+				"tania_hull_3"
+			],
+			"x": -221,
+			"y": 18929,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"id": "ballistic_damage_8",
+			"type": "ballistic_damage",
+			"connectedTo": [
+				"tania_weapon_fire_rate_2"
+			],
+			"x": -859,
+			"y": 19310,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"id": "ballistic_projectile_speed_7",
+			"type": "ballistic_projectile_speed",
+			"connectedTo": [
+				"tania_weapon_fire_rate_1",
+				"tania_solaris_overdrive_1"
+			],
+			"x": -943,
+			"y": 18825,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"id": "ballistic_damage_9",
+			"type": "ballistic_damage",
+			"connectedTo": [
+				"tania_weapon_fire_rate_1"
+			],
+			"x": -410,
+			"y": 19030,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"id": "tania_dysis_drive_1",
+			"type": "tania_dysis_drive",
+			"connectedTo": [
+				"top_speed_9"
+			],
+			"x": 1027,
+			"y": 19110,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"id": "tania_carina_charge_1",
+			"type": "tania_carina_charge",
+			"connectedTo": [
+				"tania_top_speed_2"
+			],
+			"x": 650,
+			"y": 19504,
+			"tags": [
+				"tania",
+				"gate_blood_trail_defeated"
 			]
 		}
 	],
@@ -9865,102 +9895,6 @@
 			"b": "small_flux_optional_89",
 			"controlX": -347,
 			"controlY": 4062
-		},
-		{
-			"a": "tania_wormhole_1",
-			"b": "tania_small_flux_optional_1",
-			"controlX": 851,
-			"controlY": 17149
-		},
-		{
-			"a": "tania_wormhole_1",
-			"b": "tania_small_flux_optional_2",
-			"controlX": 851,
-			"controlY": 18851
-		},
-		{
-			"a": "tania_plate_fire_control_1",
-			"b": "tania_module_hull_1",
-			"controlX": 125,
-			"controlY": 17324
-		},
-		{
-			"a": "tania_hull_1",
-			"b": "tania_hull_2",
-			"controlX": -929,
-			"controlY": 18123
-		},
-		{
-			"a": "tania_hull_3",
-			"b": "tania_rise_from_the_ashes_1",
-			"controlX": -675,
-			"controlY": 17869
-		},
-		{
-			"a": "tania_module_hull_1",
-			"b": "tania_module_armor_1",
-			"controlX": 125,
-			"controlY": 17070
-		},
-		{
-			"a": "tania_hull_2",
-			"b": "tania_hull_3",
-			"controlX": -929,
-			"controlY": 17869
-		},
-		{
-			"a": "tania_hull_1",
-			"b": "tania_rise_from_the_ashes_1",
-			"controlX": -675,
-			"controlY": 18123
-		},
-		{
-			"a": "tania_top_speed_1",
-			"b": "tania_top_speed_2",
-			"controlX": -122,
-			"controlY": 18938
-		},
-		{
-			"a": "tania_top_speed_1",
-			"b": "tania_jettison_protocol_1",
-			"controlX": -122,
-			"controlY": 18684
-		},
-		{
-			"a": "tania_top_speed_3",
-			"b": "tania_jettison_protocol_1",
-			"controlX": 132,
-			"controlY": 18684
-		},
-		{
-			"a": "tania_top_speed_2",
-			"b": "tania_top_speed_3",
-			"controlX": 132,
-			"controlY": 18938
-		},
-		{
-			"a": "tania_module_armor_1",
-			"b": "tania_module_weapon_damage_1",
-			"controlX": -129,
-			"controlY": 17070
-		},
-		{
-			"a": "tania_plate_fire_control_1",
-			"b": "tania_module_weapon_damage_1",
-			"controlX": -129,
-			"controlY": 17324
-		},
-		{
-			"a": "tania_small_flux_optional_3",
-			"b": "tania_small_flux_optional_2",
-			"controlX": -851,
-			"controlY": 18851
-		},
-		{
-			"a": "tania_small_flux_optional_3",
-			"b": "tania_small_flux_optional_1",
-			"controlX": -851,
-			"controlY": 17149
 		}
 	],
 	"hiddenConnectors": [
@@ -10689,24 +10623,6 @@
 			"x": 0,
 			"y": 18000,
 			"radius": 1204
-		},
-		{
-			"id": "tania_plates",
-			"x": -2,
-			"y": 17197,
-			"radius": 180
-		},
-		{
-			"id": "tania_ashes",
-			"x": -802,
-			"y": 17996,
-			"radius": 180
-		},
-		{
-			"id": "tania_jettison",
-			"x": 5,
-			"y": 18811,
-			"radius": 180
 		}
 	],
 	"ringBelts": [
@@ -10901,6 +10817,18 @@
 			"rotation": 285,
 			"tags": [
 				"luddic"
+			]
+		},
+		{
+			"id": "tania_nebula",
+			"x": 0,
+			"y": 18750,
+			"width": 6400,
+			"height": 6400,
+			"imagePath": "graphics/backgrounds/static_images/tania_nebula.png",
+			"behindStars": true,
+			"tags": [
+				"tania"
 			]
 		},
 		{
@@ -11256,6 +11184,9 @@
 			"radius": 400,
 			"starType": "star_orange",
 			"color": "#f08a3c",
+			"overlayPath": "graphics/fx/tania_logo.png",
+			"overlaySize": 0.95,
+			"overlayAlpha": 0.45,
 			"tags": [
 				"tania"
 			]

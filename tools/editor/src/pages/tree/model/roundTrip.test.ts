@@ -80,4 +80,45 @@ describe('threat unit serialisation', () => {
     expect(serializedTree({ nodes, threatUnits: [] })).not.toHaveProperty('threatUnits');
     expect(parseTreeDocument(typesText, JSON.stringify({ nodes })).threatUnits).toEqual([]);
   });
+
+  it('writes behindStars only on static images that draw behind the stars', () => {
+    const out = serializedTree({
+      nodes,
+      staticImages: [
+        { id: 'backdrop', x: 0, y: 0, width: 3200, height: 3200, imagePath: 'a.png', behindStars: true, tags: ['tania'] },
+        { id: 'cloud', x: 1, y: 1, width: 100, height: 100, imagePath: 'b.png' },
+      ],
+    });
+    const images = out.staticImages as Record<string, unknown>[];
+    expect(Object.keys(images[0])).toEqual(['id', 'x', 'y', 'width', 'height', 'imagePath', 'behindStars', 'tags']);
+    expect(images[1]).toEqual({ id: 'cloud', x: 1, y: 1, width: 100, height: 100, imagePath: 'b.png' });
+  });
+
+  it('keeps a static image parallax after behindStars and leaves out the tree-plane default', () => {
+    const out = serializedTree({
+      nodes,
+      staticImages: [
+        { id: 'haze', x: 0, y: 0, width: 6400, height: 6400, imagePath: 'a.png', behindStars: true, parallax: 0.8, tags: ['tania'] },
+        { id: 'cloud', x: 1, y: 1, width: 100, height: 100, imagePath: 'b.png', parallax: 1 },
+      ],
+    });
+    const images = out.staticImages as Record<string, unknown>[];
+    expect(Object.keys(images[0])).toEqual(['id', 'x', 'y', 'width', 'height', 'imagePath', 'behindStars', 'parallax', 'tags']);
+    expect(images[0].parallax).toBe(0.8);
+    expect(images[1]).toEqual({ id: 'cloud', x: 1, y: 1, width: 100, height: 100, imagePath: 'b.png' });
+  });
+
+  it('keeps a star overlay after the colour and leaves it out of stars without one', () => {
+    const out = serializedTree({
+      nodes,
+      stars: [
+        { id: 'crest_star', x: 0, y: 0, radius: 400, starType: 'star_orange', color: '#f08a3c', overlayPath: 'graphics/fx/crest.png', overlaySize: 0.95, overlayAlpha: 0.45, tags: ['tania'] },
+        { id: 'plain_star', x: 1, y: 1, radius: 200, starType: 'star_yellow' },
+      ],
+    });
+    const stars = out.stars as Record<string, unknown>[];
+    expect(Object.keys(stars[0])).toEqual(['id', 'x', 'y', 'radius', 'starType', 'color', 'overlayPath', 'overlaySize', 'overlayAlpha', 'tags']);
+    expect(stars[0].overlayAlpha).toBe(0.45);
+    expect(stars[1]).toEqual({ id: 'plain_star', x: 1, y: 1, radius: 200, starType: 'star_yellow' });
+  });
 });

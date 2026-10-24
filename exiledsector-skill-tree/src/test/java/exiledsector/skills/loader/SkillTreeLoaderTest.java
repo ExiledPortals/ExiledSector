@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -226,6 +227,43 @@ class SkillTreeLoaderTest {
         assertEquals(750f, image.getHeight());
         assertEquals("graphics/backgrounds/static_images/hyperspace_cloud_03.png", image.getImagePath());
         assertEquals(45f, image.getRotation());
+    }
+
+    @Test
+    void aStaticImageDrawsBehindTheStarsOnlyWhenItAsksTo() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [], \"staticImages\": ["
+                + "{ \"id\": \"backdrop\", \"x\": 0, \"y\": 0, \"width\": 100, \"height\": 100, \"imagePath\": \"a.png\", \"behindStars\": true },"
+                + "{ \"id\": \"cloud\", \"x\": 0, \"y\": 0, \"width\": 100, \"height\": 100, \"imagePath\": \"b.png\" } ] }");
+
+        List<StaticImage> images = SkillTreeLoader.parseStaticImages(root);
+
+        assertTrue(images.get(0).isBehindStars());
+        assertFalse(images.get(1).isBehindStars());
+    }
+
+    @Test
+    void aStaticImageSitsOnTheTreePlaneUnlessItSetsAParallax() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [], \"staticImages\": ["
+                + "{ \"id\": \"haze\", \"x\": 0, \"y\": 0, \"width\": 100, \"height\": 100, \"imagePath\": \"a.png\", \"parallax\": 0.8 },"
+                + "{ \"id\": \"cloud\", \"x\": 0, \"y\": 0, \"width\": 100, \"height\": 100, \"imagePath\": \"b.png\" } ] }");
+
+        List<StaticImage> images = SkillTreeLoader.parseStaticImages(root);
+
+        assertEquals(0.8f, images.get(0).getParallax());
+        assertEquals(1f, images.get(1).getParallax());
+    }
+
+    @Test
+    void parsesAStarsOverlayAndLeavesStarsWithoutOneBare() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [], \"stars\": ["
+                + "{ \"id\": \"crest_star\", \"x\": 0, \"y\": 100, \"radius\": 400, \"overlayPath\": \"graphics/fx/crest.png\","
+                + "\"overlaySize\": 0.9, \"overlayAlpha\": 0.4 },"
+                + "{ \"id\": \"plain_star\", \"x\": 0, \"y\": 0, \"radius\": 200 } ] }");
+
+        List<Star> stars = SkillTreeLoader.parseStars(root);
+
+        assertEquals(new Star.Overlay("graphics/fx/crest.png", 0.9f, 0.4f), stars.get(0).getOverlay());
+        assertNull(stars.get(1).getOverlay());
     }
 
     @Test

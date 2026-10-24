@@ -61,6 +61,7 @@ class WeaponSkillEffectTest {
         ship = mock(ShipAPI.class);
         when(stats.getDynamic()).thenReturn(dynamic);
         when(ship.getMutableStats()).thenReturn(stats);
+        realDynamicMod(BallisticAsEnergy.KEY);
     }
 
     @AfterEach
@@ -157,10 +158,33 @@ class WeaponSkillEffectTest {
     }
 
     @Test
+    void sensorRangeAlsoReachesBallisticWeaponsWhenTheyCountAsEnergy() {
+        StatBonus energyRange = new StatBonus();
+        StatBonus ballisticRange = new StatBonus();
+        when(stats.getSensorStrength()).thenReturn(new MutableStat(120f));
+        when(stats.getEnergyWeaponRangeBonus()).thenReturn(energyRange);
+        when(stats.getBallisticWeaponRangeBonus()).thenReturn(ballisticRange);
+
+        WeaponSkillEffect.BALLISTIC_COUNTS_AS_ENERGY.apply(stats, "fafnir", 0f);
+        WeaponSkillEffect.ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT.applyAfterShipCreation(ship, "mod_id", 0.5f);
+
+        assertEquals(60f, energyRange.getFlatBonus(), EPSILON);
+        assertEquals(60f, ballisticRange.getFlatBonus(), EPSILON);
+    }
+
+    @Test
+    void ballisticCountsAsEnergySetsItsFlagWhateverTheMagnitude() {
+        WeaponSkillEffect.BALLISTIC_COUNTS_AS_ENERGY.apply(stats, "fafnir", 0f);
+
+        assertTrue(BallisticAsEnergy.active(stats));
+    }
+
+    @Test
     void sensorRangeAlsoReachesTheFleetMembersStatsSoWeaponTooltipsShowIt() {
         StatBonus energyRange = new StatBonus();
         when(stats.getSensorStrength()).thenReturn(new MutableStat(120f));
         when(stats.getEnergyWeaponRangeBonus()).thenReturn(energyRange);
+        when(stats.getBallisticWeaponRangeBonus()).thenReturn(new StatBonus());
 
         WeaponSkillEffect.ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT.apply(stats, "mod_id", 0.5f);
         WeaponSkillEffect.ENERGY_WEAPON_RANGE_PER_SENSOR_STRENGTH_FLAT.applyAfterShipCreation(ship, "mod_id", 0.5f);

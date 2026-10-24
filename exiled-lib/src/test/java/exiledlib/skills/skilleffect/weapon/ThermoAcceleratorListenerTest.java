@@ -40,21 +40,21 @@ class ThermoAcceleratorListenerTest {
     }
 
     @Test
-    void thermoAcceleratorRaisesRateOfFireAndKeepsOnlyRealHardpointsFromFiring() {
+    void thermoAcceleratorCutsWeaponFluxCostAndKeepsOnlyRealHardpointsFromFiring() {
         WeaponAPI hardpoint = weapon(true, false, false);
         WeaponAPI turret = weapon(false, false, false);
         WeaponAPI decorative = weapon(true, true, false);
         WeaponAPI system = weapon(true, false, true);
-        ShipAPI ship = ship("aetos", Map.of(ThermoAcceleratorListener.RATE_OF_FIRE_PERCENT_KEY, 50f));
+        ShipAPI ship = ship("aetos", Map.of(ThermoAcceleratorListener.FLUX_COST_REDUCTION_PERCENT_KEY, 50f));
         when(ship.getAllWeapons()).thenReturn(List.of(hardpoint, turret, decorative, system));
 
         ThermoAcceleratorListener listener = new ThermoAcceleratorListener(ship);
         listener.advance(0.1f);
 
         String modId = "exiledLib_thermoAccelerator_aetos";
-        verify(ship.getMutableStats().getBallisticRoFMult()).modifyPercent(modId, 50f);
-        verify(ship.getMutableStats().getEnergyRoFMult()).modifyPercent(modId, 50f);
-        verify(ship.getMutableStats().getMissileRoFMult()).modifyPercent(modId, 50f);
+        verify(ship.getMutableStats().getBallisticWeaponFluxCostMod()).modifyPercent(modId, -50f);
+        verify(ship.getMutableStats().getEnergyWeaponFluxCostMod()).modifyPercent(modId, -50f);
+        verify(ship.getMutableStats().getMissileWeaponFluxCostMod()).modifyPercent(modId, -50f);
         verify(hardpoint).setForceNoFireOneFrame(true);
         verify(turret, never()).setForceNoFireOneFrame(true);
         verify(decorative, never()).setForceNoFireOneFrame(true);

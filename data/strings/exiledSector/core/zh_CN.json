@@ -202,6 +202,7 @@
     "socketable.salvagedCommon": "从残骸中回收了{count}件普通船体物品，已放入你的货舱。",
     "socketable.salvagedRare": "从残骸中回收了{count}件稀有船体物品，已放入你的货舱。",
     "fighterBay.returned": "{wing}已退回你的货舱：其所在的机库已不存在。",
+    "weaponSlot.returned": "{weapon}已退回你的货舱：其所在的槽位已不再接受它。",
     "socketable.techMining.found": "{colony}的技术采掘发现了{name}，已送至{destination}。",
     "socketable.techMining.material": "{count}个{name}",
     "socketable.techMining.storage": "{market}的仓库",

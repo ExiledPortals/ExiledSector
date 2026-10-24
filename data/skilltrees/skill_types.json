@@ -4662,91 +4662,98 @@
 			]
 		},
 		{
-			"id": "tania_module_hull",
-			"name": "Module Hull",
-			"icon": "graphics/icons/tania_module_hull.png",
+			"id": "tania_weapon_fire_rate",
+			"name": "Weapon Fire Rate",
+			"icon": "graphics/icons/tania_weapon_fire_rate.png",
 			"effects": [
 				{
-					"effect": "MODULE_HULL_PERCENT",
-					"magnitude": 10
+					"effect": "WEAPON_FIRE_RATE_PERCENT",
+					"magnitude": 3
 				}
 			],
 			"tags": [
-				"hull",
-				"req_modules"
+				"weapons"
 			]
 		},
 		{
-			"id": "tania_module_armor",
-			"name": "Module Armor",
-			"icon": "graphics/icons/tania_module_armor.png",
-			"effects": [
-				{
-					"effect": "MODULE_ARMOR_PERCENT",
-					"magnitude": 10
-				}
-			],
-			"tags": [
-				"armour",
-				"req_modules"
-			]
-		},
-		{
-			"id": "tania_module_weapon_damage",
-			"name": "Module Weapon Damage",
-			"icon": "graphics/icons/tania_module_weapon_damage.png",
-			"effects": [
-				{
-					"effect": "MODULE_WEAPON_DAMAGE_PERCENT",
-					"magnitude": 10
-				}
-			],
-			"tags": [
-				"weapons",
-				"req_modules"
-			]
-		},
-		{
-			"id": "tania_plate_fire_control",
-			"name": "Plate Fire Control",
-			"icon": "graphics/icons/tania_plate_fire_control.png",
+			"id": "tania_fafnir_breeches",
+			"name": "Dual-Feed Mounts",
+			"icon": "graphics/icons/tania_fafnir_breeches.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "MODULE_WEAPON_RANGE_PERCENT",
-					"magnitude": 20
+					"effect": "BALLISTIC_SLOTS_HYBRID"
 				},
 				{
-					"effect": "MODULE_WEAPON_RATE_OF_FIRE_PERCENT",
+					"effect": "BALLISTIC_WEAPON_FLUX_COST_PERCENT",
 					"magnitude": 25
 				}
 			],
-			"description": "Navarchy armor plates carry turrets of their own, slaved to the parent ship's fire control through its flux grid. A Persean League liaison who once served alongside Tania shows the crew how to tune this ship's modules to the same link, so their weapons reach further and fire faster.",
+			"description": "Navarchy dockyards at Farige run a flux line beside the ammunition feed in every mount, so a captain can field whatever the last salvage turned up. Mount plans traded by Navarchy quartermasters let the crew rebuild this ship's ballistic mounts the same way, though the shared feed draws harder on the grid each time they fire shells.",
 			"tags": [
-				"weapons",
-				"range",
-				"req_modules"
+				"weapons"
 			]
 		},
 		{
-			"id": "tania_jettison_protocol",
-			"name": "Jettison Protocol",
-			"icon": "graphics/icons/tania_jettison_protocol.png",
+			"id": "tania_dysis_drive",
+			"name": "Dysis Drive",
+			"icon": "graphics/icons/tania_dysis_drive.png",
+			"tier": "NOTABLE",
+			"hullSizeEffects": [
+				{
+					"effect": "FLUX_SCALED_TOP_SPEED_FLAT",
+					"frigate": 50,
+					"destroyer": 40,
+					"cruiser": 30,
+					"capitalShip": 20
+				}
+			],
+			"description": "The Black Hawk's Dysis Drive throws the ship forward hardest while its flux grid runs cold. Engineers lent by a Navarchy commission teach the crew to tune this ship's engines the same way, so it surges ahead at low flux and drags once the grid fills.",
+			"tags": [
+				"speed",
+				"flux"
+			]
+		},
+		{
+			"id": "tania_carina_charge",
+			"name": "Carina Charge",
+			"icon": "graphics/icons/tania_carina_charge.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
-					"effect": "TOP_SPEED_PERCENT_PER_DESTROYED_MODULE",
-					"magnitude": 10
-				},
-				{
-					"effect": "MANEUVERABILITY_PERCENT_PER_DESTROYED_MODULE",
-					"magnitude": 20
+					"effect": "NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT",
+					"magnitude": 0.08
 				}
 			],
-			"description": "Fighting Navarchy cruisers, the crew watched them blow the bolts on their burning plates and outrun the pursuit. Rigging the same release on this ship lets it cut a wrecked module loose and fly lighter for every one it loses.",
+			"description": "Navarchy captains close on their targets at full burn, trusting old armor to take the blow while every gun fires into the point of contact. Crews who have fought beside Navarchy fleets drill this ship's gunners to fire the same way, so its shots land harder the faster it charges in.",
 			"tags": [
-				"speed",
-				"req_modules"
+				"weapons",
+				"speed"
+			]
+		},
+		{
+			"id": "tania_solaris_overdrive",
+			"name": "Solaris Overdrive",
+			"icon": "graphics/icons/tania_solaris_overdrive.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "SOLARIS_OVERDRIVE_SECONDS_FLAT",
+					"magnitude": 4
+				},
+				{
+					"effect": "SOLARIS_OVERDRIVE_PROJECTILE_SPEED_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "SOLARIS_OVERDRIVE_RATE_OF_FIRE_PERCENT",
+					"magnitude": 25
+				}
+			],
+			"description": "The Aracari's Solaris Phalanx primes thermo-dynamic flux cores until its guns fire without drawing on the grid. A deserter from an Aracari engine room walks the crew through a smaller version, keyed to this ship's own system.",
+			"tags": [
+				"weapons",
+				"flux"
 			]
 		},
 		{
@@ -4782,11 +4789,11 @@
 			"tier": "KEYSTONE",
 			"effects": [
 				{
-					"effect": "THERMO_ACCELERATOR_RATE_OF_FIRE_PERCENT",
+					"effect": "THERMO_ACCELERATOR_FLUX_COST_REDUCTION_PERCENT",
 					"magnitude": 50
 				}
 			],
-			"description": "The Aetos that broke the Holy Armada's frigate screen at Vela ran its turret feeds far past their rating. The restricted calibration pulled from Aetos wrecks lets the crew do the same on this ship, starving the hardpoints of the power the turrets now draw.",
+			"description": "The Aetos that broke the Holy Armada's frigate screen at Vela ran its turrets on power stripped from its hardpoints. The restricted calibration pulled from Aetos wrecks lets the crew do the same on this ship, leaving the hardpoints dead so the turrets fire cooler.",
 			"tags": [
 				"weapons"
 			]

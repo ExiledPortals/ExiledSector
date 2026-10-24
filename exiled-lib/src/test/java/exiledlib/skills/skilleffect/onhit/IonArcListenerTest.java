@@ -9,6 +9,7 @@ import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
+import exiledlib.skills.skilleffect.weapon.BallisticAsEnergy;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.MockedStatic;
@@ -80,6 +81,35 @@ class IonArcListenerTest {
             verify(engine, never()).spawnEmpArcPierceShields(any(), any(), any(), any(), any(), anyFloat(), anyFloat(), anyFloat(),
                     anyString(), anyFloat(), any(), any());
 
+            ion.modifyDamageDealt(shot, target, damage, new Vector2f(), true);
+            verify(engine).spawnEmpArcPierceShields(eq(ship), any(), eq(target), eq(target), eq(DamageType.ENERGY), eq(50f), eq(100f),
+                    anyFloat(), anyString(), anyFloat(), any(), any());
+        }
+    }
+
+    @Test
+    void ionArcFiresForBallisticShotsOnlyWhileBallisticCountsAsEnergy() {
+        ShipAPI ship = ship("ion", 0, Map.of(IonArcListener.CHANCE_AT_FULL_HARD_FLUX_KEY, 100f));
+        ShipAPI target = fluxedTarget(1000f, 1000f);
+        Random alwaysArcs = mock(Random.class);
+        when(alwaysArcs.nextFloat()).thenReturn(0f);
+        IonArcListener ion = new IonArcListener(ship, alwaysArcs);
+        DamagingProjectileAPI shot = mock(DamagingProjectileAPI.class);
+        WeaponAPI weapon = mock(WeaponAPI.class);
+        when(weapon.getType()).thenReturn(WeaponAPI.WeaponType.BALLISTIC);
+        when(weapon.getShip()).thenReturn(ship);
+        when(shot.getWeapon()).thenReturn(weapon);
+        DamageAPI damage = mock(DamageAPI.class);
+        when(damage.getDamage()).thenReturn(200f);
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+            global.when(Global::getCombatEngine).thenReturn(engine);
+
+            ion.modifyDamageDealt(shot, target, damage, new Vector2f(), true);
+            verify(engine, never()).spawnEmpArcPierceShields(any(), any(), any(), any(), any(), anyFloat(), anyFloat(), anyFloat(),
+                    anyString(), anyFloat(), any(), any());
+
+            when(ship.getMutableStats().getDynamic().getMod(BallisticAsEnergy.KEY).computeEffective(0f)).thenReturn(1f);
             ion.modifyDamageDealt(shot, target, damage, new Vector2f(), true);
             verify(engine).spawnEmpArcPierceShields(eq(ship), any(), eq(target), eq(target), eq(DamageType.ENERGY), eq(50f), eq(100f),
                     anyFloat(), anyString(), anyFloat(), any(), any());

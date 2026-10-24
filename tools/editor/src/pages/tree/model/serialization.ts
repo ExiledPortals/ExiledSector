@@ -60,6 +60,8 @@ function normalizeImages(images: Partial<StaticImage>[] | undefined): StaticImag
     imagePath: image.imagePath || null,
     rotation: image.rotation || 0,
     rotationSpeed: image.rotationSpeed || 0,
+    behindStars: image.behindStars || undefined,
+    parallax: image.parallax === undefined || image.parallax === 1 ? undefined : image.parallax,
     tags: image.tags ? image.tags.slice() : undefined,
   }));
 }
@@ -72,6 +74,9 @@ function normalizeStars(stars: Partial<Star>[] | undefined): Star[] {
     radius: star.radius ?? 0,
     starType: star.starType || 'star_yellow',
     color: star.color || null,
+    overlayPath: star.overlayPath || undefined,
+    overlaySize: star.overlaySize,
+    overlayAlpha: star.overlayAlpha,
     tags: star.tags ? star.tags.slice() : undefined,
   }));
 }
@@ -282,6 +287,12 @@ function serializeStaticImage(image: StaticImage): Record<string, unknown> {
   if (image.rotationSpeed) {
     out.rotationSpeed = image.rotationSpeed;
   }
+  if (image.behindStars) {
+    out.behindStars = true;
+  }
+  if (image.parallax !== undefined && image.parallax !== 1) {
+    out.parallax = image.parallax;
+  }
   if (image.tags?.length) {
     out.tags = image.tags;
   }
@@ -292,6 +303,15 @@ function serializeStar(star: Star): Record<string, unknown> {
   const out: Record<string, unknown> = { id: star.id, x: star.x, y: star.y, radius: star.radius, starType: star.starType || 'star_yellow' };
   if (star.color) {
     out.color = star.color;
+  }
+  if (star.overlayPath) {
+    out.overlayPath = star.overlayPath;
+    if (star.overlaySize !== undefined) {
+      out.overlaySize = star.overlaySize;
+    }
+    if (star.overlayAlpha !== undefined) {
+      out.overlayAlpha = star.overlayAlpha;
+    }
   }
   if (star.tags?.length) {
     out.tags = star.tags;

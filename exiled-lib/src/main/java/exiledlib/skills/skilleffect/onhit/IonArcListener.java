@@ -14,7 +14,7 @@ import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import exiledlib.compat.CombatGlow;
 import exiledlib.skills.skilleffect.CombatQueries;
 import exiledlib.skills.skilleffect.ShipCombatListener;
-import exiledlib.skills.skilleffect.weapon.WeaponScope;
+import exiledlib.skills.skilleffect.weapon.BallisticAsEnergy;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
@@ -70,7 +70,7 @@ final class IonArcListener extends ShipCombatListener implements DamageDealtModi
     }
 
     private static boolean isEnergyProjectile(WeaponAPI weapon) {
-        return weapon != null && WeaponScope.NON_BEAM_ENERGY.matches(weapon);
+        return weapon != null && !weapon.isBeam() && BallisticAsEnergy.countsAsEnergy(weapon);
     }
 
     private void arc(ShipAPI hitShip, Vector2f point, float shotDamage) {

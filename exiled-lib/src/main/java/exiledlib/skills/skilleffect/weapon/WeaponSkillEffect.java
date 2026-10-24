@@ -130,6 +130,18 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
             }
         }
     },
+    BALLISTIC_COUNTS_AS_ENERGY {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(BallisticAsEnergy.KEY).modifyFlat(modId, 1f);
+        }
+    },
+    BALLISTIC_SLOTS_HYBRID {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            HybridBallisticSlots.convert(stats.getVariant());
+        }
+    },
     MEDIUM_ENERGY_SLOT_WEAPON_RANGE_FLAT(MediumEnergySlotRangeListener.RANGE_FLAT_KEY,
             MediumEnergySlotRangeListener.class, ship -> new MediumEnergySlotRangeListener()),
     NON_BEAM_WEAPON_DAMAGE_PER_SPEED_PERCENT(InertialSuperchargerListener.DAMAGE_PERCENT_PER_SPEED_KEY,
@@ -148,8 +160,18 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
                     .arg("decay", FurorListener.DECAY_PERCENT_PER_SECOND).styled();
         }
     },
-    THERMO_ACCELERATOR_RATE_OF_FIRE_PERCENT(ThermoAcceleratorListener.RATE_OF_FIRE_PERCENT_KEY, ThermoAcceleratorListener.class,
-            ThermoAcceleratorListener::new);
+    THERMO_ACCELERATOR_FLUX_COST_REDUCTION_PERCENT(ThermoAcceleratorListener.FLUX_COST_REDUCTION_PERCENT_KEY, ThermoAcceleratorListener.class,
+            ThermoAcceleratorListener::new),
+    SOLARIS_OVERDRIVE_SECONDS_FLAT(SolarisOverdriveListener.SECONDS_KEY, SolarisOverdriveListener.class, SolarisOverdriveListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("cooldown", SolarisOverdriveListener.COOLDOWN_SECONDS).styled();
+        }
+    },
+    SOLARIS_OVERDRIVE_PROJECTILE_SPEED_PERCENT(SolarisOverdriveListener.PROJECTILE_SPEED_PERCENT_KEY, SolarisOverdriveListener.class,
+            SolarisOverdriveListener::new),
+    SOLARIS_OVERDRIVE_RATE_OF_FIRE_PERCENT(SolarisOverdriveListener.RATE_OF_FIRE_PERCENT_KEY, SolarisOverdriveListener.class,
+            SolarisOverdriveListener::new);
 
     private static final String LARGE_BALLISTIC_OP_COST_KEY = "large_ballistic_mod";
 
@@ -180,6 +202,11 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     private static void applySensorRange(MutableShipStatsAPI stats, String modId, float magnitude) {
         float rangeBonus = stats.getSensorStrength().getModifiedValue() * magnitude;
         WeaponStatFamily.RANGE.target(WeaponScope.ENERGY).apply(stats, modId, StatMode.FLAT, rangeBonus);
+        if (BallisticAsEnergy.active(stats)) {
+            WeaponStatFamily.RANGE.target(WeaponScope.BALLISTIC).apply(stats, modId, StatMode.FLAT, rangeBonus);
+        } else {
+            WeaponStatFamily.RANGE.target(WeaponScope.BALLISTIC).remove(stats, modId);
+        }
     }
 
     @Override

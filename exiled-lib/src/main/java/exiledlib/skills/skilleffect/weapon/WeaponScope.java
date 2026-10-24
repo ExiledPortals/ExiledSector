@@ -35,7 +35,7 @@ public enum WeaponScope {
         return namePrefix;
     }
 
-    String qualify(String statKey) {
+    public String qualify(String statKey) {
         if (this == ALL) {
             return Translation.text(statKey);
         }

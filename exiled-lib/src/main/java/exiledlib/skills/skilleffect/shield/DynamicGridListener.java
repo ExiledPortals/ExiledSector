@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import exiledlib.skills.HullSizeTable;
 import exiledlib.skills.skilleffect.ScaledBonus;
 import exiledlib.skills.skilleffect.ShipCombatListener;
+import exiledlib.skills.skilleffect.weapon.BallisticAsEnergy;
 
 import static exiledlib.skills.skilleffect.ScaledBonus.percent;
 import static exiledlib.skills.skilleffect.StatTarget.bonus;
@@ -21,8 +22,11 @@ final class DynamicGridListener extends ShipCombatListener implements Advanceabl
     private static final String MOD_ID_PREFIX = "exiledLib_dynamicGrid_";
     private static final ScaledBonus ENERGY_BONUS = new ScaledBonus(percent(stat(MutableShipStatsAPI::getEnergyRoFMult)),
             percent(scaled(bonus(MutableShipStatsAPI::getEnergyWeaponFluxCostMod), -1f)));
+    private static final ScaledBonus BALLISTIC_BONUS = new ScaledBonus(percent(stat(MutableShipStatsAPI::getBallisticRoFMult)),
+            percent(scaled(bonus(MutableShipStatsAPI::getBallisticWeaponFluxCostMod), -1f)));
 
     private final ScaledBonus.Tracker energyBonus = ENERGY_BONUS.tracker();
+    private final ScaledBonus.Tracker ballisticBonus = BALLISTIC_BONUS.tracker();
     private float shieldsDownSeconds;
     private boolean bonusApplied;
 
@@ -43,6 +47,9 @@ final class DynamicGridListener extends ShipCombatListener implements Advanceabl
         shieldsDownSeconds = gridOpen ? shieldsDownSeconds + amount : 0f;
         boolean bonusDue = gridOpen && shieldsDownSeconds >= SHIELDS_DOWN_SECONDS.of(ownerShip.getHullSize());
         bonusApplied = bonusDue;
-        energyBonus.apply(ownerShip.getMutableStats(), modId, bonusDue ? magnitude(ENERGY_BONUS_PERCENT_KEY) : 0f);
+        MutableShipStatsAPI stats = ownerShip.getMutableStats();
+        float bonusPercent = bonusDue ? magnitude(ENERGY_BONUS_PERCENT_KEY) : 0f;
+        energyBonus.apply(stats, modId, bonusPercent);
+        ballisticBonus.apply(stats, modId, BallisticAsEnergy.active(stats) ? bonusPercent : 0f);
     }
 }

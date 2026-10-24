@@ -16,6 +16,8 @@ import exiledlib.i18n.Translation;
 import exiledlib.skills.DiminishingReturns;
 import exiledlib.skills.StatBaseline;
 import exiledlib.skills.skilleffect.logistics.FleetWideEffects;
+import exiledlib.skills.skilleffect.weapon.HybridBallisticSlots;
+import exiledlib.skills.skilleffect.weapon.WeaponSkillEffect;
 import exiledsector.ExiledSector;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.persistence.ShipRecords;
@@ -43,7 +45,10 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         FleetMemberAPI member = stats.getFleetMember();
         ShipVariantAPI variant = stats.getVariant();
         ShipSkillData shipData = ShipRecords.resolve(member, variant);
-        if (shipData == null) return;
+        if (shipData == null) {
+            HybridBallisticSlots.restore(variant);
+            return;
+        }
 
         ShipEffectContext context = new ShipEffectContext(shipData, member, variant, hullSize);
         sources.forEach(source -> source.beforeStatsApplied(context));
@@ -60,8 +65,34 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
                 effectEntry.effect().apply(stats, effectEntry.modId(), effectEntry.magnitude());
             }
         }
+        if (!hasHybridBallisticSlots(resolvedTree)) {
+            HybridBallisticSlots.restore(variant);
+        }
         if (isOpCostPass(stats)) return;
         sources.forEach(source -> source.afterStatsApplied(context, resolvedTree));
+    }
+
+    public static void syncHybridBallisticSlots(FleetMemberAPI member, ShipVariantAPI variant) {
+        if (variant == null) {
+            return;
+        }
+        ShipSkillData shipData = ShipRecords.resolve(member, variant);
+        ResolvedTree resolvedTree = shipData == null ? null : ResolvedTree.of(new ShipEffectContext(shipData, member, variant, variant.getHullSize()),
+                StatBaseline.of(variant), DiminishingReturns.current());
+        if (resolvedTree != null && hasHybridBallisticSlots(resolvedTree)) {
+            HybridBallisticSlots.convert(variant);
+        } else {
+            HybridBallisticSlots.restore(variant);
+        }
+    }
+
+    private static boolean hasHybridBallisticSlots(ResolvedTree resolvedTree) {
+        for (ResolvedTree.Entry entry : resolvedTree.entries()) {
+            if (entry instanceof ResolvedTree.EffectEntry effectEntry && effectEntry.effect() == WeaponSkillEffect.BALLISTIC_SLOTS_HYBRID) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

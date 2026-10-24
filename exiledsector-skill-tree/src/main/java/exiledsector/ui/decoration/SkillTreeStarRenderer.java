@@ -92,8 +92,28 @@ public class SkillTreeStarRenderer {
         if (stars.isEmpty()) return;
 
         for (Star star : stars) {
-            renderStarDisc(star, viewport, zoom, alphaOf(star, alphaMult));
+            float starAlpha = alphaOf(star, alphaMult);
+            renderStarDisc(star, viewport, zoom, starAlpha);
+            renderStarOverlay(star, viewport, zoom, starAlpha);
         }
+    }
+
+    private void renderStarOverlay(Star star, TreeViewport viewport, float zoom, float alphaMult) {
+        Star.Overlay overlay = star.getOverlay();
+        SpriteAPI sprite = overlay == null || alphaMult <= 0f ? null : spriteCache.sprite(overlay.path());
+        if (sprite == null || sprite.getWidth() <= 0f) {
+            return;
+        }
+        float screenX = viewport.screenX(star.getX());
+        float screenY = viewport.screenY(star.getY());
+        float overlayWidth = radiusOf(star) * 2f * overlay.size() * zoom;
+        float overlayHeight = overlayWidth * sprite.getHeight() / sprite.getWidth();
+        if (!viewport.isVisible(screenX, screenY, Math.max(overlayWidth, overlayHeight) / 2f)) {
+            return;
+        }
+        PlanetSpecAPI spec = resolveSpec(star.getStarType());
+        Color tint = spec == null ? Color.WHITE : resolveColor(star, spec.getPlanetColor());
+        SpriteDraw.drawAtCenter(sprite, screenX, screenY, overlayWidth, overlayHeight, tint, alphaMult * overlay.alpha(), 0f);
     }
 
     private void renderStarDisc(Star star, TreeViewport viewport, float zoom, float alphaMult) {

@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.loading.ProjectileSpecAPI;
 import org.lazywizard.lazylib.MathUtils;
 import org.lazywizard.lazylib.VectorUtils;
@@ -49,7 +50,7 @@ final class RefractionDrone extends SingleShotDrone {
 
     @Override
     StatBonus rangeBonus(MutableShipStatsAPI stats) {
-        return stats.getEnergyWeaponRangeBonus();
+        return weapon().getType() == WeaponAPI.WeaponType.BALLISTIC ? stats.getBallisticWeaponRangeBonus() : stats.getEnergyWeaponRangeBonus();
     }
 
     @Override

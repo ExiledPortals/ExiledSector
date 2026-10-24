@@ -22,16 +22,9 @@ public final class ModuleBoost {
 
     static final String HULL_PERCENT_KEY = "exiledLib_moduleHullPercent";
     static final String ARMOR_PERCENT_KEY = "exiledLib_moduleArmorPercent";
-    static final String WEAPON_DAMAGE_PERCENT_KEY = "exiledLib_moduleWeaponDamagePercent";
-    static final String WEAPON_RANGE_PERCENT_KEY = "exiledLib_moduleWeaponRangePercent";
-    static final String WEAPON_FIRE_RATE_PERCENT_KEY = "exiledLib_moduleWeaponFireRatePercent";
-    private static final List<String> MODULE_BONUS_KEYS = List.of(HULL_PERCENT_KEY, ARMOR_PERCENT_KEY, WEAPON_DAMAGE_PERCENT_KEY,
-            WEAPON_RANGE_PERCENT_KEY, WEAPON_FIRE_RATE_PERCENT_KEY);
+    private static final List<String> MODULE_BONUS_KEYS = List.of(HULL_PERCENT_KEY, ARMOR_PERCENT_KEY);
     private static final String MODULE_BONUS_MOD_ID_PREFIX = "exiledLib_moduleBonus_";
     private static final float MAX_SHIELD_ARC = 360f;
-    private static final StatTarget WEAPON_DAMAGE = WeaponStatFamily.DAMAGE.target(WeaponScope.ALL);
-    private static final StatTarget WEAPON_RANGE = WeaponStatFamily.RANGE.target(WeaponScope.ALL);
-    private static final StatTarget WEAPON_FIRE_RATE = WeaponStatFamily.FIRE_RATE.target(WeaponScope.ALL);
 
     private ModuleBoost() {
     }
@@ -90,20 +83,11 @@ public final class ModuleBoost {
         String modId = MODULE_BONUS_MOD_ID_PREFIX + parentShip.getId();
         modifyPercentIfSet(stats.getHullBonus(), modId, parentStats.getDynamic().getValue(HULL_PERCENT_KEY, 0f));
         modifyPercentIfSet(stats.getArmorBonus(), modId, parentStats.getDynamic().getValue(ARMOR_PERCENT_KEY, 0f));
-        applyIfSet(WEAPON_DAMAGE, stats, modId, parentStats.getDynamic().getValue(WEAPON_DAMAGE_PERCENT_KEY, 0f));
-        applyIfSet(WEAPON_RANGE, stats, modId, parentStats.getDynamic().getValue(WEAPON_RANGE_PERCENT_KEY, 0f));
-        applyIfSet(WEAPON_FIRE_RATE, stats, modId, parentStats.getDynamic().getValue(WEAPON_FIRE_RATE_PERCENT_KEY, 0f));
     }
 
     private static void modifyPercentIfSet(StatBonus bonus, String modId, float percent) {
         if (percent != 0f) {
             bonus.modifyPercent(modId, percent);
-        }
-    }
-
-    private static void applyIfSet(StatTarget target, MutableShipStatsAPI stats, String modId, float percent) {
-        if (percent != 0f) {
-            target.apply(stats, modId, StatMode.PERCENT, percent);
         }
     }
 

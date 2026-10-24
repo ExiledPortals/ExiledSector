@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipAPI;
+import exiledlib.skills.skilleffect.weapon.BallisticAsEnergy;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -13,8 +14,11 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -59,6 +63,37 @@ class DynamicGridListenerTest {
         when(flux.isVenting()).thenReturn(true);
         grid.advance(5f);
         assertFalse(grid.bonusActive());
+    }
+
+    @Test
+    void dynamicGridAlsoBoostsBallisticsOnlyWhileTheyCountAsEnergy() {
+        ShipAPI ship = ship("grid", 0, Map.of(DynamicGridListener.ENERGY_BONUS_PERCENT_KEY, 15f));
+        when(ship.getShield()).thenReturn(mock(ShieldAPI.class));
+        when(ship.getFluxTracker()).thenReturn(mock(FluxTrackerAPI.class));
+        when(ship.getHullSize()).thenReturn(HullSize.FRIGATE);
+        when(ship.getMutableStats().getDynamic().getMod(BallisticAsEnergy.KEY).computeEffective(0f)).thenReturn(1f);
+        DynamicGridListener grid = new DynamicGridListener(ship);
+        String modId = "exiledLib_dynamicGrid_grid";
+
+        grid.advance(1f);
+
+        assertTrue(grid.bonusActive());
+        verify(ship.getMutableStats().getBallisticRoFMult()).modifyPercent(modId, 15f);
+        verify(ship.getMutableStats().getBallisticWeaponFluxCostMod()).modifyPercent(modId, -15f);
+    }
+
+    @Test
+    void dynamicGridLeavesBallisticsAloneWithoutTheFlag() {
+        ShipAPI ship = ship("grid", 0, Map.of(DynamicGridListener.ENERGY_BONUS_PERCENT_KEY, 15f));
+        when(ship.getShield()).thenReturn(mock(ShieldAPI.class));
+        when(ship.getFluxTracker()).thenReturn(mock(FluxTrackerAPI.class));
+        when(ship.getHullSize()).thenReturn(HullSize.FRIGATE);
+        DynamicGridListener grid = new DynamicGridListener(ship);
+
+        grid.advance(1f);
+
+        assertTrue(grid.bonusActive());
+        verify(ship.getMutableStats().getBallisticRoFMult(), never()).modifyPercent(anyString(), anyFloat());
     }
 
     @Test

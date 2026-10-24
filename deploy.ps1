@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop"
 
 $projectRoot = $PSScriptRoot
-$deployCheckouts = @("E:\Dev\ExiledSector-parallel-work", "E:\Dev\ExiledSector")
+$deployCheckouts = @("E:\Dev\ExiledSector-parallel-work", "E:\Dev\ExiledSector-new-faction-areas", "E:\Dev\ExiledSector")
 $modTarget   = "E:\Dev\Starsector\mods\ExiledSector"
 $libraryTarget = "E:\Dev\Starsector\mods\ExiledLib"
 

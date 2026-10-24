@@ -5,9 +5,12 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledlib.MockSector;
 import exiledsector.persistence.ShipSkillDataManager;
 import lunalib.lunaRefit.BaseRefitButton;
+import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -18,6 +21,7 @@ import static org.mockito.Mockito.when;
 class SectionEditorTest {
 
     private MockSector mockSector;
+    private MockedStatic<LunaSettings> lunaSettingsMock;
     private FleetMemberAPI member;
     private BaseRefitButton refitButton;
     private SectionEditor editor;
@@ -25,6 +29,7 @@ class SectionEditorTest {
     @BeforeEach
     void setUp() {
         mockSector = new MockSector();
+        lunaSettingsMock = Mockito.mockStatic(LunaSettings.class, invocation -> null);
         member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship");
         refitButton = mock(BaseRefitButton.class);
@@ -33,6 +38,7 @@ class SectionEditorTest {
 
     @AfterEach
     void tearDown() {
+        lunaSettingsMock.close();
         mockSector.close();
     }
 

@@ -23,6 +23,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -166,6 +167,19 @@ class NodeGatesDataTest {
                     .filter(node -> NodeGates.isLocked(node, null))
                     .map(SkillNode::getId).sorted().toList();
         }
+    }
+
+    @Test
+    void eachTaniaMissionLocksItsOwnNavarchyNotable() {
+        Map<String, UnlockConditionType> missionByNode = Map.of(
+                "tania_carina_charge_1", UnlockConditionType.TANIA_BLOOD_TRAIL_DEFEATED,
+                "tania_rise_from_the_ashes_1", UnlockConditionType.TANIA_FROST_FIRE_DEFEATED,
+                "tania_fafnir_breeches_1", UnlockConditionType.TANIA_LAST_STRIVE_COMPLETED);
+        missionByNode.forEach((nodeId, mission) -> {
+            List<UnlockConditionType> gates = SkillTree.get(nodeId).getTags().stream().filter(NodeGates.all()::containsKey)
+                    .flatMap(gateTag -> NodeGates.all().get(gateTag).stream()).map(UnlockCondition::getType).toList();
+            assertEquals(List.of(mission), gates, nodeId);
+        });
     }
 
     private static List<String> ungatedIn(String region, String gateTag) {
