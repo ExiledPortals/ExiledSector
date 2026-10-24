@@ -10827,7 +10827,6 @@
 			"height": 6400,
 			"imagePath": "graphics/backgrounds/static_images/tania_nebula_haze.png",
 			"behindStars": true,
-			"parallax": 0.8,
 			"tags": [
 				"tania"
 			]
@@ -10840,7 +10839,6 @@
 			"height": 6400,
 			"imagePath": "graphics/backgrounds/static_images/tania_nebula_detail.png",
 			"behindStars": true,
-			"parallax": 0.9,
 			"tags": [
 				"tania"
 			]
