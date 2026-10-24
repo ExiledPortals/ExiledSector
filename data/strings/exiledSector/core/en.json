@@ -10,7 +10,7 @@
     "socketable.salvaged": "Recovered {name} from the wreckage into your cargo.",
     "socketable.salvagedCommon": "Recovered {count} common hull items from the wreckage into your cargo.",
     "socketable.salvagedRare": "Recovered {count} rare hull items from the wreckage into your cargo.",
-    "fighterBay.returned": "{wing} returned to your cargo: the fighter bay it was in is gone.",
+    "fighterBay.returned": "{wing} returned to your cargo: the strikecraft bay it was in is gone.",
     "socketable.techMining.found": "Tech Mining on {colony} uncovered {name}, sent to {destination}.",
     "socketable.techMining.material": "{count} {name}",
     "socketable.techMining.storage": "storage at {market}",

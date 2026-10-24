@@ -1,7 +1,7 @@
 {
     "framework.requirement.req_shields": "shields",
     "framework.requirement.req_phase": "a phase hull",
-    "framework.requirement.req_fighter_bays": "fighter bays",
+    "framework.requirement.req_fighter_bays": "strikecraft bays",
     "summary.framework": "Hull Upgrades {used}/{points}: {sockets}",
     "summary.frameworkNone": "no sections unlocked",
     "summary.frameworkSocket.filled": "{type} ({item})",
@@ -47,7 +47,7 @@
     "framework.socketDescription.weapon_mount": "Holds fire control for weapon damage, range, ammunition and point defence.",
     "framework.socketDescription.shield_generator": "Holds shield emitters for shield efficiency, upkeep, arc and response.",
     "framework.socketDescription.phase_coil": "Holds phase coils for cloak cost, phase speed and stealth.",
-    "framework.socketDescription.flight_deck": "Holds deck crews for fighter replacement, refit times and fighter performance.",
+    "framework.socketDescription.flight_deck": "Holds deck crews for strikecraft replacement, refit times and strikecraft performance.",
     "framework.socket.removeHint": "Right-click the section to return this hull item to storage, or click it to choose a different one.",
     "framework.socket.empty": "Empty: click to install",
     "framework.socket.inactive": "Inactive: needs {requirement}",

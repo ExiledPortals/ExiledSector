@@ -105,7 +105,7 @@ class SkillNodeTest {
         SkillNode node = new SkillNode("converted_hangar_1", type, List.of(), 0f, 0f);
 
         assertEquals(
-                "+1 to number of fighter bays.\n\n5% increased hull points.\n\nUnallocating it returns any fighter wing in the bay it adds to your cargo.",
+                "+1 to number of strikecraft bays.\n\n5% increased hull points.\n\nUnallocating it returns any strikecraft wing in the bay it adds to your cargo.",
                 description(node.getType()));
     }
 

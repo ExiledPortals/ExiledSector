@@ -971,7 +971,7 @@
 			"phantomHullMods": [
 				"converted_fighterbay"
 			],
-			"description": "Converts this ship's built-in fighter bays into cargo capacity.",
+			"description": "Converts this ship's built-in strikecraft bays into cargo capacity.",
 			"tags": [
 				"logistics",
 				"req_fighter_bays",
@@ -1031,7 +1031,7 @@
 			"phantomHullMods": [
 				"defensive_targeting_array"
 			],
-			"description": "Increases the damage fighters launched from this ship deal to other fighters and missiles. Also locks launched fighters to stay near the ship instead of patrolling freely.",
+			"description": "Increases the damage strikecraft launched from this ship deal to other strikecraft and missiles. Also locks launched strikecraft to stay near the ship instead of patrolling freely.",
 			"todo": "Deliberately kept on vanillaHullMod passthrough as a design choice, not a technical limitation - the fighter-spawn hook needed to convert this now exists (see FIGHTER_PD_DAMAGE_BONUS_PERCENT, reused by other nodes). Real vanilla effect also zeroes the launched fighters' patrol range (locking them near the ship) and tags certain fighter types to stay in front of the ship; neither of those is implemented as a reusable effect yet.",
 			"tags": [
 				"fighter",
@@ -1766,7 +1766,7 @@
 			"phantomHullMods": [
 				"nskr_volatile"
 			],
-			"description": "A prototype flux injector from Kesteven R&D lets the crew trade staying power for tempo. The ship runs faster and fires quicker while its flux is low, then slows on both counts once flux climbs past half. The injector also enlarges the flux network, at the cost of shorter long-range fire and a tighter leash on fighters.",
+			"description": "A prototype flux injector from Kesteven R&D lets the crew trade staying power for tempo. The ship runs faster and fires quicker while its flux is low, then slows on both counts once flux climbs past half. The injector also enlarges the flux network, at the cost of shorter long-range fire and a tighter leash on strikecraft.",
 			"tags": [
 				"flux",
 				"speed",
@@ -2583,7 +2583,7 @@
 		},
 		{
 			"id": "fighter_weapon_damage",
-			"name": "Fighter Weapon Damage",
+			"name": "Strikecraft Weapon Damage",
 			"icon": "graphics/icons/fighter_weapon_damage_shifted.png",
 			"effects": [
 				{
@@ -2599,7 +2599,7 @@
 		},
 		{
 			"id": "fighter_speed",
-			"name": "Fighter Speed",
+			"name": "Strikecraft Speed",
 			"icon": "graphics/icons/fighter_speed.png",
 			"effects": [
 				{
@@ -3303,7 +3303,7 @@
 		},
 		{
 			"id": "fighter_replacement",
-			"name": "Fighter Replacement",
+			"name": "Strikecraft Replacement",
 			"icon": "graphics/icons/fighter_replacement.png",
 			"effects": [
 				{
@@ -3642,7 +3642,7 @@
 					"magnitude": 30
 				}
 			],
-			"description": "Nightcross Restricted Hardlight Rifles, looted from a hidden NCA research outpost, keep count of every hit they land on a target, and the crew learns to port that counter into this carrier's wing datalink. Fighter hits paint the target with hardlight markers that guide the rest of the wings onto it.",
+			"description": "Nightcross Restricted Hardlight Rifles, looted from a hidden NCA research outpost, keep count of every hit they land on a target, and the crew learns to port that counter into this carrier's wing datalink. Strikecraft hits paint the target with hardlight markers that guide the rest of the wings onto it.",
 			"tags": [
 				"fighter",
 				"req_fighter_bays"
@@ -3663,7 +3663,7 @@
 					"magnitude": 10
 				}
 			],
-			"description": "Tri-Tachyon's phase labs learned to lock the coils of a fighter wing into one shared state, so a hit on one craft bleeds through p-space into the whole wing. A defector from those labs, smuggled out at no small cost, walks the crew through retuning this carrier's fighter coils to the same entangled frequency.",
+			"description": "Tri-Tachyon's phase labs learned to lock the coils of a strikecraft wing into one shared state, so a hit on one craft bleeds through p-space into the whole wing. A defector from those labs, smuggled out at no small cost, walks the crew through retuning this carrier's strikecraft coils to the same entangled frequency.",
 			"todo": "Needs an icon.",
 			"tags": [
 				"fighter",

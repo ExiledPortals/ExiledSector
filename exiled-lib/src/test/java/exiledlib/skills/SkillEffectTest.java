@@ -731,12 +731,12 @@ class SkillEffectTest {
 
     @Test
     void fighterBaysFlatDescribesTheBayCountOnly() {
-        assertEquals("+1 to number of fighter bays.", FighterSkillEffect.FIGHTER_BAYS_FLAT.description(1f).plain());
+        assertEquals("+1 to number of strikecraft bays.", FighterSkillEffect.FIGHTER_BAYS_FLAT.description(1f).plain());
     }
 
     @Test
     void fighterBaysFlatHasADeallocationWarning() {
-        assertEquals("Unallocating it returns any fighter wing in the bay it adds to your cargo.",
+        assertEquals("Unallocating it returns any strikecraft wing in the bay it adds to your cargo.",
                 FighterSkillEffect.FIGHTER_BAYS_FLAT.deallocationWarning(1f).plain());
     }
 
@@ -1408,11 +1408,11 @@ class SkillEffectTest {
 
     @Test
     void beamSplitTargetsFlatDescribesTheSplitCount() {
-        assertEquals("Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Fighters are never chosen. "
+        assertEquals("Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Strikecraft are never chosen. "
                         + "The target acquisition range is half the beam weapon's range. "
                         + "Split beams also carry the weapon's special beam effects.",
                 OnHitSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.description(1f).plain());
-        assertEquals("Beam weapon hits split their damage evenly across the target and up to 3 additional nearby enemy ships. Fighters are never chosen. "
+        assertEquals("Beam weapon hits split their damage evenly across the target and up to 3 additional nearby enemy ships. Strikecraft are never chosen. "
                         + "The target acquisition range is half the beam weapon's range. "
                         + "Split beams also carry the weapon's special beam effects.",
                 OnHitSkillEffect.BEAM_WEAPON_SPLIT_TARGETS_FLAT.description(3f).plain());
