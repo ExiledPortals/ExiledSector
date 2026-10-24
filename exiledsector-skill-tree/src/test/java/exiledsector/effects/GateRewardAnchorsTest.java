@@ -22,6 +22,7 @@ import exiledsector.loot.BattleLoot;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.unlock.NodeGates;
@@ -104,6 +105,7 @@ class GateRewardAnchorsTest {
 
     @AfterEach
     void tearDown() throws Exception {
+        SkillTreeSetting.setEnabledForTests(SkillTreeSetting.DEFAULT_ENABLED);
         WormholeAnchorDefinitions.clear();
         SkillTree.clearNodes();
         NodeGates.register(new JSONObject("{}"));
@@ -249,5 +251,29 @@ class GateRewardAnchorsTest {
 
         verify(playerCargo, never()).addSpecial(any(), anyFloat());
         assertTrue(GateRewardAnchors.granted(sector, LUNAR_GATE));
+    }
+
+    @Test
+    void aGateWhoseModWasMissingAtTheUpdateStillGrantsOnceTheModIsAddedAndTheBossBeaten() {
+        when(modManager.isModEnabled(NightcrossCompat.MOD_ID)).thenReturn(false);
+        GateRewardAnchors.markOpenGatesGrantedOnce(sector);
+        assertFalse(GateRewardAnchors.granted(sector, LUNAR_GATE));
+
+        when(modManager.isModEnabled(NightcrossCompat.MOD_ID)).thenReturn(true);
+        memoryValues.put("$na_defeated_macula", true);
+        GateRewardAnchors.grantMissed(sector);
+
+        verify(playerCargo).addSpecial(any(), anyFloat());
+    }
+
+    @Test
+    void withTheSkillTreeOffNoMissedRewardIsGrantedOrSpent() {
+        memoryValues.put("$na_defeated_macula", true);
+        SkillTreeSetting.setEnabledForTests(false);
+
+        GateRewardAnchors.grantMissed(sector);
+
+        verify(playerCargo, never()).addSpecial(any(), anyFloat());
+        assertFalse(GateRewardAnchors.granted(sector, LUNAR_GATE));
     }
 }

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -33,9 +34,11 @@ public class SkillType {
     private final String flavourOverride;
     private final String todo;
     private final List<String> optionalOptionIds;
+    private final Set<String> optionalOptionIdSet;
     private final List<String> exclusiveHullModIds;
     private final List<String> phantomHullModIds;
     private final List<String> ownHullModIds;
+    private final List<String> exclusiveAndOwnHullModIds;
     private final List<String> exclusiveSkillTypeIds;
     private final List<UnlockCondition> unlockConditions;
     private final List<String> tags;
@@ -57,9 +60,11 @@ public class SkillType {
         this.flavourOverride = builder.flavourOverride;
         this.todo = builder.todo;
         this.optionalOptionIds = builder.optionalOptionIds == null ? Collections.emptyList() : builder.optionalOptionIds;
+        this.optionalOptionIdSet = Collections.unmodifiableSet(new HashSet<>(optionalOptionIds));
         this.exclusiveHullModIds = builder.exclusiveHullModIds == null ? Collections.emptyList() : builder.exclusiveHullModIds;
         this.phantomHullModIds = builder.phantomHullModIds == null ? Collections.emptyList() : builder.phantomHullModIds;
         this.ownHullModIds = ownHullModIds(vanillaHullModId, phantomHullModIds);
+        this.exclusiveAndOwnHullModIds = exclusiveAndOwnHullModIds(exclusiveHullModIds, ownHullModIds);
         this.exclusiveSkillTypeIds = builder.exclusiveSkillTypeIds == null ? Collections.emptyList() : builder.exclusiveSkillTypeIds;
         this.unlockConditions = builder.unlockConditions == null ? Collections.emptyList() : builder.unlockConditions;
         this.tags = builder.tags == null ? Collections.emptyList() : builder.tags;
@@ -248,14 +253,22 @@ public class SkillType {
         return !optionalOptionIds.isEmpty();
     }
 
+    public boolean offersOption(String typeId) {
+        return optionalOptionIdSet.contains(typeId);
+    }
+
     public List<String> getExclusiveHullModIds() {
+        return exclusiveAndOwnHullModIds;
+    }
+
+    private static List<String> exclusiveAndOwnHullModIds(List<String> exclusiveHullModIds, List<String> ownHullModIds) {
         List<String> combined = new ArrayList<>(exclusiveHullModIds);
-        for (String ownHullModId : getOwnHullModIds()) {
+        for (String ownHullModId : ownHullModIds) {
             if (!combined.contains(ownHullModId)) {
                 combined.add(ownHullModId);
             }
         }
-        return combined;
+        return Collections.unmodifiableList(combined);
     }
 
     public List<String> getOwnHullModIds() {

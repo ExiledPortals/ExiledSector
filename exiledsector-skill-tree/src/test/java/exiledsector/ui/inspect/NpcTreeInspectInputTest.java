@@ -15,6 +15,7 @@ import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -29,6 +30,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -85,6 +87,22 @@ class NpcTreeInspectInputTest {
         assertTrue(NpcTreeInspectInput.tryOpen());
 
         verify(dialog).showCustomVisualDialog(anyFloat(), anyFloat(), any(NpcFleetInspectDialog.class));
+    }
+
+    @Test
+    void theKeyOpensTheInspectWindowOnlyOnceUntilItIsDismissed() {
+        InteractionDialogAPI dialog = openDialogWith(fleet(VisibilityLevel.COMPOSITION_DETAILS));
+        ArgumentCaptor<NpcFleetInspectDialog> shown = ArgumentCaptor.forClass(NpcFleetInspectDialog.class);
+
+        assertTrue(NpcTreeInspectInput.tryOpen());
+        assertFalse(NpcTreeInspectInput.tryOpen());
+        verify(dialog).showCustomVisualDialog(anyFloat(), anyFloat(), shown.capture());
+
+        shown.getValue().reportDismissed(0);
+
+        assertTrue(NpcTreeInspectInput.tryOpen());
+        verify(dialog, times(2)).showCustomVisualDialog(anyFloat(), anyFloat(), shown.capture());
+        shown.getValue().reportDismissed(0);
     }
 
     @Test

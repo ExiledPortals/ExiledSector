@@ -24,11 +24,15 @@ public record AllocatedNode(SkillNode node, SkillType effectiveType) {
 
     public boolean isRewritten() {
         SkillType ownType = node.getType();
-        return effectiveType != ownType && !ownType.getOptionalOptionIds().contains(effectiveType.getId());
+        return effectiveType != ownType && !ownType.offersOption(effectiveType.getId());
     }
 
     private SkillType declaredType() {
         return isRewritten() ? effectiveType : node.getType();
+    }
+
+    List<SkillType> conflictKey() {
+        return List.of(declaredType(), effectiveType);
     }
 
     public boolean isExclusiveWith(SkillType other) {

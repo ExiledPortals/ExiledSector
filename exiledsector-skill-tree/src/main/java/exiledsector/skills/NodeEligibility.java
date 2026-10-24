@@ -10,9 +10,11 @@ import exiledsector.skills.tags.ShipProfile;
 import exiledsector.skills.unlock.NodeGates;
 
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.ToDoubleFunction;
+import java.util.function.UnaryOperator;
 
 public final class NodeEligibility {
 
@@ -64,6 +66,19 @@ public final class NodeEligibility {
     }
 
     public static Block check(SkillNode node, SkillType option, Context context) {
+        return check(node, option, context, candidate -> firstConflict(candidate, context.allocated()));
+    }
+
+    static AllocatedNode firstConflict(AllocatedNode candidate, List<AllocatedNode> allocated) {
+        for (AllocatedNode existing : allocated) {
+            if (existing.isExclusiveWith(candidate)) {
+                return existing;
+            }
+        }
+        return null;
+    }
+
+    static Block check(SkillNode node, SkillType option, Context context, UnaryOperator<AllocatedNode> conflictFor) {
         OptionProblem optionProblem = optionProblem(node.getType(), option == null ? null : option.getId());
         if (optionProblem == OptionProblem.MISSING) {
             return new Block(Kind.INVALID_OPTION, optionProblem.name(), null);
@@ -81,12 +96,13 @@ public final class NodeEligibility {
         if (!node.getType().allowsHullSize(hullSize) || !candidate.effectiveType().allowsHullSize(hullSize)) {
             return new Block(Kind.WRONG_HULL_SIZE, null, null);
         }
-        String unmetRequirement = NodeRequirements.firstUnmetHullRequirement(node.effectiveTags(option), shipFacts);
+        Set<String> effectiveTags = node.effectiveTags(option);
+        String unmetRequirement = NodeRequirements.firstUnmetHullRequirement(effectiveTags, shipFacts);
         if (unmetRequirement != null) {
             return new Block(Kind.UNMET_HULL_REQUIREMENT, unmetRequirement, null);
         }
         if (context.profile() != null) {
-            String unmetShipRequirement = NodeRequirements.firstUnmet(node.effectiveTags(option), context.profile());
+            String unmetShipRequirement = NodeRequirements.firstUnmet(effectiveTags, context.profile());
             if (unmetShipRequirement != null) {
                 return new Block(Kind.UNMET_SHIP_REQUIREMENT, unmetShipRequirement, null);
             }
@@ -103,10 +119,9 @@ public final class NodeEligibility {
                 return new Block(Kind.LEARNED_CONFLICT, conflict.hullModId(), null);
             }
         }
-        for (AllocatedNode existing : context.allocated()) {
-            if (existing.isExclusiveWith(candidate)) {
-                return new Block(Kind.TYPE_CONFLICT, existing.effectiveType().getId(), existing.effectiveType());
-            }
+        AllocatedNode conflicting = conflictFor.apply(candidate);
+        if (conflicting != null) {
+            return new Block(Kind.TYPE_CONFLICT, conflicting.effectiveType().getId(), conflicting.effectiveType());
         }
         for (SkillTypeEffect effect : candidate.effectiveType().effectsFor(hullSize)) {
             String reason = effect.effect().blockAllocationReason(shipFacts, context.shieldType());
@@ -148,7 +163,7 @@ public final class NodeEligibility {
     }
 
     public static SkillType validOption(SkillType type, String optionTypeId, Function<String, SkillType> typeLookup) {
-        if (optionTypeId == null || !type.isOptional() || !type.getOptionalOptionIds().contains(optionTypeId)) {
+        if (optionTypeId == null || !type.isOptional() || !type.offersOption(optionTypeId)) {
             return null;
         }
         return typeLookup.apply(optionTypeId);

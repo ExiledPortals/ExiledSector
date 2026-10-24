@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 public final class AllocationGate {
@@ -55,6 +56,7 @@ public final class AllocationGate {
     private final int spentOp;
     private final Map<String, NodeVerdicts> verdictsByNodeId = new HashMap<>();
     private final Map<String, Verdict> grantVerdictsByNodeId = new HashMap<>();
+    private final Map<List<SkillType>, Optional<AllocatedNode>> conflictsByCandidateTypes = new HashMap<>();
     private Set<String> grantOnlyNodeIds;
 
     public AllocationGate(ShipSkillData data, SkillTreeTopology topology, String rootId, Budget budget, NodeEligibility.Context eligibility) {
@@ -118,7 +120,12 @@ public final class AllocationGate {
             verdicts.optionEligibilities = new HashMap<>();
         }
         return verdicts.optionEligibilities.computeIfAbsent(optionKey(option),
-                key -> Verdict.fromBlock(NodeEligibility.check(checkedNode(node), option, eligibility)));
+                key -> Verdict.fromBlock(NodeEligibility.check(checkedNode(node), option, eligibility, this::conflictFor)));
+    }
+
+    private AllocatedNode conflictFor(AllocatedNode candidate) {
+        return conflictsByCandidateTypes.computeIfAbsent(candidate.conflictKey(),
+                key -> Optional.ofNullable(NodeEligibility.firstConflict(candidate, eligibility.allocated()))).orElse(null);
     }
 
     public boolean offersOptions(SkillNode node) {

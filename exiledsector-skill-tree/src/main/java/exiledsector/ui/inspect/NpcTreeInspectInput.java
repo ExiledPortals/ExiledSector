@@ -15,6 +15,8 @@ import java.util.List;
 
 public class NpcTreeInspectInput implements CampaignInputListener {
 
+    private static InteractionDialogAPI dialogShowingInspect;
+
     @Override
     public int getListenerInputPriority() {
         return 0;
@@ -52,12 +54,13 @@ public class NpcTreeInspectInput implements CampaignInputListener {
     }
 
     private static boolean openInEncounter(InteractionDialogAPI dialog) {
-        if (dialog.getPlugin() instanceof NpcFleetInspectPlugin
+        if (dialog == dialogShowingInspect || dialog.getPlugin() instanceof NpcFleetInspectPlugin
                 || !(dialog.getInteractionTarget() instanceof CampaignFleetAPI target)) {
             return false;
         }
+        dialogShowingInspect = dialog;
         dialog.showCustomVisualDialog(NpcFleetInspectDialog.width(), NpcFleetInspectDialog.HEIGHT,
-                new NpcFleetInspectDialog(targetSide(target), null));
+                new NpcFleetInspectDialog(targetSide(target), () -> dialogShowingInspect = null));
         return true;
     }
 

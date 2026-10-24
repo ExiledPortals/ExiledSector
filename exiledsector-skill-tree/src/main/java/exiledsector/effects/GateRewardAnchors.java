@@ -21,8 +21,8 @@ import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.unlock.NodeGates;
-import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.skills.unlock.UnlockCondition;
 import exiledsector.skills.unlock.UnlockConditionType;
 import exiledsector.ui.CampaignMessages;
@@ -98,7 +98,7 @@ public final class GateRewardAnchors implements EconomyTickListener {
 
     public static void grantMissed(SectorAPI sector) {
         CampaignFleetAPI playerFleet = sector == null ? null : sector.getPlayerFleet();
-        if (playerFleet == null) {
+        if (playerFleet == null || !SkillTreeSetting.enabled()) {
             return;
         }
         for (String gateTag : rewardGateTags()) {
@@ -131,7 +131,7 @@ public final class GateRewardAnchors implements EconomyTickListener {
             return;
         }
         for (String gateTag : rewardGateTags()) {
-            if (bossBeaten(gateTag, sector) || !SkillTypeUnlockStatus.isLocked(NodeGates.gate(gateTag).conditions(), null)) {
+            if (bossBeaten(gateTag, sector)) {
                 markGranted(sector, gateTag);
             }
         }

@@ -457,10 +457,11 @@ class SkillTreeLoaderTest {
     }
 
     @Test
-    void loadAllToleratesAMalformedSectionWithoutLosingTheOthers() throws Exception {
+    void loadAllSkipsAMalformedLayoutEntryWithoutLosingTheRestOfItsSection() throws Exception {
         JSONObject root = new JSONObject("{"
                 + "\"nodes\": [ {\"id\": \"bare_node\", \"type\": \"bare\"} ],"
-                + "\"ringBelts\": [ {\"id\": \"belt\", \"x\": 0, \"y\": 0, \"innerRadius\": 10, \"outerRadius\": 20} ]"
+                + "\"ringBelts\": [ {\"id\": \"broken\", \"x\": 0, \"y\": 0, \"innerRadius\": 10, \"outerRadius\": 20},"
+                + " {\"id\": \"belt\", \"x\": 0, \"y\": 0, \"innerRadius\": 10, \"outerRadius\": 20, \"ringArtPath\": \"a.png\"} ]"
                 + "}");
         SettingsAPI settings = mock(SettingsAPI.class);
         when(settings.loadJSON(anyString())).thenReturn(root);
@@ -471,7 +472,7 @@ class SkillTreeLoaderTest {
             SkillTreeLoader.ParsedTree parsed = SkillTreeLoader.loadAll(SKILL_TYPES);
 
             assertEquals(1, parsed.nodes.size());
-            assertTrue(parsed.ringBelts.isEmpty());
+            assertEquals(List.of("belt"), parsed.ringBelts.stream().map(RingBelt::getId).toList());
         }
     }
 }

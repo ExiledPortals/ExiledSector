@@ -162,4 +162,13 @@ class NodeGatesTest {
         assertEquals(Map.of("gate_other", List.of()), NodeGates.all());
         assertFalse(NodeGates.isLocked(node(GATE_TAG), new ShipSkillData()));
     }
+
+    @Test
+    void aMalformedGateIsSkippedWithoutOpeningTheOthers() throws Exception {
+        NodeGates.register(new JSONObject("{\"gate_broken\": {\"unlockConditions\": [{\"type\": \"noSuchCondition\"}]}, \"" + GATE_TAG
+                + "\": {\"unlockConditions\": [{\"type\": \"memoryFlag\", \"key\": \"" + FLAG + "\"}]}}"));
+
+        assertNull(NodeGates.gate("gate_broken"));
+        assertTrue(NodeGates.isLocked(node(GATE_TAG), null));
+    }
 }

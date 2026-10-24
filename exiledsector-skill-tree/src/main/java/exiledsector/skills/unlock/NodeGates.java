@@ -66,14 +66,18 @@ public final class NodeGates {
         }
     }
 
-    public static void register(JSONObject gatesJson) throws JSONException {
+    public static void register(JSONObject gatesJson) {
         Map<String, Gate> gatesByTag = new LinkedHashMap<>();
         Iterator<?> gateTags = gatesJson.keys();
         while (gateTags.hasNext()) {
             String gateTag = (String) gateTags.next();
-            JSONObject gateJson = gatesJson.getJSONObject(gateTag);
-            gatesByTag.put(gateTag, new Gate(SkillTypeLoader.parseUnlockConditions(gateJson.optJSONArray("unlockConditions")),
-                    AnchorRule.parse(gateTag, gateJson.optString(ANCHORS_FIELD, "")), gateJson.optBoolean(REWARD_ANCHOR_FIELD, false)));
+            try {
+                JSONObject gateJson = gatesJson.getJSONObject(gateTag);
+                gatesByTag.put(gateTag, new Gate(SkillTypeLoader.parseUnlockConditions(gateJson.optJSONArray("unlockConditions")),
+                        AnchorRule.parse(gateTag, gateJson.optString(ANCHORS_FIELD, "")), gateJson.optBoolean(REWARD_ANCHOR_FIELD, false)));
+            } catch (JSONException | RuntimeException e) {
+                LOG.error("Skipping malformed gate " + gateTag + " in " + DATA_PATH + "; its nodes stay open", e);
+            }
         }
         GATES_BY_TAG.set(Collections.unmodifiableMap(gatesByTag));
     }

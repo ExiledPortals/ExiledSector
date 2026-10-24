@@ -35,8 +35,6 @@ final class SocketPlacement {
     private Item hoveredStorageItem;
     private SkillNode targetSocket;
     private int storageRevision;
-    private int countedStoreSize = -1;
-    private int shownSubroutineCount = -1;
     private Map<String, FleetMemberAPI> ownedShips = Map.of();
 
     SocketPlacement(CustomPanelAPI hostPanel, TreeAllocationSession treeSession, NodeSearch nodeSearch, SkillTreeSearchBar searchBar) {
@@ -116,7 +114,6 @@ final class SocketPlacement {
         if (storagePanel == null) {
             return;
         }
-        refreshButtonLabel();
         if (mustClose) {
             storagePanel.close();
         } else if (treeSession.statsRevision() != storageRevision) {
@@ -201,7 +198,6 @@ final class SocketPlacement {
     }
 
     void refresh() {
-        refreshButtonLabel();
         if (storagePanel != null) {
             storageRevision = treeSession.statsRevision();
             storagePanel.refresh(SocketCustody.shipNames(ownedShips));
@@ -213,15 +209,7 @@ final class SocketPlacement {
 
     private void refreshButtonLabel() {
         List<Item> owned = Global.getSector() == null ? List.of() : ItemStore.get().owned();
-        if (owned.size() == countedStoreSize) {
-            return;
-        }
-        countedStoreSize = owned.size();
         int subroutineCount = (int) owned.stream().filter(item -> ItemStoragePanel.listedKind(item) == ItemKind.SUBROUTINE).count();
-        if (subroutineCount == shownSubroutineCount) {
-            return;
-        }
-        shownSubroutineCount = subroutineCount;
         storageButton.setLabel(Translation.msg("ui.subroutines.button").arg("count", subroutineCount).text());
     }
 
@@ -260,10 +248,14 @@ final class SocketPlacement {
             public void hovered(Item item) {
                 hoveredStorageItem = item;
             }
+
+            @Override
+            public void disassembled() {
+                refreshButtonLabel();
+            }
         });
         storagePanel.setTargetingSocket(targetSocket != null);
         showDoctrineRemovalWarning(targetSocket);
-        refreshButtonLabel();
         refreshButtonSelected();
     }
 
@@ -272,7 +264,6 @@ final class SocketPlacement {
         hoveredStorageItem = null;
         stopPlacing();
         clearTargetSocket();
-        refreshButtonLabel();
         refreshButtonSelected();
     }
 
