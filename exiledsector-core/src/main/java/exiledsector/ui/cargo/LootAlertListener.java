@@ -15,7 +15,7 @@ public final class LootAlertListener implements ShowLootListener, SubmarketUpdat
 
     static final String LOOT_MARKET_ID = "fake_market";
 
-    private static Watcher activeWatcher;
+    private Watcher activeWatcher;
 
     @Override
     public void reportAboutToShowLootToPlayer(CargoAPI loot, InteractionDialogAPI dialog) {
@@ -42,12 +42,8 @@ public final class LootAlertListener implements ShowLootListener, SubmarketUpdat
         }
     }
 
-    static Watcher activeWatcher() {
+    Watcher activeWatcher() {
         return activeWatcher;
-    }
-
-    static void resetForTests() {
-        activeWatcher = null;
     }
 
     static final class Watcher implements EveryFrameScript {

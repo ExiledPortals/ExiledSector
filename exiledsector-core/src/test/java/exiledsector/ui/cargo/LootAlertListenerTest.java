@@ -36,12 +36,10 @@ class LootAlertListenerTest {
     void setUp() {
         global = Mockito.mockStatic(Global.class);
         global.when(Global::getSector).thenReturn(sector);
-        LootAlertListener.resetForTests();
     }
 
     @AfterEach
     void tearDown() {
-        LootAlertListener.resetForTests();
         global.close();
     }
 
@@ -73,7 +71,7 @@ class LootAlertListenerTest {
         listener.reportSubmarketCargoAndShipsUpdated(submarket(LootAlertListener.LOOT_MARKET_ID, shown));
 
         verify(sector).addTransientScript(any(EveryFrameScript.class));
-        assertSame(shown, LootAlertListener.activeWatcher().watchedCargo());
+        assertSame(shown, listener.activeWatcher().watchedCargo());
     }
 
     @Test
@@ -81,19 +79,20 @@ class LootAlertListenerTest {
         LootAlertListener listener = new LootAlertListener();
         CargoAPI loot = cargoWith(CraftingCurrency.FIXATION.itemId());
         listener.reportAboutToShowLootToPlayer(loot, null);
-        LootAlertListener.activeWatcher().advance(0f);
+        listener.activeWatcher().advance(0f);
 
         listener.reportSubmarketCargoAndShipsUpdated(submarket(LootAlertListener.LOOT_MARKET_ID, mock(CargoAPI.class)));
 
-        assertNotNull(LootAlertListener.activeWatcher());
-        assertSame(loot, LootAlertListener.activeWatcher().watchedCargo());
+        assertNotNull(listener.activeWatcher());
+        assertSame(loot, listener.activeWatcher().watchedCargo());
     }
 
     @Test
     void lootWithoutAlertsAddsNoScript() {
-        new LootAlertListener().reportAboutToShowLootToPlayer(cargoWith(ItemDisassembly.PARTS_ITEM_ID), null);
+        LootAlertListener listener = new LootAlertListener();
+        listener.reportAboutToShowLootToPlayer(cargoWith(ItemDisassembly.PARTS_ITEM_ID), null);
 
         verify(sector, never()).addTransientScript(any(EveryFrameScript.class));
-        assertNull(LootAlertListener.activeWatcher());
+        assertNull(listener.activeWatcher());
     }
 }

@@ -151,7 +151,6 @@ class CargoCraftingButtonTest {
     @BeforeEach
     void setUp() {
         CargoCraftingButton.resetForTests();
-        CargoCraftingTabListener.resetForTests();
         tradePanel = mock(TradePanel.class, withSettings().useConstructor().defaultAnswer(CALLS_REAL_METHODS));
         transactionPanel = mock(TransactionPanel.class, CALLS_REAL_METHODS);
         tradePanel.children.add(transactionPanel);
@@ -192,7 +191,6 @@ class CargoCraftingButtonTest {
         lunaSettingsMock.close();
         globalMock.close();
         CargoCraftingButton.resetForTests();
-        CargoCraftingTabListener.resetForTests();
     }
 
     @Test

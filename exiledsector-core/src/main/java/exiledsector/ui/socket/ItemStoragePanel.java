@@ -821,7 +821,7 @@ public final class ItemStoragePanel extends HoloPanel {
                 rarityColors.add(rarity.color());
             }
         }
-        String format = String.join(Translation.text("ui.socketStorage.confirm.raritySeparator"),
+        String format = String.join(VanillaText.escapeFormat(Translation.text("ui.socketStorage.confirm.raritySeparator")),
                 rarityCounts.stream().map(text -> "%s").toList());
         element.addPara(format, LINE_PAD * 2f, rarityColors.toArray(new Color[0]), rarityCounts.toArray(new String[0]));
     }

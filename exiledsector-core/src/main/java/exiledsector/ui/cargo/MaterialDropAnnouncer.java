@@ -16,12 +16,13 @@ public final class MaterialDropAnnouncer {
 
     public static void announce(Map<String, Integer> droppedMaterials) {
         MaterialTier bestTier = bestTier(droppedMaterials);
-        if (bestTier == null) {
-            return;
-        }
-        if (bestTier.dropSoundId() != null && Global.getSoundPlayer() != null) {
+        if (bestTier != null && bestTier.dropSoundId() != null && Global.getSoundPlayer() != null) {
             Global.getSoundPlayer().playUISound(bestTier.dropSoundId(), 1f, 1f);
         }
+        announceOnLootScreen(droppedMaterials);
+    }
+
+    public static void announceOnLootScreen(Map<String, Integer> droppedMaterials) {
         if (!CampaignMessages.available()) {
             return;
         }

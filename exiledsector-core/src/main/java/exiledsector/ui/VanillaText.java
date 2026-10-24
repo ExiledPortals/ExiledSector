@@ -55,6 +55,10 @@ public final class VanillaText {
         return tooltip.addPara("%s", pad, color, color, text);
     }
 
+    public static String escapeFormat(String text) {
+        return text.replace("%", "%%");
+    }
+
     public static LabelAPI plainPara(TextPanelAPI panel, String text) {
         Color color = Misc.getTextColor();
         return panel.addPara("%s", color, color, text);

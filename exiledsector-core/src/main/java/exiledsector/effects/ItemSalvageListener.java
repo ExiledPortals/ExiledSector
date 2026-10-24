@@ -47,7 +47,7 @@ public class ItemSalvageListener implements ShowLootListener {
         siteLoot.items().forEach(item -> loot.addSpecial(item.toSpecialItem(), 1f));
         siteLoot.upgrades().forEach(upgrade -> loot.addSpecial(upgrade.toSpecialItem(), 1f));
         siteLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
-        MaterialDropAnnouncer.announce(siteLoot.materials());
+        MaterialDropAnnouncer.announceOnLootScreen(siteLoot.materials());
         LootSources.all().forEach(source -> source.addSalvageLoot(Global.getSector(), salvageEntity, loot));
         if (entityMemory.getBoolean(SHOWCASE_KEY)) {
             entityMemory.unset(SHOWCASE_KEY);
@@ -69,7 +69,7 @@ public class ItemSalvageListener implements ShowLootListener {
         Map<String, Integer> materials = new LinkedHashMap<>();
         MaterialItems.ids().stream().filter(itemId -> ItemUnlock.currencyUsable(itemId, Global.getSector())).forEach(itemId -> materials.put(itemId, 1));
         materials.forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
-        MaterialDropAnnouncer.announce(materials);
+        MaterialDropAnnouncer.announceOnLootScreen(materials);
     }
 
     public static String siteId(SectorEntityToken salvageEntity) {

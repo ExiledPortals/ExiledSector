@@ -26,12 +26,8 @@ public final class CampaignMessages {
                                    Color firstHighlightColor, Color secondHighlightColor) {
         CampaignUIAPI campaignUi = campaignUi();
         if (campaignUi != null) {
-            campaignUi.addMessage(escapeFormat(message), color, firstHighlight, secondHighlight, firstHighlightColor, secondHighlightColor);
+            campaignUi.addMessage(VanillaText.escapeFormat(message), color, firstHighlight, secondHighlight, firstHighlightColor, secondHighlightColor);
         }
-    }
-
-    static String escapeFormat(String message) {
-        return message.replace("%", "%%");
     }
 
     private static CampaignUIAPI campaignUi() {

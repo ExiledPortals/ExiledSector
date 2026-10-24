@@ -166,7 +166,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
         ChartDrops.Loot chartLoot = salvageLoot(sector, salvageEntity);
         chartLoot.charts().forEach(chart -> loot.addSpecial(chart.toSpecialItem(), 1f));
         chartLoot.currencies().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
-        MaterialDropAnnouncer.announce(chartLoot.currencies());
+        MaterialDropAnnouncer.announceOnLootScreen(chartLoot.currencies());
     }
 
     public static ChartDrops.Loot salvageLoot(SectorAPI sector, SectorEntityToken salvageEntity) {
