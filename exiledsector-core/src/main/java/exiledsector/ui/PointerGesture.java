@@ -2,14 +2,14 @@ package exiledsector.ui;
 
 import java.util.Objects;
 
-final class PointerGesture {
+public final class PointerGesture<M> {
 
-    enum Kind { NONE, TARGET, PAN }
+    public enum Kind { NONE, TARGET, PAN }
 
-    static final float DRAG_THRESHOLD = 6f;
+    public static final float DRAG_THRESHOLD = 6f;
 
     private Kind gestureKind = Kind.NONE;
-    private CanvasMode pressMode;
+    private M pressMode;
     private Object pressedTarget;
     private boolean targetMayPan;
     private float pressX;
@@ -17,7 +17,7 @@ final class PointerGesture {
     private boolean pressCtrlDown;
     private boolean pressShiftDown;
 
-    void pressTarget(CanvasMode mode, Object target, float x, float y, boolean ctrlDown, boolean shiftDown, boolean mayPan) {
+    public void pressTarget(M mode, Object target, float x, float y, boolean ctrlDown, boolean shiftDown, boolean mayPan) {
         start(Kind.TARGET, mode, x, y);
         pressedTarget = target;
         pressCtrlDown = ctrlDown;
@@ -25,11 +25,11 @@ final class PointerGesture {
         targetMayPan = mayPan;
     }
 
-    void pressPan(CanvasMode mode, float x, float y) {
+    public void pressPan(M mode, float x, float y) {
         start(Kind.PAN, mode, x, y);
     }
 
-    private void start(Kind kind, CanvasMode mode, float x, float y) {
+    private void start(Kind kind, M mode, float x, float y) {
         clear();
         gestureKind = kind;
         pressMode = mode;
@@ -37,7 +37,7 @@ final class PointerGesture {
         pressY = y;
     }
 
-    boolean moveTo(float x, float y) {
+    public boolean moveTo(float x, float y) {
         if (gestureKind != Kind.TARGET || !beyondThreshold(x, y)) {
             return false;
         }
@@ -56,15 +56,15 @@ final class PointerGesture {
         return dx * dx + dy * dy > DRAG_THRESHOLD * DRAG_THRESHOLD;
     }
 
-    boolean isStaleIn(CanvasMode currentMode) {
+    public boolean isStaleIn(M currentMode) {
         return gestureKind != Kind.NONE && currentMode != pressMode;
     }
 
-    boolean releasedOn(Object releasedTarget) {
+    public boolean releasedOn(Object releasedTarget) {
         return gestureKind == Kind.TARGET && releasedTarget != null && Objects.equals(pressedTarget, releasedTarget);
     }
 
-    void clear() {
+    public void clear() {
         gestureKind = Kind.NONE;
         pressMode = null;
         pressedTarget = null;
@@ -73,31 +73,31 @@ final class PointerGesture {
         pressShiftDown = false;
     }
 
-    Kind kind() {
+    public Kind kind() {
         return gestureKind;
     }
 
-    boolean isActive() {
+    public boolean isActive() {
         return gestureKind != Kind.NONE;
     }
 
-    boolean isPanning() {
+    public boolean isPanning() {
         return gestureKind == Kind.PAN;
     }
 
-    float pressX() {
+    public float pressX() {
         return pressX;
     }
 
-    float pressY() {
+    public float pressY() {
         return pressY;
     }
 
-    boolean ctrlDown() {
+    public boolean ctrlDown() {
         return pressCtrlDown;
     }
 
-    boolean shiftDown() {
+    public boolean shiftDown() {
         return pressShiftDown;
     }
 }

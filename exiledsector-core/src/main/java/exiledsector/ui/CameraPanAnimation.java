@@ -2,9 +2,9 @@ package exiledsector.ui;
 
 import exiledlib.skills.skilleffect.render.Fade;
 
-final class CameraPanAnimation {
+public final class CameraPanAnimation {
 
-    static final float DURATION_SECONDS = 1f;
+    public static final float DURATION_SECONDS = 1f;
 
     private final float startX;
     private final float startY;
@@ -12,26 +12,26 @@ final class CameraPanAnimation {
     private final float targetY;
     private float panAnimationElapsed;
 
-    CameraPanAnimation(float startX, float startY, float targetX, float targetY) {
+    public CameraPanAnimation(float startX, float startY, float targetX, float targetY) {
         this.startX = startX;
         this.startY = startY;
         this.targetX = targetX;
         this.targetY = targetY;
     }
 
-    void advance(float amount) {
+    public void advance(float amount) {
         panAnimationElapsed = Math.min(DURATION_SECONDS, panAnimationElapsed + amount);
     }
 
-    boolean isFinished() {
+    public boolean isFinished() {
         return panAnimationElapsed >= DURATION_SECONDS;
     }
 
-    float x() {
+    public float x() {
         return startX + (targetX - startX) * eased();
     }
 
-    float y() {
+    public float y() {
         return startY + (targetY - startY) * eased();
     }
 

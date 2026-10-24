@@ -67,7 +67,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private final HyperspaceMode hyperspaceMode;
     private final SocketPlacement socketPlacement;
     private final SkillTreeChrome chrome;
-    private final PointerGesture gesture = new PointerGesture();
+    private final PointerGesture<CanvasMode> gesture = new PointerGesture<>();
     private final TreeCameraMemory.View cameraMemory;
 
     private PositionAPI canvasPosition;
