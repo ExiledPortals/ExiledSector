@@ -8,7 +8,6 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.skills.radius.RadiusSize;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -190,10 +189,9 @@ public final class SubroutineDataRules implements ItemDataRules {
                 }
                 return;
             }
-            String nodeCountChances = ModCsv.text(row, ModspecCaches.NODE_COUNT_CHANCES_COLUMN);
-            if (!ModspecCaches.isValidNodeCountChances(nodeCountChances)) {
-                integrity.error(file, line, definitionId + " has the node count chances \"" + nodeCountChances
-                        + "\"; expected numbers of 0 or more separated by ;, at least one above 0");
+            String nodeCountProblem = ModspecCaches.nodeCountProblem(definitionId, ModCsv.text(row, ModspecCaches.NODE_COUNT_CHANCES_COLUMN));
+            if (nodeCountProblem != null) {
+                integrity.error(file, line, nodeCountProblem);
             }
             checkCacheChances(integrity, file, line, definitionId, row);
             checkCachePool(integrity, file, line, definitionId, ModspecCaches.nodeIds(ModCsv.text(row, ModspecCaches.EXCLUDED_NODES_COLUMN)),
@@ -284,45 +282,17 @@ public final class SubroutineDataRules implements ItemDataRules {
 
     private static void checkDoctrineRow(ItemDataIntegrity integrity, String file, int line, String definitionId, JSONObject row,
                                          Map<String, SkillType> types) {
-        String behaviourText = ModCsv.text(row, DoctrineArchives.BEHAVIOUR_COLUMN);
-        DoctrineBehaviour behaviour = DoctrineBehaviour.byIdOrNull(behaviourText);
-        if (behaviour == null) {
-            integrity.error(file, line, definitionId + " has behaviour \"" + behaviourText + "\"; expected one of " + DoctrineBehaviour.ids());
-        }
-        String radiusText = ModCsv.text(row, DoctrineArchives.RADIUS_COLUMN);
-        if (RadiusSize.byDataKeyOrNull(radiusText) == null) {
-            integrity.error(file, line, definitionId + " has radius \"" + radiusText + "\"; expected small, medium or large");
-        }
-        Integer minLines = DoctrineArchives.lineCount(ModCsv.text(row, DoctrineArchives.MIN_LINES_COLUMN));
-        Integer maxLines = DoctrineArchives.lineCount(ModCsv.text(row, DoctrineArchives.MAX_LINES_COLUMN));
-        if (minLines == null || maxLines == null || minLines < 1 || maxLines < minLines) {
-            integrity.error(file, line, definitionId + " needs min_lines of 1 or more and max_lines of at least min_lines");
-        }
-        int listedTypes = checkReplacementPool(integrity, file, line, definitionId, ModCsv.text(row, DoctrineArchives.NOTABLES_COLUMN),
-                SkillTier.NOTABLE, types)
-                + checkReplacementPool(integrity, file, line, definitionId, ModCsv.text(row, DoctrineArchives.KEYSTONES_COLUMN), SkillTier.KEYSTONE,
-                types)
-                + checkReplacementPool(integrity, file, line, definitionId, ModCsv.text(row, DoctrineArchives.SMALL_NODES_COLUMN), SkillTier.SMALL,
-                types);
-        String modifiersText = ModCsv.text(row, DoctrineArchives.MODIFIERS_COLUMN);
-        if (behaviour == DoctrineBehaviour.TRANSFORM) {
-            if (listedTypes == 0) {
-                integrity.error(file, line, definitionId + " transforms nodes but lists no replacement notables, keystones or small nodes");
-            }
-            if (!modifiersText.isEmpty()) {
-                integrity.error(file, line, definitionId + " transforms nodes, so it lists no modifiers");
-            }
-        } else if (behaviour == DoctrineBehaviour.AUGMENT) {
-            if (listedTypes > 0) {
-                integrity.error(file, line, definitionId + " augments nodes, so it lists no replacement nodes");
-            }
-            if (checkDoctrineModifiers(integrity, file, line, definitionId, modifiersText) == 0) {
-                integrity.error(file, line, definitionId + " augments nodes but lists no modifiers");
-            }
+        DoctrineArchives.problems(definitionId, row).forEach(problem -> integrity.error(file, line, problem));
+        checkReplacementPool(integrity, file, line, definitionId, ModCsv.text(row, DoctrineArchives.NOTABLES_COLUMN), SkillTier.NOTABLE, types);
+        checkReplacementPool(integrity, file, line, definitionId, ModCsv.text(row, DoctrineArchives.KEYSTONES_COLUMN), SkillTier.KEYSTONE, types);
+        checkReplacementPool(integrity, file, line, definitionId, ModCsv.text(row, DoctrineArchives.SMALL_NODES_COLUMN), SkillTier.SMALL, types);
+        if (DoctrineBehaviour.byIdOrNull(ModCsv.text(row, DoctrineArchives.BEHAVIOUR_COLUMN)) == DoctrineBehaviour.AUGMENT
+                && checkDoctrineModifiers(integrity, file, line, definitionId, ModCsv.text(row, DoctrineArchives.MODIFIERS_COLUMN)) == 0) {
+            integrity.error(file, line, definitionId + " augments nodes but lists no modifiers");
         }
     }
 
-    private static int checkReplacementPool(ItemDataIntegrity integrity, String file, int line, String definitionId, String poolText, SkillTier tier,
+    private static void checkReplacementPool(ItemDataIntegrity integrity, String file, int line, String definitionId, String poolText, SkillTier tier,
                                             Map<String, SkillType> types) {
         List<String> typeIds = DoctrineArchives.typeIds(poolText);
         for (String typeId : typeIds) {
@@ -340,7 +310,6 @@ public final class SubroutineDataRules implements ItemDataRules {
                         + ", but optional nodes and nodes with an item cost can't be replacements");
             }
         }
-        return typeIds.size();
     }
 
     private static int checkDoctrineModifiers(ItemDataIntegrity integrity, String file, int line, String definitionId, String modifiersText) {

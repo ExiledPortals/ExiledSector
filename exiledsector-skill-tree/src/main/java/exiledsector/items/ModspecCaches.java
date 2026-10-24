@@ -98,14 +98,19 @@ public final class ModspecCaches {
 
     static CacheBase parse(String definitionId, JSONObject row) {
         String nodeCountText = ModCsv.text(row, NODE_COUNT_CHANCES_COLUMN);
-        if (!isValidNodeCountChances(nodeCountText)) {
-            throw new IllegalArgumentException(definitionId + " has the " + NODE_COUNT_CHANCES_COLUMN + " \"" + nodeCountText
-                    + "\"; expected numbers of 0 or more separated by " + LIST_SEPARATOR + ", at least one above 0");
+        String nodeCountProblem = nodeCountProblem(definitionId, nodeCountText);
+        if (nodeCountProblem != null) {
+            throw new IllegalArgumentException(nodeCountProblem);
         }
         float dropChance = chance(definitionId, DROP_CHANCE_COLUMN, ModCsv.text(row, DROP_CHANCE_COLUMN));
         float salvageChance = chance(definitionId, SALVAGE_CHANCE_COLUMN, ModCsv.text(row, SALVAGE_CHANCE_COLUMN));
         return new CacheBase(definitionId, nodeIds(ModCsv.text(row, EXCLUDED_NODES_COLUMN)), nodeCountChances(nodeCountText), dropChance,
                 salvageChance);
+    }
+
+    static String nodeCountProblem(String definitionId, String chancesText) {
+        return isValidNodeCountChances(chancesText) ? null : definitionId + " has the node count chances \"" + chancesText
+                + "\"; expected numbers of 0 or more separated by " + LIST_SEPARATOR + ", at least one above 0";
     }
 
     static boolean isValidNodeCountChances(String chancesText) {
