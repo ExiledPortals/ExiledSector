@@ -5,8 +5,10 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
+import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemData;
+import exiledsector.items.ItemKind;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -19,6 +21,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -91,6 +94,18 @@ class GrantHullItemsCommandTest {
         assertEquals(CommandResult.SUCCESS, new GrantHullItemsCommand(new Random(3L)).runCommand(" 2 ", CommandContext.CAMPAIGN_MAP));
 
         assertEquals(4, granted(4).size());
+    }
+
+    @Test
+    void subroutinesAreNotGranted() {
+        List<ItemDefinition> definitions = new ArrayList<>(ItemDefinitions.all());
+        definitions.add(new ItemDefinition("a_subroutine", ItemKind.SUBROUTINE, "Subroutine", ItemDefinition.FALLBACK_ICON, 1f, false, "",
+                List.of(), List.of(), ""));
+        ItemDefinitions.register(definitions);
+
+        assertEquals(CommandResult.SUCCESS, new GrantHullItemsCommand(new Random(3L)).runCommand("1", CommandContext.CAMPAIGN_MAP));
+
+        assertEquals(Set.of("first_hull_item", "second_hull_item"), granted(2).stream().map(ItemData::definitionId).collect(Collectors.toSet()));
     }
 
     @Test

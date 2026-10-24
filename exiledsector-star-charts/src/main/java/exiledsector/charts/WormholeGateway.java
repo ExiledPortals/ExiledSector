@@ -8,10 +8,12 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import exiledsector.ExiledSector;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.items.JanusDevice;
+import exiledsector.ui.VanillaText;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
 
@@ -117,6 +119,6 @@ public class WormholeGateway extends BaseIndustry {
 
     @Override
     protected void addPostDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode) {
-        tooltip.addPara(Translation.gameText("chart.gateway.tooltip.opens"), TOOLTIP_PAD);
+        VanillaText.plainPara(tooltip, Translation.gameText("chart.gateway.tooltip.opens"), TOOLTIP_PAD, Misc.getTextColor());
     }
 }

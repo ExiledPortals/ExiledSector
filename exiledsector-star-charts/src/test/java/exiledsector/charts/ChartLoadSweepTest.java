@@ -204,6 +204,18 @@ class ChartLoadSweepTest {
     }
 
     @Test
+    void aLiveRunMissingItsExitGetsItBackSoThePlayerCanLeave() {
+        ChartRuns.store(runInState(ChartRunState.INSIDE));
+        when(playerFleet.getContainingLocation()).thenReturn(system);
+        when(system.addCustomEntity(anyString(), anyString(), anyString(), anyString())).thenReturn(mock(CustomCampaignEntityAPI.class));
+
+        ChartLoadSweep.sweep(sector);
+
+        verify(system).addCustomEntity(Mockito.eq(ChartIds.innerWormholeId(RUN_ID)), anyString(), anyString(), anyString());
+        verify(sector, never()).removeStarSystemNextFrame(any());
+    }
+
+    @Test
     void aClosingRunWithThePlayerStillInsideResumes() {
         ChartRun run = runInState(ChartRunState.INSIDE);
         run.beginClosing();

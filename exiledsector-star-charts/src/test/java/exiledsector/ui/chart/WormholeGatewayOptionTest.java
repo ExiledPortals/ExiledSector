@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.awt.Color;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,6 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -118,6 +121,6 @@ class WormholeGatewayOptionTest {
 
         provider.createTooltip(provider.getIndustryOptions(gateway).get(0), tooltip, 300f);
 
-        verify(tooltip).addPara(anyString(), anyFloat());
+        verify(tooltip).addPara(eq("%s"), anyFloat(), nullable(Color.class), nullable(Color.class), anyString());
     }
 }

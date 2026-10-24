@@ -15,7 +15,6 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
-import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.OfficerDataAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.impl.campaign.enc.StrandedGiveTJScript;
@@ -229,23 +228,6 @@ public final class ChartRunCloser {
                 if (listener.belongsToRun(target.runId())) {
                     sector.getListenerManager().removeListener(listener);
                 }
-            }
-        }
-        unsetChartKeys(sector.getMemoryWithoutUpdate(), target.runId());
-        CampaignFleetAPI playerFleet = sector.getPlayerFleet();
-        if (playerFleet != null) {
-            unsetChartKeys(playerFleet.getMemoryWithoutUpdate(), target.runId());
-        }
-    }
-
-    private static void unsetChartKeys(MemoryAPI memory, String runId) {
-        if (memory == null || runId == null) {
-            return;
-        }
-        String runPrefix = ChartIds.MEMORY_PREFIX + runId;
-        for (String key : new ArrayList<>(memory.getKeys())) {
-            if (key.startsWith(runPrefix)) {
-                memory.unset(key);
             }
         }
     }

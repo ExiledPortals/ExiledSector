@@ -91,6 +91,7 @@ final class SectionsDisplay {
     }
 
     boolean refreshIfChanged() {
+        sectionEditor.syncOutsideChanges();
         int revision = sectionEditor.revision();
         int pointsRevision = HullUpgradePoints.revision();
         ItemStore store = upgradeStore();

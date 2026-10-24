@@ -67,7 +67,7 @@ public class ItemSalvageListener implements ShowLootListener {
     static void addShowcaseLoot(CargoAPI loot, Random random) {
         LootSources.all().forEach(source -> source.addShowcaseLoot(loot, random));
         Map<String, Integer> materials = new LinkedHashMap<>();
-        MaterialItems.ids().forEach(itemId -> materials.put(itemId, 1));
+        MaterialItems.ids().stream().filter(itemId -> ItemUnlock.currencyUsable(itemId, Global.getSector())).forEach(itemId -> materials.put(itemId, 1));
         materials.forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
         MaterialDropAnnouncer.announce(materials);
     }

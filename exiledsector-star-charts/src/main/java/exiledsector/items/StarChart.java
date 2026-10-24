@@ -1,9 +1,11 @@
 package exiledsector.items;
 
+import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
+import exiledsector.charts.StarChartSettings;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
@@ -41,6 +43,11 @@ public final class StarChart extends Item {
         @Override
         public Item create(String id, String definitionId, long seed, List<RolledModifier> explicitModifiers) {
             return new StarChart(id, definitionId, seed, explicitModifiers);
+        }
+
+        @Override
+        public boolean available(SectorAPI sector) {
+            return StarChartSettings.enabled();
         }
 
         @Override

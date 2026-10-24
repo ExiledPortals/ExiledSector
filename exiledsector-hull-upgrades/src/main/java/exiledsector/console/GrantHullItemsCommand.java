@@ -5,10 +5,12 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemData;
+import exiledsector.items.ItemType;
 import org.lazywizard.console.BaseCommand;
 import org.lazywizard.console.CommonStrings;
 import org.lazywizard.console.Console;
 
+import java.util.Collection;
 import java.util.Random;
 
 public class GrantHullItemsCommand implements BaseCommand {
@@ -58,13 +60,14 @@ public class GrantHullItemsCommand implements BaseCommand {
             Console.showMessage("No player fleet found.");
             return CommandResult.ERROR;
         }
-        if (ItemDefinitions.all().isEmpty()) {
+        Collection<ItemDefinition> hullItems = ItemDefinitions.ofType(ItemType.HULL_ITEM);
+        if (hullItems.isEmpty()) {
             Console.showMessage("No hull items are defined.");
             return CommandResult.ERROR;
         }
 
         int grantedDefinitionCount = 0;
-        for (ItemDefinition definition : ItemDefinitions.all()) {
+        for (ItemDefinition definition : hullItems) {
             for (int i = 0; i < copies; i++) {
                 playerFleet.getCargo().addSpecial(ItemData.rolled(definition, random.nextLong()).toSpecialItem(), 1f);
             }

@@ -9,7 +9,6 @@ import com.fs.starfarer.api.combat.CombatTaskManagerAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.MutableStat.StatMod;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.mission.FleetSide;
@@ -82,18 +81,17 @@ public class ChartBattlePlugin extends BaseEveryFrameCombatPlugin {
     }
 
     void refresh() {
-        refreshBattleSize(ChartFleetConditions.battleSizeBonus());
-        refreshEnemyDeploymentCost(ChartFleetConditions.mult(ChartFleetStat.ENEMY_DEPLOYMENT_COST));
+        refreshBattleCaps(ChartFleetConditions.battleSizeBonus(), ChartFleetConditions.mult(ChartFleetStat.ENEMY_DEPLOYMENT_COST));
         refreshCommandPointRate(ChartFleetConditions.mult(ChartFleetStat.COMMAND_POINT_RATE));
         refreshEnemyObjectiveCaptureRate(ChartFleetConditions.mult(ChartFleetStat.ENEMY_OBJECTIVE_CAPTURE_RATE));
     }
 
-    void refreshBattleSize(int bonusPoints) {
-        if (bonusPoints == 0 || !capsFrozen && !freezeBaseCaps(bonusPoints)) {
+    void refreshBattleCaps(int bonusPoints, float enemyCostMult) {
+        if (bonusPoints == 0 && enemyCostMult == 1f || !capsFrozen && !freezeBaseCaps(bonusPoints)) {
             return;
         }
         int playerCap = Math.max(1, playerBaseCap + objectiveBonus(PLAYER_OWNER));
-        int enemyCap = Math.max(1, enemyBaseCap + objectiveBonus(ENEMY_OWNER));
+        int enemyCap = Math.max(1, Math.round((enemyBaseCap + objectiveBonus(ENEMY_OWNER)) / enemyCostMult));
         if (playerCap != appliedPlayerCap) {
             engine.setMaxFleetPoints(FleetSide.PLAYER, playerCap);
             appliedPlayerCap = playerCap;
@@ -132,19 +130,6 @@ public class ChartBattlePlugin extends BaseEveryFrameCombatPlugin {
             }
         }
         return bonus;
-    }
-
-    void refreshEnemyDeploymentCost(float mult) {
-        if (mult == 1f) {
-            return;
-        }
-        CombatFleetManagerAPI manager = engine.getFleetManager(FleetSide.ENEMY);
-        if (manager == null) {
-            return;
-        }
-        for (FleetMemberAPI member : manager.getReservesCopy()) {
-            member.getStats().getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).modifyMult(MOD_ID, mult);
-        }
     }
 
     void refreshCommandPointRate(float mult) {

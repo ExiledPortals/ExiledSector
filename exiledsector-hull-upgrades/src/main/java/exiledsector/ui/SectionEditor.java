@@ -21,14 +21,29 @@ final class SectionEditor {
 
     private final ShipEditSession shipEdit;
     private final BaseRefitButton refitButton;
+    private int seenDataRevision;
+    private int seenEditRevision;
 
     SectionEditor(FleetMemberAPI member, ShipVariantAPI variant, BaseRefitButton refitButton) {
         this.shipEdit = new ShipEditSession(member, variant);
         this.refitButton = refitButton;
+        rememberSeenRevisions();
     }
 
     int revision() {
         return shipEdit.revision();
+    }
+
+    void syncOutsideChanges() {
+        if (data().revision() != seenDataRevision && shipEdit.revision() == seenEditRevision) {
+            apply(true, false);
+        }
+        rememberSeenRevisions();
+    }
+
+    private void rememberSeenRevisions() {
+        seenDataRevision = data().revision();
+        seenEditRevision = shipEdit.revision();
     }
 
     List<ShipSections.UnlockedSection> sections() {

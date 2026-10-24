@@ -106,7 +106,6 @@ class ChartRunCloserTest {
         when(sector.hasScript(StrandedGiveTJScript.class)).thenReturn(true);
         when(sector.getMemoryWithoutUpdate()).thenReturn(globalMemory);
         when(sector.getEntityById(ChartIds.outerWormholeId(RUN_ID))).thenReturn(outer);
-        when(globalMemory.getKeys()).thenReturn(List.of("$exiledSector_chart_abc_flag", "$somethingElse"));
 
         when(playerFleet.getContainingLocation()).thenReturn(hyperspace);
         when(playerFleet.getInteractionTarget()).thenReturn(inner);
@@ -202,14 +201,6 @@ class ChartRunCloserTest {
 
         verify(playerFleet, never()).despawn(any(), any());
         verify(system, never()).removeEntity(playerFleet);
-    }
-
-    @Test
-    void clearsOnlyThisRunsMemoryKeys() {
-        ChartRunCloser.close(sector, run);
-
-        verify(globalMemory).unset("$exiledSector_chart_abc_flag");
-        verify(globalMemory, never()).unset("$somethingElse");
     }
 
     @Test

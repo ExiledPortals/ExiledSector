@@ -104,7 +104,12 @@ public final class ChartLoadSweep {
                     ChartSystemFactory.ensureIsolationTags(system);
                     adopt(sector, system, runId, run);
                 }
-                case KEEP -> ChartSystemFactory.ensureIsolationTags(system);
+                case KEEP -> {
+                    ChartSystemFactory.ensureIsolationTags(system);
+                    if (runId != null) {
+                        ensureInnerWormhole(sector, system, runId);
+                    }
+                }
                 case LEAVE_FOR_NOW -> LOG.warn("[ExiledSector] The player is inside Star Chart system " + system.getOptionalUniqueId()
                         + " while another run is open; leaving it until they leave");
                 default -> {

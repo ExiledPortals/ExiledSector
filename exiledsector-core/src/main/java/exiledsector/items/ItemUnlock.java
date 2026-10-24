@@ -56,6 +56,19 @@ public enum ItemUnlock {
         return support != null && support.available(sector);
     }
 
+    public static boolean currencyUsable(String itemId, SectorAPI sector) {
+        ItemCurrency currency = ItemCurrencies.byItemId(itemId);
+        if (currency == null) {
+            return true;
+        }
+        for (ItemType type : ItemType.values()) {
+            if (ItemCurrencies.appliesTo(currency, type) && available(type, sector)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean canDrop(ItemDefinition definition, SectorAPI sector) {
         if (!definition.unique()) {
             return true;

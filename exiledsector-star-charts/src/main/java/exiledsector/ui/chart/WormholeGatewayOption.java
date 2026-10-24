@@ -6,10 +6,12 @@ import com.fs.starfarer.api.campaign.listeners.BaseIndustryOptionProvider;
 import com.fs.starfarer.api.campaign.listeners.DialogCreatorUI;
 import com.fs.starfarer.api.campaign.listeners.IndustryOptionProvider;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.WormholeGateway;
 import exiledlib.i18n.Translation;
 import exiledsector.ui.ModificationBenchCargoLauncher;
+import exiledsector.ui.VanillaText;
 
 import java.util.List;
 
@@ -29,7 +31,7 @@ public class WormholeGatewayOption extends BaseIndustryOptionProvider {
     @Override
     public void createTooltip(IndustryOptionProvider.IndustryOptionData option, TooltipMakerAPI tooltip, float width) {
         if (option.id == OPEN_STAR_CHARTS) {
-            tooltip.addPara(Translation.gameText("chart.gateway.option.tooltip"), 0f);
+            VanillaText.plainPara(tooltip, Translation.gameText("chart.gateway.option.tooltip"), 0f, Misc.getTextColor());
         }
     }
 

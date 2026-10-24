@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoTransferHandlerAPI;
 import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -37,6 +38,7 @@ public class MaterialItemPlugin extends BaseSpecialItemPlugin {
     static boolean alsoWorksOnStarCharts(String itemId) {
         ItemCurrency currency = ItemCurrencies.byItemId(itemId);
         return currency != null && ItemCurrencies.appliesTo(currency, ItemType.STAR_CHART)
+                && ItemUnlock.available(ItemType.STAR_CHART, Global.getSector())
                 && (ItemCurrencies.appliesTo(currency, ItemType.HULL_ITEM) || ItemCurrencies.appliesTo(currency, ItemType.SUBROUTINE));
     }
 

@@ -3,6 +3,7 @@ package exiledsector.ui;
 import com.fs.starfarer.api.campaign.TextPanelAPI;
 import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import exiledlib.i18n.Style;
 import exiledlib.i18n.StyledText;
 
@@ -52,6 +53,11 @@ public final class VanillaText {
 
     public static LabelAPI plainPara(TooltipMakerAPI tooltip, String text, float pad, Color color) {
         return tooltip.addPara("%s", pad, color, color, text);
+    }
+
+    public static LabelAPI plainPara(TextPanelAPI panel, String text) {
+        Color color = Misc.getTextColor();
+        return panel.addPara("%s", color, color, text);
     }
 
     public static LabelAPI addPara(TextPanelAPI panel, StyledText text, Color base) {

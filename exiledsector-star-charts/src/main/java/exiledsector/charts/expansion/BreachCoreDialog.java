@@ -14,6 +14,7 @@ import exiledsector.charts.ChartRun;
 import exiledsector.charts.ChartRunEffects;
 import exiledsector.charts.ChartRuns;
 import exiledsector.charts.ChartSites;
+import exiledsector.ui.VanillaText;
 import org.apache.log4j.Logger;
 import org.lwjgl.input.Keyboard;
 
@@ -40,9 +41,9 @@ public class BreachCoreDialog implements InteractionDialogPlugin {
         OptionPanelAPI options = dialog.getOptionPanel();
         options.clearOptions();
         if (breach == null) {
-            dialog.getTextPanel().addPara(Translation.gameText("chart.breach.core.inert"));
+            VanillaText.plainPara(dialog.getTextPanel(), Translation.gameText("chart.breach.core.inert"));
         } else {
-            dialog.getTextPanel().addPara(Translation.gameText("chart.breach.core.description"));
+            VanillaText.plainPara(dialog.getTextPanel(), Translation.gameText("chart.breach.core.description"));
             options.addOption(Translation.gameText("chart.breach.core.option.close"), CLOSE);
             options.addOptionConfirmation(CLOSE, Translation.gameText("chart.breach.core.confirm"),
                     Translation.gameText("chart.breach.core.confirm.yes"), Translation.gameText("chart.breach.core.confirm.no"));
@@ -68,7 +69,7 @@ public class BreachCoreDialog implements InteractionDialogPlugin {
             return;
         }
         interactionDialog.getOptionPanel().clearOptions();
-        interactionDialog.getTextPanel().addPara(Translation.gameText("chart.breach.core.closed"));
+        VanillaText.plainPara(interactionDialog.getTextPanel(), Translation.gameText("chart.breach.core.closed"));
         interactionDialog.getVisualPanel().showLoot(Translation.gameText("chart.breach.core.salvage"), salvage, false, true, true, () -> {
             interactionDialog.dismiss();
             removeCore();

@@ -10,6 +10,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
+import exiledsector.ui.VanillaText;
 import org.lwjgl.input.Keyboard;
 
 import java.util.HashMap;
@@ -55,7 +56,7 @@ public class ChartWormholeDialog implements InteractionDialogPlugin {
         options.clearOptions();
         ChartRun run = runFor(wormhole);
         if (run == null) {
-            interactionDialog.getTextPanel().addPara(Translation.gameText("chart.dialog.stale"));
+            VanillaText.plainPara(interactionDialog.getTextPanel(), Translation.gameText("chart.dialog.stale"));
         } else if (isInner(wormhole)) {
             showInnerOptions(run, options);
         } else {
@@ -66,9 +67,9 @@ public class ChartWormholeDialog implements InteractionDialogPlugin {
     }
 
     private void showOuterOptions(ChartRun run, OptionPanelAPI options) {
-        interactionDialog.getTextPanel().addPara(Translation.gameText("chart.dialog.outer.description"));
+        VanillaText.plainPara(interactionDialog.getTextPanel(), Translation.gameText("chart.dialog.outer.description"));
         int entriesLeft = run.entriesLeft();
-        interactionDialog.getTextPanel().addPara(entriesLeft > 0
+        VanillaText.plainPara(interactionDialog.getTextPanel(), entriesLeft > 0
                 ? I18n.forGameText(() -> Translation.msg("chart.dialog.outer.entriesLeft").count(entriesLeft).text())
                 : Translation.gameText("chart.dialog.outer.noEntries"));
         options.addOption(I18n.forGameText(() -> Translation.msg("chart.dialog.option.enter").count(entriesLeft).text()), ENTER);
@@ -80,9 +81,9 @@ public class ChartWormholeDialog implements InteractionDialogPlugin {
     }
 
     private void showInnerOptions(ChartRun run, OptionPanelAPI options) {
-        interactionDialog.getTextPanel().addPara(Translation.gameText("chart.dialog.inner.description"));
+        VanillaText.plainPara(interactionDialog.getTextPanel(), Translation.gameText("chart.dialog.inner.description"));
         boolean wayBackStaysOpen = !run.isOuterCollapsed() && run.entriesLeft() > 0;
-        interactionDialog.getTextPanel().addPara(Translation.gameText(wayBackStaysOpen ? "chart.dialog.inner.canComeBack" : "chart.dialog.inner.lastExit"));
+        VanillaText.plainPara(interactionDialog.getTextPanel(), Translation.gameText(wayBackStaysOpen ? "chart.dialog.inner.canComeBack" : "chart.dialog.inner.lastExit"));
         options.addOption(Translation.gameText("chart.dialog.option.return"), RETURN);
     }
 

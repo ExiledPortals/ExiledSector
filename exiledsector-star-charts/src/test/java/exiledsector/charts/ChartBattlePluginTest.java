@@ -11,7 +11,6 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.mission.FleetSide;
@@ -106,19 +105,16 @@ class ChartBattlePluginTest {
     }
 
     @Test
-    void enemyReservesCostLessToDeployFromTheFirstFrame() {
-        FleetMemberAPI reserve = mock(FleetMemberAPI.class);
-        MutableShipStatsAPI reserveStats = mock(MutableShipStatsAPI.class);
-        StatBonus deploymentCost = new StatBonus();
-        when(reserve.getStats()).thenReturn(reserveStats);
-        when(dynamicStatsOf(reserveStats).getMod(Stats.DEPLOYMENT_POINTS_MOD)).thenReturn(deploymentCost);
-        when(enemyManager.getReservesCopy()).thenReturn(List.of(reserve));
+    void cheaperEnemyShipsRaiseTheEnemyCapFromTheFirstFrameWithoutTouchingTheirStats() {
+        when(playerManager.getMaxStrength()).thenReturn(180);
+        when(enemyManager.getMaxStrength()).thenReturn(120);
         ChartBattlePlugin plugin = startedPlugin(Map.of(ChartFleetStat.ENEMY_DEPLOYMENT_COST, 0.8f));
 
         plugin.advance(0f, List.of());
 
-        assertEquals(0.8f, deploymentCost.getMultBonus(ChartBattlePlugin.MOD_ID).getValue(), 0.0001f);
-        assertEquals(16f, deploymentCost.computeEffective(20f), 0.0001f);
+        verify(engine).setMaxFleetPoints(FleetSide.ENEMY, 150);
+        verify(engine).setMaxFleetPoints(FleetSide.PLAYER, 180);
+        verify(enemyManager, never()).getReservesCopy();
     }
 
     @Test

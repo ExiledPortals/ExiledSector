@@ -147,6 +147,9 @@ final class SkillTreeNodeTooltipRenderer {
     }
 
     private ItalicTextLabel flavourFor(SkillType type) {
+        if (flavours.containsKey(type.getId())) {
+            return flavours.get(type.getId());
+        }
         List<String> paragraphs = new ArrayList<>();
         StyledText description = type.getDescriptionText();
         if (description != null && !description.isEmpty()) {
@@ -155,11 +158,10 @@ final class SkillTreeNodeTooltipRenderer {
         if (type.getFlavourText() != null) {
             paragraphs.add(type.getFlavourText());
         }
-        if (paragraphs.isEmpty()) {
-            return null;
-        }
-        return flavours.computeIfAbsent(type.getId(), id -> new ItalicTextLabel(TOOLTIP_FLAVOUR_FONT_SIZE, Misc.getGrayColor())
-                .setWrapped(String.join("\n\n", paragraphs), NODE_TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT));
+        ItalicTextLabel flavour = paragraphs.isEmpty() ? null : new ItalicTextLabel(TOOLTIP_FLAVOUR_FONT_SIZE, Misc.getGrayColor())
+                .setWrapped(String.join("\n\n", paragraphs), NODE_TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT);
+        flavours.put(type.getId(), flavour);
+        return flavour;
     }
 
     private List<SkillTreeTooltipTable> tablesFor(LazyFont font, SkillType type) {
