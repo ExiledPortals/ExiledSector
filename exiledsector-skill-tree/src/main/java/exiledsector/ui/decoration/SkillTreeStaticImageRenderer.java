@@ -8,7 +8,6 @@ import exiledsector.ui.util.SpriteDraw;
 
 import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
 
 public class SkillTreeStaticImageRenderer {
 
@@ -19,20 +18,7 @@ public class SkillTreeStaticImageRenderer {
         elapsedSeconds += amount;
     }
 
-    public void renderAmongStarfield(TreeViewport viewport, float alphaMult, Set<String> keptIds, float othersAlphaMult,
-                                     float fromParallax, float toParallax) {
-        render(viewport, alphaMult, keptIds, othersAlphaMult,
-                image -> image.getParallax() >= fromParallax && image.getParallax() < toParallax);
-    }
-
-    public void render(TreeViewport viewport, float alphaMult, Set<String> keptIds, float othersAlphaMult,
-                       boolean behindStars, float starfieldParallax) {
-        render(viewport, alphaMult, keptIds, othersAlphaMult,
-                image -> image.isBehindStars() == behindStars && image.getParallax() >= starfieldParallax);
-    }
-
-    private void render(TreeViewport viewport, float alphaMult, Set<String> keptIds, float othersAlphaMult,
-                        Predicate<StaticImage> drawn) {
+    public void render(TreeViewport viewport, float alphaMult, Set<String> keptIds, float othersAlphaMult, boolean behindStars) {
         float zoom = viewport.zoom();
         List<StaticImage> images = SkillTree.getStaticImages();
         if (images.isEmpty()) return;
@@ -42,7 +28,7 @@ public class SkillTreeStaticImageRenderer {
 
         for (StaticImage image : images) {
             String imagePath = image.getImagePath();
-            if (imagePath == null || imagePath.isEmpty() || !drawn.test(image)) continue;
+            if (imagePath == null || imagePath.isEmpty() || image.isBehindStars() != behindStars) continue;
             float imageAlpha = keptIds.contains(image.getId()) ? alphaMult : alphaMult * othersAlphaMult;
             if (imageAlpha <= 0f) continue;
 

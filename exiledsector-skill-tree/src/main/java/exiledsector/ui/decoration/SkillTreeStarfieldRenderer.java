@@ -48,7 +48,6 @@ public class SkillTreeStarfieldRenderer {
     private static final class Star {
         float baseX;
         float baseY;
-        int layer;
         float parallaxFactor;
         float spriteSize;
         float baseAlpha;
@@ -76,15 +75,7 @@ public class SkillTreeStarfieldRenderer {
         twinkleElapsedSeconds += amount;
     }
 
-    public int layerCount() {
-        return LAYER_SPECS.length;
-    }
-
-    public float layerParallax(int layer) {
-        return LAYER_SPECS[layer].parallaxFactor;
-    }
-
-    public void renderLayer(PositionAPI panelPosition, float panX, float panY, float alphaMult, int layer) {
+    public void render(PositionAPI panelPosition, float panX, float panY, float alphaMult) {
         if (panelPosition == null) return;
 
         if (!initialized) {
@@ -101,7 +92,6 @@ public class SkillTreeStarfieldRenderer {
             if (starTexture == null) continue;
             try (TexturedQuadBatch quads = starQuads.beginNormal(starTexture)) {
                 for (Star star : stars) {
-                    if (star.layer != layer) continue;
                     float wrappedX = wrap(star.baseX + panX * star.parallaxFactor, fieldWidth);
                     float wrappedY = wrap(star.baseY + panY * star.parallaxFactor, fieldHeight);
                     float screenX = panelCenterX + wrappedX - fieldWidth / 2f;
@@ -125,14 +115,12 @@ public class SkillTreeStarfieldRenderer {
         for (int i = 0; i < STAR_SPRITE_PATHS.length; i++) {
             starsBySprite.add(new ArrayList<>());
         }
-        for (int layer = 0; layer < LAYER_SPECS.length; layer++) {
-            LayerSpec layerSpec = LAYER_SPECS[layer];
+        for (LayerSpec layerSpec : LAYER_SPECS) {
             int starCount = Math.max(4, Math.round(layerSpec.baseCount * areaScale));
             for (int j = 0; j < starCount; j++) {
                 Star star = new Star();
                 star.baseX = random.nextFloat() * fieldWidth;
                 star.baseY = random.nextFloat() * fieldHeight;
-                star.layer = layer;
                 star.parallaxFactor = layerSpec.parallaxFactor;
                 int spriteIndex = random.nextInt(STAR_SPRITE_PATHS.length);
                 star.spriteSize = layerSpec.baseSize * (0.75f + random.nextFloat() * 0.5f);
