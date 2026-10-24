@@ -4,7 +4,7 @@ The 108 "Caps, Vents, Hull or Logistics" nodes become affinity nodes. Each one o
 
 Status: built and tested 2026-10-23, committed on parallel-work. Not yet checked in game.
 
-Reference image for the root art: `docs/plans/images/attributes_root_circuit_reference.jpg`.
+Reference image for the root art: `docs/plans/completed/images/attributes_root_circuit_reference.jpg`.
 
 ## Today
 

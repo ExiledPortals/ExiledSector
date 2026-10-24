@@ -8,7 +8,7 @@ Chart expansions are events and mechanics that a star chart can roll on top of i
 | Excavation Sites | `excavation_sites.md` | none, scales the boss |
 | Faction Skirmish | `faction_skirmish.md` | none of your own; allies share the load |
 | The Hunter | `the_hunter.md` | one, optional, on your terms |
-| Spatial Breach | `spatial_breach.md` | none |
+| Spatial Breach (built) | `../completed/chart_expansions/spatial_breach.md` | none |
 | Supply Convoy | `supply_convoy.md` | zero or one, sized by where you strike |
 | Stasis Vaults | `stasis_vaults.md` | optional, one per vault |
 | Asteroid Stream (Industrial Evolution only) | `asteroid_stream.md` | none |

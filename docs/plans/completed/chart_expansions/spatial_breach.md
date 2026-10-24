@@ -2,7 +2,7 @@
 
 A tear into hyperspace opens somewhere in the system and grows each day. Inside, the fleet burns fuel, uses more supplies and sees less, but breach-touched caches form there that exist only while it's open. Reaching its core closes it for a large reward. There are no fights: the pressure is time and logistics.
 
-Status: built and tested 2026-10-23, commit bd01ea16 on parallel-work, ahead of the atlas (see overview.md for what the framework still lacks). Not yet checked in game; the visuals especially need a look.
+Status: built and tested 2026-10-23, commit bd01ea16 on parallel-work, ahead of the atlas (see `docs/plans/chart_expansions/overview.md` for what the framework still lacks). Not yet checked in game; the visuals especially need a look.
 
 ## How it plays
 
