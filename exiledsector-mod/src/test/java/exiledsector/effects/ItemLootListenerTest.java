@@ -1,10 +1,10 @@
 package exiledsector.effects;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
+import exiledlib.MockSector;
 import exiledsector.items.MaterialItems;
 import exiledsector.charts.ChartContent;
 import exiledsector.charts.ChartDrops;
@@ -21,7 +21,6 @@ import org.json.JSONObject;
 import com.fs.starfarer.api.campaign.EngagementResultForFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.campaign.FleetEncounterContextPlugin;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
@@ -45,7 +44,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -64,7 +62,7 @@ class ItemLootListenerTest {
     private static final String TEST_DROPS = "test_drops";
     private static final String SECTION_ITEM_TAG = TAG + "|frameworkTypes:bridge+reactor|frameworkSockets:bridge=npc:bridge_basic/3";
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private MockedStatic<LunaSettings> lunaSettingsMock;
     private CargoAPI playerCargo;
     private final ItemLootListener listener = new ItemLootListener();
@@ -72,16 +70,11 @@ class ItemLootListenerTest {
     @BeforeEach
     void setUp() throws Exception {
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class, invocation -> null);
-        globalMock = Mockito.mockStatic(Global.class);
-        playerCargo = mock(CargoAPI.class);
-        CampaignFleetAPI playerFleet = mock(CampaignFleetAPI.class);
-        when(playerFleet.getCargo()).thenReturn(playerCargo);
+        mockSector = new MockSector();
+        playerCargo = mockSector.cargo();
         FleetDataAPI fleetData = mock(FleetDataAPI.class);
         when(fleetData.getMembersListCopy()).thenReturn(List.of());
-        when(playerFleet.getFleetData()).thenReturn(fleetData);
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPlayerFleet()).thenReturn(playerFleet);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        when(mockSector.playerFleet().getFleetData()).thenReturn(fleetData);
         SkillType rootType = new SkillType.Builder("root_type", "root", "a.png", SkillTier.ROOT).build();
         SkillType socketType = new SkillType.Builder("socket", "socket", "a.png", SkillTier.SOCKET).build();
         SkillTree.registerType(rootType);
@@ -97,7 +90,7 @@ class ItemLootListenerTest {
         FactionFleetDrops.clear(TEST_DROPS);
         ItemDefinitions.clear();
         RealSkillData.clear();
-        globalMock.close();
+        mockSector.close();
         lunaSettingsMock.close();
     }
 
@@ -319,8 +312,6 @@ class ItemLootListenerTest {
                 .put(new JSONObject().put("source", "battle").put("chance", "0.25").put("min_strength", "150").put("strength_per_tier", "100")
                         .put("max_tier", "6")));
         try {
-            SectorAPI sector = Global.getSector();
-            when(sector.getPersistentData()).thenReturn(new HashMap<>());
             ChartRun run = new ChartRun("lootRun", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
             run.recordContent(new ChartContent(8, "hegemony", ChartObjective.CLEAR, List.of("g1"), "boss", 4, 6));
             run.recordArrival();
@@ -328,7 +319,7 @@ class ItemLootListenerTest {
             StarSystemAPI system = mock(StarSystemAPI.class);
             when(system.hasTag(ChartIds.SYSTEM_TAG)).thenReturn(true);
             when(system.getTags()).thenReturn(List.of(ChartIds.SYSTEM_TAG, ChartIds.runTag("lootRun")));
-            CampaignFleetAPI playerFleet = sector.getPlayerFleet();
+            CampaignFleetAPI playerFleet = mockSector.playerFleet();
             when(playerFleet.getContainingLocation()).thenReturn(system);
             ItemLootListener chartListener = new ItemLootListener(new Random(1L), new Random(2L));
 
@@ -386,7 +377,7 @@ class ItemLootListenerTest {
     private List<String> battleHullItems(int playerLevel, String treeTag) throws Exception {
         MutableCharacterStatsAPI playerStats = mock(MutableCharacterStatsAPI.class);
         when(playerStats.getLevel()).thenReturn(playerLevel);
-        when(Global.getSector().getPlayerStats()).thenReturn(playerStats);
+        when(mockSector.sector.getPlayerStats()).thenReturn(playerStats);
         ItemDefinitions.register(new JSONArray().put(new JSONObject().put("id", "test_bridge").put("section", "bridge").put("rarity", "10")
                 .put("prefixes", "HULL_PERCENT:4:6")));
         BattleItemDrops.register(new JSONArray().put(new JSONObject().put("drop", "mods_1").put("per_100_power", "1")));

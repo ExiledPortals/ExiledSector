@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ItemDataIntegrityTest {
 
     private static JSONObject modifier(String id, String slot, String lines, String name) throws JSONException {
-        return ItemFixtures.modifierRow(id, slot, lines, name);
+        return HullItemRows.modifierRow(id, slot, lines, name);
     }
 
     private static JSONObject subroutine(String id, String subroutineKind) throws JSONException {
@@ -23,11 +23,11 @@ class ItemDataIntegrityTest {
     }
 
     private static JSONObject poolItem(String id, String prefixes, String suffixes, boolean unique) throws JSONException {
-        return ItemFixtures.row(id, "bridge", prefixes, suffixes).put("unique", unique ? "TRUE" : "");
+        return HullItemRows.row(id, "bridge", prefixes, suffixes).put("unique", unique ? "TRUE" : "");
     }
 
     private static JSONObject hullItem(String id, String section, String prefixes, String suffixes) throws JSONException {
-        return ItemFixtures.row(id, section, prefixes, suffixes);
+        return HullItemRows.row(id, section, prefixes, suffixes);
     }
 
     private static JSONObject implicit(String section, String implicits) throws JSONException {
@@ -68,18 +68,18 @@ class ItemDataIntegrityTest {
 
     @Test
     void theShippedItemDataHasNoIntegrityErrors() throws Exception {
-        List<Violation> violations = check(ItemFixtures.shippedRows(ItemModifiers.dataPath()), ItemFixtures.shippedRows(SubroutineDefinitions.dataPath()),
-                ItemFixtures.shippedRows(HullItem.definitionsPath()), ItemFixtures.shippedRows(ItemImplicits.dataPath()));
+        List<Violation> violations = check(HullItemRows.shippedRows(ItemModifiers.dataPath()), HullItemRows.shippedRows(SubroutineDefinitions.dataPath()),
+                HullItemRows.shippedRows(HullItem.definitionsPath()), HullItemRows.shippedRows(ItemImplicits.dataPath()));
 
         assertEquals(List.of(), violations.stream().filter(violation -> violation.severity() == Severity.ERROR).toList());
     }
 
     @Test
     void theShippedSubroutineCorruptionPoolIsCheckedAndCountsAsUsed() throws Exception {
-        List<Violation> violations = ItemDataChecks.checkAll(ItemFixtures.shippedRows(ItemModifiers.dataPath()),
-                ItemFixtures.shippedRows(SubroutineDefinitions.dataPath()), ItemFixtures.shippedRows(HullItem.definitionsPath()),
-                ItemFixtures.shippedRows(ItemImplicits.dataPath()), new JSONArray(), new JSONArray(), new JSONArray(),
-                ItemFixtures.shippedRows(SubroutineImplicits.DATA_PATH), new JSONArray());
+        List<Violation> violations = ItemDataChecks.checkAll(HullItemRows.shippedRows(ItemModifiers.dataPath()),
+                HullItemRows.shippedRows(SubroutineDefinitions.dataPath()), HullItemRows.shippedRows(HullItem.definitionsPath()),
+                HullItemRows.shippedRows(ItemImplicits.dataPath()), new JSONArray(), new JSONArray(), new JSONArray(),
+                HullItemRows.shippedRows(SubroutineImplicits.DATA_PATH), new JSONArray());
 
         assertEquals(List.of(), violations.stream().filter(violation -> violation.severity() == Severity.ERROR).toList());
         assertTrue(violations.stream().noneMatch(violation -> violation.message().contains("_SUBROUTINE_IMPLICIT")), violations.toString());
@@ -87,10 +87,10 @@ class ItemDataIntegrityTest {
 
     @Test
     void theShippedHullItemCorruptionPoolIsCheckedAndCountsAsUsed() throws Exception {
-        List<Violation> violations = ItemDataChecks.checkAll(ItemFixtures.shippedRows(ItemModifiers.dataPath()),
-                ItemFixtures.shippedRows(SubroutineDefinitions.dataPath()), ItemFixtures.shippedRows(HullItem.definitionsPath()),
-                ItemFixtures.shippedRows(ItemImplicits.dataPath()), new JSONArray(), new JSONArray(), new JSONArray(), new JSONArray(),
-                ItemFixtures.shippedRows(ItemImplicits.corruptionDataPath()));
+        List<Violation> violations = ItemDataChecks.checkAll(HullItemRows.shippedRows(ItemModifiers.dataPath()),
+                HullItemRows.shippedRows(SubroutineDefinitions.dataPath()), HullItemRows.shippedRows(HullItem.definitionsPath()),
+                HullItemRows.shippedRows(ItemImplicits.dataPath()), new JSONArray(), new JSONArray(), new JSONArray(), new JSONArray(),
+                HullItemRows.shippedRows(ItemImplicits.corruptionDataPath()));
 
         assertEquals(List.of(), violations.stream().filter(violation -> violation.severity() == Severity.ERROR).toList());
         assertTrue(violations.stream().noneMatch(violation -> violation.message().contains("_CORRUPTION_IMPLICIT")), violations.toString());
@@ -160,8 +160,8 @@ class ItemDataIntegrityTest {
     @Test
     void everyModifierNamesTheItemTypesItRollsOn() throws Exception {
         JSONArray modifiers = validModifiers()
-                .put(ItemFixtures.modifierRow("HULL_PERCENT", "prefix", "", "HULL_PERCENT:1:2", "Sturdy"))
-                .put(ItemFixtures.modifierRow("TOP_SPEED_PERCENT", "prefix", "subroutine;star_map", "TOP_SPEED_PERCENT:1:2", "Swift"));
+                .put(HullItemRows.modifierRow("HULL_PERCENT", "prefix", "", "HULL_PERCENT:1:2", "Sturdy"))
+                .put(HullItemRows.modifierRow("TOP_SPEED_PERCENT", "prefix", "subroutine;star_map", "TOP_SPEED_PERCENT:1:2", "Swift"));
 
         List<String> errors = errors(modifiers, validSubroutines(), validImplicits());
 
@@ -173,8 +173,8 @@ class ItemDataIntegrityTest {
     @Test
     void subroutinesOnlyRollImplicitsAndAnItemOnlyRollsModifiersScopedToItsType() throws Exception {
         JSONArray modifiers = validModifiers()
-                .put(ItemFixtures.modifierRow("VENT_RATE_PERCENT", "prefix", "subroutine", "VENT_RATE_PERCENT:1:2", "Venting"))
-                .put(ItemFixtures.modifierRow("HULL_PERCENT_IMPLICIT", "implicit", "subroutine", "HULL_PERCENT:1:2", ""));
+                .put(HullItemRows.modifierRow("VENT_RATE_PERCENT", "prefix", "subroutine", "VENT_RATE_PERCENT:1:2", "Venting"))
+                .put(HullItemRows.modifierRow("HULL_PERCENT_IMPLICIT", "implicit", "subroutine", "HULL_PERCENT:1:2", ""));
         JSONArray hullItems = validHullItems().put(hullItem("vent", "reactor", "@VENT_RATE_PERCENT", ""));
         JSONArray implicits = validImplicits().put(implicit("reactor", "@HULL_PERCENT_IMPLICIT"));
 
@@ -207,8 +207,8 @@ class ItemDataIntegrityTest {
 
     private static JSONArray modifiersWithUniqueLines() throws JSONException {
         return validModifiers()
-                .put(ItemFixtures.modifierRow("TOP_SPEED_PERCENT_RELIC", "prefix", "unique_subroutine", "TOP_SPEED_PERCENT:5:8", ""))
-                .put(ItemFixtures.modifierRow("VENT_RATE_PERCENT_RELIC", "suffix", "unique_subroutine", "VENT_RATE_PERCENT:5:8", ""));
+                .put(HullItemRows.modifierRow("TOP_SPEED_PERCENT_RELIC", "prefix", "unique_subroutine", "TOP_SPEED_PERCENT:5:8", ""))
+                .put(HullItemRows.modifierRow("VENT_RATE_PERCENT_RELIC", "suffix", "unique_subroutine", "VENT_RATE_PERCENT:5:8", ""));
     }
 
     @Test

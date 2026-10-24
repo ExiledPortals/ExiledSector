@@ -3,15 +3,13 @@ package exiledsector.items;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import exiledlib.MockSector;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.skills.ShipSkillData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.awt.Color;
 import java.util.HashMap;
@@ -32,26 +30,22 @@ import static org.mockito.Mockito.when;
 class StarChartProgressPointsTest {
 
     private final Map<String, Object> sectorValues = new HashMap<>();
-    private MockedStatic<Global> globalMock;
-    private SectorAPI sector;
+    private MockSector mockSector;
     private CampaignUIAPI campaignUi;
 
     @BeforeEach
     void setUp() {
-        sector = mock(SectorAPI.class);
+        mockSector = new MockSector();
         campaignUi = mock(CampaignUIAPI.class);
         MemoryAPI memory = mock(MemoryAPI.class);
         when(memory.contains(anyString())).thenAnswer(call -> sectorValues.containsKey(call.<String>getArgument(0)));
         when(memory.getInt(anyString())).thenAnswer(call -> ((Number) sectorValues.get(call.<String>getArgument(0))).intValue());
         doAnswer(call -> sectorValues.put(call.getArgument(0), call.getArgument(1))).when(memory).set(anyString(), any());
-        when(sector.getMemoryWithoutUpdate()).thenReturn(memory);
-        when(sector.getPersistentData()).thenReturn(new HashMap<>());
-        when(sector.getCampaignUI()).thenReturn(campaignUi);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        when(mockSector.sector.getMemoryWithoutUpdate()).thenReturn(memory);
+        when(mockSector.sector.getCampaignUI()).thenReturn(campaignUi);
         SettingsAPI settings = mock(SettingsAPI.class);
         when(settings.getColor(anyString())).thenReturn(Color.GREEN);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
         HullUpgradePoints.install();
         HullUpgradesSetting.setPointsModeForTests(HullUpgradesSetting.PointsMode.STAR_CHART_PROGRESS);
     }
@@ -60,7 +54,7 @@ class StarChartProgressPointsTest {
     void tearDown() {
         HullUpgradesSetting.setPointsModeForTests(HullUpgradesSetting.PointsMode.REFIT_SCHEMATICS);
         StarChartSettings.setEnabledForTests(StarChartSettings.DEFAULT_ENABLED);
-        globalMock.close();
+        mockSector.close();
     }
 
     @Test
@@ -71,25 +65,25 @@ class StarChartProgressPointsTest {
 
         assertTrue(HullUpgradePoints.chartsEnabled());
         assertEquals(1, HullUpgradePoints.of(freshShip));
-        ItemUnlock.recordChartCleared(sector, 9);
+        ItemUnlock.recordChartCleared(mockSector.sector, 9);
         assertEquals(2, HullUpgradePoints.of(freshShip));
         assertEquals(2, HullUpgradePoints.of(schematicShip));
-        ItemUnlock.recordChartCleared(sector, 10);
+        ItemUnlock.recordChartCleared(mockSector.sector, 10);
         assertEquals(3, HullUpgradePoints.of(freshShip));
-        ItemUnlock.recordChartCleared(sector, 15);
+        ItemUnlock.recordChartCleared(mockSector.sector, 15);
         assertEquals(4, HullUpgradePoints.of(schematicShip));
         assertEquals(5, schematicShip.getStoredHullUpgradePoints());
     }
 
     @Test
     void aClearThatRaisesThePointsSaysSoAndOneThatDoesNotStaysQuiet() {
-        ItemUnlock.recordChartCleared(sector, 4);
+        ItemUnlock.recordChartCleared(mockSector.sector, 4);
         verify(campaignUi, never()).addMessage(anyString(), any(Color.class));
 
-        ItemUnlock.recordChartCleared(sector, 5);
+        ItemUnlock.recordChartCleared(mockSector.sector, 5);
         verify(campaignUi, times(1)).addMessage(contains("2"), any(Color.class));
 
-        ItemUnlock.recordChartCleared(sector, 7);
+        ItemUnlock.recordChartCleared(mockSector.sector, 7);
         verify(campaignUi, times(1)).addMessage(anyString(), any(Color.class));
     }
 

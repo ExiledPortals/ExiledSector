@@ -52,7 +52,7 @@ class StarChartTest {
     @BeforeEach
     void setUp() throws Exception {
         ItemFixtures.registerShippedItems();
-        ItemImplicits.register(ItemFixtures.shippedRows(ItemImplicits.dataPath()));
+        ItemImplicits.register(HullItemRows.shippedRows(ItemImplicits.dataPath()));
         StarChartFixtures.registerShipped();
     }
 

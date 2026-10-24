@@ -31,10 +31,10 @@ class CraftingWardTest {
     @BeforeEach
     void setUp() throws Exception {
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.row(ItemFixtures.MILITARY, "bridge", ItemFixtures.MILITARY_PREFIXES, ItemFixtures.MILITARY_SUFFIXES))
-                .put(ItemFixtures.row("relic_a", "reactor", "HULL_MULT:4:6; ARMOR_PERCENT:6:9").put("unique", "TRUE"))
-                .put(ItemFixtures.row("relic_b", "crew_quarters", "FLUX_CAPACITY_MULT:4:6").put("unique", "TRUE")));
-        ItemNames.registerWords(new JSONObject().put(ItemFixtures.MILITARY, new JSONObject().put("style", "codename")
+                .put(HullItemRows.row(HullItemRows.MILITARY, "bridge", HullItemRows.MILITARY_PREFIXES, HullItemRows.MILITARY_SUFFIXES))
+                .put(HullItemRows.row("relic_a", "reactor", "HULL_MULT:4:6; ARMOR_PERCENT:6:9").put("unique", "TRUE"))
+                .put(HullItemRows.row("relic_b", "crew_quarters", "FLUX_CAPACITY_MULT:4:6").put("unique", "TRUE")));
+        ItemNames.registerWords(new JSONObject().put(HullItemRows.MILITARY, new JSONObject().put("style", "codename")
                 .put("first", new JSONArray(List.of("Thule"))).put("second", new JSONArray(List.of("Doctrine")))));
     }
 
@@ -47,7 +47,7 @@ class CraftingWardTest {
     private Item rare() {
         List<RolledEffect> effects = List.of(new RolledEffect("FLUX_CAPACITY_MULT", 5f), new RolledEffect("FLUX_DISSIPATION_MULT", 5f),
                 new RolledEffect("ARMOR_PERCENT", 7f), new RolledEffect("HULL_MULT", 5f));
-        return store.add(ItemFixtures.data(ItemFixtures.MILITARY, 1L, effects, null));
+        return store.add(HullItemRows.data(HullItemRows.MILITARY, 1L, effects, null));
     }
 
     private static List<RolledModifier> side(Item item, ModifierSlot slot) {
@@ -120,8 +120,8 @@ class CraftingWardTest {
 
     @Test
     void aWardGuardingOnlyAFixedEffectIsNotSpent() throws Exception {
-        ItemDefinitions.register(new JSONArray().put(ItemFixtures.row("lean", "bridge", "HULL_MULT:4:6", "ARMOR_PERCENT:6:9")));
-        Item item = store.add(ItemFixtures.data("lean", 1L, List.of(new RolledEffect("HULL_MULT", 5f), new RolledEffect("ARMOR_PERCENT", 7f)), null));
+        ItemDefinitions.register(new JSONArray().put(HullItemRows.row("lean", "bridge", "HULL_MULT:4:6", "ARMOR_PERCENT:6:9")));
+        Item item = store.add(HullItemRows.data("lean", 1L, List.of(new RolledEffect("HULL_MULT", 5f), new RolledEffect("ARMOR_PERCENT", 7f)), null));
         ItemCrafting.fixate(item, new Random(1L), Set.of(ModifierSlot.SUFFIX));
 
         assertTrue(side(item, ModifierSlot.PREFIX).get(0).locked());

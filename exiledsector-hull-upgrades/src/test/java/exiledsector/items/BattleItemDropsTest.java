@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import static exiledsector.items.ItemFixtures.MILITARY_PREFIXES;
-import static exiledsector.items.ItemFixtures.MILITARY_SUFFIXES;
-import static exiledsector.items.ItemFixtures.row;
+import static exiledsector.items.HullItemRows.MILITARY_PREFIXES;
+import static exiledsector.items.HullItemRows.MILITARY_SUFFIXES;
+import static exiledsector.items.HullItemRows.row;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;

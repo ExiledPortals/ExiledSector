@@ -1,22 +1,20 @@
 package exiledsector.charts;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
+import exiledlib.MockSector;
 import exiledsector.items.ItemData;
 import exiledsector.items.StarChart;
 import exiledsector.items.StarChartFixtures;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -37,7 +35,7 @@ class ChartRunEffectsTest {
 
     private static final String RUN_ID = "sensors";
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private SectorAPI sector;
     private StarSystemAPI system;
     private LocationAPI hyperspace;
@@ -48,19 +46,15 @@ class ChartRunEffectsTest {
     @BeforeEach
     void setUp() throws Exception {
         StarChartFixtures.registerShipped();
-        Map<String, Object> persistentData = new HashMap<>();
-        sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
+        sector = mockSector.sector;
         system = mock(StarSystemAPI.class);
         hyperspace = mock(LocationAPI.class);
-        playerFleet = mock(CampaignFleetAPI.class);
+        playerFleet = mockSector.playerFleet();
         stats = mock(MutableFleetStatsAPI.class);
         sensorRange = new StatBonus();
         when(playerFleet.getStats()).thenReturn(stats);
         when(stats.getSensorRangeMod()).thenReturn(sensorRange);
-        when(sector.getPlayerFleet()).thenReturn(playerFleet);
         when(sector.getHyperspace()).thenReturn(hyperspace);
         when(sector.getStarSystem(ChartIds.systemId(RUN_ID))).thenReturn(system);
         when(sector.getStarSystems()).thenReturn(List.of(system));
@@ -69,7 +63,7 @@ class ChartRunEffectsTest {
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         ChartFleetConditions.clear(null);
         StarChartFixtures.clear();
     }

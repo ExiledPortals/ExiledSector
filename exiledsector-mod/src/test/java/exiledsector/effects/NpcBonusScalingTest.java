@@ -1,8 +1,7 @@
 package exiledsector.effects;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledlib.MockSector;
 import exiledlib.skills.NpcBonusScaling;
 import exiledlib.skills.SkillTypeEffect;
 import exiledlib.skills.skilleffect.SkillEffect;
@@ -32,25 +31,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class NpcBonusScalingTest {
 
     private static final float TOLERANCE = 0.001f;
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private MockedStatic<LunaSettings> lunaSettingsMock;
     private int nodeCount;
 
     @BeforeEach
     void setUp() {
-        Map<String, Object> persistentData = new HashMap<>();
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class, invocation -> null);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
         SkillTree.clearNodes();
         SkillTree.clearTypes();
         ResolvedTree.clearCache();
@@ -58,7 +51,7 @@ class NpcBonusScalingTest {
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         lunaSettingsMock.close();
         SkillTree.clearNodes();
         SkillTree.clearTypes();

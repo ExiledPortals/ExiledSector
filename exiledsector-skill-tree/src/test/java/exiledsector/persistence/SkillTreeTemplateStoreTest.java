@@ -1,15 +1,12 @@
 package exiledsector.persistence;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledlib.MockSector;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.TemplateStep;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,30 +19,25 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class SkillTreeTemplateStoreTest {
 
     private static final List<TemplateStep> STEPS = List.of(new TemplateStep("armor_1", null), new TemplateStep("slot_2", "affinity_low_tech"));
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private Map<String, Object> persistentData;
     private Iterator<String> ids;
 
     @BeforeEach
     void setUp() {
-        persistentData = new HashMap<>();
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
+        persistentData = mockSector.persistentData;
         ids = List.of("t1", "t2", "t3").iterator();
     }
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
     }
 
     private SkillTreeTemplate save(String name, String root) {

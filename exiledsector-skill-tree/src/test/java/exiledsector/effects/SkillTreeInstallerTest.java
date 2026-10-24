@@ -1,22 +1,17 @@
 package exiledsector.effects;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
+import exiledlib.MockSector;
 import exiledsector.skills.SkillTree;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -28,17 +23,14 @@ import static org.mockito.Mockito.when;
 
 class SkillTreeInstallerTest {
 
-    private MockedStatic<Global> globalMock;
-    private SectorAPI sector;
+    private MockSector mockSector;
     private FleetDataAPI fleetData;
 
     @BeforeEach
     void setUp() {
-        Map<String, Object> persistentData = new HashMap<>();
-        sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
+        mockSector = new MockSector();
 
-        CampaignFleetAPI playerFleet = mock(CampaignFleetAPI.class);
+        CampaignFleetAPI playerFleet = mockSector.playerFleet();
         fleetData = mock(FleetDataAPI.class);
         when(playerFleet.getFleetData()).thenReturn(fleetData);
         MutableFleetStatsAPI fleetStats = mock(MutableFleetStatsAPI.class);
@@ -46,9 +38,6 @@ class SkillTreeInstallerTest {
         when(fleetStats.getDetectedRangeMod()).thenReturn(mock(StatBonus.class));
         when(playerFleet.isTransponderOn()).thenReturn(true);
 
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
-        when(sector.getPlayerFleet()).thenReturn(playerFleet);
         when(fleetData.getMembersListCopy()).thenReturn(List.of());
 
         SkillTree.clearNodes();
@@ -57,7 +46,7 @@ class SkillTreeInstallerTest {
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         SkillTree.clearNodes();
     }
 
@@ -167,7 +156,7 @@ class SkillTreeInstallerTest {
 
     @Test
     void doesNothingWhenThereIsNoPlayerFleet() {
-        when(sector.getPlayerFleet()).thenReturn(null);
+        when(mockSector.sector.getPlayerFleet()).thenReturn(null);
 
         new SkillTreeInstaller().advance(0.01f);
 

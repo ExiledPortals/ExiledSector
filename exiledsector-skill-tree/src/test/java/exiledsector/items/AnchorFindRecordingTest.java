@@ -9,6 +9,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
+import exiledlib.MockSector;
 import exiledsector.compat.NightcrossCompat;
 import exiledsector.compat.NightcrossUnlocks;
 import exiledsector.effects.SkillTreeLootSource;
@@ -53,9 +54,8 @@ class AnchorFindRecordingTest {
     private static final String NIGHTCROSS = "nightcross";
 
     private MockedStatic<LunaSettings> lunaSettingsMock;
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private final Map<String, Object> memoryValues = new HashMap<>();
-    private final Map<String, Object> persistentData = new HashMap<>();
     private SectorAPI sector;
 
     @BeforeEach
@@ -66,16 +66,14 @@ class AnchorFindRecordingTest {
         memoryValues.put(JanusDevice.FLAG, true);
         when(sectorMemory.getBoolean(anyString())).thenAnswer(call -> Boolean.TRUE.equals(memoryValues.get(call.<String>getArgument(0))));
         doAnswer(call -> memoryValues.put(call.getArgument(0), call.getArgument(1))).when(sectorMemory).set(anyString(), any());
-        sector = mock(SectorAPI.class);
+        mockSector = new MockSector();
+        sector = mockSector.sector;
         when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
         SettingsAPI settings = mock(SettingsAPI.class);
         ModManagerAPI modManager = mock(ModManagerAPI.class);
         when(modManager.isModEnabled(NightcrossCompat.MOD_ID)).thenReturn(true);
         when(settings.getModManager()).thenReturn(modManager);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
         NodeGates.register(new JSONObject("{\"gate_found\": {\"anchors\": \"free\", \"unlockConditions\": [{\"type\": \"anchorFound\", \"volume\": \""
                 + NIGHTCROSS + "\"}]}}"));
 
@@ -95,14 +93,12 @@ class AnchorFindRecordingTest {
         WormholeAnchorDefinitions.clear();
         SkillTree.clearNodes();
         NodeGates.register(new JSONObject("{}"));
-        globalMock.close();
+        mockSector.close();
         lunaSettingsMock.close();
     }
 
     private static JSONObject anchorRow(String id, String volume, String exitNode) throws Exception {
-        return new JSONObject().put("id", id).put("volume", volume).put("exit_node", exitNode).put("name", id + " name")
-                .put("icon", "graphics/icons/nav_relay.png").put("rarity", "10").put("description", "Opens a wormhole.")
-                .put("drop_chance", "1");
+        return AnchorRows.row(id, volume, exitNode).put("drop_chance", "1");
     }
 
     private static ItemData anchor(String definitionId) {

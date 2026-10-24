@@ -12,7 +12,9 @@ import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledlib.MockSector;
 import exiledsector.compat.NightcrossCompat;
+import exiledsector.items.AnchorRows;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.JanusDevice;
@@ -62,9 +64,8 @@ class GateRewardAnchorsTest {
     private static final String STARGAZER_ANCHOR = "wormhole_anchor_stargazer";
 
     private MockedStatic<LunaSettings> lunaSettingsMock;
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private final Map<String, Object> memoryValues = new HashMap<>();
-    private final Map<String, Object> persistentData = new HashMap<>();
     private final ModManagerAPI modManager = mock(ModManagerAPI.class);
     private SectorAPI sector;
     private CargoAPI playerCargo;
@@ -76,21 +77,16 @@ class GateRewardAnchorsTest {
         memoryValues.put(JanusDevice.FLAG, true);
         MemoryAPI sectorMemory = memory(memoryValues);
         MemoryAPI playerMemory = memory(new HashMap<>());
-        sector = mock(SectorAPI.class);
+        mockSector = new MockSector();
+        sector = mockSector.sector;
         when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
         when(sector.getPlayerMemoryWithoutUpdate()).thenReturn(playerMemory);
-        when(sector.getPersistentData()).thenReturn(persistentData);
         when(sector.getSeedString()).thenReturn("seed");
-        CampaignFleetAPI playerFleet = mock(CampaignFleetAPI.class);
-        playerCargo = mock(CargoAPI.class);
-        when(playerFleet.getCargo()).thenReturn(playerCargo);
-        when(sector.getPlayerFleet()).thenReturn(playerFleet);
+        playerCargo = mockSector.cargo();
         SettingsAPI settings = mock(SettingsAPI.class);
         when(settings.getModManager()).thenReturn(modManager);
         when(modManager.isModEnabled(NightcrossCompat.MOD_ID)).thenReturn(true);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
         NodeGates.register(new JSONObject("{\"" + ABYSS_GATE + "\": {\"rewardAnchor\": true, \"unlockConditions\": [{\"type\": \"ratSingularityDefeated\"}]},"
                 + " \"" + EXISTENTIAL_THREAT_GATE + "\": {\"rewardAnchor\": true, \"unlockConditions\": [{\"type\": \"nightcrossExistentialThreatDefeated\"}]}}"));
 
@@ -99,8 +95,8 @@ class GateRewardAnchorsTest {
         SkillTree.register(new SkillNode("rat_abyss_wormhole_1", exitType, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of("abyss", ABYSS_GATE)));
         SkillTree.register(new SkillNode("stargazer_wormhole_1", exitType, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of("stargazer", EXISTENTIAL_THREAT_GATE)));
         WormholeAnchorDefinitions.register(new JSONArray()
-                .put(anchorRow(ABYSS_ANCHOR, "abyss", "rat_abyss_wormhole_1"))
-                .put(anchorRow(STARGAZER_ANCHOR, "stargazer", "stargazer_wormhole_1")));
+                .put(AnchorRows.row(ABYSS_ANCHOR, "abyss", "rat_abyss_wormhole_1"))
+                .put(AnchorRows.row(STARGAZER_ANCHOR, "stargazer", "stargazer_wormhole_1")));
     }
 
     @AfterEach
@@ -109,7 +105,7 @@ class GateRewardAnchorsTest {
         WormholeAnchorDefinitions.clear();
         SkillTree.clearNodes();
         NodeGates.register(new JSONObject("{}"));
-        globalMock.close();
+        mockSector.close();
         lunaSettingsMock.close();
     }
 
@@ -118,11 +114,6 @@ class GateRewardAnchorsTest {
         when(memory.getBoolean(anyString())).thenAnswer(call -> Boolean.TRUE.equals(values.get(call.<String>getArgument(0))));
         doAnswer(call -> values.put(call.getArgument(0), call.getArgument(1))).when(memory).set(anyString(), any());
         return memory;
-    }
-
-    private static JSONObject anchorRow(String id, String volume, String exitNode) throws Exception {
-        return new JSONObject().put("id", id).put("volume", volume).put("exit_node", exitNode).put("name", id + " name")
-                .put("icon", "graphics/icons/nav_relay.png").put("rarity", "10").put("description", "Opens a wormhole.");
     }
 
     private static FleetMemberAPI member(String hullId) {

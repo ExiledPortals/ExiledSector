@@ -1,5 +1,6 @@
 package exiledsector.ui.inspect;
 
+import exiledlib.MockSector;
 import exiledsector.modifiers.ModifierSlot;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
@@ -14,8 +15,6 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.List;
 
@@ -27,22 +26,19 @@ import static org.mockito.Mockito.when;
 
 class ItemCodexTest {
 
-    private MockedStatic<Global> globalMock;
-    private SectorAPI sector;
+    private MockSector mockSector;
     private MemoryAPI sectorMemory;
 
     @BeforeEach
     void setUp() {
-        sector = mock(SectorAPI.class);
+        mockSector = new MockSector();
         sectorMemory = mock(MemoryAPI.class);
-        when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        when(mockSector.sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
     }
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         ItemCodex.refreshUnlocks(null);
     }
 
@@ -61,7 +57,7 @@ class ItemCodexTest {
         assertTrue(ItemCodex.isRevealed(ungated));
         assertTrue(ItemCodex.isRevealed(common));
 
-        ItemCodex.refreshUnlocks(sector);
+        ItemCodex.refreshUnlocks(mockSector.sector);
         assertFalse(ItemCodex.isRevealed(gated));
     }
 
@@ -78,10 +74,10 @@ class ItemCodexTest {
         }
         when(sectorMemory.getBoolean("$defeatedZiggurat")).thenReturn(true);
 
-        ItemCodex.refreshUnlocks(sector);
+        ItemCodex.refreshUnlocks(mockSector.sector);
         assertTrue(ItemCodex.isRevealed(gated));
 
-        globalMock.when(Global::getSector).thenReturn(mock(SectorAPI.class));
+        mockSector.global.when(Global::getSector).thenReturn(mock(SectorAPI.class));
         assertFalse(ItemCodex.isRevealed(gated));
         ItemDefinitions.clear();
     }

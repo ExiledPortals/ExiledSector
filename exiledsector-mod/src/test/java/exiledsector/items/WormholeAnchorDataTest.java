@@ -57,7 +57,7 @@ class WormholeAnchorDataTest {
     }
 
     private static JSONArray shippedAnchors() throws Exception {
-        return ItemFixtures.shippedRows(WormholeAnchorDefinitions.DATA_PATH);
+        return HullItemRows.shippedRows(WormholeAnchorDefinitions.DATA_PATH);
     }
 
     @Test
@@ -112,7 +112,7 @@ class WormholeAnchorDataTest {
     private static Set<String> otherShippedIds() throws Exception {
         Set<String> ids = new TreeSet<>();
         for (String path : List.of(SubroutineDefinitions.dataPath(), HullItem.definitionsPath(), StarChartDefinitions.DATA_PATH)) {
-            JSONArray rows = ItemFixtures.shippedRows(path);
+            JSONArray rows = HullItemRows.shippedRows(path);
             for (int index = 0; rows != null && index < rows.length(); index++) {
                 ids.add(rows.getJSONObject(index).getString("id"));
             }
@@ -130,15 +130,15 @@ class WormholeAnchorDataTest {
                 "luddic_2", node("luddic_2", wormhole, "luddic"),
                 "stargazer_wormhole_1", node("stargazer_wormhole_1", wormhole, "stargazer"));
         JSONArray rows = new JSONArray()
-                .put(WormholeAnchorTest.anchorRow("good", "hegemony", "hegemony_2"))
-                .put(WormholeAnchorTest.anchorRow("good", "kesteven", "missing_exit"))
-                .put(WormholeAnchorTest.anchorRow("second_hegemony", "hegemony", "hegemony_2"))
-                .put(WormholeAnchorTest.anchorRow("wrong_volume", "tritachyon", "luddic_2"))
-                .put(WormholeAnchorTest.anchorRow("not_a_wormhole", "pirate", "pirate_notable"))
-                .put(WormholeAnchorTest.anchorRow("core_anchor", "core", ""))
-                .put(WormholeAnchorTest.anchorRow("taken", "luddic", "luddic_2"))
-                .put(WormholeAnchorTest.anchorRow("odd_unlock", "abyss", "luddic_2").put("unlock", "made_up"))
-                .put(WormholeAnchorTest.anchorRow("chart_unlock", "stargazer", "stargazer_wormhole_1").put("unlock", "cleared_chart_tier_3")
+                .put(AnchorRows.row("good", "hegemony", "hegemony_2"))
+                .put(AnchorRows.row("good", "kesteven", "missing_exit"))
+                .put(AnchorRows.row("second_hegemony", "hegemony", "hegemony_2"))
+                .put(AnchorRows.row("wrong_volume", "tritachyon", "luddic_2"))
+                .put(AnchorRows.row("not_a_wormhole", "pirate", "pirate_notable"))
+                .put(AnchorRows.row("core_anchor", "core", ""))
+                .put(AnchorRows.row("taken", "luddic", "luddic_2"))
+                .put(AnchorRows.row("odd_unlock", "abyss", "luddic_2").put("unlock", "made_up"))
+                .put(AnchorRows.row("chart_unlock", "stargazer", "stargazer_wormhole_1").put("unlock", "cleared_chart_tier_3")
                         .put("color", "orange"))
                 .put(new JSONObject().put("volume", "enigma"));
 
@@ -162,7 +162,7 @@ class WormholeAnchorDataTest {
 
     @Test
     void aModifierMayNotRollOnAnchors() throws Exception {
-        JSONArray modifiers = new JSONArray().put(ItemFixtures.modifierRow("HULL_MULT", "prefix", "wormhole_anchor", "HULL_MULT:1:2", "Sturdy"));
+        JSONArray modifiers = new JSONArray().put(HullItemRows.modifierRow("HULL_MULT", "prefix", "wormhole_anchor", "HULL_MULT:1:2", "Sturdy"));
 
         List<String> messages = ItemDataChecks.check(modifiers, new JSONArray(), new JSONArray(), new JSONArray()).stream()
                 .map(Violation::message).toList();

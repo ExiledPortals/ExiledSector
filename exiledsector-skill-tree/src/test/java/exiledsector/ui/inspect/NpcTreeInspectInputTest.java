@@ -7,10 +7,10 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CoreUITabId;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.SectorEntityToken.VisibilityLevel;
 import com.fs.starfarer.api.input.InputEventAPI;
+import exiledlib.MockSector;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,26 +37,23 @@ import static org.mockito.Mockito.when;
 class NpcTreeInspectInputTest {
 
     private MockedStatic<LunaSettings> lunaSettingsMock;
-    private MockedStatic<Global> globalMock;
-    private SectorAPI sector;
+    private MockSector mockSector;
     private CampaignUIAPI campaignUI;
 
     @BeforeEach
     void setUp() {
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class, invocation -> null);
-        sector = mock(SectorAPI.class);
+        mockSector = new MockSector();
         campaignUI = mock(CampaignUIAPI.class);
-        when(sector.getCampaignUI()).thenReturn(campaignUI);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        when(mockSector.sector.getCampaignUI()).thenReturn(campaignUI);
         SettingsAPI settings = mock(SettingsAPI.class);
         when(settings.getScreenWidth()).thenReturn(1920f);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
     }
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         lunaSettingsMock.close();
     }
 
@@ -125,7 +122,7 @@ class NpcTreeInspectInputTest {
     @Test
     void onTheMapTheKeyInspectsTheHoveredFleet() {
         CampaignFleetAPI hovered = fleet(VisibilityLevel.COMPOSITION_DETAILS);
-        when(sector.getMousedOverEntity()).thenReturn(hovered);
+        when(mockSector.sector.getMousedOverEntity()).thenReturn(hovered);
         when(campaignUI.showInteractionDialog(any(NpcFleetInspectPlugin.class), any())).thenReturn(true);
 
         assertTrue(NpcTreeInspectInput.tryOpen());
@@ -136,7 +133,7 @@ class NpcTreeInspectInputTest {
     @Test
     void theKeyIsIgnoredWhileACoreTabOrMenuIsOpen() {
         CampaignFleetAPI hovered = fleet(VisibilityLevel.COMPOSITION_DETAILS);
-        when(sector.getMousedOverEntity()).thenReturn(hovered);
+        when(mockSector.sector.getMousedOverEntity()).thenReturn(hovered);
         when(campaignUI.getCurrentCoreTab()).thenReturn(CoreUITabId.FLEET);
 
         assertFalse(NpcTreeInspectInput.tryOpen());

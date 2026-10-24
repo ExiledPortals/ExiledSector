@@ -4,7 +4,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignClockAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
@@ -12,6 +11,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import com.fs.starfarer.api.impl.campaign.submarkets.BaseSubmarketPlugin;
+import exiledlib.MockSector;
 import exiledsector.compat.RandomAssortmentCompat;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
@@ -30,8 +30,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,7 +60,7 @@ class MarketItemStockTest {
         }
     });
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private CampaignClockAPI clock;
     private MutableCharacterStatsAPI playerStats;
     private final Map<String, Object> marketMemoryValues = new HashMap<>();
@@ -73,14 +71,12 @@ class MarketItemStockTest {
         when(clock.getTimestamp()).thenReturn(1000L);
         playerStats = mock(MutableCharacterStatsAPI.class);
         when(playerStats.getLevel()).thenReturn(15);
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getClock()).thenReturn(clock);
-        when(sector.getPlayerStats()).thenReturn(playerStats);
+        mockSector = new MockSector();
+        when(mockSector.sector.getClock()).thenReturn(clock);
+        when(mockSector.sector.getPlayerStats()).thenReturn(playerStats);
         MemoryAPI sectorMemory = mock(MemoryAPI.class);
         when(sectorMemory.getBoolean(JanusDevice.FLAG)).thenReturn(true);
-        when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        when(mockSector.sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
         SkillType exitType = new SkillType.Builder("wormhole_exit", "exit", "a.png", SkillTier.WORMHOLE_EXIT).build();
         SkillTree.registerType(exitType);
         SkillTree.register(new SkillNode("hegemony_2", exitType, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of("hegemony")));
@@ -99,7 +95,7 @@ class MarketItemStockTest {
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         MarketHullItems.clear();
         ItemDefinitions.clear();
         WormholeAnchorDefinitions.clear();

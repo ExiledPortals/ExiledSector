@@ -171,7 +171,7 @@ class ModspecCachesTest {
         ItemDefinitions.clear();
         RealSkillData.load();
         ItemFixtures.registerShippedItems();
-        JSONArray shippedRows = ItemFixtures.shippedRows(SubroutineDefinitions.dataPath());
+        JSONArray shippedRows = HullItemRows.shippedRows(SubroutineDefinitions.dataPath());
         ModspecCaches.register(shippedRows);
 
         assertEquals(List.of(), SubroutineDataRules.checkModspecCaches(shippedRows, SkillTree.getDeclaredNodes()));

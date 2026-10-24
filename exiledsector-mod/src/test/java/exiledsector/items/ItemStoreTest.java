@@ -1,19 +1,14 @@
 package exiledsector.items;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
+import exiledlib.MockSector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -26,22 +21,18 @@ import static org.mockito.Mockito.when;
 
 class ItemStoreTest {
 
-    private final Map<String, Object> persistentData = new HashMap<>();
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private ItemDefinition military;
 
     @BeforeEach
     void setUp() throws Exception {
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
-        military = ItemFixtures.registerMilitary();
+        mockSector = new MockSector();
+        military = HullItemRows.registerMilitary();
     }
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         ItemDefinitions.clear();
     }
 
@@ -57,7 +48,7 @@ class ItemStoreTest {
         ItemStore store = ItemStore.get();
 
         assertTrue(store.owned().isEmpty());
-        assertSame(store, persistentData.get(ItemStore.dataKey()));
+        assertSame(store, mockSector.persistentData.get(ItemStore.dataKey()));
         assertSame(store, ItemStore.get());
     }
 

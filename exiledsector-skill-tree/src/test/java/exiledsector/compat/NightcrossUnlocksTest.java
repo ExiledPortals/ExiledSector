@@ -12,6 +12,7 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledlib.MockSector;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.skills.unlock.AnchorFinds;
 import exiledsector.skills.unlock.RelockedGates;
@@ -46,7 +47,7 @@ class NightcrossUnlocksTest {
     private static final List<UnlockCondition> PROTOTYPE_GATE = List.of(UnlockCondition.modGate(UnlockConditionType.NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND));
 
     private MockedStatic<LunaSettings> lunaSettingsMock;
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private ModManagerAPI modManager;
     private SectorAPI sector;
     private MemoryAPI sectorMemory;
@@ -74,24 +75,22 @@ class NightcrossUnlocksTest {
         sectorMemory = memory();
         playerMemory = memory();
         pascal = mock(StarSystemAPI.class);
-        playerFleet = mock(CampaignFleetAPI.class);
+        mockSector = new MockSector();
+        sector = mockSector.sector;
+        playerFleet = mockSector.playerFleet();
         FleetDataAPI fleetData = mock(FleetDataAPI.class);
         when(playerFleet.getFleetData()).thenReturn(fleetData);
         when(fleetData.getMembersListCopy()).thenReturn(List.of());
-        sector = mock(SectorAPI.class);
         when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
         when(sector.getPlayerMemoryWithoutUpdate()).thenReturn(playerMemory);
         when(sector.getStarSystem(NightcrossUnlocks.PASCAL_SYSTEM_NAME)).thenReturn(pascal);
-        when(sector.getPlayerFleet()).thenReturn(playerFleet);
 
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
     }
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         lunaSettingsMock.close();
     }
 
@@ -216,8 +215,6 @@ class NightcrossUnlocksTest {
 
     @Test
     void discoveringAPrototypeWreckReopensARelockedGate() {
-        Map<String, Object> persistentData = new HashMap<>();
-        when(sector.getPersistentData()).thenReturn(persistentData);
         sectorMemory.set(NightcrossUnlocks.PROTOTYPE_FOUND_FLAG, true);
         RelockedGates.relock(sector, List.of(UnlockConditionType.NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND));
 
@@ -228,8 +225,6 @@ class NightcrossUnlocksTest {
 
     @Test
     void beatingTheWholeExistentialThreatReopensARelockedGate() {
-        Map<String, Object> persistentData = new HashMap<>();
-        when(sector.getPersistentData()).thenReturn(persistentData);
         sectorMemory.set(NightcrossUnlocks.EXISTENTIAL_THREAT_DEFEATED_SECTOR_FLAG, true);
         RelockedGates.relock(sector, List.of(UnlockConditionType.NIGHTCROSS_EXISTENTIAL_THREAT_DEFEATED));
         FleetMemberAPI flagship = mock(FleetMemberAPI.class);

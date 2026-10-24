@@ -112,7 +112,7 @@ class DeletedSubroutinesTest {
     void aReleasedSaveWithLegacySocketableEntriesLosesItsRetiredSubroutinesFromStorageAndSockets() {
         ItemStore store = storeSavedWith(saved("exiledSector.Socketable", "socketable_1", DELETED),
                 saved("exiledSector.Socketable", "socketable_2", "domain_subroutine_consumer"),
-                saved("exiledSector.Socketable", "socketable_3", ItemFixtures.MILITARY));
+                saved("exiledSector.Socketable", "socketable_3", HullItemRows.MILITARY));
         ShipSkillData installedShip = shipHolding("ship_a", "socketable_1");
 
         assertEquals(UnresolvedItem.class, store.find("socketable_1").getClass());
@@ -154,7 +154,7 @@ class DeletedSubroutinesTest {
                 saved("exiledSector.Subroutine", "socketable_2", DELETED),
                 saved("exiledSector.HullItem", "socketable_3", MISSING_HULL_ITEM),
                 saved("exiledSector.Subroutine", "socketable_4", ItemFixtures.SUBROUTINE),
-                saved("exiledSector.HullItem", "socketable_5", ItemFixtures.MILITARY));
+                saved("exiledSector.HullItem", "socketable_5", HullItemRows.MILITARY));
         ShipSkillData installedShip = shipHolding("ship_a", "socketable_1", "socketable_4");
         ShipSkillData recoveredShip = shipHolding("ship_b", NpcItems.id(DELETED, 9L), NpcItems.id(ItemFixtures.SUBROUTINE, 9L));
 
@@ -172,7 +172,7 @@ class DeletedSubroutinesTest {
     void aSaveWithNothingToRemoveIsLeftAlone() {
         ItemStore store = new ItemStore();
         Item subroutine = store.add(ItemDefinitions.get(ItemFixtures.SUBROUTINE), 4L);
-        Item hullItem = store.add(ItemDefinitions.get(ItemFixtures.MILITARY), 4L);
+        Item hullItem = store.add(ItemDefinitions.get(HullItemRows.MILITARY), 4L);
         ShipSkillData shipData = shipHolding("ship_a", subroutine.id());
 
         assertEquals(0, DeletedSubroutines.remove(shipDataById, store));
@@ -201,7 +201,7 @@ class DeletedSubroutinesTest {
                 List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledEffect("HULL_MULT", 5f))), null).toSpecialItem(), 1f);
         CargoStackAPI missingHullItemStack = stack(new ItemData(MISSING_HULL_ITEM, 5L).toSpecialItem(), 1f);
         CargoStackAPI subroutineStack = stack(new ItemData(ItemFixtures.SUBROUTINE, 5L).toSpecialItem(), 1f);
-        CargoStackAPI hullItemStack = stack(new ItemData(ItemFixtures.MILITARY, 5L).toSpecialItem(), 1f);
+        CargoStackAPI hullItemStack = stack(new ItemData(HullItemRows.MILITARY, 5L).toSpecialItem(), 1f);
         CargoStackAPI otherSpecialStack = stack(new SpecialItemData("exiledSector_socketable_parts", null), 30f);
         CargoStackAPI commodityStack = stack(null, 100f);
         CargoAPI playerCargo = cargoHolding(deletedStack, missingHullItemStack, subroutineStack, commodityStack);

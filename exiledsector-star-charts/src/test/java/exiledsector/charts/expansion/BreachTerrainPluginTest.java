@@ -1,11 +1,9 @@
 package exiledsector.charts.expansion;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BuffManagerAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
@@ -13,6 +11,7 @@ import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetLogisticsAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
+import exiledlib.MockSector;
 import exiledsector.charts.ChartIds;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,8 +19,6 @@ import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,7 +42,7 @@ class BreachTerrainPluginTest {
 
     private static final BreachRules.Growth GROWTH = new BreachRules.Growth(400f, 2000f, 100f);
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private StarSystemAPI system;
     private SectorEntityToken terrainEntity;
     private final List<CampaignFleetAPI> fleets = new ArrayList<>();
@@ -54,10 +51,7 @@ class BreachTerrainPluginTest {
 
     @BeforeEach
     void setUp() {
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(new HashMap<>());
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
         system = mock(StarSystemAPI.class);
         when(system.getFleets()).thenReturn(fleets);
         when(system.getEntitiesWithTag(ChartIds.CONTENT_TAG)).thenReturn(contentSites);
@@ -69,7 +63,7 @@ class BreachTerrainPluginTest {
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
     }
 
     private BreachTerrainPlugin breach(List<BreachRules.CacheSite> caches) {

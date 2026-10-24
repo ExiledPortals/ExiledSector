@@ -3,9 +3,9 @@ package exiledsector.skills.unlock;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import exiledlib.MockSector;
 import exiledlib.ProjectFiles;
 import exiledsector.compat.NightcrossCompat;
 import exiledsector.skills.SkillItemCost;
@@ -154,15 +154,13 @@ class NodeGatesDataTest {
         when(settings.getModManager()).thenReturn(modManager);
         when(modManager.isModEnabled(NightcrossCompat.MOD_ID)).thenReturn(nightcrossInstalled);
         MemoryAPI emptyMemory = mock(MemoryAPI.class);
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getMemoryWithoutUpdate()).thenReturn(emptyMemory);
-        when(sector.getPlayerMemoryWithoutUpdate()).thenReturn(emptyMemory);
-        when(sector.getStarSystem(anyString())).thenReturn(mock(StarSystemAPI.class));
         try (MockedStatic<LunaSettings> lunaSettings = Mockito.mockStatic(LunaSettings.class);
-             MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+             MockSector mockSector = new MockSector()) {
+            when(mockSector.sector.getMemoryWithoutUpdate()).thenReturn(emptyMemory);
+            when(mockSector.sector.getPlayerMemoryWithoutUpdate()).thenReturn(emptyMemory);
+            when(mockSector.sector.getStarSystem(anyString())).thenReturn(mock(StarSystemAPI.class));
             lunaSettings.when(() -> LunaSettings.getBoolean(anyString(), anyString())).thenReturn(null);
-            global.when(Global::getSettings).thenReturn(settings);
-            global.when(Global::getSector).thenReturn(sector);
+            mockSector.global.when(Global::getSettings).thenReturn(settings);
             return SkillTree.getAllNodes().values().stream()
                     .filter(node -> AreaToggles.NIGHTCROSS_REGIONS.contains(node.getRegion()))
                     .filter(node -> NodeGates.isLocked(node, null))

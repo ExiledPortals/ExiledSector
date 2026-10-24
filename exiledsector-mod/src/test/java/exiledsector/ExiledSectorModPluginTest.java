@@ -7,6 +7,7 @@ import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
 import com.fs.starfarer.api.campaign.listeners.ListenerManagerAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import exiledlib.MockSector;
 import exiledlib.skills.skilleffect.logistics.FleetCrewLedger;
 import exiledsector.effects.NpcFleetDialogListener;
 import exiledsector.effects.NpcFleetInflationListener;
@@ -72,7 +73,7 @@ class ExiledSectorModPluginTest {
             + " { \"id\": \"armor\", \"name\": \"Armor\", \"icon\": \"a.png\" } ] }";
     private static final String NODES = "{ \"id\": \"root\", \"type\": \"root_type\" }, { \"id\": \"armor\", \"type\": \"armor\", \"connectedTo\": [\"root\"] }";
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private MockedStatic<LunaSettings> lunaSettingsMock;
     private MockedStatic<LunaSettings.SettingsCreator> settingsCreatorMock;
     private SectorAPI sector;
@@ -82,9 +83,9 @@ class ExiledSectorModPluginTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        persistentData = new HashMap<>();
-        sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
+        mockSector = new MockSector();
+        sector = mockSector.sector;
+        persistentData = mockSector.persistentData;
         listenerManager = mock(ListenerManagerAPI.class);
         when(sector.getListenerManager()).thenReturn(listenerManager);
 
@@ -134,10 +135,8 @@ class ExiledSectorModPluginTest {
         Logger logger = mock(Logger.class);
 
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class, invocation -> null);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
-        globalMock.when(Global::getSettings).thenReturn(settings);
-        globalMock.when(() -> Global.getLogger(any())).thenReturn(logger);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(() -> Global.getLogger(any())).thenReturn(logger);
         settingsCreatorMock = Mockito.mockStatic(LunaSettings.SettingsCreator.class);
     }
 
@@ -153,7 +152,7 @@ class ExiledSectorModPluginTest {
         ItemNames.clear();
         StarChartCurrency.unregisterAll();
         settingsCreatorMock.close();
-        globalMock.close();
+        mockSector.close();
         lunaSettingsMock.close();
         BaseRefitButton registered = LunaRefitManager.getFirstButtonOfClass(SkillTreeRefitButton.class);
         if (registered != null) {

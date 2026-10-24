@@ -1,10 +1,9 @@
 package exiledsector.skills;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledlib.MockSector;
 import exiledlib.skills.HullSizeSkillEffect;
 import exiledlib.skills.SkillTypeEffect;
 import exiledlib.skills.skilleffect.SkillEffect;
@@ -13,12 +12,8 @@ import exiledsector.persistence.ShipSkillDataManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -28,16 +23,11 @@ import static org.mockito.Mockito.when;
 
 class AllocatedSkillEffectsTest {
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
 
     @BeforeEach
     void setUp() {
-        Map<String, Object> persistentData = new HashMap<>();
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
 
         SkillTree.clearNodes();
         SkillTree.clearTypes();
@@ -45,7 +35,7 @@ class AllocatedSkillEffectsTest {
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         SkillTree.clearNodes();
         SkillTree.clearTypes();
     }

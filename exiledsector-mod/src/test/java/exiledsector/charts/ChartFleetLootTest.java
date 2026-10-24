@@ -1,6 +1,5 @@
 package exiledsector.charts;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
@@ -12,6 +11,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec;
+import exiledlib.MockSector;
 import exiledsector.charts.ChartGenContext.AppliedEffect;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
@@ -23,10 +23,8 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -42,15 +40,15 @@ class ChartFleetLootTest {
     private static final String RUN_ID = "fleetLootRun";
     private static final String BOSS_ID = "boss";
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private SectorAPI sector;
 
     @BeforeEach
     void setUp() throws Exception {
         StarChartFixtures.registerShipped();
         StarChartCurrency.registerAll();
-        sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(new HashMap<>());
+        mockSector = new MockSector();
+        sector = mockSector.sector;
         MemoryAPI sectorMemory = mock(MemoryAPI.class);
         when(sectorMemory.contains(anyString())).thenReturn(false);
         when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
@@ -58,13 +56,11 @@ class ChartFleetLootTest {
         when(playerStats.getLevel()).thenReturn(10);
         when(sector.getPlayerStats()).thenReturn(playerStats);
         when(sector.getIntelManager()).thenReturn(mock(IntelManagerAPI.class));
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
     }
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         ChartDrops.clear();
         StarChartCurrency.unregisterAll();
         StarChartFixtures.clear();

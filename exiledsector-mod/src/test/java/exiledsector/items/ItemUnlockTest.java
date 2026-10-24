@@ -51,13 +51,13 @@ class ItemUnlockTest {
         when(player.getLevel()).thenReturn(15);
         when(sector.getPlayerStats()).thenReturn(player);
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.row("basic", "bridge", "HULL_MULT:4:6"))
-                .put(ItemFixtures.row("open_unique", "crew_quarters", "HULL_MULT:4:6").put("unique", "true"))
-                .put(ItemFixtures.row("vambrace", "bridge", "HULL_MULT:4:6").put("unique", "true").put("unlock", "found_onslaught_mk1"))
-                .put(ItemFixtures.row("coil", "bridge", "HULL_MULT:4:6").put("unique", "true").put("unlock", "found_gate_hauler"))
-                .put(ItemFixtures.row("circuit", "bridge", "HULL_MULT:4:6").put("unique", "true").put("unlock", "found_planetkiller"))
-                .put(ItemFixtures.row("survivor", "bridge", "HULL_MULT:4:6").put("unique", "true").put("unlock", "defeated_ziggurat"))
-                .put(ItemFixtures.row("mystery", "bridge", "HULL_MULT:4:6").put("unique", "true").put("unlock", "found_something_else")));
+                .put(HullItemRows.row("basic", "bridge", "HULL_MULT:4:6"))
+                .put(HullItemRows.row("open_unique", "crew_quarters", "HULL_MULT:4:6").put("unique", "true"))
+                .put(HullItemRows.row("vambrace", "bridge", "HULL_MULT:4:6").put("unique", "true").put("unlock", "found_onslaught_mk1"))
+                .put(HullItemRows.row("coil", "bridge", "HULL_MULT:4:6").put("unique", "true").put("unlock", "found_gate_hauler"))
+                .put(HullItemRows.row("circuit", "bridge", "HULL_MULT:4:6").put("unique", "true").put("unlock", "found_planetkiller"))
+                .put(HullItemRows.row("survivor", "bridge", "HULL_MULT:4:6").put("unique", "true").put("unlock", "defeated_ziggurat"))
+                .put(HullItemRows.row("mystery", "bridge", "HULL_MULT:4:6").put("unique", "true").put("unlock", "found_something_else")));
     }
 
     @AfterEach
@@ -103,7 +103,7 @@ class ItemUnlockTest {
     @Test
     void uniqueHullItemsFollowTheHullUpgradesLevelAndUniqueSubroutinesTheirOwn() throws Exception {
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.row("open_unique", "crew_quarters", "HULL_MULT:4:6").put("unique", "true"))
+                .put(HullItemRows.row("open_unique", "crew_quarters", "HULL_MULT:4:6").put("unique", "true"))
                 .put(ItemFixtures.subroutineRow("unique_subroutine", SubroutineKind.UNIQUE).put("unique", "true")));
         when(player.getLevel()).thenReturn(5);
         HullUpgradesSetting.setUnlockLevelForTests(5);
@@ -238,8 +238,8 @@ class ItemUnlockTest {
         when(memory.getInt(anyString())).thenAnswer(call -> ((Number) values.get(call.<String>getArgument(0))).intValue());
         when(sector.getMemoryWithoutUpdate()).thenReturn(memory);
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.row("basic", "bridge", "HULL_MULT:4:6"))
-                .put(ItemFixtures.row("charted", "bridge", "HULL_MULT:4:6").put("unique", "true").put("unlock", "cleared_chart_tier_4")));
+                .put(HullItemRows.row("basic", "bridge", "HULL_MULT:4:6"))
+                .put(HullItemRows.row("charted", "bridge", "HULL_MULT:4:6").put("unique", "true").put("unlock", "cleared_chart_tier_4")));
         ItemDefinition charted = ItemDefinitions.get("charted");
 
         assertFalse(ItemUnlock.unlockConditionMet(charted, sector));

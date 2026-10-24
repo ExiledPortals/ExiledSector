@@ -76,10 +76,10 @@ class ItemEffectsTest {
     void aTypeWithItsOwnResolverLoadsItsModifiersThroughIt() throws Exception {
         ItemEffects.register(ItemType.HULL_ITEM, plunderEffects);
         ItemModifiers.register(new JSONArray()
-                .put(ItemFixtures.modifierRow(PLUNDER, "prefix", "hull_item", OLD_PLUNDER + ":10:20", "Plundering"))
-                .put(ItemFixtures.modifierRow("ARMOR_PERCENT", "prefix", "hull_item", "ARMOR_PERCENT:5:10", "Plated"))
-                .put(ItemFixtures.modifierRow("HULL_MULT", "prefix", "subroutine", "HULL_MULT:4:6", "Reinforced"))
-                .put(ItemFixtures.modifierRow("HULL_PERCENT", "prefix", ItemFixtures.EVERY_ITEM_TYPE, "HULL_PERCENT:4:6", "Sturdy")));
+                .put(HullItemRows.modifierRow(PLUNDER, "prefix", "hull_item", OLD_PLUNDER + ":10:20", "Plundering"))
+                .put(HullItemRows.modifierRow("ARMOR_PERCENT", "prefix", "hull_item", "ARMOR_PERCENT:5:10", "Plated"))
+                .put(HullItemRows.modifierRow("HULL_MULT", "prefix", "subroutine", "HULL_MULT:4:6", "Reinforced"))
+                .put(HullItemRows.modifierRow("HULL_PERCENT", "prefix", HullItemRows.EVERY_ITEM_TYPE, "HULL_PERCENT:4:6", "Sturdy")));
 
         assertEquals(PLUNDER, ItemModifiers.get(PLUNDER).line().effectName());
         assertNull(ItemModifiers.get("ARMOR_PERCENT"), "a skill effect is not an effect of the hull item resolver");
@@ -91,8 +91,8 @@ class ItemEffectsTest {
     @Test
     void anItemDescribesAndAppliesItsEffectsThroughItsTypesResolver() throws Exception {
         ItemEffects.register(ItemType.HULL_ITEM, plunderEffects);
-        ItemDefinitions.register(new JSONArray().put(ItemFixtures.row("map", "reactor", OLD_PLUNDER + ":10:20")));
-        Item item = store.add(ItemFixtures.data("map", 1L, List.of(new RolledEffect(OLD_PLUNDER, 15f)), null));
+        ItemDefinitions.register(new JSONArray().put(HullItemRows.row("map", "reactor", OLD_PLUNDER + ":10:20")));
+        Item item = store.add(HullItemRows.data("map", 1L, List.of(new RolledEffect(OLD_PLUNDER, 15f)), null));
 
         assertSame(plunderEffects, item.modifierEffects());
         assertEquals(PLUNDER, item.effects().get(0).effectName());
@@ -106,9 +106,9 @@ class ItemEffectsTest {
     @Test
     void theDataCheckValidatesNamesAgainstTheModifiersOwnResolver() throws JSONException {
         JSONArray modifiers = new JSONArray()
-                .put(ItemFixtures.modifierRow(PLUNDER, "prefix", "hull_item", PLUNDER + ":10:20", "Plundering"))
-                .put(ItemFixtures.modifierRow("PLUNDER_PERCENT_OLD", "prefix", "hull_item", OLD_PLUNDER + ":10:20", "Raiding"));
-        JSONArray hullItems = new JSONArray().put(ItemFixtures.row("map", "reactor", "@" + PLUNDER + "; @PLUNDER_PERCENT_OLD"));
+                .put(HullItemRows.modifierRow(PLUNDER, "prefix", "hull_item", PLUNDER + ":10:20", "Plundering"))
+                .put(HullItemRows.modifierRow("PLUNDER_PERCENT_OLD", "prefix", "hull_item", OLD_PLUNDER + ":10:20", "Raiding"));
+        JSONArray hullItems = new JSONArray().put(HullItemRows.row("map", "reactor", "@" + PLUNDER + "; @PLUNDER_PERCENT_OLD"));
 
         List<String> skillErrors = errors(modifiers, hullItems);
         ItemEffects.register(ItemType.HULL_ITEM, plunderEffects);

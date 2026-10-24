@@ -1,6 +1,5 @@
 package exiledsector.charts;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
 import com.fs.starfarer.api.campaign.IntelDataAPI;
@@ -9,17 +8,15 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
+import exiledlib.MockSector;
 import exiledsector.charts.ChartLoadSweep.SystemDecision;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,7 +34,7 @@ class ChartLoadSweepTest {
 
     private static final String RUN_ID = "abc";
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private SectorAPI sector;
     private StarSystemAPI system;
     private LocationAPI hyperspace;
@@ -46,27 +43,23 @@ class ChartLoadSweepTest {
 
     @BeforeEach
     void setUp() {
-        Map<String, Object> persistentData = new HashMap<>();
-        sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
+        sector = mockSector.sector;
         system = systemFor(RUN_ID);
         hyperspace = mock(LocationAPI.class);
-        playerFleet = mock(CampaignFleetAPI.class);
+        playerFleet = mockSector.playerFleet();
         systemstar = taggedEntity(RUN_ID, system);
         when(system.getEntitiesWithTag(ChartIds.ENTITY_TAG)).thenReturn(List.of(systemstar));
         when(system.getAllEntities()).thenReturn(List.of(systemstar));
         when(sector.getStarSystems()).thenReturn(List.of(system));
         when(sector.getStarSystem(ChartIds.systemId(RUN_ID))).thenReturn(system);
         when(sector.getHyperspace()).thenReturn(hyperspace);
-        when(sector.getPlayerFleet()).thenReturn(playerFleet);
         when(playerFleet.getContainingLocation()).thenReturn(hyperspace);
     }
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
     }
 
     private static StarSystemAPI systemFor(String runId) {

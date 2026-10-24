@@ -2,12 +2,10 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledlib.MockSector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.awt.Color;
 
@@ -20,22 +18,19 @@ import static org.mockito.Mockito.when;
 
 class CampaignMessagesTest {
 
-    private MockedStatic<Global> globalMock;
-    private SectorAPI sector;
+    private MockSector mockSector;
     private CampaignUIAPI campaignUi;
 
     @BeforeEach
     void setUp() {
-        sector = mock(SectorAPI.class);
+        mockSector = new MockSector();
         campaignUi = mock(CampaignUIAPI.class);
-        when(sector.getCampaignUI()).thenReturn(campaignUi);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        when(mockSector.sector.getCampaignUI()).thenReturn(campaignUi);
     }
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
     }
 
     @Test
@@ -54,7 +49,7 @@ class CampaignMessagesTest {
 
     @Test
     void messagesAreDroppedQuietlyWithoutACampaignUi() {
-        when(sector.getCampaignUI()).thenReturn(null);
+        when(mockSector.sector.getCampaignUI()).thenReturn(null);
 
         assertFalse(CampaignMessages.available());
         assertDoesNotThrow(() -> CampaignMessages.plain("text", Color.WHITE));
@@ -63,7 +58,7 @@ class CampaignMessagesTest {
 
     @Test
     void messagesAreDroppedQuietlyWithoutASector() {
-        globalMock.when(Global::getSector).thenReturn(null);
+        mockSector.global.when(Global::getSector).thenReturn(null);
 
         assertFalse(CampaignMessages.available());
         assertDoesNotThrow(() -> CampaignMessages.plain("text", Color.WHITE));

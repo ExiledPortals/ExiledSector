@@ -2,7 +2,6 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
@@ -18,6 +17,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledlib.MockSector;
 import exiledlib.effects.RealVariantTags;
 import exiledlib.effects.RecordingHullModEffect;
 import exiledlib.skills.SkillTypeEffect;
@@ -72,20 +72,17 @@ import static org.mockito.Mockito.when;
 
 class SkillTreeHullModTest {
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private MockedStatic<LunaSettings> lunaSettingsMock;
     private Map<String, Object> persistentData;
 
     @BeforeEach
     void setUp() {
         SkillDataResolver.clearCache();
-        persistentData = new HashMap<>();
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
+        mockSector = new MockSector();
+        persistentData = mockSector.persistentData;
 
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class, invocation -> null);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
 
         SkillTree.clearNodes();
         SkillTree.clearTypes();
@@ -94,7 +91,7 @@ class SkillTreeHullModTest {
     @AfterEach
     void tearDown() {
         PhantomHullMods.clearForTests();
-        globalMock.close();
+        mockSector.close();
         lunaSettingsMock.close();
         SkillTree.clearNodes();
         SkillTree.clearTypes();
@@ -293,7 +290,7 @@ class SkillTreeHullModTest {
         when(stats.getFleetMember()).thenReturn(member);
 
         SettingsAPI settings = mock(SettingsAPI.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
         HullModSpecAPI spec = mock(HullModSpecAPI.class);
         when(settings.getHullModSpec("safetyoverrides")).thenReturn(spec);
         HullModEffect vanillaEffect = mock(HullModEffect.class);
@@ -342,7 +339,7 @@ class SkillTreeHullModTest {
         when(variant.getSMods()).thenReturn(new LinkedHashSet<>());
 
         SettingsAPI settings = mock(SettingsAPI.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
 
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
 
@@ -382,7 +379,7 @@ class SkillTreeHullModTest {
         when(variant.getSMods()).thenReturn(new LinkedHashSet<>(List.of("armoredcladding")));
 
         SettingsAPI settings = mock(SettingsAPI.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
 
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
 
@@ -446,7 +443,7 @@ class SkillTreeHullModTest {
         when(variant.getSMods()).thenReturn(new LinkedHashSet<>());
 
         SettingsAPI settings = mock(SettingsAPI.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
 
         HullModConflictResolver.removeConflicts(member, variant);
         verify(variant).addMod("exiledSector_conflictWarning");
@@ -517,7 +514,7 @@ class SkillTreeHullModTest {
 
     private void makeSafetyOverridesAPhantom() {
         SettingsAPI settings = mock(SettingsAPI.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
         when(settings.getScriptClassLoader()).thenReturn(SkillTreeHullModTest.class.getClassLoader());
         HullModSpecAPI spec = mock(HullModSpecAPI.class);
         when(settings.getHullModSpec("safetyoverrides")).thenReturn(spec);
@@ -720,7 +717,7 @@ class SkillTreeHullModTest {
         when(variant.hasHullMod("heavyarmor")).thenReturn(true);
         when(variant.getHullMods()).thenReturn(new LinkedHashSet<>(List.of("heavyarmor")));
         when(variant.getSMods()).thenReturn(new LinkedHashSet<>());
-        globalMock.when(Global::getSettings).thenReturn(mock(SettingsAPI.class));
+        mockSector.global.when(Global::getSettings).thenReturn(mock(SettingsAPI.class));
 
         HullModConflictResolver.removeConflicts(memberWithId("ship-a"), variant);
 
@@ -767,7 +764,7 @@ class SkillTreeHullModTest {
         when(variant.hasTag(ShipRecords.SHIP_TAG_PREFIX + "ship-a")).thenReturn(true);
 
         SettingsAPI settings = mock(SettingsAPI.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
 
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, "exiledSector_core");
 
@@ -797,7 +794,7 @@ class SkillTreeHullModTest {
         when(stats.getVariant()).thenReturn(variant);
 
         SettingsAPI settings = mock(SettingsAPI.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
         HullModSpecAPI reserveSpec = mock(HullModSpecAPI.class);
         when(settings.getHullModSpec("exiledSector_opReserve_2")).thenReturn(reserveSpec);
 
@@ -876,7 +873,7 @@ class SkillTreeHullModTest {
         ShipVariantAPI variant = mock(ShipVariantAPI.class);
         when(variant.getHullMods()).thenReturn(List.of("hardenedshieldemitter", "exiledSector_opSpent_7", "exiledSector_opReserve_30"));
         SettingsAPI settings = mock(SettingsAPI.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
         when(settings.getHullModSpec("exiledSector_opReserve_1")).thenReturn(mock(HullModSpecAPI.class));
 
         OpReserveHullMods.sync(member, variant);
@@ -922,7 +919,7 @@ class SkillTreeHullModTest {
         ShipAPI ship = mockShip(member, stats);
 
         SettingsAPI settings = mock(SettingsAPI.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
         HullModSpecAPI spec = mock(HullModSpecAPI.class);
         when(settings.getHullModSpec("frontshield")).thenReturn(spec);
         HullModEffect vanillaEffect = mock(HullModEffect.class);
@@ -943,7 +940,7 @@ class SkillTreeHullModTest {
         ShipTrees.allocate(ShipSkillDataManager.get("ship-a"), keystoneNode, 1);
 
         SettingsAPI settings = mock(SettingsAPI.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
         HullModSpecAPI spec = mock(HullModSpecAPI.class);
         when(settings.getHullModSpec(hullModId)).thenReturn(spec);
         HullModEffect vanillaEffect = mock(HullModEffect.class);
@@ -982,7 +979,7 @@ class SkillTreeHullModTest {
         ShipAPI ship = mockShip(member, stats);
 
         SettingsAPI settings = mock(SettingsAPI.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
 
         new SkillTreeHullMod().applyEffectsAfterShipCreation(ship, "exiledSector_core");
 
@@ -1009,7 +1006,7 @@ class SkillTreeHullModTest {
         ShipAPI fighter = mock(ShipAPI.class);
 
         SettingsAPI settings = mock(SettingsAPI.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
         HullModSpecAPI spec = mock(HullModSpecAPI.class);
         when(settings.getHullModSpec("defensive_targeting_array")).thenReturn(spec);
         HullModEffect vanillaEffect = mock(HullModEffect.class);
@@ -1056,7 +1053,7 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().applyEffectsToFighterSpawnedByShip(fighter, ship, "exiledSector_core");
 
-        globalMock.verify(Global::getSettings, never());
+        mockSector.global.verify(Global::getSettings, never());
     }
 
     @Test
@@ -1120,7 +1117,7 @@ class SkillTreeHullModTest {
 
         new SkillTreeHullMod().applyEffectsAfterShipCreation(ship, "exiledSector_core");
 
-        globalMock.verify(Global::getSettings, never());
+        mockSector.global.verify(Global::getSettings, never());
     }
 
     private ShipAPI mockShip(FleetMemberAPI member, MutableShipStatsAPI stats) {
@@ -1394,7 +1391,7 @@ class SkillTreeHullModTest {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         ShipAPI ship = mockShip(member, stats);
         CombatEngineAPI engine = mock(CombatEngineAPI.class);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
+        mockSector.global.when(Global::getCombatEngine).thenReturn(engine);
         when(engine.getPlayerShip()).thenReturn(ship);
         DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
         when(stats.getDynamic()).thenReturn(dynamic);
@@ -1426,7 +1423,7 @@ class SkillTreeHullModTest {
         ShipAPI ship = mockShip(member, stats);
         ShipAPI otherShip = mock(ShipAPI.class);
         CombatEngineAPI engine = mock(CombatEngineAPI.class);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
+        mockSector.global.when(Global::getCombatEngine).thenReturn(engine);
         when(engine.getPlayerShip()).thenReturn(otherShip);
         PersonAPI captain = mock(PersonAPI.class);
         when(ship.getCaptain()).thenReturn(captain);
@@ -1559,7 +1556,7 @@ class SkillTreeHullModTest {
         when(stats.getFleetMember()).thenReturn(member);
         when(stats.getVariant()).thenReturn(variant);
         SettingsAPI settings = mock(SettingsAPI.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
 
         new SkillTreeHullMod().applyEffectsBeforeShipCreation(HullSize.FRIGATE, stats, SkillTreeHullMod.ID);
 
@@ -1618,7 +1615,7 @@ class SkillTreeHullModTest {
         registerNpcRoot();
         ShipVariantAPI variant = npcVariant();
         SettingsAPI settings = mock(SettingsAPI.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
 
         OpReserveHullMods.sync(memberWithId("npc-ship"), variant);
         HullModConflictResolver.removeConflicts(memberWithId("npc-ship"), variant);

@@ -1,23 +1,19 @@
 package exiledsector.charts;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignEventListener.FleetDespawnReason;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import com.fs.starfarer.api.util.MutableValue;
+import exiledlib.MockSector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -34,7 +30,7 @@ class ChartObjectivesTest {
 
     private static final String RUN_ID = "objectiveRun";
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private SectorAPI sector;
     private StarSystemAPI system;
     private MutableValue credits;
@@ -43,26 +39,19 @@ class ChartObjectivesTest {
 
     @BeforeEach
     void setUp() {
-        Map<String, Object> persistentData = new HashMap<>();
-        sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
+        sector = mockSector.sector;
         system = mock(StarSystemAPI.class);
         when(sector.getStarSystem(ChartIds.systemId(RUN_ID))).thenReturn(system);
         when(system.getFleets()).thenAnswer(invocation -> new ArrayList<>(systemFleets));
-        CampaignFleetAPI playerFleet = mock(CampaignFleetAPI.class);
-        CargoAPI cargo = mock(CargoAPI.class);
         credits = mock(MutableValue.class);
-        when(cargo.getCredits()).thenReturn(credits);
-        when(playerFleet.getCargo()).thenReturn(cargo);
-        when(sector.getPlayerFleet()).thenReturn(playerFleet);
+        when(mockSector.cargo().getCredits()).thenReturn(credits);
         when(sector.getIntelManager()).thenReturn(mock(IntelManagerAPI.class));
     }
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
     }
 
     private ChartRun openRun(ChartObjective objective, List<String> targets) {

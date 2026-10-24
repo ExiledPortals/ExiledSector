@@ -10,6 +10,7 @@ import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledlib.MockSector;
 import exiledsector.compat.NightcrossCompat;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillTier;
@@ -35,7 +36,7 @@ import static org.mockito.Mockito.when;
 
 class SkillTypeUnlockStatusTest {
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private MockedStatic<LunaSettings> lunaSettingsMock;
     private SectorAPI sector;
     private CharacterDataAPI playerCharacter;
@@ -43,14 +44,12 @@ class SkillTypeUnlockStatusTest {
 
     @BeforeEach
     void setUp() {
-        sector = mock(SectorAPI.class);
+        mockSector = new MockSector();
+        sector = mockSector.sector;
         playerCharacter = mock(CharacterDataAPI.class);
         sectorMemory = mock(MemoryAPI.class);
         when(sector.getCharacterData()).thenReturn(playerCharacter);
         when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
-
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
 
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
         lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", "exiledSector_disableBlueprintUnlock")).thenReturn(null);
@@ -62,7 +61,7 @@ class SkillTypeUnlockStatusTest {
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         lunaSettingsMock.close();
     }
 
@@ -93,7 +92,7 @@ class SkillTypeUnlockStatusTest {
         SkillType type = typeWithConditions();
 
         assertFalse(SkillTypeUnlockStatus.isLocked(type, new ShipSkillData()));
-        globalMock.verify(Global::getSector, never());
+        mockSector.global.verify(Global::getSector, never());
     }
 
     @Test
@@ -212,7 +211,7 @@ class SkillTypeUnlockStatusTest {
         lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", "exiledSector_disableBlueprintUnlock")).thenReturn(true);
 
         assertFalse(SkillTypeUnlockStatus.isLocked(type, new ShipSkillData()));
-        globalMock.verify(Global::getSector, never());
+        mockSector.global.verify(Global::getSector, never());
     }
 
     @Test
@@ -256,7 +255,7 @@ class SkillTypeUnlockStatusTest {
         ModManagerAPI modManager = mock(ModManagerAPI.class);
         when(settings.getModManager()).thenReturn(modManager);
         when(modManager.isModEnabled(NightcrossCompat.MOD_ID)).thenReturn(true);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
         when(sector.getMemoryWithoutUpdate()).thenThrow(new IllegalStateException("memory gone"));
 
         assertFalse(SkillTypeUnlockStatus.isLocked(typeWithConditions(UnlockCondition.modGate(UnlockConditionType.NIGHTCROSS_EXISTENTIAL_THREAT_DEFEATED)), null));

@@ -53,7 +53,7 @@ class StarChartCurrencyTest {
     @BeforeEach
     void setUp() throws Exception {
         ItemFixtures.registerShippedItems();
-        ItemImplicits.register(ItemFixtures.shippedRows(ItemImplicits.dataPath()));
+        ItemImplicits.register(HullItemRows.shippedRows(ItemImplicits.dataPath()));
         StarChartFixtures.registerShipped();
         StarChartCurrency.registerAll();
         when(cargo.getQuantity(eq(CargoAPI.CargoItemType.SPECIAL), any())).thenReturn(1000f);
@@ -446,7 +446,7 @@ class StarChartCurrencyTest {
     @Test
     void theShippedCostsMatchTheDefaultsAndTheCurrenciesCanBeGrown() throws Exception {
         assertEquals(List.of(30, 40, 120), Arrays.stream(StarChartCurrency.values()).map(StarChartCurrency::partsCost).toList());
-        ItemCraftingCosts.register(ItemFixtures.shippedRows(ItemCraftingCosts.dataPath()));
+        ItemCraftingCosts.register(HullItemRows.shippedRows(ItemCraftingCosts.dataPath()));
         assertEquals(List.of(30, 40, 120), Arrays.stream(StarChartCurrency.values()).map(StarChartCurrency::partsCost).toList());
         for (StarChartCurrency currency : StarChartCurrency.values()) {
             assertTrue(currency.synthesisable());

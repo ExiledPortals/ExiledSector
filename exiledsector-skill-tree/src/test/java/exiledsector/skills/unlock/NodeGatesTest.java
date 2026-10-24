@@ -1,8 +1,7 @@
 package exiledsector.skills.unlock;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import exiledlib.MockSector;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
@@ -35,7 +34,7 @@ class NodeGatesTest {
     private static final SkillType SMALL = new SkillType.Builder("small", "Small", "a.png", SkillTier.SMALL).build();
 
     private MockedStatic<LunaSettings> lunaSettingsMock;
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private MemoryAPI sectorMemory;
 
     @BeforeEach
@@ -43,17 +42,15 @@ class NodeGatesTest {
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
         lunaSettingsMock.when(() -> LunaSettings.getBoolean(anyString(), anyString())).thenReturn(null);
         sectorMemory = mock(MemoryAPI.class);
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
+        when(mockSector.sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
         NodeGates.register(new JSONObject("{\"" + GATE_TAG + "\": {\"unlockConditions\": [{\"type\": \"memoryFlag\", \"key\": \"" + FLAG + "\"}]}}"));
     }
 
     @AfterEach
     void tearDown() throws Exception {
         NodeGates.register(new JSONObject("{}"));
-        globalMock.close();
+        mockSector.close();
         lunaSettingsMock.close();
     }
 

@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static exiledsector.items.ItemFixtures.row;
+import static exiledsector.items.HullItemRows.row;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -30,7 +30,7 @@ class ItemFreezingTest {
     void setUp() throws Exception {
         registerBridge(BEFORE_PREFIXES, BEFORE_SUFFIXES);
         registerWords("Askonia", "Corvus");
-        ItemFixtures.registerModifierNames("FIGHTER_ARMOR_PERCENT,prefix,FIGHTER_ARMOR_PERCENT:10:15,Plated",
+        HullItemRows.registerModifierNames("FIGHTER_ARMOR_PERCENT,prefix,FIGHTER_ARMOR_PERCENT:10:15,Plated",
                 "HULL_MULT,suffix,HULL_MULT:4:6,Fortitude");
     }
 

@@ -116,10 +116,10 @@ Highest payoff first. Line counts are the reviewers' estimates.
 
 ## Test suite
 
-1. `MockSector` in Exiled Lib's test jar: opens the `Global` static mock and a `SectorAPI` with a real persistent data map, optional player fleet and cargo. 94 test files mock `SectorAPI` by hand. About 500 lines. Don't auto-register it as an extension.
+1. DONE (parallel-work): `exiledlib.MockSector` (`global`, `sector`, `persistentData`, lazy `playerFleet()` and `cargo()`), used by 79 tests and `ConsoleFixture`. Skipped: tests that only pass a sector mock as an argument, and `PhantomHullModsTest`, whose other tests need `Global.getSector()` to stay null. Originally: `MockSector` in Exiled Lib's test jar: opens the `Global` static mock and a `SectorAPI` with a real persistent data map, optional player fleet and cargo. 94 test files mock `SectorAPI` by hand. About 500 lines. Don't auto-register it as an extension.
 2. DONE (a8bc9e5e): `ConsoleFixture` (sector, fleet, cargo, `granted`, `verifyNothingGranted`), used by the 8 console tests. Originally: console test fixture in core's test jar (package `exiledsector.console`): the identical 8-line setUp in 9 tests and the granted-items captor in 4.
-3. Split `ItemFixtures`: hull and modifier row builders to core's test jar as `HullItemRows`, subroutine rows stay in mod. Then `BattleItemDropsTest` can move to hull upgrades.
-4. `AnchorRows` in skill tree's tests for five near-identical `anchorRow` copies.
+3. DONE (parallel-work): core's `HullItemRows` holds the hull and modifier rows, shipped rows, `data` and `registerMilitary`; `ItemFixtures` keeps the subroutine rows, `registerShippedItems` and `registerMilitaryAndSubroutine`; `BattleItemDropsTest` is in hull upgrades. Originally: Split `ItemFixtures`: hull and modifier row builders to core's test jar as `HullItemRows`, subroutine rows stay in mod. Then `BattleItemDropsTest` can move to hull upgrades.
+4. DONE (parallel-work): `exiledsector.items.AnchorRows.row`; the three tests with default chances keep a one-line wrapper, and the mod tests use it too. Originally: `AnchorRows` in skill tree's tests for five near-identical `anchorRow` copies.
 5. Optional: a reset extension for item registries (63 tearDowns call `ItemDefinitions.clear()`). Medium risk if tests share state.
 
 ## Build order
@@ -134,4 +134,4 @@ Highest payoff first. Line counts are the reviewers' estimates.
 8. [x] Refuted: moving `Seeds` and `SpecLocalisation` to core (abstraction 3). Both are generic (a seeded `Random`; spec localisation for any host's hull mods and industries through lib's `Translation`), so they stay in lib.
 9. [x] Skill tree UI cost: bugs 10-16 with abstraction 12. Bugs 10-16 done (10-15 in bac5457a, 16 in parallel-work); abstraction 12 done for the ring, ghost and ghost flight sprites; marked complete by the owner without an in-game measurement.
 10. [x] Exiled Lib: bugs 34-39 and 41 with abstractions 22-25 (parallel-work). 41's Seraph's Grace lists went with abstraction 22.
-11. [ ] The remaining abstractions and test suite items. Done: 9, 10, 14, 15, 18 (partly), 19, 21, 26 (partly). 16 and 17 done as cleanup. Open: the test suite items.
+11. [ ] The remaining abstractions and test suite items. Done: 9, 10, 14, 15, 18 (partly), 19, 21, 26 (partly). 16 and 17 done as cleanup. Test suite items 1-4 done (parallel-work); open: the optional item 5.

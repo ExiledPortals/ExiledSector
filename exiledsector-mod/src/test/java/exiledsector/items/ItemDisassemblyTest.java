@@ -34,7 +34,7 @@ class ItemDisassemblyTest {
     @BeforeEach
     void setUp() throws Exception {
         SkillTree.clearNodes();
-        ItemFixtures.registerMilitary();
+        HullItemRows.registerMilitary();
     }
 
     @AfterEach
@@ -52,7 +52,7 @@ class ItemDisassemblyTest {
 
     @Test
     void disassemblingRemovesTheItemAndAddsItsPartsToCargo() {
-        Item item = store.add(ItemDefinitions.get(ItemFixtures.MILITARY), 7L);
+        Item item = store.add(ItemDefinitions.get(HullItemRows.MILITARY), 7L);
         int expected = item.rarity().disassemblyParts();
 
         assertEquals(expected, ItemDisassembly.disassemble(item, CraftingMaterials.cargoOnly(cargo), store, ships));
@@ -66,7 +66,7 @@ class ItemDisassemblyTest {
         SkillNode socket = new SkillNode("socket", new SkillType.Builder("socket_type", "Socket", "", SkillTier.SOCKET).build(),
                 List.of(), 0f, 0f);
         SkillTree.register(socket);
-        Item item = store.add(ItemDefinitions.get(ItemFixtures.MILITARY), 7L);
+        Item item = store.add(ItemDefinitions.get(HullItemRows.MILITARY), 7L);
         ShipSkillData data = new ShipSkillData();
         ShipTrees.allocate(data, socket, 3);
         data.socketItem("socket", item.id());
@@ -80,7 +80,7 @@ class ItemDisassemblyTest {
 
     @Test
     void anItemNoLongerInStorageIsNotPaidOutTwice() {
-        Item item = store.add(ItemDefinitions.get(ItemFixtures.MILITARY), 7L);
+        Item item = store.add(ItemDefinitions.get(HullItemRows.MILITARY), 7L);
         ItemDisassembly.disassemble(item, CraftingMaterials.cargoOnly(cargo), store, ships);
 
         assertEquals(0, ItemDisassembly.disassemble(item, CraftingMaterials.cargoOnly(cargo), store, ships));

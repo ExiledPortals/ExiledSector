@@ -3,9 +3,7 @@ package exiledsector.ui.node;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.characters.SkillSpecAPI;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
@@ -14,6 +12,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.VariantSource;
+import exiledlib.MockSector;
 import exiledsector.effects.OpReserveParity;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.persistence.ShipSkillDataManager;
@@ -39,9 +38,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -64,7 +61,7 @@ import static org.mockito.Mockito.when;
 class NodeAllocatorTest {
 
     private MockedStatic<LunaSettings> lunaSettingsMock;
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private SettingsAPI settings;
     private CargoAPI cargo;
     private FleetMemberAPI member;
@@ -81,17 +78,10 @@ class NodeAllocatorTest {
     @BeforeEach
     void setUp() {
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class, invocation -> null);
-        globalMock = Mockito.mockStatic(Global.class);
-        SectorAPI sector = mock(SectorAPI.class);
-        Map<String, Object> persistentData = new HashMap<>();
-        when(sector.getPersistentData()).thenReturn(persistentData);
-        CampaignFleetAPI playerFleet = mock(CampaignFleetAPI.class);
-        cargo = mock(CargoAPI.class);
-        when(playerFleet.getCargo()).thenReturn(cargo);
-        when(sector.getPlayerFleet()).thenReturn(playerFleet);
+        mockSector = new MockSector();
+        cargo = mockSector.cargo();
         settings = mock(SettingsAPI.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
 
         SkillTree.clearNodes();
         SkillTree.clearTypes();
@@ -119,7 +109,7 @@ class NodeAllocatorTest {
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         lunaSettingsMock.close();
         SkillTree.clearNodes();
         SkillTree.clearTypes();

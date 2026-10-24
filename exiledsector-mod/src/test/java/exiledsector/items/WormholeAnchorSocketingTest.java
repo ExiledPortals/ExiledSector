@@ -1,8 +1,8 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import exiledlib.MockSector;
 import exiledlib.i18n.StyledText;
 import exiledsector.data.CsvRows;
 import exiledsector.skills.AnchorLinks;
@@ -49,7 +49,7 @@ class WormholeAnchorSocketingTest {
 
     private final Map<String, Item> itemsById = new HashMap<>();
     private MockedStatic<LunaSettings> lunaSettingsMock;
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private MemoryAPI sectorMemory;
     private SkillNode root;
     private SkillNode socket;
@@ -60,11 +60,9 @@ class WormholeAnchorSocketingTest {
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
         lunaSettingsMock.when(() -> LunaSettings.getBoolean(anyString(), anyString())).thenReturn(null);
         sectorMemory = mock(MemoryAPI.class);
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
+        mockSector = new MockSector();
+        when(mockSector.sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
         when(sectorMemory.getBoolean(JanusDevice.FLAG)).thenReturn(true);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
         NodeGates.register(new JSONObject("{\"" + GATE_TAG + "\": {\"unlockConditions\": [{\"type\": \"memoryFlag\", \"key\": \"" + GATE_FLAG + "\"}]}}"));
 
         SkillTree.clearNodes();
@@ -79,10 +77,10 @@ class WormholeAnchorSocketingTest {
             SkillTree.register(node);
         }
         WormholeAnchorDefinitions.register(new JSONArray()
-                .put(WormholeAnchorTest.anchorRow(HEGEMONY_ANCHOR, "hegemony", "hegemony_2").put("drop_chance", "0.5"))
-                .put(WormholeAnchorTest.anchorRow(ABYSS_ANCHOR, "abyss", "rat_abyss_wormhole_1")
+                .put(AnchorRows.row(HEGEMONY_ANCHOR, "hegemony", "hegemony_2").put("drop_chance", "0.5"))
+                .put(AnchorRows.row(ABYSS_ANCHOR, "abyss", "rat_abyss_wormhole_1")
                         .put("drop_factions", "rat_abyssals;rat_abyssals_deep").put("drop_chance", "0.1"))
-                .put(WormholeAnchorTest.anchorRow(KESTEVEN_ANCHOR, "kesteven", "kesteven_wormhole1").put("drop_factions", "kesteven")
+                .put(AnchorRows.row(KESTEVEN_ANCHOR, "kesteven", "kesteven_wormhole1").put("drop_factions", "kesteven")
                         .put("drop_chance", "0.2")));
         NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
         AnchorLinks.install(new AnchorLinks.ExitLookup() {
@@ -110,7 +108,7 @@ class WormholeAnchorSocketingTest {
         NpcFactionVolumes.clear();
         WormholeAnchorDefinitions.clear();
         SkillTree.clearNodes();
-        globalMock.close();
+        mockSector.close();
         lunaSettingsMock.close();
     }
 
@@ -234,8 +232,8 @@ class WormholeAnchorSocketingTest {
     @Test
     void aBadDropChanceKeepsTheAnchorButNeverDropsIt() throws Exception {
         WormholeAnchorDefinitions.register(new JSONArray()
-                .put(WormholeAnchorTest.anchorRow(HEGEMONY_ANCHOR, "hegemony", "hegemony_2").put("drop_chance", "6%"))
-                .put(WormholeAnchorTest.anchorRow(ABYSS_ANCHOR, "abyss", "rat_abyss_wormhole_1").put("drop_chance", "-1")));
+                .put(AnchorRows.row(HEGEMONY_ANCHOR, "hegemony", "hegemony_2").put("drop_chance", "6%"))
+                .put(AnchorRows.row(ABYSS_ANCHOR, "abyss", "rat_abyss_wormhole_1").put("drop_chance", "-1")));
 
         assertEquals("hegemony_2", WormholeAnchorDefinitions.exitNodeId(HEGEMONY_ANCHOR));
         assertEquals(0f, FactionFleetDrops.source(HEGEMONY_ANCHOR).chance());
@@ -284,8 +282,8 @@ class WormholeAnchorSocketingTest {
     @Test
     void onlyMarketsOfAnAnchorsFactionsStockItAtItsMarketChanceAndPrice() throws Exception {
         WormholeAnchorDefinitions.register(new JSONArray()
-                .put(WormholeAnchorTest.anchorRow(HEGEMONY_ANCHOR, "hegemony", "hegemony_2").put("market_chance", "0.25").put("price", "120000"))
-                .put(WormholeAnchorTest.anchorRow(ABYSS_ANCHOR, "abyss", "rat_abyss_wormhole_1").put("drop_factions", "rat_abyssals")));
+                .put(AnchorRows.row(HEGEMONY_ANCHOR, "hegemony", "hegemony_2").put("market_chance", "0.25").put("price", "120000"))
+                .put(AnchorRows.row(ABYSS_ANCHOR, "abyss", "rat_abyss_wormhole_1").put("drop_factions", "rat_abyssals")));
         Random random = new Random(4L);
         int hegemonyStock = 0;
         int trials = 4000;
@@ -304,7 +302,7 @@ class WormholeAnchorSocketingTest {
     @Test
     void aBadMarketChanceOrPriceFallsBackToNeverSoldAndTheDefaultPrice() throws Exception {
         WormholeAnchorDefinitions.register(new JSONArray()
-                .put(WormholeAnchorTest.anchorRow(HEGEMONY_ANCHOR, "hegemony", "hegemony_2").put("market_chance", "often").put("price", "-3")));
+                .put(AnchorRows.row(HEGEMONY_ANCHOR, "hegemony", "hegemony_2").put("market_chance", "often").put("price", "-3")));
 
         assertEquals(0f, WormholeAnchorDefinitions.market(HEGEMONY_ANCHOR).chance());
         assertEquals(WormholeAnchorDefinitions.DEFAULT_PRICE, WormholeAnchorDefinitions.market(HEGEMONY_ANCHOR).price());

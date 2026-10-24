@@ -1,10 +1,8 @@
 package exiledsector.effects;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.EngagementResultForFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
@@ -12,6 +10,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledlib.MockSector;
 import exiledlib.skills.skilleffect.logistics.FleetWideEffects;
 import exiledsector.effects.PlayerEngagementPipeline.Stage;
 import exiledsector.effects.PlayerEngagementPipeline.Step;
@@ -44,16 +43,15 @@ import static org.mockito.Mockito.when;
 
 class PlayerEngagementPipelineTest {
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private FleetDataAPI fleetData;
     private MutableStat salvageMult;
 
     @BeforeEach
     void setUp() {
-        SectorAPI sector = mock(SectorAPI.class);
-        CampaignFleetAPI playerFleet = mock(CampaignFleetAPI.class);
+        mockSector = new MockSector();
+        CampaignFleetAPI playerFleet = mockSector.playerFleet();
         fleetData = mock(FleetDataAPI.class);
-        when(sector.getPlayerFleet()).thenReturn(playerFleet);
         when(playerFleet.getFleetData()).thenReturn(fleetData);
         MutableFleetStatsAPI fleetStats = mock(MutableFleetStatsAPI.class);
         DynamicStatsAPI fleetDynamic = mock(DynamicStatsAPI.class);
@@ -61,14 +59,11 @@ class PlayerEngagementPipelineTest {
         when(fleetStats.getDynamic()).thenReturn(fleetDynamic);
         salvageMult = mock(MutableStat.class);
         when(fleetDynamic.getStat(Stats.BATTLE_SALVAGE_MULT_FLEET)).thenReturn(salvageMult);
-
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
     }
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
     }
 
     private static FleetMemberAPI ship(String id, float deploymentPoints) {

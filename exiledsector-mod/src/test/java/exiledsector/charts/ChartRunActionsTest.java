@@ -1,6 +1,5 @@
 package exiledsector.charts;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
@@ -13,17 +12,15 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import exiledlib.MockSector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.ArgumentCaptor;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,7 +40,7 @@ import static org.mockito.Mockito.when;
 
 class ChartRunActionsTest {
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private SectorAPI sector;
     private LocationAPI hyperspace;
     private StarSystemAPI system;
@@ -52,18 +49,14 @@ class ChartRunActionsTest {
 
     @BeforeEach
     void setUp() {
-        Map<String, Object> persistentData = new HashMap<>();
-        sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
+        sector = mockSector.sector;
         hyperspace = mock(LocationAPI.class);
         system = mock(StarSystemAPI.class);
-        playerFleet = mock(CampaignFleetAPI.class);
+        playerFleet = mockSector.playerFleet();
         outer = mock(CustomCampaignEntityAPI.class);
         when(hyperspace.isHyperspace()).thenReturn(true);
         when(sector.getHyperspace()).thenReturn(hyperspace);
-        when(sector.getPlayerFleet()).thenReturn(playerFleet);
         when(sector.createStarSystem(anyString())).thenReturn(system);
         when(system.getLocation()).thenReturn(new Vector2f());
         when(system.getMemoryWithoutUpdate()).thenReturn(mock(MemoryAPI.class));
@@ -79,7 +72,7 @@ class ChartRunActionsTest {
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         ChartLayoutGenerator.resetForTests();
         ChartContentGenerator.resetForTests();
     }

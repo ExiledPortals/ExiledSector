@@ -2,9 +2,9 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledlib.MockSector;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.ShipSkillData;
@@ -25,7 +25,6 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,19 +40,15 @@ import static org.mockito.Mockito.when;
 
 class TemplateLevelUpTest {
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private MockedStatic<LunaSettings> lunaSettingsMock;
     private FleetMemberAPI member;
     private ShipSkillData shipData;
 
     @BeforeEach
     void setUp() {
-        Map<String, Object> persistentData = new HashMap<>();
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
-        globalMock.when(Global::getSettings).thenReturn(mock(SettingsAPI.class));
+        mockSector = new MockSector();
+        mockSector.global.when(Global::getSettings).thenReturn(mock(SettingsAPI.class));
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
         lunaSettingsMock.when(() -> LunaSettings.getInt(anyString(), anyString())).thenReturn(null);
         lunaSettingsMock.when(() -> LunaSettings.getFloat(anyString(), anyString())).thenReturn(null);
@@ -74,7 +69,7 @@ class TemplateLevelUpTest {
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         lunaSettingsMock.close();
         SkillTree.clearNodes();
     }

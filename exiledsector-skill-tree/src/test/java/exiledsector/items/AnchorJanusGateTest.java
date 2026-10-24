@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import exiledlib.MockSector;
 import exiledsector.effects.SkillTreeLootSource;
 import exiledsector.skills.AnchorLinks;
 import exiledsector.skills.ShipSkillData;
@@ -18,7 +19,6 @@ import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.tags.SkillTags;
 import lunalib.lunaSettings.LunaSettings;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,7 +53,7 @@ class AnchorJanusGateTest {
 
     private final Map<String, Item> itemsById = new HashMap<>();
     private MockedStatic<LunaSettings> lunaSettingsMock;
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private MemoryAPI sectorMemory;
     private Boolean allowBeforeJanus;
     private SkillNode root;
@@ -67,10 +67,8 @@ class AnchorJanusGateTest {
         lunaSettingsMock.when(() -> LunaSettings.getBoolean(anyString(), Mockito.eq(AnchorJanusGate.ALLOW_BEFORE_JANUS_FIELD_ID)))
                 .thenAnswer(invocation -> allowBeforeJanus);
         sectorMemory = mock(MemoryAPI.class);
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
+        when(mockSector.sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
 
         SkillTree.clearNodes();
         SkillType exitType = new SkillType.Builder("wormhole_exit", "Wormhole Exit", "", SkillTier.WORMHOLE_EXIT).build();
@@ -83,8 +81,8 @@ class AnchorJanusGateTest {
             SkillTree.register(node);
         }
         WormholeAnchorDefinitions.register(new JSONArray()
-                .put(anchorRow(HEGEMONY_ANCHOR, "hegemony", "hegemony_2").put("drop_chance", "1").put("market_chance", "1"))
-                .put(anchorRow(BEACON, SkillTags.EXOTECH_REGION, "exoship").put("drop_factions", "rat_exotech")
+                .put(AnchorRows.row(HEGEMONY_ANCHOR, "hegemony", "hegemony_2").put("drop_chance", "1").put("market_chance", "1"))
+                .put(AnchorRows.row(BEACON, SkillTags.EXOTECH_REGION, "exoship").put("drop_factions", "rat_exotech")
                         .put("drop_chance", "1").put("market_chance", "1")));
         NpcFactionVolumes.register(new JSONArray("[{\"faction\": \"hegemony\", \"region\": \"hegemony\"}]"));
         AnchorLinks.install(new AnchorLinks.ExitLookup() {
@@ -111,13 +109,8 @@ class AnchorJanusGateTest {
         NpcFactionVolumes.clear();
         WormholeAnchorDefinitions.clear();
         SkillTree.clearNodes();
-        globalMock.close();
+        mockSector.close();
         lunaSettingsMock.close();
-    }
-
-    private static JSONObject anchorRow(String id, String volume, String exitNode) throws Exception {
-        return new JSONObject().put("id", id).put("volume", volume).put("exit_node", exitNode).put("name", id + " name")
-                .put("icon", "graphics/icons/nav_relay.png").put("rarity", "10").put("description", "Opens a wormhole.");
     }
 
     private void janusObtained(boolean obtained) {

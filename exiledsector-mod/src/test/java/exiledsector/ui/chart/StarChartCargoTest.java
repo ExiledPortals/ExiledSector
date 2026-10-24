@@ -1,11 +1,9 @@
 package exiledsector.ui.chart;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
+import exiledlib.MockSector;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.LocaleChain;
 import exiledlib.i18n.RealCatalogue;
@@ -16,11 +14,9 @@ import exiledsector.items.StarChartFixtures;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -32,26 +28,19 @@ import static org.mockito.Mockito.when;
 
 class StarChartCargoTest {
 
-    private MockedStatic<Global> globalMock;
-    private SectorAPI sector;
+    private MockSector mockSector;
     private CargoAPI cargo;
 
     @BeforeEach
     void setUp() throws Exception {
         StarChartFixtures.registerShipped();
-        sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(new HashMap<>());
-        CampaignFleetAPI playerFleet = mock(CampaignFleetAPI.class);
-        cargo = mock(CargoAPI.class);
-        when(sector.getPlayerFleet()).thenReturn(playerFleet);
-        when(playerFleet.getCargo()).thenReturn(cargo);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
+        cargo = mockSector.cargo();
     }
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         StarChartFixtures.clear();
     }
 
@@ -70,7 +59,7 @@ class StarChartCargoTest {
         when(cargo.getStacksCopy()).thenReturn(new ArrayList<>(List.of(threes, eight)));
         StarChartBrowser browser = new StarChartBrowser();
 
-        int moved = StarChartBrowser.prepare(sector, browser);
+        int moved = StarChartBrowser.prepare(mockSector.sector, browser);
 
         assertEquals(3, moved);
         verify(cargo).removeStack(threes);
@@ -89,7 +78,7 @@ class StarChartCargoTest {
         when(cargo.getStacksCopy()).thenReturn(new ArrayList<>());
         StarChartBrowser browser = new StarChartBrowser();
 
-        assertEquals(0, StarChartBrowser.prepare(sector, browser));
+        assertEquals(0, StarChartBrowser.prepare(mockSector.sector, browser));
 
         assertNull(ItemStore.starChartsIfCreated());
         assertEquals(0, browser.storedCount());

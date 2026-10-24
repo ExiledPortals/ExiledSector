@@ -69,9 +69,9 @@ class WormholeAnchorTest {
         SkillTree.register(new SkillNode("exoship", wormholeType, List.of(), 200f, 0f, SkillNodeDecoration.NONE, List.of("exotech")));
         ItemDefinitions.register(new JSONArray().put(ItemFixtures.subroutineRow(ItemFixtures.SUBROUTINE)));
         WormholeAnchorDefinitions.register(new JSONArray()
-                .put(anchorRow(HEGEMONY_ANCHOR, "hegemony", "hegemony_2"))
-                .put(anchorRow(ABYSS_ANCHOR, "abyss", "rat_abyss_wormhole_1"))
-                .put(anchorRow(BEACON, "exotech", "exoship").put("unlock", ItemUnlock.RAT_PLAYER_EXOSHIP.id())));
+                .put(AnchorRows.row(HEGEMONY_ANCHOR, "hegemony", "hegemony_2"))
+                .put(AnchorRows.row(ABYSS_ANCHOR, "abyss", "rat_abyss_wormhole_1"))
+                .put(AnchorRows.row(BEACON, "exotech", "exoship").put("unlock", ItemUnlock.RAT_PLAYER_EXOSHIP.id())));
     }
 
     @AfterEach
@@ -81,11 +81,6 @@ class WormholeAnchorTest {
         WormholeAnchorDefinitions.clear();
         ItemDefinitions.clear();
         ItemDrops.clear();
-    }
-
-    static JSONObject anchorRow(String id, String volume, String exitNode) throws Exception {
-        return new JSONObject().put("id", id).put("volume", volume).put("exit_node", exitNode).put("name", id + " name")
-                .put("icon", "graphics/icons/nav_relay.png").put("rarity", "10").put("description", "Opens a wormhole.");
     }
 
     private static XStream xstream() {
@@ -118,8 +113,8 @@ class WormholeAnchorTest {
     @Test
     void anAnchorCarriesItsFactionColourAndCrestAndFramesInThatColour() throws Exception {
         WormholeAnchorDefinitions.register(new JSONArray()
-                .put(anchorRow(HEGEMONY_ANCHOR, "hegemony", "hegemony_2").put("color", "#F5961E").put("crest_faction", "hegemony"))
-                .put(anchorRow(BEACON, "exotech", "exoship").put("color", "orange")));
+                .put(AnchorRows.row(HEGEMONY_ANCHOR, "hegemony", "hegemony_2").put("color", "#F5961E").put("crest_faction", "hegemony"))
+                .put(AnchorRows.row(BEACON, "exotech", "exoship").put("color", "orange")));
 
         WormholeAnchor hegemony = assertInstanceOf(WormholeAnchor.class, anchor(HEGEMONY_ANCHOR));
         WormholeAnchor beacon = assertInstanceOf(WormholeAnchor.class, anchor(BEACON));
@@ -141,7 +136,7 @@ class WormholeAnchorTest {
     @Test
     void anAnchorWithAnAnimatedIconKeepsThatIconsOwnLook() throws Exception {
         WormholeAnchorDefinitions.register(new JSONArray()
-                .put(anchorRow(BEACON, "exotech", "exoship").put("icon", AnimatedItemIcons.BEACON_PATH).put("color", "#FCBE12")
+                .put(AnchorRows.row(BEACON, "exotech", "exoship").put("icon", AnimatedItemIcons.BEACON_PATH).put("color", "#FCBE12")
                         .put("crest_faction", "rat_exotech")));
 
         CargoIconLook look = CargoIconLooks.forItem(anchor(BEACON));
@@ -153,12 +148,12 @@ class WormholeAnchorTest {
     @Test
     void theLoaderSkipsRowsWithABadVolumeASecondAnchorForAVolumeOrATakenId() throws Exception {
         WormholeAnchorDefinitions.register(new JSONArray()
-                .put(anchorRow("core_anchor", "core", "core_exit"))
-                .put(anchorRow("made_up_anchor", "nowhere", "exit"))
-                .put(anchorRow("first_hegemony", "hegemony", "hegemony_2"))
-                .put(anchorRow("second_hegemony", "hegemony", "hegemony_2"))
-                .put(anchorRow("no_exit", "pirate", ""))
-                .put(anchorRow(ItemFixtures.SUBROUTINE, "luddic", "luddic_2")));
+                .put(AnchorRows.row("core_anchor", "core", "core_exit"))
+                .put(AnchorRows.row("made_up_anchor", "nowhere", "exit"))
+                .put(AnchorRows.row("first_hegemony", "hegemony", "hegemony_2"))
+                .put(AnchorRows.row("second_hegemony", "hegemony", "hegemony_2"))
+                .put(AnchorRows.row("no_exit", "pirate", ""))
+                .put(AnchorRows.row(ItemFixtures.SUBROUTINE, "luddic", "luddic_2")));
 
         assertEquals(List.of("first_hegemony"), ItemDefinitions.ofType(ItemType.WORMHOLE_ANCHOR).stream().map(ItemDefinition::id).toList());
         assertEquals(ItemType.SUBROUTINE, ItemDefinitions.get(ItemFixtures.SUBROUTINE).type());
@@ -209,7 +204,7 @@ class WormholeAnchorTest {
         Item orphaned = ((ItemStore) xstream().fromXML(xml)).owned().get(0);
         assertInstanceOf(UnresolvedItem.class, orphaned);
         String orphanXml = xstream().toXML(orphaned);
-        WormholeAnchorDefinitions.register(new JSONArray().put(anchorRow(HEGEMONY_ANCHOR, "hegemony", "hegemony_2")));
+        WormholeAnchorDefinitions.register(new JSONArray().put(AnchorRows.row(HEGEMONY_ANCHOR, "hegemony", "hegemony_2")));
         assertInstanceOf(WormholeAnchor.class, xstream().fromXML(orphanXml));
     }
 

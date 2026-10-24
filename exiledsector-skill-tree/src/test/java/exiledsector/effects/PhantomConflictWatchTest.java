@@ -2,12 +2,11 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledlib.MockSector;
 import exiledsector.compat.MagicLibCompat;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.InstalledHullMods;
@@ -26,10 +25,8 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,18 +40,13 @@ class PhantomConflictWatchTest {
 
     private static final String SAFETY_OVERRIDES = "safetyoverrides";
 
-    private final Map<String, Object> persistentData = new HashMap<>();
-    private MockedStatic<Global> globalMock;
-    private SectorAPI sector;
+    private MockSector mockSector;
 
     @BeforeEach
     void setUp() {
         SettingsAPI settings = mock(SettingsAPI.class);
-        sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
         LearnedPhantomConflicts.load();
         SkillTree.clearNodes();
         SkillTree.clearTypes();
@@ -67,7 +59,7 @@ class PhantomConflictWatchTest {
         LearnedPhantomConflicts.load();
         SkillTree.clearNodes();
         SkillTree.clearTypes();
-        globalMock.close();
+        mockSector.close();
     }
 
     private static ShipVariantAPI variant(String hullId, List<String> hullMods, Set<String> builtIns) {
@@ -218,11 +210,9 @@ class PhantomConflictWatchTest {
     }
 
     private void playerFleetHolds(FleetMemberAPI... members) {
-        CampaignFleetAPI playerFleet = mock(CampaignFleetAPI.class);
         FleetDataAPI fleetData = mock(FleetDataAPI.class);
-        when(playerFleet.getFleetData()).thenReturn(fleetData);
+        when(mockSector.playerFleet().getFleetData()).thenReturn(fleetData);
         when(fleetData.getMembersListCopy()).thenReturn(List.of(members));
-        when(sector.getPlayerFleet()).thenReturn(playerFleet);
     }
 
     private static FleetMemberAPI fittedMember(String memberId, ShipVariantAPI variant) {

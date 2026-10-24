@@ -1,47 +1,35 @@
 package exiledsector.charts;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
+import exiledlib.MockSector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class ChartRunTest {
 
-    private MockedStatic<Global> globalMock;
-    private Map<String, Object> persistentData;
+    private MockSector mockSector;
 
     @BeforeEach
     void setUp() {
-        persistentData = new HashMap<>();
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
     }
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
     }
 
     private static ChartRun run(int entries) {
@@ -179,7 +167,7 @@ class ChartRunTest {
         assertTrue(ChartRuns.hasRun());
         ChartRuns.delete("abc");
         assertNull(ChartRuns.currentOrNull());
-        assertFalse(persistentData.containsKey(ChartRuns.DATA_KEY));
+        assertFalse(mockSector.persistentData.containsKey(ChartRuns.DATA_KEY));
     }
 
     @Test

@@ -1,7 +1,6 @@
 package exiledsector.skills;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledlib.MockSector;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
@@ -15,30 +14,20 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class SocketedEffectsTest {
 
-    private final Map<String, Object> persistentData = new HashMap<>();
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private SkillNode socket;
 
     @BeforeEach
     void setUp() throws Exception {
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
         SkillTree.clearNodes();
         socket = new SkillNode("socket", new SkillType.Builder("socket_type", "Socket", "", SkillTier.SOCKET).build(), List.of(), 0f, 0f);
         SkillTree.register(socket);
@@ -49,7 +38,7 @@ class SocketedEffectsTest {
     void tearDown() {
         SkillTree.clearNodes();
         ItemDefinitions.clear();
-        globalMock.close();
+        mockSector.close();
     }
 
     @Test

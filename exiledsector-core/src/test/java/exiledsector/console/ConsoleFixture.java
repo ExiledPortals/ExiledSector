@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
+import exiledlib.MockSector;
 import exiledsector.items.ItemData;
 import org.lazywizard.console.Console;
 import org.mockito.ArgumentCaptor;
@@ -15,25 +16,18 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public final class ConsoleFixture implements AutoCloseable {
 
-    public final MockedStatic<Global> global = Mockito.mockStatic(Global.class);
+    private final MockSector mockSector = new MockSector();
+    public final MockedStatic<Global> global = mockSector.global;
     public final MockedStatic<Console> console = Mockito.mockStatic(Console.class);
-    public final SectorAPI sector = mock(SectorAPI.class);
-    public final CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
-    public final CargoAPI cargo = mock(CargoAPI.class);
-
-    public ConsoleFixture() {
-        global.when(Global::getSector).thenReturn(sector);
-        when(sector.getPlayerFleet()).thenReturn(fleet);
-        when(fleet.getCargo()).thenReturn(cargo);
-    }
+    public final SectorAPI sector = mockSector.sector;
+    public final CampaignFleetAPI fleet = mockSector.playerFleet();
+    public final CargoAPI cargo = mockSector.cargo();
 
     public List<ItemData> granted(int expectedItems) {
         ArgumentCaptor<SpecialItemData> items = ArgumentCaptor.forClass(SpecialItemData.class);
@@ -48,6 +42,6 @@ public final class ConsoleFixture implements AutoCloseable {
     @Override
     public void close() {
         console.close();
-        global.close();
+        mockSector.close();
     }
 }

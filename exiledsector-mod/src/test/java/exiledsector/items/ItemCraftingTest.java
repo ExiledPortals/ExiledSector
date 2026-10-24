@@ -38,11 +38,11 @@ class ItemCraftingTest {
     @BeforeEach
     void setUp() throws Exception {
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.row(ItemFixtures.MILITARY, "bridge", ItemFixtures.MILITARY_PREFIXES,
-                        ItemFixtures.MILITARY_SUFFIXES))
-                .put(ItemFixtures.row("relic_a", "reactor", "HULL_MULT:4:6; ARMOR_PERCENT:6:9").put("unique", "TRUE"))
-                .put(ItemFixtures.row("relic_b", "crew_quarters", "FLUX_CAPACITY_MULT:4:6").put("unique", "TRUE")));
-        ItemNames.registerWords(new JSONObject().put(ItemFixtures.MILITARY, new JSONObject().put("style", "codename")
+                .put(HullItemRows.row(HullItemRows.MILITARY, "bridge", HullItemRows.MILITARY_PREFIXES,
+                        HullItemRows.MILITARY_SUFFIXES))
+                .put(HullItemRows.row("relic_a", "reactor", "HULL_MULT:4:6; ARMOR_PERCENT:6:9").put("unique", "TRUE"))
+                .put(HullItemRows.row("relic_b", "crew_quarters", "FLUX_CAPACITY_MULT:4:6").put("unique", "TRUE")));
+        ItemNames.registerWords(new JSONObject().put(HullItemRows.MILITARY, new JSONObject().put("style", "codename")
                 .put("first", new JSONArray(List.of("Thule"))).put("second", new JSONArray(List.of("Doctrine")))));
     }
 
@@ -55,7 +55,7 @@ class ItemCraftingTest {
 
     private Item common() {
         List<RolledEffect> effects = List.of(new RolledEffect("FLUX_CAPACITY_MULT", 5f), new RolledEffect("ARMOR_PERCENT", 7f));
-        return store.add(ItemFixtures.data(ItemFixtures.MILITARY, 1L, effects, null));
+        return store.add(HullItemRows.data(HullItemRows.MILITARY, 1L, effects, null));
     }
 
     private void owns(String commodityId, float quantity) {
@@ -124,8 +124,8 @@ class ItemCraftingTest {
 
     @Test
     void everyRecalibrationChangesAValueSoTheKernelIsNeverWasted() throws Exception {
-        ItemDefinitions.register(new JSONArray().put(ItemFixtures.row("narrow", "bridge", "HULL_MULT:4:5", "ARMOR_PERCENT:1:1")));
-        Item item = store.add(ItemFixtures.data("narrow", 1L,
+        ItemDefinitions.register(new JSONArray().put(HullItemRows.row("narrow", "bridge", "HULL_MULT:4:5", "ARMOR_PERCENT:1:1")));
+        Item item = store.add(HullItemRows.data("narrow", 1L,
                 List.of(new RolledEffect("HULL_MULT", 4f), new RolledEffect("ARMOR_PERCENT", 1f)), null));
 
         for (long seed = 0; seed < 50; seed++) {
@@ -139,11 +139,11 @@ class ItemCraftingTest {
     @Test
     void decimalRangesThatStayBelowOneCanBeRecalibrated() throws Exception {
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.row("decimal", "bridge", "HULL_MULT:0.15:0.25", "ARMOR_PERCENT:0.01:0.03"))
-                .put(ItemFixtures.row("fixed", "bridge", "HULL_MULT:1:1", "ARMOR_PERCENT:2.5:2.5")));
-        Item decimal = store.add(ItemFixtures.data("decimal", 1L,
+                .put(HullItemRows.row("decimal", "bridge", "HULL_MULT:0.15:0.25", "ARMOR_PERCENT:0.01:0.03"))
+                .put(HullItemRows.row("fixed", "bridge", "HULL_MULT:1:1", "ARMOR_PERCENT:2.5:2.5")));
+        Item decimal = store.add(HullItemRows.data("decimal", 1L,
                 List.of(new RolledEffect("HULL_MULT", 0.2f), new RolledEffect("ARMOR_PERCENT", 0.02f)), null));
-        Item fixed = store.add(ItemFixtures.data("fixed", 1L,
+        Item fixed = store.add(HullItemRows.data("fixed", 1L,
                 List.of(new RolledEffect("HULL_MULT", 1f), new RolledEffect("ARMOR_PERCENT", 2.5f)), null));
 
         assertTrue(ItemCrafting.canUse(CraftingCurrency.RECALIBRATION, decimal, definition -> true));
@@ -259,8 +259,8 @@ class ItemCraftingTest {
 
     @Test
     void fixingNeedsAtLeastTwoEffects() throws Exception {
-        ItemDefinitions.register(new JSONArray().put(ItemFixtures.row("single", "bridge", "HULL_MULT:4:6", "")));
-        Item single = store.add(ItemFixtures.data("single", 1L, List.of(new RolledEffect("HULL_MULT", 5f)), null));
+        ItemDefinitions.register(new JSONArray().put(HullItemRows.row("single", "bridge", "HULL_MULT:4:6", "")));
+        Item single = store.add(HullItemRows.data("single", 1L, List.of(new RolledEffect("HULL_MULT", 5f)), null));
 
         assertFalse(ItemCrafting.canUse(CraftingCurrency.FIXATION, single, definition -> true));
     }
@@ -292,7 +292,7 @@ class ItemCraftingTest {
 
     @Test
     void attuningRerollsImplicitValuesWithinTheirRange() throws Exception {
-        ItemDefinitions.register(new JSONArray().put(ItemFixtures.row("plate", "armor_plating", "HULL_MULT:4:6", "")));
+        ItemDefinitions.register(new JSONArray().put(HullItemRows.row("plate", "armor_plating", "HULL_MULT:4:6", "")));
         ItemImplicits.register(new JSONArray().put(new JSONObject().put("section", "armor_plating").put("implicits", "ARMOR_PERCENT:10:20")));
         try {
             Item plate = store.add(ItemDefinitions.get("plate"), 3L);

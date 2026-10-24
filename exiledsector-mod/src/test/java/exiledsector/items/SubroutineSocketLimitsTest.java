@@ -1,7 +1,6 @@
 package exiledsector.items;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledlib.MockSector;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
@@ -13,10 +12,7 @@ import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class SubroutineSocketLimitsTest {
 
@@ -39,16 +33,12 @@ class SubroutineSocketLimitsTest {
     private static final String UNLIMITED_UNIQUE = "zero_limit_unique_sub";
     private static final String HULL_ITEM = "plate";
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private final ShipSkillData shipData = new ShipSkillData();
 
     @BeforeEach
     void setUp() throws Exception {
-        Map<String, Object> persistentData = new HashMap<>();
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
         ItemDefinitions.register(new JSONArray()
                 .put(subroutineRow(VOLUME, SubroutineKind.MODSPEC_CACHE))
                 .put(subroutineRow(BYPASS, SubroutineKind.BYPASS))
@@ -56,7 +46,7 @@ class SubroutineSocketLimitsTest {
                 .put(subroutineRow(UNIQUE, SubroutineKind.UNIQUE).put("unique", "true"))
                 .put(subroutineRow(LIMITED_UNIQUE, SubroutineKind.UNIQUE).put("unique", "true").put(SubroutineDefinitions.SOCKET_LIMIT_COLUMN, "1"))
                 .put(subroutineRow(UNLIMITED_UNIQUE, SubroutineKind.UNIQUE).put("unique", "true").put(SubroutineDefinitions.SOCKET_LIMIT_COLUMN, "0"))
-                .put(ItemFixtures.row(HULL_ITEM, "armor_plating", "HULL_MULT:4:6")));
+                .put(HullItemRows.row(HULL_ITEM, "armor_plating", "HULL_MULT:4:6")));
         SkillType socketType = new SkillType.Builder("socket_type", "Socket", "", SkillTier.SOCKET).build();
         for (String socketId : List.of("socket_1", "socket_2", "socket_3")) {
             SkillNode socket = new SkillNode(socketId, socketType, List.of(), 0f, 0f);
@@ -70,7 +60,7 @@ class SubroutineSocketLimitsTest {
         NpcItems.clearCache();
         ItemDefinitions.clear();
         SkillTree.clearNodes();
-        globalMock.close();
+        mockSector.close();
     }
 
     private static Item owned(String definitionId, long seed) {

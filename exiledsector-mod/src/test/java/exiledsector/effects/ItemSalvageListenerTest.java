@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.util.Misc;
+import exiledlib.MockSector;
 import exiledsector.charts.StarChartLootSource;
 import exiledsector.charts.DropType;
 import exiledsector.loot.LootModifiers;
@@ -26,8 +27,6 @@ import exiledsector.charts.ChartGenContext;
 import exiledsector.charts.ChartObjective;
 import exiledsector.charts.ChartRun;
 import exiledsector.charts.ChartRuns;
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import org.mockito.ArgumentCaptor;
@@ -46,7 +45,6 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
@@ -147,10 +145,7 @@ class ItemSalvageListenerTest {
         StarChartFixtures.registerShipped();
         StarChartCurrency.registerAll();
         ChartDrops.register(new JSONArray().put(new JSONObject().put("source", "system_salvage").put("chance", "1").put("currency_chance", "1")));
-        try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
-            SectorAPI sector = mock(SectorAPI.class);
-            when(sector.getPersistentData()).thenReturn(new HashMap<>());
-            global.when(Global::getSector).thenReturn(sector);
+        try (MockSector mockSector = new MockSector()) {
             ChartRun run = new ChartRun("salvageRun", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
             run.recordContent(new ChartContent(6, "hegemony", ChartObjective.CLEAR, List.of("g1"), "boss", 4, 6));
             run.recordArrival();

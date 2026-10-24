@@ -1,8 +1,7 @@
 package exiledsector.ui.socket;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
+import exiledlib.MockSector;
 import exiledsector.ui.chart.StarChartBrowser;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +26,7 @@ class ModificationBayModeTest {
 
     private final AtomicReference<BenchMode> openedMode = new AtomicReference<>();
     private final AtomicReference<SocketWorkbenchPanel.Listener> benchListener = new AtomicReference<>();
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private MockedStatic<SocketWorkbenchPanel> workbenchMock;
     private MockedStatic<ItemStoragePanel> itemStorageMock;
     private MockedStatic<StarChartStoragePanel> chartStorageMock;
@@ -36,8 +35,7 @@ class ModificationBayModeTest {
 
     @BeforeEach
     void setUp() {
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(mock(SectorAPI.class));
+        mockSector = new MockSector();
         SocketWorkbenchPanel workbench = mock(SocketWorkbenchPanel.class);
         workbenchMock = Mockito.mockStatic(SocketWorkbenchPanel.class, invocation -> {
             if (!"open".equals(invocation.getMethod().getName())) {
@@ -58,7 +56,7 @@ class ModificationBayModeTest {
         chartStorageMock.close();
         itemStorageMock.close();
         workbenchMock.close();
-        globalMock.close();
+        mockSector.close();
     }
 
     @Test

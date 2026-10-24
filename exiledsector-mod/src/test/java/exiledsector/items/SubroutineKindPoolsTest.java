@@ -28,7 +28,7 @@ class SubroutineKindPoolsTest {
                 .put(ItemFixtures.subroutineRow("bypass_chip", SubroutineKind.BYPASS))
                 .put(ItemFixtures.subroutineRow("relic", SubroutineKind.UNIQUE).put("unique", "true").put("lines", "HULL_MULT:5:5")
                         .put("source", "faction:pirates"))
-                .put(ItemFixtures.row("plate", "armor_plating", "HULL_MULT:4:6")));
+                .put(HullItemRows.row("plate", "armor_plating", "HULL_MULT:4:6")));
         ItemDrops.register(new JSONArray().put(new JSONObject().put("site", "derelict").put("chances", "1;1;1").put("uniqueChance", "0")));
     }
 

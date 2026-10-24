@@ -44,7 +44,7 @@ class SaveFixtureTest {
     void setUp() throws Exception {
         ItemFixtures.registerShippedItems();
         StarChartFixtures.registerShipped();
-        WormholeAnchorDefinitions.register(ItemFixtures.shippedRows(WormholeAnchorDefinitions.DATA_PATH));
+        WormholeAnchorDefinitions.register(HullItemRows.shippedRows(WormholeAnchorDefinitions.DATA_PATH));
     }
 
     @AfterEach

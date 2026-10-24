@@ -5,20 +5,18 @@ import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledlib.MockSector;
 import exiledlib.skills.skilleffect.fighter.FighterSkillEffect;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Answers;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 import second_in_command.SCUtils;
 
 import java.util.List;
@@ -32,7 +30,7 @@ import static org.mockito.Mockito.when;
 
 class SecondInCommandCompatTest {
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private ModManagerAPI modManager;
     private SettingsAPI settings;
     private FleetMemberAPI member;
@@ -44,19 +42,15 @@ class SecondInCommandCompatTest {
         when(settings.getModManager()).thenReturn(modManager);
         when(settings.getScriptClassLoader()).thenReturn(getClass().getClassLoader());
 
-        CampaignFleetAPI playerFleet = mock(CampaignFleetAPI.class);
+        mockSector = new MockSector();
+        CampaignFleetAPI playerFleet = mockSector.playerFleet();
         FleetDataAPI fleetData = mock(FleetDataAPI.class);
         member = mock(FleetMemberAPI.class);
         when(member.getFleetData()).thenReturn(fleetData);
         when(fleetData.getFleet()).thenReturn(playerFleet);
         when(playerFleet.getFleetData()).thenReturn(fleetData);
         when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPlayerFleet()).thenReturn(playerFleet);
-
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
         SCUtils.ACTIVE_SKILLS.clear();
         SCUtils.failure = null;
         SecondInCommandCompat.clearCachedLookups();
@@ -64,7 +58,7 @@ class SecondInCommandCompatTest {
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         SCUtils.ACTIVE_SKILLS.clear();
         SCUtils.failure = null;
         SecondInCommandCompat.clearCachedLookups();

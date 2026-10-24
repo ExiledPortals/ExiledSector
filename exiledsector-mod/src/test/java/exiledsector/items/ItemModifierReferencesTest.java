@@ -24,16 +24,16 @@ class ItemModifierReferencesTest {
 
     @BeforeEach
     void register() throws Exception {
-        ItemFixtures.registerModifierNames(
+        HullItemRows.registerModifierNames(
                 "TOP_SPEED_PERCENT,prefix,TOP_SPEED_PERCENT:-10:-5,Hasty",
                 "TOP_SPEED_PERCENT_ENGINE_ROOM,prefix,TOP_SPEED_PERCENT:5:15,Swift",
                 "FUEL_USE_MULT_ENGINE_ROOM,suffix,FUEL_USE_MULT:-15:-10,Economy",
                 "TOP_SPEED_PERCENT_IMPLICIT,implicit,TOP_SPEED_PERCENT:5:10,",
                 "HYBRID_FLUX_CAPACITY_FLUX_DISSIPATION,implicit,FLUX_CAPACITY_PERCENT:5:10; FLUX_DISSIPATION_PERCENT:5:10,");
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.row(DRIVE, "engine_room", "@TOP_SPEED_PERCENT_ENGINE_ROOM:3", "@FUEL_USE_MULT_ENGINE_ROOM")
+                .put(HullItemRows.row(DRIVE, "engine_room", "@TOP_SPEED_PERCENT_ENGINE_ROOM:3", "@FUEL_USE_MULT_ENGINE_ROOM")
                         .put("name", "Drive"))
-                .put(ItemFixtures.row("emitter", "shield_generator", "@TOP_SPEED_PERCENT_ENGINE_ROOM", "").put("name", "Emitter")));
+                .put(HullItemRows.row("emitter", "shield_generator", "@TOP_SPEED_PERCENT_ENGINE_ROOM", "").put("name", "Emitter")));
         ItemImplicits.register(new JSONArray()
                 .put(new JSONObject().put("section", "engine_room").put("implicits", "@TOP_SPEED_PERCENT_IMPLICIT"))
                 .put(new JSONObject().put("section", "shield_generator").put("implicits", "@HYBRID_FLUX_CAPACITY_FLUX_DISSIPATION")));
@@ -67,7 +67,7 @@ class ItemModifierReferencesTest {
 
     @Test
     void aReferenceToAMissingModifierOrTheWrongSlotIsSkipped() throws Exception {
-        ItemDefinitions.register(new JSONArray().put(ItemFixtures.row("broken", "engine_room",
+        ItemDefinitions.register(new JSONArray().put(HullItemRows.row("broken", "engine_room",
                 "@NO_SUCH_MODIFIER; @FUEL_USE_MULT_ENGINE_ROOM; @TOP_SPEED_PERCENT_ENGINE_ROOM", "")));
 
         assertEquals(List.of("TOP_SPEED_PERCENT_ENGINE_ROOM"),
@@ -77,10 +77,10 @@ class ItemModifierReferencesTest {
     @Test
     void aPoolEntryForAModifierScopedToAnotherItemTypeIsSkipped() throws Exception {
         ItemModifiers.register(new JSONArray()
-                .put(ItemFixtures.modifierRow("VENT_RATE_PERCENT", "prefix", "star_chart", "VENT_RATE_PERCENT:1:2", "Venting"))
-                .put(ItemFixtures.modifierRow("HULL_MULT", "prefix", "hull_item", "HULL_MULT:4:6", "Reinforced")));
+                .put(HullItemRows.modifierRow("VENT_RATE_PERCENT", "prefix", "star_chart", "VENT_RATE_PERCENT:1:2", "Venting"))
+                .put(HullItemRows.modifierRow("HULL_MULT", "prefix", "hull_item", "HULL_MULT:4:6", "Reinforced")));
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.row("chip", "bridge", "@VENT_RATE_PERCENT; @HULL_MULT")));
+                .put(HullItemRows.row("chip", "bridge", "@VENT_RATE_PERCENT; @HULL_MULT")));
 
         assertEquals(List.of("HULL_MULT"), ItemDefinitions.get("chip").prefixes().stream().map(entry -> entry.modifier().id()).toList());
     }
@@ -88,8 +88,8 @@ class ItemModifierReferencesTest {
     @Test
     void aModifierWithoutItemTypesIsSkipped() throws Exception {
         ItemModifiers.register(new JSONArray()
-                .put(ItemFixtures.modifierRow("HULL_MULT", "prefix", "", "HULL_MULT:4:6", "Reinforced"))
-                .put(ItemFixtures.modifierRow("ARMOR_PERCENT", "suffix", "hull_item", "ARMOR_PERCENT:1:2", "Plating")));
+                .put(HullItemRows.modifierRow("HULL_MULT", "prefix", "", "HULL_MULT:4:6", "Reinforced"))
+                .put(HullItemRows.modifierRow("ARMOR_PERCENT", "suffix", "hull_item", "ARMOR_PERCENT:1:2", "Plating")));
 
         assertNull(ItemModifiers.get("HULL_MULT"));
         assertEquals(java.util.Set.of(ItemType.HULL_ITEM), ItemModifiers.itemTypes("ARMOR_PERCENT"));
@@ -231,10 +231,10 @@ class ItemModifierReferencesTest {
     @Test
     void theCatalogueSkipsBrokenRowsAndKeepsTheRest() throws Exception {
         ItemModifiers.register(new JSONArray()
-                .put(ItemFixtures.modifierRow("HULL_MULT", "prefix", "HULL_MULT:4:6", "Reinforced"))
-                .put(ItemFixtures.modifierRow("HULL_MULT", "suffix", "HULL_MULT:1:2", "Again"))
-                .put(ItemFixtures.modifierRow("NOT_REAL", "prefix", "NOT_REAL:1:2", "Nope"))
-                .put(ItemFixtures.modifierRow("ARMOR_PERCENT", "sideways", "ARMOR_PERCENT:1:2", "Plated")));
+                .put(HullItemRows.modifierRow("HULL_MULT", "prefix", "HULL_MULT:4:6", "Reinforced"))
+                .put(HullItemRows.modifierRow("HULL_MULT", "suffix", "HULL_MULT:1:2", "Again"))
+                .put(HullItemRows.modifierRow("NOT_REAL", "prefix", "NOT_REAL:1:2", "Nope"))
+                .put(HullItemRows.modifierRow("ARMOR_PERCENT", "sideways", "ARMOR_PERCENT:1:2", "Plated")));
 
         assertEquals(List.of("HULL_MULT"), ItemModifiers.all().stream().map(Modifier::id).toList());
         assertEquals(ModifierSlot.PREFIX, ItemModifiers.get("HULL_MULT").slot());

@@ -4,7 +4,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -15,14 +14,13 @@ import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import com.fs.starfarer.api.fleet.RepairTrackerAPI;
 import com.fs.starfarer.api.impl.hullmods.PhaseField;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledlib.MockSector;
 import exiledlib.skills.skilleffect.logistics.FleetWideEffects;
 import exiledlib.skills.skilleffect.logistics.LogisticsSkillEffect;
 import exiledsector.effects.SkillTreeHullMod;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.List;
 
@@ -38,19 +36,18 @@ import static org.mockito.Mockito.when;
 
 class FleetWideEffectsTest {
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private CampaignFleetAPI playerFleet;
     private StatBonus detectedRange;
     private FleetDataAPI fleetData;
 
     @BeforeEach
     void setUp() {
-        SectorAPI sector = mock(SectorAPI.class);
-        playerFleet = mock(CampaignFleetAPI.class);
+        mockSector = new MockSector();
+        playerFleet = mockSector.playerFleet();
         MutableFleetStatsAPI fleetStats = mock(MutableFleetStatsAPI.class);
         detectedRange = mock(StatBonus.class);
         fleetData = mock(FleetDataAPI.class);
-        when(sector.getPlayerFleet()).thenReturn(playerFleet);
         when(playerFleet.getStats()).thenReturn(fleetStats);
         when(playerFleet.getFleetData()).thenReturn(fleetData);
         when(playerFleet.isPlayerFleet()).thenReturn(true);
@@ -58,11 +55,9 @@ class FleetWideEffectsTest {
         when(fleetStats.getDetectedRangeMod()).thenReturn(detectedRange);
         when(fleetStats.getSensorStrengthMod()).thenReturn(new com.fs.starfarer.api.combat.StatBonus());
         when(fleetData.getMembersListCopy()).thenReturn(List.of());
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
         SettingsAPI settings = mock(SettingsAPI.class);
         when(settings.getInt("maxSensorShips")).thenReturn(6);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
 
         FleetWideEffects.markPhaseFieldStale();
         FleetWideEffects.recomputeExtendedPhaseFieldIfStale();
@@ -71,7 +66,7 @@ class FleetWideEffectsTest {
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
     }
 
     @Test

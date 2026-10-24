@@ -7,7 +7,6 @@ import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
@@ -22,6 +21,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.VariantSource;
+import exiledlib.MockSector;
 import exiledsector.ExiledSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.items.NpcItems;
@@ -73,12 +73,11 @@ import static org.mockito.Mockito.when;
 
 class NpcFleetLevellerTest {
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private MockedStatic<LunaSettings> lunaSettingsMock;
     private MutableCharacterStatsAPI playerStats;
     private CampaignFleetAPI playerFleet;
     private LocationAPI location;
-    private final Map<String, Object> persistentData = new HashMap<>();
 
     @BeforeEach
     void setUp() {
@@ -93,23 +92,19 @@ class NpcFleetLevellerTest {
         playerStats = mock(MutableCharacterStatsAPI.class);
         when(playerStats.getLevel()).thenReturn(15);
         location = mock(LocationAPI.class);
-        playerFleet = mock(CampaignFleetAPI.class);
+        mockSector = new MockSector();
+        playerFleet = mockSector.playerFleet();
         when(playerFleet.getContainingLocation()).thenReturn(location);
         when(playerFleet.getLocation()).thenReturn(new Vector2f(0f, 0f));
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPlayerStats()).thenReturn(playerStats);
-        when(sector.getSeedString()).thenReturn("SEED-1");
-        when(sector.getPlayerFleet()).thenReturn(playerFleet);
-        when(sector.getPersistentData()).thenReturn(persistentData);
+        when(mockSector.sector.getPlayerStats()).thenReturn(playerStats);
+        when(mockSector.sector.getSeedString()).thenReturn("SEED-1");
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class, invocation -> null);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
     }
 
     @AfterEach
     void tearDown() {
         lunaSettingsMock.close();
-        globalMock.close();
+        mockSector.close();
         NpcFactionVolumes.clear();
         SkillDataResolver.clearCache();
         SkillTree.clearNodes();
@@ -219,7 +214,7 @@ class NpcFleetLevellerTest {
         HullModSpecAPI heavyArmor = mock(HullModSpecAPI.class);
         when(heavyArmor.getCostFor(HullSize.DESTROYER)).thenReturn(10);
         when(settings.getHullModSpec("heavyarmor")).thenReturn(heavyArmor);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
         Set<String> hullMods = new LinkedHashSet<>(List.of("heavyarmor"));
         FleetMemberAPI officered = member("m1", statefulVariant(hullMods, new ArrayList<>()), true);
 

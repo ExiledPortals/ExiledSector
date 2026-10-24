@@ -1,6 +1,5 @@
 package exiledsector.charts;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
@@ -8,6 +7,7 @@ import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import exiledlib.MockSector;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
@@ -18,11 +18,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,7 +34,7 @@ import static org.mockito.Mockito.when;
 
 class ChartOpenFromChartTest {
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private SectorAPI sector;
     private ItemStore store;
     private Item firstChart;
@@ -47,17 +43,13 @@ class ChartOpenFromChartTest {
     @BeforeEach
     void setUp() throws Exception {
         StarChartFixtures.registerShipped();
-        Map<String, Object> persistentData = new HashMap<>();
-        sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
+        sector = mockSector.sector;
         LocationAPI hyperspace = mock(LocationAPI.class);
         StarSystemAPI system = mock(StarSystemAPI.class);
-        CampaignFleetAPI playerFleet = mock(CampaignFleetAPI.class);
+        CampaignFleetAPI playerFleet = mockSector.playerFleet();
         when(hyperspace.isHyperspace()).thenReturn(true);
         when(sector.getHyperspace()).thenReturn(hyperspace);
-        when(sector.getPlayerFleet()).thenReturn(playerFleet);
         when(sector.createStarSystem(anyString())).thenReturn(system);
         when(system.getLocation()).thenReturn(new Vector2f());
         when(system.getMemoryWithoutUpdate()).thenReturn(mock(MemoryAPI.class));
@@ -76,7 +68,7 @@ class ChartOpenFromChartTest {
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         ChartLayoutGenerator.resetForTests();
         ChartContentGenerator.resetForTests();
         StarChartFixtures.clear();

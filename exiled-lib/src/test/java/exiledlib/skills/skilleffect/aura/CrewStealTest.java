@@ -1,9 +1,6 @@
 package exiledlib.skills.skilleffect.aura;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.CargoAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.CollisionGridAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
@@ -11,13 +8,12 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledlib.MockSector;
 import exiledlib.skills.skilleffect.logistics.FleetCrewLedger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +34,7 @@ class CrewStealTest {
     private static final int NEUTRAL = 100;
 
     private final List<Object> gridShips = new ArrayList<>();
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private CombatEngineAPI engine;
 
     @BeforeEach
@@ -49,22 +45,16 @@ class CrewStealTest {
         CollisionGridAPI shipGrid = mock(CollisionGridAPI.class);
         when(engine.getShipGrid()).thenReturn(shipGrid);
         when(shipGrid.getCheckIterator(any(), anyFloat(), anyFloat())).thenAnswer(invocation -> new ArrayList<>(gridShips).iterator());
-        CargoAPI cargo = mock(CargoAPI.class);
-        when(cargo.getCrew()).thenReturn(2);
-        CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
-        when(fleet.getCargo()).thenReturn(cargo);
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPlayerFleet()).thenReturn(fleet);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
+        when(mockSector.cargo().getCrew()).thenReturn(2);
+        mockSector.global.when(Global::getCombatEngine).thenReturn(engine);
         FleetCrewLedger.drain();
     }
 
     @AfterEach
     void tearDown() {
         FleetCrewLedger.drain();
-        globalMock.close();
+        mockSector.close();
     }
 
     private static ShipAPI ship(float x, int owner) {
