@@ -12,6 +12,7 @@ import exiledlib.skills.ShipFacts;
 import exiledlib.skills.SkillTypeEffect;
 import exiledlib.skills.skilleffect.SkillEffect;
 import exiledlib.skills.skilleffect.hullmodule.ModuleBoost;
+import exiledsector.persistence.ShipRecords;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.InstalledHullMods;
 
@@ -80,7 +81,7 @@ final class ModuleTreeShare implements AdvanceableListener {
         String modIdPrefix = MOD_ID_PREFIX + parentShip.getId() + "_";
         for (ShipAPI module : modules) {
             if (module.isAlive() && !module.isHulk() && module.getVariant() != null && module.getHullSpec() != null) {
-                Map<SkillEffect, Float> totals = share > 0f
+                Map<SkillEffect, Float> totals = share > 0f && ShipRecords.taggedTree(module.getVariant()) == null
                         ? sharedTotals(parentNodeEffects, affinityBonusRatios, parentHullSize, module.getVariant(), share) : Map.of();
                 ModuleBoost.boost(parentShip, module, totals, modIdPrefix);
             }

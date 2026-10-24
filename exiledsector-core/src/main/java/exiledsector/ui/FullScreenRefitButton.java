@@ -51,13 +51,17 @@ public abstract class FullScreenRefitButton extends BaseRefitButton {
         return iconPath();
     }
 
+    protected boolean opensOnModuleTab(FleetMemberAPI member, ShipVariantAPI variant) {
+        return false;
+    }
+
     @Override
     public boolean shouldShow(FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
-        return !RefitButtonConfig.buttonUnderHullMods() && enabled() && !RefitModuleTabs.isModuleTab(member);
+        return !RefitButtonConfig.buttonUnderHullMods() && enabled() && hasPanel(member, variant, market);
     }
 
     @Override
     public boolean hasPanel(FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
-        return !RefitModuleTabs.isModuleTab(member);
+        return !RefitModuleTabs.isModuleTab(member) || opensOnModuleTab(member, variant);
     }
 }

@@ -10,6 +10,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.ui.refit.RefitButtonColumn;
 import exiledsector.ui.refit.RefitButtonConfig;
+import exiledsector.ui.refit.RefitModuleTabs;
 import lunalib.backend.ui.refit.RefitPanelBackgroundPlugin;
 import lunalib.lunaRefit.LunaRefitManager;
 import org.lwjgl.input.Keyboard;
@@ -53,7 +54,13 @@ public class SkillTreeRefitButton extends FullScreenRefitButton {
     }
 
     @Override
+    protected boolean opensOnModuleTab(FleetMemberAPI member, ShipVariantAPI variant) {
+        return RefitModuleTabs.showsDockedShip(member, variant);
+    }
+
+    @Override
     public void initPanel(CustomPanelAPI backgroundPanel, FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
+        RefitModuleTabs.adoptDockedShip(member, variant);
         float panelWidth = getPanelWidth(member, variant);
         float panelHeight = getPanelHeight(member, variant);
 

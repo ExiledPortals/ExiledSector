@@ -36,8 +36,8 @@ public final class SkillDataResolver {
     }
 
     public static boolean borrowsShipTree(FleetMemberAPI member, ShipVariantAPI variant) {
-        return member != null && member.getFleetData() == null && NpcTreeTag.find(variant) == null
-                && ShipSkillDataManager.find(member.getId()) == null && ShipRecords.taggedTree(variant) != null;
+        return member != null && NpcTreeTag.find(variant) == null && ShipSkillDataManager.find(member.getId()) == null
+                && ShipRecords.taggedTree(variant) != null && ShipRecords.isOutsideFleet(member);
     }
 
     public static boolean isNpcTree(ShipVariantAPI variant) {

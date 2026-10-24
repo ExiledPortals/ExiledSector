@@ -3,7 +3,11 @@ package exiledsector.ui;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.persistence.ShipRecords;
+import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.ShipSkillData;
 import lunalib.lunaRefit.BaseRefitButton;
 import lunalib.lunaRefit.LunaRefitManager;
 import org.junit.jupiter.api.AfterEach;
@@ -57,6 +61,23 @@ class SkillTreeRefitButtonTest {
 
         assertTrue(button.hasPanel(parent, null, null));
         assertFalse(button.hasPanel(module, null, null));
+    }
+
+    @Test
+    void opensOnTheModuleTabOfAShipDockedWithATreeOfItsOwn() {
+        FleetMemberAPI parent = mock(FleetMemberAPI.class);
+        FleetMemberAPI module = mock(FleetMemberAPI.class);
+        FleetDataAPI fleetData = mock(FleetDataAPI.class);
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(parent));
+        when(module.getFleetData()).thenReturn(fleetData);
+        ShipVariantAPI dockedVariant = mock(ShipVariantAPI.class);
+        when(dockedVariant.getTags()).thenReturn(List.of(ShipRecords.SHIP_TAG_PREFIX + "docked-core"));
+
+        try (MockedStatic<ShipSkillDataManager> records = Mockito.mockStatic(ShipSkillDataManager.class)) {
+            records.when(() -> ShipSkillDataManager.find("docked-core")).thenReturn(new ShipSkillData());
+
+            assertTrue(button.hasPanel(module, dockedVariant, null));
+        }
     }
 
     @Test

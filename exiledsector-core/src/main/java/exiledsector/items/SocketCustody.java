@@ -7,12 +7,14 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import exiledlib.PlayerFleet;
 import exiledsector.domain.DomainContributions;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.persistence.SaveData;
+import exiledsector.persistence.ShipRecords;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 
@@ -200,6 +202,7 @@ public final class SocketCustody {
                 }
             }
         }
+        addDockedShips(ownedShipsById);
         return ownedShipsById;
     }
 
@@ -210,6 +213,21 @@ public final class SocketCustody {
             CargoAPI storageCargo = isStorage ? submarket.getCargoNullOk() : null;
             if (storageCargo != null && storageCargo.getMothballedShips() != null) {
                 storageCargo.getMothballedShips().getMembersListCopy().forEach(member -> ownedShipsById.put(member.getId(), member));
+            }
+        }
+    }
+
+    static void addDockedShips(Map<String, FleetMemberAPI> ownedShipsById) {
+        for (FleetMemberAPI owner : List.copyOf(ownedShipsById.values())) {
+            ShipVariantAPI variant = owner.getVariant();
+            if (variant == null || variant.getModuleSlots() == null) {
+                continue;
+            }
+            for (String slotId : variant.getModuleSlots()) {
+                String dockedShipId = ShipRecords.taggedShipId(variant.getModuleVariant(slotId));
+                if (dockedShipId != null) {
+                    ownedShipsById.putIfAbsent(dockedShipId, owner);
+                }
             }
         }
     }

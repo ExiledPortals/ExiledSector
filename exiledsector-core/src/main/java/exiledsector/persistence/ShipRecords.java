@@ -1,5 +1,6 @@
 package exiledsector.persistence;
 
+import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.ExiledSector;
@@ -31,8 +32,8 @@ public final class ShipRecords {
         if (saved != null) {
             return saved;
         }
-        ShipSkillData borrowed = member.getFleetData() == null ? taggedTree(variant) : null;
-        return borrowed != null ? borrowed : EMPTY_RECORDS.computeIfAbsent(member, ignored -> new ShipSkillData());
+        ShipSkillData tagged = taggedTree(variant);
+        return tagged != null && isOutsideFleet(member) ? tagged : EMPTY_RECORDS.computeIfAbsent(member, ignored -> new ShipSkillData());
     }
 
     public static ShipSkillData taggedTree(ShipVariantAPI variant) {
@@ -40,7 +41,12 @@ public final class ShipRecords {
         return shipId == null ? null : ShipSkillDataManager.find(shipId);
     }
 
-    static String taggedShipId(ShipVariantAPI variant) {
+    public static boolean isOutsideFleet(FleetMemberAPI member) {
+        FleetDataAPI fleetData = member.getFleetData();
+        return fleetData == null || !fleetData.getMembersListCopy().contains(member);
+    }
+
+    public static String taggedShipId(ShipVariantAPI variant) {
         if (variant == null) {
             return null;
         }

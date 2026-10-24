@@ -67,6 +67,9 @@ the `MODULE_*` effects at full strength.
 `ModuleBoost` applies both, then rescales the module's maximum hull, armor cells, shield arc (up to 360) and
 each weapon's maximum ammo once; cells above their maximum are clamped first so armor carried from an earlier
 engagement isn't raised again.
+A ship docked into another's module slot (Arma Armatura's core units) keeps its own tree through the ship tag its variant carries:
+`ShipRecords.resolve` lends it to any member outside its fleet's list, refit module tabs included, it gets no share of the
+parent's tree, and `SocketCustody.addDockedShips` counts it as owned so its items stay socketed.
 
 ## Ballistic counts as energy
 
