@@ -138,6 +138,9 @@ public final class SkillTreeLoader {
         if (starArray == null) return stars;
         for (int i = 0; i < starArray.length(); i++) {
             JSONObject starJson = starArray.getJSONObject(i);
+            String overlayPath = starJson.optString("overlayPath", null);
+            Star.Overlay overlay = overlayPath == null || overlayPath.isEmpty() ? null
+                    : new Star.Overlay(overlayPath, (float) starJson.optDouble("overlaySize", 1.0), (float) starJson.optDouble("overlayAlpha", 1.0));
             stars.add(new Star(
                     starJson.getString("id"),
                     (float) starJson.getDouble("x"),
@@ -145,6 +148,7 @@ public final class SkillTreeLoader {
                     (float) starJson.getDouble("radius"),
                     starJson.optString("starType", "star_yellow"),
                     starJson.optString("color", null),
+                    overlay,
                     SkillTypeLoader.parseStringArray(starJson.optJSONArray("tags"))));
         }
         return stars;

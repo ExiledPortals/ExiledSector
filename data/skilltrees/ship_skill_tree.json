@@ -11169,6 +11169,9 @@
 			"radius": 400,
 			"starType": "star_orange",
 			"color": "#f08a3c",
+			"overlayPath": "graphics/fx/tania_logo.png",
+			"overlaySize": 0.95,
+			"overlayAlpha": 0.45,
 			"tags": [
 				"tania"
 			]

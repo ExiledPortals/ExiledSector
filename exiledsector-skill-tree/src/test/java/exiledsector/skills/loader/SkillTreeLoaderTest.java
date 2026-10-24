@@ -229,6 +229,19 @@ class SkillTreeLoaderTest {
     }
 
     @Test
+    void parsesAStarsOverlayAndLeavesStarsWithoutOneBare() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [], \"stars\": ["
+                + "{ \"id\": \"crest_star\", \"x\": 0, \"y\": 100, \"radius\": 400, \"overlayPath\": \"graphics/fx/crest.png\","
+                + "\"overlaySize\": 0.9, \"overlayAlpha\": 0.4 },"
+                + "{ \"id\": \"plain_star\", \"x\": 0, \"y\": 0, \"radius\": 200 } ] }");
+
+        List<Star> stars = SkillTreeLoader.parseStars(root);
+
+        assertEquals(new Star.Overlay("graphics/fx/crest.png", 0.9f, 0.4f), stars.get(0).getOverlay());
+        assertNull(stars.get(1).getOverlay());
+    }
+
+    @Test
     void rotationDefaultsToZeroWhenFieldMissing() throws Exception {
         JSONObject root = new JSONObject("{ \"nodes\": [], \"staticImages\": [ {"
                 + "\"id\": \"image_1\","

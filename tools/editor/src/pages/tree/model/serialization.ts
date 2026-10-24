@@ -72,6 +72,9 @@ function normalizeStars(stars: Partial<Star>[] | undefined): Star[] {
     radius: star.radius ?? 0,
     starType: star.starType || 'star_yellow',
     color: star.color || null,
+    overlayPath: star.overlayPath || undefined,
+    overlaySize: star.overlaySize,
+    overlayAlpha: star.overlayAlpha,
     tags: star.tags ? star.tags.slice() : undefined,
   }));
 }
@@ -292,6 +295,15 @@ function serializeStar(star: Star): Record<string, unknown> {
   const out: Record<string, unknown> = { id: star.id, x: star.x, y: star.y, radius: star.radius, starType: star.starType || 'star_yellow' };
   if (star.color) {
     out.color = star.color;
+  }
+  if (star.overlayPath) {
+    out.overlayPath = star.overlayPath;
+    if (star.overlaySize !== undefined) {
+      out.overlaySize = star.overlaySize;
+    }
+    if (star.overlayAlpha !== undefined) {
+      out.overlayAlpha = star.overlayAlpha;
+    }
   }
   if (star.tags?.length) {
     out.tags = star.tags;

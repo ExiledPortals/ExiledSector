@@ -80,4 +80,18 @@ describe('threat unit serialisation', () => {
     expect(serializedTree({ nodes, threatUnits: [] })).not.toHaveProperty('threatUnits');
     expect(parseTreeDocument(typesText, JSON.stringify({ nodes })).threatUnits).toEqual([]);
   });
+
+  it('keeps a star overlay after the colour and leaves it out of stars without one', () => {
+    const out = serializedTree({
+      nodes,
+      stars: [
+        { id: 'crest_star', x: 0, y: 0, radius: 400, starType: 'star_orange', color: '#f08a3c', overlayPath: 'graphics/fx/crest.png', overlaySize: 0.95, overlayAlpha: 0.45, tags: ['tania'] },
+        { id: 'plain_star', x: 1, y: 1, radius: 200, starType: 'star_yellow' },
+      ],
+    });
+    const stars = out.stars as Record<string, unknown>[];
+    expect(Object.keys(stars[0])).toEqual(['id', 'x', 'y', 'radius', 'starType', 'color', 'overlayPath', 'overlaySize', 'overlayAlpha', 'tags']);
+    expect(stars[0].overlayAlpha).toBe(0.45);
+    expect(stars[1]).toEqual({ id: 'plain_star', x: 1, y: 1, radius: 200, starType: 'star_yellow' });
+  });
 });
