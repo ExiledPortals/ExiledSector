@@ -1,6 +1,6 @@
 # Code review 2026-10-23: plan
 
-Status: review done; skill tree bugs 1-16 and hull upgrades bugs 17-18 and Star Charts bugs 20-23 and core bugs 24 and 26-30 fixed on parallel-work, 19 not needed, 25, 31 and 32 won't do, the rest open. Seven read-only reviewers covered one module each (skill tree split into logic and UI) plus one for cross-module duplication. Each finding was re-read by its reviewer; CONFIRMED means the code was re-checked and the failure follows, PLAUSIBLE means it depends on engine behaviour or data that wasn't verified. Findings marked (checked) were also re-checked in the main session.
+Status: review done; skill tree bugs 1-16 and hull upgrades bugs 17-18 and Star Charts bugs 20-23 and core bugs 24 and 26-30 and Exiled Lib bugs 33, 35, 36 and 40 fixed on parallel-work, 19 not needed, 25, 31 and 32 won't do, the rest open. Seven read-only reviewers covered one module each (skill tree split into logic and UI) plus one for cross-module duplication. Each finding was re-read by its reviewer; CONFIRMED means the code was re-checked and the failure follows, PLAUSIBLE means it depends on engine behaviour or data that wasn't verified. Findings marked (checked) were also re-checked in the main session.
 
 Paths are relative to each module's `src/main/java/exiledsector/` (or `exiledlib/` for Exiled Lib) unless given in full.
 
@@ -67,7 +67,7 @@ All PLAUSIBLE as FPS costs (not measured), CONFIRMED as code paths.
 37. CONFIRMED formula, engine use assumed. `StatTarget` per-weapon max ammo is `(int)(base*(1+pct)*mult) + flat` and regen `(base+flat)*(1+pct)*mult`, while `StatBonus`/`MutableStat` compute `(base*(1+pct)+flat)*mult`. Spec 10, +5 flat, x2 gives 25 instead of 30.
 38. PLAUSIBLE edge. At a pooled -100% MULT, `fighter/FighterSkillEffect` divides by zero on both replacement-rate stats and `StatMode.MULT.inverse` returns Infinity for the compensated non-beam energy damage and range (beam stats become NaN).
 39. PLAUSIBLE, unreachable today. `SkillEffectSupport` d-mod copies: the early return when logistics and non-logistics compound to equal values leaves an earlier call's copies in place. Run the copy pass with `copyEffect = 0` instead.
-40. CONFIRMED, minor. `shield/SharedShieldDamageListener` caps sharing at 90% but `SHIELD_DAMAGE_SHARED_PERCENT` prints the raw value; node plus the "Linked" modifier can pass 90.
+40. FIXED (parallel-work): the tooltip shows the capped value. CONFIRMED, minor. `shield/SharedShieldDamageListener` caps sharing at 90% but `SHIELD_DAMAGE_SHARED_PERCENT` prints the raw value; node plus the "Linked" modifier can pass 90.
 41. CONFIRMED, low. Hot-path allocations: `FighterWingAPI.getWingMembers()` copies a list on every fighter hit (`WingNumbersDamageListener`, `WingSharedFateListener`); `SecondInCommandCompat.fleetFor` copies the player fleet list on every `WaivedPenalty.apply` (O(n^2) per sync with SiC); `SeraphsGraceListener` builds three `List.of` per stack change.
 
 ## Abstractions
@@ -124,14 +124,14 @@ Highest payoff first. Line counts are the reviewers' estimates.
 
 ## Build order
 
-1. [ ] Bugs 1, 2, 4, 17, 20, 21, 22, 40 (small, confirmed or strong), and 33 with abstraction 21. 33 with abstraction 21 done.
+1. [x] Bugs 1, 2, 4, 17, 20, 21, 22, 40 (small, confirmed or strong), and 33 with abstraction 21 (parallel-work).
 2. [x] Bugs 3 with abstraction 16, bug 5 with abstraction 17.
-3. [ ] Bugs 18, 19, 24, 31, and decide 26.
+3. [x] Bugs 18, 24 and 26 fixed, 19 not needed, 31 won't do (parallel-work).
 4. [x] Abstraction 1 (console base) with test suite item 2 (a8bc9e5e).
 5. [x] Abstractions 5 and 13 (domain hooks and switches) (parallel-work).
 6. [x] Abstraction 4 after the bench edits land, then 2 and 11 (96fddeed, parallel-work).
 7. [x] Abstractions 6, 7, 8 (data parsing) (25af106c, d879ee14, parallel-work).
 8. [x] Refuted: moving `Seeds` and `SpecLocalisation` to core (abstraction 3). Both are generic (a seeded `Random`; spec localisation for any host's hull mods and industries through lib's `Translation`), so they stay in lib.
-9. [ ] Skill tree UI cost: bugs 10-16 with abstraction 12; measure before and after. Bugs 10-16 done (10-15 in bac5457a, 16 in parallel-work); abstraction 12 done for the ring, ghost and ghost flight sprites; not yet measured in game.
+9. [x] Skill tree UI cost: bugs 10-16 with abstraction 12. Bugs 10-16 done (10-15 in bac5457a, 16 in parallel-work); abstraction 12 done for the ring, ghost and ghost flight sprites; marked complete by the owner without an in-game measurement.
 10. [ ] Exiled Lib: bugs 34-39 and 41 with abstractions 22-25. Abstractions 22-25 done with bugs 35 and 36; bugs 34, 37-39 and 41 open (41's Seraph's Grace lists are gone with abstraction 22).
 11. [ ] The remaining abstractions and test suite items. Done: 9, 10, 14, 15, 18 (partly), 19, 21, 26 (partly). 16 and 17 done as cleanup. Open: the test suite items.

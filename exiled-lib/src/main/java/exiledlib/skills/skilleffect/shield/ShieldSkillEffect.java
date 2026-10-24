@@ -113,7 +113,8 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
             SharedShieldDamageListener.class, SharedShieldDamageListener::new) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", magnitude).arg("range", Math.round(SharedShieldDamageListener.RANGE)).styled();
+            return EffectText.msg(this).arg("value", Math.min(magnitude, SharedShieldDamageListener.MAX_SHARED_PERCENT))
+                    .arg("range", Math.round(SharedShieldDamageListener.RANGE)).styled();
         }
     },
     SHIELD_ABSORB_RATE_OF_FIRE_PERCENT(AbsorbReserveListener.RATE_OF_FIRE_PERCENT_KEY,

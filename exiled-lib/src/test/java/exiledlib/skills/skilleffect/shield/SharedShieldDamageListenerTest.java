@@ -135,6 +135,12 @@ class SharedShieldDamageListenerTest {
     }
 
     @Test
+    void theTooltipShowsTheCappedShare() {
+        assertEquals(ShieldSkillEffect.SHIELD_DAMAGE_SHARED_PERCENT.description(SharedShieldDamageListener.MAX_SHARED_PERCENT).plain(),
+                ShieldSkillEffect.SHIELD_DAMAGE_SHARED_PERCENT.description(120f).plain());
+    }
+
+    @Test
     void sharedFateNeverSendsFluxIntoItsOwnModulesOrItsParentsOtherModules() {
         ShipAPI defender = ship(SHARED_PERCENT_KEY, 20f);
         ShipAPI ownModule = shipAt(100f, 0);

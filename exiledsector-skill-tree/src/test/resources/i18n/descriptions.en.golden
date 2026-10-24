@@ -1867,7 +1867,7 @@ effect|SHIELD_ARC_PERCENT|-12.5	0	<bad>12.5%</bad> reduced shield arc.
 effect|SHIELD_DAMAGE_SHARED_PERCENT|1.0	0	Disperses 1% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 effect|SHIELD_DAMAGE_SHARED_PERCENT|10.0	0	Disperses 10% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 effect|SHIELD_DAMAGE_SHARED_PERCENT|12.5	0	Disperses 12.5% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
-effect|SHIELD_DAMAGE_SHARED_PERCENT|100.0	0	Disperses 100% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
+effect|SHIELD_DAMAGE_SHARED_PERCENT|100.0	0	Disperses 90% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 effect|SHIELD_DAMAGE_SHARED_PERCENT|-10.0	0	Disperses -10% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 effect|SHIELD_DAMAGE_SHARED_PERCENT|-12.5	0	Disperses -12.5% of shield damage taken to nearby allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 effect|SHIELD_DAMAGE_TAKEN_MULT|1.0	1	<good>1%</good> more damage taken by shields.

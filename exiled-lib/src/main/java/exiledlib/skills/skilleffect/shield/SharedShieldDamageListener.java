@@ -19,7 +19,7 @@ final class SharedShieldDamageListener extends ShipCombatListener implements Dam
     static final String SHARED_PERCENT_KEY = "exiledSector_shieldDamageSharedPercent";
     static final float RANGE = 1000f;
     private static final String SHARE_MOD_ID = "exiledSector_shieldDamageShared";
-    private static final float MAX_SHARED_PERCENT = 90f;
+    static final float MAX_SHARED_PERCENT = 90f;
     private static final float ALLY_SEARCH_INTERVAL_SECONDS = 0.25f;
     private static final float ALLY_SEARCH_MARGIN = 200f;
 
