@@ -130,14 +130,20 @@ public final class SkillTreeLoader {
 
     public static List<Star> parseStars(JSONObject treeJson) {
         List<Star> stars = new ArrayList<>();
-        forEachEntry(treeJson.optJSONArray("stars"), "star", starJson -> stars.add(new Star(
-                starJson.getString("id"),
-                (float) starJson.getDouble("x"),
-                (float) starJson.getDouble("y"),
-                (float) starJson.getDouble("radius"),
-                starJson.optString("starType", "star_yellow"),
-                starJson.optString("color", null),
-                SkillTypeLoader.parseStringArray(starJson.optJSONArray("tags")))));
+        forEachEntry(treeJson.optJSONArray("stars"), "star", starJson -> {
+            String overlayPath = starJson.optString("overlayPath", null);
+            Star.Overlay overlay = overlayPath == null || overlayPath.isEmpty() ? null
+                    : new Star.Overlay(overlayPath, (float) starJson.optDouble("overlaySize", 1.0), (float) starJson.optDouble("overlayAlpha", 1.0));
+            stars.add(new Star(
+                    starJson.getString("id"),
+                    (float) starJson.getDouble("x"),
+                    (float) starJson.getDouble("y"),
+                    (float) starJson.getDouble("radius"),
+                    starJson.optString("starType", "star_yellow"),
+                    starJson.optString("color", null),
+                    overlay,
+                    SkillTypeLoader.parseStringArray(starJson.optJSONArray("tags"))));
+        });
         return stars;
     }
 

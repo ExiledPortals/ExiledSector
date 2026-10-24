@@ -1,12 +1,14 @@
 package exiledsector.ui.refit;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledlib.PlayerFleet;
 import exiledlib.skills.skilleffect.logistics.FleetWideEffects;
 import exiledsector.ExiledSector;
 import exiledsector.effects.FighterBayOverflow;
+import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.effects.UnfitWeapons;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.FittedShipProfile;
@@ -53,12 +55,17 @@ public final class ShipEditSession {
             return false;
         }
         revision++;
+        ShipHullSpecAPI hullSpecBefore = variant.getHullSpec();
         ExiledSector.domains().forEach(domain -> domain.memberChanged(member, variant));
         FleetWideEffects.markPhaseFieldStale();
         member.setStatUpdateNeeded(true);
         member.updateStats();
+        SkillTreeHullMod.syncHybridBallisticSlots(member, variant);
         FighterBayOverflow.returnUnhousedWingsAndAnnounce(member, variant, PlayerFleet.cargoOrNull());
         UnfitWeapons.returnUnfitWeaponsAndAnnounce(member, variant, PlayerFleet.cargoOrNull());
+        if (variant.getHullSpec() != hullSpecBefore) {
+            RefitShipDisplay.rebuildSlots(member, variant);
+        }
         return true;
     }
 }

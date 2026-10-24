@@ -113,6 +113,9 @@ export interface Star {
   radius: number;
   starType: string;
   color: string | null;
+  overlayPath?: string;
+  overlaySize?: number;
+  overlayAlpha?: number;
   tags?: string[];
 }
 

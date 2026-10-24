@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.persistence.ShipSkillDataManager;
 import lunalib.lunaRefit.BaseRefitButton;
+import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.when;
 class SectionEditorTest {
 
     private MockedStatic<Global> globalMock;
+    private MockedStatic<LunaSettings> lunaSettingsMock;
     private FleetMemberAPI member;
     private BaseRefitButton refitButton;
     private SectionEditor editor;
@@ -30,6 +32,7 @@ class SectionEditorTest {
     @BeforeEach
     void setUp() {
         globalMock = Mockito.mockStatic(Global.class);
+        lunaSettingsMock = Mockito.mockStatic(LunaSettings.class, invocation -> null);
         SectorAPI sector = mock(SectorAPI.class);
         globalMock.when(Global::getSector).thenReturn(sector);
         when(sector.getPersistentData()).thenReturn(new HashMap<>());
@@ -41,6 +44,7 @@ class SectionEditorTest {
 
     @AfterEach
     void tearDown() {
+        lunaSettingsMock.close();
         globalMock.close();
     }
 
