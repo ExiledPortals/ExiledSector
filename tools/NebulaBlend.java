@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 public final class NebulaBlend {
 
+    private static final boolean REMOVE_STARS = Boolean.parseBoolean(System.getProperty("removeStars", "false"));
     private static final int STAR_MEDIAN_RADIUS = 4;
     private static final float STAR_CONTRAST = Float.parseFloat(System.getProperty("starContrast", "28"));
     private static final int STAR_MAX_PIXELS = Integer.getInteger("starMaxPixels", 30);
@@ -33,7 +34,7 @@ public final class NebulaBlend {
         float[][] premultiplied = premultiplied(source);
         boolean[] starMask = sourceGrid.starMask(premultiplied);
         if (args.length > 3) ImageIO.write(sourceGrid.maskPreview(premultiplied, starMask), "png", new File(args[3]));
-        sourceGrid.removeStars(premultiplied, starMask);
+        if (REMOVE_STARS) sourceGrid.removeStars(premultiplied, starMask);
 
         NebulaBlend outputGrid = new NebulaBlend(outputSize, outputSize);
         float[][] scaled = new float[4][];
@@ -41,7 +42,7 @@ public final class NebulaBlend {
             scaled[channel] = outputGrid.resized(premultiplied[channel], source.getWidth(), source.getHeight());
         }
         outputGrid.fadeRim(scaled);
-        ImageIO.write(outputGrid.brightnessAsAlpha(scaled), "png", new File(args[1]));
+        ImageIO.write(outputGrid.overBlackUnderlay(scaled), "png", new File(args[1]));
     }
 
     private static float[][] premultiplied(BufferedImage image) {
@@ -236,22 +237,23 @@ public final class NebulaBlend {
                 double angle = Math.atan2(offsetY, offsetX);
                 double wobble = 1 + 0.06 * Math.sin(3 * angle + 0.7) + 0.035 * Math.sin(7 * angle + 2.1) + 0.02 * Math.sin(13 * angle + 4.0);
                 float edge = 1f - smoothstep(FADE_START, FADE_END, (float) (Math.hypot(offsetX, offsetY) * wobble));
-                for (int channel = 0; channel < 3; channel++) rgba[channel][i] *= edge;
+                for (int channel = 0; channel < 4; channel++) rgba[channel][i] *= edge;
             }
         }
     }
 
-    private BufferedImage brightnessAsAlpha(float[][] rgb) {
+    private BufferedImage overBlackUnderlay(float[][] rgba) {
         BufferedImage out = new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_ARGB);
         for (int y = 0; y < imageHeight; y++) {
             for (int x = 0; x < imageWidth; x++) {
                 int i = y * imageWidth + x;
-                float peak = Math.min(255f, brightness(rgb, i));
-                if (peak < 0.5f) continue;
-                int alpha = Math.round(peak);
-                int red = Math.min(255, Math.round(rgb[0][i] * 255f / alpha));
-                int green = Math.min(255, Math.round(rgb[1][i] * 255f / alpha));
-                int blue = Math.min(255, Math.round(rgb[2][i] * 255f / alpha));
+                float coverage = Math.min(1f, rgba[3][i]);
+                if (coverage * 255f < 0.5f) continue;
+                int alpha = Math.round(coverage * 255f);
+                float unpremultiply = 255f / alpha;
+                int red = Math.min(255, Math.round(rgba[0][i] * unpremultiply));
+                int green = Math.min(255, Math.round(rgba[1][i] * unpremultiply));
+                int blue = Math.min(255, Math.round(rgba[2][i] * unpremultiply));
                 out.setRGB(x, y, (alpha << 24) | (red << 16) | (green << 8) | blue);
             }
         }
