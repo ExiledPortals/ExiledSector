@@ -41,6 +41,10 @@ public final class ShipRecords {
         return shipId == null ? null : ShipSkillDataManager.find(shipId);
     }
 
+    public static boolean savedTreeOutOfReach(FleetMemberAPI member, ShipVariantAPI variant) {
+        return member != null && member.getId().equals(taggedShipId(variant)) && ShipSkillDataManager.find(member.getId()) == null;
+    }
+
     public static boolean isOutsideFleet(FleetMemberAPI member) {
         FleetDataAPI fleetData = member.getFleetData();
         return fleetData == null || !fleetData.getMembersListCopy().contains(member);

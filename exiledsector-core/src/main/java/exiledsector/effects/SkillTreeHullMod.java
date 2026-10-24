@@ -49,6 +49,9 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
             HybridBallisticSlots.restore(variant);
             return;
         }
+        if (!shipData.isNpcBuild() && ShipRecords.savedTreeOutOfReach(member, variant)) {
+            FighterBayOverflow.keepBaysForFittedWings(stats, variant);
+        }
 
         ShipEffectContext context = new ShipEffectContext(shipData, member, variant, hullSize);
         sources.forEach(source -> source.beforeStatsApplied(context));
