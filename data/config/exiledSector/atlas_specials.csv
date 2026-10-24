@@ -1,0 +1,5 @@
+id,kind,placement,chance,min_steps,radius,count,steps,requires_mod,unlock,note
+sensor_array,sensor_array,chunk,0.35,4,6,,,,,"Placeholder name. Reveals 6 lanes around it"
+remnant_nexus,infestation,chunk,0.12,8,2.5,,,,,"Placeholder name. Remnant infestation"
+threat_nexus,infestation,chunk,0.08,15,2.5,,,,$encounteredThreat,"Placeholder name. Threat infestation"
+bastion,bastion,fixed,,,,3,25,,,"Placeholder name. One attempt each, tier 15 chart"

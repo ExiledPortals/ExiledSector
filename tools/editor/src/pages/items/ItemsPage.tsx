@@ -2,6 +2,10 @@ import { Alert, Center, Loader, Tabs } from '@mantine/core';
 import { IconAlertTriangle } from '@tabler/icons-react';
 import { useVocabulary } from '../../api/vocabulary.ts';
 import {
+  ATLAS_LAYOUT_SPEC,
+  ATLAS_MARKER_SPEC,
+  ATLAS_REGION_SPEC,
+  ATLAS_SPECIAL_SPEC,
   CHART_BLOCKED_ABILITY_SPEC,
   CHART_COLONY_ITEM_SPEC,
   CHART_DROP_SPEC,
@@ -54,6 +58,10 @@ export function ItemsPage() {
         <Tabs.Tab value="chart-colony-items">Chart colony items</Tabs.Tab>
         <Tabs.Tab value="chart-blocked-abilities">Chart blocked abilities</Tabs.Tab>
         <Tabs.Tab value="chart-expansions">Chart expansions</Tabs.Tab>
+        <Tabs.Tab value="atlas-regions">Atlas regions</Tabs.Tab>
+        <Tabs.Tab value="atlas-layouts">Atlas layouts</Tabs.Tab>
+        <Tabs.Tab value="atlas-markers">Atlas markers</Tabs.Tab>
+        <Tabs.Tab value="atlas-specials">Atlas special sites</Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value="definitions" style={PANEL_STYLE}>
         <DefinitionsTab vocabulary={vocabulary.data} />
@@ -96,6 +104,18 @@ export function ItemsPage() {
       </Tabs.Panel>
       <Tabs.Panel value="chart-expansions" style={PANEL_STYLE}>
         <ChartTableTab spec={CHART_EXPANSION_SPEC} vocabulary={vocabulary.data} />
+      </Tabs.Panel>
+      <Tabs.Panel value="atlas-regions" style={PANEL_STYLE}>
+        <ChartTableTab spec={ATLAS_REGION_SPEC} vocabulary={vocabulary.data} />
+      </Tabs.Panel>
+      <Tabs.Panel value="atlas-layouts" style={PANEL_STYLE}>
+        <ChartTableTab spec={ATLAS_LAYOUT_SPEC} vocabulary={vocabulary.data} />
+      </Tabs.Panel>
+      <Tabs.Panel value="atlas-markers" style={PANEL_STYLE}>
+        <ChartTableTab spec={ATLAS_MARKER_SPEC} vocabulary={vocabulary.data} />
+      </Tabs.Panel>
+      <Tabs.Panel value="atlas-specials" style={PANEL_STYLE}>
+        <ChartTableTab spec={ATLAS_SPECIAL_SPEC} vocabulary={vocabulary.data} />
       </Tabs.Panel>
     </Tabs>
   );

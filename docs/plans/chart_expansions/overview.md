@@ -31,9 +31,11 @@ Chart modifiers get two new kinds of line per expansion: `CHART_<EXPANSION>_CHAN
 
 Players favour one expansion over the others with intel and atlas passives (`../atlas.md`).
 
+Gameplay-changing terrain (black holes, neutron stars, dense nebulae, asteroid storms, magnetic storms, stellar flares) is not an expansion but a phenomenon: it shares the expansion roll and marker, but shapes the layout before content is placed. See `../atlas.md` (Regions, layouts and phenomena).
+
 ## Build order
 
 The atlas comes first. These steps sit inside `../atlas.md`'s build order (its steps 2, 12 and 13).
 
-1. [~] Expansion framework: `ChartExpansion` with its atlas hooks, `chart_expansions.csv`, the per-node roll, run requests, tooltip line, run state and cleanup, with one test expansion that places nothing. Built: `ChartExpansion`/`ExpansionSite` (package `charts.expansion`), `ChartExpansions` (loads `chart_expansions.csv`, rolls each expansion on its own seed from `CHART_<EXPANSION>_CHANCE` lines), plan and run records, the intel line, cleanup through the run tag, the test expansion (`ChartExpansionsTest.PlacesNothing`) and the editor table. Not built: the atlas hooks, the per-node roll and the icon/intel columns' use, which wait for the atlas.
+1. [~] Expansion framework: `ChartExpansion` with its atlas hooks, `chart_expansions.csv`, the per-node roll, run requests, tooltip line, run state and cleanup, with one test expansion that places nothing. Built: `ChartExpansion`/`ExpansionSite` (package `charts.expansion`), `ChartExpansions` (loads `chart_expansions.csv`, rolls each expansion on its own seed from `CHART_<EXPANSION>_CHANCE` lines), plan and run records, the intel line, cleanup through the run tag, the test expansion (`ChartExpansionsTest.PlacesNothing`) and the editor table. The atlas weight hook (`ChartExpansion.atlasWeight`) and the per-node roll are built with the atlas generator (`../atlas.md` step 3). Not built: the `AtlasState` entry, node marker requests and the icon/intel columns' use, which wait for the atlas.
 2. [ ] Expansions one at a time, each to its own plan's build order. Suggested order: Relay Network, Faction Skirmish, Excavation Sites, The Hunter, Supply Convoy, Stasis Vaults, Spatial Breach, Asteroid Stream.

@@ -75,6 +75,14 @@ export const CHART_DROP_COLUMNS = [
 ] as const;
 export const CHART_COLONY_ITEM_COLUMNS = ['id', 'value', 'note'] as const;
 export const CHART_EXPANSION_COLUMNS = ['id', 'weight', 'min_tier', 'max_tier', 'requires_mod', 'icon', 'intel', 'note'] as const;
+export const ATLAS_REGION_COLUMNS = ['id', 'weight', 'min_steps', 'requires_mod', 'unlock', 'layouts', 'factions', 'markers', 'note'] as const;
+export const ATLAS_NORMAL_REGION = 'normal';
+export const ATLAS_LAYOUT_COLUMNS = ['id', 'weight', 'note'] as const;
+export const ATLAS_MARKER_COLUMNS = ['id', 'chance', 'chance_per_step', 'max_chance', 'note'] as const;
+export const ATLAS_MARKER_IDS = ['void', 'powerful_boss', 'expansion', 'phenomenon'];
+export const ATLAS_SPECIAL_COLUMNS = ['id', 'kind', 'placement', 'chance', 'min_steps', 'radius', 'count', 'steps', 'requires_mod', 'unlock', 'note'] as const;
+export const ATLAS_SPECIAL_PLACEMENTS = ['chunk', 'fixed'];
+const ATLAS_MOST_RADIUS = 7;
 export const CHART_COLONY_ITEM_CEILING_ID = 'ceiling';
 export const CHART_LOOT_COLUMNS =['id', 'drop_type', 'scope', 'group', 'mode', 'amount', 'min_tier', 'note'] as const;
 export const CHART_LOOT_MODES = ['random', 'value'];
@@ -680,6 +688,180 @@ export const CHART_EXPANSION_SPEC: ChartTableSpec = {
   summary: tierSpanSummary,
 };
 
+function weightListIssues(row: ChartTableRow, column: string, label: string): string[] {
+  return value(row, column)
+    .split(';')
+    .map((entry) => entry.trim())
+    .filter((entry) => entry !== '')
+    .flatMap((entry) => {
+      const separator = entry.indexOf(':');
+      const id = separator < 0 ? entry : entry.slice(0, separator).trim();
+      const weight = separator < 0 ? '1' : entry.slice(separator + 1).trim();
+      return id === '' || !isNumberText(weight) || Number.parseFloat(weight) < 0
+        ? [`${label}: ${column} entry "${entry}" must be an id or id:weight with a weight of 0 or more`]
+        : [];
+    });
+}
+
+export const ATLAS_REGION_SPEC: ChartTableSpec = {
+  resource: 'atlas-regions',
+  fileName: 'atlas_regions.csv',
+  noun: 'atlas region',
+  keyColumn: 'id',
+  description:
+    'Regions of the Outer Reaches atlas. The normal row is normal space, plain hyperspace that most systems sit in; every other row is a biome. Biome sites are scattered with normal space between them, each picks a row by weight and gathers 4 to 7 systems into a sparse patch. A site that picks normal stays a quiet patch of normal space. A region sets which layouts and factions its systems use and leans phenomenon and expansion markers up or down. A biome behind a mod or an unlock is decided when its site is first revealed, and shows as normal space if it is still locked then.',
+  columns: columnsOf(ATLAS_REGION_COLUMNS, {
+    id: { label: 'Region id', kind: 'text' },
+    weight: { label: 'Weight', kind: 'number' },
+    min_steps: { label: 'Min steps', kind: 'integer', help: 'A biome is never centred closer to the Gateway than this many cells' },
+    requires_mod: { label: 'Requires mod', kind: 'text', help: 'Optional mod id; sites revealed while that mod is off stay normal space' },
+    unlock: { label: 'Unlock', kind: 'text', help: 'Optional player memory flag, such as $encounteredThreat; sites revealed before it is set stay normal space' },
+    layouts: { label: 'Layouts', kind: 'text', help: 'layout:weight; ... from atlas_layouts.csv. Empty uses every layout at its own weight' },
+    factions: { label: 'Factions', kind: 'text', help: 'faction:weight; ... from chart_factions.csv. Empty keeps the faction territory as it is' },
+    markers: { label: 'Markers', kind: 'text', help: 'phenomenon or expansion id:multiplier; ... Unlisted markers keep their weight' },
+    note: NOTE_COLUMN,
+  }),
+  newRow: () => ({ id: '', weight: '1', min_steps: '0' }),
+  issues: (model, vocabulary) => {
+    const issues: string[] = [];
+    model.rows.forEach((row, index) => {
+      const label = rowLabel(ATLAS_REGION_SPEC, row, index);
+      if (value(row, 'id') === '') {
+        issues.push(`${label}: needs a region id`);
+      }
+      issues.push(...columnFormatIssues(ATLAS_REGION_SPEC.columns, row, label, vocabulary));
+      for (const column of ['layouts', 'factions', 'markers']) {
+        issues.push(...weightListIssues(row, column, label));
+      }
+      const gated = value(row, 'requires_mod') !== '' || value(row, 'unlock') !== '' || numberValue(row, 'min_steps', 0) > 0;
+      if (value(row, 'id') === ATLAS_NORMAL_REGION && gated) {
+        issues.push(`${label}: normal space is always open, so it takes no mod, unlock or min_steps`);
+      }
+    });
+    if (!model.rows.some((row) => value(row, 'id') === ATLAS_NORMAL_REGION)) {
+      issues.push(`Needs a ${ATLAS_NORMAL_REGION} row for normal space`);
+    }
+    return [...issues, ...duplicateKeyIssues(ATLAS_REGION_SPEC, model)];
+  },
+  warnings: (model) => model.rows.flatMap((row, index) => roundedIntegerWarnings(ATLAS_REGION_SPEC.columns, row, rowLabel(ATLAS_REGION_SPEC, row, index))),
+  summary: (row) =>
+    value(row, 'id') === ATLAS_NORMAL_REGION ? `normal space, weight ${value(row, 'weight') || '1'}` : `weight ${value(row, 'weight') || '1'}, from ${value(row, 'min_steps') || '0'} cells`,
+};
+
+export const ATLAS_LAYOUT_SPEC: ChartTableSpec = {
+  resource: 'atlas-layouts',
+  fileName: 'atlas_layouts.csv',
+  noun: 'atlas layout',
+  keyColumn: 'id',
+  description:
+    'Layouts (map types) of atlas systems. A system picks one by weight from its region\'s layout list, or from every layout here when the region lists none.',
+  columns: columnsOf(ATLAS_LAYOUT_COLUMNS, {
+    id: { label: 'Layout id', kind: 'text' },
+    weight: { label: 'Weight', kind: 'number' },
+    note: NOTE_COLUMN,
+  }),
+  newRow: () => ({ id: '', weight: '1' }),
+  issues: (model, vocabulary) => {
+    const issues: string[] = [];
+    model.rows.forEach((row, index) => {
+      const label = rowLabel(ATLAS_LAYOUT_SPEC, row, index);
+      if (value(row, 'id') === '') {
+        issues.push(`${label}: needs a layout id`);
+      }
+      issues.push(...columnFormatIssues(ATLAS_LAYOUT_SPEC.columns, row, label, vocabulary));
+    });
+    return [...issues, ...duplicateKeyIssues(ATLAS_LAYOUT_SPEC, model)];
+  },
+  warnings: (model) =>
+    model.rows.flatMap((row, index) =>
+      numberValue(row, 'weight', 1) > 0 ? [] : [`${rowLabel(ATLAS_LAYOUT_SPEC, row, index)}: a weight of 0 or less is only used by regions that list it`],
+    ),
+  summary: (row) => `weight ${value(row, 'weight') || '1'}`,
+};
+
+export const ATLAS_MARKER_SPEC: ChartTableSpec = {
+  resource: 'atlas-markers',
+  fileName: 'atlas_markers.csv',
+  noun: 'atlas marker',
+  keyColumn: 'id',
+  description:
+    'How often atlas systems roll each marker: chance plus chance_per_step for every step from the Gateway, up to max_chance. Steps are cells from the Gateway. void is the chance that a cell which may be empty (half of them) is empty space. For expansion and phenomenon the chance is per candidate, multiplied by its weight.',
+  columns: columnsOf(ATLAS_MARKER_COLUMNS, {
+    id: { label: 'Marker', kind: 'choice', choices: () => ATLAS_MARKER_IDS },
+    chance: { label: 'Chance', kind: 'fraction' },
+    chance_per_step: { label: 'Per step', kind: 'fraction' },
+    max_chance: { label: 'Max chance', kind: 'fraction' },
+    note: NOTE_COLUMN,
+  }),
+  newRow: () => ({ id: '', chance: '0.1', chance_per_step: '0', max_chance: '1' }),
+  issues: (model, vocabulary) => {
+    const issues: string[] = [];
+    model.rows.forEach((row, index) => {
+      const label = rowLabel(ATLAS_MARKER_SPEC, row, index);
+      if (value(row, 'id') === '') {
+        issues.push(`${label}: needs a marker id`);
+      }
+      issues.push(...columnFormatIssues(ATLAS_MARKER_SPEC.columns, row, label, vocabulary));
+    });
+    return [...issues, ...duplicateKeyIssues(ATLAS_MARKER_SPEC, model)];
+  },
+  warnings: (model) => {
+    const listed = new Set(model.rows.map((row) => value(row, 'id')));
+    return ATLAS_MARKER_IDS.filter((id) => !listed.has(id)).map((id) => `No ${id} row, so it never rolls`);
+  },
+  summary: (row) => `${value(row, 'chance') || '0'} +${value(row, 'chance_per_step') || '0'}/step, max ${value(row, 'max_chance') || '1'}`,
+};
+
+export const ATLAS_SPECIAL_SPEC: ChartTableSpec = {
+  resource: 'atlas-specials',
+  fileName: 'atlas_specials.csv',
+  noun: 'atlas special site',
+  keyColumn: 'id',
+  description:
+    'Special atlas sites. A chunk site rolls its chance once per 8 by 8 chunk and lands on one of its systems at least min_steps cells out. A fixed site sits count times at steps cells from the Gateway, evenly spread around it, in every save. Infestation sites infest every system within radius cells; for sensor arrays radius is the reveal in lanes.',
+  columns: columnsOf(ATLAS_SPECIAL_COLUMNS, {
+    id: { label: 'Site id', kind: 'text' },
+    kind: { label: 'Kind', kind: 'text', help: 'infestation, sensor_array, bastion or unique' },
+    placement: { label: 'Placement', kind: 'choice', choices: () => ATLAS_SPECIAL_PLACEMENTS },
+    chance: { label: 'Chance per chunk', kind: 'fraction' },
+    min_steps: { label: 'Min steps', kind: 'number' },
+    radius: { label: 'Radius', kind: 'number', help: `At most ${ATLAS_MOST_RADIUS}` },
+    count: { label: 'Count', kind: 'integer', help: 'Fixed sites only' },
+    steps: { label: 'Steps', kind: 'number', help: 'Fixed sites only; cells from the Gateway' },
+    requires_mod: { label: 'Requires mod', kind: 'text' },
+    unlock: { label: 'Unlock', kind: 'text', help: 'Optional player memory flag, such as $encounteredThreat' },
+    note: NOTE_COLUMN,
+  }),
+  newRow: () => ({ id: '', placement: 'chunk', chance: '0.1', min_steps: '4' }),
+  issues: (model, vocabulary) => {
+    const issues: string[] = [];
+    model.rows.forEach((row, index) => {
+      const label = rowLabel(ATLAS_SPECIAL_SPEC, row, index);
+      if (value(row, 'id') === '') {
+        issues.push(`${label}: needs a site id`);
+      }
+      issues.push(...columnFormatIssues(ATLAS_SPECIAL_SPEC.columns, row, label, vocabulary));
+      if (numberValue(row, 'radius', 0) > ATLAS_MOST_RADIUS) {
+        issues.push(`${label}: radius above ${ATLAS_MOST_RADIUS} counts as ${ATLAS_MOST_RADIUS}`);
+      }
+    });
+    return [...issues, ...duplicateKeyIssues(ATLAS_SPECIAL_SPEC, model)];
+  },
+  warnings: (model) =>
+    model.rows.flatMap((row, index) => {
+      const label = rowLabel(ATLAS_SPECIAL_SPEC, row, index);
+      const chunk = value(row, 'placement').toLowerCase() !== 'fixed';
+      return [
+        ...roundedIntegerWarnings(ATLAS_SPECIAL_SPEC.columns, row, label),
+        ...(chunk && !(numberValue(row, 'chance', 0) > 0) ? [`${label}: a chunk site with no chance is never placed`] : []),
+      ];
+    }),
+  summary: (row) =>
+    value(row, 'placement').toLowerCase() === 'fixed'
+      ? `${value(row, 'count') || '1'} fixed at ${value(row, 'steps') || '1'} cells`
+      : `${value(row, 'chance') || '0'} per chunk from ${value(row, 'min_steps') || '1'} cells`,
+};
+
 export const CHART_TABLE_SPECS: ChartTableSpec[] = [
   CHART_TIER_SPEC,
   CHART_POI_SPEC,
@@ -689,4 +871,8 @@ export const CHART_TABLE_SPECS: ChartTableSpec[] = [
   CHART_COLONY_ITEM_SPEC,
   CHART_BLOCKED_ABILITY_SPEC,
   CHART_EXPANSION_SPEC,
+  ATLAS_REGION_SPEC,
+  ATLAS_LAYOUT_SPEC,
+  ATLAS_MARKER_SPEC,
+  ATLAS_SPECIAL_SPEC,
 ];

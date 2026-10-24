@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { buildVocabulary } from '../../../api/vocabulary.ts';
 import { parseCsvTable, serializeCsvTable } from '../../../shared/csv.ts';
 import {
+  ATLAS_MARKER_SPEC,
+  ATLAS_REGION_SPEC,
+  ATLAS_SPECIAL_SPEC,
   CHART_BLOCKED_ABILITY_SPEC,
   CHART_COLONY_ITEM_SPEC,
   CHART_DROP_SPEC,
@@ -347,6 +350,43 @@ describe('chart tables', () => {
     expect(issues.some((issue) => issue.startsWith('unbuilt:'))).toBe(true);
     expect(CHART_EXPANSION_SPEC.warnings(model, vocabulary)).toContain('unbuilt: min_tier is above max_tier, so the game swaps them');
     expect(CHART_EXPANSION_SPEC.summary?.(model.rows[0], vocabulary)).toBe('tiers 1-15');
+  });
+
+  it('mirrors the atlas region loader: weight lists and an always-open normal row', () => {
+    const text =
+      'id,weight,min_steps,requires_mod,unlock,layouts,factions,markers,note\r\n' +
+      'normal,15,0,,$flag,,,,\r\n' +
+      'graveyard,10,0,,,compact:2; sprawling,pirates:3,black_hole:0,\r\n' +
+      'rift,3,15,assortment_of_things,,compact:x,,,\r\n' +
+      'expanse,3,20,,$encounteredThreat,,,,\r\n';
+    const model = chartTable(ATLAS_REGION_SPEC, text);
+    expect(serializeChartTable(model, ATLAS_REGION_SPEC.columns)).toBe(text);
+    expect(ATLAS_REGION_SPEC.issues(model, vocabulary)).toEqual([
+      'normal: normal space is always open, so it takes no mod, unlock or min_steps',
+      'rift: layouts entry "compact:x" must be an id or id:weight with a weight of 0 or more',
+    ]);
+    expect(ATLAS_REGION_SPEC.summary?.(model.rows[0], vocabulary)).toBe('normal space, weight 15');
+    expect(ATLAS_REGION_SPEC.issues(chartTable(ATLAS_REGION_SPEC, 'id,weight\nfurnace,1\n'), vocabulary)).toEqual(['Needs a normal row for normal space']);
+  });
+
+  it('mirrors the atlas marker and special site loaders', () => {
+    const markers = chartTable(ATLAS_MARKER_SPEC, 'id,chance,chance_per_step,max_chance,note\nvoid,0.35,0,0.35,\nstorm,0.1,,,\n');
+    expect(ATLAS_MARKER_SPEC.issues(markers, vocabulary)).toEqual(['storm: id must be one of void, powerful_boss, expansion, phenomenon']);
+    expect(ATLAS_MARKER_SPEC.warnings(markers, vocabulary)).toEqual([
+      'No powerful_boss row, so it never rolls',
+      'No expansion row, so it never rolls',
+      'No phenomenon row, so it never rolls',
+    ]);
+    const specials = chartTable(
+      ATLAS_SPECIAL_SPEC,
+      'id,kind,placement,chance,min_steps,radius,count,steps,requires_mod,unlock,note\n' +
+        'bastion,bastion,fixed,,,,4,25,,,\n' +
+        'nexus,infestation,chunk,0.1,8,12,,,,,\n' +
+        'idle,sensor_array,chunk,0,4,6,,,,,\n',
+    );
+    expect(ATLAS_SPECIAL_SPEC.issues(specials, vocabulary)).toEqual(['nexus: radius above 7 counts as 7']);
+    expect(ATLAS_SPECIAL_SPEC.warnings(specials, vocabulary)).toEqual(['idle: a chunk site with no chance is never placed']);
+    expect(ATLAS_SPECIAL_SPEC.summary?.(specials.rows[0], vocabulary)).toBe('4 fixed at 25 cells');
   });
 
   it('mirrors the chart loot loader: one drop type per group, base entries need a scope, mode and amount', () => {

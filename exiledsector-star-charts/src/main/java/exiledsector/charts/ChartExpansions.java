@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -84,6 +85,10 @@ public final class ChartExpansions {
             }
         }
         return null;
+    }
+
+    public static Collection<Definition> definitions() {
+        return definitions.values();
     }
 
     public static Definition definition(String id) {

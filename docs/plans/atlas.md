@@ -1,10 +1,10 @@
 # The Outer Reaches (atlas)
 
-Status: planned, nothing built.
+Status: in progress, steps 1 and 3 of the build order built.
 
 In game the atlas is called The Outer Reaches: the uncharted space beyond the Persean Sector that the Wormhole Gateway reaches. Its button is "Outer Reach Atlas", and the Tablet equivalent is "Outer Reach Intel", which keeps clear of vanilla's intel screen. Code and this plan keep the short words atlas and intel.
 
-The atlas replaces "pick a chart, open a wormhole" with a persistent star map that keeps generating as the player pushes outward, modelled on Path of Exile 2's Atlas of Worlds. Its panel works like the skill tree canvas, with star systems in place of skill nodes. Path of Exile gets its variety from a hundred hand-made map layouts. The atlas gets it from combining generated traits on each system (region, layout, faction, boss, expansions, special sites), so a handful of data rows produce many distinct places.
+The atlas replaces "pick a chart, open a wormhole" with a persistent star map that keeps generating as the player pushes outward, modelled on Path of Exile 2's Atlas of Worlds. Its panel works like the skill tree canvas, with star systems in place of skill nodes. Path of Exile gets its variety from a hundred hand-made map layouts. The atlas gets it from combining generated traits on each system (region, layout, phenomenon, faction, boss, expansions, special sites), so a handful of data rows produce many distinct places.
 
 ## What Path of Exile 2 does
 
@@ -26,24 +26,45 @@ A node says where and a chart says how hard, as with Waystones. The chart item k
 
 ## Generation
 
-A seed per save and a generator version. Nodes sit on a jittered hex lattice cut into chunks (8 by 8 cells), and every trait is a pure function of the seed and the cell coordinates. Nothing generated is saved; chunks are built on demand into a transient cache when they come into view. Some cells are voids (empty space). Voids are never adjacent to each other, which keeps the lattice connected without a global check.
+A seed per save and a generator version. Space is a square grid cut into chunks (8 by 8 cells), and every trait is a pure function of the seed and the cell coordinates. Nothing generated is saved except the biome decisions described below; chunks are built on demand into a transient cache when they come into view.
+
+Systems are sparse and irregular. Each cell holds at most one system, placed anywhere inside it, so neighbouring systems sit at varying distances and no grid shows. Some cells are empty space, but a cell whose coordinates are both even never is, so every 2 by 2 block keeps a system. Lanes join systems that see each other with nothing in between (a Gabriel graph): every system is reachable, and lanes stay shorter than about four cells, so a chunk only needs its neighbours to work them out. Distances in this plan (min_steps, Bastions, radii) are in cells; "steps" for visibility and reveals are lanes.
+
+Most of the atlas is normal space: plain hyperspace with a starscape, whose systems use ordinary generation. Unique biomes are patches in it. Each biome site gathers 4 to 7 systems from a sparser sub-grid and clears every other system inside its patch, so a biome is visually large but holds few systems. Patches never overlap and keep at least a cell of normal space between them. On the canvas a biome is drawn as a soft patch around its systems that fades to black. A site can also roll normal, which leaves gaps. A biome behind a mod or an unlock is decided when its site first comes out of the fog, with the unlocks the player has then, and that decision is saved, so revealed biomes never change (unless their required mod is removed, which turns them back into normal space).
 
 Each node gets these traits.
 
 | Trait | How it's chosen | Data |
 |---|---|---|
-| Region (the biome) | Voronoi cells over sparse region seeds, so regions form contiguous areas. Regions set star and terrain bias, the POI category mix, the faction pool and drop leanings. Examples: Derelict Graveyard, Remnant Expanse, Nebula Reach, Pirate Badlands, Pulsar Fields, Black Hole Deep, Abyssal Rift (RAT only), Threat Expanse (after vanilla's `$encounteredThreat`). | `atlas_regions.csv` |
-| Layout (the map type) | Weighted by region. Each row maps to layout parameters: system type, star type and age, terrain set, planet count range. Aim for about 30 rows at launch; this is where map-type count grows cheaply. | `atlas_layouts.csv` |
-| Faction | A coarser second Voronoi layer so factions hold territories that span regions. Replaces the faction implicit. | faction pool per region |
+| Region (the biome) | Normal space, or the biome whose site claims the system. Regions set the look, the layout weights, the POI category mix, the faction pool and phenomenon and expansion leanings (see Regions, layouts and phenomena). Examples: Derelict Graveyard, Remnant Expanse, Frozen Fringe, Furnace, Pirate Badlands, Collapsed Reach, Abyssal Rift (RAT only), Threat Expanse (after vanilla's `$encounteredThreat`). | `atlas_regions.csv` |
+| Layout (the map type) | Weighted by region. Each row is a recipe that constrains vanilla's generator: system type, planet count range, orbit spread, cosmetic terrain and one signature feature. Aim for about 30 rows at launch; this is where map-type count grows cheaply. | `atlas_layouts.csv`, `atlas_features.csv` |
+| Phenomenon | At most one, rolled like an expansion and leaned on by the region, more often further out. | `chart_phenomena.csv` |
+| Faction | A Voronoi layer of large territories that span biomes and normal space. A region with a faction pool that lacks the territory faction swaps it for one pool faction per territory. Replaces the faction implicit. | faction pool per region |
 | Boss | Every node has one. About 1 in 4 carries a Powerful Boss marker: a bigger boss and a guaranteed tier-up chart. | `atlas_markers.csv` |
 | Expansion | At most one expansion marker, rolled as described under Expansions, more often further out. | `chart_expansions.csv` |
 | Special site | Rare per-chunk rolls (Sensor Array, Infestation Nexus, unique systems), plus fixed positions for Bastions. | `atlas_specials.csv` |
 
-Further from the origin, nodes roll more markers and rarer regions. Distance never gates the tier, matching PoE2.
+Further from the origin, nodes roll more markers and rarer biomes. Distance never gates the tier, matching PoE2.
+
+A node's star, planets and terrain come from its cell seed, so a node looks the same every time it is opened, including after a failed run. Fleets, POIs and expansions come from the chart seed.
+
+## Regions, layouts and phenomena
+
+Today every chart is vanilla's generator with every planet category allowed, so systems blur together. Variety comes from constraint: a region or layout is defined as much by what it leaves out as by what it adds.
+
+A region is a look and a shape palette, with no implicit effect lines. The `normal` row is normal space; every other row is a biome. It sets the background pool (separate pools for nebula and clear systems), a light tint, weights for ordinary star types and planet categories, an optional music set (check vanilla's per-system music memory key first), the layout weights, the POI mix, the faction pool, and weight multipliers for phenomena and expansions. A region's theme is a lean, never a guarantee: the Collapsed Reach leans hard towards black holes and neutron stars, but most of its systems have an ordinary star.
+
+A layout constrains vanilla's generator (system type, planet count, orbit spread from compact to sprawling, cosmetic terrain such as rings, dust and debris fields) and names one signature feature from `atlas_features.csv`: a small class building a set-piece such as a ringed giant with a court of moons, a debris ring around a dead star, twin worlds or a rogue planet. The boss fleet sits at the feature, so the shape a player remembers is also where the fight is. Planets keep their ruins in regions that want them, and `chart_poi.csv` gets a `planet_categories` column so sites such as cryo vaults only appear on matching worlds and a planet's look hints at its loot.
+
+Phenomena are the gameplay changers: Black Hole (event horizon, accretion disk), Neutron Star (pulsar beam), Dense Nebula (starless nebula system), Asteroid Storm (dense belts and fields with impacts), Magnetic Storm (magnetic fields that blind sensors) and Stellar Flares (corona flares). They are kept out of ordinary generation: layouts never pick black holes or neutron stars, never build nebula systems, and strip vanilla's random magnetic fields and corona flares, so these only come through a phenomenon. A phenomenon is one class behind `ChartPhenomenon` with one row in `chart_phenomena.csv` (`id,weight,min_tier,max_tier,requires_mod,icon,kind,note`). It shares the expansion roll (its own hash per id, weight from the node's traits, `CHART_<PHENOMENON>_CHANCE` lines, marker icon and tooltip line), but runs before and during layout generation instead of after content. Phenomena of kind `star` replace the star or the system type, so they come only from the node roll, which keeps the node's layout fixed. Phenomena of kind `overlay` add terrain on top of the layout, so chart lines and intel can add them as well. A node rolls at most one phenomenon, in its own slot next to the expansion marker.
+
+## Unknown Skies compatibility
+
+Unknown Skies (`US`) adds planet types to vanilla's `planet_gen_data.csv`, so they already appear in charts when it is installed. Its texture swaps for planets and stars and its background pool only run at new game, so chart systems miss them. When it is loaded, the generator reads its background map (`unknownSkies.backgrounds` in its `modSettings.json`, keyed by star age, nebula backgrounds ending in `n.jpg`) and its star sprite variants from the installed mod, never copied into ours, and applies them with our seeded randoms instead of its `new Random()`. Its swaps keep the planet type, so Terrain FX and conditions are unaffected. It gets a CompatTarget self-check.
 
 ## Movement and visibility
 
-The origin is the player's Wormhole Gateway, shown as a completed node at the centre. A node is reachable when a neighbour is completed. Nodes within 2 steps of a completed node are visible; beyond that only faint stars show. Sensor Arrays reveal 6 steps around them.
+The origin is the player's Wormhole Gateway, shown as a completed node at the centre. A node is reachable when a neighbour is completed. Nodes within 2 lanes of a completed node are visible; beyond that only faint stars show. Sensor Arrays reveal 6 lanes around them.
 
 ## Running a node
 
@@ -59,7 +80,7 @@ Chart drops in a run never fall below the run tier. Bosses keep their tier-up ch
 
 The atlas is built before any expansion in `chart_expansions/`. It ships with the expansion slot in place and no expansions in the data, so each expansion later adds a data row and a class without touching atlas code.
 
-One place decides a run's expansions. When a run opens, `ChartContentPlan` collects expansion requests from every source: the node's marker, the chart's `CHART_<EXPANSION>_CHANCE` lines, intel, and later atlas passives. The overview's fight budget still holds: a node rolls at most one marker, and more expansions come only from what the player adds.
+One place decides a run's expansions. When a run opens, `ChartContentPlan` collects expansion requests from every source: the node's marker, the chart's `CHART_<EXPANSION>_CHANCE` lines, intel, and later atlas passives. The overview's fight budget still holds: a node rolls at most one expansion marker (plus at most one phenomenon, which adds no fights), and more expansions come only from what the player adds.
 
 Node rolls survive new expansions and mods. Each expansion rolls on its own hash of the seed, the cell and the expansion id, so adding an expansion in an update, or installing Industrial Evolution for the Asteroid Stream, moves no other node's rolls. When more than one passes, the lowest hash wins. Every other trait rolls on its own salted hash for the same reason.
 
@@ -71,11 +92,11 @@ Expansion tuning, region effects and later atlas passives all reach a run as `Ch
 
 ## Special sites
 
-A Sensor Array is a short run with a boss. Completing it reveals 6 steps around it, drops intel and grants an atlas point.
+A Sensor Array is a short run with a boss. Completing it reveals 6 lanes around it, drops intel and grants an atlas point.
 
-An infestation is a cluster of infested nodes around an Infestation Nexus. There are two kinds: Remnant infestations, and Threat infestations, which appear only once the player has met the Threat (vanilla's `$encounteredThreat`). Infested nodes have stronger fleets and a better loot multiplier. The Nexus needs a chart with at least four modifiers. Clearing it turns every infested node within 2 steps into a Cleansed node with exclusive drops, and grants an atlas point. Infestations never spread, because charts have no timers.
+An infestation is a cluster of infested nodes around an Infestation Nexus. There are two kinds: Remnant infestations, and Threat infestations, which appear only once the player has met the Threat (vanilla's `$encounteredThreat`). Infested nodes have stronger fleets and a better loot multiplier. The Nexus needs a chart with at least four modifiers. Infested nodes are those within a radius of the Nexus (2.5 cells to start). Clearing it turns every infested node into a Cleansed node with exclusive drops, and grants an atlas point. Infestations never spread, because charts have no timers. Like biomes, a Threat infestation is decided when its chunk is revealed, so one never appears in space the player has already seen.
 
-Bastions are three nodes at fixed bearings about 25 steps out, so every save has the same long-range goals. Each needs a tier 15 chart and allows one attempt. Each drops a key fragment, and three fragments open a pinnacle encounter at the Gateway. The pinnacle gets its own plan.
+Bastions are three nodes at fixed bearings 25 cells out, so every save has the same long-range goals. Each needs a tier 15 chart and allows one attempt. Each drops a key fragment, and three fragments open a pinnacle encounter at the Gateway. The pinnacle gets its own plan.
 
 Unique systems are new content (the old unique charts were removed 2026-10-23). Each one bends a single rule hard: all loot and no fleets, a huge boss, or every POI a cache.
 
@@ -85,11 +106,11 @@ Points come from milestones: the first boss kill at each tier (15), each Sensor 
 
 ## UI
 
-The Star Charts window keeps its storage and crafting, and its Open Wormhole button becomes Outer Reach Atlas (`chart.ui.open.button`), which shows the atlas panel with the selected chart; the player picks a node there, and the Open Wormhole confirmation moves to that step. The Open Anywhere dev switch applies to that confirmation. The canvas reuses the skill tree's: `TreeCamera`, `SmoothZoom`, `PointerGesture`, `CameraPanAnimation`, `ScreenRect`, `ChromeMetrics` and `TreeLayers` move from `exiledsector-skill-tree` to `exiledsector-core`, because the star charts module sees only core. The atlas gets its own node drawer built on the shared ring, icon and connector rendering, the hyperspace backdrop, a search bar for markers, and tooltips through the existing tooltip renderer. Only visible chunks are drawn or generated.
+The Star Charts window keeps its storage and crafting, and its Open Wormhole button becomes Outer Reach Atlas (`chart.ui.open.button`), which shows the atlas panel with the selected chart; the player picks a node there, and the Open Wormhole confirmation moves to that step. The Open Anywhere dev switch applies to that confirmation. The canvas reuses the skill tree's camera and input classes, which live in `exiledsector-core` (`exiledsector.ui`) because the star charts module sees only core: `CanvasCamera` (pan, zoom, drag, follow, viewport), `SmoothZoom`, `PointerGesture` (generic over the canvas's mode type), `CameraPanAnimation`, `ScreenRect` and `ChromeMetrics`. The skill tree's `TreeCamera` extends `CanvasCamera` with the starting-root follow and hyperspace camera, and `TreeLayers` stays in the skill tree since it only splits exoship nodes. The atlas gets its own node drawer built on the shared ring, icon and connector rendering, the hyperspace backdrop, a search bar for markers, and tooltips through the existing tooltip renderer. Only visible chunks are drawn or generated.
 
 ## Save footprint
 
-`AtlasState` stores the seed, the generator version, a map from packed cell coordinates to a state byte (completed, failed, markers spent), completed special ids, atlas points and key fragments: a few hundred entries in a long game. Chart systems keep the zero-trace rule. A generator change reshuffles unvisited nodes only, because state is keyed by coordinates.
+`AtlasState` stores the seed, the generator version, a map from packed cell coordinates to a state byte (completed, failed, markers spent), completed special ids, atlas points, key fragments, the region decided for each revealed biome site and the Threat infestation decision for each revealed chunk: a few hundred entries in a long game. Chart systems keep the zero-trace rule. A generator change reshuffles unvisited nodes only, because state is keyed by coordinates.
 
 ## Foiler mods compatibility
 
@@ -114,16 +135,20 @@ Star Chart Progress for hull upgrade points (highest cleared tier), the entries 
 
 Decided 2026-10-23: failed nodes can be attempted again. The infestation design stands as written, with both Remnant and Threat infestations. Atlas passives get their own plan. The in-game name is The Outer Reaches, with the Outer Reach Atlas button and Outer Reach Intel. There is one atlas per save, and every Gateway the player owns opens it. Distance from the origin never gates the tier.
 
+Decided 2026-10-24: gameplay-changing terrain (black holes, neutron stars and pulsar beams, dense nebulae, asteroid impacts, magnetic fields, stellar flares) is a phenomenon marker rolled like an expansion, not bound to a region; regions only lean on it. A node's star, planets and terrain are fixed per cell. Regions carry no implicit effect lines or loot leanings. Unknown Skies gets optional support. Biomes are patches of 4 to 7 systems in normal space, which is the default, rather than regions tiling the map; locked biomes are decided when first revealed.
+
 ## Open questions
 
-1. Names: Sensor Array, Infestation, Nexus and Bastion are placeholders.
+1. Names: Sensor Array, Infestation, Nexus and Bastion are placeholders, as are the region and phenomenon names.
 
 ## Build order
 
-1. [ ] Move the generic canvas classes to core, with no behaviour change.
-2. [~] Expansion framework (step 1 of `chart_expansions/overview.md`; built without the atlas hooks and per-node roll, see there) with the atlas hooks: `ChartExpansion`, `chart_expansions.csv` with icon and intel columns, the per-expansion hash roll, expansion requests in `ChartContentPlan`, run state and cleanup, and a test-only expansion that places nothing.
-3. [ ] Atlas generator as pure, unit-tested Java (layouts limited to vanilla star, planet and terrain types, see Foiler mods compatibility): lattice, voids, regions, factions, layouts, boss and expansion markers, special sites. Determinism and connectivity tests, plus a test that adding an expansion moves no other roll. New CSVs added to the editor serialisers.
-4. [ ] `AtlasState`, reachability and visibility.
+1. [x] Move the generic canvas classes to core, with no behaviour change (see UI; tests in core's `exiledsector.ui`).
+2. [~] Expansion framework (step 1 of `chart_expansions/overview.md`; the weight hook `ChartExpansion.atlasWeight` and the per-node roll are built with step 3, the `AtlasState` entry, node marker requests and icon/intel use wait for steps 4 to 6) with the atlas hooks: `ChartExpansion`, `chart_expansions.csv` with icon and intel columns, the per-expansion hash roll, expansion requests in `ChartContentPlan`, run state and cleanup, and a test-only expansion that places nothing.
+3. [x] Atlas generator as pure, unit-tested Java (layouts limited to vanilla star, planet and terrain types, see Foiler mods compatibility): sparse systems and lanes, normal space and biome patches, factions, layouts, boss, phenomenon and expansion markers, special sites. Determinism and connectivity tests, plus a test that adding a region, expansion or phenomenon moves no other roll. New CSVs added to the editor serialisers. Built: package `exiledsector.charts.atlas` (`AtlasGenerator`, `AtlasCell`, `AtlasBiome`, `AtlasData` loading `atlas_regions.csv` with its `normal` row, `atlas_layouts.csv` with placeholder ids until 3b, `atlas_markers.csv` and `atlas_specials.csv`), tests in the matching test package, and four Atlas tabs in the editor's Items page. Biome systems come from the every-other-cell sub-grid, whose cells are never empty, and the patch clears every other system inside it; a site survives unless a surviving higher-priority patch comes within a cell of it. Patch shape never depends on the region, so unlocks and recorded biomes only change which region a patch is. Every weighted pick is a per-id hash race, so adding a row only moves what it wins. With the shipped weights biomes cover about a fifth of space and hold about a tenth of systems. Phenomenon candidates stay empty until 3c.
+3b. [ ] Layout recipes: decompile vanilla's `StarSystemGenerator` to find which star, planet category and terrain pickers `ChartStarSystemGenerator` can override, then build region palettes (backgrounds, tint, star and planet weights), layout constraints, `atlas_features.csv` with the first set-pieces, and `planet_categories` on `chart_poi.csv`. Black holes, neutron stars and nebula systems removed from ordinary picks, and vanilla's random magnetic fields and corona flares stripped (check where vanilla adds flares first). Region background pools use all six vanilla backgrounds; Foiler Nebula Backgrounds replaces them at their vanilla paths, so it needs no support.
+3c. [ ] Phenomenon framework: `ChartPhenomenon`, `chart_phenomena.csv`, the shared roll, the layout-stage hook and cleanup, then Black Hole, Neutron Star, Dense Nebula, Asteroid Storm, Magnetic Storm and Stellar Flares. In-game pass with Terrain FX on.
+4. [ ] `AtlasState`, reachability and visibility, and recording the biome region of each site and the Threat infestation of each chunk when first revealed (the generator takes the recorded biomes through `AtlasRegionMemory`).
 5. [ ] Chart and system split: node traits feed `ChartGenContext` and `ChartLayoutRequest`, stored charts converted.
 6. [ ] Atlas panel: canvas, node drawer, tooltips, the Outer Reach Atlas button, node selection and the moved Open Wormhole confirmation. Markers drawn from the expansion data, checked with the test expansion.
 7. [ ] Completion and failure wired through the objectives and `ChartRunCloser`. CompatTarget self-checks for `foilerTerrain` and `foilerHydro`, and an in-game pass of black hole, neutron star and nebula layouts with Terrain FX on.
@@ -134,3 +159,4 @@ Decided 2026-10-23: failed nodes can be attempted again. The infestation design 
 12. [ ] First expansion (Relay Network, per the overview's order) together with the intel item.
 13. [ ] The other expansions, one at a time, each to its own plan.
 14. [ ] Atlas points and passives (own plan).
+15. [ ] Unknown Skies support: backgrounds and star variants read from the installed mod, CompatTarget self-check.

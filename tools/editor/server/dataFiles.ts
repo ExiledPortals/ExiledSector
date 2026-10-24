@@ -152,6 +152,14 @@ export function resolveDataResource(paths: ProjectPaths, name: string): DataReso
       return { filePath: path.join(configDir, 'chart_colony_items.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
     case 'chart-expansions':
       return { filePath: path.join(configDir, 'chart_expansions.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
+    case 'atlas-regions':
+      return { filePath: path.join(configDir, 'atlas_regions.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
+    case 'atlas-layouts':
+      return { filePath: path.join(configDir, 'atlas_layouts.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
+    case 'atlas-markers':
+      return { filePath: path.join(configDir, 'atlas_markers.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
+    case 'atlas-specials':
+      return { filePath: path.join(configDir, 'atlas_specials.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
     case 'chart-loot':
       return { filePath: path.join(configDir, 'chart_loot.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
     case 'commodities':

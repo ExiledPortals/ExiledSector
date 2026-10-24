@@ -1,0 +1,5 @@
+id,chance,chance_per_step,max_chance,note
+void,0.5,0,0.5,"Chance that a cell which may be empty is empty space (half the cells may be)"
+powerful_boss,0.2,0.003,0.35,"About 1 in 4 near the Gateway, more further out"
+expansion,0.1,0.005,0.4,"Per expansion, times its weight"
+phenomenon,0.08,0.004,0.3,"Per phenomenon, times its weight"

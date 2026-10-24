@@ -1,0 +1,10 @@
+id,weight,min_steps,requires_mod,unlock,layouts,factions,markers,note
+normal,15,0,,,,,,"Normal space: plain hyperspace and a starscape. Its weight is how often a biome site stays normal space"
+derelict_graveyard,10,0,,,debris_ring:3; rogue_planet:1; compact:2,derelict:4; pirates:2; independent:1,,"Placeholder name. Old battlefields and dead fleets"
+frozen_fringe,8,0,,,sprawling:3; rogue_planet:2; ringed_giant:1,,stellar_flares:0,"Placeholder name. Cold, wide systems"
+furnace,8,0,,,compact:3; twin_worlds:2,,stellar_flares:3; magnetic_storm:2,"Placeholder name. Hot, tight systems"
+pirate_badlands,8,0,,,debris_ring:2; compact:2; sprawling:1,pirates:5; independent:1; mercenary:1,,"Placeholder name"
+remnant_expanse,6,8,,,sprawling:2; ringed_giant:2; twin_worlds:1,remnant:1,,"Placeholder name"
+collapsed_reach,4,12,,,compact:2; debris_ring:2,,black_hole:4; neutron_star:4,"Placeholder name. Leans hard on dead-star phenomena"
+abyssal_rift,3,15,assortment_of_things,,sprawling:2; rogue_planet:2,,dense_nebula:4,"Placeholder name. Random Assortment of Things only"
+threat_expanse,3,20,,$encounteredThreat,debris_ring:2; compact:1,remnant:1; derelict:1,,"Placeholder name. After the player has met the Threat"
