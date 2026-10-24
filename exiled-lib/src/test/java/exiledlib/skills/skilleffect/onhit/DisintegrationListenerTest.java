@@ -6,8 +6,10 @@ import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledlib.skills.skilleffect.weapon.BallisticAsEnergy;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -88,5 +90,24 @@ class DisintegrationListenerTest {
         listener.modifyDamageDealt(projectileFrom(WeaponAPI.WeaponType.BALLISTIC), target, damage, point, false);
 
         verify(grid, never()).setArmorValue(anyInt(), anyInt(), anyFloat());
+    }
+
+    @Test
+    void disintegrationStripsArmorAroundBallisticHitsWhileBallisticCountsAsEnergy() {
+        ShipAPI ship = shipWithDynamicValue(DisintegrationListener.ARMOR_DAMAGE_PERCENT_KEY, 50f);
+        StatBonus flag = new StatBonus();
+        flag.modifyFlat("fafnir", 1f);
+        when(ship.getMutableStats().getDynamic().getMod(BallisticAsEnergy.KEY)).thenReturn(flag);
+        Vector2f point = new Vector2f();
+        ArmorGridAPI grid = mock(ArmorGridAPI.class);
+        ShipAPI target = armoredTarget(grid, point);
+        DamageAPI damage = mock(DamageAPI.class);
+        when(damage.getDamage()).thenReturn(300f);
+        DamagingProjectileAPI ballisticShot = projectileFrom(WeaponAPI.WeaponType.BALLISTIC);
+        when(ballisticShot.getWeapon().getShip()).thenReturn(ship);
+
+        new DisintegrationListener(ship).modifyDamageDealt(ballisticShot, target, damage, point, false);
+
+        verify(grid).setArmorValue(2, 2, 90f);
     }
 }

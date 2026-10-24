@@ -10,6 +10,7 @@ import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import exiledlib.skills.skilleffect.CombatQueries;
 import exiledlib.skills.skilleffect.ShipCombatListener;
+import exiledlib.skills.skilleffect.weapon.BallisticAsEnergy;
 import org.lwjgl.util.vector.Vector2f;
 
 final class DisintegrationListener extends ShipCombatListener implements DamageDealtModifier {
@@ -46,7 +47,7 @@ final class DisintegrationListener extends ShipCombatListener implements DamageD
         } else if (param instanceof BeamAPI beam) {
             weapon = beam.getWeapon();
         }
-        return weapon != null && weapon.getType() == WeaponAPI.WeaponType.ENERGY;
+        return BallisticAsEnergy.countsAsEnergy(weapon);
     }
 
     private static void stripArmor(ShipAPI target, Vector2f point, float armorDamage) {

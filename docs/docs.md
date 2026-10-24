@@ -65,8 +65,21 @@ living child module a share of the parent's shareable tree effects (`ModuleShare
 the `MODULE_*` effects at full strength.
 `ModuleBoost` applies both, then rescales the module's maximum hull, armor cells, shield arc (up to 360) and
 each weapon's maximum ammo once; cells above their maximum are clamped first so armor carried from an earlier
-engagement isn't raised again. `JettisonListener` counts the modules it saw alive that have since
-died, and scales top speed and maneuverability by that count.
+engagement isn't raised again.
+
+## Ballistic counts as energy
+
+`BALLISTIC_COUNTS_AS_ENERGY` makes `BallisticEnergyMirror` copy every energy and non-beam energy
+weapon effect from the ship's sources into a ballistic one before diminishing returns. Energy checks in Dynamic Grid,
+energy range per sensor strength, Disintegration, Ion Arc and energy chains also accept ballistic weapons
+(`BallisticAsEnergy`). Vanilla and other mods' energy bonuses don't reach ballistics.
+
+## Hybrid ballistic slots
+
+`BALLISTIC_SLOTS_HYBRID` (Fafnir Breeches) gives the variant its own copy of the hull spec with every non-built-in
+ballistic slot retyped to hybrid (`HybridBallisticSlots`). Saves keep only the hull id, so the copy is rebuilt each
+time hull mods apply. `SkillTreeHullMod` swaps the slots back once the effect is gone, and `UnfitWeapons` returns
+weapons that no longer fit to cargo.
 
 ## Rise From the Ashes
 

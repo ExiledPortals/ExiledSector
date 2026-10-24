@@ -5,6 +5,7 @@ import exiledlib.PlayerFleet;
 import exiledlib.skills.skilleffect.logistics.FleetWideEffects;
 import exiledsector.ExiledSector;
 import exiledsector.effects.FighterBayOverflow;
+import exiledsector.effects.UnfitWeapons;
 import org.lazywizard.console.Console;
 
 import java.util.ArrayList;
@@ -58,6 +59,7 @@ final class ConsoleShips {
         member.updateStats();
         if (member.getFleetData() != null && member.getFleetData().getFleet() == PlayerFleet.orNull()) {
             FighterBayOverflow.returnUnhousedWingsAndAnnounce(member, member.getVariant(), PlayerFleet.cargoOrNull());
+            UnfitWeapons.returnUnfitWeaponsAndAnnounce(member, member.getVariant(), PlayerFleet.cargoOrNull());
         }
     }
 }
