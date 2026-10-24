@@ -6,15 +6,12 @@ import com.fs.starfarer.api.campaign.RepLevel;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI.ShipTypeHints;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
-import com.fs.starfarer.api.graphics.SpriteAPI;
-import com.fs.starfarer.api.util.Misc;
 import exiledlib.skills.skilleffect.render.SpriteCache;
 import exiledsector.compat.NexerelinCompat;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.hyperspace.HyperspaceAnchor;
-import exiledsector.ui.util.TexturedQuadBatch;
 import org.apache.log4j.Logger;
 
 import java.awt.Color;
@@ -58,8 +55,7 @@ public final class FactionFleetRenderer {
     }
 
     private final SpriteCache spriteCache = new SpriteCache(FactionFleetRenderer.class);
-    private final TexturedQuadBatch glowQuads = new TexturedQuadBatch();
-    private final FlameBatch flameBatch = new FlameBatch();
+    private final DrawnShips drawnShips = new DrawnShips(spriteCache);
     private final Random random = new Random();
     private final Map<String, RoamVolume> volumesByRegion = new LinkedHashMap<>();
     private final Map<String, List<ShipHullSpecAPI>> hullsByFaction = new HashMap<>();
@@ -67,12 +63,6 @@ public final class FactionFleetRenderer {
     private final List<FleetBattle> battles = new ArrayList<>();
     private final List<Respawn> respawns = new ArrayList<>();
     private final BattleEffects effects = new BattleEffects();
-    private RoamingShip[] drawnShips = new RoamingShip[0];
-    private float[] drawnEngineLevel = new float[0];
-    private float[] drawnAlpha = new float[0];
-    private float[] drawnScreenX = new float[0];
-    private float[] drawnScreenY = new float[0];
-    private float[] drawnScreenScale = new float[0];
 
     private FactionFleetRenderer() {
     }
@@ -188,7 +178,8 @@ public final class FactionFleetRenderer {
         float travelSpeed = MIN_TRAVEL_SPEED + random.nextFloat() * (MAX_TRAVEL_SPEED - MIN_TRAVEL_SPEED);
         FactionFleet fleet = new FactionFleet(factionId, factionColor, region, home, alliedVolumes(factionId, region), travelSpeed, random,
                 this::arrive);
-        List<RoamingShip> ships = buildShips(pickHulls(hullsByFaction.get(factionId), random), fleet.flight().facingDeg());
+        List<ShipHullSpecAPI> hulls = pickHulls(hullsByFaction.get(factionId), random);
+        List<RoamingShip> ships = FleetFormation.of(hulls, FLEET_RADIUS).shipsLargestFirst(hulls, spriteCache, fleet.flight().facingDeg(), random);
         if (ships.isEmpty()) {
             return null;
         }
@@ -202,36 +193,6 @@ public final class FactionFleetRenderer {
                 .filter(entry -> !entry.getKey().equals(homeRegion)
                         && TreeFleetFactions.factionsIn(entry.getKey()).stream().anyMatch(other -> allied(factionId, other)))
                 .map(Map.Entry::getValue).toList();
-    }
-
-    private List<RoamingShip> buildShips(List<ShipHullSpecAPI> hulls, float startFacingDeg) {
-        float largestSizeNum = 0f;
-        int largestCount = 0;
-        for (ShipHullSpecAPI hull : hulls) {
-            float sizeNum = Misc.getSizeNum(hull.getHullSize());
-            if (sizeNum > largestSizeNum) {
-                largestSizeNum = sizeNum;
-                largestCount = 1;
-            } else if (Float.compare(sizeNum, largestSizeNum) == 0) {
-                largestCount++;
-            }
-        }
-        List<RoamingShip> ships = new ArrayList<>(hulls.size());
-        for (ShipHullSpecAPI hull : hulls) {
-            SpriteAPI texture = spriteCache.texture(hull.getSpriteName());
-            if (texture == null) {
-                continue;
-            }
-            float sizeNum = Misc.getSizeNum(hull.getHullSize());
-            boolean onlyLargest = Float.compare(sizeNum, largestSizeNum) == 0 && largestCount == 1;
-            FleetShipDrift.HullMotion motion = FleetShipDrift.HullMotion.of(hull.getHullSize());
-            float maxOffset = FleetShipDrift.maxOffset(FLEET_RADIUS, largestSizeNum, sizeNum, onlyLargest);
-            FleetShipDrift drift = new FleetShipDrift(motion, maxOffset, startFacingDeg, random);
-            ships.add(new RoamingShip(hull.getSpriteName(), texture.getWidth(), texture.getHeight(), hull.getHullSize(), drift,
-                    HullEngines.of(FleetHullVisuals.of(hull))));
-        }
-        ships.sort(Comparator.comparingDouble(ship -> -ship.width() * ship.height()));
-        return ships;
     }
 
     private RoamVolume arrive(FactionFleet fleet, RoamVolume current) {
@@ -290,9 +251,8 @@ public final class FactionFleetRenderer {
 
     public void render(TreeViewport viewport, float alphaMult) {
         if ((fleets.isEmpty() && effects.isEmpty()) || alphaMult <= 0f) return;
-        ensureDrawCapacity();
         float zoom = viewport.zoom();
-        int drawnCount = 0;
+        drawnShips.begin(shipCount());
         for (FactionFleet fleet : fleets) {
             FleetFlight flight = fleet.flight();
             float fleetAlpha = alphaMult * fleet.spawnLevel();
@@ -301,68 +261,25 @@ public final class FactionFleetRenderer {
                 continue;
             }
             for (RoamingShip ship : fleet.ships()) {
-                FleetShipDrift drift = ship.drift();
-                float screenScale = drift.motion().scaleMult() * zoom;
-                if (Math.max(ship.width(), ship.height()) * screenScale < SkillTreeFleetRenderer.MIN_SHIP_PIXELS) {
-                    continue;
-                }
+                float screenScale = ship.drift().motion().scaleMult() * zoom;
                 float screenX = viewport.screenX(fleet.shipX(ship));
                 float screenY = viewport.screenY(fleet.shipY(ship));
-                ship.engines().drawHull(spriteCache, ship.spritePath(), screenX, screenY, ship.width() * screenScale,
-                        ship.height() * screenScale, screenScale, drift.facingDeg(), fleetAlpha);
-                drawnShips[drawnCount] = ship;
-                drawnEngineLevel[drawnCount] = flight.engineLevel();
-                drawnAlpha[drawnCount] = fleetAlpha;
-                drawnScreenX[drawnCount] = screenX;
-                drawnScreenY[drawnCount] = screenY;
-                drawnScreenScale[drawnCount] = screenScale;
-                drawnCount++;
+                if (drawnShips.add(ship, screenX, screenY, screenScale, flight.engineLevel(), fleetAlpha)) {
+                    ship.drawHull(spriteCache, screenX, screenY, screenScale, fleetAlpha);
+                }
             }
         }
-        if (drawnCount > 0) {
-            renderFlames(drawnCount, zoom);
+        drawnShips.renderFlames(zoom);
+        if (!drawnShips.isEmpty() || !effects.isEmpty()) {
+            drawnShips.renderGlows(quads -> effects.render(quads, viewport, alphaMult));
         }
-        renderGlows(drawnCount, viewport, alphaMult);
     }
 
-    private void ensureDrawCapacity() {
+    private int shipCount() {
         int shipCount = 0;
         for (FactionFleet fleet : fleets) {
             shipCount += fleet.ships().size();
         }
-        if (shipCount > drawnShips.length) {
-            drawnShips = new RoamingShip[shipCount];
-            drawnEngineLevel = new float[shipCount];
-            drawnAlpha = new float[shipCount];
-            drawnScreenX = new float[shipCount];
-            drawnScreenY = new float[shipCount];
-            drawnScreenScale = new float[shipCount];
-        }
-    }
-
-    private void renderFlames(int drawnCount, float zoom) {
-        SpriteAPI flameTexture = spriteCache.texture(HullEngines.FLAME_PATH);
-        if (flameTexture == null) return;
-        try (FlameBatch flames = flameBatch.begin(flameTexture)) {
-            for (int i = 0; i < drawnCount; i++) {
-                RoamingShip ship = drawnShips[i];
-                ship.engines().addFlames(flames, drawnScreenX[i], drawnScreenY[i], Math.toRadians(ship.drift().facingDeg()),
-                        drawnScreenScale[i], zoom, HullEngines.flameLengthFactor(drawnEngineLevel[i]), drawnAlpha[i]);
-            }
-        }
-    }
-
-    private void renderGlows(int drawnCount, TreeViewport viewport, float alphaMult) {
-        if (drawnCount == 0 && effects.isEmpty()) return;
-        SpriteAPI glowTexture = spriteCache.texture(HullEngines.GLOW_PATH);
-        if (glowTexture == null) return;
-        try (TexturedQuadBatch quads = glowQuads.beginAdditive(glowTexture)) {
-            for (int i = 0; i < drawnCount; i++) {
-                RoamingShip ship = drawnShips[i];
-                ship.engines().addGlows(quads, drawnScreenX[i], drawnScreenY[i], Math.toRadians(ship.drift().facingDeg()),
-                        drawnScreenScale[i], HullEngines.glowFactor(drawnEngineLevel[i]), drawnAlpha[i]);
-            }
-            effects.render(quads, viewport, alphaMult);
-        }
+        return shipCount;
     }
 }

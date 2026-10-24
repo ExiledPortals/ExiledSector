@@ -1,13 +1,11 @@
 package exiledsector.ui;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledlib.i18n.Translation;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
-import exiledsector.items.SocketCustody;
 import exiledsector.items.ItemKind;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
@@ -16,9 +14,9 @@ import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.node.TreeAllocationSession;
 import exiledsector.ui.socket.SocketPanelPlacement;
 import exiledsector.ui.socket.ItemStoragePanel;
+import exiledsector.ui.socket.StoragePlacement;
 
 import java.util.List;
-import java.util.Map;
 
 final class SocketPlacement {
 
@@ -30,12 +28,8 @@ final class SocketPlacement {
     private final NodeSearch nodeSearch;
     private final SkillTreeSearchBar searchBar;
     private final SkillTreeUiButton storageButton = new SkillTreeUiButton("");
-    private ItemStoragePanel storagePanel;
-    private Item placingItem;
+    private final StoragePlacement<SkillNode> storage = new StoragePlacement<>(SocketPlacement::placingHint);
     private Item hoveredStorageItem;
-    private SkillNode targetSocket;
-    private int storageRevision;
-    private Map<String, FleetMemberAPI> ownedShips = Map.of();
 
     SocketPlacement(CustomPanelAPI hostPanel, TreeAllocationSession treeSession, NodeSearch nodeSearch, SkillTreeSearchBar searchBar) {
         this.hostPanel = hostPanel;
@@ -51,30 +45,30 @@ final class SocketPlacement {
     }
 
     Item placingItem() {
-        return placingItem;
+        return storage.placingItem();
     }
 
     SubroutineRadius.Footprint hoveredStorageFootprint() {
-        if (storagePanel == null || hoveredStorageItem == null || !SubroutineRadius.hasRadius(hoveredStorageItem)) {
+        if (!storage.isOpen() || hoveredStorageItem == null || !SubroutineRadius.hasRadius(hoveredStorageItem)) {
             return null;
         }
         String socketId = treeSession.socketHolding(hoveredStorageItem);
-        if (socketId == null && targetSocket != null) {
-            socketId = targetSocket.getId();
+        if (socketId == null && storage.target() != null) {
+            socketId = storage.target().getId();
         }
         return socketId == null ? null : SubroutineRadius.footprint(hoveredStorageItem, socketId);
     }
 
     boolean isEngaged() {
-        return storagePanel != null || placingItem != null;
+        return storage.isOpen() || storage.placingItem() != null;
     }
 
     boolean isWorkbenchOpen() {
-        return storagePanel != null && storagePanel.isWorkbenchOpen();
+        return storage.isOpen() && storage.panel().isWorkbenchOpen();
     }
 
     boolean panelContains(float x, float y) {
-        return storagePanel != null && storagePanel.contains(x, y);
+        return storage.isOpen() && storage.panel().contains(x, y);
     }
 
     boolean buttonContains(float x, float y) {
@@ -86,12 +80,13 @@ final class SocketPlacement {
     }
 
     void escape() {
+        ItemStoragePanel storagePanel = storage.panel();
         if (storagePanel != null && storagePanel.escape()) {
             return;
         }
-        if (placingItem != null) {
+        if (storage.placingItem() != null) {
             stopPlacing();
-        } else if (targetSocket != null && storagePanel != null) {
+        } else if (storage.target() != null && storagePanel != null) {
             clearTargetSocket();
         } else if (storagePanel != null) {
             storagePanel.close();
@@ -104,21 +99,21 @@ final class SocketPlacement {
         }
         if (treeSession.emptySocket(node)) {
             refresh();
-        } else if (storagePanel != null && treeSession.releaseWarning(node) != null) {
-            storagePanel.showRefusal(treeSession.releaseWarning(node));
+        } else if (storage.isOpen() && treeSession.releaseWarning(node) != null) {
+            storage.panel().showRefusal(treeSession.releaseWarning(node));
         }
         return true;
     }
 
     void advance(boolean mustClose) {
-        if (storagePanel == null) {
+        if (!storage.isOpen()) {
             return;
         }
         if (mustClose) {
-            storagePanel.close();
-        } else if (treeSession.statsRevision() != storageRevision) {
+            storage.panel().close();
+        } else if (storage.isStale(treeSession.statsRevision())) {
             refresh();
-            if (targetSocket != null && !treeSession.isAllocatedSocket(targetSocket)) {
+            if (storage.target() != null && !treeSession.isAllocatedSocket(storage.target())) {
                 clearTargetSocket();
             }
         }
@@ -140,18 +135,19 @@ final class SocketPlacement {
     }
 
     void toggle(PositionAPI canvasPosition, ScreenRect shipCard) {
-        if (storagePanel != null) {
-            storagePanel.close();
+        if (storage.isOpen()) {
+            storage.panel().close();
         } else {
             open(canvasPosition, shipCard);
         }
     }
 
     private void refreshButtonSelected() {
-        storageButton.setSelected(storagePanel != null);
+        storageButton.setSelected(storage.isOpen());
     }
 
     boolean placeInto(SkillNode node) {
+        Item placingItem = storage.placingItem();
         if (placingItem == null) {
             return false;
         }
@@ -168,14 +164,14 @@ final class SocketPlacement {
 
     private void showRefusal(SkillNode node, Item item) {
         String refusal = treeSession.socketRefusal(node, item);
-        if (refusal != null && storagePanel != null) {
-            storagePanel.showRefusal(refusal);
+        if (refusal != null && storage.isOpen()) {
+            storage.panel().showRefusal(refusal);
         }
     }
 
     private void clearRefusal() {
-        if (storagePanel != null) {
-            storagePanel.clearRefusal();
+        if (storage.isOpen()) {
+            storage.panel().clearRefusal();
         }
     }
 
@@ -190,7 +186,7 @@ final class SocketPlacement {
             }
             return true;
         }
-        if (targetSocket != null && storagePanel != null && treeSession.isAllocatedSocket(node)) {
+        if (storage.target() != null && storage.isOpen() && treeSession.isAllocatedSocket(node)) {
             setTargetSocket(node);
             return true;
         }
@@ -198,13 +194,7 @@ final class SocketPlacement {
     }
 
     void refresh() {
-        if (storagePanel != null) {
-            storageRevision = treeSession.statsRevision();
-            storagePanel.refresh(SocketCustody.shipNames(ownedShips));
-            if (placingItem != null) {
-                storagePanel.setSelected(placingItem, placingHint(placingItem));
-            }
-        }
+        storage.refresh(treeSession.statsRevision());
     }
 
     private void refreshButtonLabel() {
@@ -214,17 +204,16 @@ final class SocketPlacement {
     }
 
     private void open(PositionAPI canvasPosition, ScreenRect shipCard) {
-        if (storagePanel != null) {
+        if (storage.isOpen()) {
             return;
         }
         SkillTreeSounds.panelOpened();
         treeSession.closeDropdown();
         searchBar.unfocus();
-        ownedShips = SocketCustody.reconcile();
-        storageRevision = treeSession.statsRevision();
+        storage.reconcileOwnedShips();
         SocketPanelPlacement placement = new SocketPanelPlacement(ChromeMetrics.EDGE_MARGIN, PANEL_TOP, ItemStoragePanel.WIDTH,
                 sidePanelHeight(canvasPosition, shipCard), false);
-        storagePanel = ItemStoragePanel.openSubroutines(hostPanel, placement, SocketCustody.shipNames(ownedShips), new ItemStoragePanel.Listener() {
+        ItemStoragePanel storagePanel = ItemStoragePanel.openSubroutines(hostPanel, placement, storage.shipNames(), new ItemStoragePanel.Listener() {
             @Override
             public void selected(Item item) {
                 if (item == null) {
@@ -254,25 +243,23 @@ final class SocketPlacement {
                 refreshButtonLabel();
             }
         });
-        storagePanel.setTargetingSocket(targetSocket != null);
-        showDoctrineRemovalWarning(targetSocket);
+        storage.opened(storagePanel, treeSession.statsRevision());
+        storagePanel.setTargetingSocket(storage.target() != null);
+        showDoctrineRemovalWarning(storage.target());
         refreshButtonSelected();
     }
 
     private void forgetStorage() {
-        storagePanel = null;
+        storage.forget();
         hoveredStorageItem = null;
-        stopPlacing();
-        clearTargetSocket();
+        nodeSearch.setSocketFocus(false);
+        treeSession.setTargetedSocket(null);
         refreshButtonSelected();
     }
 
     private void startPlacing(Item item) {
-        placingItem = item;
         nodeSearch.setSocketFocus(true, true);
-        if (storagePanel != null) {
-            storagePanel.setSelected(item, placingHint(item));
-        }
+        storage.startPlacing(item);
     }
 
     private static String placingHint(Item item) {
@@ -280,39 +267,31 @@ final class SocketPlacement {
     }
 
     private void stopPlacing() {
-        placingItem = null;
+        storage.stopPlacing();
         nodeSearch.setSocketFocus(false);
-        if (storagePanel != null) {
-            storagePanel.setSelected(null);
-        }
     }
 
     private void setTargetSocket(SkillNode socket) {
         stopPlacing();
-        targetSocket = socket;
+        storage.setTarget(socket);
         treeSession.setTargetedSocket(socket);
-        if (storagePanel != null) {
-            storagePanel.setTargetingSocket(socket != null);
-            showDoctrineRemovalWarning(socket);
-        }
+        showDoctrineRemovalWarning(socket);
     }
 
     private void showDoctrineRemovalWarning(SkillNode socket) {
         String warning = treeSession.doctrineRemovalWarning(socket);
-        if (warning != null && storagePanel != null) {
-            storagePanel.showRefusal(warning);
+        if (warning != null && storage.isOpen()) {
+            storage.panel().showRefusal(warning);
         }
     }
 
     private void clearTargetSocket() {
-        targetSocket = null;
+        storage.setTarget(null);
         treeSession.setTargetedSocket(null);
-        if (storagePanel != null) {
-            storagePanel.setTargetingSocket(false);
-        }
     }
 
     private boolean installInTargetSocket(Item item) {
+        SkillNode targetSocket = storage.target();
         if (targetSocket == null) {
             return false;
         }
