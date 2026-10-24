@@ -164,7 +164,6 @@
     "ui.cargoCraftingButton": "Exiled Sector Crafting",
     "ui.socketPanel.tab.socketables": "Hull Items",
     "ui.socketPanel.tab.hullUpgrades": "Hull Upgrades",
-    "ui.socketPanel.tab.starCharts": "Star Charts",
 
     "settings.header": "Exiled Sector",
     "settings.language.name": "Language",

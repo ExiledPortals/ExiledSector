@@ -62,33 +62,30 @@ class ModificationBayModeTest {
     }
 
     @Test
-    void theStarChartsOnlyBayOpensOnChartsWithNoWayToHullItems() {
+    void theStarChartsOnlyBayOpensOnCharts() {
         ModificationBay bay = ModificationBay.openStarChartsOnly(mock(CustomPanelAPI.class), SIDE_BY_SIDE_AREA, item -> null, bayListener);
 
         assertEquals(BenchMode.STAR_CHARTS, openedMode.get());
         assertEquals(BenchMode.STAR_CHARTS, bay.mode());
-        assertFalse(benchListener.get().offersModeSwitch());
         assertTrue(benchListener.get().offersWormholeOpening());
         chartStorageMock.verify(() -> StarChartStoragePanel.open(any(), any(), any(), any(), any()), times(1));
         itemStorageMock.verify(() -> ItemStoragePanel.openPicker(any(), any(), any(), any(), anyBoolean()), never());
     }
 
     @Test
-    void theFullBayStillOffersBothModesAndStartsOnHullItems() {
+    void theCraftingBayOpensOnHullItemsWithoutCharts() {
         ModificationBay bay = ModificationBay.open(mock(CustomPanelAPI.class), SIDE_BY_SIDE_AREA, item -> null, bayListener);
 
+        assertEquals(BenchMode.HULL_ITEMS, openedMode.get());
         assertEquals(BenchMode.HULL_ITEMS, bay.mode());
-        assertTrue(benchListener.get().offersModeSwitch());
-        assertTrue(benchListener.get().offersWormholeOpening());
         chartStorageMock.verify(() -> StarChartStoragePanel.open(any(), any(), any(), any(), any()), never());
     }
 
     @Test
-    void theHullItemsOnlyBayStillHidesChartsAndTheModeSwitch() {
+    void theHullItemsOnlyBayHidesWormholeOpening() {
         ModificationBay.openHullItemsOnly(mock(CustomPanelAPI.class), SIDE_BY_SIDE_AREA, item -> null, bayListener);
 
         assertEquals(BenchMode.HULL_ITEMS, openedMode.get());
-        assertFalse(benchListener.get().offersModeSwitch());
         assertFalse(benchListener.get().offersWormholeOpening());
     }
 }

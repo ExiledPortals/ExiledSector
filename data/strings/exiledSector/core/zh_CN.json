@@ -500,7 +500,6 @@
     "ui.cargoCraftingButton": "Exiled Sector 制作",
     "ui.socketPanel.tab.socketables": "船体物品",
     "ui.socketPanel.tab.hullUpgrades": "船体升级",
-    "ui.socketPanel.tab.starCharts": "星图",
 
     "settings.header": "Exiled Sector",
     "settings.language.name": "语言",

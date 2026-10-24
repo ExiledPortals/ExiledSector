@@ -50,8 +50,6 @@ public interface BenchModeSupport {
 
         void refresh();
 
-        void swapOut();
-
         void close();
 
         boolean contains(float x, float y);

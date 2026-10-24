@@ -28,10 +28,8 @@ public final class ModificationBay {
     private ItemStoragePanel storagePanel;
     private BenchModeSupport.PickerSession chartPicker;
     private SocketPanelPlacement drawerPlacement;
-    private SocketPanelPlacement sidePlacement;
     private BenchMode benchMode = BenchMode.HULL_ITEMS;
     private boolean hullItemsOnly;
-    private boolean modeLocked;
     private boolean drawer;
     private boolean closing;
 
@@ -52,7 +50,6 @@ public final class ModificationBay {
                                                     Listener bayListener) {
         ModificationBay bay = new ModificationBay(hostPanel, installedShipLookup, bayListener);
         bay.hullItemsOnly = true;
-        bay.modeLocked = true;
         bay.layOut(area);
         return bay;
     }
@@ -61,7 +58,6 @@ public final class ModificationBay {
                                                      Listener bayListener) {
         ModificationBay bay = new ModificationBay(hostPanel, installedShipLookup, bayListener);
         bay.benchMode = BenchMode.STAR_CHARTS;
-        bay.modeLocked = true;
         bay.layOut(area);
         return bay;
     }
@@ -87,8 +83,7 @@ public final class ModificationBay {
             drawerPlacement = new SocketPanelPlacement(benchLeft + inset, groupTop + inset, ItemStoragePanel.COMPACT_WIDTH, benchHeight - inset * 2f,
                     false);
         } else {
-            sidePlacement = new SocketPanelPlacement(groupLeft, groupTop, ItemStoragePanel.COMPACT_WIDTH, benchHeight, area.instantly());
-            openPicker(sidePlacement);
+            openPicker(new SocketPanelPlacement(groupLeft, groupTop, ItemStoragePanel.COMPACT_WIDTH, benchHeight, area.instantly()));
         }
     }
 
@@ -127,16 +122,6 @@ public final class ModificationBay {
             }
 
             @Override
-            public boolean offersModeSwitch() {
-                return !modeLocked && BenchModes.enabled(BenchMode.STAR_CHARTS);
-            }
-
-            @Override
-            public void modeChanged(BenchMode mode) {
-                switchPicker(mode);
-            }
-
-            @Override
             public boolean offersWormholeOpening() {
                 return !hullItemsOnly;
             }
@@ -147,26 +132,6 @@ public final class ModificationBay {
                 close();
             }
         };
-    }
-
-    private void switchPicker(BenchMode mode) {
-        benchMode = mode;
-        swapOutPickers();
-        if (!drawer && !closing) {
-            openPicker(new SocketPanelPlacement(sidePlacement.panelLeft(), sidePlacement.panelTop(), sidePlacement.panelWidth(),
-                    sidePlacement.panelHeight(), true));
-        }
-    }
-
-    private void swapOutPickers() {
-        if (storagePanel != null) {
-            ItemStoragePanel swapped = storagePanel;
-            storagePanel = null;
-            swapped.swapOut();
-        }
-        if (chartPicker != null) {
-            chartPicker.swapOut();
-        }
     }
 
     private boolean pickerOpen() {

@@ -67,13 +67,6 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         default void requestItem() {
         }
 
-        default boolean offersModeSwitch() {
-            return false;
-        }
-
-        default void modeChanged(BenchMode mode) {
-        }
-
         default boolean offersWormholeOpening() {
             return false;
         }
@@ -97,11 +90,6 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     private static final String FALLBACK_ICON = ItemDefinition.FALLBACK_ICON;
 
     private enum Control {CLOSE, PICK, CONFIRM_USE, CONFIRM_GROW, CANCEL_CONFIRM, OPEN_WORMHOLE, CONFIRM_OPEN}
-
-    private record ModeButton(BenchMode mode) {
-    }
-
-    private static final float MODE_BUTTON_PADDING = 24f;
 
     private static final float CONFIRM_WIDTH = 460f;
     private static final float USE_CONFIRM_HEIGHT = 180f;
@@ -349,8 +337,6 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             cancelConfirm();
         } else if (isConfirmOpen()) {
             return;
-        } else if (id instanceof ModeButton modeButton) {
-            switchMode(modeButton.mode());
         } else if (id == Control.CLOSE) {
             close();
         } else if (id == Control.PICK) {
@@ -358,23 +344,6 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         } else if (id == Control.OPEN_WORMHOLE) {
             openPressed();
         }
-    }
-
-    private void switchMode(BenchMode mode) {
-        if (mode == benchMode) {
-            buildHeader();
-            refreshOpacity();
-            return;
-        }
-        hoverTooltip.hide();
-        benchMode = mode;
-        loadedItem = null;
-        activeWards.clear();
-        noticeText = null;
-        socketFlair.restartLoad();
-        buildHeader();
-        rebuildContent();
-        workbenchListener.modeChanged(mode);
     }
 
     public boolean escape() {
@@ -647,12 +616,8 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     }
 
     private void buildHeader() {
-        boolean switchable = workbenchListener.offersModeSwitch();
         String titleKey = benchMode == BenchMode.STAR_CHARTS ? "ui.workbench.title.starCharts" : "ui.workbench.title";
-        TooltipMakerAPI element = startHeader(switchable ? null : titleKey, "ui.workbench.close", Control.CLOSE);
-        if (switchable) {
-            addModeButtons(element);
-        }
+        TooltipMakerAPI element = startHeader(titleKey, "ui.workbench.close", Control.CLOSE);
         float partsRight = CLOSE_BUTTON_WIDTH + GAP * 2f;
         if (workbenchListener.offersItemPicker()) {
             element.addButton(Translation.text("ui.workbench.pickItem"), Control.PICK, PICK_BUTTON_WIDTH, HEADER_BUTTON_HEIGHT, 0f)
@@ -661,18 +626,6 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         }
         addPartsCount(element, partsRight);
         headerElement = finishHeader(element, headerElement);
-    }
-
-    private void addModeButtons(TooltipMakerAPI element) {
-        float buttonLeft = 0f;
-        for (BenchMode mode : BenchMode.values()) {
-            String label = mode.label();
-            float buttonWidth = Global.getSettings().computeStringWidth(label, Fonts.ORBITRON_20AABOLD) + MODE_BUTTON_PADDING;
-            element.addAreaCheckbox(label, new ModeButton(mode), Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(), Misc.getBrightPlayerColor(),
-                    buttonWidth, HEADER_BUTTON_HEIGHT, 0f).setChecked(mode == benchMode);
-            element.getPrev().getPosition().inTL(buttonLeft, 0f);
-            buttonLeft += buttonWidth + GAP;
-        }
     }
 
     private List<ItemCurrency> currencies() {

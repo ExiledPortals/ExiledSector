@@ -154,15 +154,6 @@ public final class StarChartBench implements BenchModeSupport {
         }
 
         @Override
-        public void swapOut() {
-            if (storagePanel != null) {
-                StarChartStoragePanel swapped = storagePanel;
-                storagePanel = null;
-                swapped.swapOut();
-            }
-        }
-
-        @Override
         public void close() {
             if (storagePanel != null) {
                 storagePanel.close();

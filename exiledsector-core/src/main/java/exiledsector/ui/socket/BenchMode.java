@@ -1,13 +1,10 @@
 package exiledsector.ui.socket;
 
-import exiledlib.i18n.Translation;
 import exiledsector.items.ItemStore;
 
 public enum BenchMode {
-    HULL_ITEMS("graphics/ui/exiledSector/modification_bench.png", 159f, 83.3f, 58f, 42f, 68.5f, 112f, 243.5f, 112f,
-            "ui.socketPanel.tab.socketables"),
-    STAR_CHARTS("graphics/ui/exiledSector/map_device.png", 169.7f, 70f, 58f, 34f, 37.5f, 103.5f, 283.7f, 100.7f,
-            "ui.socketPanel.tab.starCharts");
+    HULL_ITEMS("graphics/ui/exiledSector/modification_bench.png", 159f, 83.3f, 58f, 42f, 68.5f, 112f, 243.5f, 112f),
+    STAR_CHARTS("graphics/ui/exiledSector/map_device.png", 169.7f, 70f, 58f, 34f, 37.5f, 103.5f, 283.7f, 100.7f);
 
     private final String artPath;
     private final float socketX;
@@ -18,10 +15,9 @@ public enum BenchMode {
     private final float leftConsoleY;
     private final float rightConsoleX;
     private final float rightConsoleY;
-    private final String labelKey;
 
     BenchMode(String artPath, float socketX, float socketY, float orbitRadiusX, float orbitRadiusY, float leftConsoleX, float leftConsoleY,
-              float rightConsoleX, float rightConsoleY, String labelKey) {
+              float rightConsoleX, float rightConsoleY) {
         this.artPath = artPath;
         this.socketX = socketX;
         this.socketY = socketY;
@@ -31,7 +27,6 @@ public enum BenchMode {
         this.leftConsoleY = leftConsoleY;
         this.rightConsoleX = rightConsoleX;
         this.rightConsoleY = rightConsoleY;
-        this.labelKey = labelKey;
     }
 
     String artPath() {
@@ -68,10 +63,6 @@ public enum BenchMode {
 
     float rightConsoleY() {
         return rightConsoleY;
-    }
-
-    String label() {
-        return Translation.text(labelKey);
     }
 
     ItemStore store() {
