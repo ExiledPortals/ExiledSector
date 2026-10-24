@@ -20,8 +20,11 @@ public final class AnchorFinds {
     }
 
     public static void record(SectorAPI sector, String volume, String reason) {
-        if (markFound(sector, volume, reason) && opensAGate(volume)) {
-            RelockedGates.reopen(sector, UnlockConditionType.ANCHOR_FOUND);
+        if (volume != null && opensAGate(volume)) {
+            GateTriggers.record(sector, UnlockConditionType.ANCHOR_FOUND, sector == null ? null : sector.getMemoryWithoutUpdate(),
+                    FOUND_FLAG_PREFIX + volume, "Recorded a found " + volume + " anchor: " + reason);
+        } else {
+            markFound(sector, volume, reason);
         }
     }
 

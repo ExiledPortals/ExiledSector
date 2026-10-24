@@ -9,6 +9,7 @@ import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import exiledlib.skills.skilleffect.CombatQueries;
 import exiledlib.skills.skilleffect.CsvIdList;
 import exiledlib.skills.skilleffect.ShipCombatListener;
+import exiledlib.skills.skilleffect.weapon.WeaponScope;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
@@ -51,7 +52,7 @@ final class EnergyChainListener extends ShipCombatListener implements DamageDeal
     }
 
     private static boolean canChainFrom(WeaponAPI weapon) {
-        return weapon != null && !weapon.isBeam() && weapon.getType() == WeaponAPI.WeaponType.ENERGY
+        return weapon != null && WeaponScope.NON_BEAM_ENERGY.matches(weapon)
                 && !CsvIdList.ENERGY_CHAIN_WEAPONS.contains(weapon.getId());
     }
 

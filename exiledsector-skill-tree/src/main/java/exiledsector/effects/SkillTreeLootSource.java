@@ -1,7 +1,6 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
@@ -11,6 +10,8 @@ import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.compat.NightcrossCompat;
+import exiledsector.compat.NightcrossUnlocks;
 import exiledsector.compat.RandomAssortmentCompat;
 import exiledsector.items.AnchorJanusGate;
 import exiledsector.items.DoctrineArchives;
@@ -60,17 +61,12 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty {
 
     @Override
     public void recordEngagement(BattleLoot battle, BattleEngagement engagement) {
-        holdFactionLosses(defeatedDeploymentPointsByFaction(battle), engagement);
+        Map<String, Float> defeatedDeploymentPointsByFaction = defeatedDeploymentPointsByFaction(battle);
+        engagement.deploymentPointsLostByFaction().forEach((factionId, deploymentPoints) ->
+                defeatedDeploymentPointsByFaction.merge(factionId, deploymentPoints, Float::sum));
         GateRewardAnchors.recordEngagement(battle, engagement);
-    }
-
-    static void holdFactionLosses(Map<String, Float> defeatedDeploymentPointsByFaction, BattleEngagement engagement) {
-        for (FleetMemberAPI member : engagement.lostEnemies()) {
-            CampaignFleetAPI sourceFleet = member == null ? null : engagement.battle().getSourceFleet(member);
-            String factionId = sourceFleet == null || sourceFleet.getFaction() == null ? null : sourceFleet.getFaction().getId();
-            if (factionId != null) {
-                defeatedDeploymentPointsByFaction.merge(factionId, member.getDeploymentPointsCost(), Float::sum);
-            }
+        if (NightcrossCompat.isModEnabled()) {
+            NightcrossUnlocks.recordEngagement(Global.getSector(), engagement);
         }
     }
 

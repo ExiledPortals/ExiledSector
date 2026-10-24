@@ -72,7 +72,10 @@ died, and scales top speed and maneuverability by that count.
 
 `RiseFromTheAshesListener` cancels the first hull hit that would kill the ship, sets its hull to a share of
 maximum, restores armor and applies a damage taken multiplier for 6 s. It happens once per fleet member per
-battle, tracked in the combat engine's custom data, so redeploying doesn't reset it.
+battle, tracked in the combat engine's custom data, so redeploying doesn't reset it. A ship's lethal hits go
+through one `special/LethalHitArbiter`: Ludd's Light detonates on any lethal hit, even one a dive or Rise
+then saves, then Rise From the Ashes and then the Phase Anchor dive try to save the ship, and the first that
+does wins.
 
 ## Thermo-Accelerator
 
@@ -189,8 +192,8 @@ An anchor drops, stocks or shows in showcase salvage only while it is obtainable
 Janus Device (`JanusDevice`, `AnchorJanusGate`, lifted by the "Allow Wormhole Anchors Before the Janus Device"
 setting, Hyper-Nav Beacon exempt), its own unlock is met, and no closed `withheld` gate holds its exit. Each gate
 in `node_gates.json` sets `anchors` (`withheld` by default, or `free`) and `rewardAnchor`. Nightcross is `free`
-and opens on `anchorFound` once any of its anchors reaches the player (`AnchorFinds`). The Singularity and Lunar
-Fleet battles add one area anchor to their loot once per save (`GateRewardAnchors`). NPC anchors ignore all of
+and opens on `anchorFound` once any of its anchors reaches the player (`AnchorFinds`). The Singularity and Existential
+Threat battles add one area anchor to their loot once per save (`GateRewardAnchors`). NPC anchors ignore all of
 this, and open wormholes stay open.
 
 An anchor whose factions are all missing, or whose playable factions Nexerelin has all eliminated, drops from the

@@ -2,7 +2,6 @@ package exiledlib.skills.skilleffect.weapon;
 
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
-import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
@@ -13,8 +12,6 @@ import exiledlib.skills.skilleffect.ShipCombatListener;
 import org.lwjgl.util.vector.Vector2f;
 
 import static exiledlib.skills.skilleffect.ScaledBonus.percent;
-import static exiledlib.skills.skilleffect.StatTarget.all;
-import static exiledlib.skills.skilleffect.StatTarget.stat;
 
 final class FurorListener extends ShipCombatListener implements DamageDealtModifier, AdvanceableListener {
 
@@ -24,11 +21,10 @@ final class FurorListener extends ShipCombatListener implements DamageDealtModif
     static final float SHIELD_HIT_WEIGHT = 0.5f;
     static final float EMP_WEIGHT = 0.25f;
     private static final String MOD_ID_PREFIX = "exiledSector_furor_";
-    private static final ScaledBonus RATE_OF_FIRE = new ScaledBonus(percent(all(stat(MutableShipStatsAPI::getBallisticRoFMult),
-            stat(MutableShipStatsAPI::getEnergyRoFMult), stat(MutableShipStatsAPI::getMissileRoFMult))));
+    private static final ScaledBonus RATE_OF_FIRE = new ScaledBonus(percent(WeaponStatFamily.FIRE_RATE.target(WeaponScope.ALL)));
 
+    private final ScaledBonus.Tracker rateOfFire = RATE_OF_FIRE.tracker();
     private float furorPercent;
-    private int appliedPercent;
 
     FurorListener(ShipAPI ownerShip) {
         super(ownerShip, MOD_ID_PREFIX);
@@ -67,11 +63,6 @@ final class FurorListener extends ShipCombatListener implements DamageDealtModif
     }
 
     private void applyIfChanged() {
-        int percent = Math.round(furorPercent);
-        if (percent == appliedPercent) {
-            return;
-        }
-        appliedPercent = percent;
-        RATE_OF_FIRE.apply(ownerShip.getMutableStats(), modId, percent);
+        rateOfFire.apply(ownerShip.getMutableStats(), modId, Math.round(furorPercent));
     }
 }

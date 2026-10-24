@@ -33,7 +33,7 @@ public enum AuraSkillEffect implements BackedSkillEffect {
             TerrifyingPresenceListener.class, TerrifyingPresenceListener::new) {
         @Override
         public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("range", TerrifyingPresenceListener.RANGE).arg("value", magnitude).styled();
+            return EffectText.msg(this).arg("range", TerrifyingPresenceField.RANGE).arg("value", magnitude).styled();
         }
     },
     GRAVITY_DRAG_TIMEFLOW_PERCENT(GravityDragListener.TIMEFLOW_PERCENT_KEY, GravityDragListener.class, GravityDragListener::new) {

@@ -1,13 +1,10 @@
 package exiledsector.charts;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.IntelDataAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
-import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
-import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -171,25 +168,10 @@ public final class ChartLoadSweep {
     }
 
     static int removeOrphanIntel(SectorAPI sector) {
-        IntelManagerAPI intelManager = sector.getIntelManager();
-        if (intelManager == null) {
-            return 0;
-        }
         ChartRun run = ChartRuns.currentOrNull();
         String liveRunId = run != null && run.runState().isLive() ? run.runId() : null;
-        IntelDataAPI intelTab = sector.getIntel();
-        if (intelTab != null && intelTab.getSelectedIntel() instanceof ChartObjectiveIntel selected && !selected.belongsToRun(liveRunId)) {
-            intelTab.setSelectedIntel(null);
-        }
-        int removed = 0;
-        for (IntelInfoPlugin intel : new ArrayList<>(intelManager.getIntel(ChartObjectiveIntel.class))) {
-            if (intel instanceof ChartObjectiveIntel objectiveIntel && !objectiveIntel.belongsToRun(liveRunId)) {
-                objectiveIntel.endImmediately();
-                intelManager.removeIntel(intel);
-                removed++;
-            }
-        }
-        return removed;
+        return ChartRunCloser.endIntelWhere(sector, intelManager -> intelManager.getIntel(ChartObjectiveIntel.class),
+                intel -> intel instanceof ChartObjectiveIntel objectiveIntel && !objectiveIntel.belongsToRun(liveRunId));
     }
 
     private static void runSafely(String stepName, Runnable step) {

@@ -6,7 +6,6 @@ import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
-import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.impl.campaign.skills.NeuralLinkScript;
 import exiledlib.compat.CombatGlow;
 import exiledlib.i18n.Translation;
@@ -14,7 +13,7 @@ import exiledlib.skills.skilleffect.PlayerStatus;
 import exiledlib.skills.skilleffect.ScaledBonus;
 import exiledlib.skills.skilleffect.ShipCombatListener;
 import exiledlib.skills.skilleffect.StatMode;
-import org.lwjgl.util.vector.Vector2f;
+import exiledlib.skills.skilleffect.special.LethalHitArbiter;
 
 import java.awt.Color;
 import java.util.Map;
@@ -22,7 +21,7 @@ import java.util.Map;
 import static exiledlib.skills.skilleffect.StatTarget.all;
 import static exiledlib.skills.skilleffect.StatTarget.stat;
 
-final class RiseFromTheAshesListener extends ShipCombatListener implements HullDamageAboutToBeTakenListener, AdvanceableListener {
+final class RiseFromTheAshesListener extends ShipCombatListener implements LethalHitArbiter.Saver, AdvanceableListener {
 
     static final String HULL_PERCENT_KEY = "exiledSector_riseFromTheAshesHullPercent";
     static final String ARMOR_RESTORE_PERCENT_KEY = "exiledSector_riseFromTheAshesArmorRestorePercent";
@@ -44,6 +43,7 @@ final class RiseFromTheAshesListener extends ShipCombatListener implements HullD
     RiseFromTheAshesListener(ShipAPI ownerShip) {
         super(ownerShip, MOD_ID_PREFIX);
         status = new PlayerStatus(modId, STATUS_ICON, "combat.riseFromTheAshes");
+        LethalHitArbiter.addSaver(ownerShip, LethalHitArbiter.RISE_FROM_THE_ASHES_PRIORITY, this);
     }
 
     boolean rising() {
@@ -51,10 +51,7 @@ final class RiseFromTheAshesListener extends ShipCombatListener implements HullD
     }
 
     @Override
-    public boolean notifyAboutToTakeHullDamage(Object param, ShipAPI damagedShip, Vector2f point, float damageAmount) {
-        if (damagedShip != ownerShip || damageAmount < damagedShip.getHitpoints()) {
-            return false;
-        }
+    public boolean saveFromLethalHit(ShipAPI ship, float damageAmount) {
         CombatEngineAPI engine = Global.getCombatEngine();
         Map<String, Object> customData = engine == null ? null : engine.getCustomData();
         String usedKey = usedKey(ownerShip);
@@ -106,16 +103,6 @@ final class RiseFromTheAshesListener extends ShipCombatListener implements HullD
             return;
         }
         ownerShip.setJitterUnder(this, JITTER_COLOR, remainingSeconds / DURATION_SECONDS, 6, 0f, ownerShip.getCollisionRadius() * 0.15f);
-        showStatus();
-    }
-
-    private void showStatus() {
-        CombatEngineAPI engine = Global.getCombatEngine();
-        if (engine != null && engine.getPlayerShip() == ownerShip) {
-            if (status.needsText()) {
-                status.setText(() -> Translation.text("combat.riseFromTheAshes.status"));
-            }
-            status.show(engine, false);
-        }
+        status.showIfPlayer(ownerShip, false, () -> Translation.text("combat.riseFromTheAshes.status"));
     }
 }

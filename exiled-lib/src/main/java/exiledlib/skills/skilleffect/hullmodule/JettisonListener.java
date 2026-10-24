@@ -30,9 +30,9 @@ final class JettisonListener extends ShipCombatListener implements AdvanceableLi
 
     private final Set<ShipAPI> trackedModules = Collections.newSetFromMap(new IdentityHashMap<>());
     private final IntervalUtil checkInterval = new IntervalUtil(CHECK_SECONDS, CHECK_SECONDS);
+    private final ScaledBonus.Tracker jettisonBonus = JETTISON_BONUS.tracker();
     private boolean modulesCounted;
     private int lostBeforeDeployment;
-    private int appliedCount;
 
     JettisonListener(ShipAPI ownerShip) {
         super(ownerShip, MOD_ID_PREFIX);
@@ -52,11 +52,7 @@ final class JettisonListener extends ShipCombatListener implements AdvanceableLi
             track(ownerShip.getChildModulesCopy());
             lostBeforeDeployment = Math.max(0, ModuleBoost.expectedModuleCount(ownerShip) - trackedModules.size());
         }
-        int destroyed = lostBeforeDeployment + destroyedCount(trackedModules);
-        if (destroyed != appliedCount) {
-            appliedCount = destroyed;
-            JETTISON_BONUS.apply(ownerShip.getMutableStats(), modId, destroyed);
-        }
+        jettisonBonus.apply(ownerShip.getMutableStats(), modId, lostBeforeDeployment + destroyedCount(trackedModules));
     }
 
     private void track(List<ShipAPI> modules) {

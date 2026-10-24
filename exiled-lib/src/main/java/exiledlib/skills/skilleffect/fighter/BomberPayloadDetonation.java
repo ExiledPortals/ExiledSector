@@ -25,7 +25,6 @@ import com.fs.starfarer.api.loading.WeaponSpecAPI;
 import com.fs.starfarer.api.loading.WingRole;
 import exiledlib.compat.CombatGlow;
 import exiledlib.skills.skilleffect.CombatQueries;
-import exiledlib.skills.skilleffect.SkillEffectSupport;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,6 +40,7 @@ import java.util.Random;
 
 final class BomberPayloadDetonation implements AdvanceableListener {
 
+    static final String CHANCE_PERCENT_KEY = "exiledSector_bomberPayloadDetonationChancePercent";
     static final float CHECK_INTERVAL_SECONDS = 3f;
     static final float SAFE_DISTANCE_FROM_CARRIER = 600f;
     static final float MIN_BLAST_RADIUS = 75f;
@@ -98,24 +98,18 @@ final class BomberPayloadDetonation implements AdvanceableListener {
 
     private final ShipAPI bomber;
     private final ShipAPI carrier;
-    private final float chancePercent;
     private final Random random;
     private float secondsSinceCheck;
     private boolean detonated;
 
-    BomberPayloadDetonation(ShipAPI bomber, ShipAPI carrier, float chancePercent, Random random) {
+    BomberPayloadDetonation(ShipAPI bomber, ShipAPI carrier, Random random) {
         this.bomber = bomber;
         this.carrier = carrier;
-        this.chancePercent = chancePercent;
         this.random = random;
     }
 
-    static void arm(ShipAPI bomber, ShipAPI carrier, float chancePercent) {
-        if (chancePercent <= 0f || !isBomber(bomber)) {
-            return;
-        }
-        SkillEffectSupport.ensureListener(bomber, BomberPayloadDetonation.class,
-                ship -> new BomberPayloadDetonation(ship, carrier, chancePercent, new Random()));
+    static BomberPayloadDetonation armed(ShipAPI fighter, ShipAPI carrier) {
+        return isBomber(fighter) ? new BomberPayloadDetonation(fighter, carrier, new Random()) : null;
     }
 
     static boolean isBomber(ShipAPI fighter) {
@@ -133,7 +127,7 @@ final class BomberPayloadDetonation implements AdvanceableListener {
             return;
         }
         secondsSinceCheck -= CHECK_INTERVAL_SECONDS;
-        if (!carriesPayload(bomber) || !mayDetonate() || random.nextFloat() * 100f >= chancePercent) {
+        if (!carriesPayload(bomber) || !mayDetonate() || random.nextFloat() * 100f >= FighterListenerEffect.carrierValue(carrier, CHANCE_PERCENT_KEY)) {
             return;
         }
         detonated = true;

@@ -1,7 +1,5 @@
 package exiledlib.skills.skilleffect.defense;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipCommand;
@@ -66,7 +64,7 @@ final class TerminalDescentListener extends ShipCombatListener implements Advanc
         }
         if (inDescent) {
             ownerShip.blockCommandForOneFrame(ShipCommand.VENT_FLUX);
-            showStatus();
+            status.showIfPlayer(ownerShip, false, () -> Translation.text("combat.terminalDescent.status"));
         }
     }
 
@@ -77,16 +75,6 @@ final class TerminalDescentListener extends ShipCombatListener implements Advanc
         }
         if (ownerShip.getFluxTracker() != null && ownerShip.getFluxTracker().isVenting()) {
             ownerShip.getFluxTracker().stopVenting();
-        }
-    }
-
-    private void showStatus() {
-        CombatEngineAPI engine = Global.getCombatEngine();
-        if (engine != null && engine.getPlayerShip() == ownerShip) {
-            if (status.needsText()) {
-                status.setText(() -> Translation.text("combat.terminalDescent.status"));
-            }
-            status.show(engine, false);
         }
     }
 }

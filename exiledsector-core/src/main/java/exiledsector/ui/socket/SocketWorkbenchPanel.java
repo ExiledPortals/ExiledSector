@@ -821,7 +821,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     }
 
     static String wardDescriptionKey(CraftingWard ward) {
-        return "material." + ward.itemId() + ".description";
+        return MaterialItems.descriptionKey(ward.itemId());
     }
 
     private TileInput.Handler tileHandler(Object tooltipKey, Consumer<PositionAPI> showTooltip, Consumer<Boolean> clicked,
@@ -928,7 +928,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     }
 
     static String descriptionKey(ItemCurrency currency) {
-        return "material." + currency.itemId() + ".description";
+        return MaterialItems.descriptionKey(currency.itemId());
     }
 
     private String modeDescriptionKey(ItemCurrency currency) {

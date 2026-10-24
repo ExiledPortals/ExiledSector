@@ -15,8 +15,9 @@ public final class ShipTreeRepairs {
     }
 
     public static void replaceRemovedNodes(Map<String, SkillNode> nodesById, Map<String, String> replacements) {
-        replacements.forEach((oldId, newId) -> {
-            if (!nodesById.containsKey(oldId) && nodesById.containsKey(newId)) {
+        replacements.keySet().forEach(oldId -> {
+            String newId = NodeReplacements.current(oldId, replacements, nodesById::containsKey);
+            if (!newId.equals(oldId)) {
                 ShipSkillDataManager.all().values().forEach(shipData -> ShipTrees.replaceNode(shipData, oldId, newId));
             }
         });

@@ -23,6 +23,7 @@ import java.util.List;
 
 final class WingSharedFateListener implements DamageTakenModifier, DamageListener {
 
+    static final String SHARED_PERCENT_KEY = "exiledSector_wingSharedFatePercent";
     static final String SHARE_MOD_ID = "exiledSector_wingSharedFate";
     static final float MAX_SHARED_PERCENT = 100f;
     static final float KILLING_BLOW_MULTIPLE = 3f;
@@ -34,7 +35,7 @@ final class WingSharedFateListener implements DamageTakenModifier, DamageListene
     private static boolean applyingSharedDamage;
 
     private final ShipAPI fighter;
-    private final float sharedPercent;
+    private final ShipAPI carrier;
     private final List<ShipAPI> recipients = new ArrayList<>();
     private Object pendingParam;
     private float pendingRatio;
@@ -43,15 +44,9 @@ final class WingSharedFateListener implements DamageTakenModifier, DamageListene
     private DamageAPI empScaledDamage;
     private float unscaledEmp;
 
-    private WingSharedFateListener(ShipAPI fighter, float sharedPercent) {
+    WingSharedFateListener(ShipAPI fighter, ShipAPI carrier) {
         this.fighter = fighter;
-        this.sharedPercent = sharedPercent;
-    }
-
-    static void attach(ShipAPI fighter, float sharedPercent) {
-        if (fighter != null && sharedPercent > 0f && !fighter.hasListenerOfClass(WingSharedFateListener.class)) {
-            fighter.addListener(new WingSharedFateListener(fighter, sharedPercent));
-        }
+        this.carrier = carrier;
     }
 
     record Split(float keptFraction, float perWingmateRatio) {
@@ -76,7 +71,8 @@ final class WingSharedFateListener implements DamageTakenModifier, DamageListene
         restoreEmp();
         sharePending = false;
         recipients.clear();
-        if (applyingSharedDamage || protectedByAnotherMod(fighter)) {
+        float sharedPercent = FighterListenerEffect.carrierValue(carrier, SHARED_PERCENT_KEY);
+        if (applyingSharedDamage || sharedPercent <= 0f || protectedByAnotherMod(fighter)) {
             return null;
         }
         collectRecipients(Global.getCombatEngine(), shieldHit);

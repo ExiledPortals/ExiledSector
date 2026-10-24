@@ -1192,7 +1192,7 @@ class SkillEffectTest {
         return ship;
     }
 
-    private Object capturePhaseAnchorDiveListener(ShipAPI ship, float magnitude) {
+    private List<Object> attachPhaseAnchorDive(ShipAPI ship, float magnitude) {
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         com.fs.starfarer.api.util.DynamicStatsAPI dynamic = mock(com.fs.starfarer.api.util.DynamicStatsAPI.class);
         when(ship.getMutableStats()).thenReturn(stats);
@@ -1201,15 +1201,23 @@ class SkillEffectTest {
         when(ship.getListeners(any())).thenReturn(List.of());
         PhaseSkillEffect.PHASE_ANCHOR_EMERGENCY_DIVE.applyAfterShipCreation(ship, "mod_id", magnitude);
         ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
-        verify(ship).addListener(captor.capture());
-        return captor.getValue();
+        verify(ship, times(2)).addListener(captor.capture());
+        return captor.getAllValues();
+    }
+
+    private static <T> T listenerOfType(List<Object> listeners, Class<T> type) {
+        return listeners.stream().filter(type::isInstance).map(type::cast).findFirst().orElseThrow();
+    }
+
+    private HullDamageAboutToBeTakenListener captureLethalHitListener(ShipAPI ship, float magnitude) {
+        return listenerOfType(attachPhaseAnchorDive(ship, magnitude), HullDamageAboutToBeTakenListener.class);
     }
 
     @Test
     void phaseAnchorDiveIgnoresNonLethalDamage() {
         ShipAPI ship = phaseShip();
         when(ship.getHitpoints()).thenReturn(100f);
-        HullDamageAboutToBeTakenListener listener = (HullDamageAboutToBeTakenListener) capturePhaseAnchorDiveListener(ship, 100f);
+        HullDamageAboutToBeTakenListener listener = captureLethalHitListener(ship, 100f);
 
         boolean saved = listener.notifyAboutToTakeHullDamage(new Object(), ship, mock(Vector2f.class), 50f);
 
@@ -1227,7 +1235,7 @@ class SkillEffectTest {
         when(member.getDeployCost()).thenReturn(10f);
         when(member.getRepairTracker()).thenReturn(repairTracker);
         when(ship.getFleetMember()).thenReturn(member);
-        HullDamageAboutToBeTakenListener listener = (HullDamageAboutToBeTakenListener) capturePhaseAnchorDiveListener(ship, 100f);
+        HullDamageAboutToBeTakenListener listener = captureLethalHitListener(ship, 100f);
 
         Map<String, Object> customData = new HashMap<>();
         try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
@@ -1250,7 +1258,7 @@ class SkillEffectTest {
         when(ship.getHitpoints()).thenReturn(100f);
         when(ship.getCurrentCR()).thenReturn(0f);
         when(ship.getFleetMember()).thenReturn(null);
-        HullDamageAboutToBeTakenListener listener = (HullDamageAboutToBeTakenListener) capturePhaseAnchorDiveListener(ship, 100f);
+        HullDamageAboutToBeTakenListener listener = captureLethalHitListener(ship, 100f);
 
         try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
             CombatEngineAPI engine = mock(CombatEngineAPI.class);
@@ -1268,7 +1276,7 @@ class SkillEffectTest {
     void phaseAnchorDiveIsBlockedWhenAnotherShipAlreadyDoveThisBattle() {
         ShipAPI ship = phaseShip();
         when(ship.getHitpoints()).thenReturn(100f);
-        HullDamageAboutToBeTakenListener listener = (HullDamageAboutToBeTakenListener) capturePhaseAnchorDiveListener(ship, 100f);
+        HullDamageAboutToBeTakenListener listener = captureLethalHitListener(ship, 100f);
 
         Map<String, Object> customData = new HashMap<>();
         customData.put("phaseAnchor_canDive", Boolean.TRUE);
@@ -1292,7 +1300,7 @@ class SkillEffectTest {
         FleetMemberAPI member = mock(FleetMemberAPI.class);
         when(member.getDeployCost()).thenReturn(10f);
         when(ship.getFleetMember()).thenReturn(member);
-        HullDamageAboutToBeTakenListener listener = (HullDamageAboutToBeTakenListener) capturePhaseAnchorDiveListener(ship, 100f);
+        HullDamageAboutToBeTakenListener listener = captureLethalHitListener(ship, 100f);
 
         try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
             CombatEngineAPI engine = mock(CombatEngineAPI.class);
@@ -1310,7 +1318,7 @@ class SkillEffectTest {
     void phaseAnchorDiveNeverSavesAShipWithoutAPhaseCloak() {
         ShipAPI ship = mock(ShipAPI.class);
         when(ship.getHitpoints()).thenReturn(100f);
-        HullDamageAboutToBeTakenListener listener = (HullDamageAboutToBeTakenListener) capturePhaseAnchorDiveListener(ship, 0f);
+        HullDamageAboutToBeTakenListener listener = captureLethalHitListener(ship, 0f);
 
         assertFalse(listener.notifyAboutToTakeHullDamage(new Object(), ship, mock(Vector2f.class), 150f));
         assertFalse(listener.notifyAboutToTakeHullDamage(new Object(), ship, mock(Vector2f.class), 150f));
@@ -1330,7 +1338,7 @@ class SkillEffectTest {
     @Test
     void phaseAnchorDiveAdvanceDoesNothingWhenNotDiving() {
         ShipAPI ship = mock(ShipAPI.class);
-        AdvanceableListener listener = (AdvanceableListener) capturePhaseAnchorDiveListener(ship, 100f);
+        AdvanceableListener listener = listenerOfType(attachPhaseAnchorDive(ship, 100f), AdvanceableListener.class);
 
         listener.advance(0.1f);
 
@@ -1349,7 +1357,7 @@ class SkillEffectTest {
         when(phaseCloak.getSpecAPI().getEffectColor2()).thenReturn(java.awt.Color.CYAN);
         when(phaseCloak.getChargeUpDur()).thenReturn(1f);
         when(ship.getPhaseCloak()).thenReturn(phaseCloak);
-        Object listener = capturePhaseAnchorDiveListener(ship, 0f);
+        List<Object> listeners = attachPhaseAnchorDive(ship, 0f);
         MutableStat hullDamageTaken = mock(MutableStat.class);
         when(ship.getMutableStats().getTimeMult()).thenReturn(new MutableStat(1f));
         when(ship.getMutableStats().getHullDamageTakenMult()).thenReturn(hullDamageTaken);
@@ -1362,8 +1370,8 @@ class SkillEffectTest {
             globalMock.when(Global::getSettings).thenReturn(settings);
             globalMock.when(Global::getSoundPlayer).thenReturn(sound);
             when(engine.getCustomData()).thenReturn(new HashMap<>());
-            ((HullDamageAboutToBeTakenListener) listener).notifyAboutToTakeHullDamage(new Object(), ship, location, 150f);
-            AdvanceableListener dive = (AdvanceableListener) listener;
+            listenerOfType(listeners, HullDamageAboutToBeTakenListener.class).notifyAboutToTakeHullDamage(new Object(), ship, location, 150f);
+            AdvanceableListener dive = listenerOfType(listeners, AdvanceableListener.class);
 
             dive.advance(0.5f);
             verify(hullDamageTaken).modifyMult("mod_id", 0f);

@@ -257,7 +257,7 @@ export const UNLOCK_CONDITION_LABELS: Record<string, string> = {
   ratPlayerExoship: 'RAT: player owns an Exoship',
   ratSingularityDefeated: 'RAT: Singularity defeated',
   anchorFound: "A volume's wormhole anchor found",
-  nightcrossLunarFleetDefeated: 'Nightcross: Stargazer existential threat defeated',
+  nightcrossExistentialThreatDefeated: 'Nightcross: Stargazer existential threat defeated',
   nightcrossAncientPrototypeFound: 'Nightcross: an Ancient Prototype found',
   lostSectorFrozenHeartVisited: "Lost Sector: the Frozen Heart's system visited",
   threatFought: 'Player has fought a Threat fleet',

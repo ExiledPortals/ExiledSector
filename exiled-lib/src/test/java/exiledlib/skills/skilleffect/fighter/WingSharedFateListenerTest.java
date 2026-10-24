@@ -182,7 +182,8 @@ class WingSharedFateListenerTest {
 
     private static WingSharedFateListener attachedTo(ShipAPI fighter, float sharedPercent) {
         ArgumentCaptor<Object> listener = ArgumentCaptor.forClass(Object.class);
-        WingSharedFateListener.attach(fighter, sharedPercent);
+        FighterSkillEffect.FIGHTER_WING_SHARED_DAMAGE_PERCENT.applyToFighterSpawnedByShip(fighter,
+                FighterCarriers.with(WingSharedFateListener.SHARED_PERCENT_KEY, sharedPercent), "mod_id", sharedPercent);
         verify(fighter).addListener(listener.capture());
         return (WingSharedFateListener) listener.getValue();
     }
@@ -254,7 +255,8 @@ class WingSharedFateListenerTest {
         when(armor.getArmorRating()).thenReturn(50f);
         when(wingmate.getArmorGrid()).thenReturn(armor);
         wingOf(hit, wingmate);
-        WingNumbersDamageListener.attach(wingmate, 10f);
+        FighterSkillEffect.FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER.applyToFighterSpawnedByShip(wingmate,
+                FighterCarriers.with(WingNumbersDamageListener.REDUCTION_PERCENT_PER_FIGHTER_KEY, 10f), "mod_id", 10f);
         ArgumentCaptor<Object> wingNumbers = ArgumentCaptor.forClass(Object.class);
         verify(wingmate).addListener(wingNumbers.capture());
         ShipAPI attacker = mock(ShipAPI.class);

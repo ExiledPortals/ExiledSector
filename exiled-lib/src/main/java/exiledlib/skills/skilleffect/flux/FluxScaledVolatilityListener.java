@@ -11,6 +11,10 @@ import exiledlib.compat.LostSectorCompat;
 import exiledlib.i18n.Translation;
 import exiledlib.skills.skilleffect.PlayerStatus;
 import exiledlib.skills.skilleffect.ShipCombatListener;
+import exiledlib.skills.skilleffect.StatMode;
+import exiledlib.skills.skilleffect.StatTarget;
+import exiledlib.skills.skilleffect.weapon.WeaponScope;
+import exiledlib.skills.skilleffect.weapon.WeaponStatFamily;
 
 import java.awt.Color;
 import java.util.Locale;
@@ -24,6 +28,7 @@ final class FluxScaledVolatilityListener extends ShipCombatListener implements A
     private static final String STATUS_KEY = "exiledSector_fluxScaledStatus";
     private static final String STATUS_ICON = "graphics/icons/hullsys/high_energy_focus.png";
     private static final float RATIO_STEP = 0.02f;
+    private static final StatTarget RATE_OF_FIRE = WeaponStatFamily.FIRE_RATE.target(WeaponScope.ALL);
     static final float AFTERIMAGE_INTERVAL = 0.05f;
     private static final float AFTERIMAGE_DRIFT = -0.8f;
     private static final float AFTERIMAGE_DURATION = 0.35f;
@@ -63,9 +68,7 @@ final class FluxScaledVolatilityListener extends ShipCombatListener implements A
         if (ratio != appliedRatio) {
             applyRatio(ratio, topSpeed, rateOfFire);
         }
-        if (ownerShip == engine.getPlayerShip()) {
-            showStatus(engine, ratio, topSpeed, rateOfFire);
-        }
+        showStatus(ratio, topSpeed, rateOfFire);
         if (ratio > 0f) {
             showLowFluxEffects(engine, ratio);
         }
@@ -81,17 +84,12 @@ final class FluxScaledVolatilityListener extends ShipCombatListener implements A
         stats.getMaxSpeed().modifyFlat(modId, topSpeed * ratio);
         stats.getAcceleration().modifyPercent(modId, agility);
         stats.getTurnAcceleration().modifyPercent(modId, agility);
-        stats.getBallisticRoFMult().modifyPercent(modId, rateOfFire * ratio);
-        stats.getEnergyRoFMult().modifyPercent(modId, rateOfFire * ratio);
-        stats.getMissileRoFMult().modifyPercent(modId, rateOfFire * ratio);
+        RATE_OF_FIRE.apply(stats, modId, StatMode.PERCENT, rateOfFire * ratio);
     }
 
-    private void showStatus(CombatEngineAPI engine, float ratio, float topSpeed, float rateOfFire) {
-        if (status.needsText()) {
-            status.setText(() -> Translation.msg("combat.fluxScaled.status")
-                    .arg("speed", signed(topSpeed * ratio)).arg("rateOfFire", signed(rateOfFire * ratio)).text());
-        }
-        status.show(engine, ratio < 0f);
+    private void showStatus(float ratio, float topSpeed, float rateOfFire) {
+        status.showIfPlayer(ownerShip, ratio < 0f, () -> Translation.msg("combat.fluxScaled.status")
+                .arg("speed", signed(topSpeed * ratio)).arg("rateOfFire", signed(rateOfFire * ratio)).text());
     }
 
     private void showLowFluxEffects(CombatEngineAPI engine, float ratio) {

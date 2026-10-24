@@ -57,35 +57,26 @@ public final class HullUpgradeLootSource implements LootSource {
     @Override
     public void recordEngagement(BattleLoot battle, BattleEngagement engagement) {
         Losses losses = losses(battle);
-        for (FleetMemberAPI member : engagement.lostEnemies()) {
-            CampaignFleetAPI sourceFleet = member == null ? null : engagement.battle().getSourceFleet(member);
-            String factionId = sourceFleet == null || sourceFleet.getFaction() == null ? null : sourceFleet.getFaction().getId();
-            if (factionId != null) {
-                losses.defeatedDeploymentPointsByFaction.merge(factionId, member.getDeploymentPointsCost(), Float::sum);
+        engagement.deploymentPointsLostByFaction().forEach((factionId, deploymentPoints) ->
+                losses.defeatedDeploymentPointsByFaction.merge(factionId, deploymentPoints, Float::sum));
+        engagement.lostEnemiesBySourceFleet().forEach((sourceFleet, members) -> {
+            for (FleetMemberAPI member : members) {
+                float power = BattleItemDrops.shipPower(member.getDeploymentPointsCost(), LootSources.shipLevel(member)) * engagement.difficultyMultiplier();
+                if (power > 0f) {
+                    losses.battlePowerByFleet.merge(sourceFleet, power, Float::sum);
+                }
             }
-        }
-        for (FleetMemberAPI member : engagement.lostEnemies()) {
-            if (member == null) {
-                continue;
-            }
-            float power = BattleItemDrops.shipPower(member.getDeploymentPointsCost(), LootSources.shipLevel(member)) * engagement.difficultyMultiplier();
-            if (!(power > 0f)) {
-                continue;
-            }
-            losses.battlePowerByFleet.merge(engagement.battle().getSourceFleet(member), power, Float::sum);
-        }
+        });
     }
 
     @Override
     public void addEncounterLoot(BattleLoot battle, CargoAPI loot) {
-        BattleItemDrops.Loot battleItems = battleItemDrops(battle);
-        battleItems.items().forEach(item -> loot.addSpecial(item.toSpecialItem(), 1f));
-        battleItems.upgrades().forEach(upgrade -> loot.addSpecial(upgrade.toSpecialItem(), 1f));
+        ItemLootListener.addSectionLoot(loot, battleItemDrops(battle));
     }
 
     @Override
     public void deliverBattleLoot(BattleLoot battle, CargoAPI playerCargo) {
-        BattleItemDrops.Loot battleItems = battleItemDrops(battle);
+        ItemDrops.SectionItemLoot battleItems = battleItemDrops(battle);
         battleItems.items().forEach(item -> playerCargo.addSpecial(item.toSpecialItem(), 1f));
         ItemLootListener.announceBattleItems(battleItems.items());
         for (RefitSchematic schematic : battleItems.upgrades()) {
@@ -94,17 +85,17 @@ public final class HullUpgradeLootSource implements LootSource {
         }
     }
 
-    private BattleItemDrops.Loot battleItemDrops(BattleLoot battle) {
+    private ItemDrops.SectionItemLoot battleItemDrops(BattleLoot battle) {
         SectorAPI sector = Global.getSector();
         if (!battle.playerWon() || sector == null || !HullUpgradesSetting.sectionsOpen(sector)) {
-            return BattleItemDrops.Loot.NONE;
+            return ItemDrops.SectionItemLoot.NONE;
         }
         try {
             return BattleItemDrops.roll(losses(battle).battleItems(), BattleItemDrops.settingMultiplier(), battle.random(),
                     definition -> ItemUnlock.canDrop(definition, sector));
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Rolling battle hull item drops failed", e);
-            return BattleItemDrops.Loot.NONE;
+            return ItemDrops.SectionItemLoot.NONE;
         }
     }
 

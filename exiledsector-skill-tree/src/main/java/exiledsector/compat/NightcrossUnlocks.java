@@ -9,9 +9,9 @@ import com.fs.starfarer.api.campaign.listeners.DiscoverEntityListener;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledlib.compat.CompatTarget;
 import exiledsector.loot.BattleEngagement;
-import org.apache.log4j.Logger;
+import exiledsector.skills.unlock.GateTriggers;
+import exiledsector.skills.unlock.UnlockConditionType;
 
 import java.util.List;
 import java.util.Set;
@@ -21,13 +21,12 @@ public final class NightcrossUnlocks {
     public static final String PASCAL_SYSTEM_NAME = "Pascal";
     static final String PASCAL_VISITED_FLAG = "$exiledSector_pascalVisited";
     static final String PROTOTYPE_FOUND_FLAG = "$exiledSector_ancientPrototypeFound";
-    static final String LUNAR_FLEET_DEFEATED_SECTOR_FLAG = "$na_defeated_macula";
-    static final String LUNAR_FLEET_DEFEATED_PLAYER_FLAG = "$defeatedLunarFleet";
-    static final String LUNAR_FLEET_MEMORY_KEY = "$SDFStargazerLunarFleet";
+    static final String EXISTENTIAL_THREAT_DEFEATED_SECTOR_FLAG = "$na_defeated_macula";
+    static final String EXISTENTIAL_THREAT_DEFEATED_PLAYER_FLAG = "$defeatedLunarFleet";
+    static final String EXISTENTIAL_THREAT_MEMORY_KEY = "$SDFStargazerLunarFleet";
     static final String PROTOTYPE_DEFENDERS_DEFEATED_FLAG = "$na_defeatedAutoUnitFleet";
     static final List<String> PROTOTYPE_WRECK_IDS = List.of("na_mare_x_wreck", "na_sop_x_wreck", "na_macula_x_wreck");
     static final Set<String> PROTOTYPE_HULL_IDS = Set.of("na_mare_proto", "na_sop_proto", "na_macula_proto");
-    private static final Logger LOG = Logger.getLogger(NightcrossUnlocks.class);
 
     private NightcrossUnlocks() {
     }
@@ -44,23 +43,23 @@ public final class NightcrossUnlocks {
         return pascal == null ? NightcrossCompat.isModEnabled() : pascal.isEnteredByPlayer();
     }
 
-    public static boolean isLunarFleetDefeated(SectorAPI sector) {
+    public static boolean isExistentialThreatDefeated(SectorAPI sector) {
         if (sector == null) {
             return false;
         }
         MemoryAPI playerMemory = sector.getPlayerMemoryWithoutUpdate();
-        return sector.getMemoryWithoutUpdate().getBoolean(LUNAR_FLEET_DEFEATED_SECTOR_FLAG)
-                || playerMemory != null && playerMemory.getBoolean(LUNAR_FLEET_DEFEATED_PLAYER_FLAG);
+        return sector.getMemoryWithoutUpdate().getBoolean(EXISTENTIAL_THREAT_DEFEATED_SECTOR_FLAG)
+                || playerMemory != null && playerMemory.getBoolean(EXISTENTIAL_THREAT_DEFEATED_PLAYER_FLAG);
     }
 
-    public static boolean lunarFleetBeatenIn(BattleEngagement engagement) {
+    public static boolean existentialThreatBeatenIn(BattleEngagement engagement) {
         if (engagement == null || engagement.battle() == null || engagement.lostEnemies().isEmpty()) {
             return false;
         }
         for (FleetMemberAPI lost : engagement.lostEnemies()) {
             CampaignFleetAPI sourceFleet = lost == null ? null : engagement.battle().getSourceFleet(lost);
             if (sourceFleet != null && sourceFleet.getMemoryWithoutUpdate() != null
-                    && sourceFleet.getMemoryWithoutUpdate().getBoolean(LUNAR_FLEET_MEMORY_KEY)) {
+                    && sourceFleet.getMemoryWithoutUpdate().getBoolean(EXISTENTIAL_THREAT_MEMORY_KEY)) {
                 return sourceFleet.getFleetData() == null || engagement.lostEnemies().containsAll(sourceFleet.getFleetData().getMembersListCopy());
             }
         }
@@ -91,8 +90,15 @@ public final class NightcrossUnlocks {
 
     static void recordDiscovery(SectorAPI sector, SectorEntityToken entity) {
         if (sector != null && entity != null && PROTOTYPE_WRECK_IDS.contains(entity.getId())
-                && !sector.getMemoryWithoutUpdate().getBoolean(PROTOTYPE_FOUND_FLAG)) {
+                && GateTriggers.awaits(sector, UnlockConditionType.NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND, isAncientPrototypeFound(sector))) {
             record(sector, PROTOTYPE_FOUND_FLAG, "the player discovered an Ancient Prototype wreck");
+        }
+    }
+
+    public static void recordEngagement(SectorAPI sector, BattleEngagement engagement) {
+        if (sector != null && GateTriggers.awaits(sector, UnlockConditionType.NIGHTCROSS_EXISTENTIAL_THREAT_DEFEATED, isExistentialThreatDefeated(sector))
+                && existentialThreatBeatenIn(engagement)) {
+            GateTriggers.record(sector, UnlockConditionType.NIGHTCROSS_EXISTENTIAL_THREAT_DEFEATED, null, null, null);
         }
     }
 
@@ -120,7 +126,8 @@ public final class NightcrossUnlocks {
     }
 
     private static void record(SectorAPI sector, String flag, String reason) {
-        CompatTarget.raiseSectorFlag(sector, flag, LOG, "Recording " + flag + ": " + reason);
+        GateTriggers.record(sector, UnlockConditionType.NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND, sector.getMemoryWithoutUpdate(), flag,
+                "Recording " + flag + ": " + reason);
     }
 
     public static final class DiscoveryListener implements DiscoverEntityListener {

@@ -182,7 +182,7 @@ public final class SocketCustody {
 
     public static Map<String, FleetMemberAPI> ownedShips() {
         Map<String, FleetMemberAPI> ownedShipsById = new LinkedHashMap<>();
-        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
+        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
         if (playerFleet != null) {
             playerFleet.getFleetData().getMembersListCopy().forEach(member -> ownedShipsById.put(member.getId(), member));
         }

@@ -13,9 +13,13 @@ import java.util.function.Supplier;
 public record CompatTarget(String displayName, List<String> modIds, List<String> testedVersions, Supplier<List<String>> missingFeatures) {
 
     public boolean isEnabled() {
+        return modIds.stream().anyMatch(CompatTarget::isModEnabled);
+    }
+
+    public static boolean isModEnabled(String modId) {
         SettingsAPI settings = Global.getSettings();
         ModManagerAPI modManager = settings == null ? null : settings.getModManager();
-        return modManager != null && modIds.stream().anyMatch(modManager::isModEnabled);
+        return modManager != null && modManager.isModEnabled(modId);
     }
 
     public static List<String> missingHullMods(List<String> hullModIds) {

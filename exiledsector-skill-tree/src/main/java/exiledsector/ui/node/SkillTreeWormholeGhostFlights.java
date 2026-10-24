@@ -1,7 +1,5 @@
 package exiledsector.ui.node;
 
-import com.fs.starfarer.api.graphics.SpriteAPI;
-import exiledlib.skills.skilleffect.render.SpriteCache;
 import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
@@ -10,7 +8,6 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeTopology;
 import exiledsector.ui.TreeViewport;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,10 +20,9 @@ final class SkillTreeWormholeGhostFlights {
     private static final float FLIGHT_SPEED = 1400f;
     private static final float GHOST_SIZE_RATIO = 0.35f;
 
-    private final SpriteCache spriteCache = new SpriteCache(SkillTreeWormholeGhostFlights.class);
     private final Random random;
     private final Map<String, float[]> secondsUntilNextFlight = new HashMap<>();
-    private final List<GhostFlight> flights = new ArrayList<>();
+    private final GhostFlightPool flights = new GhostFlightPool();
     private List<SkillTreeTopology.WormholePair> pairs = List.of();
     private ShipSkillData pairsShip;
     private SkillTreeTopology pairsTopology;
@@ -37,7 +33,7 @@ final class SkillTreeWormholeGhostFlights {
     }
 
     void advance(float amount, ShipSkillData skillData) {
-        flights.removeIf(flight -> flight.advance(amount));
+        flights.advance(amount);
         for (SkillTreeTopology.WormholePair pair : pairsFor(skillData)) {
             if (skillData.isAllocated(pair.first().getId()) && skillData.isAllocated(pair.second().getId())
                     && !ExoshipNodes.isCarried(pair.first()) && !ExoshipNodes.isCarried(pair.second())) {
@@ -86,13 +82,6 @@ final class SkillTreeWormholeGhostFlights {
     }
 
     void draw(TreeViewport viewport, float alphaMult) {
-        SpriteAPI sprite = flights.isEmpty() ? null : spriteCache.sprite(GhostFlight.TEXTURE_PATH);
-        if (sprite == null) {
-            return;
-        }
-        float ghostSize = SkillTreeNodeGeometry.NODE_SIZE * GHOST_SIZE_RATIO * viewport.zoom();
-        for (GhostFlight flight : flights) {
-            flight.draw(sprite, GhostFlight.color(), ghostSize, viewport, alphaMult);
-        }
+        flights.draw(SkillTreeNodeGeometry.NODE_SIZE * GHOST_SIZE_RATIO * viewport.zoom(), viewport, alphaMult);
     }
 }

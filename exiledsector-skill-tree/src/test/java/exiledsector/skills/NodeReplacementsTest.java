@@ -3,6 +3,9 @@ package exiledsector.skills;
 import exiledlib.ProjectFiles;
 import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.skills.npc.RealSkillData;
+import exiledsector.skills.template.SkillTreeTemplate;
+import exiledsector.skills.template.TemplateCodec;
+import exiledsector.skills.template.TemplateStep;
 import org.json.CDL;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -80,12 +83,38 @@ class NodeReplacementsTest {
 
     @Test
     void anIdIsOnlyResolvedOnceItsNodeHasLeftTheTree() {
-        assertEquals("socket", NodeReplacements.resolve("removed"));
-        assertEquals("kept", NodeReplacements.resolve("kept"));
+        assertEquals("socket", NodeReplacements.current("removed"));
+        assertEquals("kept", NodeReplacements.current("kept"));
 
         node("removed", SkillTier.SMALL);
 
-        assertEquals("removed", NodeReplacements.resolve("removed"));
+        assertEquals("removed", NodeReplacements.current("removed"));
+    }
+
+    @Test
+    void aChainOfReplacementsIsFollowedToTheNodeStillInTheTree() throws Exception {
+        NodeReplacements.register(new JSONArray().put(new JSONObject().put("old", "oldest").put("new", "removed"))
+                .put(new JSONObject().put("old", "removed").put("new", "socket")));
+
+        assertEquals("socket", NodeReplacements.current("oldest"));
+    }
+
+    @Test
+    void aChainThatEndsOutsideTheTreeKeepsTheSavedId() throws Exception {
+        NodeReplacements.register(new JSONArray().put(new JSONObject().put("old", "removed").put("new", "also_removed")));
+
+        assertEquals("removed", NodeReplacements.current("removed"));
+    }
+
+    @Test
+    void aTemplateSavedOnARenamedNodeReadsBackWithTheReplacement() {
+        String encoded = TemplateCodec.encode(new SkillTreeTemplate("template", "Build", "root", null,
+                List.of(new TemplateStep("removed", null), new TemplateStep("kept", null))));
+
+        SkillTreeTemplate decoded = TemplateCodec.decode(encoded);
+
+        assertNotNull(decoded);
+        assertEquals(List.of("socket", "kept"), decoded.steps().stream().map(TemplateStep::nodeId).toList());
     }
 
     @Test

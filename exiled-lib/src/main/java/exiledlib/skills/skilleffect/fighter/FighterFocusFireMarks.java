@@ -32,8 +32,8 @@ final class FighterFocusFireMarks extends ShipCombatListener {
         return SkillEffectSupport.ensureListener(carrier, FighterFocusFireMarks.class, FighterFocusFireMarks::new);
     }
 
-    static void markFighter(ShipAPI fighter, ShipAPI carrier) {
-        SkillEffectSupport.ensureListener(fighter, FighterHits.class, ignored -> new FighterHits(of(carrier)));
+    static FighterListenerEffect<FighterHits> backing(String magnitudeKey) {
+        return new FighterListenerEffect<>(magnitudeKey, FighterHits.class, (fighter, carrier) -> new FighterHits(of(carrier)));
     }
 
     float markPercent(ShipAPI target) {

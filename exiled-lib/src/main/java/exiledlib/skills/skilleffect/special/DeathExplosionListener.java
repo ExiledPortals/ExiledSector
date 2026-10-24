@@ -4,7 +4,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledlib.compat.CombatGlow;
 import exiledlib.skills.skilleffect.CombatQueries;
@@ -14,7 +13,7 @@ import org.lwjgl.util.vector.Vector2f;
 import java.awt.Color;
 import java.util.List;
 
-final class DeathExplosionListener extends ShipCombatListener implements HullDamageAboutToBeTakenListener {
+final class DeathExplosionListener extends ShipCombatListener implements LethalHitArbiter.Reactor {
 
     static final String FUEL_DAMAGE_PERCENT_KEY = "exiledSector_explodeOnDeathFuelDamagePercent";
 
@@ -29,19 +28,16 @@ final class DeathExplosionListener extends ShipCombatListener implements HullDam
 
     DeathExplosionListener(ShipAPI ownerShip) {
         super(ownerShip);
+        LethalHitArbiter.addReactor(ownerShip, this);
     }
 
     // Intended: detonates once on the first lethal blow even if a Phase Anchor dive or similar then saves the ship.
-    // java:S3516: returning true would cancel the hull damage; this listener only reacts to the killing blow and never cancels it
-    @SuppressWarnings("java:S3516")
     @Override
-    public boolean notifyAboutToTakeHullDamage(Object param, ShipAPI damagedShip, Vector2f point, float damageAmount) {
-        if (exploded || damageAmount < damagedShip.getHitpoints()) {
-            return false;
+    public void reactToLethalHit(ShipAPI ship, float damageAmount) {
+        if (!exploded) {
+            exploded = true;
+            detonate();
         }
-        exploded = true;
-        detonate();
-        return false;
     }
 
     private void detonate() {

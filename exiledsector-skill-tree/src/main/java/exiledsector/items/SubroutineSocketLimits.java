@@ -5,11 +5,8 @@ import exiledsector.skills.ShipSkillData;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.function.Function;
 
 public final class SubroutineSocketLimits {
@@ -52,18 +49,10 @@ public final class SubroutineSocketLimits {
         if (definition == null || !definition.limitsSocketsPerShip() || socketedItemIds == null) {
             return false;
         }
-        int sameDefinitionCount = 0;
-        for (Map.Entry<String, String> socketedEntry : socketedItemIds.entrySet()) {
-            String socketedItemId = socketedEntry.getValue();
-            if (socketedEntry.getKey().equals(socketNodeId) || socketedItemId == null || socketedItemId.equals(itemId)) {
-                continue;
-            }
+        return SocketPeers.count(socketedItemIds, socketNodeId, itemId, socketedItemId -> {
             ItemDefinition socketedDefinition = definitionLookup.apply(socketedItemId);
-            if (socketedDefinition != null && socketedDefinition.id().equals(definition.id())) {
-                sameDefinitionCount++;
-            }
-        }
-        return sameDefinitionCount >= definition.socketLimit();
+            return socketedDefinition != null && socketedDefinition.id().equals(definition.id());
+        }) >= definition.socketLimit();
     }
 
     static boolean limitReached(SubroutineKind kind, String itemId, String socketNodeId, Map<String, String> socketedItemIds,
@@ -71,50 +60,30 @@ public final class SubroutineSocketLimits {
         if (kind == null || !kind.limitsSocketsPerShip() || socketedItemIds == null) {
             return false;
         }
-        int sameKindCount = 0;
-        for (Map.Entry<String, String> socketedEntry : socketedItemIds.entrySet()) {
-            String socketedItemId = socketedEntry.getValue();
-            if (socketedEntry.getKey().equals(socketNodeId) || socketedItemId == null || socketedItemId.equals(itemId)) {
-                continue;
-            }
-            if (kindOf(definitionLookup.apply(socketedItemId)) == kind) {
-                sameKindCount++;
-            }
-        }
-        return sameKindCount >= kind.socketLimitPerShip();
+        return SocketPeers.count(socketedItemIds, socketNodeId, itemId, socketedItemId -> kindOf(definitionLookup.apply(socketedItemId)) == kind)
+                >= kind.socketLimitPerShip();
     }
 
     static List<Item> unsocketExtras(Map<String, ShipSkillData> shipDataById, ItemStore store) {
-        List<Item> unsocketedItems = new ArrayList<>();
-        for (ShipSkillData shipData : shipDataById.values()) {
-            Map<SubroutineKind, Integer> keptCountByKind = new EnumMap<>(SubroutineKind.class);
-            Map<String, Integer> keptCountByDefinitionId = new HashMap<>();
-            for (Map.Entry<String, String> socketedEntry : new TreeMap<>(shipData.getSocketedItems()).entrySet()) {
-                Item item = store.find(socketedEntry.getValue());
-                ItemDefinition definition = item == null ? null : item.definition();
-                SubroutineKind kind = kindOf(definition);
-                boolean kindLimited = kind != null && kind.limitsSocketsPerShip();
-                boolean definitionLimited = definition != null && definition.limitsSocketsPerShip();
-                boolean pastKindLimit = kindLimited && keptCountByKind.getOrDefault(kind, 0) >= kind.socketLimitPerShip();
-                boolean pastDefinitionLimit = definitionLimited && keptCountByDefinitionId.getOrDefault(definition.id(), 0) >= definition.socketLimit();
-                if (pastKindLimit || pastDefinitionLimit) {
-                    shipData.unsocketItem(socketedEntry.getKey());
-                    unsocketedItems.add(item);
-                    continue;
-                }
-                if (kindLimited) {
-                    keptCountByKind.merge(kind, 1, Integer::sum);
-                }
-                if (definitionLimited) {
-                    keptCountByDefinitionId.merge(definition.id(), 1, Integer::sum);
-                }
-            }
-        }
+        List<Item> unsocketedItems = SocketPeers.unsocketPastLimits(shipDataById, store, SubroutineSocketLimits::limitsOf);
         if (!unsocketedItems.isEmpty()) {
             LOG.info("[ExiledSector] Returned " + unsocketedItems.size() + " subroutines to storage that went past a per-ship limit: "
                     + unsocketedItems.stream().map(Item::definitionId).toList());
         }
         return unsocketedItems;
+    }
+
+    private static List<SocketPeers.Limit> limitsOf(Item item) {
+        ItemDefinition definition = item.definition();
+        SubroutineKind kind = kindOf(definition);
+        List<SocketPeers.Limit> limits = new ArrayList<>(2);
+        if (kind != null && kind.limitsSocketsPerShip()) {
+            limits.add(new SocketPeers.Limit(kind, kind.socketLimitPerShip()));
+        }
+        if (definition != null && definition.limitsSocketsPerShip()) {
+            limits.add(new SocketPeers.Limit(definition.id(), definition.socketLimit()));
+        }
+        return limits;
     }
 
     static ItemDefinition definitionOf(String itemId) {

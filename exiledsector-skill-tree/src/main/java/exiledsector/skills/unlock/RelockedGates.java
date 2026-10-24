@@ -1,10 +1,6 @@
 package exiledsector.skills.unlock;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
-import com.fs.starfarer.api.campaign.listeners.CurrentLocationChangedListener;
-import exiledsector.compat.LostSectorUnlocks;
 import org.apache.log4j.Logger;
 
 import java.util.Collection;
@@ -80,20 +76,4 @@ public final class RelockedGates {
         return persistentData != null && persistentData.get(PERSISTENT_KEY) instanceof Set<?> relocked ? (Set<String>) relocked : null;
     }
 
-    static void recordLocation(SectorAPI sector, LocationAPI location) {
-        if (location == null || stored(sector) == null) {
-            return;
-        }
-        if (location == LostSectorUnlocks.frostSystem(sector)) {
-            reopen(sector, UnlockConditionType.LOST_SECTOR_FROZEN_HEART_VISITED);
-        }
-    }
-
-    public static final class LocationListener implements CurrentLocationChangedListener {
-
-        @Override
-        public void reportCurrentLocationChanged(LocationAPI previousLocation, LocationAPI currentLocation) {
-            recordLocation(Global.getSector(), currentLocation);
-        }
-    }
 }

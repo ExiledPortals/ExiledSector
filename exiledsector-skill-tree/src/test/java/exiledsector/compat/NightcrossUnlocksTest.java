@@ -3,6 +3,7 @@ package exiledsector.compat;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
@@ -11,7 +12,9 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.loot.BattleEngagement;
 import exiledsector.skills.unlock.AnchorFinds;
+import exiledsector.skills.unlock.RelockedGates;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.skills.unlock.UnlockCondition;
 import exiledsector.skills.unlock.UnlockConditionType;
@@ -39,7 +42,7 @@ import static org.mockito.Mockito.when;
 class NightcrossUnlocksTest {
 
     private static final List<UnlockCondition> PASCAL_GATE = List.of(UnlockCondition.anchorFound("nightcross"));
-    private static final List<UnlockCondition> LUNAR_FLEET_GATE = List.of(UnlockCondition.modGate(UnlockConditionType.NIGHTCROSS_LUNAR_FLEET_DEFEATED));
+    private static final List<UnlockCondition> EXISTENTIAL_THREAT_GATE = List.of(UnlockCondition.modGate(UnlockConditionType.NIGHTCROSS_EXISTENTIAL_THREAT_DEFEATED));
     private static final List<UnlockCondition> PROTOTYPE_GATE = List.of(UnlockCondition.modGate(UnlockConditionType.NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND));
 
     private MockedStatic<LunaSettings> lunaSettingsMock;
@@ -130,15 +133,15 @@ class NightcrossUnlocksTest {
     }
 
     @Test
-    void theStargazerAreaOpensWhenEitherLunarFleetFlagIsSet() {
-        assertTrue(SkillTypeUnlockStatus.isLocked(LUNAR_FLEET_GATE, null));
+    void theStargazerAreaOpensWhenEitherExistentialThreatFlagIsSet() {
+        assertTrue(SkillTypeUnlockStatus.isLocked(EXISTENTIAL_THREAT_GATE, null));
 
-        playerMemory.set(NightcrossUnlocks.LUNAR_FLEET_DEFEATED_PLAYER_FLAG, true);
-        assertFalse(SkillTypeUnlockStatus.isLocked(LUNAR_FLEET_GATE, null));
+        playerMemory.set(NightcrossUnlocks.EXISTENTIAL_THREAT_DEFEATED_PLAYER_FLAG, true);
+        assertFalse(SkillTypeUnlockStatus.isLocked(EXISTENTIAL_THREAT_GATE, null));
 
-        playerMemory.set(NightcrossUnlocks.LUNAR_FLEET_DEFEATED_PLAYER_FLAG, false);
-        sectorMemory.set(NightcrossUnlocks.LUNAR_FLEET_DEFEATED_SECTOR_FLAG, true);
-        assertFalse(SkillTypeUnlockStatus.isLocked(LUNAR_FLEET_GATE, null));
+        playerMemory.set(NightcrossUnlocks.EXISTENTIAL_THREAT_DEFEATED_PLAYER_FLAG, false);
+        sectorMemory.set(NightcrossUnlocks.EXISTENTIAL_THREAT_DEFEATED_SECTOR_FLAG, true);
+        assertFalse(SkillTypeUnlockStatus.isLocked(EXISTENTIAL_THREAT_GATE, null));
     }
 
     @Test
@@ -170,9 +173,9 @@ class NightcrossUnlocksTest {
     }
 
     @Test
-    void beatingAPrototypesDefendersCountsAsFindingOneButBeatingTheLunarFleetDoesNot() {
-        sectorMemory.set(NightcrossUnlocks.LUNAR_FLEET_DEFEATED_SECTOR_FLAG, true);
-        playerMemory.set(NightcrossUnlocks.LUNAR_FLEET_DEFEATED_PLAYER_FLAG, true);
+    void beatingAPrototypesDefendersCountsAsFindingOneButBeatingTheExistentialThreatDoesNot() {
+        sectorMemory.set(NightcrossUnlocks.EXISTENTIAL_THREAT_DEFEATED_SECTOR_FLAG, true);
+        playerMemory.set(NightcrossUnlocks.EXISTENTIAL_THREAT_DEFEATED_PLAYER_FLAG, true);
         assertTrue(SkillTypeUnlockStatus.isLocked(PROTOTYPE_GATE, null));
 
         sectorMemory.set(NightcrossUnlocks.PROTOTYPE_DEFENDERS_DEFEATED_FLAG, true);
@@ -207,7 +210,44 @@ class NightcrossUnlocksTest {
         when(modManager.isModEnabled(NightcrossCompat.MOD_ID)).thenReturn(false);
 
         assertFalse(SkillTypeUnlockStatus.isLocked(PASCAL_GATE, null));
-        assertFalse(SkillTypeUnlockStatus.isLocked(LUNAR_FLEET_GATE, null));
+        assertFalse(SkillTypeUnlockStatus.isLocked(EXISTENTIAL_THREAT_GATE, null));
         assertFalse(SkillTypeUnlockStatus.isLocked(PROTOTYPE_GATE, null));
+    }
+
+    @Test
+    void discoveringAPrototypeWreckReopensARelockedGate() {
+        Map<String, Object> persistentData = new HashMap<>();
+        when(sector.getPersistentData()).thenReturn(persistentData);
+        sectorMemory.set(NightcrossUnlocks.PROTOTYPE_FOUND_FLAG, true);
+        RelockedGates.relock(sector, List.of(UnlockConditionType.NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND));
+
+        NightcrossUnlocks.recordDiscovery(sector, wreck("na_sop_x_wreck", true));
+
+        assertFalse(RelockedGates.isRelocked(sector, UnlockConditionType.NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND));
+    }
+
+    @Test
+    void beatingTheWholeExistentialThreatReopensARelockedGate() {
+        Map<String, Object> persistentData = new HashMap<>();
+        when(sector.getPersistentData()).thenReturn(persistentData);
+        sectorMemory.set(NightcrossUnlocks.EXISTENTIAL_THREAT_DEFEATED_SECTOR_FLAG, true);
+        RelockedGates.relock(sector, List.of(UnlockConditionType.NIGHTCROSS_EXISTENTIAL_THREAT_DEFEATED));
+        FleetMemberAPI flagship = mock(FleetMemberAPI.class);
+        FleetMemberAPI escort = mock(FleetMemberAPI.class);
+        CampaignFleetAPI existentialThreat = mock(CampaignFleetAPI.class);
+        MemoryAPI threatMemory = memory();
+        threatMemory.set(NightcrossUnlocks.EXISTENTIAL_THREAT_MEMORY_KEY, true);
+        when(existentialThreat.getMemoryWithoutUpdate()).thenReturn(threatMemory);
+        FleetDataAPI threatData = mock(FleetDataAPI.class);
+        when(threatData.getMembersListCopy()).thenReturn(List.of(flagship, escort));
+        when(existentialThreat.getFleetData()).thenReturn(threatData);
+        BattleAPI battle = mock(BattleAPI.class);
+        when(battle.getSourceFleet(any())).thenReturn(existentialThreat);
+
+        NightcrossUnlocks.recordEngagement(sector, new BattleEngagement(battle, 1f, 100f, List.of(flagship)));
+        assertTrue(RelockedGates.isRelocked(sector, UnlockConditionType.NIGHTCROSS_EXISTENTIAL_THREAT_DEFEATED));
+
+        NightcrossUnlocks.recordEngagement(sector, new BattleEngagement(battle, 1f, 100f, List.of(flagship, escort)));
+        assertFalse(RelockedGates.isRelocked(sector, UnlockConditionType.NIGHTCROSS_EXISTENTIAL_THREAT_DEFEATED));
     }
 }

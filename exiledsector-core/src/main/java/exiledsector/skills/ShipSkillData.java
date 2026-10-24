@@ -31,15 +31,21 @@ public class ShipSkillData {
     Map<String, String> frameworkItemsBySocketType;
     boolean autoAllocateTemplate;
     transient int pendingTemplateCredits;
-    transient Map<String, String> anchorExitBySocketId;
-    transient Map<String, String> anchorSocketByExitId;
-    transient int anchorLinksRevision;
-    transient Object anchorLinksLookup;
-    transient int anchorLinksLookupRevision;
-    transient Map<String, List<String>> grantedNodesBySocketId;
-    transient int grantLinksRevision;
-    transient Object grantLinksLookup;
-    transient int grantLinksLookupRevision;
+    transient LinkCache<AnchorLinkMaps> anchorLinks;
+    transient LinkCache<Map<String, List<String>>> grantLinks;
+
+    record AnchorLinkMaps(Map<String, String> exitBySocketId, Map<String, String> socketByExitId) {
+    }
+
+    LinkCache<AnchorLinkMaps> anchorLinkCache() {
+        if (anchorLinks == null) anchorLinks = new LinkCache<>();
+        return anchorLinks;
+    }
+
+    LinkCache<Map<String, List<String>>> grantLinkCache() {
+        if (grantLinks == null) grantLinks = new LinkCache<>();
+        return grantLinks;
+    }
 
     Set<String> freeNodeIds() {
         if (freeNodeIds == null) freeNodeIds = new LinkedHashSet<>();

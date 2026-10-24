@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.TextPanelAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledlib.PlayerFleet;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Message;
 import exiledlib.i18n.StyledText;
@@ -27,7 +28,7 @@ public final class CombatXpAward {
     }
 
     public static void award(PlayerEngagement engagement) {
-        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
+        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
         if (playerFleet == null || !SkillTreeSetting.enabled()) {
             return;
         }

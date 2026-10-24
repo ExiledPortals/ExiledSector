@@ -36,7 +36,7 @@ class NodeGatesDataTest {
 
     private static final String ABYSS_GATE = "gate_singularity_defeated";
     private static final String PASCAL_GATE = "gate_pascal_visited";
-    private static final String LUNAR_FLEET_GATE = "gate_lunar_fleet_defeated";
+    private static final String EXISTENTIAL_THREAT_GATE = "gate_existential_threat_defeated";
     private static final String THREAT_GATE = "gate_threat_fought";
     private static final String REMNANT_GATE = "gate_remnant_fought";
     private static final String FROZEN_HEART_GATE = "gate_frozen_heart_visited";
@@ -64,12 +64,12 @@ class NodeGatesDataTest {
     @Test
     void eachWormholeGateHandsOutItsAnchorsByItsOwnRule() {
         assertEquals(NodeGates.AnchorRule.FREE, NodeGates.gate(PASCAL_GATE).anchorRule());
-        for (String withheldGate : List.of(ABYSS_GATE, LUNAR_FLEET_GATE, FROZEN_HEART_GATE, THREAT_GATE, REMNANT_GATE)) {
+        for (String withheldGate : List.of(ABYSS_GATE, EXISTENTIAL_THREAT_GATE, FROZEN_HEART_GATE, THREAT_GATE, REMNANT_GATE)) {
             assertEquals(NodeGates.AnchorRule.WITHHELD, NodeGates.gate(withheldGate).anchorRule(), withheldGate);
         }
         Set<String> rewardGates = NodeGates.all().keySet().stream().filter(gateTag -> NodeGates.gate(gateTag).rewardAnchor())
                 .collect(Collectors.toSet());
-        assertEquals(Set.of(ABYSS_GATE, LUNAR_FLEET_GATE), rewardGates);
+        assertEquals(Set.of(ABYSS_GATE, EXISTENTIAL_THREAT_GATE), rewardGates);
     }
 
     @Test
@@ -89,12 +89,12 @@ class NodeGatesDataTest {
     }
 
     @Test
-    void theNightcrossGatesWaitForAFoundAnchorTheLunarFleetAndAnAncientPrototype() {
+    void theNightcrossGatesWaitForAFoundAnchorTheExistentialThreatAndAnAncientPrototype() {
         List<UnlockCondition> pascalConditions = NodeGates.all().get(PASCAL_GATE);
         assertEquals(List.of(UnlockConditionType.ANCHOR_FOUND), pascalConditions.stream().map(UnlockCondition::getType).toList());
         assertEquals("nightcross", pascalConditions.get(0).getKey());
-        assertEquals(List.of(UnlockConditionType.NIGHTCROSS_LUNAR_FLEET_DEFEATED),
-                NodeGates.all().get(LUNAR_FLEET_GATE).stream().map(UnlockCondition::getType).toList());
+        assertEquals(List.of(UnlockConditionType.NIGHTCROSS_EXISTENTIAL_THREAT_DEFEATED),
+                NodeGates.all().get(EXISTENTIAL_THREAT_GATE).stream().map(UnlockCondition::getType).toList());
         assertEquals(List.of(UnlockConditionType.NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND),
                 NodeGates.all().get(PROTOTYPE_GATE).stream().map(UnlockCondition::getType).toList());
     }
@@ -125,15 +125,15 @@ class NodeGatesDataTest {
     }
 
     @Test
-    void everyStargazerNodeAndTheWormholeIntoItWaitForTheLunarFleetExceptCandlesGrace() {
-        assertTrue(ungatedIn("stargazer", LUNAR_FLEET_GATE).isEmpty(), "Stargazer nodes without the gate: " + ungatedIn("stargazer", LUNAR_FLEET_GATE));
+    void everyStargazerNodeAndTheWormholeIntoItWaitForTheExistentialThreatExceptCandlesGrace() {
+        assertTrue(ungatedIn("stargazer", EXISTENTIAL_THREAT_GATE).isEmpty(), "Stargazer nodes without the gate: " + ungatedIn("stargazer", EXISTENTIAL_THREAT_GATE));
     }
 
     @Test
-    void candlesGraceWaitsForBothTheLunarFleetAndAnAncientPrototype() {
+    void candlesGraceWaitsForBothTheExistentialThreatAndAnAncientPrototype() {
         Set<String> gates = SkillTree.get(CANDLES_GRACE_NODE_ID).getTags().stream().filter(SkillTags.GATE::contains)
                 .collect(Collectors.toSet());
-        assertEquals(Set.of(PROTOTYPE_GATE, LUNAR_FLEET_GATE), gates);
+        assertEquals(Set.of(PROTOTYPE_GATE, EXISTENTIAL_THREAT_GATE), gates);
     }
 
     @Test

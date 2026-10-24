@@ -1,15 +1,23 @@
 package exiledlib.skills.skilleffect.fighter;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
+import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.FighterWingAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import org.junit.jupiter.api.Test;
+import org.lwjgl.util.vector.Vector2f;
+import org.mockito.ArgumentCaptor;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class WingNumbersDamageListenerTest {
@@ -60,6 +68,24 @@ class WingNumbersDamageListenerTest {
         when(engine.isEntityInPlay(removed)).thenReturn(false);
 
         assertEquals(3, WingNumbersDamageListener.fightersOutWithWing(hit, engine), "the struck fighter, the flying one and the phased one");
+    }
+
+    @Test
+    void theReductionIsTheCarriersTotalOverEverySourceNotTheFirstSourceAlone() {
+        ShipAPI carrier = FighterCarriers.with(WingNumbersDamageListener.REDUCTION_PERCENT_PER_FIGHTER_KEY, 15f);
+        ShipAPI fighter = flyingFighter();
+        FighterSkillEffect.FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER.applyToFighterSpawnedByShip(fighter, carrier, "node", 10f);
+        when(fighter.hasListenerOfClass(WingNumbersDamageListener.class)).thenReturn(true);
+        FighterSkillEffect.FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER.applyToFighterSpawnedByShip(fighter, carrier, "item", 5f);
+        ArgumentCaptor<Object> listener = ArgumentCaptor.forClass(Object.class);
+        verify(fighter).addListener(listener.capture());
+        DamageAPI damage = mock(DamageAPI.class, RETURNS_DEEP_STUBS);
+
+        try (MockedStatic<Global> ignored = Mockito.mockStatic(Global.class)) {
+            ((WingNumbersDamageListener) listener.getValue()).modifyDamageTaken(null, fighter, damage, new Vector2f(), false);
+        }
+
+        verify(damage.getModifier()).modifyMult(WingNumbersDamageListener.REDUCTION_MOD_ID, 0.85f);
     }
 
     @Test

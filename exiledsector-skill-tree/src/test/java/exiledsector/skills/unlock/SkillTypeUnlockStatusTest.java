@@ -259,7 +259,7 @@ class SkillTypeUnlockStatusTest {
         globalMock.when(Global::getSettings).thenReturn(settings);
         when(sector.getMemoryWithoutUpdate()).thenThrow(new IllegalStateException("memory gone"));
 
-        assertFalse(SkillTypeUnlockStatus.isLocked(typeWithConditions(UnlockCondition.modGate(UnlockConditionType.NIGHTCROSS_LUNAR_FLEET_DEFEATED)), null));
+        assertFalse(SkillTypeUnlockStatus.isLocked(typeWithConditions(UnlockCondition.modGate(UnlockConditionType.NIGHTCROSS_EXISTENTIAL_THREAT_DEFEATED)), null));
         assertFalse(SkillTypeUnlockStatus.isLocked(typeWithConditions(UnlockCondition.anchorFound("nightcross")), null));
         assertTrue(SkillTypeUnlockStatus.isLocked(typeWithConditions(UnlockCondition.memoryFlag("someFlag")), null));
     }

@@ -1,5 +1,6 @@
 package exiledsector.ui.refit;
 
+import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -52,11 +53,15 @@ public final class ShipEditSession {
             return false;
         }
         revision++;
-        ExiledSector.domains().forEach(domain -> domain.memberChanged(member, variant));
+        applyChange(member, variant, PlayerFleet.cargoOrNull());
+        return true;
+    }
+
+    public static void applyChange(FleetMemberAPI member, ShipVariantAPI editedVariant, CargoAPI wingCargo) {
+        ExiledSector.domains().forEach(domain -> domain.memberChanged(member, editedVariant));
         FleetWideEffects.markPhaseFieldStale();
         member.setStatUpdateNeeded(true);
         member.updateStats();
-        FighterBayOverflow.returnUnhousedWingsAndAnnounce(member, variant, PlayerFleet.cargoOrNull());
-        return true;
+        FighterBayOverflow.returnUnhousedWingsAndAnnounce(member, editedVariant == null ? member.getVariant() : editedVariant, wingCargo);
     }
 }

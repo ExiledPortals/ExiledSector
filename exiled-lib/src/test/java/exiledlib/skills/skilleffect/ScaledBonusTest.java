@@ -9,6 +9,9 @@ import exiledlib.skills.skilleffect.weapon.WeaponStatFamily;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -60,6 +63,28 @@ class ScaledBonusTest {
         verify(energyDamage).unmodify(MOD_ID);
         verify(beamDamage).unmodify(MOD_ID + StatTarget.Compensated.OFFSET_SUFFIX);
         verify(maxSpeed, never()).modifyPercent(anyString(), anyFloat());
+    }
+
+    @Test
+    void aTrackerReappliesOnlyWhenTheScaleChanges() {
+        ScaledBonus.Tracker tracker = BONUS.tracker();
+
+        boolean first = tracker.apply(stats, MOD_ID, 2f);
+        boolean repeat = tracker.apply(stats, MOD_ID, 2f);
+        boolean changed = tracker.apply(stats, MOD_ID, 3f);
+
+        assertTrue(first);
+        assertFalse(repeat);
+        assertTrue(changed);
+        verify(maxSpeed).modifyPercent(MOD_ID, 8f);
+        verify(maxSpeed).modifyPercent(MOD_ID, 12f);
+        assertEquals(3f, tracker.appliedScale());
+    }
+
+    @Test
+    void aTrackerStartsAtZeroSoAZeroScaleChangesNothing() {
+        assertFalse(BONUS.tracker().apply(stats, MOD_ID, 0f));
+        verify(maxSpeed, never()).unmodify(anyString());
     }
 
     @Test

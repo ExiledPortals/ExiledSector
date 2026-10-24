@@ -21,7 +21,7 @@ final class InertialSuperchargerListener extends ShipCombatListener implements A
             percent(liveStat(MutableShipStatsAPI::getEnergyWeaponDamageMult)),
             percent(StatTarget.scaled(liveStat(MutableShipStatsAPI::getBeamWeaponDamageMult), -1f)));
 
-    private int appliedPercent;
+    private final ScaledBonus.Tracker nonBeamDamage = NON_BEAM_DAMAGE.tracker();
     private Float projectileSpeedShare;
 
     InertialSuperchargerListener(ShipAPI ownerShip) {
@@ -34,15 +34,13 @@ final class InertialSuperchargerListener extends ShipCombatListener implements A
         if (ownerIsAliveNotHulk()) {
             percent = (int) (ownerShip.getVelocity().length() * magnitude(DAMAGE_PERCENT_PER_SPEED_KEY));
         }
-        if (percent != appliedPercent) {
-            apply(percent);
+        MutableShipStatsAPI stats = ownerShip.getMutableStats();
+        if (nonBeamDamage.apply(stats, modId, percent)) {
+            applyProjectileSpeed(stats, percent);
         }
     }
 
-    private void apply(int percent) {
-        appliedPercent = percent;
-        MutableShipStatsAPI stats = ownerShip.getMutableStats();
-        NON_BEAM_DAMAGE.apply(stats, modId, percent);
+    private void applyProjectileSpeed(MutableShipStatsAPI stats, int percent) {
         float share = projectileSpeedShare();
         if (share <= 0f) {
             return;

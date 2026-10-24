@@ -17,12 +17,12 @@
 			}
 		]
 	},
-	"gate_lunar_fleet_defeated": {
+	"gate_existential_threat_defeated": {
 		"anchors": "withheld",
 		"rewardAnchor": true,
 		"unlockConditions": [
 			{
-				"type": "nightcrossLunarFleetDefeated"
+				"type": "nightcrossExistentialThreatDefeated"
 			}
 		]
 	},

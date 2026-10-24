@@ -90,15 +90,6 @@ public final class BattleItemDrops {
         }
     }
 
-    public record Loot(List<ItemData> items, List<RefitSchematic> upgrades) {
-
-        public static final Loot NONE = new Loot(List.of(), List.of());
-
-        public Loot {
-            items = List.copyOf(items);
-            upgrades = List.copyOf(upgrades);
-        }
-    }
 
     record Planned(Drop drop, ItemKind kind) {
     }
@@ -143,9 +134,9 @@ public final class BattleItemDrops {
         return Math.max(0f, deploymentPoints) * (1f + Math.max(0, allocatedNodeCount) / NODES_PER_DOUBLING);
     }
 
-    public static Loot roll(Battle battle, float dropMultiplier, Random random, Predicate<ItemDefinition> uniqueAllowed) {
+    public static ItemDrops.SectionItemLoot roll(Battle battle, float dropMultiplier, Random random, Predicate<ItemDefinition> uniqueAllowed) {
         if (battle == null || battle.isEmpty() || !(dropMultiplier > 0f)) {
-            return Loot.NONE;
+            return ItemDrops.SectionItemLoot.NONE;
         }
         List<ItemData> items = new ArrayList<>();
         List<RefitSchematic> upgrades = new ArrayList<>();
@@ -170,7 +161,7 @@ public final class BattleItemDrops {
                 }
             }
         }
-        return new Loot(items, upgrades);
+        return new ItemDrops.SectionItemLoot(items, upgrades);
     }
 
     static List<Planned> plan(List<SourcePower> sources, float dropMultiplier, List<ItemKind> kindsWithBasics, Random random) {

@@ -1,8 +1,6 @@
 package exiledsector.charts;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.ModManagerAPI;
-import com.fs.starfarer.api.SettingsAPI;
+import exiledlib.compat.CompatTarget;
 import exiledsector.data.CsvRows;
 import exiledlib.ModCsv;
 import exiledsector.compat.IndustrialEvolutionCompat;
@@ -102,9 +100,7 @@ public final class ChartPois {
         if (modId == null || modId.isEmpty()) {
             return true;
         }
-        SettingsAPI settings = Global.getSettings();
-        ModManagerAPI modManager = settings == null ? null : settings.getModManager();
-        if (modManager == null || !modManager.isModEnabled(modId)) {
+        if (!CompatTarget.isModEnabled(modId)) {
             return false;
         }
         BooleanSupplier settingGate = MOD_SETTING_GATES.get(modId);

@@ -14,21 +14,16 @@ import java.util.List;
 
 final class WingNumbersDamageListener implements DamageTakenModifier {
 
+    static final String REDUCTION_PERCENT_PER_FIGHTER_KEY = "exiledSector_wingNumbersReductionPercentPerFighter";
     static final String REDUCTION_MOD_ID = "exiledSector_wingNumbersDamageTaken";
     static final float MAX_REDUCTION_PERCENT = 80f;
 
     private final ShipAPI fighter;
-    private final float reductionPercentPerFighter;
+    private final ShipAPI carrier;
 
-    private WingNumbersDamageListener(ShipAPI fighter, float reductionPercentPerFighter) {
+    WingNumbersDamageListener(ShipAPI fighter, ShipAPI carrier) {
         this.fighter = fighter;
-        this.reductionPercentPerFighter = reductionPercentPerFighter;
-    }
-
-    static void attach(ShipAPI fighter, float reductionPercentPerFighter) {
-        if (fighter != null && reductionPercentPerFighter > 0f && !fighter.hasListenerOfClass(WingNumbersDamageListener.class)) {
-            fighter.addListener(new WingNumbersDamageListener(fighter, reductionPercentPerFighter));
-        }
+        this.carrier = carrier;
     }
 
     static float damageTakenMult(float reductionPercentPerFighter, int livingFighters) {
@@ -38,7 +33,8 @@ final class WingNumbersDamageListener implements DamageTakenModifier {
 
     @Override
     public String modifyDamageTaken(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-        if (WingSharedFateListener.isApplyingSharedDamage()) {
+        float reductionPercentPerFighter = FighterListenerEffect.carrierValue(carrier, REDUCTION_PERCENT_PER_FIGHTER_KEY);
+        if (WingSharedFateListener.isApplyingSharedDamage() || reductionPercentPerFighter <= 0f) {
             return null;
         }
         float mult = damageTakenMult(reductionPercentPerFighter, fightersOutWithWing(fighter, Global.getCombatEngine()));

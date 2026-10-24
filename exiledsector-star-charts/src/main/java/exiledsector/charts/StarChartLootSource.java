@@ -57,15 +57,14 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
     @Override
     public void recordEngagement(BattleLoot battle, BattleEngagement engagement) {
         Losses losses = losses(battle);
-        for (FleetMemberAPI member : engagement.lostEnemies()) {
-            CampaignFleetAPI sourceFleet = member == null ? null : engagement.battle().getSourceFleet(member);
+        engagement.lostEnemiesBySourceFleet().forEach((sourceFleet, members) -> {
             if (ChartFleetLoot.isChartFleet(sourceFleet) || adoptedAsDefender(sourceFleet)) {
-                losses.chartFleetDeploymentPoints.merge(sourceFleet, member.getDeploymentPointsCost(), Float::sum);
+                losses.chartFleetDeploymentPoints.merge(sourceFleet, BattleEngagement.deploymentPoints(members), Float::sum);
             }
-            if (member != null) {
+            for (FleetMemberAPI member : members) {
                 losses.highestDefeatedLevel = Math.max(losses.highestDefeatedLevel, LootSources.shipLevel(member));
             }
-        }
+        });
         if (engagement.defeatedDeploymentPoints() > 0f) {
             losses.deploymentPointsDefeated += engagement.defeatedDeploymentPoints();
             losses.chartStrengthDefeated += engagement.defeatedDeploymentPoints() * engagement.difficultyMultiplier();

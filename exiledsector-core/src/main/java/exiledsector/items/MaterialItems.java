@@ -85,8 +85,12 @@ public final class MaterialItems {
         SpecialItemSpecAPI materialSpec = spec(itemId);
         if (materialSpec != null) {
             materialSpec.setName(Translation.data("material." + itemId + ".name", materialSpec.getName()));
-            materialSpec.setDesc(Translation.data("material." + itemId + ".description", materialSpec.getDesc()));
+            materialSpec.setDesc(Translation.data(descriptionKey(itemId), materialSpec.getDesc()));
         }
+    }
+
+    public static String descriptionKey(String itemId) {
+        return "material." + itemId + ".description";
     }
 
     public static String displayName(String itemId) {

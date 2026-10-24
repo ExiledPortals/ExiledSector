@@ -1,11 +1,10 @@
 package exiledsector.ui.node;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import exiledlib.skills.skilleffect.render.FallbackSupport;
 import exiledsector.ui.TreeViewport;
-import exiledsector.ui.util.SpriteDraw;
+import exiledsector.ui.util.TexturedQuadBatch;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -67,7 +66,7 @@ public final class GhostFlight {
         return flightElapsed >= flightDuration;
     }
 
-    public void draw(SpriteAPI sprite, Color ghostColor, float ghostSize, TreeViewport viewport, float alphaMult) {
+    public void draw(TexturedQuadBatch quads, Color ghostColor, float ghostSize, TreeViewport viewport, float alphaMult) {
         float t = flightElapsed / flightDuration;
         Vector2f leaderPosition = pointAt(t);
         Vector2f heading = headingAt(t);
@@ -78,8 +77,8 @@ public final class GhostFlight {
             Vector2f wingOffset = formationOffset(i, heading, ghostSize / viewport.zoom());
             float flicker = (float) (0.5 + 0.5 * Math.sin(FLICKER_FREQUENCY * flightElapsed + animationPhase + i * 2.1));
             float ghostAlpha = (MIN_ALPHA + (MAX_ALPHA - MIN_ALPHA) * flicker) * fade * alphaMult;
-            SpriteDraw.drawAtCenter(sprite, viewport.screenX(leaderPosition.x + wingOffset.x), viewport.screenY(leaderPosition.y + wingOffset.y),
-                    ghostSize, ghostSize, ghostColor, ghostAlpha, screenAngle - 90f);
+            quads.quadAtCenter(viewport.screenX(leaderPosition.x + wingOffset.x), viewport.screenY(leaderPosition.y + wingOffset.y),
+                    ghostSize, ghostSize, screenAngle - 90f, ghostColor, ghostAlpha);
         }
     }
 

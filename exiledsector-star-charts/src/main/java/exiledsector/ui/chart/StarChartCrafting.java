@@ -61,7 +61,7 @@ public final class StarChartCrafting {
 
     public static String currencyDescriptionKey(ItemCurrency currency) {
         String chartKey = chartCurrencyDescriptionKey(currency);
-        return Translation.has(chartKey) ? chartKey : "material." + currency.itemId() + ".description";
+        return Translation.has(chartKey) ? chartKey : MaterialItems.descriptionKey(currency.itemId());
     }
 
     static String chartCurrencyDescriptionKey(ItemCurrency currency) {

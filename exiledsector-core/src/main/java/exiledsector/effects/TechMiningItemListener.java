@@ -13,7 +13,6 @@ import com.fs.starfarer.api.util.Misc;
 import exiledlib.Seeds;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
-import exiledsector.items.Item;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.ItemData;
@@ -95,23 +94,14 @@ public class TechMiningItemListener implements EconomyTickListener {
             storageMarket = null;
             storageCargo = Global.getSector().getPlayerFleet().getCargo();
         }
-        for (ItemData item : foundItems) {
-            storageCargo.addSpecial(item.toSpecialItem(), 1f);
-            Item preview = item.preview();
-            if (preview != null) {
-                announce(minedMarket, storageMarket, preview::name);
-            }
-        }
-        for (RefitSchematic schematic : foundUpgrades) {
-            storageCargo.addSpecial(schematic.toSpecialItem(), 1f);
-            announce(minedMarket, storageMarket, schematic::displayName);
-        }
-        for (Map.Entry<String, Integer> material : foundMaterials.entrySet()) {
-            MaterialItems.add(storageCargo, material.getKey(), material.getValue());
-            String materialName = MaterialItems.displayName(material.getKey());
-            announce(minedMarket, storageMarket, () -> Translation.msg("socketable.techMining.material").arg("count", material.getValue())
-                    .arg("name", materialName).text());
-        }
+        MarketAPI storedAt = storageMarket;
+        ItemLootListener.deliverSiteLoot(storageCargo, new ItemDrops.SiteLoot(foundItems, foundUpgrades, foundMaterials),
+                itemName -> announce(minedMarket, storedAt, itemName),
+                materials -> materials.forEach((itemId, quantity) -> {
+                    String materialName = MaterialItems.displayName(itemId);
+                    announce(minedMarket, storedAt, () -> Translation.msg("socketable.techMining.material").arg("count", quantity)
+                            .arg("name", materialName).text());
+                }));
     }
 
     private static void announce(MarketAPI minedMarket, MarketAPI storedAt, Supplier<String> itemName) {

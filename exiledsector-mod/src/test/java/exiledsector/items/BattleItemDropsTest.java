@@ -164,7 +164,7 @@ class BattleItemDropsTest {
         int relics = 0;
         int lockedRelics = 0;
         for (int trial = 0; trial < 100; trial++) {
-            BattleItemDrops.Loot loot = BattleItemDrops.roll(bigBattle, 1f, random, definition -> true);
+            ItemDrops.SectionItemLoot loot = BattleItemDrops.roll(bigBattle, 1f, random, definition -> true);
             for (ItemData item : loot.items()) {
                 relics += HULL_RELIC.equals(item.definitionId()) ? 1 : 0;
                 assertFalse(THIN_BRIDGE.equals(item.definitionId()) && item.explicits().size() > 1, item.toString());
@@ -182,8 +182,8 @@ class BattleItemDropsTest {
     void aBattleWithNoPowerOrADropMultiplierOfZeroDropsNothing() {
         BattleItemDrops.Battle battle = new BattleItemDrops.Battle(List.of(new BattleItemDrops.SourcePower(4000f, ItemChances.BASE)), null);
 
-        assertEquals(BattleItemDrops.Loot.NONE, BattleItemDrops.roll(battle, 0f, new Random(1L), definition -> true));
-        assertEquals(BattleItemDrops.Loot.NONE, BattleItemDrops.roll(new BattleItemDrops.Battle(List.of(), null), 1f,
+        assertEquals(ItemDrops.SectionItemLoot.NONE, BattleItemDrops.roll(battle, 0f, new Random(1L), definition -> true));
+        assertEquals(ItemDrops.SectionItemLoot.NONE, BattleItemDrops.roll(new BattleItemDrops.Battle(List.of(), null), 1f,
                 new Random(1L), definition -> true));
     }
 

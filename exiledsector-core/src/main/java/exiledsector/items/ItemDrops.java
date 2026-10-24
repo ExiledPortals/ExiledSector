@@ -211,6 +211,11 @@ public final class ItemDrops {
 
         public static final SectionItemLoot NONE = new SectionItemLoot(List.of(), List.of());
 
+        public SectionItemLoot {
+            items = List.copyOf(items);
+            upgrades = List.copyOf(upgrades);
+        }
+
         public boolean isEmpty() {
             return items.isEmpty() && upgrades.isEmpty();
         }
@@ -284,7 +289,7 @@ public final class ItemDrops {
         for (ItemKind kind : kindsWithBasics) {
             rollTargeted(rule, random, chances.targeted(kind), chances.rarity(), kindsWithBasics.size(), kind, droppedItems);
         }
-        return new SectionItemLoot(List.copyOf(droppedItems), List.copyOf(droppedUpgrades));
+        return new SectionItemLoot(droppedItems, droppedUpgrades);
     }
 
     private static void rollTargeted(Rule rule, Random random, float extraShare, float rarity, int sharedKinds, ItemKind kind,

@@ -382,11 +382,11 @@
     "theme": ["flux", "shield", "armour", "hull", "speed", "logistics", "missile", "fighter", "energy", "ballistic", "phase", "beam", "range", "ammo", "dmgtypekinetic", "dmgtypehighexplosive", "dmgtypefragmentation", "dmgtypeenergy", "weapons", "point_defense", "combat_readiness", "repair", "fleet_support", "d_mods"],
     "region": ["core", "luddic", "tritachyon", "hegemony", "sindrian_dictat", "pirate", "REDACTED", "persean_league", "enigma", "kesteven", "exotech", "abyss", "nightcross", "stargazer", "threat", "tania"],
     "requirement": ["req_shields", "req_no_shields", "req_phase", "req_fighter_bays", "req_no_fighter_bays", "req_ballistic", "req_missile", "req_energy", "req_beam", "req_offensive_beam", "req_non_beam_energy", "req_flagship", "campaign_only", "player_only", "req_civilian_hull", "req_non_phase_hull", "req_system_charges", "req_modules"],
-    "gate": ["gate_singularity_defeated", "gate_pascal_visited", "gate_lunar_fleet_defeated", "gate_ancient_prototype_found", "gate_frozen_heart_visited", "gate_threat_fought", "gate_remnant_fought"]
+    "gate": ["gate_singularity_defeated", "gate_pascal_visited", "gate_existential_threat_defeated", "gate_ancient_prototype_found", "gate_frozen_heart_visited", "gate_threat_fought", "gate_remnant_fought"]
   },
   "tiers": ["SMALL", "NOTABLE", "KEYSTONE", "WORMHOLE", "WORMHOLE_EXIT", "ROOT", "SOCKET"],
-  "unlockConditionTypes": ["blueprint", "characterStat", "minShipLevel", "memoryFlag", "ratPlayerExoship", "ratSingularityDefeated", "anchorFound", "nightcrossLunarFleetDefeated", "nightcrossAncientPrototypeFound", "lostSectorFrozenHeartVisited", "threatFought", "remnantFought"],
-  "parameterlessUnlockConditionTypes": ["ratPlayerExoship", "ratSingularityDefeated", "nightcrossLunarFleetDefeated", "nightcrossAncientPrototypeFound", "lostSectorFrozenHeartVisited", "threatFought", "remnantFought"],
+  "unlockConditionTypes": ["blueprint", "characterStat", "minShipLevel", "memoryFlag", "ratPlayerExoship", "ratSingularityDefeated", "anchorFound", "nightcrossExistentialThreatDefeated", "nightcrossAncientPrototypeFound", "lostSectorFrozenHeartVisited", "threatFought", "remnantFought"],
+  "parameterlessUnlockConditionTypes": ["ratPlayerExoship", "ratSingularityDefeated", "nightcrossExistentialThreatDefeated", "nightcrossAncientPrototypeFound", "lostSectorFrozenHeartVisited", "threatFought", "remnantFought"],
   "blueprintCategories": ["hullmod"],
   "itemTypes": ["subroutine", "hull_item", "star_chart", "wormhole_anchor"],
   "itemKinds": [{"id": "subroutine", "type": "subroutine"}, {"id": "bridge", "type": "hull_item"}, {"id": "crew_quarters", "type": "hull_item"}, {"id": "engine_room", "type": "hull_item"}, {"id": "reactor", "type": "hull_item"}, {"id": "armor_plating", "type": "hull_item"}, {"id": "weapon_mount", "type": "hull_item"}, {"id": "shield_generator", "type": "hull_item"}, {"id": "phase_coil", "type": "hull_item"}, {"id": "flight_deck", "type": "hull_item"}],

@@ -22,32 +22,8 @@ public final class WormholeAnchor extends Item implements NodeSocketable {
         AREA_OFF, JANUS, LOCKED, GATED, EXIT_LOCKED
     }
 
-    public static final ItemTypeSupport SUPPORT = new ItemTypeSupport() {
-        @Override
-        public ItemType type() {
-            return ItemType.WORMHOLE_ANCHOR;
-        }
-
-        @Override
-        public Class<? extends Item> itemClass() {
-            return WormholeAnchor.class;
-        }
-
-        @Override
-        public String saveAlias() {
-            return "exiledSector.WormholeAnchor";
-        }
-
-        @Override
-        public Item create(String id, String definitionId, long seed, List<RolledModifier> explicitModifiers) {
-            return new WormholeAnchor(id, definitionId, seed);
-        }
-
-        @Override
-        public Item convert(Item source) {
-            return new WormholeAnchor(source);
-        }
-
+    public static final ItemTypeSupport SUPPORT = new BasicItemTypeSupport(ItemType.WORMHOLE_ANCHOR, WormholeAnchor.class, "exiledSector.WormholeAnchor",
+            (id, definitionId, seed, explicitModifiers) -> new WormholeAnchor(id, definitionId, seed), WormholeAnchor::new) {
         @Override
         public boolean uniqueRarity(ItemDefinition definition) {
             return true;

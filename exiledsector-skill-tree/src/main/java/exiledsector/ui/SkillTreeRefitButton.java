@@ -7,24 +7,20 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import exiledlib.i18n.Translation;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.ui.refit.RefitButtonColumn;
 import exiledsector.ui.refit.RefitButtonConfig;
-import exiledsector.ui.refit.RefitModuleTabs;
 import lunalib.backend.ui.refit.RefitPanelBackgroundPlugin;
-import lunalib.lunaRefit.BaseRefitButton;
 import lunalib.lunaRefit.LunaRefitManager;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.Color;
 import java.util.Collections;
 
-public class SkillTreeRefitButton extends BaseRefitButton {
+public class SkillTreeRefitButton extends FullScreenRefitButton {
 
     public static final RefitButtonColumn.ButtonSpec COLUMN_BUTTON = new RefitButtonColumn.ButtonSpec("exiledSector_skillTreeButton",
             "ui.refitButton", () -> Keyboard.KEY_K, RefitButtonConfig::buttonUnderHullMods, () -> openPanel(null));
-    private static final float SCREEN_FRACTION = 1f;
     static final float SHIP_CARD_ICON_SIZE = 128f;
 
     public static void addButton() {
@@ -42,33 +38,18 @@ public class SkillTreeRefitButton extends BaseRefitButton {
     }
 
     @Override
-    public float getPanelWidth(FleetMemberAPI member, ShipVariantAPI variant) {
-        return Global.getSettings().getScreenWidth() * SCREEN_FRACTION;
+    protected String buttonKey() {
+        return "ui.refitButton";
     }
 
     @Override
-    public float getPanelHeight(FleetMemberAPI member, ShipVariantAPI variant) {
-        return Global.getSettings().getScreenHeight() * SCREEN_FRACTION;
-    }
-
-    @Override
-    public String getButtonName(FleetMemberAPI member, ShipVariantAPI variant) {
-        return Translation.gameText("ui.refitButton");
-    }
-
-    @Override
-    public String getIconName(FleetMemberAPI member, ShipVariantAPI variant) {
+    protected String iconPath() {
         return "graphics/icons/skills.png";
     }
 
     @Override
-    public boolean shouldShow(FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
-        return !RefitButtonConfig.buttonUnderHullMods() && SkillTreeSetting.enabled() && !RefitModuleTabs.isModuleTab(member);
-    }
-
-    @Override
-    public boolean hasPanel(FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
-        return !RefitModuleTabs.isModuleTab(member);
+    protected boolean enabled() {
+        return SkillTreeSetting.enabled();
     }
 
     @Override

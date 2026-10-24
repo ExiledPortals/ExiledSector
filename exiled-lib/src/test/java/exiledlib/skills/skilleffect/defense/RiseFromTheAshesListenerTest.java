@@ -49,14 +49,13 @@ class RiseFromTheAshesListenerTest {
             global.when(Global::getCombatEngine).thenReturn(engine);
             RiseFromTheAshesListener listener = new RiseFromTheAshesListener(ship);
 
-            assertFalse(listener.notifyAboutToTakeHullDamage(null, ship, new Vector2f(), 50f));
-            assertTrue(listener.notifyAboutToTakeHullDamage(null, ship, new Vector2f(), 300f));
+            assertTrue(listener.saveFromLethalHit(ship, 300f));
             verify(ship).setHitpoints(500f);
             verify(ship.getMutableStats().getHullDamageTakenMult()).modifyMult("exiledSector_riseFromTheAshes_sandgrouse", 0.5f);
             assertTrue(listener.rising());
             assertTrue(customData.containsKey("exiledSector_riseFromTheAshesUsed_member_7"));
 
-            assertFalse(new RiseFromTheAshesListener(ship).notifyAboutToTakeHullDamage(null, ship, new Vector2f(), 300f));
+            assertFalse(new RiseFromTheAshesListener(ship).saveFromLethalHit(ship, 300f));
 
             listener.advance(RiseFromTheAshesListener.DURATION_SECONDS + 0.1f);
             assertFalse(listener.rising());

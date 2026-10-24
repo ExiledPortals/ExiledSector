@@ -31,7 +31,7 @@ final class LiveMunitionsListener extends ShipCombatListener implements Advancea
     private float[] lastReloadProgress;
     private HeartlessStacks heartlessStacks;
     private final FleetCrewLedger.Lazy crewLedger = new FleetCrewLedger.Lazy();
-    private int appliedStacks;
+    private final ScaledBonus.Tracker missileBonus = MISSILE_BONUS.tracker();
 
     LiveMunitionsListener(ShipAPI ownerShip) {
         this(ownerShip, new Random());
@@ -63,7 +63,7 @@ final class LiveMunitionsListener extends ShipCombatListener implements Advancea
         if (fired > 0 && stackCount > 0 && crewLeft()) {
             sacrificeCrew(fired, stackCount);
         }
-        applyBonuses(crewLeft() ? stackCount : 0);
+        missileBonus.apply(ownerShip.getMutableStats(), modId, crewLeft() ? stackCount : 0);
     }
 
     private int missilesFiredSinceLastFrame() {
@@ -104,13 +104,5 @@ final class LiveMunitionsListener extends ShipCombatListener implements Advancea
                 ledger.sacrifice();
             }
         }
-    }
-
-    private void applyBonuses(int effectiveStacks) {
-        if (effectiveStacks == appliedStacks) {
-            return;
-        }
-        appliedStacks = effectiveStacks;
-        MISSILE_BONUS.apply(ownerShip.getMutableStats(), modId, effectiveStacks);
     }
 }

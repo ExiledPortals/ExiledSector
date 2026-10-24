@@ -86,33 +86,30 @@ public final class ShipTrees {
     }
 
     public static String anchorPartner(ShipSkillData data, String nodeId) {
-        refreshAnchorLinks(data);
-        String exitId = data.anchorExitBySocketId.get(nodeId);
-        return exitId != null ? exitId : data.anchorSocketByExitId.get(nodeId);
+        ShipSkillData.AnchorLinkMaps links = anchorLinks(data);
+        String exitId = links.exitBySocketId().get(nodeId);
+        return exitId != null ? exitId : links.socketByExitId().get(nodeId);
     }
 
     public static String anchorExit(ShipSkillData data, String socketNodeId) {
-        refreshAnchorLinks(data);
-        return data.anchorExitBySocketId.get(socketNodeId);
+        return anchorLinks(data).exitBySocketId().get(socketNodeId);
     }
 
     public static String anchorSocket(ShipSkillData data, String exitNodeId) {
-        refreshAnchorLinks(data);
-        return data.anchorSocketByExitId.get(exitNodeId);
+        return anchorLinks(data).socketByExitId().get(exitNodeId);
     }
 
     public static Map<String, String> anchorExitsBySocket(ShipSkillData data) {
-        refreshAnchorLinks(data);
-        return Collections.unmodifiableMap(data.anchorExitBySocketId);
+        return Collections.unmodifiableMap(anchorLinks(data).exitBySocketId());
     }
 
     public static List<SkillTreeTopology.WormholePair> wormholePairs(ShipSkillData data, SkillTreeTopology topology) {
-        refreshAnchorLinks(data);
-        if (data.anchorExitBySocketId.isEmpty()) {
+        Map<String, String> exitBySocketId = anchorLinks(data).exitBySocketId();
+        if (exitBySocketId.isEmpty()) {
             return topology.wormholePairs();
         }
         List<SkillTreeTopology.WormholePair> pairs = new ArrayList<>(topology.wormholePairs());
-        data.anchorExitBySocketId.forEach((socketId, exitId) -> {
+        exitBySocketId.forEach((socketId, exitId) -> {
             SkillNode socket = topology.node(socketId);
             SkillNode exit = topology.node(exitId);
             if (socket != null && exit != null && data.isAllocated(exitId)) {
@@ -122,12 +119,12 @@ public final class ShipTrees {
         return pairs;
     }
 
-    private static void refreshAnchorLinks(ShipSkillData data) {
+    private static ShipSkillData.AnchorLinkMaps anchorLinks(ShipSkillData data) {
         AnchorLinks.ExitLookup lookup = AnchorLinks.lookup();
         int lookupRevision = lookup.revision();
-        if (data.anchorExitBySocketId != null && data.anchorLinksRevision == data.revision && data.anchorLinksLookup == lookup
-                && data.anchorLinksLookupRevision == lookupRevision) {
-            return;
+        LinkCache<ShipSkillData.AnchorLinkMaps> cache = data.anchorLinkCache();
+        if (cache.isFresh(data.revision, lookup, lookupRevision)) {
+            return cache.links();
         }
         Map<String, String> exitBySocketId = new LinkedHashMap<>();
         Map<String, String> socketByExitId = new LinkedHashMap<>();
@@ -138,11 +135,8 @@ public final class ShipTrees {
                 }
             });
         }
-        data.anchorExitBySocketId = exitBySocketId.isEmpty() ? Map.of() : exitBySocketId;
-        data.anchorSocketByExitId = socketByExitId.isEmpty() ? Map.of() : socketByExitId;
-        data.anchorLinksRevision = data.revision;
-        data.anchorLinksLookup = lookup;
-        data.anchorLinksLookupRevision = lookupRevision;
+        return cache.store(new ShipSkillData.AnchorLinkMaps(exitBySocketId.isEmpty() ? Map.of() : exitBySocketId,
+                socketByExitId.isEmpty() ? Map.of() : socketByExitId), data.revision, lookup, lookupRevision);
     }
 
     private static void link(ShipSkillData data, String socketId, String exitId, Map<String, String> exitBySocketId, Map<String, String> socketByExitId) {
@@ -155,13 +149,11 @@ public final class ShipTrees {
     }
 
     public static Map<String, List<String>> grantedNodesBySocket(ShipSkillData data) {
-        refreshGrantLinks(data);
-        return Collections.unmodifiableMap(data.grantedNodesBySocketId);
+        return Collections.unmodifiableMap(grantLinks(data));
     }
 
     public static String grantingSocket(ShipSkillData data, String nodeId) {
-        refreshGrantLinks(data);
-        for (Map.Entry<String, List<String>> grantLink : data.grantedNodesBySocketId.entrySet()) {
+        for (Map.Entry<String, List<String>> grantLink : grantLinks(data).entrySet()) {
             if (grantLink.getValue().contains(nodeId)) {
                 return grantLink.getKey();
             }
@@ -229,12 +221,12 @@ public final class ShipTrees {
         return releaseNewlyStranded(data, topology, satisfiedRootId, reachableBefore);
     }
 
-    private static void refreshGrantLinks(ShipSkillData data) {
+    private static Map<String, List<String>> grantLinks(ShipSkillData data) {
         NodeGrants.GrantLookup lookup = NodeGrants.lookup();
         int lookupRevision = lookup.revision();
-        if (data.grantedNodesBySocketId != null && data.grantLinksRevision == data.revision && data.grantLinksLookup == lookup
-                && data.grantLinksLookupRevision == lookupRevision) {
-            return;
+        LinkCache<Map<String, List<String>>> cache = data.grantLinkCache();
+        if (cache.isFresh(data.revision, lookup, lookupRevision)) {
+            return cache.links();
         }
         Map<String, List<String>> nodesBySocketId = new LinkedHashMap<>();
         if (data.socketedItems != null) {
@@ -247,10 +239,7 @@ public final class ShipTrees {
                 }
             });
         }
-        data.grantedNodesBySocketId = nodesBySocketId.isEmpty() ? Map.of() : nodesBySocketId;
-        data.grantLinksRevision = data.revision;
-        data.grantLinksLookup = lookup;
-        data.grantLinksLookupRevision = lookupRevision;
+        return cache.store(nodesBySocketId.isEmpty() ? Map.of() : nodesBySocketId, data.revision, lookup, lookupRevision);
     }
 
     public static Set<String> pathReachableAllocatedNodeIds(ShipSkillData data, SkillTreeTopology topology, String satisfiedRootId) {

@@ -2,17 +2,22 @@ package exiledlib.skills.skilleffect.special;
 
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
-import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
+import exiledlib.skills.skilleffect.ScaledBonus;
 import exiledlib.skills.skilleffect.ShipCombatListener;
+import exiledlib.skills.skilleffect.weapon.WeaponScope;
+import exiledlib.skills.skilleffect.weapon.WeaponStatFamily;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.List;
+
+import static exiledlib.skills.skilleffect.ScaledBonus.percent;
+import static exiledlib.skills.skilleffect.StatTarget.all;
+import static exiledlib.skills.skilleffect.StatTarget.scaled;
+import static exiledlib.skills.skilleffect.StatTarget.stat;
 
 final class SeraphsGraceListener extends ShipCombatListener implements DamageListener, AdvanceableListener {
 
@@ -21,11 +26,17 @@ final class SeraphsGraceListener extends ShipCombatListener implements DamageLis
     static final float DAMAGE_PER_STACK = 100f;
     static final float STACK_DURATION_SECONDS = 15f;
     private static final String MOD_ID_PREFIX = "exiledSector_seraphsGrace_";
+    private static final ScaledBonus GRACE_BONUS = new ScaledBonus(
+            percent(all(stat(MutableShipStatsAPI::getMaxSpeed), stat(MutableShipStatsAPI::getFluxDissipation),
+                    WeaponStatFamily.FIRE_RATE.target(WeaponScope.ALL)), PERCENT_PER_STACK_KEY),
+            percent(scaled(all(WeaponStatFamily.FLUX_COST.target(WeaponScope.ALL), stat(MutableShipStatsAPI::getArmorDamageTakenMult),
+                    stat(MutableShipStatsAPI::getHullDamageTakenMult), stat(MutableShipStatsAPI::getShieldDamageTakenMult),
+                    stat(MutableShipStatsAPI::getEmpDamageTakenMult)), -1f), PERCENT_PER_STACK_KEY));
 
     private final Deque<Float> stackExpiryTimes = new ArrayDeque<>();
+    private final ScaledBonus.Tracker graceBonus = GRACE_BONUS.tracker();
     private float graceClockSeconds;
     private float damageTowardNextStack;
-    private int appliedStackCount;
 
     SeraphsGraceListener(ShipAPI ownerShip) {
         super(ownerShip, MOD_ID_PREFIX);
@@ -70,27 +81,6 @@ final class SeraphsGraceListener extends ShipCombatListener implements DamageLis
     }
 
     private void applyIfChanged() {
-        int stackCount = stackExpiryTimes.size();
-        if (stackCount == appliedStackCount) {
-            return;
-        }
-        appliedStackCount = stackCount;
-        MutableShipStatsAPI stats = ownerShip.getMutableStats();
-        List<MutableStat> raisedStats = List.of(stats.getMaxSpeed(), stats.getFluxDissipation(), stats.getBallisticRoFMult(),
-                stats.getEnergyRoFMult(), stats.getMissileRoFMult());
-        List<StatBonus> loweredFluxCosts = List.of(stats.getBallisticWeaponFluxCostMod(), stats.getEnergyWeaponFluxCostMod(),
-                stats.getMissileWeaponFluxCostMod());
-        List<MutableStat> loweredDamageTaken = List.of(stats.getArmorDamageTakenMult(), stats.getHullDamageTakenMult(),
-                stats.getShieldDamageTakenMult(), stats.getEmpDamageTakenMult());
-        if (stackCount == 0) {
-            raisedStats.forEach(stat -> stat.unmodify(modId));
-            loweredFluxCosts.forEach(bonus -> bonus.unmodify(modId));
-            loweredDamageTaken.forEach(stat -> stat.unmodify(modId));
-            return;
-        }
-        float percent = stackCount * magnitude(PERCENT_PER_STACK_KEY);
-        raisedStats.forEach(stat -> stat.modifyPercent(modId, percent));
-        loweredFluxCosts.forEach(bonus -> bonus.modifyPercent(modId, -percent));
-        loweredDamageTaken.forEach(stat -> stat.modifyPercent(modId, -percent));
+        graceBonus.apply(ownerShip.getMutableStats(), modId, stackExpiryTimes.size());
     }
 }

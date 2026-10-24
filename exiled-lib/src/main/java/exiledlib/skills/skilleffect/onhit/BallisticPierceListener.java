@@ -11,6 +11,7 @@ import com.fs.starfarer.api.loading.ProjectileSpawnType;
 import exiledlib.skills.skilleffect.CombatQueries;
 import exiledlib.skills.skilleffect.CsvIdList;
 import exiledlib.skills.skilleffect.ShipCombatListener;
+import exiledlib.skills.skilleffect.weapon.WeaponScope;
 import org.lazywizard.lazylib.VectorUtils;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -61,7 +62,7 @@ final class BallisticPierceListener extends ShipCombatListener implements Damage
     }
 
     static boolean canPierce(WeaponAPI weapon) {
-        return weapon != null && !weapon.isBeam() && weapon.getType() == WeaponAPI.WeaponType.BALLISTIC
+        return weapon != null && !weapon.isBeam() && WeaponScope.BALLISTIC.matches(weapon)
                 && !CsvIdList.BALLISTIC_PIERCE_WEAPONS.contains(weapon.getId());
     }
 

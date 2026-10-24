@@ -7,9 +7,14 @@ import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.StarChart;
 
+import java.util.Objects;
+
 public final class ChartRunEffects {
 
     static final float SENSOR_MOD_DAYS = 0.1f;
+    private static ChartRun contextRun;
+    private static String contextChartData;
+    private static ChartGenContext context = ChartGenContext.none();
 
     private ChartRunEffects() {
     }
@@ -24,7 +29,15 @@ public final class ChartRunEffects {
     }
 
     public static ChartGenContext contextOf(ChartRun run) {
-        return ChartGenContext.from(chartOf(run));
+        if (run == null) {
+            return ChartGenContext.none();
+        }
+        if (run != contextRun || !Objects.equals(run.chartData(), contextChartData)) {
+            context = ChartGenContext.from(chartOf(run));
+            contextRun = run;
+            contextChartData = run.chartData();
+        }
+        return context;
     }
 
     public static boolean applySensorRange(CampaignFleetAPI fleet, float sensorRangeMult, String source) {

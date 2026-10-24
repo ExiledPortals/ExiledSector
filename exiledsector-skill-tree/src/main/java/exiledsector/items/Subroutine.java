@@ -24,32 +24,8 @@ public final class Subroutine extends Item implements NodeSocketable {
     public record AllocatedNodeEffects(String nodeName, List<StyledText> effectLines) {
     }
 
-    public static final ItemTypeSupport SUPPORT = new ItemTypeSupport() {
-        @Override
-        public ItemType type() {
-            return ItemType.SUBROUTINE;
-        }
-
-        @Override
-        public Class<? extends Item> itemClass() {
-            return Subroutine.class;
-        }
-
-        @Override
-        public String saveAlias() {
-            return "exiledSector.Subroutine";
-        }
-
-        @Override
-        public Item create(String id, String definitionId, long seed, List<RolledModifier> explicitModifiers) {
-            return new Subroutine(id, definitionId, seed, explicitModifiers);
-        }
-
-        @Override
-        public Item convert(Item source) {
-            return new Subroutine(source);
-        }
-
+    public static final ItemTypeSupport SUPPORT = new BasicItemTypeSupport(ItemType.SUBROUTINE, Subroutine.class, "exiledSector.Subroutine",
+            Subroutine::new, Subroutine::new) {
         @Override
         public String definitionsPath() {
             return SubroutineDefinitions.dataPath();
@@ -196,20 +172,12 @@ public final class Subroutine extends Item implements NodeSocketable {
         }
         List<String> currentIds = new ArrayList<>(rolledNodeIds.size());
         for (String rolledNodeId : rolledNodeIds) {
-            String currentId = currentNodeId(rolledNodeId);
+            String currentId = NodeReplacements.current(rolledNodeId);
             if (!currentIds.contains(currentId)) {
                 currentIds.add(currentId);
             }
         }
         return currentIds;
-    }
-
-    private static String currentNodeId(String rolledNodeId) {
-        if (SkillTree.getDeclared(rolledNodeId) != null) {
-            return rolledNodeId;
-        }
-        String replacementId = NodeReplacements.all().get(rolledNodeId);
-        return replacementId != null ? replacementId : rolledNodeId;
     }
 
     @Override

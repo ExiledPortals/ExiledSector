@@ -41,4 +41,31 @@ public final class ScaledBonus {
             part.target().remove(stats, modId);
         }
     }
+
+    public Tracker tracker() {
+        return new Tracker(this);
+    }
+
+    public static final class Tracker {
+
+        private final ScaledBonus bonus;
+        private float appliedScale;
+
+        private Tracker(ScaledBonus bonus) {
+            this.bonus = bonus;
+        }
+
+        public boolean apply(MutableShipStatsAPI stats, String modId, float scale) {
+            if (scale == appliedScale) {
+                return false;
+            }
+            appliedScale = scale;
+            bonus.apply(stats, modId, scale);
+            return true;
+        }
+
+        public float appliedScale() {
+            return appliedScale;
+        }
+    }
 }
