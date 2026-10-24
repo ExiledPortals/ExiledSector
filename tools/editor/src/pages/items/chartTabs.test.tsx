@@ -197,7 +197,9 @@ describe('star chart editing', () => {
     fireEvent.click(saveButton());
     await screen.findByText('Saved star_chart_tiers.csv', undefined, { timeout: 30000 });
 
-    expect(server.readProjectFile(TIERS_FILE)).toBe(before.replace('1,100,2,3,0,0,30,26,29,3.5,0,0,2.5,yes,180,3,1,0,"A couple', '1,110,2,3,0,0,30,26,29,3.5,0,0,2.5,yes,180,3,1,0,"A couple'));
+    const expected = before.replace(/^1,\d+(,.*"A couple)/m, '1,110$1');
+    expect(expected).not.toBe(before);
+    expect(server.readProjectFile(TIERS_FILE)).toBe(expected);
   }, 90000);
 
   it('warns before saving a cipher chance on a drop source outside chart systems', async () => {
