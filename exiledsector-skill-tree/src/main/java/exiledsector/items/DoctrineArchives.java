@@ -63,8 +63,8 @@ public final class DoctrineArchives {
                 LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": " + e.getMessage());
             }
         });
-        for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.SUBROUTINE)) {
-            if (SubroutineKind.of(definition) == SubroutineKind.DOCTRINE && !loaded.containsKey(definition.id())) {
+        for (ItemDefinition definition : SubroutineKind.DOCTRINE.definitions()) {
+            if (!loaded.containsKey(definition.id())) {
                 LOG.error(definition.id() + " is a " + SubroutineKind.DOCTRINE.id() + " subroutine with no row in " + DATA_PATH
                         + ", so it rewrites nothing");
             }

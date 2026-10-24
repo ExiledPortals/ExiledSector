@@ -1,22 +1,16 @@
 package exiledsector.console;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemDefinitions;
-import exiledsector.items.ItemType;
 import exiledsector.items.ModspecCaches;
 import exiledsector.items.SubroutineKind;
-import org.lazywizard.console.BaseCommand;
-import org.lazywizard.console.CommonStrings;
 import org.lazywizard.console.Console;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class GrantModspecCacheCommand implements BaseCommand {
+public class GrantModspecCacheCommand extends PlayerFleetCommand {
 
     static final int SEED_SEARCH_ATTEMPTS = 100_000;
 
@@ -31,22 +25,13 @@ public class GrantModspecCacheCommand implements BaseCommand {
     }
 
     @Override
-    public CommandResult runCommand(String args, CommandContext context) {
-        if (!context.isInCampaign()) {
-            Console.showMessage(CommonStrings.ERROR_CAMPAIGN_ONLY);
-            return CommandResult.WRONG_CONTEXT;
-        }
-        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
-        if (playerFleet == null) {
-            Console.showMessage("No player fleet found.");
-            return CommandResult.ERROR;
-        }
-        Integer requestedNodeCount = requestedNodeCount(args.trim());
-        if (!args.isBlank() && requestedNodeCount == null) {
+    protected CommandResult runForFleet(String args, CampaignFleetAPI playerFleet) {
+        Integer requestedNodeCount = ConsoleArgs.wholeNumber(args, 1, Integer.MAX_VALUE);
+        if (!args.isEmpty() && requestedNodeCount == null) {
             Console.showMessage("Expected a node count of 1 or more, or nothing.");
             return CommandResult.BAD_SYNTAX;
         }
-        List<ItemDefinition> definitions = modspecCaches();
+        List<ItemDefinition> definitions = SubroutineKind.MODSPEC_CACHE.definitions();
         if (definitions.isEmpty()) {
             Console.showMessage("No modspec caches are defined.");
             return CommandResult.ERROR;
@@ -63,20 +48,8 @@ public class GrantModspecCacheCommand implements BaseCommand {
             Console.showMessage("No modspec cache can roll " + requestedNodeCount + " nodes.");
             return CommandResult.ERROR;
         }
-        Console.showMessage("Added " + added + (added == 1 ? " modspec cache" : " modspec caches") + " to your cargo.");
+        Console.showMessage("Added " + counted(added, "modspec cache", "modspec caches") + " to your cargo.");
         return CommandResult.SUCCESS;
-    }
-
-    static Integer requestedNodeCount(String argument) {
-        if (argument.isEmpty()) {
-            return null;
-        }
-        try {
-            int nodeCount = Integer.parseInt(argument);
-            return nodeCount >= 1 ? nodeCount : null;
-        } catch (NumberFormatException e) {
-            return null;
-        }
     }
 
     Long seedFor(ItemDefinition definition, Integer requestedNodeCount) {
@@ -91,15 +64,5 @@ public class GrantModspecCacheCommand implements BaseCommand {
             }
         }
         return null;
-    }
-
-    static List<ItemDefinition> modspecCaches() {
-        List<ItemDefinition> caches = new ArrayList<>();
-        for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.SUBROUTINE)) {
-            if (SubroutineKind.of(definition) == SubroutineKind.MODSPEC_CACHE) {
-                caches.add(definition);
-            }
-        }
-        return caches;
     }
 }

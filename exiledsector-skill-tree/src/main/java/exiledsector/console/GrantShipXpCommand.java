@@ -1,35 +1,22 @@
 package exiledsector.console;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.effects.ShipTreeSync;
 import exiledsector.skills.progression.ShipLevelSystem;
-import org.lazywizard.console.BaseCommand;
-import org.lazywizard.console.CommonStrings;
 import org.lazywizard.console.Console;
 
 import java.util.List;
 
-public class GrantShipXpCommand implements BaseCommand {
+public class GrantShipXpCommand extends PlayerFleetCommand {
 
     private static final float DEFAULT_XP = 1000f;
 
     @Override
-    public CommandResult runCommand(String args, CommandContext context) {
-        if (!context.isInCampaign()) {
-            Console.showMessage(CommonStrings.ERROR_CAMPAIGN_ONLY);
-            return CommandResult.WRONG_CONTEXT;
-        }
-        String query = args.trim();
+    protected CommandResult runForFleet(String args, CampaignFleetAPI playerFleet) {
+        String query = args;
         if (query.isEmpty()) {
             return CommandResult.BAD_SYNTAX;
-        }
-
-        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
-        if (playerFleet == null) {
-            Console.showMessage("No player fleet found.");
-            return CommandResult.ERROR;
         }
         List<FleetMemberAPI> fleetMembers = playerFleet.getFleetData().getMembersListCopy();
 
@@ -40,7 +27,6 @@ public class GrantShipXpCommand implements BaseCommand {
         if (matchingMembers.isEmpty() && trailingXpAmount != null) {
             xp = trailingXpAmount;
             query = query.substring(0, lastSpace).trim();
-            matchingMembers = ConsoleShips.matching(fleetMembers, query);
         }
 
         FleetMemberAPI matchedMember = ConsoleShips.findOne(fleetMembers, query);

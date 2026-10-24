@@ -1,7 +1,9 @@
 package exiledsector.items;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
@@ -59,6 +61,16 @@ public enum SubroutineKind {
 
     public boolean limitsSocketsPerShip() {
         return socketLimitPerShip != UNLIMITED_PER_SHIP;
+    }
+
+    public List<ItemDefinition> definitions() {
+        List<ItemDefinition> definitions = new ArrayList<>();
+        for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.SUBROUTINE)) {
+            if (of(definition) == this) {
+                definitions.add(definition);
+            }
+        }
+        return definitions;
     }
 
     public static SubroutineKind of(ItemDefinition definition) {

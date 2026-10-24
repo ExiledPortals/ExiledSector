@@ -14,8 +14,6 @@ import exiledsector.charts.ChartRuns;
 import exiledsector.charts.ChartTiers;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.items.StarChart;
-import org.lazywizard.console.BaseCommand;
-import org.lazywizard.console.CommonStrings;
 import org.lazywizard.console.Console;
 
 import java.util.ArrayList;
@@ -25,7 +23,7 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ChartOpenCommand implements BaseCommand {
+public class ChartOpenCommand extends CampaignCommand {
 
     static final int DEFAULT_TIER = ChartTiers.LOWEST_TIER;
     static final String BREACH_WORD = "breach";
@@ -42,11 +40,7 @@ public class ChartOpenCommand implements BaseCommand {
     }
 
     @Override
-    public CommandResult runCommand(String args, CommandContext context) {
-        if (!context.isInCampaign()) {
-            Console.showMessage(CommonStrings.ERROR_CAMPAIGN_ONLY);
-            return CommandResult.WRONG_CONTEXT;
-        }
+    protected CommandResult runInCampaign(String args) {
         OpenArguments arguments = OpenArguments.parse(args);
         if (arguments.problem() != null) {
             Console.showMessage(arguments.problem() + "\nUsage: ExiledSectorChartOpen [seed] [type] [tier] [breach], where type is one of "
@@ -63,14 +57,14 @@ public class ChartOpenCommand implements BaseCommand {
         OpenResult result = ChartRunActions.openBesidePlayer(Global.getSector(), entries, random, layoutRequest);
         switch (result) {
             case OPENED -> {
-                Console.showMessage("Opened a Star Chart wormhole beside your fleet with " + entries + (entries == 1 ? " entry." : " entries."));
+                Console.showMessage("Opened a Star Chart wormhole beside your fleet with " + counted(entries, "entry", "entries") + ".");
                 ChartRun run = ChartRuns.currentOrNull();
                 Console.showMessage(describeLayout(run));
                 Console.showMessage(describeContent(run));
                 return CommandResult.SUCCESS;
             }
             case RUN_EXISTS -> Console.showMessage("A Star Chart run is already open. Collapse it or finish it first (see ExiledSectorChartStatus).");
-            case NO_PLAYER_FLEET -> Console.showMessage("No player fleet found.");
+            case NO_PLAYER_FLEET -> Console.showMessage(PlayerFleetCommand.NO_PLAYER_FLEET);
             case PLAYER_IN_TRANSITION -> Console.showMessage("Your fleet is jumping. Try again once it arrives.");
             case PLAYER_IN_SYSTEM -> Console.showMessage("Your fleet is inside a Star Chart system.");
             default -> Console.showMessage("Opening the wormhole failed; see starsector.log.");

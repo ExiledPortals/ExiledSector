@@ -85,8 +85,8 @@ public final class ModspecCaches {
                 LOG.error("Row " + (index + 1) + " of " + SubroutineDefinitions.dataPath() + " allocates nothing: " + e.getMessage());
             }
         });
-        for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.SUBROUTINE)) {
-            if (SubroutineKind.of(definition) == SubroutineKind.MODSPEC_CACHE && !bases.containsKey(definition.id())) {
+        for (ItemDefinition definition : SubroutineKind.MODSPEC_CACHE.definitions()) {
+            if (!bases.containsKey(definition.id())) {
                 LOG.error(definition.id() + " is a " + SubroutineKind.MODSPEC_CACHE.id() + " subroutine with no usable row, so it rolls no node");
             }
         }

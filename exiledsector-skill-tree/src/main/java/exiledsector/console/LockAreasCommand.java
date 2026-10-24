@@ -16,8 +16,6 @@ import exiledsector.skills.unlock.NodeGates;
 import exiledsector.skills.unlock.RelockedGates;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.skills.unlock.UnlockConditionType;
-import org.lazywizard.console.BaseCommand;
-import org.lazywizard.console.CommonStrings;
 import org.lazywizard.console.Console;
 
 import java.util.ArrayList;
@@ -27,14 +25,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class LockAreasCommand implements BaseCommand {
+public class LockAreasCommand extends CampaignCommand {
 
     @Override
-    public CommandResult runCommand(String args, CommandContext context) {
-        if (!context.isInCampaign()) {
-            Console.showMessage(CommonStrings.ERROR_CAMPAIGN_ONLY);
-            return CommandResult.WRONG_CONTEXT;
-        }
+    protected CommandResult runInCampaign(String args) {
         Map<String, FleetMemberAPI> ownedShipsById = SocketCustody.ownedShips();
         Map<String, ShipSkillData> shipDataById = ShipSkillDataManager.all();
         Map<String, Set<String>> lockedBeforeByShipId = new HashMap<>();

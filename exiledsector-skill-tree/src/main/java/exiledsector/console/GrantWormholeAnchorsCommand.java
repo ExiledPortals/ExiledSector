@@ -7,15 +7,12 @@ import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemType;
 import exiledsector.items.WormholeAnchorDefinitions;
-import org.lazywizard.console.BaseCommand;
-import org.lazywizard.console.CommonStrings;
 import org.lazywizard.console.Console;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class GrantWormholeAnchorsCommand implements BaseCommand {
+public class GrantWormholeAnchorsCommand extends PlayerFleetCommand {
 
     private final Random random;
 
@@ -28,41 +25,22 @@ public class GrantWormholeAnchorsCommand implements BaseCommand {
     }
 
     @Override
-    public CommandResult runCommand(String args, CommandContext context) {
-        if (!context.isInCampaign()) {
-            Console.showMessage(CommonStrings.ERROR_CAMPAIGN_ONLY);
-            return CommandResult.WRONG_CONTEXT;
-        }
-        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
-        if (playerFleet == null) {
-            Console.showMessage("No player fleet found.");
-            return CommandResult.ERROR;
-        }
-        String requestedVolume = args.trim();
-        List<ItemDefinition> grantedDefinitions = new ArrayList<>();
-        for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.WORMHOLE_ANCHOR)) {
-            if (requestedVolume.isEmpty() || requestedVolume.equalsIgnoreCase(WormholeAnchorDefinitions.volume(definition.id()))) {
-                grantedDefinitions.add(definition);
-            }
-        }
+    protected CommandResult runForFleet(String args, CampaignFleetAPI playerFleet) {
+        List<ItemDefinition> grantedDefinitions = ItemDefinitions.ofType(ItemType.WORMHOLE_ANCHOR).stream()
+                .filter(definition -> args.isEmpty() || args.equalsIgnoreCase(WormholeAnchorDefinitions.volume(definition.id())))
+                .toList();
         if (grantedDefinitions.isEmpty()) {
-            Console.showMessage(requestedVolume.isEmpty() ? "No wormhole anchors are defined." : "No wormhole anchor leads to the volume \""
-                    + requestedVolume + "\".");
-            return requestedVolume.isEmpty() ? CommandResult.ERROR : CommandResult.BAD_SYNTAX;
+            Console.showMessage(args.isEmpty() ? "No wormhole anchors are defined." : "No wormhole anchor leads to the volume \"" + args + "\".");
+            return args.isEmpty() ? CommandResult.ERROR : CommandResult.BAD_SYNTAX;
         }
-        List<String> inertIds = new ArrayList<>();
-        List<ItemData> grantedItems = new ArrayList<>();
-        for (ItemDefinition definition : grantedDefinitions) {
-            ItemData granted = ItemData.rolled(definition, random.nextLong());
-            playerFleet.getCargo().addSpecial(granted.toSpecialItem(), 1f);
-            grantedItems.add(granted);
-            if (!WormholeAnchorDefinitions.areaActive(definition.id())) {
-                inertIds.add(definition.id());
-            }
-        }
+        List<ItemData> grantedItems = ConsoleItems.grantRolled(playerFleet.getCargo(), grantedDefinitions, 1, random);
+        List<String> inertIds = grantedItems.stream()
+                .map(ItemData::definitionId)
+                .filter(id -> !WormholeAnchorDefinitions.areaActive(id))
+                .toList();
         WormholeAnchorDefinitions.recordFound(grantedItems, Global.getSector(), "granted by the console");
-        Console.showMessage("Added " + grantedDefinitions.size() + (grantedDefinitions.size() == 1 ? " wormhole anchor" : " wormhole anchors")
-                + " to your cargo." + (inertIds.isEmpty() ? "" : " Inert because their area is off: " + String.join(", ", inertIds) + "."));
+        Console.showMessage("Added " + counted(grantedDefinitions.size(), "wormhole anchor", "wormhole anchors") + " to your cargo."
+                + (inertIds.isEmpty() ? "" : " Inert because their area is off: " + String.join(", ", inertIds) + "."));
         return CommandResult.SUCCESS;
     }
 }

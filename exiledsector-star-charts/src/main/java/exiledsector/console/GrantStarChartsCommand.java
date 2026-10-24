@@ -1,6 +1,5 @@
 package exiledsector.console;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
@@ -8,15 +7,13 @@ import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemType;
 import exiledsector.items.StarChart;
-import org.lazywizard.console.BaseCommand;
-import org.lazywizard.console.CommonStrings;
 import org.lazywizard.console.Console;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class GrantStarChartsCommand implements BaseCommand {
+public class GrantStarChartsCommand extends PlayerFleetCommand {
 
     static final int DEFAULT_COUNT = 5;
     static final int MAX_COUNT = 50;
@@ -39,12 +36,13 @@ public class GrantStarChartsCommand implements BaseCommand {
             if (tokens.length > 2) {
                 return problem("Give at most a count and a tier.");
             }
-            Integer count = tokens.length > 0 ? parseNumber(tokens[0]) : Integer.valueOf(DEFAULT_COUNT);
-            Integer tier = tokens.length > 1 ? parseNumber(tokens[1]) : Integer.valueOf(DEFAULT_TIER);
-            if (count == null || count < 1 || count > MAX_COUNT) {
+            Integer count = tokens.length > 0 ? ConsoleArgs.wholeNumber(tokens[0], 1, MAX_COUNT) : Integer.valueOf(DEFAULT_COUNT);
+            Integer tier = tokens.length > 1 ? ConsoleArgs.wholeNumber(tokens[1], StarChart.LOWEST_TIER, StarChart.HIGHEST_TIER)
+                    : Integer.valueOf(DEFAULT_TIER);
+            if (count == null) {
                 return problem("The count must be a whole number from 1 to " + MAX_COUNT + ".");
             }
-            if (tier == null || tier < StarChart.LOWEST_TIER || tier > StarChart.HIGHEST_TIER) {
+            if (tier == null) {
                 return problem("The tier must be a whole number from " + StarChart.LOWEST_TIER + " to " + StarChart.HIGHEST_TIER + ".");
             }
             return new GrantArguments(count, tier, null);
@@ -53,33 +51,16 @@ public class GrantStarChartsCommand implements BaseCommand {
         private static GrantArguments problem(String problem) {
             return new GrantArguments(0, 0, problem);
         }
-
-        private static Integer parseNumber(String token) {
-            try {
-                return Integer.parseInt(token);
-            } catch (NumberFormatException e) {
-                return null;
-            }
-        }
     }
 
     @Override
-    public CommandResult runCommand(String args, CommandContext context) {
-        if (!context.isInCampaign()) {
-            Console.showMessage(CommonStrings.ERROR_CAMPAIGN_ONLY);
-            return CommandResult.WRONG_CONTEXT;
-        }
+    protected CommandResult runForFleet(String args, CampaignFleetAPI playerFleet) {
         GrantArguments arguments = GrantArguments.parse(args);
         if (arguments.problem() != null) {
             Console.showMessage(arguments.problem() + "\nUsage: ExiledSectorGrantStarCharts [count] [tier], count 1 to " + MAX_COUNT
                     + " (default " + DEFAULT_COUNT + "), tier " + StarChart.LOWEST_TIER + " to " + StarChart.HIGHEST_TIER + " (default "
                     + DEFAULT_TIER + ").");
             return CommandResult.BAD_SYNTAX;
-        }
-        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
-        if (playerFleet == null || playerFleet.getCargo() == null) {
-            Console.showMessage("No player fleet found.");
-            return CommandResult.ERROR;
         }
         if (ItemDefinitions.ofType(ItemType.STAR_CHART).isEmpty()) {
             Console.showMessage("No Star Charts are defined.");
