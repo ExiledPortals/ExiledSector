@@ -32,6 +32,7 @@ public final class CargoCraftingButton extends BaseCustomUIPanelPlugin {
     private ButtonAPI craftingButton;
     private boolean shown = true;
     private boolean usable = true;
+    private boolean advancedSinceCheck;
 
     private CargoCraftingButton(UIPanelAPI tradePanel) {
         this.tradePanel = tradePanel;
@@ -53,19 +54,26 @@ public final class CargoCraftingButton extends BaseCustomUIPanelPlugin {
         }
     }
 
-    static void attachIfMissing(UIPanelAPI tradePanel) {
-        if (failed || tradePanel == null) return;
+    static CargoCraftingButton attachIfMissing(UIPanelAPI tradePanel) {
+        if (failed || tradePanel == null) return null;
         try {
             for (Object child : UiReflection.children(tradePanel)) {
-                if (child instanceof CustomPanelAPI panel && panel.getPlugin() instanceof CargoCraftingButton) return;
+                if (child instanceof CustomPanelAPI panel && panel.getPlugin() instanceof CargoCraftingButton attached) return attached;
             }
-            attach(tradePanel);
+            return attach(tradePanel);
         } catch (Throwable e) {
             disable(e);
+            return null;
         }
     }
 
-    private static void attach(UIPanelAPI tradePanel) throws Throwable {
+    boolean advancedSinceLastCheck() {
+        boolean advanced = advancedSinceCheck;
+        advancedSinceCheck = false;
+        return advanced;
+    }
+
+    private static CargoCraftingButton attach(UIPanelAPI tradePanel) throws Throwable {
         if (!(UiReflection.childWithMethod(tradePanel, "getTakeAll", 0) instanceof UIComponentAPI transactionPanel)) {
             throw new IllegalStateException("The inventory screen has no transaction panel to anchor the Crafting button below");
         }
@@ -89,6 +97,7 @@ public final class CargoCraftingButton extends BaseCustomUIPanelPlugin {
             tradePanel.addComponent(container).belowLeft(transactionPanel, GAP_BELOW_TRANSACTION_PANEL);
         }
         plugin.refreshState();
+        return plugin;
     }
 
     private static boolean showsMarketTitleRow(UIPanelAPI tradePanel) throws Throwable {
@@ -108,6 +117,7 @@ public final class CargoCraftingButton extends BaseCustomUIPanelPlugin {
     @Override
     public void advance(float amount) {
         if (craftingButton == null) return;
+        advancedSinceCheck = true;
         try {
             refreshState();
         } catch (Throwable e) {

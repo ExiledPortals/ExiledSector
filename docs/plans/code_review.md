@@ -1,6 +1,6 @@
 # Code review 2026-10-23: plan
 
-Status: review done; skill tree bugs 1-16 and hull upgrades bugs 17-18 and Star Charts bugs 20-23 and core bugs 24 and 26-29 fixed on parallel-work, 19 not needed, 25 won't do, the rest open. Seven read-only reviewers covered one module each (skill tree split into logic and UI) plus one for cross-module duplication. Each finding was re-read by its reviewer; CONFIRMED means the code was re-checked and the failure follows, PLAUSIBLE means it depends on engine behaviour or data that wasn't verified. Findings marked (checked) were also re-checked in the main session.
+Status: review done; skill tree bugs 1-16 and hull upgrades bugs 17-18 and Star Charts bugs 20-23 and core bugs 24 and 26-30 fixed on parallel-work, 19 not needed, 25, 31 and 32 won't do, the rest open. Seven read-only reviewers covered one module each (skill tree split into logic and UI) plus one for cross-module duplication. Each finding was re-read by its reviewer; CONFIRMED means the code was re-checked and the failure follows, PLAUSIBLE means it depends on engine behaviour or data that wasn't verified. Findings marked (checked) were also re-checked in the main session.
 
 Paths are relative to each module's `src/main/java/exiledsector/` (or `exiledlib/` for Exiled Lib) unless given in full.
 
@@ -53,12 +53,12 @@ All PLAUSIBLE as FPS costs (not measured), CONFIRMED as code paths.
 27. FIXED (parallel-work): both watchers are instance fields. PLAUSIBLE, small leak. Static `activeWatcher` fields in `ui/cargo/LootAlertListener` and `ui/cargo/CargoCraftingTabListener` hold the previous save's cargo after a reload; both listeners are re-registered each load, so an instance field works.
 28. FIXED (parallel-work): `ShipRecords` keeps one blank record per member in a weak map. PLAUSIBLE, perf. `persistence/ShipRecords` returns a new `ShipSkillData()` per call for members with no record, and `effects/ResolvedTree` caches by identity, so those ships rebuild their tree on every hull mod hook and fighter spawn.
 29. FIXED (parallel-work): the separator goes through `VanillaText.escapeFormat` (moved from `CampaignMessages`). PLAUSIBLE, latent crash. `ui/socket/ItemStoragePanel` builds a format pattern from the translated `raritySeparator`.
-30. CONFIRMED, low cost. Per-frame reflection in `ui/cargo/CargoCraftingTabListener` and `CargoCraftingButton.advance`; `CraftingMaterials.forPlayer` reruns `MaterialMigration.convert` on every tooltip hover; `SocketCustody.ownedShips` walks every entity in every location on each reconcile.
+30. FIXED (parallel-work), partly: the cargo tab watcher walks the trade panel only when the Crafting button skipped a frame; the legacy material conversion runs once per storage panel open (`ItemStoragePanel.settleMaterials`, which every material screen opens) instead of on every hover. The button's own per-frame state check stays (vanilla has no event for it, and the method lookups are cached). `SocketCustody.ownedShips` stays a full walk: a ship it misses loses its socketed items, and storage at abandoned stations is outside the economy list. CONFIRMED, low cost. Per-frame reflection in `ui/cargo/CargoCraftingTabListener` and `CargoCraftingButton.advance`; `CraftingMaterials.forPlayer` reruns `MaterialMigration.convert` on every tooltip hover; `SocketCustody.ownedShips` walks every entity in every location on each reconcile.
 
 ### Exiled Lib and the plugin
 
-31. PLAUSIBLE, latent. `exiledlib/HostMod` keeps one static host slot. A second mod using Exiled Lib would overwrite ours, so `HostMod.configPath` and the string folders point at its files and no hull items load.
-32. PLAUSIBLE. The plugin calls `afterSaveRepair`/`afterSocketCustody` for every domain, and `SkillTreeDomain` adds `NpcFleetSweepScript`, `NpcFleetInflationListener` and `GateRewardAnchors` there without an enabled check (bug 2 is the visible case). Star Charts does the same, which looks intended because its load sweep must still clean up.
+31. WON'T DO (owner decision): handled with the abstractions. PLAUSIBLE, latent. `exiledlib/HostMod` keeps one static host slot. A second mod using Exiled Lib would overwrite ours, so `HostMod.configPath` and the string folders point at its files and no hull items load.
+32. WON'T DO (owner decision): covered by abstraction 5. PLAUSIBLE. The plugin calls `afterSaveRepair`/`afterSocketCustody` for every domain, and `SkillTreeDomain` adds `NpcFleetSweepScript`, `NpcFleetInflationListener` and `GateRewardAnchors` there without an enabled check (bug 2 is the visible case). Star Charts does the same, which looks intended because its load sweep must still clean up.
 
 ### Exiled Lib effects
 

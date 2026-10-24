@@ -22,6 +22,7 @@ import exiledsector.items.Item;
 import exiledsector.items.ItemDisassembly;
 import exiledsector.items.ItemRarity;
 import exiledsector.items.ItemStore;
+import exiledsector.items.MaterialMigration;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.cargo.CargoIconLooks;
@@ -193,6 +194,7 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private static String settleMaterials() {
+        MaterialMigration.convert(PlayerFleet.cargoOrNull());
         CraftingMaterials materials = playerMaterials();
         int movedCount = materials.settle();
         if (movedCount <= 0) {
