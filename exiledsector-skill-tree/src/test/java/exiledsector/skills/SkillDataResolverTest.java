@@ -164,10 +164,27 @@ class SkillDataResolverTest {
         dataManagerMock.when(() -> ShipSkillDataManager.find("ship-a")).thenReturn(new ShipSkillData());
         ShipVariantAPI variant = variantWithTags(ShipRecords.SHIP_TAG_PREFIX + "ship-a");
         FleetMemberAPI fleetMember = member("ship-b");
-        when(fleetMember.getFleetData()).thenReturn(mock(FleetDataAPI.class));
+        FleetDataAPI fleetData = mock(FleetDataAPI.class);
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(fleetMember));
+        when(fleetMember.getFleetData()).thenReturn(fleetData);
 
         assertTrue(SkillDataResolver.resolve(fleetMember, variant).isBlank());
         assertFalse(SkillDataResolver.borrowsShipTree(fleetMember, variant));
+    }
+
+    @Test
+    void aRefitModuleTabBorrowsTheTreeOfTheShipDockedInThatSlot() {
+        ShipSkillData docked = new ShipSkillData();
+        dataManagerMock.when(() -> ShipSkillDataManager.find("docked-core")).thenReturn(docked);
+        ShipVariantAPI moduleVariant = variantWithTags(ShipRecords.SHIP_TAG_PREFIX + "docked-core");
+        FleetMemberAPI moduleTab = member("module-tab");
+        FleetMemberAPI parent = member("parent");
+        FleetDataAPI parentFleetData = mock(FleetDataAPI.class);
+        when(parentFleetData.getMembersListCopy()).thenReturn(List.of(parent));
+        when(moduleTab.getFleetData()).thenReturn(parentFleetData);
+
+        assertSame(docked, SkillDataResolver.resolve(moduleTab, moduleVariant));
+        assertTrue(SkillDataResolver.borrowsShipTree(moduleTab, moduleVariant));
     }
 
     @Test

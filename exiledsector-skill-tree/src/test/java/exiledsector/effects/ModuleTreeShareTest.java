@@ -11,8 +11,11 @@ import exiledlib.skills.EffectContribution;
 import exiledlib.skills.EffectTotals;
 import exiledlib.skills.SkillTypeEffect;
 import exiledlib.skills.skilleffect.SkillEffect;
+import exiledsector.persistence.ShipRecords;
+import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.ModuleShareOverride;
+import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillType;
@@ -180,6 +183,25 @@ class ModuleTreeShareTest {
         verify(stats.getFluxCapacity(), times(1)).modifyPercent("exiledSector_moduleShare_parent_FLUX_CAPACITY_PERCENT", 10f);
         verify(stats.getArmorBonus(), times(1)).modifyPercent("exiledSector_moduleShare_parent_ARMOR_PERCENT", 5f);
         verify(wreck.getMutableStats().getFluxCapacity(), never()).modifyPercent(anyString(), anyFloat());
+    }
+
+    @Test
+    void aDockedShipWithATreeOfItsOwnGetsNoShareOfTheParentsTree() {
+        ShipAPI parent = mock(ShipAPI.class);
+        when(parent.getId()).thenReturn("parent");
+        when(parent.getMutableStats()).thenReturn(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS));
+        ShipAPI dockedCore = module(true);
+        when(dockedCore.getVariant().getTags()).thenReturn(List.of(ShipRecords.SHIP_TAG_PREFIX + "docked-core"));
+        ShipAPI plate = module(true);
+        when(parent.getChildModulesCopy()).thenReturn(new ArrayList<>(List.of(dockedCore, plate)));
+
+        try (MockedStatic<ShipSkillDataManager> records = Mockito.mockStatic(ShipSkillDataManager.class)) {
+            records.when(() -> ShipSkillDataManager.find("docked-core")).thenReturn(new ShipSkillData());
+            new ModuleTreeShare(parent, List.of(node(effect("FLUX_CAPACITY_PERCENT", 20f))), Map.of(), HullSize.CRUISER).advance(0.1f);
+        }
+
+        verify(dockedCore.getMutableStats().getFluxCapacity(), never()).modifyPercent(anyString(), anyFloat());
+        verify(plate.getMutableStats().getFluxCapacity()).modifyPercent("exiledSector_moduleShare_parent_FLUX_CAPACITY_PERCENT", 10f);
     }
 
     @Test

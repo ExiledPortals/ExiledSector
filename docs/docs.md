@@ -68,6 +68,9 @@ the `MODULE_*` effects at full strength.
 each weapon's maximum ammo once; cells above their maximum are clamped first so armor carried from an earlier
 engagement isn't raised again. `JettisonListener` counts the modules it saw alive that have since
 died, and scales top speed and maneuverability by that count.
+A ship docked into another's module slot (Arma Armatura's core units) keeps its own tree through the ship tag its variant carries:
+`ShipRecords.resolve` lends it to any member outside its fleet's list, refit module tabs included, it gets no share of the
+parent's tree, and `SocketCustody.addDockedShips` counts it as owned so its items stay socketed.
 
 ## Rise From the Ashes
 
