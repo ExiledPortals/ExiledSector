@@ -22,6 +22,9 @@ public class SkillTreeStaticImageRenderer {
         float zoom = viewport.zoom();
         List<StaticImage> images = SkillTree.getStaticImages();
         if (images.isEmpty()) return;
+        float viewCenterX = (viewport.left() + viewport.right()) / 2f;
+        float viewCenterY = (viewport.bottom() + viewport.top()) / 2f;
+        boolean viewBounded = Float.isFinite(viewCenterX) && Float.isFinite(viewCenterY);
 
         for (StaticImage image : images) {
             String imagePath = image.getImagePath();
@@ -33,6 +36,12 @@ public class SkillTreeStaticImageRenderer {
             float screenY = viewport.screenY(image.getY());
             float imageWidth = image.getWidth() * zoom;
             float imageHeight = image.getHeight() * zoom;
+            if (viewBounded) {
+                float drift = ImageParallax.driftFraction((float) Math.hypot(viewCenterX - screenX, viewCenterY - screenY),
+                        image.getParallax(), imageWidth * ImageParallax.REACH_PER_WIDTH);
+                screenX += (viewCenterX - screenX) * drift;
+                screenY += (viewCenterY - screenY) * drift;
+            }
             if (!viewport.isVisible(screenX, screenY, (float) Math.hypot(imageWidth, imageHeight) / 2f)) {
                 continue;
             }
