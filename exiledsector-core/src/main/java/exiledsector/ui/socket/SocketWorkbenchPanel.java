@@ -1051,8 +1051,4 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         noticeElement = replaceElement(noticeElement, element, PAD, artY(BenchScene.NOTICE_TOP));
     }
 
-    private float innerWidth() {
-        return panelWidth - PAD * 2f;
-    }
-
 }

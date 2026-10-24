@@ -93,6 +93,10 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
 
     protected abstract void build();
 
+    protected float innerWidth() {
+        return panelWidth - PAD * 2f;
+    }
+
     protected SocketPanelTab tab() {
         return null;
     }
