@@ -1,7 +1,6 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
-import exiledlib.ModSettingsListener;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.effects.ShipEffectSource;
 import exiledlib.i18n.Translation;
@@ -75,10 +74,8 @@ public final class HullUpgradesDomain implements ExiledSectorDomain {
 
     @Override
     public void registerSettings() {
-        SettingsCreator.addHeader(MOD_ID, "exiledSector_hullUpgradesHeader", Translation.text("settings.hullUpgrades.header"), ExiledSectorSettings.MAIN_TAB);
-        SettingsCreator.addBoolean(MOD_ID, HullUpgradesSetting.ENABLED_FIELD_ID,
-                Translation.text("settings.socketStorage.hullUpgrades.name"), Translation.text("settings.socketStorage.hullUpgrades.tooltip"),
-                HullUpgradesSetting.DEFAULT_ENABLED, ExiledSectorSettings.MAIN_TAB);
+        HullUpgradesSetting.SWITCH.addSettings("exiledSector_hullUpgradesHeader", "settings.hullUpgrades.header",
+                "settings.socketStorage.hullUpgrades.name", "settings.socketStorage.hullUpgrades.tooltip");
         SettingsCreator.addInt(MOD_ID, HullUpgradesSetting.UNLOCK_LEVEL_FIELD_ID,
                 Translation.text("settings.socketStorage.hullUpgradesLevel.name"), Translation.text("settings.socketStorage.hullUpgradesLevel.tooltip"),
                 HullUpgradesSetting.DEFAULT_UNLOCK_LEVEL, HullUpgradesSetting.MIN_UNLOCK_LEVEL, HullUpgradesSetting.MAX_UNLOCK_LEVEL,
@@ -89,7 +86,6 @@ public final class HullUpgradesDomain implements ExiledSectorDomain {
         SettingsCreator.addInt(MOD_ID, BattleItemDrops.DROP_PERCENT_FIELD_ID,
                 Translation.text("settings.socketStorage.battleItems.name"), Translation.text("settings.socketStorage.battleItems.tooltip"),
                 BattleItemDrops.DEFAULT_DROP_PERCENT, 0, BattleItemDrops.MAX_DROP_PERCENT, ExiledSectorSettings.MAIN_TAB);
-        ModSettingsListener.ensureRegistered(HullUpgradesSetting.SettingsListener.class, HullUpgradesSetting.SettingsListener::new);
     }
 
     @Override

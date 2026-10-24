@@ -1,6 +1,8 @@
 package exiledsector.items;
 
 import exiledlib.ModCsv;
+import exiledsector.domain.DomainContributions;
+import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
@@ -10,8 +12,7 @@ import org.json.JSONException;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumMap;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -37,7 +38,7 @@ public final class ItemDataIntegrity {
     static final String WEIGHT_SEPARATOR = ":";
     static final int FIRST_DATA_LINE = 2;
     private static final Logger LOG = Logger.getLogger(ItemDataIntegrity.class);
-    private static final Map<ItemType, ItemDataRules> RULES_BY_TYPE = Collections.synchronizedMap(new EnumMap<>(ItemType.class));
+    private static final DomainContributions<ItemDataRules> RULES = DomainContributions.fromEveryDomain(ExiledSectorDomain::itemDataRules);
 
     record ModifierRow(String id, ModifierSlot slot, Set<ModifierScope> scopes, List<String> effectNames, boolean named, int line,
                        String file) {
@@ -49,18 +50,12 @@ public final class ItemDataIntegrity {
     private final Map<String, Integer> idsNeedingNames = new LinkedHashMap<>();
     private final Map<String, String> definitionSourcesById = new HashMap<>();
 
-    public static void registerRules(ItemDataRules rules) {
-        RULES_BY_TYPE.put(rules.type(), rules);
-    }
-
     static List<ItemDataRules> rules() {
-        synchronized (RULES_BY_TYPE) {
-            return List.copyOf(RULES_BY_TYPE.values());
-        }
+        return RULES.all().stream().sorted(Comparator.comparing(ItemDataRules::type)).toList();
     }
 
     private static ItemDataRules rulesFor(ItemType type) {
-        return type == null ? null : RULES_BY_TYPE.get(type);
+        return RULES.all().stream().filter(rules -> rules.type() == type).findFirst().orElse(null);
     }
 
     public static void logLoaded() {

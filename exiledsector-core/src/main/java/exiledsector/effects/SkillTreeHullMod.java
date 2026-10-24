@@ -102,7 +102,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     public void addPostDescriptionSection(TooltipMakerAPI tooltip, HullSize hullSize, ShipAPI ship, float width, boolean isForModSpec) {
         if (ship == null || isForModSpec) return;
 
-        ExiledSector.domains().stream().filter(ExiledSectorDomain::enabled).forEach(domain -> domain.describeShip(tooltip, hullSize, ship));
+        ExiledSector.enabledDomains().forEach(domain -> domain.describeShip(tooltip, hullSize, ship));
     }
 
     @Override

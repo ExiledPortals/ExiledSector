@@ -1,7 +1,6 @@
 package exiledsector.items;
 
 import exiledlib.ModSettings;
-import exiledlib.ModSettingsListener;
 
 public final class UniqueSubroutinesSetting {
 
@@ -11,14 +10,6 @@ public final class UniqueSubroutinesSetting {
     public static final int MAX_UNLOCK_LEVEL = 15;
 
     private static volatile int unlockLevelSetting = DEFAULT_UNLOCK_LEVEL;
-
-    public static final class SettingsListener extends ModSettingsListener {
-
-        @Override
-        protected void reload() {
-            reloadSettings();
-        }
-    }
 
     private UniqueSubroutinesSetting() {
     }

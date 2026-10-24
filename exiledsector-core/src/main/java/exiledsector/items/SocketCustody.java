@@ -9,13 +9,13 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
-import exiledsector.ExiledSector;
 import exiledlib.PlayerFleet;
+import exiledsector.domain.DomainContributions;
+import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.persistence.SaveData;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,6 +29,7 @@ import java.util.function.Function;
 public final class SocketCustody {
 
     static final String LOST_KEY = "exiledSector_socketShipsLostInCombat";
+    private static final DomainContributions<ShipCustody> CUSTODIES = DomainContributions.fromEveryDomain(ExiledSectorDomain::shipCustodies);
 
     public record Installation(String shipId, String nodeId, String sectionType) {
 
@@ -85,9 +86,7 @@ public final class SocketCustody {
     }
 
     static List<ShipCustody> custodies() {
-        List<ShipCustody> custodies = new ArrayList<>();
-        ExiledSector.domains().forEach(domain -> custodies.addAll(domain.shipCustodies()));
-        return custodies;
+        return CUSTODIES.all();
     }
 
     public static Map<String, FleetMemberAPI> reconcile() {

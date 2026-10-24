@@ -9,6 +9,7 @@ import exiledlib.skills.DiminishedStat;
 import exiledlib.skills.DiminishingReturns;
 import exiledlib.skills.skilleffect.onhit.MaxChainCountConfig;
 import exiledsector.compat.SalvageSiteCompat;
+import exiledsector.domain.DomainSettingsListener;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.ItemDrops;
@@ -48,6 +49,7 @@ public final class ExiledSectorSettings {
         ItemRoller.reloadSettings();
         ModSettingsListener.ensureRegistered(ItemAnimationSetting.SettingsListener.class, ItemAnimationSetting.SettingsListener::new);
         ItemAnimationSetting.reloadSettings();
+        ModSettingsListener.ensureRegistered(DomainSettingsListener.class, DomainSettingsListener::new);
         domains.forEach(ExiledSectorDomain::reloadSettings);
     }
 
