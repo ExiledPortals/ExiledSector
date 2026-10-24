@@ -1,6 +1,7 @@
 package exiledsector.charts;
 
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import exiledsector.data.CsvRows;
 import exiledlib.ModCsv;
 import exiledsector.loot.FleetLevelRange;
 import org.apache.log4j.Logger;
@@ -34,7 +35,7 @@ public final class ChartTiers {
     static void register(JSONArray rows) throws JSONException {
         Map<Integer, ChartTier> loaded = new HashMap<>();
         Map<Integer, Float> loadedColonyItemChances = new HashMap<>();
-        ChartCsv csv = new ChartCsv(PATH);
+        CsvRows csv = new CsvRows(PATH);
         if (rows != null) {
             ModCsv.forEach(rows, (index, row) -> {
                 String rowLabel = "row " + (index + 1);

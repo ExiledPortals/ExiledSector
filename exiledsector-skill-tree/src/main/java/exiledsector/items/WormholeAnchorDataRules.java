@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import exiledlib.ModCsv;
+import exiledsector.data.CsvRows;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -76,7 +77,7 @@ public final class WormholeAnchorDataRules implements ItemDataRules {
                         + ItemUnlock.CLEARED_CHART_TIER_PREFIX + "N or leave it blank");
             }
             String dropChance = ModCsv.text(row, WormholeAnchorDefinitions.DROP_CHANCE_COLUMN);
-            if (!WormholeAnchorDefinitions.isValidDropChance(dropChance)) {
+            if (!CsvRows.isValidChance(dropChance)) {
                 integrity.error(file, line, definitionId + " has the drop chance \"" + dropChance + "\"; expected a number of 0 or more");
             }
             String color = ModCsv.text(row, WormholeAnchorDefinitions.COLOR_COLUMN);

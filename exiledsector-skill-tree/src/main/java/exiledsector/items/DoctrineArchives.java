@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import exiledlib.ModCsv;
+import exiledsector.data.CsvRows;
 import exiledsector.modifiers.ModifierSlot;
 import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.radius.RadiusSize;
@@ -53,14 +54,10 @@ public final class DoctrineArchives {
 
     public static void register(JSONArray rows) throws JSONException {
         Map<String, DoctrineArchive> loaded = new LinkedHashMap<>();
-        ModCsv.forEach(rows == null ? new JSONArray() : rows, (index, row) -> {
-            try {
-                DoctrineArchive archive = parse(row);
-                if (loaded.putIfAbsent(archive.definitionId(), archive) != null) {
-                    throw new IllegalArgumentException(archive.definitionId() + " is listed more than once");
-                }
-            } catch (IllegalArgumentException e) {
-                LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": " + e.getMessage());
+        CsvRows.forEachRow(rows, DATA_PATH, LOG, (index, row) -> {
+            DoctrineArchive archive = parse(row);
+            if (loaded.putIfAbsent(archive.definitionId(), archive) != null) {
+                throw new IllegalArgumentException(archive.definitionId() + " is listed more than once");
             }
         });
         for (ItemDefinition definition : SubroutineKind.DOCTRINE.definitions()) {

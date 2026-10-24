@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import exiledlib.ModCsv;
+import exiledsector.data.CsvRows;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
 import exiledsector.skills.SkillNode;
@@ -204,10 +205,10 @@ public final class SubroutineDataRules implements ItemDataRules {
     private static void checkCacheChances(ItemDataIntegrity integrity, String file, int line, String definitionId, JSONObject row) {
         String dropChance = ModCsv.text(row, ModspecCaches.DROP_CHANCE_COLUMN);
         String salvageChance = ModCsv.text(row, ModspecCaches.SALVAGE_CHANCE_COLUMN);
-        if (!ModspecCaches.isValidChance(dropChance)) {
+        if (!CsvRows.isValidChance(dropChance)) {
             integrity.error(file, line, definitionId + " has the drop chance \"" + dropChance + "\"; expected a number of 0 or more");
         }
-        if (!ModspecCaches.isValidChance(salvageChance)) {
+        if (!CsvRows.isValidChance(salvageChance)) {
             integrity.error(file, line, definitionId + " has the salvage chance \"" + salvageChance + "\"; expected a number of 0 or more");
         }
         if (isZeroChance(dropChance) && isZeroChance(salvageChance)) {

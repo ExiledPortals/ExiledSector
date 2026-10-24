@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import exiledlib.ModCsv;
+import exiledsector.data.CsvRows;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -113,7 +114,7 @@ public final class ModspecCaches {
         }
         boolean anyAboveZero = false;
         for (String chanceText : chancesText.split(LIST_SEPARATOR, -1)) {
-            if (!isValidChance(chanceText.trim()) || chanceText.isBlank()) {
+            if (!CsvRows.isValidChance(chanceText.trim()) || chanceText.isBlank()) {
                 return false;
             }
             anyAboveZero |= Float.parseFloat(chanceText.trim()) > 0f;
@@ -130,29 +131,11 @@ public final class ModspecCaches {
     }
 
     static float chance(String definitionId, String column, String chanceText) {
-        if (chanceText.isEmpty()) {
-            return 0f;
-        }
-        if (!isValidChance(chanceText)) {
-            LOG.error(definitionId + " in " + SubroutineDefinitions.dataPath() + " has the " + column + " \"" + chanceText
-                    + "\"; expected a number of 0 or more, so it never drops that way");
-            return 0f;
-        }
-        return Float.parseFloat(chanceText);
-    }
-
-    static boolean isValidChance(String chanceText) {
-        return WormholeAnchorDefinitions.isValidDropChance(chanceText);
+        return CsvRows.chance(chanceText, definitionId, column, SubroutineDefinitions.dataPath(), LOG);
     }
 
     static Set<String> nodeIds(String nodeIdsText) {
-        Set<String> nodeIds = new LinkedHashSet<>();
-        for (String nodeId : nodeIdsText.split(LIST_SEPARATOR)) {
-            if (!nodeId.isBlank()) {
-                nodeIds.add(nodeId.trim());
-            }
-        }
-        return nodeIds;
+        return new LinkedHashSet<>(CsvRows.entries(nodeIdsText));
     }
 
     public static CacheBase base(String definitionId) {

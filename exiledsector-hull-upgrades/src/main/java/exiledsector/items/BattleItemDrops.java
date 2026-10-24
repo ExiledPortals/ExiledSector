@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import exiledlib.ModCsv;
 import exiledlib.ModSettings;
+import exiledsector.data.CsvRows;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -114,7 +115,7 @@ public final class BattleItemDrops {
         ModCsv.forEach(rows == null ? new JSONArray() : rows, (index, row) -> {
             String dropId = ModCsv.text(row, DROP_COLUMN);
             Drop drop = Drop.byIdOrNull(dropId);
-            float rate = parsedOrNaN(ModCsv.text(row, RATE_COLUMN));
+            float rate = CsvRows.numberOrNaN(ModCsv.text(row, RATE_COLUMN));
             if (drop == null) {
                 LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": unknown drop \"" + dropId + "\"");
             } else if (!(rate >= 0f) || Float.isInfinite(rate)) {
@@ -124,14 +125,6 @@ public final class BattleItemDrops {
             }
         });
         RATES.set(Collections.unmodifiableMap(rates));
-    }
-
-    private static float parsedOrNaN(String numberText) {
-        try {
-            return Float.parseFloat(numberText);
-        } catch (NumberFormatException e) {
-            return Float.NaN;
-        }
     }
 
     public static void clear() {

@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
+import exiledsector.data.CsvRows;
 import exiledlib.ModCsv;
 import exiledsector.items.ItemCurrencies;
 import exiledsector.items.ItemCurrency;
@@ -108,7 +109,7 @@ public final class ChartDrops {
 
     public static void register(JSONArray rows) throws JSONException {
         Map<Source, Rule> loaded = new EnumMap<>(Source.class);
-        ChartCsv csv = new ChartCsv(PATH);
+        CsvRows csv = new CsvRows(PATH);
         if (rows != null) {
             ModCsv.forEach(rows, (index, row) -> {
                 String sourceText = ModCsv.text(row, SOURCE_COLUMN);

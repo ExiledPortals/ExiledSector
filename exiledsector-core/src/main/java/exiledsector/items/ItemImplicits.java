@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import exiledlib.HostMod;
 import exiledlib.ModCsv;
+import exiledsector.data.CsvRows;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
@@ -53,15 +54,11 @@ public final class ItemImplicits {
 
     public static void register(JSONArray rows) throws JSONException {
         Map<ItemKind, List<Modifier>> loaded = new EnumMap<>(ItemKind.class);
-        ModCsv.forEach(rows, (index, row) -> {
-            try {
-                ItemKind kind = ItemKind.byId(ModCsv.text(row, "section"));
-                List<Modifier> implicits = parseImplicits(kind, ModCsv.text(row, "implicits"));
-                if (loaded.put(kind, implicits) != null) {
-                    throw new IllegalArgumentException(kind.id() + " is listed more than once");
-                }
-            } catch (IllegalArgumentException e) {
-                LOG.error("Skipping row " + (index + 1) + " of " + dataPath() + ": " + e.getMessage());
+        CsvRows.forEachRow(rows, dataPath(), LOG, (index, row) -> {
+            ItemKind kind = ItemKind.byId(ModCsv.text(row, "section"));
+            List<Modifier> implicits = parseImplicits(kind, ModCsv.text(row, "implicits"));
+            if (loaded.put(kind, implicits) != null) {
+                throw new IllegalArgumentException(kind.id() + " is listed more than once");
             }
         });
         BY_TYPE.set(Collections.unmodifiableMap(loaded));

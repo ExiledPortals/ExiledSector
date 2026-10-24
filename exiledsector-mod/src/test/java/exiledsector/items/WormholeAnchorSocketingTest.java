@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledlib.i18n.StyledText;
+import exiledsector.data.CsvRows;
 import exiledsector.skills.AnchorLinks;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
@@ -239,8 +240,8 @@ class WormholeAnchorSocketingTest {
         assertEquals("hegemony_2", WormholeAnchorDefinitions.exitNodeId(HEGEMONY_ANCHOR));
         assertEquals(0f, FactionFleetDrops.source(HEGEMONY_ANCHOR).chance());
         assertEquals(0f, FactionFleetDrops.source(ABYSS_ANCHOR).chance());
-        assertFalse(WormholeAnchorDefinitions.isValidDropChance("6%"));
-        assertTrue(WormholeAnchorDefinitions.isValidDropChance(""));
+        assertFalse(CsvRows.isValidChance("6%"));
+        assertTrue(CsvRows.isValidChance(""));
     }
 
     @Test

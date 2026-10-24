@@ -3,6 +3,7 @@ package exiledsector.items;
 import exiledlib.HostMod;
 import exiledlib.ModCsv;
 import exiledlib.i18n.Translation;
+import exiledsector.data.CsvRows;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
@@ -104,24 +105,20 @@ public final class ItemModifiers {
         Map<String, Modifier> modifiersById = new LinkedHashMap<>();
         Map<String, String> namesById = new LinkedHashMap<>();
         Map<String, Set<ModifierScope>> scopesById = new LinkedHashMap<>();
-        ModCsv.forEach(rows, (index, row) -> {
-            try {
-                Modifier modifier = parse(row);
-                Set<ModifierScope> scopes = parseScopes(modifier.id(), ModCsv.text(row, "item_types"));
-                if (!allowedScopes.test(scopes)) {
-                    throw new IllegalArgumentException(modifier.id() + " lists item types " + scopes.stream().map(ModifierScope::id).toList()
-                            + ", which do not belong in this file");
-                }
-                if (takenIds.contains(modifier.id()) || modifiersById.putIfAbsent(modifier.id(), modifier) != null) {
-                    throw new IllegalArgumentException(modifier.id() + " is listed more than once");
-                }
-                scopesById.put(modifier.id(), scopes);
-                String englishName = ModCsv.text(row, "name");
-                if (!englishName.isEmpty()) {
-                    namesById.put(modifier.id(), englishName);
-                }
-            } catch (IllegalArgumentException e) {
-                LOG.error("Skipping row " + (index + 1) + " of " + sourcePath + ": " + e.getMessage());
+        CsvRows.forEachRow(rows, sourcePath, LOG, (index, row) -> {
+            Modifier modifier = parse(row);
+            Set<ModifierScope> scopes = parseScopes(modifier.id(), ModCsv.text(row, "item_types"));
+            if (!allowedScopes.test(scopes)) {
+                throw new IllegalArgumentException(modifier.id() + " lists item types " + scopes.stream().map(ModifierScope::id).toList()
+                        + ", which do not belong in this file");
+            }
+            if (takenIds.contains(modifier.id()) || modifiersById.putIfAbsent(modifier.id(), modifier) != null) {
+                throw new IllegalArgumentException(modifier.id() + " is listed more than once");
+            }
+            scopesById.put(modifier.id(), scopes);
+            String englishName = ModCsv.text(row, "name");
+            if (!englishName.isEmpty()) {
+                namesById.put(modifier.id(), englishName);
             }
         });
         return new Catalogue(Collections.unmodifiableMap(modifiersById), Collections.unmodifiableMap(namesById),

@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import exiledlib.ModCsv;
+import exiledsector.data.CsvRows;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -89,14 +90,10 @@ public final class ItemDefinitions {
         if (rows == null) {
             return;
         }
-        ModCsv.forEach(rows, (index, row) -> {
-            try {
-                ItemDefinition definition = parser.apply(row);
-                if (loaded.putIfAbsent(definition.id(), definition) != null) {
-                    throw new IllegalArgumentException(definition.id() + " is already defined");
-                }
-            } catch (IllegalArgumentException e) {
-                LOG.error("Skipping row " + (index + 1) + " of " + source + ": " + e.getMessage());
+        CsvRows.forEachRow(rows, source, LOG, (index, row) -> {
+            ItemDefinition definition = parser.apply(row);
+            if (loaded.putIfAbsent(definition.id(), definition) != null) {
+                throw new IllegalArgumentException(definition.id() + " is already defined");
             }
         });
     }

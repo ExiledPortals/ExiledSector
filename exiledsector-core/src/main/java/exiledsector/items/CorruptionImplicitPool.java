@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import exiledlib.ModCsv;
+import exiledsector.data.CsvRows;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
@@ -34,14 +35,10 @@ public final class CorruptionImplicitPool {
 
     public void register(JSONArray rows) throws JSONException {
         Map<String, Modifier> byId = new LinkedHashMap<>();
-        ModCsv.forEach(rows == null ? new JSONArray() : rows, (index, row) -> {
-            try {
-                Modifier implicit = referencedImplicit(ModCsv.text(row, IMPLICIT_COLUMN));
-                if (byId.putIfAbsent(implicit.id(), implicit) != null) {
-                    throw new IllegalArgumentException(implicit.id() + " is listed more than once");
-                }
-            } catch (IllegalArgumentException e) {
-                log.error("Skipping row " + (index + 1) + " of " + dataPath.get() + ": " + e.getMessage());
+        CsvRows.forEachRow(rows, dataPath.get(), log, (index, row) -> {
+            Modifier implicit = referencedImplicit(ModCsv.text(row, IMPLICIT_COLUMN));
+            if (byId.putIfAbsent(implicit.id(), implicit) != null) {
+                throw new IllegalArgumentException(implicit.id() + " is listed more than once");
             }
         });
         implicits.set(List.copyOf(byId.values()));

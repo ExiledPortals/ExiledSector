@@ -1,6 +1,7 @@
 package exiledsector.skills.npc;
 
 import exiledlib.ModCsv;
+import exiledsector.data.CsvRows;
 import exiledsector.skills.tags.SkillTags;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -68,10 +69,7 @@ public final class NpcFocus {
 
     static Map<String, Float> parseFocus(String id, String focusText, String path) {
         Map<String, Float> weightsByTag = new LinkedHashMap<>();
-        for (String entry : focusText.split(";")) {
-            if (entry.isBlank()) {
-                continue;
-            }
+        for (String entry : CsvRows.entries(focusText)) {
             String[] parts = entry.split(":");
             String tag = parts[0].trim();
             Float weight = parts.length == 2 ? weight(parts[1].trim()) : null;

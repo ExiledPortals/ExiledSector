@@ -3,6 +3,7 @@ package exiledsector.charts;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
+import exiledsector.data.CsvRows;
 import exiledlib.ModCsv;
 import exiledsector.compat.IndustrialEvolutionCompat;
 import org.apache.log4j.Logger;
@@ -38,7 +39,7 @@ public final class ChartPois {
 
     static void register(JSONArray rows) throws JSONException {
         Map<String, ChartPoi> loaded = new LinkedHashMap<>();
-        ChartCsv csv = new ChartCsv(PATH);
+        CsvRows csv = new CsvRows(PATH);
         if (rows != null) {
             ModCsv.forEach(rows, (index, row) -> {
                 String id = ModCsv.text(row, ID_COLUMN);
@@ -56,7 +57,7 @@ public final class ChartPois {
         LOG.info("[ExiledSector] Star Chart systems can place " + pois.size() + " kinds of point of interest");
     }
 
-    private static ChartPoi parse(ChartCsv csv, JSONObject row, String id) {
+    private static ChartPoi parse(CsvRows csv, JSONObject row, String id) {
         ChartPoi.Kind kind = ChartPoi.Kind.parse(ModCsv.text(row, "kind"));
         String entityType = ModCsv.text(row, "entity");
         if (kind == null) {

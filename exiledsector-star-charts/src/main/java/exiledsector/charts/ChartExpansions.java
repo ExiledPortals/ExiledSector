@@ -1,5 +1,6 @@
 package exiledsector.charts;
 
+import exiledsector.data.CsvRows;
 import exiledlib.ModCsv;
 import exiledsector.charts.expansion.ChartExpansion;
 import exiledsector.charts.expansion.SpatialBreach;
@@ -46,7 +47,7 @@ public final class ChartExpansions {
 
     static List<String> register(JSONArray rows) throws JSONException {
         Map<String, Definition> loaded = new LinkedHashMap<>();
-        ChartCsv csv = new ChartCsv(PATH);
+        CsvRows csv = new CsvRows(PATH);
         if (rows != null) {
             ModCsv.forEach(rows, (index, row) -> {
                 String id = ModCsv.text(row, ID_COLUMN);
@@ -66,7 +67,7 @@ public final class ChartExpansions {
         return csv.problems();
     }
 
-    private static Definition parse(ChartCsv csv, JSONObject row, String id) {
+    private static Definition parse(CsvRows csv, JSONObject row, String id) {
         int minTier = ChartTiers.clamp(csv.integer(row, "min_tier", ChartTiers.LOWEST_TIER, id));
         int maxTier = ChartTiers.clamp(csv.integer(row, "max_tier", ChartTiers.HIGHEST_TIER, id));
         return new Definition(id, csv.number(row, "weight", 1f, id), Math.min(minTier, maxTier), Math.max(minTier, maxTier),

@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import exiledlib.ModCsv;
 import exiledlib.Seeds;
+import exiledsector.data.CsvRows;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
@@ -44,19 +45,15 @@ public final class StarChartImplicits {
 
     public static void register(JSONArray rows) throws JSONException {
         Map<String, List<Modifier>> bySystemType = new LinkedHashMap<>();
-        ModCsv.forEach(rows == null ? new JSONArray() : rows, (index, row) -> {
-            try {
-                String systemType = StarChartDefinitions.normalisedSystemType(ModCsv.text(row, SYSTEM_TYPE_COLUMN));
-                if (systemType == null) {
-                    throw new IllegalArgumentException("\"" + ModCsv.text(row, SYSTEM_TYPE_COLUMN) + "\" is not a star chart system type; expected "
-                            + StarChartDefinitions.SYSTEM_TYPES + " or " + StarChartDefinitions.ANY_SYSTEM_TYPE);
-                }
-                List<Modifier> implicits = parseImplicits(ModCsv.text(row, "implicits"));
-                if (bySystemType.putIfAbsent(systemType, implicits) != null) {
-                    throw new IllegalArgumentException(systemType + " is listed more than once");
-                }
-            } catch (IllegalArgumentException e) {
-                LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": " + e.getMessage());
+        CsvRows.forEachRow(rows, DATA_PATH, LOG, (index, row) -> {
+            String systemType = StarChartDefinitions.normalisedSystemType(ModCsv.text(row, SYSTEM_TYPE_COLUMN));
+            if (systemType == null) {
+                throw new IllegalArgumentException("\"" + ModCsv.text(row, SYSTEM_TYPE_COLUMN) + "\" is not a star chart system type; expected "
+                        + StarChartDefinitions.SYSTEM_TYPES + " or " + StarChartDefinitions.ANY_SYSTEM_TYPE);
+            }
+            List<Modifier> implicits = parseImplicits(ModCsv.text(row, "implicits"));
+            if (bySystemType.putIfAbsent(systemType, implicits) != null) {
+                throw new IllegalArgumentException(systemType + " is listed more than once");
             }
         });
         Map<String, Modifier> distinctById = new LinkedHashMap<>();

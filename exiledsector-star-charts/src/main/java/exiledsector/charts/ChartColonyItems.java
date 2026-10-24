@@ -1,5 +1,6 @@
 package exiledsector.charts;
 
+import exiledsector.data.CsvRows;
 import exiledlib.ModCsv;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.WeightedPick;
@@ -43,7 +44,7 @@ public final class ChartColonyItems {
     static List<String> register(JSONArray rows, Predicate<String> itemExists) throws JSONException {
         List<Item> items = new ArrayList<>();
         float[] ceiling = {DEFAULT_CEILING};
-        ChartCsv csv = new ChartCsv(PATH);
+        CsvRows csv = new CsvRows(PATH);
         if (rows != null) {
             ModCsv.forEach(rows, (index, row) -> {
                 String id = ModCsv.text(row, ID_COLUMN);

@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledlib.ModCsv;
+import exiledsector.data.CsvRows;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.tags.SkillTags;
 import exiledsector.skills.unlock.AnchorFinds;
@@ -36,7 +37,6 @@ public final class WormholeAnchorDefinitions {
     static final float SELL_SHARE_OF_BUY_PRICE = 0.01f;
     static final String COLOR_COLUMN = "color";
     static final String CREST_FACTION_COLUMN = "crest_faction";
-    static final String LIST_SEPARATOR = ";";
     public static final Color DEFAULT_COLOR = new Color(190, 90, 255);
     private static final Pattern HEX_COLOR = Pattern.compile("#[0-9A-Fa-f]{6}");
     private static final AnchorStyle DEFAULT_STYLE = new AnchorStyle(DEFAULT_COLOR, null);
@@ -73,40 +73,36 @@ public final class WormholeAnchorDefinitions {
         Map<String, AnchorMarket> markets = new LinkedHashMap<>();
         Map<String, String> definitionIdsByVolume = new LinkedHashMap<>();
         Map<String, FactionFleetDrops.Source> dropSources = new LinkedHashMap<>();
-        ModCsv.forEach(rows == null ? new JSONArray() : rows, (index, row) -> {
-            try {
-                ItemDefinition definition = parseDefinition(row);
-                String volume = ModCsv.text(row, VOLUME_COLUMN);
-                if (!isVolume(volume)) {
-                    throw new IllegalArgumentException(definition.id() + " has volume \"" + volume + "\"; expected a tree region other than "
-                            + SkillTags.CORE_REGION);
-                }
-                String exitNodeId = ModCsv.text(row, EXIT_NODE_COLUMN);
-                if (exitNodeId.isEmpty()) {
-                    throw new IllegalArgumentException(definition.id() + " has no exit node");
-                }
-                ItemDefinition otherItem = ItemDefinitions.get(definition.id());
-                if ((otherItem != null && otherItem.type() != ItemType.WORMHOLE_ANCHOR) || targets.containsKey(definition.id())) {
-                    throw new IllegalArgumentException(definition.id() + " is already defined");
-                }
-                String earlierAnchor = definitionIdsByVolume.putIfAbsent(volume, definition.id());
-                if (earlierAnchor != null) {
-                    throw new IllegalArgumentException(definition.id() + " leads to " + volume + ", which already has the anchor " + earlierAnchor);
-                }
-                if (!isKnownUnlock(definition.unlock())) {
-                    LOG.warn(definition.id() + " in " + DATA_PATH + " has the unknown unlock \"" + definition.unlock()
-                            + "\", so it stays inert; use an item unlock id, " + ItemUnlock.CLEARED_CHART_TIER_PREFIX + "N or leave it blank");
-                }
-                float dropChance = dropChance(definition.id(), ModCsv.text(row, DROP_CHANCE_COLUMN));
-                definitions.add(definition);
-                targets.put(definition.id(), new AnchorTarget(volume, exitNodeId));
-                styles.put(definition.id(), style(definition.id(), ModCsv.text(row, COLOR_COLUMN), ModCsv.text(row, CREST_FACTION_COLUMN)));
-                markets.put(definition.id(), new AnchorMarket(chance(definition.id(), MARKET_CHANCE_COLUMN, ModCsv.text(row, MARKET_CHANCE_COLUMN)),
-                        price(definition.id(), ModCsv.text(row, PRICE_COLUMN))));
-                dropSources.put(definition.id(), FactionFleetDrops.Source.forVolume(volume, dropFactions(ModCsv.text(row, DROP_FACTIONS_COLUMN)), dropChance));
-            } catch (IllegalArgumentException e) {
-                LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": " + e.getMessage());
+        CsvRows.forEachRow(rows, DATA_PATH, LOG, (index, row) -> {
+            ItemDefinition definition = parseDefinition(row);
+            String volume = ModCsv.text(row, VOLUME_COLUMN);
+            if (!isVolume(volume)) {
+                throw new IllegalArgumentException(definition.id() + " has volume \"" + volume + "\"; expected a tree region other than "
+                        + SkillTags.CORE_REGION);
             }
+            String exitNodeId = ModCsv.text(row, EXIT_NODE_COLUMN);
+            if (exitNodeId.isEmpty()) {
+                throw new IllegalArgumentException(definition.id() + " has no exit node");
+            }
+            ItemDefinition otherItem = ItemDefinitions.get(definition.id());
+            if ((otherItem != null && otherItem.type() != ItemType.WORMHOLE_ANCHOR) || targets.containsKey(definition.id())) {
+                throw new IllegalArgumentException(definition.id() + " is already defined");
+            }
+            String earlierAnchor = definitionIdsByVolume.putIfAbsent(volume, definition.id());
+            if (earlierAnchor != null) {
+                throw new IllegalArgumentException(definition.id() + " leads to " + volume + ", which already has the anchor " + earlierAnchor);
+            }
+            if (!isKnownUnlock(definition.unlock())) {
+                LOG.warn(definition.id() + " in " + DATA_PATH + " has the unknown unlock \"" + definition.unlock()
+                        + "\", so it stays inert; use an item unlock id, " + ItemUnlock.CLEARED_CHART_TIER_PREFIX + "N or leave it blank");
+            }
+            float dropChance = dropChance(definition.id(), ModCsv.text(row, DROP_CHANCE_COLUMN));
+            definitions.add(definition);
+            targets.put(definition.id(), new AnchorTarget(volume, exitNodeId));
+            styles.put(definition.id(), style(definition.id(), ModCsv.text(row, COLOR_COLUMN), ModCsv.text(row, CREST_FACTION_COLUMN)));
+            markets.put(definition.id(), new AnchorMarket(chance(definition.id(), MARKET_CHANCE_COLUMN, ModCsv.text(row, MARKET_CHANCE_COLUMN)),
+                    price(definition.id(), ModCsv.text(row, PRICE_COLUMN))));
+            dropSources.put(definition.id(), FactionFleetDrops.Source.forVolume(volume, dropFactions(ModCsv.text(row, DROP_FACTIONS_COLUMN)), dropChance));
         });
         ItemDefinitions.registerOwnType(ItemType.WORMHOLE_ANCHOR, definitions);
         TARGETS_BY_ID.set(Collections.unmodifiableMap(targets));
@@ -144,22 +140,14 @@ public final class WormholeAnchorDefinitions {
     }
 
     static float chance(String definitionId, String column, String chanceText) {
-        if (chanceText.isEmpty()) {
-            return 0f;
-        }
-        if (!isValidDropChance(chanceText)) {
-            LOG.error(definitionId + " in " + DATA_PATH + " has the " + column + " \"" + chanceText
-                    + "\"; expected a number of 0 or more, so it is never used");
-            return 0f;
-        }
-        return parsedOrNaN(chanceText);
+        return CsvRows.chance(chanceText, definitionId, column, DATA_PATH, LOG);
     }
 
     static int price(String definitionId, String priceText) {
         if (priceText.isEmpty()) {
             return DEFAULT_PRICE;
         }
-        float price = parsedOrNaN(priceText);
+        float price = CsvRows.numberOrNaN(priceText);
         if (!(price >= 0f) || price > Integer.MAX_VALUE) {
             LOG.error(definitionId + " in " + DATA_PATH + " has the price \"" + priceText + "\"; expected a number of 0 or more, so it costs "
                     + DEFAULT_PRICE);
@@ -193,26 +181,8 @@ public final class WormholeAnchorDefinitions {
         return stocked;
     }
 
-    static boolean isValidDropChance(String chanceText) {
-        float chance = parsedOrNaN(chanceText);
-        return chanceText.isEmpty() || chance >= 0f && !Float.isInfinite(chance);
-    }
-
-    private static float parsedOrNaN(String numberText) {
-        try {
-            return Float.parseFloat(numberText);
-        } catch (NumberFormatException e) {
-            return Float.NaN;
-        }
-    }
-
     static Set<String> dropFactions(String factionsText) {
-        Set<String> factionIds = new LinkedHashSet<>();
-        for (String factionId : factionsText.split(LIST_SEPARATOR)) {
-            if (!factionId.isBlank()) {
-                factionIds.add(factionId.trim());
-            }
-        }
+        Set<String> factionIds = new LinkedHashSet<>(CsvRows.entries(factionsText));
         return factionIds;
     }
 
