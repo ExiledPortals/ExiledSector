@@ -242,6 +242,18 @@ class SkillTreeLoaderTest {
     }
 
     @Test
+    void aStaticImageSitsOnTheTreePlaneUnlessItSetsAParallax() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [], \"staticImages\": ["
+                + "{ \"id\": \"haze\", \"x\": 0, \"y\": 0, \"width\": 100, \"height\": 100, \"imagePath\": \"a.png\", \"parallax\": 0.8 },"
+                + "{ \"id\": \"cloud\", \"x\": 0, \"y\": 0, \"width\": 100, \"height\": 100, \"imagePath\": \"b.png\" } ] }");
+
+        List<StaticImage> images = SkillTreeLoader.parseStaticImages(root);
+
+        assertEquals(0.8f, images.get(0).getParallax());
+        assertEquals(1f, images.get(1).getParallax());
+    }
+
+    @Test
     void parsesAStarsOverlayAndLeavesStarsWithoutOneBare() throws Exception {
         JSONObject root = new JSONObject("{ \"nodes\": [], \"stars\": ["
                 + "{ \"id\": \"crest_star\", \"x\": 0, \"y\": 100, \"radius\": 400, \"overlayPath\": \"graphics/fx/crest.png\","

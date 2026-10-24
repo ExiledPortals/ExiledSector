@@ -94,6 +94,20 @@ describe('threat unit serialisation', () => {
     expect(images[1]).toEqual({ id: 'cloud', x: 1, y: 1, width: 100, height: 100, imagePath: 'b.png' });
   });
 
+  it('keeps a static image parallax after behindStars and leaves out the tree-plane default', () => {
+    const out = serializedTree({
+      nodes,
+      staticImages: [
+        { id: 'haze', x: 0, y: 0, width: 6400, height: 6400, imagePath: 'a.png', behindStars: true, parallax: 0.8, tags: ['tania'] },
+        { id: 'cloud', x: 1, y: 1, width: 100, height: 100, imagePath: 'b.png', parallax: 1 },
+      ],
+    });
+    const images = out.staticImages as Record<string, unknown>[];
+    expect(Object.keys(images[0])).toEqual(['id', 'x', 'y', 'width', 'height', 'imagePath', 'behindStars', 'parallax', 'tags']);
+    expect(images[0].parallax).toBe(0.8);
+    expect(images[1]).toEqual({ id: 'cloud', x: 1, y: 1, width: 100, height: 100, imagePath: 'b.png' });
+  });
+
   it('keeps a star overlay after the colour and leaves it out of stars without one', () => {
     const out = serializedTree({
       nodes,

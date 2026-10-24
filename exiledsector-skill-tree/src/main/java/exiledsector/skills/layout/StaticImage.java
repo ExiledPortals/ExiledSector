@@ -8,26 +8,34 @@ public class StaticImage extends SkillTreeObject {
     private final float imageHeight;
     private final String imagePath;
     private final Rotation rotation;
-    private final boolean behindStars;
+    private final Depth depth;
 
     public record Shape(float width, float height, String imagePath, Rotation rotation) {
     }
 
-    public StaticImage(String id, float x, float y, Shape shape, List<String> tags) {
-        this(id, x, y, shape, false, tags);
+    public record Depth(boolean behindStars, float parallax) {
+        public static final Depth TREE = new Depth(false, 1f);
     }
 
-    public StaticImage(String id, float x, float y, Shape shape, boolean behindStars, List<String> tags) {
+    public StaticImage(String id, float x, float y, Shape shape, List<String> tags) {
+        this(id, x, y, shape, Depth.TREE, tags);
+    }
+
+    public StaticImage(String id, float x, float y, Shape shape, Depth depth, List<String> tags) {
         super(id, x, y, tags);
         this.imageWidth = shape.width();
         this.imageHeight = shape.height();
         this.imagePath = shape.imagePath();
         this.rotation = shape.rotation();
-        this.behindStars = behindStars;
+        this.depth = depth;
     }
 
     public boolean isBehindStars() {
-        return behindStars;
+        return depth.behindStars();
+    }
+
+    public float getParallax() {
+        return depth.parallax();
     }
 
     public float getWidth() {

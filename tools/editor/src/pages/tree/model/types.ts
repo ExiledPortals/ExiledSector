@@ -104,6 +104,7 @@ export interface StaticImage {
   rotation: number;
   rotationSpeed: number;
   behindStars?: boolean;
+  parallax?: number;
   tags?: string[];
 }
 
