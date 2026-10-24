@@ -206,7 +206,7 @@ class AllocationGateTest {
         SkillType second = registered(type("second_option", SkillTier.SMALL).itemCost(new SkillItemCost("alpha_core", 1f)).build());
         SkillNode choice = optional("choice", first, second);
         ShipTrees.selectOption(data, choice, first, OP_PER_NODE);
-        ShipTrees.recordItemCharge(data, "choice", first.getItemCost());
+        ItemChargeLedger.recordItemCharge(data, "choice", first.getItemCost());
         Map<String, Double> cargo = Map.of("alpha_core", 0d);
 
         assertTrue(gate(AMPLE_OP, AMPLE_NODE_CAP, itemId -> cargo.getOrDefault(itemId, 0d), null).optionSwitch(choice, second).allowed());

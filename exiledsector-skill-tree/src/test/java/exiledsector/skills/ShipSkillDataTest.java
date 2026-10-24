@@ -1165,10 +1165,10 @@ class ShipSkillDataTest {
         assertEquals(List.of("root", "bridge"), List.copyOf(data.getAllocatedNodeIds()));
         assertEquals(Set.of("hidden"), data.getDormantNodeIds());
         assertEquals(3, ShipTrees.getSpentOp(data, 3));
-        assertEquals(List.of(), ShipTrees.wakeDormantNodes(data, shown, 10, dormantNode -> true));
+        assertEquals(List.of(), DormantNodes.wakeDormantNodes(data, shown, 10, dormantNode -> true));
         assertEquals(Set.of("hidden"), data.getDormantNodeIds());
 
-        assertEquals(List.of(), ShipTrees.wakeDormantNodes(data, declared, 10, dormantNode -> true));
+        assertEquals(List.of(), DormantNodes.wakeDormantNodes(data, declared, 10, dormantNode -> true));
         assertTrue(data.isAllocated("hidden"));
         assertTrue(data.getDormantNodeIds().isEmpty());
         assertEquals(6, ShipTrees.getSpentOp(data, 3));
@@ -1190,7 +1190,7 @@ class ShipSkillDataTest {
         ShipTrees.allocate(stranded, first, 3);
         ShipTrees.forgetUnknownNodes(stranded, Map.of("root", root, "bridge", bridge), declared, Map.of());
         ShipTrees.deallocate(stranded, bridge);
-        assertEquals(List.of("first"), ShipTrees.wakeDormantNodes(stranded, declared, 10, dormantNode -> true));
+        assertEquals(List.of("first"), DormantNodes.wakeDormantNodes(stranded, declared, 10, dormantNode -> true));
         assertFalse(stranded.isAllocated("first"));
         assertEquals(1, stranded.getBankedFreeAllocations());
 
@@ -1201,7 +1201,7 @@ class ShipSkillDataTest {
         ShipTrees.allocate(capped, second, 3);
         ShipTrees.forgetUnknownNodes(capped, Map.of("root", root, "bridge", bridge, "filler", filler), declared, Map.of());
         ShipTrees.allocate(capped, filler, 3);
-        assertEquals(List.of("second"), ShipTrees.wakeDormantNodes(capped, declared, 4, dormantNode -> true));
+        assertEquals(List.of("second"), DormantNodes.wakeDormantNodes(capped, declared, 4, dormantNode -> true));
         assertEquals(List.of("root", "bridge", "filler", "first"), List.copyOf(capped.getAllocatedNodeIds()));
     }
 
@@ -1217,7 +1217,7 @@ class ShipSkillDataTest {
         Map<String, SkillNode> declared = Map.of("root", root, "entrance", entrance, "exit", exit);
         ShipTrees.forgetUnknownNodes(data, Map.of("root", root, "entrance", entrance), declared, Map.of());
 
-        assertEquals(List.of(), ShipTrees.wakeDormantNodes(data, declared, 3, dormantNode -> true));
+        assertEquals(List.of(), DormantNodes.wakeDormantNodes(data, declared, 3, dormantNode -> true));
         assertTrue(data.isAllocated("exit"));
         assertEquals(3, ShipTrees.getSpentOp(data, 3));
     }
@@ -1235,7 +1235,7 @@ class ShipSkillDataTest {
         ShipTrees.forgetUnknownNodes(data, Map.of("root", root, "entrance", entrance, "filler", filler), declared, Map.of());
         ShipTrees.allocate(data, filler, 3);
 
-        assertEquals(List.of("exit", "entrance"), ShipTrees.wakeDormantNodes(data, declared, 3, dormantNode -> true));
+        assertEquals(List.of("exit", "entrance"), DormantNodes.wakeDormantNodes(data, declared, 3, dormantNode -> true));
         assertEquals(List.of("root", "filler"), List.copyOf(data.getAllocatedNodeIds()));
         assertEquals(3, ShipTrees.getSpentOp(data, 3));
     }
@@ -1253,7 +1253,7 @@ class ShipSkillDataTest {
         Map<String, SkillNode> declared = Map.of("root", root, "bridge", bridge, "refused", refused);
         ShipTrees.forgetUnknownNodes(data, Map.of("root", root, "bridge", bridge), declared, Map.of());
 
-        assertEquals(List.of("refused"), ShipTrees.wakeDormantNodes(data, declared, 10, dormantNode -> false));
+        assertEquals(List.of("refused"), DormantNodes.wakeDormantNodes(data, declared, 10, dormantNode -> false));
         assertFalse(data.isAllocated("refused"));
         assertEquals(1, data.getBankedFreeAllocations());
     }
@@ -1271,7 +1271,7 @@ class ShipSkillDataTest {
         ShipTrees.forgetUnknownNodes(data, Map.of("root", root, "bridge", bridge), declared, Map.of());
         data.addFreeAllocationCredit();
 
-        assertEquals(List.of(), ShipTrees.wakeDormantNodes(data, declared, 10, dormantNode -> true));
+        assertEquals(List.of(), DormantNodes.wakeDormantNodes(data, declared, 10, dormantNode -> true));
         assertTrue(data.isFreeNode("hidden"));
         assertEquals(0, data.getBankedFreeAllocations());
         assertEquals(3, ShipTrees.getSpentOp(data, 3));

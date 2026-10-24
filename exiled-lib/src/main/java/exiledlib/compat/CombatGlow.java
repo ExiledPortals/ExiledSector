@@ -16,7 +16,7 @@ public final class CombatGlow {
     public static final boolean DEFAULT_ENABLED = true;
     static final int MAX_LIVE_LIGHTS = 20;
     static final int MAX_LIVE_RIPPLES = 6;
-    public static final String CUSTOM_DATA_KEY = "exiledSector_combatGlow";
+    public static final String CUSTOM_DATA_KEY = "exiledLib_combatGlow";
 
     public interface Lens {
         Lens NONE = new Lens() {

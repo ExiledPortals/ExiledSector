@@ -110,14 +110,14 @@ class WormholeAnchorLinksTest {
         ShipSkillData data = shipWithSocket();
         data.socketItem("socket", ANCHOR);
 
-        assertEquals("exit", ShipTrees.wormholePartner(data, socket));
-        assertEquals("socket", ShipTrees.wormholePartner(data, exit));
-        assertEquals("exit", ShipTrees.anchorExit(data, "socket"));
+        assertEquals("exit", ShipTreeLinks.wormholePartner(data, socket));
+        assertEquals("socket", ShipTreeLinks.wormholePartner(data, exit));
+        assertEquals("exit", ShipTreeLinks.anchorExit(data, "socket"));
 
         ShipTrees.deallocate(data, socket);
 
-        assertNull(ShipTrees.wormholePartner(data, socket));
-        assertNull(ShipTrees.wormholePartner(data, exit));
+        assertNull(ShipTreeLinks.wormholePartner(data, socket));
+        assertNull(ShipTreeLinks.wormholePartner(data, exit));
     }
 
     @Test
@@ -142,9 +142,9 @@ class WormholeAnchorLinksTest {
         data.socketItem("socket", ANCHOR);
         data.socketItem("socket_b", SECOND_ANCHOR);
 
-        assertEquals("exit", ShipTrees.anchorExit(data, "socket"));
-        assertNull(ShipTrees.anchorExit(data, "socket_b"));
-        assertEquals("socket", ShipTrees.anchorSocket(data, "exit"));
+        assertEquals("exit", ShipTreeLinks.anchorExit(data, "socket"));
+        assertNull(ShipTreeLinks.anchorExit(data, "socket_b"));
+        assertEquals("socket", ShipTreeLinks.anchorSocket(data, "exit"));
     }
 
     @Test
@@ -175,7 +175,7 @@ class WormholeAnchorLinksTest {
         data.addFreeAllocationCredit();
         ShipTrees.allocate(data, volumeSmall, 1);
         ShipTrees.allocate(data, volumeNotable, 1);
-        ShipTrees.recordItemCharge(data, "vol_b", new SkillItemCost("alpha_core", 1f));
+        ItemChargeLedger.recordItemCharge(data, "vol_b", new SkillItemCost("alpha_core", 1f));
         int paidBefore = ShipTrees.paidNodeCount(data);
 
         data.unsocketItem("socket");
@@ -242,12 +242,12 @@ class WormholeAnchorLinksTest {
         ShipSkillData data = shipWithOpenVolume();
         ShipSkillData plan = ShipTrees.planningCopy(data);
 
-        assertEquals("exit", ShipTrees.wormholePartner(plan, socket));
+        assertEquals("exit", ShipTreeLinks.wormholePartner(plan, socket));
 
         data.unsocketItem("socket");
         plan.mirrorSocketedItems(data);
 
-        assertNull(ShipTrees.wormholePartner(plan, socket));
+        assertNull(ShipTreeLinks.wormholePartner(plan, socket));
     }
 
     @Test
@@ -255,11 +255,11 @@ class WormholeAnchorLinksTest {
         ShipSkillData data = shipWithSocket();
         data.socketItem("socket", ANCHOR);
 
-        assertTrue(ShipTrees.wormholePairs(data, topology).isEmpty());
+        assertTrue(ShipTreeLinks.wormholePairs(data, topology).isEmpty());
 
         ShipTrees.openAnchorWormholes(data, 100);
 
-        assertEquals(List.of(new SkillTreeTopology.WormholePair(socket, exit)), ShipTrees.wormholePairs(data, topology));
+        assertEquals(List.of(new SkillTreeTopology.WormholePair(socket, exit)), ShipTreeLinks.wormholePairs(data, topology));
     }
 
     @Test
@@ -284,7 +284,7 @@ class WormholeAnchorLinksTest {
         ShipTrees.forgetUnknownNodes(data, coreOnly, fullTree, Map.of());
         assertTrue(data.getDormantNodeIds().containsAll(List.of("exit", "vol_a", "vol_b")));
 
-        ShipTrees.wakeDormantNodes(data, fullTree, 100, dormantNode -> true);
+        DormantNodes.wakeDormantNodes(data, fullTree, 100, dormantNode -> true);
 
         assertTrue(data.isAllocated("exit") && data.isAllocated("vol_a") && data.isAllocated("vol_b"));
     }
@@ -307,7 +307,7 @@ class WormholeAnchorLinksTest {
         inertItemIds.add(ANCHOR);
         data.socketItem("socket", ANCHOR);
 
-        assertEquals("exit", ShipTrees.anchorExit(data, "socket"));
+        assertEquals("exit", ShipTreeLinks.anchorExit(data, "socket"));
         assertEquals(List.of(), ShipTrees.openAnchorWormholes(data, 100));
 
         inertItemIds.clear();
@@ -327,7 +327,7 @@ class WormholeAnchorLinksTest {
         ReleasedNodes released = ShipTrees.releaseNewlyStranded(data, topology, "root", reachableBefore);
 
         assertTrue(released.isEmpty());
-        assertEquals("exit", ShipTrees.wormholePartner(data, socket));
+        assertEquals("exit", ShipTreeLinks.wormholePartner(data, socket));
         assertTrue(data.isAllocated("exit") && data.isAllocated("vol_a") && data.isAllocated("vol_b"));
         assertEquals(Set.of("vol_b"), ShipTrees.previewRelease(data, topology, "root", planned -> ShipTrees.deallocate(planned, volumeNotable)));
     }
@@ -352,11 +352,11 @@ class WormholeAnchorLinksTest {
         exitByItemId.remove(ANCHOR);
         data.socketItem("socket", ANCHOR);
 
-        assertNull(ShipTrees.anchorExit(data, "socket"));
+        assertNull(ShipTreeLinks.anchorExit(data, "socket"));
 
         exitByItemId.put(ANCHOR, "exit");
         lookupRevision++;
 
-        assertEquals("exit", ShipTrees.anchorExit(data, "socket"));
+        assertEquals("exit", ShipTreeLinks.anchorExit(data, "socket"));
     }
 }

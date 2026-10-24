@@ -22,7 +22,7 @@ public final class Motes {
     private static final float LAUNCH_SOUND_VOLUME = 0.25f;
     private static final int EMP_IMMUNE_RESISTANCE = 10000;
     private static final float FLARE_PROOF_ECCM_CHANCE = 1f;
-    private static final String CUSTOM_DATA_KEY = "exiledSector_liveMotesBySource";
+    private static final String CUSTOM_DATA_KEY = "exiledLib_liveMotesBySource";
     private static final Random SPIN_DIRECTION = new Random();
 
     private Motes() {

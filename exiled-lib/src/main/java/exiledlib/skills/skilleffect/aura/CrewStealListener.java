@@ -10,8 +10,8 @@ import exiledlib.skills.skilleffect.logistics.FleetCrewLedger;
 
 final class CrewStealListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String RANGE_KEY = "exiledSector_crewStealRange";
-    static final String SKELETON_CREW_PERCENT_KEY = "exiledSector_crewStealSkeletonCrewPercent";
+    static final String RANGE_KEY = "exiledLib_crewStealRange";
+    static final String SKELETON_CREW_PERCENT_KEY = "exiledLib_crewStealSkeletonCrewPercent";
     private static final float CHECK_SECONDS = 0.25f;
 
     private final IntervalUtil checkInterval = new IntervalUtil(CHECK_SECONDS, CHECK_SECONDS);

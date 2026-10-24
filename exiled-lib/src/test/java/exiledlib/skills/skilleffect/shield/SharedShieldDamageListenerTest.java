@@ -41,7 +41,7 @@ import static org.mockito.Mockito.when;
 
 class SharedShieldDamageListenerTest {
 
-    private static final String SHARED_PERCENT_KEY = "exiledSector_shieldDamageSharedPercent";
+    private static final String SHARED_PERCENT_KEY = "exiledLib_shieldDamageSharedPercent";
 
     private final List<ShipAPI> ships = new ArrayList<>();
 

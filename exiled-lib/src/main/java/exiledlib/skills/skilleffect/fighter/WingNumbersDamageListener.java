@@ -13,8 +13,8 @@ import java.util.List;
 
 final class WingNumbersDamageListener implements DamageTakenModifier {
 
-    static final String REDUCTION_PERCENT_PER_FIGHTER_KEY = "exiledSector_wingNumbersReductionPercentPerFighter";
-    static final String REDUCTION_MOD_ID = "exiledSector_wingNumbersDamageTaken";
+    static final String REDUCTION_PERCENT_PER_FIGHTER_KEY = "exiledLib_wingNumbersReductionPercentPerFighter";
+    static final String REDUCTION_MOD_ID = "exiledLib_wingNumbersDamageTaken";
     static final float MAX_REDUCTION_PERCENT = 80f;
 
     private final ShipAPI fighter;

@@ -13,9 +13,9 @@ import static exiledlib.skills.skilleffect.StatTarget.liveStat;
 
 final class InertialSuperchargerListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String DAMAGE_PERCENT_PER_SPEED_KEY = "exiledSector_inertialDamagePercentPerSpeed";
-    static final String AUGMENTED_PROJECTILE_SPEED_KEY = "exiledSector_inertialAugmentedProjectileSpeed";
-    private static final String MOD_ID_PREFIX = "exiledSector_inertialSupercharger_";
+    static final String DAMAGE_PERCENT_PER_SPEED_KEY = "exiledLib_inertialDamagePercentPerSpeed";
+    static final String AUGMENTED_PROJECTILE_SPEED_KEY = "exiledLib_inertialAugmentedProjectileSpeed";
+    private static final String MOD_ID_PREFIX = "exiledLib_inertialSupercharger_";
     private static final ScaledBonus NON_BEAM_DAMAGE = new ScaledBonus(
             percent(liveStat(MutableShipStatsAPI::getBallisticWeaponDamageMult)),
             percent(liveStat(MutableShipStatsAPI::getEnergyWeaponDamageMult)),

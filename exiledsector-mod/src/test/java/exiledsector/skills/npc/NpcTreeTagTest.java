@@ -3,6 +3,7 @@ package exiledsector.skills.npc;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import exiledsector.skills.AnchorLinks;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -135,7 +136,7 @@ class NpcTreeTagTest {
             assertEquals(Map.of("socket_1", HEGEMONY_ANCHOR), restored.getSocketedItems());
             assertEquals(List.copyOf(data.getAllocatedNodeIds()), List.copyOf(restored.getAllocatedNodeIds()));
             assertTrue(restored.isFreeNode("hegemony_2"));
-            assertEquals("socket_1", ShipTrees.wormholePartner(restored, SkillTree.get("hegemony_2")));
+            assertEquals("socket_1", ShipTreeLinks.wormholePartner(restored, SkillTree.get("hegemony_2")));
         }
     }
 

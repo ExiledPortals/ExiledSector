@@ -229,7 +229,7 @@ class ModuleTreeShareTest {
         when(plain.getMutableStats()).thenReturn(mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS));
         ShipAPI tania = ship(true);
         MutableShipStatsAPI taniaStats = mock(MutableShipStatsAPI.class, RETURNS_DEEP_STUBS);
-        when(taniaStats.getDynamic().getValue("exiledSector_moduleArmorPercent", 0f)).thenReturn(20f);
+        when(taniaStats.getDynamic().getValue("exiledLib_moduleArmorPercent", 0f)).thenReturn(20f);
         when(tania.getMutableStats()).thenReturn(taniaStats);
 
         lunaSettings.when(() -> LunaSettings.getInt("exiledSector", ModuleShareSetting.FIELD_ID)).thenReturn(0);

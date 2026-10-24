@@ -14,7 +14,7 @@ import org.lwjgl.util.vector.Vector2f;
 
 final class DisintegrationListener extends ShipCombatListener implements DamageDealtModifier {
 
-    static final String ARMOR_DAMAGE_PERCENT_KEY = "exiledSector_disintegrationArmorDamagePercent";
+    static final String ARMOR_DAMAGE_PERCENT_KEY = "exiledLib_disintegrationArmorDamagePercent";
     private static final int KERNEL_RADIUS = 2;
     private static final float INNER_CELL_SHARE = 1f / 15f;
     private static final float OUTER_CELL_SHARE = 1f / 30f;

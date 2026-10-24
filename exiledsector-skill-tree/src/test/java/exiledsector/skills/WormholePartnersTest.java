@@ -90,8 +90,8 @@ class WormholePartnersTest {
     void aShipsPartnerIsTheStaticPairing() {
         ShipSkillData data = new ShipSkillData();
 
-        assertEquals("wormhole_b", ShipTrees.wormholePartner(data, paired("wormhole_a", SkillTier.WORMHOLE, "wormhole_b")));
-        assertNull(ShipTrees.wormholePartner(data, socket));
+        assertEquals("wormhole_b", ShipTreeLinks.wormholePartner(data, paired("wormhole_a", SkillTier.WORMHOLE, "wormhole_b")));
+        assertNull(ShipTreeLinks.wormholePartner(data, socket));
     }
 
     @Test
@@ -99,7 +99,7 @@ class WormholePartnersTest {
         SkillTreeTopology pairedTopology = SkillTreeTopology.of(List.of(
                 paired("wormhole_a", SkillTier.WORMHOLE, "wormhole_b"), paired("wormhole_b", SkillTier.WORMHOLE, "wormhole_a")));
 
-        assertSame(pairedTopology.wormholePairs(), ShipTrees.wormholePairs(new ShipSkillData(), pairedTopology));
+        assertSame(pairedTopology.wormholePairs(), ShipTreeLinks.wormholePairs(new ShipSkillData(), pairedTopology));
     }
 
     @Test

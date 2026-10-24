@@ -15,12 +15,12 @@ import static exiledlib.skills.skilleffect.ScaledBonus.percent;
 
 final class FurorListener extends ShipCombatListener implements DamageDealtModifier, AdvanceableListener {
 
-    static final String RATE_OF_FIRE_PERCENT_KEY = "exiledSector_furorRateOfFirePercent";
+    static final String RATE_OF_FIRE_PERCENT_KEY = "exiledLib_furorRateOfFirePercent";
     static final HullSizeTable DAMAGE_FOR_FULL_FUROR = new HullSizeTable(2000f, 2000f, 4000f, 8000f, 20000f, 20000f);
     static final float DECAY_PERCENT_PER_SECOND = 1f;
     static final float SHIELD_HIT_WEIGHT = 0.5f;
     static final float EMP_WEIGHT = 0.25f;
-    private static final String MOD_ID_PREFIX = "exiledSector_furor_";
+    private static final String MOD_ID_PREFIX = "exiledLib_furor_";
     private static final ScaledBonus RATE_OF_FIRE = new ScaledBonus(percent(WeaponStatFamily.FIRE_RATE.target(WeaponScope.ALL)));
 
     private final ScaledBonus.Tracker rateOfFire = RATE_OF_FIRE.tracker();

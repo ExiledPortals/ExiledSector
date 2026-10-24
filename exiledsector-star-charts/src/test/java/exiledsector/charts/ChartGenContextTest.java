@@ -43,7 +43,7 @@ class ChartGenContextTest {
     @BeforeEach
     void setUp() throws Exception {
         StarChartFixtures.registerShipped();
-        ChartContentDataTest.loadShippedTables();
+        ChartTables.loadShipped();
     }
 
     @AfterEach

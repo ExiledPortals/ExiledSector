@@ -17,8 +17,8 @@ import org.lwjgl.util.vector.Vector2f;
 
 final class BallisticPierceListener extends ShipCombatListener implements DamageDealtModifier, DroneSpawner {
 
-    static final String CHANCE_KEY = "exiledSector_ballisticPierceChance";
-    static final String PIERCED_KEY = "exiledSector_ballisticPierced";
+    static final String CHANCE_KEY = "exiledLib_ballisticPierceChance";
+    static final String PIERCED_KEY = "exiledLib_ballisticPierced";
 
     private final PierceDrones drones;
 

@@ -37,7 +37,7 @@ import static org.mockito.Mockito.when;
 
 class BeamHardFluxListenerTest {
 
-    private static final String HARD_FLUX_PERCENT_KEY = "exiledSector_beamDamageHardFluxPercent";
+    private static final String HARD_FLUX_PERCENT_KEY = "exiledLib_beamDamageHardFluxPercent";
 
     private final List<ShipAPI> ships = new ArrayList<>();
 

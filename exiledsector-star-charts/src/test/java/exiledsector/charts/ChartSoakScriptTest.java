@@ -154,7 +154,7 @@ class ChartSoakScriptTest {
 
     @Test
     void soaksFullContentSystemsAcrossEveryTierAndStillLeavesEveryCountUnchanged() throws Exception {
-        ChartContentDataTest.loadShippedTables();
+        ChartTables.loadShipped();
         FakeChartContentEngine content = FakeChartContentEngine.install(new FakeChartContentEngine().offering(-4000f, 0f, 0f, 5000f));
         when(sector.getFaction(anyString())).thenReturn(mock(FactionAPI.class));
         try {
@@ -181,7 +181,7 @@ class ChartSoakScriptTest {
 
     @Test
     void soaksSystemsOpenedFromRolledChartsAndStillLeavesEveryCountUnchanged() throws Exception {
-        ChartContentDataTest.loadShippedTables();
+        ChartTables.loadShipped();
         exiledsector.items.StarChartFixtures.registerShipped();
         FakeChartContentEngine.install(new FakeChartContentEngine().offering(-4000f, 0f, 0f, 5000f));
         when(sector.getFaction(anyString())).thenReturn(mock(FactionAPI.class));
@@ -209,7 +209,7 @@ class ChartSoakScriptTest {
 
     @Test
     void aChartSystemThatFailsToOpenIsNotCountedAsOpened() throws Exception {
-        ChartContentDataTest.loadShippedTables();
+        ChartTables.loadShipped();
         exiledsector.items.StarChartFixtures.registerShipped();
         FakeChartContentEngine.install(new FakeChartContentEngine().offering(-4000f, 0f, 0f, 5000f));
         when(sector.getFaction(anyString())).thenReturn(mock(FactionAPI.class));

@@ -19,7 +19,7 @@ import java.util.Map;
 
 final class PhaseAnchorDiveListener implements LethalHitArbiter.Saver, AdvanceableListener {
 
-    static final String CR_PENALTY_KEY = "exiledSector_phaseAnchorCrPenaltyPercent";
+    static final String CR_PENALTY_KEY = "exiledLib_phaseAnchorCrPenaltyPercent";
     private static final String DIVE_FLAG_KEY = "phaseAnchor_canDive";
     private static final CombatGlow.Burst VANISH_GLOW = new CombatGlow.Burst(null, 4f, 1f, 1f, 3f, 0.3f, 0.8f, true);
 

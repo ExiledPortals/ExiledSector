@@ -17,7 +17,7 @@ import java.awt.Color;
 
 final class RefractionDrone extends SingleShotDrone {
 
-    static final String RANGE_MATCH_MOD_ID = "exiledSector_refractionRange";
+    static final String RANGE_MATCH_MOD_ID = "exiledLib_refractionRange";
 
     private static final float STREAK_FULL_SECONDS = 0.05f;
     private static final float STREAK_FADE_SECONDS = 0.15f;

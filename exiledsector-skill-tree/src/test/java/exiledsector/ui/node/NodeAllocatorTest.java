@@ -17,6 +17,7 @@ import exiledsector.effects.OpReserveParity;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocationGate;
+import exiledsector.skills.ItemChargeLedger;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
@@ -296,7 +297,7 @@ class NodeAllocatorTest {
         assertTrue(allocator.deallocate(coreSlot, allocator.snapshot()));
         verify(cargo).addCommodity("alpha_core", 1f);
         verify(member, times(2)).updateStats();
-        assertNull(ShipTrees.itemCharge(data(), "core_1"));
+        assertNull(ItemChargeLedger.itemCharge(data(), "core_1"));
     }
 
     @Test
@@ -325,7 +326,7 @@ class NodeAllocatorTest {
 
         assertTrue(allocator.allocate(picker, SkillTree.getType("scanner"), allocator.snapshot()));
         verify(cargo).removeCommodity("alpha_core", 1f);
-        assertEquals(new SkillItemCost("alpha_core", 1f), ShipTrees.itemCharge(data(), "picker_1"));
+        assertEquals(new SkillItemCost("alpha_core", 1f), ItemChargeLedger.itemCharge(data(), "picker_1"));
 
         assertTrue(allocator.deallocate(picker, allocator.snapshot()));
         verify(cargo).addCommodity("alpha_core", 1f);
@@ -361,7 +362,7 @@ class NodeAllocatorTest {
 
         verify(cargo).addCommodity("alpha_core", 1f);
         verify(cargo).removeCommodity("beta_core", 2f);
-        assertEquals(new SkillItemCost("beta_core", 2f), ShipTrees.itemCharge(data(), "picker_1"));
+        assertEquals(new SkillItemCost("beta_core", 2f), ItemChargeLedger.itemCharge(data(), "picker_1"));
         assertEquals(SkillTree.getType("sensor"), picker.resolveEffectiveType(data()));
     }
 

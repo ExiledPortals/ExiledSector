@@ -1,5 +1,6 @@
 package exiledlib.i18n;
 
+import exiledlib.HostMod;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -86,7 +87,7 @@ public final class Catalogue {
         String raw = stringsByKey.get(key);
         if (raw == null) {
             if (reportedMissing.add(key)) {
-                LOG.warn("Missing Exiled Sector string for locale " + locale + ": " + key);
+                LOG.warn("Missing " + HostMod.id() + " string for locale " + locale + ": " + key);
             }
             return Template.parse("[[" + key + "]]");
         }

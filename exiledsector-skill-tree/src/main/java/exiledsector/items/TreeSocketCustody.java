@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import exiledsector.persistence.SkillTreeTemplateStore;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillTree;
@@ -41,7 +42,7 @@ public final class TreeSocketCustody implements ShipCustody {
     }
 
     private static Set<String> grantOnlyNodeIds(ShipSkillData shipData) {
-        if (ShipTrees.grantedNodesBySocket(shipData).isEmpty()) {
+        if (ShipTreeLinks.grantedNodesBySocket(shipData).isEmpty()) {
             return Set.of();
         }
         return ShipTrees.grantOnlyNodeIds(shipData, SkillTree.topology(), ShipTrees.resolveStartingRootId(shipData));

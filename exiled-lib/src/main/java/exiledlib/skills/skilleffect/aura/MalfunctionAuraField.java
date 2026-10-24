@@ -10,8 +10,8 @@ import java.util.Map;
 final class MalfunctionAuraField extends AuraField<MalfunctionAuraListener> {
 
     static final float RANGE = 1000f;
-    static final String MOD_ID = "exiledSector_malfunctionAura";
-    private static final String CUSTOM_DATA_KEY = "exiledSector_malfunctionAuraField";
+    static final String MOD_ID = "exiledLib_malfunctionAura";
+    private static final String CUSTOM_DATA_KEY = "exiledLib_malfunctionAuraField";
 
     private final AppliedAuraValues appliedPercent = new AppliedAuraValues(AppliedAuraValues.Change.EXACT);
 

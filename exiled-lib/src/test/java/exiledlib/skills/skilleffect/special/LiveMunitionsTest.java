@@ -33,7 +33,7 @@ import static org.mockito.Mockito.when;
 
 class LiveMunitionsTest {
 
-    private static final String MOD_ID = "exiledSector_liveMunitions_ship";
+    private static final String MOD_ID = "exiledLib_liveMunitions_ship";
 
     private MockSector mockSector;
     private CombatEngineAPI engine;

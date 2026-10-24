@@ -22,7 +22,7 @@ import java.util.Random;
 
 final class IonArcListener extends ShipCombatListener implements DamageDealtModifier {
 
-    static final String CHANCE_AT_FULL_HARD_FLUX_KEY = "exiledSector_ionArcChanceAtFullHardFlux";
+    static final String CHANCE_AT_FULL_HARD_FLUX_KEY = "exiledLib_ionArcChanceAtFullHardFlux";
     static final float ARC_DAMAGE_FRACTION = 0.25f;
     static final float ARC_EMP_FRACTION = 0.5f;
     private static final float ARC_RANGE = 100000f;

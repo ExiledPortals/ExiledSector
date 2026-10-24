@@ -16,11 +16,11 @@ import java.util.Map;
 
 final class FighterFocusFireMarks extends ShipCombatListener {
 
-    static final String PERCENT_PER_HIT_KEY = "exiledSector_fighterFocusFirePercentPerHit";
-    static final String MAX_PERCENT_KEY = "exiledSector_fighterFocusFireMaxPercent";
+    static final String PERCENT_PER_HIT_KEY = "exiledLib_fighterFocusFirePercentPerHit";
+    static final String MAX_PERCENT_KEY = "exiledLib_fighterFocusFireMaxPercent";
     static final float RESET_AFTER_SECONDS = 2f;
     private static final int PRUNE_ABOVE_MARKS = 16;
-    private static final String MOD_ID_PREFIX = "exiledSector_fighterFocusFire_";
+    private static final String MOD_ID_PREFIX = "exiledLib_fighterFocusFire_";
 
     private final Map<ShipAPI, Mark> marksByTarget = new IdentityHashMap<>();
 

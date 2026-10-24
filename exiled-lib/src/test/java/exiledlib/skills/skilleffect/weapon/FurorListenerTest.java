@@ -80,7 +80,7 @@ class FurorListenerTest {
         furor.modifyDamageDealt(null, enemy, hit, new Vector2f(), false);
         furor.modifyDamageDealt(null, enemy, hit, new Vector2f(), false);
         assertEquals(15f, furor.furorPercent(), 0.001f);
-        verify(ship.getMutableStats().getEnergyRoFMult()).modifyPercent("exiledSector_furor_furor", 15f);
+        verify(ship.getMutableStats().getEnergyRoFMult()).modifyPercent("exiledLib_furor_furor", 15f);
 
         furor.advance(5f);
         assertEquals(10f, furor.furorPercent(), 0.001f);

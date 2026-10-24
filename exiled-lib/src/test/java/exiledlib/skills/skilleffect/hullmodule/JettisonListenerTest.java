@@ -63,11 +63,11 @@ class JettisonListenerTest {
 
         when(first.isAlive()).thenReturn(false);
         listener.advance(0.3f);
-        verify(ship.getMutableStats().getMaxSpeed()).modifyPercent("exiledSector_jettison_merite", 10f);
+        verify(ship.getMutableStats().getMaxSpeed()).modifyPercent("exiledLib_jettison_merite", 10f);
 
         when(second.isHulk()).thenReturn(true);
         listener.advance(0.3f);
-        verify(ship.getMutableStats().getMaxSpeed()).modifyPercent("exiledSector_jettison_merite", 20f);
+        verify(ship.getMutableStats().getMaxSpeed()).modifyPercent("exiledLib_jettison_merite", 20f);
         assertEquals(2, JettisonListener.destroyedCount(List.of(first, second)));
     }
 
@@ -80,6 +80,6 @@ class JettisonListenerTest {
 
         new JettisonListener(ship).advance(0.3f);
 
-        verify(ship.getMutableStats().getMaxSpeed()).modifyPercent("exiledSector_jettison_argentavis", 10f);
+        verify(ship.getMutableStats().getMaxSpeed()).modifyPercent("exiledLib_jettison_argentavis", 10f);
     }
 }

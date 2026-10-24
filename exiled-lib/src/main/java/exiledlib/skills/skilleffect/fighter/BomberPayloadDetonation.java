@@ -40,7 +40,7 @@ import java.util.Random;
 
 final class BomberPayloadDetonation implements AdvanceableListener {
 
-    static final String CHANCE_PERCENT_KEY = "exiledSector_bomberPayloadDetonationChancePercent";
+    static final String CHANCE_PERCENT_KEY = "exiledLib_bomberPayloadDetonationChancePercent";
     static final float CHECK_INTERVAL_SECONDS = 3f;
     static final float SAFE_DISTANCE_FROM_CARRIER = 600f;
     static final float MIN_BLAST_RADIUS = 75f;
@@ -333,7 +333,7 @@ final class BomberPayloadDetonation implements AdvanceableListener {
             payloads = payloads(bomber);
             blowUp(engine, payloads, at);
         } catch (RuntimeException | LinkageError e) {
-            LOG.warn("[ExiledSector] Martyr's Payload could not blow up the payload of " + bomber.getId(), e);
+            LOG.warn("[ExiledLib] Martyr's Payload could not blow up the payload of " + bomber.getId(), e);
         }
         float visualRadius = MIN_BLAST_RADIUS;
         Color visualColor = DEFAULT_BLAST_COLOR;
@@ -391,7 +391,7 @@ final class BomberPayloadDetonation implements AdvanceableListener {
                 }
             }
         } catch (RuntimeException | LinkageError | JSONException e) {
-            LOG.warn("[ExiledSector] Martyr's Payload could not set off " + weapon.getId() + " on its own; folding it into the blast", e);
+            LOG.warn("[ExiledLib] Martyr's Payload could not set off " + weapon.getId() + " on its own; folding it into the blast", e);
         }
         discard(engine, shot);
         return exploded;
@@ -410,7 +410,7 @@ final class BomberPayloadDetonation implements AdvanceableListener {
             try {
                 effect.onExplosion(explosion, missile);
             } catch (RuntimeException | LinkageError e) {
-                LOG.warn("[ExiledSector] Martyr's Payload proximity explosion effect failed for " + missile.getProjectileSpecId(), e);
+                LOG.warn("[ExiledLib] Martyr's Payload proximity explosion effect failed for " + missile.getProjectileSpecId(), e);
             }
         }
         return true;
@@ -422,7 +422,7 @@ final class BomberPayloadDetonation implements AdvanceableListener {
                 engine.removeEntity(shot);
             }
         } catch (RuntimeException | LinkageError e) {
-            LOG.warn("[ExiledSector] Martyr's Payload could not remove a spawned payload shot", e);
+            LOG.warn("[ExiledLib] Martyr's Payload could not remove a spawned payload shot", e);
         }
     }
 

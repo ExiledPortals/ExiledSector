@@ -17,10 +17,10 @@ import static exiledlib.skills.skilleffect.StatTarget.liveStat;
 
 final class LiveMunitionsListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String CREW_DEATH_CHANCE_PERCENT_PER_STACK_KEY = "exiledSector_heartlessCrewDeathChancePerStack";
-    static final String MISSILE_DAMAGE_PERCENT_PER_STACK_KEY = "exiledSector_heartlessMissileDamagePercentPerStack";
-    static final String MISSILE_SPEED_PERCENT_PER_STACK_KEY = "exiledSector_heartlessMissileSpeedPercentPerStack";
-    private static final String MOD_ID_PREFIX = "exiledSector_liveMunitions_";
+    static final String CREW_DEATH_CHANCE_PERCENT_PER_STACK_KEY = "exiledLib_heartlessCrewDeathChancePerStack";
+    static final String MISSILE_DAMAGE_PERCENT_PER_STACK_KEY = "exiledLib_heartlessMissileDamagePercentPerStack";
+    static final String MISSILE_SPEED_PERCENT_PER_STACK_KEY = "exiledLib_heartlessMissileSpeedPercentPerStack";
+    private static final String MOD_ID_PREFIX = "exiledLib_liveMunitions_";
     private static final ScaledBonus MISSILE_BONUS = new ScaledBonus(
             percent(liveStat(MutableShipStatsAPI::getMissileWeaponDamageMult), MISSILE_DAMAGE_PERCENT_PER_STACK_KEY),
             percent(liveBonus(MutableShipStatsAPI::getMissileMaxSpeedBonus), MISSILE_SPEED_PERCENT_PER_STACK_KEY));

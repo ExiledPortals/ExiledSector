@@ -78,14 +78,14 @@ class StationModuleSkillEffectTest {
         withModules(ship, List.of(plate));
 
         assertTrue(ModuleBoost.hasModuleBonus(ship.getMutableStats()));
-        ModuleBoost.boost(ship, plate, Map.of(), "exiledSector_moduleShare_black_hawk_");
+        ModuleBoost.boost(ship, plate, Map.of(), "exiledLib_moduleShare_black_hawk_");
 
         verify(plate).setMaxHitpoints(1200f);
         verify(plate).setHitpoints(600f);
         verify(grid).setArmorValue(eq(0), eq(0), floatThat(armor -> Math.abs(armor - 110f) < 0.01f));
         verify(grid).setArmorValue(eq(1), eq(0), floatThat(armor -> Math.abs(armor - 440f) < 0.01f));
-        verify(plateStats.getBallisticWeaponDamageMult()).modifyPercent("exiledSector_moduleBonus_black_hawk", 15f);
-        verify(plateStats.getEnergyWeaponDamageMult()).modifyPercent("exiledSector_moduleBonus_black_hawk", 15f);
+        verify(plateStats.getBallisticWeaponDamageMult()).modifyPercent("exiledLib_moduleBonus_black_hawk", 15f);
+        verify(plateStats.getEnergyWeaponDamageMult()).modifyPercent("exiledLib_moduleBonus_black_hawk", 15f);
         verify(plateStats.getBallisticWeaponRangeBonus(), never()).modifyPercent(Mockito.anyString(), anyFloat());
     }
 }

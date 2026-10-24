@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 
 class FluxScaledVolatilityListenerTest {
 
-    private static final String MOD_ID = "exiledSector_fluxScaled_ship";
+    private static final String MOD_ID = "exiledLib_fluxScaled_ship";
 
     private MockedStatic<Global> globalMock;
     private CombatEngineAPI engine;

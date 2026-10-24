@@ -21,6 +21,7 @@ import com.fs.starfarer.api.loading.ProjectileSpecAPI;
 import com.fs.starfarer.api.loading.ProjectileWeaponSpecAPI;
 import com.fs.starfarer.api.loading.WeaponGroupSpec;
 import com.fs.starfarer.api.loading.WeaponGroupType;
+import exiledlib.HostMod;
 import exiledlib.skills.skilleffect.CsvIdList;
 import exiledlib.skills.skilleffect.special.SeraphimListener;
 import org.apache.log4j.Logger;
@@ -35,11 +36,11 @@ import java.util.function.Predicate;
 
 final class WeaponDroneFactory {
 
-    static final String HULL_ID = "exiledSector_split_beam_drone";
+    private static final String HULL_NAME = "split_beam_drone";
 
     static final float SINGLE_SHOT_REFIRE_DELAY = 60f;
 
-    private static final String INVULNERABLE_MOD_ID = "exiledSector_splitBeamDrone";
+    private static final String INVULNERABLE_MOD_ID = "exiledLib_splitBeamDrone";
     private static final float MOTHERSHIP_FLAG_DURATION = 100000f;
     private static final Logger LOG = Logger.getLogger(WeaponDroneFactory.class);
     private static final Set<String> SKILLS_UNSAFE_ON_DRONES = ConcurrentHashMap.newKeySet();
@@ -82,7 +83,11 @@ final class WeaponDroneFactory {
     }
 
     private static boolean canMountOnDrone(WeaponAPI weapon) {
-        return SLOT_IDS.containsKey(weapon.getSize()) && Global.getSettings().getHullSpec(HULL_ID) != null;
+        return SLOT_IDS.containsKey(weapon.getSize()) && Global.getSettings().getHullSpec(hullId()) != null;
+    }
+
+    static String hullId() {
+        return HostMod.dataKey(HULL_NAME);
     }
 
     static ShipAPI create(ShipAPI firingShip, WeaponAPI weapon, DamageDealtModifier firstListener) {
@@ -121,8 +126,9 @@ final class WeaponDroneFactory {
     }
 
     private static ShipVariantAPI variantFor(WeaponAPI weapon) {
-        ShipHullSpecAPI hull = Global.getSettings().getHullSpec(HULL_ID);
-        ShipVariantAPI variant = Global.getSettings().createEmptyVariant(HULL_ID, hull);
+        String hullId = hullId();
+        ShipHullSpecAPI hull = Global.getSettings().getHullSpec(hullId);
+        ShipVariantAPI variant = Global.getSettings().createEmptyVariant(hullId, hull);
         String slotId = SLOT_IDS.get(weapon.getSize());
         variant.addWeapon(slotId, weapon.getSpec().getWeaponId());
         WeaponGroupSpec group = new WeaponGroupSpec(WeaponGroupType.LINKED);
@@ -151,7 +157,7 @@ final class WeaponDroneFactory {
             String skillId = skill.getSkill().getId();
             if (!SKILLS_UNSAFE_ON_DRONES.contains(skillId) && !trySetCaptain(drone, officerCopy(captain, skillId::equals))) {
                 SKILLS_UNSAFE_ON_DRONES.add(skillId);
-                LOG.warn("[ExiledSector] Captain skill " + skillId + " fails on weapon drones, which have no fleet member; "
+                LOG.warn("[ExiledLib] Captain skill " + skillId + " fails on weapon drones, which have no fleet member; "
                         + "drones copying the captain leave it out for the rest of the session");
             }
         }

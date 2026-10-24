@@ -5,6 +5,7 @@ import exiledsector.skills.AffinityOptions;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.NodeReplacements;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -136,7 +137,7 @@ public final class NpcTreeTag {
         if (node == null || shipData.isAllocated(nodeId)) {
             return;
         }
-        if (node.getType().getTier() == SkillTier.WORMHOLE_EXIT && ShipTrees.anchorSocket(shipData, nodeId) != null) {
+        if (node.getType().getTier() == SkillTier.WORMHOLE_EXIT && ShipTreeLinks.anchorSocket(shipData, nodeId) != null) {
             ShipTrees.openAnchorWormholes(shipData, Integer.MAX_VALUE);
             if (shipData.isAllocated(nodeId)) {
                 return;

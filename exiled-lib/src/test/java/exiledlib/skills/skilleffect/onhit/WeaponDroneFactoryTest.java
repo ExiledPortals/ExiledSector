@@ -65,8 +65,8 @@ class WeaponDroneFactoryTest {
         stats = Mockito.mockStatic(WeaponDroneStats.class);
 
         ShipHullSpecAPI hull = mock(ShipHullSpecAPI.class);
-        when(settings.getHullSpec(WeaponDroneFactory.HULL_ID)).thenReturn(hull);
-        when(settings.createEmptyVariant(WeaponDroneFactory.HULL_ID, hull)).thenReturn(mock(ShipVariantAPI.class));
+        when(settings.getHullSpec(WeaponDroneFactory.hullId())).thenReturn(hull);
+        when(settings.createEmptyVariant(WeaponDroneFactory.hullId(), hull)).thenReturn(mock(ShipVariantAPI.class));
         shared = mock(ProjectileWeaponSpecAPI.class);
         when(shared.getChargeTime()).thenAnswer(invocation -> chargeTime[0]);
         when(shared.getBurstSize()).thenAnswer(invocation -> burstSize[0]);
@@ -178,7 +178,7 @@ class WeaponDroneFactoryTest {
         ShipAPI firingShip = mock(ShipAPI.class);
         ShipVariantAPI firingVariant = mock(ShipVariantAPI.class);
         when(firingShip.getVariant()).thenReturn(firingVariant);
-        when(firingVariant.getHullMods()).thenReturn(List.of("ix_dawnstar_neutron", "exiledSector_core", "safetyoverrides"));
+        when(firingVariant.getHullMods()).thenReturn(List.of("ix_dawnstar_neutron", "exiledLib_core", "safetyoverrides"));
         ShipAPI drone = mock(ShipAPI.class);
         ShipVariantAPI droneVariant = mock(ShipVariantAPI.class);
         java.util.Set<String> droneMods = new java.util.LinkedHashSet<>();

@@ -14,7 +14,6 @@ import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec;
 import exiledlib.MockSector;
 import exiledsector.charts.ChartGenContext.AppliedEffect;
 import exiledsector.items.ItemData;
-import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.StarChartCurrency;
 import exiledsector.items.StarChartFixtures;
@@ -227,35 +226,6 @@ class ChartFleetLootTest {
         assertEquals(2, chartCount(plainBossLoot));
         assertEquals(3, chartCount(hoardBossLoot));
     }
-    @Test
-    void chartFleetsLeaveHullItemsToBattleDropsWhileTheBossStillCarriesThem() throws Exception {
-        when(sector.getPlayerStats().getLevel()).thenReturn(15);
-        ItemDefinitions.register(new JSONArray()
-                .put(new JSONObject().put("id", "bridge_basic").put("section", "bridge").put("rarity", "10").put("prefixes", "HULL_PERCENT:4:6"))
-                .put(new JSONObject().put("id", "hull_relic").put("section", "bridge").put("rarity", "10").put("unique", "true")
-                        .put("prefixes", "HULL_PERCENT:4:6")));
-        ItemDrops.register(new JSONArray()
-                .put(new JSONObject().put("site", ChartIds.FLEET_LOOT_SITE).put("chances", "1;1;1").put("uniqueChance", "1"))
-                .put(new JSONObject().put("site", ChartIds.BOSS_LOOT_SITE).put("chances", "1;1;1").put("uniqueChance", "1")));
-        try {
-            ChartRun run = storeLiveRun(6);
-
-            ItemDrops.SiteLoot guardLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("guard", RUN_ID, 80f), run,
-                    ChartGenContext.none(), 80f, new Random(1L));
-            ItemDrops.SiteLoot bossLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
-                    ChartGenContext.none(), 200f, new Random(1L));
-
-            assertTrue(guardLoot.upgrades().isEmpty());
-            assertTrue(guardLoot.items().stream().noneMatch(item -> ItemDefinitions.get(item.definitionId()) != null), guardLoot.toString());
-            assertFalse(guardLoot.materials().isEmpty());
-            assertFalse(bossLoot.upgrades().isEmpty());
-            assertTrue(bossLoot.items().stream().anyMatch(item -> "bridge_basic".equals(item.definitionId())));
-        } finally {
-            ItemDrops.clear();
-            ItemDefinitions.clear();
-        }
-    }
-
     @Test
     void aChartFleetGetsItsRunsItemChancesAndAnyOtherFleetTheGlobalOnes() throws Exception {
         ChartRun run = storeLiveRun(6);

@@ -99,7 +99,7 @@ class ChartDropsTest {
 
     @Test
     void theShippedTableCoversEverySourceAndKeepsChartCurrenciesInsideSystems() throws Exception {
-        ChartDrops.register(ChartContentDataTest.csvRows(ChartDrops.PATH));
+        ChartDrops.register(ChartTables.csvRows(ChartDrops.PATH));
 
         for (ChartDrops.Source source : ChartDrops.Source.values()) {
             ChartDrops.Rule rule = ChartDrops.rule(source);
@@ -219,7 +219,7 @@ class ChartDropsTest {
 
     @Test
     void outsideSystemsTheStrengthOnlyGatesTheDropAndSalvageAndTechMiningStayAtTierOne() throws Exception {
-        ChartDrops.register(ChartContentDataTest.csvRows(ChartDrops.PATH));
+        ChartDrops.register(ChartTables.csvRows(ChartDrops.PATH));
 
         assertEquals(ChartDrops.NO_TIER, ChartDrops.tierForStrength(ChartDrops.Source.BATTLE, 0f));
         assertEquals(1, ChartDrops.tierForStrength(ChartDrops.Source.BATTLE, 1f));
@@ -233,8 +233,8 @@ class ChartDropsTest {
 
     @Test
     void aWonBattleDropsTheTierItsStrongestDefeatedNpcLevelReached() throws Exception {
-        ChartDrops.register(ChartContentDataTest.csvRows(ChartDrops.PATH));
-        ChartTiers.register(ChartContentDataTest.csvRows(ChartTiers.PATH));
+        ChartDrops.register(ChartTables.csvRows(ChartDrops.PATH));
+        ChartTiers.register(ChartTables.csvRows(ChartTiers.PATH));
         try {
             assertEquals(ChartDrops.NO_TIER, ChartDrops.battleTier(0f, 40));
             assertEquals(1, ChartDrops.battleTier(400f, 0));
@@ -251,8 +251,8 @@ class ChartDropsTest {
 
     @Test
     void withTheSkillTreeOffABattleDropsATierPerStrengthPerTierOfDeploymentPointsDefeated() throws Exception {
-        ChartDrops.register(ChartContentDataTest.csvRows(ChartDrops.PATH));
-        ChartTiers.register(ChartContentDataTest.csvRows(ChartTiers.PATH));
+        ChartDrops.register(ChartTables.csvRows(ChartDrops.PATH));
+        ChartTiers.register(ChartTables.csvRows(ChartTiers.PATH));
         SkillTreeSetting.setEnabledForTests(false);
         try {
             assertEquals(ChartDrops.NO_TIER, ChartDrops.battleTier(0f, 40));
@@ -267,8 +267,8 @@ class ChartDropsTest {
 
     @Test
     void battleChartsScaleWithTheDifficultyScaledDeploymentPointsDefeated() throws Exception {
-        ChartDrops.register(ChartContentDataTest.csvRows(ChartDrops.PATH));
-        ChartTiers.register(ChartContentDataTest.csvRows(ChartTiers.PATH));
+        ChartDrops.register(ChartTables.csvRows(ChartDrops.PATH));
+        ChartTiers.register(ChartTables.csvRows(ChartTiers.PATH));
         try {
             LocationAPI outside = mock(LocationAPI.class);
             for (int roll = 0; roll < 50; roll++) {

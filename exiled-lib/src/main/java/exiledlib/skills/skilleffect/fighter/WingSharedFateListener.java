@@ -23,8 +23,8 @@ import java.util.List;
 
 final class WingSharedFateListener implements DamageTakenModifier, DamageListener {
 
-    static final String SHARED_PERCENT_KEY = "exiledSector_wingSharedFatePercent";
-    static final String SHARE_MOD_ID = "exiledSector_wingSharedFate";
+    static final String SHARED_PERCENT_KEY = "exiledLib_wingSharedFatePercent";
+    static final String SHARE_MOD_ID = "exiledLib_wingSharedFate";
     static final float MAX_SHARED_PERCENT = 100f;
     static final float KILLING_BLOW_MULTIPLE = 3f;
     static final float KILLING_BLOW_HULL_LEFT = 1f;

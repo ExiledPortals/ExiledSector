@@ -6,7 +6,7 @@ import exiledlib.skills.skilleffect.ShipCombatListener;
 
 final class NanoforgeMendingListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String REGEN_PERCENT_KEY = "exiledSector_nanoforgeMendingRegenPercent";
+    static final String REGEN_PERCENT_KEY = "exiledLib_nanoforgeMendingRegenPercent";
     static final float UNDAMAGED_SECONDS = 5f;
     static final float MAX_TOTAL_REGEN_PERCENT_OF_HULL = 100f;
 

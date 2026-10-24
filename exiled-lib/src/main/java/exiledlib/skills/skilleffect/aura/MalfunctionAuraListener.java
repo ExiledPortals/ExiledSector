@@ -5,7 +5,7 @@ import exiledlib.skills.skilleffect.ShipCombatListener;
 
 final class MalfunctionAuraListener extends ShipCombatListener implements AuraField.Source {
 
-    static final String MALFUNCTION_PERCENT_KEY = "exiledSector_malfunctionAuraPercent";
+    static final String MALFUNCTION_PERCENT_KEY = "exiledLib_malfunctionAuraPercent";
 
     MalfunctionAuraListener(ShipAPI ownerShip) {
         super(ownerShip);

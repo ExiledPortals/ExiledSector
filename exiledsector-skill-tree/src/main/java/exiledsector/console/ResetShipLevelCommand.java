@@ -5,6 +5,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledlib.PlayerFleet;
 import exiledsector.items.NodeGrantStatus;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.ItemChargeLedger;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import org.lazywizard.console.Console;
@@ -27,7 +28,7 @@ public class ResetShipLevelCommand extends PlayerFleetCommand {
         List<String> socketedItemIds = List.copyOf(shipData.getSocketedItems().values());
         List<String> releasedNodeIds = ShipTrees.resetProgress(shipData);
         socketedItemIds.forEach(NodeGrantStatus::forget);
-        ShipTrees.takeItemCharges(shipData, releasedNodeIds).forEach(charged -> charged.refundTo(PlayerFleet.cargoOrNull()));
+        ItemChargeLedger.takeItemCharges(shipData, releasedNodeIds).forEach(charged -> charged.refundTo(PlayerFleet.cargoOrNull()));
         ConsoleShips.treeChanged(member);
 
         String message = "Reset " + ConsoleShips.describe(member) + ": removed " + releasedNodeIds.size()

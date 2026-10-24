@@ -11,7 +11,7 @@ import java.util.Map;
 
 public final class FleetCrewLedger {
 
-    private static final String LEDGER_KEY = "exiledSector_fleetCrewLedger";
+    private static final String LEDGER_KEY = "exiledLib_fleetCrewLedger";
     private static final float ROUNDING_TOLERANCE = 1e-4f;
     private static float pendingStolen;
     private static int pendingSacrificed;

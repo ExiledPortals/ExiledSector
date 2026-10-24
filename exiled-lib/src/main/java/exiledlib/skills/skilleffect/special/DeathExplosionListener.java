@@ -15,7 +15,7 @@ import java.util.List;
 
 final class DeathExplosionListener extends ShipCombatListener implements LethalHitArbiter.Reactor {
 
-    static final String FUEL_DAMAGE_PERCENT_KEY = "exiledSector_explodeOnDeathFuelDamagePercent";
+    static final String FUEL_DAMAGE_PERCENT_KEY = "exiledLib_explodeOnDeathFuelDamagePercent";
 
     private static final float RADIUS_MULT = 4f;
     private static final float MIN_RADIUS = 300f;

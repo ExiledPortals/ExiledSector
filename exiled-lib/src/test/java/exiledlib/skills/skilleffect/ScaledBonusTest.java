@@ -21,8 +21,8 @@ import static org.mockito.Mockito.when;
 
 class ScaledBonusTest {
 
-    private static final String PER_UNIT_KEY = "exiledSector_test_perUnit";
-    private static final String MOD_ID = "exiledSector_test";
+    private static final String PER_UNIT_KEY = "exiledLib_test_perUnit";
+    private static final String MOD_ID = "exiledLib_test";
     private static final ScaledBonus BONUS = new ScaledBonus(
             ScaledBonus.percent(StatTarget.liveStat(MutableShipStatsAPI::getMaxSpeed), PER_UNIT_KEY),
             ScaledBonus.percent(WeaponStatFamily.DAMAGE.target(WeaponScope.NON_BEAM_ENERGY)));

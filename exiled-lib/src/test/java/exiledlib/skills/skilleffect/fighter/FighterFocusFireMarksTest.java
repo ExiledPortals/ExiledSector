@@ -42,8 +42,8 @@ class FighterFocusFireMarksTest {
         when(damage.getModifier()).thenReturn(modifier);
 
         assertNull(firstFighter.modifyDamageDealt(null, enemy, damage, new Vector2f(), false));
-        assertEquals("exiledSector_fighterFocusFire_carrier", secondFighter.modifyDamageDealt(null, enemy, damage, new Vector2f(), false));
-        verify(modifier).modifyPercent("exiledSector_fighterFocusFire_carrier", 2f);
+        assertEquals("exiledLib_fighterFocusFire_carrier", secondFighter.modifyDamageDealt(null, enemy, damage, new Vector2f(), false));
+        verify(modifier).modifyPercent("exiledLib_fighterFocusFire_carrier", 2f);
 
         for (int hit = 0; hit < 20; hit++) {
             firstFighter.modifyDamageDealt(null, enemy, damage, new Vector2f(), false);

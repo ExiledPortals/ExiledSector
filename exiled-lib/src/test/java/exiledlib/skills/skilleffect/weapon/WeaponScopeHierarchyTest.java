@@ -194,7 +194,7 @@ class WeaponScopeHierarchyTest {
         StatBonus energyAmmo = new StatBonus();
         energyAmmo.modifyPercent("energy", 20f);
         when(stats.getDynamic()).thenReturn(dynamic);
-        when(dynamic.getMod("exiledSector_BEAM_AMMO")).thenReturn(beamAmmo);
+        when(dynamic.getMod("exiledLib_BEAM_AMMO")).thenReturn(beamAmmo);
         when(stats.getEnergyAmmoBonus()).thenReturn(energyAmmo);
         WeaponAPI beam = weapon(true, 10);
         WeaponAPI pulse = weapon(false, 10);
@@ -231,7 +231,7 @@ class WeaponScopeHierarchyTest {
         StatBonus energyAmmo = new StatBonus();
         energyAmmo.modifyPercent("energy", 50f);
         energyAmmo.modifyFlat("energy", 2f);
-        MutableShipStatsAPI stats = statsWithDynamicMod("exiledSector_NON_BEAM_ENERGY_AMMO", new StatBonus());
+        MutableShipStatsAPI stats = statsWithDynamicMod("exiledLib_NON_BEAM_ENERGY_AMMO", new StatBonus());
         when(stats.getEnergyAmmoBonus()).thenReturn(energyAmmo);
         WeaponAPI pulse = weapon(false, 10);
         WeaponAPI beam = weapon(true, 10);
@@ -260,7 +260,7 @@ class WeaponScopeHierarchyTest {
     void beamAmmoRegenScalesByThePooledRegenOverTheShipWideEnergyRegenTheEngineAlreadyApplies() {
         MutableStat energyRegen = new MutableStat(1f);
         energyRegen.modifyPercent("energy", 20f);
-        MutableShipStatsAPI stats = statsWithDynamicMod("exiledSector_BEAM_AMMO_REGEN", new StatBonus());
+        MutableShipStatsAPI stats = statsWithDynamicMod("exiledLib_BEAM_AMMO_REGEN", new StatBonus());
         when(stats.getEnergyAmmoRegenMult()).thenReturn(energyRegen);
         WeaponAPI beam = regeneratingWeapon(true, 2f);
         WeaponAPI pulse = regeneratingWeapon(false, 2f);
@@ -278,7 +278,7 @@ class WeaponScopeHierarchyTest {
         MutableStat energyRegen = new MutableStat(1f);
         energyRegen.modifyPercent("energy", 20f);
         energyRegen.modifyFlat("energy", 0.5f);
-        MutableShipStatsAPI stats = statsWithDynamicMod("exiledSector_BEAM_AMMO_REGEN", new StatBonus());
+        MutableShipStatsAPI stats = statsWithDynamicMod("exiledLib_BEAM_AMMO_REGEN", new StatBonus());
         when(stats.getEnergyAmmoRegenMult()).thenReturn(energyRegen);
         WeaponAPI beam = regeneratingWeapon(true, 2f);
 
@@ -293,7 +293,7 @@ class WeaponScopeHierarchyTest {
     void ammoRegenLeavesWeaponsAloneWhenTheShipWideEnergyRegenIsZero() {
         MutableStat energyRegen = new MutableStat(1f);
         energyRegen.modifyMult("energy", 0f);
-        MutableShipStatsAPI stats = statsWithDynamicMod("exiledSector_NON_BEAM_ENERGY_AMMO_REGEN", new StatBonus());
+        MutableShipStatsAPI stats = statsWithDynamicMod("exiledLib_NON_BEAM_ENERGY_AMMO_REGEN", new StatBonus());
         when(stats.getEnergyAmmoRegenMult()).thenReturn(energyRegen);
         WeaponAPI pulse = regeneratingWeapon(false, 2f);
 

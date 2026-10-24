@@ -27,7 +27,7 @@ final class SplitBeamDrones {
     private static final float MIN_FIRING_SECONDS = 1f;
     private static final float CONNECTOR_OVERLAP = 20f;
     private static final float STAT_MIRROR_INTERVAL_SECONDS = 0.25f;
-    private static final String SHARE_MOD_ID = "exiledSector_splitBeamDroneShare";
+    private static final String SHARE_MOD_ID = "exiledLib_splitBeamDroneShare";
 
     private final ShipAPI firingShip;
     private final Map<SplitKey, SplitDrone> drones = new HashMap<>();

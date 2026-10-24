@@ -1,6 +1,7 @@
 package exiledsector.ui.node;
 
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
@@ -167,7 +168,7 @@ final class TemplatePlanner {
         List<TemplateStep> steps = new ArrayList<>(TemplateCapture.capture(orderedNodeIds, nodeId -> {
             String templateOption = templateOptionsByNodeId.get(nodeId);
             return templateOption != null && liveData.isAllocated(nodeId) ? templateOption : planData.getOptionalSelection(nodeId);
-        }, ShipTrees.wormholePartners(planData), startingRootId, SkillTree.getAllNodes()));
+        }, ShipTreeLinks.wormholePartners(planData), startingRootId, SkillTree.getAllNodes()));
         for (TemplateStep carriedStep : carriedSteps) {
             if (!planData.isAllocated(carriedStep.nodeId())) {
                 steps.add(carriedStep);

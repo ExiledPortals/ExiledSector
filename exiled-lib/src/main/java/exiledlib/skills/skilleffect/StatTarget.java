@@ -218,7 +218,7 @@ public sealed interface StatTarget {
     record PerWeaponAmmo(WeaponScope scope, boolean regeneration) implements StatTarget {
 
         private String key() {
-            return "exiledSector_" + scope.name() + (regeneration ? "_AMMO_REGEN" : "_AMMO");
+            return "exiledLib_" + scope.name() + (regeneration ? "_AMMO_REGEN" : "_AMMO");
         }
 
         @Override

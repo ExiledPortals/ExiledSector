@@ -17,7 +17,7 @@ import java.awt.Color;
 final class PierceDrone extends SingleShotDrone {
 
     static final float MAX_DEVIATION_DEGREES = 8f;
-    static final String RANGE_MATCH_MOD_ID = "exiledSector_pierceRange";
+    static final String RANGE_MATCH_MOD_ID = "exiledLib_pierceRange";
 
     private static final float MIN_TRAVEL_SPEED = 100f;
     private static final Color EXIT_FALLBACK_COLOR = new Color(255, 200, 120);

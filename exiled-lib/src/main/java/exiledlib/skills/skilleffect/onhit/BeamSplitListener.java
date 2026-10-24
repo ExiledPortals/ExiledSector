@@ -23,9 +23,9 @@ import java.util.Map;
 
 final class BeamSplitListener extends ShipCombatListener implements DamageDealtModifier, DroneSpawner {
 
-    static final String TARGETS_KEY = "exiledSector_beamSplitTargets";
+    static final String TARGETS_KEY = "exiledLib_beamSplitTargets";
 
-    private static final String DAMAGE_SHARE_MOD_ID = "exiledSector_beamSplitShare";
+    private static final String DAMAGE_SHARE_MOD_ID = "exiledLib_beamSplitShare";
     private static final float SPLIT_RADIUS_MULT_OF_BEAM_RANGE = 0.5f;
     private static final float SIMULATED_BEAM_FULL_DURATION = 0.05f;
     private static final float SIMULATED_BEAM_FADE_DURATION = 0.15f;

@@ -90,19 +90,19 @@ class AbsorbReserveListenerTest {
         listener.reportDamageApplied(null, ship, shieldHit(250f));
         listener.advance(0.5f);
 
-        verify(energyRof).modifyPercent("exiledSector_absorbReserve_a", 20f);
-        verify(energyFlux).modifyMult("exiledSector_absorbReserve_a", 100f / 120f);
-        verify(beamFlux).modifyMult("exiledSector_absorbReserve_a", 1f / (100f / 120f));
+        verify(energyRof).modifyPercent("exiledLib_absorbReserve_a", 20f);
+        verify(energyFlux).modifyMult("exiledLib_absorbReserve_a", 100f / 120f);
+        verify(beamFlux).modifyMult("exiledLib_absorbReserve_a", 1f / (100f / 120f));
 
         listener.reportDamageApplied(null, ship, shieldHit(5000f));
         listener.advance(1f);
 
-        verify(ballisticRof).modifyPercent("exiledSector_absorbReserve_a", 50f);
+        verify(ballisticRof).modifyPercent("exiledLib_absorbReserve_a", 50f);
 
         listener.advance(10f);
 
-        verify(ballisticRof).unmodify("exiledSector_absorbReserve_a");
-        verify(energyFlux).unmodify("exiledSector_absorbReserve_a");
-        verify(beamFlux).unmodify("exiledSector_absorbReserve_a");
+        verify(ballisticRof).unmodify("exiledLib_absorbReserve_a");
+        verify(energyFlux).unmodify("exiledLib_absorbReserve_a");
+        verify(beamFlux).unmodify("exiledLib_absorbReserve_a");
     }
 }

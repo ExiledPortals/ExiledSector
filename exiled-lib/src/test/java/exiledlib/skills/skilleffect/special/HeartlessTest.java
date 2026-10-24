@@ -82,7 +82,7 @@ class HeartlessTest {
             HeartlessStacks.MOBILITY_PENALTY_PERCENT_PER_STACK_KEY, 3f,
             HeartlessStacks.RADIATION_EMP_KEY, 400f);
 
-    private static final String HEARTLESS_MOD_ID = "exiledSector_heartless_heart";
+    private static final String HEARTLESS_MOD_ID = "exiledLib_heartless_heart";
 
     private record Armored(ShipAPI ship, float[][] cells, MutableStat maxSpeed, MutableStat turnRate,
                            WeaponAPI weapon, ShipEngineAPI engine, HeartlessStacks stacks) {

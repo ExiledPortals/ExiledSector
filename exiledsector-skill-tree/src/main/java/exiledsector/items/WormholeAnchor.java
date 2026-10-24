@@ -5,7 +5,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
 import exiledsector.skills.ShipSkillData;
-import exiledsector.skills.ShipTrees;
+import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -228,7 +228,7 @@ public final class WormholeAnchor extends Item implements NodeSocketable {
         String volume = volume();
         String volumeName = volumeName(volume);
         lines.add(Translation.msg("socketable.anchor.volume").arg("volume", volumeName).styled());
-        boolean linked = exitNodeId.equals(ShipTrees.anchorExit(shipData, socketNodeId));
+        boolean linked = exitNodeId.equals(ShipTreeLinks.anchorExit(shipData, socketNodeId));
         Inertness inertness = inertness(Global.getSector());
         if (linked && shipData.isAllocated(exitNodeId)) {
             lines.add(Translation.msg("socketable.anchor.open").arg("volume", volumeName).styled());

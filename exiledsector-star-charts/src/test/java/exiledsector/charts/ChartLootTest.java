@@ -77,7 +77,7 @@ class ChartLootTest {
 
     @Test
     void theShippedTableParsesAndEveryBaseEntryUsesAGroupOfItsOwnDropType() throws Exception {
-        List<String> problems = ChartLoot.register(ChartContentDataTest.csvRows(ChartLoot.PATH), group -> true);
+        List<String> problems = ChartLoot.register(ChartTables.csvRows(ChartLoot.PATH), group -> true);
 
         assertEquals(List.of(), problems);
         for (DropType type : DropType.values()) {

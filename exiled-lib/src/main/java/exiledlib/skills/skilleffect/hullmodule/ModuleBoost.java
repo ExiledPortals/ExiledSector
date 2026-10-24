@@ -20,14 +20,14 @@ import java.util.Map;
 
 public final class ModuleBoost {
 
-    static final String HULL_PERCENT_KEY = "exiledSector_moduleHullPercent";
-    static final String ARMOR_PERCENT_KEY = "exiledSector_moduleArmorPercent";
-    static final String WEAPON_DAMAGE_PERCENT_KEY = "exiledSector_moduleWeaponDamagePercent";
-    static final String WEAPON_RANGE_PERCENT_KEY = "exiledSector_moduleWeaponRangePercent";
-    static final String WEAPON_FIRE_RATE_PERCENT_KEY = "exiledSector_moduleWeaponFireRatePercent";
+    static final String HULL_PERCENT_KEY = "exiledLib_moduleHullPercent";
+    static final String ARMOR_PERCENT_KEY = "exiledLib_moduleArmorPercent";
+    static final String WEAPON_DAMAGE_PERCENT_KEY = "exiledLib_moduleWeaponDamagePercent";
+    static final String WEAPON_RANGE_PERCENT_KEY = "exiledLib_moduleWeaponRangePercent";
+    static final String WEAPON_FIRE_RATE_PERCENT_KEY = "exiledLib_moduleWeaponFireRatePercent";
     private static final List<String> MODULE_BONUS_KEYS = List.of(HULL_PERCENT_KEY, ARMOR_PERCENT_KEY, WEAPON_DAMAGE_PERCENT_KEY,
             WEAPON_RANGE_PERCENT_KEY, WEAPON_FIRE_RATE_PERCENT_KEY);
-    private static final String MODULE_BONUS_MOD_ID_PREFIX = "exiledSector_moduleBonus_";
+    private static final String MODULE_BONUS_MOD_ID_PREFIX = "exiledLib_moduleBonus_";
     private static final float MAX_SHIELD_ARC = 360f;
     private static final StatTarget WEAPON_DAMAGE = WeaponStatFamily.DAMAGE.target(WeaponScope.ALL);
     private static final StatTarget WEAPON_RANGE = WeaponStatFamily.RANGE.target(WeaponScope.ALL);

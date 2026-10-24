@@ -28,7 +28,7 @@ class ChartColonyItemsTest {
 
     @Test
     void theShippedTableParsesWithItsCeilingAndVanillaWeights() throws Exception {
-        List<String> problems = ChartColonyItems.register(ChartContentDataTest.csvRows(ChartColonyItems.PATH), itemId -> true);
+        List<String> problems = ChartColonyItems.register(ChartTables.csvRows(ChartColonyItems.PATH), itemId -> true);
 
         assertEquals(List.of(), problems);
         assertEquals(0.25f, ChartColonyItems.ceiling());
@@ -68,7 +68,7 @@ class ChartColonyItemsTest {
 
     @Test
     void theColonyItemSuffixIsOnlyRollableFromTheFirstTierWithAChance() throws Exception {
-        ChartTiers.register(ChartContentDataTest.csvRows(ChartTiers.PATH));
+        ChartTiers.register(ChartTables.csvRows(ChartTiers.PATH));
         int firstTier = ChartTiers.firstColonyItemTier();
 
         assertTrue(firstTier > 1);

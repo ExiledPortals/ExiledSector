@@ -43,6 +43,6 @@ public record CompatTarget(String displayName, List<String> modIds, List<String>
 
     public static void raiseSectorFlag(SectorAPI sector, String flag, Logger log, String logLine) {
         sector.getMemoryWithoutUpdate().set(flag, true);
-        log.info("[ExiledSector] " + logLine + ".");
+        log.info("[ExiledLib] " + logLine + ".");
     }
 }

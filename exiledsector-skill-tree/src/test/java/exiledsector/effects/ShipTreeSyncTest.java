@@ -25,6 +25,7 @@ import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AnchorLinks;
 import exiledsector.skills.PhantomHullModStatus;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -393,7 +394,7 @@ class ShipTreeSyncTest {
     @Test
     void aRecoveredFactionShipLosesItsAnchorAndTheVolumeBehindIt() throws Exception {
         registerHegemonyVolume();
-        assertEquals("gate_far", ShipTrees.anchorExit(NpcTreeTag.decode("exiledSector_npcTree|generated|5|root_1,a_1,socket_1,gate_far,pride|sockets:socket_1="
+        assertEquals("gate_far", ShipTreeLinks.anchorExit(NpcTreeTag.decode("exiledSector_npcTree|generated|5|root_1,a_1,socket_1,gate_far,pride|sockets:socket_1="
                 + HEGEMONY_ANCHOR), "socket_1"));
 
         ShipSkillData adopted = adoptFactionShip("exiledSector_npcTree|generated|5|root_1,a_1,socket_1,gate_far,pride|sockets:socket_1="

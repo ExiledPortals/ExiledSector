@@ -26,11 +26,11 @@ import static exiledlib.skills.skilleffect.StatTarget.liveStat;
 
 final class HeartlessStacks extends ShipCombatListener {
 
-    static final String ARMOR_RESTORE_PERCENT_KEY = "exiledSector_heartlessArmorRestorePercent";
-    static final String ARMOR_PERCENT_PER_STACK_KEY = "exiledSector_heartlessArmorPercentPerStack";
-    static final String MOBILITY_PENALTY_PERCENT_PER_STACK_KEY = "exiledSector_heartlessMobilityPenaltyPercentPerStack";
-    static final String RADIATION_EMP_KEY = "exiledSector_heartlessRadiationEmp";
-    static final String MAX_STACKS_KEY = "exiledSector_heartlessMaxStacks";
+    static final String ARMOR_RESTORE_PERCENT_KEY = "exiledLib_heartlessArmorRestorePercent";
+    static final String ARMOR_PERCENT_PER_STACK_KEY = "exiledLib_heartlessArmorPercentPerStack";
+    static final String MOBILITY_PENALTY_PERCENT_PER_STACK_KEY = "exiledLib_heartlessMobilityPenaltyPercentPerStack";
+    static final String RADIATION_EMP_KEY = "exiledLib_heartlessRadiationEmp";
+    static final String MAX_STACKS_KEY = "exiledLib_heartlessMaxStacks";
     static final int DEFAULT_MAX_STACKS = 5;
     private static final float ARC_THICKNESS = 12f;
     private static final Color ARC_FRINGE = new Color(120, 200, 255, 200);
@@ -39,7 +39,7 @@ final class HeartlessStacks extends ShipCombatListener {
     private static final float ARC_LIGHT_SIZE = 60f;
     private static final float ARC_LIGHT_INTENSITY = 0.8f;
     private static final float ARC_LIGHT_SECONDS = 0.3f;
-    private static final String MOD_ID_PREFIX = "exiledSector_heartless_";
+    private static final String MOD_ID_PREFIX = "exiledLib_heartless_";
     private static final ScaledBonus MOBILITY_PENALTY = new ScaledBonus(percent(StatTarget.scaled(
             StatTarget.all(liveStat(MutableShipStatsAPI::getMaxSpeed), Maneuverability.target()), -1f),
             MOBILITY_PENALTY_PERCENT_PER_STACK_KEY));

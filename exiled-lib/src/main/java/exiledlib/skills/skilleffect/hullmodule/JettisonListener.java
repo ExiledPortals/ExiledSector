@@ -20,9 +20,9 @@ import static exiledlib.skills.skilleffect.StatTarget.liveStat;
 
 final class JettisonListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String TOP_SPEED_PERCENT_PER_MODULE_KEY = "exiledSector_jettisonTopSpeedPercentPerModule";
-    static final String MANEUVERABILITY_PERCENT_PER_MODULE_KEY = "exiledSector_jettisonManeuverabilityPercentPerModule";
-    private static final String MOD_ID_PREFIX = "exiledSector_jettison_";
+    static final String TOP_SPEED_PERCENT_PER_MODULE_KEY = "exiledLib_jettisonTopSpeedPercentPerModule";
+    static final String MANEUVERABILITY_PERCENT_PER_MODULE_KEY = "exiledLib_jettisonManeuverabilityPercentPerModule";
+    private static final String MOD_ID_PREFIX = "exiledLib_jettison_";
     private static final float CHECK_SECONDS = 0.25f;
     private static final ScaledBonus JETTISON_BONUS = new ScaledBonus(
             percent(liveStat(MutableShipStatsAPI::getMaxSpeed), TOP_SPEED_PERCENT_PER_MODULE_KEY),

@@ -16,9 +16,9 @@ import java.util.List;
 
 final class SharedShieldDamageListener extends ShipCombatListener implements DamageTakenModifier, DamageListener {
 
-    static final String SHARED_PERCENT_KEY = "exiledSector_shieldDamageSharedPercent";
+    static final String SHARED_PERCENT_KEY = "exiledLib_shieldDamageSharedPercent";
     static final float RANGE = 1000f;
-    private static final String SHARE_MOD_ID = "exiledSector_shieldDamageShared";
+    private static final String SHARE_MOD_ID = "exiledLib_shieldDamageShared";
     static final float MAX_SHARED_PERCENT = 90f;
     private static final float ALLY_SEARCH_INTERVAL_SECONDS = 0.25f;
     private static final float ALLY_SEARCH_MARGIN = 200f;

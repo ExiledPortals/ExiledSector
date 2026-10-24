@@ -14,8 +14,8 @@ import static exiledlib.skills.skilleffect.ScaledBonus.percent;
 
 final class ThermoAcceleratorListener extends ShipCombatListener implements AdvanceableListener {
 
-    static final String RATE_OF_FIRE_PERCENT_KEY = "exiledSector_thermoAcceleratorRateOfFirePercent";
-    private static final String MOD_ID_PREFIX = "exiledSector_thermoAccelerator_";
+    static final String RATE_OF_FIRE_PERCENT_KEY = "exiledLib_thermoAcceleratorRateOfFirePercent";
+    private static final String MOD_ID_PREFIX = "exiledLib_thermoAccelerator_";
     private static final ScaledBonus TURRET_RATE_OF_FIRE = new ScaledBonus(
             percent(WeaponStatFamily.FIRE_RATE.target(WeaponScope.ALL), RATE_OF_FIRE_PERCENT_KEY));
 

@@ -144,7 +144,7 @@ class FleetWideEffectsTest {
         when(stats.getDynamic()).thenReturn(dynamic);
         when(profile.getModifiedValue()).thenReturn(sensorProfile);
         when(strength.getModifiedValue()).thenReturn(sensorStrength);
-        when(dynamic.getValue("exiledSector_phaseFieldContributionPercent", 0f)).thenReturn(contributionPercent);
+        when(dynamic.getValue("exiledLib_phaseFieldContributionPercent", 0f)).thenReturn(contributionPercent);
         when(repair.getCR()).thenReturn(cr);
         return member;
     }

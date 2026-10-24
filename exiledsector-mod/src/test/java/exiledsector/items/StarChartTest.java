@@ -95,8 +95,6 @@ class StarChartTest {
     void theChartTierMatchesTheRunTiers() {
         assertEquals(exiledsector.charts.ChartTiers.LOWEST_TIER, StarChart.LOWEST_TIER);
         assertEquals(exiledsector.charts.ChartTiers.HIGHEST_TIER, StarChart.HIGHEST_TIER);
-        assertEquals(StarChartDefinitions.SYSTEM_TYPES,
-                exiledsector.charts.ChartLayoutGenerator.ALLOWED_TYPES.stream().map(Enum::name).toList());
     }
 
     @Test

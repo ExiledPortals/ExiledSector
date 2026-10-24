@@ -11,6 +11,7 @@ import exiledsector.skills.AllocationGate;
 import exiledsector.skills.AnchorLinks;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -575,7 +576,7 @@ public final class NpcSkillTreeBuilder {
 
         private boolean socketAnchor(String socketId) {
             shipData.socketItem(socketId, factionAnchorItemId);
-            if (factionExitId.equals(ShipTrees.anchorExit(shipData, socketId))) {
+            if (factionExitId.equals(ShipTreeLinks.anchorExit(shipData, socketId))) {
                 anchorSocketId = socketId;
                 ShipTrees.openAnchorWormholes(shipData, maxNodes + 1);
                 if (shipData.isAllocated(factionExitId)) {
@@ -618,7 +619,7 @@ public final class NpcSkillTreeBuilder {
         }
 
         private String jumpTarget(SkillNode node) {
-            String partnerId = ShipTrees.wormholePartner(shipData, node);
+            String partnerId = ShipTreeLinks.wormholePartner(shipData, node);
             if (partnerId != null) {
                 return partnerId;
             }

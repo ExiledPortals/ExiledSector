@@ -4,14 +4,12 @@ import exiledsector.items.DoctrineOverrides;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -23,7 +21,7 @@ public final class ShipTrees {
     public static void selectOption(ShipSkillData data, SkillNode node, SkillType chosenOption, int opCost) {
         data.revision++;
         if (!data.isAllocated(node.getId())) {
-            discardItemCharge(data, node.getId());
+            ItemChargeLedger.discard(data, node.getId());
             data.charge(node.getId(), opCost);
         }
         data.allocatedNodeIds.add(node.getId());
@@ -69,100 +67,11 @@ public final class ShipTrees {
         if (!data.canUnchooseStartingRoot()) {
             return false;
         }
-        ensureItemChargeLedger(data);
+        ItemChargeLedger.ensure(data);
         data.allocatedNodeIds.remove(data.startingRootId);
         data.release(data.startingRootId);
         data.startingRootId = null;
         return true;
-    }
-
-    public static WormholePartners wormholePartners(ShipSkillData data) {
-        return node -> wormholePartner(data, node);
-    }
-
-    public static String wormholePartner(ShipSkillData data, SkillNode node) {
-        String anchorPartner = anchorPartner(data, node.getId());
-        return anchorPartner != null ? anchorPartner : WormholePartners.pairedWith(node);
-    }
-
-    public static String anchorPartner(ShipSkillData data, String nodeId) {
-        ShipSkillData.AnchorLinkMaps links = anchorLinks(data);
-        String exitId = links.exitBySocketId().get(nodeId);
-        return exitId != null ? exitId : links.socketByExitId().get(nodeId);
-    }
-
-    public static String anchorExit(ShipSkillData data, String socketNodeId) {
-        return anchorLinks(data).exitBySocketId().get(socketNodeId);
-    }
-
-    public static String anchorSocket(ShipSkillData data, String exitNodeId) {
-        return anchorLinks(data).socketByExitId().get(exitNodeId);
-    }
-
-    public static Map<String, String> anchorExitsBySocket(ShipSkillData data) {
-        return Collections.unmodifiableMap(anchorLinks(data).exitBySocketId());
-    }
-
-    public static List<SkillTreeTopology.WormholePair> wormholePairs(ShipSkillData data, SkillTreeTopology topology) {
-        Map<String, String> exitBySocketId = anchorLinks(data).exitBySocketId();
-        if (exitBySocketId.isEmpty()) {
-            return topology.wormholePairs();
-        }
-        List<SkillTreeTopology.WormholePair> pairs = new ArrayList<>(topology.wormholePairs());
-        exitBySocketId.forEach((socketId, exitId) -> {
-            SkillNode socket = topology.node(socketId);
-            SkillNode exit = topology.node(exitId);
-            if (socket != null && exit != null && data.isAllocated(exitId)) {
-                pairs.add(new SkillTreeTopology.WormholePair(socket, exit));
-            }
-        });
-        return pairs;
-    }
-
-    private static ShipSkillData.AnchorLinkMaps anchorLinks(ShipSkillData data) {
-        AnchorLinks.ExitLookup lookup = AnchorLinks.lookup();
-        int lookupRevision = lookup.revision();
-        LinkCache<ShipSkillData.AnchorLinkMaps> cache = data.anchorLinkCache();
-        if (cache.isFresh(data.revision, lookup, lookupRevision)) {
-            return cache.links();
-        }
-        Map<String, String> exitBySocketId = new LinkedHashMap<>();
-        Map<String, String> socketByExitId = new LinkedHashMap<>();
-        if (data.socketedItems != null) {
-            new TreeMap<>(data.socketedItems).forEach((socketId, itemId) -> {
-                if (data.isAllocated(socketId)) {
-                    link(data, socketId, lookup.exitNodeId(itemId), exitBySocketId, socketByExitId);
-                }
-            });
-        }
-        return cache.store(new ShipSkillData.AnchorLinkMaps(exitBySocketId.isEmpty() ? Map.of() : exitBySocketId,
-                socketByExitId.isEmpty() ? Map.of() : socketByExitId), data.revision, lookup, lookupRevision);
-    }
-
-    private static void link(ShipSkillData data, String socketId, String exitId, Map<String, String> exitBySocketId, Map<String, String> socketByExitId) {
-        if (exitId == null || exitId.equals(socketId) || !data.isAllocated(socketId) || socketByExitId.containsKey(exitId)
-                || exitBySocketId.containsKey(exitId) || socketByExitId.containsKey(socketId)) {
-            return;
-        }
-        exitBySocketId.put(socketId, exitId);
-        socketByExitId.put(exitId, socketId);
-    }
-
-    public static Map<String, List<String>> grantedNodesBySocket(ShipSkillData data) {
-        return Collections.unmodifiableMap(grantLinks(data));
-    }
-
-    public static String grantingSocket(ShipSkillData data, String nodeId) {
-        for (Map.Entry<String, List<String>> grantLink : grantLinks(data).entrySet()) {
-            if (grantLink.getValue().contains(nodeId)) {
-                return grantLink.getKey();
-            }
-        }
-        return null;
-    }
-
-    public static boolean isGrantHeld(ShipSkillData data, String nodeId) {
-        return data.isAllocated(nodeId) && grantingSocket(data, nodeId) != null;
     }
 
     public static void allocateGranted(ShipSkillData data, SkillNode node) {
@@ -172,23 +81,17 @@ public final class ShipTrees {
         if (transformed) {
             data.replacementAllocatedNodeIds().add(nodeId);
         }
-        discardItemCharge(data, nodeId);
+        ItemChargeLedger.discard(data, nodeId);
         data.dormantNodeIds().remove(nodeId);
         data.allocatedNodeIds.add(nodeId);
         data.grantFreeNodeIds().add(nodeId);
-    }
-
-    private static Set<String> grantedNodeIds(ShipSkillData data) {
-        Set<String> granted = new HashSet<>();
-        grantedNodesBySocket(data).values().forEach(granted::addAll);
-        return granted;
     }
 
     private static List<String> ungrantedFreeNodeIds(ShipSkillData data) {
         if (data.grantFreeNodeIds == null || data.grantFreeNodeIds.isEmpty()) {
             return List.of();
         }
-        Set<String> granted = grantedNodeIds(data);
+        Set<String> granted = ShipTreeLinks.grantedNodeIds(data);
         if (data.socketedItems != null && data.dormantNodeIds != null) {
             NodeGrants.GrantLookup lookup = NodeGrants.lookup();
             data.socketedItems.forEach((socketId, itemId) -> {
@@ -221,33 +124,12 @@ public final class ShipTrees {
         return releaseNewlyStranded(data, topology, satisfiedRootId, reachableBefore);
     }
 
-    private static Map<String, List<String>> grantLinks(ShipSkillData data) {
-        NodeGrants.GrantLookup lookup = NodeGrants.lookup();
-        int lookupRevision = lookup.revision();
-        LinkCache<Map<String, List<String>>> cache = data.grantLinkCache();
-        if (cache.isFresh(data.revision, lookup, lookupRevision)) {
-            return cache.links();
-        }
-        Map<String, List<String>> nodesBySocketId = new LinkedHashMap<>();
-        if (data.socketedItems != null) {
-            new TreeMap<>(data.socketedItems).forEach((socketId, itemId) -> {
-                List<String> grantedNodeIds = data.isAllocated(socketId) ? lookup.grantedNodeIds(itemId) : List.of();
-                List<String> linkedNodeIds = grantedNodeIds == null ? List.of()
-                        : grantedNodeIds.stream().filter(nodeId -> nodeId != null && !nodeId.equals(socketId)).distinct().toList();
-                if (!linkedNodeIds.isEmpty()) {
-                    nodesBySocketId.put(socketId, linkedNodeIds);
-                }
-            });
-        }
-        return cache.store(nodesBySocketId.isEmpty() ? Map.of() : nodesBySocketId, data.revision, lookup, lookupRevision);
-    }
-
     public static Set<String> pathReachableAllocatedNodeIds(ShipSkillData data, SkillTreeTopology topology, String satisfiedRootId) {
         return pathReachableAllocatedNodeIds(data, topology, satisfiedRootId, Set.of());
     }
 
     public static Set<String> grantOnlyNodeIds(ShipSkillData data, SkillTreeTopology topology, String satisfiedRootId) {
-        if (grantedNodesBySocket(data).isEmpty()) {
+        if (ShipTreeLinks.grantedNodesBySocket(data).isEmpty()) {
             return Set.of();
         }
         Set<String> pathReached = pathReachableAllocatedNodeIds(data, topology, satisfiedRootId, Set.of());
@@ -259,11 +141,11 @@ public final class ShipTrees {
     public static List<String> openAnchorWormholes(ShipSkillData data, int maxAllocatedNodes) {
         List<String> openedExitIds = new ArrayList<>();
         AnchorLinks.ExitLookup lookup = AnchorLinks.lookup();
-        for (Map.Entry<String, String> link : List.copyOf(anchorExitsBySocket(data).entrySet())) {
+        for (Map.Entry<String, String> link : List.copyOf(ShipTreeLinks.anchorExitsBySocket(data).entrySet())) {
             String exitId = link.getValue();
             if (!data.isAllocated(exitId) && data.usedNodeSlots() < maxAllocatedNodes && canOpen(data, link.getKey(), lookup)) {
                 data.revision++;
-                discardItemCharge(data, exitId);
+                ItemChargeLedger.discard(data, exitId);
                 data.dormantNodeIds().remove(exitId);
                 data.allocatedNodeIds.add(exitId);
                 data.pairedFreeNodeIds().add(exitId);
@@ -382,7 +264,7 @@ public final class ShipTrees {
         if (allocatedBefore.isEmpty()) {
             return ReleasedNodes.NONE;
         }
-        return new ReleasedNodes(List.copyOf(allocatedBefore), takeItemCharges(data, allocatedBefore));
+        return new ReleasedNodes(List.copyOf(allocatedBefore), ItemChargeLedger.takeItemCharges(data, allocatedBefore));
     }
 
     public static List<String> trimPaidNodes(ShipSkillData data, Map<String, SkillNode> tree, SkillTreeTopology topology) {
@@ -432,7 +314,8 @@ public final class ShipTrees {
             String nodeId = order.get(i);
             SkillNode node = tree.get(nodeId);
             if (node != null && candidate.test(nodeId) && !nodeId.equals(startingRoot) && !data.pairedFreeNodeIds().contains(nodeId)
-                    && anchorPartner(data, nodeId) == null && !isGrantHeld(data, nodeId) && !grantedNodesBySocket(data).containsKey(nodeId)
+                    && ShipTreeLinks.anchorPartner(data, nodeId) == null && !ShipTreeLinks.isGrantHeld(data, nodeId)
+                    && !ShipTreeLinks.grantedNodesBySocket(data).containsKey(nodeId)
                     && canDeallocate(data, node, topology, startingRoot)) {
                 return node;
             }
@@ -481,22 +364,22 @@ public final class ShipTrees {
 
     public static void allocate(ShipSkillData data, SkillNode node, int opCost) {
         data.revision++;
-        discardItemCharge(data, node.getId());
+        ItemChargeLedger.discard(data, node.getId());
         data.allocatedNodeIds.add(node.getId());
         data.charge(node.getId(), opCost);
 
-        String pairedId = wormholePartner(data, node);
+        String pairedId = ShipTreeLinks.wormholePartner(data, node);
         if (pairedId != null && !data.isAllocated(pairedId)) {
-            discardItemCharge(data, pairedId);
+            ItemChargeLedger.discard(data, pairedId);
             data.allocatedNodeIds.add(pairedId);
             data.pairedFreeNodeIds().add(pairedId);
         }
     }
 
     public static void deallocate(ShipSkillData data, SkillNode node) {
-        String pairedId = wormholePartner(data, node);
+        String pairedId = ShipTreeLinks.wormholePartner(data, node);
         data.revision++;
-        ensureItemChargeLedger(data);
+        ItemChargeLedger.ensure(data);
         data.allocatedNodeIds.remove(node.getId());
         data.release(node.getId());
 
@@ -506,21 +389,21 @@ public final class ShipTrees {
     }
 
     public static List<SkillItemCost> releaseAnchorExit(ShipSkillData data, String exitNodeId) {
-        if (anchorSocket(data, exitNodeId) == null || !data.allocatedNodeIds.contains(exitNodeId)) {
+        if (ShipTreeLinks.anchorSocket(data, exitNodeId) == null || !data.allocatedNodeIds.contains(exitNodeId)) {
             return List.of();
         }
         data.revision++;
-        ensureItemChargeLedger(data);
+        ItemChargeLedger.ensure(data);
         data.allocatedNodeIds.remove(exitNodeId);
         data.release(exitNodeId);
-        return takeItemCharges(data, List.of(exitNodeId));
+        return ItemChargeLedger.takeItemCharges(data, List.of(exitNodeId));
     }
 
     public static List<SkillItemCost> deallocateReleasingCharges(ShipSkillData data, SkillNode node) {
         Set<String> allocatedBefore = new LinkedHashSet<>(data.allocatedNodeIds);
         deallocate(data, node);
         allocatedBefore.removeAll(data.allocatedNodeIds);
-        return takeItemCharges(data, allocatedBefore);
+        return ItemChargeLedger.takeItemCharges(data, allocatedBefore);
     }
 
     public static boolean replaceNode(ShipSkillData data, String oldId, String newId) {
@@ -529,7 +412,7 @@ public final class ShipTrees {
         if ((!dormant && !data.allocatedNodeIds.contains(oldId)) || data.allocatedNodeIds.contains(newId) || data.getDormantNodeIds().contains(newId)) {
             return false;
         }
-        ensureItemChargeLedger(data);
+        ItemChargeLedger.ensure(data);
         Set<String> holdingNodeIds = dormant ? data.dormantNodeIds : data.allocatedNodeIds;
         List<String> order = new ArrayList<>(holdingNodeIds);
         holdingNodeIds.clear();
@@ -549,9 +432,9 @@ public final class ShipTrees {
         if (oldId.equals(data.startingRootId)) {
             data.startingRootId = newId;
         }
-        SkillItemCost movedCharge = takeItemCharge(data, oldId);
+        SkillItemCost movedCharge = ItemChargeLedger.takeItemCharge(data, oldId);
         if (movedCharge != null) {
-            recordItemCharge(data, newId, movedCharge);
+            ItemChargeLedger.recordItemCharge(data, newId, movedCharge);
         }
         if (data.optionalSelections != null) {
             data.optionalSelections.remove(oldId);
@@ -566,7 +449,7 @@ public final class ShipTrees {
 
     public static List<String> forgetUnknownNodes(ShipSkillData data, Map<String, SkillNode> tree, Map<String, SkillNode> declaredTree, Map<String, SkillType> types) {
         data.revision++;
-        ensureItemChargeLedger(data);
+        ItemChargeLedger.ensure(data);
         List<String> forgotten = new ArrayList<>();
         for (String nodeId : List.copyOf(data.getDormantNodeIds())) {
             SkillNode declaredNode = declaredTree.get(nodeId);
@@ -602,107 +485,6 @@ public final class ShipTrees {
         return node.getType().isOptional() && NodeEligibility.optionProblem(node.getType(), data.getOptionalSelection(node.getId()), types::get) != null;
     }
 
-    public interface WakeCheck {
-        boolean allows(SkillNode dormantNode);
-    }
-
-    public static boolean hasReturningDormantNodes(ShipSkillData data, Map<String, SkillNode> tree) {
-        for (String nodeId : data.getDormantNodeIds()) {
-            if (tree.containsKey(nodeId)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static List<String> wakeDormantNodes(ShipSkillData data, Map<String, SkillNode> tree, int maxAllocatedNodes, WakeCheck wakeCheck) {
-        if (data.getDormantNodeIds().isEmpty()) {
-            return List.of();
-        }
-        data.revision++;
-        ensureItemChargeLedger(data);
-        String satisfiedRootId = resolveStartingRootId(data, tree.values());
-        SkillTreeTopology wakeTopology = grantedNodesBySocket(data).isEmpty() ? null : SkillTreeTopology.of(tree.values());
-        boolean wokeAny = true;
-        while (wokeAny) {
-            wokeAny = false;
-            Set<String> grantOnlyNodeIds = wakeTopology == null ? Set.of() : grantHeldOffPath(data, wakeTopology, satisfiedRootId);
-            for (String nodeId : List.copyOf(data.dormantNodeIds)) {
-                SkillNode node = tree.get(nodeId);
-                if (node != null && (!data.isGrantFree(nodeId) || grantingSocket(data, nodeId) != null) && isReconnected(data, node, satisfiedRootId, grantOnlyNodeIds)) {
-                    wokeAny |= wake(data, node, satisfiedRootId, maxAllocatedNodes, wakeCheck);
-                }
-            }
-        }
-        for (String nodeId : List.copyOf(data.dormantNodeIds)) {
-            SkillNode node = tree.get(nodeId);
-            if (node != null && node.getType().getTier() != SkillTier.WORMHOLE_EXIT && grantingSocket(data, nodeId) != null) {
-                wake(data, node, satisfiedRootId, maxAllocatedNodes, wakeCheck);
-            }
-        }
-        List<String> released = new ArrayList<>();
-        SkillTreeTopology topology = null;
-        for (String nodeId : List.copyOf(data.dormantNodeIds)) {
-            SkillNode node = tree.get(nodeId);
-            if (node == null) {
-                continue;
-            }
-            String partnerId = wormholePartner(data, node);
-            boolean freePartnerOfAllocatedEnd = data.pairedFreeNodeIds().contains(nodeId) && data.allocatedNodeIds.contains(partnerId)
-                    && anchorPartner(data, nodeId) == null;
-            data.dormantNodeIds.remove(nodeId);
-            data.release(nodeId);
-            released.add(nodeId);
-            SkillNode allocatedEnd = freePartnerOfAllocatedEnd ? tree.get(partnerId) : null;
-            if (allocatedEnd != null) {
-                topology = topology != null ? topology : SkillTreeTopology.of(tree.values());
-                if (canDeallocate(data, allocatedEnd, topology, satisfiedRootId)) {
-                    deallocate(data, allocatedEnd);
-                    released.add(allocatedEnd.getId());
-                }
-            }
-        }
-        return released;
-    }
-
-    private static boolean wake(ShipSkillData data, SkillNode node, String satisfiedRootId, int maxAllocatedNodes, WakeCheck wakeCheck) {
-        if (!data.isGrantFree(node.getId()) && data.usedNodeSlots() >= maxAllocatedNodes || !wakeCheck.allows(node)) {
-            return false;
-        }
-        String nodeId = node.getId();
-        data.revision++;
-        data.dormantNodeIds.remove(nodeId);
-        data.allocatedNodeIds.add(nodeId);
-        if (!data.isFreeNode(nodeId) && !nodeId.equals(satisfiedRootId)) {
-            data.charge(nodeId, 1);
-        }
-        return true;
-    }
-
-    private static Set<String> grantHeldOffPath(ShipSkillData data, SkillTreeTopology topology, String satisfiedRootId) {
-        Set<String> pathReached = pathReachableAllocatedNodeIds(data, topology, satisfiedRootId, Set.of());
-        Set<String> grantHeld = new HashSet<>();
-        for (String grantedNodeId : grantedNodeIds(data)) {
-            if (data.isAllocated(grantedNodeId) && !pathReached.contains(grantedNodeId)) {
-                grantHeld.add(grantedNodeId);
-            }
-        }
-        return grantHeld;
-    }
-
-    private static boolean isReconnected(ShipSkillData data, SkillNode node, String satisfiedRootId, Set<String> grantOnlyNodeIds) {
-        if (node.getType().getTier() == SkillTier.WORMHOLE_EXIT) {
-            String socketId = anchorSocket(data, node.getId());
-            return socketId != null && data.isAllocated(socketId);
-        }
-        for (String connectedId : node.getConnectedNodeIds()) {
-            if (data.isSatisfied(connectedId, satisfiedRootId) && !grantOnlyNodeIds.contains(connectedId)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public static boolean hasLostStartingRoot(ShipSkillData data, Map<String, SkillNode> tree) {
         if (data.startingRootId == null) {
             return !data.allocatedNodeIds.isEmpty() && firstAllocatedRootId(data, SkillTreeTopology.rootIdsOf(tree.values())) == null;
@@ -713,7 +495,7 @@ public final class ShipTrees {
 
     public static List<String> resetAllocations(ShipSkillData data) {
         data.revision++;
-        ensureItemChargeLedger(data);
+        ItemChargeLedger.ensure(data);
         List<String> released = new ArrayList<>(data.allocatedNodeIds);
         released.addAll(data.getDormantNodeIds());
         released.forEach(data::release);
@@ -749,13 +531,13 @@ public final class ShipTrees {
     public static boolean canDeallocate(ShipSkillData data, SkillNode node, SkillTreeTopology topology, String satisfiedRootId) {
         Set<String> excluded = new HashSet<>();
         excluded.add(node.getId());
-        String pairedId = wormholePartner(data, node);
+        String pairedId = ShipTreeLinks.wormholePartner(data, node);
         if (pairedId != null) excluded.add(pairedId);
 
         Set<String> reachableBefore = reachableAllocatedNodeIds(data, topology, satisfiedRootId, Set.of());
         Set<String> reachableAfter = reachableAllocatedNodeIds(data, topology, satisfiedRootId, excluded);
         Set<String> closingRelease = closingRelease(data, node, topology, satisfiedRootId, reachableBefore);
-        List<String> grantedNodeIds = grantedNodesBySocket(data).getOrDefault(node.getId(), List.of());
+        List<String> grantedNodeIds = ShipTreeLinks.grantedNodesBySocket(data).getOrDefault(node.getId(), List.of());
 
         for (String allocatedId : reachableBefore) {
             if (excluded.contains(allocatedId) || closingRelease.contains(allocatedId) || grantedNodeIds.contains(allocatedId)) continue;
@@ -767,8 +549,8 @@ public final class ShipTrees {
     }
 
     private static Set<String> closingRelease(ShipSkillData data, SkillNode node, SkillTreeTopology topology, String satisfiedRootId, Set<String> reachableBefore) {
-        String exitId = anchorExit(data, node.getId());
-        if (exitId == null && anchorSocket(data, node.getId()) != null) {
+        String exitId = ShipTreeLinks.anchorExit(data, node.getId());
+        if (exitId == null && ShipTreeLinks.anchorSocket(data, node.getId()) != null) {
             exitId = node.getId();
         }
         if (exitId == null) {
@@ -787,7 +569,7 @@ public final class ShipTrees {
 
     private static List<String> grantedReachableNodeIds(ShipSkillData data, SkillTreeTopology topology, Set<String> pathReached, Set<String> excludedNodeIds) {
         List<String> granted = new ArrayList<>();
-        for (Map.Entry<String, List<String>> grantLink : grantedNodesBySocket(data).entrySet()) {
+        for (Map.Entry<String, List<String>> grantLink : ShipTreeLinks.grantedNodesBySocket(data).entrySet()) {
             if (!pathReached.contains(grantLink.getKey())) {
                 continue;
             }
@@ -818,65 +600,7 @@ public final class ShipTrees {
     }
 
     private static String allocatedWormholePartner(ShipSkillData data, SkillNode node, Set<String> excludedNodeIds) {
-        String partnerId = wormholePartner(data, node);
+        String partnerId = ShipTreeLinks.wormholePartner(data, node);
         return partnerId != null && !excludedNodeIds.contains(partnerId) && data.isAllocated(partnerId) ? partnerId : null;
-    }
-
-    public static SkillItemCost itemCharge(ShipSkillData data, String nodeId) {
-        String itemId = chargedItemIds(data).get(nodeId);
-        return itemId == null ? null : new SkillItemCost(itemId, data.chargedItemQuantities.getOrDefault(nodeId, 0f));
-    }
-
-    public static void recordItemCharge(ShipSkillData data, String nodeId, SkillItemCost itemCost) {
-        chargedItemIds(data).put(nodeId, itemCost.itemId());
-        data.chargedItemQuantities.put(nodeId, itemCost.quantity());
-    }
-
-    public static SkillItemCost takeItemCharge(ShipSkillData data, String nodeId) {
-        SkillItemCost charged = itemCharge(data, nodeId);
-        if (charged != null) {
-            discardItemCharge(data, nodeId);
-        }
-        return charged;
-    }
-
-    public static List<SkillItemCost> takeItemCharges(ShipSkillData data, Collection<String> nodeIds) {
-        List<SkillItemCost> charges = new ArrayList<>();
-        for (String nodeId : nodeIds) {
-            SkillItemCost charged = takeItemCharge(data, nodeId);
-            if (charged != null) {
-                charges.add(charged);
-            }
-        }
-        return charges;
-    }
-
-    private static void discardItemCharge(ShipSkillData data, String nodeId) {
-        chargedItemIds(data).remove(nodeId);
-        data.chargedItemQuantities.remove(nodeId);
-    }
-
-    private static Map<String, String> chargedItemIds(ShipSkillData data) {
-        ensureItemChargeLedger(data);
-        return data.chargedItemIds;
-    }
-
-    private static void ensureItemChargeLedger(ShipSkillData data) {
-        if (data.chargedItemIds != null && data.chargedItemQuantities != null) {
-            return;
-        }
-        data.chargedItemIds = new LinkedHashMap<>();
-        data.chargedItemQuantities = new LinkedHashMap<>();
-        if (data.npcBuild) {
-            return;
-        }
-        for (String nodeId : data.allocatedNodeIds) {
-            SkillNode node = SkillTree.getDeclared(nodeId);
-            SkillItemCost legacyCharge = node == null ? null : node.getType().getItemCost();
-            if (legacyCharge != null) {
-                data.chargedItemIds.put(nodeId, legacyCharge.itemId());
-                data.chargedItemQuantities.put(nodeId, legacyCharge.quantity());
-            }
-        }
     }
 }

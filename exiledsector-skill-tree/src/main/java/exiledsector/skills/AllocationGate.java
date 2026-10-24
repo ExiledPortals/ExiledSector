@@ -209,7 +209,7 @@ public final class AllocationGate {
         if (!isConnected(node)) {
             return Verdict.refused(Refusal.NOT_CONNECTED);
         }
-        String pairedId = ShipTrees.wormholePartner(data, node);
+        String pairedId = ShipTreeLinks.wormholePartner(data, node);
         int slotsNeeded = pairedId != null && !data.isAllocated(pairedId) ? 2 : 1;
         if (data.usedNodeSlots() + slotsNeeded > budget.maxAllocatedNodes()) {
             return Verdict.refused(Refusal.NODE_CAP);

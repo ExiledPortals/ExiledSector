@@ -51,7 +51,7 @@ class TerminalDescentListenerTest {
         when(ship.getHitpoints()).thenAnswer(call -> hull[0]);
         TerminalDescentListener descent = new TerminalDescentListener(ship);
         MutableShipStatsAPI stats = ship.getMutableStats();
-        String modId = "exiledSector_terminalDescent_nightmare";
+        String modId = "exiledLib_terminalDescent_nightmare";
 
         descent.advance(0.1f);
         assertFalse(descent.inDescent());

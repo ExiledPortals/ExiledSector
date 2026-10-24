@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 
 class ModuleBoostTest {
 
-    private static final String PREFIX = "exiledSector_moduleShare_parent_";
+    private static final String PREFIX = "exiledLib_moduleShare_parent_";
 
     private static ShipAPI parent(Map<String, Float> moduleBonuses) {
         ShipAPI parent = mock(ShipAPI.class);

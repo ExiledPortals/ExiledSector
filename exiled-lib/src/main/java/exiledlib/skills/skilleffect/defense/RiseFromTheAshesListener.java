@@ -23,12 +23,12 @@ import static exiledlib.skills.skilleffect.StatTarget.stat;
 
 final class RiseFromTheAshesListener extends ShipCombatListener implements LethalHitArbiter.Saver, AdvanceableListener {
 
-    static final String HULL_PERCENT_KEY = "exiledSector_riseFromTheAshesHullPercent";
-    static final String ARMOR_RESTORE_PERCENT_KEY = "exiledSector_riseFromTheAshesArmorRestorePercent";
-    static final String DAMAGE_TAKEN_PERCENT_KEY = "exiledSector_riseFromTheAshesDamageTakenPercent";
+    static final String HULL_PERCENT_KEY = "exiledLib_riseFromTheAshesHullPercent";
+    static final String ARMOR_RESTORE_PERCENT_KEY = "exiledLib_riseFromTheAshesArmorRestorePercent";
+    static final String DAMAGE_TAKEN_PERCENT_KEY = "exiledLib_riseFromTheAshesDamageTakenPercent";
     static final float DURATION_SECONDS = 6f;
-    static final String USED_KEY_PREFIX = "exiledSector_riseFromTheAshesUsed_";
-    private static final String MOD_ID_PREFIX = "exiledSector_riseFromTheAshes_";
+    static final String USED_KEY_PREFIX = "exiledLib_riseFromTheAshesUsed_";
+    private static final String MOD_ID_PREFIX = "exiledLib_riseFromTheAshes_";
     private static final String STATUS_ICON = "graphics/icons/hullsys/damper_field.png";
     private static final Color EMBER_COLOR = new Color(255, 140, 60);
     private static final Color JITTER_COLOR = new Color(255, 120, 40, 90);

@@ -1,6 +1,7 @@
 package exiledsector.skills.template;
 
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
@@ -20,7 +21,7 @@ public final class TemplateCapture {
     }
 
     public static List<TemplateStep> capture(ShipSkillData shipData, String startingRootId, Map<String, SkillNode> nodesById) {
-        return capture(pathAllocatedNodeIds(shipData, shipData.getAllocatedNodeIds(), startingRootId), shipData::getOptionalSelection, ShipTrees.wormholePartners(shipData),
+        return capture(pathAllocatedNodeIds(shipData, shipData.getAllocatedNodeIds(), startingRootId), shipData::getOptionalSelection, ShipTreeLinks.wormholePartners(shipData),
                 startingRootId, nodesById);
     }
 

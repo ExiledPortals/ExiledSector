@@ -10,7 +10,7 @@ import java.util.Map;
 
 final class MissileReloader {
 
-    private static final String RELOADERS_KEY = "exiledSector_missileReloaders";
+    private static final String RELOADERS_KEY = "exiledLib_missileReloaders";
 
     private final WeaponAPI[] launchers;
     private final float[] baseAmmo;

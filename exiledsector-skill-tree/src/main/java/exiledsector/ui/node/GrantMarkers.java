@@ -5,7 +5,7 @@ import exiledsector.items.ItemStore;
 import exiledsector.items.NodeGrantStatus;
 import exiledsector.skills.NodeGrants;
 import exiledsector.skills.ShipSkillData;
-import exiledsector.skills.ShipTrees;
+import exiledsector.skills.ShipTreeLinks;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ final class GrantMarkers {
         Map<String, Color> colors = new HashMap<>();
         Map<String, List<String>> activeNodeIdsBySocketId = new LinkedHashMap<>();
         Map<String, Color> socketColors = new HashMap<>();
-        ShipTrees.grantedNodesBySocket(skillData).forEach((socketId, grantedNodeIds) -> {
+        ShipTreeLinks.grantedNodesBySocket(skillData).forEach((socketId, grantedNodeIds) -> {
             Color grantColor = frameColorByItemId.apply(skillData.getSocketedItem(socketId));
             if (grantColor == null) {
                 return;

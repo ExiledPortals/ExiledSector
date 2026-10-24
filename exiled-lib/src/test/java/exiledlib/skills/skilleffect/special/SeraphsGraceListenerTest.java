@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
 
 class SeraphsGraceListenerTest {
 
-    private static final String GRACE_MOD_ID = "exiledSector_seraphsGrace_grace";
+    private static final String GRACE_MOD_ID = "exiledLib_seraphsGrace_grace";
 
     private static ShipAPI ship(String id, int owner, Map<String, Float> magnitudes) {
         ShipAPI ship = mock(ShipAPI.class);
