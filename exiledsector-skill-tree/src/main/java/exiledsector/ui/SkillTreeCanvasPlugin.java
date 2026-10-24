@@ -489,15 +489,16 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         float sceneryAlpha = backgroundAlpha * exoshipFade;
         starRenderer.setMapRadius(hyperspaceMode.starRadius(), hyperspaceMode.mapAmount());
         starRenderer.setHiddenOnMap(hyperspaceMode.hiddenStarIds());
-        starfieldRenderer.render(canvasPosition, camera.panX(), camera.panY(), backgroundAlpha * exoshipView.starfieldAlpha());
+        float starfieldParallax = renderStarfieldAmongDeepImages(viewport, backgroundAlpha * exoshipView.starfieldAlpha(),
+                sceneryAlpha, treeAlpha);
         abyssDarkness.render(canvasPosition, viewport, alphaMult);
-        staticImageRenderer.render(viewport, sceneryAlpha, hyperspaceMode.anchorIds(), treeAlpha, true);
+        staticImageRenderer.render(viewport, sceneryAlpha, hyperspaceMode.anchorIds(), treeAlpha, true, starfieldParallax);
         starRenderer.renderDisc(viewport, sceneryAlpha);
         starRenderer.renderAtmosphere(viewport, sceneryAlpha);
         starRenderer.renderAurora(viewport, sceneryAlpha);
         ringBeltRenderer.render(viewport, sceneryAlpha * treeAlpha);
         abyssSerpents.render(viewport, sceneryAlpha * treeAlpha);
-        staticImageRenderer.render(viewport, sceneryAlpha, hyperspaceMode.anchorIds(), treeAlpha, false);
+        staticImageRenderer.render(viewport, sceneryAlpha, hyperspaceMode.anchorIds(), treeAlpha, false, starfieldParallax);
         threatUnits.render(viewport, sceneryAlpha, hyperspaceMode.anchorIds(), treeAlpha);
         factionFleets.render(viewport, sceneryAlpha * treeAlpha);
         boolean pointerOverTree = mouseKnown && !chrome.contains(canvasPosition, mode, mouseX, mouseY);
@@ -530,6 +531,18 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             chrome.renderTooltips(canvasPosition, mode, mouseX, mouseY, alphaMult);
         }
         templateUi.renderModals(canvasPosition, mouseX, mouseY, alphaMult);
+    }
+
+    private float renderStarfieldAmongDeepImages(TreeViewport viewport, float starfieldAlpha, float sceneryAlpha, float treeAlpha) {
+        float drawnParallax = Float.NEGATIVE_INFINITY;
+        for (int layer = 0; layer < starfieldRenderer.layerCount(); layer++) {
+            float layerParallax = starfieldRenderer.layerParallax(layer);
+            staticImageRenderer.renderAmongStarfield(viewport, sceneryAlpha, hyperspaceMode.anchorIds(), treeAlpha,
+                    drawnParallax, layerParallax);
+            starfieldRenderer.renderLayer(canvasPosition, camera.panX(), camera.panY(), starfieldAlpha, layer);
+            drawnParallax = layerParallax;
+        }
+        return drawnParallax;
     }
 
     private void refreshRadiusRing(TreeLayers layers, boolean treeHovered) {
