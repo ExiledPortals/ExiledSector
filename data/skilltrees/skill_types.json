@@ -4677,7 +4677,7 @@
 		},
 		{
 			"id": "tania_fafnir_breeches",
-			"name": "Fafnir Breeches",
+			"name": "Dual-Feed Mounts",
 			"icon": "graphics/icons/tania_fafnir_breeches.png",
 			"tier": "NOTABLE",
 			"effects": [
@@ -4689,7 +4689,7 @@
 					"magnitude": 25
 				}
 			],
-			"description": "Fafnir cannons fire conventional shells on Gauss-rifle propulsion fed straight from the flux grid. Fafnir breech schematics salvaged from Navarchy wrecks show the crew how to wire this ship's ballistic mounts onto the same grid, so they can take energy weapons as well.",
+			"description": "Navarchy dockyards at Farige run a flux line beside the ammunition feed in every mount, so a captain can field whatever the last salvage turned up. Mount plans traded by Navarchy quartermasters let the crew rebuild this ship's ballistic mounts the same way, though the shared feed draws harder on the grid each time they fire shells.",
 			"tags": [
 				"weapons"
 			]

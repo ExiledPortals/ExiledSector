@@ -100,7 +100,7 @@ class SkillTreeHullModHybridSlotsTest {
     }
 
     private static SkillNode fafnirNode() {
-        SkillType type = new SkillType.Builder("fafnir", "Fafnir Breeches", "a.png", SkillTier.NOTABLE)
+        SkillType type = new SkillType.Builder("fafnir", "Dual-Feed Mounts", "a.png", SkillTier.NOTABLE)
                 .effects(List.of(new SkillTypeEffect(WeaponSkillEffect.BALLISTIC_SLOTS_HYBRID, 0f))).build();
         SkillNode node = new SkillNode("fafnir_1", type, List.of(), 0f, 0f);
         SkillTree.register(node);
