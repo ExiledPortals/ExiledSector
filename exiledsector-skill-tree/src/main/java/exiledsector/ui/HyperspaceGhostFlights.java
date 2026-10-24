@@ -1,8 +1,8 @@
 package exiledsector.ui;
 
+import exiledsector.ui.decoration.GhostFlight;
+import exiledsector.ui.decoration.GhostFlightPool;
 import exiledsector.ui.hyperspace.HyperspaceRoute;
-import exiledsector.ui.node.GhostFlight;
-import exiledsector.ui.node.GhostFlightPool;
 
 import java.util.List;
 import java.util.Random;

@@ -5,6 +5,8 @@ import exiledsector.skills.layout.SkillNodeDecoration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import java.util.List;
 import java.util.Set;
@@ -54,6 +56,18 @@ class SkillTreeTopologyTest {
         assertEquals(List.of("a", "b", "root"), ids(topology.sortedById()));
         assertEquals(List.of("a", "b"), ids(topology.dependents("root")));
         assertEquals(List.of(), topology.dependents("nothing"));
+    }
+
+    @Test
+    void graphQueriesLeaveTheDrawingDataUnread() {
+        List<SkillNode> nodes = List.of(node("root", SkillTier.ROOT, 0f, 0f, "a"), node("a", SkillTier.SMALL, 1f, 0f, "root"));
+        try (MockedStatic<SkillTree> skillTree = Mockito.mockStatic(SkillTree.class)) {
+            SkillTreeTopology topology = SkillTreeTopology.of(nodes);
+            topology.dependents("root");
+            topology.wormholePairs();
+
+            skillTree.verifyNoInteractions();
+        }
     }
 
     @Test

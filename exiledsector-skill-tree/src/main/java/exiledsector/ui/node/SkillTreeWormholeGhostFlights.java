@@ -7,6 +7,8 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeTopology;
 import exiledsector.ui.TreeViewport;
+import exiledsector.ui.decoration.GhostFlight;
+import exiledsector.ui.decoration.GhostFlightPool;
 
 import java.util.HashMap;
 import java.util.List;

@@ -326,7 +326,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if (exoshipView.isActive()) {
             treeSession.closeDropdown();
         }
-        camera.stopInspecting();
         camera.stopFollowing();
         exoshipView.leave();
     }

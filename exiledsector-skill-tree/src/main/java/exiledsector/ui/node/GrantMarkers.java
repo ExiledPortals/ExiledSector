@@ -84,10 +84,6 @@ final class GrantMarkers {
         grantingSocketIds = List.copyOf(activeNodeIdsBySocketId.keySet());
     }
 
-    Map<String, Color> colorByNodeId() {
-        return colorByNodeId;
-    }
-
     Color colorFor(String nodeId) {
         return colorByNodeId.get(nodeId);
     }

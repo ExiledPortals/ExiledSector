@@ -21,16 +21,18 @@ public final class SkillTreeTopology {
     public record WormholePair(SkillNode first, SkillNode second) {
     }
 
+    private record Drawing(List<Connector> connectors, Map<String, List<SkillNode>> neighbours) {
+    }
+
     private final Map<String, SkillNode> byId;
     private final List<SkillNode> roots;
     private final List<SkillNode> nonRoots;
     private final Set<String> rootIds;
     private final List<SkillNode> sortedById;
     private final Map<String, List<SkillNode>> dependents;
-    private final List<Connector> connectors;
-    private final Map<String, List<SkillNode>> drawnNeighbours;
     private final List<SkillNode> wormholes;
     private final List<WormholePair> wormholePairs;
+    private volatile Drawing drawing;
 
     private SkillTreeTopology(Collection<SkillNode> nodes) {
         Map<String, SkillNode> nodesById = new LinkedHashMap<>();
@@ -63,19 +65,28 @@ public final class SkillTreeTopology {
         sortedById = List.copyOf(sorted);
         dependents = frozen(dependentsOf(sortedById));
 
-        List<Connector> drawn = new ArrayList<>();
-        Map<String, Set<String>> neighbourIds = new HashMap<>();
         List<WormholePair> pairs = new ArrayList<>();
         for (SkillNode node : byId.values()) {
-            addDrawnEdges(node, byId, drawn, neighbourIds);
             SkillNode paired = node.getPairedNodeId() == null ? null : byId.get(node.getPairedNodeId());
             if (node.getType().getTier() == SkillTier.WORMHOLE && paired != null && node.getId().compareTo(paired.getId()) < 0) {
                 pairs.add(new WormholePair(node, paired));
             }
         }
-        connectors = List.copyOf(drawn);
         wormholePairs = List.copyOf(pairs);
-        drawnNeighbours = frozen(neighboursOf(byId.values(), neighbourIds));
+    }
+
+    private Drawing drawing() {
+        Drawing built = drawing;
+        if (built == null) {
+            List<Connector> drawn = new ArrayList<>();
+            Map<String, Set<String>> neighbourIds = new HashMap<>();
+            for (SkillNode node : byId.values()) {
+                addDrawnEdges(node, byId, drawn, neighbourIds);
+            }
+            built = new Drawing(List.copyOf(drawn), frozen(neighboursOf(byId.values(), neighbourIds)));
+            drawing = built;
+        }
+        return built;
     }
 
     private static Map<String, List<SkillNode>> dependentsOf(List<SkillNode> sortedNodes) {
@@ -179,11 +190,11 @@ public final class SkillTreeTopology {
     }
 
     public List<Connector> connectors() {
-        return connectors;
+        return drawing().connectors();
     }
 
     public List<SkillNode> drawnNeighbours(String nodeId) {
-        return drawnNeighbours.getOrDefault(nodeId, List.of());
+        return drawing().neighbours().getOrDefault(nodeId, List.of());
     }
 
     public List<SkillNode> wormholes() {

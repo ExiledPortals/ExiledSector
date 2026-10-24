@@ -34,7 +34,6 @@ import exiledsector.items.NodeGrantLinks;
 import exiledsector.items.WormholeAnchor;
 import exiledsector.items.WormholeAnchorLinks;
 import exiledsector.items.WormholeAnchorSocketLimits;
-import exiledlib.i18n.Translation;
 import exiledsector.ui.SkillTreeSounds;
 import lunalib.lunaRefit.BaseRefitButton;
 

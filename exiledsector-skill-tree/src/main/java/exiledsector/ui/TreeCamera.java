@@ -8,7 +8,6 @@ import exiledsector.ui.node.TreeAllocationSession;
 final class TreeCamera {
 
     static final float FOLLOW_SETTLE_SECONDS = 1.2f;
-    static final float FOLLOW_OFFSET_RESPONSE_PER_SECOND = 6f;
 
     private final SmoothZoom smoothZoom = new SmoothZoom(1f);
     private float panX;
@@ -23,14 +22,8 @@ final class TreeCamera {
     private float followStartX;
     private float followStartY;
     private float followSeconds;
-    private float followOffsetX;
-    private float followOffsetTargetX;
     private float followNudgeX;
     private float followNudgeY;
-
-    void startFollowing() {
-        startFollowing(SmoothZoom.MAX_ZOOM);
-    }
 
     void startFollowing(float zoomTarget) {
         followingTarget = true;
@@ -48,28 +41,8 @@ final class TreeCamera {
 
     void stopFollowing() {
         followingTarget = false;
-        followOffsetX = 0f;
-        followOffsetTargetX = 0f;
         followNudgeX = 0f;
         followNudgeY = 0f;
-    }
-
-    void setFollowOffset(float screenOffsetX) {
-        followOffsetTargetX = screenOffsetX;
-    }
-
-    void inspect(float zoom) {
-        smoothZoom.aimBeyondMax(zoom);
-    }
-
-    void stopInspecting() {
-        if (smoothZoom.target() > SmoothZoom.MAX_ZOOM) {
-            smoothZoom.aimAt(SmoothZoom.MAX_ZOOM);
-        }
-    }
-
-    boolean isFollowSettled() {
-        return followingTarget && followSeconds >= FOLLOW_SETTLE_SECONDS;
     }
 
     boolean isFollowing() {
@@ -84,8 +57,6 @@ final class TreeCamera {
         float progress = Math.min(1f, followSeconds / FOLLOW_SETTLE_SECONDS);
         float eased = Fade.smooth(progress);
         centreOn(followStartX + (treeX - followStartX) * eased + followNudgeX, followStartY + (treeY - followStartY) * eased + followNudgeY);
-        followOffsetX += (followOffsetTargetX - followOffsetX) * Math.min(1f, amount * FOLLOW_OFFSET_RESPONSE_PER_SECOND);
-        panX += followOffsetX;
     }
 
     void advanceZoom(float amount) {

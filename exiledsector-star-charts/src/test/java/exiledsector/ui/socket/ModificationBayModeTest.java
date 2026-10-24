@@ -76,6 +76,7 @@ class ModificationBayModeTest {
 
         assertEquals(BenchMode.HULL_ITEMS, openedMode.get());
         assertEquals(BenchMode.HULL_ITEMS, bay.mode());
+        assertFalse(benchListener.get().offersWormholeOpening());
         chartStorageMock.verify(() -> StarChartStoragePanel.open(any(), any(), any(), any(), any()), never());
     }
 

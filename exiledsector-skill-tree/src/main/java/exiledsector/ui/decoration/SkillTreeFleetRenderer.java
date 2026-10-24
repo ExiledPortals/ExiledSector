@@ -4,7 +4,6 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledlib.PlayerFleet;
-import exiledlib.skills.skilleffect.render.Fade;
 import exiledlib.skills.skilleffect.render.SpriteCache;
 import exiledsector.skills.SkillTree;
 import exiledsector.ui.TreeViewport;
@@ -21,7 +20,6 @@ public class SkillTreeFleetRenderer {
     static final float DEFAULT_FLEET_RADIUS = 30f;
     static final float MIN_TRAVEL_SPEED = 60f;
     static final float MAX_TRAVEL_SPEED = 400f;
-    static final float SOLO_FADE_SECONDS = 0.4f;
     private static final Random FLIGHT_RANDOM = new Random();
 
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeFleetRenderer.class);
@@ -29,19 +27,17 @@ public class SkillTreeFleetRenderer {
     private final List<RoamingShip> ships;
     private final FleetFlight flight;
     private final float cullRadius;
-    private final RoamingShip soloShip;
-    private final FleetMemberAPI soloMember;
-    private VanillaShipView soloView;
-    private boolean soloViewTried;
-    private boolean soloActive;
-    private float soloLevel;
+    private final RoamingShip viewedShip;
+    private final FleetMemberAPI viewedMember;
+    private VanillaShipView viewedShipView;
+    private boolean viewedShipViewTried;
 
-    private SkillTreeFleetRenderer(List<RoamingShip> ships, FleetFlight flight, float cullRadius, RoamingShip soloShip, FleetMemberAPI soloMember) {
+    private SkillTreeFleetRenderer(List<RoamingShip> ships, FleetFlight flight, float cullRadius, RoamingShip viewedShip, FleetMemberAPI viewedMember) {
         this.ships = ships;
         this.flight = flight;
         this.cullRadius = cullRadius;
-        this.soloShip = soloShip;
-        this.soloMember = soloMember;
+        this.viewedShip = viewedShip;
+        this.viewedMember = viewedMember;
     }
 
     public static SkillTreeFleetRenderer forPlayerFleet(String viewedMemberId) {
@@ -77,8 +73,8 @@ public class SkillTreeFleetRenderer {
         SpriteCache measuringCache = new SpriteCache(SkillTreeFleetRenderer.class);
         FleetFormation formation = FleetFormation.of(members.stream().map(FleetMemberAPI::getHullSpec).toList(), fleetRadius);
         List<RoamingShip> ships = new ArrayList<>(members.size());
-        RoamingShip soloShip = null;
-        FleetMemberAPI soloMember = null;
+        RoamingShip viewedShip = null;
+        FleetMemberAPI viewedMember = null;
         for (FleetMemberAPI member : members) {
             RoamingShip ship = formation.ship(member.getHullSpec(), measuringCache, flight.facingDeg(), random);
             if (ship == null) {
@@ -86,39 +82,21 @@ public class SkillTreeFleetRenderer {
             }
             ships.add(ship);
             if (member.getId().equals(viewedMemberId)) {
-                soloShip = ship;
-                soloMember = member;
+                viewedShip = ship;
+                viewedMember = member;
             }
         }
         ships.sort(FleetFormation.LARGEST_FIRST);
         float largestSprite = (float) ships.stream().mapToDouble(RoamingShip::longestSide).max().orElse(0.0);
-        return new SkillTreeFleetRenderer(List.copyOf(ships), flight, fleetRadius + largestSprite, soloShip, soloMember);
-    }
-
-    public void setSoloActive(boolean soloActive) {
-        this.soloActive = soloActive;
+        return new SkillTreeFleetRenderer(List.copyOf(ships), flight, fleetRadius + largestSprite, viewedShip, viewedMember);
     }
 
     public boolean hasShips() {
         return !ships.isEmpty();
     }
 
-    public float focusX() {
-        return flight.positionX() + (soloShip == null ? 0f : soloShip.drift().offsetX());
-    }
-
-    public float focusY() {
-        return flight.positionY() + (soloShip == null ? 0f : soloShip.drift().offsetY());
-    }
-
-    public float soloLongestSide() {
-        return soloShip == null ? 0f : soloShip.longestSide();
-    }
-
     public void advance(float amount) {
         if (ships.isEmpty()) return;
-        float soloStep = amount / SOLO_FADE_SECONDS;
-        soloLevel = Fade.step(soloLevel, soloActive && soloShip != null, soloStep);
         flight.advance(amount);
         for (RoamingShip ship : ships) {
             ship.drift().advance(amount, flight.facingDeg());
@@ -136,9 +114,8 @@ public class SkillTreeFleetRenderer {
             float screenScale = drift.motion().scaleMult() * zoom;
             float screenX = viewport.screenX(flight.positionX() + drift.offsetX());
             float screenY = viewport.screenY(flight.positionY() + drift.offsetY());
-            float alpha = alphaMult * (ship == soloShip ? 1f : 1f - soloLevel);
-            if (drawnShips.add(ship, screenX, screenY, screenScale, flight.engineLevel(), alpha)) {
-                drawHull(ship, screenX, screenY, screenScale, alpha);
+            if (drawnShips.add(ship, screenX, screenY, screenScale, flight.engineLevel(), alphaMult)) {
+                drawHull(ship, screenX, screenY, screenScale, alphaMult);
             }
         }
         if (!drawnShips.isEmpty()) {
@@ -148,20 +125,20 @@ public class SkillTreeFleetRenderer {
     }
 
     private void drawHull(RoamingShip ship, float screenX, float screenY, float screenScale, float alpha) {
-        VanillaShipView view = ship == soloShip ? soloView() : null;
+        VanillaShipView view = ship == viewedShip ? viewedShipView() : null;
         if (view != null && view.draw(screenX, screenY, screenScale, ship.drift().facingDeg(), alpha)) {
             return;
         }
         ship.drawHull(spriteCache, screenX, screenY, screenScale, alpha);
     }
 
-    private VanillaShipView soloView() {
-        if (!soloViewTried && soloMember != null && soloShip != null) {
-            soloViewTried = true;
-            FleetHullVisuals visuals = soloShip.engines().visuals();
-            soloView = VanillaShipView.of(soloMember, null, VanillaShipView.imageOffsetX(visuals, soloShip.width()),
-                    VanillaShipView.imageOffsetY(visuals, soloShip.height()));
+    private VanillaShipView viewedShipView() {
+        if (!viewedShipViewTried && viewedMember != null && viewedShip != null) {
+            viewedShipViewTried = true;
+            FleetHullVisuals visuals = viewedShip.engines().visuals();
+            viewedShipView = VanillaShipView.of(viewedMember, null, VanillaShipView.imageOffsetX(visuals, viewedShip.width()),
+                    VanillaShipView.imageOffsetY(visuals, viewedShip.height()));
         }
-        return soloView;
+        return viewedShipView;
     }
 }
