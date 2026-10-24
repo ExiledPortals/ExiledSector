@@ -10820,24 +10820,12 @@
 			]
 		},
 		{
-			"id": "tania_nebula_haze",
+			"id": "tania_nebula",
 			"x": 0,
 			"y": 18750,
 			"width": 6400,
 			"height": 6400,
-			"imagePath": "graphics/backgrounds/static_images/tania_nebula_haze.png",
-			"behindStars": true,
-			"tags": [
-				"tania"
-			]
-		},
-		{
-			"id": "tania_nebula_detail",
-			"x": 0,
-			"y": 18750,
-			"width": 6400,
-			"height": 6400,
-			"imagePath": "graphics/backgrounds/static_images/tania_nebula_detail.png",
+			"imagePath": "graphics/backgrounds/static_images/tania_nebula.png",
 			"behindStars": true,
 			"tags": [
 				"tania"
