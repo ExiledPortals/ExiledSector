@@ -10820,6 +10820,18 @@
 			]
 		},
 		{
+			"id": "tania_nebula",
+			"x": 0,
+			"y": 18750,
+			"width": 3200,
+			"height": 3200,
+			"imagePath": "graphics/backgrounds/static_images/tania_nebula_circular.png",
+			"behindStars": true,
+			"tags": [
+				"tania"
+			]
+		},
+		{
 			"id": "image_17",
 			"x": -44031,
 			"y": 27505,

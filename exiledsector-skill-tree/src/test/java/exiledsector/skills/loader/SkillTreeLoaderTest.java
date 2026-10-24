@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -226,6 +227,18 @@ class SkillTreeLoaderTest {
         assertEquals(750f, image.getHeight());
         assertEquals("graphics/backgrounds/static_images/hyperspace_cloud_03.png", image.getImagePath());
         assertEquals(45f, image.getRotation());
+    }
+
+    @Test
+    void aStaticImageDrawsBehindTheStarsOnlyWhenItAsksTo() throws Exception {
+        JSONObject root = new JSONObject("{ \"nodes\": [], \"staticImages\": ["
+                + "{ \"id\": \"backdrop\", \"x\": 0, \"y\": 0, \"width\": 100, \"height\": 100, \"imagePath\": \"a.png\", \"behindStars\": true },"
+                + "{ \"id\": \"cloud\", \"x\": 0, \"y\": 0, \"width\": 100, \"height\": 100, \"imagePath\": \"b.png\" } ] }");
+
+        List<StaticImage> images = SkillTreeLoader.parseStaticImages(root);
+
+        assertTrue(images.get(0).isBehindStars());
+        assertFalse(images.get(1).isBehindStars());
     }
 
     @Test

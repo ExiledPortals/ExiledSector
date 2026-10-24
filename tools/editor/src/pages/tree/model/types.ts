@@ -103,6 +103,7 @@ export interface StaticImage {
   imagePath: string | null;
   rotation: number;
   rotationSpeed: number;
+  behindStars?: boolean;
   tags?: string[];
 }
 

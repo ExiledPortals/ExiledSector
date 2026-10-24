@@ -60,6 +60,7 @@ function normalizeImages(images: Partial<StaticImage>[] | undefined): StaticImag
     imagePath: image.imagePath || null,
     rotation: image.rotation || 0,
     rotationSpeed: image.rotationSpeed || 0,
+    behindStars: image.behindStars || undefined,
     tags: image.tags ? image.tags.slice() : undefined,
   }));
 }
@@ -284,6 +285,9 @@ function serializeStaticImage(image: StaticImage): Record<string, unknown> {
   }
   if (image.rotationSpeed) {
     out.rotationSpeed = image.rotationSpeed;
+  }
+  if (image.behindStars) {
+    out.behindStars = true;
   }
   if (image.tags?.length) {
     out.tags = image.tags;

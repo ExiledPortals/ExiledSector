@@ -18,14 +18,14 @@ public class SkillTreeStaticImageRenderer {
         elapsedSeconds += amount;
     }
 
-    public void render(TreeViewport viewport, float alphaMult, Set<String> keptIds, float othersAlphaMult) {
+    public void render(TreeViewport viewport, float alphaMult, Set<String> keptIds, float othersAlphaMult, boolean behindStars) {
         float zoom = viewport.zoom();
         List<StaticImage> images = SkillTree.getStaticImages();
         if (images.isEmpty()) return;
 
         for (StaticImage image : images) {
             String imagePath = image.getImagePath();
-            if (imagePath == null || imagePath.isEmpty()) continue;
+            if (imagePath == null || imagePath.isEmpty() || image.isBehindStars() != behindStars) continue;
             float imageAlpha = keptIds.contains(image.getId()) ? alphaMult : alphaMult * othersAlphaMult;
             if (imageAlpha <= 0f) continue;
 

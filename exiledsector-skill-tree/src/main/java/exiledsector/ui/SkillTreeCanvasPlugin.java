@@ -491,12 +491,13 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         starRenderer.setHiddenOnMap(hyperspaceMode.hiddenStarIds());
         starfieldRenderer.render(canvasPosition, camera.panX(), camera.panY(), backgroundAlpha * exoshipView.starfieldAlpha());
         abyssDarkness.render(canvasPosition, viewport, alphaMult);
+        staticImageRenderer.render(viewport, sceneryAlpha, hyperspaceMode.anchorIds(), treeAlpha, true);
         starRenderer.renderDisc(viewport, sceneryAlpha);
         starRenderer.renderAtmosphere(viewport, sceneryAlpha);
         starRenderer.renderAurora(viewport, sceneryAlpha);
         ringBeltRenderer.render(viewport, sceneryAlpha * treeAlpha);
         abyssSerpents.render(viewport, sceneryAlpha * treeAlpha);
-        staticImageRenderer.render(viewport, sceneryAlpha, hyperspaceMode.anchorIds(), treeAlpha);
+        staticImageRenderer.render(viewport, sceneryAlpha, hyperspaceMode.anchorIds(), treeAlpha, false);
         threatUnits.render(viewport, sceneryAlpha, hyperspaceMode.anchorIds(), treeAlpha);
         factionFleets.render(viewport, sceneryAlpha * treeAlpha);
         boolean pointerOverTree = mouseKnown && !chrome.contains(canvasPosition, mode, mouseX, mouseY);

@@ -81,6 +81,19 @@ describe('threat unit serialisation', () => {
     expect(parseTreeDocument(typesText, JSON.stringify({ nodes })).threatUnits).toEqual([]);
   });
 
+  it('writes behindStars only on static images that draw behind the stars', () => {
+    const out = serializedTree({
+      nodes,
+      staticImages: [
+        { id: 'backdrop', x: 0, y: 0, width: 3200, height: 3200, imagePath: 'a.png', behindStars: true, tags: ['tania'] },
+        { id: 'cloud', x: 1, y: 1, width: 100, height: 100, imagePath: 'b.png' },
+      ],
+    });
+    const images = out.staticImages as Record<string, unknown>[];
+    expect(Object.keys(images[0])).toEqual(['id', 'x', 'y', 'width', 'height', 'imagePath', 'behindStars', 'tags']);
+    expect(images[1]).toEqual({ id: 'cloud', x: 1, y: 1, width: 100, height: 100, imagePath: 'b.png' });
+  });
+
   it('keeps a star overlay after the colour and leaves it out of stars without one', () => {
     const out = serializedTree({
       nodes,

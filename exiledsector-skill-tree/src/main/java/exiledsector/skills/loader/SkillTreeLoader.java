@@ -124,6 +124,7 @@ public final class SkillTreeLoader {
                 new StaticImage.Shape((float) imageJson.getDouble("width"), (float) imageJson.getDouble("height"),
                         imageJson.getString("imagePath"),
                         new Rotation((float) imageJson.optDouble("rotation", 0.0), (float) imageJson.optDouble("rotationSpeed", 0.0))),
+                imageJson.optBoolean("behindStars", false),
                 SkillTypeLoader.parseStringArray(imageJson.optJSONArray("tags")))));
         return images;
     }
