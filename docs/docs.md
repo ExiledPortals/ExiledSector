@@ -79,7 +79,8 @@ energy range per sensor strength, Disintegration, Ion Arc and energy chains also
 `BALLISTIC_SLOTS_HYBRID` (Fafnir Breeches) gives the variant its own copy of the hull spec with every non-built-in
 ballistic slot retyped to hybrid (`HybridBallisticSlots`). Saves keep only the hull id, so the copy is rebuilt each
 time hull mods apply. `SkillTreeHullMod` swaps the slots back once the effect is gone, and `UnfitWeapons` returns
-weapons that no longer fit to cargo.
+weapons that no longer fit to cargo. After a tree edit, `ShipEditSession` swaps the refit screen's own variant at once
+and `RefitShipDisplay` rebuilds its slot buttons.
 
 ## Rise From the Ashes
 

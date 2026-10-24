@@ -72,6 +72,20 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         sources.forEach(source -> source.afterStatsApplied(context, resolvedTree));
     }
 
+    public static void syncHybridBallisticSlots(FleetMemberAPI member, ShipVariantAPI variant) {
+        if (variant == null) {
+            return;
+        }
+        ShipSkillData shipData = ShipRecords.resolve(member, variant);
+        ResolvedTree resolvedTree = shipData == null ? null : ResolvedTree.of(new ShipEffectContext(shipData, member, variant, variant.getHullSize()),
+                StatBaseline.of(variant), DiminishingReturns.current());
+        if (resolvedTree != null && hasHybridBallisticSlots(resolvedTree)) {
+            HybridBallisticSlots.convert(variant);
+        } else {
+            HybridBallisticSlots.restore(variant);
+        }
+    }
+
     private static boolean hasHybridBallisticSlots(ResolvedTree resolvedTree) {
         for (ResolvedTree.Entry entry : resolvedTree.entries()) {
             if (entry instanceof ResolvedTree.EffectEntry effectEntry && effectEntry.effect() == WeaponSkillEffect.BALLISTIC_SLOTS_HYBRID) {
