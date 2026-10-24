@@ -263,6 +263,9 @@ export const UNLOCK_CONDITION_LABELS: Record<string, string> = {
   nightcrossLunarFleetDefeated: 'Nightcross: Stargazer existential threat defeated',
   nightcrossAncientPrototypeFound: 'Nightcross: an Ancient Prototype found',
   lostSectorFrozenHeartVisited: "Lost Sector: the Frozen Heart's system visited",
+  taniaBloodTrailDefeated: 'Tania: The Blood Trail of Ramirez defeated',
+  taniaFrostFireDefeated: 'Tania: The Frost Fire defeated',
+  taniaLastStriveCompleted: 'Tania: The Last Strive completed',
   threatFought: 'Player has fought a Threat fleet',
   remnantFought: 'Player has fought a Remnant fleet',
 };

@@ -56,5 +56,26 @@
 				"type": "remnantFought"
 			}
 		]
+	},
+	"gate_blood_trail_defeated": {
+		"unlockConditions": [
+			{
+				"type": "taniaBloodTrailDefeated"
+			}
+		]
+	},
+	"gate_frost_fire_defeated": {
+		"unlockConditions": [
+			{
+				"type": "taniaFrostFireDefeated"
+			}
+		]
+	},
+	"gate_last_strive_completed": {
+		"unlockConditions": [
+			{
+				"type": "taniaLastStriveCompleted"
+			}
+		]
 	}
 }

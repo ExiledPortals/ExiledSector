@@ -7,6 +7,8 @@ import exiledsector.compat.LostSectorUnlocks;
 import exiledsector.compat.NightcrossCompat;
 import exiledsector.compat.NightcrossUnlocks;
 import exiledsector.compat.RandomAssortmentCompat;
+import exiledsector.compat.TaniaCompat;
+import exiledsector.compat.TaniaUnlocks;
 import exiledsector.skills.tags.AreaToggles;
 
 import java.util.function.BiPredicate;
@@ -24,6 +26,9 @@ public enum UnlockConditionType {
     NIGHTCROSS_LUNAR_FLEET_DEFEATED(ModGate.of(NightcrossCompat::isModEnabled, NightcrossUnlocks::isLunarFleetDefeated)),
     NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND(ModGate.of(NightcrossCompat::isModEnabled, NightcrossUnlocks::isAncientPrototypeFound)),
     LOST_SECTOR_FROZEN_HEART_VISITED(ModGate.of(LostSectorCompat::isModEnabled, LostSectorUnlocks::isFrozenHeartSystemVisited)),
+    TANIA_BLOOD_TRAIL_DEFEATED(ModGate.of(TaniaCompat::isModEnabled, TaniaUnlocks::isBloodTrailDefeated)),
+    TANIA_FROST_FIRE_DEFEATED(ModGate.of(TaniaCompat::isModEnabled, TaniaUnlocks::isFrostFireDefeated)),
+    TANIA_LAST_STRIVE_COMPLETED(ModGate.of(TaniaCompat::isModEnabled, TaniaUnlocks::isLastStriveCompleted)),
     THREAT_FOUGHT(ModGate.of(() -> true, ThreatEncounter::isFought)),
     REMNANT_FOUGHT(ModGate.of(() -> true, RemnantEncounter::isFought));
 

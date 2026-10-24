@@ -7369,7 +7369,8 @@
 			"x": 0,
 			"y": 19492,
 			"tags": [
-				"tania"
+				"tania",
+				"gate_frost_fire_defeated"
 			]
 		},
 		{
@@ -7452,7 +7453,8 @@
 			"x": -645,
 			"y": 19477,
 			"tags": [
-				"tania"
+				"tania",
+				"gate_last_strive_completed"
 			]
 		},
 		{
@@ -7590,7 +7592,8 @@
 			"x": 650,
 			"y": 19504,
 			"tags": [
-				"tania"
+				"tania",
+				"gate_blood_trail_defeated"
 			]
 		}
 	],
