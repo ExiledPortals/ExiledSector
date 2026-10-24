@@ -5,19 +5,19 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipCommand;
 import com.fs.starfarer.api.combat.ShipSystemAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
-import com.fs.starfarer.api.combat.listeners.HullDamageAboutToBeTakenListener;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.skills.NeuralLinkScript;
 import com.fs.starfarer.api.util.FaderUtil;
 import com.fs.starfarer.api.util.Misc;
 import exiledlib.compat.CombatGlow;
 import exiledlib.i18n.Translation;
+import exiledlib.skills.skilleffect.special.LethalHitArbiter;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 import java.util.Map;
 
-final class PhaseAnchorDiveListener implements HullDamageAboutToBeTakenListener, AdvanceableListener {
+final class PhaseAnchorDiveListener implements LethalHitArbiter.Saver, AdvanceableListener {
 
     static final String CR_PENALTY_KEY = "exiledSector_phaseAnchorCrPenaltyPercent";
     private static final String DIVE_FLAG_KEY = "phaseAnchor_canDive";
@@ -32,14 +32,17 @@ final class PhaseAnchorDiveListener implements HullDamageAboutToBeTakenListener,
     PhaseAnchorDiveListener(ShipAPI ownerShip, String modId) {
         this.ownerShip = ownerShip;
         this.modId = modId;
+        LethalHitArbiter.addSaver(ownerShip, LethalHitArbiter.PHASE_ANCHOR_DIVE_PRIORITY, this);
     }
 
     @Override
-    public boolean notifyAboutToTakeHullDamage(Object param, ShipAPI damagedShip, Vector2f point, float damageAmount) {
-        if (diving) {
-            return true;
-        }
-        if (damageAmount < damagedShip.getHitpoints() || damagedShip.getPhaseCloak() == null) {
+    public boolean blocksHullDamage() {
+        return diving;
+    }
+
+    @Override
+    public boolean saveFromLethalHit(ShipAPI damagedShip, float damageAmount) {
+        if (damagedShip.getPhaseCloak() == null) {
             return false;
         }
 

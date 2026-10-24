@@ -1,12 +1,11 @@
 package exiledsector.skills.progression;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledlib.MockSector;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
@@ -21,9 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -196,14 +193,9 @@ class ShipLevelSystemTest {
 
     @Test
     void awardXpToFleetAwardsXpToEveryMember() {
-        Map<String, Object> persistentData = new HashMap<>();
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-
         try (MockedStatic<LunaSettings> lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
-             MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
+             MockSector mockSector = new MockSector()) {
             lunaSettingsMock.when(() -> LunaSettings.getInt(anyString(), anyString())).thenReturn(null);
-            globalMock.when(Global::getSector).thenReturn(sector);
 
             CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
             FleetDataAPI fleetData = mock(FleetDataAPI.class);
@@ -221,14 +213,9 @@ class ShipLevelSystemTest {
 
     @Test
     void awardXpToMemberAwardsXpToThatShipOnly() {
-        Map<String, Object> persistentData = new HashMap<>();
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-
         try (MockedStatic<LunaSettings> lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
-             MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
+             MockSector mockSector = new MockSector()) {
             lunaSettingsMock.when(() -> LunaSettings.getInt(anyString(), anyString())).thenReturn(null);
-            globalMock.when(Global::getSector).thenReturn(sector);
 
             ShipLevelSystem.awardXpToMember(mockMember("ship-a"), 40f);
 
@@ -244,15 +231,10 @@ class ShipLevelSystemTest {
 
     @Test
     void shipsBelowTheFleetsHighestLevelShipEarnCatchUpXp() {
-        Map<String, Object> persistentData = new HashMap<>();
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-
         try (MockedStatic<LunaSettings> lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
-             MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
+             MockSector mockSector = new MockSector()) {
             lunaSettingsMock.when(() -> LunaSettings.getInt(anyString(), anyString())).thenReturn(null);
             lunaSettingsMock.when(() -> LunaSettings.getFloat(anyString(), anyString())).thenReturn(null);
-            globalMock.when(Global::getSector).thenReturn(sector);
             ShipLevelSystem.raiseToLevel(ShipSkillDataManager.get("veteran"), 20, List.of());
             ShipLevelSystem.raiseToLevel(ShipSkillDataManager.get("middling"), 15, List.of());
 
@@ -273,15 +255,10 @@ class ShipLevelSystemTest {
 
     @Test
     void aShipAboveTheMaxLevelSetsTheCatchUpAsIfItWereAtTheMax() {
-        Map<String, Object> persistentData = new HashMap<>();
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-
         try (MockedStatic<LunaSettings> lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
-             MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class)) {
+             MockSector mockSector = new MockSector()) {
             lunaSettingsMock.when(() -> LunaSettings.getInt(anyString(), anyString())).thenReturn(null);
             lunaSettingsMock.when(() -> LunaSettings.getFloat(anyString(), anyString())).thenReturn(null);
-            globalMock.when(Global::getSector).thenReturn(sector);
             ShipSkillData overLevelled = ShipSkillDataManager.get("captured");
             for (int level = 0; level < ShipLevelConfig.DEFAULT_MAX_LEVEL + 9; level++) {
                 overLevelled.incrementLevel();

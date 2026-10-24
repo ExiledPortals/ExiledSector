@@ -55,9 +55,9 @@ class ItemCodecTest {
     @BeforeEach
     void registerDefinitions() throws Exception {
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.row("sub", "bridge", PREFIXES, SUFFIXES))
-                .put(ItemFixtures.row("gadget", "bridge", PREFIXES, SUFFIXES))
-                .put(ItemFixtures.row("relic", "bridge", PREFIXES, SUFFIXES)));
+                .put(HullItemRows.row("sub", "bridge", PREFIXES, SUFFIXES))
+                .put(HullItemRows.row("gadget", "bridge", PREFIXES, SUFFIXES))
+                .put(HullItemRows.row("relic", "bridge", PREFIXES, SUFFIXES)));
     }
 
     @AfterEach
@@ -160,8 +160,8 @@ class ItemCodecTest {
         assertEquals(new ItemData("sub", 8L, List.of(), null), NpcItems.item("npc:sub/8/"));
         assertEquals(new ItemData("sub", 7L), NpcItems.item("npc:sub/7"));
         assertEquals(new ItemData("a/b", 7L), NpcItems.item("npc:a/b/7"));
-        assertEquals(ItemFixtures.data("sub", 42L, List.of(new RolledEffect("B", 2f)), null), NpcItems.item("npc:sub/42/A:1/B:2"));
-        assertEquals(ItemFixtures.data("sub", 42L, List.of(new RolledEffect("A", 1f), new RolledEffect("B", 2f)), null),
+        assertEquals(HullItemRows.data("sub", 42L, List.of(new RolledEffect("B", 2f)), null), NpcItems.item("npc:sub/42/A:1/B:2"));
+        assertEquals(HullItemRows.data("sub", 42L, List.of(new RolledEffect("A", 1f), new RolledEffect("B", 2f)), null),
                 NpcItems.item("npc:sub/42/A:1;;B:2;"));
     }
 

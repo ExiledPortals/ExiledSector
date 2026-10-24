@@ -1,6 +1,5 @@
 package exiledsector.ui.chart;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
@@ -9,6 +8,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import exiledlib.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartRun;
 import exiledsector.charts.ChartRuns;
@@ -26,8 +26,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-
-import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -174,21 +172,18 @@ class WormholeOpenCheckTest {
 
     @Test
     void theLiveCheckReadsTheSettingTheRunAndThePlayerFleet() {
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(new HashMap<>());
-        when(sector.getPlayerFleet()).thenReturn(playerFleet);
-        try (MockedStatic<Global> globalMock = Mockito.mockStatic(Global.class);
+        try (MockSector mockSector = new MockSector();
              MockedStatic<LunaSettings> lunaMock = Mockito.mockStatic(LunaSettings.class)) {
-            globalMock.when(Global::getSector).thenReturn(sector);
+            when(mockSector.sector.getPlayerFleet()).thenReturn(playerFleet);
             lunaMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.OPEN_ANYWHERE_FIELD_ID)).thenReturn(null);
-            assertEquals(Blocker.NO_GATEWAY, WormholeOpenCheck.current(sector, store, chart), "the dev switch defaults to off");
+            assertEquals(Blocker.NO_GATEWAY, WormholeOpenCheck.current(mockSector.sector, store, chart), "the dev switch defaults to off");
 
             ChartRuns.store(new ChartRun("busy", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1));
-            assertEquals(Blocker.RUN_OPEN, WormholeOpenCheck.current(sector, store, chart));
+            assertEquals(Blocker.RUN_OPEN, WormholeOpenCheck.current(mockSector.sector, store, chart));
             ChartRuns.delete("busy");
 
             lunaMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.OPEN_ANYWHERE_FIELD_ID)).thenReturn(true);
-            assertEquals(Blocker.NONE, WormholeOpenCheck.current(sector, store, chart));
+            assertEquals(Blocker.NONE, WormholeOpenCheck.current(mockSector.sector, store, chart));
         }
     }
 }

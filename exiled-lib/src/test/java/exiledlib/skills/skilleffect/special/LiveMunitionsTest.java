@@ -1,9 +1,7 @@
 package exiledlib.skills.skilleffect.special;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.AmmoTrackerAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
@@ -12,12 +10,11 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
+import exiledlib.MockSector;
 import exiledlib.skills.skilleffect.logistics.FleetCrewLedger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +35,7 @@ class LiveMunitionsTest {
 
     private static final String MOD_ID = "exiledSector_liveMunitions_ship";
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private CombatEngineAPI engine;
     private CargoAPI cargo;
 
@@ -47,22 +44,17 @@ class LiveMunitionsTest {
         engine = mock(CombatEngineAPI.class);
         when(engine.getCustomData()).thenReturn(new HashMap<>());
         when(engine.isInCampaign()).thenReturn(true);
-        cargo = mock(CargoAPI.class);
+        mockSector = new MockSector();
+        cargo = mockSector.cargo();
         when(cargo.getCrew()).thenReturn(2);
-        CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
-        when(fleet.getCargo()).thenReturn(cargo);
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPlayerFleet()).thenReturn(fleet);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getCombatEngine).thenReturn(engine);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector.global.when(Global::getCombatEngine).thenReturn(engine);
         FleetCrewLedger.drain();
     }
 
     @AfterEach
     void tearDown() {
         FleetCrewLedger.drain();
-        globalMock.close();
+        mockSector.close();
     }
 
     private record Armed(ShipAPI ship, WeaponAPI launcher, MutableStat damage, StatBonus speed, HeartlessStacks stacks) {

@@ -35,11 +35,11 @@ class ItemCorruptionTest {
     @BeforeEach
     void setUp() throws Exception {
         ItemModifiers.register(new JSONArray()
-                .put(ItemFixtures.modifierRow(SUBROUTINE_IMPLICIT, "implicit", "subroutine", "SENSOR_STRENGTH_PERCENT:5:10", "")));
+                .put(HullItemRows.modifierRow(SUBROUTINE_IMPLICIT, "implicit", "subroutine", "SENSOR_STRENGTH_PERCENT:5:10", "")));
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.row(PLATE, "armor_plating", "HULL_MULT:4:6; FLUX_CAPACITY_MULT:4:6; FLUX_DISSIPATION_MULT:4:6",
+                .put(HullItemRows.row(PLATE, "armor_plating", "HULL_MULT:4:6; FLUX_CAPACITY_MULT:4:6; FLUX_DISSIPATION_MULT:4:6",
                         "ARMOR_PERCENT:10:20; SHIELD_DAMAGE_TAKEN_MULT:-15:-10; BEAM_WEAPON_DAMAGE_PERCENT:10:15"))
-                .put(ItemFixtures.row(RELIC, "armor_plating", "HULL_MULT:8:8; ARMOR_PERCENT:25:25").put("unique", "true"))
+                .put(HullItemRows.row(RELIC, "armor_plating", "HULL_MULT:8:8; ARMOR_PERCENT:25:25").put("unique", "true"))
                 .put(ItemFixtures.subroutineRow(DOCTRINE, SubroutineKind.DOCTRINE)));
         ItemImplicits.register(new JSONArray()
                 .put(new JSONObject().put("section", "armor_plating").put("implicits", "ARMOR_PERCENT:10:20"))
@@ -169,8 +169,8 @@ class ItemCorruptionTest {
     @Test
     void aReplacedHullItemImplicitCanComeFromTheCorruptionOnlyPool() throws Exception {
         ItemModifiers.register(new JSONArray()
-                .put(ItemFixtures.modifierRow(SUBROUTINE_IMPLICIT, "implicit", "subroutine", "SENSOR_STRENGTH_PERCENT:5:10", ""))
-                .put(ItemFixtures.modifierRow(HULL_CORRUPTION_IMPLICIT, "implicit", "hull_item", "CARGO_CAPACITY_PERCENT:7:7", "")));
+                .put(HullItemRows.modifierRow(SUBROUTINE_IMPLICIT, "implicit", "subroutine", "SENSOR_STRENGTH_PERCENT:5:10", ""))
+                .put(HullItemRows.modifierRow(HULL_CORRUPTION_IMPLICIT, "implicit", "hull_item", "CARGO_CAPACITY_PERCENT:7:7", "")));
         ItemImplicits.registerCorruptionPool(new JSONArray().put(new JSONObject().put(SubroutineImplicits.IMPLICIT_COLUMN, "@" + HULL_CORRUPTION_IMPLICIT)));
 
         assertEquals(Set.of(HULL_CORRUPTION_IMPLICIT, "FLUX_DISSIPATION_PERCENT", "ARMOR_PERCENT"),

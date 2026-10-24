@@ -5,10 +5,13 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import exiledsector.skills.unlock.RelockedGates;
+import exiledsector.skills.unlock.UnlockConditionType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -82,5 +85,17 @@ class LostSectorUnlocksTest {
     @Test
     void noSectorMeansNotVisited() {
         assertFalse(LostSectorUnlocks.isFrozenHeartSystemVisited(null));
+    }
+
+    @Test
+    void enteringTheFrozenHeartSystemReopensARelockedGateAndRemembersTheVisit() {
+        RelockedGates.relock(sector, List.of(UnlockConditionType.LOST_SECTOR_FROZEN_HEART_VISITED));
+
+        LostSectorUnlocks.recordLocation(sector, mock(StarSystemAPI.class));
+        assertTrue(RelockedGates.isRelocked(sector, UnlockConditionType.LOST_SECTOR_FROZEN_HEART_VISITED));
+
+        LostSectorUnlocks.recordLocation(sector, frost);
+        assertFalse(RelockedGates.isRelocked(sector, UnlockConditionType.LOST_SECTOR_FROZEN_HEART_VISITED));
+        assertTrue(sector.getMemoryWithoutUpdate().getBoolean(LostSectorUnlocks.FROZEN_HEART_SYSTEM_VISITED_FLAG));
     }
 }

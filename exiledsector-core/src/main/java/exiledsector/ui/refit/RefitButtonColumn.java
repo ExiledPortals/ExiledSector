@@ -11,13 +11,13 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.compat.ExoticaCompat;
+import exiledsector.domain.DomainContributions;
 import exiledlib.i18n.Translation;
 import exiledsector.ui.ModificationBenchRefitButton;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BooleanSupplier;
 import java.util.function.IntSupplier;
 
@@ -35,22 +35,18 @@ public final class RefitButtonColumn {
     static final float X_ALIGN_OFFSET = -5f;
     static final float HIDDEN_OFFSET = -10000f;
     private static final Logger LOG = Logger.getLogger(RefitButtonColumn.class);
-    private static final List<ButtonSpec> DOMAIN_BUTTONS = new CopyOnWriteArrayList<>();
+    private static final DomainContributions<ButtonSpec> DOMAIN_BUTTONS = DomainContributions.fromEveryDomain(domain -> domain.refitButtons().stream()
+            .map(button -> new ButtonSpec(button.id(), button.labelKey(), button.hotkey(),
+                    () -> domain.enabled() && button.wanted().getAsBoolean(), button.press()))
+            .toList());
 
     private static boolean failed;
 
     private RefitButtonColumn() {
     }
 
-    public static void register(ButtonSpec button, BooleanSupplier domainEnabled) {
-        if (DOMAIN_BUTTONS.stream().noneMatch(registered -> registered.id().equals(button.id()))) {
-            DOMAIN_BUTTONS.add(new ButtonSpec(button.id(), button.labelKey(), button.hotkey(),
-                    () -> domainEnabled.getAsBoolean() && button.wanted().getAsBoolean(), button.press()));
-        }
-    }
-
     static List<ButtonSpec> buttons() {
-        List<ButtonSpec> buttons = new ArrayList<>(DOMAIN_BUTTONS);
+        List<ButtonSpec> buttons = new ArrayList<>(DOMAIN_BUTTONS.all());
         buttons.add(BENCH_BUTTON);
         return buttons;
     }

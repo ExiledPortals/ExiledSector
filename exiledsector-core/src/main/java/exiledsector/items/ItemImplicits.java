@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import exiledlib.HostMod;
 import exiledlib.ModCsv;
+import exiledsector.data.CsvRows;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
@@ -53,15 +54,11 @@ public final class ItemImplicits {
 
     public static void register(JSONArray rows) throws JSONException {
         Map<ItemKind, List<Modifier>> loaded = new EnumMap<>(ItemKind.class);
-        ModCsv.forEach(rows, (index, row) -> {
-            try {
-                ItemKind kind = ItemKind.byId(ModCsv.text(row, "section"));
-                List<Modifier> implicits = parseImplicits(kind, ModCsv.text(row, "implicits"));
-                if (loaded.put(kind, implicits) != null) {
-                    throw new IllegalArgumentException(kind.id() + " is listed more than once");
-                }
-            } catch (IllegalArgumentException e) {
-                LOG.error("Skipping row " + (index + 1) + " of " + dataPath() + ": " + e.getMessage());
+        CsvRows.forEachRow(rows, dataPath(), LOG, (index, row) -> {
+            ItemKind kind = ItemKind.byId(ModCsv.text(row, "section"));
+            List<Modifier> implicits = parseImplicits(kind, ModCsv.text(row, "implicits"));
+            if (loaded.put(kind, implicits) != null) {
+                throw new IllegalArgumentException(kind.id() + " is listed more than once");
             }
         });
         BY_TYPE.set(Collections.unmodifiableMap(loaded));
@@ -97,12 +94,15 @@ public final class ItemImplicits {
         return List.copyOf(implicits);
     }
 
-    private static Modifier referencedImplicit(String entryText, ItemType itemType) {
-        String referenceId = entryText.substring(ItemModifiers.REFERENCE_MARK.length()).trim();
-        if (referenceId.contains(":")) {
+    public static Modifier referencedImplicit(String entryText, ItemType itemType) {
+        if (!ItemModifiers.isReference(entryText)) {
+            throw new IllegalArgumentException("implicit \"" + entryText + "\" must reference a modifier as @ID");
+        }
+        ModifierReference reference = ModifierReference.parse(entryText);
+        if (!reference.hasShape(false, false)) {
             throw new IllegalArgumentException("implicit \"" + entryText + "\" has a weight, but implicits always roll");
         }
-        return ItemModifiers.referenced(referenceId, ModifierSlot.IMPLICIT, itemType);
+        return ItemModifiers.referenced(reference.id(), ModifierSlot.IMPLICIT, itemType);
     }
 
     private static void addImplicit(List<Modifier> implicits, Modifier implicit) {

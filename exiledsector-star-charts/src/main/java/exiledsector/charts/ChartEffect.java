@@ -9,54 +9,14 @@ import exiledlib.modifiers.ModifierEffect;
 
 public enum ChartEffect implements ModifierEffect {
 
-    CHART_FLEET_SIZE_PERCENT(false) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addFleetSizePercent(value);
-        }
-    },
-    CHART_BASE_FLEETS(true) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addBaseFleets(Math.round(value));
-        }
-    },
-    CHART_EXTRA_FLEETS(true) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addExtraFleets(Math.round(value));
-        }
-    },
-    CHART_OFFICER_LEVEL_BONUS(true) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addOfficerLevelBonus(Math.round(value));
-        }
-    },
-    CHART_EXTRA_OFFICERS(true) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addExtraOfficers(Math.round(value));
-        }
-    },
-    CHART_BOSS_SIZE_PERCENT(false) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addBossSizePercent(value);
-        }
-    },
-    CHART_FLEET_QUALITY_PERCENT(false) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addFleetQualityPercent(value);
-        }
-    },
-    CHART_SENSOR_RANGE_PERCENT(false) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addSensorRangePercent(value);
-        }
-
+    CHART_FLEET_SIZE_PERCENT(false, ChartGenContext::addFleetSizePercent),
+    CHART_BASE_FLEETS(true, (context, value) -> context.addBaseFleets(Math.round(value))),
+    CHART_EXTRA_FLEETS(true, (context, value) -> context.addExtraFleets(Math.round(value))),
+    CHART_OFFICER_LEVEL_BONUS(true, (context, value) -> context.addOfficerLevelBonus(Math.round(value))),
+    CHART_EXTRA_OFFICERS(true, (context, value) -> context.addExtraOfficers(Math.round(value))),
+    CHART_BOSS_SIZE_PERCENT(false, ChartGenContext::addBossSizePercent),
+    CHART_FLEET_QUALITY_PERCENT(false, ChartGenContext::addFleetQualityPercent),
+    CHART_SENSOR_RANGE_PERCENT(false, ChartGenContext::addSensorRangePercent) {
         @Override
         public StyledText description(float magnitude) {
             return Translation.msg(key()).arg("value", Math.abs(magnitude)).styled();
@@ -76,78 +36,18 @@ public enum ChartEffect implements ModifierEffect {
     CHART_ENEMY_DEPLOYMENT_COST_PERCENT(ChartFleetStat.ENEMY_DEPLOYMENT_COST),
     CHART_COMMAND_POINT_RATE_PERCENT(ChartFleetStat.COMMAND_POINT_RATE),
     CHART_ENEMY_OBJECTIVE_CAPTURE_RATE_PERCENT(ChartFleetStat.ENEMY_OBJECTIVE_CAPTURE_RATE),
-    CHART_SMALLER_BATTLES_FLAT(false) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addBattleSizeBonus(-value);
-        }
-    },
-    CHART_LARGER_BATTLES_FLAT(false) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addBattleSizeBonus(value);
-        }
-    },
-    CHART_ENEMY_SENSOR_RANGE_FLAT(false) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addEnemySensorRangeBonus(value);
-        }
-    },
-    CHART_QUANTITY_PERCENT(false) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addQuantityPercent(value);
-        }
-    },
-    CHART_POI_BUDGET_PERCENT(false) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addAllSiteBudgetsPercent(value);
-        }
-    },
-    CHART_CACHE_BUDGET_PERCENT(false) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addSiteBudgetPercent(ChartPoi.Kind.CACHE, value);
-        }
-    },
-    CHART_DOMAIN_BUDGET_PERCENT(false) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addSiteBudgetPercent(ChartPoi.Kind.DOMAIN, value);
-        }
-    },
-    CHART_STATION_BUDGET_PERCENT(false) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addSiteBudgetPercent(ChartPoi.Kind.STATION, value);
-        }
-    },
-    CHART_DERELICT_BUDGET_PERCENT(false) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addSiteBudgetPercent(ChartPoi.Kind.DERELICT, value);
-        }
-    },
-    CHART_EXTRA_POIS(true) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addExtraPois(Math.round(value));
-        }
-    },
-    CHART_ITEM_PERCENT(false) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addItemPercent(value);
-        }
-    },
-    CHART_ITEM_RARITY_PERCENT(false) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addItemRarityPercent(value);
-        }
-    },
+    CHART_SMALLER_BATTLES_FLAT(false, (context, value) -> context.addBattleSizeBonus(-value)),
+    CHART_LARGER_BATTLES_FLAT(false, ChartGenContext::addBattleSizeBonus),
+    CHART_ENEMY_SENSOR_RANGE_FLAT(false, ChartGenContext::addEnemySensorRangeBonus),
+    CHART_QUANTITY_PERCENT(false, ChartGenContext::addQuantityPercent),
+    CHART_POI_BUDGET_PERCENT(false, ChartGenContext::addAllSiteBudgetsPercent),
+    CHART_CACHE_BUDGET_PERCENT(false, (context, value) -> context.addSiteBudgetPercent(ChartPoi.Kind.CACHE, value)),
+    CHART_DOMAIN_BUDGET_PERCENT(false, (context, value) -> context.addSiteBudgetPercent(ChartPoi.Kind.DOMAIN, value)),
+    CHART_STATION_BUDGET_PERCENT(false, (context, value) -> context.addSiteBudgetPercent(ChartPoi.Kind.STATION, value)),
+    CHART_DERELICT_BUDGET_PERCENT(false, (context, value) -> context.addSiteBudgetPercent(ChartPoi.Kind.DERELICT, value)),
+    CHART_EXTRA_POIS(true, (context, value) -> context.addExtraPois(Math.round(value))),
+    CHART_ITEM_PERCENT(false, ChartGenContext::addItemPercent),
+    CHART_ITEM_RARITY_PERCENT(false, ChartGenContext::addItemRarityPercent),
     CHART_BRIDGE_ITEM_PERCENT(DropType.BRIDGE),
     CHART_CREW_QUARTERS_ITEM_PERCENT(DropType.CREW_QUARTERS),
     CHART_ENGINE_ROOM_ITEM_PERCENT(DropType.ENGINE_ROOM),
@@ -166,24 +66,9 @@ public enum ChartEffect implements ModifierEffect {
     CHART_BLUEPRINT_PERCENT(DropType.BLUEPRINT),
     CHART_AI_CORE_PERCENT(DropType.AI_CORE),
     CHART_COLONY_ITEM_PERCENT(DropType.COLONY_ITEM),
-    CHART_BOSS_SPOILS_PERCENT(false) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addBossSpoilsPercent(value);
-        }
-    },
-    CHART_REWARD_PERCENT(false) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addRewardPercent(value);
-        }
-    },
-    CHART_BREACH_CHANCE(false) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addExpansionChance(SpatialBreach.ID, value);
-        }
-
+    CHART_BOSS_SPOILS_PERCENT(false, ChartGenContext::addBossSpoilsPercent),
+    CHART_REWARD_PERCENT(false, ChartGenContext::addRewardPercent),
+    CHART_BREACH_CHANCE(false, (context, value) -> context.addExpansionChance(SpatialBreach.ID, value)) {
         @Override
         public StyledText description(float magnitude) {
             if (magnitude >= ChartGenContext.PERCENT) {
@@ -192,48 +77,39 @@ public enum ChartEffect implements ModifierEffect {
             return Translation.msg(key() + CHANCE_SUFFIX).arg("value", magnitude).styled();
         }
     },
-    CHART_BREACH_GROWTH_PERCENT(false) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addExpansionPercent(SpatialBreach.GROWTH_KEY, value);
-        }
-    },
-    CHART_BREACH_CACHE_PERCENT(false) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addExpansionPercent(SpatialBreach.CACHE_KEY, value);
-        }
-    },
-    CHART_BREACH_CORE_ITEM_PERCENT(false) {
-        @Override
-        public void beforeGeneration(ChartGenContext context, float value) {
-            context.addExpansionPercent(SpatialBreach.CORE_ITEM_KEY, value);
-        }
-    };
+    CHART_BREACH_GROWTH_PERCENT(false, (context, value) -> context.addExpansionPercent(SpatialBreach.GROWTH_KEY, value)),
+    CHART_BREACH_CACHE_PERCENT(false, (context, value) -> context.addExpansionPercent(SpatialBreach.CACHE_KEY, value)),
+    CHART_BREACH_CORE_ITEM_PERCENT(false, (context, value) -> context.addExpansionPercent(SpatialBreach.CORE_ITEM_KEY, value));
 
     static final String KEY_PREFIX = "chart.effect.";
     static final String CHANCE_SUFFIX = ".chance";
 
+    private interface Contribution {
+        void addTo(ChartGenContext context, float value);
+    }
+
     private final boolean counted;
     private final DropType dropType;
     private final ChartFleetStat fleetStat;
+    private final Contribution contribution;
 
-    ChartEffect(boolean counted) {
-        this.counted = counted;
-        this.dropType = null;
-        this.fleetStat = null;
+    ChartEffect(boolean counted, Contribution contribution) {
+        this(counted, null, null, contribution);
     }
 
     ChartEffect(DropType dropType) {
-        this.counted = false;
-        this.dropType = dropType;
-        this.fleetStat = null;
+        this(false, dropType, null, (context, value) -> context.addDropPercent(dropType, value));
     }
 
     ChartEffect(ChartFleetStat fleetStat) {
-        this.counted = false;
-        this.dropType = null;
+        this(false, null, fleetStat, (context, value) -> context.addFleetStatPercent(fleetStat, value));
+    }
+
+    ChartEffect(boolean counted, DropType dropType, ChartFleetStat fleetStat, Contribution contribution) {
+        this.counted = counted;
+        this.dropType = dropType;
         this.fleetStat = fleetStat;
+        this.contribution = contribution;
     }
 
     public ChartFleetStat fleetStat() {
@@ -263,11 +139,7 @@ public enum ChartEffect implements ModifierEffect {
     }
 
     public void beforeGeneration(ChartGenContext context, float value) {
-        if (fleetStat != null) {
-            context.addFleetStatPercent(fleetStat, value);
-        } else {
-            context.addDropPercent(dropType, value);
-        }
+        contribution.addTo(context, value);
     }
 
     public void afterGeneration(ChartGenerated generated, float value) {

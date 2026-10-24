@@ -1,6 +1,8 @@
 package exiledlib.skills.skilleffect;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
+import com.fs.starfarer.api.combat.ShipAPI;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
 
@@ -30,6 +32,17 @@ public final class PlayerStatus {
 
     public void invalidate() {
         text = null;
+    }
+
+    public void showIfPlayer(ShipAPI ship, boolean debuff, Supplier<String> gameText) {
+        CombatEngineAPI engine = Global.getCombatEngine();
+        if (engine == null || engine.getPlayerShip() != ship) {
+            return;
+        }
+        if (needsText()) {
+            setText(gameText);
+        }
+        show(engine, debuff);
     }
 
     public void show(CombatEngineAPI engine, boolean debuff) {

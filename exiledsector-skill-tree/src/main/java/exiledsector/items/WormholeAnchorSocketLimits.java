@@ -4,12 +4,8 @@ import exiledlib.i18n.Translation;
 import exiledsector.skills.ShipSkillData;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 import java.util.function.Function;
 
 public final class WormholeAnchorSocketLimits {
@@ -36,31 +32,12 @@ public final class WormholeAnchorSocketLimits {
         if (volume == null || socketedItemIds == null) {
             return false;
         }
-        for (Map.Entry<String, String> socketedEntry : socketedItemIds.entrySet()) {
-            String socketedItemId = socketedEntry.getValue();
-            if (socketedEntry.getKey().equals(socketNodeId) || socketedItemId == null || socketedItemId.equals(itemId)) {
-                continue;
-            }
-            if (volume.equals(volumeLookup.apply(socketedItemId))) {
-                return true;
-            }
-        }
-        return false;
+        return SocketPeers.count(socketedItemIds, socketNodeId, itemId, socketedItemId -> volume.equals(volumeLookup.apply(socketedItemId))) > 0;
     }
 
     static List<Item> unsocketExtras(Map<String, ShipSkillData> shipDataById, ItemStore store) {
-        List<Item> unsocketedItems = new ArrayList<>();
-        for (ShipSkillData shipData : shipDataById.values()) {
-            Set<String> keptVolumes = new HashSet<>();
-            for (Map.Entry<String, String> socketedEntry : new TreeMap<>(shipData.getSocketedItems()).entrySet()) {
-                Item item = store.find(socketedEntry.getValue());
-                String volume = item instanceof WormholeAnchor anchor ? anchor.volume() : null;
-                if (volume != null && !keptVolumes.add(volume)) {
-                    shipData.unsocketItem(socketedEntry.getKey());
-                    unsocketedItems.add(item);
-                }
-            }
-        }
+        List<Item> unsocketedItems = SocketPeers.unsocketPastLimits(shipDataById, store,
+                item -> item instanceof WormholeAnchor anchor && anchor.volume() != null ? List.of(new SocketPeers.Limit(anchor.volume(), 1)) : List.of());
         if (!unsocketedItems.isEmpty()) {
             LOG.info("[ExiledSector] Returned " + unsocketedItems.size() + " wormhole anchors to storage that repeated a volume already anchored on the same ship: "
                     + unsocketedItems.stream().map(Item::definitionId).toList());

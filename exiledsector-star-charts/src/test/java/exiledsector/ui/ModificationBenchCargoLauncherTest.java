@@ -5,12 +5,13 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CustomUIPanelPlugin;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
+import exiledlib.MockSector;
 import exiledsector.items.SocketCustody;
+import exiledsector.ui.socket.BenchMode;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
@@ -60,7 +62,7 @@ class ModificationBenchCargoLauncherTest {
         }
     }
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private MockedStatic<SocketCustody> custodyMock;
     private MockedStatic<SkillTreeSounds> soundsMock;
     private CorePanel corePanel;
@@ -68,7 +70,6 @@ class ModificationBenchCargoLauncherTest {
     private CustomPanelAPI benchPanel;
     private CustomUIPanelPlugin benchPlugin;
     private SettingsAPI settings;
-    private SectorAPI sector;
     private CampaignUi campaignUI;
 
     @BeforeEach
@@ -90,11 +91,9 @@ class ModificationBenchCargoLauncherTest {
         });
         campaignUI = mock(CampaignUi.class, withSettings().useConstructor().defaultAnswer(CALLS_REAL_METHODS));
         campaignUI.core = corePanel;
-        sector = mock(SectorAPI.class);
-        when(sector.getCampaignUI()).thenReturn(campaignUI);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
+        when(mockSector.sector.getCampaignUI()).thenReturn(campaignUI);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
         custodyMock = Mockito.mockStatic(SocketCustody.class);
         custodyMock.when(SocketCustody::reconcile).thenReturn(Map.of());
         soundsMock = Mockito.mockStatic(SkillTreeSounds.class);
@@ -104,7 +103,7 @@ class ModificationBenchCargoLauncherTest {
     void tearDown() {
         soundsMock.close();
         custodyMock.close();
-        globalMock.close();
+        mockSector.close();
     }
 
     @Test
@@ -122,12 +121,12 @@ class ModificationBenchCargoLauncherTest {
     @Test
     void theStarChartsEntryLocksTheBenchToStarChartsAndTheInventoryEntryDoesNot() {
         ModificationBenchCargoLauncher.open(campaignUI, null);
-        assertFalse(((ModificationBenchScreen) benchPlugin).starChartsOnly());
+        assertNull(((ModificationBenchScreen) benchPlugin).onlyMode());
         corePanel.children.clear();
 
-        assertTrue(ModificationBenchCargoLauncher.openStarCharts(campaignUI));
+        assertTrue(ModificationBenchCargoLauncher.openMode(campaignUI, BenchMode.STAR_CHARTS));
 
-        assertTrue(((ModificationBenchScreen) benchPlugin).starChartsOnly());
+        assertEquals(BenchMode.STAR_CHARTS, ((ModificationBenchScreen) benchPlugin).onlyMode());
     }
 
     @Test
@@ -143,7 +142,7 @@ class ModificationBenchCargoLauncherTest {
 
         verify(corePanel, never()).removeComponent(any());
         ArgumentCaptor<EveryFrameScript> removal = ArgumentCaptor.forClass(EveryFrameScript.class);
-        verify(sector).addTransientScript(removal.capture());
+        verify(mockSector.sector).addTransientScript(removal.capture());
         assertTrue(removal.getValue().runWhilePaused());
 
         removal.getValue().advance(0f);

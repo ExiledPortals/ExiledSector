@@ -55,7 +55,7 @@ public enum FighterSkillEffect implements BackedSkillEffect {
 
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            float mult = 1f / SkillEffectSupport.multFrom(magnitude);
+            float mult = SkillEffectSupport.inverseMultFrom(magnitude);
             stats.getDynamic().getStat("replacement_rate_decrease_mult").modifyMult(modId, mult);
             stats.getDynamic().getStat("replacement_rate_increase_mult").modifyMult(modId, mult);
         }
@@ -127,15 +127,11 @@ public enum FighterSkillEffect implements BackedSkillEffect {
     BOMBER_ROLE_SHIELD_DAMAGE_TAKEN_PERCENT(WingRole.BOMBER, RoleStat.SHIELD_DAMAGE_TAKEN),
     BOMBER_ROLE_RATE_OF_FIRE_PERCENT(WingRole.BOMBER, RoleStat.RATE_OF_FIRE),
     BOMBER_ROLE_ACCELERATION_PERCENT(WingRole.BOMBER, RoleStat.ACCELERATION),
-    BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT {
+    BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT(new FighterListenerEffect<>(BomberPayloadDetonation.CHANCE_PERCENT_KEY,
+            BomberPayloadDetonation.class, BomberPayloadDetonation::armed)) {
         @Override
         public boolean lowerIsBetter() {
             return true;
-        }
-
-        @Override
-        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
-            BomberPayloadDetonation.arm(fighter, parentShip, magnitude);
         }
 
         @Override
@@ -206,55 +202,30 @@ public enum FighterSkillEffect implements BackedSkillEffect {
             }
         }
     },
-    FIGHTER_WING_SHARED_DAMAGE_PERCENT {
-        @Override
-        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
-            WingSharedFateListener.attach(fighter, magnitude);
-        }
+    FIGHTER_WING_SHARED_DAMAGE_PERCENT(new FighterListenerEffect<>(WingSharedFateListener.SHARED_PERCENT_KEY, WingSharedFateListener.class,
+            WingSharedFateListener::new)) {
 
         @Override
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", Math.min(magnitude, WingSharedFateListener.MAX_SHARED_PERCENT)).styled();
         }
     },
-    FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER {
-        @Override
-        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
-            WingNumbersDamageListener.attach(fighter, magnitude);
-        }
+    FIGHTER_WING_DAMAGE_TAKEN_PERCENT_PER_FIGHTER(new FighterListenerEffect<>(WingNumbersDamageListener.REDUCTION_PERCENT_PER_FIGHTER_KEY,
+            WingNumbersDamageListener.class, WingNumbersDamageListener::new)) {
 
         @Override
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", magnitude).arg("max", WingNumbersDamageListener.MAX_REDUCTION_PERCENT).styled();
         }
     },
-    FIGHTER_FOCUS_FIRE_DAMAGE_PERCENT_PER_HIT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(FighterFocusFireMarks.PERCENT_PER_HIT_KEY).modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
-            FighterFocusFireMarks.markFighter(fighter, parentShip);
-        }
+    FIGHTER_FOCUS_FIRE_DAMAGE_PERCENT_PER_HIT(FighterFocusFireMarks.backing(FighterFocusFireMarks.PERCENT_PER_HIT_KEY)) {
 
         @Override
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", magnitude).arg("reset", FighterFocusFireMarks.RESET_AFTER_SECONDS).styled();
         }
     },
-    FIGHTER_FOCUS_FIRE_MAX_DAMAGE_PERCENT {
-        @Override
-        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getDynamic().getMod(FighterFocusFireMarks.MAX_PERCENT_KEY).modifyFlat(modId, magnitude);
-        }
-
-        @Override
-        public void applyToFighterSpawnedByShip(ShipAPI fighter, ShipAPI parentShip, String modId, float magnitude) {
-            FighterFocusFireMarks.markFighter(fighter, parentShip);
-        }
-    };
+    FIGHTER_FOCUS_FIRE_MAX_DAMAGE_PERCENT(FighterFocusFireMarks.backing(FighterFocusFireMarks.MAX_PERCENT_KEY));
 
     private static float convertedHangarBonusBays(MutableShipStatsAPI stats) {
         return stats.getDynamic().getMod(Stats.CONVERTED_HANGAR_MOD).computeEffective(0f);
@@ -360,8 +331,7 @@ public enum FighterSkillEffect implements BackedSkillEffect {
             }
         },
         SHIELD_DAMAGE_TAKEN(new SimpleStatEffect(PERCENT, stat(MutableShipStatsAPI::getShieldDamageTakenMult), "stat.damageTakenByShields", true)),
-        RATE_OF_FIRE(PERCENT, all(stat(MutableShipStatsAPI::getBallisticRoFMult), stat(MutableShipStatsAPI::getEnergyRoFMult),
-                stat(MutableShipStatsAPI::getMissileRoFMult)), "weapon.stat.FIRE_RATE"),
+        RATE_OF_FIRE(PERCENT, WeaponStatFamily.FIRE_RATE.target(WeaponScope.ALL), "weapon.stat.FIRE_RATE"),
         WEAPON_RANGE(FLAT, all(bonus(MutableShipStatsAPI::getBallisticWeaponRangeBonus), bonus(MutableShipStatsAPI::getEnergyWeaponRangeBonus)),
                 "weapon.stat.RANGE");
 

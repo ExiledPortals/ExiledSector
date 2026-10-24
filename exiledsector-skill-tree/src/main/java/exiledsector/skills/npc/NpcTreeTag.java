@@ -113,7 +113,7 @@ public final class NpcTreeTag {
             int separator = entry.indexOf(OPTION_SEPARATOR);
             String itemId = separator <= 0 ? null : entry.substring(separator + 1);
             if (itemId != null && NpcItems.isAnchor(itemId)) {
-                anchorsBySocketId.putIfAbsent(NodeReplacements.resolve(entry.substring(0, separator)), itemId);
+                anchorsBySocketId.putIfAbsent(NodeReplacements.current(entry.substring(0, separator)), itemId);
             }
         }
     }
@@ -124,14 +124,14 @@ public final class NpcTreeTag {
             SkillNode exit = separator <= 0 ? null : SkillTree.get(entry.substring(separator + 1));
             String anchorItemId = exit == null || exit.getType().getTier() != SkillTier.WORMHOLE_EXIT ? null : NpcItems.anchorFor(exit.getRegion());
             if (anchorItemId != null) {
-                anchorsBySocketId.putIfAbsent(NodeReplacements.resolve(entry.substring(0, separator)), anchorItemId);
+                anchorsBySocketId.putIfAbsent(NodeReplacements.current(entry.substring(0, separator)), anchorItemId);
             }
         }
     }
 
     private static void restore(ShipSkillData shipData, String entry, Map<String, String> anchorsBySocketId) {
         int optionAt = entry.indexOf(OPTION_SEPARATOR);
-        String nodeId = NodeReplacements.resolve(optionAt < 0 ? entry : entry.substring(0, optionAt));
+        String nodeId = NodeReplacements.current(optionAt < 0 ? entry : entry.substring(0, optionAt));
         SkillNode node = SkillTree.get(nodeId);
         if (node == null || shipData.isAllocated(nodeId)) {
             return;

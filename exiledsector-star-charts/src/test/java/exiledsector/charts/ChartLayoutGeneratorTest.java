@@ -1,6 +1,5 @@
 package exiledsector.charts;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.JumpPointAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
@@ -14,16 +13,14 @@ import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.campaign.procgen.ProcgenUsedNames;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
+import exiledlib.MockSector;
 import exiledlib.charts.FakeSystem;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,26 +40,23 @@ class ChartLayoutGeneratorTest {
 
     private static final String RUN_ID = "abc";
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private SectorAPI sector;
     private EconomyAPI economy;
 
     @BeforeEach
     void setUp() {
-        Map<String, Object> persistentData = new HashMap<>();
-        sector = mock(SectorAPI.class);
+        mockSector = new MockSector();
+        sector = mockSector.sector;
         economy = mock(EconomyAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
         when(sector.getEconomy()).thenReturn(economy);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
         ProcgenUsedNames.notifyUsed("Corvus");
         ProcgenUsedNames.notifyUsed(ChartIds.SYSTEM_BASE_NAME);
     }
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         ChartLayoutGenerator.resetForTests();
     }
 

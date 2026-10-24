@@ -1,8 +1,7 @@
 package exiledsector.items;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.FactionAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledlib.MockSector;
 import exiledlib.ProjectFiles;
 import exiledsector.ui.cargo.AnchorLook;
 import exiledsector.ui.cargo.CargoIconLook;
@@ -15,8 +14,6 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.awt.Color;
 import java.nio.file.Files;
@@ -34,16 +31,14 @@ class DoctrineIconLookTest {
     private static final String PLAIN_ICON = "doctrine_plain_icon_test";
     private static final String NO_ARCHIVE = "doctrine_no_archive_test";
     private static final Color HEGEMONY_UI = new Color(245, 150, 30);
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
 
     @BeforeEach
     void setUp() throws Exception {
-        SectorAPI sector = mock(SectorAPI.class);
+        mockSector = new MockSector();
         FactionAPI hegemony = mock(FactionAPI.class);
         when(hegemony.getBaseUIColor()).thenReturn(HEGEMONY_UI);
-        when(sector.getFaction("hegemony")).thenReturn(hegemony);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        when(mockSector.sector.getFaction("hegemony")).thenReturn(hegemony);
         ItemDefinitions.register(new JSONArray()
                 .put(stillRow(HEGEMONY, "hegemony"))
                 .put(stillRow(MODDED, "modded"))
@@ -59,7 +54,7 @@ class DoctrineIconLookTest {
     void tearDown() {
         DoctrineArchives.clear();
         ItemDefinitions.clear();
-        globalMock.close();
+        mockSector.close();
     }
 
     private static JSONObject stillRow(String id, String suffix) throws Exception {
@@ -106,8 +101,8 @@ class DoctrineIconLookTest {
 
     @Test
     void everyShippedDoctrineUsesItsBakedStillAndHasAnEmblemForItsFaction() throws Exception {
-        JSONArray subroutines = ItemFixtures.shippedRows(SubroutineDefinitions.dataPath());
-        JSONArray archives = ItemFixtures.shippedRows(DoctrineArchives.DATA_PATH);
+        JSONArray subroutines = HullItemRows.shippedRows(SubroutineDefinitions.dataPath());
+        JSONArray archives = HullItemRows.shippedRows(DoctrineArchives.DATA_PATH);
         assertTrue(Files.isRegularFile(ProjectFiles.projectRoot().resolve(DoctrineIconFx.STILL_PREFIX + "frame.png")));
         int checked = 0;
         for (int index = 0; index < archives.length(); index++) {

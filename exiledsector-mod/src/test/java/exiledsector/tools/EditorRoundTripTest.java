@@ -176,7 +176,7 @@ class EditorRoundTripTest {
                     List.of(new EditorSource(WORMHOLE_ANCHORS_MODEL, "WORMHOLE_ANCHOR_COLUMNS")), true),
             new Pin("wormhole_anchors.csv shared item columns", ITEM_DEFINITION, List.of("definitionId", "parseCommon"),
                     List.of(new EditorSource(WORMHOLE_ANCHORS_MODEL, "WORMHOLE_ANCHOR_COLUMNS")), true),
-            new Pin("doctrine_archives.csv columns", DOCTRINE_ARCHIVES, List.of("load", "parse"),
+            new Pin("doctrine_archives.csv columns", DOCTRINE_ARCHIVES, List.of("load", "parse", "problems"),
                     List.of(new EditorSource(DOCTRINE_ARCHIVES_MODEL, "DOCTRINE_ARCHIVE_COLUMNS")), true),
             new Pin("subroutines.csv modspec cache columns", MODSPEC_CACHES, List.of("load", "register", "parse"),
                     List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "SUBROUTINE_COLUMNS")), true));

@@ -22,6 +22,7 @@ import exiledsector.items.Item;
 import exiledsector.items.ItemDisassembly;
 import exiledsector.items.ItemRarity;
 import exiledsector.items.ItemStore;
+import exiledsector.items.MaterialMigration;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.cargo.CargoIconLooks;
@@ -53,18 +54,12 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private static final float FIELD_HEIGHT = 26f;
-    private static final float CHIP_HEIGHT = 24f;
-    private static final float CHIP_TEXT_PADDING = 28f;
-    private static final float CHIP_DARK_SCALE = 0.3f;
     private static final int FIXED_CONTROL_ROWS = 2;
     private static final float LABEL_WIDTH = 70f;
     private static final float NOTICE_HEIGHT = 56f;
     private static final float FOOTER_HEIGHT = 24f;
-    private static final float SCROLLBAR_ROOM = 14f;
-    private static final float MIN_CELL_SIZE = 72f;
     private static final int COMPACT_COLUMNS = 5;
     private static final int TREE_COLUMNS = 6;
-    private static final float COLUMN_FIT_SLACK = 0.5f;
     public static final float COMPACT_WIDTH = widthFor(COMPACT_COLUMNS);
     public static final float WIDTH = widthFor(TREE_COLUMNS);
     private static final float CONFIRM_HEIGHT = 130f;
@@ -84,17 +79,6 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private record TypeChip(ItemKind socketType) {
-    }
-
-    private record ChipColors(Color base, Color dark, Color bright) {
-
-        static ChipColors of(Color base) {
-            return new ChipColors(base, Misc.scaleColorOnly(base, CHIP_DARK_SCALE), base.brighter());
-        }
-
-        static ChipColors player() {
-            return new ChipColors(Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(), Misc.getBrightPlayerColor());
-        }
     }
 
     private final Listener storageListener;
@@ -193,6 +177,7 @@ public final class ItemStoragePanel extends HoloPanel {
     }
 
     private static String settleMaterials() {
+        MaterialMigration.convert(PlayerFleet.cargoOrNull());
         CraftingMaterials materials = playerMaterials();
         int movedCount = materials.settle();
         if (movedCount <= 0) {
@@ -519,17 +504,8 @@ public final class ItemStoragePanel extends HoloPanel {
         }
     }
 
-    private float innerWidth() {
-        return panelWidth - PAD * 2f;
-    }
-
     private static float widthFor(int columns) {
-        return PAD * 2f + SCROLLBAR_ROOM + columns * MIN_CELL_SIZE + (columns - 1) * GAP;
-    }
-
-    static int columnsFor(float panelWidth) {
-        float gridWidth = panelWidth - PAD * 2f - SCROLLBAR_ROOM;
-        return Math.max(1, (int) ((gridWidth + GAP + COLUMN_FIT_SLACK) / (MIN_CELL_SIZE + GAP)));
+        return PAD * 2f + ItemGrid.SCROLLBAR_ROOM + columns * ItemGrid.MIN_CELL_SIZE + (columns - 1) * GAP;
     }
 
     @Override
@@ -627,71 +603,33 @@ public final class ItemStoragePanel extends HoloPanel {
 
     private void rebuildControls() {
         List<ItemKind> chipTypes = chipTypes();
-        int typeRows = typeChipRows(chipTypes);
+        int typeRows = ChipFlow.rowsFor(chipTypes.stream().map(ItemKind::displayName).toList(), innerWidth());
         int controlRows = FIXED_CONTROL_ROWS + typeRows;
-        TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), controlRows * CHIP_HEIGHT + (controlRows - 1) * GAP, false);
-        float chipLeft = 0f;
+        TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), ChipFlow.height(controlRows), false);
+        ChipFlow chips = new ChipFlow(element, innerWidth());
         for (ItemStorageFilter.Status status : ItemStorageFilter.Status.values()) {
             String label = Translation.text("ui.socketStorage.status." + status.name().toLowerCase(Locale.ROOT));
-            chipLeft += addChip(element, label, new StatusChip(status), ChipColors.player(), storageFilter.status == status, chipLeft, 0) + GAP;
+            chips.placeInRow(label, new StatusChip(status), ChipFlow.Colors.player(), storageFilter.status == status);
         }
-        chipLeft = 0f;
+        chips.startRow(1);
         for (ItemRarity rarity : ItemRarity.values()) {
             String label = Translation.text("ui.socketStorage.rarity." + rarity.name().toLowerCase(Locale.ROOT));
-            chipLeft += addChip(element, label, new RarityChip(rarity), ChipColors.of(rarity.color()), storageFilter.rarities.contains(rarity),
-                    chipLeft, 1) + GAP;
+            chips.placeInRow(label, new RarityChip(rarity), ChipFlow.Colors.of(rarity.color()), storageFilter.rarities.contains(rarity));
         }
-        chipLeft = 0f;
-        int chipRow = FIXED_CONTROL_ROWS;
+        chips.startRow(FIXED_CONTROL_ROWS);
         for (ItemKind socketType : chipTypes) {
-            String label = socketType.displayName();
-            float chipWidth = chipWidth(label);
-            if (chipLeft > 0f && chipLeft + chipWidth > innerWidth()) {
-                chipLeft = 0f;
-                chipRow++;
-            }
-            chipLeft += addChip(element, label, new TypeChip(socketType), ChipColors.of(typeColor(socketType)),
-                    storageFilter.socketTypes.contains(socketType), chipLeft, chipRow) + GAP;
+            chips.place(socketType.displayName(), new TypeChip(socketType), ChipFlow.Colors.of(typeColor(socketType)),
+                    storageFilter.socketTypes.contains(socketType));
         }
         float controlsTop = PAD + HEADER_HEIGHT + GAP + FIELD_HEIGHT + GAP;
         controlsElement = replaceElement(controlsElement, element, PAD, controlsTop);
-        gridTop = controlsTop + controlRows * (CHIP_HEIGHT + GAP) + NOTICE_HEIGHT;
+        gridTop = controlsTop + ChipFlow.rowsHeight(controlRows) + NOTICE_HEIGHT;
         rebuildGrid();
-    }
-
-    private static float chipWidth(String label) {
-        return Global.getSettings().computeStringWidth(label, Fonts.ORBITRON_12) + CHIP_TEXT_PADDING;
-    }
-
-    private int typeChipRows(List<ItemKind> chipTypes) {
-        if (chipTypes.isEmpty()) {
-            return 0;
-        }
-        int rows = 1;
-        float chipLeft = 0f;
-        for (ItemKind socketType : chipTypes) {
-            float chipWidth = chipWidth(socketType.displayName());
-            if (chipLeft > 0f && chipLeft + chipWidth > innerWidth()) {
-                chipLeft = 0f;
-                rows++;
-            }
-            chipLeft += chipWidth + GAP;
-        }
-        return rows;
     }
 
     private static Color typeColor(ItemKind socketType) {
         Color kindColor = CargoIconLooks.kindColor(socketType);
         return kindColor != null ? kindColor : Misc.getBasePlayerColor();
-    }
-
-    private static float addChip(TooltipMakerAPI element, String label, Object chipId, ChipColors colors, boolean checked, float chipLeft,
-                                 int chipRow) {
-        float chipWidth = chipWidth(label);
-        ButtonAPI chip = element.addAreaCheckbox(label, chipId, colors.base(), colors.dark(), colors.bright(), chipWidth, CHIP_HEIGHT, 0f);
-        chip.setChecked(checked);
-        chip.getPosition().inTL(chipLeft, chipRow * (CHIP_HEIGHT + GAP));
-        return chipWidth;
     }
 
     private void rebuildGridKeepingScroll() {
@@ -711,33 +649,22 @@ public final class ItemStoragePanel extends HoloPanel {
         keepGridScroll = false;
         hideHoverTooltip();
         List<ItemStorageRow> matching = ItemStorageQuery.apply(storageRows, storageFilter);
-        int columns = columnsFor(panelWidth);
-        float cellSize = (innerWidth() - SCROLLBAR_ROOM - (columns - 1) * GAP) / columns;
-        float gridHeight = Math.max(cellSize, panelHeight - PAD - FOOTER_HEIGHT - GAP - gridTop);
-        TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), gridHeight, true);
-        if (matching.isEmpty()) {
-            String emptyText;
-            if (storageRows.isEmpty() && kindFilter != null) {
-                emptyText = Translation.msg("ui.socketStorage.emptyType").arg("type", kindFilter.displayName()).text();
-            } else {
-                emptyText = Translation.text(storageRows.isEmpty() && chipTypes().stream().noneMatch(storageFilter.socketTypes::contains) ? "ui.socketStorage.empty" : "ui.socketStorage.noMatches");
-            }
-            VanillaText.plainPara(element, emptyText, 0f, Misc.getGrayColor());
-        }
-        for (int start = 0; start < matching.size(); start += columns) {
-            CustomPanelAPI rowPanel = Global.getSettings().createCustom(innerWidth() - SCROLLBAR_ROOM, cellSize, null);
-            for (int i = start; i < Math.min(matching.size(), start + columns); i++) {
-                ItemStorageRow row = matching.get(i);
-                CustomPanelAPI cellPanel = Global.getSettings().createCustom(cellSize, cellSize, cellFor(row));
-                rowPanel.addComponent(cellPanel).inTL((i - start) * (cellSize + GAP), 0f);
-            }
-            element.addCustom(rowPanel, start == 0 ? 0f : GAP);
-        }
+        int columns = ItemGrid.columnsFor(panelWidth);
+        float gridHeight = Math.max(ItemGrid.cellSize(innerWidth(), columns), panelHeight - PAD - FOOTER_HEIGHT - GAP - gridTop);
+        TooltipMakerAPI element = ItemGrid.build(panelRoot, innerWidth(), gridHeight, columns, matching, this::cellFor, emptyText());
         gridElement = replaceElement(placedComponent(gridElement), element, PAD, gridTop);
         if (restoredScroll > 0f && element.getExternalScroller() != null) {
             element.getExternalScroller().setYOffset(Math.min(restoredScroll, Math.max(0f, element.getHeightSoFar() - gridHeight)));
         }
         rebuildFooter(matching);
+    }
+
+    private String emptyText() {
+        if (storageRows.isEmpty() && kindFilter != null) {
+            return Translation.msg("ui.socketStorage.emptyType").arg("type", kindFilter.displayName()).text();
+        }
+        return Translation.text(storageRows.isEmpty() && chipTypes().stream().noneMatch(storageFilter.socketTypes::contains) ? "ui.socketStorage.empty"
+                : "ui.socketStorage.noMatches");
     }
 
     private void rebuildFooter(List<ItemStorageRow> matching) {

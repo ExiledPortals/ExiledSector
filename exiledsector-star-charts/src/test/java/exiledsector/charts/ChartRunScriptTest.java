@@ -1,6 +1,5 @@
 package exiledsector.charts;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
@@ -9,16 +8,13 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.characters.AbilityPlugin;
 import com.fs.starfarer.api.impl.campaign.ids.Abilities;
+import exiledlib.MockSector;
 import exiledlib.charts.FakeCampaignUiData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -36,7 +32,7 @@ class ChartRunScriptTest {
 
     private static final String RUN_ID = "abc";
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private SectorAPI sector;
     private StarSystemAPI system;
     private LocationAPI hyperspace;
@@ -48,18 +44,14 @@ class ChartRunScriptTest {
 
     @BeforeEach
     void setUp() {
-        Map<String, Object> persistentData = new HashMap<>();
-        sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
+        sector = mockSector.sector;
         system = mock(StarSystemAPI.class);
         hyperspace = mock(LocationAPI.class);
-        playerFleet = mock(CampaignFleetAPI.class);
+        playerFleet = mockSector.playerFleet();
         transverseJump = mock(AbilityPlugin.class);
         outer = mock(CustomCampaignEntityAPI.class);
         campaignUi = mock(CampaignUIAPI.class);
-        when(sector.getPlayerFleet()).thenReturn(playerFleet);
         when(sector.getHyperspace()).thenReturn(hyperspace);
         when(sector.getCampaignUI()).thenReturn(campaignUi);
         when(sector.getStarSystem(ChartIds.systemId(RUN_ID))).thenReturn(system);
@@ -73,7 +65,7 @@ class ChartRunScriptTest {
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
     }
 
     private ChartRun storeRun(int entries) {

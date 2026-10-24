@@ -1,9 +1,14 @@
 package exiledsector.compat;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
+import com.fs.starfarer.api.campaign.listeners.CurrentLocationChangedListener;
 import exiledlib.compat.CompatTarget;
+import exiledsector.skills.unlock.GateTriggers;
+import exiledsector.skills.unlock.UnlockConditionType;
 import org.apache.log4j.Logger;
 
 public final class LostSectorUnlocks {
@@ -42,5 +47,21 @@ public final class LostSectorUnlocks {
         }
         Object systemName = sector.getPersistentData().get(FROST_SYSTEM_NAME_KEY);
         return systemName instanceof String name ? sector.getStarSystem(name) : null;
+    }
+
+    static void recordLocation(SectorAPI sector, LocationAPI location) {
+        StarSystemAPI frost = location == null || sector == null ? null : frostSystem(sector);
+        if (frost != null && location == frost) {
+            GateTriggers.record(sector, UnlockConditionType.LOST_SECTOR_FROZEN_HEART_VISITED, sector.getMemoryWithoutUpdate(),
+                    FROZEN_HEART_SYSTEM_VISITED_FLAG, "Unlocking the Enigma area: the player has entered " + frost.getBaseName() + ", the Frozen Heart's system");
+        }
+    }
+
+    public static final class LocationListener implements CurrentLocationChangedListener {
+
+        @Override
+        public void reportCurrentLocationChanged(LocationAPI previousLocation, LocationAPI currentLocation) {
+            recordLocation(Global.getSector(), currentLocation);
+        }
     }
 }

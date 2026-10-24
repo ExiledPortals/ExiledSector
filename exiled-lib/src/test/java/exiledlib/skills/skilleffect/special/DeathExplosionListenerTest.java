@@ -82,8 +82,8 @@ class DeathExplosionListenerTest {
     private static <T> T attachedListener(SkillEffect effect, ShipAPI ship, Class<T> type) {
         effect.applyAfterShipCreation(ship, "mod_id", 0f);
         ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
-        verify(ship).addListener(captor.capture());
-        return type.cast(captor.getValue());
+        verify(ship, times(2)).addListener(captor.capture());
+        return captor.getAllValues().stream().filter(type::isInstance).map(type::cast).findFirst().orElseThrow();
     }
 
     private ShipAPI explodingShip(float fuelCapacity, float fuelDamagePercent) {

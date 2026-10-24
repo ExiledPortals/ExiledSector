@@ -10,6 +10,7 @@ import exiledsector.items.SocketCustody;
 import exiledsector.ui.socket.ModificationBay;
 import exiledsector.ui.socket.SocketPanelPlacement;
 import exiledsector.ui.util.GLDraw;
+import exiledsector.ui.socket.BenchMode;
 import lunalib.lunaRefit.BaseRefitButton;
 import org.lwjgl.input.Keyboard;
 
@@ -42,7 +43,7 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin {
     }
 
     private final Host host;
-    private final boolean starChartsOnly;
+    private final BenchMode onlyMode;
     private CustomPanelAPI hostPanel;
     private ModificationBay bay;
     private Map<String, FleetMemberAPI> ownedShips = Map.of();
@@ -53,16 +54,16 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin {
     private String wormholeMessage;
 
     ModificationBenchScreen(Host host) {
-        this(host, false);
+        this(host, null);
     }
 
-    ModificationBenchScreen(Host host, boolean starChartsOnly) {
+    ModificationBenchScreen(Host host, BenchMode onlyMode) {
         this.host = host;
-        this.starChartsOnly = starChartsOnly;
+        this.onlyMode = onlyMode;
     }
 
-    boolean starChartsOnly() {
-        return starChartsOnly;
+    BenchMode onlyMode() {
+        return onlyMode;
     }
 
     void attach(CustomPanelAPI panel) {
@@ -99,7 +100,7 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin {
                     wormholeMessage = message;
                 }
             };
-            bay = starChartsOnly ? ModificationBay.openStarChartsOnly(hostPanel, area, SocketCustody.shipNames(ownedShips), bayListener)
+            bay = onlyMode != null ? ModificationBay.openMode(hostPanel, area, onlyMode, SocketCustody.shipNames(ownedShips), bayListener)
                     : ModificationBay.open(hostPanel, area, SocketCustody.shipNames(ownedShips), bayListener);
         }
         if (closing && openLevel <= 0f && !closeRequested) {

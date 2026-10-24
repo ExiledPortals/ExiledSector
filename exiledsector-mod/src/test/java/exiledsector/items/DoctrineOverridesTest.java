@@ -1,9 +1,8 @@
 package exiledsector.items;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledlib.MockSector;
 import exiledlib.skills.ShipFacts;
 import exiledlib.skills.SkillTypeEffect;
 import exiledlib.skills.skilleffect.SkillEffect;
@@ -25,14 +24,10 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -42,8 +37,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class DoctrineOverridesTest {
 
@@ -53,8 +46,7 @@ class DoctrineOverridesTest {
     private static final String UNIQUE_RELIC = "relic";
     private static final List<String> NOTABLE_POOL = List.of("faction_a", "faction_b", "faction_c");
 
-    private final Map<String, Object> persistentData = new HashMap<>();
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private SkillNode socket;
     private SkillNode nearNotable;
     private SkillNode otherNearNotable;
@@ -64,10 +56,7 @@ class DoctrineOverridesTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
         SkillTree.clear();
         NodeRadii.register(new JSONObject("{ \"small\": 150, \"medium\": 250, \"large\": 350 }"));
         registerType(type("original", SkillTier.NOTABLE, "HULL_MULT", 5f).build());
@@ -87,8 +76,8 @@ class DoctrineOverridesTest {
         nearKeystone = node("near_keystone", "old_keystone", 0f, -100f);
         farNotable = node("far_notable", "original", 5000f, 0f);
         ItemModifiers.register(new JSONArray()
-                .put(ItemFixtures.modifierRow("ARMOR_PERCENT_TEST_DOCTRINE", "prefix", "doctrine", "ARMOR_PERCENT:2:4", ""))
-                .put(ItemFixtures.modifierRow("HULL_PERCENT_TEST_DOCTRINE", "prefix", "doctrine", "HULL_PERCENT:1:3", "")));
+                .put(HullItemRows.modifierRow("ARMOR_PERCENT_TEST_DOCTRINE", "prefix", "doctrine", "ARMOR_PERCENT:2:4", ""))
+                .put(HullItemRows.modifierRow("HULL_PERCENT_TEST_DOCTRINE", "prefix", "doctrine", "HULL_PERCENT:1:3", "")));
         ItemDefinitions.register(new JSONArray()
                 .put(ItemFixtures.subroutineRow(TRANSFORM, SubroutineKind.DOCTRINE))
                 .put(ItemFixtures.subroutineRow(AUGMENT, SubroutineKind.DOCTRINE))
@@ -111,7 +100,7 @@ class DoctrineOverridesTest {
         ItemModifiers.clear();
         SkillTree.clear();
         NodeRadii.reset();
-        globalMock.close();
+        mockSector.close();
     }
 
     private static SkillType.Builder type(String id, SkillTier tier, String effectName, float magnitude) {

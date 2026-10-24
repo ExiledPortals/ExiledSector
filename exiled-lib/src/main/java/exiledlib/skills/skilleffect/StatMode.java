@@ -52,7 +52,7 @@ public enum StatMode {
 
         @Override
         float inverse(float magnitude) {
-            return (1f / SkillEffectSupport.multFrom(magnitude) - 1f) * 100f;
+            return (SkillEffectSupport.inverseMultFrom(magnitude) - 1f) * 100f;
         }
     };
 

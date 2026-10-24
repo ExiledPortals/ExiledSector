@@ -360,6 +360,21 @@ class CargoCraftingButtonTest {
     }
 
     @Test
+    void theWatcherOnlyLooksForTheButtonAgainWhenItStopsAdvancing() {
+        CargoCraftingTabListener.Watcher watcher = new CargoCraftingTabListener.Watcher();
+        doReturn(CoreUITabId.CARGO).when(campaignUI).getCurrentCoreTab();
+        watcher.advance(0f);
+        tradePanel.children.remove(container);
+
+        buttonPlugin.advance(0f);
+        watcher.advance(0f);
+        verify(settings, times(1)).createCustom(anyFloat(), anyFloat(), any());
+
+        watcher.advance(0f);
+        verify(settings, times(2)).createCustom(anyFloat(), anyFloat(), any());
+    }
+
+    @Test
     void theWatcherGivesUpWhenNoTradePanelTurnsUp() {
         CargoCraftingTabListener.Watcher watcher = new CargoCraftingTabListener.Watcher();
         doReturn(CoreUITabId.CARGO).when(campaignUI).getCurrentCoreTab();

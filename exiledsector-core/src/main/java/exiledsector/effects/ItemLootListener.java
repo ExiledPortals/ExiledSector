@@ -34,6 +34,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class ItemLootListener extends BaseCampaignEventListener implements ShipRecoveryListener {
@@ -135,28 +136,45 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         }
     }
 
+    public static void addSectionLoot(CargoAPI loot, ItemDrops.SectionItemLoot sectionLoot) {
+        addSpecials(loot, sectionLoot.items(), sectionLoot.upgrades());
+    }
+
     public static void addSiteLoot(CargoAPI loot, ItemDrops.SiteLoot siteLoot) {
-        siteLoot.items().forEach(item -> loot.addSpecial(item.toSpecialItem(), 1f));
-        siteLoot.upgrades().forEach(upgrade -> loot.addSpecial(upgrade.toSpecialItem(), 1f));
+        addSpecials(loot, siteLoot.items(), siteLoot.upgrades());
         siteLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
     }
 
+    private static void addSpecials(CargoAPI cargo, List<ItemData> items, List<RefitSchematic> upgrades) {
+        items.forEach(item -> cargo.addSpecial(item.toSpecialItem(), 1f));
+        upgrades.forEach(upgrade -> cargo.addSpecial(upgrade.toSpecialItem(), 1f));
+    }
+
     public static void deliverSiteLoot(CargoAPI cargo, ItemDrops.SiteLoot siteLoot) {
-        deliverItems(cargo, siteLoot.items());
+        deliverSiteLoot(cargo, siteLoot, ItemLootListener::announceSalvaged, MaterialDropAnnouncer::announce);
+    }
+
+    public static void deliverSiteLoot(CargoAPI cargo, ItemDrops.SiteLoot siteLoot, Consumer<Supplier<String>> announceFind,
+                                       Consumer<Map<String, Integer>> announceMaterials) {
+        deliverItems(cargo, siteLoot.items(), announceFind);
         for (RefitSchematic schematic : siteLoot.upgrades()) {
             cargo.addSpecial(schematic.toSpecialItem(), 1f);
-            announceSalvaged(schematic::displayName);
+            announceFind.accept(schematic::displayName);
         }
         siteLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(cargo, itemId, quantity));
-        MaterialDropAnnouncer.announce(siteLoot.materials());
+        announceMaterials.accept(siteLoot.materials());
     }
 
     public static void deliverItems(CargoAPI cargo, List<ItemData> items) {
+        deliverItems(cargo, items, ItemLootListener::announceSalvaged);
+    }
+
+    private static void deliverItems(CargoAPI cargo, List<ItemData> items, Consumer<Supplier<String>> announceFind) {
         for (ItemData item : items) {
             cargo.addSpecial(item.toSpecialItem(), 1f);
             Item previewItem = item.preview();
             if (previewItem != null) {
-                announceSalvaged(previewItem::name);
+                announceFind.accept(previewItem::name);
             }
         }
     }

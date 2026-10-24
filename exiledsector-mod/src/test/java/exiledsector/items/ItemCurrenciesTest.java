@@ -94,7 +94,7 @@ class ItemCurrenciesTest {
     @BeforeEach
     void setUp() throws Exception {
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.row(ItemFixtures.MILITARY, "bridge", ItemFixtures.MILITARY_PREFIXES, ItemFixtures.MILITARY_SUFFIXES))
+                .put(HullItemRows.row(HullItemRows.MILITARY, "bridge", HullItemRows.MILITARY_PREFIXES, HullItemRows.MILITARY_SUFFIXES))
                 .put(ItemFixtures.subroutineRow("volume")));
     }
 
@@ -203,7 +203,7 @@ class ItemCurrenciesTest {
     @Test
     void anAddedCurrencyJoinsTheMaterialsDropsAndCraftingForItsTypesOnly() {
         ItemCurrencies.register(annulment);
-        Item hullItem = store.add(ItemDefinitions.get(ItemFixtures.MILITARY), 4L);
+        Item hullItem = store.add(ItemDefinitions.get(HullItemRows.MILITARY), 4L);
         Item subroutine = store.add(ItemDefinitions.get("volume"), 4L);
         int explicitsBefore = hullItem.explicits().size();
         owns(ANNULMENT_ID, 2f);

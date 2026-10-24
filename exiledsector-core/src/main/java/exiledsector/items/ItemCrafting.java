@@ -475,7 +475,7 @@ public final class ItemCrafting {
             return null;
         }
         Predicate<ItemDefinition> otherUniques = definition -> otherUnique(definition, currentDefinition, item.tier(), allowedUniques);
-        ItemDefinition nextDefinition = currentDefinition.type() == ItemType.STAR_CHART ? ItemDrops.pickChart(random, otherUniques)
+        ItemDefinition nextDefinition = ItemDefinitions.isOwnType(currentDefinition.type()) ? ItemDrops.pickOfType(random, currentDefinition.type(), otherUniques)
                 : ItemDrops.pickUnique(random, otherUniques);
         if (nextDefinition == null) {
             return null;

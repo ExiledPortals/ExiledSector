@@ -2,9 +2,9 @@ package exiledsector.items;
 
 import exiledlib.ModCsv;
 import exiledlib.Seeds;
+import exiledsector.data.CsvRows;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
-import exiledsector.modifiers.ModifierSlot;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,19 +44,15 @@ public final class StarChartImplicits {
 
     public static void register(JSONArray rows) throws JSONException {
         Map<String, List<Modifier>> bySystemType = new LinkedHashMap<>();
-        ModCsv.forEach(rows == null ? new JSONArray() : rows, (index, row) -> {
-            try {
-                String systemType = StarChartDefinitions.normalisedSystemType(ModCsv.text(row, SYSTEM_TYPE_COLUMN));
-                if (systemType == null) {
-                    throw new IllegalArgumentException("\"" + ModCsv.text(row, SYSTEM_TYPE_COLUMN) + "\" is not a star chart system type; expected "
-                            + StarChartDefinitions.SYSTEM_TYPES + " or " + StarChartDefinitions.ANY_SYSTEM_TYPE);
-                }
-                List<Modifier> implicits = parseImplicits(ModCsv.text(row, "implicits"));
-                if (bySystemType.putIfAbsent(systemType, implicits) != null) {
-                    throw new IllegalArgumentException(systemType + " is listed more than once");
-                }
-            } catch (IllegalArgumentException e) {
-                LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": " + e.getMessage());
+        CsvRows.forEachRow(rows, DATA_PATH, LOG, (index, row) -> {
+            String systemType = StarChartDefinitions.normalisedSystemType(ModCsv.text(row, SYSTEM_TYPE_COLUMN));
+            if (systemType == null) {
+                throw new IllegalArgumentException("\"" + ModCsv.text(row, SYSTEM_TYPE_COLUMN) + "\" is not a star chart system type; expected "
+                        + StarChartDefinitions.SYSTEM_TYPES + " or " + StarChartDefinitions.ANY_SYSTEM_TYPE);
+            }
+            List<Modifier> implicits = parseImplicits(ModCsv.text(row, "implicits"));
+            if (bySystemType.putIfAbsent(systemType, implicits) != null) {
+                throw new IllegalArgumentException(systemType + " is listed more than once");
             }
         });
         Map<String, Modifier> distinctById = new LinkedHashMap<>();
@@ -71,14 +67,7 @@ public final class StarChartImplicits {
             if (trimmed.isEmpty()) {
                 continue;
             }
-            if (!ItemModifiers.isReference(trimmed)) {
-                throw new IllegalArgumentException("implicit \"" + trimmed + "\" must reference a modifier as @ID");
-            }
-            String referenceId = trimmed.substring(ItemModifiers.REFERENCE_MARK.length()).trim();
-            if (referenceId.contains(":")) {
-                throw new IllegalArgumentException("implicit \"" + trimmed + "\" has a weight, but implicits always roll");
-            }
-            Modifier implicit = ItemModifiers.referenced(referenceId, ModifierSlot.IMPLICIT, ItemType.STAR_CHART);
+            Modifier implicit = ItemImplicits.referencedImplicit(trimmed, ItemType.STAR_CHART);
             for (Modifier existing : implicits) {
                 if (existing.id().equals(implicit.id())) {
                     throw new IllegalArgumentException(implicit.id() + " is listed more than once");

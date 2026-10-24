@@ -104,12 +104,4 @@ class SocketWormholesTest {
 
         assertEquals(0f, wormholes.morph("socket_1"), EPSILON);
     }
-
-    @Test
-    void theMorphEasesInAndOut() {
-        assertEquals(0f, SocketWormholes.eased(0f), EPSILON);
-        assertEquals(0.5f, SocketWormholes.eased(0.5f), EPSILON);
-        assertEquals(1f, SocketWormholes.eased(1f), EPSILON);
-        assertEquals(0.104f, SocketWormholes.eased(0.2f), EPSILON);
-    }
 }

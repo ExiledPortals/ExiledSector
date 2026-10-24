@@ -12,6 +12,7 @@ import exiledsector.charts.WormholeGateway;
 import exiledlib.i18n.Translation;
 import exiledsector.ui.ModificationBenchCargoLauncher;
 import exiledsector.ui.VanillaText;
+import exiledsector.ui.socket.BenchMode;
 
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class WormholeGatewayOption extends BaseIndustryOptionProvider {
     @Override
     public void optionSelected(IndustryOptionProvider.IndustryOptionData option, DialogCreatorUI ui) {
         if (option.id == OPEN_STAR_CHARTS) {
-            ModificationBenchCargoLauncher.openStarCharts(Global.getSector().getCampaignUI());
+            ModificationBenchCargoLauncher.openMode(Global.getSector().getCampaignUI(), BenchMode.STAR_CHARTS);
         }
     }
 }

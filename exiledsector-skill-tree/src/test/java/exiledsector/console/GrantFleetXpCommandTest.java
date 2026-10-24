@@ -1,9 +1,7 @@
 package exiledsector.console;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.effects.ShipTreeSync;
 import exiledsector.skills.progression.ShipLevelSystem;
@@ -29,25 +27,21 @@ import static org.mockito.Mockito.when;
 
 class GrantFleetXpCommandTest {
 
-    private MockedStatic<Global> globalMock;
+    private ConsoleFixture fixture;
     private MockedStatic<Console> consoleMock;
     private MockedStatic<ShipLevelSystem> levelSystemMock;
     private MockedStatic<ShipTreeSync> treeSyncMock;
-    private SectorAPI sector;
     private CampaignFleetAPI fleet;
     private FleetDataAPI fleetData;
 
     @BeforeEach
     void setUp() {
-        globalMock = Mockito.mockStatic(Global.class);
-        consoleMock = Mockito.mockStatic(Console.class);
+        fixture = new ConsoleFixture();
+        consoleMock = fixture.console;
         levelSystemMock = Mockito.mockStatic(ShipLevelSystem.class);
         treeSyncMock = Mockito.mockStatic(ShipTreeSync.class);
-        sector = mock(SectorAPI.class);
-        fleet = mock(CampaignFleetAPI.class);
+        fleet = fixture.fleet;
         fleetData = mock(FleetDataAPI.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
-        when(sector.getPlayerFleet()).thenReturn(fleet);
         when(fleet.getFleetData()).thenReturn(fleetData);
         when(fleetData.getMembersListCopy()).thenReturn(List.of(mock(FleetMemberAPI.class), mock(FleetMemberAPI.class)));
     }
@@ -56,8 +50,7 @@ class GrantFleetXpCommandTest {
     void tearDown() {
         levelSystemMock.close();
         treeSyncMock.close();
-        consoleMock.close();
-        globalMock.close();
+        fixture.close();
     }
 
     private static CommandResult run(String args, CommandContext context) {
@@ -109,7 +102,7 @@ class GrantFleetXpCommandTest {
 
     @Test
     void reportsAnErrorWhenThereIsNoPlayerFleet() {
-        when(sector.getPlayerFleet()).thenReturn(null);
+        when(fixture.sector.getPlayerFleet()).thenReturn(null);
 
         assertEquals(CommandResult.ERROR, run("250", CommandContext.CAMPAIGN_MAP));
 

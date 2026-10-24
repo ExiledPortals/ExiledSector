@@ -1,9 +1,6 @@
 package exiledsector.ui.socket;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
-import com.fs.starfarer.api.ui.Fonts;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
@@ -16,6 +13,7 @@ import exiledsector.ui.VanillaText;
 import exiledsector.ui.chart.StarChartBrowser;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -30,15 +28,9 @@ public final class StarChartStoragePanel extends HoloPanel {
         void pressedInside();
     }
 
-    private static final float CHIP_HEIGHT = 24f;
-    private static final float CHIP_TEXT_PADDING = 24f;
-    private static final float CHIP_DARK_SCALE = 0.3f;
     private static final float EMPTY_TIER_SCALE = 0.55f;
     private static final float NOTICE_HEIGHT = 24f;
     private static final float FOOTER_HEIGHT = 24f;
-    private static final float SCROLLBAR_ROOM = 14f;
-    private static final float MIN_CELL_SIZE = 72f;
-    private static final float COLUMN_FIT_SLACK = 0.5f;
     private static final ItemCell.Look CELL_LOOK = new ItemCell.Look(7f, true, 1f);
 
     private enum Control {CLOSE}
@@ -141,19 +133,6 @@ public final class StarChartStoragePanel extends HoloPanel {
         refreshOpacity();
     }
 
-    private float innerWidth() {
-        return panelWidth - PAD * 2f;
-    }
-
-    static int columnsFor(float panelWidth) {
-        float gridWidth = panelWidth - PAD * 2f - SCROLLBAR_ROOM;
-        return Math.max(1, (int) ((gridWidth + GAP + COLUMN_FIT_SLACK) / (MIN_CELL_SIZE + GAP)));
-    }
-
-    private static float chipWidth(String label) {
-        return Global.getSettings().computeStringWidth(label, Fonts.ORBITRON_12) + CHIP_TEXT_PADDING;
-    }
-
     private static String tierLabel(int tier, int count) {
         return Translation.msg("chart.ui.storage.tierTab").arg("tier", tier).arg("count", count).text();
     }
@@ -162,78 +141,38 @@ public final class StarChartStoragePanel extends HoloPanel {
         return Translation.text("ui.socketStorage.rarity." + rarity.name().toLowerCase(Locale.ROOT));
     }
 
-    private int tierRows() {
-        int rows = 1;
-        float chipLeft = 0f;
-        for (int tier = StarChartBrowser.LOWEST_TIER; tier <= StarChartBrowser.HIGHEST_TIER; tier++) {
-            float chipWidth = chipWidth(tierLabel(tier, browser.count(tier)));
-            if (chipLeft > 0f && chipLeft + chipWidth > innerWidth()) {
-                chipLeft = 0f;
-                rows++;
-            }
-            chipLeft += chipWidth + GAP;
-        }
-        return rows;
-    }
-
     private void rebuildControls() {
-        int tierRows = tierRows();
-        int controlRows = tierRows + 1;
-        TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), controlRows * CHIP_HEIGHT + (controlRows - 1) * GAP, false);
-        float chipLeft = 0f;
-        int chipRow = 0;
+        List<String> tierLabels = new ArrayList<>();
         for (int tier = StarChartBrowser.LOWEST_TIER; tier <= StarChartBrowser.HIGHEST_TIER; tier++) {
-            int count = browser.count(tier);
-            String label = tierLabel(tier, count);
-            float chipWidth = chipWidth(label);
-            if (chipLeft > 0f && chipLeft + chipWidth > innerWidth()) {
-                chipLeft = 0f;
-                chipRow++;
-            }
-            Color base = count > 0 ? Misc.getBasePlayerColor() : Misc.scaleColorOnly(Misc.getGrayColor(), EMPTY_TIER_SCALE);
-            Color bright = count > 0 ? Misc.getBrightPlayerColor() : Misc.getGrayColor();
-            addChip(element, label, new TierChip(tier), base, bright, tier == browser.selectedTier(), chipLeft, chipRow);
-            chipLeft += chipWidth + GAP;
+            tierLabels.add(tierLabel(tier, browser.count(tier)));
         }
-        chipLeft = 0f;
+        int tierRows = ChipFlow.rowsFor(tierLabels, innerWidth());
+        int controlRows = tierRows + 1;
+        TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), ChipFlow.height(controlRows), false);
+        ChipFlow chips = new ChipFlow(element, innerWidth());
+        for (int tier = StarChartBrowser.LOWEST_TIER; tier <= StarChartBrowser.HIGHEST_TIER; tier++) {
+            boolean stocked = browser.count(tier) > 0;
+            Color base = stocked ? Misc.getBasePlayerColor() : Misc.scaleColorOnly(Misc.getGrayColor(), EMPTY_TIER_SCALE);
+            Color bright = stocked ? Misc.getBrightPlayerColor() : Misc.getGrayColor();
+            chips.place(tierLabels.get(tier - StarChartBrowser.LOWEST_TIER), new TierChip(tier), ChipFlow.Colors.of(base, bright),
+                    tier == browser.selectedTier());
+        }
+        chips.startRow(tierRows);
         for (ItemRarity rarity : ItemRarity.values()) {
-            String label = rarityLabel(rarity);
-            addChip(element, label, new RarityChip(rarity), rarity.color(), rarity.color().brighter(), browser.showsRarity(rarity), chipLeft,
-                    tierRows);
-            chipLeft += chipWidth(label) + GAP;
+            chips.placeInRow(rarityLabel(rarity), new RarityChip(rarity), ChipFlow.Colors.of(rarity.color()), browser.showsRarity(rarity));
         }
         float controlsTop = PAD + HEADER_HEIGHT + GAP;
         controlsElement = replaceElement(controlsElement, element, PAD, controlsTop);
-        gridTop = controlsTop + controlRows * (CHIP_HEIGHT + GAP) + NOTICE_HEIGHT;
+        gridTop = controlsTop + ChipFlow.rowsHeight(controlRows) + NOTICE_HEIGHT;
         rebuildGrid();
-    }
-
-    private static void addChip(TooltipMakerAPI element, String label, Object chipId, Color base, Color bright, boolean checked, float chipLeft,
-                                int chipRow) {
-        ButtonAPI chip = element.addAreaCheckbox(label, chipId, base, Misc.scaleColorOnly(base, CHIP_DARK_SCALE), bright, chipWidth(label),
-                CHIP_HEIGHT, 0f);
-        chip.setChecked(checked);
-        chip.getPosition().inTL(chipLeft, chipRow * (CHIP_HEIGHT + GAP));
     }
 
     private void rebuildGrid() {
         hoverTooltip.hide();
         List<Item> shown = browser.shownCharts();
-        int columns = columnsFor(panelWidth);
-        float cellSize = (innerWidth() - SCROLLBAR_ROOM - (columns - 1) * GAP) / columns;
-        float gridHeight = Math.max(cellSize, panelHeight - PAD - FOOTER_HEIGHT - GAP - gridTop);
-        TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), gridHeight, true);
-        if (shown.isEmpty()) {
-            VanillaText.plainPara(element, emptyText(), 0f, Misc.getGrayColor());
-        }
-        for (int start = 0; start < shown.size(); start += columns) {
-            CustomPanelAPI rowPanel = Global.getSettings().createCustom(innerWidth() - SCROLLBAR_ROOM, cellSize, null);
-            for (int i = start; i < Math.min(shown.size(), start + columns); i++) {
-                CustomPanelAPI cellPanel = Global.getSettings().createCustom(cellSize, cellSize, cellFor(shown.get(i)));
-                rowPanel.addComponent(cellPanel).inTL((i - start) * (cellSize + GAP), 0f);
-            }
-            element.addCustom(rowPanel, start == 0 ? 0f : GAP);
-        }
+        int columns = ItemGrid.columnsFor(panelWidth);
+        float gridHeight = Math.max(ItemGrid.cellSize(innerWidth(), columns), panelHeight - PAD - FOOTER_HEIGHT - GAP - gridTop);
+        TooltipMakerAPI element = ItemGrid.build(panelRoot, innerWidth(), gridHeight, columns, shown, this::cellFor, emptyText());
         gridElement = replaceElement(placedComponent(gridElement), element, PAD, gridTop);
         rebuildFooter();
         refreshOpacity();

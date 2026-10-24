@@ -2,7 +2,7 @@ package exiledsector.ui.node;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledlib.skills.skilleffect.render.SpriteCache;
-import exiledsector.ui.util.SpriteDraw;
+import exiledsector.ui.util.TexturedQuadBatch;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -24,6 +24,7 @@ final class SkillTreeNodeGhostRenderer {
     private static final float GHOST_MAX_ALPHA = 0.9f;
 
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeNodeGhostRenderer.class);
+    private final TexturedQuadBatch ghostQuads = new TexturedQuadBatch();
     private final Map<String, List<GhostInstance>> ghostsByNode = new HashMap<>();
     private float elapsedSeconds = 0f;
 
@@ -39,12 +40,13 @@ final class SkillTreeNodeGhostRenderer {
         Color ghostColor = GhostFlight.color();
         float ghostSize = footprintSize * GHOST_SIZE_RATIO;
 
-        for (GhostInstance ghost : ghosts) {
-            float blinkT = (float) (0.5 + 0.5 * Math.sin(2 * Math.PI * (elapsedSeconds / ghost.blinkPeriod + ghost.blinkPhase)));
-            float alpha = (GHOST_MIN_ALPHA + (GHOST_MAX_ALPHA - GHOST_MIN_ALPHA) * blinkT) * alphaMult;
-
-            SpriteDraw.drawAtCenter(sprite, cx + ghost.offsetXFraction * footprintSize, cy + ghost.offsetYFraction * footprintSize,
-                    ghostSize, ghostSize, ghostColor, alpha, ghost.rotationDeg);
+        try (TexturedQuadBatch quads = ghostQuads.beginNormal(sprite)) {
+            for (GhostInstance ghost : ghosts) {
+                float blinkT = (float) (0.5 + 0.5 * Math.sin(2 * Math.PI * (elapsedSeconds / ghost.blinkPeriod + ghost.blinkPhase)));
+                float alpha = (GHOST_MIN_ALPHA + (GHOST_MAX_ALPHA - GHOST_MIN_ALPHA) * blinkT) * alphaMult;
+                quads.quadAtCenter(cx + ghost.offsetXFraction * footprintSize, cy + ghost.offsetYFraction * footprintSize,
+                        ghostSize, ghostSize, ghost.rotationDeg, ghostColor, alpha);
+            }
         }
     }
 

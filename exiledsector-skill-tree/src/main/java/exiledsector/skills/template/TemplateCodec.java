@@ -2,6 +2,7 @@ package exiledsector.skills.template;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.skills.AffinityOptions;
+import exiledsector.skills.NodeReplacements;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,7 +55,7 @@ public final class TemplateCodec {
         if (isBlank(templateId) || isBlank(templateName) || isBlank(rootNodeId)) {
             return null;
         }
-        return new SkillTreeTemplate(templateId, templateName, rootNodeId, parseHullSize(templateJson.optString("hull", null)), parseSteps(templateJson.optJSONArray("steps")));
+        return new SkillTreeTemplate(templateId, templateName, NodeReplacements.current(rootNodeId), parseHullSize(templateJson.optString("hull", null)), parseSteps(templateJson.optJSONArray("steps")));
     }
 
     private static HullSize parseHullSize(String hullSizeName) {
@@ -80,10 +81,10 @@ public final class TemplateCodec {
             }
             int separator = entry.indexOf(OPTION_SEPARATOR);
             if (separator < 0) {
-                steps.add(new TemplateStep(entry, null));
+                steps.add(new TemplateStep(NodeReplacements.current(entry), null));
             } else if (separator > 0) {
                 String optionTypeId = entry.substring(separator + 1);
-                steps.add(new TemplateStep(entry.substring(0, separator), optionTypeId.isEmpty() ? null : AffinityOptions.currentOptionId(optionTypeId)));
+                steps.add(new TemplateStep(NodeReplacements.current(entry.substring(0, separator)), optionTypeId.isEmpty() ? null : AffinityOptions.currentOptionId(optionTypeId)));
             }
         }
         return steps;

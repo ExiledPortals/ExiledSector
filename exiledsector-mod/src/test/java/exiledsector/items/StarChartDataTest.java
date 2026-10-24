@@ -36,7 +36,7 @@ class StarChartDataTest {
     }
 
     private static JSONObject chartModifier(String id, String slot, String lines, String name) throws JSONException {
-        return ItemFixtures.modifierRow(id, slot, ItemType.STAR_CHART.id(), lines, name);
+        return HullItemRows.modifierRow(id, slot, ItemType.STAR_CHART.id(), lines, name);
     }
 
     private static JSONObject chart(String id, String systemType, String prefixes, String suffixes) throws JSONException {
@@ -52,10 +52,10 @@ class StarChartDataTest {
 
     @Test
     void theShippedChartDataHasNoIntegrityErrors() throws Exception {
-        List<Violation> violations = ItemDataChecks.checkWithStarCharts(ItemFixtures.shippedRows(ItemModifiers.dataPath()),
-                ItemFixtures.shippedRows(SubroutineDefinitions.dataPath()), ItemFixtures.shippedRows(HullItem.definitionsPath()),
-                ItemFixtures.shippedRows(ItemImplicits.dataPath()), ItemFixtures.shippedRows(StarChartItems.MODIFIERS_PATH),
-                ItemFixtures.shippedRows(StarChartDefinitions.DATA_PATH), ItemFixtures.shippedRows(StarChartImplicits.DATA_PATH));
+        List<Violation> violations = ItemDataChecks.checkWithStarCharts(HullItemRows.shippedRows(ItemModifiers.dataPath()),
+                HullItemRows.shippedRows(SubroutineDefinitions.dataPath()), HullItemRows.shippedRows(HullItem.definitionsPath()),
+                HullItemRows.shippedRows(ItemImplicits.dataPath()), HullItemRows.shippedRows(StarChartItems.MODIFIERS_PATH),
+                HullItemRows.shippedRows(StarChartDefinitions.DATA_PATH), HullItemRows.shippedRows(StarChartImplicits.DATA_PATH));
 
         assertEquals(List.of(), violations.stream().filter(violation -> violation.severity() == Severity.ERROR).toList());
         assertTrue(violations.stream().noneMatch(violation -> violation.file().equals(StarChartItems.MODIFIERS_PATH)), violations.toString());
@@ -63,7 +63,7 @@ class StarChartDataTest {
 
     @Test
     void poolEntriesCanBeGatedToATierRange() throws Exception {
-        ItemModifiers.registerStarCharts(new JSONArray().put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:t1=1/t6=2", "Discovery")),
+        ItemModifiers.registerPart(ModifierScope.STAR_CHART, new JSONArray().put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:t1=1/t6=2", "Discovery")),
                 StarChartItems.MODIFIERS_PATH);
 
         assertEquals(TierRange.between(3, 15), PoolEntry.parse("@CHART_EXTRA_POIS:4:t3-15", ModifierSlot.SUFFIX, ItemType.STAR_CHART).tiers());
@@ -80,11 +80,11 @@ class StarChartDataTest {
 
     @Test
     void chartModifiersLoadIntoTheSharedCatalogueWithoutDisturbingShipModifiers() throws Exception {
-        ItemModifiers.register(new JSONArray().put(ItemFixtures.modifierRow("HULL_MULT", "prefix", "HULL_MULT:4:6", "Reinforced")));
-        ItemModifiers.registerStarCharts(new JSONArray()
+        ItemModifiers.register(new JSONArray().put(HullItemRows.modifierRow("HULL_MULT", "prefix", "HULL_MULT:4:6", "Reinforced")));
+        ItemModifiers.registerPart(ModifierScope.STAR_CHART, new JSONArray()
                 .put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:t1=1/t6=2", "Discovery"))
                 .put(chartModifier("HULL_MULT", "suffix", "CHART_EXTRA_POIS:1:2", "Copy"))
-                .put(ItemFixtures.modifierRow("CHART_REWARD_PERCENT", "suffix", "subroutine;star_chart", "CHART_REWARD_PERCENT:1:2", "Mixed")),
+                .put(HullItemRows.modifierRow("CHART_REWARD_PERCENT", "suffix", "subroutine;star_chart", "CHART_REWARD_PERCENT:1:2", "Mixed")),
                 StarChartItems.MODIFIERS_PATH);
 
         assertNotNull(ItemModifiers.get("CHART_EXTRA_POIS"));
@@ -92,7 +92,7 @@ class StarChartDataTest {
         assertTrue(ItemModifiers.get("CHART_EXTRA_POIS").line().scalesWithTier());
         assertEquals("HULL_MULT", ItemModifiers.get("HULL_MULT").line().effectName(), "a chart row can never replace a ship modifier");
         assertNull(ItemModifiers.get("CHART_REWARD_PERCENT"), "chart rows may only roll on star charts");
-        ItemModifiers.register(new JSONArray().put(ItemFixtures.modifierRow("HULL_MULT", "prefix", "HULL_MULT:4:6", "Reinforced")));
+        ItemModifiers.register(new JSONArray().put(HullItemRows.modifierRow("HULL_MULT", "prefix", "HULL_MULT:4:6", "Reinforced")));
         assertNotNull(ItemModifiers.get("CHART_EXTRA_POIS"), "reloading ship modifiers keeps the chart ones");
         StarChartFixtures.clear();
         assertNull(ItemModifiers.get("CHART_EXTRA_POIS"));
@@ -102,16 +102,16 @@ class StarChartDataTest {
     @Test
     void theDataCheckKeepsTierSyntaxInTheChartFiles() throws Exception {
         JSONArray itemModifiers = new JSONArray()
-                .put(ItemFixtures.modifierRow("HULL_MULT", "prefix", "HULL_MULT:t1=4-6", "Reinforced"))
-                .put(ItemFixtures.modifierRow("ARMOR_PERCENT", "prefix", "star_chart", "ARMOR_PERCENT:4:6", "Plated"));
+                .put(HullItemRows.modifierRow("HULL_MULT", "prefix", "HULL_MULT:t1=4-6", "Reinforced"))
+                .put(HullItemRows.modifierRow("ARMOR_PERCENT", "prefix", "star_chart", "ARMOR_PERCENT:4:6", "Plated"));
         JSONArray chartModifiers = new JSONArray()
                 .put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:t1=1/t20=2", "Discovery"))
-                .put(ItemFixtures.modifierRow("CHART_REWARD_PERCENT", "suffix", "hull_item", "CHART_REWARD_PERCENT:1:2", "Bounty"));
+                .put(HullItemRows.modifierRow("CHART_REWARD_PERCENT", "suffix", "hull_item", "CHART_REWARD_PERCENT:1:2", "Bounty"));
         JSONArray charts = new JSONArray()
                 .put(chart("chart_a", "QUATERNARY", "", "@CHART_EXTRA_POIS:2:t3-40"))
                 .put(chart("chart_b", "SINGLE", "", "@CHART_REWARD_PERCENT:2:t3; @CHART_MISSING"));
         JSONArray implicits = new JSONArray().put(new JSONObject().put("system_type", "NEBULA").put("implicits", "@CHART_EXTRA_POIS"));
-        JSONArray hullItems = new JSONArray().put(ItemFixtures.row("chip", "bridge", "@HULL_MULT:5:t3"));
+        JSONArray hullItems = new JSONArray().put(HullItemRows.row("chip", "bridge", "@HULL_MULT:5:t3"));
 
         List<String> errors = chartErrors(itemModifiers, chartModifiers, charts, implicits);
         List<String> shipErrors = ItemDataChecks.checkWithStarCharts(itemModifiers, new JSONArray(), hullItems, new JSONArray(),
@@ -133,7 +133,7 @@ class StarChartDataTest {
 
     @Test
     void chartsCanStartAtAMinimumTierAndTheDataCheckRejectsBadOnes() throws Exception {
-        ItemModifiers.registerStarCharts(new JSONArray().put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:t1=1", "Discovery")),
+        ItemModifiers.registerPart(ModifierScope.STAR_CHART, new JSONArray().put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:t1=1", "Discovery")),
                 StarChartItems.MODIFIERS_PATH);
         StarChartDefinitions.register(new JSONArray()
                 .put(chart("chart_low", "SINGLE", "", "@CHART_EXTRA_POIS"))
@@ -165,19 +165,19 @@ class StarChartDataTest {
 
     @Test
     void chartDefinitionsNeedAKnownSystemTypeAndCannotShadowAShipItem() throws Exception {
-        ItemFixtures.registerMilitary();
-        ItemModifiers.registerStarCharts(new JSONArray().put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:t1=1", "Discovery")),
+        HullItemRows.registerMilitary();
+        ItemModifiers.registerPart(ModifierScope.STAR_CHART, new JSONArray().put(chartModifier("CHART_EXTRA_POIS", "suffix", "CHART_EXTRA_POIS:t1=1", "Discovery")),
                 StarChartItems.MODIFIERS_PATH);
         StarChartDefinitions.register(new JSONArray()
                 .put(chart("chart_ok", "binary_far", "", "@CHART_EXTRA_POIS"))
                 .put(chart("chart_any", "", "", "@CHART_EXTRA_POIS"))
                 .put(chart("chart_bad", "NEBULA", "", "@CHART_EXTRA_POIS"))
-                .put(chart(ItemFixtures.MILITARY, "SINGLE", "", "@CHART_EXTRA_POIS")));
+                .put(chart(HullItemRows.MILITARY, "SINGLE", "", "@CHART_EXTRA_POIS")));
 
         assertEquals("BINARY_FAR", StarChartDefinitions.systemType("chart_ok"));
         assertEquals(StarChartDefinitions.ANY_SYSTEM_TYPE, StarChartDefinitions.systemType("chart_any"));
         assertNull(ItemDefinitions.get("chart_bad"));
-        assertEquals(ItemType.HULL_ITEM, ItemDefinitions.get(ItemFixtures.MILITARY).type());
+        assertEquals(ItemType.HULL_ITEM, ItemDefinitions.get(HullItemRows.MILITARY).type());
         assertEquals(2, ItemDefinitions.ofType(ItemType.STAR_CHART).size());
     }
 }

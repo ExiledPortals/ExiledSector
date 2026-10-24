@@ -1,5 +1,7 @@
 package exiledsector.ui.cargo;
 
+import exiledsector.domain.DomainContributions;
+import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.CraftingWard;
 import exiledsector.items.ItemCurrencies;
@@ -11,21 +13,13 @@ import exiledsector.items.MaterialItems;
 import exiledsector.items.MaterialTier;
 
 import java.awt.Color;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class CargoIconLooks {
 
     private static final float CORRUPTED_GLOW = 0.45f;
-    private static final List<ItemIconLooks> ITEM_LOOKS = new CopyOnWriteArrayList<>();
+    private static final DomainContributions<ItemIconLooks> ITEM_LOOKS = DomainContributions.fromEveryDomain(ExiledSectorDomain::itemIconLooks);
 
     private CargoIconLooks() {
-    }
-
-    public static void register(ItemIconLooks itemLooks) {
-        if (!ITEM_LOOKS.contains(itemLooks)) {
-            ITEM_LOOKS.add(itemLooks);
-        }
     }
 
     public static CargoIconLook forMaterial(String itemId) {
@@ -60,7 +54,7 @@ public final class CargoIconLooks {
         if (item == null) {
             return null;
         }
-        for (ItemIconLooks itemLooks : ITEM_LOOKS) {
+        for (ItemIconLooks itemLooks : ITEM_LOOKS.all()) {
             CargoIconLook ownLook = itemLooks.ownLook(item);
             if (ownLook != null) {
                 return ownLook;
@@ -77,14 +71,14 @@ public final class CargoIconLooks {
         } else if (item.corrupted()) {
             look = CargoIconLook.charged(CraftingCurrency.CORRUPTION.color(), Math.max(CORRUPTED_GLOW, look.glow()));
         }
-        for (ItemIconLooks itemLooks : ITEM_LOOKS) {
+        for (ItemIconLooks itemLooks : ITEM_LOOKS.all()) {
             look = itemLooks.decorated(item, look);
         }
         return look;
     }
 
     public static Color kindColor(ItemKind kind) {
-        for (ItemIconLooks itemLooks : ITEM_LOOKS) {
+        for (ItemIconLooks itemLooks : ITEM_LOOKS.all()) {
             Color color = itemLooks.kindColor(kind);
             if (color != null) {
                 return color;

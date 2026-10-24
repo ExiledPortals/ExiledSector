@@ -3,8 +3,6 @@ package exiledsector.charts;
 import com.fs.starfarer.api.impl.campaign.procgen.ProcgenUsedNames;
 import org.apache.log4j.Logger;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,8 +11,9 @@ final class ChartUsedNames {
     static final int UNKNOWN = -1;
     static final String NAMES_FIELD = "names";
     private static final Logger LOG = Logger.getLogger(ChartUsedNames.class);
-    private static MethodHandle namesGetter;
-    private static boolean unreachable;
+    private static final PrivateField<ProcgenUsedNames> NAMES = new PrivateField<>(ProcgenUsedNames.class, NAMES_FIELD, Set.class,
+            "The used procgen name list can't be reached, so names reserved while generating Star Chart systems"
+                    + " stay reserved and the readout shows the count as unknown");
 
     private ChartUsedNames() {
     }
@@ -42,29 +41,17 @@ final class ChartUsedNames {
         return live == null ? UNKNOWN : live.size();
     }
 
-    // java:S1181: MethodHandle.invoke declares Throwable, and a changed engine may only cost releasing generated names, never the system
-    @SuppressWarnings("java:S1181")
     private static Set<?> liveNames() {
-        if (unreachable) {
+        if (!NAMES.reachable()) {
             return null;
         }
+        ProcgenUsedNames usedNames;
         try {
-            if (namesGetter == null) {
-                namesGetter = MethodHandles.privateLookupIn(ProcgenUsedNames.class, MethodHandles.lookup())
-                        .findGetter(ProcgenUsedNames.class, NAMES_FIELD, Set.class);
-            }
-        } catch (ReflectiveOperationException | RuntimeException | LinkageError e) {
-            unreachable = true;
-            LOG.warn("[ExiledSector] The used procgen name list can't be reached, so names reserved while generating Star Chart systems"
-                    + " stay reserved and the readout shows the count as unknown", e);
-            return null;
-        }
-        try {
-            ProcgenUsedNames usedNames = ProcgenUsedNames.getUsed();
-            return usedNames != null && namesGetter.invoke(usedNames) instanceof Set<?> names ? names : null;
-        } catch (Throwable e) {
+            usedNames = ProcgenUsedNames.getUsed();
+        } catch (RuntimeException e) {
             LOG.debug("The used procgen name list could not be read this time", e);
             return null;
         }
+        return NAMES.read(usedNames) instanceof Set<?> names ? names : null;
     }
 }

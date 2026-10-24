@@ -1,13 +1,13 @@
 package exiledsector.items;
 
 import exiledlib.ModCsv;
+import exiledsector.data.CsvRows;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
-import exiledsector.skills.radius.RadiusSize;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,7 +23,6 @@ import java.util.Set;
 
 import static exiledsector.items.ItemDataIntegrity.ENTRY_SEPARATOR;
 import static exiledsector.items.ItemDataIntegrity.FIRST_DATA_LINE;
-import static exiledsector.items.ItemDataIntegrity.WEIGHT_SEPARATOR;
 
 public final class SubroutineDataRules implements ItemDataRules {
 
@@ -145,13 +144,13 @@ public final class SubroutineDataRules implements ItemDataRules {
 
     private static ItemDataIntegrity.ModifierRow referencedUniqueLine(ItemDataIntegrity integrity, String file, int line, String definitionId,
                                                                       String entryText) {
-        String referenceText = entryText.substring(ItemModifiers.REFERENCE_MARK.length()).trim();
-        if (referenceText.contains(WEIGHT_SEPARATOR)) {
+        ModifierReference reference = ModifierReference.parse(entryText);
+        if (!reference.hasShape(false, false)) {
             integrity.error(file, line, definitionId + " line \"" + entryText
                     + "\" has a weight or tier range, but every unique subroutine line always rolls");
             return null;
         }
-        return integrity.referencedModifier(file, line, definitionId, referenceText, ModifierSlot.PREFIX, ModifierScope.UNIQUE_SUBROUTINE);
+        return integrity.referencedModifier(file, line, definitionId, reference.id(), ModifierSlot.PREFIX, ModifierScope.UNIQUE_SUBROUTINE);
     }
 
     private static ItemDataIntegrity.ModifierRow inlineUniqueLine(ItemDataIntegrity integrity, String file, int line, String definitionId,
@@ -190,10 +189,9 @@ public final class SubroutineDataRules implements ItemDataRules {
                 }
                 return;
             }
-            String nodeCountChances = ModCsv.text(row, ModspecCaches.NODE_COUNT_CHANCES_COLUMN);
-            if (!ModspecCaches.isValidNodeCountChances(nodeCountChances)) {
-                integrity.error(file, line, definitionId + " has the node count chances \"" + nodeCountChances
-                        + "\"; expected numbers of 0 or more separated by ;, at least one above 0");
+            String nodeCountProblem = ModspecCaches.nodeCountProblem(definitionId, ModCsv.text(row, ModspecCaches.NODE_COUNT_CHANCES_COLUMN));
+            if (nodeCountProblem != null) {
+                integrity.error(file, line, nodeCountProblem);
             }
             checkCacheChances(integrity, file, line, definitionId, row);
             checkCachePool(integrity, file, line, definitionId, ModspecCaches.nodeIds(ModCsv.text(row, ModspecCaches.EXCLUDED_NODES_COLUMN)),
@@ -204,10 +202,10 @@ public final class SubroutineDataRules implements ItemDataRules {
     private static void checkCacheChances(ItemDataIntegrity integrity, String file, int line, String definitionId, JSONObject row) {
         String dropChance = ModCsv.text(row, ModspecCaches.DROP_CHANCE_COLUMN);
         String salvageChance = ModCsv.text(row, ModspecCaches.SALVAGE_CHANCE_COLUMN);
-        if (!ModspecCaches.isValidChance(dropChance)) {
+        if (!CsvRows.isValidChance(dropChance)) {
             integrity.error(file, line, definitionId + " has the drop chance \"" + dropChance + "\"; expected a number of 0 or more");
         }
-        if (!ModspecCaches.isValidChance(salvageChance)) {
+        if (!CsvRows.isValidChance(salvageChance)) {
             integrity.error(file, line, definitionId + " has the salvage chance \"" + salvageChance + "\"; expected a number of 0 or more");
         }
         if (isZeroChance(dropChance) && isZeroChance(salvageChance)) {
@@ -284,45 +282,17 @@ public final class SubroutineDataRules implements ItemDataRules {
 
     private static void checkDoctrineRow(ItemDataIntegrity integrity, String file, int line, String definitionId, JSONObject row,
                                          Map<String, SkillType> types) {
-        String behaviourText = ModCsv.text(row, DoctrineArchives.BEHAVIOUR_COLUMN);
-        DoctrineBehaviour behaviour = DoctrineBehaviour.byIdOrNull(behaviourText);
-        if (behaviour == null) {
-            integrity.error(file, line, definitionId + " has behaviour \"" + behaviourText + "\"; expected one of " + DoctrineBehaviour.ids());
-        }
-        String radiusText = ModCsv.text(row, DoctrineArchives.RADIUS_COLUMN);
-        if (RadiusSize.byDataKeyOrNull(radiusText) == null) {
-            integrity.error(file, line, definitionId + " has radius \"" + radiusText + "\"; expected small, medium or large");
-        }
-        Integer minLines = DoctrineArchives.lineCount(ModCsv.text(row, DoctrineArchives.MIN_LINES_COLUMN));
-        Integer maxLines = DoctrineArchives.lineCount(ModCsv.text(row, DoctrineArchives.MAX_LINES_COLUMN));
-        if (minLines == null || maxLines == null || minLines < 1 || maxLines < minLines) {
-            integrity.error(file, line, definitionId + " needs min_lines of 1 or more and max_lines of at least min_lines");
-        }
-        int listedTypes = checkReplacementPool(integrity, file, line, definitionId, ModCsv.text(row, DoctrineArchives.NOTABLES_COLUMN),
-                SkillTier.NOTABLE, types)
-                + checkReplacementPool(integrity, file, line, definitionId, ModCsv.text(row, DoctrineArchives.KEYSTONES_COLUMN), SkillTier.KEYSTONE,
-                types)
-                + checkReplacementPool(integrity, file, line, definitionId, ModCsv.text(row, DoctrineArchives.SMALL_NODES_COLUMN), SkillTier.SMALL,
-                types);
-        String modifiersText = ModCsv.text(row, DoctrineArchives.MODIFIERS_COLUMN);
-        if (behaviour == DoctrineBehaviour.TRANSFORM) {
-            if (listedTypes == 0) {
-                integrity.error(file, line, definitionId + " transforms nodes but lists no replacement notables, keystones or small nodes");
-            }
-            if (!modifiersText.isEmpty()) {
-                integrity.error(file, line, definitionId + " transforms nodes, so it lists no modifiers");
-            }
-        } else if (behaviour == DoctrineBehaviour.AUGMENT) {
-            if (listedTypes > 0) {
-                integrity.error(file, line, definitionId + " augments nodes, so it lists no replacement nodes");
-            }
-            if (checkDoctrineModifiers(integrity, file, line, definitionId, modifiersText) == 0) {
-                integrity.error(file, line, definitionId + " augments nodes but lists no modifiers");
-            }
+        DoctrineArchives.problems(definitionId, row).forEach(problem -> integrity.error(file, line, problem));
+        checkReplacementPool(integrity, file, line, definitionId, ModCsv.text(row, DoctrineArchives.NOTABLES_COLUMN), SkillTier.NOTABLE, types);
+        checkReplacementPool(integrity, file, line, definitionId, ModCsv.text(row, DoctrineArchives.KEYSTONES_COLUMN), SkillTier.KEYSTONE, types);
+        checkReplacementPool(integrity, file, line, definitionId, ModCsv.text(row, DoctrineArchives.SMALL_NODES_COLUMN), SkillTier.SMALL, types);
+        if (DoctrineBehaviour.byIdOrNull(ModCsv.text(row, DoctrineArchives.BEHAVIOUR_COLUMN)) == DoctrineBehaviour.AUGMENT
+                && checkDoctrineModifiers(integrity, file, line, definitionId, ModCsv.text(row, DoctrineArchives.MODIFIERS_COLUMN)) == 0) {
+            integrity.error(file, line, definitionId + " augments nodes but lists no modifiers");
         }
     }
 
-    private static int checkReplacementPool(ItemDataIntegrity integrity, String file, int line, String definitionId, String poolText, SkillTier tier,
+    private static void checkReplacementPool(ItemDataIntegrity integrity, String file, int line, String definitionId, String poolText, SkillTier tier,
                                             Map<String, SkillType> types) {
         List<String> typeIds = DoctrineArchives.typeIds(poolText);
         for (String typeId : typeIds) {
@@ -340,7 +310,6 @@ public final class SubroutineDataRules implements ItemDataRules {
                         + ", but optional nodes and nodes with an item cost can't be replacements");
             }
         }
-        return typeIds.size();
     }
 
     private static int checkDoctrineModifiers(ItemDataIntegrity integrity, String file, int line, String definitionId, String modifiersText) {
@@ -354,15 +323,15 @@ public final class SubroutineDataRules implements ItemDataRules {
                 integrity.error(file, line, definitionId + " lists \"" + trimmed + "\" inline; reference a modifier as @ID or @ID:weight");
                 continue;
             }
-            String[] fields = trimmed.substring(ItemModifiers.REFERENCE_MARK.length()).split(WEIGHT_SEPARATOR, -1);
-            if (fields.length > 2) {
+            ModifierReference reference = ModifierReference.parse(trimmed);
+            if (!reference.hasShape(true, false)) {
                 integrity.error(file, line, definitionId + " entry \"" + trimmed + "\" is not @ID or @ID:weight");
                 continue;
             }
-            if (fields.length == 2) {
-                integrity.checkWeight(file, line, definitionId, trimmed, fields[1]);
+            if (reference.weightText() != null) {
+                integrity.checkWeight(file, line, definitionId, trimmed, reference.weightText());
             }
-            ItemDataIntegrity.ModifierRow modifier = integrity.referencedModifier(file, line, definitionId, fields[0].trim(), ModifierSlot.PREFIX,
+            ItemDataIntegrity.ModifierRow modifier = integrity.referencedModifier(file, line, definitionId, reference.id(), ModifierSlot.PREFIX,
                     ModifierScope.DOCTRINE);
             if (modifier != null) {
                 integrity.checkRepeats(file, line, definitionId, modifier, pool);

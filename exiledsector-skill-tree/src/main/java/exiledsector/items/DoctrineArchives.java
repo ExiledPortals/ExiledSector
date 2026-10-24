@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import exiledlib.ModCsv;
+import exiledsector.data.CsvRows;
 import exiledsector.modifiers.ModifierSlot;
 import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.radius.RadiusSize;
@@ -53,18 +54,14 @@ public final class DoctrineArchives {
 
     public static void register(JSONArray rows) throws JSONException {
         Map<String, DoctrineArchive> loaded = new LinkedHashMap<>();
-        ModCsv.forEach(rows == null ? new JSONArray() : rows, (index, row) -> {
-            try {
-                DoctrineArchive archive = parse(row);
-                if (loaded.putIfAbsent(archive.definitionId(), archive) != null) {
-                    throw new IllegalArgumentException(archive.definitionId() + " is listed more than once");
-                }
-            } catch (IllegalArgumentException e) {
-                LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": " + e.getMessage());
+        CsvRows.forEachRow(rows, DATA_PATH, LOG, (index, row) -> {
+            DoctrineArchive archive = parse(row);
+            if (loaded.putIfAbsent(archive.definitionId(), archive) != null) {
+                throw new IllegalArgumentException(archive.definitionId() + " is listed more than once");
             }
         });
-        for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.SUBROUTINE)) {
-            if (SubroutineKind.of(definition) == SubroutineKind.DOCTRINE && !loaded.containsKey(definition.id())) {
+        for (ItemDefinition definition : SubroutineKind.DOCTRINE.definitions()) {
+            if (!loaded.containsKey(definition.id())) {
                 LOG.error(definition.id() + " is a " + SubroutineKind.DOCTRINE.id() + " subroutine with no row in " + DATA_PATH
                         + ", so it rewrites nothing");
             }
@@ -83,40 +80,21 @@ public final class DoctrineArchives {
             throw new IllegalArgumentException(definitionId + " is not a " + SubroutineKind.DOCTRINE.id() + " subroutine in "
                     + SubroutineDefinitions.dataPath());
         }
-        String behaviourText = ModCsv.text(row, BEHAVIOUR_COLUMN);
-        DoctrineBehaviour behaviour = DoctrineBehaviour.byIdOrNull(behaviourText);
-        if (behaviour == null) {
-            throw new IllegalArgumentException(definitionId + " has behaviour \"" + behaviourText + "\"; expected one of " + DoctrineBehaviour.ids());
+        List<String> problems = problems(definitionId, row);
+        if (!problems.isEmpty()) {
+            throw new IllegalArgumentException(problems.get(0));
         }
-        String radiusText = ModCsv.text(row, RADIUS_COLUMN);
-        RadiusSize radiusSize = RadiusSize.byDataKeyOrNull(radiusText);
-        if (radiusSize == null) {
-            throw new IllegalArgumentException(definitionId + " has radius \"" + radiusText + "\"; expected one of " + radiusKeys());
-        }
+        DoctrineBehaviour behaviour = DoctrineBehaviour.byIdOrNull(ModCsv.text(row, BEHAVIOUR_COLUMN));
+        RadiusSize radiusSize = RadiusSize.byDataKeyOrNull(ModCsv.text(row, RADIUS_COLUMN));
         String factionText = ModCsv.text(row, FACTION_COLUMN);
         String factionId = factionText.isEmpty() ? null : factionText;
-        List<String> notableTypeIds = typeIds(ModCsv.text(row, NOTABLES_COLUMN));
-        List<String> keystoneTypeIds = typeIds(ModCsv.text(row, KEYSTONES_COLUMN));
-        List<String> smallTypeIds = typeIds(ModCsv.text(row, SMALL_NODES_COLUMN));
         String modifiersText = ModCsv.text(row, MODIFIERS_COLUMN);
-        Integer minLines = lineCount(ModCsv.text(row, MIN_LINES_COLUMN));
-        Integer maxLines = lineCount(ModCsv.text(row, MAX_LINES_COLUMN));
-        if (minLines == null || maxLines == null || minLines < 1 || maxLines < minLines) {
-            throw new IllegalArgumentException(definitionId + " needs min_lines of 1 or more and max_lines of at least min_lines");
-        }
-        boolean listsTypes = !notableTypeIds.isEmpty() || !keystoneTypeIds.isEmpty() || !smallTypeIds.isEmpty();
+        int minLines = lineCount(ModCsv.text(row, MIN_LINES_COLUMN));
+        int maxLines = lineCount(ModCsv.text(row, MAX_LINES_COLUMN));
         if (behaviour == DoctrineBehaviour.TRANSFORM) {
-            if (!listsTypes) {
-                throw new IllegalArgumentException(definitionId + " transforms nodes but lists no replacement notables, keystones or small nodes");
-            }
-            if (!modifiersText.isEmpty()) {
-                throw new IllegalArgumentException(definitionId + " transforms nodes, so it lists no modifiers");
-            }
-            return new DoctrineArchive(definitionId, behaviour, radiusSize, notableTypeIds, keystoneTypeIds, smallTypeIds, List.of(), minLines,
-                    maxLines, factionId);
-        }
-        if (listsTypes) {
-            throw new IllegalArgumentException(definitionId + " augments nodes, so it lists no replacement nodes");
+            return new DoctrineArchive(definitionId, behaviour, radiusSize, typeIds(ModCsv.text(row, NOTABLES_COLUMN)),
+                    typeIds(ModCsv.text(row, KEYSTONES_COLUMN)), typeIds(ModCsv.text(row, SMALL_NODES_COLUMN)), List.of(), minLines, maxLines,
+                    factionId);
         }
         List<PoolEntry> modifierPool = modifierPool(definitionId, modifiersText);
         if (modifierPool.isEmpty()) {
@@ -124,6 +102,37 @@ public final class DoctrineArchives {
         }
         return new DoctrineArchive(definitionId, behaviour, radiusSize, List.of(), List.of(), List.of(), modifierPool, minLines, maxLines,
                 factionId);
+    }
+
+    static List<String> problems(String definitionId, JSONObject row) {
+        List<String> problems = new ArrayList<>();
+        String behaviourText = ModCsv.text(row, BEHAVIOUR_COLUMN);
+        DoctrineBehaviour behaviour = DoctrineBehaviour.byIdOrNull(behaviourText);
+        if (behaviour == null) {
+            problems.add(definitionId + " has behaviour \"" + behaviourText + "\"; expected one of " + DoctrineBehaviour.ids());
+        }
+        String radiusText = ModCsv.text(row, RADIUS_COLUMN);
+        if (RadiusSize.byDataKeyOrNull(radiusText) == null) {
+            problems.add(definitionId + " has radius \"" + radiusText + "\"; expected one of " + radiusKeys());
+        }
+        Integer minLines = lineCount(ModCsv.text(row, MIN_LINES_COLUMN));
+        Integer maxLines = lineCount(ModCsv.text(row, MAX_LINES_COLUMN));
+        if (minLines == null || maxLines == null || minLines < 1 || maxLines < minLines) {
+            problems.add(definitionId + " needs min_lines of 1 or more and max_lines of at least min_lines");
+        }
+        boolean listsTypes = !typeIds(ModCsv.text(row, NOTABLES_COLUMN)).isEmpty() || !typeIds(ModCsv.text(row, KEYSTONES_COLUMN)).isEmpty()
+                || !typeIds(ModCsv.text(row, SMALL_NODES_COLUMN)).isEmpty();
+        if (behaviour == DoctrineBehaviour.TRANSFORM) {
+            if (!listsTypes) {
+                problems.add(definitionId + " transforms nodes but lists no replacement notables, keystones or small nodes");
+            }
+            if (!ModCsv.text(row, MODIFIERS_COLUMN).isEmpty()) {
+                problems.add(definitionId + " transforms nodes, so it lists no modifiers");
+            }
+        } else if (behaviour == DoctrineBehaviour.AUGMENT && listsTypes) {
+            problems.add(definitionId + " augments nodes, so it lists no replacement nodes");
+        }
+        return problems;
     }
 
     private static String radiusKeys() {

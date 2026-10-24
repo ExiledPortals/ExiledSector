@@ -4,9 +4,9 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import exiledlib.MockSector;
 import exiledsector.effects.SkillTreeLootSource;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -57,7 +57,7 @@ class AnchorObtainabilityTest {
     private static final String EXIT_TYPE_FLAG = "$test_exitTypeOpen";
 
     private MockedStatic<LunaSettings> lunaSettingsMock;
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private MemoryAPI sectorMemory;
 
     @BeforeEach
@@ -66,13 +66,11 @@ class AnchorObtainabilityTest {
         lunaSettingsMock.when(() -> LunaSettings.getBoolean(anyString(), anyString())).thenReturn(null);
         sectorMemory = mock(MemoryAPI.class);
         when(sectorMemory.getBoolean(JanusDevice.FLAG)).thenReturn(true);
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
+        when(mockSector.sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
         SettingsAPI settings = mock(SettingsAPI.class);
         when(settings.getModManager()).thenReturn(mock(ModManagerAPI.class));
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
         NodeGates.register(new JSONObject("{\"gate_withheld\": {\"unlockConditions\": [{\"type\": \"memoryFlag\", \"key\": \"" + WITHHELD_GATE_FLAG
                 + "\"}]}, \"gate_free\": {\"anchors\": \"free\", \"unlockConditions\": [{\"type\": \"memoryFlag\", \"key\": \"" + FREE_GATE_FLAG + "\"}]}}"));
 
@@ -105,7 +103,7 @@ class AnchorObtainabilityTest {
         WormholeAnchorDefinitions.clear();
         SkillTree.clearNodes();
         NodeGates.register(new JSONObject("{}"));
-        globalMock.close();
+        mockSector.close();
         lunaSettingsMock.close();
     }
 
@@ -116,9 +114,7 @@ class AnchorObtainabilityTest {
     }
 
     private static JSONObject anchorRow(String id, String volume, String exitNode) throws Exception {
-        return new JSONObject().put("id", id).put("volume", volume).put("exit_node", exitNode).put("name", id + " name")
-                .put("icon", "graphics/icons/nav_relay.png").put("rarity", "10").put("description", "Opens a wormhole.")
-                .put("drop_chance", "1").put("market_chance", "1");
+        return AnchorRows.row(id, volume, exitNode).put("drop_chance", "1").put("market_chance", "1");
     }
 
     private static boolean obtainable(String definitionId) {

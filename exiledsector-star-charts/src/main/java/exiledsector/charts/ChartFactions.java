@@ -1,5 +1,6 @@
 package exiledsector.charts;
 
+import exiledsector.data.CsvRows;
 import exiledlib.ModCsv;
 import exiledsector.items.StarChartImplicits;
 import exiledsector.items.WeightedPick;
@@ -35,7 +36,7 @@ public final class ChartFactions {
 
     public static void register(JSONArray rows) throws JSONException {
         Map<String, ChartFaction> loaded = new LinkedHashMap<>();
-        ChartCsv csv = new ChartCsv(PATH);
+        CsvRows csv = new CsvRows(PATH);
         if (rows != null) {
             ModCsv.forEach(rows, (index, row) -> {
                 String factionId = ModCsv.text(row, FACTION_COLUMN);

@@ -1,6 +1,5 @@
 package exiledsector.effects;
 
-import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
@@ -10,6 +9,7 @@ import com.fs.starfarer.api.campaign.TextPanelAPI;
 import com.fs.starfarer.api.fleet.CrewCompositionAPI;
 import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
 import com.fs.starfarer.api.util.Misc;
+import exiledlib.PlayerFleet;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
 import exiledlib.skills.skilleffect.logistics.FleetCrewLedger.CrewChange;
@@ -28,7 +28,7 @@ public final class FleetCrewLedgerSettlement {
         if (change.stolen() <= 0 && change.sacrificed() <= 0) {
             return;
         }
-        Global.getSector().addTransientScript(new ApplyAfterEngagement(change));
+        TransientScripts.nextFrame(Global.getSector(), () -> settle(change));
     }
 
     record Outcome(int joined, int noRoom, int lost) {
@@ -85,39 +85,14 @@ public final class FleetCrewLedgerSettlement {
         }
     }
 
-    private static final class ApplyAfterEngagement implements EveryFrameScript {
-
-        private final CrewChange crewChange;
-        private boolean applied;
-
-        private ApplyAfterEngagement(CrewChange crewChange) {
-            this.crewChange = crewChange;
+    private static void settle(CrewChange crewChange) {
+        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
+        if (playerFleet == null) {
+            return;
         }
-
-        @Override
-        public boolean isDone() {
-            return applied;
-        }
-
-        @Override
-        public boolean runWhilePaused() {
-            return true;
-        }
-
-        @Override
-        public void advance(float amount) {
-            if (applied) {
-                return;
-            }
-            applied = true;
-            CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
-            if (playerFleet == null) {
-                return;
-            }
-            CargoAPI cargo = playerFleet.getCargo();
-            int freeCrewSpace = Math.max(0, cargo.getFreeCrewSpace() - crewStillToBeRecovered(playerFleet));
-            Outcome outcome = apply(crewChange, cargo, freeCrewSpace);
-            I18n.forGameText(() -> report(crewChange, outcome));
-        }
+        CargoAPI cargo = playerFleet.getCargo();
+        int freeCrewSpace = Math.max(0, cargo.getFreeCrewSpace() - crewStillToBeRecovered(playerFleet));
+        Outcome outcome = apply(crewChange, cargo, freeCrewSpace);
+        I18n.forGameText(() -> report(crewChange, outcome));
     }
 }

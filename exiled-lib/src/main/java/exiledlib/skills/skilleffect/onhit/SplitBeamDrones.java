@@ -16,6 +16,7 @@ import org.magiclib.plugins.MagicFakeBeamPlugin;
 
 import java.awt.Color;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -57,8 +58,16 @@ final class SplitBeamDrones {
         }
         float now = engine.getTotalElapsedTime(false);
         WeaponAPI weapon = beam.getWeapon();
-        claimsByBeam.put(beam, new BeamClaim(weapon, List.copyOf(splitTargets), now));
-        claimsByBeam.values().removeIf(claim -> now - claim.claimedAt() > SPLIT_TIMEOUT_SECONDS);
+        BeamClaim claim = claimsByBeam.computeIfAbsent(beam, key -> new BeamClaim());
+        claim.weapon = weapon;
+        claim.splitTargets = List.copyOf(splitTargets);
+        claim.claimedAt = now;
+        Iterator<BeamClaim> claims = claimsByBeam.values().iterator();
+        while (claims.hasNext()) {
+            if (now - claims.next().claimedAt > SPLIT_TIMEOUT_SECONDS) {
+                claims.remove();
+            }
+        }
         for (SplitDrone split : drones.values()) {
             if (split.splitKey.weapon() == weapon && !isClaimed(weapon, split.splitTarget)) {
                 split.stopSharing();
@@ -68,7 +77,7 @@ final class SplitBeamDrones {
 
     private boolean isClaimed(WeaponAPI weapon, ShipAPI splitTarget) {
         for (BeamClaim claim : claimsByBeam.values()) {
-            if (claim.weapon() == weapon && claim.splitTargets().contains(splitTarget)) {
+            if (claim.weapon == weapon && claim.splitTargets.contains(splitTarget)) {
                 return true;
             }
         }
@@ -91,7 +100,10 @@ final class SplitBeamDrones {
     private record SplitKey(WeaponAPI weapon, ShipAPI splitTarget) {
     }
 
-    private record BeamClaim(WeaponAPI weapon, List<ShipAPI> splitTargets, float claimedAt) {
+    private static final class BeamClaim {
+        private WeaponAPI weapon;
+        private List<ShipAPI> splitTargets = List.of();
+        private float claimedAt;
     }
 
     private final class SplitDrone extends WeaponDroneShell {

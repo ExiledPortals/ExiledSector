@@ -22,6 +22,7 @@ import com.fs.starfarer.api.loading.ProjectileSpecAPI;
 import com.fs.starfarer.api.loading.ShotBehaviorSpecAPI;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
 import com.fs.starfarer.api.loading.WingRole;
+import com.fs.starfarer.api.util.DynamicStatsAPI;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -88,6 +89,15 @@ class BomberPayloadDetonationTest {
     @AfterEach
     void tearDown() {
         global.close();
+    }
+
+    private ShipAPI withChance(float chancePercent) {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        DynamicStatsAPI dynamic = mock(DynamicStatsAPI.class);
+        when(carrier.getMutableStats()).thenReturn(stats);
+        when(stats.getDynamic()).thenReturn(dynamic);
+        when(dynamic.getValue(BomberPayloadDetonation.CHANCE_PERCENT_KEY, 0f)).thenReturn(chancePercent);
+        return carrier;
     }
 
     private static ShipAPI ship(Vector2f location) {
@@ -172,7 +182,7 @@ class BomberPayloadDetonationTest {
     }
 
     private void detonate(ShipAPI bomber) {
-        fly(new BomberPayloadDetonation(bomber, carrier, 100f, new AlwaysRolls()), DETONATION_SECONDS);
+        fly(new BomberPayloadDetonation(bomber, withChance(100f), new AlwaysRolls()), DETONATION_SECONDS);
     }
 
     private void verifyKilled(ShipAPI bomber, int times) {
@@ -205,21 +215,21 @@ class BomberPayloadDetonationTest {
         FighterWingAPI wing = mock(FighterWingAPI.class);
         when(wing.getRole()).thenReturn(WingRole.FIGHTER);
         when(fighter.getWing()).thenReturn(wing);
-        BomberPayloadDetonation.arm(fighter, carrier, 5f);
+        FighterSkillEffect.BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT.applyToFighterSpawnedByShip(fighter, carrier, "mod_id", 5f);
         verify(fighter, never()).addListener(any());
 
         ShipAPI bomber = bomber(2000f, weapon(WeaponAPI.WeaponType.MISSILE, true, 1));
-        BomberPayloadDetonation.arm(bomber, carrier, 5f);
+        FighterSkillEffect.BOMBER_PAYLOAD_DETONATION_CHANCE_PERCENT.applyToFighterSpawnedByShip(bomber, carrier, "mod_id", 5f);
         verify(bomber, times(1)).addListener(any(BomberPayloadDetonation.class));
     }
 
     @Test
     void theDiceAreOnlyRolledEveryThreeSecondsAndOnlyFailingRollsSpareTheBomber() {
         ShipAPI bomber = bomber(2000f, weapon(WeaponAPI.WeaponType.MISSILE, true, 1));
-        fly(new BomberPayloadDetonation(bomber, carrier, 5f, new NeverRolls()), 30f);
+        fly(new BomberPayloadDetonation(bomber, withChance(5f), new NeverRolls()), 30f);
         verifyNoDetonation(bomber);
 
-        BomberPayloadDetonation unlucky = new BomberPayloadDetonation(bomber, carrier, 5f, new AlwaysRolls());
+        BomberPayloadDetonation unlucky = new BomberPayloadDetonation(bomber, withChance(5f), new AlwaysRolls());
         fly(unlucky, BomberPayloadDetonation.CHECK_INTERVAL_SECONDS - 0.2f);
         verifyNoDetonation(bomber);
         fly(unlucky, 0.3f);
@@ -230,7 +240,7 @@ class BomberPayloadDetonationTest {
     void bombersCloseToTheirCarrierNeverDetonate() {
         float justInside = 200f + BomberPayloadDetonation.SAFE_DISTANCE_FROM_CARRIER - 10f;
         ShipAPI bomber = bomber(justInside, weapon(WeaponAPI.WeaponType.MISSILE, true, 1));
-        fly(new BomberPayloadDetonation(bomber, carrier, 100f, new AlwaysRolls()), 30f);
+        fly(new BomberPayloadDetonation(bomber, withChance(100f), new AlwaysRolls()), 30f);
         verifyNoDetonation(bomber);
     }
 
@@ -238,11 +248,11 @@ class BomberPayloadDetonationTest {
     void landingBombersAndBombersThatDroppedTheirPayloadNeverDetonate() {
         ShipAPI landing = bomber(2000f, weapon(WeaponAPI.WeaponType.MISSILE, true, 1));
         when(landing.isLanding()).thenReturn(true);
-        fly(new BomberPayloadDetonation(landing, carrier, 100f, new AlwaysRolls()), 10f);
+        fly(new BomberPayloadDetonation(landing, withChance(100f), new AlwaysRolls()), 10f);
         verifyNoDetonation(landing);
 
         ShipAPI spent = bomber(2000f, weapon(WeaponAPI.WeaponType.MISSILE, true, 0));
-        fly(new BomberPayloadDetonation(spent, carrier, 100f, new AlwaysRolls()), 10f);
+        fly(new BomberPayloadDetonation(spent, withChance(100f), new AlwaysRolls()), 10f);
         verifyNoDetonation(spent);
     }
 
@@ -255,7 +265,7 @@ class BomberPayloadDetonationTest {
         ShipAPI bomber = bomber(2000f, gun, laser);
 
         assertFalse(BomberPayloadDetonation.carriesPayload(bomber));
-        fly(new BomberPayloadDetonation(bomber, carrier, 100f, new AlwaysRolls()), 30f);
+        fly(new BomberPayloadDetonation(bomber, withChance(100f), new AlwaysRolls()), 30f);
         verifyNoDetonation(bomber);
     }
 
@@ -290,7 +300,7 @@ class BomberPayloadDetonationTest {
 
         assertFalse(BomberPayloadDetonation.regeneratingOrdnanceCounts(spentLongbow));
         assertFalse(BomberPayloadDetonation.carriesPayload(spentLongbow));
-        fly(new BomberPayloadDetonation(spentLongbow, carrier, 100f, new AlwaysRolls()), 30f);
+        fly(new BomberPayloadDetonation(spentLongbow, withChance(100f), new AlwaysRolls()), 30f);
         verifyNoDetonation(spentLongbow);
 
         WeaponAPI loadedSabot = armedWith(WeaponAPI.WeaponType.MISSILE, 1, 1, missileSpec(100f, DamageType.KINETIC, 125f, null, null));
@@ -612,7 +622,7 @@ class BomberPayloadDetonationTest {
         MissileAPI shot = spawnsMissile(bomber, torpedo, atropos);
         when(shot.explode()).thenReturn(mock(DamagingProjectileAPI.class));
 
-        fly(new BomberPayloadDetonation(bomber, carrier, 100f, new AlwaysRolls()), 30f);
+        fly(new BomberPayloadDetonation(bomber, withChance(100f), new AlwaysRolls()), 30f);
 
         verifyKilled(bomber, 1);
         verify(shot, times(1)).explode();

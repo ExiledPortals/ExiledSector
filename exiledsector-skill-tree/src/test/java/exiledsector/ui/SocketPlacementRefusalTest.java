@@ -1,9 +1,8 @@
 package exiledsector.ui;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
+import exiledlib.MockSector;
 import exiledsector.items.Item;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
@@ -18,7 +17,6 @@ import org.mockito.InOrder;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -40,16 +38,13 @@ class SocketPlacementRefusalTest {
             List.of(), 0f, 0f);
     private final Item secondBypass = mock(Item.class);
     private final Item volume = mock(Item.class);
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private MockedStatic<ItemStoragePanel> storagePanelMock;
     private SocketPlacement placement;
 
     @BeforeEach
     void setUp() {
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(new HashMap<>());
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
         storagePanelMock = Mockito.mockStatic(ItemStoragePanel.class);
         storagePanelMock.when(() -> ItemStoragePanel.openSubroutines(any(), any(), any(), any())).thenAnswer(invocation -> {
             storageListener.set(invocation.getArgument(3));
@@ -67,7 +62,7 @@ class SocketPlacementRefusalTest {
     @AfterEach
     void tearDown() {
         storagePanelMock.close();
-        globalMock.close();
+        mockSector.close();
     }
 
     @Test

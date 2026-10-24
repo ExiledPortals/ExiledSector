@@ -1,7 +1,5 @@
 package exiledsector.ui.chart;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
@@ -9,6 +7,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import exiledlib.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartRun;
 import exiledsector.charts.ChartRunActions.OpenResult;
@@ -29,7 +28,6 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -42,7 +40,7 @@ import static org.mockito.Mockito.when;
 
 class StarChartOpeningTest {
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private MockedStatic<LunaSettings> lunaMock;
     private SectorAPI sector;
     private ItemStore store;
@@ -52,13 +50,9 @@ class StarChartOpeningTest {
     @BeforeEach
     void setUp() throws Exception {
         StarChartFixtures.registerShipped();
-        sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(new HashMap<>());
-        CampaignFleetAPI playerFleet = mock(CampaignFleetAPI.class);
-        when(playerFleet.getContainingLocation()).thenReturn(mock(LocationAPI.class));
-        when(sector.getPlayerFleet()).thenReturn(playerFleet);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
+        sector = mockSector.sector;
+        when(mockSector.playerFleet().getContainingLocation()).thenReturn(mock(LocationAPI.class));
         lunaMock = Mockito.mockStatic(LunaSettings.class);
         lunaMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.OPEN_ANYWHERE_FIELD_ID)).thenReturn(true);
         store = ItemStore.starCharts();
@@ -68,7 +62,7 @@ class StarChartOpeningTest {
     @AfterEach
     void tearDown() {
         lunaMock.close();
-        globalMock.close();
+        mockSector.close();
         StarChartFixtures.clear();
     }
 

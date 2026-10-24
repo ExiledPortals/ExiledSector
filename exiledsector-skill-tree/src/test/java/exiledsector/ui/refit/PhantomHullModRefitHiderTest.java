@@ -10,13 +10,12 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
+import exiledlib.MockSector;
 import exiledsector.skills.PhantomHullModStatus;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -170,7 +169,7 @@ class PhantomHullModRefitHiderTest {
     }
 
     private Core core;
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private SectorAPI sector;
     private CampaignState campaignState;
 
@@ -189,15 +188,14 @@ class PhantomHullModRefitHiderTest {
         campaignState = mock(CampaignState.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         campaignState.core = core;
         doReturn(null).when(campaignState).getCurrentInteractionDialog();
-        sector = mock(SectorAPI.class);
+        mockSector = new MockSector();
+        sector = mockSector.sector;
         when(sector.getCampaignUI()).thenReturn(campaignState);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
     }
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         PhantomHullModRefitHider.resetForTests();
         PhantomHullModStatus.clear();
     }
@@ -285,7 +283,7 @@ class PhantomHullModRefitHiderTest {
 
     @Test
     void aListRebuiltWithAPhantomInItIsHiddenByOneScheduledPassWhateverRebuiltIt() {
-        globalMock.when(Global::getCurrentState).thenReturn(GameState.CAMPAIGN);
+        mockSector.global.when(Global::getCurrentState).thenReturn(GameState.CAMPAIGN);
         refitMods().list.items.add(row("safetyoverrides"));
 
         PhantomHullModRefitHider.requestRefresh();
@@ -303,7 +301,7 @@ class PhantomHullModRefitHiderTest {
 
     @Test
     void aRebuildAfterThePassRanSchedulesAnotherOne() {
-        globalMock.when(Global::getCurrentState).thenReturn(GameState.CAMPAIGN);
+        mockSector.global.when(Global::getCurrentState).thenReturn(GameState.CAMPAIGN);
         when(sector.hasTransientScript(any())).thenReturn(true);
         PhantomHullModRefitHider.requestRefresh();
         scheduledHide().advance(0f);
@@ -315,7 +313,7 @@ class PhantomHullModRefitHiderTest {
 
     @Test
     void aPassLostWithAReloadedSaveIsScheduledAgain() {
-        globalMock.when(Global::getCurrentState).thenReturn(GameState.CAMPAIGN);
+        mockSector.global.when(Global::getCurrentState).thenReturn(GameState.CAMPAIGN);
         PhantomHullModRefitHider.requestRefresh();
 
         PhantomHullModRefitHider.requestRefresh();
@@ -325,7 +323,7 @@ class PhantomHullModRefitHiderTest {
 
     @Test
     void nothingIsScheduledOutsideTheCampaign() {
-        globalMock.when(Global::getCurrentState).thenReturn(GameState.COMBAT);
+        mockSector.global.when(Global::getCurrentState).thenReturn(GameState.COMBAT);
 
         PhantomHullModRefitHider.requestRefresh();
 

@@ -2,7 +2,6 @@ package exiledsector.charts;
 
 import com.fs.starfarer.api.Global;
 import com.thoughtworks.xstream.XStream;
-import exiledlib.ModSettingsListener;
 import exiledlib.compat.CompatTarget;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
 import exiledsector.domain.ExiledSectorDomain;
@@ -64,10 +63,8 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public void registerSettings() {
-        SettingsCreator.addHeader(MOD_ID, "exiledSector_starChartsHeader", Translation.text("settings.starCharts.header"), ExiledSectorSettings.MAIN_TAB);
-        SettingsCreator.addBoolean(MOD_ID, StarChartSettings.ENABLED_FIELD_ID,
-                Translation.text("settings.starCharts.enabled.name"), Translation.text("settings.starCharts.enabled.tooltip"),
-                StarChartSettings.DEFAULT_ENABLED, ExiledSectorSettings.MAIN_TAB);
+        StarChartSettings.SWITCH.addSettings("exiledSector_starChartsHeader", "settings.starCharts.header",
+                "settings.starCharts.enabled.name", "settings.starCharts.enabled.tooltip");
         SettingsCreator.addInt(MOD_ID, StarChartSettings.ENTRIES_FIELD_ID,
                 Translation.text("settings.starCharts.entries.name"), Translation.text("settings.starCharts.entries.tooltip"),
                 StarChartSettings.DEFAULT_ENTRIES, StarChartSettings.MIN_ENTRIES, StarChartSettings.MAX_ENTRIES, ExiledSectorSettings.MAIN_TAB);
@@ -77,7 +74,6 @@ public final class StarChartsDomain implements ExiledSectorDomain {
         SettingsCreator.addBoolean(MOD_ID, StarChartSettings.OPEN_ANYWHERE_FIELD_ID,
                 Translation.text("chart.ui.settings.openAnywhere.name"), Translation.text("chart.ui.settings.openAnywhere.tooltip"),
                 StarChartSettings.DEFAULT_OPEN_ANYWHERE, ExiledSectorSettings.MAIN_TAB);
-        ModSettingsListener.ensureRegistered(StarChartSettings.SettingsListener.class, StarChartSettings.SettingsListener::new);
     }
 
     @Override

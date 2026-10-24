@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.charts.ChartDrops;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierCategory;
@@ -52,7 +53,7 @@ class StarChartCurrencyTest {
     @BeforeEach
     void setUp() throws Exception {
         ItemFixtures.registerShippedItems();
-        ItemImplicits.register(ItemFixtures.shippedRows(ItemImplicits.dataPath()));
+        ItemImplicits.register(HullItemRows.shippedRows(ItemImplicits.dataPath()));
         StarChartFixtures.registerShipped();
         StarChartCurrency.registerAll();
         when(cargo.getQuantity(eq(CargoAPI.CargoItemType.SPECIAL), any())).thenReturn(1000f);
@@ -445,7 +446,7 @@ class StarChartCurrencyTest {
     @Test
     void theShippedCostsMatchTheDefaultsAndTheCurrenciesCanBeGrown() throws Exception {
         assertEquals(List.of(30, 40, 120), Arrays.stream(StarChartCurrency.values()).map(StarChartCurrency::partsCost).toList());
-        ItemCraftingCosts.register(ItemFixtures.shippedRows(ItemCraftingCosts.dataPath()));
+        ItemCraftingCosts.register(HullItemRows.shippedRows(ItemCraftingCosts.dataPath()));
         assertEquals(List.of(30, 40, 120), Arrays.stream(StarChartCurrency.values()).map(StarChartCurrency::partsCost).toList());
         for (StarChartCurrency currency : StarChartCurrency.values()) {
             assertTrue(currency.synthesisable());
@@ -476,7 +477,7 @@ class StarChartCurrencyTest {
         Random random = new Random(3L);
         int trials = 12000;
         for (int pick = 0; pick < trials; pick++) {
-            picks.merge(ItemDrops.pickChartCurrency(random), 1, Integer::sum);
+            picks.merge(ChartDrops.pickChartCurrency(random), 1, Integer::sum);
         }
         float totalWeight = 0f;
         for (StarChartCurrency currency : StarChartCurrency.values()) {
@@ -489,6 +490,6 @@ class StarChartCurrencyTest {
         }
 
         StarChartCurrency.unregisterAll();
-        assertNull(ItemDrops.pickChartCurrency(new Random(1L)));
+        assertNull(ChartDrops.pickChartCurrency(new Random(1L)));
     }
 }

@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import exiledlib.ModCsv;
+import exiledsector.data.CsvRows;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,37 +37,33 @@ public final class StarChartDefinitions {
         List<ItemDefinition> definitions = new ArrayList<>();
         Map<String, String> systemTypes = new LinkedHashMap<>();
         Map<String, Integer> minTiers = new LinkedHashMap<>();
-        ModCsv.forEach(rows == null ? new JSONArray() : rows, (index, row) -> {
-            try {
-                ItemDefinition definition = ItemDefinition.parseStarChart(row);
-                String systemType = normalisedSystemType(ModCsv.text(row, SYSTEM_TYPE_COLUMN));
-                if (systemType == null) {
-                    throw new IllegalArgumentException(definition.id() + " has system type \"" + ModCsv.text(row, SYSTEM_TYPE_COLUMN)
-                            + "\"; expected " + SYSTEM_TYPES + " or " + ANY_SYSTEM_TYPE);
-                }
-                Integer minTier = parsedMinTier(ModCsv.text(row, MIN_TIER_COLUMN));
-                if (minTier == null) {
-                    throw new IllegalArgumentException(definition.id() + " has minimum tier \"" + ModCsv.text(row, MIN_TIER_COLUMN)
-                            + "\"; expected a whole number from " + StarChart.LOWEST_TIER + " to " + StarChart.HIGHEST_TIER + " or blank");
-                }
-                ItemDefinition shipItem = ItemDefinitions.get(definition.id());
-                if ((shipItem != null && shipItem.type() != ItemType.STAR_CHART) || systemTypes.containsKey(definition.id())) {
-                    throw new IllegalArgumentException(definition.id() + " is already defined");
-                }
-                if (!ItemUnlock.isKnownUnlock(definition.unlock())) {
-                    LOG.warn(definition.id() + " in " + DATA_PATH + " has the unknown unlock \"" + definition.unlock()
-                            + "\", so it can never drop; use an unlock id or " + ItemUnlock.CLEARED_CHART_TIER_PREFIX + "N");
-                }
-                definitions.add(definition);
-                systemTypes.put(definition.id(), systemType);
-                if (minTier > StarChart.LOWEST_TIER) {
-                    minTiers.put(definition.id(), minTier);
-                }
-            } catch (IllegalArgumentException e) {
-                LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": " + e.getMessage());
+        CsvRows.forEachRow(rows, DATA_PATH, LOG, (index, row) -> {
+            ItemDefinition definition = ItemDefinition.parseStarChart(row);
+            String systemType = normalisedSystemType(ModCsv.text(row, SYSTEM_TYPE_COLUMN));
+            if (systemType == null) {
+                throw new IllegalArgumentException(definition.id() + " has system type \"" + ModCsv.text(row, SYSTEM_TYPE_COLUMN)
+                        + "\"; expected " + SYSTEM_TYPES + " or " + ANY_SYSTEM_TYPE);
+            }
+            Integer minTier = parsedMinTier(ModCsv.text(row, MIN_TIER_COLUMN));
+            if (minTier == null) {
+                throw new IllegalArgumentException(definition.id() + " has minimum tier \"" + ModCsv.text(row, MIN_TIER_COLUMN)
+                        + "\"; expected a whole number from " + StarChart.LOWEST_TIER + " to " + StarChart.HIGHEST_TIER + " or blank");
+            }
+            ItemDefinition shipItem = ItemDefinitions.get(definition.id());
+            if ((shipItem != null && shipItem.type() != ItemType.STAR_CHART) || systemTypes.containsKey(definition.id())) {
+                throw new IllegalArgumentException(definition.id() + " is already defined");
+            }
+            if (!ItemUnlock.isKnownUnlock(definition.unlock())) {
+                LOG.warn(definition.id() + " in " + DATA_PATH + " has the unknown unlock \"" + definition.unlock()
+                        + "\", so it can never drop; use an unlock id or " + ItemUnlock.CLEARED_CHART_TIER_PREFIX + "N");
+            }
+            definitions.add(definition);
+            systemTypes.put(definition.id(), systemType);
+            if (minTier > StarChart.LOWEST_TIER) {
+                minTiers.put(definition.id(), minTier);
             }
         });
-        ItemDefinitions.registerStarCharts(definitions);
+        ItemDefinitions.registerOwnType(ItemType.STAR_CHART, definitions);
         SYSTEM_TYPE_BY_ID.set(Collections.unmodifiableMap(systemTypes));
         MIN_TIER_BY_ID.set(Collections.unmodifiableMap(minTiers));
     }
@@ -114,6 +111,6 @@ public final class StarChartDefinitions {
     public static void clear() {
         SYSTEM_TYPE_BY_ID.set(Map.of());
         MIN_TIER_BY_ID.set(Map.of());
-        ItemDefinitions.clearStarCharts();
+        ItemDefinitions.clearOwnType(ItemType.STAR_CHART);
     }
 }

@@ -12,6 +12,7 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.WormholeGateway;
 import exiledsector.ui.ModificationBenchCargoLauncher;
+import exiledsector.ui.socket.BenchMode;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -109,10 +110,10 @@ class WormholeGatewayOptionTest {
         IndustryOptionProvider.IndustryOptionData option = provider.getIndustryOptions(gateway).get(0);
 
         provider.optionSelected(new IndustryOptionProvider.IndustryOptionData("other", new Object(), gateway, provider), mock(DialogCreatorUI.class));
-        launcherMock.verify(() -> ModificationBenchCargoLauncher.openStarCharts(any()), never());
+        launcherMock.verify(() -> ModificationBenchCargoLauncher.openMode(any(), any()), never());
 
         provider.optionSelected(option, mock(DialogCreatorUI.class));
-        launcherMock.verify(() -> ModificationBenchCargoLauncher.openStarCharts(campaignUI), times(1));
+        launcherMock.verify(() -> ModificationBenchCargoLauncher.openMode(campaignUI, BenchMode.STAR_CHARTS), times(1));
     }
 
     @Test

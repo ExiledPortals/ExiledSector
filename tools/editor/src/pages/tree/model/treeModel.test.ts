@@ -229,7 +229,7 @@ describe('validation and tags', () => {
   it('keeps parameterless unlock conditions and drops parameterised ones that lost their parameters', () => {
     expect(
       serializeUnlockConditions([
-        { type: 'nightcrossLunarFleetDefeated' },
+        { type: 'nightcrossExistentialThreatDefeated' },
         { type: 'characterStat' },
         { type: 'memoryFlag', key: 'someFlag' },
         { type: 'blueprint', id: 'heavyarmor' },
@@ -238,7 +238,7 @@ describe('validation and tags', () => {
         { type: '' },
       ]),
     ).toEqual([
-      { type: 'nightcrossLunarFleetDefeated' },
+      { type: 'nightcrossExistentialThreatDefeated' },
       { type: 'memoryFlag', key: 'someFlag' },
       { type: 'blueprint', category: 'hullmod', id: 'heavyarmor' },
       { type: 'anchorFound', volume: 'nightcross' },

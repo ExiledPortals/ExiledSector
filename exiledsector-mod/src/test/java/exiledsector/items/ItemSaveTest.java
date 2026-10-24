@@ -33,9 +33,9 @@ class ItemSaveTest {
 
     @Test
     void itemsSavedAsLooseEffectsLoadAsModifiersWithSlotsFromTheirDefinition() throws Exception {
-        ItemFixtures.registerMilitary();
+        HullItemRows.registerMilitary();
         String legacyXml = "<exiledSector.SocketableStore><owned><exiledSector.Socketable>"
-                + "<id>socketable_1</id><definitionId>" + ItemFixtures.MILITARY + "</definitionId><seed>5</seed><effects>"
+                + "<id>socketable_1</id><definitionId>" + HullItemRows.MILITARY + "</definitionId><seed>5</seed><effects>"
                 + "<exiledSector.RolledEffect><effectName>FLUX_CAPACITY_MULT</effectName><magnitude>5.0</magnitude></exiledSector.RolledEffect>"
                 + "<exiledSector.RolledEffect><effectName>HULL_MULT</effectName><magnitude>6.0</magnitude></exiledSector.RolledEffect>"
                 + "</effects></exiledSector.Socketable></owned><nextId>2</nextId></exiledSector.SocketableStore>";
@@ -53,14 +53,14 @@ class ItemSaveTest {
     @Test
     void anOldItemLoadedWhileItsDefinitionIsMissingKeepsItsSlotsForWhenTheDefinitionReturns() throws Exception {
         String legacyXml = "<exiledSector.SocketableStore><owned><exiledSector.Socketable>"
-                + "<id>socketable_1</id><definitionId>" + ItemFixtures.MILITARY + "</definitionId><seed>5</seed><effects>"
+                + "<id>socketable_1</id><definitionId>" + HullItemRows.MILITARY + "</definitionId><seed>5</seed><effects>"
                 + "<exiledSector.RolledEffect><effectName>FLUX_CAPACITY_MULT</effectName><magnitude>5.0</magnitude></exiledSector.RolledEffect>"
                 + "</effects></exiledSector.Socketable></owned><nextId>2</nextId></exiledSector.SocketableStore>";
         Item restored = ((ItemStore) xstream().fromXML(legacyXml)).owned().get(0);
 
         assertEquals(ModifierSlot.SUFFIX, restored.explicits().get(0).slot(), "without a definition the slot cannot be known yet");
         assertEquals(UnresolvedItem.class, restored.getClass());
-        ItemFixtures.registerMilitary();
+        HullItemRows.registerMilitary();
         assertEquals(ModifierSlot.PREFIX, restored.explicits().get(0).slot());
         String resaved = xstream().toXML(restored);
         assertTrue(resaved.startsWith("<exiledSector.Socketable>"), resaved);
@@ -69,7 +69,7 @@ class ItemSaveTest {
 
     @Test
     void aSavedModifierWhoseEffectWasRenamedLoadsUnderTheCurrentName() throws Exception {
-        ItemDefinition military = ItemFixtures.registerMilitary();
+        ItemDefinition military = HullItemRows.registerMilitary();
         ItemStore store = new ItemStore();
         store.add(military, 1L);
         String xml = xstream().toXML(store).replace("HULL_MULT", "OLD_HULL_MULT");
@@ -86,7 +86,7 @@ class ItemSaveTest {
 
     @Test
     void theStoreSurvivesASaveAndLoadUnderStableNamesRatherThanJavaClassPaths() throws Exception {
-        ItemDefinition military = ItemFixtures.registerMilitary();
+        ItemDefinition military = HullItemRows.registerMilitary();
         ItemStore store = new ItemStore();
         Item saved = store.add(military, 99L);
 
@@ -105,7 +105,7 @@ class ItemSaveTest {
 
     @Test
     void savesFromWhenHullItemsCouldBeFavouritedStillLoad() throws Exception {
-        ItemDefinition military = ItemFixtures.registerMilitary();
+        ItemDefinition military = HullItemRows.registerMilitary();
         ItemStore store = new ItemStore();
         Item saved = store.add(military, 1L);
         XStream gameLike = xstream();
@@ -120,9 +120,9 @@ class ItemSaveTest {
 
     @Test
     void itemsSavedUnderLegacyNamesLoadAsTheTypeTheirDefinitionGives() throws Exception {
-        ItemFixtures.registerMilitary();
+        HullItemRows.registerMilitary();
         ItemStore store = new ItemStore();
-        Item saved = store.add(ItemDefinitions.get(ItemFixtures.MILITARY), 3L);
+        Item saved = store.add(ItemDefinitions.get(HullItemRows.MILITARY), 3L);
         String currentXml = xstream().toXML(store);
 
         List<String> legacyAliases = new java.util.ArrayList<>(ItemSaveAliases.LEGACY_ITEM_ALIASES);

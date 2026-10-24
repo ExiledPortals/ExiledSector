@@ -14,7 +14,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.DerelictShipEntityPlugin;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial;
 import exiledlib.compat.CompatTarget;
-import exiledsector.skills.unlock.RelockedGates;
+import exiledsector.skills.unlock.GateTriggers;
 import exiledsector.skills.unlock.UnlockConditionType;
 import org.apache.log4j.Logger;
 
@@ -59,16 +59,12 @@ public final class AbyssSingularity {
         if (sector == null || result == null || !result.didPlayerWin()) {
             return;
         }
-        boolean defeated = isDefeated(sector);
-        if (defeated && !RelockedGates.isRelocked(sector, UnlockConditionType.RAT_SINGULARITY_DEFEATED)) {
+        if (!GateTriggers.awaits(sector, UnlockConditionType.RAT_SINGULARITY_DEFEATED, isDefeated(sector))) {
             return;
         }
         EngagementResultForFleetAPI losers = result.getLoserResult();
         if (losers != null && (containsGenesis(losers.getDestroyed()) || containsGenesis(losers.getDisabled()))) {
-            RelockedGates.reopen(sector, UnlockConditionType.RAT_SINGULARITY_DEFEATED);
-            if (!defeated) {
-                markDefeated(sector, "the player destroyed the Singularity's Genesis-class ship");
-            }
+            markDefeated(sector, "the player destroyed the Singularity's Genesis-class ship");
         }
     }
 
@@ -84,7 +80,8 @@ public final class AbyssSingularity {
     }
 
     private static void markDefeated(SectorAPI sector, String reason) {
-        CompatTarget.raiseSectorFlag(sector, DEFEATED_FLAG, LOG, "Unlocking the Abyss area: " + reason);
+        GateTriggers.record(sector, UnlockConditionType.RAT_SINGULARITY_DEFEATED, sector.getMemoryWithoutUpdate(), DEFEATED_FLAG,
+                "Unlocking the Abyss area: " + reason);
     }
 
     public static boolean containsGenesis(List<FleetMemberAPI> members) {

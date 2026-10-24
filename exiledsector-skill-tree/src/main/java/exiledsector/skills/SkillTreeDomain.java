@@ -16,6 +16,7 @@ import exiledlib.PlayerFleet;
 import exiledsector.compat.AbyssSingularity;
 import exiledlib.compat.CompatTarget;
 import exiledlib.compat.LostSectorCompat;
+import exiledsector.compat.LostSectorUnlocks;
 import exiledsector.compat.MagicLibCompat;
 import exiledsector.compat.NexerelinCompat;
 import exiledsector.compat.NightcrossCompat;
@@ -77,8 +78,8 @@ import exiledsector.skills.npc.NpcLevelCaps;
 import exiledsector.skills.radius.NodeRadii;
 import exiledsector.skills.tags.AreaToggles;
 import exiledsector.skills.unlock.NodeGates;
-import exiledsector.skills.unlock.RelockedGates;
 import exiledsector.skills.unlock.RemnantEncounter;
+import exiledsector.skills.unlock.ThreatEncounter;
 import exiledsector.skills.unlock.UnlockConditionOverrides;
 import exiledsector.skills.unlock.UnlockConditionType;
 import exiledsector.ui.SkillTreeRefitButton;
@@ -215,7 +216,10 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
     public void afterLootListeners() {
         SectorAPI sector = Global.getSector();
         sector.addTransientListener(new RemnantEncounter.BattleListener());
-        sector.getListenerManager().addListener(new RelockedGates.LocationListener(), true);
+        sector.addTransientListener(new ThreatEncounter.BattleListener());
+        if (LostSectorCompat.isModEnabled()) {
+            sector.getListenerManager().addListener(new LostSectorUnlocks.LocationListener(), true);
+        }
         if (RandomAssortmentCompat.isModEnabled()) {
             AbyssSingularity.checkSaveOnLoad(sector);
             sector.addTransientListener(new AbyssSingularity.BattleListener());

@@ -1,9 +1,8 @@
 package exiledsector.ui;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledlib.MockSector;
 import exiledsector.persistence.ShipSkillDataManager;
 import lunalib.lunaRefit.BaseRefitButton;
 import lunalib.lunaSettings.LunaSettings;
@@ -13,8 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import java.util.HashMap;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -23,7 +20,7 @@ import static org.mockito.Mockito.when;
 
 class SectionEditorTest {
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private MockedStatic<LunaSettings> lunaSettingsMock;
     private FleetMemberAPI member;
     private BaseRefitButton refitButton;
@@ -31,11 +28,8 @@ class SectionEditorTest {
 
     @BeforeEach
     void setUp() {
-        globalMock = Mockito.mockStatic(Global.class);
+        mockSector = new MockSector();
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class, invocation -> null);
-        SectorAPI sector = mock(SectorAPI.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
-        when(sector.getPersistentData()).thenReturn(new HashMap<>());
         member = mock(FleetMemberAPI.class);
         when(member.getId()).thenReturn("ship");
         refitButton = mock(BaseRefitButton.class);
@@ -45,7 +39,7 @@ class SectionEditorTest {
     @AfterEach
     void tearDown() {
         lunaSettingsMock.close();
-        globalMock.close();
+        mockSector.close();
     }
 
     @Test

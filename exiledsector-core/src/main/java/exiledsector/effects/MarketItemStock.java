@@ -11,9 +11,9 @@ import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.campaign.listeners.ColonyInteractionListener;
 import com.fs.starfarer.api.campaign.listeners.SubmarketUpdateListener;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import com.fs.starfarer.api.impl.campaign.submarkets.BaseSubmarketPlugin;
 import exiledlib.PlayerFleet;
+import exiledsector.compat.RandomAssortmentCompat;
 import exiledsector.items.ItemData;
 import exiledsector.loot.LootSource;
 import exiledsector.loot.LootSources;
@@ -22,13 +22,10 @@ import org.apache.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 public class MarketItemStock implements SubmarketUpdateListener, ColonyInteractionListener {
 
     static final String ROLLED_RESTOCK_KEY_PREFIX = "$exiledSector_itemStockRolledAt_";
-    static final String EXOSHIP_SUBMARKET = "rat_exoship_market";
-    static final Set<String> ANCHOR_SUBMARKETS = Set.of(Submarkets.SUBMARKET_OPEN, Submarkets.GENERIC_MILITARY, EXOSHIP_SUBMARKET);
     private static final Logger LOG = Logger.getLogger(MarketItemStock.class);
     private final Random random;
 
@@ -64,7 +61,7 @@ public class MarketItemStock implements SubmarketUpdateListener, ColonyInteracti
     }
 
     private static boolean claimRestock(SubmarketAPI submarket) {
-        if (EXOSHIP_SUBMARKET.equals(submarket.getSpecId())) {
+        if (RandomAssortmentCompat.EXOSHIP_SUBMARKET.equals(submarket.getSpecId())) {
             return true;
         }
         MemoryAPI marketMemory = submarket.getMarket().getMemoryWithoutUpdate();

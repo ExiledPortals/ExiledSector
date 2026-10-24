@@ -59,6 +59,19 @@ class FighterSkillEffectTest {
     }
 
     @Test
+    void replacementRateMultStaysFiniteAtAFullReduction() {
+        MutableStat decay = new MutableStat(1f);
+        MutableStat recovery = new MutableStat(1f);
+        when(dynamic.getStat("replacement_rate_decrease_mult")).thenReturn(decay);
+        when(dynamic.getStat("replacement_rate_increase_mult")).thenReturn(recovery);
+
+        FighterSkillEffect.FIGHTER_REPLACEMENT_RATE_MULT.apply(stats, "mod_id", -100f);
+
+        assertTrue(Float.isFinite(decay.getModifiedValue()));
+        assertTrue(Float.isFinite(recovery.getModifiedValue()));
+    }
+
+    @Test
     void relaunchTimeAddsAFractionOfTheBaseRefitTime() {
         StatBonus extraRearm = realDynamicMod("fighter_rearm_time_extra_fraction_of_base_refit_time_mod");
 

@@ -82,7 +82,7 @@
     "socketable.anchor.duplicate": "<bad>暂时失效</bad>：这艘舰船上的另一个锚点已经开启了通往{volume}的虫洞。",
     "socketable.anchor.exitLocked": "在通往{volume}的道路解锁之前<bad>暂时失效</bad>。",
     "socketable.anchor.gate.gate_singularity_defeated": "在击败深渊中的奇点之前<bad>暂时失效</bad>。",
-    "socketable.anchor.gate.gate_lunar_fleet_defeated": "在击败月之舰队之前<bad>暂时失效</bad>。",
+    "socketable.anchor.gate.gate_existential_threat_defeated": "在击败存在性威胁之前<bad>暂时失效</bad>。",
     "socketable.anchor.gate.gate_ancient_prototype_found": "在找到远古原型舰之前<bad>暂时失效</bad>。",
     "socketable.anchor.gate.gate_frozen_heart_visited": "在你的舰队进入冰封之心所在的星系之前<bad>暂时失效</bad>。",
     "socketable.anchor.gate.gate_threat_fought": "在你的舰队与威胁交战之前<bad>暂时失效</bad>。",

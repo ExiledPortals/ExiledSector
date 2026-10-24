@@ -12,7 +12,9 @@ import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledlib.MockSector;
 import exiledsector.compat.NightcrossCompat;
+import exiledsector.items.AnchorRows;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.JanusDevice;
@@ -57,14 +59,13 @@ import static org.mockito.Mockito.when;
 class GateRewardAnchorsTest {
 
     private static final String ABYSS_GATE = "gate_singularity_defeated";
-    private static final String LUNAR_GATE = "gate_lunar_fleet_defeated";
+    private static final String EXISTENTIAL_THREAT_GATE = "gate_existential_threat_defeated";
     private static final String ABYSS_ANCHOR = "wormhole_anchor_abyss";
     private static final String STARGAZER_ANCHOR = "wormhole_anchor_stargazer";
 
     private MockedStatic<LunaSettings> lunaSettingsMock;
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private final Map<String, Object> memoryValues = new HashMap<>();
-    private final Map<String, Object> persistentData = new HashMap<>();
     private final ModManagerAPI modManager = mock(ModManagerAPI.class);
     private SectorAPI sector;
     private CargoAPI playerCargo;
@@ -76,31 +77,26 @@ class GateRewardAnchorsTest {
         memoryValues.put(JanusDevice.FLAG, true);
         MemoryAPI sectorMemory = memory(memoryValues);
         MemoryAPI playerMemory = memory(new HashMap<>());
-        sector = mock(SectorAPI.class);
+        mockSector = new MockSector();
+        sector = mockSector.sector;
         when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
         when(sector.getPlayerMemoryWithoutUpdate()).thenReturn(playerMemory);
-        when(sector.getPersistentData()).thenReturn(persistentData);
         when(sector.getSeedString()).thenReturn("seed");
-        CampaignFleetAPI playerFleet = mock(CampaignFleetAPI.class);
-        playerCargo = mock(CargoAPI.class);
-        when(playerFleet.getCargo()).thenReturn(playerCargo);
-        when(sector.getPlayerFleet()).thenReturn(playerFleet);
+        playerCargo = mockSector.cargo();
         SettingsAPI settings = mock(SettingsAPI.class);
         when(settings.getModManager()).thenReturn(modManager);
         when(modManager.isModEnabled(NightcrossCompat.MOD_ID)).thenReturn(true);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
         NodeGates.register(new JSONObject("{\"" + ABYSS_GATE + "\": {\"rewardAnchor\": true, \"unlockConditions\": [{\"type\": \"ratSingularityDefeated\"}]},"
-                + " \"" + LUNAR_GATE + "\": {\"rewardAnchor\": true, \"unlockConditions\": [{\"type\": \"nightcrossLunarFleetDefeated\"}]}}"));
+                + " \"" + EXISTENTIAL_THREAT_GATE + "\": {\"rewardAnchor\": true, \"unlockConditions\": [{\"type\": \"nightcrossExistentialThreatDefeated\"}]}}"));
 
         SkillTree.clearNodes();
         SkillType exitType = new SkillType.Builder("wormhole_exit", "Wormhole Exit", "", SkillTier.WORMHOLE_EXIT).build();
         SkillTree.register(new SkillNode("rat_abyss_wormhole_1", exitType, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of("abyss", ABYSS_GATE)));
-        SkillTree.register(new SkillNode("stargazer_wormhole_1", exitType, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of("stargazer", LUNAR_GATE)));
+        SkillTree.register(new SkillNode("stargazer_wormhole_1", exitType, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of("stargazer", EXISTENTIAL_THREAT_GATE)));
         WormholeAnchorDefinitions.register(new JSONArray()
-                .put(anchorRow(ABYSS_ANCHOR, "abyss", "rat_abyss_wormhole_1"))
-                .put(anchorRow(STARGAZER_ANCHOR, "stargazer", "stargazer_wormhole_1")));
+                .put(AnchorRows.row(ABYSS_ANCHOR, "abyss", "rat_abyss_wormhole_1"))
+                .put(AnchorRows.row(STARGAZER_ANCHOR, "stargazer", "stargazer_wormhole_1")));
     }
 
     @AfterEach
@@ -109,7 +105,7 @@ class GateRewardAnchorsTest {
         WormholeAnchorDefinitions.clear();
         SkillTree.clearNodes();
         NodeGates.register(new JSONObject("{}"));
-        globalMock.close();
+        mockSector.close();
         lunaSettingsMock.close();
     }
 
@@ -118,11 +114,6 @@ class GateRewardAnchorsTest {
         when(memory.getBoolean(anyString())).thenAnswer(call -> Boolean.TRUE.equals(values.get(call.<String>getArgument(0))));
         doAnswer(call -> values.put(call.getArgument(0), call.getArgument(1))).when(memory).set(anyString(), any());
         return memory;
-    }
-
-    private static JSONObject anchorRow(String id, String volume, String exitNode) throws Exception {
-        return new JSONObject().put("id", id).put("volume", volume).put("exit_node", exitNode).put("name", id + " name")
-                .put("icon", "graphics/icons/nav_relay.png").put("rarity", "10").put("description", "Opens a wormhole.");
     }
 
     private static FleetMemberAPI member(String hullId) {
@@ -149,8 +140,8 @@ class GateRewardAnchorsTest {
         return new BattleEngagement(battle, 1f, 100f, lost);
     }
 
-    private static CampaignFleetAPI fleet(boolean lunarFleet, List<FleetMemberAPI> members) {
-        MemoryAPI fleetMemory = memory(new HashMap<>(lunarFleet ? Map.of("$SDFStargazerLunarFleet", true) : Map.of()));
+    private static CampaignFleetAPI fleet(boolean existentialThreat, List<FleetMemberAPI> members) {
+        MemoryAPI fleetMemory = memory(new HashMap<>(existentialThreat ? Map.of("$SDFStargazerLunarFleet", true) : Map.of()));
         CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
         when(fleet.getMemoryWithoutUpdate()).thenReturn(fleetMemory);
         FleetDataAPI fleetData = mock(FleetDataAPI.class);
@@ -185,17 +176,17 @@ class GateRewardAnchorsTest {
     }
 
     @Test
-    void onlyBeatingTheWholeLunarFleetEarnsTheStargazerAnchor() {
+    void onlyBeatingTheWholeExistentialThreatEarnsTheStargazerAnchor() {
         FleetMemberAPI flagship = member("na_macula");
         FleetMemberAPI escort = member("na_escort");
-        CampaignFleetAPI lunarFleet = fleet(true, List.of(flagship, escort));
+        CampaignFleetAPI existentialThreat = fleet(true, List.of(flagship, escort));
 
         BattleLoot partial = wonBattle();
-        GateRewardAnchors.recordEngagement(partial, engagementLosing(List.of(flagship), lunarFleet));
+        GateRewardAnchors.recordEngagement(partial, engagementLosing(List.of(flagship), existentialThreat));
         assertEquals(List.of(), ids(GateRewardAnchors.claim(partial, List.of(), sector)));
 
         BattleLoot whole = wonBattle();
-        GateRewardAnchors.recordEngagement(whole, engagementLosing(List.of(flagship, escort), lunarFleet));
+        GateRewardAnchors.recordEngagement(whole, engagementLosing(List.of(flagship, escort), existentialThreat));
         assertEquals(List.of(STARGAZER_ANCHOR), ids(GateRewardAnchors.claim(whole, List.of(), sector)));
     }
 
@@ -250,14 +241,14 @@ class GateRewardAnchorsTest {
         GateRewardAnchors.grantMissed(sector);
 
         verify(playerCargo, never()).addSpecial(any(), anyFloat());
-        assertTrue(GateRewardAnchors.granted(sector, LUNAR_GATE));
+        assertTrue(GateRewardAnchors.granted(sector, EXISTENTIAL_THREAT_GATE));
     }
 
     @Test
     void aGateWhoseModWasMissingAtTheUpdateStillGrantsOnceTheModIsAddedAndTheBossBeaten() {
         when(modManager.isModEnabled(NightcrossCompat.MOD_ID)).thenReturn(false);
         GateRewardAnchors.markOpenGatesGrantedOnce(sector);
-        assertFalse(GateRewardAnchors.granted(sector, LUNAR_GATE));
+        assertFalse(GateRewardAnchors.granted(sector, EXISTENTIAL_THREAT_GATE));
 
         when(modManager.isModEnabled(NightcrossCompat.MOD_ID)).thenReturn(true);
         memoryValues.put("$na_defeated_macula", true);
@@ -274,6 +265,16 @@ class GateRewardAnchorsTest {
         GateRewardAnchors.grantMissed(sector);
 
         verify(playerCargo, never()).addSpecial(any(), anyFloat());
-        assertFalse(GateRewardAnchors.granted(sector, LUNAR_GATE));
+        assertFalse(GateRewardAnchors.granted(sector, EXISTENTIAL_THREAT_GATE));
+    }
+
+    @Test
+    void aSaveGrantedTheStargazerAnchorUnderTheGatesFormerNameIsNotGrantedItAgain() {
+        SectorAPI sector = mock(SectorAPI.class);
+        MemoryAPI sectorMemory = memory(new HashMap<>(Map.of(GateRewardAnchors.GRANTED_PREFIX + "gate_lunar_fleet_defeated", true)));
+        when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
+
+        assertTrue(GateRewardAnchors.granted(sector, EXISTENTIAL_THREAT_GATE));
+        assertFalse(GateRewardAnchors.granted(sector, ABYSS_GATE));
     }
 }

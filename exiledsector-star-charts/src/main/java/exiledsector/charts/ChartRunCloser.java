@@ -25,6 +25,8 @@ import org.apache.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public final class ChartRunCloser {
 
@@ -169,27 +171,38 @@ public final class ChartRunCloser {
     }
 
     static void endIntel(CloseTarget target) {
-        IntelDataAPI intelTab = target.sector().getIntel();
-        if (intelTab != null && intelTab.getSelectedIntel() != null && intelPointsIntoRun(intelTab.getSelectedIntel(), target)) {
-            intelTab.setSelectedIntel(null);
-        }
+        endIntelWhere(target.sector(), IntelManagerAPI::getIntel, intel -> intelPointsIntoRun(intel, target));
         IntelManagerAPI intelManager = target.sector().getIntelManager();
         if (intelManager == null) {
             return;
-        }
-        for (IntelInfoPlugin intel : new ArrayList<>(intelManager.getIntel())) {
-            if (intelPointsIntoRun(intel, target)) {
-                if (intel instanceof BaseIntelPlugin baseIntel) {
-                    baseIntel.endImmediately();
-                }
-                intelManager.removeIntel(intel);
-            }
         }
         for (IntelInfoPlugin queued : new ArrayList<>(intelManager.getCommQueue())) {
             if (intelPointsIntoRun(queued, target)) {
                 intelManager.unqueueIntel(queued);
             }
         }
+    }
+
+    static int endIntelWhere(SectorAPI sector, Function<IntelManagerAPI, List<IntelInfoPlugin>> candidates, Predicate<IntelInfoPlugin> doomed) {
+        IntelDataAPI intelTab = sector.getIntel();
+        if (intelTab != null && intelTab.getSelectedIntel() != null && doomed.test(intelTab.getSelectedIntel())) {
+            intelTab.setSelectedIntel(null);
+        }
+        IntelManagerAPI intelManager = sector.getIntelManager();
+        if (intelManager == null) {
+            return 0;
+        }
+        int removed = 0;
+        for (IntelInfoPlugin intel : new ArrayList<>(candidates.apply(intelManager))) {
+            if (doomed.test(intel)) {
+                if (intel instanceof BaseIntelPlugin baseIntel) {
+                    baseIntel.endImmediately();
+                }
+                intelManager.removeIntel(intel);
+                removed++;
+            }
+        }
+        return removed;
     }
 
     private static boolean intelPointsIntoRun(IntelInfoPlugin intel, CloseTarget target) {

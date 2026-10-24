@@ -1,6 +1,7 @@
 $ModRootFiles = @("mod_info.json", "ExiledSector.version", "LICENSE", "CREDITS.md")
 $LibraryModFolder = "exiled-lib\mod"
 $LibraryModRootFiles = @("mod_info.json", "ExiledLib.version")
+$BuildJvmOptions = "-XX:ActiveProcessorCount=4 -XX:CICompilerCount=2 -XX:TieredStopAtLevel=1"
 
 function Get-MavenCommand {
     $mvnCmd = Get-Command mvn -ErrorAction SilentlyContinue
@@ -24,6 +25,8 @@ function Invoke-ModBuild {
     $mvn = Get-MavenCommand
     $buildLock = Join-Path $ProjectRoot ".maven-build.lock"
     Set-Content -LiteralPath $buildLock -Value $PID
+    $previousJvmOptions = $env:JAVA_TOOL_OPTIONS
+    $env:JAVA_TOOL_OPTIONS = $BuildJvmOptions
     Push-Location $ProjectRoot
     try {
         & $mvn -q clean package
@@ -32,6 +35,7 @@ function Invoke-ModBuild {
         }
     } finally {
         Pop-Location
+        $env:JAVA_TOOL_OPTIONS = $previousJvmOptions
         Remove-Item -LiteralPath $buildLock -Force -ErrorAction SilentlyContinue
     }
 }

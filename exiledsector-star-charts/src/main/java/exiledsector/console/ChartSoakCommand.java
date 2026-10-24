@@ -5,25 +5,19 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.ChartCensus;
 import exiledsector.charts.ChartRuns;
 import exiledsector.charts.ChartSoakScript;
-import org.lazywizard.console.BaseCommand;
-import org.lazywizard.console.CommonStrings;
 import org.lazywizard.console.Console;
 
 import java.util.Random;
 
-public class ChartSoakCommand implements BaseCommand {
+public class ChartSoakCommand extends CampaignCommand {
 
     static final int DEFAULT_SYSTEMS = 10;
     static final int MAX_SYSTEMS = 500;
 
     @Override
-    public CommandResult runCommand(String args, CommandContext context) {
-        if (!context.isInCampaign()) {
-            Console.showMessage(CommonStrings.ERROR_CAMPAIGN_ONLY);
-            return CommandResult.WRONG_CONTEXT;
-        }
-        int systems = parseSystems(args);
-        if (systems < 1 || systems > MAX_SYSTEMS) {
+    protected CommandResult runInCampaign(String args) {
+        Integer systems = ConsoleArgs.count(args, DEFAULT_SYSTEMS, 1, MAX_SYSTEMS);
+        if (systems == null) {
             Console.showMessage("Give a number of systems from 1 to " + MAX_SYSTEMS + ".");
             return CommandResult.BAD_SYNTAX;
         }
@@ -42,17 +36,6 @@ public class ChartSoakCommand implements BaseCommand {
                 + " cycling seeds, system types and tiers 1 to 15. Close the console and keep the game paused so other fleets and intel do not change the counts; the result is shown"
                 + " in the campaign messages, in the console and in starsector.log.\nBefore: " + before.describe());
         return CommandResult.SUCCESS;
-    }
-
-    static int parseSystems(String args) {
-        if (args == null || args.isBlank()) {
-            return DEFAULT_SYSTEMS;
-        }
-        try {
-            return Integer.parseInt(args.trim());
-        } catch (NumberFormatException e) {
-            return 0;
-        }
     }
 
     private static void report(String report) {

@@ -1,7 +1,6 @@
 package exiledsector.items;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledlib.MockSector;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
@@ -15,10 +14,7 @@ import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,22 +26,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class NpcItemsTest {
 
     private static final String HEGEMONY_ANCHOR = "wormhole_anchor_hegemony";
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
 
     @BeforeEach
     void setUp() throws Exception {
-        Map<String, Object> persistentData = new HashMap<>();
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
         ItemDefinitions.register(new JSONArray().put(subroutineRow(SUBROUTINE)));
     }
 
@@ -55,7 +45,7 @@ class NpcItemsTest {
         WormholeAnchorDefinitions.clear();
         ItemDefinitions.clear();
         RealSkillData.clear();
-        globalMock.close();
+        mockSector.close();
     }
 
     private static void registerHegemonyAnchor(boolean withExit) throws Exception {
@@ -64,7 +54,7 @@ class NpcItemsTest {
             SkillTree.registerType(exitType);
             SkillTree.register(new SkillNode("hegemony_2", exitType, List.of(), 0f, 0f, SkillNodeDecoration.NONE, List.of("hegemony")));
         }
-        WormholeAnchorDefinitions.register(new JSONArray().put(WormholeAnchorTest.anchorRow(HEGEMONY_ANCHOR, "hegemony", "hegemony_2")));
+        WormholeAnchorDefinitions.register(new JSONArray().put(AnchorRows.row(HEGEMONY_ANCHOR, "hegemony", "hegemony_2")));
     }
 
     @Test

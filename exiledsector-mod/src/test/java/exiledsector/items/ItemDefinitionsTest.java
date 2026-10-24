@@ -12,11 +12,11 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 
-import static exiledsector.items.ItemFixtures.MILITARY;
-import static exiledsector.items.ItemFixtures.MILITARY_PREFIXES;
-import static exiledsector.items.ItemFixtures.MILITARY_SECTION;
-import static exiledsector.items.ItemFixtures.MILITARY_SUFFIXES;
-import static exiledsector.items.ItemFixtures.row;
+import static exiledsector.items.HullItemRows.MILITARY;
+import static exiledsector.items.HullItemRows.MILITARY_PREFIXES;
+import static exiledsector.items.HullItemRows.MILITARY_SECTION;
+import static exiledsector.items.HullItemRows.MILITARY_SUFFIXES;
+import static exiledsector.items.HullItemRows.row;
 import static exiledsector.items.ItemFixtures.subroutineRow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -36,7 +36,7 @@ class ItemDefinitionsTest {
 
     @Test
     void aRowBecomesADefinitionWithItsPrefixesAndSuffixesInOrderAndRangesLowToHigh() throws Exception {
-        ItemDefinition definition = ItemFixtures.registerMilitary();
+        ItemDefinition definition = HullItemRows.registerMilitary();
 
         assertEquals(ItemKind.BRIDGE, definition.kind());
         assertNull(SubroutineKind.of(definition));
@@ -144,8 +144,8 @@ class ItemDefinitionsTest {
 
     @Test
     void theShippedDefinitionsAllLoadAndOnlyHullItemsRollAffixes() throws Exception {
-        JSONArray subroutineRows = ItemFixtures.shippedRows(SubroutineDefinitions.dataPath());
-        JSONArray hullItemRows = ItemFixtures.shippedRows(HullItem.definitionsPath());
+        JSONArray subroutineRows = HullItemRows.shippedRows(SubroutineDefinitions.dataPath());
+        JSONArray hullItemRows = HullItemRows.shippedRows(HullItem.definitionsPath());
         int subroutineRowCount = subroutineRows == null ? 0 : subroutineRows.length();
 
         ItemFixtures.registerShippedItems();

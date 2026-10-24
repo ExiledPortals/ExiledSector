@@ -1,20 +1,17 @@
 package exiledsector.ui.cargo;
 
 import com.fs.starfarer.api.EveryFrameScript;
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
+import exiledlib.MockSector;
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.ItemDisassembly;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.util.List;
 
@@ -29,18 +26,16 @@ import static org.mockito.Mockito.when;
 
 class LootAlertListenerTest {
 
-    private final SectorAPI sector = mock(SectorAPI.class);
-    private MockedStatic<Global> global;
+    private MockSector mockSector;
 
     @BeforeEach
     void setUp() {
-        global = Mockito.mockStatic(Global.class);
-        global.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
     }
 
     @AfterEach
     void tearDown() {
-        global.close();
+        mockSector.close();
     }
 
     private static CargoAPI cargoWith(String itemId) {
@@ -70,7 +65,7 @@ class LootAlertListenerTest {
         listener.reportSubmarketCargoAndShipsUpdated(submarket("some_market", mock(CargoAPI.class)));
         listener.reportSubmarketCargoAndShipsUpdated(submarket(LootAlertListener.LOOT_MARKET_ID, shown));
 
-        verify(sector).addTransientScript(any(EveryFrameScript.class));
+        verify(mockSector.sector).addTransientScript(any(EveryFrameScript.class));
         assertSame(shown, listener.activeWatcher().watchedCargo());
     }
 
@@ -92,7 +87,7 @@ class LootAlertListenerTest {
         LootAlertListener listener = new LootAlertListener();
         listener.reportAboutToShowLootToPlayer(cargoWith(ItemDisassembly.PARTS_ITEM_ID), null);
 
-        verify(sector, never()).addTransientScript(any(EveryFrameScript.class));
+        verify(mockSector.sector, never()).addTransientScript(any(EveryFrameScript.class));
         assertNull(listener.activeWatcher());
     }
 }

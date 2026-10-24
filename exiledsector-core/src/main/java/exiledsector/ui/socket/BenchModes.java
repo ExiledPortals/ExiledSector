@@ -1,43 +1,38 @@
 package exiledsector.ui.socket;
 
 import exiledlib.i18n.StyledText;
+import exiledsector.domain.DomainContributions;
+import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.items.Item;
+import exiledsector.items.ItemType;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.BooleanSupplier;
 
 public final class BenchModes {
 
-    private static final Map<BenchMode, BenchModeSupport> SUPPORT_BY_MODE = Collections.synchronizedMap(new EnumMap<>(BenchMode.class));
-    private static final Map<BenchMode, BooleanSupplier> DOMAIN_ENABLED_BY_MODE = Collections.synchronizedMap(new EnumMap<>(BenchMode.class));
+    private static final DomainContributions<BenchModeSupport> EVERY_SUPPORT = DomainContributions.fromEveryDomain(ExiledSectorDomain::benchModes);
+    private static final DomainContributions<BenchModeSupport> ENABLED_SUPPORTS = new DomainContributions<>(ExiledSectorDomain::benchModes);
 
     private BenchModes() {
     }
 
-    public static void register(BenchModeSupport support, BooleanSupplier domainEnabled) {
-        SUPPORT_BY_MODE.put(support.mode(), support);
-        DOMAIN_ENABLED_BY_MODE.put(support.mode(), domainEnabled);
+    public static BenchModeSupport of(BenchMode mode) {
+        return mode == null ? null : EVERY_SUPPORT.all().stream().filter(support -> support.mode() == mode).findFirst().orElse(null);
     }
 
-    public static BenchModeSupport of(BenchMode mode) {
-        return mode == null ? null : SUPPORT_BY_MODE.get(mode);
+    public static BenchMode modeFor(ItemType type) {
+        return EVERY_SUPPORT.all().stream().filter(support -> support.itemType() == type).map(BenchModeSupport::mode).findFirst()
+                .orElse(BenchMode.HULL_ITEMS);
     }
 
     public static boolean enabled(BenchMode mode) {
-        BenchModeSupport support = of(mode);
-        BooleanSupplier domainEnabled = DOMAIN_ENABLED_BY_MODE.get(mode);
-        return support != null && domainEnabled.getAsBoolean() && support.enabled();
+        return ENABLED_SUPPORTS.all().stream().anyMatch(support -> support.mode() == mode && support.enabled());
     }
 
     static List<StyledText> detailLines(Item item) {
         List<StyledText> lines = new ArrayList<>();
-        synchronized (SUPPORT_BY_MODE) {
-            SUPPORT_BY_MODE.values().forEach(support -> lines.addAll(support.detailLines(item)));
-        }
+        EVERY_SUPPORT.all().forEach(support -> lines.addAll(support.detailLines(item)));
         return lines;
     }
 }

@@ -3,7 +3,6 @@ package exiledsector.charts;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.econ.EconomyAPI;
 import com.fs.starfarer.api.campaign.econ.Industry;
@@ -11,6 +10,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import com.fs.starfarer.api.loading.IndustrySpecAPI;
+import exiledlib.MockSector;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
 import exiledsector.items.JanusDevice;
 import lunalib.lunaSettings.LunaSettings;
@@ -37,7 +37,7 @@ class WormholeGatewayTest {
 
     private static final String PLAYER_FACTION = "player";
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private MockedStatic<LunaSettings> lunaMock;
     private final ModManagerAPI modManager = mock(ModManagerAPI.class);
     private final List<MarketAPI> markets = new ArrayList<>();
@@ -48,22 +48,20 @@ class WormholeGatewayTest {
         SettingsAPI settings = mock(SettingsAPI.class);
         when(settings.getIndustrySpec(WormholeGateway.INDUSTRY_ID)).thenReturn(mock(IndustrySpecAPI.class));
         when(settings.getModManager()).thenReturn(modManager);
-        SectorAPI sector = mock(SectorAPI.class);
+        mockSector = new MockSector();
         EconomyAPI economy = mock(EconomyAPI.class);
         when(economy.getMarketsCopy()).thenAnswer(invocation -> new ArrayList<>(markets));
-        when(sector.getEconomy()).thenReturn(economy);
-        when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
+        when(mockSector.sector.getEconomy()).thenReturn(economy);
+        when(mockSector.sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
         when(sectorMemory.getBoolean(JanusDevice.FLAG)).thenReturn(true);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
         lunaMock = Mockito.mockStatic(LunaSettings.class);
     }
 
     @AfterEach
     void tearDown() {
         lunaMock.close();
-        globalMock.close();
+        mockSector.close();
     }
 
     private MarketAPI colony(String name) {

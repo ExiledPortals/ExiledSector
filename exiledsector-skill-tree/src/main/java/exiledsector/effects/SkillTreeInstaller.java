@@ -1,8 +1,8 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.EveryFrameScript;
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import exiledlib.PlayerFleet;
 import exiledlib.skills.skilleffect.logistics.FleetWideEffects;
 
 public class SkillTreeInstaller implements EveryFrameScript {
@@ -38,7 +38,7 @@ public class SkillTreeInstaller implements EveryFrameScript {
 
     private void syncPlayerFleet() {
         passPending = false;
-        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
+        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
         if (playerFleet == null) return;
 
         if (ShipTreeSync.fleetChanged(playerFleet)) {

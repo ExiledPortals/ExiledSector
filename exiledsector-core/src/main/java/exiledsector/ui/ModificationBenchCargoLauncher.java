@@ -1,10 +1,10 @@
 package exiledsector.ui;
 
-import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.UIPanelAPI;
+import exiledsector.effects.TransientScripts;
 import exiledsector.ui.refit.UiReflection;
 import exiledsector.ui.socket.BenchMode;
 import exiledsector.ui.socket.BenchModes;
@@ -19,21 +19,21 @@ public final class ModificationBenchCargoLauncher {
     }
 
     public static boolean open(CampaignUIAPI campaignUI, Runnable afterClose) {
-        return open(campaignUI, false, afterClose);
+        return open(campaignUI, null, afterClose);
     }
 
-    public static boolean openStarCharts(CampaignUIAPI campaignUI) {
-        return BenchModes.enabled(BenchMode.STAR_CHARTS) && open(campaignUI, true, null);
+    public static boolean openMode(CampaignUIAPI campaignUI, BenchMode mode) {
+        return BenchModes.enabled(mode) && open(campaignUI, mode, null);
     }
 
     // java:S1181: UiReflection declares Throwable, and a changed engine may only cost the core UI Crafting window, never the game
     @SuppressWarnings("java:S1181")
-    private static boolean open(CampaignUIAPI campaignUI, boolean starChartsOnly, Runnable afterClose) {
+    private static boolean open(CampaignUIAPI campaignUI, BenchMode onlyMode, Runnable afterClose) {
         try {
             UIPanelAPI hostPanel = hostPanel(campaignUI);
             if (hostPanel == null || benchOpenIn(hostPanel)) return false;
             CargoHost host = new CargoHost(hostPanel, afterClose);
-            ModificationBenchScreen screen = new ModificationBenchScreen(host, starChartsOnly);
+            ModificationBenchScreen screen = new ModificationBenchScreen(host, onlyMode);
             CustomPanelAPI panel = Global.getSettings().createCustom(Global.getSettings().getScreenWidth(), Global.getSettings().getScreenHeight(), screen);
             host.benchPanel = panel;
             hostPanel.addComponent(panel).inTL(0f, 0f);
@@ -72,49 +72,24 @@ public final class ModificationBenchCargoLauncher {
 
         @Override
         public void close() {
-            Global.getSector().addTransientScript(new PanelRemoval(this, null));
+            TransientScripts.nextFrame(Global.getSector(), () -> removePanel(this, null));
         }
 
         @Override
         public void leave(String wormholeMessage) {
-            Global.getSector().addTransientScript(new PanelRemoval(this, wormholeMessage));
+            TransientScripts.nextFrame(Global.getSector(), () -> removePanel(this, wormholeMessage));
         }
     }
 
-    static final class PanelRemoval implements EveryFrameScript {
-
-        private final CargoHost host;
-        private final String wormholeMessage;
-        private boolean done;
-
-        private PanelRemoval(CargoHost host, String wormholeMessage) {
-            this.host = host;
-            this.wormholeMessage = wormholeMessage;
+    private static void removePanel(CargoHost host, String wormholeMessage) {
+        if (host.benchPanel != null) {
+            host.hostPanel.removeComponent(host.benchPanel);
         }
-
-        @Override
-        public boolean isDone() {
-            return done;
+        if (host.afterClose != null) {
+            host.afterClose.run();
         }
-
-        @Override
-        public boolean runWhilePaused() {
-            return true;
-        }
-
-        @Override
-        public void advance(float amount) {
-            if (done) return;
-            done = true;
-            if (host.benchPanel != null) {
-                host.hostPanel.removeComponent(host.benchPanel);
-            }
-            if (host.afterClose != null) {
-                host.afterClose.run();
-            }
-            if (wormholeMessage != null) {
-                RefitScreenExit.leave(null, wormholeMessage);
-            }
+        if (wormholeMessage != null) {
+            RefitScreenExit.leave(null, wormholeMessage);
         }
     }
 }

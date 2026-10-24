@@ -1,11 +1,9 @@
 package exiledsector.ui;
 
-import com.fs.starfarer.api.graphics.SpriteAPI;
-import exiledlib.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.hyperspace.HyperspaceRoute;
 import exiledsector.ui.node.GhostFlight;
+import exiledsector.ui.node.GhostFlightPool;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -16,9 +14,8 @@ final class HyperspaceGhostFlights {
     private static final float FLIGHT_SPEED = 2500f;
     private static final float GHOST_SIZE = 14f;
 
-    private final SpriteCache spriteCache = new SpriteCache(HyperspaceGhostFlights.class);
     private final Random random;
-    private final List<GhostFlight> flights = new ArrayList<>();
+    private final GhostFlightPool flights = new GhostFlightPool();
     private List<HyperspaceRoute> routes = List.of();
     private float[] secondsUntilNextFlight = new float[0];
 
@@ -39,7 +36,7 @@ final class HyperspaceGhostFlights {
     }
 
     void advance(float amount) {
-        flights.removeIf(flight -> flight.advance(amount));
+        flights.advance(amount);
         for (int i = 0; i < secondsUntilNextFlight.length; i++) {
             secondsUntilNextFlight[i] -= amount;
             if (secondsUntilNextFlight[i] <= 0f) {
@@ -62,15 +59,6 @@ final class HyperspaceGhostFlights {
     }
 
     void draw(TreeViewport viewport, float alphaMult) {
-        if (alphaMult <= 0f || flights.isEmpty()) {
-            return;
-        }
-        SpriteAPI sprite = spriteCache.sprite(GhostFlight.TEXTURE_PATH);
-        if (sprite == null) {
-            return;
-        }
-        for (GhostFlight flight : flights) {
-            flight.draw(sprite, GhostFlight.color(), GHOST_SIZE, viewport, alphaMult);
-        }
+        flights.draw(GHOST_SIZE, viewport, alphaMult);
     }
 }

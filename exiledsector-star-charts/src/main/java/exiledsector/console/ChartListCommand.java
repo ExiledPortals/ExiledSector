@@ -6,21 +6,15 @@ import exiledlib.i18n.StyledText;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
 import exiledsector.items.StarChart;
-import org.lazywizard.console.BaseCommand;
-import org.lazywizard.console.CommonStrings;
 import org.lazywizard.console.Console;
 
 import java.util.List;
 import java.util.Locale;
 
-public class ChartListCommand implements BaseCommand {
+public class ChartListCommand extends CampaignCommand {
 
     @Override
-    public CommandResult runCommand(String args, CommandContext context) {
-        if (!context.isInCampaign()) {
-            Console.showMessage(CommonStrings.ERROR_CAMPAIGN_ONLY);
-            return CommandResult.WRONG_CONTEXT;
-        }
+    protected CommandResult runInCampaign(String args) {
         int absorbed = StarCharts.absorbCharts(Global.getSector());
         ItemStore store = ItemStore.starChartsIfCreated();
         List<Item> charts = store == null ? List.of() : store.owned();

@@ -1,5 +1,6 @@
 package exiledsector.ui.node;
 
+import exiledlib.skills.skilleffect.render.Fade;
 import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
@@ -53,7 +54,7 @@ final class SocketWormholes {
 
     float morph(String socketId) {
         Float morph = morphBySocketId.get(socketId);
-        return morph == null ? 0f : eased(morph);
+        return morph == null ? 0f : Fade.smooth(morph);
     }
 
     float openness(String socketId) {
@@ -62,10 +63,6 @@ final class SocketWormholes {
 
     SkillNode exit(String socketId) {
         return exitBySocketId.get(socketId);
-    }
-
-    static float eased(float progress) {
-        return progress * progress * (3f - 2f * progress);
     }
 
     private static float toward(float current, float target, float step) {

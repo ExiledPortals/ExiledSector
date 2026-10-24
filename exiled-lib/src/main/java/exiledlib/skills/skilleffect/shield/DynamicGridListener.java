@@ -25,6 +25,8 @@ final class DynamicGridListener extends ShipCombatListener implements Advanceabl
     private static final ScaledBonus BALLISTIC_BONUS = new ScaledBonus(percent(stat(MutableShipStatsAPI::getBallisticRoFMult)),
             percent(scaled(bonus(MutableShipStatsAPI::getBallisticWeaponFluxCostMod), -1f)));
 
+    private final ScaledBonus.Tracker energyBonus = ENERGY_BONUS.tracker();
+    private final ScaledBonus.Tracker ballisticBonus = BALLISTIC_BONUS.tracker();
     private float shieldsDownSeconds;
     private boolean bonusApplied;
 
@@ -44,12 +46,10 @@ final class DynamicGridListener extends ShipCombatListener implements Advanceabl
                 && ownerIsAliveNotHulk();
         shieldsDownSeconds = gridOpen ? shieldsDownSeconds + amount : 0f;
         boolean bonusDue = gridOpen && shieldsDownSeconds >= SHIELDS_DOWN_SECONDS.of(ownerShip.getHullSize());
-        if (bonusDue != bonusApplied) {
-            bonusApplied = bonusDue;
-            MutableShipStatsAPI stats = ownerShip.getMutableStats();
-            float bonusPercent = bonusDue ? magnitude(ENERGY_BONUS_PERCENT_KEY) : 0f;
-            ENERGY_BONUS.apply(stats, modId, bonusPercent);
-            BALLISTIC_BONUS.apply(stats, modId, BallisticAsEnergy.active(stats) ? bonusPercent : 0f);
-        }
+        bonusApplied = bonusDue;
+        MutableShipStatsAPI stats = ownerShip.getMutableStats();
+        float bonusPercent = bonusDue ? magnitude(ENERGY_BONUS_PERCENT_KEY) : 0f;
+        energyBonus.apply(stats, modId, bonusPercent);
+        ballisticBonus.apply(stats, modId, BallisticAsEnergy.active(stats) ? bonusPercent : 0f);
     }
 }

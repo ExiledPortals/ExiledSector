@@ -37,7 +37,7 @@ class SocketTypeMigrationTest {
         SkillTree.register(secondSocket);
         ItemDefinitions.register(new JSONArray()
                 .put(ItemFixtures.subroutineRow("chip"))
-                .put(ItemFixtures.row("gunners", "weapon_mount", "HULL_MULT:4:6").put("unique", "TRUE")));
+                .put(HullItemRows.row("gunners", "weapon_mount", "HULL_MULT:4:6").put("unique", "TRUE")));
     }
 
     @AfterEach

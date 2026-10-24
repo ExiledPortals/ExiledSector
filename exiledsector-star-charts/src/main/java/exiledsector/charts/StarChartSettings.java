@@ -1,7 +1,7 @@
 package exiledsector.charts;
 
 import exiledlib.ModSettings;
-import exiledlib.ModSettingsListener;
+import exiledsector.domain.DomainSwitch;
 
 public final class StarChartSettings {
 
@@ -18,29 +18,22 @@ public final class StarChartSettings {
     public static final String OPEN_ANYWHERE_FIELD_ID = "exiledSector_starChartOpenAnywhereDev";
     public static final boolean DEFAULT_OPEN_ANYWHERE = false;
 
-    private static volatile boolean enabledSetting = DEFAULT_ENABLED;
-
-    public static final class SettingsListener extends ModSettingsListener {
-
-        @Override
-        protected void reload() {
-            reloadSettings();
-        }
-    }
+    public static final DomainSwitch SWITCH = new DomainSwitch(ENABLED_FIELD_ID, DEFAULT_ENABLED, () -> {
+    });
 
     private StarChartSettings() {
     }
 
     public static void reloadSettings() {
-        enabledSetting = ModSettings.booleanOr(ENABLED_FIELD_ID, DEFAULT_ENABLED);
+        SWITCH.reload();
     }
 
     public static boolean enabled() {
-        return enabledSetting;
+        return SWITCH.on();
     }
 
     public static void setEnabledForTests(boolean enabled) {
-        enabledSetting = enabled;
+        SWITCH.setForTests(enabled);
     }
 
     public static int wormholeEntries() {

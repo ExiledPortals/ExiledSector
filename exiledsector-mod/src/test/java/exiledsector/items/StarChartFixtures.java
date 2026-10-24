@@ -22,16 +22,16 @@ public final class StarChartFixtures {
 
     public static void registerShipped() throws Exception {
         ChartEffects.register();
-        ChartFactions.register(ItemFixtures.shippedRows(CHART_FACTIONS_PATH));
-        StarChartItems.register(withTestUniqueModifiers(ItemFixtures.shippedRows(StarChartItems.MODIFIERS_PATH)),
-                ItemFixtures.shippedRows(StarChartImplicits.DATA_PATH), withTestUniques(ItemFixtures.shippedRows(StarChartDefinitions.DATA_PATH)));
+        ChartFactions.register(HullItemRows.shippedRows(CHART_FACTIONS_PATH));
+        StarChartItems.register(withTestUniqueModifiers(HullItemRows.shippedRows(StarChartItems.MODIFIERS_PATH)),
+                HullItemRows.shippedRows(StarChartImplicits.DATA_PATH), withTestUniques(HullItemRows.shippedRows(StarChartDefinitions.DATA_PATH)));
     }
 
     private static JSONArray withTestUniqueModifiers(JSONArray rows) throws JSONException {
-        return rows.put(ItemFixtures.modifierRow("TEST_UNIQUE_SENSOR_RANGE", "prefix", "star_chart", "CHART_SENSOR_RANGE_PERCENT:t1=-50", ""))
-                .put(ItemFixtures.modifierRow("TEST_UNIQUE_EXTRA_POIS", "suffix", "star_chart", "CHART_EXTRA_POIS:t1=4/t8=6", ""))
-                .put(ItemFixtures.modifierRow("TEST_GATED_UNIQUE_BOSS_SIZE", "prefix", "star_chart", "CHART_BOSS_SIZE_PERCENT:t1=200/t10=700", ""))
-                .put(ItemFixtures.modifierRow("TEST_GATED_UNIQUE_BOSS_SPOILS", "suffix", "star_chart", "CHART_BOSS_SPOILS_PERCENT:t1=100/t10=150", ""));
+        return rows.put(HullItemRows.modifierRow("TEST_UNIQUE_SENSOR_RANGE", "prefix", "star_chart", "CHART_SENSOR_RANGE_PERCENT:t1=-50", ""))
+                .put(HullItemRows.modifierRow("TEST_UNIQUE_EXTRA_POIS", "suffix", "star_chart", "CHART_EXTRA_POIS:t1=4/t8=6", ""))
+                .put(HullItemRows.modifierRow("TEST_GATED_UNIQUE_BOSS_SIZE", "prefix", "star_chart", "CHART_BOSS_SIZE_PERCENT:t1=200/t10=700", ""))
+                .put(HullItemRows.modifierRow("TEST_GATED_UNIQUE_BOSS_SPOILS", "suffix", "star_chart", "CHART_BOSS_SPOILS_PERCENT:t1=100/t10=150", ""));
     }
 
     private static JSONArray withTestUniques(JSONArray rows) throws JSONException {

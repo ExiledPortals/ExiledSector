@@ -1,9 +1,6 @@
 package exiledsector.console;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.effects.ShipTreeSync;
@@ -29,11 +26,10 @@ import static org.mockito.Mockito.when;
 
 class GrantShipXpCommandTest {
 
-    private MockedStatic<Global> globalMock;
+    private ConsoleFixture fixture;
     private MockedStatic<Console> consoleMock;
     private MockedStatic<ShipLevelSystem> levelSystemMock;
     private MockedStatic<ShipTreeSync> treeSyncMock;
-    private SectorAPI sector;
     private FleetDataAPI fleetData;
     private FleetMemberAPI ravenous;
     private FleetMemberAPI ravenousTwo;
@@ -41,16 +37,12 @@ class GrantShipXpCommandTest {
 
     @BeforeEach
     void setUp() {
-        globalMock = Mockito.mockStatic(Global.class);
-        consoleMock = Mockito.mockStatic(Console.class);
+        fixture = new ConsoleFixture();
+        consoleMock = fixture.console;
         levelSystemMock = Mockito.mockStatic(ShipLevelSystem.class);
         treeSyncMock = Mockito.mockStatic(ShipTreeSync.class);
-        sector = mock(SectorAPI.class);
-        CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
         fleetData = mock(FleetDataAPI.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
-        when(sector.getPlayerFleet()).thenReturn(fleet);
-        when(fleet.getFleetData()).thenReturn(fleetData);
+        when(fixture.fleet.getFleetData()).thenReturn(fleetData);
         ravenous = member("id-1", "ISS Ravenous", "Onslaught");
         ravenousTwo = member("id-2", "ISS Ravenous II", "Lasher");
         vigilant = member("id-3", "ISS Vigilant", "Hammerhead");
@@ -61,8 +53,7 @@ class GrantShipXpCommandTest {
     void tearDown() {
         treeSyncMock.close();
         levelSystemMock.close();
-        consoleMock.close();
-        globalMock.close();
+        fixture.close();
     }
 
     private static FleetMemberAPI member(String id, String name, String hullName) {
@@ -136,7 +127,7 @@ class GrantShipXpCommandTest {
 
     @Test
     void reportsAnErrorWhenThereIsNoPlayerFleet() {
-        when(sector.getPlayerFleet()).thenReturn(null);
+        when(fixture.sector.getPlayerFleet()).thenReturn(null);
 
         assertEquals(CommandResult.ERROR, run("vigilant"));
 

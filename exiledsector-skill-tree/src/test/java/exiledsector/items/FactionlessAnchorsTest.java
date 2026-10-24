@@ -13,6 +13,7 @@ import com.fs.starfarer.api.util.Misc;
 import exerelin.campaign.SectorManager;
 import exerelin.utilities.NexConfig;
 import exerelin.utilities.NexFactionConfig;
+import exiledlib.MockSector;
 import exiledlib.ProjectFiles;
 import exiledsector.compat.NexerelinCompat;
 import exiledsector.effects.SkillTreeLootSource;
@@ -61,7 +62,7 @@ class FactionlessAnchorsTest {
     private static final String SITE = "station_research";
 
     private MockedStatic<LunaSettings> lunaSettingsMock;
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private final Set<String> existingFactionIds = new HashSet<>(Set.of("hegemony", "luddic_church"));
     private final ModManagerAPI modManager = mock(ModManagerAPI.class);
     private SectorAPI sector;
@@ -72,15 +73,14 @@ class FactionlessAnchorsTest {
         lunaSettingsMock.when(() -> LunaSettings.getBoolean(anyString(), anyString())).thenReturn(null);
         MemoryAPI sectorMemory = mock(MemoryAPI.class);
         when(sectorMemory.getBoolean(JanusDevice.FLAG)).thenReturn(true);
-        sector = mock(SectorAPI.class);
+        mockSector = new MockSector();
+        sector = mockSector.sector;
         when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
         when(sector.getFaction(anyString())).thenAnswer(call -> existingFactionIds.contains(call.<String>getArgument(0)) ? mock(FactionAPI.class) : null);
         SettingsAPI settings = mock(SettingsAPI.class);
         when(settings.getModManager()).thenReturn(modManager);
         when(settings.getScriptClassLoader()).thenReturn(FactionlessAnchorsTest.class.getClassLoader());
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
         NodeGates.register(new JSONObject("{}"));
 
         SkillTree.clearNodes();
@@ -105,14 +105,12 @@ class FactionlessAnchorsTest {
         SkillTree.clearNodes();
         SectorManager.LIVE_FACTION_IDS.clear();
         NexConfig.CONFIGS_BY_FACTION.clear();
-        globalMock.close();
+        mockSector.close();
         lunaSettingsMock.close();
     }
 
     private static JSONObject anchorRow(String id, String volume, String exitNode) throws Exception {
-        return new JSONObject().put("id", id).put("volume", volume).put("exit_node", exitNode).put("name", id + " name")
-                .put("icon", "graphics/icons/nav_relay.png").put("rarity", "10").put("description", "Opens a wormhole.")
-                .put("drop_chance", "0.1").put("market_chance", "0.3");
+        return AnchorRows.row(id, volume, exitNode).put("drop_chance", "0.1").put("market_chance", "0.3");
     }
 
     private Set<String> salvagedIds(String siteId) {

@@ -2,12 +2,12 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
+import exiledlib.MockSector;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;
@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -37,19 +36,16 @@ import static org.mockito.Mockito.when;
 
 class OpReserveParityTest {
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private MockedStatic<Logger> loggerMock;
     private SettingsAPI settings;
     private Logger logger;
 
     @BeforeEach
     void setUp() {
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(new HashMap<>());
         settings = mock(SettingsAPI.class);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector = new MockSector();
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
         logger = mock(Logger.class);
         loggerMock = Mockito.mockStatic(Logger.class);
         loggerMock.when(() -> Logger.getLogger(OpReserveParity.class)).thenReturn(logger);
@@ -58,7 +54,7 @@ class OpReserveParityTest {
     @AfterEach
     void tearDown() {
         loggerMock.close();
-        globalMock.close();
+        mockSector.close();
     }
 
     private void reserveCosts(String hullModId, int cost) {

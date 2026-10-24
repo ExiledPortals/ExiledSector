@@ -55,9 +55,9 @@ class UniqueSubroutinesTest {
 
     private static void registerModifiers(String topSpeedLine) throws JSONException {
         ItemModifiers.register(new JSONArray()
-                .put(ItemFixtures.modifierRow("TOP_SPEED_PERCENT_RELIC", "prefix", "unique_subroutine", topSpeedLine, ""))
-                .put(ItemFixtures.modifierRow("SENSOR_PROFILE_PERCENT_RELIC", "prefix", "unique_subroutine", "SENSOR_PROFILE_PERCENT:15:15", ""))
-                .put(ItemFixtures.modifierRow("HULL_MULT", "prefix", "hull_item", "HULL_MULT:4:6", "Reinforced")));
+                .put(HullItemRows.modifierRow("TOP_SPEED_PERCENT_RELIC", "prefix", "unique_subroutine", topSpeedLine, ""))
+                .put(HullItemRows.modifierRow("SENSOR_PROFILE_PERCENT_RELIC", "prefix", "unique_subroutine", "SENSOR_PROFILE_PERCENT:15:15", ""))
+                .put(HullItemRows.modifierRow("HULL_MULT", "prefix", "hull_item", "HULL_MULT:4:6", "Reinforced")));
     }
 
     private static void registerDefinitions() throws JSONException {
@@ -65,8 +65,8 @@ class UniqueSubroutinesTest {
                 .put(uniqueRow(FLEET_RELIC, "@TOP_SPEED_PERCENT_RELIC; @SENSOR_PROFILE_PERCENT_RELIC; HULL_PERCENT:3:3", "faction:pirates"))
                 .put(uniqueRow(SITE_RELIC, "@TOP_SPEED_PERCENT_RELIC", "site:station"))
                 .put(ItemFixtures.subroutineRow(ItemFixtures.SUBROUTINE))
-                .put(ItemFixtures.row(HULL_RELIC_A, "reactor", "@HULL_MULT").put("unique", "TRUE"))
-                .put(ItemFixtures.row(HULL_RELIC_B, "crew_quarters", "FLUX_CAPACITY_MULT:4:6").put("unique", "TRUE")));
+                .put(HullItemRows.row(HULL_RELIC_A, "reactor", "@HULL_MULT").put("unique", "TRUE"))
+                .put(HullItemRows.row(HULL_RELIC_B, "crew_quarters", "FLUX_CAPACITY_MULT:4:6").put("unique", "TRUE")));
     }
 
     private static JSONObject uniqueRow(String id, String lines, String source) throws JSONException {
@@ -265,9 +265,9 @@ class UniqueSubroutinesTest {
 
     @Test
     void theShippedUniqueSubroutinesLoadWithLinesAndASource() throws Exception {
-        ItemModifiers.register(ItemFixtures.shippedRows(ItemModifiers.dataPath()));
-        ItemDefinitions.register(ItemFixtures.shippedRows(SubroutineDefinitions.dataPath()), ItemFixtures.shippedRows(HullItem.definitionsPath()));
-        JSONArray shippedRows = ItemFixtures.shippedRows(SubroutineDefinitions.dataPath());
+        ItemModifiers.register(HullItemRows.shippedRows(ItemModifiers.dataPath()));
+        ItemDefinitions.register(HullItemRows.shippedRows(SubroutineDefinitions.dataPath()), HullItemRows.shippedRows(HullItem.definitionsPath()));
+        JSONArray shippedRows = HullItemRows.shippedRows(SubroutineDefinitions.dataPath());
 
         List<ItemDefinition> uniques = ItemDefinitions.ofType(ItemType.SUBROUTINE).stream().filter(SubroutineKind::isUnique).toList();
 

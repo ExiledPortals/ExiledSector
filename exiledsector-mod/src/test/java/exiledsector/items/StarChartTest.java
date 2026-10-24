@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.charts.ChartDrops;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
@@ -51,7 +52,7 @@ class StarChartTest {
     @BeforeEach
     void setUp() throws Exception {
         ItemFixtures.registerShippedItems();
-        ItemImplicits.register(ItemFixtures.shippedRows(ItemImplicits.dataPath()));
+        ItemImplicits.register(HullItemRows.shippedRows(ItemImplicits.dataPath()));
         StarChartFixtures.registerShipped();
     }
 
@@ -467,8 +468,8 @@ class StarChartTest {
         Random random = new Random(5);
         boolean gatedUniqueAtTierFour = false;
         for (int draw = 0; draw < 1000; draw++) {
-            assertNotEquals(GATED_UNIQUE, ItemDrops.pickChartAtTier(random, 3, definition -> true).id());
-            gatedUniqueAtTierFour |= GATED_UNIQUE.equals(ItemDrops.pickChartAtTier(random, 4, definition -> true).id());
+            assertNotEquals(GATED_UNIQUE, ChartDrops.pickChartAtTier(random, 3, definition -> true).id());
+            gatedUniqueAtTierFour |= GATED_UNIQUE.equals(ChartDrops.pickChartAtTier(random, 4, definition -> true).id());
         }
         assertTrue(gatedUniqueAtTierFour);
 

@@ -31,7 +31,7 @@ class UniqueSourceCheckTest {
         ItemDefinitions.register(new JSONArray()
                 .put(uniqueRow("fleet_relic", "faction:pirates; faction:missing_faction"))
                 .put(uniqueRow("site_relic", "site:station; site:probe; site:nowhere"))
-                .put(ItemFixtures.row("hull_relic", "reactor", "HULL_MULT:4:6").put("unique", "TRUE")));
+                .put(HullItemRows.row("hull_relic", "reactor", "HULL_MULT:4:6").put("unique", "TRUE")));
         ItemDrops.register(new JSONArray()
                 .put(new JSONObject().put("site", "station").put("chances", "1").put("uniqueChance", "0.2"))
                 .put(new JSONObject().put("site", "probe").put("chances", "0.5").put("uniqueChance", "0")));
@@ -68,7 +68,7 @@ class UniqueSourceCheckTest {
     @Test
     void theShippedUniquesAllHaveAReachableSource() throws Exception {
         ItemFixtures.registerShippedItems();
-        ItemDrops.register(ItemFixtures.shippedRows(ItemDrops.DATA_PATH));
+        ItemDrops.register(HullItemRows.shippedRows(ItemDrops.DATA_PATH));
 
         assertEquals(List.of(), UniqueSourceCheck.unreachableSources(ItemDefinitions.all(), Set.of("pirates", "tritachyon"), ItemDrops::hasUniqueRoll));
     }

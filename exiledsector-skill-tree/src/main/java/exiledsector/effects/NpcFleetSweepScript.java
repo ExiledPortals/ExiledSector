@@ -1,9 +1,9 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.EveryFrameScript;
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
+import exiledlib.PlayerFleet;
 import org.lwjgl.util.vector.Vector2f;
 
 public class NpcFleetSweepScript implements EveryFrameScript {
@@ -29,7 +29,7 @@ public class NpcFleetSweepScript implements EveryFrameScript {
         if (timeSinceLastCheck < CHECK_INTERVAL_SECONDS) return;
         timeSinceLastCheck = 0f;
 
-        sweepAround(Global.getSector().getPlayerFleet(), SWEEP_RANGE);
+        sweepAround(PlayerFleet.orNull(), SWEEP_RANGE);
     }
 
     static void sweepAround(CampaignFleetAPI playerFleet, float sweepRange) {

@@ -3,7 +3,7 @@ package exiledsector.items;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import exiledlib.ModSettings;
-import exiledlib.ModSettingsListener;
+import exiledsector.domain.DomainSwitch;
 import exiledsector.effects.PlayerFleetStats;
 
 import java.util.List;
@@ -23,38 +23,25 @@ public final class HullUpgradesSetting {
 
     public enum PointsMode {REFIT_SCHEMATICS, STAR_CHART_PROGRESS}
 
-    private static volatile boolean enabledSetting = DEFAULT_ENABLED;
+    public static final DomainSwitch SWITCH = new DomainSwitch(ENABLED_FIELD_ID, DEFAULT_ENABLED, PlayerFleetStats::markForStatUpdate);
     private static volatile int unlockLevelSetting = DEFAULT_UNLOCK_LEVEL;
     private static volatile PointsMode pointsModeSetting = PointsMode.REFIT_SCHEMATICS;
-
-    public static final class SettingsListener extends ModSettingsListener {
-
-        @Override
-        protected void reload() {
-            reloadSettings();
-        }
-    }
 
     private HullUpgradesSetting() {
     }
 
     public static void reloadSettings() {
-        boolean enabled = ModSettings.booleanOr(ENABLED_FIELD_ID, DEFAULT_ENABLED);
-        boolean switched = enabled != enabledSetting;
-        enabledSetting = enabled;
         unlockLevelSetting = clampLevel(ModSettings.intOr(UNLOCK_LEVEL_FIELD_ID, DEFAULT_UNLOCK_LEVEL));
         PointsMode pointsMode = parsePointsMode(ModSettings.stringOr(POINTS_FIELD_ID, REFIT_SCHEMATICS));
         if (pointsMode != pointsModeSetting) {
             pointsModeSetting = pointsMode;
             HullUpgradePoints.markChanged();
         }
-        if (switched) {
-            PlayerFleetStats.markForStatUpdate();
-        }
+        SWITCH.reload();
     }
 
     public static boolean enabled() {
-        return enabledSetting;
+        return SWITCH.on();
     }
 
     public static PointsMode pointsMode() {
@@ -89,7 +76,7 @@ public final class HullUpgradesSetting {
     }
 
     public static void setEnabledForTests(boolean enabled) {
-        enabledSetting = enabled;
+        SWITCH.setForTests(enabled);
     }
 
     public static void setUnlockLevelForTests(int unlockLevel) {

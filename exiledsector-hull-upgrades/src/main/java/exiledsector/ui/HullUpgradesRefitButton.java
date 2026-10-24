@@ -1,23 +1,18 @@
 package exiledsector.ui;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
-import com.fs.starfarer.api.ui.PositionAPI;
-import exiledlib.i18n.Translation;
 import exiledsector.items.HullUpgradesSetting;
 import exiledsector.ui.refit.RefitButtonColumn;
 import exiledsector.ui.refit.RefitButtonConfig;
-import exiledsector.ui.refit.RefitModuleTabs;
 import exiledsector.ui.refit.RefitScreenLayout;
-import lunalib.lunaRefit.BaseRefitButton;
 import lunalib.lunaRefit.LunaRefitManager;
 import org.lwjgl.input.Keyboard;
 
-public class HullUpgradesRefitButton extends BaseRefitButton {
+public class HullUpgradesRefitButton extends FullScreenRefitButton {
 
     public static final RefitButtonColumn.ButtonSpec COLUMN_BUTTON = new RefitButtonColumn.ButtonSpec("exiledSector_hullUpgradesButton",
             "ui.hullUpgradesRefitButton", () -> Keyboard.KEY_L, RefitButtonConfig::buttonUnderHullMods, () -> openPanel(null));
@@ -38,38 +33,23 @@ public class HullUpgradesRefitButton extends BaseRefitButton {
     }
 
     @Override
-    public float getPanelWidth(FleetMemberAPI member, ShipVariantAPI variant) {
-        return Global.getSettings().getScreenWidth();
+    protected String buttonKey() {
+        return "ui.hullUpgradesRefitButton";
     }
 
     @Override
-    public float getPanelHeight(FleetMemberAPI member, ShipVariantAPI variant) {
-        return Global.getSettings().getScreenHeight();
-    }
-
-    @Override
-    public String getButtonName(FleetMemberAPI member, ShipVariantAPI variant) {
-        return Translation.gameText("ui.hullUpgradesRefitButton");
-    }
-
-    @Override
-    public String getIconName(FleetMemberAPI member, ShipVariantAPI variant) {
+    protected String iconPath() {
         return ICON_PATH;
     }
 
     @Override
-    public boolean shouldShow(FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
-        return !RefitButtonConfig.buttonUnderHullMods() && HullUpgradesSetting.enabled() && !RefitModuleTabs.isModuleTab(member);
-    }
-
-    @Override
-    public boolean isClickable(FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
+    protected boolean enabled() {
         return HullUpgradesSetting.enabled();
     }
 
     @Override
-    public boolean hasPanel(FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
-        return !RefitModuleTabs.isModuleTab(member);
+    public boolean isClickable(FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
+        return enabled();
     }
 
     @Override
@@ -78,9 +58,6 @@ public class HullUpgradesRefitButton extends BaseRefitButton {
             return;
         }
         HullUpgradesScreen screen = new HullUpgradesScreen(member, variant, this, RefitScreenLayout.measure());
-        PositionAPI backgroundPosition = backgroundPanel.getPosition();
-        CustomPanelAPI screenPanel = Global.getSettings().createCustom(backgroundPosition.getWidth(), backgroundPosition.getHeight(), screen);
-        backgroundPanel.addComponent(screenPanel).inTL(0f, 0f);
-        screen.attach(screenPanel);
+        fillWithScreen(backgroundPanel, screen, screen::attach);
     }
 }

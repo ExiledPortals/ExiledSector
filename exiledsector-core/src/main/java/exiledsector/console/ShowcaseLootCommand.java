@@ -1,38 +1,30 @@
 package exiledsector.console;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.effects.ItemSalvageListener;
-import org.lazywizard.console.BaseCommand;
-import org.lazywizard.console.CommonStrings;
 import org.lazywizard.console.Console;
 
 import java.util.Locale;
 
-public class ShowcaseLootCommand implements BaseCommand {
+public class ShowcaseLootCommand extends PlayerFleetCommand {
 
     static final String SPAWN_ARGUMENT = "spawn";
     static final String SPAWNED_SITE_TYPE = "station_research";
     static final float SPAWN_DISTANCE = 300f;
 
     @Override
-    public CommandResult runCommand(String args, CommandContext context) {
-        if (!context.isInCampaign()) {
-            Console.showMessage(CommonStrings.ERROR_CAMPAIGN_ONLY);
-            return CommandResult.WRONG_CONTEXT;
-        }
-        String argument = args.trim().toLowerCase(Locale.ROOT);
+    protected CommandResult runForFleet(String args, CampaignFleetAPI playerFleet) {
+        String argument = args.toLowerCase(Locale.ROOT);
         if (!argument.isEmpty() && !argument.equals(SPAWN_ARGUMENT)) {
             return CommandResult.BAD_SYNTAX;
         }
-        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
-        LocationAPI location = playerFleet == null ? null : playerFleet.getContainingLocation();
+        LocationAPI location = playerFleet.getContainingLocation();
         if (location == null) {
-            Console.showMessage("No player fleet found.");
+            Console.showMessage(NO_PLAYER_FLEET);
             return CommandResult.ERROR;
         }
         SectorEntityToken site = argument.equals(SPAWN_ARGUMENT) ? spawnSite(playerFleet, location) : nearestSite(playerFleet, location);

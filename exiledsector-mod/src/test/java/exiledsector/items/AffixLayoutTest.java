@@ -25,7 +25,7 @@ class AffixLayoutTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        military = ItemFixtures.registerMilitary();
+        military = HullItemRows.registerMilitary();
     }
 
     @AfterEach
@@ -52,7 +52,7 @@ class AffixLayoutTest {
         assertEquals(ItemRarity.RARE, AffixLayout.rarityFor(military, 3));
         assertEquals(ItemRarity.RARE, AffixLayout.rarityFor(military, 4));
         assertEquals(ItemRarity.COMMON, AffixLayout.rarityFor(null, 2));
-        ItemDefinitions.register(new JSONArray().put(ItemFixtures.row("relic", "reactor", "HULL_MULT:4:6").put("unique", "TRUE")));
+        ItemDefinitions.register(new JSONArray().put(HullItemRows.row("relic", "reactor", "HULL_MULT:4:6").put("unique", "TRUE")));
         assertEquals(ItemRarity.UNIQUE, AffixLayout.rarityFor(ItemDefinitions.get("relic"), 1));
     }
 
@@ -121,7 +121,7 @@ class AffixLayoutTest {
     @Test
     void augmentingAnItemWithARetiredSuffixNeverAddsAThirdSuffix() {
         for (long seed = 0; seed < 200; seed++) {
-            Item item = Item.withEffects("socketable_" + seed, ItemFixtures.MILITARY, seed,
+            Item item = Item.withEffects("socketable_" + seed, HullItemRows.MILITARY, seed,
                     List.of(PREFIX_CAPACITY, SUFFIX_SHIELDS, RETIRED));
 
             ItemCrafting.augment(item, new Random(seed));

@@ -2,6 +2,7 @@ package exiledsector.items;
 
 import exiledlib.ModCsv;
 import exiledlib.ModSettings;
+import exiledsector.data.CsvRows;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -89,15 +90,6 @@ public final class BattleItemDrops {
         }
     }
 
-    public record Loot(List<ItemData> items, List<RefitSchematic> upgrades) {
-
-        public static final Loot NONE = new Loot(List.of(), List.of());
-
-        public Loot {
-            items = List.copyOf(items);
-            upgrades = List.copyOf(upgrades);
-        }
-    }
 
     record Planned(Drop drop, ItemKind kind) {
     }
@@ -114,7 +106,7 @@ public final class BattleItemDrops {
         ModCsv.forEach(rows == null ? new JSONArray() : rows, (index, row) -> {
             String dropId = ModCsv.text(row, DROP_COLUMN);
             Drop drop = Drop.byIdOrNull(dropId);
-            float rate = parsedOrNaN(ModCsv.text(row, RATE_COLUMN));
+            float rate = CsvRows.numberOrNaN(ModCsv.text(row, RATE_COLUMN));
             if (drop == null) {
                 LOG.error("Skipping row " + (index + 1) + " of " + DATA_PATH + ": unknown drop \"" + dropId + "\"");
             } else if (!(rate >= 0f) || Float.isInfinite(rate)) {
@@ -124,14 +116,6 @@ public final class BattleItemDrops {
             }
         });
         RATES.set(Collections.unmodifiableMap(rates));
-    }
-
-    private static float parsedOrNaN(String numberText) {
-        try {
-            return Float.parseFloat(numberText);
-        } catch (NumberFormatException e) {
-            return Float.NaN;
-        }
     }
 
     public static void clear() {
@@ -150,9 +134,9 @@ public final class BattleItemDrops {
         return Math.max(0f, deploymentPoints) * (1f + Math.max(0, allocatedNodeCount) / NODES_PER_DOUBLING);
     }
 
-    public static Loot roll(Battle battle, float dropMultiplier, Random random, Predicate<ItemDefinition> uniqueAllowed) {
+    public static ItemDrops.SectionItemLoot roll(Battle battle, float dropMultiplier, Random random, Predicate<ItemDefinition> uniqueAllowed) {
         if (battle == null || battle.isEmpty() || !(dropMultiplier > 0f)) {
-            return Loot.NONE;
+            return ItemDrops.SectionItemLoot.NONE;
         }
         List<ItemData> items = new ArrayList<>();
         List<RefitSchematic> upgrades = new ArrayList<>();
@@ -177,7 +161,7 @@ public final class BattleItemDrops {
                 }
             }
         }
-        return new Loot(items, upgrades);
+        return new ItemDrops.SectionItemLoot(items, upgrades);
     }
 
     static List<Planned> plan(List<SourcePower> sources, float dropMultiplier, List<ItemKind> kindsWithBasics, Random random) {

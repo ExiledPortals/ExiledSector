@@ -90,7 +90,7 @@ class CacheIconLookTest {
 
     @Test
     void theShippedCacheUsesTheBakedStill() throws Exception {
-        JSONArray subroutines = ItemFixtures.shippedRows(SubroutineDefinitions.dataPath());
+        JSONArray subroutines = HullItemRows.shippedRows(SubroutineDefinitions.dataPath());
         int caches = 0;
         for (int row = 0; row < subroutines.length(); row++) {
             JSONObject subroutine = subroutines.getJSONObject(row);

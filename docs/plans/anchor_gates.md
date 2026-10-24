@@ -2,7 +2,7 @@
 
 This plan closes two holes in how wormhole anchors reach the player.
 
-A wormhole anchor can drop, be stocked or be salvaged while its area is still locked behind its gate. The player then holds an anchor that stays inert until something like entering Pascal or defeating the Lunar Fleet. This plan gives each gate its own rule for how its anchor behaves, instead of one rule for every gate. NPC fleets keep using their faction's area whatever its gate.
+A wormhole anchor can drop, be stocked or be salvaged while its area is still locked behind its gate. The player then holds an anchor that stays inert until something like entering Pascal or defeating the Existential Threat. This plan gives each gate its own rule for how its anchor behaves, instead of one rule for every gate. NPC fleets keep using their faction's area whatever its gate.
 
 The opposite also happens: an area can be open while its anchor can never be found, because the factions that drop and sell it aren't in the game. Those anchors move to salvage and ruins (see "Factionless volumes").
 
@@ -65,7 +65,7 @@ A faction is gone when it doesn't exist in the sector (`sector.getFaction(id) ==
 The first draft of this plan withheld every gated anchor until its gate opened. That doesn't fit two areas:
 
 - Nightcross should hand out anchors freely, and finding one should be what opens the area.
-- The Abyss and Stargazer should hand out a guaranteed anchor for beating the Singularity and the Lunar Fleet, not leave it to a random roll afterwards.
+- The Abyss and Stargazer should hand out a guaranteed anchor for beating the Singularity and the Existential Threat, not leave it to a random roll afterwards.
 
 So each gate says how its anchor behaves.
 
@@ -84,7 +84,7 @@ The rules only apply to gates on an area's wormhole exit, because only the exit 
 |---|---|---|---|
 | `gate_pascal_visited` | Nightcross | `free` | Condition becomes `anchorFound` for the Nightcross volume, replacing `nightcrossPascalVisited` |
 | `gate_singularity_defeated` | Abyss | `withheld`, `rewardAnchor` | The Singularity battle drops one Abyss anchor |
-| `gate_lunar_fleet_defeated` | Stargazer | `withheld`, `rewardAnchor` | The Lunar Fleet battle drops one Stargazer anchor |
+| `gate_existential_threat_defeated` | Stargazer | `withheld`, `rewardAnchor` | The Existential Threat battle drops one Stargazer anchor |
 | `gate_frozen_heart_visited` | Enigma | `withheld` | |
 | `gate_threat_fought` | Threat | `withheld` | Opens during the first fight, so that fight can already drop one |
 | `gate_remnant_fought` | [REDACTED] | `withheld` | Same as Threat |
@@ -117,7 +117,7 @@ No core change.
 A gate with `rewardAnchor` needs a per-battle check that says "this battle opened me". `SkillTreeLootSource.recordEngagement` asks it for each engagement and marks the battle in its own state on `BattleLoot` (`battle.state(this, ...)`, next to the DP per faction it already keeps). `addEncounterLoot` and `deliverBattleLoot` then add one of the area's anchors to a marked battle's drops, unless that battle's random roll already produced one. A sector flag per gate (`$exiledSector_rewardAnchorGranted_<gate>`) makes it once per save, even if the gate is relocked and the boss fought again.
 
 - Singularity: `AbyssSingularity.recordBattle` already spots the Genesis kill in the engagement result. Reuse that check.
-- Lunar Fleet: `compat/NightcrossUnlocks.isLunarFleetDefeated` only reads the flags Nightcross raises (`$na_defeated_macula`, `$defeatedLunarFleet`), and when Nightcross raises them relative to the loot roll isn't known. Before building, read Nightcross's source for how it marks the Lunar Fleet (fleet memory key or flagship hull) and use that as the per-battle check, the same way the Singularity check uses the Genesis hull.
+- Existential Threat: `compat/NightcrossUnlocks.isExistentialThreatDefeated` only reads the flags Nightcross raises (`$na_defeated_macula`, `$defeatedLunarFleet`), and when Nightcross raises them relative to the loot roll isn't known. Before building, read Nightcross's source for how it marks the Existential Threat (fleet memory key or flagship hull) and use that as the per-battle check, the same way the Singularity check uses the Genesis hull.
 - Fallback for both: if the gate opens with its reward not yet granted and no marked battle to carry it (the other mod raised its flag after the loot screen, or some route other than the battle), add the anchor straight to the player's cargo with a campaign message the next time the gate is checked.
 - Saves that beat the boss before this update get no reward: their gate is already open, so the anchor drops normally.
 
@@ -143,7 +143,7 @@ No core change: `ItemLootListener.holdLoot` already passes every engagement to t
 ## Consequences to accept
 
 - Abyss anchors stop dropping from Abyssal fleets until the Singularity is beaten, then the Singularity fight hands one out.
-- Stargazer anchors stop dropping and stocking until the Lunar Fleet is beaten, then that fight hands one out.
+- Stargazer anchors stop dropping and stocking until the Existential Threat is beaten, then that fight hands one out.
 - Enigma and Iron Shell markets stop stocking their anchors until their gates open.
 - Market stock rolled before the update keeps any withheld anchor until that market's next refresh.
 
@@ -165,4 +165,4 @@ Each test goes in the lowest module that sees every class it uses. Most of these
 - `NpcItems.anchorFor` still returns the anchor for a gated area.
 - Factionless: an anchor is factionless only when every one of its volume's factions and `drop_factions` is missing or eliminated. A playable faction Nexerelin no longer has alive counts as eliminated. A non-playable one (Remnant, Abyssal) never does, and nothing counts as eliminated without Nexerelin. Salvage and tech mining drop at most one factionless, obtainable anchor at the site's chance, never one whose faction exists, and nothing at sites missing from `anchor_salvage.csv`.
 - `ANCHOR_FOUND`: closed until the flag is raised; each recording point raises it, including a bought anchor through the new `LootSource` hook; the load migration raises it from a held anchor or the old Pascal flag.
-- Boss rewards: a battle with the Genesis kill gets exactly one Abyss anchor, and a Lunar Fleet win exactly one Stargazer anchor, never two, and only once per save. The fallback grants the anchor to cargo when the gate opens without a marked battle.
+- Boss rewards: a battle with the Genesis kill gets exactly one Abyss anchor, and a Existential Threat win exactly one Stargazer anchor, never two, and only once per save. The fallback grants the anchor to cargo when the gate opens without a marked battle.

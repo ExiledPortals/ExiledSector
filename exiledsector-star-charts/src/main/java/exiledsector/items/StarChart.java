@@ -24,35 +24,11 @@ public final class StarChart extends Item {
     public static final int LOWEST_QUALITY = 0;
     public static final int HIGHEST_QUALITY = 20;
 
-    public static final ItemTypeSupport SUPPORT = new ItemTypeSupport() {
-        @Override
-        public ItemType type() {
-            return ItemType.STAR_CHART;
-        }
-
-        @Override
-        public Class<? extends Item> itemClass() {
-            return StarChart.class;
-        }
-
-        @Override
-        public String saveAlias() {
-            return "exiledSector.StarChart";
-        }
-
-        @Override
-        public Item create(String id, String definitionId, long seed, List<RolledModifier> explicitModifiers) {
-            return new StarChart(id, definitionId, seed, explicitModifiers);
-        }
-
+    public static final ItemTypeSupport SUPPORT = new BasicItemTypeSupport(ItemType.STAR_CHART, StarChart.class, "exiledSector.StarChart",
+            StarChart::new, StarChart::new) {
         @Override
         public boolean available(SectorAPI sector) {
             return StarChartSettings.enabled();
-        }
-
-        @Override
-        public Item convert(Item source) {
-            return new StarChart(source);
         }
 
         @Override

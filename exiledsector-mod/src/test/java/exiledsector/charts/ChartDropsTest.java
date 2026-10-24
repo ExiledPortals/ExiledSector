@@ -1,7 +1,5 @@
 package exiledsector.charts;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
@@ -11,6 +9,7 @@ import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.util.MutableValue;
+import exiledlib.MockSector;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemUnlock;
@@ -23,7 +22,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.HashMap;
@@ -55,7 +53,7 @@ class ChartDropsTest {
     private static final Set<String> CHART_CURRENCY_IDS = Set.of(StarChartCurrency.REFORGE.itemId(), StarChartCurrency.ANNULMENT.itemId(),
             StarChartCurrency.CARTOGRAPHY.itemId());
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private SectorAPI sector;
     private final Map<String, Object> sectorMemoryValues = new HashMap<>();
     private int playerLevel = 10;
@@ -64,8 +62,8 @@ class ChartDropsTest {
     void setUp() throws Exception {
         StarChartFixtures.registerShipped();
         StarChartCurrency.registerAll();
-        sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(new HashMap<>());
+        mockSector = new MockSector();
+        sector = mockSector.sector;
         MemoryAPI sectorMemory = mock(MemoryAPI.class);
         when(sectorMemory.contains(anyString())).thenAnswer(call -> sectorMemoryValues.containsKey(call.<String>getArgument(0)));
         when(sectorMemory.getInt(anyString())).thenAnswer(call -> ((Number) sectorMemoryValues.get(call.<String>getArgument(0))).intValue());
@@ -76,13 +74,11 @@ class ChartDropsTest {
         when(playerStats.getLevel()).thenAnswer(call -> playerLevel);
         when(sector.getPlayerStats()).thenReturn(playerStats);
         when(sector.getIntelManager()).thenReturn(mock(IntelManagerAPI.class));
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
     }
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         ChartDrops.clear();
         StarChartCurrency.unregisterAll();
         StarChartFixtures.clear();
@@ -338,11 +334,8 @@ class ChartDropsTest {
     @Test
     void completingAnObjectiveRecordsTheClearedTierAndDropsChartsIntoCargo() throws Exception {
         ChartDrops.register(new JSONArray().put(rule("run_reward", 1f, 0f, 0f, 1f)));
-        CampaignFleetAPI playerFleet = mock(CampaignFleetAPI.class);
-        CargoAPI cargo = mock(CargoAPI.class);
+        CargoAPI cargo = mockSector.cargo();
         when(cargo.getCredits()).thenReturn(mock(MutableValue.class));
-        when(playerFleet.getCargo()).thenReturn(cargo);
-        when(sector.getPlayerFleet()).thenReturn(playerFleet);
         ChartRun run = storeRun(4);
         run.recordTargetGone("g1");
         assertTrue(run.markObjectiveComplete());

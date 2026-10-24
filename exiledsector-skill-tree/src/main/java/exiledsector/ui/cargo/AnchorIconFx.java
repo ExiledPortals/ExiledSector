@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.FactionSpecAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledlib.skills.skilleffect.render.Fade;
 import exiledlib.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloShapes;
@@ -205,8 +206,7 @@ public final class AnchorIconFx {
     }
 
     static float smooth(float from, float to, float value) {
-        float progress = Math.max(0f, Math.min(1f, (value - from) / (to - from)));
-        return progress * progress * (3f - 2f * progress);
+        return Fade.smooth(Math.max(0f, Math.min(1f, (value - from) / (to - from))));
     }
 
     static Color lighten(Color color, float amount) {

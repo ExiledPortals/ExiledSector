@@ -6,7 +6,14 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
+import exiledlib.skills.skilleffect.ScaledBonus;
 import exiledlib.skills.skilleffect.ShipCombatListener;
+import exiledlib.skills.skilleffect.StatMode;
+
+import static exiledlib.skills.skilleffect.ScaledBonus.fixed;
+import static exiledlib.skills.skilleffect.ScaledBonus.percent;
+import static exiledlib.skills.skilleffect.StatTarget.all;
+import static exiledlib.skills.skilleffect.StatTarget.stat;
 
 final class AbsorbReserveListener extends ShipCombatListener implements DamageListener, AdvanceableListener {
 
@@ -15,9 +22,12 @@ final class AbsorbReserveListener extends ShipCombatListener implements DamageLi
     static final float MAX_RESERVE = 1000f;
     static final float DRAIN_PER_SECOND = 100f;
     private static final String MOD_ID_PREFIX = "exiledSector_absorbReserve_";
+    private static final ScaledBonus RATE_OF_FIRE = new ScaledBonus(
+            percent(all(stat(MutableShipStatsAPI::getBallisticRoFMult), stat(MutableShipStatsAPI::getEnergyRoFMult))),
+            fixed(stat(MutableShipStatsAPI::getBeamWeaponFluxCostMult), StatMode.MULT, 1f));
 
+    private final ScaledBonus.Tracker rateOfFire = RATE_OF_FIRE.tracker();
     private float reserve;
-    private int appliedPercent;
 
     AbsorbReserveListener(ShipAPI ownerShip) {
         super(ownerShip, MOD_ID_PREFIX);
@@ -39,27 +49,20 @@ final class AbsorbReserveListener extends ShipCombatListener implements DamageLi
         }
         float maxPercent = magnitude(RATE_OF_FIRE_PERCENT_KEY);
         int percent = Math.round(maxPercent * Math.min(reserve, FULL_RESERVE) / FULL_RESERVE);
-        if (percent != appliedPercent) {
-            apply(percent);
+        MutableShipStatsAPI stats = ownerShip.getMutableStats();
+        if (rateOfFire.apply(stats, modId, percent)) {
+            applyShotFluxCost(stats, percent);
         }
     }
 
-    private void apply(int percent) {
-        appliedPercent = percent;
-        MutableShipStatsAPI stats = ownerShip.getMutableStats();
+    private void applyShotFluxCost(MutableShipStatsAPI stats, int percent) {
         if (percent <= 0) {
-            stats.getBallisticRoFMult().unmodify(modId);
-            stats.getEnergyRoFMult().unmodify(modId);
             stats.getBallisticWeaponFluxCostMod().unmodify(modId);
             stats.getEnergyWeaponFluxCostMod().unmodify(modId);
-            stats.getBeamWeaponFluxCostMult().unmodify(modId);
             return;
         }
         float fluxMult = 100f / (100f + percent);
-        stats.getBallisticRoFMult().modifyPercent(modId, percent);
-        stats.getEnergyRoFMult().modifyPercent(modId, percent);
         stats.getBallisticWeaponFluxCostMod().modifyMult(modId, fluxMult);
         stats.getEnergyWeaponFluxCostMod().modifyMult(modId, fluxMult);
-        stats.getBeamWeaponFluxCostMult().modifyMult(modId, 1f / fluxMult);
     }
 }

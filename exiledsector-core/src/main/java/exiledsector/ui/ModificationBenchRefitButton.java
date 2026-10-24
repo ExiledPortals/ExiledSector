@@ -1,19 +1,13 @@
 package exiledsector.ui;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
-import com.fs.starfarer.api.ui.PositionAPI;
-import exiledlib.i18n.Translation;
-import exiledsector.ui.refit.RefitButtonConfig;
-import exiledsector.ui.refit.RefitModuleTabs;
-import lunalib.lunaRefit.BaseRefitButton;
 import lunalib.lunaRefit.LunaRefitManager;
 
-public class ModificationBenchRefitButton extends BaseRefitButton {
+public class ModificationBenchRefitButton extends FullScreenRefitButton {
 
     static final String ICON_PATH = "graphics/icons/cargo/nanoswarm_augmentation.png";
 
@@ -29,33 +23,13 @@ public class ModificationBenchRefitButton extends BaseRefitButton {
     }
 
     @Override
-    public float getPanelWidth(FleetMemberAPI member, ShipVariantAPI variant) {
-        return Global.getSettings().getScreenWidth();
+    protected String buttonKey() {
+        return "ui.benchRefitButton";
     }
 
     @Override
-    public float getPanelHeight(FleetMemberAPI member, ShipVariantAPI variant) {
-        return Global.getSettings().getScreenHeight();
-    }
-
-    @Override
-    public String getButtonName(FleetMemberAPI member, ShipVariantAPI variant) {
-        return Translation.gameText("ui.benchRefitButton");
-    }
-
-    @Override
-    public String getIconName(FleetMemberAPI member, ShipVariantAPI variant) {
+    protected String iconPath() {
         return ICON_PATH;
-    }
-
-    @Override
-    public boolean shouldShow(FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
-        return !RefitButtonConfig.buttonUnderHullMods() && !RefitModuleTabs.isModuleTab(member);
-    }
-
-    @Override
-    public boolean hasPanel(FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
-        return !RefitModuleTabs.isModuleTab(member);
     }
 
     @Override
@@ -64,9 +38,6 @@ public class ModificationBenchRefitButton extends BaseRefitButton {
             return;
         }
         ModificationBenchScreen screen = new ModificationBenchScreen(new ModificationBenchScreen.RefitHost(this));
-        PositionAPI backgroundPosition = backgroundPanel.getPosition();
-        CustomPanelAPI screenPanel = Global.getSettings().createCustom(backgroundPosition.getWidth(), backgroundPosition.getHeight(), screen);
-        backgroundPanel.addComponent(screenPanel).inTL(0f, 0f);
-        screen.attach(screenPanel);
+        fillWithScreen(backgroundPanel, screen, screen::attach);
     }
 }

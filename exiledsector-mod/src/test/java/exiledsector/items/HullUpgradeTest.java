@@ -1,12 +1,11 @@
 package exiledsector.items;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
+import exiledlib.MockSector;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.tags.ShipProfile;
@@ -14,10 +13,7 @@ import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -30,33 +26,27 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class HullUpgradeTest {
 
     private final Map<String, ShipSkillData> ships = new LinkedHashMap<>();
     private final Set<String> lost = new HashSet<>();
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private ItemStore store;
 
     @BeforeEach
     void setUp() throws Exception {
-        Map<String, Object> persistentData = new HashMap<>();
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
         store = ItemStore.get();
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.row("officer", "bridge", "HULL_PERCENT:10:10"))
+                .put(HullItemRows.row("officer", "bridge", "HULL_PERCENT:10:10"))
                 .put(ItemFixtures.subroutineRow("chip")));
     }
 
     @AfterEach
     void tearDown() {
         ItemDefinitions.clear();
-        globalMock.close();
+        mockSector.close();
     }
 
     private static ShipProfile fit(ShieldType shieldType) {

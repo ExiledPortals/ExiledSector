@@ -4,7 +4,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
@@ -15,6 +14,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.VariantSource;
+import exiledlib.MockSector;
 import exiledlib.compat.SecondInCommandCompat;
 import exiledlib.skills.SkillTypeEffect;
 import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
@@ -45,7 +45,6 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -73,19 +72,16 @@ class ShipTreeSyncTest {
 
     private static final String MILITARIZED_SUBSYSTEMS = "militarized_subsystems";
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private MockedStatic<LunaSettings> lunaSettingsMock;
-    private SectorAPI sector;
     private SettingsAPI settings;
     private FleetDataAPI fleetData;
 
     @BeforeEach
     void setUp() {
-        Map<String, Object> persistentData = new HashMap<>();
-        sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
+        mockSector = new MockSector();
 
-        CampaignFleetAPI playerFleet = mock(CampaignFleetAPI.class);
+        CampaignFleetAPI playerFleet = mockSector.playerFleet();
         fleetData = mock(FleetDataAPI.class);
         when(playerFleet.getFleetData()).thenReturn(fleetData);
         MutableFleetStatsAPI fleetStats = mock(MutableFleetStatsAPI.class);
@@ -94,14 +90,11 @@ class ShipTreeSyncTest {
         when(fleetStats.getDetectedRangeMod()).thenReturn(detectedRangeMod);
         when(playerFleet.isTransponderOn()).thenReturn(true);
 
-        globalMock = Mockito.mockStatic(Global.class);
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
         lunaSettingsMock.when(() -> LunaSettings.getInt(anyString(), anyString())).thenReturn(null);
         lunaSettingsMock.when(() -> LunaSettings.getFloat(anyString(), anyString())).thenReturn(null);
-        globalMock.when(Global::getSector).thenReturn(sector);
         settings = mock(SettingsAPI.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
-        when(sector.getPlayerFleet()).thenReturn(playerFleet);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
         when(fleetData.getMembersListCopy()).thenReturn(List.of());
 
         SkillTree.clearNodes();
@@ -110,7 +103,7 @@ class ShipTreeSyncTest {
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         lunaSettingsMock.close();
         SkillTree.clearNodes();
         SkillTreeSetting.setEnabledForTests(SkillTreeSetting.DEFAULT_ENABLED);
@@ -137,7 +130,7 @@ class ShipTreeSyncTest {
     }
 
     private CampaignFleetAPI playerFleet() {
-        return sector.getPlayerFleet();
+        return mockSector.playerFleet();
     }
 
     @Test
@@ -842,6 +835,6 @@ class ShipTreeSyncTest {
     private void playerLevel(int level) {
         MutableCharacterStatsAPI playerStats = mock(MutableCharacterStatsAPI.class);
         when(playerStats.getLevel()).thenReturn(level);
-        when(sector.getPlayerStats()).thenReturn(playerStats);
+        when(mockSector.sector.getPlayerStats()).thenReturn(playerStats);
     }
 }

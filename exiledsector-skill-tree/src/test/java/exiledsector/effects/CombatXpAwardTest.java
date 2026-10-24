@@ -2,14 +2,12 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.EngagementResultForFleetAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.TextPanelAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
@@ -19,6 +17,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
 import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.ui.LabelAPI;
+import exiledlib.MockSector;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
@@ -36,7 +35,6 @@ import org.mockito.Mockito;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +52,7 @@ import static org.mockito.Mockito.when;
 
 class CombatXpAwardTest {
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private MockedStatic<LunaSettings> lunaSettingsMock;
     private FleetDataAPI fleetData;
     private TextPanelAPI textPanel;
@@ -62,19 +60,15 @@ class CombatXpAwardTest {
 
     @BeforeEach
     void setUp() {
-        Map<String, Object> persistentData = new HashMap<>();
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-        CampaignFleetAPI playerFleet = mock(CampaignFleetAPI.class);
+        mockSector = new MockSector();
         fleetData = mock(FleetDataAPI.class);
-        when(sector.getPlayerFleet()).thenReturn(playerFleet);
-        when(playerFleet.getFleetData()).thenReturn(fleetData);
+        when(mockSector.playerFleet().getFleetData()).thenReturn(fleetData);
         when(fleetData.getMembersListCopy()).thenReturn(List.of());
 
         CampaignUIAPI campaignUi = mock(CampaignUIAPI.class);
         dialog = mock(InteractionDialogAPI.class);
         textPanel = mock(TextPanelAPI.class);
-        when(sector.getCampaignUI()).thenReturn(campaignUi);
+        when(mockSector.sector.getCampaignUI()).thenReturn(campaignUi);
         when(campaignUi.getCurrentInteractionDialog()).thenReturn(dialog);
         when(dialog.getTextPanel()).thenReturn(textPanel);
 
@@ -87,22 +81,20 @@ class CombatXpAwardTest {
         lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_LOSS_MULTIPLIER_FIELD_ID)).thenReturn(null);
         lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_DIFFICULTY_STRENGTH_FIELD_ID)).thenReturn(null);
         lunaSettingsMock.when(() -> LunaSettings.getFloat("exiledSector", ShipLevelConfig.XP_DIFFICULTY_MAX_MULTIPLIER_FIELD_ID)).thenReturn(null);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
         SettingsAPI settings = mock(SettingsAPI.class);
         when(settings.getColor("buttonShortcut")).thenReturn(Color.YELLOW);
         when(settings.getColor("textFriendColor")).thenReturn(Color.GREEN);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
         FactionAPI playerFaction = mock(FactionAPI.class);
         when(playerFaction.getBaseUIColor()).thenReturn(Color.CYAN);
-        when(sector.getPlayerFaction()).thenReturn(playerFaction);
+        when(mockSector.sector.getPlayerFaction()).thenReturn(playerFaction);
 
         SkillTree.clearNodes();
     }
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         lunaSettingsMock.close();
         SkillTree.clearNodes();
         SkillTreeSetting.setEnabledForTests(SkillTreeSetting.DEFAULT_ENABLED);

@@ -44,9 +44,7 @@ public class ItemSalvageListener implements ShowLootListener {
         LootModifiers modifiers = LootSources.modifiersFor(salvageEntity);
         ItemDrops.SiteLoot siteLoot = ItemDrops.rollSite(siteId, random, modifiers.itemChances(), modifiers.feedstockMult(), modifiers.currencyMult(),
                 ItemUnlock.available(ItemType.HULL_ITEM, Global.getSector()));
-        siteLoot.items().forEach(item -> loot.addSpecial(item.toSpecialItem(), 1f));
-        siteLoot.upgrades().forEach(upgrade -> loot.addSpecial(upgrade.toSpecialItem(), 1f));
-        siteLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
+        ItemLootListener.addSiteLoot(loot, siteLoot);
         MaterialDropAnnouncer.announceOnLootScreen(siteLoot.materials());
         LootSources.all().forEach(source -> source.addSalvageLoot(Global.getSector(), salvageEntity, loot));
         if (entityMemory.getBoolean(SHOWCASE_KEY)) {

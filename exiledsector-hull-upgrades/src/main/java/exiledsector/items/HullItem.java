@@ -8,32 +8,8 @@ import java.util.List;
 
 public final class HullItem extends Item {
 
-    public static final ItemTypeSupport SUPPORT = new ItemTypeSupport() {
-        @Override
-        public ItemType type() {
-            return ItemType.HULL_ITEM;
-        }
-
-        @Override
-        public Class<? extends Item> itemClass() {
-            return HullItem.class;
-        }
-
-        @Override
-        public String saveAlias() {
-            return "exiledSector.HullItem";
-        }
-
-        @Override
-        public Item create(String id, String definitionId, long seed, List<RolledModifier> explicitModifiers) {
-            return new HullItem(id, definitionId, seed, explicitModifiers);
-        }
-
-        @Override
-        public Item convert(Item source) {
-            return new HullItem(source);
-        }
-
+    public static final ItemTypeSupport SUPPORT = new BasicItemTypeSupport(ItemType.HULL_ITEM, HullItem.class, "exiledSector.HullItem",
+            HullItem::new, HullItem::new) {
         @Override
         public String definitionsPath() {
             return HullItem.definitionsPath();

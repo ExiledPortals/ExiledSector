@@ -29,6 +29,7 @@ public final class CargoCraftingTabListener implements CoreUITabListener {
     static final class Watcher implements EveryFrameScript {
 
         private UIPanelAPI tradePanel;
+        private CargoCraftingButton attachedButton;
         private int unresolvedFrames;
         private boolean done;
 
@@ -62,7 +63,9 @@ public final class CargoCraftingTabListener implements CoreUITabListener {
                     return;
                 }
             }
-            CargoCraftingButton.attachIfMissing(tradePanel);
+            if (attachedButton == null || !attachedButton.advancedSinceLastCheck()) {
+                attachedButton = CargoCraftingButton.attachIfMissing(tradePanel);
+            }
         }
 
         private boolean waitedTooLong() {

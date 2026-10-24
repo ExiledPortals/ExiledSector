@@ -4,9 +4,9 @@ import assortment_of_things.exotech.ExoData;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import exiledlib.MockSector;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
@@ -42,7 +42,7 @@ class RandomAssortmentExoshipTest {
     private static final ItemDefinition BEACON_ANCHOR = new ItemDefinition("wormhole_anchor_exotech", null, "Hyper-Nav Beacon", "", 10f, false, "",
             List.of(), List.of(), ItemUnlock.RAT_PLAYER_EXOSHIP.id(), ItemType.WORMHOLE_ANCHOR, null, List.of(), ItemDefinition.NO_SOCKET_LIMIT);
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private MockedStatic<LunaSettings> lunaSettingsMock;
     private SettingsAPI settings;
     private ModManagerAPI modManager;
@@ -60,19 +60,17 @@ class RandomAssortmentExoshipTest {
         sectorMemory = mock(MemoryAPI.class);
         exoData = new ExoData();
         when(sectorMemory.get(RAT_EXO_DATA_MEMORY_KEY)).thenReturn(exoData);
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
+        mockSector = new MockSector();
+        when(mockSector.sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
 
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
         lunaSettingsMock.when(() -> LunaSettings.getBoolean(anyString(), anyString())).thenReturn(null);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
     }
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         lunaSettingsMock.close();
         RandomAssortmentCompat.clearCachedLookups();
     }

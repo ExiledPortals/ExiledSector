@@ -8,6 +8,7 @@ import org.json.JSONException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Predicate;
 
 public final class NodeReplacements {
 
@@ -38,9 +39,25 @@ public final class NodeReplacements {
         return BY_OLD_ID.get();
     }
 
-    public static String resolve(String nodeId) {
-        String replacement = BY_OLD_ID.get().get(nodeId);
-        return replacement != null && SkillTree.get(nodeId) == null ? replacement : nodeId;
+    public static String current(String nodeId) {
+        return current(nodeId, BY_OLD_ID.get(), id -> SkillTree.getDeclared(id) != null);
+    }
+
+    static String current(String nodeId, Map<String, String> replacements, Predicate<String> inTree) {
+        if (nodeId == null || inTree.test(nodeId)) {
+            return nodeId;
+        }
+        String candidate = nodeId;
+        for (int hop = 0; hop < replacements.size(); hop++) {
+            candidate = replacements.get(candidate);
+            if (candidate == null) {
+                return nodeId;
+            }
+            if (inTree.test(candidate)) {
+                return candidate;
+            }
+        }
+        return nodeId;
     }
 
     public static void clear() {

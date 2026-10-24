@@ -33,15 +33,11 @@ public final class SkillTreeSettings {
         registerMain();
         registerNpcScaling();
         ModSettingsListener.ensureRegistered(NpcBonusScale.SettingsListener.class, NpcBonusScale.SettingsListener::new);
-        ModSettingsListener.ensureRegistered(UniqueSubroutinesSetting.SettingsListener.class, UniqueSubroutinesSetting.SettingsListener::new);
-        ModSettingsListener.ensureRegistered(SkillTreeSetting.SettingsListener.class, SkillTreeSetting.SettingsListener::new);
     }
 
     private static void registerMain() {
-        SettingsCreator.addHeader(MOD_ID, "exiledSector_skillTreeHeader", Translation.text("settings.skillTree.header"), MAIN_TAB);
-        SettingsCreator.addBoolean(MOD_ID, SkillTreeSetting.ENABLED_FIELD_ID,
-                Translation.text("settings.skillTree.enabled.name"), Translation.text("settings.skillTree.enabled.tooltip"),
-                SkillTreeSetting.DEFAULT_ENABLED, MAIN_TAB);
+        SkillTreeSetting.SWITCH.addSettings("exiledSector_skillTreeHeader", "settings.skillTree.header",
+                "settings.skillTree.enabled.name", "settings.skillTree.enabled.tooltip");
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_opCostHeader", Translation.text("settings.opCost.header"), MAIN_TAB);
         SettingsCreator.addText(MOD_ID, "exiledSector_opCostAbout", Translation.text("settings.opCost.about"), MAIN_TAB);

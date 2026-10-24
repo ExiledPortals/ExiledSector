@@ -2,6 +2,7 @@ package exiledsector.charts;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.impl.campaign.procgen.DropGroupRow;
+import exiledsector.data.CsvRows;
 import exiledlib.ModCsv;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -84,7 +85,7 @@ public final class ChartLoot {
     static List<String> register(JSONArray rows, Predicate<String> groupExists) throws JSONException {
         Map<String, DropType> groupTypes = new LinkedHashMap<>();
         List<Entry> entries = new ArrayList<>();
-        ChartCsv csv = new ChartCsv(PATH);
+        CsvRows csv = new CsvRows(PATH);
         if (rows != null) {
             ModCsv.forEach(rows, (index, row) -> {
                 String id = ModCsv.text(row, ID_COLUMN);
@@ -98,7 +99,7 @@ public final class ChartLoot {
         return csv.problems();
     }
 
-    private static void parse(ChartCsv csv, JSONObject row, String id, Predicate<String> groupExists, Map<String, DropType> groupTypes,
+    private static void parse(CsvRows csv, JSONObject row, String id, Predicate<String> groupExists, Map<String, DropType> groupTypes,
                               List<Entry> entries) {
         DropType type = vanillaType(ModCsv.text(row, "drop_type"));
         String group = ModCsv.text(row, "group");

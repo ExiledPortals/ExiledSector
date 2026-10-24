@@ -3,8 +3,8 @@ package exiledsector.items;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledlib.MockSector;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
 
 class HullUpgradesSwitchTest {
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private MockedStatic<LunaSettings> lunaSettingsMock;
     private FleetDataAPI fleetData;
     private FleetMemberAPI firstMember;
@@ -36,24 +36,21 @@ class HullUpgradesSwitchTest {
 
     @BeforeEach
     void setUp() {
-        SectorAPI sector = mock(SectorAPI.class);
-        CampaignFleetAPI playerFleet = mock(CampaignFleetAPI.class);
+        mockSector = new MockSector();
+        CampaignFleetAPI playerFleet = mockSector.playerFleet();
         fleetData = mock(FleetDataAPI.class);
         firstMember = mock(FleetMemberAPI.class);
         secondMember = mock(FleetMemberAPI.class);
-        when(sector.getPlayerFleet()).thenReturn(playerFleet);
         when(playerFleet.getFleetData()).thenReturn(fleetData);
         when(fleetData.getMembersListCopy()).thenReturn(List.of(firstMember, secondMember));
 
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
         lunaSettingsMock = Mockito.mockStatic(LunaSettings.class);
         lunaSettingsMock.when(() -> LunaSettings.getInt(anyString(), anyString())).thenReturn(null);
     }
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         lunaSettingsMock.close();
         HullUpgradesSetting.setEnabledForTests(HullUpgradesSetting.DEFAULT_ENABLED);
         HullUpgradesSetting.setUnlockLevelForTests(HullUpgradesSetting.DEFAULT_UNLOCK_LEVEL);
@@ -112,7 +109,7 @@ class HullUpgradesSwitchTest {
 
     @Test
     void switchingWithoutASectorOnlyUpdatesTheSetting() {
-        globalMock.when(Global::getSector).thenReturn(null);
+        mockSector.global.when(Global::getSector).thenReturn(null);
         HullUpgradesSetting.setEnabledForTests(true);
 
         assertDoesNotThrow(() -> switchTo(false));

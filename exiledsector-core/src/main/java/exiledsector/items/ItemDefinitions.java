@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import exiledlib.ModCsv;
+import exiledsector.data.CsvRows;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,6 +13,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
@@ -20,8 +22,7 @@ public final class ItemDefinitions {
     private static final String ID_COLUMN = "id";
     private static final Logger LOG = Logger.getLogger(ItemDefinitions.class);
     private static final AtomicReference<Map<String, ItemDefinition>> BY_ID = new AtomicReference<>(Map.of());
-    private static final AtomicReference<Map<String, ItemDefinition>> STAR_CHARTS_BY_ID = new AtomicReference<>(Map.of());
-    private static final AtomicReference<Map<String, ItemDefinition>> WORMHOLE_ANCHORS_BY_ID = new AtomicReference<>(Map.of());
+    private static final Map<ItemType, Map<String, ItemDefinition>> OWN_TYPES_BY_TYPE = new ConcurrentHashMap<>();
 
     private ItemDefinitions() {
     }
@@ -89,14 +90,10 @@ public final class ItemDefinitions {
         if (rows == null) {
             return;
         }
-        ModCsv.forEach(rows, (index, row) -> {
-            try {
-                ItemDefinition definition = parser.apply(row);
-                if (loaded.putIfAbsent(definition.id(), definition) != null) {
-                    throw new IllegalArgumentException(definition.id() + " is already defined");
-                }
-            } catch (IllegalArgumentException e) {
-                LOG.error("Skipping row " + (index + 1) + " of " + source + ": " + e.getMessage());
+        CsvRows.forEachRow(rows, source, LOG, (index, row) -> {
+            ItemDefinition definition = parser.apply(row);
+            if (loaded.putIfAbsent(definition.id(), definition) != null) {
+                throw new IllegalArgumentException(definition.id() + " is already defined");
             }
         });
     }
@@ -107,26 +104,19 @@ public final class ItemDefinitions {
         BY_ID.set(Collections.unmodifiableMap(loaded));
     }
 
-    public static void registerStarCharts(Collection<ItemDefinition> definitions) {
+    public static void registerOwnType(ItemType type, Collection<ItemDefinition> definitions) {
         Map<String, ItemDefinition> loaded = new LinkedHashMap<>();
         for (ItemDefinition definition : definitions) {
-            if (definition.type() != ItemType.STAR_CHART) {
-                throw new IllegalArgumentException(definition.id() + " is not a star chart");
+            if (definition.type() != type) {
+                throw new IllegalArgumentException(definition.id() + " is not a " + type.id() + " item");
             }
             loaded.put(definition.id(), definition);
         }
-        STAR_CHARTS_BY_ID.set(Collections.unmodifiableMap(loaded));
+        OWN_TYPES_BY_TYPE.put(type, Collections.unmodifiableMap(loaded));
     }
 
-    public static void registerWormholeAnchors(Collection<ItemDefinition> definitions) {
-        Map<String, ItemDefinition> loaded = new LinkedHashMap<>();
-        for (ItemDefinition definition : definitions) {
-            if (definition.type() != ItemType.WORMHOLE_ANCHOR) {
-                throw new IllegalArgumentException(definition.id() + " is not a wormhole anchor");
-            }
-            loaded.put(definition.id(), definition);
-        }
-        WORMHOLE_ANCHORS_BY_ID.set(Collections.unmodifiableMap(loaded));
+    public static boolean isOwnType(ItemType type) {
+        return OWN_TYPES_BY_TYPE.containsKey(type);
     }
 
     public static ItemDefinition get(String definitionId) {
@@ -138,8 +128,13 @@ public final class ItemDefinitions {
         if (shipItem != null) {
             return shipItem;
         }
-        ItemDefinition starChart = STAR_CHARTS_BY_ID.get().get(currentId);
-        return starChart != null ? starChart : WORMHOLE_ANCHORS_BY_ID.get().get(currentId);
+        for (Map<String, ItemDefinition> ownType : OWN_TYPES_BY_TYPE.values()) {
+            ItemDefinition definition = ownType.get(currentId);
+            if (definition != null) {
+                return definition;
+            }
+        }
+        return null;
     }
 
     public static Collection<ItemDefinition> all() {
@@ -147,26 +142,19 @@ public final class ItemDefinitions {
     }
 
     public static Collection<ItemDefinition> ofType(ItemType type) {
-        if (type == ItemType.STAR_CHART) {
-            return STAR_CHARTS_BY_ID.get().values();
-        }
-        if (type == ItemType.WORMHOLE_ANCHOR) {
-            return WORMHOLE_ANCHORS_BY_ID.get().values();
+        Map<String, ItemDefinition> ownType = OWN_TYPES_BY_TYPE.get(type);
+        if (ownType != null) {
+            return ownType.values();
         }
         return BY_ID.get().values().stream().filter(definition -> definition.type() == type).toList();
     }
 
     public static void clear() {
         BY_ID.set(Map.of());
-        STAR_CHARTS_BY_ID.set(Map.of());
-        WORMHOLE_ANCHORS_BY_ID.set(Map.of());
+        OWN_TYPES_BY_TYPE.clear();
     }
 
-    public static void clearStarCharts() {
-        STAR_CHARTS_BY_ID.set(Map.of());
-    }
-
-    public static void clearWormholeAnchors() {
-        WORMHOLE_ANCHORS_BY_ID.set(Map.of());
+    public static void clearOwnType(ItemType type) {
+        OWN_TYPES_BY_TYPE.remove(type);
     }
 }

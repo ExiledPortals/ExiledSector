@@ -3,10 +3,10 @@ package exiledsector.compat;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.econ.CommoditySpecAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledlib.MockSector;
 import exiledlib.ProjectFiles;
 import exiledlib.skills.DescriptionLine;
 import exiledsector.skills.SkillNode;
@@ -34,7 +34,7 @@ import static org.mockito.Mockito.when;
 class RandomAssortmentAreasWithoutRatTest {
 
     private MockedStatic<LunaSettings> lunaSettingsMock;
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -46,13 +46,11 @@ class RandomAssortmentAreasWithoutRatTest {
         when(modManager.isModEnabled(anyString())).thenReturn(false);
         when(settings.getCommoditySpec(anyString())).thenAnswer(invocation ->
                 ((String) invocation.getArgument(0)).startsWith("rat_") ? null : mock(CommoditySpecAPI.class));
-        SectorAPI sector = mock(SectorAPI.class);
+        mockSector = new MockSector();
         MemoryAPI sectorMemory = mock(MemoryAPI.class);
         when(sectorMemory.getBoolean("$playerCanUseGates")).thenReturn(true);
-        when(sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        when(mockSector.sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
 
         RealSkillData.load();
         NodeGates.register(ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(NodeGates.DATA_PATH)));
@@ -62,7 +60,7 @@ class RandomAssortmentAreasWithoutRatTest {
     void tearDown() throws Exception {
         RealSkillData.clear();
         NodeGates.register(new JSONObject("{}"));
-        globalMock.close();
+        mockSector.close();
         lunaSettingsMock.close();
         RandomAssortmentCompat.clearCachedLookups();
     }

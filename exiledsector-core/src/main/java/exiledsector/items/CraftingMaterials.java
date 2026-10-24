@@ -24,7 +24,6 @@ public final class CraftingMaterials {
     }
 
     public static CraftingMaterials forPlayer(CargoAPI cargo) {
-        MaterialMigration.convert(cargo);
         return new CraftingMaterials(cargo, storedCounts(), ModSettings.booleanOr(STORE_FIELD_ID, DEFAULT_STORE));
     }
 

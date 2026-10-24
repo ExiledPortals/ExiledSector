@@ -15,6 +15,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.DerelictShipEntityPlugin;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial;
+import exiledlib.MockSector;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.skills.unlock.UnlockCondition;
 import exiledsector.skills.unlock.UnlockConditionType;
@@ -42,7 +43,7 @@ class AbyssSingularityTest {
     private static final List<UnlockCondition> ABYSS_GATE = List.of(UnlockCondition.modGate(UnlockConditionType.RAT_SINGULARITY_DEFEATED));
 
     private MockedStatic<LunaSettings> lunaSettingsMock;
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private SectorAPI sector;
     private MutableCharacterStatsAPI playerStats;
     private StarSystemAPI abyssSystem;
@@ -66,20 +67,19 @@ class AbyssSingularityTest {
         PersonAPI player = mock(PersonAPI.class);
         when(player.getStats()).thenReturn(playerStats);
         abyssSystem = mock(StarSystemAPI.class);
-        sector = mock(SectorAPI.class);
+        mockSector = new MockSector();
+        sector = mockSector.sector;
         when(sector.getMemoryWithoutUpdate()).thenReturn(memory);
         when(sector.getPlayerPerson()).thenReturn(player);
         when(sector.getStarSystems()).thenReturn(List.of(mock(StarSystemAPI.class), abyssSystem));
 
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSettings).thenReturn(settings);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
     }
 
     @AfterEach
     void tearDown() {
         AbyssSingularity.clearCachedDetection();
-        globalMock.close();
+        mockSector.close();
         lunaSettingsMock.close();
     }
 

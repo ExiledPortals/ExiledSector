@@ -1,6 +1,5 @@
 package exiledsector.console;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledlib.PlayerFleet;
@@ -8,30 +7,18 @@ import exiledsector.items.NodeGrantStatus;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
-import org.lazywizard.console.BaseCommand;
-import org.lazywizard.console.CommonStrings;
 import org.lazywizard.console.Console;
 
 import java.util.List;
 
-public class ResetShipLevelCommand implements BaseCommand {
+public class ResetShipLevelCommand extends PlayerFleetCommand {
 
     @Override
-    public CommandResult runCommand(String args, CommandContext context) {
-        if (!context.isInCampaign()) {
-            Console.showMessage(CommonStrings.ERROR_CAMPAIGN_ONLY);
-            return CommandResult.WRONG_CONTEXT;
-        }
-        String query = args.trim();
-        if (query.isEmpty()) {
+    protected CommandResult runForFleet(String args, CampaignFleetAPI playerFleet) {
+        if (args.isEmpty()) {
             return CommandResult.BAD_SYNTAX;
         }
-        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
-        if (playerFleet == null) {
-            Console.showMessage("No player fleet found.");
-            return CommandResult.ERROR;
-        }
-        FleetMemberAPI member = ConsoleShips.findOne(playerFleet.getFleetData().getMembersListCopy(), query);
+        FleetMemberAPI member = ConsoleShips.findOne(playerFleet.getFleetData().getMembersListCopy(), args);
         if (member == null) {
             return CommandResult.ERROR;
         }

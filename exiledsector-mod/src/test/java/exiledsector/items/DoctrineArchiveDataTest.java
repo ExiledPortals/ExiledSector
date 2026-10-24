@@ -1,8 +1,7 @@
 package exiledsector.items;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledlib.MockSector;
 import exiledlib.ProjectFiles;
 import exiledsector.items.ItemDataIntegrity.Severity;
 import exiledsector.items.ItemDataIntegrity.Violation;
@@ -20,10 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -52,8 +48,8 @@ class DoctrineArchiveDataTest {
 
     private static List<Violation> checkShipped() throws Exception {
         RealSkillData.load();
-        return SubroutineDataRules.checkDoctrineArchives(ItemFixtures.shippedRows(ItemModifiers.dataPath()),
-                ItemFixtures.shippedRows(SubroutineDefinitions.dataPath()), ItemFixtures.shippedRows(DoctrineArchives.DATA_PATH), SkillTree.getAllTypes());
+        return SubroutineDataRules.checkDoctrineArchives(HullItemRows.shippedRows(ItemModifiers.dataPath()),
+                HullItemRows.shippedRows(SubroutineDefinitions.dataPath()), HullItemRows.shippedRows(DoctrineArchives.DATA_PATH), SkillTree.getAllTypes());
     }
 
     @Test
@@ -65,7 +61,7 @@ class DoctrineArchiveDataTest {
     void everyVanillaFactionDoctrineLoadsWithTheAgreedBehaviour() throws Exception {
         RealSkillData.load();
         ItemFixtures.registerShippedItems();
-        DoctrineArchives.register(ItemFixtures.shippedRows(DoctrineArchives.DATA_PATH));
+        DoctrineArchives.register(HullItemRows.shippedRows(DoctrineArchives.DATA_PATH));
 
         Set<String> doctrineDefinitions = ItemDefinitions.ofType(ItemType.SUBROUTINE).stream()
                 .filter(definition -> SubroutineKind.of(definition) == SubroutineKind.DOCTRINE).map(ItemDefinition::id).collect(Collectors.toSet());
@@ -97,13 +93,10 @@ class DoctrineArchiveDataTest {
     void everyShippedDoctrineRewritesNodesAroundEveryStandardSocketOfTheRealTree() throws Exception {
         RealSkillData.load();
         ItemFixtures.registerShippedItems();
-        DoctrineArchives.register(ItemFixtures.shippedRows(DoctrineArchives.DATA_PATH));
+        DoctrineArchives.register(HullItemRows.shippedRows(DoctrineArchives.DATA_PATH));
         NodeRadii.register(ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(
                 NodeRadii.DATA_PATH)));
-        SectorAPI sector = Mockito.mock(SectorAPI.class);
-        Mockito.when(sector.getPersistentData()).thenReturn(new HashMap<>());
-        try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
-            global.when(Global::getSector).thenReturn(sector);
+        try (MockSector mockSector = new MockSector()) {
             List<SkillNode> sockets = SkillTree.getAllNodes().values().stream()
                     .filter(node -> node.getType().getTier() == SkillTier.SOCKET).toList();
             assertTrue(sockets.size() >= 6);
@@ -149,9 +142,9 @@ class DoctrineArchiveDataTest {
 
     private static JSONArray modifiers() throws Exception {
         return new JSONArray()
-                .put(ItemFixtures.modifierRow("ARMOR_PERCENT_TEST_DOCTRINE", "prefix", "doctrine", "ARMOR_PERCENT:2:4", ""))
-                .put(ItemFixtures.modifierRow("HULL_PERCENT_PLATE", "prefix", "hull_item", "HULL_PERCENT:2:4", "Plated"))
-                .put(ItemFixtures.modifierRow("FLUX_CAPACITY_PERCENT_TEST_DOCTRINE", "suffix", "doctrine", "FLUX_CAPACITY_PERCENT:2:4", ""));
+                .put(HullItemRows.modifierRow("ARMOR_PERCENT_TEST_DOCTRINE", "prefix", "doctrine", "ARMOR_PERCENT:2:4", ""))
+                .put(HullItemRows.modifierRow("HULL_PERCENT_PLATE", "prefix", "hull_item", "HULL_PERCENT:2:4", "Plated"))
+                .put(HullItemRows.modifierRow("FLUX_CAPACITY_PERCENT_TEST_DOCTRINE", "suffix", "doctrine", "FLUX_CAPACITY_PERCENT:2:4", ""));
     }
 
     private static JSONArray subroutines() throws Exception {
@@ -193,7 +186,7 @@ class DoctrineArchiveDataTest {
                         .put("max_lines", "2"))
                 .put(row("volume_chip", "SHUFFLE", "small")));
 
-        assertTrue(errors.contains("doc_a has radius \"huge\"; expected small, medium or large"), errors.toString());
+        assertTrue(errors.contains("doc_a has radius \"huge\"; expected one of small, medium, large"), errors.toString());
         assertTrue(errors.contains("doc_a lists keystone_a as a NOTABLE replacement, but it is a KEYSTONE node"), errors.toString());
         assertTrue(errors.contains("doc_a lists missing_type, which is not a skill type"), errors.toString());
         assertTrue(errors.contains("doc_a transforms nodes, so it lists no modifiers"), errors.toString());
@@ -235,8 +228,8 @@ class DoctrineArchiveDataTest {
     private static void loadShippedDoctrines() throws Exception {
         RealSkillData.load();
         ItemFixtures.registerShippedItems();
-        DoctrineArchives.register(ItemFixtures.shippedRows(DoctrineArchives.DATA_PATH));
-        NpcFactionVolumes.register(ItemFixtures.shippedRows("data/config/exiledSector/npc_faction_volumes.csv"));
+        DoctrineArchives.register(HullItemRows.shippedRows(DoctrineArchives.DATA_PATH));
+        NpcFactionVolumes.register(HullItemRows.shippedRows("data/config/exiledSector/npc_faction_volumes.csv"));
     }
 
     @Test

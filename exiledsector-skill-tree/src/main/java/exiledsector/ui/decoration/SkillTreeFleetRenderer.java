@@ -1,19 +1,15 @@
 package exiledsector.ui.decoration;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledlib.PlayerFleet;
 import exiledlib.skills.skilleffect.render.Fade;
 import exiledlib.skills.skilleffect.render.SpriteCache;
 import exiledsector.skills.SkillTree;
 import exiledsector.ui.TreeViewport;
-import exiledsector.ui.util.TexturedQuadBatch;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -25,56 +21,41 @@ public class SkillTreeFleetRenderer {
     static final float DEFAULT_FLEET_RADIUS = 30f;
     static final float MIN_TRAVEL_SPEED = 60f;
     static final float MAX_TRAVEL_SPEED = 400f;
-    static final float MIN_SHIP_PIXELS = 1.5f;
     static final float SOLO_FADE_SECONDS = 0.4f;
     private static final Random FLIGHT_RANDOM = new Random();
-    private record FleetShip(String memberId, String spritePath, float width, float height, FleetShipDrift drift,
-                             FleetHullVisuals visuals, HullEngines engines) {
-    }
 
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeFleetRenderer.class);
-    private final TexturedQuadBatch glowQuads = new TexturedQuadBatch();
-    private final FlameBatch flameBatch = new FlameBatch();
-    private final List<FleetShip> ships;
+    private final DrawnShips drawnShips = new DrawnShips(spriteCache);
+    private final List<RoamingShip> ships;
     private final FleetFlight flight;
     private final float cullRadius;
-    private final float[] shipScreenX;
-    private final float[] shipScreenY;
-    private final float[] shipScreenScale;
-    private final float[] shipAlpha;
-    private FleetShip soloShip;
-    private FleetMemberAPI soloMember;
+    private final RoamingShip soloShip;
+    private final FleetMemberAPI soloMember;
     private VanillaShipView soloView;
     private boolean soloViewTried;
     private boolean soloActive;
     private float soloLevel;
 
-    private SkillTreeFleetRenderer(List<FleetShip> ships, FleetFlight flight, float cullRadius) {
+    private SkillTreeFleetRenderer(List<RoamingShip> ships, FleetFlight flight, float cullRadius, RoamingShip soloShip, FleetMemberAPI soloMember) {
         this.ships = ships;
         this.flight = flight;
         this.cullRadius = cullRadius;
-        this.shipScreenX = new float[ships.size()];
-        this.shipScreenY = new float[ships.size()];
-        this.shipScreenScale = new float[ships.size()];
-        this.shipAlpha = new float[ships.size()];
+        this.soloShip = soloShip;
+        this.soloMember = soloMember;
     }
 
     public static SkillTreeFleetRenderer forPlayerFleet(String viewedMemberId) {
         CampaignFleetAPI playerFleet = PlayerFleet.orNull();
         if (playerFleet == null || playerFleet.getFleetData() == null) {
-            return new SkillTreeFleetRenderer(List.of(), null, 0f);
+            return new SkillTreeFleetRenderer(List.of(), null, 0f, null, null);
         }
         RoamVolume roamVolume = RoamVolume.core(SkillTree.getStars(), SkillTree.getRingBelts());
         float travelSpeed = Math.max(MIN_TRAVEL_SPEED, Math.min(MAX_TRAVEL_SPEED,
                 Misc.getSpeedForBurnLevel(playerFleet.getFleetData().getMinBurnLevel())));
         FleetFlight flight = new FleetFlight(roamVolume, travelSpeed, FLIGHT_RANDOM);
         float fleetRadius = playerFleet.getRadius() > 0f ? playerFleet.getRadius() : DEFAULT_FLEET_RADIUS;
-        SkillTreeFleetRenderer renderer = build(shownMembers(playerFleet.getFleetData().getMembersListCopy(), viewedMemberId),
-                fleetRadius, flight, FLIGHT_RANDOM);
-        renderer.soloShip = renderer.ships.stream().filter(ship -> ship.memberId().equals(viewedMemberId)).findFirst().orElse(null);
-        renderer.soloMember = playerFleet.getFleetData().getMembersListCopy().stream()
-                .filter(member -> member.getId().equals(viewedMemberId)).findFirst().orElse(null);
-        return renderer;
+        return build(shownMembers(playerFleet.getFleetData().getMembersListCopy(), viewedMemberId), viewedMemberId, fleetRadius, flight,
+                FLIGHT_RANDOM);
     }
 
     static List<FleetMemberAPI> shownMembers(List<FleetMemberAPI> members, String viewedMemberId) {
@@ -91,39 +72,27 @@ public class SkillTreeFleetRenderer {
         return shown;
     }
 
-    private static SkillTreeFleetRenderer build(List<FleetMemberAPI> members, float fleetRadius, FleetFlight flight, Random random) {
+    private static SkillTreeFleetRenderer build(List<FleetMemberAPI> members, String viewedMemberId, float fleetRadius, FleetFlight flight,
+                                                Random random) {
         SpriteCache measuringCache = new SpriteCache(SkillTreeFleetRenderer.class);
-        float largestSizeNum = 0f;
-        int largestCount = 0;
+        FleetFormation formation = FleetFormation.of(members.stream().map(FleetMemberAPI::getHullSpec).toList(), fleetRadius);
+        List<RoamingShip> ships = new ArrayList<>(members.size());
+        RoamingShip soloShip = null;
+        FleetMemberAPI soloMember = null;
         for (FleetMemberAPI member : members) {
-            float sizeNum = Misc.getSizeNum(member.getHullSpec().getHullSize());
-            if (sizeNum > largestSizeNum) {
-                largestSizeNum = sizeNum;
-                largestCount = 1;
-            } else if (Float.compare(sizeNum, largestSizeNum) == 0) {
-                largestCount++;
-            }
-        }
-        List<FleetShip> ships = new ArrayList<>(members.size());
-        float largestSprite = 0f;
-        for (FleetMemberAPI member : members) {
-            String spritePath = member.getHullSpec().getSpriteName();
-            SpriteAPI texture = spritePath == null ? null : measuringCache.texture(spritePath);
-            if (texture == null) {
+            RoamingShip ship = formation.ship(member.getHullSpec(), measuringCache, flight.facingDeg(), random);
+            if (ship == null) {
                 continue;
             }
-            HullSize hullSize = member.getHullSpec().getHullSize();
-            float sizeNum = Misc.getSizeNum(hullSize);
-            boolean onlyLargest = Float.compare(sizeNum, largestSizeNum) == 0 && largestCount == 1;
-            FleetShipDrift.HullMotion motion = FleetShipDrift.HullMotion.of(hullSize);
-            float maxOffset = FleetShipDrift.maxOffset(fleetRadius, largestSizeNum, sizeNum, onlyLargest);
-            FleetShipDrift drift = new FleetShipDrift(motion, maxOffset, flight.facingDeg(), random);
-            FleetHullVisuals visuals = FleetHullVisuals.of(member.getHullSpec());
-            ships.add(new FleetShip(member.getId(), spritePath, texture.getWidth(), texture.getHeight(), drift, visuals, HullEngines.of(visuals)));
-            largestSprite = Math.max(largestSprite, Math.max(texture.getWidth(), texture.getHeight()) * motion.scaleMult());
+            ships.add(ship);
+            if (member.getId().equals(viewedMemberId)) {
+                soloShip = ship;
+                soloMember = member;
+            }
         }
-        ships.sort(Comparator.comparingDouble(ship -> -ship.width() * ship.height()));
-        return new SkillTreeFleetRenderer(List.copyOf(ships), flight, fleetRadius + largestSprite);
+        ships.sort(FleetFormation.LARGEST_FIRST);
+        float largestSprite = (float) ships.stream().mapToDouble(RoamingShip::longestSide).max().orElse(0.0);
+        return new SkillTreeFleetRenderer(List.copyOf(ships), flight, fleetRadius + largestSprite, soloShip, soloMember);
     }
 
     public void setSoloActive(boolean soloActive) {
@@ -143,7 +112,7 @@ public class SkillTreeFleetRenderer {
     }
 
     public float soloLongestSide() {
-        return soloShip == null ? 0f : Math.max(soloShip.width(), soloShip.height()) * soloShip.drift().motion().scaleMult();
+        return soloShip == null ? 0f : soloShip.longestSide();
     }
 
     public void advance(float amount) {
@@ -151,7 +120,7 @@ public class SkillTreeFleetRenderer {
         float soloStep = amount / SOLO_FADE_SECONDS;
         soloLevel = Fade.step(soloLevel, soloActive && soloShip != null, soloStep);
         flight.advance(amount);
-        for (FleetShip ship : ships) {
+        for (RoamingShip ship : ships) {
             ship.drift().advance(amount, flight.facingDeg());
         }
     }
@@ -161,72 +130,38 @@ public class SkillTreeFleetRenderer {
         float zoom = viewport.zoom();
         if (!viewport.isVisible(viewport.screenX(flight.positionX()), viewport.screenY(flight.positionY()), cullRadius * zoom)) return;
 
-        boolean anyVisible = false;
-        for (int i = 0; i < ships.size(); i++) {
-            FleetShip ship = ships.get(i);
+        drawnShips.begin(ships.size());
+        for (RoamingShip ship : ships) {
             FleetShipDrift drift = ship.drift();
             float screenScale = drift.motion().scaleMult() * zoom;
-            shipScreenX[i] = viewport.screenX(flight.positionX() + drift.offsetX());
-            shipScreenY[i] = viewport.screenY(flight.positionY() + drift.offsetY());
-            shipAlpha[i] = alphaMult * (ship == soloShip ? 1f : 1f - soloLevel);
-            boolean tooSmall = Math.max(ship.width(), ship.height()) * screenScale < MIN_SHIP_PIXELS;
-            shipScreenScale[i] = tooSmall || shipAlpha[i] <= 0f ? 0f : screenScale;
-            if (shipScreenScale[i] > 0f) {
-                anyVisible = true;
-                drawHull(ship, shipScreenX[i], shipScreenY[i], screenScale, shipAlpha[i]);
+            float screenX = viewport.screenX(flight.positionX() + drift.offsetX());
+            float screenY = viewport.screenY(flight.positionY() + drift.offsetY());
+            float alpha = alphaMult * (ship == soloShip ? 1f : 1f - soloLevel);
+            if (drawnShips.add(ship, screenX, screenY, screenScale, flight.engineLevel(), alpha)) {
+                drawHull(ship, screenX, screenY, screenScale, alpha);
             }
         }
-        if (anyVisible) {
-            renderFlames(zoom);
-            renderGlows();
+        if (!drawnShips.isEmpty()) {
+            drawnShips.renderFlames(zoom);
+            drawnShips.renderGlows();
         }
     }
 
-    private void drawHull(FleetShip ship, float screenX, float screenY, float screenScale, float alpha) {
+    private void drawHull(RoamingShip ship, float screenX, float screenY, float screenScale, float alpha) {
         VanillaShipView view = ship == soloShip ? soloView() : null;
         if (view != null && view.draw(screenX, screenY, screenScale, ship.drift().facingDeg(), alpha)) {
             return;
         }
-        ship.engines().drawHull(spriteCache, ship.spritePath(), screenX, screenY, ship.width() * screenScale, ship.height() * screenScale,
-                screenScale, ship.drift().facingDeg(), alpha);
+        ship.drawHull(spriteCache, screenX, screenY, screenScale, alpha);
     }
 
     private VanillaShipView soloView() {
         if (!soloViewTried && soloMember != null && soloShip != null) {
             soloViewTried = true;
-            soloView = VanillaShipView.of(soloMember, null, VanillaShipView.imageOffsetX(soloShip.visuals(), soloShip.width()),
-                    VanillaShipView.imageOffsetY(soloShip.visuals(), soloShip.height()));
+            FleetHullVisuals visuals = soloShip.engines().visuals();
+            soloView = VanillaShipView.of(soloMember, null, VanillaShipView.imageOffsetX(visuals, soloShip.width()),
+                    VanillaShipView.imageOffsetY(visuals, soloShip.height()));
         }
         return soloView;
-    }
-
-    private void renderFlames(float zoom) {
-        SpriteAPI flameTexture = spriteCache.texture(HullEngines.FLAME_PATH);
-        if (flameTexture == null) return;
-        float lengthFactor = HullEngines.flameLengthFactor(flight.engineLevel());
-        try (FlameBatch flames = flameBatch.begin(flameTexture)) {
-            for (int i = 0; i < ships.size(); i++) {
-                if (shipScreenScale[i] > 0f) {
-                    FleetShip ship = ships.get(i);
-                    ship.engines().addFlames(flames, shipScreenX[i], shipScreenY[i], Math.toRadians(ship.drift().facingDeg()), shipScreenScale[i],
-                            zoom, lengthFactor, shipAlpha[i]);
-                }
-            }
-        }
-    }
-
-    private void renderGlows() {
-        SpriteAPI glowTexture = spriteCache.texture(HullEngines.GLOW_PATH);
-        if (glowTexture == null) return;
-        float glowFactor = HullEngines.glowFactor(flight.engineLevel());
-        try (TexturedQuadBatch quads = glowQuads.beginAdditive(glowTexture)) {
-            for (int i = 0; i < ships.size(); i++) {
-                if (shipScreenScale[i] > 0f) {
-                    FleetShip ship = ships.get(i);
-                    ship.engines().addGlows(quads, shipScreenX[i], shipScreenY[i], Math.toRadians(ship.drift().facingDeg()), shipScreenScale[i],
-                            glowFactor, shipAlpha[i]);
-                }
-            }
-        }
     }
 }

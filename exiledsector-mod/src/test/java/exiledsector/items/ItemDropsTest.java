@@ -21,10 +21,10 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import static exiledsector.items.ItemFixtures.MILITARY;
-import static exiledsector.items.ItemFixtures.MILITARY_PREFIXES;
-import static exiledsector.items.ItemFixtures.MILITARY_SUFFIXES;
-import static exiledsector.items.ItemFixtures.row;
+import static exiledsector.items.HullItemRows.MILITARY;
+import static exiledsector.items.HullItemRows.MILITARY_PREFIXES;
+import static exiledsector.items.HullItemRows.MILITARY_SUFFIXES;
+import static exiledsector.items.HullItemRows.row;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -36,7 +36,7 @@ class ItemDropsTest {
     @BeforeEach
     void setUp() throws Exception {
         ItemDefinitions.register(new JSONArray()
-                .put(row(MILITARY, ItemFixtures.MILITARY_SECTION, MILITARY_PREFIXES, MILITARY_SUFFIXES))
+                .put(row(MILITARY, HullItemRows.MILITARY_SECTION, MILITARY_PREFIXES, MILITARY_SUFFIXES))
                 .put(ItemFixtures.subroutineRow("relic", SubroutineKind.UNIQUE).put("unique", "true")));
         ItemDrops.register(new JSONArray()
                 .put(new JSONObject().put("site", "probe").put("chances", "0.5").put("uniqueChance", "0"))

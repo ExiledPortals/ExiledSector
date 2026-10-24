@@ -1,22 +1,19 @@
 package exiledsector.effects;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.FleetEncounterContextPlugin.DataForEncounterSide;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.fleet.CrewCompositionAPI;
 import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
+import exiledlib.MockSector;
 import exiledlib.skills.skilleffect.logistics.FleetCrewLedger.CrewChange;
 import exiledlib.skills.skilleffect.logistics.FleetCrewLedger;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -28,15 +25,12 @@ import static org.mockito.Mockito.when;
 
 class FleetCrewLedgerSettlementTest {
 
-    private MockedStatic<Global> globalMock;
-    private SectorAPI sector;
+    private MockSector mockSector;
     private CargoAPI cargo;
 
     @BeforeEach
     void setUp() {
-        sector = mock(SectorAPI.class);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
         cargo = mock(CargoAPI.class);
         FleetCrewLedger.drain();
     }
@@ -44,7 +38,7 @@ class FleetCrewLedgerSettlementTest {
     @AfterEach
     void tearDown() {
         FleetCrewLedger.drain();
-        globalMock.close();
+        mockSector.close();
     }
 
     @Test
@@ -91,7 +85,7 @@ class FleetCrewLedgerSettlementTest {
         when(dialog.getPlugin()).thenReturn(plugin);
         CampaignUIAPI campaignUI = mock(CampaignUIAPI.class);
         when(campaignUI.getCurrentInteractionDialog()).thenReturn(dialog);
-        when(sector.getCampaignUI()).thenReturn(campaignUI);
+        when(mockSector.sector.getCampaignUI()).thenReturn(campaignUI);
         return playerFleet;
     }
 
@@ -107,7 +101,7 @@ class FleetCrewLedgerSettlementTest {
         CampaignFleetAPI lost = encounterWithRecoverableCrew(false, 60);
         assertEquals(0, FleetCrewLedgerSettlement.crewStillToBeRecovered(lost));
 
-        when(sector.getCampaignUI().getCurrentInteractionDialog()).thenReturn(null);
+        when(mockSector.sector.getCampaignUI().getCurrentInteractionDialog()).thenReturn(null);
         assertEquals(0, FleetCrewLedgerSettlement.crewStillToBeRecovered(lost));
     }
 
@@ -115,6 +109,6 @@ class FleetCrewLedgerSettlementTest {
     void aBattleWithoutStealingOrSacrificesSchedulesNothing() {
         FleetCrewLedgerSettlement.schedule();
 
-        verify(sector, never()).addTransientScript(any());
+        verify(mockSector.sector, never()).addTransientScript(any());
     }
 }

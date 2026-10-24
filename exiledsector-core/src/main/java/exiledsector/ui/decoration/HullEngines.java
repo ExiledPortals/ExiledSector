@@ -36,6 +36,10 @@ public final class HullEngines {
         return visuals == null ? NONE : new HullEngines(visuals);
     }
 
+    FleetHullVisuals visuals() {
+        return visuals;
+    }
+
     public boolean hasEngines() {
         return !visuals.flames().isEmpty();
     }

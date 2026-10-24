@@ -2,41 +2,46 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.CargoTransferHandlerAPI;
+import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
-import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
-import exiledlib.skills.skilleffect.render.SpriteCache;
-import exiledsector.ui.cargo.CargoIconAnimation;
-import exiledsector.ui.cargo.CargoIconFx;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;
 import exiledsector.ui.socket.ItemCodexLink;
 
 import java.util.List;
-import java.util.function.Supplier;
 
-public class ItemPlugin extends BaseSpecialItemPlugin {
+public class ItemPlugin extends AnimatedCargoItemPlugin {
 
-    private static final SpriteCache SPRITES = new SpriteCache(ItemPlugin.class);
-
-    private final CargoIconAnimation animation = new CargoIconAnimation();
     private Item previewItem;
-    private CargoIconLook look;
 
     @Override
     public void init(CargoStackAPI stack) {
         super.init(stack);
-        ItemData itemData = stack == null ? null : ItemData.of(stack.getSpecialDataIfSpecial());
+        ItemData itemData = stack == null ? null : decode(stack.getSpecialDataIfSpecial());
         previewItem = itemData == null ? null : itemData.preview();
+    }
+
+    protected ItemData decode(SpecialItemData special) {
+        return ItemData.of(special);
+    }
+
+    protected String unknownNameKey() {
+        return "socketable.unknown";
+    }
+
+    protected List<StyledText> footer(boolean showCodexHint) {
+        return showCodexHint ? List.of(Translation.styled("socketable.tooltip.storage"), Translation.styled("socketable.tooltip.codexHint"))
+                : List.of(Translation.styled("socketable.tooltip.storage"));
     }
 
     @Override
     public String getName() {
-        return I18n.forGameText(() -> previewItem == null ? Translation.text("socketable.unknown") : previewItem.name());
+        return I18n.forGameText(() -> previewItem == null ? Translation.text(unknownNameKey()) : previewItem.name());
     }
 
     @Override
@@ -64,19 +69,17 @@ public class ItemPlugin extends BaseSpecialItemPlugin {
             tooltip.setCodexEntryId(codexEntryId);
         }
         boolean showCodexHint = codexEntryId != null && expanded;
-        Supplier<List<StyledText>> footer = () -> showCodexHint
-                ? List.of(Translation.styled("socketable.tooltip.storage"), Translation.styled("socketable.tooltip.codexHint"))
-                : List.of(Translation.styled("socketable.tooltip.storage"));
-        ItemTooltip.write(tooltip, previewItem, footer, expanded);
+        ItemTooltip.write(tooltip, previewItem, () -> footer(showCodexHint), expanded);
         addCostLabel(tooltip, ItemTooltip.PAD, transferHandler, stackSource);
     }
 
     @Override
-    public void render(float x, float y, float w, float h, float alphaMult, float glowMult, SpecialItemRendererAPI renderer) {
-        if (look == null) {
-            look = CargoIconLooks.forItem(previewItem);
-        }
-        String iconPath = previewItem == null ? ItemDefinition.FALLBACK_ICON : previewItem.iconPath();
-        CargoIconFx.render(SPRITES, iconPath, look, x, y, w, h, alphaMult, glowMult, animation.phaseSeed(), animation.burstAge(look, stack));
+    protected CargoIconLook cargoLook() {
+        return CargoIconLooks.forItem(previewItem);
+    }
+
+    @Override
+    protected String cargoIconPath() {
+        return previewItem == null ? ItemDefinition.FALLBACK_ICON : previewItem.iconPath();
     }
 }

@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import exiledlib.ModCsv;
+import exiledsector.data.CsvRows;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
@@ -85,8 +86,8 @@ public final class ModspecCaches {
                 LOG.error("Row " + (index + 1) + " of " + SubroutineDefinitions.dataPath() + " allocates nothing: " + e.getMessage());
             }
         });
-        for (ItemDefinition definition : ItemDefinitions.ofType(ItemType.SUBROUTINE)) {
-            if (SubroutineKind.of(definition) == SubroutineKind.MODSPEC_CACHE && !bases.containsKey(definition.id())) {
+        for (ItemDefinition definition : SubroutineKind.MODSPEC_CACHE.definitions()) {
+            if (!bases.containsKey(definition.id())) {
                 LOG.error(definition.id() + " is a " + SubroutineKind.MODSPEC_CACHE.id() + " subroutine with no usable row, so it rolls no node");
             }
         }
@@ -97,14 +98,19 @@ public final class ModspecCaches {
 
     static CacheBase parse(String definitionId, JSONObject row) {
         String nodeCountText = ModCsv.text(row, NODE_COUNT_CHANCES_COLUMN);
-        if (!isValidNodeCountChances(nodeCountText)) {
-            throw new IllegalArgumentException(definitionId + " has the " + NODE_COUNT_CHANCES_COLUMN + " \"" + nodeCountText
-                    + "\"; expected numbers of 0 or more separated by " + LIST_SEPARATOR + ", at least one above 0");
+        String nodeCountProblem = nodeCountProblem(definitionId, nodeCountText);
+        if (nodeCountProblem != null) {
+            throw new IllegalArgumentException(nodeCountProblem);
         }
         float dropChance = chance(definitionId, DROP_CHANCE_COLUMN, ModCsv.text(row, DROP_CHANCE_COLUMN));
         float salvageChance = chance(definitionId, SALVAGE_CHANCE_COLUMN, ModCsv.text(row, SALVAGE_CHANCE_COLUMN));
         return new CacheBase(definitionId, nodeIds(ModCsv.text(row, EXCLUDED_NODES_COLUMN)), nodeCountChances(nodeCountText), dropChance,
                 salvageChance);
+    }
+
+    static String nodeCountProblem(String definitionId, String chancesText) {
+        return isValidNodeCountChances(chancesText) ? null : definitionId + " has the node count chances \"" + chancesText
+                + "\"; expected numbers of 0 or more separated by " + LIST_SEPARATOR + ", at least one above 0";
     }
 
     static boolean isValidNodeCountChances(String chancesText) {
@@ -113,7 +119,7 @@ public final class ModspecCaches {
         }
         boolean anyAboveZero = false;
         for (String chanceText : chancesText.split(LIST_SEPARATOR, -1)) {
-            if (!isValidChance(chanceText.trim()) || chanceText.isBlank()) {
+            if (!CsvRows.isValidChance(chanceText.trim()) || chanceText.isBlank()) {
                 return false;
             }
             anyAboveZero |= Float.parseFloat(chanceText.trim()) > 0f;
@@ -130,29 +136,11 @@ public final class ModspecCaches {
     }
 
     static float chance(String definitionId, String column, String chanceText) {
-        if (chanceText.isEmpty()) {
-            return 0f;
-        }
-        if (!isValidChance(chanceText)) {
-            LOG.error(definitionId + " in " + SubroutineDefinitions.dataPath() + " has the " + column + " \"" + chanceText
-                    + "\"; expected a number of 0 or more, so it never drops that way");
-            return 0f;
-        }
-        return Float.parseFloat(chanceText);
-    }
-
-    static boolean isValidChance(String chanceText) {
-        return WormholeAnchorDefinitions.isValidDropChance(chanceText);
+        return CsvRows.chance(chanceText, definitionId, column, SubroutineDefinitions.dataPath(), LOG);
     }
 
     static Set<String> nodeIds(String nodeIdsText) {
-        Set<String> nodeIds = new LinkedHashSet<>();
-        for (String nodeId : nodeIdsText.split(LIST_SEPARATOR)) {
-            if (!nodeId.isBlank()) {
-                nodeIds.add(nodeId.trim());
-            }
-        }
-        return nodeIds;
+        return new LinkedHashSet<>(CsvRows.entries(nodeIdsText));
     }
 
     public static CacheBase base(String definitionId) {

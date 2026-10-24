@@ -40,16 +40,16 @@ class ItemNamesTest {
                         List.of("Governor", "Regulator", "Manifold", "Coupling", "Loom", "Spindle"), List.of()))
                 .put("consumer_bridge", words("product", List.of("Sunny", "Happy", "Comfort", "Easy", "Safe", "Family"),
                         List.of("Pal", "Helper", "Buddy", "Assist", "Companion", "Navigator"), List.of("3000", "Plus", "Pro", "Max"))));
-        ItemFixtures.registerModifierNames("FLUX_DISSIPATION_MULT,prefix,FLUX_DISSIPATION_MULT:4:6,Vent-efficient",
+        HullItemRows.registerModifierNames("FLUX_DISSIPATION_MULT,prefix,FLUX_DISSIPATION_MULT:4:6,Vent-efficient",
                 "SHIELD_DAMAGE_TAKEN_MULT,suffix,SHIELD_DAMAGE_TAKEN_MULT:-15:-10,Shielding", "HULL_MULT,suffix,HULL_MULT:4:6,Fortitude");
         ItemDefinitions.register(new JSONArray()
-                .put(ItemFixtures.row("military_bridge", "bridge", ItemFixtures.MILITARY_PREFIXES,
-                        ItemFixtures.MILITARY_SUFFIXES))
-                .put(ItemFixtures.row("industrial_bridge", "bridge", "HULL_MULT:4:6")
+                .put(HullItemRows.row("military_bridge", "bridge", HullItemRows.MILITARY_PREFIXES,
+                        HullItemRows.MILITARY_SUFFIXES))
+                .put(HullItemRows.row("industrial_bridge", "bridge", "HULL_MULT:4:6")
                         .put("name", "Industrial-grade Bridge"))
-                .put(ItemFixtures.row("consumer_bridge", "bridge", "HULL_MULT:4:6")
+                .put(HullItemRows.row("consumer_bridge", "bridge", "HULL_MULT:4:6")
                         .put("name", "Consumer-grade Bridge"))
-                .put(ItemFixtures.row("relic", "reactor", "HULL_MULT:4:6; ARMOR_PERCENT:6:9; FLUX_CAPACITY_MULT:4:6")
+                .put(HullItemRows.row("relic", "reactor", "HULL_MULT:4:6; ARMOR_PERCENT:6:9; FLUX_CAPACITY_MULT:4:6")
                         .put("name", "Omega Shard").put("unique", "TRUE")));
     }
 
@@ -90,7 +90,7 @@ class ItemNamesTest {
 
     @Test
     void aCommonItemMissingAnAffixKeepsTheOtherOne() throws Exception {
-        ItemFixtures.registerModifierNames("FLUX_DISSIPATION_MULT,prefix,FLUX_DISSIPATION_MULT:4:6,Dissipation",
+        HullItemRows.registerModifierNames("FLUX_DISSIPATION_MULT,prefix,FLUX_DISSIPATION_MULT:4:6,Dissipation",
                 "HULL_MULT,suffix,HULL_MULT:4:6,Fortitude");
 
         assertEquals("Dissipation officer", name("military_bridge", 1L, List.of(DISSIPATION, ARMOR)).title());

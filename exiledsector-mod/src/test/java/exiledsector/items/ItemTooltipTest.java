@@ -40,8 +40,8 @@ class ItemTooltipTest {
 
     @Test
     void theTooltipListsEachRolledEffectWithoutAKindLine() throws Exception {
-        ItemFixtures.registerMilitary();
-        Item item = Item.withEffects("socketable_1", ItemFixtures.MILITARY, 1L,
+        HullItemRows.registerMilitary();
+        Item item = Item.withEffects("socketable_1", HullItemRows.MILITARY, 1L,
                 List.of(new RolledEffect("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledEffect("REMOVED_EFFECT", 3f)));
 
         List<String> lines = item.tooltipLines().stream().map(StyledText::plain).toList();
@@ -52,8 +52,8 @@ class ItemTooltipTest {
 
     @Test
     void expandedEffectLinesShowTheRollRangeInBracketsAfterTheValue() throws Exception {
-        ItemFixtures.registerMilitary();
-        Item item = Item.withEffects("socketable_4", ItemFixtures.MILITARY, 1L,
+        HullItemRows.registerMilitary();
+        Item item = Item.withEffects("socketable_4", HullItemRows.MILITARY, 1L,
                 List.of(new RolledEffect("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledEffect("SHIELD_DAMAGE_TAKEN_MULT", -12f),
                         new RolledEffect("REMOVED_EFFECT", 3f)));
 
@@ -68,8 +68,8 @@ class ItemTooltipTest {
 
     @Test
     void slottedEffectLinesTagEachExplicitAsPrefixOrSuffix() throws Exception {
-        ItemFixtures.registerMilitary();
-        Item item = Item.withEffects("socketable_6", ItemFixtures.MILITARY, 1L,
+        HullItemRows.registerMilitary();
+        Item item = Item.withEffects("socketable_6", HullItemRows.MILITARY, 1L,
                 List.of(new RolledEffect("BEAM_WEAPON_DAMAGE_PERCENT", 12f), new RolledEffect("SHIELD_DAMAGE_TAKEN_MULT", -12f)));
 
         List<SlottedLine> lines = item.slottedEffectLines(true, null);
@@ -81,7 +81,7 @@ class ItemTooltipTest {
 
     @Test
     void anEffectNoLongerInItsPoolOrWithAFixedValueShowsNoRange() throws Exception {
-        ItemDefinitions.register(new org.json.JSONArray().put(ItemFixtures.row("fixed", "bridge", "HULL_MULT:5:5")));
+        ItemDefinitions.register(new org.json.JSONArray().put(HullItemRows.row("fixed", "bridge", "HULL_MULT:5:5")));
         Item item = Item.withEffects("socketable_5", "fixed", 1L,
                 List.of(new RolledEffect("HULL_MULT", 5f), new RolledEffect("ARMOR_PERCENT", 7f)));
 
@@ -91,7 +91,7 @@ class ItemTooltipTest {
 
     @Test
     void onAKnownHullSizeTheTooltipShowsOnlyThatSizesValue() throws Exception {
-        ItemDefinitions.register(new org.json.JSONArray().put(ItemFixtures.row("plating", "bridge", "ARMOR_FLAT:5/10/15/20")));
+        ItemDefinitions.register(new org.json.JSONArray().put(HullItemRows.row("plating", "bridge", "ARMOR_FLAT:5/10/15/20")));
         Item item = Item.withEffects("socketable_6", "plating", 1L, List.of(new RolledEffect("ARMOR_FLAT", 5f)));
 
         List<String> onCapital = writtenParagraphs(item, HullSize.CAPITAL_SHIP, List::of);
@@ -134,7 +134,7 @@ class ItemTooltipTest {
 
     @Test
     void theDescriptionIsTheOnlyLineAboveTheEffects() throws Exception {
-        ItemDefinitions.register(new org.json.JSONArray().put(ItemFixtures.row("described", "bridge", "HULL_MULT:4:6")
+        ItemDefinitions.register(new org.json.JSONArray().put(HullItemRows.row("described", "bridge", "HULL_MULT:4:6")
                 .put("description", "Pulled from a Domain-era warship.")));
         Item item = Item.withEffects("socketable_3", "described", 1L, List.of());
 

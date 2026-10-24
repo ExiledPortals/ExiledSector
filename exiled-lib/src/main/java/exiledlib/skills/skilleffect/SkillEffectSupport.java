@@ -23,6 +23,7 @@ public final class SkillEffectSupport {
     static final String LOGISTICS_COPY_PREFIX = "exiledSector_logisticsDModCopy_";
     private static final String COPY_SCALE_ID = "exiledSector_logisticsDModCopyScale";
     private static final float MIN_EFFECT_MULT = 0.0001f;
+    static final float MIN_INVERTED_MULT = 0.01f;
 
     private SkillEffectSupport() {
     }
@@ -37,6 +38,10 @@ public final class SkillEffectSupport {
 
     public static float multFrom(float magnitude) {
         return 1f + magnitude / 100f;
+    }
+
+    public static float inverseMultFrom(float magnitude) {
+        return 1f / Math.max(multFrom(magnitude), MIN_INVERTED_MULT);
     }
 
     public static <T> T ensureListener(ShipAPI ship, Class<T> listenerType, Function<ShipAPI, ? extends T> listenerFactory) {
@@ -104,17 +109,16 @@ public final class SkillEffectSupport {
         float logisticsMult = stats.getDynamic().getValue(LOGISTICS_DMOD_EFFECT_MULT);
         MutableStat sharedEffect = stats.getDynamic().getStat(Stats.DMOD_EFFECT_MULT);
         float sharedValue = sharedEffect.getModifiedValue();
-        if (nonLogisticsMult <= MIN_EFFECT_MULT || sharedValue <= MIN_EFFECT_MULT || Math.abs(logisticsMult - nonLogisticsMult) < MIN_EFFECT_MULT) {
-            return;
-        }
-        float copyEffect = sharedValue / nonLogisticsMult * (logisticsMult - nonLogisticsMult);
+        boolean copiesNeeded = nonLogisticsMult > MIN_EFFECT_MULT && sharedValue > MIN_EFFECT_MULT
+                && Math.abs(logisticsMult - nonLogisticsMult) >= MIN_EFFECT_MULT;
+        float copyScale = copiesNeeded ? (logisticsMult - nonLogisticsMult) / nonLogisticsMult : 0f;
         ShipVariantAPI variant = stats.getVariant();
         for (HullModSpecAPI spec : dModSpecs(variant)) {
             if (spec.getEffect() == null || !CsvIdList.LOGISTICS_DMODS.contains(spec.getId())) {
                 continue;
             }
             String copyId = LOGISTICS_COPY_PREFIX + spec.getId();
-            sharedEffect.modifyMult(COPY_SCALE_ID, copyEffect / sharedValue);
+            sharedEffect.modifyMult(COPY_SCALE_ID, copyScale);
             spec.getEffect().applyEffectsBeforeShipCreation(variant.getHullSize(), stats, copyId);
             sharedEffect.unmodifyMult(COPY_SCALE_ID);
             stats.getSuppliesToRecover().unmodifyMult(copyId);

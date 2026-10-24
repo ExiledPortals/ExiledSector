@@ -23,7 +23,7 @@ public enum UnlockConditionType {
     RAT_PLAYER_EXOSHIP(ModGate.of(RandomAssortmentCompat::isModEnabled, sector -> RandomAssortmentCompat.exoshipConfirmedRecovered())),
     RAT_SINGULARITY_DEFEATED(ModGate.of(RandomAssortmentCompat::isModEnabled, AbyssSingularity::isGateOpen)),
     ANCHOR_FOUND(new ModGate(AreaToggles::modInstalledFor, AnchorFinds::isFound), true),
-    NIGHTCROSS_LUNAR_FLEET_DEFEATED(ModGate.of(NightcrossCompat::isModEnabled, NightcrossUnlocks::isLunarFleetDefeated)),
+    NIGHTCROSS_EXISTENTIAL_THREAT_DEFEATED(ModGate.of(NightcrossCompat::isModEnabled, NightcrossUnlocks::isExistentialThreatDefeated)),
     NIGHTCROSS_ANCIENT_PROTOTYPE_FOUND(ModGate.of(NightcrossCompat::isModEnabled, NightcrossUnlocks::isAncientPrototypeFound)),
     LOST_SECTOR_FROZEN_HEART_VISITED(ModGate.of(LostSectorCompat::isModEnabled, LostSectorUnlocks::isFrozenHeartSystemVisited)),
     TANIA_BLOOD_TRAIL_DEFEATED(ModGate.of(TaniaCompat::isModEnabled, TaniaUnlocks::isBloodTrailDefeated)),

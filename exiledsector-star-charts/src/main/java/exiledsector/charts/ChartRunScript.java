@@ -19,8 +19,6 @@ public class ChartRunScript implements EveryFrameScript {
     private boolean closeArmed;
     private boolean failureReported;
     private float secondsSinceObjectiveCheck;
-    private String effectsRunId;
-    private ChartGenContext cachedContext = ChartGenContext.none();
     private boolean sensorRangeApplied;
     private String sensorSourceText;
 
@@ -143,7 +141,7 @@ public class ChartRunScript implements EveryFrameScript {
             }
             return;
         }
-        ChartGenContext context = contextFor(run);
+        ChartGenContext context = ChartRunEffects.contextOf(run);
         float sensorRangeMult = context.sensorRangeMult();
         if (sensorRangeMult != 1f) {
             ChartRunEffects.applySensorRange(playerFleet, sensorRangeMult, sensorSource());
@@ -161,14 +159,6 @@ public class ChartRunScript implements EveryFrameScript {
         ChartFleetConditions.clear(playerFleet);
     }
 
-    private ChartGenContext contextFor(ChartRun run) {
-        if (!run.runId().equals(effectsRunId)) {
-            effectsRunId = run.runId();
-            cachedContext = ChartRunEffects.contextOf(run);
-        }
-        return cachedContext;
-    }
-
     private String sensorSource() {
         if (sensorSourceText == null) {
             sensorSourceText = Translation.gameText("chart.effect.sensorSource");
@@ -180,8 +170,6 @@ public class ChartRunScript implements EveryFrameScript {
         cachedRunId = null;
         cachedSystem = null;
         closeArmed = false;
-        effectsRunId = null;
-        cachedContext = ChartGenContext.none();
     }
 
     static void blockEscapeAbilities(CampaignFleetAPI playerFleet) {

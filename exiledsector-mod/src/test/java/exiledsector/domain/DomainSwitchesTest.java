@@ -1,5 +1,7 @@
 package exiledsector.domain;
 
+import exiledsector.ExiledSector;
+import exiledsector.items.HullUpgradesDomain;
 import exiledsector.items.ItemDefinition;
 import exiledsector.effects.ShipEffectSources;
 import exiledsector.effects.SkillTreeEffectSource;
@@ -44,6 +46,18 @@ class DomainSwitchesTest {
         assertTrue(ShipEffectSources.all().contains(HullUpgradeEffectSource.INSTANCE));
         assertTrue(LootSources.all().contains(HullUpgradeLootSource.INSTANCE));
         assertTrue(ShipSummaryParts.all().contains(SectionShipSummary.INSTANCE));
+    }
+
+    @Test
+    void aSwitchedOffDomainLeavesTheEnabledDomainsButStaysInstalledForItsStateHooks() {
+        HullUpgradesSetting.setEnabledForTests(false);
+
+        assertFalse(ExiledSector.enabledDomains().stream().anyMatch(HullUpgradesDomain.class::isInstance));
+        assertTrue(ExiledSector.domains().stream().anyMatch(HullUpgradesDomain.class::isInstance));
+
+        HullUpgradesSetting.setEnabledForTests(true);
+
+        assertTrue(ExiledSector.enabledDomains().stream().anyMatch(HullUpgradesDomain.class::isInstance));
     }
 
     @Test

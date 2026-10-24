@@ -2,10 +2,7 @@ package exiledsector.console;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledlib.PlayerFleet;
-import exiledlib.skills.skilleffect.logistics.FleetWideEffects;
-import exiledsector.ExiledSector;
-import exiledsector.effects.FighterBayOverflow;
-import exiledsector.effects.UnfitWeapons;
+import exiledsector.ui.refit.ShipEditSession;
 import org.lazywizard.console.Console;
 
 import java.util.ArrayList;
@@ -53,13 +50,7 @@ final class ConsoleShips {
     }
 
     static void treeChanged(FleetMemberAPI member) {
-        ExiledSector.domains().forEach(domain -> domain.memberChanged(member, null));
-        FleetWideEffects.markPhaseFieldStale();
-        member.setStatUpdateNeeded(true);
-        member.updateStats();
-        if (member.getFleetData() != null && member.getFleetData().getFleet() == PlayerFleet.orNull()) {
-            FighterBayOverflow.returnUnhousedWingsAndAnnounce(member, member.getVariant(), PlayerFleet.cargoOrNull());
-            UnfitWeapons.returnUnfitWeaponsAndAnnounce(member, member.getVariant(), PlayerFleet.cargoOrNull());
-        }
+        boolean inPlayerFleet = member.getFleetData() != null && member.getFleetData().getFleet() == PlayerFleet.orNull();
+        ShipEditSession.applyChange(member, null, inPlayerFleet ? PlayerFleet.cargoOrNull() : null);
     }
 }

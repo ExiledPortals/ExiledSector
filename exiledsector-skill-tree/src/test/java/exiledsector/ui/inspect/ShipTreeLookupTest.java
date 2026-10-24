@@ -1,11 +1,10 @@
 package exiledsector.ui.inspect;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledlib.MockSector;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillNode;
@@ -15,10 +14,7 @@ import exiledsector.skills.SkillType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +30,7 @@ class ShipTreeLookupTest {
 
     private static final String NPC_TAG = "exiledSector_npcTree|bulwark|2|root_1,a_1";
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private Map<String, Object> persistentData;
 
     @BeforeEach
@@ -44,16 +40,13 @@ class ShipTreeLookupTest {
         SkillTree.clearTypes();
         SkillTree.register(new SkillNode("root_1", new SkillType.Builder("root", "Root", "a.png", SkillTier.ROOT).build(), List.of(), 0f, 0f));
         SkillTree.register(new SkillNode("a_1", new SkillType.Builder("a", "A", "a.png", SkillTier.SMALL).tags(List.of("ballistic")).build(), List.of("root_1"), 0f, 0f));
-        persistentData = new HashMap<>();
-        SectorAPI sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(persistentData);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
+        mockSector = new MockSector();
+        persistentData = mockSector.persistentData;
     }
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
         SkillDataResolver.clearCache();
         SkillTree.clearNodes();
         SkillTree.clearTypes();

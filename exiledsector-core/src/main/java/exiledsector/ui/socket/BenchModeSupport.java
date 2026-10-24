@@ -9,6 +9,7 @@ import exiledsector.items.Item;
 import exiledsector.items.ItemCurrency;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemStore;
+import exiledsector.items.ItemType;
 
 import java.util.List;
 import java.util.Random;
@@ -27,6 +28,10 @@ public interface BenchModeSupport {
     }
 
     record OpenOutcome(boolean opened, String messageKey) {
+    }
+
+    record OpenTexts(String buttonKey, String tooltipKey, String confirmTitleKey, String confirmBodyKey, String confirmEntriesKey,
+                     String confirmYesKey, String confirmNoKey) {
     }
 
     interface PickerListener {
@@ -50,8 +55,6 @@ public interface BenchModeSupport {
 
         void refresh();
 
-        void swapOut();
-
         void close();
 
         boolean contains(float x, float y);
@@ -59,7 +62,17 @@ public interface BenchModeSupport {
 
     BenchMode mode();
 
+    ItemType itemType();
+
     boolean enabled();
+
+    ItemStore store();
+
+    String titleKey();
+
+    String emptyKey();
+
+    String useHintKey();
 
     PickerSession pickerSession();
 
@@ -76,6 +89,8 @@ public interface BenchModeSupport {
     String cannotUseNoticeKey();
 
     List<StyledText> detailLines(Item item);
+
+    OpenTexts openTexts();
 
     OpenCheck openCheck(SectorAPI sector, ItemStore store, Item loaded);
 

@@ -5,12 +5,10 @@ import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.CoreUITabId;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
-import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledlib.MockSector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
 import java.awt.Color;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -32,26 +30,24 @@ class RefitScreenExitTest {
 
     private static final String MESSAGE = "Wormhole opened.";
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private CampaignUIAPI campaignUi;
     private final AtomicBoolean panelGone = new AtomicBoolean();
     private final AtomicInteger coreDismissals = new AtomicInteger();
 
     @BeforeEach
     void setUp() {
-        SectorAPI sector = mock(SectorAPI.class);
+        mockSector = new MockSector();
         campaignUi = mock(CampaignUIAPI.class);
-        when(sector.getCampaignUI()).thenReturn(campaignUi);
+        when(mockSector.sector.getCampaignUI()).thenReturn(campaignUi);
         SettingsAPI settings = mock(SettingsAPI.class);
         when(settings.getColor(anyString())).thenReturn(Color.GREEN);
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
-        globalMock.when(Global::getSettings).thenReturn(settings);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
     }
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
     }
 
     private RefitScreenExit exit(InteractionDialogAPI hostDialog, boolean dismissWorks) {
@@ -171,7 +167,7 @@ class RefitScreenExitTest {
 
     @Test
     void leavingOutsideTheCampaignDoesNothing() {
-        globalMock.when(Global::getSector).thenReturn(null);
+        mockSector.global.when(Global::getSector).thenReturn(null);
 
         RefitScreenExit.leave(null, MESSAGE);
 

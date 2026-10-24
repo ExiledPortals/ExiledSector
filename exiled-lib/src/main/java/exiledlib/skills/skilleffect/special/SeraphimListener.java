@@ -8,11 +8,16 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
 import exiledlib.skills.skilleffect.CombatQueries;
+import exiledlib.skills.skilleffect.ScaledBonus;
 import exiledlib.skills.skilleffect.ShipCombatListener;
 import exiledlib.skills.skilleffect.SkillEffectSupport;
 
 import java.util.IdentityHashMap;
 import java.util.Map;
+
+import static exiledlib.skills.skilleffect.ScaledBonus.percent;
+import static exiledlib.skills.skilleffect.StatTarget.all;
+import static exiledlib.skills.skilleffect.StatTarget.stat;
 
 public final class SeraphimListener extends ShipCombatListener {
 
@@ -22,10 +27,12 @@ public final class SeraphimListener extends ShipCombatListener {
     static final String FULL_BONUS_DAMAGE_KEY = "exiledSector_seraphimFullBonusDamage";
     private static final String MOD_ID_PREFIX = "exiledSector_seraphim_";
     private static final float ZERO_FLUX_ALWAYS_ON_LEVEL = 2f;
+    private static final ScaledBonus DAMAGE_BONUS = new ScaledBonus(percent(all(stat(MutableShipStatsAPI::getBallisticWeaponDamageMult),
+            stat(MutableShipStatsAPI::getEnergyWeaponDamageMult))));
 
+    private final ScaledBonus.Tracker damageBonus = DAMAGE_BONUS.tracker();
     private float damageDealt;
     private float hullRepaired;
-    private int appliedDamagePercent;
     private boolean zeroFluxUnlocked;
 
     SeraphimListener(ShipAPI ownerShip) {
@@ -68,13 +75,8 @@ public final class SeraphimListener extends ShipCombatListener {
     private void updateDamageBonus() {
         float fullBonusDamage = magnitude(FULL_BONUS_DAMAGE_KEY);
         float progress = fullBonusDamage <= 0f ? 1f : Math.min(1f, damageDealt / fullBonusDamage);
-        int damagePercent = Math.round(magnitude(DAMAGE_BONUS_PERCENT_KEY) * progress);
         MutableShipStatsAPI stats = ownerShip.getMutableStats();
-        if (damagePercent != appliedDamagePercent) {
-            appliedDamagePercent = damagePercent;
-            stats.getBallisticWeaponDamageMult().modifyPercent(modId, damagePercent);
-            stats.getEnergyWeaponDamageMult().modifyPercent(modId, damagePercent);
-        }
+        damageBonus.apply(stats, modId, Math.round(magnitude(DAMAGE_BONUS_PERCENT_KEY) * progress));
         if (progress >= 1f && !zeroFluxUnlocked) {
             zeroFluxUnlocked = true;
             stats.getZeroFluxMinimumFluxLevel().modifyFlat(modId, ZERO_FLUX_ALWAYS_ON_LEVEL);

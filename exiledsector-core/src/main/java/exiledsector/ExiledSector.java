@@ -1,14 +1,11 @@
 package exiledsector;
 
 import exiledlib.HostMod;
+import exiledsector.domain.DomainContributions;
 import exiledsector.domain.ExiledSectorDomain;
-import exiledsector.items.ItemDataIntegrity;
 import exiledsector.items.ItemStore;
 import exiledsector.items.ItemTypes;
 import exiledsector.items.RefitSchematic;
-import exiledsector.ui.cargo.CargoIconLooks;
-import exiledsector.ui.refit.RefitButtonColumn;
-import exiledsector.ui.socket.BenchModes;
 
 import java.util.List;
 
@@ -20,6 +17,7 @@ public final class ExiledSector {
             "data/strings/exiledSector/skillTree/", "data/strings/exiledSector/hullUpgrades/", "data/strings/exiledSector/starCharts/"),
             "exiledSector_");
 
+    private static final DomainContributions<ExiledSectorDomain> ENABLED_DOMAINS = new DomainContributions<>(List::of);
     private static volatile List<ExiledSectorDomain> installedDomains;
 
     private ExiledSector() {
@@ -35,10 +33,6 @@ public final class ExiledSector {
         HostMod.register(HOST);
         List<ExiledSectorDomain> installing = List.copyOf(domains);
         installing.forEach(domain -> domain.itemTypes().forEach(ItemTypes::register));
-        installing.forEach(domain -> domain.itemDataRules().forEach(ItemDataIntegrity::registerRules));
-        installing.forEach(domain -> domain.itemIconLooks().forEach(CargoIconLooks::register));
-        installing.forEach(domain -> domain.benchModes().forEach(mode -> BenchModes.register(mode, domain::enabled)));
-        installing.forEach(domain -> domain.refitButtons().forEach(button -> RefitButtonColumn.register(button, domain::enabled)));
         ItemStore.absorbStacksWith(RefitSchematic::absorbInto);
         installedDomains = installing;
     }
@@ -46,6 +40,10 @@ public final class ExiledSector {
     public static List<ExiledSectorDomain> domains() {
         List<ExiledSectorDomain> domains = installedDomains;
         return domains == null ? List.of() : domains;
+    }
+
+    public static List<ExiledSectorDomain> enabledDomains() {
+        return ENABLED_DOMAINS.all();
     }
 
     private static List<Class<?>> domainClasses(List<ExiledSectorDomain> domains) {

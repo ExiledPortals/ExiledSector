@@ -1,18 +1,14 @@
 package exiledsector.charts;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
+import exiledlib.MockSector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-import org.mockito.Mockito;
-
-import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -25,24 +21,22 @@ class ChartWormholeVisualTest {
     private static final String RUN_ID = "abc";
     private static final String ORIGIN_SYSTEM_ID = "corvus";
 
-    private MockedStatic<Global> globalMock;
+    private MockSector mockSector;
     private SectorAPI sector;
 
     @BeforeEach
     void setUp() {
-        sector = mock(SectorAPI.class);
-        when(sector.getPersistentData()).thenReturn(new HashMap<>());
+        mockSector = new MockSector();
+        sector = mockSector.sector;
         LocationAPI hyperspace = mock(LocationAPI.class);
         when(hyperspace.isHyperspace()).thenReturn(true);
         when(sector.getHyperspace()).thenReturn(hyperspace);
         when(sector.getStarSystem(ORIGIN_SYSTEM_ID)).thenReturn(mock(StarSystemAPI.class));
-        globalMock = Mockito.mockStatic(Global.class);
-        globalMock.when(Global::getSector).thenReturn(sector);
     }
 
     @AfterEach
     void tearDown() {
-        globalMock.close();
+        mockSector.close();
     }
 
     private static SectorEntityToken wormhole(String roleTag) {

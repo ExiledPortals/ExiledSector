@@ -1,7 +1,6 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
@@ -9,7 +8,11 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.compat.NightcrossCompat;
+import exiledsector.compat.NightcrossUnlocks;
+import exiledsector.compat.RandomAssortmentCompat;
 import exiledsector.items.AnchorJanusGate;
 import exiledsector.items.DoctrineArchives;
 import exiledsector.items.FactionFleetDrops;
@@ -36,12 +39,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.Predicate;
 
 public final class SkillTreeLootSource implements LootSource, FleetDifficulty {
 
     public static final SkillTreeLootSource INSTANCE = new SkillTreeLootSource();
     static final int SHOWCASE_PICKS = 3;
+    static final Set<String> ANCHOR_SUBMARKETS = Set.of(Submarkets.SUBMARKET_OPEN, Submarkets.GENERIC_MILITARY,
+            RandomAssortmentCompat.EXOSHIP_SUBMARKET);
     private static final long ANCHOR_SALVAGE_SEED_SALT = 0x616E63686F7273L;
     private static final String BATTLE_FIND = "battle loot";
     private static final Logger LOG = Logger.getLogger(SkillTreeLootSource.class);
@@ -55,17 +61,12 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty {
 
     @Override
     public void recordEngagement(BattleLoot battle, BattleEngagement engagement) {
-        holdFactionLosses(defeatedDeploymentPointsByFaction(battle), engagement);
+        Map<String, Float> defeatedDeploymentPointsByFaction = defeatedDeploymentPointsByFaction(battle);
+        engagement.deploymentPointsLostByFaction().forEach((factionId, deploymentPoints) ->
+                defeatedDeploymentPointsByFaction.merge(factionId, deploymentPoints, Float::sum));
         GateRewardAnchors.recordEngagement(battle, engagement);
-    }
-
-    static void holdFactionLosses(Map<String, Float> defeatedDeploymentPointsByFaction, BattleEngagement engagement) {
-        for (FleetMemberAPI member : engagement.lostEnemies()) {
-            CampaignFleetAPI sourceFleet = member == null ? null : engagement.battle().getSourceFleet(member);
-            String factionId = sourceFleet == null || sourceFleet.getFaction() == null ? null : sourceFleet.getFaction().getId();
-            if (factionId != null) {
-                defeatedDeploymentPointsByFaction.merge(factionId, member.getDeploymentPointsCost(), Float::sum);
-            }
+        if (NightcrossCompat.isModEnabled()) {
+            NightcrossUnlocks.recordEngagement(Global.getSector(), engagement);
         }
     }
 
@@ -165,7 +166,7 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty {
 
     @Override
     public void stockSubmarket(SubmarketAPI submarket, CargoAPI cargo, Random random) {
-        if (MarketItemStock.ANCHOR_SUBMARKETS.contains(submarket.getSpecId())) {
+        if (ANCHOR_SUBMARKETS.contains(submarket.getSpecId())) {
             stockAnchors(submarket.getMarket(), cargo, random);
         }
     }

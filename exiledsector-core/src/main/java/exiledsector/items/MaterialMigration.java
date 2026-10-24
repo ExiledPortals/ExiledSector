@@ -32,7 +32,7 @@ public final class MaterialMigration {
         }
     }
 
-    static int convert(CargoAPI cargo) {
+    public static int convert(CargoAPI cargo) {
         if (cargo == null) {
             return 0;
         }
