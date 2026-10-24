@@ -126,6 +126,15 @@ class SkillDataResolverTest {
     }
 
     @Test
+    void aShipWithNoSavedTreeKeepsOneBlankRecordSoItsResolvedTreeStaysCached() {
+        FleetMemberAPI unsaved = member("unsaved");
+        ShipSkillData first = SkillDataResolver.resolve(unsaved, variantWithTags());
+
+        assertSame(first, SkillDataResolver.resolve(unsaved, variantWithTags()));
+        assertNotSame(first, SkillDataResolver.resolve(member("other"), variantWithTags()));
+    }
+
+    @Test
     void anUntaggedShipWithoutAFleetMemberHasNoTree() {
         assertNull(SkillDataResolver.resolve(null, variantWithTags()));
         assertNull(SkillDataResolver.resolve(null, null));

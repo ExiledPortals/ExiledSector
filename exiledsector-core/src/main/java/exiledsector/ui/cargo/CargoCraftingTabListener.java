@@ -12,7 +12,7 @@ public final class CargoCraftingTabListener implements CoreUITabListener {
 
     static final int MAX_WAIT_FRAMES = 60;
 
-    private static Watcher activeWatcher;
+    private Watcher activeWatcher;
 
     @Override
     public void reportAboutToOpenCoreTab(CoreUITabId tab, Object param) {
@@ -24,10 +24,6 @@ public final class CargoCraftingTabListener implements CoreUITabListener {
         }
         activeWatcher = new Watcher();
         sector.addTransientScript(activeWatcher);
-    }
-
-    static void resetForTests() {
-        activeWatcher = null;
     }
 
     static final class Watcher implements EveryFrameScript {

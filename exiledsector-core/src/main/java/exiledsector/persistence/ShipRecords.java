@@ -6,9 +6,13 @@ import exiledsector.ExiledSector;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.skills.ShipSkillData;
 
+import java.util.Map;
+import java.util.WeakHashMap;
+
 public final class ShipRecords {
 
     public static final String SHIP_TAG_PREFIX = "exiledSector_ship_";
+    private static final Map<FleetMemberAPI, ShipSkillData> EMPTY_RECORDS = new WeakHashMap<>();
 
     private ShipRecords() {
     }
@@ -28,7 +32,7 @@ public final class ShipRecords {
             return saved;
         }
         ShipSkillData borrowed = member.getFleetData() == null ? taggedTree(variant) : null;
-        return borrowed != null ? borrowed : new ShipSkillData();
+        return borrowed != null ? borrowed : EMPTY_RECORDS.computeIfAbsent(member, ignored -> new ShipSkillData());
     }
 
     public static ShipSkillData taggedTree(ShipVariantAPI variant) {
