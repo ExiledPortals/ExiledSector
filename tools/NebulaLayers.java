@@ -11,9 +11,11 @@ public final class NebulaLayers {
     private static final float BLACK_FLOOR = 12f;
     private static final float FADE_START = 0.42f;
     private static final float FADE_END = 0.88f;
-    private static final int HAZE_BLUR_RADIUS = 7;
-    private static final float HAZE_GAIN = 1.05f;
-    private static final float DETAIL_GAIN = 1.2f;
+    private static final int GLOW_BLUR_RADIUS = 22;
+    private static final int CLOUD_BLUR_RADIUS = 7;
+    private static final float GLOW_GAIN = 1.0f;
+    private static final float CLOUD_GAIN = 1.1f;
+    private static final float FILAMENT_GAIN = 1.2f;
 
     private final int imageWidth;
     private final int imageHeight;
@@ -24,24 +26,29 @@ public final class NebulaLayers {
     }
 
     public static void main(String[] args) throws IOException {
-        if (args.length != 3) {
-            System.err.println("usage: java tools/NebulaLayers.java <source.png> <haze.png> <detail.png>");
+        if (args.length != 4) {
+            System.err.println("usage: java tools/NebulaLayers.java <source.png> <glow.png> <clouds.png> <filaments.png>");
             System.exit(1);
         }
         BufferedImage source = ImageIO.read(new File(args[0]));
         NebulaLayers layers = new NebulaLayers(source.getWidth(), source.getHeight());
         float[][] nebula = layers.feathered(layers.withoutStars(channels(source)), alphas(source));
-        float[][] haze = new float[3][];
-        float[][] detail = new float[3][nebula[0].length];
+        int pixels = nebula[0].length;
+        float[][] glow = new float[3][];
+        float[][] clouds = new float[3][pixels];
+        float[][] filaments = new float[3][pixels];
         for (int channel = 0; channel < 3; channel++) {
-            haze[channel] = layers.blur(nebula[channel], HAZE_BLUR_RADIUS);
-            for (int i = 0; i < detail[channel].length; i++) {
-                detail[channel][i] = Math.max(0f, nebula[channel][i] - haze[channel][i]) * DETAIL_GAIN;
-                haze[channel][i] *= HAZE_GAIN;
+            glow[channel] = layers.blur(nebula[channel], GLOW_BLUR_RADIUS);
+            float[] cloudBlur = layers.blur(nebula[channel], CLOUD_BLUR_RADIUS);
+            for (int i = 0; i < pixels; i++) {
+                clouds[channel][i] = Math.max(0f, cloudBlur[i] - glow[channel][i]) * CLOUD_GAIN;
+                filaments[channel][i] = Math.max(0f, nebula[channel][i] - cloudBlur[i]) * FILAMENT_GAIN;
+                glow[channel][i] *= GLOW_GAIN;
             }
         }
-        ImageIO.write(layers.brightnessAsAlpha(haze), "png", new File(args[1]));
-        ImageIO.write(layers.brightnessAsAlpha(detail), "png", new File(args[2]));
+        ImageIO.write(layers.brightnessAsAlpha(glow), "png", new File(args[1]));
+        ImageIO.write(layers.brightnessAsAlpha(clouds), "png", new File(args[2]));
+        ImageIO.write(layers.brightnessAsAlpha(filaments), "png", new File(args[3]));
     }
 
     private static float[][] channels(BufferedImage image) {

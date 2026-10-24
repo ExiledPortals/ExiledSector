@@ -10820,27 +10820,40 @@
 			]
 		},
 		{
-			"id": "tania_nebula_haze",
+			"id": "tania_nebula_glow",
 			"x": 0,
 			"y": 18750,
 			"width": 6400,
 			"height": 6400,
-			"imagePath": "graphics/backgrounds/static_images/tania_nebula_haze.png",
+			"imagePath": "graphics/backgrounds/static_images/tania_nebula_glow.png",
 			"behindStars": true,
-			"parallax": 0.8,
+			"parallax": 0.12,
 			"tags": [
 				"tania"
 			]
 		},
 		{
-			"id": "tania_nebula_detail",
+			"id": "tania_nebula_clouds",
 			"x": 0,
 			"y": 18750,
 			"width": 6400,
 			"height": 6400,
-			"imagePath": "graphics/backgrounds/static_images/tania_nebula_detail.png",
+			"imagePath": "graphics/backgrounds/static_images/tania_nebula_clouds.png",
 			"behindStars": true,
-			"parallax": 0.9,
+			"parallax": 0.4,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"id": "tania_nebula_filaments",
+			"x": 0,
+			"y": 18750,
+			"width": 6400,
+			"height": 6400,
+			"imagePath": "graphics/backgrounds/static_images/tania_nebula_filaments.png",
+			"behindStars": true,
+			"parallax": 0.6,
 			"tags": [
 				"tania"
 			]
