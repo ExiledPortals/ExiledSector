@@ -344,18 +344,23 @@ final class NodeAllocator {
         }
         Set<String> grantedNodeIds = new LinkedHashSet<>();
         grantedNodesBySocket.values().forEach(grantedNodeIds::addAll);
+        Snapshot current = null;
         for (String grantedNodeId : grantedNodeIds) {
             SkillNode grantedNode = SkillTree.get(grantedNodeId);
             if (grantedNode == null || skillData.isAllocated(grantedNodeId)) {
                 continue;
             }
-            if (snapshot().gate().grant(grantedNode).allowed()) {
+            if (current == null) {
+                current = snapshot();
+            }
+            if (current.gate().grant(grantedNode).allowed()) {
                 ShipTrees.allocateGranted(skillData, grantedNode);
                 changedAny = true;
+                current = null;
             }
         }
         boolean changed = changed(changedAny);
-        rememberGrantStatuses(skillData, snapshot());
+        rememberGrantStatuses(skillData, changedAny || current == null ? snapshot() : current);
         return changed;
     }
 

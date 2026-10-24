@@ -27,6 +27,10 @@ final class SkillTreeWormholeGhostFlights {
     private final Random random;
     private final Map<String, float[]> secondsUntilNextFlight = new HashMap<>();
     private final List<GhostFlight> flights = new ArrayList<>();
+    private List<SkillTreeTopology.WormholePair> pairs = List.of();
+    private ShipSkillData pairsShip;
+    private SkillTreeTopology pairsTopology;
+    private int pairsRevision = -1;
 
     SkillTreeWormholeGhostFlights(Random random) {
         this.random = random;
@@ -34,12 +38,23 @@ final class SkillTreeWormholeGhostFlights {
 
     void advance(float amount, ShipSkillData skillData) {
         flights.removeIf(flight -> flight.advance(amount));
-        for (SkillTreeTopology.WormholePair pair : ShipTrees.wormholePairs(skillData, SkillTree.topology())) {
+        for (SkillTreeTopology.WormholePair pair : pairsFor(skillData)) {
             if (skillData.isAllocated(pair.first().getId()) && skillData.isAllocated(pair.second().getId())
                     && !ExoshipNodes.isCarried(pair.first()) && !ExoshipNodes.isCarried(pair.second())) {
                 scheduleFlights(pair, amount);
             }
         }
+    }
+
+    private List<SkillTreeTopology.WormholePair> pairsFor(ShipSkillData skillData) {
+        SkillTreeTopology topology = SkillTree.topology();
+        if (skillData != pairsShip || skillData.revision() != pairsRevision || topology != pairsTopology) {
+            pairs = ShipTrees.wormholePairs(skillData, topology);
+            pairsShip = skillData;
+            pairsRevision = skillData.revision();
+            pairsTopology = topology;
+        }
+        return pairs;
     }
 
     int activeFlightCount() {

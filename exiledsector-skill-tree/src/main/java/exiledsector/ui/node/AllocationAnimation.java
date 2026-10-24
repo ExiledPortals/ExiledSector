@@ -1,7 +1,5 @@
 package exiledsector.ui.node;
 
-import exiledsector.skills.SkillTree;
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,6 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 final class AllocationAnimation {
 
@@ -34,7 +33,7 @@ final class AllocationAnimation {
     private final Tree tree;
     private final Listener listener;
     private final Map<String, NodeTimer> timersByNodeId = new HashMap<>();
-    private final Map<String, Edge> edgesByKey = new HashMap<>();
+    private final Map<String, Map<String, Edge>> edgesByFirstId = new HashMap<>();
 
     AllocationAnimation(Tree tree, Listener listener) {
         this.tree = tree;
@@ -127,7 +126,7 @@ final class AllocationAnimation {
     }
 
     boolean isEmpty() {
-        return timersByNodeId.isEmpty() && edgesByKey.isEmpty();
+        return timersByNodeId.isEmpty() && edgesByFirstId.isEmpty();
     }
 
     boolean shown(String nodeId, boolean live) {
@@ -142,14 +141,10 @@ final class AllocationAnimation {
         if (isEmpty()) {
             return;
         }
-        Iterator<Edge> edges = edgesByKey.values().iterator();
-        while (edges.hasNext()) {
-            Edge edge = edges.next();
+        removeEdgesIf(edge -> {
             edge.elapsed += amount;
-            if (edge.elapsed >= FILL_SECONDS) {
-                edges.remove();
-            }
-        }
+            return edge.elapsed >= FILL_SECONDS;
+        });
         List<String> starting = new ArrayList<>();
         List<String> lit = new ArrayList<>();
         for (Map.Entry<String, NodeTimer> entry : timersByNodeId.entrySet()) {
@@ -177,7 +172,7 @@ final class AllocationAnimation {
         if (timer.allocating) {
             cancelEdges(nodeId);
         } else {
-            edgesByKey.values().removeIf(edge -> !edge.draining && (edge.litId.equals(nodeId) || edge.otherId.equals(nodeId)));
+            removeEdgesIf(edge -> !edge.draining && edge.touches(nodeId));
         }
         listener.started(nodeId, timer.allocating);
         if (timer.allocating) {
@@ -186,7 +181,7 @@ final class AllocationAnimation {
             boolean filling = false;
             for (String sourceId : timer.sources) {
                 if (tree.isSatisfied(sourceId)) {
-                    edgesByKey.put(SkillTree.curveKey(sourceId, nodeId), new Edge(sourceId, nodeId, false, lateSeconds));
+                    putEdge(new Edge(sourceId, nodeId, false, lateSeconds));
                     filling = true;
                 }
             }
@@ -199,20 +194,39 @@ final class AllocationAnimation {
         timersByNodeId.remove(nodeId);
         for (String neighbourId : tree.neighbours(nodeId)) {
             if (shown(neighbourId, tree.isSatisfied(neighbourId))) {
-                edgesByKey.put(SkillTree.curveKey(neighbourId, nodeId), new Edge(neighbourId, nodeId, true, lateSeconds));
+                putEdge(new Edge(neighbourId, nodeId, true, lateSeconds));
             }
         }
     }
 
     private void cancelEdges(String nodeId) {
-        edgesByKey.values().removeIf(edge -> edge.litId.equals(nodeId) || edge.otherId.equals(nodeId));
+        removeEdgesIf(edge -> edge.touches(nodeId));
+    }
+
+    private void putEdge(Edge edge) {
+        boolean ordered = edge.litId.compareTo(edge.otherId) <= 0;
+        edgesByFirstId.computeIfAbsent(ordered ? edge.litId : edge.otherId, ignored -> new HashMap<>())
+                .put(ordered ? edge.otherId : edge.litId, edge);
+    }
+
+    private void removeEdgesIf(Predicate<Edge> removed) {
+        Iterator<Map<String, Edge>> groups = edgesByFirstId.values().iterator();
+        while (groups.hasNext()) {
+            Map<String, Edge> group = groups.next();
+            group.values().removeIf(removed);
+            if (group.isEmpty()) {
+                groups.remove();
+            }
+        }
     }
 
     FillRange animatedRange(String startId, String endId) {
-        if (edgesByKey.isEmpty()) {
+        if (edgesByFirstId.isEmpty()) {
             return null;
         }
-        Edge edge = edgesByKey.get(SkillTree.curveKey(startId, endId));
+        boolean ordered = startId.compareTo(endId) <= 0;
+        Map<String, Edge> group = edgesByFirstId.get(ordered ? startId : endId);
+        Edge edge = group == null ? null : group.get(ordered ? endId : startId);
         if (edge == null) {
             return null;
         }
@@ -265,6 +279,10 @@ final class AllocationAnimation {
             this.otherId = otherId;
             this.draining = draining;
             this.elapsed = elapsed;
+        }
+
+        boolean touches(String nodeId) {
+            return litId.equals(nodeId) || otherId.equals(nodeId);
         }
     }
 }

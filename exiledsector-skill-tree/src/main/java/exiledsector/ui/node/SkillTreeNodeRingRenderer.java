@@ -13,6 +13,7 @@ import exiledsector.ui.belt.RingBeltRenderer;
 import exiledsector.ui.belt.WormholeBandRenderer;
 import exiledsector.ui.util.ColorUtil;
 import exiledsector.ui.util.SpriteDraw;
+import exiledsector.ui.util.TexturedQuadBatch;
 import exiledsector.ui.util.UnitCircle;
 import org.apache.log4j.Logger;
 import org.lwjgl.opengl.GL11;
@@ -124,6 +125,7 @@ final class SkillTreeNodeRingRenderer {
 
     private final SkillTreePanelStyle panelStyle;
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeNodeRingRenderer.class);
+    private final TexturedQuadBatch quads = new TexturedQuadBatch();
     private final Map<String, Float> pulseElapsed = new HashMap<>();
     private final Map<String, List<RingInstance>> ringStacks = new HashMap<>();
     private final Map<String, List<RingInstance>> pinkRingStacks = new HashMap<>();
@@ -280,17 +282,34 @@ final class SkillTreeNodeRingRenderer {
     }
 
     private void drawNotableRingStack(float cx, float cy, float outerRadius, String nodeId, float alpha, Color accentColor) {
-        drawRingStackPass(cx, cy, outerRadius, ringStacks.computeIfAbsent(nodeId, NOTABLE_RINGS), Color.WHITE, 1f, alpha);
-        drawRingStackPass(cx, cy, outerRadius, pinkRingStacks.computeIfAbsent(nodeId, NOTABLE_PINK_RINGS),
-                accentColor, RING_PINK_SCALE_RATIO, alpha);
+        List<RingInstance> whiteRings = ringStacks.computeIfAbsent(nodeId, NOTABLE_RINGS);
+        List<RingInstance> pinkRings = pinkRingStacks.computeIfAbsent(nodeId, NOTABLE_PINK_RINGS);
+        for (int textureIndex = 0; textureIndex < RING_STACK_TEXTURES.length; textureIndex++) {
+            SpriteAPI texture = spriteCache.texture(RING_STACK_TEXTURES[textureIndex]);
+            if (texture == null) continue;
+            try (TexturedQuadBatch batch = quads.beginAdditive(texture)) {
+                addRingQuads(batch, textureIndex, cx, cy, outerRadius, whiteRings, Color.WHITE, 1f, alpha);
+                addRingQuads(batch, textureIndex, cx, cy, outerRadius, pinkRings, accentColor, RING_PINK_SCALE_RATIO, alpha);
+            }
+        }
     }
 
-    private void drawRingStackPass(float cx, float cy, float outerRadius, List<RingInstance> instances,
-                                    Color ringColor, float scaleRatio, float stackAlpha) {
+    private void drawRingStack(float cx, float cy, float outerRadius, List<RingInstance> instances, Color ringColor, float stackAlpha) {
+        for (int textureIndex = 0; textureIndex < RING_STACK_TEXTURES.length; textureIndex++) {
+            SpriteAPI texture = spriteCache.texture(RING_STACK_TEXTURES[textureIndex]);
+            if (texture == null) continue;
+            try (TexturedQuadBatch batch = quads.beginAdditive(texture)) {
+                addRingQuads(batch, textureIndex, cx, cy, outerRadius, instances, ringColor, 1f, stackAlpha);
+            }
+        }
+    }
+
+    private void addRingQuads(TexturedQuadBatch batch, int textureIndex, float cx, float cy, float outerRadius, List<RingInstance> instances,
+                              Color ringColor, float scaleRatio, float stackAlpha) {
         float instanceAlpha = RING_INSTANCE_BASE_ALPHA * stackAlpha;
 
         for (RingInstance instance : instances) {
-            String texturePath = RING_STACK_TEXTURES[instance.textureIndex];
+            if (instance.textureIndex != textureIndex) continue;
 
             float instanceRadius = outerRadius * scaleRatio * instance.radiusFraction;
             float jitterMag = instanceRadius * RING_INSTANCE_JITTER_RATIO;
@@ -301,7 +320,7 @@ final class SkillTreeNodeRingRenderer {
             float jy = (float) Math.sin(wanderRad) * jitterMag;
             float spriteSize = instanceRadius * 2f * instance.sizeJitter;
 
-            SpriteDraw.drawAdditiveAtCenter(spriteCache, texturePath, cx + jx, cy + jy, spriteSize, spriteSize, ringColor, instanceAlpha, angle);
+            batch.quadAtCenter(cx + jx, cy + jy, spriteSize, spriteSize, angle, ringColor, instanceAlpha);
         }
     }
 
@@ -359,9 +378,8 @@ final class SkillTreeNodeRingRenderer {
         }
 
         if (openness > 0f) {
-            drawRingStackPass(cx, cy, baseRadius * 2f * WORMHOLE_RING_OUTER_RADIUS_RATIO,
-                    ringStacks.computeIfAbsent(nodeId, WORMHOLE_RINGS),
-                    wormholeColor, 1f, openness * alphaMult);
+            drawRingStack(cx, cy, baseRadius * 2f * WORMHOLE_RING_OUTER_RADIUS_RATIO, ringStacks.computeIfAbsent(nodeId, WORMHOLE_RINGS),
+                    wormholeColor, openness * alphaMult);
         }
 
         if (openness < 1f) {
@@ -370,18 +388,21 @@ final class SkillTreeNodeRingRenderer {
     }
 
     private void drawWormholeCorona(float cx, float cy, float baseRadius, Color wormholeColor, float alphaMult) {
+        SpriteAPI texture = spriteCache.texture(WORMHOLE_CORONA_TEXTURE_PATH);
+        if (texture == null) return;
         float size = baseRadius * 2f * WORMHOLE_CORONA_SIZE_RATIO;
         float orbit = baseRadius * WORMHOLE_CORONA_ORBIT_RATIO;
 
-        for (int i = 0; i < WORMHOLE_CORONA_COUNT; i++) {
-            float baseAngle = 360f * i / WORMHOLE_CORONA_COUNT;
-            float angle = baseAngle + animationElapsedSeconds * WORMHOLE_CORONA_ROTATION_SPEED_DEG;
-            float rad = (float) Math.toRadians(angle);
-            float pulse = 1f + (float) Math.sin(Math.toRadians(animationElapsedSeconds * WORMHOLE_CORONA_PULSE_SPEED_DEG + baseAngle)) * WORMHOLE_CORONA_PULSE_SIZE_RATIO;
+        try (TexturedQuadBatch batch = quads.beginAdditive(texture)) {
+            for (int i = 0; i < WORMHOLE_CORONA_COUNT; i++) {
+                float baseAngle = 360f * i / WORMHOLE_CORONA_COUNT;
+                float angle = baseAngle + animationElapsedSeconds * WORMHOLE_CORONA_ROTATION_SPEED_DEG;
+                float rad = (float) Math.toRadians(angle);
+                float pulse = 1f + (float) Math.sin(Math.toRadians(animationElapsedSeconds * WORMHOLE_CORONA_PULSE_SPEED_DEG + baseAngle)) * WORMHOLE_CORONA_PULSE_SIZE_RATIO;
 
-            SpriteDraw.drawAdditiveAtCenter(spriteCache, WORMHOLE_CORONA_TEXTURE_PATH,
-                    cx + (float) Math.cos(rad) * orbit, cy + (float) Math.sin(rad) * orbit,
-                    size * pulse, size * pulse, wormholeColor, alphaMult, angle);
+                batch.quadAtCenter(cx + (float) Math.cos(rad) * orbit, cy + (float) Math.sin(rad) * orbit, size * pulse, size * pulse, angle,
+                        wormholeColor, alphaMult);
+            }
         }
     }
 
@@ -403,8 +424,12 @@ final class SkillTreeNodeRingRenderer {
         float closedness = 1f - openness;
         float alpha = WORMHOLE_GLOW_ALPHA * closedness * closedness * closedness * alphaMult;
 
-        SpriteDraw.drawAdditiveAtCenter(spriteCache, WORMHOLE_GLOW_TEXTURE_PATH, cx, cy, size, size, wormholeColor, alpha);
-        SpriteDraw.drawAdditiveAtCenter(spriteCache, WORMHOLE_GLOW_TEXTURE_PATH, cx, cy, size, size, wormholeColor, alpha);
+        SpriteAPI texture = spriteCache.texture(WORMHOLE_GLOW_TEXTURE_PATH);
+        if (texture == null) return;
+        try (TexturedQuadBatch batch = quads.beginAdditive(texture)) {
+            batch.quadAtCenter(cx, cy, size, size, 0f, wormholeColor, alpha);
+            batch.quadAtCenter(cx, cy, size, size, 0f, wormholeColor, alpha);
+        }
     }
 
     private Color resolveWormholeColor(SkillNode node) {

@@ -10,6 +10,7 @@ import exiledsector.skills.radius.RadiusSize;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.TreeLayers;
 import exiledsector.ui.TreeViewport;
+import exiledsector.ui.belt.RingWave;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.UnitCircle;
 import org.lwjgl.opengl.GL11;
@@ -28,14 +29,15 @@ public final class NodeRadiusRingRenderer {
     private static final String BAND_TEXTURE_ID = "neutrino_detector";
     private static final float BAND_WIDTH_IN_TEXTURE = 256f;
     private static final int BAND_SEGMENTS = 256;
+    private static final UnitCircle BAND_CIRCLE = UnitCircle.of(BAND_SEGMENTS);
     private static final float BAND_THICKNESS_SHARE = 0.09f;
     private static final float BAND_PULSE_SHARE = 0.25f;
     private static final float BAND_EDGE_TEXTURE_TRIM = 0.2f;
     private static final float BAND_SHIMMER_SHARE = 0.33f;
     private static final float BAND_ALPHA = 0.55f;
     private static final float BAND_PHASE_DEGREES_PER_SECOND = 60f;
-    private static final float FIRST_BAND_WAVES = 29f;
-    private static final float SECOND_BAND_WAVES = 17f;
+    private static final int FIRST_BAND_WAVES = 29;
+    private static final int SECOND_BAND_WAVES = 17;
 
     private SkillNode ringCentre;
     private float ringWorldRadius;
@@ -104,7 +106,7 @@ public final class NodeRadiusRingRenderer {
         }
     }
 
-    private void drawBand(SpriteAPI texture, int bandIndex, float waves, float phaseDegrees, float textureStartShare, float layerAlpha) {
+    private void drawBand(SpriteAPI texture, int bandIndex, int waves, float phaseDegrees, float textureStartShare, float layerAlpha) {
         float outerRadius = socketedWorldRadius;
         float thickness = outerRadius * BAND_THICKNESS_SHARE;
         float anglePerSegment = (float) (Math.PI * 2 / BAND_SEGMENTS);
@@ -115,23 +117,24 @@ public final class NodeRadiusRingRenderer {
         float bandTexWidth = texture.getTextureWidth() * BAND_WIDTH_IN_TEXTURE / texture.getWidth();
         float edgeTX = (bandIndex + BAND_EDGE_TEXTURE_TRIM) * bandTexWidth;
         float innerTX = (bandIndex + 1) * bandTexWidth - 0.001f;
-        float phaseRadians = (float) Math.toRadians(phaseDegrees);
+        RingWave wave = new RingWave(waves, (float) Math.toRadians(phaseDegrees), 1f);
+        float pulseAmplitude = thickness * BAND_PULSE_SHARE;
+        float shimmer = worldPerSegment * BAND_SHIMMER_SHARE;
         float texProgress = textureStartShare * BAND_SEGMENTS * texPerSegment;
         float alpha = BAND_ALPHA * layerAlpha;
         GL11.glColor4f(socketedColor.getRed() / 255f, socketedColor.getGreen() / 255f, socketedColor.getBlue() / 255f, alpha);
         GL11.glBegin(GL11.GL_QUAD_STRIP);
         for (int i = 0; i <= BAND_SEGMENTS; i++) {
-            float theta = anglePerSegment * (i % BAND_SEGMENTS);
-            float wave = phaseRadians + theta * waves;
-            float pulse = (float) Math.sin(wave) * thickness * BAND_PULSE_SHARE;
-            float cos = (float) Math.cos(theta);
-            float sin = (float) Math.sin(theta);
-            float innerRadius = outerRadius - thickness + pulse;
-            float shimmer = worldPerSegment * BAND_SHIMMER_SHARE;
+            int segment = i % BAND_SEGMENTS;
+            float cos = BAND_CIRCLE.cos(segment);
+            float sin = BAND_CIRCLE.sin(segment);
+            float waveCos = wave.cosAt(BAND_CIRCLE, segment);
+            float waveSin = wave.sinAt(BAND_CIRCLE, segment);
+            float innerRadius = outerRadius - thickness + waveSin * pulseAmplitude;
             GL11.glTexCoord2f(edgeTX, texProgress);
             GL11.glVertex2f(cos * outerRadius, sin * outerRadius);
             GL11.glTexCoord2f(innerTX, texProgress);
-            GL11.glVertex2f(cos * innerRadius + (float) Math.cos(wave) * shimmer, sin * innerRadius + (float) Math.sin(wave) * shimmer);
+            GL11.glVertex2f(cos * innerRadius + waveCos * shimmer, sin * innerRadius + waveSin * shimmer);
             texProgress += texPerSegment;
         }
         GL11.glEnd();

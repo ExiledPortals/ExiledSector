@@ -24,7 +24,19 @@ final class RootAffinityNumber {
     private static final Color NUMBER_COLOUR = Color.WHITE;
     private static final Color OUTLINE_COLOUR = new Color(10, 12, 18);
 
-    private record SizedLabel(int fontSize, TextLabel label, TextLabel outline) {
+    private static final int[][] OUTLINE_DIRECTIONS = {{-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+
+    private static final class SizedLabel {
+        final int fontSize;
+        final TextLabel label;
+        final TextLabel outline;
+        int shownNumber = Integer.MIN_VALUE;
+
+        SizedLabel(int fontSize) {
+            this.fontSize = fontSize;
+            this.label = new TextLabel(fontSize, NUMBER_COLOUR, LazyFont.TextAnchor.CENTER);
+            this.outline = new TextLabel(fontSize, OUTLINE_COLOUR, LazyFont.TextAnchor.CENTER);
+        }
     }
 
     private final HullSize hullSize;
@@ -45,26 +57,27 @@ final class RootAffinityNumber {
         float total = rootPending ? rootAffinity.magnitude() : totalsFor(shipData).getOrDefault(rootAffinity.effect(), 0f);
         int fontSize = Math.round(Math.max(MIN_FONT_SIZE, rootRadius * FONT_SIZE_PER_ROOT_RADIUS) / FONT_SIZE_STEP) * FONT_SIZE_STEP;
         SizedLabel sized = labelsByRootId.get(root.getId());
-        if (sized == null || sized.fontSize() != fontSize) {
+        if (sized == null || sized.fontSize != fontSize) {
             if (sized != null) {
-                sized.label().dispose();
-                sized.outline().dispose();
+                sized.label.dispose();
+                sized.outline.dispose();
             }
-            sized = new SizedLabel(fontSize, new TextLabel(fontSize, NUMBER_COLOUR, LazyFont.TextAnchor.CENTER),
-                    new TextLabel(fontSize, OUTLINE_COLOUR, LazyFont.TextAnchor.CENTER));
+            sized = new SizedLabel(fontSize);
             labelsByRootId.put(root.getId(), sized);
         }
-        String number = Integer.toString(Math.round(total));
-        float outlineOffset = Math.max(1f, fontSize * OUTLINE_SHARE_OF_FONT);
-        TextLabel outline = sized.outline().set(number).setAlpha(alphaMult);
-        for (int offsetX = -1; offsetX <= 1; offsetX++) {
-            for (int offsetY = -1; offsetY <= 1; offsetY++) {
-                if (offsetX != 0 || offsetY != 0) {
-                    outline.draw(centerX + offsetX * outlineOffset, centerY + offsetY * outlineOffset);
-                }
-            }
+        int number = Math.round(total);
+        if (number != sized.shownNumber) {
+            String text = Integer.toString(number);
+            sized.label.set(text);
+            sized.outline.set(text);
+            sized.shownNumber = number;
         }
-        sized.label().set(number).setAlpha(alphaMult).draw(centerX, centerY);
+        float outlineOffset = Math.max(1f, fontSize * OUTLINE_SHARE_OF_FONT);
+        TextLabel outline = sized.outline.setAlpha(alphaMult);
+        for (int[] direction : OUTLINE_DIRECTIONS) {
+            outline.draw(centerX + direction[0] * outlineOffset, centerY + direction[1] * outlineOffset);
+        }
+        sized.label.setAlpha(alphaMult).draw(centerX, centerY);
     }
 
     private Map<SkillEffect, Float> totalsFor(ShipSkillData shipData) {

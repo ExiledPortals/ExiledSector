@@ -1,6 +1,6 @@
 # Code review 2026-10-23: plan
 
-Status: review done; skill tree bugs 1-9 fixed on parallel-work, the rest open. Seven read-only reviewers covered one module each (skill tree split into logic and UI) plus one for cross-module duplication. Each finding was re-read by its reviewer; CONFIRMED means the code was re-checked and the failure follows, PLAUSIBLE means it depends on engine behaviour or data that wasn't verified. Findings marked (checked) were also re-checked in the main session.
+Status: review done; skill tree bugs 1-15 fixed on parallel-work, the rest open. Seven read-only reviewers covered one module each (skill tree split into logic and UI) plus one for cross-module duplication. Each finding was re-read by its reviewer; CONFIRMED means the code was re-checked and the failure follows, PLAUSIBLE means it depends on engine behaviour or data that wasn't verified. Findings marked (checked) were also re-checked in the main session.
 
 Paths are relative to each module's `src/main/java/exiledsector/` (or `exiledlib/` for Exiled Lib) unless given in full.
 
@@ -24,12 +24,12 @@ Most severe first within each module.
 
 All PLAUSIBLE as FPS costs (not measured), CONFIRMED as code paths.
 
-10. `ui/node/SkillTreeNodeRingRenderer` draws 21 unbatched `Sprite.render` calls per visible notable per frame (two 10-ring stacks plus a glow), about 2,500 renders fully zoomed out, plus 2-4 unbatched 32-vertex `GL_LINE_LOOP`s per node with about 10 GL state changes. Batch through core `TexturedQuadBatch` and `LineBatch` (see abstractions), or skip the stacks below a few pixels.
-11. `ui/node/SkillTreeWormholeGhostFlights` calls `ShipTrees.wormholePairs()` every frame, which allocates a new list and pair records; cache on `skillData.revision()`.
-12. `ui/node/RootAffinityNumber` draws each root number 9 times (outline copies), each a LazyFont `glPushAttrib(GL_ALL_ATTRIB_BITS)`, and builds a string per frame.
-13. `ui/node/NodeRadiusRingRenderer.drawBand` does 6 trig calls per vertex for 514 vertices per frame while a radius item is socketed; `UnitCircle`/`RingWave` exist for this.
-14. `ui/node/NodeAllocator.grantSocketedNodes` takes a full `snapshot()` per granted node after every allocation click.
-15. `ui/node/AllocationAnimation` builds a `SkillTree.curveKey` string per connector per frame for 3 s after a click.
+10. FIXED (parallel-work), partly: ring stacks, the wormhole corona and the wormhole glow go through one `TexturedQuadBatch` per texture per node, so a notable takes 3 draws instead of 21 and a wormhole 4 instead of 24. The outline loops are unchanged; they differ in line width per loop, so batching them needs one pass over all nodes, which would draw the outlines over neighbouring icons. Originally: `ui/node/SkillTreeNodeRingRenderer` draws 21 unbatched `Sprite.render` calls per visible notable per frame (two 10-ring stacks plus a glow), about 2,500 renders fully zoomed out, plus 2-4 unbatched 32-vertex `GL_LINE_LOOP`s per node with about 10 GL state changes. Batch through core `TexturedQuadBatch` and `LineBatch` (see abstractions), or skip the stacks below a few pixels.
+11. FIXED (parallel-work): the pairs are cached on the ship, its revision and the topology. `ui/node/SkillTreeWormholeGhostFlights` calls `ShipTrees.wormholePairs()` every frame, which allocates a new list and pair records; cache on `skillData.revision()`.
+12. FIXED (parallel-work): the outline is 4 diagonal copies instead of 8 and the text is rebuilt only when the number changes. `ui/node/RootAffinityNumber` draws each root number 9 times (outline copies), each a LazyFont `glPushAttrib(GL_ALL_ATTRIB_BITS)`, and builds a string per frame.
+13. FIXED (parallel-work): the band reads `UnitCircle` and a `RingWave` (now public), two trig calls per band. `ui/node/NodeRadiusRingRenderer.drawBand` does 6 trig calls per vertex for 514 vertices per frame while a radius item is socketed; `UnitCircle`/`RingWave` exist for this.
+14. FIXED (parallel-work): one snapshot is reused until a grant changes the tree. `ui/node/NodeAllocator.grantSocketedNodes` takes a full `snapshot()` per granted node after every allocation click.
+15. FIXED (parallel-work): edges are keyed by a nested map, so the lookup builds no string. `ui/node/AllocationAnimation` builds a `SkillTree.curveKey` string per connector per frame for 3 s after a click.
 16. `ui/node/SkillTreeNodeTooltipRenderer.flavourFor` builds its paragraphs before checking the label cache.
 
 ### Hull upgrades
