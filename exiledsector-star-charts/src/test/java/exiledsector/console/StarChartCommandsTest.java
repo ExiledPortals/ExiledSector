@@ -114,7 +114,6 @@ class StarChartCommandsTest {
         fixture.console.verify(() -> Console.showMessage(shown.capture()));
         assertTrue(shown.getValue().contains("Moved 1 Star Chart"), shown.getValue());
         assertTrue(shown.getValue().contains("1. Test Gated Unique Chart [unique, tier 5, TRINARY_2FAR]"), shown.getValue());
-        assertTrue(shown.getValue().contains("implicit: "), shown.getValue());
         verify(fixture.cargo).removeStack(stack);
     }
 }

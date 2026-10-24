@@ -3,6 +3,8 @@ package exiledsector.charts;
 import com.fs.starfarer.api.Global;
 import com.thoughtworks.xstream.XStream;
 import exiledlib.compat.CompatTarget;
+import exiledsector.compat.FoilerCompat;
+import exiledsector.compat.UnknownSkiesCompat;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.effects.ShipEffectSource;
@@ -123,6 +125,6 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public List<CompatTarget> compatTargets() {
-        return List.of(VaultsOfKnowledgeCompat.TARGET);
+        return List.of(VaultsOfKnowledgeCompat.TARGET, FoilerCompat.TERRAIN_FX, FoilerCompat.HYDROFOIL, UnknownSkiesCompat.TARGET);
     }
 }

@@ -1,6 +1,8 @@
 package exiledsector.charts;
 
 import exiledsector.charts.expansion.ChartExpansion;
+import exiledsector.charts.feature.ChartFeature;
+import exiledsector.charts.phenomenon.ChartPhenomenon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,14 @@ public final class ChartEditorVocabulary {
 
     public static List<String> expansionIds() {
         return ChartExpansions.BUILT_IN.stream().map(ChartExpansion::id).toList();
+    }
+
+    public static List<String> phenomenonIds() {
+        return ChartPhenomena.BUILT_IN.stream().map(ChartPhenomenon::id).toList();
+    }
+
+    public static List<String> featureIds() {
+        return ChartFeatures.BUILT_IN.stream().map(ChartFeature::id).toList();
     }
 
     public static List<String> tierDefaultsJson() {

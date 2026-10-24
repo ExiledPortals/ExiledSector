@@ -196,6 +196,20 @@ smaller rarity bonus
 (`StarChartLootSource.modifiersFor`). Closing the core removes the field and its unlooted caches and drops salvage
 and items scaled by how far it grew (`BreachCoreDialog`).
 
+## The atlas
+
+Each save has one atlas: `AtlasState` keeps the seed and per-system flags in persistent data, and `AtlasGenerator`
+rebuilds everything else from the seed. A chart opens a system joined by a lane to a completed one (`AtlasReach`), and
+the system supplies the layout seed, faction, region recipe, phenomenon, a forced expansion and the lines from
+`atlas_node_effects.csv` for Powerful Boss, infested, cleansed and special-site systems, kept on the run as an
+`AtlasRunNode` (`AtlasOpening`). A Powerful Boss always drops a chart one tier up, and chart drops inside a run never
+fall below its tier.
+
+Killing the objective completes the system and grants an atlas point for the first clear of each tier (`AtlasProgress`).
+A Sensor Array also reveals 6 lanes, a Nexus cleanses the systems it infested, and a Bastion gives a key fragment and
+allows one attempt. A run that closes without its objective spends the system's markers (Powerful Boss, expansion,
+overlay phenomenon). A biome or Threat infestation behind an unlock is decided when first seen, and that is saved.
+
 ## Modspec caches
 
 The Contraband Modspec Cache (`contraband_modspec_cache`, kind `MODSPEC_CACHE`) is a corrupted unique

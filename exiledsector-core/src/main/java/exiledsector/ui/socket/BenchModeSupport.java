@@ -45,6 +45,18 @@ public interface BenchModeSupport {
         void pressedInside();
     }
 
+    interface TargetListener {
+
+        void picked(Object target, List<String> confirmLines);
+
+        void cancelled();
+    }
+
+    interface TargetPicker {
+
+        void pick(CustomPanelAPI hostPanel, Item loaded, TargetListener listener);
+    }
+
     interface PickerSession {
 
         void open(CustomPanelAPI hostPanel, SocketPanelPlacement placement, Item loaded, PickerListener listener);
@@ -97,4 +109,12 @@ public interface BenchModeSupport {
     int openEntries();
 
     OpenOutcome open(SectorAPI sector, ItemStore store, Item loaded, int entries, Random random);
+
+    default TargetPicker targetPicker() {
+        return null;
+    }
+
+    default OpenOutcome openAt(SectorAPI sector, ItemStore store, Item loaded, int entries, Random random, Object target) {
+        return open(sector, store, loaded, entries, random);
+    }
 }

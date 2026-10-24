@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
+import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
@@ -14,6 +15,7 @@ import com.fs.starfarer.api.impl.campaign.fleets.FleetFactoryV3;
 import com.fs.starfarer.api.impl.campaign.fleets.FleetParamsV3;
 import com.fs.starfarer.api.impl.campaign.ids.Entities;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
+import com.fs.starfarer.api.impl.campaign.procgen.PlanetGenDataSpec;
 import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.BaseThemeGenerator;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.BaseThemeGenerator.EntityLocation;
@@ -136,5 +138,11 @@ final class VanillaChartContentEngine implements ChartContentEngine {
         CargoAPI colonyItem = Global.getFactory().createCargo(true);
         colonyItem.addSpecial(new SpecialItemData(itemId, null), 1f);
         BaseSalvageSpecial.addExtraSalvage(holder, colonyItem);
+    }
+
+    @Override
+    public String planetCategory(PlanetAPI planet) {
+        Object spec = planet == null ? null : Global.getSettings().getSpec(PlanetGenDataSpec.class, planet.getTypeId(), true);
+        return spec instanceof PlanetGenDataSpec data ? data.getCategory() : "";
     }
 }

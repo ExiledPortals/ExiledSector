@@ -7,8 +7,11 @@ import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
+import exiledsector.charts.ChartSupply;
 import exiledsector.items.Item;
+import exiledsector.items.ItemStore;
 import exiledsector.items.ItemRarity;
+import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.chart.StarChartBrowser;
 
@@ -16,6 +19,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 public final class StarChartStoragePanel extends HoloPanel {
 
@@ -31,9 +35,11 @@ public final class StarChartStoragePanel extends HoloPanel {
     private static final float EMPTY_TIER_SCALE = 0.55f;
     private static final float NOTICE_HEIGHT = 24f;
     private static final float FOOTER_HEIGHT = 24f;
+    private static final float COMBINE_BUTTON_WIDTH = 130f;
+    private static final float COMBINE_TOOLTIP_WIDTH = 300f;
     private static final ItemCell.Look CELL_LOOK = new ItemCell.Look(7f, true, 1f);
 
-    private enum Control {CLOSE}
+    private enum Control {CLOSE, COMBINE}
 
     private record TierChip(int tier) {
     }
@@ -44,6 +50,7 @@ public final class StarChartStoragePanel extends HoloPanel {
     private final StarChartBrowser browser;
     private final Listener storageListener;
     private final String openNotice;
+    private String combineNotice;
     private UIComponentAPI headerElement;
     private UIComponentAPI controlsElement;
     private TooltipMakerAPI gridElement;
@@ -112,6 +119,8 @@ public final class StarChartStoragePanel extends HoloPanel {
     private void handleButton(Object id) {
         if (id == Control.CLOSE) {
             close();
+        } else if (id == Control.COMBINE) {
+            combineSelectedTier();
         } else if (id instanceof TierChip chip) {
             browser.selectTier(chip.tier());
             rebuildControls();
@@ -188,16 +197,39 @@ public final class StarChartStoragePanel extends HoloPanel {
         return Translation.text("chart.ui.storage.noMatches");
     }
 
+    private void combineSelectedTier() {
+        ItemStore store = ItemStore.starChartsIfCreated();
+        int tier = browser.selectedTier();
+        Item made = ChartSupply.combine(store, tier, browser.selectedChart(), new Random());
+        if (made == null) {
+            SkillTreeSounds.refused();
+            return;
+        }
+        SkillTreeSounds.crafted();
+        combineNotice = Translation.msg("chart.ui.storage.combined").arg("tier", tier).arg("name", made.name()).text();
+        browser.reload(store.owned());
+        rebuildControls();
+    }
+
     private void rebuildFooter() {
         TooltipMakerAPI notice = panelRoot.createUIElement(innerWidth(), NOTICE_HEIGHT, false);
-        if (openNotice != null) {
-            VanillaText.plainPara(notice, openNotice, 0f, Misc.getPositiveHighlightColor());
+        String shownNotice = combineNotice != null ? combineNotice : openNotice;
+        if (shownNotice != null) {
+            VanillaText.plainPara(notice, shownNotice, 0f, Misc.getPositiveHighlightColor());
         }
         noticeElement = replaceElement(noticeElement, notice, PAD, gridTop - NOTICE_HEIGHT);
         TooltipMakerAPI summary = panelRoot.createUIElement(innerWidth(), FOOTER_HEIGHT, false);
         VanillaText.plainPara(summary, Translation.msg("chart.ui.storage.summary").arg("shown", browser.shownCharts().size())
                 .arg("tier", browser.selectedTier()).arg("stored", browser.storedCount()).text(), 0f, Misc.getGrayColor())
                 .getPosition().inTL(0f, PARTS_TEXT_TOP);
+        int tier = browser.selectedTier();
+        if (!ChartSupply.combinable(ItemStore.starChartsIfCreated(), tier, browser.selectedChart()).isEmpty()) {
+            summary.addButton(Translation.text("chart.ui.storage.combine"), Control.COMBINE, COMBINE_BUTTON_WIDTH, FOOTER_HEIGHT, 0f)
+                    .getPosition().inTR(0f, 0f);
+            summary.addTooltipToPrevious(new GameTextTooltip(COMBINE_TOOLTIP_WIDTH, tooltip -> VanillaText.plainPara(tooltip,
+                    Translation.msg("chart.ui.storage.combine.tooltip").arg("tier", tier).arg("next", tier + 1).text(), 0f, Misc.getTextColor())),
+                    TooltipMakerAPI.TooltipLocation.ABOVE);
+        }
         summaryElement = replaceElement(summaryElement, summary, PAD, panelHeight - PAD - FOOTER_HEIGHT);
     }
 

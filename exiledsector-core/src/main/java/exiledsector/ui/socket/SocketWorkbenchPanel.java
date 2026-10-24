@@ -108,6 +108,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     private UIComponentAPI noticeElement;
     private UIComponentAPI openElement;
     private Item pendingOpenItem;
+    private Object pendingOpenTarget;
     private boolean wormholeOpened;
     private Item loadedItem;
     private CargoIconLook loadedLook;
@@ -701,30 +702,68 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             refreshOpacity();
             return;
         }
+        pendingOpenTarget = null;
+        BenchModeSupport.TargetPicker picker = modeSupport().targetPicker();
+        if (picker != null) {
+            Item pickingFor = loadedItem;
+            picker.pick(hostPanel, pickingFor, new BenchModeSupport.TargetListener() {
+                @Override
+                public void picked(Object target, List<String> confirmLines) {
+                    queue(() -> confirmTarget(pickingFor, target, confirmLines));
+                }
+
+                @Override
+                public void cancelled() {
+                    queue(() -> pendingOpenTarget = null);
+                }
+            });
+            return;
+        }
         pendingOpenItem = loadedItem;
+        showOpenConfirm(List.of());
+    }
+
+    private void confirmTarget(Item pickedFor, Object target, List<String> confirmLines) {
+        if (pickedFor == null || pickedFor != loadedItem || wormholeOpened) {
+            return;
+        }
+        pendingOpenItem = loadedItem;
+        pendingOpenTarget = target;
+        showOpenConfirm(confirmLines);
+    }
+
+    private void showOpenConfirm(List<String> confirmLines) {
         Item confirmedItem = pendingOpenItem;
         int entries = modeSupport().openEntries();
         BenchModeSupport.OpenTexts openTexts = modeSupport().openTexts();
-        openConfirm(OPEN_CONFIRM_HEIGHT, element -> writeOpenConfirm(element, openTexts, confirmedItem, entries), openTexts.confirmYesKey(),
+        openConfirm(OPEN_CONFIRM_HEIGHT + confirmLines.size() * WARD_LINE_HEIGHT,
+                element -> writeOpenConfirm(element, openTexts, confirmedItem, entries, confirmLines), openTexts.confirmYesKey(),
                 Control.CONFIRM_OPEN, openTexts.confirmNoKey(), Control.CANCEL_CONFIRM);
     }
 
-    private static void writeOpenConfirm(TooltipMakerAPI element, BenchModeSupport.OpenTexts openTexts, Item openedItem, int entries) {
+    private static void writeOpenConfirm(TooltipMakerAPI element, BenchModeSupport.OpenTexts openTexts, Item openedItem, int entries,
+                                         List<String> confirmLines) {
         VanillaText.plainPara(element, Translation.msg(openTexts.confirmTitleKey()).arg("name", openedItem.name()).text(), 0f,
                 openedItem.rarity().color());
         VanillaText.plainPara(element, Translation.text(openTexts.confirmBodyKey()), LINE_PAD * 2f, Misc.getTextColor());
+        for (String line : confirmLines) {
+            VanillaText.plainPara(element, line, LINE_PAD, Misc.getHighlightColor());
+        }
         VanillaText.plainPara(element, Translation.msg(openTexts.confirmEntriesKey()).count(entries).text(), LINE_PAD * 2f,
                 Misc.getGrayColor());
     }
 
     private void confirmOpen() {
         Item openedItem = pendingOpenItem;
+        Object openedTarget = pendingOpenTarget;
         cancelConfirm();
+        pendingOpenTarget = null;
         if (openedItem == null || openedItem != loadedItem) {
             return;
         }
-        BenchModeSupport.OpenOutcome outcome = modeSupport().open(Global.getSector(), modeStore(), openedItem, modeSupport().openEntries(),
-                craftingRandom);
+        BenchModeSupport.OpenOutcome outcome = openedTarget == null
+                ? modeSupport().open(Global.getSector(), modeStore(), openedItem, modeSupport().openEntries(), craftingRandom)
+                : modeSupport().openAt(Global.getSector(), modeStore(), openedItem, modeSupport().openEntries(), craftingRandom, openedTarget);
         String message = Translation.msg(outcome.messageKey()).arg("name", openedItem.name()).text();
         if (!outcome.opened()) {
             SkillTreeSounds.refused();

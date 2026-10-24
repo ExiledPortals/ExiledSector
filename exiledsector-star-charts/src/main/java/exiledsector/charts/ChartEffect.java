@@ -2,6 +2,9 @@ package exiledsector.charts;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.expansion.SpatialBreach;
+import exiledsector.charts.phenomenon.AsteroidStorm;
+import exiledsector.charts.phenomenon.MagneticStorm;
+import exiledsector.charts.phenomenon.StellarFlares;
 import exiledlib.i18n.Message;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
@@ -79,7 +82,34 @@ public enum ChartEffect implements ModifierEffect {
     },
     CHART_BREACH_GROWTH_PERCENT(false, (context, value) -> context.addExpansionPercent(SpatialBreach.GROWTH_KEY, value)),
     CHART_BREACH_CACHE_PERCENT(false, (context, value) -> context.addExpansionPercent(SpatialBreach.CACHE_KEY, value)),
-    CHART_BREACH_CORE_ITEM_PERCENT(false, (context, value) -> context.addExpansionPercent(SpatialBreach.CORE_ITEM_KEY, value));
+    CHART_BREACH_CORE_ITEM_PERCENT(false, (context, value) -> context.addExpansionPercent(SpatialBreach.CORE_ITEM_KEY, value)),
+    CHART_ASTEROID_STORM_CHANCE(false, (context, value) -> context.addPhenomenonChance(AsteroidStorm.ID, value)) {
+        @Override
+        public StyledText description(float magnitude) {
+            if (magnitude >= ChartGenContext.PERCENT) {
+                return Translation.msg(key()).styled();
+            }
+            return Translation.msg(key() + CHANCE_SUFFIX).arg("value", magnitude).styled();
+        }
+    },
+    CHART_MAGNETIC_STORM_CHANCE(false, (context, value) -> context.addPhenomenonChance(MagneticStorm.ID, value)) {
+        @Override
+        public StyledText description(float magnitude) {
+            if (magnitude >= ChartGenContext.PERCENT) {
+                return Translation.msg(key()).styled();
+            }
+            return Translation.msg(key() + CHANCE_SUFFIX).arg("value", magnitude).styled();
+        }
+    },
+    CHART_STELLAR_FLARES_CHANCE(false, (context, value) -> context.addPhenomenonChance(StellarFlares.ID, value)) {
+        @Override
+        public StyledText description(float magnitude) {
+            if (magnitude >= ChartGenContext.PERCENT) {
+                return Translation.msg(key()).styled();
+            }
+            return Translation.msg(key() + CHANCE_SUFFIX).arg("value", magnitude).styled();
+        }
+    };
 
     static final String KEY_PREFIX = "chart.effect.";
     static final String CHANCE_SUFFIX = ".chance";

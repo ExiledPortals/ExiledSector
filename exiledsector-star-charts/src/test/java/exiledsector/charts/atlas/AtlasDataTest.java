@@ -1,11 +1,14 @@
 package exiledsector.charts.atlas;
 
+import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
+import exiledsector.charts.ChartLayoutRecipe;
 import exiledsector.charts.ChartTables;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
+import java.awt.Color;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,6 +27,7 @@ class AtlasDataTest {
     @Test
     void theShippedAtlasTablesParseWithoutProblems() throws Exception {
         ChartTables.loadShipped();
+        ChartTables.loadFeatures();
 
         assertEquals(List.of(), AtlasData.registerLayouts(ChartTables.csvRows(AtlasData.LAYOUTS_PATH)));
         assertEquals(List.of(), AtlasData.registerRegions(ChartTables.csvRows(AtlasData.REGIONS_PATH),
@@ -52,6 +56,39 @@ class AtlasDataTest {
         assertEquals(4f, reach.markerWeight("black_hole"));
         assertEquals(1f, reach.markerWeight("flares"));
         assertEquals(2, problems.size());
+    }
+
+    @Test
+    void aRegionLookAndALayoutCombineIntoOneRecipe() throws Exception {
+        ChartTables.loadFeatures();
+        List<String> layoutProblems = AtlasData.registerLayouts(new JSONArray()
+                .put(new JSONObject().put("id", "ringed").put("system_types", "SINGLE:3; BINARY_FAR:1; NEBULA:2").put("min_orbits", "4")
+                        .put("max_orbits", "6").put("max_orbit_radius", "12000").put("terrain", "cat_terrain_rings:2; cat_magfield:5")
+                        .put("feature", "ringed_giant")));
+        List<String> regionProblems = AtlasData.registerRegions(new JSONArray()
+                .put(new JSONObject().put("id", AtlasRegion.NORMAL))
+                .put(new JSONObject().put("id", "frozen").put("backgrounds", "a.jpg; b.jpg").put("nebula_chance", "0.3")
+                        .put("light_tint", "#A0C8FF").put("light_tint_strength", "0.25").put("stars", "star_red_dwarf:2; black_hole:4")
+                        .put("planets", "cat_frozen:4; cat_terrain_rings:3").put("keep_ruins", "yes")), Set.of());
+
+        ChartLayoutRecipe recipe = AtlasData.recipeFor("frozen", "ringed");
+        ChartLayoutRecipe plain = AtlasData.recipeFor(AtlasRegion.NORMAL, "missing");
+
+        assertEquals(2, layoutProblems.size());
+        assertEquals(1, regionProblems.size());
+        assertEquals(Map.of(StarSystemType.SINGLE, 3f, StarSystemType.BINARY_FAR, 1f), recipe.systemTypeWeights());
+        assertEquals(4, recipe.minOrbits());
+        assertEquals(6, recipe.maxOrbits());
+        assertEquals(12000f, recipe.orbitRadiusLimit());
+        assertEquals("ringed_giant", recipe.featureId());
+        assertEquals(List.of("a.jpg", "b.jpg"), recipe.backgrounds());
+        assertEquals(0.3f, recipe.nebulaChance());
+        assertEquals(new Color(0xA0, 0xC8, 0xFF), recipe.lightTint());
+        assertEquals(Map.of("star_red_dwarf", 2f), recipe.starWeights());
+        assertEquals(Map.of("cat_frozen", 4f, "cat_terrain_rings", 6f), recipe.categoryWeights());
+        assertTrue(recipe.keepRuins());
+        assertFalse(plain.setsOrbits());
+        assertTrue(plain.systemTypeWeights().isEmpty());
     }
 
     @Test

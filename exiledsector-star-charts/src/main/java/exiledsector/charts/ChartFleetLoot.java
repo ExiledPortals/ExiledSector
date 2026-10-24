@@ -158,7 +158,8 @@ public final class ChartFleetLoot {
                 ? ItemDrops.rollFleetSalvage(siteId, random, chances, feedstockMult, currencyMult)
                 : ItemDrops.rollSite(siteId, random, chances, feedstockMult, currencyMult, ItemUnlock.available(ItemType.HULL_ITEM, sector));
         ChartDrops.Loot chartLoot = ChartDrops.roll(source, run.tier(), context.dropMult(DropType.STAR_CHART) * chanceMult,
-                context.dropMult(DropType.CURRENCY) * chanceMult, random, ChartDrops.uniquesFor(sector));
+                context.dropMult(DropType.CURRENCY) * chanceMult, random, ChartDrops.uniquesFor(sector),
+                source == ChartDrops.Source.CHART_BOSS && context.guaranteedBossTierUp() && run.claimBossTierUp());
         return siteLoot.plus(chartLoot.charts(), List.of(), chartLoot.currencies());
     }
 }

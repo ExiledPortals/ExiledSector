@@ -44,7 +44,7 @@ class WormholeOpenCheckTest {
     @BeforeEach
     void setUp() throws Exception {
         StarChartFixtures.registerShipped();
-        chart = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart_single"), 4L, 3));
+        chart = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 4L, 3));
         when(playerFleet.getContainingLocation()).thenReturn(hyperspace);
     }
 
@@ -63,7 +63,7 @@ class WormholeOpenCheckTest {
 
     @Test
     void openingNeedsAChartThatIsReallyInTheChartStore() {
-        Item loose = ItemData.rolledAtTier(ItemDefinitions.get("star_chart_single"), 5L, 3).preview();
+        Item loose = ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 5L, 3).preview();
 
         assertEquals(Blocker.NO_CHART, WormholeOpenCheck.evaluate(null, store, true, false, playerFleet));
         assertEquals(Blocker.NO_CHART, WormholeOpenCheck.evaluate(loose, store, true, false, playerFleet));

@@ -3,6 +3,7 @@ package exiledsector.charts;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
 import com.fs.starfarer.api.campaign.FleetAssignment;
+import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
@@ -33,6 +34,7 @@ final class FakeChartContentEngine implements ChartContentEngine {
     }
 
     final List<Vector2f> spotPositions = new ArrayList<>();
+    final List<ChartSpot> focusedSpots = new ArrayList<>();
     final List<SectorEntityToken> salvageEntities = new ArrayList<>();
     final List<String> salvageTypes = new ArrayList<>();
     final List<Boolean> derelictRecoverable = new ArrayList<>();
@@ -41,6 +43,7 @@ final class FakeChartContentEngine implements ChartContentEngine {
     final Map<CampaignFleetAPI, List<Assignment>> assignments = new HashMap<>();
     final Map<SectorEntityToken, Set<String>> tags = new HashMap<>();
     final Map<String, ChartVanillaLoot.SiteDrops> siteDropsBySpec = new HashMap<>();
+    final Map<PlanetAPI, String> planetCategories = new HashMap<>();
     final List<ColonyItem> colonyItems = new ArrayList<>();
     boolean failFleets;
     boolean emptyFleets;
@@ -59,6 +62,11 @@ final class FakeChartContentEngine implements ChartContentEngine {
         for (int i = 0; i + 1 < coordinates.length; i += 2) {
             spotPositions.add(new Vector2f(coordinates[i], coordinates[i + 1]));
         }
+        return this;
+    }
+
+    FakeChartContentEngine offeringAt(SectorEntityToken focus, float x, float y) {
+        focusedSpots.add(new ChartSpot(null, new Vector2f(x, y), focus, 1f));
         return this;
     }
 
@@ -97,6 +105,11 @@ final class FakeChartContentEngine implements ChartContentEngine {
         for (Vector2f position : spotPositions) {
             spots.add(new ChartSpot(null, new Vector2f(position), null, 1f));
         }
+        for (ChartSpot focused : focusedSpots) {
+            if (excludedFoci == null || !excludedFoci.contains(focused.focus())) {
+                spots.add(new ChartSpot(null, new Vector2f(focused.position()), focused.focus(), focused.weight()));
+            }
+        }
         return spots;
     }
 
@@ -133,6 +146,11 @@ final class FakeChartContentEngine implements ChartContentEngine {
     @Override
     public ChartVanillaLoot.SiteDrops siteDrops(String salvageSpec) {
         return siteDropsBySpec.getOrDefault(salvageSpec, ChartVanillaLoot.SiteDrops.NONE);
+    }
+
+    @Override
+    public String planetCategory(PlanetAPI planet) {
+        return planetCategories.getOrDefault(planet, "");
     }
 
     @Override

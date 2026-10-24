@@ -58,7 +58,9 @@ public final class ChartGenContext {
     private final Map<ChartFleetStat, Float> fleetStatPercents = new EnumMap<>(ChartFleetStat.class);
     private Map<ChartFleetStat, Float> fleetStatMults;
     private final Map<String, Float> expansionChances = new LinkedHashMap<>();
+    private final Map<String, Float> phenomenonChances = new LinkedHashMap<>();
     private final Map<String, Float> expansionPercents = new LinkedHashMap<>();
+    private boolean guaranteedBossTierUp;
 
     private ChartGenContext(List<AppliedEffect> applied, int quality, String factionId) {
         this.applied = List.copyOf(applied);
@@ -229,8 +231,34 @@ public final class ChartGenContext {
         expansionChances.merge(expansionId, percent, Float::sum);
     }
 
+    void addPhenomenonChance(String phenomenonId, float percent) {
+        phenomenonChances.merge(phenomenonId, percent, Float::sum);
+    }
+
+    public float phenomenonChance(String phenomenonId) {
+        return phenomenonChances.getOrDefault(phenomenonId, 0f);
+    }
+
     void addExpansionPercent(String tuningKey, float value) {
         expansionPercents.merge(tuningKey, value, Float::sum);
+    }
+
+    public ChartGenContext withAtlasNode(AtlasRunNode node) {
+        if (node == null) {
+            return this;
+        }
+        List<AppliedEffect> combined = new ArrayList<>(applied);
+        combined.addAll(node.effects());
+        ChartGenContext context = new ChartGenContext(combined, quality, node.factionId().isEmpty() ? factionId : node.factionId());
+        if (!node.expansionId().isEmpty()) {
+            context.addExpansionChance(node.expansionId(), PERCENT);
+        }
+        context.guaranteedBossTierUp = node.guaranteedBossTierUp();
+        return context;
+    }
+
+    public boolean guaranteedBossTierUp() {
+        return guaranteedBossTierUp;
     }
 
     public float expansionChance(String expansionId) {

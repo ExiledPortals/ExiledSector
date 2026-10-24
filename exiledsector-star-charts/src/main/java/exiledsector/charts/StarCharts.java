@@ -53,6 +53,8 @@ public final class StarCharts {
         ChartColonyItems.load();
         ChartFactions.load();
         ChartExpansions.load();
+        ChartFeatures.load();
+        ChartPhenomena.load();
         AtlasData.load();
     }
 }

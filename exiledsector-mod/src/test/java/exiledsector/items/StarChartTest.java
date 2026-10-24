@@ -44,8 +44,8 @@ import static org.mockito.Mockito.when;
 
 class StarChartTest {
 
-    private static final String SINGLE = "star_chart_single";
-    private static final String BINARY = "star_chart_binary_far";
+    private static final String SINGLE = "star_chart";
+    private static final String BINARY = "star_chart";
     private static final String UNGATED_UNIQUE = StarChartFixtures.TEST_UNIQUE;
     private static final String GATED_UNIQUE = StarChartFixtures.TEST_GATED_UNIQUE;
 
@@ -80,13 +80,13 @@ class StarChartTest {
 
     @Test
     void chartDefinitionsLoadAsTheirOwnTypeAndStayOutOfTheShipItemList() {
-        assertEquals(8, ItemDefinitions.ofType(ItemType.STAR_CHART).size());
+        assertEquals(3, ItemDefinitions.ofType(ItemType.STAR_CHART).size());
         assertTrue(ItemDefinitions.all().stream().noneMatch(definition -> definition.type() == ItemType.STAR_CHART));
         assertTrue(ItemDefinitions.ofType(ItemType.HULL_ITEM).stream().allMatch(definition -> definition.type() == ItemType.HULL_ITEM));
         ItemDefinition single = ItemDefinitions.get(SINGLE);
         assertEquals(ItemType.STAR_CHART, single.type());
         assertNull(single.kind());
-        assertEquals("SINGLE", StarChartDefinitions.systemType(SINGLE));
+        assertEquals(StarChartDefinitions.ANY_SYSTEM_TYPE, StarChartDefinitions.systemType(SINGLE));
         assertEquals(StarChartDefinitions.ANY_SYSTEM_TYPE, StarChartDefinitions.systemType("not_a_chart"));
         assertTrue(ItemDefinitions.get(UNGATED_UNIQUE).unique());
     }
@@ -197,35 +197,24 @@ class StarChartTest {
     }
 
     @Test
-    void everyChartRollsOneInhabitingFactionAsItsOnlyImplicit() {
-        Set<String> factionImplicits = new HashSet<>();
+    void chartsRollNoImplicitsBecauseTheAtlasNodeDecidesTheFaction() {
         for (String definitionId : List.of(SINGLE, BINARY, GATED_UNIQUE)) {
-            for (long seed = 0; seed < 40; seed++) {
-                List<RolledModifier> implicits = StarChartFixtures.chart(definitionId, seed, 5).implicits();
-                assertEquals(1, implicits.size(), definitionId + " " + implicits);
-                assertTrue(implicits.get(0).modifierId().startsWith("CHART_FACTION_"), implicits.get(0).modifierId());
-                factionImplicits.add(implicits.get(0).modifierId());
+            for (long seed = 0; seed < 20; seed++) {
+                StarChart chart = StarChartFixtures.chart(definitionId, seed, 5);
+                assertTrue(chart.implicits().isEmpty(), definitionId + " " + chart.implicits());
+                assertTrue(chart.implicitLines(false).isEmpty());
             }
         }
-        StarChart single = StarChartFixtures.chart(SINGLE, 8L, 3);
-
-        assertTrue(factionImplicits.size() > 5, "the faction varies by seed: " + factionImplicits);
-        assertEquals(single.implicits(), StarChartFixtures.chart(SINGLE, 8L, 3).implicits());
-        assertEquals(1, single.implicitLines(false).size());
-        assertTrue(single.implicitLines(false).get(0).plain().startsWith("The system is inhabited by "), single.implicitLines(false).get(0).plain());
-        assertEquals(StarChartImplicits.sharedChoices(), StarChartImplicits.corruptionPool());
-        assertEquals(single.implicits(), single.traits().implicits(), "the rolled faction is stored so it never changes with the faction list");
+        assertTrue(StarChartImplicits.sharedChoices().isEmpty());
     }
 
     @Test
-    void aChartKeepsReadingItsFactionAfterTheFactionLeavesTheList() throws Exception {
+    void aFactionImplicitStoredByAnOlderSaveIsDropped() {
         StarChart chart = StarChartFixtures.chart(SINGLE, 8L, 3);
-        String factionImplicit = chart.implicits().get(0).modifierId();
-        String keptFaction = factionImplicit.equals("CHART_FACTION_PIRATES") ? "hegemony" : "pirates";
-        exiledsector.charts.ChartFactions.register(new org.json.JSONArray("[{\"faction\": \"" + keptFaction + "\", \"weight\": \"1\"}]"));
+        chart.replaceImplicits(List.of(new RolledModifier("CHART_FACTION_PIRATES", ModifierSlot.IMPLICIT,
+                List.of(new RolledEffect("CHART_FACTION_PIRATES", 1f)))));
 
-        assertEquals(factionImplicit, chart.implicits().get(0).modifierId());
-        assertTrue(chart.implicitLines(false).get(0).plain().startsWith("The system is inhabited by "), chart.implicitLines(false).get(0).plain());
+        assertTrue(chart.implicits().isEmpty(), chart.implicits().toString());
     }
 
     @Test
@@ -239,32 +228,25 @@ class StarChartTest {
     }
 
     @Test
-    void aDroppedChartStoresItsFactionFromTheStart() throws Exception {
+    void aDroppedChartCarriesNoImplicits() {
         ItemData dropped = ItemData.rolledAtTier(ItemDefinitions.get(SINGLE), 8L, 3);
 
-        assertEquals(StarChartFixtures.chart(SINGLE, 8L, 3).implicits(), dropped.traits().implicits());
-        String droppedFaction = dropped.traits().implicits().get(0).modifierId();
-        String keptFaction = droppedFaction.equals("CHART_FACTION_PIRATES") ? "hegemony" : "pirates";
-        exiledsector.charts.ChartFactions.register(new org.json.JSONArray("[{\"faction\": \"" + keptFaction + "\", \"weight\": \"1\"}]"));
-        assertEquals(dropped.traits().implicits(), dropped.preview().implicits(), "a later faction list change leaves the chart's faction alone");
+        assertTrue(dropped.preview().implicits().isEmpty());
     }
 
     @Test
     void theCodecRoundTripsTierQualityCorruptionAndChangedImplicits() {
         StarChart chart = StarChartFixtures.chart(SINGLE, 21L, 6);
-        chart.applyTraits(new ItemTraits(6, 12, CorruptionOutcome.IMPLICIT_REPLACED, null));
-        Modifier replacement = StarChartImplicits.sharedChoices().stream().filter(implicit -> !implicit.id().equals(chart.implicits().get(0).modifierId()))
-                .findFirst().orElseThrow();
-        chart.replaceImplicits(List.of(RolledModifier.roll(replacement, new Random(1), false)));
+        chart.applyTraits(new ItemTraits(6, 12, CorruptionOutcome.VALUES_RANDOMISED, null));
 
         String encoded = ItemData.of(chart).encode();
         ItemData decoded = ItemData.parse(encoded);
         StarChart restored = (StarChart) decoded.preview();
 
-        assertTrue(encoded.contains("\"t\":6") && encoded.contains("\"q\":12") && encoded.contains("\"c\":\"IMPLICIT_REPLACED\""), encoded);
+        assertTrue(encoded.contains("\"t\":6") && encoded.contains("\"q\":12") && encoded.contains("\"c\":\"VALUES_RANDOMISED\""), encoded);
         assertEquals(6, restored.tier());
         assertEquals(12, restored.quality());
-        assertEquals(CorruptionOutcome.IMPLICIT_REPLACED, restored.corruption());
+        assertEquals(CorruptionOutcome.VALUES_RANDOMISED, restored.corruption());
         assertEquals(chart.explicits(), restored.explicits());
         assertEquals(chart.implicits(), restored.implicits());
         assertEquals(chart.name(), restored.name());
@@ -404,11 +386,11 @@ class StarChartTest {
             if (chart.rarity() == ItemRarity.COMMON) {
                 sawCommonName = true;
                 assertTrue(chart.displayName().title().toLowerCase(java.util.Locale.ROOT).contains("star chart"), chart.displayName().title());
-                assertEquals("Single Star Chart", chart.displayName().baseName());
+                assertEquals("Star Chart", chart.displayName().baseName());
             }
         }
         assertTrue(sawCommonName);
-        assertTrue(StarChartFixtures.chart(SINGLE, 1L, 4).headerLines().get(0).plain().startsWith("Tier 4 chart, single star"));
+        assertTrue(StarChartFixtures.chart(SINGLE, 1L, 4).headerLines().get(0).plain().startsWith("Tier 4 Star Chart"));
     }
 
     @Test

@@ -1,6 +1,7 @@
 package exiledsector.charts;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.fleets.FleetParamsV3;
@@ -24,4 +25,6 @@ interface ChartContentEngine {
     ChartVanillaLoot.SiteDrops siteDrops(String salvageSpec);
 
     void addColonyItem(SectorEntityToken holder, String itemId);
+
+    String planetCategory(PlanetAPI planet);
 }

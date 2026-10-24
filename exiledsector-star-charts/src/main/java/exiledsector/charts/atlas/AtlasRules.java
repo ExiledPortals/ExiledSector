@@ -25,6 +25,15 @@ public record AtlasRules(List<AtlasRegion> regions, Map<String, Float> layoutWei
         return normal == null ? AtlasRegion.DEFAULT_NORMAL : normal;
     }
 
+    public AtlasSpecial special(String id) {
+        for (AtlasSpecial special : specials) {
+            if (special.id().equals(id)) {
+                return special;
+            }
+        }
+        return null;
+    }
+
     public AtlasRegion region(String id) {
         for (AtlasRegion region : regions) {
             if (region.id().equals(id)) {

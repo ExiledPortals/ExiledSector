@@ -34,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
@@ -92,6 +93,11 @@ class ChartContentGeneratorTest {
 
     @Test
     void placesTheTiersLootAndFleetsAndRecordsTheObjectiveTargets() {
+        for (int world = 0; world < 6; world++) {
+            PlanetAPI planet = mock(PlanetAPI.class);
+            engine.offeringAt(planet, -2500f + world * 1000f, 2500f);
+            engine.planetCategories.put(planet, world % 2 == 0 ? "cat_hab3" : "cat_barren");
+        }
         ChartContent content = generate(42L, 10);
         ChartContentPlan plan = ChartContentPlanner.plan(42L, ChartTiers.forTier(10), ChartPois.all(), ChartFactions.all(), id -> true);
 
@@ -182,6 +188,43 @@ class ChartContentGeneratorTest {
         }
         assertTrue(guardsChecked >= 1);
         assertTrue(engine.fleets.stream().anyMatch(fleet -> fleet.getId().equals(content.bossFleetId())));
+    }
+
+    @Test
+    void aSiteThatNeedsAPlanetCategoryPrefersAMatchingWorld() throws Exception {
+        ChartPois.register(new JSONArray().put(new JSONObject().put("id", "mine").put("kind", "station").put("entity", "station_mining")
+                .put("cost", "1").put("weight", "1").put("planet_categories", "cat_lava")));
+        PlanetAPI lava = mock(PlanetAPI.class);
+        PlanetAPI frozen = mock(PlanetAPI.class);
+        engine = FakeChartContentEngine.install(new FakeChartContentEngine().offering(-4000f, 0f, 5000f, 0f)
+                .offeringAt(lava, 3000f, 3000f).offeringAt(frozen, -3000f, -3000f));
+        engine.planetCategories.put(lava, "cat_lava");
+        engine.planetCategories.put(frozen, "cat_frozen");
+
+        int runs = 0;
+        for (long seed = 1; seed <= 10; seed++) {
+            engine.salvageEntities.clear();
+            generate(seed, 6);
+            if (engine.salvageEntities.isEmpty()) {
+                continue;
+            }
+            runs++;
+            assertEquals(new Vector2f(3000f, 3000f), engine.salvageEntities.get(0).getLocation());
+        }
+
+        assertTrue(runs > 0);
+    }
+
+    @Test
+    void theBossHoldsAtTheLayoutsFeatureWhenThereIsOne() {
+        SectorEntityToken feature = mock(SectorEntityToken.class);
+        when(feature.getLocation()).thenReturn(new Vector2f(9000f, 0f));
+
+        ChartContent content = ChartContentGenerator.generate(sector, system, RUN_ID, 11L, 8, WORMHOLE, ChartGenContext.none(), feature);
+        CampaignFleetAPI boss = engine.fleets.stream().filter(fleet -> fleet.getId().equals(content.bossFleetId())).findFirst().orElseThrow();
+
+        assertEquals(FleetAssignment.ORBIT_AGGRESSIVE, engine.assignments.get(boss).get(0).assignment());
+        assertSame(feature, engine.assignments.get(boss).get(0).target());
     }
 
     @Test

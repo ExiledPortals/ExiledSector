@@ -2,6 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { buildVocabulary } from '../../../api/vocabulary.ts';
 import { parseCsvTable, serializeCsvTable } from '../../../shared/csv.ts';
 import {
+  ATLAS_FEATURE_SPEC,
+  ATLAS_NODE_EFFECT_SPEC,
+  ATLAS_LAYOUT_SPEC,
   ATLAS_MARKER_SPEC,
   ATLAS_REGION_SPEC,
   ATLAS_SPECIAL_SPEC,
@@ -49,6 +52,8 @@ const vocabulary = buildVocabulary({
   chartLootScopes: ['cache', 'domain', 'station', 'derelict', 'fleet', 'boss'],
   chartColonyItemGroups: ['rare_tech'],
   chartExpansions: ['spatial_breach'],
+  chartFeatures: ['ringed_giant', 'rogue_planet'],
+  chartPhenomena: ['black_hole', 'stellar_flares'],
 });
 
 const CHART_MODIFIERS_CSV =
@@ -367,6 +372,50 @@ describe('chart tables', () => {
     ]);
     expect(ATLAS_REGION_SPEC.summary?.(model.rows[0], vocabulary)).toBe('normal space, weight 15');
     expect(ATLAS_REGION_SPEC.issues(chartTable(ATLAS_REGION_SPEC, 'id,weight\nfurnace,1\n'), vocabulary)).toEqual(['Needs a normal row for normal space']);
+  });
+
+  it('mirrors the atlas look and layout loaders: phenomena stay out, colours and system types are checked', () => {
+    const regions = chartTable(
+      ATLAS_REGION_SPEC,
+      'id,weight,stars,planets,light_tint,keep_ruins\n' +
+        'normal,10,,,,\n' +
+        'collapsed,4,star_white:2; black_hole:4,cat_barren:3; cat_magfield:2,#9090C0,yes\n' +
+        'odd,1,,,purple,maybe\n',
+    );
+    expect(ATLAS_REGION_SPEC.issues(regions, vocabulary)).toEqual([
+      'collapsed: stars lists black_hole, but only phenomena add it',
+      'collapsed: planets lists cat_magfield, but only phenomena add it',
+      'odd: keep_ruins "maybe" must be yes or no',
+      'odd: light_tint "purple" must be a colour like #A0C8FF',
+    ]);
+    const layouts = chartTable(
+      ATLAS_LAYOUT_SPEC,
+      'id,weight,system_types,min_orbits,max_orbits,max_orbit_radius,terrain,feature,note\n' +
+        'ringed,1,SINGLE:4; BINARY_FAR:1,4,7,15000,cat_terrain_rings:2,ringed_giant,\n' +
+        'broken,1,NEBULA:1,6,3,,cat_magfield:1,,\n',
+    );
+    expect(ATLAS_LAYOUT_SPEC.issues(layouts, vocabulary)).toEqual([
+      'broken: system_types lists NEBULA, which is not one of SINGLE, BINARY_CLOSE, BINARY_FAR, TRINARY_2CLOSE, TRINARY_1CLOSE_1FAR, TRINARY_2FAR',
+      'broken: terrain lists cat_magfield, but only phenomena add it',
+      'broken: max_orbits is below min_orbits',
+    ]);
+    expect(ATLAS_LAYOUT_SPEC.summary?.(layouts.rows[0], vocabulary)).toBe('4-7 orbits, ringed_giant');
+    expect(ATLAS_LAYOUT_SPEC.issues(chartTable(ATLAS_LAYOUT_SPEC, 'id,feature\ncrystal,crystal_spire\n'), vocabulary)).toEqual([
+      'crystal: feature must be one of ringed_giant, rogue_planet',
+    ]);
+    const features = chartTable(ATLAS_FEATURE_SPEC, 'id,note\nringed_giant,\nspire,\n');
+    expect(ATLAS_FEATURE_SPEC.issues(features, vocabulary)).toEqual(['spire: id must be one of ringed_giant, rogue_planet']);
+    expect(ATLAS_FEATURE_SPEC.warnings(features, vocabulary)).toEqual(['No rogue_planet row, so layouts naming it build no feature']);
+  });
+
+  it('mirrors the atlas node effect loader: chart effects with numbers, negatives allowed', () => {
+    const text = 'id,effects,note\r\nsensor_array,CHART_QUANTITY_PERCENT:-30,\r\nnexus,CHART_MADE_UP:5; CHART_EXTRA_FLEETS,\r\n';
+    const model = chartTable(ATLAS_NODE_EFFECT_SPEC, text);
+    expect(serializeChartTable(model, ATLAS_NODE_EFFECT_SPEC.columns)).toBe(text);
+    expect(ATLAS_NODE_EFFECT_SPEC.issues(model, vocabulary)).toEqual([
+      'nexus: CHART_MADE_UP is not a chart effect',
+      'nexus: CHART_EXTRA_FLEETS needs a number, as EFFECT:value',
+    ]);
   });
 
   it('mirrors the atlas marker and special site loaders', () => {

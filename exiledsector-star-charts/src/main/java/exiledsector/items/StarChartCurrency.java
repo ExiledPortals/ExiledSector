@@ -15,7 +15,7 @@ public enum StarChartCurrency implements ItemCurrency {
     CARTOGRAPHY("exiledSector_cartographer_cipher", "cartographer", 120, 2f, MaterialTier.EXOTIC, new Color(245, 215, 110));
 
     public static final List<CraftingCurrency> KERNELS_ON_CHARTS = List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.CORRUPTION,
-            CraftingCurrency.TRANSPOSITION, CraftingCurrency.RECALIBRATION, CraftingCurrency.ATTUNEMENT);
+            CraftingCurrency.TRANSPOSITION, CraftingCurrency.RECALIBRATION);
     static final int MAX_REFORGE_ATTEMPTS = 16;
 
     private final String itemId;

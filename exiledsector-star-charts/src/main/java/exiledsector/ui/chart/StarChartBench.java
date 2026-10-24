@@ -3,7 +3,9 @@ package exiledsector.ui.chart;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
+import exiledsector.charts.ChartRunActions;
 import exiledsector.charts.StarChartSettings;
+import exiledsector.charts.atlas.AtlasCell;
 import exiledlib.i18n.StyledText;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.CraftingWard;
@@ -14,6 +16,7 @@ import exiledsector.items.ItemStore;
 import exiledsector.items.ItemType;
 import exiledsector.items.StarChart;
 import exiledsector.ui.socket.BenchMode;
+import exiledsector.ui.atlas.AtlasPanel;
 import exiledsector.ui.socket.BenchModeSupport;
 import exiledsector.ui.socket.SocketPanelPlacement;
 import exiledsector.ui.socket.StarChartStoragePanel;
@@ -122,6 +125,22 @@ public final class StarChartBench implements BenchModeSupport {
     @Override
     public int openEntries() {
         return StarChartSettings.wormholeEntries();
+    }
+
+    @Override
+    public TargetPicker targetPicker() {
+        return (hostPanel, loaded, listener) -> AtlasPanel.open(hostPanel, loaded instanceof StarChart chart ? chart : null, listener);
+    }
+
+    @Override
+    public OpenOutcome openAt(SectorAPI sector, ItemStore store, Item loaded, int entries, Random random, Object target) {
+        if (!(target instanceof AtlasCell cell)) {
+            return open(sector, store, loaded, entries, random);
+        }
+        StarChartOpening.Outcome outcome = StarChartOpening.open(
+                (openSector, allowed, openRandom, openStore, chart) -> ChartRunActions.openFromAtlas(openSector, allowed, openRandom, openStore, chart, cell),
+                sector, store, loaded, entries, random);
+        return new OpenOutcome(outcome.opened(), outcome.messageKey());
     }
 
     @Override

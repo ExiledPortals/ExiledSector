@@ -37,6 +37,14 @@ class ChartRunTest {
     }
 
     @Test
+    void theGuaranteedBossTierUpIsGrantedOncePerRun() {
+        ChartRun run = run(1);
+
+        assertTrue(run.claimBossTierUp());
+        assertFalse(run.claimBossTierUp());
+    }
+
+    @Test
     void aNewRunIsOpenWithEveryEntryLeftAndDerivesItsIdsFromTheRunId() {
         ChartRun run = run(2);
 

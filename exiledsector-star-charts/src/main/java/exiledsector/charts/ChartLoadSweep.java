@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
+import exiledsector.charts.atlas.AtlasProgress;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -71,6 +72,7 @@ public final class ChartLoadSweep {
         if (system == null) {
             LOG.warn("[ExiledSector] Star Chart run " + run.runId() + " lost its system; closing it");
             run.beginClosing();
+            AtlasProgress.closedWithoutObjective(sector, run);
             ChartRunCloser.close(sector, run.runId(), null);
             return;
         }

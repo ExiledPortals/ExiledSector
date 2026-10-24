@@ -1,12 +1,15 @@
 package exiledsector.charts;
 
+import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.StarAge;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
+import exiledsector.charts.phenomenon.ChartPhenomenon;
 
 import java.util.Random;
 
 interface ChartLayoutEngine {
 
-    void build(StarSystemAPI system, String starId, StarSystemType systemType, StarAge age, Random random);
+    SectorEntityToken build(StarSystemAPI system, String starId, StarSystemType systemType, StarAge age, Random random, ChartLayoutRecipe recipe,
+                            ChartPhenomenon phenomenon);
 }

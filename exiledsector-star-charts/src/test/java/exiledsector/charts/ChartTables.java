@@ -17,6 +17,10 @@ public final class ChartTables {
         return CDL.toJSONArray(csv.replace("\r\n", "\n"));
     }
 
+    public static void loadFeatures() throws Exception {
+        ChartFeatures.register(csvRows(ChartFeatures.PATH));
+    }
+
     public static void loadShipped() throws Exception {
         ChartTiers.register(csvRows(ChartTiers.PATH));
         ChartPois.register(csvRows(ChartPois.PATH));

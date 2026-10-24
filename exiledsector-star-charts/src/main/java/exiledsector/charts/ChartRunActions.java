@@ -9,6 +9,12 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemStore;
+import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.atlas.AtlasGenerator;
+import exiledsector.charts.atlas.AtlasOpening;
+import exiledsector.charts.atlas.AtlasProgress;
+import exiledsector.charts.atlas.AtlasRuntime;
+import exiledsector.charts.atlas.AtlasState;
 import exiledsector.items.StarChart;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
@@ -27,6 +33,7 @@ public final class ChartRunActions {
         PLAYER_IN_TRANSITION,
         PLAYER_IN_SYSTEM,
         NO_CHART,
+        NOT_REACHABLE,
         FAILED
     }
 
@@ -48,6 +55,26 @@ public final class ChartRunActions {
         return openBesidePlayer(sector, entriesAllowed, random, ChartLayoutRequest.forChart(chart), ItemData.of(chart).encode());
     }
 
+    public static OpenResult openFromAtlas(SectorAPI sector, int entriesAllowed, Random random, ItemStore store, Item storedChart,
+                                           AtlasCell cell) {
+        if (!(storedChart instanceof StarChart chart) || chart.definition() == null || store == null || !store.holdsStarCharts()
+                || store.find(chart.id()) != chart || cell == null) {
+            return OpenResult.NO_CHART;
+        }
+        AtlasGenerator generator = AtlasRuntime.generator(sector);
+        AtlasState state = AtlasState.get(sector);
+        if (!AtlasOpening.check(generator, state, cell, chart).allowsOpening()) {
+            return OpenResult.NOT_REACHABLE;
+        }
+        OpenResult result = openBesidePlayer(sector, entriesAllowed, random, AtlasOpening.request(generator, state, cell, chart),
+                ItemData.of(chart).encode(), AtlasOpening.runNode(generator, state, cell));
+        if (result == OpenResult.OPENED) {
+            store.remove(chart);
+            AtlasProgress.opened(sector, generator, cell);
+        }
+        return result;
+    }
+
     public static OpenResult openFromStore(SectorAPI sector, int entriesAllowed, Random random, ItemStore store, Item storedChart) {
         if (!(storedChart instanceof StarChart chart) || store == null || !store.holdsStarCharts() || store.find(chart.id()) != chart) {
             return OpenResult.NO_CHART;
@@ -61,6 +88,11 @@ public final class ChartRunActions {
 
     private static OpenResult openBesidePlayer(SectorAPI sector, int entriesAllowed, Random random, ChartLayoutRequest layoutRequest,
                                                String chartData) {
+        return openBesidePlayer(sector, entriesAllowed, random, layoutRequest, chartData, null);
+    }
+
+    private static OpenResult openBesidePlayer(SectorAPI sector, int entriesAllowed, Random random, ChartLayoutRequest layoutRequest,
+                                               String chartData, AtlasRunNode atlasNode) {
         if (ChartRuns.hasRun()) {
             return OpenResult.RUN_EXISTS;
         }
@@ -78,6 +110,7 @@ public final class ChartRunActions {
         Vector2f playerLocation = playerFleet.getLocation();
         ChartRun run = new ChartRun(newRunId(random), ChartIds.locationIdOf(origin), playerLocation.x, playerLocation.y, entriesAllowed);
         run.recordChart(chartData);
+        run.recordAtlasNode(atlasNode);
         ChartRuns.store(run);
         try {
             ChartSystemFactory.ChartSystem created = ChartSystemFactory.createSystem(sector, run.runId(), layoutRequest);
@@ -88,6 +121,7 @@ public final class ChartRunActions {
             return OpenResult.OPENED;
         } catch (RuntimeException | LinkageError e) {
             LOG.error("[ExiledSector] Opening Star Chart run " + run.runId() + " failed; cleaning up what was created", e);
+            run.recordAtlasNode(null);
             run.beginClosing();
             ChartRunCloser.close(sector, run);
             return OpenResult.FAILED;

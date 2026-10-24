@@ -45,6 +45,20 @@ class ChartOpenCommandTest {
     }
 
     @Test
+    void atlasRegionsAndLayoutsMustBeKnownAndLeaveTheOtherSettingsAlone() {
+        OpenArguments unknown = OpenArguments.parse("77 region=nowhere");
+        OpenArguments plain = OpenArguments.parse("77 tier=4 breach");
+
+        assertNotNull(unknown.problem());
+        assertNotNull(OpenArguments.parse("layout=nothing").problem());
+        assertNull(plain.problem());
+        assertNull(plain.regionId());
+        assertNull(plain.layoutId());
+        assertEquals(4, plain.tier());
+        assertTrue(plain.breach());
+    }
+
+    @Test
     void theWordBreachAddsASpatialBreachInAnyPosition() {
         OpenArguments breach = OpenArguments.parse("BREACH 77 tier=4");
         assertTrue(breach.breach());

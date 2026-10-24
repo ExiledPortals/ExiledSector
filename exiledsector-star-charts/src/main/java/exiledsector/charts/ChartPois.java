@@ -75,7 +75,7 @@ public final class ChartPois {
         int maxTier = ChartTiers.clamp(csv.integer(row, "max_tier", ChartTiers.HIGHEST_TIER, id));
         return new ChartPoi(id, kind, entityType, ModCsv.text(row, "salvage_spec"), derelictType, csv.number(row, "cost", 1f, id),
                 csv.number(row, "weight", 1f, id), Math.min(minTier, maxTier), Math.max(minTier, maxTier), csv.flag(row, "guarded", false, id),
-                ModCsv.text(row, "requires_mod"));
+                ModCsv.text(row, "requires_mod"), CsvRows.entries(ModCsv.text(row, "planet_categories")));
     }
 
     public static List<ChartPoi> all() {

@@ -14,6 +14,7 @@ public final class ChartRunEffects {
     static final float SENSOR_MOD_DAYS = 0.1f;
     private static ChartRun contextRun;
     private static String contextChartData;
+    private static AtlasRunNode contextNode;
     private static ChartGenContext context = ChartGenContext.none();
 
     private ChartRunEffects() {
@@ -32,10 +33,12 @@ public final class ChartRunEffects {
         if (run == null) {
             return ChartGenContext.none();
         }
-        if (run != contextRun || !Objects.equals(run.chartData(), contextChartData)) {
-            context = ChartGenContext.from(chartOf(run));
+        AtlasRunNode node = run.atlasNode();
+        if (run != contextRun || !Objects.equals(run.chartData(), contextChartData) || !Objects.equals(node, contextNode)) {
+            context = ChartGenContext.from(chartOf(run)).withAtlasNode(node);
             contextRun = run;
             contextChartData = run.chartData();
+            contextNode = node;
         }
         return context;
     }

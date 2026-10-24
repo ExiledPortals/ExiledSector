@@ -50,7 +50,7 @@ class StarChartNamesTest {
         List<String> secondWords = words(shippedWords, "second");
         int rareCharts = 0;
         for (long seed = 0; seed < 200; seed++) {
-            StarChart chart = StarChartFixtures.chart("star_chart_binary_close", seed, 8);
+            StarChart chart = StarChartFixtures.chart("star_chart", seed, 8);
             if (chart.rarity() != ItemRarity.RARE) {
                 continue;
             }
@@ -84,7 +84,7 @@ class StarChartNamesTest {
     void withoutChartWordsARareChartKeepsItsBaseName() throws Exception {
         StarChartNames.register(null);
         for (long seed = 0; seed < 100; seed++) {
-            StarChart chart = StarChartFixtures.chart("star_chart_single", seed, 9);
+            StarChart chart = StarChartFixtures.chart("star_chart", seed, 9);
             if (chart.rarity() == ItemRarity.RARE) {
                 assertNotNull(chart.definition());
                 assertEquals(chart.definition().displayName(), chart.name());

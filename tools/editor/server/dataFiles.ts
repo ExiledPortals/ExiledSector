@@ -156,6 +156,12 @@ export function resolveDataResource(paths: ProjectPaths, name: string): DataReso
       return { filePath: path.join(configDir, 'atlas_regions.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
     case 'atlas-layouts':
       return { filePath: path.join(configDir, 'atlas_layouts.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
+    case 'chart-phenomena':
+      return { filePath: path.join(configDir, 'chart_phenomena.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
+    case 'atlas-features':
+      return { filePath: path.join(configDir, 'atlas_features.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
+    case 'atlas-node-effects':
+      return { filePath: path.join(configDir, 'atlas_node_effects.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
     case 'atlas-markers':
       return { filePath: path.join(configDir, 'atlas_markers.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
     case 'atlas-specials':

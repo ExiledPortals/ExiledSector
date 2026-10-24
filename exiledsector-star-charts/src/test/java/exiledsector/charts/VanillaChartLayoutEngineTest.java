@@ -48,7 +48,7 @@ class VanillaChartLayoutEngineTest {
         }).when(system).setType(any());
 
         assertThrows(RuntimeException.class,
-                () -> new VanillaChartLayoutEngine().build(system, "star", StarSystemType.SINGLE, StarAge.OLD, seeded));
+                () -> new VanillaChartLayoutEngine().build(system, "star", StarSystemType.SINGLE, StarAge.OLD, seeded, ChartLayoutRecipe.ORDINARY, null));
 
         verify(system).setType(StarSystemType.SINGLE);
         assertSame(seeded, duringBuild.get());

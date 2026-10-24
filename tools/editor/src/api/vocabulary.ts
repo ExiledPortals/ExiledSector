@@ -35,6 +35,8 @@ interface VocabularyFile {
   chartLootScopes?: string[];
   chartColonyItemGroups?: string[];
   chartExpansions?: string[];
+  chartFeatures?: string[];
+  chartPhenomena?: string[];
 }
 
 export interface ChartTierDefault {
@@ -85,6 +87,8 @@ export interface Vocabulary {
   chartLootScopes: string[];
   chartColonyItemGroups: string[];
   chartExpansions: string[];
+  chartFeatures: string[];
+  chartPhenomena: string[];
 }
 
 export function buildVocabulary(file: VocabularyFile): Vocabulary {
@@ -122,6 +126,8 @@ export function buildVocabulary(file: VocabularyFile): Vocabulary {
     chartLootScopes: (file.chartLootScopes ?? []).slice(),
     chartColonyItemGroups: (file.chartColonyItemGroups ?? []).slice(),
     chartExpansions: (file.chartExpansions ?? []).slice(),
+    chartFeatures: (file.chartFeatures ?? []).slice(),
+    chartPhenomena: (file.chartPhenomena ?? []).slice(),
   };
 }
 

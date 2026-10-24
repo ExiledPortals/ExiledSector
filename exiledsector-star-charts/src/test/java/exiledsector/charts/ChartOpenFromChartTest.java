@@ -62,8 +62,8 @@ class ChartOpenFromChartTest {
         FakeChartLayoutEngine.install(FakeChartLayoutEngine.doingNothing());
         FakeChartContentEngine.install(FakeChartContentEngine.offeringNothing());
         store = ItemStore.starCharts();
-        firstChart = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart_trinary_2far"), 31L, 9));
-        secondChart = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart_single"), 32L, 2));
+        firstChart = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 31L, 9));
+        secondChart = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 32L, 2));
     }
 
     @AfterEach
@@ -85,7 +85,7 @@ class ChartOpenFromChartTest {
         assertTrue(run.hasChart());
         assertEquals(9, run.tier());
         assertEquals(firstChart.seed(), run.layoutSeed());
-        assertEquals("TRINARY_2FAR", run.layoutType());
+        assertEquals(ChartLayoutGenerator.typeFor(ChartLayoutRequest.forChart((StarChart) firstChart)).name(), run.layoutType());
         StarChart carried = ChartRunEffects.chartOf(run);
         assertEquals(firstChart.definitionId(), carried.definitionId());
         assertEquals(firstChart.explicits(), carried.explicits());
@@ -108,7 +108,7 @@ class ChartOpenFromChartTest {
 
     @Test
     void onlyAChartThatIsReallyInTheChartStoreCanBeOpened() {
-        Item looseChart = ItemData.rolledAtTier(ItemDefinitions.get("star_chart_single"), 33L, 2).preview();
+        Item looseChart = ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 33L, 2).preview();
 
         assertEquals(ChartRunActions.OpenResult.NO_CHART, ChartRunActions.openFromStore(sector, 1, new Random(1), store, looseChart));
         assertEquals(ChartRunActions.OpenResult.NO_CHART, ChartRunActions.openFromStore(sector, 1, new Random(1), new ItemStore(), firstChart));

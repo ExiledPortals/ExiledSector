@@ -75,6 +75,11 @@ public final class ChartContentGenerator {
 
     public static ChartContent generate(SectorAPI sector, StarSystemAPI system, String runId, long seed, int tier, Vector2f innerWormhole,
                                         ChartGenContext chartContext) {
+        return generate(sector, system, runId, seed, tier, innerWormhole, chartContext, null);
+    }
+
+    public static ChartContent generate(SectorAPI sector, StarSystemAPI system, String runId, long seed, int tier, Vector2f innerWormhole,
+                                        ChartGenContext chartContext, SectorEntityToken featureAnchor) {
         int clampedTier = ChartTiers.clamp(tier);
         ChartContentPlan plan;
         try {
@@ -84,7 +89,8 @@ public final class ChartContentGenerator {
             report("plan the content", seed, e);
             return ChartContent.none(clampedTier);
         }
-        Build build = new Build(system, runId, clampedTier, seed, innerWormhole, chartContext == null ? ChartGenContext.none() : chartContext);
+        Build build = new Build(system, runId, clampedTier, seed, innerWormhole, chartContext == null ? ChartGenContext.none() : chartContext,
+                featureAnchor);
         try {
             build.placePois(plan);
             build.spawnFleets(plan);
@@ -298,8 +304,11 @@ public final class ChartContentGenerator {
         private final List<String> expansions = new ArrayList<>();
         private List<Hazard> hazards = List.of();
         private String bossFleetId;
+        private final SectorEntityToken featureAnchor;
 
-        Build(StarSystemAPI system, String runId, int tier, long seed, Vector2f innerWormhole, ChartGenContext chartContext) {
+        Build(StarSystemAPI system, String runId, int tier, long seed, Vector2f innerWormhole, ChartGenContext chartContext,
+              SectorEntityToken featureAnchor) {
+            this.featureAnchor = featureAnchor;
             this.system = system;
             this.runId = runId;
             this.tier = tier;
@@ -328,6 +337,11 @@ public final class ChartContentGenerator {
         private SectorEntityToken placePoi(ChartPoi poi, String factionId) {
             List<ChartSpot> clear = clearSpots(engine.spots(system, placementRandom, usedFoci, POI_GAP), hazards, innerWormhole,
                     POI_WORMHOLE_CLEARANCE);
+            if (!poi.planetCategories().isEmpty()) {
+                List<ChartSpot> matching = clear.stream().filter(candidate -> candidate.focus() instanceof PlanetAPI planet && !planet.isStar()
+                        && poi.planetCategories().contains(engine.planetCategory(planet))).toList();
+                clear = matching.isEmpty() ? clear : matching;
+            }
             ChartSpot spot = WeightedPick.pick(clear, candidate -> Math.max(candidate.weight(), MIN_SPOT_WEIGHT), placementRandom);
             boolean recoverable = salvageRandom.nextFloat() < DERELICT_RECOVERY_CHANCE;
             Random entityRandom = new Random(salvageRandom.nextLong());
@@ -432,6 +446,9 @@ public final class ChartContentGenerator {
                 report("add loot to a " + planned.role().name().toLowerCase(Locale.ROOT) + " fleet", seed, e);
             }
             SectorEntityToken guarded = planned.guardsPoi() && planned.poiIndex() < poiEntities.size() ? poiEntities.get(planned.poiIndex()) : null;
+            if (featureAnchor != null && planned.role() == FleetRole.BOSS) {
+                guarded = featureAnchor;
+            }
             Vector2f spawnAt = spawnLocation(planned.role(), guarded, oneFleetRandom);
             system.addEntity(fleet);
             try {

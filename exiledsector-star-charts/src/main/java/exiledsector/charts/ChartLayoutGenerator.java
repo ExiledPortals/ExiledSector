@@ -9,10 +9,12 @@ import com.fs.starfarer.api.campaign.econ.EconomyAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.MarketAPI.SurveyLevel;
 import com.fs.starfarer.api.campaign.econ.MarketConditionAPI;
+import com.fs.starfarer.api.impl.MusicPlayerPluginImpl;
 import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.campaign.procgen.StarAge;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
+import exiledsector.charts.phenomenon.ChartPhenomenon;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -64,17 +66,28 @@ public final class ChartLayoutGenerator {
     }
 
     public static StarSystemType typeFor(ChartLayoutRequest request) {
-        return request.systemType() != null ? request.systemType() : pickType(derivedRandom(request.seed(), TYPE_SALT));
+        if (request.systemType() != null) {
+            return request.systemType();
+        }
+        Map<StarSystemType, Float> weights = request.recipe().systemTypeWeights();
+        return pickType(derivedRandom(request.seed(), TYPE_SALT), weights.isEmpty() ? TYPE_WEIGHTS : weights);
     }
 
     static StarSystemType pickType(Random typeRandom) {
+        return pickType(typeRandom, TYPE_WEIGHTS);
+    }
+
+    static StarSystemType pickType(Random typeRandom, Map<StarSystemType, Float> weights) {
         float total = 0f;
         for (StarSystemType allowed : ALLOWED_TYPES) {
-            total += TYPE_WEIGHTS.get(allowed);
+            total += Math.max(0f, weights.getOrDefault(allowed, 0f));
+        }
+        if (total <= 0f) {
+            return StarSystemType.SINGLE;
         }
         float roll = typeRandom.nextFloat() * total;
         for (StarSystemType allowed : ALLOWED_TYPES) {
-            roll -= TYPE_WEIGHTS.get(allowed);
+            roll -= Math.max(0f, weights.getOrDefault(allowed, 0f));
             if (roll < 0f) {
                 return allowed;
             }
@@ -95,12 +108,14 @@ public final class ChartLayoutGenerator {
 
     public static ChartLayout generate(SectorAPI sector, StarSystemAPI system, String runId, ChartLayoutRequest request) {
         long seed = request.seed();
-        StarSystemType systemType = typeFor(request);
+        String phenomenonId = request.phenomenonId().isEmpty() ? ChartPhenomena.rolledOverlay(seed, request.tier(), request.chartContext()) : request.phenomenonId();
+        ChartPhenomenon phenomenon = ChartPhenomena.availableAt(phenomenonId, request.tier());
+        StarSystemType systemType = phenomenon != null && phenomenon.systemType() != null ? phenomenon.systemType() : typeFor(request);
         Set<Object> namesBefore = ChartUsedNames.snapshot();
-        boolean generated;
+        Built built;
         try {
-            generated = buildWithVanilla(system, runId, systemType, seed);
-            if (!generated) {
+            built = buildWithVanilla(system, runId, systemType, seed, request.recipe(), phenomenon);
+            if (!built.generated()) {
                 scrub(system);
                 ChartSystemFactory.addFallbackStar(system, runId);
             }
@@ -109,20 +124,30 @@ public final class ChartLayoutGenerator {
         }
         removeJumpPoints(system);
         removeHyperspacePresence(system);
-        prepareMarkets(system, sector.getEconomy());
+        prepareMarkets(system, sector.getEconomy(), request.recipe().keepRuins());
+        if (!request.recipe().musicSetId().isEmpty()) {
+            system.getMemoryWithoutUpdate().set(MusicPlayerPluginImpl.MUSIC_SET_MEM_KEY, request.recipe().musicSetId());
+        }
         ChartBodyNames.assign(system, ChartBodyNames.designation(derivedRandom(seed, NAME_SALT)));
         system.updateAllOrbits();
-        Vector2f innerWormhole = ChartWormholePlacement.choose(system, derivedRandom(seed, PLACEMENT_SALT));
-        return new ChartLayout(seed, systemType, generated, innerWormhole);
+        SectorEntityToken anchor = built.featureAnchor();
+        Vector2f avoid = anchor == null || anchor.getLocation() == null ? null : new Vector2f(anchor.getLocation());
+        Vector2f innerWormhole = ChartWormholePlacement.choose(system, derivedRandom(seed, PLACEMENT_SALT), avoid);
+        return new ChartLayout(seed, systemType, built.generated(), innerWormhole, anchor);
     }
 
-    private static boolean buildWithVanilla(StarSystemAPI system, String runId, StarSystemType systemType, long seed) {
+    private record Built(boolean generated, SectorEntityToken featureAnchor) {
+    }
+
+    private static Built buildWithVanilla(StarSystemAPI system, String runId, StarSystemType systemType, long seed, ChartLayoutRecipe recipe,
+                                          ChartPhenomenon phenomenon) {
         try {
-            engine.build(system, ChartIds.starId(runId), systemType, pickAge(seed), derivedRandom(seed, LAYOUT_SALT));
+            SectorEntityToken anchor = engine.build(system, ChartIds.starId(runId), systemType, pickAge(seed), derivedRandom(seed, LAYOUT_SALT), recipe,
+                    phenomenon);
             if (system.getStar() == null) {
                 throw new IllegalStateException("the generator finished without a star");
             }
-            return true;
+            return new Built(true, anchor);
         } catch (RuntimeException | LinkageError e) {
             if (!failureReported) {
                 failureReported = true;
@@ -131,7 +156,7 @@ public final class ChartLayoutGenerator {
             } else {
                 LOG.debug("[ExiledSector] Generating a Star Chart layout (seed " + seed + ", " + systemType + ") failed again", e);
             }
-            return false;
+            return new Built(false, null);
         }
     }
 
@@ -165,7 +190,7 @@ public final class ChartLayoutGenerator {
         system.setHyperspaceAnchor(null);
     }
 
-    static void prepareMarkets(StarSystemAPI system, EconomyAPI economy) {
+    static void prepareMarkets(StarSystemAPI system, EconomyAPI economy, boolean keepRuins) {
         for (PlanetAPI planet : system.getPlanets()) {
             planet.addTag(Tags.NOT_RANDOM_MISSION_TARGET);
             MarketAPI market = planet.getMarket();
@@ -176,7 +201,9 @@ public final class ChartLayoutGenerator {
                 economy.removeMarket(market);
             }
             market.setPlanetConditionMarketOnly(true);
-            CIVILISATION_CONDITIONS.forEach(market::removeCondition);
+            if (!keepRuins) {
+                CIVILISATION_CONDITIONS.forEach(market::removeCondition);
+            }
             market.setSurveyLevel(SurveyLevel.SEEN);
             for (MarketConditionAPI condition : market.getConditions()) {
                 if (!condition.requiresSurveying()) {

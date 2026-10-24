@@ -56,7 +56,7 @@ class StarChartOpeningTest {
         lunaMock = Mockito.mockStatic(LunaSettings.class);
         lunaMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.OPEN_ANYWHERE_FIELD_ID)).thenReturn(true);
         store = ItemStore.starCharts();
-        chart = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart_single"), 12L, 4));
+        chart = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 12L, 4));
     }
 
     @AfterEach

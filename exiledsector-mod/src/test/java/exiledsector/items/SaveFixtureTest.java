@@ -45,11 +45,13 @@ class SaveFixtureTest {
         ItemFixtures.registerShippedItems();
         StarChartFixtures.registerShipped();
         WormholeAnchorDefinitions.register(HullItemRows.shippedRows(WormholeAnchorDefinitions.DATA_PATH));
+        ItemIdAliases.register(HullItemRows.shippedRows(ItemIdAliases.dataPath()));
     }
 
     @AfterEach
     void tearDown() {
         StarChartFixtures.clear();
+        ItemIdAliases.clear();
         WormholeAnchorDefinitions.clear();
         ItemDefinitions.clear();
         ItemModifiers.clear();

@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
+import exiledsector.charts.atlas.AtlasProgress;
 import org.apache.log4j.Logger;
 
 import java.util.HashSet;
@@ -75,6 +76,7 @@ public final class ChartObjectives {
         if (!run.markObjectiveComplete()) {
             return;
         }
+        AtlasProgress.completed(sector, run);
         try {
             ChartRewards.grant(sector, run);
         } catch (RuntimeException | LinkageError e) {

@@ -1,7 +1,7 @@
 package exiledsector.charts.atlas;
 
 public record AtlasSpecial(String id, String kind, Placement placement, float chance, float minSteps, float radius, int count, float steps,
-                           String requiredMod, String unlock) {
+                           String requiredMod, String unlock, String factionId) {
 
     public static final String INFESTATION = "infestation";
     public static final float MOST_RADIUS = AtlasCell.CHUNK_SIZE - 1f;
@@ -17,6 +17,12 @@ public record AtlasSpecial(String id, String kind, Placement placement, float ch
         steps = Math.max(1f, steps);
         requiredMod = requiredMod == null ? "" : requiredMod;
         unlock = unlock == null ? "" : unlock;
+        factionId = factionId == null ? "" : factionId;
+    }
+
+    public AtlasSpecial(String id, String kind, Placement placement, float chance, float minSteps, float radius, int count, float steps,
+                        String requiredMod, String unlock) {
+        this(id, kind, placement, chance, minSteps, radius, count, steps, requiredMod, unlock, "");
     }
 
     public boolean infests() {

@@ -188,12 +188,11 @@ class ChartContentDataTest {
     }
 
     @Test
-    void everyListedFactionIsAWeightedChartImplicit() throws Exception {
+    void listedFactionsNoLongerRollAsChartImplicitsButStillRead() throws Exception {
         ChartFactions.register(ChartTables.csvRows(ChartFactions.PATH));
 
-        List<String> implicitIds = StarChartImplicits.sharedChoices().stream().map(Modifier::id).toList();
-        assertEquals(ChartFactions.all().size(), implicitIds.size());
-        assertTrue(implicitIds.contains("CHART_FACTION_LUDDIC_PATH"));
+        assertTrue(StarChartImplicits.sharedChoices().isEmpty());
+        assertTrue(ChartFactions.all().stream().anyMatch(faction -> faction.factionId().equals("luddic_path")));
         assertEquals(new ChartFactionEffect("luddic_path"), ChartEffects.RESOLVER.byName("CHART_FACTION_LUDDIC_PATH"));
         assertEquals(new ChartFactionEffect("diableavionics"), ChartEffects.RESOLVER.byName("CHART_FACTION_DIABLEAVIONICS"),
                 "a faction removed from the list still reads, so old charts fall back to a random faction instead of an unreadable line");

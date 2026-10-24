@@ -46,7 +46,7 @@ public final class AtlasGenerator {
     private final long seed;
     private final AtlasRules rules;
     private final AtlasUnlocks unlocks;
-    private final AtlasRegionMemory memory;
+    private final AtlasMemory memory;
     private final Set<Long> fixedCells = new HashSet<>();
     private final Map<Long, PlacedSpecial> fixedSpecials = new HashMap<>();
     private final Map<Long, List<AtlasCell>> laneCache = boundedCache(CACHE_LIMIT_CELLS);
@@ -54,6 +54,7 @@ public final class AtlasGenerator {
     private final Map<Long, Boolean> survivalCache = boundedCache(CACHE_LIMIT);
     private final Map<Long, Patch> patchCache = boundedCache(CACHE_LIMIT);
     private final Map<Long, AtlasBiome> biomeCache = boundedCache(CACHE_LIMIT);
+    private final Map<Long, Map<Long, PlacedSpecial>> specialCache = boundedCache(CACHE_LIMIT);
 
     private record PlacedSpecial(AtlasCell cell, AtlasSpecial special, double roll) {
     }
@@ -72,10 +73,10 @@ public final class AtlasGenerator {
     }
 
     public AtlasGenerator(long seed, AtlasRules rules, AtlasUnlocks unlocks) {
-        this(seed, rules, unlocks, AtlasRegionMemory.NONE);
+        this(seed, rules, unlocks, AtlasMemory.NONE);
     }
 
-    public AtlasGenerator(long seed, AtlasRules rules, AtlasUnlocks unlocks, AtlasRegionMemory memory) {
+    public AtlasGenerator(long seed, AtlasRules rules, AtlasUnlocks unlocks, AtlasMemory memory) {
         this.seed = seed;
         this.rules = rules;
         this.unlocks = unlocks;
@@ -455,19 +456,23 @@ public final class AtlasGenerator {
     }
 
     private Map<Long, PlacedSpecial> specialsAround(int chunkX, int chunkY) {
+        return specialCache.computeIfAbsent(chunkKey(chunkX, chunkY), key -> placeSpecialsAround(chunkX, chunkY));
+    }
+
+    private Map<Long, PlacedSpecial> placeSpecialsAround(int chunkX, int chunkY) {
         Map<Long, PlacedSpecial> placed = new HashMap<>(fixedSpecials);
         for (int dx = -1; dx <= 1; dx++) {
             for (int dy = -1; dy <= 1; dy++) {
                 placeChunkSpecials(chunkX + dx, chunkY + dy, placed);
             }
         }
-        return placed;
+        return Map.copyOf(placed);
     }
 
     private void placeChunkSpecials(int chunkX, int chunkY, Map<Long, PlacedSpecial> placed) {
         List<AtlasCell> cells = null;
         for (AtlasSpecial special : rules.specials()) {
-            if (special.placement() != AtlasSpecial.Placement.CHUNK || !unlocks.allows(special.requiredMod(), special.unlock())) {
+            if (special.placement() != AtlasSpecial.Placement.CHUNK || !chunkAllows(chunkX, chunkY, special)) {
                 continue;
             }
             double roll = AtlasHash.unit(AtlasHash.of(seed, SPECIAL_SALT, special.id(), chunkX, chunkY));
@@ -486,6 +491,46 @@ public final class AtlasGenerator {
                 placed.put(cell.pack(), new PlacedSpecial(cell, special, roll));
             }
         }
+    }
+
+    private boolean chunkAllows(int chunkX, int chunkY, AtlasSpecial special) {
+        if (!unlocks.allows(special.requiredMod(), "")) {
+            return false;
+        }
+        if (special.unlock().isEmpty()) {
+            return true;
+        }
+        Boolean atReveal = memory.unlockedAtReveal(chunkKey(chunkX, chunkY), special.unlock());
+        return atReveal != null ? atReveal : unlocks.allows("", special.unlock());
+    }
+
+    public static long chunkKey(int chunkX, int chunkY) {
+        return new AtlasCell(chunkX, chunkY).pack();
+    }
+
+    public List<AtlasBiome> sitesTouching(AtlasCell cell) {
+        float x = mapX(cell);
+        float y = mapY(cell);
+        List<AtlasBiome> touching = new ArrayList<>();
+        for (AtlasBiome biome : biomesNear(cell)) {
+            if (biome.covers(x, y) || biome.systems().contains(cell)) {
+                touching.add(biome);
+            }
+        }
+        return touching;
+    }
+
+    public AtlasSpecial specialAt(AtlasCell cell) {
+        PlacedSpecial placed = specialsAround(cell.chunkX(), cell.chunkY()).get(cell.pack());
+        return placed == null ? null : placed.special();
+    }
+
+    public AtlasRules rules() {
+        return rules;
+    }
+
+    public Set<String> unlockFlags() {
+        return unlocks.unlockedFlags();
     }
 
     private AtlasCell specialCell(AtlasSpecial special, List<AtlasCell> cells) {

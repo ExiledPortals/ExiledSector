@@ -2,14 +2,17 @@ import { Alert, Center, Loader, Tabs } from '@mantine/core';
 import { IconAlertTriangle } from '@tabler/icons-react';
 import { useVocabulary } from '../../api/vocabulary.ts';
 import {
+  ATLAS_FEATURE_SPEC,
   ATLAS_LAYOUT_SPEC,
   ATLAS_MARKER_SPEC,
+  ATLAS_NODE_EFFECT_SPEC,
   ATLAS_REGION_SPEC,
   ATLAS_SPECIAL_SPEC,
   CHART_BLOCKED_ABILITY_SPEC,
   CHART_COLONY_ITEM_SPEC,
   CHART_DROP_SPEC,
   CHART_EXPANSION_SPEC,
+  CHART_PHENOMENON_SPEC,
   CHART_FACTION_SPEC,
   CHART_LOOT_SPEC,
   CHART_POI_SPEC,
@@ -58,8 +61,11 @@ export function ItemsPage() {
         <Tabs.Tab value="chart-colony-items">Chart colony items</Tabs.Tab>
         <Tabs.Tab value="chart-blocked-abilities">Chart blocked abilities</Tabs.Tab>
         <Tabs.Tab value="chart-expansions">Chart expansions</Tabs.Tab>
+        <Tabs.Tab value="chart-phenomena">Chart phenomena</Tabs.Tab>
         <Tabs.Tab value="atlas-regions">Atlas regions</Tabs.Tab>
         <Tabs.Tab value="atlas-layouts">Atlas layouts</Tabs.Tab>
+        <Tabs.Tab value="atlas-features">Atlas features</Tabs.Tab>
+        <Tabs.Tab value="atlas-node-effects">Atlas node effects</Tabs.Tab>
         <Tabs.Tab value="atlas-markers">Atlas markers</Tabs.Tab>
         <Tabs.Tab value="atlas-specials">Atlas special sites</Tabs.Tab>
       </Tabs.List>
@@ -105,11 +111,20 @@ export function ItemsPage() {
       <Tabs.Panel value="chart-expansions" style={PANEL_STYLE}>
         <ChartTableTab spec={CHART_EXPANSION_SPEC} vocabulary={vocabulary.data} />
       </Tabs.Panel>
+      <Tabs.Panel value="chart-phenomena" style={PANEL_STYLE}>
+        <ChartTableTab spec={CHART_PHENOMENON_SPEC} vocabulary={vocabulary.data} />
+      </Tabs.Panel>
       <Tabs.Panel value="atlas-regions" style={PANEL_STYLE}>
         <ChartTableTab spec={ATLAS_REGION_SPEC} vocabulary={vocabulary.data} />
       </Tabs.Panel>
       <Tabs.Panel value="atlas-layouts" style={PANEL_STYLE}>
         <ChartTableTab spec={ATLAS_LAYOUT_SPEC} vocabulary={vocabulary.data} />
+      </Tabs.Panel>
+      <Tabs.Panel value="atlas-features" style={PANEL_STYLE}>
+        <ChartTableTab spec={ATLAS_FEATURE_SPEC} vocabulary={vocabulary.data} />
+      </Tabs.Panel>
+      <Tabs.Panel value="atlas-node-effects" style={PANEL_STYLE}>
+        <ChartTableTab spec={ATLAS_NODE_EFFECT_SPEC} vocabulary={vocabulary.data} />
       </Tabs.Panel>
       <Tabs.Panel value="atlas-markers" style={PANEL_STYLE}>
         <ChartTableTab spec={ATLAS_MARKER_SPEC} vocabulary={vocabulary.data} />

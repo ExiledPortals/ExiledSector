@@ -153,15 +153,25 @@ public final class ChartDrops {
     }
 
     public static Loot roll(Source source, int tier, float chartMult, float currencyMult, Random random, Predicate<ItemDefinition> allowedUniques) {
+        return roll(source, tier, chartMult, currencyMult, random, allowedUniques, false);
+    }
+
+    public static Loot roll(Source source, int tier, float chartMult, float currencyMult, Random random, Predicate<ItemDefinition> allowedUniques,
+                            boolean guaranteedTierUp) {
         Rule rule = rule(source);
         if (!StarChartSettings.enabled() || rule == null || tier == NO_TIER || !(chartMult > 0f) && !(currencyMult > 0f)) {
             return Loot.NONE;
         }
-        int baseTier = Math.min(rule.maxTier(), ChartTiers.clamp(tier));
+        int baseTier = source.insideSystem() ? ChartTiers.clamp(tier) : Math.min(rule.maxTier(), ChartTiers.clamp(tier));
         List<ItemData> charts = new ArrayList<>();
         int chartCount = chartMult > 0f ? chartCount(rule, chartMult, random) : 0;
+        if (guaranteedTierUp) {
+            chartCount = Math.max(1, chartCount);
+        }
         for (int i = 0; i < chartCount; i++) {
-            int dropTier = random.nextFloat() < rule.tierUpChance() ? Math.min(rule.maxTier(), baseTier + 1) : baseTier;
+            boolean forced = guaranteedTierUp && i == 0;
+            boolean tierUp = forced || random.nextFloat() < rule.tierUpChance();
+            int dropTier = tierUp ? Math.max(baseTier, Math.min(forced ? ChartTiers.HIGHEST_TIER : rule.maxTier(), baseTier + 1)) : baseTier;
             ItemDefinition definition = pickChartAtTier(random, dropTier, allowedUniques);
             if (definition != null) {
                 charts.add(ItemData.rolledAtTier(definition, random.nextLong(), dropTier));

@@ -45,7 +45,7 @@ class StarChartCargoTest {
     }
 
     private CargoStackAPI chartStack(int tier, float size) {
-        ItemData chart = ItemData.rolledAtTier(ItemDefinitions.get("star_chart_single"), 40L + tier, tier);
+        ItemData chart = ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 40L + tier, tier);
         CargoStackAPI stack = mock(CargoStackAPI.class);
         when(stack.getSpecialDataIfSpecial()).thenReturn(new SpecialItemData(ItemData.STAR_CHART_ITEM_ID, chart.encode()));
         when(stack.getSize()).thenReturn(size);

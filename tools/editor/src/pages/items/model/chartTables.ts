@@ -59,7 +59,7 @@ export const CHART_TIER_COLUMNS = [
   'colony_item_chance',
   'note',
 ] as const;
-export const CHART_POI_COLUMNS = ['id', 'kind', 'entity', 'salvage_spec', 'derelict_type', 'cost', 'weight', 'min_tier', 'max_tier', 'guarded', 'requires_mod', 'note'] as const;
+export const CHART_POI_COLUMNS = ['id', 'kind', 'entity', 'salvage_spec', 'derelict_type', 'cost', 'weight', 'min_tier', 'max_tier', 'guarded', 'requires_mod', 'planet_categories', 'note'] as const;
 export const CHART_FACTION_COLUMNS = ['faction', 'weight', 'note'] as const;
 export const CHART_BLOCKED_ABILITY_COLUMNS = ['ability_id', 'note'] as const;
 export const CHART_DROP_COLUMNS = [
@@ -75,12 +75,39 @@ export const CHART_DROP_COLUMNS = [
 ] as const;
 export const CHART_COLONY_ITEM_COLUMNS = ['id', 'value', 'note'] as const;
 export const CHART_EXPANSION_COLUMNS = ['id', 'weight', 'min_tier', 'max_tier', 'requires_mod', 'icon', 'intel', 'note'] as const;
-export const ATLAS_REGION_COLUMNS = ['id', 'weight', 'min_steps', 'requires_mod', 'unlock', 'layouts', 'factions', 'markers', 'note'] as const;
+export const ATLAS_REGION_COLUMNS = [
+  'id',
+  'weight',
+  'min_steps',
+  'requires_mod',
+  'unlock',
+  'layouts',
+  'factions',
+  'markers',
+  'backgrounds',
+  'nebula_backgrounds',
+  'nebula_chance',
+  'light_tint',
+  'light_tint_strength',
+  'stars',
+  'planets',
+  'keep_ruins',
+  'music',
+  'note',
+] as const;
+export const ATLAS_PHENOMENON_STARS = ['black_hole', 'star_neutron'];
+export const ATLAS_PHENOMENON_CATEGORIES = ['cat_magfield'];
+export const ATLAS_SYSTEM_TYPES = ['SINGLE', 'BINARY_CLOSE', 'BINARY_FAR', 'TRINARY_2CLOSE', 'TRINARY_1CLOSE_1FAR', 'TRINARY_2FAR'];
 export const ATLAS_NORMAL_REGION = 'normal';
-export const ATLAS_LAYOUT_COLUMNS = ['id', 'weight', 'note'] as const;
+export const ATLAS_LAYOUT_COLUMNS = ['id', 'weight', 'system_types', 'min_orbits', 'max_orbits', 'max_orbit_radius', 'terrain', 'feature', 'note'] as const;
 export const ATLAS_MARKER_COLUMNS = ['id', 'chance', 'chance_per_step', 'max_chance', 'note'] as const;
+export const ATLAS_FEATURE_COLUMNS = ['id', 'note'] as const;
+export const ATLAS_NODE_EFFECT_COLUMNS = ['id', 'effects', 'note'] as const;
+export const ATLAS_NODE_EFFECT_IDS = ['powerful_boss', 'infested', 'cleansed', 'sensor_array', 'nexus', 'bastion'];
+export const CHART_PHENOMENON_COLUMNS = ['id', 'weight', 'min_tier', 'max_tier', 'requires_mod', 'icon', 'kind', 'note'] as const;
+export const CHART_PHENOMENON_KINDS = ['star', 'overlay'];
 export const ATLAS_MARKER_IDS = ['void', 'powerful_boss', 'expansion', 'phenomenon'];
-export const ATLAS_SPECIAL_COLUMNS = ['id', 'kind', 'placement', 'chance', 'min_steps', 'radius', 'count', 'steps', 'requires_mod', 'unlock', 'note'] as const;
+export const ATLAS_SPECIAL_COLUMNS = ['id', 'kind', 'placement', 'chance', 'min_steps', 'radius', 'count', 'steps', 'requires_mod', 'unlock', 'faction', 'note'] as const;
 export const ATLAS_SPECIAL_PLACEMENTS = ['chunk', 'fixed'];
 const ATLAS_MOST_RADIUS = 7;
 export const CHART_COLONY_ITEM_CEILING_ID = 'ceiling';
@@ -361,6 +388,11 @@ export const CHART_POI_SPEC: ChartTableSpec = {
       kind: 'text',
       help: 'Optional mod id; the site is only placed while that mod is enabled (for IndEvo, also while its derelict stations are turned on)',
     },
+    planet_categories: {
+      label: 'Planet categories',
+      kind: 'text',
+      help: 'Optional planet categories separated by ;, such as cat_barren; cat_lava. The site is only placed at a planet of one of them, and is left out when the system has none',
+    },
     note: NOTE_COLUMN,
   }),
   newRow: () => ({ id: '', kind: 'cache', entity: '', cost: '1', weight: '1', min_tier: '1', max_tier: '15', guarded: 'no' }),
@@ -405,7 +437,7 @@ export const CHART_FACTION_SPEC: ChartTableSpec = {
   noun: 'chart faction',
   keyColumn: 'faction',
   description:
-    'Which factions can inhabit a system. Every Star Chart rolls one of them by weight as its implicit when it drops, and keeps it. A chart whose faction is not installed gets a random one when its wormhole opens.',
+    'Which factions can inhabit a system. Atlas faction territories are picked from these by weight, and a chart opened without the atlas gets one at random. A system whose faction is not installed gets a random one when its wormhole opens.',
   columns: columnsOf(CHART_FACTION_COLUMNS, {
     faction: { label: 'Faction id', kind: 'text' },
     weight: { label: 'Weight', kind: 'number' },
@@ -688,6 +720,19 @@ export const CHART_EXPANSION_SPEC: ChartTableSpec = {
   summary: tierSpanSummary,
 };
 
+function weightListIds(row: ChartTableRow, column: string): string[] {
+  return value(row, column)
+    .split(';')
+    .map((entry) => entry.split(':')[0].trim())
+    .filter((id) => id !== '');
+}
+
+function forbiddenIdIssues(row: ChartTableRow, column: string, label: string, forbidden: string[], reason: string): string[] {
+  return weightListIds(row, column)
+    .filter((id) => forbidden.includes(id))
+    .map((id) => `${label}: ${column} lists ${id}, but ${reason}`);
+}
+
 function weightListIssues(row: ChartTableRow, column: string, label: string): string[] {
   return value(row, column)
     .split(';')
@@ -719,6 +764,15 @@ export const ATLAS_REGION_SPEC: ChartTableSpec = {
     layouts: { label: 'Layouts', kind: 'text', help: 'layout:weight; ... from atlas_layouts.csv. Empty uses every layout at its own weight' },
     factions: { label: 'Factions', kind: 'text', help: 'faction:weight; ... from chart_factions.csv. Empty keeps the faction territory as it is' },
     markers: { label: 'Markers', kind: 'text', help: 'phenomenon or expansion id:multiplier; ... Unlisted markers keep their weight' },
+    backgrounds: { label: 'Backgrounds', kind: 'text', help: 'Background images for systems without a nebula, separated by ;. Empty uses vanilla\'s' },
+    nebula_backgrounds: { label: 'Nebula backgrounds', kind: 'text', help: 'Background images for systems with a nebula. Empty uses vanilla\'s' },
+    nebula_chance: { label: 'Nebula chance', kind: 'fraction', help: 'Chance of a system-wide nebula. Empty uses the star age\'s chance' },
+    light_tint: { label: 'Light tint', kind: 'text', help: 'Colour the system light leans towards, as #RRGGBB' },
+    light_tint_strength: { label: 'Tint strength', kind: 'fraction', help: '0 keeps the star\'s light, 1 is the tint colour' },
+    stars: { label: 'Stars', kind: 'text', help: 'star type:multiplier; ... on vanilla\'s star weights. Black holes and neutron stars only come from phenomena' },
+    planets: { label: 'Planets', kind: 'text', help: 'planet category:multiplier; ... such as cat_frozen:3 or cat_lava:0' },
+    keep_ruins: { label: 'Keep ruins', kind: 'flag', help: 'Planets keep their ruins; other regions strip them' },
+    music: { label: 'Music', kind: 'text', help: 'Optional music set id from sounds.json, played in its systems' },
     note: NOTE_COLUMN,
   }),
   newRow: () => ({ id: '', weight: '1', min_steps: '0' }),
@@ -730,8 +784,14 @@ export const ATLAS_REGION_SPEC: ChartTableSpec = {
         issues.push(`${label}: needs a region id`);
       }
       issues.push(...columnFormatIssues(ATLAS_REGION_SPEC.columns, row, label, vocabulary));
-      for (const column of ['layouts', 'factions', 'markers']) {
+      for (const column of ['layouts', 'factions', 'markers', 'stars', 'planets']) {
         issues.push(...weightListIssues(row, column, label));
+      }
+      issues.push(...forbiddenIdIssues(row, 'stars', label, ATLAS_PHENOMENON_STARS, 'only phenomena add it'));
+      issues.push(...forbiddenIdIssues(row, 'planets', label, ATLAS_PHENOMENON_CATEGORIES, 'only phenomena add it'));
+      const tint = value(row, 'light_tint');
+      if (tint !== '' && !/^#?[0-9a-fA-F]{6}$/.test(tint)) {
+        issues.push(`${label}: light_tint "${tint}" must be a colour like #A0C8FF`);
       }
       const gated = value(row, 'requires_mod') !== '' || value(row, 'unlock') !== '' || numberValue(row, 'min_steps', 0) > 0;
       if (value(row, 'id') === ATLAS_NORMAL_REGION && gated) {
@@ -754,10 +814,16 @@ export const ATLAS_LAYOUT_SPEC: ChartTableSpec = {
   noun: 'atlas layout',
   keyColumn: 'id',
   description:
-    'Layouts (map types) of atlas systems. A system picks one by weight from its region\'s layout list, or from every layout here when the region lists none.',
+    "Layouts (map types) of atlas systems. A system picks one by weight from its region's layout list, or from every layout here when the region lists none. A layout steers vanilla's generator: which system types it uses, how many orbits it gets and how far out they reach, how often rings and belts appear, and the signature feature built into it.",
   columns: columnsOf(ATLAS_LAYOUT_COLUMNS, {
     id: { label: 'Layout id', kind: 'text' },
     weight: { label: 'Weight', kind: 'number' },
+    system_types: { label: 'System types', kind: 'text', help: `type:weight; ... from ${ATLAS_SYSTEM_TYPES.join(', ')}. Empty uses the usual chart weights` },
+    min_orbits: { label: 'Min orbits', kind: 'integer', help: 'Empty leaves the orbit count to the star' },
+    max_orbits: { label: 'Max orbits', kind: 'integer' },
+    max_orbit_radius: { label: 'Max orbit radius', kind: 'number', help: 'How far out planets may sit. Empty is vanilla\'s 20000' },
+    terrain: { label: 'Terrain', kind: 'text', help: 'category:multiplier; ... such as cat_terrain_rings:2' },
+    feature: { label: 'Feature', kind: 'choice', choices: (vocabulary) => vocabulary.chartFeatures, help: 'Signature set-piece from atlas_features.csv, where the boss waits' },
     note: NOTE_COLUMN,
   }),
   newRow: () => ({ id: '', weight: '1' }),
@@ -769,14 +835,135 @@ export const ATLAS_LAYOUT_SPEC: ChartTableSpec = {
         issues.push(`${label}: needs a layout id`);
       }
       issues.push(...columnFormatIssues(ATLAS_LAYOUT_SPEC.columns, row, label, vocabulary));
+      issues.push(...weightListIssues(row, 'system_types', label), ...weightListIssues(row, 'terrain', label));
+      for (const type of weightListIds(row, 'system_types')) {
+        if (!ATLAS_SYSTEM_TYPES.includes(type.toUpperCase())) {
+          issues.push(`${label}: system_types lists ${type}, which is not one of ${ATLAS_SYSTEM_TYPES.join(', ')}`);
+        }
+      }
+      issues.push(...forbiddenIdIssues(row, 'terrain', label, ATLAS_PHENOMENON_CATEGORIES, 'only phenomena add it'));
+      if (value(row, 'min_orbits') !== '' && value(row, 'max_orbits') !== '' && numberValue(row, 'max_orbits', 0) < numberValue(row, 'min_orbits', 0)) {
+        issues.push(`${label}: max_orbits is below min_orbits`);
+      }
     });
     return [...issues, ...duplicateKeyIssues(ATLAS_LAYOUT_SPEC, model)];
   },
   warnings: (model) =>
-    model.rows.flatMap((row, index) =>
-      numberValue(row, 'weight', 1) > 0 ? [] : [`${rowLabel(ATLAS_LAYOUT_SPEC, row, index)}: a weight of 0 or less is only used by regions that list it`],
-    ),
-  summary: (row) => `weight ${value(row, 'weight') || '1'}`,
+    model.rows.flatMap((row, index) => {
+      const label = rowLabel(ATLAS_LAYOUT_SPEC, row, index);
+      return [
+        ...roundedIntegerWarnings(ATLAS_LAYOUT_SPEC.columns, row, label),
+        ...(numberValue(row, 'weight', 1) > 0 ? [] : [`${label}: a weight of 0 or less is only used by regions that list it`]),
+      ];
+    }),
+  summary: (row) => {
+    const orbits = value(row, 'min_orbits') === '' ? 'vanilla orbits' : `${value(row, 'min_orbits')}-${value(row, 'max_orbits') || value(row, 'min_orbits')} orbits`;
+    return value(row, 'feature') === '' ? orbits : `${orbits}, ${value(row, 'feature')}`;
+  },
+};
+
+export const CHART_PHENOMENON_SPEC: ChartTableSpec = {
+  resource: 'chart-phenomena',
+  fileName: 'chart_phenomena.csv',
+  noun: 'chart phenomenon',
+  keyColumn: 'id',
+  description:
+    'Gameplay-changing terrain an atlas system can roll as a marker, like an expansion: black holes, neutron stars, dense nebulae, asteroid and magnetic storms, stellar flares. Ordinary generation never makes these. A star phenomenon replaces the star or the system type; an overlay adds terrain on top of the layout. Each id needs a phenomenon class in the mod, and its kind must match it. The weight is per system, multiplied by the region leaning in atlas_regions.csv.',
+  columns: columnsOf(CHART_PHENOMENON_COLUMNS, {
+    id: { label: 'Phenomenon', kind: 'choice', choices: (vocabulary) => vocabulary.chartPhenomena },
+    weight: { label: 'Weight', kind: 'number' },
+    min_tier: { label: 'Min tier', kind: 'integer' },
+    max_tier: { label: 'Max tier', kind: 'integer' },
+    requires_mod: { label: 'Requires mod', kind: 'text', help: 'Optional mod id; the phenomenon only appears while that mod is enabled' },
+    icon: { label: 'Icon', kind: 'text', help: 'Sprite path for the atlas marker' },
+    kind: { label: 'Kind', kind: 'choice', choices: () => CHART_PHENOMENON_KINDS },
+    note: NOTE_COLUMN,
+  }),
+  newRow: () => ({ id: '', weight: '1', min_tier: '1', max_tier: '15', kind: 'overlay' }),
+  issues: (model, vocabulary) => {
+    const issues: string[] = [];
+    model.rows.forEach((row, index) => {
+      const label = rowLabel(CHART_PHENOMENON_SPEC, row, index);
+      if (value(row, 'id') === '') {
+        issues.push(`${label}: needs a phenomenon id`);
+      }
+      issues.push(...columnFormatIssues(CHART_PHENOMENON_SPEC.columns, row, label, vocabulary));
+    });
+    return [...issues, ...duplicateKeyIssues(CHART_PHENOMENON_SPEC, model)];
+  },
+  warnings: (model, vocabulary) =>
+    model.rows.flatMap((row, index) => {
+      const label = rowLabel(CHART_PHENOMENON_SPEC, row, index);
+      return [...roundedIntegerWarnings(CHART_PHENOMENON_SPEC.columns, row, label), ...tierSpanWarnings(row, label, vocabulary)];
+    }),
+  summary: tierSpanSummary,
+};
+
+export const ATLAS_FEATURE_SPEC: ChartTableSpec = {
+  resource: 'atlas-features',
+  fileName: 'atlas_features.csv',
+  noun: 'atlas feature',
+  keyColumn: 'id',
+  description:
+    'Signature set-pieces a layout can build past the last planet, such as a ringed giant or a rogue planet. The boss waits at the feature and the wormhole opens on the far side. Each id needs a feature class in the mod; a feature without a row here is never built.',
+  columns: columnsOf(ATLAS_FEATURE_COLUMNS, {
+    id: { label: 'Feature', kind: 'choice', choices: (vocabulary) => vocabulary.chartFeatures },
+    note: NOTE_COLUMN,
+  }),
+  newRow: () => ({ id: '' }),
+  issues: (model, vocabulary) => {
+    const issues: string[] = [];
+    model.rows.forEach((row, index) => {
+      const label = rowLabel(ATLAS_FEATURE_SPEC, row, index);
+      if (value(row, 'id') === '') {
+        issues.push(`${label}: needs a feature id`);
+      }
+      issues.push(...columnFormatIssues(ATLAS_FEATURE_SPEC.columns, row, label, vocabulary));
+    });
+    return [...issues, ...duplicateKeyIssues(ATLAS_FEATURE_SPEC, model)];
+  },
+  warnings: (model, vocabulary) => {
+    const listed = new Set(model.rows.map((row) => value(row, 'id')));
+    return vocabulary.chartFeatures.filter((id) => !listed.has(id)).map((id) => `No ${id} row, so layouts naming it build no feature`);
+  },
+};
+
+export const ATLAS_NODE_EFFECT_SPEC: ChartTableSpec = {
+  resource: 'atlas-node-effects',
+  fileName: 'atlas_node_effects.csv',
+  noun: 'atlas node effect',
+  keyColumn: 'id',
+  description:
+    'Chart effect lines an atlas system adds to the run on top of the chart: a Powerful Boss marker, infested and cleansed systems, and the special sites. Write effects as EFFECT:value; EFFECT:value with chart effects from the Modifiers tab, such as CHART_BOSS_SIZE_PERCENT:50. Values may be negative.',
+  columns: columnsOf(ATLAS_NODE_EFFECT_COLUMNS, {
+    id: { label: 'Node', kind: 'choice', choices: () => ATLAS_NODE_EFFECT_IDS },
+    effects: { label: 'Effects', kind: 'text', help: 'EFFECT:value; ... using chart effects' },
+    note: NOTE_COLUMN,
+  }),
+  newRow: () => ({ id: '', effects: '' }),
+  issues: (model, vocabulary) => {
+    const issues: string[] = [];
+    model.rows.forEach((row, index) => {
+      const label = rowLabel(ATLAS_NODE_EFFECT_SPEC, row, index);
+      if (value(row, 'id') === '') {
+        issues.push(`${label}: needs a node id`);
+      }
+      issues.push(...columnFormatIssues(ATLAS_NODE_EFFECT_SPEC.columns, row, label, vocabulary));
+      for (const entry of value(row, 'effects').split(';').map((part) => part.trim()).filter((part) => part !== '')) {
+        const separator = entry.indexOf(':');
+        const effect = separator < 0 ? entry : entry.slice(0, separator).trim();
+        const amount = separator < 0 ? '' : entry.slice(separator + 1).trim();
+        if (!vocabulary.chartEffectNames.includes(effect.toUpperCase())) {
+          issues.push(`${label}: ${effect} is not a chart effect`);
+        } else if (!isNumberText(amount)) {
+          issues.push(`${label}: ${effect} needs a number, as EFFECT:value`);
+        }
+      }
+    });
+    return [...issues, ...duplicateKeyIssues(ATLAS_NODE_EFFECT_SPEC, model)];
+  },
+  warnings: () => [],
+  summary: (row) => value(row, 'effects') || 'no effects',
 };
 
 export const ATLAS_MARKER_SPEC: ChartTableSpec = {
@@ -830,6 +1017,7 @@ export const ATLAS_SPECIAL_SPEC: ChartTableSpec = {
     steps: { label: 'Steps', kind: 'number', help: 'Fixed sites only; cells from the Gateway' },
     requires_mod: { label: 'Requires mod', kind: 'text' },
     unlock: { label: 'Unlock', kind: 'text', help: 'Optional player memory flag, such as $encounteredThreat' },
+    faction: { label: 'Faction', kind: 'text', help: 'Infestations only: the faction that holds the infested systems' },
     note: NOTE_COLUMN,
   }),
   newRow: () => ({ id: '', placement: 'chunk', chance: '0.1', min_steps: '4' }),
@@ -871,8 +1059,11 @@ export const CHART_TABLE_SPECS: ChartTableSpec[] = [
   CHART_COLONY_ITEM_SPEC,
   CHART_BLOCKED_ABILITY_SPEC,
   CHART_EXPANSION_SPEC,
+  CHART_PHENOMENON_SPEC,
   ATLAS_REGION_SPEC,
   ATLAS_LAYOUT_SPEC,
+  ATLAS_FEATURE_SPEC,
+  ATLAS_NODE_EFFECT_SPEC,
   ATLAS_MARKER_SPEC,
   ATLAS_SPECIAL_SPEC,
 ];

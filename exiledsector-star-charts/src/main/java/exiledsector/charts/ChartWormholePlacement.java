@@ -11,6 +11,7 @@ import com.fs.starfarer.api.impl.campaign.terrain.PulsarBeamTerrainPlugin;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -23,16 +24,45 @@ final class ChartWormholePlacement {
     static final float STEP_PAST_BAND = 1f;
     static final float ARRIVAL_SEARCH_STEP = 50f;
     static final int MAX_ORBIT_DEPTH = 6;
+    static final double AVOID_SPREAD = Math.PI / 2d;
 
     private ChartWormholePlacement() {
     }
 
     static Vector2f choose(StarSystemAPI system, Random placementRandom) {
-        return place(blockedBands(system), placementRandom);
+        return choose(system, placementRandom, null);
+    }
+
+    static Vector2f choose(StarSystemAPI system, Random placementRandom, Vector2f avoid) {
+        return place(blockedBands(system), placementRandom, avoid);
+    }
+
+    static float outermost(StarSystemAPI system, Collection<? extends SectorEntityToken> ignored) {
+        float outermost = 0f;
+        for (PlanetAPI body : system.getPlanets()) {
+            if (!ignored.contains(body)) {
+                float clearance = body.getRadius() + (body.isStar() ? STAR_CLEARANCE : PLANET_CLEARANCE);
+                outermost = Math.max(outermost, centreBand(body, 0).widenedBy(clearance).outer());
+            }
+        }
+        for (CampaignTerrainAPI terrain : system.getTerrainCopy()) {
+            Band band = ringTerrainBand(terrain);
+            if (band != null && !ignored.contains(terrain.getOrbitFocus())) {
+                outermost = Math.max(outermost, band.outer());
+            }
+        }
+        return outermost;
     }
 
     static Vector2f place(List<Band> blocked, Random placementRandom) {
+        return place(blocked, placementRandom, null);
+    }
+
+    static Vector2f place(List<Band> blocked, Random placementRandom, Vector2f avoid) {
         double angle = placementRandom.nextDouble() * Math.PI * 2d;
+        if (avoid != null && avoid.lengthSquared() > 0f) {
+            angle = Math.atan2(avoid.y, avoid.x) + Math.PI + (angle / (Math.PI * 2d) - 0.5d) * AVOID_SPREAD;
+        }
         float outermost = 0f;
         for (Band band : blocked) {
             outermost = Math.max(outermost, band.outer());

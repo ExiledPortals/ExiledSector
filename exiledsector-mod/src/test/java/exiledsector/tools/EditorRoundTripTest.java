@@ -64,6 +64,9 @@ class EditorRoundTripTest {
     private static final String CHART_LOOT = "exiledsector/charts/ChartLoot.java";
     private static final String CHART_COLONY_ITEMS = "exiledsector/charts/ChartColonyItems.java";
     private static final String CHART_EXPANSIONS = "exiledsector/charts/ChartExpansions.java";
+    private static final String CHART_PHENOMENA = "exiledsector/charts/ChartPhenomena.java";
+    private static final String CHART_FEATURES = "exiledsector/charts/ChartFeatures.java";
+    private static final String ATLAS_DATA = "exiledsector/charts/atlas/AtlasData.java";
     private static final String WORMHOLE_ANCHOR_DEFINITIONS = "exiledsector/items/WormholeAnchorDefinitions.java";
     private static final String DOCTRINE_ARCHIVES = "exiledsector/items/DoctrineArchives.java";
     private static final String MODSPEC_CACHES = "exiledsector/items/ModspecCaches.java";
@@ -71,13 +74,13 @@ class EditorRoundTripTest {
     private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, ITEM_DEFINITIONS, ITEM_DEFINITION, SUBROUTINE_DEFINITIONS, HULL_ITEM,
             ITEM_NAMES, ITEM_DROPS, SALVAGE_COMPAT, ITEM_CRAFTING, HULL_ITEM_IMPLICITS, ITEM_MODIFIERS, STAR_CHART_DEFINITIONS, STAR_CHART_IMPLICITS,
             STAR_CHART_ITEMS, STAR_CHART_NAMES, CHART_TIERS, CHART_POIS, CHART_FACTIONS, CHART_BLOCKED_ABILITIES, CHART_DROPS, CHART_LOOT,
-            CHART_COLONY_ITEMS, CHART_EXPANSIONS, WORMHOLE_ANCHOR_DEFINITIONS, DOCTRINE_ARCHIVES, MODSPEC_CACHES, SUBROUTINE_IMPLICITS,
+            CHART_COLONY_ITEMS, CHART_EXPANSIONS, CHART_PHENOMENA, CHART_FEATURES, ATLAS_DATA, WORMHOLE_ANCHOR_DEFINITIONS, DOCTRINE_ARCHIVES, MODSPEC_CACHES, SUBROUTINE_IMPLICITS,
             CORRUPTION_IMPLICIT_POOL);
 
     private static final List<String> EDITED_DATA_PATHS = List.of("data/skilltrees/skill_types.json", "data/skilltrees/ship_skill_tree.json",
             "data/config/exiledSector/item_modifiers", "data/config/exiledSector/item_names", "data/config/exiledSector/item_crafting",
             "data/config/exiledSector/item_salvage", "data/config/exiledSector/hull_item", "data/config/exiledSector/subroutines", "compat/salvage/",
-            "data/config/exiledSector/star_chart", "data/config/exiledSector/chart_", "data/config/exiledSector/wormhole_anchors",
+            "data/config/exiledSector/star_chart", "data/config/exiledSector/chart_", "data/config/exiledSector/atlas_", "data/config/exiledSector/wormhole_anchors",
             "data/config/exiledSector/doctrine_archives", "data/config/exiledSector/subroutine_corruption_implicits");
 
     private record EditorSource(String file, String symbol) {
@@ -172,6 +175,18 @@ class EditorRoundTripTest {
                     List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_COLONY_ITEM_COLUMNS")), true),
             new Pin("chart_expansions.csv columns", CHART_EXPANSIONS, List.of("load", "register", "parse"),
                     List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_EXPANSION_COLUMNS")), true),
+            new Pin("chart_phenomena.csv columns", CHART_PHENOMENA, List.of("load", "register", "parse"),
+                    List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_PHENOMENON_COLUMNS")), true),
+            new Pin("atlas_features.csv columns", CHART_FEATURES, List.of("load", "register"),
+                    List.of(new EditorSource(CHART_TABLES_MODEL, "ATLAS_FEATURE_COLUMNS")), true),
+            new Pin("atlas_regions.csv columns", ATLAS_DATA, List.of("load", "forEachRow", "registerRegions", "look"),
+                    List.of(new EditorSource(CHART_TABLES_MODEL, "ATLAS_REGION_COLUMNS")), true),
+            new Pin("atlas_layouts.csv columns", ATLAS_DATA, List.of("registerLayouts"),
+                    List.of(new EditorSource(CHART_TABLES_MODEL, "ATLAS_LAYOUT_COLUMNS")), true),
+            new Pin("atlas_markers.csv columns", ATLAS_DATA, List.of("registerMarkers"),
+                    List.of(new EditorSource(CHART_TABLES_MODEL, "ATLAS_MARKER_COLUMNS")), true),
+            new Pin("atlas_specials.csv columns", ATLAS_DATA, List.of("registerSpecials"),
+                    List.of(new EditorSource(CHART_TABLES_MODEL, "ATLAS_SPECIAL_COLUMNS")), true),
             new Pin("wormhole_anchors.csv columns", WORMHOLE_ANCHOR_DEFINITIONS, List.of("load", "register"),
                     List.of(new EditorSource(WORMHOLE_ANCHORS_MODEL, "WORMHOLE_ANCHOR_COLUMNS")), true),
             new Pin("wormhole_anchors.csv shared item columns", ITEM_DEFINITION, List.of("definitionId", "parseCommon"),

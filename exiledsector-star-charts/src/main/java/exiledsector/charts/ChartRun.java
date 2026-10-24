@@ -34,8 +34,10 @@ public final class ChartRun {
     private int contentPois;
     private boolean objectiveComplete;
     private boolean rewardClaimed;
+    private boolean bossTierUpGranted;
     private String chartData;
     private String expansions;
+    private String atlasNode;
 
     public ChartRun(String runId, String originLocationId, float originX, float originY, int entriesAllowed) {
         this.runId = runId;
@@ -153,6 +155,14 @@ public final class ChartRun {
         chartData = encodedChart == null || encodedChart.isEmpty() ? null : encodedChart;
     }
 
+    public void recordAtlasNode(AtlasRunNode node) {
+        atlasNode = node == null ? null : node.encode();
+    }
+
+    public AtlasRunNode atlasNode() {
+        return AtlasRunNode.decode(atlasNode);
+    }
+
     public String chartData() {
         return chartData;
     }
@@ -237,6 +247,14 @@ public final class ChartRun {
             return false;
         }
         rewardClaimed = true;
+        return true;
+    }
+
+    public boolean claimBossTierUp() {
+        if (bossTierUpGranted) {
+            return false;
+        }
+        bossTierUpGranted = true;
         return true;
     }
 

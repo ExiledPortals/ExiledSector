@@ -6,6 +6,7 @@ import exiledsector.charts.ChartEffect;
 import exiledsector.charts.ChartGenContext;
 import exiledsector.charts.ChartLayoutGenerator;
 import exiledsector.charts.ChartLayoutRequest;
+import exiledsector.charts.ChartPhenomena;
 import exiledsector.charts.ChartRun;
 import exiledsector.charts.ChartRunActions;
 import exiledsector.charts.ChartRunActions.OpenResult;
@@ -13,6 +14,7 @@ import exiledsector.charts.ChartRunEffects;
 import exiledsector.charts.ChartRuns;
 import exiledsector.charts.ChartTiers;
 import exiledsector.charts.StarChartSettings;
+import exiledsector.charts.atlas.AtlasData;
 import exiledsector.items.StarChart;
 import org.lazywizard.console.Console;
 
@@ -28,6 +30,7 @@ public class ChartOpenCommand extends CampaignCommand {
     static final int DEFAULT_TIER = ChartTiers.LOWEST_TIER;
     static final String BREACH_WORD = "breach";
     static final Pattern EXPLICIT_TIER = Pattern.compile("(?:tier|t)=?(-?\\d+)", Pattern.CASE_INSENSITIVE);
+    static final Pattern ATLAS_SETTING = Pattern.compile("(region|layout|phenomenon)=(\\S+)", Pattern.CASE_INSENSITIVE);
 
     private final Random random;
 
@@ -45,14 +48,21 @@ public class ChartOpenCommand extends CampaignCommand {
         if (arguments.problem() != null) {
             Console.showMessage(arguments.problem() + "\nUsage: ExiledSectorChartOpen [seed] [type] [tier] [breach], where type is one of "
                     + ChartLayoutGenerator.ALLOWED_TYPES + ", tier is " + ChartTiers.LOWEST_TIER + " to " + ChartTiers.HIGHEST_TIER
-                    + " (default " + DEFAULT_TIER + ") and breach adds a Spatial Breach. All are optional and can come in any order; write"
-                    + " the tier as tier=N when the seed is also a small number.");
+                    + " (default " + DEFAULT_TIER + "), breach adds a Spatial Breach, and region=ID, layout=ID and phenomenon=ID build the system from the"
+                    + " atlas tables. All are optional and can come in any order; write the tier as tier=N when the seed is also a"
+                    + " small number.");
             return CommandResult.BAD_SYNTAX;
         }
         ChartGenContext chartContext = arguments.breach()
                 ? ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_CHANCE, 100f))) : null;
         ChartLayoutRequest layoutRequest = new ChartLayoutRequest(arguments.seed() != null ? arguments.seed() : random.nextLong(),
                 arguments.systemType(), arguments.tierOrDefault(), chartContext);
+        if (arguments.regionId() != null || arguments.layoutId() != null) {
+            layoutRequest = layoutRequest.withRecipe(AtlasData.recipeFor(arguments.regionId(), arguments.layoutId()));
+        }
+        if (arguments.phenomenonId() != null) {
+            layoutRequest = layoutRequest.withPhenomenon(arguments.phenomenonId());
+        }
         int entries = StarChartSettings.wormholeEntries();
         OpenResult result = ChartRunActions.openBesidePlayer(Global.getSector(), entries, random, layoutRequest);
         switch (result) {
@@ -106,7 +116,12 @@ public class ChartOpenCommand extends CampaignCommand {
                 + ". Objective: " + objective + ".";
     }
 
-    record OpenArguments(Long seed, StarSystemType systemType, Integer tier, String problem, boolean breach) {
+    record OpenArguments(Long seed, StarSystemType systemType, Integer tier, String problem, boolean breach, String regionId, String layoutId,
+                         String phenomenonId) {
+
+        OpenArguments(Long seed, StarSystemType systemType, Integer tier, String problem, boolean breach) {
+            this(seed, systemType, tier, problem, breach, null, null, null);
+        }
 
         OpenArguments(Long seed, StarSystemType systemType, Integer tier, String problem) {
             this(seed, systemType, tier, problem, false);
@@ -114,6 +129,40 @@ public class ChartOpenCommand extends CampaignCommand {
 
         static OpenArguments parse(String args) {
             if (args == null || args.isBlank()) {
+                return new OpenArguments(null, null, null, null);
+            }
+            String regionId = null;
+            String layoutId = null;
+            String phenomenonId = null;
+            List<String> rest = new ArrayList<>();
+            for (String token : args.trim().split("\\s+")) {
+                Matcher atlas = ATLAS_SETTING.matcher(token);
+                if (!atlas.matches()) {
+                    rest.add(token);
+                } else if (atlas.group(1).equalsIgnoreCase("region")) {
+                    if (regionId != null || !AtlasData.knowsRegion(atlas.group(2))) {
+                        return problem("Can't use \"" + token + "\": give one region from atlas_regions.csv.");
+                    }
+                    regionId = atlas.group(2);
+                } else if (atlas.group(1).equalsIgnoreCase("layout")) {
+                    if (layoutId != null || !AtlasData.knowsLayout(atlas.group(2))) {
+                        return problem("Can't use \"" + token + "\": give one layout from atlas_layouts.csv.");
+                    }
+                    layoutId = atlas.group(2);
+                } else {
+                    if (phenomenonId != null || ChartPhenomena.byId(atlas.group(2)) == null) {
+                        return problem("Can't use \"" + token + "\": give one phenomenon from chart_phenomena.csv.");
+                    }
+                    phenomenonId = atlas.group(2);
+                }
+            }
+            OpenArguments parsed = parseSettings(String.join(" ", rest));
+            return parsed.problem() != null ? parsed
+                    : new OpenArguments(parsed.seed(), parsed.systemType(), parsed.tier(), null, parsed.breach(), regionId, layoutId, phenomenonId);
+        }
+
+        private static OpenArguments parseSettings(String args) {
+            if (args.isBlank()) {
                 return new OpenArguments(null, null, null, null);
             }
             StarSystemType systemType = null;

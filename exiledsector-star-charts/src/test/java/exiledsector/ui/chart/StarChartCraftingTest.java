@@ -101,7 +101,7 @@ class StarChartCraftingTest {
     @BeforeEach
     void setUp() throws Exception {
         StarChartFixtures.registerShipped();
-        chart = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart_binary_far"), 8L, 6));
+        chart = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 8L, 6));
     }
 
     @AfterEach
@@ -125,14 +125,14 @@ class StarChartCraftingTest {
 
         StarChartCurrency.registerAll();
 
-        assertEquals(List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.ATTUNEMENT, CraftingCurrency.CORRUPTION, CraftingCurrency.TRANSPOSITION,
+        assertEquals(List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.CORRUPTION, CraftingCurrency.TRANSPOSITION,
                 CraftingCurrency.RECALIBRATION, StarChartCurrency.REFORGE, StarChartCurrency.ANNULMENT, StarChartCurrency.CARTOGRAPHY),
                 StarChartCrafting.currencies());
-        for (ItemCurrency currency : List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.ATTUNEMENT, CraftingCurrency.RECALIBRATION, CraftingCurrency.CORRUPTION,
+        for (ItemCurrency currency : List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.RECALIBRATION, CraftingCurrency.CORRUPTION,
                 StarChartCurrency.REFORGE, StarChartCurrency.ANNULMENT, StarChartCurrency.CARTOGRAPHY)) {
             assertEquals(Refusal.NONE, refusalWithOne(currency), currency.key());
         }
-        for (CraftingCurrency currency : List.of(CraftingCurrency.SUBSTITUTION, CraftingCurrency.FIXATION,
+        for (CraftingCurrency currency : List.of(CraftingCurrency.ATTUNEMENT, CraftingCurrency.SUBSTITUTION, CraftingCurrency.FIXATION,
                 CraftingCurrency.REPLICATION)) {
             assertEquals(Refusal.CANNOT_USE, refusalWithOne(currency), currency.key());
         }
@@ -143,7 +143,7 @@ class StarChartCraftingTest {
         StarChartCurrency.registerAll();
         CraftingMaterials materials = CraftingMaterials.cargoOnly(cargo);
         when(cargo.getQuantity(eq(CargoAPI.CargoItemType.SPECIAL), any())).thenReturn(100f);
-        Item topTier = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart_single"), 3L, 15));
+        Item topTier = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 3L, 15));
         Item unique = store.add(ItemData.rolledAtTier(ItemDefinitions.get(StarChartFixtures.TEST_UNIQUE), 3L, 2));
 
         assertEquals(Refusal.MAX_TIER, StarChartCrafting.refusal(StarChartCurrency.CARTOGRAPHY, topTier, store, materials, definition -> true));
@@ -252,7 +252,7 @@ class StarChartCraftingTest {
 
         owns(SURVEY_ID, 1f);
         assertEquals(Refusal.NO_CHART, StarChartCrafting.refusal(survey, null, store, materials, definition -> true));
-        Item loose = ItemData.rolledAtTier(ItemDefinitions.get("star_chart_single"), 9L, 2).preview();
+        Item loose = ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 9L, 2).preview();
         assertEquals(Refusal.NO_CHART, StarChartCrafting.refusal(survey, loose, store, materials, definition -> true));
         assertEquals(Refusal.NO_CHART, StarChartCrafting.refusal(survey, chart, new ItemStore(), materials, definition -> true));
         assertEquals(Refusal.CORRUPTED, StarChartCrafting.refusal(survey, withFlag("c", "NOTHING"), store, materials, definition -> true));

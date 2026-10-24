@@ -95,7 +95,7 @@ describe('star chart editing', () => {
 
     expect((await screen.findAllByDisplayValue('t3+', undefined, { timeout: 30000 })).length).toBeGreaterThan(0);
     expect(screen.queryByText(/Not in star_chart_modifiers.csv/)).toBeNull();
-    fireEvent.click(screen.getByText("Wide Trinary Chart"));
+    fireEvent.click(screen.getByText("Star Chart"));
     const minTier = await findLabelled('Minimum tier');
     expect(minTier).toHaveProperty('value', '');
     const before = server.readProjectFile(STAR_CHARTS_FILE);
@@ -104,7 +104,7 @@ describe('star chart editing', () => {
     fireEvent.click(saveButton());
     await screen.findByText('Saved star_charts.csv', undefined, { timeout: 30000 });
 
-    expect(server.readProjectFile(STAR_CHARTS_FILE)).toBe(before.replace("Wide Trinary Chart,graphics/icons/colony_management.png,4,,,", "Wide Trinary Chart,graphics/icons/colony_management.png,4,,5,"));
+    expect(server.readProjectFile(STAR_CHARTS_FILE)).toBe(before.replace("Star Chart,graphics/icons/colony_management.png,30,,,", "Star Chart,graphics/icons/colony_management.png,30,,5,"));
   }, 90000);
 
   it('edits a star chart description under StrictMode', async () => {
@@ -115,7 +115,7 @@ describe('star chart editing', () => {
     );
     await screen.findAllByDisplayValue('Halcyon Fire-Control Lattice', undefined, { timeout: 30000 });
     await switchToStarCharts();
-    fireEvent.click(await screen.findByText("Wide Trinary Chart", undefined, { timeout: 30000 }));
+    fireEvent.click(await screen.findByText("Star Chart", undefined, { timeout: 30000 }));
     const description = (await findLabelled('Tooltip description (optional)')) as HTMLTextAreaElement;
     const edited = `${description.value} Edited.`;
 
@@ -147,7 +147,7 @@ describe('star chart editing', () => {
     await screen.findByLabelText('ARMOR_PERCENT max', undefined, { timeout: 30000 });
     await switchToStarCharts();
 
-    await screen.findByText(/first rolls one inhabiting faction by weight from chart_factions\.csv/, undefined, { timeout: 30000 });
+    await screen.findByText(/no longer roll an inhabiting faction; the atlas system decides it/, undefined, { timeout: 30000 });
     expect(screen.getAllByText('No implicits.').length).toBe(vocabulary.chartSystemTypes.length + 1);
     expect(server.readProjectFile(CHART_IMPLICITS_FILE).trim()).toBe('system_type,implicits');
   }, 90000);

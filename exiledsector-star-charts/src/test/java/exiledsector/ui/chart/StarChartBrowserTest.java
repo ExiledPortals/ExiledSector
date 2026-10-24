@@ -39,9 +39,9 @@ class StarChartBrowserTest {
 
     @Test
     void groupsChartsByTierAndCountsEachTier() {
-        stored("star_chart_single", 1L, 3);
-        stored("star_chart_single", 2L, 3);
-        stored("star_chart_binary_close", 3L, 7);
+        stored("star_chart", 1L, 3);
+        stored("star_chart", 2L, 3);
+        stored("star_chart", 3L, 7);
         StarChartBrowser browser = new StarChartBrowser();
 
         browser.reload(store.owned());
@@ -74,8 +74,8 @@ class StarChartBrowserTest {
 
     @Test
     void theSelectedTierAndChartSurviveReloadsWhileTheChartIsStillStored() {
-        Item low = stored("star_chart_single", 1L, 2);
-        Item high = stored("star_chart_single", 2L, 9);
+        Item low = stored("star_chart", 1L, 2);
+        Item high = stored("star_chart", 2L, 9);
         StarChartBrowser browser = new StarChartBrowser();
         browser.reload(store.owned());
 
@@ -95,8 +95,8 @@ class StarChartBrowserTest {
 
     @Test
     void aChartThatLeftStorageIsDeselected() {
-        Item chart = stored("star_chart_single", 1L, 4);
-        stored("star_chart_single", 2L, 4);
+        Item chart = stored("star_chart", 1L, 4);
+        stored("star_chart", 2L, 4);
         StarChartBrowser browser = new StarChartBrowser();
         browser.reload(store.owned());
         browser.select(chart);
@@ -111,8 +111,8 @@ class StarChartBrowserTest {
 
     @Test
     void selectingIgnoresChartsOutsideStorageAndTogglingClears() {
-        Item chart = stored("star_chart_single", 1L, 4);
-        Item loose = ItemData.rolledAtTier(ItemDefinitions.get("star_chart_single"), 5L, 4).preview();
+        Item chart = stored("star_chart", 1L, 4);
+        Item loose = ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 5L, 4).preview();
         StarChartBrowser browser = new StarChartBrowser();
         browser.reload(store.owned());
 
@@ -128,7 +128,7 @@ class StarChartBrowserTest {
     void theRarityFilterOnlyNarrowsTheShownTier() {
         List<Item> charts = new ArrayList<>();
         for (long seed = 1L; seed <= 12L; seed++) {
-            charts.add(stored("star_chart_single", seed, 6));
+            charts.add(stored("star_chart", seed, 6));
         }
         StarChartBrowser browser = new StarChartBrowser();
         browser.reload(store.owned());

@@ -76,8 +76,7 @@ class ChartGenContextTest {
         assertEquals(first.applied(), second.applied());
         assertTrue(first.applied().contains(new AppliedEffect(ChartEffect.CHART_BOSS_SIZE_PERCENT, 700f)), first.applied().toString());
         assertTrue(first.applied().contains(new AppliedEffect(ChartEffect.CHART_OFFICER_LEVEL_BONUS, 2f)), first.applied().toString());
-        assertEquals(chart.implicits().get(0).modifierId(), "CHART_FACTION_" + first.factionId().toUpperCase(java.util.Locale.ROOT),
-                "the faction implicit is read too");
+        assertTrue(chart.implicits().isEmpty(), "charts no longer roll a faction implicit; the atlas node decides the faction");
         assertEquals(first.factionId(), second.factionId());
         assertEquals(700f, first.bossSizePercent(), TOLERANCE);
         assertEquals(BASE.bossSize() + 700f, first.adjust(BASE).bossSize(), TOLERANCE, "boss size modifiers add percentage points");
@@ -335,7 +334,7 @@ class ChartGenContextTest {
         assertEquals(BASE.fleetSize(), polished.adjust(BASE).fleetSize(), TOLERANCE);
         assertSame(ChartGenContext.none(), ChartGenContext.of(List.of(), 0));
 
-        ItemData plainData = ItemData.rolledAtTier(StarChartFixtures.definition("star_chart_single"), 3L, 5);
+        ItemData plainData = ItemData.rolledAtTier(StarChartFixtures.definition("star_chart"), 3L, 5);
         StarChart plainChart = (StarChart) plainData.preview();
         StarChart polishedChart = (StarChart) plainData.withTraits(new ItemTraits(5, 12, null, null)).preview();
         ChartGenContext plainContext = ChartGenContext.from(plainChart);

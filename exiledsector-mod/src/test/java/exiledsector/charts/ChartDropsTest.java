@@ -141,6 +141,25 @@ class ChartDropsTest {
     }
 
     @Test
+    void chartsDroppedInsideARunNeverFallBelowTheRunTierButOutsideDropsKeepTheirCap() throws Exception {
+        ChartDrops.register(new JSONArray().put(rule("chart_fleet", 1f, 0f, 0f, 0f).put("max_tier", "3"))
+                .put(rule("battle", 1f, 0f, 0f, 0f).put("max_tier", "3")));
+
+        assertEquals(9, tierOf(ChartDrops.roll(ChartDrops.Source.CHART_FLEET, 9, 1f, new Random(4L), anyUnique()).charts().get(0)));
+        assertEquals(3, tierOf(ChartDrops.roll(ChartDrops.Source.BATTLE, 9, 1f, new Random(4L), anyUnique()).charts().get(0)));
+    }
+
+    @Test
+    void aPowerfulBossAlwaysDropsAChartOneTierUp() throws Exception {
+        ChartDrops.register(new JSONArray().put(rule("chart_boss", 0f, 0f, 0f, 0f)));
+        for (long roll = 0; roll < 30; roll++) {
+            ChartDrops.Loot loot = ChartDrops.roll(ChartDrops.Source.CHART_BOSS, 5, 1f, 1f, new Random(roll), anyUnique(), true);
+            assertEquals(6, tierOf(loot.charts().get(0)));
+        }
+        assertSame(ChartDrops.Loot.NONE, ChartDrops.roll(ChartDrops.Source.CHART_BOSS, 5, 1f, 1f, new Random(3L), anyUnique(), false));
+    }
+
+    @Test
     void runRewardsDropChartsAtTheRunTierOrOneAbove() throws Exception {
         ChartDrops.register(new JSONArray().put(rule("run_reward", 1f, 0f, 0.4f, 0f)));
         Random random = new Random(11L);

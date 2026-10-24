@@ -48,7 +48,7 @@ public final class ChartFactions {
         }
         csv.report(LOG);
         factions = List.copyOf(loaded.values());
-        StarChartImplicits.registerSharedChoice(implicitChoices(factions), ChartFactions::unlistedImplicit);
+        StarChartImplicits.registerSharedChoice(List.of());
     }
 
     static Modifier unlistedImplicit(String modifierId) {

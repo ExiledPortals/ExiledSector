@@ -20,6 +20,7 @@ import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.impl.campaign.enc.StrandedGiveTJScript;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.impl.campaign.intel.misc.SalvorsTallyIntel;
+import exiledsector.charts.atlas.AtlasProgress;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -53,6 +54,11 @@ public final class ChartRunCloser {
     }
 
     public static int close(SectorAPI sector, ChartRun run) {
+        try {
+            AtlasProgress.closedWithoutObjective(sector, run);
+        } catch (RuntimeException e) {
+            LOG.warn("[ExiledSector] Recording the failed atlas system for run " + run.runId() + " failed", e);
+        }
         StarSystemAPI system = sector.getStarSystem(run.systemId());
         return close(sector, run.runId(), system);
     }

@@ -51,12 +51,14 @@ class ReleasedItemsTest {
         ItemIdAliases.register(csvRows(ItemIdAliases.dataPath()));
         ItemModifiers.register(csvRows(ItemModifiers.dataPath()));
         ItemDefinitions.register(csvRows(SubroutineDefinitions.dataPath()), csvRows(HullItem.definitionsPath()));
+        StarChartFixtures.registerShipped();
     }
 
     @AfterEach
     void tearDown() {
         ItemModifiers.clear();
         ItemIdAliases.clear();
+        StarChartFixtures.clear();
         ItemDefinitions.clear();
         EffectAliases.clear();
     }
