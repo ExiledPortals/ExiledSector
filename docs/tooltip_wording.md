@@ -57,7 +57,7 @@ The normal tooltip shows only the rolled value. The roll range, such as "(15-25)
 
 By default a line applies to the ship that has the skill tree or the installed item, and the line names no subject: "15% increased armor".
 
-Every other subject comes first in the line, in Starsector's lowercase style: "Your fleet has 20% less sensor range", "Enemy fleets have 2 additional officers", "Fighters launched from this ship take 10% less damage", "Enemy ships within 1000 su have...". A fleet-wide effect from a single ship always says so: "Ships in your fleet have..." or "Your fleet has...".
+Every other subject comes first in the line, in Starsector's lowercase style: "Your fleet has 20% less sensor range", "Enemy fleets have 2 additional officers", "Strikecraft launched from this ship take 10% less damage", "Enemy ships within 1000 su have...". A fleet-wide effect from a single ship always says so: "Ships in your fleet have..." or "Your fleet has...".
 
 A Star Chart line that only applies inside the chart system ends with "in the system" or "while in the system". Item quantity lines say "found in the system", which covers salvage sites, caches and defeated fleets alike.
 
@@ -72,8 +72,11 @@ When a roll affects a whole category, name the category, not its members. "51% i
 | commodities | supplies, fuel, metals and every other vanilla commodity |
 | Bridge items, Reactor items, ... | hull items for one section |
 | colony items | vanilla colony items (nanoforges, synchrotrons, ...) |
+| strikecraft | every craft launched from a bay: fighters, bombers, interceptors and support craft |
 
-Several separate categories in one roll are listed: "hull items, subroutines and Star Charts", "weapons and fighter wings", "blueprints and modspecs".
+"Fighter" only ever means the fighter wing role, never strikecraft in general, so the roles under strikecraft stay exact. Bays and wings are "strikecraft bays" and "strikecraft wings". Vanilla proper names such as Converted Fighter Bay keep their wording.
+
+Several separate categories in one roll are listed: "hull items, subroutines and Star Charts", "weapons and strikecraft wings", "blueprints and modspecs".
 
 ## Banned words
 

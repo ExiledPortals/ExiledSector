@@ -27,7 +27,7 @@ The zh_CN catalogue was drafted by Claude and still needs review by a native spe
 | Beam / non-beam energy / burst beam | 光束 / 非光束能量 / 脉冲光束 | |
 | Hybrid weapon | 混合武器 | |
 | Point defense | 点防御 | |
-| Fighter (craft in general) | 战机 | |
+| Strikecraft (craft in general) | 战机 | |
 | Fighter / interceptor / bomber / support (wing roles) | 战斗机 / 截击机 / 轰炸机 / 支援机 | |
 | Fighter bay | 机库 | |
 | Frigate / destroyer / cruiser / capital | 护卫舰 / 驱逐舰 / 巡洋舰 / 主力舰 | |
