@@ -10,7 +10,6 @@ import exiledsector.items.SocketCustody;
 import exiledsector.ui.socket.ModificationBay;
 import exiledsector.ui.socket.SocketPanelPlacement;
 import exiledsector.ui.util.GLDraw;
-import exiledsector.ui.socket.BenchMode;
 import lunalib.lunaRefit.BaseRefitButton;
 import org.lwjgl.input.Keyboard;
 
@@ -18,19 +17,13 @@ import java.awt.Color;
 import java.util.List;
 import java.util.Map;
 
-final class ModificationBenchScreen extends BaseCustomUIPanelPlugin {
+final class ModificationBenchScreen extends BaseCustomUIPanelPlugin implements CampaignOverlay.Screen {
 
     static final float SCREEN_MARGIN = 40f;
     private static final float OPEN_SECONDS = 0.2f;
     private static final float BACKDROP_ALPHA = 0.8f;
 
-    interface Host {
-        void close();
-
-        void leave(String wormholeMessage);
-    }
-
-    record RefitHost(BaseRefitButton refitButton) implements Host {
+    record RefitHost(BaseRefitButton refitButton) implements CampaignOverlay.Host {
         @Override
         public void close() {
             refitButton.closePanel();
@@ -42,8 +35,7 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin {
         }
     }
 
-    private final Host host;
-    private final BenchMode onlyMode;
+    private final CampaignOverlay.Host host;
     private CustomPanelAPI hostPanel;
     private ModificationBay bay;
     private Map<String, FleetMemberAPI> ownedShips = Map.of();
@@ -51,22 +43,13 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin {
     private boolean bayOpened;
     private boolean closing;
     private boolean closeRequested;
-    private String wormholeMessage;
 
-    ModificationBenchScreen(Host host) {
-        this(host, null);
-    }
-
-    ModificationBenchScreen(Host host, BenchMode onlyMode) {
+    ModificationBenchScreen(CampaignOverlay.Host host) {
         this.host = host;
-        this.onlyMode = onlyMode;
     }
 
-    BenchMode onlyMode() {
-        return onlyMode;
-    }
-
-    void attach(CustomPanelAPI panel) {
+    @Override
+    public void attach(CustomPanelAPI panel) {
         hostPanel = panel;
         ownedShips = SocketCustody.reconcile();
     }
@@ -95,21 +78,12 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin {
                 public void pressedInside() {
                 }
 
-                @Override
-                public void wormholeOpened(String message) {
-                    wormholeMessage = message;
-                }
             };
-            bay = onlyMode != null ? ModificationBay.openMode(hostPanel, area, onlyMode, SocketCustody.shipNames(ownedShips), bayListener)
-                    : ModificationBay.open(hostPanel, area, SocketCustody.shipNames(ownedShips), bayListener);
+            bay = ModificationBay.open(hostPanel, area, SocketCustody.shipNames(ownedShips), bayListener);
         }
         if (closing && openLevel <= 0f && !closeRequested) {
             closeRequested = true;
-            if (wormholeMessage != null) {
-                host.leave(wormholeMessage);
-            } else {
-                host.close();
-            }
+            host.close();
         }
     }
 

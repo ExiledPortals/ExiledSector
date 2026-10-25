@@ -171,6 +171,12 @@ class ExiledSectorSettingsTest {
     }
 
     @Test
+    void registersTheStarChartDebugToolsOffByDefault() {
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addBoolean(eq("exiledSector"),
+                eq(StarChartSettings.DEBUG_TOOLS_FIELD_ID), anyString(), anyString(), eq(false), eq("")));
+    }
+
+    @Test
     void noSettingTextContainsAPercentSignBecauseLunaLibFormatsItBeforeDisplaying() {
         assertFalse(registeredTexts.isEmpty());
         for (String text : registeredTexts) {

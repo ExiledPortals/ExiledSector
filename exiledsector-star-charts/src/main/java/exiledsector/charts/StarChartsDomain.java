@@ -76,6 +76,9 @@ public final class StarChartsDomain implements ExiledSectorDomain {
         SettingsCreator.addBoolean(MOD_ID, StarChartSettings.OPEN_ANYWHERE_FIELD_ID,
                 Translation.text("chart.ui.settings.openAnywhere.name"), Translation.text("chart.ui.settings.openAnywhere.tooltip"),
                 StarChartSettings.DEFAULT_OPEN_ANYWHERE, ExiledSectorSettings.MAIN_TAB);
+        SettingsCreator.addBoolean(MOD_ID, StarChartSettings.DEBUG_TOOLS_FIELD_ID,
+                Translation.text("chart.ui.settings.debugTools.name"), Translation.text("chart.ui.settings.debugTools.tooltip"),
+                StarChartSettings.DEFAULT_DEBUG_TOOLS, ExiledSectorSettings.MAIN_TAB);
     }
 
     @Override

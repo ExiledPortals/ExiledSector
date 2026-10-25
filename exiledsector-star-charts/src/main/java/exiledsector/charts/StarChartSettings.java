@@ -17,6 +17,8 @@ public final class StarChartSettings {
     public static final int MAX_FLEET_LIMIT = 12;
     public static final String OPEN_ANYWHERE_FIELD_ID = "exiledSector_starChartOpenAnywhereDev";
     public static final boolean DEFAULT_OPEN_ANYWHERE = false;
+    public static final String DEBUG_TOOLS_FIELD_ID = "exiledSector_starChartDebugTools";
+    public static final boolean DEFAULT_DEBUG_TOOLS = false;
 
     public static final DomainSwitch SWITCH = new DomainSwitch(ENABLED_FIELD_ID, DEFAULT_ENABLED, () -> {
     });
@@ -53,5 +55,9 @@ public final class StarChartSettings {
 
     public static boolean openAnywhere() {
         return ModSettings.booleanOr(OPEN_ANYWHERE_FIELD_ID, DEFAULT_OPEN_ANYWHERE);
+    }
+
+    public static boolean debugTools() {
+        return ModSettings.booleanOr(DEBUG_TOOLS_FIELD_ID, DEFAULT_DEBUG_TOOLS);
     }
 }

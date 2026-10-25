@@ -12,16 +12,15 @@ import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.WormholeGateway;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
-import exiledsector.ui.ModificationBenchCargoLauncher;
 import exiledsector.ui.VanillaText;
-import exiledsector.ui.socket.BenchMode;
+import exiledsector.ui.atlas.AtlasScreen;
 
 import java.util.List;
 import java.util.Random;
 
 public class WormholeGatewayOption extends BaseIndustryOptionProvider {
 
-    static final Object OPEN_STAR_CHARTS = new Object();
+    static final Object OPEN_ATLAS = new Object();
     static final Object BUY_STAR_CHART = new Object();
 
     @Override
@@ -33,13 +32,13 @@ public class WormholeGatewayOption extends BaseIndustryOptionProvider {
         IndustryOptionProvider.IndustryOptionData buy = new IndustryOptionProvider.IndustryOptionData(buyText("chart.gateway.option.buy"),
                 BUY_STAR_CHART, industry, this);
         buy.enabled = ChartSupply.canAfford(Global.getSector());
-        return List.of(new IndustryOptionProvider.IndustryOptionData(Translation.gameText("chart.gateway.option.open"), OPEN_STAR_CHARTS, industry, this),
+        return List.of(new IndustryOptionProvider.IndustryOptionData(Translation.gameText("chart.gateway.option.open"), OPEN_ATLAS, industry, this),
                 buy);
     }
 
     @Override
     public void createTooltip(IndustryOptionProvider.IndustryOptionData option, TooltipMakerAPI tooltip, float width) {
-        if (option.id == OPEN_STAR_CHARTS) {
+        if (option.id == OPEN_ATLAS) {
             VanillaText.plainPara(tooltip, Translation.gameText("chart.gateway.option.tooltip"), 0f, Misc.getTextColor());
         } else if (option.id == BUY_STAR_CHART) {
             VanillaText.plainPara(tooltip, buyText("chart.gateway.option.buy.tooltip"), 0f, Misc.getTextColor());
@@ -53,8 +52,8 @@ public class WormholeGatewayOption extends BaseIndustryOptionProvider {
 
     @Override
     public void optionSelected(IndustryOptionProvider.IndustryOptionData option, DialogCreatorUI ui) {
-        if (option.id == OPEN_STAR_CHARTS) {
-            ModificationBenchCargoLauncher.openMode(Global.getSector().getCampaignUI(), BenchMode.STAR_CHARTS);
+        if (option.id == OPEN_ATLAS) {
+            AtlasScreen.open(Global.getSector().getCampaignUI());
         } else if (option.id == BUY_STAR_CHART) {
             ChartSupply.buyFromGateway(Global.getSector(), new Random());
         }

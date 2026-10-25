@@ -12,7 +12,6 @@ import exiledsector.charts.atlas.AtlasReach;
 import exiledsector.charts.atlas.AtlasRegion;
 import exiledsector.charts.atlas.AtlasSpecial;
 import exiledsector.charts.atlas.AtlasState;
-import exiledsector.items.StarChart;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +60,7 @@ public final class AtlasNodeText {
         return faction == null ? tidy(factionId == null ? "" : factionId) : faction.getDisplayName();
     }
 
-    public static List<Line> describe(AtlasGenerator generator, AtlasState state, AtlasCell cell, StarChart chart, boolean reachable) {
+    public static List<Line> describe(AtlasGenerator generator, AtlasState state, AtlasCell cell, boolean reachable) {
         AtlasNode node = generator.node(cell);
         List<Line> lines = new ArrayList<>();
         if (node.isOrigin()) {
@@ -73,7 +72,7 @@ public final class AtlasNodeText {
                 Tone.PLAIN));
         lines.add(new Line(Translation.msg("chart.atlas.node.layout").arg("layout", name("layout", node.layoutId())).text(), Tone.PLAIN));
         lines.addAll(markers(generator, state, cell, node));
-        lines.add(stateLine(generator, state, cell, chart, reachable));
+        lines.addAll(stateLines(generator, state, cell, reachable));
         return lines;
     }
 
@@ -105,18 +104,19 @@ public final class AtlasNodeText {
         return lines;
     }
 
-    static Line stateLine(AtlasGenerator generator, AtlasState state, AtlasCell cell, StarChart chart, boolean reachable) {
+    static List<Line> stateLines(AtlasGenerator generator, AtlasState state, AtlasCell cell, boolean reachable) {
         if (state.isCompleted(cell)) {
-            return new Line(Translation.text("chart.atlas.node.completed"), Tone.GOOD);
+            return List.of(new Line(Translation.text("chart.atlas.node.completed"), Tone.GOOD));
         }
         if (AtlasReach.isSpentBastion(generator, state, cell)) {
-            return new Line(Translation.text("chart.atlas.node.attempted"), Tone.BAD);
+            return List.of(new Line(Translation.text("chart.atlas.node.attempted"), Tone.BAD));
         }
         if (!reachable) {
-            return new Line(Translation.text("chart.atlas.blocked.not_reachable"), Tone.HINT);
+            return List.of(new Line(Translation.text("chart.atlas.blocked.not_reachable"), Tone.HINT));
         }
-        AtlasOpening.Blocker blocker = AtlasOpening.check(generator, state, cell, chart);
-        return blocker.allowsOpening() ? new Line(Translation.text("chart.atlas.node.open"), Tone.GOOD) : new Line(Translation.text(blocker.reasonKey()), Tone.BAD);
+        AtlasOpening.Blocker requirement = AtlasOpening.check(generator, state, cell, null);
+        Line open = new Line(Translation.text("chart.atlas.node.open"), Tone.GOOD);
+        return requirement.allowsOpening() ? List.of(open) : List.of(new Line(Translation.text(requirement.reasonKey()), Tone.MARKER), open);
     }
 
     public static List<String> confirmLines(AtlasGenerator generator, AtlasState state, AtlasCell cell) {

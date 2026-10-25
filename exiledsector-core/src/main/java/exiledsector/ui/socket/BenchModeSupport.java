@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public interface BenchModeSupport {
 
@@ -45,16 +46,10 @@ public interface BenchModeSupport {
         void pressedInside();
     }
 
-    interface TargetListener {
-
-        void picked(Object target, List<String> confirmLines);
-
-        void cancelled();
+    record OpenTarget(Object target, Supplier<List<String>> confirmLines) {
     }
 
-    interface TargetPicker {
-
-        void pick(CustomPanelAPI hostPanel, Item loaded, TargetListener listener);
+    record DebugAction(String buttonKey, String tooltipKey) {
     }
 
     interface PickerSession {
@@ -106,15 +101,22 @@ public interface BenchModeSupport {
 
     OpenCheck openCheck(SectorAPI sector, ItemStore store, Item loaded);
 
+    default OpenCheck openCheck(SectorAPI sector, ItemStore store, Item loaded, Object target) {
+        return openCheck(sector, store, loaded);
+    }
+
     int openEntries();
 
     OpenOutcome open(SectorAPI sector, ItemStore store, Item loaded, int entries, Random random);
 
-    default TargetPicker targetPicker() {
+    default OpenOutcome openAt(SectorAPI sector, ItemStore store, Item loaded, int entries, Random random, Object target) {
+        return open(sector, store, loaded, entries, random);
+    }
+
+    default DebugAction debugAction() {
         return null;
     }
 
-    default OpenOutcome openAt(SectorAPI sector, ItemStore store, Item loaded, int entries, Random random, Object target) {
-        return open(sector, store, loaded, entries, random);
+    default void runDebugAction(SectorAPI sector, Item loaded, Object target) {
     }
 }

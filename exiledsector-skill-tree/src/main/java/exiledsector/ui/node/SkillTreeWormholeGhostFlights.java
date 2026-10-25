@@ -84,6 +84,6 @@ final class SkillTreeWormholeGhostFlights {
     }
 
     void draw(TreeViewport viewport, float alphaMult) {
-        flights.draw(SkillTreeNodeGeometry.NODE_SIZE * GHOST_SIZE_RATIO * viewport.zoom(), viewport, alphaMult);
+        flights.draw(NodeMetrics.NODE_SIZE * GHOST_SIZE_RATIO * viewport.zoom(), viewport, alphaMult);
     }
 }

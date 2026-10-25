@@ -91,4 +91,13 @@ class StarChartSettingsTest {
         lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.OPEN_ANYWHERE_FIELD_ID)).thenReturn(true);
         assertTrue(StarChartSettings.openAnywhere());
     }
+
+    @Test
+    void showsTheDebugToolsOnlyWhenTheirSwitchIsOn() {
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.DEBUG_TOOLS_FIELD_ID)).thenReturn(null);
+        assertFalse(StarChartSettings.debugTools());
+
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.DEBUG_TOOLS_FIELD_ID)).thenReturn(true);
+        assertTrue(StarChartSettings.debugTools());
+    }
 }

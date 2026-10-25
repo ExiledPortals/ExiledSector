@@ -17,14 +17,12 @@ import java.awt.Color;
 import java.util.List;
 import java.util.Set;
 
-import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_ALPHA;
-import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_HALO_THICKNESS;
-import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_GLOW_LINE_THICKNESS;
-import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_LINE_THICKNESS;
-import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_CONNECTOR_PARALLEL_GAP;
-import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_SIZE;
-import static exiledsector.ui.node.SkillTreeNodeGeometry.RING_DULL_ALPHA;
-import static exiledsector.ui.node.SkillTreeNodeGeometry.RING_DULL_COLOR;
+import static exiledsector.ui.node.NodeMetrics.NODE_CONNECTOR_GLOW_HALO_ALPHA;
+import static exiledsector.ui.node.NodeMetrics.NODE_CONNECTOR_GLOW_HALO_THICKNESS;
+import static exiledsector.ui.node.NodeMetrics.NODE_CONNECTOR_GLOW_LINE_THICKNESS;
+import static exiledsector.ui.node.NodeMetrics.NODE_CONNECTOR_PARALLEL_GAP;
+import static exiledsector.ui.node.NodeMetrics.NODE_SIZE;
+import static exiledsector.ui.node.NodeMetrics.RING_DULL_ALPHA;
 import static exiledsector.ui.node.SkillTreeNodeGeometry.connectorEndpointRadius;
 
 final class SkillTreeNodeConnectorRenderer {
@@ -35,7 +33,7 @@ final class SkillTreeNodeConnectorRenderer {
     private static final float WORMHOLE_TIP_FADE_MAX_FRACTION = 0.4f;
     private static final float[] PLAIN_BREAKPOINTS = {0f, 1f};
     private static final float[] DULL_FADE_BREAKPOINTS = {0f, 0.5f, 1f};
-    private static final int RING_DULL_RGB = RING_DULL_COLOR.getRGB();
+    private static final int RING_DULL_RGB = NodeConnectorLines.RING_DULL_RGB;
     private static final int TEMPLATE_RGB = SkillTreePanelStyle.POSITIVE_STAT_COLOR.getRGB();
     private static final float TEMPLATE_ALPHA = 0.9f;
     private static final int BLACK_RGB = Color.BLACK.getRGB();
@@ -46,9 +44,7 @@ final class SkillTreeNodeConnectorRenderer {
     private final SkillTreePanelStyle panelStyle;
     private final NodeSearch nodeSearch;
 
-    private final LineBatch dullLines = new LineBatch(NODE_CONNECTOR_LINE_THICKNESS);
-    private final LineBatch glowHaloLines = new LineBatch(NODE_CONNECTOR_GLOW_HALO_THICKNESS);
-    private final LineBatch glowLines = new LineBatch(NODE_CONNECTOR_GLOW_LINE_THICKNESS);
+    private final NodeConnectorLines connectorLines = new NodeConnectorLines();
     private final LineBatch tetherLines = new LineBatch(NODE_CONNECTOR_GLOW_LINE_THICKNESS);
     private final Segment scratchSegment = new Segment();
     private final Segment scratchPart = new Segment();
@@ -71,7 +67,7 @@ final class SkillTreeNodeConnectorRenderer {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        clearBatch();
+        connectorLines.clear();
         exoshipRadius = layers.exoshipRadius();
 
         for (SkillTreeTopology.Connector connector : SkillTree.topology().connectors()) {
@@ -83,7 +79,7 @@ final class SkillTreeNodeConnectorRenderer {
             }
         }
 
-        flushBatch();
+        connectorLines.flush();
         GL11.glDisable(GL11.GL_BLEND);
     }
 
@@ -283,9 +279,9 @@ final class SkillTreeNodeConnectorRenderer {
     }
 
     private void drawWormholeSegmentWithInnerLineFill(Segment s, float fillStart, float fillEnd, SegmentFade segmentFade) {
-        addTipFadeLine(glowHaloLines, s, segmentFade, segmentFade.alphaMult() * NODE_CONNECTOR_GLOW_HALO_ALPHA);
+        addTipFadeLine(true, s, segmentFade, segmentFade.alphaMult() * NODE_CONNECTOR_GLOW_HALO_ALPHA);
         if (fillEnd <= fillStart || s.progress2 <= s.progress1) return;
-        addTipFadeLine(glowLines, scratchPart.setPart(s, fillStart, fillEnd), segmentFade, segmentFade.alphaMult());
+        addTipFadeLine(false, scratchPart.setPart(s, fillStart, fillEnd), segmentFade, segmentFade.alphaMult());
     }
 
     private void drawFillPart(Segment s, float from, float to, SegmentFade segmentFade) {
@@ -381,52 +377,41 @@ final class SkillTreeNodeConnectorRenderer {
 
     private void drawConnectorSegment(Segment s, ConnectorKind kind, float alphaMult) {
         if (kind == ConnectorKind.GLOW) {
-            int accentRgb = panelStyle.getAccentColor().getRGB();
-            glowHaloLines.add(s.x1, s.y1, accentRgb, s.x2, s.y2, accentRgb, alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA);
-            glowLines.add(s.x1, s.y1, accentRgb, s.x2, s.y2, accentRgb, alphaMult);
+            connectorLines.glow(s.x1, s.y1, s.x2, s.y2, panelStyle.getAccentColor().getRGB(), alphaMult);
             return;
         }
         if (kind == ConnectorKind.TEMPLATE) {
-            glowLines.add(s.x1, s.y1, TEMPLATE_RGB, s.x2, s.y2, TEMPLATE_RGB, alphaMult * TEMPLATE_ALPHA);
+            connectorLines.glowLine(s.x1, s.y1, TEMPLATE_RGB, s.x2, s.y2, TEMPLATE_RGB, alphaMult * TEMPLATE_ALPHA);
             return;
         }
-        addDullPair(s, RING_DULL_RGB, RING_DULL_RGB, alphaMult * RING_DULL_ALPHA);
+        connectorLines.dull(s.x1, s.y1, s.x2, s.y2, alphaMult);
     }
 
     private void drawFadedDullSegment(Segment s, ConnectorFade fade, float alphaMult) {
         int color0 = colorForFadeProgress(s.progress1, fade.fadeR1ToBlack(), fade.fadeR2ToBlack(), RING_DULL_RGB);
         int color1 = colorForFadeProgress(s.progress2, fade.fadeR1ToBlack(), fade.fadeR2ToBlack(), RING_DULL_RGB);
-        addDullPair(s, color0, color1, alphaMult * RING_DULL_ALPHA);
-    }
-
-    private void addDullPair(Segment s, int color0, int color1, float alpha) {
-        float dx = s.x2 - s.x1;
-        float dy = s.y2 - s.y1;
-        float length = (float) Math.sqrt(dx * dx + dy * dy);
-        if (length <= 0.0001f) return;
-        float dirX = dx / length;
-        float dirY = dy / length;
-        float perpX = -dirY * (NODE_CONNECTOR_PARALLEL_GAP / 2f);
-        float perpY = dirX * (NODE_CONNECTOR_PARALLEL_GAP / 2f);
-        dullLines.add(s.x1 + perpX, s.y1 + perpY, color0, s.x2 + perpX, s.y2 + perpY, color1, alpha);
-        dullLines.add(s.x1 - perpX, s.y1 - perpY, color0, s.x2 - perpX, s.y2 - perpY, color1, alpha);
+        connectorLines.dullPair(s.x1, s.y1, color0, s.x2, s.y2, color1, alphaMult * RING_DULL_ALPHA);
     }
 
     private void drawFadedTemplateSegment(Segment s, ConnectorFade fade, float alphaMult) {
         int color0 = colorForFadeProgress(s.progress1, fade.fadeR1ToBlack(), fade.fadeR2ToBlack(), TEMPLATE_RGB);
         int color1 = colorForFadeProgress(s.progress2, fade.fadeR1ToBlack(), fade.fadeR2ToBlack(), TEMPLATE_RGB);
-        glowLines.add(s.x1, s.y1, color0, s.x2, s.y2, color1, alphaMult * TEMPLATE_ALPHA);
+        connectorLines.glowLine(s.x1, s.y1, color0, s.x2, s.y2, color1, alphaMult * TEMPLATE_ALPHA);
     }
 
     private void drawGlowingSegmentWithTipFade(Segment s, SegmentFade segmentFade) {
-        addTipFadeLine(glowHaloLines, s, segmentFade, segmentFade.alphaMult() * NODE_CONNECTOR_GLOW_HALO_ALPHA);
-        addTipFadeLine(glowLines, s, segmentFade, segmentFade.alphaMult());
+        addTipFadeLine(true, s, segmentFade, segmentFade.alphaMult() * NODE_CONNECTOR_GLOW_HALO_ALPHA);
+        addTipFadeLine(false, s, segmentFade, segmentFade.alphaMult());
     }
 
-    private void addTipFadeLine(LineBatch batch, Segment s, SegmentFade segmentFade, float alphaMult) {
+    private void addTipFadeLine(boolean halo, Segment s, SegmentFade segmentFade, float alphaMult) {
         int color0 = colorForTipFade(s.progress1, segmentFade.tipFraction1(), segmentFade.tipFraction2());
         int color1 = colorForTipFade(s.progress2, segmentFade.tipFraction1(), segmentFade.tipFraction2());
-        batch.add(s.x1, s.y1, color0, s.x2, s.y2, color1, alphaMult);
+        if (halo) {
+            connectorLines.glowHalo(s.x1, s.y1, color0, s.x2, s.y2, color1, alphaMult);
+        } else {
+            connectorLines.glowLine(s.x1, s.y1, color0, s.x2, s.y2, color1, alphaMult);
+        }
     }
 
     private int colorForTipFade(float progress, float tipFraction1, float tipFraction2) {
@@ -459,18 +444,6 @@ final class SkillTreeNodeConnectorRenderer {
 
     private static int lerpChannel(int from, int to, float t) {
         return Math.round(from + (to - from) * t);
-    }
-
-    private void clearBatch() {
-        dullLines.clear();
-        glowLines.clear();
-        glowHaloLines.clear();
-    }
-
-    private void flushBatch() {
-        dullLines.flush();
-        glowHaloLines.flush();
-        glowLines.flush();
     }
 
     private record ConnectorEndpoint(float x, float y, float radius) {

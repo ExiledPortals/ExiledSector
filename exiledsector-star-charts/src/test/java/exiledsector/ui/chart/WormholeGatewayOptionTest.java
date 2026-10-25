@@ -11,8 +11,7 @@ import com.fs.starfarer.api.campaign.listeners.IndustryOptionProvider;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.WormholeGateway;
-import exiledsector.ui.ModificationBenchCargoLauncher;
-import exiledsector.ui.socket.BenchMode;
+import exiledsector.ui.atlas.AtlasScreen;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -39,7 +38,7 @@ import static org.mockito.Mockito.when;
 class WormholeGatewayOptionTest {
 
     private MockedStatic<Global> globalMock;
-    private MockedStatic<ModificationBenchCargoLauncher> launcherMock;
+    private MockedStatic<AtlasScreen> atlasMock;
     private CampaignUIAPI campaignUI;
     private MarketAPI market;
     private Industry gateway;
@@ -53,7 +52,7 @@ class WormholeGatewayOptionTest {
         globalMock = Mockito.mockStatic(Global.class);
         globalMock.when(Global::getSettings).thenReturn(mock(SettingsAPI.class));
         globalMock.when(Global::getSector).thenReturn(sector);
-        launcherMock = Mockito.mockStatic(ModificationBenchCargoLauncher.class);
+        atlasMock = Mockito.mockStatic(AtlasScreen.class);
         market = mock(MarketAPI.class, Mockito.RETURNS_DEEP_STUBS);
         when(market.isPlayerOwned()).thenReturn(true);
         gateway = industry(WormholeGateway.INDUSTRY_ID, market);
@@ -61,7 +60,7 @@ class WormholeGatewayOptionTest {
 
     @AfterEach
     void tearDown() {
-        launcherMock.close();
+        atlasMock.close();
         globalMock.close();
     }
 
@@ -73,13 +72,13 @@ class WormholeGatewayOptionTest {
     }
 
     @Test
-    void onlyThePlayersGatewayOffersStarChartsEvenWhileUnderConstruction() {
+    void onlyThePlayersGatewayOffersTheAtlasEvenWhileUnderConstruction() {
         when(gateway.isBuilding()).thenReturn(true);
 
         List<IndustryOptionProvider.IndustryOptionData> options = provider.getIndustryOptions(gateway);
 
         assertEquals(2, options.size());
-        assertSame(WormholeGatewayOption.OPEN_STAR_CHARTS, options.get(0).id);
+        assertSame(WormholeGatewayOption.OPEN_ATLAS, options.get(0).id);
         assertSame(WormholeGatewayOption.BUY_STAR_CHART, options.get(1).id);
         assertSame(gateway, options.get(0).ind);
         assertSame(provider, options.get(0).provider);
@@ -107,18 +106,18 @@ class WormholeGatewayOptionTest {
     }
 
     @Test
-    void choosingTheOptionOpensTheCraftingWindowOnStarCharts() {
+    void choosingTheOptionOpensTheAtlas() {
         IndustryOptionProvider.IndustryOptionData option = provider.getIndustryOptions(gateway).get(0);
 
         provider.optionSelected(new IndustryOptionProvider.IndustryOptionData("other", new Object(), gateway, provider), mock(DialogCreatorUI.class));
-        launcherMock.verify(() -> ModificationBenchCargoLauncher.openMode(any(), any()), never());
+        atlasMock.verify(() -> AtlasScreen.open(any()), never());
 
         provider.optionSelected(option, mock(DialogCreatorUI.class));
-        launcherMock.verify(() -> ModificationBenchCargoLauncher.openMode(campaignUI, BenchMode.STAR_CHARTS), times(1));
+        atlasMock.verify(() -> AtlasScreen.open(campaignUI), times(1));
     }
 
     @Test
-    void theOptionTooltipDescribesTheStarChartsPage() {
+    void theOptionTooltipDescribesTheAtlas() {
         TooltipMakerAPI tooltip = mock(TooltipMakerAPI.class);
 
         provider.createTooltip(provider.getIndustryOptions(gateway).get(0), tooltip, 300f);

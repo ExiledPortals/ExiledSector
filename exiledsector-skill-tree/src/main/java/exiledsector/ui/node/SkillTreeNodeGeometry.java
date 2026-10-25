@@ -2,33 +2,15 @@ package exiledsector.ui.node;
 
 import exiledsector.skills.SkillTier;
 
-import java.awt.Color;
+import static exiledsector.ui.node.NodeMetrics.ICON_INSET_RATIO;
+import static exiledsector.ui.node.NodeMetrics.donutGapRadius;
+import static exiledsector.ui.node.NodeMetrics.donutRadius;
 
 final class SkillTreeNodeGeometry {
-
-    static final float NODE_SIZE = 64f;
-    static final float ICON_INSET_RATIO = 0.9f;
-
-    static final float NODE_CONNECTOR_PARALLEL_GAP = 4f;
-    static final float NODE_CONNECTOR_LINE_THICKNESS = 1.5f;
-    static final float NODE_CONNECTOR_GLOW_LINE_THICKNESS = 2.5f;
-    static final float NODE_CONNECTOR_GLOW_HALO_THICKNESS = 7f;
-    static final float NODE_CONNECTOR_GLOW_HALO_ALPHA = 0.35f;
-
-    static final Color RING_DULL_COLOR = new Color(150, 150, 150);
-    static final float RING_DULL_ALPHA = 0.5f;
 
     private static final float ROOT_CONNECTOR_OVERLAP_RATIO = 0.7f;
 
     private SkillTreeNodeGeometry() {
-    }
-
-    static float donutRadius(float footprintSize) {
-        return footprintSize / 2f;
-    }
-
-    static float donutGapRadius(float scale, float zoom) {
-        return (NODE_CONNECTOR_PARALLEL_GAP * scale * zoom) / 2f;
     }
 
     static float donutOuterRadius(float footprintSize, SkillTier tier, float zoom) {

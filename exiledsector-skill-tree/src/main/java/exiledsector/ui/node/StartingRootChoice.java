@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_SIZE;
+import static exiledsector.ui.node.NodeMetrics.NODE_SIZE;
 
 final class StartingRootChoice {
 

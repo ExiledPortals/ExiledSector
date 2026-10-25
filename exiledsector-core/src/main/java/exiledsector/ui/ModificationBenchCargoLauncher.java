@@ -1,95 +1,13 @@
 package exiledsector.ui;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
-import com.fs.starfarer.api.ui.CustomPanelAPI;
-import com.fs.starfarer.api.ui.UIPanelAPI;
-import exiledsector.effects.TransientScripts;
-import exiledsector.ui.refit.UiReflection;
-import exiledsector.ui.socket.BenchMode;
-import exiledsector.ui.socket.BenchModes;
-import org.apache.log4j.Logger;
 
 public final class ModificationBenchCargoLauncher {
-
-    private static final Logger LOG = Logger.getLogger(ModificationBenchCargoLauncher.class);
-    private static final String CLICK_SOUND = "ui_button_pressed";
 
     private ModificationBenchCargoLauncher() {
     }
 
     public static boolean open(CampaignUIAPI campaignUI, Runnable afterClose) {
-        return open(campaignUI, null, afterClose);
-    }
-
-    public static boolean openMode(CampaignUIAPI campaignUI, BenchMode mode) {
-        return BenchModes.enabled(mode) && open(campaignUI, mode, null);
-    }
-
-    // java:S1181: UiReflection declares Throwable, and a changed engine may only cost the core UI Crafting window, never the game
-    @SuppressWarnings("java:S1181")
-    private static boolean open(CampaignUIAPI campaignUI, BenchMode onlyMode, Runnable afterClose) {
-        try {
-            UIPanelAPI hostPanel = hostPanel(campaignUI);
-            if (hostPanel == null || benchOpenIn(hostPanel)) return false;
-            CargoHost host = new CargoHost(hostPanel, afterClose);
-            ModificationBenchScreen screen = new ModificationBenchScreen(host, onlyMode);
-            CustomPanelAPI panel = Global.getSettings().createCustom(Global.getSettings().getScreenWidth(), Global.getSettings().getScreenHeight(), screen);
-            host.benchPanel = panel;
-            hostPanel.addComponent(panel).inTL(0f, 0f);
-            screen.attach(panel);
-            SkillTreeSounds.play(CLICK_SOUND);
-            return true;
-        } catch (Throwable e) {
-            LOG.error("[ExiledSector] Could not open the Crafting window over the campaign screens", e);
-            return false;
-        }
-    }
-
-    static UIPanelAPI hostPanel(CampaignUIAPI campaignUI) throws Throwable {
-        if (campaignUI == null) return null;
-        if (campaignUI.getCurrentInteractionDialog() instanceof UIPanelAPI dialogPanel) return dialogPanel;
-        return UiReflection.call(campaignUI, "getCore") instanceof UIPanelAPI corePanel ? corePanel : null;
-    }
-
-    private static boolean benchOpenIn(UIPanelAPI hostPanel) throws Throwable {
-        for (Object child : UiReflection.children(hostPanel)) {
-            if (child instanceof CustomPanelAPI panel && panel.getPlugin() instanceof ModificationBenchScreen) return true;
-        }
-        return false;
-    }
-
-    private static final class CargoHost implements ModificationBenchScreen.Host {
-
-        private final UIPanelAPI hostPanel;
-        private final Runnable afterClose;
-        private CustomPanelAPI benchPanel;
-
-        private CargoHost(UIPanelAPI hostPanel, Runnable afterClose) {
-            this.hostPanel = hostPanel;
-            this.afterClose = afterClose;
-        }
-
-        @Override
-        public void close() {
-            TransientScripts.nextFrame(Global.getSector(), () -> removePanel(this, null));
-        }
-
-        @Override
-        public void leave(String wormholeMessage) {
-            TransientScripts.nextFrame(Global.getSector(), () -> removePanel(this, wormholeMessage));
-        }
-    }
-
-    private static void removePanel(CargoHost host, String wormholeMessage) {
-        if (host.benchPanel != null) {
-            host.hostPanel.removeComponent(host.benchPanel);
-        }
-        if (host.afterClose != null) {
-            host.afterClose.run();
-        }
-        if (wormholeMessage != null) {
-            RefitScreenExit.leave(null, wormholeMessage);
-        }
+        return CampaignOverlay.open(campaignUI, ModificationBenchScreen::new, afterClose);
     }
 }

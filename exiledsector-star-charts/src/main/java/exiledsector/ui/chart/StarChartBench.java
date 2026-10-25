@@ -6,6 +6,10 @@ import com.fs.starfarer.api.ui.CustomPanelAPI;
 import exiledsector.charts.ChartRunActions;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.atlas.AtlasDevTools;
+import exiledsector.charts.atlas.AtlasOpening;
+import exiledsector.charts.atlas.AtlasRuntime;
+import exiledsector.charts.atlas.AtlasState;
 import exiledlib.i18n.StyledText;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.CraftingWard;
@@ -16,7 +20,6 @@ import exiledsector.items.ItemStore;
 import exiledsector.items.ItemType;
 import exiledsector.items.StarChart;
 import exiledsector.ui.socket.BenchMode;
-import exiledsector.ui.atlas.AtlasPanel;
 import exiledsector.ui.socket.BenchModeSupport;
 import exiledsector.ui.socket.SocketPanelPlacement;
 import exiledsector.ui.socket.StarChartStoragePanel;
@@ -30,6 +33,7 @@ import java.util.function.Predicate;
 public final class StarChartBench implements BenchModeSupport {
 
     public static final StarChartBench INSTANCE = new StarChartBench();
+    private static final DebugAction COMPLETE_TARGET = new DebugAction("chart.atlas.debug.complete", "chart.atlas.debug.complete.tooltip");
     private static final OpenTexts OPEN_TEXTS = new OpenTexts("chart.ui.open.button", "chart.ui.open.tooltip", "chart.ui.open.confirm.title",
             "chart.ui.open.confirm.body", "chart.ui.open.confirm.entries", "chart.ui.open.confirm.yes", "chart.ui.open.confirm.no");
 
@@ -123,13 +127,19 @@ public final class StarChartBench implements BenchModeSupport {
     }
 
     @Override
-    public int openEntries() {
-        return StarChartSettings.wormholeEntries();
+    public OpenCheck openCheck(SectorAPI sector, ItemStore store, Item loaded, Object target) {
+        OpenCheck wormhole = openCheck(sector, store, loaded);
+        if (!wormhole.allowsOpening() || !(target instanceof AtlasCell cell) || sector == null) {
+            return wormhole;
+        }
+        AtlasOpening.Blocker blocker = AtlasOpening.check(AtlasRuntime.generator(sector), AtlasState.get(sector), cell,
+                loaded instanceof StarChart chart ? chart : null);
+        return new OpenCheck(blocker.allowsOpening(), blocker.reasonKey());
     }
 
     @Override
-    public TargetPicker targetPicker() {
-        return (hostPanel, loaded, listener) -> AtlasPanel.open(hostPanel, loaded instanceof StarChart chart ? chart : null, listener);
+    public int openEntries() {
+        return StarChartSettings.wormholeEntries();
     }
 
     @Override
@@ -141,6 +151,19 @@ public final class StarChartBench implements BenchModeSupport {
                 (openSector, allowed, openRandom, openStore, chart) -> ChartRunActions.openFromAtlas(openSector, allowed, openRandom, openStore, chart, cell),
                 sector, store, loaded, entries, random);
         return new OpenOutcome(outcome.opened(), outcome.messageKey());
+    }
+
+    @Override
+    public DebugAction debugAction() {
+        return StarChartSettings.debugTools() ? COMPLETE_TARGET : null;
+    }
+
+    @Override
+    public void runDebugAction(SectorAPI sector, Item loaded, Object target) {
+        if (sector != null && target instanceof AtlasCell cell) {
+            int tier = loaded instanceof StarChart chart ? StarChart.clampTier(chart.tier()) : StarChart.LOWEST_TIER;
+            AtlasDevTools.complete(AtlasRuntime.generator(sector), AtlasState.get(sector), cell, tier);
+        }
     }
 
     @Override

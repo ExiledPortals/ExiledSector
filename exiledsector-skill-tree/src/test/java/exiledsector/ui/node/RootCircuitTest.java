@@ -58,7 +58,7 @@ class RootCircuitTest {
 
     @Test
     void theCircuitFitsInsideTheGapAroundEveryRoot() {
-        float rootRadius = SkillTreeNodeGeometry.donutRadius(SkillTreeNodeGeometry.NODE_SIZE * SkillTier.ROOT.getSizeMultiplier());
+        float rootRadius = NodeMetrics.donutRadius(NodeMetrics.NODE_SIZE * SkillTier.ROOT.getSizeMultiplier());
         float circuitReach = circuit.extentRadii() * rootRadius;
         for (RootCircuit.Trace trace : circuit.traces()) {
             int last = trace.xs().length - 1;

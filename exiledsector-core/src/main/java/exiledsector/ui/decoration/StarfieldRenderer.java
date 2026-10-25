@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class SkillTreeStarfieldRenderer {
+public class StarfieldRenderer {
 
     private static final String[] STAR_SPRITE_PATHS = {
             "graphics/backgrounds/star0.png",
@@ -57,7 +57,7 @@ public class SkillTreeStarfieldRenderer {
     }
 
     private final SkillTreePanelStyle panelStyle;
-    private final SpriteCache spriteCache = new SpriteCache(SkillTreeStarfieldRenderer.class);
+    private final SpriteCache spriteCache = new SpriteCache(StarfieldRenderer.class);
     private final TexturedQuadBatch starQuads = new TexturedQuadBatch();
     private final Random random = new Random();
     private final List<List<Star>> starsBySprite = new ArrayList<>(STAR_SPRITE_PATHS.length);
@@ -67,7 +67,7 @@ public class SkillTreeStarfieldRenderer {
     private float fieldHeight;
     private float twinkleElapsedSeconds = 0f;
 
-    public SkillTreeStarfieldRenderer(SkillTreePanelStyle panelStyle) {
+    public StarfieldRenderer(SkillTreePanelStyle panelStyle) {
         this.panelStyle = panelStyle;
     }
 

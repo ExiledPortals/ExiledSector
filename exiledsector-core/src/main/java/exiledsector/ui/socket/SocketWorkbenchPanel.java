@@ -66,11 +66,14 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         default void requestItem() {
         }
 
-        default boolean offersWormholeOpening() {
-            return false;
+        default BenchModeSupport.OpenTarget openTarget() {
+            return null;
         }
 
         default void wormholeOpened(String message) {
+        }
+
+        default void debugActionApplied() {
         }
     }
 
@@ -85,10 +88,12 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     private static final float SCROLLBAR_ROOM = 20f;
     private static final float MIN_OPEN_BUTTON_HEIGHT = 26f;
     private static final float OPEN_CONFIRM_HEIGHT = 170f;
+    private static final float DEBUG_BUTTON_SHARE = 0.32f;
+    private static final float DEBUG_BUTTON_GAP = 6f;
     private static final Color PLATE_COLOR = Color.BLACK;
     private static final String FALLBACK_ICON = ItemDefinition.FALLBACK_ICON;
 
-    private enum Control {CLOSE, PICK, CONFIRM_USE, CONFIRM_GROW, CANCEL_CONFIRM, OPEN_WORMHOLE, CONFIRM_OPEN}
+    private enum Control {CLOSE, PICK, CONFIRM_USE, CONFIRM_GROW, CANCEL_CONFIRM, OPEN_WORMHOLE, CONFIRM_OPEN, DEBUG_ACTION}
 
     private static final float CONFIRM_WIDTH = 460f;
     private static final float USE_CONFIRM_HEIGHT = 180f;
@@ -343,6 +348,8 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             requestItem();
         } else if (id == Control.OPEN_WORMHOLE) {
             openPressed();
+        } else if (id == Control.DEBUG_ACTION) {
+            debugPressed();
         }
     }
 
@@ -652,7 +659,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private boolean showsOpenButton() {
         BenchModeSupport support = domainSupport();
-        return support != null && support.openTexts() != null && workbenchListener.offersWormholeOpening();
+        return support != null && support.openTexts() != null && workbenchListener.openTarget() != null;
     }
 
     private float detailsArtHeight() {
@@ -661,7 +668,8 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     }
 
     private BenchModeSupport.OpenCheck openBlocker() {
-        return modeSupport().openCheck(Global.getSector(), modeStore(), loadedItem);
+        BenchModeSupport.OpenTarget openTarget = workbenchListener.openTarget();
+        return modeSupport().openCheck(Global.getSector(), modeStore(), loadedItem, openTarget == null ? null : openTarget.target());
     }
 
     private void rebuildOpenButton() {
@@ -679,17 +687,44 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         float buttonTop = Math.max(artY(BenchScene.OPEN_BUTTON_TOP), plateBottom + PLATE_PAD);
         float artBottom = artY(BenchScene.ART_HEIGHT);
         float buttonHeight = Math.min(Math.max(MIN_OPEN_BUTTON_HEIGHT, BenchScene.OPEN_BUTTON_HEIGHT * sceneScale), artBottom - buttonTop);
+        BenchModeSupport.DebugAction debugAction = modeSupport().debugAction();
+        float debugWidth = debugAction == null ? 0f : buttonWidth * DEBUG_BUTTON_SHARE;
+        float openWidth = debugAction == null ? buttonWidth : buttonWidth - debugWidth - DEBUG_BUTTON_GAP;
         TooltipMakerAPI element = panelRoot.createUIElement(buttonWidth, buttonHeight, false);
         element.setButtonFontOrbitron20Bold();
         ButtonAPI openButton = element.addButton(Translation.text(openTexts.buttonKey()), Control.OPEN_WORMHOLE, Misc.getBrightPlayerColor(),
-                Misc.getDarkPlayerColor(), Alignment.MID, CutStyle.ALL, buttonWidth, buttonHeight, 0f);
+                Misc.getDarkPlayerColor(), Alignment.MID, CutStyle.ALL, openWidth, buttonHeight, 0f);
         openButton.setEnabled(blocker.allowsOpening() && !wormholeOpened);
         openButton.setShowTooltipWhileInactive(true);
         String tooltipText = Translation.text(blocker.allowsOpening() ? openTexts.tooltipKey() : blocker.reasonKey());
         element.addTooltipToPrevious(new GameTextTooltip(TOOLTIP_WIDTH, tooltip -> VanillaText.plainPara(tooltip, tooltipText, 0f,
                 Misc.getTextColor())), TooltipMakerAPI.TooltipLocation.BELOW);
         element.setButtonFontDefault();
+        if (debugAction != null) {
+            addDebugButton(element, debugAction, openWidth + DEBUG_BUTTON_GAP, debugWidth, buttonHeight);
+        }
         openElement = replaceElement(openElement, element, artX(BenchScene.detailsLeft(benchMode)), buttonTop);
+    }
+
+    private void addDebugButton(TooltipMakerAPI element, BenchModeSupport.DebugAction debugAction, float left, float width, float height) {
+        ButtonAPI debugButton = element.addButton(Translation.text(debugAction.buttonKey()), Control.DEBUG_ACTION, Misc.getNegativeHighlightColor(),
+                Misc.getDarkPlayerColor(), Alignment.MID, CutStyle.ALL, width, height, 0f);
+        debugButton.setEnabled(!wormholeOpened);
+        debugButton.getPosition().inTL(left, 0f);
+        String tooltipText = Translation.text(debugAction.tooltipKey());
+        element.addTooltipToPrevious(new GameTextTooltip(TOOLTIP_WIDTH, tooltip -> VanillaText.plainPara(tooltip, tooltipText, 0f,
+                Misc.getTextColor())), TooltipMakerAPI.TooltipLocation.BELOW);
+    }
+
+    private void debugPressed() {
+        hoverTooltip.hide();
+        BenchModeSupport.OpenTarget openTarget = workbenchListener.openTarget();
+        if (openTarget == null || modeSupport().debugAction() == null) {
+            return;
+        }
+        modeSupport().runDebugAction(Global.getSector(), loadedItem, openTarget.target());
+        SkillTreeSounds.panelOpened();
+        workbenchListener.debugActionApplied();
     }
 
     private void openPressed() {
@@ -702,34 +737,10 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             refreshOpacity();
             return;
         }
-        pendingOpenTarget = null;
-        BenchModeSupport.TargetPicker picker = modeSupport().targetPicker();
-        if (picker != null) {
-            Item pickingFor = loadedItem;
-            picker.pick(hostPanel, pickingFor, new BenchModeSupport.TargetListener() {
-                @Override
-                public void picked(Object target, List<String> confirmLines) {
-                    queue(() -> confirmTarget(pickingFor, target, confirmLines));
-                }
-
-                @Override
-                public void cancelled() {
-                    queue(() -> pendingOpenTarget = null);
-                }
-            });
-            return;
-        }
+        BenchModeSupport.OpenTarget openTarget = workbenchListener.openTarget();
         pendingOpenItem = loadedItem;
-        showOpenConfirm(List.of());
-    }
-
-    private void confirmTarget(Item pickedFor, Object target, List<String> confirmLines) {
-        if (pickedFor == null || pickedFor != loadedItem || wormholeOpened) {
-            return;
-        }
-        pendingOpenItem = loadedItem;
-        pendingOpenTarget = target;
-        showOpenConfirm(confirmLines);
+        pendingOpenTarget = openTarget == null ? null : openTarget.target();
+        showOpenConfirm(openTarget == null ? List.of() : openTarget.confirmLines().get());
     }
 
     private void showOpenConfirm(List<String> confirmLines) {

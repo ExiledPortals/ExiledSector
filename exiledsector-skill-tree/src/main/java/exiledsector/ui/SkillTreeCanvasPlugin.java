@@ -25,7 +25,7 @@ import exiledsector.ui.decoration.FactionFleetRenderer;
 import exiledsector.ui.decoration.SkillTreeFleetRenderer;
 import exiledsector.ui.decoration.SkillTreeRingBeltRenderer;
 import exiledsector.ui.decoration.SkillTreeStarRenderer;
-import exiledsector.ui.decoration.SkillTreeStarfieldRenderer;
+import exiledsector.ui.decoration.StarfieldRenderer;
 import exiledsector.ui.decoration.SkillTreeStaticImageRenderer;
 import exiledsector.ui.decoration.ThreatUnitRenderer;
 import exiledsector.ui.inspect.ItemCodex;
@@ -46,7 +46,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
     private static final float WORKBENCH_DIM_SECONDS = 0.25f;
     private static final float WORKBENCH_DIM_ALPHA = 0.45f;
 
-    private final SkillTreeStarfieldRenderer starfieldRenderer;
+    private final StarfieldRenderer starfieldRenderer;
     private final AbyssDarknessRenderer abyssDarkness = AbyssDarknessRenderer.forActiveTree();
     private final AbyssSerpentRenderer abyssSerpents = AbyssSerpentRenderer.forActiveTree();
     private final ThreatUnitRenderer threatUnits = ThreatUnitRenderer.forActiveTree();
@@ -89,7 +89,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         }
         SocketCustody.reconcile();
         SkillTreePanelStyle panelStyle = new SkillTreePanelStyle();
-        this.starfieldRenderer = new SkillTreeStarfieldRenderer(panelStyle);
+        this.starfieldRenderer = new StarfieldRenderer(panelStyle);
         this.fleetRenderer = SkillTreeFleetRenderer.forPlayerFleet(member == null ? null : member.getId());
         exoshipView.setPlayerShip(member);
         this.nodeSearch = new NodeSearch(member == null ? null : member.getHullSpec().getHullSize());

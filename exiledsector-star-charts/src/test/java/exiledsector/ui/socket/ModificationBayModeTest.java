@@ -9,11 +9,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.mock;
@@ -60,12 +61,14 @@ class ModificationBayModeTest {
     }
 
     @Test
-    void theStarChartsOnlyBayOpensOnCharts() {
-        ModificationBay bay = ModificationBay.openMode(mock(CustomPanelAPI.class), SIDE_BY_SIDE_AREA, BenchMode.STAR_CHARTS, item -> null, bayListener);
+    void theStarChartsOnlyBayOpensOnChartsAndOffersItsTarget() {
+        BenchModeSupport.OpenTarget target = new BenchModeSupport.OpenTarget("system", List::of);
+        ModificationBay bay = ModificationBay.openMode(mock(CustomPanelAPI.class), SIDE_BY_SIDE_AREA, BenchMode.STAR_CHARTS, item -> null, target,
+                bayListener);
 
         assertEquals(BenchMode.STAR_CHARTS, openedMode.get());
         assertEquals(BenchMode.STAR_CHARTS, bay.mode());
-        assertTrue(benchListener.get().offersWormholeOpening());
+        assertSame(target, benchListener.get().openTarget());
         chartStorageMock.verify(() -> StarChartStoragePanel.open(any(), any(), any(), any(), any()), times(1));
         itemStorageMock.verify(() -> ItemStoragePanel.openPicker(any(), any(), any(), any(), anyBoolean()), never());
     }
@@ -76,7 +79,7 @@ class ModificationBayModeTest {
 
         assertEquals(BenchMode.HULL_ITEMS, openedMode.get());
         assertEquals(BenchMode.HULL_ITEMS, bay.mode());
-        assertFalse(benchListener.get().offersWormholeOpening());
+        assertNull(benchListener.get().openTarget());
         chartStorageMock.verify(() -> StarChartStoragePanel.open(any(), any(), any(), any(), any()), never());
     }
 
@@ -85,6 +88,13 @@ class ModificationBayModeTest {
         ModificationBay.openHullItemsOnly(mock(CustomPanelAPI.class), SIDE_BY_SIDE_AREA, item -> null, bayListener);
 
         assertEquals(BenchMode.HULL_ITEMS, openedMode.get());
-        assertFalse(benchListener.get().offersWormholeOpening());
+        assertNull(benchListener.get().openTarget());
+    }
+
+    @Test
+    void aStarChartsBayWithoutATargetOffersNoWormhole() {
+        ModificationBay.openMode(mock(CustomPanelAPI.class), SIDE_BY_SIDE_AREA, BenchMode.STAR_CHARTS, item -> null, bayListener);
+
+        assertNull(benchListener.get().openTarget());
     }
 }

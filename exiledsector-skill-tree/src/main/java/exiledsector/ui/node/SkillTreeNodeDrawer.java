@@ -26,9 +26,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
-import static exiledsector.ui.node.SkillTreeNodeGeometry.ICON_INSET_RATIO;
-import static exiledsector.ui.node.SkillTreeNodeGeometry.NODE_SIZE;
-import static exiledsector.ui.node.SkillTreeNodeGeometry.donutRadius;
+import static exiledsector.ui.node.NodeMetrics.ICON_INSET_RATIO;
+import static exiledsector.ui.node.NodeMetrics.NODE_SIZE;
+import static exiledsector.ui.node.NodeMetrics.donutRadius;
 
 public final class SkillTreeNodeDrawer {
 

@@ -16,6 +16,9 @@ public final class ModificationBay {
 
         default void wormholeOpened(String message) {
         }
+
+        default void debugActionApplied() {
+        }
     }
 
     static final float PANEL_GAP = 12f;
@@ -29,6 +32,7 @@ public final class ModificationBay {
     private BenchModeSupport.PickerSession modePicker;
     private SocketPanelPlacement drawerPlacement;
     private BenchMode benchMode = BenchMode.HULL_ITEMS;
+    private BenchModeSupport.OpenTarget openTarget;
     private boolean hullItemsOnly;
     private boolean drawer;
     private boolean closing;
@@ -56,8 +60,14 @@ public final class ModificationBay {
 
     public static ModificationBay openMode(CustomPanelAPI hostPanel, SocketPanelPlacement area, BenchMode mode, Function<Item, String> installedShipLookup,
                                            Listener bayListener) {
+        return openMode(hostPanel, area, mode, installedShipLookup, null, bayListener);
+    }
+
+    public static ModificationBay openMode(CustomPanelAPI hostPanel, SocketPanelPlacement area, BenchMode mode, Function<Item, String> installedShipLookup,
+                                           BenchModeSupport.OpenTarget openTarget, Listener bayListener) {
         ModificationBay bay = new ModificationBay(hostPanel, installedShipLookup, bayListener);
         bay.benchMode = mode;
+        bay.openTarget = openTarget;
         bay.layOut(area);
         return bay;
     }
@@ -122,14 +132,19 @@ public final class ModificationBay {
             }
 
             @Override
-            public boolean offersWormholeOpening() {
-                BenchModeSupport modeSupport = BenchModes.of(benchMode);
-                return !hullItemsOnly && modeSupport != null && modeSupport.openTexts() != null;
+            public BenchModeSupport.OpenTarget openTarget() {
+                return hullItemsOnly ? null : openTarget;
             }
 
             @Override
             public void wormholeOpened(String message) {
                 bayListener.wormholeOpened(message);
+                close();
+            }
+
+            @Override
+            public void debugActionApplied() {
+                bayListener.debugActionApplied();
                 close();
             }
         };
