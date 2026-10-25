@@ -34,15 +34,15 @@ class SkillTreeFleetMotionTest {
                 new RingBelt("outer", 0f, 0f, new RingBelt.Shape(3600f, 4050f, "a.png", new Rotation(0f, -0.8f)), List.of("core")),
                 new RingBelt("faction", 0f, -13000f, new RingBelt.Shape(100f, 900f, "a.png", new Rotation(0f, 0f)), List.of("tritachyon")));
 
-        assertEquals(CORE, RoamVolume.core(stars, ringBelts));
+        assertEquals(CORE, TreeRoamVolumes.core(stars, ringBelts));
     }
 
     @Test
     void withoutCoreRingBeltsTheVolumeFallsBackToADefaultRadius() {
-        RoamVolume roamVolume = RoamVolume.core(List.of(), List.of());
+        RoamVolume roamVolume = TreeRoamVolumes.core(List.of(), List.of());
 
-        assertEquals(RoamVolume.DEFAULT_OUTER_RADIUS, roamVolume.outerRadius(), TOLERANCE);
-        assertEquals(RoamVolume.DEFAULT_STAR_RADIUS * RoamVolume.STAR_CLEARANCE_MULT, roamVolume.innerRadius(), TOLERANCE);
+        assertEquals(TreeRoamVolumes.DEFAULT_OUTER_RADIUS, roamVolume.outerRadius(), TOLERANCE);
+        assertEquals(TreeRoamVolumes.DEFAULT_STAR_RADIUS * TreeRoamVolumes.STAR_CLEARANCE_MULT, roamVolume.innerRadius(), TOLERANCE);
     }
 
     @Test

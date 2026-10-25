@@ -79,6 +79,11 @@ export const ATLAS_REGION_COLUMNS = [
   'id',
   'weight',
   'min_steps',
+  'max_steps',
+  'weight_per_step',
+  'size',
+  'density',
+  'neighbours',
   'requires_mod',
   'unlock',
   'layouts',
@@ -92,6 +97,12 @@ export const ATLAS_REGION_COLUMNS = [
   'stars',
   'planets',
   'keep_ruins',
+  'clouds',
+  'walls',
+  'storms',
+  'cloud_colour',
+  'decorations',
+  'decoration_density',
   'music',
   'note',
 ] as const;
@@ -101,6 +112,23 @@ export const ATLAS_SYSTEM_TYPES = ['SINGLE', 'BINARY_CLOSE', 'BINARY_FAR', 'TRIN
 export const ATLAS_NORMAL_REGION = 'normal';
 export const ATLAS_LAYOUT_COLUMNS = ['id', 'weight', 'system_types', 'min_orbits', 'max_orbits', 'max_orbit_radius', 'terrain', 'feature', 'note'] as const;
 export const ATLAS_MARKER_COLUMNS = ['id', 'chance', 'chance_per_step', 'max_chance', 'note'] as const;
+export const ATLAS_DECORATION_COLUMNS = [
+  'id',
+  'sprite',
+  'glow',
+  'columns',
+  'rows',
+  'size',
+  'size_jitter',
+  'count',
+  'spread',
+  'spin',
+  'drift',
+  'colour',
+  'glow_colour',
+  'alpha',
+  'note',
+] as const;
 export const ATLAS_FEATURE_COLUMNS = ['id', 'note'] as const;
 export const ATLAS_NODE_EFFECT_COLUMNS = ['id', 'effects', 'note'] as const;
 export const ATLAS_NODE_EFFECT_IDS = ['powerful_boss', 'infested', 'cleansed', 'sensor_array', 'nexus', 'bastion'];
@@ -755,13 +783,18 @@ export const ATLAS_REGION_SPEC: ChartTableSpec = {
   noun: 'atlas region',
   keyColumn: 'id',
   description:
-    'Regions of the Outer Reaches atlas. The normal row is normal space, plain hyperspace that most systems sit in; every other row is a biome. Biome sites are scattered with normal space between them, each picks a row by weight and gathers 4 to 7 systems into a sparse patch. A site that picks normal stays a quiet patch of normal space. A region sets which layouts and factions its systems use and leans phenomenon and expansion markers up or down. A biome behind a mod or an unlock is decided when its site is first revealed, and shows as normal space if it is still locked then.',
+    'Biomes of the Outer Reaches atlas. Biomes cover the whole map: sites are scattered about five cells apart, each picks a row by weight, and every cell belongs to the nearest site, with larger biomes reaching further. The normal row is open space, a bare starscape with few systems, and is picked like any other row, so its weight sets how common it is. A biome sets which layouts and factions its systems use, leans phenomenon and expansion markers up or down, and sets the hyperspace clouds and scattered decorations from atlas_decorations.csv. Clouds are impassable: no system sits under one and no lane crosses one. They gather into clumps inside a biome (clouds) and into ridges with passes along some borders between different biomes (walls). A biome behind a mod or an unlock is decided when its site is first revealed; while locked, the site takes its next pick.',
   columns: columnsOf(ATLAS_REGION_COLUMNS, {
     id: { label: 'Region id', kind: 'text' },
     weight: { label: 'Weight', kind: 'number' },
     min_steps: { label: 'Min steps', kind: 'integer', help: 'A biome is never centred closer to the Gateway than this many cells' },
-    requires_mod: { label: 'Requires mod', kind: 'text', help: 'Optional mod id; sites revealed while that mod is off stay normal space' },
-    unlock: { label: 'Unlock', kind: 'text', help: 'Optional player memory flag, such as $encounteredThreat; sites revealed before it is set stay normal space' },
+    max_steps: { label: 'Max steps', kind: 'integer', help: 'Optional: a biome is never centred further out than this many cells' },
+    weight_per_step: { label: 'Weight per step', kind: 'number', help: 'Added to the weight for every cell beyond min_steps; negative fades a biome out further away' },
+    size: { label: 'Size', kind: 'number', help: '0.5 to 2: how far a site reaches against its neighbours. Empty is 1' },
+    density: { label: 'Density', kind: 'fraction', help: 'Share of the cells that may hold a system which do. 0 keeps only the every-other-cell grid. Empty is 1' },
+    neighbours: { label: 'Neighbours', kind: 'text', help: 'region:multiplier; ... on the weight next to those biomes. 0 means never next to it' },
+    requires_mod: { label: 'Requires mod', kind: 'text', help: 'Optional mod id; sites revealed while that mod is off take their next pick' },
+    unlock: { label: 'Unlock', kind: 'text', help: 'Optional player memory flag, such as $encounteredThreat; sites revealed before it is set take their next pick' },
     layouts: { label: 'Layouts', kind: 'text', help: 'layout:weight; ... from atlas_layouts.csv. Empty uses every layout at its own weight' },
     factions: { label: 'Factions', kind: 'text', help: 'faction:weight; ... from chart_factions.csv. Empty keeps the faction territory as it is' },
     markers: { label: 'Markers', kind: 'text', help: 'phenomenon or expansion id:multiplier; ... Unlisted markers keep their weight' },
@@ -773,6 +806,12 @@ export const ATLAS_REGION_SPEC: ChartTableSpec = {
     stars: { label: 'Stars', kind: 'text', help: 'star type:multiplier; ... on vanilla\'s star weights. Black holes and neutron stars only come from phenomena' },
     planets: { label: 'Planets', kind: 'text', help: 'planet category:multiplier; ... such as cat_frozen:3 or cat_lava:0' },
     keep_ruins: { label: 'Keep ruins', kind: 'flag', help: 'Planets keep their ruins; other regions strip them' },
+    clouds: { label: 'Clouds', kind: 'fraction', help: 'How readily impassable cloud clumps gather inside this biome. 0 means none' },
+    walls: { label: 'Walls', kind: 'fraction', help: 'Chance that a border with a different biome rises into an impassable cloud ridge with passes, averaged with the other biome' },
+    storms: { label: 'Storms', kind: 'fraction', help: 'Share of the clouds that can storm and flash with lightning' },
+    cloud_colour: { label: 'Cloud colour', kind: 'text', help: 'Optional cloud tint as #RRGGBB. Empty keeps the hyperspace texture colour' },
+    decorations: { label: 'Decorations', kind: 'text', help: 'decoration:weight; ... from atlas_decorations.csv, scattered between systems' },
+    decoration_density: { label: 'Decoration density', kind: 'number', help: 'Decorations placed per cell on average. Empty is 1 when decorations are listed' },
     music: { label: 'Music', kind: 'text', help: 'Optional music set id from sounds.json, played in its systems' },
     note: NOTE_COLUMN,
   }),
@@ -785,14 +824,20 @@ export const ATLAS_REGION_SPEC: ChartTableSpec = {
         issues.push(`${label}: needs a region id`);
       }
       issues.push(...columnFormatIssues(ATLAS_REGION_SPEC.columns, row, label, vocabulary));
-      for (const column of ['layouts', 'factions', 'markers', 'stars', 'planets']) {
+      for (const column of ['layouts', 'factions', 'markers', 'stars', 'planets', 'neighbours', 'decorations']) {
         issues.push(...weightListIssues(row, column, label));
       }
       issues.push(...forbiddenIdIssues(row, 'stars', label, ATLAS_PHENOMENON_STARS, 'only phenomena add it'));
       issues.push(...forbiddenIdIssues(row, 'planets', label, ATLAS_PHENOMENON_CATEGORIES, 'only phenomena add it'));
-      const tint = value(row, 'light_tint');
-      if (tint !== '' && !/^#?[0-9a-fA-F]{6}$/.test(tint)) {
-        issues.push(`${label}: light_tint "${tint}" must be a colour like #A0C8FF`);
+      for (const column of ['light_tint', 'cloud_colour']) {
+        const tint = value(row, column);
+        if (tint !== '' && !/^#?[0-9a-fA-F]{6}$/.test(tint)) {
+          issues.push(`${label}: ${column} "${tint}" must be a colour like #A0C8FF`);
+        }
+      }
+      const size = value(row, 'size');
+      if (size !== '' && (Number.parseFloat(size) < 0.5 || Number.parseFloat(size) > 2)) {
+        issues.push(`${label}: size ${size} must be from 0.5 to 2`);
       }
       const gated = value(row, 'requires_mod') !== '' || value(row, 'unlock') !== '' || numberValue(row, 'min_steps', 0) > 0;
       if (value(row, 'id') === ATLAS_NORMAL_REGION && gated) {
@@ -806,7 +851,56 @@ export const ATLAS_REGION_SPEC: ChartTableSpec = {
   },
   warnings: (model) => model.rows.flatMap((row, index) => roundedIntegerWarnings(ATLAS_REGION_SPEC.columns, row, rowLabel(ATLAS_REGION_SPEC, row, index))),
   summary: (row) =>
-    value(row, 'id') === ATLAS_NORMAL_REGION ? `normal space, weight ${value(row, 'weight') || '1'}` : `weight ${value(row, 'weight') || '1'}, from ${value(row, 'min_steps') || '0'} cells`,
+    value(row, 'id') === ATLAS_NORMAL_REGION ? `open space, weight ${value(row, 'weight') || '1'}` : `weight ${value(row, 'weight') || '1'}, from ${value(row, 'min_steps') || '0'} cells`,
+};
+
+export const ATLAS_DECORATION_SPEC: ChartTableSpec = {
+  resource: 'atlas-decorations',
+  fileName: 'atlas_decorations.csv',
+  noun: 'atlas decoration',
+  keyColumn: 'id',
+  description:
+    'Props drawn in the space between atlas systems, picked by the decorations column of atlas_regions.csv. Each placement draws count pieces of one sprite (picked from the list) within spread cells of a spot kept clear of systems. A sheet sprite is cut into columns by rows frames. Sizes and distances are in cells; spin is degrees per second at most; drift is how far a piece sways.',
+  columns: columnsOf(ATLAS_DECORATION_COLUMNS, {
+    id: { label: 'Decoration id', kind: 'text' },
+    sprite: { label: 'Sprites', kind: 'text', help: 'Image paths separated by ;, one picked per placement' },
+    glow: { label: 'Glow', kind: 'text', help: 'Optional glow sheet drawn additively over the same frame' },
+    columns: { label: 'Columns', kind: 'integer', help: 'Frames across the sheet. Empty is 1' },
+    rows: { label: 'Rows', kind: 'integer', help: 'Frames down the sheet. Empty is 1' },
+    size: { label: 'Size', kind: 'number', help: 'Longest side in cells' },
+    size_jitter: { label: 'Size jitter', kind: 'fraction', help: 'How far each piece may be larger or smaller' },
+    count: { label: 'Count', kind: 'integer', help: 'Pieces per placement' },
+    spread: { label: 'Spread', kind: 'number', help: 'How far pieces scatter around the spot, in cells' },
+    spin: { label: 'Spin', kind: 'number', help: 'Most degrees per second a piece turns' },
+    drift: { label: 'Drift', kind: 'number', help: 'How far a piece sways, in cells' },
+    colour: { label: 'Colour', kind: 'text', help: 'Optional tint as #RRGGBB' },
+    glow_colour: { label: 'Glow colour', kind: 'text', help: 'Optional glow tint as #RRGGBB' },
+    alpha: { label: 'Alpha', kind: 'fraction' },
+    note: NOTE_COLUMN,
+  }),
+  newRow: () => ({ id: '', sprite: '', size: '0.05', count: '1', alpha: '1' }),
+  issues: (model, vocabulary) => {
+    const issues: string[] = [];
+    model.rows.forEach((row, index) => {
+      const label = rowLabel(ATLAS_DECORATION_SPEC, row, index);
+      if (value(row, 'id') === '') {
+        issues.push(`${label}: needs a decoration id`);
+      }
+      if (value(row, 'sprite') === '') {
+        issues.push(`${label}: needs at least one sprite`);
+      }
+      issues.push(...columnFormatIssues(ATLAS_DECORATION_SPEC.columns, row, label, vocabulary));
+      for (const column of ['colour', 'glow_colour']) {
+        const tint = value(row, column);
+        if (tint !== '' && !/^#?[0-9a-fA-F]{6}$/.test(tint)) {
+          issues.push(`${label}: ${column} "${tint}" must be a colour like #A0C8FF`);
+        }
+      }
+    });
+    return [...issues, ...duplicateKeyIssues(ATLAS_DECORATION_SPEC, model)];
+  },
+  warnings: (model) => model.rows.flatMap((row, index) => roundedIntegerWarnings(ATLAS_DECORATION_SPEC.columns, row, rowLabel(ATLAS_DECORATION_SPEC, row, index))),
+  summary: (row) => `${value(row, 'count') || '1'} x ${value(row, 'size') || '0.05'} cells`,
 };
 
 export const ATLAS_LAYOUT_SPEC: ChartTableSpec = {
@@ -1062,6 +1156,7 @@ export const CHART_TABLE_SPECS: ChartTableSpec[] = [
   CHART_EXPANSION_SPEC,
   CHART_PHENOMENON_SPEC,
   ATLAS_REGION_SPEC,
+  ATLAS_DECORATION_SPEC,
   ATLAS_LAYOUT_SPEC,
   ATLAS_FEATURE_SPEC,
   ATLAS_NODE_EFFECT_SPEC,

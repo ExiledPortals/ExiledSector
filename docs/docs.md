@@ -208,7 +208,10 @@ fall below its tier.
 Killing the objective completes the system and grants an atlas point for the first clear of each tier (`AtlasProgress`).
 A Sensor Array also reveals 6 lanes, a Nexus cleanses the systems it infested, and a Bastion gives a key fragment and
 allows one attempt. A run that closes without its objective spends the system's markers (Powerful Boss, expansion,
-overlay phenomenon). A biome or Threat infestation behind an unlock is decided when first seen, and that is saved.
+overlay phenomenon). Biomes tile the map from sites about five cells apart, and each sets how many of its cells hold a
+system (`AtlasBiomes`). Hyperspace clouds are impassable terrain clumping inside biomes and ridging along some
+biome borders: no system sits under one and lanes route around them (`AtlasTerrain`). A biome or Threat infestation
+behind an unlock is decided when first seen, and that is saved.
 
 ## Modspec caches
 

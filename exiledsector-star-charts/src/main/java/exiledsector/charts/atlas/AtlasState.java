@@ -117,13 +117,23 @@ public final class AtlasState implements AtlasMemory {
     public void recordReveal(AtlasGenerator generator, Collection<AtlasCell> revealed) {
         String flags = String.join(FLAG_SEPARATOR, new TreeSet<>(generator.unlockFlags()));
         for (AtlasCell cell : revealed) {
-            for (AtlasBiome biome : generator.sitesTouching(cell)) {
+            for (AtlasBiome biome : generator.biomeContenders(cell)) {
                 siteRegions.putIfAbsent(biome.siteKey(), biome.regionId());
             }
             for (int dx = -1; dx <= 1; dx++) {
                 for (int dy = -1; dy <= 1; dy++) {
-                    chunkUnlocks.putIfAbsent(AtlasGenerator.chunkKey(cell.chunkX() + dx, cell.chunkY() + dy), flags);
+                    if (chunkUnlocks.putIfAbsent(AtlasGenerator.chunkKey(cell.chunkX() + dx, cell.chunkY() + dy), flags) == null) {
+                        recordChunkSites(generator, cell.chunkX() + dx, cell.chunkY() + dy);
+                    }
                 }
+            }
+        }
+    }
+
+    private void recordChunkSites(AtlasGenerator generator, int chunkX, int chunkY) {
+        for (AtlasCell cell : AtlasSpecialPlacer.cellsOf(chunkX, chunkY)) {
+            for (AtlasBiome biome : generator.biomeContenders(cell)) {
+                siteRegions.putIfAbsent(biome.siteKey(), biome.regionId());
             }
         }
     }

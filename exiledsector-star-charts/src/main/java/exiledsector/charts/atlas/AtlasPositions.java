@@ -6,6 +6,7 @@ import java.util.Map;
 final class AtlasPositions {
 
     static final float JITTER_REACH = 0.4f;
+    static final float DISPLAY_JITTER_SHARE = 0.35f;
     private static final long JITTER_X_SALT = 0x4a4954585fL;
     private static final long JITTER_Y_SALT = 0x4a4954595fL;
 
@@ -21,6 +22,14 @@ final class AtlasPositions {
 
     float mapY(AtlasCell cell) {
         return cell.gridY() + jitter(cell, JITTER_Y_SALT);
+    }
+
+    float displayX(AtlasCell cell) {
+        return cell.gridX() + (mapX(cell) - cell.gridX()) * DISPLAY_JITTER_SHARE;
+    }
+
+    float displayY(AtlasCell cell) {
+        return cell.gridY() + (mapY(cell) - cell.gridY()) * DISPLAY_JITTER_SHARE;
     }
 
     private float jitter(AtlasCell cell, long salt) {

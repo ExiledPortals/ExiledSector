@@ -1,24 +1,16 @@
 package exiledsector.ui.decoration;
 
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
-import com.fs.starfarer.api.combat.ShipHullSpecAPI.ShipTypeHints;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.layout.Star;
 import org.junit.jupiter.api.Test;
 
-import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class FactionFleetRendererTest {
 
@@ -30,58 +22,23 @@ class FactionFleetRendererTest {
         List<SkillNode> nodes = List.of(node("a", 1500f, 0f, "pirate"), node("b", 1000f, 800f, "pirate"), node("c", 1000f, -1000f, "pirate"),
                 node("stray", 9000f, 0f, "pirate"), node("core", 0f, 0f, "core"));
 
-        RoamVolume volume = RoamVolume.region("pirate", stars, nodes);
+        RoamVolume volume = TreeRoamVolumes.region("pirate", stars, nodes);
 
-        assertEquals(new RoamVolume(1000f, 0f, 200f * RoamVolume.STAR_CLEARANCE_MULT, 1000f * RoamVolume.REGION_EDGE_MULT), volume);
+        assertEquals(new RoamVolume(1000f, 0f, 200f * TreeRoamVolumes.STAR_CLEARANCE_MULT, 1000f * TreeRoamVolumes.REGION_EDGE_MULT), volume);
     }
 
     @Test
     void aStarlessFactionVolumeCentresOnItsNodes() {
-        RoamVolume volume = RoamVolume.region("luddic", List.of(), List.of(node("a", 100f, 0f, "luddic"), node("b", -100f, 0f, "luddic")));
+        RoamVolume volume = TreeRoamVolumes.region("luddic", List.of(), List.of(node("a", 100f, 0f, "luddic"), node("b", -100f, 0f, "luddic")));
 
         assertEquals(0f, volume.centerX(), TOLERANCE);
         assertEquals(0f, volume.innerRadius(), TOLERANCE);
-        assertEquals(100f * RoamVolume.REGION_EDGE_MULT, volume.outerRadius(), TOLERANCE);
+        assertEquals(100f * TreeRoamVolumes.REGION_EDGE_MULT, volume.outerRadius(), TOLERANCE);
     }
 
     @Test
     void aRegionWithoutNodesHasNoVolume() {
-        assertNull(RoamVolume.region("hegemony", List.of(), List.of(node("a", 0f, 0f, "core"))));
-    }
-
-    @Test
-    void fleetsAreLedByAWarshipAndEscortedByFrigatesAndDestroyers() {
-        List<ShipHullSpecAPI> hulls = List.of(hull("wolf", HullSize.FRIGATE), hull("hammerhead", HullSize.DESTROYER),
-                hull("eagle", HullSize.CRUISER), hull("onslaught", HullSize.CAPITAL_SHIP));
-        Random random = new Random(11L);
-        for (int fleet = 0; fleet < 200; fleet++) {
-            List<ShipHullSpecAPI> picked = FactionFleetRenderer.pickHulls(hulls, random);
-
-            assertTrue(picked.size() >= FactionFleetRenderer.MIN_SHIPS_PER_FLEET && picked.size() <= FactionFleetRenderer.MAX_SHIPS_PER_FLEET);
-            assertNotEquals(HullSize.FRIGATE, picked.get(0).getHullSize());
-            for (ShipHullSpecAPI escort : picked.subList(1, picked.size())) {
-                assertTrue(escort.getHullSize() == HullSize.FRIGATE || escort.getHullSize() == HullSize.DESTROYER);
-            }
-        }
-    }
-
-    @Test
-    void aFrigateOnlyFactionStillFormsFleets() {
-        List<ShipHullSpecAPI> picked = FactionFleetRenderer.pickHulls(List.of(hull("wolf", HullSize.FRIGATE)), new Random(1L));
-
-        assertTrue(picked.stream().allMatch(hull -> hull.getHullSize() == HullSize.FRIGATE));
-    }
-
-    @Test
-    void onlyWarshipHullsRoam() {
-        assertTrue(FactionFleetRenderer.roams(hull("wolf", HullSize.FRIGATE)));
-        assertFalse(FactionFleetRenderer.roams(hull("talon", HullSize.FIGHTER)));
-        ShipHullSpecAPI station = hull("station", HullSize.CAPITAL_SHIP);
-        when(station.getHints()).thenReturn(EnumSet.of(ShipTypeHints.STATION));
-        assertFalse(FactionFleetRenderer.roams(station));
-        ShipHullSpecAPI freighter = hull("buffalo", HullSize.DESTROYER);
-        when(freighter.isCivilianNonCarrier()).thenReturn(true);
-        assertFalse(FactionFleetRenderer.roams(freighter));
+        assertNull(TreeRoamVolumes.region("hegemony", List.of(), List.of(node("a", 0f, 0f, "core"))));
     }
 
     @Test
@@ -133,14 +90,5 @@ class FactionFleetRendererTest {
 
     private static SkillNode node(String id, float x, float y, String region) {
         return new SkillNode(id, null, List.of(), x, y, SkillNodeDecoration.NONE, List.of(region));
-    }
-
-    private static ShipHullSpecAPI hull(String hullId, HullSize hullSize) {
-        ShipHullSpecAPI hull = mock(ShipHullSpecAPI.class);
-        when(hull.getHullId()).thenReturn(hullId);
-        when(hull.getHullSize()).thenReturn(hullSize);
-        when(hull.getSpriteName()).thenReturn("graphics/ships/" + hullId + ".png");
-        when(hull.getHints()).thenReturn(EnumSet.noneOf(ShipTypeHints.class));
-        return hull;
     }
 }

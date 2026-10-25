@@ -5,6 +5,7 @@ import {
   ATLAS_FEATURE_SPEC,
   ATLAS_LAYOUT_SPEC,
   ATLAS_MARKER_SPEC,
+  ATLAS_DECORATION_SPEC,
   ATLAS_NODE_EFFECT_SPEC,
   ATLAS_REGION_SPEC,
   ATLAS_SPECIAL_SPEC,
@@ -63,6 +64,7 @@ export function ItemsPage() {
         <Tabs.Tab value="chart-expansions">Chart expansions</Tabs.Tab>
         <Tabs.Tab value="chart-phenomena">Chart phenomena</Tabs.Tab>
         <Tabs.Tab value="atlas-regions">Atlas regions</Tabs.Tab>
+        <Tabs.Tab value="atlas-decorations">Atlas decorations</Tabs.Tab>
         <Tabs.Tab value="atlas-layouts">Atlas layouts</Tabs.Tab>
         <Tabs.Tab value="atlas-features">Atlas features</Tabs.Tab>
         <Tabs.Tab value="atlas-node-effects">Atlas node effects</Tabs.Tab>
@@ -116,6 +118,9 @@ export function ItemsPage() {
       </Tabs.Panel>
       <Tabs.Panel value="atlas-regions" style={PANEL_STYLE}>
         <ChartTableTab spec={ATLAS_REGION_SPEC} vocabulary={vocabulary.data} />
+      </Tabs.Panel>
+      <Tabs.Panel value="atlas-decorations" style={PANEL_STYLE}>
+        <ChartTableTab spec={ATLAS_DECORATION_SPEC} vocabulary={vocabulary.data} />
       </Tabs.Panel>
       <Tabs.Panel value="atlas-layouts" style={PANEL_STYLE}>
         <ChartTableTab spec={ATLAS_LAYOUT_SPEC} vocabulary={vocabulary.data} />

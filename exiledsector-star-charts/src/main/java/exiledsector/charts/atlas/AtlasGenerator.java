@@ -8,6 +8,7 @@ import java.util.Set;
 public final class AtlasGenerator {
 
     public static final int VERSION = 1;
+    public static final float DISPLAY_JITTER_SHARE = AtlasPositions.DISPLAY_JITTER_SHARE;
     static final float LONGEST_LANE = (float) (3.0 * Math.sqrt(2.0));
     static final int LANE_WINDOW = 5;
     private static final int CACHE_LIMIT_CELLS = 65536;
@@ -24,6 +25,7 @@ public final class AtlasGenerator {
     private final AtlasSpecialPlacer specials;
     private final AtlasBiomes biomes;
     private final AtlasTerritories territories;
+    private final AtlasTerrain terrain;
     private final Map<Long, List<AtlasCell>> laneCache = AtlasPositions.boundedCache(CACHE_LIMIT_CELLS);
     private final Map<Long, Boolean> voidCache = AtlasPositions.boundedCache(CACHE_LIMIT_CELLS);
 
@@ -33,8 +35,9 @@ public final class AtlasGenerator {
         this.unlocks = unlocks;
         positions = new AtlasPositions(seed);
         specials = new AtlasSpecialPlacer(seed, rules, unlocks, memory, positions, this::isVoid);
-        biomes = new AtlasBiomes(seed, rules, unlocks, memory, positions, specials.fixedCells());
+        biomes = new AtlasBiomes(seed, rules, unlocks, memory, positions);
         territories = new AtlasTerritories(seed, rules, positions);
+        terrain = new AtlasTerrain(seed, rules, biomes, positions, specials.fixedCells());
     }
 
     public long seed() {
@@ -84,11 +87,27 @@ public final class AtlasGenerator {
         return positions.mapY(cell);
     }
 
+    public float displayX(AtlasCell cell) {
+        return positions.displayX(cell);
+    }
+
+    public float displayY(AtlasCell cell) {
+        return positions.displayY(cell);
+    }
+
+    public boolean cloudAt(float displayX, float displayY) {
+        return terrain.cloudAt(displayX, displayY);
+    }
+
+    public boolean laneClear(AtlasCell from, AtlasCell to) {
+        return terrain.laneClear(displayX(from), displayY(from), displayX(to), displayY(to));
+    }
+
     public List<AtlasCell> lanes(AtlasCell cell) {
         if (isVoid(cell)) {
             return List.of();
         }
-        return laneCache.computeIfAbsent(cell.pack(), packed -> gabrielNeighbours(cell));
+        return laneCache.computeIfAbsent(cell.pack(), packed -> relativeNeighbours(cell));
     }
 
     public AtlasBiome biomeOf(AtlasCell cell) {
@@ -99,8 +118,8 @@ public final class AtlasGenerator {
         return biomes.biomesAround(chunkX, chunkY);
     }
 
-    public List<AtlasBiome> sitesTouching(AtlasCell cell) {
-        return biomes.sitesTouching(cell);
+    public List<AtlasBiome> biomeContenders(AtlasCell cell) {
+        return biomes.contenders(cell, AtlasTerrain.RECORD_REACH);
     }
 
     public AtlasSpecial specialAt(AtlasCell cell) {
@@ -120,10 +139,14 @@ public final class AtlasGenerator {
         if (specials.fixedCells().contains(cell.pack()) || cell.equals(AtlasCell.ORIGIN)) {
             return false;
         }
-        if (cell.mayBeVoid() && AtlasHash.unit(AtlasHash.of(seed, VOID_SALT, cell.gridX(), cell.gridY())) < rules.voidRule().chanceAt(cell.centreDistance())) {
+        if (terrain.clouded(displayX(cell), displayY(cell), AtlasTerrain.SYSTEM_CLEARANCE)) {
             return true;
         }
-        return !AtlasPositions.isLattice(cell) && biomes.coveringBiome(cell) != null;
+        if (AtlasPositions.isLattice(cell)) {
+            return false;
+        }
+        float keep = (cell.mayBeVoid() ? 1f - rules.voidRule().chanceAt(cell.centreDistance()) : 1f) * regionOf(cell).density();
+        return AtlasHash.unit(AtlasHash.of(seed, VOID_SALT, cell.gridX(), cell.gridY())) < 1f - keep;
     }
 
     private AtlasNode node(AtlasCell cell, Map<Long, AtlasSpecialPlacer.PlacedSpecial> placed) {
@@ -150,7 +173,7 @@ public final class AtlasGenerator {
                 special == null ? null : special.special().id(), infestation == null ? null : infestation.special().id(), lanes);
     }
 
-    private List<AtlasCell> gabrielNeighbours(AtlasCell cell) {
+    private List<AtlasCell> relativeNeighbours(AtlasCell cell) {
         float ax = mapX(cell);
         float ay = mapY(cell);
         List<AtlasCell> nearby = new ArrayList<>();
@@ -166,17 +189,20 @@ public final class AtlasGenerator {
                 nearbyPositions.add(new float[] {ox, oy});
             }
         }
+        Sight sight = new Sight(cell, nearby);
         List<AtlasCell> lanes = new ArrayList<>();
         for (int candidate = 0; candidate < nearby.size(); candidate++) {
+            if (!sight.clear(nearby.size(), candidate)) {
+                continue;
+            }
             float[] end = nearbyPositions.get(candidate);
-            float midX = (ax + end[0]) / 2f;
-            float midY = (ay + end[1]) / 2f;
-            float limit = AtlasPositions.squared(end[0] - ax, end[1] - ay) / 4f;
+            float limit = AtlasPositions.squared(end[0] - ax, end[1] - ay);
             boolean clear = true;
             for (int blocker = 0; blocker < nearby.size() && clear; blocker++) {
                 if (blocker != candidate) {
                     float[] point = nearbyPositions.get(blocker);
-                    clear = AtlasPositions.squared(point[0] - midX, point[1] - midY) >= limit;
+                    clear = Math.max(AtlasPositions.squared(point[0] - ax, point[1] - ay), AtlasPositions.squared(point[0] - end[0], point[1] - end[1]))
+                            >= limit || !sight.clear(nearby.size(), blocker) || !sight.clear(blocker, candidate);
                 }
             }
             if (clear) {
@@ -186,9 +212,37 @@ public final class AtlasGenerator {
         return List.copyOf(lanes);
     }
 
+    private final class Sight {
+        private final List<AtlasCell> cells;
+        private final boolean open;
+        private final Boolean[][] known;
+
+        private Sight(AtlasCell from, List<AtlasCell> nearby) {
+            cells = new ArrayList<>(nearby);
+            cells.add(from);
+            open = !terrain.anyCloudWithin(displayX(from), displayY(from), LONGEST_LANE + AtlasTerrain.LANE_CLEARANCE + 1f);
+            known = open ? null : new Boolean[cells.size()][cells.size()];
+        }
+
+        boolean clear(int first, int second) {
+            if (open) {
+                return true;
+            }
+            Boolean cached = known[first][second];
+            if (cached == null) {
+                cached = laneClear(cells.get(first), cells.get(second));
+                known[first][second] = cached;
+                known[second][first] = cached;
+            }
+            return cached;
+        }
+    }
+
     private AtlasRegion regionOf(AtlasCell cell) {
-        AtlasBiome biome = isVoid(cell) ? biomes.coveringBiome(cell) : biomes.biomeOf(cell);
-        AtlasRegion region = biome == null ? null : rules.region(biome.regionId());
+        if (cell.equals(AtlasCell.ORIGIN)) {
+            return rules.normalRegion();
+        }
+        AtlasRegion region = rules.region(biomes.biomeOf(cell).regionId());
         return region == null ? rules.normalRegion() : region;
     }
 

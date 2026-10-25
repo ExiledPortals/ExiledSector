@@ -3,8 +3,6 @@ package exiledsector.ui.decoration;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.RepLevel;
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import com.fs.starfarer.api.combat.ShipHullSpecAPI.ShipTypeHints;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import exiledlib.skills.skilleffect.render.SpriteCache;
 import exiledsector.compat.NexerelinCompat;
@@ -12,12 +10,10 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.hyperspace.HyperspaceAnchor;
-import org.apache.log4j.Logger;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -31,8 +27,6 @@ public final class FactionFleetRenderer {
 
     static final int MIN_FLEETS_PER_VOLUME = 2;
     static final int MAX_FLEETS_PER_VOLUME = 3;
-    static final int MIN_SHIPS_PER_FLEET = 3;
-    static final int MAX_SHIPS_PER_FLEET = 5;
     static final float FLEET_RADIUS = 40f;
     static final float MIN_TRAVEL_SPEED = 90f;
     static final float MAX_TRAVEL_SPEED = 180f;
@@ -42,7 +36,6 @@ public final class FactionFleetRenderer {
     static final float MIN_RESPAWN_SECONDS = 30f;
     static final float MAX_RESPAWN_SECONDS = 60f;
     static final RepLevel ALLY_LEVEL = RepLevel.COOPERATIVE;
-    private static final Logger LOG = Logger.getLogger(FactionFleetRenderer.class);
 
     private static final class Respawn {
         private final String region;
@@ -75,7 +68,7 @@ public final class FactionFleetRenderer {
         Collection<SkillNode> nodes = SkillTree.getAllNodes().values();
         Set<String> lockedRegions = HyperspaceAnchor.lockedRegions(nodes, SkillNode::getRegion, nodeHidden);
         for (String region : TreeFleetFactions.regions()) {
-            RoamVolume volume = lockedRegions.contains(region) ? null : RoamVolume.region(region, SkillTree.getStars(), nodes);
+            RoamVolume volume = lockedRegions.contains(region) ? null : TreeRoamVolumes.region(region, SkillTree.getStars(), nodes);
             if (volume != null) {
                 renderer.volumesByRegion.put(region, volume);
             }
@@ -92,32 +85,6 @@ public final class FactionFleetRenderer {
         return renderer;
     }
 
-    static boolean roams(ShipHullSpecAPI hullSpec) {
-        if (hullSpec == null || hullSpec.getSpriteName() == null || hullSpec.isCivilianNonCarrier()) {
-            return false;
-        }
-        HullSize hullSize = hullSpec.getHullSize();
-        if (hullSize != HullSize.FRIGATE && hullSize != HullSize.DESTROYER && hullSize != HullSize.CRUISER && hullSize != HullSize.CAPITAL_SHIP) {
-            return false;
-        }
-        Set<ShipTypeHints> hints = hullSpec.getHints();
-        return hints == null || !(hints.contains(ShipTypeHints.STATION) || hints.contains(ShipTypeHints.MODULE)
-                || hints.contains(ShipTypeHints.HIDE_IN_CODEX));
-    }
-
-    static List<ShipHullSpecAPI> pickHulls(List<ShipHullSpecAPI> hulls, Random random) {
-        List<ShipHullSpecAPI> flagships = hulls.stream().filter(hull -> hull.getHullSize() != HullSize.FRIGATE).toList();
-        List<ShipHullSpecAPI> escorts = hulls.stream()
-                .filter(hull -> hull.getHullSize() == HullSize.FRIGATE || hull.getHullSize() == HullSize.DESTROYER).toList();
-        int shipCount = MIN_SHIPS_PER_FLEET + random.nextInt(MAX_SHIPS_PER_FLEET - MIN_SHIPS_PER_FLEET + 1);
-        List<ShipHullSpecAPI> picked = new ArrayList<>(shipCount);
-        picked.add(randomHull(flagships.isEmpty() ? hulls : flagships, random));
-        for (int i = 1; i < shipCount; i++) {
-            picked.add(randomHull(escorts.isEmpty() ? hulls : escorts, random));
-        }
-        return picked;
-    }
-
     static RoamVolume nextVolume(RoamVolume current, RoamVolume home, List<RoamVolume> alliedVolumes, Random random) {
         if (alliedVolumes.isEmpty() || random.nextFloat() >= VOLUME_TRAVEL_CHANCE) {
             return current;
@@ -126,30 +93,6 @@ public final class FactionFleetRenderer {
         destinations.add(home);
         destinations.remove(current);
         return destinations.get(random.nextInt(destinations.size()));
-    }
-
-    private static ShipHullSpecAPI randomHull(List<ShipHullSpecAPI> hulls, Random random) {
-        return hulls.get(random.nextInt(hulls.size()));
-    }
-
-    private static List<ShipHullSpecAPI> roamingHulls(String factionId) {
-        FactionAPI faction = Global.getSector().getFaction(factionId);
-        if (faction == null || faction.getKnownShips() == null) {
-            return List.of();
-        }
-        List<ShipHullSpecAPI> hulls = new ArrayList<>();
-        for (String hullId : faction.getKnownShips()) {
-            try {
-                ShipHullSpecAPI hullSpec = Global.getSettings().getHullSpec(hullId);
-                if (roams(hullSpec)) {
-                    hulls.add(hullSpec);
-                }
-            } catch (RuntimeException e) {
-                LOG.debug("Faction " + factionId + " knows hull " + hullId + " but it has no spec: " + e.getMessage());
-            }
-        }
-        hulls.sort(Comparator.comparing(ShipHullSpecAPI::getHullId));
-        return hulls;
     }
 
     private static boolean allied(String factionId, String otherFactionId) {
@@ -168,7 +111,7 @@ public final class FactionFleetRenderer {
     private FactionFleet spawn(String region) {
         RoamVolume home = volumesByRegion.get(region);
         List<String> factionIds = TreeFleetFactions.factionsIn(region).stream()
-                .filter(factionId -> !hullsByFaction.computeIfAbsent(factionId, FactionFleetRenderer::roamingHulls).isEmpty()).toList();
+                .filter(factionId -> !hullsByFaction.computeIfAbsent(factionId, FleetHulls::roamingHulls).isEmpty()).toList();
         if (home == null || factionIds.isEmpty()) {
             return null;
         }
@@ -178,7 +121,7 @@ public final class FactionFleetRenderer {
         float travelSpeed = MIN_TRAVEL_SPEED + random.nextFloat() * (MAX_TRAVEL_SPEED - MIN_TRAVEL_SPEED);
         FactionFleet fleet = new FactionFleet(factionId, factionColor, region, home, alliedVolumes(factionId, region), travelSpeed, random,
                 this::arrive);
-        List<ShipHullSpecAPI> hulls = pickHulls(hullsByFaction.get(factionId), random);
+        List<ShipHullSpecAPI> hulls = FleetHulls.pickHulls(hullsByFaction.get(factionId), random);
         List<RoamingShip> ships = FleetFormation.of(hulls, FLEET_RADIUS).shipsLargestFirst(hulls, spriteCache, fleet.flight().facingDeg(), random);
         if (ships.isEmpty()) {
             return null;

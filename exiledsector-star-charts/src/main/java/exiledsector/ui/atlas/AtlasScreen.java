@@ -170,7 +170,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
 
             @Override
             public void debugActionApplied() {
-                map = new AtlasMapCanvas(map.generator(), map.state());
+                map = new AtlasMapCanvas(map.generator(), map.state(), map.scenery());
                 tooltipCell = null;
                 map.pulse(cell);
                 map.collapse(cell);

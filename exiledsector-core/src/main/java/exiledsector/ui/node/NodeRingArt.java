@@ -122,6 +122,20 @@ public final class NodeRingArt {
         pulseElapsed.put(nodeId, 0f);
     }
 
+    public float pulseProgress(String nodeId) {
+        Float pulseSeconds = pulseElapsed.get(nodeId);
+        return pulseSeconds == null ? -1f : Math.min(1f, pulseSeconds / PULSE_DURATION);
+    }
+
+    public static float pulseRadiusFraction(float progress) {
+        return PULSE_START_RADIUS_FRACTION + (PULSE_END_RADIUS_FRACTION - PULSE_START_RADIUS_FRACTION) * progress;
+    }
+
+    public float breathing() {
+        double phase = animationElapsedSeconds * 2.0 * Math.PI / BREATHING_PERIOD_SECONDS;
+        return BREATHING_MIN_ALPHA + (BREATHING_MAX_ALPHA - BREATHING_MIN_ALPHA) * (float) (0.5 + 0.5 * Math.sin(phase));
+    }
+
     public boolean isPulsing(String nodeId) {
         return pulseElapsed.containsKey(nodeId);
     }
@@ -145,11 +159,6 @@ public final class NodeRingArt {
         GL11.glDisable(GL11.GL_BLEND);
     }
 
-    public void drawPortal(float cx, float cy, float innerRadius, float zoom, String nodeId, NotableLook look, float alphaMult) {
-        drawPortalRings(cx, cy, innerRadius, nodeId, look, alphaMult);
-        drawNodeOutline(cx, cy, innerRadius, zoom, nodeId, look, alphaMult);
-    }
-
     public void drawPortalRings(float cx, float cy, float innerRadius, String nodeId, NotableLook look, float alphaMult) {
         GL11.glEnable(GL11.GL_BLEND);
         float stateAlpha = look.lit() ? 1f : UNALLOCATED_ALPHA_MULT;
@@ -157,18 +166,6 @@ public final class NodeRingArt {
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
         HoloShapes.radialGlow(cx, cy, innerRadius, innerRadius * PORTAL_GLOW_REACH, look.glowTint(), PORTAL_GLOW_ALPHA * stateAlpha * alphaMult);
         drawNotableRings(cx, cy, portalRingSize(innerRadius), nodeId, stateAlpha * alphaMult, look.ringTint());
-        GL11.glDisable(GL11.GL_BLEND);
-    }
-
-    public void drawNodeOutline(float cx, float cy, float innerRadius, float zoom, String nodeId, NotableLook look, float alphaMult) {
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        drawDonut(cx, cy, innerRadius, 1f, zoom, look.lit(), look.accent(), alphaMult);
-        if (look.breathing()) {
-            drawBreathingOutline(cx, cy, innerRadius, NODE_CONNECTOR_GLOW_LINE_THICKNESS * zoom, CIRCLE_OUTLINE_RADII, look.accent(), alphaMult);
-        }
-        drawPulseOutline(cx, cy, innerRadius, nodeId, zoom, CIRCLE_OUTLINE_RADII, look.accent(), alphaMult);
         GL11.glDisable(GL11.GL_BLEND);
     }
 

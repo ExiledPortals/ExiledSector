@@ -41,6 +41,7 @@ public final class AtlasData {
     static final String MARKERS_PATH = "data/config/exiledSector/atlas_markers.csv";
     static final String SPECIALS_PATH = "data/config/exiledSector/atlas_specials.csv";
     static final String NODE_EFFECTS_PATH = "data/config/exiledSector/atlas_node_effects.csv";
+    static final String DECORATIONS_PATH = "data/config/exiledSector/atlas_decorations.csv";
     static final String ID_COLUMN = "id";
     static final String VOID_MARKER = "void";
     static final String POWERFUL_BOSS_MARKER = "powerful_boss";
@@ -51,6 +52,8 @@ public final class AtlasData {
     private static volatile Map<String, AtlasLayout> layouts = Map.of();
     private static volatile Map<String, Float> layoutWeights = Map.of();
     private static volatile Map<String, ChartLook> looks = Map.of();
+    private static volatile Map<String, AtlasAmbience> ambiences = Map.of();
+    private static volatile Map<String, AtlasDecoration> decorations = Map.of();
     private static volatile List<AtlasRegion> regions = List.of();
     private static volatile Map<String, AtlasMarkerRule> markerRules = Map.of();
     private static volatile List<AtlasSpecial> specials = List.of();
@@ -61,6 +64,7 @@ public final class AtlasData {
 
     public static void load() {
         ModCsv.load(ID_COLUMN, LAYOUTS_PATH, LOG, AtlasData::registerLayouts);
+        ModCsv.load(ID_COLUMN, DECORATIONS_PATH, LOG, AtlasData::registerDecorations);
         ModCsv.load(ID_COLUMN, REGIONS_PATH, LOG, rows -> registerRegions(rows, factionIds()));
         ModCsv.load(ID_COLUMN, MARKERS_PATH, LOG, AtlasData::registerMarkers);
         ModCsv.load(ID_COLUMN, SPECIALS_PATH, LOG, AtlasData::registerSpecials);
@@ -94,6 +98,15 @@ public final class AtlasData {
     public static Color regionTint(String regionId) {
         ChartLook look = regionId == null ? null : looks.get(regionId);
         return look == null ? null : look.lightTint();
+    }
+
+    public static AtlasAmbience ambience(String regionId) {
+        AtlasAmbience ambience = regionId == null ? null : ambiences.get(regionId);
+        return ambience == null ? AtlasAmbience.BARE : ambience;
+    }
+
+    public static AtlasDecoration decoration(String decorationId) {
+        return decorations.get(decorationId);
     }
 
     public static boolean knowsRegion(String regionId) {
@@ -218,25 +231,80 @@ public final class AtlasData {
     static List<String> registerRegions(JSONArray rows, Set<String> knownFactions) throws JSONException {
         Map<String, AtlasRegion> loaded = new LinkedHashMap<>();
         Map<String, ChartLook> loadedLooks = new LinkedHashMap<>();
+        Map<String, AtlasAmbience> loadedAmbiences = new LinkedHashMap<>();
         CsvRows csv = new CsvRows(REGIONS_PATH);
         Set<String> layoutIds = layoutWeights.keySet();
         CsvRows.forEachIdRow(rows, ID_COLUMN, (id, row) -> {
+            float size = csv.number(row, "size", 1f, id);
+            if (size < AtlasRegion.MIN_SIZE || size > AtlasRegion.MAX_SIZE) {
+                csv.problem(id, "size", size + " (needs " + AtlasRegion.MIN_SIZE + " to " + AtlasRegion.MAX_SIZE + ")");
+            }
+            float density = csv.number(row, "density", 1f, id);
+            if (density < 0f || density > 1f) {
+                csv.problem(id, "density", density + " (needs 0 to 1)");
+            }
             loaded.put(id, new AtlasRegion(id, csv.number(row, "weight", 1f, id), csv.integer(row, "min_steps", 0, id),
                     ModCsv.text(row, "requires_mod"), ModCsv.text(row, "unlock"), csv.weights(row, "layouts", id, layoutIds),
-                    csv.weights(row, "factions", id, knownFactions), csv.weights(row, "markers", id, null)));
+                    csv.weights(row, "factions", id, knownFactions), csv.weights(row, "markers", id, null),
+                    csv.integer(row, "max_steps", AtlasRegion.NO_MAX_STEPS, id), csv.number(row, "weight_per_step", 0f, id), size, density,
+                    csv.weights(row, "neighbours", id, null), fraction(csv, row, "clouds", id), fraction(csv, row, "walls", id)));
             loadedLooks.put(id, look(csv, row, id));
+            loadedAmbiences.put(id, ambience(csv, row, id));
         });
+        for (AtlasRegion region : loaded.values()) {
+            for (String neighbour : region.neighbourWeights().keySet()) {
+                if (!loaded.containsKey(neighbour)) {
+                    csv.problem(region.id(), "neighbours", neighbour + " (no region has this id)");
+                }
+            }
+        }
         AtlasRegion normal = loaded.get(AtlasRegion.NORMAL);
         if (normal == null) {
             csv.problem(AtlasRegion.NORMAL, ID_COLUMN, "missing (normal space uses no layouts, factions or leanings)");
         } else if (!normal.requiredMod().isEmpty() || !normal.unlock().isEmpty() || normal.minSteps() > 0) {
             csv.problem(AtlasRegion.NORMAL, "requires_mod/unlock/min_steps", "set (normal space is always open, so these are ignored)");
             loaded.put(AtlasRegion.NORMAL, new AtlasRegion(AtlasRegion.NORMAL, normal.weight(), 0, "", "", normal.layoutWeights(),
-                    normal.factionWeights(), normal.markerWeights()));
+                    normal.factionWeights(), normal.markerWeights(), normal.maxSteps(), normal.weightPerStep(), normal.size(), normal.density(),
+                    normal.neighbourWeights(), normal.clouds(), normal.walls()));
         }
         csv.report(LOG);
         regions = List.copyOf(loaded.values());
         looks = Map.copyOf(loadedLooks);
+        ambiences = Map.copyOf(loadedAmbiences);
+        return csv.problems();
+    }
+
+    private static AtlasAmbience ambience(CsvRows csv, JSONObject row, String rowId) {
+        float storms = fraction(csv, row, "storms", rowId);
+        Map<String, Float> picks = csv.weights(row, "decorations", rowId, decorations.keySet());
+        return new AtlasAmbience(storms, colour(csv, row, "cloud_colour", rowId), picks,
+                csv.number(row, "decoration_density", picks.isEmpty() ? 0f : 1f, rowId));
+    }
+
+    private static float fraction(CsvRows csv, JSONObject row, String column, String rowId) {
+        float value = csv.number(row, column, 0f, rowId);
+        if (value < 0f || value > 1f) {
+            csv.problem(rowId, column, value + " (needs 0 to 1)");
+        }
+        return value;
+    }
+
+    static List<String> registerDecorations(JSONArray rows) throws JSONException {
+        Map<String, AtlasDecoration> loaded = new LinkedHashMap<>();
+        CsvRows csv = new CsvRows(DECORATIONS_PATH);
+        CsvRows.forEachIdRow(rows, ID_COLUMN, (id, row) -> {
+            List<String> sprites = CsvRows.entries(ModCsv.text(row, "sprite"));
+            if (sprites.isEmpty()) {
+                csv.skipRow(id, "needs at least one sprite");
+                return;
+            }
+            loaded.put(id, new AtlasDecoration(id, sprites, ModCsv.text(row, "glow"), csv.integer(row, "columns", 1, id), csv.integer(row, "rows", 1, id),
+                    csv.number(row, "size", 0.05f, id), fraction(csv, row, "size_jitter", id), csv.integer(row, "count", 1, id),
+                    csv.number(row, "spread", 0f, id), csv.number(row, "spin", 0f, id), csv.number(row, "drift", 0f, id), colour(csv, row, "colour", id),
+                    colour(csv, row, "glow_colour", id), csv.number(row, "alpha", 1f, id)));
+        });
+        csv.report(LOG);
+        decorations = Map.copyOf(loaded);
         return csv.problems();
     }
 
@@ -315,6 +383,8 @@ public final class AtlasData {
         layouts = Map.of();
         layoutWeights = Map.of();
         looks = Map.of();
+        ambiences = Map.of();
+        decorations = Map.of();
         regions = List.of();
         markerRules = Map.of();
         specials = List.of();

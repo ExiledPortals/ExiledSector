@@ -8,6 +8,7 @@ import {
   ATLAS_MARKER_SPEC,
   ATLAS_REGION_SPEC,
   ATLAS_SPECIAL_SPEC,
+  ATLAS_DECORATION_SPEC,
   CHART_BLOCKED_ABILITY_SPEC,
   CHART_COLONY_ITEM_SPEC,
   CHART_DROP_SPEC,
@@ -370,8 +371,31 @@ describe('chart tables', () => {
       'normal: normal space is always open, so it takes no mod, unlock or min_steps',
       'rift: layouts entry "compact:x" must be an id or id:weight with a weight of 0 or more',
     ]);
-    expect(ATLAS_REGION_SPEC.summary?.(model.rows[0], vocabulary)).toBe('normal space, weight 15');
+    expect(ATLAS_REGION_SPEC.summary?.(model.rows[0], vocabulary)).toBe('open space, weight 15');
     expect(ATLAS_REGION_SPEC.issues(chartTable(ATLAS_REGION_SPEC, 'id,weight\nfurnace,1\n'), vocabulary)).toEqual(['Needs a normal row for normal space']);
+  });
+
+  it('checks biome placement and scenery columns', () => {
+    const model = chartTable(
+      ATLAS_REGION_SPEC,
+      'id,weight,size,neighbours,cloud_colour,decorations\n' + 'normal,6,1,,,\n' + 'frozen,8,3,furnace:0,blue,ice:2; probe:x\n',
+    );
+    expect(ATLAS_REGION_SPEC.issues(model, vocabulary)).toEqual([
+      'frozen: decorations entry "probe:x" must be an id or id:weight with a weight of 0 or more',
+      'frozen: cloud_colour "blue" must be a colour like #A0C8FF',
+      'frozen: size 3 must be from 0.5 to 2',
+    ]);
+  });
+
+  it('mirrors the atlas decoration loader', () => {
+    const text = 'id,sprite,columns,rows,size,count,colour,note\n' + 'debris,graphics/debris/debris_sheet0.png,4,4,0.012,12,#FFA564,\n' + 'empty,,,,,,red,\n';
+    const model = chartTable(ATLAS_DECORATION_SPEC, text);
+    expect(serializeChartTable(model, ATLAS_DECORATION_SPEC.columns)).toBe(text);
+    expect(ATLAS_DECORATION_SPEC.issues(model, vocabulary)).toEqual([
+      'empty: needs at least one sprite',
+      'empty: colour "red" must be a colour like #A0C8FF',
+    ]);
+    expect(ATLAS_DECORATION_SPEC.summary?.(model.rows[0], vocabulary)).toBe('12 x 0.012 cells');
   });
 
   it('mirrors the atlas look and layout loaders: phenomena stay out, colours and system types are checked', () => {

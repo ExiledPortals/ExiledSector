@@ -30,6 +30,7 @@ class AtlasDataTest {
         ChartTables.loadFeatures();
 
         assertEquals(List.of(), AtlasData.registerLayouts(ChartTables.csvRows(AtlasData.LAYOUTS_PATH)));
+        assertEquals(List.of(), AtlasData.registerDecorations(ChartTables.csvRows(AtlasData.DECORATIONS_PATH)));
         assertEquals(List.of(), AtlasData.registerRegions(ChartTables.csvRows(AtlasData.REGIONS_PATH),
                 AtlasData.factionIds()));
         assertEquals(List.of(), AtlasData.registerMarkers(ChartTables.csvRows(AtlasData.MARKERS_PATH)));
@@ -38,6 +39,14 @@ class AtlasDataTest {
 
         assertFalse(rules.regions().isEmpty());
         assertTrue(rules.powerfulBossRule().chanceAt(0) > 0f);
+        for (AtlasRegion region : rules.regions()) {
+            for (String decorationId : AtlasData.ambience(region.id()).decorations().keySet()) {
+                AtlasDecoration decoration = AtlasData.decoration(decorationId);
+                assertTrue(decoration.sprites().stream().allMatch(path -> path.startsWith("graphics/")), decorationId);
+            }
+        }
+        assertTrue(AtlasData.rules().region("storm_belt").walls() > 0.5f);
+        assertTrue(AtlasData.ambience(AtlasRegion.NORMAL).decorations().isEmpty());
         assertEquals(3, rules.specials().stream().filter(special -> special.placement() == AtlasSpecial.Placement.FIXED)
                 .mapToInt(AtlasSpecial::count).sum());
     }

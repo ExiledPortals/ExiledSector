@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -94,6 +95,27 @@ class AtlasGeneratorTest {
         return biomes;
     }
 
+    private static AtlasRegion sized(String id, float size, float density) {
+        return new AtlasRegion(id, 1f, 0, "", "", Map.of(), Map.of(), Map.of(), AtlasRegion.NO_MAX_STEPS, 0f, size, density, Map.of());
+    }
+
+    private static AtlasRegion clouded(String id, float clouds, float walls) {
+        return new AtlasRegion(id, 1f, 0, "", "", Map.of(), Map.of(), Map.of(), AtlasRegion.NO_MAX_STEPS, 0f, 1f, 1f, Map.of(), clouds, walls);
+    }
+
+    private static final List<AtlasRegion> CLOUDED = List.of(clouded(AtlasRegion.NORMAL, 0f, 0.3f), clouded("storm", 0.6f, 0.9f),
+            clouded("calm", 0.1f, 0.5f));
+
+    private static int cloudTiles(AtlasGenerator generator, int radius) {
+        int clouds = 0;
+        for (int tileX = -radius * 4; tileX < radius * 4; tileX++) {
+            for (int tileY = -radius * 4; tileY < radius * 4; tileY++) {
+                clouds += generator.cloudAt((tileX + 0.5f) / 4f, (tileY + 0.5f) / 4f) ? 1 : 0;
+            }
+        }
+        return clouds;
+    }
+
     private static boolean inside(AtlasCell cell, int radius) {
         return Math.abs(cell.gridX()) <= radius && Math.abs(cell.gridY()) <= radius;
     }
@@ -169,11 +191,15 @@ class AtlasGeneratorTest {
                 assertTrue(reached.contains(system), system + " is cut off");
             }
         }
-        assertTrue(averageLanes > 2.5f && averageLanes < 6f, "average lanes " + averageLanes);
+        assertTrue(averageLanes > 2.2f && averageLanes < 3.5f, "average lanes " + averageLanes);
+    }
+
+    private static double distance(AtlasGenerator generator, AtlasCell from, AtlasCell to) {
+        return Math.hypot(generator.mapX(to) - generator.mapX(from), generator.mapY(to) - generator.mapY(from));
     }
 
     @Test
-    void lanesMatchAnUncappedGabrielGraphOverAWiderWindow() {
+    void lanesMatchAnUncappedRelativeNeighbourhoodGraphOverAWiderWindow() {
         AtlasGenerator generator = generator(rules());
         for (AtlasCell cell : AtlasCell.ORIGIN.around(12)) {
             if (generator.isVoid(cell)) {
@@ -187,11 +213,9 @@ class AtlasGeneratorTest {
             }
             Set<AtlasCell> expected = new HashSet<>();
             for (AtlasCell end : others) {
-                double midX = (generator.mapX(cell) + generator.mapX(end)) / 2.0;
-                double midY = (generator.mapY(cell) + generator.mapY(end)) / 2.0;
-                double limit = Math.hypot(generator.mapX(end) - generator.mapX(cell), generator.mapY(end) - generator.mapY(cell)) / 2.0;
+                double limit = distance(generator, cell, end);
                 boolean clear = others.stream().filter(other -> !other.equals(end))
-                        .allMatch(other -> Math.hypot(generator.mapX(other) - midX, generator.mapY(other) - midY) >= limit - 1e-4);
+                        .allMatch(other -> Math.max(distance(generator, other, cell), distance(generator, other, end)) >= limit - 1e-4);
                 if (clear) {
                     expected.add(end);
                 }
@@ -279,65 +303,226 @@ class AtlasGeneratorTest {
     }
 
     @Test
-    void biomesClaimTheirSizeAndNeverOverlap() {
+    void biomesTileTheWholeMapWithEveryCellInItsNearestSite() {
         AtlasGenerator generator = generator(rules());
-        List<AtlasBiome> biomes = biomes(generator);
-        Map<AtlasCell, AtlasBiome> claims = new HashMap<>();
-        for (AtlasBiome biome : biomes) {
-            assertTrue(biome.systems().size() >= 4 && biome.systems().size() <= 7, biome.regionId() + " holds " + biome.systems().size());
-            for (AtlasCell system : biome.systems()) {
-                assertNull(claims.put(system, biome), system + " is claimed twice");
-                assertEquals(biome.regionId(), generator.node(system).regionId());
-            }
-        }
+        List<AtlasBiome> sites = biomes(generator);
+        Map<String, Integer> siteRegions = new HashMap<>();
+        sites.forEach(site -> siteRegions.merge(site.regionId(), 1, Integer::sum));
         for (AtlasNode node : scan(generator)) {
-            if (!node.isVoid() && !claims.containsKey(node.cell())) {
-                assertEquals(AtlasRegion.NORMAL, node.regionId(), node.cell().toString());
+            if (node.isOrigin() || !inside(node.cell(), SCAN_RADIUS - 8)) {
+                continue;
             }
-        }
+            AtlasBiome owner = generator.biomeOf(node.cell());
+            AtlasBiome nearest = sites.stream().min(Comparator.comparingDouble(
+                    site -> Math.hypot(site.centreX() - node.mapX(), site.centreY() - node.mapY()))).orElseThrow();
 
-        assertFalse(biomes.isEmpty());
+            assertEquals(nearest.siteKey(), owner.siteKey(), node.cell().toString());
+            assertEquals(owner.regionId(), node.regionId(), node.cell().toString());
+        }
+        float normalShare = (float) siteRegions.getOrDefault(AtlasRegion.NORMAL, 0) / sites.size();
+
+        assertTrue(siteRegions.keySet().containsAll(Set.of(AtlasRegion.NORMAL, "graveyard", "badlands", "collapsed")), siteRegions.toString());
+        assertTrue(normalShare > 0.2f && normalShare < 0.5f, "normal space holds " + normalShare + " of sites");
     }
 
     @Test
-    void biomesAreLargeSparsePatchesWithNormalSpaceBetween() {
-        AtlasGenerator generator = generator(rules());
-        List<AtlasBiome> biomes = biomes(generator);
-        for (AtlasBiome biome : biomes) {
-            for (AtlasBiome other : biomes) {
-                if (other != biome) {
-                    double gap = Math.hypot(other.centreX() - biome.centreX(), other.centreY() - biome.centreY()) - biome.radius() - other.radius();
-                    assertTrue(gap >= AtlasBiomes.BIOME_GAP, "biomes " + gap + " apart");
+    void aLargerRegionClaimsMoreSpaceForEachSite() {
+        List<AtlasRegion> regions = List.of(sized("vast", 2f, 1f), sized("tiny", 0.5f, 1f));
+        AtlasGenerator generator = generator(rules(regions));
+        Map<String, Set<Long>> sites = new HashMap<>();
+        Map<String, Integer> cells = new HashMap<>();
+        for (AtlasCell cell : AtlasCell.ORIGIN.around(SCAN_RADIUS)) {
+            AtlasBiome biome = generator.biomeOf(cell);
+            sites.computeIfAbsent(biome.regionId(), id -> new HashSet<>()).add(biome.siteKey());
+            cells.merge(biome.regionId(), 1, Integer::sum);
+        }
+        float vastPerSite = (float) cells.get("vast") / sites.get("vast").size();
+        float tinyPerSite = (float) cells.get("tiny") / sites.get("tiny").size();
+
+        assertTrue(vastPerSite > tinyPerSite * 2f, vastPerSite + " against " + tinyPerSite);
+    }
+
+    @Test
+    void aRegionsDensitySetsHowManyOfItsCellsHoldASystem() {
+        List<AtlasRegion> regions = List.of(sized("sparse", 1f, 0f), sized("full", 1f, 1f));
+        AtlasGenerator generator = generator(rules(regions));
+        int sparseCells = 0;
+        int fullOddCells = 0;
+        for (AtlasNode node : scan(generator)) {
+            AtlasCell cell = node.cell();
+            if (node.isOrigin() || AtlasPositions.isLattice(cell) || generator.specialAt(cell) != null) {
+                continue;
+            }
+            if ("sparse".equals(node.regionId())) {
+                sparseCells++;
+                assertTrue(node.isVoid(), cell.toString());
+            } else if (!cell.mayBeVoid()) {
+                fullOddCells++;
+                assertFalse(node.isVoid(), cell.toString());
+            }
+        }
+
+        assertTrue(sparseCells > 0 && fullOddCells > 0);
+    }
+
+    @Test
+    void aRegionsDistanceBandLimitsWhereItsSitesSit() {
+        AtlasRegion inner = new AtlasRegion("inner", 4f, 0, "", "", Map.of(), Map.of(), Map.of(), 12, -0.2f, 1f, 1f, Map.of());
+        AtlasRegion outer = new AtlasRegion("outer", 0f, 8, "", "", Map.of(), Map.of(), Map.of(), AtlasRegion.NO_MAX_STEPS, 1f, 1f, 1f, Map.of());
+
+        assertEquals(4f, inner.weightAt(0f));
+        assertEquals(2f, inner.weightAt(10f), 1e-5f);
+        assertEquals(0f, inner.weightAt(13f));
+        assertEquals(0f, outer.weightAt(7f));
+        assertEquals(5f, outer.weightAt(13f), 1e-5f);
+        int inners = 0;
+        int outers = 0;
+        for (AtlasBiome site : biomes(generator(rules(List.of(region(AtlasRegion.NORMAL, 1f, 0, "", "", Map.of(), Map.of()), inner, outer)))))  {
+            double distance = Math.hypot(site.centreX(), site.centreY());
+            if ("inner".equals(site.regionId())) {
+                inners++;
+                assertTrue(distance <= 12, site.siteKey() + " sits " + distance + " out");
+            } else if ("outer".equals(site.regionId())) {
+                outers++;
+                assertTrue(distance >= 8, site.siteKey() + " sits " + distance + " out");
+            }
+        }
+
+        assertTrue(inners > 0 && outers > 0);
+    }
+
+    @Test
+    void aForbiddenNeighbourNeverSharesABorder() {
+        AtlasRegion hot = new AtlasRegion("hot", 1f, 0, "", "", Map.of(), Map.of(), Map.of(), AtlasRegion.NO_MAX_STEPS, 0f, 2f, 1f,
+                Map.of("cold", 0f));
+        List<AtlasRegion> regions = List.of(sized(AtlasRegion.NORMAL, 0.5f, 1f), hot, sized("cold", 2f, 1f));
+        int hots = 0;
+        int colds = 0;
+        for (long seed = 1; seed <= 6; seed++) {
+            AtlasGenerator generator = new AtlasGenerator(seed, rules(regions), AtlasUnlocks.NONE, AtlasMemory.NONE);
+            for (AtlasCell cell : AtlasCell.ORIGIN.around(SCAN_RADIUS)) {
+                String regionId = generator.biomeOf(cell).regionId();
+                hots += "hot".equals(regionId) ? 1 : 0;
+                colds += "cold".equals(regionId) ? 1 : 0;
+                if (!"hot".equals(regionId)) {
+                    continue;
+                }
+                for (AtlasCell neighbour : cell.around(1)) {
+                    assertNotEquals("cold", generator.biomeOf(neighbour).regionId(), "seed " + seed + ": " + cell + " borders cold at " + neighbour);
                 }
             }
         }
-        int covered = 0;
-        int cells = 0;
-        int biomeSystems = 0;
-        int systems = 0;
-        for (AtlasNode node : scan(generator)) {
-            cells++;
-            AtlasBiome cover = biomes.stream().filter(biome -> biome.covers(node.mapX(), node.mapY())).findFirst().orElse(null);
-            covered += cover == null ? 0 : 1;
-            if (node.isVoid()) {
-                assertEquals(cover == null ? AtlasRegion.NORMAL : cover.regionId(), node.regionId());
-                continue;
-            }
-            systems++;
-            if (cover != null) {
-                biomeSystems++;
-                assertTrue(cover.systems().contains(node.cell()), node.cell() + " sits inside a biome it does not belong to");
-            }
-        }
-        float coveredShare = (float) covered / cells;
-        float systemShare = (float) biomeSystems / systems;
 
-        assertTrue(coveredShare > 0.15f && coveredShare < 0.6f, "biomes cover " + coveredShare);
-        assertTrue(systemShare > 0.02f && systemShare < coveredShare / 2f, "biomes hold " + systemShare + " of systems over " + coveredShare + " of space");
+        assertTrue(hots > 0 && colds > 0);
     }
 
     @Test
-    void lockedBiomesStayNormalUnlessRevealedAfterTheUnlock() {
+    void cloudsNeverCoverASystemAndLanesNeverCrossThem() {
+        AtlasGenerator generator = generator(rules(CLOUDED));
+        int cloudedCells = 0;
+        for (AtlasCell cell : AtlasCell.ORIGIN.around(SCAN_RADIUS)) {
+            float x = generator.displayX(cell);
+            float y = generator.displayY(cell);
+            if (generator.isVoid(cell)) {
+                cloudedCells += generator.cloudAt(x, y) ? 1 : 0;
+                continue;
+            }
+            for (int tileX = -3; tileX <= 3; tileX++) {
+                for (int tileY = -3; tileY <= 3; tileY++) {
+                    float tileCentreX = ((float) Math.floor(x * 4f) + tileX + 0.5f) / 4f;
+                    float tileCentreY = ((float) Math.floor(y * 4f) + tileY + 0.5f) / 4f;
+                    if (Math.hypot(tileCentreX - x, tileCentreY - y) < 0.6) {
+                        assertFalse(generator.cloudAt(tileCentreX, tileCentreY), cell + " sits under a cloud");
+                    }
+                }
+            }
+            for (AtlasCell lane : generator.lanes(cell)) {
+                assertTrue(generator.laneClear(cell, lane), cell + " to " + lane + " crosses a cloud");
+            }
+        }
+
+        assertTrue(cloudedCells > 0);
+    }
+
+    @Test
+    void cloudRidgesOnlyRiseBetweenDifferentBiomes() {
+        assertEquals(0, cloudTiles(generator(rules(List.of(clouded(AtlasRegion.NORMAL, 0f, 1f)))), 20));
+        assertTrue(cloudTiles(generator(rules(List.of(clouded(AtlasRegion.NORMAL, 0f, 1f), clouded("other", 0f, 1f)))), 20) > 0);
+        assertEquals(0, cloudTiles(generator(rules(List.of(clouded(AtlasRegion.NORMAL, 0f, 0f), clouded("other", 0f, 0f)))), 20));
+    }
+
+    @Test
+    void systemsWithAClearLineBetweenThemAreAlwaysJoinedByLanes() {
+        AtlasGenerator generator = generator(rules(CLOUDED));
+        Map<Long, Long> parents = new HashMap<>();
+        for (AtlasCell cell : AtlasCell.ORIGIN.around(SCAN_RADIUS)) {
+            for (AtlasCell lane : generator.lanes(cell)) {
+                if (inside(lane, SCAN_RADIUS)) {
+                    parents.put(root(parents, cell.pack()), root(parents, lane.pack()));
+                }
+            }
+        }
+        int checked = 0;
+        int blocked = 0;
+        for (AtlasCell cell : AtlasCell.ORIGIN.around(SCAN_RADIUS - 10)) {
+            if (generator.isVoid(cell)) {
+                continue;
+            }
+            for (AtlasCell other : cell.around(AtlasGenerator.LANE_WINDOW)) {
+                if (other.equals(cell) || generator.isVoid(other) || distance(generator, cell, other) > AtlasGenerator.LONGEST_LANE - 0.01f) {
+                    continue;
+                }
+                if (!generator.laneClear(cell, other)) {
+                    blocked++;
+                    continue;
+                }
+                checked++;
+                assertEquals(root(parents, cell.pack()), root(parents, other.pack()), cell + " and " + other + " see each other but are not joined");
+            }
+        }
+
+        assertTrue(checked > 0 && blocked > 0);
+    }
+
+    private static long root(Map<Long, Long> parents, long packed) {
+        long current = packed;
+        Long parent = parents.get(current);
+        while (parent != null && parent != current) {
+            current = parent;
+            parent = parents.get(current);
+        }
+        return current;
+    }
+
+    @Test
+    void revealedSpaceKeepsItsSystemsSpecialsAndLanesWhenAnUnlockArrives() {
+        List<AtlasRegion> regions = List.of(sized(AtlasRegion.NORMAL, 0.5f, 0.3f),
+                new AtlasRegion("dense", 1f, 0, "", "", Map.of(), Map.of(), Map.of(), AtlasRegion.NO_MAX_STEPS, 0f, 1.5f, 1f, Map.of(), 0.3f, 0.7f),
+                new AtlasRegion("sparse", 1f, 0, "", "", Map.of(), Map.of(), Map.of(), AtlasRegion.NO_MAX_STEPS, 0f, 1f, 0.5f, Map.of(), 0f, 0.7f),
+                new AtlasRegion("expanse", 4f, 0, "", THREAT_FLAG, Map.of(), Map.of(), Map.of(), AtlasRegion.NO_MAX_STEPS, 0f, 2f, 0.1f, Map.of(), 0.5f,
+                        0.9f),
+                new AtlasRegion("rift", 4f, 0, RAT, "", Map.of(), Map.of(), Map.of(), AtlasRegion.NO_MAX_STEPS, 0f, 0.5f, 1f, Map.of(), 0.2f, 0.9f));
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator before = generator(rules(regions));
+        List<AtlasCell> revealed = AtlasCell.ORIGIN.around(12);
+        state.recordReveal(before, revealed);
+        AtlasGenerator after = new AtlasGenerator(SEED, rules(regions), new AtlasUnlocks(RAT::equals, Set.of(THREAT_FLAG)), state);
+        AtlasGenerator fresh = new AtlasGenerator(SEED, rules(regions), new AtlasUnlocks(RAT::equals, Set.of(THREAT_FLAG)), AtlasMemory.NONE);
+        int changedElsewhere = 0;
+
+        for (AtlasCell cell : revealed) {
+            assertEquals(before.isVoid(cell), after.isVoid(cell), cell + " void");
+            assertEquals(before.lanes(cell), after.lanes(cell), cell + " lanes");
+            assertEquals(before.specialAt(cell), after.specialAt(cell), cell + " special");
+            assertEquals(before.infestationSource(cell), after.infestationSource(cell), cell + " infestation");
+            assertEquals(before.biomeOf(cell), after.biomeOf(cell), cell + " biome");
+            changedElsewhere += before.isVoid(cell) != fresh.isVoid(cell) ? 1 : 0;
+        }
+        assertTrue(changedElsewhere > 0);
+    }
+
+    @Test
+    void lockedBiomesTakeTheirRunnerUpUnlessRevealedAfterTheUnlock() {
         AtlasGenerator locked = generator(rules());
         AtlasGenerator unlocked = new AtlasGenerator(SEED, rules(), new AtlasUnlocks(RAT::equals, Set.of(THREAT_FLAG)), AtlasMemory.NONE);
         int opened = 0;
@@ -353,7 +538,6 @@ class AtlasGeneratorTest {
             String after = unlocked.node(node.cell()).regionId();
             if (!after.equals(node.regionId())) {
                 opened++;
-                assertEquals(AtlasRegion.NORMAL, node.regionId());
                 assertTrue("rift".equals(after) || "expanse".equals(after), node.cell() + " became " + after);
             }
         }
@@ -365,7 +549,11 @@ class AtlasGeneratorTest {
         for (AtlasNode node : scan(unlocked)) {
             assertEquals(node.regionId(), remembered.node(node.cell()).regionId());
             String withoutMod = modRemoved.node(node.cell()).regionId();
-            assertEquals("rift".equals(node.regionId()) ? AtlasRegion.NORMAL : node.regionId(), withoutMod);
+            if ("rift".equals(node.regionId())) {
+                assertNotEquals("rift", withoutMod);
+            } else {
+                assertEquals(node.regionId(), withoutMod);
+            }
             expanses += "expanse".equals(withoutMod) ? 1 : 0;
         }
         assertTrue(expanses > 0);
@@ -416,20 +604,15 @@ class AtlasGeneratorTest {
         withExtra.add(region("furnace", 6f, 0, "", "", Map.of(), Map.of()));
         AtlasGenerator before = generator(rules());
         AtlasGenerator after = generator(rules(withExtra));
-        Map<Long, String> afterSites = new HashMap<>();
-        for (AtlasBiome biome : biomes(after)) {
-            afterSites.put(biome.siteKey(), biome.regionId());
-        }
         int taken = 0;
         for (AtlasCell cell : AtlasCell.ORIGIN.around(SCAN_RADIUS - 4)) {
             AtlasBiome was = before.biomeOf(cell);
             AtlasBiome now = after.biomeOf(cell);
-            String wasRegion = was == null ? AtlasRegion.NORMAL : was.regionId();
-            String nowRegion = now == null ? AtlasRegion.NORMAL : now.regionId();
-            if ("furnace".equals(nowRegion)) {
+            assertEquals(was.siteKey(), now.siteKey());
+            if ("furnace".equals(now.regionId())) {
                 taken++;
-            } else if (!wasRegion.equals(nowRegion)) {
-                assertEquals("furnace", afterSites.get(was.siteKey()), cell + " changed from " + wasRegion + " to " + nowRegion);
+            } else {
+                assertEquals(was.regionId(), now.regionId(), cell.toString());
             }
         }
 
