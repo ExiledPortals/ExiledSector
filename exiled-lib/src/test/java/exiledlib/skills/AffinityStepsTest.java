@@ -33,30 +33,29 @@ class AffinityStepsTest {
     }
 
     @Test
-    void lowTechCountsWholeStepsOfFiveAndTen() {
+    void lowTechCountsWholeStepsOfFiveAndFifteen() {
         assertEquals(Map.of(), bonuses(LOW_TECH, 0f));
         assertEquals(Map.of(), bonuses(LOW_TECH, 4f));
-        assertEquals(Map.of(DefenseSkillEffect.HULL_MULT, 2f, LogisticsSkillEffect.CARGO_CAPACITY_MULT, 1f,
-                LogisticsSkillEffect.FUEL_CAPACITY_MULT, 1f, LogisticsSkillEffect.CREW_CAPACITY_MULT, 1f), bonuses(LOW_TECH, 5f));
+        assertEquals(Map.of(DefenseSkillEffect.HULL_MULT, 2f, LogisticsSkillEffect.FUEL_CAPACITY_MULT, 1f), bonuses(LOW_TECH, 5f));
         assertEquals(bonuses(LOW_TECH, 5f), bonuses(LOW_TECH, 9f));
-        assertEquals(Map.of(DefenseSkillEffect.HULL_MULT, 4f, DefenseSkillEffect.ARMOR_MULT, 2f, LogisticsSkillEffect.CARGO_CAPACITY_MULT, 2f,
-                LogisticsSkillEffect.FUEL_CAPACITY_MULT, 2f, LogisticsSkillEffect.CREW_CAPACITY_MULT, 2f), bonuses(LOW_TECH, 10f));
+        assertEquals(Map.of(DefenseSkillEffect.HULL_MULT, 4f, LogisticsSkillEffect.FUEL_CAPACITY_MULT, 2f), bonuses(LOW_TECH, 10f));
+        assertEquals(Map.of(DefenseSkillEffect.HULL_MULT, 6f, DefenseSkillEffect.ARMOR_MULT, 1f, LogisticsSkillEffect.FUEL_CAPACITY_MULT, 3f),
+                bonuses(LOW_TECH, 15f));
         assertEquals(bonuses(LOW_TECH, 10f), bonuses(LOW_TECH, 14f));
-        assertEquals(Map.of(DefenseSkillEffect.HULL_MULT, 40f, DefenseSkillEffect.ARMOR_MULT, 20f, LogisticsSkillEffect.CARGO_CAPACITY_MULT, 20f,
-                LogisticsSkillEffect.FUEL_CAPACITY_MULT, 20f, LogisticsSkillEffect.CREW_CAPACITY_MULT, 20f), bonuses(LOW_TECH, 100f));
+        assertEquals(Map.of(DefenseSkillEffect.HULL_MULT, 40f, DefenseSkillEffect.ARMOR_MULT, 6f, LogisticsSkillEffect.FUEL_CAPACITY_MULT, 20f),
+                bonuses(LOW_TECH, 100f));
     }
 
     @Test
     void highTechAndMidlineFollowTheirOwnTables() {
-        assertEquals(Map.of(FluxSkillEffect.FLUX_CAPACITY_MULT, 4f, FluxSkillEffect.FLUX_DISSIPATION_MULT, 2f,
-                LogisticsSkillEffect.CARGO_CAPACITY_MULT, 2f, LogisticsSkillEffect.FUEL_CAPACITY_MULT, 2f, LogisticsSkillEffect.CREW_CAPACITY_MULT, 2f),
+        assertEquals(Map.of(FluxSkillEffect.FLUX_CAPACITY_MULT, 4f, FluxSkillEffect.FLUX_DISSIPATION_MULT, 1f, LogisticsSkillEffect.CREW_CAPACITY_MULT, 2f),
                 bonuses(HIGH_TECH, 14f));
-        assertEquals(Map.of(FluxSkillEffect.FLUX_CAPACITY_MULT, 2f, DefenseSkillEffect.HULL_MULT, 2f,
-                LogisticsSkillEffect.CARGO_CAPACITY_MULT, 1f, LogisticsSkillEffect.FUEL_CAPACITY_MULT, 1f, LogisticsSkillEffect.CREW_CAPACITY_MULT, 1f),
+        assertEquals(Map.of(FluxSkillEffect.FLUX_CAPACITY_MULT, 2f, DefenseSkillEffect.HULL_MULT, 2f, LogisticsSkillEffect.CARGO_CAPACITY_MULT, 1f),
                 bonuses(MIDLINE, 9f));
-        assertEquals(Map.of(FluxSkillEffect.FLUX_CAPACITY_MULT, 4f, DefenseSkillEffect.HULL_MULT, 4f, DefenseSkillEffect.ARMOR_MULT, 1f,
-                FluxSkillEffect.FLUX_DISSIPATION_MULT, 1f, LogisticsSkillEffect.CARGO_CAPACITY_MULT, 2f, LogisticsSkillEffect.FUEL_CAPACITY_MULT, 2f,
-                LogisticsSkillEffect.CREW_CAPACITY_MULT, 2f), bonuses(MIDLINE, 10f));
+        assertEquals(Map.of(FluxSkillEffect.FLUX_CAPACITY_MULT, 6f, DefenseSkillEffect.HULL_MULT, 6f, FluxSkillEffect.FLUX_DISSIPATION_MULT, 1f,
+                LogisticsSkillEffect.CARGO_CAPACITY_MULT, 3f), bonuses(MIDLINE, 19f));
+        assertEquals(Map.of(FluxSkillEffect.FLUX_CAPACITY_MULT, 8f, DefenseSkillEffect.HULL_MULT, 8f, DefenseSkillEffect.ARMOR_MULT, 1f,
+                FluxSkillEffect.FLUX_DISSIPATION_MULT, 2f, LogisticsSkillEffect.CARGO_CAPACITY_MULT, 4f), bonuses(MIDLINE, 20f));
     }
 
     @Test
@@ -72,22 +71,35 @@ class AffinityStepsTest {
     void differentAffinitiesStackTheirSharedBonuses() {
         Map<SkillEffect, Float> totals = new LinkedHashMap<>();
         totals.put(LOW_TECH, 5f);
-        totals.put(HIGH_TECH, 5f);
+        totals.put(MIDLINE, 5f);
         Map<SkillEffect, Float> bonuses = new LinkedHashMap<>();
         AffinitySteps.bonuses(totals).forEach(bonus -> bonuses.put(bonus.effect(), bonus.magnitude()));
 
-        assertEquals(2f, bonuses.get(LogisticsSkillEffect.CARGO_CAPACITY_MULT));
+        assertEquals(4f, bonuses.get(DefenseSkillEffect.HULL_MULT));
+    }
+
+    @Test
+    void eachLogisticsBonusBelongsToOneAffinity() {
+        assertEquals(Map.of(LogisticsSkillEffect.FUEL_CAPACITY_MULT, 1f), logistics(LOW_TECH));
+        assertEquals(Map.of(LogisticsSkillEffect.CARGO_CAPACITY_MULT, 1f), logistics(MIDLINE));
+        assertEquals(Map.of(LogisticsSkillEffect.CREW_CAPACITY_MULT, 1f), logistics(HIGH_TECH));
+    }
+
+    private static Map<SkillEffect, Float> logistics(SkillEffect affinity) {
+        Map<SkillEffect, Float> logistics = new LinkedHashMap<>(bonuses(affinity, 5f));
+        logistics.keySet().removeIf(effect -> !(effect instanceof LogisticsSkillEffect));
+        return logistics;
     }
 
     @Test
     void effectTotalsSeeTheSteppedBonusesNextToTheAffinityItself() {
-        EffectTotals totals = EffectTotals.of(List.of(node(LOW_TECH, 10f), node(HIGH_TECH, 4f)), 1f);
+        EffectTotals totals = EffectTotals.of(List.of(node(LOW_TECH, 15f), node(HIGH_TECH, 4f)), 1f);
         Map<SkillEffect, Float> permanent = totals.groups().get(0).totals();
 
-        assertEquals(10f, permanent.get(LOW_TECH));
+        assertEquals(15f, permanent.get(LOW_TECH));
         assertEquals(4f, permanent.get(HIGH_TECH));
-        assertEquals(4f, totals.pooledMultipliers().get(DefenseSkillEffect.HULL_MULT));
-        assertEquals(2f, totals.pooledMultipliers().get(DefenseSkillEffect.ARMOR_MULT));
+        assertEquals(6f, totals.pooledMultipliers().get(DefenseSkillEffect.HULL_MULT));
+        assertEquals(1f, totals.pooledMultipliers().get(DefenseSkillEffect.ARMOR_MULT));
         assertNull(totals.pooledMultipliers().get(FluxSkillEffect.FLUX_CAPACITY_MULT));
         assertTrue(totals.contributions().stream().anyMatch(contribution -> contribution.origin() instanceof AffinitySteps.Origin));
     }

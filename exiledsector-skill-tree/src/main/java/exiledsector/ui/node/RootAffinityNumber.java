@@ -50,7 +50,7 @@ final class RootAffinityNumber {
     }
 
     void draw(SkillNode root, ShipSkillData shipData, boolean rootPending, float centerX, float centerY, float rootRadius, float alphaMult) {
-        SkillTypeEffect rootAffinity = rootAffinity(root.getType());
+        SkillTypeEffect rootAffinity = affinityOf(root.getType());
         if (rootAffinity == null) {
             return;
         }
@@ -89,8 +89,8 @@ final class RootAffinityNumber {
         return totals;
     }
 
-    static SkillTypeEffect rootAffinity(SkillType rootType) {
-        for (SkillTypeEffect effect : rootType.getEffects()) {
+    static SkillTypeEffect affinityOf(SkillType type) {
+        for (SkillTypeEffect effect : type.getEffects()) {
             if (AffinitySteps.isAffinity(effect.effect())) {
                 return effect;
             }

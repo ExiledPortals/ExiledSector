@@ -13,6 +13,7 @@ import exiledsector.effects.SkillTreeEffectSource;
 import exiledsector.skills.NodeDescription;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
+import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
 
 import java.util.ArrayList;
@@ -25,14 +26,22 @@ final class AffinityTooltipLines {
     }
 
     static NodeDescription forRoot(SkillType rootType, ShipSkillData shipData, HullSize hullSize) {
-        SkillTypeEffect rootAffinity = RootAffinityNumber.rootAffinity(rootType);
-        if (rootAffinity == null) {
+        return forAffinity(rootType, shipData, hullSize, ShipTrees.resolveStartingRootId(shipData) != null);
+    }
+
+    static NodeDescription forNode(SkillNode node, SkillType effectiveType, ShipSkillData shipData, HullSize hullSize) {
+        return forAffinity(effectiveType, shipData, hullSize, shipData.isAllocated(node.getId()));
+    }
+
+    private static NodeDescription forAffinity(SkillType type, ShipSkillData shipData, HullSize hullSize, boolean showTotal) {
+        SkillTypeEffect typeAffinity = RootAffinityNumber.affinityOf(type);
+        if (typeAffinity == null) {
             return new NodeDescription(List.of(), List.of());
         }
-        SkillEffect affinity = rootAffinity.effect();
+        SkillEffect affinity = typeAffinity.effect();
         String affinityName = affinityName(affinity);
         List<DescriptionLine> applied = new ArrayList<>();
-        if (ShipTrees.resolveStartingRootId(shipData) != null) {
+        if (showTotal) {
             float total = AffinitySteps.totals(SkillTreeEffectSource.contributions(shipData, hullSize)).getOrDefault(affinity, 0f);
             applied.add(new DescriptionLine(Translation.msg("ui.node.affinity.total").arg("affinity", affinityName).arg("total", total).styled(), false));
             for (SkillTypeEffect bonus : AffinitySteps.bonuses(Map.of(affinity, total))) {

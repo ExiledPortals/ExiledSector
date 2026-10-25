@@ -78,8 +78,8 @@ final class SkillTreeNodeTooltipRenderer {
         Item socketed = allocatedSocket ? ItemStore.lookup(skillData.getSocketedItem(node.getId())) : null;
         String refusalReason = allocation.refusalReason(node);
         List<NodeGrantStatus> socketGrantStatuses = socketed instanceof Subroutine ? allocation.nodeGrantStatuses(node.getId()) : List.of();
-        boolean rootTooltip = node.getType().getTier() == SkillTier.ROOT;
-        boolean shipStateTooltip = socketed instanceof WormholeAnchor || rootTooltip;
+        boolean affinityTooltip = node.getType().getTier() == SkillTier.ROOT || RootAffinityNumber.affinityOf(effectiveType) != null;
+        boolean shipStateTooltip = socketed instanceof WormholeAnchor || affinityTooltip;
         Object shipState = shipStateTooltip ? skillData : "";
         int shipStateRevision = shipStateTooltip ? skillData.revision() : 0;
         Item grantingItem = hidden ? null : grantingItem(node, allocation);
@@ -238,11 +238,12 @@ final class SkillTreeNodeTooltipRenderer {
             NodeDescription description = SkillNode.describeMechanics(effectiveType, fleetMember.getHullSpec().getHullSize());
             effects.addAll(description.effects());
             details.addAll(description.details());
-            if (node.getType().getTier() == SkillTier.ROOT) {
-                NodeDescription affinity = AffinityTooltipLines.forRoot(node.getType(), skillData, fleetMember.getHullSpec().getHullSize());
-                effects.addAll(affinity.effects());
-                details.addAll(affinity.details());
-            }
+            HullSize hullSize = fleetMember.getHullSpec().getHullSize();
+            NodeDescription affinity = node.getType().getTier() == SkillTier.ROOT
+                    ? AffinityTooltipLines.forRoot(node.getType(), skillData, hullSize)
+                    : AffinityTooltipLines.forNode(node, effectiveType, skillData, hullSize);
+            effects.addAll(affinity.effects());
+            details.addAll(affinity.details());
         }
         if (allocatedSocket) {
             effects.add(plainLine("ui.node.socket.installHint"));

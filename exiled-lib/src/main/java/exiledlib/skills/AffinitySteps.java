@@ -17,6 +17,8 @@ public final class AffinitySteps {
     public static final String MOD_ID_PREFIX = "exiledLib_affinity_";
     static final int SMALL_STEP = 5;
     static final int LARGE_STEP = 10;
+    static final int LOW_TECH_ARMOR_STEP = 15;
+    static final int MIDLINE_ARMOR_STEP = 20;
 
     public record Step(int size, SkillEffect effect, float bonusPerStep) {
     }
@@ -25,10 +27,6 @@ public final class AffinitySteps {
     }
 
     private static final Origin ORIGIN = new Origin();
-    private static final List<Step> LOGISTICS_STEPS = List.of(
-            new Step(SMALL_STEP, LogisticsSkillEffect.CARGO_CAPACITY_MULT, 1f),
-            new Step(SMALL_STEP, LogisticsSkillEffect.FUEL_CAPACITY_MULT, 1f),
-            new Step(SMALL_STEP, LogisticsSkillEffect.CREW_CAPACITY_MULT, 1f));
     private static final Map<SkillEffect, List<Step>> STEPS_BY_AFFINITY = stepsByAffinity();
 
     private AffinitySteps() {
@@ -36,24 +34,21 @@ public final class AffinitySteps {
 
     private static Map<SkillEffect, List<Step>> stepsByAffinity() {
         Map<SkillEffect, List<Step>> steps = new LinkedHashMap<>();
-        steps.put(SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT, withLogistics(
+        steps.put(SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT, List.of(
                 new Step(SMALL_STEP, DefenseSkillEffect.HULL_MULT, 2f),
-                new Step(LARGE_STEP, DefenseSkillEffect.ARMOR_MULT, 2f)));
-        steps.put(SpecialSkillEffect.HIGH_TECH_AFFINITY_FLAT, withLogistics(
+                new Step(LOW_TECH_ARMOR_STEP, DefenseSkillEffect.ARMOR_MULT, 1f),
+                new Step(SMALL_STEP, LogisticsSkillEffect.FUEL_CAPACITY_MULT, 1f)));
+        steps.put(SpecialSkillEffect.HIGH_TECH_AFFINITY_FLAT, List.of(
                 new Step(SMALL_STEP, FluxSkillEffect.FLUX_CAPACITY_MULT, 2f),
-                new Step(LARGE_STEP, FluxSkillEffect.FLUX_DISSIPATION_MULT, 2f)));
-        steps.put(SpecialSkillEffect.MIDLINE_AFFINITY_FLAT, withLogistics(
+                new Step(LARGE_STEP, FluxSkillEffect.FLUX_DISSIPATION_MULT, 1f),
+                new Step(SMALL_STEP, LogisticsSkillEffect.CREW_CAPACITY_MULT, 1f)));
+        steps.put(SpecialSkillEffect.MIDLINE_AFFINITY_FLAT, List.of(
                 new Step(SMALL_STEP, FluxSkillEffect.FLUX_CAPACITY_MULT, 2f),
                 new Step(SMALL_STEP, DefenseSkillEffect.HULL_MULT, 2f),
-                new Step(LARGE_STEP, DefenseSkillEffect.ARMOR_MULT, 1f),
-                new Step(LARGE_STEP, FluxSkillEffect.FLUX_DISSIPATION_MULT, 1f)));
+                new Step(MIDLINE_ARMOR_STEP, DefenseSkillEffect.ARMOR_MULT, 1f),
+                new Step(LARGE_STEP, FluxSkillEffect.FLUX_DISSIPATION_MULT, 1f),
+                new Step(SMALL_STEP, LogisticsSkillEffect.CARGO_CAPACITY_MULT, 1f)));
         return Collections.unmodifiableMap(steps);
-    }
-
-    private static List<Step> withLogistics(Step... statSteps) {
-        List<Step> steps = new ArrayList<>(List.of(statSteps));
-        steps.addAll(LOGISTICS_STEPS);
-        return List.copyOf(steps);
     }
 
     public static boolean isAffinity(SkillEffect effect) {

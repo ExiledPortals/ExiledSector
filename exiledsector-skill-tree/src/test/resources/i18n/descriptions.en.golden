@@ -5120,7 +5120,7 @@ summary|option0|FRIGATE|92	0	<good>+100</good> to shield arc.
 summary|option0|FRIGATE|93	0	<good>20%</good> increased top speed of strikecraft launched from this ship.
 summary|option0|FRIGATE|94	0	<good>15%</good> increased weapon damage of strikecraft launched from this ship.
 summary|option0|FRIGATE|95	0	<good>8%</good> more flux capacity.
-summary|option0|FRIGATE|96	0	<good>106%</good> more flux dissipation.
+summary|option0|FRIGATE|96	0	<good>105%</good> more flux dissipation.
 summary|option0|FRIGATE|97	0	<good>80%</good> increased fragment swarm size.
 summary|option0|FRIGATE|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option0|FRIGATE|99	0	<good>100%</good> increased shield arc.
@@ -5246,13 +5246,12 @@ summary|option0|FRIGATE|218	0	<good>15%</good> increased energy weapon damage.
 summary|option0|FRIGATE|219	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option0|FRIGATE|220	0	<good>3%</good> increased post-battle salvage recovered by your fleet.
 summary|option0|FRIGATE|221	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option0|FRIGATE|222	0	<good>110%</good> more cargo capacity.
-summary|option0|FRIGATE|223	0	<good>110%</good> more fuel capacity.
-summary|option0|FRIGATE|224	0	<good>110%</good> more crew capacity.
-summary|option0|FRIGATE|225	0	<good>108%</good> more armor.
-summary|option0|FRIGATE|226	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option0|FRIGATE|227	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option0|FRIGATE|228	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option0|FRIGATE|222	0	<good>2%</good> more crew capacity.
+summary|option0|FRIGATE|223	0	<good>36%</good> more armor.
+summary|option0|FRIGATE|224	0	<good>108%</good> more fuel capacity.
+summary|option0|FRIGATE|225	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option0|FRIGATE|226	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option0|FRIGATE|227	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option0|DESTROYER|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option0|DESTROYER|1	0	<good>+100</good> to energy weapon range.
 summary|option0|DESTROYER|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -5349,7 +5348,7 @@ summary|option0|DESTROYER|92	0	<good>+100</good> to shield arc.
 summary|option0|DESTROYER|93	0	<good>20%</good> increased top speed of strikecraft launched from this ship.
 summary|option0|DESTROYER|94	0	<good>15%</good> increased weapon damage of strikecraft launched from this ship.
 summary|option0|DESTROYER|95	0	<good>8%</good> more flux capacity.
-summary|option0|DESTROYER|96	0	<good>106%</good> more flux dissipation.
+summary|option0|DESTROYER|96	0	<good>105%</good> more flux dissipation.
 summary|option0|DESTROYER|97	0	<good>80%</good> increased fragment swarm size.
 summary|option0|DESTROYER|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option0|DESTROYER|99	0	<good>100%</good> increased shield arc.
@@ -5475,13 +5474,12 @@ summary|option0|DESTROYER|218	0	<good>15%</good> increased energy weapon damage.
 summary|option0|DESTROYER|219	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option0|DESTROYER|220	0	<good>6%</good> increased post-battle salvage recovered by your fleet.
 summary|option0|DESTROYER|221	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option0|DESTROYER|222	0	<good>110%</good> more cargo capacity.
-summary|option0|DESTROYER|223	0	<good>110%</good> more fuel capacity.
-summary|option0|DESTROYER|224	0	<good>110%</good> more crew capacity.
-summary|option0|DESTROYER|225	0	<good>108%</good> more armor.
-summary|option0|DESTROYER|226	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option0|DESTROYER|227	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option0|DESTROYER|228	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option0|DESTROYER|222	0	<good>2%</good> more crew capacity.
+summary|option0|DESTROYER|223	0	<good>36%</good> more armor.
+summary|option0|DESTROYER|224	0	<good>108%</good> more fuel capacity.
+summary|option0|DESTROYER|225	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option0|DESTROYER|226	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option0|DESTROYER|227	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option0|CRUISER|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option0|CRUISER|1	0	<good>+100</good> to energy weapon range.
 summary|option0|CRUISER|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -5578,7 +5576,7 @@ summary|option0|CRUISER|92	0	<good>+100</good> to shield arc.
 summary|option0|CRUISER|93	0	<good>20%</good> increased top speed of strikecraft launched from this ship.
 summary|option0|CRUISER|94	0	<good>15%</good> increased weapon damage of strikecraft launched from this ship.
 summary|option0|CRUISER|95	0	<good>8%</good> more flux capacity.
-summary|option0|CRUISER|96	0	<good>106%</good> more flux dissipation.
+summary|option0|CRUISER|96	0	<good>105%</good> more flux dissipation.
 summary|option0|CRUISER|97	0	<good>80%</good> increased fragment swarm size.
 summary|option0|CRUISER|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option0|CRUISER|99	0	<good>100%</good> increased shield arc.
@@ -5704,13 +5702,12 @@ summary|option0|CRUISER|218	0	<good>15%</good> increased energy weapon damage.
 summary|option0|CRUISER|219	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option0|CRUISER|220	0	<good>10%</good> increased post-battle salvage recovered by your fleet.
 summary|option0|CRUISER|221	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option0|CRUISER|222	0	<good>110%</good> more cargo capacity.
-summary|option0|CRUISER|223	0	<good>110%</good> more fuel capacity.
-summary|option0|CRUISER|224	0	<good>110%</good> more crew capacity.
-summary|option0|CRUISER|225	0	<good>108%</good> more armor.
-summary|option0|CRUISER|226	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option0|CRUISER|227	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option0|CRUISER|228	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option0|CRUISER|222	0	<good>2%</good> more crew capacity.
+summary|option0|CRUISER|223	0	<good>36%</good> more armor.
+summary|option0|CRUISER|224	0	<good>108%</good> more fuel capacity.
+summary|option0|CRUISER|225	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option0|CRUISER|226	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option0|CRUISER|227	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option0|CAPITAL_SHIP|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option0|CAPITAL_SHIP|1	0	<good>+100</good> to energy weapon range.
 summary|option0|CAPITAL_SHIP|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -5807,7 +5804,7 @@ summary|option0|CAPITAL_SHIP|92	0	<good>+100</good> to shield arc.
 summary|option0|CAPITAL_SHIP|93	0	<good>20%</good> increased top speed of strikecraft launched from this ship.
 summary|option0|CAPITAL_SHIP|94	0	<good>15%</good> increased weapon damage of strikecraft launched from this ship.
 summary|option0|CAPITAL_SHIP|95	0	<good>8%</good> more flux capacity.
-summary|option0|CAPITAL_SHIP|96	0	<good>106%</good> more flux dissipation.
+summary|option0|CAPITAL_SHIP|96	0	<good>105%</good> more flux dissipation.
 summary|option0|CAPITAL_SHIP|97	0	<good>80%</good> increased fragment swarm size.
 summary|option0|CAPITAL_SHIP|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option0|CAPITAL_SHIP|99	0	<good>100%</good> increased shield arc.
@@ -5933,13 +5930,12 @@ summary|option0|CAPITAL_SHIP|218	0	<good>15%</good> increased energy weapon dama
 summary|option0|CAPITAL_SHIP|219	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option0|CAPITAL_SHIP|220	0	<good>15%</good> increased post-battle salvage recovered by your fleet.
 summary|option0|CAPITAL_SHIP|221	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option0|CAPITAL_SHIP|222	0	<good>110%</good> more cargo capacity.
-summary|option0|CAPITAL_SHIP|223	0	<good>110%</good> more fuel capacity.
-summary|option0|CAPITAL_SHIP|224	0	<good>110%</good> more crew capacity.
-summary|option0|CAPITAL_SHIP|225	0	<good>108%</good> more armor.
-summary|option0|CAPITAL_SHIP|226	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option0|CAPITAL_SHIP|227	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option0|CAPITAL_SHIP|228	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option0|CAPITAL_SHIP|222	0	<good>2%</good> more crew capacity.
+summary|option0|CAPITAL_SHIP|223	0	<good>36%</good> more armor.
+summary|option0|CAPITAL_SHIP|224	0	<good>108%</good> more fuel capacity.
+summary|option0|CAPITAL_SHIP|225	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option0|CAPITAL_SHIP|226	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option0|CAPITAL_SHIP|227	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option1|FRIGATE|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option1|FRIGATE|1	0	<good>+100</good> to energy weapon range.
 summary|option1|FRIGATE|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -6036,7 +6032,7 @@ summary|option1|FRIGATE|92	0	<good>+100</good> to shield arc.
 summary|option1|FRIGATE|93	0	<good>20%</good> increased top speed of strikecraft launched from this ship.
 summary|option1|FRIGATE|94	0	<good>15%</good> increased weapon damage of strikecraft launched from this ship.
 summary|option1|FRIGATE|95	0	<good>224%</good> more flux capacity.
-summary|option1|FRIGATE|96	0	<good>214%</good> more flux dissipation.
+summary|option1|FRIGATE|96	0	<good>159%</good> more flux dissipation.
 summary|option1|FRIGATE|97	0	<good>80%</good> increased fragment swarm size.
 summary|option1|FRIGATE|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option1|FRIGATE|99	0	<good>100%</good> increased shield arc.
@@ -6161,12 +6157,10 @@ summary|option1|FRIGATE|217	0	<good>15%</good> increased energy weapon damage.
 summary|option1|FRIGATE|218	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option1|FRIGATE|219	0	<good>3%</good> increased post-battle salvage recovered by your fleet.
 summary|option1|FRIGATE|220	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option1|FRIGATE|221	0	<good>110%</good> more cargo capacity.
-summary|option1|FRIGATE|222	0	<good>110%</good> more fuel capacity.
-summary|option1|FRIGATE|223	0	<good>110%</good> more crew capacity.
-summary|option1|FRIGATE|224	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option1|FRIGATE|225	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option1|FRIGATE|226	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option1|FRIGATE|221	0	<good>110%</good> more crew capacity.
+summary|option1|FRIGATE|222	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option1|FRIGATE|223	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option1|FRIGATE|224	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option1|DESTROYER|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option1|DESTROYER|1	0	<good>+100</good> to energy weapon range.
 summary|option1|DESTROYER|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -6263,7 +6257,7 @@ summary|option1|DESTROYER|92	0	<good>+100</good> to shield arc.
 summary|option1|DESTROYER|93	0	<good>20%</good> increased top speed of strikecraft launched from this ship.
 summary|option1|DESTROYER|94	0	<good>15%</good> increased weapon damage of strikecraft launched from this ship.
 summary|option1|DESTROYER|95	0	<good>224%</good> more flux capacity.
-summary|option1|DESTROYER|96	0	<good>214%</good> more flux dissipation.
+summary|option1|DESTROYER|96	0	<good>159%</good> more flux dissipation.
 summary|option1|DESTROYER|97	0	<good>80%</good> increased fragment swarm size.
 summary|option1|DESTROYER|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option1|DESTROYER|99	0	<good>100%</good> increased shield arc.
@@ -6388,12 +6382,10 @@ summary|option1|DESTROYER|217	0	<good>15%</good> increased energy weapon damage.
 summary|option1|DESTROYER|218	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option1|DESTROYER|219	0	<good>6%</good> increased post-battle salvage recovered by your fleet.
 summary|option1|DESTROYER|220	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option1|DESTROYER|221	0	<good>110%</good> more cargo capacity.
-summary|option1|DESTROYER|222	0	<good>110%</good> more fuel capacity.
-summary|option1|DESTROYER|223	0	<good>110%</good> more crew capacity.
-summary|option1|DESTROYER|224	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option1|DESTROYER|225	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option1|DESTROYER|226	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option1|DESTROYER|221	0	<good>110%</good> more crew capacity.
+summary|option1|DESTROYER|222	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option1|DESTROYER|223	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option1|DESTROYER|224	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option1|CRUISER|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option1|CRUISER|1	0	<good>+100</good> to energy weapon range.
 summary|option1|CRUISER|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -6490,7 +6482,7 @@ summary|option1|CRUISER|92	0	<good>+100</good> to shield arc.
 summary|option1|CRUISER|93	0	<good>20%</good> increased top speed of strikecraft launched from this ship.
 summary|option1|CRUISER|94	0	<good>15%</good> increased weapon damage of strikecraft launched from this ship.
 summary|option1|CRUISER|95	0	<good>224%</good> more flux capacity.
-summary|option1|CRUISER|96	0	<good>214%</good> more flux dissipation.
+summary|option1|CRUISER|96	0	<good>159%</good> more flux dissipation.
 summary|option1|CRUISER|97	0	<good>80%</good> increased fragment swarm size.
 summary|option1|CRUISER|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option1|CRUISER|99	0	<good>100%</good> increased shield arc.
@@ -6615,12 +6607,10 @@ summary|option1|CRUISER|217	0	<good>15%</good> increased energy weapon damage.
 summary|option1|CRUISER|218	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option1|CRUISER|219	0	<good>10%</good> increased post-battle salvage recovered by your fleet.
 summary|option1|CRUISER|220	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option1|CRUISER|221	0	<good>110%</good> more cargo capacity.
-summary|option1|CRUISER|222	0	<good>110%</good> more fuel capacity.
-summary|option1|CRUISER|223	0	<good>110%</good> more crew capacity.
-summary|option1|CRUISER|224	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option1|CRUISER|225	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option1|CRUISER|226	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option1|CRUISER|221	0	<good>110%</good> more crew capacity.
+summary|option1|CRUISER|222	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option1|CRUISER|223	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option1|CRUISER|224	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option1|CAPITAL_SHIP|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option1|CAPITAL_SHIP|1	0	<good>+100</good> to energy weapon range.
 summary|option1|CAPITAL_SHIP|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -6717,7 +6707,7 @@ summary|option1|CAPITAL_SHIP|92	0	<good>+100</good> to shield arc.
 summary|option1|CAPITAL_SHIP|93	0	<good>20%</good> increased top speed of strikecraft launched from this ship.
 summary|option1|CAPITAL_SHIP|94	0	<good>15%</good> increased weapon damage of strikecraft launched from this ship.
 summary|option1|CAPITAL_SHIP|95	0	<good>224%</good> more flux capacity.
-summary|option1|CAPITAL_SHIP|96	0	<good>214%</good> more flux dissipation.
+summary|option1|CAPITAL_SHIP|96	0	<good>159%</good> more flux dissipation.
 summary|option1|CAPITAL_SHIP|97	0	<good>80%</good> increased fragment swarm size.
 summary|option1|CAPITAL_SHIP|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option1|CAPITAL_SHIP|99	0	<good>100%</good> increased shield arc.
@@ -6842,12 +6832,10 @@ summary|option1|CAPITAL_SHIP|217	0	<good>15%</good> increased energy weapon dama
 summary|option1|CAPITAL_SHIP|218	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option1|CAPITAL_SHIP|219	0	<good>15%</good> increased post-battle salvage recovered by your fleet.
 summary|option1|CAPITAL_SHIP|220	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option1|CAPITAL_SHIP|221	0	<good>110%</good> more cargo capacity.
-summary|option1|CAPITAL_SHIP|222	0	<good>110%</good> more fuel capacity.
-summary|option1|CAPITAL_SHIP|223	0	<good>110%</good> more crew capacity.
-summary|option1|CAPITAL_SHIP|224	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option1|CAPITAL_SHIP|225	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option1|CAPITAL_SHIP|226	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option1|CAPITAL_SHIP|221	0	<good>110%</good> more crew capacity.
+summary|option1|CAPITAL_SHIP|222	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option1|CAPITAL_SHIP|223	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option1|CAPITAL_SHIP|224	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option2|FRIGATE|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option2|FRIGATE|1	0	<good>+100</good> to energy weapon range.
 summary|option2|FRIGATE|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -6944,7 +6932,7 @@ summary|option2|FRIGATE|92	0	<good>+100</good> to shield arc.
 summary|option2|FRIGATE|93	0	<good>20%</good> increased top speed of strikecraft launched from this ship.
 summary|option2|FRIGATE|94	0	<good>15%</good> increased weapon damage of strikecraft launched from this ship.
 summary|option2|FRIGATE|95	0	<good>224%</good> more flux capacity.
-summary|option2|FRIGATE|96	0	<good>160%</good> more flux dissipation.
+summary|option2|FRIGATE|96	0	<good>159%</good> more flux dissipation.
 summary|option2|FRIGATE|97	0	<good>80%</good> increased fragment swarm size.
 summary|option2|FRIGATE|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option2|FRIGATE|99	0	<good>100%</good> increased shield arc.
@@ -7070,13 +7058,12 @@ summary|option2|FRIGATE|218	0	<good>15%</good> increased energy weapon damage.
 summary|option2|FRIGATE|219	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option2|FRIGATE|220	0	<good>3%</good> increased post-battle salvage recovered by your fleet.
 summary|option2|FRIGATE|221	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option2|FRIGATE|222	0	<good>110%</good> more cargo capacity.
-summary|option2|FRIGATE|223	0	<good>110%</good> more fuel capacity.
-summary|option2|FRIGATE|224	0	<good>110%</good> more crew capacity.
-summary|option2|FRIGATE|225	0	<good>54%</good> more armor.
-summary|option2|FRIGATE|226	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option2|FRIGATE|227	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option2|FRIGATE|228	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option2|FRIGATE|222	0	<good>2%</good> more crew capacity.
+summary|option2|FRIGATE|223	0	<good>27%</good> more armor.
+summary|option2|FRIGATE|224	0	<good>108%</good> more cargo capacity.
+summary|option2|FRIGATE|225	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option2|FRIGATE|226	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option2|FRIGATE|227	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option2|DESTROYER|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option2|DESTROYER|1	0	<good>+100</good> to energy weapon range.
 summary|option2|DESTROYER|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -7173,7 +7160,7 @@ summary|option2|DESTROYER|92	0	<good>+100</good> to shield arc.
 summary|option2|DESTROYER|93	0	<good>20%</good> increased top speed of strikecraft launched from this ship.
 summary|option2|DESTROYER|94	0	<good>15%</good> increased weapon damage of strikecraft launched from this ship.
 summary|option2|DESTROYER|95	0	<good>224%</good> more flux capacity.
-summary|option2|DESTROYER|96	0	<good>160%</good> more flux dissipation.
+summary|option2|DESTROYER|96	0	<good>159%</good> more flux dissipation.
 summary|option2|DESTROYER|97	0	<good>80%</good> increased fragment swarm size.
 summary|option2|DESTROYER|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option2|DESTROYER|99	0	<good>100%</good> increased shield arc.
@@ -7299,13 +7286,12 @@ summary|option2|DESTROYER|218	0	<good>15%</good> increased energy weapon damage.
 summary|option2|DESTROYER|219	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option2|DESTROYER|220	0	<good>6%</good> increased post-battle salvage recovered by your fleet.
 summary|option2|DESTROYER|221	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option2|DESTROYER|222	0	<good>110%</good> more cargo capacity.
-summary|option2|DESTROYER|223	0	<good>110%</good> more fuel capacity.
-summary|option2|DESTROYER|224	0	<good>110%</good> more crew capacity.
-summary|option2|DESTROYER|225	0	<good>54%</good> more armor.
-summary|option2|DESTROYER|226	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option2|DESTROYER|227	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option2|DESTROYER|228	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option2|DESTROYER|222	0	<good>2%</good> more crew capacity.
+summary|option2|DESTROYER|223	0	<good>27%</good> more armor.
+summary|option2|DESTROYER|224	0	<good>108%</good> more cargo capacity.
+summary|option2|DESTROYER|225	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option2|DESTROYER|226	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option2|DESTROYER|227	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option2|CRUISER|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option2|CRUISER|1	0	<good>+100</good> to energy weapon range.
 summary|option2|CRUISER|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -7402,7 +7388,7 @@ summary|option2|CRUISER|92	0	<good>+100</good> to shield arc.
 summary|option2|CRUISER|93	0	<good>20%</good> increased top speed of strikecraft launched from this ship.
 summary|option2|CRUISER|94	0	<good>15%</good> increased weapon damage of strikecraft launched from this ship.
 summary|option2|CRUISER|95	0	<good>224%</good> more flux capacity.
-summary|option2|CRUISER|96	0	<good>160%</good> more flux dissipation.
+summary|option2|CRUISER|96	0	<good>159%</good> more flux dissipation.
 summary|option2|CRUISER|97	0	<good>80%</good> increased fragment swarm size.
 summary|option2|CRUISER|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option2|CRUISER|99	0	<good>100%</good> increased shield arc.
@@ -7528,13 +7514,12 @@ summary|option2|CRUISER|218	0	<good>15%</good> increased energy weapon damage.
 summary|option2|CRUISER|219	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option2|CRUISER|220	0	<good>10%</good> increased post-battle salvage recovered by your fleet.
 summary|option2|CRUISER|221	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option2|CRUISER|222	0	<good>110%</good> more cargo capacity.
-summary|option2|CRUISER|223	0	<good>110%</good> more fuel capacity.
-summary|option2|CRUISER|224	0	<good>110%</good> more crew capacity.
-summary|option2|CRUISER|225	0	<good>54%</good> more armor.
-summary|option2|CRUISER|226	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option2|CRUISER|227	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option2|CRUISER|228	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option2|CRUISER|222	0	<good>2%</good> more crew capacity.
+summary|option2|CRUISER|223	0	<good>27%</good> more armor.
+summary|option2|CRUISER|224	0	<good>108%</good> more cargo capacity.
+summary|option2|CRUISER|225	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option2|CRUISER|226	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option2|CRUISER|227	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option2|CAPITAL_SHIP|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option2|CAPITAL_SHIP|1	0	<good>+100</good> to energy weapon range.
 summary|option2|CAPITAL_SHIP|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -7631,7 +7616,7 @@ summary|option2|CAPITAL_SHIP|92	0	<good>+100</good> to shield arc.
 summary|option2|CAPITAL_SHIP|93	0	<good>20%</good> increased top speed of strikecraft launched from this ship.
 summary|option2|CAPITAL_SHIP|94	0	<good>15%</good> increased weapon damage of strikecraft launched from this ship.
 summary|option2|CAPITAL_SHIP|95	0	<good>224%</good> more flux capacity.
-summary|option2|CAPITAL_SHIP|96	0	<good>160%</good> more flux dissipation.
+summary|option2|CAPITAL_SHIP|96	0	<good>159%</good> more flux dissipation.
 summary|option2|CAPITAL_SHIP|97	0	<good>80%</good> increased fragment swarm size.
 summary|option2|CAPITAL_SHIP|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option2|CAPITAL_SHIP|99	0	<good>100%</good> increased shield arc.
@@ -7757,10 +7742,9 @@ summary|option2|CAPITAL_SHIP|218	0	<good>15%</good> increased energy weapon dama
 summary|option2|CAPITAL_SHIP|219	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option2|CAPITAL_SHIP|220	0	<good>15%</good> increased post-battle salvage recovered by your fleet.
 summary|option2|CAPITAL_SHIP|221	0	When this ship deploys, its wings that share a role (fighter, bomber, interceptor or support) lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option2|CAPITAL_SHIP|222	0	<good>110%</good> more cargo capacity.
-summary|option2|CAPITAL_SHIP|223	0	<good>110%</good> more fuel capacity.
-summary|option2|CAPITAL_SHIP|224	0	<good>110%</good> more crew capacity.
-summary|option2|CAPITAL_SHIP|225	0	<good>54%</good> more armor.
-summary|option2|CAPITAL_SHIP|226	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option2|CAPITAL_SHIP|227	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option2|CAPITAL_SHIP|228	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option2|CAPITAL_SHIP|222	0	<good>2%</good> more crew capacity.
+summary|option2|CAPITAL_SHIP|223	0	<good>27%</good> more armor.
+summary|option2|CAPITAL_SHIP|224	0	<good>108%</good> more cargo capacity.
+summary|option2|CAPITAL_SHIP|225	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option2|CAPITAL_SHIP|226	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option2|CAPITAL_SHIP|227	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
