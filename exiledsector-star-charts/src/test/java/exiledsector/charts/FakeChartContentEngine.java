@@ -45,6 +45,9 @@ final class FakeChartContentEngine implements ChartContentEngine {
     final Map<String, ChartVanillaLoot.SiteDrops> siteDropsBySpec = new HashMap<>();
     final Map<PlanetAPI, String> planetCategories = new HashMap<>();
     final List<ColonyItem> colonyItems = new ArrayList<>();
+    final List<String> stationVariants = new ArrayList<>();
+    final List<CampaignFleetAPI> stations = new ArrayList<>();
+    boolean missingStations;
     boolean failFleets;
     boolean emptyFleets;
     int spotCalls;
@@ -164,8 +167,24 @@ final class FakeChartContentEngine implements ChartContentEngine {
         if (failFleets) {
             throw new IllegalStateException("vanilla fleet factory changed");
         }
+        CampaignFleetAPI fleet = newFleet("fleet-" + fleets.size());
+        fleets.add(fleet);
+        return fleet;
+    }
+
+    @Override
+    public CampaignFleetAPI createStation(String factionId, String variantId, int officerLevel, Random random) {
+        stationVariants.add(variantId);
+        if (missingStations) {
+            return null;
+        }
+        CampaignFleetAPI station = newFleet("station-" + stations.size());
+        stations.add(station);
+        return station;
+    }
+
+    private CampaignFleetAPI newFleet(String id) {
         CampaignFleetAPI fleet = tagged(mock(CampaignFleetAPI.class));
-        String id = "fleet-" + fleets.size();
         when(fleet.getId()).thenReturn(id);
         when(fleet.isEmpty()).thenReturn(emptyFleets);
         when(fleet.hasAbility(anyString())).thenReturn(true);
@@ -177,11 +196,14 @@ final class FakeChartContentEngine implements ChartContentEngine {
             location.set(invocation.<Float>getArgument(0), invocation.<Float>getArgument(1));
             return null;
         }).when(fleet).setLocation(anyFloat(), anyFloat());
+        doAnswer(invocation -> {
+            location.set(invocation.<Float>getArgument(0), invocation.<Float>getArgument(1));
+            return null;
+        }).when(fleet).setFixedLocation(anyFloat(), anyFloat());
         List<Assignment> fleetAssignments = new ArrayList<>();
         assignments.put(fleet, fleetAssignments);
         doAnswer(invocation -> fleetAssignments.add(new Assignment(invocation.getArgument(0), invocation.getArgument(1))))
                 .when(fleet).addAssignment(any(FleetAssignment.class), any(), anyFloat());
-        fleets.add(fleet);
         return fleet;
     }
 }

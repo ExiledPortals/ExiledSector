@@ -10,6 +10,8 @@ import {
   ATLAS_REGION_SPEC,
   ATLAS_SPECIAL_SPEC,
   CHART_BLOCKED_ABILITY_SPEC,
+  CHART_BOSS_SPEC,
+  CHART_BOSS_STATION_SPEC,
   CHART_COLONY_ITEM_SPEC,
   CHART_DROP_SPEC,
   CHART_EXPANSION_SPEC,
@@ -57,6 +59,8 @@ export function ItemsPage() {
         <Tabs.Tab value="chart-tiers">Chart tiers</Tabs.Tab>
         <Tabs.Tab value="chart-pois">Chart POIs</Tabs.Tab>
         <Tabs.Tab value="chart-factions">Chart factions</Tabs.Tab>
+        <Tabs.Tab value="chart-bosses">Chart bosses</Tabs.Tab>
+        <Tabs.Tab value="chart-boss-stations">Chart boss stations</Tabs.Tab>
         <Tabs.Tab value="chart-drops">Chart drops</Tabs.Tab>
         <Tabs.Tab value="chart-loot">Chart loot</Tabs.Tab>
         <Tabs.Tab value="chart-colony-items">Chart colony items</Tabs.Tab>
@@ -97,6 +101,12 @@ export function ItemsPage() {
       </Tabs.Panel>
       <Tabs.Panel value="chart-factions" style={PANEL_STYLE}>
         <ChartTableTab spec={CHART_FACTION_SPEC} vocabulary={vocabulary.data} />
+      </Tabs.Panel>
+      <Tabs.Panel value="chart-bosses" style={PANEL_STYLE}>
+        <ChartTableTab spec={CHART_BOSS_SPEC} vocabulary={vocabulary.data} />
+      </Tabs.Panel>
+      <Tabs.Panel value="chart-boss-stations" style={PANEL_STYLE}>
+        <ChartTableTab spec={CHART_BOSS_STATION_SPEC} vocabulary={vocabulary.data} />
       </Tabs.Panel>
       <Tabs.Panel value="chart-drops" style={PANEL_STYLE}>
         <ChartTableTab spec={CHART_DROP_SPEC} vocabulary={vocabulary.data} />

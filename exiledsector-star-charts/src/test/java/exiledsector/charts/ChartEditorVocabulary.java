@@ -5,6 +5,7 @@ import exiledsector.charts.feature.ChartFeature;
 import exiledsector.charts.phenomenon.ChartPhenomenon;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public final class ChartEditorVocabulary {
@@ -34,6 +35,10 @@ public final class ChartEditorVocabulary {
 
     public static List<String> phenomenonIds() {
         return ChartPhenomena.BUILT_IN.stream().map(ChartPhenomenon::id).toList();
+    }
+
+    public static List<String> bossTypes() {
+        return Arrays.stream(ChartBossType.values()).map(ChartBossType::key).toList();
     }
 
     public static List<String> featureIds() {

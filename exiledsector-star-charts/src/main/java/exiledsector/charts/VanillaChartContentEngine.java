@@ -1,25 +1,37 @@
 package exiledsector.charts;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.AICoreOfficerPlugin;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
+import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
+import com.fs.starfarer.api.characters.PersonAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.fleet.FleetMemberType;
 import com.fs.starfarer.api.impl.campaign.DerelictShipEntityPlugin;
 import com.fs.starfarer.api.impl.campaign.DerelictShipEntityPlugin.DerelictShipData;
 import com.fs.starfarer.api.impl.campaign.DerelictShipEntityPlugin.DerelictType;
+import com.fs.starfarer.api.impl.campaign.events.OfficerManagerEvent;
+import com.fs.starfarer.api.impl.campaign.events.OfficerManagerEvent.SkillPickPreference;
 import com.fs.starfarer.api.impl.campaign.fleets.FleetFactoryV3;
 import com.fs.starfarer.api.impl.campaign.fleets.FleetParamsV3;
+import com.fs.starfarer.api.impl.campaign.ids.Abilities;
+import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.impl.campaign.ids.Entities;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
+import com.fs.starfarer.api.impl.campaign.ids.FleetTypes;
 import com.fs.starfarer.api.impl.campaign.procgen.PlanetGenDataSpec;
 import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.BaseThemeGenerator;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.BaseThemeGenerator.EntityLocation;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.BaseThemeGenerator.LocationType;
+import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantThemeGenerator;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.SalvageEntityGeneratorOld;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.SalvageSpecialAssigner.ShipRecoverySpecialCreator;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.SalvageSpecialAssigner.SpecialCreationContext;
@@ -40,6 +52,7 @@ final class VanillaChartContentEngine implements ChartContentEngine {
     static final float STAR_ORBIT_WEIGHT = 6f;
     static final float HIDDEN_WEIGHT = 5f;
     static final String DETECTION_MOD_ID = "gen";
+    static final float STATION_DETECTION_BONUS = 1000f;
 
     static LinkedHashMap<LocationType, Float> locationWeights() {
         LinkedHashMap<LocationType, Float> weights = new LinkedHashMap<>();
@@ -125,6 +138,36 @@ final class VanillaChartContentEngine implements ChartContentEngine {
     @Override
     public CampaignFleetAPI createFleet(FleetParamsV3 params) {
         return FleetFactoryV3.createFleet(params);
+    }
+
+    @Override
+    public CampaignFleetAPI createStation(String factionId, String variantId, int officerLevel, Random random) {
+        ShipVariantAPI variant = Global.getSettings().doesVariantExist(variantId) ? Global.getSettings().getVariant(variantId) : null;
+        if (variant == null) {
+            return null;
+        }
+        CampaignFleetAPI station = FleetFactoryV3.createEmptyFleet(factionId, FleetTypes.BATTLESTATION, null);
+        FleetMemberAPI member = Global.getFactory().createFleetMember(FleetMemberType.SHIP, variant);
+        station.getFleetData().addFleetMember(member);
+        station.setStationMode(true);
+        RemnantThemeGenerator.addRemnantStationInteractionConfig(station);
+        station.clearAbilities();
+        station.addAbility(Abilities.TRANSPONDER);
+        station.getAbility(Abilities.TRANSPONDER).activate();
+        station.getDetectedRangeMod().modifyFlat(DETECTION_MOD_ID, STATION_DETECTION_BONUS);
+        PersonAPI commander = stationCommander(station.getFaction(), member, officerLevel, random);
+        station.setCommander(commander);
+        member.setCaptain(commander);
+        member.getRepairTracker().setCR(member.getRepairTracker().getMaxCR());
+        return station;
+    }
+
+    private static PersonAPI stationCommander(FactionAPI faction, FleetMemberAPI station, int officerLevel, Random random) {
+        if (Misc.isAutomated(station)) {
+            AICoreOfficerPlugin core = Misc.getAICoreOfficerPlugin(Commodities.ALPHA_CORE);
+            return core.createPerson(Commodities.ALPHA_CORE, faction.getId(), random);
+        }
+        return OfficerManagerEvent.createOfficer(faction, officerLevel, SkillPickPreference.ANY, false, null, true, true, -1, random);
     }
 
     @Override

@@ -3,12 +3,17 @@ package exiledsector.charts;
 import java.util.List;
 
 public record ChartContentPlan(int tier, ChartFaction faction, ChartObjective objective, List<PlannedPoi> pois, List<PlannedFleet> fleets,
-                               List<String> expansions) {
+                               List<String> expansions, ChartBossType bossType, PlannedStation bossStation) {
 
     public enum FleetRole {
         GUARD,
         PATROL,
-        BOSS
+        BOSS,
+        DEFENDER;
+
+        public boolean bossFleet() {
+            return this == BOSS || this == DEFENDER;
+        }
     }
 
     public record PlannedPoi(ChartPoi poi, boolean guarded) {
@@ -22,10 +27,19 @@ public record ChartContentPlan(int tier, ChartFaction faction, ChartObjective ob
         }
     }
 
+    public record PlannedStation(String variantId, int officerLevel, PlannedFleet fallbackBoss) {
+    }
+
     public ChartContentPlan {
         pois = List.copyOf(pois);
         fleets = List.copyOf(fleets);
         expansions = expansions == null ? List.of() : List.copyOf(expansions);
+        bossType = bossType == null ? ChartBossType.FLEET : bossType;
+    }
+
+    public ChartContentPlan(int tier, ChartFaction faction, ChartObjective objective, List<PlannedPoi> pois, List<PlannedFleet> fleets,
+                            List<String> expansions) {
+        this(tier, faction, objective, pois, fleets, expansions, ChartBossType.FLEET, null);
     }
 
     public ChartContentPlan(int tier, ChartFaction faction, ChartObjective objective, List<PlannedPoi> pois, List<PlannedFleet> fleets) {

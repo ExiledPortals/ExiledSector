@@ -111,7 +111,7 @@ public class ChartOpenCommand extends CampaignCommand {
                 : run.objective().name() + " (" + run.objectiveTargetIds().size() + " target(s))";
         return "Tier " + run.tier() + ", held by " + (run.contentFaction() == null ? "nobody" : run.contentFaction()) + ": "
                 + run.contentFleets() + " fleet(s), " + run.contentPois() + " point(s) of interest"
-                + (run.bossFleetId() != null ? ", a boss fleet" : "")
+                + (run.bossFleetId() != null ? ", a boss " + run.bossType().key() : "")
                 + (run.expansionIds().isEmpty() ? "" : ", expansions " + String.join(", ", run.expansionIds()))
                 + ". Objective: " + objective + ".";
     }

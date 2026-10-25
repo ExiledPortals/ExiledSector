@@ -22,6 +22,7 @@ import com.fs.starfarer.api.impl.campaign.terrain.StarCoronaTerrainPlugin;
 import exiledsector.charts.ChartContentPlan.FleetRole;
 import exiledsector.charts.ChartContentPlan.PlannedFleet;
 import exiledsector.charts.ChartContentPlan.PlannedPoi;
+import exiledsector.charts.ChartContentPlan.PlannedStation;
 import exiledsector.charts.expansion.ChartExpansion;
 import exiledsector.charts.expansion.ExpansionSite;
 import exiledlib.i18n.Translation;
@@ -43,6 +44,9 @@ public final class ChartContentGenerator {
     static final float POI_WORMHOLE_CLEARANCE = 2000f;
     static final float FLEET_WORMHOLE_CLEARANCE = 3000f;
     static final float GUARD_OFFSET = 250f;
+    static final float STATION_ORBIT_GAP = 300f;
+    static final float STATION_ORBIT_DAYS = 60f;
+    static final float STATION_SPIN = 5f;
     static final float STAR_CLEARANCE = 600f;
     static final float CORONA_CLEARANCE = 300f;
     static final float DERELICT_RECOVERY_CHANCE = 0.5f;
@@ -53,6 +57,7 @@ public final class ChartContentGenerator {
     static final long FLEET_BUILD_SALT = 0x43484255494c44L;
     static final long LOOT_SALT = 0x43484c4f4f5453L;
     static final long COLONY_ITEM_SALT = 0x4348434f4c4f4eL;
+    static final long STATION_SALT = 0x43485354415449L;
     static final List<String> HOSTILITY_FLAGS = List.of(MemFlags.MEMORY_KEY_MAKE_HOSTILE, MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE,
             MemFlags.MEMORY_KEY_ALLOW_LONG_PURSUIT, MemFlags.MEMORY_KEY_NO_JUMP, MemFlags.MEMORY_KEY_SAW_PLAYER_WITH_TRANSPONDER_ON,
             MemFlags.MEMORY_KEY_NO_REP_IMPACT, MemFlags.MEMORY_KEY_LOW_REP_IMPACT);
@@ -199,7 +204,7 @@ public final class ChartContentGenerator {
         params.officerLevelBonus = planned.officerLevelBonus();
         params.officerNumberBonus = planned.officerCountBonus();
         params.averageSMods = planned.averageSMods() > 0 ? planned.averageSMods() : null;
-        if (planned.role() == FleetRole.BOSS) {
+        if (planned.role().bossFleet()) {
             params.forceAllowPhaseShipsEtc = true;
         }
         return params;
@@ -209,7 +214,7 @@ public final class ChartContentGenerator {
         return switch (role) {
             case GUARD -> FleetTypes.PATROL_MEDIUM;
             case PATROL -> FleetTypes.PATROL_LARGE;
-            case BOSS -> FleetTypes.TASK_FORCE;
+            case BOSS, DEFENDER -> FleetTypes.TASK_FORCE;
         };
     }
 
@@ -220,6 +225,31 @@ public final class ChartContentGenerator {
     }
 
     static void prepareFleet(CampaignFleetAPI fleet, String runId, int tier, FleetRole role, int strengthBonus, long fleetSeed) {
+        markContent(fleet, runId, tier, strengthBonus, fleetSeed, role.bossFleet());
+        if (role == FleetRole.DEFENDER) {
+            fleet.getMemoryWithoutUpdate().unset(MemFlags.MEMORY_KEY_ALLOW_LONG_PURSUIT);
+        }
+        fleet.setTransponderOn(true);
+        for (String abilityId : REMOVED_ABILITIES) {
+            if (fleet.hasAbility(abilityId)) {
+                fleet.removeAbility(abilityId);
+            }
+        }
+        if (role.bossFleet()) {
+            fleet.setName(Translation.gameText(role == FleetRole.DEFENDER ? "chart.fleet.bossDefenders.name" : "chart.fleet.boss.name"));
+            PersonAPI commander = fleet.getCommander();
+            if (commander != null && commander.getPersonalityAPI() != null && MEEK_PERSONALITIES.contains(commander.getPersonalityAPI().getId())) {
+                commander.setPersonality(Personalities.AGGRESSIVE);
+            }
+        }
+    }
+
+    static void prepareStation(CampaignFleetAPI station, String runId, int tier, long stationSeed) {
+        markContent(station, runId, tier, 0, stationSeed, true);
+        station.setName(Translation.gameText("chart.fleet.bossStation.name"));
+    }
+
+    private static void markContent(CampaignFleetAPI fleet, String runId, int tier, int strengthBonus, long fleetSeed, boolean boss) {
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();
         memory.set(ChartIds.TIER_MEMORY_KEY, tier);
         if (strengthBonus > 0) {
@@ -231,25 +261,12 @@ public final class ChartContentGenerator {
         for (String flag : HOSTILITY_FLAGS) {
             memory.set(flag, true);
         }
-        if (role == FleetRole.BOSS) {
+        if (boss) {
             memory.set(MemFlags.FLEET_FIGHT_TO_THE_LAST, true);
             memory.set(ChartIds.BOSS_MEMORY_KEY, true);
         }
         fleet.setNoAutoDespawn(true);
-        fleet.setTransponderOn(true);
-        for (String abilityId : REMOVED_ABILITIES) {
-            if (fleet.hasAbility(abilityId)) {
-                fleet.removeAbility(abilityId);
-            }
-        }
         tagContent(fleet, runId);
-        if (role == FleetRole.BOSS) {
-            fleet.setName(Translation.gameText("chart.fleet.boss.name"));
-            PersonAPI commander = fleet.getCommander();
-            if (commander != null && commander.getPersonalityAPI() != null && MEEK_PERSONALITIES.contains(commander.getPersonalityAPI().getId())) {
-                commander.setPersonality(Personalities.AGGRESSIVE);
-            }
-        }
     }
 
     static void tagContent(SectorEntityToken entity, String runId) {
@@ -304,6 +321,7 @@ public final class ChartContentGenerator {
         private final List<String> expansions = new ArrayList<>();
         private List<Hazard> hazards = List.of();
         private String bossFleetId;
+        private ChartBossType bossType = ChartBossType.FLEET;
         private final SectorEntityToken featureAnchor;
 
         Build(StarSystemAPI system, String runId, int tier, long seed, Vector2f innerWormhole, ChartGenContext chartContext,
@@ -434,36 +452,105 @@ public final class ChartContentGenerator {
 
         private void spawnFleet(ChartContentPlan plan, PlannedFleet planned, long fleetSeed) {
             Random oneFleetRandom = new Random(fleetSeed);
-            CampaignFleetAPI fleet = engine.createFleet(fleetParams(plan.faction().factionId(), planned, oneFleetRandom));
+            SectorEntityToken guarded = planned.guardsPoi() && planned.poiIndex() < poiEntities.size() ? poiEntities.get(planned.poiIndex()) : null;
+            if (featureAnchor != null && planned.role().bossFleet()) {
+                guarded = featureAnchor;
+            }
+            PlannedFleet built = planned;
+            if (planned.role() == FleetRole.DEFENDER) {
+                CampaignFleetAPI station = spawnStation(plan.faction().factionId(), plan.bossStation(), guarded, fleetSeed);
+                if (station != null) {
+                    guarded = station;
+                } else {
+                    built = fallbackBoss(plan.bossStation(), planned);
+                }
+            }
+            FleetRole role = built.role();
+            CampaignFleetAPI fleet = engine.createFleet(fleetParams(plan.faction().factionId(), built, oneFleetRandom));
             if (fleet == null || fleet.isEmpty()) {
                 return;
             }
-            prepareFleet(fleet, runId, tier, planned.role(), planned.strengthBonus(), fleetSeed);
+            prepareFleet(fleet, runId, tier, role, built.strengthBonus(), fleetSeed);
             applyEnemySensorRange(fleet, chartContext.enemySensorRangeBonus());
             try {
-                ChartVanillaLoot.addToFleet(fleet, planned.role() == FleetRole.BOSS, chartContext, tier);
+                ChartVanillaLoot.addToFleet(fleet, role == FleetRole.BOSS, chartContext, tier);
             } catch (RuntimeException | LinkageError e) {
-                report("add loot to a " + planned.role().name().toLowerCase(Locale.ROOT) + " fleet", seed, e);
+                report("add loot to a " + role.name().toLowerCase(Locale.ROOT) + " fleet", seed, e);
             }
-            SectorEntityToken guarded = planned.guardsPoi() && planned.poiIndex() < poiEntities.size() ? poiEntities.get(planned.poiIndex()) : null;
-            if (featureAnchor != null && planned.role() == FleetRole.BOSS) {
-                guarded = featureAnchor;
-            }
-            Vector2f spawnAt = spawnLocation(planned.role(), guarded, oneFleetRandom);
+            Vector2f spawnAt = spawnLocation(role, guarded, oneFleetRandom);
             system.addEntity(fleet);
             try {
                 fleet.setLocation(spawnAt.x, spawnAt.y);
-                assign(fleet, planned.role(), guarded);
+                assign(fleet, role, guarded);
             } catch (RuntimeException | LinkageError e) {
                 system.removeEntity(fleet);
                 throw e;
             }
             fleets.add(fleet);
-            if (planned.role() == FleetRole.GUARD) {
+            if (role == FleetRole.GUARD) {
                 guardFleetIds.add(fleet.getId());
-            } else if (planned.role() == FleetRole.BOSS) {
+            } else if (role == FleetRole.BOSS) {
                 bossFleetId = fleet.getId();
+                bossType = ChartBossType.FLEET;
             }
+        }
+
+        private static PlannedFleet fallbackBoss(PlannedStation station, PlannedFleet guard) {
+            if (station != null && station.fallbackBoss() != null) {
+                return station.fallbackBoss();
+            }
+            return new PlannedFleet(FleetRole.BOSS, guard.poiIndex(), guard.combatPoints(), guard.quality(), guard.officerLevelBonus(),
+                    guard.officerCountBonus(), guard.strengthBonus(), guard.averageSMods());
+        }
+
+        private CampaignFleetAPI spawnStation(String factionId, PlannedStation planned, SectorEntityToken anchor, long fleetSeed) {
+            if (planned == null) {
+                return null;
+            }
+            long stationSeed = fleetSeed ^ STATION_SALT;
+            Random stationRandom = new Random(stationSeed);
+            try {
+                CampaignFleetAPI station = engine.createStation(factionId, planned.variantId(), planned.officerLevel(), stationRandom);
+                if (station == null || station.isEmpty()) {
+                    report("build a boss station", seed, new IllegalStateException("Station variant " + planned.variantId() + " is not loaded"));
+                    return null;
+                }
+                prepareStation(station, runId, tier, stationSeed);
+                try {
+                    ChartVanillaLoot.addToFleet(station, true, chartContext, tier);
+                } catch (RuntimeException | LinkageError e) {
+                    report("add loot to a boss station", seed, e);
+                }
+                system.addEntity(station);
+                try {
+                    station.setAI(null);
+                    anchorStation(station, anchor, stationRandom);
+                } catch (RuntimeException | LinkageError e) {
+                    system.removeEntity(station);
+                    throw e;
+                }
+                fleets.add(station);
+                bossFleetId = station.getId();
+                bossType = ChartBossType.STATION;
+                return station;
+            } catch (RuntimeException | LinkageError e) {
+                report("spawn a boss station", seed, e);
+                return null;
+            }
+        }
+
+        private void anchorStation(CampaignFleetAPI station, SectorEntityToken anchor, Random stationRandom) {
+            if (anchor == null || anchor.getLocation() == null) {
+                Vector2f farSide = farSideOf(innerWormhole);
+                station.setFixedLocation(farSide.x, farSide.y);
+                return;
+            }
+            float angle = stationRandom.nextFloat() * 360f;
+            float orbitRadius = anchor.getRadius() + STATION_ORBIT_GAP;
+            Vector2f at = anchor.getLocation();
+            double radians = Math.toRadians(angle);
+            station.setLocation(at.x + (float) Math.cos(radians) * orbitRadius, at.y + (float) Math.sin(radians) * orbitRadius);
+            station.setCircularOrbitWithSpin(anchor, angle, orbitRadius, STATION_ORBIT_DAYS, STATION_SPIN, STATION_SPIN);
         }
 
         private Vector2f spawnLocation(FleetRole role, SectorEntityToken guarded, Random oneFleetRandom) {
@@ -491,7 +578,8 @@ public final class ChartContentGenerator {
                     Vector2f farSide = farSideOf(innerWormhole);
                     holdPoint = system.createToken(farSide.x, farSide.y);
                 }
-                fleet.addAssignment(FleetAssignment.ORBIT_AGGRESSIVE, holdPoint, ASSIGNMENT_DAYS);
+                FleetAssignment hold = role == FleetRole.DEFENDER ? FleetAssignment.ORBIT_PASSIVE : FleetAssignment.ORBIT_AGGRESSIVE;
+                fleet.addAssignment(hold, holdPoint, ASSIGNMENT_DAYS);
             }
             if (patrolCentre != null) {
                 fleet.addAssignment(FleetAssignment.PATROL_SYSTEM, patrolCentre, ASSIGNMENT_DAYS);
@@ -527,7 +615,7 @@ public final class ChartContentGenerator {
                     placedPois++;
                 }
             }
-            return new ChartContent(tier, plan.faction().factionId(), objective, targets, bossFleetId, fleets.size(), placedPois, expansions);
+            return new ChartContent(tier, plan.faction().factionId(), objective, targets, bossFleetId, bossType, fleets.size(), placedPois, expansions);
         }
 
         void removeEverything() {

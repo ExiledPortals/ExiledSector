@@ -61,6 +61,8 @@ export const CHART_TIER_COLUMNS = [
 ] as const;
 export const CHART_POI_COLUMNS = ['id', 'kind', 'entity', 'salvage_spec', 'derelict_type', 'cost', 'weight', 'min_tier', 'max_tier', 'guarded', 'requires_mod', 'planet_categories', 'note'] as const;
 export const CHART_FACTION_COLUMNS = ['faction', 'weight', 'note'] as const;
+export const CHART_BOSS_COLUMNS = ['id', 'weight', 'min_tier', 'max_tier', 'fleet_share', 'note'] as const;
+export const CHART_BOSS_STATION_COLUMNS = ['variant', 'factions', 'min_tier', 'max_tier', 'weight', 'note'] as const;
 export const CHART_BLOCKED_ABILITY_COLUMNS = ['ability_id', 'note'] as const;
 export const CHART_DROP_COLUMNS = [
   'source',
@@ -497,6 +499,87 @@ export const CHART_FACTION_SPEC: ChartTableSpec = {
       return warnings;
     }),
   summary: (row) => `weight ${value(row, 'weight') || '1'}`,
+};
+
+export const CHART_BOSS_SPEC: ChartTableSpec = {
+  resource: 'chart-bosses',
+  fileName: 'chart_bosses.csv',
+  noun: 'boss type',
+  keyColumn: 'id',
+  description:
+    "Kinds of Star Chart boss. A run with a boss picks one of the kinds allowed at its tier by weight. A station boss is a station from chart_boss_stations.csv with a guard fleet beside it, and is only picked when the run's faction has a station at that tier. Fleet share scales the tier's boss size for the boss's fleet: the whole boss for a fleet boss, the guard for a station boss. With no rows every boss is a fleet.",
+  columns: columnsOf(CHART_BOSS_COLUMNS, {
+    id: { label: 'Boss type', kind: 'choice', choices: (vocabulary) => vocabulary.chartBossTypes },
+    weight: { label: 'Weight', kind: 'number' },
+    min_tier: { label: 'Min tier', kind: 'integer' },
+    max_tier: { label: 'Max tier', kind: 'integer' },
+    fleet_share: { label: 'Fleet share', kind: 'number', help: "Multiplies the tier's boss size for this boss's fleet. Empty is 1" },
+    note: NOTE_COLUMN,
+  }),
+  newRow: () => ({ id: '', weight: '1', min_tier: '1', max_tier: '15', fleet_share: '1' }),
+  issues: (model, vocabulary) => {
+    const issues: string[] = [];
+    model.rows.forEach((row, index) => {
+      const label = rowLabel(CHART_BOSS_SPEC, row, index);
+      if (value(row, 'id') === '') {
+        issues.push(`${label}: needs a boss type`);
+      }
+      issues.push(...columnFormatIssues(CHART_BOSS_SPEC.columns, row, label, vocabulary));
+    });
+    return [...issues, ...duplicateKeyIssues(CHART_BOSS_SPEC, model)];
+  },
+  warnings: (model, vocabulary) =>
+    model.rows.flatMap((row, index) => {
+      const label = rowLabel(CHART_BOSS_SPEC, row, index);
+      const warnings = [...roundedIntegerWarnings(CHART_BOSS_SPEC.columns, row, label), ...tierSpanWarnings(row, label, vocabulary)];
+      if (!(numberValue(row, 'weight', 1) > 0)) {
+        warnings.push(`${label}: a weight of 0 or less means it is never picked`);
+      }
+      if (!(numberValue(row, 'fleet_share', 1) > 0)) {
+        warnings.push(`${label}: a fleet share of 0 or less gives its fleet the smallest size`);
+      }
+      return warnings;
+    }),
+  summary: (row, vocabulary) => `weight ${value(row, 'weight') || '1'}, ${tierSpanSummary(row, vocabulary)}`,
+};
+
+export const CHART_BOSS_STATION_SPEC: ChartTableSpec = {
+  resource: 'chart-boss-stations',
+  fileName: 'chart_boss_stations.csv',
+  noun: 'boss station',
+  keyColumn: 'variant',
+  description:
+    "Stations a station boss can be. A run picks by weight among the rows that list its faction and allow its tier; a faction with no such row uses the rows without factions. Rows whose variant the game has not loaded are skipped.",
+  columns: columnsOf(CHART_BOSS_STATION_COLUMNS, {
+    variant: { label: 'Station variant', kind: 'text', help: 'A station variant id, such as station2_Standard' },
+    factions: { label: 'Factions', kind: 'text', help: 'Faction ids separated by ;. Empty serves every faction without a row of its own at that tier' },
+    min_tier: { label: 'Min tier', kind: 'integer' },
+    max_tier: { label: 'Max tier', kind: 'integer' },
+    weight: { label: 'Weight', kind: 'number' },
+    note: NOTE_COLUMN,
+  }),
+  newRow: () => ({ variant: '', factions: '', min_tier: '1', max_tier: '15', weight: '1' }),
+  issues: (model, vocabulary) => {
+    const issues: string[] = [];
+    model.rows.forEach((row, index) => {
+      const label = rowLabel(CHART_BOSS_STATION_SPEC, row, index);
+      if (value(row, 'variant') === '') {
+        issues.push(`${label}: needs a station variant id`);
+      }
+      issues.push(...columnFormatIssues(CHART_BOSS_STATION_SPEC.columns, row, label, vocabulary));
+    });
+    return [...issues, ...duplicateKeyIssues(CHART_BOSS_STATION_SPEC, model)];
+  },
+  warnings: (model, vocabulary) =>
+    model.rows.flatMap((row, index) => {
+      const label = rowLabel(CHART_BOSS_STATION_SPEC, row, index);
+      const warnings = [...roundedIntegerWarnings(CHART_BOSS_STATION_SPEC.columns, row, label), ...tierSpanWarnings(row, label, vocabulary)];
+      if (!(numberValue(row, 'weight', 1) > 0)) {
+        warnings.push(`${label}: a weight of 0 or less means it is never picked`);
+      }
+      return warnings;
+    }),
+  summary: (row, vocabulary) => `${value(row, 'factions') || 'any faction'}, ${tierSpanSummary(row, vocabulary)}`,
 };
 
 export const CHART_BLOCKED_ABILITY_SPEC: ChartTableSpec = {
@@ -1165,6 +1248,8 @@ export const CHART_TABLE_SPECS: ChartTableSpec[] = [
   CHART_TIER_SPEC,
   CHART_POI_SPEC,
   CHART_FACTION_SPEC,
+  CHART_BOSS_SPEC,
+  CHART_BOSS_STATION_SPEC,
   CHART_DROP_SPEC,
   CHART_LOOT_SPEC,
   CHART_COLONY_ITEM_SPEC,

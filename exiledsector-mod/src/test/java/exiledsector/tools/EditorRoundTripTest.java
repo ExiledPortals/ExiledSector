@@ -59,6 +59,7 @@ class EditorRoundTripTest {
     private static final String CHART_TIERS = "exiledsector/charts/ChartTiers.java";
     private static final String CHART_POIS = "exiledsector/charts/ChartPois.java";
     private static final String CHART_FACTIONS = "exiledsector/charts/ChartFactions.java";
+    private static final String CHART_BOSSES = "exiledsector/charts/ChartBosses.java";
     private static final String CHART_BLOCKED_ABILITIES = "exiledsector/charts/ChartBlockedAbilities.java";
     private static final String CHART_DROPS = "exiledsector/charts/ChartDrops.java";
     private static final String CHART_LOOT = "exiledsector/charts/ChartLoot.java";
@@ -73,7 +74,7 @@ class EditorRoundTripTest {
 
     private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, ITEM_DEFINITIONS, ITEM_DEFINITION, SUBROUTINE_DEFINITIONS, HULL_ITEM,
             ITEM_NAMES, ITEM_DROPS, SALVAGE_COMPAT, ITEM_CRAFTING, HULL_ITEM_IMPLICITS, ITEM_MODIFIERS, STAR_CHART_DEFINITIONS, STAR_CHART_IMPLICITS,
-            STAR_CHART_ITEMS, STAR_CHART_NAMES, CHART_TIERS, CHART_POIS, CHART_FACTIONS, CHART_BLOCKED_ABILITIES, CHART_DROPS, CHART_LOOT,
+            STAR_CHART_ITEMS, STAR_CHART_NAMES, CHART_TIERS, CHART_POIS, CHART_FACTIONS, CHART_BOSSES, CHART_BLOCKED_ABILITIES, CHART_DROPS, CHART_LOOT,
             CHART_COLONY_ITEMS, CHART_EXPANSIONS, CHART_PHENOMENA, CHART_FEATURES, ATLAS_DATA, WORMHOLE_ANCHOR_DEFINITIONS, DOCTRINE_ARCHIVES, MODSPEC_CACHES, SUBROUTINE_IMPLICITS,
             CORRUPTION_IMPLICIT_POOL);
 
@@ -165,6 +166,10 @@ class EditorRoundTripTest {
                     List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_POI_COLUMNS")), true),
             new Pin("chart_factions.csv columns", CHART_FACTIONS, List.of("load", "register"),
                     List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_FACTION_COLUMNS")), true),
+            new Pin("chart_bosses.csv columns", CHART_BOSSES, List.of("parse"),
+                    List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_BOSS_COLUMNS")), true),
+            new Pin("chart_boss_stations.csv columns", CHART_BOSSES, List.of("load", "registerStations"),
+                    List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_BOSS_STATION_COLUMNS")), true),
             new Pin("chart_blocked_abilities.csv columns", CHART_BLOCKED_ABILITIES, List.of("load"),
                     List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_BLOCKED_ABILITY_COLUMNS")), true),
             new Pin("chart_drops.csv columns", CHART_DROPS, List.of("load", "register"),

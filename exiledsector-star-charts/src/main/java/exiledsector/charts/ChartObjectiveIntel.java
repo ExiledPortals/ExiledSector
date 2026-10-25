@@ -58,6 +58,12 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
         return objective == null ? "" : Translation.gameText("chart.objective." + objective.key() + ".name");
     }
 
+    static String descriptionKey(ChartRun run) {
+        String objectiveKey = run.objective().key();
+        String bossKey = run.objective() == ChartObjective.BOSS ? "." + run.bossType().key() : "";
+        return "chart.objective." + objectiveKey + bossKey + ".description";
+    }
+
     static String progressText(ChartRun run) {
         if (run.isObjectiveComplete()) {
             return Translation.gameText("chart.intel.complete");
@@ -106,10 +112,9 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
             info.addPara(safe(Translation.gameText("chart.dialog.stale")), 0f);
             return;
         }
-        String objectiveKey = run.objective().key();
         int tier = run.tier();
         String faction = factionName(run.contentFaction());
-        info.addPara(safe(Translation.gameText("chart.objective." + objectiveKey + ".description")), 0f);
+        info.addPara(safe(Translation.gameText(descriptionKey(run))), 0f);
         info.addPara(safe(I18n.forGameText(() -> Translation.msg("chart.intel.tier").arg("tier", tier).arg("faction", faction).text())),
                 PARAGRAPH_PAD);
         info.addPara(safe(progressText(run)), PARAGRAPH_PAD);

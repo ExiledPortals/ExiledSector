@@ -40,6 +40,40 @@ class ChartContentPlannerTest {
     }
 
     @Test
+    void aStationBossPlansItsStationAndAGuardFromItsShareOfTheBossSize() {
+        ChartBosses.useForTests(List.of(new ChartBosses.Definition(ChartBossType.STATION, 1f, 1, 15, 0.5f)),
+                List.of(new ChartBosses.Station("station2_Standard", Set.of(), 1, 15, 1f)));
+        try {
+            ChartTier tier = ChartTiers.forTier(10);
+            ChartContentPlan plan = plan(77L, 10);
+
+            assertEquals(ChartBossType.STATION, plan.bossType());
+            assertEquals("station2_Standard", plan.bossStation().variantId());
+            assertEquals(ChartContentPlanner.STATION_OFFICER_LEVEL + tier.officerLevelBonus() + ChartContentPlanner.BOSS_OFFICER_LEVEL_BONUS,
+                    plan.bossStation().officerLevel());
+            assertEquals(0, plan.count(FleetRole.BOSS));
+            assertEquals(1, plan.count(FleetRole.DEFENDER));
+            assertEquals(ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, tier.bossSize() * 0.5f)),
+                    plan.fleetPoints(FleetRole.DEFENDER), 0.001f);
+            PlannedFleet fallback = plan.bossStation().fallbackBoss();
+            assertEquals(FleetRole.BOSS, fallback.role());
+            assertEquals(ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, tier.bossSize())), fallback.combatPoints(), 0.001f);
+        } finally {
+            ChartBosses.resetForTests();
+        }
+    }
+
+    @Test
+    void withoutBossTablesEveryBossIsAFleet() {
+        for (long seed = 0; seed < 10; seed++) {
+            ChartContentPlan plan = plan(seed, 6);
+            assertEquals(ChartBossType.FLEET, plan.bossType());
+            assertEquals(1, plan.count(FleetRole.BOSS));
+            assertEquals(0, plan.count(FleetRole.DEFENDER));
+        }
+    }
+
+    @Test
     void theSameSeedAndTierAlwaysPlanTheSameContent() {
         for (int tier = ChartTiers.LOWEST_TIER; tier <= ChartTiers.HIGHEST_TIER; tier++) {
             assertEquals(plan(1234L, tier), plan(1234L, tier), "tier " + tier);

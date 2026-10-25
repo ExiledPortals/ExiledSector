@@ -10,6 +10,8 @@ import {
   ATLAS_SPECIAL_SPEC,
   ATLAS_DECORATION_SPEC,
   CHART_BLOCKED_ABILITY_SPEC,
+  CHART_BOSS_SPEC,
+  CHART_BOSS_STATION_SPEC,
   CHART_COLONY_ITEM_SPEC,
   CHART_DROP_SPEC,
   CHART_EXPANSION_SPEC,
@@ -53,6 +55,7 @@ const vocabulary = buildVocabulary({
   chartLootScopes: ['cache', 'domain', 'station', 'derelict', 'fleet', 'boss'],
   chartColonyItemGroups: ['rare_tech'],
   chartExpansions: ['spatial_breach'],
+  chartBossTypes: ['fleet', 'station'],
   chartFeatures: ['ringed_giant', 'rogue_planet'],
   chartPhenomena: ['black_hole', 'stellar_flares'],
 });
@@ -356,6 +359,33 @@ describe('chart tables', () => {
     expect(issues.some((issue) => issue.startsWith('unbuilt:'))).toBe(true);
     expect(CHART_EXPANSION_SPEC.warnings(model, vocabulary)).toContain('unbuilt: min_tier is above max_tier, so the game swaps them');
     expect(CHART_EXPANSION_SPEC.summary?.(model.rows[0], vocabulary)).toBe('tiers 1-15');
+  });
+
+  it('round-trips the boss tables and flags unknown boss types and missing variants', () => {
+    const bosses =
+      'id,weight,min_tier,max_tier,fleet_share,note\r\n' +
+      'fleet,1,1,15,1,\r\n' +
+      'station,1,4,15,0.6,"A station, guarded"\r\n' +
+      'dragon,0,1,15,0,\r\n';
+    const bossModel = chartTable(CHART_BOSS_SPEC, bosses);
+    expect(serializeChartTable(bossModel, CHART_BOSS_SPEC.columns)).toBe(bosses);
+    expect(CHART_BOSS_SPEC.issues(bossModel, vocabulary).some((issue) => issue.startsWith('dragon:'))).toBe(true);
+    expect(CHART_BOSS_SPEC.warnings(bossModel, vocabulary)).toEqual([
+      'dragon: a weight of 0 or less means it is never picked',
+      'dragon: a fleet share of 0 or less gives its fleet the smallest size',
+    ]);
+    expect(CHART_BOSS_SPEC.summary?.(bossModel.rows[1], vocabulary)).toBe('weight 1, tiers 4-15');
+
+    const stations =
+      'variant,factions,min_tier,max_tier,weight,note\r\n' +
+      'station1_Standard,pirates;hegemony,1,5,1,\r\n' +
+      'station2_midline_Standard,,6,10,1,\r\n' +
+      ',remnant,1,15,1,\r\n';
+    const stationModel = chartTable(CHART_BOSS_STATION_SPEC, stations);
+    expect(serializeChartTable(stationModel, CHART_BOSS_STATION_SPEC.columns)).toBe(stations);
+    expect(CHART_BOSS_STATION_SPEC.issues(stationModel, vocabulary)).toContain('row 3: needs a station variant id');
+    expect(CHART_BOSS_STATION_SPEC.summary?.(stationModel.rows[0], vocabulary)).toBe('pirates;hegemony, tiers 1-5');
+    expect(CHART_BOSS_STATION_SPEC.summary?.(stationModel.rows[1], vocabulary)).toBe('any faction, tiers 6-10');
   });
 
   it('mirrors the atlas region loader: weight lists and an always-open normal row', () => {

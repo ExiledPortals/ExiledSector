@@ -3,6 +3,7 @@ package exiledsector.charts;
 import exiledsector.charts.ChartContentPlan.FleetRole;
 import exiledsector.charts.ChartContentPlan.PlannedFleet;
 import exiledsector.charts.ChartContentPlan.PlannedPoi;
+import exiledsector.charts.ChartContentPlan.PlannedStation;
 import exiledsector.items.WeightedPick;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ final class ChartContentPlanner {
     static final long LOOT_SALT = 0x43484c4f4f5453L;
     static final long FLEET_SALT = 0x4348464c454554L;
     static final long EXTRA_POI_SALT = 0x43484558545241L;
+    static final long BOSS_SALT = 0x4348424f535354L;
     static final int MAX_POIS = 24;
     static final int MAX_FLEETS = 15;
     static final float FLEET_SIZE_CAP = 1200f;
@@ -29,6 +31,7 @@ final class ChartContentPlanner {
     static final float BOSS_QUALITY_BONUS = 15f;
     static final int BOSS_OFFICER_LEVEL_BONUS = 2;
     static final int BOSS_OFFICER_COUNT_BONUS = 2;
+    static final int STATION_OFFICER_LEVEL = 5;
     static final float MAX_QUALITY = 300f;
     static final float QUALITY_PERCENT_PER_SMOD = 50f;
     static final int NO_POI = -1;
@@ -53,10 +56,33 @@ final class ChartContentPlanner {
         ChartObjective objective = pickObjective(tier, ChartLayoutGenerator.derivedRandom(seed, OBJECTIVE_SALT));
         List<PlannedPoi> plannedPois = spendLoot(tier, pois, ChartLayoutGenerator.derivedRandom(seed, LOOT_SALT));
         plannedPois = addExtraPois(tier, pois, plannedPois, chartContext.extraPois(), ChartLayoutGenerator.derivedRandom(seed, EXTRA_POI_SALT));
+        Random bossRandom = ChartLayoutGenerator.derivedRandom(seed, BOSS_SALT);
+        ChartBossType bossType = tier.boss() ? ChartBosses.pickType(tier.tier(), faction.factionId(), bossRandom) : ChartBossType.FLEET;
+        String stationVariant = bossType == ChartBossType.STATION ? ChartBosses.pickStation(faction.factionId(), tier.tier(), bossRandom) : null;
+        if (stationVariant == null) {
+            bossType = ChartBossType.FLEET;
+        }
         List<PlannedFleet> plannedFleets = new ArrayList<>();
         plannedPois = planFleets(tier, objective, plannedPois, plannedFleets, ChartLayoutGenerator.derivedRandom(seed, FLEET_SALT),
-                chartContext.extraFleets(), fleetLimit);
-        return new ChartContentPlan(tier.tier(), faction, objective, plannedPois, plannedFleets, ChartExpansions.planned(seed, tier.tier(), chartContext));
+                chartContext.extraFleets(), fleetLimit, bossType);
+        PlannedStation bossStation = stationVariant == null ? null : plannedStation(tier, stationVariant, plannedFleets);
+        return new ChartContentPlan(tier.tier(), faction, objective, plannedPois, plannedFleets, ChartExpansions.planned(seed, tier.tier(), chartContext),
+                bossType, bossStation);
+    }
+
+    static PlannedStation plannedStation(ChartTier tier, String variantId, List<PlannedFleet> plannedFleets) {
+        int guardedPoi = NO_POI;
+        for (PlannedFleet planned : plannedFleets) {
+            if (planned.role() == FleetRole.DEFENDER) {
+                guardedPoi = planned.poiIndex();
+            }
+        }
+        return new PlannedStation(variantId, STATION_OFFICER_LEVEL + tier.officerLevelBonus() + BOSS_OFFICER_LEVEL_BONUS,
+                plannedBoss(tier, fleetQuality(tier), guardedPoi, ChartBossType.FLEET));
+    }
+
+    static float fleetQuality(ChartTier tier) {
+        return Math.max(0f, Math.min(MAX_QUALITY, tier.fleetQuality()));
     }
 
     static ChartObjective pickObjective(ChartTier tier, Random random) {
@@ -146,6 +172,11 @@ final class ChartContentPlanner {
 
     static List<PlannedPoi> planFleets(ChartTier tier, ChartObjective objective, List<PlannedPoi> pois,
                                        List<PlannedFleet> fleets, Random random, int extraFleets, int fleetLimit) {
+        return planFleets(tier, objective, pois, fleets, random, extraFleets, fleetLimit, ChartBossType.FLEET);
+    }
+
+    static List<PlannedPoi> planFleets(ChartTier tier, ChartObjective objective, List<PlannedPoi> pois,
+                                       List<PlannedFleet> fleets, Random random, int extraFleets, int fleetLimit, ChartBossType bossType) {
         int rolledFleets = tier.fleetsMin() + random.nextInt(tier.fleetsMax() - tier.fleetsMin() + 1);
         ChartFleetSpread spread = ChartFleetSpread.of(rolledFleets, tier.fleetSize(), extraFleets, fleetLimit);
         int fleetCount = spread.fleets();
@@ -167,7 +198,7 @@ final class ChartContentPlanner {
         if (objective == ChartObjective.CLEAR && guardCount == 0) {
             guardCount = 1;
         }
-        float quality = Math.max(0f, Math.min(MAX_QUALITY, tier.fleetQuality()));
+        float quality = fleetQuality(tier);
         for (int i = 0; i < fleetCount; i++) {
             float sizePercent = Math.max(MIN_FLEET_SIZE, fleetSize * shares[i] * fleetCount / shareTotal);
             boolean guard = i < guardCount;
@@ -184,15 +215,22 @@ final class ChartContentPlanner {
             }
         }
         if (tier.boss()) {
-            fleets.add(plannedBoss(tier, quality, mostValuableIndex(guardedPois)));
+            fleets.add(plannedBoss(tier, quality, mostValuableIndex(guardedPois), bossType));
         }
         return guardedPois;
     }
 
     static PlannedFleet plannedBoss(ChartTier tier, float fleetQuality, int targetPoi) {
-        float bossSize = Math.max(MIN_FLEET_SIZE, tier.bossSize());
+        return plannedBoss(tier, fleetQuality, targetPoi, ChartBossType.FLEET);
+    }
+
+    static PlannedFleet plannedBoss(ChartTier tier, float fleetQuality, int targetPoi, ChartBossType bossType) {
+        ChartBosses.Definition definition = ChartBosses.definition(bossType);
+        float fleetShare = definition == null ? 1f : definition.fleetShare();
+        float bossSize = Math.max(MIN_FLEET_SIZE, tier.bossSize() * fleetShare);
         float bossQuality = Math.max(0f, Math.min(MAX_QUALITY, fleetQuality + BOSS_QUALITY_BONUS));
-        return new PlannedFleet(FleetRole.BOSS, targetPoi, ChartTier.fleetPoints(Math.min(BOSS_SIZE_CAP, bossSize)),
+        FleetRole role = bossType == ChartBossType.STATION ? FleetRole.DEFENDER : FleetRole.BOSS;
+        return new PlannedFleet(role, targetPoi, ChartTier.fleetPoints(Math.min(BOSS_SIZE_CAP, bossSize)),
                 bossQuality / ChartTier.PERCENT,
                 tier.officerLevelBonus() + BOSS_OFFICER_LEVEL_BONUS, tier.officerCountBonus() + BOSS_OFFICER_COUNT_BONUS,
                 overflowStrength(bossSize, BOSS_SIZE_CAP), averageSMods(bossQuality));

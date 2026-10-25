@@ -30,6 +30,7 @@ public final class ChartRun {
     private String objectiveTargets;
     private String objectiveDefeated;
     private String bossFleetId;
+    private String bossType;
     private int contentFleets;
     private int contentPois;
     private boolean objectiveComplete;
@@ -149,6 +150,7 @@ public final class ChartRun {
         objectiveTargets = join(content.targetIds());
         objectiveDefeated = null;
         bossFleetId = content.bossFleetId();
+        bossType = content.bossFleetId() == null ? null : content.bossType().name();
         contentFleets = content.fleets();
         contentPois = content.pois();
         expansions = join(content.expansions());
@@ -194,6 +196,10 @@ public final class ChartRun {
 
     public String bossFleetId() {
         return bossFleetId;
+    }
+
+    public ChartBossType bossType() {
+        return ChartBossType.parse(bossType);
     }
 
     public int contentFleets() {

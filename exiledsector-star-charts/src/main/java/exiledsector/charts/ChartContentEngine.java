@@ -22,6 +22,8 @@ interface ChartContentEngine {
 
     CampaignFleetAPI createFleet(FleetParamsV3 params);
 
+    CampaignFleetAPI createStation(String factionId, String variantId, int officerLevel, Random random);
+
     ChartVanillaLoot.SiteDrops siteDrops(String salvageSpec);
 
     void addColonyItem(SectorEntityToken holder, String itemId);

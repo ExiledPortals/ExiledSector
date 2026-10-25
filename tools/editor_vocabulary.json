@@ -408,6 +408,7 @@
   "chartLootScopes": ["cache", "domain", "station", "derelict", "fleet", "boss"],
   "chartColonyItemGroups": ["nanoforge_always", "rare_tech", "rare_tech_low", "rare_tech_mothership"],
   "chartExpansions": ["spatial_breach"],
+  "chartBossTypes": ["fleet", "station"],
   "chartFeatures": ["ringed_giant", "debris_ring", "twin_worlds", "rogue_planet"],
   "chartPhenomena": ["black_hole", "neutron_star", "dense_nebula", "asteroid_storm", "magnetic_storm", "stellar_flares"]
 }

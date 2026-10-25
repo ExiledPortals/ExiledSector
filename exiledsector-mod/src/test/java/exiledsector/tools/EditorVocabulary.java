@@ -93,6 +93,7 @@ final class EditorVocabulary {
         json.append("  \"chartLootScopes\": ").append(list(ChartEditorVocabulary.lootScopes())).append(",\n");
         json.append("  \"chartColonyItemGroups\": ").append(list(ChartEditorVocabulary.colonyItemGroups())).append(",\n");
         json.append("  \"chartExpansions\": ").append(list(ChartEditorVocabulary.expansionIds())).append(",\n");
+        json.append("  \"chartBossTypes\": ").append(list(ChartEditorVocabulary.bossTypes())).append(",\n");
         json.append("  \"chartFeatures\": ").append(list(ChartEditorVocabulary.featureIds())).append(",\n");
         json.append("  \"chartPhenomena\": ").append(list(ChartEditorVocabulary.phenomenonIds())).append("\n");
         return json.append("}\n").toString();

@@ -29,6 +29,7 @@ import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -225,6 +226,59 @@ class ChartContentGeneratorTest {
 
         assertEquals(FleetAssignment.ORBIT_AGGRESSIVE, engine.assignments.get(boss).get(0).assignment());
         assertSame(feature, engine.assignments.get(boss).get(0).target());
+    }
+
+    private void useStationBosses() {
+        ChartBosses.useForTests(List.of(new ChartBosses.Definition(ChartBossType.STATION, 1f, 1, 15, 0.5f)),
+                List.of(new ChartBosses.Station("station2_Standard", Set.of(), 1, 15, 1f)));
+    }
+
+    @Test
+    void aStationBossIsTheBossAndItsGuardOrbitsItWithoutChasing() {
+        useStationBosses();
+        try {
+            ChartContent content = generate(11L, 8);
+
+            assertEquals(ChartBossType.STATION, content.bossType());
+            assertEquals(List.of("station2_Standard"), engine.stationVariants);
+            CampaignFleetAPI station = engine.stations.get(0);
+            assertEquals(station.getId(), content.bossFleetId());
+            assertTrue(inSystem.contains(station));
+            verify(station).setAI(null);
+            assertTrue(station.getMemoryWithoutUpdate().getBoolean(ChartIds.BOSS_MEMORY_KEY));
+            assertTrue(station.getMemoryWithoutUpdate().getBoolean(MemFlags.FLEET_FIGHT_TO_THE_LAST));
+            assertTrue(station.getMemoryWithoutUpdate().getBoolean(ChartIds.fleetRunKey(RUN_ID)));
+            assertTrue(station.hasTag(ChartIds.runTag(RUN_ID)));
+            if (content.objective() == ChartObjective.BOSS) {
+                assertEquals(List.of(station.getId()), content.targetIds());
+            }
+            CampaignFleetAPI guard = engine.fleets.stream()
+                    .filter(fleet -> engine.assignments.get(fleet).get(0).assignment() == FleetAssignment.ORBIT_PASSIVE).findFirst().orElseThrow();
+            assertSame(station, engine.assignments.get(guard).get(0).target());
+            assertFalse(guard.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_ALLOW_LONG_PURSUIT));
+            assertTrue(guard.getMemoryWithoutUpdate().getBoolean(ChartIds.BOSS_MEMORY_KEY));
+            assertEquals(ChartContentGenerator.GUARD_OFFSET, Vector2f.sub(guard.getLocation(), station.getLocation(), new Vector2f()).length(), 1f);
+        } finally {
+            ChartBosses.resetForTests();
+        }
+    }
+
+    @Test
+    void aStationThatCannotBeBuiltLeavesItsGuardAsTheBossFleet() {
+        useStationBosses();
+        engine.missingStations = true;
+        try {
+            ChartContent content = generate(11L, 8);
+
+            assertEquals(ChartBossType.FLEET, content.bossType());
+            CampaignFleetAPI boss = engine.fleets.stream().filter(fleet -> fleet.getId().equals(content.bossFleetId())).findFirst().orElseThrow();
+            assertEquals(FleetAssignment.ORBIT_AGGRESSIVE, engine.assignments.get(boss).get(0).assignment());
+            assertTrue(boss.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_ALLOW_LONG_PURSUIT));
+            float fullBoss = ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, ChartTiers.forTier(8).bossSize()));
+            assertEquals(fullBoss, engine.fleetParams.get(engine.fleets.indexOf(boss)).combatPts, 0.001f);
+        } finally {
+            ChartBosses.resetForTests();
+        }
     }
 
     @Test

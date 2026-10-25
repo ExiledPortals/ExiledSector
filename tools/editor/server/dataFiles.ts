@@ -141,6 +141,13 @@ export function resolveDataResource(paths: ProjectPaths, name: string): DataReso
       return { filePath: path.join(configDir, 'chart_poi.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
     case 'chart-factions':
       return { filePath: path.join(configDir, 'chart_factions.csv'), check: (text) => checkCsvHeader(text, 'faction,', 'the faction column') };
+    case 'chart-bosses':
+      return { filePath: path.join(configDir, 'chart_bosses.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
+    case 'chart-boss-stations':
+      return {
+        filePath: path.join(configDir, 'chart_boss_stations.csv'),
+        check: (text) => checkCsvHeader(text, 'variant,', 'the variant column'),
+      };
     case 'chart-blocked-abilities':
       return {
         filePath: path.join(configDir, 'chart_blocked_abilities.csv'),

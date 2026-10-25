@@ -181,6 +181,18 @@ battle chance per 100 enemy deployment points defeated, scaled by battle difficu
 `level_min` the strongest defeated NPC reached (`ChartDrops.forBattle`). With the skill tree switched off, the
 tier instead rises one per `strength_per_tier` deployment points defeated.
 
+### Chart bosses
+
+A chart's boss is a fleet or a station, picked by weight from the `chart_bosses.csv` rows allowed at its tier
+(`ChartBosses`). A station is only picked when `chart_boss_stations.csv` has one for the run's faction at that tier,
+and rows without factions serve every faction without its own. Each row's `fleet_share` scales the boss size for
+the boss's fleet: the whole boss, or the station's guard.
+
+A station boss is a vanilla station-mode fleet with no market (`VanillaChartContentEngine.createStation`) orbiting
+the boss's spot, and its guard holds a passive orbit beside it, so engaging either pulls in the other. The station
+is the objective target and carries the boss loot. Station rows whose variant the game has not loaded are dropped
+at load, and a station that still fails to spawn is replaced by a full-size fleet boss (`ChartContentGenerator`).
+
 ## Chart expansions
 
 A chart's `CHART_<EXPANSION>_CHANCE` lines sum into a per-expansion chance in `ChartGenContext`, rolled on its

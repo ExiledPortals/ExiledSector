@@ -1,0 +1,13 @@
+variant,factions,min_tier,max_tier,weight,note
+station1_Standard,pirates;luddic_path;luddic_church;hegemony,1,5,1,"Low tech Orbital Station"
+station2_Standard,pirates;luddic_path;luddic_church;hegemony,6,10,1,"Low tech Battlestation"
+station3_Standard,pirates;luddic_path;luddic_church;hegemony,11,15,1,"Low tech Star Fortress"
+station1_hightech_Standard,tritachyon,1,5,1,
+station2_hightech_Standard,tritachyon,6,10,1,
+station3_hightech_Standard,tritachyon,11,15,1,
+remnant_station2_Damaged,remnant,1,7,1,"Damaged Remnant Nexus"
+remnant_station2_Standard,remnant,8,15,1,
+station_derelict_survey_mothership_Standard,derelict,1,15,1,"Domain-era Survey Mothership"
+station1_midline_Standard,,1,5,1,"Rows without factions serve every faction that has no row of its own at that tier"
+station2_midline_Standard,,6,10,1,
+station3_midline_Standard,,11,15,1,

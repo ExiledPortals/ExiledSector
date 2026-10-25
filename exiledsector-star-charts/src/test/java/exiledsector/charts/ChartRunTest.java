@@ -198,6 +198,22 @@ class ChartRunTest {
     }
 
     @Test
+    void theRunKeepsItsBossTypeForTheObjectiveDescription() {
+        ChartRun fleetRun = new ChartRun("abc", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+        fleetRun.recordContent(new ChartContent(4, "pirates", ChartObjective.BOSS, List.of("b"), "b", 3, 2));
+        ChartRun stationRun = new ChartRun("def", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+        stationRun.recordContent(new ChartContent(4, "pirates", ChartObjective.BOSS, List.of("s"), "s", ChartBossType.STATION, 3, 2, List.of()));
+        ChartRun clearRun = new ChartRun("ghi", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+        clearRun.recordContent(new ChartContent(4, "pirates", ChartObjective.CLEAR, List.of("g"), "s", ChartBossType.STATION, 3, 2, List.of()));
+
+        assertEquals(ChartBossType.FLEET, fleetRun.bossType());
+        assertEquals(ChartBossType.STATION, stationRun.bossType());
+        assertEquals("chart.objective.boss.fleet.description", ChartObjectiveIntel.descriptionKey(fleetRun));
+        assertEquals("chart.objective.boss.station.description", ChartObjectiveIntel.descriptionKey(stationRun));
+        assertEquals("chart.objective.clear.description", ChartObjectiveIntel.descriptionKey(clearRun));
+    }
+
+    @Test
     void theContentRecordKeepsOnlyIdsAndTracksTheObjectiveOnce() {
         ChartRun run = new ChartRun("abc", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
         assertEquals(ChartTiers.LOWEST_TIER, run.tier());
