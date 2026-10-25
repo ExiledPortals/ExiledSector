@@ -19,12 +19,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 final class AtlasTerritoryBorders {
 
     static final float INSET_CELLS = 0.02f;
     static final float BAND_CELLS = 0.3f;
-    static final int CHAIKIN_PASSES = 2;
+    static final int CHAIKIN_PASSES = 3;
+    static final float ROUGH_CELLS = 0.22f;
+    static final float ROUGH_SPACING_CELLS = 1.1f;
+    static final float ROUGH_OCTAVE_SHARE = 0.5f;
+    static final float SYSTEM_CLEARANCE_CELLS = 0.24f;
+    private static final long ROUGH_X_SALT = 0x524f554758L;
+    private static final long ROUGH_Y_SALT = 0x524f554759L;
+    private static final long ROUGH_OCTAVE_SALT = 0x4f4354L;
     static final int MIN_LABEL_CELLS = 6;
     static final float BAND_ALPHA = 0.22f;
     static final float OUTLINE_ALPHA = 0.8f;
@@ -45,6 +53,7 @@ final class AtlasTerritoryBorders {
     private record Edge(int fromX, int fromY, int toX, int toY) {
     }
 
+    private final long seed;
     private final Function<String, Color> colours;
     private final Function<String, String> names;
     private final List<TextLabel> labels = new ArrayList<>();
@@ -52,19 +61,20 @@ final class AtlasTerritoryBorders {
     private boolean shown;
     private float level;
 
-    AtlasTerritoryBorders(Function<String, Color> colours, Function<String, String> names) {
+    AtlasTerritoryBorders(long seed, Function<String, Color> colours, Function<String, String> names) {
+        this.seed = seed;
         this.colours = colours;
         this.names = names;
     }
 
-    void attach(Set<Long> known, Function<AtlasCell, String> groupAt) {
+    void attach(Set<Long> known, Function<AtlasCell, String> groupAt, Predicate<AtlasCell> hasSystem) {
         for (TextLabel label : labels) {
             if (label != null) {
                 label.dispose();
             }
         }
         labels.clear();
-        regions = build(known, groupAt);
+        regions = build(seed, known, groupAt, hasSystem);
         for (int index = 0; index < regions.size(); index++) {
             labels.add(null);
         }
@@ -186,7 +196,7 @@ final class AtlasTerritoryBorders {
                 Math.round(colour.getBlue() + (255 - colour.getBlue()) * share));
     }
 
-    static List<Region> build(Set<Long> known, Function<AtlasCell, String> groupAt) {
+    static List<Region> build(long seed, Set<Long> known, Function<AtlasCell, String> groupAt, Predicate<AtlasCell> hasSystem) {
         Map<Long, String> groupOf = new HashMap<>();
         List<Long> ordered = new ArrayList<>(known);
         ordered.sort(Comparator.naturalOrder());
@@ -205,8 +215,10 @@ final class AtlasTerritoryBorders {
             String groupId = groupOf.get(packed);
             Set<Long> patch = new HashSet<>(Set.of(packed));
             ArrayDeque<AtlasCell> queue = new ArrayDeque<>(List.of(AtlasCell.unpack(packed)));
+            boolean holdsSystem = false;
             while (!queue.isEmpty()) {
                 AtlasCell cell = queue.poll();
+                holdsSystem |= hasSystem.test(cell);
                 for (int[] side : SIDES) {
                     long next = new AtlasCell(cell.gridX() + side[0], cell.gridY() + side[1]).pack();
                     if (groupId.equals(groupOf.get(next)) && claimed.add(next)) {
@@ -215,19 +227,21 @@ final class AtlasTerritoryBorders {
                     }
                 }
             }
-            built.add(region(groupId, patch));
+            if (holdsSystem) {
+                built.add(region(seed, groupId, patch));
+            }
         }
         return List.copyOf(built);
     }
 
-    private static Region region(String groupId, Set<Long> patch) {
+    private static Region region(long seed, String groupId, Set<Long> patch) {
         List<Loop> loops = new ArrayList<>();
         float minX = Float.MAX_VALUE;
         float minY = Float.MAX_VALUE;
         float maxX = -Float.MAX_VALUE;
         float maxY = -Float.MAX_VALUE;
         for (List<float[]> corners : trace(patch)) {
-            Loop loop = loop(smooth(corners));
+            Loop loop = loop(roughen(seed, smooth(corners)));
             loops.add(loop);
             minX = Math.min(minX, loop.minX());
             minY = Math.min(minY, loop.minY());
@@ -311,6 +325,55 @@ final class AtlasTerritoryBorders {
             points = rounded;
         }
         return points;
+    }
+
+    static List<float[]> roughen(long seed, List<float[]> points) {
+        List<float[]> roughened = new ArrayList<>(points.size());
+        for (float[] point : points) {
+            float noiseX = point[0] / ROUGH_SPACING_CELLS;
+            float noiseY = point[1] / ROUGH_SPACING_CELLS;
+            float shiftX = ROUGH_CELLS * roughness(seed, ROUGH_X_SALT, noiseX, noiseY);
+            float shiftY = ROUGH_CELLS * roughness(seed, ROUGH_Y_SALT, noiseX, noiseY);
+            float room = (float) Math.hypot(point[0] - Math.round(point[0]), point[1] - Math.round(point[1])) - INSET_CELLS - SYSTEM_CLEARANCE_CELLS;
+            float shift = (float) Math.hypot(shiftX, shiftY);
+            float kept = shift <= 0f ? 0f : Math.max(0f, Math.min(1f, room / shift));
+            roughened.add(new float[] {point[0] + shiftX * kept, point[1] + shiftY * kept});
+        }
+        return roughened;
+    }
+
+    private static float roughness(long seed, long salt, float x, float y) {
+        float noise = (valueNoise(seed, salt, x, y) + ROUGH_OCTAVE_SHARE * valueNoise(seed, salt ^ ROUGH_OCTAVE_SALT, x * 2f, y * 2f)) / (1f + ROUGH_OCTAVE_SHARE);
+        return noise * 2f - 1f;
+    }
+
+    private static float valueNoise(long seed, long salt, float x, float y) {
+        int cornerX = (int) Math.floor(x);
+        int cornerY = (int) Math.floor(y);
+        float fractionX = fade(x - cornerX);
+        float fractionY = fade(y - cornerY);
+        float bottom = lerp(lattice(seed, salt, cornerX, cornerY), lattice(seed, salt, cornerX + 1, cornerY), fractionX);
+        float top = lerp(lattice(seed, salt, cornerX, cornerY + 1), lattice(seed, salt, cornerX + 1, cornerY + 1), fractionX);
+        return lerp(bottom, top, fractionY);
+    }
+
+    private static float lattice(long seed, long salt, int x, int y) {
+        return (mix(mix(mix(seed ^ salt) ^ x) ^ ((long) y << 32)) >>> 40) / (float) (1 << 24);
+    }
+
+    private static long mix(long value) {
+        long mixed = value;
+        mixed = (mixed ^ (mixed >>> 30)) * 0xbf58476d1ce4e5b9L;
+        mixed = (mixed ^ (mixed >>> 27)) * 0x94d049bb133111ebL;
+        return mixed ^ (mixed >>> 31);
+    }
+
+    private static float fade(float fraction) {
+        return fraction * fraction * fraction * (fraction * (fraction * 6f - 15f) + 10f);
+    }
+
+    private static float lerp(float from, float to, float fraction) {
+        return from + (to - from) * fraction;
     }
 
     private static Loop loop(List<float[]> points) {

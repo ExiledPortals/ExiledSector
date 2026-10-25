@@ -6,6 +6,7 @@ import exiledsector.charts.atlas.AtlasAmbience;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasData;
 import exiledsector.charts.atlas.AtlasDecoration;
+import exiledsector.charts.atlas.AtlasNode;
 import exiledsector.charts.atlas.AtlasRegion;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.decoration.FactionStarColours;
@@ -27,7 +28,7 @@ final class AtlasScenery {
     private final HyperspaceClouds clouds;
     private final AtlasDecorations decorations = new AtlasDecorations();
     private final AtlasFleetTraffic fleets = new AtlasFleetTraffic();
-    private final AtlasTerritoryBorders borders = new AtlasTerritoryBorders(AtlasScenery::factionColour, AtlasScenery::factionName);
+    private final AtlasTerritoryBorders borders;
     private final Set<Long> known = new HashSet<>();
     private AtlasMapCanvas canvas;
 
@@ -39,6 +40,7 @@ final class AtlasScenery {
         this.ambiences = ambiences;
         this.decorationLookup = decorationLookup;
         clouds = new HyperspaceClouds(CLOUD_TILE, seed, CLOUD_ALPHA);
+        borders = new AtlasTerritoryBorders(seed, AtlasScenery::factionColour, AtlasScenery::factionName);
     }
 
     AtlasDecorations decorations() {
@@ -64,7 +66,12 @@ final class AtlasScenery {
         clouds.setCover(new Cover());
         decorations.attach(canvas, known);
         fleets.attach(canvas);
-        borders.attach(known, this::territoryAt);
+        borders.attach(known, this::territoryAt, this::hasSystem);
+    }
+
+    private boolean hasSystem(AtlasCell cell) {
+        AtlasNode node = canvas.nodeAt(cell);
+        return node != null && !node.isVoid();
     }
 
     void advance(float amount) {
