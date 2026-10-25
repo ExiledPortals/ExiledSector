@@ -388,10 +388,16 @@ describe('chart tables', () => {
   });
 
   it('mirrors the atlas decoration loader', () => {
-    const text = 'id,sprite,columns,rows,size,count,colour,note\n' + 'debris,graphics/debris/debris_sheet0.png,4,4,0.012,12,#FFA564,\n' + 'empty,,,,,,red,\n';
+    const text =
+      'id,sprite,columns,rows,size,count,colour,scatter,note\n' +
+      'debris,graphics/debris/debris_sheet0.png,4,4,0.012,12,#FFA564,,\n' +
+      'probe,graphics/stations/survey_probe.png,1,1,0.05,1,,debris; probe; ghost,\n' +
+      'empty,,,,,,red,,\n';
     const model = chartTable(ATLAS_DECORATION_SPEC, text);
     expect(serializeChartTable(model, ATLAS_DECORATION_SPEC.columns)).toBe(text);
     expect(ATLAS_DECORATION_SPEC.issues(model, vocabulary)).toEqual([
+      'probe: scatter "probe" must be another decoration id',
+      'probe: scatter "ghost" must be another decoration id',
       'empty: needs at least one sprite',
       'empty: colour "red" must be a colour like #A0C8FF',
     ]);

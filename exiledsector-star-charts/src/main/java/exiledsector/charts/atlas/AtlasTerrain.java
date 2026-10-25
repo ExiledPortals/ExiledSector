@@ -16,27 +16,66 @@ final class AtlasTerrain {
     static final float RIDGE_NOISE_CELLS = 3f;
     static final float CLUMP_NOISE_CELLS = 3f;
     static final float CLUMP_REACH = 0.7f;
-    static final float RECORD_REACH = RIDGE_WIDTH + 2f;
+    static final float RECORD_REACH = RIDGE_WIDTH + 2.6f;
+    static final int HUB_SPACING = 10;
+    static final int HUB_JITTER_STEPS = 2;
+    static final float CORRIDOR_MARGIN = 0.01f;
     private static final int CACHE_LIMIT = 65536;
+    private static final int HUB_CACHE_LIMIT = 4096;
     private static final long WALL_SALT = 0x57414c4cL;
     private static final long RIDGE_SALT = 0x52494447L;
     private static final long CLUMP_SALT = 0x434c554dL;
     private static final long OCTAVE_SALT = 0x4f4354L;
+    private static final long HUB_X_SALT = 0x4855425fL;
+    private static final long HUB_Y_SALT = 0x48554259L;
 
     private final long seed;
     private final AtlasRules rules;
     private final AtlasBiomes biomes;
+    private final AtlasPositions positions;
     private final List<float[]> fixedPoints = new ArrayList<>();
+    private final List<Corridor> spurs = new ArrayList<>();
     private final boolean anyClouds;
     private final Map<Long, Integer> blocks = AtlasPositions.boundedCache(CACHE_LIMIT);
+    private final Map<Long, List<Corridor>> hubCorridors = AtlasPositions.boundedCache(HUB_CACHE_LIMIT);
+
+    private record Corridor(float[] points, float minX, float minY, float maxX, float maxY) {
+
+        boolean clears(float x, float y) {
+            float reach = SYSTEM_CLEARANCE + CORRIDOR_MARGIN;
+            if (x < minX - reach || x > maxX + reach || y < minY - reach || y > maxY + reach) {
+                return false;
+            }
+            float lineReach = LANE_CLEARANCE + CORRIDOR_MARGIN;
+            for (int index = 0; index < points.length; index += 2) {
+                if (AtlasPositions.squared(points[index] - x, points[index + 1] - y) <= reach * reach) {
+                    return true;
+                }
+                if (index + 3 < points.length
+                        && segmentSquared(points[index], points[index + 1], points[index + 2], points[index + 3], x, y) <= lineReach * lineReach) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
 
     AtlasTerrain(long seed, AtlasRules rules, AtlasBiomes biomes, AtlasPositions positions, Set<Long> fixedCells) {
         this.seed = seed;
         this.rules = rules;
         this.biomes = biomes;
+        this.positions = positions;
         for (long packed : fixedCells) {
             AtlasCell cell = AtlasCell.unpack(packed);
             fixedPoints.add(new float[] {positions.displayX(cell), positions.displayY(cell)});
+            AtlasCell hub = hub(seed, Math.round(cell.gridX() / (float) HUB_SPACING), Math.round(cell.gridY() / (float) HUB_SPACING));
+            List<AtlasCell> path = new ArrayList<>(List.of(cell));
+            for (AtlasCell step : latticePath(new AtlasCell(2 * Math.round(cell.gridX() / 2f), 2 * Math.round(cell.gridY() / 2f)), hub)) {
+                if (!step.equals(cell)) {
+                    path.add(step);
+                }
+            }
+            spurs.add(corridor(path));
         }
         anyClouds = rules.regions().stream().anyMatch(region -> region.clouds() > 0f || region.walls() > 0f);
     }
@@ -133,8 +172,90 @@ final class AtlasTerrain {
         return mask;
     }
 
+    static AtlasCell hub(long seed, int hubX, int hubY) {
+        if (hubX == 0 && hubY == 0) {
+            return AtlasCell.ORIGIN;
+        }
+        int span = 2 * HUB_JITTER_STEPS + 1;
+        int offsetX = Math.min(span - 1, (int) (AtlasHash.unit(AtlasHash.of(seed, HUB_X_SALT, hubX, hubY)) * span)) - HUB_JITTER_STEPS;
+        int offsetY = Math.min(span - 1, (int) (AtlasHash.unit(AtlasHash.of(seed, HUB_Y_SALT, hubX, hubY)) * span)) - HUB_JITTER_STEPS;
+        return new AtlasCell(hubX * HUB_SPACING + 2 * offsetX, hubY * HUB_SPACING + 2 * offsetY);
+    }
+
+    static List<AtlasCell> latticePath(AtlasCell from, AtlasCell to) {
+        List<AtlasCell> path = new ArrayList<>(List.of(from));
+        int x = from.gridX();
+        int y = from.gridY();
+        while (x != to.gridX() || y != to.gridY()) {
+            int stepsX = (to.gridX() - x) / 2;
+            int stepsY = (to.gridY() - y) / 2;
+            if (2 * Math.abs(stepsX) >= Math.abs(stepsY)) {
+                x += 2 * Integer.signum(stepsX);
+            }
+            if (2 * Math.abs(stepsY) >= Math.abs(stepsX)) {
+                y += 2 * Integer.signum(stepsY);
+            }
+            path.add(new AtlasCell(x, y));
+        }
+        return path;
+    }
+
+    private Corridor corridor(List<AtlasCell> path) {
+        float[] points = new float[path.size() * 2];
+        float minX = Float.MAX_VALUE;
+        float minY = Float.MAX_VALUE;
+        float maxX = -Float.MAX_VALUE;
+        float maxY = -Float.MAX_VALUE;
+        for (int index = 0; index < path.size(); index++) {
+            float x = positions.displayX(path.get(index));
+            float y = positions.displayY(path.get(index));
+            points[index * 2] = x;
+            points[index * 2 + 1] = y;
+            minX = Math.min(minX, x);
+            minY = Math.min(minY, y);
+            maxX = Math.max(maxX, x);
+            maxY = Math.max(maxY, y);
+        }
+        return new Corridor(points, minX, minY, maxX, maxY);
+    }
+
+    private List<Corridor> corridorsFrom(int hubX, int hubY) {
+        return hubCorridors.computeIfAbsent(new AtlasCell(hubX, hubY).pack(), key -> {
+            AtlasCell hub = hub(seed, hubX, hubY);
+            return List.of(corridor(latticePath(hub, hub(seed, hubX + 1, hubY))), corridor(latticePath(hub, hub(seed, hubX, hubY + 1))));
+        });
+    }
+
+    private boolean inCorridor(float x, float y) {
+        int hubX = Math.round(x / HUB_SPACING);
+        int hubY = Math.round(y / HUB_SPACING);
+        for (int nearX = hubX - 1; nearX <= hubX + 1; nearX++) {
+            for (int nearY = hubY - 1; nearY <= hubY + 1; nearY++) {
+                for (Corridor corridor : corridorsFrom(nearX, nearY)) {
+                    if (corridor.clears(x, y)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        for (Corridor spur : spurs) {
+            if (spur.clears(x, y)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static float segmentSquared(float ax, float ay, float bx, float by, float px, float py) {
+        float dx = bx - ax;
+        float dy = by - ay;
+        float lengthSquared = dx * dx + dy * dy;
+        float along = lengthSquared <= 0f ? 0f : Math.max(0f, Math.min(1f, ((px - ax) * dx + (py - ay) * dy) / lengthSquared));
+        return AtlasPositions.squared(ax + dx * along - px, ay + dy * along - py);
+    }
+
     private boolean raw(float x, float y) {
-        if (AtlasPositions.squared(x, y) < ORIGIN_CLEARANCE * ORIGIN_CLEARANCE || nearFixed(x, y)) {
+        if (AtlasPositions.squared(x, y) < ORIGIN_CLEARANCE * ORIGIN_CLEARANCE || nearFixed(x, y) || inCorridor(x, y)) {
             return false;
         }
         AtlasBiomes.Border border = biomes.borderAt(x, y);

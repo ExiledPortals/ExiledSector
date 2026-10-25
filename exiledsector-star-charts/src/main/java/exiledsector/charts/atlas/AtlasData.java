@@ -301,11 +301,27 @@ public final class AtlasData {
             loaded.put(id, new AtlasDecoration(id, sprites, ModCsv.text(row, "glow"), csv.integer(row, "columns", 1, id), csv.integer(row, "rows", 1, id),
                     csv.number(row, "size", 0.05f, id), fraction(csv, row, "size_jitter", id), csv.integer(row, "count", 1, id),
                     csv.number(row, "spread", 0f, id), csv.number(row, "spin", 0f, id), csv.number(row, "drift", 0f, id), colour(csv, row, "colour", id),
-                    colour(csv, row, "glow_colour", id), csv.number(row, "alpha", 1f, id)));
+                    colour(csv, row, "glow_colour", id), csv.number(row, "alpha", 1f, id), CsvRows.entries(ModCsv.text(row, "scatter"))));
         });
+        loaded.replaceAll((id, decoration) -> knownScatter(csv, decoration, loaded.keySet()));
         csv.report(LOG);
         decorations = Map.copyOf(loaded);
         return csv.problems();
+    }
+
+    private static AtlasDecoration knownScatter(CsvRows csv, AtlasDecoration decoration, Set<String> knownIds) {
+        List<String> known = new ArrayList<>();
+        for (String scatterId : decoration.scatter()) {
+            if (knownIds.contains(scatterId) && !scatterId.equals(decoration.id())) {
+                known.add(scatterId);
+            } else {
+                csv.problem(decoration.id(), "scatter", scatterId + " (needs another decoration id)");
+            }
+        }
+        return known.size() == decoration.scatter().size() ? decoration
+                : new AtlasDecoration(decoration.id(), decoration.sprites(), decoration.glow(), decoration.columns(), decoration.rows(), decoration.size(),
+                decoration.sizeJitter(), decoration.count(), decoration.spread(), decoration.spin(), decoration.drift(), decoration.colour(),
+                decoration.glowColour(), decoration.alpha(), known);
     }
 
     static List<String> registerMarkers(JSONArray rows) throws JSONException {

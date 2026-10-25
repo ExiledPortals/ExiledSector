@@ -210,8 +210,9 @@ A Sensor Array also reveals 6 lanes, a Nexus cleanses the systems it infested, a
 allows one attempt. A run that closes without its objective spends the system's markers (Powerful Boss, expansion,
 overlay phenomenon). Biomes tile the map from sites about five cells apart, and each sets how many of its cells hold a
 system (`AtlasBiomes`). Hyperspace clouds are impassable terrain clumping inside biomes and ridging along some
-biome borders: no system sits under one and lanes route around them (`AtlasTerrain`). A biome or Threat infestation
-behind an unlock is decided when first seen, and that is saved.
+biome borders: no system sits under one and lanes route around them, and a grid of cleared corridors keeps the
+Gateway and every Bastion joined to the rest of the map (`AtlasTerrain`). A biome or Threat infestation behind
+an unlock is decided when first seen, and that is saved.
 
 ## Modspec caches
 

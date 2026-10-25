@@ -9,6 +9,7 @@ import exiledsector.charts.atlas.AtlasRegion;
 import exiledsector.charts.atlas.AtlasRules;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasUnlocks;
+import exiledsector.ui.TreeViewport;
 import exiledsector.ui.decoration.LaneFleetTraffic;
 import exiledsector.ui.node.NodeMetrics;
 import org.junit.jupiter.api.Test;
@@ -26,9 +27,10 @@ class AtlasSceneryTest {
 
     private static final long SEED = 0x5ce4eL;
     private static final Map<String, AtlasDecoration> DECORATIONS = Map.of(
-            "probe", new AtlasDecoration("probe", List.of("graphics/stations/survey_probe.png"), "", 1, 1, 0.035f, 0.2f, 1, 0f, 4f, 0.02f, null, null, 0.9f),
+            "probe", new AtlasDecoration("probe", List.of("graphics/stations/survey_probe.png"), "", 1, 1, 0.05f, 0.2f, 1, 0f, 4f, 0.02f, null, null, 0.9f,
+                    List.of("debris")),
             "debris", new AtlasDecoration("debris", List.of("graphics/debris/debris_sheet0.png"), "graphics/debris/debris_sheet0_glow.png", 4, 4,
-                    0.012f, 0.5f, 12, 0.1f, 25f, 0.008f, null, null, 1f));
+                    0.012f, 0.5f, 12, 0.1f, 25f, 0.008f, null, null, 1f, List.of()));
     private static final AtlasAmbience GRAVEYARD = new AtlasAmbience(0f, null, Map.of("probe", 1f, "debris", 2f), 2f);
 
     private static AtlasMapCanvas canvas() {
@@ -53,6 +55,7 @@ class AtlasSceneryTest {
                 assertTrue(canvas.scenery().isKnown(cell));
                 List<AtlasDecorations.Piece> placed = canvas.scenery().decorations().piecesIn(cell);
                 assertEquals(placed, again.scenery().decorations().piecesIn(cell), cell.toString());
+                assertWreckageSurroundsEachProbe(placed);
                 for (AtlasDecorations.Piece piece : placed) {
                     pieces++;
                     kinds.merge(piece.decoration().id(), 1, Integer::sum);
@@ -70,6 +73,22 @@ class AtlasSceneryTest {
         assertTrue(pieces > 0);
         assertTrue(kinds.containsKey("probe") && kinds.containsKey("debris"), kinds.toString());
         assertFalse(canvas.scenery().isKnown(new AtlasCell(400, 400)));
+    }
+
+    private static void assertWreckageSurroundsEachProbe(List<AtlasDecorations.Piece> placed) {
+        AtlasDecoration debris = DECORATIONS.get("debris");
+        float reach = debris.spread() * AtlasMapCanvas.CELL_PIXELS + 1f;
+        for (int index = 0; index < placed.size(); index++) {
+            AtlasDecorations.Piece probe = placed.get(index);
+            if (!"probe".equals(probe.decoration().id())) {
+                continue;
+            }
+            assertTrue(index + debris.count() < placed.size(), "no wreckage after " + probe);
+            for (AtlasDecorations.Piece piece : placed.subList(index + 1, index + 1 + debris.count())) {
+                assertEquals("debris", piece.decoration().id());
+                assertTrue(Math.hypot(piece.x() - probe.x(), piece.y() - probe.y()) <= reach, piece + " strays from " + probe);
+            }
+        }
     }
 
     @Test
@@ -107,6 +126,24 @@ class AtlasSceneryTest {
             for (long neighbour : port.neighbours()) {
                 assertTrue(canvas.visibleCells().contains(AtlasCell.unpack(neighbour)));
             }
+        }
+    }
+
+    @Test
+    void fleetsDrawnAtDoubleSizeStillCircleTheirSystems() {
+        List<LaneFleetTraffic.Port> ports = AtlasFleetTraffic.ports(canvas());
+        List<LaneFleetTraffic.Port> scaled = AtlasFleetTraffic.fleetSpace(ports);
+        TreeViewport view = new TreeViewport(640f, 360f, 0.25f);
+        TreeViewport fleetView = new TreeViewport(640f, 360f, 0.25f * AtlasFleetTraffic.FLEET_SCALE);
+
+        assertEquals(2f, AtlasFleetTraffic.FLEET_SCALE);
+        for (int index = 0; index < ports.size(); index++) {
+            LaneFleetTraffic.Port port = ports.get(index);
+            LaneFleetTraffic.Port fleetPort = scaled.get(index);
+            assertEquals(view.screenX(port.x()), fleetView.screenX(fleetPort.x()), 0.01f);
+            assertEquals(view.screenY(port.y()), fleetView.screenY(fleetPort.y()), 0.01f);
+            assertEquals(port.outerRadius() * view.zoom(), fleetPort.outerRadius() * fleetView.zoom(), 0.01f);
+            assertEquals(port.neighbours(), fleetPort.neighbours());
         }
     }
 }

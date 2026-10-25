@@ -106,18 +106,28 @@ final class AtlasDecorations {
             if (decoration == null || spot == null) {
                 continue;
             }
-            String sprite = decoration.sprites().get(random.nextInt(decoration.sprites().size()));
-            for (int index = 0; index < decoration.count(); index++) {
-                double angle = random.nextDouble() * Math.PI * 2.0;
-                float distance = (float) Math.sqrt(random.nextFloat()) * decoration.spread() * AtlasMapCanvas.CELL_PIXELS;
-                float size = decoration.size() * (1f + decoration.sizeJitter() * (random.nextFloat() * 2f - 1f)) * AtlasMapCanvas.CELL_PIXELS;
-                float spin = decoration.spin() * (random.nextFloat() * 2f - 1f);
-                placed.add(new Piece(decoration, sprite, random.nextInt(decoration.columns() * decoration.rows()),
-                        spot[0] + (float) Math.cos(angle) * distance, spot[1] + (float) Math.sin(angle) * distance, size, random.nextFloat() * 360f,
-                        spin, random.nextFloat() * (float) (Math.PI * 2.0), decoration.drift() * AtlasMapCanvas.CELL_PIXELS));
+            scatter(decoration, spot, random, placed);
+            for (String scatterId : decoration.scatter()) {
+                AtlasDecoration around = canvas.scenery().decoration(scatterId);
+                if (around != null) {
+                    scatter(around, spot, random, placed);
+                }
             }
         }
         return List.copyOf(placed);
+    }
+
+    private static void scatter(AtlasDecoration decoration, float[] spot, Random random, List<Piece> placed) {
+        String sprite = decoration.sprites().get(random.nextInt(decoration.sprites().size()));
+        for (int index = 0; index < decoration.count(); index++) {
+            double angle = random.nextDouble() * Math.PI * 2.0;
+            float distance = (float) Math.sqrt(random.nextFloat()) * decoration.spread() * AtlasMapCanvas.CELL_PIXELS;
+            float size = decoration.size() * (1f + decoration.sizeJitter() * (random.nextFloat() * 2f - 1f)) * AtlasMapCanvas.CELL_PIXELS;
+            float spin = decoration.spin() * (random.nextFloat() * 2f - 1f);
+            placed.add(new Piece(decoration, sprite, random.nextInt(decoration.columns() * decoration.rows()),
+                    spot[0] + (float) Math.cos(angle) * distance, spot[1] + (float) Math.sin(angle) * distance, size, random.nextFloat() * 360f,
+                    spin, random.nextFloat() * (float) (Math.PI * 2.0), decoration.drift() * AtlasMapCanvas.CELL_PIXELS));
+        }
     }
 
     private float[] spot(AtlasCell cell, Random random) {

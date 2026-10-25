@@ -484,6 +484,59 @@ class AtlasGeneratorTest {
         assertTrue(checked > 0 && blocked > 0);
     }
 
+    @Test
+    void corridorsKeepTheGatewayEveryHubAndEveryBastionJoinedUnderHeavyClouds() {
+        List<AtlasRegion> walled = List.of(clouded(AtlasRegion.NORMAL, 0.9f, 1f), clouded("storm", 1f, 1f), clouded("calm", 0.8f, 1f));
+        int radius = 40;
+        for (long seed : new long[] {SEED, 41L}) {
+            AtlasGenerator generator = new AtlasGenerator(seed, rules(walled), AtlasUnlocks.NONE, AtlasMemory.NONE);
+            Set<Long> reached = new HashSet<>(Set.of(AtlasCell.ORIGIN.pack()));
+            ArrayDeque<AtlasCell> queue = new ArrayDeque<>(List.of(AtlasCell.ORIGIN));
+            while (!queue.isEmpty()) {
+                for (AtlasCell lane : generator.lanes(queue.poll())) {
+                    if (inside(lane, radius) && reached.add(lane.pack())) {
+                        queue.add(lane);
+                    }
+                }
+            }
+
+            assertTrue(cloudTiles(generator, 20) > 20 * 20 * 16, "clouds should be heavy for seed " + seed);
+            for (int hubX = -3; hubX <= 3; hubX++) {
+                for (int hubY = -3; hubY <= 3; hubY++) {
+                    AtlasCell hub = AtlasTerrain.hub(seed, hubX, hubY);
+                    assertFalse(generator.isVoid(hub), hub.toString());
+                    assertTrue(reached.contains(hub.pack()), hub + " is cut off for seed " + seed);
+                }
+            }
+            int bastions = 0;
+            for (AtlasCell cell : AtlasCell.ORIGIN.around(radius)) {
+                if (generator.specialAt(cell) != null && generator.specialAt(cell).kind() == AtlasSpecial.Kind.BASTION) {
+                    bastions++;
+                    assertTrue(reached.contains(cell.pack()), "bastion " + cell + " is cut off for seed " + seed);
+                }
+            }
+            assertEquals(3, bastions);
+        }
+    }
+
+    @Test
+    void latticePathsStepBetweenLatticeCellsWithinLaneReach() {
+        AtlasCell from = new AtlasCell(-14, 6);
+        AtlasCell to = new AtlasCell(8, -2);
+        List<AtlasCell> path = AtlasTerrain.latticePath(from, to);
+
+        assertEquals(from, path.get(0));
+        assertEquals(to, path.get(path.size() - 1));
+        for (int index = 1; index < path.size(); index++) {
+            AtlasCell step = path.get(index);
+            AtlasCell previous = path.get(index - 1);
+            assertTrue(AtlasPositions.isLattice(step), step.toString());
+            assertTrue(Math.abs(step.gridX() - previous.gridX()) <= 2 && Math.abs(step.gridY() - previous.gridY()) <= 2, step.toString());
+            assertNotEquals(previous, step);
+        }
+        assertEquals(List.of(from), AtlasTerrain.latticePath(from, from));
+    }
+
     private static long root(Map<Long, Long> parents, long packed) {
         long current = packed;
         Long parent = parents.get(current);

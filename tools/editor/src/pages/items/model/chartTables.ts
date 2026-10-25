@@ -127,6 +127,7 @@ export const ATLAS_DECORATION_COLUMNS = [
   'colour',
   'glow_colour',
   'alpha',
+  'scatter',
   'note',
 ] as const;
 export const ATLAS_FEATURE_COLUMNS = ['id', 'note'] as const;
@@ -860,7 +861,7 @@ export const ATLAS_DECORATION_SPEC: ChartTableSpec = {
   noun: 'atlas decoration',
   keyColumn: 'id',
   description:
-    'Props drawn in the space between atlas systems, picked by the decorations column of atlas_regions.csv. Each placement draws count pieces of one sprite (picked from the list) within spread cells of a spot kept clear of systems. A sheet sprite is cut into columns by rows frames. Sizes and distances are in cells; spin is degrees per second at most; drift is how far a piece sways.',
+    'Props drawn in the space between atlas systems, picked by the decorations column of atlas_regions.csv. Each placement draws count pieces of one sprite (picked from the list) within spread cells of a spot kept clear of systems. A sheet sprite is cut into columns by rows frames. Sizes and distances are in cells; spin is degrees per second at most; drift is how far a piece sways. Scatter places other decorations around the same spot, such as wreckage around a derelict.',
   columns: columnsOf(ATLAS_DECORATION_COLUMNS, {
     id: { label: 'Decoration id', kind: 'text' },
     sprite: { label: 'Sprites', kind: 'text', help: 'Image paths separated by ;, one picked per placement' },
@@ -876,11 +877,13 @@ export const ATLAS_DECORATION_SPEC: ChartTableSpec = {
     colour: { label: 'Colour', kind: 'text', help: 'Optional tint as #RRGGBB' },
     glow_colour: { label: 'Glow colour', kind: 'text', help: 'Optional glow tint as #RRGGBB' },
     alpha: { label: 'Alpha', kind: 'fraction' },
+    scatter: { label: 'Scatter', kind: 'text', help: 'Other decoration ids separated by ;, placed around the same spot' },
     note: NOTE_COLUMN,
   }),
   newRow: () => ({ id: '', sprite: '', size: '0.05', count: '1', alpha: '1' }),
   issues: (model, vocabulary) => {
     const issues: string[] = [];
+    const ids = new Set(model.rows.map((row) => value(row, 'id')));
     model.rows.forEach((row, index) => {
       const label = rowLabel(ATLAS_DECORATION_SPEC, row, index);
       if (value(row, 'id') === '') {
@@ -894,6 +897,11 @@ export const ATLAS_DECORATION_SPEC: ChartTableSpec = {
         const tint = value(row, column);
         if (tint !== '' && !/^#?[0-9a-fA-F]{6}$/.test(tint)) {
           issues.push(`${label}: ${column} "${tint}" must be a colour like #A0C8FF`);
+        }
+      }
+      for (const scatterId of value(row, 'scatter').split(';').map((entry) => entry.trim()).filter((entry) => entry !== '')) {
+        if (!ids.has(scatterId) || scatterId === value(row, 'id')) {
+          issues.push(`${label}: scatter "${scatterId}" must be another decoration id`);
         }
       }
     });

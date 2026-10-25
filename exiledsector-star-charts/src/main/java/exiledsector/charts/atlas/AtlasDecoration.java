@@ -4,7 +4,8 @@ import java.awt.Color;
 import java.util.List;
 
 public record AtlasDecoration(String id, List<String> sprites, String glow, int columns, int rows, float size, float sizeJitter, int count,
-                              float spread, float spin, float drift, Color colour, Color glowColour, float alpha) {
+                              float spread, float spin, float drift, Color colour, Color glowColour, float alpha,
+                              List<String> scatter) {
 
     public AtlasDecoration {
         sprites = List.copyOf(sprites);
@@ -18,5 +19,6 @@ public record AtlasDecoration(String id, List<String> sprites, String glow, int 
         spin = Math.max(0f, spin);
         drift = Math.max(0f, drift);
         alpha = Math.max(0f, Math.min(1f, alpha));
+        scatter = scatter == null ? List.of() : List.copyOf(scatter);
     }
 }
