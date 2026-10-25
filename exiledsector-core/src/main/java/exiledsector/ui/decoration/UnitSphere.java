@@ -4,14 +4,14 @@ import com.fs.graphics.util.GLListManager;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.Sphere;
 
-final class UnitSphere {
+public final class UnitSphere {
 
     private static final int DETAIL = 32;
 
     private final Sphere sphere;
     private GLListManager.GLListToken displayList;
 
-    UnitSphere() {
+    public UnitSphere() {
         this(texturedSphere());
     }
 
@@ -25,7 +25,7 @@ final class UnitSphere {
         return sphere;
     }
 
-    void draw(float radius) {
+    public void draw(float radius) {
         GL11.glPushMatrix();
         GL11.glScalef(radius, radius, radius);
         if (!GLListManager.callList(displayList)) {

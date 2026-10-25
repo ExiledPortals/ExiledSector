@@ -168,4 +168,14 @@ class TextLabelTest {
         verify(font, times(1)).createText(anyString(), any(Color.class), anyFloat());
         verify(drawable).setText("second");
     }
+
+    @Test
+    void anEmptyLabelTakesNoSpaceAndNeverReachesLazyFont() {
+        TextLabel label = label(Color.WHITE).set("");
+
+        assertEquals(false, label.draw(0f, 0f));
+        assertEquals(0f, label.width());
+        assertEquals(0f, label.height());
+        verify(drawable, never()).draw(anyFloat(), anyFloat());
+    }
 }

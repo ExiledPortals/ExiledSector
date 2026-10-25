@@ -86,4 +86,16 @@ class SmoothZoomTest {
         assertEquals(0.5f, zoom.current());
         assertEquals(0.5f, zoom.target());
     }
+
+    @Test
+    void aCustomCeilingStopsScrollingAndAimingInPastIt() {
+        SmoothZoom zoom = new SmoothZoom(0.7f, 0.8f);
+
+        zoom.scroll(true);
+        zoom.scroll(true);
+        assertEquals(0.8f, zoom.target());
+
+        zoom.aimAt(2f);
+        assertEquals(0.8f, zoom.target());
+    }
 }

@@ -20,6 +20,20 @@ public final class RingBeltRenderer {
     }
 
     public static void render(SpriteAPI texture, RadialBand band, Color color, float alphaMult, float rotationDeg, TreeViewport clip) {
+        render(texture, band, color, alphaMult, rotationDeg, clip, new TextureSlot(0f, 1f, texture.getHeight() / texture.getWidth()));
+    }
+
+    public static void renderSlot(SpriteAPI texture, RadialBand band, int slot, float slotWidthInImage, Color color, float alphaMult,
+                                  float rotationDeg) {
+        render(texture, band, color, alphaMult, rotationDeg, null, new TextureSlot(RadialBandMaths.slotInnerTexX(texture, slot, slotWidthInImage),
+                RadialBandMaths.slotOuterTexX(texture, slot, slotWidthInImage), texture.getHeight() / slotWidthInImage));
+    }
+
+    private record TextureSlot(float innerTexX, float outerTexX, float aspectRatio) {
+    }
+
+    private static void render(SpriteAPI texture, RadialBand band, Color color, float alphaMult, float rotationDeg, TreeViewport clip,
+                               TextureSlot slot) {
         if (alphaMult <= 0f) {
             return;
         }
@@ -32,15 +46,14 @@ public final class RingBeltRenderer {
             return;
         }
 
-        float aspectRatio = texture.getHeight() / texture.getWidth();
-        float tileCount = RadialBandMaths.wholeTileCount(circumference, RadialBandMaths.thickness(band), aspectRatio, TILE_DENSITY,
+        float tileCount = RadialBandMaths.wholeTileCount(circumference, RadialBandMaths.thickness(band), slot.aspectRatio(), TILE_DENSITY,
                 RadialBandMaths.MAX_TILE_COUNT);
         float texPerSegment = tileCount / segments;
 
         RadialBandGL.begin(texture, band.center().x, band.center().y, GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, color, alphaMult);
         GL11.glRotatef(rotationDeg, 0f, 0f, 1f);
         UnitCircle circle = UnitCircle.of(segments);
-        RadialBandGL.StripSpec spec = new RadialBandGL.StripSpec(innerRadius, outerRadius, 0f, 1f, texPerSegment, RingWave.NONE,
+        RadialBandGL.StripSpec spec = new RadialBandGL.StripSpec(innerRadius, outerRadius, slot.innerTexX(), slot.outerTexX(), texPerSegment, RingWave.NONE,
                 RingWave.NONE);
         if (range[1] <= segments) {
             RadialBandGL.strip(circle, range[0], range[1], spec);

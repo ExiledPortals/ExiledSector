@@ -96,10 +96,13 @@ public final class AtlasOpening {
         return spent && phenomenon != null && phenomenon.kind() == ChartPhenomenon.Kind.OVERLAY ? "" : phenomenonId;
     }
 
+    public static long layoutSeed(AtlasState state, AtlasCell cell) {
+        return AtlasHash.of(state.seed(), LAYOUT_SEED_SALT, cell.gridX(), cell.gridY());
+    }
+
     public static ChartLayoutRequest request(AtlasGenerator generator, AtlasState state, AtlasCell cell, StarChart chart, AtlasRunNode runNode) {
         AtlasNode node = generator.node(cell);
-        long layoutSeed = AtlasHash.of(state.seed(), LAYOUT_SEED_SALT, cell.gridX(), cell.gridY());
-        return new ChartLayoutRequest(layoutSeed, null, chart.tier(), ChartGenContext.from(chart).withAtlasNode(runNode),
+        return new ChartLayoutRequest(layoutSeed(state, cell), null, chart.tier(), ChartGenContext.from(chart).withAtlasNode(runNode),
                 AtlasData.recipeFor(node.regionId(), node.layoutId()), runNode.phenomenonId(), chart.seed());
     }
 }

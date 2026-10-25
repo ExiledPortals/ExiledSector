@@ -3,6 +3,7 @@ package exiledsector.ui.node;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.ui.util.HoloShapes;
 import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.TexturedQuadBatch;
 import exiledsector.ui.util.UnitCircle;
@@ -51,6 +52,11 @@ public final class NodeRingArt {
     private static final float RING_INSTANCE_JITTER_RATIO = 0.05f;
     private static final float RING_INSTANCE_BASE_ALPHA = 0.5f;
     private static final float RING_MIN_RADIUS_FRACTION = 0.62f;
+    private static final float RING_MIN_SIZE_JITTER = 0.9f;
+    private static final float RING_SIZE_JITTER_RANGE = 0.2f;
+    private static final float RING_TEXTURE_INNER_EDGE = 0.85f;
+    private static final float PORTAL_GLOW_REACH = 1.8f;
+    private static final float PORTAL_GLOW_ALPHA = 0.5f;
 
     public static final Color RING_PINK_COLOR = new Color(255, 60, 220);
     private static final float RING_PINK_SCALE_RATIO = 0.85f;
@@ -137,6 +143,43 @@ public final class NodeRingArt {
         }
         drawPulseOutline(cx, cy, footprintSize / 2f, nodeId, zoom, CIRCLE_OUTLINE_RADII, look.accent(), alphaMult);
         GL11.glDisable(GL11.GL_BLEND);
+    }
+
+    public void drawPortal(float cx, float cy, float innerRadius, float zoom, String nodeId, NotableLook look, float alphaMult) {
+        drawPortalRings(cx, cy, innerRadius, nodeId, look, alphaMult);
+        drawNodeOutline(cx, cy, innerRadius, zoom, nodeId, look, alphaMult);
+    }
+
+    public void drawPortalRings(float cx, float cy, float innerRadius, String nodeId, NotableLook look, float alphaMult) {
+        GL11.glEnable(GL11.GL_BLEND);
+        float stateAlpha = look.lit() ? 1f : UNALLOCATED_ALPHA_MULT;
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
+        HoloShapes.radialGlow(cx, cy, innerRadius, innerRadius * PORTAL_GLOW_REACH, look.glowTint(), PORTAL_GLOW_ALPHA * stateAlpha * alphaMult);
+        drawNotableRings(cx, cy, portalRingSize(innerRadius), nodeId, stateAlpha * alphaMult, look.ringTint());
+        GL11.glDisable(GL11.GL_BLEND);
+    }
+
+    public void drawNodeOutline(float cx, float cy, float innerRadius, float zoom, String nodeId, NotableLook look, float alphaMult) {
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        drawDonut(cx, cy, innerRadius, 1f, zoom, look.lit(), look.accent(), alphaMult);
+        if (look.breathing()) {
+            drawBreathingOutline(cx, cy, innerRadius, NODE_CONNECTOR_GLOW_LINE_THICKNESS * zoom, CIRCLE_OUTLINE_RADII, look.accent(), alphaMult);
+        }
+        drawPulseOutline(cx, cy, innerRadius, nodeId, zoom, CIRCLE_OUTLINE_RADII, look.accent(), alphaMult);
+        GL11.glDisable(GL11.GL_BLEND);
+    }
+
+    public static float portalRingSize(float innerRadius) {
+        return innerRadius / (NOTABLE_RING_OUTER_RADIUS_RATIO * RING_PINK_SCALE_RATIO * RING_MIN_RADIUS_FRACTION * RING_MIN_SIZE_JITTER
+                * RING_TEXTURE_INNER_EDGE);
+    }
+
+    public static float portalReach(float innerRadius) {
+        return portalRingSize(innerRadius) * NOTABLE_RING_OUTER_RADIUS_RATIO * (RING_MIN_SIZE_JITTER + RING_SIZE_JITTER_RANGE)
+                * (1f + RING_INSTANCE_JITTER_RATIO);
     }
 
     public void drawNotableRings(float cx, float cy, float footprintSize, String nodeId, float alpha, Color tint) {
@@ -257,7 +300,7 @@ public final class NodeRingArt {
             instance.jitterPhase = random.nextFloat() * (float) (Math.PI * 2);
             instance.jitterSpeed = 0.5f + random.nextFloat();
             instance.textureIndex = i % RING_STACK_TEXTURES.length;
-            instance.sizeJitter = 0.9f + random.nextFloat() * 0.2f;
+            instance.sizeJitter = RING_MIN_SIZE_JITTER + random.nextFloat() * RING_SIZE_JITTER_RANGE;
             instances.add(instance);
         }
         return instances;

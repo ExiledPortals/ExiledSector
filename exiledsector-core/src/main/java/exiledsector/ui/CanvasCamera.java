@@ -7,7 +7,7 @@ public class CanvasCamera {
 
     public static final float FOLLOW_SETTLE_SECONDS = 1.2f;
 
-    private final SmoothZoom smoothZoom = new SmoothZoom(1f);
+    private final SmoothZoom smoothZoom;
     private float panX;
     private float panY;
     private float currentZoom = 1f;
@@ -21,6 +21,14 @@ public class CanvasCamera {
     private float followSeconds;
     private float followNudgeX;
     private float followNudgeY;
+
+    public CanvasCamera() {
+        this(SmoothZoom.MAX_ZOOM);
+    }
+
+    public CanvasCamera(float maxZoom) {
+        smoothZoom = new SmoothZoom(1f, maxZoom);
+    }
 
     public void startFollowing(float zoomTarget) {
         followingTarget = true;

@@ -56,7 +56,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private final CampaignOverlay.Host host;
     private final SkillTreePanelStyle panelStyle = new SkillTreePanelStyle();
     private final StarfieldRenderer starfield = new StarfieldRenderer(panelStyle);
-    private final CanvasCamera camera = new CanvasCamera();
+    private final CanvasCamera camera = new CanvasCamera(AtlasMapCanvas.MAX_ZOOM);
     private final PointerGesture<Void> gesture = new PointerGesture<>();
     private final TextLabel titleLabel = new TextLabel(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final TextLabel summaryLabel = new TextLabel(SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
@@ -89,6 +89,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     public void attach(CustomPanelAPI panel) {
         panelRoot = panel;
         map = new AtlasMapCanvas(AtlasRuntime.generator(Global.getSector()), AtlasState.get(Global.getSector()));
+        camera.jumpZoomTo(AtlasMapCanvas.DEFAULT_ZOOM);
         camera.centreOn(map.focusX(), map.focusY());
         I18n.forGameText(this::buildChrome);
     }
@@ -172,6 +173,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
                 map = new AtlasMapCanvas(map.generator(), map.state());
                 tooltipCell = null;
                 map.pulse(cell);
+                map.collapse(cell);
                 I18n.forGameText(AtlasScreen.this::writeSummary);
             }
 

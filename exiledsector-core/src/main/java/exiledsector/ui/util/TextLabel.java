@@ -120,6 +120,9 @@ public final class TextLabel {
     }
 
     public boolean draw(float x, float y) {
+        if (isEmpty()) {
+            return false;
+        }
         LazyFont.DrawableString current = current();
         if (current == null) {
             return false;
@@ -181,7 +184,7 @@ public final class TextLabel {
             return;
         }
         LazyFont font = fontSource.get();
-        if (plainText == null || font == null) {
+        if (plainText == null || plainText.isEmpty() || font == null) {
             measuredWidth = 0f;
             measuredHeight = 0f;
             return;

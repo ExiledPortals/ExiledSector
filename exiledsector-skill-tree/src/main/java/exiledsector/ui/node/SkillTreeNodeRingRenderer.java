@@ -9,9 +9,7 @@ import exiledsector.ui.SmoothZoom;
 import exiledsector.ui.belt.AuroraBeltRenderer;
 import exiledsector.ui.belt.RadialBand;
 import exiledsector.ui.belt.RingBeltRenderer;
-import exiledsector.ui.belt.WormholeBandRenderer;
 import exiledsector.ui.util.ColorUtil;
-import exiledsector.ui.util.TexturedQuadBatch;
 import org.apache.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
@@ -38,30 +36,6 @@ final class SkillTreeNodeRingRenderer {
     private static final String AURORA_TEXTURE_PATH = "graphics/planets/aurorae.png";
     private static final Color DEFAULT_AURORA_COLOR = new Color(140, 120, 255);
 
-    private static final float WORMHOLE_MIN_SCALE = 0.25f;
-
-    private static final String WORMHOLE_CORONA_TEXTURE_PATH = "graphics/fx/wormhole_corona.png";
-    private static final float WORMHOLE_CORONA_SIZE_RATIO = 2.2f;
-    private static final int WORMHOLE_CORONA_COUNT = 6;
-    private static final float WORMHOLE_CORONA_ORBIT_RATIO = 0.12f;
-    private static final float WORMHOLE_CORONA_ROTATION_SPEED_DEG = 12f;
-    private static final float WORMHOLE_CORONA_PULSE_SPEED_DEG = 90f;
-    private static final float WORMHOLE_CORONA_PULSE_SIZE_RATIO = 0.1f;
-
-    private static final float WORMHOLE_RING_OUTER_RADIUS_RATIO = 1.55f;
-    private static final int WORMHOLE_RING_COUNT = 16;
-    private static final float WORMHOLE_RING_RADIUS_DECAY = 0.94f;
-
-    private static final String WORMHOLE_BAND_TEXTURE_PATH = "graphics/fx/portal_textures_small.png";
-    private static final float WORMHOLE_BAND_INNER_RADIUS_RATIO = 0.45f;
-    private static final float WORMHOLE_BAND_THICKNESS_RATIO = 0.35f;
-    private static final float WORMHOLE_BAND_ROTATION_SPEED_DEG = 5f;
-    private static final float WORMHOLE_BAND_ALPHA = 0.75f;
-
-    private static final String WORMHOLE_GLOW_TEXTURE_PATH = "graphics/fx/hit_glow.png";
-    private static final float WORMHOLE_GLOW_SIZE_RATIO = 1.3f;
-    private static final float WORMHOLE_GLOW_ALPHA = 0.67f;
-
     private static final float GRANT_RING_GAP = NODE_CONNECTOR_GLOW_HALO_THICKNESS / 2f + 2f;
     private static final float GRANT_RING_ALPHA = 0.9f;
 
@@ -70,8 +44,8 @@ final class SkillTreeNodeRingRenderer {
 
     private final SkillTreePanelStyle panelStyle;
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeNodeRingRenderer.class);
-    private final TexturedQuadBatch quads = new TexturedQuadBatch();
     private final NodeRingArt ringArt = new NodeRingArt();
+    private final WormholeArt wormholeArt = new WormholeArt(ringArt);
     private final WormholeOpenness wormholeOpenness;
     private final Map<String, Color> wormholeColors = new HashMap<>();
     private final Map<String, Color> ringBeltColors = new HashMap<>();
@@ -204,71 +178,7 @@ final class SkillTreeNodeRingRenderer {
     }
 
     private void drawWormhole(float cx, float cy, float footprintSize, float alphaMult, String nodeId, Color wormholeColor, float rawOpenness) {
-        float openness = rawOpenness * rawOpenness;
-        float visualScale = WORMHOLE_MIN_SCALE + (1f - WORMHOLE_MIN_SCALE) * openness;
-        float baseRadius = footprintSize / 2f * visualScale;
-
-        drawWormholeCorona(cx, cy, baseRadius, wormholeColor, alphaMult);
-
-        if (openness < 1f) {
-            drawWormholeBands(cx, cy, baseRadius, wormholeColor, (1f - openness) * WORMHOLE_BAND_ALPHA * alphaMult);
-        }
-
-        if (openness > 0f) {
-            ringArt.drawRingStack(cx, cy, baseRadius * 2f * WORMHOLE_RING_OUTER_RADIUS_RATIO, nodeId, WORMHOLE_RING_COUNT,
-                    WORMHOLE_RING_RADIUS_DECAY, wormholeColor, openness * alphaMult);
-        }
-
-        if (openness < 1f) {
-            drawWormholeGlow(cx, cy, baseRadius, wormholeColor, alphaMult, openness);
-        }
-    }
-
-    private void drawWormholeCorona(float cx, float cy, float baseRadius, Color wormholeColor, float alphaMult) {
-        SpriteAPI texture = spriteCache.texture(WORMHOLE_CORONA_TEXTURE_PATH);
-        if (texture == null) return;
-        float elapsed = ringArt.elapsedSeconds();
-        float size = baseRadius * 2f * WORMHOLE_CORONA_SIZE_RATIO;
-        float orbit = baseRadius * WORMHOLE_CORONA_ORBIT_RATIO;
-
-        try (TexturedQuadBatch batch = quads.beginAdditive(texture)) {
-            for (int i = 0; i < WORMHOLE_CORONA_COUNT; i++) {
-                float baseAngle = 360f * i / WORMHOLE_CORONA_COUNT;
-                float angle = baseAngle + elapsed * WORMHOLE_CORONA_ROTATION_SPEED_DEG;
-                float rad = (float) Math.toRadians(angle);
-                float pulse = 1f + (float) Math.sin(Math.toRadians(elapsed * WORMHOLE_CORONA_PULSE_SPEED_DEG + baseAngle)) * WORMHOLE_CORONA_PULSE_SIZE_RATIO;
-
-                batch.quadAtCenter(cx + (float) Math.cos(rad) * orbit, cy + (float) Math.sin(rad) * orbit, size * pulse, size * pulse, angle,
-                        wormholeColor, alphaMult);
-            }
-        }
-    }
-
-    private void drawWormholeBands(float cx, float cy, float baseRadius, Color wormholeColor, float alphaMult) {
-        SpriteAPI texture = spriteCache.texture(WORMHOLE_BAND_TEXTURE_PATH);
-        if (texture == null) return;
-        float elapsed = ringArt.elapsedSeconds();
-        float innerRadius = baseRadius * WORMHOLE_BAND_INNER_RADIUS_RATIO;
-        float outerRadius = innerRadius + baseRadius * WORMHOLE_BAND_THICKNESS_RATIO;
-        float rotationA = (elapsed * WORMHOLE_BAND_ROTATION_SPEED_DEG) % 360f;
-        float rotationB = (-elapsed * WORMHOLE_BAND_ROTATION_SPEED_DEG) % 360f;
-
-        RadialBand band = new RadialBand(new Vector2f(cx, cy), innerRadius, outerRadius);
-        WormholeBandRenderer.render(texture, band, 0, rotationA, wormholeColor, alphaMult, elapsed);
-        WormholeBandRenderer.render(texture, band, 1, rotationB, wormholeColor, alphaMult, elapsed);
-    }
-
-    private void drawWormholeGlow(float cx, float cy, float baseRadius, Color wormholeColor, float alphaMult, float openness) {
-        float size = baseRadius * 2f * WORMHOLE_GLOW_SIZE_RATIO;
-        float closedness = 1f - openness;
-        float alpha = WORMHOLE_GLOW_ALPHA * closedness * closedness * closedness * alphaMult;
-
-        SpriteAPI texture = spriteCache.texture(WORMHOLE_GLOW_TEXTURE_PATH);
-        if (texture == null) return;
-        try (TexturedQuadBatch batch = quads.beginAdditive(texture)) {
-            batch.quadAtCenter(cx, cy, size, size, 0f, wormholeColor, alpha);
-            batch.quadAtCenter(cx, cy, size, size, 0f, wormholeColor, alpha);
-        }
+        wormholeArt.draw(cx, cy, footprintSize, alphaMult, nodeId, wormholeColor, rawOpenness);
     }
 
     private Color resolveWormholeColor(SkillNode node) {
