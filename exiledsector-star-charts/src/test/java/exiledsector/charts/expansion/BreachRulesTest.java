@@ -13,25 +13,44 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class BreachRulesTest {
 
     @Test
-    void theBreachGrowsFromItsStartToItsMaximumAndStops() {
+    void theBreachOpensSlowlyFromNothingToItsMaximumThenCollapsesBackToNothing() {
         BreachRules.Growth growth = BreachRules.growth(5, 1f);
+        float max = BreachRules.BASE_MAX_RADIUS + 5 * BreachRules.MAX_RADIUS_PER_TIER;
+        float open = BreachRules.OPEN_SECONDS;
+        float collapse = BreachRules.COLLAPSE_SECONDS;
 
-        assertEquals(BreachRules.START_RADIUS, growth.startRadius());
-        assertEquals(BreachRules.BASE_MAX_RADIUS + 5 * BreachRules.MAX_RADIUS_PER_TIER, growth.maxRadius());
-        float halfway = growth.grow(growth.startRadius(), BreachRules.BASE_DAYS_TO_FULL / 2f);
-        assertEquals(0.5f, growth.grownFraction(halfway), 0.001f);
-        assertEquals(growth.maxRadius(), growth.grow(halfway, BreachRules.BASE_DAYS_TO_FULL * 10f));
-        assertEquals(1f, growth.grownFraction(growth.maxRadius()));
+        assertEquals(max, growth.maxRadius());
+        assertEquals(open, growth.openSeconds());
+        assertEquals(collapse, growth.collapseSeconds());
+        assertEquals(0f, growth.radiusAt(0f));
+        assertTrue(growth.radiusAt(open / 10f) < max * 0.05f);
+        assertEquals(max * 0.5f, growth.radiusAt(open / 2f), 0.01f);
+        assertEquals(max, growth.radiusAt(open), 0.01f);
+        assertFalse(growth.isCollapsing(open - 1f));
+        assertTrue(growth.isCollapsing(open));
+        assertEquals(max * 0.5f, growth.radiusAt(open + collapse / 2f), 0.01f);
+        assertFalse(growth.isCollapsed(open + collapse - 1f));
+        assertTrue(growth.isCollapsed(open + collapse));
+        assertEquals(0f, growth.radiusAt(open + collapse));
+        assertEquals(0.5f, growth.grownFraction(max / 2f), 0.001f);
     }
 
     @Test
-    void fasterGrowthReachesFullSizeSoonerAndNoGrowthIsFloored() {
+    void fasterGrowthOpensSoonerButCollapsesAtTheSamePaceAndNoGrowthIsFloored() {
         BreachRules.Growth normal = BreachRules.growth(1, 1f);
         BreachRules.Growth doubled = BreachRules.growth(1, 2f);
         BreachRules.Growth stalled = BreachRules.growth(1, 0f);
 
-        assertEquals(normal.perDay() * 2f, doubled.perDay(), 0.001f);
-        assertEquals(normal.perDay() * BreachRules.MIN_GROWTH_MULT, stalled.perDay(), 0.001f);
+        assertEquals(normal.openSeconds() / 2f, doubled.openSeconds(), 0.001f);
+        assertEquals(normal.collapseSeconds(), doubled.collapseSeconds());
+        assertEquals(normal.openSeconds() / BreachRules.MIN_GROWTH_MULT, stalled.openSeconds(), 0.01f);
+    }
+
+    @Test
+    void onlyAFleetPassingOverTheCoreOpensTheBreach() {
+        assertTrue(BreachRules.triggers(100f, 50f));
+        assertTrue(BreachRules.triggers(50f + BreachRules.TRIGGER_REACH, 50f));
+        assertFalse(BreachRules.triggers(51f + BreachRules.TRIGGER_REACH, 50f));
     }
 
     @Test

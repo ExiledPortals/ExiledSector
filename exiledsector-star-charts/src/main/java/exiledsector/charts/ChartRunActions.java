@@ -25,6 +25,7 @@ public final class ChartRunActions {
 
     private static final Logger LOG = Logger.getLogger(ChartRunActions.class);
     private static final int RUN_ID_RADIX = 36;
+    static final float ANCHOR_REACH = 600f;
 
     public enum OpenResult {
         OPENED,
@@ -110,6 +111,8 @@ public final class ChartRunActions {
         }
         Vector2f playerLocation = playerFleet.getLocation();
         ChartRun run = new ChartRun(newRunId(random), ChartIds.locationIdOf(origin), playerLocation.x, playerLocation.y, entriesAllowed);
+        SectorEntityToken anchor = marketBeside(origin, playerLocation);
+        run.recordOriginEntity(anchor == null ? null : anchor.getId());
         run.recordChart(chartData);
         run.recordAtlasNode(atlasNode);
         ChartRuns.store(run);
@@ -117,7 +120,7 @@ public final class ChartRunActions {
             ChartSystemFactory.ChartSystem created = ChartSystemFactory.createSystem(sector, run.runId(), layoutRequest);
             run.recordLayout(created.layout());
             run.recordContent(created.content());
-            ChartSystemFactory.addOuterWormhole(origin, playerLocation, run.runId());
+            ChartSystemFactory.addOuterWormhole(origin, playerLocation, anchor, run.runId());
             ChartObjectiveIntel.addFor(sector, run);
             return OpenResult.OPENED;
         } catch (RuntimeException | LinkageError e) {
@@ -127,6 +130,23 @@ public final class ChartRunActions {
             ChartRunCloser.close(sector, run);
             return OpenResult.FAILED;
         }
+    }
+
+    static SectorEntityToken marketBeside(LocationAPI location, Vector2f point) {
+        SectorEntityToken nearest = null;
+        float nearestGap = ANCHOR_REACH;
+        for (SectorEntityToken entity : location.getAllEntities()) {
+            if (entity.getMarket() == null || entity.getMarket().isPlanetConditionMarketOnly() || entity.getLocation() == null) {
+                continue;
+            }
+            Vector2f at = entity.getLocation();
+            float gap = (float) Math.hypot(at.x - point.x, at.y - point.y) - entity.getRadius();
+            if (gap <= nearestGap) {
+                nearestGap = gap;
+                nearest = entity;
+            }
+        }
+        return nearest;
     }
 
     static String newRunId(Random random) {
@@ -168,6 +188,12 @@ public final class ChartRunActions {
         if (outer != null && outer.getContainingLocation() != null && !outer.getContainingLocation().hasTag(ChartIds.SYSTEM_TAG)) {
             Vector2f outerLocation = outer.getLocation();
             return outer.getContainingLocation().createToken(outerLocation.x + ChartSystemFactory.ENTRY_OFFSET, outerLocation.y);
+        }
+        SectorEntityToken anchor = run.originEntityId() == null ? null : sector.getEntityById(run.originEntityId());
+        if (anchor != null && anchor.getContainingLocation() != null && !anchor.getContainingLocation().hasTag(ChartIds.SYSTEM_TAG)) {
+            Vector2f anchorLocation = anchor.getLocation();
+            return anchor.getContainingLocation().createToken(anchorLocation.x + anchor.getRadius() + ChartSystemFactory.ENTRY_OFFSET,
+                    anchorLocation.y);
         }
         LocationAPI origin = ChartIds.resolveLocation(sector, run.originLocationId());
         if (origin != null && !origin.hasTag(ChartIds.SYSTEM_TAG)) {

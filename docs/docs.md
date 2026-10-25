@@ -188,13 +188,14 @@ own seed per expansion when the content is planned (`ChartExpansions.planned`), 
 `chart_expansions.csv` in tier range with their `requires_mod` loaded. Each planned `ChartExpansion` (package
 `charts.expansion`) places its entities after the sites and fleets, and the run record keeps the ids that placed.
 
-The Spatial Breach (`SpatialBreach`, `BreachTerrainPlugin`, numbers in `BreachRules`) is a terrain field that grows
-each day to a tier-based maximum. Every 0.1 days fleets inside lose sensor range and burn level, and the player fleet
-also burns fuel while its ships use more supplies (`BreachSupplyBuff`), all stronger toward the core. Caches planned
-at creation form once the field reaches them, with item rarity raised by depth, and content sites it covers get a
-smaller rarity bonus
-(`StarChartLootSource.modifiersFor`). Closing the core removes the field and its unlooted caches and drops salvage
-and items scaled by how far it grew (`BreachCoreDialog`).
+The Spatial Breach (`SpatialBreach`, `BreachTerrainPlugin`, numbers in `BreachRules`) is a terrain field fixed at its
+core that starts closed. Once the player fleet flies over the core it eases open to a tier-based maximum over 60
+seconds (faster with the growth modifier), then collapses over 60 seconds and removes itself, its core and its unlooted
+caches. Every 0.1 days fleets inside lose sensor range and burn level, and the player fleet also burns fuel while its
+ships use more supplies (`BreachSupplyBuff`), all stronger toward the core. Caches planned at creation form once the
+field reaches them and vanish once the collapse passes them, with item rarity raised by depth, and content sites it
+covers get a smaller rarity bonus (`StarChartLootSource.modifiersFor`). Closing the core early removes the field and
+its unlooted caches and drops salvage and items scaled by the largest size it reached (`BreachCoreDialog`).
 
 ## The atlas
 

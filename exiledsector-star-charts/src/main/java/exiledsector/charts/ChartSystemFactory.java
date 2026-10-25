@@ -29,6 +29,7 @@ public final class ChartSystemFactory {
     static final float INNER_WORMHOLE_Y = 0f;
     static final float ENTRY_OFFSET = 350f;
     static final float OUTER_WORMHOLE_OFFSET = 250f;
+    static final float OUTER_ORBIT_DAYS = 40f;
     static final float FAR_AWAY_CORNER = -320000f;
     static final float FAR_AWAY_SPACING = 4000f;
     static final int FAR_AWAY_CELLS = 40;
@@ -92,12 +93,24 @@ public final class ChartSystemFactory {
     }
 
     public static CustomCampaignEntityAPI addOuterWormhole(LocationAPI origin, Vector2f besideHere, String runId) {
+        return addOuterWormhole(origin, besideHere, null, runId);
+    }
+
+    public static CustomCampaignEntityAPI addOuterWormhole(LocationAPI origin, Vector2f besideHere, SectorEntityToken anchor, String runId) {
         CustomCampaignEntityAPI outer = origin.addCustomEntity(ChartIds.outerWormholeId(runId),
                 Translation.gameText("chart.wormhole.outer.name"), ChartIds.WORMHOLE_TYPE, Factions.NEUTRAL);
-        outer.setFixedLocation(besideHere.x + OUTER_WORMHOLE_OFFSET, besideHere.y);
+        if (anchor == null) {
+            outer.setFixedLocation(besideHere.x + OUTER_WORMHOLE_OFFSET, besideHere.y);
+        } else {
+            outer.setCircularOrbit(anchor, angleFrom(anchor.getLocation(), besideHere), anchor.getRadius() + OUTER_WORMHOLE_OFFSET, OUTER_ORBIT_DAYS);
+        }
         tag(outer, runId);
         outer.addTag(ChartIds.OUTER_WORMHOLE_TAG);
         return outer;
+    }
+
+    static float angleFrom(Vector2f centre, Vector2f point) {
+        return (float) Math.toDegrees(Math.atan2(point.y - centre.y, point.x - centre.x));
     }
 
     public static SectorEntityToken entryPoint(StarSystemAPI system, SectorEntityToken innerWormhole) {

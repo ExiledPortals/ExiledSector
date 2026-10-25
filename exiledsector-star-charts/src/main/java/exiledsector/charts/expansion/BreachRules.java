@@ -9,10 +9,11 @@ import java.util.function.Predicate;
 
 public final class BreachRules {
 
-    static final float START_RADIUS = 400f;
     static final float BASE_MAX_RADIUS = 2400f;
     static final float MAX_RADIUS_PER_TIER = 100f;
-    static final float BASE_DAYS_TO_FULL = 60f;
+    static final float OPEN_SECONDS = 60f;
+    static final float COLLAPSE_SECONDS = 60f;
+    static final float TRIGGER_REACH = 150f;
     static final float MIN_GROWTH_MULT = 0.1f;
     static final float EDGE_INTENSITY = 0.25f;
     static final float SENSOR_LOSS = 0.5f;
@@ -37,15 +38,33 @@ public final class BreachRules {
     static final float CORE_BASE_RARITY_PERCENT = 50f;
     static final float CORE_GROWN_RARITY_PERCENT = 50f;
 
-    record Growth(float startRadius, float maxRadius, float perDay) {
+    record Growth(float maxRadius, float openSeconds, float collapseSeconds) {
 
-        float grow(float radius, float days) {
-            return Math.min(maxRadius, Math.max(startRadius, radius) + perDay * Math.max(0f, days));
+        float radiusAt(float seconds) {
+            if (seconds <= 0f || isCollapsed(seconds)) {
+                return 0f;
+            }
+            if (seconds < openSeconds) {
+                return maxRadius * ease(seconds / openSeconds);
+            }
+            return maxRadius * (1f - ease((seconds - openSeconds) / collapseSeconds));
+        }
+
+        boolean isCollapsing(float seconds) {
+            return seconds >= openSeconds;
+        }
+
+        boolean isCollapsed(float seconds) {
+            return seconds >= openSeconds + collapseSeconds;
         }
 
         float grownFraction(float radius) {
-            float span = maxRadius - startRadius;
-            return span <= 0f ? 1f : Math.max(0f, Math.min(1f, (radius - startRadius) / span));
+            return maxRadius <= 0f ? 1f : Math.max(0f, Math.min(1f, radius / maxRadius));
+        }
+
+        private static float ease(float progress) {
+            float clamped = Math.max(0f, Math.min(1f, progress));
+            return clamped * clamped * (3f - 2f * clamped);
         }
     }
 
@@ -61,8 +80,11 @@ public final class BreachRules {
 
     static Growth growth(int tier, float growthMult) {
         float maxRadius = BASE_MAX_RADIUS + MAX_RADIUS_PER_TIER * Math.max(0, tier);
-        float perDay = (maxRadius - START_RADIUS) / BASE_DAYS_TO_FULL * Math.max(MIN_GROWTH_MULT, growthMult);
-        return new Growth(START_RADIUS, maxRadius, perDay);
+        return new Growth(maxRadius, OPEN_SECONDS / Math.max(MIN_GROWTH_MULT, growthMult), COLLAPSE_SECONDS);
+    }
+
+    static boolean triggers(float distance, float fleetRadius) {
+        return distance <= Math.max(0f, fleetRadius) + TRIGGER_REACH;
     }
 
     static float intensity(float distance, float radius) {

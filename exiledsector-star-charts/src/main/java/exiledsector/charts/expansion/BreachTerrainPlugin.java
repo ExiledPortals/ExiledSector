@@ -54,10 +54,13 @@ public class BreachTerrainPlugin extends BaseTerrain {
 
     private String runId;
     private int tier;
-    private float startRadius;
     private float maxRadius;
-    private float growthPerDay;
+    private float openSeconds;
+    private float collapseSeconds;
+    private boolean opened;
+    private float secondsOpen;
     private float radius;
+    private float peakRadius;
     private float coreItemMult;
     private long seed;
     private float[] cacheX;
@@ -75,10 +78,9 @@ public class BreachTerrainPlugin extends BaseTerrain {
         if (param instanceof Params params) {
             runId = params.runId();
             tier = params.tier();
-            startRadius = params.growth().startRadius();
             maxRadius = params.growth().maxRadius();
-            growthPerDay = params.growth().perDay();
-            radius = startRadius;
+            openSeconds = params.growth().openSeconds();
+            collapseSeconds = params.growth().collapseSeconds();
             coreItemMult = params.coreItemMult();
             seed = params.seed();
             int count = params.caches() == null ? 0 : params.caches().size();
@@ -96,7 +98,7 @@ public class BreachTerrainPlugin extends BaseTerrain {
     }
 
     BreachRules.Growth growth() {
-        return new BreachRules.Growth(startRadius, maxRadius, growthPerDay);
+        return new BreachRules.Growth(maxRadius, openSeconds, collapseSeconds);
     }
 
     public String runId() {
@@ -115,8 +117,12 @@ public class BreachTerrainPlugin extends BaseTerrain {
         return closed;
     }
 
+    public boolean isOpened() {
+        return opened;
+    }
+
     public float grownFraction() {
-        return growth().grownFraction(radius);
+        return growth().grownFraction(peakRadius);
     }
 
     public float coreItemMult() {
@@ -148,23 +154,46 @@ public class BreachTerrainPlugin extends BaseTerrain {
         }
         super.advance(amount);
         elapsedSeconds = (elapsedSeconds + amount) % ANIMATION_WRAP_SECONDS;
-        daysSinceTick += Global.getSector().getClock().convertToDays(amount);
-        if (daysSinceTick < TICK_DAYS) {
+        if (!opened && !playerFleetOver()) {
             return;
         }
-        float days = daysSinceTick;
-        daysSinceTick = 0f;
+        daysSinceTick += Global.getSector().getClock().convertToDays(amount);
         try {
+            elapse(amount);
+            if (closed || daysSinceTick < TICK_DAYS) {
+                return;
+            }
+            float days = daysSinceTick;
+            daysSinceTick = 0f;
             tick(days);
         } catch (RuntimeException | LinkageError e) {
             LOG.error("[ExiledSector] The Spatial Breach in Star Chart run " + runId + " failed to update", e);
         }
     }
 
+    private boolean playerFleetOver() {
+        CampaignFleetAPI player = Global.getSector().getPlayerFleet();
+        return player != null && player.getContainingLocation() == entity.getContainingLocation() && player.getLocation() != null
+                && BreachRules.triggers(Misc.getDistance(entity.getLocation(), player.getLocation()), player.getRadius());
+    }
+
+    void elapse(float seconds) {
+        opened = true;
+        secondsOpen += Math.max(0f, seconds);
+        BreachRules.Growth growth = growth();
+        radius = growth.radiusAt(secondsOpen);
+        peakRadius = Math.max(peakRadius, radius);
+        if (growth.isCollapsed(secondsOpen)) {
+            collapse();
+        }
+    }
+
     void tick(float days) {
-        radius = growth().grow(radius, days);
         LocationAPI location = entity.getContainingLocation();
         formCaches(location);
+        if (growth().isCollapsing(secondsOpen)) {
+            dissolveCaches(location);
+        }
         touchSites(location);
         for (CampaignFleetAPI fleet : location.getFleets()) {
             applyTo(fleet, days);
@@ -200,6 +229,15 @@ public class BreachTerrainPlugin extends BaseTerrain {
             }
         } catch (RuntimeException | LinkageError e) {
             LOG.error("[ExiledSector] A Spatial Breach cache could not form in Star Chart run " + runId, e);
+        }
+    }
+
+    private void dissolveCaches(LocationAPI location) {
+        Vector2f centre = entity.getLocation();
+        for (SectorEntityToken cache : new ArrayList<>(location.getEntitiesWithTag(SpatialBreach.CACHE_TAG))) {
+            if (cache.getLocation() != null && !BreachRules.reached(Misc.getDistance(centre, cache.getLocation()), radius)) {
+                location.removeEntity(cache);
+            }
         }
     }
 
@@ -282,6 +320,15 @@ public class BreachTerrainPlugin extends BaseTerrain {
         return grownFraction();
     }
 
+    void collapse() {
+        LocationAPI location = entity == null ? null : entity.getContainingLocation();
+        close();
+        SectorEntityToken core = location == null ? null : location.getEntityById(SpatialBreach.coreId(runId));
+        if (core != null) {
+            location.removeEntity(core);
+        }
+    }
+
     public static void liftFrom(CampaignFleetAPI fleet) {
         MutableFleetStatsAPI stats = fleet == null ? null : fleet.getStats();
         if (stats == null) {
@@ -308,7 +355,7 @@ public class BreachTerrainPlugin extends BaseTerrain {
 
     @Override
     public boolean containsPoint(Vector2f point, float pointRadius) {
-        return !closed && entity != null && point != null && Misc.getDistance(entity.getLocation(), point) < radius + pointRadius;
+        return !closed && radius > 0f && entity != null && point != null && Misc.getDistance(entity.getLocation(), point) < radius + pointRadius;
     }
 
     @Override
@@ -323,7 +370,7 @@ public class BreachTerrainPlugin extends BaseTerrain {
 
     @Override
     public void render(CampaignEngineLayers layer, ViewportAPI viewport) {
-        if (closed || entity == null) {
+        if (closed || entity == null || radius <= 0f) {
             return;
         }
         BreachFieldRenderer.render(entity.getLocation(), radius, viewport.getAlphaMult(), elapsedSeconds, viewport.getViewMult());
@@ -331,7 +378,7 @@ public class BreachTerrainPlugin extends BaseTerrain {
 
     @Override
     public void renderOnMap(float factor, float alphaMult) {
-        if (closed || entity == null || !loadSprites()) {
+        if (closed || entity == null || radius <= 0f || !loadSprites()) {
             return;
         }
         Vector2f centre = entity.getLocation();

@@ -176,6 +176,22 @@ class ChartSystemFactoryTest {
     }
 
     @Test
+    void theOuterWormholeOrbitsTheMarketItOpenedBesideOnThePlayersSide() {
+        LocationAPI system = mock(LocationAPI.class);
+        CustomCampaignEntityAPI outer = mock(CustomCampaignEntityAPI.class);
+        PlanetAPI market = mock(PlanetAPI.class);
+        when(system.addCustomEntity(anyString(), anyString(), anyString(), anyString())).thenReturn(outer);
+        when(market.getLocation()).thenReturn(new Vector2f(500f, 500f));
+        when(market.getRadius()).thenReturn(150f);
+
+        ChartSystemFactory.addOuterWormhole(system, new Vector2f(500f, 900f), market, RUN_ID);
+
+        verify(outer).setCircularOrbit(market, 90f, 150f + ChartSystemFactory.OUTER_WORMHOLE_OFFSET, ChartSystemFactory.OUTER_ORBIT_DAYS);
+        verify(outer, never()).setFixedLocation(anyFloat(), anyFloat());
+        verify(outer).addTag(ChartIds.OUTER_WORMHOLE_TAG);
+    }
+
+    @Test
     void theRunIdCanBeReadBackFromTheSystem() {
         when(system.getTags()).thenReturn(List.of(Tags.THEME_HIDDEN, ChartIds.runTag(RUN_ID)));
 

@@ -38,6 +38,7 @@ public final class ChartRun {
     private String chartData;
     private String expansions;
     private String atlasNode;
+    private String originEntityId;
 
     public ChartRun(String runId, String originLocationId, float originX, float originY, int entriesAllowed) {
         this.runId = runId;
@@ -84,6 +85,14 @@ public final class ChartRun {
 
     public float originY() {
         return originY;
+    }
+
+    public void recordOriginEntity(String entityId) {
+        originEntityId = entityId == null || entityId.isEmpty() ? null : entityId;
+    }
+
+    public String originEntityId() {
+        return originEntityId;
     }
 
     public int entriesAllowed() {

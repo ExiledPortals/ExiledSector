@@ -11,6 +11,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
+import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledlib.MockSector;
 import org.junit.jupiter.api.AfterEach;
@@ -213,6 +214,46 @@ class ChartRunActionsTest {
         when(hyperspace.createToken(40f, 50f)).thenReturn(arrival);
 
         assertSame(arrival, ChartRunActions.returnPoint(sector, run));
+    }
+
+    @Test
+    void returningAfterTheOuterCollapsedLandsBesideTheMarketWhereverItHasOrbitedTo() {
+        ChartRun run = new ChartRun("abc", ChartIds.HYPERSPACE_LOCATION_ID, 40f, 50f, 1);
+        run.recordOriginEntity("gateway_planet");
+        run.recordArrival();
+        PlanetAPI market = mock(PlanetAPI.class);
+        when(sector.getEntityById("gateway_planet")).thenReturn(market);
+        when(market.getContainingLocation()).thenReturn(hyperspace);
+        when(market.getLocation()).thenReturn(new Vector2f(3000f, -800f));
+        when(market.getRadius()).thenReturn(120f);
+        SectorEntityToken arrival = mock(SectorEntityToken.class);
+        when(hyperspace.createToken(3000f + 120f + ChartSystemFactory.ENTRY_OFFSET, -800f)).thenReturn(arrival);
+
+        assertSame(arrival, ChartRunActions.returnPoint(sector, run));
+    }
+
+    @Test
+    void theNearestMarketBesideThePlayerAnchorsTheWormholeAndBareSpaceAnchorsNothing() {
+        LocationAPI system = mock(LocationAPI.class);
+        PlanetAPI near = marketAt(new Vector2f(100f, 0f), 200f, false);
+        PlanetAPI far = marketAt(new Vector2f(5000f, 0f), 200f, false);
+        PlanetAPI barren = marketAt(new Vector2f(0f, 50f), 200f, true);
+        SectorEntityToken rock = mock(SectorEntityToken.class);
+        when(rock.getLocation()).thenReturn(new Vector2f(0f, 0f));
+        when(system.getAllEntities()).thenReturn(List.of(far, barren, rock, near));
+
+        assertSame(near, ChartRunActions.marketBeside(system, new Vector2f(0f, 0f)));
+        assertNull(ChartRunActions.marketBeside(system, new Vector2f(2500f, 2500f)));
+    }
+
+    private static PlanetAPI marketAt(Vector2f location, float radius, boolean conditionsOnly) {
+        PlanetAPI planet = mock(PlanetAPI.class);
+        MarketAPI market = mock(MarketAPI.class);
+        when(market.isPlanetConditionMarketOnly()).thenReturn(conditionsOnly);
+        when(planet.getMarket()).thenReturn(market);
+        when(planet.getLocation()).thenReturn(location);
+        when(planet.getRadius()).thenReturn(radius);
+        return planet;
     }
 
     @Test

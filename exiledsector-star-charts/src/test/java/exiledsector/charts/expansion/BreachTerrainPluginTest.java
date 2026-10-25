@@ -1,6 +1,7 @@
 package exiledsector.charts.expansion;
 
 import com.fs.starfarer.api.campaign.BuffManagerAPI;
+import com.fs.starfarer.api.campaign.CampaignClockAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
@@ -40,7 +41,7 @@ import static org.mockito.Mockito.when;
 
 class BreachTerrainPluginTest {
 
-    private static final BreachRules.Growth GROWTH = new BreachRules.Growth(400f, 2000f, 100f);
+    private static final BreachRules.Growth GROWTH = new BreachRules.Growth(2000f, 60f, 60f);
 
     private MockSector mockSector;
     private StarSystemAPI system;
@@ -59,6 +60,9 @@ class BreachTerrainPluginTest {
         terrainEntity = mock(SectorEntityToken.class);
         when(terrainEntity.getLocation()).thenReturn(new Vector2f());
         when(terrainEntity.getContainingLocation()).thenReturn(system);
+        CampaignClockAPI clock = mock(CampaignClockAPI.class);
+        when(clock.convertToDays(anyFloat())).thenAnswer(invocation -> (float) invocation.getArgument(0) / 10f);
+        when(mockSector.sector.getClock()).thenReturn(clock);
     }
 
     @AfterEach
@@ -92,15 +96,48 @@ class BreachTerrainPluginTest {
     }
 
     @Test
-    void theBreachStartsSmallGrowsEachTickAndStopsAtItsMaximum() {
+    void theBreachStaysClosedUntilThePlayerFleetFliesOverItsCore() {
         BreachTerrainPlugin plugin = breach(List.of());
+        CampaignFleetAPI player = mockSector.playerFleet();
+        Vector2f playerAt = new Vector2f(3000f, 0f);
+        when(player.getLocation()).thenReturn(playerAt);
+        when(player.getContainingLocation()).thenReturn(system);
+        when(player.getRadius()).thenReturn(50f);
 
-        assertEquals(400f, plugin.radius());
-        plugin.tick(2f);
-        assertEquals(600f, plugin.radius());
-        plugin.tick(100f);
-        assertEquals(2000f, plugin.radius());
+        plugin.advance(1f);
+        assertFalse(plugin.isOpened());
+        assertEquals(0f, plugin.radius());
+        assertFalse(plugin.containsPoint(new Vector2f(), 10f));
+
+        playerAt.set(100f, 0f);
+        plugin.advance(1f);
+        assertTrue(plugin.isOpened());
+        assertTrue(plugin.radius() > 0f);
+        playerAt.set(5000f, 0f);
+        float opening = plugin.radius();
+        plugin.advance(1f);
+        assertTrue(plugin.radius() > opening);
+    }
+
+    @Test
+    void theBreachExpandsOverAMinuteThenCollapsesOverAMinuteAndTakesItsCoreWithIt() {
+        BreachTerrainPlugin plugin = breach(List.of());
+        SectorEntityToken core = mock(SectorEntityToken.class);
+        when(system.getEntityById(SpatialBreach.coreId("run1"))).thenReturn(core);
+
+        plugin.elapse(30f);
+        assertEquals(1000f, plugin.radius(), 0.01f);
+        plugin.elapse(30f);
+        assertEquals(2000f, plugin.radius(), 0.01f);
         assertEquals(1f, plugin.grownFraction());
+        plugin.elapse(30f);
+        assertEquals(1000f, plugin.radius(), 0.01f);
+        assertEquals(1f, plugin.grownFraction());
+        assertFalse(plugin.isClosed());
+        plugin.elapse(30f);
+        assertTrue(plugin.isClosed());
+        verify(system).removeEntity(terrainEntity);
+        verify(system).removeEntity(core);
         assertEquals(1.5f, plugin.coreItemMult());
         assertEquals("run1", plugin.runId());
         assertEquals(5, plugin.tier());
@@ -112,6 +149,7 @@ class BreachTerrainPluginTest {
         CampaignFleetAPI inside = fleetAt(0f, 0f, false);
         CampaignFleetAPI outside = fleetAt(5000f, 0f, false);
 
+        plugin.elapse(60f);
         plugin.tick(BreachTerrainPlugin.TICK_DAYS);
 
         String modId = plugin.getModId();
@@ -140,6 +178,7 @@ class BreachTerrainPluginTest {
         when(player.getCargo()).thenReturn(cargo);
         CampaignFleetAPI enemy = fleetAt(0f, 0f, false);
 
+        plugin.elapse(60f);
         plugin.tick(1f);
 
         ArgumentCaptor<BuffManagerAPI.Buff> buff = ArgumentCaptor.forClass(BuffManagerAPI.Buff.class);
@@ -169,12 +208,14 @@ class BreachTerrainPluginTest {
         when(alreadyRare.getMemoryWithoutUpdate()).thenReturn(rareMemory);
         contentSites.addAll(List.of(near, far, alreadyRare));
 
+        plugin.elapse(20f);
         plugin.tick(BreachTerrainPlugin.TICK_DAYS);
 
         assertEquals(BreachRules.TOUCHED_RARITY_PERCENT, near.getMemoryWithoutUpdate().getFloat(SpatialBreach.RARITY_KEY));
         assertFalse(far.getMemoryWithoutUpdate().contains(SpatialBreach.RARITY_KEY));
         assertEquals(90f, rareMemory.getFloat(SpatialBreach.RARITY_KEY));
-        plugin.tick(20f);
+        plugin.elapse(40f);
+        plugin.tick(BreachTerrainPlugin.TICK_DAYS);
         assertEquals(BreachRules.TOUCHED_RARITY_PERCENT, far.getMemoryWithoutUpdate().getFloat(SpatialBreach.RARITY_KEY));
     }
 
@@ -182,23 +223,43 @@ class BreachTerrainPluginTest {
     void cachesFormOnlyOnceTheFieldReachesThem() {
         BreachTerrainPlugin plugin = breach(List.of(new BreachRules.CacheSite(200f, 0f, 0.1f), new BreachRules.CacheSite(1800f, 0f, 0.9f)));
 
+        plugin.elapse(20f);
         plugin.tick(BreachTerrainPlugin.TICK_DAYS);
         assertEquals(1, plugin.cachesFormed());
-        plugin.tick(100f);
+        plugin.elapse(40f);
+        plugin.tick(BreachTerrainPlugin.TICK_DAYS);
         assertEquals(2, plugin.cachesFormed());
+    }
+
+    @Test
+    void cachesVanishOnceTheCollapsingFieldPassesBackOverThem() {
+        BreachTerrainPlugin plugin = breach(List.of());
+        SectorEntityToken outer = mock(SectorEntityToken.class);
+        when(outer.getLocation()).thenReturn(new Vector2f(1800f, 0f));
+        SectorEntityToken inner = mock(SectorEntityToken.class);
+        when(inner.getLocation()).thenReturn(new Vector2f(200f, 0f));
+        breachCaches.addAll(List.of(outer, inner));
+
+        plugin.elapse(50f);
+        plugin.tick(BreachTerrainPlugin.TICK_DAYS);
+        verify(system, never()).removeEntity(outer);
+        plugin.elapse(40f);
+        plugin.tick(BreachTerrainPlugin.TICK_DAYS);
+        verify(system).removeEntity(outer);
+        verify(system, never()).removeEntity(inner);
     }
 
     @Test
     void closingRemovesTheFieldAndItsCachesAndEndsItsEffects() {
         BreachTerrainPlugin plugin = breach(List.of());
-        plugin.tick(8f);
+        plugin.elapse(30f);
         SectorEntityToken leftover = mock(SectorEntityToken.class);
         breachCaches.add(leftover);
         CampaignFleetAPI inside = fleetAt(0f, 0f, false);
 
         float grown = plugin.close();
 
-        assertEquals(GROWTH.grownFraction(1200f), grown, 0.001f);
+        assertEquals(GROWTH.grownFraction(1000f), grown, 0.001f);
         assertTrue(plugin.isClosed());
         verify(system).removeEntity(leftover);
         verify(system).removeEntity(terrainEntity);
