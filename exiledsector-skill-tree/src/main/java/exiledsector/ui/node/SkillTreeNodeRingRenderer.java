@@ -18,9 +18,6 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
-import static exiledsector.ui.node.NodeMetrics.NODE_CONNECTOR_GLOW_HALO_THICKNESS;
-import static exiledsector.ui.node.NodeMetrics.NODE_CONNECTOR_GLOW_LINE_THICKNESS;
-import static exiledsector.ui.node.NodeMetrics.NODE_CONNECTOR_LINE_THICKNESS;
 import static exiledsector.ui.node.SkillTreeNodeGeometry.beltInnerRadius;
 import static exiledsector.ui.node.SkillTreeNodeGeometry.beltOuterRadius;
 import static exiledsector.ui.node.NodeMetrics.donutRadius;
@@ -36,7 +33,6 @@ final class SkillTreeNodeRingRenderer {
     private static final String AURORA_TEXTURE_PATH = "graphics/planets/aurorae.png";
     private static final Color DEFAULT_AURORA_COLOR = new Color(140, 120, 255);
 
-    private static final float GRANT_RING_GAP = NODE_CONNECTOR_GLOW_HALO_THICKNESS / 2f + 2f;
     private static final float GRANT_RING_ALPHA = 0.9f;
 
     private static final float REACH_FOOTPRINT_RATIO = 2f;
@@ -46,6 +42,7 @@ final class SkillTreeNodeRingRenderer {
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeNodeRingRenderer.class);
     private final NodeRingArt ringArt = new NodeRingArt();
     private final WormholeArt wormholeArt = new WormholeArt(ringArt);
+    private final NodeBeams beams = new NodeBeams(ringArt);
     private final WormholeOpenness wormholeOpenness;
     private final Map<String, Color> wormholeColors = new HashMap<>();
     private final Map<String, Color> ringBeltColors = new HashMap<>();
@@ -65,6 +62,10 @@ final class SkillTreeNodeRingRenderer {
 
     boolean isPulsing(String nodeId) {
         return ringArt.isPulsing(nodeId);
+    }
+
+    NodeBeams beams() {
+        return beams;
     }
 
     float reach(float footprintSize, SkillNode node) {
@@ -112,34 +113,36 @@ final class SkillTreeNodeRingRenderer {
         }
 
         GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glDisable(GL11.GL_BLEND);
 
+        if (tier.isWormhole()) {
+            return;
+        }
+        float widthScale = NodeBeams.widthScale(zoom) * scale;
         Color accent = panelStyle.getAccentColor();
-        float breathingLineWidth = NODE_CONNECTOR_GLOW_LINE_THICKNESS * scale * zoom;
         if (tier == SkillTier.SOCKET) {
             if (ringState.breathing) {
-                ringArt.drawBreathingOutline(cx, cy, halfSize, breathingLineWidth, SOCKET_OUTLINE_RADII, accent, alphaMult);
+                beams.nodeRing(cx, cy, halfSize, SOCKET_OUTLINE_RADII, NodeBeams.RingLight.BREATHING, accent, nodeId, alphaMult, widthScale);
+            } else {
+                beams.pulse(cx, cy, halfSize, SOCKET_OUTLINE_RADII, accent, nodeId, alphaMult, widthScale);
             }
-            ringArt.drawPulseOutline(cx, cy, halfSize, nodeId, zoom, SOCKET_OUTLINE_RADII, accent, alphaMult);
-        } else if (!tier.isWormhole()) {
-            ringArt.drawDonut(cx, cy, ringRadius, scale, zoom, allocated, accent, alphaMult);
-            if (grantColor != null) {
-                drawGrantRing(cx, cy, ringRadius, scale, zoom, grantColor, alphaMult);
-            }
-            if (ringState.breathing) {
-                ringArt.drawBreathingOutline(cx, cy, ringRadius, breathingLineWidth, NodeRingArt.CIRCLE_OUTLINE_RADII, accent, alphaMult);
-            }
-            ringArt.drawPulseOutline(cx, cy, halfSize, nodeId, zoom, NodeRingArt.CIRCLE_OUTLINE_RADII, accent, alphaMult);
+            return;
         }
-
-        GL11.glDisable(GL11.GL_BLEND);
+        beams.nodeRing(cx, cy, ringRadius, null, ringLight(ringState), accent, nodeId, alphaMult, widthScale);
+        if (ringState == RingState.ALLOCATED_BREATHING) {
+            beams.ring(cx, cy, ringRadius, null, beams.lit(accent), beams.lightAlpha(NodeBeams.RingLight.BREATHING) * alphaMult, widthScale);
+        }
+        if (grantColor != null) {
+            beams.ring(cx, cy, ringRadius + 2f * NodeBeams.ringEdge(widthScale), null, beams.lit(grantColor), GRANT_RING_ALPHA * alphaMult,
+                    widthScale);
+        }
     }
 
-    private static void drawGrantRing(float cx, float cy, float donutRadius, float scale, float zoom, Color grantColor, float alphaMult) {
-        GL11.glLineWidth(NODE_CONNECTOR_LINE_THICKNESS * scale * zoom);
-        NodeRingArt.drawOutline(cx, cy, donutRadius + GRANT_RING_GAP * scale * zoom, NodeRingArt.CIRCLE_OUTLINE_RADII, grantColor,
-                alphaMult * GRANT_RING_ALPHA);
+    private static NodeBeams.RingLight ringLight(RingState ringState) {
+        if (ringState.allocated) {
+            return NodeBeams.RingLight.LIT;
+        }
+        return ringState.breathing ? NodeBeams.RingLight.BREATHING : NodeBeams.RingLight.DULL;
     }
 
     void drawDoctrineSocketBelt(float cx, float cy, float footprintSize, Color doctrineColor, boolean live, float alphaMult, float zoom) {

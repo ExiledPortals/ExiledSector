@@ -12,7 +12,7 @@ import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasReach;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.ui.TreeViewport;
-import exiledsector.ui.node.BeamStroke;
+import exiledsector.ui.node.NodeBeams;
 import exiledsector.ui.node.NodeMetrics;
 import exiledsector.ui.node.NodeRingArt;
 import exiledsector.ui.node.WormholeArt;
@@ -23,11 +23,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static exiledsector.ui.node.NodeBeams.DULL_ALPHA;
+import static exiledsector.ui.node.NodeBeams.DULL_LOOK;
+
 final class AtlasMapCanvas {
 
     static final float CELL_PIXELS = 2400f;
     static final float NODE_SCALE = 6f;
-    static final float LINE_SCALE_SHARE = 0.5f;
     static final float DISPLAY_JITTER_SHARE = AtlasGenerator.DISPLAY_JITTER_SHARE;
     static final float DEFAULT_ZOOM = 0.25f;
     static final float MAX_ZOOM = 0.8f;
@@ -35,13 +37,8 @@ final class AtlasMapCanvas {
     static final float DIM_PREVIEW_ALPHA = 0.55f;
     static final float COLLAPSE_SECONDS = 1.5f;
     static final int MAX_SCENERY_CELLS = 48;
-    static final BeamStroke.Style LANE_STYLE = new BeamStroke.Style("graphics/fx/beamfringe.png", "graphics/fx/beamcore.png", 14f, 5f, 4f, 30f);
-    static final BeamStroke.Style RING_STYLE = new BeamStroke.Style("graphics/fx/beamfringeb.png", "graphics/fx/beamcorec.png", 12f, 4f, 4f, 20f);
-    static final float DULL_LANE_ALPHA = 0.4f;
     static final float FOG_LANE_ALPHA = 0.3f;
-    static final float DIM_RING_ALPHA = 0.4f;
     static final float FOG_RING_ALPHA = 0.3f;
-    static final float WHITENESS = 0.7f;
     static final float FOG_SIZE_SHARE = 0.2f;
     static final float HIT_SHARE = 0.6f;
     static final float INFESTATION_RING_SHARE = 0.6f;
@@ -61,8 +58,7 @@ final class AtlasMapCanvas {
     private final NodeRingArt ringArt = new NodeRingArt();
     private final WormholeArt wormholeArt = new WormholeArt(ringArt);
     private final Map<AtlasCell, Float> collapsing = new HashMap<>();
-    private final BeamStroke beams = new BeamStroke();
-    private final Map<Color, BeamStroke.Look> beamLooks = new HashMap<>();
+    private final NodeBeams beams = new NodeBeams(ringArt);
     private final AtlasScenery scenery;
 
     AtlasMapCanvas(AtlasGenerator generator, AtlasState state) {
@@ -190,8 +186,8 @@ final class AtlasMapCanvas {
         return NodeMetrics.NODE_SIZE * NODE_SCALE * view.zoom();
     }
 
-    static float lineZoom(TreeViewport view) {
-        return view.zoom() * NODE_SCALE * LINE_SCALE_SHARE;
+    static float beamWidthScale(TreeViewport view) {
+        return NodeBeams.widthScale(view.zoom() * NODE_SCALE);
     }
 
     AtlasCell cellAt(TreeViewport view, float x, float y) {
@@ -226,8 +222,7 @@ final class AtlasMapCanvas {
     }
 
     private void drawLanes(TreeViewport view, Color accent, float alphaMult) {
-        float widthScale = lineZoom(view);
-        float edge = LANE_STYLE.fringeWidth() * widthScale / 2f;
+        float edge = NodeBeams.laneEdge(beamWidthScale(view));
         float innerRadius = NodeMetrics.donutRadius(footprint(view));
         float fogRadius = NodeMetrics.donutRadius(footprint(view) * FOG_SIZE_SHARE) + edge;
         for (AtlasCell cell : visible) {
@@ -240,6 +235,7 @@ final class AtlasMapCanvas {
                         bothVisible ? innerRadius * nodeScale(neighbour) + edge : fogRadius, bothVisible, accent, alphaMult);
             }
         }
+        beams.flush();
     }
 
     private void addLane(TreeViewport view, AtlasCell from, AtlasCell to, float fromRadius, float toRadius, boolean bothVisible, Color accent,
@@ -248,58 +244,23 @@ final class AtlasMapCanvas {
         float y1 = screenY(view, from);
         float x2 = screenX(view, to);
         float y2 = screenY(view, to);
-        float dx = x2 - x1;
-        float dy = y2 - y1;
-        float length = (float) Math.sqrt(dx * dx + dy * dy);
-        if (length <= fromRadius + toRadius || !view.overlaps(Math.min(x1, x2), Math.min(y1, y2), Math.max(x1, x2), Math.max(y1, y2))) {
+        if (!view.overlaps(Math.min(x1, x2), Math.min(y1, y2), Math.max(x1, x2), Math.max(y1, y2))) {
             return;
         }
-        float dirX = dx / length;
-        float dirY = dy / length;
-        float startX = x1 + dirX * fromRadius;
-        float startY = y1 + dirY * fromRadius;
-        float endX = x2 - dirX * toRadius;
-        float endY = y2 - dirY * toRadius;
-        float elapsed = ringArt.elapsedSeconds();
-        float widthScale = lineZoom(view);
+        float widthScale = beamWidthScale(view);
         if (state.isCompleted(from) && state.isCompleted(to)) {
-            beams.line(startX, startY, endX, endY, LANE_STYLE, beamLook(accent), alphaMult, alphaMult, elapsed, widthScale);
+            beams.connector(x1, y1, fromRadius, x2, y2, toRadius, beams.lit(accent), alphaMult, alphaMult, widthScale);
         } else if (bothVisible) {
-            beams.line(startX, startY, endX, endY, LANE_STYLE, dullLook(), DULL_LANE_ALPHA * alphaMult, DULL_LANE_ALPHA * alphaMult, elapsed,
-                    widthScale);
+            float dullAlpha = DULL_ALPHA * alphaMult;
+            beams.connector(x1, y1, fromRadius, x2, y2, toRadius, DULL_LOOK, dullAlpha, dullAlpha, widthScale);
         } else {
-            beams.line(startX, startY, endX, endY, LANE_STYLE, dullLook(), FOG_LANE_ALPHA * alphaMult, 0f, elapsed, widthScale);
-        }
-    }
-
-    private BeamStroke.Look beamLook(Color colour) {
-        return beamLooks.computeIfAbsent(colour, base -> new BeamStroke.Look(base, whitened(base), 0.8f, 0.9f));
-    }
-
-    private BeamStroke.Look dullLook() {
-        return beamLooks.computeIfAbsent(NodeMetrics.RING_DULL_COLOR, base -> new BeamStroke.Look(base, base, 0.6f, 0.3f));
-    }
-
-    static Color whitened(Color colour) {
-        return new Color(towardWhite(colour.getRed()), towardWhite(colour.getGreen()), towardWhite(colour.getBlue()));
-    }
-
-    private static int towardWhite(int channel) {
-        return Math.round(channel + (255 - channel) * WHITENESS);
-    }
-
-    private void drawRing(float x, float y, float radius, String key, Color colour, float alpha, float widthScale) {
-        float elapsed = ringArt.elapsedSeconds();
-        beams.ring(x, y, radius, RING_STYLE, beamLook(colour), alpha, elapsed, widthScale);
-        float pulse = ringArt.pulseProgress(key);
-        if (pulse >= 0f) {
-            beams.ring(x, y, radius * NodeRingArt.pulseRadiusFraction(pulse), RING_STYLE, beamLook(colour), (1f - pulse) * alpha, elapsed, widthScale);
+            beams.connector(x1, y1, fromRadius, x2, y2, toRadius, DULL_LOOK, FOG_LANE_ALPHA * alphaMult, 0f, widthScale);
         }
     }
 
     private void drawNodes(TreeViewport view, Color accent, float alphaMult) {
         float footprint = footprint(view);
-        float zoom = lineZoom(view);
+        float widthScale = beamWidthScale(view);
         for (Map.Entry<AtlasCell, AtlasNode> entry : nodes.entrySet()) {
             AtlasCell cell = entry.getKey();
             AtlasNode node = entry.getValue();
@@ -312,8 +273,7 @@ final class AtlasMapCanvas {
                 continue;
             }
             if (!visible.contains(cell)) {
-                beams.ring(x, y, NodeMetrics.donutRadius(footprint * FOG_SIZE_SHARE), RING_STYLE, dullLook(), FOG_RING_ALPHA * alphaMult,
-                        ringArt.elapsedSeconds(), zoom);
+                beams.ring(x, y, NodeMetrics.donutRadius(footprint * FOG_SIZE_SHARE), null, DULL_LOOK, FOG_RING_ALPHA * alphaMult, widthScale);
                 continue;
             }
             boolean lit = state.isCompleted(cell);
@@ -326,18 +286,20 @@ final class AtlasMapCanvas {
                 ringArt.drawPortalRings(x, y, innerRadius, nodeKey(cell), look, openness * alphaMult);
             }
             wormholeArt.drawDormant(x, y, innerRadius, tint, alphaMult, openness);
-            float ringAlpha = lit ? 1f : open ? ringArt.breathing() : DIM_RING_ALPHA;
-            drawRing(x, y, innerRadius, nodeKey(cell), tint, ringAlpha * alphaMult, zoom);
+            NodeBeams.RingLight light = lit ? NodeBeams.RingLight.LIT : open ? NodeBeams.RingLight.BREATHING : NodeBeams.RingLight.DIM;
+            beams.nodeRing(x, y, innerRadius, null, light, tint, nodeKey(cell), alphaMult, widthScale);
+            beams.flush();
             AtlasSystemPreview.Prepared sketch = sketches.get(cell);
             if (sketch != null && openness > 0f) {
                 preview.render(sketch, x, y, innerRadius * PREVIEW_FILL, ringArt.elapsedSeconds(), (lit || open ? 1f : DIM_PREVIEW_ALPHA) * openness * alphaMult);
             }
             if (node.infestationId() != null) {
                 boolean cleansed = state.has(cell, AtlasState.CLEANSED);
-                beams.ring(x, y, footprint * INFESTATION_RING_SHARE, RING_STYLE, beamLook(cleansed ? CLEANSED_COLOUR : Misc.getNegativeHighlightColor()),
-                        INFESTATION_RING_ALPHA * alphaMult, ringArt.elapsedSeconds(), zoom);
+                beams.ring(x, y, footprint * INFESTATION_RING_SHARE, null, beams.lit(cleansed ? CLEANSED_COLOUR : Misc.getNegativeHighlightColor()),
+                        INFESTATION_RING_ALPHA * alphaMult, widthScale);
             }
         }
+        beams.flush();
     }
 
     private Color ringTint(AtlasCell cell, AtlasNode node) {

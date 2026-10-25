@@ -49,6 +49,7 @@ public final class SkillTreeNodeDrawer {
     private final SkillTreePanelStyle panelStyle;
     private final NodeSearch nodeSearch;
     private final SkillTreeNodeRingRenderer ringRenderer;
+    private final NodeBeams beams;
     private final SkillTreeNodeIconRenderer iconRenderer = new SkillTreeNodeIconRenderer();
     private final RootCircuitRenderer rootCircuitRenderer = new RootCircuitRenderer();
     private final RootCircuitGrowth rootCircuitGrowth = new RootCircuitGrowth();
@@ -74,8 +75,9 @@ public final class SkillTreeNodeDrawer {
         this.panelStyle = panelStyle;
         this.nodeSearch = nodeSearch;
         this.ringRenderer = new SkillTreeNodeRingRenderer(panelStyle, wormholeOpenness);
+        this.beams = ringRenderer.beams();
         this.allocationAnimation = new AllocationAnimation(new AnimatedTree(), new AnimationSounds());
-        this.connectorRenderer = new SkillTreeNodeConnectorRenderer(panelStyle, nodeSearch, wormholeOpenness, socketWormholes);
+        this.connectorRenderer = new SkillTreeNodeConnectorRenderer(panelStyle, nodeSearch, wormholeOpenness, socketWormholes, beams);
         this.tooltipRenderer = new SkillTreeNodeTooltipRenderer(member, panelStyle);
         this.rootAffinityNumber = new RootAffinityNumber(member.getHullSpec().getHullSize());
         this.dropdownRenderer = new SkillTreeNodeDropdownRenderer(panelStyle);
@@ -121,6 +123,7 @@ public final class SkillTreeNodeDrawer {
         if (tetheredSocketId != null) {
             connectorRenderer.drawGrantTethers(shownLayers, SkillTree.get(tetheredSocketId), grantMarkers.grantedBy(tetheredSocketId),
                     grantMarkers.colorForSocket(tetheredSocketId));
+            beams.flush();
         }
 
         for (SkillNode node : SkillTree.topology().nonRoots()) {
@@ -131,12 +134,14 @@ public final class SkillTreeNodeDrawer {
         }
 
         connectorRenderer.draw(shownLayers, allocation, session.templateNodeIds(), session.plannedOnlyNodeIds(), allocationAnimation);
+        beams.flush();
         wormholeGhostFlights.draw(viewport, shownLayers.treeAlpha() * nodeSearch.backgroundAlpha());
 
         boolean choosing = rootChoice.phase() == StartingRootChoice.Phase.CHOOSING;
         for (SkillNode node : SkillTree.topology().roots()) {
             renderRootNode(node, viewport, alphaMult, allocation, rootChoice, choosing);
         }
+        beams.flush();
 
         if (choosing) {
             startingRootPrompt.setAlpha(alphaMult).draw(viewport.centerX(), viewport.screenY(rootChoice.promptOffsetY()));

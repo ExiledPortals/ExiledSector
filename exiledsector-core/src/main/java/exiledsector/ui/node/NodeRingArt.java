@@ -1,7 +1,6 @@
 package exiledsector.ui.node;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
-import com.fs.starfarer.api.util.Misc;
 import exiledlib.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.util.HoloShapes;
 import exiledsector.ui.util.SpriteDraw;
@@ -17,15 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import static exiledsector.ui.node.NodeMetrics.NODE_CONNECTOR_GLOW_HALO_ALPHA;
-import static exiledsector.ui.node.NodeMetrics.NODE_CONNECTOR_GLOW_HALO_THICKNESS;
-import static exiledsector.ui.node.NodeMetrics.NODE_CONNECTOR_GLOW_LINE_THICKNESS;
-import static exiledsector.ui.node.NodeMetrics.NODE_CONNECTOR_LINE_THICKNESS;
-import static exiledsector.ui.node.NodeMetrics.RING_DULL_ALPHA;
-import static exiledsector.ui.node.NodeMetrics.RING_DULL_COLOR;
-import static exiledsector.ui.node.NodeMetrics.donutGapRadius;
-import static exiledsector.ui.node.NodeMetrics.donutRadius;
-
 public final class NodeRingArt {
 
     public interface EdgeShape {
@@ -39,8 +29,6 @@ public final class NodeRingArt {
     public static final int RING_SEGMENTS = 32;
     public static final float UNALLOCATED_ALPHA_MULT = 0.45f;
     private static final UnitCircle RING_CIRCLE = UnitCircle.of(RING_SEGMENTS);
-    private static final float RING_LINE_THICKNESS = 1.5f;
-    public static final float[] CIRCLE_OUTLINE_RADII = outlineRadii((cos, sin) -> 1f);
 
     private static final String[] RING_STACK_TEXTURES = {
             "graphics/fx/wormhole_ring_bright2.png",
@@ -77,7 +65,6 @@ public final class NodeRingArt {
     private static final float BREATHING_PERIOD_SECONDS = 2.2f;
     private static final float BREATHING_MIN_ALPHA = 0.35f;
     private static final float BREATHING_MAX_ALPHA = 1f;
-    private static final int BREATHING_BRIGHTNESS_PASSES = 2;
 
     private static final String PINK_STACK_SUFFIX = "_pink";
 
@@ -85,7 +72,6 @@ public final class NodeRingArt {
     private final TexturedQuadBatch quads = new TexturedQuadBatch();
     private final Map<String, Float> pulseElapsed = new HashMap<>();
     private final Map<String, List<RingInstance>> ringStacks = new HashMap<>();
-    private float breathingPhase = 0f;
     private float animationElapsedSeconds = 0f;
 
     public static float[] outlineRadii(EdgeShape shape) {
@@ -97,7 +83,6 @@ public final class NodeRingArt {
     }
 
     public void advance(float amount) {
-        breathingPhase = (breathingPhase + amount) % BREATHING_PERIOD_SECONDS;
         animationElapsedSeconds += amount;
 
         if (!pulseElapsed.isEmpty()) {
@@ -138,25 +123,6 @@ public final class NodeRingArt {
 
     public boolean isPulsing(String nodeId) {
         return pulseElapsed.containsKey(nodeId);
-    }
-
-    public void drawNotable(float cx, float cy, float footprintSize, float zoom, String nodeId, NotableLook look, float alphaMult) {
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        float stateAlpha = look.lit() ? 1f : UNALLOCATED_ALPHA_MULT;
-        drawNotableRings(cx, cy, footprintSize, nodeId, stateAlpha * alphaMult, look.ringTint());
-        drawAmbientGlow(cx, cy, footprintSize, stateAlpha * alphaMult, look.glowTint());
-
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        float ringRadius = donutRadius(footprintSize);
-        drawDonut(cx, cy, ringRadius, 1f, zoom, look.lit(), look.accent(), alphaMult);
-        if (look.breathing()) {
-            drawBreathingOutline(cx, cy, ringRadius, NODE_CONNECTOR_GLOW_LINE_THICKNESS * zoom, CIRCLE_OUTLINE_RADII, look.accent(), alphaMult);
-        }
-        drawPulseOutline(cx, cy, footprintSize / 2f, nodeId, zoom, CIRCLE_OUTLINE_RADII, look.accent(), alphaMult);
-        GL11.glDisable(GL11.GL_BLEND);
     }
 
     public void drawPortalRings(float cx, float cy, float innerRadius, String nodeId, NotableLook look, float alphaMult) {
@@ -232,52 +198,6 @@ public final class NodeRingArt {
     public void drawAmbientGlow(float cx, float cy, float footprintSize, float alpha, Color glowColor) {
         float size = footprintSize * AMBIENT_GLOW_SIZE_RATIO;
         SpriteDraw.drawAdditiveAtCenter(spriteCache, GLOW_TEXTURE_PATH, cx, cy, size, size, glowColor, AMBIENT_GLOW_ALPHA * alpha);
-    }
-
-    public void drawDonut(float cx, float cy, float radius, float scale, float zoom, boolean lit, Color accent, float alphaMult) {
-        if (lit) {
-            GL11.glLineWidth(NODE_CONNECTOR_GLOW_HALO_THICKNESS * scale * zoom);
-            drawOutline(cx, cy, radius, CIRCLE_OUTLINE_RADII, accent, alphaMult * NODE_CONNECTOR_GLOW_HALO_ALPHA);
-            GL11.glLineWidth(NODE_CONNECTOR_GLOW_LINE_THICKNESS * scale * zoom);
-            drawOutline(cx, cy, radius, CIRCLE_OUTLINE_RADII, accent, alphaMult);
-            return;
-        }
-
-        float gapRadius = donutGapRadius(scale, zoom);
-        GL11.glLineWidth(NODE_CONNECTOR_LINE_THICKNESS * scale * zoom);
-        drawOutline(cx, cy, radius - gapRadius, CIRCLE_OUTLINE_RADII, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA);
-        drawOutline(cx, cy, radius + gapRadius, CIRCLE_OUTLINE_RADII, RING_DULL_COLOR, alphaMult * RING_DULL_ALPHA);
-    }
-
-    public void drawBreathingOutline(float cx, float cy, float ringRadius, float lineWidth, float[] outlineRadii, Color accent, float alphaMult) {
-        float breathingT = (float) (0.5 + 0.5 * Math.sin(2 * Math.PI * breathingPhase / BREATHING_PERIOD_SECONDS));
-        float breathingAlpha = (BREATHING_MIN_ALPHA + (BREATHING_MAX_ALPHA - BREATHING_MIN_ALPHA) * breathingT) * alphaMult;
-        GL11.glLineWidth(lineWidth);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
-        for (int pass = 0; pass < BREATHING_BRIGHTNESS_PASSES; pass++) {
-            drawOutline(cx, cy, ringRadius, outlineRadii, accent, breathingAlpha);
-        }
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-    }
-
-    public void drawPulseOutline(float cx, float cy, float halfSize, String nodeId, float zoom, float[] outlineRadii, Color accent, float alphaMult) {
-        Float pulseSeconds = pulseElapsed.get(nodeId);
-        if (pulseSeconds == null) return;
-
-        GL11.glLineWidth(RING_LINE_THICKNESS * zoom);
-        float progress = pulseSeconds / PULSE_DURATION;
-        float radiusFraction = PULSE_START_RADIUS_FRACTION + (PULSE_END_RADIUS_FRACTION - PULSE_START_RADIUS_FRACTION) * progress;
-        drawOutline(cx, cy, halfSize * radiusFraction, outlineRadii, accent, (1f - progress) * alphaMult);
-    }
-
-    public static void drawOutline(float cx, float cy, float radius, float[] outlineRadii, Color color, float alpha) {
-        Misc.setColor(color, alpha);
-        GL11.glBegin(GL11.GL_LINE_LOOP);
-        for (int i = 0; i < RING_SEGMENTS; i++) {
-            float vertexRadius = radius * outlineRadii[i];
-            GL11.glVertex2f(cx + RING_CIRCLE.cos(i) * vertexRadius, cy + RING_CIRCLE.sin(i) * vertexRadius);
-        }
-        GL11.glEnd();
     }
 
     private static List<RingInstance> generateRingInstances(String seedKey, int count, float radiusDecay) {

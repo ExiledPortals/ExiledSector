@@ -3,7 +3,6 @@ package exiledsector.ui.node;
 import exiledsector.skills.SkillTier;
 
 import static exiledsector.ui.node.NodeMetrics.ICON_INSET_RATIO;
-import static exiledsector.ui.node.NodeMetrics.donutGapRadius;
 import static exiledsector.ui.node.NodeMetrics.donutRadius;
 
 final class SkillTreeNodeGeometry {
@@ -13,15 +12,11 @@ final class SkillTreeNodeGeometry {
     private SkillTreeNodeGeometry() {
     }
 
-    static float donutOuterRadius(float footprintSize, SkillTier tier, float zoom) {
-        return donutRadius(footprintSize) + donutGapRadius(tier.getSizeMultiplier(), zoom);
-    }
-
     static float connectorEndpointRadius(SkillTier tier, float footprintSize, float zoom) {
         if (tier == SkillTier.ROOT) {
             return donutRadius(footprintSize) * ROOT_CONNECTOR_OVERLAP_RATIO;
         }
-        return donutOuterRadius(footprintSize, tier, zoom);
+        return donutRadius(footprintSize) + NodeBeams.laneEdge(NodeBeams.widthScale(zoom));
     }
 
     static float octagonEdgeDistance(float halfSize, float diagonalLimit, float dx, float dy) {

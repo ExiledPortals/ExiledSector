@@ -2,6 +2,8 @@ package exiledsector.ui.node;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -42,5 +44,45 @@ class BeamStrokeTest {
         assertEquals(-10f, BeamStroke.tileStart(0f, 40f, 10f));
         assertEquals(30f, BeamStroke.tileStart(30f, 40f, 10f));
         assertEquals(5f, BeamStroke.positiveModulo(-35f, 40f));
+    }
+
+    @Test
+    void outlinedRingsFollowTheirShapeAndCloseOnThemselves() {
+        float[] square = new float[32];
+        Arrays.fill(square, 1f);
+        for (int i = 0; i < square.length; i += 2) {
+            square[i] = 2f;
+        }
+        BeamStroke.RingPath path = new BeamStroke.RingPath();
+        path.set(10f, 20f, 5f, square);
+        float[] start = new float[4];
+        float[] end = new float[4];
+        path.at(0f, start);
+        path.at(path.length(), end);
+
+        assertEquals(20f, start[0], 0.001f);
+        assertEquals(20f, start[1], 0.001f);
+        assertEquals(start[0], end[0], 0.001f);
+        assertEquals(start[1], end[1], 0.001f);
+        assertTrue(path.length() > 2f * Math.PI * 5f);
+    }
+
+    @Test
+    void plainRingsAreCircles() {
+        BeamStroke.RingPath path = new BeamStroke.RingPath();
+        path.set(0f, 0f, 10f, null);
+        float[] quarter = new float[4];
+        path.at(path.length() / 4f, quarter);
+
+        assertEquals(2f * Math.PI * 10f, path.length(), 0.001f);
+        assertEquals(0f, quarter[0], 0.001f);
+        assertEquals(10f, quarter[1], 0.001f);
+    }
+
+    @Test
+    void ringPiecesTrackScreenSizeWithinBounds() {
+        assertEquals(1f, BeamStroke.ringPiece(12f), 0.0001f);
+        assertEquals(8f, BeamStroke.ringPiece(200f), 0.0001f);
+        assertEquals(2000f / 45f, BeamStroke.ringPiece(2000f), 0.0001f);
     }
 }

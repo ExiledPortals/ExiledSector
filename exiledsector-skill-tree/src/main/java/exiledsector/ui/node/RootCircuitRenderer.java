@@ -47,7 +47,6 @@ final class RootCircuitRenderer {
     private static final float TAIL_SHRINK_PER_COPY = 0.18f;
     private static final float TAIL_FADE_PER_COPY = 0.22f;
     private static final float END_FADE_RADII = 0.15f;
-    private static final float WHITENESS = 0.7f;
     private static final float CLOCK_WRAP_SECONDS = RootCircuit.SPARK_INTERVAL_SECONDS * 1000f;
 
     private final SpriteCache sprites = new SpriteCache(RootCircuitRenderer.class);
@@ -70,7 +69,7 @@ final class RootCircuitRenderer {
         if (circuit.traces().isEmpty() || !texturesLoaded()) {
             return;
         }
-        Color whitened = whitenedColours.computeIfAbsent(rootColour, RootCircuitRenderer::whitened);
+        Color whitened = whitenedColours.computeIfAbsent(rootColour, NodeBeams::whitened);
         float growth = Math.min(1f, grownRadii / circuit.longestTraceRadii());
         if (growth > 0f) {
             centredQuad(HALO, centerX, centerY, HALO_SIZE_RADII * rootRadius, rootColour, alphaMult * HALO_ALPHA * growth);
@@ -182,13 +181,5 @@ final class RootCircuitRenderer {
             quads.quadAtCenter(centerX + point[0] * rootRadius, centerY + point[1] * rootRadius, copySize, copySize, 0f,
                     copy == 0 ? headColour : rootColour, alphaMult * endFade * (1f - copy * TAIL_FADE_PER_COPY));
         }
-    }
-
-    private static Color whitened(Color colour) {
-        return new Color(towardWhite(colour.getRed()), towardWhite(colour.getGreen()), towardWhite(colour.getBlue()));
-    }
-
-    private static int towardWhite(int channel) {
-        return Math.round(channel + (255 - channel) * WHITENESS);
     }
 }
