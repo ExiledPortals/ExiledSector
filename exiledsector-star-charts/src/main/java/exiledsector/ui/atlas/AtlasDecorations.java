@@ -7,6 +7,7 @@ import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasDecoration;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.GlScope;
+import exiledsector.ui.util.HoloShapes;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
@@ -25,6 +26,9 @@ final class AtlasDecorations {
     static final float DRIFT_FREQUENCY = 0.15f;
     static final float MIN_PIECE_PIXELS = 1f;
     static final int CACHE_LIMIT = 2048;
+    static final float PING_SECONDS = 1f;
+    static final float PING_REACH = 4f;
+    static final float PING_LINE_WIDTH = 2f;
     private static final long PLACEMENT_SALT = 0x4445434fL;
 
     record Piece(AtlasDecoration decoration, String sprite, int frame, float x, float y, float size, float startAngle, float spinRate,
@@ -40,6 +44,7 @@ final class AtlasDecorations {
     };
     private final Map<String, List<Piece>> bySprite = new LinkedHashMap<>();
     private final Map<String, List<Piece>> byGlow = new LinkedHashMap<>();
+    private final List<Piece> pinging = new ArrayList<>();
     private AtlasMapCanvas canvas;
     private Set<Long> known = Set.of();
     private float elapsedSeconds;
@@ -68,6 +73,7 @@ final class AtlasDecorations {
         }
         bySprite.values().forEach(List::clear);
         byGlow.values().forEach(List::clear);
+        pinging.clear();
         for (int gridX = firstX; gridX <= lastX; gridX++) {
             for (int gridY = firstY; gridY <= lastY; gridY++) {
                 AtlasCell cell = new AtlasCell(gridX, gridY);
@@ -79,11 +85,15 @@ final class AtlasDecorations {
                     if (!piece.decoration().glow().isEmpty()) {
                         byGlow.computeIfAbsent(piece.decoration().glow(), path -> new ArrayList<>()).add(piece);
                     }
+                    if (piece.decoration().ping() > 0f) {
+                        pinging.add(piece);
+                    }
                 }
             }
         }
         bySprite.forEach((path, list) -> drawAll(view, path, list, false, alphaMult));
         byGlow.forEach((path, list) -> drawAll(view, path, list, true, alphaMult));
+        drawPings(view, alphaMult);
     }
 
     List<Piece> piecesIn(AtlasCell cell) {
@@ -200,9 +210,8 @@ final class AtlasDecorations {
                 if (Math.max(halfWidth, halfHeight) * 2f < MIN_PIECE_PIXELS) {
                     continue;
                 }
-                float drift = elapsedSeconds * DRIFT_FREQUENCY * (float) (Math.PI * 2.0) + piece.driftPhase();
-                float x = view.screenX(piece.x() + (float) Math.cos(drift) * piece.driftRadius());
-                float y = view.screenY(piece.y() + (float) Math.sin(drift) * piece.driftRadius());
+                float x = view.screenX(driftedX(piece));
+                float y = view.screenY(driftedY(piece));
                 float reach = (halfWidth + halfHeight);
                 if (!view.isVisible(x, y, reach)) {
                     continue;
@@ -216,7 +225,7 @@ final class AtlasDecorations {
                 float red = colour == null ? 1f : colour.getRed() / 255f;
                 float green = colour == null ? 1f : colour.getGreen() / 255f;
                 float blue = colour == null ? 1f : colour.getBlue() / 255f;
-                GL11.glColor4f(red, green, blue, decoration.alpha() * alphaMult);
+                GL11.glColor4f(red, green, blue, decoration.alpha() * alphaMult * (glow ? pulseLevel(decoration.pulse(), beat(piece), elapsedSeconds) : 1f));
                 float angle = (float) Math.toRadians(piece.startAngle() + piece.spinRate() * elapsedSeconds);
                 float cos = (float) Math.cos(angle);
                 float sin = (float) Math.sin(angle);
@@ -233,6 +242,56 @@ final class AtlasDecorations {
                 GL11.glEnd();
             }
         }
+    }
+
+    private void drawPings(TreeViewport view, float alphaMult) {
+        if (pinging.isEmpty()) {
+            return;
+        }
+        float zoom = view.zoom();
+        try (GlScope scope = GlScope.save(GlScope.DRAW_ATTRIBS).untextured().blend(GL11.GL_SRC_ALPHA, GL11.GL_ONE)) {
+            for (Piece piece : pinging) {
+                AtlasDecoration decoration = piece.decoration();
+                float progress = pingProgress(decoration.ping(), beat(piece), elapsedSeconds);
+                float radius = progress * piece.size() * PING_REACH * zoom;
+                float x = view.screenX(driftedX(piece));
+                float y = view.screenY(driftedY(piece));
+                if (progress < 0f || radius < MIN_PIECE_PIXELS || !view.isVisible(x, y, radius)) {
+                    continue;
+                }
+                Color colour = decoration.glowColour() != null ? decoration.glowColour() : decoration.colour();
+                HoloShapes.circle(x, y, radius, colour == null ? Color.WHITE : colour, PING_LINE_WIDTH, (1f - progress) * decoration.alpha() * alphaMult);
+            }
+        }
+    }
+
+    static float pulseLevel(float pulse, float beat, float elapsedSeconds) {
+        if (pulse <= 0f) {
+            return 1f;
+        }
+        float phase = (elapsedSeconds * pulse + beat) % 1f;
+        return phase < 0.5f ? phase * 2f : 2f - phase * 2f;
+    }
+
+    static float pingProgress(float ping, float beat, float elapsedSeconds) {
+        if (ping <= 0f) {
+            return -1f;
+        }
+        float since = (elapsedSeconds + beat * ping) % ping;
+        float duration = Math.min(PING_SECONDS, ping);
+        return since < duration ? since / duration : -1f;
+    }
+
+    private static float beat(Piece piece) {
+        return piece.driftPhase() / (float) (Math.PI * 2.0);
+    }
+
+    private float driftedX(Piece piece) {
+        return piece.x() + (float) Math.cos(elapsedSeconds * DRIFT_FREQUENCY * (float) (Math.PI * 2.0) + piece.driftPhase()) * piece.driftRadius();
+    }
+
+    private float driftedY(Piece piece) {
+        return piece.y() + (float) Math.sin(elapsedSeconds * DRIFT_FREQUENCY * (float) (Math.PI * 2.0) + piece.driftPhase()) * piece.driftRadius();
     }
 
     private static void corner(float x, float y, float localX, float localY, float cos, float sin, float texX, float texY) {

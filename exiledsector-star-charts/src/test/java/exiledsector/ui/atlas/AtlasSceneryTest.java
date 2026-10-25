@@ -28,9 +28,9 @@ class AtlasSceneryTest {
     private static final long SEED = 0x5ce4eL;
     private static final Map<String, AtlasDecoration> DECORATIONS = Map.of(
             "probe", new AtlasDecoration("probe", List.of("graphics/stations/survey_probe.png"), "", 1, 1, 0.05f, 0.2f, 1, 0f, 4f, 0.02f, null, null, 0.9f,
-                    List.of("debris")),
+                    0f, 0f, List.of("debris")),
             "debris", new AtlasDecoration("debris", List.of("graphics/debris/debris_sheet0.png"), "graphics/debris/debris_sheet0_glow.png", 4, 4,
-                    0.012f, 0.5f, 12, 0.1f, 25f, 0.008f, null, null, 1f, List.of()));
+                    0.012f, 0.5f, 12, 0.1f, 25f, 0.008f, null, null, 1f, 0f, 0f, List.of()));
     private static final AtlasAmbience GRAVEYARD = new AtlasAmbience(0f, null, Map.of("probe", 1f, "debris", 2f), 2f);
 
     private static AtlasMapCanvas canvas() {
@@ -89,6 +89,18 @@ class AtlasSceneryTest {
                 assertTrue(Math.hypot(piece.x() - probe.x(), piece.y() - probe.y()) <= reach, piece + " strays from " + probe);
             }
         }
+    }
+
+    @Test
+    void glowsPulseAndPingsRingOutOnTheirBeat() {
+        assertEquals(1f, AtlasDecorations.pulseLevel(0f, 0.3f, 12f));
+        assertEquals(0f, AtlasDecorations.pulseLevel(1.5f, 0f, 0f), 0.001f);
+        assertEquals(1f, AtlasDecorations.pulseLevel(1.5f, 0f, 1f / 3f), 0.001f);
+        assertEquals(0.5f, AtlasDecorations.pulseLevel(1.5f, 0.25f, 0f), 0.001f);
+        assertEquals(-1f, AtlasDecorations.pingProgress(0f, 0f, 3f));
+        assertEquals(0.5f, AtlasDecorations.pingProgress(6f, 0f, 6.5f), 0.001f);
+        assertEquals(-1f, AtlasDecorations.pingProgress(6f, 0f, 3f));
+        assertEquals(0.25f, AtlasDecorations.pingProgress(6f, 0.5f, 3.25f), 0.001f);
     }
 
     @Test
