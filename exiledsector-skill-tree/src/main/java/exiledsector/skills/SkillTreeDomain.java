@@ -87,6 +87,7 @@ import exiledsector.ui.SkillTreeSettings;
 import exiledsector.ui.TreeCameraMemory;
 import exiledsector.ui.cargo.ItemIconLooks;
 import exiledsector.ui.cargo.SkillTreeIconLooks;
+import exiledsector.ui.decoration.TreeFactionColours;
 import exiledsector.ui.decoration.TreeFleetFactions;
 import exiledsector.ui.inspect.ItemCodex;
 import exiledsector.ui.inspect.NpcTreeInspectInput;
@@ -152,6 +153,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
         LearnedPhantomConflicts.load();
         NpcFactionVolumes.load();
         TreeFleetFactions.load();
+        TreeFactionColours.publish();
         NpcFocus.load();
         NpcLevelCaps.load();
         NodeReplacements.load();

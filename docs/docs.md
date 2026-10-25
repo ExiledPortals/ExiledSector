@@ -209,7 +209,9 @@ Killing the objective completes the system and grants an atlas point for the fir
 A Sensor Array also reveals 6 lanes, a Nexus cleanses the systems it infested, and a Bastion gives a key fragment and
 allows one attempt. A run that closes without its objective spends the system's markers (Powerful Boss, expansion,
 overlay phenomenon). Biomes tile the map from sites about five cells apart, and each sets how many of its cells hold a
-system (`AtlasBiomes`). Hyperspace clouds are impassable terrain clumping inside biomes and ridging along some
+system (`AtlasBiomes`). Normal space wins most sites and chains into the volumes factions hold, while a special biome
+never sits beside another site of its own type, so it stays a small pocket. Each biome lists the only factions it holds
+(the derelict graveyard holds only derelicts), and normal space's list is the pool every faction territory draws from. Hyperspace clouds are impassable terrain clumping inside biomes and ridging along some
 biome borders: no system sits under one and lanes route around them, and a grid of cleared corridors keeps the
 Gateway and every Bastion joined to the rest of the map (`AtlasTerrain`). A biome or Threat infestation behind
 an unlock is decided when first seen, and that is saved.

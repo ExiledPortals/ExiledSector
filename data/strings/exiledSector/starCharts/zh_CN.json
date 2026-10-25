@@ -195,6 +195,7 @@
     "chart.atlas.summary": "星图册点数：{points}    钥匙碎片：{fragments}/3",
     "chart.atlas.hint": "拖动以平移，滚轮缩放。点击亮起的星系为其选择星图；Esc关闭。",
     "chart.atlas.close": "关闭",
+    "chart.atlas.borders": "势力领地",
     "chart.atlas.debug.complete": "完成",
     "chart.atlas.debug.complete.tooltip": "调试工具：立即以已装载星图的等级（未装载时为1级）完成此星系并获得其奖励。不会消耗星图。",
     "chart.atlas.normalSpace": "开阔空间",

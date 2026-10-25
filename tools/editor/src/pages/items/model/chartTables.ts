@@ -786,7 +786,7 @@ export const ATLAS_REGION_SPEC: ChartTableSpec = {
   noun: 'atlas region',
   keyColumn: 'id',
   description:
-    'Biomes of the Outer Reaches atlas. Biomes cover the whole map: sites are scattered about five cells apart, each picks a row by weight, and every cell belongs to the nearest site, with larger biomes reaching further. The normal row is open space, a bare starscape with few systems, and is picked like any other row, so its weight sets how common it is. A biome sets which layouts and factions its systems use, leans phenomenon and expansion markers up or down, and sets the hyperspace clouds and scattered decorations from atlas_decorations.csv. Clouds are impassable: no system sits under one and no lane crosses one. They gather into clumps inside a biome (clouds) and into ridges with passes along some borders between different biomes (walls). A biome behind a mod or an unlock is decided when its site is first revealed; while locked, the site takes its next pick.',
+    'Biomes of the Outer Reaches atlas. Biomes cover the whole map: sites are scattered about five cells apart, each picks a row by weight, and every cell belongs to the nearest site, with larger biomes reaching further. The normal row is the space factions hold and is picked like any other row, so its weight sets how common it is; its sites chain together, while a site of any other row never sits beside another site of the same row, so special biomes stay small pockets. A biome sets which layouts and factions its systems use, leans phenomenon and expansion markers up or down, and sets the hyperspace clouds and scattered decorations from atlas_decorations.csv. Clouds are impassable: no system sits under one and no lane crosses one. They gather into clumps inside a biome (clouds) and into ridges with passes along some borders between different biomes (walls). A biome behind a mod or an unlock is decided when its site is first revealed; while locked, the site takes its next pick.',
   columns: columnsOf(ATLAS_REGION_COLUMNS, {
     id: { label: 'Region id', kind: 'text' },
     weight: { label: 'Weight', kind: 'number' },
@@ -799,7 +799,11 @@ export const ATLAS_REGION_SPEC: ChartTableSpec = {
     requires_mod: { label: 'Requires mod', kind: 'text', help: 'Optional mod id; sites revealed while that mod is off take their next pick' },
     unlock: { label: 'Unlock', kind: 'text', help: 'Optional player memory flag, such as $encounteredThreat; sites revealed before it is set take their next pick' },
     layouts: { label: 'Layouts', kind: 'text', help: 'layout:weight; ... from atlas_layouts.csv. Empty uses every layout at its own weight' },
-    factions: { label: 'Factions', kind: 'text', help: 'faction:weight; ... from chart_factions.csv. Empty keeps the faction territory as it is' },
+    factions: {
+      label: 'Factions',
+      kind: 'text',
+      help: 'faction:weight; ... from chart_factions.csv: the only factions this biome holds, kept in territories. On the normal row it is the pool every territory draws from. Empty keeps the territory faction',
+    },
     markers: { label: 'Markers', kind: 'text', help: 'phenomenon or expansion id:multiplier; ... Unlisted markers keep their weight' },
     backgrounds: { label: 'Backgrounds', kind: 'text', help: 'Background images for systems without a nebula, separated by ;. Empty uses vanilla\'s' },
     nebula_backgrounds: { label: 'Nebula backgrounds', kind: 'text', help: 'Background images for systems with a nebula. Empty uses vanilla\'s' },

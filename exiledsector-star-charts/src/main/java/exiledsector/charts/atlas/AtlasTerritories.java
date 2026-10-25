@@ -2,6 +2,7 @@ package exiledsector.charts.atlas;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 final class AtlasTerritories {
@@ -77,6 +78,7 @@ final class AtlasTerritories {
     }
 
     private String territoryFor(SeedPoint point) {
-        return AtlasHash.race(seed, TERRITORY_PICK_SALT, point.gridX(), point.gridY(), rules.factionWeights());
+        Map<String, Float> pool = rules.normalRegion().factionWeights();
+        return AtlasHash.race(seed, TERRITORY_PICK_SALT, point.gridX(), point.gridY(), pool.isEmpty() ? rules.factionWeights() : pool);
     }
 }

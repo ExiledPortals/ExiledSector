@@ -4,9 +4,11 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
+import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Style;
 import exiledlib.i18n.StyledText;
@@ -36,6 +38,7 @@ import org.lwjgl.input.Keyboard;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class AtlasScreen extends BaseCustomUIPanelPlugin implements CampaignOverlay.Screen {
 
@@ -45,13 +48,17 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     static final float CHROME_PAD = 24f;
     static final float SUMMARY_GAP = 6f;
     static final float CLOSE_WIDTH = 120f;
+    static final float BORDERS_WIDTH = 160f;
+    static final float BUTTON_GAP = 10f;
     static final float OPEN_SECONDS = 0.2f;
     static final float DIM_SECONDS = 0.2f;
     static final float BACKDROP_ALPHA = 0.8f;
     static final float BENCH_DIM_ALPHA = 0.65f;
     static final Color HINT_COLOUR = new Color(150, 150, 150);
 
-    private enum Control { CLOSE }
+    private enum Control { CLOSE, BORDERS }
+
+    private static final AtomicBoolean BORDERS_SHOWN = new AtomicBoolean();
 
     private final CampaignOverlay.Host host;
     private final SkillTreePanelStyle panelStyle = new SkillTreePanelStyle();
@@ -67,6 +74,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private CustomPanelAPI panelRoot;
     private PositionAPI panelPosition;
     private ModificationBay bay;
+    private ButtonAPI bordersButton;
     private AtlasCell tooltipCell;
     private AtlasCell hoveredCell;
     private String wormholeMessage;
@@ -89,6 +97,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     public void attach(CustomPanelAPI panel) {
         panelRoot = panel;
         map = new AtlasMapCanvas(AtlasRuntime.generator(Global.getSector()), AtlasState.get(Global.getSector()));
+        map.scenery().borders().show(BORDERS_SHOWN.get(), true);
         camera.jumpZoomTo(AtlasMapCanvas.DEFAULT_ZOOM);
         camera.centreOn(map.focusX(), map.focusY());
         I18n.forGameText(this::buildChrome);
@@ -102,6 +111,12 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         TooltipMakerAPI element = panelRoot.createUIElement(CLOSE_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
         element.addButton(Translation.text("chart.atlas.close"), Control.CLOSE, CLOSE_WIDTH, ChromeMetrics.CONTROL_HEIGHT, 0f);
         panelRoot.addUIElement(element).inTL(position.getWidth() - PANEL_MARGIN - CHROME_PAD - CLOSE_WIDTH, PANEL_MARGIN + CHROME_PAD);
+        TooltipMakerAPI toggles = panelRoot.createUIElement(BORDERS_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
+        bordersButton = toggles.addAreaCheckbox(Translation.text("chart.atlas.borders"), Control.BORDERS, Misc.getBasePlayerColor(),
+                Misc.getDarkPlayerColor(), Misc.getBrightPlayerColor(), BORDERS_WIDTH, ChromeMetrics.CONTROL_HEIGHT, 0f);
+        bordersButton.setChecked(BORDERS_SHOWN.get());
+        panelRoot.addUIElement(toggles).inTL(position.getWidth() - PANEL_MARGIN - CHROME_PAD - CLOSE_WIDTH - BUTTON_GAP - BORDERS_WIDTH,
+                PANEL_MARGIN + CHROME_PAD);
     }
 
     private void writeSummary() {
@@ -138,6 +153,9 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     public void buttonPressed(Object buttonId) {
         if (buttonId == Control.CLOSE) {
             close();
+        } else if (buttonId == Control.BORDERS && bordersButton != null) {
+            BORDERS_SHOWN.set(bordersButton.isChecked());
+            map.scenery().borders().show(BORDERS_SHOWN.get(), false);
         }
     }
 

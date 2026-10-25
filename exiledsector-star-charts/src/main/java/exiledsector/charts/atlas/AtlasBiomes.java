@@ -14,6 +14,8 @@ final class AtlasBiomes {
     static final float MAX_BONUS = bonus(AtlasRegion.MAX_SIZE);
     static final float MIN_BONUS = bonus(AtlasRegion.MIN_SIZE);
     static final int SITE_WINDOW = 3;
+    static final float POCKET_REACH = 2f * BIOME_SPACING;
+    static final int POCKET_WINDOW = 2;
     static final float SITE_REACH = BIOME_SPACING * (float) Math.sqrt(2) + MAX_BONUS - MIN_BONUS;
     static final float TOUCH_DISTANCE = 2f * SITE_REACH + (1f + 2f * AtlasPositions.JITTER_REACH) * (float) Math.sqrt(2);
     static final int TOUCH_WINDOW = (int) Math.ceil(TOUCH_DISTANCE / BIOME_SPACING) + 1;
@@ -209,8 +211,31 @@ final class AtlasBiomes {
             });
             picked = AtlasHash.race(seed, REGION_PICK_SALT, site.siteX(), site.siteY(), weights);
         }
+        while (picked != null && !AtlasRegion.NORMAL.equals(picked) && kinNearby(site, picked)) {
+            weights.put(picked, 0f);
+            picked = AtlasHash.race(seed, REGION_PICK_SALT, site.siteX(), site.siteY(), weights);
+        }
         AtlasRegion region = rules.region(picked);
         return region == null ? rules.normalRegion() : region;
+    }
+
+    private boolean kinNearby(Site site, String regionId) {
+        for (int sx = site.siteX() - POCKET_WINDOW; sx <= site.siteX() + POCKET_WINDOW; sx++) {
+            for (int sy = site.siteY() - POCKET_WINDOW; sy <= site.siteY() + POCKET_WINDOW; sy++) {
+                Site other = site(sx, sy);
+                if (sx == site.siteX() && sy == site.siteY() || other.distanceTo(site.centreX(), site.centreY()) > POCKET_REACH) {
+                    continue;
+                }
+                AtlasRegion decided = recordedRegion(other);
+                if (decided == null && other.outranks(site)) {
+                    decided = siteRegion(other);
+                }
+                if (decided != null && decided.id().equals(regionId)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private AtlasRegion recordedRegion(Site site) {

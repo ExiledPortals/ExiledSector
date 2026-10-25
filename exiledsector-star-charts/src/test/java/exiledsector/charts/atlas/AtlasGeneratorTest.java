@@ -322,7 +322,7 @@ class AtlasGeneratorTest {
         float normalShare = (float) siteRegions.getOrDefault(AtlasRegion.NORMAL, 0) / sites.size();
 
         assertTrue(siteRegions.keySet().containsAll(Set.of(AtlasRegion.NORMAL, "graveyard", "badlands", "collapsed")), siteRegions.toString());
-        assertTrue(normalShare > 0.2f && normalShare < 0.5f, "normal space holds " + normalShare + " of sites");
+        assertTrue(normalShare > 0.2f && normalShare < 0.8f, "normal space holds " + normalShare + " of sites");
     }
 
     @Test
@@ -520,6 +520,53 @@ class AtlasGeneratorTest {
     }
 
     @Test
+    void specialPocketsNeverTouchAnotherPocketOfTheirOwnTypeWhileNormalSpaceChains() {
+        AtlasGenerator generator = generator(rules(List.of(sized(AtlasRegion.NORMAL, 1f, 1f), sized("storm", 1f, 1f), sized("ice", 1f, 1f))));
+        int specialCells = 0;
+        int normalJoins = 0;
+        for (AtlasCell cell : AtlasCell.ORIGIN.around(40)) {
+            AtlasBiome biome = generator.biomeOf(cell);
+            for (AtlasCell next : List.of(new AtlasCell(cell.gridX() + 1, cell.gridY()), new AtlasCell(cell.gridX(), cell.gridY() + 1))) {
+                AtlasBiome neighbour = generator.biomeOf(next);
+                if (neighbour.siteKey() == biome.siteKey() || !neighbour.regionId().equals(biome.regionId())) {
+                    continue;
+                }
+                assertEquals(AtlasRegion.NORMAL, biome.regionId(), cell + " and " + next + " are separate " + biome.regionId() + " pockets");
+                normalJoins++;
+            }
+            specialCells += AtlasRegion.NORMAL.equals(biome.regionId()) ? 0 : 1;
+        }
+
+        assertTrue(specialCells > 500, "specials " + specialCells);
+        assertTrue(normalJoins > 0);
+    }
+
+    @Test
+    void biomesHoldOnlyTheirMappedFactionsAndTerritoriesDrawFromNormalSpace() {
+        AtlasRegion normal = new AtlasRegion(AtlasRegion.NORMAL, 2f, 0, "", "", Map.of(), Map.of("pirates", 1f, "hegemony", 1f), Map.of());
+        AtlasRegion graveyard = new AtlasRegion("graveyard", 1f, 0, "", "", Map.of(), Map.of("derelict", 1f), Map.of());
+        AtlasRegion storm = new AtlasRegion("storm", 1f, 0, "", "", Map.of(), Map.of(), Map.of());
+        AtlasGenerator generator = generator(rules(List.of(normal, graveyard, storm)));
+        int held = 0;
+        Set<String> territoryFactions = new HashSet<>();
+        for (AtlasNode node : scan(generator)) {
+            if (node.isVoid() || node.isOrigin()) {
+                continue;
+            }
+            assertEquals(node.factionId(), generator.factionAt(node.cell()));
+            if ("graveyard".equals(node.regionId())) {
+                held++;
+                assertEquals("derelict", node.factionId(), node.cell().toString());
+            } else {
+                territoryFactions.add(node.factionId());
+            }
+        }
+
+        assertTrue(held > 20);
+        assertEquals(Set.of("pirates", "hegemony"), territoryFactions);
+    }
+
+    @Test
     void latticePathsStepBetweenLatticeCellsWithinLaneReach() {
         AtlasCell from = new AtlasCell(-14, 6);
         AtlasCell to = new AtlasCell(8, -2);
@@ -583,6 +630,7 @@ class AtlasGeneratorTest {
         for (AtlasBiome biome : biomes(unlocked)) {
             unlockedSites.put(biome.siteKey(), biome.regionId());
         }
+        List<AtlasBiome> openedSites = biomes(unlocked).stream().filter(biome -> Set.of("rift", "expanse").contains(biome.regionId())).toList();
         for (AtlasNode node : scan(locked)) {
             assertNotEquals("rift", node.regionId());
             assertNotEquals("expanse", node.regionId());
@@ -591,7 +639,8 @@ class AtlasGeneratorTest {
             String after = unlocked.node(node.cell()).regionId();
             if (!after.equals(node.regionId())) {
                 opened++;
-                assertTrue("rift".equals(after) || "expanse".equals(after), node.cell() + " became " + after);
+                assertTrue("rift".equals(after) || "expanse".equals(after) || nearSwitched(unlocked.biomeOf(node.cell()), openedSites),
+                        node.cell() + " became " + after);
             }
         }
         AtlasGenerator remembered = new AtlasGenerator(SEED, rules(), new AtlasUnlocks(RAT::equals, Set.of()), unlockedSites::get);
@@ -657,6 +706,7 @@ class AtlasGeneratorTest {
         withExtra.add(region("furnace", 6f, 0, "", "", Map.of(), Map.of()));
         AtlasGenerator before = generator(rules());
         AtlasGenerator after = generator(rules(withExtra));
+        List<AtlasBiome> furnaces = biomes(after).stream().filter(biome -> "furnace".equals(biome.regionId())).toList();
         int taken = 0;
         for (AtlasCell cell : AtlasCell.ORIGIN.around(SCAN_RADIUS - 4)) {
             AtlasBiome was = before.biomeOf(cell);
@@ -664,12 +714,17 @@ class AtlasGeneratorTest {
             assertEquals(was.siteKey(), now.siteKey());
             if ("furnace".equals(now.regionId())) {
                 taken++;
-            } else {
-                assertEquals(was.regionId(), now.regionId(), cell.toString());
+            } else if (!was.regionId().equals(now.regionId())) {
+                assertTrue(nearSwitched(now, furnaces), cell + " moved from " + was.regionId() + " to " + now.regionId());
             }
         }
 
         assertTrue(taken > 0);
+    }
+
+    private static boolean nearSwitched(AtlasBiome site, List<AtlasBiome> switched) {
+        return switched.stream().anyMatch(other -> Math.hypot(other.centreX() - site.centreX(), other.centreY() - site.centreY())
+                <= 2f * AtlasBiomes.POCKET_REACH);
     }
 
     @Test

@@ -1,11 +1,14 @@
 package exiledsector.ui.atlas;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.FactionAPI;
 import exiledsector.charts.atlas.AtlasAmbience;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasData;
 import exiledsector.charts.atlas.AtlasDecoration;
 import exiledsector.charts.atlas.AtlasRegion;
 import exiledsector.ui.TreeViewport;
+import exiledsector.ui.decoration.FactionStarColours;
 import exiledsector.ui.decoration.HyperspaceClouds;
 
 import java.awt.Color;
@@ -24,6 +27,7 @@ final class AtlasScenery {
     private final HyperspaceClouds clouds;
     private final AtlasDecorations decorations = new AtlasDecorations();
     private final AtlasFleetTraffic fleets = new AtlasFleetTraffic();
+    private final AtlasTerritoryBorders borders = new AtlasTerritoryBorders(AtlasScenery::factionColour, AtlasScenery::factionName);
     private final Set<Long> known = new HashSet<>();
     private AtlasMapCanvas canvas;
 
@@ -41,6 +45,10 @@ final class AtlasScenery {
         return decorations;
     }
 
+    AtlasTerritoryBorders borders() {
+        return borders;
+    }
+
     AtlasDecoration decoration(String decorationId) {
         return decorationLookup.apply(decorationId);
     }
@@ -56,17 +64,20 @@ final class AtlasScenery {
         clouds.setCover(new Cover());
         decorations.attach(canvas, known);
         fleets.attach(canvas);
+        borders.attach(known, this::territoryAt);
     }
 
     void advance(float amount) {
         clouds.advance(amount);
         decorations.advance(amount);
         fleets.advance(amount);
+        borders.advance(amount);
     }
 
     void renderBackdrop(TreeViewport view, float alphaMult) {
         clouds.render(view, alphaMult);
         decorations.render(view, alphaMult);
+        borders.render(view, alphaMult);
     }
 
     void renderAbove(TreeViewport view, float alphaMult) {
@@ -85,6 +96,28 @@ final class AtlasScenery {
 
     String regionAt(AtlasCell cell) {
         return cell.equals(AtlasCell.ORIGIN) ? AtlasRegion.NORMAL : canvas.generator().biomeOf(cell).regionId();
+    }
+
+    String territoryAt(AtlasCell cell) {
+        return canvas.generator().factionAt(cell);
+    }
+
+    private static Color factionColour(String factionId) {
+        Color starColour = FactionStarColours.colourOf(factionId);
+        if (starColour != null) {
+            return starColour;
+        }
+        FactionAPI faction = faction(factionId);
+        return faction == null ? null : faction.getColor();
+    }
+
+    private static String factionName(String factionId) {
+        FactionAPI faction = faction(factionId);
+        return faction == null ? factionId : faction.getDisplayName();
+    }
+
+    private static FactionAPI faction(String factionId) {
+        return Global.getSector() == null || factionId == null ? null : Global.getSector().getFaction(factionId);
     }
 
     static AtlasCell cellAt(float worldX, float worldY) {

@@ -245,7 +245,8 @@ public final class AtlasData {
             }
             loaded.put(id, new AtlasRegion(id, csv.number(row, "weight", 1f, id), csv.integer(row, "min_steps", 0, id),
                     ModCsv.text(row, "requires_mod"), ModCsv.text(row, "unlock"), csv.weights(row, "layouts", id, layoutIds),
-                    csv.weights(row, "factions", id, knownFactions), csv.weights(row, "markers", id, null),
+                    csv.weights(row, "factions", id, ModCsv.text(row, "requires_mod").isEmpty() ? knownFactions : null),
+                    csv.weights(row, "markers", id, null),
                     csv.integer(row, "max_steps", AtlasRegion.NO_MAX_STEPS, id), csv.number(row, "weight_per_step", 0f, id), size, density,
                     csv.weights(row, "neighbours", id, null), fraction(csv, row, "clouds", id), fraction(csv, row, "walls", id)));
             loadedLooks.put(id, look(csv, row, id));

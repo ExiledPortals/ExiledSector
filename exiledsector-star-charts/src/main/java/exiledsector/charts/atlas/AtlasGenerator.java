@@ -135,6 +135,10 @@ public final class AtlasGenerator {
         return territories.territoryAt(cell);
     }
 
+    public String factionAt(AtlasCell cell) {
+        return territories.factionAt(cell, regionOf(cell));
+    }
+
     private boolean computeVoid(AtlasCell cell) {
         if (specials.fixedCells().contains(cell.pack()) || cell.equals(AtlasCell.ORIGIN)) {
             return false;

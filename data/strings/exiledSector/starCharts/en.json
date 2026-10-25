@@ -205,6 +205,7 @@
     "chart.atlas.summary": "Atlas points: {points}    Key fragments: {fragments}/3",
     "chart.atlas.hint": "Drag to pan and scroll to zoom. Click a lit system to pick a Star Chart for it. Esc closes.",
     "chart.atlas.close": "Close",
+    "chart.atlas.borders": "Faction Territories",
     "chart.atlas.debug.complete": "Complete",
     "chart.atlas.debug.complete.tooltip": "Debug tool: completes this system now, as a run of the loaded chart's tier (tier 1 without a chart), granting its rewards. No chart is used.",
     "chart.atlas.normalSpace": "Open space",

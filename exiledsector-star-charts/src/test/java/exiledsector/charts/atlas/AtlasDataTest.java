@@ -46,6 +46,11 @@ class AtlasDataTest {
             }
         }
         assertTrue(AtlasData.rules().region("storm_belt").walls() > 0.5f);
+        assertEquals(Set.of("derelict"), AtlasData.rules().region("derelict_graveyard").factionWeights().keySet());
+        assertEquals(Set.of("remnant"), AtlasData.rules().region("remnant_expanse").factionWeights().keySet());
+        Set<String> normalFactions = AtlasData.rules().normalRegion().factionWeights().keySet();
+        assertTrue(normalFactions.contains("hegemony"), normalFactions.toString());
+        assertFalse(normalFactions.contains("derelict") || normalFactions.contains("remnant") || normalFactions.contains("rat_abyssals"));
         assertTrue(AtlasData.ambience(AtlasRegion.NORMAL).decorations().isEmpty());
         assertEquals(3, rules.specials().stream().filter(special -> special.placement() == AtlasSpecial.Placement.FIXED)
                 .mapToInt(AtlasSpecial::count).sum());

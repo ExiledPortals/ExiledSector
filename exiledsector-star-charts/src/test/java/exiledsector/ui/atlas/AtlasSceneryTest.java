@@ -15,9 +15,11 @@ import exiledsector.ui.node.NodeMetrics;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -101,6 +103,25 @@ class AtlasSceneryTest {
         assertEquals(0.5f, AtlasDecorations.pingProgress(6f, 0f, 6.5f), 0.001f);
         assertEquals(-1f, AtlasDecorations.pingProgress(6f, 0f, 3f));
         assertEquals(0.25f, AtlasDecorations.pingProgress(6f, 0.5f, 3.25f), 0.001f);
+    }
+
+    @Test
+    void factionTerritoriesCoverEveryKnownCellWithItsFaction() {
+        AtlasMapCanvas canvas = canvas();
+        Set<Long> known = new HashSet<>();
+        for (AtlasCell visible : canvas.visibleCells()) {
+            for (AtlasCell cell : visible.around(1)) {
+                known.add(cell.pack());
+                assertEquals(canvas.generator().factionAt(cell), canvas.scenery().territoryAt(cell), cell.toString());
+            }
+        }
+        int territoryCells = 0;
+        for (AtlasTerritoryBorders.Region territory : canvas.scenery().borders().regions()) {
+            territoryCells += territory.cells();
+            assertEquals("pirates", territory.groupId());
+        }
+
+        assertEquals(known.size(), territoryCells);
     }
 
     @Test
