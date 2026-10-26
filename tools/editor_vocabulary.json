@@ -405,6 +405,7 @@
   "doctrineBehaviours": ["TRANSFORM", "AUGMENT"],
   "radiusSizes": ["small", "medium", "large"],
   "uniqueSourceKinds": ["faction", "site"],
+  "hullItemMechanics": ["doubler"],
   "itemUnlocks": ["found_onslaught_mk1", "found_gate_hauler", "found_planetkiller", "defeated_ziggurat", "rat_player_exoship"],
   "clearedChartTierPrefix": "cleared_chart_tier_",
   "chartTierRange": [1, 15],
