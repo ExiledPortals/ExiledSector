@@ -66,6 +66,21 @@ class AffinityStepsTest {
     }
 
     @Test
+    void anExchangeEmptiesTheOtherTwoAffinitiesIntoItsOwnAtItsShareAfterLowestAsHighest() {
+        EffectContribution exchange = EffectContribution.scaledPermanent("exchange", "exchange_", List.of(
+                new SkillTypeEffect(SpecialSkillEffect.AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT, 50f)));
+        EffectContribution absence = EffectContribution.scaledPermanent("absence", "absence_", List.of(
+                new SkillTypeEffect(SpecialSkillEffect.LOWEST_AFFINITY_AS_HIGHEST, 1f)));
+
+        assertEquals(Map.of(LOW_TECH, 0f, HIGH_TECH, 20f, MIDLINE, 0f),
+                AffinitySteps.totals(List.of(exchange, node(LOW_TECH, 20f), node(MIDLINE, 10f), node(HIGH_TECH, 5f))));
+        assertEquals(Map.of(LOW_TECH, 0f, HIGH_TECH, 5f), AffinitySteps.totals(List.of(exchange, node(LOW_TECH, -4f), node(HIGH_TECH, 5f))));
+        Map<SkillEffect, Float> raisedFirst = AffinitySteps.totals(List.of(exchange, absence, node(LOW_TECH, 20f), node(HIGH_TECH, 5f)));
+        assertEquals(25f, raisedFirst.get(HIGH_TECH));
+        assertEquals(0f, raisedFirst.get(MIDLINE));
+    }
+
+    @Test
     void lowTechCountsWholeStepsOfFiveAndFifteen() {
         assertEquals(Map.of(), bonuses(LOW_TECH, 0f));
         assertEquals(Map.of(), bonuses(LOW_TECH, 4f));

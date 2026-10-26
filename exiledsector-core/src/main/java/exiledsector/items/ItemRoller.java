@@ -83,6 +83,10 @@ public final class ItemRoller {
 
     public static List<RolledModifier> roll(ItemDefinition definition, long seed, boolean averageRolls, int tier) {
         Random random = Seeds.random(seed);
+        if (definition.keepsOneModifier() && !definition.pool().isEmpty()) {
+            PoolEntry kept = definition.pool().get(random.nextInt(definition.pool().size()));
+            return List.of(RolledModifier.roll(kept.modifier(), random, averageRolls));
+        }
         if (definition.unique()) {
             List<RolledModifier> rolledModifiers = new ArrayList<>(definition.pool().size());
             for (PoolEntry entry : definition.pool()) {

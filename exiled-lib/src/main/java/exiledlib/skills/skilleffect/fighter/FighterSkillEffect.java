@@ -116,6 +116,12 @@ public enum FighterSkillEffect implements BackedSkillEffect {
     FIGHTER_ARMOR_PERCENT(RoleStat.ARMOR),
     FIGHTER_SHIELD_DAMAGE_TAKEN_PERCENT(RoleStat.SHIELD_DAMAGE_TAKEN),
     FIGHTER_DAMAGE_TAKEN_MULT(RoleStat.DAMAGE_TAKEN),
+    STRIKECRAFT_GAIN_AFFINITY_BONUSES {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).styled();
+        }
+    },
     FIGHTER_RATE_OF_FIRE_PERCENT(RoleStat.RATE_OF_FIRE),
     FIGHTER_ENGAGEMENT_RANGE_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getFighterWingRange), "stat.fighterEngagementRange", false),
     FIGHTER_ENGAGEMENT_RANGE_MULT(MULT, bonus(MutableShipStatsAPI::getFighterWingRange), "stat.fighterEngagementRange", false),

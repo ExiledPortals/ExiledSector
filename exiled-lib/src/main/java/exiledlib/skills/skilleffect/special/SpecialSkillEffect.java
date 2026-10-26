@@ -82,6 +82,24 @@ public enum SpecialSkillEffect implements BackedSkillEffect {
         }
     },
     EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE(new AffinityTally()),
+    AFFINITY_EXCHANGE_TO_LOW_TECH_PERCENT(new AffinityTally()) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.templated(this, magnitude);
+        }
+    },
+    AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT(new AffinityTally()) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.templated(this, magnitude);
+        }
+    },
+    AFFINITY_EXCHANGE_TO_MIDLINE_PERCENT(new AffinityTally()) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.templated(this, magnitude);
+        }
+    },
     GATES_RADIUS_BELOW_HALF_HULL(new RadiusGate(CombatGate.LOW_HULL)),
     GATES_RADIUS_WHILE_SYSTEM_ACTIVE(new RadiusGate(CombatGate.SYSTEM_ACTIVE)),
     GATES_RADIUS_WHILE_PHASED(new RadiusGate(CombatGate.PHASED));

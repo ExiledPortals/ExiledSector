@@ -72,7 +72,7 @@ final class EditorVocabulary {
         json.append("  \"radiusSizes\": ").append(list(Arrays.stream(RadiusSize.values()).map(RadiusSize::dataKey).toList())).append(",\n");
         json.append("  \"uniqueSourceKinds\": ")
                 .append(list(Arrays.stream(UniqueSource.Kind.values()).map(UniqueSource.Kind::prefix).toList())).append(",\n");
-        json.append("  \"hullItemMechanics\": ").append(list(List.of(HullItem.DOUBLER_MECHANIC))).append(",\n");
+        json.append("  \"hullItemMechanics\": ").append(list(HullItem.MECHANICS)).append(",\n");
         json.append("  \"itemAreas\": ").append(list(AreaToggles.ITEM_AREAS.areas().stream().sorted().toList())).append(",\n");
         json.append("  \"itemUnlocks\": ")
                 .append(list(Arrays.stream(ItemUnlock.values()).map(ItemUnlock::id).toList())).append(",\n");

@@ -18,6 +18,7 @@ import exiledlib.skills.AffinitySteps;
 import exiledlib.skills.DiminishingReturns;
 import exiledlib.skills.StatBaseline;
 import exiledlib.skills.skilleffect.SkillEffect;
+import exiledlib.skills.skilleffect.fighter.AffinityStrikecraft;
 import exiledlib.skills.skilleffect.logistics.FleetWideEffects;
 import exiledlib.skills.skilleffect.weapon.SlotConversionBacking;
 import exiledlib.skills.skilleffect.weapon.WeaponSlotConversion;
@@ -200,6 +201,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
                 effectEntry.effect().applyToFighterSpawnedByShip(fighter, ship, effectEntry.modId(), effectEntry.magnitude());
             }
         }
+        AffinityStrikecraft.apply(fighter, resolvedTree.contributions());
     }
 
     @Override

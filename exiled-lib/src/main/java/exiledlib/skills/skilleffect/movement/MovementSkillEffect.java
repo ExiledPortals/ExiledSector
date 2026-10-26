@@ -20,8 +20,10 @@ public enum MovementSkillEffect implements BackedSkillEffect {
     TOP_SPEED_FLAT(FLAT, liveStat(MutableShipStatsAPI::getMaxSpeed), StatNames.TOP_SPEED, false),
     TOP_SPEED_MULT(MULT, liveStat(MutableShipStatsAPI::getMaxSpeed), StatNames.TOP_SPEED, false),
     ACCELERATION_FLAT(FLAT, liveStat(MutableShipStatsAPI::getAcceleration), "stat.acceleration", false),
+    ACCELERATION_PERCENT(PERCENT, liveStat(MutableShipStatsAPI::getAcceleration), "stat.acceleration", false),
     DECELERATION_FLAT(FLAT, liveStat(MutableShipStatsAPI::getDeceleration), "stat.deceleration", false),
     TIMEFLOW_PERCENT(PERCENT, liveStat(MutableShipStatsAPI::getTimeMult), "stat.timeflow", false),
+    TIMEFLOW_MULT(MULT, liveStat(MutableShipStatsAPI::getTimeMult), "stat.timeflow", false),
     TOP_SPEED_MULT_PER_DMOD(new PerDModMultEffect(liveStat(MutableShipStatsAPI::getMaxSpeed), "stat.topSpeedPerDMod", false));
 
     private final EffectBacking backing;

@@ -42,6 +42,11 @@ instant damage plus a MagicLib fake beam, without the weapon's effect code.
 `BEAM_WEAPON_HARD_FLUX_PERCENT` converts that share (capped at 100%) of a beam hit's shield flux from soft to
 hard on the target, never above its total flux. Beams that already force hard flux are skipped.
 
+## Weapon range cap
+
+`NON_MISSILE_WEAPON_RANGE_CAP_FLAT` uses the engine's range threshold, as Safety Overrides does: it adds its value to
+the threshold and multiplies range past it by zero. Thresholds from several sources add up.
+
 ## The weapon stat hierarchy
 
 Names follow `<SCOPE_>WEAPON_<STAT>_<FLAT|PERCENT|MULT>`, with scopes ALL > BALLISTIC / MISSILE / ENERGY and
@@ -106,6 +111,18 @@ A conversion to EMP moves the hit's whole damage into EMP. `HitDamageRestorer` m
 once it lands; energy chains and Wing Shared Fate use the same restorer, so their changes stack on one hit, and Beam
 Split cuts its simulated hits from the original damage.
 
+## Displacer Failsafe
+
+`DISPLACER_FAILSAFE_HULL_PERCENT` (`DisplacerFailsafeListener`) watches damage taken. The first time hull drops
+below the threshold in a deployment, the ship is moved 1200 su straight away from the nearest enemy ship, kept
+inside the map, its velocity zeroed, and it vents unless it is already overloaded or venting.
+
+## Projectile echoes
+
+`NON_MISSILE_PROJECTILE_ECHO_CHANCE_PERCENT` (`ProjectileEchoListener`) rolls on each hit an enemy ship takes from
+this ship's non-missile, non-beam projectiles. On success the same weapon spawns another copy of its projectile,
+aimed at the target, costing no flux or ammo. Echoes are tagged and never echo again.
+
 ## Rise From the Ashes
 
 `RiseFromTheAshesListener` cancels the first hull hit that would kill the ship, sets its hull to a share of
@@ -137,7 +154,9 @@ Effects backed by `AffinityScaling` (`*_PER_*_AFFINITY`, on the affinity hull it
 `AffinitySteps.scaledBonuses` adds their target stat once per whole step of the affinities they read, summed when
 they read all three, in a contribution of its own so module sharing is unaffected. `AffinitySteps.totals` adds
 `HIGHEST_AFFINITY_FLAT_PER_S_MOD` (already multiplied by the ship's s-mods in `HullUpgradeEffectSource`) to the
-highest affinity, then `LOWEST_AFFINITY_AS_HIGHEST` raises the lowest to match it.
+highest affinity, then `LOWEST_AFFINITY_AS_HIGHEST` raises the lowest to match it, and last each `AFFINITY_EXCHANGE_TO_*`
+empties the other two affinities (never below zero) into its own at its share. With `STRIKECRAFT_GAIN_AFFINITY_BONUSES`,
+`AffinityStrikecraft` gives launched strikecraft the step bonuses to hull, armor and flux.
 
 ## Diminishing returns
 
@@ -343,13 +362,16 @@ schematic only applies to a ship with exactly one point fewer than its tier (Scr
 every ship has 1, plus one each once the highest cleared chart tier reaches 5, 10 and 15, schematics stop
 dropping, and stored points are kept for switching back. Switching never locks an unlocked section.
 
-## Item doubling
+## Hull item mechanics
 
 A hull item whose `mechanic` column is `doubler` rolls one other section as its target (`HullItem.targetSection`,
 picked from the item's seed and stored once rolled). `ShipSections.doubledSections` finds active doublers whose
 target holds an active item that isn't a doubler, and `HullUpgradeEffectSource` doubles every magnitude of that
 item, drawbacks included. The Tuning Nanoswarm rerolls the target to another section (`Item.rerollTarget`), even
 on an item with no modifier range to vary.
+
+A unique whose `mechanic` is `one_of` keeps just one of its listed modifiers, picked from its seed when it is
+rolled (`ItemRoller`), so the choice is frozen with the item.
 
 ## Item areas
 

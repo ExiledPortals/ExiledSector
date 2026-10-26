@@ -19,6 +19,7 @@ import exiledlib.skills.skilleffect.SimpleStatEffect;
 import exiledlib.skills.skilleffect.StatMode;
 import exiledlib.skills.skilleffect.StatTarget;
 
+import java.util.List;
 import java.util.function.Function;
 
 import static exiledlib.skills.skilleffect.StatMode.PERCENT;
@@ -93,6 +94,36 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
         @Override
         public StyledText description(float magnitude) {
             return StatMode.FLAT.describeStat(magnitude, "stat.ordnancePointCostOfLargeBallisticWeapons");
+        }
+    },
+    SMALL_WEAPON_OP_COST_FLAT {
+        @Override
+        public boolean lowerIsBetter() {
+            return true;
+        }
+
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            for (String smallWeaponCostKey : SMALL_WEAPON_OP_COST_KEYS) {
+                stats.getDynamic().getMod(smallWeaponCostKey).modifyFlat(modId, magnitude);
+            }
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return StatMode.FLAT.describeStat(magnitude, "stat.ordnancePointCostOfSmallWeapons");
+        }
+    },
+    NON_MISSILE_WEAPON_RANGE_CAP_FLAT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getWeaponRangeThreshold().modifyFlat(modId, magnitude);
+            stats.getWeaponRangeMultPastThreshold().modifyMult(modId, 0f);
+        }
+
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.templated(this, magnitude);
         }
     },
     DAMAGE_TO_FRIGATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getDamageToFrigates), "stat.damageToFrigates", false),
@@ -173,6 +204,7 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
             SolarisOverdriveListener::new);
 
     private static final String LARGE_BALLISTIC_OP_COST_KEY = "large_ballistic_mod";
+    private static final List<String> SMALL_WEAPON_OP_COST_KEYS = List.of(Stats.SMALL_BALLISTIC_MOD, Stats.SMALL_ENERGY_MOD, Stats.SMALL_MISSILE_MOD);
 
     private final EffectBacking backing;
 

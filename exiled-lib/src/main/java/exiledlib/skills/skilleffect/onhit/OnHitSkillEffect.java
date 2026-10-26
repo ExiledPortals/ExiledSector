@@ -43,6 +43,7 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
         }
     },
     BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT(BallisticPierceListener.CHANCE_KEY, BallisticPierceListener.class, BallisticPierceListener::new),
+    NON_MISSILE_PROJECTILE_ECHO_CHANCE_PERCENT(ProjectileEchoListener.CHANCE_KEY, ProjectileEchoListener.class, ProjectileEchoListener::new),
     ION_ARC_CHANCE_PERCENT(IonArcListener.CHANCE_AT_FULL_HARD_FLUX_KEY, IonArcListener.class, IonArcListener::new) {
         @Override
         public StyledText description(float magnitude) {

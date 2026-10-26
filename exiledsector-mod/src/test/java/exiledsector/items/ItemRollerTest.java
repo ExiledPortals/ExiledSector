@@ -98,6 +98,23 @@ class ItemRollerTest {
     }
 
     @Test
+    void aUniqueThatKeepsOneModifierRollsJustOneOfItsLinesPickedBySeed() throws Exception {
+        ItemDefinitions.register(new org.json.JSONArray().put(HullItemRows.row("exchange", "reactor",
+                "HULL_PERCENT:10:10; ARMOR_PERCENT:10:10; FLUX_CAPACITY_PERCENT:10:10").put("unique", "true")
+                .put("mechanic", ItemDefinition.ONE_OF_MECHANIC)));
+        ItemDefinition exchange = ItemDefinitions.get("exchange");
+
+        Set<String> kept = new HashSet<>();
+        for (long seed = 0; seed < 60; seed++) {
+            List<RolledEffect> rolled = RolledModifier.lines(ItemRoller.roll(exchange, seed));
+            assertEquals(1, rolled.size());
+            assertEquals(rolled, RolledModifier.lines(ItemRoller.roll(exchange, seed)));
+            kept.add(rolled.get(0).effectName());
+        }
+        assertEquals(Set.of("HULL_PERCENT", "ARMOR_PERCENT", "FLUX_CAPACITY_PERCENT"), kept);
+    }
+
+    @Test
     void aPoolSmallerThanTheRollIsUsedUpWithoutFailing() throws Exception {
         ItemDefinitions.register(new org.json.JSONArray().put(HullItemRows.row("tiny", "bridge", "HULL_MULT:4:6")));
 

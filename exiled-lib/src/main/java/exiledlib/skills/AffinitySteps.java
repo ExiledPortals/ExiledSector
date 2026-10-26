@@ -75,15 +75,19 @@ public final class AffinitySteps {
         Map<SkillEffect, Float> totals = new LinkedHashMap<>();
         float toHighest = 0f;
         boolean lowestAsHighest = false;
+        Map<SkillEffect, Float> exchangePercents = new LinkedHashMap<>();
         for (EffectContribution contribution : contributions) {
             if (contribution.permanent()) {
                 for (SkillTypeEffect effect : contribution.effects()) {
+                    SkillEffect exchangeTarget = exchangeTarget(effect.effect());
                     if (isAffinity(effect.effect())) {
                         totals.merge(effect.effect(), effect.magnitude(), Float::sum);
                     } else if (effect.effect() == SpecialSkillEffect.HIGHEST_AFFINITY_FLAT_PER_S_MOD) {
                         toHighest += effect.magnitude();
                     } else if (effect.effect() == SpecialSkillEffect.LOWEST_AFFINITY_AS_HIGHEST) {
                         lowestAsHighest = true;
+                    } else if (exchangeTarget != null) {
+                        exchangePercents.merge(exchangeTarget, effect.magnitude(), Float::sum);
                     }
                 }
             }
@@ -94,7 +98,32 @@ public final class AffinitySteps {
         if (lowestAsHighest) {
             totals.put(lowest(totals), totals.getOrDefault(highest(totals), 0f));
         }
+        exchangePercents.forEach((target, percent) -> exchange(totals, target, percent));
         return totals;
+    }
+
+    static SkillEffect exchangeTarget(SkillEffect effect) {
+        if (effect == SpecialSkillEffect.AFFINITY_EXCHANGE_TO_LOW_TECH_PERCENT) {
+            return SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT;
+        }
+        if (effect == SpecialSkillEffect.AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT) {
+            return SpecialSkillEffect.HIGH_TECH_AFFINITY_FLAT;
+        }
+        if (effect == SpecialSkillEffect.AFFINITY_EXCHANGE_TO_MIDLINE_PERCENT) {
+            return SpecialSkillEffect.MIDLINE_AFFINITY_FLAT;
+        }
+        return null;
+    }
+
+    private static void exchange(Map<SkillEffect, Float> totals, SkillEffect target, float percent) {
+        float removed = 0f;
+        for (SkillEffect affinity : STEPS_BY_AFFINITY.keySet()) {
+            if (affinity != target && totals.containsKey(affinity)) {
+                removed += Math.max(0f, totals.get(affinity));
+                totals.put(affinity, 0f);
+            }
+        }
+        totals.merge(target, removed * percent / 100f, Float::sum);
     }
 
     private static SkillEffect highest(Map<SkillEffect, Float> totals) {

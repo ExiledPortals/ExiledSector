@@ -41,6 +41,7 @@ public final class HullItem extends Item {
     static final String UNIQUE_SOURCE_COLUMN = "source";
     static final String MECHANIC_COLUMN = "mechanic";
     public static final String DOUBLER_MECHANIC = "doubler";
+    public static final List<String> MECHANICS = List.of(DOUBLER_MECHANIC, ItemDefinition.ONE_OF_MECHANIC);
 
     private String targetSectionId;
 

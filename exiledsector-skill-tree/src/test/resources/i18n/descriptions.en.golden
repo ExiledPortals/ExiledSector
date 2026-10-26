@@ -4,6 +4,30 @@ effect|ACCELERATION_FLAT|12.5	0	<good>+12.5</good> to acceleration.
 effect|ACCELERATION_FLAT|100.0	0	<good>+100</good> to acceleration.
 effect|ACCELERATION_FLAT|-10.0	0	<bad>-10</bad> to acceleration.
 effect|ACCELERATION_FLAT|-12.5	0	<bad>-12.5</bad> to acceleration.
+effect|ACCELERATION_PERCENT|1.0	0	<good>1%</good> increased acceleration.
+effect|ACCELERATION_PERCENT|10.0	0	<good>10%</good> increased acceleration.
+effect|ACCELERATION_PERCENT|12.5	0	<good>12.5%</good> increased acceleration.
+effect|ACCELERATION_PERCENT|100.0	0	<good>100%</good> increased acceleration.
+effect|ACCELERATION_PERCENT|-10.0	0	<bad>10%</bad> reduced acceleration.
+effect|ACCELERATION_PERCENT|-12.5	0	<bad>12.5%</bad> reduced acceleration.
+effect|AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT|1.0	0	Removes all Low Tech and Midline Affinity and grants <good>1%</good> of it as High Tech Affinity.
+effect|AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT|10.0	0	Removes all Low Tech and Midline Affinity and grants <good>10%</good> of it as High Tech Affinity.
+effect|AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT|12.5	0	Removes all Low Tech and Midline Affinity and grants <good>12.5%</good> of it as High Tech Affinity.
+effect|AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT|100.0	0	Removes all Low Tech and Midline Affinity and grants <good>100%</good> of it as High Tech Affinity.
+effect|AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT|-10.0	0	Removes all Low Tech and Midline Affinity and grants <good>-10%</good> of it as High Tech Affinity.
+effect|AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT|-12.5	0	Removes all Low Tech and Midline Affinity and grants <good>-12.5%</good> of it as High Tech Affinity.
+effect|AFFINITY_EXCHANGE_TO_LOW_TECH_PERCENT|1.0	0	Removes all High Tech and Midline Affinity and grants <good>1%</good> of it as Low Tech Affinity.
+effect|AFFINITY_EXCHANGE_TO_LOW_TECH_PERCENT|10.0	0	Removes all High Tech and Midline Affinity and grants <good>10%</good> of it as Low Tech Affinity.
+effect|AFFINITY_EXCHANGE_TO_LOW_TECH_PERCENT|12.5	0	Removes all High Tech and Midline Affinity and grants <good>12.5%</good> of it as Low Tech Affinity.
+effect|AFFINITY_EXCHANGE_TO_LOW_TECH_PERCENT|100.0	0	Removes all High Tech and Midline Affinity and grants <good>100%</good> of it as Low Tech Affinity.
+effect|AFFINITY_EXCHANGE_TO_LOW_TECH_PERCENT|-10.0	0	Removes all High Tech and Midline Affinity and grants <good>-10%</good> of it as Low Tech Affinity.
+effect|AFFINITY_EXCHANGE_TO_LOW_TECH_PERCENT|-12.5	0	Removes all High Tech and Midline Affinity and grants <good>-12.5%</good> of it as Low Tech Affinity.
+effect|AFFINITY_EXCHANGE_TO_MIDLINE_PERCENT|1.0	0	Removes all Low Tech and High Tech Affinity and grants <good>1%</good> of it as Midline Affinity.
+effect|AFFINITY_EXCHANGE_TO_MIDLINE_PERCENT|10.0	0	Removes all Low Tech and High Tech Affinity and grants <good>10%</good> of it as Midline Affinity.
+effect|AFFINITY_EXCHANGE_TO_MIDLINE_PERCENT|12.5	0	Removes all Low Tech and High Tech Affinity and grants <good>12.5%</good> of it as Midline Affinity.
+effect|AFFINITY_EXCHANGE_TO_MIDLINE_PERCENT|100.0	0	Removes all Low Tech and High Tech Affinity and grants <good>100%</good> of it as Midline Affinity.
+effect|AFFINITY_EXCHANGE_TO_MIDLINE_PERCENT|-10.0	0	Removes all Low Tech and High Tech Affinity and grants <good>-10%</good> of it as Midline Affinity.
+effect|AFFINITY_EXCHANGE_TO_MIDLINE_PERCENT|-12.5	0	Removes all Low Tech and High Tech Affinity and grants <good>-12.5%</good> of it as Midline Affinity.
 effect|AMMO_REGEN_WHILE_PHASED_PERCENT|1.0	0	<good>1%</good> increased ammo regeneration while phased.
 effect|AMMO_REGEN_WHILE_PHASED_PERCENT|10.0	0	<good>10%</good> increased ammo regeneration while phased.
 effect|AMMO_REGEN_WHILE_PHASED_PERCENT|12.5	0	<good>12.5%</good> increased ammo regeneration while phased.
@@ -592,6 +616,12 @@ effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|12.5	0	Energy weapon hits on armor st
 effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|100.0	0	Energy weapon hits on armor strip an additional 100% of the hit's damage from the armor around the impact.
 effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|-10.0	0	Energy weapon hits on armor strip an additional -10% of the hit's damage from the armor around the impact.
 effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|-12.5	0	Energy weapon hits on armor strip an additional -12.5% of the hit's damage from the armor around the impact.
+effect|DISPLACER_FAILSAFE_HULL_PERCENT|1.0	0	Once per deployment, when hull drops below <good>1%</good>, this ship teleports 1200 su away from the nearest enemy and vents its flux.
+effect|DISPLACER_FAILSAFE_HULL_PERCENT|10.0	0	Once per deployment, when hull drops below <good>10%</good>, this ship teleports 1200 su away from the nearest enemy and vents its flux.
+effect|DISPLACER_FAILSAFE_HULL_PERCENT|12.5	0	Once per deployment, when hull drops below <good>12.5%</good>, this ship teleports 1200 su away from the nearest enemy and vents its flux.
+effect|DISPLACER_FAILSAFE_HULL_PERCENT|100.0	0	Once per deployment, when hull drops below <good>100%</good>, this ship teleports 1200 su away from the nearest enemy and vents its flux.
+effect|DISPLACER_FAILSAFE_HULL_PERCENT|-10.0	0	Once per deployment, when hull drops below <good>-10%</good>, this ship teleports 1200 su away from the nearest enemy and vents its flux.
+effect|DISPLACER_FAILSAFE_HULL_PERCENT|-12.5	0	Once per deployment, when hull drops below <good>-12.5%</good>, this ship teleports 1200 su away from the nearest enemy and vents its flux.
 effect|DMOD_EFFECT_MULT|1.0	1	<good>1%</good> more negative effects from D-mods.
 effect|DMOD_EFFECT_MULT|10.0	1	<good>10%</good> more negative effects from D-mods.
 effect|DMOD_EFFECT_MULT|12.5	1	<good>12.5%</good> more negative effects from D-mods.
@@ -1684,6 +1714,18 @@ effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|12.5	1	<good>12.5%</good> more ne
 effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|100.0	1	<good>100%</good> more negative effects from combat D-mods per D-mod, up to 5 D-mods.
 effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|-10.0	1	<bad>10%</bad> less negative effects from combat D-mods per D-mod, up to 5 D-mods.
 effect|NON_LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|-12.5	1	<bad>12.5%</bad> less negative effects from combat D-mods per D-mod, up to 5 D-mods.
+effect|NON_MISSILE_PROJECTILE_ECHO_CHANCE_PERCENT|1.0	0	Non-missile projectiles that hit an enemy ship have a <good>1%</good> chance to be fired again from the same weapon.
+effect|NON_MISSILE_PROJECTILE_ECHO_CHANCE_PERCENT|10.0	0	Non-missile projectiles that hit an enemy ship have a <good>10%</good> chance to be fired again from the same weapon.
+effect|NON_MISSILE_PROJECTILE_ECHO_CHANCE_PERCENT|12.5	0	Non-missile projectiles that hit an enemy ship have a <good>12.5%</good> chance to be fired again from the same weapon.
+effect|NON_MISSILE_PROJECTILE_ECHO_CHANCE_PERCENT|100.0	0	Non-missile projectiles that hit an enemy ship have a <good>100%</good> chance to be fired again from the same weapon.
+effect|NON_MISSILE_PROJECTILE_ECHO_CHANCE_PERCENT|-10.0	0	Non-missile projectiles that hit an enemy ship have a <good>-10%</good> chance to be fired again from the same weapon.
+effect|NON_MISSILE_PROJECTILE_ECHO_CHANCE_PERCENT|-12.5	0	Non-missile projectiles that hit an enemy ship have a <good>-12.5%</good> chance to be fired again from the same weapon.
+effect|NON_MISSILE_WEAPON_RANGE_CAP_FLAT|1.0	0	Non-missile weapon range can't exceed <bad>1</bad> su.
+effect|NON_MISSILE_WEAPON_RANGE_CAP_FLAT|10.0	0	Non-missile weapon range can't exceed <bad>10</bad> su.
+effect|NON_MISSILE_WEAPON_RANGE_CAP_FLAT|12.5	0	Non-missile weapon range can't exceed <bad>12.5</bad> su.
+effect|NON_MISSILE_WEAPON_RANGE_CAP_FLAT|100.0	0	Non-missile weapon range can't exceed <bad>100</bad> su.
+effect|NON_MISSILE_WEAPON_RANGE_CAP_FLAT|-10.0	0	Non-missile weapon range can't exceed <bad>-10</bad> su.
+effect|NON_MISSILE_WEAPON_RANGE_CAP_FLAT|-12.5	0	Non-missile weapon range can't exceed <bad>-12.5</bad> su.
 effect|OBJECTIVE_CAPTURE_RANGE_FLAT|1.0	0	<good>+1</good> to range from which combat objectives can be captured.
 effect|OBJECTIVE_CAPTURE_RANGE_FLAT|10.0	0	<good>+10</good> to range from which combat objectives can be captured.
 effect|OBJECTIVE_CAPTURE_RANGE_FLAT|12.5	0	<good>+12.5</good> to range from which combat objectives can be captured.
@@ -2044,6 +2086,12 @@ effect|SMALL_SLOTS_UNIVERSAL|12.5	0	Small weapon mounts become universal mounts.
 effect|SMALL_SLOTS_UNIVERSAL|100.0	0	Small weapon mounts become universal mounts.
 effect|SMALL_SLOTS_UNIVERSAL|-10.0	0	Small weapon mounts become universal mounts.
 effect|SMALL_SLOTS_UNIVERSAL|-12.5	0	Small weapon mounts become universal mounts.
+effect|SMALL_WEAPON_OP_COST_FLAT|1.0	1	<good>+1</good> to ordnance point cost of small weapons.
+effect|SMALL_WEAPON_OP_COST_FLAT|10.0	1	<good>+10</good> to ordnance point cost of small weapons.
+effect|SMALL_WEAPON_OP_COST_FLAT|12.5	1	<good>+12.5</good> to ordnance point cost of small weapons.
+effect|SMALL_WEAPON_OP_COST_FLAT|100.0	1	<good>+100</good> to ordnance point cost of small weapons.
+effect|SMALL_WEAPON_OP_COST_FLAT|-10.0	1	<bad>-10</bad> to ordnance point cost of small weapons.
+effect|SMALL_WEAPON_OP_COST_FLAT|-12.5	1	<bad>-12.5</bad> to ordnance point cost of small weapons.
 effect|SOLARIS_OVERDRIVE_PROJECTILE_SPEED_PERCENT|1.0	0	<good>1%</good> increased weapon projectile speed for those seconds.
 effect|SOLARIS_OVERDRIVE_PROJECTILE_SPEED_PERCENT|10.0	0	<good>10%</good> increased weapon projectile speed for those seconds.
 effect|SOLARIS_OVERDRIVE_PROJECTILE_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased weapon projectile speed for those seconds.
@@ -2062,6 +2110,12 @@ effect|SOLARIS_OVERDRIVE_SECONDS_FLAT|12.5	0	Weapons cost no flux to fire for <g
 effect|SOLARIS_OVERDRIVE_SECONDS_FLAT|100.0	0	Weapons cost no flux to fire for <good>100</good> seconds after this ship's system activates, at most once every 60 seconds.
 effect|SOLARIS_OVERDRIVE_SECONDS_FLAT|-10.0	0	Weapons cost no flux to fire for <good>-10</good> seconds after this ship's system activates, at most once every 60 seconds.
 effect|SOLARIS_OVERDRIVE_SECONDS_FLAT|-12.5	0	Weapons cost no flux to fire for <good>-12.5</good> seconds after this ship's system activates, at most once every 60 seconds.
+effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|1.0	0	Strikecraft launched from this ship gain its affinity bonuses to hull, armor and flux.
+effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|10.0	0	Strikecraft launched from this ship gain its affinity bonuses to hull, armor and flux.
+effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|12.5	0	Strikecraft launched from this ship gain its affinity bonuses to hull, armor and flux.
+effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|100.0	0	Strikecraft launched from this ship gain its affinity bonuses to hull, armor and flux.
+effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|-10.0	0	Strikecraft launched from this ship gain its affinity bonuses to hull, armor and flux.
+effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|-12.5	0	Strikecraft launched from this ship gain its affinity bonuses to hull, armor and flux.
 effect|SUPPLIES_PER_MONTH_MULT|1.0	1	<good>1%</good> more supply use for maintenance.
 effect|SUPPLIES_PER_MONTH_MULT|10.0	1	<good>10%</good> more supply use for maintenance.
 effect|SUPPLIES_PER_MONTH_MULT|12.5	1	<good>12.5%</good> more supply use for maintenance.
@@ -2164,6 +2218,12 @@ effect|THERMO_ACCELERATOR_FLUX_COST_REDUCTION_PERCENT|12.5	0	Turret weapons have
 effect|THERMO_ACCELERATOR_FLUX_COST_REDUCTION_PERCENT|100.0	0	Turret weapons have <good>100%</good> reduced flux cost. Hardpoint weapons can't fire.
 effect|THERMO_ACCELERATOR_FLUX_COST_REDUCTION_PERCENT|-10.0	0	Turret weapons have <good>-10%</good> reduced flux cost. Hardpoint weapons can't fire.
 effect|THERMO_ACCELERATOR_FLUX_COST_REDUCTION_PERCENT|-12.5	0	Turret weapons have <good>-12.5%</good> reduced flux cost. Hardpoint weapons can't fire.
+effect|TIMEFLOW_MULT|1.0	0	<good>1%</good> more timeflow.
+effect|TIMEFLOW_MULT|10.0	0	<good>10%</good> more timeflow.
+effect|TIMEFLOW_MULT|12.5	0	<good>12.5%</good> more timeflow.
+effect|TIMEFLOW_MULT|100.0	0	<good>100%</good> more timeflow.
+effect|TIMEFLOW_MULT|-10.0	0	<bad>10%</bad> less timeflow.
+effect|TIMEFLOW_MULT|-12.5	0	<bad>12.5%</bad> less timeflow.
 effect|TIMEFLOW_PERCENT|1.0	0	<good>1%</good> increased timeflow.
 effect|TIMEFLOW_PERCENT|10.0	0	<good>10%</good> increased timeflow.
 effect|TIMEFLOW_PERCENT|12.5	0	<good>12.5%</good> increased timeflow.

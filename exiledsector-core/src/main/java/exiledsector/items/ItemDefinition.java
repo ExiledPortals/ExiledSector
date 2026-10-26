@@ -17,6 +17,7 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
 
     public static final String FALLBACK_ICON = "graphics/icons/cargo/chip1.png";
     public static final int NO_SOCKET_LIMIT = 0;
+    public static final String ONE_OF_MECHANIC = "one_of";
     private static final Logger LOG = Logger.getLogger(ItemDefinition.class);
     private static final String ENTRY_SEPARATOR = ";";
     static final String SECTION_COLUMN = "section";
@@ -49,6 +50,10 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
     public ItemDefinition(String id, ItemKind kind, String name, String icon, float rarity, boolean unique, String description,
                           List<PoolEntry> prefixes, List<PoolEntry> suffixes, String unlock) {
         this(id, kind, name, icon, rarity, unique, description, prefixes, suffixes, unlock, null, null, List.of(), NO_SOCKET_LIMIT);
+    }
+
+    public boolean keepsOneModifier() {
+        return unique && ONE_OF_MECHANIC.equals(mechanic);
     }
 
     public boolean limitsSocketsPerShip() {

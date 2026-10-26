@@ -238,7 +238,13 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
     TERMINAL_DESCENT_SYSTEM_REGEN_PERCENT(TerminalDescentListener.SYSTEM_REGEN_PERCENT_KEY, TerminalDescentListener.class,
             TerminalDescentListener::new),
     TERMINAL_DESCENT_SHIELD_DAMAGE_TAKEN_PERCENT(TerminalDescentListener.SHIELD_DAMAGE_TAKEN_PERCENT_KEY, TerminalDescentListener.class,
-            TerminalDescentListener::new);
+            TerminalDescentListener::new),
+    DISPLACER_FAILSAFE_HULL_PERCENT(DisplacerFailsafeListener.HULL_PERCENT_KEY, DisplacerFailsafeListener.class, DisplacerFailsafeListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("distance", Math.round(DisplacerFailsafeListener.DISPLACE_DISTANCE)).styled();
+        }
+    };
 
     private final EffectBacking backing;
 
