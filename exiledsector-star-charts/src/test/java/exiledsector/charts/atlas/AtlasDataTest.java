@@ -51,6 +51,7 @@ class AtlasDataTest {
         Set<String> normalFactions = AtlasData.rules().normalRegion().factionWeights().keySet();
         assertTrue(normalFactions.contains("hegemony"), normalFactions.toString());
         assertFalse(normalFactions.contains("derelict") || normalFactions.contains("remnant") || normalFactions.contains("rat_abyssals"));
+        assertFalse(normalFactions.contains(AtlasData.MODDED_FACTIONS));
         assertTrue(AtlasData.ambience(AtlasRegion.NORMAL).decorations().isEmpty());
         assertFalse(AtlasData.ambience(AtlasRegion.NORMAL).abyss());
         assertEquals(Set.of("threat"), AtlasData.rules().region("threat_expanse").factionWeights().keySet());
@@ -76,6 +77,20 @@ class AtlasDataTest {
         assertEquals(4f, reach.markerWeight("black_hole"));
         assertEquals(1f, reach.markerWeight("flares"));
         assertEquals(2, problems.size());
+    }
+
+    @Test
+    void theModdedFactionsEntryAddsEachDetectedFactionAtItsWeight() throws Exception {
+        JSONArray rows = new JSONArray().put(new JSONObject().put("id", AtlasRegion.NORMAL).put("factions", "pirates:10; modded_factions:4"));
+
+        List<String> problems = AtlasData.registerRegions(rows, Set.of("pirates"), List.of("kesteven", "pirates", "roider"));
+
+        assertEquals(List.of(), problems);
+        assertEquals(Map.of("pirates", 10f, "kesteven", 4f, "roider", 4f), AtlasData.rules().normalRegion().factionWeights());
+
+        AtlasData.registerRegions(rows, Set.of("pirates"));
+
+        assertEquals(Map.of("pirates", 10f), AtlasData.rules().normalRegion().factionWeights());
     }
 
     @Test

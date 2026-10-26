@@ -10,4 +10,8 @@ public interface AtlasMemory {
     default Boolean unlockedAtReveal(long chunkKey, String unlock) {
         return null;
     }
+
+    default String recordedFaction(String territoryKey) {
+        return null;
+    }
 }

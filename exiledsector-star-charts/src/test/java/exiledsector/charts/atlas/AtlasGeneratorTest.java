@@ -622,6 +622,38 @@ class AtlasGeneratorTest {
     }
 
     @Test
+    void aFactionAddedMidSaveOnlyClaimsSpaceRevealedAfterIt() {
+        List<AtlasRegion> before = List.of(region(AtlasRegion.NORMAL, 10f, 0, "", "", Map.of("pirates", 1f, "hegemony", 1f), Map.of()),
+                region("graveyard", 10f, 0, "", "", Map.of("derelict", 1f, "pirates", 1f), Map.of()));
+        List<AtlasRegion> added = List.of(region(AtlasRegion.NORMAL, 10f, 0, "", "", Map.of("pirates", 1f, "hegemony", 1f, "kesteven", 1f), Map.of()),
+                region("graveyard", 10f, 0, "", "", Map.of("derelict", 1f, "pirates", 1f, "kesteven", 1f), Map.of()));
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator original = generator(rules(before));
+        List<AtlasCell> revealed = AtlasCell.ORIGIN.around(10);
+        state.recordReveal(original, revealed);
+        AtlasGenerator remembered = new AtlasGenerator(SEED, rules(added), AtlasUnlocks.NONE, state);
+        AtlasGenerator fresh = generator(rules(added));
+        Set<AtlasCell> shown = new HashSet<>();
+        revealed.forEach(cell -> shown.addAll(cell.around(1)));
+        int claimedIfFresh = 0;
+
+        for (AtlasCell cell : shown) {
+            assertEquals(original.factionAt(cell), remembered.factionAt(cell), cell.toString());
+            assertEquals(original.territoryAt(cell), remembered.territoryAt(cell), cell.toString());
+            claimedIfFresh += "kesteven".equals(fresh.factionAt(cell)) ? 1 : 0;
+        }
+        assertTrue(claimedIfFresh > 0);
+        assertTrue(AtlasCell.ORIGIN.around(SCAN_RADIUS).stream().filter(cell -> !shown.contains(cell))
+                .anyMatch(cell -> "kesteven".equals(remembered.factionAt(cell))));
+
+        AtlasGenerator removed = new AtlasGenerator(SEED, rules(List.of(region(AtlasRegion.NORMAL, 10f, 0, "", "", Map.of("pirates", 1f), Map.of()),
+                region("graveyard", 10f, 0, "", "", Map.of("derelict", 1f), Map.of()))), AtlasUnlocks.NONE, state);
+        for (AtlasCell cell : shown) {
+            assertTrue(Set.of("pirates", "derelict").contains(removed.factionAt(cell)), cell + " " + removed.factionAt(cell));
+        }
+    }
+
+    @Test
     void lockedBiomesTakeTheirRunnerUpUnlessRevealedAfterTheUnlock() {
         AtlasGenerator locked = generator(rules());
         AtlasGenerator unlocked = new AtlasGenerator(SEED, rules(), new AtlasUnlocks(RAT::equals, Set.of(THREAT_FLAG)), AtlasMemory.NONE);

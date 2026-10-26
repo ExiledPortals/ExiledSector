@@ -225,6 +225,9 @@ overlay phenomenon). Biomes tile the map from sites about five cells apart, and 
 system (`AtlasBiomes`). Normal space wins most sites and chains into the volumes factions hold, while a special biome
 never sits beside another site of its own type, so it stays a small pocket. Each biome lists the only factions it holds
 (the derelict graveyard holds only derelicts), and normal space's list is the pool every faction territory draws from.
+Its `modded_factions` entry adds every installed faction Nexerelin would count as playable: listed in a mod's
+`exerelinFactionConfig/mod_factions.csv` and not set `playableFaction: false` (`ModdedChartFactions`). Revealed
+territories keep their faction (`AtlasState.recordReveal`), so a faction added mid-save only claims space revealed later.
 The Threat Expanse holds only the Threat, and no other faction's infestation reaches it (`AtlasGenerator`). Its systems use the starless `DEEP_SPACE` layout, one world at the centre
 under vanilla's abyssal light (`ChartStarSystemGenerator`). Its fleets are built like vanilla's abyssal Threat
 fleets, filled to the chart's fleet points with a fabricator leading each boss (`ChartThreatFleets`), and its boss is

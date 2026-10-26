@@ -1,6 +1,9 @@
 package exiledsector.charts.atlas;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,7 +40,7 @@ public final class AtlasGenerator {
         positions = new AtlasPositions(seed);
         specials = new AtlasSpecialPlacer(seed, rules, unlocks, memory, positions, this::isVoid);
         biomes = new AtlasBiomes(seed, rules, unlocks, memory, positions);
-        territories = new AtlasTerritories(seed, rules, positions);
+        territories = new AtlasTerritories(seed, rules, positions, memory);
         terrain = new AtlasTerrain(seed, rules, biomes, positions, specials.fixedCells());
     }
 
@@ -138,6 +141,19 @@ public final class AtlasGenerator {
 
     public String factionAt(AtlasCell cell) {
         return territories.factionAt(cell, regionOf(cell));
+    }
+
+    public Map<String, String> factionDecisions(Collection<AtlasCell> revealed) {
+        Set<AtlasCell> shown = new LinkedHashSet<>();
+        for (AtlasCell cell : revealed) {
+            shown.addAll(cell.around(1));
+            shown.addAll(lanes(cell));
+        }
+        Map<String, String> decisions = new HashMap<>();
+        for (AtlasCell cell : shown) {
+            territories.recordFactions(cell, regionOf(cell), decisions::putIfAbsent);
+        }
+        return decisions;
     }
 
     private boolean computeVoid(AtlasCell cell) {

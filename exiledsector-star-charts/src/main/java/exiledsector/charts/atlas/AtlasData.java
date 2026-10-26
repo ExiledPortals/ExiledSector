@@ -14,6 +14,7 @@ import exiledsector.charts.ChartLayoutRecipe;
 import exiledsector.charts.ChartLook;
 import exiledsector.charts.ChartPhenomena;
 import exiledsector.charts.ChartPois;
+import exiledsector.charts.ModdedChartFactions;
 import exiledsector.charts.ChartShape;
 import exiledsector.charts.expansion.ChartExpansion;
 import exiledsector.data.CsvRows;
@@ -47,6 +48,7 @@ public final class AtlasData {
     static final String POWERFUL_BOSS_MARKER = "powerful_boss";
     static final String EXPANSION_MARKER = "expansion";
     static final String PHENOMENON_MARKER = "phenomenon";
+    static final String MODDED_FACTIONS = "modded_factions";
     private static final Logger LOG = Logger.getLogger(AtlasData.class);
     private static final Pattern HEX_COLOUR = Pattern.compile("#?([0-9a-fA-F]{6}|[0-9a-fA-F]{8})");
     private static volatile Map<String, AtlasLayout> layouts = Map.of();
@@ -65,7 +67,7 @@ public final class AtlasData {
     public static void load() {
         ModCsv.load(ID_COLUMN, LAYOUTS_PATH, LOG, AtlasData::registerLayouts);
         ModCsv.load(ID_COLUMN, DECORATIONS_PATH, LOG, AtlasData::registerDecorations);
-        ModCsv.load(ID_COLUMN, REGIONS_PATH, LOG, rows -> registerRegions(rows, factionIds()));
+        ModCsv.load(ID_COLUMN, REGIONS_PATH, LOG, rows -> registerRegions(rows, factionIds(), ModdedChartFactions.detect(factionIds())));
         ModCsv.load(ID_COLUMN, MARKERS_PATH, LOG, AtlasData::registerMarkers);
         ModCsv.load(ID_COLUMN, SPECIALS_PATH, LOG, AtlasData::registerSpecials);
         ModCsv.load(ID_COLUMN, NODE_EFFECTS_PATH, LOG, AtlasData::registerNodeEffects);
@@ -229,6 +231,10 @@ public final class AtlasData {
     }
 
     static List<String> registerRegions(JSONArray rows, Set<String> knownFactions) throws JSONException {
+        return registerRegions(rows, knownFactions, List.of());
+    }
+
+    static List<String> registerRegions(JSONArray rows, Set<String> knownFactions, List<String> moddedFactions) throws JSONException {
         Map<String, AtlasRegion> loaded = new LinkedHashMap<>();
         Map<String, ChartLook> loadedLooks = new LinkedHashMap<>();
         Map<String, AtlasAmbience> loadedAmbiences = new LinkedHashMap<>();
@@ -245,7 +251,7 @@ public final class AtlasData {
             }
             loaded.put(id, new AtlasRegion(id, csv.number(row, "weight", 1f, id), csv.integer(row, "min_steps", 0, id),
                     ModCsv.text(row, "requires_mod"), ModCsv.text(row, "unlock"), csv.weights(row, "layouts", id, layoutIds),
-                    csv.weights(row, "factions", id, ModCsv.text(row, "requires_mod").isEmpty() ? knownFactions : null),
+                    factionWeights(csv, row, id, knownFactions, moddedFactions),
                     csv.weights(row, "markers", id, null),
                     csv.integer(row, "max_steps", AtlasRegion.NO_MAX_STEPS, id), csv.number(row, "weight_per_step", 0f, id), size, density,
                     csv.weights(row, "neighbours", id, null), fraction(csv, row, "clouds", id), fraction(csv, row, "walls", id)));
@@ -273,6 +279,21 @@ public final class AtlasData {
         looks = Map.copyOf(loadedLooks);
         ambiences = Map.copyOf(loadedAmbiences);
         return csv.problems();
+    }
+
+    private static Map<String, Float> factionWeights(CsvRows csv, JSONObject row, String rowId, Set<String> knownFactions,
+                                                     List<String> moddedFactions) {
+        Set<String> known = null;
+        if (ModCsv.text(row, "requires_mod").isEmpty()) {
+            known = new HashSet<>(knownFactions);
+            known.add(MODDED_FACTIONS);
+        }
+        Map<String, Float> weights = csv.weights(row, "factions", rowId, known);
+        Float moddedWeight = weights.remove(MODDED_FACTIONS);
+        if (moddedWeight != null) {
+            moddedFactions.forEach(factionId -> weights.putIfAbsent(factionId, moddedWeight));
+        }
+        return weights;
     }
 
     private static AtlasAmbience ambience(CsvRows csv, JSONObject row, String rowId) {

@@ -28,6 +28,7 @@ public final class AtlasState implements AtlasMemory {
     private Map<Long, Integer> cellFlags = new HashMap<>();
     private Map<Long, String> siteRegions = new HashMap<>();
     private Map<Long, String> chunkUnlocks = new HashMap<>();
+    private Map<String, String> territoryFactions = new HashMap<>();
     private Set<Integer> clearedTiers = new HashSet<>();
     private int atlasPoints;
     private int keyFragments;
@@ -60,6 +61,9 @@ public final class AtlasState implements AtlasMemory {
         }
         if (chunkUnlocks == null) {
             chunkUnlocks = new HashMap<>();
+        }
+        if (territoryFactions == null) {
+            territoryFactions = new HashMap<>();
         }
         if (clearedTiers == null) {
             clearedTiers = new HashSet<>();
@@ -114,6 +118,11 @@ public final class AtlasState implements AtlasMemory {
         return List.of(recorded.split(FLAG_SEPARATOR)).contains(unlock);
     }
 
+    @Override
+    public String recordedFaction(String territoryKey) {
+        return territoryFactions.get(territoryKey);
+    }
+
     public void recordReveal(AtlasGenerator generator, Collection<AtlasCell> revealed) {
         String flags = String.join(FLAG_SEPARATOR, new TreeSet<>(generator.unlockFlags()));
         for (AtlasCell cell : revealed) {
@@ -128,6 +137,7 @@ public final class AtlasState implements AtlasMemory {
                 }
             }
         }
+        generator.factionDecisions(revealed).forEach(territoryFactions::putIfAbsent);
     }
 
     private void recordChunkSites(AtlasGenerator generator, int chunkX, int chunkY) {

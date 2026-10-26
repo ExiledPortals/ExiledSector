@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 final class AtlasTerritories {
 
@@ -16,14 +18,16 @@ final class AtlasTerritories {
     private final long seed;
     private final AtlasRules rules;
     private final AtlasPositions positions;
+    private final AtlasMemory memory;
 
     private record SeedPoint(int gridX, int gridY) {
     }
 
-    AtlasTerritories(long seed, AtlasRules rules, AtlasPositions positions) {
+    AtlasTerritories(long seed, AtlasRules rules, AtlasPositions positions, AtlasMemory memory) {
         this.seed = seed;
         this.rules = rules;
         this.positions = positions;
+        this.memory = memory;
     }
 
     String territoryAt(AtlasCell cell) {
@@ -33,13 +37,47 @@ final class AtlasTerritories {
     String factionAt(AtlasCell cell, AtlasRegion region) {
         SeedPoint point = territoryPoint(cell);
         String territory = territoryFor(point);
-        if (region.factionWeights().isEmpty()) {
-            return territory;
+        return keepsTerritory(region, territory) ? territory : regionFaction(region, point);
+    }
+
+    void recordFactions(AtlasCell cell, AtlasRegion region, BiConsumer<String, String> recorder) {
+        SeedPoint point = territoryPoint(cell);
+        String territory = territoryFor(point);
+        if (territory != null) {
+            recorder.accept(territoryKey(point), territory);
         }
-        if (territory != null && region.factionWeights().getOrDefault(territory, 0f) > 0f) {
-            return territory;
+        if (!keepsTerritory(region, territory)) {
+            String faction = regionFaction(region, point);
+            if (faction != null) {
+                recorder.accept(regionKey(region, point), faction);
+            }
         }
-        return AtlasHash.race(seed, FACTION_SALT ^ AtlasHash.idSalt(region.id()), point.gridX(), point.gridY(), region.factionWeights());
+    }
+
+    private static boolean keepsTerritory(AtlasRegion region, String territory) {
+        return region.factionWeights().isEmpty() || territory != null && holds(region.factionWeights(), territory);
+    }
+
+    private String regionFaction(AtlasRegion region, SeedPoint point) {
+        return recordedOr(regionKey(region, point), region.factionWeights(),
+                () -> AtlasHash.race(seed, FACTION_SALT ^ AtlasHash.idSalt(region.id()), point.gridX(), point.gridY(), region.factionWeights()));
+    }
+
+    private String recordedOr(String key, Map<String, Float> weights, Supplier<String> rolled) {
+        String recorded = memory.recordedFaction(key);
+        return recorded != null && holds(weights, recorded) ? recorded : rolled.get();
+    }
+
+    private static boolean holds(Map<String, Float> weights, String factionId) {
+        return weights.getOrDefault(factionId, 0f) > 0f;
+    }
+
+    private static String territoryKey(SeedPoint point) {
+        return point.gridX() + "," + point.gridY();
+    }
+
+    private static String regionKey(AtlasRegion region, SeedPoint point) {
+        return region.id() + "@" + territoryKey(point);
     }
 
     Set<String> laneTerritories(List<AtlasCell> lanes) {
@@ -78,7 +116,8 @@ final class AtlasTerritories {
     }
 
     private String territoryFor(SeedPoint point) {
-        Map<String, Float> pool = rules.normalRegion().factionWeights();
-        return AtlasHash.race(seed, TERRITORY_PICK_SALT, point.gridX(), point.gridY(), pool.isEmpty() ? rules.factionWeights() : pool);
+        Map<String, Float> normalPool = rules.normalRegion().factionWeights();
+        Map<String, Float> pool = normalPool.isEmpty() ? rules.factionWeights() : normalPool;
+        return recordedOr(territoryKey(point), pool, () -> AtlasHash.race(seed, TERRITORY_PICK_SALT, point.gridX(), point.gridY(), pool));
     }
 }
