@@ -2,7 +2,7 @@ package exiledsector.charts.anomaly;
 
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
-import exiledsector.charts.ChartGenContext;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.content.ChartSpot;

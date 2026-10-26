@@ -16,7 +16,7 @@ import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystem
 import exiledlib.MockSector;
 import exiledlib.charts.FakeSystem;
 import exiledsector.charts.ChartIds;
-import exiledsector.charts.ChartSystemFactory;
+import exiledsector.charts.generation.ChartSystemFactory;
 import exiledsector.charts.run.cleanup.ChartUsedNames;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

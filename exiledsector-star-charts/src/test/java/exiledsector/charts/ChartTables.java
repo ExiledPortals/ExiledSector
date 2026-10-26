@@ -4,6 +4,7 @@ import exiledlib.ProjectFiles;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.content.ChartFactions;
 import exiledsector.charts.content.ChartPois;
+import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.layout.feature.ChartFeatures;
 import org.json.CDL;
 import org.json.JSONArray;

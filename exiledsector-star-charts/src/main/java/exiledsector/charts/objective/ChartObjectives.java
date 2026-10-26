@@ -6,8 +6,8 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.comm.IntelInfoPlugin;
 import exiledsector.charts.ChartIds;
-import exiledsector.charts.ChartRun;
-import exiledsector.charts.ChartRuns;
+import exiledsector.charts.run.ChartRun;
+import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.atlas.AtlasProgress;
 import org.apache.log4j.Logger;
 

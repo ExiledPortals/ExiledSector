@@ -3,7 +3,7 @@ package exiledsector.console;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.run.diagnostics.ChartCensus;
-import exiledsector.charts.ChartRuns;
+import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.run.diagnostics.ChartSoakScript;
 import org.lazywizard.console.Console;
 

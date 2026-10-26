@@ -1,6 +1,6 @@
 package exiledsector.charts.content;
 
-import exiledsector.charts.ChartTier;
+import exiledsector.charts.generation.ChartTier;
 
 public record ChartFleetSpread(int fleets, float fleetSize, int strengthBonus) {
 

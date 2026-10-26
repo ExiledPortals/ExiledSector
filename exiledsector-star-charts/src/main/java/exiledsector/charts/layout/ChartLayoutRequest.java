@@ -1,8 +1,8 @@
 package exiledsector.charts.layout;
 
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
-import exiledsector.charts.ChartGenContext;
-import exiledsector.charts.ChartTiers;
+import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.items.StarChart;
 

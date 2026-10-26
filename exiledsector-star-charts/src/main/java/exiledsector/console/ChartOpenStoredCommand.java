@@ -1,10 +1,10 @@
 package exiledsector.console;
 
 import com.fs.starfarer.api.Global;
-import exiledsector.charts.ChartRun;
-import exiledsector.charts.ChartRunActions;
-import exiledsector.charts.ChartRunActions.OpenResult;
-import exiledsector.charts.ChartRuns;
+import exiledsector.charts.run.ChartRun;
+import exiledsector.charts.run.ChartRunActions;
+import exiledsector.charts.run.ChartRunActions.OpenResult;
+import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.StarCharts;
 import exiledsector.items.Item;

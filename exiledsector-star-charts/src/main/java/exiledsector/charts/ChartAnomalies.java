@@ -10,6 +10,7 @@ import exiledsector.charts.anomaly.StellarFlares;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.table.BuiltInTable;
 import exiledsector.data.CsvRows;
 import org.apache.log4j.Logger;

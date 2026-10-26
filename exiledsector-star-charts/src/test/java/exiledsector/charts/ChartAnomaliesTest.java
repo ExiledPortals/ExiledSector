@@ -8,6 +8,8 @@ import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.StarAnomalies;
 import exiledsector.charts.anomaly.StellarFlares;
 import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.DropType;
 import org.json.JSONArray;
 import org.json.JSONObject;

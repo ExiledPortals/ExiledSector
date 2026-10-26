@@ -1,8 +1,8 @@
 package exiledsector.charts.content;
 
 import exiledsector.charts.ChartAnomalies;
-import exiledsector.charts.ChartGenContext;
-import exiledsector.charts.ChartTier;
+import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.content.ChartContentPlan.FleetRole;
 import exiledsector.charts.content.ChartContentPlan.PlannedFleet;

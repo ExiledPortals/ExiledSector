@@ -3,7 +3,7 @@ package exiledsector.charts.content;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
-import exiledsector.charts.ChartGenContext;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
 import org.json.JSONArray;
 import org.json.JSONObject;

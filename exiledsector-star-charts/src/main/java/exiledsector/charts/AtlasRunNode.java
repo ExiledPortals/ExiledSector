@@ -2,6 +2,7 @@ package exiledsector.charts;
 
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.generation.ChartGenContext;
 
 import java.util.ArrayList;
 import java.util.List;

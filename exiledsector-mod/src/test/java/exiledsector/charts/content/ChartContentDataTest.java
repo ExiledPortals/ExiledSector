@@ -1,8 +1,8 @@
 package exiledsector.charts.content;
 
 import exiledsector.charts.ChartTables;
-import exiledsector.charts.ChartTier;
-import exiledsector.charts.ChartTiers;
+import exiledsector.charts.generation.ChartTier;
+import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.effect.ChartEffects;
 import exiledsector.charts.effect.ChartFactionEffect;
 import exiledsector.charts.objective.ChartObjective;

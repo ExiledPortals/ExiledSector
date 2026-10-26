@@ -1,9 +1,9 @@
 package exiledsector.charts.content;
 
-import exiledsector.charts.ChartGenContext;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartTables;
-import exiledsector.charts.ChartTier;
-import exiledsector.charts.ChartTiers;
+import exiledsector.charts.generation.ChartTier;
+import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.content.ChartContentPlan.FleetRole;
 import exiledsector.charts.content.ChartContentPlan.PlannedFleet;
 import exiledsector.charts.content.ChartContentPlan.PlannedPoi;

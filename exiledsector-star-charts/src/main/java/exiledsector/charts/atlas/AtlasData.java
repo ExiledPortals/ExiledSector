@@ -8,7 +8,7 @@ import exiledsector.charts.content.ChartFaction;
 import exiledsector.charts.content.ChartFactions;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.layout.feature.ChartFeatures;
-import exiledsector.charts.ChartGenContext;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.layout.ChartLayoutGenerator;
 import exiledsector.charts.layout.ChartLayoutRecipe;
 import exiledsector.charts.layout.ChartLook;

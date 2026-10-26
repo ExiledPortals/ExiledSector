@@ -12,6 +12,7 @@ import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.content.ChartSpot;
 import exiledsector.charts.content.FakeChartContentEngine;
+import exiledsector.charts.generation.ChartGenContext;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;

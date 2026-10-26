@@ -1,6 +1,6 @@
 package exiledsector.charts.table;
 
-import exiledsector.charts.ChartTiers;
+import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.layout.ChartLayoutGenerator;
 import exiledsector.data.CsvRows;
 import org.json.JSONArray;

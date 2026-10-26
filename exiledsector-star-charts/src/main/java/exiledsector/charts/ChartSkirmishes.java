@@ -9,6 +9,8 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.content.ChartContentGenerator;
+import exiledsector.charts.run.ChartRun;
+import exiledsector.charts.run.ChartRuns;
 
 public final class ChartSkirmishes {
 

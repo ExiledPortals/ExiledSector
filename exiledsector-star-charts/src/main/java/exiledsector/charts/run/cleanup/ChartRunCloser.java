@@ -21,10 +21,10 @@ import com.fs.starfarer.api.impl.campaign.enc.StrandedGiveTJScript;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.impl.campaign.intel.misc.SalvorsTallyIntel;
 import exiledsector.charts.ChartIds;
-import exiledsector.charts.ChartRun;
-import exiledsector.charts.ChartRunBound;
-import exiledsector.charts.ChartRunEffects;
-import exiledsector.charts.ChartRuns;
+import exiledsector.charts.run.ChartRun;
+import exiledsector.charts.run.ChartRunBound;
+import exiledsector.charts.run.ChartRunEffects;
+import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.atlas.AtlasProgress;
 import org.apache.log4j.Logger;
 

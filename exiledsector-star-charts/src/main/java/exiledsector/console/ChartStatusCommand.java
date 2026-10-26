@@ -9,8 +9,8 @@ import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import exiledsector.charts.run.diagnostics.ChartCensus;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.diagnostics.ChartSystemContents;
-import exiledsector.charts.ChartRun;
-import exiledsector.charts.ChartRuns;
+import exiledsector.charts.run.ChartRun;
+import exiledsector.charts.run.ChartRuns;
 import org.lazywizard.console.Console;
 
 public class ChartStatusCommand extends CampaignCommand {

@@ -2,7 +2,7 @@ package exiledsector.charts.effect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
-import exiledsector.charts.ChartGenContext;
+import exiledsector.charts.generation.ChartGenContext;
 
 public enum ChartFleetStat {
 

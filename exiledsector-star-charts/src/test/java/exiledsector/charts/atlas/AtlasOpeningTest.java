@@ -2,7 +2,7 @@ package exiledsector.charts.atlas;
 
 import exiledsector.charts.AtlasRunNode;
 import exiledsector.charts.effect.ChartEffect;
-import exiledsector.charts.ChartGenContext;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;

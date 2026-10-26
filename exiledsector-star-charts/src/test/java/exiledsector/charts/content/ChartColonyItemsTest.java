@@ -2,7 +2,7 @@ package exiledsector.charts.content;
 
 import exiledlib.ProjectFiles;
 import exiledsector.charts.ChartTables;
-import exiledsector.charts.ChartTiers;
+import exiledsector.charts.generation.ChartTiers;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;

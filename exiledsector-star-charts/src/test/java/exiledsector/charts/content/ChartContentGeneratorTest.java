@@ -15,11 +15,11 @@ import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec.DropD
 import exiledsector.charts.AtlasRunNode;
 import exiledsector.charts.ChartAnomalies;
 import exiledsector.charts.ChartAnomaliesTest;
-import exiledsector.charts.ChartGenContext;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartTables;
-import exiledsector.charts.ChartTier;
-import exiledsector.charts.ChartTiers;
+import exiledsector.charts.generation.ChartTier;
+import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.content.ChartContentGenerator.Hazard;
 import exiledsector.charts.content.ChartContentPlan.FleetRole;
 import exiledsector.charts.content.ChartContentPlan.PlannedFleet;

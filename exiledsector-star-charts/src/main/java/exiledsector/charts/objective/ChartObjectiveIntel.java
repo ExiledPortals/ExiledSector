@@ -12,10 +12,10 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
 import exiledsector.charts.ChartAnomalies;
-import exiledsector.charts.ChartRun;
-import exiledsector.charts.ChartRunBound;
-import exiledsector.charts.ChartRunState;
-import exiledsector.charts.ChartRuns;
+import exiledsector.charts.run.ChartRun;
+import exiledsector.charts.run.ChartRunBound;
+import exiledsector.charts.run.ChartRunState;
+import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.anomaly.ChartAnomaly;
 
 import java.awt.Color;

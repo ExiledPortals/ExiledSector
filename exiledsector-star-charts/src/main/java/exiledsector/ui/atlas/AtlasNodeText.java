@@ -6,7 +6,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
 import exiledsector.charts.ChartAnomalies;
-import exiledsector.charts.ChartGenContext;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.anomaly.skirmish.SkirmishEntry;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;

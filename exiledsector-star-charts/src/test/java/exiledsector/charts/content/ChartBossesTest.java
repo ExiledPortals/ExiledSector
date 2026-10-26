@@ -2,7 +2,7 @@ package exiledsector.charts.content;
 
 import exiledlib.ProjectFiles;
 import exiledsector.charts.ChartTables;
-import exiledsector.charts.ChartTiers;
+import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.content.ChartBosses.Definition;
 import exiledsector.charts.content.ChartBosses.Station;
 import org.json.JSONArray;

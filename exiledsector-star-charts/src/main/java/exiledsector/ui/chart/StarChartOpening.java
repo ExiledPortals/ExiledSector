@@ -1,8 +1,8 @@
 package exiledsector.ui.chart;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledsector.charts.ChartRunActions;
-import exiledsector.charts.ChartRunActions.OpenResult;
+import exiledsector.charts.run.ChartRunActions;
+import exiledsector.charts.run.ChartRunActions.OpenResult;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
 

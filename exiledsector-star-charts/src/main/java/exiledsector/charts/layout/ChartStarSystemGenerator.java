@@ -17,7 +17,7 @@ import com.fs.starfarer.api.impl.campaign.terrain.StarCoronaTerrainPlugin;
 import com.fs.starfarer.api.impl.campaign.terrain.StarCoronaTerrainPlugin.CoronaParams;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
-import exiledsector.charts.ChartWormholePlacement;
+import exiledsector.charts.wormhole.ChartWormholePlacement;
 import exiledsector.charts.layout.feature.ChartFeature;
 import exiledsector.charts.layout.feature.ChartFeatures;
 import exiledsector.charts.layout.feature.FeatureSite;

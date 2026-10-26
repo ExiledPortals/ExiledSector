@@ -2,7 +2,7 @@ package exiledsector.charts.content;
 
 import com.fs.starfarer.api.Global;
 import exiledsector.charts.table.BuiltInTable;
-import exiledsector.charts.ChartTiers;
+import exiledsector.charts.generation.ChartTiers;
 import exiledsector.data.CsvRows;
 import exiledlib.ModCsv;
 import exiledsector.items.WeightedPick;

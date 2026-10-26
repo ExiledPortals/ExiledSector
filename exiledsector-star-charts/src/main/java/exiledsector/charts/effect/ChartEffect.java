@@ -1,8 +1,8 @@
 package exiledsector.charts.effect;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledsector.charts.ChartGenContext;
-import exiledsector.charts.ChartGenerated;
+import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.generation.ChartGenerated;
 import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledlib.i18n.Message;

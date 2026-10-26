@@ -3,7 +3,7 @@ package exiledsector.charts.loot;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.impl.campaign.procgen.DropGroupRow;
 import exiledsector.charts.content.ChartPois;
-import exiledsector.charts.ChartTiers;
+import exiledsector.charts.generation.ChartTiers;
 import exiledsector.data.CsvRows;
 import exiledlib.ModCsv;
 import org.apache.log4j.Logger;

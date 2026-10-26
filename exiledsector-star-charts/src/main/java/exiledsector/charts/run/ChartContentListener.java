@@ -1,0 +1,44 @@
+package exiledsector.charts.run;
+
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.BattleAPI;
+import com.fs.starfarer.api.campaign.CampaignEventListener.FleetDespawnReason;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.listeners.FleetEventListener;
+import exiledsector.charts.ChartIds;
+import exiledsector.charts.ChartSkirmishes;
+import exiledsector.charts.anomaly.skirmish.SkirmishSide;
+import exiledsector.charts.objective.ChartObjectives;
+import org.apache.log4j.Logger;
+
+public class ChartContentListener implements FleetEventListener {
+
+    private static final Logger LOG = Logger.getLogger(ChartContentListener.class);
+    private boolean failureReported;
+
+    @Override
+    public void reportFleetDespawnedToListener(CampaignFleetAPI fleet, FleetDespawnReason reason, Object param) {
+        if (!ChartRuns.hasRun()) {
+            return;
+        }
+        try {
+            ChartObjectives.fleetGone(Global.getSector(), fleet, reason);
+            if (fleet != null && SkirmishSide.ATTACKER.key().equals(fleet.getMemoryWithoutUpdate().getString(ChartIds.SKIRMISH_SIDE_MEMORY_KEY))) {
+                ChartSkirmishes.checkFinalPush(Global.getSector());
+            }
+        } catch (RuntimeException | LinkageError e) {
+            reportFailure(e);
+        }
+    }
+
+    @Override
+    public void reportBattleOccurred(CampaignFleetAPI fleet, CampaignFleetAPI primaryWinner, BattleAPI battle) {
+    }
+
+    private void reportFailure(Throwable cause) {
+        if (!failureReported) {
+            failureReported = true;
+            LOG.error("[ExiledSector] Tracking a Star Chart objective failed; the objective is checked again every second while inside", cause);
+        }
+    }
+}

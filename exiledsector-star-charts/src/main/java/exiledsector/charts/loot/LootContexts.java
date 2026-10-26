@@ -1,9 +1,9 @@
 package exiledsector.charts.loot;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import exiledsector.charts.ChartGenContext;
-import exiledsector.charts.ChartRun;
-import exiledsector.charts.ChartRunEffects;
+import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.run.ChartRun;
+import exiledsector.charts.run.ChartRunEffects;
 
 public final class LootContexts {
 
