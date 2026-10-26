@@ -96,7 +96,7 @@ public final class ShipTrees {
             NodeGrants.GrantLookup lookup = NodeGrants.lookup();
             data.socketedItems.forEach((socketId, itemId) -> {
                 if (data.dormantNodeIds.contains(socketId)) {
-                    granted.addAll(lookup.grantedNodeIds(itemId));
+                    granted.addAll(lookup.grantedNodeIds(itemId, socketId));
                 }
             });
         }
@@ -397,6 +397,13 @@ public final class ShipTrees {
         data.allocatedNodeIds.remove(exitNodeId);
         data.release(exitNodeId);
         return ItemChargeLedger.takeItemCharges(data, List.of(exitNodeId));
+    }
+
+    public static List<SkillItemCost> takeOverAsGranted(ShipSkillData data, String nodeId) {
+        data.revision++;
+        ItemChargeLedger.ensure(data);
+        data.grantFreeNodeIds().add(nodeId);
+        return ItemChargeLedger.takeItemCharges(data, List.of(nodeId));
     }
 
     public static List<SkillItemCost> deallocateReleasingCharges(ShipSkillData data, SkillNode node) {

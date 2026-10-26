@@ -172,6 +172,8 @@
     "effect.HIGHEST_AFFINITY_FLAT_PER_S_MOD.more": "<good>+{value}</good> to your highest affinity for each s-mod on this ship.",
     "effect.HIGHEST_AFFINITY_FLAT_PER_S_MOD.less": "<bad>-{value}</bad> to your highest affinity for each s-mod on this ship.",
     "effect.LOWEST_AFFINITY_AS_HIGHEST": "Your lowest affinity counts as equal to your highest.",
+    "effect.EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE.more": "Takes over every node in its radius for free. Each grants <good>+{value}</good> to every affinity instead of its own effects.",
+    "effect.EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE.less": "Takes over every node in its radius for free. Each grants <bad>-{value}</bad> to every affinity instead of its own effects.",
     "effect.CREW_STEAL_RANGE_FLAT": "Enemy ships destroyed within {value} su of this ship have their survivors pressed into service. Each wreck is only claimed once.",
     "effect.DYNAMIC_GRID_ENERGY_WEAPON_BONUS_PERCENT": "Once shields have been down for {frigate}/{destroyer}/{cruiser}/{capital} seconds while not venting or overloaded, <good>{value}%</good> increased energy weapon rate of fire and <good>{value}%</good> reduced energy weapon flux cost.",
     "effect.ION_ARC_CHANCE_PERCENT": "Energy shots that hit an enemy shield can arc through to its hull, dealing {damage}% of the shot's damage plus {emp}% as EMP. The chance is <good>{value}%</good> when the target is at full hard flux and falls with its hard flux.",

@@ -115,7 +115,7 @@ function blurMask(mask, w, h, radius) {
 
 function sprite(cv, img, opts) {
   const { cx = cv.w / 2, cy = cv.h / 2, scale = 1, angle = 0, crop = null, palette = null, keep = 0, contrast = 1,
-    lift = 0, alpha = 1, glow = null, flipX = false, feather = 0 } = opts;
+    lift = 0, alpha = 1, glow = null, flipX = false, feather = 0, circle = 0 } = opts;
   const c = crop || { x: 0, y: 0, w: img.w, h: img.h };
   const cos = Math.cos(-angle), sin = Math.sin(-angle);
   const layer = new Float32Array(cv.w * cv.h * 4);
@@ -130,6 +130,11 @@ function sprite(cv, img, opts) {
       if (feather > 0) {
         const edge = Math.min(sx - c.x, sy - c.y, c.x + c.w - sx, c.y + c.h - sy);
         const f = Math.max(0, Math.min(1, edge / feather));
+        p[3] *= f * f * (3 - 2 * f);
+      }
+      if (circle > 0) {
+        const reach = Math.hypot(sx - (c.x + c.w / 2), sy - (c.y + c.h / 2));
+        const f = Math.max(0, Math.min(1, (circle - reach) / (circle * 0.25)));
         p[3] *= f * f * (3 - 2 * f);
       }
       if (p[3] <= 0.001) continue;

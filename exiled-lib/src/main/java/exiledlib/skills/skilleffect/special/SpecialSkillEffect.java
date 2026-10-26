@@ -79,7 +79,8 @@ public enum SpecialSkillEffect implements BackedSkillEffect {
         public StyledText description(float magnitude) {
             return EffectText.msg(this).styled();
         }
-    };
+    },
+    EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE(new AffinityTally());
 
     private final EffectBacking backing;
 

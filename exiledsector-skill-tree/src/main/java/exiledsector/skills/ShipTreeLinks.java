@@ -119,7 +119,7 @@ public final class ShipTreeLinks {
         Map<String, List<String>> nodesBySocketId = new LinkedHashMap<>();
         if (data.socketedItems != null) {
             new TreeMap<>(data.socketedItems).forEach((socketId, itemId) -> {
-                List<String> grantedNodeIds = data.isAllocated(socketId) ? lookup.grantedNodeIds(itemId) : List.of();
+                List<String> grantedNodeIds = data.isAllocated(socketId) ? lookup.grantedNodeIds(itemId, socketId) : List.of();
                 List<String> linkedNodeIds = grantedNodeIds == null ? List.of()
                         : grantedNodeIds.stream().filter(nodeId -> nodeId != null && !nodeId.equals(socketId)).distinct().toList();
                 if (!linkedNodeIds.isEmpty()) {

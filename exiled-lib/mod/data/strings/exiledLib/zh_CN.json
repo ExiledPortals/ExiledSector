@@ -174,6 +174,8 @@
     "effect.HIGHEST_AFFINITY_FLAT_PER_S_MOD.more": "本舰每有一个S插，你最高的亲和<good>+{value}</good>。",
     "effect.HIGHEST_AFFINITY_FLAT_PER_S_MOD.less": "本舰每有一个S插，你最高的亲和<bad>-{value}</bad>。",
     "effect.LOWEST_AFFINITY_AS_HIGHEST": "你最低的亲和视为与最高的亲和相等。",
+    "effect.EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE.more": "免费接管其范围内的所有节点。每个节点不再提供自身效果，而是让每种亲和<good>+{value}</good>。",
+    "effect.EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE.less": "免费接管其范围内的所有节点。每个节点不再提供自身效果，而是让每种亲和<bad>-{value}</bad>。",
     "effect.CREW_STEAL_RANGE_FLAT": "在本舰{value} su内被摧毁的敌舰，其幸存者会被强征入伍。每具残骸只会被认领一次。",
     "effect.DYNAMIC_GRID_ENERGY_WEAPON_BONUS_PERCENT": "在未排散、未过载的状态下，护盾关闭达到{frigate}/{destroyer}/{cruiser}/{capital}秒后，能量武器射速提高<good>{value}%</good>，幅能消耗降低<good>{value}%</good>。",
     "effect.ION_ARC_CHANCE_PERCENT": "能量弹丸命中敌方护盾时可能产生穿透电弧击中船体，造成弹丸伤害{damage}%的伤害以及{emp}%的EMP伤害。目标硬幅能满时几率为<good>{value}%</good>，硬幅能越低几率越低。",

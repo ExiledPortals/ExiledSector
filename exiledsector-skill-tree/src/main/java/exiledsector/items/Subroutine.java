@@ -107,7 +107,7 @@ public final class Subroutine extends Item implements NodeSocketable {
         if (kind == null) {
             return;
         }
-        if (kind.bornCorrupted() && corruption() == null) {
+        if ((kind.bornCorrupted() || EmptyShells.hollows(definition())) && corruption() == null) {
             corrupt(CorruptionOutcome.INNATE);
         }
         if (kind.rollsNode() && rolledNodeIds == null) {

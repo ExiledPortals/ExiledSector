@@ -152,6 +152,8 @@
     "ui.subroutines.hint": "用于此技能树上子程序插槽的子程序与虫洞锚点。打开此处会把货舱中携带的船体物品移入仓库。其他船体物品和船体升级位于改装界面的船体物品面板中。",
     "socketable.unique_halcyon_fire_lattice.name": "哈尔西恩火控晶格",
     "socketable.unique_halcyon_fire_lattice.description": "来自一艘速子科技一线旗舰的火控固件，编写它的东西从不睡眠。船员可以把它接入自家的瞄准核心，看着光束精准命中，只是这套晶格会不停地把遥测数据悄悄发往一个谁也追查不到的地址。",
+    "socketable.unique_empty_shell_axion.name": "空壳轴子",
+    "socketable.unique_empty_shell_axion.description": "舰员在一艘观星者残骸里找到了这颗被掏空的轴子核心。插入他们的改装之间后，它吞没了周围的成果，只回馈出一丝他们所知每一种驾船之道的共鸣。",
     "socketable.unique_cracked_drive_governor.name": "破解驱动调速器",
     "socketable.unique_cracked_drive_governor.description": "一枚安全限制被磨掉的驱动调速器，存在一块划痕累累的数据芯片里，在一支又一支劫掠船员之间辗转。它让引擎比任何船坞允许的都烧得更热、跑得更快，而反应堆要为每一秒买单。",
     "socketable.unique_lamplighter_modspec.name": "KR-9“点灯人”模组规格",

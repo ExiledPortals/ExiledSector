@@ -27,6 +27,12 @@ public final class NodeGrantLinks implements NodeGrants.GrantLookup {
         return cache == null ? List.of() : cache.currentNodeIds();
     }
 
+    @Override
+    public List<String> grantedNodeIds(String socketedItemId, String socketId) {
+        Item item = socketedItemId == null || NpcItems.isNpcId(socketedItemId) ? null : ItemStore.lookup(socketedItemId);
+        return EmptyShells.isEmptyShell(item) ? EmptyShells.radiusNodeIds(item, socketId) : grantedNodeIds(socketedItemId);
+    }
+
     static Subroutine modspecCache(String socketedItemId) {
         if (socketedItemId == null || NpcItems.isNpcId(socketedItemId)) {
             return null;

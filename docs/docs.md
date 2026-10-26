@@ -363,3 +363,11 @@ A hull item or subroutine can name an `area`, one of the toggled tree regions. `
 `AreaToggles`, bound at application load: a definition whose area's mod isn't installed is never loaded, so its
 faction sources are never checked, and one whose area is switched off stays loaded but is left out of every drop
 pool (`ItemDrops`, `ItemUnlock.canDrop`) and of Transposition.
+
+## Empty shells
+
+A subroutine whose lines hold `EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE` (Empty Shell Axion) is born corrupted and grants
+every small, notable and keystone node in its radius through the socket grant links (`EmptyShells.radiusNodeIds`,
+via `NodeGrantLinks`). `NodeAllocator.grantSocketedNodes` turns paid nodes it covers into free ones, refunding
+their OP and items, and `AllocatedSkillEffects` drops a hollow node's own effects and gives the socket +1 (the line's
+value) to every affinity per hollow node. Unsocketing releases the granted nodes like a Modspec Cache's.

@@ -35,6 +35,7 @@ import exiledsector.skills.progression.ShipOpBudget;
 import exiledsector.skills.progression.SkillNodeOpCost;
 import exiledsector.skills.unlock.NodeGates;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
+import exiledsector.items.EmptyShells;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.items.NodeGrantStatus;
 import exiledsector.ui.refit.ShipEditSession;
@@ -344,6 +345,7 @@ final class NodeAllocator {
             NodeGrantStatus.rememberForShip(fleetMember.getId(), Map.of());
             return changed(changedAny);
         }
+        changedAny |= takeOverEmptyShellNodes(skillData, grantedNodesBySocket, cargo);
         Set<String> grantedNodeIds = new LinkedHashSet<>();
         grantedNodesBySocket.values().forEach(grantedNodeIds::addAll);
         Snapshot current = null;
@@ -364,6 +366,22 @@ final class NodeAllocator {
         boolean changed = changed(changedAny);
         rememberGrantStatuses(skillData, changedAny || current == null ? snapshot() : current);
         return changed;
+    }
+
+    private static boolean takeOverEmptyShellNodes(ShipSkillData skillData, Map<String, List<String>> grantedNodesBySocket, CargoAPI cargo) {
+        boolean tookOver = false;
+        for (Map.Entry<String, List<String>> grantLink : grantedNodesBySocket.entrySet()) {
+            if (!EmptyShells.holdsEmptyShell(skillData, grantLink.getKey())) {
+                continue;
+            }
+            for (String nodeId : grantLink.getValue()) {
+                if (skillData.isAllocated(nodeId) && !skillData.isFreeNode(nodeId)) {
+                    ShipTrees.takeOverAsGranted(skillData, nodeId).forEach(refund -> refund.refundTo(cargo));
+                    tookOver = true;
+                }
+            }
+        }
+        return tookOver;
     }
 
     private void rememberGrantStatuses(ShipSkillData skillData, Snapshot snapshot) {

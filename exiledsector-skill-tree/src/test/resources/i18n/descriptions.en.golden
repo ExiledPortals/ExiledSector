@@ -796,6 +796,12 @@ effect|ESCORT_WEAPON_RANGE_BONUS_PERCENT|12.5	0	While within 700 su of a larger 
 effect|ESCORT_WEAPON_RANGE_BONUS_PERCENT|100.0	0	While within 700 su of a larger friendly ship, up to 100% increased ballistic and energy weapon range, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 effect|ESCORT_WEAPON_RANGE_BONUS_PERCENT|-10.0	0	While within 700 su of a larger friendly ship, up to -10% increased ballistic and energy weapon range, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 effect|ESCORT_WEAPON_RANGE_BONUS_PERCENT|-12.5	0	While within 700 su of a larger friendly ship, up to -12.5% increased ballistic and energy weapon range, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
+effect|EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE|1.0	0	Takes over every node in its radius for free. Each grants <good>+1</good> to every affinity instead of its own effects.
+effect|EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE|10.0	0	Takes over every node in its radius for free. Each grants <good>+10</good> to every affinity instead of its own effects.
+effect|EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE|12.5	0	Takes over every node in its radius for free. Each grants <good>+12.5</good> to every affinity instead of its own effects.
+effect|EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE|100.0	0	Takes over every node in its radius for free. Each grants <good>+100</good> to every affinity instead of its own effects.
+effect|EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE|-10.0	0	Takes over every node in its radius for free. Each grants <bad>-10</bad> to every affinity instead of its own effects.
+effect|EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE|-12.5	0	Takes over every node in its radius for free. Each grants <bad>-12.5</bad> to every affinity instead of its own effects.
 effect|EXPLODE_ON_DEATH|1.0	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 1% of its maximum fuel capacity to nearby ships, tapering off with distance.
 effect|EXPLODE_ON_DEATH|10.0	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 10% of its maximum fuel capacity to nearby ships, tapering off with distance.
 effect|EXPLODE_ON_DEATH|12.5	0	When this ship is destroyed, it detonates violently, dealing high-explosive damage equal to up to 12.5% of its maximum fuel capacity to nearby ships, tapering off with distance.

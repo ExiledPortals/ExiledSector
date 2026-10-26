@@ -299,7 +299,7 @@ class UniqueSubroutinesTest {
         assertTrue(uniques.size() >= 4 && uniques.size() <= 6, String.valueOf(uniques.size()));
         for (ItemDefinition unique : uniques) {
             assertTrue(unique.unique(), unique.id());
-            assertTrue(unique.pool().size() >= 2, unique.id());
+            assertTrue(unique.pool().size() >= 2 || EmptyShells.hollows(unique), unique.id());
             assertFalse(unique.uniqueSources().isEmpty(), unique.id());
             assertEquals(1, unique.socketLimit(), unique.id() + " is limited to one per ship");
             assertFalse(unique.description().isEmpty(), unique.id());

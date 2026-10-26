@@ -132,6 +132,7 @@
     {"name": "ESCORT_MANEUVER_BONUS_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "ESCORT_SPEED_BONUS_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "ESCORT_WEAPON_RANGE_BONUS_PERCENT", "statMode": null, "lowerIsBetter": false},
+    {"name": "EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE", "statMode": null, "lowerIsBetter": false},
     {"name": "EXPLODE_ON_DEATH", "statMode": null, "lowerIsBetter": false},
     {"name": "FIGHTER_ARMOR_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
     {"name": "FIGHTER_BAYS_FLAT", "statMode": null, "lowerIsBetter": false},
