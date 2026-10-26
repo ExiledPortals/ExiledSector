@@ -79,7 +79,6 @@ describe('data files', () => {
   it('reports unknown or missing files', async () => {
     expect((await app.inject({ method: 'GET', url: '/api/files?names=nope' })).statusCode).toBe(404);
     expect((await app.inject({ method: 'GET', url: '/api/files?names=commodities' })).statusCode).toBe(404);
-    expect((await app.inject({ method: 'GET', url: '/api/files?names=salvage:../escape.csv' })).statusCode).toBe(404);
   });
 
   it('saves exactly what was sent, without a byte order mark, and returns the new hashes', async () => {
@@ -152,16 +151,6 @@ describe('data files', () => {
     const reworded = original.replace('"armor"', '"plating"');
     expect((await save(reworded)).statusCode).toBe(200);
     expect(fs.readFileSync(path.join(projectRoot, 'data/strings/exiledSector/core/en.json'), 'utf8')).toBe(reworded);
-  });
-
-  it('lists salvage files with the default first', async () => {
-    writeProjectFile('data/config/exiledSector/compat/salvage/zzz.csv', 'site,chances\n');
-    writeProjectFile('data/config/exiledSector/compat/salvage/aaa.csv', 'site,chances\n');
-    expect((await app.inject({ method: 'GET', url: '/api/salvage-files' })).json()).toEqual([
-      'item_salvage.csv',
-      'compat/salvage/aaa.csv',
-      'compat/salvage/zzz.csv',
-    ]);
   });
 });
 

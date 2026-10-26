@@ -778,7 +778,3 @@ export function definitionWarnings(definitions: ItemDefinition[], family: ItemFa
   }
   return warnings;
 }
-
-export function modifierQualifierFor(definition: Pick<ItemDefinition, 'id'>): string {
-  return definition.id.replace(/^unique_/, '');
-}

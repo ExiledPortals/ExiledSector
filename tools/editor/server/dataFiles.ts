@@ -1,7 +1,7 @@
 import { createHash, randomUUID } from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
-import { resolveSalvagePath, toProjectRelative, type ProjectPaths } from './paths.ts';
+import { toProjectRelative, type ProjectPaths } from './paths.ts';
 import { stringCatalogueFile } from './stringCatalogues.ts';
 
 export interface DataFile {
@@ -104,10 +104,6 @@ export function resolveDataResource(paths: ProjectPaths, name: string): DataReso
       return { filePath: path.join(configDir, 'hull_items.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
     case 'item-modifiers':
       return { filePath: path.join(configDir, 'item_modifiers.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
-    case 'item-names':
-      return { filePath: path.join(configDir, 'item_names.json'), check: checkJsonObject };
-    case 'item-crafting':
-      return { filePath: path.join(configDir, 'item_crafting.csv'), check: (text) => checkCsvHeader(text, 'item,', 'the item column') };
     case 'hull-item-implicits':
       return { filePath: path.join(configDir, 'hull_item_implicits.csv'), check: (text) => checkCsvHeader(text, 'section,', 'the section column') };
     case 'subroutine-corruption-implicits':
@@ -133,72 +129,12 @@ export function resolveDataResource(paths: ProjectPaths, name: string): DataReso
         filePath: path.join(configDir, 'star_chart_implicits.csv'),
         check: (text) => checkCsvHeader(text, 'system_type,', 'the system_type column'),
       };
-    case 'star-chart-names':
-      return { filePath: path.join(configDir, 'star_chart_names.json'), check: checkJsonObject };
-    case 'star-chart-tiers':
-      return { filePath: path.join(configDir, 'star_chart_tiers.csv'), check: (text) => checkCsvHeader(text, 'tier,', 'the tier column') };
-    case 'chart-pois':
-      return { filePath: path.join(configDir, 'chart_poi.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
-    case 'chart-factions':
-      return { filePath: path.join(configDir, 'chart_factions.csv'), check: (text) => checkCsvHeader(text, 'faction,', 'the faction column') };
-    case 'chart-bosses':
-      return { filePath: path.join(configDir, 'chart_bosses.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
-    case 'chart-boss-stations':
-      return {
-        filePath: path.join(configDir, 'chart_boss_stations.csv'),
-        check: (text) => checkCsvHeader(text, 'variant,', 'the variant column'),
-      };
-    case 'chart-blocked-abilities':
-      return {
-        filePath: path.join(configDir, 'chart_blocked_abilities.csv'),
-        check: (text) => checkCsvHeader(text, 'ability_id,', 'the ability_id column'),
-      };
-    case 'chart-drops':
-      return { filePath: path.join(configDir, 'chart_drops.csv'), check: (text) => checkCsvHeader(text, 'source,', 'the source column') };
-    case 'chart-colony-items':
-      return { filePath: path.join(configDir, 'chart_colony_items.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
-    case 'chart-expansions':
-      return { filePath: path.join(configDir, 'chart_expansions.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
-    case 'atlas-regions':
-      return { filePath: path.join(configDir, 'atlas_regions.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
-    case 'atlas-layouts':
-      return { filePath: path.join(configDir, 'atlas_layouts.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
-    case 'chart-phenomena':
-      return { filePath: path.join(configDir, 'chart_phenomena.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
-    case 'atlas-features':
-      return { filePath: path.join(configDir, 'atlas_features.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
-    case 'atlas-node-effects':
-      return { filePath: path.join(configDir, 'atlas_node_effects.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
-    case 'atlas-decorations':
-      return { filePath: path.join(configDir, 'atlas_decorations.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
-    case 'atlas-markers':
-      return { filePath: path.join(configDir, 'atlas_markers.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
-    case 'atlas-specials':
-      return { filePath: path.join(configDir, 'atlas_specials.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
-    case 'chart-loot':
-      return { filePath: path.join(configDir, 'chart_loot.csv'), check: (text) => checkCsvHeader(text, 'id,', 'the id column') };
-    case 'commodities':
-      return {
-        filePath: path.join(paths.projectRoot, 'data', 'campaign', 'commodities.csv'),
-        check: (text) => checkCsvHeader(text, 'name,id,', 'the name and id columns'),
-      };
-    case 'special-items':
-      return {
-        filePath: path.join(paths.projectRoot, 'data', 'campaign', 'special_items.csv'),
-        check: (text) => checkCsvHeader(text, 'name,id,', 'the name and id columns'),
-      };
     default:
       break;
   }
   const stringCatalogue = stringCatalogueFile(name);
   if (stringCatalogue) {
     return { filePath: path.join(paths.projectRoot, ...stringCatalogue.split('/')), check: checkStringCatalogue };
-  }
-  if (name.startsWith('salvage:')) {
-    const salvagePath = resolveSalvagePath(paths, name.slice('salvage:'.length));
-    if (salvagePath) {
-      return { filePath: salvagePath, check: (text) => checkCsvHeader(text, 'site,', 'the site column') };
-    }
   }
   return null;
 }

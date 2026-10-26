@@ -1,0 +1,26 @@
+.lines {
+  padding: 6px 10px;
+  background: rgba(8, 12, 18, 0.94);
+  border: 1px solid rgba(120, 200, 255, 0.35);
+  border-radius: 2px;
+  color: rgb(230, 230, 230);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.line {
+  white-space: pre-wrap;
+}
+
+.line + .line {
+  margin-top: 2px;
+}
+
+.missing {
+  color: #fc6300;
+}
+
+.selected {
+  border-color: rgba(120, 200, 255, 0.95);
+  box-shadow: 0 0 8px rgba(120, 200, 255, 0.35);
+}

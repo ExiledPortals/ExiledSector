@@ -1,7 +1,6 @@
 import { List, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import { TextPrompt } from './TextPrompt.tsx';
 
 export interface ConfirmOptions {
   title: string;
@@ -39,24 +38,6 @@ export function showIssues(title: string, issues: string[]): void {
         ))}
       </List>
     ),
-  });
-}
-
-export function promptText(title: string, label: string): Promise<string | null> {
-  return new Promise((resolve) => {
-    const modalId = modals.open({
-      title,
-      onClose: () => resolve(null),
-      children: (
-        <TextPrompt
-          label={label}
-          onSubmit={(value) => {
-            resolve(value || null);
-            modals.close(modalId);
-          }}
-        />
-      ),
-    });
   });
 }
 

@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildVocabulary } from '../../../api/vocabulary.ts';
 import {
-  doctrineModifierIds,
   doctrineTypeFacts,
   joinEntries,
   listEntries,
@@ -105,12 +104,11 @@ describe('doctrine archives', () => {
     expect(issues).toContain('not_a_doctrine: behaviour must be one of TRANSFORM, AUGMENT');
   });
 
-  it('offers only plain replacements of the right tier and doctrine-scoped prefixes', () => {
+  it('offers only plain replacements of the right tier', () => {
     const facts = doctrineTypeFacts(TYPES);
 
     expect(replacementCandidates(facts, 'NOTABLE')).toEqual(['notable_a', 'notable_b']);
     expect(replacementCandidates(facts, 'SMALL')).toEqual(['small_a']);
-    expect(doctrineModifierIds([...MODIFIERS, modifier('SUFFIX_DOCTRINE', ['doctrine'], 'suffix')])).toEqual(['ARMOR_PERCENT_DOCTRINE']);
   });
 
   it('a new row takes the first doctrine without a row, and saving keeps the loaded id', () => {

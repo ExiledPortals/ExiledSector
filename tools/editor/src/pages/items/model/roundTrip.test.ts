@@ -2,10 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { buildVocabulary } from '../../../api/vocabulary.ts';
-import { parseCsvTable, serializeCsvTable } from '../../../shared/csv.ts';
 import { parseWormholeAnchorsCsv, serializeWormholeAnchorsCsv } from './anchors.ts';
-import { CHART_TABLE_SPECS, parseChartTable, serializeChartTable } from './chartTables.ts';
-import { parseCraftingCsv, serializeCraftingCsv } from './crafting.ts';
 import { parseDoctrineArchivesCsv, serializeDoctrineArchivesCsv } from './doctrines.ts';
 import {
   parseFamilyDefinitions,
@@ -16,11 +13,8 @@ import {
   serializeStarChartsCsv,
   serializeSubroutinesCsv,
 } from './definitions.ts';
-import { parseSalvageCsv, serializeSalvageCsv } from './drops.ts';
-import { lineEndingOf } from '../../../shared/lineEndings.ts';
 import { parseImplicitsCsv, parseStarChartImplicitsCsv, serializeImplicitsCsv, serializeStarChartImplicitsCsv } from './implicits.ts';
 import { parseModifiersCsv, serializeModifiersCsv } from './modifiers.ts';
-import { serializeRareNames, serializeStarChartNames } from './names.ts';
 
 const repositoryRoot = path.resolve(import.meta.dirname, '..', '..', '..', '..', '..', '..');
 const configDir = path.join(repositoryRoot, 'data', 'config', 'exiledSector');
@@ -80,27 +74,6 @@ describe('saving unchanged item data reproduces the files byte for byte', () => 
     expect(serializeModifiersCsv(parseModifiersCsv(text))).toBe(text);
   });
 
-  it('item_names.json', () => {
-    const text = readData(path.join(configDir, 'item_names.json'));
-    expect(serializeRareNames(JSON.parse(text), lineEndingOf(text))).toBe(text);
-  });
-
-  it('item_crafting.csv', () => {
-    const text = readData(path.join(configDir, 'item_crafting.csv'));
-    const parsed = parseCraftingCsv(text);
-    expect(serializeCraftingCsv(parsed.table, parsed.rows)).toBe(text);
-  });
-
-  it('commodities.csv', () => {
-    const text = readData(path.join(repositoryRoot, 'data', 'campaign', 'commodities.csv'));
-    expect(serializeCsvTable(parseCsvTable(text))).toBe(text);
-  });
-
-  it('special_items.csv', () => {
-    const text = readData(path.join(repositoryRoot, 'data', 'campaign', 'special_items.csv'));
-    expect(serializeCsvTable(parseCsvTable(text))).toBe(text);
-  });
-
   it('hull_item_implicits.csv', () => {
     const text = readData(path.join(configDir, 'hull_item_implicits.csv'));
     expect(serializeImplicitsCsv(parseImplicitsCsv(text, vocabulary))).toBe(text);
@@ -134,26 +107,5 @@ describe('saving unchanged item data reproduces the files byte for byte', () => 
   it('star_chart_implicits.csv', () => {
     const text = readData(path.join(configDir, 'star_chart_implicits.csv'));
     expect(serializeStarChartImplicitsCsv(parseStarChartImplicitsCsv(text, vocabulary))).toBe(text);
-  });
-
-  it('star_chart_names.json', () => {
-    const text = readData(path.join(configDir, 'star_chart_names.json'));
-    expect(serializeStarChartNames(JSON.parse(text), lineEndingOf(text))).toBe(text);
-  });
-
-  it('every chart table', () => {
-    for (const spec of CHART_TABLE_SPECS) {
-      const text = readData(path.join(configDir, spec.fileName));
-      expect(serializeChartTable(parseChartTable(text, spec.columns), spec.columns), spec.fileName).toBe(text);
-    }
-  });
-
-  it('every salvage file', () => {
-    const compatDir = path.join(configDir, 'compat', 'salvage');
-    const salvageFiles = [path.join(configDir, 'item_salvage.csv'), ...fs.readdirSync(compatDir).map((name) => path.join(compatDir, name))];
-    for (const salvageFile of salvageFiles) {
-      const text = readData(salvageFile);
-      expect(serializeSalvageCsv(parseSalvageCsv(text)), path.basename(salvageFile)).toBe(text);
-    }
   });
 });

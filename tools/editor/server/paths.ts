@@ -45,23 +45,6 @@ export function existingVanillaFile(paths: ProjectPaths, relativePath: string | 
   return existingFile(resolveVanillaPath(paths, relativePath));
 }
 
-export const DEFAULT_SALVAGE_FILE = 'item_salvage.csv';
-const COMPAT_SALVAGE_PREFIX = 'compat/salvage/';
-
-export function salvageDir(paths: ProjectPaths): string {
-  return path.join(paths.projectRoot, 'data', 'config', 'exiledSector');
-}
-
-export function resolveSalvagePath(paths: ProjectPaths, file: string | undefined | null): string | null {
-  if (!file || file === DEFAULT_SALVAGE_FILE) {
-    return path.join(salvageDir(paths), DEFAULT_SALVAGE_FILE);
-  }
-  if (/^compat\/salvage\/[A-Za-z0-9_.-]+\.csv$/.test(file)) {
-    return path.join(salvageDir(paths), 'compat', 'salvage', file.slice(COMPAT_SALVAGE_PREFIX.length));
-  }
-  return null;
-}
-
 export function toProjectRelative(paths: ProjectPaths, fullPath: string): string {
   return path.relative(paths.projectRoot, fullPath).split(path.sep).join('/');
 }

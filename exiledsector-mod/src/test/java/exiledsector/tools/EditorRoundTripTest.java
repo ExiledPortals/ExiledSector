@@ -29,12 +29,8 @@ class EditorRoundTripTest {
 
     private static final String TREE_SERIALIZATION = "pages/tree/model/serialization.ts";
     private static final String ITEM_DEFINITIONS_MODEL = "pages/items/model/definitions.ts";
-    private static final String ITEM_NAMES_MODEL = "pages/items/model/names.ts";
-    private static final String ITEM_DROPS_MODEL = "pages/items/model/drops.ts";
-    private static final String ITEM_CRAFTING_MODEL = "pages/items/model/crafting.ts";
     private static final String HULL_ITEM_IMPLICITS_MODEL = "pages/items/model/implicits.ts";
     private static final String ITEM_MODIFIERS_MODEL = "pages/items/model/modifiers.ts";
-    private static final String CHART_TABLES_MODEL = "pages/items/model/chartTables.ts";
     private static final String WORMHOLE_ANCHORS_MODEL = "pages/items/model/anchors.ts";
     private static final String DOCTRINE_ARCHIVES_MODEL = "pages/items/model/doctrines.ts";
 
@@ -44,10 +40,6 @@ class EditorRoundTripTest {
     private static final String ITEM_DEFINITION = "exiledsector/items/ItemDefinition.java";
     private static final String SUBROUTINE_DEFINITIONS = "exiledsector/items/SubroutineDefinitions.java";
     private static final String HULL_ITEM = "exiledsector/items/HullItem.java";
-    private static final String ITEM_NAMES = "exiledsector/items/ItemNames.java";
-    private static final String ITEM_DROPS = "exiledsector/items/ItemDrops.java";
-    private static final String SALVAGE_COMPAT = "exiledsector/compat/SalvageSiteCompat.java";
-    private static final String ITEM_CRAFTING = "exiledsector/items/ItemCraftingCosts.java";
     private static final String HULL_ITEM_IMPLICITS = "exiledsector/items/ItemImplicits.java";
     private static final String ITEM_MODIFIERS = "exiledsector/items/ItemModifiers.java";
     private static final String STAR_CHART_DEFINITIONS = "exiledsector/items/StarChartDefinitions.java";
@@ -55,34 +47,18 @@ class EditorRoundTripTest {
     private static final String SUBROUTINE_IMPLICITS = "exiledsector/items/SubroutineImplicits.java";
     private static final String CORRUPTION_IMPLICIT_POOL = "exiledsector/items/CorruptionImplicitPool.java";
     private static final String STAR_CHART_ITEMS = "exiledsector/items/StarChartItems.java";
-    private static final String STAR_CHART_NAMES = "exiledsector/items/StarChartNames.java";
-    private static final String CHART_TIERS = "exiledsector/charts/ChartTiers.java";
-    private static final String CHART_POIS = "exiledsector/charts/ChartPois.java";
-    private static final String CHART_FACTIONS = "exiledsector/charts/ChartFactions.java";
-    private static final String CHART_BOSSES = "exiledsector/charts/ChartBosses.java";
-    private static final String CHART_BLOCKED_ABILITIES = "exiledsector/charts/ChartBlockedAbilities.java";
-    private static final String CHART_DROPS = "exiledsector/charts/ChartDrops.java";
-    private static final String CHART_LOOT = "exiledsector/charts/ChartLoot.java";
-    private static final String CHART_COLONY_ITEMS = "exiledsector/charts/ChartColonyItems.java";
-    private static final String CHART_EXPANSIONS = "exiledsector/charts/ChartExpansions.java";
-    private static final String CHART_PHENOMENA = "exiledsector/charts/ChartPhenomena.java";
-    private static final String CHART_FEATURES = "exiledsector/charts/ChartFeatures.java";
-    private static final String ATLAS_DATA = "exiledsector/charts/atlas/AtlasData.java";
     private static final String WORMHOLE_ANCHOR_DEFINITIONS = "exiledsector/items/WormholeAnchorDefinitions.java";
     private static final String DOCTRINE_ARCHIVES = "exiledsector/items/DoctrineArchives.java";
     private static final String MODSPEC_CACHES = "exiledsector/items/ModspecCaches.java";
 
-    private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, ITEM_DEFINITIONS, ITEM_DEFINITION, SUBROUTINE_DEFINITIONS, HULL_ITEM,
-            ITEM_NAMES, ITEM_DROPS, SALVAGE_COMPAT, ITEM_CRAFTING, HULL_ITEM_IMPLICITS, ITEM_MODIFIERS, STAR_CHART_DEFINITIONS, STAR_CHART_IMPLICITS,
-            STAR_CHART_ITEMS, STAR_CHART_NAMES, CHART_TIERS, CHART_POIS, CHART_FACTIONS, CHART_BOSSES, CHART_BLOCKED_ABILITIES, CHART_DROPS, CHART_LOOT,
-            CHART_COLONY_ITEMS, CHART_EXPANSIONS, CHART_PHENOMENA, CHART_FEATURES, ATLAS_DATA, WORMHOLE_ANCHOR_DEFINITIONS, DOCTRINE_ARCHIVES, MODSPEC_CACHES, SUBROUTINE_IMPLICITS,
-            CORRUPTION_IMPLICIT_POOL);
+    private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, ITEM_DEFINITIONS, ITEM_DEFINITION, SUBROUTINE_DEFINITIONS,
+            HULL_ITEM, HULL_ITEM_IMPLICITS, ITEM_MODIFIERS, STAR_CHART_DEFINITIONS, STAR_CHART_IMPLICITS, STAR_CHART_ITEMS,
+            WORMHOLE_ANCHOR_DEFINITIONS, DOCTRINE_ARCHIVES, MODSPEC_CACHES, SUBROUTINE_IMPLICITS, CORRUPTION_IMPLICIT_POOL);
 
     private static final List<String> EDITED_DATA_PATHS = List.of("data/skilltrees/skill_types.json", "data/skilltrees/ship_skill_tree.json",
-            "data/config/exiledSector/item_modifiers", "data/config/exiledSector/item_names", "data/config/exiledSector/item_crafting",
-            "data/config/exiledSector/item_salvage", "data/config/exiledSector/hull_item", "data/config/exiledSector/subroutines", "compat/salvage/",
-            "data/config/exiledSector/star_chart", "data/config/exiledSector/chart_", "data/config/exiledSector/atlas_", "data/config/exiledSector/wormhole_anchors",
-            "data/config/exiledSector/doctrine_archives", "data/config/exiledSector/subroutine_corruption_implicits");
+            "data/config/exiledSector/item_modifiers", "data/config/exiledSector/hull_item", "data/config/exiledSector/subroutines",
+            "data/config/exiledSector/star_charts", "data/config/exiledSector/star_chart_modifiers", "data/config/exiledSector/star_chart_implicits",
+            "data/config/exiledSector/wormhole_anchors", "data/config/exiledSector/doctrine_archives", "data/config/exiledSector/subroutine_corruption_implicits");
 
     private record EditorSource(String file, String symbol) {
         String label() {
@@ -133,15 +109,6 @@ class EditorRoundTripTest {
                     List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "HULL_ITEM_COLUMNS")), true),
             new Pin("item_modifiers.csv columns", ITEM_MODIFIERS, List.of("load", "catalogueOf", "parse"),
                     List.of(new EditorSource(ITEM_MODIFIERS_MODEL, "serializeModifiersCsv")), true),
-            new Pin("item_names.json word fields", ITEM_NAMES, List.of("registerWords"),
-                    List.of(new EditorSource(ITEM_NAMES_MODEL, "serializeRareNames"), new EditorSource(ITEM_NAMES_MODEL, "RARE_NAME_WORD_LISTS"),
-                            new EditorSource(ITEM_NAMES_MODEL, "newRareNameWords")), true),
-            new Pin("item_salvage.csv columns", ITEM_DROPS, List.of("load", "parse"),
-                    List.of(new EditorSource(ITEM_DROPS_MODEL, "serializeSalvageCsv")), true),
-            new Pin("compat/salvage/*.csv columns", SALVAGE_COMPAT, List.of("rows", "missingSites"),
-                    List.of(new EditorSource(ITEM_DROPS_MODEL, "serializeSalvageCsv")), true),
-            new Pin("item_crafting.csv columns", ITEM_CRAFTING, List.of("load", "register"),
-                    List.of(new EditorSource(ITEM_CRAFTING_MODEL, "serializeCraftingCsv")), true),
             new Pin("hull_item_implicits.csv columns", HULL_ITEM_IMPLICITS, List.of("load", "register"),
                     List.of(new EditorSource(HULL_ITEM_IMPLICITS_MODEL, "serializeImplicitsCsv")), true),
             new Pin("star_charts.csv columns", STAR_CHART_DEFINITIONS, List.of("load", "register"),
@@ -157,43 +124,6 @@ class EditorRoundTripTest {
             new Pin("subroutine_corruption_implicits.csv and hull_item_corruption_implicits.csv columns", CORRUPTION_IMPLICIT_POOL,
                     List.of("load", "register"),
                     List.of(new EditorSource(HULL_ITEM_IMPLICITS_MODEL, "serializeCorruptionPoolCsv")), true),
-            new Pin("star_chart_names.json word fields", STAR_CHART_NAMES, List.of("register"),
-                    List.of(new EditorSource(ITEM_NAMES_MODEL, "serializeStarChartNames"), new EditorSource(ITEM_NAMES_MODEL, "RARE_NAME_WORD_LISTS"),
-                            new EditorSource(ITEM_NAMES_MODEL, "newRareNameWords")), true),
-            new Pin("star_chart_tiers.csv columns", CHART_TIERS, List.of("load", "register"),
-                    List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_TIER_COLUMNS")), true),
-            new Pin("chart_poi.csv columns", CHART_POIS, List.of("load", "register", "parse"),
-                    List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_POI_COLUMNS")), true),
-            new Pin("chart_factions.csv columns", CHART_FACTIONS, List.of("load", "register"),
-                    List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_FACTION_COLUMNS")), true),
-            new Pin("chart_bosses.csv columns", CHART_BOSSES, List.of("parse"),
-                    List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_BOSS_COLUMNS")), true),
-            new Pin("chart_boss_stations.csv columns", CHART_BOSSES, List.of("load", "registerStations"),
-                    List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_BOSS_STATION_COLUMNS")), true),
-            new Pin("chart_blocked_abilities.csv columns", CHART_BLOCKED_ABILITIES, List.of("load"),
-                    List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_BLOCKED_ABILITY_COLUMNS")), true),
-            new Pin("chart_drops.csv columns", CHART_DROPS, List.of("load", "register"),
-                    List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_DROP_COLUMNS")), true),
-            new Pin("chart_loot.csv columns", CHART_LOOT, List.of("load", "register", "parse"),
-                    List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_LOOT_COLUMNS")), true),
-            new Pin("chart_colony_items.csv columns", CHART_COLONY_ITEMS, List.of("load", "register"),
-                    List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_COLONY_ITEM_COLUMNS")), true),
-            new Pin("chart_expansions.csv columns", CHART_EXPANSIONS, List.of("load", "parse"),
-                    List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_EXPANSION_COLUMNS")), true),
-            new Pin("chart_phenomena.csv columns", CHART_PHENOMENA, List.of("load", "parse"),
-                    List.of(new EditorSource(CHART_TABLES_MODEL, "CHART_PHENOMENON_COLUMNS")), true),
-            new Pin("atlas_features.csv columns", CHART_FEATURES, List.of("load"),
-                    List.of(new EditorSource(CHART_TABLES_MODEL, "ATLAS_FEATURE_COLUMNS")), true),
-            new Pin("atlas_regions.csv columns", ATLAS_DATA, List.of("load", "registerRegions", "look", "ambience"),
-                    List.of(new EditorSource(CHART_TABLES_MODEL, "ATLAS_REGION_COLUMNS")), true),
-            new Pin("atlas_decorations.csv columns", ATLAS_DATA, List.of("registerDecorations"),
-                    List.of(new EditorSource(CHART_TABLES_MODEL, "ATLAS_DECORATION_COLUMNS")), true),
-            new Pin("atlas_layouts.csv columns", ATLAS_DATA, List.of("registerLayouts"),
-                    List.of(new EditorSource(CHART_TABLES_MODEL, "ATLAS_LAYOUT_COLUMNS")), true),
-            new Pin("atlas_markers.csv columns", ATLAS_DATA, List.of("registerMarkers"),
-                    List.of(new EditorSource(CHART_TABLES_MODEL, "ATLAS_MARKER_COLUMNS")), true),
-            new Pin("atlas_specials.csv columns", ATLAS_DATA, List.of("registerSpecials"),
-                    List.of(new EditorSource(CHART_TABLES_MODEL, "ATLAS_SPECIAL_COLUMNS")), true),
             new Pin("wormhole_anchors.csv columns", WORMHOLE_ANCHOR_DEFINITIONS, List.of("load", "register"),
                     List.of(new EditorSource(WORMHOLE_ANCHORS_MODEL, "WORMHOLE_ANCHOR_COLUMNS")), true),
             new Pin("wormhole_anchors.csv shared item columns", ITEM_DEFINITION, List.of("definitionId", "parseCommon"),

@@ -188,10 +188,6 @@ export function lineSummary(line: ModifierLine): string {
   return `${line.effect} ${values}`;
 }
 
-export function modifierSummary(modifier: Pick<ItemModifier, 'lines'>): string {
-  return modifier.lines.map(lineSummary).join(' + ');
-}
-
 function effectStem(effect: string): string {
   return effect.replace(/_(PERCENT|MULT|FLAT)$/, '');
 }
@@ -463,22 +459,4 @@ export function markModifiersSaved(model: ModifiersModel, saved: ModifiersModel)
       modifier.loadedId = savedModifier.id;
     }
   }
-}
-
-export function copiedModifier(
-  modifiers: ItemModifier[],
-  source: ItemModifier,
-  qualifier: string,
-  itemType: string,
-  takenIds: ReadonlySet<string> = new Set(),
-): ItemModifier {
-  const lines = JSON.parse(JSON.stringify(source.lines)) as ModifierLine[];
-  return {
-    cells: [],
-    id: uniqueModifierId(modifiers, suggestedModifierId(lines, qualifier), takenIds),
-    slot: source.slot,
-    itemTypes: [itemType],
-    lines,
-    name: source.name,
-  };
 }

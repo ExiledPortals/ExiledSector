@@ -73,6 +73,24 @@ class EditorDescriberTest {
     }
 
     @Test
+    void aLineThatCannotBeDescribedLeavesTheRestOfTheBatchDescribed() throws Exception {
+        JSONArray lines = new JSONArray()
+                .put(new JSONObject().put("effect", "MAX_COMBAT_READINESS_PERCENT"))
+                .put(new JSONObject().put("effect", "CHART_FLEET_SIZE_PERCENT").put("itemType", "star_chart").put("tierBands", new JSONArray()))
+                .put("not a line")
+                .put(new JSONObject().put("effect", "MAX_COMBAT_READINESS_PERCENT").put("min", 3).put("max", 5));
+
+        JSONArray described = new JSONObject(new EditorDescriber().respond(new JSONObject().put("modifierLines", lines).toString()))
+                .getJSONArray("lines");
+
+        assertEquals(4, described.length());
+        assertTrue(described.isNull(0));
+        assertTrue(described.isNull(1));
+        assertTrue(described.isNull(2));
+        assertTrue(described.getString(3).contains("3") && described.getString(3).contains("5"), described.getString(3));
+    }
+
+    @Test
     void aSavedTypeIsDescribedWithItsTitleAndHighlightedEffects() throws Exception {
         JSONObject response = new JSONObject(new EditorDescriber().respond(request(savedTypes, "flux_capacity", null).toString()));
 

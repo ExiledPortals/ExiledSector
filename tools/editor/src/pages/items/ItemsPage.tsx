@@ -1,35 +1,17 @@
-import { Alert, Center, Loader, Tabs } from '@mantine/core';
+import { Alert, Box, Center, Divider, Loader, Stack, Tabs } from '@mantine/core';
 import { IconAlertTriangle } from '@tabler/icons-react';
-import { useVocabulary } from '../../api/vocabulary.ts';
-import {
-  ATLAS_FEATURE_SPEC,
-  ATLAS_LAYOUT_SPEC,
-  ATLAS_MARKER_SPEC,
-  ATLAS_DECORATION_SPEC,
-  ATLAS_NODE_EFFECT_SPEC,
-  ATLAS_REGION_SPEC,
-  ATLAS_SPECIAL_SPEC,
-  CHART_BLOCKED_ABILITY_SPEC,
-  CHART_BOSS_SPEC,
-  CHART_BOSS_STATION_SPEC,
-  CHART_COLONY_ITEM_SPEC,
-  CHART_DROP_SPEC,
-  CHART_EXPANSION_SPEC,
-  CHART_PHENOMENON_SPEC,
-  CHART_FACTION_SPEC,
-  CHART_LOOT_SPEC,
-  CHART_POI_SPEC,
-  CHART_TIER_SPEC,
-} from './model/chartTables.ts';
-import { ChartTableTab } from './tabs/ChartTableTab.tsx';
-import { CraftingTab } from './tabs/CraftingTab.tsx';
-import { DefinitionsTab } from './tabs/DefinitionsTab.tsx';
-import { DropsTab } from './tabs/DropsTab.tsx';
-import { ImplicitsTab } from './tabs/ImplicitsTab.tsx';
-import { ModifiersTab } from './tabs/ModifiersTab.tsx';
-import { NamesTab } from './tabs/NamesTab.tsx';
+import { useVocabulary, type Vocabulary } from '../../api/vocabulary.ts';
+import { DataToolbar } from '../../shared/DataToolbar.tsx';
+import { DocumentState } from '../../shared/DocumentState.tsx';
+import { HullItemTypesPanel } from './hullItems/HullItemTypesPanel.tsx';
+import { useItemsDocument } from './itemsDocument.ts';
+import { ModifierCataloguePanel } from './modifiers/ModifierCataloguePanel.tsx';
+import { DoctrineArchivesPanel } from './socketables/DoctrineArchivesPanel.tsx';
+import { SubroutinesPanel } from './socketables/SubroutinesPanel.tsx';
+import { WormholeAnchorsPanel } from './socketables/WormholeAnchorsPanel.tsx';
 
-const PANEL_STYLE = { flex: 1, minHeight: 0 };
+const FILL = { flex: 1, minHeight: 0 };
+const TAB_COLUMN = { flexDirection: 'column' } as const;
 
 export function ItemsPage() {
   const vocabulary = useVocabulary();
@@ -47,106 +29,63 @@ export function ItemsPage() {
       </Center>
     );
   }
+  return <ItemsWorkspace vocabulary={vocabulary.data} />;
+}
+
+function ItemsWorkspace({ vocabulary }: { vocabulary: Vocabulary }) {
+  const document = useItemsDocument(vocabulary);
   return (
-    <Tabs defaultValue="definitions" keepMounted h="100%" display="flex" style={{ flexDirection: 'column' }}>
-      <Tabs.List px="md" pt="xs">
-        <Tabs.Tab value="definitions">Definitions</Tabs.Tab>
-        <Tabs.Tab value="modifiers">Modifiers</Tabs.Tab>
-        <Tabs.Tab value="implicits">Implicits</Tabs.Tab>
-        <Tabs.Tab value="names">Names</Tabs.Tab>
-        <Tabs.Tab value="drops">Drops</Tabs.Tab>
-        <Tabs.Tab value="crafting">Crafting</Tabs.Tab>
-        <Tabs.Tab value="chart-tiers">Chart tiers</Tabs.Tab>
-        <Tabs.Tab value="chart-pois">Chart POIs</Tabs.Tab>
-        <Tabs.Tab value="chart-factions">Chart factions</Tabs.Tab>
-        <Tabs.Tab value="chart-bosses">Chart bosses</Tabs.Tab>
-        <Tabs.Tab value="chart-boss-stations">Chart boss stations</Tabs.Tab>
-        <Tabs.Tab value="chart-drops">Chart drops</Tabs.Tab>
-        <Tabs.Tab value="chart-loot">Chart loot</Tabs.Tab>
-        <Tabs.Tab value="chart-colony-items">Chart colony items</Tabs.Tab>
-        <Tabs.Tab value="chart-blocked-abilities">Chart blocked abilities</Tabs.Tab>
-        <Tabs.Tab value="chart-expansions">Chart expansions</Tabs.Tab>
-        <Tabs.Tab value="chart-phenomena">Chart phenomena</Tabs.Tab>
-        <Tabs.Tab value="atlas-regions">Atlas regions</Tabs.Tab>
-        <Tabs.Tab value="atlas-decorations">Atlas decorations</Tabs.Tab>
-        <Tabs.Tab value="atlas-layouts">Atlas layouts</Tabs.Tab>
-        <Tabs.Tab value="atlas-features">Atlas features</Tabs.Tab>
-        <Tabs.Tab value="atlas-node-effects">Atlas node effects</Tabs.Tab>
-        <Tabs.Tab value="atlas-markers">Atlas markers</Tabs.Tab>
-        <Tabs.Tab value="atlas-specials">Atlas special sites</Tabs.Tab>
-      </Tabs.List>
-      <Tabs.Panel value="definitions" style={PANEL_STYLE}>
-        <DefinitionsTab vocabulary={vocabulary.data} />
-      </Tabs.Panel>
-      <Tabs.Panel value="modifiers" style={PANEL_STYLE}>
-        <ModifiersTab vocabulary={vocabulary.data} />
-      </Tabs.Panel>
-      <Tabs.Panel value="implicits" style={PANEL_STYLE}>
-        <ImplicitsTab vocabulary={vocabulary.data} />
-      </Tabs.Panel>
-      <Tabs.Panel value="names" style={PANEL_STYLE}>
-        <NamesTab />
-      </Tabs.Panel>
-      <Tabs.Panel value="drops" style={PANEL_STYLE}>
-        <DropsTab />
-      </Tabs.Panel>
-      <Tabs.Panel value="crafting" style={PANEL_STYLE}>
-        <CraftingTab />
-      </Tabs.Panel>
-      <Tabs.Panel value="chart-tiers" style={PANEL_STYLE}>
-        <ChartTableTab spec={CHART_TIER_SPEC} vocabulary={vocabulary.data} />
-      </Tabs.Panel>
-      <Tabs.Panel value="chart-pois" style={PANEL_STYLE}>
-        <ChartTableTab spec={CHART_POI_SPEC} vocabulary={vocabulary.data} />
-      </Tabs.Panel>
-      <Tabs.Panel value="chart-factions" style={PANEL_STYLE}>
-        <ChartTableTab spec={CHART_FACTION_SPEC} vocabulary={vocabulary.data} />
-      </Tabs.Panel>
-      <Tabs.Panel value="chart-bosses" style={PANEL_STYLE}>
-        <ChartTableTab spec={CHART_BOSS_SPEC} vocabulary={vocabulary.data} />
-      </Tabs.Panel>
-      <Tabs.Panel value="chart-boss-stations" style={PANEL_STYLE}>
-        <ChartTableTab spec={CHART_BOSS_STATION_SPEC} vocabulary={vocabulary.data} />
-      </Tabs.Panel>
-      <Tabs.Panel value="chart-drops" style={PANEL_STYLE}>
-        <ChartTableTab spec={CHART_DROP_SPEC} vocabulary={vocabulary.data} />
-      </Tabs.Panel>
-      <Tabs.Panel value="chart-loot" style={PANEL_STYLE}>
-        <ChartTableTab spec={CHART_LOOT_SPEC} vocabulary={vocabulary.data} />
-      </Tabs.Panel>
-      <Tabs.Panel value="chart-colony-items" style={PANEL_STYLE}>
-        <ChartTableTab spec={CHART_COLONY_ITEM_SPEC} vocabulary={vocabulary.data} />
-      </Tabs.Panel>
-      <Tabs.Panel value="chart-blocked-abilities" style={PANEL_STYLE}>
-        <ChartTableTab spec={CHART_BLOCKED_ABILITY_SPEC} vocabulary={vocabulary.data} />
-      </Tabs.Panel>
-      <Tabs.Panel value="chart-expansions" style={PANEL_STYLE}>
-        <ChartTableTab spec={CHART_EXPANSION_SPEC} vocabulary={vocabulary.data} />
-      </Tabs.Panel>
-      <Tabs.Panel value="chart-phenomena" style={PANEL_STYLE}>
-        <ChartTableTab spec={CHART_PHENOMENON_SPEC} vocabulary={vocabulary.data} />
-      </Tabs.Panel>
-      <Tabs.Panel value="atlas-regions" style={PANEL_STYLE}>
-        <ChartTableTab spec={ATLAS_REGION_SPEC} vocabulary={vocabulary.data} />
-      </Tabs.Panel>
-      <Tabs.Panel value="atlas-decorations" style={PANEL_STYLE}>
-        <ChartTableTab spec={ATLAS_DECORATION_SPEC} vocabulary={vocabulary.data} />
-      </Tabs.Panel>
-      <Tabs.Panel value="atlas-layouts" style={PANEL_STYLE}>
-        <ChartTableTab spec={ATLAS_LAYOUT_SPEC} vocabulary={vocabulary.data} />
-      </Tabs.Panel>
-      <Tabs.Panel value="atlas-features" style={PANEL_STYLE}>
-        <ChartTableTab spec={ATLAS_FEATURE_SPEC} vocabulary={vocabulary.data} />
-      </Tabs.Panel>
-      <Tabs.Panel value="atlas-node-effects" style={PANEL_STYLE}>
-        <ChartTableTab spec={ATLAS_NODE_EFFECT_SPEC} vocabulary={vocabulary.data} />
-      </Tabs.Panel>
-      <Tabs.Panel value="atlas-markers" style={PANEL_STYLE}>
-        <ChartTableTab spec={ATLAS_MARKER_SPEC} vocabulary={vocabulary.data} />
-      </Tabs.Panel>
-      <Tabs.Panel value="atlas-specials" style={PANEL_STYLE}>
-        <ChartTableTab spec={ATLAS_SPECIAL_SPEC} vocabulary={vocabulary.data} />
-      </Tabs.Panel>
-    </Tabs>
+    <Stack h="100%" gap={0}>
+      <Box px="md" py="xs">
+        <DataToolbar document={document} />
+      </Box>
+      <Divider />
+      <DocumentState state={document.state} onRetry={() => void document.reload()}>
+        {(model) => (
+          <Tabs defaultValue="hull-items" keepMounted display="flex" style={{ ...FILL, ...TAB_COLUMN }}>
+            <Tabs.List px="md" pt="xs">
+              <Tabs.Tab value="hull-items">Hull Items</Tabs.Tab>
+              <Tabs.Tab value="star-charts">Star Charts</Tabs.Tab>
+              <Tabs.Tab value="socketables">Skill Tree Socketables</Tabs.Tab>
+            </Tabs.List>
+            <Tabs.Panel value="hull-items" style={FILL}>
+              <Tabs defaultValue="item-types" keepMounted variant="pills" h="100%" display="flex" style={TAB_COLUMN}>
+                <Tabs.List px="md" py="xs">
+                  <Tabs.Tab value="item-types">Item types</Tabs.Tab>
+                  <Tabs.Tab value="modifiers">Modifiers</Tabs.Tab>
+                </Tabs.List>
+                <Tabs.Panel value="item-types" style={FILL}>
+                  <HullItemTypesPanel document={document} model={model} vocabulary={vocabulary} />
+                </Tabs.Panel>
+                <Tabs.Panel value="modifiers" style={FILL}>
+                  <ModifierCataloguePanel document={document} model={model} vocabulary={vocabulary} family="ship" />
+                </Tabs.Panel>
+              </Tabs>
+            </Tabs.Panel>
+            <Tabs.Panel value="star-charts" style={FILL}>
+              <ModifierCataloguePanel document={document} model={model} vocabulary={vocabulary} family="chart" />
+            </Tabs.Panel>
+            <Tabs.Panel value="socketables" style={FILL}>
+              <Tabs defaultValue="subroutines" keepMounted variant="pills" h="100%" display="flex" style={TAB_COLUMN}>
+                <Tabs.List px="md" py="xs">
+                  <Tabs.Tab value="subroutines">Subroutines</Tabs.Tab>
+                  <Tabs.Tab value="doctrines">Doctrine Archives</Tabs.Tab>
+                  <Tabs.Tab value="anchors">Wormhole Anchors</Tabs.Tab>
+                </Tabs.List>
+                <Tabs.Panel value="subroutines" style={FILL}>
+                  <SubroutinesPanel document={document} model={model} vocabulary={vocabulary} />
+                </Tabs.Panel>
+                <Tabs.Panel value="doctrines" style={FILL}>
+                  <DoctrineArchivesPanel document={document} model={model} vocabulary={vocabulary} />
+                </Tabs.Panel>
+                <Tabs.Panel value="anchors" style={FILL}>
+                  <WormholeAnchorsPanel document={document} model={model} vocabulary={vocabulary} />
+                </Tabs.Panel>
+              </Tabs>
+            </Tabs.Panel>
+          </Tabs>
+        )}
+      </DocumentState>
+    </Stack>
   );
 }

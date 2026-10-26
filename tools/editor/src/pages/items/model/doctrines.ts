@@ -114,10 +114,6 @@ export function replacementCandidates(typeFacts: Readonly<Record<string, Doctrin
     .sort((first, second) => first.localeCompare(second));
 }
 
-export function doctrineModifierIds(modifiers: readonly ItemModifier[]): string[] {
-  return modifiers.filter((modifier) => modifier.itemTypes.includes(DOCTRINE_TYPE) && modifier.slot === 'prefix').map((modifier) => modifier.id);
-}
-
 export function newDoctrineArchive(archives: DoctrineArchive[], doctrineSubroutineIds: readonly string[], vocabulary: Vocabulary): DoctrineArchive {
   const covered = new Set(archives.map((archive) => archive.id));
   const id = doctrineSubroutineIds.find((candidate) => !covered.has(candidate)) ?? '';
@@ -266,6 +262,10 @@ export function doctrineModifierReferences(archive: Pick<DoctrineArchive, 'modif
     }
   }
   return references;
+}
+
+export function formatDoctrineModifiers(references: readonly DoctrineModifierReference[]): string {
+  return joinEntries(references.map((reference) => (reference.weight === undefined || reference.weight === '' ? `@${reference.modifierId}` : `@${reference.modifierId}:${reference.weight}`)));
 }
 
 export function renameDoctrineModifier(archives: DoctrineArchive[], fromId: string, toId: string): number {

@@ -4,7 +4,6 @@ import { isUnshippedImagePath } from '../../../shared/imagePaths.ts';
 
 export const WORMHOLE_ANCHOR_TYPE = 'wormhole_anchor';
 export const WORMHOLE_ANCHOR_RESOURCE = 'wormhole-anchors';
-export const WORMHOLE_ANCHOR_FILE_NAME = 'wormhole_anchors.csv';
 export const CORE_REGION = 'core';
 export const WORMHOLE_EXIT_TIER = 'WORMHOLE_EXIT';
 export const DEFAULT_ANCHOR_ICON = 'graphics/icons/nav_relay.png';

@@ -16,7 +16,7 @@ interface EditorPageLink {
 const PAGE_LINKS: EditorPageLink[] = [
   { path: '/tree', label: 'Skill tree', description: 'Nodes, types and layout', icon: IconBinaryTree },
   { path: '/images', label: 'Images', description: 'Browse, recolour and crop', icon: IconPhoto },
-  { path: '/hull-items', label: 'Hull Items', description: 'Definitions, implicits, names, drops, crafting', icon: IconCpu },
+  { path: '/items', label: 'Items', description: 'Hull items, star charts, socketables', icon: IconCpu },
   { path: '/text', label: 'Text', description: 'English wording and tooltips', icon: IconLanguage },
 ];
 

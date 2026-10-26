@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { buildVocabulary } from '../../../api/vocabulary.ts';
-import { fractionToPercentText, percentToFractionText } from '../../../shared/decimalText.ts';
 import {
   formatPool,
   markDefinitionsSaved,
@@ -15,9 +14,7 @@ import {
   type ItemDefinition,
   type ItemDefinitionsModel,
 } from './definitions.ts';
-import { dropSummary, setChance, validateDrops, type DropRow } from './drops.ts';
 import { modifierById, parseModifiersCsv } from './modifiers.ts';
-import { validateNames, wordList } from './names.ts';
 
 const vocabulary = buildVocabulary({
   effects: [
@@ -358,54 +355,5 @@ describe('modspec cache subroutines', () => {
       'zero_counts: at least one node count chance must be above 0',
       'doctrine: only MODSPEC_CACHE subroutines have excluded nodes, node count chances or drop chances; clear them',
     ]);
-  });
-});
-
-describe('drops', () => {
-  function row(chances: string[]): DropRow {
-    return { cells: [], passthrough: false, site: 'derelict', chances, unique: '' };
-  }
-
-  it('summarises the chance of at least N items as a product of the chained rolls', () => {
-    expect(dropSummary(row(['0.5', '0.5', '0.1']))).toBe('1+: 50%, 2+: 25%, 3+: 2.5%');
-  });
-
-  it('pads earlier slots and trims trailing blanks when a slot changes', () => {
-    const drop = row(['0.5']);
-    setChance(drop, 2, '0.1');
-    expect(drop.chances).toEqual(['0.5', '', '0.1']);
-    setChance(drop, 2, '');
-    expect(drop.chances).toEqual(['0.5']);
-  });
-
-  it('rejects gaps, out-of-range chances and duplicate sites, but ignores comment rows', () => {
-    const issues = validateDrops({
-      table: { header: [], rows: [], lineEnding: '\n' },
-      rows: [row(['', '1.5']), row(['0.2']), { cells: [], passthrough: true, site: '#note', chances: ['9'], unique: '' }],
-    });
-    expect(issues).toEqual([
-      'derelict: item 1 is blank but a later item is set',
-      'derelict: item 2 must be between 0 and 100',
-      'derelict: listed more than once',
-    ]);
-  });
-
-  it('converts between stored fractions and shown percentages without float noise', () => {
-    expect(fractionToPercentText('0.075')).toBe('7.5');
-    expect(percentToFractionText('7.5')).toBe('0.075');
-    expect(percentToFractionText('0.3')).toBe('0.003');
-    expect(fractionToPercentText('')).toBe('');
-  });
-});
-
-describe('names', () => {
-  it('needs both word lists for every rare name entry', () => {
-    expect(validateNames({ rareNames: { a: { first: ['X'] }, b: { first: ['Y'], second: ['Z'] } }, rareNamesLineEnding: '\n' })).toEqual([
-      'a: needs at least one first word and one second word',
-    ]);
-  });
-
-  it('splits word lists on new lines and commas', () => {
-    expect(wordList('Alpha\n Beta, Gamma\n\n')).toEqual(['Alpha', 'Beta', 'Gamma']);
   });
 });

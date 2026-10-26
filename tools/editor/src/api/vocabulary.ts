@@ -27,31 +27,6 @@ interface VocabularyFile {
   chartTierRange?: [number, number];
   chartEffects?: string[];
   chartSystemTypes?: string[];
-  chartPoiKinds?: string[];
-  chartDerelictTypes?: string[];
-  chartTierDefaults?: ChartTierDefault[];
-  chartDropSources?: ChartDropSource[];
-  chartLootDropTypes?: string[];
-  chartLootScopes?: string[];
-  chartColonyItemGroups?: string[];
-  chartExpansions?: string[];
-  chartBossTypes?: string[];
-  chartFeatures?: string[];
-  chartPhenomena?: string[];
-}
-
-export interface ChartTierDefault {
-  tier: number;
-  fleetsMin: number;
-  fleetsMax: number;
-  levelMin: number;
-  levelMax: number;
-  bossSize: number;
-}
-
-export interface ChartDropSource {
-  id: string;
-  insideSystem: boolean;
 }
 
 export interface Vocabulary {
@@ -80,17 +55,6 @@ export interface Vocabulary {
   highestChartTier: number;
   chartEffectNames: string[];
   chartSystemTypes: string[];
-  chartPoiKinds: string[];
-  chartDerelictTypes: string[];
-  chartTierDefaults: ChartTierDefault[];
-  chartDropSources: ChartDropSource[];
-  chartLootDropTypes: string[];
-  chartLootScopes: string[];
-  chartColonyItemGroups: string[];
-  chartExpansions: string[];
-  chartBossTypes: string[];
-  chartFeatures: string[];
-  chartPhenomena: string[];
 }
 
 export function buildVocabulary(file: VocabularyFile): Vocabulary {
@@ -120,17 +84,6 @@ export function buildVocabulary(file: VocabularyFile): Vocabulary {
     highestChartTier: file.chartTierRange?.[1] ?? 15,
     chartEffectNames: (file.chartEffects ?? []).slice(),
     chartSystemTypes: (file.chartSystemTypes ?? []).slice(),
-    chartPoiKinds: (file.chartPoiKinds ?? []).slice(),
-    chartDerelictTypes: (file.chartDerelictTypes ?? []).slice(),
-    chartTierDefaults: (file.chartTierDefaults ?? []).map((tierDefault) => ({ ...tierDefault })),
-    chartDropSources: (file.chartDropSources ?? []).map((source) => ({ ...source })),
-    chartLootDropTypes: (file.chartLootDropTypes ?? []).slice(),
-    chartLootScopes: (file.chartLootScopes ?? []).slice(),
-    chartColonyItemGroups: (file.chartColonyItemGroups ?? []).slice(),
-    chartExpansions: (file.chartExpansions ?? []).slice(),
-    chartBossTypes: (file.chartBossTypes ?? []).slice(),
-    chartFeatures: (file.chartFeatures ?? []).slice(),
-    chartPhenomena: (file.chartPhenomena ?? []).slice(),
   };
 }
 

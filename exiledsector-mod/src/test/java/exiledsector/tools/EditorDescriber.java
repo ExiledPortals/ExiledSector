@@ -35,7 +35,7 @@ public final class EditorDescriber {
             JSONObject request = new JSONObject(requestLine);
             JSONObject strings = request.optJSONObject("strings");
             return strings == null ? describe(request).toString() : describeWithStrings(request, strings).toString();
-        } catch (JSONException | IllegalArgumentException e) {
+        } catch (JSONException | RuntimeException e) {
             return error(e.getMessage());
         }
     }
@@ -78,10 +78,21 @@ public final class EditorDescriber {
     private static JSONObject describeModifierLines(JSONArray modifierLines) throws JSONException {
         JSONArray described = new JSONArray();
         for (int index = 0; index < modifierLines.length(); index++) {
-            StyledText lineText = describeModifierLine(modifierLines.getJSONObject(index));
+            StyledText lineText = describeModifierLineOrNull(modifierLines.optJSONObject(index));
             described.put(lineText == null ? JSONObject.NULL : lineText.toMarkup());
         }
         return new JSONObject().put("lines", described);
+    }
+
+    private static StyledText describeModifierLineOrNull(JSONObject lineJson) {
+        if (lineJson == null) {
+            return null;
+        }
+        try {
+            return describeModifierLine(lineJson);
+        } catch (JSONException | RuntimeException e) {
+            return null;
+        }
     }
 
     private static StyledText describeModifierLine(JSONObject lineJson) throws JSONException {

@@ -11,7 +11,7 @@ export type DescribeStatus = 'idle' | 'waiting' | 'building' | 'built' | 'ready'
 
 const READY_LINE = '{"ready":true}';
 const READY_TIMEOUT_MS = 30000;
-const REQUEST_TIMEOUT_MS = 10000;
+const REQUEST_TIMEOUT_MS = 30000;
 const HELPER_CLASS = 'exiledsector.tools.EditorDescribeServer';
 const HELPER_MODULE = 'exiledsector-mod';
 export const REBUILD_COOLDOWN_MS = 15000;
