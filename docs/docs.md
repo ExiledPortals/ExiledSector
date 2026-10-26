@@ -214,6 +214,22 @@ passes them, with item rarity raised by depth, and content sites it covers get a
 (`StarChartLootSource.modifiersFor`). Closing the core early removes the field and its unlooted caches and drops
 salvage and items scaled by the largest size it reached (`BreachCoreDialog`).
 
+## Neutron Star charts
+
+A Neutron Star chart has at least 7 planets to hide behind from the pulsar beam (`ChartAnomaly.minPlanets`).
+`ChartStarSystemGenerator.topUpPlanets` adds planet-only orbits past the layout's last one, then into gaps between
+orbits once the layout's orbit limit is reached, then further out. Every neutron star in a chart gets
+`ChartCoronaTerrainPlugin` and `ChartPulsarBeamTerrainPlugin` in place of vanilla's corona and beam
+(`setPulsarIfNeutron`). They push and drain only the player fleet, so the system's other fleets stay where they are.
+
+## Transverse Jump in charts
+
+In any chart system, Transverse Jump takes the fleet back to where the chart was opened, the same as the exit
+wormhole's Return (`ChartRunActions.returnToOrigin`), at vanilla's fuel and CR cost. While the player is inside,
+`ChartRunScript` swaps the fleet's vanilla `FractureJumpAbility` for `ChartTransverseJumpAbility`, and
+`ChartTransverseJump` swaps it back once the jump is idle outside and before every save, so saves never hold it. A
+Transverse Jump plugin from another mod stays blocked like the other escape abilities.
+
 ## The atlas
 
 Each save has one atlas: `AtlasState` keeps the seed and per-system flags in persistent data, and `AtlasGenerator`

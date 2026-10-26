@@ -69,6 +69,9 @@ public interface ExiledSectorDomain {
     default void afterSocketCustody() {
     }
 
+    default void beforeGameSave() {
+    }
+
     default List<CompatTarget> compatTargets() {
         return List.of();
     }

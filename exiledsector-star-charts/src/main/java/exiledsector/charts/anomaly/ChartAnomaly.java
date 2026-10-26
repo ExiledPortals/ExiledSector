@@ -20,6 +20,10 @@ public interface ChartAnomaly {
         return primaryStar() != null || systemType() != null;
     }
 
+    default int minPlanets() {
+        return 0;
+    }
+
     default void shape(AnomalyLayoutSite site) {
     }
 

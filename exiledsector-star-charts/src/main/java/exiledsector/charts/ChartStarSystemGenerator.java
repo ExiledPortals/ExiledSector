@@ -12,25 +12,36 @@ import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.campaign.procgen.StarAge;
 import com.fs.starfarer.api.impl.campaign.procgen.StarGenDataSpec;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator;
+import com.fs.starfarer.api.impl.campaign.procgen.TerrainGenDataSpec;
 import com.fs.starfarer.api.impl.campaign.terrain.StarCoronaTerrainPlugin;
+import com.fs.starfarer.api.impl.campaign.terrain.StarCoronaTerrainPlugin.CoronaParams;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import exiledsector.charts.feature.ChartFeature;
 import exiledsector.charts.feature.FeatureSite;
 import exiledsector.charts.anomaly.AnomalyLayoutSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.ChartCoronaTerrainPlugin;
+import exiledsector.charts.anomaly.ChartPulsarBeamTerrainPlugin;
 import exiledsector.charts.anomaly.StellarFlares;
 import exiledsector.compat.UnknownSkiesCompat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 final class ChartStarSystemGenerator extends StarSystemGenerator {
 
     static final float BINARY_PAD = 1500f;
+    static final int TOP_UP_ATTEMPTS_PER_PLANET = 3;
+    static final String NEUTRON_STAR = "star_neutron";
+    static final float PULSAR_CORONA_RADIUS = 300f;
+    static final float PULSAR_CORONA_WIND = 3f;
+    static final float PULSAR_CORONA_CR_LOSS = 3f;
     static final Map<String, List<String>> BACKGROUNDS_BY_NEBULA = Map.of(
             NEBULA_NONE, List.of("graphics/backgrounds/background2.jpg", "graphics/backgrounds/background4.jpg"),
             NEBULA_BLUE, List.of("graphics/backgrounds/background5.jpg"),
@@ -134,14 +145,22 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
     @Override
     protected GenResult addPlanetsAndTerrain(float maxOrbitRadius) {
         float orbitLimit = Math.min(maxOrbitRadius, recipe.shape().orbitRadiusLimit());
-        if (!recipe.shape().setsOrbits()) {
-            return super.addPlanetsAndTerrain(orbitLimit);
-        }
+        GenResult result = recipe.shape().setsOrbits() ? addShapedOrbits(orbitLimit) : super.addPlanetsAndTerrain(orbitLimit);
+        return topUpPlanets(result, orbitLimit);
+    }
+
+    private GenResult addShapedOrbits(float orbitLimit) {
         int numOrbits = Math.round(getNormalRandom(recipe.shape().minOrbits(), recipe.shape().maxOrbits()));
         if (numOrbits <= 0) {
             return null;
         }
-        float currentRadius = centerRadius + STARTING_RADIUS_STAR_BASE + STARTING_RADIUS_STAR_RANGE * random.nextFloat();
+        GenContext context = orbitContext(firstOrbitRadius(), orbitLimit);
+        GenResult result = addOrbitingEntities(context, numOrbits, false, true, false, true);
+        result.context = context;
+        return result;
+    }
+
+    private GenContext orbitContext(float currentRadius, float orbitLimit) {
         GenContext context = new GenContext(this, system, systemCenter, starData, null, 0, starAge.name(), currentRadius, orbitLimit, null, -1);
         if (systemType == StarSystemType.BINARY_CLOSE || systemType == StarSystemType.TRINARY_1CLOSE_1FAR) {
             context.multipliers.add(COL_BINARY);
@@ -149,9 +168,80 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
         if (systemType == StarSystemType.TRINARY_2CLOSE) {
             context.multipliers.add(COL_TRINARY);
         }
-        GenResult result = addOrbitingEntities(context, numOrbits, false, true, false, true);
-        result.context = context;
-        return result;
+        return context;
+    }
+
+    private float firstOrbitRadius() {
+        return centerRadius + STARTING_RADIUS_STAR_BASE + STARTING_RADIUS_STAR_RANGE * random.nextFloat();
+    }
+
+    GenResult topUpPlanets(GenResult result, float orbitLimit) {
+        int wanted = minPlanets();
+        if (wanted <= 0 || centre() == null || planetCount() >= wanted) {
+            return result;
+        }
+        float outerEdge = result == null ? 0f : result.orbitalWidth * 0.5f;
+        float nextRadius = Math.max(firstOrbitRadius(), outerEdge + orbitIncrement());
+        GenContext context = orbitContext(nextRadius, orbitLimit);
+        context.excludeCategories.addAll(terrainCategories());
+        for (int attempt = 0; attempt < wanted * TOP_UP_ATTEMPTS_PER_PLANET && planetCount() < wanted; attempt++) {
+            float gap = nextRadius > orbitLimit ? gapRadius(orbitLimit) : Float.NaN;
+            float radius = Float.isNaN(gap) ? nextRadius : gap;
+            GenResult added = addTopUpOrbit(context, radius);
+            float edge = added == null ? radius : added.orbitalWidth * 0.5f;
+            outerEdge = Math.max(outerEdge, edge);
+            if (Float.isNaN(gap)) {
+                nextRadius = edge + orbitIncrement();
+            }
+        }
+        GenResult toppedUp = result != null ? result : new GenResult();
+        toppedUp.orbitalWidth = Math.max(toppedUp.orbitalWidth, outerEdge * 2f);
+        if (toppedUp.context == null) {
+            toppedUp.context = context;
+        }
+        return toppedUp;
+    }
+
+    GenResult addTopUpOrbit(GenContext context, float radius) {
+        context.currentRadius = radius;
+        context.startingOrbitIndex = Math.max(0, Math.round((radius - centerRadius - STARTING_RADIUS_STAR_BASE - STARTING_RADIUS_STAR_RANGE * 0.5f)
+                / (BASE_INCR * 1.25f)));
+        return addOrbitingEntities(context, 1, false, true, false, false);
+    }
+
+    private float orbitIncrement() {
+        return BASE_INCR + BASE_INCR * 0.5f * random.nextFloat();
+    }
+
+    private int minPlanets() {
+        int wanted = 0;
+        for (ChartAnomaly anomaly : anomalies) {
+            wanted = Math.max(wanted, anomaly.minPlanets());
+        }
+        return wanted;
+    }
+
+    int planetCount() {
+        int count = 0;
+        for (PlanetAPI planet : system.getPlanets()) {
+            if (!planet.isStar()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private static Set<String> terrainCategories() {
+        Set<String> categories = new HashSet<>();
+        for (TerrainGenDataSpec terrain : Global.getSettings().getAllSpecs(TerrainGenDataSpec.class)) {
+            categories.add(terrain.getCategory());
+        }
+        return categories;
+    }
+
+    private float gapRadius(float orbitLimit) {
+        float radius = ChartWormholePlacement.clearRadius(ChartWormholePlacement.blockedBands(system), centerRadius + STARTING_RADIUS_STAR_BASE);
+        return radius <= orbitLimit ? radius : Float.NaN;
     }
 
     void generateLayout(StarSystemAPI system, String starId) {
@@ -320,6 +410,25 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
 
     private static List<PlanetAPI> nonNull(PlanetAPI... bodies) {
         return Arrays.stream(bodies).filter(Objects::nonNull).toList();
+    }
+
+    @Override
+    protected void setPulsarIfNeutron(PlanetAPI neutronStar) {
+        if (neutronStar == null || !NEUTRON_STAR.equals(neutronStar.getSpec().getPlanetType())) {
+            return;
+        }
+        StarCoronaTerrainPlugin vanillaCorona = Misc.getCoronaFor(neutronStar);
+        if (vanillaCorona != null) {
+            system.removeEntity(vanillaCorona.getEntity());
+        }
+        system.addCorona(neutronStar, ChartCoronaTerrainPlugin.TERRAIN_ID, PULSAR_CORONA_RADIUS, PULSAR_CORONA_WIND, 0f, PULSAR_CORONA_CR_LOSS);
+        StarGenDataSpec neutronData = (StarGenDataSpec) Global.getSettings().getSpec(StarGenDataSpec.class, NEUTRON_STAR, false);
+        float corona = neutronStar.getRadius() * (neutronData.getCoronaMult() + neutronData.getCoronaVar() * (random.nextFloat() - 0.5f));
+        corona = Math.max(corona, neutronData.getCoronaMin());
+        float flareProbability = neutronData.getMinFlare() + (neutronData.getMaxFlare() - neutronData.getMinFlare()) * random.nextFloat();
+        SectorEntityToken beam = system.addTerrain(ChartPulsarBeamTerrainPlugin.TERRAIN_ID, new CoronaParams(neutronStar.getRadius() + corona,
+                (neutronStar.getRadius() + corona) / 2f, neutronStar, neutronData.getSolarWind(), flareProbability, neutronData.getCrLossMult()));
+        beam.setCircularOrbit(neutronStar, 0f, 0f, 100f);
     }
 
     @Override

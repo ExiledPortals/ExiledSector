@@ -112,6 +112,11 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     }
 
     @Override
+    public void beforeGameSave() {
+        ChartTransverseJump.restoreBeforeSave(Global.getSector().getPlayerFleet());
+    }
+
+    @Override
     public List<ItemTypeSupport> itemTypes() {
         return List.of(StarChart.SUPPORT);
     }

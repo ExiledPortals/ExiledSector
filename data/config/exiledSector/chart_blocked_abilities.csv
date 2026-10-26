@@ -1,2 +1,2 @@
 ability_id,note
-fracture_jump,"Vanilla Transverse Jump: FractureJumpAbility.applyEffect calls doHyperspaceTransition from any star system, with no tag or anchor check"
+fracture_jump,"Vanilla Transverse Jump: FractureJumpAbility.applyEffect calls doHyperspaceTransition from any star system, with no tag or anchor check. Left unblocked while ChartTransverseJump has swapped in the chart exit"

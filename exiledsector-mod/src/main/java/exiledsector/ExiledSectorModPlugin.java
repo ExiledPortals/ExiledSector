@@ -159,4 +159,9 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
         SocketCustody.reconcile();
         DOMAINS.forEach(ExiledSectorDomain::afterSocketCustody);
     }
+
+    @Override
+    public void beforeGameSave() {
+        DOMAINS.forEach(ExiledSectorDomain::beforeGameSave);
+    }
 }

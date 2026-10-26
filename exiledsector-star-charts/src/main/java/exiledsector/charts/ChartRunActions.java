@@ -169,7 +169,7 @@ public final class ChartRunActions {
         return true;
     }
 
-    public static boolean returnToOrigin(SectorAPI sector, ChartRun run, SectorEntityToken innerWormhole) {
+    public static boolean returnToOrigin(SectorAPI sector, ChartRun run, SectorEntityToken jumpSource) {
         CampaignFleetAPI playerFleet = sector.getPlayerFleet();
         if (playerFleet == null || playerFleet.isInHyperspaceTransition()) {
             return false;
@@ -179,7 +179,7 @@ public final class ChartRunActions {
             return false;
         }
         run.requestReturn();
-        sector.doHyperspaceTransition(playerFleet, innerWormhole, new JumpDestination(arrival, arrival.getContainingLocation().getName()));
+        sector.doHyperspaceTransition(playerFleet, jumpSource, new JumpDestination(arrival, arrival.getContainingLocation().getName()));
         return true;
     }
 

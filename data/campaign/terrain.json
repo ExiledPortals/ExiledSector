@@ -4,4 +4,15 @@
 		"musicSuppression":0.5,
 		"loopOne":"terrain_hyperspace_abyss",
 	},
+	"exiledSector_chart_corona":{
+		"plugin":"exiledsector.charts.anomaly.ChartCoronaTerrainPlugin",
+		"musicSuppression":1,
+		"loopOne":"terrain_corona",
+		"loopTwo":"terrain_corona_flare",
+	},
+	"exiledSector_chart_pulsar_beam":{
+		"plugin":"exiledsector.charts.anomaly.ChartPulsarBeamTerrainPlugin",
+		"musicSuppression":1,
+		"loopOne":"terrain_corona_am",
+	},
 }

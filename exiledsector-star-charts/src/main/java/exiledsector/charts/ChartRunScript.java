@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.characters.AbilityPlugin;
+import com.fs.starfarer.api.impl.campaign.ids.Abilities;
 import exiledlib.i18n.Translation;
 import org.apache.log4j.Logger;
 
@@ -21,6 +22,7 @@ public class ChartRunScript implements EveryFrameScript {
     private float secondsSinceObjectiveCheck;
     private boolean sensorRangeApplied;
     private String sensorSourceText;
+    private boolean transverseJumpSwapped;
 
     @Override
     public boolean isDone() {
@@ -38,6 +40,9 @@ public class ChartRunScript implements EveryFrameScript {
         if (run == null) {
             if (sensorRangeApplied || ChartFleetConditions.isActive()) {
                 liftRunEffects(Global.getSector().getPlayerFleet());
+            }
+            if (transverseJumpSwapped) {
+                restoreTransverseJump(Global.getSector().getPlayerFleet());
             }
             forget();
             return;
@@ -74,7 +79,10 @@ public class ChartRunScript implements EveryFrameScript {
         boolean inTransition = playerFleet.isInHyperspaceTransition();
         boolean inside = system != null && playerFleet.getContainingLocation() == system;
         if (inside) {
+            transverseJumpSwapped |= ChartTransverseJump.install(playerFleet);
             blockEscapeAbilities(playerFleet);
+        } else {
+            restoreTransverseJump(playerFleet);
         }
         applyRunEffects(playerFleet, run, inside && run.runState().keepsRunEffects());
         if (run.runState() == ChartRunState.CLOSED) {
@@ -172,8 +180,18 @@ public class ChartRunScript implements EveryFrameScript {
         closeArmed = false;
     }
 
+    private void restoreTransverseJump(CampaignFleetAPI playerFleet) {
+        if (transverseJumpSwapped && ChartTransverseJump.restoreWhenIdle(playerFleet)) {
+            transverseJumpSwapped = false;
+        }
+    }
+
     static void blockEscapeAbilities(CampaignFleetAPI playerFleet) {
+        boolean chartJump = ChartTransverseJump.isInstalled(playerFleet);
         for (String abilityId : ChartBlockedAbilities.abilityIds()) {
+            if (chartJump && Abilities.TRANSVERSE_JUMP.equals(abilityId)) {
+                continue;
+            }
             try {
                 block(playerFleet.getAbility(abilityId));
             } catch (RuntimeException | LinkageError e) {
