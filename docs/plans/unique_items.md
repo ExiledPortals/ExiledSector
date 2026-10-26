@@ -1,6 +1,6 @@
 # Unique hull items and subroutines
 
-Only the groundwork is built. This plan adds unique hull items and subroutines for the modded factions that have tree volumes (the Navarchy of Tania, Nightcross, Stargazer, the RAT Abyss and ExoTech), plus affinity items that work for any faction.
+Only the groundwork and the vanilla faction binding are built. This plan adds unique hull items and subroutines for the modded factions that have tree volumes (the Navarchy of Tania, Nightcross, Stargazer, the RAT Abyss and ExoTech), plus affinity items that work for any faction.
 
 A unique must do something no rolled modifier can. It changes how a build works (converting damage, reshaping weapon slots, rerouting flux, bending affinity, gating tree nodes) instead of bundling stats that rare items already roll. A unique may carry at most one plain supporting stat. The existing vanilla-themed uniques are older than this rule. Names are working names and all magnitudes are placeholders.
 
@@ -166,7 +166,7 @@ These need:
 - Gated subroutines: is triple strength right? Should each condition get one subroutine, or should one subroutine roll its condition?
 - Should faction uniques also drop from the general pool at a lower weight?
 
-## Bind the vanilla uniques to their factions
+## Bind the vanilla uniques to their factions (built)
 
 Fill the `source` column (groundwork step 1) for the existing vanilla-themed unique hull items, so each one is twice as likely to drop from battles against the faction it names, while still dropping everywhere else. The factions come from the vanilla market files in `data/campaign/econ/` and the item descriptions.
 
@@ -194,3 +194,5 @@ Some items stay unbound. Alpha Site Survivor, Vambrace Plating, the Gate Hauler 
 The unique subroutines keep their `site:` sources. The ones that name a faction also gain it as a second source: `faction:tritachyon` for the Halcyon Fire-Control Lattice, and `faction:pirates` for the Cracked Drive Governor. Battle drops only roll unique hull items today (`BattleItemDrops` filters on `HULL_ITEM`), so a faction source on a subroutine does nothing until battles can also roll unique subroutines.
 
 Check that `ItemUnlockTest` and the drop tests still pass.
+
+Built: the sources above are in the `source` column of `hull_items.csv` and `subroutines.csv`; every faction id matches a vanilla faction, so `UniqueSourceCheck` stays quiet.

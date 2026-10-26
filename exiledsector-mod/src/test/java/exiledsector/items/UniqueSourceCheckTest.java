@@ -70,7 +70,8 @@ class UniqueSourceCheckTest {
         ItemFixtures.registerShippedItems();
         ItemDrops.register(HullItemRows.shippedRows(ItemDrops.DATA_PATH));
 
-        assertEquals(List.of(), UniqueSourceCheck.unreachableSources(ItemDefinitions.all(), Set.of("pirates", "tritachyon"), ItemDrops::hasUniqueRoll));
+        assertEquals(List.of(), UniqueSourceCheck.unreachableSources(ItemDefinitions.all(), Set.of("hegemony", "tritachyon", "sindrian_diktat", "persean", "luddic_church", "luddic_path", "pirates", "independent"),
+                ItemDrops::hasUniqueRoll));
     }
 
     @Test

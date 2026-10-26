@@ -156,13 +156,13 @@ describe('hull item types', () => {
 
   it('gives a unique hull item a drop source and saves it to hull_items.csv', async () => {
     const itemTypes = await openItems('Item types');
-    fireEvent.click(await within(itemTypes).findByText('Back-Alley Cyber-Surgeon', undefined, LOAD_TIMEOUT));
+    fireEvent.click(await within(itemTypes).findByText('Nanoforge Seed', undefined, LOAD_TIMEOUT));
 
     fireEvent.change(await findLabelled('Drop source', itemTypes), { target: { value: 'faction:pirates' } });
     await save('Saved hull_items.csv');
 
-    const surgeon = server.readProjectFile(HULL_ITEMS_FILE).split(/\r?\n/).find((line) => line.startsWith('unique_back_alley_surgeon,'));
-    expect(surgeon).toMatch(/,faction:pirates$/);
+    const seed = server.readProjectFile(HULL_ITEMS_FILE).split(/\r?\n/).find((line) => line.startsWith('unique_nanoforge_seed,'));
+    expect(seed).toMatch(/,faction:pirates$/);
   }, 90000);
 });
 
