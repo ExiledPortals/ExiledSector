@@ -408,6 +408,7 @@
     "codex.socketables.socket": "安装在<hl>{socket}</hl>插槽中。",
     "codex.hullItems.section": "安装在舰船的<hl>{socket}</hl>舱段中。",
     "codex.socketables.effects": "效果",
+    "codex.socketables.keepsOne": "掉落时从以下词条中选定一条保留。",
     "codex.socketables.prefixes": "前缀",
     "codex.socketables.suffixes": "后缀",
     "codex.socketables.chance": "<hl>{chance}%</hl>",

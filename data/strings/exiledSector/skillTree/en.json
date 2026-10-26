@@ -358,6 +358,7 @@
     "codex.socketables.socket": "Installs in a <hl>{socket}</hl> socket.",
     "codex.hullItems.section": "Installs in a ship's <hl>{socket}</hl> section.",
     "codex.socketables.effects": "Modifiers",
+    "codex.socketables.keepsOne": "Keeps one of these, picked when it drops.",
     "codex.socketables.prefixes": "Prefixes",
     "codex.socketables.suffixes": "Suffixes",
     "codex.socketables.chance": "<hl>{chance}%</hl>",

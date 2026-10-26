@@ -161,6 +161,18 @@ class ModuleTreeShareTest {
     }
 
     @Test
+    void anAffinityTheParentExchangedAwayGivesTheModuleNoBonus() {
+        SkillTypeEffect lowTech = effect("LOW_TECH_AFFINITY_FLAT", 30f);
+        EffectTotals parentTotals = EffectTotals.of(List.of(EffectContribution.scaledPermanent("node", "prefix_", List.of(lowTech)),
+                EffectContribution.scaledPermanent("item", "item_", List.of(effect("AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT", 50f)))), 1f);
+        Map<SkillEffect, Float> ratios = ModuleTreeShare.affinityBonusRatios(parentTotals.contributions());
+
+        Map<SkillEffect, Float> moduleTotals = ModuleTreeShare.sharedTotals(List.of(node(lowTech)), ratios, HullSize.CRUISER,
+                mock(ShipVariantAPI.class), SHARE);
+        assertEquals(0f, moduleTotals.getOrDefault(SkillEffect.byName("HULL_MULT"), 0f), 1e-4f);
+    }
+
+    @Test
     void anUnscaledParentSharesItsSteppedAffinityBonuses() {
         assertEquals(6f, total(totals(node(effect("LOW_TECH_AFFINITY_FLAT", 30f))), "HULL_MULT"), 1e-4f);
     }

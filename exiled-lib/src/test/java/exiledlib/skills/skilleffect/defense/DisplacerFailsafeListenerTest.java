@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -82,6 +83,20 @@ class DisplacerFailsafeListenerTest {
         assertEquals(-DisplacerFailsafeListener.DISPLACE_DISTANCE, ship.getLocation().x, 0.01f);
         assertEquals(0f, ship.getVelocity().x, 1e-4f);
         verify(flux, times(1)).ventFlux();
+    }
+
+    @Test
+    void aSpotTakenByAnotherShipIsSkippedForTheNextAngle() {
+        ShipAPI blocker = mock(ShipAPI.class);
+        queries.when(() -> CombatQueries.nearestShip(argThat(point -> point != null && point.x < -1100f && Math.abs(point.y) < 1f), anyFloat(), any()))
+                .thenReturn(blocker);
+        queries.when(() -> CombatQueries.nearestShip(argThat(point -> point != null && point.x > -1100f && Math.abs(point.y) > 1f), anyFloat(), any()))
+                .thenReturn(null);
+
+        Vector2f to = listener.clearDestination(new Vector2f(0f, 0f), new Vector2f(500f, 0f), 20000f, 20000f);
+
+        assertEquals(DisplacerFailsafeListener.DISPLACE_DISTANCE, Vector2f.sub(to, new Vector2f(), null).length(), 0.1f);
+        assertTrue(Math.abs(to.y) > 1f);
     }
 
     @Test

@@ -64,6 +64,9 @@ final class ModuleTreeShare implements AdvanceableListener {
                 ratios.put(rawBonus.effect(), resolvedBonuses.getOrDefault(rawBonus.effect(), 0f) / rawBonus.magnitude());
             }
         }
+        for (SkillEffect affinity : AffinitySteps.affinities()) {
+            AffinitySteps.stepsFor(affinity).forEach(step -> ratios.putIfAbsent(step.effect(), 0f));
+        }
         return ratios;
     }
 

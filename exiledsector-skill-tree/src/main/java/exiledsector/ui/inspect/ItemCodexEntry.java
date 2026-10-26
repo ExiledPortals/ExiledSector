@@ -115,6 +115,9 @@ public class ItemCodexEntry extends BoxedCodexEntry {
     private void writeUnique(TooltipMakerAPI info) {
         info.addSectionHeading(Translation.text("codex.socketables.effects"), Alignment.MID, PAD);
         float linePad = PAD;
+        if (definition.keepsOneModifier()) {
+            VanillaText.addPara(info, Translation.styled("codex.socketables.keepsOne"), PAD, Misc.getGrayColor());
+        }
         for (PoolEntry entry : definition.pool()) {
             for (StyledText effectText : effectTexts(entry.modifier())) {
                 VanillaText.addPara(info, effectText, linePad, Misc.getTextColor());

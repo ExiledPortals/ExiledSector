@@ -133,7 +133,7 @@ The Equivalent Exchange Core lists all three exchanges and keeps one (`one_of`),
 | Facet Mount Geometry | weapon_mount | Small weapon slots become universal slots; small weapons cost more OP | slot |
 | P-Space Lattice (subroutine) | | Allocated nodes in radius apply only while phased, at triple strength | gated |
 
-The Tesseract Stillwell caps range with the engine's range threshold, as Safety Overrides does. The Shard Microburn Cluster is plain stats, an exception to the rule above kept from the earlier design.
+The Tesseract Stillwell caps range with the engine's range threshold, as Safety Overrides does, lowering any threshold the ship already has to the cap rather than adding to it. The Shard Microburn Cluster is plain stats, an exception to the rule above kept from the earlier design.
 
 ## Affinity items
 

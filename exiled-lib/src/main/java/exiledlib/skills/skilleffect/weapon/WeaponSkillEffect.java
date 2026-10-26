@@ -116,9 +116,18 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     },
     NON_MISSILE_WEAPON_RANGE_CAP_FLAT {
         @Override
+        public boolean appliesAfterOtherEffects() {
+            return true;
+        }
+
+        @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-            stats.getWeaponRangeThreshold().modifyFlat(modId, magnitude);
-            stats.getWeaponRangeMultPastThreshold().modifyMult(modId, 0f);
+            capRange(stats, modId, magnitude);
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+            capRange(ship.getMutableStats(), modId, magnitude);
         }
 
         @Override
@@ -222,6 +231,15 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
 
     WeaponSkillEffect(EffectBacking backing) {
         this.backing = backing;
+    }
+
+    static void capRange(MutableShipStatsAPI stats, String modId, float cap) {
+        MutableStat threshold = stats.getWeaponRangeThreshold();
+        threshold.unmodifyFlat(modId);
+        float otherThreshold = threshold.getModifiedValue();
+        float cappedThreshold = otherThreshold > 0f ? Math.min(otherThreshold, cap) : cap;
+        threshold.modifyFlat(modId, cappedThreshold - otherThreshold);
+        stats.getWeaponRangeMultPastThreshold().modifyMult(modId, 0f);
     }
 
     private static void applyBurnDamage(MutableShipStatsAPI stats, String modId, float magnitude) {

@@ -40,6 +40,7 @@ import exiledlib.skills.skilleffect.readiness.ReadinessSkillEffect;
 import exiledlib.skills.skilleffect.shield.ShieldSkillEffect;
 import exiledlib.skills.skilleffect.weapon.ScopedWeaponEffect;
 import exiledlib.skills.skilleffect.weapon.WeaponScope;
+import exiledlib.skills.skilleffect.weapon.WeaponSkillEffect;
 import exiledlib.skills.skilleffect.weapon.WeaponStatFamily;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
@@ -940,6 +941,29 @@ class SkillEffectTest {
         when(ship.getShield()).thenReturn(null);
 
         assertDoesNotThrow(() -> ShieldSkillEffect.CONVERT_SHIELD_TO_FRONT.applyAfterShipCreation(ship, "mod_id", 0f));
+    }
+
+    @Test
+    void theRangeCapLowersAnotherThresholdInsteadOfAddingToIt() {
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        com.fs.starfarer.api.combat.MutableStat threshold = new com.fs.starfarer.api.combat.MutableStat(0f);
+        com.fs.starfarer.api.combat.MutableStat pastThreshold = new com.fs.starfarer.api.combat.MutableStat(1f);
+        when(stats.getWeaponRangeThreshold()).thenReturn(threshold);
+        when(stats.getWeaponRangeMultPastThreshold()).thenReturn(pastThreshold);
+
+        threshold.modifyFlat("safety_overrides", 450f);
+        WeaponSkillEffect.NON_MISSILE_WEAPON_RANGE_CAP_FLAT.apply(stats, "cap", 500f);
+        assertEquals(450f, threshold.getModifiedValue(), 1e-3f);
+        assertEquals(0f, pastThreshold.getModifiedValue(), 1e-6f);
+
+        threshold.modifyFlat("long_range_node", 800f);
+        WeaponSkillEffect.NON_MISSILE_WEAPON_RANGE_CAP_FLAT.apply(stats, "cap", 500f);
+        assertEquals(500f, threshold.getModifiedValue(), 1e-3f);
+
+        threshold.unmodifyFlat("safety_overrides");
+        threshold.unmodifyFlat("long_range_node");
+        WeaponSkillEffect.NON_MISSILE_WEAPON_RANGE_CAP_FLAT.apply(stats, "cap", 500f);
+        assertEquals(500f, threshold.getModifiedValue(), 1e-3f);
     }
 
     @Test

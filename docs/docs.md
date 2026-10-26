@@ -44,8 +44,9 @@ hard on the target, never above its total flux. Beams that already force hard fl
 
 ## Weapon range cap
 
-`NON_MISSILE_WEAPON_RANGE_CAP_FLAT` uses the engine's range threshold, as Safety Overrides does: it adds its value to
-the threshold and multiplies range past it by zero. Thresholds from several sources add up.
+`NON_MISSILE_WEAPON_RANGE_CAP_FLAT` uses the engine's range threshold, as Safety Overrides does, and multiplies range
+past it by zero. It runs after the other effects and again once the ship is built, setting its flat so the summed
+threshold becomes the lower of the cap and any threshold the ship already has.
 
 ## The weapon stat hierarchy
 
@@ -114,8 +115,9 @@ Split cuts its simulated hits from the original damage.
 ## Displacer Failsafe
 
 `DISPLACER_FAILSAFE_HULL_PERCENT` (`DisplacerFailsafeListener`) watches damage taken. The first time hull drops
-below the threshold in a deployment, the ship is moved 1200 su straight away from the nearest enemy ship, kept
-inside the map, its velocity zeroed, and it vents unless it is already overloaded or venting.
+below the threshold in a deployment, the ship is moved 1200 su away from the nearest enemy ship, kept inside the map
+and turned up to 90 degrees to land clear of other hulls, its velocity zeroed, and it vents unless it is already
+overloaded or venting.
 
 ## Projectile echoes
 
@@ -156,7 +158,8 @@ they read all three, in a contribution of its own so module sharing is unaffecte
 `HIGHEST_AFFINITY_FLAT_PER_S_MOD` (already multiplied by the ship's s-mods in `HullUpgradeEffectSource`) to the
 highest affinity, then `LOWEST_AFFINITY_AS_HIGHEST` raises the lowest to match it, and last each `AFFINITY_EXCHANGE_TO_*`
 empties the other two affinities (never below zero) into its own at its share. With `STRIKECRAFT_GAIN_AFFINITY_BONUSES`,
-`AffinityStrikecraft` gives launched strikecraft the step bonuses to hull, armor and flux.
+`AffinityStrikecraft` gives launched strikecraft the step bonuses to hull, armor and flux. `ModuleTreeShare` gives modules
+no bonus the parent exchanged away.
 
 ## Diminishing returns
 

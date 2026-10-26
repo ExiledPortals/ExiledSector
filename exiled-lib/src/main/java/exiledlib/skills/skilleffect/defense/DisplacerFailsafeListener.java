@@ -2,6 +2,7 @@ package exiledlib.skills.skilleffect.defense;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
+import com.fs.starfarer.api.combat.CollisionClass;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.FluxTrackerAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -21,6 +22,8 @@ final class DisplacerFailsafeListener extends ShipCombatListener implements Dama
     static final float DISPLACE_DISTANCE = 1200f;
     private static final float ENEMY_SEARCH_RADIUS = 6000f;
     private static final float MAP_EDGE_MARGIN = 300f;
+    private static final float[] ANGLE_OFFSETS = {0f, 30f, -30f, 60f, -60f, 90f, -90f};
+    private static final float LARGEST_OTHER_RADIUS = 1000f;
     private static final String SOUND = "system_phase_teleporter";
     private static final Color FLASH_COLOR = new Color(120, 200, 255, 255);
     private static final float FLASH_DURATION_SECONDS = 0.6f;
@@ -55,7 +58,7 @@ final class DisplacerFailsafeListener extends ShipCombatListener implements Dama
     private void displaceAwayFrom(ShipAPI enemy) {
         CombatEngineAPI engine = Global.getCombatEngine();
         Vector2f from = new Vector2f(ownerShip.getLocation());
-        Vector2f to = destination(from, enemy.getLocation(), engine.getMapWidth(), engine.getMapHeight());
+        Vector2f to = clearDestination(from, enemy.getLocation(), engine.getMapWidth(), engine.getMapHeight());
         flash(engine, from);
         ownerShip.getLocation().set(to);
         ownerShip.getVelocity().set(0f, 0f);
@@ -63,8 +66,33 @@ final class DisplacerFailsafeListener extends ShipCombatListener implements Dama
         Global.getSoundPlayer().playSound(SOUND, 1f, 1f, to, ownerShip.getVelocity());
     }
 
+    Vector2f clearDestination(Vector2f from, Vector2f enemyLocation, float mapWidth, float mapHeight) {
+        Vector2f first = null;
+        for (float angleOffset : ANGLE_OFFSETS) {
+            Vector2f candidate = destination(from, enemyLocation, mapWidth, mapHeight, angleOffset);
+            if (first == null) {
+                first = candidate;
+            }
+            if (isClear(candidate)) {
+                return candidate;
+            }
+        }
+        return first;
+    }
+
+    private boolean isClear(Vector2f point) {
+        float ownRadius = ownerShip.getCollisionRadius();
+        return CombatQueries.nearestShip(point, ownRadius + LARGEST_OTHER_RADIUS, other -> other != ownerShip && other.getParentStation() != ownerShip
+                && !other.isFighter() && other.getCollisionClass() != CollisionClass.NONE
+                && MathUtils.getDistance(other.getLocation(), point) < ownRadius + other.getCollisionRadius()) == null;
+    }
+
     static Vector2f destination(Vector2f from, Vector2f enemyLocation, float mapWidth, float mapHeight) {
-        float awayAngle = from.equals(enemyLocation) ? 0f : VectorUtils.getAngle(enemyLocation, from);
+        return destination(from, enemyLocation, mapWidth, mapHeight, 0f);
+    }
+
+    static Vector2f destination(Vector2f from, Vector2f enemyLocation, float mapWidth, float mapHeight, float angleOffset) {
+        float awayAngle = (from.equals(enemyLocation) ? 0f : VectorUtils.getAngle(enemyLocation, from)) + angleOffset;
         Vector2f to = MathUtils.getPointOnCircumference(from, DISPLACE_DISTANCE, awayAngle);
         float halfWidth = Math.max(0f, mapWidth / 2f - MAP_EDGE_MARGIN);
         float halfHeight = Math.max(0f, mapHeight / 2f - MAP_EDGE_MARGIN);
