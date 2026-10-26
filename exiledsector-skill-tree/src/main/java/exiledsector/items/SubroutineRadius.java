@@ -22,7 +22,7 @@ public final class SubroutineRadius {
                 yield archive == null ? null : archive.radiusSize();
             }
             case UNIQUE -> UniqueSubroutineRadii.sizeOf(subroutine.definitionId());
-            case MODSPEC_CACHE, BYPASS -> null;
+            case MODSPEC_CACHE, BYPASS, ROOT_CONDUIT -> null;
         };
     }
 
@@ -32,7 +32,7 @@ public final class SubroutineRadius {
         }
         return switch (subroutine.subroutineKind()) {
             case DOCTRINE, UNIQUE -> socketNodeId;
-            case MODSPEC_CACHE, BYPASS -> null;
+            case MODSPEC_CACHE, BYPASS, ROOT_CONDUIT -> null;
         };
     }
 

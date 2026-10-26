@@ -1,7 +1,7 @@
 package exiledsector.ui.node;
 
 enum ConnectorKind {
-    GLOW, TEMPLATE, DULL;
+    GLOW, TEMPLATE, DULL, CONDUIT;
 
     static ConnectorKind of(boolean bothSatisfied, boolean firstInTemplate, boolean secondInTemplate) {
         if (bothSatisfied) {

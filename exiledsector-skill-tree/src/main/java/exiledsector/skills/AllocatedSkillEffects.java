@@ -11,6 +11,8 @@ import exiledsector.items.EmptyShells;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
 import exiledsector.items.NodeSocketable;
+import exiledsector.items.RootConduits;
+import exiledsector.items.Subroutine;
 import exiledsector.persistence.ShipSkillDataManager;
 
 import java.util.ArrayList;
@@ -73,6 +75,10 @@ public final class AllocatedSkillEffects {
     public static List<SkillTypeEffect> appliedEffects(ShipSkillData data, AllocatedNode allocated, HullSize hullSize) {
         List<SkillTypeEffect> applied = appliedEffects(data, allocated.effectiveType(), hullSize);
         Item socketed = ItemStore.lookup(data.getSocketedItem(allocated.node().getId()));
+        SkillTypeEffect conduit = socketed instanceof Subroutine ? RootConduits.effectAt(data, allocated.node().getId()) : null;
+        if (conduit != null && conduit.magnitude() > 0f) {
+            applied.add(conduit);
+        }
         if (socketed != null && NodeSocketable.fits(socketed, allocated.node())) {
             for (SkillTypeEffect effect : socketed.skillEffects(hullSize)) {
                 if (effect.effect() == SpecialSkillEffect.EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE) {

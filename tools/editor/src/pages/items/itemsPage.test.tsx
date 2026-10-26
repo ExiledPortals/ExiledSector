@@ -162,7 +162,7 @@ describe('hull item types', () => {
     await save('Saved hull_items.csv');
 
     const seed = server.readProjectFile(HULL_ITEMS_FILE).split(/\r?\n/).find((line) => line.startsWith('unique_nanoforge_seed,'));
-    expect(seed).toMatch(/,faction:pirates$/);
+    expect(seed).toMatch(/,faction:pirates,,$/);
   }, 90000);
 });
 
@@ -278,8 +278,8 @@ describe('skill tree socketables', () => {
     await save('Saved subroutines.csv');
 
     const lines = server.readProjectFile(SUBROUTINES_FILE).split(/\r?\n/);
-    expect(lines[0]).toMatch(/,radius$/);
-    expect(lines.find((line) => line.startsWith('unique_cracked_drive_governor,'))).toMatch(/,medium$/);
+    expect(lines[0]).toMatch(/,radius,area$/);
+    expect(lines.find((line) => line.startsWith('unique_cracked_drive_governor,'))).toMatch(/,medium,$/);
   }, 90000);
 
   it('edits a doctrine archive row and its subroutine together and refuses line counts out of order', async () => {

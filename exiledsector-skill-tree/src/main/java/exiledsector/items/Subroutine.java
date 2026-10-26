@@ -7,7 +7,9 @@ import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
+import exiledlib.skills.AffinitySteps;
 import exiledlib.skills.DescriptionLine;
+import exiledlib.skills.skilleffect.SkillEffect;
 import exiledsector.skills.NodeReplacements;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.SkillNode;
@@ -19,6 +21,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.SplittableRandom;
 
 public final class Subroutine extends Item implements NodeSocketable {
 
@@ -272,7 +275,16 @@ public final class Subroutine extends Item implements NodeSocketable {
         return DoctrineRewriter.revision(seed());
     }
 
+    public SkillEffect conduitAffinity() {
+        List<SkillEffect> affinities = AffinitySteps.affinities();
+        return affinities.get(new SplittableRandom(seed()).nextInt(affinities.size()));
+    }
+
     public List<StyledText> kindLines() {
+        if (subroutineKind() == SubroutineKind.ROOT_CONDUIT) {
+            return List.of(Translation.msg("socketable.rootConduit.line").arg("value", Math.round(RootConduits.AFFINITY_PER_STEP))
+                    .arg("affinity", Translation.text("affinity." + conduitAffinity().name() + ".name")).arg("nodes", RootConduits.NODES_PER_STEP).styled());
+        }
         if (subroutineKind() == SubroutineKind.UNIQUE) {
             RadiusSize radiusSize = UniqueSubroutineRadii.sizeOf(definitionId());
             return radiusSize == null ? List.of() : List.of(SubroutineRadius.radiusLine(radiusSize));

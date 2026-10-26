@@ -53,6 +53,7 @@ import exiledsector.items.FactionlessAnchors;
 import exiledsector.items.ItemDataRules;
 import exiledsector.items.ItemTypeSupport;
 import exiledsector.items.ModspecCaches;
+import exiledsector.items.RootConduits;
 import exiledsector.items.NodeGrantLinks;
 import exiledsector.items.NodeGrantStatus;
 import exiledsector.items.NpcItems;
@@ -171,6 +172,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
         WormholeAnchorLinks.install();
         DoctrineArchives.load();
         ModspecCaches.load();
+        RootConduits.registerDrops();
         UniqueSubroutineRadii.load();
         NodeGrantLinks.install();
     }

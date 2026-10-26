@@ -371,3 +371,11 @@ every small, notable and keystone node in its radius through the socket grant li
 via `NodeGrantLinks`). `NodeAllocator.grantSocketedNodes` turns paid nodes it covers into free ones, refunding
 their OP and items, and `AllocatedSkillEffects` drops a hollow node's own effects and gives the socket +1 (the line's
 value) to every affinity per hollow node. Unsocketing releases the granted nodes like a Modspec Cache's.
+
+## Root Conduit
+
+A `ROOT_CONDUIT` subroutine is born corrupted and freezes one affinity from its seed (`Subroutine.conduitAffinity`).
+`RootConduits` finds the shortest path from its socket to the starting root through the whole tree graph, wormhole
+links included and allocation ignored, caches it per ship until the socket, root or tree layout changes, and the
+socket grants +5 of that affinity for every 5 nodes between the two ends. The connector renderer draws the path's
+connectors with the `CONDUIT` look in that affinity's colour (`AffinityColours`). It is player-only.

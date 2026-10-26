@@ -411,7 +411,7 @@
   "blueprintCategories": ["hullmod"],
   "itemTypes": ["subroutine", "hull_item", "star_chart", "wormhole_anchor"],
   "itemKinds": [{"id": "subroutine", "type": "subroutine"}, {"id": "bridge", "type": "hull_item"}, {"id": "crew_quarters", "type": "hull_item"}, {"id": "engine_room", "type": "hull_item"}, {"id": "reactor", "type": "hull_item"}, {"id": "armor_plating", "type": "hull_item"}, {"id": "weapon_mount", "type": "hull_item"}, {"id": "shield_generator", "type": "hull_item"}, {"id": "phase_coil", "type": "hull_item"}, {"id": "flight_deck", "type": "hull_item"}],
-  "subroutineKinds": ["MODSPEC_CACHE", "DOCTRINE", "BYPASS", "UNIQUE"],
+  "subroutineKinds": ["MODSPEC_CACHE", "DOCTRINE", "BYPASS", "UNIQUE", "ROOT_CONDUIT"],
   "modifierScopes": ["subroutine", "unique_subroutine", "doctrine", "hull_item", "star_chart", "wormhole_anchor"],
   "doctrineBehaviours": ["TRANSFORM", "AUGMENT"],
   "radiusSizes": ["small", "medium", "large"],

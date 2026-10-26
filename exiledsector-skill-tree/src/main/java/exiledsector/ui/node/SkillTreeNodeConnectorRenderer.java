@@ -1,5 +1,6 @@
 package exiledsector.ui.node;
 
+import exiledsector.items.RootConduits;
 import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
@@ -61,6 +62,10 @@ final class SkillTreeNodeConnectorRenderer {
     private final WormholeOpenness wormholeOpenness;
     private final SocketWormholes socketWormholes;
     private float exoshipRadius;
+    private List<String> conduitPath = List.of();
+    private Set<String> conduitNodeIds = Set.of();
+    private Set<String> conduitConnectorKeys = Set.of();
+    private Color conduitColor = Color.WHITE;
 
     SkillTreeNodeConnectorRenderer(SkillTreePanelStyle panelStyle, NodeSearch nodeSearch, WormholeOpenness wormholeOpenness,
                                     SocketWormholes socketWormholes, NodeBeams beams) {
@@ -80,6 +85,7 @@ final class SkillTreeNodeConnectorRenderer {
         TemplateHighlight templateHighlight = new TemplateHighlight(templateNodeIds, plannedOnlyNodeIds);
         exoshipRadius = layers.exoshipRadius();
         flow.refresh(allocation, plannedOnlyNodeIds);
+        refreshConduit(RootConduits.of(allocation.skillData()));
 
         for (SkillTreeTopology.Connector connector : SkillTree.topology().connectors()) {
             boolean carried = ExoshipNodes.isCarried(connector.from());
@@ -89,6 +95,23 @@ final class SkillTreeNodeConnectorRenderer {
                         allocationAnimation, alphaMult);
             }
         }
+    }
+
+    private void refreshConduit(RootConduits.Conduit conduit) {
+        List<String> path = conduit == null ? List.of() : conduit.path();
+        if (path != conduitPath) {
+            conduitPath = path;
+            conduitNodeIds = Set.copyOf(path);
+            conduitConnectorKeys = conduit == null ? Set.of() : conduit.connectorKeys();
+        }
+        if (conduit != null) {
+            conduitColor = AffinityColours.of(conduit.affinity());
+        }
+    }
+
+    private boolean onConduit(SkillNode node, SkillNode other) {
+        return conduitNodeIds.contains(node.getId()) && conduitNodeIds.contains(other.getId())
+                && conduitConnectorKeys.contains(RootConduits.connectorKey(node.getId(), other.getId()));
     }
 
     void drawGrantTethers(TreeLayers layers, SkillNode socket, List<String> grantedNodeIds, Color tetherColor) {
@@ -153,7 +176,7 @@ final class SkillTreeNodeConnectorRenderer {
         boolean otherInTemplate = templateHighlight.templateNodeIds().contains(other.getId());
 
         ConnectorFade fade = new ConnectorFade(
-                ConnectorKind.of(bothSatisfied, nodeInTemplate, otherInTemplate),
+                onConduit(node, other) ? ConnectorKind.CONDUIT : ConnectorKind.of(bothSatisfied, nodeInTemplate, otherInTemplate),
                 isWormhole(other) || allocation.isHidden(other),
                 isWormhole(node) || allocation.isHidden(node),
                 isOpenWormhole(other, skillData, satisfiedRootId),
@@ -472,6 +495,7 @@ final class SkillTreeNodeConnectorRenderer {
             case GLOW -> beams.lit(panelStyle.getAccentColor());
             case TEMPLATE -> beams.lit(TEMPLATE_COLOR);
             case DULL -> DULL_LOOK;
+            case CONDUIT -> beams.lit(conduitColor);
         };
     }
 
@@ -480,6 +504,7 @@ final class SkillTreeNodeConnectorRenderer {
             case GLOW -> 1f;
             case TEMPLATE -> TEMPLATE_ALPHA;
             case DULL -> DULL_ALPHA;
+            case CONDUIT -> 1f;
         };
     }
 
@@ -538,7 +563,7 @@ final class SkillTreeNodeConnectorRenderer {
                                   boolean tipFadesAtR1, boolean tipFadesAtR2) {
 
         boolean glowing() {
-            return kind == ConnectorKind.GLOW;
+            return kind == ConnectorKind.GLOW || kind == ConnectorKind.CONDUIT;
         }
 
         boolean endFading() {

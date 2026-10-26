@@ -202,6 +202,7 @@
     "affinity.LOW_TECH_AFFINITY_FLAT.name": "Low Tech Affinity",
     "affinity.HIGH_TECH_AFFINITY_FLAT.name": "High Tech Affinity",
     "affinity.MIDLINE_AFFINITY_FLAT.name": "Midline Affinity",
+    "socketable.rootConduit.line": "Grants <good>+{value}</good> {affinity} for every {nodes} nodes between its socket and the ship's root.",
     "ui.tooltip.expandHint": "Press <hl>F1</hl> for more info.",
     "ui.tooltip.collapseHint": "Press <hl>F1</hl> for less info.",
     "ui.node.startingRootPrompt": "Choose a starting location",

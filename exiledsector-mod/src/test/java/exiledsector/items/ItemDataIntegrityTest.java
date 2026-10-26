@@ -196,8 +196,8 @@ class ItemDataIntegrityTest {
 
         List<String> errors = errors(validModifiers(), subroutines, validImplicits());
 
-        assertEquals(List.of("expansion has kind \"EXPANSION\"; expected one of MODSPEC_CACHE, DOCTRINE, BYPASS, UNIQUE",
-                "kindless has kind \"\"; expected one of MODSPEC_CACHE, DOCTRINE, BYPASS, UNIQUE",
+        assertEquals(List.of("expansion has kind \"EXPANSION\"; expected one of MODSPEC_CACHE, DOCTRINE, BYPASS, UNIQUE, ROOT_CONDUIT",
+                "kindless has kind \"\"; expected one of MODSPEC_CACHE, DOCTRINE, BYPASS, UNIQUE, ROOT_CONDUIT",
                 "pooled lists prefixes or suffixes, but subroutines do not roll them"), errors);
     }
 
