@@ -1,19 +1,21 @@
 import { produce, type Draft } from 'immer';
 import { create } from 'zustand';
 import { registerUnloadCheck } from '../../../shared/unsavedChanges.ts';
+import type { DecorationKind } from '../model/decorations.ts';
 import type { TreeLineEndings } from '../model/serialization.ts';
 import type { AnchorShape, TreeDocument } from '../model/types.ts';
 
-export type EditorMode = 'select' | 'add' | 'addAnchor' | 'addImage' | 'addStar' | 'addThreatUnit';
+export type EditorMode = 'select' | 'add' | 'addAnchor' | 'addDecoration';
 
-export type SelectionKind = 'nodes' | 'anchors' | 'images' | 'stars' | 'threatUnits';
+export type SelectionKind = 'nodes' | 'anchors' | 'decorations';
 
 export type Selection = Record<SelectionKind, string[]>;
 
-export type HandleKind = 'anchorResize' | 'anchorRotate' | 'imageResize' | 'imageRotate' | 'starResize' | 'threatUnitResize' | 'threatUnitRotate';
+export type HandleKind = 'anchorResize' | 'anchorRotate';
 
 export type ActiveDrag =
-  | { kind: 'move'; anchorIds: string[]; imageIds: string[]; starIds: string[]; threatUnitIds: string[] }
+  | { kind: 'move'; anchorIds: string[]; decorationIds: string[] }
+  | { kind: 'decorationHandle'; id: string; handle: string }
   | { kind: 'curve'; key: string }
   | { kind: HandleKind; id: string }
   | { kind: 'marquee'; startX: number; startY: number; currentX: number; currentY: number };
@@ -38,6 +40,7 @@ export interface TreeStoreState {
   canvasSize: { width: number; height: number };
   mode: EditorMode;
   pendingAnchorShape: AnchorShape;
+  pendingDecorationKind: DecorationKind;
   selection: Selection;
   showLabels: boolean;
   search: string;
@@ -47,9 +50,9 @@ export interface TreeStoreState {
   releasedNodeIds: ReadonlySet<string>;
 }
 
-export const EMPTY_SELECTION: Selection = { nodes: [], anchors: [], images: [], stars: [], threatUnits: [] };
+export const EMPTY_SELECTION: Selection = { nodes: [], anchors: [], decorations: [] };
 
-export const EMPTY_DOCUMENT: TreeDocument = { types: [], nodes: [], curves: [], hiddenConnectors: [], anchors: [], images: [], stars: [], threatUnits: [] };
+export const EMPTY_DOCUMENT: TreeDocument = { types: [], nodes: [], curves: [], hiddenConnectors: [], anchors: [], decorations: [] };
 
 export const MIN_ZOOM = 0.08;
 export const MAX_ZOOM = 3;
@@ -66,6 +69,7 @@ export const useTreeStore = create<TreeStoreState>(() => ({
   canvasSize: { width: 800, height: 600 },
   mode: 'select',
   pendingAnchorShape: 'circle',
+  pendingDecorationKind: 'star',
   selection: EMPTY_SELECTION,
   showLabels: true,
   search: '',
@@ -94,5 +98,5 @@ export function setSelection(selection: Partial<Selection>): void {
 }
 
 export function selectionCount(selection: Selection): number {
-  return selection.nodes.length + selection.anchors.length + selection.images.length + selection.stars.length + selection.threatUnits.length;
+  return selection.nodes.length + selection.anchors.length + selection.decorations.length;
 }

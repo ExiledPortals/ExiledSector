@@ -4,11 +4,11 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTreeTopology;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.decoration.Star;
+import exiledsector.skills.decoration.StaticImage;
+import exiledsector.skills.decoration.ThreatUnit;
 import exiledsector.skills.layout.Rotation;
 import exiledsector.skills.layout.SkillNodeDecoration;
-import exiledsector.skills.layout.Star;
-import exiledsector.skills.layout.StaticImage;
-import exiledsector.skills.layout.ThreatUnit;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

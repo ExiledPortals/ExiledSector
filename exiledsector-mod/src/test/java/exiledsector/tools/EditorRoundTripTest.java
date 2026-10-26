@@ -28,6 +28,7 @@ class EditorRoundTripTest {
     private static final Path EDITOR_SOURCES = Path.of("tools/editor/src");
 
     private static final String TREE_SERIALIZATION = "pages/tree/model/serialization.ts";
+    private static final String TREE_DECORATIONS = "pages/tree/model/decorations.ts";
     private static final String ITEM_DEFINITIONS_MODEL = "pages/items/model/definitions.ts";
     private static final String HULL_ITEM_IMPLICITS_MODEL = "pages/items/model/implicits.ts";
     private static final String ITEM_MODIFIERS_MODEL = "pages/items/model/modifiers.ts";
@@ -36,6 +37,7 @@ class EditorRoundTripTest {
 
     private static final String TYPE_LOADER = "exiledsector/skills/loader/SkillTypeLoader.java";
     private static final String TREE_LOADER = "exiledsector/skills/loader/SkillTreeLoader.java";
+    private static final String DECORATION_LOADER = "exiledsector/skills/loader/DecorationLoader.java";
     private static final String ITEM_DEFINITIONS = "exiledsector/items/ItemDefinitions.java";
     private static final String ITEM_DEFINITION = "exiledsector/items/ItemDefinition.java";
     private static final String SUBROUTINE_DEFINITIONS = "exiledsector/items/SubroutineDefinitions.java";
@@ -51,7 +53,7 @@ class EditorRoundTripTest {
     private static final String DOCTRINE_ARCHIVES = "exiledsector/items/DoctrineArchives.java";
     private static final String MODSPEC_CACHES = "exiledsector/items/ModspecCaches.java";
 
-    private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, ITEM_DEFINITIONS, ITEM_DEFINITION, SUBROUTINE_DEFINITIONS,
+    private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, DECORATION_LOADER, ITEM_DEFINITIONS, ITEM_DEFINITION, SUBROUTINE_DEFINITIONS,
             HULL_ITEM, HULL_ITEM_IMPLICITS, ITEM_MODIFIERS, STAR_CHART_DEFINITIONS, STAR_CHART_IMPLICITS, STAR_CHART_ITEMS,
             WORMHOLE_ANCHOR_DEFINITIONS, DOCTRINE_ARCHIVES, MODSPEC_CACHES, SUBROUTINE_IMPLICITS, CORRUPTION_IMPLICIT_POOL);
 
@@ -76,6 +78,10 @@ class EditorRoundTripTest {
         return new EditorSource(TREE_SERIALIZATION, symbol);
     }
 
+    private static List<EditorSource> decoration(String kindSymbol) {
+        return List.of(new EditorSource(TREE_DECORATIONS, "serializeDecoration"), new EditorSource(TREE_DECORATIONS, kindSymbol));
+    }
+
     private static final List<Pin> PINS = List.of(
             new Pin("skill_types.json root", TYPE_LOADER, List.of("loadAll", "parseSkillTypes"),
                     List.of(tree("skillTypesFileObject")), false),
@@ -89,14 +95,13 @@ class EditorRoundTripTest {
             new Pin("ship_skill_tree.json root, connectorCurves and hiddenConnectors", TREE_LOADER,
                     List.of("loadAll", "parseNodes", "parseConnectorCurves", "parseHiddenConnectors"), List.of(tree("treeFileObject")), false),
             new Pin("ship_skill_tree.json node", TREE_LOADER, List.of("parseNode"), List.of(tree("serializeTreeNode")), false),
-            new Pin("ship_skill_tree.json ringBelts", TREE_LOADER, List.of("parseRingBelts"),
-                    List.of(tree("treeFileObject"), tree("serializeRingBelt")), false),
-            new Pin("ship_skill_tree.json staticImages", TREE_LOADER, List.of("parseStaticImages"),
-                    List.of(tree("treeFileObject"), tree("serializeStaticImage")), false),
-            new Pin("ship_skill_tree.json stars", TREE_LOADER, List.of("parseStars"),
-                    List.of(tree("treeFileObject"), tree("serializeStar")), false),
-            new Pin("ship_skill_tree.json threatUnits", TREE_LOADER, List.of("parseThreatUnits"),
-                    List.of(tree("treeFileObject"), tree("serializeThreatUnit")), false),
+            new Pin("ship_skill_tree.json decorations list", DECORATION_LOADER, List.of("parse", "parseDecoration", "tags"),
+                    List.of(tree("treeFileObject"), new EditorSource(TREE_DECORATIONS, "serializeDecoration")), true),
+            new Pin("ship_skill_tree.json star decoration", DECORATION_LOADER, List.of("parseStar"), decoration("STAR"), true),
+            new Pin("ship_skill_tree.json image decoration", DECORATION_LOADER, List.of("parseImage", "rotation"), decoration("IMAGE"), true),
+            new Pin("ship_skill_tree.json ring belt decoration", DECORATION_LOADER, List.of("parseRingBelt", "rotation"), decoration("RING_BELT"), true),
+            new Pin("ship_skill_tree.json threat unit decoration", DECORATION_LOADER, List.of("parseThreatUnit"), decoration("THREAT_UNIT"), true),
+            new Pin("ship_skill_tree.json serpent decoration", DECORATION_LOADER, List.of("parseSerpent"), decoration("SERPENT"), true),
             new Pin("subroutines.csv and hull_items.csv row key", ITEM_DEFINITIONS, List.of("rows"),
                     List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "SUBROUTINE_COLUMNS"), new EditorSource(ITEM_DEFINITIONS_MODEL, "HULL_ITEM_COLUMNS")), true),
             new Pin("subroutines.csv columns", SUBROUTINE_DEFINITIONS, List.of("parse"),

@@ -45,9 +45,7 @@
 }
 
 .modeAddAnchor,
-.modeAddImage,
-.modeAddStar,
-.modeAddThreatUnit {
+.modeAddDecoration {
   cursor: crosshair;
 }
 
@@ -156,7 +154,7 @@
   pointer-events: none;
 }
 
-.threatUnitOutline {
+.decorationOutline {
   fill: none;
   stroke: var(--tree-faint);
   stroke-width: 1.5;
@@ -165,21 +163,52 @@
   pointer-events: none;
 }
 
-.threatUnitOutlineSelected {
+.decorationOutlineSelected {
   stroke: var(--tree-accent);
   opacity: 0.9;
 }
 
-.threatUnitLabel {
+.decorationLabel {
   font-size: 11px;
   fill: var(--tree-text-dim);
   pointer-events: none;
 }
 
-.imageRotateLine {
+.rotateLine {
   stroke: var(--tree-faint);
   stroke-width: 1;
   opacity: 0.5;
+  pointer-events: none;
+}
+
+.ringBeltBand {
+  fill: none;
+  stroke: var(--tree-faint);
+  stroke-opacity: 0.18;
+  pointer-events: none;
+}
+
+.ringBeltBandSelected {
+  stroke: var(--tree-accent);
+  stroke-opacity: 0.25;
+}
+
+.serpentPath {
+  fill: none;
+  stroke: #aa3cff;
+  stroke-width: 6;
+  stroke-dasharray: 18 14;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.serpentPathSelected {
+  opacity: 0.9;
+}
+
+.serpentHead {
+  fill: #aa3cff;
+  opacity: 0.8;
   pointer-events: none;
 }
 

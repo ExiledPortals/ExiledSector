@@ -11,7 +11,6 @@ import {
   normalizeDegrees,
   ORBIT_CARDINAL_ANGLES,
   resyncNodesOnAnchor,
-  rotateAroundOrigin,
   setAnchorShape,
   snapAngleToTargets,
   snapNodeToAnchor,
@@ -21,34 +20,27 @@ import {
   ANCHOR_RECTANGLE_ASPECT,
   ANCHOR_SHAPES,
   anchorById,
-  imageById,
   nodeById,
-  starById,
-  threatUnitById,
   tierOf,
   typeById,
   type ConnectorCurve,
   type TreeDocument,
 } from '../model/types.ts';
+import { decorationById, dragDecorationHandle } from '../model/decorations.ts';
 import { brokenNodeIds } from '../model/validation.ts';
-import { addAnchorAt, addImageAt, addStarAt, addThreatUnitAt, clearSelection, fitToScreen, selectOnly, toggleLink, toggleSelected, zoomAtPoint } from '../state/treeActions.ts';
+import { addAnchorAt, addDecorationAt, clearSelection, fitToScreen, selectOnly, toggleLink, toggleSelected, zoomAtPoint } from '../state/treeActions.ts';
 import { editDocument, setSelection, useTreeStore, type HandleKind, type SelectionKind } from '../state/treeStore.ts';
 import { CanvasOverlays } from './CanvasOverlays.tsx';
+import { DecorationHandleLayer, DecorationLayer } from './DecorationLayers.tsx';
 import classes from './TreeCanvas.module.css';
 import {
   AnchorHandleLayer,
   AnchorRingLayer,
   EdgeLayer,
   IconClipDefinitions,
-  ImageHandleLayer,
-  ImageLayer,
   LabelLayer,
   NodeLayer,
   SocketRadiusLayer,
-  StarHandleLayer,
-  StarLayer,
-  ThreatUnitHandleLayer,
-  ThreatUnitLayer,
 } from './TreeLayers.tsx';
 
 interface StartPosition {
@@ -62,9 +54,7 @@ interface MoveDrag {
   startWorld: Point;
   nodes: StartPosition[];
   anchors: StartPosition[];
-  images: StartPosition[];
-  stars: StartPosition[];
-  threatUnits: StartPosition[];
+  decorations: StartPosition[];
   curves: ConnectorCurve[];
   moved: boolean;
 }
@@ -74,14 +64,13 @@ type DragState =
   | { kind: 'marquee'; startClientX: number; startClientY: number }
   | { kind: 'curve'; a: string; b: string }
   | { kind: HandleKind; id: string }
+  | { kind: 'decorationHandle'; id: string; handle: string }
   | MoveDrag;
 
 const MODE_CLASSES: Record<string, string | undefined> = {
   add: classes.modeAdd,
   addAnchor: classes.modeAddAnchor,
-  addImage: classes.modeAddImage,
-  addStar: classes.modeAddStar,
-  addThreatUnit: classes.modeAddThreatUnit,
+  addDecoration: classes.modeAddDecoration,
 };
 
 function positionsOf(items: { id: string; x: number; y: number }[], ids: string[]): StartPosition[] {
@@ -125,7 +114,7 @@ function applyMove(drag: MoveDrag, world: Point): void {
         curve.controlY = Math.round(start.controlY + deltaY);
       }
     }
-    const singleNode = drag.nodes.length === 1 && drag.anchors.length === 0 && drag.images.length === 0 && drag.stars.length === 0 && drag.threatUnits.length === 0;
+    const singleNode = drag.nodes.length === 1 && drag.anchors.length === 0 && drag.decorations.length === 0;
     if (singleNode) {
       const start = drag.nodes[0];
       const node = nodeById(document, start.id);
@@ -154,9 +143,7 @@ function applyMove(drag: MoveDrag, world: Point): void {
       }
     };
     drag.nodes.forEach((start) => shift(nodeById(document, start.id), start));
-    drag.images.forEach((start) => shift(imageById(document, start.id), start));
-    drag.stars.forEach((start) => shift(starById(document, start.id), start));
-    drag.threatUnits.forEach((start) => shift(threatUnitById(document, start.id), start));
+    drag.decorations.forEach((start) => shift(decorationById(document, start.id), start));
     for (const start of drag.anchors) {
       const anchor = anchorById(document, start.id);
       shift(anchor, start);
@@ -167,48 +154,28 @@ function applyMove(drag: MoveDrag, world: Point): void {
   });
 }
 
-function applyHandleDrag(kind: HandleKind, id: string, world: Point): void {
+function applyDecorationHandleDrag(id: string, handle: string, world: Point): void {
   editDocument((document) => {
-    if (kind === 'anchorResize' || kind === 'anchorRotate') {
-      const anchor = anchorById(document, id);
-      if (!anchor) {
-        return;
-      }
-      if (kind === 'anchorResize') {
-        anchor.radius = Math.max(10, Math.round(Math.hypot(world.x - anchor.x, world.y - anchor.y)));
-      } else {
-        const rotation = snapAngleToTargets(angleDegrees(anchor.x, anchor.y, world.x, world.y) + 90, ORBIT_CARDINAL_ANGLES);
-        anchor.rotation = Math.round(normalizeDegrees(rotation) * 10) / 10;
-      }
-      resyncNodesOnAnchor(document, anchor);
-    } else if (kind === 'imageResize' || kind === 'imageRotate') {
-      const image = imageById(document, id);
-      if (!image) {
-        return;
-      }
-      if (kind === 'imageResize') {
-        const local = rotateAroundOrigin(world.x - image.x, world.y - image.y, -(image.rotation || 0));
-        image.width = Math.max(20, Math.round(Math.abs(local.x) * 2));
-        image.height = Math.max(20, Math.round(Math.abs(local.y) * 2));
-      } else {
-        image.rotation = Math.round(normalizeDegrees(angleDegrees(image.x, image.y, world.x, world.y) + 90));
-      }
-    } else if (kind === 'threatUnitResize' || kind === 'threatUnitRotate') {
-      const threatUnit = threatUnitById(document, id);
-      if (!threatUnit) {
-        return;
-      }
-      if (kind === 'threatUnitResize') {
-        threatUnit.length = Math.max(20, Math.round(Math.hypot(world.x - threatUnit.x, world.y - threatUnit.y) * 2));
-      } else {
-        threatUnit.rotation = Math.round(normalizeDegrees(angleDegrees(threatUnit.x, threatUnit.y, world.x, world.y) + 90));
-      }
-    } else {
-      const star = starById(document, id);
-      if (star) {
-        star.radius = Math.max(20, Math.round(Math.hypot(world.x - star.x, world.y - star.y)));
-      }
+    const decoration = decorationById(document, id);
+    if (decoration) {
+      dragDecorationHandle(decoration, handle, world);
     }
+  });
+}
+
+function applyAnchorHandleDrag(kind: HandleKind, id: string, world: Point): void {
+  editDocument((document) => {
+    const anchor = anchorById(document, id);
+    if (!anchor) {
+      return;
+    }
+    if (kind === 'anchorResize') {
+      anchor.radius = Math.max(10, Math.round(Math.hypot(world.x - anchor.x, world.y - anchor.y)));
+    } else {
+      const rotation = snapAngleToTargets(angleDegrees(anchor.x, anchor.y, world.x, world.y) + 90, ORBIT_CARDINAL_ANGLES);
+      anchor.rotation = Math.round(normalizeDegrees(rotation) * 10) / 10;
+    }
+    resyncNodesOnAnchor(document, anchor);
   });
 }
 
@@ -331,8 +298,10 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
         editDocument((draft) => setCurveControl(draft, drag.a, drag.b, Math.round(world.x), Math.round(world.y)));
       } else if (drag.kind === 'move') {
         applyMove(drag, world);
+      } else if (drag.kind === 'decorationHandle') {
+        applyDecorationHandleDrag(drag.id, drag.handle, world);
       } else {
-        applyHandleDrag(drag.kind, drag.id, world);
+        applyAnchorHandleDrag(drag.kind, drag.id, world);
       }
     };
 
@@ -345,9 +314,7 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
       setSelection({
         nodes: current.nodes.filter(inside).map((node) => node.id),
         anchors: current.anchors.filter(inside).map((anchor) => anchor.id),
-        images: current.images.filter(inside).map((image) => image.id),
-        stars: current.stars.filter(inside).map((star) => star.id),
-        threatUnits: current.threatUnits.filter(inside).map((threatUnit) => threatUnit.id),
+        decorations: current.decorations.filter(inside).map((decoration) => decoration.id),
       });
     };
 
@@ -396,15 +363,13 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
         startWorld: worldPoint(event.clientX, event.clientY),
         nodes: positionsOf(currentDocument.nodes, current.nodes),
         anchors: positionsOf(currentDocument.anchors, current.anchors),
-        images: positionsOf(currentDocument.images, current.images),
-        stars: positionsOf(currentDocument.stars, current.stars),
-        threatUnits: positionsOf(currentDocument.threatUnits, current.threatUnits),
+        decorations: positionsOf(currentDocument.decorations, current.decorations),
         curves: currentDocument.curves.filter((curve) => nodeIds.has(curve.a) || nodeIds.has(curve.b)).map((curve) => ({ ...curve })),
         moved: false,
       },
       event,
     );
-    useTreeStore.setState({ activeDrag: { kind: 'move', anchorIds: current.anchors, imageIds: current.images, starIds: current.stars, threatUnitIds: current.threatUnits } });
+    useTreeStore.setState({ activeDrag: { kind: 'move', anchorIds: current.anchors, decorationIds: current.decorations } });
   };
 
   const pressSelectable = (kind: SelectionKind, id: string, event: ReactPointerEvent) => {
@@ -431,12 +396,8 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
       onRequestAddNode(x, y);
     } else if (mode === 'addAnchor') {
       addAnchorAt(x, y);
-    } else if (mode === 'addImage') {
-      addImageAt(x, y, staticImages.data?.[0] ?? null);
-    } else if (mode === 'addStar') {
-      addStarAt(x, y);
-    } else if (mode === 'addThreatUnit') {
-      addThreatUnitAt(x, y, vocabulary.data);
+    } else if (mode === 'addDecoration') {
+      addDecorationAt(useTreeStore.getState().pendingDecorationKind, x, y, vocabulary.data, staticImages.data?.[0] ?? null);
     } else if (event.shiftKey) {
       beginDrag({ kind: 'marquee', startClientX: event.clientX, startClientY: event.clientY }, event);
     } else {
@@ -466,26 +427,16 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
       useTreeStore.setState({ activeDrag: { kind: 'curve', key: curveKey(data.curveA, data.curveB) } });
     } else if (data.anchorId) {
       pressSelectable('anchors', data.anchorId, event);
-    } else if (data.imageId) {
-      pressSelectable('images', data.imageId, event);
-    } else if (data.starId) {
-      pressSelectable('stars', data.starId, event);
-    } else if (data.threatUnitId) {
-      pressSelectable('threatUnits', data.threatUnitId, event);
+    } else if (data.decorationId) {
+      pressSelectable('decorations', data.decorationId, event);
+    } else if (data.decorationHandle && data.decorationHandleOf) {
+      const drag = { kind: 'decorationHandle' as const, id: data.decorationHandleOf, handle: data.decorationHandle };
+      beginDrag(drag, event);
+      useTreeStore.setState({ activeDrag: drag });
     } else if (data.anchorResize) {
       pressHandle('anchorResize', data.anchorResize, event);
     } else if (data.anchorRotate) {
       pressHandle('anchorRotate', data.anchorRotate, event);
-    } else if (data.imageResize) {
-      pressHandle('imageResize', data.imageResize, event);
-    } else if (data.imageRotate) {
-      pressHandle('imageRotate', data.imageRotate, event);
-    } else if (data.starResize) {
-      pressHandle('starResize', data.starResize, event);
-    } else if (data.threatUnitResize) {
-      pressHandle('threatUnitResize', data.threatUnitResize, event);
-    } else if (data.threatUnitRotate) {
-      pressHandle('threatUnitRotate', data.threatUnitRotate, event);
     } else if (!data.anchorShapeCycle && target === svgRef.current) {
       pressBackground(event);
     }
@@ -505,9 +456,7 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
   };
 
   const showAnchorHandles = mode === 'select' || mode === 'addAnchor';
-  const showImageHandles = mode === 'select' || mode === 'addImage';
-  const showStarHandles = mode === 'select' || mode === 'addStar';
-  const showThreatUnitHandles = mode === 'select' || mode === 'addThreatUnit';
+  const showDecorationHandles = mode === 'select' || mode === 'addDecoration';
   const rootTransform = `translate(${canvasSize.width / 2 + view.panX},${canvasSize.height / 2 + view.panY}) scale(${view.zoom})`;
   const marquee = activeDrag?.kind === 'marquee' ? activeDrag : null;
 
@@ -516,9 +465,7 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
       <svg ref={svgRef} className={classes.stage} onPointerDown={onPointerDown} onPointerOver={onPointerOver} onPointerLeave={() => setHoveredNodeId(null)} onClick={onClick} onContextMenu={(event) => event.preventDefault()}>
         <IconClipDefinitions />
         <g transform={rootTransform}>
-          <StarLayer stars={document.stars} />
-          <ThreatUnitLayer threatUnits={document.threatUnits} selectedIds={selection.threatUnits} />
-          <ImageLayer images={document.images} />
+          <DecorationLayer decorations={document.decorations} selectedIds={selection.decorations} />
           <AnchorRingLayer anchors={document.anchors} selectedIds={selection.anchors} />
           <EdgeLayer
             nodes={document.nodes}
@@ -533,9 +480,7 @@ export function TreeCanvas({ onRequestAddNode }: TreeCanvasProps) {
           <NodeLayer nodes={document.nodes} types={document.types} selectedIds={selection.nodes} matchIds={matchIds} brokenIds={brokenIds} />
           {showLabels ? <LabelLayer nodes={document.nodes} types={document.types} matchIds={matchIds} /> : null}
           {showAnchorHandles ? <AnchorHandleLayer items={document.anchors} selectedIds={selection.anchors} activeDrag={activeDrag} /> : null}
-          {showImageHandles ? <ImageHandleLayer items={document.images} selectedIds={selection.images} activeDrag={activeDrag} /> : null}
-          {showStarHandles ? <StarHandleLayer items={document.stars} selectedIds={selection.stars} activeDrag={activeDrag} /> : null}
-          {showThreatUnitHandles ? <ThreatUnitHandleLayer items={document.threatUnits} selectedIds={selection.threatUnits} activeDrag={activeDrag} /> : null}
+          {showDecorationHandles ? <DecorationHandleLayer decorations={document.decorations} selectedIds={selection.decorations} activeDrag={activeDrag} /> : null}
         </g>
         {marquee ? (
           <rect

@@ -5,9 +5,9 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.decoration.StaticImage;
 import exiledsector.skills.layout.SkillNodeDecoration;
-import exiledsector.skills.layout.StaticImage;
-import exiledsector.skills.loader.SkillTreeLoader;
+import exiledsector.skills.loader.DecorationLoader;
 import exiledsector.skills.npc.RealSkillData;
 import exiledsector.skills.tags.SkillTags;
 import exiledsector.ui.TreeViewport;
@@ -151,7 +151,7 @@ class AbyssDarknessRendererTest {
                 assertEquals(0f, darkness, node::getId);
             }
         }
-        List<StaticImage> images = SkillTreeLoader.parseStaticImages(ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(RealSkillData.TREE_FILE)));
+        List<StaticImage> images = DecorationLoader.parse(ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(RealSkillData.TREE_FILE)), RealSkillData.TREE_FILE.toString()).images();
         images.stream().filter(image -> image.getTags().contains(SkillTags.ABYSS_REGION)).forEach(image -> {
             float cloudReach = (float) Math.hypot(image.getWidth(), image.getHeight()) / 2f;
             float nearestX = image.getX() - abyssalDepth.directionX() * cloudReach;

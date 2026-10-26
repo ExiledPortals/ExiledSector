@@ -1,8 +1,10 @@
-package exiledsector.skills.layout;
+package exiledsector.skills.decoration;
+
+import exiledsector.skills.layout.Rotation;
 
 import java.util.List;
 
-public class RingBelt extends SkillTreeObject {
+public class RingBelt extends Decoration {
 
     private final float innerRadius;
     private final float outerRadius;
@@ -18,6 +20,11 @@ public class RingBelt extends SkillTreeObject {
         this.outerRadius = shape.outerRadius();
         this.ringArtPath = shape.ringArtPath();
         this.rotation = shape.rotation();
+    }
+
+    @Override
+    public DecorationKind kind() {
+        return DecorationKind.RING_BELT;
     }
 
     public float getInnerRadius() {

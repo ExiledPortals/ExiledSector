@@ -22,20 +22,13 @@ describe('tree files round-trip', () => {
     expect(texts.tree).toBe(treeText);
   });
 
-  it('round-trips the tree file with and without threat units', () => {
+  it('round-trips the tree file with and without decorations', () => {
     const typesText = readProjectFile('data/skilltrees/skill_types.json');
     const treeText = readProjectFile('data/skilltrees/ship_skill_tree.json');
     const lineEnding = lineEndingOf(treeText);
     const treeJson = JSON.parse(treeText) as Record<string, unknown>;
-    const withoutThreatUnits = Object.fromEntries(Object.entries(treeJson).filter(([key]) => key !== 'threatUnits'));
-    const withThreatUnits = {
-      ...withoutThreatUnits,
-      threatUnits: [
-        { id: 'threat_unit_1', x: -41802, y: 18563, unitType: 'fabricator', length: 600, tags: ['threat'] },
-        { id: 'threat_unit_2', x: 10, y: -20, unitType: 'hive', length: 450.5, rotation: 35 },
-      ],
-    };
-    for (const json of [withoutThreatUnits, withThreatUnits]) {
+    const withoutDecorations = Object.fromEntries(Object.entries(treeJson).filter(([key]) => key !== 'decorations'));
+    for (const json of [treeJson, withoutDecorations]) {
       const text = withLineEnding(JSON.stringify(json, null, '\t'), lineEnding);
       const texts = serializeTreeFiles(parseTreeDocument(typesText, text), { types: lineEndingOf(typesText), tree: lineEnding });
       expect(texts.tree).toBe(text);
@@ -52,73 +45,60 @@ describe('module share serialisation', () => {
   });
 });
 
-describe('threat unit serialisation', () => {
+describe('decoration serialisation', () => {
   const typesText = JSON.stringify({ skillTypes: [{ id: 'small', name: 'Small', icon: '' }] });
   const nodes = [{ id: 'a', type: 'small', connectedTo: [], x: 0, y: 0 }];
 
-  function serializedTree(treeJson: Record<string, unknown>): Record<string, unknown> {
-    const document = parseTreeDocument(typesText, JSON.stringify(treeJson));
-    return JSON.parse(serializeTreeFiles(document, { types: '\n', tree: '\n' }).tree) as Record<string, unknown>;
+  function serializedDecorations(decorations: Record<string, unknown>[]): Record<string, unknown>[] {
+    const document = parseTreeDocument(typesText, JSON.stringify({ nodes, decorations }));
+    const tree = JSON.parse(serializeTreeFiles(document, { types: '\n', tree: '\n' }).tree) as Record<string, unknown>;
+    return (tree.decorations ?? []) as Record<string, unknown>[];
   }
 
-  it('writes threat units after stars with keys in loader order, omitting zero rotation and empty tags', () => {
-    const out = serializedTree({
-      nodes,
-      threatUnits: [
-        { tags: ['threat'], rotation: 90, length: 700, unitType: 'hive', y: 2, x: 1, id: 'threat_unit_1' },
-        { id: 'threat_unit_2', x: 3, y: 4, unitType: 'fabricator', length: 600, rotation: 0, tags: [] },
-      ],
-      stars: [{ id: 'star_1', x: 0, y: 0, radius: 400, starType: 'star_yellow' }],
-    });
-    expect(Object.keys(out)).toEqual(['nodes', 'stars', 'threatUnits']);
-    const threatUnits = out.threatUnits as Record<string, unknown>[];
-    expect(Object.keys(threatUnits[0])).toEqual(['id', 'x', 'y', 'unitType', 'length', 'rotation', 'tags']);
-    expect(threatUnits[1]).toEqual({ id: 'threat_unit_2', x: 3, y: 4, unitType: 'fabricator', length: 600 });
+  it('writes every kind into one decorations list grouped by kind, kind first and keys in loader order', () => {
+    const out = serializedDecorations([
+      { kind: 'threatUnit', tags: ['threat'], rotation: 90, length: 700, unitType: 'hive', y: 2, x: 1, id: 'threat_unit_1' },
+      { kind: 'serpent', id: 'worm', x: 0, y: 0, orbitRadius: 1663, orbitSeconds: 190, clockwise: false, startAngle: 180, wobble: 0.15, wobbleWaves: 7, wobblePhase: 74.5, tags: ['abyss'] },
+      { kind: 'ringBelt', id: 'belt', x: 0, y: 0, innerRadius: 2900, outerRadius: 3250, ringArtPath: 'graphics/planets/ring_band_dust.png', rotationSpeed: 0.6 },
+      { kind: 'star', id: 'star_1', x: 0, y: 0, radius: 400, starType: 'star_yellow' },
+    ]);
+    expect(out.map((decoration) => decoration.kind)).toEqual(['star', 'ringBelt', 'threatUnit', 'serpent']);
+    expect(Object.keys(out[2])).toEqual(['kind', 'id', 'x', 'y', 'unitType', 'length', 'rotation', 'tags']);
+    expect(Object.keys(out[1])).toEqual(['kind', 'id', 'x', 'y', 'innerRadius', 'outerRadius', 'ringArtPath', 'rotationSpeed']);
+    expect(Object.keys(out[3])).toEqual(['kind', 'id', 'x', 'y', 'orbitRadius', 'orbitSeconds', 'clockwise', 'startAngle', 'wobble', 'wobbleWaves', 'wobblePhase', 'tags']);
   });
 
-  it('leaves threatUnits out when there are none', () => {
-    expect(serializedTree({ nodes, threatUnits: [] })).not.toHaveProperty('threatUnits');
-    expect(parseTreeDocument(typesText, JSON.stringify({ nodes })).threatUnits).toEqual([]);
+  it('leaves out zero rotations, empty tags, plain serpent orbits and the list itself when there is nothing in it', () => {
+    const out = serializedDecorations([
+      { kind: 'threatUnit', id: 'threat_unit_2', x: 3, y: 4, unitType: 'fabricator', length: 600, rotation: 0, tags: [] },
+      { kind: 'serpent', id: 'plain', x: 0, y: 0, orbitRadius: 500, orbitSeconds: 100, clockwise: true, startAngle: 0, wobble: 0 },
+    ]);
+    expect(out[0]).toEqual({ kind: 'threatUnit', id: 'threat_unit_2', x: 3, y: 4, unitType: 'fabricator', length: 600 });
+    expect(out[1]).toEqual({ kind: 'serpent', id: 'plain', x: 0, y: 0, orbitRadius: 500, orbitSeconds: 100, clockwise: true });
+    const empty = JSON.parse(serializeTreeFiles(parseTreeDocument(typesText, JSON.stringify({ nodes })), { types: '\n', tree: '\n' }).tree) as Record<string, unknown>;
+    expect(empty).not.toHaveProperty('decorations');
   });
 
-  it('writes behindStars only on static images that draw behind the stars', () => {
-    const out = serializedTree({
-      nodes,
-      staticImages: [
-        { id: 'backdrop', x: 0, y: 0, width: 3200, height: 3200, imagePath: 'a.png', behindStars: true, tags: ['tania'] },
-        { id: 'cloud', x: 1, y: 1, width: 100, height: 100, imagePath: 'b.png' },
-      ],
-    });
-    const images = out.staticImages as Record<string, unknown>[];
-    expect(Object.keys(images[0])).toEqual(['id', 'x', 'y', 'width', 'height', 'imagePath', 'behindStars', 'tags']);
-    expect(images[1]).toEqual({ id: 'cloud', x: 1, y: 1, width: 100, height: 100, imagePath: 'b.png' });
-  });
-
-  it('keeps a static image parallax after behindStars and leaves out the tree-plane default', () => {
-    const out = serializedTree({
-      nodes,
-      staticImages: [
-        { id: 'haze', x: 0, y: 0, width: 6400, height: 6400, imagePath: 'a.png', behindStars: true, parallax: 0.8, tags: ['tania'] },
-        { id: 'cloud', x: 1, y: 1, width: 100, height: 100, imagePath: 'b.png', parallax: 1 },
-      ],
-    });
-    const images = out.staticImages as Record<string, unknown>[];
-    expect(Object.keys(images[0])).toEqual(['id', 'x', 'y', 'width', 'height', 'imagePath', 'behindStars', 'parallax', 'tags']);
-    expect(images[0].parallax).toBe(0.8);
-    expect(images[1]).toEqual({ id: 'cloud', x: 1, y: 1, width: 100, height: 100, imagePath: 'b.png' });
+  it('writes behindStars and a parallax only on images that need them', () => {
+    const out = serializedDecorations([
+      { kind: 'image', id: 'haze', x: 0, y: 0, width: 6400, height: 6400, imagePath: 'a.png', behindStars: true, parallax: 0.8, tags: ['tania'] },
+      { kind: 'image', id: 'cloud', x: 1, y: 1, width: 100, height: 100, imagePath: 'b.png', parallax: 1 },
+    ]);
+    expect(Object.keys(out[0])).toEqual(['kind', 'id', 'x', 'y', 'width', 'height', 'imagePath', 'behindStars', 'parallax', 'tags']);
+    expect(out[1]).toEqual({ kind: 'image', id: 'cloud', x: 1, y: 1, width: 100, height: 100, imagePath: 'b.png' });
   });
 
   it('keeps a star overlay after the colour and leaves it out of stars without one', () => {
-    const out = serializedTree({
-      nodes,
-      stars: [
-        { id: 'crest_star', x: 0, y: 0, radius: 400, starType: 'star_orange', color: '#f08a3c', overlayPath: 'graphics/fx/crest.png', overlaySize: 0.95, overlayAlpha: 0.45, tags: ['tania'] },
-        { id: 'plain_star', x: 1, y: 1, radius: 200, starType: 'star_yellow' },
-      ],
-    });
-    const stars = out.stars as Record<string, unknown>[];
-    expect(Object.keys(stars[0])).toEqual(['id', 'x', 'y', 'radius', 'starType', 'color', 'overlayPath', 'overlaySize', 'overlayAlpha', 'tags']);
-    expect(stars[0].overlayAlpha).toBe(0.45);
-    expect(stars[1]).toEqual({ id: 'plain_star', x: 1, y: 1, radius: 200, starType: 'star_yellow' });
+    const out = serializedDecorations([
+      { kind: 'star', id: 'crest_star', x: 0, y: 0, radius: 400, starType: 'star_orange', color: '#f08a3c', overlayPath: 'graphics/fx/crest.png', overlaySize: 0.95, overlayAlpha: 0.45, tags: ['tania'] },
+      { kind: 'star', id: 'plain_star', x: 1, y: 1, radius: 200, starType: 'star_yellow' },
+    ]);
+    expect(Object.keys(out[0])).toEqual(['kind', 'id', 'x', 'y', 'radius', 'starType', 'color', 'overlayPath', 'overlaySize', 'overlayAlpha', 'tags']);
+    expect(out[1]).toEqual({ kind: 'star', id: 'plain_star', x: 1, y: 1, radius: 200, starType: 'star_yellow' });
+  });
+
+  it('refuses to load an unknown kind or a retired per-kind list rather than dropping them on save', () => {
+    expect(() => parseTreeDocument(typesText, JSON.stringify({ nodes, decorations: [{ kind: 'comet', id: 'c', x: 0, y: 0 }] }))).toThrow(/unknown kind "comet"/);
+    expect(() => parseTreeDocument(typesText, JSON.stringify({ nodes, stars: [{ id: 's', x: 0, y: 0, radius: 100 }] }))).toThrow(/still has stars/);
   });
 });

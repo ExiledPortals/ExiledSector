@@ -1,8 +1,8 @@
 package exiledsector.ui.decoration;
 
 import exiledsector.skills.SkillNode;
+import exiledsector.skills.decoration.Star;
 import exiledsector.skills.layout.SkillNodeDecoration;
-import exiledsector.skills.layout.Star;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

@@ -1,8 +1,8 @@
-package exiledsector.skills.layout;
+package exiledsector.skills.decoration;
 
 import java.util.List;
 
-public class Star extends SkillTreeObject {
+public class Star extends Decoration {
 
     private final float radius;
     private final String starType;
@@ -22,6 +22,11 @@ public class Star extends SkillTreeObject {
         this.starType = starType;
         this.color = color;
         this.overlay = overlay;
+    }
+
+    @Override
+    public DecorationKind kind() {
+        return DecorationKind.STAR;
     }
 
     public Overlay getOverlay() {

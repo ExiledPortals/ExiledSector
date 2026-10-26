@@ -1,8 +1,8 @@
-package exiledsector.skills.layout;
+package exiledsector.skills.decoration;
 
 import java.util.List;
 
-public class ThreatUnit extends SkillTreeObject {
+public class ThreatUnit extends Decoration {
 
     public static final String FABRICATOR = "fabricator";
     public static final String HIVE = "hive";
@@ -16,6 +16,11 @@ public class ThreatUnit extends SkillTreeObject {
         this.unitType = unitType;
         this.hullLength = hullLength;
         this.rotationDegrees = rotationDegrees;
+    }
+
+    @Override
+    public DecorationKind kind() {
+        return DecorationKind.THREAT_UNIT;
     }
 
     public String getUnitType() {

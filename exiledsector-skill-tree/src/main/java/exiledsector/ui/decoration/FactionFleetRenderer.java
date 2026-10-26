@@ -68,7 +68,7 @@ public final class FactionFleetRenderer {
         Collection<SkillNode> nodes = SkillTree.getAllNodes().values();
         Set<String> lockedRegions = HyperspaceAnchor.lockedRegions(nodes, SkillNode::getRegion, nodeHidden);
         for (String region : TreeFleetFactions.regions()) {
-            RoamVolume volume = lockedRegions.contains(region) ? null : TreeRoamVolumes.region(region, SkillTree.getStars(), nodes);
+            RoamVolume volume = lockedRegions.contains(region) ? null : TreeRoamVolumes.region(region, SkillTree.getDecorations().stars(), nodes);
             if (volume != null) {
                 renderer.volumesByRegion.put(region, volume);
             }

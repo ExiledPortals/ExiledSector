@@ -56,8 +56,7 @@ public final class TreeRegionFilter {
             }
         }
         return new SkillTreeLoader.ParsedTree(keptNodes, parsedTree.declaredNodeCount, keptCurves, keptHiddenConnectors,
-                visible(parsedTree.staticImages, disabledRegions), visible(parsedTree.ringBelts, disabledRegions),
-                visible(parsedTree.stars, disabledRegions), visible(parsedTree.threatUnits, disabledRegions));
+                parsedTree.decorations.outsideRegions(disabledRegions));
     }
 
     private static boolean isDisabled(SkillTreeObject treeObject, Set<String> disabledRegions) {
@@ -68,9 +67,5 @@ public final class TreeRegionFilter {
     private static boolean keepsConnector(String connectorKey, Set<String> removedNodeIds) {
         int separator = connectorKey.indexOf('|');
         return separator < 0 || !removedNodeIds.contains(connectorKey.substring(0, separator)) && !removedNodeIds.contains(connectorKey.substring(separator + 1));
-    }
-
-    private static <T extends SkillTreeObject> List<T> visible(List<T> objects, Set<String> disabledRegions) {
-        return objects.stream().filter(treeObject -> !isDisabled(treeObject, disabledRegions)).toList();
     }
 }

@@ -6,10 +6,8 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.decoration.RingBelt;
 import exiledsector.skills.layout.ConnectorCurve;
-import exiledsector.skills.layout.RingBelt;
-import exiledsector.skills.layout.Star;
-import exiledsector.skills.layout.StaticImage;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -21,7 +19,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -196,246 +193,6 @@ class SkillTreeLoaderTest {
     }
 
     @Test
-    void missingStaticImagesFieldMeansNoImages() throws Exception {
-        JSONObject root = new JSONObject("{ \"nodes\": [] }");
-
-        List<StaticImage> images = SkillTreeLoader.parseStaticImages(root);
-
-        assertTrue(images.isEmpty());
-    }
-
-    @Test
-    void parsesAllFieldsOfAStaticImage() throws Exception {
-        JSONObject root = new JSONObject("{ \"nodes\": [], \"staticImages\": [ {"
-                + "\"id\": \"image_1\","
-                + "\"x\": 1800,"
-                + "\"y\": 600,"
-                + "\"width\": 900,"
-                + "\"height\": 750,"
-                + "\"imagePath\": \"graphics/backgrounds/static_images/hyperspace_cloud_03.png\","
-                + "\"rotation\": 45"
-                + "} ] }");
-
-        List<StaticImage> images = SkillTreeLoader.parseStaticImages(root);
-
-        assertEquals(1, images.size());
-        StaticImage image = images.get(0);
-        assertEquals("image_1", image.getId());
-        assertEquals(1800f, image.getX());
-        assertEquals(600f, image.getY());
-        assertEquals(900f, image.getWidth());
-        assertEquals(750f, image.getHeight());
-        assertEquals("graphics/backgrounds/static_images/hyperspace_cloud_03.png", image.getImagePath());
-        assertEquals(45f, image.getRotation());
-    }
-
-    @Test
-    void aStaticImageDrawsBehindTheStarsOnlyWhenItAsksTo() throws Exception {
-        JSONObject root = new JSONObject("{ \"nodes\": [], \"staticImages\": ["
-                + "{ \"id\": \"backdrop\", \"x\": 0, \"y\": 0, \"width\": 100, \"height\": 100, \"imagePath\": \"a.png\", \"behindStars\": true },"
-                + "{ \"id\": \"cloud\", \"x\": 0, \"y\": 0, \"width\": 100, \"height\": 100, \"imagePath\": \"b.png\" } ] }");
-
-        List<StaticImage> images = SkillTreeLoader.parseStaticImages(root);
-
-        assertTrue(images.get(0).isBehindStars());
-        assertFalse(images.get(1).isBehindStars());
-    }
-
-    @Test
-    void aStaticImageSitsOnTheTreePlaneUnlessItSetsAParallax() throws Exception {
-        JSONObject root = new JSONObject("{ \"nodes\": [], \"staticImages\": ["
-                + "{ \"id\": \"haze\", \"x\": 0, \"y\": 0, \"width\": 100, \"height\": 100, \"imagePath\": \"a.png\", \"parallax\": 0.8 },"
-                + "{ \"id\": \"cloud\", \"x\": 0, \"y\": 0, \"width\": 100, \"height\": 100, \"imagePath\": \"b.png\" } ] }");
-
-        List<StaticImage> images = SkillTreeLoader.parseStaticImages(root);
-
-        assertEquals(0.8f, images.get(0).getParallax());
-        assertEquals(1f, images.get(1).getParallax());
-    }
-
-    @Test
-    void parsesAStarsOverlayAndLeavesStarsWithoutOneBare() throws Exception {
-        JSONObject root = new JSONObject("{ \"nodes\": [], \"stars\": ["
-                + "{ \"id\": \"crest_star\", \"x\": 0, \"y\": 100, \"radius\": 400, \"overlayPath\": \"graphics/fx/crest.png\","
-                + "\"overlaySize\": 0.9, \"overlayAlpha\": 0.4 },"
-                + "{ \"id\": \"plain_star\", \"x\": 0, \"y\": 0, \"radius\": 200 } ] }");
-
-        List<Star> stars = SkillTreeLoader.parseStars(root);
-
-        assertEquals(new Star.Overlay("graphics/fx/crest.png", 0.9f, 0.4f), stars.get(0).getOverlay());
-        assertNull(stars.get(1).getOverlay());
-    }
-
-    @Test
-    void rotationDefaultsToZeroWhenFieldMissing() throws Exception {
-        JSONObject root = new JSONObject("{ \"nodes\": [], \"staticImages\": [ {"
-                + "\"id\": \"image_1\","
-                + "\"x\": 0,"
-                + "\"y\": 0,"
-                + "\"width\": 100,"
-                + "\"height\": 100,"
-                + "\"imagePath\": \"a.png\""
-                + "} ] }");
-
-        StaticImage image = SkillTreeLoader.parseStaticImages(root).get(0);
-
-        assertEquals(0f, image.getRotation());
-    }
-
-    @Test
-    void rotationSpeedDefaultsToZeroWhenFieldMissing() throws Exception {
-        JSONObject root = new JSONObject("{ \"nodes\": [], \"staticImages\": [ {"
-                + "\"id\": \"image_1\","
-                + "\"x\": 0,"
-                + "\"y\": 0,"
-                + "\"width\": 100,"
-                + "\"height\": 100,"
-                + "\"imagePath\": \"a.png\""
-                + "} ] }");
-
-        StaticImage image = SkillTreeLoader.parseStaticImages(root).get(0);
-
-        assertEquals(0f, image.getRotationSpeed());
-    }
-
-    @Test
-    void parsesRotationSpeedWhenPresent() throws Exception {
-        JSONObject root = new JSONObject("{ \"nodes\": [], \"staticImages\": [ {"
-                + "\"id\": \"image_1\","
-                + "\"x\": 0,"
-                + "\"y\": 0,"
-                + "\"width\": 100,"
-                + "\"height\": 100,"
-                + "\"imagePath\": \"a.png\","
-                + "\"rotationSpeed\": 0.75"
-                + "} ] }");
-
-        StaticImage image = SkillTreeLoader.parseStaticImages(root).get(0);
-
-        assertEquals(0.75f, image.getRotationSpeed());
-    }
-
-    @Test
-    void parsesMultipleStaticImagesInOrder() throws Exception {
-        JSONObject root = new JSONObject("{ \"nodes\": [], \"staticImages\": ["
-                + "{\"id\": \"a\", \"x\": 0, \"y\": 0, \"width\": 100, \"height\": 100, \"imagePath\": \"a.png\"},"
-                + "{\"id\": \"b\", \"x\": 0, \"y\": 0, \"width\": 100, \"height\": 100, \"imagePath\": \"b.png\"}"
-                + "] }");
-
-        List<StaticImage> images = SkillTreeLoader.parseStaticImages(root);
-
-        assertEquals(List.of("a", "b"), List.of(images.get(0).getId(), images.get(1).getId()));
-    }
-
-    @Test
-    void missingRingBeltsFieldMeansNoRingBelts() throws Exception {
-        JSONObject root = new JSONObject("{ \"nodes\": [] }");
-
-        List<RingBelt> ringBelts = SkillTreeLoader.parseRingBelts(root);
-
-        assertTrue(ringBelts.isEmpty());
-    }
-
-    @Test
-    void parsesAllFieldsOfARingBelt() throws Exception {
-        JSONObject root = new JSONObject("{ \"nodes\": [], \"ringBelts\": [ {"
-                + "\"id\": \"outer_ringbelt\","
-                + "\"x\": 100,"
-                + "\"y\": -50,"
-                + "\"innerRadius\": 2850,"
-                + "\"outerRadius\": 3150,"
-                + "\"ringArtPath\": \"graphics/planets/ring_band_dust.png\","
-                + "\"rotation\": 45,"
-                + "\"rotationSpeed\": -0.8"
-                + "} ] }");
-
-        List<RingBelt> ringBelts = SkillTreeLoader.parseRingBelts(root);
-
-        assertEquals(1, ringBelts.size());
-        RingBelt belt = ringBelts.get(0);
-        assertEquals("outer_ringbelt", belt.getId());
-        assertEquals(100f, belt.getX());
-        assertEquals(-50f, belt.getY());
-        assertEquals(2850f, belt.getInnerRadius());
-        assertEquals(3150f, belt.getOuterRadius());
-        assertEquals("graphics/planets/ring_band_dust.png", belt.getRingArtPath());
-        assertEquals(45f, belt.getRotation());
-        assertEquals(-0.8f, belt.getRotationSpeed());
-    }
-
-    @Test
-    void parsesMultipleRingBeltsInOrder() throws Exception {
-        JSONObject root = new JSONObject("{ \"nodes\": [], \"ringBelts\": ["
-                + "{\"id\": \"a\", \"x\": 0, \"y\": 0, \"innerRadius\": 100, \"outerRadius\": 200, \"ringArtPath\": \"a.png\"},"
-                + "{\"id\": \"b\", \"x\": 0, \"y\": 0, \"innerRadius\": 100, \"outerRadius\": 200, \"ringArtPath\": \"b.png\"}"
-                + "] }");
-
-        List<RingBelt> ringBelts = SkillTreeLoader.parseRingBelts(root);
-
-        assertEquals(List.of("a", "b"), List.of(ringBelts.get(0).getId(), ringBelts.get(1).getId()));
-    }
-
-    @Test
-    void missingStarsFieldMeansNoStars() throws Exception {
-        JSONObject root = new JSONObject("{ \"nodes\": [] }");
-
-        List<Star> stars = SkillTreeLoader.parseStars(root);
-
-        assertTrue(stars.isEmpty());
-    }
-
-    @Test
-    void parsesAllFieldsOfAStar() throws Exception {
-        JSONObject root = new JSONObject("{ \"nodes\": [], \"stars\": [ {"
-                + "\"id\": \"central_star\","
-                + "\"x\": 10,"
-                + "\"y\": -20,"
-                + "\"radius\": 850,"
-                + "\"starType\": \"star_blue_giant\","
-                + "\"color\": \"#ffaa33\""
-                + "} ] }");
-
-        List<Star> stars = SkillTreeLoader.parseStars(root);
-
-        assertEquals(1, stars.size());
-        Star star = stars.get(0);
-        assertEquals("central_star", star.getId());
-        assertEquals(10f, star.getX());
-        assertEquals(-20f, star.getY());
-        assertEquals(850f, star.getRadius());
-        assertEquals("star_blue_giant", star.getStarType());
-        assertEquals("#ffaa33", star.getColor());
-    }
-
-    @Test
-    void starDefaultsToYellowTypeAndNoColorOverride() throws Exception {
-        JSONObject root = new JSONObject("{ \"nodes\": [], \"stars\": [ {"
-                + "\"id\": \"central_star\","
-                + "\"x\": 0,"
-                + "\"y\": 0,"
-                + "\"radius\": 850"
-                + "} ] }");
-
-        List<Star> stars = SkillTreeLoader.parseStars(root);
-
-        Star star = stars.get(0);
-        assertEquals("star_yellow", star.getStarType());
-        assertNull(star.getColor());
-    }
-
-    @Test
-    void parsesMultipleStarsInOrder() throws Exception {
-        JSONObject root = new JSONObject("{ \"nodes\": [], \"stars\": ["
-                + "{\"id\": \"a\", \"x\": 0, \"y\": 0, \"radius\": 800},"
-                + "{\"id\": \"b\", \"x\": 0, \"y\": 0, \"radius\": 800}"
-                + "] }");
-
-        List<Star> stars = SkillTreeLoader.parseStars(root);
-
-        assertEquals(List.of("a", "b"), List.of(stars.get(0).getId(), stars.get(1).getId()));
-    }
-
-    @Test
     void loadRootReturnsNullWhenTheJsonFailsToLoad() throws Exception {
         SettingsAPI settings = mock(SettingsAPI.class);
         when(settings.loadJSON(anyString())).thenThrow(new IOException("boom"));
@@ -460,9 +217,7 @@ class SkillTreeLoaderTest {
             assertTrue(parsed.nodes.isEmpty());
             assertTrue(parsed.connectorCurves.isEmpty());
             assertTrue(parsed.hiddenConnectors.isEmpty());
-            assertTrue(parsed.staticImages.isEmpty());
-            assertTrue(parsed.ringBelts.isEmpty());
-            assertTrue(parsed.stars.isEmpty());
+            assertTrue(parsed.decorations.all().isEmpty());
         }
     }
 
@@ -472,9 +227,9 @@ class SkillTreeLoaderTest {
                 + "\"nodes\": [ {\"id\": \"bare_node\", \"type\": \"bare\"} ],"
                 + "\"connectorCurves\": [ {\"a\": \"a\", \"b\": \"b\", \"controlX\": 1, \"controlY\": 2} ],"
                 + "\"hiddenConnectors\": [ {\"a\": \"a\", \"b\": \"b\"} ],"
-                + "\"staticImages\": [ {\"id\": \"img\", \"x\": 0, \"y\": 0, \"width\": 10, \"height\": 10, \"imagePath\": \"a.png\"} ],"
-                + "\"ringBelts\": [ {\"id\": \"belt\", \"x\": 0, \"y\": 0, \"innerRadius\": 10, \"outerRadius\": 20, \"ringArtPath\": \"a.png\"} ],"
-                + "\"stars\": [ {\"id\": \"star\", \"x\": 0, \"y\": 0, \"radius\": 100} ]"
+                + "\"decorations\": [ {\"kind\": \"image\", \"id\": \"img\", \"x\": 0, \"y\": 0, \"width\": 10, \"height\": 10, \"imagePath\": \"a.png\"},"
+                + " {\"kind\": \"ringBelt\", \"id\": \"belt\", \"x\": 0, \"y\": 0, \"innerRadius\": 10, \"outerRadius\": 20, \"ringArtPath\": \"a.png\"},"
+                + " {\"kind\": \"star\", \"id\": \"star\", \"x\": 0, \"y\": 0, \"radius\": 100} ]"
                 + "}");
         SettingsAPI settings = mock(SettingsAPI.class);
         when(settings.loadJSON(anyString())).thenReturn(root);
@@ -487,9 +242,9 @@ class SkillTreeLoaderTest {
             assertEquals(1, parsed.nodes.size());
             assertEquals(1, parsed.connectorCurves.size());
             assertEquals(1, parsed.hiddenConnectors.size());
-            assertEquals(1, parsed.staticImages.size());
-            assertEquals(1, parsed.ringBelts.size());
-            assertEquals(1, parsed.stars.size());
+            assertEquals(1, parsed.decorations.images().size());
+            assertEquals(1, parsed.decorations.ringBelts().size());
+            assertEquals(1, parsed.decorations.stars().size());
             verify(settings, times(1)).loadJSON(anyString());
         }
     }
@@ -498,8 +253,8 @@ class SkillTreeLoaderTest {
     void loadAllSkipsAMalformedLayoutEntryWithoutLosingTheRestOfItsSection() throws Exception {
         JSONObject root = new JSONObject("{"
                 + "\"nodes\": [ {\"id\": \"bare_node\", \"type\": \"bare\"} ],"
-                + "\"ringBelts\": [ {\"id\": \"broken\", \"x\": 0, \"y\": 0, \"innerRadius\": 10, \"outerRadius\": 20},"
-                + " {\"id\": \"belt\", \"x\": 0, \"y\": 0, \"innerRadius\": 10, \"outerRadius\": 20, \"ringArtPath\": \"a.png\"} ]"
+                + "\"decorations\": [ {\"kind\": \"ringBelt\", \"id\": \"broken\", \"x\": 0, \"y\": 0, \"innerRadius\": 10, \"outerRadius\": 20},"
+                + " {\"kind\": \"ringBelt\", \"id\": \"belt\", \"x\": 0, \"y\": 0, \"innerRadius\": 10, \"outerRadius\": 20, \"ringArtPath\": \"a.png\"} ]"
                 + "}");
         SettingsAPI settings = mock(SettingsAPI.class);
         when(settings.loadJSON(anyString())).thenReturn(root);
@@ -510,7 +265,7 @@ class SkillTreeLoaderTest {
             SkillTreeLoader.ParsedTree parsed = SkillTreeLoader.loadAll(SKILL_TYPES);
 
             assertEquals(1, parsed.nodes.size());
-            assertEquals(List.of("belt"), parsed.ringBelts.stream().map(RingBelt::getId).toList());
+            assertEquals(List.of("belt"), parsed.decorations.ringBelts().stream().map(RingBelt::getId).toList());
         }
     }
 }

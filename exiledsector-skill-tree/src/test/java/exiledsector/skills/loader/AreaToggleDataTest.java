@@ -3,11 +3,10 @@ package exiledsector.skills.loader;
 import exiledlib.ProjectFiles;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
-import exiledsector.skills.layout.SkillTreeObject;
+import exiledsector.skills.decoration.Decoration;
 import exiledsector.skills.npc.RealSkillData;
 import exiledsector.skills.tags.AreaToggles;
 import exiledsector.skills.tags.SkillTags;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
@@ -33,34 +32,21 @@ class AreaToggleDataTest {
                 ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(RealSkillData.TYPES_FILE)));
         List<SkillNode> nodes = SkillTreeLoader.parseNodes(root, types);
         return new SkillTreeLoader.ParsedTree(nodes, nodes.size(), SkillTreeLoader.parseConnectorCurves(root),
-                SkillTreeLoader.parseHiddenConnectors(root), SkillTreeLoader.parseStaticImages(root),
-                SkillTreeLoader.parseRingBelts(root), SkillTreeLoader.parseStars(root), SkillTreeLoader.parseThreatUnits(root));
+                SkillTreeLoader.parseHiddenConnectors(root), DecorationLoader.parse(root, RealSkillData.TREE_FILE.toString()));
     }
 
-    private static void requireOneRegion(String kind, List<? extends SkillTreeObject> objects, List<String> problems) {
-        for (SkillTreeObject object : objects) {
-            List<String> regions = object.getTags().stream().filter(SkillTags::isRegion).toList();
-            if (regions.size() != 1) {
-                problems.add(kind + " " + object.getId() + " has region tags " + regions);
-            }
-        }
-    }
 
     @Test
-    void everyStarRingBeltAndStaticImageCarriesExactlyOneRegionTag() throws Exception {
+    void everyDecorationCarriesExactlyOneRegionTag() throws Exception {
         SkillTreeLoader.ParsedTree tree = realTree();
         List<String> problems = new ArrayList<>();
-        requireOneRegion("star", tree.stars, problems);
-        requireOneRegion("threat unit", tree.threatUnits, problems);
-        requireOneRegion("ring belt", tree.ringBelts, problems);
-        requireOneRegion("static image", tree.staticImages, problems);
-        JSONArray anchors = treeJson().optJSONArray("orbitAnchors");
-        for (int i = 0; anchors != null && i < anchors.length(); i++) {
-            JSONObject anchor = anchors.getJSONObject(i);
-            if ("asteroidBelt".equals(anchor.optString("shape")) && anchor.optJSONArray("tags") == null) {
-                problems.add("ring belt anchor " + anchor.optString("id") + " has no region tag");
+        for (Decoration decoration : tree.decorations.all()) {
+            List<String> regions = decoration.getTags().stream().filter(SkillTags::isRegion).toList();
+            if (regions.size() != 1) {
+                problems.add(decoration.kind().dataKey() + " " + decoration.getId() + " has region tags " + regions);
             }
         }
+        assertTrue(!tree.decorations.all().isEmpty(), "the tree has no decorations");
 
         assertTrue(problems.isEmpty(), String.join("\n", problems));
     }

@@ -10096,32 +10096,6 @@
 			"radius": 180
 		},
 		{
-			"id": "middle_ringbelt",
-			"x": 0,
-			"y": 0,
-			"radius": 3075,
-			"shape": "asteroidBelt",
-			"beltBandWidth": 350,
-			"beltStyle": "dust",
-			"beltRotationSpeed": 0.6,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "outer_ringbelt",
-			"x": 0,
-			"y": 0,
-			"radius": 4575,
-			"shape": "asteroidBelt",
-			"beltBandWidth": 450,
-			"beltStyle": "dust",
-			"beltRotationSpeed": -0.8,
-			"tags": [
-				"core"
-			]
-		},
-		{
 			"id": "anchor_20",
 			"x": -2886,
 			"y": 2692,
@@ -10187,18 +10161,6 @@
 			"x": -1,
 			"y": -12998,
 			"radius": 1310
-		},
-		{
-			"id": "tritach_asteroids",
-			"x": -1,
-			"y": -12999,
-			"radius": 1540,
-			"shape": "asteroidBelt",
-			"beltStyle": "ice",
-			"beltRotationSpeed": -0.8,
-			"tags": [
-				"tritachyon"
-			]
 		},
 		{
 			"id": "REDACTED_inner",
@@ -10625,431 +10587,9 @@
 			"radius": 1204
 		}
 	],
-	"ringBelts": [
+	"decorations": [
 		{
-			"id": "middle_ringbelt",
-			"x": 0,
-			"y": 0,
-			"innerRadius": 2900,
-			"outerRadius": 3250,
-			"ringArtPath": "graphics/planets/ring_band_dust.png",
-			"rotationSpeed": 0.6,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "outer_ringbelt",
-			"x": 0,
-			"y": 0,
-			"innerRadius": 4350,
-			"outerRadius": 4800,
-			"ringArtPath": "graphics/planets/ring_band_dust.png",
-			"rotationSpeed": -0.8,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "tritach_asteroids",
-			"x": -1,
-			"y": -12999,
-			"innerRadius": 1386,
-			"outerRadius": 1694,
-			"ringArtPath": "graphics/planets/ring_band_ice.png",
-			"rotationSpeed": -0.8,
-			"tags": [
-				"tritachyon"
-			]
-		}
-	],
-	"staticImages": [
-		{
-			"id": "image_5",
-			"x": -6,
-			"y": -1374,
-			"width": 763,
-			"height": 468,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_01.png",
-			"rotation": 264,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "image_6",
-			"x": 1355,
-			"y": 776,
-			"width": 757,
-			"height": 724,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_07_lowtech.png",
-			"rotation": 307,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "image_7",
-			"x": -1321,
-			"y": 795,
-			"width": 548,
-			"height": 485,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_10_orange.png",
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "image_1",
-			"x": 1327,
-			"y": 1153,
-			"width": 501,
-			"height": 533,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_06_lowtech.png",
-			"rotation": 203,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "image_2",
-			"x": 1639,
-			"y": 677,
-			"width": 526,
-			"height": 602,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_04_lowtech.png",
-			"rotation": 253,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "image_3",
-			"x": 1605,
-			"y": 527,
-			"width": 519,
-			"height": 656,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_09_lowtech.png",
-			"rotation": 164,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "image_10",
-			"x": -1491,
-			"y": 577,
-			"width": 749,
-			"height": 889,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_04_orange.png",
-			"rotation": 237,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "image_11",
-			"x": -1284,
-			"y": 1085,
-			"width": 615,
-			"height": 560,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_09_orange.png",
-			"rotation": 294,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "image_13",
-			"x": -1450,
-			"y": 1010,
-			"width": 626,
-			"height": 491,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_07_blend_b75.png",
-			"rotation": 94,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "image_14",
-			"x": -413,
-			"y": -1594,
-			"width": 561,
-			"height": 549,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_04.png",
-			"rotation": 179,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "image_15",
-			"x": 173,
-			"y": -1673,
-			"width": 587,
-			"height": 680,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_01.png",
-			"rotation": 261,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "image_16",
-			"x": -159,
-			"y": -1646,
-			"width": 886,
-			"height": 508,
-			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_05.png",
-			"rotation": 230,
-			"tags": [
-				"core"
-			]
-		},
-		{
-			"id": "luddic_nebula",
-			"x": 5640,
-			"y": 11713,
-			"width": 3400,
-			"height": 3400,
-			"imagePath": "graphics/backgrounds/static_images/luddic_nebula.png",
-			"rotation": 285,
-			"tags": [
-				"luddic"
-			]
-		},
-		{
-			"id": "tania_nebula",
-			"x": 0,
-			"y": 18750,
-			"width": 6400,
-			"height": 6400,
-			"imagePath": "graphics/backgrounds/static_images/tania_nebula.png",
-			"behindStars": true,
-			"tags": [
-				"tania"
-			]
-		},
-		{
-			"id": "image_17",
-			"x": -44031,
-			"y": 27505,
-			"width": 927,
-			"height": 830,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_01.png",
-			"rotation": 173,
-			"tags": [
-				"abyss"
-			]
-		},
-		{
-			"id": "image_18",
-			"x": -44505,
-			"y": 28907,
-			"width": 923,
-			"height": 806,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_02.png",
-			"rotation": 28,
-			"tags": [
-				"abyss"
-			]
-		},
-		{
-			"id": "image_19",
-			"x": -45404,
-			"y": 29328,
-			"width": 906,
-			"height": 899,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_03.png",
-			"rotation": 5,
-			"tags": [
-				"abyss"
-			]
-		},
-		{
-			"id": "image_20",
-			"x": -47021,
-			"y": 28432,
-			"width": 1009,
-			"height": 936,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_05.png",
-			"rotation": 186,
-			"tags": [
-				"abyss"
-			]
-		},
-		{
-			"id": "image_21",
-			"x": -46482,
-			"y": 26406,
-			"width": 1032,
-			"height": 1082,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_06.png",
-			"rotation": 2,
-			"tags": [
-				"abyss"
-			]
-		},
-		{
-			"id": "image_22",
-			"x": -44483,
-			"y": 26413,
-			"width": 1003,
-			"height": 1040,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_07.png",
-			"rotation": 1,
-			"tags": [
-				"abyss"
-			]
-		},
-		{
-			"id": "image_23",
-			"x": -44754,
-			"y": 26259,
-			"width": 901,
-			"height": 1017,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_12.png",
-			"rotation": 153,
-			"tags": [
-				"abyss"
-			]
-		},
-		{
-			"id": "image_24",
-			"x": -43894,
-			"y": 28262,
-			"width": 1097,
-			"height": 1227,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_14.png",
-			"rotation": 219,
-			"tags": [
-				"abyss"
-			]
-		},
-		{
-			"id": "image_25",
-			"x": -43686,
-			"y": 27742,
-			"width": 1129,
-			"height": 1072,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_01.png",
-			"rotation": 290,
-			"tags": [
-				"abyss"
-			]
-		},
-		{
-			"id": "image_26",
-			"x": -44321,
-			"y": 28555,
-			"width": 1135,
-			"height": 982,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_02.png",
-			"rotation": 107,
-			"tags": [
-				"abyss"
-			]
-		},
-		{
-			"id": "image_27",
-			"x": -44883,
-			"y": 29173,
-			"width": 1183,
-			"height": 1023,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_03.png",
-			"rotation": 296,
-			"tags": [
-				"abyss"
-			]
-		},
-		{
-			"id": "image_28",
-			"x": -46179,
-			"y": 29188,
-			"width": 1471,
-			"height": 1399,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_05.png",
-			"rotation": 43,
-			"tags": [
-				"abyss"
-			]
-		},
-		{
-			"id": "image_29",
-			"x": -46856,
-			"y": 28828,
-			"width": 1235,
-			"height": 1298,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_06.png",
-			"rotation": 20,
-			"tags": [
-				"abyss"
-			]
-		},
-		{
-			"id": "image_30",
-			"x": -47369,
-			"y": 27708,
-			"width": 1332,
-			"height": 1350,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_07.png",
-			"rotation": 276,
-			"tags": [
-				"abyss"
-			]
-		},
-		{
-			"id": "image_31",
-			"x": -46929,
-			"y": 26852,
-			"width": 1474,
-			"height": 1615,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_12.png",
-			"rotation": 349,
-			"tags": [
-				"abyss"
-			]
-		},
-		{
-			"id": "image_32",
-			"x": -46004,
-			"y": 26075,
-			"width": 1398,
-			"height": 1449,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_14.png",
-			"rotation": 159,
-			"tags": [
-				"abyss"
-			]
-		},
-		{
-			"id": "image_33",
-			"x": -45194,
-			"y": 25859,
-			"width": 1325,
-			"height": 1310,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_01.png",
-			"rotation": 81,
-			"tags": [
-				"abyss"
-			]
-		},
-		{
-			"id": "image_34",
-			"x": -44095,
-			"y": 26929,
-			"width": 1123,
-			"height": 1173,
-			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_02.png",
-			"rotation": 44,
-			"tags": [
-				"abyss"
-			]
-		}
-	],
-	"stars": [
-		{
+			"kind": "star",
 			"id": "central_star",
 			"x": 0,
 			"y": 0,
@@ -11060,6 +10600,7 @@
 			]
 		},
 		{
+			"kind": "star",
 			"id": "tritach_star",
 			"x": 0,
 			"y": -13000,
@@ -11071,6 +10612,7 @@
 			]
 		},
 		{
+			"kind": "star",
 			"id": "REDACTED_star",
 			"x": 10164,
 			"y": -8105,
@@ -11081,6 +10623,7 @@
 			]
 		},
 		{
+			"kind": "star",
 			"id": "pirate_star",
 			"x": 12674,
 			"y": 2893,
@@ -11091,6 +10634,7 @@
 			]
 		},
 		{
+			"kind": "star",
 			"id": "hegemony_star",
 			"x": -5640,
 			"y": 11713,
@@ -11102,6 +10646,7 @@
 			]
 		},
 		{
+			"kind": "star",
 			"id": "dictat_star",
 			"x": -10164,
 			"y": -8105,
@@ -11113,6 +10658,7 @@
 			]
 		},
 		{
+			"kind": "star",
 			"id": "star_1",
 			"x": -12674,
 			"y": 2893,
@@ -11124,6 +10670,7 @@
 			]
 		},
 		{
+			"kind": "star",
 			"id": "frozen_heart_star",
 			"x": 8386,
 			"y": -15928,
@@ -11134,6 +10681,7 @@
 			]
 		},
 		{
+			"kind": "star",
 			"id": "kesteven_star",
 			"x": -14818,
 			"y": 10213,
@@ -11145,6 +10693,7 @@
 			]
 		},
 		{
+			"kind": "star",
 			"id": "nightcross_star",
 			"x": -17586,
 			"y": -3854,
@@ -11156,6 +10705,7 @@
 			]
 		},
 		{
+			"kind": "star",
 			"id": "stargazer_star",
 			"x": 17365,
 			"y": -4745,
@@ -11167,6 +10717,7 @@
 			]
 		},
 		{
+			"kind": "star",
 			"id": "abyss_star",
 			"x": -45507,
 			"y": 27715,
@@ -11178,6 +10729,7 @@
 			]
 		},
 		{
+			"kind": "star",
 			"id": "tania_star",
 			"x": 0,
 			"y": 18001,
@@ -11190,10 +10742,463 @@
 			"tags": [
 				"tania"
 			]
-		}
-	],
-	"threatUnits": [
+		},
 		{
+			"kind": "image",
+			"id": "image_5",
+			"x": -6,
+			"y": -1374,
+			"width": 763,
+			"height": 468,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_01.png",
+			"rotation": 264,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_6",
+			"x": 1355,
+			"y": 776,
+			"width": 757,
+			"height": 724,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_07_lowtech.png",
+			"rotation": 307,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_7",
+			"x": -1321,
+			"y": 795,
+			"width": 548,
+			"height": 485,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_10_orange.png",
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_1",
+			"x": 1327,
+			"y": 1153,
+			"width": 501,
+			"height": 533,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_06_lowtech.png",
+			"rotation": 203,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_2",
+			"x": 1639,
+			"y": 677,
+			"width": 526,
+			"height": 602,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_04_lowtech.png",
+			"rotation": 253,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_3",
+			"x": 1605,
+			"y": 527,
+			"width": 519,
+			"height": 656,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_09_lowtech.png",
+			"rotation": 164,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_10",
+			"x": -1491,
+			"y": 577,
+			"width": 749,
+			"height": 889,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_04_orange.png",
+			"rotation": 237,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_11",
+			"x": -1284,
+			"y": 1085,
+			"width": 615,
+			"height": 560,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_09_orange.png",
+			"rotation": 294,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_13",
+			"x": -1450,
+			"y": 1010,
+			"width": 626,
+			"height": 491,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_07_blend_b75.png",
+			"rotation": 94,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_14",
+			"x": -413,
+			"y": -1594,
+			"width": 561,
+			"height": 549,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_04.png",
+			"rotation": 179,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_15",
+			"x": 173,
+			"y": -1673,
+			"width": 587,
+			"height": 680,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_01.png",
+			"rotation": 261,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_16",
+			"x": -159,
+			"y": -1646,
+			"width": 886,
+			"height": 508,
+			"imagePath": "graphics/backgrounds/static_images/hyperspace_cloud_05.png",
+			"rotation": 230,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "luddic_nebula",
+			"x": 5640,
+			"y": 11713,
+			"width": 3400,
+			"height": 3400,
+			"imagePath": "graphics/backgrounds/static_images/luddic_nebula.png",
+			"rotation": 285,
+			"tags": [
+				"luddic"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "tania_nebula",
+			"x": 0,
+			"y": 18750,
+			"width": 6400,
+			"height": 6400,
+			"imagePath": "graphics/backgrounds/static_images/tania_nebula.png",
+			"behindStars": true,
+			"tags": [
+				"tania"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_17",
+			"x": -44031,
+			"y": 27505,
+			"width": 927,
+			"height": 830,
+			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_01.png",
+			"rotation": 173,
+			"tags": [
+				"abyss"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_18",
+			"x": -44505,
+			"y": 28907,
+			"width": 923,
+			"height": 806,
+			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_02.png",
+			"rotation": 28,
+			"tags": [
+				"abyss"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_19",
+			"x": -45404,
+			"y": 29328,
+			"width": 906,
+			"height": 899,
+			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_03.png",
+			"rotation": 5,
+			"tags": [
+				"abyss"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_20",
+			"x": -47021,
+			"y": 28432,
+			"width": 1009,
+			"height": 936,
+			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_05.png",
+			"rotation": 186,
+			"tags": [
+				"abyss"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_21",
+			"x": -46482,
+			"y": 26406,
+			"width": 1032,
+			"height": 1082,
+			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_06.png",
+			"rotation": 2,
+			"tags": [
+				"abyss"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_22",
+			"x": -44483,
+			"y": 26413,
+			"width": 1003,
+			"height": 1040,
+			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_07.png",
+			"rotation": 1,
+			"tags": [
+				"abyss"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_23",
+			"x": -44754,
+			"y": 26259,
+			"width": 901,
+			"height": 1017,
+			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_12.png",
+			"rotation": 153,
+			"tags": [
+				"abyss"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_24",
+			"x": -43894,
+			"y": 28262,
+			"width": 1097,
+			"height": 1227,
+			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_14.png",
+			"rotation": 219,
+			"tags": [
+				"abyss"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_25",
+			"x": -43686,
+			"y": 27742,
+			"width": 1129,
+			"height": 1072,
+			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_01.png",
+			"rotation": 290,
+			"tags": [
+				"abyss"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_26",
+			"x": -44321,
+			"y": 28555,
+			"width": 1135,
+			"height": 982,
+			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_02.png",
+			"rotation": 107,
+			"tags": [
+				"abyss"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_27",
+			"x": -44883,
+			"y": 29173,
+			"width": 1183,
+			"height": 1023,
+			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_03.png",
+			"rotation": 296,
+			"tags": [
+				"abyss"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_28",
+			"x": -46179,
+			"y": 29188,
+			"width": 1471,
+			"height": 1399,
+			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_05.png",
+			"rotation": 43,
+			"tags": [
+				"abyss"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_29",
+			"x": -46856,
+			"y": 28828,
+			"width": 1235,
+			"height": 1298,
+			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_06.png",
+			"rotation": 20,
+			"tags": [
+				"abyss"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_30",
+			"x": -47369,
+			"y": 27708,
+			"width": 1332,
+			"height": 1350,
+			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_07.png",
+			"rotation": 276,
+			"tags": [
+				"abyss"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_31",
+			"x": -46929,
+			"y": 26852,
+			"width": 1474,
+			"height": 1615,
+			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_12.png",
+			"rotation": 349,
+			"tags": [
+				"abyss"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_32",
+			"x": -46004,
+			"y": 26075,
+			"width": 1398,
+			"height": 1449,
+			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_14.png",
+			"rotation": 159,
+			"tags": [
+				"abyss"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_33",
+			"x": -45194,
+			"y": 25859,
+			"width": 1325,
+			"height": 1310,
+			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_01.png",
+			"rotation": 81,
+			"tags": [
+				"abyss"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "image_34",
+			"x": -44095,
+			"y": 26929,
+			"width": 1123,
+			"height": 1173,
+			"imagePath": "graphics/backgrounds/static_images/rat_abyss_cloud_02.png",
+			"rotation": 44,
+			"tags": [
+				"abyss"
+			]
+		},
+		{
+			"kind": "ringBelt",
+			"id": "middle_ringbelt",
+			"x": 0,
+			"y": 0,
+			"innerRadius": 2900,
+			"outerRadius": 3250,
+			"ringArtPath": "graphics/planets/ring_band_dust.png",
+			"rotationSpeed": 0.6,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"kind": "ringBelt",
+			"id": "outer_ringbelt",
+			"x": 0,
+			"y": 0,
+			"innerRadius": 4350,
+			"outerRadius": 4800,
+			"ringArtPath": "graphics/planets/ring_band_dust.png",
+			"rotationSpeed": -0.8,
+			"tags": [
+				"core"
+			]
+		},
+		{
+			"kind": "ringBelt",
+			"id": "tritach_asteroids",
+			"x": -1,
+			"y": -12999,
+			"innerRadius": 1386,
+			"outerRadius": 1694,
+			"ringArtPath": "graphics/planets/ring_band_ice.png",
+			"rotationSpeed": -0.8,
+			"tags": [
+				"tritachyon"
+			]
+		},
+		{
+			"kind": "threatUnit",
 			"id": "threat_unit_1",
 			"x": -41802,
 			"y": 18563,
@@ -11201,6 +11206,36 @@
 			"length": 600,
 			"tags": [
 				"threat"
+			]
+		},
+		{
+			"kind": "serpent",
+			"id": "abyss_serpent_1",
+			"x": -45507,
+			"y": 27715,
+			"orbitRadius": 1663,
+			"orbitSeconds": 150,
+			"clockwise": true,
+			"wobble": 0.12,
+			"wobbleWaves": 9,
+			"tags": [
+				"abyss"
+			]
+		},
+		{
+			"kind": "serpent",
+			"id": "abyss_serpent_2",
+			"x": -45507,
+			"y": 27715,
+			"orbitRadius": 1663,
+			"orbitSeconds": 190,
+			"clockwise": false,
+			"startAngle": 180,
+			"wobble": 0.15,
+			"wobbleWaves": 7,
+			"wobblePhase": 74.5,
+			"tags": [
+				"abyss"
 			]
 		}
 	]

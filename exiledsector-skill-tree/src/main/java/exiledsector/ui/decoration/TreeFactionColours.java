@@ -3,7 +3,7 @@ package exiledsector.ui.decoration;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.PlanetSpecAPI;
 import exiledsector.skills.SkillTree;
-import exiledsector.skills.layout.Star;
+import exiledsector.skills.decoration.Star;
 import exiledsector.ui.util.ColorUtil;
 
 import java.awt.Color;
@@ -25,7 +25,7 @@ public final class TreeFactionColours {
                 coronaByType.put(spec.getPlanetType(), spec.getCoronaColor());
             }
         }
-        FactionStarColours.register(colours(SkillTree.getStars(), TreeFleetFactions.regions(), TreeFleetFactions::factionsIn, coronaByType::get));
+        FactionStarColours.register(colours(SkillTree.getDecorations().stars(), TreeFleetFactions.regions(), TreeFleetFactions::factionsIn, coronaByType::get));
     }
 
     static Map<String, Color> colours(List<Star> stars, List<String> regions, Function<String, List<String>> factionsIn,

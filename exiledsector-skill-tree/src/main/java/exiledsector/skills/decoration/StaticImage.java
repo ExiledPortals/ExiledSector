@@ -1,8 +1,10 @@
-package exiledsector.skills.layout;
+package exiledsector.skills.decoration;
+
+import exiledsector.skills.layout.Rotation;
 
 import java.util.List;
 
-public class StaticImage extends SkillTreeObject {
+public class StaticImage extends Decoration {
 
     private final float imageWidth;
     private final float imageHeight;
@@ -28,6 +30,11 @@ public class StaticImage extends SkillTreeObject {
         this.imagePath = shape.imagePath();
         this.rotation = shape.rotation();
         this.depth = depth;
+    }
+
+    @Override
+    public DecorationKind kind() {
+        return DecorationKind.IMAGE;
     }
 
     public boolean isBehindStars() {

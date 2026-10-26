@@ -1,27 +1,40 @@
 package exiledsector.ui.decoration;
 
 import exiledlib.skills.skilleffect.render.SpriteCache;
-import exiledsector.skills.SkillTree;
-import exiledsector.skills.layout.StaticImage;
+import exiledsector.skills.decoration.StaticImage;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.SpriteDraw;
 
 import java.util.List;
-import java.util.Set;
 
-public class SkillTreeStaticImageRenderer {
+public class SkillTreeStaticImageRenderer implements DecorationRenderer {
 
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeStaticImageRenderer.class);
+    private final List<StaticImage> images;
     private float elapsedSeconds = 0f;
 
+    SkillTreeStaticImageRenderer(List<StaticImage> images) {
+        this.images = List.copyOf(images);
+    }
+
+    @Override
     public void advance(float amount) {
         elapsedSeconds += amount;
     }
 
-    public void render(TreeViewport viewport, float alphaMult, Set<String> keptIds, float othersAlphaMult, boolean behindStars) {
-        float zoom = viewport.zoom();
-        List<StaticImage> images = SkillTree.getStaticImages();
+    @Override
+    public void render(DecorationScene scene, DecorationDepth depth) {
+        if (depth == DecorationDepth.BEHIND_STARS) {
+            render(scene, true);
+        } else if (depth == DecorationDepth.FOREGROUND_IMAGES) {
+            render(scene, false);
+        }
+    }
+
+    private void render(DecorationScene scene, boolean behindStars) {
         if (images.isEmpty()) return;
+        TreeViewport viewport = scene.viewport();
+        float zoom = viewport.zoom();
         float viewCenterX = (viewport.left() + viewport.right()) / 2f;
         float viewCenterY = (viewport.bottom() + viewport.top()) / 2f;
         boolean viewBounded = Float.isFinite(viewCenterX) && Float.isFinite(viewCenterY);
@@ -29,7 +42,7 @@ public class SkillTreeStaticImageRenderer {
         for (StaticImage image : images) {
             String imagePath = image.getImagePath();
             if (imagePath == null || imagePath.isEmpty() || image.isBehindStars() != behindStars) continue;
-            float imageAlpha = keptIds.contains(image.getId()) ? alphaMult : alphaMult * othersAlphaMult;
+            float imageAlpha = scene.alphaFor(image.getId());
             if (imageAlpha <= 0f) continue;
 
             float screenX = viewport.screenX(image.getX());

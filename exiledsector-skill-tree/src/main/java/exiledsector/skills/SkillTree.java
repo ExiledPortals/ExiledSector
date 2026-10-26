@@ -1,10 +1,7 @@
 package exiledsector.skills;
 
+import exiledsector.skills.decoration.Decorations;
 import exiledsector.skills.layout.ConnectorCurve;
-import exiledsector.skills.layout.RingBelt;
-import exiledsector.skills.layout.Star;
-import exiledsector.skills.layout.ThreatUnit;
-import exiledsector.skills.layout.StaticImage;
 import exiledsector.skills.loader.SkillTreeLoader;
 import exiledsector.skills.loader.SkillTypeLoader;
 import exiledsector.skills.loader.TreeRegionFilter;
@@ -14,11 +11,9 @@ import exiledsector.skills.radius.NodeRadiusCache;
 import exiledsector.skills.radius.RadiusSize;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,10 +23,6 @@ public class SkillTree {
     private static final Map<String, SkillType> TYPES = new LinkedHashMap<>();
     private static final Map<String, ConnectorCurve> CURVES = new LinkedHashMap<>();
     private static final Set<String> HIDDEN_CONNECTOR_KEYS = new HashSet<>();
-    private static final List<StaticImage> STATIC_IMAGES = new ArrayList<>();
-    private static final List<RingBelt> RING_BELTS = new ArrayList<>();
-    private static final List<Star> STARS = new ArrayList<>();
-    private static final List<ThreatUnit> THREAT_UNITS = new ArrayList<>();
     private static final Map<String, SkillNode> NODES_VIEW = Collections.unmodifiableMap(NODES);
     private static final Map<String, SkillType> TYPES_VIEW = Collections.unmodifiableMap(TYPES);
     private static final Map<String, SkillNode> DECLARED_NODES = new LinkedHashMap<>();
@@ -41,6 +32,7 @@ public class SkillTree {
     private static boolean loadedCompletely;
     private static SkillTreeTopology topology;
     private static NodeRadiusCache radiusCache;
+    private static Decorations decorations = Decorations.NONE;
 
     private SkillTree() {
     }
@@ -80,10 +72,7 @@ public class SkillTree {
         }
         CURVES.putAll(activeTree.connectorCurves);
         HIDDEN_CONNECTOR_KEYS.addAll(activeTree.hiddenConnectors);
-        STATIC_IMAGES.addAll(activeTree.staticImages);
-        RING_BELTS.addAll(activeTree.ringBelts);
-        STARS.addAll(activeTree.stars);
-        THREAT_UNITS.addAll(activeTree.threatUnits);
+        decorations = activeTree.decorations;
         topology = SkillTreeTopology.of(NODES.values());
         radiusCache = NodeRadiusCache.of(NODES.values(), NodeRadii.distances());
     }
@@ -97,10 +86,7 @@ public class SkillTree {
     private static void clearLayout() {
         CURVES.clear();
         HIDDEN_CONNECTOR_KEYS.clear();
-        STATIC_IMAGES.clear();
-        RING_BELTS.clear();
-        STARS.clear();
-        THREAT_UNITS.clear();
+        decorations = Decorations.NONE;
     }
 
     public static SkillNode getDeclared(String nodeId) {
@@ -193,19 +179,7 @@ public class SkillTree {
         return !HIDDEN_CONNECTOR_KEYS.contains(curveKey(aId, bId));
     }
 
-    public static List<StaticImage> getStaticImages() {
-        return STATIC_IMAGES;
-    }
-
-    public static List<RingBelt> getRingBelts() {
-        return RING_BELTS;
-    }
-
-    public static List<Star> getStars() {
-        return STARS;
-    }
-
-    public static List<ThreatUnit> getThreatUnits() {
-        return THREAT_UNITS;
+    public static Decorations getDecorations() {
+        return decorations;
     }
 }

@@ -1,16 +1,12 @@
 import { withLineEnding, type LineEnding } from '../../../shared/lineEndings.ts';
 import { linkedEntries, pruneConnectorEntries } from './connectors.ts';
+import { parseDecorations, RETIRED_DECORATION_LISTS, serializeDecoration, sortDecorationsByKind } from './decorations.ts';
 import {
   ANCHOR_RECTANGLE_ASPECT,
-  DEFAULT_THREAT_UNIT_LENGTH,
-  defaultBeltBandWidth,
   PARAMETERISED_UNLOCK_CONDITIONS,
   tierOf,
   type OrbitAnchor,
   type SkillType,
-  type Star,
-  type StaticImage,
-  type ThreatUnit,
   type TreeDocument,
   type TreeNode,
   type UnlockCondition,
@@ -21,10 +17,7 @@ interface TreeFileJson {
   connectorCurves?: TreeDocument['curves'];
   hiddenConnectors?: TreeDocument['hiddenConnectors'];
   orbitAnchors?: OrbitAnchor[];
-  ringBelts?: { id: string; rotation?: number }[];
-  staticImages?: Partial<StaticImage>[];
-  stars?: Partial<Star>[];
-  threatUnits?: Partial<ThreatUnit>[];
+  decorations?: unknown[];
 }
 
 function parseJson<TValue>(text: string, fileName: string): TValue {
@@ -33,64 +26,6 @@ function parseJson<TValue>(text: string, fileName: string): TValue {
   } catch (error) {
     throw new Error(`${fileName} is not valid JSON: ${error instanceof Error ? error.message : String(error)}`);
   }
-}
-
-function anchorsFromTree(tree: TreeFileJson): OrbitAnchor[] {
-  const anchors = tree.orbitAnchors ?? [];
-  for (const belt of tree.ringBelts ?? []) {
-    if (!belt.rotation) {
-      continue;
-    }
-    for (const anchor of anchors) {
-      if (anchor.id === belt.id && anchor.shape === 'asteroidBelt' && anchor.beltRotation === undefined) {
-        anchor.beltRotation = belt.rotation;
-      }
-    }
-  }
-  return anchors;
-}
-
-function normalizeImages(images: Partial<StaticImage>[] | undefined): StaticImage[] {
-  return (images ?? []).map((image) => ({
-    id: image.id ?? '',
-    x: image.x ?? 0,
-    y: image.y ?? 0,
-    width: image.width ?? 0,
-    height: image.height ?? 0,
-    imagePath: image.imagePath || null,
-    rotation: image.rotation || 0,
-    rotationSpeed: image.rotationSpeed || 0,
-    behindStars: image.behindStars || undefined,
-    parallax: image.parallax === undefined || image.parallax === 1 ? undefined : image.parallax,
-    tags: image.tags ? image.tags.slice() : undefined,
-  }));
-}
-
-function normalizeStars(stars: Partial<Star>[] | undefined): Star[] {
-  return (stars ?? []).map((star) => ({
-    id: star.id ?? '',
-    x: star.x ?? 0,
-    y: star.y ?? 0,
-    radius: star.radius ?? 0,
-    starType: star.starType || 'star_yellow',
-    color: star.color || null,
-    overlayPath: star.overlayPath || undefined,
-    overlaySize: star.overlaySize,
-    overlayAlpha: star.overlayAlpha,
-    tags: star.tags ? star.tags.slice() : undefined,
-  }));
-}
-
-function normalizeThreatUnits(threatUnits: Partial<ThreatUnit>[] | undefined): ThreatUnit[] {
-  return (threatUnits ?? []).map((threatUnit) => ({
-    id: threatUnit.id ?? '',
-    x: threatUnit.x ?? 0,
-    y: threatUnit.y ?? 0,
-    unitType: threatUnit.unitType || 'fabricator',
-    length: threatUnit.length ?? DEFAULT_THREAT_UNIT_LENGTH,
-    rotation: threatUnit.rotation || 0,
-    tags: threatUnit.tags ? threatUnit.tags.slice() : undefined,
-  }));
 }
 
 export function parseTreeDocument(typesText: string, treeText: string): TreeDocument {
@@ -102,15 +37,17 @@ export function parseTreeDocument(typesText: string, treeText: string): TreeDocu
   if (!Array.isArray(treeJson.nodes) || treeJson.nodes.length === 0) {
     throw new Error('ship_skill_tree.json has no nodes');
   }
+  const retiredLists = RETIRED_DECORATION_LISTS.filter((key) => key in treeJson);
+  if (retiredLists.length > 0) {
+    throw new Error(`ship_skill_tree.json still has ${retiredLists.join(', ')}; move those entries into "decorations" with a kind before editing, or a save would drop them`);
+  }
   const document: TreeDocument = {
     types: typesJson.skillTypes,
     nodes: treeJson.nodes.map((node) => ({ ...node, connectedTo: node.connectedTo ?? [] })),
     curves: treeJson.connectorCurves ?? [],
     hiddenConnectors: treeJson.hiddenConnectors ?? [],
-    anchors: anchorsFromTree(treeJson),
-    images: normalizeImages(treeJson.staticImages),
-    stars: normalizeStars(treeJson.stars),
-    threatUnits: normalizeThreatUnits(treeJson.threatUnits),
+    anchors: treeJson.orbitAnchors ?? [],
+    decorations: parseDecorations(treeJson.decorations),
   };
   pruneConnectorEntries(document);
   return document;
@@ -236,102 +173,6 @@ function serializeOrbitAnchor(anchor: OrbitAnchor): Record<string, unknown> {
     if (anchor.rotation) {
       out.rotation = anchor.rotation;
     }
-    if (anchor.shape === 'asteroidBelt') {
-      if (anchor.beltBandWidth) {
-        out.beltBandWidth = anchor.beltBandWidth;
-      }
-      if (anchor.beltStyle) {
-        out.beltStyle = anchor.beltStyle;
-      }
-      if (anchor.beltRotation) {
-        out.beltRotation = anchor.beltRotation;
-      }
-      if (anchor.beltRotationSpeed) {
-        out.beltRotationSpeed = anchor.beltRotationSpeed;
-      }
-      if (anchor.tags?.length) {
-        out.tags = anchor.tags;
-      }
-    }
-  }
-  return out;
-}
-
-function serializeRingBelt(anchor: OrbitAnchor): Record<string, unknown> {
-  const halfBand = (anchor.beltBandWidth || defaultBeltBandWidth(anchor)) / 2;
-  const out: Record<string, unknown> = {
-    id: anchor.id,
-    x: anchor.x,
-    y: anchor.y,
-    innerRadius: Math.max(0, anchor.radius - halfBand),
-    outerRadius: anchor.radius + halfBand,
-    ringArtPath: `graphics/planets/ring_band_${anchor.beltStyle || 'asteroids'}.png`,
-  };
-  if (anchor.beltRotation) {
-    out.rotation = anchor.beltRotation;
-  }
-  if (anchor.beltRotationSpeed) {
-    out.rotationSpeed = anchor.beltRotationSpeed;
-  }
-  if (anchor.tags?.length) {
-    out.tags = anchor.tags;
-  }
-  return out;
-}
-
-function serializeStaticImage(image: StaticImage): Record<string, unknown> {
-  const out: Record<string, unknown> = { id: image.id, x: image.x, y: image.y, width: image.width, height: image.height, imagePath: image.imagePath || '' };
-  if (image.rotation) {
-    out.rotation = image.rotation;
-  }
-  if (image.rotationSpeed) {
-    out.rotationSpeed = image.rotationSpeed;
-  }
-  if (image.behindStars) {
-    out.behindStars = true;
-  }
-  if (image.parallax !== undefined && image.parallax !== 1) {
-    out.parallax = image.parallax;
-  }
-  if (image.tags?.length) {
-    out.tags = image.tags;
-  }
-  return out;
-}
-
-function serializeStar(star: Star): Record<string, unknown> {
-  const out: Record<string, unknown> = { id: star.id, x: star.x, y: star.y, radius: star.radius, starType: star.starType || 'star_yellow' };
-  if (star.color) {
-    out.color = star.color;
-  }
-  if (star.overlayPath) {
-    out.overlayPath = star.overlayPath;
-    if (star.overlaySize !== undefined) {
-      out.overlaySize = star.overlaySize;
-    }
-    if (star.overlayAlpha !== undefined) {
-      out.overlayAlpha = star.overlayAlpha;
-    }
-  }
-  if (star.tags?.length) {
-    out.tags = star.tags;
-  }
-  return out;
-}
-
-function serializeThreatUnit(threatUnit: ThreatUnit): Record<string, unknown> {
-  const out: Record<string, unknown> = {
-    id: threatUnit.id,
-    x: threatUnit.x,
-    y: threatUnit.y,
-    unitType: threatUnit.unitType || 'fabricator',
-    length: threatUnit.length,
-  };
-  if (threatUnit.rotation) {
-    out.rotation = threatUnit.rotation;
-  }
-  if (threatUnit.tags?.length) {
-    out.tags = threatUnit.tags;
   }
   return out;
 }
@@ -357,18 +198,8 @@ function treeFileObject(document: TreeDocument): Record<string, unknown> {
   if (document.anchors.length) {
     out.orbitAnchors = document.anchors.map(serializeOrbitAnchor);
   }
-  const beltAnchors = document.anchors.filter((anchor) => anchor.shape === 'asteroidBelt');
-  if (beltAnchors.length) {
-    out.ringBelts = beltAnchors.map(serializeRingBelt);
-  }
-  if (document.images.length) {
-    out.staticImages = document.images.map(serializeStaticImage);
-  }
-  if (document.stars.length) {
-    out.stars = document.stars.map(serializeStar);
-  }
-  if (document.threatUnits.length) {
-    out.threatUnits = document.threatUnits.map(serializeThreatUnit);
+  if (document.decorations.length) {
+    out.decorations = sortDecorationsByKind(document.decorations).map(serializeDecoration);
   }
   return out;
 }

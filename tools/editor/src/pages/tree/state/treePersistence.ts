@@ -69,7 +69,7 @@ function readDraft(): TreeDraft | null {
   try {
     const raw = localStorage.getItem(DRAFT_KEY);
     const draft = raw ? (JSON.parse(raw) as TreeDraft) : null;
-    return draft?.data?.types && draft.data.nodes ? draft : null;
+    return draft?.data?.types && draft.data.nodes && Array.isArray(draft.data.decorations) ? draft : null;
   } catch {
     return null;
   }
@@ -82,9 +82,7 @@ function normalizeDraftData(data: TreeDocument): TreeDocument {
     curves: data.curves ?? [],
     hiddenConnectors: data.hiddenConnectors ?? [],
     anchors: data.anchors ?? [],
-    images: data.images ?? [],
-    stars: data.stars ?? [],
-    threatUnits: data.threatUnits ?? [],
+    decorations: data.decorations,
   };
   pruneConnectorEntries(document);
   return document;

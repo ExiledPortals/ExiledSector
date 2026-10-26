@@ -1,10 +1,7 @@
 package exiledsector.ui.decoration;
 
 import exiledlib.skills.skilleffect.render.SpriteCache;
-import exiledsector.skills.SkillTree;
-import exiledsector.skills.layout.Star;
-import exiledsector.skills.layout.StaticImage;
-import exiledsector.skills.tags.SkillTags;
+import exiledsector.skills.decoration.AbyssSerpent;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.WobblyOrbit;
@@ -12,12 +9,20 @@ import exiledsector.ui.util.WobblyOrbit;
 import java.awt.Color;
 import java.util.List;
 
-public final class AbyssSerpentRenderer {
+public final class AbyssSerpentRenderer implements DecorationRenderer {
 
     record Part(String spritePath, String glowPath, float width, float height, float behindHead, float imageBackOffset) {
     }
 
-    record Serpent(float direction, float secondsPerOrbit, float startAngleRad, WobblyOrbit path) {
+    record Serpent(float centerX, float centerY, float orbitRadius, float direction, float secondsPerOrbit, float startAngleRad, WobblyOrbit path) {
+
+        static Serpent of(AbyssSerpent serpent) {
+            AbyssSerpent.Orbit orbit = serpent.getOrbit();
+            AbyssSerpent.Wobble wobble = serpent.getWobble();
+            return new Serpent(serpent.getX(), serpent.getY(), Math.max(MIN_ORBIT_RADIUS, orbit.radius()), orbit.clockwise() ? 1f : -1f,
+                    Math.max(MIN_ORBIT_SECONDS, orbit.seconds()), (float) Math.toRadians(orbit.startAngleDegrees()),
+                    new WobblyOrbit(wobble.share(), wobble.waves(), (float) Math.toRadians(wobble.phaseDegrees()), 1f, 0f));
+        }
     }
 
     record Pose(float treeX, float treeY, float facingDeg) {
@@ -32,40 +37,24 @@ public final class AbyssSerpentRenderer {
             part("spine", 120f, 100f, 96f, 0f),
             part("head", 280f, 240f, 0f, 0f)
     };
-    static final Serpent[] SERPENTS = {
-            new Serpent(1f, 150f, 0f, new WobblyOrbit(0.12f, 9, 0f, 1f, 0f)),
-            new Serpent(-1f, 190f, (float) Math.PI, new WobblyOrbit(0.15f, 7, 1.3f, 1f, 0f))
-    };
     static final float SCALE = 1.4f;
-    static final float DEFAULT_ORBIT_STAR_RADII = 4f;
     static final float MIN_ORBIT_RADIUS = 200f;
+    static final float MIN_ORBIT_SECONDS = 1f;
     private static final float BODY_ALPHA = 0.45f;
     private static final float GLOW_ALPHA = 0.25f;
     private static final Color BODY_TINT = new Color(150, 140, 175);
     private static final Color GLOW_TINT = new Color(170, 60, 255);
     private static final float TANGENT_STEP_RAD = 0.002f;
     private static final float WALK_STEP = 6f;
+    private static final float REACH_PER_RADIUS = 1.3f;
 
     private final SpriteCache spriteCache = new SpriteCache(AbyssSerpentRenderer.class);
     private final WobblyOrbit.Point pathPoint = new WobblyOrbit.Point();
-    private final float centerX;
-    private final float centerY;
-    private final float orbitRadius;
-    private final boolean present;
+    private final List<Serpent> serpents;
     private float elapsedSeconds;
 
-    AbyssSerpentRenderer(Star abyssStar, List<StaticImage> clouds) {
-        present = abyssStar != null;
-        centerX = present ? abyssStar.getX() : 0f;
-        centerY = present ? abyssStar.getY() : 0f;
-        float measuredRadius = present ? orbitRadius(abyssStar, clouds) : 0f;
-        orbitRadius = measuredRadius >= MIN_ORBIT_RADIUS ? measuredRadius : MIN_ORBIT_RADIUS;
-    }
-
-    public static AbyssSerpentRenderer forActiveTree() {
-        Star abyssStar = SkillTree.getStars().stream().filter(star -> SkillTags.ABYSS_REGION.equals(star.getRegion())).findFirst().orElse(null);
-        List<StaticImage> clouds = SkillTree.getStaticImages().stream().filter(image -> SkillTags.ABYSS_REGION.equals(image.getRegion())).toList();
-        return new AbyssSerpentRenderer(abyssStar, clouds);
+    AbyssSerpentRenderer(List<AbyssSerpent> serpents) {
+        this.serpents = serpents.stream().map(Serpent::of).toList();
     }
 
     private static Part part(String name, float width, float height, float behindHead, float imageBackOffset) {
@@ -73,30 +62,23 @@ public final class AbyssSerpentRenderer {
                 width, height, behindHead, imageBackOffset);
     }
 
-    static float orbitRadius(Star abyssStar, List<StaticImage> clouds) {
-        if (clouds.isEmpty()) {
-            return abyssStar.getRadius() * DEFAULT_ORBIT_STAR_RADII;
-        }
-        float totalDistance = 0f;
-        for (StaticImage cloud : clouds) {
-            totalDistance += (float) Math.hypot(cloud.getX() - abyssStar.getX(), cloud.getY() - abyssStar.getY());
-        }
-        return totalDistance / clouds.size();
+    List<Serpent> serpents() {
+        return serpents;
     }
 
+    @Override
     public void advance(float amount) {
-        elapsedSeconds += amount;
-    }
-
-    float orbitRadius() {
-        return orbitRadius;
+        if (!serpents.isEmpty()) {
+            elapsedSeconds += amount;
+        }
     }
 
     Pose[] poses(Serpent serpent, float atSeconds) {
         Pose[] poses = new Pose[PARTS.length];
+        float orbitRadius = serpent.orbitRadius();
         float angle = serpent.startAngleRad() + serpent.direction() * (float) (Math.PI * 2) * atSeconds / serpent.secondsPerOrbit();
         float angleStep = serpent.direction() * WALK_STEP / orbitRadius;
-        serpent.path().locate(centerX, centerY, orbitRadius, angle, pathPoint);
+        serpent.path().locate(serpent.centerX(), serpent.centerY(), orbitRadius, angle, pathPoint);
         float x = pathPoint.x();
         float y = pathPoint.y();
         float walked = 0f;
@@ -109,7 +91,7 @@ public final class AbyssSerpentRenderer {
                 angle -= angleStep;
                 previousX = x;
                 previousY = y;
-                serpent.path().locate(centerX, centerY, orbitRadius, angle, pathPoint);
+                serpent.path().locate(serpent.centerX(), serpent.centerY(), orbitRadius, angle, pathPoint);
                 x = pathPoint.x();
                 y = pathPoint.y();
                 stepLength = (float) Math.hypot(x - previousX, y - previousY);
@@ -125,20 +107,23 @@ public final class AbyssSerpentRenderer {
 
     private float facingDeg(Serpent serpent, float angle, float x, float y) {
         float aheadAngle = angle + serpent.direction() * TANGENT_STEP_RAD;
-        serpent.path().locate(centerX, centerY, orbitRadius, aheadAngle, pathPoint);
+        serpent.path().locate(serpent.centerX(), serpent.centerY(), serpent.orbitRadius(), aheadAngle, pathPoint);
         return (float) Math.toDegrees(Math.atan2(pathPoint.y() - y, pathPoint.x() - x));
     }
 
-    public void render(TreeViewport viewport, float alphaMult) {
-        if (!present || alphaMult <= 0f) {
+    @Override
+    public void render(DecorationScene scene, DecorationDepth depth) {
+        float alphaMult = scene.sceneryAlpha() * scene.treeAlpha();
+        if (depth != DecorationDepth.CREATURES || alphaMult <= 0f) {
             return;
         }
+        TreeViewport viewport = scene.viewport();
         float zoom = viewport.zoom();
-        float reach = orbitRadius * 1.3f + PARTS[0].behindHead() * SCALE;
-        if (!viewport.isVisible(viewport.screenX(centerX), viewport.screenY(centerY), reach * zoom)) {
-            return;
-        }
-        for (Serpent serpent : SERPENTS) {
+        for (Serpent serpent : serpents) {
+            float reach = serpent.orbitRadius() * REACH_PER_RADIUS + PARTS[0].behindHead() * SCALE;
+            if (!viewport.isVisible(viewport.screenX(serpent.centerX()), viewport.screenY(serpent.centerY()), reach * zoom)) {
+                continue;
+            }
             Pose[] poses = poses(serpent, elapsedSeconds);
             for (int index = 0; index < PARTS.length; index++) {
                 renderPart(viewport, PARTS[index], poses[index], alphaMult);

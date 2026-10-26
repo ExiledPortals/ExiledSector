@@ -1,7 +1,6 @@
 package exiledsector.ui.decoration;
 
-import exiledsector.skills.layout.StaticImage;
-import exiledsector.skills.layout.Star;
+import exiledsector.skills.decoration.AbyssSerpent;
 import exiledsector.skills.tags.SkillTags;
 import org.junit.jupiter.api.Test;
 
@@ -12,56 +11,57 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AbyssSerpentRendererTest {
 
-    private static final Star ABYSS_STAR = new Star("abyss_star", 1000f, -500f, 400f, "star_red", null, List.of(SkillTags.ABYSS_REGION));
+    private static final float CENTER_X = 1000f;
+    private static final float CENTER_Y = -500f;
+    private static final float ORBIT_RADIUS = 1550f;
 
-    private static StaticImage cloudAt(float x, float y) {
-        return new StaticImage("cloud", x, y, new StaticImage.Shape(900f, 800f, "a.png", null), List.of(SkillTags.ABYSS_REGION));
+    private static AbyssSerpent serpent(String id, boolean clockwise, float orbitRadius, float seconds, AbyssSerpent.Wobble wobble) {
+        return new AbyssSerpent(id, CENTER_X, CENTER_Y, new AbyssSerpent.Orbit(orbitRadius, seconds, clockwise, 0f), wobble, List.of(SkillTags.ABYSS_REGION));
     }
 
     private static AbyssSerpentRenderer serpents() {
-        return new AbyssSerpentRenderer(ABYSS_STAR, List.of(cloudAt(2500f, -500f), cloudAt(1000f, 1100f)));
+        return new AbyssSerpentRenderer(List.of(
+                serpent("clockwise", true, ORBIT_RADIUS, 150f, new AbyssSerpent.Wobble(0.12f, 9, 0f)),
+                serpent("anticlockwise", false, ORBIT_RADIUS, 190f, new AbyssSerpent.Wobble(0.15f, 7, 74.5f))));
     }
 
-    private static float distanceFromStar(AbyssSerpentRenderer.Pose pose) {
-        return (float) Math.hypot(pose.treeX() - ABYSS_STAR.getX(), pose.treeY() - ABYSS_STAR.getY());
+    private static float distanceFromCentre(AbyssSerpentRenderer.Pose pose) {
+        return (float) Math.hypot(pose.treeX() - CENTER_X, pose.treeY() - CENTER_Y);
     }
 
     private static float signedAngle(AbyssSerpentRenderer.Pose pose) {
-        return (float) Math.atan2(pose.treeY() - ABYSS_STAR.getY(), pose.treeX() - ABYSS_STAR.getX());
+        return (float) Math.atan2(pose.treeY() - CENTER_Y, pose.treeX() - CENTER_X);
     }
 
     @Test
-    void theSerpentsCircleAtTheDistanceOfTheAbyssClouds() {
-        assertEquals(1550f, serpents().orbitRadius(), 0.01f);
+    void eachSerpentDecorationBecomesOneSerpentOnItsOwnOrbit() {
+        List<AbyssSerpentRenderer.Serpent> serpents = serpents().serpents();
+
+        assertEquals(2, serpents.size());
+        assertEquals(ORBIT_RADIUS, serpents.get(0).orbitRadius(), 0.01f);
+        assertEquals(CENTER_X, serpents.get(1).centerX(), 0.01f);
     }
 
     @Test
-    void withoutCloudsTheyCircleAFewStarRadiiOut() {
-        AbyssSerpentRenderer serpents = new AbyssSerpentRenderer(ABYSS_STAR, List.of());
-
-        assertEquals(ABYSS_STAR.getRadius() * AbyssSerpentRenderer.DEFAULT_ORBIT_STAR_RADII, serpents.orbitRadius(), 0.01f);
-    }
-
-    @Test
-    void theTwoSerpentsOrbitInOppositeDirections() {
-        AbyssSerpentRenderer serpents = serpents();
+    void clockwiseSerpentsTurnOneWayAndTheOthersTheOther() {
+        AbyssSerpentRenderer renderer = serpents();
         int head = AbyssSerpentRenderer.PARTS.length - 1;
-        for (int index = 0; index < AbyssSerpentRenderer.SERPENTS.length; index++) {
-            AbyssSerpentRenderer.Serpent serpent = AbyssSerpentRenderer.SERPENTS[index];
-            float before = signedAngle(serpents.poses(serpent, 10f)[head]);
-            float after = signedAngle(serpents.poses(serpent, 11f)[head]);
+        for (AbyssSerpentRenderer.Serpent serpent : renderer.serpents()) {
+            float before = signedAngle(renderer.poses(serpent, 10f)[head]);
+            float after = signedAngle(renderer.poses(serpent, 11f)[head]);
             float turned = (float) Math.atan2(Math.sin(after - before), Math.cos(after - before));
-            assertEquals(Math.signum(serpent.direction()), Math.signum(turned), "serpent " + index);
+            assertEquals(Math.signum(serpent.direction()), Math.signum(turned));
         }
-        assertEquals(-1f, AbyssSerpentRenderer.SERPENTS[0].direction() * AbyssSerpentRenderer.SERPENTS[1].direction());
+        assertEquals(1f, renderer.serpents().get(0).direction());
+        assertEquals(-1f, renderer.serpents().get(1).direction());
     }
 
     @Test
     void eachSegmentTrailsTheOneAheadAtItsModuleSpacingWithoutGaps() {
-        AbyssSerpentRenderer serpents = serpents();
-        for (AbyssSerpentRenderer.Serpent serpent : AbyssSerpentRenderer.SERPENTS) {
+        AbyssSerpentRenderer renderer = serpents();
+        for (AbyssSerpentRenderer.Serpent serpent : renderer.serpents()) {
             for (float seconds = 0f; seconds < 200f; seconds += 13f) {
-                AbyssSerpentRenderer.Pose[] poses = serpents.poses(serpent, seconds);
+                AbyssSerpentRenderer.Pose[] poses = renderer.poses(serpent, seconds);
                 for (int index = 0; index < poses.length - 1; index++) {
                     float spacing = (AbyssSerpentRenderer.PARTS[index].behindHead() - AbyssSerpentRenderer.PARTS[index + 1].behindHead())
                             * AbyssSerpentRenderer.SCALE;
@@ -74,29 +74,28 @@ class AbyssSerpentRendererTest {
 
     @Test
     void theyWindInAndOutButStayWithinTheirBand() {
-        AbyssSerpentRenderer serpents = serpents();
-        float radius = serpents.orbitRadius();
-        for (AbyssSerpentRenderer.Serpent serpent : AbyssSerpentRenderer.SERPENTS) {
+        AbyssSerpentRenderer renderer = serpents();
+        for (AbyssSerpentRenderer.Serpent serpent : renderer.serpents()) {
             float nearest = Float.MAX_VALUE;
             float farthest = 0f;
             for (float seconds = 0f; seconds < serpent.secondsPerOrbit(); seconds += 0.5f) {
-                float distance = distanceFromStar(serpents.poses(serpent, seconds)[AbyssSerpentRenderer.PARTS.length - 1]);
+                float distance = distanceFromCentre(renderer.poses(serpent, seconds)[AbyssSerpentRenderer.PARTS.length - 1]);
                 nearest = Math.min(nearest, distance);
                 farthest = Math.max(farthest, distance);
             }
-            float band = radius * serpent.path().wobbleShare();
+            float band = serpent.orbitRadius() * serpent.path().wobbleShare();
             assertTrue(farthest - nearest > band, "winds by " + (farthest - nearest));
-            assertTrue(nearest >= radius - band - 1f && farthest <= radius + band + 1f);
+            assertTrue(nearest >= serpent.orbitRadius() - band - 1f && farthest <= serpent.orbitRadius() + band + 1f);
         }
     }
 
     @Test
     void theHeadFacesAlongItsPath() {
-        AbyssSerpentRenderer serpents = serpents();
-        AbyssSerpentRenderer.Serpent serpent = AbyssSerpentRenderer.SERPENTS[0];
+        AbyssSerpentRenderer renderer = serpents();
+        AbyssSerpentRenderer.Serpent serpent = renderer.serpents().get(0);
         int head = AbyssSerpentRenderer.PARTS.length - 1;
-        AbyssSerpentRenderer.Pose now = serpents.poses(serpent, 20f)[head];
-        AbyssSerpentRenderer.Pose soon = serpents.poses(serpent, 20.05f)[head];
+        AbyssSerpentRenderer.Pose now = renderer.poses(serpent, 20f)[head];
+        AbyssSerpentRenderer.Pose soon = renderer.poses(serpent, 20.05f)[head];
         float travelDeg = (float) Math.toDegrees(Math.atan2(soon.treeY() - now.treeY(), soon.treeX() - now.treeX()));
         float difference = (travelDeg - now.facingDeg() + 540f) % 360f - 180f;
 
@@ -104,12 +103,13 @@ class AbyssSerpentRendererTest {
     }
 
     @Test
-    void aStarWithNoRadiusAndNoCloudsStillGivesAWalkableOrbit() {
-        Star pointStar = new Star("abyss_star", 0f, 0f, 0f, "star_red", null, List.of(SkillTags.ABYSS_REGION));
-        AbyssSerpentRenderer serpents = new AbyssSerpentRenderer(pointStar, List.of());
+    void aTinyOrbitOrZeroOrbitTimeStillGivesAWalkableOrbit() {
+        AbyssSerpentRenderer renderer = new AbyssSerpentRenderer(List.of(serpent("tiny", true, 0f, 0f, AbyssSerpent.Wobble.NONE)));
+        AbyssSerpentRenderer.Serpent serpent = renderer.serpents().get(0);
 
-        assertEquals(AbyssSerpentRenderer.MIN_ORBIT_RADIUS, serpents.orbitRadius(), 0.01f);
-        for (AbyssSerpentRenderer.Pose pose : serpents.poses(AbyssSerpentRenderer.SERPENTS[0], 3f)) {
+        assertEquals(AbyssSerpentRenderer.MIN_ORBIT_RADIUS, serpent.orbitRadius(), 0.01f);
+        assertEquals(AbyssSerpentRenderer.MIN_ORBIT_SECONDS, serpent.secondsPerOrbit(), 0.01f);
+        for (AbyssSerpentRenderer.Pose pose : renderer.poses(serpent, 3f)) {
             assertTrue(Float.isFinite(pose.treeX()) && Float.isFinite(pose.treeY()) && Float.isFinite(pose.facingDeg()));
         }
     }

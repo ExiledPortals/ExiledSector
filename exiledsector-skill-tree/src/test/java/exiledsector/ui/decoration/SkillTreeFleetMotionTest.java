@@ -3,9 +3,9 @@ package exiledsector.ui.decoration;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledsector.skills.layout.RingBelt;
+import exiledsector.skills.decoration.RingBelt;
+import exiledsector.skills.decoration.Star;
 import exiledsector.skills.layout.Rotation;
-import exiledsector.skills.layout.Star;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

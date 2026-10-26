@@ -1,6 +1,7 @@
 import { Button, Group, Kbd, SegmentedControl, Select, Switch, Text, TextInput, Tooltip } from '@mantine/core';
 import { IconDeviceFloppy, IconRefresh, IconSearch } from '@tabler/icons-react';
 import type { Vocabulary } from '../../api/vocabulary.ts';
+import { DECORATION_KIND_ORDER, DECORATION_KINDS, type DecorationKind } from './model/decorations.ts';
 import { ANCHOR_SHAPE_LABELS, ANCHOR_SHAPES, HULL_SIZE_OPTIONS, type AnchorShape } from './model/types.ts';
 import { setMode } from './state/treeActions.ts';
 import { reloadTreeFromDisk, saveTree } from './state/treePersistence.ts';
@@ -10,9 +11,7 @@ const MODES: { value: EditorMode; label: string; key: string }[] = [
   { value: 'select', label: 'Select / Move', key: 'A' },
   { value: 'add', label: 'Add node', key: 'S' },
   { value: 'addAnchor', label: 'Add anchor', key: 'D' },
-  { value: 'addImage', label: 'Add image', key: 'F' },
-  { value: 'addStar', label: 'Add star', key: 'G' },
-  { value: 'addThreatUnit', label: 'Add Threat unit', key: 'H' },
+  { value: 'addDecoration', label: 'Add decoration', key: 'F' },
 ];
 
 const TOOLTIP_HULL_SIZES = [{ value: '', label: 'All sizes' }, ...HULL_SIZE_OPTIONS.map((option) => ({ value: option.value, label: option.value === 'CAPITAL_SHIP' ? 'Capital ship' : option.label }))];
@@ -26,6 +25,7 @@ interface TreeToolbarProps {
 export function TreeToolbar({ vocabulary, tooltipHullSize, onTooltipHullSize }: TreeToolbarProps) {
   const mode = useTreeStore((state) => state.mode);
   const pendingAnchorShape = useTreeStore((state) => state.pendingAnchorShape);
+  const pendingDecorationKind = useTreeStore((state) => state.pendingDecorationKind);
   const search = useTreeStore((state) => state.search);
   const showLabels = useTreeStore((state) => state.showLabels);
   const nodeCount = useTreeStore((state) => state.document.nodes.length);
@@ -57,6 +57,15 @@ export function TreeToolbar({ vocabulary, tooltipHullSize, onTooltipHullSize }: 
           value={pendingAnchorShape}
           onChange={(value) => useTreeStore.setState({ pendingAnchorShape: value as AnchorShape })}
           data={ANCHOR_SHAPES.map((shape) => ({ value: shape, label: ANCHOR_SHAPE_LABELS[shape] }))}
+        />
+      ) : null}
+      {mode === 'addDecoration' ? (
+        <SegmentedControl
+          size="xs"
+          value={pendingDecorationKind}
+          onChange={(value) => useTreeStore.setState({ pendingDecorationKind: value as DecorationKind })}
+          data={DECORATION_KIND_ORDER.map((kind) => ({ value: kind, label: DECORATION_KINDS[kind].label }))}
+          aria-label="Decoration kind"
         />
       ) : null}
       <TextInput

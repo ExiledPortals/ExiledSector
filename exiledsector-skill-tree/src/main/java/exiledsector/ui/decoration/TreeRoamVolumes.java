@@ -1,8 +1,8 @@
 package exiledsector.ui.decoration;
 
 import exiledsector.skills.SkillNode;
-import exiledsector.skills.layout.RingBelt;
-import exiledsector.skills.layout.Star;
+import exiledsector.skills.decoration.RingBelt;
+import exiledsector.skills.decoration.Star;
 import exiledsector.skills.tags.SkillTags;
 
 import java.util.Arrays;

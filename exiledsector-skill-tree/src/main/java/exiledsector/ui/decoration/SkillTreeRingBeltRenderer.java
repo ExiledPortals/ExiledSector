@@ -2,8 +2,7 @@ package exiledsector.ui.decoration;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledlib.skills.skilleffect.render.SpriteCache;
-import exiledsector.skills.SkillTree;
-import exiledsector.skills.layout.RingBelt;
+import exiledsector.skills.decoration.RingBelt;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.belt.RadialBand;
 import exiledsector.ui.belt.RingBeltRenderer;
@@ -12,25 +11,29 @@ import org.lwjgl.util.vector.Vector2f;
 import java.awt.Color;
 import java.util.List;
 
-public class SkillTreeRingBeltRenderer {
+public class SkillTreeRingBeltRenderer implements DecorationRenderer {
 
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeRingBeltRenderer.class);
-    private RadialBand[] bandByBelt = new RadialBand[0];
+    private final List<RingBelt> ringBelts;
+    private final RadialBand[] bandByBelt;
     private float elapsedSeconds = 0f;
 
+    SkillTreeRingBeltRenderer(List<RingBelt> ringBelts) {
+        this.ringBelts = List.copyOf(ringBelts);
+        this.bandByBelt = new RadialBand[this.ringBelts.size()];
+    }
+
+    @Override
     public void advance(float amount) {
         elapsedSeconds += amount;
     }
 
-    public void render(TreeViewport viewport, float alphaMult) {
-        if (alphaMult <= 0f) return;
+    @Override
+    public void render(DecorationScene scene, DecorationDepth depth) {
+        float alphaMult = scene.sceneryAlpha() * scene.treeAlpha();
+        if (depth != DecorationDepth.BELTS || alphaMult <= 0f || ringBelts.isEmpty()) return;
+        TreeViewport viewport = scene.viewport();
         float zoom = viewport.zoom();
-        List<RingBelt> ringBelts = SkillTree.getRingBelts();
-        if (ringBelts.isEmpty()) return;
-
-        if (bandByBelt.length != ringBelts.size()) {
-            bandByBelt = new RadialBand[ringBelts.size()];
-        }
         for (int beltIndex = 0; beltIndex < ringBelts.size(); beltIndex++) {
             RingBelt belt = ringBelts.get(beltIndex);
             String ringArtPath = belt.getRingArtPath();

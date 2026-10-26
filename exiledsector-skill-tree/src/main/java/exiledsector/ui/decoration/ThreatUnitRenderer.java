@@ -2,17 +2,15 @@ package exiledsector.ui.decoration;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledlib.skills.skilleffect.render.SpriteCache;
-import exiledsector.skills.SkillTree;
-import exiledsector.skills.layout.ThreatUnit;
+import exiledsector.skills.decoration.ThreatUnit;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.SpriteDraw;
 import exiledsector.ui.util.TexturedQuadBatch;
 
 import java.awt.Color;
 import java.util.List;
-import java.util.Set;
 
-public final class ThreatUnitRenderer {
+public final class ThreatUnitRenderer implements DecorationRenderer {
 
     static final String FABRICATOR_SPRITE_PATH = "graphics/ships/threat/fabricator.png";
     static final String HIVE_SPRITE_PATH = "graphics/ships/threat/threat_hive.png";
@@ -45,24 +43,22 @@ public final class ThreatUnitRenderer {
         this.units = List.copyOf(units);
     }
 
-    public static ThreatUnitRenderer forActiveTree() {
-        return new ThreatUnitRenderer(SkillTree.getThreatUnits());
-    }
-
+    @Override
     public void advance(float amount) {
         if (!units.isEmpty()) {
             elapsedSeconds += amount;
         }
     }
 
-    public void render(TreeViewport viewport, float alphaMult, Set<String> keptIds, float othersAlphaMult) {
-        if (units.isEmpty() || alphaMult <= 0f) {
+    @Override
+    public void render(DecorationScene scene, DecorationDepth depth) {
+        if (depth != DecorationDepth.UNITS || units.isEmpty() || scene.sceneryAlpha() <= 0f) {
             return;
         }
         for (ThreatUnit unit : units) {
-            float unitAlpha = keptIds.contains(unit.getId()) ? alphaMult : alphaMult * othersAlphaMult;
+            float unitAlpha = scene.alphaFor(unit.getId());
             if (unitAlpha > 0f) {
-                renderUnit(viewport, unit, unitAlpha);
+                renderUnit(scene.viewport(), unit, unitAlpha);
             }
         }
     }

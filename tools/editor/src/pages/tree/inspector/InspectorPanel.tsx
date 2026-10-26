@@ -5,7 +5,8 @@ import type { Vocabulary } from '../../../api/vocabulary.ts';
 import { selectionCount, useTreeStore } from '../state/treeStore.ts';
 import classes from './InspectorPanel.module.css';
 import { NodeInspector } from './NodeInspector.tsx';
-import { AnchorInspector, ImageInspector, MultiSelectionInspector, StarInspector, ThreatUnitInspector } from './ObjectInspectors.tsx';
+import { DecorationInspector } from './DecorationInspector.tsx';
+import { AnchorInspector, MultiSelectionInspector } from './ObjectInspectors.tsx';
 
 const PANEL_STORAGE_KEY = 'exiledSectorEditor.treeInspector';
 const MIN_PANEL_WIDTH = 260;
@@ -32,7 +33,7 @@ function SelectionInspector({ vocabulary }: { vocabulary: Vocabulary }) {
   if (total === 0) {
     return (
       <Text size="sm" c="dimmed">
-        Select a node, or the centre dot of an anchor, image, star or threat unit, to see and edit its details. Switch to an Add mode and click the canvas to place
+        Select a node, or the centre dot of an anchor or decoration, to see and edit its details. Switch to an Add mode and click the canvas to place
         something new. Shift-click or shift-drag to select several objects; drag any selected one to move them together. Ctrl-click another node to
         connect or disconnect it.
       </Text>
@@ -42,16 +43,10 @@ function SelectionInspector({ vocabulary }: { vocabulary: Vocabulary }) {
     return <MultiSelectionInspector />;
   }
   if (selection.anchors.length === 1) {
-    return <AnchorInspector key={selection.anchors[0]} anchorId={selection.anchors[0]} vocabulary={vocabulary} />;
+    return <AnchorInspector key={selection.anchors[0]} anchorId={selection.anchors[0]} />;
   }
-  if (selection.images.length === 1) {
-    return <ImageInspector key={selection.images[0]} imageId={selection.images[0]} vocabulary={vocabulary} />;
-  }
-  if (selection.stars.length === 1) {
-    return <StarInspector key={selection.stars[0]} starId={selection.stars[0]} vocabulary={vocabulary} />;
-  }
-  if (selection.threatUnits.length === 1) {
-    return <ThreatUnitInspector key={selection.threatUnits[0]} threatUnitId={selection.threatUnits[0]} vocabulary={vocabulary} />;
+  if (selection.decorations.length === 1) {
+    return <DecorationInspector key={selection.decorations[0]} decorationId={selection.decorations[0]} vocabulary={vocabulary} />;
   }
   return <NodeInspector key={selection.nodes[0]} nodeId={selection.nodes[0]} vocabulary={vocabulary} />;
 }

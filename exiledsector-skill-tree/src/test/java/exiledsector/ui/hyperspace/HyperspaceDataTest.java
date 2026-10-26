@@ -4,6 +4,8 @@ import exiledlib.ProjectFiles;
 import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.decoration.Decorations;
+import exiledsector.skills.loader.DecorationLoader;
 import exiledsector.skills.loader.SkillTreeLoader;
 import exiledsector.skills.loader.SkillTypeLoader;
 import exiledsector.skills.npc.RealSkillData;
@@ -30,8 +32,8 @@ class HyperspaceDataTest {
         Map<String, SkillType> types = SkillTypeLoader.parseSkillTypes(
                 ProjectFiles.readJson(ProjectFiles.projectRoot().resolve(RealSkillData.TYPES_FILE)));
         nodes = SkillTreeLoader.parseNodes(root, types);
-        anchors = HyperspaceAnchor.collect(SkillTreeLoader.parseStars(root), SkillTreeLoader.parseThreatUnits(root),
-                SkillTreeLoader.parseStaticImages(root));
+        Decorations decorations = DecorationLoader.parse(root, RealSkillData.TREE_FILE.toString());
+        anchors = HyperspaceAnchor.collect(decorations.stars(), decorations.threatUnits(), decorations.images());
     }
 
     @Test

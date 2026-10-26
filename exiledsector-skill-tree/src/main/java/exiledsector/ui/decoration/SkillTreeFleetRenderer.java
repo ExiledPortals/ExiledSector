@@ -45,7 +45,7 @@ public class SkillTreeFleetRenderer {
         if (playerFleet == null || playerFleet.getFleetData() == null) {
             return new SkillTreeFleetRenderer(List.of(), null, 0f, null, null);
         }
-        RoamVolume roamVolume = TreeRoamVolumes.core(SkillTree.getStars(), SkillTree.getRingBelts());
+        RoamVolume roamVolume = TreeRoamVolumes.core(SkillTree.getDecorations().stars(), SkillTree.getDecorations().ringBelts());
         float travelSpeed = Math.max(MIN_TRAVEL_SPEED, Math.min(MAX_TRAVEL_SPEED,
                 Misc.getSpeedForBurnLevel(playerFleet.getFleetData().getMinBurnLevel())));
         FleetFlight flight = new FleetFlight(roamVolume, travelSpeed, FLIGHT_RANDOM);

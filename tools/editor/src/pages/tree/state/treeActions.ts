@@ -3,19 +3,8 @@ import { notifyInfo } from '../../../shared/dialogs.tsx';
 import { connectNodes, deleteNodes, isLinkedPair, unlinkNodes } from '../model/connectors.ts';
 import { deleteAnchor, detachNodeFromAnchor, syncRingArcCurves } from '../model/geometry.ts';
 import { isRegionTag } from '../model/tags.ts';
-import {
-  ANCHOR_RECTANGLE_ASPECT,
-  anchorById,
-  DEFAULT_THREAT_UNIT_LENGTH,
-  imageById,
-  nodeById,
-  starById,
-  threatUnitById,
-  uniqueId,
-  type OrbitAnchor,
-  type TreeDocument,
-  type TreeNode,
-} from '../model/types.ts';
+import { decorationById, decorationSpec, type DecorationKind } from '../model/decorations.ts';
+import { ANCHOR_RECTANGLE_ASPECT, anchorById, nodeById, uniqueId, type OrbitAnchor, type TreeDocument, type TreeNode } from '../model/types.ts';
 import {
   editDocument,
   EMPTY_SELECTION,
@@ -102,34 +91,15 @@ export function addAnchorAt(x: number, y: number): void {
   setMode('select');
 }
 
-export function addImageAt(x: number, y: number, defaultImagePath: string | null): void {
+export function addDecorationAt(kind: DecorationKind, x: number, y: number, vocabulary: Vocabulary | undefined, defaultImagePath: string | null): void {
   const document = useTreeStore.getState().document;
-  const id = uniqueId('image', (taken) => Boolean(imageById(document, taken)));
-  editDocument((draft) => {
-    draft.images.push({ id, x, y, width: 800, height: 800, imagePath: defaultImagePath, rotation: 0, rotationSpeed: 0 });
-  });
-  selectOnly('images', id);
-  setMode('select');
-}
-
-export function addStarAt(x: number, y: number): void {
-  const document = useTreeStore.getState().document;
-  const id = uniqueId('star', (taken) => Boolean(starById(document, taken)));
-  editDocument((draft) => {
-    draft.stars.push({ id, x, y, radius: 850, starType: 'star_yellow', color: null });
-  });
-  selectOnly('stars', id);
-  setMode('select');
-}
-
-export function addThreatUnitAt(x: number, y: number, vocabulary?: Vocabulary): void {
-  const document = useTreeStore.getState().document;
-  const id = uniqueId('threat_unit', (taken) => Boolean(threatUnitById(document, taken)));
+  const spec = decorationSpec(kind);
+  const id = uniqueId(spec.idPrefix, (taken) => Boolean(decorationById(document, taken)));
   const region = vocabulary ? nearestRegionTag(document, vocabulary, x, y) : undefined;
   editDocument((draft) => {
-    draft.threatUnits.push({ id, x, y, unitType: 'fabricator', length: DEFAULT_THREAT_UNIT_LENGTH, rotation: 0, tags: region ? [region] : undefined });
+    draft.decorations.push(spec.create(id, { x, y }, { imagePath: defaultImagePath, region }));
   });
-  selectOnly('threatUnits', id);
+  selectOnly('decorations', id);
   setMode('select');
 }
 
@@ -164,9 +134,7 @@ export function deleteSelection(): void {
     for (const anchorId of selection.anchors) {
       deleteAnchor(draft, anchorId);
     }
-    draft.images = draft.images.filter((image) => !selection.images.includes(image.id));
-    draft.stars = draft.stars.filter((star) => !selection.stars.includes(star.id));
-    draft.threatUnits = draft.threatUnits.filter((threatUnit) => !selection.threatUnits.includes(threatUnit.id));
+    draft.decorations = draft.decorations.filter((decoration) => !selection.decorations.includes(decoration.id));
   });
   setSelection(EMPTY_SELECTION);
 }

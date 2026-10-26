@@ -5,8 +5,7 @@ import com.fs.starfarer.api.campaign.PlanetSpecAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledlib.skills.skilleffect.render.SpriteCache;
-import exiledsector.skills.SkillTree;
-import exiledsector.skills.layout.Star;
+import exiledsector.skills.decoration.Star;
 import exiledsector.ui.SmoothZoom;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.ColorUtil;
@@ -20,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class SkillTreeStarRenderer {
+public class SkillTreeStarRenderer implements DecorationRenderer {
 
     private static final float RIM_ALPHA_MULT = 0.37f;
     private static final String FALLBACK_STAR_TYPE = "star_yellow";
@@ -35,14 +34,27 @@ public class SkillTreeStarRenderer {
     private float mapAmount;
     private Set<String> starIdsHiddenOnMap = Set.of();
     private final Map<String, Map<Color, Color>> resolvedColors = new HashMap<>();
+    private final List<Star> stars;
 
-    public void setMapRadius(float mapRadius, float mapAmount) {
-        this.mapRadius = mapRadius;
-        this.mapAmount = mapAmount;
+    SkillTreeStarRenderer(List<Star> stars) {
+        this.stars = List.copyOf(stars);
     }
 
-    public void setHiddenOnMap(Set<String> starIds) {
-        this.starIdsHiddenOnMap = starIds;
+    @Override
+    public void render(DecorationScene scene, DecorationDepth depth) {
+        if (stars.isEmpty()) return;
+        DecorationScene.StarMap starMap = scene.starMap();
+        mapRadius = starMap.radius();
+        mapAmount = starMap.amount();
+        starIdsHiddenOnMap = starMap.hiddenStarIds();
+        switch (depth) {
+            case STAR_DISC -> renderDisc(scene.viewport(), scene.sceneryAlpha());
+            case STAR_ATMOSPHERE -> renderAtmosphere(scene.viewport(), scene.sceneryAlpha());
+            case STAR_AURORA -> renderAurora(scene.viewport(), scene.sceneryAlpha());
+            case STAR_GLOW -> renderGlow(scene.viewport(), scene.sceneryAlpha());
+            default -> {
+            }
+        }
     }
 
     private float radiusOf(Star star) {
@@ -56,9 +68,10 @@ public class SkillTreeStarRenderer {
         return starIdsHiddenOnMap.contains(star.getId()) ? alphaMult * (1f - mapAmount) : alphaMult;
     }
 
+    @Override
     public void advance(float amount) {
         if (amount <= 0f) return;
-        for (Star star : SkillTree.getStars()) {
+        for (Star star : stars) {
             PlanetSpecAPI spec = resolveSpec(star.getStarType());
             if (spec == null) continue;
             StarAnimation animation = animationOf(star);
@@ -67,11 +80,8 @@ public class SkillTreeStarRenderer {
         }
     }
 
-    public void renderDisc(TreeViewport viewport, float alphaMult) {
+    private void renderDisc(TreeViewport viewport, float alphaMult) {
         float zoom = viewport.zoom();
-        List<Star> stars = SkillTree.getStars();
-        if (stars.isEmpty()) return;
-
         for (Star star : stars) {
             float starAlpha = alphaOf(star, alphaMult);
             renderStarDisc(star, viewport, zoom, starAlpha);
@@ -139,11 +149,8 @@ public class SkillTreeStarRenderer {
         }
     }
 
-    public void renderAtmosphere(TreeViewport viewport, float alphaMult) {
+    private void renderAtmosphere(TreeViewport viewport, float alphaMult) {
         float zoom = viewport.zoom();
-        List<Star> stars = SkillTree.getStars();
-        if (stars.isEmpty()) return;
-
         if (atmosphereTexture == null) {
             atmosphereTexture = Global.getSettings().getSprite(AtmosphereRing.TEXTURE_CATEGORY, AtmosphereRing.TEXTURE_ID);
         }
@@ -172,11 +179,8 @@ public class SkillTreeStarRenderer {
         }
     }
 
-    public void renderAurora(TreeViewport viewport, float alphaMult) {
+    private void renderAurora(TreeViewport viewport, float alphaMult) {
         float zoom = viewport.zoom();
-        List<Star> stars = SkillTree.getStars();
-        if (stars.isEmpty()) return;
-
         if (auroraTexture == null) {
             auroraTexture = Global.getSettings().getSprite(StarAurora.TEXTURE_CATEGORY, StarAurora.TEXTURE_ID);
         }
@@ -207,11 +211,8 @@ public class SkillTreeStarRenderer {
         return animationById.computeIfAbsent(star.getId(), id -> new StarAnimation());
     }
 
-    public void renderGlow(TreeViewport viewport, float alphaMult) {
+    private void renderGlow(TreeViewport viewport, float alphaMult) {
         float zoom = viewport.zoom();
-        List<Star> stars = SkillTree.getStars();
-        if (stars.isEmpty()) return;
-
         for (Star star : stars) {
             PlanetSpecAPI spec = resolveSpec(star.getStarType());
             String coronaPath = spec == null ? null : spec.getCoronaTexture();

@@ -1,6 +1,6 @@
 package exiledsector.ui.decoration;
 
-import exiledsector.skills.layout.Star;
+import exiledsector.skills.decoration.Star;
 import org.junit.jupiter.api.Test;
 
 import java.awt.Color;

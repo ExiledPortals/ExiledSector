@@ -20,14 +20,11 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.radius.RadiusSize;
 import exiledsector.ui.decoration.AbyssDarknessRenderer;
-import exiledsector.ui.decoration.AbyssSerpentRenderer;
+import exiledsector.ui.decoration.DecorationScene;
 import exiledsector.ui.decoration.FactionFleetRenderer;
 import exiledsector.ui.decoration.SkillTreeFleetRenderer;
-import exiledsector.ui.decoration.SkillTreeRingBeltRenderer;
-import exiledsector.ui.decoration.SkillTreeStarRenderer;
 import exiledsector.ui.decoration.StarfieldRenderer;
-import exiledsector.ui.decoration.SkillTreeStaticImageRenderer;
-import exiledsector.ui.decoration.ThreatUnitRenderer;
+import exiledsector.ui.decoration.TreeDecorations;
 import exiledsector.ui.inspect.ItemCodex;
 import exiledsector.ui.node.DoctrineColors;
 import exiledsector.ui.node.NodeRadiusRingRenderer;
@@ -48,14 +45,10 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     private final StarfieldRenderer starfieldRenderer;
     private final AbyssDarknessRenderer abyssDarkness = AbyssDarknessRenderer.forActiveTree();
-    private final AbyssSerpentRenderer abyssSerpents = AbyssSerpentRenderer.forActiveTree();
-    private final ThreatUnitRenderer threatUnits = ThreatUnitRenderer.forActiveTree();
+    private final TreeDecorations decorations = TreeDecorations.forActiveTree();
     private final ExoshipView exoshipView = new ExoshipView();
-    private final SkillTreeStaticImageRenderer staticImageRenderer = new SkillTreeStaticImageRenderer();
-    private final SkillTreeRingBeltRenderer ringBeltRenderer = new SkillTreeRingBeltRenderer();
     private final SkillTreeFleetRenderer fleetRenderer;
     private final FactionFleetRenderer factionFleets;
-    private final SkillTreeStarRenderer starRenderer = new SkillTreeStarRenderer();
     private final NodeRadiusRingRenderer radiusRingRenderer = new NodeRadiusRingRenderer();
     private final TreeAllocationSession treeSession;
     private final SkillTreeNodeDrawer nodeDrawer;
@@ -143,10 +136,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         camera.advancePan(amount);
         searchBar.advance(amount);
         starfieldRenderer.advance(amount);
-        staticImageRenderer.advance(amount);
-        ringBeltRenderer.advance(amount);
-        abyssSerpents.advance(amount);
-        threatUnits.advance(amount);
+        decorations.advance(amount);
         factionFleets.advance(amount);
         if (camera.isFollowing() && hyperspaceMode.isActive()) {
             stopFollowing();
@@ -157,7 +147,6 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         if (exoshipView.isActive()) {
             camera.follow(exoshipView.focusX(), exoshipView.focusY(), amount);
         }
-        starRenderer.advance(amount);
         boolean followingStartingRoot = treeSession.isStartingRootMoving();
         camera.beginStartingRootFollow(treeSession);
         treeSession.advance(amount);
@@ -487,18 +476,11 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         float backgroundAlpha = alphaMult * searchDim * treeSession.treeAlpha();
         float exoshipFade = 1f - exoshipView.viewLevel();
         float sceneryAlpha = backgroundAlpha * exoshipFade;
-        starRenderer.setMapRadius(hyperspaceMode.starRadius(), hyperspaceMode.mapAmount());
-        starRenderer.setHiddenOnMap(hyperspaceMode.hiddenStarIds());
         starfieldRenderer.render(canvasPosition, camera.panX(), camera.panY(), backgroundAlpha * exoshipView.starfieldAlpha());
         abyssDarkness.render(canvasPosition, viewport, alphaMult);
-        staticImageRenderer.render(viewport, sceneryAlpha, hyperspaceMode.anchorIds(), treeAlpha, true);
-        starRenderer.renderDisc(viewport, sceneryAlpha);
-        starRenderer.renderAtmosphere(viewport, sceneryAlpha);
-        starRenderer.renderAurora(viewport, sceneryAlpha);
-        ringBeltRenderer.render(viewport, sceneryAlpha * treeAlpha);
-        abyssSerpents.render(viewport, sceneryAlpha * treeAlpha);
-        staticImageRenderer.render(viewport, sceneryAlpha, hyperspaceMode.anchorIds(), treeAlpha, false);
-        threatUnits.render(viewport, sceneryAlpha, hyperspaceMode.anchorIds(), treeAlpha);
+        DecorationScene decorationScene = new DecorationScene(viewport, sceneryAlpha, treeAlpha, hyperspaceMode.anchorIds(),
+                new DecorationScene.StarMap(hyperspaceMode.starRadius(), hyperspaceMode.mapAmount(), hyperspaceMode.hiddenStarIds()));
+        decorations.renderBehindTree(decorationScene);
         factionFleets.render(viewport, sceneryAlpha * treeAlpha);
         boolean pointerOverTree = mouseKnown && !chrome.contains(canvasPosition, mode, mouseX, mouseY);
         boolean shipHovered = pointerOverTree && mode.hoversTree() && exoshipView.shipContains(viewport, mouseX, mouseY);
@@ -514,7 +496,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         fleetRenderer.render(viewport, backgroundAlpha * treeAlpha * exoshipFade);
         float shipAlpha = backgroundAlpha + (alphaMult * treeSession.treeAlpha() - backgroundAlpha) * exoshipView.viewLevel();
         exoshipView.render(viewport, shipAlpha * treeAlpha);
-        starRenderer.renderGlow(viewport, sceneryAlpha);
+        decorations.renderOverTree(decorationScene);
         if (workbenchDimProgress > 0f) {
             GLDraw.fillQuad(canvasPosition.getX(), canvasPosition.getY(), canvasPosition.getWidth(), canvasPosition.getHeight(), Color.BLACK,
                     WORKBENCH_DIM_ALPHA * workbenchDimProgress * alphaMult);

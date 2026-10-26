@@ -2,25 +2,21 @@ import { memo, useMemo } from 'react';
 import type { NodeRadius } from '../../../api/nodeRadii.ts';
 import { fileUrl } from '../../../shared/imagePaths.ts';
 import { bezierHandleFor, curveKey, defaultControlPoint } from '../model/connectors.ts';
-import { anchorShapeVertices, countNodesWithinRadius, positionOnAnchor, rotateAroundOrigin } from '../model/geometry.ts';
+import { anchorShapeVertices, countNodesWithinRadius, positionOnAnchor } from '../model/geometry.ts';
 import {
-  DEFAULT_STAR_COLOR,
   radiusForTier,
   TIER_COLOR_VARIABLES,
-  threatUnitSprite,
   TIER_RADIUS,
   tierOf,
   type ConnectorCurve,
   type NodePair,
   type OrbitAnchor,
   type SkillType,
-  type Star,
-  type StaticImage,
-  type ThreatUnit,
   type Tier,
   type TreeNode,
 } from '../model/types.ts';
 import type { ActiveDrag } from '../state/treeStore.ts';
+import { centerClass, handleClass, isHandleActive, isMoving } from './handleClasses.ts';
 import classes from './TreeCanvas.module.css';
 
 export function IconClipDefinitions() {
@@ -37,22 +33,6 @@ export function IconClipDefinitions() {
 
 function useTypeMap(types: SkillType[]): Map<string, SkillType> {
   return useMemo(() => new Map(types.map((type) => [type.id, type])), [types]);
-}
-
-function handleClass(base: string, active: boolean): string {
-  return `${classes.handle} ${base}${active ? ` ${classes.handleActive}` : ''}`;
-}
-
-function centerClass(selected: boolean): string {
-  return `${classes.centerHandle}${selected ? ` ${classes.centerHandleSelected}` : ''}`;
-}
-
-function isMoving(activeDrag: ActiveDrag | null, list: 'anchorIds' | 'imageIds' | 'starIds' | 'threatUnitIds', id: string): boolean {
-  return activeDrag?.kind === 'move' && activeDrag[list].includes(id);
-}
-
-function isHandleActive(activeDrag: ActiveDrag | null, kind: ActiveDrag['kind'], id: string): boolean {
-  return activeDrag !== null && activeDrag.kind === kind && 'id' in activeDrag && activeDrag.id === id;
 }
 
 interface NodeShapeProps {
@@ -318,185 +298,6 @@ export const AnchorHandleLayer = memo(function AnchorHandleLayer({ items, select
                 r={rotating ? 7 : 5}
                 className={handleClass(classes.rotateHandle, rotating)}
                 data-anchor-rotate={anchor.id}
-              />
-            ) : null}
-          </g>
-        );
-      })}
-    </g>
-  );
-});
-
-export const ImageLayer = memo(function ImageLayer({ images }: { images: StaticImage[] }) {
-  return (
-    <g>
-      {images.map((image) => {
-        const transform = image.rotation ? `rotate(${image.rotation} ${image.x} ${image.y})` : undefined;
-        const left = image.x - image.width / 2;
-        const top = image.y - image.height / 2;
-        return image.imagePath ? (
-          <image
-            key={image.id}
-            href={fileUrl(image.imagePath)}
-            x={left}
-            y={top}
-            width={image.width}
-            height={image.height}
-            transform={transform}
-            pointerEvents="none"
-          />
-        ) : (
-          <rect key={image.id} x={left} y={top} width={image.width} height={image.height} transform={transform} className={classes.imagePlaceholder} />
-        );
-      })}
-    </g>
-  );
-});
-
-export const ImageHandleLayer = memo(function ImageHandleLayer({ items, selectedIds, activeDrag }: HandleLayerProps<StaticImage>) {
-  return (
-    <g>
-      {items.map((image) => {
-        const selected = selectedIds.includes(image.id);
-        const moving = isMoving(activeDrag, 'imageIds', image.id);
-        const resizing = isHandleActive(activeDrag, 'imageResize', image.id);
-        const rotating = isHandleActive(activeDrag, 'imageRotate', image.id);
-        const corner = rotateAroundOrigin(image.width / 2, image.height / 2, image.rotation || 0);
-        const rotateOffset = rotateAroundOrigin(0, -(image.height / 2) - 24, image.rotation || 0);
-        return (
-          <g key={image.id}>
-            <circle cx={image.x} cy={image.y} r={moving ? 8 : 6} className={centerClass(selected || moving)} data-image-id={image.id} />
-            {selected ? (
-              <>
-                <circle
-                  cx={image.x + corner.x}
-                  cy={image.y + corner.y}
-                  r={resizing ? 7 : 5}
-                  className={handleClass(classes.resizeHandle, resizing)}
-                  data-image-resize={image.id}
-                />
-                <line x1={image.x} y1={image.y} x2={image.x + rotateOffset.x} y2={image.y + rotateOffset.y} className={classes.imageRotateLine} />
-                <circle
-                  cx={image.x + rotateOffset.x}
-                  cy={image.y + rotateOffset.y}
-                  r={rotating ? 7 : 5}
-                  className={handleClass(classes.rotateHandle, rotating)}
-                  data-image-rotate={image.id}
-                />
-              </>
-            ) : null}
-          </g>
-        );
-      })}
-    </g>
-  );
-});
-
-export const StarLayer = memo(function StarLayer({ stars }: { stars: Star[] }) {
-  return (
-    <g pointerEvents="none">
-      {stars.map((star) => {
-        const colour = star.color || DEFAULT_STAR_COLOR;
-        return (
-          <g key={star.id}>
-            <circle cx={star.x} cy={star.y} r={star.radius * 3} fill={colour} fillOpacity={0.12} />
-            <circle cx={star.x} cy={star.y} r={star.radius} fill={colour} fillOpacity={0.85} />
-          </g>
-        );
-      })}
-    </g>
-  );
-});
-
-function threatUnitWidth(threatUnit: ThreatUnit): number {
-  return threatUnit.length * threatUnitSprite(threatUnit.unitType).widthPerLength;
-}
-
-export const ThreatUnitLayer = memo(function ThreatUnitLayer({ threatUnits, selectedIds }: { threatUnits: ThreatUnit[]; selectedIds: string[] }) {
-  return (
-    <g pointerEvents="none">
-      {threatUnits.map((threatUnit) => {
-        const sprite = threatUnitSprite(threatUnit.unitType);
-        const spriteWidth = threatUnitWidth(threatUnit);
-        const transform = threatUnit.rotation ? `rotate(${threatUnit.rotation} ${threatUnit.x} ${threatUnit.y})` : undefined;
-        const outlineClass = `${classes.threatUnitOutline}${selectedIds.includes(threatUnit.id) ? ` ${classes.threatUnitOutlineSelected}` : ''}`;
-        return (
-          <g key={threatUnit.id} transform={transform}>
-            <image
-              href={fileUrl(sprite.spritePath)}
-              x={threatUnit.x - spriteWidth / 2}
-              y={threatUnit.y - threatUnit.length / 2}
-              width={spriteWidth}
-              height={threatUnit.length}
-              preserveAspectRatio="none"
-            />
-            <ellipse cx={threatUnit.x} cy={threatUnit.y} rx={spriteWidth / 2} ry={threatUnit.length / 2} className={outlineClass} />
-            <text x={threatUnit.x} y={threatUnit.y + threatUnit.length / 2 + 16} textAnchor="middle" className={classes.threatUnitLabel}>
-              {sprite.label}
-            </text>
-          </g>
-        );
-      })}
-    </g>
-  );
-});
-
-export const ThreatUnitHandleLayer = memo(function ThreatUnitHandleLayer({ items, selectedIds, activeDrag }: HandleLayerProps<ThreatUnit>) {
-  return (
-    <g>
-      {items.map((threatUnit) => {
-        const selected = selectedIds.includes(threatUnit.id);
-        const moving = isMoving(activeDrag, 'threatUnitIds', threatUnit.id);
-        const resizing = isHandleActive(activeDrag, 'threatUnitResize', threatUnit.id);
-        const rotating = isHandleActive(activeDrag, 'threatUnitRotate', threatUnit.id);
-        const lengthOffset = rotateAroundOrigin(0, threatUnit.length / 2, threatUnit.rotation || 0);
-        const rotateOffset = rotateAroundOrigin(0, -(threatUnit.length / 2) - 24, threatUnit.rotation || 0);
-        return (
-          <g key={threatUnit.id}>
-            <circle cx={threatUnit.x} cy={threatUnit.y} r={moving ? 8 : 6} className={centerClass(selected || moving)} data-threat-unit-id={threatUnit.id} />
-            {selected ? (
-              <>
-                <circle
-                  cx={threatUnit.x + lengthOffset.x}
-                  cy={threatUnit.y + lengthOffset.y}
-                  r={resizing ? 7 : 5}
-                  className={handleClass(classes.resizeHandle, resizing)}
-                  data-threat-unit-resize={threatUnit.id}
-                />
-                <line x1={threatUnit.x} y1={threatUnit.y} x2={threatUnit.x + rotateOffset.x} y2={threatUnit.y + rotateOffset.y} className={classes.imageRotateLine} />
-                <circle
-                  cx={threatUnit.x + rotateOffset.x}
-                  cy={threatUnit.y + rotateOffset.y}
-                  r={rotating ? 7 : 5}
-                  className={handleClass(classes.rotateHandle, rotating)}
-                  data-threat-unit-rotate={threatUnit.id}
-                />
-              </>
-            ) : null}
-          </g>
-        );
-      })}
-    </g>
-  );
-});
-
-export const StarHandleLayer = memo(function StarHandleLayer({ items, selectedIds, activeDrag }: HandleLayerProps<Star>) {
-  return (
-    <g>
-      {items.map((star) => {
-        const selected = selectedIds.includes(star.id);
-        const moving = isMoving(activeDrag, 'starIds', star.id);
-        const resizing = isHandleActive(activeDrag, 'starResize', star.id);
-        return (
-          <g key={star.id}>
-            <circle cx={star.x} cy={star.y} r={moving ? 8 : 6} className={centerClass(selected || moving)} data-star-id={star.id} />
-            {selected ? (
-              <circle
-                cx={star.x + star.radius}
-                cy={star.y}
-                r={resizing ? 7 : 5}
-                className={handleClass(classes.resizeHandle, resizing)}
-                data-star-resize={star.id}
               />
             ) : null}
           </g>

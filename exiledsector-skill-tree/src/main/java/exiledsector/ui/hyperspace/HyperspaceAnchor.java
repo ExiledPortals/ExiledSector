@@ -1,9 +1,9 @@
 package exiledsector.ui.hyperspace;
 
+import exiledsector.skills.decoration.Star;
+import exiledsector.skills.decoration.StaticImage;
+import exiledsector.skills.decoration.ThreatUnit;
 import exiledsector.skills.layout.SkillTreeObject;
-import exiledsector.skills.layout.Star;
-import exiledsector.skills.layout.StaticImage;
-import exiledsector.skills.layout.ThreatUnit;
 
 import java.util.ArrayList;
 import java.util.Collection;

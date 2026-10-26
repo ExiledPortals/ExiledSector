@@ -5,7 +5,7 @@ import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeTopology;
-import exiledsector.skills.layout.Star;
+import exiledsector.skills.decoration.Star;
 import exiledsector.skills.tags.SkillTags;
 import exiledsector.ui.hyperspace.HyperspaceAnchor;
 import exiledsector.ui.hyperspace.HyperspaceCamera;
@@ -91,9 +91,9 @@ final class HyperspaceMode {
 
     boolean enter(PositionAPI canvasPosition) {
         Set<String> lockedRegions = HyperspaceAnchor.lockedRegions(SkillTree.getAllNodes().values(), SkillNode::getRegion, nodeHidden);
-        hiddenStarIds = SkillTree.getStars().stream().filter(star -> lockedRegions.contains(star.getRegion())).map(Star::getId)
+        hiddenStarIds = SkillTree.getDecorations().stars().stream().filter(star -> lockedRegions.contains(star.getRegion())).map(Star::getId)
                 .collect(Collectors.toUnmodifiableSet());
-        anchors = HyperspaceAnchor.collect(SkillTree.getStars(), SkillTree.getThreatUnits(), SkillTree.getStaticImages()).stream()
+        anchors = HyperspaceAnchor.collect(SkillTree.getDecorations().stars(), SkillTree.getDecorations().threatUnits(), SkillTree.getDecorations().images()).stream()
                 .filter(anchor -> !lockedRegions.contains(anchor.region())).toList();
         if (anchors.isEmpty()) {
             return false;
