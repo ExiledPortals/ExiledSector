@@ -4,7 +4,9 @@ import exiledsector.skills.ShipSections;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.tags.ShipProfile;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public final class HullUpgradeRules {
 
@@ -65,6 +67,23 @@ public final class HullUpgradeRules {
     }
 
     public static boolean socket(ShipSkillData shipData, ShipSection section, Item item, Map<String, ShipSkillData> shipDataById) {
-        return canSocket(shipData, section, item, shipDataById) && shipData.installInSection(section.id(), item.id());
+        return socket(shipData, section, item, shipDataById, hullModId -> false);
+    }
+
+    public static boolean socket(ShipSkillData shipData, ShipSection section, Item item, Map<String, ShipSkillData> shipDataById,
+                                 Predicate<String> hasHullMod) {
+        return canSocket(shipData, section, item, shipDataById) && ItemHullModExclusions.fittedConflict(item, hasHullMod) == null
+                && shipData.installInSection(section.id(), item.id());
+    }
+
+    public static Map<String, Item> excludedHullMods(ShipSkillData shipData) {
+        Map<String, Item> excluded = new LinkedHashMap<>();
+        for (Map.Entry<String, String> sectionEntry : shipData.getSectionItems().entrySet()) {
+            Item item = ItemStore.lookup(sectionEntry.getValue());
+            if (item != null && HullItem.fits(item, ShipSection.byIdOrNull(sectionEntry.getKey()))) {
+                ItemHullModExclusions.exclusiveHullModIds(item).forEach(hullModId -> excluded.putIfAbsent(hullModId, item));
+            }
+        }
+        return excluded;
     }
 }

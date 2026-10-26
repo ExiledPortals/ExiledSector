@@ -18,6 +18,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
+import org.mockito.AdditionalMatchers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -32,6 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -42,6 +44,7 @@ import static org.mockito.Mockito.when;
 class SharedShieldDamageListenerTest {
 
     private static final String SHARED_PERCENT_KEY = "exiledLib_shieldDamageSharedPercent";
+    private static final String PASSED_PERCENT_KEY = "exiledLib_shieldDamagePassedPercent";
 
     private final List<ShipAPI> ships = new ArrayList<>();
 
@@ -250,5 +253,50 @@ class SharedShieldDamageListenerTest {
         verify(shipGrid, times(1)).getCheckIterator(any(), anyFloat(), anyFloat());
         verify(ally.getFluxTracker()).increaseFlux(20f, true);
         verify(soonVenting.getFluxTracker(), never()).increaseFlux(anyFloat(), anyBoolean());
+    }
+
+    private static ShipAPI allyWithFluxRoom(float x, float room) {
+        ShipAPI ally = shipAt(x, 0);
+        when(ally.getFluxTracker().getMaxFlux()).thenReturn(1000f);
+        when(ally.getFluxTracker().getCurrFlux()).thenReturn(1000f - room);
+        return ally;
+    }
+
+    @Test
+    void passedShieldDamageGoesToTheNearestAllyWithFluxRoomAsSoftFlux() {
+        ShipAPI defender = ship(PASSED_PERCENT_KEY, 30f);
+        ShipAPI fullAlly = allyWithFluxRoom(100f, 0f);
+        ShipAPI nearAlly = allyWithFluxRoom(300f, 500f);
+        ShipAPI farAlly = allyWithFluxRoom(-600f, 500f);
+        ships.addAll(List.of(defender, fullAlly, nearAlly, farAlly));
+        DamageTakenModifier listener = attachedListener(ShieldSkillEffect.SHIELD_DAMAGE_PASSED_TO_ALLY_PERCENT, defender, DamageTakenModifier.class);
+        MutableStat modifier = new MutableStat(1f);
+        Object projectile = new Object();
+        when(defender.getParamAboutToApplyDamage()).thenReturn(projectile);
+
+        listener.modifyDamageTaken(projectile, defender, damageWithModifier(modifier), new Vector2f(), true);
+        ((DamageListener) listener).reportDamageApplied(projectile, defender, shieldFlux(70f));
+
+        assertEquals(0.7f, modifier.getModifiedValue(), 1e-6f);
+        verify(nearAlly.getFluxTracker()).increaseFlux(AdditionalMatchers.eq(30f, 1e-3f), eq(false));
+        verify(fullAlly.getFluxTracker(), never()).increaseFlux(anyFloat(), anyBoolean());
+        verify(farAlly.getFluxTracker(), never()).increaseFlux(anyFloat(), anyBoolean());
+    }
+
+    @Test
+    void passedShieldDamageTheAllyHasNoRoomForStaysWithTheShipAsHardFlux() {
+        ShipAPI defender = ship(PASSED_PERCENT_KEY, 30f);
+        ShipAPI ally = allyWithFluxRoom(300f, 500f);
+        ships.addAll(List.of(defender, ally));
+        DamageTakenModifier listener = attachedListener(ShieldSkillEffect.SHIELD_DAMAGE_PASSED_TO_ALLY_PERCENT, defender, DamageTakenModifier.class);
+        Object projectile = new Object();
+        when(defender.getParamAboutToApplyDamage()).thenReturn(projectile);
+
+        listener.modifyDamageTaken(projectile, defender, damageWithModifier(new MutableStat(1f)), new Vector2f(), true);
+        when(ally.getFluxTracker().getCurrFlux()).thenReturn(990f);
+        ((DamageListener) listener).reportDamageApplied(projectile, defender, shieldFlux(70f));
+
+        verify(ally.getFluxTracker()).increaseFlux(AdditionalMatchers.eq(10f, 1e-3f), eq(false));
+        verify(defender.getFluxTracker()).increaseFlux(AdditionalMatchers.eq(20f, 1e-3f), eq(true));
     }
 }

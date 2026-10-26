@@ -9,6 +9,8 @@ import exiledlib.skills.ShipFacts;
 import exiledlib.skills.skilleffect.hullmodule.ModuleShare;
 import exiledlib.skills.skilleffect.hullmodule.ModuleShares;
 
+import java.util.List;
+
 public interface SkillEffect extends ModifierEffect {
 
     void apply(MutableShipStatsAPI stats, String modId, float magnitude);
@@ -60,6 +62,10 @@ public interface SkillEffect extends ModifierEffect {
 
     default String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {
         return null;
+    }
+
+    default List<String> exclusiveHullModIds() {
+        return List.of();
     }
 
     default boolean appliesToNpcShips() {

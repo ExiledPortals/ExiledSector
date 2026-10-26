@@ -3,6 +3,8 @@ package exiledlib.skills.skilleffect.shield;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
@@ -91,6 +93,20 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
             return shieldConversionBlockReason(currentShieldType, ShieldAPI.ShieldType.OMNI, "node.block.hasOmniShield");
         }
     },
+    SHIELD_ARC_FIXED {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
+            ShieldAPI shield = ship.getShield();
+            ShipHullSpecAPI.ShieldSpecAPI hullShield = ship.getHullSpec().getShieldSpec();
+            if (shield != null && hullShield != null && hasShields(ship.getHullSpec().getShieldType())) {
+                shield.setArc(hullShield.getArc());
+            }
+        }
+    },
     SHIELD_ARC_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getShieldArcBonus), StatNames.SHIELD_ARC, false),
     SHIELD_ARC_FLAT(FLAT, bonus(MutableShipStatsAPI::getShieldArcBonus), StatNames.SHIELD_ARC, false),
     SHIELD_ARC_MULT(MULT, bonus(MutableShipStatsAPI::getShieldArcBonus), StatNames.SHIELD_ARC, false),
@@ -115,6 +131,31 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", Math.min(magnitude, SharedShieldDamageListener.MAX_SHARED_PERCENT))
                     .arg("range", Math.round(SharedShieldDamageListener.RANGE)).styled();
+        }
+    },
+    SHIELD_DAMAGE_PASSED_TO_ALLY_PERCENT(SharedShieldDamageListener.PASSED_PERCENT_KEY,
+            SharedShieldDamageListener.class, SharedShieldDamageListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", Math.min(magnitude, SharedShieldDamageListener.MAX_SHARED_PERCENT))
+                    .arg("range", Math.round(SharedShieldDamageListener.RANGE)).styled();
+        }
+    },
+    SHIELDS_DOWN_HULL_DAMAGE_TO_SOFT_FLUX_PERCENT(ShieldsDownSoftFluxListener.CONVERTED_PERCENT_KEY,
+            ShieldsDownSoftFluxListener.class, ShieldsDownSoftFluxListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", Math.min(magnitude, ShieldsDownSoftFluxListener.MAX_CONVERTED_PERCENT)).styled();
+        }
+
+        @Override
+        public String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {
+            return noShieldsReason(currentShieldType);
+        }
+
+        @Override
+        public List<String> exclusiveHullModIds() {
+            return List.of(HullMods.SHIELD_SHUNT);
         }
     },
     SHIELD_ABSORB_RATE_OF_FIRE_PERCENT(AbsorbReserveListener.RATE_OF_FIRE_PERCENT_KEY,

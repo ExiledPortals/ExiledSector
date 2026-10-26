@@ -21,6 +21,7 @@ import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.skills.tags.SkillTags;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipLevelSystem;
+import exiledsector.items.ItemHullModExclusions;
 import exiledsector.items.NpcItems;
 import org.apache.log4j.Logger;
 
@@ -137,7 +138,8 @@ public final class ShipTreeSync {
         if (isNpcTree) {
             HullModConflictResolver.removeHullModsThatTriedToStripAPhantom(allocatedNodes, variant, false);
         } else {
-            HullModConflictResolver.removeConflicts(allocatedNodes, variant);
+            ShipSkillData shipData = member == null ? null : ShipSkillDataManager.find(member.getId());
+            HullModConflictResolver.removeConflicts(allocatedNodes, ItemHullModExclusions.of(shipData), variant);
         }
         return phantomsChanged || reserveChanged;
     }

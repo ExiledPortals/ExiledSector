@@ -8,8 +8,13 @@ final class SkillConflictWarnings {
 
     static final String TAG_PREFIX = "exiledSector_conflictRemoved|";
     private static final String SEPARATOR = "|";
+    private static final String ITEM_CAUSE_PREFIX = "item:";
 
     private SkillConflictWarnings() {
+    }
+
+    static String itemCause(String itemId) {
+        return ITEM_CAUSE_PREFIX + itemId;
     }
 
     static void recordRemoval(ShipVariantAPI variant, String removedHullModId, String causeTypeId) {
@@ -37,5 +42,9 @@ final class SkillConflictWarnings {
     }
 
     record Removal(String removedHullModId, String causeTypeId) {
+
+        String causeItemId() {
+            return causeTypeId.startsWith(ITEM_CAUSE_PREFIX) ? causeTypeId.substring(ITEM_CAUSE_PREFIX.length()) : null;
+        }
     }
 }

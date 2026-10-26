@@ -943,6 +943,23 @@ class SkillEffectTest {
     }
 
     @Test
+    void aFixedShieldArcIsResetToTheHullsOwnArcAfterTheShipIsBuilt() {
+        ShipAPI ship = mock(ShipAPI.class);
+        com.fs.starfarer.api.combat.ShieldAPI shield = mock(com.fs.starfarer.api.combat.ShieldAPI.class);
+        com.fs.starfarer.api.combat.ShipHullSpecAPI hullSpec = mock(com.fs.starfarer.api.combat.ShipHullSpecAPI.class);
+        com.fs.starfarer.api.combat.ShipHullSpecAPI.ShieldSpecAPI hullShield = mock(com.fs.starfarer.api.combat.ShipHullSpecAPI.ShieldSpecAPI.class);
+        when(ship.getShield()).thenReturn(shield);
+        when(ship.getHullSpec()).thenReturn(hullSpec);
+        when(hullSpec.getShieldSpec()).thenReturn(hullShield);
+        when(hullSpec.getShieldType()).thenReturn(com.fs.starfarer.api.combat.ShieldAPI.ShieldType.FRONT);
+        when(hullShield.getArc()).thenReturn(120f);
+
+        ShieldSkillEffect.SHIELD_ARC_FIXED.applyAfterShipCreation(ship, "mod_id", 0f);
+
+        verify(shield).setArc(120f);
+    }
+
+    @Test
     void convertShieldToOmniChangesAnExistingShieldSType() {
         ShipAPI ship = mock(ShipAPI.class);
         com.fs.starfarer.api.combat.ShieldAPI shield = mock(com.fs.starfarer.api.combat.ShieldAPI.class);

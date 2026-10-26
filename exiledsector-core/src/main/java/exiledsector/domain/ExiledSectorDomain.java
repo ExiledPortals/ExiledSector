@@ -11,6 +11,7 @@ import com.thoughtworks.xstream.XStream;
 import exiledlib.compat.CompatTarget;
 import exiledsector.effects.PlayerEngagementPipeline;
 import exiledsector.effects.ShipEffectSource;
+import exiledsector.items.Item;
 import exiledsector.items.ItemDataRules;
 import exiledsector.items.ItemTypeSupport;
 import exiledsector.items.ShipCustody;
@@ -105,6 +106,10 @@ public interface ExiledSectorDomain {
 
     default List<SkillTypeEffect> fitEffects(ShipSkillData shipData, HullSize hullSize) {
         return List.of();
+    }
+
+    default Map<String, Item> excludedHullMods(ShipSkillData shipData) {
+        return Map.of();
     }
 
     default ShipSkillData shipRecord(ShipVariantAPI variant) {

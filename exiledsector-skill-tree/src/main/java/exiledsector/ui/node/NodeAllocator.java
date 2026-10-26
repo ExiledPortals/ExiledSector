@@ -480,6 +480,7 @@ final class NodeAllocator {
                             .arg("skill", bestOfTheBestName()).text();
             case LEARNED_CONFLICT -> block.detail() == null ? Translation.text("node.block.learnedHullConflict")
                     : Translation.msg("node.block.learnedConflict").arg("hullmod", HullModNames.displayName(block.detail())).text();
+            case ITEM_CONFLICT -> Translation.msg("node.block.itemInstalled").arg("item", block.detail()).text();
             case TYPE_CONFLICT -> Translation.msg("node.block.typeAllocated").arg("node", block.conflictingType().getDisplayName()).text();
             case EFFECT_BLOCK -> block.detail();
             case ITEM_COST -> Translation.msg("node.block.itemCost").arg("quantity", block.itemCost().formattedQuantity())

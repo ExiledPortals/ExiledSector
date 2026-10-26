@@ -15,6 +15,19 @@ at this ship's shield efficiency, goes to those allies as hard flux, split evenl
 not. Armour and hull damage are never shared. The notable's -20% weapon damage pools through the weapon stat
 hierarchy.
 
+## Soft flux shields
+
+`SHIELDS_DOWN_HULL_DAMAGE_TO_SOFT_FLUX_PERCENT` (`ShieldsDownSoftFluxListener`) cuts armour and hull hits taken
+while the shield is off by its share (capped at 90%) and adds the removed damage as soft flux, converting less once
+flux would pass full. `SHIELD_DAMAGE_PASSED_TO_ALLY_PERCENT` shares Shared Fate's listener and 90% cap, sending its
+share to the nearest qualifying ally with flux room as soft flux; what that ally can't hold returns as hard flux.
+`SHIELD_ARC_FIXED` resets the shield to the hull's own arc after the ship is built, since arc is only read then.
+
+An effect can list hull mods it excludes (`SkillEffect.exclusiveHullModIds`), gathered for hull items by
+`ItemHullModExclusions`. The bench refuses such an item while one is fitted, `NodeEligibility` refuses a node that
+would add one (`ITEM_CONFLICT`), and `HullModConflictResolver` removes a fitted one with its usual warning. The
+shields-down effect excludes Shield Shunt this way.
+
 ## Lion's Gaze
 
 A beam hit on an enemy ship splits to up to N more targets (`BEAM_WEAPON_SPLIT_TARGETS_FLAT`): the nearest

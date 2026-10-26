@@ -577,6 +577,7 @@
     "hullmod.exiledSector_conflictWarning.description": "本舰的一个船插因与已分配的技能树节点冲突而被移除。移除此船插即可关闭此提示。",
     "hullmod.conflict.title": "检测到冲突",
     "hullmod.conflict.text": "<hl>{removed}</hl>已被移除：它与<hl>{cause}</hl>节点冲突。",
+    "hullmod.conflict.itemText": "<hl>{removed}</hl>已被移除：它与已安装的<hl>{cause}</hl>冲突。",
     "hullmod.phantom.providedBy": "由<hl>{node}</hl>技能树节点提供。不消耗装配点。",
     "hullmod.phantom.generic": "由技能树提供。不消耗装配点。",
     "hullmod.phantom.locked": "由技能树提供。取消分配该节点即可移除。",

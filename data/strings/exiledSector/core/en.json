@@ -224,6 +224,7 @@
     "hullmod.exiledSector_conflictWarning.description": "A hullmod on this ship was removed because it conflicts with an allocated skill tree node. Remove this hullmod to dismiss the notice.",
     "hullmod.conflict.title": "Conflict detected",
     "hullmod.conflict.text": "<hl>{removed}</hl> was removed: it conflicts with the <hl>{cause}</hl> node.",
+    "hullmod.conflict.itemText": "<hl>{removed}</hl> was removed: it conflicts with the installed <hl>{cause}</hl>.",
     "hullmod.phantom.providedBy": "Provided by the <hl>{node}</hl> skill tree node. Costs no OP.",
     "hullmod.phantom.generic": "Provided by the skill tree. Costs no OP.",
     "hullmod.phantom.locked": "Provided by the skill tree. Unallocate the node to remove it.",

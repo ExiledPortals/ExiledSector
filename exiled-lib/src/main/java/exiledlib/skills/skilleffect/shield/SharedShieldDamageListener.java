@@ -9,6 +9,7 @@ import com.fs.starfarer.api.combat.listeners.DamageListener;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import exiledlib.skills.skilleffect.CombatQueries;
 import exiledlib.skills.skilleffect.ShipCombatListener;
+import org.lazywizard.lazylib.MathUtils;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.List;
 final class SharedShieldDamageListener extends ShipCombatListener implements DamageTakenModifier, DamageListener {
 
     static final String SHARED_PERCENT_KEY = "exiledLib_shieldDamageSharedPercent";
+    static final String PASSED_PERCENT_KEY = "exiledLib_shieldDamagePassedPercent";
     static final float RANGE = 1000f;
     private static final String SHARE_MOD_ID = "exiledLib_shieldDamageShared";
     static final float MAX_SHARED_PERCENT = 90f;
@@ -29,7 +31,9 @@ final class SharedShieldDamageListener extends ShipCombatListener implements Dam
     private float eligibleCheckedAt = Float.NEGATIVE_INFINITY;
     private boolean sharePending;
     private Object pendingSource;
-    private float pendingShare;
+    private float pendingSharedShare;
+    private float pendingPassedShare;
+    private ShipAPI pendingPassTarget;
 
     SharedShieldDamageListener(ShipAPI ownerShip) {
         super(ownerShip);
@@ -40,13 +44,24 @@ final class SharedShieldDamageListener extends ShipCombatListener implements Dam
         sharePending = false;
         if (!shieldHit) return null;
 
-        float share = Math.min(magnitude(SHARED_PERCENT_KEY), MAX_SHARED_PERCENT) / 100f;
-        if (share <= 0f || nearbyAllies().isEmpty()) return null;
+        float sharedShare = Math.max(magnitude(SHARED_PERCENT_KEY), 0f) / 100f;
+        float passedShare = Math.max(magnitude(PASSED_PERCENT_KEY), 0f) / 100f;
+        if (sharedShare + passedShare <= 0f || nearbyAllies().isEmpty()) return null;
 
-        damage.getModifier().modifyMult(SHARE_MOD_ID, 1f - share);
+        ShipAPI passTarget = passedShare > 0f ? nearestAllyWithFluxRoom() : null;
+        if (passTarget == null) {
+            passedShare = 0f;
+        }
+        float totalShare = sharedShare + passedShare;
+        if (totalShare <= 0f) return null;
+        float capScale = Math.min(1f, MAX_SHARED_PERCENT / 100f / totalShare);
+
+        damage.getModifier().modifyMult(SHARE_MOD_ID, 1f - totalShare * capScale);
         sharePending = true;
         pendingSource = param;
-        pendingShare = share;
+        pendingSharedShare = sharedShare * capScale;
+        pendingPassedShare = passedShare * capScale;
+        pendingPassTarget = passTarget;
         return SHARE_MOD_ID;
     }
 
@@ -55,13 +70,40 @@ final class SharedShieldDamageListener extends ShipCombatListener implements Dam
         if (!sharePending || ownerShip.getParamAboutToApplyDamage() != pendingSource) return;
         sharePending = false;
 
-        float moved = result.getDamageToShields() * pendingShare / (1f - pendingShare);
-        if (moved <= 0f || eligibleAllies.isEmpty()) return;
-
-        float perAlly = moved / eligibleAllies.size();
-        for (ShipAPI ally : eligibleAllies) {
-            ally.getFluxTracker().increaseFlux(perAlly, true);
+        float originalShieldDamage = result.getDamageToShields() / (1f - pendingSharedShare - pendingPassedShare);
+        float shared = originalShieldDamage * pendingSharedShare;
+        if (shared > 0f && !eligibleAllies.isEmpty()) {
+            float perAlly = shared / eligibleAllies.size();
+            for (ShipAPI ally : eligibleAllies) {
+                ally.getFluxTracker().increaseFlux(perAlly, true);
+            }
         }
+        float passed = originalShieldDamage * pendingPassedShare;
+        if (passed > 0f && pendingPassTarget != null) {
+            float taken = Math.max(Math.min(passed, fluxRoom(pendingPassTarget)), 0f);
+            pendingPassTarget.getFluxTracker().increaseFlux(taken, false);
+            if (passed > taken) {
+                ownerShip.getFluxTracker().increaseFlux(passed - taken, true);
+            }
+        }
+        pendingPassTarget = null;
+    }
+
+    private ShipAPI nearestAllyWithFluxRoom() {
+        ShipAPI nearest = null;
+        float nearestDistanceSquared = Float.MAX_VALUE;
+        for (ShipAPI ally : eligibleAllies) {
+            float distanceSquared = MathUtils.getDistanceSquared(ally.getLocation(), ownerShip.getLocation());
+            if (fluxRoom(ally) > 0f && distanceSquared < nearestDistanceSquared) {
+                nearest = ally;
+                nearestDistanceSquared = distanceSquared;
+            }
+        }
+        return nearest;
+    }
+
+    private static float fluxRoom(ShipAPI ship) {
+        return ship.getFluxTracker().getMaxFlux() - ship.getFluxTracker().getCurrFlux();
     }
 
     private List<ShipAPI> nearbyAllies() {

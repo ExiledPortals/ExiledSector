@@ -1852,6 +1852,12 @@ effect|SERAPHS_GRACE_PERCENT_PER_STACK|12.5	0	Each Borrowed Grace stack grants <
 effect|SERAPHS_GRACE_PERCENT_PER_STACK|100.0	0	Each Borrowed Grace stack grants <good>100%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>100%</good> reduced weapon flux cost and damage taken.
 effect|SERAPHS_GRACE_PERCENT_PER_STACK|-10.0	0	Each Borrowed Grace stack grants <good>-10%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>-10%</good> reduced weapon flux cost and damage taken.
 effect|SERAPHS_GRACE_PERCENT_PER_STACK|-12.5	0	Each Borrowed Grace stack grants <good>-12.5%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>-12.5%</good> reduced weapon flux cost and damage taken.
+effect|SHIELDS_DOWN_HULL_DAMAGE_TO_SOFT_FLUX_PERCENT|1.0	0	<good>1%</good> of armor and hull damage taken is converted to soft flux while shields are down.
+effect|SHIELDS_DOWN_HULL_DAMAGE_TO_SOFT_FLUX_PERCENT|10.0	0	<good>10%</good> of armor and hull damage taken is converted to soft flux while shields are down.
+effect|SHIELDS_DOWN_HULL_DAMAGE_TO_SOFT_FLUX_PERCENT|12.5	0	<good>12.5%</good> of armor and hull damage taken is converted to soft flux while shields are down.
+effect|SHIELDS_DOWN_HULL_DAMAGE_TO_SOFT_FLUX_PERCENT|100.0	0	<good>90%</good> of armor and hull damage taken is converted to soft flux while shields are down.
+effect|SHIELDS_DOWN_HULL_DAMAGE_TO_SOFT_FLUX_PERCENT|-10.0	0	<good>-10%</good> of armor and hull damage taken is converted to soft flux while shields are down.
+effect|SHIELDS_DOWN_HULL_DAMAGE_TO_SOFT_FLUX_PERCENT|-12.5	0	<good>-12.5%</good> of armor and hull damage taken is converted to soft flux while shields are down.
 effect|SHIELD_ABSORB_RATE_OF_FIRE_PERCENT|1.0	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>1%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
 effect|SHIELD_ABSORB_RATE_OF_FIRE_PERCENT|10.0	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>10%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
 effect|SHIELD_ABSORB_RATE_OF_FIRE_PERCENT|12.5	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>12.5%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
@@ -1864,6 +1870,12 @@ effect|SHIELD_ABSORPTION_PERCENT|12.5	1	<good>12.5%</good> increased damage take
 effect|SHIELD_ABSORPTION_PERCENT|100.0	1	<good>100%</good> increased damage taken by shields.
 effect|SHIELD_ABSORPTION_PERCENT|-10.0	1	<bad>10%</bad> reduced damage taken by shields.
 effect|SHIELD_ABSORPTION_PERCENT|-12.5	1	<bad>12.5%</bad> reduced damage taken by shields.
+effect|SHIELD_ARC_FIXED|1.0	0	Shield arc is fixed and can't be modified.
+effect|SHIELD_ARC_FIXED|10.0	0	Shield arc is fixed and can't be modified.
+effect|SHIELD_ARC_FIXED|12.5	0	Shield arc is fixed and can't be modified.
+effect|SHIELD_ARC_FIXED|100.0	0	Shield arc is fixed and can't be modified.
+effect|SHIELD_ARC_FIXED|-10.0	0	Shield arc is fixed and can't be modified.
+effect|SHIELD_ARC_FIXED|-12.5	0	Shield arc is fixed and can't be modified.
 effect|SHIELD_ARC_FLAT|1.0	0	<good>+1</good> to shield arc.
 effect|SHIELD_ARC_FLAT|10.0	0	<good>+10</good> to shield arc.
 effect|SHIELD_ARC_FLAT|12.5	0	<good>+12.5</good> to shield arc.
@@ -1882,6 +1894,12 @@ effect|SHIELD_ARC_PERCENT|12.5	0	<good>12.5%</good> increased shield arc.
 effect|SHIELD_ARC_PERCENT|100.0	0	<good>100%</good> increased shield arc.
 effect|SHIELD_ARC_PERCENT|-10.0	0	<bad>10%</bad> reduced shield arc.
 effect|SHIELD_ARC_PERCENT|-12.5	0	<bad>12.5%</bad> reduced shield arc.
+effect|SHIELD_DAMAGE_PASSED_TO_ALLY_PERCENT|1.0	0	<good>1%</good> of shield damage taken is passed to the nearest allied ship within 1000 su as soft flux.
+effect|SHIELD_DAMAGE_PASSED_TO_ALLY_PERCENT|10.0	0	<good>10%</good> of shield damage taken is passed to the nearest allied ship within 1000 su as soft flux.
+effect|SHIELD_DAMAGE_PASSED_TO_ALLY_PERCENT|12.5	0	<good>12.5%</good> of shield damage taken is passed to the nearest allied ship within 1000 su as soft flux.
+effect|SHIELD_DAMAGE_PASSED_TO_ALLY_PERCENT|100.0	0	<good>90%</good> of shield damage taken is passed to the nearest allied ship within 1000 su as soft flux.
+effect|SHIELD_DAMAGE_PASSED_TO_ALLY_PERCENT|-10.0	0	<good>-10%</good> of shield damage taken is passed to the nearest allied ship within 1000 su as soft flux.
+effect|SHIELD_DAMAGE_PASSED_TO_ALLY_PERCENT|-12.5	0	<good>-12.5%</good> of shield damage taken is passed to the nearest allied ship within 1000 su as soft flux.
 effect|SHIELD_DAMAGE_SHARED_PERCENT|1.0	0	Disperses 1% of shield damage taken to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 effect|SHIELD_DAMAGE_SHARED_PERCENT|10.0	0	Disperses 10% of shield damage taken to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 effect|SHIELD_DAMAGE_SHARED_PERCENT|12.5	0	Disperses 12.5% of shield damage taken to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
