@@ -21,7 +21,7 @@ Combat readiness makes back-to-back fleet battles miserable, so each anomaly kee
 
 ## How an anomaly plugs in
 
-Each anomaly is one class behind `ChartAnomaly` (package `exiledsector.charts.anomaly`) and one row in `data/config/exiledSector/chart_anomalies.csv` (`id,weight,min_tier,max_tier,requires_mod,icon,intel,insertable,excludes,effects,note`). The interface has optional hooks for three stages, and an anomaly implements only the ones it needs:
+Each anomaly is one class behind `ChartAnomaly` (package `exiledsector.charts.anomaly`, with the `ChartAnomalies` registry; an anomaly with several classes gets a subpackage, such as `anomaly.breach` and `anomaly.skirmish`) and one row in `data/config/exiledSector/chart_anomalies.csv` (`id,weight,min_tier,max_tier,requires_mod,icon,intel,insertable,excludes,effects,note`). The interface has optional hooks for three stages, and an anomaly implements only the ones it needs:
 
 1. Star: `primaryStar()` or `systemType()` replaces the star or the system type before layout (Black Hole, Neutron Star, Dense Nebula). These are locked to the atlas cell and can never be inserted.
 2. Shape: `shape(AnomalyLayoutSite)` adds terrain right after layout (Asteroid Storm, Magnetic Storm, Stellar Flares).
