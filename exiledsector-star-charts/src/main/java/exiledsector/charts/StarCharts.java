@@ -3,6 +3,7 @@ package exiledsector.charts;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledsector.charts.anomaly.skirmish.SkirmishFactions;
 import exiledsector.charts.atlas.AtlasData;
 import exiledsector.items.ItemStore;
 import org.apache.log4j.Logger;
@@ -54,6 +55,7 @@ public final class StarCharts {
         ChartFactions.load();
         ChartBosses.load();
         ChartAnomalies.load();
+        SkirmishFactions.load();
         ChartFeatures.load();
         AtlasData.load();
     }

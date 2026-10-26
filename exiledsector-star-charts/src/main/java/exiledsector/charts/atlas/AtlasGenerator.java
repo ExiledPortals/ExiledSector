@@ -181,14 +181,16 @@ public final class AtlasGenerator {
             return new AtlasNode(cell, x, y, !origin, region.id(), factionId, null, false, List.of(), null, null, lanes(cell));
         }
         List<AtlasCell> lanes = lanes(cell);
-        AtlasTraits traits = traits(cell, distance, region, factionId, lanes);
+        AtlasTraits traits = traits(cell, distance, region, factionId, lanes, placed);
         String layoutId = traits.layoutId();
         boolean powerfulBoss = AtlasHash.unit(AtlasHash.of(seed, BOSS_SALT, cell.gridX(), cell.gridY())) < rules.powerfulBossRule().chanceAt(distance);
         List<String> anomalyIds = rollAnomalies(cell, traits, region);
-        AtlasSpecialPlacer.PlacedSpecial special = placed.get(cell.pack());
-        AtlasSpecialPlacer.PlacedSpecial infestation = infestationOf(cell, region, placed);
-        return new AtlasNode(cell, x, y, false, region.id(), factionId, layoutId, powerfulBoss, anomalyIds,
-                special == null ? null : special.special().id(), infestation == null ? null : infestation.special().id(), lanes);
+        return new AtlasNode(cell, x, y, false, region.id(), factionId, layoutId, powerfulBoss, anomalyIds, traits.specialId(), traits.infestationId(), lanes);
+    }
+
+    public String infestationAt(AtlasCell cell) {
+        AtlasSpecialPlacer.PlacedSpecial infestation = infestationOf(cell, regionOf(cell), specials.specialsAround(cell.chunkX(), cell.chunkY()));
+        return infestation == null ? null : infestation.special().id();
     }
 
     private AtlasSpecialPlacer.PlacedSpecial infestationOf(AtlasCell cell, AtlasRegion region, Map<Long, AtlasSpecialPlacer.PlacedSpecial> placed) {
@@ -303,12 +305,28 @@ public final class AtlasGenerator {
 
     public AtlasTraits traits(AtlasCell cell) {
         AtlasRegion region = regionOf(cell);
-        return traits(cell, (float) Math.hypot(mapX(cell), mapY(cell)), region, territories.factionAt(cell, region), lanes(cell));
+        return traits(cell, (float) Math.hypot(mapX(cell), mapY(cell)), region, territories.factionAt(cell, region), lanes(cell),
+                specials.specialsAround(cell.chunkX(), cell.chunkY()));
     }
 
-    private AtlasTraits traits(AtlasCell cell, float distance, AtlasRegion region, String factionId, List<AtlasCell> lanes) {
+    private AtlasTraits traits(AtlasCell cell, float distance, AtlasRegion region, String factionId, List<AtlasCell> lanes,
+                               Map<Long, AtlasSpecialPlacer.PlacedSpecial> placed) {
         String layoutId = AtlasHash.race(seed, LAYOUT_SALT, cell.gridX(), cell.gridY(),
                 region.layoutWeights().isEmpty() ? rules.layoutWeights() : region.layoutWeights());
-        return new AtlasTraits(cell, distance, region.id(), factionId, territories.territoryAt(cell), layoutId, territories.laneTerritories(lanes));
+        AtlasSpecialPlacer.PlacedSpecial special = placed.get(cell.pack());
+        AtlasSpecialPlacer.PlacedSpecial infestation = infestationOf(cell, region, placed);
+        return new AtlasTraits(cell, distance, region.id(), factionId, territories.territoryAt(cell), layoutId, territories.laneTerritories(lanes),
+                laneFactions(lanes), special == null ? null : special.special().id(), infestation == null ? null : infestation.special().id());
+    }
+
+    private List<String> laneFactions(List<AtlasCell> lanes) {
+        List<String> factionIds = new ArrayList<>(lanes.size());
+        for (AtlasCell neighbour : lanes) {
+            String factionId = neighbour.equals(AtlasCell.ORIGIN) ? null : factionAt(neighbour);
+            if (factionId != null) {
+                factionIds.add(factionId);
+            }
+        }
+        return factionIds;
     }
 }

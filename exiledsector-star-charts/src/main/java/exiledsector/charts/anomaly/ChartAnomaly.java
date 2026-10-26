@@ -2,6 +2,9 @@ package exiledsector.charts.anomaly;
 
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
+import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.atlas.AtlasGenerator;
+import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasTraits;
 
 public interface ChartAnomaly {
@@ -35,6 +38,10 @@ public interface ChartAnomaly {
     }
 
     default boolean fitsAt(AtlasTraits traits) {
+        return true;
+    }
+
+    default boolean holdsAt(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
         return true;
     }
 

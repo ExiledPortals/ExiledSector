@@ -84,7 +84,7 @@ public final class AtlasData {
             ChartAnomaly anomaly = ChartAnomalies.byId(definition.id());
             if (anomaly != null) {
                 anomalies.add(new AtlasAnomalyCandidate(definition.id(), definition.weight(), definition.requiredMod(), definition.replacesStar(),
-                        definition.excludes(), anomaly::atlasWeight));
+                        definition.excludes(), (traits, weight) -> anomaly.fitsAt(traits) ? anomaly.atlasWeight(traits, weight) : 0f));
             }
         }
         Map<String, AtlasMarkerRule> rules = markerRules;

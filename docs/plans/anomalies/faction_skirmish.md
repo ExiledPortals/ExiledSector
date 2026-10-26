@@ -50,7 +50,7 @@ None for now. The old allied reward, stock and strength lines are dropped.
 
 ## Build order
 
-1. [ ] `chart_skirmish_factions.csv` (with an editor table), neighbour factions on `AtlasTraits`, the `fitsAt` rule, the attacker pick, the `chart_anomalies.csv` row and a tooltip line naming both sides.
+1. [x] `chart_skirmish_factions.csv`, neighbour factions on `AtlasTraits`, the `fitsAt` rule, the attacker pick, the `chart_anomalies.csv` row and a tooltip line naming both sides. Built: `charts.anomaly.skirmish` (`FactionSkirmish`, `SkirmishFactions`), `AtlasTraits.neighbourFactionIds`, `specialId` and `infestationId`, the atlas roll honouring `fitsAt` (`AtlasData.rules`), `ChartAnomaly.holdsAt` dropping anomalies in `AtlasAnomalies.effective`, `AtlasOpening.ownerOf`, `AtlasBorders.attacker`, and the `chart.atlas.node.skirmish` line. Not built: the marker icon.
 2. [ ] Capture records in `AtlasState`, the capture-aware owner reader used by opening, tooltips, borders and fleet traffic, and a dev console command to capture and release a system.
 3. [ ] The side confirmation over the atlas, the choice on `AtlasRunNode`, and `side=` on the console open command.
 4. [ ] Two-sided fleets with the strength rule, the defender's station with shared fallback rows, and fleet assignments that attack the other side.

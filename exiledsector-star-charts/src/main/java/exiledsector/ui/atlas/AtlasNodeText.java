@@ -7,6 +7,7 @@ import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
 import exiledsector.charts.ChartAnomalies;
 import exiledsector.charts.ChartGenContext;
+import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
@@ -92,6 +93,11 @@ public final class AtlasNodeText {
         }
         for (String anomalyId : AtlasAnomalies.effective(generator, state, cell)) {
             lines.add(new Line(Translation.msg("chart.atlas.node.anomaly").arg("anomaly", name("anomaly", anomalyId)).text(), Tone.MARKER));
+            if (FactionSkirmish.ID.equals(anomalyId)) {
+                lines.add(new Line(Translation.msg("chart.atlas.node.skirmish")
+                        .arg("attacker", factionName(FactionSkirmish.attacker(generator, state, cell)))
+                        .arg("defender", factionName(FactionSkirmish.defender(generator, state, cell))).text(), Tone.PLAIN));
+            }
         }
         if (node.infestationId() != null) {
             lines.add(state.has(cell, AtlasState.CLEANSED)

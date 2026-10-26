@@ -44,16 +44,20 @@ public final class AtlasAnomalies {
         for (String anomalyId : generator.node(cell).anomalyIds()) {
             ChartAnomalies.Definition definition = ChartAnomalies.definition(anomalyId);
             boolean keptWhenSpent = definition != null && definition.replacesStar();
-            if ((!spent || keptWhenSpent) && ChartAnomalies.accepts(accepted, anomalyId)) {
+            if ((!spent || keptWhenSpent) && accepts(generator, state, cell, accepted, anomalyId)) {
                 accepted.add(anomalyId);
             }
         }
         for (AtlasAnomalyRecord record : state.anomalyRecords(cell)) {
-            if (ChartAnomalies.accepts(accepted, record.anomalyId())) {
+            if (accepts(generator, state, cell, accepted, record.anomalyId())) {
                 accepted.add(record.anomalyId());
             }
         }
         return List.copyOf(accepted);
+    }
+
+    private static boolean accepts(AtlasGenerator generator, AtlasState state, AtlasCell cell, List<String> accepted, String anomalyId) {
+        return ChartAnomalies.accepts(accepted, anomalyId) && ChartAnomalies.byId(anomalyId).holdsAt(generator, state, cell);
     }
 
     public static InsertCheck canInsert(AtlasGenerator generator, AtlasState state, AtlasCell cell, String anomalyId, AtlasCell openRunCell) {

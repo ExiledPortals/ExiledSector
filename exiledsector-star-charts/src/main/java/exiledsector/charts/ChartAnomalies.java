@@ -7,6 +7,7 @@ import exiledsector.charts.anomaly.MagneticStorm;
 import exiledsector.charts.anomaly.SpatialBreach;
 import exiledsector.charts.anomaly.StarAnomalies;
 import exiledsector.charts.anomaly.StellarFlares;
+import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.data.CsvRows;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -27,7 +28,7 @@ public final class ChartAnomalies {
     static final String PATH = "data/config/exiledSector/chart_anomalies.csv";
     static final String ID_COLUMN = "id";
     static final List<ChartAnomaly> BUILT_IN = List.of(StarAnomalies.BLACK_HOLE, StarAnomalies.NEUTRON_STAR, StarAnomalies.DENSE_NEBULA,
-            AsteroidStorm.INSTANCE, MagneticStorm.INSTANCE, StellarFlares.INSTANCE, SpatialBreach.INSTANCE);
+            AsteroidStorm.INSTANCE, MagneticStorm.INSTANCE, StellarFlares.INSTANCE, SpatialBreach.INSTANCE, FactionSkirmish.INSTANCE);
     private static final Logger LOG = Logger.getLogger(ChartAnomalies.class);
     private static volatile List<ChartAnomaly> anomalies = BUILT_IN;
     private static volatile Map<String, Definition> definitions = Map.of();
