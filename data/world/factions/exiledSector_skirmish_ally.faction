@@ -1,0 +1,24 @@
+{
+	id:"exiledSector_skirmish_ally",
+	"color":[110,210,130,255],
+	"baseUIColor":[110,210,130,255],
+	"displayName":"Allied Forces",
+	"displayNameWithArticle":"the Allied Forces",
+	"displayNameIsOrAre":"are",
+	"logo":"graphics/factions/neutral.png",
+	"crest":"graphics/factions/crest_neutral.png",
+	"showInIntelTab":false,
+	"names":{
+	},
+	"portraits":{
+	},
+	"music":{
+		"theme":"music_none",
+		"market_neutral":"music_none",
+		"market_hostile":"music_none",
+		"market_friendly":"music_none",
+		"encounter_neutral":"music_none",
+		"encounter_hostile":"music_none",
+		"encounter_friendly":"music_none",
+	},
+}

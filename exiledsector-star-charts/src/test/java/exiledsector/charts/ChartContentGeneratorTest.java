@@ -18,6 +18,8 @@ import exiledsector.charts.ChartContentPlan.PlannedFleet;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.anomaly.SpatialBreach;
+import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
+import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -259,6 +261,87 @@ class ChartContentGeneratorTest {
             assertFalse(guard.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_ALLOW_LONG_PURSUIT));
             assertTrue(guard.getMemoryWithoutUpdate().getBoolean(ChartIds.BOSS_MEMORY_KEY));
             assertEquals(ChartContentGenerator.GUARD_OFFSET, Vector2f.sub(guard.getLocation(), station.getLocation(), new Vector2f()).length(), 1f);
+        } finally {
+            ChartBosses.resetForTests();
+        }
+    }
+
+    private ChartContent skirmish(SkirmishSide side) {
+        ChartGenContext context = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of(FactionSkirmish.ID), false,
+                "tritachyon", side));
+        return ChartContentGenerator.generate(sector, system, RUN_ID, 11L, 8, WORMHOLE, context, null, List.of(FactionSkirmish.ID));
+    }
+
+    private String factionOf(CampaignFleetAPI fleet) {
+        return engine.fleetParams.get(engine.fleets.indexOf(fleet)).factionId;
+    }
+
+    @Test
+    void aSkirmishSetsTheDefendersStationAndBothSidesAgainstEachOther() {
+        useStationBosses();
+        try {
+            ChartContent content = skirmish(SkirmishSide.NEITHER);
+
+            CampaignFleetAPI station = engine.stations.get(0);
+            assertEquals(station.getId(), content.bossFleetId());
+            assertTrue(station.getMemoryWithoutUpdate().getBoolean("$cfai_makeHostile_tritachyon"));
+            assertEquals(List.of(), engine.dressedFactions);
+            List<CampaignFleetAPI> attackers = engine.fleets.stream().filter(fleet -> factionOf(fleet).equals("tritachyon")).toList();
+            List<CampaignFleetAPI> defenders = engine.fleets.stream().filter(fleet -> factionOf(fleet).equals("hegemony")).toList();
+            assertFalse(attackers.isEmpty());
+            for (CampaignFleetAPI attacker : attackers) {
+                MemoryAPI memory = attacker.getMemoryWithoutUpdate();
+                assertTrue(memory.getBoolean("$cfai_makeHostile_hegemony"));
+                assertTrue(memory.getBoolean(MemFlags.MEMORY_KEY_MAKE_HOSTILE));
+                assertEquals(SkirmishSide.ATTACKER.key(), memory.getString(ChartIds.SKIRMISH_SIDE_MEMORY_KEY));
+                FleetAssignment first = engine.assignments.get(attacker).get(0).assignment();
+                if (memory.getBoolean(ChartIds.SKIRMISH_COMMANDER_MEMORY_KEY)) {
+                    assertEquals(FleetAssignment.ORBIT_PASSIVE, first);
+                } else {
+                    assertEquals(FleetAssignment.ORBIT_AGGRESSIVE, first);
+                    assertSame(station, engine.assignments.get(attacker).get(0).target());
+                    assertEquals(FleetAssignment.PATROL_SYSTEM, engine.assignments.get(attacker).get(1).assignment());
+                }
+            }
+            assertEquals(1, attackers.stream().filter(fleet -> fleet.getMemoryWithoutUpdate().getBoolean(ChartIds.SKIRMISH_COMMANDER_MEMORY_KEY)).count());
+            for (CampaignFleetAPI defender : defenders) {
+                assertTrue(defender.getMemoryWithoutUpdate().getBoolean("$cfai_makeHostile_tritachyon"));
+            }
+            assertTrue(defenders.stream().anyMatch(fleet -> engine.assignments.get(fleet).get(0).assignment() == FleetAssignment.ORBIT_AGGRESSIVE
+                    && engine.assignments.get(fleet).get(0).target() == station));
+            assertTrue(attackers.stream().allMatch(fleet -> Vector2f.sub(fleet.getLocation(), station.getLocation(), new Vector2f()).length()
+                    > ChartContentGenerator.GUARD_OFFSET * 2f));
+        } finally {
+            ChartBosses.resetForTests();
+        }
+    }
+
+    @Test
+    void theAlliedSideIsFriendlyToThePlayerAndCarriesNoLoot() {
+        useStationBosses();
+        try {
+            skirmish(SkirmishSide.DEFENDER);
+
+            CampaignFleetAPI station = engine.stations.get(0);
+            List<CampaignFleetAPI> allies = new ArrayList<>(engine.fleets.stream().filter(fleet -> factionOf(fleet).equals("hegemony")).toList());
+            allies.add(station);
+            for (CampaignFleetAPI ally : allies) {
+                MemoryAPI memory = ally.getMemoryWithoutUpdate();
+                assertFalse(memory.getBoolean(MemFlags.MEMORY_KEY_MAKE_HOSTILE));
+                assertTrue(memory.getBoolean(ChartContentGenerator.MAKE_NON_HOSTILE));
+                assertTrue(memory.getBoolean(ChartContentGenerator.NON_HOSTILE_TAKES_PRIORITY));
+                assertFalse(memory.contains(ChartIds.START_DP_MEMORY_KEY));
+                assertTrue(memory.getBoolean("$cfai_makeHostile_tritachyon"));
+                verify(ally).setFaction("allies", true);
+            }
+            assertEquals(List.of("hegemony"), engine.dressedFactions);
+            for (CampaignFleetAPI enemy : engine.fleets.stream().filter(fleet -> factionOf(fleet).equals("tritachyon")).toList()) {
+                assertTrue(enemy.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_MAKE_HOSTILE));
+                assertFalse(enemy.getMemoryWithoutUpdate().getBoolean(ChartContentGenerator.MAKE_NON_HOSTILE));
+                assertTrue(enemy.getMemoryWithoutUpdate().getBoolean("$cfai_makeHostile_hegemony"));
+                assertTrue(enemy.getMemoryWithoutUpdate().getBoolean("$cfai_makeHostile_allies"));
+                verify(enemy, never()).setFaction(anyString(), Mockito.anyBoolean());
+            }
         } finally {
             ChartBosses.resetForTests();
         }

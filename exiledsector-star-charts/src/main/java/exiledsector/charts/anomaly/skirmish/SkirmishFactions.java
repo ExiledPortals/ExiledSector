@@ -10,6 +10,7 @@ import java.util.Set;
 
 public final class SkirmishFactions {
 
+    public static final String ALLY_FACTION_ID = "exiledSector_skirmish_ally";
     static final String PATH = "data/config/exiledSector/chart_skirmish_factions.csv";
     static final String FACTION_COLUMN = "faction";
     private static final Logger LOG = Logger.getLogger(SkirmishFactions.class);

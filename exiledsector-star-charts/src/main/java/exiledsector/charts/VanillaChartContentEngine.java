@@ -7,6 +7,7 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
+import com.fs.starfarer.api.campaign.RepLevel;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
@@ -38,6 +39,7 @@ import com.fs.starfarer.api.impl.campaign.procgen.themes.SalvageSpecialAssigner.
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.BaseSalvageSpecial;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
+import exiledsector.charts.anomaly.skirmish.SkirmishFactions;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -187,5 +189,22 @@ final class VanillaChartContentEngine implements ChartContentEngine {
     public String planetCategory(PlanetAPI planet) {
         Object spec = planet == null ? null : Global.getSettings().getSpec(PlanetGenDataSpec.class, planet.getTypeId(), true);
         return spec instanceof PlanetGenDataSpec data ? data.getCategory() : "";
+    }
+
+    @Override
+    public String dressAllies(String factionId) {
+        FactionAPI allies = Global.getSector().getFaction(SkirmishFactions.ALLY_FACTION_ID);
+        FactionAPI faction = Global.getSector().getFaction(factionId);
+        if (allies == null || faction == null) {
+            return null;
+        }
+        allies.setDisplayNameOverride(faction.getDisplayName());
+        allies.setDisplayNameWithArticleOverride(faction.getDisplayNameWithArticle());
+        allies.setDisplayIsOrAreOverride(faction.getDisplayNameIsOrAre());
+        allies.setShipNamePrefixOverride(faction.getShipNamePrefix());
+        allies.setFactionCrestOverride(faction.getCrest());
+        allies.setFactionLogoOverride(faction.getLogo());
+        allies.setRelationship(Factions.PLAYER, RepLevel.FRIENDLY);
+        return allies.getId();
     }
 }

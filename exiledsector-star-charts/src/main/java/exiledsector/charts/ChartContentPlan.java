@@ -1,9 +1,11 @@
 package exiledsector.charts;
 
+import exiledsector.charts.anomaly.skirmish.SkirmishSide;
+
 import java.util.List;
 
 public record ChartContentPlan(int tier, ChartFaction faction, ChartObjective objective, List<PlannedPoi> pois, List<PlannedFleet> fleets,
-                               List<String> anomalies, ChartBossType bossType, PlannedStation bossStation) {
+                               List<String> anomalies, ChartBossType bossType, PlannedStation bossStation, PlannedSkirmish skirmish) {
 
     public enum FleetRole {
         GUARD,
@@ -30,11 +32,28 @@ public record ChartContentPlan(int tier, ChartFaction faction, ChartObjective ob
     public record PlannedStation(String variantId, int officerLevel, PlannedFleet fallbackBoss) {
     }
 
+    public record PlannedSkirmish(String attackerFactionId, SkirmishSide side, List<PlannedFleet> attackerFleets) {
+
+        public PlannedSkirmish {
+            side = side == null ? SkirmishSide.NEITHER : side;
+            attackerFleets = List.copyOf(attackerFleets);
+        }
+
+        public boolean alliedWith(boolean defending) {
+            return side == (defending ? SkirmishSide.DEFENDER : SkirmishSide.ATTACKER);
+        }
+    }
+
     public ChartContentPlan {
         pois = List.copyOf(pois);
         fleets = List.copyOf(fleets);
         anomalies = anomalies == null ? List.of() : List.copyOf(anomalies);
         bossType = bossType == null ? ChartBossType.FLEET : bossType;
+    }
+
+    public ChartContentPlan(int tier, ChartFaction faction, ChartObjective objective, List<PlannedPoi> pois, List<PlannedFleet> fleets,
+                            List<String> anomalies, ChartBossType bossType, PlannedStation bossStation) {
+        this(tier, faction, objective, pois, fleets, anomalies, bossType, bossStation, null);
     }
 
     public ChartContentPlan(int tier, ChartFaction faction, ChartObjective objective, List<PlannedPoi> pois, List<PlannedFleet> fleets,

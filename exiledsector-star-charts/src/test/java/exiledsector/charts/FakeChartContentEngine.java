@@ -47,6 +47,8 @@ final class FakeChartContentEngine implements ChartContentEngine {
     final List<ColonyItem> colonyItems = new ArrayList<>();
     final List<String> stationVariants = new ArrayList<>();
     final List<CampaignFleetAPI> stations = new ArrayList<>();
+    final List<String> dressedFactions = new ArrayList<>();
+    String alliesFactionId = "allies";
     boolean missingStations;
     boolean failFleets;
     boolean emptyFleets;
@@ -154,6 +156,12 @@ final class FakeChartContentEngine implements ChartContentEngine {
     @Override
     public String planetCategory(PlanetAPI planet) {
         return planetCategories.getOrDefault(planet, "");
+    }
+
+    @Override
+    public String dressAllies(String factionId) {
+        dressedFactions.add(factionId);
+        return alliesFactionId;
     }
 
     @Override

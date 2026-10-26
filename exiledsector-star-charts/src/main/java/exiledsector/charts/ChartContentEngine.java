@@ -29,4 +29,6 @@ interface ChartContentEngine {
     void addColonyItem(SectorEntityToken holder, String itemId);
 
     String planetCategory(PlanetAPI planet);
+
+    String dressAllies(String factionId);
 }
