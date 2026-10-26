@@ -2,7 +2,7 @@
 
 `exiledsector.charts` holds 98 classes in one flat package, next to small subpackages (`anomaly` with 14, `atlas` with 30, `feature` with 6) and two empty leftover folders (`expansion` and `phenomenon`, in both `main` and `test`). Finding a class means already knowing its name. This plan sorts the root into subpackages by the stage of a chart's life each class belongs to. It only moves classes: no behaviour changes, no class renames.
 
-Status: planned, nothing moved.
+Status: in progress on branch `charts-packages`.
 
 ## Constraints
 
@@ -77,7 +77,7 @@ Add one line to the Layout section of `CLAUDE.md`: Star Charts classes go in the
 
 Each step is its own commit, and each one builds and passes `mvn -q clean package` before the next starts. Move files with `git mv` so history follows them, and fix imports with IntelliJ's Move refactoring or by editing the files. Never split files on `\n`, because of the line-ending rule.
 
-1. [ ] Delete the empty `expansion` and `phenomenon` folders in `main` and `test`.
+1. [x] Delete the empty `expansion` and `phenomenon` folders in `main` and `test`. Git never tracked them (no files), so the branch has nothing to delete; they exist only on disk in older checkouts and go with `git clean -d`.
 2. [ ] Add XStream aliases for `AtlasState` and the classes it stores, with a save-fixture test that loads a save made before the aliases. Nothing moves in this step.
 3. [ ] Add a test that checks every `exiledsector.*` class named in `data/` resolves.
 4. [ ] Move the leaf groups that little else depends on: `run.diagnostics`, `run.cleanup`, `objective`, `layout.sketch`, `anomaly.breach`.
