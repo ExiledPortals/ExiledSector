@@ -94,6 +94,7 @@ public final class SkillTreeNodeDrawer {
     public void advance(float amount) {
         ringRenderer.advance(amount);
         rootCircuitRenderer.advance(amount);
+        connectorRenderer.advance(amount);
         rootCircuitGrowth.advance(amount, session.rootChoice());
         String targetedSocketId = session.targetedSocketId();
         if (targetedSocketId != null && !ringRenderer.isPulsing(targetedSocketId)) {

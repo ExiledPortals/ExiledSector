@@ -16,6 +16,33 @@ public final class BeamStroke {
     public record Style(String fringeTexture, String coreTexture, float fringeWidth, float coreWidth, float tileLengthPerWidth, float scrollSpeed) {
     }
 
+    public record Helix(float amplitude, float wavelength, float phase, float backShade, float backWidth) {
+
+        public float offset(float distance) {
+            return amplitude * (float) Math.sin(angle(distance));
+        }
+
+        public float slope(float distance) {
+            return amplitude * 2f * (float) Math.PI / wavelength * depth(distance);
+        }
+
+        public float depth(float distance) {
+            return (float) Math.cos(angle(distance));
+        }
+
+        public float shade(float distance) {
+            return backShade + (1f - backShade) * (depth(distance) + 1f) / 2f;
+        }
+
+        public float width(float distance) {
+            return backWidth + (1f - backWidth) * (depth(distance) + 1f) / 2f;
+        }
+
+        private double angle(float distance) {
+            return 2.0 * Math.PI * distance / wavelength + phase;
+        }
+    }
+
     public record Look(Color fringe, Color core, float fringeAlpha, float coreAlpha) {
 
         public Look fringeOnly() {
@@ -32,6 +59,7 @@ public final class BeamStroke {
     static final int MAX_RING_PIECES = 45;
     static final float MIN_PIECE = 0.5f;
     static final float TILE_EPSILON = 0.001f;
+    static final float HELIX_PIECES_PER_WAVE = 6f;
     private static final int FLOATS_PER_VERTEX = 8;
 
     private interface Path {
@@ -39,6 +67,10 @@ public final class BeamStroke {
         float length();
 
         void at(float distance, float[] out);
+
+        default float shade(float distance) {
+            return 1f;
+        }
     }
 
     private final SpriteCache spriteCache = new SpriteCache(BeamStroke.class);
@@ -46,6 +78,7 @@ public final class BeamStroke {
     private final float[] nextPoint = new float[4];
     private final LinePath linePath = new LinePath();
     private final RingPath ringPath = new RingPath();
+    private final HelixPath helixPath = new HelixPath();
     private final Map<String, QuadBuffer> pending = new LinkedHashMap<>();
 
     public void addLine(float fromX, float fromY, float toX, float toY, float distanceOffset, Style style, Look look, float startAlpha, float endAlpha,
@@ -55,6 +88,34 @@ public final class BeamStroke {
             return;
         }
         stroke(linePath, style, look, startAlpha, endAlpha, elapsedSeconds, widthScale, 0f, distanceOffset);
+    }
+
+    public void addHelix(float fromX, float fromY, float toX, float toY, float distanceOffset, Helix helix, Style style, Look look,
+                         float startAlpha, float endAlpha, float elapsedSeconds, float widthScale) {
+        linePath.set(fromX, fromY, toX, toY);
+        if (linePath.length() <= MIN_PIECE || (startAlpha <= 0f && endAlpha <= 0f)) {
+            return;
+        }
+        helixPath.set(linePath, helix, distanceOffset);
+        stroke(helixPath, style, look, startAlpha, endAlpha, elapsedSeconds, widthScale, helix.wavelength() / HELIX_PIECES_PER_WAVE, distanceOffset);
+    }
+
+    public void addSprite(String texturePath, float centreX, float centreY, float size, Color colour, float alpha) {
+        SpriteAPI texture = spriteCache.texture(texturePath);
+        if (texture == null || size <= 0f || alpha <= 0f) {
+            return;
+        }
+        QuadBuffer buffer = pending.computeIfAbsent(texturePath, key -> new QuadBuffer());
+        float half = size / 2f;
+        float textureWidth = texture.getTextureWidth();
+        float textureHeight = texture.getTextureHeight();
+        float red = colour.getRed() / 255f;
+        float green = colour.getGreen() / 255f;
+        float blue = colour.getBlue() / 255f;
+        buffer.corner(centreX - half, centreY - half, 0f, 0f, red, green, blue, alpha);
+        buffer.corner(centreX + half, centreY - half, textureWidth, 0f, red, green, blue, alpha);
+        buffer.corner(centreX + half, centreY + half, textureWidth, textureHeight, red, green, blue, alpha);
+        buffer.corner(centreX - half, centreY + half, 0f, textureHeight, red, green, blue, alpha);
     }
 
     public void addRing(float cx, float cy, float radius, float[] outlineRadii, Style style, Look look, float alpha, float elapsedSeconds,
@@ -116,8 +177,8 @@ public final class BeamStroke {
             float endU = (end - tileStart) / tile * textureWidth;
             path.at(start, point);
             path.at(end, nextPoint);
-            float startShade = layerAlpha * lerp(startAlpha, endAlpha, start / length);
-            float endShade = layerAlpha * lerp(startAlpha, endAlpha, end / length);
+            float startShade = layerAlpha * lerp(startAlpha, endAlpha, start / length) * path.shade(start);
+            float endShade = layerAlpha * lerp(startAlpha, endAlpha, end / length) * path.shade(end);
             buffer.vertex(point, half, startU, 0f, red, green, blue, startShade);
             buffer.vertex(nextPoint, half, endU, 0f, red, green, blue, endShade);
             buffer.vertex(nextPoint, -half, endU, textureHeight, red, green, blue, endShade);
@@ -155,12 +216,16 @@ public final class BeamStroke {
         private int vertexCount;
 
         void vertex(float[] at, float offset, float u, float v, float red, float green, float blue, float alpha) {
+            corner(at[0] + at[2] * offset, at[1] + at[3] * offset, u, v, red, green, blue, alpha);
+        }
+
+        void corner(float x, float y, float u, float v, float red, float green, float blue, float alpha) {
             int index = vertexCount * FLOATS_PER_VERTEX;
             if (index + FLOATS_PER_VERTEX > vertices.length) {
                 vertices = Arrays.copyOf(vertices, vertices.length * 2);
             }
-            vertices[index] = at[0] + at[2] * offset;
-            vertices[index + 1] = at[1] + at[3] * offset;
+            vertices[index] = x;
+            vertices[index + 1] = y;
             vertices[index + 2] = u;
             vertices[index + 3] = v;
             vertices[index + 4] = red;
@@ -184,7 +249,7 @@ public final class BeamStroke {
         }
     }
 
-    private static final class LinePath implements Path {
+    static final class LinePath implements Path {
         private float fromX;
         private float fromY;
         private float dirX;
@@ -212,6 +277,43 @@ public final class BeamStroke {
             out[1] = fromY + dirY * distance;
             out[2] = -dirY;
             out[3] = dirX;
+        }
+    }
+
+    static final class HelixPath implements Path {
+        private Path base;
+        private Helix helix;
+        private float distanceOffset;
+
+        void set(Path basePath, Helix strand, float offset) {
+            base = basePath;
+            helix = strand;
+            distanceOffset = offset;
+        }
+
+        @Override
+        public float length() {
+            return base.length();
+        }
+
+        @Override
+        public void at(float distance, float[] out) {
+            base.at(distance, out);
+            float along = distanceOffset + distance;
+            float offset = helix.offset(along);
+            float slope = helix.slope(along);
+            float normalX = out[2];
+            float normalY = out[3];
+            float width = helix.width(along) / (float) Math.sqrt(1f + slope * slope);
+            out[0] += normalX * offset;
+            out[1] += normalY * offset;
+            out[2] = (normalX - normalY * slope) * width;
+            out[3] = (normalY + normalX * slope) * width;
+        }
+
+        @Override
+        public float shade(float distance) {
+            return helix.shade(distanceOffset + distance);
         }
     }
 

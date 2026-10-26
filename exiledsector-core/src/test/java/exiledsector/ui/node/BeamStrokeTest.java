@@ -80,6 +80,29 @@ class BeamStrokeTest {
     }
 
     @Test
+    void helixStrandsWindAroundTheLineAtAnEvenWidth() {
+        BeamStroke.LinePath line = new BeamStroke.LinePath();
+        line.set(0f, 0f, 100f, 0f);
+        BeamStroke.Helix helix = new BeamStroke.Helix(5f, 20f, 0f, 0.3f, 1f);
+        BeamStroke.HelixPath path = new BeamStroke.HelixPath();
+        path.set(line, helix, 10f);
+        float[] crest = new float[4];
+        float[] crossing = new float[4];
+        path.at(-5f, crest);
+        path.at(0f, crossing);
+
+        assertEquals(-5f, crest[0], 0.001f);
+        assertEquals(5f, crest[1], 0.001f);
+        assertEquals(0f, crest[2], 0.001f);
+        assertEquals(1f, crest[3], 0.001f);
+        assertEquals(0f, crossing[1], 0.001f);
+        assertEquals(1f, (float) Math.hypot(crossing[2], crossing[3]), 0.001f);
+        assertTrue(crossing[2] > 0f, "the strand leans along its own slope");
+        assertEquals(0.3f, path.shade(0f), 0.001f);
+        assertEquals(1f, path.shade(10f), 0.001f);
+    }
+
+    @Test
     void ringPiecesTrackScreenSizeWithinBounds() {
         assertEquals(1f, BeamStroke.ringPiece(12f), 0.0001f);
         assertEquals(8f, BeamStroke.ringPiece(200f), 0.0001f);

@@ -19,6 +19,7 @@ import static exiledsector.ui.node.NodeBeams.DULL_ALPHA;
 import static exiledsector.ui.node.NodeBeams.DULL_LOOK;
 import static exiledsector.ui.node.NodeMetrics.NODE_SIZE;
 import static exiledsector.ui.node.SkillTreeNodeGeometry.connectorEndpointRadius;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.laneWidthScale;
 
 final class SkillTreeNodeConnectorRenderer {
 
@@ -34,6 +35,16 @@ final class SkillTreeNodeConnectorRenderer {
     private static final float TEMPLATE_ALPHA = 0.9f;
     private static final float EXOSHIP_ENDPOINT_SHARE = 0.4f;
     private static final float GRANT_TETHER_ALPHA = 0.35f;
+    private static final float HELIX_ALPHA = 0.9f;
+    private static final float HELIX_MIN_ZOOM = 0.5f;
+    private static final float HELIX_FADE_IN_ZOOM = 0.2f;
+    private static final int MAX_BUBBLES_PER_CONNECTOR = 4;
+    private static final int BUBBLE_TAIL_COPIES = 4;
+    private static final float BUBBLE_SIZE = 14f;
+    private static final float BUBBLE_TAIL_SPACING = 2.5f;
+    private static final float BUBBLE_TAIL_SHRINK_PER_COPY = 0.18f;
+    private static final float BUBBLE_TAIL_FADE_PER_COPY = 0.22f;
+    private static final float BUBBLE_END_FADE = 8f;
 
     private final SkillTreePanelStyle panelStyle;
     private final NodeSearch nodeSearch;
@@ -42,6 +53,11 @@ final class SkillTreeNodeConnectorRenderer {
     private final Segment scratchSegment = new Segment();
     private final Segment scratchPart = new Segment();
     private final float[] cumulativeArcLength = new float[CURVE_ARC_SAMPLES + 1];
+    private final float[] bubbleFractions = new float[MAX_BUBBLES_PER_CONNECTOR];
+    private final float[] pathPoint = new float[4];
+    private final ConnectorFlow flow = new ConnectorFlow();
+    private int bubbleCount;
+    private boolean bubblesTowardEnd;
     private final WormholeOpenness wormholeOpenness;
     private final SocketWormholes socketWormholes;
     private float exoshipRadius;
@@ -55,10 +71,15 @@ final class SkillTreeNodeConnectorRenderer {
         this.beams = beams;
     }
 
+    void advance(float amount) {
+        flow.advance(amount);
+    }
+
     void draw(TreeLayers layers, NodeAllocator.Snapshot allocation, Set<String> templateNodeIds, Set<String> plannedOnlyNodeIds,
               AllocationAnimation allocationAnimation) {
         TemplateHighlight templateHighlight = new TemplateHighlight(templateNodeIds, plannedOnlyNodeIds);
         exoshipRadius = layers.exoshipRadius();
+        flow.refresh(allocation, plannedOnlyNodeIds);
 
         for (SkillTreeTopology.Connector connector : SkillTree.topology().connectors()) {
             boolean carried = ExoshipNodes.isCarried(connector.from());
@@ -79,7 +100,7 @@ final class SkillTreeNodeConnectorRenderer {
         float socketX = socketViewport.screenX(socket.getOffsetX());
         float socketY = socketViewport.screenY(socket.getOffsetY());
         BeamStroke.Look tetherLook = beams.lit(tetherColor);
-        float widthScale = NodeBeams.widthScale(socketViewport.zoom());
+        float widthScale = laneWidthScale(socketViewport.zoom());
         for (int grantedIndex = 0; grantedIndex < grantedNodeIds.size(); grantedIndex++) {
             SkillNode granted = SkillTree.get(grantedNodeIds.get(grantedIndex));
             if (granted == null) {
@@ -99,7 +120,7 @@ final class SkillTreeNodeConnectorRenderer {
 
     private void drawConnector(SkillTreeTopology.Connector connector, TreeViewport viewport, NodeAllocator.Snapshot allocation,
                                TemplateHighlight templateHighlight, AllocationAnimation allocationAnimation, float alphaMult) {
-        float cullMargin = 2f * NodeBeams.laneEdge(NodeBeams.widthScale(viewport.zoom()));
+        float cullMargin = 2f * NodeBeams.laneEdge(laneWidthScale(viewport.zoom()));
         if (!viewport.overlaps(viewport.screenX(connector.minX()) - cullMargin, viewport.screenY(connector.maxY()) - cullMargin,
                 viewport.screenX(connector.maxX()) + cullMargin, viewport.screenY(connector.minY()) + cullMargin)) {
             return;
@@ -139,6 +160,7 @@ final class SkillTreeNodeConnectorRenderer {
                 isOpenWormhole(node, skillData, satisfiedRootId));
         AllocationAnimation.FillRange fillRange = bothSatisfied && animatedRange != null ? animatedRange : AllocationAnimation.FillRange.FULL;
         EdgeFill edgeFill = fillRange.isFull() ? EdgeFill.NONE : new EdgeFill(fillRange, ConnectorKind.of(false, nodeInTemplate, otherInTemplate));
+        prepareBubbles(fade.glowing() && edgeFill == EdgeFill.NONE, node, other);
 
         ConnectorStyle connectorStyle = new ConnectorStyle(fade, edgeFill, zoom, alphaMult * nodeSearch.connectorAlpha(node, other, allocation));
         if (curve == null) {
@@ -147,6 +169,21 @@ final class SkillTreeNodeConnectorRenderer {
             drawCurvedConnector(otherEndpoint, viewport.screenX(curve.getControlOffsetX()),
                     viewport.screenY(curve.getControlOffsetY()), nodeEndpoint, connectorStyle);
         }
+    }
+
+    private void prepareBubbles(boolean flowing, SkillNode node, SkillNode other) {
+        bubbleCount = 0;
+        if (!flowing) {
+            return;
+        }
+        float nodeDistance = flow.distance(node.getId());
+        float otherDistance = flow.distance(other.getId());
+        if (Float.isNaN(nodeDistance) || Float.isNaN(otherDistance)) {
+            return;
+        }
+        float length = (float) Math.hypot(node.getOffsetX() - other.getOffsetX(), node.getOffsetY() - other.getOffsetY());
+        bubblesTowardEnd = otherDistance <= nodeDistance;
+        bubbleCount = flow.bubbles(Math.min(nodeDistance, otherDistance), length, bubbleFractions);
     }
 
     private float endpointRadius(SkillNode node, float zoom, float towardX, float towardY) {
@@ -206,6 +243,7 @@ final class SkillTreeNodeConnectorRenderer {
                 drawFadedSegment(scratchSegment, segmentFade);
             }
         }
+        drawBubbles(segmentFade, r1, length, x1, y1, dirX, dirY, null, null);
     }
 
     private static float[] straightBreakpoints(SegmentFade segmentFade) {
@@ -218,12 +256,19 @@ final class SkillTreeNodeConnectorRenderer {
         return PLAIN_BREAKPOINTS;
     }
 
-    private static SegmentFade segmentFade(ConnectorStyle connectorStyle, float visibleLength) {
+    private SegmentFade segmentFade(ConnectorStyle connectorStyle, float visibleLength) {
         ConnectorFade fade = connectorStyle.fade();
+        float widthScale = laneWidthScale(connectorStyle.zoom());
+        float helixAlpha = fade.glowing() ? helixAlpha(connectorStyle.zoom()) : 0f;
         return new SegmentFade(fade,
                 tipFraction(fade.glowing() && fade.tipFadesAtR1(), visibleLength, connectorStyle.zoom()),
                 tipFraction(fade.glowing() && fade.tipFadesAtR2(), visibleLength, connectorStyle.zoom()),
-                connectorStyle.alphaMult(), connectorStyle.edgeFill(), visibleLength, NodeBeams.widthScale(connectorStyle.zoom()));
+                connectorStyle.alphaMult(), connectorStyle.edgeFill(), visibleLength, widthScale,
+                helixAlpha > 0f ? beams.helix(widthScale) : null, helixAlpha);
+    }
+
+    private static float helixAlpha(float zoom) {
+        return Math.max(0f, Math.min(1f, (zoom - HELIX_MIN_ZOOM) / HELIX_FADE_IN_ZOOM));
     }
 
     private static float tipFraction(boolean fades, float visibleLength, float zoom) {
@@ -277,7 +322,7 @@ final class SkillTreeNodeConnectorRenderer {
         ConnectorFade fade = segmentFade.fade();
         if (fade.endFading()) {
             float alpha = segmentFade.alphaMult() * kindAlpha(fade.kind());
-            addBeam(s, segmentFade, look(fade.kind()), alpha * endFade(s.progress1, fade), alpha * endFade(s.progress2, fade));
+            addBeam(s, segmentFade, look(fade.kind()), alpha * endFade(s.progress1, fade), alpha * endFade(s.progress2, fade), false);
         } else if (fade.glowTipFading()) {
             addTipFadeBeam(s, segmentFade, look(ConnectorKind.GLOW));
         } else {
@@ -300,7 +345,56 @@ final class SkillTreeNodeConnectorRenderer {
         float tEnd = curveParamAtArcLength(cumLen, totalLength - r2);
         if (tEnd <= tStart) return;
 
-        renderCurveSegments(curve, cumLen, r1, segmentFade(connectorStyle, totalLength - r1 - r2));
+        SegmentFade segmentFade = segmentFade(connectorStyle, totalLength - r1 - r2);
+        renderCurveSegments(curve, cumLen, r1, segmentFade);
+        drawBubbles(segmentFade, r1, totalLength, 0f, 0f, 0f, 0f, curve, cumLen);
+    }
+
+    private void drawBubbles(SegmentFade segmentFade, float startLength, float totalLength, float startX, float startY, float dirX, float dirY,
+                             QuadraticCurve curve, float[] cumLen) {
+        if (bubbleCount == 0 || segmentFade.helix() == null) {
+            return;
+        }
+        BeamStroke.Look look = look(ConnectorKind.GLOW);
+        BeamStroke.Helix helix = segmentFade.helix();
+        float widthScale = segmentFade.widthScale();
+        float visibleLength = segmentFade.visibleLength();
+        float tailDirection = bubblesTowardEnd ? -1f : 1f;
+        for (int bubble = 0; bubble < bubbleCount; bubble++) {
+            float fromStart = bubblesTowardEnd ? bubbleFractions[bubble] : 1f - bubbleFractions[bubble];
+            float head = fromStart * totalLength - startLength;
+            for (int copy = BUBBLE_TAIL_COPIES; copy >= 0; copy--) {
+                float along = head + tailDirection * copy * BUBBLE_TAIL_SPACING * widthScale;
+                float endFade = Math.min(1f, Math.min(along, visibleLength - along) / (BUBBLE_END_FADE * widthScale));
+                if (endFade <= 0f) {
+                    continue;
+                }
+                connectorPoint(startLength + along, startX, startY, dirX, dirY, curve, cumLen);
+                float offset = helix.offset(along);
+                float size = BUBBLE_SIZE * widthScale * helix.width(along) * (1f - copy * BUBBLE_TAIL_SHRINK_PER_COPY);
+                float alpha = segmentFade.alphaMult() * segmentFade.helixAlpha() * endFade * helix.shade(along) * (1f - copy * BUBBLE_TAIL_FADE_PER_COPY);
+                beams.bubble(pathPoint[0] + pathPoint[2] * offset, pathPoint[1] + pathPoint[3] * offset, size,
+                        copy == 0 ? look.core() : look.fringe(), alpha);
+            }
+        }
+    }
+
+    private void connectorPoint(float distance, float startX, float startY, float dirX, float dirY, QuadraticCurve curve, float[] cumLen) {
+        if (curve == null) {
+            pathPoint[0] = startX + dirX * distance;
+            pathPoint[1] = startY + dirY * distance;
+            pathPoint[2] = -dirY;
+            pathPoint[3] = dirX;
+            return;
+        }
+        float t = curveParamAtArcLength(cumLen, distance);
+        float tangentX = curve.dxAt(t);
+        float tangentY = curve.dyAt(t);
+        float tangentLength = (float) Math.sqrt(tangentX * tangentX + tangentY * tangentY);
+        pathPoint[0] = curve.xAt(t);
+        pathPoint[1] = curve.yAt(t);
+        pathPoint[2] = tangentLength > 0f ? -tangentY / tangentLength : 0f;
+        pathPoint[3] = tangentLength > 0f ? tangentX / tangentLength : 1f;
     }
 
     private float[] computeCumulativeArcLength(QuadraticCurve curve) {
@@ -354,16 +448,23 @@ final class SkillTreeNodeConnectorRenderer {
 
     private void drawConnectorSegment(Segment s, ConnectorKind kind, SegmentFade segmentFade) {
         float alpha = segmentFade.alphaMult() * kindAlpha(kind);
-        addBeam(s, segmentFade, look(kind), alpha, alpha);
+        addBeam(s, segmentFade, look(kind), alpha, alpha, kind == ConnectorKind.GLOW);
     }
 
     private void addTipFadeBeam(Segment s, SegmentFade segmentFade, BeamStroke.Look look) {
         float alpha = segmentFade.alphaMult();
-        addBeam(s, segmentFade, look, alpha * tipFade(s.progress1, segmentFade), alpha * tipFade(s.progress2, segmentFade));
+        addBeam(s, segmentFade, look, alpha * tipFade(s.progress1, segmentFade), alpha * tipFade(s.progress2, segmentFade),
+                look == look(ConnectorKind.GLOW));
     }
 
-    private void addBeam(Segment s, SegmentFade segmentFade, BeamStroke.Look look, float startAlpha, float endAlpha) {
-        beams.lane(s.x1, s.y1, s.x2, s.y2, s.progress1 * segmentFade.visibleLength(), look, startAlpha, endAlpha, segmentFade.widthScale());
+    private void addBeam(Segment s, SegmentFade segmentFade, BeamStroke.Look look, float startAlpha, float endAlpha, boolean helixed) {
+        float distanceOffset = s.progress1 * segmentFade.visibleLength();
+        beams.lane(s.x1, s.y1, s.x2, s.y2, distanceOffset, look, startAlpha, endAlpha, segmentFade.widthScale());
+        if (helixed && segmentFade.helix() != null) {
+            float helixAlpha = HELIX_ALPHA * segmentFade.helixAlpha();
+            beams.helixLane(s.x1, s.y1, s.x2, s.y2, distanceOffset, segmentFade.helix(), look, helixAlpha * startAlpha, helixAlpha * endAlpha,
+                    segmentFade.widthScale());
+        }
     }
 
     private BeamStroke.Look look(ConnectorKind kind) {
@@ -450,7 +551,7 @@ final class SkillTreeNodeConnectorRenderer {
     }
 
     private record SegmentFade(ConnectorFade fade, float tipFraction1, float tipFraction2, float alphaMult, EdgeFill edgeFill, float visibleLength,
-                               float widthScale) {
+                               float widthScale, BeamStroke.Helix helix, float helixAlpha) {
     }
 
     private record TemplateHighlight(Set<String> templateNodeIds, Set<String> plannedOnlyNodeIds) {
@@ -469,6 +570,14 @@ final class SkillTreeNodeConnectorRenderer {
         float yAt(float t) {
             float omt = 1f - t;
             return omt * omt * y0 + 2f * omt * t * cy + t * t * y2;
+        }
+
+        float dxAt(float t) {
+            return 2f * (1f - t) * (cx - x0) + 2f * t * (x2 - cx);
+        }
+
+        float dyAt(float t) {
+            return 2f * (1f - t) * (cy - y0) + 2f * t * (y2 - cy);
         }
     }
 }

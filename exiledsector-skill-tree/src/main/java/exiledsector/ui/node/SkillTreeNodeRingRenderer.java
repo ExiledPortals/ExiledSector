@@ -20,7 +20,8 @@ import java.util.Map;
 
 import static exiledsector.ui.node.SkillTreeNodeGeometry.beltInnerRadius;
 import static exiledsector.ui.node.SkillTreeNodeGeometry.beltOuterRadius;
-import static exiledsector.ui.node.NodeMetrics.donutRadius;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.ringRadius;
+import static exiledsector.ui.node.SkillTreeNodeGeometry.ringWidthScale;
 
 final class SkillTreeNodeRingRenderer {
 
@@ -87,12 +88,10 @@ final class SkillTreeNodeRingRenderer {
         SkillTier tier = node.getType().getTier();
         String nodeId = node.getId();
         float halfSize = footprintSize / 2f;
-        float scale = tier.getSizeMultiplier();
 
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        float ringRadius = donutRadius(footprintSize);
         if (tier == SkillTier.NOTABLE) {
             float stateAlpha = allocated ? 1f : NodeRingArt.UNALLOCATED_ALPHA_MULT;
             ringArt.drawNotableRings(cx, cy, footprintSize, nodeId, stateAlpha * alphaMult,
@@ -118,7 +117,8 @@ final class SkillTreeNodeRingRenderer {
         if (tier.isWormhole()) {
             return;
         }
-        float widthScale = NodeBeams.widthScale(zoom) * scale;
+        float widthScale = ringWidthScale(tier, zoom);
+        float ringRadius = ringRadius(tier, footprintSize, zoom);
         Color accent = panelStyle.getAccentColor();
         if (tier == SkillTier.SOCKET) {
             if (ringState.breathing) {

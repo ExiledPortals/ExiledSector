@@ -12,6 +12,8 @@ public final class NodeBeams {
 
     public static final BeamStroke.Style LANE_STYLE = new BeamStroke.Style("graphics/fx/beamfringe.png", "graphics/fx/beamcore.png", 14f, 5f, 4f, 30f);
     public static final BeamStroke.Style RING_STYLE = new BeamStroke.Style("graphics/fx/beamfringeb.png", "graphics/fx/beamcorec.png", 12f, 4f, 4f, 20f);
+    public static final BeamStroke.Style HELIX_STYLE = new BeamStroke.Style("graphics/fx/beamfringeb.png", "graphics/fx/beamcorec.png", 5f, 2f, 4f, 20f);
+    public static final String BUBBLE_TEXTURE = "graphics/fx/particlealpha64sq.png";
     public static final BeamStroke.Look DULL_LOOK = new BeamStroke.Look(NodeMetrics.RING_DULL_COLOR, NodeMetrics.RING_DULL_COLOR, 0.6f, 0.3f);
     public static final float DULL_ALPHA = 0.4f;
     public static final float DIM_ALPHA = 0.4f;
@@ -20,6 +22,14 @@ public final class NodeBeams {
     static final float LIT_FRINGE_ALPHA = 0.8f;
     static final float LIT_CORE_ALPHA = 0.9f;
     static final float WHITENESS = 0.7f;
+    static final float LANE_VISIBLE_SHARE = 0.7f;
+    static final float RING_VISIBLE_SHARE = 0.6f;
+    static final float RING_HUG_SHARE = 0.45f;
+    static final float HELIX_AMPLITUDE = 5f;
+    static final float HELIX_WAVELENGTH = 30f;
+    static final float HELIX_SPIN_PER_SECOND = 2.5f;
+    static final float HELIX_BACK_SHADE = 0.3f;
+    static final float HELIX_BACK_WIDTH = 0.6f;
 
     private final BeamStroke stroke = new BeamStroke();
     private final NodeRingArt ringArt;
@@ -39,6 +49,19 @@ public final class NodeBeams {
 
     public static float ringEdge(float widthScale) {
         return RING_STYLE.fringeWidth() * widthScale / 2f;
+    }
+
+    public static float huggingRingRadius(float iconRadius, float ringWidthScale) {
+        return iconRadius + ringEdge(ringWidthScale) * RING_HUG_SHARE;
+    }
+
+    public static float ringOuterEdge(float ringRadius, float ringWidthScale) {
+        return ringRadius + ringEdge(ringWidthScale) * RING_VISIBLE_SHARE;
+    }
+
+    public static float laneReach(float ringOuterEdge, float laneWidthScale) {
+        float laneHalf = laneEdge(laneWidthScale) * LANE_VISIBLE_SHARE;
+        return (float) Math.sqrt(Math.max(0f, ringOuterEdge * ringOuterEdge - laneHalf * laneHalf));
     }
 
     public static Color whitened(Color colour) {
@@ -98,6 +121,20 @@ public final class NodeBeams {
     public void lane(float fromX, float fromY, float toX, float toY, float distanceOffset, BeamStroke.Look look, float startAlpha, float endAlpha,
                      float widthScale) {
         stroke.addLine(fromX, fromY, toX, toY, distanceOffset, LANE_STYLE, look, startAlpha, endAlpha, ringArt.elapsedSeconds(), widthScale);
+    }
+
+    public BeamStroke.Helix helix(float widthScale) {
+        return new BeamStroke.Helix(HELIX_AMPLITUDE * widthScale, HELIX_WAVELENGTH * widthScale, -ringArt.elapsedSeconds() * HELIX_SPIN_PER_SECOND,
+                HELIX_BACK_SHADE, HELIX_BACK_WIDTH);
+    }
+
+    public void helixLane(float fromX, float fromY, float toX, float toY, float distanceOffset, BeamStroke.Helix helix, BeamStroke.Look look,
+                          float startAlpha, float endAlpha, float widthScale) {
+        stroke.addHelix(fromX, fromY, toX, toY, distanceOffset, helix, HELIX_STYLE, look, startAlpha, endAlpha, ringArt.elapsedSeconds(), widthScale);
+    }
+
+    public void bubble(float x, float y, float size, Color colour, float alpha) {
+        stroke.addSprite(BUBBLE_TEXTURE, x, y, size, colour, alpha);
     }
 
     public void flush() {
