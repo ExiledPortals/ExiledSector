@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignEventListener.FleetDespawnReason;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.listeners.FleetEventListener;
+import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import org.apache.log4j.Logger;
 
 public class ChartContentListener implements FleetEventListener {
@@ -19,6 +20,9 @@ public class ChartContentListener implements FleetEventListener {
         }
         try {
             ChartObjectives.fleetGone(Global.getSector(), fleet, reason);
+            if (fleet != null && SkirmishSide.ATTACKER.key().equals(fleet.getMemoryWithoutUpdate().getString(ChartIds.SKIRMISH_SIDE_MEMORY_KEY))) {
+                ChartSkirmishes.checkFinalPush(Global.getSector());
+            }
         } catch (RuntimeException | LinkageError e) {
             reportFailure(e);
         }

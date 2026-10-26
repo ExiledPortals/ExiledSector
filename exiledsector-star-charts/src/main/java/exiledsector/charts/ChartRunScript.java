@@ -68,6 +68,7 @@ public class ChartRunScript implements EveryFrameScript {
         if (run.runState() == ChartRunState.INSIDE && !run.isObjectiveComplete() && run.objective() != null) {
             ChartObjectives.reconcile(sector);
         }
+        ChartSkirmishes.checkFinalPush(sector);
     }
 
     void watch(SectorAPI sector, ChartRun run) {

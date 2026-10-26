@@ -189,6 +189,22 @@ class AtlasOpeningTest {
     }
 
     @Test
+    void onlyWinningOnTheAttackersSideCapturesTheSystem() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator generator = new AtlasGenerator(SEED, rules(), AtlasUnlocks.NONE, state);
+        AtlasCell cell = new AtlasCell(3, 2);
+        AtlasRunNode node = new AtlasRunNode(cell.pack(), "pirates", List.of(), List.of("faction_skirmish"), false);
+
+        AtlasProgress.captureForWinner(generator, state, cell, node.withSkirmish("hegemony", SkirmishSide.DEFENDER));
+        AtlasProgress.captureForWinner(generator, state, cell, node.withSkirmish("hegemony", SkirmishSide.NEITHER));
+        AtlasProgress.captureForWinner(generator, state, cell, node);
+        assertEquals(Map.of(), state.captures());
+
+        AtlasProgress.captureForWinner(generator, state, cell, node.withSkirmish("hegemony", SkirmishSide.ATTACKER));
+        assertEquals(Map.of(cell, "hegemony"), state.captures());
+    }
+
+    @Test
     void aRunNodeKeepsItsSkirmishSidesAndOlderNodesReadWithout() {
         AtlasRunNode node = new AtlasRunNode(9L, "hegemony", List.of(), List.of("faction_skirmish", "spatial_breach"), true, "tritachyon",
                 SkirmishSide.ATTACKER);

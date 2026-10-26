@@ -317,6 +317,34 @@ class ChartContentGeneratorTest {
     }
 
     @Test
+    void eachSideGetsItsOwnBossObjective() {
+        useStationBosses();
+        try {
+            for (SkirmishSide side : List.of(SkirmishSide.ATTACKER, SkirmishSide.NEITHER)) {
+                ChartContent content = skirmish(side);
+                String stationId = engine.stations.get(engine.stations.size() - 1).getId();
+                assertEquals(ChartObjective.BOSS, content.objective());
+                assertEquals(List.of(stationId), content.targetIds());
+                assertEquals(stationId, content.bossFleetId());
+                assertNull(content.protectedFleetId());
+            }
+
+            ChartContent defending = skirmish(SkirmishSide.DEFENDER);
+            CampaignFleetAPI station = engine.stations.get(engine.stations.size() - 1);
+            CampaignFleetAPI commander = engine.fleets.stream()
+                    .filter(fleet -> fleet.getMemoryWithoutUpdate().getBoolean(ChartIds.SKIRMISH_COMMANDER_MEMORY_KEY)).reduce((first, last) -> last)
+                    .orElseThrow();
+            assertEquals(ChartObjective.BOSS, defending.objective());
+            assertEquals(List.of(commander.getId()), defending.targetIds());
+            assertEquals(commander.getId(), defending.bossFleetId());
+            assertEquals(ChartBossType.FLEET, defending.bossType());
+            assertEquals(station.getId(), defending.protectedFleetId());
+        } finally {
+            ChartBosses.resetForTests();
+        }
+    }
+
+    @Test
     void theAlliedSideIsFriendlyToThePlayerAndCarriesNoLoot() {
         useStationBosses();
         try {

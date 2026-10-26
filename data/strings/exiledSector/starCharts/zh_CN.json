@@ -35,6 +35,7 @@
     "chart.intel.tier": "一张{tier}级星图，由{faction}控制。",
     "chart.intel.progress": "进度：{done}/{total}",
     "chart.intel.complete": "目标已完成。奖励已发放。",
+    "chart.intel.lost": "目标失败。友方空间站已被摧毁，该星系无法再完成。",
     "chart.intel.reward": "完成目标可获得一次性奖励。",
     "chart.reward.message": "星图目标已完成：{objective}。你获得了{credits}星币。",
     "chart.reward.items.other": "从星域中回收了{count}件船体物品。",

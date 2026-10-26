@@ -3,6 +3,7 @@ package exiledsector.charts.atlas;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.AtlasRunNode;
 import exiledsector.charts.ChartRun;
+import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import org.apache.log4j.Logger;
 
 public final class AtlasProgress {
@@ -20,10 +21,20 @@ public final class AtlasProgress {
         try {
             AtlasState state = AtlasState.get(sector);
             AtlasGenerator generator = AtlasRuntime.generator(sector);
-            complete(generator, state, AtlasCell.unpack(node.cell()), run.tier());
+            AtlasCell cell = AtlasCell.unpack(node.cell());
+            complete(generator, state, cell, run.tier());
+            if (node.skirmishAttackerId() != null && sector.getFaction(node.skirmishAttackerId()) != null) {
+                captureForWinner(generator, state, cell, node);
+            }
             AtlasReach.refreshReveal(generator, state);
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Recording the completed atlas system for run " + run.runId() + " failed", e);
+        }
+    }
+
+    static void captureForWinner(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasRunNode node) {
+        if (node.skirmishSide() == SkirmishSide.ATTACKER && node.skirmishAttackerId() != null) {
+            state.capture(generator, cell, node.skirmishAttackerId());
         }
     }
 

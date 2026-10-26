@@ -68,6 +68,9 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
         if (run.isObjectiveComplete()) {
             return Translation.gameText("chart.intel.complete");
         }
+        if (run.isObjectiveLost()) {
+            return Translation.gameText("chart.intel.lost");
+        }
         int done = run.objectiveTargetsDefeated();
         int total = run.objectiveTargetIds().size();
         return I18n.forGameText(() -> Translation.msg("chart.intel.progress").arg("done", done).arg("total", total).text());
@@ -127,7 +130,7 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
             }
             info.addPara(safe(Translation.gameText(key)), PARAGRAPH_PAD);
         }
-        if (!run.isObjectiveComplete()) {
+        if (!run.isObjectiveComplete() && !run.isObjectiveLost()) {
             info.addPara(safe(Translation.gameText("chart.intel.reward")), PARAGRAPH_PAD);
         }
     }

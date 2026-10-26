@@ -22,7 +22,7 @@ public final class ChartObjectives {
 
     static ChartRun trackedRun() {
         ChartRun run = ChartRuns.currentOrNull();
-        if (run == null || !run.runState().isLive() || run.isObjectiveComplete() || run.objective() == null) {
+        if (run == null || !run.runState().isLive() || run.isObjectiveComplete() || run.isObjectiveLost() || run.objective() == null) {
             return null;
         }
         return run;
@@ -33,10 +33,27 @@ public final class ChartObjectives {
         if (run == null || fleet == null || !DEFEAT_REASONS.contains(reason) || !ChartIds.belongsToRun(fleet, run.runId())) {
             return false;
         }
+        if (fleet.getId() != null && fleet.getId().equals(run.protectedFleetId()) || run.protectedFleetId() != null && protectedFallen(sector, run)) {
+            lost(sector, run);
+            return true;
+        }
         if (!run.recordTargetGone(fleet.getId())) {
             return false;
         }
         progressed(sector, run);
+        return true;
+    }
+
+    private static boolean protectedFallen(SectorAPI sector, ChartRun run) {
+        StarSystemAPI system = sector.getStarSystem(run.systemId());
+        if (system == null) {
+            return false;
+        }
+        for (CampaignFleetAPI fleet : system.getFleets()) {
+            if (run.protectedFleetId().equals(fleet.getId())) {
+                return fleet.isDespawning() || fleet.isEmpty();
+            }
+        }
         return true;
     }
 
@@ -56,6 +73,10 @@ public final class ChartObjectives {
                 remainingFleetIds.add(fleet.getId());
             }
         }
+        if (run.protectedFleetId() != null && !remainingFleetIds.contains(run.protectedFleetId())) {
+            lost(sector, run);
+            return true;
+        }
         List<String> defeated = run.defeatedTargetIds();
         for (String targetId : run.objectiveTargetIds()) {
             if (defeated.contains(targetId)) {
@@ -69,6 +90,12 @@ public final class ChartObjectives {
             progressed(sector, run);
         }
         return changed;
+    }
+
+    private static void lost(SectorAPI sector, ChartRun run) {
+        if (run.markObjectiveLost()) {
+            updateIntel(sector, run);
+        }
     }
 
     private static void progressed(SectorAPI sector, ChartRun run) {

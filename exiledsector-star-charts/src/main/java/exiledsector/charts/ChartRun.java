@@ -34,6 +34,8 @@ public final class ChartRun {
     private int contentFleets;
     private int contentPois;
     private boolean objectiveComplete;
+    private boolean objectiveLost;
+    private String protectedFleetId;
     private boolean rewardClaimed;
     private boolean bossTierUpGranted;
     private String chartData;
@@ -154,7 +156,9 @@ public final class ChartRun {
         contentFleets = content.fleets();
         contentPois = content.pois();
         anomalies = join(content.anomalies());
+        protectedFleetId = content.protectedFleetId();
         objectiveComplete = false;
+        objectiveLost = false;
         rewardClaimed = false;
     }
 
@@ -249,8 +253,24 @@ public final class ChartRun {
         return objectiveComplete;
     }
 
+    public String protectedFleetId() {
+        return protectedFleetId;
+    }
+
+    public boolean isObjectiveLost() {
+        return objectiveLost;
+    }
+
+    public boolean markObjectiveLost() {
+        if (objectiveComplete || objectiveLost) {
+            return false;
+        }
+        objectiveLost = true;
+        return true;
+    }
+
     public boolean markObjectiveComplete() {
-        if (objectiveComplete || !isObjectiveMet()) {
+        if (objectiveComplete || objectiveLost || !isObjectiveMet()) {
             return false;
         }
         objectiveComplete = true;

@@ -356,6 +356,9 @@ public final class ChartContentGenerator {
         private ChartBossType bossType = ChartBossType.FLEET;
         private CampaignFleetAPI skirmishStation;
         private String allyFactionId;
+        private String defenderBossId;
+        private String commanderId;
+        private final List<String> attackerFleetIds = new ArrayList<>();
         private Vector2f stagingPoint;
         private final SectorEntityToken featureAnchor;
 
@@ -491,6 +494,7 @@ public final class ChartContentGenerator {
             if (plan.skirmish() == null) {
                 return;
             }
+            defenderBossId = bossFleetId;
             for (PlannedFleet planned : plan.skirmish().attackerFleets()) {
                 long fleetSeed = fleetRandom.nextLong();
                 try {
@@ -533,6 +537,14 @@ public final class ChartContentGenerator {
                 throw e;
             }
             fleets.add(fleet);
+            attackerFleetIds.add(fleet.getId());
+            if (role == FleetRole.BOSS) {
+                commanderId = fleet.getId();
+                if (plan.skirmish().side() == SkirmishSide.DEFENDER) {
+                    bossFleetId = commanderId;
+                    bossType = ChartBossType.FLEET;
+                }
+            }
         }
 
         private String dressAllies(ChartContentPlan plan) {
@@ -758,18 +770,41 @@ public final class ChartContentGenerator {
         }
 
         ChartContent settle(ChartContentPlan plan) {
+            if (plan.skirmish() != null) {
+                return settleSkirmish(plan);
+            }
             ChartObjective objective = settleObjective(plan.objective(), !guardFleetIds.isEmpty(), bossFleetId != null);
             List<String> targets = objective == null ? List.of() : switch (objective) {
                 case CLEAR -> guardFleetIds;
                 case BOSS -> List.of(bossFleetId);
             };
+            return new ChartContent(tier, plan.faction().factionId(), objective, targets, bossFleetId, bossType, fleets.size(), placedPois(), anomalies);
+        }
+
+        private ChartContent settleSkirmish(ChartContentPlan plan) {
+            if (plan.skirmish().side() != SkirmishSide.DEFENDER) {
+                ChartObjective objective = settleObjective(ChartObjective.BOSS, !guardFleetIds.isEmpty(), bossFleetId != null);
+                List<String> targets = objective == null ? List.of() : switch (objective) {
+                    case CLEAR -> guardFleetIds;
+                    case BOSS -> List.of(bossFleetId);
+                };
+                return new ChartContent(tier, plan.faction().factionId(), objective, targets, bossFleetId, bossType, fleets.size(), placedPois(), anomalies);
+            }
+            String protectedId = skirmishStation != null ? skirmishStation.getId() : defenderBossId;
+            ChartObjective objective = commanderId != null ? ChartObjective.BOSS : attackerFleetIds.isEmpty() ? null : ChartObjective.CLEAR;
+            List<String> targets = commanderId != null ? List.of(commanderId) : attackerFleetIds;
+            return new ChartContent(tier, plan.faction().factionId(), objective, objective == null ? List.of() : targets, commanderId,
+                    ChartBossType.FLEET, fleets.size(), placedPois(), anomalies, protectedId);
+        }
+
+        private int placedPois() {
             int placedPois = 0;
             for (SectorEntityToken entity : poiEntities) {
                 if (entity != null) {
                     placedPois++;
                 }
             }
-            return new ChartContent(tier, plan.faction().factionId(), objective, targets, bossFleetId, bossType, fleets.size(), placedPois, anomalies);
+            return placedPois;
         }
 
         void removeEverything() {
