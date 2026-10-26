@@ -8,6 +8,7 @@ import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import exiledlib.skills.skilleffect.CombatQueries;
 import exiledlib.skills.skilleffect.CsvIdList;
+import exiledlib.skills.skilleffect.HitDamageRestorer;
 import exiledlib.skills.skilleffect.ShipCombatListener;
 import exiledlib.skills.skilleffect.weapon.BallisticAsEnergy;
 import org.lwjgl.util.vector.Vector2f;
@@ -44,7 +45,7 @@ final class EnergyChainListener extends ShipCombatListener implements DamageDeal
         }
         ChainLink link = ChainLink.of(projectile, ownerShip);
         if (link.dealtMult() < 1f) {
-            ChainHitDamageRestorer.reduceForThisHit(damage, link.dealtMult(), hitShip);
+            HitDamageRestorer.reduceForThisHit(damage, link.dealtMult(), hitShip);
         }
         if (shieldHit && CombatQueries.isHostile(ownerShip, hitShip)) {
             tryChain(projectile.getWeapon(), hitShip, point, link);

@@ -92,6 +92,7 @@ final class SplitBeamDrones {
             return null;
         }
         SplitDrone split = new SplitDrone(key, droneShip, shareListener);
+        split.markSourceMount(weapon);
         WeaponDroneStats.mirrorTimeMult(firingShip.getMutableStats(), droneShip.getMutableStats());
         split.droneShip.addListener(split);
         return split;

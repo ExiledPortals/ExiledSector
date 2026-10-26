@@ -43,6 +43,7 @@ abstract class SingleShotDrones<D extends SingleShotDrone> {
                 continue;
             }
             if (drone.weaponId().equals(weaponId)) {
+                drone.markSourceMount(weapon);
                 return drone;
             }
             if (longestIdle == null || drone.idleSeconds() > longestIdle.idleSeconds()) {
@@ -65,6 +66,7 @@ abstract class SingleShotDrones<D extends SingleShotDrone> {
             return null;
         }
         drones.add(created);
+        created.markSourceMount(weapon);
         return created;
     }
 }

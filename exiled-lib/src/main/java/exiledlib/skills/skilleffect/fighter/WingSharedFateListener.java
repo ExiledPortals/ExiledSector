@@ -16,6 +16,7 @@ import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
 import com.fs.starfarer.api.combat.listeners.DamageListener;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import exiledlib.skills.skilleffect.CombatQueries;
+import exiledlib.skills.skilleffect.HitDamageRestorer;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -42,8 +43,6 @@ final class WingSharedFateListener implements DamageTakenModifier, DamageListene
     private float pendingRatio;
     private float pendingKeptFraction;
     private boolean sharePending;
-    private DamageAPI empScaledDamage;
-    private float unscaledEmp;
 
     WingSharedFateListener(ShipAPI fighter, ShipAPI carrier) {
         this.fighter = fighter;
@@ -69,7 +68,6 @@ final class WingSharedFateListener implements DamageTakenModifier, DamageListene
 
     @Override
     public String modifyDamageTaken(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-        restoreEmp();
         sharePending = false;
         recipients.clear();
         float sharedPercent = FighterListenerEffect.carrierValue(carrier, SHARED_PERCENT_KEY);
@@ -83,9 +81,7 @@ final class WingSharedFateListener implements DamageTakenModifier, DamageListene
         }
         damage.getModifier().modifyMult(SHARE_MOD_ID, split.keptFraction());
         if (!shieldHit && damage.getFluxComponent() > 0f) {
-            empScaledDamage = damage;
-            unscaledEmp = damage.getFluxComponent();
-            damage.setFluxComponent(unscaledEmp / split.keptFraction());
+            HitDamageRestorer.scaleEmpForThisHit(damage, 1f / split.keptFraction(), target);
         }
         pendingParam = param;
         pendingRatio = split.perWingmateRatio();
@@ -104,7 +100,6 @@ final class WingSharedFateListener implements DamageTakenModifier, DamageListene
             return;
         }
         sharePending = false;
-        restoreEmp();
         if (fighter.getParamAboutToApplyDamage() == pendingParam) {
             CombatEngineAPI engine = Global.getCombatEngine();
             shareFlux(result.getDamageToShields(), engine);
@@ -112,13 +107,6 @@ final class WingSharedFateListener implements DamageTakenModifier, DamageListene
         }
         recipients.clear();
         pendingParam = null;
-    }
-
-    private void restoreEmp() {
-        if (empScaledDamage != null) {
-            empScaledDamage.setFluxComponent(unscaledEmp);
-            empScaledDamage = null;
-        }
     }
 
     private void collectRecipients(CombatEngineAPI engine, boolean shieldHit) {

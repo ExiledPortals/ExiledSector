@@ -21,6 +21,7 @@ import com.fs.starfarer.api.loading.ProjectileSpecAPI;
 import com.fs.starfarer.api.loading.ProjectileWeaponSpecAPI;
 import com.fs.starfarer.api.loading.WeaponGroupSpec;
 import com.fs.starfarer.api.loading.WeaponGroupType;
+import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import exiledlib.HostMod;
 import exiledlib.skills.skilleffect.CsvIdList;
 import exiledlib.skills.skilleffect.special.SeraphimListener;
@@ -36,6 +37,7 @@ import java.util.function.Predicate;
 
 final class WeaponDroneFactory {
 
+    static final String SOURCE_MOUNT_KEY = "exiledLib_droneSourceMount";
     private static final String HULL_NAME = "split_beam_drone";
 
     static final float SINGLE_SHOT_REFIRE_DELAY = 60f;
@@ -84,6 +86,12 @@ final class WeaponDroneFactory {
 
     private static boolean canMountOnDrone(WeaponAPI weapon) {
         return SLOT_IDS.containsKey(weapon.getSize()) && Global.getSettings().getHullSpec(hullId()) != null;
+    }
+
+    static WeaponSlotAPI mountOf(WeaponAPI weapon) {
+        ShipAPI ship = weapon.getShip();
+        Object sourceMount = ship == null ? null : ship.getCustomData().get(SOURCE_MOUNT_KEY);
+        return sourceMount instanceof WeaponSlotAPI mount ? mount : weapon.getSlot();
     }
 
     static String hullId() {

@@ -23,7 +23,7 @@ A unique must do something no rolled modifier can. It changes how a build works 
 Each stage builds, tests and gets committed on its own. A framework stage adds the mechanic and its effects with no items. An item stage adds data and art.
 
 1. [x] Weapon slot conversion: generalise `HybridBallisticSlots` into ordered rules, make Dual-Feed Mounts one of them, add the slot effects the faction items need, and show a conflict in the ship summary. Built: `WeaponSlotConversion` (formerly `HybridBallisticSlots`) syncs a variant's hull spec copy to an ordered rule list, recording each slot's original type in a tag; `SlotConversionBacking` gives `BALLISTIC_SLOTS_HYBRID`, `ENERGY_SLOTS_BALLISTIC`, `BALLISTIC_SLOTS_ENERGY`, `MISSILE_SLOTS_ENERGY` and `SMALL_SLOTS_UNIVERSAL` their rules; `SkillTreeHullMod.syncSlotConversions` collects them from tree nodes and hull items alike; `UnfitWeapons` now checks every slot type; `ShipTreeSummaryRenderer` names conflicting mount types (`summary.slotConflict`). Superposition Mounts' extra OP cost for small weapons is left for its item stage. Tests in `WeaponSlotConversionTest`, `SkillTreeHullModSlotConversionTest` and `UnfitWeaponsTest`.
-2. [ ] Damage conversion, with its effects (EMP as a target included).
+2. [x] Damage conversion, with its effects (EMP as a target included). Built: every conversion is 100% and bound to a kind of mount. `DamageConversion` holds the bindings, `DamageConversionListener` changes each hit's type or moves its damage into EMP through `HitDamageRestorer` (formerly `ChainHitDamageRestorer`, now shared by energy chains and Wing Shared Fate). Drones record the mount of the weapon they copy (`WeaponDroneFactory.mountOf`), and Beam Split cuts simulated hits from the original damage. Effects: `BALLISTIC_HARDPOINT_KINETIC_TO_HIGH_EXPLOSIVE`, `ENERGY_TURRET_BEAM_ENERGY_TO_HIGH_EXPLOSIVE` and `SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP`. Tests in `DamageConversionTest`, `DamageConversionListenerTest`, `HitDamageRestorerTest` and `WingSharedFateListenerTest`.
 3. [ ] Shield damage as soft flux, with its effects and the hull item eligibility check that keeps the Hardlight Veil and Shield Shunt apart.
 4. [ ] Item doubling, including the Tuning Nanoswarm reroll of its target.
 5. [ ] Mod-gated items: a `requires_mod` column (or per-mod files) for hull items and subroutines, honouring the mod's area switch, with editor support.
@@ -39,20 +39,9 @@ Each family is built once as framework and then used by several items.
 
 ### Damage conversion
 
-These rules are adapted from Grim Dawn:
+Every conversion turns 100% of the matching damage into another type, and is bound to a kind of mount: mount type, size, and hardpoint or turret. The mount type is read after slot conversion, so slot items can feed conversion items. When two owned conversions match one mount, the first applies. A full conversion changes the hit's type, so it stays one hit with full armour penetration. A conversion to EMP moves all of the hit's damage into EMP, so those weapons do nothing to shields. EMP is never converted from.
 
-- A conversion turns a share of one damage type into another. The types are kinetic, high explosive, fragmentation and energy. EMP can be converted to, but never from.
-- A local conversion, limited to one weapon type such as "ballistic weapons", applies first. A global conversion ("all weapons") then applies to whatever is left.
-- Damage converts only once. Converted damage is never converted again, so conversions never chain.
-- When the conversions from one type add up to more than 100%, they are scaled down in proportion so that they total 100%.
-- Weapon bonuses apply before conversion and carry over, because they belong to the weapon, not the damage type. The target's damage taken modifiers apply per resulting type, so converted damage uses the new type's modifiers.
-Implementation: conversions use a `DamageDealtModifier` on the firing ship.
-- A full (100%) conversion calls `DamageAPI.setType`.
-- A partial conversion keeps the original type at reduced damage and applies one extra hit of the new type at the same point. That extra hit is flagged, so it never converts again and never triggers on-hit effects a second time.
-- Beam damage objects persist for the whole firing, so beams are reduced only through `getModifier().modifyMult` with a returned id, never through `setDamage`.
-- Check the ordering against energy chains, pierce and Disintegration before building.
-
-Line wording: "30% of kinetic damage from ballistic weapons is converted to high explosive damage".
+Line wording: "Kinetic damage from weapons in ballistic hardpoints is converted to high explosive damage".
 
 ### Weapon slot conversion
 
@@ -80,7 +69,7 @@ The nodes allocated in the subroutine's radius apply only while a combat conditi
 
 | Item | Section | Effect | Family |
 |---|---|---|---|
-| Fafnir Osmium Shell Stock | weapon_mount | 40% of kinetic damage from ballistic weapons is converted to high explosive damage | conversion |
+| Fafnir Osmium Shell Stock | weapon_mount | Kinetic damage from weapons in ballistic hardpoints is converted to high explosive damage | conversion |
 | Black Hawk Breech Refit | weapon_mount | Energy slots become ballistic slots | slot |
 | Low Arc Shield Emitter Core | shield_generator | All shield damage taken is converted to soft flux; shield arc is fixed and can't be modified | soft flux |
 | Farige Blueprint Vault | bridge | +3 to the root's affinity for each s-mod on the ship | affinity |
@@ -95,7 +84,7 @@ The Fafnir is Tania's osmium-shell "Spear of Carina". The emitter core is Tania'
 | Helical Drive Coils (kept) | engine_room | Increased zero-flux speed; the zero-flux boost stays on while the ship system is ready | |
 | Chroma Reactor Tap (kept) | reactor | Increased flux capacity; reduced energy weapon flux cost; reduced ship system cooldown | |
 | Project Aria Retrofit | weapon_mount | Ballistic slots become energy slots | slot |
-| Ion Discharge Coils | weapon_mount | 25% of all weapon damage is converted to EMP damage | conversion |
+| Ion Discharge Coils | weapon_mount | All damage from weapons in small energy mounts is converted to EMP damage | conversion |
 | Hardlight Veil Projectors | shield_generator | While shields are down, 30% of armor and hull damage taken is converted to soft flux; can't be used with Shield Shunt | soft flux |
 | Extended Warranty Contract | bridge | Doubles the modifiers of the hull item in its target section | doubling |
 | Nightcross Doctrine Archive (kept, subroutine) | | Adds energy rate of fire, energy flux cost, vent rate, EMP damage taken and fighter damage modifiers to nodes in radius | |
@@ -108,7 +97,7 @@ The Hardlight Veil and Shield Shunt exclude each other, whether the shunt is the
 
 | Item | Section | Effect | Family |
 |---|---|---|---|
-| Corrosion Lens Filter | weapon_mount | 50% of energy damage from beam weapons is converted to high explosive damage | conversion |
+| Corrosion Lens Filter | weapon_mount | Energy damage from beam weapons in energy turrets is converted to high explosive damage | conversion |
 | Cosmic Shunt Array | shield_generator | 30% of shield damage taken is passed as soft flux to the nearest allied ship within range | soft flux |
 | Absence of Light | reactor | Your lowest affinity counts as equal to your highest | affinity |
 | Empty Shell Axion (subroutine) | | Nodes in radius can't be allocated; each grants +1 to every affinity instead | affinity |
@@ -179,7 +168,7 @@ These need:
 - Affinity hull items: should they stay seven single-line uniques, or share items? Should they also roll as explicit modifiers on rare bases?
 - Gated subroutines: is triple strength right? Should each condition get one subroutine, or should one subroutine roll its condition?
 
-Decided: EMP is a conversion target, never a source. Faction uniques drop from the general pool at their normal weight, and at double weight from their faction's battles (groundwork step 1).
+Decided: EMP is a conversion target, never a source, and every conversion is 100% and bound to a kind of mount. Faction uniques drop from the general pool at their normal weight, and at double weight from their faction's battles (groundwork step 1).
 
 ## Bind the vanilla uniques to their factions (built)
 

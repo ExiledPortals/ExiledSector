@@ -1,11 +1,13 @@
 package exiledlib.skills.skilleffect;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.combat.listeners.CombatListenerManagerAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
@@ -55,7 +57,9 @@ public final class SkillEffectSupport {
     }
 
     public static <T> T existingEngineListener(Class<T> listenerType) {
-        List<T> existing = Global.getCombatEngine().getListenerManager().getListeners(listenerType);
+        CombatEngineAPI engine = Global.getCombatEngine();
+        CombatListenerManagerAPI manager = engine == null ? null : engine.getListenerManager();
+        List<T> existing = manager == null ? List.of() : manager.getListeners(listenerType);
         return existing.isEmpty() ? null : existing.get(0);
     }
 

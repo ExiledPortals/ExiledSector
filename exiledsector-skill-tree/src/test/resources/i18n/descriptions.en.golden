@@ -64,6 +64,12 @@ effect|BALLISTIC_COUNTS_AS_ENERGY|12.5	0	Ballistic weapons also gain this ship's
 effect|BALLISTIC_COUNTS_AS_ENERGY|100.0	0	Ballistic weapons also gain this ship's energy weapon modifiers.
 effect|BALLISTIC_COUNTS_AS_ENERGY|-10.0	0	Ballistic weapons also gain this ship's energy weapon modifiers.
 effect|BALLISTIC_COUNTS_AS_ENERGY|-12.5	0	Ballistic weapons also gain this ship's energy weapon modifiers.
+effect|BALLISTIC_HARDPOINT_KINETIC_TO_HIGH_EXPLOSIVE|1.0	0	Kinetic damage from weapons in ballistic hardpoints is converted to high explosive damage.
+effect|BALLISTIC_HARDPOINT_KINETIC_TO_HIGH_EXPLOSIVE|10.0	0	Kinetic damage from weapons in ballistic hardpoints is converted to high explosive damage.
+effect|BALLISTIC_HARDPOINT_KINETIC_TO_HIGH_EXPLOSIVE|12.5	0	Kinetic damage from weapons in ballistic hardpoints is converted to high explosive damage.
+effect|BALLISTIC_HARDPOINT_KINETIC_TO_HIGH_EXPLOSIVE|100.0	0	Kinetic damage from weapons in ballistic hardpoints is converted to high explosive damage.
+effect|BALLISTIC_HARDPOINT_KINETIC_TO_HIGH_EXPLOSIVE|-10.0	0	Kinetic damage from weapons in ballistic hardpoints is converted to high explosive damage.
+effect|BALLISTIC_HARDPOINT_KINETIC_TO_HIGH_EXPLOSIVE|-12.5	0	Kinetic damage from weapons in ballistic hardpoints is converted to high explosive damage.
 effect|BALLISTIC_SLOTS_ENERGY|1.0	0	Ballistic weapon mounts become energy mounts.
 effect|BALLISTIC_SLOTS_ENERGY|10.0	0	Ballistic weapon mounts become energy mounts.
 effect|BALLISTIC_SLOTS_ENERGY|12.5	0	Ballistic weapon mounts become energy mounts.
@@ -634,6 +640,12 @@ effect|ENERGY_SLOTS_BALLISTIC|12.5	0	Energy weapon mounts become ballistic mount
 effect|ENERGY_SLOTS_BALLISTIC|100.0	0	Energy weapon mounts become ballistic mounts.
 effect|ENERGY_SLOTS_BALLISTIC|-10.0	0	Energy weapon mounts become ballistic mounts.
 effect|ENERGY_SLOTS_BALLISTIC|-12.5	0	Energy weapon mounts become ballistic mounts.
+effect|ENERGY_TURRET_BEAM_ENERGY_TO_HIGH_EXPLOSIVE|1.0	0	Energy damage from beam weapons in energy turrets is converted to high explosive damage.
+effect|ENERGY_TURRET_BEAM_ENERGY_TO_HIGH_EXPLOSIVE|10.0	0	Energy damage from beam weapons in energy turrets is converted to high explosive damage.
+effect|ENERGY_TURRET_BEAM_ENERGY_TO_HIGH_EXPLOSIVE|12.5	0	Energy damage from beam weapons in energy turrets is converted to high explosive damage.
+effect|ENERGY_TURRET_BEAM_ENERGY_TO_HIGH_EXPLOSIVE|100.0	0	Energy damage from beam weapons in energy turrets is converted to high explosive damage.
+effect|ENERGY_TURRET_BEAM_ENERGY_TO_HIGH_EXPLOSIVE|-10.0	0	Energy damage from beam weapons in energy turrets is converted to high explosive damage.
+effect|ENERGY_TURRET_BEAM_ENERGY_TO_HIGH_EXPLOSIVE|-12.5	0	Energy damage from beam weapons in energy turrets is converted to high explosive damage.
 effect|ENERGY_WEAPON_AMMO_FLAT|1.0	0	<good>+1</good> to energy weapon ammo capacity.
 effect|ENERGY_WEAPON_AMMO_FLAT|10.0	0	<good>+10</good> to energy weapon ammo capacity.
 effect|ENERGY_WEAPON_AMMO_FLAT|12.5	0	<good>+12.5</good> to energy weapon ammo capacity.
@@ -1930,6 +1942,12 @@ effect|SHIP_RECOVERY_CHANCE_BONUS|12.5	0	If disabled, this ship is almost always
 effect|SHIP_RECOVERY_CHANCE_BONUS|100.0	0	If disabled, this ship is almost always recoverable after the battle.
 effect|SHIP_RECOVERY_CHANCE_BONUS|-10.0	0	If disabled, this ship is almost always recoverable after the battle.
 effect|SHIP_RECOVERY_CHANCE_BONUS|-12.5	0	If disabled, this ship is almost always recoverable after the battle.
+effect|SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP|1.0	0	All damage from weapons in small energy mounts is converted to EMP damage.
+effect|SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP|10.0	0	All damage from weapons in small energy mounts is converted to EMP damage.
+effect|SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP|12.5	0	All damage from weapons in small energy mounts is converted to EMP damage.
+effect|SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP|100.0	0	All damage from weapons in small energy mounts is converted to EMP damage.
+effect|SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP|-10.0	0	All damage from weapons in small energy mounts is converted to EMP damage.
+effect|SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP|-12.5	0	All damage from weapons in small energy mounts is converted to EMP damage.
 effect|SMALL_SLOTS_UNIVERSAL|1.0	0	Small weapon mounts become universal mounts.
 effect|SMALL_SLOTS_UNIVERSAL|10.0	0	Small weapon mounts become universal mounts.
 effect|SMALL_SLOTS_UNIVERSAL|12.5	0	Small weapon mounts become universal mounts.

@@ -29,6 +29,10 @@ abstract class WeaponDroneShell implements AdvanceableListener {
         return built;
     }
 
+    void markSourceMount(WeaponAPI weapon) {
+        droneShip.setCustomData(WeaponDroneFactory.SOURCE_MOUNT_KEY, WeaponDroneFactory.mountOf(weapon));
+    }
+
     abstract ShipAPI firingShip();
 
     abstract void advanceState(float amount);

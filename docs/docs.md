@@ -88,6 +88,17 @@ time hull mods apply; slots swap back once their rule is gone, and `UnfitWeapons
 to cargo. After a tree edit, `ShipEditSession` swaps the refit screen's own variant at once and `RefitShipDisplay`
 rebuilds its slot buttons. The ship summary names mount types that more than one rule wants to change.
 
+## Damage conversion
+
+Conversion effects (`DamageConversion`, read by `DamageConversionListener`) turn all damage from weapons in one kind of
+mount into another type: mount type (after slot conversion), size and hardpoint or turret. The first owned conversion
+matching a mount applies. Shots from weapon drones use the mount of the weapon they copy. Beams read their original
+type from the weapon each tick, since their damage object lasts the whole firing.
+
+A conversion to EMP moves the hit's whole damage into EMP. `HitDamageRestorer` makes the change and restores the hit
+once it lands; energy chains and Wing Shared Fate use the same restorer, so their changes stack on one hit, and Beam
+Split cuts its simulated hits from the original damage.
+
 ## Rise From the Ashes
 
 `RiseFromTheAshesListener` cancels the first hull hit that would kill the ship, sets its hull to a share of

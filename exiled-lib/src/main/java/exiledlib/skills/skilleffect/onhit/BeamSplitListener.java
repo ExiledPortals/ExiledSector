@@ -10,6 +10,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.DamageDealtModifier;
 import exiledlib.skills.skilleffect.CombatQueries;
+import exiledlib.skills.skilleffect.HitDamageRestorer;
 import exiledlib.skills.skilleffect.ShipCombatListener;
 import org.lazywizard.lazylib.MathUtils;
 import org.lazywizard.lazylib.VectorUtils;
@@ -94,7 +95,7 @@ final class BeamSplitListener extends ShipCombatListener implements DamageDealtM
     }
 
     private void simulateSplit(BeamAPI beam, DamageAPI damage, Vector2f point, List<ShipAPI> splitTargets, float share) {
-        float perTargetDamage = CombatQueries.hitDamage(damage) * share;
+        float perTargetDamage = HitDamageRestorer.originalHitDamage(damage) * share;
         float perTargetEmp = perTargetDamage * empToDamageRatio(beam.getWeapon());
         CombatEngineAPI engine = Global.getCombatEngine();
         processingSplit = true;

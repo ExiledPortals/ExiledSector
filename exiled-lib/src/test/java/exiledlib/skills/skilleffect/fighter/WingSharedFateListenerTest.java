@@ -15,6 +15,8 @@ import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipSystemAPI;
 import com.fs.starfarer.api.combat.listeners.ApplyDamageResultAPI;
+import com.fs.starfarer.api.combat.listeners.CombatListenerManagerAPI;
+import com.fs.starfarer.api.combat.listeners.DamageListener;
 import com.fs.starfarer.api.combat.listeners.DamageTakenModifier;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
@@ -478,17 +480,24 @@ class WingSharedFateListenerTest {
     }
 
     @Test
-    void empIsLeftWholeOnTheStruckFighterAndRestoredAfterTheHit() {
-        ShipAPI hit = fighter(300f);
-        wingOf(hit, fighter(300f));
-        Hit empHit = new Hit(attachedTo(hit, 100f), hit, new Object());
-        when(empHit.damage().getFluxComponent()).thenReturn(60f);
+    void empIsLeftWholeOnTheStruckFighterAndRestoredByTheSharedRestorerAfterTheHit() {
+        try (MockedStatic<Global> global = Mockito.mockStatic(Global.class)) {
+            CombatListenerManagerAPI listeners = mock(CombatListenerManagerAPI.class);
+            when(engineWithEverythingInPlay(global).getListenerManager()).thenReturn(listeners);
+            ShipAPI hit = fighter(300f);
+            wingOf(hit, fighter(300f));
+            Hit empHit = new Hit(attachedTo(hit, 100f), hit, new Object());
+            when(empHit.damage().getFluxComponent()).thenReturn(60f);
 
-        empHit.lands(0f, 30f);
+            empHit.lands(0f, 30f);
+            ArgumentCaptor<Object> restorer = ArgumentCaptor.forClass(Object.class);
+            verify(listeners).addListener(restorer.capture());
+            ((DamageListener) restorer.getValue()).reportDamageApplied(null, hit, null);
 
-        InOrder order = inOrder(empHit.damage());
-        order.verify(empHit.damage()).setFluxComponent(about(120f, 0.001f));
-        order.verify(empHit.damage()).setFluxComponent(about(60f, 0.001f));
+            InOrder order = inOrder(empHit.damage());
+            order.verify(empHit.damage()).setFluxComponent(about(120f, 0.001f));
+            order.verify(empHit.damage()).setFluxComponent(about(60f, 0.001f));
+        }
     }
 
     @Test
