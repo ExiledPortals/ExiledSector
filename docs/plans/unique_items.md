@@ -1,6 +1,6 @@
 # Unique hull items and subroutines
 
-Nothing here is built. This plan adds unique hull items and subroutines for the modded factions that have tree volumes (the Navarchy of Tania, Nightcross, Stargazer, the RAT Abyss and ExoTech), plus affinity items that work for any faction.
+Only groundwork step 1 is built. This plan adds unique hull items and subroutines for the modded factions that have tree volumes (the Navarchy of Tania, Nightcross, Stargazer, the RAT Abyss and ExoTech), plus affinity items that work for any faction.
 
 A unique must do something no rolled modifier can. It changes how a build works (converting damage, reshaping weapon slots, rerouting flux, bending affinity, gating tree nodes) instead of bundling stats that rare items already roll. A unique may carry at most one plain supporting stat. The existing vanilla-themed uniques are older than this rule. Names are working names and all magnitudes are placeholders.
 
@@ -14,7 +14,7 @@ A unique must do something no rolled modifier can. It changes how a build works 
 
 ## Groundwork
 
-1. Add a `source` column to `hull_items.csv`, using the same `faction:` and `site:` syntax as subroutines (`UniqueSource`). `BattleItemDrops` already asks for `pickUniqueFrom(FACTION, battle.uniqueFactionId())`, and an empty list still means "drops anywhere". The editor serialiser must learn the column. By default each faction item drops from that faction's fleets.
+1. [x] Add a `source` column to `hull_items.csv`, using the same `faction:` and `site:` syntax as subroutines (`UniqueSource`). `BattleItemDrops` already asks for `pickUniqueFrom(FACTION, battle.uniqueFactionId())`, and an empty list still means "drops anywhere". The editor serialiser must learn the column. By default each faction item drops from that faction's fleets. Built: `HullItem.parseDefinition` reads the column into `ItemDefinition.uniqueSources`; `HullItemDataRules` reports bad sources (shared `ItemDataIntegrity.checkUniqueSources`, also used by subroutines) and warns on a source on a common item; the editor's hull item panel has a Drop source field, validated and written like subroutines (the column is added to older files only once used). Tests in `BattleItemDropsTest`, `ItemDataIntegrityTest` and the editor's `models.test.ts`.
 2. Faction ids are `navarchy_of_tania`, `nightcross`, `stargazer` and `rat_exotech`. The Abyss is `rat_abyssals` plus its biome factions (`rat_abyssals_deep`, `_harmony`, `_primordials`, `_serenity`, `_solitude`, `_wastes`), but not `rat_abyssals_sim`.
 3. Give unique subroutines an optional radius, as Doctrine Archives have. The gated subroutines and Empty Shell Axion need it.
 
@@ -165,3 +165,32 @@ These need:
 - Damage conversion: should EMP count as a conversion target at all, or only the four damage types?
 - Gated subroutines: is triple strength right? Should each condition get one subroutine, or should one subroutine roll its condition?
 - Should faction uniques also drop from the general pool at a lower weight?
+
+## Bind the vanilla uniques to their factions
+
+Fill the `source` column (groundwork step 1) for the existing vanilla-themed unique hull items, so each one drops only from the faction it names. The factions come from the vanilla market files in `data/campaign/econ/` and the item descriptions.
+
+| Item | Source |
+|---|---|
+| Coatl Bastion Gunnery Team | `faction:hegemony` |
+| COMSEC Signals Detachment | `faction:hegemony` |
+| Auxiliary Conscripts | `faction:hegemony` |
+| Tri-Tachyon Morale Assurance Officer | `faction:tritachyon` |
+| Sindrian Fuel Company Engineers | `faction:sindrian_diktat` |
+| Gryphon Missile Crew | `faction:persean` |
+| Olinadu Security Detachment | `faction:persean` |
+| Asher Salvage Guild Crew | `faction:luddic_church` |
+| Converted Hangar Deck Crew | `faction:luddic_church` |
+| Pather Cell | `faction:luddic_path` |
+| Back-Alley Cyber-Surgeon | `faction:pirates` |
+| Kanta's Den Scrapdogs | `faction:pirates` |
+| Deserter Gunners | `faction:pirates` |
+| Salvager Crew | `faction:independent` |
+| Ko Combine Shipbreakers | `faction:independent` |
+| Galatia Hyperspace Physics Group | `faction:independent` |
+
+Some items stay unbound. Alpha Site Survivor, Vambrace Plating, the Gate Hauler Drive Coil and the Planetkiller Resonance Circuit are tied to a story event through `unlock`, not to a faction. The Nanoforge Seed, Synchrotron Cell and Fullerene Spool Integration name no faction.
+
+The unique subroutines keep their `site:` sources. The ones that name a faction also gain it as a second source: `faction:tritachyon` for the Halcyon Fire-Control Lattice, and `faction:pirates` for the Cracked Drive Governor. Battle drops only roll unique hull items today (`BattleItemDrops` filters on `HULL_ITEM`), so a faction source on a subroutine does nothing until battles can also roll unique subroutines.
+
+Check that every faction still drops at least one unique, and that `ItemUnlockTest` and the drop tests still pass.
