@@ -40,6 +40,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -521,4 +522,50 @@ class ChartContentGeneratorTest {
         }
     }
 
+
+    @Test
+    void aNeutronStarAlwaysHasAResearchStationOrbitingItsStar() {
+        ChartAnomalies.useForTests(List.of(ChartAnomaliesTest.definition("neutron_star")));
+        try {
+            ChartGenContext neutronStar = ChartGenContext.none().withAnomalies(List.of("neutron_star"));
+
+            ChartContent content = ChartContentGenerator.generate(sector, system, RUN_ID, 42L, 3, WORMHOLE, neutronStar);
+
+            assertEquals(List.of("neutron_star"), content.anomalies());
+            assertEquals(1, engine.salvageTypes.stream().filter("station_research"::equals).count());
+            SectorEntityToken station = engine.salvageEntities.get(engine.salvageTypes.indexOf("station_research"));
+            verify(station).setCircularOrbit(eq(star), anyFloat(), anyFloat(), anyFloat());
+            assertTrue(station.hasTag(ChartIds.runTag(RUN_ID)));
+        } finally {
+            ChartAnomalies.resetForTests();
+        }
+    }
+
+    @Test
+    void aFailingAnomalyTakesTheSitesItPlacedWithIt() {
+        ChartAnomaly placesThenFails = new ChartAnomaly() {
+            @Override
+            public String id() {
+                return SpatialBreach.ID;
+            }
+
+            @Override
+            public void generate(AnomalyContentSite site) {
+                site.addSite(ChartSites.pick(ChartPoi.Kind.CACHE, site.tier(), new Random(1L)), new ChartSites.Orbit(star, 0f, 5000f, 100f),
+                        new Random(2L));
+                throw new IllegalStateException("test failure");
+            }
+        };
+        ChartAnomalies.useForTests(List.of(placesThenFails), List.of(ChartAnomaliesTest.definition(SpatialBreach.ID)));
+        try {
+            ChartGenContext breach = ChartGenContext.none().withAnomalies(List.of(SpatialBreach.ID));
+
+            ChartContent content = ChartContentGenerator.generate(sector, system, RUN_ID, 42L, 10, WORMHOLE, breach);
+
+            assertEquals(List.of(), content.anomalies());
+            verify(system).removeEntity(engine.salvageEntities.get(engine.salvageEntities.size() - 1));
+        } finally {
+            ChartAnomalies.resetForTests();
+        }
+    }
 }

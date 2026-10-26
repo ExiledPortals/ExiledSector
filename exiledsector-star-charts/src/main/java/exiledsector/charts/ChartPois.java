@@ -81,6 +81,15 @@ public final class ChartPois {
         return pois;
     }
 
+    public static ChartPoi byId(String id) {
+        for (ChartPoi poi : pois) {
+            if (poi.id().equals(id)) {
+                return poi;
+            }
+        }
+        return null;
+    }
+
     static List<ChartPoi> lootAt(List<ChartPoi> candidates, int tier) {
         List<ChartPoi> eligible = new ArrayList<>();
         for (ChartPoi poi : candidates) {

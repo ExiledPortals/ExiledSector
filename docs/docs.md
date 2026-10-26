@@ -200,16 +200,19 @@ tier ranges), then each `CHART_<ANOMALY>_CHANCE` line rolled on its own chart se
 anomaly. Each id needs a `chart_anomalies.csv` row with its `requires_mod` loaded, and one that conflicts with an anomaly
 already taken (both replace the star, or `excludes`) is dropped. A star anomaly picks the star or system type, every
 anomaly's `shape` adds terrain after layout and its `generate` places entities after the sites and fleets (package
-`charts.anomaly`), and the run record keeps the ids that placed.
+`charts.anomaly`), and the run record keeps the ids that placed. An anomaly's `effects` lines join the run's context for
+generation and loot (`ChartGenContext.withAnomalyEffects`). `AnomalyContentSite.addSite` places chart POIs on clear
+orbits: derelicts around a black hole, a research station around a neutron star whatever the tier (`StarAnomalies`),
+and caches in an Asteroid Storm's belts.
 
 The Spatial Breach (`SpatialBreach`, `BreachTerrainPlugin`, numbers in `BreachRules`) is a terrain field fixed at its
 core that starts closed. Once the player fleet flies over the core it eases open to a tier-based maximum over 60
 seconds (faster with the growth modifier), then collapses over 60 seconds and removes itself, its core and its unlooted
-caches. Every 0.1 days fleets inside lose sensor range and burn level, and the player fleet also burns fuel while its
-ships use more supplies (`BreachSupplyBuff`), all stronger toward the core. Caches planned at creation form once the
-field reaches them and vanish once the collapse passes them, with item rarity raised by depth, and content sites it
-covers get a smaller rarity bonus (`StarChartLootSource.modifiersFor`). Closing the core early removes the field and
-its unlooted caches and drops salvage and items scaled by the largest size it reached (`BreachCoreDialog`).
+caches. Every 0.1 days the player fleet inside burns fuel and its ships use more supplies (`BreachSupplyBuff`), both
+stronger toward the core. Caches planned at creation form once the field reaches them and vanish once the collapse
+passes them, with item rarity raised by depth, and content sites it covers get a smaller rarity bonus
+(`StarChartLootSource.modifiersFor`). Closing the core early removes the field and its unlooted caches and drops
+salvage and items scaled by the largest size it reached (`BreachCoreDialog`).
 
 ## The atlas
 

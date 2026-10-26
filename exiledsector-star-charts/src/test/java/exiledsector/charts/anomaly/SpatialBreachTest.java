@@ -45,7 +45,7 @@ class SpatialBreachTest {
     }
 
     private AnomalyContentSite site(ChartGenContext context, Vector2f entry, Predicate<Vector2f> clear) {
-        return new AnomalyContentSite(system, "run1", 5, context, List.of(), entry, clear, Random::new);
+        return new AnomalyContentSite(system, "run1", 5, "pirates", context, List.of(), entry, spot -> clear.test(spot.position()), Random::new);
     }
 
     @Test

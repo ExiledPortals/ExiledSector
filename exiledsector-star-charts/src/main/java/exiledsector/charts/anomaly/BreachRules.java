@@ -16,8 +16,6 @@ public final class BreachRules {
     static final float TRIGGER_REACH = 150f;
     static final float MIN_GROWTH_MULT = 0.1f;
     static final float EDGE_INTENSITY = 0.25f;
-    static final float SENSOR_LOSS = 0.5f;
-    static final float BURN_LOSS = 0.5f;
     static final float SUPPLY_USE_PERCENT = 100f;
     static final float SUPPLY_USE_STEP = 5f;
     static final float FUEL_LIGHT_YEARS_PER_DAY = 0.5f;
@@ -93,14 +91,6 @@ public final class BreachRules {
         }
         float depth = 1f - Math.max(0f, distance) / radius;
         return EDGE_INTENSITY + (1f - EDGE_INTENSITY) * depth;
-    }
-
-    static float sensorMult(float intensity) {
-        return 1f - SENSOR_LOSS * intensity;
-    }
-
-    static float burnMult(float intensity) {
-        return 1f - BURN_LOSS * intensity;
     }
 
     static float supplyUsePercent(float intensity) {

@@ -36,7 +36,7 @@ public final class ChartAnomalies {
     private static volatile Map<String, Definition> definitions = Map.of();
 
     public record Definition(String id, float weight, int minTier, int maxTier, String requiredMod, String icon, boolean insertable,
-                             Set<String> excludes, boolean replacesStar) {
+                             Set<String> excludes, boolean replacesStar, List<ChartGenContext.AppliedEffect> effects) {
 
         public Definition {
             requiredMod = requiredMod == null ? "" : requiredMod;
@@ -44,6 +44,12 @@ public final class ChartAnomalies {
             weight = Math.max(0f, weight);
             excludes = excludes == null ? Set.of() : Set.copyOf(excludes);
             insertable = insertable && !replacesStar;
+            effects = effects == null ? List.of() : List.copyOf(effects);
+        }
+
+        public Definition(String id, float weight, int minTier, int maxTier, String requiredMod, String icon, boolean insertable,
+                          Set<String> excludes, boolean replacesStar) {
+            this(id, weight, minTier, maxTier, requiredMod, icon, insertable, excludes, replacesStar, List.of());
         }
 
         public boolean allowedAt(int tier) {
@@ -89,8 +95,17 @@ public final class ChartAnomalies {
                 excludes.add(excluded);
             }
         }
+        List<ChartGenContext.AppliedEffect> effects = new ArrayList<>();
+        csv.weights(row, "effects", id, null, true).forEach((name, value) -> {
+            ChartEffect effect = ChartEffect.byNameOrNull(name);
+            if (effect == null || effect.isChance()) {
+                csv.problem(id, "effects", name + (effect == null ? " (not a chart effect)" : " (an anomaly can't add anomalies)"));
+            } else {
+                effects.add(new ChartGenContext.AppliedEffect(effect, value));
+            }
+        });
         return new Definition(id, csv.number(row, "weight", 1f, id), tiers.minTier(), tiers.maxTier(), ModCsv.text(row, "requires_mod"),
-                ModCsv.text(row, "icon"), insertable, excludes, replacesStar);
+                ModCsv.text(row, "icon"), insertable, excludes, replacesStar, effects);
     }
 
     public static ChartAnomaly byId(String id) {
@@ -139,6 +154,17 @@ public final class ChartAnomalies {
 
     public static List<ChartAnomaly> anomaliesOf(Collection<String> ids) {
         return ids.stream().map(ChartAnomalies::byId).filter(Objects::nonNull).toList();
+    }
+
+    public static List<ChartGenContext.AppliedEffect> effectsOf(Collection<String> ids) {
+        List<ChartGenContext.AppliedEffect> effects = new ArrayList<>();
+        for (String id : ids) {
+            Definition definition = definition(id);
+            if (definition != null) {
+                effects.addAll(definition.effects());
+            }
+        }
+        return effects;
     }
 
     public static List<String> planned(long seed, int tier, ChartGenContext context) {

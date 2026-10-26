@@ -7,6 +7,7 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import exiledlib.MockSector;
+import exiledsector.charts.anomaly.MagneticStorm;
 import exiledsector.items.ItemData;
 import exiledsector.items.StarChart;
 import exiledsector.items.StarChartFixtures;
@@ -90,6 +91,21 @@ class ChartRunEffectsTest {
         assertEquals(0.5f, ChartRunEffects.contextOf(run).sensorRangeMult(), 0.001f);
         assertNull(ChartRunEffects.chartOf(new ChartRun("plain", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1)));
         assertTrue(ChartRunEffects.contextOf(new ChartRun("plain", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1)).isEmpty());
+    }
+
+    @Test
+    void theRunsAnomaliesAddTheirLootToItsContext() throws Exception {
+        ChartTables.loadAnomalies();
+        try {
+            ChartRun run = new ChartRun("storm", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+            assertEquals(0f, ChartRunEffects.contextOf(run).dropPercent(DropType.CURRENCY));
+
+            run.recordContent(new ChartContent(1, "pirates", null, List.of(), null, 0, 0, List.of(MagneticStorm.ID)));
+
+            assertTrue(ChartRunEffects.contextOf(run).dropPercent(DropType.CURRENCY) > 0f);
+        } finally {
+            ChartTables.resetAnomalies();
+        }
     }
 
     @Test

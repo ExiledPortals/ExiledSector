@@ -137,6 +137,10 @@ public enum ChartEffect implements ModifierEffect {
         return dropType;
     }
 
+    public boolean isChance() {
+        return chance;
+    }
+
     public boolean canRoll(SectorAPI sector) {
         return dropType == null || dropType.canDrop(sector);
     }

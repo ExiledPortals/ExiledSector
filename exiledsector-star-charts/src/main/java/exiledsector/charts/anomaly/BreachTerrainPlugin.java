@@ -9,7 +9,6 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ViewportAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.impl.campaign.terrain.BaseTerrain;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -36,11 +35,8 @@ public class BreachTerrainPlugin extends BaseTerrain {
 
     static final float TICK_DAYS = 0.1f;
     public static final String MOD_ID = SpatialBreach.TERRAIN_ID + "_stat_mod";
-    static final String SENSOR_MOD_ID = MOD_ID + "_sensor";
-    static final String BURN_MOD_ID = MOD_ID + "_burn";
     static final String SUPPLY_BUFF_ID = MOD_ID + "_supplies";
     static final float MOD_DAYS = TICK_DAYS * 2.5f;
-    static final float PERCENT = 100f;
     static final float RENDER_MARGIN = 500f;
     static final float TOOLTIP_PAD = 10f;
     static final float ANIMATION_WRAP_SECONDS = 3600f;
@@ -256,21 +252,15 @@ public class BreachTerrainPlugin extends BaseTerrain {
     }
 
     private void applyTo(CampaignFleetAPI fleet, float days) {
-        if (fleet == null || fleet.isStationMode() || fleet.getStats() == null || fleet.getLocation() == null) {
+        if (fleet == null || !fleet.isPlayerFleet() || fleet.getLocation() == null) {
             return;
         }
         float intensity = BreachRules.intensity(Misc.getDistance(entity.getLocation(), fleet.getLocation()) - fleet.getRadius(), radius);
         if (intensity <= 0f) {
             return;
         }
-        MutableFleetStatsAPI stats = fleet.getStats();
-        String source = getTerrainName();
-        stats.addTemporaryModMult(MOD_DAYS, SENSOR_MOD_ID, source, BreachRules.sensorMult(intensity), stats.getSensorRangeMod());
-        stats.addTemporaryModMult(MOD_DAYS, BURN_MOD_ID, source, BreachRules.burnMult(intensity), stats.getFleetwideMaxBurnMod());
-        if (fleet.isPlayerFleet()) {
-            raiseSupplyUse(fleet, intensity, source);
-            drainFuel(fleet, intensity, days);
-        }
+        raiseSupplyUse(fleet, intensity, getTerrainName());
+        drainFuel(fleet, intensity, days);
     }
 
     private static void raiseSupplyUse(CampaignFleetAPI fleet, float intensity, String source) {
@@ -330,20 +320,7 @@ public class BreachTerrainPlugin extends BaseTerrain {
     }
 
     public static void liftFrom(CampaignFleetAPI fleet) {
-        MutableFleetStatsAPI stats = fleet == null ? null : fleet.getStats();
-        if (stats == null) {
-            return;
-        }
-        for (String modId : List.of(SENSOR_MOD_ID, BURN_MOD_ID)) {
-            stats.removeTemporaryMod(modId);
-        }
-        if (stats.getSensorRangeMod() != null) {
-            stats.getSensorRangeMod().unmodify(SENSOR_MOD_ID);
-        }
-        if (stats.getFleetwideMaxBurnMod() != null) {
-            stats.getFleetwideMaxBurnMod().unmodify(BURN_MOD_ID);
-        }
-        if (fleet.getFleetData() == null) {
+        if (fleet == null || fleet.getFleetData() == null) {
             return;
         }
         for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
@@ -424,10 +401,6 @@ public class BreachTerrainPlugin extends BaseTerrain {
         Color text = Misc.getTextColor();
         tooltip.addTitle(getTerrainName());
         VanillaText.plainPara(tooltip, Translation.gameText("chart.breach.description"), TOOLTIP_PAD, text);
-        int sensorLoss = Math.round(BreachRules.SENSOR_LOSS * PERCENT);
-        int burnLoss = Math.round(BreachRules.BURN_LOSS * PERCENT);
-        VanillaText.addPara(tooltip, Translation.msg("chart.breach.effect.sensor").arg("value", sensorLoss).styled(), TOOLTIP_PAD, text);
-        VanillaText.addPara(tooltip, Translation.msg("chart.breach.effect.burn").arg("value", burnLoss).styled(), TOOLTIP_PAD, text);
         int supplyIncrease = Math.round(BreachRules.SUPPLY_USE_PERCENT);
         VanillaText.addPara(tooltip, Translation.msg("chart.breach.effect.supplies").arg("value", supplyIncrease).styled(), TOOLTIP_PAD, text);
         VanillaText.addPara(tooltip, Translation.msg("chart.breach.effect.fuel").styled(), TOOLTIP_PAD, text);

@@ -21,13 +21,15 @@ Combat readiness makes back-to-back fleet battles miserable, so each anomaly kee
 
 ## How an anomaly plugs in
 
-Each anomaly is one class behind `ChartAnomaly` (package `exiledsector.charts.anomaly`) and one row in `data/config/exiledSector/chart_anomalies.csv` (`id,weight,min_tier,max_tier,requires_mod,icon,intel,insertable,excludes,note`). The interface has optional hooks for three stages, and an anomaly implements only the ones it needs:
+Each anomaly is one class behind `ChartAnomaly` (package `exiledsector.charts.anomaly`) and one row in `data/config/exiledSector/chart_anomalies.csv` (`id,weight,min_tier,max_tier,requires_mod,icon,intel,insertable,excludes,effects,note`). The interface has optional hooks for three stages, and an anomaly implements only the ones it needs:
 
 1. Star: `primaryStar()` or `systemType()` replaces the star or the system type before layout (Black Hole, Neutron Star, Dense Nebula). These are locked to the atlas cell, never come from chart lines and can never be inserted.
 2. Shape: `shape(AnomalyLayoutSite)` adds terrain right after layout (Asteroid Storm, Magnetic Storm, Stellar Flares).
-3. Content: `generate(AnomalyContentSite)` places entities and fleets after the sites and fleets (Spatial Breach). Run state lives in `ChartRunState`, and `ChartRunCloser` removes it with the run tag, so the chart leaves no save trace.
+3. Content: `generate(AnomalyContentSite)` places entities and fleets after the sites and fleets (Spatial Breach, the Black Hole's derelicts, the Neutron Star's research station, the Asteroid Storm's belt caches). `AnomalyContentSite.addSite` places a `chart_poi.csv` site on a clear orbit with chart loot. Run state lives in `ChartRunState`, and `ChartRunCloser` removes it with the run tag, so the chart leaves no save trace.
 
 Atlas hooks have defaults: `atlasWeight` leans the node roll from the node's traits (Faction Skirmish prefers hostile borders), and `fitsAt` says whether the anomaly can exist at a node at all (Asteroid Stream needs Industrial Evolution). Rewards go through the loot framework (`ChartLoot`, `ChartRewards`) so chart loot modifiers apply to them.
+
+`effects` lists chart lines the anomaly adds to the run, such as a loot quantity bonus; chance lines are refused.
 
 `excludes` lists anomalies that must never share a system with this one, for pairs that would interact badly. It works in both directions, and two star anomalies always exclude each other. Wherever two conflicting anomalies meet, the one already there wins: the node's own roll before inserted ones, the atlas before chart lines, and within one roll the lowest hash.
 

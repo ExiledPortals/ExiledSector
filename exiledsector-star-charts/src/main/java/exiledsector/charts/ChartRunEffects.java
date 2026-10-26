@@ -7,6 +7,7 @@ import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.StarChart;
 
+import java.util.List;
 import java.util.Objects;
 
 public final class ChartRunEffects {
@@ -15,6 +16,7 @@ public final class ChartRunEffects {
     private static ChartRun contextRun;
     private static String contextChartData;
     private static String contextNodeData;
+    private static List<String> contextAnomalies;
     private static ChartGenContext context = ChartGenContext.none();
 
     private ChartRunEffects() {
@@ -33,11 +35,13 @@ public final class ChartRunEffects {
         if (run == null) {
             return ChartGenContext.none();
         }
-        if (run != contextRun || !Objects.equals(run.chartData(), contextChartData) || !Objects.equals(run.atlasNodeData(), contextNodeData)) {
-            context = ChartGenContext.from(chartOf(run)).withAtlasNode(run.atlasNode());
+        if (run != contextRun || !Objects.equals(run.chartData(), contextChartData) || !Objects.equals(run.atlasNodeData(), contextNodeData)
+                || !run.anomalyIds().equals(contextAnomalies)) {
+            context = ChartGenContext.from(chartOf(run)).withAtlasNode(run.atlasNode()).withAnomalyEffects(run.anomalyIds());
             contextRun = run;
             contextChartData = run.chartData();
             contextNodeData = run.atlasNodeData();
+            contextAnomalies = run.anomalyIds();
         }
         return context;
     }

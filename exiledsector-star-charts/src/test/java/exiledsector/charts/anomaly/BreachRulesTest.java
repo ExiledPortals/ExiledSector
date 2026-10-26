@@ -60,8 +60,6 @@ class BreachRulesTest {
         assertEquals(0f, BreachRules.intensity(1001f, 1000f));
         assertEquals(0f, BreachRules.intensity(10f, 0f));
         assertTrue(BreachRules.intensity(200f, 1000f) > BreachRules.intensity(800f, 1000f));
-        assertEquals(1f - BreachRules.SENSOR_LOSS, BreachRules.sensorMult(1f), 0.001f);
-        assertEquals(1f - BreachRules.BURN_LOSS, BreachRules.burnMult(1f), 0.001f);
     }
 
     @Test

@@ -1,6 +1,6 @@
 # Anomaly: Spatial Breach
 
-A tear into hyperspace opens somewhere in the system and grows each day. Inside, the fleet burns fuel, uses more supplies and sees less, but breach-touched caches form there that exist only while it's open. Reaching its core closes it for a large reward. There are no fights: the pressure is time and logistics.
+A tear into hyperspace opens somewhere in the system and grows each day. Inside, the fleet burns fuel and uses more supplies, but breach-touched caches form there that exist only while it's open. Reaching its core closes it for a large reward. There are no fights: the pressure is time and logistics.
 
 Status: built and tested 2026-10-23, commit bd01ea16 on parallel-work, ahead of the atlas (see `docs/plans/anomalies/overview.md` for what the framework still lacks). Not yet checked in game; the visuals especially need a look.
 
@@ -9,8 +9,9 @@ Status: built and tested 2026-10-23, commit bd01ea16 on parallel-work, ahead of 
 The breach is a custom terrain field that starts small and grows each day to a maximum radius, then stops. The chart itself still has no timer; the breach is the only thing that changes with time, and it never forces you out. Inside it:
 
 - fuel use is increased;
-- each ship in your fleet uses more supplies per day (changed from a CR drain on 2026-10-24: draining CR wasn't fun);
-- sensor range and burn level are reduced.
+- each ship in your fleet uses more supplies per day (changed from a CR drain on 2026-10-24: draining CR wasn't fun).
+
+Sensor range and burn level were reduced too until 2026-10-26, when they were dropped so the breach stays a logistics squeeze rather than a slog.
 
 All of these get stronger toward the core. Visuals borrow from vanilla hyperspace storms and abyssal hyperspace.
 
@@ -31,7 +32,7 @@ The single line is `CHART_BREACH_CHANCE` at 100. The three tuning lines only rol
 
 ## Build order
 
-1. [x] Breach terrain plugin with growth and the fuel, CR, sensor and burn effects (`BreachTerrainPlugin`, `BreachRules`). Sensor and burn apply to every fleet; the supply increase (a `BreachSupplyBuff` on each ship, refreshed each tick) and the fuel drain apply only to the player fleet.
+1. [x] Breach terrain plugin with growth and the fuel and supply effects (`BreachTerrainPlugin`, `BreachRules`). The supply increase (a `BreachSupplyBuff` on each ship, refreshed each tick) and the fuel drain apply only to the player fleet. The sensor and burn penalties were removed on 2026-10-26.
 2. [x] Breach cache spawning by depth and breach-touched POIs (`ChartSites.addCache`, rarity through `LootSource.modifiersFor`).
 3. [x] Core entity, closing, core reward (`BreachCoreDialog`, salvage from the station loot tables plus items from the `exiledSector_chart_breach_core` salvage rule).
 4. [x] Visuals (reworked 2026-10-24 on parallel-work, after RAT's Primordial Sea): the field is a pitch-black tear (`BreachFieldRenderer`, TERRAIN_1, under planets and fleets) with dark cracks from vanilla `emp_arcs` fading outward and a near-black aurora rim (the doctrine socket belt, `AuroraBeltRenderer.renderShaded`). The core is vanilla's black hole look: a black centre, a pink `star_halo` corona and a spinning `wormhole_ring`. The map still draws a tinted `fx_radial` glow. Later the black backdrop becomes the atlas hyperspace view, clipped to the tear. Not yet checked in game.

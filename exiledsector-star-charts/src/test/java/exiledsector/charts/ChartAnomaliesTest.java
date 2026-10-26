@@ -6,12 +6,14 @@ import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.anomaly.MagneticStorm;
 import exiledsector.charts.anomaly.SpatialBreach;
 import exiledsector.charts.anomaly.StarAnomalies;
+import exiledsector.charts.anomaly.StellarFlares;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -82,6 +84,44 @@ class ChartAnomaliesTest {
         assertTrue(breach.insertable());
         assertTrue(breach.allowedAt(ChartTiers.LOWEST_TIER) && breach.allowedAt(ChartTiers.HIGHEST_TIER));
         assertFalse(ChartAnomalies.definition("black_hole").insertable());
+        Set<DropType> lootKinds = new HashSet<>();
+        for (String id : List.of("dense_nebula", MagneticStorm.ID, StellarFlares.ID)) {
+            List<ChartGenContext.AppliedEffect> effects = ChartAnomalies.definition(id).effects();
+            assertEquals(1, effects.size(), id);
+            assertNotNull(effects.get(0).effect().dropType(), id);
+            lootKinds.add(effects.get(0).effect().dropType());
+        }
+        assertEquals(3, lootKinds.size());
+    }
+
+    @Test
+    void anAnomalysEffectsSkipUnknownLinesAndChanceLines() throws Exception {
+        List<String> problems = ChartAnomalies.register(new JSONArray().put(new JSONObject().put("id", MagneticStorm.ID)
+                .put("effects", "CHART_CURRENCY_PERCENT:20; CHART_BREACH_CHANCE:100; NOT_AN_EFFECT:5")));
+
+        assertEquals(2, problems.size());
+        assertEquals(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_CURRENCY_PERCENT, 20f)),
+                ChartAnomalies.definition(MagneticStorm.ID).effects());
+    }
+
+    @Test
+    void theRunsAnomaliesAddTheirEffectsToTheContextOnTopOfTheChart() {
+        ChartAnomalies.useForTests(List.of(
+                new ChartAnomalies.Definition(MagneticStorm.ID, 1f, 1, 15, "", "", false, Set.of(), false,
+                        List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_CURRENCY_PERCENT, 50f))),
+                new ChartAnomalies.Definition(StellarFlares.ID, 1f, 1, 15, "", "", false, Set.of(), false,
+                        List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_FEEDSTOCK_PERCENT, 30f))),
+                definition(AsteroidStorm.ID)));
+        ChartGenContext chart = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_CURRENCY_PERCENT, 20f)))
+                .withAnomalies(List.of(AsteroidStorm.ID));
+
+        ChartGenContext context = chart.withAnomalyEffects(List.of(MagneticStorm.ID, StellarFlares.ID, AsteroidStorm.ID));
+
+        assertEquals(70f, context.dropPercent(DropType.CURRENCY), 0.001f);
+        assertEquals(30f, context.dropPercent(DropType.FEEDSTOCK), 0.001f);
+        assertEquals(List.of(AsteroidStorm.ID), context.forcedAnomalies());
+        assertSame(chart, chart.withAnomalyEffects(List.of(AsteroidStorm.ID)));
+        assertSame(chart, chart.withAnomalyEffects(null));
     }
 
     @Test

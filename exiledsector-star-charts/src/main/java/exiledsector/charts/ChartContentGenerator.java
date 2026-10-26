@@ -100,8 +100,8 @@ public final class ChartContentGenerator {
             report("plan the content", seed, e);
             return ChartContent.none(clampedTier);
         }
-        Build build = new Build(system, runId, clampedTier, seed, innerWormhole, chartContext == null ? ChartGenContext.none() : chartContext,
-                featureAnchor);
+        Build build = new Build(system, runId, clampedTier, seed, innerWormhole,
+                (chartContext == null ? ChartGenContext.none() : chartContext).withAnomalyEffects(plan.anomalies()), featureAnchor);
         try {
             build.placePois(plan);
             build.spawnFleets(plan);
@@ -325,6 +325,7 @@ public final class ChartContentGenerator {
         private final List<String> guardFleetIds = new ArrayList<>();
         private final Set<SectorEntityToken> usedFoci = new LinkedHashSet<>();
         private final List<String> anomalies = new ArrayList<>();
+        private final List<SectorEntityToken> anomalySites = new ArrayList<>();
         private List<Hazard> hazards = List.of();
         private String bossFleetId;
         private ChartBossType bossType = ChartBossType.FLEET;
@@ -598,14 +599,18 @@ public final class ChartContentGenerator {
                 if (anomaly == null) {
                     continue;
                 }
+                AnomalyContentSite site = new AnomalyContentSite(system, runId, tier, plan.faction().factionId(), chartContext, poiEntities,
+                        innerWormhole, spot -> isClear(spot, hazards, innerWormhole, POI_WORMHOLE_CLEARANCE),
+                        salt -> ChartLayoutGenerator.derivedRandom(seed ^ ((long) anomalyId.hashCode() << 32), salt));
                 try {
-                    anomaly.generate(new AnomalyContentSite(system, runId, tier, chartContext, poiEntities, innerWormhole,
-                            point -> isClear(new ChartSpot(null, point, null, 1f), hazards, innerWormhole, POI_WORMHOLE_CLEARANCE),
-                            salt -> ChartLayoutGenerator.derivedRandom(seed ^ ((long) anomalyId.hashCode() << 32), salt)));
+                    anomaly.generate(site);
                     anomalies.add(anomalyId);
                 } catch (RuntimeException | LinkageError e) {
+                    site.placed().forEach(system::removeEntity);
                     report("generate the " + anomalyId + " anomaly", seed, e);
+                    continue;
                 }
+                anomalySites.addAll(site.placed());
             }
         }
 
@@ -633,7 +638,9 @@ public final class ChartContentGenerator {
                     LOG.debug("Removing a half-generated Star Chart fleet failed", e);
                 }
             }
-            for (SectorEntityToken entity : poiEntities) {
+            List<SectorEntityToken> sites = new ArrayList<>(poiEntities);
+            sites.addAll(anomalySites);
+            for (SectorEntityToken entity : sites) {
                 if (entity != null) {
                     try {
                         system.removeEntity(entity);
@@ -644,6 +651,7 @@ public final class ChartContentGenerator {
             }
             fleets.clear();
             poiEntities.clear();
+            anomalySites.clear();
         }
     }
 }

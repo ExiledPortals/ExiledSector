@@ -25,7 +25,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class OverlayPhenomenaTest {
+class ShapeAnomaliesTest {
 
     private final List<String> terrainAdded = new ArrayList<>();
     private StarSystemAPI system;
@@ -61,6 +61,16 @@ class OverlayPhenomenaTest {
         verify(system, times(AsteroidStorm.BELTS)).addAsteroidBelt(eq(star), anyInt(), anyFloat(), eq(AsteroidStorm.BELT_WIDTH), anyFloat(), anyFloat(),
                 eq(Terrain.ASTEROID_BELT), isNull());
         assertEquals(AsteroidStorm.FIELDS, terrainAdded.stream().filter(Terrain.ASTEROID_FIELD::equals).count());
+    }
+
+    @Test
+    void anAsteroidStormTagsItsBeltsSoItsCachesCanFindThem() {
+        SectorEntityToken belt = mock(SectorEntityToken.class);
+        when(system.addAsteroidBelt(eq(star), anyInt(), anyFloat(), anyFloat(), anyFloat(), anyFloat(), anyString(), isNull())).thenReturn(belt);
+
+        AsteroidStorm.INSTANCE.shape(site());
+
+        verify(belt, times(AsteroidStorm.BELTS)).addTag(AsteroidStorm.BELT_TAG);
     }
 
     @Test

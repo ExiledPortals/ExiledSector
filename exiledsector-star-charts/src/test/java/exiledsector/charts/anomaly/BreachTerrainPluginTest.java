@@ -32,7 +32,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -144,20 +143,16 @@ class BreachTerrainPluginTest {
     }
 
     @Test
-    void fleetsInsideLoseSensorRangeAndBurnLevelAndFleetsOutsideDoNot() {
+    void fleetsKeepTheirSensorRangeAndBurnLevelInside() {
         BreachTerrainPlugin plugin = breach(List.of());
-        CampaignFleetAPI inside = fleetAt(0f, 0f, false);
-        CampaignFleetAPI outside = fleetAt(5000f, 0f, false);
+        CampaignFleetAPI player = fleetAt(0f, 0f, true);
+        CampaignFleetAPI enemy = fleetAt(0f, 0f, false);
 
         plugin.elapse(60f);
         plugin.tick(BreachTerrainPlugin.TICK_DAYS);
 
-        String modId = plugin.getModId();
-        verify(inside.getStats()).addTemporaryModMult(eq(BreachTerrainPlugin.MOD_DAYS), eq(modId + "_sensor"), any(),
-                eq(BreachRules.sensorMult(1f)), ArgumentMatchers.<StatBonus>any());
-        verify(inside.getStats()).addTemporaryModMult(eq(BreachTerrainPlugin.MOD_DAYS), eq(modId + "_burn"), any(),
-                eq(BreachRules.burnMult(1f)), ArgumentMatchers.<StatBonus>any());
-        verify(outside.getStats(), never()).addTemporaryModMult(anyFloat(), anyString(), any(), anyFloat(), ArgumentMatchers.<StatBonus>any());
+        verify(player.getStats(), never()).addTemporaryModMult(anyFloat(), anyString(), any(), anyFloat(), ArgumentMatchers.<StatBonus>any());
+        verify(enemy.getStats(), never()).addTemporaryModMult(anyFloat(), anyString(), any(), anyFloat(), ArgumentMatchers.<StatBonus>any());
     }
 
     @Test
@@ -263,8 +258,6 @@ class BreachTerrainPluginTest {
         assertTrue(plugin.isClosed());
         verify(system).removeEntity(leftover);
         verify(system).removeEntity(terrainEntity);
-        verify(inside.getStats()).removeTemporaryMod(BreachTerrainPlugin.SENSOR_MOD_ID);
-        verify(inside.getStats()).removeTemporaryMod(BreachTerrainPlugin.BURN_MOD_ID);
         assertFalse(plugin.containsPoint(new Vector2f(), 10f));
         plugin.advance(1f);
         verify(inside.getStats(), never()).addTemporaryModMult(anyFloat(), anyString(), any(), anyFloat(), ArgumentMatchers.<StatBonus>any());
