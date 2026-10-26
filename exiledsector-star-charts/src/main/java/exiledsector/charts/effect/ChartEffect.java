@@ -1,11 +1,15 @@
-package exiledsector.charts;
+package exiledsector.charts.effect;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledsector.charts.ChartGenContext;
+import exiledsector.charts.ChartGenerated;
+import exiledsector.charts.ChartPoi;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledlib.i18n.Message;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
 import exiledlib.modifiers.ModifierEffect;
+import exiledsector.charts.loot.DropType;
 
 public enum ChartEffect implements ModifierEffect {
 
@@ -124,7 +128,7 @@ public enum ChartEffect implements ModifierEffect {
         return dropType == null || dropType.canDrop(sector);
     }
 
-    String key() {
+    public String key() {
         return KEY_PREFIX + name();
     }
 

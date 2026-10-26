@@ -1,4 +1,4 @@
-package exiledsector.charts;
+package exiledsector.charts.loot;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
@@ -12,7 +12,15 @@ import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec;
 import exiledlib.MockSector;
+import exiledsector.charts.ChartContent;
 import exiledsector.charts.ChartGenContext.AppliedEffect;
+import exiledsector.charts.ChartGenContext;
+import exiledsector.charts.ChartIds;
+import exiledsector.charts.ChartRun;
+import exiledsector.charts.ChartRunEffects;
+import exiledsector.charts.ChartRuns;
+import exiledsector.charts.FakeChartContentEngine;
+import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.objective.ChartObjective;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDrops;

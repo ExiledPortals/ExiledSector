@@ -1,5 +1,6 @@
 package exiledsector.charts;
 
+import exiledsector.charts.effect.ChartFactionEffect;
 import exiledsector.data.CsvRows;
 import exiledlib.ModCsv;
 import exiledsector.items.StarChartImplicits;
@@ -75,7 +76,7 @@ public final class ChartFactions {
         return factions;
     }
 
-    static ChartFactionEffect effectByName(String effectName) {
+    public static ChartFactionEffect effectByName(String effectName) {
         if (effectName == null || !effectName.startsWith(ChartFactionEffect.NAME_PREFIX)) {
             return null;
         }

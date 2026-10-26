@@ -6,7 +6,7 @@ import exiledlib.i18n.I18n;
 import exiledlib.i18n.LocaleChain;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
-import exiledsector.charts.ChartEffects;
+import exiledsector.charts.effect.ChartEffects;
 import exiledsector.items.ItemEffects;
 import exiledsector.items.ItemType;
 import exiledsector.items.RolledEffect;

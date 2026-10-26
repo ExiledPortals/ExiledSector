@@ -27,6 +27,9 @@ import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledlib.i18n.Translation;
+import exiledsector.charts.loot.ChartFleetLoot;
+import exiledsector.charts.loot.ChartVanillaLoot;
+import exiledsector.charts.loot.DropType;
 import exiledsector.charts.objective.ChartObjective;
 import exiledsector.items.WeightedPick;
 import org.apache.log4j.Logger;
@@ -231,7 +234,7 @@ public final class ChartContentGenerator {
         };
     }
 
-    static void applyEnemySensorRange(CampaignFleetAPI fleet, float sensorRangeBonus) {
+    public static void applyEnemySensorRange(CampaignFleetAPI fleet, float sensorRangeBonus) {
         if (sensorRangeBonus > 0f && fleet.getStats() != null) {
             fleet.getStats().getSensorRangeMod().modifyFlat(ChartIds.ENEMY_SENSOR_MOD_ID, sensorRangeBonus);
         }

@@ -1,6 +1,10 @@
 package exiledsector.charts;
 
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
+import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.effect.ChartFactionEffect;
+import exiledsector.charts.effect.ChartFleetStat;
+import exiledsector.charts.loot.DropType;
 import exiledsector.items.Item;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemKind;
@@ -25,7 +29,7 @@ public final class ChartGenContext {
 
     static final float MIN_SENSOR_RANGE_MULT = 0.1f;
     static final float MAX_SENSOR_RANGE_MULT = 2f;
-    static final float PERCENT = 100f;
+    public static final float PERCENT = 100f;
     static final float QUANTITY_PERCENT_PER_QUALITY = 1f;
     private static final Logger LOG = Logger.getLogger(ChartGenContext.class);
     private static final Set<String> REPORTED_UNRESOLVED_ROLLS = ConcurrentHashMap.newKeySet();
@@ -139,39 +143,39 @@ public final class ChartGenContext {
         return applied.isEmpty() && quality == 0;
     }
 
-    void addFleetSizePercent(float value) {
+    public void addFleetSizePercent(float value) {
         fleetSizePercent += value;
     }
 
-    void addBaseFleets(int value) {
+    public void addBaseFleets(int value) {
         baseFleets += value;
     }
 
-    void addExtraFleets(int value) {
+    public void addExtraFleets(int value) {
         extraFleets += value;
     }
 
-    void addOfficerLevelBonus(int value) {
+    public void addOfficerLevelBonus(int value) {
         officerLevelBonus += value;
     }
 
-    void addExtraOfficers(int value) {
+    public void addExtraOfficers(int value) {
         extraOfficers += value;
     }
 
-    void addBossSizePercent(float value) {
+    public void addBossSizePercent(float value) {
         bossSizePercent += value;
     }
 
-    void addFleetQualityPercent(float value) {
+    public void addFleetQualityPercent(float value) {
         fleetQualityPercent += value;
     }
 
-    void addSensorRangePercent(float value) {
+    public void addSensorRangePercent(float value) {
         sensorRangePercent += value;
     }
 
-    void addEnemySensorRangeBonus(float value) {
+    public void addEnemySensorRangeBonus(float value) {
         enemySensorRangeBonus += value;
     }
 
@@ -179,7 +183,7 @@ public final class ChartGenContext {
         return enemySensorRangeBonus;
     }
 
-    void addBattleSizeBonus(float value) {
+    public void addBattleSizeBonus(float value) {
         battleSizeBonus += value;
     }
 
@@ -187,49 +191,49 @@ public final class ChartGenContext {
         return Math.round(battleSizeBonus);
     }
 
-    void addQuantityPercent(float value) {
+    public void addQuantityPercent(float value) {
         quantityPercent += value;
     }
 
-    void addSiteBudgetPercent(ChartPoi.Kind kind, float value) {
+    public void addSiteBudgetPercent(ChartPoi.Kind kind, float value) {
         siteBudgetPercents.merge(kind, value, Float::sum);
     }
 
-    void addAllSiteBudgetsPercent(float value) {
+    public void addAllSiteBudgetsPercent(float value) {
         for (ChartPoi.Kind kind : ChartPoi.Kind.values()) {
             addSiteBudgetPercent(kind, value);
         }
     }
 
-    void addExtraPois(int value) {
+    public void addExtraPois(int value) {
         extraPois += value;
     }
 
-    void addItemPercent(float value) {
+    public void addItemPercent(float value) {
         itemPercent += value;
     }
 
-    void addItemRarityPercent(float value) {
+    public void addItemRarityPercent(float value) {
         itemRarityPercent += value;
     }
 
-    void addDropPercent(DropType type, float value) {
+    public void addDropPercent(DropType type, float value) {
         dropPercents.merge(type, value, Float::sum);
     }
 
-    void addBossSpoilsPercent(float value) {
+    public void addBossSpoilsPercent(float value) {
         bossSpoilsPercent += value;
     }
 
-    void addRewardPercent(float value) {
+    public void addRewardPercent(float value) {
         rewardPercent += value;
     }
 
-    void addFleetStatPercent(ChartFleetStat stat, float value) {
+    public void addFleetStatPercent(ChartFleetStat stat, float value) {
         fleetStatPercents.merge(stat, value, Float::sum);
     }
 
-    void addAnomalyPercent(String tuningKey, float value) {
+    public void addAnomalyPercent(String tuningKey, float value) {
         anomalyPercents.merge(tuningKey, value, Float::sum);
     }
 

@@ -1,13 +1,15 @@
-package exiledsector.charts;
+package exiledsector.charts.loot;
 
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
+import exiledsector.charts.ChartGenContext;
+import exiledsector.charts.ChartPoi;
 import exiledsector.items.StarChart;
 
 import java.util.ArrayList;
 import java.util.List;
 
-final class ChartLootTotals {
+public final class ChartLootTotals {
 
     static final String DROP_TYPE_KEY_PREFIX = "chart.dropType.";
     static final String SITE_CATEGORY_KEY_PREFIX = "chart.siteCategory.";
@@ -15,11 +17,11 @@ final class ChartLootTotals {
     private ChartLootTotals() {
     }
 
-    static List<StyledText> lines(StarChart chart) {
+    public static List<StyledText> lines(StarChart chart) {
         return lines(ChartGenContext.from(chart));
     }
 
-    static List<StyledText> lines(ChartGenContext context) {
+    public static List<StyledText> lines(ChartGenContext context) {
         List<StyledText> lines = new ArrayList<>();
         addLine(lines, Translation.text("chart.totals.quantity"), context.quantityPercent());
         addLine(lines, Translation.text("chart.totals.items"), context.itemPercent());

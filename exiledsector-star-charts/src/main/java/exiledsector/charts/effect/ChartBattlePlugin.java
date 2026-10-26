@@ -1,4 +1,4 @@
-package exiledsector.charts;
+package exiledsector.charts.effect;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.BaseEveryFrameCombatPlugin;

@@ -6,7 +6,7 @@ import exiledlib.ModCsv;
 import exiledsector.charts.ChartAnomalies;
 import exiledsector.charts.ChartFaction;
 import exiledsector.charts.ChartFactions;
-import exiledsector.charts.ChartEffect;
+import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.ChartFeatures;
 import exiledsector.charts.ChartGenContext;
 import exiledsector.charts.ChartLayoutGenerator;

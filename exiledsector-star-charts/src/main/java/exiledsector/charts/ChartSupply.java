@@ -1,6 +1,7 @@
 package exiledsector.charts;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledsector.charts.loot.ChartDrops;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;

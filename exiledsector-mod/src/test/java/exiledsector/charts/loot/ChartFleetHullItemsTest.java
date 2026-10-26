@@ -1,10 +1,15 @@
-package exiledsector.charts;
+package exiledsector.charts.loot;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import exiledlib.MockSector;
+import exiledsector.charts.ChartContent;
+import exiledsector.charts.ChartGenContext;
+import exiledsector.charts.ChartIds;
+import exiledsector.charts.ChartRun;
+import exiledsector.charts.ChartRuns;
 import exiledsector.charts.objective.ChartObjective;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDrops;

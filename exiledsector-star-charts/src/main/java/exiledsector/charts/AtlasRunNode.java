@@ -1,6 +1,7 @@
 package exiledsector.charts;
 
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
+import exiledsector.charts.effect.ChartEffect;
 
 import java.util.ArrayList;
 import java.util.List;

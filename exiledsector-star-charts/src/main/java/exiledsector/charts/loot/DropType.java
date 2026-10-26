@@ -1,4 +1,4 @@
-package exiledsector.charts;
+package exiledsector.charts.loot;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.items.ItemDrops;

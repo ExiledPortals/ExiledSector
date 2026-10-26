@@ -17,7 +17,7 @@ public final class ChartTiers {
 
     public static final int LOWEST_TIER = 1;
     public static final int HIGHEST_TIER = 15;
-    static final String PATH = "data/config/exiledSector/star_chart_tiers.csv";
+    public static final String PATH = "data/config/exiledSector/star_chart_tiers.csv";
     static final String TIER_COLUMN = "tier";
     private static final Logger LOG = Logger.getLogger(ChartTiers.class);
     static final float MAX_COLONY_ITEM_CHANCE = 1f;
@@ -32,7 +32,7 @@ public final class ChartTiers {
         ModCsv.load(TIER_COLUMN, PATH, LOG, ChartTiers::register);
     }
 
-    static void register(JSONArray rows) throws JSONException {
+    public static void register(JSONArray rows) throws JSONException {
         Map<Integer, ChartTier> loaded = new HashMap<>();
         Map<Integer, Float> loadedColonyItemChances = new HashMap<>();
         CsvRows csv = new CsvRows(PATH);

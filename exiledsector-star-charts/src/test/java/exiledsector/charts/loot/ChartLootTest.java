@@ -1,9 +1,14 @@
-package exiledsector.charts;
+package exiledsector.charts.loot;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec.DropData;
 import exiledsector.charts.ChartGenContext.AppliedEffect;
+import exiledsector.charts.ChartGenContext;
+import exiledsector.charts.ChartPoi;
+import exiledsector.charts.ChartTables;
+import exiledsector.charts.ChartTiers;
+import exiledsector.charts.effect.ChartEffect;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;

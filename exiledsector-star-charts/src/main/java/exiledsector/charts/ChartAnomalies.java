@@ -8,6 +8,7 @@ import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.StarAnomalies;
 import exiledsector.charts.anomaly.StellarFlares;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
+import exiledsector.charts.effect.ChartEffect;
 import exiledsector.data.CsvRows;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;

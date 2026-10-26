@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledsector.charts.ChartEffects;
+import exiledsector.charts.effect.ChartEffects;
 import exiledsector.items.ItemDataIntegrity.Severity;
 import exiledsector.items.ItemDataIntegrity.Violation;
 import exiledsector.modifiers.ModifierSlot;

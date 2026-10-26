@@ -1,7 +1,8 @@
-package exiledsector.charts;
+package exiledsector.charts.effect;
 
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
+import exiledsector.charts.ChartGenContext;
 
 public enum ChartFleetStat {
 
@@ -70,7 +71,7 @@ public enum ChartFleetStat {
         }
     }
 
-    static float multFor(float percent) {
+    public static float multFor(float percent) {
         return Math.max(MIN_MULT, Math.min(MAX_MULT, 1f + percent / ChartGenContext.PERCENT));
     }
 }

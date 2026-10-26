@@ -1,9 +1,16 @@
-package exiledsector.charts;
+package exiledsector.charts.loot;
 
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
+import exiledsector.charts.ChartGenContext;
+import exiledsector.charts.ChartIds;
+import exiledsector.charts.ChartRun;
+import exiledsector.charts.ChartRunEffects;
+import exiledsector.charts.ChartRuns;
+import exiledsector.charts.ChartTiers;
+import exiledsector.charts.StarChartSettings;
 import exiledsector.data.CsvRows;
 import exiledlib.ModCsv;
 import exiledsector.items.ItemCurrencies;

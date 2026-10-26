@@ -23,7 +23,7 @@ public final class ChartPois {
     static final String PATH = "data/config/exiledSector/chart_poi.csv";
     static final String ID_COLUMN = "id";
     static final Set<String> DERELICT_TYPES = Set.of("CIVILIAN", "SMALL", "MEDIUM", "LARGE");
-    static final List<String> KIND_NAMES = Arrays.stream(ChartPoi.Kind.values()).map(kind -> kind.name().toLowerCase(Locale.ROOT)).toList();
+    public static final List<String> KIND_NAMES = Arrays.stream(ChartPoi.Kind.values()).map(kind -> kind.name().toLowerCase(Locale.ROOT)).toList();
     static final Map<String, BooleanSupplier> MOD_SETTING_GATES = Map.of(IndustrialEvolutionCompat.MOD_ID, IndustrialEvolutionCompat::derelictStationsEnabled);
     private static final Logger LOG = Logger.getLogger(ChartPois.class);
     private static volatile List<ChartPoi> pois = List.of();

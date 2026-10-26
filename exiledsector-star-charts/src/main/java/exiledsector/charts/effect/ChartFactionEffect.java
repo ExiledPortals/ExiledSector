@@ -1,4 +1,4 @@
-package exiledsector.charts;
+package exiledsector.charts.effect;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.FactionSpecAPI;
@@ -10,10 +10,10 @@ import java.util.Locale;
 
 public record ChartFactionEffect(String factionId) implements ModifierEffect {
 
-    static final String NAME_PREFIX = "CHART_FACTION_";
+    public static final String NAME_PREFIX = "CHART_FACTION_";
     static final String KEY = ChartEffect.KEY_PREFIX + "CHART_FACTION";
 
-    static String effectName(String factionId) {
+    public static String effectName(String factionId) {
         return NAME_PREFIX + factionId.toUpperCase(Locale.ROOT);
     }
 

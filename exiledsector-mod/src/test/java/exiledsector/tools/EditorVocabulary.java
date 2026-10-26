@@ -3,7 +3,7 @@ package exiledsector.tools;
 import exiledlib.skills.skilleffect.SkillEffect;
 import exiledlib.skills.skilleffect.SkillEffectNames;
 import exiledlib.skills.skilleffect.StatMode;
-import exiledsector.charts.ChartEffect;
+import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.ChartTiers;
 import exiledsector.items.DoctrineBehaviour;
 import exiledsector.items.ItemKind;

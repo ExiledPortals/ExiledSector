@@ -7,6 +7,8 @@ import exiledsector.charts.anomaly.MagneticStorm;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.StarAnomalies;
 import exiledsector.charts.anomaly.StellarFlares;
+import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.loot.DropType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;

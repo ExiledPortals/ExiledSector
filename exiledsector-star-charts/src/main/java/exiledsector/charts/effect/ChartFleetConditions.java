@@ -1,10 +1,11 @@
-package exiledsector.charts;
+package exiledsector.charts.effect;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.charts.ChartIds;
 import exiledsector.effects.PlayerFleetStats;
 
 import java.util.EnumMap;
@@ -33,7 +34,7 @@ public final class ChartFleetConditions {
         return battleSizeBonus;
     }
 
-    static void setBattleSizeBonus(int points) {
+    public static void setBattleSizeBonus(int points) {
         battleSizeBonus = points;
     }
 
@@ -41,7 +42,7 @@ public final class ChartFleetConditions {
         return activeMults.getOrDefault(stat, 1f);
     }
 
-    static boolean set(Map<ChartFleetStat, Float> mults, CampaignFleetAPI playerFleet) {
+    public static boolean set(Map<ChartFleetStat, Float> mults, CampaignFleetAPI playerFleet) {
         Map<ChartFleetStat, Float> next = mults == null || mults.isEmpty() ? Map.of() : mults;
         if (next == lastSource) {
             return false;

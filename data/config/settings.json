@@ -1,6 +1,6 @@
 {
 	"plugins":{
-		"exiledSector_chartBattlePlugin":"exiledsector.charts.ChartBattlePlugin",
+		"exiledSector_chartBattlePlugin":"exiledsector.charts.effect.ChartBattlePlugin",
 	},
 	"graphics":{
 		"ui_icons_tech_tree":{

@@ -1,4 +1,4 @@
-package exiledsector.charts;
+package exiledsector.charts.loot;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
@@ -10,6 +10,13 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.util.MutableValue;
 import exiledlib.MockSector;
+import exiledsector.charts.ChartContent;
+import exiledsector.charts.ChartIds;
+import exiledsector.charts.ChartRun;
+import exiledsector.charts.ChartRuns;
+import exiledsector.charts.ChartTables;
+import exiledsector.charts.ChartTiers;
+import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.objective.ChartObjective;
 import exiledsector.charts.objective.ChartRewards;
 import exiledsector.items.ItemData;

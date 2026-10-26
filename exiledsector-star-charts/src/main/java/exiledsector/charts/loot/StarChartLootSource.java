@@ -1,4 +1,4 @@
-package exiledsector.charts;
+package exiledsector.charts.loot;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
@@ -11,6 +11,9 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledlib.PlayerFleet;
 import exiledlib.Seeds;
+import exiledsector.charts.ChartGenContext;
+import exiledsector.charts.ChartIds;
+import exiledsector.charts.ChartTiers;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.effects.ItemLootListener;
 import exiledsector.effects.TechMiningItemListener;

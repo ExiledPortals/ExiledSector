@@ -3,6 +3,8 @@ package exiledsector.charts;
 import com.fs.starfarer.api.Global;
 import com.thoughtworks.xstream.XStream;
 import exiledlib.compat.CompatTarget;
+import exiledsector.charts.effect.ChartFleetConditionSource;
+import exiledsector.charts.loot.StarChartLootSource;
 import exiledsector.compat.FoilerCompat;
 import exiledsector.compat.UnknownSkiesCompat;
 import exiledsector.compat.VaultsOfKnowledgeCompat;

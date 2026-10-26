@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledsector.charts.ChartEffects;
+import exiledsector.charts.effect.ChartEffects;
 import exiledsector.charts.ChartFactions;
 import org.json.JSONArray;
 import org.json.JSONException;

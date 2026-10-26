@@ -1,8 +1,9 @@
-package exiledsector.charts;
+package exiledsector.charts.loot;
 
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import exiledsector.charts.FakeChartContentEngine;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.loot.LootModifiers;
 import org.junit.jupiter.api.Test;

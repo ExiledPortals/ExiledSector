@@ -40,6 +40,7 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.BaseSalvageSpe
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import exiledsector.charts.anomaly.skirmish.SkirmishFactions;
+import exiledsector.charts.loot.ChartVanillaLoot;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;

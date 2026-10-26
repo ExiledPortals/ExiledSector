@@ -1,7 +1,9 @@
-package exiledsector.charts;
+package exiledsector.charts.loot;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.impl.campaign.procgen.DropGroupRow;
+import exiledsector.charts.ChartPois;
+import exiledsector.charts.ChartTiers;
 import exiledsector.data.CsvRows;
 import exiledlib.ModCsv;
 import org.apache.log4j.Logger;
@@ -82,7 +84,7 @@ public final class ChartLoot {
         return groups;
     }
 
-    static List<String> register(JSONArray rows, Predicate<String> groupExists) throws JSONException {
+    public static List<String> register(JSONArray rows, Predicate<String> groupExists) throws JSONException {
         Map<String, DropType> groupTypes = new LinkedHashMap<>();
         List<Entry> entries = new ArrayList<>();
         CsvRows csv = new CsvRows(PATH);

@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledsector.charts.ChartDrops;
+import exiledsector.charts.loot.ChartDrops;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
@@ -9,7 +9,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
 import exiledlib.i18n.StyledText;
 import exiledlib.skills.skilleffect.SkillEffect;
-import exiledsector.charts.ChartEffect;
+import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.ChartGenContext.AppliedEffect;
 import exiledsector.charts.ChartGenContext;
 import exiledsector.charts.anomaly.breach.SpatialBreach;

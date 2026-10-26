@@ -1,23 +1,25 @@
-package exiledsector.charts;
+package exiledsector.charts.loot;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec.DropData;
+import exiledsector.charts.ChartGenContext;
+import exiledsector.charts.ChartPoi;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
-final class ChartVanillaLoot {
+public final class ChartVanillaLoot {
 
     static final float FLEET_POINTS_PER_STEP = 100f;
 
-    record SiteDrops(List<DropData> random, List<DropData> value) {
+    public record SiteDrops(List<DropData> random, List<DropData> value) {
 
-        static final SiteDrops NONE = new SiteDrops(List.of(), List.of());
+        public static final SiteDrops NONE = new SiteDrops(List.of(), List.of());
 
-        SiteDrops {
+        public SiteDrops {
             random = random == null ? List.of() : List.copyOf(random);
             value = value == null ? List.of() : List.copyOf(value);
         }
@@ -38,7 +40,7 @@ final class ChartVanillaLoot {
     private ChartVanillaLoot() {
     }
 
-    static void addToSite(SectorEntityToken site, ChartPoi.Kind kind, SiteDrops specDrops, ChartGenContext context, int tier, Random random) {
+    public static void addToSite(SectorEntityToken site, ChartPoi.Kind kind, SiteDrops specDrops, ChartGenContext context, int tier, Random random) {
         SiteDrops existingDrops = specDrops.plus(site.getDropRandom(), site.getDropValue());
         for (DropData existingDrop : existingDrops.random()) {
             DropData extraDrop = scaledRandomCopy(existingDrop, context, random);
@@ -104,7 +106,7 @@ final class ChartVanillaLoot {
         return whole + (random.nextFloat() < expected - whole ? 1 : 0);
     }
 
-    static void addToFleet(CampaignFleetAPI fleet, boolean boss, ChartGenContext context, int tier) {
+    public static void addToFleet(CampaignFleetAPI fleet, boolean boss, ChartGenContext context, int tier) {
         float fleetPointSteps = fleet.getFleetPoints() / FLEET_POINTS_PER_STEP;
         if (!(fleetPointSteps > 0f)) {
             return;

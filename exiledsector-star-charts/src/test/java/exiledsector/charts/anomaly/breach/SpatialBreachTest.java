@@ -4,7 +4,7 @@ import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
-import exiledsector.charts.ChartEffect;
+import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.ChartGenContext;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import org.junit.jupiter.api.BeforeEach;

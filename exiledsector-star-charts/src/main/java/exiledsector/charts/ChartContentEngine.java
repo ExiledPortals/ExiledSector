@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.fleets.FleetParamsV3;
+import exiledsector.charts.loot.ChartVanillaLoot;
 
 import java.util.List;
 import java.util.Random;
