@@ -41,6 +41,7 @@ class HullUpgradeTest {
         ItemDefinitions.register(new JSONArray()
                 .put(HullItemRows.row("officer", "bridge", "HULL_PERCENT:10:10"))
                 .put(HullItemRows.row("veil", "shield_generator", "SHIELDS_DOWN_HULL_DAMAGE_TO_SOFT_FLUX_PERCENT:30:30"))
+                .put(HullItemRows.row("warranty", "bridge", "HULL_PERCENT:1:1").put("unique", "true").put("mechanic", HullItem.DOUBLER_MECHANIC))
                 .put(ItemFixtures.subroutineRow("chip")));
     }
 
@@ -117,6 +118,20 @@ class HullUpgradeTest {
         assertTrue(HullUpgradeRules.socket(shipData, ShipSection.SHIELD_GENERATOR, veil, ships, Set.of("heavyarmor")::contains));
 
         assertEquals(Map.of("shield_shunt", veil), HullUpgradeRules.excludedHullMods(shipData));
+    }
+
+    @Test
+    void theTuningNanoswarmRerollsADoublersTargetToAnotherSectionEvenWithFixedModifiers() {
+        HullItem warranty = (HullItem) store.add(ItemDefinitions.get("warranty"), 7L);
+        ShipSection firstTarget = warranty.targetSection();
+
+        assertTrue(ItemCrafting.canRecalibrate(warranty, warranty.definition(), Set.of()));
+        assertNotNull(ItemCrafting.recalibrate(warranty, new java.util.Random(3L)));
+
+        assertNotEquals(firstTarget, warranty.targetSection());
+        assertNotEquals(ShipSection.BRIDGE, warranty.targetSection());
+        assertEquals(warranty.targetSection(), warranty.targetSection());
+        assertTrue(warranty.implicitLines(true).size() >= 2);
     }
 
     @Test

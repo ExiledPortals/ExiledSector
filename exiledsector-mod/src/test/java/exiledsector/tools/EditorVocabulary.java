@@ -6,6 +6,7 @@ import exiledlib.skills.skilleffect.StatMode;
 import exiledsector.charts.ChartEffect;
 import exiledsector.charts.ChartTiers;
 import exiledsector.items.DoctrineBehaviour;
+import exiledsector.items.HullItem;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
@@ -70,6 +71,7 @@ final class EditorVocabulary {
         json.append("  \"radiusSizes\": ").append(list(Arrays.stream(RadiusSize.values()).map(RadiusSize::dataKey).toList())).append(",\n");
         json.append("  \"uniqueSourceKinds\": ")
                 .append(list(Arrays.stream(UniqueSource.Kind.values()).map(UniqueSource.Kind::prefix).toList())).append(",\n");
+        json.append("  \"hullItemMechanics\": ").append(list(List.of(HullItem.DOUBLER_MECHANIC))).append(",\n");
         json.append("  \"itemUnlocks\": ")
                 .append(list(Arrays.stream(ItemUnlock.values()).map(ItemUnlock::id).toList())).append(",\n");
         json.append("  \"clearedChartTierPrefix\": ").append(quote(ItemUnlock.CLEARED_CHART_TIER_PREFIX)).append(",\n");

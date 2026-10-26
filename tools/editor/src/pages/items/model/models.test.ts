@@ -222,6 +222,29 @@ describe('hull item sources', () => {
   });
 });
 
+describe('hull item mechanics', () => {
+  it('adds the mechanic column only once a hull item uses it and writes it back', () => {
+    const subroutinesText = 'id,name,icon,rarity,unique,kind,description,unlock\n';
+    const olderText = 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\nrelic,bridge,Relic,,10,true,,@HULL_MULT_BRIDGE,,\n';
+    const model = parseItemDefinitions(subroutinesText, olderText);
+
+    expect(serializeHullItemsCsv(model)).toBe(olderText);
+    model.definitions[0].mechanic = 'doubler';
+    const withMechanic = 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock,mechanic\nrelic,bridge,Relic,,10,true,,@HULL_MULT_BRIDGE,,,doubler\n';
+    expect(serializeHullItemsCsv(model)).toBe(withMechanic);
+    expect(parseItemDefinitions(subroutinesText, withMechanic).definitions[0].mechanic).toBe('doubler');
+  });
+
+  it('rejects an unknown mechanic and warns when a common hull item names one', () => {
+    const issues = validateItemDefinitions([definition({ id: 'odd', unique: 'true', mechanic: 'tripler' })], vocabulary, catalogue);
+
+    expect(issues).toEqual(['odd: mechanic must be blank or one of doubler']);
+    expect(definitionWarnings([definition({ id: 'common', mechanic: 'doubler' })], 'ship')).toEqual([
+      'common: the mechanic doubler is meant for unique hull items',
+    ]);
+  });
+});
+
 describe('unique subroutines', () => {
   const uniqueCatalogue = modifierById(
     parseModifiersCsv(

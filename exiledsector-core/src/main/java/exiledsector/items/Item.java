@@ -324,6 +324,14 @@ public abstract class Item {
     public void writeTooltipSections(TooltipMakerAPI tooltip, HullSize hullSize, boolean showRollRanges) {
     }
 
+    public boolean hasRerollableTarget() {
+        return false;
+    }
+
+    public boolean rerollTarget(Random random) {
+        return false;
+    }
+
     public List<SkillTypeEffect> skillEffects() {
         return skillEffects(null);
     }

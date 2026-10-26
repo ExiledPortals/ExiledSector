@@ -4,9 +4,12 @@ import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledlib.skills.EffectTotals;
 import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
+import exiledsector.items.HullItem;
 import exiledsector.items.HullUpgradeEffectSource;
 import exiledsector.items.ItemDefinitions;
+import exiledsector.items.ItemStore;
 import exiledsector.items.NpcItems;
+import exiledsector.items.ShipSection;
 import exiledsector.skills.tags.ShipProfile;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,7 +36,8 @@ class ShipSectionsTest {
         ItemDefinitions.register(new JSONArray()
                 .put(definition("bridge_item", "bridge", "HULL_PERCENT:5:5"))
                 .put(definition("emitter", "shield_generator", "HULL_PERCENT:10:10"))
-                .put(definition("chip", "reactor", "HULL_PERCENT:20:20")));
+                .put(definition("chip", "reactor", "HULL_PERCENT:20:20"))
+                .put(definition("warranty", "bridge", "HULL_PERCENT:1:1").put("unique", "true").put("mechanic", HullItem.DOUBLER_MECHANIC)));
         shipData = new ShipSkillData();
         shipData.grantUnlockedSocketType("bridge");
         shipData.grantUnlockedSocketType("shield_generator");
@@ -114,6 +118,40 @@ class ShipSectionsTest {
         List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
 
         assertEquals(30f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(slots,HullSize.CRUISER), 2f)), 1e-4f);
+    }
+
+    private static String warrantyTargeting(ShipSection target) {
+        for (long seed = 1L; seed < 500L; seed++) {
+            String itemId = NpcItems.id("warranty", seed);
+            if (((HullItem) ItemStore.lookup(itemId)).targetSection() == target) {
+                return itemId;
+            }
+        }
+        throw new AssertionError("no seed targets " + target);
+    }
+
+    @Test
+    void aDoublerDoublesTheItemInItsTargetSectionAndNothingWhileThatSectionIsEmpty() {
+        shipData.installInSection("bridge", warrantyTargeting(ShipSection.SHIELD_GENERATOR));
+        List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
+
+        assertEquals(Set.of(ShipSection.SHIELD_GENERATOR), ShipSections.doubledSections(slots));
+        assertEquals(21f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(slots, HullSize.CRUISER), 1f)), 1e-4f);
+
+        shipData.installInSection("bridge", warrantyTargeting(ShipSection.REACTOR));
+        List<ShipSections.UnlockedSection> emptyTarget = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
+
+        assertEquals(Set.of(), ShipSections.doubledSections(emptyTarget));
+        assertEquals(11f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(emptyTarget, HullSize.CRUISER), 1f)), 1e-4f);
+    }
+
+    @Test
+    void aDoublerNeverTargetsItsOwnSection() {
+        for (long seed = 1L; seed < 200L; seed++) {
+            HullItem warranty = (HullItem) ItemStore.lookup(NpcItems.id("warranty", seed));
+            assertTrue(warranty.doubler());
+            assertTrue(warranty.targetSection() != ShipSection.BRIDGE);
+        }
     }
 
     @Test

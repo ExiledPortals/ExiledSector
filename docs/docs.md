@@ -342,3 +342,11 @@ schematic only applies to a ship with exactly one point fewer than its tier (Scr
 4, Domain 5) and sets the points to that tier (`HullUpgradeRules.applySchematic`). With Star Chart Progress
 every ship has 1, plus one each once the highest cleared chart tier reaches 5, 10 and 15, schematics stop
 dropping, and stored points are kept for switching back. Switching never locks an unlocked section.
+
+## Item doubling
+
+A hull item whose `mechanic` column is `doubler` rolls one other section as its target (`HullItem.targetSection`,
+picked from the item's seed and stored once rolled). `ShipSections.doubledSections` finds active doublers whose
+target holds an active item that isn't a doubler, and `HullUpgradeEffectSource` doubles every magnitude of that
+item, drawbacks included. The Tuning Nanoswarm rerolls the target to another section (`Item.rerollTarget`), even
+on an item with no modifier range to vary.

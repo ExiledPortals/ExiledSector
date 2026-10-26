@@ -13,6 +13,7 @@ import exiledsector.items.ItemStore;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -37,6 +38,7 @@ public final class ShipSections {
     }
 
     private static final Map<ShipSkillData, CachedSections> CACHE = new WeakHashMap<>();
+    static final float DOUBLED_MAGNITUDE_MULT = 2f;
 
     private ShipSections() {
     }
@@ -93,5 +95,28 @@ public final class ShipSections {
 
     public static List<SkillTypeEffect> appliedEffects(UnlockedSection section, HullSize hullSize) {
         return section.appliesItem() ? section.item().skillEffects(hullSize) : List.of();
+    }
+
+    public static List<SkillTypeEffect> appliedEffects(UnlockedSection section, HullSize hullSize, boolean doubled) {
+        List<SkillTypeEffect> effects = appliedEffects(section, hullSize);
+        return doubled ? effects.stream().map(effect -> new SkillTypeEffect(effect.effect(), effect.magnitude() * DOUBLED_MAGNITUDE_MULT)).toList()
+                : effects;
+    }
+
+    public static Set<ShipSection> doubledSections(List<UnlockedSection> sections) {
+        Set<ShipSection> doubled = EnumSet.noneOf(ShipSection.class);
+        for (UnlockedSection doubling : sections) {
+            ShipSection target = isDoubler(doubling) ? ((HullItem) doubling.item()).targetSection() : null;
+            for (UnlockedSection targeted : sections) {
+                if (target != null && targeted.section() == target && targeted.appliesItem() && !isDoubler(targeted)) {
+                    doubled.add(target);
+                }
+            }
+        }
+        return doubled;
+    }
+
+    private static boolean isDoubler(UnlockedSection section) {
+        return section.appliesItem() && section.item() instanceof HullItem hullItem && hullItem.doubler();
     }
 }

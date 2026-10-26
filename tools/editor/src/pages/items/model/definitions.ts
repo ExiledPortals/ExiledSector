@@ -51,8 +51,8 @@ export const OPTIONAL_SUBROUTINE_FIELDS: readonly string[] = ['lines', 'source',
 const NODE_ID_TEXT = /^[A-Za-z0-9_.-]+$/;
 const UNIQUE_SOURCE_ID = /^[A-Za-z0-9_.-]+$/;
 const SOCKET_LIMIT_TEXT = /^\d{1,9}$/;
-export const HULL_ITEM_COLUMNS = ['id', 'section', 'name', 'icon', 'rarity', 'unique', 'description', 'prefixes', 'suffixes', 'unlock', 'source'] as const;
-const OPTIONAL_HULL_ITEM_FIELDS: readonly string[] = ['source'];
+export const HULL_ITEM_COLUMNS = ['id', 'section', 'name', 'icon', 'rarity', 'unique', 'description', 'prefixes', 'suffixes', 'unlock', 'source', 'mechanic'] as const;
+const OPTIONAL_HULL_ITEM_FIELDS: readonly string[] = ['source', 'mechanic'];
 export const STAR_CHART_COLUMNS = ['id', 'system_type', 'name', 'icon', 'rarity', 'unique', 'min_tier', 'description', 'prefixes', 'suffixes', 'unlock'] as const;
 export const UNLOCK_LABELS: Record<string, string> = {
   found_onslaught_mk1: 'Found the Onslaught Mk.I in the Abyss',
@@ -100,6 +100,7 @@ export interface ItemDefinition {
   subroutineKind?: string;
   lines?: PoolEntry[];
   source?: string;
+  mechanic?: string;
   socketLimit?: string;
   radius?: string;
   excludedNodes?: string;
@@ -267,6 +268,7 @@ export function parseItemDefinitions(subroutinesText: string, hullItemsText: str
       ...parseDefinitionRows(hullItemTable, (cells) => csvCell(hullItemTable, cells, 'section').trim()).map((definition) => ({
         ...definition,
         source: csvCell(hullItemTable, definition.cells, 'source').trim(),
+        mechanic: csvCell(hullItemTable, definition.cells, 'mechanic').trim(),
       })),
     ],
   };
@@ -294,6 +296,8 @@ function definitionColumnValue(definition: ItemDefinition, column: string): unkn
       return formatPool(definition.lines ?? []);
     case 'source':
       return definition.source ?? '';
+    case 'mechanic':
+      return definition.mechanic ?? '';
     case 'socket_limit':
       return definition.socketLimit ?? '';
     case 'radius':
@@ -470,6 +474,7 @@ export function newItemDefinition(
     definition.minTier = '';
   } else {
     definition.source = '';
+    definition.mechanic = '';
   }
   return definition;
 }
@@ -774,6 +779,10 @@ export function validateItemDefinitions(
     }
     if (itemTypeOfKind(definition.kind) === HULL_ITEM_TYPE) {
       issues.push(...uniqueSourceIssues(definition.source ?? '', vocabulary).map((issue) => `${label}: ${issue}`));
+      const mechanic = (definition.mechanic ?? '').trim();
+      if (mechanic !== '' && !vocabulary.hullItemMechanics.includes(mechanic)) {
+        issues.push(`${label}: mechanic must be blank or one of ${vocabulary.hullItemMechanics.join(', ')}`);
+      }
     }
     if (!(Number.parseFloat(definition.rarity) >= 0)) {
       issues.push(`${label}: rarity must be zero or more`);
@@ -793,6 +802,9 @@ export function definitionWarnings(definitions: ItemDefinition[], family: ItemFa
     const unique = isTrueText(definition.unique);
     if (!unique && definition.unlock) {
       warnings.push(`${label}: the drop condition ${definition.unlock} only applies to uniques, so it is ignored`);
+    }
+    if (definition.mechanic && itemTypeOfKind(definition.kind) === HULL_ITEM_TYPE && !unique) {
+      warnings.push(`${label}: the mechanic ${definition.mechanic} is meant for unique hull items`);
     }
     if (definition.source && itemTypeOfKind(definition.kind) === HULL_ITEM_TYPE && !unique) {
       warnings.push(`${label}: the source ${definition.source} only applies to unique hull items, so it is ignored`);

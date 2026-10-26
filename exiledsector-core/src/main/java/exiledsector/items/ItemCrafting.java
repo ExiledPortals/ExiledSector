@@ -132,7 +132,7 @@ public final class ItemCrafting {
     }
 
     static boolean canRecalibrate(Item item, ItemDefinition definition, Set<ModifierSlot> guarded) {
-        return item.explicits().stream().anyMatch(rolled -> !guards(rolled, guarded) && canVary(rolled, definition));
+        return item.hasRerollableTarget() || item.explicits().stream().anyMatch(rolled -> !guards(rolled, guarded) && canVary(rolled, definition));
     }
 
     static Item recalibrate(Item item, Random random) {
@@ -144,6 +144,7 @@ public final class ItemCrafting {
         if (definition == null) {
             return null;
         }
+        boolean targetRerolled = item.rerollTarget(random);
         for (int attempt = 0; attempt < MAX_RECALIBRATION_ATTEMPTS; attempt++) {
             List<RolledModifier> rerolled = reroll(item.explicits(), definition, random, guarded);
             if (!rerolled.equals(item.explicits())) {
@@ -151,7 +152,7 @@ public final class ItemCrafting {
                 return item;
             }
         }
-        return null;
+        return targetRerolled ? item : null;
     }
 
     private static List<RolledModifier> reroll(List<RolledModifier> modifiers, ItemDefinition definition, Random random,

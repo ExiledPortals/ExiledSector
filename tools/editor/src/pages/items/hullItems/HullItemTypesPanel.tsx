@@ -242,6 +242,16 @@ function HullItemForm({ document, model, vocabulary, definition, index, descript
           }}
         />
       )}
+      {(unique || Boolean(definition.mechanic)) && (
+        <Select
+          label="Mechanic"
+          description="doubler - rolls another section as its target and doubles every modifier of the item installed there"
+          data={[{ value: '', label: 'None' }, ...vocabulary.hullItemMechanics.map((mechanic) => ({ value: mechanic, label: mechanic }))]}
+          value={definition.mechanic ?? ''}
+          allowDeselect={false}
+          onChange={(mechanic) => edit((draft) => void (draft.mechanic = mechanic ?? ''))}
+        />
+      )}
       <DescriptionField description={definition.description} onChange={(description) => edit((draft) => void (draft.description = description))} />
       <Divider />
       <DescriptionNote descriptions={descriptions} />

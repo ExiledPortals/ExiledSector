@@ -10,6 +10,7 @@ import exiledlib.skills.SkillTypeEffect;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public final class HullUpgradeEffectSource implements ShipEffectSource {
 
@@ -21,7 +22,8 @@ public final class HullUpgradeEffectSource implements ShipEffectSource {
 
     @Override
     public Object cacheKey(ShipEffectContext context) {
-        return ShipSections.forVariant(context.shipData(), context.variant());
+        List<ShipSections.UnlockedSection> sections = ShipSections.forVariant(context.shipData(), context.variant());
+        return List.of(sections, ShipSections.doubledSections(sections));
     }
 
     @Override
@@ -31,8 +33,9 @@ public final class HullUpgradeEffectSource implements ShipEffectSource {
 
     public static List<EffectContribution> contributions(List<ShipSections.UnlockedSection> sections, HullSize hullSize) {
         List<EffectContribution> contributions = new ArrayList<>();
+        Set<ShipSection> doubled = ShipSections.doubledSections(sections);
         for (ShipSections.UnlockedSection unlocked : sections) {
-            List<SkillTypeEffect> effects = ShipSections.appliedEffects(unlocked, hullSize);
+            List<SkillTypeEffect> effects = ShipSections.appliedEffects(unlocked, hullSize, doubled.contains(unlocked.section()));
             if (!effects.isEmpty()) {
                 contributions.add(EffectContribution.scaledPermanent(unlocked, MOD_ID_PREFIX + unlocked.section().id() + "_",
                         Collections.unmodifiableList(effects)));

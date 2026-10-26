@@ -22,6 +22,7 @@ interface VocabularyFile {
   doctrineBehaviours?: string[];
   radiusSizes?: string[];
   uniqueSourceKinds?: string[];
+  hullItemMechanics?: string[];
   itemUnlocks: string[];
   clearedChartTierPrefix?: string;
   chartTierRange?: [number, number];
@@ -49,6 +50,7 @@ export interface Vocabulary {
   doctrineBehaviours: string[];
   radiusSizes: string[];
   uniqueSourceKinds: string[];
+  hullItemMechanics: string[];
   itemUnlocks: string[];
   clearedChartTierPrefix: string;
   lowestChartTier: number;
@@ -78,6 +80,7 @@ export function buildVocabulary(file: VocabularyFile): Vocabulary {
     doctrineBehaviours: (file.doctrineBehaviours ?? ['TRANSFORM', 'AUGMENT']).slice(),
     radiusSizes: (file.radiusSizes ?? ['small', 'medium', 'large']).slice(),
     uniqueSourceKinds: (file.uniqueSourceKinds ?? ['faction', 'site']).slice(),
+    hullItemMechanics: (file.hullItemMechanics ?? ['doubler']).slice(),
     itemUnlocks: file.itemUnlocks.slice(),
     clearedChartTierPrefix: file.clearedChartTierPrefix ?? 'cleared_chart_tier_',
     lowestChartTier: file.chartTierRange?.[0] ?? 1,
