@@ -14,7 +14,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.campaign.procgen.StarAge;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
-import exiledsector.charts.phenomenon.ChartPhenomenon;
+import exiledsector.charts.anomaly.ChartAnomaly;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -114,13 +114,13 @@ public final class ChartLayoutGenerator {
 
     public static ChartLayout generate(SectorAPI sector, StarSystemAPI system, String runId, ChartLayoutRequest request) {
         long seed = request.seed();
-        String phenomenonId = request.phenomenonId().isEmpty() ? ChartPhenomena.rolledOverlay(seed, request.tier(), request.chartContext()) : request.phenomenonId();
-        ChartPhenomenon phenomenon = ChartPhenomena.availableAt(phenomenonId, request.tier());
-        StarSystemType systemType = ChartPhenomenon.systemTypeOr(phenomenon, typeFor(request));
+        List<String> anomalyIds = ChartAnomalies.planned(request.contentSeed(), request.tier(), request.chartContext());
+        List<ChartAnomaly> anomalies = ChartAnomalies.anomaliesOf(anomalyIds);
+        StarSystemType systemType = ChartAnomaly.systemTypeOr(ChartAnomalies.starOf(anomalyIds), typeFor(request));
         Set<Object> namesBefore = ChartUsedNames.snapshot();
         Built built;
         try {
-            built = buildWithVanilla(system, runId, systemType, seed, request.recipe(), phenomenon);
+            built = buildWithVanilla(system, runId, systemType, seed, request.recipe(), anomalies);
             if (!built.generated()) {
                 scrub(system);
                 ChartSystemFactory.addFallbackStar(system, runId);
@@ -139,17 +139,17 @@ public final class ChartLayoutGenerator {
         SectorEntityToken anchor = built.featureAnchor();
         Vector2f avoid = anchor == null || anchor.getLocation() == null ? null : new Vector2f(anchor.getLocation());
         Vector2f innerWormhole = ChartWormholePlacement.choose(system, derivedRandom(seed, PLACEMENT_SALT), avoid);
-        return new ChartLayout(seed, systemType, built.generated(), innerWormhole, anchor);
+        return new ChartLayout(seed, systemType, built.generated(), innerWormhole, anchor, anomalyIds);
     }
 
     private record Built(boolean generated, SectorEntityToken featureAnchor) {
     }
 
     private static Built buildWithVanilla(StarSystemAPI system, String runId, StarSystemType systemType, long seed, ChartLayoutRecipe recipe,
-                                          ChartPhenomenon phenomenon) {
+                                          List<ChartAnomaly> anomalies) {
         try {
             SectorEntityToken anchor = engine.build(system, ChartIds.starId(runId), systemType, pickAge(seed), derivedRandom(seed, LAYOUT_SALT), recipe,
-                    phenomenon);
+                    anomalies);
             if (system.getStar() == null && (systemType != StarSystemType.DEEP_SPACE || system.getCenter() == null)) {
                 throw new IllegalStateException("the generator finished without a star");
             }

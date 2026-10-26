@@ -23,8 +23,8 @@ import exiledsector.charts.ChartContentPlan.FleetRole;
 import exiledsector.charts.ChartContentPlan.PlannedFleet;
 import exiledsector.charts.ChartContentPlan.PlannedPoi;
 import exiledsector.charts.ChartContentPlan.PlannedStation;
-import exiledsector.charts.expansion.ChartExpansion;
-import exiledsector.charts.expansion.ExpansionSite;
+import exiledsector.charts.anomaly.AnomalyContentSite;
+import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledlib.i18n.Translation;
 import exiledsector.items.WeightedPick;
 import org.apache.log4j.Logger;
@@ -85,11 +85,17 @@ public final class ChartContentGenerator {
 
     public static ChartContent generate(SectorAPI sector, StarSystemAPI system, String runId, long seed, int tier, Vector2f innerWormhole,
                                         ChartGenContext chartContext, SectorEntityToken featureAnchor) {
+        return generate(sector, system, runId, seed, tier, innerWormhole, chartContext, featureAnchor,
+                ChartAnomalies.planned(seed, ChartTiers.clamp(tier), chartContext));
+    }
+
+    public static ChartContent generate(SectorAPI sector, StarSystemAPI system, String runId, long seed, int tier, Vector2f innerWormhole,
+                                        ChartGenContext chartContext, SectorEntityToken featureAnchor, List<String> anomalyIds) {
         int clampedTier = ChartTiers.clamp(tier);
         ChartContentPlan plan;
         try {
             plan = ChartContentPlanner.plan(seed, ChartTiers.forTier(clampedTier), ChartPois.all(), ChartFactions.all(),
-                    factionId -> isLoaded(sector, factionId), chartContext, StarChartSettings.fleetLimit());
+                    factionId -> isLoaded(sector, factionId), chartContext, StarChartSettings.fleetLimit(), anomalyIds);
         } catch (RuntimeException e) {
             report("plan the content", seed, e);
             return ChartContent.none(clampedTier);
@@ -100,7 +106,7 @@ public final class ChartContentGenerator {
             build.placePois(plan);
             build.spawnFleets(plan);
             build.placeColonyItem(plan);
-            build.generateExpansions(plan);
+            build.generateAnomalies(plan);
             return build.settle(plan);
         } catch (RuntimeException | LinkageError e) {
             report("generate the content", seed, e);
@@ -318,7 +324,7 @@ public final class ChartContentGenerator {
         private final List<CampaignFleetAPI> fleets = new ArrayList<>();
         private final List<String> guardFleetIds = new ArrayList<>();
         private final Set<SectorEntityToken> usedFoci = new LinkedHashSet<>();
-        private final List<String> expansions = new ArrayList<>();
+        private final List<String> anomalies = new ArrayList<>();
         private List<Hazard> hazards = List.of();
         private String bossFleetId;
         private ChartBossType bossType = ChartBossType.FLEET;
@@ -586,19 +592,19 @@ public final class ChartContentGenerator {
             }
         }
 
-        void generateExpansions(ChartContentPlan plan) {
-            for (String expansionId : plan.expansions()) {
-                ChartExpansion expansion = ChartExpansions.byId(expansionId);
-                if (expansion == null) {
+        void generateAnomalies(ChartContentPlan plan) {
+            for (String anomalyId : plan.anomalies()) {
+                ChartAnomaly anomaly = ChartAnomalies.byId(anomalyId);
+                if (anomaly == null) {
                     continue;
                 }
                 try {
-                    expansion.generate(new ExpansionSite(system, runId, tier, chartContext, poiEntities, innerWormhole,
+                    anomaly.generate(new AnomalyContentSite(system, runId, tier, chartContext, poiEntities, innerWormhole,
                             point -> isClear(new ChartSpot(null, point, null, 1f), hazards, innerWormhole, POI_WORMHOLE_CLEARANCE),
-                            salt -> ChartLayoutGenerator.derivedRandom(seed ^ ((long) expansionId.hashCode() << 32), salt)));
-                    expansions.add(expansionId);
+                            salt -> ChartLayoutGenerator.derivedRandom(seed ^ ((long) anomalyId.hashCode() << 32), salt)));
+                    anomalies.add(anomalyId);
                 } catch (RuntimeException | LinkageError e) {
-                    report("generate the " + expansionId + " expansion", seed, e);
+                    report("generate the " + anomalyId + " anomaly", seed, e);
                 }
             }
         }
@@ -615,7 +621,7 @@ public final class ChartContentGenerator {
                     placedPois++;
                 }
             }
-            return new ChartContent(tier, plan.faction().factionId(), objective, targets, bossFleetId, bossType, fleets.size(), placedPois, expansions);
+            return new ChartContent(tier, plan.faction().factionId(), objective, targets, bossFleetId, bossType, fleets.size(), placedPois, anomalies);
         }
 
         void removeEverything() {

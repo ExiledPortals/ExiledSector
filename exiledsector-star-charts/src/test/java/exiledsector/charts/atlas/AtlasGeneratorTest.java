@@ -47,10 +47,9 @@ class AtlasGeneratorTest {
     private static AtlasRules rules(List<AtlasRegion> regions) {
         return new AtlasRules(regions, Map.of("compact", 1f, "sprawling", 2f, "ringed", 1f),
                 Map.of("pirates", 5f, "hegemony", 3f, "remnant", 2f, "derelict", 2f, "independent", 1f),
-                new AtlasMarkerRule(0.5f, 0f, 0.5f), new AtlasMarkerRule(0.25f, 0f, 0.25f), new AtlasMarkerRule(0.15f, 0.01f, 0.5f),
-                new AtlasMarkerRule(0.1f, 0.005f, 0.4f), SPECIALS,
-                List.of(new AtlasMarkerCandidate("relay", 1f, ""), new AtlasMarkerCandidate("hunter", 1f, "")),
-                List.of(new AtlasMarkerCandidate("black_hole", 1f, ""), new AtlasMarkerCandidate("flares", 1f, "")));
+                new AtlasMarkerRule(0.5f, 0f, 0.5f), new AtlasMarkerRule(0.25f, 0f, 0.25f), new AtlasMarkerRule(0.15f, 0.01f, 0.5f), SPECIALS,
+                List.of(new AtlasAnomalyCandidate("relay", 1f, ""), new AtlasAnomalyCandidate("hunter", 1f, ""),
+                        new AtlasAnomalyCandidate("black_hole", 1f, "", true, Set.of(), null), new AtlasAnomalyCandidate("flares", 1f, "")));
     }
 
     private static AtlasRules rules() {
@@ -61,14 +60,13 @@ class AtlasGeneratorTest {
         return new AtlasGenerator(SEED, rules, AtlasUnlocks.NONE, AtlasMemory.NONE);
     }
 
-    private static AtlasRules withExpansions(AtlasRules rules, List<AtlasMarkerCandidate> expansions) {
-        return new AtlasRules(rules.regions(), rules.layoutWeights(), rules.factionWeights(), rules.voidRule(), rules.powerfulBossRule(),
-                rules.expansionRule(), rules.phenomenonRule(), rules.specials(), expansions, rules.phenomena());
+    private static AtlasRules withAnomalies(AtlasRules rules, List<AtlasAnomalyCandidate> anomalies) {
+        return withAnomalies(rules, rules.anomalyRule(), anomalies);
     }
 
-    private static AtlasRules withPhenomena(AtlasRules rules, List<AtlasMarkerCandidate> phenomena) {
+    private static AtlasRules withAnomalies(AtlasRules rules, AtlasMarkerRule anomalyRule, List<AtlasAnomalyCandidate> anomalies) {
         return new AtlasRules(rules.regions(), rules.layoutWeights(), rules.factionWeights(), rules.voidRule(), rules.powerfulBossRule(),
-                rules.expansionRule(), rules.phenomenonRule(), rules.specials(), rules.expansions(), phenomena);
+                anomalyRule, rules.specials(), anomalies);
     }
 
     private static List<AtlasNode> scan(AtlasGenerator generator) {
@@ -152,7 +150,7 @@ class AtlasGeneratorTest {
         assertEquals(AtlasRegion.NORMAL, origin.regionId());
         assertNull(origin.layoutId());
         assertFalse(origin.powerfulBoss());
-        assertNull(origin.expansionId());
+        assertEquals(List.of(), origin.anomalyIds());
         assertNull(origin.specialId());
         assertFalse(origin.lanes().isEmpty());
     }
@@ -259,19 +257,19 @@ class AtlasGeneratorTest {
     }
 
     @Test
-    void anExpansionHookReadingTerritoryBordersStillOnlyMovesWithTheSitesANewRegionTakes() {
-        AtlasMarkerCandidate borderLoving = new AtlasMarkerCandidate("relay", 1f, "", (traits, weight) -> traits.bordersOtherTerritory() ? weight * 4f : 0f);
+    void anAnomalyHookReadingTerritoryBordersStillOnlyMovesWithTheSitesANewRegionTakes() {
+        AtlasAnomalyCandidate borderLoving = new AtlasAnomalyCandidate("relay", 1f, "", (traits, weight) -> traits.bordersOtherTerritory() ? weight * 4f : 0f);
         List<AtlasRegion> withExtra = new ArrayList<>(REGIONS);
         withExtra.add(region("furnace", 6f, 0, "", "", Map.of("hegemony", 1f), Map.of()));
-        List<AtlasNode> before = scan(generator(withExpansions(rules(), List.of(borderLoving))));
-        List<AtlasNode> after = scan(generator(withExpansions(rules(withExtra), List.of(borderLoving))));
+        List<AtlasNode> before = scan(generator(withAnomalies(rules(), List.of(borderLoving))));
+        List<AtlasNode> after = scan(generator(withAnomalies(rules(withExtra), List.of(borderLoving))));
         int bordered = 0;
         for (int index = 0; index < before.size(); index++) {
             AtlasNode was = before.get(index);
             AtlasNode now = after.get(index);
-            bordered += now.expansionId() != null ? 1 : 0;
+            bordered += now.anomalyIds().isEmpty() ? 0 : 1;
             if (was.regionId().equals(now.regionId())) {
-                assertEquals(was.expansionId(), now.expansionId(), was.cell().toString());
+                assertEquals(was.anomalyIds(), now.anomalyIds(), was.cell().toString());
             }
         }
 
@@ -760,29 +758,21 @@ class AtlasGeneratorTest {
     }
 
     @Test
-    void addingAnExpansionOrPhenomenonMovesNoOtherRoll() {
+    void addingAnAnomalyMovesNoOtherRoll() {
         AtlasRules base = rules();
-        List<AtlasMarkerCandidate> moreExpansions = new ArrayList<>(base.expansions());
-        moreExpansions.add(new AtlasMarkerCandidate("convoy", 1f, ""));
-        List<AtlasMarkerCandidate> morePhenomena = new ArrayList<>(base.phenomena());
-        morePhenomena.add(new AtlasMarkerCandidate("nebula", 1f, ""));
+        List<AtlasAnomalyCandidate> moreAnomalies = new ArrayList<>(base.anomalies());
+        moreAnomalies.add(new AtlasAnomalyCandidate("convoy", 1f, ""));
         List<AtlasNode> before = scan(generator(base));
-        List<AtlasNode> after = scan(generator(withPhenomena(withExpansions(base, moreExpansions), morePhenomena)));
+        List<AtlasNode> after = scan(generator(withAnomalies(base, moreAnomalies)));
         int convoys = 0;
-        int nebulae = 0;
         for (int index = 0; index < before.size(); index++) {
             AtlasNode was = before.get(index);
             AtlasNode now = after.get(index);
-            if ("convoy".equals(now.expansionId())) {
+            List<String> withoutConvoy = new ArrayList<>(now.anomalyIds());
+            if (withoutConvoy.remove("convoy")) {
                 convoys++;
-            } else {
-                assertEquals(was.expansionId(), now.expansionId(), was.cell().toString());
             }
-            if ("nebula".equals(now.phenomenonId())) {
-                nebulae++;
-            } else {
-                assertEquals(was.phenomenonId(), now.phenomenonId(), was.cell().toString());
-            }
+            assertEquals(was.anomalyIds(), withoutConvoy, was.cell().toString());
             assertEquals(was.regionId(), now.regionId());
             assertEquals(was.factionId(), now.factionId());
             assertEquals(was.layoutId(), now.layoutId());
@@ -792,7 +782,29 @@ class AtlasGeneratorTest {
         }
 
         assertTrue(convoys > 0);
-        assertTrue(nebulae > 0);
+    }
+
+    @Test
+    void aNodeRollsSeveralAnomaliesButNeverTwoThatConflict() {
+        List<AtlasAnomalyCandidate> anomalies = List.of(new AtlasAnomalyCandidate("relay", 1f, ""),
+                new AtlasAnomalyCandidate("hunter", 1f, "", false, Set.of("relay"), null), new AtlasAnomalyCandidate("flares", 1f, ""),
+                new AtlasAnomalyCandidate("black_hole", 1f, "", true, Set.of(), null), new AtlasAnomalyCandidate("neutron", 1f, "", true, Set.of(), null));
+        int several = 0;
+        int hunters = 0;
+        int neutrons = 0;
+        for (AtlasNode node : scan(generator(withAnomalies(rules(), new AtlasMarkerRule(0.6f, 0f, 0.6f), anomalies)))) {
+            List<String> ids = node.anomalyIds();
+            several += ids.size() >= 3 ? 1 : 0;
+            hunters += ids.contains("hunter") ? 1 : 0;
+            neutrons += ids.contains("neutron") ? 1 : 0;
+            assertFalse(ids.contains("relay") && ids.contains("hunter"), node.cell().toString());
+            assertFalse(ids.contains("black_hole") && ids.contains("neutron"), node.cell().toString());
+            assertEquals(ids.size(), Set.copyOf(ids).size());
+        }
+
+        assertTrue(several > 0);
+        assertTrue(hunters > 0);
+        assertTrue(neutrons > 0);
     }
 
     @Test
@@ -805,7 +817,7 @@ class AtlasGeneratorTest {
             if (node.isVoid() || node.isOrigin()) {
                 continue;
             }
-            int marked = node.expansionId() != null ? 1 : 0;
+            int marked = node.anomalyIds().isEmpty() ? 0 : 1;
             if (node.distance() <= 10f) {
                 nearCount++;
                 near += marked;
@@ -814,20 +826,20 @@ class AtlasGeneratorTest {
                 far += marked;
             }
         }
-        for (AtlasNode node : scan(generator(withExpansions(rules(), List.of(new AtlasMarkerCandidate("relay", 1f, RAT)))))) {
-            assertNull(node.expansionId());
+        for (AtlasNode node : scan(generator(withAnomalies(rules(), List.of(new AtlasAnomalyCandidate("relay", 1f, RAT)))))) {
+            assertEquals(List.of(), node.anomalyIds());
         }
 
         assertTrue((float) far / farCount > (float) near / nearCount);
     }
 
     @Test
-    void theExpansionHookShapesTheRoll() {
-        AtlasRules vetoed = withExpansions(rules(), List.of(new AtlasMarkerCandidate("relay", 1f, "",
+    void theAnomalyHookShapesTheRoll() {
+        AtlasRules vetoed = withAnomalies(rules(), List.of(new AtlasAnomalyCandidate("relay", 1f, "",
                 (traits, weight) -> "badlands".equals(traits.regionId()) ? weight : 0f)));
         int inBadlands = 0;
         for (AtlasNode node : scan(generator(vetoed))) {
-            if (node.expansionId() != null) {
+            if (!node.anomalyIds().isEmpty()) {
                 assertEquals("badlands", node.regionId());
                 inBadlands++;
             }

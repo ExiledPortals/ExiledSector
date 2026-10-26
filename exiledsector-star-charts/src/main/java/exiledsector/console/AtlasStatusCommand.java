@@ -63,7 +63,7 @@ public class AtlasStatusCommand extends CampaignCommand {
         text.append("\nReachable systems:");
         List<AtlasCell> shown = reachable.stream().limit(REACHABLE_LISTED).toList();
         for (AtlasCell cell : shown) {
-            text.append("\n   ").append(AtlasCommandText.node(generator.node(cell), state));
+            text.append("\n   ").append(AtlasCommandText.node(generator, cell, state));
         }
         if (reachable.size() > shown.size()) {
             text.append("\n   and ").append(reachable.size() - shown.size()).append(" more.");

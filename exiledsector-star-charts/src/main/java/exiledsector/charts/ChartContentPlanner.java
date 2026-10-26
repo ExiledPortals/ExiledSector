@@ -51,6 +51,11 @@ final class ChartContentPlanner {
 
     static ChartContentPlan plan(long seed, ChartTier baseTier, List<ChartPoi> pois, List<ChartFaction> factions, Predicate<String> factionLoaded,
                                  ChartGenContext chartContext, int fleetLimit) {
+        return plan(seed, baseTier, pois, factions, factionLoaded, chartContext, fleetLimit, null);
+    }
+
+    static ChartContentPlan plan(long seed, ChartTier baseTier, List<ChartPoi> pois, List<ChartFaction> factions, Predicate<String> factionLoaded,
+                                 ChartGenContext chartContext, int fleetLimit, List<String> anomalyIds) {
         ChartTier tier = chartContext.adjust(baseTier);
         ChartFaction faction = ChartFactions.resolve(chartContext.factionId(), factions, factionLoaded, ChartLayoutGenerator.derivedRandom(seed, FACTION_SALT));
         ChartObjective objective = pickObjective(tier, ChartLayoutGenerator.derivedRandom(seed, OBJECTIVE_SALT));
@@ -66,7 +71,7 @@ final class ChartContentPlanner {
         plannedPois = planFleets(tier, objective, plannedPois, plannedFleets, ChartLayoutGenerator.derivedRandom(seed, FLEET_SALT),
                 chartContext.extraFleets(), fleetLimit, bossType);
         PlannedStation bossStation = stationVariant == null ? null : plannedStation(tier, stationVariant, plannedFleets);
-        return new ChartContentPlan(tier.tier(), faction, objective, plannedPois, plannedFleets, ChartExpansions.planned(seed, tier.tier(), chartContext),
+        return new ChartContentPlan(tier.tier(), faction, objective, plannedPois, plannedFleets, anomalyIds == null ? ChartAnomalies.planned(seed, tier.tier(), chartContext) : anomalyIds,
                 bossType, bossStation);
     }
 

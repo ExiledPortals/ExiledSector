@@ -3,18 +3,20 @@ package exiledsector.charts;
 import java.util.ArrayList;
 import java.util.List;
 
-public record AtlasRunNode(long cell, String factionId, List<ChartGenContext.AppliedEffect> effects, String expansionId, String phenomenonId,
+public record AtlasRunNode(long cell, String factionId, List<ChartGenContext.AppliedEffect> effects, List<String> anomalyIds,
                            boolean guaranteedBossTierUp) {
 
     static final String FIELD_SEPARATOR = "|";
     static final String EFFECT_SEPARATOR = ";";
     static final String VALUE_SEPARATOR = ":";
+    static final String ID_SEPARATOR = ",";
+    private static final int FIELDS = 5;
+    private static final int FIELDS_BEFORE_ANOMALIES = 6;
 
     public AtlasRunNode {
         factionId = factionId == null ? "" : factionId;
         effects = effects == null ? List.of() : List.copyOf(effects);
-        expansionId = expansionId == null ? "" : expansionId;
-        phenomenonId = phenomenonId == null ? "" : phenomenonId;
+        anomalyIds = anomalyIds == null ? List.of() : List.copyOf(anomalyIds);
     }
 
     public String encode() {
@@ -22,8 +24,8 @@ public record AtlasRunNode(long cell, String factionId, List<ChartGenContext.App
         for (ChartGenContext.AppliedEffect effect : effects) {
             parts.add(effect.effect().name() + VALUE_SEPARATOR + effect.value());
         }
-        return cell + FIELD_SEPARATOR + factionId + FIELD_SEPARATOR + String.join(EFFECT_SEPARATOR, parts) + FIELD_SEPARATOR + expansionId
-                + FIELD_SEPARATOR + phenomenonId + FIELD_SEPARATOR + guaranteedBossTierUp;
+        return cell + FIELD_SEPARATOR + factionId + FIELD_SEPARATOR + String.join(EFFECT_SEPARATOR, parts) + FIELD_SEPARATOR
+                + String.join(ID_SEPARATOR, anomalyIds) + FIELD_SEPARATOR + guaranteedBossTierUp;
     }
 
     public static AtlasRunNode decode(String text) {
@@ -31,7 +33,7 @@ public record AtlasRunNode(long cell, String factionId, List<ChartGenContext.App
             return null;
         }
         String[] fields = text.split("\\" + FIELD_SEPARATOR, -1);
-        if (fields.length < 6) {
+        if (fields.length != FIELDS && fields.length != FIELDS_BEFORE_ANOMALIES) {
             return null;
         }
         try {
@@ -46,7 +48,15 @@ public record AtlasRunNode(long cell, String factionId, List<ChartGenContext.App
                     effects.add(new ChartGenContext.AppliedEffect(effect, Float.parseFloat(part.substring(separator + 1))));
                 }
             }
-            return new AtlasRunNode(Long.parseLong(fields[0]), fields[1], effects, fields[3], fields[4], Boolean.parseBoolean(fields[5]));
+            List<String> anomalyIds = new ArrayList<>();
+            for (int field = 3; field < fields.length - 1; field++) {
+                for (String id : fields[field].split(ID_SEPARATOR)) {
+                    if (!id.isBlank() && !anomalyIds.contains(id)) {
+                        anomalyIds.add(id);
+                    }
+                }
+            }
+            return new AtlasRunNode(Long.parseLong(fields[0]), fields[1], effects, anomalyIds, Boolean.parseBoolean(fields[fields.length - 1]));
         } catch (NumberFormatException e) {
             return null;
         }

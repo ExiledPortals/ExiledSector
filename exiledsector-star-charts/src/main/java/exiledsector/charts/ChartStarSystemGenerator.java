@@ -17,9 +17,9 @@ import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
 import exiledsector.charts.feature.ChartFeature;
 import exiledsector.charts.feature.FeatureSite;
-import exiledsector.charts.phenomenon.ChartPhenomenon;
-import exiledsector.charts.phenomenon.PhenomenonSite;
-import exiledsector.charts.phenomenon.StellarFlares;
+import exiledsector.charts.anomaly.AnomalyLayoutSite;
+import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.StellarFlares;
 import exiledsector.compat.UnknownSkiesCompat;
 
 import java.util.ArrayList;
@@ -38,16 +38,18 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
             NEBULA_DEFAULT, List.of("graphics/backgrounds/background1.jpg", "graphics/backgrounds/background2.jpg"));
 
     private final ChartLayoutRecipe recipe;
-    private final ChartPhenomenon phenomenon;
+    private final List<ChartAnomaly> anomalies;
+    private final ChartAnomaly starAnomaly;
     private SectorEntityToken featureAnchor;
     private PlanetAPI deepSpaceCentre;
     private String bodyIdPrefix;
     private boolean primaryForced;
 
-    ChartStarSystemGenerator(StarAge age, StarSystemType chartType, ChartLayoutRecipe recipe, ChartPhenomenon phenomenon) {
+    ChartStarSystemGenerator(StarAge age, StarSystemType chartType, ChartLayoutRecipe recipe, List<ChartAnomaly> anomalies) {
         super(new CustomConstellationParams(age));
-        this.phenomenon = phenomenon;
-        systemType = ChartPhenomenon.systemTypeOr(phenomenon, chartType);
+        this.anomalies = anomalies == null ? List.of() : List.copyOf(anomalies);
+        starAnomaly = this.anomalies.stream().filter(ChartAnomaly::replacesStar).findFirst().orElse(null);
+        systemType = ChartAnomaly.systemTypeOr(starAnomaly, chartType);
         this.recipe = recipe == null ? ChartLayoutRecipe.ORDINARY : recipe;
     }
 
@@ -65,10 +67,10 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
 
     @Override
     public PlanetSpecAPI pickStar(StarAge age) {
-        if (phenomenon != null && phenomenon.primaryStar() != null && !primaryForced) {
+        if (starAnomaly != null && starAnomaly.primaryStar() != null && !primaryForced) {
             primaryForced = true;
             for (PlanetSpecAPI spec : Global.getSettings().getAllPlanetSpecs()) {
-                if (spec.isStar() && phenomenon.primaryStar().equals(spec.getPlanetType())) {
+                if (spec.isStar() && starAnomaly.primaryStar().equals(spec.getPlanetType())) {
                     return spec;
                 }
             }
@@ -183,8 +185,8 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
         if (systemType == StarSystemType.NEBULA) {
             hideNebulaCentre();
         }
-        if (phenomenon != null) {
-            phenomenon.shape(new PhenomenonSite(system, centre(), visibleStars(),
+        for (ChartAnomaly anomaly : anomalies) {
+            anomaly.shape(new AnomalyLayoutSite(system, centre(), visibleStars(),
                     ChartWormholePlacement.outermost(system, List.of()), random));
         }
         system.setAge(starAge);

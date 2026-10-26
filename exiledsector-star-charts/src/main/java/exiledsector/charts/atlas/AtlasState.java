@@ -2,6 +2,7 @@ package exiledsector.charts.atlas;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 public final class AtlasState implements AtlasMemory {
@@ -30,6 +32,8 @@ public final class AtlasState implements AtlasMemory {
     private Map<Long, String> chunkUnlocks = new HashMap<>();
     private Map<String, String> territoryFactions = new HashMap<>();
     private Set<Integer> clearedTiers = new HashSet<>();
+    private Map<Integer, String> anomalyRecords = new TreeMap<>();
+    private int nextAnomalyRecord;
     private int atlasPoints;
     private int keyFragments;
 
@@ -67,6 +71,9 @@ public final class AtlasState implements AtlasMemory {
         }
         if (clearedTiers == null) {
             clearedTiers = new HashSet<>();
+        }
+        if (anomalyRecords == null) {
+            anomalyRecords = new TreeMap<>();
         }
         return this;
     }
@@ -178,5 +185,47 @@ public final class AtlasState implements AtlasMemory {
 
     public int keyFragments() {
         return keyFragments;
+    }
+
+    public List<AtlasAnomalyRecord> anomalyRecords() {
+        List<AtlasAnomalyRecord> records = new ArrayList<>();
+        anomalyRecords.forEach((recordId, text) -> {
+            AtlasAnomalyRecord record = AtlasAnomalyRecord.decode(recordId, text);
+            if (record != null) {
+                records.add(record);
+            }
+        });
+        return records;
+    }
+
+    public List<AtlasAnomalyRecord> anomalyRecords(AtlasCell cell) {
+        return anomalyRecords().stream().filter(record -> record.cell().equals(cell)).toList();
+    }
+
+    public AtlasAnomalyRecord anomalyRecord(int recordId) {
+        return AtlasAnomalyRecord.decode(recordId, anomalyRecords.get(recordId));
+    }
+
+    int insertAnomaly(AtlasCell cell, String anomalyId, AtlasAnomalyRecord.Source source) {
+        int recordId = ++nextAnomalyRecord;
+        anomalyRecords.put(recordId, new AtlasAnomalyRecord(recordId, cell, anomalyId, source).encode());
+        return recordId;
+    }
+
+    boolean moveAnomaly(int recordId, AtlasCell target) {
+        AtlasAnomalyRecord record = anomalyRecord(recordId);
+        if (record == null) {
+            return false;
+        }
+        anomalyRecords.put(recordId, record.movedTo(target).encode());
+        return true;
+    }
+
+    public boolean removeAnomaly(int recordId) {
+        return anomalyRecords.remove(recordId) != null;
+    }
+
+    void spendInsertedAnomalies(AtlasCell cell) {
+        anomalyRecords(cell).forEach(record -> anomalyRecords.remove(record.recordId()));
     }
 }

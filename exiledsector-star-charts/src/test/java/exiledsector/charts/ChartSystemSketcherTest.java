@@ -34,9 +34,9 @@ class ChartSystemSketcherTest {
     @Test
     void theSameSeedSketchesTheSameSystemWithTheRealGeneratorsStarCount() {
         for (long seed = 0; seed < 200; seed++) {
-            ChartSystemSketch sketch = ChartSystemSketcher.sketch(seed, ChartLayoutRecipe.ORDINARY, "", PALETTE);
+            ChartSystemSketch sketch = ChartSystemSketcher.sketch(seed, ChartLayoutRecipe.ORDINARY, List.of(), PALETTE);
 
-            assertEquals(sketch, ChartSystemSketcher.sketch(seed, ChartLayoutRecipe.ORDINARY, "", PALETTE));
+            assertEquals(sketch, ChartSystemSketcher.sketch(seed, ChartLayoutRecipe.ORDINARY, List.of(), PALETTE));
             StarSystemType type = ChartLayoutGenerator.typeFor(new ChartLayoutRequest(seed, null));
             assertEquals(type, sketch.systemType());
             assertEquals(1 + ChartSystemSketcher.closeStars(type) + ChartSystemSketcher.farStars(type), sketch.stars().size());
@@ -49,7 +49,7 @@ class ChartSystemSketcherTest {
         Set<String> centres = new HashSet<>();
 
         for (long seed = 0; seed < 200; seed++) {
-            ChartSystemSketch sketch = ChartSystemSketcher.sketch(seed, starless, "", PALETTE);
+            ChartSystemSketch sketch = ChartSystemSketcher.sketch(seed, starless, List.of(), PALETTE);
 
             assertEquals(StarSystemType.DEEP_SPACE, sketch.systemType());
             assertTrue(sketch.stars().isEmpty());
@@ -68,7 +68,7 @@ class ChartSystemSketcherTest {
                 Map.of("cat_giant", 0f, "cat_terrain_rings", 0f, "cat_nothing", 0f), new ChartShape(Map.of(), 4, 4, Float.NaN, Map.of(), ""));
 
         for (long seed = 0; seed < 50; seed++) {
-            ChartSystemSketch sketch = ChartSystemSketcher.sketch(seed, frozenOnly, "", PALETTE);
+            ChartSystemSketch sketch = ChartSystemSketcher.sketch(seed, frozenOnly, List.of(), PALETTE);
 
             assertTrue(sketch.stars().stream().allMatch(star -> star.typeId().equals("star_white")));
             assertEquals(4, sketch.planets().size());
@@ -82,7 +82,7 @@ class ChartSystemSketcherTest {
         ChartLayoutRecipe tight = recipe(Map.of(), Map.of("cat_nothing", 0f), new ChartShape(Map.of(), 12, 12, 5000f, Map.of(), ""));
 
         for (long seed = 0; seed < 50; seed++) {
-            ChartSystemSketch sketch = ChartSystemSketcher.sketch(seed, tight, "", PALETTE);
+            ChartSystemSketch sketch = ChartSystemSketcher.sketch(seed, tight, List.of(), PALETTE);
 
             assertTrue(sketch.planets().size() + sketch.belts().size() < 12);
             for (Body planet : sketch.planets()) {
@@ -95,7 +95,7 @@ class ChartSystemSketcherTest {
     void beltsUseTheRingTerrainKindsAndPlanetsOrbitOutsideTheStars() {
         Set<String> seenBelts = new HashSet<>();
         for (long seed = 0; seed < 100; seed++) {
-            ChartSystemSketch sketch = ChartSystemSketcher.sketch(seed, ChartLayoutRecipe.ORDINARY, "", PALETTE);
+            ChartSystemSketch sketch = ChartSystemSketcher.sketch(seed, ChartLayoutRecipe.ORDINARY, List.of(), PALETTE);
             sketch.belts().forEach(belt -> seenBelts.add(belt.typeId()));
             float centreReach = sketch.stars().stream().filter(star -> star.orbitDays() < ChartSystemSketcher.CLOSE_STAR_DAYS * 2f + 1f)
                     .map(star -> star.orbitRadius() + star.radius()).max(Float::compare).orElse(0f);
@@ -110,7 +110,7 @@ class ChartSystemSketcherTest {
     @Test
     void anEmptyPaletteFallsBackToALoneWhiteStar() {
         ChartSystemSketch sketch = ChartSystemSketcher.sketch(7L, recipe(Map.of(), Map.of(), new ChartShape(Map.of(
-                StarSystemType.SINGLE, 1f), -1, -1, Float.NaN, Map.of(), "")), "", ChartSketchPalette.EMPTY);
+                StarSystemType.SINGLE, 1f), -1, -1, Float.NaN, Map.of(), "")), List.of(), ChartSketchPalette.EMPTY);
 
         assertEquals(List.of(new Body(ChartSystemSketcher.FALLBACK_STAR, ChartSystemSketcher.FALLBACK_STAR_RADIUS, 0f, 0f, 0f)), sketch.stars());
         assertTrue(sketch.planets().isEmpty());

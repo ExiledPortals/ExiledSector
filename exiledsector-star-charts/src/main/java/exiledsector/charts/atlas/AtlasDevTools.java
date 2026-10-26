@@ -97,7 +97,7 @@ public final class AtlasDevTools {
     }
 
     public static void fail(AtlasState state, AtlasCell cell) {
-        state.add(cell, AtlasState.FAILED | AtlasState.MARKERS_SPENT);
+        AtlasProgress.fail(state, cell);
     }
 
     public static AtlasState reset(SectorAPI sector, Long seed) {

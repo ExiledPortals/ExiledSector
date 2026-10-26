@@ -43,7 +43,7 @@ final class FakeChartLayoutEngine implements ChartLayoutEngine {
 
     @Override
     public SectorEntityToken build(StarSystemAPI system, String starId, StarSystemType systemType, StarAge age, Random random, ChartLayoutRecipe recipe,
-                                   exiledsector.charts.phenomenon.ChartPhenomenon phenomenon) {
+                                   java.util.List<exiledsector.charts.anomaly.ChartAnomaly> anomalies) {
         long firstRandomLong = new Random(random.nextLong()).nextLong();
         builds.add(new Build(system, starId, systemType, age, firstRandomLong, recipe));
         layout.build(system, starId, systemType, random);

@@ -33,7 +33,7 @@ public class AtlasReachCommand extends AtlasTargetCommand {
         }
         Console.showMessage(path.isEmpty() ? AtlasCommandText.cell(cell) + " was already reachable."
                 : "Completed " + counted(path.size(), "system", "systems") + " on the way, so " + AtlasCommandText.cell(cell)
-                + " is now reachable: " + AtlasCommandText.node(generator.node(cell), state));
+                + " is now reachable: " + AtlasCommandText.node(generator, cell, state));
         return CommandResult.SUCCESS;
     }
 }

@@ -1,6 +1,6 @@
 {
 	"exiledSector_chart_breach":{
-		"plugin":"exiledsector.charts.expansion.BreachTerrainPlugin",
+		"plugin":"exiledsector.charts.anomaly.BreachTerrainPlugin",
 		"musicSuppression":0.5,
 		"loopOne":"terrain_hyperspace_abyss",
 	},

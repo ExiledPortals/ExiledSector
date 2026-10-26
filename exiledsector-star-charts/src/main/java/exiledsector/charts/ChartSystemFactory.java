@@ -45,7 +45,7 @@ public final class ChartSystemFactory {
         localiseName(system);
         addInnerWormhole(system, runId, layout.innerWormholeLocation());
         ChartContent content = ChartContentGenerator.generate(sector, system, runId, request.contentSeed(), request.tier(),
-                innerWormholeSpot(layout.innerWormholeLocation()), request.chartContext(), layout.featureAnchor());
+                innerWormholeSpot(layout.innerWormholeLocation()), request.chartContext(), layout.featureAnchor(), layout.anomalyIds());
         tagEveryEntity(system, runId);
         request.chartContext().afterGeneration(new ChartGenerated(system, runId, content, request.chartContext()));
         return new ChartSystem(system, layout, content);

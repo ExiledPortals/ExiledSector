@@ -3,7 +3,7 @@ package exiledsector.charts.atlas;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import exiledlib.ModCsv;
-import exiledsector.charts.ChartExpansions;
+import exiledsector.charts.ChartAnomalies;
 import exiledsector.charts.ChartFaction;
 import exiledsector.charts.ChartFactions;
 import exiledsector.charts.ChartEffect;
@@ -12,11 +12,10 @@ import exiledsector.charts.ChartGenContext;
 import exiledsector.charts.ChartLayoutGenerator;
 import exiledsector.charts.ChartLayoutRecipe;
 import exiledsector.charts.ChartLook;
-import exiledsector.charts.ChartPhenomena;
 import exiledsector.charts.ChartPois;
 import exiledsector.charts.ModdedChartFactions;
 import exiledsector.charts.ChartShape;
-import exiledsector.charts.expansion.ChartExpansion;
+import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.data.CsvRows;
 import exiledsector.ui.util.ColorUtil;
 import org.apache.log4j.Logger;
@@ -46,8 +45,7 @@ public final class AtlasData {
     static final String ID_COLUMN = "id";
     static final String VOID_MARKER = "void";
     static final String POWERFUL_BOSS_MARKER = "powerful_boss";
-    static final String EXPANSION_MARKER = "expansion";
-    static final String PHENOMENON_MARKER = "phenomenon";
+    static final String ANOMALY_MARKER = "anomaly";
     static final String MODDED_FACTIONS = "modded_factions";
     private static final Logger LOG = Logger.getLogger(AtlasData.class);
     private static final Pattern HEX_COLOUR = Pattern.compile("#?([0-9a-fA-F]{6}|[0-9a-fA-F]{8})");
@@ -81,20 +79,17 @@ public final class AtlasData {
         for (ChartFaction faction : ChartFactions.all()) {
             factionWeights.put(faction.factionId(), faction.weight());
         }
-        List<AtlasMarkerCandidate> expansions = new ArrayList<>();
-        for (ChartExpansions.Definition definition : ChartExpansions.definitions()) {
-            ChartExpansion expansion = ChartExpansions.byId(definition.id());
-            if (expansion != null) {
-                expansions.add(new AtlasMarkerCandidate(definition.id(), definition.weight(), definition.requiredMod(), expansion::atlasWeight));
+        List<AtlasAnomalyCandidate> anomalies = new ArrayList<>();
+        for (ChartAnomalies.Definition definition : ChartAnomalies.definitions()) {
+            ChartAnomaly anomaly = ChartAnomalies.byId(definition.id());
+            if (anomaly != null) {
+                anomalies.add(new AtlasAnomalyCandidate(definition.id(), definition.weight(), definition.requiredMod(), definition.replacesStar(),
+                        definition.excludes(), anomaly::atlasWeight));
             }
-        }
-        List<AtlasMarkerCandidate> phenomena = new ArrayList<>();
-        for (ChartPhenomena.Definition definition : ChartPhenomena.definitions()) {
-            phenomena.add(new AtlasMarkerCandidate(definition.id(), definition.weight(), definition.requiredMod()));
         }
         Map<String, AtlasMarkerRule> rules = markerRules;
         return new AtlasRules(regions, layoutWeights, factionWeights, rule(rules, VOID_MARKER), rule(rules, POWERFUL_BOSS_MARKER),
-                rule(rules, EXPANSION_MARKER), rule(rules, PHENOMENON_MARKER), specials, expansions, phenomena);
+                rule(rules, ANOMALY_MARKER), specials, anomalies);
     }
 
     public static Color regionTint(String regionId) {
@@ -195,8 +190,8 @@ public final class AtlasData {
     private static Map<String, Float> categoryWeights(CsvRows csv, JSONObject row, String column, String rowId) {
         Map<String, Float> categories = csv.weights(row, column, rowId, null);
         for (String category : List.copyOf(categories.keySet())) {
-            if (ChartLayoutRecipe.PHENOMENON_CATEGORIES.contains(category)) {
-                csv.problem(rowId, column, category + " (only phenomena add it)");
+            if (ChartLayoutRecipe.ANOMALY_CATEGORIES.contains(category)) {
+                csv.problem(rowId, column, category + " (only anomalies add it)");
                 categories.remove(category);
             }
         }
@@ -206,8 +201,8 @@ public final class AtlasData {
     private static ChartLook look(CsvRows csv, JSONObject row, String rowId) {
         Map<String, Float> stars = csv.weights(row, "stars", rowId, null);
         for (String star : List.copyOf(stars.keySet())) {
-            if (ChartLayoutRecipe.PHENOMENON_STARS.contains(star)) {
-                csv.problem(rowId, "stars", star + " (only phenomena add it)");
+            if (ChartLayoutRecipe.ANOMALY_STARS.contains(star)) {
+                csv.problem(rowId, "stars", star + " (only anomalies add it)");
                 stars.remove(star);
             }
         }
@@ -351,7 +346,7 @@ public final class AtlasData {
         Map<String, AtlasMarkerRule> loaded = new LinkedHashMap<>();
         CsvRows csv = new CsvRows(MARKERS_PATH);
         CsvRows.forEachIdRow(rows, ID_COLUMN, (id, row) -> {
-            if (!List.of(VOID_MARKER, POWERFUL_BOSS_MARKER, EXPANSION_MARKER, PHENOMENON_MARKER).contains(id)) {
+            if (!List.of(VOID_MARKER, POWERFUL_BOSS_MARKER, ANOMALY_MARKER).contains(id)) {
                 csv.skipRow(id, "no atlas marker has this id");
                 return;
             }

@@ -1,9 +1,9 @@
 package exiledsector.charts;
 
 import com.thoughtworks.xstream.XStream;
-import exiledsector.charts.expansion.BreachCorePlugin;
-import exiledsector.charts.expansion.BreachSupplyBuff;
-import exiledsector.charts.expansion.BreachTerrainPlugin;
+import exiledsector.charts.anomaly.BreachCorePlugin;
+import exiledsector.charts.anomaly.BreachSupplyBuff;
+import exiledsector.charts.anomaly.BreachTerrainPlugin;
 
 import java.util.Map;
 

@@ -4,20 +4,18 @@ import java.util.List;
 import java.util.Map;
 
 public record AtlasRules(List<AtlasRegion> regions, Map<String, Float> layoutWeights, Map<String, Float> factionWeights,
-                         AtlasMarkerRule voidRule, AtlasMarkerRule powerfulBossRule, AtlasMarkerRule expansionRule,
-                         AtlasMarkerRule phenomenonRule, List<AtlasSpecial> specials, List<AtlasMarkerCandidate> expansions,
-                         List<AtlasMarkerCandidate> phenomena) {
+                         AtlasMarkerRule voidRule, AtlasMarkerRule powerfulBossRule, AtlasMarkerRule anomalyRule, List<AtlasSpecial> specials,
+                         List<AtlasAnomalyCandidate> anomalies) {
 
     public static final AtlasRules EMPTY = new AtlasRules(List.of(), Map.of(), Map.of(), AtlasMarkerRule.NEVER, AtlasMarkerRule.NEVER,
-            AtlasMarkerRule.NEVER, AtlasMarkerRule.NEVER, List.of(), List.of(), List.of());
+            AtlasMarkerRule.NEVER, List.of(), List.of());
 
     public AtlasRules {
         regions = List.copyOf(regions);
         layoutWeights = Map.copyOf(layoutWeights);
         factionWeights = Map.copyOf(factionWeights);
         specials = List.copyOf(specials);
-        expansions = List.copyOf(expansions);
-        phenomena = List.copyOf(phenomena);
+        anomalies = List.copyOf(anomalies);
     }
 
     public AtlasRegion normalRegion() {

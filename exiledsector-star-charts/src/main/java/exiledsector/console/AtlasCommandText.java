@@ -1,6 +1,8 @@
 package exiledsector.console;
 
+import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasNode;
 import exiledsector.charts.atlas.AtlasState;
 
@@ -16,7 +18,8 @@ final class AtlasCommandText {
         return "(" + cell.gridX() + " " + cell.gridY() + ")";
     }
 
-    static String node(AtlasNode node, AtlasState state) {
+    static String node(AtlasGenerator generator, AtlasCell cell, AtlasState state) {
+        AtlasNode node = generator.node(cell);
         List<String> parts = new ArrayList<>();
         parts.add(node.regionId());
         if (node.factionId() != null) {
@@ -31,11 +34,9 @@ final class AtlasCommandText {
         if (node.powerfulBoss()) {
             parts.add("powerful boss");
         }
-        if (node.phenomenonId() != null) {
-            parts.add("phenomenon " + node.phenomenonId());
-        }
-        if (node.expansionId() != null) {
-            parts.add("expansion " + node.expansionId());
+        List<String> anomalyIds = AtlasAnomalies.effective(generator, state, cell);
+        if (!anomalyIds.isEmpty()) {
+            parts.add("anomalies " + String.join(" ", anomalyIds));
         }
         if (node.infestationId() != null) {
             parts.add(state.has(node.cell(), AtlasState.CLEANSED) ? "cleansed" : "infested from " + node.infestationId());

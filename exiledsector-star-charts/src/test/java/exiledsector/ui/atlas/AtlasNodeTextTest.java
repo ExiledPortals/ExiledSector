@@ -27,7 +27,7 @@ class AtlasNodeTextTest {
         List<AtlasSpecial> specials = List.of(
                 new AtlasSpecial("bastion", AtlasSpecial.Kind.BASTION, AtlasSpecial.Placement.FIXED, 0f, 1f, 0f, 3, 25f, "", "", ""));
         AtlasRules rules = new AtlasRules(regions, Map.of("compact", 1f), Map.of("pirates", 1f), AtlasMarkerRule.NEVER, AtlasMarkerRule.NEVER,
-                AtlasMarkerRule.NEVER, AtlasMarkerRule.NEVER, specials, List.of(), List.of());
+                AtlasMarkerRule.NEVER, specials, List.of());
         return new AtlasGenerator(SEED, rules, AtlasUnlocks.NONE, state);
     }
 

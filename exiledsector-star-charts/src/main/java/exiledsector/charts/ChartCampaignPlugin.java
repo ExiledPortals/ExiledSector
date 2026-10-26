@@ -5,8 +5,8 @@ import com.fs.starfarer.api.campaign.BaseCampaignPlugin;
 import com.fs.starfarer.api.campaign.CampaignPlugin;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import exiledsector.charts.expansion.BreachCoreDialog;
-import exiledsector.charts.expansion.SpatialBreach;
+import exiledsector.charts.anomaly.BreachCoreDialog;
+import exiledsector.charts.anomaly.SpatialBreach;
 
 public class ChartCampaignPlugin extends BaseCampaignPlugin {
 

@@ -4,6 +4,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.ChartSketchPalette;
 import exiledsector.charts.ChartSystemSketch;
 import exiledsector.charts.ChartSystemSketcher;
+import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasData;
 import exiledsector.charts.atlas.AtlasGenerator;
@@ -86,7 +87,7 @@ final class AtlasMapCanvas {
             AtlasNode node = nodes.get(cell);
             if (!node.isVoid() && !node.isOrigin()) {
                 ChartSystemSketch sketch = ChartSystemSketcher.sketch(AtlasOpening.layoutSeed(state, cell),
-                        AtlasData.recipeFor(node.regionId(), node.layoutId()), AtlasOpening.phenomenonFor(state, cell, node), palette);
+                        AtlasData.recipeFor(node.regionId(), node.layoutId()), AtlasAnomalies.effective(generator, state, cell), palette);
                 sketches.put(cell, AtlasSystemPreview.Prepared.of(nodeKey(cell), sketch));
             }
         }

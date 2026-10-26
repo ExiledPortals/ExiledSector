@@ -103,13 +103,13 @@ class ChartStarSystemGeneratorTest {
     }
 
     @Test
-    void aStarPhenomenonForcesOnlyThePrimaryStar() {
+    void aStarAnomalyForcesOnlyThePrimaryStar() {
         ChartStarSystemGenerator blackHole = new ChartStarSystemGenerator(StarAge.OLD, StarSystemType.SINGLE, ChartLayoutRecipe.ORDINARY,
-                exiledsector.charts.phenomenon.StarPhenomena.BLACK_HOLE);
+                java.util.List.of(exiledsector.charts.anomaly.StarAnomalies.BLACK_HOLE));
 
         assertEquals("black_hole", blackHole.pickStar(StarAge.OLD).getPlanetType());
         for (int pick = 0; pick < 50; pick++) {
-            assertFalse(ChartLayoutRecipe.PHENOMENON_STARS.contains(blackHole.pickStar(StarAge.OLD).getPlanetType()));
+            assertFalse(ChartLayoutRecipe.ANOMALY_STARS.contains(blackHole.pickStar(StarAge.OLD).getPlanetType()));
         }
     }
 

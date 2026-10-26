@@ -1,10 +1,10 @@
 package exiledsector.charts;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledsector.charts.expansion.SpatialBreach;
-import exiledsector.charts.phenomenon.AsteroidStorm;
-import exiledsector.charts.phenomenon.MagneticStorm;
-import exiledsector.charts.phenomenon.StellarFlares;
+import exiledsector.charts.anomaly.AsteroidStorm;
+import exiledsector.charts.anomaly.MagneticStorm;
+import exiledsector.charts.anomaly.SpatialBreach;
+import exiledsector.charts.anomaly.StellarFlares;
 import exiledlib.i18n.Message;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
@@ -81,13 +81,13 @@ public enum ChartEffect implements ModifierEffect {
     CHART_COLONY_ITEM_PERCENT(DropType.COLONY_ITEM),
     CHART_BOSS_SPOILS_PERCENT(false, ChartGenContext::addBossSpoilsPercent),
     CHART_REWARD_PERCENT(false, ChartGenContext::addRewardPercent),
-    CHART_BREACH_CHANCE(new Chance((context, value) -> context.addExpansionChance(SpatialBreach.EXPANSION_ID, value))),
-    CHART_BREACH_GROWTH_PERCENT(false, (context, value) -> context.addExpansionPercent(SpatialBreach.GROWTH_KEY, value)),
-    CHART_BREACH_CACHE_PERCENT(false, (context, value) -> context.addExpansionPercent(SpatialBreach.CACHE_KEY, value)),
-    CHART_BREACH_CORE_ITEM_PERCENT(false, (context, value) -> context.addExpansionPercent(SpatialBreach.CORE_ITEM_KEY, value)),
-    CHART_ASTEROID_STORM_CHANCE(new Chance((context, value) -> context.addPhenomenonChance(AsteroidStorm.PHENOMENON_ID, value))),
-    CHART_MAGNETIC_STORM_CHANCE(new Chance((context, value) -> context.addPhenomenonChance(MagneticStorm.PHENOMENON_ID, value))),
-    CHART_STELLAR_FLARES_CHANCE(new Chance((context, value) -> context.addPhenomenonChance(StellarFlares.PHENOMENON_ID, value)));
+    CHART_BREACH_CHANCE(new Chance((context, value) -> context.addAnomalyChance(SpatialBreach.ID, value))),
+    CHART_BREACH_GROWTH_PERCENT(false, (context, value) -> context.addAnomalyPercent(SpatialBreach.GROWTH_KEY, value)),
+    CHART_BREACH_CACHE_PERCENT(false, (context, value) -> context.addAnomalyPercent(SpatialBreach.CACHE_KEY, value)),
+    CHART_BREACH_CORE_ITEM_PERCENT(false, (context, value) -> context.addAnomalyPercent(SpatialBreach.CORE_ITEM_KEY, value)),
+    CHART_ASTEROID_STORM_CHANCE(new Chance((context, value) -> context.addAnomalyChance(AsteroidStorm.ID, value))),
+    CHART_MAGNETIC_STORM_CHANCE(new Chance((context, value) -> context.addAnomalyChance(MagneticStorm.ID, value))),
+    CHART_STELLAR_FLARES_CHANCE(new Chance((context, value) -> context.addAnomalyChance(StellarFlares.ID, value)));
 
     static final String KEY_PREFIX = "chart.effect.";
     static final String CHANCE_SUFFIX = ".chance";

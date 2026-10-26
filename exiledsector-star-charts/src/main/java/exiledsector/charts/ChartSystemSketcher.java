@@ -6,9 +6,10 @@ import exiledsector.charts.ChartSketchPalette.BodyKind;
 import exiledsector.charts.ChartSketchPalette.StarKind;
 import exiledsector.charts.ChartSystemSketch.Belt;
 import exiledsector.charts.ChartSystemSketch.Body;
-import exiledsector.charts.phenomenon.ChartPhenomenon;
+import exiledsector.charts.anomaly.ChartAnomaly;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -38,11 +39,10 @@ public final class ChartSystemSketcher {
     private ChartSystemSketcher() {
     }
 
-    public static ChartSystemSketch sketch(long seed, ChartLayoutRecipe recipe, String phenomenonId, ChartSketchPalette palette) {
+    public static ChartSystemSketch sketch(long seed, ChartLayoutRecipe recipe, Collection<String> anomalyIds, ChartSketchPalette palette) {
         ChartLayoutRecipe layoutRecipe = recipe == null ? ChartLayoutRecipe.ORDINARY : recipe;
-        ChartPhenomena.Definition definition = ChartPhenomena.definition(phenomenonId);
-        ChartPhenomenon phenomenon = definition != null && ChartPois.modRequirementMet(definition.requiredMod()) ? ChartPhenomena.byId(phenomenonId) : null;
-        StarSystemType systemType = ChartPhenomenon.systemTypeOr(phenomenon,
+        ChartAnomaly starAnomaly = ChartAnomalies.starOf(anomalyIds == null ? List.of() : anomalyIds);
+        StarSystemType systemType = ChartAnomaly.systemTypeOr(starAnomaly,
                 ChartLayoutGenerator.typeFor(new ChartLayoutRequest(seed, null).withRecipe(layoutRecipe)));
         StarAge age = ChartLayoutGenerator.pickAge(seed);
         Random random = ChartLayoutGenerator.derivedRandom(seed, SKETCH_SALT);
@@ -56,7 +56,7 @@ public final class ChartSystemSketcher {
             centreReach = placeDeepSpaceCentre(palette, random, planets);
         } else {
             List<StarKind> centreKinds = new ArrayList<>();
-            centreKinds.add(forcedStar(phenomenon, palette, nebula, layoutRecipe, age, random));
+            centreKinds.add(forcedStar(starAnomaly, palette, nebula, layoutRecipe, age, random));
             for (int i = 0; i < closeStars(systemType); i++) {
                 centreKinds.add(pickStar(palette, nebula, layoutRecipe, age, random));
             }
@@ -178,9 +178,9 @@ public final class ChartSystemSketcher {
         return picked == null ? null : picked.getKey();
     }
 
-    private static StarKind forcedStar(ChartPhenomenon phenomenon, ChartSketchPalette palette, boolean nebula, ChartLayoutRecipe recipe,
+    private static StarKind forcedStar(ChartAnomaly starAnomaly, ChartSketchPalette palette, boolean nebula, ChartLayoutRecipe recipe,
                                        StarAge age, Random random) {
-        String forced = phenomenon == null ? null : phenomenon.primaryStar();
+        String forced = starAnomaly == null ? null : starAnomaly.primaryStar();
         for (StarKind kind : palette.stars()) {
             if (kind.typeId().equals(forced)) {
                 return kind;

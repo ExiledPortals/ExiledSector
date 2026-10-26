@@ -27,7 +27,7 @@ public class AtlasFailCommand extends AtlasTargetCommand {
             return CommandResult.ERROR;
         }
         AtlasDevTools.fail(state, cell);
-        Console.showMessage("Marked " + AtlasCommandText.node(generator.node(cell), state) + " as failed.");
+        Console.showMessage("Marked " + AtlasCommandText.node(generator, cell, state) + " as failed.");
         return CommandResult.SUCCESS;
     }
 }

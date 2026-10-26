@@ -3,9 +3,7 @@ package exiledsector.charts.atlas;
 import exiledsector.charts.AtlasRunNode;
 import exiledsector.charts.ChartGenContext;
 import exiledsector.charts.ChartLayoutRequest;
-import exiledsector.charts.ChartPhenomena;
 import exiledsector.charts.ChartTiers;
-import exiledsector.charts.phenomenon.ChartPhenomenon;
 import exiledsector.items.StarChart;
 import exiledsector.modifiers.ModifierSlot;
 
@@ -77,8 +75,7 @@ public final class AtlasOpening {
         if (special != null) {
             effects.addAll(AtlasData.nodeEffects(special.infests() ? NEXUS : special.kind().key()));
         }
-        String expansionId = spent || node.expansionId() == null ? "" : node.expansionId();
-        return new AtlasRunNode(cell.pack(), factionFor(generator, state, cell, node), effects, expansionId, phenomenonFor(state, cell, node), bossTierUp);
+        return new AtlasRunNode(cell.pack(), factionFor(generator, state, cell, node), effects, AtlasAnomalies.effective(generator, state, cell), bossTierUp);
     }
 
     public static String factionFor(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasNode node) {
@@ -89,13 +86,6 @@ public final class AtlasOpening {
         return infestation == null || infestation.factionId().isEmpty() ? node.factionId() : infestation.factionId();
     }
 
-    public static String phenomenonFor(AtlasState state, AtlasCell cell, AtlasNode node) {
-        String phenomenonId = node.phenomenonId() == null ? "" : node.phenomenonId();
-        ChartPhenomena.Definition phenomenon = ChartPhenomena.definition(phenomenonId);
-        boolean spent = state.has(cell, AtlasState.MARKERS_SPENT);
-        return spent && phenomenon != null && phenomenon.kind() == ChartPhenomenon.Kind.OVERLAY ? "" : phenomenonId;
-    }
-
     public static long layoutSeed(AtlasState state, AtlasCell cell) {
         return AtlasHash.of(state.seed(), LAYOUT_SEED_SALT, cell.gridX(), cell.gridY());
     }
@@ -103,6 +93,6 @@ public final class AtlasOpening {
     public static ChartLayoutRequest request(AtlasGenerator generator, AtlasState state, AtlasCell cell, StarChart chart, AtlasRunNode runNode) {
         AtlasNode node = generator.node(cell);
         return new ChartLayoutRequest(layoutSeed(state, cell), null, chart.tier(), ChartGenContext.from(chart).withAtlasNode(runNode),
-                AtlasData.recipeFor(node.regionId(), node.layoutId()), runNode.phenomenonId(), chart.seed());
+                AtlasData.recipeFor(node.regionId(), node.layoutId()), chart.seed());
     }
 }

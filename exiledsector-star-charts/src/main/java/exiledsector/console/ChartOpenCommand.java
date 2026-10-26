@@ -6,7 +6,7 @@ import exiledsector.charts.ChartEffect;
 import exiledsector.charts.ChartGenContext;
 import exiledsector.charts.ChartLayoutGenerator;
 import exiledsector.charts.ChartLayoutRequest;
-import exiledsector.charts.ChartPhenomena;
+import exiledsector.charts.ChartAnomalies;
 import exiledsector.charts.ChartRun;
 import exiledsector.charts.ChartRunActions;
 import exiledsector.charts.ChartRunActions.OpenResult;
@@ -30,7 +30,7 @@ public class ChartOpenCommand extends CampaignCommand {
     static final int DEFAULT_TIER = ChartTiers.LOWEST_TIER;
     static final String BREACH_WORD = "breach";
     static final Pattern EXPLICIT_TIER = Pattern.compile("(?:tier|t)=?(-?\\d+)", Pattern.CASE_INSENSITIVE);
-    static final Pattern ATLAS_SETTING = Pattern.compile("(region|layout|phenomenon)=(\\S+)", Pattern.CASE_INSENSITIVE);
+    static final Pattern ATLAS_SETTING = Pattern.compile("(region|layout|anomaly)=(\\S+)", Pattern.CASE_INSENSITIVE);
 
     private final Random random;
 
@@ -48,8 +48,8 @@ public class ChartOpenCommand extends CampaignCommand {
         if (arguments.problem() != null) {
             Console.showMessage(arguments.problem() + "\nUsage: ExiledSectorChartOpen [seed] [type] [tier] [breach], where type is one of "
                     + ChartLayoutGenerator.ALLOWED_TYPES + ", tier is " + ChartTiers.LOWEST_TIER + " to " + ChartTiers.HIGHEST_TIER
-                    + " (default " + DEFAULT_TIER + "), breach adds a Spatial Breach, and region=ID, layout=ID and phenomenon=ID build the system from the"
-                    + " atlas tables. All are optional and can come in any order; write the tier as tier=N when the seed is also a"
+                    + " (default " + DEFAULT_TIER + "), breach adds a Spatial Breach, and region=ID and layout=ID build the system from the"
+                    + " atlas tables, and each anomaly=ID adds that anomaly. All are optional and can come in any order; write the tier as tier=N when the seed is also a"
                     + " small number.");
             return CommandResult.BAD_SYNTAX;
         }
@@ -60,8 +60,8 @@ public class ChartOpenCommand extends CampaignCommand {
         if (arguments.regionId() != null || arguments.layoutId() != null) {
             layoutRequest = layoutRequest.withRecipe(AtlasData.recipeFor(arguments.regionId(), arguments.layoutId()));
         }
-        if (arguments.phenomenonId() != null) {
-            layoutRequest = layoutRequest.withPhenomenon(arguments.phenomenonId());
+        if (!arguments.anomalyIds().isEmpty()) {
+            layoutRequest = layoutRequest.withAnomalies(arguments.anomalyIds());
         }
         int entries = StarChartSettings.wormholeEntries();
         OpenResult result = ChartRunActions.openBesidePlayer(Global.getSector(), entries, random, layoutRequest);
@@ -113,15 +113,19 @@ public class ChartOpenCommand extends CampaignCommand {
         return "Tier " + run.tier() + ", held by " + (run.contentFaction() == null ? "nobody" : run.contentFaction()) + ": "
                 + run.contentFleets() + " fleet(s), " + run.contentPois() + " point(s) of interest"
                 + (run.bossFleetId() != null ? ", a boss " + run.bossType().key() : "")
-                + (run.expansionIds().isEmpty() ? "" : ", expansions " + String.join(", ", run.expansionIds()))
+                + (run.anomalyIds().isEmpty() ? "" : ", anomalies " + String.join(", ", run.anomalyIds()))
                 + ". Objective: " + objective + ".";
     }
 
     record OpenArguments(Long seed, StarSystemType systemType, Integer tier, String problem, boolean breach, String regionId, String layoutId,
-                         String phenomenonId) {
+                         List<String> anomalyIds) {
+
+        OpenArguments {
+            anomalyIds = anomalyIds == null ? List.of() : List.copyOf(anomalyIds);
+        }
 
         OpenArguments(Long seed, StarSystemType systemType, Integer tier, String problem, boolean breach) {
-            this(seed, systemType, tier, problem, breach, null, null, null);
+            this(seed, systemType, tier, problem, breach, null, null, List.of());
         }
 
         OpenArguments(Long seed, StarSystemType systemType, Integer tier, String problem) {
@@ -134,7 +138,7 @@ public class ChartOpenCommand extends CampaignCommand {
             }
             String regionId = null;
             String layoutId = null;
-            String phenomenonId = null;
+            List<String> anomalyIds = new ArrayList<>();
             List<String> rest = new ArrayList<>();
             for (String token : args.trim().split("\\s+")) {
                 Matcher atlas = ATLAS_SETTING.matcher(token);
@@ -151,15 +155,15 @@ public class ChartOpenCommand extends CampaignCommand {
                     }
                     layoutId = atlas.group(2);
                 } else {
-                    if (phenomenonId != null || ChartPhenomena.byId(atlas.group(2)) == null) {
-                        return problem("Can't use \"" + token + "\": give one phenomenon from chart_phenomena.csv.");
+                    if (anomalyIds.contains(atlas.group(2)) || ChartAnomalies.definition(atlas.group(2)) == null) {
+                        return problem("Can't use \"" + token + "\": give an anomaly from chart_anomalies.csv, once each.");
                     }
-                    phenomenonId = atlas.group(2);
+                    anomalyIds.add(atlas.group(2));
                 }
             }
             OpenArguments parsed = parseSettings(String.join(" ", rest));
             return parsed.problem() != null ? parsed
-                    : new OpenArguments(parsed.seed(), parsed.systemType(), parsed.tier(), null, parsed.breach(), regionId, layoutId, phenomenonId);
+                    : new OpenArguments(parsed.seed(), parsed.systemType(), parsed.tier(), null, parsed.breach(), regionId, layoutId, anomalyIds);
         }
 
         private static OpenArguments parseSettings(String args) {

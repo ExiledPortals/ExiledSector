@@ -3,6 +3,8 @@ package exiledsector.charts.atlas;
 import exiledsector.charts.AtlasRunNode;
 import exiledsector.charts.ChartEffect;
 import exiledsector.charts.ChartGenContext;
+import exiledsector.charts.ChartTables;
+import exiledsector.charts.anomaly.SpatialBreach;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -28,12 +30,13 @@ class AtlasOpeningTest {
                 new AtlasSpecial("nexus", AtlasSpecial.Kind.INFESTATION, AtlasSpecial.Placement.CHUNK, 1f, 3f, 2.5f, 1, 1f, "", "", "remnant"),
                 new AtlasSpecial("bastion", AtlasSpecial.Kind.BASTION, AtlasSpecial.Placement.FIXED, 0f, 1f, 0f, 3, 25f, "", "", ""));
         return new AtlasRules(regions, Map.of("compact", 1f), Map.of("pirates", 1f), new AtlasMarkerRule(0.3f, 0f, 0.3f),
-                new AtlasMarkerRule(1f, 0f, 1f), new AtlasMarkerRule(1f, 0f, 1f), AtlasMarkerRule.NEVER, specials,
-                List.of(new AtlasMarkerCandidate("relay", 1f, "")), List.of());
+                new AtlasMarkerRule(1f, 0f, 1f), new AtlasMarkerRule(1f, 0f, 1f), specials,
+                List.of(new AtlasAnomalyCandidate(SpatialBreach.ID, 1f, "")));
     }
 
     @BeforeEach
     void setUp() throws Exception {
+        ChartTables.loadAnomalies();
         AtlasData.registerNodeEffects(new JSONArray()
                 .put(new JSONObject().put("id", AtlasOpening.POWERFUL_BOSS).put("effects", "CHART_BOSS_SIZE_PERCENT:50"))
                 .put(new JSONObject().put("id", AtlasOpening.INFESTED).put("effects", "CHART_FLEET_SIZE_PERCENT:25"))
@@ -44,6 +47,7 @@ class AtlasOpeningTest {
     @AfterEach
     void tearDown() {
         AtlasData.resetForTests();
+        ChartTables.resetAnomalies();
     }
 
     private static AtlasCell findInfested(AtlasGenerator generator, boolean nexus) {
@@ -59,7 +63,7 @@ class AtlasOpeningTest {
     }
 
     @Test
-    void aPowerfulInfestedNodeCarriesItsMarkersFactionAndExpansionUntilItsMarkersAreSpent() {
+    void aPowerfulInfestedNodeCarriesItsMarkersFactionAndAnomalyUntilItsMarkersAreSpent() {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = new AtlasGenerator(SEED, rules(), AtlasUnlocks.NONE, state);
         AtlasCell cell = findInfested(generator, false);
@@ -67,7 +71,7 @@ class AtlasOpeningTest {
         AtlasRunNode node = AtlasOpening.runNode(generator, state, cell);
 
         assertEquals("remnant", node.factionId());
-        assertEquals("relay", node.expansionId());
+        assertEquals(List.of(SpatialBreach.ID), node.anomalyIds());
         assertTrue(node.guaranteedBossTierUp());
         assertTrue(node.effects().contains(new ChartGenContext.AppliedEffect(ChartEffect.CHART_BOSS_SIZE_PERCENT, 50f)));
         assertTrue(node.effects().contains(new ChartGenContext.AppliedEffect(ChartEffect.CHART_FLEET_SIZE_PERCENT, 25f)));
@@ -75,7 +79,7 @@ class AtlasOpeningTest {
         state.add(cell, AtlasState.MARKERS_SPENT | AtlasState.CLEANSED);
         AtlasRunNode spent = AtlasOpening.runNode(generator, state, cell);
 
-        assertEquals("", spent.expansionId());
+        assertEquals(List.of(), spent.anomalyIds());
         assertFalse(spent.guaranteedBossTierUp());
         assertEquals(generator.node(cell).factionId(), spent.factionId());
         assertEquals(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_REWARD_PERCENT, 50f)), spent.effects());
@@ -150,11 +154,21 @@ class AtlasOpeningTest {
     void aRunNodeSurvivesEncoding() {
         AtlasRunNode node = new AtlasRunNode(new AtlasCell(-3, 7).pack(), "remnant",
                 List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_BOSS_SIZE_PERCENT, 50f),
-                        new ChartGenContext.AppliedEffect(ChartEffect.CHART_FLEET_SIZE_PERCENT, -30f)), "relay", "black_hole", true);
+                        new ChartGenContext.AppliedEffect(ChartEffect.CHART_FLEET_SIZE_PERCENT, -30f)), List.of("spatial_breach", "black_hole"), true);
 
         assertEquals(node, AtlasRunNode.decode(node.encode()));
-        assertEquals(new AtlasRunNode(5L, "", List.of(), "", "", false), AtlasRunNode.decode(new AtlasRunNode(5L, null, null, null, null, false).encode()));
+        assertEquals(new AtlasRunNode(5L, "", List.of(), List.of(), false), AtlasRunNode.decode(new AtlasRunNode(5L, null, null, null, false).encode()));
         assertEquals(null, AtlasRunNode.decode("garbage"));
-        assertEquals(Set.of(), Set.copyOf(AtlasRunNode.decode("1||||| false").effects()));
+        assertEquals(Set.of(), Set.copyOf(AtlasRunNode.decode("1|||| false").effects()));
+    }
+
+    @Test
+    void aRunNodeSavedWithSeparateExpansionAndPhenomenonFieldsReadsBothAsAnomalies() {
+        AtlasRunNode old = AtlasRunNode.decode("9|pirates|CHART_BOSS_SIZE_PERCENT:50.0|spatial_breach|black_hole|true");
+
+        assertNotNull(old);
+        assertEquals(List.of("spatial_breach", "black_hole"), old.anomalyIds());
+        assertTrue(old.guaranteedBossTierUp());
+        assertEquals(List.of(), AtlasRunNode.decode("9|pirates||||false").anomalyIds());
     }
 }

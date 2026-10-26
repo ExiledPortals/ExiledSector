@@ -193,12 +193,14 @@ the boss's spot, and its guard holds a passive orbit beside it, so engaging eith
 is the objective target and carries the boss loot. Station rows whose variant the game has not loaded are dropped
 at load, and a station that still fails to spawn is replaced by a full-size fleet boss (`ChartContentGenerator`).
 
-## Chart expansions
+## Chart anomalies
 
-A chart's `CHART_<EXPANSION>_CHANCE` lines sum into a per-expansion chance in `ChartGenContext`, rolled on its
-own seed per expansion when the content is planned (`ChartExpansions.planned`), and only for ids that have a row in
-`chart_expansions.csv` in tier range with their `requires_mod` loaded. Each planned `ChartExpansion` (package
-`charts.expansion`) places its entities after the sites and fleets, and the run record keeps the ids that placed.
+A run's anomalies are decided once before layout (`ChartAnomalies.planned`): first the atlas system's own (ignoring
+tier ranges), then each `CHART_<ANOMALY>_CHANCE` line rolled on its own chart seed, in tier range and never a star
+anomaly. Each id needs a `chart_anomalies.csv` row with its `requires_mod` loaded, and one that conflicts with an anomaly
+already taken (both replace the star, or `excludes`) is dropped. A star anomaly picks the star or system type, every
+anomaly's `shape` adds terrain after layout and its `generate` places entities after the sites and fleets (package
+`charts.anomaly`), and the run record keeps the ids that placed.
 
 The Spatial Breach (`SpatialBreach`, `BreachTerrainPlugin`, numbers in `BreachRules`) is a terrain field fixed at its
 core that starts closed. Once the player fleet flies over the core it eases open to a tier-based maximum over 60
@@ -213,15 +215,16 @@ its unlooted caches and drops salvage and items scaled by the largest size it re
 
 Each save has one atlas: `AtlasState` keeps the seed and per-system flags in persistent data, and `AtlasGenerator`
 rebuilds everything else from the seed. A chart opens a system joined by a lane to a completed one (`AtlasReach`), and
-the system supplies the layout seed, faction, region recipe, phenomenon, a forced expansion and the lines from
+the system supplies the layout seed, faction, region recipe, anomalies and the lines from
 `atlas_node_effects.csv` for Powerful Boss, infested, cleansed and special-site systems, kept on the run as an
 `AtlasRunNode` (`AtlasOpening`). A Powerful Boss always drops a chart one tier up, and chart drops inside a run never
 fall below its tier.
 
 Killing the objective completes the system and grants an atlas point for the first clear of each tier (`AtlasProgress`).
 A Sensor Array also reveals 6 lanes, a Nexus cleanses the systems it infested, and a Bastion gives a key fragment and
-allows one attempt. A run that closes without its objective spends the system's markers (Powerful Boss, expansion,
-overlay phenomenon). Biomes tile the map from sites about five cells apart, and each sets how many of its cells hold a
+allows one attempt. A system's anomalies are its rolled ones plus records inserted into `AtlasState`, which
+`AtlasAnomalies.canInsert` gates and any run there spends. A run that closes without its objective spends the system's
+markers (Powerful Boss and every anomaly but a star one). Biomes tile the map from sites about five cells apart, and each sets how many of its cells hold a
 system (`AtlasBiomes`). Normal space wins most sites and chains into the volumes factions hold, while a special biome
 never sits beside another site of its own type, so it stays a small pocket. Each biome lists the only factions it holds
 (the derelict graveyard holds only derelicts), and normal space's list is the pool every faction territory draws from.

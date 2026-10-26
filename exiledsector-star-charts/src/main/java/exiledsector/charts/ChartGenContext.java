@@ -57,9 +57,9 @@ public final class ChartGenContext {
     private float rewardPercent;
     private final Map<ChartFleetStat, Float> fleetStatPercents = new EnumMap<>(ChartFleetStat.class);
     private Map<ChartFleetStat, Float> fleetStatMults;
-    private final Map<String, Float> expansionChances = new LinkedHashMap<>();
-    private final Map<String, Float> phenomenonChances = new LinkedHashMap<>();
-    private final Map<String, Float> expansionPercents = new LinkedHashMap<>();
+    private final Map<String, Float> anomalyChances = new LinkedHashMap<>();
+    private final Map<String, Float> anomalyPercents = new LinkedHashMap<>();
+    private final List<String> forcedAnomalies = new ArrayList<>();
     private boolean guaranteedBossTierUp;
 
     private ChartGenContext(List<AppliedEffect> applied, int quality, String factionId) {
@@ -227,20 +227,12 @@ public final class ChartGenContext {
         fleetStatPercents.merge(stat, value, Float::sum);
     }
 
-    void addExpansionChance(String expansionId, float percent) {
-        expansionChances.merge(expansionId, percent, Float::sum);
+    void addAnomalyChance(String anomalyId, float percent) {
+        anomalyChances.merge(anomalyId, percent, Float::sum);
     }
 
-    void addPhenomenonChance(String phenomenonId, float percent) {
-        phenomenonChances.merge(phenomenonId, percent, Float::sum);
-    }
-
-    public float phenomenonChance(String phenomenonId) {
-        return phenomenonChances.getOrDefault(phenomenonId, 0f);
-    }
-
-    void addExpansionPercent(String tuningKey, float value) {
-        expansionPercents.merge(tuningKey, value, Float::sum);
+    void addAnomalyPercent(String tuningKey, float value) {
+        anomalyPercents.merge(tuningKey, value, Float::sum);
     }
 
     public ChartGenContext withAtlasNode(AtlasRunNode node) {
@@ -250,27 +242,49 @@ public final class ChartGenContext {
         List<AppliedEffect> combined = new ArrayList<>(applied);
         combined.addAll(node.effects());
         ChartGenContext context = new ChartGenContext(combined, quality, node.factionId().isEmpty() ? factionId : node.factionId());
-        if (!node.expansionId().isEmpty()) {
-            context.addExpansionChance(node.expansionId(), PERCENT);
-        }
+        context.forceAnomalies(forcedAnomalies);
+        context.forceAnomalies(node.anomalyIds());
         context.guaranteedBossTierUp = node.guaranteedBossTierUp();
         return context;
+    }
+
+    public ChartGenContext withAnomalies(List<String> anomalyIds) {
+        if (anomalyIds == null || anomalyIds.isEmpty()) {
+            return this;
+        }
+        ChartGenContext context = new ChartGenContext(applied, quality, factionId);
+        context.forceAnomalies(forcedAnomalies);
+        context.forceAnomalies(anomalyIds);
+        context.guaranteedBossTierUp = guaranteedBossTierUp;
+        return context;
+    }
+
+    private void forceAnomalies(List<String> anomalyIds) {
+        for (String anomalyId : anomalyIds) {
+            if (!forcedAnomalies.contains(anomalyId)) {
+                forcedAnomalies.add(anomalyId);
+            }
+        }
+    }
+
+    public List<String> forcedAnomalies() {
+        return List.copyOf(forcedAnomalies);
     }
 
     public boolean guaranteedBossTierUp() {
         return guaranteedBossTierUp;
     }
 
-    public float expansionChance(String expansionId) {
-        return expansionChances.getOrDefault(expansionId, 0f);
+    public float anomalyChance(String anomalyId) {
+        return anomalyChances.getOrDefault(anomalyId, 0f);
     }
 
-    public float expansionPercent(String tuningKey) {
-        return expansionPercents.getOrDefault(tuningKey, 0f);
+    public float anomalyPercent(String tuningKey) {
+        return anomalyPercents.getOrDefault(tuningKey, 0f);
     }
 
-    public float expansionMult(String tuningKey) {
-        return multiplier(expansionPercent(tuningKey));
+    public float anomalyMult(String tuningKey) {
+        return multiplier(anomalyPercent(tuningKey));
     }
 
     public Map<ChartFleetStat, Float> fleetStatMults() {
@@ -422,10 +436,10 @@ public final class ChartGenContext {
         }
         return factionText + String.format(Locale.ROOT, "fleet size %+.0f%%, %+d rolled fleet(s), %+d added fleet(s), %+d officer level(s), %+d officer(s), boss size %+.0f%%, "
                         + "fleet quality %+.0f%%, site budgets %s, %+d point(s) of interest, item drops %+.0f%%, item rarity %+.0f%%, drop types %s, "
-                        + "boss spoils x%.2f, reward x%.2f, sensor range x%.2f, chart quality %d, expansions %s",
+                        + "boss spoils x%.2f, reward x%.2f, sensor range x%.2f, chart quality %d, anomalies %s",
                 fleetSizePercent, baseFleets, extraFleets, officerLevelBonus, extraOfficers, bossSizePercent,
                 fleetQualityPercent, siteBudgetText(), extraPois(), itemPercent, itemRarityPercent, describeDropPercents(), bossSpoilsMult(), rewardMult(),
-                sensorRangeMult(), quality, expansionChances.isEmpty() ? "none" : expansionChances.toString());
+                sensorRangeMult(), quality, anomalyChances.isEmpty() ? "none" : anomalyChances.toString());
     }
 
     private String describeDropPercents() {

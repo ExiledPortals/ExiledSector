@@ -37,7 +37,7 @@ public final class ChartRun {
     private boolean rewardClaimed;
     private boolean bossTierUpGranted;
     private String chartData;
-    private String expansions;
+    private String anomalies;
     private String atlasNode;
     private String originEntityId;
 
@@ -153,7 +153,7 @@ public final class ChartRun {
         bossType = content.bossFleetId() == null ? null : content.bossType().name();
         contentFleets = content.fleets();
         contentPois = content.pois();
-        expansions = join(content.expansions());
+        anomalies = join(content.anomalies());
         objectiveComplete = false;
         rewardClaimed = false;
     }
@@ -210,12 +210,8 @@ public final class ChartRun {
         return contentPois;
     }
 
-    public List<String> expansionIds() {
-        return split(expansions);
-    }
-
-    public boolean hasExpansion(String expansionId) {
-        return expansionIds().contains(expansionId);
+    public List<String> anomalyIds() {
+        return split(anomalies);
     }
 
     public List<String> objectiveTargetIds() {

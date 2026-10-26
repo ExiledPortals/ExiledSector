@@ -24,7 +24,7 @@ class ChartLayoutRecipeTest {
     }
 
     @Test
-    void phenomenonStarsAndCategoriesNeverComeFromOrdinaryGeneration() {
+    void anomalyStarsAndCategoriesNeverComeFromOrdinaryGeneration() {
         ChartLayoutRecipe leaning = recipe(Map.of("black_hole", 9f, "star_red_dwarf", 2f), Map.of("cat_magfield", 9f, "cat_frozen", 3f), null, 0f);
 
         assertEquals(0f, leaning.starWeight("black_hole", 5f));

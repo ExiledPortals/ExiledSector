@@ -2,6 +2,7 @@ package exiledsector.charts.atlas;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -19,8 +20,7 @@ public final class AtlasGenerator {
     private static final long VOID_SALT = 0x564f4944L;
     private static final long LAYOUT_SALT = 0x4c41594fL;
     private static final long BOSS_SALT = 0x424f5353L;
-    private static final long EXPANSION_SALT = 0x455850414eL;
-    private static final long PHENOMENON_SALT = 0x5048454eL;
+    private static final long ANOMALY_SALT = 0x455850414eL;
 
     private final long seed;
     private final AtlasRules rules;
@@ -178,19 +178,16 @@ public final class AtlasGenerator {
         String factionId = territories.factionAt(cell, region);
         boolean origin = cell.equals(AtlasCell.ORIGIN);
         if (origin || isVoid(cell)) {
-            return new AtlasNode(cell, x, y, !origin, region.id(), factionId, null, false, null, null, null, null, lanes(cell));
+            return new AtlasNode(cell, x, y, !origin, region.id(), factionId, null, false, List.of(), null, null, lanes(cell));
         }
         List<AtlasCell> lanes = lanes(cell);
-        String layoutId = AtlasHash.race(seed, LAYOUT_SALT, cell.gridX(), cell.gridY(),
-                region.layoutWeights().isEmpty() ? rules.layoutWeights() : region.layoutWeights());
+        AtlasTraits traits = traits(cell, distance, region, factionId, lanes);
+        String layoutId = traits.layoutId();
         boolean powerfulBoss = AtlasHash.unit(AtlasHash.of(seed, BOSS_SALT, cell.gridX(), cell.gridY())) < rules.powerfulBossRule().chanceAt(distance);
-        AtlasTraits traits = new AtlasTraits(cell, distance, region.id(), factionId, territories.territoryAt(cell), layoutId,
-                territories.laneTerritories(lanes));
-        String phenomenonId = rollMarker(cell, traits, region, rules.phenomenonRule(), rules.phenomena(), PHENOMENON_SALT);
-        String expansionId = rollMarker(cell, traits, region, rules.expansionRule(), rules.expansions(), EXPANSION_SALT);
+        List<String> anomalyIds = rollAnomalies(cell, traits, region);
         AtlasSpecialPlacer.PlacedSpecial special = placed.get(cell.pack());
         AtlasSpecialPlacer.PlacedSpecial infestation = infestationOf(cell, region, placed);
-        return new AtlasNode(cell, x, y, false, region.id(), factionId, layoutId, powerfulBoss, phenomenonId, expansionId,
+        return new AtlasNode(cell, x, y, false, region.id(), factionId, layoutId, powerfulBoss, anomalyIds,
                 special == null ? null : special.special().id(), infestation == null ? null : infestation.special().id(), lanes);
     }
 
@@ -276,25 +273,42 @@ public final class AtlasGenerator {
         return region == null ? rules.normalRegion() : region;
     }
 
-    private String rollMarker(AtlasCell cell, AtlasTraits traits, AtlasRegion region, AtlasMarkerRule rule, List<AtlasMarkerCandidate> candidates,
-                              long salt) {
-        float chance = rule.chanceAt(traits.distance());
+    private List<String> rollAnomalies(AtlasCell cell, AtlasTraits traits, AtlasRegion region) {
+        float chance = rules.anomalyRule().chanceAt(traits.distance());
         if (chance <= 0f) {
-            return null;
+            return List.of();
         }
-        String winner = null;
-        double winningRoll = Double.POSITIVE_INFINITY;
-        for (AtlasMarkerCandidate candidate : candidates) {
+        List<AtlasAnomalyCandidate> passed = new ArrayList<>();
+        Map<String, Double> rolls = new HashMap<>();
+        for (AtlasAnomalyCandidate candidate : rules.anomalies()) {
             if (!unlocks.allows(candidate.requiredMod(), "")) {
                 continue;
             }
             float weight = candidate.weighting().weightFor(traits, candidate.weight() * region.markerWeight(candidate.id()));
-            double roll = AtlasHash.unit(AtlasHash.of(seed, salt, candidate.id(), cell.gridX(), cell.gridY()));
-            if (roll < chance * weight && AtlasHash.beats(roll, candidate.id(), winningRoll, winner)) {
-                winner = candidate.id();
-                winningRoll = roll;
+            double roll = AtlasHash.unit(AtlasHash.of(seed, ANOMALY_SALT, candidate.id(), cell.gridX(), cell.gridY()));
+            if (roll < chance * weight) {
+                passed.add(candidate);
+                rolls.put(candidate.id(), roll);
             }
         }
-        return winner;
+        passed.sort(Comparator.<AtlasAnomalyCandidate>comparingDouble(candidate -> rolls.get(candidate.id())).thenComparing(AtlasAnomalyCandidate::id));
+        List<AtlasAnomalyCandidate> kept = new ArrayList<>();
+        for (AtlasAnomalyCandidate candidate : passed) {
+            if (kept.stream().noneMatch(candidate::conflictsWith)) {
+                kept.add(candidate);
+            }
+        }
+        return kept.stream().map(AtlasAnomalyCandidate::id).toList();
+    }
+
+    public AtlasTraits traits(AtlasCell cell) {
+        AtlasRegion region = regionOf(cell);
+        return traits(cell, (float) Math.hypot(mapX(cell), mapY(cell)), region, territories.factionAt(cell, region), lanes(cell));
+    }
+
+    private AtlasTraits traits(AtlasCell cell, float distance, AtlasRegion region, String factionId, List<AtlasCell> lanes) {
+        String layoutId = AtlasHash.race(seed, LAYOUT_SALT, cell.gridX(), cell.gridY(),
+                region.layoutWeights().isEmpty() ? rules.layoutWeights() : region.layoutWeights());
+        return new AtlasTraits(cell, distance, region.id(), factionId, territories.territoryAt(cell), layoutId, territories.laneTerritories(lanes));
     }
 }

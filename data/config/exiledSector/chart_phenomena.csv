@@ -1,7 +1,0 @@
-id,weight,min_tier,max_tier,requires_mod,icon,kind,note
-black_hole,1,1,15,,graphics/icons/icon_portal.png,star,"The primary star is a black hole with an event horizon"
-neutron_star,1,1,15,,graphics/icons/icon_portal.png,star,"The primary star is a neutron star with a sweeping pulsar beam"
-dense_nebula,1,1,15,,graphics/icons/icon_portal.png,star,"A starless nebula system: thick nebula everywhere, no central star"
-asteroid_storm,1,1,15,,graphics/icons/icon_portal.png,overlay,"Extra asteroid belts and fields, whose rocks strike fleets passing through"
-magnetic_storm,1,1,15,,graphics/icons/icon_portal.png,overlay,"Magnetic fields around the star and several worlds that blind sensors"
-stellar_flares,1,1,15,,graphics/icons/icon_portal.png,overlay,"Every corona throws flares constantly"

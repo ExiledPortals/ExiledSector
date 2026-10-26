@@ -3,10 +3,11 @@ package exiledsector.charts;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import exiledsector.items.StarChart;
 
+import java.util.List;
 import java.util.Random;
 
 public record ChartLayoutRequest(long seed, StarSystemType systemType, int tier, ChartGenContext chartContext, ChartLayoutRecipe recipe,
-                                 String phenomenonId, Long chartSeed) {
+                                 Long chartSeed) {
 
     public ChartLayoutRequest {
         if (systemType != null && !ChartLayoutGenerator.isAllowed(systemType)) {
@@ -15,7 +16,6 @@ public record ChartLayoutRequest(long seed, StarSystemType systemType, int tier,
         tier = ChartTiers.clamp(tier);
         chartContext = chartContext == null ? ChartGenContext.none() : chartContext;
         recipe = recipe == null ? ChartLayoutRecipe.ORDINARY : recipe;
-        phenomenonId = phenomenonId == null ? "" : phenomenonId;
     }
 
     public long contentSeed() {
@@ -23,7 +23,7 @@ public record ChartLayoutRequest(long seed, StarSystemType systemType, int tier,
     }
 
     public ChartLayoutRequest(long seed, StarSystemType systemType, int tier, ChartGenContext chartContext) {
-        this(seed, systemType, tier, chartContext, null, null, null);
+        this(seed, systemType, tier, chartContext, null, null);
     }
 
     public ChartLayoutRequest(long seed, StarSystemType systemType, int tier) {
@@ -35,11 +35,11 @@ public record ChartLayoutRequest(long seed, StarSystemType systemType, int tier,
     }
 
     public ChartLayoutRequest withRecipe(ChartLayoutRecipe layoutRecipe) {
-        return new ChartLayoutRequest(seed, systemType, tier, chartContext, layoutRecipe, phenomenonId, chartSeed);
+        return new ChartLayoutRequest(seed, systemType, tier, chartContext, layoutRecipe, chartSeed);
     }
 
-    public ChartLayoutRequest withPhenomenon(String id) {
-        return new ChartLayoutRequest(seed, systemType, tier, chartContext, recipe, id, chartSeed);
+    public ChartLayoutRequest withAnomalies(List<String> anomalyIds) {
+        return new ChartLayoutRequest(seed, systemType, tier, chartContext.withAnomalies(anomalyIds), recipe, chartSeed);
     }
 
     public static ChartLayoutRequest randomFrom(Random random) {

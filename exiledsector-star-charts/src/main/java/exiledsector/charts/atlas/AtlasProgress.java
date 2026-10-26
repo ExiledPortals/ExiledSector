@@ -32,6 +32,7 @@ public final class AtlasProgress {
             return;
         }
         state.add(cell, AtlasState.COMPLETED);
+        state.spendInsertedAnomalies(cell);
         state.clearTier(tier);
         AtlasSpecial special = generator.specialAt(cell);
         if (special == null) {
@@ -62,7 +63,12 @@ public final class AtlasProgress {
         if (sector == null || node == null || run.isObjectiveComplete()) {
             return;
         }
-        AtlasState.get(sector).add(AtlasCell.unpack(node.cell()), AtlasState.FAILED | AtlasState.MARKERS_SPENT);
+        fail(AtlasState.get(sector), AtlasCell.unpack(node.cell()));
+    }
+
+    static void fail(AtlasState state, AtlasCell cell) {
+        state.add(cell, AtlasState.FAILED | AtlasState.MARKERS_SPENT);
+        state.spendInsertedAnomalies(cell);
     }
 
     public static void opened(SectorAPI sector, AtlasGenerator generator, AtlasCell cell) {

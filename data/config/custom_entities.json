@@ -37,6 +37,6 @@
 		"renderCircleIndicatorSelectionFlash":false,
 		"tags":["has_interaction_dialog"],
 		"layers":[STATIONS],
-		"pluginClass":"exiledsector.charts.expansion.BreachCorePlugin",
+		"pluginClass":"exiledsector.charts.anomaly.BreachCorePlugin",
 	},
 }

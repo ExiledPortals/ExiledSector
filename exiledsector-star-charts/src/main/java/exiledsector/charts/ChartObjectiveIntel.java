@@ -11,7 +11,7 @@ import com.fs.starfarer.api.ui.SectorMapAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
-import exiledsector.charts.expansion.ChartExpansion;
+import exiledsector.charts.anomaly.ChartAnomaly;
 
 import java.awt.Color;
 import java.util.Set;
@@ -119,12 +119,13 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
                 PARAGRAPH_PAD);
         info.addPara(safe(progressText(run)), PARAGRAPH_PAD);
         StarSystemAPI system = Global.getSector().getStarSystem(run.systemId());
-        for (String expansionId : run.expansionIds()) {
-            ChartExpansion expansion = ChartExpansions.byId(expansionId);
-            if (expansion == null || !expansion.isActiveIn(system)) {
+        for (String anomalyId : run.anomalyIds()) {
+            ChartAnomaly anomaly = ChartAnomalies.byId(anomalyId);
+            String key = "chart.anomaly." + anomalyId + ".intel";
+            if (anomaly == null || !anomaly.isActiveIn(system) || !Translation.has(key)) {
                 continue;
             }
-            info.addPara(safe(Translation.gameText("chart.expansion." + expansionId + ".intel")), PARAGRAPH_PAD);
+            info.addPara(safe(Translation.gameText(key)), PARAGRAPH_PAD);
         }
         if (!run.isObjectiveComplete()) {
             info.addPara(safe(Translation.gameText("chart.intel.reward")), PARAGRAPH_PAD);

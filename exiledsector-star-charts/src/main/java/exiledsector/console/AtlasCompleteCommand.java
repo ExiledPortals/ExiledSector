@@ -46,7 +46,7 @@ public class AtlasCompleteCommand extends AtlasTargetCommand {
         int points = state.atlasPoints();
         int fragments = state.keyFragments();
         AtlasDevTools.complete(generator, state, cell, tier);
-        Console.showMessage("Completed " + AtlasCommandText.node(generator.node(cell), state) + " as a tier " + tier + " run. Atlas points +"
+        Console.showMessage("Completed " + AtlasCommandText.node(generator, cell, state) + " as a tier " + tier + " run. Atlas points +"
                 + (state.atlasPoints() - points) + ", key fragments +" + (state.keyFragments() - fragments) + ".");
         return CommandResult.SUCCESS;
     }

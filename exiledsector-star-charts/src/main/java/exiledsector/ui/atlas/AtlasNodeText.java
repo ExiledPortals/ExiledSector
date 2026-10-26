@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledlib.i18n.Translation;
+import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasNode;
@@ -86,12 +87,8 @@ public final class AtlasNodeText {
         if (node.powerfulBoss() && !spent) {
             lines.add(new Line(Translation.text("chart.atlas.node.powerfulBoss"), Tone.MARKER));
         }
-        if (node.expansionId() != null && !spent) {
-            lines.add(new Line(Translation.msg("chart.atlas.node.expansion").arg("expansion", name("expansion", node.expansionId())).text(), Tone.MARKER));
-        }
-        String phenomenonId = AtlasOpening.phenomenonFor(state, cell, node);
-        if (!phenomenonId.isEmpty()) {
-            lines.add(new Line(Translation.msg("chart.atlas.node.phenomenon").arg("phenomenon", name("phenomenon", phenomenonId)).text(), Tone.MARKER));
+        for (String anomalyId : AtlasAnomalies.effective(generator, state, cell)) {
+            lines.add(new Line(Translation.msg("chart.atlas.node.anomaly").arg("anomaly", name("anomaly", anomalyId)).text(), Tone.MARKER));
         }
         if (node.infestationId() != null) {
             lines.add(state.has(cell, AtlasState.CLEANSED)
