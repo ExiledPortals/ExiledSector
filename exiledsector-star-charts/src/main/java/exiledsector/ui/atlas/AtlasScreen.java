@@ -79,8 +79,9 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private ModificationBay bay;
     private ButtonAPI bordersButton;
     private ButtonAPI biomesButton;
-    private AtlasCell tooltipCell;
+    private Object tooltipSubject;
     private AtlasCell hoveredCell;
+    private AtlasMapCanvas.AnomalyIcon hoveredAnomaly;
     private String wormholeMessage;
     private float mouseX;
     private float mouseY;
@@ -212,7 +213,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             @Override
             public void debugActionApplied() {
                 map = new AtlasMapCanvas(map.generator(), map.state(), map.scenery());
-                tooltipCell = null;
+                tooltipSubject = null;
                 map.pulse(cell);
                 map.collapse(cell);
                 I18n.forGameText(AtlasScreen.this::writeSummary);
@@ -322,7 +323,9 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         camera.advanceZoom(amount);
         camera.advancePan(amount);
         if (panelPosition != null) {
-            AtlasCell hovered = bay == null && !camera.isDragging() ? map.cellAt(viewport(), mouseX, mouseY) : null;
+            boolean hovering = bay == null && !camera.isDragging();
+            hoveredAnomaly = hovering ? map.anomalyAt(viewport(), mouseX, mouseY) : null;
+            AtlasCell hovered = hovering && hoveredAnomaly == null ? map.cellAt(viewport(), mouseX, mouseY) : null;
             if (hovered != null && !hovered.equals(hoveredCell)) {
                 map.pulse(hovered);
             }
@@ -352,8 +355,10 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         drawChrome(alpha);
         if (benchDim > 0f) {
             GLDraw.fillQuad(innerLeft(), innerBottom(), innerWidth(), innerHeight(), Color.BLACK, BENCH_DIM_ALPHA * Fade.smooth(benchDim) * alpha);
+        } else if (hoveredAnomaly != null && !gesture.isPanning()) {
+            drawTooltip(hoveredAnomaly, this::writeAnomalyTooltip, alpha);
         } else if (hoveredCell != null && !gesture.isPanning()) {
-            drawTooltip(alpha);
+            drawTooltip(hoveredCell, this::writeTooltip, alpha);
         }
     }
 
@@ -365,16 +370,21 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         hintLabel.setAlpha(alpha).draw(left, innerBottom() + CHROME_PAD + hintLabel.height());
     }
 
-    private void drawTooltip(float alpha) {
-        if (!hoveredCell.equals(tooltipCell)) {
-            tooltipCell = hoveredCell;
-            I18n.forGameText(this::writeTooltip);
+    private void drawTooltip(Object subject, Runnable writer, float alpha) {
+        if (!subject.equals(tooltipSubject)) {
+            tooltipSubject = subject;
+            I18n.forGameText(writer);
         }
         panelStyle.drawTitleBodyTooltip(tooltipTitle, tooltipBody, mouseX, mouseY, alpha);
     }
 
+    private void writeAnomalyTooltip() {
+        tooltipTitle.set(AtlasNodeText.name("anomaly", hoveredAnomaly.anomalyId()));
+        tooltipBody.setStyled(AtlasNodeText.anomalyBody(hoveredAnomaly.anomalyId()), SkillTreePanelStyle::standardHighlightColor);
+    }
+
     private void writeTooltip() {
-        List<AtlasNodeText.Line> lines = AtlasNodeText.describe(map.generator(), map.state(), tooltipCell, map.isReachable(tooltipCell));
+        List<AtlasNodeText.Line> lines = AtlasNodeText.describe(map.generator(), map.state(), hoveredCell, map.isReachable(hoveredCell));
         tooltipTitle.set(lines.isEmpty() ? "" : lines.get(0).text());
         List<StyledText> body = new ArrayList<>();
         for (AtlasNodeText.Line line : lines.subList(Math.min(1, lines.size()), lines.size())) {

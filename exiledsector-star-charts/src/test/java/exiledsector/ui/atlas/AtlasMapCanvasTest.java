@@ -1,5 +1,9 @@
 package exiledsector.ui.atlas;
 
+import exiledsector.charts.ChartTables;
+import exiledsector.charts.anomaly.SpatialBreach;
+import exiledsector.charts.atlas.AtlasAnomalies;
+import exiledsector.charts.atlas.AtlasAnomalyRecord;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasDevTools;
 import exiledsector.charts.atlas.AtlasGenerator;
@@ -9,12 +13,14 @@ import exiledsector.charts.atlas.AtlasRules;
 import exiledsector.charts.atlas.AtlasSpecial;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasUnlocks;
+import exiledsector.ui.TreeViewport;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class AtlasMapCanvasTest {
 
@@ -50,5 +56,32 @@ class AtlasMapCanvasTest {
         assertEquals(0.25f, after.openness(bastion), 0.001f);
         after.advance(AtlasMapCanvas.COLLAPSE_SECONDS);
         assertEquals(0f, after.openness(bastion));
+    }
+
+    @Test
+    void eachAnomalyOrbitsItsSystemAsAnIconThatCanBeHovered() throws Exception {
+        ChartTables.loadAnomalies();
+        try {
+            AtlasState state = new AtlasState(SEED);
+            AtlasGenerator generator = generator(state);
+            AtlasCell bastion = AtlasDevTools.nearestOpenSite(generator, state, "bastion");
+            AtlasDevTools.reach(generator, state, bastion);
+            AtlasAnomalies.insert(generator, state, bastion, SpatialBreach.ID, AtlasAnomalyRecord.Source.WORLD, null);
+            AtlasMapCanvas canvas = new AtlasMapCanvas(generator, state);
+            TreeViewport view = new TreeViewport(640f, 360f, AtlasMapCanvas.DEFAULT_ZOOM);
+
+            AtlasMapCanvas.AnomalyIcon icon = canvas.anomalyIcons().stream().filter(candidate -> candidate.cell().equals(bastion)).findFirst()
+                    .orElseThrow();
+            assertEquals(SpatialBreach.ID, icon.anomalyId());
+            assertEquals("graphics/icons/anomalies/spatial_breach.png", icon.iconPath());
+
+            float orbit = AtlasMapCanvas.footprint(view) * AtlasMapCanvas.ANOMALY_ORBIT_SHARE;
+            float iconX = canvas.screenX(view, bastion) + (float) Math.cos(AtlasMapCanvas.ANOMALY_FIRST_ANGLE) * orbit;
+            float iconY = canvas.screenY(view, bastion) + (float) Math.sin(AtlasMapCanvas.ANOMALY_FIRST_ANGLE) * orbit;
+            assertEquals(icon, canvas.anomalyAt(view, iconX, iconY));
+            assertNull(canvas.anomalyAt(view, canvas.screenX(view, bastion), canvas.screenY(view, bastion)));
+        } finally {
+            ChartTables.resetAnomalies();
+        }
     }
 }

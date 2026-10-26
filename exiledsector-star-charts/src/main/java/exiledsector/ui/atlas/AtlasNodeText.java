@@ -3,7 +3,10 @@ package exiledsector.ui.atlas;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
+import exiledsector.charts.ChartAnomalies;
+import exiledsector.charts.ChartGenContext;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
@@ -99,6 +102,21 @@ public final class AtlasNodeText {
             lines.add(new Line(Translation.text("chart.atlas.node.spent"), Tone.BAD));
         }
         return lines;
+    }
+
+    public static StyledText anomalyBody(String anomalyId) {
+        List<StyledText> lines = new ArrayList<>();
+        String descriptionKey = "chart.atlas.anomaly." + anomalyId + ".description";
+        if (Translation.has(descriptionKey)) {
+            lines.add(StyledText.of(Translation.text(descriptionKey)));
+        }
+        ChartAnomalies.Definition definition = ChartAnomalies.definition(anomalyId);
+        if (definition != null) {
+            for (ChartGenContext.AppliedEffect applied : definition.effects()) {
+                lines.add(applied.effect().description(applied.value()));
+            }
+        }
+        return StyledText.join(StyledText.of("\n"), lines);
     }
 
     static List<Line> stateLines(AtlasGenerator generator, AtlasState state, AtlasCell cell, boolean reachable) {

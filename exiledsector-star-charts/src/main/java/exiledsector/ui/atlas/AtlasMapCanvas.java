@@ -1,6 +1,8 @@
 package exiledsector.ui.atlas;
 
 import com.fs.starfarer.api.util.Misc;
+import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.charts.ChartAnomalies;
 import exiledsector.charts.ChartSketchPalette;
 import exiledsector.charts.ChartSystemSketch;
 import exiledsector.charts.ChartSystemSketcher;
@@ -14,14 +16,18 @@ import exiledsector.charts.atlas.AtlasReach;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.ui.SmoothZoom;
 import exiledsector.ui.TreeViewport;
+import exiledsector.ui.node.BeamStroke;
 import exiledsector.ui.node.NodeBeams;
 import exiledsector.ui.node.NodeMetrics;
 import exiledsector.ui.node.NodeRingArt;
 import exiledsector.ui.node.WormholeArt;
+import exiledsector.ui.util.SpriteDraw;
 
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -49,6 +55,14 @@ final class AtlasMapCanvas {
     static final Color ORIGIN_TINT = new Color(150, 220, 255);
     static final Color SPENT_TINT = new Color(150, 40, 40);
     static final Color CLEANSED_COLOUR = new Color(235, 240, 255);
+    static final float ANOMALY_ORBIT_SHARE = 0.8f;
+    static final float ANOMALY_ICON_SHARE = 0.12f;
+    static final float ANOMALY_FIRST_ANGLE = (float) Math.toRadians(60.0);
+    static final float ANOMALY_ANGLE_STEP = (float) Math.toRadians(32.0);
+    static final float ANOMALY_RING_WIDTH_SHARE = 0.5f;
+
+    record AnomalyIcon(AtlasCell cell, String anomalyId, String iconPath, int slot) {
+    }
 
     private final AtlasGenerator generator;
     private final AtlasState state;
@@ -57,6 +71,8 @@ final class AtlasMapCanvas {
     private final Set<AtlasCell> reachable;
     private final Map<AtlasCell, String> nodeKeys = new HashMap<>();
     private final Map<AtlasCell, AtlasSystemPreview.Prepared> sketches = new HashMap<>();
+    private final List<AnomalyIcon> anomalyIcons = new ArrayList<>();
+    private final SpriteCache spriteCache = new SpriteCache(AtlasMapCanvas.class);
     private final AtlasSystemPreview preview = new AtlasSystemPreview();
     private final NodeRingArt ringArt = new NodeRingArt();
     private final WormholeArt wormholeArt = new WormholeArt(ringArt);
@@ -86,9 +102,14 @@ final class AtlasMapCanvas {
         for (AtlasCell cell : visible) {
             AtlasNode node = nodes.get(cell);
             if (!node.isVoid() && !node.isOrigin()) {
+                List<String> anomalyIds = AtlasAnomalies.effective(generator, state, cell);
                 ChartSystemSketch sketch = ChartSystemSketcher.sketch(AtlasOpening.layoutSeed(state, cell),
-                        AtlasData.recipeFor(node.regionId(), node.layoutId()), AtlasAnomalies.effective(generator, state, cell), palette);
+                        AtlasData.recipeFor(node.regionId(), node.layoutId()), anomalyIds, palette);
                 sketches.put(cell, AtlasSystemPreview.Prepared.of(nodeKey(cell), sketch));
+                for (int slot = 0; slot < anomalyIds.size(); slot++) {
+                    ChartAnomalies.Definition definition = ChartAnomalies.definition(anomalyIds.get(slot));
+                    anomalyIcons.add(new AnomalyIcon(cell, anomalyIds.get(slot), definition == null ? "" : definition.icon(), slot));
+                }
             }
         }
         scenery.attach(this);
@@ -212,10 +233,45 @@ final class AtlasMapCanvas {
         return nearest;
     }
 
+    List<AnomalyIcon> anomalyIcons() {
+        return anomalyIcons;
+    }
+
+    AnomalyIcon anomalyAt(TreeViewport view, float x, float y) {
+        float footprint = footprint(view);
+        for (AnomalyIcon icon : anomalyIcons) {
+            float scale = nodeScale(icon.cell());
+            float radius = anomalyIconRadius(footprint, scale);
+            float dx = anomalyX(view, icon, footprint, scale) - x;
+            float dy = anomalyY(view, icon, footprint, scale) - y;
+            if (openness(icon.cell()) > 0f && dx * dx + dy * dy <= radius * radius) {
+                return icon;
+            }
+        }
+        return null;
+    }
+
+    private static float anomalyIconRadius(float footprint, float scale) {
+        return footprint * ANOMALY_ICON_SHARE * scale;
+    }
+
+    private static float anomalyAngle(AnomalyIcon icon) {
+        return ANOMALY_FIRST_ANGLE - icon.slot() * ANOMALY_ANGLE_STEP;
+    }
+
+    private float anomalyX(TreeViewport view, AnomalyIcon icon, float footprint, float scale) {
+        return screenX(view, icon.cell()) + (float) Math.cos(anomalyAngle(icon)) * footprint * ANOMALY_ORBIT_SHARE * scale;
+    }
+
+    private float anomalyY(TreeViewport view, AnomalyIcon icon, float footprint, float scale) {
+        return screenY(view, icon.cell()) + (float) Math.sin(anomalyAngle(icon)) * footprint * ANOMALY_ORBIT_SHARE * scale;
+    }
+
     void render(TreeViewport view, Color accent, float alphaMult) {
         scenery.renderBackdrop(view, alphaMult);
         drawLanes(view, accent, alphaMult);
         drawNodes(view, accent, alphaMult);
+        drawAnomalies(view, alphaMult);
         scenery.renderAbove(view, alphaMult);
     }
 
@@ -305,6 +361,29 @@ final class AtlasMapCanvas {
                 beams.ring(x, y, footprint * INFESTATION_RING_SHARE, null, beams.lit(cleansed ? CLEANSED_COLOUR : Misc.getNegativeHighlightColor()),
                         INFESTATION_RING_ALPHA * alphaMult, widthScale);
             }
+        }
+        beams.flush();
+    }
+
+    private void drawAnomalies(TreeViewport view, float alphaMult) {
+        float footprint = footprint(view);
+        float ringWidthScale = beamWidthScale(view) * ANOMALY_RING_WIDTH_SHARE;
+        BeamStroke.Look ringLook = beams.lit(Misc.getNegativeHighlightColor());
+        for (AnomalyIcon icon : anomalyIcons) {
+            float openness = openness(icon.cell());
+            float scale = nodeScale(icon.cell());
+            float radius = anomalyIconRadius(footprint, scale);
+            float x = anomalyX(view, icon, footprint, scale);
+            float y = anomalyY(view, icon, footprint, scale);
+            if (openness <= 0f || !view.isVisible(x, y, radius * 2f)) {
+                continue;
+            }
+            boolean bright = state.isCompleted(icon.cell()) || reachable.contains(icon.cell());
+            float alpha = (bright ? 1f : DIM_PREVIEW_ALPHA) * openness * alphaMult;
+            if (!icon.iconPath().isEmpty()) {
+                SpriteDraw.drawAtCenter(spriteCache, icon.iconPath(), x, y, radius * 2f, radius * 2f, Color.WHITE, alpha);
+            }
+            beams.ring(x, y, NodeBeams.huggingRingRadius(radius, ringWidthScale), null, ringLook, alpha, ringWidthScale);
         }
         beams.flush();
     }
