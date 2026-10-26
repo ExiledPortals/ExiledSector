@@ -293,6 +293,13 @@ this, and open wormholes stay open.
 An anchor whose factions are all missing, or whose playable factions Nexerelin has all eliminated, drops from the
 salvage and tech mining sites in `anchor_salvage.csv` instead (`FactionlessAnchors`).
 
+## Unique drop sources
+
+A unique's `source` column (`UniqueSource`) can name `site:` and `faction:` sources. A unique with a site source
+drops only from those salvage sites' unique rolls and never from battles or transposition. A faction source
+restricts nothing: in a battle where that faction lost the most deployment points, the unique's drop weight is
+doubled (`ItemDrops.pickUniqueFromFaction`, `FACTION_SOURCE_WEIGHT_MULT`).
+
 ## Corruption
 
 A Corrupted Nanoswarm locks the item and picks one equally likely outcome from its list in `CorruptionOutcome`

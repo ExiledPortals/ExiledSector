@@ -146,7 +146,7 @@ public final class BattleItemDrops {
                     upgrades.add(RefitSchematic.roll(random));
                 }
             } else if (planned.drop() == Drop.UNIQUE) {
-                ItemDefinition definition = ItemDrops.pickUniqueFrom(UniqueSource.Kind.FACTION, battle.uniqueFactionId(), random,
+                ItemDefinition definition = ItemDrops.pickUniqueFromFaction(battle.uniqueFactionId(), random,
                         candidate -> candidate.type() == ItemType.HULL_ITEM && uniqueAllowed.test(candidate));
                 if (definition != null) {
                     items.add(ItemData.rolled(definition, random.nextLong()));

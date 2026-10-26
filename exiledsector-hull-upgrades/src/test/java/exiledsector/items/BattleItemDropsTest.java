@@ -181,7 +181,7 @@ class BattleItemDropsTest {
     }
 
     @Test
-    void aFactionSourcedUniqueDropsOnlyFromThatFactionsBattlesWhileAnUnsourcedOneDropsFromAny() throws Exception {
+    void aFactionSourcedUniqueIsTwiceAsLikelyFromThatFactionsBattlesAndStillDropsFromOthers() throws Exception {
         ItemDefinitions.register(new JSONArray()
                 .put(row(HULL_RELIC, "weapon_mount", "HULL_PERCENT:4:6").put("unique", "true"))
                 .put(row(FACTION_RELIC, "reactor", "HULL_PERCENT:4:6").put("unique", "true")
@@ -192,16 +192,20 @@ class BattleItemDropsTest {
         Map<String, Integer> fromTriTachyon = uniqueDrops(new BattleItemDrops.Battle(sources, "tritachyon"));
 
         assertEquals(List.of(UniqueSource.parse("faction:tritachyon")), ItemDefinitions.get(FACTION_RELIC).uniqueSources());
-        assertNull(fromPirates.get(FACTION_RELIC));
-        assertTrue(fromPirates.getOrDefault(HULL_RELIC, 0) > 0);
-        assertTrue(fromTriTachyon.getOrDefault(FACTION_RELIC, 0) > 0);
-        assertTrue(fromTriTachyon.getOrDefault(HULL_RELIC, 0) > 0);
+        assertEquals(0.5, share(fromPirates, FACTION_RELIC), 0.05);
+        assertEquals(2.0 / 3.0, share(fromTriTachyon, FACTION_RELIC), 0.05);
+    }
+
+    private static double share(Map<String, Integer> drops, String definitionId) {
+        int total = drops.values().stream().mapToInt(Integer::intValue).sum();
+        assertTrue(total > 500, drops.toString());
+        return drops.getOrDefault(definitionId, 0) / (double) total;
     }
 
     private static Map<String, Integer> uniqueDrops(BattleItemDrops.Battle battle) {
         Map<String, Integer> drops = new HashMap<>();
         Random random = new Random(5L);
-        for (int trial = 0; trial < 200; trial++) {
+        for (int trial = 0; trial < 2000; trial++) {
             for (ItemData item : BattleItemDrops.roll(battle, 1f, random, definition -> true).items()) {
                 if (ItemDefinitions.get(item.definitionId()).unique()) {
                     drops.merge(item.definitionId(), 1, Integer::sum);

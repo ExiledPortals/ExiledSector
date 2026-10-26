@@ -60,11 +60,15 @@ public record UniqueSource(Kind kind, String sourceId) {
         return List.copyOf(sources);
     }
 
-    public static boolean allows(List<UniqueSource> sources, Kind kind, String sourceId) {
-        if (sources == null || sources.isEmpty()) {
+    public static boolean allowsSite(List<UniqueSource> sources, String siteId) {
+        if (sources == null || sources.stream().noneMatch(source -> source.kind == Kind.SITE)) {
             return true;
         }
-        return sourceId != null && sources.contains(new UniqueSource(kind, sourceId));
+        return siteId != null && sources.contains(new UniqueSource(Kind.SITE, siteId));
+    }
+
+    public static boolean favoursFaction(List<UniqueSource> sources, String factionId) {
+        return sources != null && factionId != null && sources.contains(new UniqueSource(Kind.FACTION, factionId));
     }
 
     public String text() {

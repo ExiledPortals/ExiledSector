@@ -200,7 +200,7 @@ class UniqueSubroutinesTest {
     }
 
     @Test
-    void genericPickersNeverPickASourcedUnique() {
+    void genericPickersSkipSiteBoundUniquesButNotFactionFavouredOnes() {
         Random random = new Random(3L);
         Set<String> picked = new HashSet<>();
         for (int trial = 0; trial < TRIALS; trial++) {
@@ -208,7 +208,7 @@ class UniqueSubroutinesTest {
             picked.add(idOrBlank(ItemDrops.pickUnique(random, definition -> true)));
         }
 
-        assertEquals(Set.of("", HULL_RELIC_A, HULL_RELIC_B), picked);
+        assertEquals(Set.of("", FLEET_RELIC, HULL_RELIC_A, HULL_RELIC_B), picked);
     }
 
     private static String idOrBlank(ItemDefinition definition) {
@@ -216,34 +216,45 @@ class UniqueSubroutinesTest {
     }
 
     @Test
-    void onlyTheSourceFactionDrawsItsFleetUnique() {
+    void itsFavouredFactionDrawsAFactionUniqueTwiceAsOftenAndOtherFactionsStillCan() {
+        ItemDefinition fleetRelic = ItemDefinitions.get(FLEET_RELIC);
+        ItemDefinition hullRelic = ItemDefinitions.get(HULL_RELIC_A);
         Random random = new Random(5L);
-        for (int trial = 0; trial < 200; trial++) {
-            String pickedId = idOrBlank(ItemDrops.pickUniqueFrom(UniqueSource.Kind.FACTION, "pirates", random,
-                    SubroutineKind::isUnique));
-            assertFalse(pickedId.equals(SITE_RELIC) || pickedId.equals(HULL_RELIC_A), pickedId);
-            assertEquals("", idOrBlank(ItemDrops.pickUniqueFrom(UniqueSource.Kind.FACTION, "hegemony", random,
-                    SubroutineKind::isUnique)));
+        int fromPirates = 0;
+        int fromHegemony = 0;
+        for (int trial = 0; trial < TRIALS; trial++) {
+            String pirateId = idOrBlank(ItemDrops.pickUniqueFromFaction("pirates", random, definition -> definition == fleetRelic || definition == hullRelic));
+            String hegemonyId = idOrBlank(ItemDrops.pickUniqueFromFaction("hegemony", random, definition -> definition == fleetRelic || definition == hullRelic));
+            fromPirates += FLEET_RELIC.equals(pirateId) ? 1 : 0;
+            fromHegemony += FLEET_RELIC.equals(hegemonyId) ? 1 : 0;
+            assertFalse(SITE_RELIC.equals(idOrBlank(ItemDrops.pickUniqueFromFaction("pirates", random, SubroutineKind::isUnique))));
         }
-        assertEquals(FLEET_RELIC, idOrBlank(ItemDrops.pickUniqueFrom(UniqueSource.Kind.FACTION, "pirates", random,
-                definition -> definition.id().equals(FLEET_RELIC))));
+
+        assertEquals(2.0 * fleetRelic.rarity(), ItemDrops.factionWeight(fleetRelic, "pirates"), 1e-6);
+        assertEquals(fleetRelic.rarity(), ItemDrops.factionWeight(fleetRelic, "hegemony"), 1e-6);
+        assertEquals(hullRelic.rarity(), ItemDrops.factionWeight(hullRelic, "pirates"), 1e-6);
+        double pirateShare = 2.0 * fleetRelic.rarity() / (2.0 * fleetRelic.rarity() + hullRelic.rarity());
+        double hegemonyShare = fleetRelic.rarity() / (double) (fleetRelic.rarity() + hullRelic.rarity());
+        assertEquals(pirateShare, fromPirates / (double) TRIALS, 0.02);
+        assertEquals(hegemonyShare, fromHegemony / (double) TRIALS, 0.02);
     }
 
     @Test
-    void onlyTheSourceSiteDropsASiteUnique() {
+    void onlyTheSourceSiteDropsASiteUniqueWhileAFactionUniqueDropsAtAnySite() {
         Random random = new Random(6L);
         for (int trial = 0; trial < 200; trial++) {
-            List<ItemData> fromStation = ItemDrops.roll("station", random, 1f, SubroutineKind::isUnique);
-            List<ItemData> fromElsewhere = ItemDrops.roll("elsewhere", random, 1f, SubroutineKind::isUnique);
+            List<String> fromStation = ItemDrops.roll("station", random, 1f, SubroutineKind::isUnique).stream().map(ItemData::definitionId).toList();
+            List<String> fromElsewhere = ItemDrops.roll("elsewhere", random, 1f, SubroutineKind::isUnique).stream().map(ItemData::definitionId).toList();
 
-            assertEquals(List.of(SITE_RELIC), fromStation.stream().map(ItemData::definitionId).toList());
-            assertTrue(fromElsewhere.isEmpty(), fromElsewhere.toString());
+            assertEquals(1, fromStation.size(), fromStation.toString());
+            assertTrue(Set.of(SITE_RELIC, FLEET_RELIC).contains(fromStation.get(0)), fromStation.toString());
+            assertEquals(List.of(FLEET_RELIC), fromElsewhere);
         }
         Set<String> hullSiteDrops = new HashSet<>();
         for (int trial = 0; trial < 200; trial++) {
             ItemDrops.roll("elsewhere", random, 1f, definition -> true).forEach(drop -> hullSiteDrops.add(drop.definitionId()));
         }
-        assertEquals(Set.of(HULL_RELIC_A, HULL_RELIC_B), hullSiteDrops);
+        assertEquals(Set.of(FLEET_RELIC, HULL_RELIC_A, HULL_RELIC_B), hullSiteDrops);
     }
 
     @Test
@@ -257,10 +268,17 @@ class UniqueSubroutinesTest {
         assertThrows(IllegalArgumentException.class, () -> UniqueSource.parseList("site:a; site:a"));
 
         List<UniqueSource> pirateSources = List.of(new UniqueSource(UniqueSource.Kind.FACTION, "pirates"));
-        assertTrue(UniqueSource.allows(List.of(), UniqueSource.Kind.SITE, null));
-        assertTrue(UniqueSource.allows(pirateSources, UniqueSource.Kind.FACTION, "pirates"));
-        assertFalse(UniqueSource.allows(pirateSources, UniqueSource.Kind.SITE, "pirates"));
-        assertFalse(UniqueSource.allows(pirateSources, UniqueSource.Kind.FACTION, null));
+        List<UniqueSource> stationSources = UniqueSource.parseList("site:station; faction:pirates");
+        assertTrue(UniqueSource.allowsSite(List.of(), null));
+        assertTrue(UniqueSource.allowsSite(pirateSources, null));
+        assertTrue(UniqueSource.allowsSite(pirateSources, "station"));
+        assertTrue(UniqueSource.allowsSite(stationSources, "station"));
+        assertFalse(UniqueSource.allowsSite(stationSources, "probe"));
+        assertFalse(UniqueSource.allowsSite(stationSources, null));
+        assertTrue(UniqueSource.favoursFaction(pirateSources, "pirates"));
+        assertFalse(UniqueSource.favoursFaction(pirateSources, "hegemony"));
+        assertFalse(UniqueSource.favoursFaction(pirateSources, null));
+        assertFalse(UniqueSource.favoursFaction(List.of(), "pirates"));
     }
 
     @Test

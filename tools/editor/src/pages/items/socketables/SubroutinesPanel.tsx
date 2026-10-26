@@ -228,7 +228,7 @@ function SubroutineForm({ document, model, vocabulary, definition, index, kinds,
           <Divider />
           <TextInput
             label="Drop source"
-            description="faction:FACTION_ID - flagships of that faction's fleets can carry it; site:SALVAGE_SITE_ID - that salvage site's unique roll. Separate several with ;"
+            description="site:SALVAGE_SITE_ID - drops only from that salvage site's unique roll; faction:FACTION_ID - favours that faction's battle drops, which do not roll unique subroutines yet. Separate several with ;"
             value={definition.source ?? ''}
             onChange={(event) => {
               const text = event.currentTarget.value;

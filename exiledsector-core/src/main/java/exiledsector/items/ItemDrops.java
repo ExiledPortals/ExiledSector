@@ -19,6 +19,7 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.ToDoubleFunction;
 import java.util.regex.Pattern;
 
 public final class ItemDrops {
@@ -29,6 +30,7 @@ public final class ItemDrops {
     static final int MIN_PARTS_PER_FIND = 1;
     static final int MAX_PARTS_PER_FIND = 3;
     static final float KERNEL_CHANCE_SHARE = 0.35f;
+    static final float FACTION_SOURCE_WEIGHT_MULT = 2f;
     public static final String BATTLE_PARTS_FIELD_ID = "exiledSector_socketPartsPer100DeploymentPoints";
     public static final int DEFAULT_BATTLE_PARTS_PER_100_DP = 5;
     public static final int MAX_BATTLE_PARTS_PER_100_DP = 200;
@@ -130,7 +132,7 @@ public final class ItemDrops {
         }
         List<ItemData> droppedItems = rollCascade(rule, random, chances.general(), chances.rarity(), ItemDrops::pickBasic);
         if (withUnique && random.nextFloat() < rule.uniqueChance() * chances.general() * chances.rarity()) {
-            ItemDefinition uniqueDefinition = pickUniqueFrom(UniqueSource.Kind.SITE, siteId, random, uniqueAllowed);
+            ItemDefinition uniqueDefinition = pickUniqueAtSite(siteId, random, uniqueAllowed);
             if (uniqueDefinition != null) {
                 droppedItems.add(ItemData.rolled(uniqueDefinition, random.nextLong()));
             }
@@ -381,13 +383,22 @@ public final class ItemDrops {
     }
 
     public static ItemDefinition pickUnique(Random random, Predicate<ItemDefinition> allowedUniques) {
-        return pick(random, definition -> definition.unique() && definition.uniqueSources().isEmpty() && allowedUniques.test(definition));
+        return pickUniqueAtSite(null, random, allowedUniques);
     }
 
-    public static ItemDefinition pickUniqueFrom(UniqueSource.Kind sourceKind, String sourceId, Random random,
-                                                Predicate<ItemDefinition> allowedUniques) {
-        return pick(random, definition -> definition.unique() && UniqueSource.allows(definition.uniqueSources(), sourceKind, sourceId)
+    public static ItemDefinition pickUniqueAtSite(String siteId, Random random, Predicate<ItemDefinition> allowedUniques) {
+        return pick(random, definition -> definition.unique() && UniqueSource.allowsSite(definition.uniqueSources(), siteId)
                 && allowedUniques.test(definition));
+    }
+
+    public static ItemDefinition pickUniqueFromFaction(String factionId, Random random, Predicate<ItemDefinition> allowedUniques) {
+        return pick(random, definition -> definition.unique() && UniqueSource.allowsSite(definition.uniqueSources(), null)
+                && allowedUniques.test(definition), definition -> factionWeight(definition, factionId));
+    }
+
+    static double factionWeight(ItemDefinition definition, String factionId) {
+        float mult = UniqueSource.favoursFaction(definition.uniqueSources(), factionId) ? FACTION_SOURCE_WEIGHT_MULT : 1f;
+        return definition.rarity() * mult;
     }
 
     public static ItemDefinition pickOfType(Random random, ItemType type, Predicate<ItemDefinition> filter) {
@@ -401,13 +412,17 @@ public final class ItemDrops {
     }
 
     private static ItemDefinition pick(Random random, Predicate<ItemDefinition> filter) {
+        return pick(random, filter, ItemDefinition::rarity);
+    }
+
+    private static ItemDefinition pick(Random random, Predicate<ItemDefinition> filter, ToDoubleFunction<ItemDefinition> weightOf) {
         List<ItemDefinition> candidates = new ArrayList<>();
         for (ItemDefinition definition : ItemDefinitions.all()) {
             if (filter.test(definition) && isDroppable(definition)) {
                 candidates.add(definition);
             }
         }
-        return WeightedPick.pick(candidates, ItemDefinition::rarity, random);
+        return WeightedPick.pick(candidates, weightOf, random);
     }
 
     public static void clear() {

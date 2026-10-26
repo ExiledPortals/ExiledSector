@@ -14,7 +14,7 @@ A unique must do something no rolled modifier can. It changes how a build works 
 
 ## Groundwork
 
-1. [x] Add a `source` column to `hull_items.csv`, using the same `faction:` and `site:` syntax as subroutines (`UniqueSource`). `BattleItemDrops` already asks for `pickUniqueFrom(FACTION, battle.uniqueFactionId())`, and an empty list still means "drops anywhere". The editor serialiser must learn the column. By default each faction item drops from that faction's fleets. Built: `HullItem.parseDefinition` reads the column into `ItemDefinition.uniqueSources`; `HullItemDataRules` reports bad sources (shared `ItemDataIntegrity.checkUniqueSources`, also used by subroutines) and warns on a source on a common item; the editor's hull item panel has a Drop source field, validated and written like subroutines (the column is added to older files only once used). Tests in `BattleItemDropsTest`, `ItemDataIntegrityTest` and the editor's `models.test.ts`.
+1. [x] Add a `source` column to `hull_items.csv`, using the same `faction:` and `site:` syntax as subroutines (`UniqueSource`). The editor serialiser must learn the column. A `faction:` source restricts nothing: it doubles the item's drop weight in battles where that faction lost the most, while a `site:` source still limits the item to those sites. Built: `HullItem.parseDefinition` reads the column into `ItemDefinition.uniqueSources`; `HullItemDataRules` reports bad sources (shared `ItemDataIntegrity.checkUniqueSources`, also used by subroutines) and warns on a source on a common item; the editor's hull item panel has a Drop source field, validated and written like subroutines (the column is added to older files only once used). The faction weighting is `ItemDrops.pickUniqueFromFaction` (`FACTION_SOURCE_WEIGHT_MULT`). Tests in `BattleItemDropsTest`, `UniqueSubroutinesTest`, `ItemDataIntegrityTest` and the editor's `models.test.ts`.
 2. Faction ids are `navarchy_of_tania`, `nightcross`, `stargazer` and `rat_exotech`. The Abyss is `rat_abyssals` plus its biome factions (`rat_abyssals_deep`, `_harmony`, `_primordials`, `_serenity`, `_solitude`, `_wastes`), but not `rat_abyssals_sim`.
 3. [x] Give unique subroutines an optional radius, as Doctrine Archives have. The gated subroutines and Empty Shell Axion need it. Built: an optional `radius` column in `subroutines.csv` (`small`, `medium`, `large`), read for UNIQUE subroutines by `UniqueSubroutineRadii`; `SubroutineRadius` centres it on the socket, so the tree ring and the storage hover preview show it, and `Subroutine.kindLines` adds a radius line (shared `socketable.radiusLine` and `socketable.radius.*` keys, formerly Doctrine-only). `SubroutineDataRules` rejects an unknown size or a radius on another kind. The editor has a Radius picker on unique subroutines, written like the other optional columns. No shipped unique has a radius yet, and the radius has no effect until the gated and affinity mechanics read it. Tests in `DoctrineOverridesTest`, `ItemDataIntegrityTest`, the editor's `models.test.ts` and `itemsPage.test.tsx`.
 
@@ -168,7 +168,7 @@ These need:
 
 ## Bind the vanilla uniques to their factions
 
-Fill the `source` column (groundwork step 1) for the existing vanilla-themed unique hull items, so each one drops only from the faction it names. The factions come from the vanilla market files in `data/campaign/econ/` and the item descriptions.
+Fill the `source` column (groundwork step 1) for the existing vanilla-themed unique hull items, so each one is twice as likely to drop from battles against the faction it names, while still dropping everywhere else. The factions come from the vanilla market files in `data/campaign/econ/` and the item descriptions.
 
 | Item | Source |
 |---|---|
@@ -193,4 +193,4 @@ Some items stay unbound. Alpha Site Survivor, Vambrace Plating, the Gate Hauler 
 
 The unique subroutines keep their `site:` sources. The ones that name a faction also gain it as a second source: `faction:tritachyon` for the Halcyon Fire-Control Lattice, and `faction:pirates` for the Cracked Drive Governor. Battle drops only roll unique hull items today (`BattleItemDrops` filters on `HULL_ITEM`), so a faction source on a subroutine does nothing until battles can also roll unique subroutines.
 
-Check that every faction still drops at least one unique, and that `ItemUnlockTest` and the drop tests still pass.
+Check that `ItemUnlockTest` and the drop tests still pass.

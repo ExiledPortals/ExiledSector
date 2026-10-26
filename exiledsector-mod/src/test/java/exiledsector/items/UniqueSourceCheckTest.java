@@ -54,7 +54,7 @@ class UniqueSourceCheckTest {
         List<String> warnings = UniqueSourceCheck.unreachableSources(ItemDefinitions.all(), Set.of("pirates", "hegemony"), ItemDrops::hasUniqueRoll);
 
         assertEquals(List.of(
-                "fleet_relic drops from faction:missing_faction, but no faction with that id is loaded, so it can never drop there",
+                "fleet_relic favours faction:missing_faction, but no faction with that id is loaded, so that bonus never applies",
                 "site_relic drops from site:probe, but " + ItemDrops.DATA_PATH + " has no row for that site with a uniqueChance above zero, so it can never drop there",
                 "site_relic drops from site:nowhere, but " + ItemDrops.DATA_PATH + " has no row for that site with a uniqueChance above zero, so it can never drop there"),
                 warnings);
