@@ -2,7 +2,6 @@ package exiledsector.console;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
-import exiledsector.charts.ChartEffect;
 import exiledsector.charts.ChartGenContext;
 import exiledsector.charts.ChartLayoutGenerator;
 import exiledsector.charts.ChartLayoutRequest;
@@ -14,6 +13,7 @@ import exiledsector.charts.ChartRunEffects;
 import exiledsector.charts.ChartRuns;
 import exiledsector.charts.ChartTiers;
 import exiledsector.charts.StarChartSettings;
+import exiledsector.charts.anomaly.SpatialBreach;
 import exiledsector.charts.atlas.AtlasData;
 import exiledsector.items.StarChart;
 import org.lazywizard.console.Console;
@@ -53,15 +53,14 @@ public class ChartOpenCommand extends CampaignCommand {
                     + " small number.");
             return CommandResult.BAD_SYNTAX;
         }
-        ChartGenContext chartContext = arguments.breach()
-                ? ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_CHANCE, 100f))) : null;
         ChartLayoutRequest layoutRequest = new ChartLayoutRequest(arguments.seed() != null ? arguments.seed() : random.nextLong(),
-                arguments.systemType(), arguments.tierOrDefault(), chartContext);
+                arguments.systemType(), arguments.tierOrDefault(), null);
         if (arguments.regionId() != null || arguments.layoutId() != null) {
             layoutRequest = layoutRequest.withRecipe(AtlasData.recipeFor(arguments.regionId(), arguments.layoutId()));
         }
-        if (!arguments.anomalyIds().isEmpty()) {
-            layoutRequest = layoutRequest.withAnomalies(arguments.anomalyIds());
+        List<String> anomalyIds = arguments.forcedAnomalyIds();
+        if (!anomalyIds.isEmpty()) {
+            layoutRequest = layoutRequest.withAnomalies(anomalyIds);
         }
         int entries = StarChartSettings.wormholeEntries();
         OpenResult result = ChartRunActions.openBesidePlayer(Global.getSector(), entries, random, layoutRequest);
@@ -230,6 +229,15 @@ public class ChartOpenCommand extends CampaignCommand {
 
         int tierOrDefault() {
             return tier != null ? tier : DEFAULT_TIER;
+        }
+
+        List<String> forcedAnomalyIds() {
+            if (!breach || anomalyIds.contains(SpatialBreach.ID)) {
+                return anomalyIds;
+            }
+            List<String> ids = new ArrayList<>(anomalyIds);
+            ids.add(SpatialBreach.ID);
+            return List.copyOf(ids);
         }
 
         private static Long parseNumber(String token) {

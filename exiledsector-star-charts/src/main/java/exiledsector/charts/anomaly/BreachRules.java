@@ -30,11 +30,6 @@ public final class BreachRules {
     static final float CACHE_BASE_RARITY_PERCENT = 25f;
     static final float CACHE_DEEP_RARITY_PERCENT = 75f;
     static final float TOUCHED_RARITY_PERCENT = 30f;
-    static final float CORE_MIN_ITEM_MULT = 0.5f;
-    static final float CORE_GROWN_ITEM_MULT = 1.5f;
-    static final float CORE_SALVAGE_MULT_PER_TIER = 0.2f;
-    static final float CORE_BASE_RARITY_PERCENT = 50f;
-    static final float CORE_GROWN_RARITY_PERCENT = 50f;
 
     record Growth(float maxRadius, float openSeconds, float collapseSeconds) {
 
@@ -54,10 +49,6 @@ public final class BreachRules {
 
         boolean isCollapsed(float seconds) {
             return seconds >= openSeconds + collapseSeconds;
-        }
-
-        float grownFraction(float radius) {
-            return maxRadius <= 0f ? 1f : Math.max(0f, Math.min(1f, radius / maxRadius));
         }
 
         private static float ease(float progress) {
@@ -121,17 +112,5 @@ public final class BreachRules {
 
     static boolean reached(float distance, float radius) {
         return distance <= radius - CACHE_MARGIN;
-    }
-
-    static float coreItemMult(float grownFraction, float coreItemMult) {
-        return (CORE_MIN_ITEM_MULT + CORE_GROWN_ITEM_MULT * Math.max(0f, Math.min(1f, grownFraction))) * Math.max(0f, coreItemMult);
-    }
-
-    static float coreRarityPercent(float grownFraction) {
-        return CORE_BASE_RARITY_PERCENT + CORE_GROWN_RARITY_PERCENT * Math.max(0f, Math.min(1f, grownFraction));
-    }
-
-    static float coreSalvageMult(int tier, float itemMult) {
-        return itemMult * (1f + CORE_SALVAGE_MULT_PER_TIER * Math.max(0, tier - 1));
     }
 }

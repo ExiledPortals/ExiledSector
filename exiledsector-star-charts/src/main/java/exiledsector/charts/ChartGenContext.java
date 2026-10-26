@@ -57,7 +57,6 @@ public final class ChartGenContext {
     private float rewardPercent;
     private final Map<ChartFleetStat, Float> fleetStatPercents = new EnumMap<>(ChartFleetStat.class);
     private Map<ChartFleetStat, Float> fleetStatMults;
-    private final Map<String, Float> anomalyChances = new LinkedHashMap<>();
     private final Map<String, Float> anomalyPercents = new LinkedHashMap<>();
     private final List<String> forcedAnomalies = new ArrayList<>();
     private boolean guaranteedBossTierUp;
@@ -227,10 +226,6 @@ public final class ChartGenContext {
         fleetStatPercents.merge(stat, value, Float::sum);
     }
 
-    void addAnomalyChance(String anomalyId, float percent) {
-        anomalyChances.merge(anomalyId, percent, Float::sum);
-    }
-
     void addAnomalyPercent(String tuningKey, float value) {
         anomalyPercents.merge(tuningKey, value, Float::sum);
     }
@@ -286,10 +281,6 @@ public final class ChartGenContext {
 
     public boolean guaranteedBossTierUp() {
         return guaranteedBossTierUp;
-    }
-
-    public float anomalyChance(String anomalyId) {
-        return anomalyChances.getOrDefault(anomalyId, 0f);
     }
 
     public float anomalyPercent(String tuningKey) {
@@ -452,7 +443,7 @@ public final class ChartGenContext {
                         + "boss spoils x%.2f, reward x%.2f, sensor range x%.2f, chart quality %d, anomalies %s",
                 fleetSizePercent, baseFleets, extraFleets, officerLevelBonus, extraOfficers, bossSizePercent,
                 fleetQualityPercent, siteBudgetText(), extraPois(), itemPercent, itemRarityPercent, describeDropPercents(), bossSpoilsMult(), rewardMult(),
-                sensorRangeMult(), quality, anomalyChances.isEmpty() ? "none" : anomalyChances.toString());
+                sensorRangeMult(), quality, forcedAnomalies.isEmpty() ? "none" : forcedAnomalies.toString());
     }
 
     private String describeDropPercents() {

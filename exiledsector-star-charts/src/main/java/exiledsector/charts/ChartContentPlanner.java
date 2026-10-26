@@ -71,7 +71,7 @@ final class ChartContentPlanner {
         plannedPois = planFleets(tier, objective, plannedPois, plannedFleets, ChartLayoutGenerator.derivedRandom(seed, FLEET_SALT),
                 chartContext.extraFleets(), fleetLimit, bossType);
         PlannedStation bossStation = stationVariant == null ? null : plannedStation(tier, stationVariant, plannedFleets);
-        return new ChartContentPlan(tier.tier(), faction, objective, plannedPois, plannedFleets, anomalyIds == null ? ChartAnomalies.planned(seed, tier.tier(), chartContext) : anomalyIds,
+        return new ChartContentPlan(tier.tier(), faction, objective, plannedPois, plannedFleets, anomalyIds == null ? ChartAnomalies.planned(chartContext) : anomalyIds,
                 bossType, bossStation);
     }
 

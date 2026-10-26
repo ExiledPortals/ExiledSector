@@ -46,18 +46,6 @@ class ChartAnomaliesTest {
         ChartAnomalies.resetForTests();
     }
 
-    private static ChartGenContext withBreachChance(float percent) {
-        return ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_CHANCE, percent)));
-    }
-
-    private static ChartGenContext withChances(String... anomalyIds) {
-        ChartGenContext context = ChartGenContext.of(List.of(), 1);
-        for (String anomalyId : anomalyIds) {
-            context.addAnomalyChance(anomalyId, ChartGenContext.PERCENT);
-        }
-        return context;
-    }
-
     private static ChartAnomalies.Definition definition(String id, int minTier, int maxTier, String requiredMod, Set<String> excludes) {
         ChartAnomaly anomaly = ChartAnomalies.byId(id);
         return new ChartAnomalies.Definition(id, 1f, minTier, maxTier, requiredMod, "", true, excludes, anomaly != null && anomaly.replacesStar());
@@ -95,7 +83,7 @@ class ChartAnomaliesTest {
     }
 
     @Test
-    void anAnomalysEffectsSkipUnknownLinesAndChanceLines() throws Exception {
+    void anAnomalysEffectsSkipUnknownLines() throws Exception {
         List<String> problems = ChartAnomalies.register(new JSONArray().put(new JSONObject().put("id", MagneticStorm.ID)
                 .put("effects", "CHART_CURRENCY_PERCENT:20; CHART_BREACH_CHANCE:100; NOT_AN_EFFECT:5")));
 
@@ -153,64 +141,33 @@ class ChartAnomaliesTest {
     }
 
     @Test
-    void aCertainChanceAlwaysPlansTheAnomalyAndNoChanceNever() {
+    void withoutAtlasAnomaliesNothingIsPlannedWhateverTheChartCarries() {
         useTestAnomaly(1, 15, "");
+        ChartGenContext chart = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_GROWTH_PERCENT, 50f),
+                new ChartGenContext.AppliedEffect(ChartEffect.CHART_CURRENCY_PERCENT, 20f)));
 
-        for (long seed = 0; seed < 20; seed++) {
-            assertEquals(List.of(SpatialBreach.ID), ChartAnomalies.planned(seed, 5, withBreachChance(100f)));
-            assertEquals(List.of(), ChartAnomalies.planned(seed, 5, ChartGenContext.none()));
-        }
+        assertEquals(List.of(), ChartAnomalies.planned(chart));
+        assertEquals(List.of(), ChartAnomalies.planned(ChartGenContext.none()));
+        assertEquals(List.of(), ChartAnomalies.planned(null));
+        assertEquals(List.of(SpatialBreach.ID), ChartAnomalies.planned(chart.withAnomalies(List.of(SpatialBreach.ID))));
     }
 
     @Test
-    void aPartialChanceRollsPerSeedAndRepeatsForTheSameSeed() {
-        useTestAnomaly(1, 15, "");
-        int planned = 0;
-
-        for (long seed = 0; seed < 400; seed++) {
-            List<String> first = ChartAnomalies.planned(seed, 5, withBreachChance(50f));
-            assertEquals(first, ChartAnomalies.planned(seed, 5, withBreachChance(50f)));
-            planned += first.size();
-        }
-
-        assertTrue(planned > 140 && planned < 260, "about half the seeds plan the breach, got " + planned);
-    }
-
-    @Test
-    void aChanceLineOutsideItsTiersOrWithoutItsModIsNeverPlanned() {
-        useTestAnomaly(6, 10, "");
-        assertEquals(List.of(), ChartAnomalies.planned(1L, 5, withBreachChance(100f)));
-        assertEquals(List.of(SpatialBreach.ID), ChartAnomalies.planned(1L, 6, withBreachChance(100f)));
-        assertEquals(List.of(), ChartAnomalies.planned(1L, 11, withBreachChance(100f)));
+    void anAnomalyWithNoTableRowOrWithoutItsModIsNeverPlanned() {
+        assertEquals(List.of(), ChartAnomalies.planned(ChartGenContext.none().withAnomalies(List.of(SpatialBreach.ID))));
 
         useTestAnomaly(1, 15, "some_missing_mod");
-        assertEquals(List.of(), ChartAnomalies.planned(1L, 5, withBreachChance(100f)));
+        assertEquals(List.of(), ChartAnomalies.planned(ChartGenContext.none().withAnomalies(List.of(SpatialBreach.ID))));
     }
 
     @Test
-    void anAnomalyWithNoTableRowIsNeverPlanned() {
-        assertEquals(List.of(), ChartAnomalies.planned(1L, 5, withBreachChance(100f)));
-        assertEquals(List.of(), ChartAnomalies.planned(1L, 5, ChartGenContext.none().withAnomalies(List.of(SpatialBreach.ID))));
-    }
-
-    @Test
-    void chanceLinesAddSeveralAnomaliesButNeverAStarOne() {
-        ChartAnomalies.useForTests(List.of(definition("black_hole"), definition(AsteroidStorm.ID), definition(MagneticStorm.ID)));
-
-        for (long seed = 0; seed < 10; seed++) {
-            List<String> planned = ChartAnomalies.planned(seed, 5, withChances("black_hole", AsteroidStorm.ID, MagneticStorm.ID));
-            assertEquals(Set.of(AsteroidStorm.ID, MagneticStorm.ID), Set.copyOf(planned));
-        }
-    }
-
-    @Test
-    void forcedAnomaliesComeFirstIgnoreTheTierRangeAndBeatConflictingChanceLines() {
+    void forcedAnomaliesKeepTheirOrderIgnoreTheTierRangeAndDropConflicts() {
         ChartAnomalies.useForTests(List.of(definition("black_hole", 10, 15, "", Set.of()), definition("dense_nebula"),
                 definition(MagneticStorm.ID, 1, 15, "", Set.of(AsteroidStorm.ID)), definition(AsteroidStorm.ID)));
-        ChartGenContext context = withChances(AsteroidStorm.ID).withAnomalies(List.of("black_hole", "dense_nebula", MagneticStorm.ID));
+        ChartGenContext context = ChartGenContext.none().withAnomalies(List.of("black_hole", "dense_nebula", MagneticStorm.ID, AsteroidStorm.ID));
 
-        assertEquals(List.of("black_hole", MagneticStorm.ID), ChartAnomalies.planned(3L, 2, context));
-        assertSame(StarAnomalies.BLACK_HOLE, ChartAnomalies.starOf(ChartAnomalies.planned(3L, 2, context)));
+        assertEquals(List.of("black_hole", MagneticStorm.ID), ChartAnomalies.planned(context));
+        assertSame(StarAnomalies.BLACK_HOLE, ChartAnomalies.starOf(ChartAnomalies.planned(context)));
     }
 
     @Test
@@ -221,7 +178,7 @@ class ChartAnomaliesTest {
         ChartGenContext context = ChartGenContext.none().withAtlasNode(node);
 
         assertEquals(List.of(AsteroidStorm.ID, SpatialBreach.ID), context.forcedAnomalies());
-        assertEquals(List.of(AsteroidStorm.ID, SpatialBreach.ID), ChartAnomalies.planned(1L, 5, context));
+        assertEquals(List.of(AsteroidStorm.ID, SpatialBreach.ID), ChartAnomalies.planned(context));
     }
 
     @Test
@@ -229,14 +186,11 @@ class ChartAnomaliesTest {
         ChartGenContext context = ChartGenContext.of(List.of(
                 new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_GROWTH_PERCENT, 40f),
                 new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_CACHE_PERCENT, 50f),
-                new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_CORE_ITEM_PERCENT, 25f),
-                new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_CHANCE, 100f),
-                new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_CHANCE, 100f)));
+                new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_CACHE_ITEM_PERCENT, 25f)));
 
         assertEquals(1.4f, context.anomalyMult(SpatialBreach.GROWTH_KEY), 0.001f);
         assertEquals(1.5f, context.anomalyMult(SpatialBreach.CACHE_KEY), 0.001f);
-        assertEquals(1.25f, context.anomalyMult(SpatialBreach.CORE_ITEM_KEY), 0.001f);
-        assertEquals(200f, context.anomalyChance(SpatialBreach.ID), 0.001f);
+        assertEquals(1.25f, context.anomalyMult(SpatialBreach.CACHE_ITEM_KEY), 0.001f);
         assertEquals(1f, ChartGenContext.none().anomalyMult(SpatialBreach.GROWTH_KEY));
     }
 }

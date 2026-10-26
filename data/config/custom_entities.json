@@ -35,7 +35,7 @@
 		"scaleIconWithZoom":true,
 		"renderCircleIndicator":false,
 		"renderCircleIndicatorSelectionFlash":false,
-		"tags":["has_interaction_dialog"],
+		"tags":["non_clickable"],
 		"layers":[STATIONS],
 		"pluginClass":"exiledsector.charts.anomaly.BreachCorePlugin",
 	},

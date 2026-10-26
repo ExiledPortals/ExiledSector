@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
+import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import exiledlib.i18n.Translation;
 import exiledsector.charts.ChartGenContext;
 import exiledsector.charts.ChartIds;
@@ -18,7 +19,7 @@ public final class SpatialBreach implements ChartAnomaly {
     public static final String ID = "spatial_breach";
     public static final String GROWTH_KEY = ID + ".growth";
     public static final String CACHE_KEY = ID + ".caches";
-    public static final String CORE_ITEM_KEY = ID + ".coreItems";
+    public static final String CACHE_ITEM_KEY = ID + ".cacheItems";
     public static final String TERRAIN_ID = "exiledSector_chart_breach";
     public static final String CORE_TYPE = "exiledSector_chart_breach_core";
     public static final String CORE_TAG = ChartIds.PREFIX + "breach_core";
@@ -55,7 +56,7 @@ public final class SpatialBreach implements ChartAnomaly {
         int cacheCount = BreachRules.cacheCount(site.tier(), context.anomalyMult(CACHE_KEY));
         List<BreachRules.CacheSite> caches = BreachRules.cacheSites(centre, growth.maxRadius(), cacheCount, site::isClear, site.random(CACHE_SALT));
         BreachTerrainPlugin.Params params = new BreachTerrainPlugin.Params(site.runId(), site.tier(), growth, caches,
-                context.anomalyMult(CORE_ITEM_KEY), site.random(SPAWN_SALT).nextLong());
+                context.anomalyMult(CACHE_ITEM_KEY), site.random(SPAWN_SALT).nextLong());
         SectorEntityToken terrain = system.addTerrain(TERRAIN_ID, params);
         try {
             terrain.setFixedLocation(centre.x, centre.y);
@@ -63,6 +64,7 @@ public final class SpatialBreach implements ChartAnomaly {
                     Factions.NEUTRAL);
             core.setFixedLocation(centre.x, centre.y);
             core.addTag(CORE_TAG);
+            core.addTag(Tags.NON_CLICKABLE);
         } catch (RuntimeException | LinkageError e) {
             system.removeEntity(terrain);
             throw e;
@@ -105,10 +107,6 @@ public final class SpatialBreach implements ChartAnomaly {
 
     public static String coreId(String runId) {
         return ChartIds.PREFIX + "breach_core_" + runId;
-    }
-
-    public static boolean isCore(SectorEntityToken entity) {
-        return entity != null && entity.hasTag(CORE_TAG);
     }
 
     public static BreachTerrainPlugin breachIn(LocationAPI location) {

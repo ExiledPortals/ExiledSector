@@ -1,10 +1,8 @@
 package exiledsector.charts;
 
-import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
-import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageEntity;
 import exiledsector.items.WeightedPick;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -70,11 +68,5 @@ public final class ChartSites {
             throw e;
         }
         return site;
-    }
-
-    public static CargoAPI siteSalvage(SectorEntityToken site, int tier, ChartGenContext context, float mult, Random random) {
-        ChartVanillaLoot.addToSite(site, ChartPoi.Kind.STATION, ChartVanillaLoot.SiteDrops.NONE, context == null ? ChartGenContext.none() : context,
-                ChartTiers.clamp(tier), random);
-        return SalvageEntity.generateSalvage(random, 1f, 1f, Math.max(0f, mult), 1f, site.getDropValue(), site.getDropRandom());
     }
 }

@@ -30,7 +30,7 @@ class StarChartSiteModifiersTest {
     }
 
     @Test
-    void breachRarityAndCoreQuantityRaiseTheSitesItemChances() {
+    void breachRarityAndCacheQuantityRaiseTheSitesItemChances() {
         MemoryAPI memory = FakeChartContentEngine.memory();
         memory.set(SpatialBreach.RARITY_KEY, 50f);
         memory.set(SpatialBreach.ITEM_MULT_KEY, 2f);

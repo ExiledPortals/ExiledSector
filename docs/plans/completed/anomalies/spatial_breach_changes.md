@@ -1,12 +1,12 @@
 # Anomaly: Spatial Breach changes
 
-There are three changes to the Spatial Breach (built in `../completed/anomalies/spatial_breach.md`):
+There are three changes to the Spatial Breach (built in `spatial_breach.md`):
 
 1. The breach core no longer gives loot and can't be interacted with. The caches are the breach's only loot. The breach runs its course and closes by itself, with nothing at the end.
 2. The core item modifier line becomes a cache item line.
 3. Star Charts no longer roll any anomaly content, whether breach, storm or flare. Anomalies only come from the atlas: a cell rolls one, or has one inserted.
 
-Status: planned, nothing built.
+Status: built 2026-10-26 on parallel-work. Not yet checked in game.
 
 ## Part 1: no core interaction, no core loot
 
@@ -54,8 +54,8 @@ All text goes through `exiledlib.i18n`, in `en.json` and `zh_CN.json`, following
 
 ## Build order
 
-1. [ ] Make the core non-clickable, including on old cores. Remove `BreachCoreDialog`, its `ChartCampaignPlugin` branch, the core loot code and constants, and the `item_salvage.csv` row. Shrink `close` to the collapse path. Tests: the core can't be interacted with, and collapsing removes the field, the core and the remaining caches with no loot.
-2. [ ] Rename the core item effect to the cache item effect and apply it in the cache salvage roll. Test that a higher value gives more items per cache.
-3. [ ] Delete the seven anomaly modifiers and their weights, the four chance effects and their strings, and the chance machinery in `ChartEffect`, `ChartGenContext` and `ChartAnomalies`. Make old charts drop unknown lines when they load. Tests: no chart can roll an anomaly line, `planned` returns exactly the atlas-given anomalies, and a chart carrying a removed line still loads and opens.
-4. [ ] Text in en and zh_CN.
-5. [ ] Update `docs/docs.md`: the Spatial Breach section (automatic close, caches as the only loot) and the chart modifier text (anomalies come only from the atlas). Mark the core reward steps and the chart modifier section in `../completed/anomalies/spatial_breach.md` as replaced by this plan, fix any mention of chart chance lines in `../atlas.md` and `overview.md`, then move this plan to `../completed/anomalies/`.
+1. [x] Make the core non-clickable, including on old cores. Remove `BreachCoreDialog`, its `ChartCampaignPlugin` branch, the core loot code and constants, and the `item_salvage.csv` row. Shrink `close` to the collapse path. Tests: the core can't be interacted with, and collapsing removes the field, the core and the remaining caches with no loot. Built: `SpatialBreach.generate` and `BreachTerrainPlugin.advance` add `Tags.NON_CLICKABLE`, the core entity spec dropped `has_interaction_dialog`, `close` folded into `BreachTerrainPlugin.collapse`, `ChartSites.siteSalvage` removed; `SpatialBreach.ITEM_MULT_KEY` and `RARITY_KEY` stay, since the caches use them.
+2. [x] Rename the core item effect to the cache item effect and apply it in the cache salvage roll. Test that a higher value gives more items per cache. Built: `BreachTerrainPlugin.markCache` sets `ITEM_MULT_KEY` on each cache, which `StarChartLootSource.modifiersFor` reads; the saved field is `cacheItemBonus` (the multiplier minus 1), so an old save reads as 1.
+3. [x] Delete the seven anomaly modifiers and their weights, the four chance effects and their strings, and the chance machinery in `ChartEffect`, `ChartGenContext` and `ChartAnomalies`. Make old charts drop unknown lines when they load. Tests: no chart can roll an anomaly line, `planned` returns exactly the atlas-given anomalies, and a chart carrying a removed line still loads and opens. Built: `ChartAnomalies.planned(context)` returns the forced anomalies only; the console's `breach` word now forces `spatial_breach`. Old charts needed no loader change: a removed effect is hidden and a removed modifier shows "Unreadable modifier" (`StarChartTest`).
+4. [x] Text in en and zh_CN. `chart.breach.core.description` was removed rather than rewritten, since nothing shows it once the dialog is gone.
+5. [x] Update `docs/docs.md`: the Spatial Breach section (automatic close, caches as the only loot) and the chart modifier text (anomalies come only from the atlas). Mark the core reward steps and the chart modifier section in `spatial_breach.md` as replaced by this plan, fix any mention of chart chance lines in `../../atlas.md` and `overview.md`, then move this plan to `completed/anomalies/`.

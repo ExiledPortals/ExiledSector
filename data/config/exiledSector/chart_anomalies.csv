@@ -5,4 +5,4 @@ dense_nebula,1,1,15,,graphics/icons/anomalies/dense_nebula.png,,,,CHART_STAR_CHA
 asteroid_storm,1,1,15,,graphics/icons/anomalies/asteroid_storm.png,,,,,"Extra asteroid belts and fields, whose rocks strike fleets passing through, with caches hidden in the belts"
 magnetic_storm,1,1,15,,graphics/icons/anomalies/magnetic_storm.png,,,,CHART_CURRENCY_PERCENT:50,"Magnetic fields around the star and several worlds that blind sensors"
 stellar_flares,1,1,15,,graphics/icons/anomalies/stellar_flares.png,,,,CHART_FEEDSTOCK_PERCENT:50,"Every corona throws flares constantly"
-spatial_breach,1,1,15,,graphics/icons/anomalies/spatial_breach.png,,yes,,,"A growing tear into hyperspace: drains, breach caches and a core that closes it"
+spatial_breach,1,1,15,,graphics/icons/anomalies/spatial_breach.png,,yes,,,"A growing tear into hyperspace: drains and breach caches"

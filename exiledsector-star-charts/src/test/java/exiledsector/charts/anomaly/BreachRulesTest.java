@@ -32,7 +32,6 @@ class BreachRulesTest {
         assertFalse(growth.isCollapsed(open + collapse - 1f));
         assertTrue(growth.isCollapsed(open + collapse));
         assertEquals(0f, growth.radiusAt(open + collapse));
-        assertEquals(0.5f, growth.grownFraction(max / 2f), 0.001f);
     }
 
     @Test
@@ -112,14 +111,5 @@ class BreachRulesTest {
         assertTrue(new BreachRules.CacheSite(0f, 0f, 0.2f).rarityPercent() > new BreachRules.CacheSite(0f, 0f, 0.9f).rarityPercent());
         assertTrue(BreachRules.reached(500f, 1000f));
         assertFalse(BreachRules.reached(950f, 1000f));
-    }
-
-    @Test
-    void aLargerBreachLeavesMoreAndRarerItemsInItsCore() {
-        assertEquals(BreachRules.CORE_MIN_ITEM_MULT, BreachRules.coreItemMult(0f, 1f), 0.001f);
-        assertEquals(BreachRules.CORE_MIN_ITEM_MULT + BreachRules.CORE_GROWN_ITEM_MULT, BreachRules.coreItemMult(1f, 1f), 0.001f);
-        assertEquals(2f * BreachRules.coreItemMult(0.5f, 1f), BreachRules.coreItemMult(0.5f, 2f), 0.001f);
-        assertTrue(BreachRules.coreRarityPercent(1f) > BreachRules.coreRarityPercent(0f));
-        assertTrue(BreachRules.coreSalvageMult(10, 1f) > BreachRules.coreSalvageMult(1, 1f));
     }
 }

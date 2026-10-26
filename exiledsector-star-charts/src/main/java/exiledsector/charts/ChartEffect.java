@@ -1,10 +1,7 @@
 package exiledsector.charts;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledsector.charts.anomaly.AsteroidStorm;
-import exiledsector.charts.anomaly.MagneticStorm;
 import exiledsector.charts.anomaly.SpatialBreach;
-import exiledsector.charts.anomaly.StellarFlares;
 import exiledlib.i18n.Message;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
@@ -81,52 +78,38 @@ public enum ChartEffect implements ModifierEffect {
     CHART_COLONY_ITEM_PERCENT(DropType.COLONY_ITEM),
     CHART_BOSS_SPOILS_PERCENT(false, ChartGenContext::addBossSpoilsPercent),
     CHART_REWARD_PERCENT(false, ChartGenContext::addRewardPercent),
-    CHART_BREACH_CHANCE(new Chance((context, value) -> context.addAnomalyChance(SpatialBreach.ID, value))),
     CHART_BREACH_GROWTH_PERCENT(false, (context, value) -> context.addAnomalyPercent(SpatialBreach.GROWTH_KEY, value)),
     CHART_BREACH_CACHE_PERCENT(false, (context, value) -> context.addAnomalyPercent(SpatialBreach.CACHE_KEY, value)),
-    CHART_BREACH_CORE_ITEM_PERCENT(false, (context, value) -> context.addAnomalyPercent(SpatialBreach.CORE_ITEM_KEY, value)),
-    CHART_ASTEROID_STORM_CHANCE(new Chance((context, value) -> context.addAnomalyChance(AsteroidStorm.ID, value))),
-    CHART_MAGNETIC_STORM_CHANCE(new Chance((context, value) -> context.addAnomalyChance(MagneticStorm.ID, value))),
-    CHART_STELLAR_FLARES_CHANCE(new Chance((context, value) -> context.addAnomalyChance(StellarFlares.ID, value)));
+    CHART_BREACH_CACHE_ITEM_PERCENT(false, (context, value) -> context.addAnomalyPercent(SpatialBreach.CACHE_ITEM_KEY, value));
 
     static final String KEY_PREFIX = "chart.effect.";
-    static final String CHANCE_SUFFIX = ".chance";
 
     private interface Contribution {
         void addTo(ChartGenContext context, float value);
-    }
-
-    private record Chance(Contribution contribution) {
     }
 
     private final boolean counted;
     private final DropType dropType;
     private final ChartFleetStat fleetStat;
     private final Contribution contribution;
-    private final boolean chance;
 
     ChartEffect(boolean counted, Contribution contribution) {
-        this(counted, null, null, contribution, false);
-    }
-
-    ChartEffect(Chance chance) {
-        this(false, null, null, chance.contribution(), true);
+        this(counted, null, null, contribution);
     }
 
     ChartEffect(DropType dropType) {
-        this(false, dropType, null, (context, value) -> context.addDropPercent(dropType, value), false);
+        this(false, dropType, null, (context, value) -> context.addDropPercent(dropType, value));
     }
 
     ChartEffect(ChartFleetStat fleetStat) {
-        this(false, null, fleetStat, (context, value) -> context.addFleetStatPercent(fleetStat, value), false);
+        this(false, null, fleetStat, (context, value) -> context.addFleetStatPercent(fleetStat, value));
     }
 
-    ChartEffect(boolean counted, DropType dropType, ChartFleetStat fleetStat, Contribution contribution, boolean chance) {
+    ChartEffect(boolean counted, DropType dropType, ChartFleetStat fleetStat, Contribution contribution) {
         this.counted = counted;
         this.dropType = dropType;
         this.fleetStat = fleetStat;
         this.contribution = contribution;
-        this.chance = chance;
     }
 
     public ChartFleetStat fleetStat() {
@@ -135,10 +118,6 @@ public enum ChartEffect implements ModifierEffect {
 
     public DropType dropType() {
         return dropType;
-    }
-
-    public boolean isChance() {
-        return chance;
     }
 
     public boolean canRoll(SectorAPI sector) {
@@ -151,13 +130,7 @@ public enum ChartEffect implements ModifierEffect {
 
     @Override
     public StyledText description(float magnitude) {
-        if (chance && magnitude < ChartGenContext.PERCENT) {
-            return Translation.msg(key() + CHANCE_SUFFIX).arg("value", magnitude).styled();
-        }
         Message message = Translation.msg(key());
-        if (chance) {
-            return message.styled();
-        }
         if (counted) {
             int count = Math.round(magnitude);
             return message.count(count).arg("value", count).styled();

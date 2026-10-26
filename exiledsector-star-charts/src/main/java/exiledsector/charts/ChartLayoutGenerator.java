@@ -114,7 +114,7 @@ public final class ChartLayoutGenerator {
 
     public static ChartLayout generate(SectorAPI sector, StarSystemAPI system, String runId, ChartLayoutRequest request) {
         long seed = request.seed();
-        List<String> anomalyIds = ChartAnomalies.planned(request.contentSeed(), request.tier(), request.chartContext());
+        List<String> anomalyIds = ChartAnomalies.planned(request.chartContext());
         List<ChartAnomaly> anomalies = ChartAnomalies.anomaliesOf(anomalyIds);
         StarSystemType systemType = ChartAnomaly.systemTypeOr(ChartAnomalies.starOf(anomalyIds), typeFor(request));
         Set<Object> namesBefore = ChartUsedNames.snapshot();

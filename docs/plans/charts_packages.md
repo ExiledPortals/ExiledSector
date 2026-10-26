@@ -62,7 +62,7 @@ The current `charts.feature` package becomes `layout.feature`, with `ChartFeatur
 `ChartLoot`, `ChartDrops`, `DropType`, `LootContexts`, `ChartLootTotals`, `ChartVanillaLoot`, `ChartFleetLoot`, `StarChartLootSource`
 
 ### `anomaly`
-This package stays, but the seven Spatial Breach classes (`SpatialBreach`, `BreachCoreDialog`, `BreachCorePlugin`, `BreachFieldRenderer`, `BreachRules`, `BreachSupplyBuff`, `BreachTerrainPlugin`) move to `anomaly.breach`. `ChartAnomalies` (the registry) moves from the root into `anomaly`.
+This package stays, but the six Spatial Breach classes (`SpatialBreach`, `BreachCorePlugin`, `BreachFieldRenderer`, `BreachRules`, `BreachSupplyBuff`, `BreachTerrainPlugin`) move to `anomaly.breach`. `ChartAnomalies` (the registry) moves from the root into `anomaly`.
 
 ### `atlas`
 30 classes, but they hang together, so they're left alone in this pass. A later pass could split generation (`AtlasGenerator`, `AtlasLayout`, `AtlasPositions`, `AtlasHash`, `AtlasBiome(s)`, `AtlasTerrain`, `AtlasTerritories`, `AtlasDecoration`, `AtlasSpecialPlacer`, `AtlasAnomalies`, `AtlasAnomalyCandidate`) from state and progress, but only after `AtlasState` has its aliases. `AtlasRunNode` moves in from the root.

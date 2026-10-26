@@ -15,20 +15,17 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 import java.util.Set;
 
 public final class ChartAnomalies {
 
     static final String PATH = "data/config/exiledSector/chart_anomalies.csv";
     static final String ID_COLUMN = "id";
-    static final long ROLL_SALT = 0x43484558504e44L;
     static final List<ChartAnomaly> BUILT_IN = List.of(StarAnomalies.BLACK_HOLE, StarAnomalies.NEUTRON_STAR, StarAnomalies.DENSE_NEBULA,
             AsteroidStorm.INSTANCE, MagneticStorm.INSTANCE, StellarFlares.INSTANCE, SpatialBreach.INSTANCE);
     private static final Logger LOG = Logger.getLogger(ChartAnomalies.class);
@@ -59,9 +56,6 @@ public final class ChartAnomalies {
         public boolean conflictsWith(Definition other) {
             return other != null && !id.equals(other.id) && (replacesStar && other.replacesStar || excludes.contains(other.id) || other.excludes.contains(id));
         }
-    }
-
-    private record Roll(String id, float roll) {
     }
 
     private ChartAnomalies() {
@@ -98,8 +92,8 @@ public final class ChartAnomalies {
         List<ChartGenContext.AppliedEffect> effects = new ArrayList<>();
         csv.weights(row, "effects", id, null, true).forEach((name, value) -> {
             ChartEffect effect = ChartEffect.byNameOrNull(name);
-            if (effect == null || effect.isChance()) {
-                csv.problem(id, "effects", name + (effect == null ? " (not a chart effect)" : " (an anomaly can't add anomalies)"));
+            if (effect == null) {
+                csv.problem(id, "effects", name + " (not a chart effect)");
             } else {
                 effects.add(new ChartGenContext.AppliedEffect(effect, value));
             }
@@ -167,7 +161,7 @@ public final class ChartAnomalies {
         return effects;
     }
 
-    public static List<String> planned(long seed, int tier, ChartGenContext context) {
+    public static List<String> planned(ChartGenContext context) {
         if (context == null) {
             return List.of();
         }
@@ -177,29 +171,7 @@ public final class ChartAnomalies {
                 accepted.add(id);
             }
         }
-        List<Roll> passed = new ArrayList<>();
-        for (ChartAnomaly anomaly : anomalies) {
-            float chance = context.anomalyChance(anomaly.id()) / ChartGenContext.PERCENT;
-            Definition definition = definition(anomaly.id());
-            if (chance <= 0f || definition == null || definition.replacesStar() || !definition.allowedAt(tier)) {
-                continue;
-            }
-            float roll = rollFor(seed, anomaly.id()).nextFloat();
-            if (roll < chance) {
-                passed.add(new Roll(anomaly.id(), roll));
-            }
-        }
-        passed.sort(Comparator.comparingDouble(Roll::roll).thenComparing(Roll::id));
-        for (Roll roll : passed) {
-            if (accepts(accepted, roll.id())) {
-                accepted.add(roll.id());
-            }
-        }
         return List.copyOf(accepted);
-    }
-
-    static Random rollFor(long seed, String anomalyId) {
-        return BuiltInTable.rollFor(seed, anomalyId, ROLL_SALT);
     }
 
     static void useForTests(List<ChartAnomaly> testAnomalies, List<Definition> testDefinitions) {

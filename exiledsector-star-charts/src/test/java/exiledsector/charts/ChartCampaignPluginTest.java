@@ -4,6 +4,7 @@ import com.fs.starfarer.api.PluginPick;
 import com.fs.starfarer.api.campaign.CampaignPlugin;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import exiledsector.charts.anomaly.SpatialBreach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,7 +41,11 @@ class ChartCampaignPluginTest {
 
     @Test
     void leavesEveryOtherEntityToTheGame() {
+        SectorEntityToken breachCore = mock(SectorEntityToken.class);
+        when(breachCore.hasTag(SpatialBreach.CORE_TAG)).thenReturn(true);
+
         assertNull(new ChartCampaignPlugin().pickInteractionDialogPlugin(mock(SectorEntityToken.class)));
+        assertNull(new ChartCampaignPlugin().pickInteractionDialogPlugin(breachCore));
         assertNull(new ChartCampaignPlugin().pickInteractionDialogPlugin(null));
     }
 }

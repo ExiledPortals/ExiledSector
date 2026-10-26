@@ -23,19 +23,19 @@ Combat readiness makes back-to-back fleet battles miserable, so each anomaly kee
 
 Each anomaly is one class behind `ChartAnomaly` (package `exiledsector.charts.anomaly`) and one row in `data/config/exiledSector/chart_anomalies.csv` (`id,weight,min_tier,max_tier,requires_mod,icon,intel,insertable,excludes,effects,note`). The interface has optional hooks for three stages, and an anomaly implements only the ones it needs:
 
-1. Star: `primaryStar()` or `systemType()` replaces the star or the system type before layout (Black Hole, Neutron Star, Dense Nebula). These are locked to the atlas cell, never come from chart lines and can never be inserted.
+1. Star: `primaryStar()` or `systemType()` replaces the star or the system type before layout (Black Hole, Neutron Star, Dense Nebula). These are locked to the atlas cell and can never be inserted.
 2. Shape: `shape(AnomalyLayoutSite)` adds terrain right after layout (Asteroid Storm, Magnetic Storm, Stellar Flares).
 3. Content: `generate(AnomalyContentSite)` places entities and fleets after the sites and fleets (Spatial Breach, the Black Hole's derelicts, the Neutron Star's research station, the Asteroid Storm's belt caches). `AnomalyContentSite.addSite` places a `chart_poi.csv` site on a clear orbit with chart loot. Run state lives in `ChartRunState`, and `ChartRunCloser` removes it with the run tag, so the chart leaves no save trace.
 
 Atlas hooks have defaults: `atlasWeight` leans the node roll from the node's traits (Faction Skirmish prefers hostile borders), and `fitsAt` says whether the anomaly can exist at a node at all (Asteroid Stream needs Industrial Evolution). Rewards go through the loot framework (`ChartLoot`, `ChartRewards`) so chart loot modifiers apply to them.
 
-`effects` lists chart lines the anomaly adds to the run, such as a loot quantity bonus; chance lines are refused.
+`effects` lists chart lines the anomaly adds to the run, such as a loot quantity bonus.
 
-`excludes` lists anomalies that must never share a system with this one, for pairs that would interact badly. It works in both directions, and two star anomalies always exclude each other. Wherever two conflicting anomalies meet, the one already there wins: the node's own roll before inserted ones, the atlas before chart lines, and within one roll the lowest hash.
+`excludes` lists anomalies that must never share a system with this one, for pairs that would interact badly. It works in both directions, and two star anomalies always exclude each other. Wherever two conflicting anomalies meet, the one already there wins: the node's own roll before inserted ones, and within one roll the lowest hash.
 
 Every anomaly follows the Foiler mods compatibility rules in `../atlas.md`: no combat nebula tiles, custom terrain on `BaseTerrain`, textures preloaded.
 
-Chart modifiers get two kinds of line per anomaly: `CHART_<ANOMALY>_CHANCE` ("Area contains a Relay Network") and the anomaly's own tuning lines, listed in each plan. They go in `star_chart_modifiers.csv` and the `prefixes`/`suffixes` pools of `star_charts.csv` like every other chart line, and follow `docs/tooltip_wording.md`.
+Star Charts roll no anomaly lines (since 2026-10-26, `../completed/anomalies/spatial_breach_changes.md`): every anomaly comes from the atlas, rolled by a cell or inserted, so the `CHART_<ANOMALY>_CHANCE` lines in the unbuilt plans are dropped. An anomaly's own tuning lines are still chart effects, carried by an atlas source (an anomaly's `effects` column or an atlas node's effects), and follow `docs/tooltip_wording.md`.
 
 Players favour one anomaly over the others with intel and atlas passives, and can insert anomalies into atlas systems (`../atlas.md`, Anomalies).
 

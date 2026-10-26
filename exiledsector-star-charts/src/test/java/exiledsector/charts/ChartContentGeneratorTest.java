@@ -476,7 +476,7 @@ class ChartContentGeneratorTest {
         ChartAnomaliesTest.PlacesNothing expansion = new ChartAnomaliesTest.PlacesNothing();
         ChartAnomalies.useForTests(List.of(expansion), List.of(ChartAnomaliesTest.definition(SpatialBreach.ID)));
         try {
-            ChartGenContext breach = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_CHANCE, 100f)));
+            ChartGenContext breach = ChartGenContext.none().withAnomalies(List.of(SpatialBreach.ID));
 
             ChartContent content = ChartContentGenerator.generate(sector, system, RUN_ID, 42L, 10, WORMHOLE, breach);
 
@@ -510,7 +510,7 @@ class ChartContentGeneratorTest {
         };
         ChartAnomalies.useForTests(List.of(failing), List.of(ChartAnomaliesTest.definition(SpatialBreach.ID)));
         try {
-            ChartGenContext breach = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_CHANCE, 100f)));
+            ChartGenContext breach = ChartGenContext.none().withAnomalies(List.of(SpatialBreach.ID));
 
             ChartContent content = ChartContentGenerator.generate(sector, system, RUN_ID, 42L, 10, WORMHOLE, breach);
 

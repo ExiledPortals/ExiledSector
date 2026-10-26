@@ -86,7 +86,7 @@ public final class ChartContentGenerator {
     public static ChartContent generate(SectorAPI sector, StarSystemAPI system, String runId, long seed, int tier, Vector2f innerWormhole,
                                         ChartGenContext chartContext, SectorEntityToken featureAnchor) {
         return generate(sector, system, runId, seed, tier, innerWormhole, chartContext, featureAnchor,
-                ChartAnomalies.planned(seed, ChartTiers.clamp(tier), chartContext));
+                ChartAnomalies.planned(chartContext));
     }
 
     public static ChartContent generate(SectorAPI sector, StarSystemAPI system, String runId, long seed, int tier, Vector2f innerWormhole,

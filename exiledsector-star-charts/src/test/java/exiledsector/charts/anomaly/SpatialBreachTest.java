@@ -3,6 +3,7 @@ package exiledsector.charts.anomaly;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import exiledsector.charts.ChartEffect;
 import exiledsector.charts.ChartGenContext;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,7 +50,7 @@ class SpatialBreachTest {
     }
 
     @Test
-    void theBreachOpensAtAClearSpotWithItsCoreAtTheCentre() {
+    void theBreachOpensAtAClearSpotWithAnUnclickableCoreAtTheCentre() {
         Predicate<Vector2f> clear = point -> point.length() > 3000f;
 
         SpatialBreach.INSTANCE.generate(site(ChartGenContext.none(), clear));
@@ -60,15 +61,16 @@ class SpatialBreachTest {
         assertTrue(new Vector2f(x.getValue(), y.getValue()).length() > 3000f);
         verify(core).setFixedLocation(x.getValue(), y.getValue());
         verify(core).addTag(SpatialBreach.CORE_TAG);
+        verify(core).addTag(Tags.NON_CLICKABLE);
         verify(system).addCustomEntity(eq(SpatialBreach.coreId("run1")), any(), eq(SpatialBreach.CORE_TYPE), anyString());
     }
 
     @Test
-    void theChartsBreachLinesShapeItsGrowthCachesAndCore() {
+    void theBreachTuningLinesShapeItsGrowthAndCaches() {
         ChartGenContext context = ChartGenContext.of(List.of(
                 new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_GROWTH_PERCENT, 100f),
                 new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_CACHE_PERCENT, 100f),
-                new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_CORE_ITEM_PERCENT, 50f)));
+                new ChartGenContext.AppliedEffect(ChartEffect.CHART_BREACH_CACHE_ITEM_PERCENT, 50f)));
 
         SpatialBreach.INSTANCE.generate(site(context, point -> true));
 
@@ -79,7 +81,7 @@ class SpatialBreachTest {
         assertEquals(5, opened.tier());
         assertEquals(BreachRules.growth(5, 2f), opened.growth());
         assertEquals(BreachRules.cacheCount(5, 2f), opened.caches().size());
-        assertEquals(1.5f, opened.coreItemMult(), 0.001f);
+        assertEquals(1.5f, opened.cacheItemMult(), 0.001f);
     }
 
     @Test
@@ -107,14 +109,5 @@ class SpatialBreachTest {
     void withNowhereClearTheBreachIsNotOpened() {
         assertThrows(IllegalStateException.class, () -> SpatialBreach.INSTANCE.generate(site(ChartGenContext.none(), point -> false)));
         verify(system, never()).addTerrain(anyString(), any());
-    }
-
-    @Test
-    void theCoreIsRecognisedByItsTag() {
-        when(core.hasTag(SpatialBreach.CORE_TAG)).thenReturn(true);
-
-        assertTrue(SpatialBreach.isCore(core));
-        assertEquals(false, SpatialBreach.isCore(mock(SectorEntityToken.class)));
-        assertEquals(false, SpatialBreach.isCore(null));
     }
 }

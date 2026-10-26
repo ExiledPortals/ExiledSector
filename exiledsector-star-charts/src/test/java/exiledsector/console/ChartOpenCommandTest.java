@@ -4,6 +4,7 @@ import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystem
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartLayout;
 import exiledsector.charts.ChartRun;
+import exiledsector.charts.anomaly.SpatialBreach;
 import exiledsector.console.ChartOpenCommand.OpenArguments;
 import org.junit.jupiter.api.Test;
 import org.lazywizard.console.BaseCommand.CommandContext;
@@ -12,6 +13,8 @@ import org.lazywizard.console.Console;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -66,6 +69,9 @@ class ChartOpenCommandTest {
         assertEquals(4, breach.tier());
         assertFalse(OpenArguments.parse("77 tier=4").breach());
         assertNotNull(OpenArguments.parse("breach breach").problem());
+        assertEquals(List.of(SpatialBreach.ID), breach.forcedAnomalyIds());
+        assertEquals(List.of(), OpenArguments.parse("77 tier=4").forcedAnomalyIds());
+        assertEquals(List.of(SpatialBreach.ID), new OpenArguments(null, null, null, null, true, null, null, List.of(SpatialBreach.ID)).forcedAnomalyIds());
     }
 
     @Test

@@ -10,6 +10,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ViewportAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.campaign.terrain.BaseTerrain;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -45,7 +46,7 @@ public class BreachTerrainPlugin extends BaseTerrain {
     static final Color BODY_COLOUR = new Color(120, 60, 200);
     private static final Logger LOG = Logger.getLogger(BreachTerrainPlugin.class);
 
-    public record Params(String runId, int tier, BreachRules.Growth growth, List<BreachRules.CacheSite> caches, float coreItemMult, long seed) {
+    public record Params(String runId, int tier, BreachRules.Growth growth, List<BreachRules.CacheSite> caches, float cacheItemMult, long seed) {
     }
 
     private String runId;
@@ -56,14 +57,14 @@ public class BreachTerrainPlugin extends BaseTerrain {
     private boolean opened;
     private float secondsOpen;
     private float radius;
-    private float peakRadius;
-    private float coreItemMult;
+    private float cacheItemBonus;
     private long seed;
     private float[] cacheX;
     private float[] cacheY;
     private float[] cacheDepth;
     private boolean[] cacheFormed;
     private boolean closed;
+    private transient boolean coreChecked;
     private transient float daysSinceTick;
     private transient float elapsedSeconds;
     private transient SpriteAPI bodySprite;
@@ -77,7 +78,7 @@ public class BreachTerrainPlugin extends BaseTerrain {
             maxRadius = params.growth().maxRadius();
             openSeconds = params.growth().openSeconds();
             collapseSeconds = params.growth().collapseSeconds();
-            coreItemMult = params.coreItemMult();
+            cacheItemBonus = params.cacheItemMult() - 1f;
             seed = params.seed();
             int count = params.caches() == null ? 0 : params.caches().size();
             cacheX = new float[count];
@@ -117,12 +118,8 @@ public class BreachTerrainPlugin extends BaseTerrain {
         return opened;
     }
 
-    public float grownFraction() {
-        return growth().grownFraction(peakRadius);
-    }
-
-    public float coreItemMult() {
-        return coreItemMult;
+    float cacheItemMult() {
+        return 1f + cacheItemBonus;
     }
 
     int cachesFormed() {
@@ -149,6 +146,10 @@ public class BreachTerrainPlugin extends BaseTerrain {
             return;
         }
         super.advance(amount);
+        if (!coreChecked) {
+            coreChecked = true;
+            makeCoreUnclickable();
+        }
         elapsedSeconds = (elapsedSeconds + amount) % ANIMATION_WRAP_SECONDS;
         if (!opened && !playerFleetOver()) {
             return;
@@ -167,6 +168,13 @@ public class BreachTerrainPlugin extends BaseTerrain {
         }
     }
 
+    private void makeCoreUnclickable() {
+        SectorEntityToken core = entity.getContainingLocation().getEntityById(SpatialBreach.coreId(runId));
+        if (core != null && !core.hasTag(Tags.NON_CLICKABLE)) {
+            core.addTag(Tags.NON_CLICKABLE);
+        }
+    }
+
     private boolean playerFleetOver() {
         CampaignFleetAPI player = Global.getSector().getPlayerFleet();
         return player != null && player.getContainingLocation() == entity.getContainingLocation() && player.getLocation() != null
@@ -178,7 +186,6 @@ public class BreachTerrainPlugin extends BaseTerrain {
         secondsOpen += Math.max(0f, seconds);
         BreachRules.Growth growth = growth();
         radius = growth.radiusAt(secondsOpen);
-        peakRadius = Math.max(peakRadius, radius);
         if (growth.isCollapsed(secondsOpen)) {
             collapse();
         }
@@ -219,12 +226,19 @@ public class BreachTerrainPlugin extends BaseTerrain {
             Random random = new Random(seed ^ (index * 0x9E3779B97F4A7C15L));
             SectorEntityToken cache = ChartSites.addCache(system, runId, tier, context, new Vector2f(cacheX[index], cacheY[index]), random);
             if (cache != null) {
-                cache.addTag(SpatialBreach.CACHE_TAG);
-                float rarity = new BreachRules.CacheSite(cacheX[index], cacheY[index], cacheDepth[index]).rarityPercent();
-                cache.getMemoryWithoutUpdate().set(SpatialBreach.RARITY_KEY, rarity);
+                markCache(cache, index);
             }
         } catch (RuntimeException | LinkageError e) {
             LOG.error("[ExiledSector] A Spatial Breach cache could not form in Star Chart run " + runId, e);
+        }
+    }
+
+    void markCache(SectorEntityToken cache, int index) {
+        cache.addTag(SpatialBreach.CACHE_TAG);
+        MemoryAPI memory = cache.getMemoryWithoutUpdate();
+        memory.set(SpatialBreach.RARITY_KEY, new BreachRules.CacheSite(cacheX[index], cacheY[index], cacheDepth[index]).rarityPercent());
+        if (cacheItemBonus != 0f) {
+            memory.set(SpatialBreach.ITEM_MULT_KEY, cacheItemMult());
         }
     }
 
@@ -291,32 +305,26 @@ public class BreachTerrainPlugin extends BaseTerrain {
         return run != null && run.runId().equals(runId) ? ChartRunEffects.contextOf(run) : ChartGenContext.none();
     }
 
-    public float close() {
+    void collapse() {
         if (closed) {
-            return grownFraction();
+            return;
         }
         closed = true;
-        for (CampaignFleetAPI fleet : entity == null || entity.getContainingLocation() == null ? List.<CampaignFleetAPI>of()
-                : entity.getContainingLocation().getFleets()) {
+        LocationAPI location = entity == null ? null : entity.getContainingLocation();
+        if (location == null) {
+            return;
+        }
+        for (CampaignFleetAPI fleet : location.getFleets()) {
             liftFrom(fleet);
         }
-        LocationAPI location = entity == null ? null : entity.getContainingLocation();
-        if (location != null) {
-            for (SectorEntityToken cache : new ArrayList<>(location.getEntitiesWithTag(SpatialBreach.CACHE_TAG))) {
-                location.removeEntity(cache);
-            }
-            location.removeEntity(entity);
+        for (SectorEntityToken cache : new ArrayList<>(location.getEntitiesWithTag(SpatialBreach.CACHE_TAG))) {
+            location.removeEntity(cache);
         }
-        return grownFraction();
-    }
-
-    void collapse() {
-        LocationAPI location = entity == null ? null : entity.getContainingLocation();
-        close();
-        SectorEntityToken core = location == null ? null : location.getEntityById(SpatialBreach.coreId(runId));
+        SectorEntityToken core = location.getEntityById(SpatialBreach.coreId(runId));
         if (core != null) {
             location.removeEntity(core);
         }
+        location.removeEntity(entity);
     }
 
     public static void liftFrom(CampaignFleetAPI fleet) {

@@ -12,6 +12,7 @@ import exiledlib.skills.skilleffect.SkillEffect;
 import exiledsector.charts.ChartEffect;
 import exiledsector.charts.ChartGenContext.AppliedEffect;
 import exiledsector.charts.ChartGenContext;
+import exiledsector.charts.anomaly.SpatialBreach;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
@@ -343,6 +344,32 @@ class StarChartTest {
         assertTrue(loaded.holdsStarCharts());
         assertEquals(chart.explicits(), restored.explicits());
         assertEquals(chart.implicits(), restored.implicits());
+    }
+
+    @Test
+    void chartsNeverRollAnomalyLinesAndAnOldChartCarryingThemStillLoadsWithoutAnAnomaly() {
+        Set<String> removed = Set.of("CHART_BREACH_CHANCE", "HYBRID_CHART_BREACH_GROWTH", "HYBRID_CHART_BREACH_CACHES", "HYBRID_CHART_BREACH_CORE",
+                "CHART_ASTEROID_STORM_CHANCE", "CHART_MAGNETIC_STORM_CHANCE", "CHART_STELLAR_FLARES_CHANCE");
+        for (long seed = 0; seed < 200; seed++) {
+            StarChart chart = StarChartFixtures.chart(SINGLE, seed, 12);
+            assertTrue(modifierIds(chart).stream().noneMatch(removed::contains), "seed " + seed + ": " + modifierIds(chart));
+            assertEquals(List.of(), ChartGenContext.from(chart).forcedAnomalies());
+        }
+
+        List<RolledModifier> oldExplicits = List.of(
+                new RolledModifier("HYBRID_CHART_BREACH_GROWTH", ModifierSlot.PREFIX,
+                        List.of(new RolledEffect("CHART_BREACH_CHANCE", 100f), new RolledEffect("CHART_BREACH_GROWTH_PERCENT", 30f))),
+                new RolledModifier("CHART_ASTEROID_STORM_CHANCE", ModifierSlot.SUFFIX, List.of(new RolledEffect("CHART_ASTEROID_STORM_CHANCE", 100f))));
+        Item oldChart = Item.create(null, SINGLE, 4L, oldExplicits, ItemTraits.ofTier(6));
+        Item loaded = (Item) xstream().fromXML(xstream().toXML(oldChart));
+        ChartGenContext context = ChartGenContext.from(loaded);
+        List<String> lines = loaded.effectLines().stream().map(StyledText::plain).toList();
+
+        assertInstanceOf(StarChart.class, loaded);
+        assertEquals(List.of(), context.forcedAnomalies());
+        assertEquals(1f, context.anomalyMult(SpatialBreach.GROWTH_KEY));
+        assertEquals(1, lines.size(), lines.toString());
+        assertTrue(lines.get(0).contains("Unreadable modifier"), lines.toString());
     }
 
     @Test

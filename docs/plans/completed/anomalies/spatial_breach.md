@@ -1,6 +1,6 @@
 # Anomaly: Spatial Breach
 
-A tear into hyperspace opens somewhere in the system and grows each day. Inside, the fleet burns fuel and uses more supplies, but breach-touched caches form there that exist only while it's open. Reaching its core closes it for a large reward. There are no fights: the pressure is time and logistics.
+A tear into hyperspace opens somewhere in the system and grows each day. Inside, the fleet burns fuel and uses more supplies, but breach-touched caches form there that exist only while it's open. Reaching its core closes it for a large reward (replaced 2026-10-26 by `spatial_breach_changes.md`: the core opens the breach but can't be interacted with, and the caches are the only loot). There are no fights: the pressure is time and logistics.
 
 Status: built and tested 2026-10-23, commit bd01ea16 on parallel-work, ahead of the atlas (see `docs/plans/anomalies/overview.md` for what the framework still lacks). Not yet checked in game; the visuals especially need a look.
 
@@ -19,9 +19,11 @@ All of these get stronger toward the core. Visuals borrow from vanilla hyperspac
 
 Breach caches form inside the field as it grows, more of them deeper in and of higher rarity there. A normal POI the field grows over becomes breach-touched: it keeps its loot and gains extra rarity, but now sits in the harsh zone.
 
-The core is an entity at the centre. Interacting with it closes the breach: the field collapses, its drains end, and the core drops a reward scaled by how large the breach had grown. Caches it hasn't reached yet never form, so closing early is safer but smaller.
+The core is an entity at the centre. Interacting with it closes the breach: the field collapses, its drains end, and the core drops a reward scaled by how large the breach had grown. Caches it hasn't reached yet never form, so closing early is safer but smaller. Replaced 2026-10-26 by `spatial_breach_changes.md`: the core can't be clicked and drops nothing.
 
 ## Chart modifiers
+
+Replaced 2026-10-26 by `spatial_breach_changes.md`: Star Charts no longer roll any of these lines, the three tuning effects stay for atlas sources, and `CHART_BREACH_CORE_ITEM_PERCENT` became `CHART_BREACH_CACHE_ITEM_PERCENT`.
 
 - `CHART_BREACH_CHANCE`: Area contains a Spatial Breach.
 - `CHART_BREACH_GROWTH_PERCENT`: increased breach growth rate.
@@ -34,10 +36,10 @@ The single line is `CHART_BREACH_CHANCE` at 100. The three tuning lines only rol
 
 1. [x] Breach terrain plugin with growth and the fuel and supply effects (`BreachTerrainPlugin`, `BreachRules`). The supply increase (a `BreachSupplyBuff` on each ship, refreshed each tick) and the fuel drain apply only to the player fleet. The sensor and burn penalties were removed on 2026-10-26.
 2. [x] Breach cache spawning by depth and breach-touched POIs (`ChartSites.addCache`, rarity through `LootSource.modifiersFor`).
-3. [x] Core entity, closing, core reward (`BreachCoreDialog`, salvage from the station loot tables plus items from the `exiledSector_chart_breach_core` salvage rule).
+3. [x] Core entity, closing, core reward; closing and the reward replaced by `spatial_breach_changes.md` (was `BreachCoreDialog`, salvage from the station loot tables plus items from the `exiledSector_chart_breach_core` salvage rule).
 4. [x] Visuals (reworked 2026-10-24 on parallel-work, after RAT's Primordial Sea): the field is a pitch-black tear (`BreachFieldRenderer`, TERRAIN_1, under planets and fleets) with dark cracks from vanilla `emp_arcs` fading outward and a near-black aurora rim (the doctrine socket belt, `AuroraBeltRenderer.renderShaded`). The core is vanilla's black hole look: a black centre, a pink `star_halo` corona and a spinning `wormhole_ring`. The map still draws a tinted `fx_radial` glow. Later the black backdrop becomes the atlas hyperspace view, clipped to the tear. Not yet checked in game.
-5. [x] Chart modifier lines, strings (en and zh_CN).
-6. [x] Timed lifecycle (2026-10-25, after playing it): the breach starts closed at its fixed spot, opens once the player fleet flies over the core, eases out to full size over 60 seconds, then collapses over 60 seconds, dropping caches as the edge passes them and removing its core at the end (`BreachRules.Growth`, `BreachTerrainPlugin.elapse`). The core reward uses the largest size reached. This replaces the daily growth above.
+5. [x] Chart modifier lines, strings (en and zh_CN); the chart lines replaced by `spatial_breach_changes.md`.
+6. [x] Timed lifecycle (2026-10-25, after playing it): the breach starts closed at its fixed spot, opens once the player fleet flies over the core, eases out to full size over 60 seconds, then collapses over 60 seconds, dropping caches as the edge passes them and removing its core at the end (`BreachRules.Growth`, `BreachTerrainPlugin.elapse`). The core reward used the largest size reached (removed by `spatial_breach_changes.md`). This replaces the daily growth above.
 
 ## Open questions
 
