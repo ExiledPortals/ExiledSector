@@ -5,9 +5,16 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.thoughtworks.xstream.XStream;
-import exiledsector.charts.anomaly.BreachCorePlugin;
-import exiledsector.charts.anomaly.BreachSupplyBuff;
-import exiledsector.charts.anomaly.BreachTerrainPlugin;
+import exiledsector.charts.anomaly.breach.BreachCorePlugin;
+import exiledsector.charts.anomaly.breach.BreachSupplyBuff;
+import exiledsector.charts.anomaly.breach.BreachTerrainPlugin;
+import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.objective.ChartObjectiveIntel;
+import exiledsector.charts.run.ChartContentListener;
+import exiledsector.charts.run.ChartRun;
+import exiledsector.charts.run.ChartRunState;
+import exiledsector.charts.wormhole.ChartWormholePlugin;
+import exiledsector.charts.wormhole.WormholeGateway;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
@@ -57,7 +64,23 @@ class ChartPersistenceGuardTest {
         assertTrue(ChartSaveAliases.ALIASES.containsValue(BreachTerrainPlugin.class));
         assertTrue(ChartSaveAliases.ALIASES.containsValue(BreachCorePlugin.class));
         assertTrue(ChartSaveAliases.ALIASES.containsValue(BreachSupplyBuff.class));
+        assertTrue(ChartSaveAliases.ALIASES.containsValue(AtlasState.class));
         ChartSaveAliases.ALIASES.keySet().forEach(alias -> assertTrue(alias.startsWith("exiledSector."), alias));
+    }
+
+    @Test
+    void theAtlasStateStoresOnlyJdkTypesSoItsAliasCoversEverythingItSaves() {
+        List<String> offending = new ArrayList<>();
+        for (Field field : AtlasState.class.getDeclaredFields()) {
+            if (Modifier.isStatic(field.getModifiers()) || Modifier.isTransient(field.getModifiers())) {
+                continue;
+            }
+            Class<?> type = field.getType();
+            if (!type.isPrimitive() && !type.getName().startsWith("java.")) {
+                offending.add(field.getName() + ": " + type.getName());
+            }
+        }
+        assertEquals(List.of(), offending);
     }
 
     @Test

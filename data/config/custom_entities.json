@@ -17,7 +17,7 @@
 		"renderCircleIndicatorSelectionFlash":false,
 		"tags":["has_interaction_dialog"],
 		"layers":[JUMP_POINTS],
-		"pluginClass":"exiledsector.charts.ChartWormholePlugin",
+		"pluginClass":"exiledsector.charts.wormhole.ChartWormholePlugin",
 	},
 	"exiledSector_chart_breach_core":{
 		"defaultName":"Breach Core",
@@ -37,6 +37,6 @@
 		"renderCircleIndicatorSelectionFlash":false,
 		"tags":["non_clickable"],
 		"layers":[STATIONS],
-		"pluginClass":"exiledsector.charts.anomaly.BreachCorePlugin",
+		"pluginClass":"exiledsector.charts.anomaly.breach.BreachCorePlugin",
 	},
 }

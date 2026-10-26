@@ -1,7 +1,7 @@
 package exiledsector.console;
 
 import com.fs.starfarer.api.Global;
-import exiledsector.charts.ChartRuns;
+import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.atlas.AtlasDevTools;
 import exiledsector.charts.atlas.AtlasState;
 import org.lazywizard.console.Console;

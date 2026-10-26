@@ -1,7 +1,7 @@
 package exiledsector.console;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import exiledsector.charts.ChartDrops;
+import exiledsector.charts.loot.ChartDrops;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDefinitions;

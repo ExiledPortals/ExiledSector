@@ -10,7 +10,7 @@ import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
-import exiledsector.charts.ChartSupply;
+import exiledsector.charts.wormhole.ChartSupply;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.Item;
 import exiledsector.items.ItemDisassembly;

@@ -1,7 +1,7 @@
 package exiledsector.ui.atlas;
 
 import exiledsector.charts.ChartTables;
-import exiledsector.charts.anomaly.SpatialBreach;
+import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasAnomalyRecord;
 import exiledsector.charts.atlas.AtlasCell;

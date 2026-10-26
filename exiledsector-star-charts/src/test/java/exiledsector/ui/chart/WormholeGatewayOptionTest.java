@@ -10,7 +10,7 @@ import com.fs.starfarer.api.campaign.listeners.DialogCreatorUI;
 import com.fs.starfarer.api.campaign.listeners.IndustryOptionProvider;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.charts.StarChartSettings;
-import exiledsector.charts.WormholeGateway;
+import exiledsector.charts.wormhole.WormholeGateway;
 import exiledsector.ui.atlas.AtlasScreen;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

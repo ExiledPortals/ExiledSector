@@ -1,9 +1,8 @@
 package exiledsector.charts.atlas;
 
-import exiledsector.charts.AtlasRunNode;
-import exiledsector.charts.ChartGenContext;
-import exiledsector.charts.ChartLayoutRequest;
-import exiledsector.charts.ChartTiers;
+import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.layout.ChartLayoutRequest;
+import exiledsector.charts.generation.ChartTiers;
 import exiledsector.items.StarChart;
 import exiledsector.modifiers.ModifierSlot;
 

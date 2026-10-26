@@ -1,6 +1,6 @@
 package exiledsector.charts.anomaly.skirmish;
 
-import exiledsector.charts.AtlasRunNode;
+import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasBorders;

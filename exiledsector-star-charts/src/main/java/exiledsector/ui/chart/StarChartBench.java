@@ -3,7 +3,7 @@ package exiledsector.ui.chart;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
-import exiledsector.charts.ChartRunActions;
+import exiledsector.charts.run.ChartRunActions;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.anomaly.skirmish.SkirmishEntry;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;

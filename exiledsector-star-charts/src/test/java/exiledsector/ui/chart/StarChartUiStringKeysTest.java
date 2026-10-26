@@ -1,6 +1,6 @@
 package exiledsector.ui.chart;
 
-import exiledsector.charts.ChartRunActions.OpenResult;
+import exiledsector.charts.run.ChartRunActions.OpenResult;
 import exiledlib.i18n.RealCatalogue;
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.StarChartCurrency;

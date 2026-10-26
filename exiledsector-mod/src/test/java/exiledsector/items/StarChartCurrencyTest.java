@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledsector.charts.ChartDrops;
+import exiledsector.charts.loot.ChartDrops;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierCategory;

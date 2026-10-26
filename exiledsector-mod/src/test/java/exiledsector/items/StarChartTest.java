@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledsector.charts.ChartDrops;
+import exiledsector.charts.loot.ChartDrops;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
@@ -9,10 +9,10 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
 import exiledlib.i18n.StyledText;
 import exiledlib.skills.skilleffect.SkillEffect;
-import exiledsector.charts.ChartEffect;
-import exiledsector.charts.ChartGenContext.AppliedEffect;
-import exiledsector.charts.ChartGenContext;
-import exiledsector.charts.anomaly.SpatialBreach;
+import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
+import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
@@ -94,8 +94,8 @@ class StarChartTest {
 
     @Test
     void theChartTierMatchesTheRunTiers() {
-        assertEquals(exiledsector.charts.ChartTiers.LOWEST_TIER, StarChart.LOWEST_TIER);
-        assertEquals(exiledsector.charts.ChartTiers.HIGHEST_TIER, StarChart.HIGHEST_TIER);
+        assertEquals(exiledsector.charts.generation.ChartTiers.LOWEST_TIER, StarChart.LOWEST_TIER);
+        assertEquals(exiledsector.charts.generation.ChartTiers.HIGHEST_TIER, StarChart.HIGHEST_TIER);
     }
 
     @Test
@@ -469,7 +469,7 @@ class StarChartTest {
         assertEquals(4, lowTierData.preview().tier());
         assertEquals(4, ItemStore.forStarCharts().add(lowTierData).tier());
         assertEquals(4, ItemData.ofStarChart(new SpecialItemData(ItemData.STAR_CHART_ITEM_ID, GATED_UNIQUE + "|5")).preview().tier());
-        assertTrue(exiledsector.charts.ChartTiers.forTier(StarChartDefinitions.minTier(GATED_UNIQUE)).boss(),
+        assertTrue(exiledsector.charts.generation.ChartTiers.forTier(StarChartDefinitions.minTier(GATED_UNIQUE)).boss(),
                 "the gated unique's boss prefix always has a boss to strengthen");
 
         Random random = new Random(5);

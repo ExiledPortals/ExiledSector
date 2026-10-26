@@ -2,10 +2,10 @@ package exiledsector.ui.atlas;
 
 import com.fs.starfarer.api.util.Misc;
 import exiledlib.skills.skilleffect.render.SpriteCache;
-import exiledsector.charts.ChartAnomalies;
-import exiledsector.charts.ChartSketchPalette;
-import exiledsector.charts.ChartSystemSketch;
-import exiledsector.charts.ChartSystemSketcher;
+import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.layout.sketch.ChartSketchPalette;
+import exiledsector.charts.layout.sketch.ChartSystemSketch;
+import exiledsector.charts.layout.sketch.ChartSystemSketcher;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasData;

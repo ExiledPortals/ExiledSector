@@ -7,11 +7,14 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
 import exiledsector.ExiledSectorModPlugin;
-import exiledsector.charts.ChartObjectiveIntel;
-import exiledsector.charts.ChartRun;
-import exiledsector.charts.ChartRunState;
-import exiledsector.charts.ChartWormholePlugin;
-import exiledsector.charts.WormholeGateway;
+import exiledsector.charts.objective.ChartObjectiveIntel;
+import exiledsector.charts.run.ChartRun;
+import exiledsector.charts.run.ChartRunState;
+import exiledsector.charts.wormhole.ChartWormholePlugin;
+import exiledsector.charts.wormhole.WormholeGateway;
+import exiledsector.charts.atlas.AtlasAnomalyRecord;
+import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.atlas.AtlasState;
 import exiledsector.skills.ShipSkillData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +41,7 @@ import static org.mockito.Mockito.when;
 class SaveFixtureTest {
 
     private static final Path FIXTURE = Path.of("exiledsector-mod/src/test/resources/save_fixture.xml");
+    private static final Path ATLAS_BEFORE_ALIAS = Path.of("exiledsector-mod/src/test/resources/save_fixture_atlas_before_alias.xml");
     private static final Pattern JAVA_CLASS_NAME = Pattern.compile("exiledsector\\.[\\w.$]+");
 
     @BeforeEach
@@ -113,6 +117,31 @@ class SaveFixtureTest {
 
         assertEquals(List.of(), javaClassNames(written));
         assertEquals(List.of(), javaClassNames(resaved));
+    }
+
+    @Test
+    void anAtlasSavedBeforeItHadAnAliasStillLoadsAndIsResavedUnderTheAlias() throws IOException {
+        String written = Files.readString(ATLAS_BEFORE_ALIAS, StandardCharsets.UTF_8);
+        assertEquals(List.of("exiledsector.charts.atlas.AtlasState"), javaClassNames(written));
+
+        Map<?, ?> saved = (Map<?, ?>) xstream().fromXML(written);
+        AtlasState atlas = (AtlasState) saved.get(AtlasState.PERSISTENT_KEY);
+        assertEquals(424242L, atlas.seed());
+        assertTrue(atlas.isCompleted(new AtlasCell(1, 0)));
+        assertTrue(atlas.has(new AtlasCell(2, -1), AtlasState.FAILED));
+        assertTrue(atlas.has(new AtlasCell(-1, 3), AtlasState.MARKERS_SPENT));
+        assertEquals(Set.of(1, 2), atlas.clearedTiers());
+        assertEquals(5, atlas.atlasPoints());
+        assertEquals(1, atlas.keyFragments());
+        assertEquals("fixture_region", atlas.recordedRegion(77L));
+        assertEquals(Boolean.TRUE, atlas.unlockedAtReveal(0L, "fixture_unlock"));
+        assertEquals("pirates", atlas.recordedFaction("0:0"));
+        assertEquals("hegemony", atlas.capturedBy(new AtlasCell(1, 0)));
+        assertEquals(List.of("spatial_breach"), atlas.anomalyRecords(new AtlasCell(2, -1)).stream().map(AtlasAnomalyRecord::anomalyId).toList());
+
+        String resaved = xstream().toXML(saved);
+        assertEquals(List.of(), javaClassNames(resaved));
+        assertTrue(resaved.contains("<exiledSector.AtlasState>"), resaved);
     }
 
     private static List<String> javaClassNames(String xml) {

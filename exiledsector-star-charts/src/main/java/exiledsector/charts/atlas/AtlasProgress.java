@@ -1,8 +1,7 @@
 package exiledsector.charts.atlas;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledsector.charts.AtlasRunNode;
-import exiledsector.charts.ChartRun;
+import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import org.apache.log4j.Logger;
 
