@@ -8,6 +8,7 @@ import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
+import exiledsector.skills.radius.RadiusSize;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -88,13 +89,17 @@ public final class SubroutineDataRules implements ItemDataRules {
         }
         String linesText = ModCsv.text(row, SubroutineDefinitions.UNIQUE_LINES_COLUMN);
         String sourcesText = ModCsv.text(row, SubroutineDefinitions.UNIQUE_SOURCE_COLUMN);
-        checkSources(integrity, file, line, definitionId, sourcesText);
+        integrity.checkUniqueSources(file, line, definitionId, sourcesText);
         String socketLimitText = ModCsv.text(row, SubroutineDefinitions.SOCKET_LIMIT_COLUMN);
         if (SubroutineDefinitions.parsedSocketLimit(socketLimitText) == null) {
             integrity.error(file, line, definitionId + " has socket limit \"" + socketLimitText
                     + "\"; expected a whole number of 0 or more, or blank for no limit");
         }
+        String radiusText = ModCsv.text(row, UniqueSubroutineRadii.RADIUS_COLUMN);
         if (subroutineKind != SubroutineKind.UNIQUE) {
+            if (!radiusText.isEmpty()) {
+                integrity.error(file, line, definitionId + " has a radius, but only " + SubroutineKind.UNIQUE.id() + " subroutines read it");
+            }
             if (!linesText.isEmpty()) {
                 integrity.error(file, line, definitionId + " lists lines, but only " + SubroutineKind.UNIQUE.id() + " subroutines have them");
             }
@@ -107,20 +112,15 @@ public final class SubroutineDataRules implements ItemDataRules {
         if (!"true".equalsIgnoreCase(ModCsv.text(row, "unique"))) {
             integrity.error(file, line, definitionId + " is a " + SubroutineKind.UNIQUE.id() + " subroutine, so unique must be true");
         }
+        if (!radiusText.isEmpty() && RadiusSize.byDataKeyOrNull(radiusText) == null) {
+            integrity.error(file, line, UniqueSubroutineRadii.radiusProblem(definitionId, radiusText));
+        }
         if (checkUniqueLines(integrity, file, line, definitionId, linesText) == 0) {
             integrity.error(file, line, definitionId + " is a " + SubroutineKind.UNIQUE.id() + " subroutine but lists no lines");
         }
         if (sourcesText.isEmpty()) {
             integrity.error(file, line, definitionId + " is a " + SubroutineKind.UNIQUE.id() + " subroutine but names no source; add faction:FACTION_ID or "
                     + "site:SALVAGE_SITE_ID");
-        }
-    }
-
-    private static void checkSources(ItemDataIntegrity integrity, String file, int line, String definitionId, String sourcesText) {
-        try {
-            UniqueSource.parseList(sourcesText);
-        } catch (IllegalArgumentException e) {
-            integrity.error(file, line, definitionId + ": " + e.getMessage());
         }
     }
 

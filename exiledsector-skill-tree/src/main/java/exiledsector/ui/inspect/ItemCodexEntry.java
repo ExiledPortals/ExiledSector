@@ -21,6 +21,7 @@ import exiledsector.items.DoctrineArchive;
 import exiledsector.items.DoctrineArchives;
 import exiledsector.items.DoctrineText;
 import exiledsector.items.SubroutineKind;
+import exiledsector.items.SubroutineRadius;
 import exiledlib.skills.DescriptionLine;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
@@ -124,7 +125,7 @@ public class ItemCodexEntry extends BoxedCodexEntry {
 
     private void writeDoctrine(TooltipMakerAPI info, DoctrineArchive doctrine, float textWidth) {
         VanillaText.addPara(info, DoctrineText.limitLine(), PAD, Misc.getGrayColor());
-        String radiusName = DoctrineText.radiusName(doctrine);
+        String radiusName = SubroutineRadius.radiusName(doctrine.radiusSize());
         if (doctrine.augments()) {
             VanillaText.addPara(info, Translation.msg("codex.doctrine.augments").arg("lines", lineCountText(doctrine)).arg("radius", radiusName)
                     .styled(), PAD, Misc.getTextColor());

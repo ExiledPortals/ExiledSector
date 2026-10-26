@@ -32,6 +32,7 @@ public final class HullItem extends Item {
     };
 
     static final String DEFINITIONS_FILE = "hull_items.csv";
+    static final String UNIQUE_SOURCE_COLUMN = "source";
 
     HullItem(String id, String definitionId, long seed, List<RolledModifier> explicitModifiers) {
         super(id, definitionId, seed, explicitModifiers);
@@ -51,7 +52,7 @@ public final class HullItem extends Item {
         if (kind == null || kind.type() != ItemType.HULL_ITEM) {
             throw new IllegalArgumentException("section \"" + sectionId + "\" is not a ship section");
         }
-        return ItemDefinition.parse(row, kind);
+        return ItemDefinition.parse(row, kind, UniqueSource.parseList(row.optString(UNIQUE_SOURCE_COLUMN, "")));
     }
 
     @Override

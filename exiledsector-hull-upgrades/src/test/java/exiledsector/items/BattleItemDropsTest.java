@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -26,6 +27,7 @@ class BattleItemDropsTest {
     private static final String THIN_BRIDGE = "bridge_thin";
     private static final String FULL_REACTOR = "reactor_full";
     private static final String HULL_RELIC = "hull_relic";
+    private static final String FACTION_RELIC = "faction_relic";
 
     @BeforeEach
     void setUp() throws Exception {
@@ -176,6 +178,37 @@ class BattleItemDropsTest {
 
         assertTrue(relics > 0);
         assertEquals(0, lockedRelics);
+    }
+
+    @Test
+    void aFactionSourcedUniqueDropsOnlyFromThatFactionsBattlesWhileAnUnsourcedOneDropsFromAny() throws Exception {
+        ItemDefinitions.register(new JSONArray()
+                .put(row(HULL_RELIC, "weapon_mount", "HULL_PERCENT:4:6").put("unique", "true"))
+                .put(row(FACTION_RELIC, "reactor", "HULL_PERCENT:4:6").put("unique", "true")
+                        .put(HullItem.UNIQUE_SOURCE_COLUMN, "faction:tritachyon")));
+        List<BattleItemDrops.SourcePower> sources = List.of(new BattleItemDrops.SourcePower(4000f, ItemChances.BASE));
+
+        Map<String, Integer> fromPirates = uniqueDrops(new BattleItemDrops.Battle(sources, "pirates"));
+        Map<String, Integer> fromTriTachyon = uniqueDrops(new BattleItemDrops.Battle(sources, "tritachyon"));
+
+        assertEquals(List.of(UniqueSource.parse("faction:tritachyon")), ItemDefinitions.get(FACTION_RELIC).uniqueSources());
+        assertNull(fromPirates.get(FACTION_RELIC));
+        assertTrue(fromPirates.getOrDefault(HULL_RELIC, 0) > 0);
+        assertTrue(fromTriTachyon.getOrDefault(FACTION_RELIC, 0) > 0);
+        assertTrue(fromTriTachyon.getOrDefault(HULL_RELIC, 0) > 0);
+    }
+
+    private static Map<String, Integer> uniqueDrops(BattleItemDrops.Battle battle) {
+        Map<String, Integer> drops = new HashMap<>();
+        Random random = new Random(5L);
+        for (int trial = 0; trial < 200; trial++) {
+            for (ItemData item : BattleItemDrops.roll(battle, 1f, random, definition -> true).items()) {
+                if (ItemDefinitions.get(item.definitionId()).unique()) {
+                    drops.merge(item.definitionId(), 1, Integer::sum);
+                }
+            }
+        }
+        return drops;
     }
 
     @Test

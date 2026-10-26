@@ -287,6 +287,14 @@ public final class ItemDataIntegrity {
         }
     }
 
+    void checkUniqueSources(String file, int line, String definitionId, String sourcesText) {
+        try {
+            UniqueSource.parseList(sourcesText);
+        } catch (IllegalArgumentException e) {
+            error(file, line, definitionId + ": " + e.getMessage());
+        }
+    }
+
     private void checkPool(String file, int line, String definitionId, String poolText, ModifierSlot slot, ItemType itemType, boolean unique,
                            List<ModifierRow> pool) {
         for (String entryText : poolText.split(ENTRY_SEPARATOR)) {

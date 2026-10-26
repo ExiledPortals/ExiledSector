@@ -49,11 +49,15 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
         return parse(row, null, ItemType.STAR_CHART);
     }
 
-    public static ItemDefinition parse(JSONObject row, ItemKind kind) {
-        return parse(row, kind, kind.type());
+    public static ItemDefinition parse(JSONObject row, ItemKind kind, List<UniqueSource> uniqueSources) {
+        return parse(row, kind, kind.type(), uniqueSources);
     }
 
     public static ItemDefinition parse(JSONObject row, ItemKind kind, ItemType itemType) {
+        return parse(row, kind, itemType, List.of());
+    }
+
+    private static ItemDefinition parse(JSONObject row, ItemKind kind, ItemType itemType, List<UniqueSource> uniqueSources) {
         String definitionId = definitionId(row);
         List<PoolEntry> prefixes = parsePool(definitionId, row.optString("prefixes", ""), ModifierSlot.PREFIX, itemType);
         List<PoolEntry> suffixes = parsePool(definitionId, row.optString("suffixes", ""), ModifierSlot.SUFFIX, itemType);
@@ -61,7 +65,7 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
             throw new IllegalArgumentException("it has no prefixes or suffixes");
         }
         rejectRepeats(prefixes, suffixes);
-        return parseShared(row, kind, itemType, new Pools(prefixes, suffixes), null, List.of());
+        return parseShared(row, kind, itemType, new Pools(prefixes, suffixes), null, uniqueSources);
     }
 
     public record Pools(List<PoolEntry> prefixes, List<PoolEntry> suffixes) {

@@ -52,10 +52,12 @@ class EditorRoundTripTest {
     private static final String WORMHOLE_ANCHOR_DEFINITIONS = "exiledsector/items/WormholeAnchorDefinitions.java";
     private static final String DOCTRINE_ARCHIVES = "exiledsector/items/DoctrineArchives.java";
     private static final String MODSPEC_CACHES = "exiledsector/items/ModspecCaches.java";
+    private static final String UNIQUE_SUBROUTINE_RADII = "exiledsector/items/UniqueSubroutineRadii.java";
 
     private static final List<String> LOADERS = List.of(TYPE_LOADER, TREE_LOADER, DECORATION_LOADER, ITEM_DEFINITIONS, ITEM_DEFINITION, SUBROUTINE_DEFINITIONS,
             HULL_ITEM, HULL_ITEM_IMPLICITS, ITEM_MODIFIERS, STAR_CHART_DEFINITIONS, STAR_CHART_IMPLICITS, STAR_CHART_ITEMS,
-            WORMHOLE_ANCHOR_DEFINITIONS, DOCTRINE_ARCHIVES, MODSPEC_CACHES, SUBROUTINE_IMPLICITS, CORRUPTION_IMPLICIT_POOL);
+            WORMHOLE_ANCHOR_DEFINITIONS, DOCTRINE_ARCHIVES, MODSPEC_CACHES, UNIQUE_SUBROUTINE_RADII, SUBROUTINE_IMPLICITS,
+            CORRUPTION_IMPLICIT_POOL);
 
     private static final List<String> EDITED_DATA_PATHS = List.of("data/skilltrees/skill_types.json", "data/skilltrees/ship_skill_tree.json",
             "data/config/exiledSector/item_modifiers", "data/config/exiledSector/hull_item", "data/config/exiledSector/subroutines",
@@ -136,6 +138,8 @@ class EditorRoundTripTest {
             new Pin("doctrine_archives.csv columns", DOCTRINE_ARCHIVES, List.of("load", "parse", "problems"),
                     List.of(new EditorSource(DOCTRINE_ARCHIVES_MODEL, "DOCTRINE_ARCHIVE_COLUMNS")), true),
             new Pin("subroutines.csv modspec cache columns", MODSPEC_CACHES, List.of("load", "register", "parse"),
+                    List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "SUBROUTINE_COLUMNS")), true),
+            new Pin("subroutines.csv unique radius column", UNIQUE_SUBROUTINE_RADII, List.of("load", "register"),
                     List.of(new EditorSource(ITEM_DEFINITIONS_MODEL, "SUBROUTINE_COLUMNS")), true));
 
     private static final String JAVA_KEY_READ_PREFIX = "(?:\\.\\s*(?:opt|get|has|isNull)[A-Za-z]*\\s*\\(\\s*"

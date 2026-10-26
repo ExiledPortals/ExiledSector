@@ -39,6 +39,7 @@ export const SUBROUTINE_COLUMNS = [
   'lines',
   'source',
   'socket_limit',
+  'radius',
   'unlock',
   'excluded_nodes',
   'node_count_chances',
@@ -46,11 +47,12 @@ export const SUBROUTINE_COLUMNS = [
   'salvage_chance',
 ] as const;
 export const MODSPEC_CACHE_SUBROUTINE_FIELDS: readonly string[] = ['excluded_nodes', 'node_count_chances', 'drop_chance', 'salvage_chance'];
-export const OPTIONAL_SUBROUTINE_FIELDS: readonly string[] = ['lines', 'source', 'socket_limit', ...MODSPEC_CACHE_SUBROUTINE_FIELDS];
+export const OPTIONAL_SUBROUTINE_FIELDS: readonly string[] = ['lines', 'source', 'socket_limit', 'radius', ...MODSPEC_CACHE_SUBROUTINE_FIELDS];
 const NODE_ID_TEXT = /^[A-Za-z0-9_.-]+$/;
 const UNIQUE_SOURCE_ID = /^[A-Za-z0-9_.-]+$/;
 const SOCKET_LIMIT_TEXT = /^\d{1,9}$/;
-export const HULL_ITEM_COLUMNS = ['id', 'section', 'name', 'icon', 'rarity', 'unique', 'description', 'prefixes', 'suffixes', 'unlock'] as const;
+export const HULL_ITEM_COLUMNS = ['id', 'section', 'name', 'icon', 'rarity', 'unique', 'description', 'prefixes', 'suffixes', 'unlock', 'source'] as const;
+const OPTIONAL_HULL_ITEM_FIELDS: readonly string[] = ['source'];
 export const STAR_CHART_COLUMNS = ['id', 'system_type', 'name', 'icon', 'rarity', 'unique', 'min_tier', 'description', 'prefixes', 'suffixes', 'unlock'] as const;
 export const UNLOCK_LABELS: Record<string, string> = {
   found_onslaught_mk1: 'Found the Onslaught Mk.I in the Abyss',
@@ -99,6 +101,7 @@ export interface ItemDefinition {
   lines?: PoolEntry[];
   source?: string;
   socketLimit?: string;
+  radius?: string;
   excludedNodes?: string;
   nodeCountChances?: string;
   dropChance?: string;
@@ -255,12 +258,16 @@ export function parseItemDefinitions(subroutinesText: string, hullItemsText: str
         lines: parsePool(csvCell(subroutineTable, definition.cells, 'lines')),
         source: csvCell(subroutineTable, definition.cells, 'source').trim(),
         socketLimit: csvCell(subroutineTable, definition.cells, 'socket_limit').trim(),
+        radius: csvCell(subroutineTable, definition.cells, 'radius').trim(),
         excludedNodes: csvCell(subroutineTable, definition.cells, 'excluded_nodes').trim(),
         nodeCountChances: csvCell(subroutineTable, definition.cells, 'node_count_chances').trim(),
         dropChance: csvCell(subroutineTable, definition.cells, 'drop_chance').trim(),
         salvageChance: csvCell(subroutineTable, definition.cells, 'salvage_chance').trim(),
       })),
-      ...parseDefinitionRows(hullItemTable, (cells) => csvCell(hullItemTable, cells, 'section').trim()),
+      ...parseDefinitionRows(hullItemTable, (cells) => csvCell(hullItemTable, cells, 'section').trim()).map((definition) => ({
+        ...definition,
+        source: csvCell(hullItemTable, definition.cells, 'source').trim(),
+      })),
     ],
   };
 }
@@ -289,6 +296,8 @@ function definitionColumnValue(definition: ItemDefinition, column: string): unkn
       return definition.source ?? '';
     case 'socket_limit':
       return definition.socketLimit ?? '';
+    case 'radius':
+      return definition.radius ?? '';
     case 'excluded_nodes':
       return definition.excludedNodes ?? '';
     case 'node_count_chances':
@@ -328,7 +337,13 @@ export function serializeSubroutinesCsv(model: Pick<ItemDefinitionsModel, 'subro
 
 export function serializeHullItemsCsv(model: Pick<ItemDefinitionsModel, 'hullItemTable' | 'definitions'>): string {
   const hullItems = model.definitions.filter((definition) => itemTypeOfKind(definition.kind) === HULL_ITEM_TYPE);
-  return serializeDefinitions(model.hullItemTable, hullItems, HULL_ITEM_COLUMNS);
+  const writtenColumns = HULL_ITEM_COLUMNS.filter(
+    (column) =>
+      !OPTIONAL_HULL_ITEM_FIELDS.includes(column) ||
+      model.hullItemTable.header.includes(column) ||
+      hullItems.some((definition) => String(definitionColumnValue(definition, column)) !== ''),
+  );
+  return serializeDefinitions(model.hullItemTable, hullItems, writtenColumns);
 }
 
 export function serializeStarChartsCsv(model: StarChartDefinitionsModel): string {
@@ -430,6 +445,7 @@ export function newItemDefinition(
       lines: [],
       source: '',
       socketLimit: '',
+      radius: '',
       excludedNodes: '',
       nodeCountChances: '',
       dropChance: '',
@@ -452,6 +468,8 @@ export function newItemDefinition(
   if (itemType === STAR_CHART_TYPE) {
     definition.systemType = 'SINGLE';
     definition.minTier = '';
+  } else {
+    definition.source = '';
   }
   return definition;
 }
@@ -694,11 +712,18 @@ function subroutineIssues(label: string, definition: ItemDefinition, vocabulary:
     issues.push(`${label}: socket limit must be blank or a whole number of 0 or more`);
   }
   issues.push(...modspecCacheIssues(label, definition));
+  const radius = (definition.radius ?? '').trim();
   if (!isUniqueSubroutine(definition)) {
     if ((definition.lines ?? []).length > 0) {
       issues.push(`${label}: only ${UNIQUE_SUBROUTINE_KIND} subroutines have lines; remove them`);
     }
+    if (radius !== '') {
+      issues.push(`${label}: only ${UNIQUE_SUBROUTINE_KIND} subroutines read a radius from subroutines.csv; remove it`);
+    }
     return issues;
+  }
+  if (radius !== '' && !vocabulary.radiusSizes.includes(radius)) {
+    issues.push(`${label}: radius must be blank or one of ${vocabulary.radiusSizes.join(', ')}`);
   }
   if (!isTrueText(definition.unique)) {
     issues.push(`${label}: a ${UNIQUE_SUBROUTINE_KIND} subroutine must be marked unique`);
@@ -747,6 +772,9 @@ export function validateItemDefinitions(
     } else if (definition.prefixes.length === 0 && definition.suffixes.length === 0) {
       issues.push(`${label}: it has no prefixes or suffixes`);
     }
+    if (itemTypeOfKind(definition.kind) === HULL_ITEM_TYPE) {
+      issues.push(...uniqueSourceIssues(definition.source ?? '', vocabulary).map((issue) => `${label}: ${issue}`));
+    }
     if (!(Number.parseFloat(definition.rarity) >= 0)) {
       issues.push(`${label}: rarity must be zero or more`);
     }
@@ -766,7 +794,9 @@ export function definitionWarnings(definitions: ItemDefinition[], family: ItemFa
     if (!unique && definition.unlock) {
       warnings.push(`${label}: the drop condition ${definition.unlock} only applies to uniques, so it is ignored`);
     }
-    if (definition.source && !isUniqueSubroutine(definition)) {
+    if (definition.source && itemTypeOfKind(definition.kind) === HULL_ITEM_TYPE && !unique) {
+      warnings.push(`${label}: the source ${definition.source} only applies to unique hull items, so it is ignored`);
+    } else if (definition.source && itemTypeOfKind(definition.kind) === SUBROUTINE_TYPE && !isUniqueSubroutine(definition)) {
       warnings.push(`${label}: the source ${definition.source} only applies to ${UNIQUE_SUBROUTINE_KIND} subroutines, so it is ignored`);
     }
     if (family === 'chart' && unique) {

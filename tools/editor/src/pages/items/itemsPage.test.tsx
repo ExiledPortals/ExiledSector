@@ -153,6 +153,17 @@ describe('hull item types', () => {
     expect(server.readProjectFile(SUBROUTINES_FILE)).toBe(before[SUBROUTINES_FILE]);
     expect(server.readProjectFile(MODIFIERS_FILE)).toBe(before[MODIFIERS_FILE]);
   }, 90000);
+
+  it('gives a unique hull item a drop source and saves it to hull_items.csv', async () => {
+    const itemTypes = await openItems('Item types');
+    fireEvent.click(await within(itemTypes).findByText('Back-Alley Cyber-Surgeon', undefined, LOAD_TIMEOUT));
+
+    fireEvent.change(await findLabelled('Drop source', itemTypes), { target: { value: 'faction:pirates' } });
+    await save('Saved hull_items.csv');
+
+    const surgeon = server.readProjectFile(HULL_ITEMS_FILE).split(/\r?\n/).find((line) => line.startsWith('unique_back_alley_surgeon,'));
+    expect(surgeon).toMatch(/,faction:pirates$/);
+  }, 90000);
 });
 
 describe('hull item validation', () => {
@@ -256,6 +267,19 @@ describe('skill tree socketables', () => {
     const halcyon = server.readProjectFile(SUBROUTINES_FILE).split(/\r?\n/).find((line) => line.startsWith('unique_halcyon_fire_lattice,'));
     expect(halcyon).toContain('@SENSOR_PROFILE_PERCENT_HALCYON_LATTICE; @TOP_SPEED_PERCENT_CRACKED_GOVERNOR,');
     expect(server.readProjectFile(HULL_ITEMS_FILE)).toBe(before[HULL_ITEMS_FILE]);
+  }, 90000);
+
+  it('gives a unique subroutine a radius and saves it to subroutines.csv', async () => {
+    const subroutines = await openItems('Skill Tree Socketables', 'Subroutines');
+    fireEvent.click(await within(subroutines).findByText('Cracked Drive Governor', undefined, LOAD_TIMEOUT));
+
+    fireEvent.click(await findLabelled('Radius', subroutines));
+    fireEvent.click(await screen.findByRole('option', { name: 'medium' }, LOAD_TIMEOUT));
+    await save('Saved subroutines.csv');
+
+    const lines = server.readProjectFile(SUBROUTINES_FILE).split(/\r?\n/);
+    expect(lines[0]).toMatch(/,radius$/);
+    expect(lines.find((line) => line.startsWith('unique_cracked_drive_governor,'))).toMatch(/,medium$/);
   }, 90000);
 
   it('edits a doctrine archive row and its subroutine together and refuses line counts out of order', async () => {

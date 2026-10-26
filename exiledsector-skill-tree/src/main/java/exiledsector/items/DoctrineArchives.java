@@ -11,7 +11,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -113,7 +112,7 @@ public final class DoctrineArchives {
         }
         String radiusText = ModCsv.text(row, RADIUS_COLUMN);
         if (RadiusSize.byDataKeyOrNull(radiusText) == null) {
-            problems.add(definitionId + " has radius \"" + radiusText + "\"; expected one of " + radiusKeys());
+            problems.add(definitionId + " has radius \"" + radiusText + "\"; expected one of " + RadiusSize.dataKeys());
         }
         Integer minLines = lineCount(ModCsv.text(row, MIN_LINES_COLUMN));
         Integer maxLines = lineCount(ModCsv.text(row, MAX_LINES_COLUMN));
@@ -133,10 +132,6 @@ public final class DoctrineArchives {
             problems.add(definitionId + " augments nodes, so it lists no replacement nodes");
         }
         return problems;
-    }
-
-    private static String radiusKeys() {
-        return String.join(", ", Arrays.stream(RadiusSize.values()).map(RadiusSize::dataKey).toList());
     }
 
     static List<String> typeIds(String poolText) {

@@ -142,7 +142,10 @@ function SubroutineForm({ document, model, vocabulary, definition, index, kinds,
   const subroutineKind = definition.subroutineKind ?? '';
   const kindOptions = subroutineKind === '' || kinds.includes(subroutineKind) ? kinds : [subroutineKind, ...kinds];
   const uniqueLines = definition.lines ?? [];
-  const showsUniqueFields = isUniqueSubroutine(definition) || uniqueLines.length > 0 || Boolean(definition.source);
+  const showsUniqueFields = isUniqueSubroutine(definition) || uniqueLines.length > 0 || Boolean(definition.source) || Boolean(definition.radius);
+  const radius = definition.radius ?? '';
+  const radiusSizes = radius === '' || vocabulary.radiusSizes.includes(radius) ? vocabulary.radiusSizes : [radius, ...vocabulary.radiusSizes];
+  const radiusOptions = [{ value: '', label: 'none' }, ...radiusSizes.map((size) => ({ value: size, label: size }))];
 
   const duplicate = () => {
     document.update((draft) => {
@@ -231,6 +234,14 @@ function SubroutineForm({ document, model, vocabulary, definition, index, kinds,
               const text = event.currentTarget.value;
               edit((draft) => void (draft.source = text));
             }}
+          />
+          <Select
+            label="Radius"
+            description="Nodes within this distance of the socket are the ones the subroutine's mechanic acts on. Blank for none."
+            data={radiusOptions}
+            value={definition.radius ?? ''}
+            onChange={(value) => edit((draft) => void (draft.radius = value ?? ''))}
+            allowDeselect={false}
           />
           <DescriptionNote descriptions={descriptions} />
           <ModifierPool

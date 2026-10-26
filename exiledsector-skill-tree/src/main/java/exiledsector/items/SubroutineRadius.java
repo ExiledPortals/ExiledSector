@@ -1,5 +1,7 @@
 package exiledsector.items;
 
+import exiledlib.i18n.StyledText;
+import exiledlib.i18n.Translation;
 import exiledsector.skills.radius.RadiusSize;
 
 public final class SubroutineRadius {
@@ -19,7 +21,8 @@ public final class SubroutineRadius {
                 DoctrineArchive archive = DoctrineArchives.get(subroutine.definitionId());
                 yield archive == null ? null : archive.radiusSize();
             }
-            case MODSPEC_CACHE, BYPASS, UNIQUE -> null;
+            case UNIQUE -> UniqueSubroutineRadii.sizeOf(subroutine.definitionId());
+            case MODSPEC_CACHE, BYPASS -> null;
         };
     }
 
@@ -28,8 +31,8 @@ public final class SubroutineRadius {
             return null;
         }
         return switch (subroutine.subroutineKind()) {
-            case DOCTRINE -> socketNodeId;
-            case MODSPEC_CACHE, BYPASS, UNIQUE -> null;
+            case DOCTRINE, UNIQUE -> socketNodeId;
+            case MODSPEC_CACHE, BYPASS -> null;
         };
     }
 
@@ -49,5 +52,13 @@ public final class SubroutineRadius {
 
     public static boolean hasRadius(Item item) {
         return sizeOf(item) != null;
+    }
+
+    public static String radiusName(RadiusSize size) {
+        return Translation.text("socketable.radius." + size.dataKey());
+    }
+
+    public static StyledText radiusLine(RadiusSize size) {
+        return Translation.msg("socketable.radiusLine").arg("radius", radiusName(size)).styled();
     }
 }

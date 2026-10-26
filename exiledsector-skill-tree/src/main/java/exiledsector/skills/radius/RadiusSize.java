@@ -1,5 +1,7 @@
 package exiledsector.skills.radius;
 
+import java.util.Arrays;
+
 public enum RadiusSize {
     SMALL("small"),
     MEDIUM("medium"),
@@ -13,6 +15,10 @@ public enum RadiusSize {
 
     public String dataKey() {
         return dataKey;
+    }
+
+    public static String dataKeys() {
+        return String.join(", ", Arrays.stream(values()).map(RadiusSize::dataKey).toList());
     }
 
     public static RadiusSize byDataKeyOrNull(String key) {

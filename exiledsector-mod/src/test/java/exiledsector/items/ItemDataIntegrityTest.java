@@ -278,6 +278,35 @@ class ItemDataIntegrityTest {
     }
 
     @Test
+    void onlyUniqueSubroutinesTakeARadiusAndItMustBeAKnownSize() throws Exception {
+        JSONArray subroutines = validSubroutines()
+                .put(uniqueSubroutine("ringed", "@TOP_SPEED_PERCENT_RELIC", "site:wreck").put(UniqueSubroutineRadii.RADIUS_COLUMN, "medium"))
+                .put(uniqueSubroutine("huge", "@TOP_SPEED_PERCENT_RELIC", "site:wreck").put(UniqueSubroutineRadii.RADIUS_COLUMN, "huge"))
+                .put(subroutine("cache_ring", "MODSPEC_CACHE").put(UniqueSubroutineRadii.RADIUS_COLUMN, "small"));
+
+        List<String> errors = errors(modifiersWithUniqueLines(), subroutines, validImplicits());
+
+        assertTrue(errors.contains("huge has radius \"huge\"; expected one of small, medium, large, or blank for none"), errors.toString());
+        assertTrue(errors.contains("cache_ring has a radius, but only UNIQUE subroutines read it"), errors.toString());
+        assertTrue(errors.stream().noneMatch(error -> error.startsWith("ringed")), errors.toString());
+    }
+
+    @Test
+    void hullItemSourcesMustParseAndOnlyApplyToUniques() throws Exception {
+        JSONArray hullItems = validHullItems()
+                .put(poolItem("fleet_relic", "@HULL_MULT", "@ARMOR_PERCENT", true).put(HullItem.UNIQUE_SOURCE_COLUMN, "faction:pirates; site:wreck"))
+                .put(poolItem("misplaced", "@HULL_MULT", "@ARMOR_PERCENT", true).put(HullItem.UNIQUE_SOURCE_COLUMN, "colony:jangala"))
+                .put(poolItem("common", "@HULL_MULT", "@ARMOR_PERCENT", false).put(HullItem.UNIQUE_SOURCE_COLUMN, "faction:pirates"));
+
+        List<Violation> violations = check(validModifiers(), validSubroutines(), hullItems, validImplicits());
+
+        assertEquals(List.of("misplaced: source \"colony:jangala\" is not faction:FACTION_ID or site:SALVAGE_SITE_ID"),
+                violations.stream().filter(violation -> violation.severity() == Severity.ERROR).map(Violation::message).toList());
+        assertEquals(List.of("common names a source, but sources only apply to unique hull items"),
+                violations.stream().filter(violation -> violation.severity() == Severity.WARNING).map(Violation::message).toList());
+    }
+
+    @Test
     void poolEntriesMustReferenceExistingModifiersOfTheirSlot() throws Exception {
         JSONArray hullItems = validHullItems()
                 .put(poolItem("inline", "HULL_MULT:4:6", "", false))

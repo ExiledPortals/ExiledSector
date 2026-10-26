@@ -96,6 +96,7 @@ class DoctrineOverridesTest {
     void tearDown() {
         DoctrineOverrides.clearCache();
         DoctrineArchives.clear();
+        UniqueSubroutineRadii.clear();
         ItemDefinitions.clear();
         ItemModifiers.clear();
         SkillTree.clear();
@@ -420,6 +421,34 @@ class DoctrineOverridesTest {
         assertEquals(socket.getId(), footprint.centreNodeId());
         assertEquals(exiledsector.skills.radius.RadiusSize.MEDIUM, footprint.size());
         assertNull(SubroutineRadius.footprint(relic, socket.getId()));
+    }
+
+    @Test
+    void aUniqueSubroutineWithARadiusCentresItOnItsSocketAndNamesItInTheTooltip() throws Exception {
+        Item relic = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(UNIQUE_RELIC), 1L));
+        Item doctrine = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(TRANSFORM), 1L));
+        UniqueSubroutineRadii.register(new JSONArray()
+                .put(new JSONObject().put("id", UNIQUE_RELIC).put(UniqueSubroutineRadii.RADIUS_COLUMN, "small"))
+                .put(new JSONObject().put("id", TRANSFORM).put(UniqueSubroutineRadii.RADIUS_COLUMN, "large")));
+
+        SubroutineRadius.Footprint footprint = SubroutineRadius.footprint(relic, socket.getId());
+        List<String> lines = new ArrayList<>();
+        relic.headerLines().forEach(line -> lines.add(line.toMarkup()));
+
+        assertEquals(socket.getId(), footprint.centreNodeId());
+        assertEquals(exiledsector.skills.radius.RadiusSize.SMALL, footprint.size());
+        assertNull(footprint.factionId());
+        assertTrue(lines.contains(SubroutineRadius.radiusLine(exiledsector.skills.radius.RadiusSize.SMALL).toMarkup()), lines.toString());
+        assertEquals(exiledsector.skills.radius.RadiusSize.MEDIUM, SubroutineRadius.sizeOf(doctrine));
+    }
+
+    @Test
+    void aUniqueSubroutineWithABadRadiusHasNone() throws Exception {
+        Item relic = ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(UNIQUE_RELIC), 1L));
+        UniqueSubroutineRadii.register(new JSONArray().put(new JSONObject().put("id", UNIQUE_RELIC).put(UniqueSubroutineRadii.RADIUS_COLUMN, "huge")));
+
+        assertNull(SubroutineRadius.footprint(relic, socket.getId()));
+        assertEquals(List.of(), ((Subroutine) relic).kindLines());
     }
 
     @Test

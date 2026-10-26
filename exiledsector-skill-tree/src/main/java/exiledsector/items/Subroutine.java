@@ -13,6 +13,7 @@ import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
+import exiledsector.skills.radius.RadiusSize;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -189,7 +190,7 @@ public final class Subroutine extends Item implements NodeSocketable {
     public List<StyledText> headerLines() {
         List<StyledText> lines = new ArrayList<>(super.headerLines());
         lines.addAll(allocationLines(NodeGrantStatus.lastKnown(id())));
-        lines.addAll(doctrineLines());
+        lines.addAll(kindLines());
         return lines;
     }
 
@@ -271,7 +272,11 @@ public final class Subroutine extends Item implements NodeSocketable {
         return DoctrineRewriter.revision(seed());
     }
 
-    public List<StyledText> doctrineLines() {
+    public List<StyledText> kindLines() {
+        if (subroutineKind() == SubroutineKind.UNIQUE) {
+            RadiusSize radiusSize = UniqueSubroutineRadii.sizeOf(definitionId());
+            return radiusSize == null ? List.of() : List.of(SubroutineRadius.radiusLine(radiusSize));
+        }
         if (subroutineKind() != SubroutineKind.DOCTRINE) {
             return List.of();
         }
@@ -282,7 +287,7 @@ public final class Subroutine extends Item implements NodeSocketable {
             lines.add(Translation.styled("socketable.doctrine.inert"));
             return lines;
         }
-        lines.add(Translation.msg("socketable.doctrine.radiusLine").arg("radius", DoctrineText.radiusName(archive)).styled());
+        lines.add(SubroutineRadius.radiusLine(archive.radiusSize()));
         return lines;
     }
 

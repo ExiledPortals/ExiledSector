@@ -19,8 +19,4 @@ public final class DoctrineText {
         int limit = SubroutineKind.DOCTRINE.socketLimitPerShip();
         return Translation.msg("socketable.doctrine.limit").count(limit).arg("limit", limit).styled();
     }
-
-    public static String radiusName(DoctrineArchive archive) {
-        return Translation.text("socketable.doctrine.radius." + archive.radiusSize().dataKey());
-    }
 }

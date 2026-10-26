@@ -61,6 +61,7 @@ import exiledsector.items.Subroutine;
 import exiledsector.items.SubroutineDataRules;
 import exiledsector.items.SubroutineImplicits;
 import exiledsector.items.TreeSocketCustody;
+import exiledsector.items.UniqueSubroutineRadii;
 import exiledsector.items.UniqueSubroutinesSetting;
 import exiledsector.items.WormholeAnchor;
 import exiledsector.items.WormholeAnchorDataRules;
@@ -168,6 +169,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
         WormholeAnchorLinks.install();
         DoctrineArchives.load();
         ModspecCaches.load();
+        UniqueSubroutineRadii.load();
         NodeGrantLinks.install();
     }
 

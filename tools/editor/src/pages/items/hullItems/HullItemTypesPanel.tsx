@@ -231,6 +231,17 @@ function HullItemForm({ document, model, vocabulary, definition, index, descript
         }
         onUnlock={(unlock) => edit((draft) => void (draft.unlock = unlock))}
       />
+      {(unique || Boolean(definition.source)) && (
+        <TextInput
+          label="Drop source"
+          description="faction:FACTION_ID - only battles where that faction lost the most deployment points drop it; site:SALVAGE_SITE_ID - only that salvage site's unique roll. Blank drops anywhere. Separate several with ;"
+          value={definition.source ?? ''}
+          onChange={(event) => {
+            const text = event.currentTarget.value;
+            edit((draft) => void (draft.source = text));
+          }}
+        />
+      )}
       <DescriptionField description={definition.description} onChange={(description) => edit((draft) => void (draft.description = description))} />
       <Divider />
       <DescriptionNote descriptions={descriptions} />

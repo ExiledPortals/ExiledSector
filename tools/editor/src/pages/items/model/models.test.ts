@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildVocabulary } from '../../../api/vocabulary.ts';
 import {
+  definitionWarnings,
   formatPool,
   markDefinitionsSaved,
   newItemDefinition,
@@ -177,6 +178,50 @@ describe('item definitions', () => {
   });
 });
 
+describe('hull item sources', () => {
+  const header = 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock,source\n';
+
+  it('reads the source column and writes it back unchanged', () => {
+    const text = `${header}relic,bridge,Relic,,10,true,,@HULL_MULT_BRIDGE,,,faction:pirates; site:wreck\n`;
+    const model = parseItemDefinitions('id,name,icon,rarity,unique,kind,description,unlock\n', text);
+
+    expect(model.definitions[0].source).toBe('faction:pirates; site:wreck');
+    expect(serializeHullItemsCsv(model)).toBe(text);
+
+    model.definitions[0].source = 'faction:tritachyon';
+    expect(serializeHullItemsCsv(model)).toBe(`${header}relic,bridge,Relic,,10,true,,@HULL_MULT_BRIDGE,,,faction:tritachyon\n`);
+  });
+
+  it('adds the source column to an older file only once a hull item uses it', () => {
+    const olderText = 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\nrelic,bridge,Relic,,10,true,,@HULL_MULT_BRIDGE,,\n';
+    const model = parseItemDefinitions('id,name,icon,rarity,unique,kind,description,unlock\n', olderText);
+
+    expect(serializeHullItemsCsv(model)).toBe(olderText);
+    model.definitions[0].source = 'faction:pirates';
+    expect(serializeHullItemsCsv(model)).toBe(`${header}relic,bridge,Relic,,10,true,,@HULL_MULT_BRIDGE,,,faction:pirates\n`);
+  });
+
+  it('checks the source text and warns when a common hull item names one', () => {
+    const issues = validateItemDefinitions(
+      [
+        definition({ id: 'fleet_relic', unique: 'true', source: 'faction:pirates; site:wreck' }),
+        definition({ id: 'misplaced', unique: 'true', source: 'colony:jangala; faction:pirates; faction:pirates' }),
+      ],
+      vocabulary,
+      catalogue,
+    );
+
+    expect(issues).toEqual(['misplaced: source "colony:jangala" is not faction:ID or site:ID', 'misplaced: source "faction:pirates" is listed more than once']);
+    expect(definitionWarnings([definition({ id: 'common', source: 'faction:pirates' }), definition({ id: 'relic', unique: 'true', source: 'faction:pirates' })], 'ship')).toEqual([
+      'common: the source faction:pirates only applies to unique hull items, so it is ignored',
+    ]);
+  });
+
+  it('starts a new hull item with a blank source', () => {
+    expect(newItemDefinition([], 'bridge', []).source).toBe('');
+  });
+});
+
 describe('unique subroutines', () => {
   const uniqueCatalogue = modifierById(
     parseModifiersCsv(
@@ -237,6 +282,34 @@ describe('unique subroutines', () => {
     expect(serializeSubroutinesCsv(older)).toBe(olderText);
     older.definitions[0].socketLimit = '2';
     expect(serializeSubroutinesCsv(older)).toBe('id,name,icon,rarity,unique,kind,description,unlock,socket_limit\nchip,Chip,,10,,DOCTRINE,,,2\n');
+  });
+
+  it('reads and writes the radius, adding its column to an older file only once it is set', () => {
+    const withRadius = 'id,name,icon,rarity,unique,kind,description,lines,source,radius,unlock\nrelic,Relic,,10,true,UNIQUE,,@HULL_MULT_RELIC,site:wreck,small,\n';
+    const ringed = parseItemDefinitions(withRadius, 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\n');
+    const olderText = 'id,name,icon,rarity,unique,kind,description,lines,source,unlock\nrelic,Relic,,10,true,UNIQUE,,@HULL_MULT_RELIC,site:wreck,\n';
+    const older = parseItemDefinitions(olderText, 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\n');
+
+    expect(ringed.definitions[0].radius).toBe('small');
+    expect(serializeSubroutinesCsv(ringed)).toBe(withRadius);
+    expect(serializeSubroutinesCsv(older)).toBe(olderText);
+    older.definitions[0].radius = 'large';
+    expect(serializeSubroutinesCsv(older)).toBe(`${olderText.split('\n')[0]},radius\nrelic,Relic,,10,true,UNIQUE,,@HULL_MULT_RELIC,site:wreck,,large\n`);
+  });
+
+  it('accepts a blank or known radius on a unique subroutine and keeps it off other kinds', () => {
+    expect(validateItemDefinitions([relic({ radius: '' }), relic({ id: 'ringed', radius: 'medium' })], vocabulary, uniqueCatalogue)).toEqual([]);
+    expect(
+      validateItemDefinitions(
+        [relic({ id: 'huge', radius: 'huge' }), relic({ id: 'bypass', subroutineKind: 'BYPASS', lines: [], source: '', radius: 'small' })],
+        vocabulary,
+        uniqueCatalogue,
+      ),
+    ).toEqual(['huge: radius must be blank or one of small, medium, large', 'bypass: only UNIQUE subroutines read a radius from subroutines.csv; remove it']);
+  });
+
+  it('starts a new subroutine with no radius', () => {
+    expect(newItemDefinition([], 'subroutine', [], [], 'UNIQUE').radius).toBe('');
   });
 
   it('accepts a blank or whole socket limit and refuses anything else', () => {
