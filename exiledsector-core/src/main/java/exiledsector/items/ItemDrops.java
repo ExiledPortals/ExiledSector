@@ -379,7 +379,7 @@ public final class ItemDrops {
 
     private static boolean isDroppable(ItemDefinition definition) {
         return ItemTypes.inGenericPools(definition) && definition.rarity() > 0f
-                && SAFE_ID.matcher(definition.id()).matches();
+                && SAFE_ID.matcher(definition.id()).matches() && ItemAreas.dropsNow(definition);
     }
 
     public static ItemDefinition pickUnique(Random random, Predicate<ItemDefinition> allowedUniques) {

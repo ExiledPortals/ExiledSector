@@ -40,6 +40,7 @@ export const SUBROUTINE_COLUMNS = [
   'source',
   'socket_limit',
   'radius',
+  'area',
   'unlock',
   'excluded_nodes',
   'node_count_chances',
@@ -47,12 +48,12 @@ export const SUBROUTINE_COLUMNS = [
   'salvage_chance',
 ] as const;
 export const MODSPEC_CACHE_SUBROUTINE_FIELDS: readonly string[] = ['excluded_nodes', 'node_count_chances', 'drop_chance', 'salvage_chance'];
-export const OPTIONAL_SUBROUTINE_FIELDS: readonly string[] = ['lines', 'source', 'socket_limit', 'radius', ...MODSPEC_CACHE_SUBROUTINE_FIELDS];
+export const OPTIONAL_SUBROUTINE_FIELDS: readonly string[] = ['lines', 'source', 'socket_limit', 'radius', 'area', ...MODSPEC_CACHE_SUBROUTINE_FIELDS];
 const NODE_ID_TEXT = /^[A-Za-z0-9_.-]+$/;
 const UNIQUE_SOURCE_ID = /^[A-Za-z0-9_.-]+$/;
 const SOCKET_LIMIT_TEXT = /^\d{1,9}$/;
-export const HULL_ITEM_COLUMNS = ['id', 'section', 'name', 'icon', 'rarity', 'unique', 'description', 'prefixes', 'suffixes', 'unlock', 'source', 'mechanic'] as const;
-const OPTIONAL_HULL_ITEM_FIELDS: readonly string[] = ['source', 'mechanic'];
+export const HULL_ITEM_COLUMNS = ['id', 'section', 'name', 'icon', 'rarity', 'unique', 'description', 'prefixes', 'suffixes', 'unlock', 'source', 'mechanic', 'area'] as const;
+const OPTIONAL_HULL_ITEM_FIELDS: readonly string[] = ['source', 'mechanic', 'area'];
 export const STAR_CHART_COLUMNS = ['id', 'system_type', 'name', 'icon', 'rarity', 'unique', 'min_tier', 'description', 'prefixes', 'suffixes', 'unlock'] as const;
 export const UNLOCK_LABELS: Record<string, string> = {
   found_onslaught_mk1: 'Found the Onslaught Mk.I in the Abyss',
@@ -101,6 +102,7 @@ export interface ItemDefinition {
   lines?: PoolEntry[];
   source?: string;
   mechanic?: string;
+  area?: string;
   socketLimit?: string;
   radius?: string;
   excludedNodes?: string;
@@ -259,6 +261,7 @@ export function parseItemDefinitions(subroutinesText: string, hullItemsText: str
         lines: parsePool(csvCell(subroutineTable, definition.cells, 'lines')),
         source: csvCell(subroutineTable, definition.cells, 'source').trim(),
         socketLimit: csvCell(subroutineTable, definition.cells, 'socket_limit').trim(),
+        area: csvCell(subroutineTable, definition.cells, 'area').trim(),
         radius: csvCell(subroutineTable, definition.cells, 'radius').trim(),
         excludedNodes: csvCell(subroutineTable, definition.cells, 'excluded_nodes').trim(),
         nodeCountChances: csvCell(subroutineTable, definition.cells, 'node_count_chances').trim(),
@@ -269,6 +272,7 @@ export function parseItemDefinitions(subroutinesText: string, hullItemsText: str
         ...definition,
         source: csvCell(hullItemTable, definition.cells, 'source').trim(),
         mechanic: csvCell(hullItemTable, definition.cells, 'mechanic').trim(),
+        area: csvCell(hullItemTable, definition.cells, 'area').trim(),
       })),
     ],
   };
@@ -298,6 +302,8 @@ function definitionColumnValue(definition: ItemDefinition, column: string): unkn
       return definition.source ?? '';
     case 'mechanic':
       return definition.mechanic ?? '';
+    case 'area':
+      return definition.area ?? '';
     case 'socket_limit':
       return definition.socketLimit ?? '';
     case 'radius':
@@ -450,6 +456,7 @@ export function newItemDefinition(
       source: '',
       socketLimit: '',
       radius: '',
+      area: '',
       excludedNodes: '',
       nodeCountChances: '',
       dropChance: '',
@@ -475,6 +482,7 @@ export function newItemDefinition(
   } else {
     definition.source = '';
     definition.mechanic = '';
+    definition.area = '';
   }
   return definition;
 }
@@ -577,6 +585,11 @@ function starChartIssues(label: string, definition: ItemDefinition, vocabulary: 
     );
   }
   return issues;
+}
+
+export function areaOptions(areas: readonly string[], current: string): { value: string; label: string }[] {
+  const listed = current !== '' && !areas.includes(current) ? [...areas, current] : [...areas];
+  return [{ value: '', label: 'None' }, ...listed.map((area) => ({ value: area, label: area }))];
 }
 
 export function uniqueSourceIssues(sourceText: string, vocabulary: Vocabulary): string[] {
@@ -776,6 +789,10 @@ export function validateItemDefinitions(
       issues.push(...subroutineIssues(label, definition, vocabulary, catalogue));
     } else if (definition.prefixes.length === 0 && definition.suffixes.length === 0) {
       issues.push(`${label}: it has no prefixes or suffixes`);
+    }
+    const area = (definition.area ?? '').trim();
+    if (area !== '' && !vocabulary.itemAreas.includes(area)) {
+      issues.push(`${label}: area must be blank or one of ${vocabulary.itemAreas.join(', ')}`);
     }
     if (itemTypeOfKind(definition.kind) === HULL_ITEM_TYPE) {
       issues.push(...uniqueSourceIssues(definition.source ?? '', vocabulary).map((issue) => `${label}: ${issue}`));

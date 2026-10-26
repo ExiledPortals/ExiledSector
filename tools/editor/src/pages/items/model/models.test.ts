@@ -245,6 +245,27 @@ describe('hull item mechanics', () => {
   });
 });
 
+describe('item areas', () => {
+  it('writes the area column of hull items and subroutines only once one is set', () => {
+    const subroutinesText = 'id,name,icon,rarity,unique,kind,description,unlock\nchip,Chip,,10,,MODSPEC_CACHE,,\n';
+    const hullItemsText = 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\nrelic,bridge,Relic,,10,true,,@HULL_MULT_BRIDGE,,\n';
+    const model = parseItemDefinitions(subroutinesText, hullItemsText);
+
+    expect(serializeHullItemsCsv(model)).toBe(hullItemsText);
+    expect(serializeSubroutinesCsv(model)).toBe(subroutinesText);
+    model.definitions.find((definition) => definition.id === 'relic')!.area = 'tania';
+    model.definitions.find((definition) => definition.id === 'chip')!.area = 'nightcross';
+    expect(serializeHullItemsCsv(model)).toBe('id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock,area\nrelic,bridge,Relic,,10,true,,@HULL_MULT_BRIDGE,,,tania\n');
+    expect(serializeSubroutinesCsv(model)).toBe('id,name,icon,rarity,unique,kind,description,unlock,area\nchip,Chip,,10,,MODSPEC_CACHE,,,nightcross\n');
+  });
+
+  it('rejects an area the vocabulary does not list', () => {
+    const issues = validateItemDefinitions([definition({ id: 'lost', area: 'atlantis' })], { ...vocabulary, itemAreas: ['tania'] }, catalogue);
+
+    expect(issues).toEqual(['lost: area must be blank or one of tania']);
+  });
+});
+
 describe('unique subroutines', () => {
   const uniqueCatalogue = modifierById(
     parseModifiersCsv(

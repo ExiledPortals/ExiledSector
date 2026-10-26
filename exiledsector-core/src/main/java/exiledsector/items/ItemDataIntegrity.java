@@ -111,6 +111,12 @@ public final class ItemDataIntegrity {
         return rows == null ? new JSONArray() : rows;
     }
 
+    void checkArea(String file, int line, String definitionId, String area) {
+        if (!area.isEmpty() && !ItemAreas.isKnown(area)) {
+            error(file, line, definitionId + " names the area \"" + area + "\"; expected one of " + ItemAreas.known().stream().sorted().toList());
+        }
+    }
+
     void error(String file, int line, String message) {
         violations.add(new Violation(Severity.ERROR, file, line, message));
     }

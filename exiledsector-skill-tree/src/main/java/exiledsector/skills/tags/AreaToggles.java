@@ -5,6 +5,7 @@ import exiledlib.compat.LostSectorCompat;
 import exiledsector.compat.NightcrossCompat;
 import exiledsector.compat.RandomAssortmentCompat;
 import exiledsector.compat.TaniaCompat;
+import exiledsector.items.ItemAreas;
 
 import java.util.HashSet;
 import java.util.List;
@@ -26,6 +27,25 @@ public final class AreaToggles {
     public static final String OFF = "Off";
     public static final List<String> OPTIONS = List.of(AUTO, ON, OFF);
     public static final List<String> REQUIRED_MOD_OPTIONS = List.of(AUTO, OFF);
+
+    public static final ItemAreas.Toggles ITEM_AREAS = new ItemAreas.Toggles() {
+        @Override
+        public Set<String> areas() {
+            Set<String> areas = new HashSet<>();
+            TOGGLED_AREAS.forEach(areas::addAll);
+            return areas;
+        }
+
+        @Override
+        public boolean modInstalled(String area) {
+            return modInstalledFor(area);
+        }
+
+        @Override
+        public boolean switchedOn(String area) {
+            return !disabledRegions().contains(area);
+        }
+    };
 
     private AreaToggles() {
     }

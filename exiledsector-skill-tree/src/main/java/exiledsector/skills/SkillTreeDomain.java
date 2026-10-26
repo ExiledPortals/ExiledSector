@@ -44,6 +44,7 @@ import exiledsector.effects.SkillTreeInstaller;
 import exiledsector.effects.SkillTreeLootSource;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.SpecLocalisation;
+import exiledsector.items.ItemAreas;
 import exiledsector.items.AnchorFindMigration;
 import exiledsector.items.DeletedSubroutines;
 import exiledsector.items.DoctrineArchives;
@@ -130,6 +131,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
 
     @Override
     public void onApplicationLoad() {
+        ItemAreas.bind(AreaToggles.ITEM_AREAS);
         I18n.forGameText(() -> LOCALISED_HULLMODS.forEach(SpecLocalisation::hullMod));
         SkillTreeRefitButton.addButton();
     }

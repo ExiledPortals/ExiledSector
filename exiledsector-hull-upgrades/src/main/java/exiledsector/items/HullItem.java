@@ -64,7 +64,7 @@ public final class HullItem extends Item {
             throw new IllegalArgumentException("section \"" + sectionId + "\" is not a ship section");
         }
         return ItemDefinition.parse(row, kind, UniqueSource.parseList(row.optString(UNIQUE_SOURCE_COLUMN, "")))
-                .withMechanic(row.optString(MECHANIC_COLUMN, ""));
+                .withMechanic(row.optString(MECHANIC_COLUMN, "")).withArea(row.optString(ItemAreas.AREA_COLUMN, ""));
     }
 
     @Override

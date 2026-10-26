@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -304,6 +305,36 @@ class ItemDataIntegrityTest {
                 violations.stream().filter(violation -> violation.severity() == Severity.ERROR).map(Violation::message).toList());
         assertEquals(List.of("common names a source, but sources only apply to unique hull items"),
                 violations.stream().filter(violation -> violation.severity() == Severity.WARNING).map(Violation::message).toList());
+    }
+
+    @Test
+    void hullItemsAndSubroutinesMayOnlyNameAKnownArea() throws Exception {
+        ItemAreas.bind(new TestAreas(Set.of("tania")));
+        try {
+            JSONArray hullItems = validHullItems()
+                    .put(poolItem("tania_relic", "@HULL_MULT", "@ARMOR_PERCENT", true).put(ItemAreas.AREA_COLUMN, "tania"))
+                    .put(poolItem("lost_relic", "@HULL_MULT", "@ARMOR_PERCENT", true).put(ItemAreas.AREA_COLUMN, "atlantis"));
+
+            List<String> errors = errors(validModifiers(), validSubroutines(), hullItems, validImplicits());
+
+            assertTrue(errors.contains("lost_relic names the area \"atlantis\"; expected one of [tania]"), errors.toString());
+            assertTrue(errors.stream().noneMatch(error -> error.startsWith("tania_relic")), errors.toString());
+        } finally {
+            ItemAreas.bind(null);
+        }
+    }
+
+    private record TestAreas(Set<String> areas) implements ItemAreas.Toggles {
+
+        @Override
+        public boolean modInstalled(String area) {
+            return true;
+        }
+
+        @Override
+        public boolean switchedOn(String area) {
+            return true;
+        }
     }
 
     @Test

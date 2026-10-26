@@ -27,6 +27,7 @@ import exiledsector.items.ItemNature;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemName;
 import exiledsector.items.ItemStore;
+import exiledsector.items.ItemAreas;
 import exiledsector.items.ItemUnlock;
 import exiledsector.items.SlottedLine;
 import exiledsector.modifiers.ModifierSlot;
@@ -628,7 +629,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     }
 
     private static Predicate<ItemDefinition> allowedUniques() {
-        return definition -> ItemUnlock.unlockConditionMet(definition, Global.getSector());
+        return definition -> ItemAreas.dropsNow(definition) && ItemUnlock.unlockConditionMet(definition, Global.getSector());
     }
 
     @Override

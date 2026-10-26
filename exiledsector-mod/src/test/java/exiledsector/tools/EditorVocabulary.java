@@ -16,6 +16,7 @@ import exiledsector.items.SubroutineKind;
 import exiledsector.items.UniqueSource;
 import exiledsector.skills.SkillTier;
 import exiledsector.skills.radius.RadiusSize;
+import exiledsector.skills.tags.AreaToggles;
 import exiledsector.skills.tags.SkillTags;
 import exiledsector.skills.unlock.BlueprintCategory;
 import exiledsector.skills.unlock.UnlockConditionType;
@@ -72,6 +73,7 @@ final class EditorVocabulary {
         json.append("  \"uniqueSourceKinds\": ")
                 .append(list(Arrays.stream(UniqueSource.Kind.values()).map(UniqueSource.Kind::prefix).toList())).append(",\n");
         json.append("  \"hullItemMechanics\": ").append(list(List.of(HullItem.DOUBLER_MECHANIC))).append(",\n");
+        json.append("  \"itemAreas\": ").append(list(AreaToggles.ITEM_AREAS.areas().stream().sorted().toList())).append(",\n");
         json.append("  \"itemUnlocks\": ")
                 .append(list(Arrays.stream(ItemUnlock.values()).map(ItemUnlock::id).toList())).append(",\n");
         json.append("  \"clearedChartTierPrefix\": ").append(quote(ItemUnlock.CLEARED_CHART_TIER_PREFIX)).append(",\n");

@@ -92,6 +92,9 @@ public final class ItemDefinitions {
         }
         CsvRows.forEachRow(rows, source, LOG, (index, row) -> {
             ItemDefinition definition = parser.apply(row);
+            if (!ItemAreas.loads(definition)) {
+                return;
+            }
             if (loaded.putIfAbsent(definition.id(), definition) != null) {
                 throw new IllegalArgumentException(definition.id() + " is already defined");
             }

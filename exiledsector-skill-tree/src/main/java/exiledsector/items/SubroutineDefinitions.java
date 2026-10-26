@@ -49,7 +49,7 @@ public final class SubroutineDefinitions {
                     + "\"; expected a whole number of 0 or more, or blank for no limit");
         }
         return ItemDefinition.parseShared(row, ItemKind.SUBROUTINE, ItemType.SUBROUTINE, new ItemDefinition.Pools(uniqueLines, List.of()),
-                subroutineKind, sources).withSocketLimit(socketLimit);
+                subroutineKind, sources).withSocketLimit(socketLimit).withArea(row.optString(ItemAreas.AREA_COLUMN, ""));
     }
 
     static Integer parsedSocketLimit(String socketLimitText) {

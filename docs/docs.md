@@ -350,3 +350,10 @@ picked from the item's seed and stored once rolled). `ShipSections.doubledSectio
 target holds an active item that isn't a doubler, and `HullUpgradeEffectSource` doubles every magnitude of that
 item, drawbacks included. The Tuning Nanoswarm rerolls the target to another section (`Item.rerollTarget`), even
 on an item with no modifier range to vary.
+
+## Item areas
+
+A hull item or subroutine can name an `area`, one of the toggled tree regions. `ItemAreas` asks the skill tree's
+`AreaToggles`, bound at application load: a definition whose area's mod isn't installed is never loaded, so its
+faction sources are never checked, and one whose area is switched off stays loaded but is left out of every drop
+pool (`ItemDrops`, `ItemUnlock.canDrop`) and of Transposition.
