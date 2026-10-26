@@ -10,7 +10,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import exiledlib.skills.SkillTypeEffect;
 import exiledlib.skills.skilleffect.weapon.CloneableTestHullSpec;
-import exiledlib.skills.skilleffect.weapon.HybridBallisticSlots;
+import exiledlib.skills.skilleffect.weapon.WeaponSlotConversion;
 import exiledlib.skills.skilleffect.weapon.RetypableTestSlot;
 import exiledlib.skills.skilleffect.weapon.WeaponSkillEffect;
 import exiledsector.persistence.ShipSkillDataManager;
@@ -44,7 +44,7 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class SkillTreeHullModHybridSlotsTest {
+class SkillTreeHullModSlotConversionTest {
 
     private static final String SHIP_ID = "ship-a";
     private static final String SLOT_ID = "WS0001";
@@ -117,10 +117,10 @@ class SkillTreeHullModHybridSlotsTest {
         ShipVariantAPI variant = refitVariant(stockHull);
         ShipTrees.allocate(ShipSkillDataManager.get(SHIP_ID), fafnirNode(), 1);
 
-        SkillTreeHullMod.syncHybridBallisticSlots(member(), variant);
+        SkillTreeHullMod.syncSlotConversions(member(), variant);
 
         assertNotSame(stockHull, variant.getHullSpec());
-        assertTrue(HybridBallisticSlots.converted(variant.getHullSpec()));
+        assertTrue(WeaponSlotConversion.converted(variant.getHullSpec()));
         assertEquals(WeaponType.HYBRID, slotType(variant));
     }
 
@@ -131,15 +131,33 @@ class SkillTreeHullModHybridSlotsTest {
         FleetMemberAPI member = member();
         SkillNode fafnir = fafnirNode();
         ShipTrees.allocate(ShipSkillDataManager.get(SHIP_ID), fafnir, 1);
-        SkillTreeHullMod.syncHybridBallisticSlots(member, variant);
+        SkillTreeHullMod.syncSlotConversions(member, variant);
         ShipHullSpecAPI hybridHull = variant.getHullSpec();
 
         ShipTrees.deallocate(ShipSkillDataManager.get(SHIP_ID), fafnir);
-        SkillTreeHullMod.syncHybridBallisticSlots(member, variant);
+        SkillTreeHullMod.syncSlotConversions(member, variant);
 
         assertNotSame(hybridHull, variant.getHullSpec());
-        assertFalse(HybridBallisticSlots.converted(variant.getHullSpec()));
+        assertFalse(WeaponSlotConversion.converted(variant.getHullSpec()));
         assertEquals(WeaponType.BALLISTIC, slotType(variant));
+    }
+
+    @Test
+    void twoNodesChangingTheSameMountsConvertThemOnceAndReportTheConflict() {
+        ShipHullSpecAPI stockHull = hullSpec(new LinkedHashSet<>(), new RetypableTestSlot(SLOT_ID, WeaponType.BALLISTIC, false));
+        ShipVariantAPI variant = refitVariant(stockHull);
+        ShipTrees.allocate(ShipSkillDataManager.get(SHIP_ID), fafnirNode(), 1);
+        SkillType retrofit = new SkillType.Builder("retrofit", "Retrofit", "b.png", SkillTier.NOTABLE)
+                .effects(List.of(new SkillTypeEffect(WeaponSkillEffect.BALLISTIC_SLOTS_ENERGY, 0f))).build();
+        SkillNode retrofitNode = new SkillNode("retrofit_1", retrofit, List.of(), 0f, 0f);
+        SkillTree.register(retrofitNode);
+        ShipTrees.allocate(ShipSkillDataManager.get(SHIP_ID), retrofitNode, 1);
+
+        SkillTreeHullMod.syncSlotConversions(member(), variant);
+
+        assertTrue(Set.of(WeaponType.HYBRID, WeaponType.ENERGY).contains(slotType(variant)));
+        assertEquals(Set.of(WeaponType.BALLISTIC), SkillTreeHullMod.slotConversionConflicts(ShipSkillDataManager.get(SHIP_ID), variant));
+        assertEquals(Set.of(), SkillTreeHullMod.slotConversionConflicts(ShipSkillDataManager.get("no-tree"), variant));
     }
 
     @Test
@@ -147,8 +165,8 @@ class SkillTreeHullModHybridSlotsTest {
         ShipHullSpecAPI stockHull = hullSpec(new LinkedHashSet<>(), new RetypableTestSlot(SLOT_ID, WeaponType.BALLISTIC, false));
         ShipVariantAPI variant = refitVariant(stockHull);
 
-        SkillTreeHullMod.syncHybridBallisticSlots(member(), variant);
-        SkillTreeHullMod.syncHybridBallisticSlots(member(), null);
+        SkillTreeHullMod.syncSlotConversions(member(), variant);
+        SkillTreeHullMod.syncSlotConversions(member(), null);
 
         assertSame(stockHull, variant.getHullSpec());
     }

@@ -9,6 +9,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledlib.i18n.I18n;
@@ -16,15 +17,17 @@ import exiledlib.i18n.Translation;
 import exiledlib.skills.DiminishingReturns;
 import exiledlib.skills.StatBaseline;
 import exiledlib.skills.skilleffect.logistics.FleetWideEffects;
-import exiledlib.skills.skilleffect.weapon.HybridBallisticSlots;
-import exiledlib.skills.skilleffect.weapon.WeaponSkillEffect;
+import exiledlib.skills.skilleffect.weapon.SlotConversionBacking;
+import exiledlib.skills.skilleffect.weapon.WeaponSlotConversion;
 import exiledsector.ExiledSector;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.persistence.ShipRecords;
 import exiledsector.skills.ShipSkillData;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect {
 
@@ -46,7 +49,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         ShipVariantAPI variant = stats.getVariant();
         ShipSkillData shipData = ShipRecords.resolve(member, variant);
         if (shipData == null) {
-            HybridBallisticSlots.restore(variant);
+            WeaponSlotConversion.restore(variant);
             return;
         }
         if (!shipData.isNpcBuild() && ShipRecords.savedTreeOutOfReach(member, variant)) {
@@ -56,6 +59,7 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         ShipEffectContext context = new ShipEffectContext(shipData, member, variant, hullSize);
         sources.forEach(source -> source.beforeStatsApplied(context));
         ResolvedTree resolvedTree = ResolvedTree.of(context, StatBaseline.of(variant), DiminishingReturns.current(), sources);
+        WeaponSlotConversion.sync(variant, slotRules(resolvedTree));
         for (ResolvedTree.Entry entry : resolvedTree.entries()) {
             if (entry instanceof ResolvedTree.VanillaEntry vanillaEntry) {
                 vanillaEntry.effect().applyEffectsBeforeShipCreation(hullSize, stats, vanillaEntry.hullModId());
@@ -68,34 +72,37 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
                 effectEntry.effect().apply(stats, effectEntry.modId(), effectEntry.magnitude());
             }
         }
-        if (!hasHybridBallisticSlots(resolvedTree)) {
-            HybridBallisticSlots.restore(variant);
-        }
         if (isOpCostPass(stats)) return;
         sources.forEach(source -> source.afterStatsApplied(context, resolvedTree));
     }
 
-    public static void syncHybridBallisticSlots(FleetMemberAPI member, ShipVariantAPI variant) {
+    public static void syncSlotConversions(FleetMemberAPI member, ShipVariantAPI variant) {
         if (variant == null) {
             return;
         }
-        ShipSkillData shipData = ShipRecords.resolve(member, variant);
-        ResolvedTree resolvedTree = shipData == null ? null : ResolvedTree.of(new ShipEffectContext(shipData, member, variant, variant.getHullSize()),
-                StatBaseline.of(variant), DiminishingReturns.current());
-        if (resolvedTree != null && hasHybridBallisticSlots(resolvedTree)) {
-            HybridBallisticSlots.convert(variant);
-        } else {
-            HybridBallisticSlots.restore(variant);
-        }
+        ResolvedTree resolvedTree = resolve(ShipRecords.resolve(member, variant), member, variant);
+        WeaponSlotConversion.sync(variant, resolvedTree == null ? List.of() : slotRules(resolvedTree));
     }
 
-    private static boolean hasHybridBallisticSlots(ResolvedTree resolvedTree) {
+    public static Set<WeaponType> slotConversionConflicts(ShipSkillData shipData, ShipVariantAPI variant) {
+        ResolvedTree resolvedTree = variant == null ? null : resolve(shipData, null, variant);
+        return resolvedTree == null ? Set.of() : WeaponSlotConversion.conflicts(variant.getHullSpec(), slotRules(resolvedTree));
+    }
+
+    private static ResolvedTree resolve(ShipSkillData shipData, FleetMemberAPI member, ShipVariantAPI variant) {
+        return shipData == null ? null : ResolvedTree.of(new ShipEffectContext(shipData, member, variant, variant.getHullSize()),
+                StatBaseline.of(variant), DiminishingReturns.current());
+    }
+
+    static List<WeaponSlotConversion.Rule> slotRules(ResolvedTree resolvedTree) {
+        List<WeaponSlotConversion.Rule> rules = new ArrayList<>();
         for (ResolvedTree.Entry entry : resolvedTree.entries()) {
-            if (entry instanceof ResolvedTree.EffectEntry effectEntry && effectEntry.effect() == WeaponSkillEffect.BALLISTIC_SLOTS_HYBRID) {
-                return true;
+            WeaponSlotConversion.Rule rule = entry instanceof ResolvedTree.EffectEntry effectEntry ? SlotConversionBacking.ruleOf(effectEntry.effect()) : null;
+            if (rule != null) {
+                rules.add(rule);
             }
         }
-        return false;
+        return rules;
     }
 
     @Override

@@ -3,6 +3,7 @@ package exiledsector.ui.inspect;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -107,6 +108,7 @@ public final class ShipTreeSummaryRenderer {
         }
         renderPartLines(info, shipTree);
         renderModuleShare(info, moduleSharePercent);
+        renderSlotConflicts(info, shipTree);
 
         if (!bonusSummary.bonuses().isEmpty()) {
             VanillaText.addPara(info, Translation.styled("summary.bonuses"), SECTION_PAD, Misc.getTextColor());
@@ -133,6 +135,17 @@ public final class ShipTreeSummaryRenderer {
     private static void renderModuleShare(TooltipMakerAPI info, int moduleSharePercent) {
         if (moduleSharePercent > 0) {
             VanillaText.addPara(info, Translation.msg("summary.moduleShare").arg("percent", moduleSharePercent).styled(), LINE_PAD,
+                    Misc.getTextColor());
+        }
+    }
+
+    private static void renderSlotConflicts(TooltipMakerAPI info, ShipTreeLookup.ShipTree shipTree) {
+        List<StyledText> mountTypes = new ArrayList<>();
+        for (WeaponType weaponType : SkillTreeHullMod.slotConversionConflicts(shipTree.skillData(), shipTree.variant())) {
+            mountTypes.add(StyledText.styled(weaponType.getDisplayName(), Style.HIGHLIGHT));
+        }
+        if (!mountTypes.isEmpty()) {
+            VanillaText.addPara(info, Translation.msg("summary.slotConflict").arg("types", Translation.list(mountTypes)).styled(), LINE_PAD,
                     Misc.getTextColor());
         }
     }

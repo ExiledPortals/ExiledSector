@@ -18,6 +18,21 @@ A unique must do something no rolled modifier can. It changes how a build works 
 2. Faction ids are `navarchy_of_tania`, `nightcross`, `stargazer` and `rat_exotech`. The Abyss is `rat_abyssals` plus its biome factions (`rat_abyssals_deep`, `_harmony`, `_primordials`, `_serenity`, `_solitude`, `_wastes`), but not `rat_abyssals_sim`.
 3. [x] Give unique subroutines an optional radius, as Doctrine Archives have. The gated subroutines and Empty Shell Axion need it. Built: an optional `radius` column in `subroutines.csv` (`small`, `medium`, `large`), read for UNIQUE subroutines by `UniqueSubroutineRadii`; `SubroutineRadius` centres it on the socket, so the tree ring and the storage hover preview show it, and `Subroutine.kindLines` adds a radius line (shared `socketable.radiusLine` and `socketable.radius.*` keys, formerly Doctrine-only). `SubroutineDataRules` rejects an unknown size or a radius on another kind. The editor has a Radius picker on unique subroutines, written like the other optional columns. No shipped unique has a radius yet, and the radius has no effect until the gated and affinity mechanics read it. Tests in `DoctrineOverridesTest`, `ItemDataIntegrityTest`, the editor's `models.test.ts` and `itemsPage.test.tsx`.
 
+## Stages
+
+Each stage builds, tests and gets committed on its own. A framework stage adds the mechanic and its effects with no items. An item stage adds data and art.
+
+1. [x] Weapon slot conversion: generalise `HybridBallisticSlots` into ordered rules, make Dual-Feed Mounts one of them, add the slot effects the faction items need, and show a conflict in the ship summary. Built: `WeaponSlotConversion` (formerly `HybridBallisticSlots`) syncs a variant's hull spec copy to an ordered rule list, recording each slot's original type in a tag; `SlotConversionBacking` gives `BALLISTIC_SLOTS_HYBRID`, `ENERGY_SLOTS_BALLISTIC`, `BALLISTIC_SLOTS_ENERGY`, `MISSILE_SLOTS_ENERGY` and `SMALL_SLOTS_UNIVERSAL` their rules; `SkillTreeHullMod.syncSlotConversions` collects them from tree nodes and hull items alike; `UnfitWeapons` now checks every slot type; `ShipTreeSummaryRenderer` names conflicting mount types (`summary.slotConflict`). Superposition Mounts' extra OP cost for small weapons is left for its item stage. Tests in `WeaponSlotConversionTest`, `SkillTreeHullModSlotConversionTest` and `UnfitWeaponsTest`.
+2. [ ] Damage conversion, with its effects (EMP as a target included).
+3. [ ] Shield damage as soft flux, with its effects and the hull item eligibility check that keeps the Hardlight Veil and Shield Shunt apart.
+4. [ ] Item doubling, including the Tuning Nanoswarm reroll of its target.
+5. [ ] Mod-gated items: a `requires_mod` column (or per-mod files) for hull items and subroutines, honouring the mod's area switch, with editor support.
+6. [ ] Tania and Nightcross items from the families above: Black Hawk Breech Refit, Project Aria Retrofit, Fafnir Osmium Shell Stock, Ion Discharge Coils, Low Arc Shield Emitter Core, Hardlight Veil Projectors and Extended Warranty Contract, each with an art sheet.
+7. [ ] Stargazer items from the families above: Corrosion Lens Filter and Cosmic Shunt Array. Check the Stargazer art permission first.
+8. [ ] Affinity: the family, then Farige Blueprint Vault, Absence of Light, Empty Shell Axion and the affinity hull items. Waits on the affinity hull item decision. Root Conduit also waits on N.
+9. [ ] Gated subroutines and Phoenix Ash Archive. Waits on the gated subroutine decision.
+10. [ ] RAT Abyss and ExoTech items, after Lukas04 approves the names and art.
+
 ## Mechanic families
 
 Each family is built once as framework and then used by several items.
@@ -162,9 +177,9 @@ These need:
 
 - Root Conduit: what is N? How many can a ship socket?
 - Affinity hull items: should they stay seven single-line uniques, or share items? Should they also roll as explicit modifiers on rare bases?
-- Damage conversion: should EMP count as a conversion target at all, or only the four damage types?
 - Gated subroutines: is triple strength right? Should each condition get one subroutine, or should one subroutine roll its condition?
-- Should faction uniques also drop from the general pool at a lower weight?
+
+Decided: EMP is a conversion target, never a source. Faction uniques drop from the general pool at their normal weight, and at double weight from their faction's battles (groundwork step 1).
 
 ## Bind the vanilla uniques to their factions (built)
 

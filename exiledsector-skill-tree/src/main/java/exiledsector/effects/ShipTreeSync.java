@@ -7,7 +7,7 @@ import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.VariantSource;
-import exiledlib.skills.skilleffect.weapon.HybridBallisticSlots;
+import exiledlib.skills.skilleffect.weapon.WeaponSlotConversion;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.InstalledHullMods;
@@ -268,7 +268,7 @@ public final class ShipTreeSync {
         if (variant.hasHullMod(SkillTreeHullMod.ID) && !variant.getPermaMods().contains(SkillTreeHullMod.ID)) {
             variant.removeMod(SkillTreeHullMod.ID);
         }
-        HybridBallisticSlots.restore(variant);
+        WeaponSlotConversion.restore(variant);
     }
 
     static ShipVariantAPI ownedVariant(FleetMemberAPI member) {

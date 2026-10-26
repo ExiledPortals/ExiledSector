@@ -67,7 +67,7 @@ public final class ShipEditSession {
         FleetWideEffects.markPhaseFieldStale();
         member.setStatUpdateNeeded(true);
         member.updateStats();
-        SkillTreeHullMod.syncHybridBallisticSlots(member, changedVariant);
+        SkillTreeHullMod.syncSlotConversions(member, changedVariant);
         FighterBayOverflow.returnUnhousedWingsAndAnnounce(member, changedVariant, returnCargo);
         UnfitWeapons.returnUnfitWeaponsAndAnnounce(member, changedVariant, returnCargo);
         if (changedVariant.getHullSpec() != hullSpecBefore) {

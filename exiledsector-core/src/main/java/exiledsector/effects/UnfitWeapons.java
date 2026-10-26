@@ -3,7 +3,6 @@ package exiledsector.effects;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.WeaponGroupSpec;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
@@ -29,7 +28,7 @@ public final class UnfitWeapons {
         for (String slotId : variant.getNonBuiltInWeaponSlots()) {
             WeaponSlotAPI slot = variant.getSlot(slotId);
             WeaponSpecAPI weapon = variant.getWeaponSpec(slotId);
-            if (slot == null || weapon == null || slot.isBuiltIn() || slot.getWeaponType() != WeaponType.BALLISTIC || slot.weaponFits(weapon)) {
+            if (slot == null || weapon == null || slot.isBuiltIn() || slot.weaponFits(weapon)) {
                 continue;
             }
             String weaponId = variant.getWeaponId(slotId);

@@ -54,6 +54,7 @@
     "summary.more.other": "...and {count} more bonuses. Open the skill tree to see the full list.",
     "summary.diminished": "Bonuses reduced by diminishing returns: {stats}",
     "summary.moduleShare": "This ship's modules have <hl>{percent}%</hl> of its weapon, flux and defense bonuses.",
+    "summary.slotConflict": "More than one effect changes this ship's {types} mounts; only one of them applies.",
 
     "node.requires.req_civilian_hull": "Can only be allocated on civilian-grade hulls.",
     "node.requires.req_system_charges": "Can only be allocated on ships whose ship system or defense system uses charges.",

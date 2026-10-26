@@ -51,6 +51,7 @@
     "summary.more.other": "……另有{count}项加成。打开技能树查看完整列表。",
     "summary.diminished": "受收益递减影响的加成：{stats}",
     "summary.moduleShare": "本舰模块获得本舰武器、幅能和防御加成的<hl>{percent}%</hl>。",
+    "summary.slotConflict": "多个效果会改变本舰的{types}槽位，只有其中一个生效。",
 
     "node.requires.req_civilian_hull": "只能在民用级船体上分配。",
     "node.requires.req_system_charges": "只能在舰船系统或防御系统使用充能的舰船上分配。",

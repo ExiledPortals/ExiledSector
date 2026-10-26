@@ -14,16 +14,22 @@ public class RetypableTestSlot implements WeaponSlotAPI {
 
     private final String slotId;
     private final boolean builtIn;
+    private final WeaponSize slotSize;
     private WeaponType weaponType;
 
     public RetypableTestSlot(String slotId, WeaponType weaponType, boolean builtIn) {
+        this(slotId, weaponType, builtIn, WeaponSize.MEDIUM);
+    }
+
+    public RetypableTestSlot(String slotId, WeaponType weaponType, boolean builtIn, WeaponSize slotSize) {
         this.slotId = slotId;
         this.weaponType = weaponType;
         this.builtIn = builtIn;
+        this.slotSize = slotSize;
     }
 
     public RetypableTestSlot copy() {
-        return new RetypableTestSlot(slotId, weaponType, builtIn);
+        return new RetypableTestSlot(slotId, weaponType, builtIn, slotSize);
     }
 
     public void setWeaponType(WeaponType weaponType) {
@@ -72,7 +78,7 @@ public class RetypableTestSlot implements WeaponSlotAPI {
 
     @Override
     public WeaponSize getSlotSize() {
-        return WeaponSize.MEDIUM;
+        return slotSize;
     }
 
     @Override

@@ -69,9 +69,17 @@ class UnfitWeaponsTest {
     }
 
     @Test
-    void otherSlotTypesAndBuiltInSlotsAreLeftAlone() {
-        fitted("WS0001", WeaponType.HYBRID, false, "pulselaser", false);
-        fitted("WS0002", WeaponType.BALLISTIC, true, "pulselaser", false);
+    void aBallisticWeaponLeftInASlotThatIsEnergyAgainGoesBackToCargo() {
+        fitted("WS0001", WeaponType.ENERGY, false, "heavymauler", false);
+        fitted("WS0002", WeaponType.MISSILE, false, "harpoon", true);
+
+        assertEquals(List.of("heavymauler"), UnfitWeapons.returnUnfitWeapons(variant, cargo));
+        assertEquals(Map.of("WS0002", "harpoon"), fittedWeapons);
+    }
+
+    @Test
+    void builtInSlotsAreLeftAlone() {
+        fitted("WS0001", WeaponType.BALLISTIC, true, "pulselaser", false);
 
         assertTrue(UnfitWeapons.returnUnfitWeapons(variant, cargo).isEmpty());
         verify(cargo, never()).addWeapons(anyString(), anyInt());

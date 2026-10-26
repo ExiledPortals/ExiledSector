@@ -78,12 +78,14 @@ weapon effect from the ship's sources into a ballistic one before diminishing re
 energy range per sensor strength, Disintegration, Ion Arc and energy chains also accept ballistic weapons
 (`BallisticAsEnergy`). Vanilla and other mods' energy bonuses don't reach ballistics.
 
-## Hybrid ballistic slots
+## Weapon slot conversion
 
-`BALLISTIC_SLOTS_HYBRID` (Dual-Feed Mounts) gives the variant its own copy of the hull spec with every non-built-in
-ballistic slot retyped to hybrid (`HybridBallisticSlots`). Saves keep only the hull id, so the copy is rebuilt each
-time hull mods apply. `SkillTreeHullMod` swaps the slots back once the effect is gone, and `UnfitWeapons` returns
-weapons that no longer fit to cargo. After a tree edit, `ShipEditSession` swaps the refit screen's own variant at once
+Slot effects such as `BALLISTIC_SLOTS_HYBRID` (Dual-Feed Mounts) are rules: a slot type, an optional size and a new
+type (`SlotConversionBacking`). `SkillTreeHullMod` collects the rules of every tree node and hull item in order and
+`WeaponSlotConversion` gives the variant its own copy of the hull spec with each non-built-in slot retyped by the first
+rule matching its original type, so conversions never chain. Saves keep only the hull id, so the copy is rebuilt each
+time hull mods apply; slots swap back once their rule is gone, and `UnfitWeapons` returns weapons that no longer fit
+to cargo. The ship summary names mount types that more than one rule wants to change. After a tree edit, `ShipEditSession` swaps the refit screen's own variant at once
 and `RefitShipDisplay` rebuilds its slot buttons.
 
 ## Rise From the Ashes
