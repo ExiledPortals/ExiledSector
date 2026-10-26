@@ -72,7 +72,7 @@ final class SkillTreeNodeTooltipRenderer {
         SkillType effectiveType = node.resolveEffectiveType(skillData);
         boolean hidden = allocation.isHidden(node);
         boolean showOptionalHint = effectiveType == node.getType() && effectiveType.isOptional()
-                && effectiveType.getDescriptionOverride() == null;
+                && effectiveType.getFlavourText() == null;
         boolean expanded = TooltipExpansion.isExpanded();
         boolean allocatedSocket = node.getType().getTier() == SkillTier.SOCKET && skillData.isAllocated(node.getId());
         Item socketed = allocatedSocket ? ItemStore.lookup(skillData.getSocketedItem(node.getId())) : null;
@@ -150,16 +150,9 @@ final class SkillTreeNodeTooltipRenderer {
         if (flavours.containsKey(type.getId())) {
             return flavours.get(type.getId());
         }
-        List<String> paragraphs = new ArrayList<>();
-        StyledText description = type.getDescriptionText();
-        if (description != null && !description.isEmpty()) {
-            paragraphs.add(description.plain());
-        }
-        if (type.getFlavourText() != null) {
-            paragraphs.add(type.getFlavourText());
-        }
-        ItalicTextLabel flavour = paragraphs.isEmpty() ? null : new ItalicTextLabel(TOOLTIP_FLAVOUR_FONT_SIZE, Misc.getGrayColor())
-                .setWrapped(String.join("\n\n", paragraphs), NODE_TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT);
+        String flavourText = type.getFlavourText();
+        ItalicTextLabel flavour = flavourText == null ? null : new ItalicTextLabel(TOOLTIP_FLAVOUR_FONT_SIZE, Misc.getGrayColor())
+                .setWrapped(flavourText, NODE_TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT);
         flavours.put(type.getId(), flavour);
         return flavour;
     }

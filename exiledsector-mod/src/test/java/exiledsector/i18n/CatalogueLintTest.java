@@ -60,13 +60,13 @@ class CatalogueLintTest {
             JSONObject type = types.getJSONObject(i);
             String id = type.getString("id");
             sources.put("skillType." + id + ".name", type.getString("name"));
-            String description = type.optString("description", "");
-            if (!description.isEmpty()) {
-                sources.put("skillType." + id + ".description", description);
-            }
             String flavour = type.optString("flavour", "");
             if (!flavour.isEmpty()) {
                 sources.put("skillType." + id + ".flavour", flavour);
+            }
+            JSONArray effectText = type.optJSONArray("effectText");
+            for (int line = 0; effectText != null && line < effectText.length(); line++) {
+                sources.put("skillType." + id + ".effectText." + line, effectText.getString(line));
             }
         }
         for (String definitionFile : ITEM_DEFINITION_FILES) {
@@ -198,12 +198,12 @@ class CatalogueLintTest {
 
     @Test
     void checksDataTranslationsAgainstTheEnglishDataText() {
-        Map<String, String> sources = Map.of("skillType.armor.description", "Adds <good>armor</good>.");
+        Map<String, String> sources = Map.of("skillType.armor.effectText.0", "Adds <good>armor</good>.");
 
         assertEquals(List.of(), CatalogueLint.translationProblems("zh_CN", Map.of(),
-                Map.of("skillType.armor.description", "增加<good>装甲</good>。"), sources));
+                Map.of("skillType.armor.effectText.0", "增加<good>装甲</good>。"), sources));
         assertEquals(1, CatalogueLint.translationProblems("zh_CN", Map.of(),
-                Map.of("skillType.armor.description", "增加装甲。"), sources).size());
+                Map.of("skillType.armor.effectText.0", "增加装甲。"), sources).size());
     }
 
     @Test

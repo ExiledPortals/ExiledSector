@@ -133,7 +133,7 @@ class DoctrineArchiveDataTest {
         RealSkillData.load();
         for (SkillType type : SkillTree.getAllTypes().values()) {
             if (type.getId().startsWith("doctrine_")) {
-                String description = type.getDescriptionOverride();
+                String description = type.getFlavourSource();
                 assertNotNull(description, type.getId());
                 assertTrue(description.chars().noneMatch(Character::isDigit), type.getId() + ": " + description);
             }

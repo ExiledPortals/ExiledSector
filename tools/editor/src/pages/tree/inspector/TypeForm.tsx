@@ -35,6 +35,13 @@ function idListFromText(text: string): string[] {
     .filter(Boolean);
 }
 
+function effectTextLines(text: string): string[] {
+  return text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
 function numberOrZero(value: number): number {
   return Number.isNaN(value) ? 0 : value;
 }
@@ -501,7 +508,8 @@ export function TypeForm(props: TypeFormProps) {
           <Stack gap={6} key={section}>
             <CommitTextarea
               size="xs"
-              label={`Flavour text (optional, grey line under the title)${note}`}
+              label={`Flavour text (optional, italic text under the title)${note}`}
+              minRows={3}
               value={type.flavour ?? ''}
               onCommit={(text) => onEdit((draft) => {
                 draft.flavour = text.trim();
@@ -509,11 +517,10 @@ export function TypeForm(props: TypeFormProps) {
             />
             <CommitTextarea
               size="xs"
-              label={`Description override (optional)${note}`}
-              minRows={3}
-              value={type.description ?? ''}
+              label={`Effect text (optional, one effect line per line, for mechanics no effect describes)${note}`}
+              value={(type.effectText ?? []).join('\n')}
               onCommit={(text) => onEdit((draft) => {
-                draft.description = text.trim();
+                draft.effectText = effectTextLines(text);
               })}
             />
           </Stack>

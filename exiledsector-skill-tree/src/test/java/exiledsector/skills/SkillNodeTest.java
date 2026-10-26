@@ -2,6 +2,7 @@ package exiledsector.skills;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledlib.skills.DescriptionLine;
@@ -23,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -31,7 +33,7 @@ class SkillNodeTest {
     private MockedStatic<Global> globalMock;
 
     private static String description(SkillType type) {
-        return SkillNode.describeTypeLines(type, null).stream().map(DescriptionLine::plain).collect(Collectors.joining("\n\n"));
+        return SkillNode.describeMechanics(type, null).all().stream().map(DescriptionLine::plain).collect(Collectors.joining("\n\n"));
     }
 
     @BeforeEach
@@ -62,7 +64,6 @@ class SkillNodeTest {
         SkillType type = new SkillType.Builder("hull", "Hull", "graphics/hullmods/reinforced_bulkheads.png", SkillTier.SMALL)
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
                 .vanillaHullModId(null)
-                .descriptionOverride(null)
                 .todo(null)
                 .build();
         SkillNode node = new SkillNode("hull_1", type, List.of(), 0f, 0f);
@@ -86,7 +87,6 @@ class SkillNodeTest {
         SkillType type = new SkillType.Builder("heavyarmor", "Heavy Armor", "graphics/icons/notable_hullmods/heavy_armor.png", SkillTier.NOTABLE)
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.ARMOR_PERCENT, 15f), new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 5f)))
                 .vanillaHullModId(null)
-                .descriptionOverride(null)
                 .todo(null)
                 .build();
         SkillNode node = new SkillNode("heavyarmor_1", type, List.of(), 0f, 0f);
@@ -99,7 +99,6 @@ class SkillNodeTest {
         SkillType type = new SkillType.Builder("converted_hangar", "Converted Hangar", "graphics/icons/notable_hullmods/converted_hangar.png", SkillTier.KEYSTONE)
                 .effects(List.of(new SkillTypeEffect(FighterSkillEffect.FIGHTER_BAYS_FLAT, 1f), new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 5f)))
                 .vanillaHullModId(null)
-                .descriptionOverride(null)
                 .todo(null)
                 .build();
         SkillNode node = new SkillNode("converted_hangar_1", type, List.of(), 0f, 0f);
@@ -112,13 +111,13 @@ class SkillNodeTest {
     @Test
     void aSocketsLoreIsItsOnlyTextSoNothingSpoilsWhatCanBeInstalled() {
         SkillType type = new SkillType.Builder("socket", "Socket", "", SkillTier.SOCKET)
-                .descriptionOverride("An empty room.")
+                .flavour("An empty room.")
                 .build();
 
-        NodeDescription description = SkillNode.describeType(type, null);
+        NodeDescription description = SkillNode.describeMechanics(type, null);
 
-        assertEquals(List.of("An empty room."), description.effects().stream().map(DescriptionLine::plain).toList());
-        assertTrue(description.details().isEmpty());
+        assertEquals("An empty room.", type.getFlavourText());
+        assertTrue(description.all().isEmpty());
     }
 
     @Test
@@ -126,7 +125,6 @@ class SkillNodeTest {
         SkillType type = new SkillType.Builder("cosmetic", "Cosmetic", "graphics/hullmods/flux_coil_adjunct.png", SkillTier.SMALL)
                 .effects(List.of())
                 .vanillaHullModId(null)
-                .descriptionOverride(null)
                 .todo(null)
                 .build();
         SkillNode node = new SkillNode("cosmetic_1", type, List.of(), 0f, 0f);
@@ -135,16 +133,84 @@ class SkillNodeTest {
     }
 
     @Test
-    void descriptionOverrideIsFollowedByEffectLines() {
+    void flavourIsNotAnEffectLine() {
         SkillType type = new SkillType.Builder("hull", "Hull", "graphics/hullmods/reinforced_bulkheads.png", SkillTier.SMALL)
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
                 .vanillaHullModId(null)
-                .descriptionOverride("Custom flavor text.")
+                .flavour("Custom flavor text.")
                 .todo(null)
                 .build();
         SkillNode node = new SkillNode("hull_1", type, List.of(), 0f, 0f);
 
-        assertEquals("Custom flavor text.\n\n10% increased hull points.", description(node.getType()));
+        assertEquals("10% increased hull points.", description(node.getType()));
+    }
+
+    @Test
+    void effectTextFollowsTheGeneratedEffectLines() {
+        SkillType type = new SkillType.Builder("hull", "Hull", "a.png", SkillTier.SMALL)
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
+                .effectText(List.of("Holds <hl>one</hl> subroutine."))
+                .build();
+
+        List<DescriptionLine> effects = SkillNode.describeMechanics(type, null).effects();
+
+        assertEquals(List.of("10% increased hull points.", "Holds one subroutine."), effects.stream().map(DescriptionLine::plain).toList());
+        assertEquals("Holds <hl>one</hl> subroutine.", effects.get(1).text().toMarkup());
+    }
+
+    @Test
+    void aVanillaPassthroughTypeDescribesItsHullModWithTheHullModsOwnText() {
+        HullModEffect effect = mock(HullModEffect.class);
+        when(effect.shouldAddDescriptionToTooltip(HullSize.FRIGATE, null, true)).thenReturn(true);
+        when(effect.getDescriptionParam(0, HullSize.FRIGATE, null)).thenReturn("50%");
+        when(effect.getDescriptionParam(1, HullSize.FRIGATE, null)).thenReturn("3");
+        stubHullModNames();
+        VanillaHullModLines.install(source("Links come first.\n\nRaises damage by %s.\r\n\r\nWorks %s times. ", effect));
+        try {
+            SkillType type = new SkillType.Builder("dta", "DTA", "a.png", SkillTier.KEYSTONE).vanillaHullModId("dta").build();
+
+            List<DescriptionLine> effects = SkillNode.describeMechanics(type, HullSize.FRIGATE).effects();
+
+            assertEquals(List.of("Links come first.", "Raises damage by <hl>50%</hl>.", "Works <hl>3</hl> times."),
+                    effects.stream().map(line -> line.text().toMarkup()).toList());
+        } finally {
+            VanillaHullModLines.install(null);
+        }
+    }
+
+    @Test
+    void aHullModThatBuildsItsOwnTooltipAddsNoVanillaLines() {
+        stubHullModNames();
+        VanillaHullModLines.install(source("<tooltip created in the script>", mock(HullModEffect.class)));
+        try {
+            SkillType type = new SkillType.Builder("rangefinder", "Rangefinder", "a.png", SkillTier.KEYSTONE).vanillaHullModId("rangefinder").build();
+
+            assertTrue(SkillNode.describeMechanics(type, HullSize.FRIGATE).effects().isEmpty());
+        } finally {
+            VanillaHullModLines.install(null);
+        }
+    }
+
+    private void stubHullModNames() {
+        SettingsAPI settings = mock(SettingsAPI.class);
+        HullModSpecAPI spec = mock(HullModSpecAPI.class);
+        when(spec.getDisplayName()).thenReturn("Hullmod");
+        when(settings.getHullModSpec(anyString())).thenReturn(spec);
+        globalMock.when(Global::getSettings).thenReturn(settings);
+    }
+
+    private static VanillaHullModLines.Source source(String descriptionFormat, HullModEffect effect) {
+        return new VanillaHullModLines.Source() {
+            @Override
+            public String descriptionFormat(String hullModId) {
+                return descriptionFormat;
+            }
+
+            @Override
+            public HullModEffect effect(String hullModId) {
+                return effect;
+            }
+        };
     }
 
     @Test
@@ -158,7 +224,6 @@ class SkillNodeTest {
         SkillType type = new SkillType.Builder("escort_package", "Escort Package", "graphics/icons/notable_hullmods/escort_package.png", SkillTier.NOTABLE)
                 .effects(List.of())
                 .vanillaHullModId("escort_package")
-                .descriptionOverride(null)
                 .todo("Needs a real mechanic")
                 .build();
         SkillNode node = new SkillNode("escort_package_1", type, List.of(), 0f, 0f);
@@ -178,7 +243,6 @@ class SkillNodeTest {
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.ARMOR_PERCENT, 15f)))
                 .hullSizeEffects(List.of())
                 .vanillaHullModId(null)
-                .descriptionOverride(null)
                 .todo(null)
                 .optionalOptionIds(List.of())
                 .exclusiveHullModIds(List.of("armoredcladding"))
@@ -201,7 +265,6 @@ class SkillNodeTest {
                 .effects(List.of())
                 .hullSizeEffects(List.of())
                 .vanillaHullModId(null)
-                .descriptionOverride(null)
                 .todo(null)
                 .optionalOptionIds(List.of())
                 .exclusiveHullModIds(List.of("unknown_hullmod", "escort_package"))
@@ -216,7 +279,6 @@ class SkillNodeTest {
         SkillType other = new SkillType.Builder("adaptiveshields", "Shield Conversion - Omni", "b.png", SkillTier.KEYSTONE)
                 .effects(List.of())
                 .vanillaHullModId(null)
-                .descriptionOverride(null)
                 .todo(null)
                 .build();
         SkillTree.registerType(other);
@@ -225,7 +287,6 @@ class SkillNodeTest {
                 .effects(List.of())
                 .hullSizeEffects(List.of())
                 .vanillaHullModId(null)
-                .descriptionOverride(null)
                 .todo(null)
                 .optionalOptionIds(List.of())
                 .exclusiveHullModIds(List.of())
@@ -253,7 +314,6 @@ class SkillNodeTest {
                 .effects(List.of())
                 .hullSizeEffects(List.of())
                 .vanillaHullModId(null)
-                .descriptionOverride(null)
                 .todo(null)
                 .optionalOptionIds(List.of())
                 .exclusiveHullModIds(List.of())
@@ -275,7 +335,6 @@ class SkillNodeTest {
         SkillType other = new SkillType.Builder("adaptiveshields", "Shield Conversion - Omni", "b.png", SkillTier.KEYSTONE)
                 .effects(List.of())
                 .vanillaHullModId(null)
-                .descriptionOverride(null)
                 .todo(null)
                 .build();
         SkillTree.registerType(other);
@@ -284,7 +343,6 @@ class SkillNodeTest {
                 .effects(List.of())
                 .hullSizeEffects(List.of())
                 .vanillaHullModId(null)
-                .descriptionOverride(null)
                 .todo(null)
                 .optionalOptionIds(List.of())
                 .exclusiveHullModIds(List.of("escort_package"))
@@ -323,7 +381,6 @@ class SkillNodeTest {
         SkillType other = new SkillType.Builder("shield_shunt", "Shield Shunt", "b.png", SkillTier.NOTABLE)
                 .effects(List.of())
                 .vanillaHullModId(null)
-                .descriptionOverride(null)
                 .todo(null)
                 .build();
         SkillTree.registerType(other);
@@ -332,7 +389,6 @@ class SkillNodeTest {
                 .effects(List.of())
                 .hullSizeEffects(List.of())
                 .vanillaHullModId(null)
-                .descriptionOverride(null)
                 .todo(null)
                 .optionalOptionIds(List.of())
                 .exclusiveHullModIds(List.of("shield_shunt"))
@@ -348,7 +404,6 @@ class SkillNodeTest {
         SkillType type = new SkillType.Builder("hull", "Hull", "graphics/hullmods/reinforced_bulkheads.png", SkillTier.SMALL)
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
                 .vanillaHullModId(null)
-                .descriptionOverride(null)
                 .todo(null)
                 .build();
         SkillNode node = new SkillNode("hull_1", type, List.of(), 0f, 0f);
@@ -362,7 +417,6 @@ class SkillNodeTest {
                 .effects(List.of())
                 .hullSizeEffects(List.of())
                 .vanillaHullModId(null)
-                .descriptionOverride(null)
                 .todo(null)
                 .optionalOptionIds(List.of("hull", "armor"))
                 .build();
@@ -377,14 +431,12 @@ class SkillNodeTest {
                 .effects(List.of())
                 .hullSizeEffects(List.of())
                 .vanillaHullModId(null)
-                .descriptionOverride(null)
                 .todo(null)
                 .optionalOptionIds(List.of("hull"))
                 .build();
         SkillType hullOption = new SkillType.Builder("hull", "Hull", "graphics/hullmods/reinforced_bulkheads.png", SkillTier.SMALL)
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
                 .vanillaHullModId(null)
-                .descriptionOverride(null)
                 .todo(null)
                 .build();
         SkillTree.registerType(hullOption);
@@ -494,7 +546,7 @@ class SkillNodeTest {
                 .exclusiveHullModIds(List.of("armoredcladding"))
                 .build();
 
-        NodeDescription description = SkillNode.describeType(type, null);
+        NodeDescription description = SkillNode.describeMechanics(type, null);
 
         assertEquals(List.of("15% increased armor."), description.effects().stream().map(DescriptionLine::plain).toList());
         assertEquals(List.of("Restricted to hull size: Frigate.", "Mutually exclusive with hullmod:\n• Armored Cladding"),

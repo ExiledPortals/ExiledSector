@@ -256,7 +256,7 @@ export class DescribeService {
     }
     const moduleTarget = path.join(HELPER_MODULE, 'target');
     const classpath = `${path.join(moduleTarget, 'classes')};${path.join(moduleTarget, 'test-classes')};${fs.readFileSync(this.classpathFile, 'utf8').trim()}`;
-    const helper = spawn(path.join(javaHome, 'bin', 'java.exe'), ['-cp', classpath, HELPER_CLASS], {
+    const helper = spawn(path.join(javaHome, 'bin', 'java.exe'), ['-cp', classpath, HELPER_CLASS, this.paths.vanillaCoreDir], {
       cwd: this.paths.projectRoot,
       windowsHide: true,
     });

@@ -45,7 +45,7 @@ export interface SkillType {
   exclusiveSkillTypes?: string[];
   optionalOptions?: string[];
   flavour?: string;
-  description?: string;
+  effectText?: string[];
   todo?: string;
   tags?: string[];
   moduleShare?: string;

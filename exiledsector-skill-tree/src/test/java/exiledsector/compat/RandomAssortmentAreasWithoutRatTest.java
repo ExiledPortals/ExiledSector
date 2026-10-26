@@ -102,7 +102,7 @@ class RandomAssortmentAreasWithoutRatTest {
         List<String> leaks = new ArrayList<>();
         for (SkillNode node : ratAreaNodes()) {
             for (HullSize hullSize : new HullSize[]{null, HullSize.FRIGATE, HullSize.CAPITAL_SHIP}) {
-                for (DescriptionLine line : SkillNode.describeType(node.getType(), hullSize).all()) {
+                for (DescriptionLine line : SkillNode.describeMechanics(node.getType(), hullSize).all()) {
                     if (line.text().plain().contains("rat_")) {
                         leaks.add(node.getId() + " (" + hullSize + "): " + line.text().plain());
                     }

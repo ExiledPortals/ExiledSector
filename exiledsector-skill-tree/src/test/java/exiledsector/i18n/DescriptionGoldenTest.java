@@ -98,8 +98,11 @@ class DescriptionGoldenTest {
         }
         secondInCommandEnabled = true;
         for (SkillType type : sortedTypes()) {
+            if (type.getFlavourText() != null) {
+                addLine(lines, "flavour|" + type.getId(), StyledText.of(type.getFlavourText()), false);
+            }
             for (HullSize hullSize : HULL_SIZES) {
-                NodeDescription description = SkillNode.describeType(type, hullSize);
+                NodeDescription description = SkillNode.describeMechanics(type, hullSize);
                 for (int i = 0; i < description.effects().size(); i++) {
                     DescriptionLine line = description.effects().get(i);
                     addLine(lines, "type|" + type.getId() + "|" + hullSize + "|" + i, line.text(), line.lowerIsBetter());

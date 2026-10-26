@@ -121,8 +121,8 @@ export function serializeType(type: SkillType): Record<string, unknown> {
   if (type.flavour) {
     out.flavour = type.flavour;
   }
-  if (type.description) {
-    out.description = type.description;
+  if (type.effectText?.length) {
+    out.effectText = type.effectText;
   }
   if (type.todo) {
     out.todo = type.todo;

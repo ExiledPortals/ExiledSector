@@ -134,7 +134,7 @@ export function TooltipPreview({ strings, selectedKey, editedKeys, onSelectKey }
       {preview?.kind === 'content' ? (
         <Stack gap={4}>
           <Text size="xs" c="dimmed">
-            Strings used by this tooltip (click one to edit it). Type names, descriptions and flavour come from the type itself; edit those on the Skill tree page.
+            Strings used by this tooltip (click one to edit it). Type names, flavour and effect text come from the type itself; edit those on the Skill tree page.
           </Text>
           <Group gap={6}>
             {preview.keys.map((key) => (

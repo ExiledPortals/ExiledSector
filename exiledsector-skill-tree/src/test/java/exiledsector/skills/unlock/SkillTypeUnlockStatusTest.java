@@ -70,7 +70,6 @@ class SkillTypeUnlockStatusTest {
                 .effects(List.of())
                 .hullSizeEffects(List.of())
                 .vanillaHullModId(null)
-                .descriptionOverride(null)
                 .todo(null)
                 .optionalOptionIds(List.of())
                 .exclusiveHullModIds(List.of())

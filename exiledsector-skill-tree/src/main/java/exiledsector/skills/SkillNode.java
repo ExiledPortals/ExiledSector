@@ -61,18 +61,6 @@ public class SkillNode extends SkillTreeObject {
         return type.getIconPath();
     }
 
-    public static List<DescriptionLine> describeTypeLines(SkillType type, HullSize hullSize) {
-        return describeType(type, hullSize).all();
-    }
-
-    public static NodeDescription describeType(SkillType type, HullSize hullSize) {
-        NodeDescription mechanics = describeMechanics(type, hullSize);
-        List<DescriptionLine> effects = new ArrayList<>();
-        addLine(effects, type.getDescriptionText(), false);
-        effects.addAll(mechanics.effects());
-        return new NodeDescription(effects, mechanics.details());
-    }
-
     public static NodeDescription describeMechanics(SkillType type, HullSize hullSize) {
         List<DescriptionLine> effects = describeEffects(type, hullSize);
 
@@ -96,6 +84,14 @@ public class SkillNode extends SkillTreeObject {
         List<DescriptionLine> effects = new ArrayList<>();
         for (SkillTypeEffect effect : WeaponEffectTooltipAggregator.collapse(describedEffects(type, hullSize))) {
             addLine(effects, effect.effect().description(effect.magnitude(), hullSize), effect.effect().invertsDescriptionColours());
+        }
+        if (type.getVanillaHullModId() != null) {
+            for (StyledText line : VanillaHullModLines.describe(type.getVanillaHullModId(), hullSize)) {
+                addLine(effects, line, false);
+            }
+        }
+        for (StyledText line : type.getEffectTextLines()) {
+            addLine(effects, line, false);
         }
         addLine(effects, describeTemporaryDuration(type), false);
         return effects;

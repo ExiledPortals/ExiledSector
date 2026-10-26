@@ -63,10 +63,10 @@ public final class EditorDescriber {
             return new JSONObject().put("error", "Unknown or invalid type \"" + request.getString("typeId") + "\"");
         }
         HullSize hullSize = request.isNull("hullSize") ? null : HullSize.valueOf(request.getString("hullSize"));
-        boolean optionalHint = type.isOptional() && type.getDescriptionOverride() == null;
+        boolean optionalHint = type.isOptional() && type.getFlavourText() == null;
         NodeDescription description = optionalHint
                 ? new NodeDescription(List.of(new DescriptionLine(Translation.styled("ui.node.optionalHint"), false)), List.of())
-                : SkillNode.describeType(type, hullSize);
+                : SkillNode.describeMechanics(type, hullSize);
         return new JSONObject()
                 .put("title", type.getDisplayName())
                 .put("flavour", type.getFlavourText() == null ? JSONObject.NULL : type.getFlavourText())

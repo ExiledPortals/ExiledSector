@@ -30,8 +30,8 @@ public class SkillType {
     private final SkillItemCost itemCost;
     private final Float temporaryAfterDeploymentSeconds;
     private final Set<HullSize> requiredHullSizes;
-    private final String descriptionOverride;
-    private final String flavourOverride;
+    private final String flavour;
+    private final List<String> effectText;
     private final String todo;
     private final List<String> optionalOptionIds;
     private final Set<String> optionalOptionIdSet;
@@ -56,8 +56,8 @@ public class SkillType {
         this.temporaryAfterDeploymentSeconds = builder.temporaryAfterDeploymentSeconds;
         this.requiredHullSizes = builder.requiredHullSizes == null || builder.requiredHullSizes.isEmpty()
                 ? Collections.emptySet() : Collections.unmodifiableSet(EnumSet.copyOf(builder.requiredHullSizes));
-        this.descriptionOverride = builder.descriptionOverride;
-        this.flavourOverride = builder.flavourOverride;
+        this.flavour = builder.flavour == null || builder.flavour.isBlank() ? null : builder.flavour;
+        this.effectText = builder.effectText == null ? Collections.emptyList() : builder.effectText;
         this.todo = builder.todo;
         this.optionalOptionIds = builder.optionalOptionIds == null ? Collections.emptyList() : builder.optionalOptionIds;
         this.optionalOptionIdSet = Collections.unmodifiableSet(new HashSet<>(optionalOptionIds));
@@ -82,8 +82,8 @@ public class SkillType {
         private SkillItemCost itemCost;
         private Float temporaryAfterDeploymentSeconds;
         private Collection<HullSize> requiredHullSizes;
-        private String descriptionOverride;
-        private String flavourOverride;
+        private String flavour;
+        private List<String> effectText = Collections.emptyList();
         private String todo;
         private List<String> optionalOptionIds = Collections.emptyList();
         private List<String> exclusiveHullModIds = Collections.emptyList();
@@ -130,13 +130,13 @@ public class SkillType {
             return this;
         }
 
-        public Builder descriptionOverride(String descriptionOverride) {
-            this.descriptionOverride = descriptionOverride;
+        public Builder flavour(String flavour) {
+            this.flavour = flavour;
             return this;
         }
 
-        public Builder flavourOverride(String flavourOverride) {
-            this.flavourOverride = flavourOverride;
+        public Builder effectText(List<String> effectText) {
+            this.effectText = effectText;
             return this;
         }
 
@@ -197,12 +197,20 @@ public class SkillType {
         return displayName;
     }
 
-    public StyledText getDescriptionText() {
-        return Translation.dataStyled(KEY_PREFIX + id + ".description", descriptionOverride);
+    public String getFlavourText() {
+        return flavour == null ? null : Translation.data(KEY_PREFIX + id + ".flavour", flavour);
     }
 
-    public String getFlavourText() {
-        return flavourOverride == null || flavourOverride.isBlank() ? null : Translation.data(KEY_PREFIX + id + ".flavour", flavourOverride);
+    public String getFlavourSource() {
+        return flavour;
+    }
+
+    public List<StyledText> getEffectTextLines() {
+        List<StyledText> lines = new ArrayList<>(effectText.size());
+        for (int index = 0; index < effectText.size(); index++) {
+            lines.add(Translation.dataStyled(KEY_PREFIX + id + ".effectText." + index, effectText.get(index)));
+        }
+        return lines;
     }
 
     public String getIconPath() {
@@ -235,10 +243,6 @@ public class SkillType {
 
     public boolean allowsHullSize(HullSize hullSize) {
         return requiredHullSizes.isEmpty() || requiredHullSizes.contains(hullSize);
-    }
-
-    public String getDescriptionOverride() {
-        return descriptionOverride;
     }
 
     public String getTodo() {

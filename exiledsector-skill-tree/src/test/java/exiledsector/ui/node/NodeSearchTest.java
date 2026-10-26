@@ -110,7 +110,7 @@ class NodeSearchTest {
         I18n.install(RealCatalogue.english());
         SkillType type = new SkillType.Builder("bulkheads", "Bulkheads", "", SkillTier.SMALL)
                 .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f)))
-                .descriptionOverride("The crew welded spare plating everywhere.")
+                .flavour("The crew welded spare plating everywhere.")
                 .build();
         SkillNode node = new SkillNode("bulkheads_1", type, List.of(), 0f, 0f);
         NodeSearch search = new NodeSearch();

@@ -3,6 +3,7 @@ package exiledsector.skills.loader;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledlib.i18n.StyledText;
 import exiledlib.skills.ShipHullSizes;
 import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
 import exiledsector.skills.ModuleShareOverride;
@@ -112,17 +113,17 @@ class SkillTypeLoaderTest {
     }
 
     @Test
-    void parsesDescriptionOverride() throws Exception {
+    void parsesEffectTextLines() throws Exception {
         JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
                 + "\"id\": \"hull\","
                 + "\"name\": \"Hull\","
                 + "\"icon\": \"a.png\","
-                + "\"description\": \"Custom flavor text.\""
+                + "\"effectText\": [\"Holds one subroutine.\", \"Ctrl-click to travel.\"]"
                 + "} ] }");
 
         SkillType hull = SkillTypeLoader.parseSkillTypes(root).get("hull");
 
-        assertEquals("Custom flavor text.", hull.getDescriptionOverride());
+        assertEquals(List.of("Holds one subroutine.", "Ctrl-click to travel."), hull.getEffectTextLines().stream().map(StyledText::plain).toList());
     }
 
     @Test

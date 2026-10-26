@@ -260,7 +260,7 @@ class SubroutineCreationRollsTest {
     @Test
     void theExpandedTooltipListsOnlyTheEffectsOfEachAllocatedNode() {
         SkillType keystone = new SkillType.Builder("test_keystone", "Safety Overrides", "", SkillTier.KEYSTONE)
-                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f))).descriptionOverride("Crew notes").build();
+                .effects(List.of(new SkillTypeEffect(DefenseSkillEffect.HULL_PERCENT, 10f))).flavour("Crew notes").build();
         SkillTree.register(new SkillNode("notable_a", keystone, List.of(), 0f, 0f));
         SubroutineNodePools.use(SubroutineKind.MODSPEC_CACHE, definition -> List.of("notable_a", "removed_node"));
         Subroutine volume = stored(VOLUME, 1L);

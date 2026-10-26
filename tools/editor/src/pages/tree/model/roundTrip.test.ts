@@ -45,6 +45,14 @@ describe('module share serialisation', () => {
   });
 });
 
+describe('text serialisation', () => {
+  it('writes the effect text after the flavour and leaves an empty list out', () => {
+    const base = { id: 'a', name: 'A', icon: '', flavour: 'Old steel.', tags: ['armor'] };
+    expect(Object.keys(serializeType({ ...base, effectText: ['Holds one subroutine.'] }))).toEqual(['id', 'name', 'icon', 'flavour', 'effectText', 'tags']);
+    expect(serializeType({ ...base, effectText: [] })).not.toHaveProperty('effectText');
+  });
+});
+
 describe('decoration serialisation', () => {
   const typesText = JSON.stringify({ skillTypes: [{ id: 'small', name: 'Small', icon: '' }] });
   const nodes = [{ id: 'a', type: 'small', connectedTo: [], x: 0, y: 0 }];

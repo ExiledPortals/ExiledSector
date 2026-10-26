@@ -14,6 +14,10 @@ Write the shortest line that tells the player what happens. Don't over-explain a
 - Don't repeat what the UI already shows elsewhere, such as rarity, where an item is used, or the item's own name.
 - Describe an outcome rather than listing every case when the cases don't help the player decide: "Corrupts a Star Chart, modifying it unpredictably."
 
+## Flavour and effect lines
+
+A skill type's `flavour` is shown in grey italics under the title and never states a mechanic. Every mechanic is a plain effect line. Most are generated from the type's skill effects. A vanilla hullmod node (`vanillaHullMod`) also shows that hullmod's own description with its values filled in. Anything else goes in the type's `effectText` list, one line each, written to these rules.
+
 ## Percentages: increased/reduced vs more/less
 
 Use "increased" and "reduced" when the value is summed with every other source of the same stat before it is applied. Several 10% increased sources make 20% increased, applied once to the base.

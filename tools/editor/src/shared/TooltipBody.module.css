@@ -22,6 +22,7 @@
   font-style: italic;
   font-size: 12px;
   margin-bottom: 6px;
+  white-space: pre-wrap;
 }
 
 .line {

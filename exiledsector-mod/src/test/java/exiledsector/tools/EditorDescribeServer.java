@@ -7,6 +7,7 @@ import exiledsector.ExiledSector;
 import exiledsector.charts.StarChartsDomain;
 import exiledsector.items.HullUpgradesDomain;
 import exiledsector.skills.SkillTreeDomain;
+import exiledsector.skills.VanillaHullModLines;
 import exiledsector.skills.npc.RealSkillData;
 
 import java.io.BufferedReader;
@@ -15,6 +16,8 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 public final class EditorDescribeServer {
@@ -29,6 +32,9 @@ public final class EditorDescribeServer {
         try (HeadlessGameText ignored = HeadlessGameText.install(() -> true)) {
             I18n.install(RealCatalogue.english());
             RealSkillData.load();
+            if (args.length > 0 && Files.isRegularFile(Path.of(args[0], "data/hullmods/hull_mods.csv"))) {
+                VanillaHullModLines.install(VanillaHullModCsv.read(Path.of(args[0])));
+            }
             EditorDescriber describer = new EditorDescriber();
             BufferedReader requests = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.UTF_8));
             protocolOut.println("{\"ready\":true}");
