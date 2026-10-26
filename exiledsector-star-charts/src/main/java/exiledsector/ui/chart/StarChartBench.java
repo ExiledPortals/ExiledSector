@@ -203,7 +203,17 @@ public final class StarChartBench implements BenchModeSupport {
                 public void pressedInside() {
                     listener.pressedInside();
                 }
+
+                @Override
+                public void disassembled() {
+                    listener.storeChanged();
+                }
             }, StarChartBrowser.movedNotice(moved));
+        }
+
+        @Override
+        public boolean escape() {
+            return storagePanel != null && storagePanel.escape();
         }
 
         @Override

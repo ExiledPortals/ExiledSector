@@ -44,6 +44,9 @@ public interface BenchModeSupport {
         void closed();
 
         void pressedInside();
+
+        default void storeChanged() {
+        }
     }
 
     record OpenTarget(Object target, Supplier<List<String>> confirmLines) {
@@ -61,6 +64,10 @@ public interface BenchModeSupport {
         void changed(Item loaded);
 
         void refresh();
+
+        default boolean escape() {
+            return false;
+        }
 
         void close();
 

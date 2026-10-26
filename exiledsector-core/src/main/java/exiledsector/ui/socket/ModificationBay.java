@@ -215,6 +215,13 @@ public final class ModificationBay {
             public void pressedInside() {
                 bayListener.pressedInside();
             }
+
+            @Override
+            public void storeChanged() {
+                if (benchPanel != null) {
+                    benchPanel.refresh();
+                }
+            }
         });
     }
 
@@ -301,6 +308,9 @@ public final class ModificationBay {
             return true;
         }
         if (storagePanel != null && storagePanel.escape()) {
+            return true;
+        }
+        if (modePicker != null && modePicker.escape()) {
             return true;
         }
         if (drawer && pickerOpen()) {

@@ -16,6 +16,10 @@ public final class ItemDisassembly {
         return disassemble(item, materials, ItemStore.get(), ShipSkillDataManager.all());
     }
 
+    public static int disassemble(Item item, CraftingMaterials materials, ItemStore store) {
+        return store == null ? 0 : disassemble(item, materials, store, ShipSkillDataManager.all());
+    }
+
     static int disassemble(Item item, CraftingMaterials materials, ItemStore store, Map<String, ShipSkillData> shipDataById) {
         if (item == null ||SocketCustody.isInstalled(shipDataById, item) || !store.remove(item)) {
             return 0;
