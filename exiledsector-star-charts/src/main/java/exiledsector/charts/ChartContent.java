@@ -1,5 +1,7 @@
 package exiledsector.charts;
 
+import exiledsector.charts.objective.ChartObjective;
+
 import java.util.List;
 
 public record ChartContent(int tier, String factionId, ChartObjective objective, List<String> targetIds, String bossFleetId,

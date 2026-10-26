@@ -64,7 +64,7 @@ public final class ChartSystemFactory {
         return system;
     }
 
-    static void ensureIsolationTags(StarSystemAPI system) {
+    public static void ensureIsolationTags(StarSystemAPI system) {
         for (String tag : ISOLATION_TAGS) {
             if (!system.hasTag(tag)) {
                 system.addTag(tag);

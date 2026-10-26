@@ -5,6 +5,8 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
 import exiledlib.MockSector;
+import exiledsector.charts.objective.ChartObjective;
+import exiledsector.charts.objective.ChartObjectiveIntel;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

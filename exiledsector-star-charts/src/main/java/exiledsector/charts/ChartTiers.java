@@ -138,7 +138,7 @@ public final class ChartTiers {
         return Math.round(level * (1f + strengthBonusPercent / ChartTier.PERCENT));
     }
 
-    static void resetForTests() {
+    public static void resetForTests() {
         tiers = Map.of();
         colonyItemChances = Map.of();
     }

@@ -15,6 +15,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.campaign.procgen.StarAge;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.run.cleanup.ChartUsedNames;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -101,14 +102,14 @@ public final class ChartLayoutGenerator {
         return StarSystemType.SINGLE;
     }
 
-    static Random derivedRandom(long seed, long salt) {
+    public static Random derivedRandom(long seed, long salt) {
         long mixed = seed ^ salt;
         mixed = (mixed ^ (mixed >>> 30)) * 0xbf58476d1ce4e5b9L;
         mixed = (mixed ^ (mixed >>> 27)) * 0x94d049bb133111ebL;
         return new Random(mixed ^ (mixed >>> 31));
     }
 
-    static StarAge pickAge(long seed) {
+    public static StarAge pickAge(long seed) {
         return AGES.get(derivedRandom(seed, AGE_SALT).nextInt(AGES.size()));
     }
 
@@ -224,7 +225,7 @@ public final class ChartLayoutGenerator {
         failureReported = false;
     }
 
-    static void resetForTests() {
+    public static void resetForTests() {
         engine = VANILLA_ENGINE;
         failureReported = false;
     }

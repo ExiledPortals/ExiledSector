@@ -24,7 +24,7 @@ import exiledsector.items.StarChartFixtures;
 import exiledsector.charts.ChartContent;
 import exiledsector.charts.ChartDrops;
 import exiledsector.charts.ChartGenContext;
-import exiledsector.charts.ChartObjective;
+import exiledsector.charts.objective.ChartObjective;
 import exiledsector.charts.ChartRun;
 import exiledsector.charts.ChartRuns;
 import com.fs.starfarer.api.campaign.SpecialItemData;

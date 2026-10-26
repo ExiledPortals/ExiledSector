@@ -25,7 +25,7 @@ public final class ChartSkirmishes {
         return system != null && pushCommander(system);
     }
 
-    static boolean pushCommander(StarSystemAPI system) {
+    public static boolean pushCommander(StarSystemAPI system) {
         CampaignFleetAPI commander = null;
         CampaignFleetAPI station = null;
         for (CampaignFleetAPI fleet : system.getFleets()) {

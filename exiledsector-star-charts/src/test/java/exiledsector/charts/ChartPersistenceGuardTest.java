@@ -5,10 +5,11 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.thoughtworks.xstream.XStream;
-import exiledsector.charts.anomaly.BreachCorePlugin;
-import exiledsector.charts.anomaly.BreachSupplyBuff;
-import exiledsector.charts.anomaly.BreachTerrainPlugin;
+import exiledsector.charts.anomaly.breach.BreachCorePlugin;
+import exiledsector.charts.anomaly.breach.BreachSupplyBuff;
+import exiledsector.charts.anomaly.breach.BreachTerrainPlugin;
 import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.objective.ChartObjectiveIntel;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;

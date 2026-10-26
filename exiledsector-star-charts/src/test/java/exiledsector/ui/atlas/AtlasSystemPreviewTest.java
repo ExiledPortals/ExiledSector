@@ -1,7 +1,7 @@
 package exiledsector.ui.atlas;
 
-import exiledsector.charts.ChartSystemSketch;
-import exiledsector.charts.ChartSystemSketch.Body;
+import exiledsector.charts.layout.sketch.ChartSystemSketch;
+import exiledsector.charts.layout.sketch.ChartSystemSketch.Body;
 import exiledsector.ui.node.NodeMetrics;
 import exiledsector.ui.node.NodeRingArt;
 import org.junit.jupiter.api.Test;

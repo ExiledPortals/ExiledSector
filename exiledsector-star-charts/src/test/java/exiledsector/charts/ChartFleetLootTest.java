@@ -13,6 +13,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec;
 import exiledlib.MockSector;
 import exiledsector.charts.ChartGenContext.AppliedEffect;
+import exiledsector.charts.objective.ChartObjective;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.StarChartCurrency;

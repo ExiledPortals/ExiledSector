@@ -10,6 +10,8 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.util.MutableValue;
 import exiledlib.MockSector;
+import exiledsector.charts.objective.ChartObjective;
+import exiledsector.charts.objective.ChartRewards;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemUnlock;

@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
-final class ChartWormholePlacement {
+public final class ChartWormholePlacement {
 
     static final float MIN_RADIUS = 1800f;
     static final float STAR_CLEARANCE = 900f;
@@ -29,7 +29,7 @@ final class ChartWormholePlacement {
     private ChartWormholePlacement() {
     }
 
-    static Vector2f choose(StarSystemAPI system, Random placementRandom) {
+    public static Vector2f choose(StarSystemAPI system, Random placementRandom) {
         return choose(system, placementRandom, null);
     }
 

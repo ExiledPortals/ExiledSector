@@ -8,6 +8,8 @@ import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import exiledlib.MockSector;
 import exiledsector.charts.anomaly.MagneticStorm;
+import exiledsector.charts.run.cleanup.ChartLoadSweep;
+import exiledsector.charts.run.cleanup.ChartRunCloser;
 import exiledsector.items.ItemData;
 import exiledsector.items.StarChart;
 import exiledsector.items.StarChartFixtures;

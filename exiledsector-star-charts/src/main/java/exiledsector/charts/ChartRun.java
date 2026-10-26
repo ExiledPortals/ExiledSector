@@ -1,5 +1,7 @@
 package exiledsector.charts;
 
+import exiledsector.charts.objective.ChartObjective;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;

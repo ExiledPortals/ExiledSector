@@ -3,6 +3,7 @@ package exiledsector.charts;
 import exiledsector.charts.ChartContentPlan.FleetRole;
 import exiledsector.charts.ChartContentPlan.PlannedFleet;
 import exiledsector.charts.ChartContentPlan.PlannedPoi;
+import exiledsector.charts.objective.ChartObjective;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

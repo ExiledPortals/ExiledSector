@@ -1,5 +1,7 @@
 package exiledsector.charts;
 
+import exiledsector.charts.objective.ChartObjective;
+
 public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax, int officerLevelBonus, int officerCountBonus,
                         float fleetQuality, int levelMin, int levelMax, float cacheBudget, float domainBudget,
                         float stationBudget, float derelictBudget, boolean boss, float bossSize, float clearWeight, float bossWeight) {

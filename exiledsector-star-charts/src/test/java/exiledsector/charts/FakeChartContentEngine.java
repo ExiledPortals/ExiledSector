@@ -25,57 +25,57 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-final class FakeChartContentEngine implements ChartContentEngine {
+public final class FakeChartContentEngine implements ChartContentEngine {
 
-    record Assignment(FleetAssignment assignment, SectorEntityToken target) {
+    public record Assignment(FleetAssignment assignment, SectorEntityToken target) {
     }
 
-    record ColonyItem(SectorEntityToken holder, String itemId) {
+    public record ColonyItem(SectorEntityToken holder, String itemId) {
     }
 
-    final List<Vector2f> spotPositions = new ArrayList<>();
-    final List<ChartSpot> focusedSpots = new ArrayList<>();
-    final List<SectorEntityToken> salvageEntities = new ArrayList<>();
-    final List<String> salvageTypes = new ArrayList<>();
-    final List<Boolean> derelictRecoverable = new ArrayList<>();
-    final List<FleetParamsV3> fleetParams = new ArrayList<>();
-    final List<CampaignFleetAPI> fleets = new ArrayList<>();
-    final Map<CampaignFleetAPI, List<Assignment>> assignments = new HashMap<>();
-    final Map<SectorEntityToken, Set<String>> tags = new HashMap<>();
-    final Map<String, ChartVanillaLoot.SiteDrops> siteDropsBySpec = new HashMap<>();
-    final Map<PlanetAPI, String> planetCategories = new HashMap<>();
-    final List<ColonyItem> colonyItems = new ArrayList<>();
-    final List<String> stationVariants = new ArrayList<>();
-    final List<CampaignFleetAPI> stations = new ArrayList<>();
-    final List<String> dressedFactions = new ArrayList<>();
-    String alliesFactionId = "allies";
+    public final List<Vector2f> spotPositions = new ArrayList<>();
+    public final List<ChartSpot> focusedSpots = new ArrayList<>();
+    public final List<SectorEntityToken> salvageEntities = new ArrayList<>();
+    public final List<String> salvageTypes = new ArrayList<>();
+    public final List<Boolean> derelictRecoverable = new ArrayList<>();
+    public final List<FleetParamsV3> fleetParams = new ArrayList<>();
+    public final List<CampaignFleetAPI> fleets = new ArrayList<>();
+    public final Map<CampaignFleetAPI, List<Assignment>> assignments = new HashMap<>();
+    public final Map<SectorEntityToken, Set<String>> tags = new HashMap<>();
+    public final Map<String, ChartVanillaLoot.SiteDrops> siteDropsBySpec = new HashMap<>();
+    public final Map<PlanetAPI, String> planetCategories = new HashMap<>();
+    public final List<ColonyItem> colonyItems = new ArrayList<>();
+    public final List<String> stationVariants = new ArrayList<>();
+    public final List<CampaignFleetAPI> stations = new ArrayList<>();
+    public final List<String> dressedFactions = new ArrayList<>();
+    public String alliesFactionId = "allies";
     boolean missingStations;
     boolean failFleets;
     boolean emptyFleets;
     int spotCalls;
 
-    static FakeChartContentEngine install(FakeChartContentEngine engine) {
+    public static FakeChartContentEngine install(FakeChartContentEngine engine) {
         ChartContentGenerator.useEngineForTests(engine);
         return engine;
     }
 
-    static FakeChartContentEngine offeringNothing() {
+    public static FakeChartContentEngine offeringNothing() {
         return new FakeChartContentEngine();
     }
 
-    FakeChartContentEngine offering(float... coordinates) {
+    public FakeChartContentEngine offering(float... coordinates) {
         for (int i = 0; i + 1 < coordinates.length; i += 2) {
             spotPositions.add(new Vector2f(coordinates[i], coordinates[i + 1]));
         }
         return this;
     }
 
-    FakeChartContentEngine offeringAt(SectorEntityToken focus, float x, float y) {
+    public FakeChartContentEngine offeringAt(SectorEntityToken focus, float x, float y) {
         focusedSpots.add(new ChartSpot(null, new Vector2f(x, y), focus, 1f));
         return this;
     }
 
-    static MemoryAPI memory() {
+    public static MemoryAPI memory() {
         Map<String, Object> stored = new HashMap<>();
         MemoryAPI memory = mock(MemoryAPI.class);
         doAnswer(invocation -> stored.put(invocation.getArgument(0), invocation.getArgument(1))).when(memory).set(anyString(), any());
@@ -94,7 +94,7 @@ final class FakeChartContentEngine implements ChartContentEngine {
         return memory;
     }
 
-    <T extends SectorEntityToken> T tagged(T entity) {
+    public <T extends SectorEntityToken> T tagged(T entity) {
         Set<String> entityTags = tags.computeIfAbsent(entity, key -> new LinkedHashSet<>());
         doAnswer(invocation -> entityTags.add(invocation.getArgument(0))).when(entity).addTag(anyString());
         doAnswer(invocation -> entityTags.remove((String) invocation.getArgument(0))).when(entity).removeTag(anyString());

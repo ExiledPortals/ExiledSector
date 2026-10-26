@@ -10,7 +10,7 @@ import exiledsector.charts.ChartContent;
 import exiledsector.charts.ChartDrops;
 import exiledsector.charts.ChartFleetFixtures;
 import exiledsector.charts.ChartIds;
-import exiledsector.charts.ChartObjective;
+import exiledsector.charts.objective.ChartObjective;
 import exiledsector.charts.ChartRun;
 import exiledsector.charts.ChartRuns;
 import exiledsector.items.StarChartFixtures;

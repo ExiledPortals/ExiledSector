@@ -13,7 +13,7 @@ import exiledsector.charts.ChartRunEffects;
 import exiledsector.charts.ChartRuns;
 import exiledsector.charts.ChartTiers;
 import exiledsector.charts.StarChartSettings;
-import exiledsector.charts.anomaly.SpatialBreach;
+import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.atlas.AtlasData;

@@ -5,6 +5,7 @@ import exiledsector.charts.ChartContentPlan.PlannedFleet;
 import exiledsector.charts.ChartContentPlan.PlannedPoi;
 import exiledsector.charts.ChartContentPlan.PlannedStation;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
+import exiledsector.charts.objective.ChartObjective;
 import exiledsector.items.WeightedPick;
 
 import java.util.ArrayList;

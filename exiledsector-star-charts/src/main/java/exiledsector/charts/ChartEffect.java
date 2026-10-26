@@ -1,7 +1,7 @@
 package exiledsector.charts;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledsector.charts.anomaly.SpatialBreach;
+import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledlib.i18n.Message;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;

@@ -16,10 +16,10 @@ public final class ChartDeepSpace {
     static final String BARREN_DESCRIPTION = "barren";
     static final float PLANETOID_WEIGHT = 100f;
     static final float GIANT_WEIGHT = 20f;
-    static final Map<String, Float> PLANETOIDS = ordered(
+    public static final Map<String, Float> PLANETOIDS = ordered(
             "cryovolcanic", 5f, "frozen", 2.5f, "frozen1", 2.5f, "frozen2", 2.5f, "frozen3", 2.5f, "barren", 2.5f, "barren2", 2.5f,
             "barren3", 2.5f, "barren_castiron", 2.5f, "barren-bombarded", 5f, "rocky_metallic", 5f, "rocky_ice", 5f);
-    static final Map<String, Float> GIANTS = ordered("ice_giant", 10f, "gas_giant", 5f);
+    public static final Map<String, Float> GIANTS = ordered("ice_giant", 10f, "gas_giant", 5f);
 
     private ChartDeepSpace() {
     }

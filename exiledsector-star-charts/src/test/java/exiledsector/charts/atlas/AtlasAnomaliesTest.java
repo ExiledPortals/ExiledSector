@@ -4,7 +4,7 @@ import exiledsector.charts.ChartAnomalies;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.AsteroidStorm;
 import exiledsector.charts.anomaly.ChartAnomaly;
-import exiledsector.charts.anomaly.SpatialBreach;
+import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.StarAnomalies;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

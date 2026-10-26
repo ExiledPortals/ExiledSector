@@ -8,6 +8,8 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.characters.AbilityPlugin;
 import com.fs.starfarer.api.impl.campaign.ids.Abilities;
 import exiledlib.i18n.Translation;
+import exiledsector.charts.objective.ChartObjectives;
+import exiledsector.charts.run.cleanup.ChartRunCloser;
 import org.apache.log4j.Logger;
 
 public class ChartRunScript implements EveryFrameScript {

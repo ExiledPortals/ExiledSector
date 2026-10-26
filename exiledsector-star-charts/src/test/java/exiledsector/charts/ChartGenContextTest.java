@@ -8,6 +8,7 @@ import exiledsector.charts.ChartContentPlan.PlannedFleet;
 import exiledsector.charts.ChartGenContext.AppliedEffect;
 import exiledlib.i18n.RealCatalogue;
 import exiledlib.i18n.StyledText;
+import exiledsector.charts.objective.ChartRewards;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemKind;

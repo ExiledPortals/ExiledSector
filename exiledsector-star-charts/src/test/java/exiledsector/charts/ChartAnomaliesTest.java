@@ -4,7 +4,7 @@ import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AsteroidStorm;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.anomaly.MagneticStorm;
-import exiledsector.charts.anomaly.SpatialBreach;
+import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.StarAnomalies;
 import exiledsector.charts.anomaly.StellarFlares;
 import org.json.JSONArray;

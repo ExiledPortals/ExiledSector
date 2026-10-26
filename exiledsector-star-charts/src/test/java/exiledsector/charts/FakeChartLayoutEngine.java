@@ -9,34 +9,34 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-final class FakeChartLayoutEngine implements ChartLayoutEngine {
+public final class FakeChartLayoutEngine implements ChartLayoutEngine {
 
-    record Build(StarSystemAPI system, String starId, StarSystemType systemType, StarAge age, long firstRandomLong, ChartLayoutRecipe recipe) {
+    public record Build(StarSystemAPI system, String starId, StarSystemType systemType, StarAge age, long firstRandomLong, ChartLayoutRecipe recipe) {
     }
 
-    interface Layout {
+    public interface Layout {
         void build(StarSystemAPI system, String starId, StarSystemType systemType, Random random);
     }
 
-    final List<Build> builds = new ArrayList<>();
+    public final List<Build> builds = new ArrayList<>();
     private final Layout layout;
 
-    FakeChartLayoutEngine(Layout layout) {
+    public FakeChartLayoutEngine(Layout layout) {
         this.layout = layout;
     }
 
-    static FakeChartLayoutEngine doingNothing() {
+    public static FakeChartLayoutEngine doingNothing() {
         return new FakeChartLayoutEngine((system, starId, systemType, random) -> {
         });
     }
 
-    static FakeChartLayoutEngine failing() {
+    public static FakeChartLayoutEngine failing() {
         return new FakeChartLayoutEngine((system, starId, systemType, random) -> {
             throw new IllegalStateException("vanilla generator changed");
         });
     }
 
-    static FakeChartLayoutEngine install(FakeChartLayoutEngine engine) {
+    public static FakeChartLayoutEngine install(FakeChartLayoutEngine engine) {
         ChartLayoutGenerator.useEngineForTests(engine);
         return engine;
     }

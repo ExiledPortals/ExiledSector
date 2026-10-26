@@ -27,6 +27,7 @@ import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledlib.i18n.Translation;
+import exiledsector.charts.objective.ChartObjective;
 import exiledsector.items.WeightedPick;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
@@ -52,7 +53,7 @@ public final class ChartContentGenerator {
     static final float STAR_CLEARANCE = 600f;
     static final float CORONA_CLEARANCE = 300f;
     static final float DERELICT_RECOVERY_CHANCE = 0.5f;
-    static final float ASSIGNMENT_DAYS = 1_000_000f;
+    public static final float ASSIGNMENT_DAYS = 1_000_000f;
     static final float MIN_SPOT_WEIGHT = 0.0001f;
     static final long PLACEMENT_SALT = 0x43485053504f54L;
     static final long SALVAGE_SALT = 0x434853414c5647L;
@@ -328,7 +329,7 @@ public final class ChartContentGenerator {
         REPORTED_FAILURES.clear();
     }
 
-    static void resetForTests() {
+    public static void resetForTests() {
         engine = VANILLA_ENGINE;
         REPORTED_FAILURES.clear();
     }

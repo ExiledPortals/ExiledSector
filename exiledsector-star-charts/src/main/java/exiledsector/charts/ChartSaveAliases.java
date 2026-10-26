@@ -1,10 +1,11 @@
 package exiledsector.charts;
 
 import com.thoughtworks.xstream.XStream;
-import exiledsector.charts.anomaly.BreachCorePlugin;
-import exiledsector.charts.anomaly.BreachSupplyBuff;
-import exiledsector.charts.anomaly.BreachTerrainPlugin;
+import exiledsector.charts.anomaly.breach.BreachCorePlugin;
+import exiledsector.charts.anomaly.breach.BreachSupplyBuff;
+import exiledsector.charts.anomaly.breach.BreachTerrainPlugin;
 import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.objective.ChartObjectiveIntel;
 
 import java.util.Map;
 

@@ -7,7 +7,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
 import exiledsector.ExiledSectorModPlugin;
-import exiledsector.charts.ChartObjectiveIntel;
+import exiledsector.charts.objective.ChartObjectiveIntel;
 import exiledsector.charts.ChartRun;
 import exiledsector.charts.ChartRunState;
 import exiledsector.charts.ChartWormholePlugin;

@@ -116,7 +116,7 @@ public final class ChartFactions {
         return pick(candidates, factionLoaded, random);
     }
 
-    static void resetForTests() {
+    public static void resetForTests() {
         factions = List.of();
         StarChartImplicits.registerSharedChoice(List.of());
     }

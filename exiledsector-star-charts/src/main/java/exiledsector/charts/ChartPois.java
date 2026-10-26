@@ -125,7 +125,7 @@ public final class ChartPois {
         return members;
     }
 
-    static void resetForTests() {
+    public static void resetForTests() {
         pois = List.of();
     }
 }

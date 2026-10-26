@@ -1,5 +1,7 @@
 package exiledsector.charts;
 
+import exiledsector.charts.objective.ChartObjective;
+import exiledsector.charts.objective.ChartRewards;
 import exiledsector.items.StarChartImplicits;
 import exiledsector.modifiers.Modifier;
 import exiledsector.skills.progression.ShipLevelConfig;

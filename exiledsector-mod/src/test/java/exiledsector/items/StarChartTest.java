@@ -12,7 +12,7 @@ import exiledlib.skills.skilleffect.SkillEffect;
 import exiledsector.charts.ChartEffect;
 import exiledsector.charts.ChartGenContext.AppliedEffect;
 import exiledsector.charts.ChartGenContext;
-import exiledsector.charts.anomaly.SpatialBreach;
+import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;

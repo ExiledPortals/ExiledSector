@@ -2,7 +2,7 @@ package exiledsector.charts;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
-import exiledsector.charts.anomaly.BreachTerrainPlugin;
+import exiledsector.charts.anomaly.breach.BreachTerrainPlugin;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.StarChart;
