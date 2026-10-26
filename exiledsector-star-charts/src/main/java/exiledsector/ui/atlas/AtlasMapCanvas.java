@@ -378,8 +378,7 @@ final class AtlasMapCanvas {
             if (openness <= 0f || !view.isVisible(x, y, radius * 2f)) {
                 continue;
             }
-            boolean bright = state.isCompleted(icon.cell()) || reachable.contains(icon.cell());
-            float alpha = (bright ? 1f : DIM_PREVIEW_ALPHA) * openness * alphaMult;
+            float alpha = openness * alphaMult;
             if (!icon.iconPath().isEmpty()) {
                 SpriteDraw.drawAtCenter(spriteCache, icon.iconPath(), x, y, radius * 2f, radius * 2f, Color.WHITE, alpha);
             }
