@@ -20,7 +20,6 @@ import exiledsector.items.StarChartDataRules;
 import exiledsector.items.StarChartItems;
 import exiledsector.loot.FleetDifficulty;
 import exiledsector.loot.LootSource;
-import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.chart.StarChartBench;
 import exiledsector.ui.chart.WormholeGatewayOption;
 import exiledsector.ui.socket.BenchModeSupport;
@@ -65,20 +64,21 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public void registerSettings() {
+        String chartsTab = StarChartSettings.settingsTab();
         StarChartSettings.SWITCH.addSettings("exiledSector_starChartsHeader", "settings.starCharts.header",
-                "settings.starCharts.enabled.name", "settings.starCharts.enabled.tooltip");
+                "settings.starCharts.enabled.name", "settings.starCharts.enabled.tooltip", chartsTab);
         SettingsCreator.addInt(MOD_ID, StarChartSettings.ENTRIES_FIELD_ID,
                 Translation.text("settings.starCharts.entries.name"), Translation.text("settings.starCharts.entries.tooltip"),
-                StarChartSettings.DEFAULT_ENTRIES, StarChartSettings.MIN_ENTRIES, StarChartSettings.MAX_ENTRIES, ExiledSectorSettings.MAIN_TAB);
+                StarChartSettings.DEFAULT_ENTRIES, StarChartSettings.MIN_ENTRIES, StarChartSettings.MAX_ENTRIES, chartsTab);
         SettingsCreator.addInt(MOD_ID, StarChartSettings.FLEET_LIMIT_FIELD_ID,
                 Translation.text("settings.starCharts.fleetLimit.name"), Translation.text("settings.starCharts.fleetLimit.tooltip"),
-                StarChartSettings.DEFAULT_FLEET_LIMIT, StarChartSettings.MIN_FLEET_LIMIT, StarChartSettings.MAX_FLEET_LIMIT, ExiledSectorSettings.MAIN_TAB);
+                StarChartSettings.DEFAULT_FLEET_LIMIT, StarChartSettings.MIN_FLEET_LIMIT, StarChartSettings.MAX_FLEET_LIMIT, chartsTab);
         SettingsCreator.addBoolean(MOD_ID, StarChartSettings.OPEN_ANYWHERE_FIELD_ID,
                 Translation.text("chart.ui.settings.openAnywhere.name"), Translation.text("chart.ui.settings.openAnywhere.tooltip"),
-                StarChartSettings.DEFAULT_OPEN_ANYWHERE, ExiledSectorSettings.MAIN_TAB);
+                StarChartSettings.DEFAULT_OPEN_ANYWHERE, chartsTab);
         SettingsCreator.addBoolean(MOD_ID, StarChartSettings.DEBUG_TOOLS_FIELD_ID,
                 Translation.text("chart.ui.settings.debugTools.name"), Translation.text("chart.ui.settings.debugTools.tooltip"),
-                StarChartSettings.DEFAULT_DEBUG_TOOLS, ExiledSectorSettings.MAIN_TAB);
+                StarChartSettings.DEFAULT_DEBUG_TOOLS, chartsTab);
     }
 
     @Override

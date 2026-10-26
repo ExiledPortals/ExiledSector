@@ -1,6 +1,7 @@
 package exiledsector.charts;
 
 import exiledlib.ModSettings;
+import exiledlib.i18n.Translation;
 import exiledsector.domain.DomainSwitch;
 
 public final class StarChartSettings {
@@ -24,6 +25,10 @@ public final class StarChartSettings {
     });
 
     private StarChartSettings() {
+    }
+
+    public static String settingsTab() {
+        return Translation.text("settings.tab.starCharts");
     }
 
     public static void reloadSettings() {

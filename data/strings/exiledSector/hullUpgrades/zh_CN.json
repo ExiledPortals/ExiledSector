@@ -117,12 +117,12 @@
     "socketable.unique_kantas_den_scrapdogs.description": "来自坎塔巢穴的海盗，从没开过一艘不在散架边缘的船。每一道破口都是他们熟悉的门，每一个烧毁的安全装置都少拖他们一次后腿。",
     "ui.hullUpgradesRefitButton": "船体物品",
     "settings.hullUpgrades.header": "船体升级",
-    "settings.socketStorage.hullUpgrades.name": "船体升级",
-    "settings.socketStorage.hullUpgrades.tooltip": "关闭后，改装图纸以及除子程序以外的所有船体物品都不再从战斗、打捞和技术采掘中掉落，改装界面的船体物品按钮也会隐藏。子程序和技能树照常运作。舰船已解锁的舱段会停止生效但会被保留，重新开启此选项后即可恢复。",
+    "settings.socketStorage.hullUpgrades.name": "启用",
+    "settings.socketStorage.hullUpgrades.tooltip": "关闭后，改装图纸和除子程序以外的船体物品不再掉落，已解锁的舱段停止生效，直到重新开启。",
     "settings.socketStorage.hullUpgradesLevel.name": "船体升级解锁等级",
-    "settings.socketStorage.hullUpgradesLevel.tooltip": "改装图纸和船体物品开始掉落时的玩家等级。默认15。",
+    "settings.socketStorage.hullUpgradesLevel.tooltip": "改装图纸和船体物品开始掉落时的玩家等级。",
     "settings.socketStorage.hullUpgradePoints.name": "船体升级点数",
-    "settings.socketStorage.hullUpgradePoints.tooltip": "舰船获得船体升级点数的方式。每艘舰船初始有1点。改装图纸会为舰船逐点提升，最多5点。星图进度会在你通关5级、10级和15级星图后将所有舰船分别提升至2、3、4点，且需要开启星图。切换此项不会锁定任何舱段。",
+    "settings.socketStorage.hullUpgradePoints.tooltip": "改装图纸为舰船逐点提升，最多5点。星图进度会在你通关5级、10级和15级星图后将所有舰船分别提升至2、3、4点，且需要开启星图。",
     "settings.socketStorage.battleItems.name": "战斗掉落的船体物品",
-    "settings.socketStorage.battleItems.tooltip": "调整战斗胜利后掉落的船体物品和改装图纸数量。100为正常，200为双倍，0则关闭。玩家达到船体升级解锁等级后开始掉落。"
+    "settings.socketStorage.battleItems.tooltip": "100为正常，0则关闭。"
 }

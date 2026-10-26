@@ -55,12 +55,12 @@
     "ui.socketStorage.placingHintFrameworkLocked": "This ship has no {type} section unlocked for {name}. Unlock it in Hull Upgrades first. Esc cancels.",
     "ui.hullUpgradesRefitButton": "Hull Items",
     "settings.hullUpgrades.header": "Hull Upgrades",
-    "settings.socketStorage.hullUpgrades.name": "Hull Upgrades",
-    "settings.socketStorage.hullUpgrades.tooltip": "When off, Refit Schematics and every hull item except Subroutines stop dropping from battles, salvage and tech mining, and the refit screen's Hull Items button is hidden. Subroutines and the skill tree work as normal. Sections your ships already have unlocked stop working but are kept, and switching this back on restores them.",
+    "settings.socketStorage.hullUpgrades.name": "Enabled",
+    "settings.socketStorage.hullUpgrades.tooltip": "When off, Refit Schematics and hull items other than Subroutines stop dropping, and unlocked sections stop working until it's switched back on.",
     "settings.socketStorage.hullUpgradesLevel.name": "Hull Upgrades From Player Level",
-    "settings.socketStorage.hullUpgradesLevel.tooltip": "The player level at which Refit Schematics and hull items start dropping. Default 15.",
+    "settings.socketStorage.hullUpgradesLevel.tooltip": "Player level at which Refit Schematics and hull items start dropping.",
     "settings.socketStorage.hullUpgradePoints.name": "Hull Upgrade Points",
-    "settings.socketStorage.hullUpgradePoints.tooltip": "How ships earn Hull Upgrade points. Every ship starts with 1. Refit Schematics raise a ship one point at a time, up to 5. Star Chart Progress raises every ship to 2, 3 and 4 points once you clear a tier 5, 10 and 15 Star Chart, and needs Star Charts switched on. Switching never locks a section.",
+    "settings.socketStorage.hullUpgradePoints.tooltip": "Refit Schematics add one point at a time, up to 5. Star Chart Progress raises every ship to 2, 3 and 4 points as you clear tier 5, 10 and 15 Star Charts, and needs Star Charts switched on.",
     "settings.socketStorage.battleItems.name": "Hull Item Drops From Battles",
-    "settings.socketStorage.battleItems.tooltip": "Scales how many hull items and Refit Schematics drop after won battles. 100 is normal, 200 doubles them and 0 turns them off. They start dropping at the Hull Upgrades player level."
+    "settings.socketStorage.battleItems.tooltip": "100 is normal and 0 turns them off."
 }

@@ -2,7 +2,6 @@ package exiledsector.domain;
 
 import exiledlib.ModSettings;
 import exiledlib.i18n.Translation;
-import exiledsector.ui.ExiledSectorSettings;
 import lunalib.lunaSettings.LunaSettings.SettingsCreator;
 
 import static exiledsector.ExiledSector.MOD_ID;
@@ -21,9 +20,9 @@ public final class DomainSwitch {
         this.switchedOn = defaultOn;
     }
 
-    public void addSettings(String headerId, String headerKey, String nameKey, String tooltipKey) {
-        SettingsCreator.addHeader(MOD_ID, headerId, Translation.text(headerKey), ExiledSectorSettings.MAIN_TAB);
-        SettingsCreator.addBoolean(MOD_ID, fieldId, Translation.text(nameKey), Translation.text(tooltipKey), defaultOn, ExiledSectorSettings.MAIN_TAB);
+    public void addSettings(String headerId, String headerKey, String nameKey, String tooltipKey, String tab) {
+        SettingsCreator.addHeader(MOD_ID, headerId, Translation.text(headerKey), tab);
+        SettingsCreator.addBoolean(MOD_ID, fieldId, Translation.text(nameKey), Translation.text(tooltipKey), defaultOn, tab);
     }
 
     public void reload() {
