@@ -1,6 +1,6 @@
 # Unique hull items and subroutines
 
-Stages 1 to 9 are built; stage 10, the RAT items, waits on Lukas04's approval. This plan adds unique hull items and subroutines for the modded factions that have tree volumes (the Navarchy of Tania, Nightcross, Stargazer, the RAT Abyss and ExoTech), plus affinity items that work for any faction.
+Every stage is built. This plan adds unique hull items and subroutines for the modded factions that have tree volumes (the Navarchy of Tania, Nightcross and Stargazer), for the vanilla Remnant, Omega and Luddic Path, plus affinity items that work for any faction. The RAT Abyss and ExoTech items were dropped in favour of the vanilla Remnant and Omega themes.
 
 A unique must do something no rolled modifier can. It changes how a build works (converting damage, reshaping weapon slots, rerouting flux, bending affinity, gating tree nodes) instead of bundling stats that rare items already roll. A unique may carry at most one plain supporting stat. The existing vanilla-themed uniques are older than this rule. Names are working names and all magnitudes are placeholders.
 
@@ -8,14 +8,14 @@ A unique must do something no rolled modifier can. It changes how a build works 
 
 - Each item echoes its faction without copying a volume notable.
 - Descriptions are flavour only, written as the crew acquiring or fitting the item, with no numbers. Effect lines follow `docs/tooltip_wording.md`.
-- Every item, subroutines included, gets its own suitable art, picked to show what that item is. Never reuse a generic section icon or another item's icon. Faction items take art from the source mod that matches their subject: a weapon sprite, ship crop, hull mod or system icon, or a portrait. For example, the Fafnir HVA for the Osmium Shell Stock, the Hypatia for the Mini Warp-Drive, and Nightcross's Hardlight Matrix for the Hardlight Veil. Affinity items use vanilla or our own art in the matching affinity's colour. For each item, show the user a sheet of about three candidates and let them pick. Then blend the chosen art into one palette rather than pasting it, and save it under `graphics/icons/socketables/` with the mod prefix. Credit every copied asset in the credits file. Tania and Nightcross art is free to reuse with credit. RAT needs Lukas04's approval for anything new, including RAT names such as Ordnance Redistributor, Temporal Gear and Equivalent Exchange, so ask before building the Abyss and ExoTech items. Never use Tania boss-faction art.
+- Every item, subroutines included, gets its own suitable art, picked to show what that item is. Never reuse a generic section icon or another item's icon. Faction items take art from the source mod that matches their subject: a weapon sprite, ship crop, hull mod or system icon, or a portrait. For example, the Fafnir HVA for the Osmium Shell Stock, the Hypatia for the Mini Warp-Drive, and Nightcross's Hardlight Matrix for the Hardlight Veil. Affinity items use vanilla or our own art in the matching affinity's colour. For each item, show the user a sheet of about three candidates and let them pick. Then blend the chosen art into one palette rather than pasting it, and save it under `graphics/icons/socketables/` with the mod prefix. Credit every copied asset in the credits file. Tania and Nightcross art is free to reuse with credit. Vanilla art is free to use and credited under Starsector. Never use Tania boss-faction art.
 - Each mod's items only exist while that mod is loaded and its area isn't switched off. They load from a per-mod file or behind a `requires_mod` column, so `UniqueSourceCheck` never sees unknown faction ids.
 - None of these items go on NPC ships.
 
 ## Groundwork
 
 1. [x] Add a `source` column to `hull_items.csv`, using the same `faction:` and `site:` syntax as subroutines (`UniqueSource`). The editor serialiser must learn the column. A `faction:` source restricts nothing: it doubles the item's drop weight in battles where that faction lost the most, while a `site:` source still limits the item to those sites. Built: `HullItem.parseDefinition` reads the column into `ItemDefinition.uniqueSources`; `HullItemDataRules` reports bad sources (shared `ItemDataIntegrity.checkUniqueSources`, also used by subroutines) and warns on a source on a common item; the editor's hull item panel has a Drop source field, validated and written like subroutines (the column is added to older files only once used). The faction weighting is `ItemDrops.pickUniqueFromFaction` (`FACTION_SOURCE_WEIGHT_MULT`). Tests in `BattleItemDropsTest`, `UniqueSubroutinesTest`, `ItemDataIntegrityTest` and the editor's `models.test.ts`.
-2. Faction ids are `navarchy_of_tania`, `nightcross`, `stargazer` and `rat_exotech`. The Abyss is `rat_abyssals` plus its biome factions (`rat_abyssals_deep`, `_harmony`, `_primordials`, `_serenity`, `_solitude`, `_wastes`), but not `rat_abyssals_sim`.
+2. Faction ids are `navarchy_of_tania`, `nightcross`, `stargazer`, `remnant`, `omega` and `luddic_path`.
 3. [x] Give unique subroutines an optional radius, as Doctrine Archives have. The gated subroutines and Empty Shell Axion need it. Built: an optional `radius` column in `subroutines.csv` (`small`, `medium`, `large`), read for UNIQUE subroutines by `UniqueSubroutineRadii`; `SubroutineRadius` centres it on the socket, so the tree ring and the storage hover preview show it, and `Subroutine.kindLines` adds a radius line (shared `socketable.radiusLine` and `socketable.radius.*` keys, formerly Doctrine-only). `SubroutineDataRules` rejects an unknown size or a radius on another kind. The editor has a Radius picker on unique subroutines, written like the other optional columns. No shipped unique has a radius yet, and the radius has no effect until the gated and affinity mechanics read it. Tests in `DoctrineOverridesTest`, `ItemDataIntegrityTest`, the editor's `models.test.ts` and `itemsPage.test.tsx`.
 
 ## Stages
@@ -35,7 +35,7 @@ Each stage builds, tests and gets committed on its own. A framework stage adds t
     - [x] Empty Shell Axion. Built: `unique_empty_shell_axion` (medium radius, area `stargazer`) with the `EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE` line; `EmptyShells` and the socket-aware `NodeGrants.GrantLookup` make it take over its radius as granted nodes, which keeps the tree connected where "can't be allocated" would strand the socket. Roots, sockets and wormholes are never hollowed. Tests in `EmptyShellsTest`.
     - [x] Root Conduit. Built: the `ROOT_CONDUIT` subroutine kind (born corrupted, one per ship, dropped by any faction's battles at 0.01 per 100 deployment points, since only uniques stay in the generic pools) and the `root_conduit` row; `RootConduits` caches the path and grants the affinity through `AllocatedSkillEffects`; `SkillTreeNodeConnectorRenderer` glows the path with `ConnectorKind.CONDUIT`. Tests in `RootConduitsTest`.
 9. [x] Gated subroutines and Phoenix Ash Archive. Waits on the gated subroutine decision. Built: `CombatGate` (Exiled Lib) and an optional gate on `EffectContribution`, kept out of permanent totals and grouped apart in `EffectTotals`; `RadiusGate` backs `GATES_RADIUS_BELOW_HALF_HULL`, `GATES_RADIUS_WHILE_SYSTEM_ACTIVE` and `GATES_RADIUS_WHILE_PHASED`; `GatedSubroutines` maps the nodes in a gating radius, `SkillTreeEffectSource` gates them, and `ShipCombatPlan` toggles them in combat; the ship summary prefixes gated totals. `unique_phoenix_ash_archive` (Tania, medium radius, triple strength below 50% hull). Decided without the user: triple strength stays, and each condition gets its own subroutine; the system-active and phased subroutines are left for a later volume, since their effects already exist. Tests in `GatedSubroutinesTest` and `ShipCombatPlanTest`.
-10. [ ] RAT Abyss and ExoTech items, after Lukas04 approves the names and art.
+10. [x] Remnant, Omega and Luddic Path items, replacing the RAT Abyss and ExoTech items. Built: the effects `TIMEFLOW_MULT`, `ACCELERATION_PERCENT`, `NON_MISSILE_WEAPON_RANGE_CAP_FLAT`, `SMALL_WEAPON_OP_COST_FLAT` (the engine's small weapon OP mods), `DISPLACER_FAILSAFE_HULL_PERCENT` (`DisplacerFailsafeListener`), `NON_MISSILE_PROJECTILE_ECHO_CHANCE_PERCENT` (`ProjectileEchoListener`), `STRIKECRAFT_GAIN_AFFINITY_BONUSES` (`AffinityStrikecraft`, hooked into `SkillTreeHullMod`'s fighter application) and the three `AFFINITY_EXCHANGE_TO_*_PERCENT` (resolved last in `AffinitySteps.totals`); the `one_of` hull item mechanic (`ItemDefinition.keepsOneModifier`, rolled in `ItemRoller`), which the Equivalent Exchange Core uses to freeze its affinity. Nine `unique_*` rows in `hull_items.csv` and `unique_p_space_lattice` in `subroutines.csv`, sources `faction:remnant`, `faction:omega` or `faction:luddic_path`, no area. Icons `graphics/icons/socketables/exiledSector_*` from vanilla sprites via `tools/item_art/remnant_omega.js` (`save 0 1 1 0 0 0 0 1 0 0`), picked from the sheets in `graphics/unused/item_art_sheets/`. Decided while building: the echo rolls on hit rather than on firing, since the engine has no fire event, and fires from the weapon toward the target at no flux or ammo cost; the Displacer Failsafe moves the ship 1200 su; the Radiant Shield Lattice rolls 15-20% soft flux, less than the Hardlight Veil, since it also reduces energy damage taken; small weapons cost 1-2 more OP on the Facet Mount Geometry. Tests in `AffinityStepsTest`, `DisplacerFailsafeListenerTest`, `ProjectileEchoListenerTest`, `AffinityStrikecraftTest`, `ItemRollerTest` and `UniqueSourceCheckTest`.
 
 ## Mechanic families
 
@@ -106,32 +106,34 @@ The Retrofit is the mirror of Tania's Breech Refit. The warranty is Nightcross's
 
 The Corrosion Lens Filter turns beams into armor breakers, which they otherwise never are. Empty Shell Axion is always corrupted and refunds the nodes in its radius when socketed.
 
-## RAT Abyss
+## Remnant
 
 | Item | Section | Effect | Family |
 |---|---|---|---|
-| Photosphere Lens (kept) | shield_generator | Part of shield damage taken is converted to soft flux; reduced energy damage taken | soft flux |
-| Abyssal Skimmer Drive (kept) | engine_room | Increased top speed and acceleration; reduced sensor profile | |
-| Chronal Decay Core | bridge | 20% more timeflow; weapon range can't exceed 500 su | |
+| Radiant Shield Lattice | shield_generator | Part of shield damage taken is converted to soft flux; reduced energy damage taken | soft flux |
 | Equivalent Exchange Core | reactor | Removes all affinity of the two types it doesn't roll and grants half that amount as the rolled type | affinity |
-| Ordnance Redistributor | weapon_mount | Missile slots become energy slots | slot |
-| Temporal Gear (subroutine) | | Allocated nodes in radius apply only while the ship system is active, at triple strength | gated |
+| Ordo Feed Conversion | weapon_mount | Missile slots become energy slots | slot |
+| Displacer Failsafe | engine_room | Once per deployment, when hull drops below 30%, the ship teleports away from the nearest enemy and vents | |
 
-The Chronal Decay Core follows the Chronos core: time bends around the ship, but range is capped. It uses the engine's weapon range threshold, as Safety Overrides does.
+The Equivalent Exchange Core lists all three exchanges and keeps one (`one_of`), picked when it drops and frozen. With a High Tech roll, for example, 20 Low Tech and 10 Midline become 0 and 0, and 15 is added to High Tech. It runs after every other affinity source, including Absence of Light, and before the step bonuses.
 
-The Equivalent Exchange Core rolls one affinity type at creation, and that roll is frozen. With a High Tech roll, for example, 20 Low Tech and 10 Midline become 0 and 0, and 15 is added to High Tech. It runs after every other affinity source and conversion, including Absence of Light, and before the step bonuses.
-
-## ExoTech
+## Luddic Path
 
 | Item | Section | Effect | Family |
 |---|---|---|---|
-| Gilgamesh Timeline Gunners (kept) | weapon_mount | Non-missile shots have a chance to fire a second copy from an alternate timeline | |
-| Superposition Mounts | weapon_mount | Small weapon slots become universal slots; small weapons cost more OP | slot |
-| Hypatia Mini Warp-Drive | engine_room | Once per deployment, when hull drops below 30%, the ship warps away from the nearest enemy and vents | |
-| Gamma Core Bays | flight_deck | Fighters gain the ship's affinity bonuses | affinity |
-| Superposition Lattice (subroutine) | | Allocated nodes in radius apply only while phased, at triple strength | gated |
+| Pather Wing Zealots | flight_deck | Strikecraft gain the ship's affinity bonuses to hull, armor and flux | affinity |
 
-The Gilgamesh gunners' extra shot spawns from an event listener, not a per-frame scan. The warp-drive is the Hypatia's "Rapid Response" drive. Gamma Core Bays applies the ship's affinity step bonuses (hull, armor, flux) to its fighters when they launch.
+## Omega
+
+| Item | Section | Effect | Family |
+|---|---|---|---|
+| Shard Microburn Cluster | engine_room | Increased top speed and acceleration; reduced sensor profile | |
+| Tesseract Stillwell | bridge | 20% more timeflow; non-missile weapon range can't exceed 500 su | |
+| Reality Disruptor Echo | weapon_mount | Non-missile projectiles that hit have a chance to be fired again from the same weapon | |
+| Facet Mount Geometry | weapon_mount | Small weapon slots become universal slots; small weapons cost more OP | slot |
+| P-Space Lattice (subroutine) | | Allocated nodes in radius apply only while phased, at triple strength | gated |
+
+The Tesseract Stillwell caps range with the engine's range threshold, as Safety Overrides does. The Shard Microburn Cluster is plain stats, an exception to the rule above kept from the earlier design.
 
 ## Affinity items
 
