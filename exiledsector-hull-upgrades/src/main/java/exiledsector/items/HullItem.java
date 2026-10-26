@@ -123,7 +123,14 @@ public final class HullItem extends Item {
     public void copyTraitsFrom(Item source) {
         if (source instanceof HullItem hullItem) {
             targetSectionId = hullItem.targetSectionId;
+        } else if (source instanceof UnresolvedItem unresolved && unresolved.targetId() != null) {
+            targetSectionId = unresolved.targetId();
         }
+    }
+
+    @Override
+    public void keepWhenUnresolved(UnresolvedItem unresolved) {
+        unresolved.keepTarget(targetSectionId);
     }
 
     @Override

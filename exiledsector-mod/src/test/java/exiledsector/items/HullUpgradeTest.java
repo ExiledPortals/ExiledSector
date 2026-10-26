@@ -132,6 +132,8 @@ class HullUpgradeTest {
         assertNotEquals(ShipSection.BRIDGE, warranty.targetSection());
         assertEquals(warranty.targetSection(), warranty.targetSection());
         assertTrue(warranty.implicitLines(true).size() >= 2);
+        HullItem restored = new HullItem(new UnresolvedItem(warranty));
+        assertEquals(warranty.targetSection(), restored.targetSection());
     }
 
     @Test

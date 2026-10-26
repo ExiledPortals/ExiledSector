@@ -7,6 +7,7 @@ public final class UnresolvedItem extends Item {
     private Integer chartTier;
     private Integer chartQuality;
     private List<String> rolledNodeIds;
+    private String targetId;
 
     public UnresolvedItem(String id, String definitionId, long seed, List<RolledModifier> explicitModifiers) {
         super(id, definitionId, seed, explicitModifiers);
@@ -21,6 +22,7 @@ public final class UnresolvedItem extends Item {
     public void keepWhenUnresolved(UnresolvedItem unresolved) {
         unresolved.keepChart(chartTier, chartQuality);
         unresolved.keepRolledNodeIds(rolledNodeIds);
+        unresolved.keepTarget(targetId);
     }
 
     public void keepChart(Integer tier, Integer quality) {
@@ -30,6 +32,14 @@ public final class UnresolvedItem extends Item {
 
     public void keepRolledNodeIds(List<String> nodeIds) {
         rolledNodeIds = nodeIds;
+    }
+
+    public void keepTarget(String keptTargetId) {
+        targetId = keptTargetId;
+    }
+
+    public String targetId() {
+        return targetId;
     }
 
     @Override
