@@ -2,10 +2,17 @@ package exiledlib.skills.skilleffect.special;
 
 import com.fs.starfarer.api.combat.ShipAPI;
 import exiledlib.i18n.StyledText;
+import exiledlib.skills.AffinityScaling;
 import exiledlib.skills.skilleffect.BackedSkillEffect;
 import exiledlib.skills.skilleffect.EffectBacking;
 import exiledlib.skills.skilleffect.EffectText;
 import exiledlib.skills.skilleffect.ListenerEffect;
+import exiledlib.skills.skilleffect.StatMode;
+import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
+import exiledlib.skills.skilleffect.fighter.FighterSkillEffect;
+import exiledlib.skills.skilleffect.weapon.ScopedWeaponEffect;
+import exiledlib.skills.skilleffect.weapon.WeaponScope;
+import exiledlib.skills.skilleffect.weapon.WeaponStatFamily;
 
 import java.util.function.Function;
 
@@ -52,7 +59,20 @@ public enum SpecialSkillEffect implements BackedSkillEffect {
     SERAPHIM_FULL_BONUS_DAMAGE_FLAT(SeraphimListener.FULL_BONUS_DAMAGE_KEY, SeraphimListener.class, SeraphimListener::new),
     LOW_TECH_AFFINITY_FLAT(new AffinityTally()),
     HIGH_TECH_AFFINITY_FLAT(new AffinityTally()),
-    MIDLINE_AFFINITY_FLAT(new AffinityTally());
+    MIDLINE_AFFINITY_FLAT(new AffinityTally()),
+    BALLISTIC_WEAPON_DAMAGE_PERCENT_PER_LOW_TECH_AFFINITY(new AffinityScaling(AffinityScaling.Filter.LOW_TECH, AffinityScaling.SMALL_STEP,
+            ScopedWeaponEffect.find(WeaponStatFamily.DAMAGE, WeaponScope.BALLISTIC, StatMode.PERCENT))),
+    ENERGY_WEAPON_DAMAGE_PERCENT_PER_HIGH_TECH_AFFINITY(new AffinityScaling(AffinityScaling.Filter.HIGH_TECH, AffinityScaling.SMALL_STEP,
+            ScopedWeaponEffect.find(WeaponStatFamily.DAMAGE, WeaponScope.ENERGY, StatMode.PERCENT))),
+    MISSILE_WEAPON_DAMAGE_PERCENT_PER_MIDLINE_AFFINITY(new AffinityScaling(AffinityScaling.Filter.MIDLINE, AffinityScaling.SMALL_STEP,
+            ScopedWeaponEffect.find(WeaponStatFamily.DAMAGE, WeaponScope.MISSILE, StatMode.PERCENT))),
+    ARMOR_PERCENT_PER_LOW_TECH_AFFINITY(new AffinityScaling(AffinityScaling.Filter.LOW_TECH, AffinityScaling.LARGE_STEP, DefenseSkillEffect.ARMOR_PERCENT)),
+    WEAPON_RANGE_PERCENT_PER_AFFINITY(new AffinityScaling(AffinityScaling.Filter.ALL, AffinityScaling.LARGE_STEP,
+            ScopedWeaponEffect.find(WeaponStatFamily.RANGE, WeaponScope.ALL, StatMode.PERCENT))),
+    FIGHTER_WEAPON_DAMAGE_PERCENT_PER_AFFINITY(new AffinityScaling(AffinityScaling.Filter.ALL, AffinityScaling.LARGE_STEP,
+            FighterSkillEffect.FIGHTER_WEAPON_DAMAGE_PERCENT)),
+    FIGHTER_DAMAGE_TAKEN_MULT_PER_AFFINITY(new AffinityScaling(AffinityScaling.Filter.ALL, AffinityScaling.LARGEST_STEP,
+            FighterSkillEffect.FIGHTER_DAMAGE_TAKEN_MULT));
 
     private final EffectBacking backing;
 

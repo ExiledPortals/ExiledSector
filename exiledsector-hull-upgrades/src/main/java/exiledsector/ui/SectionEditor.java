@@ -3,6 +3,8 @@ package exiledsector.ui;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledlib.skills.skilleffect.SkillEffect;
+import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.items.HullUpgradePoints;
 import exiledsector.items.HullUpgradeRules;
 import exiledsector.items.Item;
@@ -16,6 +18,7 @@ import exiledsector.ui.refit.ShipEditSession;
 import lunalib.lunaRefit.BaseRefitButton;
 
 import java.util.List;
+import java.util.Map;
 
 final class SectionEditor {
 
@@ -64,6 +67,10 @@ final class SectionEditor {
 
     boolean isSectionUnlocked(ShipSection section) {
         return section != null && data().isSocketTypeUnlocked(section.id());
+    }
+
+    Map<SkillEffect, Float> affinityTotals() {
+        return SkillTreeHullMod.affinityTotals(data(), shipEdit.member(), shipEdit.variant());
     }
 
     HullSize hullSize() {

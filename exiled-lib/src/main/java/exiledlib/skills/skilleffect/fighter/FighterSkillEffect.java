@@ -115,6 +115,7 @@ public enum FighterSkillEffect implements BackedSkillEffect {
     },
     FIGHTER_ARMOR_PERCENT(RoleStat.ARMOR),
     FIGHTER_SHIELD_DAMAGE_TAKEN_PERCENT(RoleStat.SHIELD_DAMAGE_TAKEN),
+    FIGHTER_DAMAGE_TAKEN_MULT(RoleStat.DAMAGE_TAKEN),
     FIGHTER_RATE_OF_FIRE_PERCENT(RoleStat.RATE_OF_FIRE),
     FIGHTER_ENGAGEMENT_RANGE_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getFighterWingRange), "stat.fighterEngagementRange", false),
     FIGHTER_ENGAGEMENT_RANGE_MULT(MULT, bonus(MutableShipStatsAPI::getFighterWingRange), "stat.fighterEngagementRange", false),
@@ -344,6 +345,8 @@ public enum FighterSkillEffect implements BackedSkillEffect {
             }
         },
         SHIELD_DAMAGE_TAKEN(new SimpleStatEffect(PERCENT, stat(MutableShipStatsAPI::getShieldDamageTakenMult), "stat.damageTakenByShields", true)),
+        DAMAGE_TAKEN(new SimpleStatEffect(MULT, all(stat(MutableShipStatsAPI::getHullDamageTakenMult), stat(MutableShipStatsAPI::getArmorDamageTakenMult),
+                stat(MutableShipStatsAPI::getShieldDamageTakenMult)), "stat.damageTaken", true)),
         RATE_OF_FIRE(PERCENT, WeaponStatFamily.FIRE_RATE.target(WeaponScope.ALL), "weapon.stat.FIRE_RATE"),
         WEAPON_RANGE(FLAT, all(bonus(MutableShipStatsAPI::getBallisticWeaponRangeBonus), bonus(MutableShipStatsAPI::getEnergyWeaponRangeBonus)),
                 "weapon.stat.RANGE");

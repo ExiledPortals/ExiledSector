@@ -40,6 +40,12 @@ effect|ARMOR_PERCENT|12.5	0	<good>12.5%</good> increased armor.
 effect|ARMOR_PERCENT|100.0	0	<good>100%</good> increased armor.
 effect|ARMOR_PERCENT|-10.0	0	<bad>10%</bad> reduced armor.
 effect|ARMOR_PERCENT|-12.5	0	<bad>12.5%</bad> reduced armor.
+effect|ARMOR_PERCENT_PER_LOW_TECH_AFFINITY|1.0	0	<good>1%</good> increased armor for every 10 Low Tech Affinity.
+effect|ARMOR_PERCENT_PER_LOW_TECH_AFFINITY|10.0	0	<good>10%</good> increased armor for every 10 Low Tech Affinity.
+effect|ARMOR_PERCENT_PER_LOW_TECH_AFFINITY|12.5	0	<good>12.5%</good> increased armor for every 10 Low Tech Affinity.
+effect|ARMOR_PERCENT_PER_LOW_TECH_AFFINITY|100.0	0	<good>100%</good> increased armor for every 10 Low Tech Affinity.
+effect|ARMOR_PERCENT_PER_LOW_TECH_AFFINITY|-10.0	0	<bad>10%</bad> reduced armor for every 10 Low Tech Affinity.
+effect|ARMOR_PERCENT_PER_LOW_TECH_AFFINITY|-12.5	0	<bad>12.5%</bad> reduced armor for every 10 Low Tech Affinity.
 effect|AUGMENTED_FLUX_SCALED_PENALTY_REDUCTION_PERCENT|1.0	0	On hulls with Augmented Systems, <good>1%</good> reduced effect of the high-flux top speed and rate of fire penalties.
 effect|AUGMENTED_FLUX_SCALED_PENALTY_REDUCTION_PERCENT|10.0	0	On hulls with Augmented Systems, <good>10%</good> reduced effect of the high-flux top speed and rate of fire penalties.
 effect|AUGMENTED_FLUX_SCALED_PENALTY_REDUCTION_PERCENT|12.5	0	On hulls with Augmented Systems, <good>12.5%</good> reduced effect of the high-flux top speed and rate of fire penalties.
@@ -130,6 +136,12 @@ effect|BALLISTIC_WEAPON_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased balli
 effect|BALLISTIC_WEAPON_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased ballistic weapon damage.
 effect|BALLISTIC_WEAPON_DAMAGE_PERCENT|-10.0	0	<bad>10%</bad> reduced ballistic weapon damage.
 effect|BALLISTIC_WEAPON_DAMAGE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced ballistic weapon damage.
+effect|BALLISTIC_WEAPON_DAMAGE_PERCENT_PER_LOW_TECH_AFFINITY|1.0	0	<good>1%</good> increased ballistic weapon damage for every 5 Low Tech Affinity.
+effect|BALLISTIC_WEAPON_DAMAGE_PERCENT_PER_LOW_TECH_AFFINITY|10.0	0	<good>10%</good> increased ballistic weapon damage for every 5 Low Tech Affinity.
+effect|BALLISTIC_WEAPON_DAMAGE_PERCENT_PER_LOW_TECH_AFFINITY|12.5	0	<good>12.5%</good> increased ballistic weapon damage for every 5 Low Tech Affinity.
+effect|BALLISTIC_WEAPON_DAMAGE_PERCENT_PER_LOW_TECH_AFFINITY|100.0	0	<good>100%</good> increased ballistic weapon damage for every 5 Low Tech Affinity.
+effect|BALLISTIC_WEAPON_DAMAGE_PERCENT_PER_LOW_TECH_AFFINITY|-10.0	0	<bad>10%</bad> reduced ballistic weapon damage for every 5 Low Tech Affinity.
+effect|BALLISTIC_WEAPON_DAMAGE_PERCENT_PER_LOW_TECH_AFFINITY|-12.5	0	<bad>12.5%</bad> reduced ballistic weapon damage for every 5 Low Tech Affinity.
 effect|BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT|1.0	0	<good>1%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
 effect|BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT|10.0	0	<good>10%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
 effect|BALLISTIC_WEAPON_DAMAGE_PER_BURN_LEVEL_MULT|12.5	0	<good>12.5%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
@@ -694,6 +706,12 @@ effect|ENERGY_WEAPON_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased energy w
 effect|ENERGY_WEAPON_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased energy weapon damage.
 effect|ENERGY_WEAPON_DAMAGE_PERCENT|-10.0	0	<bad>10%</bad> reduced energy weapon damage.
 effect|ENERGY_WEAPON_DAMAGE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced energy weapon damage.
+effect|ENERGY_WEAPON_DAMAGE_PERCENT_PER_HIGH_TECH_AFFINITY|1.0	0	<good>1%</good> increased energy weapon damage for every 5 High Tech Affinity.
+effect|ENERGY_WEAPON_DAMAGE_PERCENT_PER_HIGH_TECH_AFFINITY|10.0	0	<good>10%</good> increased energy weapon damage for every 5 High Tech Affinity.
+effect|ENERGY_WEAPON_DAMAGE_PERCENT_PER_HIGH_TECH_AFFINITY|12.5	0	<good>12.5%</good> increased energy weapon damage for every 5 High Tech Affinity.
+effect|ENERGY_WEAPON_DAMAGE_PERCENT_PER_HIGH_TECH_AFFINITY|100.0	0	<good>100%</good> increased energy weapon damage for every 5 High Tech Affinity.
+effect|ENERGY_WEAPON_DAMAGE_PERCENT_PER_HIGH_TECH_AFFINITY|-10.0	0	<bad>10%</bad> reduced energy weapon damage for every 5 High Tech Affinity.
+effect|ENERGY_WEAPON_DAMAGE_PERCENT_PER_HIGH_TECH_AFFINITY|-12.5	0	<bad>12.5%</bad> reduced energy weapon damage for every 5 High Tech Affinity.
 effect|ENERGY_WEAPON_FIRE_RATE_MULT|1.0	0	<good>1%</good> more energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 effect|ENERGY_WEAPON_FIRE_RATE_MULT|10.0	0	<good>10%</good> more energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 effect|ENERGY_WEAPON_FIRE_RATE_MULT|12.5	0	<good>12.5%</good> more energy weapon rate of fire. Burst beams instead recharge faster between bursts.
@@ -814,6 +832,18 @@ effect|FIGHTER_CREW_LOSS_PERCENT|12.5	1	Strikecraft launched from this ship have
 effect|FIGHTER_CREW_LOSS_PERCENT|100.0	1	Strikecraft launched from this ship have <good>100%</good> increased pilot casualties.
 effect|FIGHTER_CREW_LOSS_PERCENT|-10.0	1	Strikecraft launched from this ship have <bad>10%</bad> reduced pilot casualties.
 effect|FIGHTER_CREW_LOSS_PERCENT|-12.5	1	Strikecraft launched from this ship have <bad>12.5%</bad> reduced pilot casualties.
+effect|FIGHTER_DAMAGE_TAKEN_MULT|1.0	1	Strikecraft launched from this ship have <good>1%</good> more damage taken.
+effect|FIGHTER_DAMAGE_TAKEN_MULT|10.0	1	Strikecraft launched from this ship have <good>10%</good> more damage taken.
+effect|FIGHTER_DAMAGE_TAKEN_MULT|12.5	1	Strikecraft launched from this ship have <good>12.5%</good> more damage taken.
+effect|FIGHTER_DAMAGE_TAKEN_MULT|100.0	1	Strikecraft launched from this ship have <good>100%</good> more damage taken.
+effect|FIGHTER_DAMAGE_TAKEN_MULT|-10.0	1	Strikecraft launched from this ship have <bad>10%</bad> less damage taken.
+effect|FIGHTER_DAMAGE_TAKEN_MULT|-12.5	1	Strikecraft launched from this ship have <bad>12.5%</bad> less damage taken.
+effect|FIGHTER_DAMAGE_TAKEN_MULT_PER_AFFINITY|1.0	1	Strikecraft launched from this ship take <bad>1%</bad> more damage for every 15 affinity.
+effect|FIGHTER_DAMAGE_TAKEN_MULT_PER_AFFINITY|10.0	1	Strikecraft launched from this ship take <bad>10%</bad> more damage for every 15 affinity.
+effect|FIGHTER_DAMAGE_TAKEN_MULT_PER_AFFINITY|12.5	1	Strikecraft launched from this ship take <bad>12.5%</bad> more damage for every 15 affinity.
+effect|FIGHTER_DAMAGE_TAKEN_MULT_PER_AFFINITY|100.0	1	Strikecraft launched from this ship take <bad>100%</bad> more damage for every 15 affinity.
+effect|FIGHTER_DAMAGE_TAKEN_MULT_PER_AFFINITY|-10.0	1	Strikecraft launched from this ship take <good>10%</good> less damage for every 15 affinity.
+effect|FIGHTER_DAMAGE_TAKEN_MULT_PER_AFFINITY|-12.5	1	Strikecraft launched from this ship take <good>12.5%</good> less damage for every 15 affinity.
 effect|FIGHTER_ENGAGEMENT_RANGE_MULT|1.0	0	<good>1%</good> more strikecraft engagement range.
 effect|FIGHTER_ENGAGEMENT_RANGE_MULT|10.0	0	<good>10%</good> more strikecraft engagement range.
 effect|FIGHTER_ENGAGEMENT_RANGE_MULT|12.5	0	<good>12.5%</good> more strikecraft engagement range.
@@ -934,6 +964,12 @@ effect|FIGHTER_WEAPON_DAMAGE_PERCENT|12.5	0	Strikecraft launched from this ship 
 effect|FIGHTER_WEAPON_DAMAGE_PERCENT|100.0	0	Strikecraft launched from this ship have <good>100%</good> increased weapon damage.
 effect|FIGHTER_WEAPON_DAMAGE_PERCENT|-10.0	0	Strikecraft launched from this ship have <bad>10%</bad> reduced weapon damage.
 effect|FIGHTER_WEAPON_DAMAGE_PERCENT|-12.5	0	Strikecraft launched from this ship have <bad>12.5%</bad> reduced weapon damage.
+effect|FIGHTER_WEAPON_DAMAGE_PERCENT_PER_AFFINITY|1.0	0	Strikecraft launched from this ship have <good>1%</good> increased weapon damage for every 10 affinity.
+effect|FIGHTER_WEAPON_DAMAGE_PERCENT_PER_AFFINITY|10.0	0	Strikecraft launched from this ship have <good>10%</good> increased weapon damage for every 10 affinity.
+effect|FIGHTER_WEAPON_DAMAGE_PERCENT_PER_AFFINITY|12.5	0	Strikecraft launched from this ship have <good>12.5%</good> increased weapon damage for every 10 affinity.
+effect|FIGHTER_WEAPON_DAMAGE_PERCENT_PER_AFFINITY|100.0	0	Strikecraft launched from this ship have <good>100%</good> increased weapon damage for every 10 affinity.
+effect|FIGHTER_WEAPON_DAMAGE_PERCENT_PER_AFFINITY|-10.0	0	Strikecraft launched from this ship have <bad>10%</bad> reduced weapon damage for every 10 affinity.
+effect|FIGHTER_WEAPON_DAMAGE_PERCENT_PER_AFFINITY|-12.5	0	Strikecraft launched from this ship have <bad>12.5%</bad> reduced weapon damage for every 10 affinity.
 effect|FIGHTER_WEAPON_RANGE_FLAT|1.0	0	Strikecraft launched from this ship have <good>+1</good> to weapon range.
 effect|FIGHTER_WEAPON_RANGE_FLAT|10.0	0	Strikecraft launched from this ship have <good>+10</good> to weapon range.
 effect|FIGHTER_WEAPON_RANGE_FLAT|12.5	0	Strikecraft launched from this ship have <good>+12.5</good> to weapon range.
@@ -1348,6 +1384,12 @@ effect|MISSILE_WEAPON_DAMAGE_PERCENT|12.5	0	<good>12.5%</good> increased missile
 effect|MISSILE_WEAPON_DAMAGE_PERCENT|100.0	0	<good>100%</good> increased missile weapon damage.
 effect|MISSILE_WEAPON_DAMAGE_PERCENT|-10.0	0	<bad>10%</bad> reduced missile weapon damage.
 effect|MISSILE_WEAPON_DAMAGE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced missile weapon damage.
+effect|MISSILE_WEAPON_DAMAGE_PERCENT_PER_MIDLINE_AFFINITY|1.0	0	<good>1%</good> increased missile weapon damage for every 5 Midline Affinity.
+effect|MISSILE_WEAPON_DAMAGE_PERCENT_PER_MIDLINE_AFFINITY|10.0	0	<good>10%</good> increased missile weapon damage for every 5 Midline Affinity.
+effect|MISSILE_WEAPON_DAMAGE_PERCENT_PER_MIDLINE_AFFINITY|12.5	0	<good>12.5%</good> increased missile weapon damage for every 5 Midline Affinity.
+effect|MISSILE_WEAPON_DAMAGE_PERCENT_PER_MIDLINE_AFFINITY|100.0	0	<good>100%</good> increased missile weapon damage for every 5 Midline Affinity.
+effect|MISSILE_WEAPON_DAMAGE_PERCENT_PER_MIDLINE_AFFINITY|-10.0	0	<bad>10%</bad> reduced missile weapon damage for every 5 Midline Affinity.
+effect|MISSILE_WEAPON_DAMAGE_PERCENT_PER_MIDLINE_AFFINITY|-12.5	0	<bad>12.5%</bad> reduced missile weapon damage for every 5 Midline Affinity.
 effect|MISSILE_WEAPON_ECCM_CHANCE_PERCENT|1.0	0	<good>1%</good> increased chance for missiles to resist enemy ECM and flares.
 effect|MISSILE_WEAPON_ECCM_CHANCE_PERCENT|10.0	0	<good>10%</good> increased chance for missiles to resist enemy ECM and flares.
 effect|MISSILE_WEAPON_ECCM_CHANCE_PERCENT|12.5	0	<good>12.5%</good> increased chance for missiles to resist enemy ECM and flares.
@@ -2278,6 +2320,12 @@ effect|WEAPON_RANGE_PERCENT|12.5	0	<good>12.5%</good> increased weapon range.
 effect|WEAPON_RANGE_PERCENT|100.0	0	<good>100%</good> increased weapon range.
 effect|WEAPON_RANGE_PERCENT|-10.0	0	<bad>10%</bad> reduced weapon range.
 effect|WEAPON_RANGE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced weapon range.
+effect|WEAPON_RANGE_PERCENT_PER_AFFINITY|1.0	0	<good>1%</good> increased weapon range for every 10 affinity.
+effect|WEAPON_RANGE_PERCENT_PER_AFFINITY|10.0	0	<good>10%</good> increased weapon range for every 10 affinity.
+effect|WEAPON_RANGE_PERCENT_PER_AFFINITY|12.5	0	<good>12.5%</good> increased weapon range for every 10 affinity.
+effect|WEAPON_RANGE_PERCENT_PER_AFFINITY|100.0	0	<good>100%</good> increased weapon range for every 10 affinity.
+effect|WEAPON_RANGE_PERCENT_PER_AFFINITY|-10.0	0	<bad>10%</bad> reduced weapon range for every 10 affinity.
+effect|WEAPON_RANGE_PERCENT_PER_AFFINITY|-12.5	0	<bad>12.5%</bad> reduced weapon range for every 10 affinity.
 effect|WEAPON_RANGE_THRESHOLD_FLAT|1.0	0	<good>+1</good> to range before falloff effectiveness applies.
 effect|WEAPON_RANGE_THRESHOLD_FLAT|10.0	0	<good>+10</good> to range before falloff effectiveness applies.
 effect|WEAPON_RANGE_THRESHOLD_FLAT|12.5	0	<good>+12.5</good> to range before falloff effectiveness applies.

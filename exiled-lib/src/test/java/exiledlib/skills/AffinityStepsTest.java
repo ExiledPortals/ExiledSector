@@ -2,6 +2,7 @@ package exiledlib.skills;
 
 import exiledlib.skills.skilleffect.SkillEffect;
 import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
+import exiledlib.skills.skilleffect.fighter.FighterSkillEffect;
 import exiledlib.skills.skilleffect.flux.FluxSkillEffect;
 import exiledlib.skills.skilleffect.logistics.LogisticsSkillEffect;
 import exiledlib.skills.skilleffect.special.SpecialSkillEffect;
@@ -30,6 +31,24 @@ class AffinityStepsTest {
 
     private static EffectContribution node(SkillEffect affinity, float amount) {
         return EffectContribution.scaledPermanent("node", "node_", List.of(new SkillTypeEffect(affinity, amount)));
+    }
+
+    private static Map<SkillEffect, Float> scaled(List<EffectContribution> contributions) {
+        Map<SkillEffect, Float> bonuses = new LinkedHashMap<>();
+        AffinitySteps.scaledBonuses(contributions, AffinitySteps.totals(contributions)).forEach(bonus -> bonuses.put(bonus.effect(), bonus.magnitude()));
+        return bonuses;
+    }
+
+    @Test
+    void anAffinityScaledEffectAddsItsTargetStatOncePerWholeStepOfItsAffinities() {
+        EffectContribution item = EffectContribution.scaledPermanent("item", "item_", List.of(
+                new SkillTypeEffect(SpecialSkillEffect.ARMOR_PERCENT_PER_LOW_TECH_AFFINITY, 1f),
+                new SkillTypeEffect(SpecialSkillEffect.FIGHTER_DAMAGE_TAKEN_MULT_PER_AFFINITY, -1f)));
+
+        assertEquals(Map.of(DefenseSkillEffect.ARMOR_PERCENT, 2f, FighterSkillEffect.FIGHTER_DAMAGE_TAKEN_MULT, -2f),
+                scaled(List.of(item, node(LOW_TECH, 25f), node(HIGH_TECH, 9f))));
+        assertEquals(Map.of(FighterSkillEffect.FIGHTER_DAMAGE_TAKEN_MULT, -1f), scaled(List.of(item, node(HIGH_TECH, 9f), node(MIDLINE, 6f))));
+        assertEquals(Map.of(), scaled(List.of(item, node(LOW_TECH, 9f))));
     }
 
     @Test

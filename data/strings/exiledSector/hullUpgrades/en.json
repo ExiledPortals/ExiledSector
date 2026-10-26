@@ -64,5 +64,6 @@
     "settings.socketStorage.battleItems.name": "Hull Item Drops From Battles",
     "settings.socketStorage.battleItems.tooltip": "100 is normal and 0 turns them off.",
     "hullItem.doubler.line": "Doubles the modifiers of this ship's {section} item.",
-    "hullItem.doubler.choices": "Can target: {sections}"
+    "hullItem.doubler.choices": "Can target: {sections}",
+    "hullItem.affinity.current": "Currently on this ship: {line}"
 }

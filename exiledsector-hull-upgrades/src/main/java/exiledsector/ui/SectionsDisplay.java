@@ -190,11 +190,11 @@ final class SectionsDisplay {
         hostPanel.addComponent(tooltipAnchor).inTL(sectionCentreX[hovered] - radius - hostPosition.getX(),
                 hostPosition.getY() + hostPosition.getHeight() - sectionCentreY[hovered] - radius);
         tooltipSection = hovered;
-        hoverTooltip.show(hoveredSection, hoveredSection.item(), sectionEditor.hullSize(), expanded -> tooltipFooter(hoveredSection), tooltipAnchor.getPosition());
+        hoverTooltip.show(hoveredSection, hoveredSection.item(), sectionEditor.hullSize(), expanded -> tooltipFooter(hoveredSection, sectionEditor), tooltipAnchor.getPosition());
     }
 
-    private static List<StyledText> tooltipFooter(ShipSections.UnlockedSection unlocked) {
-        List<StyledText> footer = new ArrayList<>();
+    private static List<StyledText> tooltipFooter(ShipSections.UnlockedSection unlocked, SectionEditor editor) {
+        List<StyledText> footer = new ArrayList<>(AffinityItemLines.current(unlocked.item(), editor.hullSize(), editor::affinityTotals));
         if (!unlocked.active()) {
             footer.add(Translation.msg("framework.socket.inactive")
                     .arg("requirement", HullUpgradeTooltip.requirementText(unlocked.unmetRequirement())).styled());

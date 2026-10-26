@@ -14,8 +14,10 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
+import exiledlib.skills.AffinitySteps;
 import exiledlib.skills.DiminishingReturns;
 import exiledlib.skills.StatBaseline;
+import exiledlib.skills.skilleffect.SkillEffect;
 import exiledlib.skills.skilleffect.logistics.FleetWideEffects;
 import exiledlib.skills.skilleffect.weapon.SlotConversionBacking;
 import exiledlib.skills.skilleffect.weapon.WeaponSlotConversion;
@@ -91,6 +93,11 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
     public static Set<WeaponType> slotConversionConflicts(ShipSkillData shipData, ShipVariantAPI variant) {
         ResolvedTree resolvedTree = variant == null ? null : resolve(shipData, null, variant);
         return resolvedTree == null ? Set.of() : WeaponSlotConversion.conflicts(variant.getHullSpec(), slotRules(resolvedTree));
+    }
+
+    public static Map<SkillEffect, Float> affinityTotals(ShipSkillData shipData, FleetMemberAPI member, ShipVariantAPI variant) {
+        ResolvedTree resolvedTree = variant == null ? null : resolve(shipData, member, variant);
+        return resolvedTree == null ? Map.of() : AffinitySteps.totals(resolvedTree.contributions());
     }
 
     private static ResolvedTree resolve(ShipSkillData shipData, FleetMemberAPI member, ShipVariantAPI variant) {

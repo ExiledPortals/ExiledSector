@@ -26,7 +26,11 @@ public final class AffinitySteps {
     public record Origin() {
     }
 
+    public record ScaledOrigin() {
+    }
+
     private static final Origin ORIGIN = new Origin();
+    private static final ScaledOrigin SCALED_ORIGIN = new ScaledOrigin();
     private static final Map<SkillEffect, List<Step>> STEPS_BY_AFFINITY = stepsByAffinity();
 
     private AffinitySteps() {
@@ -96,13 +100,39 @@ public final class AffinitySteps {
         return bonuses;
     }
 
+    public static List<SkillTypeEffect> scaledBonuses(List<EffectContribution> contributions, Map<SkillEffect, Float> affinityTotals) {
+        Map<SkillEffect, Float> bonusTotals = new LinkedHashMap<>();
+        for (EffectContribution contribution : contributions) {
+            if (!contribution.permanent()) {
+                continue;
+            }
+            for (SkillTypeEffect effect : contribution.effects()) {
+                AffinityScaling scaling = effect.effect().affinityScaling();
+                int steps = scaling == null ? 0 : scaling.stepsReached(affinityTotals);
+                if (steps > 0) {
+                    bonusTotals.merge(scaling.target(), steps * effect.magnitude(), Float::sum);
+                }
+            }
+        }
+        List<SkillTypeEffect> bonuses = new ArrayList<>();
+        bonusTotals.forEach((effect, bonus) -> bonuses.add(new SkillTypeEffect(effect, bonus)));
+        return bonuses;
+    }
+
     static List<EffectContribution> withSteppedBonuses(List<EffectContribution> contributions) {
-        List<SkillTypeEffect> bonuses = bonuses(totals(contributions));
-        if (bonuses.isEmpty()) {
+        Map<SkillEffect, Float> affinityTotals = totals(contributions);
+        List<SkillTypeEffect> bonuses = bonuses(affinityTotals);
+        List<SkillTypeEffect> scaled = scaledBonuses(contributions, affinityTotals);
+        if (bonuses.isEmpty() && scaled.isEmpty()) {
             return contributions;
         }
         List<EffectContribution> withBonuses = new ArrayList<>(contributions);
-        withBonuses.add(EffectContribution.scaledPermanent(ORIGIN, MOD_ID_PREFIX, List.copyOf(bonuses)));
+        if (!bonuses.isEmpty()) {
+            withBonuses.add(EffectContribution.scaledPermanent(ORIGIN, MOD_ID_PREFIX, List.copyOf(bonuses)));
+        }
+        if (!scaled.isEmpty()) {
+            withBonuses.add(EffectContribution.scaledPermanent(SCALED_ORIGIN, MOD_ID_PREFIX + "scaled_", List.copyOf(scaled)));
+        }
         return withBonuses;
     }
 }

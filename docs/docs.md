@@ -139,6 +139,10 @@ apply no stat themselves. `EffectTotals` sums each ship's permanent affinity fir
 bonuses for every whole step of 5, 10, 15 or 20, from the one table in `AffinitySteps`, so diminishing returns, NPC
 scaling and the summary see the stat bonuses. `ModuleTreeShare` steps the shared nodes' affinity the same way.
 
+Effects backed by `AffinityScaling` (`*_PER_*_AFFINITY`, on the affinity hull items) apply nothing themselves:
+`AffinitySteps.scaledBonuses` adds their target stat once per whole step of the affinities they read, summed when
+they read all three, in a contribution of its own so module sharing is unaffected.
+
 ## Diminishing returns
 
 `EffectTotals` shrinks permanent tree and hull item bonuses to armor, hull, flux capacity, flux dissipation,

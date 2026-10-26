@@ -3,8 +3,14 @@ package exiledlib.skills.skilleffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import exiledlib.i18n.StyledText;
+import exiledlib.skills.AffinityScaling;
 
 public interface BackedSkillEffect extends SkillEffect {
+
+    @Override
+    default AffinityScaling affinityScaling() {
+        return backing() instanceof AffinityScaling scaling ? scaling : null;
+    }
 
     EffectBacking backing();
 
