@@ -7,6 +7,8 @@ import com.fs.starfarer.api.combat.BattleObjectiveAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatFleetManagerAPI;
 import com.fs.starfarer.api.combat.CombatTaskManagerAPI;
+import com.fs.starfarer.api.combat.DamageAPI;
+import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
@@ -147,6 +149,47 @@ class ChartBattlePluginTest {
 
         assertEquals(1.5f, enemyCapture.getModifiedValue(), 0.0001f);
         assertEquals(1f, playerCapture.getModifiedValue(), 0.0001f);
+    }
+
+    @Test
+    void enemyShipsAndFightersGetTheDamageListenerOnce() {
+        ShipAPI enemyShip = mock(ShipAPI.class);
+        ShipAPI enemyFighter = mock(ShipAPI.class);
+        ShipAPI playerShip = mock(ShipAPI.class);
+        when(enemyShip.getOwner()).thenReturn(ChartBattlePlugin.ENEMY_OWNER);
+        when(enemyFighter.getOwner()).thenReturn(ChartBattlePlugin.ENEMY_OWNER);
+        when(enemyFighter.isFighter()).thenReturn(true);
+        when(enemyFighter.hasListenerOfClass(ChartEnemyDamageListener.class)).thenReturn(true);
+        when(playerShip.getOwner()).thenReturn(0);
+        when(engine.getShips()).thenReturn(List.of(enemyShip, enemyFighter, playerShip));
+        ChartBattlePlugin plugin = startedPlugin(Map.of(ChartFleetStat.ENEMY_KINETIC_DAMAGE_DEALT, 1.2f));
+
+        plugin.advance(0f, List.of());
+
+        verify(enemyShip).addListener(ChartEnemyDamageListener.INSTANCE);
+        verify(enemyFighter, never()).addListener(ChartEnemyDamageListener.INSTANCE);
+        verify(playerShip, never()).addListener(ChartEnemyDamageListener.INSTANCE);
+    }
+
+    @Test
+    void theEnemyDamageListenerRaisesOnlyItsDamageType() {
+        ChartFleetConditions.set(Map.of(ChartFleetStat.ENEMY_KINETIC_DAMAGE_DEALT, 1.2f), null);
+        DamageAPI kinetic = damageOf(DamageType.KINETIC);
+        DamageAPI energy = damageOf(DamageType.ENERGY);
+
+        assertEquals(ChartFleetConditions.MOD_ID, ChartEnemyDamageListener.INSTANCE.modifyDamageDealt(null, null, kinetic, null, false));
+        assertNull(ChartEnemyDamageListener.INSTANCE.modifyDamageDealt(null, null, energy, null, true));
+
+        assertEquals(1.2f, kinetic.getModifier().getMultStatMod(ChartFleetConditions.MOD_ID).getValue(), 0.0001f);
+        assertNull(energy.getModifier().getMultStatMod(ChartFleetConditions.MOD_ID));
+    }
+
+    private static DamageAPI damageOf(DamageType type) {
+        DamageAPI damage = mock(DamageAPI.class);
+        MutableStat modifier = new MutableStat(1f);
+        when(damage.getType()).thenReturn(type);
+        when(damage.getModifier()).thenReturn(modifier);
+        return damage;
     }
 
     private static ShipAPI shipWithCaptureRate(int owner, MutableStat captureRate) {

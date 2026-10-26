@@ -21,6 +21,8 @@ public enum ChartFleetStat {
         stats.getEnergyDamageTakenMult().modifyMult(id, mult);
         stats.getEnergyShieldDamageTakenMult().modifyMult(id, mult);
     }),
+    SHIELD_DAMAGE_TAKEN((stats, id, mult) -> stats.getShieldDamageTakenMult().modifyMult(id, mult)),
+    ARMOR_DAMAGE_TAKEN((stats, id, mult) -> stats.getArmorDamageTakenMult().modifyMult(id, mult)),
     TOP_SPEED((stats, id, mult) -> stats.getMaxSpeed().modifyMult(id, mult)),
     MANEUVERABILITY((stats, id, mult) -> {
         stats.getAcceleration().modifyMult(id, mult);
@@ -29,17 +31,21 @@ public enum ChartFleetStat {
         stats.getMaxTurnRate().modifyMult(id, mult);
     }),
     SHIELD_ARC((stats, id, mult) -> stats.getShieldArcBonus().modifyMult(id, mult)),
+    SHIELD_UPKEEP((stats, id, mult) -> stats.getShieldUpkeepMult().modifyMult(id, mult)),
+    SHIELD_RAISE_RATE((stats, id, mult) -> stats.getShieldUnfoldRateMult().modifyMult(id, mult)),
     PHASE_ACTIVATION_COST((stats, id, mult) -> stats.getPhaseCloakActivationCostBonus().modifyMult(id, mult)),
     FLUX_DISSIPATION((stats, id, mult) -> stats.getFluxDissipation().modifyMult(id, mult)),
-    WEAPON_RANGE((stats, id, mult) -> {
-        stats.getBallisticWeaponRangeBonus().modifyMult(id, mult);
-        stats.getEnergyWeaponRangeBonus().modifyMult(id, mult);
-        stats.getMissileWeaponRangeBonus().modifyMult(id, mult);
-    }),
+    BALLISTIC_WEAPON_RANGE((stats, id, mult) -> stats.getBallisticWeaponRangeBonus().modifyMult(id, mult)),
+    ENERGY_WEAPON_RANGE((stats, id, mult) -> stats.getEnergyWeaponRangeBonus().modifyMult(id, mult)),
+    MISSILE_WEAPON_RANGE((stats, id, mult) -> stats.getMissileWeaponRangeBonus().modifyMult(id, mult)),
     DEPLOYMENT_COST((stats, id, mult) -> stats.getDynamic().getMod(Stats.DEPLOYMENT_POINTS_MOD).modifyMult(id, mult)),
     ENEMY_DEPLOYMENT_COST(null),
     COMMAND_POINT_RATE(null),
-    ENEMY_OBJECTIVE_CAPTURE_RATE(null);
+    ENEMY_OBJECTIVE_CAPTURE_RATE(null),
+    ENEMY_KINETIC_DAMAGE_DEALT(null),
+    ENEMY_HIGH_EXPLOSIVE_DAMAGE_DEALT(null),
+    ENEMY_ENERGY_DAMAGE_DEALT(null),
+    ENEMY_FRAGMENTATION_DAMAGE_DEALT(null);
 
     static final float MIN_MULT = 0.1f;
     static final float MAX_MULT = 10f;

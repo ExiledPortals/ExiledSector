@@ -89,7 +89,7 @@ class ChartFleetConditionsTest {
 
     @Test
     void onlyShipsAndFightersOfThePlayerFleetAreAffected() {
-        ChartFleetConditions.set(Map.of(ChartFleetStat.TOP_SPEED, 0.8f, ChartFleetStat.WEAPON_RANGE, 0.9f,
+        ChartFleetConditions.set(Map.of(ChartFleetStat.TOP_SPEED, 0.8f, ChartFleetStat.MISSILE_WEAPON_RANGE, 0.9f,
                 ChartFleetStat.ENERGY_DAMAGE_TAKEN, 1.25f), playerFleet);
         ShipStats playerShip = new ShipStats(playerMember);
         FleetMemberAPI otherMember = mock(FleetMemberAPI.class);
@@ -129,6 +129,31 @@ class ChartFleetConditionsTest {
         assertEquals(25f, deploymentCost.computeEffective(20f), 0.0001f);
         assertFalse(ChartFleetStat.ENEMY_DEPLOYMENT_COST.appliesToShips());
         assertFalse(ChartFleetStat.COMMAND_POINT_RATE.appliesToShips());
+    }
+
+    @Test
+    void shieldAndArmorDrawbacksReachTheirShipStatsAndEnemyDamageStaysOffShips() {
+        ChartFleetConditions.set(Map.of(ChartFleetStat.SHIELD_UPKEEP, 1.5f, ChartFleetStat.SHIELD_RAISE_RATE, 0.6f,
+                ChartFleetStat.SHIELD_DAMAGE_TAKEN, 1.2f, ChartFleetStat.ARMOR_DAMAGE_TAKEN, 1.15f,
+                ChartFleetStat.ENEMY_ENERGY_DAMAGE_DEALT, 1.2f), playerFleet);
+        MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
+        MutableStat upkeep = new MutableStat(1f);
+        MutableStat raiseRate = new MutableStat(1f);
+        MutableStat shieldTaken = new MutableStat(1f);
+        MutableStat armorTaken = new MutableStat(1f);
+        when(stats.getFleetMember()).thenReturn(playerMember);
+        when(stats.getShieldUpkeepMult()).thenReturn(upkeep);
+        when(stats.getShieldUnfoldRateMult()).thenReturn(raiseRate);
+        when(stats.getShieldDamageTakenMult()).thenReturn(shieldTaken);
+        when(stats.getArmorDamageTakenMult()).thenReturn(armorTaken);
+
+        ChartFleetConditions.applyToShip(stats);
+
+        assertEquals(1.5f, upkeep.getModifiedValue(), 0.0001f);
+        assertEquals(0.6f, raiseRate.getModifiedValue(), 0.0001f);
+        assertEquals(1.2f, shieldTaken.getModifiedValue(), 0.0001f);
+        assertEquals(1.15f, armorTaken.getModifiedValue(), 0.0001f);
+        assertFalse(ChartFleetStat.ENEMY_ENERGY_DAMAGE_DEALT.appliesToShips());
     }
 
     @Test

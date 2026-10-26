@@ -84,6 +84,7 @@ public class ChartBattlePlugin extends BaseEveryFrameCombatPlugin {
         refreshBattleCaps(ChartFleetConditions.battleSizeBonus(), ChartFleetConditions.mult(ChartFleetStat.ENEMY_DEPLOYMENT_COST));
         refreshCommandPointRate(ChartFleetConditions.mult(ChartFleetStat.COMMAND_POINT_RATE));
         refreshEnemyObjectiveCaptureRate(ChartFleetConditions.mult(ChartFleetStat.ENEMY_OBJECTIVE_CAPTURE_RATE));
+        refreshEnemyDamageDealt();
     }
 
     void refreshBattleCaps(int bonusPoints, float enemyCostMult) {
@@ -154,6 +155,17 @@ public class ChartBattlePlugin extends BaseEveryFrameCombatPlugin {
         for (ShipAPI ship : engine.getShips()) {
             if (ship.getOwner() == ENEMY_OWNER && !ship.isFighter()) {
                 ship.getMutableStats().getDynamic().getStat(Stats.SHIP_OBJECTIVE_CAP_RATE_MULT).modifyMult(MOD_ID, mult);
+            }
+        }
+    }
+
+    void refreshEnemyDamageDealt() {
+        if (!ChartEnemyDamageListener.anyActive()) {
+            return;
+        }
+        for (ShipAPI ship : engine.getShips()) {
+            if (ship.getOwner() == ENEMY_OWNER && !ship.hasListenerOfClass(ChartEnemyDamageListener.class)) {
+                ship.addListener(ChartEnemyDamageListener.INSTANCE);
             }
         }
     }
