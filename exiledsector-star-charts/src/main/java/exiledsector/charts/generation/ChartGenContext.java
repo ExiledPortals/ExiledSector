@@ -1,7 +1,7 @@
 package exiledsector.charts.generation;
 
-import exiledsector.charts.AtlasRunNode;
-import exiledsector.charts.ChartAnomalies;
+import exiledsector.charts.atlas.AtlasRunNode;
+import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.effect.ChartEffect;

@@ -2,7 +2,7 @@ package exiledsector.ui.atlas;
 
 import exiledlib.i18n.Style;
 import exiledlib.i18n.StyledText;
-import exiledsector.charts.ChartAnomalies;
+import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.anomaly.skirmish.SkirmishEntry;

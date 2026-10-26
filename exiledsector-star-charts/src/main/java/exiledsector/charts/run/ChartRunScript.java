@@ -8,7 +8,7 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.characters.AbilityPlugin;
 import com.fs.starfarer.api.impl.campaign.ids.Abilities;
 import exiledlib.i18n.Translation;
-import exiledsector.charts.ChartSkirmishes;
+import exiledsector.charts.anomaly.skirmish.ChartSkirmishes;
 import exiledsector.charts.effect.ChartFleetConditions;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.objective.ChartObjectives;

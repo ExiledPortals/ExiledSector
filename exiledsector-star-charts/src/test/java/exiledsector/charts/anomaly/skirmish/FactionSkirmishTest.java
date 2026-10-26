@@ -1,7 +1,7 @@
 package exiledsector.charts.anomaly.skirmish;
 
-import exiledsector.charts.AtlasRunNode;
-import exiledsector.charts.ChartAnomalies;
+import exiledsector.charts.atlas.AtlasRunNode;
+import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasAnomalyCandidate;

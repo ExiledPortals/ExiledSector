@@ -1,8 +1,7 @@
 package exiledsector.charts.atlas;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledsector.charts.AtlasRunNode;
-import exiledsector.charts.ChartAnomalies;
+import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.anomaly.ChartAnomaly;

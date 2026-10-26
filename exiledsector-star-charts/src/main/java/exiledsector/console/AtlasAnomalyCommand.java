@@ -1,7 +1,7 @@
 package exiledsector.console;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledsector.charts.ChartAnomalies;
+import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasAnomalyRecord;
 import exiledsector.charts.atlas.AtlasCell;

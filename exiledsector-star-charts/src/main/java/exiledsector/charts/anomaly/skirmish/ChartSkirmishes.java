@@ -1,4 +1,4 @@
-package exiledsector.charts;
+package exiledsector.charts.anomaly.skirmish;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetAssignment;
@@ -6,8 +6,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
-import exiledsector.charts.anomaly.skirmish.SkirmishSide;
+import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;

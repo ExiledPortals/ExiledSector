@@ -16,7 +16,7 @@ import exiledsector.charts.run.ChartContentListener;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
-import exiledsector.charts.ChartSkirmishes;
+import exiledsector.charts.anomaly.skirmish.ChartSkirmishes;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;

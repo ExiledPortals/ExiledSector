@@ -1,6 +1,6 @@
 package exiledsector.charts.atlas;
 
-import exiledsector.charts.ChartAnomalies;
+import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.AsteroidStorm;
 import exiledsector.charts.anomaly.ChartAnomaly;

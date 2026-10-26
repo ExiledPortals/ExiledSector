@@ -1,12 +1,8 @@
-package exiledsector.charts;
+package exiledsector.charts.anomaly;
 
-import exiledsector.charts.anomaly.AnomalyContentSite;
-import exiledsector.charts.anomaly.AsteroidStorm;
-import exiledsector.charts.anomaly.ChartAnomaly;
-import exiledsector.charts.anomaly.MagneticStorm;
+import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
-import exiledsector.charts.anomaly.StarAnomalies;
-import exiledsector.charts.anomaly.StellarFlares;
+import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;

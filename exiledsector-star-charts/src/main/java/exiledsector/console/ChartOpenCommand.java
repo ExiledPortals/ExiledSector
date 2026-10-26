@@ -5,7 +5,7 @@ import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystem
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.layout.ChartLayoutGenerator;
 import exiledsector.charts.layout.ChartLayoutRequest;
-import exiledsector.charts.ChartAnomalies;
+import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunActions;
 import exiledsector.charts.run.ChartRunActions.OpenResult;

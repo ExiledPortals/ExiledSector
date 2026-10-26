@@ -3,6 +3,7 @@ package exiledsector.charts;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.skirmish.SkirmishFactions;
 import exiledsector.charts.atlas.AtlasData;
 import exiledsector.charts.content.ChartBosses;

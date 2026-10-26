@@ -11,7 +11,7 @@ import com.fs.starfarer.api.ui.SectorMapAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
-import exiledsector.charts.ChartAnomalies;
+import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunBound;
 import exiledsector.charts.run.ChartRunState;

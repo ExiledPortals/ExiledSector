@@ -1,6 +1,7 @@
 package exiledsector.charts;
 
 import exiledlib.ProjectFiles;
+import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.content.ChartFactions;
 import exiledsector.charts.content.ChartPois;

@@ -1,6 +1,5 @@
 package exiledsector.charts.atlas;
 
-import exiledsector.charts.AtlasRunNode;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.layout.ChartLayoutRequest;
 import exiledsector.charts.generation.ChartTiers;

@@ -1,6 +1,6 @@
 package exiledsector.charts.run;
 
-import exiledsector.charts.AtlasRunNode;
+import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartBossType;
 import exiledsector.charts.content.ChartContent;

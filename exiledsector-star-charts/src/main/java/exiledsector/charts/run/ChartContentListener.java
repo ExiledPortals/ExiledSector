@@ -6,7 +6,7 @@ import com.fs.starfarer.api.campaign.CampaignEventListener.FleetDespawnReason;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.listeners.FleetEventListener;
 import exiledsector.charts.ChartIds;
-import exiledsector.charts.ChartSkirmishes;
+import exiledsector.charts.anomaly.skirmish.ChartSkirmishes;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.objective.ChartObjectives;
 import org.apache.log4j.Logger;

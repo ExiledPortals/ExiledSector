@@ -6,7 +6,7 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
-import exiledsector.charts.AtlasRunNode;
+import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.generation.ChartSystemFactory;
 import exiledsector.charts.layout.ChartLayoutRequest;

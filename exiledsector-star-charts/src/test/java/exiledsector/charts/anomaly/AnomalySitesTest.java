@@ -1,13 +1,11 @@
-package exiledsector.charts;
+package exiledsector.charts.anomaly;
 
 import com.fs.starfarer.api.campaign.CampaignTerrainAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.terrain.BaseRingTerrain;
-import exiledsector.charts.anomaly.AnomalyContentSite;
-import exiledsector.charts.anomaly.AsteroidStorm;
-import exiledsector.charts.anomaly.StarAnomalies;
+import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.content.ChartSpot;

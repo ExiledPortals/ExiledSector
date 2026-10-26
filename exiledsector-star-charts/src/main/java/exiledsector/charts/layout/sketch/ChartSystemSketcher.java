@@ -2,7 +2,7 @@ package exiledsector.charts.layout.sketch;
 
 import com.fs.starfarer.api.impl.campaign.procgen.StarAge;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
-import exiledsector.charts.ChartAnomalies;
+import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.layout.ChartDeepSpace;
 import exiledsector.charts.layout.ChartLayoutGenerator;
 import exiledsector.charts.layout.ChartLayoutRecipe;

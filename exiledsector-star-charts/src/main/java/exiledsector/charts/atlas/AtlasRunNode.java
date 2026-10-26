@@ -1,4 +1,4 @@
-package exiledsector.charts;
+package exiledsector.charts.atlas;
 
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.effect.ChartEffect;

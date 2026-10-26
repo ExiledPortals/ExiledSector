@@ -1,12 +1,7 @@
-package exiledsector.charts;
+package exiledsector.charts.anomaly;
 
 import exiledlib.ModCsv;
-import exiledsector.charts.anomaly.AsteroidStorm;
-import exiledsector.charts.anomaly.ChartAnomaly;
-import exiledsector.charts.anomaly.MagneticStorm;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
-import exiledsector.charts.anomaly.StarAnomalies;
-import exiledsector.charts.anomaly.StellarFlares;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.effect.ChartEffect;
@@ -29,7 +24,7 @@ import java.util.Set;
 
 public final class ChartAnomalies {
 
-    static final String PATH = "data/config/exiledSector/chart_anomalies.csv";
+    public static final String PATH = "data/config/exiledSector/chart_anomalies.csv";
     static final String ID_COLUMN = "id";
     static final List<ChartAnomaly> BUILT_IN = List.of(StarAnomalies.BLACK_HOLE, StarAnomalies.NEUTRON_STAR, StarAnomalies.DENSE_NEBULA,
             AsteroidStorm.INSTANCE, MagneticStorm.INSTANCE, StellarFlares.INSTANCE, SpatialBreach.INSTANCE, FactionSkirmish.INSTANCE);
@@ -70,7 +65,7 @@ public final class ChartAnomalies {
         ModCsv.load(ID_COLUMN, PATH, LOG, ChartAnomalies::register);
     }
 
-    static List<String> register(JSONArray rows) throws JSONException {
+    public static List<String> register(JSONArray rows) throws JSONException {
         CsvRows csv = new CsvRows(PATH);
         Map<String, Definition> loaded = BuiltInTable.rows(rows, csv, "anomaly", id -> byId(id) != null, ChartAnomalies::parse);
         csv.report(LOG);
