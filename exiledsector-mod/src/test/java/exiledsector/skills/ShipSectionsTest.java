@@ -3,7 +3,9 @@ package exiledsector.skills;
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledlib.skills.EffectTotals;
+import exiledlib.skills.SkillTypeEffect;
 import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
+import exiledlib.skills.skilleffect.special.SpecialSkillEffect;
 import exiledsector.items.HullItem;
 import exiledsector.items.HullUpgradeEffectSource;
 import exiledsector.items.ItemDefinitions;
@@ -37,7 +39,8 @@ class ShipSectionsTest {
                 .put(definition("bridge_item", "bridge", "HULL_PERCENT:5:5"))
                 .put(definition("emitter", "shield_generator", "HULL_PERCENT:10:10"))
                 .put(definition("chip", "reactor", "HULL_PERCENT:20:20"))
-                .put(definition("warranty", "bridge", "HULL_PERCENT:1:1").put("unique", "true").put("mechanic", HullItem.DOUBLER_MECHANIC)));
+                .put(definition("warranty", "bridge", "HULL_PERCENT:1:1").put("unique", "true").put("mechanic", HullItem.DOUBLER_MECHANIC))
+                .put(definition("vault", "bridge", "HIGHEST_AFFINITY_FLAT_PER_S_MOD:3:3")));
         shipData = new ShipSkillData();
         shipData.grantUnlockedSocketType("bridge");
         shipData.grantUnlockedSocketType("shield_generator");
@@ -143,6 +146,19 @@ class ShipSectionsTest {
 
         assertEquals(Set.of(), ShipSections.doubledSections(emptyTarget));
         assertEquals(11f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(emptyTarget, HullSize.CRUISER), 1f)), 1e-4f);
+    }
+
+    @Test
+    void perSModAffinityIsMultipliedByTheShipsSMods() {
+        shipData.installInSection("bridge", NpcItems.id("vault", 4L));
+        List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
+
+        float granted = HullUpgradeEffectSource.contributions(slots, HullSize.CRUISER, 2).stream()
+                .flatMap(contribution -> contribution.effects().stream())
+                .filter(effect -> effect.effect() == SpecialSkillEffect.HIGHEST_AFFINITY_FLAT_PER_S_MOD)
+                .map(SkillTypeEffect::magnitude).reduce(0f, Float::sum);
+
+        assertEquals(6f, granted, 1e-4f);
     }
 
     @Test

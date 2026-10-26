@@ -141,7 +141,9 @@ scaling and the summary see the stat bonuses. `ModuleTreeShare` steps the shared
 
 Effects backed by `AffinityScaling` (`*_PER_*_AFFINITY`, on the affinity hull items) apply nothing themselves:
 `AffinitySteps.scaledBonuses` adds their target stat once per whole step of the affinities they read, summed when
-they read all three, in a contribution of its own so module sharing is unaffected.
+they read all three, in a contribution of its own so module sharing is unaffected. `AffinitySteps.totals` adds
+`HIGHEST_AFFINITY_FLAT_PER_S_MOD` (already multiplied by the ship's s-mods in `HullUpgradeEffectSource`) to the
+highest affinity, then `LOWEST_AFFINITY_AS_HIGHEST` raises the lowest to match it.
 
 ## Diminishing returns
 

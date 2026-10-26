@@ -1180,6 +1180,12 @@ effect|HEARTLESS_RADIATION_EMP_FLAT|12.5	0	Each new Heartless stack sets off a r
 effect|HEARTLESS_RADIATION_EMP_FLAT|100.0	0	Each new Heartless stack sets off a radiation surge that deals <bad>100</bad> EMP damage to a random weapon and to a random engine on this ship.
 effect|HEARTLESS_RADIATION_EMP_FLAT|-10.0	0	Each new Heartless stack sets off a radiation surge that deals <bad>-10</bad> EMP damage to a random weapon and to a random engine on this ship.
 effect|HEARTLESS_RADIATION_EMP_FLAT|-12.5	0	Each new Heartless stack sets off a radiation surge that deals <bad>-12.5</bad> EMP damage to a random weapon and to a random engine on this ship.
+effect|HIGHEST_AFFINITY_FLAT_PER_S_MOD|1.0	0	<good>+1</good> to your highest affinity for each s-mod on this ship.
+effect|HIGHEST_AFFINITY_FLAT_PER_S_MOD|10.0	0	<good>+10</good> to your highest affinity for each s-mod on this ship.
+effect|HIGHEST_AFFINITY_FLAT_PER_S_MOD|12.5	0	<good>+12.5</good> to your highest affinity for each s-mod on this ship.
+effect|HIGHEST_AFFINITY_FLAT_PER_S_MOD|100.0	0	<good>+100</good> to your highest affinity for each s-mod on this ship.
+effect|HIGHEST_AFFINITY_FLAT_PER_S_MOD|-10.0	0	<bad>-10</bad> to your highest affinity for each s-mod on this ship.
+effect|HIGHEST_AFFINITY_FLAT_PER_S_MOD|-12.5	0	<bad>-12.5</bad> to your highest affinity for each s-mod on this ship.
 effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased high-explosive damage taken.
 effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased high-explosive damage taken.
 effect|HIGH_EXPLOSIVE_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased high-explosive damage taken.
@@ -1258,6 +1264,12 @@ effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|12.5	1	<good>12.5%</good> more negati
 effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|100.0	1	<good>100%</good> more negative effects from logistics D-mods per D-mod, up to 5 D-mods.
 effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|-10.0	1	<bad>10%</bad> less negative effects from logistics D-mods per D-mod, up to 5 D-mods.
 effect|LOGISTICS_DMOD_EFFECT_MULT_PER_DMOD|-12.5	1	<bad>12.5%</bad> less negative effects from logistics D-mods per D-mod, up to 5 D-mods.
+effect|LOWEST_AFFINITY_AS_HIGHEST|1.0	0	Your lowest affinity counts as equal to your highest.
+effect|LOWEST_AFFINITY_AS_HIGHEST|10.0	0	Your lowest affinity counts as equal to your highest.
+effect|LOWEST_AFFINITY_AS_HIGHEST|12.5	0	Your lowest affinity counts as equal to your highest.
+effect|LOWEST_AFFINITY_AS_HIGHEST|100.0	0	Your lowest affinity counts as equal to your highest.
+effect|LOWEST_AFFINITY_AS_HIGHEST|-10.0	0	Your lowest affinity counts as equal to your highest.
+effect|LOWEST_AFFINITY_AS_HIGHEST|-12.5	0	Your lowest affinity counts as equal to your highest.
 effect|LOW_TECH_AFFINITY_FLAT|1.0	0	<good>+1</good> to Low Tech Affinity.
 effect|LOW_TECH_AFFINITY_FLAT|10.0	0	<good>+10</good> to Low Tech Affinity.
 effect|LOW_TECH_AFFINITY_FLAT|12.5	0	<good>+12.5</good> to Low Tech Affinity.

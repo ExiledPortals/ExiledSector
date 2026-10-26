@@ -73,16 +73,48 @@ public final class AffinitySteps {
 
     public static Map<SkillEffect, Float> totals(List<EffectContribution> contributions) {
         Map<SkillEffect, Float> totals = new LinkedHashMap<>();
+        float toHighest = 0f;
+        boolean lowestAsHighest = false;
         for (EffectContribution contribution : contributions) {
             if (contribution.permanent()) {
                 for (SkillTypeEffect effect : contribution.effects()) {
                     if (isAffinity(effect.effect())) {
                         totals.merge(effect.effect(), effect.magnitude(), Float::sum);
+                    } else if (effect.effect() == SpecialSkillEffect.HIGHEST_AFFINITY_FLAT_PER_S_MOD) {
+                        toHighest += effect.magnitude();
+                    } else if (effect.effect() == SpecialSkillEffect.LOWEST_AFFINITY_AS_HIGHEST) {
+                        lowestAsHighest = true;
                     }
                 }
             }
         }
+        if (toHighest != 0f) {
+            totals.merge(highest(totals), toHighest, Float::sum);
+        }
+        if (lowestAsHighest) {
+            totals.put(lowest(totals), totals.getOrDefault(highest(totals), 0f));
+        }
         return totals;
+    }
+
+    private static SkillEffect highest(Map<SkillEffect, Float> totals) {
+        SkillEffect highest = SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT;
+        for (SkillEffect affinity : STEPS_BY_AFFINITY.keySet()) {
+            if (totals.getOrDefault(affinity, 0f) > totals.getOrDefault(highest, 0f)) {
+                highest = affinity;
+            }
+        }
+        return highest;
+    }
+
+    private static SkillEffect lowest(Map<SkillEffect, Float> totals) {
+        SkillEffect lowest = SpecialSkillEffect.LOW_TECH_AFFINITY_FLAT;
+        for (SkillEffect affinity : STEPS_BY_AFFINITY.keySet()) {
+            if (totals.getOrDefault(affinity, 0f) < totals.getOrDefault(lowest, 0f)) {
+                lowest = affinity;
+            }
+        }
+        return lowest;
     }
 
     public static List<SkillTypeEffect> bonuses(Map<SkillEffect, Float> affinityTotals) {

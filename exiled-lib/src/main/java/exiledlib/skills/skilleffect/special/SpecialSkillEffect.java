@@ -72,7 +72,14 @@ public enum SpecialSkillEffect implements BackedSkillEffect {
     FIGHTER_WEAPON_DAMAGE_PERCENT_PER_AFFINITY(new AffinityScaling(AffinityScaling.Filter.ALL, AffinityScaling.LARGE_STEP,
             FighterSkillEffect.FIGHTER_WEAPON_DAMAGE_PERCENT)),
     FIGHTER_DAMAGE_TAKEN_MULT_PER_AFFINITY(new AffinityScaling(AffinityScaling.Filter.ALL, AffinityScaling.LARGEST_STEP,
-            FighterSkillEffect.FIGHTER_DAMAGE_TAKEN_MULT));
+            FighterSkillEffect.FIGHTER_DAMAGE_TAKEN_MULT)),
+    HIGHEST_AFFINITY_FLAT_PER_S_MOD(new AffinityTally()),
+    LOWEST_AFFINITY_AS_HIGHEST(new AffinityTally()) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).styled();
+        }
+    };
 
     private final EffectBacking backing;
 

@@ -52,6 +52,20 @@ class AffinityStepsTest {
     }
 
     @Test
+    void perSModAffinityGoesToTheHighestAndLowestAsHighestRaisesTheLowestAfterwards() {
+        EffectContribution vault = EffectContribution.scaledPermanent("vault", "vault_", List.of(
+                new SkillTypeEffect(SpecialSkillEffect.HIGHEST_AFFINITY_FLAT_PER_S_MOD, 6f)));
+        EffectContribution absence = EffectContribution.scaledPermanent("absence", "absence_", List.of(
+                new SkillTypeEffect(SpecialSkillEffect.LOWEST_AFFINITY_AS_HIGHEST, 1f)));
+
+        assertEquals(Map.of(LOW_TECH, 10f, HIGH_TECH, 21f), AffinitySteps.totals(List.of(vault, node(LOW_TECH, 10f), node(HIGH_TECH, 15f))));
+        Map<SkillEffect, Float> raised = AffinitySteps.totals(List.of(vault, absence, node(LOW_TECH, 10f), node(HIGH_TECH, 15f)));
+        assertEquals(21f, raised.get(HIGH_TECH));
+        assertEquals(21f, raised.get(MIDLINE));
+        assertEquals(10f, raised.get(LOW_TECH));
+    }
+
+    @Test
     void lowTechCountsWholeStepsOfFiveAndFifteen() {
         assertEquals(Map.of(), bonuses(LOW_TECH, 0f));
         assertEquals(Map.of(), bonuses(LOW_TECH, 4f));
