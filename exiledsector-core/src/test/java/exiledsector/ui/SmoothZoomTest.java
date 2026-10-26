@@ -59,6 +59,20 @@ class SmoothZoomTest {
     }
 
     @Test
+    void aCustomMinimumLetsTheZoomGoFurtherOut() {
+        SmoothZoom zoom = new SmoothZoom(1f, 0.05f, 1f);
+        for (int tick = 0; tick < 200; tick++) {
+            zoom.scroll(false);
+        }
+        zoom.advance(10f);
+
+        assertEquals(0.05f, zoom.target());
+        assertTrue(zoom.isSettledAtMinimum());
+        zoom.aimAt(0.01f);
+        assertEquals(0.05f, zoom.target());
+    }
+
+    @Test
     void zoomingAboutTheCursorKeepsTheWorldPointUnderItInPlace() {
         float zoom = 0.5f;
         float pan = 40f;

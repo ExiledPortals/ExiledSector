@@ -82,6 +82,16 @@ class ChartBossesTest {
     }
 
     @Test
+    void theThreatNeverTakesASharedStationSoItsBossIsAlwaysAFleet() {
+        ChartBosses.useForTests(List.of(new Definition(ChartBossType.STATION, 1f, 1, 15, 0.5f)), List.of(new Station("shared", Set.of(), 1, 15, 1f)));
+
+        assertTrue(ChartBosses.stationsFor("threat", 9).isEmpty());
+        for (long seed = 0; seed < 20; seed++) {
+            assertEquals(ChartBossType.FLEET, ChartBosses.pickType(9, "threat", new Random(seed)));
+        }
+    }
+
+    @Test
     void everyBossTypeHasATableKeyAndAnObjectiveDescriptionInEveryCatalogue() throws Exception {
         for (ChartBossType type : ChartBossType.values()) {
             assertEquals(type, ChartBossType.byKey(type.key()));

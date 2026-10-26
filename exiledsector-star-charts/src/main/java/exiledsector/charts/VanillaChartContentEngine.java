@@ -103,7 +103,7 @@ final class VanillaChartContentEngine implements ChartContentEngine {
 
     @Override
     public SectorEntityToken addDerelict(StarSystemAPI system, String factionId, String derelictType, boolean recoverable, Random random) {
-        DerelictShipData shipData = DerelictShipEntityPlugin.createRandom(factionId, DerelictType.valueOf(derelictType), random,
+        DerelictShipData shipData = DerelictShipEntityPlugin.createRandom(ChartThreatFleets.wreckFaction(factionId, random), DerelictType.valueOf(derelictType), random,
                 DerelictShipEntityPlugin.getDefaultSModProb());
         if (shipData == null || shipData.ship == null) {
             return null;
@@ -137,7 +137,7 @@ final class VanillaChartContentEngine implements ChartContentEngine {
 
     @Override
     public CampaignFleetAPI createFleet(FleetParamsV3 params) {
-        return FleetFactoryV3.createFleet(params);
+        return ChartThreatFleets.builds(params.factionId) ? ChartThreatFleets.create(params) : FleetFactoryV3.createFleet(params);
     }
 
     @Override

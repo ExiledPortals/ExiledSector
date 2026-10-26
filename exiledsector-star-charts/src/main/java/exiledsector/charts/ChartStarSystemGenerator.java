@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.PlanetSpecAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.CategoryGenDataSpec;
+import com.fs.starfarer.api.impl.campaign.procgen.PlanetGenDataSpec;
 import com.fs.starfarer.api.impl.campaign.procgen.PlanetConditionGenerator;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.campaign.procgen.StarAge;
@@ -39,6 +40,8 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
     private final ChartLayoutRecipe recipe;
     private final ChartPhenomenon phenomenon;
     private SectorEntityToken featureAnchor;
+    private PlanetAPI deepSpaceCentre;
+    private String bodyIdPrefix;
     private boolean primaryForced;
 
     ChartStarSystemGenerator(StarAge age, StarSystemType chartType, ChartLayoutRecipe recipe, ChartPhenomenon phenomenon) {
@@ -158,7 +161,10 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
         secondary = null;
         tertiary = null;
         systemCenter = null;
-        if (!addStars(starId)) {
+        bodyIdPrefix = starId;
+        if (systemType == StarSystemType.DEEP_SPACE) {
+            addDeepSpaceCentre();
+        } else if (!addStars(starId)) {
             throw new IllegalStateException("no star type could be picked for a " + systemType + " Star Chart layout");
         }
         for (PlanetAPI body : pickedStars()) {
@@ -169,6 +175,9 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
         updateAgeAfterPickingStar();
         GenResult result = addPlanetsAndTerrain(MAX_ORBIT_RADIUS);
         featureAnchor = buildFeature();
+        if (featureAnchor == null) {
+            featureAnchor = deepSpaceCentre;
+        }
         addFarStars(result);
         addSystemwideNebula();
         if (systemType == StarSystemType.NEBULA) {
@@ -179,6 +188,32 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
                     ChartWormholePlacement.outermost(system, List.of()), random));
         }
         system.setAge(starAge);
+    }
+
+    private void addDeepSpaceCentre() {
+        systemCenter = system.initNonStarCenter();
+        systemCenter.addTag(Tags.AMBIENT_LS);
+        system.setLightColor(ChartDeepSpace.AMBIENT_LIGHT);
+        starData = (StarGenDataSpec) Global.getSettings().getSpec(StarGenDataSpec.class, ChartDeepSpace.centreDataId(constellationAge), false);
+        String centreType = ChartDeepSpace.pickCentre(random);
+        Object found = Global.getSettings().getSpec(PlanetGenDataSpec.class, centreType, true);
+        if (!(found instanceof PlanetGenDataSpec planetData)) {
+            throw new IllegalStateException("the deep space centre " + centreType + " has no planet generation data");
+        }
+        GenContext context = new GenContext(this, system, systemCenter, starData, null, 0, constellationAge.name(), 0f, MAX_ORBIT_RADIUS, null, -1);
+        context.lagrangeParent = new GeneratedPlanet(null, null, false, 0f, 0f, 0f);
+        context.excludeCategories.addAll(List.of("cat_hab2", "cat_hab3", "cat_hab4", "cat_hab5"));
+        GenResult result = addPlanet(context, planetData, false, true);
+        if (result == null || result.entities.isEmpty() || !(result.entities.get(0) instanceof PlanetAPI centre)) {
+            throw new IllegalStateException("the deep space centre " + centreType + " could not be added");
+        }
+        centre.setOrbit(null);
+        centre.setLocation(0f, 0f);
+        if (ChartDeepSpace.BARREN_DESCRIPTION.equals(centre.getSpec().getDescriptionId())) {
+            centre.setDescriptionIdOverride(ChartDeepSpace.DEEP_SPACE_BARREN_DESCRIPTION);
+        }
+        centerRadius = centre.getRadius();
+        deepSpaceCentre = centre;
     }
 
     private void hideNebulaCentre() {
@@ -221,7 +256,7 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
             return null;
         }
         StarAge age = starAge;
-        return feature.build(new FeatureSite(system, centre, ChartWormholePlacement.outermost(system, farStars()), star.getId() + "_feature", random,
+        return feature.build(new FeatureSite(system, centre, ChartWormholePlacement.outermost(system, farStars()), bodyIdPrefix + "_feature", random,
                 planet -> PlanetConditionGenerator.generateConditionsForPlanet(planet, age)));
     }
 

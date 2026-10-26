@@ -27,7 +27,11 @@ public class CanvasCamera {
     }
 
     public CanvasCamera(float maxZoom) {
-        smoothZoom = new SmoothZoom(1f, maxZoom);
+        this(SmoothZoom.MIN_ZOOM, maxZoom);
+    }
+
+    public CanvasCamera(float minZoom, float maxZoom) {
+        smoothZoom = new SmoothZoom(1f, minZoom, maxZoom);
     }
 
     public void startFollowing(float zoomTarget) {

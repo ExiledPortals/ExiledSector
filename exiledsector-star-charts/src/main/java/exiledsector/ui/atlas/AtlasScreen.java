@@ -38,7 +38,7 @@ import org.lwjgl.input.Keyboard;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public final class AtlasScreen extends BaseCustomUIPanelPlugin implements CampaignOverlay.Screen {
 
@@ -49,6 +49,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     static final float SUMMARY_GAP = 6f;
     static final float CLOSE_WIDTH = 120f;
     static final float BORDERS_WIDTH = 160f;
+    static final float BIOMES_WIDTH = 120f;
     static final float BUTTON_GAP = 10f;
     static final float OPEN_SECONDS = 0.2f;
     static final float DIM_SECONDS = 0.2f;
@@ -56,14 +57,16 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     static final float BENCH_DIM_ALPHA = 0.65f;
     static final Color HINT_COLOUR = new Color(150, 150, 150);
 
-    private enum Control { CLOSE, BORDERS }
+    private enum Control { CLOSE, BORDERS, BIOMES }
 
-    private static final AtomicBoolean BORDERS_SHOWN = new AtomicBoolean();
+    enum Overlay { NONE, FACTIONS, BIOMES }
+
+    private static final AtomicReference<Overlay> OVERLAY_SHOWN = new AtomicReference<>(Overlay.NONE);
 
     private final CampaignOverlay.Host host;
     private final SkillTreePanelStyle panelStyle = new SkillTreePanelStyle();
     private final StarfieldRenderer starfield = new StarfieldRenderer(panelStyle);
-    private final CanvasCamera camera = new CanvasCamera(AtlasMapCanvas.MAX_ZOOM);
+    private final CanvasCamera camera = new CanvasCamera(AtlasMapCanvas.MIN_ZOOM, AtlasMapCanvas.MAX_ZOOM);
     private final PointerGesture<Void> gesture = new PointerGesture<>();
     private final TextLabel titleLabel = new TextLabel(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final TextLabel summaryLabel = new TextLabel(SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
@@ -75,6 +78,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private PositionAPI panelPosition;
     private ModificationBay bay;
     private ButtonAPI bordersButton;
+    private ButtonAPI biomesButton;
     private AtlasCell tooltipCell;
     private AtlasCell hoveredCell;
     private String wormholeMessage;
@@ -97,7 +101,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     public void attach(CustomPanelAPI panel) {
         panelRoot = panel;
         map = new AtlasMapCanvas(AtlasRuntime.generator(Global.getSector()), AtlasState.get(Global.getSector()));
-        map.scenery().borders().show(BORDERS_SHOWN.get(), true);
+        showOverlay(true);
         camera.jumpZoomTo(AtlasMapCanvas.DEFAULT_ZOOM);
         camera.centreOn(map.focusX(), map.focusY());
         I18n.forGameText(this::buildChrome);
@@ -114,9 +118,27 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         TooltipMakerAPI toggles = panelRoot.createUIElement(BORDERS_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
         bordersButton = toggles.addAreaCheckbox(Translation.text("chart.atlas.borders"), Control.BORDERS, Misc.getBasePlayerColor(),
                 Misc.getDarkPlayerColor(), Misc.getBrightPlayerColor(), BORDERS_WIDTH, ChromeMetrics.CONTROL_HEIGHT, 0f);
-        bordersButton.setChecked(BORDERS_SHOWN.get());
-        panelRoot.addUIElement(toggles).inTL(position.getWidth() - PANEL_MARGIN - CHROME_PAD - CLOSE_WIDTH - BUTTON_GAP - BORDERS_WIDTH,
-                PANEL_MARGIN + CHROME_PAD);
+        bordersButton.setChecked(OVERLAY_SHOWN.get() == Overlay.FACTIONS);
+        float bordersLeft = position.getWidth() - PANEL_MARGIN - CHROME_PAD - CLOSE_WIDTH - BUTTON_GAP - BORDERS_WIDTH;
+        panelRoot.addUIElement(toggles).inTL(bordersLeft, PANEL_MARGIN + CHROME_PAD);
+        TooltipMakerAPI biomeToggle = panelRoot.createUIElement(BIOMES_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
+        biomesButton = biomeToggle.addAreaCheckbox(Translation.text("chart.atlas.biomes"), Control.BIOMES, Misc.getBasePlayerColor(),
+                Misc.getDarkPlayerColor(), Misc.getBrightPlayerColor(), BIOMES_WIDTH, ChromeMetrics.CONTROL_HEIGHT, 0f);
+        biomesButton.setChecked(OVERLAY_SHOWN.get() == Overlay.BIOMES);
+        panelRoot.addUIElement(biomeToggle).inTL(bordersLeft - BUTTON_GAP - BIOMES_WIDTH, PANEL_MARGIN + CHROME_PAD);
+    }
+
+    private void showOverlay(boolean instantly) {
+        map.scenery().borders().show(OVERLAY_SHOWN.get() == Overlay.FACTIONS, instantly);
+        map.scenery().biomes().show(OVERLAY_SHOWN.get() == Overlay.BIOMES, instantly);
+    }
+
+    private void toggleOverlay(Overlay overlay, ButtonAPI pressed, ButtonAPI other) {
+        OVERLAY_SHOWN.set(pressed.isChecked() ? overlay : Overlay.NONE);
+        if (pressed.isChecked() && other != null) {
+            other.setChecked(false);
+        }
+        showOverlay(false);
     }
 
     private void writeSummary() {
@@ -154,8 +176,9 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         if (buttonId == Control.CLOSE) {
             close();
         } else if (buttonId == Control.BORDERS && bordersButton != null) {
-            BORDERS_SHOWN.set(bordersButton.isChecked());
-            map.scenery().borders().show(BORDERS_SHOWN.get(), false);
+            toggleOverlay(Overlay.FACTIONS, bordersButton, biomesButton);
+        } else if (buttonId == Control.BIOMES && biomesButton != null) {
+            toggleOverlay(Overlay.BIOMES, biomesButton, bordersButton);
         }
     }
 

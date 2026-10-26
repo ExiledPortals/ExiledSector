@@ -25,6 +25,10 @@ final class AtlasTerritoryBorders {
 
     static final float INSET_CELLS = 0.02f;
     static final float BAND_CELLS = 0.3f;
+    static final float BAND_RADIUS_SHARE = 0.8f;
+    static final float BAND_SLOPE = 0.6f;
+    static final float UNFOLD_SHRINK = 0.6f;
+    static final int MAX_UNFOLD_PASSES = 30;
     static final int CHAIKIN_PASSES = 3;
     static final float ROUGH_CELLS = 0.22f;
     static final float ROUGH_SPACING_CELLS = 1.1f;
@@ -378,8 +382,8 @@ final class AtlasTerritoryBorders {
 
     private static Loop loop(List<float[]> points) {
         int count = points.size();
+        float[] normals = new float[count * 2];
         float[] outline = new float[count * 2];
-        float[] inner = new float[count * 2];
         float minX = Float.MAX_VALUE;
         float minY = Float.MAX_VALUE;
         float maxX = -Float.MAX_VALUE;
@@ -391,20 +395,86 @@ final class AtlasTerritoryBorders {
             float normalX = -(here[1] - previous[1]) / length(here, previous) - (next[1] - here[1]) / length(next, here);
             float normalY = (here[0] - previous[0]) / length(here, previous) + (next[0] - here[0]) / length(next, here);
             float normalLength = (float) Math.hypot(normalX, normalY);
-            normalX = normalLength <= 0f ? 0f : normalX / normalLength;
-            normalY = normalLength <= 0f ? 0f : normalY / normalLength;
-            float x = (here[0] + normalX * INSET_CELLS) * AtlasMapCanvas.CELL_PIXELS;
-            float y = (here[1] + normalY * INSET_CELLS) * AtlasMapCanvas.CELL_PIXELS;
+            normals[index * 2] = normalLength <= 0f ? 0f : normalX / normalLength;
+            normals[index * 2 + 1] = normalLength <= 0f ? 0f : normalY / normalLength;
+            float x = (here[0] + normals[index * 2] * INSET_CELLS) * AtlasMapCanvas.CELL_PIXELS;
+            float y = (here[1] + normals[index * 2 + 1] * INSET_CELLS) * AtlasMapCanvas.CELL_PIXELS;
             outline[index * 2] = x;
             outline[index * 2 + 1] = y;
-            inner[index * 2] = (here[0] + normalX * (INSET_CELLS + BAND_CELLS)) * AtlasMapCanvas.CELL_PIXELS;
-            inner[index * 2 + 1] = (here[1] + normalY * (INSET_CELLS + BAND_CELLS)) * AtlasMapCanvas.CELL_PIXELS;
             minX = Math.min(minX, x);
             minY = Math.min(minY, y);
             maxX = Math.max(maxX, x);
             maxY = Math.max(maxY, y);
         }
+        float[] depths = bandDepths(points, outline);
+        float[] inner = new float[count * 2];
+        for (int attempt = 0; ; attempt++) {
+            for (int index = 0; index < count; index++) {
+                float depth = depths[index] * AtlasMapCanvas.CELL_PIXELS;
+                inner[index * 2] = outline[index * 2] + normals[index * 2] * depth;
+                inner[index * 2 + 1] = outline[index * 2 + 1] + normals[index * 2 + 1] * depth;
+            }
+            if (!unfold(outline, inner, depths) || attempt >= MAX_UNFOLD_PASSES) {
+                break;
+            }
+        }
         return new Loop(outline, inner, minX, minY, maxX, maxY);
+    }
+
+    private static float[] bandDepths(List<float[]> points, float[] outline) {
+        int count = points.size();
+        float[] depths = new float[count];
+        for (int index = 0; index < count; index++) {
+            float[] previous = points.get((index + count - 1) % count);
+            float[] here = points.get(index);
+            float[] next = points.get((index + 1) % count);
+            float turn = (here[0] - previous[0]) * (next[1] - here[1]) - (here[1] - previous[1]) * (next[0] - here[0]);
+            float radius = turn <= 0f ? Float.MAX_VALUE : length(here, previous) * length(next, here) * length(next, previous) / (2f * turn);
+            depths[index] = Math.min(BAND_CELLS, BAND_RADIUS_SHARE * radius);
+        }
+        for (int lap = 0; lap < 2; lap++) {
+            for (int step = 1; step <= count; step++) {
+                int forward = step % count;
+                int forwardPrevious = step - 1;
+                depths[forward] = Math.min(depths[forward], depths[forwardPrevious] + BAND_SLOPE * segmentCells(outline, forwardPrevious, forward));
+                int backward = count - step;
+                int backwardPrevious = (backward + 1) % count;
+                depths[backward] = Math.min(depths[backward], depths[backwardPrevious] + BAND_SLOPE * segmentCells(outline, backward, backwardPrevious));
+            }
+        }
+        return depths;
+    }
+
+    private static boolean unfold(float[] outline, float[] inner, float[] depths) {
+        int count = depths.length;
+        boolean folded = false;
+        for (int index = 0; index < count; index++) {
+            int next = (index + 1) % count;
+            if (folds(outline, inner, index, next)) {
+                depths[index] *= UNFOLD_SHRINK;
+                depths[next] *= UNFOLD_SHRINK;
+                folded = true;
+            }
+        }
+        return folded;
+    }
+
+    private static boolean folds(float[] outline, float[] inner, int index, int next) {
+        float[] quadX = {outline[index * 2], outline[next * 2], inner[next * 2], inner[index * 2]};
+        float[] quadY = {outline[index * 2 + 1], outline[next * 2 + 1], inner[next * 2 + 1], inner[index * 2 + 1]};
+        for (int corner = 0; corner < quadX.length; corner++) {
+            int b = (corner + 1) % quadX.length;
+            int c = (corner + 2) % quadX.length;
+            double turn = (quadX[b] - quadX[corner]) * (double) (quadY[c] - quadY[b]) - (quadY[b] - quadY[corner]) * (double) (quadX[c] - quadX[b]);
+            if (turn < 0.0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static float segmentCells(float[] outline, int from, int to) {
+        return (float) Math.hypot(outline[to * 2] - outline[from * 2], outline[to * 2 + 1] - outline[from * 2 + 1]) / AtlasMapCanvas.CELL_PIXELS;
     }
 
     private static AtlasCell deepest(Set<Long> patch) {

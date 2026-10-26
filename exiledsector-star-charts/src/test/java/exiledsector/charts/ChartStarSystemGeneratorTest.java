@@ -2,12 +2,18 @@ package exiledsector.charts;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.PlanetSpecAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.StarSystemAPI;
+import com.fs.starfarer.api.impl.campaign.ids.Tags;
+import com.fs.starfarer.api.impl.campaign.procgen.PlanetGenDataSpec;
 import com.fs.starfarer.api.impl.campaign.procgen.CategoryGenDataSpec;
 import com.fs.starfarer.api.impl.campaign.procgen.StarAge;
 import com.fs.starfarer.api.impl.campaign.procgen.StarGenDataSpec;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.GenContext;
+import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.GenResult;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import exiledlib.MockSector;
 import org.junit.jupiter.api.AfterEach;
@@ -23,6 +29,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -30,6 +37,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class ChartStarSystemGeneratorTest {
@@ -103,6 +111,38 @@ class ChartStarSystemGeneratorTest {
         for (int pick = 0; pick < 50; pick++) {
             assertFalse(ChartLayoutRecipe.PHENOMENON_STARS.contains(blackHole.pickStar(StarAge.OLD).getPlanetType()));
         }
+    }
+
+    @Test
+    void aDeepSpaceLayoutPutsOneLoneWorldAtTheCentreUnderAmbientLight() {
+        SettingsAPI settings = Global.getSettings();
+        StarGenDataSpec centreData = mock(StarGenDataSpec.class);
+        when(centreData.getAge()).thenReturn(StarAge.OLD);
+        when(settings.getSpec(StarGenDataSpec.class, "nebula_center_old", false)).thenReturn(centreData);
+        when(settings.getSpec(eq(PlanetGenDataSpec.class), any(), eq(true))).thenReturn(mock(PlanetGenDataSpec.class));
+        StarSystemAPI system = mock(StarSystemAPI.class);
+        SectorEntityToken centreToken = mock(SectorEntityToken.class);
+        when(system.initNonStarCenter()).thenReturn(centreToken);
+        PlanetAPI world = mock(PlanetAPI.class);
+        PlanetSpecAPI worldSpec = mock(PlanetSpecAPI.class);
+        when(world.getSpec()).thenReturn(worldSpec);
+        when(worldSpec.getDescriptionId()).thenReturn("barren");
+        GenResult added = new GenResult();
+        added.entities = new ArrayList<>(List.of(world));
+        ChartLayoutRecipe starless = new ChartLayoutRecipe(new ChartLook(List.of("graphics/backgrounds/background4.jpg"), List.of(), 0f, null, 0f,
+                Map.of(), Map.of(), false, ""), new ChartShape(Map.of(StarSystemType.DEEP_SPACE, 1f), 0, 0, Float.NaN, Map.of(), ""));
+        ChartStarSystemGenerator generator = spy(new ChartStarSystemGenerator(StarAge.OLD, StarSystemType.DEEP_SPACE, starless, null));
+        doReturn(added).when(generator).addPlanet(any(), any(), anyBoolean(), anyBoolean());
+
+        generator.generateLayout(system, "chart_star");
+
+        verify(system).setType(StarSystemType.DEEP_SPACE);
+        verify(system).setLightColor(ChartDeepSpace.AMBIENT_LIGHT);
+        verify(centreToken).addTag(Tags.AMBIENT_LS);
+        verify(world).setOrbit(null);
+        verify(world).setLocation(0f, 0f);
+        verify(world).setDescriptionIdOverride("barren_deep_space");
+        assertSame(world, generator.featureAnchor());
     }
 
     @Test

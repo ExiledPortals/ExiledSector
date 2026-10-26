@@ -195,7 +195,7 @@ final class AtlasSystemPreview {
     private void drawPlanet(Body planet, Fit fit, float alpha) {
         PlanetSpecAPI spec = spec(planet.typeId());
         place(planet, fit);
-        float pixels = planetPixels(planet, fit.radius());
+        float pixels = planet.orbitRadius() <= 0f ? starPixels(planet, fit.radius()) : planetPixels(planet, fit.radius());
         drawBody(spec, bodyX, bodyY, pixels, planet.startAngle(), fit.elapsedSeconds(), FALLBACK_PLANET_COLOUR, alpha, false);
         float dx = fit.cx() - bodyX;
         float dy = fit.cy() - bodyY;

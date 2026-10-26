@@ -26,9 +26,11 @@ final class AtlasScenery {
     private final Function<String, AtlasAmbience> ambiences;
     private final Function<String, AtlasDecoration> decorationLookup;
     private final HyperspaceClouds clouds;
+    private final AtlasAbyssShade abyssShade = new AtlasAbyssShade();
     private final AtlasDecorations decorations = new AtlasDecorations();
     private final AtlasFleetTraffic fleets = new AtlasFleetTraffic();
     private final AtlasTerritoryBorders borders;
+    private final AtlasTerritoryBorders biomes;
     private final Set<Long> known = new HashSet<>();
     private AtlasMapCanvas canvas;
 
@@ -41,6 +43,7 @@ final class AtlasScenery {
         this.decorationLookup = decorationLookup;
         clouds = new HyperspaceClouds(CLOUD_TILE, seed, CLOUD_ALPHA);
         borders = new AtlasTerritoryBorders(seed, AtlasScenery::factionColour, AtlasScenery::factionName);
+        biomes = new AtlasTerritoryBorders(seed, AtlasData::regionTint, AtlasNodeText::regionName);
     }
 
     AtlasDecorations decorations() {
@@ -49,6 +52,10 @@ final class AtlasScenery {
 
     AtlasTerritoryBorders borders() {
         return borders;
+    }
+
+    AtlasTerritoryBorders biomes() {
+        return biomes;
     }
 
     AtlasDecoration decoration(String decorationId) {
@@ -63,10 +70,12 @@ final class AtlasScenery {
                 known.add(around.pack());
             }
         }
+        abyssShade.attach(cell -> isKnown(cell) && ambience(cell).abyss(), known.stream().map(AtlasCell::unpack).toList());
         clouds.setCover(new Cover());
         decorations.attach(canvas, known);
         fleets.attach(canvas);
         borders.attach(known, this::territoryAt, this::hasSystem);
+        biomes.attach(known, this::biomeAt, this::hasSystem);
     }
 
     private boolean hasSystem(AtlasCell cell) {
@@ -79,12 +88,15 @@ final class AtlasScenery {
         decorations.advance(amount);
         fleets.advance(amount);
         borders.advance(amount);
+        biomes.advance(amount);
     }
 
     void renderBackdrop(TreeViewport view, float alphaMult) {
+        abyssShade.render(view, alphaMult);
         clouds.render(view, alphaMult);
         decorations.render(view, alphaMult);
         borders.render(view, alphaMult);
+        biomes.render(view, alphaMult);
     }
 
     void renderAbove(TreeViewport view, float alphaMult) {
@@ -103,6 +115,11 @@ final class AtlasScenery {
 
     String regionAt(AtlasCell cell) {
         return cell.equals(AtlasCell.ORIGIN) ? AtlasRegion.NORMAL : canvas.generator().biomeOf(cell).regionId();
+    }
+
+    String biomeAt(AtlasCell cell) {
+        String regionId = regionAt(cell);
+        return AtlasRegion.NORMAL.equals(regionId) ? null : regionId;
     }
 
     String territoryAt(AtlasCell cell) {

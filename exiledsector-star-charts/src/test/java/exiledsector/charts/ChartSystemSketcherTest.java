@@ -44,6 +44,25 @@ class ChartSystemSketcherTest {
     }
 
     @Test
+    void aDeepSpaceSketchHasNoStarAndOneWorldAtTheCentre() {
+        ChartLayoutRecipe starless = recipe(Map.of(), Map.of(), new ChartShape(Map.of(StarSystemType.DEEP_SPACE, 1f), 0, 0, Float.NaN, Map.of(), ""));
+        Set<String> centres = new HashSet<>();
+
+        for (long seed = 0; seed < 200; seed++) {
+            ChartSystemSketch sketch = ChartSystemSketcher.sketch(seed, starless, "", PALETTE);
+
+            assertEquals(StarSystemType.DEEP_SPACE, sketch.systemType());
+            assertTrue(sketch.stars().isEmpty());
+            assertEquals(1, sketch.planets().size());
+            assertEquals(0f, sketch.planets().get(0).orbitRadius());
+            centres.add(sketch.planets().get(0).typeId());
+        }
+        assertTrue(centres.contains("gas_giant") || centres.contains("ice_giant"), centres.toString());
+        assertTrue(centres.contains("frozen"), centres.toString());
+        assertTrue(ChartDeepSpace.PLANETOIDS.keySet().containsAll(centres.stream().filter(type -> !ChartDeepSpace.GIANTS.containsKey(type)).toList()));
+    }
+
+    @Test
     void theRegionLeaningsDecideWhichStarsAndPlanetsAppear() {
         ChartLayoutRecipe frozenOnly = recipe(Map.of("star_red_dwarf", 0f),
                 Map.of("cat_giant", 0f, "cat_terrain_rings", 0f, "cat_nothing", 0f), new ChartShape(Map.of(), 4, 4, Float.NaN, Map.of(), ""));

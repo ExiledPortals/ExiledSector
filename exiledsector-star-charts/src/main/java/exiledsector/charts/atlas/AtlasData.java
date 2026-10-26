@@ -180,7 +180,7 @@ public final class AtlasData {
     private static Map<StarSystemType, Float> systemTypes(CsvRows csv, JSONObject row, String rowId) {
         Map<StarSystemType, Float> types = new EnumMap<>(StarSystemType.class);
         csv.weights(row, "system_types", rowId, null).forEach((name, weight) -> {
-            StarSystemType type = ChartLayoutGenerator.parseType(name);
+            StarSystemType type = ChartLayoutGenerator.parseRecipeType(name);
             if (type == null) {
                 csv.problem(rowId, "system_types", name + " (not a chart system type)");
             } else {
@@ -279,7 +279,7 @@ public final class AtlasData {
         float storms = fraction(csv, row, "storms", rowId);
         Map<String, Float> picks = csv.weights(row, "decorations", rowId, decorations.keySet());
         return new AtlasAmbience(storms, colour(csv, row, "cloud_colour", rowId), picks,
-                csv.number(row, "decoration_density", picks.isEmpty() ? 0f : 1f, rowId));
+                csv.number(row, "decoration_density", picks.isEmpty() ? 0f : 1f, rowId), csv.flag(row, "abyss", false, rowId));
     }
 
     private static float fraction(CsvRows csv, JSONObject row, String column, String rowId) {

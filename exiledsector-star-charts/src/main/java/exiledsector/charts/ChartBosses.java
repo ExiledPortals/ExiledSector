@@ -136,7 +136,7 @@ public final class ChartBosses {
                 own.add(station);
             }
         }
-        return own.isEmpty() ? shared : own;
+        return own.isEmpty() && !ChartThreatFleets.builds(factionId) ? shared : own;
     }
 
     static String pickStation(String factionId, int tier, Random random) {

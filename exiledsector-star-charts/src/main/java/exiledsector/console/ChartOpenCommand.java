@@ -88,7 +88,8 @@ public class ChartOpenCommand extends CampaignCommand {
         }
         return "Layout seed " + run.layoutSeed() + ", type " + run.layoutType()
                 + (run.isLayoutGenerated() ? "" : " (generation failed, so the system has a single star; see starsector.log)")
-                + ". Reopen the same system with: ExiledSectorChartOpen " + run.layoutSeed() + " " + run.layoutType() + " tier=" + run.tier()
+                + ". Reopen the same system with: ExiledSectorChartOpen " + run.layoutSeed()
+                + (ChartLayoutGenerator.parseType(run.layoutType()) != null ? " " + run.layoutType() : " region=ID layout=ID") + " tier=" + run.tier()
                 + (run.hasChart() ? " (that leaves out the chart's modifiers)" : "");
     }
 

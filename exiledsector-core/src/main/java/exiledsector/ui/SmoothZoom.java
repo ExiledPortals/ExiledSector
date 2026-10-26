@@ -8,6 +8,7 @@ public final class SmoothZoom {
     static final float RESPONSE_PER_SECOND = 12f;
     private static final float SNAP_LOG_DISTANCE = 0.0005f;
 
+    private final float minZoom;
     private final float maxZoom;
     private float currentZoom;
     private float zoomTarget;
@@ -17,6 +18,11 @@ public final class SmoothZoom {
     }
 
     public SmoothZoom(float zoom, float maxZoom) {
+        this(zoom, MIN_ZOOM, maxZoom);
+    }
+
+    public SmoothZoom(float zoom, float minZoom, float maxZoom) {
+        this.minZoom = minZoom;
         this.maxZoom = maxZoom;
         currentZoom = zoom;
         zoomTarget = zoom;
@@ -31,7 +37,7 @@ public final class SmoothZoom {
     }
 
     public void scroll(boolean in) {
-        zoomTarget = in ? Math.min(maxZoom, zoomTarget * STEP) : Math.max(MIN_ZOOM, zoomTarget / STEP);
+        zoomTarget = in ? Math.min(maxZoom, zoomTarget * STEP) : Math.max(minZoom, zoomTarget / STEP);
     }
 
     public static float panAbout(float pan, float pivot, float zoomRatio) {
@@ -39,7 +45,7 @@ public final class SmoothZoom {
     }
 
     public boolean isSettledAtMinimum() {
-        return currentZoom == MIN_ZOOM && zoomTarget == MIN_ZOOM;
+        return currentZoom == minZoom && zoomTarget == minZoom;
     }
 
     public void jumpTo(float zoom) {
@@ -48,7 +54,7 @@ public final class SmoothZoom {
     }
 
     public void aimAt(float zoom) {
-        zoomTarget = Math.max(MIN_ZOOM, Math.min(maxZoom, zoom));
+        zoomTarget = Math.max(minZoom, Math.min(maxZoom, zoom));
     }
 
     public void advance(float amount) {

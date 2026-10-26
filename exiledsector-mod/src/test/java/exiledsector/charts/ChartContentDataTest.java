@@ -164,8 +164,10 @@ class ChartContentDataTest {
         ChartFactions.register(ChartTables.csvRows(ChartFactions.PATH));
         Set<String> vanilla = Set.of("pirates", "hegemony", "remnant", "luddic_path", "independent", "mercenary", "sindrian_diktat",
                 "persean", "luddic_church", "tritachyon", "derelict");
+        Set<String> listed = new java.util.HashSet<>(vanilla);
+        listed.add("threat");
 
-        assertEquals(vanilla, ChartFactions.all().stream().map(ChartFaction::factionId).collect(Collectors.toSet()));
+        assertEquals(listed, ChartFactions.all().stream().map(ChartFaction::factionId).collect(Collectors.toSet()));
         assertEquals(vanilla, ChartFactions.available(ChartFactions.all(), vanilla::contains).stream().map(ChartFaction::factionId)
                 .collect(Collectors.toSet()));
         assertEquals(ChartFaction.FALLBACK, ChartFactions.pick(ChartFactions.all(), id -> false, new Random(1)));

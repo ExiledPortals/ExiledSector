@@ -125,6 +125,29 @@ class AtlasSceneryTest {
     }
 
     @Test
+    void biomesOutlineKnownBiomeCellsButNeverOpenSpace() {
+        AtlasMapCanvas canvas = canvas();
+        Set<Long> biomeCells = new HashSet<>();
+        for (AtlasCell visible : canvas.visibleCells()) {
+            for (AtlasCell cell : visible.around(1)) {
+                String regionId = canvas.scenery().regionAt(cell);
+                assertEquals(AtlasRegion.NORMAL.equals(regionId) ? null : regionId, canvas.scenery().biomeAt(cell), cell.toString());
+                if (canvas.scenery().biomeAt(cell) != null) {
+                    biomeCells.add(cell.pack());
+                }
+            }
+        }
+        int coveredCells = 0;
+        for (AtlasTerritoryBorders.Region biome : canvas.scenery().biomes().regions()) {
+            coveredCells += biome.cells();
+            assertEquals("graveyard", biome.groupId());
+        }
+
+        assertEquals(null, canvas.scenery().biomeAt(AtlasCell.ORIGIN));
+        assertTrue(coveredCells <= biomeCells.size());
+    }
+
+    @Test
     void openSpaceStaysBare() {
         AtlasMapCanvas canvas = canvas();
         AtlasScenery bare = new AtlasScenery(SEED, id -> AtlasAmbience.BARE, DECORATIONS::get);

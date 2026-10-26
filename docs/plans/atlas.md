@@ -141,6 +141,8 @@ Decided 2026-10-24: gameplay-changing terrain (black holes, neutron stars and pu
 
 Decided 2026-10-25 (replacing the 2026-10-24 patch layout): biomes tile the whole map. Revised the same day: every biome has the same site size and system density, normal space wins about 70% of the area and chains into the volumes factions hold, and each special biome is a pocket of about ten systems that never touches another site of its own type. Biomes carry decorations, faction fleets travel the lanes, and hyperspace clouds are impassable terrain clumping inside biomes and ridging along some biome borders. Lanes are a relative neighbourhood graph, about 40% fewer than the earlier Gabriel graph.
 
+Decided 2026-10-26: the Threat Expanse looks like vanilla's abyssal hyperspace. The atlas draws its space pitch black (the region's `abyss` flag), with no clouds and rare drifting abyssal lights. Its systems are starless: the `abyssal_void` layout makes a `DEEP_SPACE` system with one world at the centre, picked like vanilla's rogue stellar objects, under vanilla's abyssal ambient light and music. Only Threat fleets spawn there, built as vanilla builds them rather than through `FleetFactoryV3`, so its bosses are fleets led by fabricators.
+
 ## Open questions
 
 1. Names: Sensor Array, Infestation, Nexus and Bastion are placeholders, as are the region and phenomenon names.

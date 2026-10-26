@@ -11,3 +11,8 @@ warning_beacon,graphics/stations/buoy00.png,graphics/stations/buoy00glow.png,1,1
 wreck,graphics/ships/buffalo/buffalo_pirates.png; graphics/ships/cerberus/cerberus_pirates.png; graphics/ships/enforcer/enforcer_pirates.png; graphics/ships/falcon/falcon_p.png,,1,1,0.05,0.3,1,0,2,0.01,#7A6A64,,0.85,,,,"A gutted pirate hull"
 ice,graphics/terrain/dust_chunks00_sheet.png; graphics/terrain/dust_chunks01_sheet.png,,4,4,0.08,0.4,4,0.1,3,0.01,#C8E0FF,,0.55,,,,"Drifting ice and frozen dust"
 cinders,graphics/debris/debris_sheet0.png,graphics/debris/debris_sheet0_glow.png,4,4,0.01,0.5,10,0.09,15,0.008,#503828,#FF7838,1,,,,"Glowing slag thrown off by hot stars"
+abyssal_light,graphics/fx/hit_glow.png,graphics/fx/hit_glow.png,1,1,0.4,0.33,1,0,0,0,#C8C8FF,#C8C8FF,0.6,0.2,,abyssal_light_core,"A drifting abyssal light, like vanilla's in deep hyperspace"
+abyssal_light_core,graphics/fx/hit_glow.png,graphics/fx/hit_glow.png,1,1,0.12,0.2,1,0,0,0,#E6E6FF,#FFFFFF,0.7,0.2,,,"The bright heart of an abyssal light"
+abyssal_light_pair,graphics/fx/hit_glow.png,graphics/fx/hit_glow.png,1,1,0.3,0.33,2,0.12,0,0,#C8C8FF,#C8C8FF,0.7,0.2,,,"Two abyssal lights drifting together"
+abyssal_light_cluster,graphics/fx/hit_glow.png,graphics/fx/hit_glow.png,1,1,0.12,0.4,6,0.22,0,0,#C8C8FF,#E6E6FF,0.8,0.25,,,"A cluster of small abyssal lights"
+abyssal_light_large,graphics/fx/hit_glow.png,graphics/fx/hit_glow.png,1,1,0.8,0.25,1,0,0,0,#C8C8FF,#C8C8FF,0.5,0.15,,abyssal_light_core,"A rare, huge abyssal light"

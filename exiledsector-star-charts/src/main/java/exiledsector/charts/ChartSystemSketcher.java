@@ -49,15 +49,20 @@ public final class ChartSystemSketcher {
         boolean nebula = systemType == StarSystemType.NEBULA;
 
         List<Body> stars = new ArrayList<>();
-        List<StarKind> centreKinds = new ArrayList<>();
-        centreKinds.add(forcedStar(phenomenon, palette, nebula, layoutRecipe, age, random));
-        for (int i = 0; i < closeStars(systemType); i++) {
-            centreKinds.add(pickStar(palette, nebula, layoutRecipe, age, random));
-        }
-        float centreReach = placeCentre(centreKinds, random, stars);
-
         List<Body> planets = new ArrayList<>();
         List<Belt> belts = new ArrayList<>();
+        float centreReach;
+        if (systemType == StarSystemType.DEEP_SPACE) {
+            centreReach = placeDeepSpaceCentre(palette, random, planets);
+        } else {
+            List<StarKind> centreKinds = new ArrayList<>();
+            centreKinds.add(forcedStar(phenomenon, palette, nebula, layoutRecipe, age, random));
+            for (int i = 0; i < closeStars(systemType); i++) {
+                centreKinds.add(pickStar(palette, nebula, layoutRecipe, age, random));
+            }
+            centreReach = placeCentre(centreKinds, random, stars);
+        }
+
         float outermost = addOrbits(layoutRecipe, palette, random, centreReach, planets, belts);
 
         float farAngle = random.nextFloat() * 360f;
@@ -85,6 +90,21 @@ public final class ChartSystemSketcher {
             case TRINARY_2FAR -> 2;
             default -> 0;
         };
+    }
+
+    private static float placeDeepSpaceCentre(ChartSketchPalette palette, Random random, List<Body> planets) {
+        String typeId = ChartDeepSpace.pickCentre(random);
+        BodyKind kind = null;
+        for (List<BodyKind> kinds : palette.bodies().values()) {
+            for (BodyKind candidate : kinds) {
+                if (candidate.typeId().equals(typeId)) {
+                    kind = candidate;
+                }
+            }
+        }
+        float radius = kind == null ? FALLBACK_PLANET_RADIUS : planetRadius(kind, random);
+        planets.add(new Body(typeId, radius, 0f, 0f, random.nextFloat() * 360f));
+        return radius;
     }
 
     private static float placeCentre(List<StarKind> kinds, Random random, List<Body> stars) {

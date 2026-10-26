@@ -11,6 +11,7 @@ public final class AtlasGenerator {
     public static final float DISPLAY_JITTER_SHARE = AtlasPositions.DISPLAY_JITTER_SHARE;
     static final float LONGEST_LANE = (float) (3.0 * Math.sqrt(2.0));
     static final int LANE_WINDOW = 5;
+    static final Set<String> THREAT_ONLY = Set.of("threat");
     private static final int CACHE_LIMIT_CELLS = 65536;
     private static final long VOID_SALT = 0x564f4944L;
     private static final long LAYOUT_SALT = 0x4c41594fL;
@@ -127,7 +128,7 @@ public final class AtlasGenerator {
     }
 
     public AtlasCell infestationSource(AtlasCell cell) {
-        AtlasSpecialPlacer.PlacedSpecial source = specials.nearestInfestation(cell, specials.specialsAround(cell.chunkX(), cell.chunkY()));
+        AtlasSpecialPlacer.PlacedSpecial source = infestationOf(cell, regionOf(cell), specials.specialsAround(cell.chunkX(), cell.chunkY()));
         return source == null ? null : source.cell();
     }
 
@@ -172,9 +173,18 @@ public final class AtlasGenerator {
         String phenomenonId = rollMarker(cell, traits, region, rules.phenomenonRule(), rules.phenomena(), PHENOMENON_SALT);
         String expansionId = rollMarker(cell, traits, region, rules.expansionRule(), rules.expansions(), EXPANSION_SALT);
         AtlasSpecialPlacer.PlacedSpecial special = placed.get(cell.pack());
-        AtlasSpecialPlacer.PlacedSpecial infestation = specials.nearestInfestation(cell, placed);
+        AtlasSpecialPlacer.PlacedSpecial infestation = infestationOf(cell, region, placed);
         return new AtlasNode(cell, x, y, false, region.id(), factionId, layoutId, powerfulBoss, phenomenonId, expansionId,
                 special == null ? null : special.special().id(), infestation == null ? null : infestation.special().id(), lanes);
+    }
+
+    private AtlasSpecialPlacer.PlacedSpecial infestationOf(AtlasCell cell, AtlasRegion region, Map<Long, AtlasSpecialPlacer.PlacedSpecial> placed) {
+        AtlasSpecialPlacer.PlacedSpecial infestation = specials.nearestInfestation(cell, placed);
+        return infestation == null || keepsOut(region, infestation.special()) ? null : infestation;
+    }
+
+    static boolean keepsOut(AtlasRegion region, AtlasSpecial infestation) {
+        return region.factionWeights().keySet().equals(THREAT_ONLY) && !THREAT_ONLY.contains(infestation.factionId());
     }
 
     private List<AtlasCell> relativeNeighbours(AtlasCell cell) {

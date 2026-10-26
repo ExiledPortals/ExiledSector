@@ -29,6 +29,8 @@ public final class ChartLayoutGenerator {
 
     public static final List<StarSystemType> ALLOWED_TYPES = List.of(StarSystemType.SINGLE, StarSystemType.BINARY_CLOSE,
             StarSystemType.BINARY_FAR, StarSystemType.TRINARY_2CLOSE, StarSystemType.TRINARY_1CLOSE_1FAR, StarSystemType.TRINARY_2FAR);
+    public static final List<StarSystemType> RECIPE_TYPES = List.of(StarSystemType.SINGLE, StarSystemType.BINARY_CLOSE, StarSystemType.BINARY_FAR,
+            StarSystemType.TRINARY_2CLOSE, StarSystemType.TRINARY_1CLOSE_1FAR, StarSystemType.TRINARY_2FAR, StarSystemType.DEEP_SPACE);
     static final Map<StarSystemType, Float> TYPE_WEIGHTS = Map.of(StarSystemType.SINGLE, 10f, StarSystemType.BINARY_CLOSE, 3f,
             StarSystemType.BINARY_FAR, 3f, StarSystemType.TRINARY_2CLOSE, 1f, StarSystemType.TRINARY_1CLOSE_1FAR, 1f,
             StarSystemType.TRINARY_2FAR, 1f);
@@ -53,11 +55,19 @@ public final class ChartLayoutGenerator {
     }
 
     public static StarSystemType parseType(String text) {
+        return parse(text, ALLOWED_TYPES);
+    }
+
+    public static StarSystemType parseRecipeType(String text) {
+        return parse(text, RECIPE_TYPES);
+    }
+
+    private static StarSystemType parse(String text, List<StarSystemType> types) {
         if (text == null) {
             return null;
         }
         String wanted = text.trim().toUpperCase(Locale.ROOT);
-        for (StarSystemType allowed : ALLOWED_TYPES) {
+        for (StarSystemType allowed : types) {
             if (allowed.name().equals(wanted)) {
                 return allowed;
             }
@@ -75,14 +85,14 @@ public final class ChartLayoutGenerator {
 
     static StarSystemType pickType(Random typeRandom, Map<StarSystemType, Float> weights) {
         float total = 0f;
-        for (StarSystemType allowed : ALLOWED_TYPES) {
+        for (StarSystemType allowed : RECIPE_TYPES) {
             total += Math.max(0f, weights.getOrDefault(allowed, 0f));
         }
         if (total <= 0f) {
             return StarSystemType.SINGLE;
         }
         float roll = typeRandom.nextFloat() * total;
-        for (StarSystemType allowed : ALLOWED_TYPES) {
+        for (StarSystemType allowed : RECIPE_TYPES) {
             roll -= Math.max(0f, weights.getOrDefault(allowed, 0f));
             if (roll < 0f) {
                 return allowed;
@@ -140,7 +150,7 @@ public final class ChartLayoutGenerator {
         try {
             SectorEntityToken anchor = engine.build(system, ChartIds.starId(runId), systemType, pickAge(seed), derivedRandom(seed, LAYOUT_SALT), recipe,
                     phenomenon);
-            if (system.getStar() == null) {
+            if (system.getStar() == null && (systemType != StarSystemType.DEEP_SPACE || system.getCenter() == null)) {
                 throw new IllegalStateException("the generator finished without a star");
             }
             return new Built(true, anchor);

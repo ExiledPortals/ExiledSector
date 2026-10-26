@@ -149,6 +149,46 @@ class AtlasTerritoryBordersTest {
     }
 
     @Test
+    void bandsNeverFoldBackOnThemselves() {
+        for (long seed = 0; seed < SEEDS; seed++) {
+            for (AtlasTerritoryBorders.Region region : AtlasTerritoryBorders.build(seed, known(), AtlasTerritoryBordersTest::regionAt, cell -> true)) {
+                for (AtlasTerritoryBorders.Loop loop : region.loops()) {
+                    float[] outline = loop.outline();
+                    float[] inner = loop.inner();
+                    int count = outline.length / 2;
+                    for (int index = 0; index < count; index++) {
+                        int next = (index + 1) % count;
+                        float[][] quad = {{outline[index * 2], outline[index * 2 + 1]}, {outline[next * 2], outline[next * 2 + 1]},
+                                {inner[next * 2], inner[next * 2 + 1]}, {inner[index * 2], inner[index * 2 + 1]}};
+                        for (int corner = 0; corner < quad.length; corner++) {
+                            float[] a = quad[corner];
+                            float[] b = quad[(corner + 1) % quad.length];
+                            float[] c = quad[(corner + 2) % quad.length];
+                            double turn = (b[0] - a[0]) * (double) (c[1] - b[1]) - (b[1] - a[1]) * (double) (c[0] - b[0]);
+                            assertTrue(turn >= -1e-3, region.groupId() + " band folds at point " + index + " with seed " + seed);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    void wideOpenEdgesKeepTheFullBand() {
+        AtlasTerritoryBorders.Region west = AtlasTerritoryBorders.build(SEED, known(), AtlasTerritoryBordersTest::regionAt, cell -> true).stream()
+                .filter(region -> region.groupId().equals("west")).findFirst().orElseThrow();
+        float deepest = 0f;
+        for (AtlasTerritoryBorders.Loop loop : west.loops()) {
+            for (int index = 0; index < loop.outline().length; index += 2) {
+                float depth = (float) Math.hypot(loop.inner()[index] - loop.outline()[index], loop.inner()[index + 1] - loop.outline()[index + 1]);
+                deepest = Math.max(deepest, depth / AtlasMapCanvas.CELL_PIXELS);
+            }
+        }
+
+        assertEquals(AtlasTerritoryBorders.BAND_CELLS, deepest, 0.001f);
+    }
+
+    @Test
     void outlinesFollowThePlayersRevealedSpaceOnly() {
         Set<Long> known = Set.of(new AtlasCell(-3, 0).pack(), new AtlasCell(-2, 0).pack());
         List<AtlasTerritoryBorders.Region> built = AtlasTerritoryBorders.build(SEED, known, AtlasTerritoryBordersTest::regionAt, cell -> true);

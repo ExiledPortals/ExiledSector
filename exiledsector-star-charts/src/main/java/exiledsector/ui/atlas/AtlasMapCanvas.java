@@ -11,6 +11,7 @@ import exiledsector.charts.atlas.AtlasNode;
 import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasReach;
 import exiledsector.charts.atlas.AtlasState;
+import exiledsector.ui.SmoothZoom;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.node.NodeBeams;
 import exiledsector.ui.node.NodeMetrics;
@@ -33,6 +34,7 @@ final class AtlasMapCanvas {
     static final float DISPLAY_JITTER_SHARE = AtlasGenerator.DISPLAY_JITTER_SHARE;
     static final float DEFAULT_ZOOM = 0.25f;
     static final float MAX_ZOOM = 0.8f;
+    static final float MIN_ZOOM = SmoothZoom.MIN_ZOOM / 2f;
     static final float PREVIEW_FILL = 0.85f;
     static final float DIM_PREVIEW_ALPHA = 0.55f;
     static final float COLLAPSE_SECONDS = 1.5f;
@@ -222,20 +224,24 @@ final class AtlasMapCanvas {
     }
 
     private void drawLanes(TreeViewport view, Color accent, float alphaMult) {
-        float edge = NodeBeams.laneEdge(beamWidthScale(view));
+        float widthScale = beamWidthScale(view);
         float innerRadius = NodeMetrics.donutRadius(footprint(view));
-        float fogRadius = NodeMetrics.donutRadius(footprint(view) * FOG_SIZE_SHARE) + edge;
+        float fogRadius = laneReach(NodeMetrics.donutRadius(footprint(view) * FOG_SIZE_SHARE), widthScale);
         for (AtlasCell cell : visible) {
             for (AtlasCell neighbour : generator.lanes(cell)) {
                 boolean bothVisible = visible.contains(neighbour);
                 if (bothVisible && neighbour.pack() < cell.pack()) {
                     continue;
                 }
-                addLane(view, cell, neighbour, innerRadius * nodeScale(cell) + edge,
-                        bothVisible ? innerRadius * nodeScale(neighbour) + edge : fogRadius, bothVisible, accent, alphaMult);
+                addLane(view, cell, neighbour, laneReach(innerRadius * nodeScale(cell), widthScale),
+                        bothVisible ? laneReach(innerRadius * nodeScale(neighbour), widthScale) : fogRadius, bothVisible, accent, alphaMult);
             }
         }
         beams.flush();
+    }
+
+    private static float laneReach(float ringRadius, float widthScale) {
+        return NodeBeams.laneReach(NodeBeams.ringOuterEdge(ringRadius, widthScale), widthScale);
     }
 
     private void addLane(TreeViewport view, AtlasCell from, AtlasCell to, float fromRadius, float toRadius, boolean bothVisible, Color accent,

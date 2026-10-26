@@ -52,6 +52,12 @@ class AtlasDataTest {
         assertTrue(normalFactions.contains("hegemony"), normalFactions.toString());
         assertFalse(normalFactions.contains("derelict") || normalFactions.contains("remnant") || normalFactions.contains("rat_abyssals"));
         assertTrue(AtlasData.ambience(AtlasRegion.NORMAL).decorations().isEmpty());
+        assertFalse(AtlasData.ambience(AtlasRegion.NORMAL).abyss());
+        assertEquals(Set.of("threat"), AtlasData.rules().region("threat_expanse").factionWeights().keySet());
+        assertTrue(AtlasData.ambience("threat_expanse").abyss());
+        assertFalse(normalFactions.contains("threat"));
+        assertEquals(Map.of(StarSystemType.DEEP_SPACE, 1f), AtlasData.recipeFor("threat_expanse", "abyssal_void").shape().systemTypeWeights());
+        assertEquals(0f, AtlasData.rules().layoutWeights().get("abyssal_void"));
         assertEquals(3, rules.specials().stream().filter(special -> special.placement() == AtlasSpecial.Placement.FIXED)
                 .mapToInt(AtlasSpecial::count).sum());
     }

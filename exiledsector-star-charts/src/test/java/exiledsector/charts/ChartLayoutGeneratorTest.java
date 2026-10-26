@@ -137,6 +137,19 @@ class ChartLayoutGeneratorTest {
         assertNull(ChartLayoutGenerator.parseType("nebula"));
         assertNull(new ChartLayoutRequest(1L, StarSystemType.NEBULA).systemType());
         assertEquals(StarSystemType.TRINARY_2FAR, ChartLayoutGenerator.parseType("trinary_2far"));
+        assertNull(ChartLayoutGenerator.parseType("deep_space"));
+    }
+
+    @Test
+    void onlyARecipeCanAskForADeepSpaceSystem() {
+        assertEquals(StarSystemType.DEEP_SPACE, ChartLayoutGenerator.parseRecipeType("deep_space"));
+        assertNull(ChartLayoutGenerator.parseRecipeType("nebula"));
+        ChartLayoutRecipe starless = new ChartLayoutRecipe(ChartLook.PLAIN,
+                new ChartShape(java.util.Map.of(StarSystemType.DEEP_SPACE, 1f), 0, 0, Float.NaN, java.util.Map.of(), ""));
+        for (long seed = 0; seed < 50; seed++) {
+            assertEquals(StarSystemType.DEEP_SPACE, ChartLayoutGenerator.typeFor(new ChartLayoutRequest(seed, null).withRecipe(starless)));
+            assertNotEquals(StarSystemType.DEEP_SPACE, ChartLayoutGenerator.typeFor(new ChartLayoutRequest(seed, null)));
+        }
     }
 
     @Test

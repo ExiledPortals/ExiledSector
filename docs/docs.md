@@ -224,7 +224,11 @@ allows one attempt. A run that closes without its objective spends the system's 
 overlay phenomenon). Biomes tile the map from sites about five cells apart, and each sets how many of its cells hold a
 system (`AtlasBiomes`). Normal space wins most sites and chains into the volumes factions hold, while a special biome
 never sits beside another site of its own type, so it stays a small pocket. Each biome lists the only factions it holds
-(the derelict graveyard holds only derelicts), and normal space's list is the pool every faction territory draws from. Hyperspace clouds are impassable terrain clumping inside biomes and ridging along some
+(the derelict graveyard holds only derelicts), and normal space's list is the pool every faction territory draws from.
+The Threat Expanse holds only the Threat, and no other faction's infestation reaches it (`AtlasGenerator`). Its systems use the starless `DEEP_SPACE` layout, one world at the centre
+under vanilla's abyssal light (`ChartStarSystemGenerator`). Its fleets are built like vanilla's abyssal Threat
+fleets, filled to the chart's fleet points with a fabricator leading each boss (`ChartThreatFleets`), and its boss is
+never a station. Hyperspace clouds are impassable terrain clumping inside biomes and ridging along some
 biome borders: no system sits under one and lanes route around them, and a grid of cleared corridors keeps the
 Gateway and every Bastion joined to the rest of the map (`AtlasTerrain`). A biome or Threat infestation behind
 an unlock is decided when first seen, and that is saved.
