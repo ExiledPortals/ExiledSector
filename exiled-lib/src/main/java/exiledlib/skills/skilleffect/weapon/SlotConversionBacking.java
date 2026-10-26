@@ -22,7 +22,9 @@ public record SlotConversionBacking(WeaponSlotConversion.Rule rule) implements E
 
     @Override
     public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
-        WeaponSlotConversion.add(stats.getVariant(), rule);
+        if (stats.getFleetMember() != null) {
+            WeaponSlotConversion.add(stats.getVariant(), rule);
+        }
     }
 
     @Override

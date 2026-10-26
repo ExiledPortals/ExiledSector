@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponSize;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.VariantSource;
 import org.junit.jupiter.api.Test;
 
@@ -91,7 +92,9 @@ class WeaponSlotConversionTest {
     void theFirstMatchingRuleWinsAndRulesReadTheOriginalTypeSoConversionsNeverChain() {
         CloneableTestHullSpec shared = spec(new LinkedHashSet<>(), new RetypableTestSlot("WS0001", WeaponType.BALLISTIC, false),
                 new RetypableTestSlot("WS0002", WeaponType.ENERGY, false),
-                new RetypableTestSlot("WS0003", WeaponType.MISSILE, false, WeaponSize.SMALL));
+                new RetypableTestSlot("WS0003", WeaponType.MISSILE, false, WeaponSize.SMALL),
+                new RetypableTestSlot("WS0004", WeaponType.SYSTEM, false, WeaponSize.SMALL),
+                new RetypableTestSlot("WS0005", WeaponType.STATION_MODULE, false, WeaponSize.SMALL));
         ShipVariantAPI variant = variant(shared, VariantSource.REFIT);
         List<WeaponSlotConversion.Rule> rules = List.of(BALLISTIC_TO_ENERGY, ENERGY_TO_BALLISTIC, BALLISTIC_TO_HYBRID, SMALL_TO_UNIVERSAL);
 
@@ -103,6 +106,8 @@ class WeaponSlotConversionTest {
         assertEquals(WeaponType.ENERGY, slotType(variant, "WS0001"));
         assertEquals(WeaponType.BALLISTIC, slotType(variant, "WS0002"));
         assertEquals(WeaponType.UNIVERSAL, slotType(variant, "WS0003"));
+        assertEquals(WeaponType.SYSTEM, slotType(variant, "WS0004"));
+        assertEquals(WeaponType.STATION_MODULE, slotType(variant, "WS0005"));
         assertEquals(Set.of(WeaponType.BALLISTIC), WeaponSlotConversion.conflicts(converted, rules));
         assertEquals(Set.of(), WeaponSlotConversion.conflicts(converted, List.of(BALLISTIC_TO_ENERGY, ENERGY_TO_BALLISTIC)));
     }
@@ -184,12 +189,15 @@ class WeaponSlotConversionTest {
     }
 
     @Test
-    void theSlotEffectsCarryTheirRulesAndConvertTheVariantTheyAreAppliedTo() {
+    void theSlotEffectsCarryTheirRulesAndConvertTheVariantOutsideTheOpCostPass() {
         CloneableTestHullSpec shared = spec(new LinkedHashSet<>(), new RetypableTestSlot("WS0001", WeaponType.ENERGY, false));
         ShipVariantAPI variant = variant(shared, VariantSource.REFIT);
         MutableShipStatsAPI stats = mock(MutableShipStatsAPI.class);
         when(stats.getVariant()).thenReturn(variant);
 
+        WeaponSkillEffect.ENERGY_SLOTS_BALLISTIC.apply(stats, "breech", 0f);
+        assertSame(shared, variant.getHullSpec());
+        when(stats.getFleetMember()).thenReturn(mock(FleetMemberAPI.class));
         WeaponSkillEffect.ENERGY_SLOTS_BALLISTIC.apply(stats, "breech", 0f);
 
         assertEquals(WeaponType.BALLISTIC, slotType(variant, "WS0001"));

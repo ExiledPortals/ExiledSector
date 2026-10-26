@@ -64,7 +64,7 @@ public final class WeaponSlotConversion {
         Map<String, WeaponType> originalTypes = originalTypes(hullSpec);
         Map<String, WeaponType> targetTypes = currentTypes(hullSpec, originalTypes);
         for (WeaponSlotAPI slot : hullSpec.getAllWeaponSlotsCopy()) {
-            if (!slot.isBuiltIn() && !originalTypes.containsKey(slot.getId()) && rule.matches(slot.getWeaponType(), slot.getSlotSize())) {
+            if (slot.isWeaponSlot() && !originalTypes.containsKey(slot.getId()) && rule.matches(slot.getWeaponType(), slot.getSlotSize())) {
                 targetTypes.put(slot.getId(), rule.toType());
             }
         }
@@ -85,7 +85,7 @@ public final class WeaponSlotConversion {
             WeaponType originalType = originalTypes.getOrDefault(slot.getId(), slot.getWeaponType());
             Set<WeaponType> targets = EnumSet.noneOf(WeaponType.class);
             for (Rule rule : rules) {
-                if (!slot.isBuiltIn() && rule.matches(originalType, slot.getSlotSize())) {
+                if (slot.isWeaponSlot() && rule.matches(originalType, slot.getSlotSize())) {
                     targets.add(rule.toType());
                 }
             }
@@ -99,7 +99,7 @@ public final class WeaponSlotConversion {
     static Map<String, WeaponType> targetTypes(ShipHullSpecAPI hullSpec, Map<String, WeaponType> originalTypes, List<Rule> rules) {
         Map<String, WeaponType> targetTypes = new LinkedHashMap<>();
         for (WeaponSlotAPI slot : hullSpec.getAllWeaponSlotsCopy()) {
-            if (slot.isBuiltIn()) {
+            if (!slot.isWeaponSlot()) {
                 continue;
             }
             WeaponType originalType = originalTypes.getOrDefault(slot.getId(), slot.getWeaponType());

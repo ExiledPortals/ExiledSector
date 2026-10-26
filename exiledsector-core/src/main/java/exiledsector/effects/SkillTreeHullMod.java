@@ -49,7 +49,9 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         ShipVariantAPI variant = stats.getVariant();
         ShipSkillData shipData = ShipRecords.resolve(member, variant);
         if (shipData == null) {
-            WeaponSlotConversion.restore(variant);
+            if (!isOpCostPass(stats)) {
+                WeaponSlotConversion.restore(variant);
+            }
             return;
         }
         if (!shipData.isNpcBuild() && ShipRecords.savedTreeOutOfReach(member, variant)) {
@@ -59,7 +61,9 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         ShipEffectContext context = new ShipEffectContext(shipData, member, variant, hullSize);
         sources.forEach(source -> source.beforeStatsApplied(context));
         ResolvedTree resolvedTree = ResolvedTree.of(context, StatBaseline.of(variant), DiminishingReturns.current(), sources);
-        WeaponSlotConversion.sync(variant, slotRules(resolvedTree));
+        if (!isOpCostPass(stats)) {
+            WeaponSlotConversion.sync(variant, slotRules(resolvedTree));
+        }
         for (ResolvedTree.Entry entry : resolvedTree.entries()) {
             if (entry instanceof ResolvedTree.VanillaEntry vanillaEntry) {
                 vanillaEntry.effect().applyEffectsBeforeShipCreation(hullSize, stats, vanillaEntry.hullModId());

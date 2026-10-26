@@ -8,9 +8,14 @@ import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
 import org.lwjgl.util.vector.Vector2f;
 
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 public class RetypableTestSlot implements WeaponSlotAPI {
+
+    private static final Set<WeaponType> WEAPON_MOUNT_TYPES = EnumSet.of(WeaponType.BALLISTIC, WeaponType.ENERGY, WeaponType.MISSILE,
+            WeaponType.UNIVERSAL, WeaponType.HYBRID, WeaponType.SYNERGY, WeaponType.COMPOSITE);
 
     private final String slotId;
     private final boolean builtIn;
@@ -140,6 +145,6 @@ public class RetypableTestSlot implements WeaponSlotAPI {
 
     @Override
     public boolean isWeaponSlot() {
-        return true;
+        return !builtIn && WEAPON_MOUNT_TYPES.contains(weaponType);
     }
 }
