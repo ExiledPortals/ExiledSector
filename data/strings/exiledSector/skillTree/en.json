@@ -64,7 +64,6 @@
     "node.block.hullModInstalled": "Ship already has {hullmod} installed.",
     "node.block.deactivatedSMod": "Ship has a deactivated {hullmod} S-mod that {skill} will restore.",
     "node.block.typeAllocated": "Already have {node} allocated.",
-    "node.block.itemInstalled": "Can't be allocated while {item} is installed.",
     "node.block.invalidOption": "That option isn't available on this node.",
     "node.block.locked": "Unidentified - explore the sector to discover this node.",
     "node.block.nodeCap": "This ship already has the maximum of {maxNodes} allocated nodes.",

@@ -240,7 +240,6 @@
     "effect.SHIELD_DAMAGE_SHARED_PERCENT": "将护盾所受伤害的{value}%分散给{range} su内未过载且未在主动排散的友方舰船，由它们平均承担为硬幅能。",
     "effect.SHIELD_SOFT_FLUX_CONVERSION_PERCENT": "护盾所受伤害的<good>{value}%</good>转为软幅能。",
     "effect.SHIELD_DAMAGE_PASSED_TO_ALLY_PERCENT": "护盾所受伤害的<good>{value}%</good>以软幅能形式转移给{range} su内最近的友方舰船。",
-    "effect.SHIELDS_DOWN_HULL_DAMAGE_TO_SOFT_FLUX_PERCENT": "护盾关闭时，装甲和船体所受伤害的<good>{value}%</good>转为软幅能。",
     "effect.PHASE_FIELD_CONTRIBUTION_PERCENT": "本舰传感器强度的{value}%会计入相位舰提供的全舰队被发现距离缩减。仅在你的舰队应答器关闭时生效。",
     "effect.SENSOR_STRENGTH_ALWAYS_COUNTS": "本舰的传感器强度始终计入舰队整体传感器强度。",
     "fleet.sensorStrengthAlwaysCounts": "传感器强度始终计入的舰船",

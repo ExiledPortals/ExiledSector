@@ -40,7 +40,6 @@ class HullUpgradeTest {
         store = ItemStore.get();
         ItemDefinitions.register(new JSONArray()
                 .put(HullItemRows.row("officer", "bridge", "HULL_PERCENT:10:10"))
-                .put(HullItemRows.row("veil", "shield_generator", "SHIELDS_DOWN_HULL_DAMAGE_TO_SOFT_FLUX_PERCENT:30:30"))
                 .put(HullItemRows.row("warranty", "bridge", "HULL_PERCENT:1:1").put("unique", "true").put("mechanic", HullItem.DOUBLER_MECHANIC))
                 .put(ItemFixtures.subroutineRow("chip")));
     }
@@ -106,18 +105,6 @@ class HullUpgradeTest {
         assertEquals(List.of("shield_generator"), shipData.getUnlockedSocketTypeIds());
         assertFalse(SocketCustody.isInstalled(ships, officer));
         assertEquals(List.of(officer), store.owned());
-    }
-
-    @Test
-    void anItemIsRefusedWhileTheShipHasAHullModItsEffectsExcludeAndThenExcludesThatHullMod() {
-        ShipSkillData shipData = shipWithPoints("ship", 2);
-        HullUpgradeRules.unlock(shipData, ShipSection.SHIELD_GENERATOR, fit(ShieldType.FRONT));
-        Item veil = store.add(ItemDefinitions.get("veil"), 1L);
-
-        assertFalse(HullUpgradeRules.socket(shipData, ShipSection.SHIELD_GENERATOR, veil, ships, Set.of("shield_shunt")::contains));
-        assertTrue(HullUpgradeRules.socket(shipData, ShipSection.SHIELD_GENERATOR, veil, ships, Set.of("heavyarmor")::contains));
-
-        assertEquals(Map.of("shield_shunt", veil), HullUpgradeRules.excludedHullMods(shipData));
     }
 
     @Test

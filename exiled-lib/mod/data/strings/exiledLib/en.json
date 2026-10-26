@@ -236,7 +236,6 @@
     "effect.SHIELD_DAMAGE_SHARED_PERCENT": "Disperses {value}% of shield damage taken to allied ships within {range} su that aren't overloaded or venting, split evenly between them as hard flux.",
     "effect.SHIELD_SOFT_FLUX_CONVERSION_PERCENT": "<good>{value}%</good> of shield damage taken is converted to soft flux.",
     "effect.SHIELD_DAMAGE_PASSED_TO_ALLY_PERCENT": "<good>{value}%</good> of shield damage taken is passed to the nearest allied ship within {range} su as soft flux.",
-    "effect.SHIELDS_DOWN_HULL_DAMAGE_TO_SOFT_FLUX_PERCENT": "<good>{value}%</good> of armor and hull damage taken is converted to soft flux while shields are down.",
     "effect.PHASE_FIELD_CONTRIBUTION_PERCENT": "{value}% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.",
     "effect.SENSOR_STRENGTH_ALWAYS_COUNTS": "This ship's sensor strength always contributes to fleet-wide sensor strength.",
     "fleet.sensorStrengthAlwaysCounts": "Ships whose sensor strength always counts",

@@ -7,10 +7,7 @@ import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledlib.i18n.I18n;
-import exiledlib.i18n.Message;
 import exiledlib.i18n.Translation;
-import exiledsector.items.Item;
-import exiledsector.items.ItemStore;
 import exiledsector.skills.HullModNames;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
@@ -32,17 +29,9 @@ public class SkillConflictWarningHullMod extends BaseHullMod {
         Color highlightColor = Global.getSettings().getColor("hColor");
         I18n.forGameText(() -> {
             tooltip.addSectionHeading(Translation.text("hullmod.conflict.title"), Alignment.MID, 15);
-            String causeItemId = removal.causeItemId();
-            Message message = causeItemId == null
-                    ? Translation.msg("hullmod.conflict.text").arg("cause", causeName(removal.causeTypeId()))
-                    : Translation.msg("hullmod.conflict.itemText").arg("cause", itemName(causeItemId));
-            VanillaText.addPara(tooltip, message.arg("removed", removedName).styled(), 10, Misc.getTextColor(), style -> highlightColor);
+            VanillaText.addPara(tooltip, Translation.msg("hullmod.conflict.text").arg("removed", removedName)
+                    .arg("cause", causeName(removal.causeTypeId())).styled(), 10, Misc.getTextColor(), style -> highlightColor);
         });
-    }
-
-    private static String itemName(String itemId) {
-        Item item = ItemStore.lookup(itemId);
-        return item == null ? itemId : item.name();
     }
 
     private static String causeName(String causeTypeId) {

@@ -320,7 +320,6 @@
     {"name": "SERAPHIM_HEAL_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "SERAPHS_GRACE_MAX_STACKS_FLAT", "statMode": null, "lowerIsBetter": false},
     {"name": "SERAPHS_GRACE_PERCENT_PER_STACK", "statMode": null, "lowerIsBetter": false},
-    {"name": "SHIELDS_DOWN_HULL_DAMAGE_TO_SOFT_FLUX_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "SHIELD_ABSORB_RATE_OF_FIRE_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "SHIELD_ABSORPTION_PERCENT", "statMode": "PERCENT", "lowerIsBetter": true},
     {"name": "SHIELD_ARC_FIXED", "statMode": null, "lowerIsBetter": false},

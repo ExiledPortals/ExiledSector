@@ -61,7 +61,6 @@
     "node.block.hullModInstalled": "舰船已安装{hullmod}。",
     "node.block.deactivatedSMod": "舰船有一个已停用的{hullmod} S插，{skill}会将其恢复。",
     "node.block.typeAllocated": "已分配{node}。",
-    "node.block.itemInstalled": "已安装{item}时无法分配。",
     "node.block.invalidOption": "该节点没有这个选项。",
     "node.block.locked": "未识别：探索星区以发现此节点。",
     "node.block.nodeCap": "本舰已分配节点数达到上限{maxNodes}个。",

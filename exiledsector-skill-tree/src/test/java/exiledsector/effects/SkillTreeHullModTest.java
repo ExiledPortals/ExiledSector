@@ -27,7 +27,6 @@ import exiledlib.skills.skilleffect.flux.FluxSkillEffect;
 import exiledlib.skills.skilleffect.logistics.LogisticsSkillEffect;
 import exiledlib.skills.skilleffect.phase.PhaseSkillEffect;
 import exiledsector.ExiledSector;
-import exiledsector.items.Item;
 import exiledsector.persistence.ShipRecords;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
@@ -453,24 +452,6 @@ class SkillTreeHullModTest {
         HullModConflictResolver.removeConflicts(member, variant);
 
         assertNull(SkillConflictWarnings.get(variant));
-    }
-
-    @Test
-    void aHullModThatAnInstalledItemExcludesIsRemovedWithAWarningNamingTheItem() {
-        ShipVariantAPI variant = mock(ShipVariantAPI.class);
-        RealVariantTags.attach(variant);
-        when(variant.hasHullMod("shield_shunt")).thenReturn(true);
-        when(variant.getHullMods()).thenReturn(new LinkedHashSet<>(List.of("shield_shunt")));
-        when(variant.getSMods()).thenReturn(new LinkedHashSet<>());
-        mockSector.global.when(Global::getSettings).thenReturn(mock(SettingsAPI.class));
-        Item veil = mock(Item.class);
-        when(veil.id()).thenReturn("veil_1");
-
-        HullModConflictResolver.removeConflicts(List.of(), Map.of("shield_shunt", veil), variant);
-
-        verify(variant).addMod("exiledSector_conflictWarning");
-        assertEquals("shield_shunt", SkillConflictWarnings.get(variant).removedHullModId());
-        assertEquals("veil_1", SkillConflictWarnings.get(variant).causeItemId());
     }
 
     @Test

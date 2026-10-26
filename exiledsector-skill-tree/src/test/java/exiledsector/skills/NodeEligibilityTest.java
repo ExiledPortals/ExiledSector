@@ -13,7 +13,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -96,20 +95,6 @@ class NodeEligibilityTest {
         assertEquals(NodeEligibility.OptionProblem.INVALID, NodeEligibility.optionProblem(container, "hull", typeId -> null));
         assertEquals(NodeEligibility.OptionProblem.UNEXPECTED, NodeEligibility.optionProblem(unlisted, "hull"));
         assertEquals(NodeEligibility.OptionProblem.MISSING, NodeEligibility.optionProblem(container, null));
-    }
-
-    @Test
-    void aNodeAddingAHullModThatAnInstalledItemExcludesIsBlockedNamingTheItem() {
-        SkillNode shunt = node("shunt", registered(type("shunt_type", SkillTier.NOTABLE).phantomHullModIds(List.of("shield_shunt")).build()));
-        SkillNode plain = node("plain", registered(type("plain_type", SkillTier.SMALL).build()));
-        NodeEligibility.Context context = new NodeEligibility.Context(AllocatedNode.of(data), ShieldType.FRONT, FRONT_SHIELDED_FRIGATE,
-                null, null, null, null, Map.of("shield_shunt", "Hardlight Veil Projectors"));
-
-        NodeEligibility.Block block = NodeEligibility.check(shunt, null, context);
-
-        assertEquals(NodeEligibility.Kind.ITEM_CONFLICT, block.kind());
-        assertEquals("Hardlight Veil Projectors", block.detail());
-        assertNull(NodeEligibility.check(plain, null, context));
     }
 
     @Test

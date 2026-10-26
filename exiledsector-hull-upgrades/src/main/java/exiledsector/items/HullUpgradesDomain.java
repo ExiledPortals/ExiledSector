@@ -6,7 +6,6 @@ import exiledsector.effects.ShipEffectSource;
 import exiledlib.i18n.Translation;
 import exiledsector.loot.LootSource;
 import exiledsector.skills.ShipSections;
-import exiledsector.skills.ShipSkillData;
 import exiledsector.ui.ExiledSectorSettings;
 import exiledsector.ui.HullUpgradesRefitButton;
 import exiledsector.ui.cargo.ItemIconLooks;
@@ -17,7 +16,6 @@ import exiledsector.ui.section.SectionShipSummary;
 import lunalib.lunaSettings.LunaSettings.SettingsCreator;
 
 import java.util.List;
-import java.util.Map;
 
 import static exiledsector.ExiledSector.MOD_ID;
 
@@ -51,11 +49,6 @@ public final class HullUpgradesDomain implements ExiledSectorDomain {
     @Override
     public List<ShipCustody> shipCustodies() {
         return List.of(SectionCustody.INSTANCE);
-    }
-
-    @Override
-    public Map<String, Item> excludedHullMods(ShipSkillData shipData) {
-        return HullUpgradeRules.excludedHullMods(shipData);
     }
 
     @Override

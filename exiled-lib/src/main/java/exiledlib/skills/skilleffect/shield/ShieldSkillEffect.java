@@ -4,7 +4,6 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
-import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
@@ -139,23 +138,6 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", Math.min(magnitude, SharedShieldDamageListener.MAX_SHARED_PERCENT))
                     .arg("range", Math.round(SharedShieldDamageListener.RANGE)).styled();
-        }
-    },
-    SHIELDS_DOWN_HULL_DAMAGE_TO_SOFT_FLUX_PERCENT(ShieldsDownSoftFluxListener.CONVERTED_PERCENT_KEY,
-            ShieldsDownSoftFluxListener.class, ShieldsDownSoftFluxListener::new) {
-        @Override
-        public StyledText description(float magnitude) {
-            return EffectText.msg(this).arg("value", Math.min(magnitude, ShieldsDownSoftFluxListener.MAX_CONVERTED_PERCENT)).styled();
-        }
-
-        @Override
-        public String blockAllocationReason(ShipFacts ship, ShieldAPI.ShieldType currentShieldType) {
-            return noShieldsReason(currentShieldType);
-        }
-
-        @Override
-        public List<String> exclusiveHullModIds() {
-            return List.of(HullMods.SHIELD_SHUNT);
         }
     },
     SHIELD_ABSORB_RATE_OF_FIRE_PERCENT(AbsorbReserveListener.RATE_OF_FIRE_PERCENT_KEY,

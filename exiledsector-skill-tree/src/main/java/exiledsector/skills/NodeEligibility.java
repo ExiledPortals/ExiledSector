@@ -7,13 +7,9 @@ import exiledlib.skills.SkillTypeEffect;
 import exiledlib.skills.skilleffect.shield.ShieldSkillEffect;
 import exiledsector.skills.tags.NodeRequirements;
 import exiledsector.skills.tags.ShipProfile;
-import exiledsector.items.Item;
-import exiledsector.items.ItemHullModExclusions;
 import exiledsector.skills.unlock.NodeGates;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -24,7 +20,7 @@ public final class NodeEligibility {
 
     public enum Kind {
         LOCKED, INVALID_OPTION, WRONG_HULL_SIZE, UNMET_HULL_REQUIREMENT, UNMET_SHIP_REQUIREMENT, HULL_MOD_CONFLICT, LEARNED_CONFLICT,
-        ITEM_CONFLICT, TYPE_CONFLICT, EFFECT_BLOCK, ITEM_COST
+        TYPE_CONFLICT, EFFECT_BLOCK, ITEM_COST
     }
 
     public enum OptionProblem {
@@ -39,17 +35,11 @@ public final class NodeEligibility {
     }
 
     public record Context(List<AllocatedNode> allocated, ShieldType shieldType, ShipFacts shipFacts, Predicate<SkillType> locked,
-                          ShipProfile profile, ToDoubleFunction<String> heldItems, Predicate<SkillNode> gated,
-                          Map<String, String> itemExcludedHullMods) {
+                          ShipProfile profile, ToDoubleFunction<String> heldItems, Predicate<SkillNode> gated) {
 
         public Context(List<AllocatedNode> allocated, ShieldType shieldType, ShipFacts shipFacts, Predicate<SkillType> locked,
                        ShipProfile profile) {
             this(allocated, shieldType, shipFacts, locked, profile, null, null);
-        }
-
-        public Context(List<AllocatedNode> allocated, ShieldType shieldType, ShipFacts shipFacts, Predicate<SkillType> locked,
-                       ShipProfile profile, ToDoubleFunction<String> heldItems, Predicate<SkillNode> gated) {
-            this(allocated, shieldType, shipFacts, locked, profile, heldItems, gated, Map.of());
         }
 
         public static Context of(ShipSkillData data, ShipFacts shipFacts, Predicate<SkillType> locked) {
@@ -58,15 +48,7 @@ public final class NodeEligibility {
 
         public static Context of(ShipSkillData data, ShipFacts shipFacts, Predicate<SkillType> locked, ToDoubleFunction<String> heldItems) {
             return new Context(AllocatedNode.of(data), currentShieldType(data, shipFacts.hullSize(), shipFacts.hullShieldType()), shipFacts, locked,
-                    null, heldItems, node -> NodeGates.isLocked(node, data), itemExcludedHullMods(data));
-        }
-
-        private static Map<String, String> itemExcludedHullMods(ShipSkillData data) {
-            Map<String, String> itemNames = new LinkedHashMap<>();
-            for (Map.Entry<String, Item> excluded : ItemHullModExclusions.of(data).entrySet()) {
-                itemNames.put(excluded.getKey(), excluded.getValue().name());
-            }
-            return itemNames;
+                    null, heldItems, node -> NodeGates.isLocked(node, data));
         }
 
         public Context excluding(String nodeId, ShipSkillData data) {
@@ -76,7 +58,7 @@ public final class NodeEligibility {
             SkillItemCost refund = ItemChargeLedger.itemCharge(data, nodeId);
             ToDoubleFunction<String> heldAfterRefund = refund == null || heldItems == null ? heldItems
                     : itemId -> heldItems.applyAsDouble(itemId) + (itemId.equals(refund.itemId()) ? refund.quantity() : 0f);
-            return new Context(remaining, remainingShieldType, shipFacts, locked, profile, heldAfterRefund, gated, itemExcludedHullMods);
+            return new Context(remaining, remainingShieldType, shipFacts, locked, profile, heldAfterRefund, gated);
         }
     }
 
@@ -128,12 +110,6 @@ public final class NodeEligibility {
         for (String hullModId : candidate.exclusiveHullModIds()) {
             if (shipFacts.hasHullMod().test(hullModId)) {
                 return new Block(Kind.HULL_MOD_CONFLICT, hullModId, null);
-            }
-        }
-        for (String ownHullModId : candidate.effectiveType().getOwnHullModIds()) {
-            String excludingItem = context.itemExcludedHullMods().get(ownHullModId);
-            if (excludingItem != null) {
-                return new Block(Kind.ITEM_CONFLICT, excludingItem, null);
             }
         }
         for (String phantomHullModId : candidate.effectiveType().getPhantomHullModIds()) {
