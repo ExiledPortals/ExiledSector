@@ -170,7 +170,7 @@ class WormholeAnchorSocketingTest {
 
         ShipTrees.openAnchorWormholes(data, 100);
 
-        assertEquals("The wormhole to the Hegemony volume is open. Ctrl click the socket to travel through it.",
+        assertEquals("The wormhole to the Hegemony volume is open. Ctrl-click the socket to travel through it.",
                 plain(first.socketStatusLines(data, "socket")).get(1));
         assertEquals("Inert: another anchor on this ship already opens the Hegemony volume.",
                 plain(second.socketStatusLines(data, "socket_b")).get(1));

@@ -39,17 +39,17 @@ class SkillTreeReadoutXpRulesTest {
     void atDefaultsTheReadoutQuotesVanillasFullDifficultyBonus() {
         String rules = SkillTreeChrome.xpRulesText();
 
-        assertTrue(rules.contains("Harder battles give up to +500% more XP"), rules);
+        assertTrue(rules.contains("Harder battles give up to 500% more XP"), rules);
         assertTrue(rules.endsWith("Losing combat awards 50% of the XP."), rules);
     }
 
     @Test
     void theQuotedBonusFollowsTheStrengthAndCapSettings() {
         configure(0.5f, 6f);
-        assertTrue(SkillTreeChrome.xpRulesText().contains("up to +250% more XP"));
+        assertTrue(SkillTreeChrome.xpRulesText().contains("up to 250% more XP"));
 
         configure(1f, 2f);
-        assertTrue(SkillTreeChrome.xpRulesText().contains("up to +100% more XP"));
+        assertTrue(SkillTreeChrome.xpRulesText().contains("up to 100% more XP"));
     }
 
     @Test

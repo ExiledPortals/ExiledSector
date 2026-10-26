@@ -42,9 +42,19 @@ public enum FighterSkillEffect implements BackedSkillEffect {
     FIGHTER_WEAPON_DAMAGE_PERCENT(RoleStat.WEAPON_DAMAGE),
     FIGHTER_TOP_SPEED_PERCENT(RoleStat.TOP_SPEED),
     FIGHTER_CREW_LOSS_PERCENT(PERCENT, dynamicStat("fighter_crew_loss_mult"),
-            "stat.casualtiesSufferedByFighterPilotsLaunchedFromThisShip", true),
+            "stat.casualtiesSufferedByFighterPilotsLaunchedFromThisShip", true) {
+        @Override
+        public StyledText description(float magnitude) {
+            return describeLaunched(PERCENT, null, magnitude, "stat.casualtiesSufferedByFighterPilotsLaunchedFromThisShip");
+        }
+    },
     FIGHTER_CREW_LOSS_MULT(MULT, dynamicStat("fighter_crew_loss_mult"),
-            "stat.casualtiesSufferedByFighterPilotsLaunchedFromThisShip", true),
+            "stat.casualtiesSufferedByFighterPilotsLaunchedFromThisShip", true) {
+        @Override
+        public StyledText description(float magnitude) {
+            return describeLaunched(MULT, null, magnitude, "stat.casualtiesSufferedByFighterPilotsLaunchedFromThisShip");
+        }
+    },
     FIGHTER_REFIT_TIME_MULT(MULT, liveStat(MutableShipStatsAPI::getFighterRefitTimeMult), "stat.fighterRefitTime", true),
     FIGHTER_REFIT_TIME_PERCENT(PERCENT, liveStat(MutableShipStatsAPI::getFighterRefitTimeMult), "stat.fighterRefitTime", true),
     FIGHTER_REPLACEMENT_RATE_MULT {
@@ -79,7 +89,7 @@ public enum FighterSkillEffect implements BackedSkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return StatMode.PERCENT.describeStat(magnitude, "stat.damageDealtByFightersLaunchedFromThisShipToOtherFightersAndMissiles");
+            return describeLaunched(PERCENT, null, magnitude, "stat.damageDealtByFightersLaunchedFromThisShipToOtherFightersAndMissiles");
         }
     },
     FIGHTER_RELAUNCH_TIME_FLAT {
@@ -100,7 +110,7 @@ public enum FighterSkillEffect implements BackedSkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return StatMode.FLAT.describeStat(magnitude, "stat.fighterRelaunchTimeAsAOfBaseRefitTime");
+            return EffectText.signed(this, magnitude).styled();
         }
     },
     FIGHTER_ARMOR_PERCENT(RoleStat.ARMOR),
@@ -251,6 +261,11 @@ public enum FighterSkillEffect implements BackedSkillEffect {
         return "fighter.role." + (role == null ? "ALL" : role.name());
     }
 
+    private static StyledText describeLaunched(StatMode mode, WingRole role, float magnitude, String statKey) {
+        String subject = Translation.msg("fighter.launched").arg("role", Translation.text(roleKey(role))).text();
+        return mode.description(magnitude, subject, Translation.text(statKey));
+    }
+
     private final EffectBacking backing;
 
     FighterSkillEffect() {
@@ -308,9 +323,7 @@ public enum FighterSkillEffect implements BackedSkillEffect {
 
         @Override
         public StyledText description(SkillEffect effect, float magnitude) {
-            String stat = Translation.msg("fighter.launched").arg("stat", Translation.text(roleStat.stat.statKey()))
-                    .arg("role", Translation.text(roleKey(role))).text();
-            return roleStat.stat.mode().description(magnitude, stat);
+            return describeLaunched(roleStat.stat.mode(), role, magnitude, roleStat.stat.statKey());
         }
     }
 

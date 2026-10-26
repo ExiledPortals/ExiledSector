@@ -28,7 +28,12 @@ public enum BattleSkillEffect implements BackedSkillEffect {
             "stat.electronicWarfarePenaltyAgainstThisShipSWeaponRange", true),
     ELECTRONIC_WARFARE_PENALTY_MULT(MULT, dynamicMod(Stats.ELECTRONIC_WARFARE_PENALTY_MOD),
             "stat.electronicWarfarePenaltyAgainstThisShipSWeaponRange", true),
-    NAV_RATING(FLAT, dynamicMod("coord_maneuvers_flat"), "stat.fleetNavRating", false),
+    NAV_RATING(FLAT, dynamicMod("coord_maneuvers_flat"), "stat.fleetNavRating", false) {
+        @Override
+        public StyledText description(float magnitude) {
+            return FLAT.describeStat(magnitude, "subject.yourFleet", "stat.fleetNavRating");
+        }
+    },
     OBJECTIVE_CAPTURE_RATE_MULT {
         @Override
         public StatMode statMode() {

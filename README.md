@@ -10,11 +10,11 @@
 
 ## Features
 
-Exiled Sector adds three major modules: a skill tree for every ship, hull upgrades for ships, and star charts to go and find more of both. The skill tree, hull upgrades and star charts can each be switched off in LunaLib settings if you'd rather run without them.
+Exiled Sector adds three major modules: a skill tree for every ship, hull upgrades for ships and star charts to go and find more of both. The skill tree, hull upgrades and star charts can each be switched off in LunaLib settings if you'd rather run without them.
 
 ### The skill tree
 
-Press the Skill Tree button in the refit screen and every ship in your fleet gets a tree of its own, over 300 nodes of armour, flux, guns and questionable engineering decisions. Ships level up in combat and every level buys a node, so your veteran Lasher eventually stops being a Lasher and starts being a problem. The small nodes along the tree's main paths grant Low Tech, High Tech or Midline affinity, which adds up across the ship into hull, armour, flux and cargo bonuses.
+Press the Skill Tree button in the refit screen and every ship in your fleet gets a tree of its own, over 300 nodes of armor, flux, guns and questionable engineering decisions. Ships level up in combat and every level buys a node, so your veteran Lasher eventually stops being a Lasher and starts being a problem. The small nodes along the tree's main paths grant Low Tech, High Tech or Midline affinity, which adds up across the ship into hull, armor, flux and cargo bonuses.
 
 <details>
 <summary>The skill tree</summary>
@@ -23,7 +23,7 @@ Press the Skill Tree button in the refit screen and every ship in your fleet get
 
 </details>
 
-You might have to travel a bit for the juicy nodes. Slot a Wormhole Anchor into a Subroutine Socket and it tears a hole out past the edge of the tree, to where the sensible nodes stop. Ctrl+click the socket and in you go. Anchors only turn up once you have the Janus Device, unless you allow them earlier in the mod settings. Story-locked areas only drop their anchors once you can open them, except Nightcross, whose anchor is what opens it. An area turned on without its mod, or whose faction Nexerelin has eliminated, has its anchor in salvage and ruins.
+You might have to travel a bit for the juicy nodes. Slot a Wormhole Anchor into a Subroutine Socket and it tears a hole out past the edge of the tree, to where the sensible nodes stop. Ctrl-click the socket and in you go. Anchors only turn up once you have the Janus Device, unless you allow them earlier in the mod settings. Story-locked areas only drop their anchors once you can open them, except Nightcross, whose anchor is what opens it. An area turned on without its mod, or whose faction Nexerelin has eliminated, has its anchor in salvage and ruins.
 
 <details>
 <summary>Travelling through a Wormhole Anchor</summary>
@@ -32,7 +32,7 @@ You might have to travel a bit for the juicy nodes. Slot a Wormhole Anchor into 
 
 </details>
 
-Every major faction has a volume of its own, full of nodes that think the way it does. The Hegemony thickens your armour, Tri-Tachyon invoices you for it, and the Luddic Path would quite like your ship to explode, ideally next to someone else's.
+Every major faction has a volume of its own, full of nodes that think the way it does. The Hegemony thickens your armor, Tri-Tachyon invoices you for it and the Luddic Path would quite like your ship to explode, ideally next to someone else's.
 
 <details>
 <summary>Unique faction volume nodes</summary>
@@ -61,7 +61,7 @@ Running Random Assortment of Things, Nightcross Armory, Navarchy of Tania or LOS
 
 ### Hull upgrades
 
-Nobody has designed a new hull since the Collapse, and the Domain's blueprints sit behind DRM older than your grandmother's grandmother. So your crew looks at other people's ships, decides they had some good ideas, and welds those ideas onto yours. 
+Nobody has designed a new hull since the Collapse, and the Domain's blueprints sit behind DRM older than your grandmother's grandmother. So your crew looks at other people's ships, decides they had some good ideas and welds those ideas onto yours. 
 
 Every ship starts with one Hull Upgrade point. Spend it on a section of the ship, and that section takes hull items of its own.
 
@@ -161,19 +161,19 @@ Optional:
 ## Compatibility
 
 > [!WARNING]
-> Exiled Sector adds permanent hull mods to the ships in your fleet. It is not safe to remove after being used.
+> Exiled Sector adds permanent hullmods to the ships in your fleet. It is not safe to remove after being used.
 
 It should be safe to add to an existing save.
 
-Nodes that copy a vanilla hull mod also place the real hull mod on the ship as a phantom: it costs no OP and does nothing itself, but other mods that check for that hull mod see it. That should make most mods work with the tree's nodes without needing dedicated support.
+Nodes that copy a vanilla hullmod also place the real hullmod on the ship as a phantom: it costs no OP and does nothing itself, but other mods that check for that hullmod see it. That should make most mods work with the tree's nodes without needing dedicated support.
 
 These mods have dedicated compatibility. The version listed is the one I last tested against. Newer versions usually work; if one doesn't, `starsector.log` says so at startup and lists anything Exiled Sector can no longer find.
 
 | Mod | Tested version | What Exiled Sector does with it |
 |---|---|---|
-| [Second-in-Command](https://fractalsoftworks.com/forum/index.php?topic=30407.0) | 2.0.0 | Its skills see the hull mods your nodes stand in for, and Reconfiguration waives the Converted Hangar penalties. |
+| [Second-in-Command](https://fractalsoftworks.com/forum/index.php?topic=30407.0) | 2.0.0 | Its skills see the hullmods your nodes stand in for, and Reconfiguration waives the Converted Hangar penalties. |
 | Lost Sector | 0.6.2d, 1.0.b | REDACTED |
-| [MagicLib](https://fractalsoftworks.com/forum/index.php?topic=25868.0) | 1.5.6 | Required. A hull mod that tries to strip one of your nodes' hull mods through MagicLib is removed instead. |
+| [MagicLib](https://fractalsoftworks.com/forum/index.php?topic=25868.0) | 1.5.6 | Required. A hullmod that tries to strip one of your nodes' hullmods through MagicLib is removed instead. |
 | Exotica Technologies | 1.8.7 | The Skill Tree button moves one slot down on the refit screen so it doesn't cover the Exotica button. |
 | Random Assortment of Things | 3.3.1 | REDACTED |
 | Nightcross Armory | 2.1.6 | REDACTED |
@@ -194,23 +194,23 @@ All three files are merged across mods, so other mods can opt their own weapons 
 <details>
 <summary><b>How do I earn and spend points?</b></summary>
 
-Open a ship's refit screen and click the **Skill Tree** button under the hull mods, or press **K**. If you prefer the old LunaLib Additional Options entry, switch the button off in LunaLib settings.
+Open a ship's refit screen and click the **Skill Tree** button under the hullmods, or press **K**. If you prefer the old LunaLib Additional Options entry, switch the button off in LunaLib settings.
 
 The first time you open a ship's tree you choose where it starts: Low Tech, Midline or High Tech. The starting node is free. Whenever it is the only node allocated, you can click it again to choose a different start. The other two can still be reached later like any other node.
 
-Every node costs the ship's unused ordnance points: 1 for frigates, 2 for destroyers, 3 for cruisers and 5 for capitals. A node can only be allocated next to one you already have. Node tooltips show only what a node does. Press **F1** while hovering one to also see its restrictions, such as the hull mods and nodes it is mutually exclusive with.
+Every node costs the ship's unused ordnance points: 1 for frigates, 2 for destroyers, 3 for cruisers and 5 for capitals. A node can only be allocated next to one you already have. Node tooltips show only what a node does. Press **F1** while hovering one to also see its restrictions, such as the hullmods and nodes it is mutually exclusive with.
 
 After every engagement, each ship in your fleet gains XP equal to the deployment points of the enemy ships destroyed or disabled, whether it deployed or not. Harder fights grant more: the same battle difficulty bonus vanilla shows before combat multiplies it, up to 6×. Easier fights never reduce it. You get half as much if you lose.
 
-Each level makes your most recently bought node free and refunds its OP. If every node you have is already free, the level is banked, and your next node costs nothing. The first level takes 60 XP, each level after that takes 13% more until level 25, and ships cap at level 50.
+Each level makes your most recently bought node free and refunds its OP. If every node you have is already free, the level is banked, and your next node costs nothing. The first level takes 60 XP, each level after that takes 13% more until level 25 and ships cap at level 50.
 
 Ships that join your fleet late don't start from scratch. No ship in your fleet sits below your own character level, so a ship bought at level 12 starts at level 12 and keeps pace as you level up. Ships behind your highest-level ship also earn 10% more XP for every level they trail it, up to 4×, so they catch up over time. Both can be changed in LunaLib settings.
 
 Click an allocated node to remove it. OP-paid nodes refund their OP, and free nodes return their free allocation. You can't remove a node that other nodes depend on to connect back to your starting point, and you can't remove the starting point itself.
 
-Ctrl+Shift+click an allocated node to remove it along with every node that depends on it, starting with the farthest. Doing this on your starting point clears the whole tree and lets you choose a new start. For now it does nothing if any of those nodes has its own removal condition.
+Ctrl-Shift-click an allocated node to remove it along with every node that depends on it, starting with the farthest. Doing this on your starting point clears the whole tree and lets you choose a new start. For now it does nothing if any of those nodes has its own removal condition.
 
-For multi-choice nodes, click to open a dropdown so you can pick an option. Ctrl+click repeats your last choice.
+For multi-choice nodes, click to open a dropdown so you can pick an option. Ctrl-click repeats your last choice.
 
 Each ship can have a max of 60 nodes.
 
@@ -262,7 +262,7 @@ The mirror stops at a cap. Pirates never pass 15 nodes, faction fleets 25 and AI
 
 Star Chart fleets ignore your fleet when sizing their trees. Tier 1 ships get 26 to 29 nodes, climbing to 47 to 50 at tier 15, and Star Chart Bosses get one more. Higher tiers also bring more and larger fleets, more and better officers and better-quality ships, before the chart's own modifiers add more. Chart fleets have no cap, so if you turn the bonus multiplier on it can reach its full maximum there. All of this, the multiplier included, can be tuned on the **NPC Fleets** tab in LunaLib settings.
 
-NPC ships don't all build the same way. Each faction leans towards its own themes: the Hegemony towards armour and ballistics, Tri-Tachyon towards flux, energy and phase, pirates towards speed and missiles. A ship's own system and defence steer it too. Bonuses to armour, hull, flux, speed and range only partly count once they pass a threshold, on your ships and theirs, so each bonus past the threshold adds less. To skip NPC trees entirely, switch them off on the NPC Fleets tab.
+NPC ships don't all build the same way. Each faction leans towards its own themes: the Hegemony towards armor and ballistics, Tri-Tachyon towards flux, energy and phase, pirates towards speed and missiles. A ship's own system and defense steer it too. Bonuses to armor, hull, flux, speed and range only partly count once they pass a threshold, on your ships and theirs, so each bonus past the threshold adds less. To skip NPC trees entirely, switch them off on the NPC Fleets tab.
 
 </details>
 
@@ -273,7 +273,7 @@ Hidden nodes show up as sensor ghosts until you unlock them.
 
 Wormholes unlock when you gain access to the Gate network, the same point vanilla does: using the Janus Device at the end of the Galatia Academy storyline.
 
-Wormholes come in linked pairs. Allocate one end and the other end comes free. It costs nothing extra, but it still counts toward your node limit. Removing either end removes both. Ctrl+click any identified wormhole, allocated or not, to jump the camera to the other end.
+Wormholes come in linked pairs. Allocate one end and the other end comes free. It costs nothing extra, but it still counts toward your node limit. Removing either end removes both. Ctrl-click any identified wormhole, allocated or not, to jump the camera to the other end.
 
 Hullmod nodes unlock when you learn the matching hullmod blueprint. Neural Interface also unlocks if you have the relevant Neural Link skill.
 
@@ -312,7 +312,7 @@ Battles outside charts drop charts up to tier 6, at a tier set by the strongest 
 <details>
 <summary><b>Does it work with faction mods?</b></summary>
 
-Most of it should just work. Nodes that copy a hull mod place the real hull mod on the ship (see Compatibility), so other mods that check for it, such as Second-in-Command, still work. Nexerelin fleets get skill trees like any other NPC fleet. Random Assortment of Things, Nightcross Armory and LOST_SECTOR each have a volume of their own on the tree, unlocked by playing their content. Exiled Sector's loot also drops in other mods' loot pools, such as Industrial.evolution and RAT's Abyss. Mods I haven't tested probably work. If one doesn't, please report it.
+Most of it should just work. Nodes that copy a hullmod place the real hullmod on the ship (see Compatibility), so other mods that check for it, such as Second-in-Command, still work. Nexerelin fleets get skill trees like any other NPC fleet. Random Assortment of Things, Nightcross Armory and LOST_SECTOR each have a volume of their own on the tree, unlocked by playing their content. Exiled Sector's loot also drops in other mods' loot pools, such as Industrial.evolution and RAT's Abyss. Mods I haven't tested probably work. If one doesn't, please report it.
 
 </details>
 
@@ -326,14 +326,14 @@ Not easily yet. A volume needs placement, circular icons, thematic descriptions,
 <details>
 <summary><b>Can I update mid-run?</b></summary>
 
-Every release on GitHub ends with "Save compatible." or "Not save compatible." If you update, LunaLib keeps your old values for any setting I've rebalanced. Reset the Exiled Sector settings to their defaults in LunaLib to pick up the new ones. When in doubt, load your save, look around, and quit without saving.
+Every release on GitHub ends with "Save compatible." or "Not save compatible." If you update, LunaLib keeps your old values for any setting I've rebalanced. Reset the Exiled Sector settings to their defaults in LunaLib to pick up the new ones. When in doubt, load your save, look around and quit without saving.
 
 </details>
 
 <details>
 <summary><b>How does this fit into the lore?</b></summary>
 
-The tree isn't your ship gaining sentience and learning kung fu. It's a picture of you and your crew making lots of small changes that pull the ship away from its factory spec: rerouted conduits, flux grids tuned to the captain's habits, armour patched where it keeps getting hit. That's the same thing vanilla's hullmods represent, just in finer steps. A veteran hull that has survived a dozen campaigns shouldn't fly like one fresh off a Domain-era template, and a ship your crew has been iterating on for years is going to be much more familiar to them. They'll learn the ins and outs of its quirks and get every edge they can.
+The tree isn't your ship gaining sentience and learning kung fu. It's a picture of you and your crew making lots of small changes that pull the ship away from its factory spec: rerouted conduits, flux grids tuned to the captain's habits, armor patched where it keeps getting hit. That's the same thing vanilla's hullmods represent, just in finer steps. A veteran hull that has survived a dozen campaigns shouldn't fly like one fresh off a Domain-era template, and a ship your crew has been iterating on for years is going to be much more familiar to them. They'll learn the ins and outs of its quirks and get every edge they can.
 
 I may also add a node that teaches your ship kung fu.
 
@@ -367,11 +367,11 @@ The Chinese translation is a first draft awaiting review by a native speaker. If
 
 This mod is in early development.
 
-It is my first mod, and first foray into OpenGL/game development, and is by no means feature complete or bug free.
+It is my first mod and my first foray into OpenGL/game development, and is by no means feature complete or bug free.
 
 AI usage: I am a Java software engineer working in the regulatory sector where AI use is heavily restricted at this stage. I started this project as a way to educate myself on the capabilities of LLMs for clean, maintainable code, so that when people asked my opinion I can definitively state that LLMs are not the godsend Sam Altman claims. I still think giving inexperienced devs access to an LLM is like giving an 8 year old a powerdrill. Claude's Opus 5.5 was used for this project.
 
-The art in the mod comes from starsector-core, royalty-free sources, and other mods whose authors kindly gave permission (see Credits).
+The art in the mod comes from starsector-core, royalty-free sources and other mods whose authors kindly gave permission (see Credits).
 
 I am seeking any feedback, bug reports, node suggestions, or faction designs.
 
@@ -379,7 +379,7 @@ You can find me on various Starsector Discords or by direct message @portals_
 
 ## Credits
 
-A big thank you to Lukas04 for letting me build the ExoTech and Abyss areas from Random Assortment of Things, to YukiM for the same in Nightcross Armory, to I Spectros I, whose Navarchy of Tania art the Tania area uses, and to Kissa Mies and SirHartley for LOST_SECTOR. The loot alert sounds are from Path of Exile and are copyright Grinding Gear Games. [CREDITS.md](CREDITS.md) lists every borrowed file, who made it and the terms it is used under.
+A big thank you to Lukas04 for letting me build the ExoTech and Abyss areas from Random Assortment of Things, to YukiM for the same in Nightcross Armory, to I Spectros I, whose Navarchy of Tania art the Tania area uses and to Kissa Mies and SirHartley for LOST_SECTOR. The loot alert sounds are from Path of Exile and are copyright Grinding Gear Games. [CREDITS.md](CREDITS.md) lists every borrowed file, who made it and the terms it is used under.
 
 ## License
 

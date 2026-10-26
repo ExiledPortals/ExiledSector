@@ -127,18 +127,23 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
             "stat.heavyMachineryRequiredToPerformSurveysFleetWide", true) {
         @Override
         public StyledText description(float magnitude) {
-            return super.description(-magnitude);
+            return FLAT.describeStat(-magnitude, YOUR_FLEET, "stat.heavyMachineryRequiredToPerformSurveysFleetWide");
         }
     },
     SURVEY_COST_REDUCTION_SUPPLIES(FLAT, dynamicMod("survey_cost_reduction_supplies"),
             "stat.suppliesRequiredToPerformSurveysFleetWide", true) {
         @Override
         public StyledText description(float magnitude) {
-            return super.description(-magnitude);
+            return FLAT.describeStat(-magnitude, YOUR_FLEET, "stat.suppliesRequiredToPerformSurveysFleetWide");
         }
     },
     GROUND_SUPPORT_FLAT(FLAT, dynamicMod(Stats.FLEET_GROUND_SUPPORT),
-            "stat.effectiveStrengthOfPlanetaryRaidsUpToTheTotalNumberOfMarinesInTheFleet", false),
+            "stat.effectiveStrengthOfPlanetaryRaidsUpToTheTotalNumberOfMarinesInTheFleet", false) {
+        @Override
+        public StyledText description(float magnitude) {
+            return FLAT.describeStat(magnitude, YOUR_FLEET, "stat.effectiveStrengthOfPlanetaryRaidsUpToTheTotalNumberOfMarinesInTheFleet");
+        }
+    },
     GROUND_SUPPORT_PER_MAX_CREW_PERCENT {
         @Override
         public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
@@ -174,7 +179,7 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
 
         @Override
         public StyledText description(float magnitude) {
-            return StatMode.PERCENT.describeStat(magnitude, "stat.postBattleSalvageRecoveredFleetWide");
+            return StatMode.PERCENT.describeStat(magnitude, YOUR_FLEET, "stat.postBattleSalvageRecoveredFleetWide");
         }
     },
     PHASE_FIELD_CONTRIBUTION_PERCENT {
@@ -195,6 +200,7 @@ public enum LogisticsSkillEffect implements BackedSkillEffect {
     };
 
     private static final String CREW_GROUND_SUPPORT_SUFFIX = "_crewGroundSupport";
+    private static final String YOUR_FLEET = "subject.yourFleet";
 
     private final EffectBacking backing;
 

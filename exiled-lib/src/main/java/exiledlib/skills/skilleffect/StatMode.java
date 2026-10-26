@@ -71,6 +71,15 @@ public enum StatMode {
         return description(magnitude, Translation.text(statKey));
     }
 
+    public StyledText description(float magnitude, String subject, String statName) {
+        return Translation.msg(descriptionKey + (magnitude >= 0 ? ".up" : ".down") + ".subject").arg("subject", subject)
+                .arg("stat", statName).arg("value", Math.abs(magnitude)).styled();
+    }
+
+    public StyledText describeStat(float magnitude, String subjectKey, String statKey) {
+        return description(magnitude, Translation.text(subjectKey), Translation.text(statKey));
+    }
+
     abstract void apply(MutableStat stat, String modId, float magnitude);
 
     abstract void apply(StatBonus stat, String modId, float magnitude);

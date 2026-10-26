@@ -92,7 +92,11 @@ Conditions go after the value and stat: "while phased", "while in the system", "
 
 ## Capitalisation
 
-Follow Starsector's own style. Stats and generic nouns are lowercase (flux capacity, sensor range, items, currency items, points of interest). Proper names keep their capitals: Star Charts, Star Chart Bosses, Nanite Feedstock, Bridge items, Domain, hull mod and faction names.
+Follow Starsector's own style. Stats and generic nouns are lowercase (flux capacity, sensor range, items, currency items, points of interest). Proper names keep their capitals: Star Charts, Star Chart Bosses, Nanite Feedstock, Bridge items, Domain, hullmod and faction names.
+
+## Spelling
+
+Use Starsector's spelling: armor, hullmod, point defense ("point-defense" before a noun), Ctrl-click and Ctrl-Shift-click. The opposite of allocate is unallocate. Lists take no Oxford comma: "top speed, flux dissipation and weapon rate of fire".
 
 ## Chinese
 

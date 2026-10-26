@@ -1543,7 +1543,7 @@
 			"phantomHullMods": [
 				"nskr_criticalArmor"
 			],
-			"description": "A prototype modspec from Kesteven R&D shows the crew how to reinforce a light hull's critical structural points. The thinner the hull's own armour, the more the refit adds.",
+			"description": "A prototype modspec from Kesteven R&D shows the crew how to reinforce a light hull's critical structural points. The thinner the hull's own armor, the more the refit adds.",
 			"tags": [
 				"armour"
 			]
@@ -2861,7 +2861,7 @@
 					"magnitude": -2
 				}
 			],
-			"description": "Captured pirate hulls show the crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Each d-mod this ship carries makes its armour shrug off a little more damage.",
+			"description": "Captured pirate hulls show the crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Each d-mod this ship carries makes its armor shrug off a little more damage.",
 			"tags": [
 				"d_mods",
 				"armour"
@@ -3250,21 +3250,21 @@
 					"key": "$playerCanUseGates"
 				}
 			],
-			"description": "Allocating this wormhole automatically allocates its paired wormhole as well at no extra cost, connecting both branches of the tree. \n\nDeallocating either end deallocates both.\n\nCtrl click on a wormhole to travel through it."
+			"description": "Allocating this wormhole automatically allocates its paired wormhole as well at no extra cost, connecting both branches of the tree. \n\nUnallocating either end unallocates both.\n\nCtrl-click a wormhole to travel through it."
 		},
 		{
 			"id": "wormhole_exit",
 			"name": "Wormhole Exit",
 			"icon": "",
 			"tier": "WORMHOLE_EXIT",
-			"description": "The far end of a faction's wormhole. It opens only while a wormhole anchor for this volume sits in an allocated Subroutine Socket, and opening allocates it at no cost. No path leads to it from inside its volume.\n\nRemoving the anchor or deallocating its socket closes the wormhole and releases every node reached through it.\n\nCtrl click on an open exit to travel back to the anchor's socket."
+			"description": "The far end of a faction's wormhole. It opens only while a wormhole anchor for this volume sits in an allocated Subroutine Socket, and opening allocates it at no cost. No path leads to it from inside its volume.\n\nRemoving the anchor or unallocating its socket closes the wormhole and releases every node reached through it.\n\nCtrl-click an open exit to travel back to the anchor's socket."
 		},
 		{
 			"id": "exoship",
 			"name": "Exoship",
 			"icon": "",
 			"tier": "WORMHOLE_EXIT",
-			"description": "The last Exoship of the Exo-Tech faction, warping from system to system across the sector. Its branches travel with it.\n\nIt docks with your ship only while a Hyper-Nav Beacon sits in an allocated Subroutine Socket, and docking allocates it at no cost. Removing the beacon or deallocating its socket undocks the Exoship and releases every node reached through it.\n\nCtrl click on the Exoship to return to the beacon's socket."
+			"description": "The last Exoship of the Exo-Tech faction, warping from system to system across the sector. Its branches travel with it.\n\nIt docks with your ship only while a Hyper-Nav Beacon sits in an allocated Subroutine Socket, and docking allocates it at no cost. Removing the beacon or unallocating its socket undocks the Exoship and releases every node reached through it.\n\nCtrl-click the Exoship to return to the beacon's socket."
 		},
 		{
 			"id": "modular_hull_socket",
@@ -3275,7 +3275,7 @@
 		},
 		{
 			"id": "pd_damage_to_missiles",
-			"name": "Point Defence Damage to Missiles",
+			"name": "Point Defense Damage to Missiles",
 			"icon": "graphics/icons/pd_damage_to_missiles.png",
 			"effects": [
 				{
@@ -3520,7 +3520,7 @@
 					"magnitude": -10
 				}
 			],
-			"description": "Pirate captains who joined the crew drill the habits that make freebooters so dangerous up close: charge in, fire everything and count the casualties later. Weapons hit much harder, but the ship sheds armour, takes more damage on its shields and loses far more crew.",
+			"description": "Pirate captains who joined the crew drill the habits that make freebooters so dangerous up close: charge in, fire everything and count the casualties later. Weapons hit much harder, but the ship sheds armor, takes more damage on its shields and loses far more crew.",
 			"tags": [
 				"weapons"
 			]
@@ -3882,7 +3882,7 @@
 					"magnitude": 100
 				}
 			],
-			"description": "An Exo-Tech armourer shows the crew how to route the ammunition feeders through the phase coils, so magazines refill twice as fast while the ship is phased.",
+			"description": "An Exo-Tech armorer shows the crew how to route the ammunition feeders through the phase coils, so magazines refill twice as fast while the ship is phased.",
 			"tags": [
 				"phase",
 				"ammo",
@@ -4383,7 +4383,7 @@
 					"magnitude": 15
 				}
 			],
-			"description": "Luddic shipwrights bless every plate they hang, and they hang far more of them than any yard would allow. Learning their slow, devout layering lets the crew build this ship's armour and hull up thicker.",
+			"description": "Luddic shipwrights bless every plate they hang, and they hang far more of them than any yard would allow. Learning their slow, devout layering lets the crew build this ship's armor and hull up thicker.",
 			"tags": [
 				"armour",
 				"hull"
@@ -4536,7 +4536,7 @@
 					"magnitude": 30
 				}
 			],
-			"description": "Remnant point defence never tires and never flinches. Its tracking routines, recovered from a gutted drone, swing this ship's turrets faster and make its point defence far deadlier to missiles.",
+			"description": "Remnant point defense never tires and never flinches. Its tracking routines, recovered from a gutted drone, swing this ship's turrets faster and make its point defense far deadlier to missiles.",
 			"tags": [
 				"point_defense",
 				"weapons"

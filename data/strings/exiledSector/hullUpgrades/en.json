@@ -44,7 +44,7 @@
     "framework.socketDescription.engine_room": "Holds drive assemblies for speed, maneuverability, burn level and fuel economy.",
     "framework.socketDescription.reactor": "Holds power regulators for venting, capacitors, EMP resistance and weapon flux costs.",
     "framework.socketDescription.armor_plating": "Holds bolt-on plating for armor, hull and damage resistance.",
-    "framework.socketDescription.weapon_mount": "Holds fire control for weapon damage, range, ammunition and point defence.",
+    "framework.socketDescription.weapon_mount": "Holds fire control for weapon damage, range, ammunition and point defense.",
     "framework.socketDescription.shield_generator": "Holds shield emitters for shield efficiency, upkeep, arc and response.",
     "framework.socketDescription.phase_coil": "Holds phase coils for cloak cost, phase speed and stealth.",
     "framework.socketDescription.flight_deck": "Holds deck crews for strikecraft replacement, refit times and strikecraft performance.",
