@@ -316,6 +316,7 @@
     "chart.effect.CHART_BREACH_CACHE_PERCENT": "<good>{value}%</good> increased number of breach caches",
     "chart.effect.CHART_BREACH_CACHE_ITEM_PERCENT": "<good>{value}%</good> increased quantity of items found in breach caches",
     "chart.anomaly.spatial_breach.intel": "A Spatial Breach grows in the system. Breach caches form inside it.",
+    "chart.anomaly.faction_skirmish.intel": "Two factions are fighting over the system.",
     "chart.breach.name": "Spatial Breach",
     "chart.breach.description": "A tear into hyperspace that opens once a fleet passes over its core, expands to its full size and then collapses. Its effects are stronger toward the core.",
     "chart.breach.effect.supplies": "Ships in your fleet have up to <bad>{value}%</bad> increased supply use",

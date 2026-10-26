@@ -220,6 +220,22 @@ orbits once the layout's orbit limit is reached, then further out. Every neutron
 `ChartCoronaTerrainPlugin` and `ChartPulsarBeamTerrainPlugin` in place of vanilla's corona and beam
 (`setPulsarIfNeutron`). They push and drain only the player fleet, so the system's other fleets stay where they are.
 
+## Faction Skirmish
+
+The anomaly rolls only on atlas border systems whose owner and a lane neighbour of another faction both take sides
+(`FactionSkirmish.fitsAt`, never in special or infested systems; `chart_skirmish_factions.csv` lists the factions that
+don't). The attacker is raced from the neighbours' current owners, weighted by lanes (`AtlasBorders.attacker`), and the
+player picks a side before the wormhole opens, kept on the `AtlasRunNode`. The defender always has a station, and the
+attacker matches the defender's ordinary fleets plus a commander that pushes on the station once the rest have fallen
+(`SkirmishPlanner`, `ChartSkirmishes`). The joined side is 30% weaker, drops nothing and flies as the run-only faction
+`exiledSector_skirmish_ally`, which is friendly to the player; per-fleet `$cfai_makeHostile_<faction>` flags set the two
+sides against each other (`ChartContentGenerator.joinSkirmish`).
+
+Siding with the attacker or staying out makes the station the boss, counted whoever destroys it. Siding with the
+defender makes the commander the boss and protects the station: losing it loses the run (`ChartRun.objectiveLost`).
+Completing a run on the attacker's side records the system as captured in `AtlasState`, and captures feed the owner
+reader that opening, tooltips, borders and atlas traffic use (`AtlasOpening.ownerOf`, `territoryOwnerOf`).
+
 ## Transverse Jump in charts
 
 In any chart system, Transverse Jump takes the fleet back to where the chart was opened, the same as the exit

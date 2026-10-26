@@ -129,6 +129,18 @@ class FactionSkirmishTest {
     }
 
     @Test
+    void theShippedListKeepsTheFactionsThatNeverTakeSidesOut() throws Exception {
+        SkirmishFactions.register(ChartTables.csvRows(SkirmishFactions.PATH));
+
+        for (String neutral : List.of("remnant", "derelict", "threat", "rat_abyssals")) {
+            assertFalse(SkirmishFactions.takesSides(neutral), neutral);
+        }
+        assertTrue(SkirmishFactions.takesSides("hegemony"));
+        assertFalse(SkirmishFactions.takesSides(null));
+        assertFalse(SkirmishFactions.takesSides(""));
+    }
+
+    @Test
     void theAtlasRollSkipsSystemsTheSkirmishDoesNotFit() throws Exception {
         ChartTables.loadAnomalies();
         AtlasAnomalyCandidate candidate = AtlasData.rules().anomalies().stream()

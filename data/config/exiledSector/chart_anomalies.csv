@@ -6,4 +6,4 @@ asteroid_storm,1,1,15,,graphics/icons/anomalies/asteroid_storm.png,,,,,"Extra as
 magnetic_storm,1,1,15,,graphics/icons/anomalies/magnetic_storm.png,,,,CHART_CURRENCY_PERCENT:50,"Magnetic fields around the star and several worlds that blind sensors"
 stellar_flares,1,1,15,,graphics/icons/anomalies/stellar_flares.png,,,,CHART_FEEDSTOCK_PERCENT:50,"Every corona throws flares constantly"
 spatial_breach,1,1,15,,graphics/icons/anomalies/spatial_breach.png,,yes,,,"A growing tear into hyperspace: drains and breach caches"
-faction_skirmish,1,1,15,,,,,,,"Two factions fight over a border system; the player sides with one or stays out"
+faction_skirmish,1,1,15,,graphics/icons/anomalies/faction_skirmish.png,,,,,"Two factions fight over a border system; the player sides with one or stays out"

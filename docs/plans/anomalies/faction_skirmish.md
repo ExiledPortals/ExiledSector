@@ -2,7 +2,7 @@
 
 Two factions fight over a system on the border between their territories on the atlas. Before the wormhole opens, the player sides with the defender, sides with the attacker, or stays out. Siding with the attacker and winning hands the system to the attacker on the atlas; every other outcome leaves it with its owner.
 
-Status: planned, nothing built. Redesigned 2026-10-26 around atlas territories, replacing the allied-foothold design. See `overview.md` for the shared framework.
+Status: built 2026-10-26 apart from the in-game checks below; move this plan to `completed/` once those are done. Redesigned 2026-10-26 around atlas territories, replacing the allied-foothold design. See `overview.md` for the shared framework.
 
 ## Where it appears
 
@@ -32,7 +32,9 @@ Every skirmish run uses the boss objective.
 
 - Siding with the attacker: the boss is the defender's station, and it counts whoever destroys it. Completing the system records it as captured by the attacker.
 - Siding with the defender: the boss is the attacker's commander, who leads a final push on the station once the attacker's other fleets have fallen. If the station falls, the objective can't be completed and the run fails when it closes.
-- Staying out: the boss is the defender's station. The map never changes, even if the player destroys it.
+- Staying out: the boss is the defender's station, counted whoever destroys it (decided 2026-10-26). The map never changes, even if the player destroys it.
+
+Killing the attacker's commander always drops boss loot, even after the allied station has fallen (decided 2026-10-26).
 
 A failed run never changes ownership.
 
@@ -50,12 +52,12 @@ None for now. The old allied reward, stock and strength lines are dropped.
 
 ## Build order
 
-1. [x] `chart_skirmish_factions.csv`, neighbour factions on `AtlasTraits`, the `fitsAt` rule, the attacker pick, the `chart_anomalies.csv` row and a tooltip line naming both sides. Built: `charts.anomaly.skirmish` (`FactionSkirmish`, `SkirmishFactions`), `AtlasTraits.neighbourFactionIds`, `specialId` and `infestationId`, the atlas roll honouring `fitsAt` (`AtlasData.rules`), `ChartAnomaly.holdsAt` dropping anomalies in `AtlasAnomalies.effective`, `AtlasOpening.ownerOf`, `AtlasBorders.attacker`, and the `chart.atlas.node.skirmish` line. Not built: the marker icon.
+1. [x] `chart_skirmish_factions.csv`, neighbour factions on `AtlasTraits`, the `fitsAt` rule, the attacker pick, the `chart_anomalies.csv` row and a tooltip line naming both sides. Built: `charts.anomaly.skirmish` (`FactionSkirmish`, `SkirmishFactions`), `AtlasTraits.neighbourFactionIds`, `specialId` and `infestationId`, the atlas roll honouring `fitsAt` (`AtlasData.rules`), `ChartAnomaly.holdsAt` dropping anomalies in `AtlasAnomalies.effective`, `AtlasOpening.ownerOf`, `AtlasBorders.attacker`, and the `chart.atlas.node.skirmish` line. Marker icon: `graphics/icons/anomalies/faction_skirmish.png`, a circular copy of vanilla `faction_conflict`.
 2. [x] Capture records in `AtlasState`, the capture-aware owner reader used by opening, tooltips, borders and fleet traffic, and a dev console command to capture and release a system. Built: `AtlasState.capturedSystems` (packed cell to captor; capturing for the original owner releases), `AtlasOpening.ownerOf` (infestation, then capture, then the generator's faction; opening, tooltips, skirmish sides) and `territoryOwnerOf` (capture, then the generator's faction, as borders and traffic ignored infestation before; `AtlasScenery.territoryAt`, `AtlasFleetTraffic.ports`), and `ExiledSectorAtlasCapture` (`AtlasCaptureCommand`).
 3. [~] The side confirmation over the atlas, the choice on `AtlasRunNode`, and `side=` on the console open command. Built: `BenchModeSupport.OpenChoice` with a stacked-button confirm (`HoloPanel.openChoiceConfirm`, `SocketWorkbenchPanel.showChoiceConfirm`), the atlas choices (`AtlasNodeText.sideChoices`, `SkirmishEntry`, `SkirmishSide`), the attacker and side on `AtlasRunNode` (two new encoded fields; older nodes still read) and `ChartGenContext`, `FactionSkirmish.join` in `ChartRunActions.openFromAtlas` (no choice means staying out), and `side=` on `ExiledSectorChartOpen`, which adds the anomaly with no attacker for step 4 to pick. Not built: the in-game check of the confirm dialog.
 4. [x] Two-sided fleets with the strength rule, the defender's station with shared fallback rows, and fleet assignments that attack the other side. Built: `SkirmishPlanner` (attacker fleets matching the defender's ordinary fleets plus a commander, the allied side's fleets divided by `ALLY_STRENGTH_DIVISOR`, an attacker picked for console runs), a forced station boss in `ChartContentPlanner.plan`, `ChartContentPlan.PlannedSkirmish`, and in `ChartContentGenerator` the station spawned first, `joinSkirmish` flags (hostile to the other side, allies non-hostile to the player with no chart loot), attacker fleets from a staging point far from the station (`ORBIT_AGGRESSIVE` on it, the commander holding with `SKIRMISH_COMMANDER_MEMORY_KEY`), and defender patrols on `ORBIT_AGGRESSIVE` around it. Orbit assignments are the only ones the engine ends when their target dies, so both sides fall back to patrolling once the station falls. An allied boss never holds the colony item. Allies fly as the proxy faction `exiledSector_skirmish_ally` (`data/world/factions/`, with a Nexerelin config).
 5. [x] Objectives per side, the attacker commander's final push, failure when the station falls on the defender's side, and the capture on completion. Built: `ChartContentGenerator.settleSkirmish` (the station, or the commander with the allied station as `ChartContent.protectedFleetId`), `ChartRun.objectiveLost` set by `ChartObjectives.fleetGone` and `reconcile` when the protected fleet goes, checked before any target so a station falling in the same battle as the boss still loses, and the run fails on close, `ChartSkirmishes.pushCommander` (from the despawn listener and the run script's objective check), `AtlasProgress.captureForWinner`, and the `chart.intel.lost` line.
-6. [ ] Strings (en and zh_CN), the `docs/docs.md` section and tests.
+6. [x] Strings (en and zh_CN), the `docs/docs.md` section and tests. Built: the run intel line `chart.anomaly.faction_skirmish.intel`, the "Faction Skirmish" section in `docs/docs.md`, and tests for the shipped faction list and the atlas text and side choices (`AtlasNodeTextTest`).
 
 ## Open questions
 

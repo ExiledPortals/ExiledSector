@@ -307,6 +307,7 @@
     "chart.effect.CHART_BREACH_CACHE_PERCENT": "裂隙储藏数量提高<good>{value}%</good>",
     "chart.effect.CHART_BREACH_CACHE_ITEM_PERCENT": "在裂隙储藏中找到的物品数量提高<good>{value}%</good>",
     "chart.anomaly.spatial_breach.intel": "星域中有一处空间裂隙正在扩张。裂隙储藏会在其中形成。",
+    "chart.anomaly.faction_skirmish.intel": "两个势力正在争夺这个星系。",
     "chart.breach.name": "空间裂隙",
     "chart.breach.description": "一道通往超空间的裂口。舰队经过其核心后它会张开，扩张到最大范围后再坍缩。越靠近核心，影响越强。",
     "chart.breach.effect.supplies": "你舰队中的舰船补给消耗最多提高<bad>{value}%</bad>",
