@@ -40,6 +40,8 @@ public final class ResolvedTree {
     record EffectEntry(SkillEffect effect, String modId, float magnitude) implements Entry {
     }
 
+    private static final int CAP_SCALE_STEPS = 24;
+
     record TemporaryNode(float durationSeconds, List<EffectEntry> effects) {
     }
 
@@ -93,7 +95,7 @@ public final class ResolvedTree {
         totals.reachedCaps().forEach(reductionCap -> replaceWithCap(reductionCap, resolvedEntries, temporaryEntries));
         this.entries = List.copyOf(resolvedEntries);
         this.temporaryNodes = List.copyOf(resolvedTemporaryNodes);
-        this.gatedNodes = List.copyOf(resolvedGatedNodes);
+        this.gatedNodes = List.copyOf(withinDamageTakenCaps(resolvedGatedNodes, permanentTotals(totals)));
     }
 
     private static void replaceWithCap(DamageTakenCaps.Cap reductionCap, List<Entry> resolvedEntries, Set<EffectEntry> temporaryEntries) {
@@ -132,6 +134,83 @@ public final class ResolvedTree {
         if (!temporaryEffects.isEmpty()) {
             resolvedTemporaryNodes.add(new TemporaryNode(contribution.temporarySeconds(), List.copyOf(temporaryEffects)));
         }
+    }
+
+    private static Map<SkillEffect, Float> permanentTotals(EffectTotals totals) {
+        for (EffectTotals.Group group : totals.groups()) {
+            if (group.temporarySeconds() == null && group.gate() == null) {
+                return group.totals();
+            }
+        }
+        return Map.of();
+    }
+
+    static List<GatedNode> withinDamageTakenCaps(List<GatedNode> gatedNodes, Map<SkillEffect, Float> permanentTotals) {
+        List<GatedNode> limited = new ArrayList<>(gatedNodes);
+        for (CombatGate gate : CombatGate.values()) {
+            for (DamageTakenCaps.Cap cap : DamageTakenCaps.CAPS) {
+                float scale = capScale(gatedNodes, gate, cap, permanentTotals);
+                if (scale < 1f) {
+                    limited.replaceAll(node -> node.gate() == gate ? scaled(node, cap, scale) : node);
+                }
+            }
+        }
+        return limited;
+    }
+
+    private static float capScale(List<GatedNode> gatedNodes, CombatGate gate, DamageTakenCaps.Cap cap, Map<SkillEffect, Float> permanentTotals) {
+        if (!exceedsWith(gatedNodes, gate, cap, permanentTotals, 1f)) {
+            return 1f;
+        }
+        float low = 0f;
+        float high = 1f;
+        for (int step = 0; step < CAP_SCALE_STEPS; step++) {
+            float middle = (low + high) / 2f;
+            if (exceedsWith(gatedNodes, gate, cap, permanentTotals, middle)) {
+                high = middle;
+            } else {
+                low = middle;
+            }
+        }
+        return low;
+    }
+
+    private static boolean exceedsWith(List<GatedNode> gatedNodes, CombatGate gate, DamageTakenCaps.Cap cap, Map<SkillEffect, Float> permanentTotals,
+                                       float scale) {
+        float percentTotal = 0f;
+        float multiplierProduct = 1f;
+        for (SkillEffect effect : cap.contributingEffects()) {
+            float permanent = permanentTotals.getOrDefault(effect, 0f);
+            if (effect.isMultiplicative()) {
+                multiplierProduct *= 1f + permanent / 100f;
+            } else {
+                percentTotal += permanent;
+            }
+        }
+        for (GatedNode node : gatedNodes) {
+            if (node.gate() != gate) {
+                continue;
+            }
+            for (EffectEntry entry : node.effects()) {
+                if (cap.contributingEffects().contains(entry.effect()) && entry.magnitude() < 0f) {
+                    if (entry.effect().isMultiplicative()) {
+                        multiplierProduct *= 1f + entry.magnitude() * scale / 100f;
+                    } else {
+                        percentTotal += entry.magnitude() * scale;
+                    }
+                }
+            }
+        }
+        return DamageTakenCaps.exceedsCap(percentTotal, multiplierProduct);
+    }
+
+    private static GatedNode scaled(GatedNode node, DamageTakenCaps.Cap cap, float scale) {
+        List<EffectEntry> effects = new ArrayList<>(node.effects().size());
+        for (EffectEntry entry : node.effects()) {
+            boolean limited = cap.contributingEffects().contains(entry.effect()) && entry.magnitude() < 0f;
+            effects.add(limited ? new EffectEntry(entry.effect(), entry.modId(), entry.magnitude() * scale) : entry);
+        }
+        return new GatedNode(node.gate(), List.copyOf(effects));
     }
 
     private static void addGatedNode(EffectContribution contribution, List<GatedNode> resolvedGatedNodes) {

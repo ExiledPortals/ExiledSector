@@ -63,6 +63,8 @@ final class SkillTreeNodeConnectorRenderer {
     private final SocketWormholes socketWormholes;
     private float exoshipRadius;
     private List<String> conduitPath = List.of();
+    private ShipSkillData conduitData;
+    private int conduitRevision = -1;
     private Set<String> conduitNodeIds = Set.of();
     private Set<String> conduitConnectorKeys = Set.of();
     private Color conduitColor = Color.WHITE;
@@ -85,7 +87,12 @@ final class SkillTreeNodeConnectorRenderer {
         TemplateHighlight templateHighlight = new TemplateHighlight(templateNodeIds, plannedOnlyNodeIds);
         exoshipRadius = layers.exoshipRadius();
         flow.refresh(allocation, plannedOnlyNodeIds);
-        refreshConduit(RootConduits.of(allocation.skillData()));
+        ShipSkillData skillData = allocation.skillData();
+        if (skillData != conduitData || skillData.revision() != conduitRevision) {
+            conduitData = skillData;
+            conduitRevision = skillData.revision();
+            refreshConduit(RootConduits.of(skillData));
+        }
 
         for (SkillTreeTopology.Connector connector : SkillTree.topology().connectors()) {
             boolean carried = ExoshipNodes.isCarried(connector.from());

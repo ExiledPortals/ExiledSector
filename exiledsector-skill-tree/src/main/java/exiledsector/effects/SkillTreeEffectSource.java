@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.items.DoctrineOverrides;
+import exiledsector.items.EmptyShells;
 import exiledsector.items.GatedSubroutines;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocatedSkillEffects;
@@ -55,11 +56,15 @@ public final class SkillTreeEffectSource implements ShipEffectSource {
     public static List<EffectContribution> contributions(ShipSkillData shipData, HullSize hullSize) {
         List<EffectContribution> contributions = new ArrayList<>();
         Map<String, GatedSubroutines.Gating> gatedNodeIds = GatedSubroutines.gatedNodeIds(shipData);
+        Set<String> hollowNodeIds = EmptyShells.hollowNodeIds(shipData);
         for (AllocatedNode node : AllocatedNode.of(shipData)) {
+            if (hollowNodeIds.contains(node.node().getId())) {
+                continue;
+            }
             SkillType type = node.effectiveType();
             boolean vanillaPassthrough = AllocatedSkillEffects.isVanillaPassthrough(node);
             boolean scaled = scalesNode(node);
-            GatedSubroutines.Gating gating = gatedNodeIds.get(node.node().getId());
+            GatedSubroutines.Gating gating = type.getTemporaryAfterDeploymentSeconds() == null ? gatedNodeIds.get(node.node().getId()) : null;
             if (gating != null) {
                 if (!vanillaPassthrough) {
                     contributions.add(new EffectContribution(node, MOD_ID_PREFIX + node.node().getId() + "_",
@@ -118,7 +123,7 @@ public final class SkillTreeEffectSource implements ShipEffectSource {
         return resolvedTree.derived(NODE_EFFECTS_KEY, () -> {
             List<NodeEffects> nodeEffects = new ArrayList<>();
             for (EffectContribution contribution : resolvedTree.contributions()) {
-                if (contribution.origin() instanceof AllocatedNode node) {
+                if (contribution.origin() instanceof AllocatedNode node && contribution.gate() == null) {
                     nodeEffects.add(new NodeEffects(node, contribution.effects()));
                 }
             }

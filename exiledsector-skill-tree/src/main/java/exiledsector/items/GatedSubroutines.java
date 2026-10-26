@@ -4,6 +4,8 @@ import exiledlib.skills.CombatGate;
 import exiledlib.skills.SkillTypeEffect;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.skills.ShipSkillData;
+import exiledsector.skills.SkillNode;
+import exiledsector.skills.SkillTier;
 import exiledsector.skills.SkillTree;
 
 import java.util.HashMap;
@@ -30,10 +32,20 @@ public final class GatedSubroutines {
             Gating gating = gatingOf(item);
             SubroutineRadius.Footprint footprint = gating == null ? null : SubroutineRadius.footprint(item, socketed.getKey());
             if (footprint != null) {
-                SkillTree.radii().nodeIdsWithin(footprint.centreNodeId(), footprint.size()).forEach(nodeId -> gated.putIfAbsent(nodeId, gating));
+                for (String nodeId : SkillTree.radii().nodeIdsWithin(footprint.centreNodeId(), footprint.size())) {
+                    SkillNode node = SkillTree.get(nodeId);
+                    if (node != null && gateable(node)) {
+                        gated.putIfAbsent(nodeId, gating);
+                    }
+                }
             }
         }
         return gated;
+    }
+
+    private static boolean gateable(SkillNode node) {
+        SkillTier tier = node.getType().getTier();
+        return tier == SkillTier.SMALL || tier == SkillTier.NOTABLE || tier == SkillTier.KEYSTONE;
     }
 
     static Gating gatingOf(Item item) {

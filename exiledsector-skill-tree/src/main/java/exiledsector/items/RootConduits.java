@@ -50,7 +50,7 @@ public final class RootConduits {
         }
     }
 
-    private record CachedPath(String socketId, String rootId, SkillTreeTopology topology, List<String> path) {
+    private record CachedPath(String socketId, String rootId, SkillTreeTopology topology, int revision, List<String> path) {
     }
 
     private static final Map<ShipSkillData, CachedPath> PATHS = new WeakHashMap<>();
@@ -93,11 +93,15 @@ public final class RootConduits {
         SkillTreeTopology topology = SkillTree.topology();
         synchronized (PATHS) {
             CachedPath cached = PATHS.get(data);
-            if (cached != null && cached.socketId().equals(socketId) && Objects.equals(cached.rootId(), rootId) && cached.topology() == topology) {
+            if (cached != null && cached.socketId().equals(socketId) && Objects.equals(cached.rootId(), rootId) && cached.topology() == topology
+                    && cached.revision() == data.revision()) {
                 return cached.path();
             }
             List<String> path = rootId == null ? List.of() : shortestPath(topology, data, socketId, rootId);
-            PATHS.put(data, new CachedPath(socketId, rootId, topology, path));
+            if (cached != null && cached.path().equals(path)) {
+                path = cached.path();
+            }
+            PATHS.put(data, new CachedPath(socketId, rootId, topology, data.revision(), path));
             return path;
         }
     }
