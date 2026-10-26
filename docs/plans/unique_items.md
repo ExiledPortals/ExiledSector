@@ -1,6 +1,6 @@
 # Unique hull items and subroutines
 
-Only the groundwork and the vanilla faction binding are built. This plan adds unique hull items and subroutines for the modded factions that have tree volumes (the Navarchy of Tania, Nightcross, Stargazer, the RAT Abyss and ExoTech), plus affinity items that work for any faction.
+Stages 1 to 9 are built; stage 10, the RAT items, waits on Lukas04's approval. This plan adds unique hull items and subroutines for the modded factions that have tree volumes (the Navarchy of Tania, Nightcross, Stargazer, the RAT Abyss and ExoTech), plus affinity items that work for any faction.
 
 A unique must do something no rolled modifier can. It changes how a build works (converting damage, reshaping weapon slots, rerouting flux, bending affinity, gating tree nodes) instead of bundling stats that rare items already roll. A unique may carry at most one plain supporting stat. The existing vanilla-themed uniques are older than this rule. Names are working names and all magnitudes are placeholders.
 
