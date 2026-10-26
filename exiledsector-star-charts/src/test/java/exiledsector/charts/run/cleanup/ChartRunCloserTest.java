@@ -27,7 +27,7 @@ import com.fs.starfarer.api.impl.campaign.enc.StrandedGiveTJScript;
 import com.fs.starfarer.api.impl.campaign.intel.misc.SalvorsTallyIntel;
 import exiledlib.MockSector;
 import exiledlib.charts.FakeCampaignUiData;
-import exiledsector.charts.ChartContent;
+import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartRun;
 import exiledsector.charts.ChartRunBound;

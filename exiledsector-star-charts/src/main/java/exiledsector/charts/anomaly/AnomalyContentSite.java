@@ -3,9 +3,9 @@ package exiledsector.charts.anomaly;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.charts.ChartGenContext;
-import exiledsector.charts.ChartPoi;
-import exiledsector.charts.ChartSites;
-import exiledsector.charts.ChartSpot;
+import exiledsector.charts.content.ChartPoi;
+import exiledsector.charts.content.ChartSites;
+import exiledsector.charts.content.ChartSpot;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;

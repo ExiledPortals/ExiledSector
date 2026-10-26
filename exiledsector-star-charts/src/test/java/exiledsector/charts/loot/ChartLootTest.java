@@ -5,7 +5,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec.DropData;
 import exiledsector.charts.ChartGenContext.AppliedEffect;
 import exiledsector.charts.ChartGenContext;
-import exiledsector.charts.ChartPoi;
+import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.ChartTiers;
 import exiledsector.charts.effect.ChartEffect;

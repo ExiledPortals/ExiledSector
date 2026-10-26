@@ -1,5 +1,8 @@
 package exiledsector.charts;
 
+import exiledsector.charts.content.ChartBossType;
+import exiledsector.charts.content.ChartContent;
+import exiledsector.charts.layout.ChartLayout;
 import exiledsector.charts.objective.ChartObjective;
 
 import java.util.ArrayList;

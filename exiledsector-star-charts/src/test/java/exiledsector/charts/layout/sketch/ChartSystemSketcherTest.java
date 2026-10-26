@@ -1,12 +1,12 @@
 package exiledsector.charts.layout.sketch;
 
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
-import exiledsector.charts.ChartDeepSpace;
-import exiledsector.charts.ChartLayoutGenerator;
-import exiledsector.charts.ChartLayoutRecipe;
-import exiledsector.charts.ChartLayoutRequest;
-import exiledsector.charts.ChartLook;
-import exiledsector.charts.ChartShape;
+import exiledsector.charts.layout.ChartDeepSpace;
+import exiledsector.charts.layout.ChartLayoutGenerator;
+import exiledsector.charts.layout.ChartLayoutRecipe;
+import exiledsector.charts.layout.ChartLayoutRequest;
+import exiledsector.charts.layout.ChartLook;
+import exiledsector.charts.layout.ChartShape;
 import exiledsector.charts.layout.sketch.ChartSketchPalette.BodyKind;
 import exiledsector.charts.layout.sketch.ChartSketchPalette.StarKind;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.Body;

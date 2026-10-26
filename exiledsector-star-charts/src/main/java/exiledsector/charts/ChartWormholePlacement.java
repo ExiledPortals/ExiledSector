@@ -19,7 +19,7 @@ public final class ChartWormholePlacement {
 
     static final float MIN_RADIUS = 1800f;
     static final float STAR_CLEARANCE = 900f;
-    static final float PLANET_CLEARANCE = 600f;
+    public static final float PLANET_CLEARANCE = 600f;
     static final float TERRAIN_CLEARANCE = 500f;
     static final float STEP_PAST_BAND = 1f;
     static final float ARRIVAL_SEARCH_STEP = 50f;
@@ -33,11 +33,11 @@ public final class ChartWormholePlacement {
         return choose(system, placementRandom, null);
     }
 
-    static Vector2f choose(StarSystemAPI system, Random placementRandom, Vector2f avoid) {
+    public static Vector2f choose(StarSystemAPI system, Random placementRandom, Vector2f avoid) {
         return place(blockedBands(system), placementRandom, avoid);
     }
 
-    static float outermost(StarSystemAPI system, Collection<? extends SectorEntityToken> ignored) {
+    public static float outermost(StarSystemAPI system, Collection<? extends SectorEntityToken> ignored) {
         float outermost = 0f;
         for (PlanetAPI body : system.getPlanets()) {
             if (!ignored.contains(body)) {
@@ -88,7 +88,7 @@ public final class ChartWormholePlacement {
         return true;
     }
 
-    static float clearRadius(List<Band> blocked, float startRadius) {
+    public static float clearRadius(List<Band> blocked, float startRadius) {
         float radius = startRadius;
         boolean moved = true;
         while (moved) {
@@ -103,7 +103,7 @@ public final class ChartWormholePlacement {
         return radius;
     }
 
-    static List<Band> blockedBands(StarSystemAPI system) {
+    public static List<Band> blockedBands(StarSystemAPI system) {
         List<Band> blocked = new ArrayList<>();
         for (PlanetAPI body : system.getPlanets()) {
             float clearance = body.getRadius() + (body.isStar() ? STAR_CLEARANCE : PLANET_CLEARANCE);
@@ -129,13 +129,13 @@ public final class ChartWormholePlacement {
         return centreBand(terrain, 0).sweptAt(innerEdge, outerEdge + flareReach).widenedBy(TERRAIN_CLEARANCE);
     }
 
-    static float flareReach(FlareManagerDelegate flares, float outerEdge) {
+    public static float flareReach(FlareManagerDelegate flares, float outerEdge) {
         float largeFlare = (flares.getFlareExtraLengthMultMax() - 1f) * outerEdge + flares.getFlareExtraLengthFlatMax();
         float smallFlare = (flares.getFlareSmallExtraLengthMultMax() - 1f) * outerEdge + flares.getFlareSmallExtraLengthFlatMax();
         return Math.max(0f, Math.max(largeFlare, smallFlare));
     }
 
-    static Band centreBand(SectorEntityToken entity, int depth) {
+    public static Band centreBand(SectorEntityToken entity, int depth) {
         SectorEntityToken focus = entity.getOrbitFocus();
         if (focus == null || focus == entity || depth >= MAX_ORBIT_DEPTH) {
             Vector2f location = entity.getLocation();
@@ -149,18 +149,18 @@ public final class ChartWormholePlacement {
         return centreBand(focus, depth + 1).sweptAt(orbitRadius, orbitRadius);
     }
 
-    record Band(float inner, float outer) {
+    public record Band(float inner, float outer) {
 
-        Band widenedBy(float amount) {
+        public Band widenedBy(float amount) {
             return new Band(Math.max(0f, inner - amount), outer + amount);
         }
 
-        Band sweptAt(float innerDistance, float outerDistance) {
+        public Band sweptAt(float innerDistance, float outerDistance) {
             float nearest = Math.max(0f, Math.max(inner - outerDistance, innerDistance - outer));
             return new Band(nearest, outer + outerDistance);
         }
 
-        boolean contains(float radius) {
+        public boolean contains(float radius) {
             return radius >= inner && radius <= outer;
         }
     }

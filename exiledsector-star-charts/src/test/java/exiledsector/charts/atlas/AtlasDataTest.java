@@ -1,7 +1,7 @@
 package exiledsector.charts.atlas;
 
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
-import exiledsector.charts.ChartLayoutRecipe;
+import exiledsector.charts.layout.ChartLayoutRecipe;
 import exiledsector.charts.ChartTables;
 import org.json.JSONArray;
 import org.json.JSONObject;

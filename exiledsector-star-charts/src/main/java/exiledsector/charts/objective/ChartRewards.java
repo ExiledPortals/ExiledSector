@@ -6,7 +6,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
 import exiledsector.charts.loot.ChartDrops;
-import exiledsector.charts.ChartLayoutGenerator;
+import exiledsector.charts.layout.ChartLayoutGenerator;
 import exiledsector.charts.ChartRun;
 import exiledsector.charts.ChartRunEffects;
 import exiledsector.charts.ChartTiers;

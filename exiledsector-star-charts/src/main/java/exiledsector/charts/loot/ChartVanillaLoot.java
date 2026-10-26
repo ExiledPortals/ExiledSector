@@ -4,7 +4,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec.DropData;
 import exiledsector.charts.ChartGenContext;
-import exiledsector.charts.ChartPoi;
+import exiledsector.charts.content.ChartPoi;
 
 import java.util.ArrayList;
 import java.util.List;

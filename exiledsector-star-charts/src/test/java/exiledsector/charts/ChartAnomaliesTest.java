@@ -26,11 +26,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class ChartAnomaliesTest {
+public class ChartAnomaliesTest {
 
-    static final class PlacesNothing implements ChartAnomaly {
+    public static final class PlacesNothing implements ChartAnomaly {
 
-        final List<AnomalyContentSite> sites = new ArrayList<>();
+        public final List<AnomalyContentSite> sites = new ArrayList<>();
 
         @Override
         public String id() {
@@ -53,7 +53,7 @@ class ChartAnomaliesTest {
         return new ChartAnomalies.Definition(id, 1f, minTier, maxTier, requiredMod, "", true, excludes, anomaly != null && anomaly.replacesStar());
     }
 
-    static ChartAnomalies.Definition definition(String id) {
+    public static ChartAnomalies.Definition definition(String id) {
         return definition(id, 1, 15, "", Set.of());
     }
 

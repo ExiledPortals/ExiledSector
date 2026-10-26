@@ -3,7 +3,7 @@ package exiledsector.charts.loot;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.ChartIds;
-import exiledsector.charts.FakeChartContentEngine;
+import exiledsector.charts.content.FakeChartContentEngine;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

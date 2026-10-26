@@ -8,7 +8,9 @@ import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.StarAnomalies;
 import exiledsector.charts.anomaly.StellarFlares;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
+import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.table.BuiltInTable;
 import exiledsector.data.CsvRows;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -176,18 +178,18 @@ public final class ChartAnomalies {
         return List.copyOf(accepted);
     }
 
-    static void useForTests(List<ChartAnomaly> testAnomalies, List<Definition> testDefinitions) {
+    public static void useForTests(List<ChartAnomaly> testAnomalies, List<Definition> testDefinitions) {
         anomalies = List.copyOf(testAnomalies);
         Map<String, Definition> byId = new LinkedHashMap<>();
         testDefinitions.forEach(definition -> byId.put(definition.id(), definition));
         definitions = Map.copyOf(byId);
     }
 
-    static void useForTests(List<Definition> testDefinitions) {
+    public static void useForTests(List<Definition> testDefinitions) {
         useForTests(BUILT_IN, testDefinitions);
     }
 
-    static void resetForTests() {
+    public static void resetForTests() {
         anomalies = BUILT_IN;
         definitions = Map.of();
     }

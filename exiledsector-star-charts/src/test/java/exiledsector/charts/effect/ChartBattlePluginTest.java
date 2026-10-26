@@ -17,7 +17,7 @@ import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.mission.FleetSide;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
-import exiledsector.charts.ChartContentGenerator;
+import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.ChartGenContext.AppliedEffect;
 import exiledsector.charts.ChartGenContext;
 import exiledsector.charts.ChartIds;

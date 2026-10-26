@@ -1,7 +1,7 @@
 package exiledsector.charts.effect;
 
 import com.fs.starfarer.api.Global;
-import exiledsector.charts.ChartFactions;
+import exiledsector.charts.content.ChartFactions;
 import exiledsector.charts.loot.ChartLootTotals;
 import exiledsector.items.ItemEffects;
 import exiledsector.items.ItemType;

@@ -6,8 +6,8 @@ import com.fs.starfarer.api.impl.campaign.ids.Terrain;
 import com.fs.starfarer.api.impl.campaign.terrain.AsteroidFieldTerrainPlugin.AsteroidFieldParams;
 import com.fs.starfarer.api.impl.campaign.terrain.BaseRingTerrain;
 import exiledsector.charts.ChartIds;
-import exiledsector.charts.ChartPoi;
-import exiledsector.charts.ChartSites;
+import exiledsector.charts.content.ChartPoi;
+import exiledsector.charts.content.ChartSites;
 
 import java.awt.Color;
 import java.util.Random;

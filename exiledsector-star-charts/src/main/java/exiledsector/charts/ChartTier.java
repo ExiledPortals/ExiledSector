@@ -1,5 +1,6 @@
 package exiledsector.charts;
 
+import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.objective.ChartObjective;
 
 public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax, int officerLevelBonus, int officerCountBonus,
@@ -7,7 +8,7 @@ public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax,
                         float stationBudget, float derelictBudget, boolean boss, float bossSize, float clearWeight, float bossWeight) {
 
     public static final float FLEET_SIZE_BASE_POINTS = 50f;
-    static final float PERCENT = 100f;
+    public static final float PERCENT = 100f;
     static final float FALLBACK_FIRST_TIER_FLEET_SIZE = 100f;
     static final float FALLBACK_FLEET_SIZE_PER_TIER = 32f;
     static final float FALLBACK_FIRST_TIER_BOSS_SIZE = 180f;
@@ -69,7 +70,7 @@ public record ChartTier(int tier, float fleetSize, int fleetsMin, int fleetsMax,
         };
     }
 
-    static ChartTier fallback(int tier) {
+    public static ChartTier fallback(int tier) {
         int steps = Math.max(0, tier - 1);
         int levelMin = FALLBACK_FIRST_TIER_LEVEL + Math.round(FALLBACK_LEVELS_PER_TIER * steps);
         float poiBudget = FALLBACK_FIRST_TIER_POI_BUDGET + FALLBACK_POI_BUDGET_PER_TIER * steps;

@@ -2,7 +2,7 @@ package exiledsector.console;
 
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import exiledsector.charts.ChartIds;
-import exiledsector.charts.ChartLayout;
+import exiledsector.charts.layout.ChartLayout;
 import exiledsector.charts.ChartRun;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;

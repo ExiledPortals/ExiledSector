@@ -2,9 +2,9 @@ package exiledsector.charts.anomaly;
 
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
-import exiledsector.charts.ChartPoi;
-import exiledsector.charts.ChartPois;
-import exiledsector.charts.ChartSites;
+import exiledsector.charts.content.ChartPoi;
+import exiledsector.charts.content.ChartPois;
+import exiledsector.charts.content.ChartSites;
 
 import java.util.Random;
 import java.util.function.Consumer;

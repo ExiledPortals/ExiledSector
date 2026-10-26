@@ -5,7 +5,7 @@ import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import exiledlib.MockSector;
-import exiledsector.charts.ChartContent;
+import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.ChartGenContext;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartRun;

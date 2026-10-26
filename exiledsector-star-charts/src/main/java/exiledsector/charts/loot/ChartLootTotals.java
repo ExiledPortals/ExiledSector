@@ -3,7 +3,7 @@ package exiledsector.charts.loot;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
 import exiledsector.charts.ChartGenContext;
-import exiledsector.charts.ChartPoi;
+import exiledsector.charts.content.ChartPoi;
 import exiledsector.items.StarChart;
 
 import java.util.ArrayList;

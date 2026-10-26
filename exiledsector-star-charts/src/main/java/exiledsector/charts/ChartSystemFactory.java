@@ -9,6 +9,11 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import exiledlib.i18n.Translation;
+import exiledsector.charts.content.ChartContent;
+import exiledsector.charts.content.ChartContentGenerator;
+import exiledsector.charts.layout.ChartLayout;
+import exiledsector.charts.layout.ChartLayoutGenerator;
+import exiledsector.charts.layout.ChartLayoutRequest;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
@@ -20,7 +25,7 @@ public final class ChartSystemFactory {
     static final List<String> ISOLATION_TAGS = List.of(Tags.THEME_HIDDEN, Tags.THEME_SPECIAL, Tags.TEMPORARY_LOCATION,
             Tags.SYSTEM_CUT_OFF_FROM_HYPER, Tags.DO_NOT_SHOW_STRANDED_DIALOG, Tags.NOT_RANDOM_MISSION_TARGET, Tags.NO_TOPOGRAPHY_SCANS,
             Tags.SYSTEM_ALREADY_USED_FOR_STORY);
-    static final String STAR_TYPE = "star_white";
+    public static final String STAR_TYPE = "star_white";
     static final float STAR_RADIUS = 600f;
     static final float CORONA_SIZE = 300f;
     static final Color SYSTEM_LIGHT = new Color(205, 215, 255);
@@ -72,7 +77,7 @@ public final class ChartSystemFactory {
         }
     }
 
-    static PlanetAPI addFallbackStar(StarSystemAPI system, String runId) {
+    public static PlanetAPI addFallbackStar(StarSystemAPI system, String runId) {
         system.setBackgroundTextureFilename(SYSTEM_BACKGROUND);
         system.setLightColor(SYSTEM_LIGHT);
         return system.initStar(ChartIds.starId(runId), STAR_TYPE, STAR_RADIUS, CORONA_SIZE);

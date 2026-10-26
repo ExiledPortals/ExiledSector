@@ -21,7 +21,7 @@ import exiledsector.items.MaterialItems;
 import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.items.StarChartCurrency;
 import exiledsector.items.StarChartFixtures;
-import exiledsector.charts.ChartContent;
+import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.loot.ChartDrops;
 import exiledsector.charts.ChartGenContext;
 import exiledsector.charts.objective.ChartObjective;

@@ -21,7 +21,7 @@ import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartRun;
 import exiledsector.charts.ChartRunEffects;
 import exiledsector.charts.ChartRuns;
-import exiledsector.charts.ChartSites;
+import exiledsector.charts.content.ChartSites;
 import exiledsector.ui.VanillaText;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;

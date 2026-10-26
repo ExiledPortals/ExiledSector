@@ -2,7 +2,7 @@ package exiledsector.charts.atlas;
 
 import exiledsector.charts.AtlasRunNode;
 import exiledsector.charts.ChartGenContext;
-import exiledsector.charts.ChartLayoutRequest;
+import exiledsector.charts.layout.ChartLayoutRequest;
 import exiledsector.charts.ChartTiers;
 import exiledsector.items.StarChart;
 import exiledsector.modifiers.ModifierSlot;

@@ -1,6 +1,7 @@
 package exiledsector.charts;
 
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
+import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.effect.ChartFactionEffect;
 import exiledsector.charts.effect.ChartFleetStat;

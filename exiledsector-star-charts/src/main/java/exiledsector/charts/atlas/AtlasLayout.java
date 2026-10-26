@@ -1,6 +1,6 @@
 package exiledsector.charts.atlas;
 
-import exiledsector.charts.ChartShape;
+import exiledsector.charts.layout.ChartShape;
 
 public record AtlasLayout(String id, float weight, ChartShape shape) {
 
