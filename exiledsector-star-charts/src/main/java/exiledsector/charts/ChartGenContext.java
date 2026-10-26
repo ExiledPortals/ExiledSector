@@ -1,5 +1,6 @@
 package exiledsector.charts;
 
+import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.items.Item;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemKind;
@@ -60,6 +61,8 @@ public final class ChartGenContext {
     private final Map<String, Float> anomalyPercents = new LinkedHashMap<>();
     private final List<String> forcedAnomalies = new ArrayList<>();
     private boolean guaranteedBossTierUp;
+    private String skirmishAttackerId;
+    private SkirmishSide skirmishSide;
 
     private ChartGenContext(List<AppliedEffect> applied, int quality, String factionId) {
         this.applied = List.copyOf(applied);
@@ -240,6 +243,8 @@ public final class ChartGenContext {
         context.forceAnomalies(forcedAnomalies);
         context.forceAnomalies(node.anomalyIds());
         context.guaranteedBossTierUp = node.guaranteedBossTierUp();
+        context.skirmishAttackerId = node.skirmishAttackerId() == null ? skirmishAttackerId : node.skirmishAttackerId();
+        context.skirmishSide = node.skirmishSide() == null ? skirmishSide : node.skirmishSide();
         return context;
     }
 
@@ -251,6 +256,8 @@ public final class ChartGenContext {
         context.forceAnomalies(forcedAnomalies);
         context.forceAnomalies(anomalyIds);
         context.guaranteedBossTierUp = guaranteedBossTierUp;
+        context.skirmishAttackerId = skirmishAttackerId;
+        context.skirmishSide = skirmishSide;
         return context;
     }
 
@@ -264,6 +271,8 @@ public final class ChartGenContext {
         ChartGenContext context = new ChartGenContext(combined, quality, factionId);
         context.forceAnomalies(forcedAnomalies);
         context.guaranteedBossTierUp = guaranteedBossTierUp;
+        context.skirmishAttackerId = skirmishAttackerId;
+        context.skirmishSide = skirmishSide;
         return context;
     }
 
@@ -281,6 +290,26 @@ public final class ChartGenContext {
 
     public boolean guaranteedBossTierUp() {
         return guaranteedBossTierUp;
+    }
+
+    public ChartGenContext withSkirmishSide(SkirmishSide side) {
+        if (side == null || side == skirmishSide) {
+            return this;
+        }
+        ChartGenContext context = new ChartGenContext(applied, quality, factionId);
+        context.forceAnomalies(forcedAnomalies);
+        context.guaranteedBossTierUp = guaranteedBossTierUp;
+        context.skirmishAttackerId = skirmishAttackerId;
+        context.skirmishSide = side;
+        return context;
+    }
+
+    public String skirmishAttackerId() {
+        return skirmishAttackerId;
+    }
+
+    public SkirmishSide skirmishSide() {
+        return skirmishSide;
     }
 
     public float anomalyPercent(String tuningKey) {

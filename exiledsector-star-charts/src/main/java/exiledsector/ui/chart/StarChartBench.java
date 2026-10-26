@@ -5,6 +5,8 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import exiledsector.charts.ChartRunActions;
 import exiledsector.charts.StarChartSettings;
+import exiledsector.charts.anomaly.skirmish.SkirmishEntry;
+import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasDevTools;
 import exiledsector.charts.atlas.AtlasOpening;
@@ -144,11 +146,14 @@ public final class StarChartBench implements BenchModeSupport {
 
     @Override
     public OpenOutcome openAt(SectorAPI sector, ItemStore store, Item loaded, int entries, Random random, Object target) {
-        if (!(target instanceof AtlasCell cell)) {
+        AtlasCell cell = target instanceof SkirmishEntry entry ? entry.cell() : target instanceof AtlasCell atlasCell ? atlasCell : null;
+        if (cell == null) {
             return open(sector, store, loaded, entries, random);
         }
+        SkirmishSide side = target instanceof SkirmishEntry entry ? entry.side() : null;
         StarChartOpening.Outcome outcome = StarChartOpening.open(
-                (openSector, allowed, openRandom, openStore, chart) -> ChartRunActions.openFromAtlas(openSector, allowed, openRandom, openStore, chart, cell),
+                (openSector, allowed, openRandom, openStore, chart) -> ChartRunActions.openFromAtlas(openSector, allowed, openRandom, openStore, chart, cell,
+                        side),
                 sector, store, loaded, entries, random);
         return new OpenOutcome(outcome.opened(), outcome.messageKey());
     }

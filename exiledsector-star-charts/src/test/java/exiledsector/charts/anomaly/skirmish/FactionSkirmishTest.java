@@ -1,5 +1,6 @@
 package exiledsector.charts.anomaly.skirmish;
 
+import exiledsector.charts.AtlasRunNode;
 import exiledsector.charts.ChartAnomalies;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.atlas.AtlasAnomalies;
@@ -109,6 +110,22 @@ class FactionSkirmishTest {
         SkirmishFactions.useForTests(neutral);
 
         assertEquals(List.of(), AtlasAnomalies.effective(generator, state, cell));
+    }
+
+    @Test
+    void openingASkirmishSystemRecordsTheAttackerAndTheSideStayingOutByDefault() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator generator = new AtlasGenerator(SEED, RULES, AtlasUnlocks.NONE, state);
+        AtlasCell cell = borderSystem(generator, state);
+        AtlasRunNode skirmish = new AtlasRunNode(cell.pack(), "hegemony", List.of(), List.of(FactionSkirmish.ID), false);
+        AtlasRunNode plain = new AtlasRunNode(cell.pack(), "hegemony", List.of(), List.of(), false);
+
+        AtlasRunNode joined = FactionSkirmish.join(skirmish, generator, state, cell, SkirmishSide.DEFENDER);
+
+        assertEquals(FactionSkirmish.attacker(generator, state, cell), joined.skirmishAttackerId());
+        assertEquals(SkirmishSide.DEFENDER, joined.skirmishSide());
+        assertEquals(SkirmishSide.NEITHER, FactionSkirmish.join(skirmish, generator, state, cell, null).skirmishSide());
+        assertEquals(plain, FactionSkirmish.join(plain, generator, state, cell, SkirmishSide.ATTACKER));
     }
 
     @Test

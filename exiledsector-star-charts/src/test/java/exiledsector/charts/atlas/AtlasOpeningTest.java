@@ -5,6 +5,7 @@ import exiledsector.charts.ChartEffect;
 import exiledsector.charts.ChartGenContext;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.SpatialBreach;
+import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -185,6 +186,23 @@ class AtlasOpeningTest {
         assertEquals(new AtlasRunNode(5L, "", List.of(), List.of(), false), AtlasRunNode.decode(new AtlasRunNode(5L, null, null, null, false).encode()));
         assertEquals(null, AtlasRunNode.decode("garbage"));
         assertEquals(Set.of(), Set.copyOf(AtlasRunNode.decode("1|||| false").effects()));
+    }
+
+    @Test
+    void aRunNodeKeepsItsSkirmishSidesAndOlderNodesReadWithout() {
+        AtlasRunNode node = new AtlasRunNode(9L, "hegemony", List.of(), List.of("faction_skirmish", "spatial_breach"), true, "tritachyon",
+                SkirmishSide.ATTACKER);
+        AtlasRunNode decoded = AtlasRunNode.decode(node.encode());
+
+        assertEquals(node, decoded);
+        assertEquals(List.of("faction_skirmish", "spatial_breach"), decoded.anomalyIds());
+        assertTrue(decoded.guaranteedBossTierUp());
+        AtlasRunNode older = AtlasRunNode.decode("9|hegemony||spatial_breach|true");
+        assertEquals(new AtlasRunNode(9L, "hegemony", List.of(), List.of("spatial_breach"), true), older);
+        assertEquals(null, older.skirmishSide());
+        assertEquals(null, new AtlasRunNode(9L, "", List.of(), List.of(), false, "tritachyon", null).skirmishAttackerId());
+        assertEquals(SkirmishSide.ATTACKER, ChartGenContext.none().withAtlasNode(node).skirmishSide());
+        assertEquals("tritachyon", ChartGenContext.none().withAtlasNode(node).withAnomalies(List.of("black_hole")).skirmishAttackerId());
     }
 
     @Test

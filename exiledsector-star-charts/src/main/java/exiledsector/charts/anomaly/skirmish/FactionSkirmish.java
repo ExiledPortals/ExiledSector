@@ -1,6 +1,8 @@
 package exiledsector.charts.anomaly.skirmish;
 
+import exiledsector.charts.AtlasRunNode;
 import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasBorders;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
@@ -40,5 +42,16 @@ public final class FactionSkirmish implements ChartAnomaly {
 
     public static String attacker(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
         return AtlasBorders.attacker(generator, state, cell, SkirmishFactions::takesSides);
+    }
+
+    public static boolean isIn(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+        return AtlasAnomalies.effective(generator, state, cell).contains(ID);
+    }
+
+    public static AtlasRunNode join(AtlasRunNode node, AtlasGenerator generator, AtlasState state, AtlasCell cell, SkirmishSide side) {
+        if (!node.anomalyIds().contains(ID)) {
+            return node;
+        }
+        return node.withSkirmish(attacker(generator, state, cell), side == null ? SkirmishSide.NEITHER : side);
     }
 }

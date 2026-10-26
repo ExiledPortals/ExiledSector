@@ -14,6 +14,8 @@ import exiledsector.charts.ChartRuns;
 import exiledsector.charts.ChartTiers;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.anomaly.SpatialBreach;
+import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
+import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.atlas.AtlasData;
 import exiledsector.items.StarChart;
 import org.lazywizard.console.Console;
@@ -30,7 +32,7 @@ public class ChartOpenCommand extends CampaignCommand {
     static final int DEFAULT_TIER = ChartTiers.LOWEST_TIER;
     static final String BREACH_WORD = "breach";
     static final Pattern EXPLICIT_TIER = Pattern.compile("(?:tier|t)=?(-?\\d+)", Pattern.CASE_INSENSITIVE);
-    static final Pattern ATLAS_SETTING = Pattern.compile("(region|layout|anomaly)=(\\S+)", Pattern.CASE_INSENSITIVE);
+    static final Pattern ATLAS_SETTING = Pattern.compile("(region|layout|anomaly|side)=(\\S+)", Pattern.CASE_INSENSITIVE);
 
     private final Random random;
 
@@ -48,8 +50,9 @@ public class ChartOpenCommand extends CampaignCommand {
         if (arguments.problem() != null) {
             Console.showMessage(arguments.problem() + "\nUsage: ExiledSectorChartOpen [seed] [type] [tier] [breach], where type is one of "
                     + ChartLayoutGenerator.ALLOWED_TYPES + ", tier is " + ChartTiers.LOWEST_TIER + " to " + ChartTiers.HIGHEST_TIER
-                    + " (default " + DEFAULT_TIER + "), breach adds a Spatial Breach, and region=ID and layout=ID build the system from the"
-                    + " atlas tables, and each anomaly=ID adds that anomaly. All are optional and can come in any order; write the tier as tier=N when the seed is also a"
+                    + " (default " + DEFAULT_TIER + "), breach adds a Spatial Breach, region=ID and layout=ID build the system from the"
+                    + " atlas tables, each anomaly=ID adds that anomaly, and side=defender|attacker|neither adds a Faction Skirmish joined on that side."
+                    + " All are optional and can come in any order; write the tier as tier=N when the seed is also a"
                     + " small number.");
             return CommandResult.BAD_SYNTAX;
         }
@@ -62,6 +65,7 @@ public class ChartOpenCommand extends CampaignCommand {
         if (!anomalyIds.isEmpty()) {
             layoutRequest = layoutRequest.withAnomalies(anomalyIds);
         }
+        layoutRequest = layoutRequest.withSkirmishSide(arguments.side());
         int entries = StarChartSettings.wormholeEntries();
         OpenResult result = ChartRunActions.openBesidePlayer(Global.getSector(), entries, random, layoutRequest);
         switch (result) {
@@ -117,10 +121,15 @@ public class ChartOpenCommand extends CampaignCommand {
     }
 
     record OpenArguments(Long seed, StarSystemType systemType, Integer tier, String problem, boolean breach, String regionId, String layoutId,
-                         List<String> anomalyIds) {
+                         List<String> anomalyIds, SkirmishSide side) {
 
         OpenArguments {
             anomalyIds = anomalyIds == null ? List.of() : List.copyOf(anomalyIds);
+        }
+
+        OpenArguments(Long seed, StarSystemType systemType, Integer tier, String problem, boolean breach, String regionId, String layoutId,
+                      List<String> anomalyIds) {
+            this(seed, systemType, tier, problem, breach, regionId, layoutId, anomalyIds, null);
         }
 
         OpenArguments(Long seed, StarSystemType systemType, Integer tier, String problem, boolean breach) {
@@ -138,6 +147,7 @@ public class ChartOpenCommand extends CampaignCommand {
             String regionId = null;
             String layoutId = null;
             List<String> anomalyIds = new ArrayList<>();
+            SkirmishSide side = null;
             List<String> rest = new ArrayList<>();
             for (String token : args.trim().split("\\s+")) {
                 Matcher atlas = ATLAS_SETTING.matcher(token);
@@ -153,6 +163,11 @@ public class ChartOpenCommand extends CampaignCommand {
                         return problem("Can't use \"" + token + "\": give one layout from atlas_layouts.csv.");
                     }
                     layoutId = atlas.group(2);
+                } else if (atlas.group(1).equalsIgnoreCase("side")) {
+                    if (side != null || SkirmishSide.parse(atlas.group(2)) == null) {
+                        return problem("Can't use \"" + token + "\": give one side, defender, attacker or neither.");
+                    }
+                    side = SkirmishSide.parse(atlas.group(2));
                 } else {
                     if (anomalyIds.contains(atlas.group(2)) || ChartAnomalies.definition(atlas.group(2)) == null) {
                         return problem("Can't use \"" + token + "\": give an anomaly from chart_anomalies.csv, once each.");
@@ -162,7 +177,7 @@ public class ChartOpenCommand extends CampaignCommand {
             }
             OpenArguments parsed = parseSettings(String.join(" ", rest));
             return parsed.problem() != null ? parsed
-                    : new OpenArguments(parsed.seed(), parsed.systemType(), parsed.tier(), null, parsed.breach(), regionId, layoutId, anomalyIds);
+                    : new OpenArguments(parsed.seed(), parsed.systemType(), parsed.tier(), null, parsed.breach(), regionId, layoutId, anomalyIds, side);
         }
 
         private static OpenArguments parseSettings(String args) {
@@ -232,11 +247,13 @@ public class ChartOpenCommand extends CampaignCommand {
         }
 
         List<String> forcedAnomalyIds() {
-            if (!breach || anomalyIds.contains(SpatialBreach.ID)) {
-                return anomalyIds;
-            }
             List<String> ids = new ArrayList<>(anomalyIds);
-            ids.add(SpatialBreach.ID);
+            if (breach && !ids.contains(SpatialBreach.ID)) {
+                ids.add(SpatialBreach.ID);
+            }
+            if (side != null && !ids.contains(FactionSkirmish.ID)) {
+                ids.add(FactionSkirmish.ID);
+            }
             return List.copyOf(ids);
         }
 

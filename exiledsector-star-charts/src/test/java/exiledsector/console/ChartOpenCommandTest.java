@@ -5,6 +5,8 @@ import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartLayout;
 import exiledsector.charts.ChartRun;
 import exiledsector.charts.anomaly.SpatialBreach;
+import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
+import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.console.ChartOpenCommand.OpenArguments;
 import org.junit.jupiter.api.Test;
 import org.lazywizard.console.BaseCommand.CommandContext;
@@ -72,6 +74,18 @@ class ChartOpenCommandTest {
         assertEquals(List.of(SpatialBreach.ID), breach.forcedAnomalyIds());
         assertEquals(List.of(), OpenArguments.parse("77 tier=4").forcedAnomalyIds());
         assertEquals(List.of(SpatialBreach.ID), new OpenArguments(null, null, null, null, true, null, null, List.of(SpatialBreach.ID)).forcedAnomalyIds());
+    }
+
+    @Test
+    void aSideAddsAFactionSkirmishJoinedOnThatSide() {
+        OpenArguments attacker = OpenArguments.parse("77 side=ATTACKER breach");
+
+        assertEquals(SkirmishSide.ATTACKER, attacker.side());
+        assertEquals(77L, attacker.seed());
+        assertEquals(List.of(SpatialBreach.ID, FactionSkirmish.ID), attacker.forcedAnomalyIds());
+        assertNull(OpenArguments.parse("77").side());
+        assertNotNull(OpenArguments.parse("side=both").problem());
+        assertNotNull(OpenArguments.parse("side=defender side=neither").problem());
     }
 
     @Test

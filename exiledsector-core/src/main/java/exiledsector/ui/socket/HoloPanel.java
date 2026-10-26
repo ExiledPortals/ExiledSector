@@ -396,6 +396,32 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         refreshOpacity();
     }
 
+    final void openChoiceConfirm(Consumer<TooltipMakerAPI> bodyWriter, List<String> choiceLabels, List<Object> choiceIds, String cancelKey,
+                                 Object cancelId) {
+        if (confirmPanel != null) {
+            return;
+        }
+        hoverTooltip.hide();
+        confirmBlocker = Global.getSettings().createCustom(panelWidth, panelHeight, new InputBlocker());
+        panelRoot.addComponent(confirmBlocker).inTL(0f, 0f);
+        float confirmWidth = confirmWidth();
+        float innerWidth = confirmWidth - PAD * 2f;
+        confirmPanel = Global.getSettings().createCustom(confirmWidth, panelHeight, new FramedPanelPlugin(this::buttonPressed));
+        TooltipMakerAPI element = confirmPanel.createUIElement(innerWidth, panelHeight, false);
+        bodyWriter.accept(element);
+        float buttonTop = element.getHeightSoFar() + PAD;
+        for (int choice = 0; choice < choiceLabels.size(); choice++) {
+            element.addButton(choiceLabels.get(choice), choiceIds.get(choice), innerWidth, CONFIRM_BUTTON_HEIGHT, 0f).getPosition().inTL(0f, buttonTop);
+            buttonTop += CONFIRM_BUTTON_HEIGHT + GAP;
+        }
+        element.addButton(Translation.text(cancelKey), cancelId, innerWidth, CONFIRM_BUTTON_HEIGHT, 0f).getPosition().inTL(0f, buttonTop);
+        float confirmHeight = Math.min(panelHeight, buttonTop + CONFIRM_BUTTON_HEIGHT + PAD * 2f);
+        confirmPanel.getPosition().setSize(confirmWidth, confirmHeight);
+        confirmPanel.addUIElement(element).inTL(PAD, PAD);
+        panelRoot.addComponent(confirmPanel).inTL((panelWidth - confirmWidth) / 2f, (panelHeight - confirmHeight) / 2f);
+        refreshOpacity();
+    }
+
     protected float confirmWidth() {
         return panelWidth - PAD * 2f;
     }

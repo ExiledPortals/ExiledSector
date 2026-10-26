@@ -49,7 +49,14 @@ public interface BenchModeSupport {
         }
     }
 
-    record OpenTarget(Object target, Supplier<List<String>> confirmLines) {
+    record OpenTarget(Object target, Supplier<List<String>> confirmLines, Supplier<List<OpenChoice>> choices) {
+
+        public OpenTarget(Object target, Supplier<List<String>> confirmLines) {
+            this(target, confirmLines, List::of);
+        }
+    }
+
+    record OpenChoice(String label, String description, Object target) {
     }
 
     record DebugAction(String buttonKey, String tooltipKey) {

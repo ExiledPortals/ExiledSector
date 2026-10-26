@@ -8,6 +8,8 @@ import exiledlib.i18n.Translation;
 import exiledsector.charts.ChartAnomalies;
 import exiledsector.charts.ChartGenContext;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
+import exiledsector.charts.anomaly.skirmish.SkirmishEntry;
+import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
@@ -17,6 +19,7 @@ import exiledsector.charts.atlas.AtlasReach;
 import exiledsector.charts.atlas.AtlasRegion;
 import exiledsector.charts.atlas.AtlasSpecial;
 import exiledsector.charts.atlas.AtlasState;
+import exiledsector.ui.socket.BenchModeSupport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -148,6 +151,25 @@ public final class AtlasNodeText {
         for (Line marker : markers(generator, state, cell, node)) {
             lines.add(marker.text());
         }
+        if (FactionSkirmish.isIn(generator, state, cell)) {
+            lines.add(Translation.text("chart.atlas.skirmish.final"));
+        }
         return lines;
+    }
+
+    public static List<BenchModeSupport.OpenChoice> sideChoices(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+        if (!FactionSkirmish.isIn(generator, state, cell)) {
+            return List.of();
+        }
+        String defender = factionName(FactionSkirmish.defender(generator, state, cell));
+        String attacker = factionName(FactionSkirmish.attacker(generator, state, cell));
+        return List.of(
+                new BenchModeSupport.OpenChoice(Translation.msg("chart.atlas.skirmish.join").arg("faction", defender).text(),
+                        Translation.msg("chart.atlas.skirmish.defender").arg("defender", defender).text(), new SkirmishEntry(cell, SkirmishSide.DEFENDER)),
+                new BenchModeSupport.OpenChoice(Translation.msg("chart.atlas.skirmish.join").arg("faction", attacker).text(),
+                        Translation.msg("chart.atlas.skirmish.attacker").arg("attacker", attacker).arg("defender", defender).text(),
+                        new SkirmishEntry(cell, SkirmishSide.ATTACKER)),
+                new BenchModeSupport.OpenChoice(Translation.text("chart.atlas.skirmish.stayOut"),
+                        Translation.msg("chart.atlas.skirmish.neither").arg("defender", defender).text(), new SkirmishEntry(cell, SkirmishSide.NEITHER)));
     }
 }

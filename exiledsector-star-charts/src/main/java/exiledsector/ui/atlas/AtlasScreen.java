@@ -198,7 +198,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         map.pulse(cell);
         SkillTreeSounds.panelOpened();
         BenchModeSupport.OpenTarget target = new BenchModeSupport.OpenTarget(cell,
-                () -> AtlasNodeText.confirmLines(map.generator(), map.state(), cell));
+                () -> AtlasNodeText.confirmLines(map.generator(), map.state(), cell), () -> AtlasNodeText.sideChoices(map.generator(), map.state(), cell));
         SocketPanelPlacement area = new SocketPanelPlacement(BENCH_MARGIN, BENCH_MARGIN, panelPosition.getWidth() - BENCH_MARGIN * 2f,
                 panelPosition.getHeight() - BENCH_MARGIN * 2f, false);
         bay = ModificationBay.openMode(panelRoot, area, BenchMode.STAR_CHARTS, item -> null, target, new ModificationBay.Listener() {

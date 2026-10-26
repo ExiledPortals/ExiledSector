@@ -95,6 +95,9 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private enum Control {CLOSE, PICK, CONFIRM_USE, CONFIRM_GROW, CANCEL_CONFIRM, OPEN_WORMHOLE, CONFIRM_OPEN, DEBUG_ACTION}
 
+    private record OpenChoiceButton(Object target) {
+    }
+
     private static final float CONFIRM_WIDTH = 460f;
     private static final float USE_CONFIRM_HEIGHT = 180f;
     private static final float WARD_LINE_HEIGHT = 22f;
@@ -326,6 +329,9 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             return;
         }
         if (id == Control.CONFIRM_OPEN) {
+            confirmOpen();
+        } else if (id instanceof OpenChoiceButton choice) {
+            pendingOpenTarget = choice.target();
             confirmOpen();
         } else if (id == Control.CONFIRM_USE || id == Control.CONFIRM_GROW) {
             ItemCurrency currency = pendingCurrency;
@@ -740,7 +746,29 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         BenchModeSupport.OpenTarget openTarget = workbenchListener.openTarget();
         pendingOpenItem = loadedItem;
         pendingOpenTarget = openTarget == null ? null : openTarget.target();
-        showOpenConfirm(openTarget == null ? List.of() : openTarget.confirmLines().get());
+        List<String> confirmLines = openTarget == null ? List.of() : openTarget.confirmLines().get();
+        List<BenchModeSupport.OpenChoice> choices = openTarget == null ? List.of() : openTarget.choices().get();
+        if (choices.isEmpty()) {
+            showOpenConfirm(confirmLines);
+        } else {
+            showChoiceConfirm(confirmLines, choices);
+        }
+    }
+
+    private void showChoiceConfirm(List<String> confirmLines, List<BenchModeSupport.OpenChoice> choices) {
+        Item confirmedItem = pendingOpenItem;
+        int entries = modeSupport().openEntries();
+        BenchModeSupport.OpenTexts openTexts = modeSupport().openTexts();
+        List<String> lines = new ArrayList<>(confirmLines);
+        List<String> labels = new ArrayList<>();
+        List<Object> ids = new ArrayList<>();
+        for (BenchModeSupport.OpenChoice choice : choices) {
+            lines.add(choice.description());
+            labels.add(choice.label());
+            ids.add(new OpenChoiceButton(choice.target()));
+        }
+        openChoiceConfirm(element -> writeOpenConfirm(element, openTexts, confirmedItem, entries, lines), labels, ids, openTexts.confirmNoKey(),
+                Control.CANCEL_CONFIRM);
     }
 
     private void showOpenConfirm(List<String> confirmLines) {

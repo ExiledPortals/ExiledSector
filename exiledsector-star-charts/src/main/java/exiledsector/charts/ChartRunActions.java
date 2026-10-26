@@ -9,6 +9,8 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemStore;
+import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
+import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasOpening;
@@ -57,7 +59,7 @@ public final class ChartRunActions {
     }
 
     public static OpenResult openFromAtlas(SectorAPI sector, int entriesAllowed, Random random, ItemStore store, Item storedChart,
-                                           AtlasCell cell) {
+                                           AtlasCell cell, SkirmishSide side) {
         if (!(storedChart instanceof StarChart chart) || chart.definition() == null || store == null || !store.holdsStarCharts()
                 || store.find(chart.id()) != chart || cell == null) {
             return OpenResult.NO_CHART;
@@ -67,7 +69,7 @@ public final class ChartRunActions {
         if (!AtlasOpening.check(generator, state, cell, chart).allowsOpening()) {
             return OpenResult.NOT_REACHABLE;
         }
-        AtlasRunNode runNode = AtlasOpening.runNode(generator, state, cell);
+        AtlasRunNode runNode = FactionSkirmish.join(AtlasOpening.runNode(generator, state, cell), generator, state, cell, side);
         OpenResult result = openBesidePlayer(sector, entriesAllowed, random, AtlasOpening.request(generator, state, cell, chart, runNode),
                 ItemData.of(chart).encode(), runNode);
         if (result == OpenResult.OPENED) {
