@@ -4,6 +4,7 @@ import com.thoughtworks.xstream.XStream;
 import exiledsector.charts.anomaly.BreachCorePlugin;
 import exiledsector.charts.anomaly.BreachSupplyBuff;
 import exiledsector.charts.anomaly.BreachTerrainPlugin;
+import exiledsector.charts.atlas.AtlasState;
 
 import java.util.Map;
 
@@ -17,7 +18,8 @@ public final class ChartSaveAliases {
             "exiledSector.WormholeGateway", WormholeGateway.class,
             "exiledSector.BreachTerrainPlugin", BreachTerrainPlugin.class,
             "exiledSector.BreachCorePlugin", BreachCorePlugin.class,
-            "exiledSector.BreachSupplyBuff", BreachSupplyBuff.class);
+            "exiledSector.BreachSupplyBuff", BreachSupplyBuff.class,
+            "exiledSector.AtlasState", AtlasState.class);
 
     private ChartSaveAliases() {
     }

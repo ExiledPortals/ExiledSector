@@ -78,7 +78,7 @@ Add one line to the Layout section of `CLAUDE.md`: Star Charts classes go in the
 Each step is its own commit, and each one builds and passes `mvn -q clean package` before the next starts. Move files with `git mv` so history follows them, and fix imports with IntelliJ's Move refactoring or by editing the files. Never split files on `\n`, because of the line-ending rule.
 
 1. [x] Delete the empty `expansion` and `phenomenon` folders in `main` and `test`. Git never tracked them (no files), so the branch has nothing to delete; they exist only on disk in older checkouts and go with `git clean -d`.
-2. [ ] Add XStream aliases for `AtlasState` and the classes it stores, with a save-fixture test that loads a save made before the aliases. Nothing moves in this step.
+2. [x] Add XStream aliases for `AtlasState` and the classes it stores, with a save-fixture test that loads a save made before the aliases. Nothing moves in this step. Built: `ChartSaveAliases` maps `exiledSector.AtlasState`; `AtlasState` stores only JDK maps, sets and numbers, so it needs no other alias (`ChartPersistenceGuardTest` checks that). `SaveFixtureTest` loads `save_fixture_atlas_before_alias.xml`, written by plain XStream from a real `AtlasState` before the alias, and checks that it resaves under the alias. A save written before the alias still names `exiledsector.charts.atlas.AtlasState`, so a later pass that moves it must also alias that old name.
 3. [ ] Add a test that checks every `exiledsector.*` class named in `data/` resolves.
 4. [ ] Move the leaf groups that little else depends on: `run.diagnostics`, `run.cleanup`, `objective`, `layout.sketch`, `anomaly.breach`.
 5. [ ] Move `loot` and `effect`, and update the `ChartBattlePlugin` data entry.
