@@ -7,6 +7,7 @@ import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasData;
 import exiledsector.charts.atlas.AtlasDecoration;
 import exiledsector.charts.atlas.AtlasNode;
+import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasRegion;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.decoration.FactionStarColours;
@@ -123,7 +124,7 @@ final class AtlasScenery {
     }
 
     String territoryAt(AtlasCell cell) {
-        return canvas.generator().factionAt(cell);
+        return AtlasOpening.territoryOwnerOf(canvas.generator(), canvas.state(), cell);
     }
 
     private static Color factionColour(String factionId) {

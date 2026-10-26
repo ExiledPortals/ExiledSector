@@ -36,10 +36,13 @@ class AtlasSceneryTest {
     private static final AtlasAmbience GRAVEYARD = new AtlasAmbience(0f, null, Map.of("probe", 1f, "debris", 2f), 2f);
 
     private static AtlasMapCanvas canvas() {
+        return canvas(new AtlasState(SEED));
+    }
+
+    private static AtlasMapCanvas canvas(AtlasState state) {
         AtlasRules rules = new AtlasRules(List.of(new AtlasRegion("graveyard", 1f, 0, "", "", Map.of(), Map.of(), Map.of())), Map.of("compact", 1f),
                 Map.of("pirates", 1f), new AtlasMarkerRule(0.5f, 0f, 0.5f), AtlasMarkerRule.NEVER, AtlasMarkerRule.NEVER,
                 List.of(), List.of());
-        AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = new AtlasGenerator(SEED, rules, AtlasUnlocks.NONE, state);
         AtlasScenery scenery = new AtlasScenery(SEED, id -> "graveyard".equals(id) ? GRAVEYARD : AtlasAmbience.BARE, DECORATIONS::get);
         return new AtlasMapCanvas(generator, state, scenery);
@@ -167,6 +170,22 @@ class AtlasSceneryTest {
 
         assertFalse(picks.containsKey("c"));
         assertTrue(picks.get("b") > picks.get("a") * 2.5f && picks.get("b") < picks.get("a") * 3.5f, picks.toString());
+    }
+
+    @Test
+    void aCapturedSystemJoinsItsCaptorsTerritoryAndTraffic() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasMapCanvas before = canvas(state);
+        AtlasCell captured = before.visibleCells().stream().filter(cell -> !before.generator().isVoid(cell) && !cell.equals(AtlasCell.ORIGIN))
+                .findFirst().orElseThrow();
+        state.capture(before.generator(), captured, "hegemony");
+
+        AtlasMapCanvas canvas = canvas(state);
+
+        assertEquals("hegemony", canvas.scenery().territoryAt(captured));
+        assertEquals("pirates", canvas.scenery().territoryAt(AtlasCell.ORIGIN));
+        assertTrue(canvas.scenery().borders().regions().stream().anyMatch(region -> "hegemony".equals(region.groupId())));
+        assertTrue(AtlasFleetTraffic.ports(canvas).stream().anyMatch(port -> port.id() == captured.pack() && "hegemony".equals(port.factionId())));
     }
 
     @Test

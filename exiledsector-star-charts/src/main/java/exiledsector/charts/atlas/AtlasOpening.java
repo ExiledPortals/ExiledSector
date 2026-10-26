@@ -86,12 +86,22 @@ public final class AtlasOpening {
         return owner(generator, state, cell, generator.factionAt(cell), generator.infestationAt(cell));
     }
 
+    public static String territoryOwnerOf(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+        return held(state, cell, generator.factionAt(cell));
+    }
+
+    private static String held(AtlasState state, AtlasCell cell, String factionId) {
+        String captor = state.capturedBy(cell);
+        return captor == null ? factionId : captor;
+    }
+
     private static String owner(AtlasGenerator generator, AtlasState state, AtlasCell cell, String factionId, String infestationId) {
+        String holder = held(state, cell, factionId);
         if (infestationId == null || state.has(cell, AtlasState.CLEANSED)) {
-            return factionId;
+            return holder;
         }
         AtlasSpecial infestation = generator.rules().special(infestationId);
-        return infestation == null || infestation.factionId().isEmpty() ? factionId : infestation.factionId();
+        return infestation == null || infestation.factionId().isEmpty() ? holder : infestation.factionId();
     }
 
     public static long layoutSeed(AtlasState state, AtlasCell cell) {

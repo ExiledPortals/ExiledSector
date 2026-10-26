@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,7 @@ public final class AtlasState implements AtlasMemory {
     private Set<Integer> clearedTiers = new HashSet<>();
     private Map<Integer, String> anomalyRecords = new TreeMap<>();
     private int nextAnomalyRecord;
+    private Map<Long, String> capturedSystems = new HashMap<>();
     private int atlasPoints;
     private int keyFragments;
 
@@ -74,6 +76,9 @@ public final class AtlasState implements AtlasMemory {
         }
         if (anomalyRecords == null) {
             anomalyRecords = new TreeMap<>();
+        }
+        if (capturedSystems == null) {
+            capturedSystems = new HashMap<>();
         }
         return this;
     }
@@ -227,5 +232,27 @@ public final class AtlasState implements AtlasMemory {
 
     void spendInsertedAnomalies(AtlasCell cell) {
         anomalyRecords(cell).forEach(record -> anomalyRecords.remove(record.recordId()));
+    }
+
+    public String capturedBy(AtlasCell cell) {
+        return capturedSystems.get(cell.pack());
+    }
+
+    public Map<AtlasCell, String> captures() {
+        Map<AtlasCell, String> captures = new LinkedHashMap<>();
+        new TreeMap<>(capturedSystems).forEach((packed, factionId) -> captures.put(AtlasCell.unpack(packed), factionId));
+        return captures;
+    }
+
+    public void capture(AtlasGenerator generator, AtlasCell cell, String factionId) {
+        if (factionId.equals(generator.factionAt(cell))) {
+            capturedSystems.remove(cell.pack());
+        } else {
+            capturedSystems.put(cell.pack(), factionId);
+        }
+    }
+
+    public boolean release(AtlasCell cell) {
+        return capturedSystems.remove(cell.pack()) != null;
     }
 }

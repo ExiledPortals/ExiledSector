@@ -2,6 +2,7 @@ package exiledsector.ui.atlas;
 
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasNode;
+import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.decoration.LaneFleetTraffic;
 import exiledsector.ui.node.NodeMetrics;
@@ -47,7 +48,7 @@ final class AtlasFleetTraffic {
                 }
             }
             ports.add(new LaneFleetTraffic.Port(cell.pack(), canvas.displayX(cell), canvas.displayY(cell), reach * ROAM_INNER_SHARE,
-                    reach * ROAM_OUTER_SHARE, node.factionId(), neighbours));
+                    reach * ROAM_OUTER_SHARE, AtlasOpening.territoryOwnerOf(canvas.generator(), canvas.state(), cell), neighbours));
         }
         return ports;
     }

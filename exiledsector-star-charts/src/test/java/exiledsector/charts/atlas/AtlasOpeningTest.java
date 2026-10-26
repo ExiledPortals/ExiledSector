@@ -86,6 +86,31 @@ class AtlasOpeningTest {
     }
 
     @Test
+    void aCaptureHandsTheSystemToItsCaptorButAnInfestationHoldsItUntilCleansed() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator generator = new AtlasGenerator(SEED, rules(), AtlasUnlocks.NONE, state);
+        AtlasCell infested = findInfested(generator, false);
+
+        state.capture(generator, infested, "hegemony");
+
+        assertEquals(Map.of(infested, "hegemony"), state.captures());
+        assertEquals("hegemony", AtlasOpening.territoryOwnerOf(generator, state, infested));
+        assertEquals("remnant", AtlasOpening.ownerOf(generator, state, infested));
+        state.add(infested, AtlasState.CLEANSED);
+        assertEquals("hegemony", AtlasOpening.ownerOf(generator, state, infested));
+        assertEquals("hegemony", AtlasOpening.runNode(generator, state, infested).factionId());
+
+        state.capture(generator, infested, "pirates");
+
+        assertEquals(Map.of(), state.captures());
+        assertEquals("pirates", AtlasOpening.ownerOf(generator, state, infested));
+        state.capture(generator, infested, "tritachyon");
+        assertTrue(state.release(infested));
+        assertFalse(state.release(infested));
+        assertEquals("pirates", AtlasOpening.territoryOwnerOf(generator, state, infested));
+    }
+
+    @Test
     void clearingANexusCleansesItsInfestationAndGrantsAPoint() {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = new AtlasGenerator(SEED, rules(), AtlasUnlocks.NONE, state);

@@ -4,6 +4,7 @@ import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasNode;
+import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasState;
 
 import java.util.ArrayList;
@@ -22,8 +23,9 @@ final class AtlasCommandText {
         AtlasNode node = generator.node(cell);
         List<String> parts = new ArrayList<>();
         parts.add(node.regionId());
-        if (node.factionId() != null) {
-            parts.add(node.factionId());
+        String owner = AtlasOpening.territoryOwnerOf(generator, state, cell);
+        if (owner != null) {
+            parts.add(state.capturedBy(cell) == null ? owner : owner + " (captured from " + node.factionId() + ")");
         }
         if (node.layoutId() != null) {
             parts.add(node.layoutId());
