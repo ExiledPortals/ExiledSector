@@ -6,7 +6,7 @@ An anomaly is anything a star chart system holds beyond its ordinary layout, fle
 |---|---|---|
 | Relay Network | `relay_network.md` | none, changes every chart battle |
 | Excavation Sites | `excavation_sites.md` | none, scales the boss |
-| Faction Skirmish | `faction_skirmish.md` | none of your own; allies share the load |
+| Faction Skirmish | `faction_skirmish.md` | two sides' fleets; you join one or fight both |
 | The Hunter | `the_hunter.md` | one, optional, on your terms |
 | Spatial Breach (built) | `../completed/anomalies/spatial_breach.md` | none |
 | Supply Convoy | `supply_convoy.md` | zero or one, sized by where you strike |
@@ -27,7 +27,7 @@ Each anomaly is one class behind `ChartAnomaly` (package `exiledsector.charts.an
 2. Shape: `shape(AnomalyLayoutSite)` adds terrain right after layout (Asteroid Storm, Magnetic Storm, Stellar Flares).
 3. Content: `generate(AnomalyContentSite)` places entities and fleets after the sites and fleets (Spatial Breach, the Black Hole's derelicts, the Neutron Star's research station, the Asteroid Storm's belt caches). `AnomalyContentSite.addSite` places a `chart_poi.csv` site on a clear orbit with chart loot. Run state lives in `ChartRunState`, and `ChartRunCloser` removes it with the run tag, so the chart leaves no save trace.
 
-Atlas hooks have defaults: `atlasWeight` leans the node roll from the node's traits (Faction Skirmish prefers hostile borders), and `fitsAt` says whether the anomaly can exist at a node at all (Asteroid Stream needs Industrial Evolution). Rewards go through the loot framework (`ChartLoot`, `ChartRewards`) so chart loot modifiers apply to them.
+Atlas hooks have defaults: `atlasWeight` leans the node roll from the node's traits, and `fitsAt` says whether the anomaly can exist at a node at all (Asteroid Stream needs Industrial Evolution, Faction Skirmish a border between two factions). Rewards go through the loot framework (`ChartLoot`, `ChartRewards`) so chart loot modifiers apply to them.
 
 `effects` lists chart lines the anomaly adds to the run, such as a loot quantity bonus.
 

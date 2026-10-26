@@ -1,39 +1,63 @@
 # Anomaly: Faction Skirmish
 
-A weaker allied faction holds a foothold in the system and is losing a war against the chart's faction. You don't pick a side: the allies are on yours, and the boss leads the enemy. Their fleets soak up damage and CR that you would otherwise lose, so the system can hold more fights than a normal chart without wearing your fleet out.
+Two factions fight over a system on the border between their territories on the atlas. Before the wormhole opens, the player sides with the defender, sides with the attacker, or stays out. Siding with the attacker and winning hands the system to the attacker on the atlas; every other outcome leaves it with its owner.
 
-Status: planned, nothing built. See `overview.md` for the shared framework.
+Status: planned, nothing built. Redesigned 2026-10-26 around atlas territories, replacing the allied-foothold design. See `overview.md` for the shared framework.
 
-## How it plays
+## Where it appears
 
-The chart's faction stays the enemy. The allied faction is any faction hostile to it and not hostile to the player when the chart opens, picked by weight from `data/config/exiledSector/chart_skirmish_allies.csv` (`enemy_faction,ally_faction,weight,note`), falling back to independents. The allies get a foothold (a small station or outpost) and a few fleets, together around half the enemy's strength (placeholder).
+The defender is the system's owner and the attacker is a faction that owns a system one lane away. Any two different factions that meet on a border can fight; their relationship outside the atlas never matters. Factions listed in `data/config/exiledSector/chart_skirmish_factions.csv` (`faction,note`) never take a side: remnant, derelict, threat and rat_abyssals to start.
 
-Enemy fleets push on the foothold on their own: they attack allied fleets and the station, and those battles are fought between NPCs in the campaign layer. You can join any of them, and joining puts you on the allied side because of the faction relations. Fleets that come out of a fight keep their damage and lost CR, so a battle the allies have already been in is easier to finish.
+The anomaly rolls only on the atlas, through `fitsAt`: the system's own faction must be able to take a side, at least one lane neighbour must belong to another faction that can, and infested systems, special sites and the Gateway never qualify. `AtlasTraits` gets the lane neighbours' factions for this (its territory ids ignore biome factions, so a pirate pocket inside Hegemony space would read as Hegemony). There is no chart chance line and no intel, since a skirmish needs a border and an owner. A border system without the anomaly plays as a normal chart.
 
-The run tracks a front: how much of each side is left. As the enemy's other fleets fall, the boss commits and moves on the foothold. That battle has the allied fleets nearby joining on your side, so the boss fight is bigger but shared.
+The attacker is picked when the run opens and when the tooltip draws, from the lane neighbours' current owners (captures included), weighted by how many lanes lead into each faction and raced on the cell's hash, so it never changes while the map stays the same. If no neighbour of another faction remains, the skirmish drops from the system. The node tooltip names both sides.
 
-If the foothold falls, the allies are gone and the chart plays out as normal.
+## Choosing a side
+
+Pressing Open Wormhole on a skirmish system opens a confirmation over the atlas: side with the defender, side with the attacker, stay out, or cancel. Each option says what winning does to the map, and that completing the system ends the fight for good. The choice is stored on `AtlasRunNode`, and `ExiledSectorChartOpen` takes `side=defender|attacker|neither` for testing.
+
+The player's real standing with either faction never matters: per-fleet memory flags make the chosen side friendly and the other side hostile for the run, and chart fleets already carry no reputation impact.
+
+## Fleets and strength
+
+The defender always has a station in a skirmish system, picked from `chart_boss_stations.csv`. Factions without their own rows fall back to shared rows (an empty `factions` column), which get vanilla's midline stations by tier.
+
+Strength is the fleet points of a side's fleets, leaving out the station. When the player picks a side, the other side keeps the chart's normal enemy budget (after Fleet Size, Strength and the other chart lines) and the allied side gets that budget divided by 1.3 (placeholder), so the enemy is always at least 30% stronger and the allies can't win alone. Any later line that strengthens allies is capped so the gap never drops below 30%. When the player stays out, both sides get the normal budget, both are hostile to the player and to each other, and the player can let them wear each other down first. Skirmish fleets may go past the chart's fleet limit.
+
+Enemy fleets push on their own: attacker fleets go for defender fleets and the station, and defender fleets meet them. Those battles are fought between NPCs in the campaign layer and leave their damage and lost CR, and the player can join any of them.
+
+## Winning
+
+Every skirmish run uses the boss objective.
+
+- Siding with the attacker: the boss is the defender's station, and it counts whoever destroys it. Completing the system records it as captured by the attacker.
+- Siding with the defender: the boss is the attacker's commander, who leads a final push on the station once the attacker's other fleets have fallen. If the station falls, the objective can't be completed and the run fails when it closes.
+- Staying out: the boss is the defender's station. The map never changes, even if the player destroys it.
+
+A failed run never changes ownership.
+
+## Captures on the atlas
+
+`AtlasState` stores one encoded string per captured system (cell and new owner), like inserted anomalies, so the generator stays a pure function of the seed. One reader returns a system's owner with captures applied; `AtlasOpening.factionFor`, the node tooltips, `AtlasTerritoryBorders` and the atlas fleet traffic all go through it, so a captured system redraws the border as a dent into the defender's territory and its scenery fleets change colour. Captures don't add new skirmishes along the moved front; the world inserting them later is a separate plan.
 
 ## Rewards
 
-While the foothold stands you can dock there. It opens a temporary submarket whose stock is rolled from the chart's loot table and grows with how much of the allied side survives, plus a quartermaster reward when the boss falls, also scaled by allied survival. Helping also gives a small reputation gain with the allied faction in the real sector.
+Nothing beyond the extra fleets and their loot; allied fleets drop nothing. Later, contacts in each faction will offer missions to capture a number of atlas systems for them, built on the capture records (own plan).
 
 ## Chart modifiers
 
-- `CHART_SKIRMISH_CHANCE`: Area contains a Faction Skirmish.
-- `CHART_ALLY_STRENGTH_PERCENT`: increased allied fleet strength.
-- `CHART_ALLY_REWARD_PERCENT`: increased allied rewards.
-- `CHART_ALLY_STOCK_PERCENT`: increased allied market stock.
+None for now. The old allied reward, stock and strength lines are dropped.
 
 ## Build order
 
-1. [ ] Ally picker, `chart_skirmish_allies.csv`, allied foothold and fleets.
-2. [ ] Enemy assignments that attack the foothold and allied fleets; front tracking in the run.
-3. [ ] Boss commitment once the front tips.
-4. [ ] Foothold submarket and quartermaster reward.
-5. [ ] Chart modifier lines, strings, intel showing the front.
+1. [ ] `chart_skirmish_factions.csv` (with an editor table), neighbour factions on `AtlasTraits`, the `fitsAt` rule, the attacker pick, the `chart_anomalies.csv` row and a tooltip line naming both sides.
+2. [ ] Capture records in `AtlasState`, the capture-aware owner reader used by opening, tooltips, borders and fleet traffic, and a dev console command to capture and release a system.
+3. [ ] The side confirmation over the atlas, the choice on `AtlasRunNode`, and `side=` on the console open command.
+4. [ ] Two-sided fleets with the strength rule, the defender's station with shared fallback rows, and fleet assignments that attack the other side.
+5. [ ] Objectives per side, the attacker commander's final push, failure when the station falls on the defender's side, and the capture on completion.
+6. [ ] Strings (en and zh_CN), the `docs/docs.md` section and tests.
 
 ## Open questions
 
-- Confirm that NPC-vs-NPC campaign battles in a chart system resolve and leave damage and CR loss the same way they do in the sector, and that the player can join one in progress, before step 2.
-- Nexerelin may change relations mid-run; the allies' relation should be fixed for the chart's run.
+- How two factions' fleets fight in a chart system whatever their real relationship. Decompile `isHostileTo` for a per-fleet route first; if there is none, spawn each side under a run-only proxy faction that is hostile to the other, keeping the real faction's ships, names and colours. Never change real faction relations. Settle before step 4.
+- Confirm that NPC-vs-NPC campaign battles in a chart system resolve and leave damage and lost CR as they do in the sector, and that when the player joins one in progress, the side picker respects the per-fleet hostility flags, before step 4.
