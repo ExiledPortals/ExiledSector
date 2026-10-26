@@ -79,7 +79,7 @@ class LowBaseArmorBonusTest {
     @Test
     void theDescriptionListsTheScaledBonusesAndTheCutoffsByHullSize() {
         assertEquals("Up to +200/350/450/600 to armor. The bonus is highest on hulls with the least base armor and falls to "
-                        + "+75/150/200/250 at 400/700/900/1200 base armor (frigate/destroyer/cruiser/capital ship). "
+                        + "+75/150/200/250 at 400/700/900/1200 base armor. "
                         + "Can't be allocated on phase ships or on hulls with more base armor than that.",
                 EFFECT.description(0.5f).plain());
     }

@@ -7,7 +7,7 @@
 
 [size=14pt][b]Features[/b][/size]
 
-Exiled Sector adds three major modules: a skill tree for every ship, hull upgrades (equipment) for ships, and star charts to go and find more of both. The skill tree, hull upgrades and star charts can each be switched off in LunaLib settings if you'd rather run without them.
+Exiled Sector adds three major modules: a skill tree for every ship, hull upgrades for ships, and star charts to go and find more of both. The skill tree, hull upgrades and star charts can each be switched off in LunaLib settings if you'd rather run without them.
 
 [size=12pt][b]The skill tree[/b][/size]
 
@@ -135,7 +135,7 @@ The first time you open a ship's tree you choose where it starts: Low Tech, Midl
 
 Every node costs the ship's unused ordnance points: 1 for frigates, 2 for destroyers, 3 for cruisers and 5 for capitals. A node can only be allocated next to one you already have. Node tooltips show only what a node does. Press [b]F1[/b] while hovering one to also see its restrictions, such as the hull mods and nodes it is mutually exclusive with.
 
-After every engagement, each ship in your fleet gains XP equal to the deployment points of the enemy ships destroyed or disabled, whether it deployed or not. Harder fights pay more: the same battle difficulty bonus vanilla shows before combat ("Additional XP due to overall battle difficulty") multiplies it, up to 6×. Easier fights never reduce it. You get half as much if you lose.
+After every engagement, each ship in your fleet gains XP equal to the deployment points of the enemy ships destroyed or disabled, whether it deployed or not. Harder fights grant more: the same battle difficulty bonus vanilla shows before combat multiplies it, up to 6×. Easier fights never reduce it. You get half as much if you lose.
 
 Each level makes your most recently bought node free and refunds its OP. If every node you have is already free, the level is banked, and your next node costs nothing. The first level takes 60 XP, each level after that takes 13% more until level 25, and ships cap at level 50.
 
@@ -143,7 +143,7 @@ Ships that join your fleet late don't start from scratch. No ship in your fleet 
 
 Click an allocated node to remove it. OP-paid nodes refund their OP, and free nodes return their free allocation. You can't remove a node that other nodes depend on to connect back to your starting point, and you can't remove the starting point itself.
 
-Ctrl+Shift+click an allocated node to remove it along with every node that depends on it, starting with the farthest. Doing this on your starting point clears the whole tree and lets you choose a new start. For now it does nothing if any of those nodes has its own removal condition (currently any node that adds fighter bays).
+Ctrl+Shift+click an allocated node to remove it along with every node that depends on it, starting with the farthest. Doing this on your starting point clears the whole tree and lets you choose a new start. For now it does nothing if any of those nodes has its own removal condition.
 
 For multi-choice nodes, click to open a dropdown so you can pick an option. Ctrl+click repeats your last choice.
 
@@ -184,7 +184,7 @@ Numbers are [color=#98FB00]green[/color] when they help your ship and [color=#FC
 
 [b]How do NPC fleets get skill trees?[/b]
 [spoiler]
-Every fleet can carry skill trees, your own faction's and your allies' included. Flagships, ships with officers and combat stations (your colonies' included) always get one, and other ships have a 30% chance; civilian and mothballed ships never do. On the regular star map NPC trees mirror your fleet: each NPC ship picks one of your combat ships at random and gets 80 to 120% of its tree power (its level plus the paid nodes it has allocated) in nodes. Since the level counts, leaving nodes unallocated won't make enemies any easier.
+Every fleet can carry skill trees, your own faction's and your allies' included. Flagships, ships with officers and combat stations always get one, and other ships have a 30% chance; civilian and mothballed ships never do. On the regular star map NPC trees mirror your fleet: each NPC ship picks one of your combat ships at random and gets 80 to 120% of its tree power in nodes.
 
 The mirror stops at a cap. Pirates never pass 15 nodes, faction fleets 25 and AI fleets 35, so a ship you keep levelling eventually outgrows them. Bounty targets climb from their cap toward 25 as bounties get harder, and their flagship gets 3 more. An optional bonus multiplier, off by default, can also make NPC node bonuses grow with your fleet's average tree power, again only up to that fleet's cap. Only bonuses scale: drawbacks stay as written, and campaign stats such as sensors, cargo and burn level don't grow.
 
@@ -208,7 +208,7 @@ If you'd rather skip all of this, LunaLib settings can reveal hidden nodes, or s
 
 [b]When do Hull Upgrades and Star Charts start?[/b]
 [spoiler]
-Exiled Sector is meant as an endgame expansion, so the extra modules wait until the skill tree has had time to sink in. Refit Schematics and unique hull items start dropping once your character (not your ship) reaches level 15. Star Charts need a Wormhole Gateway, which you can only build once the Janus Device gives you access to the Gate network. With Ashes of the Domain installed, you unlock it on the Vaults of Knowledge tree instead. Hull Upgrades can be switched off in LunaLib settings.
+Exiled Sector is meant as an endgame expansion, so the extra modules wait until the skill tree has had time to sink in. Refit Schematics and unique hull items start dropping once your character reaches level 15. Star Charts need a Wormhole Gateway, which you can only build once the Janus Device gives you access to the Gate network. With Ashes of the Domain installed, you unlock it on the Vaults of Knowledge tree instead. Hull Upgrades can be switched off in LunaLib settings.
 [/spoiler]
 
 [b]How do Star Charts get harder?[/b]
@@ -270,7 +270,7 @@ I also have plans for future features that work much better when each ship has i
 [spoiler]
 Exiled Sector is available in English and Simplified Chinese. By default it follows the game's language, so a Chinese-localised Starsector shows the skill tree in Chinese automatically. You can also pick a language in the LunaLib settings; the change takes effect after a restart.
 
-The skill tree screen always shows the chosen language, using a bundled Noto Sans SC font. Text the game draws itself (settings, dialogs, the codex) stays in English unless the game can display Chinese characters.
+The skill tree screen always shows the chosen language, using a bundled Noto Sans SC font. Text the game draws itself stays in English unless the game can display Chinese characters.
 
 The Chinese translation is a first draft awaiting review by a native speaker. To add another language, see the [url=https://github.com/ExiledPortals/ExiledSector/blob/main/docs/i18n/README.md]localisation guide[/url].
 [/spoiler]

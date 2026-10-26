@@ -163,8 +163,7 @@ class WeaponScopeHierarchyTest {
 
     @Test
     void beamAndNonBeamAmmoDescriptionsWarnThatRefitTooltipsWontShowThem() {
-        String note = " This is set directly on each weapon: it's correct in combat, "
-                + "but the refit screen's weapon tooltips won't show it.";
+        String note = " The refit screen's weapon tooltips don't show this.";
         for (String name : List.of("BEAM_WEAPON_AMMO_PERCENT", "BEAM_WEAPON_AMMO_FLAT", "BEAM_WEAPON_AMMO_REGEN_PERCENT",
                 "NON_BEAM_ENERGY_WEAPON_AMMO_MULT", "NON_BEAM_ENERGY_WEAPON_AMMO_REGEN_MULT")) {
             assertTrue(SkillEffect.byName(name).description(10f).plain().endsWith(note), name);
