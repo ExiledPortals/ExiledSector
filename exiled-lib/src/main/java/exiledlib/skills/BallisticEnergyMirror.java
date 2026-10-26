@@ -33,7 +33,7 @@ final class BallisticEnergyMirror {
             }
             if (!mirroredEffects.isEmpty()) {
                 withMirrors.add(new EffectContribution(new Origin(contribution.origin()), MOD_ID_PREFIX + index + "_" + contribution.modIdPrefix(),
-                        List.copyOf(mirroredEffects), contribution.temporarySeconds(), null, false, contribution.bonusScaled()));
+                        List.copyOf(mirroredEffects), contribution.temporarySeconds(), null, false, contribution.bonusScaled(), contribution.gate()));
             }
         }
         return withMirrors;

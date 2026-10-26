@@ -3,6 +3,7 @@ package exiledsector.skills;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
+import exiledlib.skills.CombatGate;
 import exiledlib.skills.DescriptionLine;
 import exiledlib.skills.DiminishedStat;
 import exiledlib.skills.DiminishingReturns;
@@ -75,7 +76,7 @@ public final class SkillTreeBonusSummary {
             for (SkillTypeEffect effect : WeaponEffectTooltipAggregator.collapse(effects)) {
                 StyledText text = effect.effect().description(effect.magnitude());
                 if (text != null) {
-                    lines.add(new DescriptionLine(withDuration(text, group.temporarySeconds()), effect.effect().invertsDescriptionColours()));
+                    lines.add(new DescriptionLine(withGate(withDuration(text, group.temporarySeconds()), group.gate()), effect.effect().invertsDescriptionColours()));
                 }
             }
         }
@@ -84,6 +85,10 @@ public final class SkillTreeBonusSummary {
 
     static float rounded(float total) {
         return Math.round(total * 100f) / 100f;
+    }
+
+    private static StyledText withGate(StyledText text, CombatGate gate) {
+        return gate == null ? text : Translation.msg("summary.gated." + gate.name()).arg("text", text).styled();
     }
 
     private static StyledText withDuration(StyledText text, Float seconds) {

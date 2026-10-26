@@ -136,6 +136,9 @@
     "node.exclusive.nodes.other": "Mutually exclusive with <node>nodes</node>:",
     "node.exclusive.item": "• {name}",
     "summary.forFirst": "For the first {seconds} seconds after deployment: {text}",
+    "summary.gated.LOW_HULL": "Below 50% hull: {text}",
+    "summary.gated.SYSTEM_ACTIVE": "While the ship system is active: {text}",
+    "summary.gated.PHASED": "While phased: {text}",
 
     "ui.readout.title": "Ordnance Points, Level & Nodes",
     "ui.readout.opBar": "OP {spent} / {total}",

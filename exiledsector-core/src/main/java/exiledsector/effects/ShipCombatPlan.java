@@ -2,6 +2,7 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.ShipAPI;
+import exiledlib.skills.CombatGate;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,6 +13,7 @@ final class ShipCombatPlan {
     private final List<HullModEffect> vanillaEffects = new ArrayList<>();
     private final List<ResolvedTree.EffectEntry> combatUpdates = new ArrayList<>();
     private final List<TemporaryNode> temporaryNodes = new ArrayList<>();
+    private final List<GatedNode> gatedNodes = new ArrayList<>();
 
     void addVanillaEffect(HullModEffect effect) {
         vanillaEffects.add(effect);
@@ -27,6 +29,12 @@ final class ShipCombatPlan {
         }
     }
 
+    void addGatedNode(CombatGate gate, List<ResolvedTree.EffectEntry> effects) {
+        if (!effects.isEmpty()) {
+            gatedNodes.add(new GatedNode(gate, effects));
+        }
+    }
+
     void advance(ShipAPI ship, float amount) {
         for (HullModEffect vanillaEffect : vanillaEffects) {
             vanillaEffect.advanceInCombat(ship, amount);
@@ -36,6 +44,9 @@ final class ShipCombatPlan {
         }
         if (!temporaryNodes.isEmpty()) {
             expireTemporaryNodes(ship);
+        }
+        for (GatedNode gatedNode : gatedNodes) {
+            gatedNode.update(ship);
         }
     }
 
@@ -55,5 +66,28 @@ final class ShipCombatPlan {
     }
 
     private record TemporaryNode(float durationSeconds, List<ResolvedTree.EffectEntry> effects) {
+    }
+
+    private static final class GatedNode {
+
+        private final CombatGate gate;
+        private final List<ResolvedTree.EffectEntry> effects;
+        private boolean open;
+
+        private GatedNode(CombatGate gate, List<ResolvedTree.EffectEntry> effects) {
+            this.gate = gate;
+            this.effects = effects;
+        }
+
+        private void update(ShipAPI ship) {
+            boolean holds = gate.holds(ship);
+            if (holds == open) {
+                return;
+            }
+            open = holds;
+            for (ResolvedTree.EffectEntry effectEntry : effects) {
+                effectEntry.effect().apply(ship.getMutableStats(), effectEntry.modId(), open ? effectEntry.magnitude() : 0f);
+            }
+        }
     }
 }

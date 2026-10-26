@@ -4,12 +4,19 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import exiledlib.i18n.StyledText;
 import exiledlib.skills.AffinityScaling;
+import exiledlib.skills.CombatGate;
+import exiledlib.skills.skilleffect.special.RadiusGate;
 
 public interface BackedSkillEffect extends SkillEffect {
 
     @Override
     default AffinityScaling affinityScaling() {
         return backing() instanceof AffinityScaling scaling ? scaling : null;
+    }
+
+    @Override
+    default CombatGate radiusGate() {
+        return backing() instanceof RadiusGate radiusGate ? radiusGate.gate() : null;
     }
 
     EffectBacking backing();

@@ -13,13 +13,13 @@ import java.util.Set;
 
 public final class EffectTotals {
 
-    public record Group(Float temporarySeconds, Map<SkillEffect, Float> totals) {
+    public record Group(Float temporarySeconds, CombatGate gate, Map<SkillEffect, Float> totals) {
     }
 
-    private record Duration(Float temporarySeconds) {
+    private record Duration(Float temporarySeconds, CombatGate gate) {
     }
 
-    private static final Duration PERMANENT = new Duration(null);
+    private static final Duration PERMANENT = new Duration(null, null);
 
     private final List<EffectContribution> contributions;
     private final Map<SkillEffect, Float> pooledMultipliers;
@@ -56,7 +56,7 @@ public final class EffectTotals {
         List<EffectContribution> resolvedContributions = new ArrayList<>();
         Map<Duration, Map<SkillEffect, Float>> totalsByDuration = new LinkedHashMap<>();
         for (EffectContribution scaled : scaledContributions) {
-            Duration duration = new Duration(scaled.temporarySeconds());
+            Duration duration = new Duration(scaled.temporarySeconds(), scaled.gate());
             Map<SkillEffect, Float> durationTotals = totalsByDuration.computeIfAbsent(duration, key -> new LinkedHashMap<>());
             List<SkillTypeEffect> effects = PERMANENT.equals(duration) ? diminished(scaled.effects(), diminishingRatios) : scaled.effects();
             resolvedContributions.add(scaled.withEffects(effects));
@@ -75,8 +75,8 @@ public final class EffectTotals {
         List<DamageTakenCaps.Cap> reachedCaps = DamageTakenCaps.reachedBy(permanentTotals);
         List<Group> groups = new ArrayList<>();
         totalsByDuration.forEach((duration, durationTotals) -> groups.add(PERMANENT.equals(duration)
-                ? new Group(null, Collections.unmodifiableMap(DamageTakenCaps.capped(permanentTotals, reachedCaps)))
-                : new Group(duration.temporarySeconds(), Collections.unmodifiableMap(durationTotals))));
+                ? new Group(null, null, Collections.unmodifiableMap(DamageTakenCaps.capped(permanentTotals, reachedCaps)))
+                : new Group(duration.temporarySeconds(), duration.gate(), Collections.unmodifiableMap(durationTotals))));
         return new EffectTotals(List.copyOf(resolvedContributions), Collections.unmodifiableMap(pooledMultipliers), List.copyOf(reachedCaps),
                 diminishedStatsOf(diminishingRatios), List.copyOf(groups));
     }

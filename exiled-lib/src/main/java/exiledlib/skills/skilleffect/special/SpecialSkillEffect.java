@@ -3,6 +3,7 @@ package exiledlib.skills.skilleffect.special;
 import com.fs.starfarer.api.combat.ShipAPI;
 import exiledlib.i18n.StyledText;
 import exiledlib.skills.AffinityScaling;
+import exiledlib.skills.CombatGate;
 import exiledlib.skills.skilleffect.BackedSkillEffect;
 import exiledlib.skills.skilleffect.EffectBacking;
 import exiledlib.skills.skilleffect.EffectText;
@@ -80,7 +81,10 @@ public enum SpecialSkillEffect implements BackedSkillEffect {
             return EffectText.msg(this).styled();
         }
     },
-    EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE(new AffinityTally());
+    EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE(new AffinityTally()),
+    GATES_RADIUS_BELOW_HALF_HULL(new RadiusGate(CombatGate.LOW_HULL)),
+    GATES_RADIUS_WHILE_SYSTEM_ACTIVE(new RadiusGate(CombatGate.SYSTEM_ACTIVE)),
+    GATES_RADIUS_WHILE_PHASED(new RadiusGate(CombatGate.PHASED));
 
     private final EffectBacking backing;
 

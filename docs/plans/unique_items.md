@@ -34,7 +34,7 @@ Each stage builds, tests and gets committed on its own. A framework stage adds t
     - [x] Farige Blueprint Vault and Absence of Light. Built: `HIGHEST_AFFINITY_FLAT_PER_S_MOD` (Farige, +3) and `LOWEST_AFFINITY_AS_HIGHEST` (Absence), resolved in `AffinitySteps.totals`. Decided without the user: Farige feeds the ship's highest affinity rather than the root's, which is nearly always the same and needs no tree lookup in Exiled Lib. Icons from `tools/item_art/affinity_uniques.js`. Tests in `AffinityStepsTest` and `ShipSectionsTest`.
     - [x] Empty Shell Axion. Built: `unique_empty_shell_axion` (medium radius, area `stargazer`) with the `EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE` line; `EmptyShells` and the socket-aware `NodeGrants.GrantLookup` make it take over its radius as granted nodes, which keeps the tree connected where "can't be allocated" would strand the socket. Roots, sockets and wormholes are never hollowed. Tests in `EmptyShellsTest`.
     - [x] Root Conduit. Built: the `ROOT_CONDUIT` subroutine kind (born corrupted, one per ship, dropped by any faction's battles at 0.01 per 100 deployment points, since only uniques stay in the generic pools) and the `root_conduit` row; `RootConduits` caches the path and grants the affinity through `AllocatedSkillEffects`; `SkillTreeNodeConnectorRenderer` glows the path with `ConnectorKind.CONDUIT`. Tests in `RootConduitsTest`.
-9. [ ] Gated subroutines and Phoenix Ash Archive. Waits on the gated subroutine decision.
+9. [x] Gated subroutines and Phoenix Ash Archive. Waits on the gated subroutine decision. Built: `CombatGate` (Exiled Lib) and an optional gate on `EffectContribution`, kept out of permanent totals and grouped apart in `EffectTotals`; `RadiusGate` backs `GATES_RADIUS_BELOW_HALF_HULL`, `GATES_RADIUS_WHILE_SYSTEM_ACTIVE` and `GATES_RADIUS_WHILE_PHASED`; `GatedSubroutines` maps the nodes in a gating radius, `SkillTreeEffectSource` gates them, and `ShipCombatPlan` toggles them in combat; the ship summary prefixes gated totals. `unique_phoenix_ash_archive` (Tania, medium radius, triple strength below 50% hull). Decided without the user: triple strength stays, and each condition gets its own subroutine; the system-active and phased subroutines are left for a later volume, since their effects already exist. Tests in `GatedSubroutinesTest` and `ShipCombatPlanTest`.
 10. [ ] RAT Abyss and ExoTech items, after Lukas04 approves the names and art.
 
 ## Mechanic families
@@ -166,9 +166,7 @@ These need:
 - A new fighter damage taken MULT.
 - A tooltip line showing the bonus the ship currently gets from its affinity (`AffinityTooltipLines`).
 
-## Open decisions
-
-- Gated subroutines: is triple strength right? Should each condition get one subroutine, or should one subroutine roll its condition?
+## Decisions
 
 Decided without the user, while they were away: Root Conduit's N is 5 and a ship can socket one; the affinity hull items stay seven single-line uniques and never roll as explicit modifiers. Decided: EMP is a conversion target, never a source, and every conversion is 100% and bound to a kind of mount. Faction uniques drop from the general pool at their normal weight, and at double weight from their faction's battles (groundwork step 1).
 

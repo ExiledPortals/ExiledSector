@@ -5,6 +5,9 @@ require('fs').mkdirSync(out, { recursive: true });
 const NC_MOD = 'C:/Games/Starsector/mods/Nightcross/graphics/';
 const STARGAZER = ['#05020a', '#24093f', '#6a2ea6', '#e0609a', '#fde8f4'];
 const crest = A.load(NC_MOD + 'factions/crest_stargazer.png');
+const TANIA_MOD = 'E:/Dev/Starsector/mods/Navarchy of Tania - 1.3.0/graphics/';
+const EMBER = ['#080403', '#2e100a', '#8a3416', '#f08a3a', '#fff0d0'];
+const aetos = A.load(TANIA_MOD + 'ships/aetos/tania_aetos_main.png');
 const EVERY_AFFINITY = ['#080604', '#2c2210', '#786030', '#e6c66e', '#fff6da'];
 
 function base(palette, seed, cx = 0.5, cy = 0.5, stars = 50) {
@@ -76,9 +79,35 @@ function conduitPath(cv, points, colors) {
 }
 A.sheet(conduit, out + 'sheet_root_conduit.png');
 
+const phoenix = [];
+function embers(cv, seed, count, area) {
+  let s = seed;
+  const rand = () => ((s = (s * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff);
+  for (let k = 0; k < count; k++) {
+    const x = area.x + rand() * area.w, y = area.y + rand() * area.h;
+    A.glowDot(cv, Math.round(x), Math.round(y), 1.2 + rand() * 2, A.hex(rand() < 0.5 ? '#f08a3a' : '#ffd890'), 0.5 + rand() * 0.5);
+  }
+}
+{
+  const cv = base(EMBER, 321, 0.5, 0.6, 10);
+  A.sprite(cv, aetos, { cx: 128, cy: 150, scale: 1.45, palette: EMBER, keep: 0.2, contrast: 1.3, glow: { radius: 12, color: '#f08a3a', strength: 0.7 } });
+  embers(cv, 7, 60, { x: 40, y: 10, w: 176, h: 140 });
+  A.vignette(cv, 0.55);
+  phoenix.push(cv);
+}
+{
+  const cv = base(EMBER, 322, 0.5, 0.5, 10);
+  A.sprite(cv, aetos, { cx: 128, cy: 132, scale: 1.25, angle: -0.5, palette: EMBER, keep: 0, contrast: 1.5, lift: -0.05, glow: { radius: 14, color: '#f08a3a', strength: 0.8 } });
+  embers(cv, 11, 80, { x: 20, y: 0, w: 216, h: 256 });
+  A.vignette(cv, 0.6);
+  phoenix.push(cv);
+}
+A.sheet(phoenix, out + 'sheet_phoenix_ash_archive.png');
+
 if (process.argv[2] === 'save') {
   const dest = __dirname + '/../../graphics/icons/socketables/';
-  const [e, c] = process.argv.slice(3).map(Number);
+  const [e, c, p] = process.argv.slice(3).map(Number);
   A.save(axion[e], dest + 'na_empty_shell_axion.png');
   A.save(conduit[c ?? 0], dest + 'exiledSector_root_conduit.png');
+  A.save(phoenix[p ?? 0], dest + 'tania_phoenix_ash_archive.png');
 }

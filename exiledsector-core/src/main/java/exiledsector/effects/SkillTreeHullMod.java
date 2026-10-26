@@ -256,6 +256,9 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         for (ResolvedTree.TemporaryNode temporaryNode : resolvedTree.temporaryNodes()) {
             combatPlan.addTemporaryNode(temporaryNode.durationSeconds(), temporaryNode.effects());
         }
+        for (ResolvedTree.GatedNode gatedNode : resolvedTree.gatedNodes()) {
+            combatPlan.addGatedNode(gatedNode.gate(), gatedNode.effects());
+        }
         return combatPlan;
     }
 

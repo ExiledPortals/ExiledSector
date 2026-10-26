@@ -156,6 +156,8 @@
     "socketable.unique_empty_shell_axion.description": "舰员在一艘观星者残骸里找到了这颗被掏空的轴子核心。插入他们的改装之间后，它吞没了周围的成果，只回馈出一丝他们所知每一种驾船之道的共鸣。",
     "socketable.root_conduit.name": "根源导管",
     "socketable.root_conduit.description": "一块导管芯片，离舰船最初的设计越远，嗡鸣就越响。舰员把它深深接进自己的改装里，让它汲取一路走来所建的一切。",
+    "socketable.unique_phoenix_ash_archive.name": "凤凰灰烬档案",
+    "socketable.unique_phoenix_ash_archive.description": "收录了那些本该沉没却仍久久坚持作战的塔尼亚海军舰船的战斗记录。插入舰员的改装之间后，它教会周围的系统在船体燃烧时发挥出最佳状态。",
     "socketable.unique_cracked_drive_governor.name": "破解驱动调速器",
     "socketable.unique_cracked_drive_governor.description": "一枚安全限制被磨掉的驱动调速器，存在一块划痕累累的数据芯片里，在一支又一支劫掠船员之间辗转。它让引擎比任何船坞允许的都烧得更热、跑得更快，而反应堆要为每一秒买单。",
     "socketable.unique_lamplighter_modspec.name": "KR-9“点灯人”模组规格",
@@ -186,6 +188,9 @@
     "node.exclusive.nodes.other": "与以下<node>节点</node>互斥：",
     "node.exclusive.item": "• {name}",
     "summary.forFirst": "部署后的前{seconds}秒内：{text}",
+    "summary.gated.LOW_HULL": "船体低于50%时：{text}",
+    "summary.gated.SYSTEM_ACTIVE": "舰船系统激活时：{text}",
+    "summary.gated.PHASED": "相位状态下：{text}",
 
     "ui.readout.title": "装配点、等级与节点",
     "ui.readout.opBar": "装配点 {spent} / {total}",

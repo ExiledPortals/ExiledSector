@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.items.DoctrineOverrides;
+import exiledsector.items.GatedSubroutines;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocatedSkillEffects;
 import exiledlib.skills.EffectContribution;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public final class SkillTreeEffectSource implements ShipEffectSource {
@@ -52,15 +54,35 @@ public final class SkillTreeEffectSource implements ShipEffectSource {
 
     public static List<EffectContribution> contributions(ShipSkillData shipData, HullSize hullSize) {
         List<EffectContribution> contributions = new ArrayList<>();
+        Map<String, GatedSubroutines.Gating> gatedNodeIds = GatedSubroutines.gatedNodeIds(shipData);
         for (AllocatedNode node : AllocatedNode.of(shipData)) {
             SkillType type = node.effectiveType();
             boolean vanillaPassthrough = AllocatedSkillEffects.isVanillaPassthrough(node);
             boolean scaled = scalesNode(node);
+            GatedSubroutines.Gating gating = gatedNodeIds.get(node.node().getId());
+            if (gating != null) {
+                if (!vanillaPassthrough) {
+                    contributions.add(new EffectContribution(node, MOD_ID_PREFIX + node.node().getId() + "_",
+                            gatedEffects(AllocatedSkillEffects.treeEffects(shipData, node, hullSize), gating.strength()), null, null, scaled, scaled,
+                            gating.gate()));
+                }
+                continue;
+            }
             contributions.add(new EffectContribution(node, MOD_ID_PREFIX + node.node().getId() + "_",
                     Collections.unmodifiableList(AllocatedSkillEffects.treeEffects(shipData, node, hullSize)), type.getTemporaryAfterDeploymentSeconds(),
                     vanillaPassthrough ? type.getVanillaHullModId() : null, scaled, scaled && !vanillaPassthrough));
         }
         return contributions;
+    }
+
+    static List<SkillTypeEffect> gatedEffects(List<SkillTypeEffect> effects, float strength) {
+        List<SkillTypeEffect> gated = new ArrayList<>();
+        for (SkillTypeEffect effect : effects) {
+            if (effect.effect().supportsTemporaryGating()) {
+                gated.add(new SkillTypeEffect(effect.effect(), effect.magnitude() * strength));
+            }
+        }
+        return Collections.unmodifiableList(gated);
     }
 
     static boolean scalesNode(AllocatedNode node) {

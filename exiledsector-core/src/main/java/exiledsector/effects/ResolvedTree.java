@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
+import exiledlib.skills.CombatGate;
 import exiledlib.skills.DamageTakenCaps;
 import exiledlib.skills.DiminishingReturns;
 import exiledlib.skills.EffectContribution;
@@ -42,6 +43,9 @@ public final class ResolvedTree {
     record TemporaryNode(float durationSeconds, List<EffectEntry> effects) {
     }
 
+    record GatedNode(CombatGate gate, List<EffectEntry> effects) {
+    }
+
     private final List<ShipEffectSource> sources;
     private final HullSize hullSize;
     private final float bonusScale;
@@ -52,6 +56,7 @@ public final class ResolvedTree {
     private final EffectTotals totals;
     private final List<Entry> entries;
     private final List<TemporaryNode> temporaryNodes;
+    private final List<GatedNode> gatedNodes;
     private final Map<Object, Object> derived = new HashMap<>();
 
     private ResolvedTree(ShipEffectContext context, List<ShipEffectSource> sources, float bonusScale, List<Object> sourceCacheKeys,
@@ -68,8 +73,11 @@ public final class ResolvedTree {
         this.totals = EffectTotals.of(contributions, bonusScale, statBaseline, diminishing);
         List<Entry> resolvedEntries = new ArrayList<>();
         List<TemporaryNode> resolvedTemporaryNodes = new ArrayList<>();
+        List<GatedNode> resolvedGatedNodes = new ArrayList<>();
         for (EffectContribution contribution : totals.contributions()) {
-            if (contribution.vanillaHullModId() != null) {
+            if (contribution.gate() != null) {
+                addGatedNode(contribution, resolvedGatedNodes);
+            } else if (contribution.vanillaHullModId() != null) {
                 addVanillaEntry(contribution.vanillaHullModId(), resolvedEntries);
                 addEffects(contribution, resolvedEntries);
             } else if (!contribution.permanent()) {
@@ -85,6 +93,7 @@ public final class ResolvedTree {
         totals.reachedCaps().forEach(reductionCap -> replaceWithCap(reductionCap, resolvedEntries, temporaryEntries));
         this.entries = List.copyOf(resolvedEntries);
         this.temporaryNodes = List.copyOf(resolvedTemporaryNodes);
+        this.gatedNodes = List.copyOf(resolvedGatedNodes);
     }
 
     private static void replaceWithCap(DamageTakenCaps.Cap reductionCap, List<Entry> resolvedEntries, Set<EffectEntry> temporaryEntries) {
@@ -122,6 +131,17 @@ public final class ResolvedTree {
         }
         if (!temporaryEffects.isEmpty()) {
             resolvedTemporaryNodes.add(new TemporaryNode(contribution.temporarySeconds(), List.copyOf(temporaryEffects)));
+        }
+    }
+
+    private static void addGatedNode(EffectContribution contribution, List<GatedNode> resolvedGatedNodes) {
+        EffectModIds modIds = new EffectModIds(contribution.modIdPrefix());
+        List<EffectEntry> gatedEffects = new ArrayList<>();
+        for (SkillTypeEffect effect : contribution.effects()) {
+            gatedEffects.add(new EffectEntry(effect.effect(), modIds.next(effect.effect()), effect.magnitude()));
+        }
+        if (!gatedEffects.isEmpty()) {
+            resolvedGatedNodes.add(new GatedNode(contribution.gate(), List.copyOf(gatedEffects)));
         }
     }
 
@@ -218,5 +238,9 @@ public final class ResolvedTree {
 
     List<TemporaryNode> temporaryNodes() {
         return temporaryNodes;
+    }
+
+    List<GatedNode> gatedNodes() {
+        return gatedNodes;
     }
 }
