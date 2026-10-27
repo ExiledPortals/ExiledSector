@@ -7,11 +7,14 @@ import exiledsector.charts.layout.ChartLayoutRecipe;
 import exiledsector.charts.layout.ChartLayoutRequest;
 import exiledsector.charts.layout.ChartLook;
 import exiledsector.charts.layout.ChartShape;
+import exiledsector.charts.layout.abyss.AbyssPalette;
+import exiledsector.charts.layout.abyss.ChartAbyss;
 import exiledsector.charts.layout.sketch.ChartSketchPalette.BodyKind;
 import exiledsector.charts.layout.sketch.ChartSketchPalette.StarKind;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.Body;
 import org.junit.jupiter.api.Test;
 
+import java.awt.Color;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -20,6 +23,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ChartSystemSketcherTest {
@@ -66,6 +70,29 @@ class ChartSystemSketcherTest {
         assertTrue(centres.contains("gas_giant") || centres.contains("ice_giant"), centres.toString());
         assertTrue(centres.contains("frozen"), centres.toString());
         assertTrue(ChartDeepSpace.PLANETOIDS.keySet().containsAll(centres.stream().filter(type -> !ChartDeepSpace.GIANTS.containsKey(type)).toList()));
+    }
+
+    @Test
+    void anAbyssalDeepSpaceSketchShowsThePhotosphereTheRealSystemPicksInsteadOfACentreWorld() {
+        AbyssPalette red = new AbyssPalette("red", new Color(255, 0, 50), new Color(77, 0, 15), 1f);
+        AbyssPalette amber = new AbyssPalette("amber", new Color(255, 123, 0), new Color(77, 37, 0), 1f);
+        Map<AbyssPalette, Float> palettes = new LinkedHashMap<>();
+        palettes.put(red, 1f);
+        palettes.put(amber, 1f);
+        ChartLook look = new ChartLook(List.of(), List.of(), Float.NaN, null, 0f, Map.of(), Map.of(), false, "", palettes);
+        ChartLayoutRecipe abyssal = new ChartLayoutRecipe(look, new ChartShape(Map.of(StarSystemType.DEEP_SPACE, 1f), 0, 2, 12000f, Map.of(), ""));
+        Set<Color> seen = new HashSet<>();
+
+        for (long seed = 0; seed < 100; seed++) {
+            ChartSystemSketch sketch = ChartSystemSketcher.sketch(seed, abyssal, List.of(), PALETTE);
+
+            assertTrue(sketch.stars().isEmpty());
+            assertEquals(ChartLayoutGenerator.abyssPalette(seed, abyssal).colour(), sketch.photosphere());
+            assertTrue(sketch.planets().stream().allMatch(planet -> planet.orbitRadius() > ChartAbyss.CENTRE_CLEARANCE));
+            seen.add(sketch.photosphere());
+        }
+        assertEquals(Set.of(red.colour(), amber.colour()), seen);
+        assertNull(ChartSystemSketcher.sketch(1L, ChartLayoutRecipe.ORDINARY, List.of(), PALETTE).photosphere());
     }
 
     @Test

@@ -468,6 +468,7 @@
     "chart.raid.lossFactor.highEffectiveness": "High raid effectiveness",
     "chart.raid.lossFactor.lowEffectiveness": "Low raid effectiveness",
     "chart.raid.lossFactor.reserves": "Forces held in reserve",
+    "chart.abyss.photosphere.name": "Photosphere",
     "chart.breach.name": "Spatial Breach",
     "chart.breach.description": "A tear into hyperspace that opens once a fleet passes over its core, expands to its full size and then collapses. Its effects are stronger toward the core.",
     "chart.breach.effect.supplies": "Ships in your fleet have up to <bad>{value}%</bad> increased supply use",

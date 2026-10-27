@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.thoughtworks.xstream.XStream;
 import exiledlib.compat.CompatTarget;
 import exiledsector.charts.anomaly.debris.AnomalousDebrisTerrainPlugin;
+import exiledsector.charts.layout.abyss.AbyssArt;
 import exiledsector.charts.effect.ChartFleetConditionSource;
 import exiledsector.charts.loot.StarChartLootSource;
 import exiledsector.charts.run.ChartRuns;
@@ -63,6 +64,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     public void onApplicationLoad() {
         StarChartCurrency.registerAll();
         AnomalousDebrisTerrainPlugin.preloadTextures();
+        AbyssArt.preload();
         I18n.forGameText(() -> {
             for (StarChartCurrency currency : StarChartCurrency.values()) {
                 MaterialItems.localise(currency.itemId());

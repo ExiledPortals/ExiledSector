@@ -450,6 +450,7 @@
     "chart.effect.CHART_CONVOY_ESCORT_PERCENT": "补给船队护航规模提高<bad>{value}%</bad>",
     "chart.effect.CHART_CONVOY_ESCORT_PERCENT.reduced": "补给船队护航规模降低<good>{value}%</good>",
     "chart.effect.CHART_EXTRA_CONVOYS.other": "星域内额外出现<good>{value}</good>支补给船队",
+    "chart.abyss.photosphere.name": "光球",
     "chart.breach.name": "空间裂隙",
     "chart.breach.description": "一道通往超空间的裂口。舰队经过其核心后它会张开，扩张到最大范围后再坍缩。越靠近核心，影响越强。",
     "chart.breach.effect.supplies": "你舰队中的舰船补给消耗最多提高<bad>{value}%</bad>",

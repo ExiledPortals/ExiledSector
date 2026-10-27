@@ -15,6 +15,7 @@ import exiledsector.charts.layout.ChartLook;
 import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.content.ModdedChartFactions;
 import exiledsector.charts.layout.ChartShape;
+import exiledsector.charts.layout.abyss.AbyssPalette;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.data.CsvRows;
 import exiledsector.ui.util.ColorUtil;
@@ -42,6 +43,7 @@ public final class AtlasData {
     static final String SPECIALS_PATH = "data/config/exiledSector/atlas_specials.csv";
     static final String NODE_EFFECTS_PATH = "data/config/exiledSector/atlas_node_effects.csv";
     static final String DECORATIONS_PATH = "data/config/exiledSector/atlas_decorations.csv";
+    static final String ABYSS_PALETTES_PATH = "data/config/exiledSector/atlas_abyss_palettes.csv";
     static final String ID_COLUMN = "id";
     static final String VOID_MARKER = "void";
     static final String POWERFUL_BOSS_MARKER = "powerful_boss";
@@ -54,6 +56,7 @@ public final class AtlasData {
     private static volatile Map<String, ChartLook> looks = Map.of();
     private static volatile Map<String, AtlasAmbience> ambiences = Map.of();
     private static volatile Map<String, AtlasDecoration> decorations = Map.of();
+    private static volatile Map<String, AbyssPalette> abyssPalettes = Map.of();
     private static volatile List<AtlasRegion> regions = List.of();
     private static volatile Map<String, AtlasMarkerRule> markerRules = Map.of();
     private static volatile List<AtlasSpecial> specials = List.of();
@@ -65,6 +68,7 @@ public final class AtlasData {
     public static void load() {
         ModCsv.load(ID_COLUMN, LAYOUTS_PATH, LOG, AtlasData::registerLayouts);
         ModCsv.load(ID_COLUMN, DECORATIONS_PATH, LOG, AtlasData::registerDecorations);
+        ModCsv.load(ID_COLUMN, ABYSS_PALETTES_PATH, LOG, AtlasData::registerAbyssPalettes);
         ModCsv.load(ID_COLUMN, REGIONS_PATH, LOG, rows -> registerRegions(rows, factionIds(), ModdedChartFactions.detect(factionIds())));
         ModCsv.load(ID_COLUMN, MARKERS_PATH, LOG, AtlasData::registerMarkers);
         ModCsv.load(ID_COLUMN, SPECIALS_PATH, LOG, AtlasData::registerSpecials);
@@ -213,7 +217,36 @@ public final class AtlasData {
         }
         return new ChartLook(CsvRows.entries(ModCsv.text(row, "backgrounds")), CsvRows.entries(ModCsv.text(row, "nebula_backgrounds")),
                 nebulaChance, colour(csv, row, "light_tint", rowId), csv.number(row, "light_tint_strength", 0f, rowId), stars,
-                categoryWeights(csv, row, "planets", rowId), csv.flag(row, "keep_ruins", false, rowId), ModCsv.text(row, "music"));
+                categoryWeights(csv, row, "planets", rowId), csv.flag(row, "keep_ruins", false, rowId), ModCsv.text(row, "music"),
+                paletteWeights(csv, row, rowId));
+    }
+
+    private static Map<AbyssPalette, Float> paletteWeights(CsvRows csv, JSONObject row, String rowId) {
+        Map<String, AbyssPalette> known = abyssPalettes;
+        Map<AbyssPalette, Float> weights = new LinkedHashMap<>();
+        csv.weights(row, "abyss_palettes", rowId, known.keySet()).forEach((id, weight) -> weights.put(known.get(id), weight));
+        return weights;
+    }
+
+    static List<String> registerAbyssPalettes(JSONArray rows) throws JSONException {
+        Map<String, AbyssPalette> loaded = new LinkedHashMap<>();
+        CsvRows csv = new CsvRows(ABYSS_PALETTES_PATH);
+        CsvRows.forEachIdRow(rows, ID_COLUMN, (id, row) -> {
+            Color colour = colour(csv, row, "colour", id);
+            Color darkColour = colour(csv, row, "dark_colour", id);
+            if (colour == null || darkColour == null) {
+                csv.skipRow(id, "needs a colour and a dark_colour");
+                return;
+            }
+            float vignette = csv.number(row, "vignette", 1f, id);
+            if (vignette < 0f || vignette > 1f) {
+                csv.problem(id, "vignette", vignette + " (needs 0 to 1)");
+            }
+            loaded.put(id, new AbyssPalette(id, colour, darkColour, vignette));
+        });
+        csv.report(LOG);
+        abyssPalettes = Map.copyOf(loaded);
+        return csv.problems();
     }
 
     private static Color colour(CsvRows csv, JSONObject row, String column, String rowId) {
@@ -419,6 +452,7 @@ public final class AtlasData {
         looks = Map.of();
         ambiences = Map.of();
         decorations = Map.of();
+        abyssPalettes = Map.of();
         regions = List.of();
         markerRules = Map.of();
         specials = List.of();

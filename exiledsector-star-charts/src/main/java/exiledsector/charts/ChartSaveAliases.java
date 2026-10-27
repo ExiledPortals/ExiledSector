@@ -10,6 +10,9 @@ import exiledsector.charts.anomaly.convoy.ConvoyScript;
 import exiledsector.charts.anomaly.convoy.ConvoyState;
 import exiledsector.charts.anomaly.convoy.ConvoyStep;
 import exiledsector.charts.anomaly.debris.AnomalousDebrisTerrainPlugin;
+import exiledsector.charts.layout.abyss.AbyssalDarknessTerrainPlugin;
+import exiledsector.charts.layout.abyss.AbyssalFogTerrainPlugin;
+import exiledsector.charts.layout.abyss.ChartPhotospherePlugin;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.objective.ChartObjectiveIntel;
 import exiledsector.charts.run.ChartRun;
@@ -38,7 +41,10 @@ public final class ChartSaveAliases {
             Map.entry("exiledSector.ConvoyStep", ConvoyStep.class),
             Map.entry("exiledSector.ConvoyStepKind", ConvoyStep.Kind.class),
             Map.entry("exiledSector.ConvoyIntel", ConvoyIntel.class),
-            Map.entry("exiledSector.AnomalousDebrisTerrainPlugin", AnomalousDebrisTerrainPlugin.class));
+            Map.entry("exiledSector.AnomalousDebrisTerrainPlugin", AnomalousDebrisTerrainPlugin.class),
+            Map.entry("exiledSector.ChartPhotospherePlugin", ChartPhotospherePlugin.class),
+            Map.entry("exiledSector.AbyssalFogTerrainPlugin", AbyssalFogTerrainPlugin.class),
+            Map.entry("exiledSector.AbyssalDarknessTerrainPlugin", AbyssalDarknessTerrainPlugin.class));
 
     private ChartSaveAliases() {
     }

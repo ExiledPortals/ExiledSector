@@ -2,9 +2,10 @@ package exiledsector.charts.layout.sketch;
 
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 
+import java.awt.Color;
 import java.util.List;
 
-public record ChartSystemSketch(StarSystemType systemType, List<Body> stars, List<Body> planets, List<Belt> belts) {
+public record ChartSystemSketch(StarSystemType systemType, List<Body> stars, List<Body> planets, List<Belt> belts, Color photosphere) {
 
     public record Body(String typeId, float radius, float orbitRadius, float orbitDays, float startAngle) {
     }
@@ -16,6 +17,10 @@ public record ChartSystemSketch(StarSystemType systemType, List<Body> stars, Lis
         stars = List.copyOf(stars);
         planets = List.copyOf(planets);
         belts = List.copyOf(belts);
+    }
+
+    public ChartSystemSketch(StarSystemType systemType, List<Body> stars, List<Body> planets, List<Belt> belts) {
+        this(systemType, stars, planets, belts, null);
     }
 
     public float outerRadius() {

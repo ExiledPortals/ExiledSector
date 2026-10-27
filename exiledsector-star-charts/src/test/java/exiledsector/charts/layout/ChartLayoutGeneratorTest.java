@@ -17,13 +17,17 @@ import exiledlib.MockSector;
 import exiledlib.charts.FakeSystem;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.generation.ChartSystemFactory;
+import exiledsector.charts.layout.abyss.AbyssPalette;
 import exiledsector.charts.run.cleanup.ChartUsedNames;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.awt.Color;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -127,6 +131,23 @@ class ChartLayoutGeneratorTest {
         assertEquals(picked.names(), explicit.names());
         assertEquals(picked.engineFingerprint(), explicit.engineFingerprint());
         assertEquals(picked.layout().innerWormholeLocation(), explicit.layout().innerWormholeLocation());
+    }
+
+    @Test
+    void anAbyssalRecipeIsNarrowedToTheSeedsPaletteSoThePreviewAndTheSystemAgree() {
+        Map<AbyssPalette, Float> palettes = new LinkedHashMap<>();
+        palettes.put(new AbyssPalette("red", Color.RED, Color.BLACK, 1f), 1f);
+        palettes.put(new AbyssPalette("amber", Color.ORANGE, Color.BLACK, 1f), 1f);
+        ChartLayoutRecipe abyssal = new ChartLayoutRecipe(new ChartLook(List.of(), List.of(), Float.NaN, null, 0f, Map.of(), Map.of(), false, "",
+                palettes), null);
+
+        for (long seed = 0; seed < 50; seed++) {
+            ChartLayoutRecipe settled = ChartLayoutGenerator.settleAbyss(seed, abyssal);
+
+            assertEquals(Map.of(ChartLayoutGenerator.abyssPalette(seed, abyssal), 1f), settled.look().abyssPalettes());
+            assertEquals(abyssal.shape(), settled.shape());
+        }
+        assertEquals(ChartLayoutRecipe.ORDINARY, ChartLayoutGenerator.settleAbyss(1L, ChartLayoutRecipe.ORDINARY));
     }
 
     @Test

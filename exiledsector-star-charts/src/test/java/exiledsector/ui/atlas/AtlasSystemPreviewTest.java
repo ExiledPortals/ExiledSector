@@ -6,6 +6,7 @@ import exiledsector.ui.node.NodeMetrics;
 import exiledsector.ui.node.NodeRingArt;
 import org.junit.jupiter.api.Test;
 
+import java.awt.Color;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,6 +44,15 @@ class AtlasSystemPreviewTest {
         assertEquals(0f, AtlasSystemPreview.shadowAlpha(1f, 0f, 1f, 0f));
         assertEquals(AtlasSystemPreview.SHADOW_MAX, AtlasSystemPreview.shadowAlpha(-1f, 0f, 1f, 0f));
         assertEquals(AtlasSystemPreview.SHADOW_FLOOR, AtlasSystemPreview.shadowAlpha(0f, 1f, 1f, 0f));
+    }
+
+    @Test
+    void thePhotosphereCoreIsItsColourDrawnTowardWhite() {
+        Color core = AtlasSystemPreview.whitened(new Color(255, 0, 50));
+
+        assertEquals(255, core.getRed());
+        assertEquals(Math.round(255 * AtlasSystemPreview.PHOTOSPHERE_CORE_WHITENING), core.getGreen());
+        assertTrue(core.getBlue() > 50 && core.getBlue() < 255);
     }
 
     @Test

@@ -17,6 +17,8 @@ import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystem
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.generation.ChartSystemFactory;
+import exiledsector.charts.layout.abyss.AbyssPalette;
+import exiledsector.charts.layout.abyss.ChartAbyss;
 import exiledsector.charts.wormhole.ChartWormholePlacement;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.run.cleanup.ChartUsedNames;
@@ -47,6 +49,7 @@ public final class ChartLayoutGenerator {
     static final long NAME_SALT = 0x434841525453L;
     static final long PLACEMENT_SALT = 0x43484152545057L;
     static final long LAYOUT_SALT = 0x4348415254594fL;
+    static final long ABYSS_SALT = 0x43484152544142L;
     private static final Logger LOG = Logger.getLogger(ChartLayoutGenerator.class);
     private static final ChartLayoutEngine VANILLA_ENGINE = new VanillaChartLayoutEngine();
     private static ChartLayoutEngine engine = VANILLA_ENGINE;
@@ -117,6 +120,17 @@ public final class ChartLayoutGenerator {
         return AGES.get(derivedRandom(seed, AGE_SALT).nextInt(AGES.size()));
     }
 
+    public static AbyssPalette abyssPalette(long seed, ChartLayoutRecipe recipe) {
+        return recipe == null ? null : ChartAbyss.pick(recipe.look().abyssPalettes(), derivedRandom(seed, ABYSS_SALT));
+    }
+
+    static ChartLayoutRecipe settleAbyss(long seed, ChartLayoutRecipe recipe) {
+        if (recipe == null || !recipe.look().abyssal()) {
+            return recipe;
+        }
+        return new ChartLayoutRecipe(recipe.look().withAbyssPalette(abyssPalette(seed, recipe)), recipe.shape());
+    }
+
     public static ChartLayout generate(SectorAPI sector, StarSystemAPI system, String runId, ChartLayoutRequest request) {
         long seed = request.seed();
         List<String> anomalyIds = ChartAnomalies.planned(request.chartContext());
@@ -153,7 +167,7 @@ public final class ChartLayoutGenerator {
     private static Built buildWithVanilla(StarSystemAPI system, String runId, StarSystemType systemType, long seed, ChartLayoutRecipe recipe,
                                           List<ChartAnomaly> anomalies) {
         try {
-            SectorEntityToken anchor = engine.build(system, ChartIds.starId(runId), systemType, pickAge(seed), derivedRandom(seed, LAYOUT_SALT), recipe,
+            SectorEntityToken anchor = engine.build(system, ChartIds.starId(runId), systemType, pickAge(seed), derivedRandom(seed, LAYOUT_SALT), settleAbyss(seed, recipe),
                     anomalies);
             if (system.getStar() == null && (systemType != StarSystemType.DEEP_SPACE || system.getCenter() == null)) {
                 throw new IllegalStateException("the generator finished without a star");

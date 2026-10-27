@@ -8,6 +8,8 @@ By Lukas04 and SnazzyPantsMcGee. Used with permission from Lukas04 for RAT-theme
 
 Files: everything prefixed `rat_`, which covers the icons in `graphics/icons`, the Abyss clouds in `graphics/backgrounds/static_images`, the Exoship, escort and serpent sprites in `graphics/fx`, and the Exoship warp sounds in `sounds/exiledSector`.
 
+Abyssal Rift chart systems also draw RAT's Abyss background, fog, photosphere and darkness art and play its Abyss music. Exiled Sector doesn't ship these files; they're read from RAT's own install, so they only appear while RAT is enabled.
+
 ## Nightcross Armory
 
 By YukiM. Nightcross's own licence makes its graphics free to use for kitbashing and its code available under GPLv3, and the author confirmed the assets are free to use in Starsector modding.

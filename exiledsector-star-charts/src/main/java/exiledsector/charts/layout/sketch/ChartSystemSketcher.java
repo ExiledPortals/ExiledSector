@@ -8,6 +8,8 @@ import exiledsector.charts.layout.ChartLayoutGenerator;
 import exiledsector.charts.layout.ChartLayoutRecipe;
 import exiledsector.charts.layout.ChartLayoutRequest;
 import exiledsector.charts.layout.ChartShape;
+import exiledsector.charts.layout.abyss.AbyssPalette;
+import exiledsector.charts.layout.abyss.ChartAbyss;
 import exiledsector.charts.layout.sketch.ChartSketchPalette.BodyKind;
 import exiledsector.charts.layout.sketch.ChartSketchPalette.StarKind;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.Belt;
@@ -57,8 +59,11 @@ public final class ChartSystemSketcher {
         List<Body> stars = new ArrayList<>();
         List<Body> planets = new ArrayList<>();
         List<Belt> belts = new ArrayList<>();
+        AbyssPalette abyss = systemType == StarSystemType.DEEP_SPACE ? ChartLayoutGenerator.abyssPalette(seed, layoutRecipe) : null;
         float centreReach;
-        if (systemType == StarSystemType.DEEP_SPACE) {
+        if (abyss != null) {
+            centreReach = ChartAbyss.CENTRE_CLEARANCE;
+        } else if (systemType == StarSystemType.DEEP_SPACE) {
             centreReach = placeDeepSpaceCentre(palette, random, planets);
         } else {
             List<StarKind> centreKinds = new ArrayList<>();
@@ -79,7 +84,7 @@ public final class ChartSystemSketcher {
             float angle = i == 0 ? farAngle : farAngle + 60f + 180f * random.nextFloat();
             stars.add(new Body(kind.typeId(), radius, orbit, orbit / (3f + random.nextFloat() * 2f), angle));
         }
-        return new ChartSystemSketch(systemType, stars, planets, belts);
+        return new ChartSystemSketch(systemType, stars, planets, belts, abyss == null ? null : abyss.colour());
     }
 
     static int closeStars(StarSystemType systemType) {

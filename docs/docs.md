@@ -361,7 +361,9 @@ Its `modded_factions` entry adds every installed faction Nexerelin would count a
 `exerelinFactionConfig/mod_factions.csv` and not set `playableFaction: false` (`ModdedChartFactions`). Revealed
 territories keep their faction (`AtlasState.recordReveal`), so a faction added mid-save only claims space revealed later.
 The Threat Expanse holds only the Threat, and no other faction's infestation reaches it (`AtlasGenerator`). Its systems use the starless `DEEP_SPACE` layout, one world at the centre
-under vanilla's abyssal light (`ChartStarSystemGenerator`). Its fleets are built like vanilla's abyssal Threat
+under vanilla's abyssal light (`ChartStarSystemGenerator`). Abyssal Rift systems copy only the look of Random Assortment
+of Things' Abyss, with photospheres for stars and abyssal fog and darkness: none of RAT's sensor or storm effects apply
+(`ChartAbyss`). The Threat Expanse's fleets are built like vanilla's abyssal Threat
 fleets, filled to the chart's fleet points with a fabricator leading each boss (`ChartThreatFleets`), and its boss is
 never a station. Hyperspace clouds are impassable terrain clumping inside biomes and ridging along some
 biome borders: no system sits under one and lanes route around them, and a grid of cleared corridors keeps the

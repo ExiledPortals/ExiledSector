@@ -59,6 +59,11 @@ final class AtlasSystemPreview {
     static final float NEBULA_SHARE = 0.55f;
     static final float NEBULA_ALPHA = 0.5f;
     static final float RIM_ALPHA_MULT = 0.37f;
+    static final float PHOTOSPHERE_GLOW_SHARE = 0.5f;
+    static final float PHOTOSPHERE_GLOW_ALPHA = 0.55f;
+    static final float PHOTOSPHERE_HEART_SHARE = 0.14f;
+    static final float PHOTOSPHERE_CORE_SHARE = 0.035f;
+    static final float PHOTOSPHERE_CORE_WHITENING = 0.6f;
     static final float AURORA_DETAIL_RADIUS = 400f;
     static final float MIN_BAND_PIXELS = 2f;
     static final float RING_SLOT_WIDTH = 256f;
@@ -101,6 +106,9 @@ final class AtlasSystemPreview {
         Fit fit = new Fit(cx, cy, radius, radius * ORBIT_REACH_SHARE, prepared.outerRadius(), elapsedSeconds);
         for (int i = 0; i < sketch.belts().size(); i++) {
             drawBelt(sketch.belts().get(i), i, fit, alpha);
+        }
+        if (sketch.photosphere() != null) {
+            drawPhotosphere(sketch.photosphere(), fit, alpha);
         }
         for (int i = 0; i < sketch.stars().size(); i++) {
             drawStar(prepared.starKeys().get(i), sketch.stars().get(i), fit, alpha);
@@ -190,6 +198,24 @@ final class AtlasSystemPreview {
             aurora.render(auroraTexture, bodyX, bodyY, AURORA_DETAIL_RADIUS, pixels / AURORA_DETAIL_RADIUS, corona, alpha);
         }
         drawBody(spec, bodyX, bodyY, pixels, star.startAngle(), fit.elapsedSeconds(), FALLBACK_STAR_COLOUR, alpha, true);
+    }
+
+    private static void drawPhotosphere(Color colour, Fit fit, float alpha) {
+        try (GlScope glow = GlScope.flat().blend(GL11.GL_SRC_ALPHA, GL11.GL_ONE)) {
+            drawGlow(fit.cx(), fit.cy(), fit.radius() * PHOTOSPHERE_GLOW_SHARE, colour, PHOTOSPHERE_GLOW_ALPHA * alpha);
+            drawGlow(fit.cx(), fit.cy(), fit.radius() * PHOTOSPHERE_HEART_SHARE, colour, alpha);
+        }
+        try (GlScope flat = GlScope.flat()) {
+            drawDisc(fit.cx(), fit.cy(), Math.max(MIN_BODY_PIXELS, fit.radius() * PHOTOSPHERE_CORE_SHARE), whitened(colour), alpha);
+        }
+    }
+
+    static Color whitened(Color colour) {
+        return new Color(whiten(colour.getRed()), whiten(colour.getGreen()), whiten(colour.getBlue()));
+    }
+
+    private static int whiten(int channel) {
+        return Math.round(channel + (255 - channel) * PHOTOSPHERE_CORE_WHITENING);
     }
 
     private void drawPlanet(Body planet, Fit fit, float alpha) {

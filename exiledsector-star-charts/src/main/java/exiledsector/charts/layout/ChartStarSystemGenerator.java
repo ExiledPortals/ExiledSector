@@ -21,6 +21,8 @@ import exiledsector.charts.wormhole.ChartWormholePlacement;
 import exiledsector.charts.layout.feature.ChartFeature;
 import exiledsector.charts.layout.feature.ChartFeatures;
 import exiledsector.charts.layout.feature.FeatureSite;
+import exiledsector.charts.layout.abyss.AbyssPalette;
+import exiledsector.charts.layout.abyss.ChartAbyss;
 import exiledsector.charts.anomaly.AnomalyLayoutSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.anomaly.ChartCoronaTerrainPlugin;
@@ -256,7 +258,11 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
         tertiary = null;
         systemCenter = null;
         bodyIdPrefix = starId;
-        if (systemType == StarSystemType.DEEP_SPACE) {
+        AbyssPalette abyss = ChartAbyss.pick(recipe.look().abyssPalettes(), random);
+        boolean abyssalCentre = abyss != null && systemType == StarSystemType.DEEP_SPACE;
+        if (abyssalCentre) {
+            addAbyssalCentre();
+        } else if (systemType == StarSystemType.DEEP_SPACE) {
             addDeepSpaceCentre();
         } else if (!addStars(starId)) {
             throw new IllegalStateException("no star type could be picked for a " + systemType + " Star Chart layout");
@@ -281,14 +287,26 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
             anomaly.shape(new AnomalyLayoutSite(system, centre(), visibleStars(),
                     ChartWormholePlacement.outermost(system, List.of()), random));
         }
+        if (abyss != null) {
+            ChartAbyss.dress(system, abyss, abyssalCentre, ChartWormholePlacement.outermost(system, List.of()), starId, random);
+        }
         system.setAge(starAge);
     }
 
-    private void addDeepSpaceCentre() {
+    private void addAbyssalCentre() {
+        startStarlessCentre();
+        centerRadius = ChartAbyss.CENTRE_CLEARANCE;
+    }
+
+    private void startStarlessCentre() {
         systemCenter = system.initNonStarCenter();
         systemCenter.addTag(Tags.AMBIENT_LS);
         system.setLightColor(ChartDeepSpace.AMBIENT_LIGHT);
         starData = (StarGenDataSpec) Global.getSettings().getSpec(StarGenDataSpec.class, ChartDeepSpace.centreDataId(constellationAge), false);
+    }
+
+    private void addDeepSpaceCentre() {
+        startStarlessCentre();
         String centreType = ChartDeepSpace.pickCentre(random);
         Object found = Global.getSettings().getSpec(PlanetGenDataSpec.class, centreType, true);
         if (!(found instanceof PlanetGenDataSpec planetData)) {

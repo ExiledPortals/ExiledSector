@@ -3,6 +3,7 @@ package exiledsector.charts.atlas;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import exiledsector.charts.layout.ChartLayoutRecipe;
 import exiledsector.charts.ChartTables;
+import exiledsector.charts.layout.abyss.AbyssPalette;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -31,6 +32,7 @@ class AtlasDataTest {
 
         assertEquals(List.of(), AtlasData.registerLayouts(ChartTables.csvRows(AtlasData.LAYOUTS_PATH)));
         assertEquals(List.of(), AtlasData.registerDecorations(ChartTables.csvRows(AtlasData.DECORATIONS_PATH)));
+        assertEquals(List.of(), AtlasData.registerAbyssPalettes(ChartTables.csvRows(AtlasData.ABYSS_PALETTES_PATH)));
         assertEquals(List.of(), AtlasData.registerRegions(ChartTables.csvRows(AtlasData.REGIONS_PATH),
                 AtlasData.factionIds()));
         assertEquals(List.of(), AtlasData.registerMarkers(ChartTables.csvRows(AtlasData.MARKERS_PATH)));
@@ -59,6 +61,9 @@ class AtlasDataTest {
         assertFalse(normalFactions.contains("threat"));
         assertEquals(Map.of(StarSystemType.DEEP_SPACE, 1f), AtlasData.recipeFor("threat_expanse", "abyssal_void").shape().systemTypeWeights());
         assertEquals(0f, AtlasData.rules().layoutWeights().get("abyssal_void"));
+        assertEquals(0f, AtlasData.rules().layoutWeights().get("abyssal_depths"));
+        assertEquals(4, AtlasData.recipeFor("abyssal_rift", "abyssal_depths").look().abyssPalettes().size());
+        assertFalse(AtlasData.recipeFor("threat_expanse", "abyssal_void").look().abyssal());
         assertEquals(3, rules.specials().stream().filter(special -> special.placement() == AtlasSpecial.Placement.FIXED)
                 .mapToInt(AtlasSpecial::count).sum());
     }
@@ -125,6 +130,29 @@ class AtlasDataTest {
         assertTrue(recipe.look().keepRuins());
         assertFalse(plain.shape().setsOrbits());
         assertTrue(plain.shape().systemTypeWeights().isEmpty());
+    }
+
+    @Test
+    void abyssPalettesResolveInListedOrderAndBadRowsAreReported() throws Exception {
+        List<String> paletteProblems = AtlasData.registerAbyssPalettes(new JSONArray()
+                .put(new JSONObject().put("id", "red").put("colour", "#FF0032").put("dark_colour", "#4D000F"))
+                .put(new JSONObject().put("id", "amber").put("colour", "#FF7B00").put("dark_colour", "#4D2500").put("vignette", "0.5"))
+                .put(new JSONObject().put("id", "broken").put("colour", "#FF7B00")));
+        List<String> regionProblems = AtlasData.registerRegions(new JSONArray()
+                .put(new JSONObject().put("id", AtlasRegion.NORMAL))
+                .put(new JSONObject().put("id", "rift").put("abyss_palettes", "amber:2; red; broken:1")), Set.of());
+
+        Map<AbyssPalette, Float> palettes = AtlasData.recipeFor("rift", null).look().abyssPalettes();
+
+        assertEquals(1, paletteProblems.size());
+        assertEquals(1, regionProblems.size());
+        assertEquals(List.of("amber", "red"), palettes.keySet().stream().map(AbyssPalette::id).toList());
+        assertEquals(List.of(2f, 1f), List.copyOf(palettes.values()));
+        AbyssPalette amber = palettes.keySet().iterator().next();
+        assertEquals(new Color(0x4D, 0x25, 0x00), amber.darkColour());
+        assertEquals(0.5f, amber.vignette());
+        assertEquals(1f, palettes.keySet().stream().filter(palette -> palette.id().equals("red")).findFirst().orElseThrow().vignette());
+        assertFalse(AtlasData.recipeFor(AtlasRegion.NORMAL, null).look().abyssal());
     }
 
     @Test

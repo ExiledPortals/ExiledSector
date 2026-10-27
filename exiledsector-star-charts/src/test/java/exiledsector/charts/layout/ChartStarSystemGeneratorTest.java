@@ -2,6 +2,7 @@ package exiledsector.charts.layout;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
+import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.PlanetSpecAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
@@ -23,11 +24,16 @@ import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.anomaly.ChartCoronaTerrainPlugin;
 import exiledsector.charts.anomaly.ChartPulsarBeamTerrainPlugin;
 import exiledsector.charts.anomaly.StarAnomalies;
+import exiledsector.charts.layout.abyss.AbyssPalette;
+import exiledsector.charts.layout.abyss.AbyssalDarknessTerrainPlugin;
+import exiledsector.charts.layout.abyss.ChartAbyss;
+import exiledsector.charts.layout.abyss.ChartPhotospherePlugin;
 import org.mockito.ArgumentCaptor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -37,6 +43,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -122,6 +129,33 @@ class ChartStarSystemGeneratorTest {
         for (int pick = 0; pick < 50; pick++) {
             assertFalse(ChartLayoutRecipe.ANOMALY_STARS.contains(blackHole.pickStar(StarAge.OLD).getPlanetType()));
         }
+    }
+
+    @Test
+    void anAbyssalDeepSpaceLayoutLightsItsCentreWithAPhotosphereInsteadOfAWorld() {
+        SettingsAPI settings = Global.getSettings();
+        StarGenDataSpec centreData = mock(StarGenDataSpec.class);
+        when(centreData.getAge()).thenReturn(StarAge.OLD);
+        when(settings.getSpec(StarGenDataSpec.class, "nebula_center_old", false)).thenReturn(centreData);
+        StarSystemAPI system = mock(StarSystemAPI.class);
+        SectorEntityToken centreToken = mock(SectorEntityToken.class);
+        when(system.initNonStarCenter()).thenReturn(centreToken);
+        CustomCampaignEntityAPI photosphere = mock(CustomCampaignEntityAPI.class);
+        when(system.addCustomEntity(any(), any(), eq(ChartPhotospherePlugin.ENTITY_TYPE), any(), any())).thenReturn(photosphere);
+        AbyssPalette red = new AbyssPalette("red", new Color(255, 0, 50), new Color(77, 0, 15), 1f);
+        ChartLayoutRecipe abyssal = new ChartLayoutRecipe(new ChartLook(List.of("graphics/backgrounds/background4.jpg"), List.of(), 0f, null, 0f,
+                Map.of(), Map.of(), false, "", Map.of(red, 1f)), new ChartShape(Map.of(StarSystemType.DEEP_SPACE, 1f), 0, 0, Float.NaN, Map.of(), ""));
+        ChartStarSystemGenerator generator = spy(new ChartStarSystemGenerator(StarAge.OLD, StarSystemType.DEEP_SPACE, abyssal, null));
+
+        generator.generateLayout(system, "chart_star");
+
+        verify(centreToken).addTag(Tags.AMBIENT_LS);
+        verify(generator, never()).addPlanet(any(), any(), anyBoolean(), anyBoolean());
+        verify(system).addCustomEntity(eq("chart_star_photosphere_centre"), any(), eq(ChartPhotospherePlugin.ENTITY_TYPE), any(), any());
+        verify(photosphere).setFixedLocation(0f, 0f);
+        verify(system).setLightColor(ChartAbyss.light(red));
+        verify(system).addTerrain(eq(AbyssalDarknessTerrainPlugin.TERRAIN_ID), any());
+        assertNull(generator.featureAnchor());
     }
 
     @Test

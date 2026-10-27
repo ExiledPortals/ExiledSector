@@ -6,3 +6,4 @@ debris_ring,1,SINGLE:4; BINARY_CLOSE:1,3,6,12000,cat_terrain_rings:3; cat_terrai
 twin_worlds,1,SINGLE:4; BINARY_CLOSE:2,4,7,14000,,twin_worlds,"Two matching worlds locked around each other"
 rogue_planet,1,SINGLE:5,2,5,10000,,rogue_planet,"A lone world drifting far beyond the planets"
 abyssal_void,0,DEEP_SPACE:1,0,0,,,,"No star: one lone world drifts at the centre, as in vanilla's abyssal hyperspace. Weight 0, so only biomes that list it use it"
+abyssal_depths,0,DEEP_SPACE:1,0,2,12000,,,"No star: a photosphere lights the centre and up to two rogue worlds drift far out, as in Random Assortment of Things' Abyss. Weight 0, so only biomes that list it use it"
