@@ -9,6 +9,7 @@ import exiledsector.modifiers.TierRange;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -22,6 +23,7 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
     static final String DESCRIPTION_KEY = "chart.debris.currency.description";
     static final String ITEMS_KEY_PREFIX = "chart.debris.currency.items.";
     static final String USED_NOTICE_KEY_PREFIX = "ui.workbench.notice.used.anomalousDebris.";
+    static final String LOCKED_CLASH_KEY = "chart.debris.currency.lockedClash";
     static final String LINE_SEPARATOR = ", ";
     static final String ITEMS_SEPARATOR = " or ";
 
@@ -86,10 +88,34 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
                 || !ItemModifiers.itemTypes(modifierId).contains(definition.type()) || granted.slot() == ModifierSlot.IMPLICIT) {
             return false;
         }
-        if (ItemCrafting.wardBlocksTransposition(item, context.guardedSlots())) {
+        if (ItemCrafting.wardBlocksTransposition(item, context.guardedSlots()) || lockedClash(item, granted)) {
             return false;
         }
         return AffixLayout.rollableAt(definition.type(), List.of(new PoolEntry(granted, 1f)), TierRange.NO_TIER).size() == 1;
+    }
+
+    @Override
+    public String refusalNoticeKey(Item item) {
+        return item != null && lockedClash(item, modifier()) ? LOCKED_CLASH_KEY : null;
+    }
+
+    static RolledModifier lockedModifier(Item item) {
+        return item.explicits().stream().filter(RolledModifier::locked).findFirst().orElse(null);
+    }
+
+    static boolean lockedClash(Item item, Modifier granted) {
+        RolledModifier locked = item == null || granted == null ? null : lockedModifier(item);
+        if (locked == null || locked.modifierId().equals(granted.id())) {
+            return false;
+        }
+        Set<String> grantedEffects = effectsOf(granted);
+        boolean sharesEffect = locked.lines().stream().anyMatch(line -> grantedEffects.contains(line.effectName()));
+        boolean sideFull = locked.slot() == granted.slot() && AffixLayout.limits(item.definition().type()).maxPerSide() < 2;
+        return sharesEffect || sideFull;
+    }
+
+    private static Set<String> effectsOf(Modifier modifier) {
+        return modifier.lines().stream().map(ModifierLine::effectName).collect(Collectors.toSet());
     }
 
     @Override
@@ -97,31 +123,39 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
         if (!canUse(item, context)) {
             return null;
         }
-        item.replaceExplicits(reroll(item.definition(), modifier(), random));
+        item.replaceExplicits(reroll(item.definition(), modifier(), lockedModifier(item), random));
         item.refreezeName();
         return item;
     }
 
-    static List<RolledModifier> reroll(ItemDefinition definition, Modifier granted, Random random) {
+    static List<RolledModifier> reroll(ItemDefinition definition, Modifier granted, RolledModifier locked, Random random) {
         AffixLayout.Limits limits = AffixLayout.limits(definition.type());
-        boolean grantedPrefix = granted.slot() == ModifierSlot.PREFIX;
         List<RolledModifier> prefixes = new ArrayList<>();
         List<RolledModifier> suffixes = new ArrayList<>();
-        (grantedPrefix ? prefixes : suffixes).add(RolledModifier.roll(granted, random, false));
-        int othersLeft = limits.maxEffects() - 1;
-        othersLeft -= draw(candidates(definition, definition.prefixes(), granted), Math.min(limits.maxPerSide() - prefixes.size(), othersLeft),
-                random, prefixes);
-        draw(candidates(definition, definition.suffixes(), granted), Math.min(limits.maxPerSide() - suffixes.size(), othersLeft), random, suffixes);
+        boolean keepsGranted = locked != null && locked.modifierId().equals(granted.id());
+        RolledModifier grantedRoll = keepsGranted ? locked : RolledModifier.roll(granted, random, false);
+        (granted.slot() == ModifierSlot.PREFIX ? prefixes : suffixes).add(grantedRoll);
+        Set<String> takenIds = new HashSet<>(List.of(granted.id()));
+        Set<String> takenEffects = new HashSet<>(effectsOf(granted));
+        if (locked != null && !keepsGranted) {
+            (locked.slot() == ModifierSlot.PREFIX ? prefixes : suffixes).add(locked);
+            takenIds.add(locked.modifierId());
+            locked.lines().forEach(line -> takenEffects.add(line.effectName()));
+        }
+        int othersLeft = limits.maxEffects() - prefixes.size() - suffixes.size();
+        othersLeft -= draw(candidates(definition, definition.prefixes(), takenIds, takenEffects),
+                Math.min(limits.maxPerSide() - prefixes.size(), othersLeft), random, prefixes);
+        draw(candidates(definition, definition.suffixes(), takenIds, takenEffects), Math.min(limits.maxPerSide() - suffixes.size(), othersLeft),
+                random, suffixes);
         List<RolledModifier> rerolled = new ArrayList<>(prefixes);
         rerolled.addAll(suffixes);
         return rerolled;
     }
 
-    private static List<PoolEntry> candidates(ItemDefinition definition, List<PoolEntry> side, Modifier granted) {
-        Set<String> grantedEffects = granted.lines().stream().map(ModifierLine::effectName).collect(Collectors.toSet());
+    private static List<PoolEntry> candidates(ItemDefinition definition, List<PoolEntry> side, Set<String> takenIds, Set<String> takenEffects) {
         return AffixLayout.rollableAt(definition.type(), side, TierRange.NO_TIER).stream()
-                .filter(entry -> !entry.modifier().id().equals(granted.id()))
-                .filter(entry -> entry.modifier().lines().stream().noneMatch(line -> grantedEffects.contains(line.effectName())))
+                .filter(entry -> !takenIds.contains(entry.modifier().id()))
+                .filter(entry -> entry.modifier().lines().stream().noneMatch(line -> takenEffects.contains(line.effectName())))
                 .toList();
     }
 

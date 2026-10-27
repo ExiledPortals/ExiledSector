@@ -49,6 +49,10 @@ public interface ItemCurrency {
         return appliesTo(ItemType.SUBROUTINE) || appliesTo(ItemType.HULL_ITEM);
     }
 
+    default String refusalNoticeKey(Item item) {
+        return null;
+    }
+
     default String description() {
         return Translation.text(MaterialItems.descriptionKey(itemId()));
     }

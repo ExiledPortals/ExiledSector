@@ -102,6 +102,26 @@ class AnomalousDebrisTest {
     }
 
     @Test
+    void piecesMoveSmoothlyForHoursWithoutJumping() {
+        List<AnomalousDebrisTerrainPlugin.Piece> pieces = AnomalousDebrisTerrainPlugin.pieces(400f, 4L);
+        float[] angles = new float[pieces.size()];
+        float[] facings = new float[pieces.size()];
+        float[] pulses = new float[pieces.size()];
+        float frame = 1f / 60f;
+        for (int step = 0; step < 4 * 3600 * 60; step++) {
+            float before = angles[0];
+            float beforeFacing = facings[0];
+            AnomalousDebrisTerrainPlugin.advancePhases(pieces, angles, facings, pulses, frame);
+            float moved = AnomalousDebrisTerrainPlugin.wrap(angles[0] - before + 180f, 360f) - 180f;
+            float spun = AnomalousDebrisTerrainPlugin.wrap(facings[0] - beforeFacing + 180f, 360f) - 180f;
+            assertEquals(pieces.get(0).driftDegreesPerSecond() * frame, moved, 0.01f);
+            assertEquals(pieces.get(0).spinDegreesPerSecond() * frame, spun, 0.01f);
+        }
+        assertTrue(angles[0] >= 0f && angles[0] < 360f);
+        assertTrue(pulses[0] >= 0f && pulses[0] < (float) Math.PI * 2f);
+    }
+
+    @Test
     void piecesAreTheSameForTheSameSeedAndStayInsideTheField() {
         List<AnomalousDebrisTerrainPlugin.Piece> pieces = AnomalousDebrisTerrainPlugin.pieces(400f, 4L);
         assertEquals(pieces, AnomalousDebrisTerrainPlugin.pieces(400f, 4L));

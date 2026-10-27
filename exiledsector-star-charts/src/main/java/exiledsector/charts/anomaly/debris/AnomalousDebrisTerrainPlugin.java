@@ -40,7 +40,8 @@ public class AnomalousDebrisTerrainPlugin extends BaseTerrain {
     static final float GLOW_CHANCE = 0.12f;
     static final float GLOW_ALPHA = 0.6f;
     static final float GLOW_PULSE_PER_SECOND = 1.2f;
-    static final float ANIMATION_WRAP_SECONDS = 3600f;
+    static final float FULL_TURN_DEGREES = 360f;
+    static final float FULL_PULSE = (float) Math.PI * 2f;
     static final Color GLOW_COLOUR = new Color(110, 230, 255);
     private static final Logger LOG = Logger.getLogger(AnomalousDebrisTerrainPlugin.class);
 
@@ -57,7 +58,9 @@ public class AnomalousDebrisTerrainPlugin extends BaseTerrain {
     private long seed;
     private boolean revealed;
     private transient float secondsSinceCheck;
-    private transient float elapsedSeconds;
+    private transient float[] angles;
+    private transient float[] facings;
+    private transient float[] pulses;
     private transient List<Piece> pieces;
     private transient List<SpriteAPI> sprites;
     private transient List<SpriteAPI> glows;
@@ -116,7 +119,9 @@ public class AnomalousDebrisTerrainPlugin extends BaseTerrain {
             return;
         }
         super.advance(amount);
-        elapsedSeconds = (elapsedSeconds + amount) % ANIMATION_WRAP_SECONDS;
+        if (entity.isInCurrentLocation() && ensurePhases()) {
+            advancePhases(pieces, angles, facings, pulses, amount);
+        }
         if (revealed) {
             return;
         }
@@ -184,15 +189,48 @@ public class AnomalousDebrisTerrainPlugin extends BaseTerrain {
         return made;
     }
 
+    private boolean ensurePhases() {
+        if (angles != null) {
+            return true;
+        }
+        if (radius <= 0f) {
+            return false;
+        }
+        pieces = pieces(radius, seed);
+        angles = new float[pieces.size()];
+        facings = new float[pieces.size()];
+        pulses = new float[pieces.size()];
+        for (int index = 0; index < pieces.size(); index++) {
+            Piece piece = pieces.get(index);
+            angles[index] = piece.startAngle();
+            facings[index] = piece.startFacing();
+            pulses[index] = piece.glowPhase();
+        }
+        return true;
+    }
+
+    static void advancePhases(List<Piece> pieces, float[] angles, float[] facings, float[] pulses, float seconds) {
+        for (int index = 0; index < pieces.size(); index++) {
+            Piece piece = pieces.get(index);
+            angles[index] = wrap(angles[index] + piece.driftDegreesPerSecond() * seconds, FULL_TURN_DEGREES);
+            facings[index] = wrap(facings[index] + piece.spinDegreesPerSecond() * seconds, FULL_TURN_DEGREES);
+            pulses[index] = wrap(pulses[index] + GLOW_PULSE_PER_SECOND * seconds, FULL_PULSE);
+        }
+    }
+
+    static float wrap(float value, float period) {
+        float wrapped = value % period;
+        return wrapped < 0f ? wrapped + period : wrapped;
+    }
+
     private boolean ensureSprites() {
         if (sprites != null) {
             return true;
         }
-        if (spritesFailed) {
+        if (spritesFailed || !ensurePhases()) {
             return false;
         }
         try {
-            pieces = pieces(radius, seed);
             sprites = new ArrayList<>(pieces.size());
             glows = new ArrayList<>(pieces.size());
             for (Piece piece : pieces) {
@@ -231,10 +269,10 @@ public class AnomalousDebrisTerrainPlugin extends BaseTerrain {
         Color light = entity.getLightSource() != null && entity.getLightColor() != null ? entity.getLightColor() : Color.WHITE;
         for (int index = 0; index < pieces.size(); index++) {
             Piece piece = pieces.get(index);
-            double angle = Math.toRadians(piece.startAngle() + piece.driftDegreesPerSecond() * elapsedSeconds);
+            double angle = Math.toRadians(angles[index]);
             float x = centre.x + (float) Math.cos(angle) * piece.orbitRadius();
             float y = centre.y + (float) Math.sin(angle) * piece.orbitRadius();
-            float facing = piece.startFacing() + piece.spinDegreesPerSecond() * elapsedSeconds;
+            float facing = facings[index];
             SpriteAPI sprite = sprites.get(index);
             sprite.setAngle(facing);
             sprite.setColor(light);
@@ -243,7 +281,7 @@ public class AnomalousDebrisTerrainPlugin extends BaseTerrain {
             sprite.renderAtCenter(x, y);
             SpriteAPI glow = glows.get(index);
             if (glow != null) {
-                float pulse = 0.5f + 0.5f * (float) Math.sin(elapsedSeconds * GLOW_PULSE_PER_SECOND + piece.glowPhase());
+                float pulse = 0.5f + 0.5f * (float) Math.sin(pulses[index]);
                 glow.setAngle(facing);
                 glow.setColor(GLOW_COLOUR);
                 glow.setAdditiveBlend();

@@ -13,6 +13,7 @@ import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
+import exiledsector.ExiledSector;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.CraftingWard;
@@ -500,6 +501,11 @@ public final class SocketWorkbenchPanel extends HoloPanel {
                 showNotice(Translation.text("ui.workbench.notice.noOtherUnique"));
                 return false;
             }
+            String refusalKey = currency.refusalNoticeKey(loadedItem);
+            if (refusalKey != null) {
+                showNotice(Translation.msg(refusalKey).arg("name", MaterialItems.displayName(currency.itemId())).arg("target", loadedItem.name()).text());
+                return false;
+            }
             showNotice(Translation.msg("ui.workbench.notice.cannotUse").arg("name", MaterialItems.displayName(currency.itemId()))
                     .arg("target", loadedItem.name()).text());
             return false;
@@ -660,7 +666,9 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             return support.currencies();
         }
         CraftingMaterials materials = playerMaterials();
-        return hullBenchCurrencies(ItemCurrencies.all(), materials::count);
+        List<ItemCurrency> offered = new ArrayList<>();
+        ExiledSector.enabledDomains().forEach(domain -> offered.addAll(domain.hullBenchCurrencies()));
+        return hullBenchCurrencies(offered, materials::count);
     }
 
     static List<ItemCurrency> hullBenchCurrencies(List<ItemCurrency> registered, ToIntFunction<String> owned) {

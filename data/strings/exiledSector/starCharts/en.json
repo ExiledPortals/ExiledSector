@@ -276,6 +276,7 @@
     "chart.debris.currency.description": "Rerolls {items} with four modifiers, one always {modifier}. Only found on corrupted dormant fleets.",
     "chart.debris.currency.items.hull_item": "a hull item",
     "chart.debris.currency.items.subroutine": "a subroutine",
+    "chart.debris.currency.lockedClash": "{name} can't keep the locked modifier alongside its own.",
     "ui.workbench.notice.used.anomalousDebris.hardware": "The engram rebuilt {before} as {name}.",
     "ui.workbench.notice.used.anomalousDebris.crew": "The engram rewrote {before} as {name}.",
     "ui.workbench.notice.used.anomalousDebris.software": "The engram recompiled {before} into {name}.",

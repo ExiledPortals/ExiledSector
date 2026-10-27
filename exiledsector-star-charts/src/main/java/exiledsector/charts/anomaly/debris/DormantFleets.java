@@ -67,7 +67,7 @@ public final class DormantFleets {
 
     public static CampaignFleetAPI create(String runId, int tier, ChartGenContext context, long seed) {
         SectorAPI sector = Global.getSector();
-        dressFaction(sector.getFaction(FACTION_ID));
+        dressFaction(sector.getFaction(FACTION_ID), sector.getAllFactions());
         CampaignFleetAPI fleet = Global.getFactory().createEmptyFleet(FACTION_ID, Translation.gameText("chart.debris.fleet.name"), true);
         fleet.setInflater(null);
         populate(fleet, hullFactions(sector), tier, context, seed, false);
@@ -79,7 +79,7 @@ public final class DormantFleets {
         return fleet;
     }
 
-    static void dressFaction(FactionAPI faction) {
+    static void dressFaction(FactionAPI faction, List<FactionAPI> others) {
         if (faction == null) {
             throw new IllegalStateException("the " + FACTION_ID + " faction is not loaded");
         }
@@ -87,6 +87,11 @@ public final class DormantFleets {
         faction.setDisplayNameWithArticleOverride(Translation.gameText("chart.debris.faction.article"));
         faction.setDisplayIsOrAreOverride(Translation.gameText("chart.debris.faction.isOrAre"));
         faction.setRelationship(Factions.PLAYER, NEUTRAL_RELATIONSHIP);
+        for (FactionAPI other : others == null ? List.<FactionAPI>of() : others) {
+            if (other != null && other != faction && !FACTION_ID.equals(other.getId())) {
+                faction.setRelationship(other.getId(), NEUTRAL_RELATIONSHIP);
+            }
+        }
     }
 
     static List<HullFaction> hullFactions(SectorAPI sector) {

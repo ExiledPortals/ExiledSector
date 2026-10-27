@@ -266,6 +266,7 @@
     "chart.debris.currency.description": "重铸{items}，使其拥有四个修正，其中一个必定为{modifier}。只能从被腐化的休眠舰队获得。",
     "chart.debris.currency.items.hull_item": "一件舰体物品",
     "chart.debris.currency.items.subroutine": "一个子程序",
+    "chart.debris.currency.lockedClash": "{name}无法在保留锁定修正的同时加入自己的修正。",
     "ui.workbench.notice.used.anomalousDebris.hardware": "印痕将{before}重建为{name}。",
     "ui.workbench.notice.used.anomalousDebris.crew": "印痕将{before}改写为{name}。",
     "ui.workbench.notice.used.anomalousDebris.software": "印痕将{before}重新编译为{name}。",

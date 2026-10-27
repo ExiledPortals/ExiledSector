@@ -113,6 +113,67 @@ class AnomalousDebrisCurrencyTest {
         assertNotNull(reloaded.explicitModifier(GRANTED_PREFIX));
     }
 
+    private Item lockedWith(String effectName, ModifierSlot slot, float magnitude) {
+        return store.add(new ItemData(BASE, 9L, List.of(RolledModifier.single(slot, new RolledEffect(effectName, magnitude)).asLocked()), null));
+    }
+
+    @Test
+    void anEngramKeepsAFixationLockedModifierAndFillsAroundIt() {
+        for (long seed = 0; seed < 40; seed++) {
+            for (String currencyId : List.of(REVENANT, VIGIL)) {
+                Item item = lockedWith("FLUX_CAPACITY_MULT", ModifierSlot.PREFIX, 5f);
+                AnomalousDebrisCurrency currency = currency(currencyId);
+
+                assertSame(item, currency.use(item, new CraftingContext(store, definition -> true, Set.of()), new Random(seed)));
+
+                List<RolledModifier> explicits = item.explicits();
+                assertEquals(4, explicits.size());
+                assertEquals(2, explicits.stream().filter(rolled -> rolled.slot() == ModifierSlot.PREFIX).count());
+                RolledModifier locked = explicits.stream().filter(RolledModifier::locked).findFirst().orElseThrow();
+                assertEquals("FLUX_CAPACITY_MULT", locked.lines().get(0).effectName());
+                assertEquals(5f, locked.lines().get(0).magnitude());
+                assertTrue(explicits.stream().anyMatch(rolled -> rolled.modifierId().equals(currency.modifierId())));
+                Set<String> effects = new HashSet<>();
+                explicits.forEach(rolled -> rolled.lines().forEach(line -> assertTrue(effects.add(line.effectName()), line.effectName())));
+            }
+        }
+    }
+
+    @Test
+    void anEngramRefusesAnItemWhoseLockedModifierRollsItsOwnEffect() {
+        Item item = lockedWith("HULL_PERCENT", ModifierSlot.PREFIX, 5f);
+        CraftingContext context = new CraftingContext(store, definition -> true, Set.of());
+
+        assertFalse(currency(REVENANT).canUse(item, context));
+        assertEquals(AnomalousDebrisCurrency.LOCKED_CLASH_KEY, currency(REVENANT).refusalNoticeKey(item));
+        assertTrue(currency(VIGIL).canUse(item, context));
+        assertNull(currency(VIGIL).refusalNoticeKey(item));
+    }
+
+    @Test
+    void corruptingAroundALockedReservedModifierNeverAddsItsOrdinaryTwin() {
+        for (long seed = 0; seed < 60; seed++) {
+            Item item = common();
+            currency(REVENANT).use(item, new CraftingContext(store, definition -> true, Set.of()), new Random(seed));
+            List<RolledModifier> locked = new java.util.ArrayList<>(item.explicits());
+            locked.replaceAll(rolled -> rolled.modifierId().equals(GRANTED_PREFIX) ? rolled.asLocked() : rolled);
+            item.replaceExplicits(locked);
+
+            assertNotNull(ItemCrafting.randomiseModifiers(store, item, new Random(seed + 100L), definition -> true));
+
+            long hullLines = item.explicits().stream().flatMap(rolled -> rolled.lines().stream())
+                    .filter(line -> line.effectName().equals("HULL_PERCENT")).count();
+            assertEquals(1, hullLines);
+            assertTrue(item.explicits().stream().anyMatch(rolled -> rolled.locked() && rolled.modifierId().equals(GRANTED_PREFIX)));
+        }
+    }
+
+    @Test
+    void theStarChartsDomainOffersItsEngramsToTheHullBench() {
+        assertEquals(Set.of(REVENANT, VIGIL), new HashSet<>(new exiledsector.charts.StarChartsDomain().hullBenchCurrencies().stream()
+                .map(ItemCurrency::itemId).toList()));
+    }
+
     @Test
     void laterCraftingNeverAddsASecondModifierOfTheGrantedEffect() {
         Item item = common();

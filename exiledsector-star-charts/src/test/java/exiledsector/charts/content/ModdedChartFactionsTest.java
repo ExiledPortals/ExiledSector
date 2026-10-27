@@ -3,6 +3,8 @@ package exiledsector.charts.content;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.FactionSpecAPI;
+import exiledsector.charts.anomaly.debris.DormantFleets;
+import exiledsector.charts.anomaly.skirmish.SkirmishFactions;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -53,6 +55,32 @@ class ModdedChartFactionsTest {
         config("pirates", new JSONObject().put(ModdedChartFactions.PLAYABLE_KEY, true));
 
         assertEquals(List.of("kesteven", "roider"), ModdedChartFactions.detect(Set.of("pirates")));
+    }
+
+    @Test
+    void ourOwnRunOnlyFactionsAreNeverFoundEvenIfTheirConfigSaysPlayable() throws Exception {
+        when(settings.getMergedSpreadsheetData(ModdedChartFactions.FACTION_COLUMN, ModdedChartFactions.MOD_FACTIONS_PATH)).thenReturn(new JSONArray()
+                .put(row(DormantFleets.FACTION_ID)).put(row(SkirmishFactions.ALLY_FACTION_ID)));
+        for (String factionId : List.of(DormantFleets.FACTION_ID, SkirmishFactions.ALLY_FACTION_ID)) {
+            when(settings.getFactionSpec(factionId)).thenReturn(mock(FactionSpecAPI.class));
+            config(factionId, new JSONObject().put(ModdedChartFactions.PLAYABLE_KEY, true));
+        }
+
+        assertEquals(List.of(), ModdedChartFactions.detect(Set.of()));
+    }
+
+    @Test
+    void nexerelinReadsOurRunOnlyFactionsAsUnplayableAndOutOfDiplomacy() throws Exception {
+        java.nio.file.Path folder = exiledlib.ProjectFiles.projectRoot().resolve(ModdedChartFactions.CONFIG_FOLDER);
+        String listed = java.nio.file.Files.readString(folder.resolve("mod_factions.csv"));
+        for (String factionId : List.of(DormantFleets.FACTION_ID, SkirmishFactions.ALLY_FACTION_ID)) {
+            org.junit.jupiter.api.Assertions.assertTrue(listed.lines().anyMatch(factionId::equals), factionId);
+            String config = java.nio.file.Files.readString(folder.resolve(factionId + ".json")).replaceAll("\\s", "");
+            for (String flag : List.of("\"playableFaction\":false", "\"noRandomizeRelations\":true", "\"noSyncRelations\":true",
+                    "\"disableDiplomacy\":true")) {
+                org.junit.jupiter.api.Assertions.assertTrue(config.contains(flag), factionId + " " + flag);
+            }
+        }
     }
 
     @Test

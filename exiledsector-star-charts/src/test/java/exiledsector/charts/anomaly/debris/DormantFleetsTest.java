@@ -3,6 +3,7 @@ package exiledsector.charts.anomaly.debris;
 import com.fs.starfarer.api.FactoryAPI;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.FleetAssignment;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
@@ -18,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -100,6 +102,23 @@ class DormantFleetsTest {
         assertTrue(DormantFleets.isHidden(other));
         verify(other, never()).setAI(any());
         assertFalse(DormantFleets.wake(attacked));
+    }
+
+    @Test
+    void theDormantFactionIsResetToNeutralWithThePlayerAndEveryOtherFaction() {
+        FactionAPI dormant = mock(FactionAPI.class);
+        when(dormant.getId()).thenReturn(DormantFleets.FACTION_ID);
+        FactionAPI pirates = mock(FactionAPI.class);
+        when(pirates.getId()).thenReturn("pirates");
+        FactionAPI threat = mock(FactionAPI.class);
+        when(threat.getId()).thenReturn("threat");
+
+        DormantFleets.dressFaction(dormant, List.of(dormant, pirates, threat));
+
+        verify(dormant).setRelationship("player", 0f);
+        verify(dormant).setRelationship("pirates", 0f);
+        verify(dormant).setRelationship("threat", 0f);
+        verify(dormant, never()).setRelationship(DormantFleets.FACTION_ID, 0f);
     }
 
     @Test
