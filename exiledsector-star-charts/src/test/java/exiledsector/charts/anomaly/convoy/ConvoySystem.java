@@ -55,6 +55,7 @@ final class ConvoySystem {
         doAnswer(invocation -> {
             SectorEntityToken entity = invocation.getArgument(0);
             entities.put(entity.getId(), entity);
+            when(entity.getContainingLocation()).thenReturn(system);
             return null;
         }).when(system).addEntity(any());
         doAnswer(invocation -> {

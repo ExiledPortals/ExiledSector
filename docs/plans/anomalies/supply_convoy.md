@@ -35,14 +35,15 @@ Tuning lines are chart effects carried by an atlas source, per `overview.md`:
 ## Build order
 
 1. [x] Convoy fleets, non-hostile to the player, with the route through waypoints to the destination planet; intel with route, destination, timing and manifest. `charts.anomaly.convoy`: `SupplyConvoy` (anomaly, generation), `ConvoyRoute`, `ConvoyFleets` (fleets fly the run-only faction `exiledSector_convoy`, dressed as the chart faction like the skirmish allies), `ConvoyScript` (system script: departs 5 days after the player arrives), `ConvoyIntel`; anomaly fleets go through `content.ChartAnomalyFleets`.
-2. [ ] Turning the whole convoy hostile when any of its fleets is attacked or pulsed, with no reputation change.
+2. [x] Turning the whole convoy hostile when any of its fleets is attacked or pulsed, with no reputation change. `ConvoyEncounterDialog` (picked by `ChartCampaignPlugin` through `ConvoyDialogs`), `ConvoyScript.turnHostile` and `checkPulse` (reads vanilla's `$justDidInterdictionPulse` on its periodic check, holds the hit fleets for vanilla's interdict seconds), flags in `ConvoyHostility`.
 3. [ ] Escort formation and terrain separation.
 4. [ ] Freighter flight and cargo pod drops; split loot budget.
 5. [ ] The raid class in `charts.raid`, copied from vanilla's non-market raid, and the cache raid objective.
 6. [ ] Delivery to the destination planet, the raid option there, difficulty by tier.
 7. [ ] Chart modifier lines, strings, `docs/docs.md` section and tests.
 
-## Open questions
+## Resolved questions
 
-- Vanilla pulls nearby fleets into a battle by distance; confirm that range so escort separation can be tuned against it.
-- Decompile how vanilla handles attacking a non-hostile fleet: which faction the convoy flies so no reputation changes, and whether nearby non-hostile escorts join the battle on the convoy's side when it starts.
+- Pull-in range: vanilla's `battleJoinRange` is 500 su (`settings.json`, 200 more for AI fleets of the player's faction), measured edge to edge from the attacked fleet (`FleetInteractionDialogPluginImpl.pullInNearbyFleets`). A fleet in range also has to be visible to the player's sensors and its AI has to want to join. Escort separation is tuned against 500 su.
+- Attacking a non-hostile fleet: the pull-in runs as soon as the encounter dialog opens, before the player picks Engage, and `TacticalModule.wantsToJoin` refuses any fleet with `$cfai_makeNonHostile` that would join the side against the player, and every fleet with `$isTradeFleet`. So clicking a peaceful convoy fleet opens our own `ConvoyEncounterDialog` first; choosing to attack turns the whole convoy hostile, then hands over to vanilla's fleet dialog, whose pull-in now takes escorts within 500 su. The freighters keep `$isTradeFleet`, so they never join a fight over an escort.
+- Faction and reputation: battles skip the reputation change when the enemy side's primary fleet has `$noRepImpact` (`FleetEncounterContext.adjustPlayerReputation`), which every convoy fleet carries. Interdiction Pulse, though, applies `RepActions.INTERDICTED` to the hit fleet's faction with no memory check (`InterdictionPulseAbility.applyEffect`). So the convoy flies the run-only faction `exiledSector_convoy`, dressed as the chart faction and set back to neutral towards the player whenever a convoy is generated, and no real faction's standing ever changes.

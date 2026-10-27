@@ -35,6 +35,7 @@ final class ConvoyHostility {
     }
 
     static boolean isPeaceful(CampaignFleetAPI fleet) {
-        return fleet != null && fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_MAKE_NON_HOSTILE);
+        MemoryAPI memory = fleet == null ? null : fleet.getMemoryWithoutUpdate();
+        return memory != null && memory.getBoolean(MemFlags.MEMORY_KEY_MAKE_NON_HOSTILE);
     }
 }

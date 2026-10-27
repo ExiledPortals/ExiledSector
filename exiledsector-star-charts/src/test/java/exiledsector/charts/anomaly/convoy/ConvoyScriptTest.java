@@ -1,6 +1,12 @@
 package exiledsector.charts.anomaly.convoy;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CampaignClockAPI;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
+import org.lwjgl.util.vector.Vector2f;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetAssignment;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
@@ -27,6 +33,7 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -129,6 +136,61 @@ class ConvoyScriptTest {
         assertEquals(new FakeChartContentEngine.Assignment(FleetAssignment.GO_TO_LOCATION, destination), given.get(given.size() - 2));
         assertEquals(FleetAssignment.ORBIT_PASSIVE, given.get(given.size() - 1).assignment());
         assertEquals(List.of(FleetAssignment.FOLLOW), orders(ConvoyRole.ESCORT));
+    }
+
+    @Test
+    void attackingOneFleetTurnsTheWholeConvoyHostileWithoutTouchingStanding() {
+        ConvoyScript script = convoySystem.script();
+        CampaignFleetAPI freighters = convoySystem.fleet(convoy(), ConvoyRole.FREIGHTERS);
+        assertTrue(ConvoyEncounterDialog.wantsToHandle(convoySystem.fleet(convoy(), ConvoyRole.SCREEN)));
+
+        assertTrue(script.turnHostile(convoy()));
+        assertFalse(script.turnHostile(convoy()));
+
+        assertTrue(convoy().isHostile());
+        for (ConvoyRole role : ConvoyRole.values()) {
+            CampaignFleetAPI fleet = convoySystem.fleet(convoy(), role);
+            assertTrue(fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_MAKE_HOSTILE), role.key());
+            assertFalse(fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_MAKE_NON_HOSTILE), role.key());
+            assertTrue(fleet.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_NO_REP_IMPACT), role.key());
+            assertFalse(ConvoyEncounterDialog.wantsToHandle(fleet), role.key());
+        }
+        assertTrue(convoySystem.fleet(convoy(), ConvoyRole.ESCORT).getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE));
+        assertFalse(freighters.getMemoryWithoutUpdate().getBoolean(MemFlags.MEMORY_KEY_MAKE_AGGRESSIVE));
+        assertEquals(new FakeChartContentEngine.Assignment(FleetAssignment.ORBIT_AGGRESSIVE, freighters),
+                convoySystem.assignments(convoySystem.fleet(convoy(), ConvoyRole.SCREEN)).get(0));
+        verify(mockSector.sector, never()).adjustPlayerReputation(any(), any(String.class));
+    }
+
+    @Test
+    void anInterdictionPulseThatReachesAConvoyFleetHoldsItAndTurnsTheConvoyHostile() {
+        ConvoyScript script = convoySystem.script();
+        CampaignFleetAPI escort = convoySystem.fleet(convoy(), ConvoyRole.ESCORT);
+        SettingsAPI settings = mock(SettingsAPI.class);
+        when(settings.getMaxSensorRange()).thenReturn(3000);
+        mockSector.global.when(Global::getSettings).thenReturn(settings);
+        StatBonus sensorRange = mock(StatBonus.class);
+        when(sensorRange.computeEffective(anyFloat())).thenReturn(1000f);
+        when(playerFleet.getSensorRangeMod()).thenReturn(sensorRange);
+        for (ConvoyRole role : ConvoyRole.values()) {
+            when(convoySystem.fleet(convoy(), role).getSensorRangeMod()).thenReturn(sensorRange);
+        }
+        MemoryAPI playerMemory = FakeChartContentEngine.memory();
+        when(playerFleet.getMemoryWithoutUpdate()).thenReturn(playerMemory);
+        when(playerFleet.getContainingLocation()).thenReturn(convoySystem.system);
+        Vector2f escortAt = escort.getLocation();
+        when(playerFleet.getLocation()).thenReturn(new Vector2f(escortAt.x + 5000f, escortAt.y));
+
+        playerMemory.set(MemFlags.JUST_DID_INTERDICTION_PULSE, true);
+        script.check(mockSector.sector);
+        assertFalse(convoy().isHostile(), "a pulse out of range is no attack");
+
+        elapsedDays = 1f;
+        when(playerFleet.getLocation()).thenReturn(new Vector2f(escortAt.x + 100f, escortAt.y));
+        script.check(mockSector.sector);
+        assertTrue(convoy().isHostile());
+        script.advance(0.1f);
+        verify(escort).goSlowOneFrame(true);
     }
 
     @Test

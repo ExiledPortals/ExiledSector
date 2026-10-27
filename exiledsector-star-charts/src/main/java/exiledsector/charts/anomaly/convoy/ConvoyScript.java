@@ -10,15 +10,23 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.ai.FleetAssignmentDataAPI;
+import com.fs.starfarer.api.impl.campaign.abilities.InterdictionPulseAbility;
+import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
+import com.fs.starfarer.api.util.Misc;
+import exiledlib.i18n.Translation;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunBound;
 import exiledsector.charts.run.ChartRuns;
+import exiledsector.ui.CampaignMessages;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public final class ConvoyScript implements EveryFrameScript, ChartRunBound {
 
@@ -28,7 +36,9 @@ public final class ConvoyScript implements EveryFrameScript, ChartRunBound {
     private final int tier;
     private final StarSystemAPI system;
     private final List<ConvoyState> convoys = new ArrayList<>();
+    private final Map<String, Float> holds = new HashMap<>();
     private long arrivalTimestamp = Long.MIN_VALUE;
+    private long lastPulseTimestamp = Long.MIN_VALUE;
     private boolean intelAdded;
     private float daysSinceCheck = Float.MAX_VALUE;
     private boolean done;
@@ -50,6 +60,14 @@ public final class ConvoyScript implements EveryFrameScript, ChartRunBound {
             }
         }
         return null;
+    }
+
+    public static ConvoyState convoyOf(CampaignFleetAPI fleet) {
+        if (fleet == null || fleet.getMemoryWithoutUpdate() == null || !fleet.getMemoryWithoutUpdate().contains(SupplyConvoy.CONVOY_MEMORY_KEY)) {
+            return null;
+        }
+        ConvoyScript script = in(fleet.getContainingLocation());
+        return script == null ? null : script.convoy(fleet.getMemoryWithoutUpdate().getInt(SupplyConvoy.CONVOY_MEMORY_KEY));
     }
 
     void add(ConvoyState convoy) {
@@ -121,6 +139,7 @@ public final class ConvoyScript implements EveryFrameScript, ChartRunBound {
                 intelAdded = true;
                 convoys.forEach(convoy -> ConvoyIntel.addFor(sector, this, convoy));
             }
+            holdFleets(amount);
             daysSinceCheck += sector.getClock().convertToDays(amount);
             if (daysSinceCheck < ConvoyRules.CHECK_DAYS) {
                 return;
@@ -138,8 +157,12 @@ public final class ConvoyScript implements EveryFrameScript, ChartRunBound {
     void check(SectorAPI sector) {
         CampaignFleetAPI playerFleet = sector.getPlayerFleet();
         CampaignClockAPI clock = sector.getClock();
-        if (arrivalTimestamp == Long.MIN_VALUE && playerFleet != null && playerFleet.getContainingLocation() == system) {
+        boolean playerInside = playerFleet != null && playerFleet.getContainingLocation() == system;
+        if (arrivalTimestamp == Long.MIN_VALUE && playerInside) {
             arrivalTimestamp = clock.getTimestamp();
+        }
+        if (playerInside) {
+            checkPulse(playerFleet, clock);
         }
         for (ConvoyState convoy : convoys) {
             if (convoy.phase() == ConvoyState.Phase.WAITING && arrivalTimestamp != Long.MIN_VALUE
@@ -147,6 +170,79 @@ public final class ConvoyScript implements EveryFrameScript, ChartRunBound {
                 depart(convoy);
             }
             moveScreenLead(convoy);
+        }
+    }
+
+    void checkPulse(CampaignFleetAPI playerFleet, CampaignClockAPI clock) {
+        if (playerFleet.getMemoryWithoutUpdate() == null || !playerFleet.getMemoryWithoutUpdate().getBoolean(MemFlags.JUST_DID_INTERDICTION_PULSE)
+                || lastPulseTimestamp != Long.MIN_VALUE && clock.getElapsedDaysSince(lastPulseTimestamp) < ConvoyRules.PULSE_REPEAT_DAYS) {
+            return;
+        }
+        lastPulseTimestamp = clock.getTimestamp();
+        float range = InterdictionPulseAbility.getRange(playerFleet);
+        for (ConvoyState convoy : convoys) {
+            boolean hit = false;
+            for (ConvoyRole role : ConvoyRole.values()) {
+                CampaignFleetAPI fleet = fleet(convoy, role);
+                if (fleet != null && !fleet.isInHyperspaceTransition() && Misc.getDistance(playerFleet.getLocation(), fleet.getLocation()) <= range) {
+                    hit = true;
+                    holds.put(fleet.getId(), Math.max(0f, InterdictionPulseAbility.getInterdictSeconds(playerFleet, fleet)));
+                }
+            }
+            if (hit) {
+                turnHostile(convoy);
+            }
+        }
+    }
+
+    void holdFleets(float amount) {
+        if (holds.isEmpty()) {
+            return;
+        }
+        Iterator<Map.Entry<String, Float>> held = holds.entrySet().iterator();
+        while (held.hasNext()) {
+            Map.Entry<String, Float> hold = held.next();
+            SectorEntityToken entity = system.getEntityById(hold.getKey());
+            float left = hold.getValue() - amount;
+            if (!(entity instanceof CampaignFleetAPI fleet) || left <= 0f) {
+                held.remove();
+                continue;
+            }
+            fleet.goSlowOneFrame(true);
+            hold.setValue(left);
+        }
+    }
+
+    public boolean turnHostile(ConvoyState convoy) {
+        if (!convoy.markHostile()) {
+            return false;
+        }
+        CampaignFleetAPI freighters = fleet(convoy, ConvoyRole.FREIGHTERS);
+        for (ConvoyRole role : ConvoyRole.values()) {
+            CampaignFleetAPI fleet = fleet(convoy, role);
+            if (fleet == null) {
+                continue;
+            }
+            ConvoyHostility.makeHostile(fleet, role);
+            if (role != ConvoyRole.FREIGHTERS) {
+                guard(fleet, freighters);
+            }
+        }
+        if (CampaignMessages.available() && Global.getSector().getPlayerFleet() != null
+                && Global.getSector().getPlayerFleet().getContainingLocation() == system) {
+            CampaignMessages.plain(Translation.gameText("chart.convoy.alarm"), Misc.getNegativeHighlightColor());
+        }
+        return true;
+    }
+
+    void guard(CampaignFleetAPI escort, CampaignFleetAPI freighters) {
+        escort.clearAssignments();
+        if (freighters != null) {
+            escort.addAssignment(FleetAssignment.ORBIT_AGGRESSIVE, freighters, ChartContentGenerator.ASSIGNMENT_DAYS);
+        }
+        SectorEntityToken centre = system.getCenter() != null ? system.getCenter() : system.getStar();
+        if (centre != null) {
+            escort.addAssignment(FleetAssignment.PATROL_SYSTEM, centre, ChartContentGenerator.ASSIGNMENT_DAYS);
         }
     }
 
