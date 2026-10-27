@@ -3,6 +3,7 @@ package exiledsector.charts.anomaly;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.content.ChartSpot;
@@ -26,6 +27,7 @@ public final class AnomalyContentSite {
     private final String factionId;
     private final ChartGenContext context;
     private final List<SectorEntityToken> pois;
+    private final List<SectorEntityToken> guardedPois;
     private final Vector2f entry;
     private final Predicate<ChartSpot> clear;
     private final LongFunction<Random> randoms;
@@ -33,12 +35,18 @@ public final class AnomalyContentSite {
 
     public AnomalyContentSite(StarSystemAPI system, String runId, int tier, String factionId, ChartGenContext context, List<SectorEntityToken> pois,
                               Vector2f entry, Predicate<ChartSpot> clear, LongFunction<Random> randoms) {
+        this(system, runId, tier, factionId, context, pois, List.of(), entry, clear, randoms);
+    }
+
+    public AnomalyContentSite(StarSystemAPI system, String runId, int tier, String factionId, ChartGenContext context, List<SectorEntityToken> pois,
+                              List<SectorEntityToken> guardedPois, Vector2f entry, Predicate<ChartSpot> clear, LongFunction<Random> randoms) {
         this.system = system;
         this.runId = runId;
         this.tier = tier;
         this.factionId = factionId;
         this.context = context == null ? ChartGenContext.none() : context;
         this.pois = pois == null ? List.of() : pois.stream().filter(Objects::nonNull).toList();
+        this.guardedPois = guardedPois == null ? List.of() : guardedPois.stream().filter(Objects::nonNull).toList();
         this.entry = entry == null ? null : new Vector2f(entry);
         this.clear = clear;
         this.randoms = randoms;
@@ -62,6 +70,10 @@ public final class AnomalyContentSite {
 
     public List<SectorEntityToken> pois() {
         return pois;
+    }
+
+    public List<SectorEntityToken> guardedPois() {
+        return guardedPois;
     }
 
     public boolean isClear(Vector2f point) {
@@ -89,6 +101,22 @@ public final class AnomalyContentSite {
             placed.add(site);
         }
         return site;
+    }
+
+    public SectorEntityToken addEntity(String entityId, String name, String entityType, String entityFactionId, ChartSites.Orbit orbit) {
+        if (orbit == null) {
+            return null;
+        }
+        SectorEntityToken entity = system.addCustomEntity(entityId, name, entityType, entityFactionId);
+        try {
+            entity.setCircularOrbitPointingDown(orbit.focus(), orbit.angle(), orbit.radius(), orbit.days());
+            ChartContentGenerator.tagContent(entity, runId);
+        } catch (RuntimeException | LinkageError e) {
+            system.removeEntity(entity);
+            throw e;
+        }
+        placed.add(entity);
+        return entity;
     }
 
     public List<SectorEntityToken> placed() {

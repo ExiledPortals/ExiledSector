@@ -311,7 +311,7 @@ public final class ChartContentGenerator {
         tagContent(fleet, runId);
     }
 
-    static void tagContent(SectorEntityToken entity, String runId) {
+    public static void tagContent(SectorEntityToken entity, String runId) {
         entity.addTag(ChartIds.ENTITY_TAG);
         entity.addTag(ChartIds.runTag(runId));
         entity.addTag(ChartIds.CONTENT_TAG);
@@ -359,6 +359,7 @@ public final class ChartContentGenerator {
         private final List<SectorEntityToken> poiEntities = new ArrayList<>();
         private final List<CampaignFleetAPI> fleets = new ArrayList<>();
         private final List<String> guardFleetIds = new ArrayList<>();
+        private final List<SectorEntityToken> guardedPois = new ArrayList<>();
         private final Set<SectorEntityToken> usedFoci = new LinkedHashSet<>();
         private final List<String> anomalies = new ArrayList<>();
         private final List<SectorEntityToken> anomalySites = new ArrayList<>();
@@ -651,6 +652,9 @@ public final class ChartContentGenerator {
             fleets.add(fleet);
             if (role == FleetRole.GUARD) {
                 guardFleetIds.add(fleet.getId());
+                if (guarded != null && !guardedPois.contains(guarded)) {
+                    guardedPois.add(guarded);
+                }
             } else if (role == FleetRole.BOSS) {
                 bossFleetId = fleet.getId();
                 bossType = ChartBossType.FLEET;
@@ -766,7 +770,7 @@ public final class ChartContentGenerator {
                     continue;
                 }
                 AnomalyContentSite site = new AnomalyContentSite(system, runId, tier, plan.faction().factionId(), chartContext, poiEntities,
-                        innerWormhole, spot -> isClear(spot, hazards, innerWormhole, POI_WORMHOLE_CLEARANCE),
+                        guardedPois, innerWormhole, spot -> isClear(spot, hazards, innerWormhole, POI_WORMHOLE_CLEARANCE),
                         salt -> ChartLayoutGenerator.derivedRandom(seed ^ ((long) anomalyId.hashCode() << 32), salt));
                 try {
                     anomaly.generate(site);

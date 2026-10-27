@@ -2,7 +2,7 @@
 
 Dormant Domain-era relays sit around the system: a nav buoy, a comm relay and a sensor array. Waking all three recovers a data trace someone left behind, and finishing the system sends the network on, further out along the trail. Each step of the chain makes the whole next system harder and richer, for three or four steps, and the last boss guarantees a unique. Missing a step loses the trace for good.
 
-Status: planned, nothing built. Redesigned 2026-10-27 as a chain across atlas systems, replacing the pre-captured battle objectives. See `overview.md` for the shared framework.
+Status: being built 2026-10-27; see the build order. Redesigned 2026-10-27 as a chain across atlas systems, replacing the pre-captured battle objectives. See `overview.md` for the shared framework.
 
 ## In a system
 
@@ -44,7 +44,7 @@ Tuning lines are chart effects carried by an atlas source, per `overview.md`:
 
 ## Build order
 
-1. [ ] Relay entities and their dormant/woken state in the run, using vanilla objective entity types; the nav buoy and sensor array bonuses for the player, and the comm relay's fleet reveal.
+1. [x] Relay entities and their dormant/woken state in the run, using vanilla objective entity types; the nav buoy and sensor array bonuses for the player, and the comm relay's fleet reveal. Built: `charts.anomaly.relay` (`RelayNetwork` places vanilla `nav_buoy`, `comm_relay` and `sensor_array` entities in three orbit bands, each orbiting a guarded POI half the time through `AnomalyContentSite.guardedPois` and `addEntity`; dormant relays are neutral and `$objectiveNonFunctional`), relay flags kept as text on the run record (`ChartRun.anomalyState`, `RelayStates`), and `ChartRelays.wake`: the nav buoy and sensor array switch to the player faction, so vanilla's `NavBuoyEntityPlugin` and `SensorArrayEntityPlugin` give the player's fleet their usual bonus, and the comm relay multiplies every other fleet's `detected_by_player_range_mult` and raises its extended detection range, so only the player sees them at any range (the relay itself stays non-functional, so it never counts as a comm relay for intel). Marker icon: `graphics/icons/anomalies/relay_network.png`, a circular copy of vanilla `comm_sniffer`. Not checked in game: the bonuses and the map and minimap reveal.
 2. [ ] Wake conditions per type (station keeping, transponder, sensor burst) and the cost dialog.
 3. [ ] The stage on the anomaly record, moving it on completion with all three woken, removing it on failure or a dormant relay at close, and the outward target pick.
 4. [ ] Per-stage escalation lines in the run's context, and the last boss's guaranteed unique.

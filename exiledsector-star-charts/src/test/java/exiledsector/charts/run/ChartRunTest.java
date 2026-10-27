@@ -280,4 +280,29 @@ class ChartRunTest {
         assertEquals(5, loaded.tier());
         assertFalse(loaded.isObjectiveMet());
     }
+
+    @Test
+    void anomalyStateIsKeptAsTextOnTheRunAndSurvivesASave() {
+        XStream xstream = new XStream(new DomDriver());
+        XStream.setupDefaultSecurity(xstream);
+        xstream.addPermission(AnyTypePermission.ANY);
+        ChartRun run = new ChartRun("abc", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+
+        run.recordAnomalyState("relay_network.nav_buoy", "5");
+        run.recordAnomalyState("relay_network.comm_relay", "2");
+        run.recordAnomalyState("bad;key", "1");
+        run.recordAnomalyState("relay_network.sensor_array", "a;b");
+        ChartRun loaded = (ChartRun) xstream.fromXML(xstream.toXML(run));
+
+        assertEquals("5", loaded.anomalyState("relay_network.nav_buoy"));
+        assertEquals("2", loaded.anomalyState("relay_network.comm_relay"));
+        assertNull(loaded.anomalyState("bad;key"));
+        assertNull(loaded.anomalyState("relay_network.sensor_array"));
+        loaded.recordAnomalyState("relay_network.nav_buoy", null);
+        assertNull(loaded.anomalyState("relay_network.nav_buoy"));
+        assertEquals("2", loaded.anomalyState("relay_network.comm_relay"));
+        assertFalse(loaded.isBossUniqueGranted());
+        loaded.grantBossUnique();
+        assertTrue(loaded.isBossUniqueGranted());
+    }
 }
