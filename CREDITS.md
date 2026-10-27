@@ -12,13 +12,13 @@ Files: everything prefixed `rat_`, which covers the icons in `graphics/icons`, t
 
 By YukiM. Nightcross's own licence makes its graphics free to use for kitbashing and its code available under GPLv3, and the author confirmed the assets are free to use in Starsector modding.
 
-Files: everything prefixed `na_` in `graphics/icons` and `graphics/icons/socketables` (the hull item icons are built from its ship and weapon sprites and logo, recoloured and relit), the repair drone sprite `graphics/fx/na_repair_drone.png` (from the Healing Bolt drone), and the faction crests `graphics/icons/crests/nightcross.png` and `graphics/icons/crests/stargazer.png`.
+Files: everything prefixed `na_` in `graphics/icons`, the repair drone sprite `graphics/fx/na_repair_drone.png` (from the Healing Bolt drone), and the faction crests `graphics/icons/crests/nightcross.png` and `graphics/icons/crests/stargazer.png`.
 
 ## Navarchy of Tania
 
 By I Spectros I. Its licence lets its code and graphics be reused freely in Starsector modding projects, provided I Spectros I is credited.
 
-Files: everything prefixed `tania_` in `graphics/icons` (circular copies of its hull mod icons and the Frost Fire crest) and `graphics/icons/socketables` (hull item icons built from the Black Hawk and Fafnir sprites, recoloured and relit), and the faction crest `graphics/icons/crests/navarchy_of_tania.png`.
+Files: everything prefixed `tania_` in `graphics/icons` (circular copies of its hull mod icons and the Frost Fire crest), and the faction crest `graphics/icons/crests/navarchy_of_tania.png`.
 
 ## LOST_SECTOR
 
