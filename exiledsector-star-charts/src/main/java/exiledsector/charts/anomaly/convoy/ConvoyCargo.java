@@ -1,6 +1,8 @@
 package exiledsector.charts.anomaly.convoy;
 
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
@@ -47,6 +49,22 @@ final class ConvoyCargo {
 
     static StyledText manifest(int tier) {
         return Translation.list(manifestKeys(tier).stream().map(Translation::styled).toList());
+    }
+
+    static float freighterPoints(CampaignFleetAPI fleet, boolean civilianOnly) {
+        if (fleet == null || fleet.isEmpty()) {
+            return 0f;
+        }
+        if (!civilianOnly || fleet.getFleetData() == null) {
+            return fleet.getFleetPoints();
+        }
+        float points = 0f;
+        for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
+            if (member.isCivilian()) {
+                points += member.getFleetPointCost();
+            }
+        }
+        return points;
     }
 
     static CargoAPI roll(SectorAPI sector, ChartRun run, ConvoyState convoy, float share, Random random) {

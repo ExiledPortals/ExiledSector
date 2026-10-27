@@ -102,10 +102,9 @@ public class ConvoyCacheObjective extends BaseGroundRaidObjectivePluginImpl {
         if (convoy == null || run == null || !script.belongsToRun(run.runId()) || !convoy.hasCache()) {
             return 0;
         }
-        float share = convoy.deliveredShare() * lootMult;
-        convoy.takeCache();
-        CargoAPI cargo = ConvoyCargo.roll(sector, run, convoy, share, random);
+        CargoAPI cargo = ConvoyCargo.roll(sector, run, convoy, convoy.deliveredShare() * lootMult, random);
         loot.addAll(cargo);
+        convoy.takeCache();
         return Math.round(valueOf(cargo) * XP_GAIN_VALUE_MULT);
     }
 

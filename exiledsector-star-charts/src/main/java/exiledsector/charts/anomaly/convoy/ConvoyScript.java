@@ -281,7 +281,7 @@ public final class ConvoyScript implements EveryFrameScript, FleetEventListener,
     public void reportBattleOccurred(CampaignFleetAPI fleet, CampaignFleetAPI primaryWinner, BattleAPI battle) {
         ConvoyState convoy = freightersOf(fleet);
         if (convoy != null) {
-            recordLosses(convoy, fleet.isEmpty() ? 0f : fleet.getFleetPoints(), fleet.getLocation());
+            recordLosses(convoy, ConvoyCargo.freighterPoints(fleet, convoy.countsCivilianOnly()), fleet.getLocation());
         }
     }
 
@@ -321,8 +321,9 @@ public final class ConvoyScript implements EveryFrameScript, FleetEventListener,
 
     void catchUpOnLosses(ConvoyState convoy) {
         CampaignFleetAPI freighters = fleet(convoy, ConvoyRole.FREIGHTERS);
-        if (freighters != null && convoy.isHostile() && freighters.getFleetPoints() < convoy.carriedFreighterPoints()) {
-            recordLosses(convoy, freighters.getFleetPoints(), freighters.getLocation());
+        float remaining = ConvoyCargo.freighterPoints(freighters, convoy.countsCivilianOnly());
+        if (freighters != null && convoy.isHostile() && remaining < convoy.carriedFreighterPoints()) {
+            recordLosses(convoy, remaining, freighters.getLocation());
         }
     }
 

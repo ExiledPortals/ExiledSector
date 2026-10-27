@@ -65,7 +65,9 @@ final class ConvoyFleets {
             convoy.setFleetId(role, fleet.getId());
             if (role == ConvoyRole.FREIGHTERS) {
                 freighters = fleet;
-                float freighterPoints = fleet.getFleetPoints();
+                boolean civilianOnly = ConvoyCargo.freighterPoints(fleet, true) > 0f;
+                float freighterPoints = ConvoyCargo.freighterPoints(fleet, civilianOnly);
+                convoy.countCivilianOnly(civilianOnly);
                 convoy.loadCargo(freighterPoints, ConvoyRules.cargoSteps(freighterPoints, context.anomalyMult(SupplyConvoy.CARGO_KEY)),
                         ConvoyRules.itemChanceMult(site.tier(), context.anomalyMult(SupplyConvoy.CARGO_KEY)));
                 fleet.addAssignment(FleetAssignment.ORBIT_PASSIVE, entry, ChartContentGenerator.ASSIGNMENT_DAYS);

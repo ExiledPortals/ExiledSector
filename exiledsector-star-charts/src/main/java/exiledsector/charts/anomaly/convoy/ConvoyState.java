@@ -29,6 +29,7 @@ public final class ConvoyState {
     private float startFreighterPoints;
     private float carriedFreighterPoints;
     private float cargoSteps;
+    private boolean civilianOnly;
     private float itemChanceMult;
     private Phase phase = Phase.WAITING;
     private boolean hostile;
@@ -134,6 +135,14 @@ public final class ConvoyState {
 
     public float itemChanceMult() {
         return itemChanceMult;
+    }
+
+    void countCivilianOnly(boolean civilianOnly) {
+        this.civilianOnly = civilianOnly;
+    }
+
+    boolean countsCivilianOnly() {
+        return civilianOnly;
     }
 
     float carriedFreighterPoints() {

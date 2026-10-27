@@ -1,6 +1,9 @@
 package exiledsector.charts.anomaly.convoy;
 
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
+import com.fs.starfarer.api.campaign.FleetDataAPI;
+import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
 import com.fs.starfarer.api.campaign.FleetAssignment;
 import com.fs.starfarer.api.campaign.LocationAPI;
@@ -58,6 +61,25 @@ class ConvoyCargoTest {
         assertEquals(0.6f, convoy.recordFreighterPoints(0f), 0.001f);
         assertEquals(ConvoyState.Phase.LOST, convoy.phase());
         assertEquals(false, convoy.deliver());
+    }
+
+    @Test
+    void onlyTheFreightersAndTankersCountTowardsTheCargo() {
+        CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
+        FleetDataAPI data = mock(FleetDataAPI.class);
+        FleetMemberAPI freighter = mock(FleetMemberAPI.class);
+        FleetMemberAPI guard = mock(FleetMemberAPI.class);
+        when(freighter.isCivilian()).thenReturn(true);
+        when(freighter.getFleetPointCost()).thenReturn(10);
+        when(guard.getFleetPointCost()).thenReturn(5);
+        when(data.getMembersListCopy()).thenReturn(List.of(freighter, guard));
+        when(fleet.getFleetData()).thenReturn(data);
+        when(fleet.getFleetPoints()).thenReturn(15);
+
+        assertEquals(10f, ConvoyCargo.freighterPoints(fleet, true), 0.001f);
+        assertEquals(15f, ConvoyCargo.freighterPoints(fleet, false), 0.001f);
+        when(fleet.isEmpty()).thenReturn(true);
+        assertEquals(0f, ConvoyCargo.freighterPoints(fleet, true), 0.001f);
     }
 
     @Test
