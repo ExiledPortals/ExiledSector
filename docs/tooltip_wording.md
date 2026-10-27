@@ -1,6 +1,6 @@
 # Tooltip wording rules
 
-Every modifier, effect and stat line the player reads follows these rules: skill tree nodes, hull items, subroutines, Star Charts, nanoswarm notices and settings tooltips. They are modelled on Path of Exile's modifier wording, adapted to Starsector. Node and item flavour descriptions are covered by the separate flavour rules and don't carry numbers at all.
+Every modifier, effect and stat line the player reads follows these rules: skill tree nodes, hull items, subroutines, Star Charts, nanoswarm notices and settings tooltips. They are modelled on Path of Exile's modifier wording, adapted to Starsector. Node and item flavour descriptions follow the flavour rules below and don't carry numbers at all.
 
 Before writing a line, find out how the value is combined in code. The wording is decided by what the value stacks with, not by how the effect is named or what the designer intended.
 
@@ -16,7 +16,21 @@ Write the shortest line that tells the player what happens. Don't over-explain a
 
 ## Flavour and effect lines
 
-A skill type's `flavour` is shown in grey italics under the title and never states a mechanic. Every mechanic is a plain effect line. Most are generated from the type's skill effects. A vanilla hullmod node (`vanillaHullMod`) also shows that hullmod's own description with its values filled in. Anything else goes in the type's `effectText` list, one line each, written to these rules.
+A skill type's `flavour` (grey italics under the title) and a hull item's `description` are flavour and never state a mechanic. Every mechanic is a plain effect line. Most are generated from the type's skill effects. A vanilla hullmod node (`vanillaHullMod`) also shows that hullmod's own description with its values filled in. Anything else goes in the type's `effectText` list, one line each, written to these rules.
+
+## Flavour
+
+Flavour follows the voice of vanilla's codex: special items, commodities and ship descriptions. `docs/analysis/flavour_style_review.md` has the full comparison.
+
+- Don't restate the effect. Cut any sentence that only sums up the stat, such as "This ship hits cruisers and capital ships harder." A cost or change told as part of the hardware's story is fine: "The shield emitters were never built for that load." No numbers or number words like "twice", and no UI instructions like Ctrl-click; those are effect lines.
+- The same text shows whether or not the node is allocated. Past tense is for how the crew learned something, never for the change itself.
+- Open on the object or where it came from. Nodes are the crew modifying their own ship, but vary how the crew comes in rather than repeating "X shows the crew how to Y".
+- One specific detail per sentence: a place, a hull class, a maker or a cycle, not three proper nouns at once. Check names against vanilla lore.
+- End on a short, flat line that undercuts the one before. Vanilla's humour is dry and institutional: regulations, Tri-Tachyon subscriptions, Hegemony bureaucracy.
+- Hedge what nobody knows ("dimly understood", "rumored"). Show strangeness through a reading, an absence or a crew reaction, not horror adjectives, and never explain the Threat, Omega or the Dwellers. Don't reuse one device across a set, such as "nobody aboard can explain".
+- Don't address the player: no "you", no instructions, no exclamation marks, no modern idiom or real-world references.
+- Terms: normal space or n-space, p-space, cycles, light-years, strike craft (not strikecraft), alpha, beta and gamma cores in lowercase, and the Remnant and Nexus by name. "The crew" is singular.
+- Text written by another mod's author, such as the Navarchy of Tania nodes, stays exactly as written. The deliberate jokes stay jokes: Crustacean Integration, Ludd's Light, At Any Cost and Back-Alley Cyber-Surgeon.
 
 ## Percentages: increased/reduced vs more/less
 
@@ -78,7 +92,7 @@ When a roll affects a whole category, name the category, not its members. "51% i
 | colony items | vanilla colony items (nanoforges, synchrotrons, ...) |
 | strikecraft | every craft launched from a bay: fighters, bombers, interceptors and support craft |
 
-"Fighter" only ever means the fighter wing role, never strikecraft in general, so the roles under strikecraft stay exact. Bays and wings are "strikecraft bays" and "strikecraft wings". Vanilla proper names such as Converted Fighter Bay keep their wording.
+"Fighter" only ever means the fighter wing role, never strikecraft in general, so the roles under strikecraft stay exact. Bays and wings are "strikecraft bays" and "strikecraft wings". Vanilla proper names such as Converted Fighter Bay keep their wording. Flavour uses vanilla's "strike craft" instead.
 
 Several separate categories in one roll are listed: "hull items, subroutines and Star Charts", "weapons and strikecraft wings", "blueprints and modspecs".
 
@@ -100,7 +114,7 @@ Follow Starsector's own style. Stats and generic nouns are lowercase (flux capac
 
 ## Spelling
 
-Use Starsector's spelling: armor, hullmod, point defense ("point-defense" before a noun), Ctrl-click and Ctrl-Shift-click. The opposite of allocate is unallocate. Lists take no Oxford comma: "top speed, flux dissipation and weapon rate of fire".
+Use Starsector's US spelling (armor, maneuver, stabilized, center, mold), and its terms: hullmod, point defense ("point-defense" before a noun), Ctrl-click and Ctrl-Shift-click. The opposite of allocate is unallocate. Lists take no Oxford comma: "top speed, flux dissipation and weapon rate of fire".
 
 ## Chinese
 

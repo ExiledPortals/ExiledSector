@@ -48,7 +48,7 @@ Single uses read like vanilla, but repetition turns them into tics:
 - "realspace" (Phase Coil Array): vanilla says "normal space" or "n-space".
 - "Gamma core", "Alpha core": vanilla writes them lowercase.
 - Crew agreement: most texts treat "the crew" as singular ("the crew learns", "pulls"), but the Abyss, Exo-Tech and Remnant ones use plural ("the crew work out", "rewire", "splice", "decode", "have stopped asking"). Vanilla (US) is singular. Pick one; singular matches vanilla.
-- "strikecraft" in flavour: `tooltip_wording.md` makes it the house term for effect lines, which is fine, but in flavour vanilla's "fighters" or "strike craft" reads more natively. Optional.
+- "strikecraft" in flavour: `tooltip_wording.md` makes it the house term for effect lines, which is fine, but in flavour vanilla's "fighters" or "strike craft" reads more natively. Decided: flavour uses "strike craft", effect lines keep "strikecraft". The flavour rules drawn from this review now live in `docs/tooltip_wording.md` under Flavour.
 - No Oxford comma anywhere in our flavour; vanilla uses it consistently. Optional, since the house style may prefer none.
 
 ### 6. Tone outliers

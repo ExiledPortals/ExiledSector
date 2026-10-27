@@ -4264,7 +4264,7 @@ type|phase_cloak_flux_threshold|FRIGATE|0	0	<good>5%</good> increased hard flux 
 type|phase_cloak_flux_threshold|DESTROYER|0	0	<good>5%</good> increased hard flux level at which phased speed reaches its minimum.
 type|phase_cloak_flux_threshold|CRUISER|0	0	<good>5%</good> increased hard flux level at which phased speed reaches its minimum.
 type|phase_cloak_flux_threshold|CAPITAL_SHIP|0	0	<good>5%</good> increased hard flux level at which phased speed reaches its minimum.
-flavour|phase_entangled_wings	0	Tri-Tachyon's phase labs learned to lock the coils of a strikecraft wing into one shared state, so a hit on one craft bleeds through p-space into the whole wing. A defector from those labs, smuggled out at no small cost, walks the crew through retuning this carrier's strikecraft coils to the same entangled frequency.
+flavour|phase_entangled_wings	0	Tri-Tachyon's phase labs learned to lock the coils of a strike craft wing into one shared state, so a hit on one craft bleeds through p-space into the whole wing. A defector from those labs, smuggled out at no small cost, walks the crew through retuning this carrier's strike craft coils to the same entangled frequency.
 type|phase_entangled_wings|null|0	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>100%</good> of that damage is shared across its wing.
 type|phase_entangled_wings|null|1	0	Strikecraft launched from this ship take <good>10%</good> less damage for every living strikecraft of their wing out in space, up to 80% less.
 type|phase_entangled_wings|FRIGATE|0	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>100%</good> of that damage is shared across its wing.
