@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.charts.anomaly.relay.RelayStates;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
@@ -163,7 +164,7 @@ public final class ChartFleetLoot {
     }
 
     static ItemData guaranteedUnique(SectorAPI sector, ChartRun run, ChartGenContext context, Random random) {
-        if (!context.guaranteedBossUnique() || run.isBossUniqueGranted()) {
+        if (!context.guaranteedBossUnique() || run.isBossUniqueGranted() || !RelayStates.allWoken(run)) {
             return null;
         }
         ItemDefinition unique = ItemDrops.pickUniqueFromAnySource(random, definition -> GUARANTEED_UNIQUE_TYPES.contains(definition.type())

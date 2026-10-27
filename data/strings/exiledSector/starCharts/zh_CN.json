@@ -268,7 +268,7 @@
     "chart.atlas.anomaly.relay_network.description": "一座休眠的人类领域时代导航浮标、通讯中继站和传感器阵列。唤醒全部三座并完成该星系，即可沿它们的踪迹继续深入。",
     "chart.atlas.node.skirmish": "{attacker}正在进攻{defender}",
     "chart.atlas.node.relayStage": "第{stage}阶段，共{stages}阶段",
-    "chart.atlas.node.relayLast": "星图首领必定掉落一件独特船体物品或子程序",
+    "chart.atlas.node.relayLast": "三座中继设施全部苏醒时，星图首领必定掉落一件独特船体物品或子程序",
     "chart.atlas.skirmish.join": "支持{faction}",
     "chart.atlas.skirmish.stayOut": "置身事外",
     "chart.atlas.skirmish.defender": "支持{defender}：获胜后星系仍归其所有。",

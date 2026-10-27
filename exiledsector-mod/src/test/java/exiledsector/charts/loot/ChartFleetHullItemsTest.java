@@ -5,6 +5,8 @@ import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import exiledlib.MockSector;
+import exiledsector.charts.anomaly.relay.RelayKind;
+import exiledsector.charts.anomaly.relay.RelayStates;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.generation.ChartGenContext;
@@ -90,7 +92,7 @@ class ChartFleetHullItemsTest {
     }
 
     @Test
-    void theLastRelayStageBossDropsOneUniqueWhateverItsSource() throws Exception {
+    void theLastRelayStageBossDropsOneUniqueWhateverItsSourceOnceEveryRelayIsAwake() throws Exception {
         when(sector.getPlayerStats().getLevel()).thenReturn(15);
         ItemDefinitions.register(new JSONArray()
                 .put(new JSONObject().put("id", "site_relic").put("section", "bridge").put("rarity", "10").put("unique", "true")
@@ -99,7 +101,10 @@ class ChartFleetHullItemsTest {
                 .put(new JSONObject().put("site", ChartIds.FLEET_LOOT_SITE).put("chances", "0").put("uniqueChance", "0"))
                 .put(new JSONObject().put("site", ChartIds.BOSS_LOOT_SITE).put("chances", "0").put("uniqueChance", "0")));
         try {
-            ChartRun run = storeLiveRun(6);
+            ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+            run.recordContent(new ChartContent(6, "hegemony", ChartObjective.BOSS, List.of(BOSS_ID), BOSS_ID, 4, 6, List.of("relay_network")));
+            run.recordArrival();
+            ChartRuns.store(run);
             ChartGenContext lastStage = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of("relay_network"), false)
                     .withExtraEffects(List.of(), true));
 
@@ -107,6 +112,13 @@ class ChartFleetHullItemsTest {
                     new Random(1L));
             ItemDrops.SiteLoot plainBossLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run,
                     ChartGenContext.none(), 200f, new Random(1L));
+            ItemDrops.SiteLoot relaysAsleep = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, lastStage, 100f,
+                    new Random(1L));
+            run.recordAnomalyState(RelayStates.key(RelayKind.NAV_BUOY), Integer.toString(RelayStates.WOKEN));
+            run.recordAnomalyState(RelayStates.key(RelayKind.COMM_RELAY), Integer.toString(RelayStates.WOKEN));
+            ItemDrops.SiteLoot oneRelayAsleep = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, lastStage, 100f,
+                    new Random(1L));
+            run.recordAnomalyState(RelayStates.key(RelayKind.SENSOR_ARRAY), Integer.toString(RelayStates.WOKEN));
             ItemDrops.SiteLoot firstBattle = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, lastStage, 100f,
                     new Random(1L));
             ItemDrops.SiteLoot secondBattle = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, lastStage, 100f,
@@ -114,6 +126,8 @@ class ChartFleetHullItemsTest {
 
             assertTrue(guardLoot.items().stream().noneMatch(item -> "site_relic".equals(item.definitionId())));
             assertTrue(plainBossLoot.items().stream().noneMatch(item -> "site_relic".equals(item.definitionId())));
+            assertTrue(relaysAsleep.items().stream().noneMatch(item -> "site_relic".equals(item.definitionId())));
+            assertTrue(oneRelayAsleep.items().stream().noneMatch(item -> "site_relic".equals(item.definitionId())));
             assertEquals(1, firstBattle.items().stream().filter(item -> "site_relic".equals(item.definitionId())).count());
             assertTrue(secondBattle.items().stream().noneMatch(item -> "site_relic".equals(item.definitionId())));
             assertTrue(run.isBossUniqueGranted());

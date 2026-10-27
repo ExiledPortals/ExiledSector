@@ -278,7 +278,7 @@
     "chart.atlas.anomaly.relay_network.description": "A dormant Domain-era nav buoy, comm relay and sensor array. Wake all three and complete the system to follow their trace further out.",
     "chart.atlas.node.skirmish": "{attacker} attacks {defender}",
     "chart.atlas.node.relayStage": "Stage {stage} of {stages}",
-    "chart.atlas.node.relayLast": "The Star Chart Boss always drops a unique hull item or subroutine",
+    "chart.atlas.node.relayLast": "With all three relays awake, the Star Chart Boss drops a unique hull item or subroutine",
     "chart.atlas.skirmish.join": "Side with {faction}",
     "chart.atlas.skirmish.stayOut": "Stay out",
     "chart.atlas.skirmish.defender": "Side with {defender}: winning keeps the system theirs.",

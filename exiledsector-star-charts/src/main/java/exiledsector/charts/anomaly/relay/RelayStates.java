@@ -12,7 +12,7 @@ public final class RelayStates {
     private RelayStates() {
     }
 
-    static String key(RelayKind kind) {
+    public static String key(RelayKind kind) {
         return KEY_PREFIX + kind.key();
     }
 
