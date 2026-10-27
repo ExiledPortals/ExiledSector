@@ -68,6 +68,7 @@ public final class ChartGenContext {
     private final Map<String, Float> anomalyPercents = new LinkedHashMap<>();
     private final List<String> forcedAnomalies = new ArrayList<>();
     private boolean guaranteedBossTierUp;
+    private boolean guaranteedBossUnique;
     private String skirmishAttackerId;
     private SkirmishSide skirmishSide;
 
@@ -250,6 +251,7 @@ public final class ChartGenContext {
         context.forceAnomalies(forcedAnomalies);
         context.forceAnomalies(node.anomalyIds());
         context.guaranteedBossTierUp = node.guaranteedBossTierUp();
+        context.guaranteedBossUnique = guaranteedBossUnique || node.guaranteedBossUnique();
         context.skirmishAttackerId = node.skirmishAttackerId() == null ? skirmishAttackerId : node.skirmishAttackerId();
         context.skirmishSide = node.skirmishSide() == null ? skirmishSide : node.skirmishSide();
         return context;
@@ -263,6 +265,7 @@ public final class ChartGenContext {
         context.forceAnomalies(forcedAnomalies);
         context.forceAnomalies(anomalyIds);
         context.guaranteedBossTierUp = guaranteedBossTierUp;
+        context.guaranteedBossUnique = guaranteedBossUnique;
         context.skirmishAttackerId = skirmishAttackerId;
         context.skirmishSide = skirmishSide;
         return context;
@@ -278,6 +281,7 @@ public final class ChartGenContext {
         ChartGenContext context = new ChartGenContext(combined, quality, factionId);
         context.forceAnomalies(forcedAnomalies);
         context.guaranteedBossTierUp = guaranteedBossTierUp;
+        context.guaranteedBossUnique = guaranteedBossUnique;
         context.skirmishAttackerId = skirmishAttackerId;
         context.skirmishSide = skirmishSide;
         return context;
@@ -299,6 +303,10 @@ public final class ChartGenContext {
         return guaranteedBossTierUp;
     }
 
+    public boolean guaranteedBossUnique() {
+        return guaranteedBossUnique;
+    }
+
     public ChartGenContext withSkirmishSide(SkirmishSide side) {
         if (side == null || side == skirmishSide) {
             return this;
@@ -306,6 +314,7 @@ public final class ChartGenContext {
         ChartGenContext context = new ChartGenContext(applied, quality, factionId);
         context.forceAnomalies(forcedAnomalies);
         context.guaranteedBossTierUp = guaranteedBossTierUp;
+        context.guaranteedBossUnique = guaranteedBossUnique;
         context.skirmishAttackerId = skirmishAttackerId;
         context.skirmishSide = side;
         return context;

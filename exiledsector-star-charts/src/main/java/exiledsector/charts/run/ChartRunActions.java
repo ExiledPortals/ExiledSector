@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartSystemFactory;
 import exiledsector.charts.layout.ChartLayoutRequest;
 import exiledsector.charts.objective.ChartObjectiveIntel;
@@ -15,6 +16,7 @@ import exiledsector.charts.run.cleanup.ChartRunCloser;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemStore;
+import exiledsector.charts.anomaly.relay.RelayChain;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.atlas.AtlasCell;
@@ -76,6 +78,8 @@ public final class ChartRunActions {
             return OpenResult.NOT_REACHABLE;
         }
         AtlasRunNode runNode = FactionSkirmish.join(AtlasOpening.runNode(generator, state, cell), generator, state, cell, side);
+        runNode = RelayChain.join(runNode, generator, state, cell,
+                RelayChain.extraStages(ChartGenContext.from(chart).withAtlasNode(runNode).withAnomalyEffects(runNode.anomalyIds())));
         OpenResult result = openBesidePlayer(sector, entriesAllowed, random, AtlasOpening.request(generator, state, cell, chart, runNode),
                 ItemData.of(chart).encode(), runNode);
         if (result == OpenResult.OPENED) {

@@ -392,7 +392,7 @@ public final class AtlasData {
         return nodeEffects.getOrDefault(id, List.of());
     }
 
-    static List<String> registerNodeEffects(JSONArray rows) throws JSONException {
+    public static List<String> registerNodeEffects(JSONArray rows) throws JSONException {
         Map<String, List<ChartGenContext.AppliedEffect>> loaded = new LinkedHashMap<>();
         CsvRows csv = new CsvRows(NODE_EFFECTS_PATH);
         CsvRows.forEachIdRow(rows, ID_COLUMN, (id, row) -> {

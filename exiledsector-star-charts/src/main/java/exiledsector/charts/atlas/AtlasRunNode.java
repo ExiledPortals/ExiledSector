@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public record AtlasRunNode(long cell, String factionId, List<ChartGenContext.AppliedEffect> effects, List<String> anomalyIds,
-                           boolean guaranteedBossTierUp, String skirmishAttackerId, SkirmishSide skirmishSide) {
+                           boolean guaranteedBossTierUp, String skirmishAttackerId, SkirmishSide skirmishSide, boolean guaranteedBossUnique) {
 
     static final String FIELD_SEPARATOR = "|";
     static final String EFFECT_SEPARATOR = ";";
@@ -16,7 +16,8 @@ public record AtlasRunNode(long cell, String factionId, List<ChartGenContext.App
     static final String ID_SEPARATOR = ",";
     private static final int FIELDS_BEFORE_SKIRMISH = 5;
     private static final int FIELDS_BEFORE_ANOMALIES = 6;
-    private static final int FIELDS = 7;
+    private static final int FIELDS_BEFORE_UNIQUE = 7;
+    private static final int FIELDS = 8;
 
     public AtlasRunNode {
         factionId = factionId == null ? "" : factionId;
@@ -26,12 +27,24 @@ public record AtlasRunNode(long cell, String factionId, List<ChartGenContext.App
         skirmishSide = skirmishAttackerId == null ? null : skirmishSide;
     }
 
+    public AtlasRunNode(long cell, String factionId, List<ChartGenContext.AppliedEffect> effects, List<String> anomalyIds, boolean guaranteedBossTierUp,
+                        String skirmishAttackerId, SkirmishSide skirmishSide) {
+        this(cell, factionId, effects, anomalyIds, guaranteedBossTierUp, skirmishAttackerId, skirmishSide, false);
+    }
+
     public AtlasRunNode(long cell, String factionId, List<ChartGenContext.AppliedEffect> effects, List<String> anomalyIds, boolean guaranteedBossTierUp) {
-        this(cell, factionId, effects, anomalyIds, guaranteedBossTierUp, null, null);
+        this(cell, factionId, effects, anomalyIds, guaranteedBossTierUp, null, null, false);
     }
 
     public AtlasRunNode withSkirmish(String attackerId, SkirmishSide side) {
-        return new AtlasRunNode(cell, factionId, effects, anomalyIds, guaranteedBossTierUp, attackerId, side);
+        return new AtlasRunNode(cell, factionId, effects, anomalyIds, guaranteedBossTierUp, attackerId, side, guaranteedBossUnique);
+    }
+
+    public AtlasRunNode withExtraEffects(List<ChartGenContext.AppliedEffect> extraEffects, boolean bossUnique) {
+        List<ChartGenContext.AppliedEffect> combined = new ArrayList<>(effects);
+        combined.addAll(extraEffects);
+        return new AtlasRunNode(cell, factionId, combined, anomalyIds, guaranteedBossTierUp, skirmishAttackerId, skirmishSide,
+                guaranteedBossUnique || bossUnique);
     }
 
     public String encode() {
@@ -41,7 +54,8 @@ public record AtlasRunNode(long cell, String factionId, List<ChartGenContext.App
         }
         return cell + FIELD_SEPARATOR + factionId + FIELD_SEPARATOR + String.join(EFFECT_SEPARATOR, parts) + FIELD_SEPARATOR
                 + String.join(ID_SEPARATOR, anomalyIds) + FIELD_SEPARATOR + guaranteedBossTierUp + FIELD_SEPARATOR
-                + (skirmishAttackerId == null ? "" : skirmishAttackerId) + FIELD_SEPARATOR + (skirmishSide == null ? "" : skirmishSide.key());
+                + (skirmishAttackerId == null ? "" : skirmishAttackerId) + FIELD_SEPARATOR + (skirmishSide == null ? "" : skirmishSide.key())
+                + FIELD_SEPARATOR + guaranteedBossUnique;
     }
 
     public static AtlasRunNode decode(String text) {
@@ -49,10 +63,11 @@ public record AtlasRunNode(long cell, String factionId, List<ChartGenContext.App
             return null;
         }
         String[] fields = text.split("\\" + FIELD_SEPARATOR, -1);
-        if (fields.length != FIELDS && fields.length != FIELDS_BEFORE_SKIRMISH && fields.length != FIELDS_BEFORE_ANOMALIES) {
+        if (fields.length != FIELDS && fields.length != FIELDS_BEFORE_UNIQUE && fields.length != FIELDS_BEFORE_SKIRMISH
+                && fields.length != FIELDS_BEFORE_ANOMALIES) {
             return null;
         }
-        boolean skirmishFields = fields.length == FIELDS;
+        boolean skirmishFields = fields.length >= FIELDS_BEFORE_UNIQUE;
         int bossField = skirmishFields ? 4 : fields.length - 1;
         try {
             List<ChartGenContext.AppliedEffect> effects = new ArrayList<>();
@@ -75,7 +90,8 @@ public record AtlasRunNode(long cell, String factionId, List<ChartGenContext.App
                 }
             }
             return new AtlasRunNode(Long.parseLong(fields[0]), fields[1], effects, anomalyIds, Boolean.parseBoolean(fields[bossField]),
-                    skirmishFields ? fields[5] : null, skirmishFields ? SkirmishSide.parse(fields[6]) : null);
+                    skirmishFields ? fields[5] : null, skirmishFields ? SkirmishSide.parse(fields[6]) : null,
+                    fields.length == FIELDS && Boolean.parseBoolean(fields[7]));
         } catch (NumberFormatException e) {
             return null;
         }

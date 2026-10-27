@@ -221,6 +221,24 @@ class AtlasOpeningTest {
     }
 
     @Test
+    void aRunNodeKeepsItsGuaranteedUniqueAndSkirmishNodesSavedBeforeItReadWithout() {
+        AtlasRunNode node = new AtlasRunNode(9L, "hegemony", List.of(), List.of("relay_network"), false)
+                .withExtraEffects(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, 50f)), true);
+        AtlasRunNode decoded = AtlasRunNode.decode(node.encode());
+
+        assertEquals(node, decoded);
+        assertTrue(decoded.guaranteedBossUnique());
+        assertEquals(50f, decoded.effects().get(0).value());
+        assertTrue(ChartGenContext.none().withAtlasNode(decoded).withAnomalyEffects(List.of("relay_network")).withSkirmishSide(SkirmishSide.NEITHER)
+                .guaranteedBossUnique());
+        AtlasRunNode skirmishEra = AtlasRunNode.decode("9|hegemony||faction_skirmish|true|tritachyon|attacker");
+        assertEquals(SkirmishSide.ATTACKER, skirmishEra.skirmishSide());
+        assertFalse(skirmishEra.guaranteedBossUnique());
+        assertTrue(skirmishEra.withSkirmish("tritachyon", SkirmishSide.DEFENDER).withExtraEffects(List.of(), true)
+                .withSkirmish("tritachyon", SkirmishSide.ATTACKER).guaranteedBossUnique());
+    }
+
+    @Test
     void aRunNodeSavedWithSeparateExpansionAndPhenomenonFieldsReadsBothAsAnomalies() {
         AtlasRunNode old = AtlasRunNode.decode("9|pirates|CHART_BOSS_SIZE_PERCENT:50.0|spatial_breach|black_hole|true");
 

@@ -4,12 +4,18 @@ import exiledsector.charts.ChartTables;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasAnomalyRecord;
 import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.atlas.AtlasData;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasMarkerRule;
 import exiledsector.charts.atlas.AtlasRegion;
 import exiledsector.charts.atlas.AtlasRules;
+import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasUnlocks;
+import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.generation.ChartGenContext;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,8 +24,10 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class RelayChainTest {
@@ -33,6 +41,8 @@ class RelayChainTest {
     @BeforeEach
     void setUp() throws Exception {
         ChartTables.loadAnomalies();
+        AtlasData.registerNodeEffects(new JSONArray().put(new JSONObject().put("id", RelayChain.STAGE_EFFECTS_ID)
+                .put("effects", "CHART_FLEET_SIZE_PERCENT:20; CHART_QUANTITY_PERCENT:25")));
         state = new AtlasState(SEED);
         List<AtlasRegion> regions = List.of(new AtlasRegion(AtlasRegion.NORMAL, 1f, 0, "", "", Map.of(), Map.of(), Map.of()));
         AtlasRules rules = new AtlasRules(regions, Map.of("compact", 1f), Map.of("pirates", 1f), AtlasMarkerRule.NEVER, AtlasMarkerRule.NEVER,
@@ -42,7 +52,8 @@ class RelayChainTest {
     }
 
     @AfterEach
-    void tearDown() {
+    void tearDown() throws Exception {
+        AtlasData.registerNodeEffects(new JSONArray());
         ChartTables.resetAnomalies();
     }
 
@@ -117,5 +128,38 @@ class RelayChainTest {
 
         insertAtStart(null);
         assertEquals(new AtlasAnomalyRecord.Chain(1, RelayChain.rolledStages(state, start), null), RelayChain.stageAt(generator, state, start));
+    }
+
+    @Test
+    void eachStagePastTheFirstAddsTheStageLinesOnceMore() {
+        assertEquals(List.of(), RelayChain.stageEffects(1));
+        assertEquals(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_FLEET_SIZE_PERCENT, 40f),
+                new ChartGenContext.AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, 50f)), RelayChain.stageEffects(3));
+    }
+
+    @Test
+    void openingAChainSystemAddsItsStageLinesAndTheLastStageGuaranteesAUnique() {
+        AtlasRunNode node = new AtlasRunNode(start.pack(), "pirates", List.of(), List.of(RelayNetwork.ID), false);
+        insertAtStart(new AtlasAnomalyRecord.Chain(3, 3, AtlasCell.ORIGIN));
+
+        AtlasRunNode last = RelayChain.join(node, generator, state, start, 0);
+        AtlasRunNode extended = RelayChain.join(node, generator, state, start, 1);
+
+        assertEquals(RelayChain.stageEffects(3), last.effects());
+        assertTrue(last.guaranteedBossUnique());
+        assertFalse(extended.guaranteedBossUnique());
+        AtlasRunNode plain = new AtlasRunNode(start.pack(), "pirates", List.of(), List.of(), false);
+        assertSame(plain, RelayChain.join(plain, generator, state, start, 0));
+    }
+
+    @Test
+    void aFirstStageAddsNothingAndASystemWithoutTheNetworkIsLeftAlone() {
+        AtlasRunNode node = new AtlasRunNode(start.pack(), "pirates", List.of(), List.of(RelayNetwork.ID), false);
+        assertSame(node, RelayChain.join(node, generator, state, start, 0));
+
+        insertAtStart(null);
+        AtlasRunNode first = RelayChain.join(node, generator, state, start, 0);
+        assertEquals(List.of(), first.effects());
+        assertFalse(first.guaranteedBossUnique());
     }
 }

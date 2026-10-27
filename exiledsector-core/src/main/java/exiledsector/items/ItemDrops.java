@@ -391,6 +391,10 @@ public final class ItemDrops {
                 && allowedUniques.test(definition));
     }
 
+    public static ItemDefinition pickUniqueFromAnySource(Random random, Predicate<ItemDefinition> allowedUniques) {
+        return pick(random, definition -> definition.unique() && allowedUniques.test(definition));
+    }
+
     public static ItemDefinition pickUniqueFromFaction(String factionId, Random random, Predicate<ItemDefinition> allowedUniques) {
         return pick(random, definition -> definition.unique() && UniqueSource.allowsSite(definition.uniqueSources(), null)
                 && allowedUniques.test(definition), definition -> factionWeight(definition, factionId));

@@ -4,14 +4,21 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasAnomalyRecord;
 import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.atlas.AtlasData;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public final class RelayChain {
+
+    public static final String STAGE_EFFECTS_ID = "relay_stage";
 
     private RelayChain() {
     }
@@ -38,12 +45,39 @@ public final class RelayChain {
         return record != null && record.chain() != null ? record.chain() : new AtlasAnomalyRecord.Chain(1, rolledStages(state, cell), null);
     }
 
+    public static List<ChartGenContext.AppliedEffect> stageEffects(int stage) {
+        int steps = stage - 1;
+        if (steps <= 0) {
+            return List.of();
+        }
+        List<ChartGenContext.AppliedEffect> lines = new ArrayList<>();
+        for (ChartGenContext.AppliedEffect line : AtlasData.nodeEffects(STAGE_EFFECTS_ID)) {
+            lines.add(new ChartGenContext.AppliedEffect(line.effect(), line.value() * steps));
+        }
+        return lines;
+    }
+
+    public static int extraStages(ChartGenContext context) {
+        return context == null ? 0 : Math.max(0, Math.round(context.anomalyPercent(RelayNetwork.STAGES_KEY)));
+    }
+
+    public static AtlasRunNode join(AtlasRunNode node, AtlasGenerator generator, AtlasState state, AtlasCell cell, int extraStages) {
+        if (node == null || !node.anomalyIds().contains(RelayNetwork.ID)) {
+            return node;
+        }
+        AtlasAnomalyRecord.Chain stage = stageAt(generator, state, cell);
+        if (stage == null) {
+            return node;
+        }
+        return node.withExtraEffects(stageEffects(stage.stage()), stage.stage() >= stage.stages() + Math.max(0, extraStages));
+    }
+
     public static void closed(SectorAPI sector, ChartRun run) {
         AtlasRunNode node = run == null ? null : run.atlasNode();
         if (sector == null || node == null || !node.anomalyIds().contains(RelayNetwork.ID)) {
             return;
         }
-        int extraStages = Math.round(ChartRunEffects.contextOf(run).anomalyPercent(RelayNetwork.STAGES_KEY));
+        int extraStages = extraStages(ChartRunEffects.contextOf(run));
         settle(AtlasRuntime.generator(sector), AtlasState.get(sector), AtlasCell.unpack(node.cell()), run.isObjectiveComplete(),
                 RelayStates.allWoken(run), extraStages);
     }
