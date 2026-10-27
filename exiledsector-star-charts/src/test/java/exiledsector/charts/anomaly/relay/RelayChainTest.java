@@ -153,6 +153,16 @@ class RelayChainTest {
     }
 
     @Test
+    void theChainStagesLineAddsStagesThroughTheRunContext() {
+        ChartGenContext context = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_RELAY_CHAIN_STAGES, 2f)));
+
+        assertEquals(2, RelayChain.extraStages(context));
+        assertEquals(0, RelayChain.extraStages(ChartGenContext.none()));
+        assertEquals(0, RelayChain.extraStages(null));
+        assertEquals("2 additional Relay Network stages", ChartEffect.CHART_RELAY_CHAIN_STAGES.description(2f).plain());
+    }
+
+    @Test
     void aFirstStageAddsNothingAndASystemWithoutTheNetworkIsLeftAlone() {
         AtlasRunNode node = new AtlasRunNode(start.pack(), "pirates", List.of(), List.of(RelayNetwork.ID), false);
         assertSame(node, RelayChain.join(node, generator, state, start, 0));

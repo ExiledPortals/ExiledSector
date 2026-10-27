@@ -5,6 +5,7 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartGenerated;
 import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
+import exiledsector.charts.anomaly.relay.RelayNetwork;
 import exiledlib.i18n.Message;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
@@ -84,9 +85,17 @@ public enum ChartEffect implements ModifierEffect {
     CHART_REWARD_PERCENT(false, ChartGenContext::addRewardPercent),
     CHART_BREACH_GROWTH_PERCENT(false, (context, value) -> context.addAnomalyPercent(SpatialBreach.GROWTH_KEY, value)),
     CHART_BREACH_CACHE_PERCENT(false, (context, value) -> context.addAnomalyPercent(SpatialBreach.CACHE_KEY, value)),
-    CHART_BREACH_CACHE_ITEM_PERCENT(false, (context, value) -> context.addAnomalyPercent(SpatialBreach.CACHE_ITEM_KEY, value));
+    CHART_BREACH_CACHE_ITEM_PERCENT(false, (context, value) -> context.addAnomalyPercent(SpatialBreach.CACHE_ITEM_KEY, value)),
+    CHART_RELAY_COST_PERCENT(false, (context, value) -> context.addAnomalyPercent(RelayNetwork.COST_KEY, value)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return Translation.msg(magnitude < 0f ? key() + REDUCED_SUFFIX : key()).arg("value", Math.abs(magnitude)).styled();
+        }
+    },
+    CHART_RELAY_CHAIN_STAGES(true, (context, value) -> context.addAnomalyPercent(RelayNetwork.STAGES_KEY, value));
 
     static final String KEY_PREFIX = "chart.effect.";
+    static final String REDUCED_SUFFIX = ".reduced";
 
     private interface Contribution {
         void addTo(ChartGenContext context, float value);
