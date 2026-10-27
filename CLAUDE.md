@@ -6,6 +6,7 @@ Starsector mod (Java 17, Maven) that gives every ship its own skill tree. Mod id
 - Build and test from the repo root: `mvn -q clean package` (also rewrites the jar list in `mod_info.json`). Without `mvn` on PATH, use IntelliJ's bundled Maven with `JAVA_HOME=C:\Program Files\Java\jdk-17`, as `build-common.ps1` does. `jars/`, `exiled-lib/mod/jars/` and `libs/` are generated and gitignored; don't edit them.
 - Deploy: `.\deploy.ps1`. It only runs from `E:\Dev\ExiledSector-parallel-work` (normal), `E:\Dev\ExiledSector-new-faction-areas` (volume testing) or `E:\Dev\ExiledSector` (hotfix testing), which write the same `ExiledSector` and `ExiledLib` mod folders. Don't work around that check.
 - Don't run `release.ps1` unless asked. Python isn't installed (`python` opens the Microsoft Store); use PowerShell, Git Bash tools or Edit.
+- A JVM crash during a build or test run comes from the user's CPU, not the code; ignore it and run it again.
 - Tests: JUnit 5 + Mockito in each module's `src/test/java`. A test sits in the lowest module that sees every class it uses; each module installs only the domains it can see (`exiledsector.test.domains` in its pom). Keep the surefire `--add-opens` args in the parent `pom.xml`.
 
 ## Layout
