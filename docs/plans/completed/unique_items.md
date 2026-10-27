@@ -36,7 +36,7 @@ Each stage builds, tests and gets committed on its own. A framework stage adds t
     - [x] Root Conduit. Built: the `ROOT_CONDUIT` subroutine kind (born corrupted, one per ship, dropped by any faction's battles at 0.01 per 100 deployment points, since only uniques stay in the generic pools) and the `root_conduit` row; `RootConduits` caches the path and grants the affinity through `AllocatedSkillEffects`; `SkillTreeNodeConnectorRenderer` glows the path with `ConnectorKind.CONDUIT`. Tests in `RootConduitsTest`.
 9. [x] Gated subroutines and Phoenix Ash Archive. Waits on the gated subroutine decision. Built: `CombatGate` (Exiled Lib) and an optional gate on `EffectContribution`, kept out of permanent totals and grouped apart in `EffectTotals`; `RadiusGate` backs `GATES_RADIUS_BELOW_HALF_HULL`, `GATES_RADIUS_WHILE_SYSTEM_ACTIVE` and `GATES_RADIUS_WHILE_PHASED`; `GatedSubroutines` maps the nodes in a gating radius, `SkillTreeEffectSource` gates them, and `ShipCombatPlan` toggles them in combat; the ship summary prefixes gated totals. `unique_phoenix_ash_archive` (Tania, medium radius, triple strength below 50% hull). Decided without the user: triple strength stays, and each condition gets its own subroutine; the system-active and phased subroutines are left for a later volume, since their effects already exist. Tests in `GatedSubroutinesTest` and `ShipCombatPlanTest`.
 10. [x] Remnant, Omega and Luddic Path items, replacing the RAT Abyss and ExoTech items. Built: the effects `TIMEFLOW_MULT`, `ACCELERATION_PERCENT`, `NON_MISSILE_WEAPON_RANGE_CAP_FLAT`, `SMALL_WEAPON_OP_COST_FLAT` (the engine's small weapon OP mods), `DISPLACER_FAILSAFE_HULL_PERCENT` (`DisplacerFailsafeListener`), `NON_MISSILE_PROJECTILE_ECHO_CHANCE_PERCENT` (`ProjectileEchoListener`), `STRIKECRAFT_GAIN_AFFINITY_BONUSES` (`AffinityStrikecraft`, hooked into `SkillTreeHullMod`'s fighter application) and the three `AFFINITY_EXCHANGE_TO_*_PERCENT` (resolved last in `AffinitySteps.totals`); the `one_of` hull item mechanic (`ItemDefinition.keepsOneModifier`, rolled in `ItemRoller`), which the Equivalent Exchange Core uses to freeze its affinity. Nine `unique_*` rows in `hull_items.csv` and `unique_p_space_lattice` in `subroutines.csv`, sources `faction:remnant`, `faction:omega` or `faction:luddic_path`, no area. Decided while building: the echo rolls on hit rather than on firing, since the engine has no fire event, and fires from the weapon toward the target at no flux or ammo cost; the Displacer Failsafe moves the ship 1200 su; the Radiant Shield Lattice rolls 15-20% soft flux, less than the Hardlight Veil, since it also reduces energy damage taken; small weapons cost 1-2 more OP on the Facet Mount Geometry. Tests in `AffinityStepsTest`, `DisplacerFailsafeListenerTest`, `ProjectileEchoListenerTest`, `AffinityStrikecraftTest`, `ItemRollerTest` and `UniqueSourceCheckTest`.
-11. [x] Art for every item in this plan, subroutines included, following the art rule above. The first generated icons were rejected and deleted. Built: 128px icons in `graphics/icons/socketables/`, `exiledSector_*` for vanilla art and `tania_black_hawk_breech_refit` for the Black Hawk sprite over the Navarchy crest. Each is vanilla art cropped, selectively recoloured into its faction or affinity colours, or with a system icon or emblem blended onto a sprite or device screen; the any-affinity items carry the low-tech, midline and high-tech colours, and the Root Conduit shows the three root icons on a chip screen. The user picked each one from candidate sheets.
+11. [x] Art for every item in this plan, subroutines included, following the art rule above. The first generated icons were rejected and deleted. Built: 128px `exiledSector_*` icons in `graphics/icons/socketables/`, all from vanilla art. Each is vanilla art cropped, selectively recoloured into its faction or affinity colours, or with a system icon or emblem blended onto a sprite or device screen; the any-affinity items carry the low-tech, midline and high-tech colours, and the Root Conduit shows the three root icons on a chip screen. The user picked each one from candidate sheets.
 
 ## Mechanic families
 
@@ -74,13 +74,11 @@ The nodes allocated in the subroutine's radius apply only while a combat conditi
 
 | Item | Section | Effect | Family |
 |---|---|---|---|
-| Fafnir Osmium Shell Stock | weapon_mount | Kinetic damage from weapons in ballistic hardpoints is converted to high explosive damage | conversion |
-| Black Hawk Breech Refit | weapon_mount | Energy slots become ballistic slots | slot |
 | Low Arc Shield Emitter Core | shield_generator | All shield damage taken is converted to soft flux; shield arc is fixed and can't be modified | soft flux |
 | Farige Blueprint Vault | bridge | +3 to the root's affinity for each s-mod on the ship | affinity |
 | Phoenix Ash Archive (subroutine) | | Allocated nodes in radius apply only below 50% hull, at triple strength | gated |
 
-The Fafnir is Tania's osmium-shell "Spear of Carina". The emitter core is Tania's own Low Arc Shield Emitter turned into a trade: a narrow shield that never builds hard flux. The vault ties Tania's s-mod pillar to affinity.
+The emitter core is Tania's own Low Arc Shield Emitter turned into a trade: a narrow shield that never builds hard flux. The vault ties Tania's s-mod pillar to affinity.
 
 ## Nightcross
 
@@ -94,7 +92,7 @@ The Fafnir is Tania's osmium-shell "Spear of Carina". The emitter core is Tania'
 | Extended Warranty Contract | bridge | Doubles the modifiers of the hull item in its target section | doubling |
 | Nightcross Doctrine Archive (kept, subroutine) | | Adds energy rate of fire, energy flux cost, vent rate, EMP damage taken and fighter damage modifiers to nodes in radius | |
 
-The Retrofit is the mirror of Tania's Breech Refit. The warranty is Nightcross's corporate upsell, and it doubles the drawbacks too.
+The Retrofit is the mirror of the Path's Purifier Breech Refit. The warranty is Nightcross's corporate upsell, and it doubles the drawbacks too.
 
 ## Stargazer
 
@@ -123,6 +121,10 @@ The Equivalent Exchange Core lists all three exchanges and keeps one (`one_of`),
 | Item | Section | Effect | Family |
 |---|---|---|---|
 | Pather Wing Zealots | flight_deck | Strikecraft gain the ship's affinity bonuses to hull, armor and flux | affinity |
+| Chalcedon Charge Shells | weapon_mount | Kinetic damage from weapons in ballistic hardpoints is converted to high explosive damage | conversion |
+| Purifier Breech Refit | weapon_mount | Energy slots become ballistic slots | slot |
+
+The Charge Shells and the Breech Refit began as Tania's Fafnir Osmium Shell Stock and Black Hawk Breech Refit and were moved to the Path. The shells are solid shot packed with mining charge from the Path world Chalcedon; the refit tears out energy weapons as purification.
 
 ## Omega
 

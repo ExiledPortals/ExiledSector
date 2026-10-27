@@ -18,7 +18,7 @@ Files: everything prefixed `na_` in `graphics/icons`, the repair drone sprite `g
 
 By I Spectros I. Its licence lets its code and graphics be reused freely in Starsector modding projects, provided I Spectros I is credited.
 
-Files: everything prefixed `tania_` in `graphics/icons` (circular copies of its hull mod icons and the Frost Fire crest) and `graphics/icons/socketables` (a hull item icon showing the Black Hawk sprite over the Navarchy crest), and the faction crest `graphics/icons/crests/navarchy_of_tania.png`.
+Files: everything prefixed `tania_` in `graphics/icons` (circular copies of its hull mod icons and the Frost Fire crest), and the faction crest `graphics/icons/crests/navarchy_of_tania.png`.
 
 ## LOST_SECTOR
 
