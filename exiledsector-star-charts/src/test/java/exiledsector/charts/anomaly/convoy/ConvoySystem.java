@@ -72,6 +72,7 @@ final class ConvoySystem {
         when(planet.getName()).thenReturn("Planet " + id);
         when(planet.getLocation()).thenReturn(new Vector2f(x, y));
         when(planet.getRadius()).thenReturn(100f);
+        when(planet.getContainingLocation()).thenReturn(system);
         MemoryAPI memory = FakeChartContentEngine.memory();
         when(planet.getMemoryWithoutUpdate()).thenReturn(memory);
         entities.put(id, planet);

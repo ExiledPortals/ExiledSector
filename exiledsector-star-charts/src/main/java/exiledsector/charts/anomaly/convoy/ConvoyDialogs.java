@@ -12,6 +12,9 @@ public final class ConvoyDialogs {
         if (ConvoyEncounterDialog.wantsToHandle(target)) {
             return new ConvoyEncounterDialog();
         }
+        if (ConvoyCacheDialog.wantsToHandle(target)) {
+            return new ConvoyCacheDialog();
+        }
         return null;
     }
 }

@@ -17,6 +17,7 @@ import com.fs.starfarer.api.campaign.listeners.FleetEventListener;
 import com.fs.starfarer.api.impl.campaign.abilities.InterdictionPulseAbility;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.util.Misc;
+import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.run.ChartRun;
@@ -327,9 +328,9 @@ public final class ConvoyScript implements EveryFrameScript, FleetEventListener,
 
     void recordLosses(ConvoyState convoy, float remainingFreighterPoints, Vector2f at) {
         float lostShare = convoy.recordFreighterPoints(remainingFreighterPoints);
-        ChartRun run = ChartRuns.currentOrNull();
         SectorAPI sector = Global.getSector();
-        if (!(lostShare > 0f) || at == null || run == null || !run.runId().equals(runId) || sector == null) {
+        ChartRun run = sector == null ? null : ChartRuns.currentOrNull();
+        if (!(lostShare > 0f) || at == null || run == null || !run.runId().equals(runId)) {
             return;
         }
         Random dropRandom = new Random(convoy.nextDropSeed());
@@ -392,8 +393,43 @@ public final class ConvoyScript implements EveryFrameScript, FleetEventListener,
             freighters.addAssignment(FleetAssignment.GO_TO_LOCATION_AND_DESPAWN, convoy.exitToken(), ChartContentGenerator.ASSIGNMENT_DAYS);
             return;
         }
-        freighters.addAssignment(FleetAssignment.GO_TO_LOCATION, destination, ChartContentGenerator.ASSIGNMENT_DAYS);
-        freighters.addAssignment(FleetAssignment.ORBIT_PASSIVE, destination, ConvoyRules.UNLOAD_DAYS);
+        freighters.addAssignment(FleetAssignment.GO_TO_LOCATION, destination, ChartContentGenerator.ASSIGNMENT_DAYS,
+                new ConvoyStep(this, convoy.index(), ConvoyStep.Kind.ARRIVED));
+        freighters.addAssignment(FleetAssignment.ORBIT_PASSIVE, destination, ConvoyRules.UNLOAD_DAYS,
+                new ConvoyStep(this, convoy.index(), ConvoyStep.Kind.UNLOADED));
+    }
+
+    void arrived(ConvoyState convoy) {
+        if (convoy.phase() == ConvoyState.Phase.EN_ROUTE) {
+            convoy.setPhase(ConvoyState.Phase.UNLOADING);
+        }
+    }
+
+    void unloaded(ConvoyState convoy) {
+        if (!convoy.deliver()) {
+            return;
+        }
+        CampaignFleetAPI freighters = fleet(convoy, ConvoyRole.FREIGHTERS);
+        if (freighters != null) {
+            freighters.addAssignment(FleetAssignment.GO_TO_LOCATION_AND_DESPAWN, convoy.exitToken(), ChartContentGenerator.ASSIGNMENT_DAYS);
+        }
+        SectorEntityToken destination = entity(convoy.destinationId());
+        CampaignFleetAPI playerFleet = Global.getSector() == null ? null : Global.getSector().getPlayerFleet();
+        if (destination != null && convoy.hasCache() && playerFleet != null && playerFleet.getContainingLocation() == system && CampaignMessages.available()) {
+            String planet = destination.getName();
+            CampaignMessages.plain(I18n.forGameText(() -> Translation.msg("chart.convoy.delivered").arg("planet", planet).text()),
+                    Misc.getHighlightColor());
+        }
+    }
+
+    public List<ConvoyState> cachesAt(SectorEntityToken planet) {
+        List<ConvoyState> caches = new ArrayList<>();
+        for (ConvoyState convoy : convoys) {
+            if (planet != null && planet.getId() != null && planet.getId().equals(convoy.destinationId()) && convoy.hasCache()) {
+                caches.add(convoy);
+            }
+        }
+        return caches;
     }
 
     void moveScreenLead(ConvoyState convoy) {
