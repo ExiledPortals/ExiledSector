@@ -80,6 +80,9 @@ public class AtlasAnomalyCommand extends AtlasTargetCommand {
         for (AtlasAnomalyRecord record : state.anomalyRecords(cell)) {
             text.append("\n   record ").append(record.recordId()).append(": ").append(record.anomalyId()).append(" (")
                     .append(record.source().name().toLowerCase(Locale.ROOT)).append(")");
+            if (record.chain() != null) {
+                text.append(", stage ").append(record.chain().stage()).append(" of ").append(record.chain().stages());
+            }
         }
         return text.toString();
     }

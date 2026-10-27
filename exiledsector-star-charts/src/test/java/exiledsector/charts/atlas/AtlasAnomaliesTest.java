@@ -10,13 +10,17 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayDeque;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AtlasAnomaliesTest {
 
@@ -179,5 +183,98 @@ class AtlasAnomaliesTest {
         assertNull(AtlasAnomalyRecord.decode(1, "12,spatial_breach,ALIEN"));
         assertNull(AtlasAnomalyRecord.decode(1, null));
         assertNotNull(AtlasAnomalyRecord.decode(1, "12,spatial_breach,world"));
+    }
+
+    @Test
+    void aChainSurvivesEncodingAndOldRecordsReadWithoutOne() {
+        AtlasAnomalyRecord.Chain chain = new AtlasAnomalyRecord.Chain(2, 4, new AtlasCell(1, -2));
+        AtlasAnomalyRecord chained = new AtlasAnomalyRecord(5, new AtlasCell(3, 3), "relay_network", AtlasAnomalyRecord.Source.WORLD, chain);
+
+        assertEquals(chained, AtlasAnomalyRecord.decode(5, chained.encode()));
+        assertNull(AtlasAnomalyRecord.decode(5, "12,relay_network,WORLD").chain());
+        assertNull(AtlasAnomalyRecord.decode(5, "12,relay_network,WORLD,2,x,"));
+        assertNull(AtlasAnomalyRecord.decode(5, "12,relay_network,WORLD,2,4,").chain().from());
+        assertEquals(3, new AtlasAnomalyRecord.Chain(3, 1, null).stages());
+        assertTrue(new AtlasAnomalyRecord.Chain(3, 3, null).isLast());
+    }
+
+    @Test
+    void completingASystemKeepsItsChainedRecordsForTheirAnomalyToSettleButFailingSpendsThem() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator generator = generator(state);
+        AtlasCell completed = system(generator, 0);
+        AtlasCell failed = system(generator, 1);
+        AtlasAnomalyRecord.Chain chain = new AtlasAnomalyRecord.Chain(2, 3, AtlasCell.ORIGIN);
+        AtlasAnomalies.insert(generator, state, completed, SpatialBreach.ID, AtlasAnomalyRecord.Source.WORLD, null, chain);
+        AtlasAnomalies.insert(generator, state, failed, SpatialBreach.ID, AtlasAnomalyRecord.Source.WORLD, null, chain);
+
+        AtlasProgress.complete(generator, state, completed, 3);
+        AtlasProgress.fail(state, failed);
+
+        assertEquals(1, state.anomalyRecords(completed).size());
+        assertEquals(chain, state.anomalyRecords(completed).get(0).chain());
+        assertEquals(List.of(), state.anomalyRecords(failed));
+        AtlasDevTools.complete(generator, state, completed, 3);
+        assertEquals(List.of(), state.anomalyRecords());
+    }
+
+    @Test
+    void movingARecordCanCarryItsNextChainStage() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator generator = generator(state);
+        AtlasCell from = system(generator, 0);
+        AtlasCell to = system(generator, 1);
+        int recordId = AtlasAnomalies.insert(generator, state, from, SpatialBreach.ID, AtlasAnomalyRecord.Source.WORLD, null,
+                new AtlasAnomalyRecord.Chain(2, 3, null)).recordId();
+
+        assertEquals(AtlasAnomalies.InsertCheck.ALLOWED, AtlasAnomalies.move(generator, state, recordId, to, null, new AtlasAnomalyRecord.Chain(3, 3, from)));
+
+        assertEquals(new AtlasAnomalyRecord(recordId, to, SpatialBreach.ID, AtlasAnomalyRecord.Source.WORLD, new AtlasAnomalyRecord.Chain(3, 3, from)),
+                state.anomalyRecord(recordId));
+        assertEquals(AtlasAnomalies.InsertCheck.ALLOWED, AtlasAnomalies.move(generator, state, recordId, from, null));
+        assertEquals(new AtlasAnomalyRecord.Chain(3, 3, from), state.anomalyRecord(recordId).chain());
+    }
+
+    @Test
+    void anOnwardTargetIsTwoOrThreeLanesOutThroughUncompletedSystemsAndFurtherFromTheGateway() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator generator = generator(state);
+        AtlasCell from = generator.lanes(AtlasCell.ORIGIN).get(0);
+        state.add(from, AtlasState.COMPLETED);
+
+        AtlasCell target = AtlasAnomalies.onward(generator, state, from, SpatialBreach.ID, 2, 3);
+
+        assertNotNull(target);
+        int lanes = lanesThroughUncompleted(generator, state, from, target);
+        assertTrue(lanes >= 2 && lanes <= 3, "lanes " + lanes);
+        assertTrue(target.centreDistance() > from.centreDistance());
+        assertEquals(target, AtlasAnomalies.onward(generator, state, from, SpatialBreach.ID, 2, 3));
+        AtlasAnomalies.insert(generator, state, target, SpatialBreach.ID, AtlasAnomalyRecord.Source.WORLD, null);
+        assertNotEquals(target, AtlasAnomalies.onward(generator, state, from, SpatialBreach.ID, 2, 3));
+
+        for (AtlasCell cell : from.around(8)) {
+            if (!generator.isVoid(cell)) {
+                state.add(cell, AtlasState.COMPLETED);
+            }
+        }
+        assertNull(AtlasAnomalies.onward(generator, state, from, SpatialBreach.ID, 2, 3));
+    }
+
+    private static int lanesThroughUncompleted(AtlasGenerator generator, AtlasState state, AtlasCell from, AtlasCell target) {
+        Map<AtlasCell, Integer> lanesAway = new HashMap<>(Map.of(from, 0));
+        ArrayDeque<AtlasCell> frontier = new ArrayDeque<>(List.of(from));
+        while (!frontier.isEmpty()) {
+            AtlasCell cell = frontier.poll();
+            if (lanesAway.get(cell) >= 3) {
+                continue;
+            }
+            for (AtlasCell neighbour : generator.lanes(cell)) {
+                if (!lanesAway.containsKey(neighbour) && !state.isCompleted(neighbour)) {
+                    lanesAway.put(neighbour, lanesAway.get(cell) + 1);
+                    frontier.add(neighbour);
+                }
+            }
+        }
+        return lanesAway.getOrDefault(target, -1);
     }
 }

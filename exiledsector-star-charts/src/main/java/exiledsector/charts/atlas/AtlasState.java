@@ -212,8 +212,12 @@ public final class AtlasState implements AtlasMemory {
     }
 
     int insertAnomaly(AtlasCell cell, String anomalyId, AtlasAnomalyRecord.Source source) {
+        return insertAnomaly(cell, anomalyId, source, null);
+    }
+
+    int insertAnomaly(AtlasCell cell, String anomalyId, AtlasAnomalyRecord.Source source, AtlasAnomalyRecord.Chain chain) {
         int recordId = ++nextAnomalyRecord;
-        anomalyRecords.put(recordId, new AtlasAnomalyRecord(recordId, cell, anomalyId, source).encode());
+        anomalyRecords.put(recordId, new AtlasAnomalyRecord(recordId, cell, anomalyId, source, chain).encode());
         return recordId;
     }
 
@@ -226,12 +230,25 @@ public final class AtlasState implements AtlasMemory {
         return true;
     }
 
+    boolean moveAnomaly(int recordId, AtlasCell target, AtlasAnomalyRecord.Chain chain) {
+        AtlasAnomalyRecord record = anomalyRecord(recordId);
+        if (record == null) {
+            return false;
+        }
+        anomalyRecords.put(recordId, record.movedTo(target, chain).encode());
+        return true;
+    }
+
     public boolean removeAnomaly(int recordId) {
         return anomalyRecords.remove(recordId) != null;
     }
 
     void spendInsertedAnomalies(AtlasCell cell) {
         anomalyRecords(cell).forEach(record -> anomalyRecords.remove(record.recordId()));
+    }
+
+    void spendUnchainedAnomalies(AtlasCell cell) {
+        anomalyRecords(cell).stream().filter(record -> record.chain() == null).forEach(record -> anomalyRecords.remove(record.recordId()));
     }
 
     public String capturedBy(AtlasCell cell) {

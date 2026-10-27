@@ -82,7 +82,7 @@ public final class ChartLoadSweep {
         if (system == null) {
             LOG.warn("[ExiledSector] Star Chart run " + run.runId() + " lost its system; closing it");
             run.beginClosing();
-            AtlasProgress.closedWithoutObjective(sector, run);
+            AtlasProgress.closed(sector, run);
             ChartRunCloser.close(sector, run.runId(), null);
             return;
         }

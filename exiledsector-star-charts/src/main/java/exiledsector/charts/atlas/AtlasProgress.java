@@ -1,6 +1,7 @@
 package exiledsector.charts.atlas;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledsector.charts.anomaly.relay.RelayChain;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import org.apache.log4j.Logger;
@@ -42,7 +43,7 @@ public final class AtlasProgress {
             return;
         }
         state.add(cell, AtlasState.COMPLETED);
-        state.spendInsertedAnomalies(cell);
+        state.spendUnchainedAnomalies(cell);
         state.clearTier(tier);
         AtlasSpecial special = generator.specialAt(cell);
         if (special == null) {
@@ -65,6 +66,15 @@ public final class AtlasProgress {
             if (!generator.isVoid(cell) && nexus.equals(generator.infestationSource(cell))) {
                 state.add(cell, AtlasState.CLEANSED);
             }
+        }
+    }
+
+    public static void closed(SectorAPI sector, ChartRun run) {
+        closedWithoutObjective(sector, run);
+        try {
+            RelayChain.closed(sector, run);
+        } catch (RuntimeException e) {
+            LOG.error("[ExiledSector] Moving the relay network on from run " + run.runId() + " failed", e);
         }
     }
 
