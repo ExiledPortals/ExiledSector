@@ -317,6 +317,21 @@ destination (`ConvoyState`, `ConvoyCargo`). That planet then offers a raid (`Con
 non-market raid without reputation, response, cooldowns or rules) at a difficulty and danger level set by tier
 (`ConvoyRules`); the cache objective yields exactly the delivered share and stays until taken. Once the freighters are lost, every convoy fleet left leaves through the exit.
 
+## Anomalous Debris
+
+The anomaly places one to four visual-only debris fields plus the extra-debris line, each hiding a dormant fleet at 60%
+of a chart fleet's size, its ships drawn by weight from `chart_factions.csv` factions and each captained by an AI core
+of a tier-based level (`AnomalousDebris`, `DormantFleets`, numbers in `DebrisRules`). The fleets fly as the neutral
+`exiledSector_dormant` faction with vanilla's dormant setup and no fleet AI, so they never move or join a battle. A 0
+detected-range multiplier hides each one until the player fleet comes within 600 su of its field's edge
+(`AnomalousDebrisTerrainPlugin`).
+
+`DormantFleetDialog` replaces the first encounter: engaging wakes only that fleet, hostile for the rest of the run with
+no reputation change and an AI that holds its field (`DormantFleets.wake`), then hands over to vanilla's encounter.
+Corrupting first spends a Corrupted Nanoswarm and rebuilds the fleet stronger, and the first engagement won against it
+drops an engram (`DormantFleetLoot`). An engram rerolls a non-unique hull item with four modifiers, one always its own
+from the reserved pool that no other roll draws from (`AnomalousDebrisCurrency`, core `ReservedModifiers`).
+
 ## Transverse Jump in charts
 
 In any chart system, Transverse Jump takes the fleet back to where the chart was opened, the same as the exit

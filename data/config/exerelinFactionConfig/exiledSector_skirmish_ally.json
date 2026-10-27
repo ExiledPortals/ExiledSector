@@ -2,6 +2,6 @@
     "playableFaction":false,
     "disableDiplomacy":true,
     "corvusCompatible":true,
-    "noSyncRelations":true,
     "noRandomizeRelations":true,
+    "noSyncRelations":true,
 }

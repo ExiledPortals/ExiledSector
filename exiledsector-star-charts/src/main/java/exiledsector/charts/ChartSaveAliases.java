@@ -9,6 +9,7 @@ import exiledsector.charts.anomaly.convoy.ConvoyRole;
 import exiledsector.charts.anomaly.convoy.ConvoyScript;
 import exiledsector.charts.anomaly.convoy.ConvoyState;
 import exiledsector.charts.anomaly.convoy.ConvoyStep;
+import exiledsector.charts.anomaly.debris.AnomalousDebrisTerrainPlugin;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.objective.ChartObjectiveIntel;
 import exiledsector.charts.run.ChartRun;
@@ -36,7 +37,8 @@ public final class ChartSaveAliases {
             Map.entry("exiledSector.ConvoyRole", ConvoyRole.class),
             Map.entry("exiledSector.ConvoyStep", ConvoyStep.class),
             Map.entry("exiledSector.ConvoyStepKind", ConvoyStep.Kind.class),
-            Map.entry("exiledSector.ConvoyIntel", ConvoyIntel.class));
+            Map.entry("exiledSector.ConvoyIntel", ConvoyIntel.class),
+            Map.entry("exiledSector.AnomalousDebrisTerrainPlugin", AnomalousDebrisTerrainPlugin.class));
 
     private ChartSaveAliases() {
     }

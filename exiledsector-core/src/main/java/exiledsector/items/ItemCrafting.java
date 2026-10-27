@@ -449,7 +449,10 @@ public final class ItemCrafting {
         if (locked == null) {
             return rerolled;
         }
-        List<RolledModifier> merged = new ArrayList<>(rerolled.stream().filter(rolled -> !rolled.modifierId().equals(locked.modifierId())).toList());
+        Set<String> lockedEffects = new HashSet<>();
+        locked.lines().forEach(line -> lockedEffects.add(line.effectName()));
+        List<RolledModifier> merged = new ArrayList<>(rerolled.stream().filter(rolled -> !rolled.modifierId().equals(locked.modifierId()))
+                .filter(rolled -> rolled.lines().stream().noneMatch(line -> lockedEffects.contains(line.effectName()))).toList());
         List<RolledModifier> sameSide = merged.stream().filter(rolled -> rolled.slot() == locked.slot()).toList();
         if (sameSide.size() >= maxPerSide) {
             merged.remove(sameSide.get(random.nextInt(sameSide.size())));

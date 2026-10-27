@@ -6,6 +6,8 @@ import com.fs.starfarer.api.campaign.CampaignPlugin;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import exiledsector.charts.anomaly.convoy.ConvoyDialogs;
+import exiledsector.charts.anomaly.debris.DormantFleetDialog;
+import exiledsector.charts.anomaly.debris.DormantFleets;
 import exiledsector.charts.anomaly.relay.RelayDialog;
 import exiledsector.charts.anomaly.relay.RelayNetwork;
 import exiledsector.charts.wormhole.ChartWormholeDialog;
@@ -28,6 +30,9 @@ public class ChartCampaignPlugin extends BaseCampaignPlugin {
     public PluginPick<InteractionDialogPlugin> pickInteractionDialogPlugin(SectorEntityToken interactionTarget) {
         if (RelayNetwork.isRelay(interactionTarget)) {
             return new PluginPick<>(new RelayDialog(), CampaignPlugin.PickPriority.MOD_SPECIFIC);
+        }
+        if (DormantFleets.isDebrisFleet(interactionTarget)) {
+            return new PluginPick<>(new DormantFleetDialog(), CampaignPlugin.PickPriority.MOD_SPECIFIC);
         }
         if (ChartWormholeDialog.isChartWormhole(interactionTarget)) {
             return new PluginPick<>(new ChartWormholeDialog(), CampaignPlugin.PickPriority.MOD_SPECIFIC);

@@ -1,7 +1,10 @@
 package exiledsector.items;
 
 
+import exiledlib.i18n.Translation;
+
 import java.awt.Color;
+import java.util.Locale;
 import java.util.Random;
 
 public interface ItemCurrency {
@@ -44,5 +47,17 @@ public interface ItemCurrency {
 
     default boolean dropsFromShipLoot() {
         return appliesTo(ItemType.SUBROUTINE) || appliesTo(ItemType.HULL_ITEM);
+    }
+
+    default String refusalNoticeKey(Item item) {
+        return null;
+    }
+
+    default String description() {
+        return Translation.text(MaterialItems.descriptionKey(itemId()));
+    }
+
+    default String usedNoticeKey(ItemNature nature) {
+        return "ui.workbench.notice.used." + key() + "." + nature.name().toLowerCase(Locale.ROOT);
     }
 }

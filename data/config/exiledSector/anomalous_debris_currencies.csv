@@ -1,0 +1,3 @@
+id,name,modifier,item_types,min_tier,weight,note
+exiledSector_revenant_engram,Revenant Engram,HULL_PERCENT_ANOMALOUS_DEBRIS,hull_item,1,1,"Placeholder: a hull item rerolled with the Revenant prefix"
+exiledSector_vigil_engram,Vigil Engram,BEAM_WEAPON_RANGE_PERCENT_ANOMALOUS_DEBRIS,hull_item,1,1,"Placeholder: a hull item rerolled with the Vigil suffix"

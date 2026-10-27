@@ -6,6 +6,7 @@ import exiledsector.charts.generation.ChartGenerated;
 import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.convoy.SupplyConvoy;
+import exiledsector.charts.anomaly.debris.AnomalousDebris;
 import exiledsector.charts.anomaly.relay.RelayNetwork;
 import exiledlib.i18n.Message;
 import exiledlib.i18n.StyledText;
@@ -101,7 +102,9 @@ public enum ChartEffect implements ModifierEffect {
             return Translation.msg(magnitude < 0f ? key() + REDUCED_SUFFIX : key()).arg("value", Math.abs(magnitude)).styled();
         }
     },
-    CHART_EXTRA_CONVOYS(true, (context, value) -> context.addAnomalyPercent(SupplyConvoy.EXTRA_KEY, value));
+    CHART_EXTRA_CONVOYS(true, (context, value) -> context.addAnomalyPercent(SupplyConvoy.EXTRA_KEY, value)),
+    CHART_EXTRA_ANOMALOUS_DEBRIS(true, (context, value) -> context.addAnomalyPercent(AnomalousDebris.EXTRA_KEY, Math.round(value))),
+    CHART_ANOMALOUS_DEBRIS_CURRENCY_QUANTITY_PERCENT(false, (context, value) -> context.addAnomalyPercent(AnomalousDebris.CURRENCY_KEY, value));
 
     static final String KEY_PREFIX = "chart.effect.";
     static final String REDUCED_SUFFIX = ".reduced";

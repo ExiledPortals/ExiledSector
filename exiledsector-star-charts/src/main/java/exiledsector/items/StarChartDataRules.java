@@ -45,6 +45,7 @@ public final class StarChartDataRules implements ItemDataRules {
         integrity.checkDefinitions(ItemDataIntegrity.orEmpty(ModCsv.rows("id", StarChartDefinitions.DATA_PATH)), StarChartDefinitions.DATA_PATH,
                 ItemType.STAR_CHART);
         checkImplicits(integrity, ItemDataIntegrity.orEmpty(ModCsv.rows(StarChartImplicits.SYSTEM_TYPE_COLUMN, StarChartImplicits.DATA_PATH)));
+        AnomalousDebrisCurrencies.checkData(integrity);
     }
 
     @Override

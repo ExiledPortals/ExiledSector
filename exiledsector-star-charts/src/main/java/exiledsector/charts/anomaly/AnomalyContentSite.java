@@ -131,6 +131,12 @@ public final class AnomalyContentSite {
         return fleet;
     }
 
+    public void track(SectorEntityToken entity) {
+        if (entity != null) {
+            placed.add(entity);
+        }
+    }
+
     public List<SectorEntityToken> placed() {
         return List.copyOf(placed);
     }

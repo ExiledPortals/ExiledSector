@@ -10,6 +10,10 @@
 		"loopOne":"terrain_corona",
 		"loopTwo":"terrain_corona_flare",
 	},
+	"exiledSector_chart_anomalous_debris":{
+		"plugin":"exiledsector.charts.anomaly.debris.AnomalousDebrisTerrainPlugin",
+		"musicSuppression":0,
+	},
 	"exiledSector_chart_pulsar_beam":{
 		"plugin":"exiledsector.charts.anomaly.ChartPulsarBeamTerrainPlugin",
 		"musicSuppression":1,

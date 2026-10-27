@@ -232,7 +232,7 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
     }
 
     private String currentId(RolledModifier modifier) {
-        if (poolEntryFor(modifier.modifierId()) != null || modifier.lines().size() != 1) {
+        if (poolEntryFor(modifier.modifierId()) != null || modifier.lines().size() != 1 || ReservedModifiers.isReserved(modifier.modifierId())) {
             return modifier.modifierId();
         }
         PoolEntry entry = singleEntryFor(modifier.lines().get(0).effectName(), modifier.slot());

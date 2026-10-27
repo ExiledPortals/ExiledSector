@@ -13,6 +13,7 @@ import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
+import exiledsector.ExiledSector;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.CraftingWard;
@@ -21,8 +22,10 @@ import exiledsector.items.SocketCustody;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.Item;
 import exiledsector.items.ItemCrafting;
+import exiledsector.items.ItemCurrencies;
 import exiledsector.items.ItemCurrency;
 import exiledsector.items.ItemDefinition;
+import exiledsector.items.ItemType;
 import exiledsector.items.ItemNature;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ItemName;
@@ -49,6 +52,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.function.ToIntFunction;
 
 public final class SocketWorkbenchPanel extends HoloPanel {
 
@@ -419,7 +423,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         VanillaText.plainPara(element, title, 0f, Misc.getBasePlayerColor());
         String body = growing
                 ? Translation.msg("ui.workbench.confirm.growBody").arg("cost", currency.partsCost()).arg("parts", ItemCrafting.parts(playerMaterials())).text()
-                : Translation.text(modeDescriptionKey(currency));
+                : domainSupport() != null ? Translation.text(modeDescriptionKey(currency)) : currency.description();
         VanillaText.plainPara(element, body, LINE_PAD * 2f, Misc.getTextColor());
         for (CraftingWard ward : spentWards) {
             VanillaText.plainPara(element, Translation.msg("ui.workbench.confirm.wardSpent").arg("name", MaterialItems.displayName(ward.itemId())).text(),
@@ -495,6 +499,11 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             }
             if (currency == CraftingCurrency.TRANSPOSITION && loadedItem.definition() != null && loadedItem.definition().unique()) {
                 showNotice(Translation.text("ui.workbench.notice.noOtherUnique"));
+                return false;
+            }
+            String refusalKey = currency.refusalNoticeKey(loadedItem);
+            if (refusalKey != null) {
+                showNotice(Translation.msg(refusalKey).arg("name", MaterialItems.displayName(currency.itemId())).arg("target", loadedItem.name()).text());
                 return false;
             }
             showNotice(Translation.msg("ui.workbench.notice.cannotUse").arg("name", MaterialItems.displayName(currency.itemId()))
@@ -583,7 +592,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         if (currency != CraftingCurrency.REPLICATION) {
             loadedItem = result;
         }
-        String usedKey = usedNoticeKey((CraftingCurrency) currency, result.corruption(), ItemNature.of(result.kind()));
+        String usedKey = usedNoticeKey(currency, result.corruption(), ItemNature.of(result.kind()));
         noticeText = Translation.msg(usedKey)
                 .arg("before", nameBefore).arg("name", result.name()).text();
         SocketCustody.markHostsChanged(result);
@@ -653,7 +662,24 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private List<ItemCurrency> currencies() {
         BenchModeSupport support = domainSupport();
-        return support != null ? support.currencies() : List.of(CraftingCurrency.values());
+        if (support != null) {
+            return support.currencies();
+        }
+        CraftingMaterials materials = playerMaterials();
+        List<ItemCurrency> offered = new ArrayList<>();
+        ExiledSector.enabledDomains().forEach(domain -> offered.addAll(domain.hullBenchCurrencies()));
+        return hullBenchCurrencies(offered, materials::count);
+    }
+
+    static List<ItemCurrency> hullBenchCurrencies(List<ItemCurrency> registered, ToIntFunction<String> owned) {
+        List<ItemCurrency> shown = new ArrayList<>(List.of(CraftingCurrency.values()));
+        for (ItemCurrency currency : registered) {
+            boolean hullBench = ItemCurrencies.appliesTo(currency, ItemType.HULL_ITEM) || ItemCurrencies.appliesTo(currency, ItemType.SUBROUTINE);
+            if (!(currency instanceof CraftingCurrency) && hullBench && owned.applyAsInt(currency.itemId()) > 0) {
+                shown.add(currency);
+            }
+        }
+        return shown;
     }
 
     private void rebuildContent() {
@@ -969,7 +995,8 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         element.setParaFont(Fonts.ORBITRON_20AA);
         VanillaText.plainPara(element, recipeName(currency), 0f, Misc.getBrightPlayerColor());
         element.setParaFontDefault();
-        VanillaText.plainPara(element, Translation.text(modeDescriptionKey(currency)), GAP, Misc.getTextColor());
+        String description = domainSupport() != null ? Translation.text(modeDescriptionKey(currency)) : currency.description();
+        VanillaText.plainPara(element, description, GAP, Misc.getTextColor());
         for (String line : tooltipHints(currency)) {
             VanillaText.plainPara(element, line, GAP, Misc.getGrayColor());
         }
@@ -1013,11 +1040,11 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         return domainSupport() != null ? modeSupport().currencyDescriptionKey(currency) : descriptionKey(currency);
     }
 
-    static String usedNoticeKey(CraftingCurrency currency, CorruptionOutcome outcome, ItemNature nature) {
-        String baseKey = currency == CraftingCurrency.CORRUPTION && outcome != null
-                ? "ui.workbench.notice.corrupted." + outcome.name().toLowerCase(Locale.ROOT)
-                : "ui.workbench.notice.used." + currency.name().toLowerCase(Locale.ROOT);
-        return baseKey + "." + nature.name().toLowerCase(Locale.ROOT);
+    static String usedNoticeKey(ItemCurrency currency, CorruptionOutcome outcome, ItemNature nature) {
+        if (currency == CraftingCurrency.CORRUPTION && outcome != null) {
+            return "ui.workbench.notice.corrupted." + outcome.name().toLowerCase(Locale.ROOT) + "." + nature.name().toLowerCase(Locale.ROOT);
+        }
+        return currency.usedNoticeKey(nature);
     }
 
     private static CargoIconLook recipeLook(ItemCurrency currency) {

@@ -3,6 +3,7 @@ package exiledsector.charts;
 import com.fs.starfarer.api.Global;
 import com.thoughtworks.xstream.XStream;
 import exiledlib.compat.CompatTarget;
+import exiledsector.charts.anomaly.debris.AnomalousDebrisTerrainPlugin;
 import exiledsector.charts.effect.ChartFleetConditionSource;
 import exiledsector.charts.loot.StarChartLootSource;
 import exiledsector.charts.run.ChartRuns;
@@ -16,6 +17,8 @@ import exiledsector.effects.ShipEffectSource;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.SpecLocalisation;
 import exiledlib.i18n.Translation;
+import exiledsector.items.AnomalousDebrisCurrencies;
+import exiledsector.items.ItemCurrency;
 import exiledsector.items.ItemDataRules;
 import exiledsector.items.ItemTypeSupport;
 import exiledsector.items.MaterialItems;
@@ -59,6 +62,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     @Override
     public void onApplicationLoad() {
         StarChartCurrency.registerAll();
+        AnomalousDebrisTerrainPlugin.preloadTextures();
         I18n.forGameText(() -> {
             for (StarChartCurrency currency : StarChartCurrency.values()) {
                 MaterialItems.localise(currency.itemId());
@@ -99,6 +103,8 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     @Override
     public void loadItems() {
         StarChartItems.load();
+        AnomalousDebrisCurrencies.load();
+        I18n.forGameText(AnomalousDebrisCurrencies::localise);
     }
 
     @Override
@@ -124,6 +130,11 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     @Override
     public List<ItemTypeSupport> itemTypes() {
         return List.of(StarChart.SUPPORT);
+    }
+
+    @Override
+    public List<ItemCurrency> hullBenchCurrencies() {
+        return List.copyOf(AnomalousDebrisCurrencies.all());
     }
 
     @Override

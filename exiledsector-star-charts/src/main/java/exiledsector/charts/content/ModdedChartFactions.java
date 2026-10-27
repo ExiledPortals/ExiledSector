@@ -3,6 +3,8 @@ package exiledsector.charts.content;
 import com.fs.starfarer.api.Global;
 import exiledlib.ModCsv;
 import exiledlib.compat.CompatTarget;
+import exiledsector.charts.anomaly.debris.DormantFleets;
+import exiledsector.charts.anomaly.skirmish.SkirmishFactions;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,6 +21,7 @@ public final class ModdedChartFactions {
     static final String MOD_FACTIONS_PATH = CONFIG_FOLDER + "mod_factions.csv";
     static final String FACTION_COLUMN = "faction";
     static final String PLAYABLE_KEY = "playableFaction";
+    static final Set<String> OWN_FACTIONS = Set.of(SkirmishFactions.ALLY_FACTION_ID, DormantFleets.FACTION_ID);
     private static final Logger LOG = Logger.getLogger(ModdedChartFactions.class);
 
     private ModdedChartFactions() {
@@ -30,7 +33,7 @@ public final class ModdedChartFactions {
             Set<String> found = new TreeSet<>();
             ModCsv.forEach(rows, (index, row) -> {
                 String factionId = ModCsv.text(row, FACTION_COLUMN);
-                if (!factionId.isEmpty() && !listedFactions.contains(factionId) && isPlayable(factionId)) {
+                if (!factionId.isEmpty() && !listedFactions.contains(factionId) && !OWN_FACTIONS.contains(factionId) && isPlayable(factionId)) {
                     found.add(factionId);
                 }
             });
