@@ -14,6 +14,7 @@ public final class RelayRules {
     public static final float STATION_KEEPING_BURN = 2f;
     public static final float STATION_KEEPING_DAYS = 0.25f;
     public static final float HANDSHAKE_DAYS = 0.25f;
+    static final float HOLD_GAP_DAYS = 0.2f;
     static final int SUPPLIES_BASE = 10;
     static final int SUPPLIES_PER_TIER = 4;
     static final int MACHINERY_BASE = 5;

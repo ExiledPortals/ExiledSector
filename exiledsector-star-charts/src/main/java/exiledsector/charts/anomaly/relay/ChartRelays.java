@@ -30,6 +30,7 @@ public final class ChartRelays {
 
     static final String REVEAL_MOD_ID = ChartIds.PREFIX + "relay_reveal";
     static final String SYNC_SINCE_MEMORY_KEY = "$exiledSector_chartRelaySyncSince";
+    static final String SYNC_SEEN_MEMORY_KEY = "$exiledSector_chartRelaySyncSeen";
     static final Color MESSAGE_COLOUR = new Color(120, 200, 255);
 
     private ChartRelays() {
@@ -52,6 +53,9 @@ public final class ChartRelays {
         StarSystemAPI system = sector.getStarSystem(run.systemId());
         if (playerFleet == null || system == null || playerFleet.getContainingLocation() != system || playerFleet.isInHyperspaceTransition()) {
             return false;
+        }
+        if (RelayStates.isWoken(run, RelayKind.COMM_RELAY)) {
+            revealFleets(system);
         }
         boolean changed = false;
         for (SectorEntityToken relay : system.getEntitiesWithTag(RelayNetwork.RELAY_TAG)) {
@@ -93,7 +97,9 @@ public final class ChartRelays {
         if (holdDays <= 0f) {
             return true;
         }
-        if (!memory.contains(SYNC_SINCE_MEMORY_KEY)) {
+        boolean lapsed = memory.contains(SYNC_SEEN_MEMORY_KEY) && clock.getElapsedDaysSince(memory.getLong(SYNC_SEEN_MEMORY_KEY)) > RelayRules.HOLD_GAP_DAYS;
+        memory.set(SYNC_SEEN_MEMORY_KEY, clock.getTimestamp());
+        if (lapsed || !memory.contains(SYNC_SINCE_MEMORY_KEY)) {
             memory.set(SYNC_SINCE_MEMORY_KEY, clock.getTimestamp());
             return false;
         }
@@ -151,6 +157,7 @@ public final class ChartRelays {
     static void applyWoken(LocationAPI system, SectorEntityToken relay, RelayKind kind) {
         relay.setFaction(Factions.PLAYER);
         relay.getMemoryWithoutUpdate().unset(SYNC_SINCE_MEMORY_KEY);
+        relay.getMemoryWithoutUpdate().unset(SYNC_SEEN_MEMORY_KEY);
         if (kind.givesVanillaBonus()) {
             relay.getMemoryWithoutUpdate().unset(MemFlags.OBJECTIVE_NON_FUNCTIONAL);
         }
@@ -165,7 +172,7 @@ public final class ChartRelays {
         }
         int revealed = 0;
         for (CampaignFleetAPI fleet : system.getFleets()) {
-            if (!fleet.isPlayerFleet()) {
+            if (!fleet.isPlayerFleet() && fleet.getExtendedDetectedAtRange() < RelayRules.REVEAL_EXTENDED_RANGE) {
                 reveal(fleet);
                 revealed++;
             }

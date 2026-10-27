@@ -40,9 +40,11 @@ import static org.mockito.Mockito.when;
 
 class ChartRelaysTest {
 
+    private static final float HUNDREDTHS = 100f;
+
     private MockSector mockSector;
     private CampaignClockAPI clock;
-    private float elapsedDays;
+    private long now;
 
     @BeforeEach
     void setUp() {
@@ -52,8 +54,8 @@ class ChartRelaysTest {
         when(settings.getSpeedPerBurnLevel()).thenReturn(20f);
         mockSector.global.when(Global::getSettings).thenReturn(settings);
         clock = mock(CampaignClockAPI.class);
-        when(clock.getTimestamp()).thenReturn(100L);
-        when(clock.getElapsedDaysSince(anyLong())).thenAnswer(invocation -> elapsedDays);
+        when(clock.getTimestamp()).thenAnswer(invocation -> now);
+        when(clock.getElapsedDaysSince(anyLong())).thenAnswer(invocation -> (now - (long) invocation.getArgument(0)) / HUNDREDTHS);
         when(mockSector.sector.getClock()).thenReturn(clock);
     }
 
@@ -129,8 +131,9 @@ class ChartRelaysTest {
         SectorEntityToken buoy = RelayFixtures.relay(RelayKind.NAV_BUOY, new Vector2f());
 
         assertFalse(ChartRelays.synced(clock, player, buoy, RelayKind.NAV_BUOY));
-        elapsedDays = RelayRules.STATION_KEEPING_DAYS;
-        assertTrue(ChartRelays.synced(clock, player, buoy, RelayKind.NAV_BUOY));
+        assertFalse(advanceAndSync(10L, player, buoy, RelayKind.NAV_BUOY));
+        assertFalse(advanceAndSync(10L, player, buoy, RelayKind.NAV_BUOY));
+        assertTrue(advanceAndSync(10L, player, buoy, RelayKind.NAV_BUOY));
 
         player.getVelocity().set(200f, 0f);
         assertFalse(ChartRelays.synced(clock, player, buoy, RelayKind.NAV_BUOY));
@@ -141,6 +144,23 @@ class ChartRelaysTest {
         assertFalse(ChartRelays.synced(clock, far, buoy, RelayKind.NAV_BUOY));
     }
 
+    private boolean advanceAndSync(long hundredthsOfADay, CampaignFleetAPI player, SectorEntityToken relay, RelayKind kind) {
+        now += hundredthsOfADay;
+        return ChartRelays.synced(clock, player, relay, kind);
+    }
+
+    @Test
+    void aHoldThatWentUncheckedStartsOver() {
+        CampaignFleetAPI player = RelayFixtures.fleet(true, new Vector2f(100f, 0f));
+        SectorEntityToken buoy = RelayFixtures.relay(RelayKind.NAV_BUOY, new Vector2f());
+
+        assertFalse(ChartRelays.synced(clock, player, buoy, RelayKind.NAV_BUOY));
+        assertFalse(advanceAndSync(30L, player, buoy, RelayKind.NAV_BUOY));
+        assertFalse(advanceAndSync(10L, player, buoy, RelayKind.NAV_BUOY));
+        assertFalse(advanceAndSync(10L, player, buoy, RelayKind.NAV_BUOY));
+        assertTrue(advanceAndSync(10L, player, buoy, RelayKind.NAV_BUOY));
+    }
+
     @Test
     void theCommRelayNeedsTheTransponderOnInRangeAndTheSensorArrayASensorBurst() {
         CampaignFleetAPI player = RelayFixtures.fleet(true, new Vector2f(RelayRules.WAKE_RANGE - 100f, 0f));
@@ -148,12 +168,12 @@ class ChartRelaysTest {
         SectorEntityToken array = RelayFixtures.relay(RelayKind.SENSOR_ARRAY, new Vector2f());
         AbilityPlugin burst = mock(AbilityPlugin.class);
         when(player.getAbility(Abilities.SENSOR_BURST)).thenReturn(burst);
-        elapsedDays = RelayRules.HANDSHAKE_DAYS;
 
         assertFalse(ChartRelays.synced(clock, player, relay, RelayKind.COMM_RELAY));
         when(player.isTransponderOn()).thenReturn(true);
         assertFalse(ChartRelays.synced(clock, player, relay, RelayKind.COMM_RELAY));
-        assertTrue(ChartRelays.synced(clock, player, relay, RelayKind.COMM_RELAY));
+        assertFalse(advanceAndSync(15L, player, relay, RelayKind.COMM_RELAY));
+        assertTrue(advanceAndSync(15L, player, relay, RelayKind.COMM_RELAY));
 
         assertFalse(ChartRelays.synced(clock, player, array, RelayKind.SENSOR_ARRAY));
         when(burst.isActiveOrInProgress()).thenReturn(true);
@@ -225,6 +245,24 @@ class ChartRelaysTest {
                         .anomalyMult(RelayNetwork.COST_KEY)));
         assertEquals("50% reduced supply and heavy machinery cost to wake relays", ChartEffect.CHART_RELAY_COST_PERCENT.description(-50f).plain());
         assertEquals("20% increased supply and heavy machinery cost to wake relays", ChartEffect.CHART_RELAY_COST_PERCENT.description(20f).plain());
+    }
+
+    @Test
+    void aWokenCommRelayAlsoRevealsFleetsThatTurnUpLater() {
+        ChartRun run = liveRelayRun();
+        ChartRuns.store(run);
+        StarSystemAPI system = mock(StarSystemAPI.class);
+        when(mockSector.sector.getStarSystem(run.systemId())).thenReturn(system);
+        CampaignFleetAPI player = RelayFixtures.fleet(true, new Vector2f());
+        when(player.getContainingLocation()).thenReturn(system);
+        when(mockSector.sector.getPlayerFleet()).thenReturn(player);
+        RelayStates.add(run, RelayKind.COMM_RELAY, RelayStates.WOKEN);
+        CampaignFleetAPI defenders = RelayFixtures.fleet(false, new Vector2f(7000f, 0f));
+        when(system.getFleets()).thenReturn(List.of(player, defenders));
+
+        ChartRelays.check(mockSector.sector);
+
+        verify(defenders).setExtendedDetectedAtRange(RelayRules.REVEAL_EXTENDED_RANGE);
     }
 
     @Test
