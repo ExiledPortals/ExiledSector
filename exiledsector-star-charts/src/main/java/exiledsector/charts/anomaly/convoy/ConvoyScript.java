@@ -4,6 +4,7 @@ import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignClockAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.CampaignTerrainPlugin;
 import com.fs.starfarer.api.campaign.FleetAssignment;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
@@ -164,12 +165,35 @@ public final class ConvoyScript implements EveryFrameScript, ChartRunBound {
         if (playerInside) {
             checkPulse(playerFleet, clock);
         }
+        List<CampaignTerrainPlugin> slowing = ConvoyTerrain.slowingTerrain(system);
         for (ConvoyState convoy : convoys) {
             if (convoy.phase() == ConvoyState.Phase.WAITING && arrivalTimestamp != Long.MIN_VALUE
                     && clock.getElapsedDaysSince(arrivalTimestamp) >= ConvoyRules.DEPARTURE_DAYS) {
                 depart(convoy);
             }
             moveScreenLead(convoy);
+            keepFormation(convoy, slowing);
+        }
+    }
+
+    void keepFormation(ConvoyState convoy, List<CampaignTerrainPlugin> slowing) {
+        float slowestEscort = Float.MAX_VALUE;
+        for (ConvoyRole role : List.of(ConvoyRole.SCREEN, ConvoyRole.ESCORT)) {
+            CampaignFleetAPI escort = fleet(convoy, role);
+            if (escort != null) {
+                slowestEscort = Math.min(slowestEscort, ConvoyTerrain.unmodifiedBurn(escort));
+            }
+        }
+        for (ConvoyRole role : ConvoyRole.values()) {
+            CampaignFleetAPI fleet = fleet(convoy, role);
+            if (fleet == null) {
+                continue;
+            }
+            float burnMult = ConvoyTerrain.inside(fleet, slowing) ? ConvoyRules.terrainBurn(role) : 1f;
+            if (role == ConvoyRole.FREIGHTERS && burnMult == 1f && !convoy.isHostile() && slowestEscort < Float.MAX_VALUE) {
+                burnMult = ConvoyTerrain.formationMult(ConvoyTerrain.unmodifiedBurn(fleet), slowestEscort);
+            }
+            ConvoyTerrain.apply(fleet, burnMult);
         }
     }
 
