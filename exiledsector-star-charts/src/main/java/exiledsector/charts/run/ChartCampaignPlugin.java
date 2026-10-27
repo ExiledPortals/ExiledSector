@@ -5,6 +5,8 @@ import com.fs.starfarer.api.campaign.BaseCampaignPlugin;
 import com.fs.starfarer.api.campaign.CampaignPlugin;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import exiledsector.charts.anomaly.relay.RelayDialog;
+import exiledsector.charts.anomaly.relay.RelayNetwork;
 import exiledsector.charts.wormhole.ChartWormholeDialog;
 
 public class ChartCampaignPlugin extends BaseCampaignPlugin {
@@ -23,6 +25,9 @@ public class ChartCampaignPlugin extends BaseCampaignPlugin {
 
     @Override
     public PluginPick<InteractionDialogPlugin> pickInteractionDialogPlugin(SectorEntityToken interactionTarget) {
+        if (RelayNetwork.isRelay(interactionTarget)) {
+            return new PluginPick<>(new RelayDialog(), CampaignPlugin.PickPriority.MOD_SPECIFIC);
+        }
         if (!ChartWormholeDialog.isChartWormhole(interactionTarget)) {
             return null;
         }

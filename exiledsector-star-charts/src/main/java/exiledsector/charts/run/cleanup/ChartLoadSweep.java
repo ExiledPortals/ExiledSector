@@ -82,7 +82,7 @@ public final class ChartLoadSweep {
         if (system == null) {
             LOG.warn("[ExiledSector] Star Chart run " + run.runId() + " lost its system; closing it");
             run.beginClosing();
-            AtlasProgress.closedWithoutObjective(sector, run);
+            AtlasProgress.closed(sector, run);
             ChartRunCloser.close(sector, run.runId(), null);
             return;
         }
@@ -107,7 +107,11 @@ public final class ChartLoadSweep {
             switch (decision) {
                 case PURGE -> {
                     LOG.info("[ExiledSector] Purging Star Chart system " + system.getOptionalUniqueId() + " with no live run");
-                    ChartRunCloser.close(sector, runId, system);
+                    if (run != null && run.runId().equals(runId)) {
+                        ChartRunCloser.close(sector, run);
+                    } else {
+                        ChartRunCloser.close(sector, runId, system);
+                    }
                 }
                 case ADOPT -> {
                     ChartSystemFactory.ensureIsolationTags(system);

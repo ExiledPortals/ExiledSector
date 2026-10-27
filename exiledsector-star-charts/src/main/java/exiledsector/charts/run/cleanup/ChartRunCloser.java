@@ -60,7 +60,7 @@ public final class ChartRunCloser {
 
     public static int close(SectorAPI sector, ChartRun run) {
         try {
-            AtlasProgress.closedWithoutObjective(sector, run);
+            AtlasProgress.closed(sector, run);
         } catch (RuntimeException e) {
             LOG.warn("[ExiledSector] Recording the failed atlas system for run " + run.runId() + " failed", e);
         }

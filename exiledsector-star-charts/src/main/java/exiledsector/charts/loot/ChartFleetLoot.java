@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.charts.anomaly.relay.RelayStates;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
@@ -15,6 +16,7 @@ import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.items.ItemChances;
 import exiledsector.items.ItemData;
+import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
@@ -23,8 +25,11 @@ import exiledsector.loot.LootSources;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 public final class ChartFleetLoot {
+
+    static final Set<ItemType> GUARANTEED_UNIQUE_TYPES = Set.of(ItemType.HULL_ITEM, ItemType.SUBROUTINE);
 
     private ChartFleetLoot() {
     }
@@ -150,8 +155,25 @@ public final class ChartFleetLoot {
             if (!bossDrops.isEmpty()) {
                 fleetLoot = fleetLoot.plus(bossDrops, List.of(), Map.of());
             }
+            ItemData guaranteedUnique = guaranteedUnique(sector, run, context, random);
+            if (guaranteedUnique != null) {
+                fleetLoot = fleetLoot.plus(List.of(guaranteedUnique), List.of(), Map.of());
+            }
         }
         return fleetLoot;
+    }
+
+    static ItemData guaranteedUnique(SectorAPI sector, ChartRun run, ChartGenContext context, Random random) {
+        if (!context.guaranteedBossUnique() || run.isBossUniqueGranted() || !RelayStates.allWoken(run)) {
+            return null;
+        }
+        ItemDefinition unique = ItemDrops.pickUniqueFromAnySource(random, definition -> GUARANTEED_UNIQUE_TYPES.contains(definition.type())
+                && ItemUnlock.available(definition.type(), sector) && ItemUnlock.canDrop(definition, sector));
+        if (unique == null) {
+            return null;
+        }
+        run.grantBossUnique();
+        return ItemData.rolled(unique, random.nextLong());
     }
 
     private static ItemDrops.SiteLoot roll(SectorAPI sector, ChartRun run, ChartGenContext context, String siteId, ChartDrops.Source source,

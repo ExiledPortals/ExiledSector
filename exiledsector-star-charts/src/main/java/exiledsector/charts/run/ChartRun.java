@@ -9,13 +9,17 @@ import exiledsector.charts.layout.ChartLayout;
 import exiledsector.charts.objective.ChartObjective;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public final class ChartRun {
 
     static final String ID_SEPARATOR = "|";
     static final String LEGACY_VAULT_OBJECTIVE = "VAULT";
+    static final String STATE_SEPARATOR = ";";
+    static final String STATE_VALUE_SEPARATOR = "=";
 
     private final String runId;
     private final String systemId;
@@ -46,10 +50,12 @@ public final class ChartRun {
     private String protectedFleetId;
     private boolean rewardClaimed;
     private boolean bossTierUpGranted;
+    private boolean bossUniqueGranted;
     private String chartData;
     private String anomalies;
     private String atlasNode;
     private String originEntityId;
+    private String anomalyStates;
 
     public ChartRun(String runId, String originLocationId, float originX, float originY, int entriesAllowed) {
         this.runId = runId;
@@ -299,6 +305,47 @@ public final class ChartRun {
 
     public void grantBossTierUp() {
         bossTierUpGranted = true;
+    }
+
+    public boolean isBossUniqueGranted() {
+        return bossUniqueGranted;
+    }
+
+    public void grantBossUnique() {
+        bossUniqueGranted = true;
+    }
+
+    public String anomalyState(String key) {
+        return anomalyStatesMap().get(key);
+    }
+
+    public void recordAnomalyState(String key, String value) {
+        if (key == null || key.isEmpty() || key.contains(STATE_SEPARATOR) || key.contains(STATE_VALUE_SEPARATOR)) {
+            return;
+        }
+        Map<String, String> states = anomalyStatesMap();
+        if (value == null || value.isEmpty() || value.contains(STATE_SEPARATOR)) {
+            states.remove(key);
+        } else {
+            states.put(key, value);
+        }
+        List<String> entries = new ArrayList<>();
+        states.forEach((stateKey, stateValue) -> entries.add(stateKey + STATE_VALUE_SEPARATOR + stateValue));
+        anomalyStates = entries.isEmpty() ? null : String.join(STATE_SEPARATOR, entries);
+    }
+
+    private Map<String, String> anomalyStatesMap() {
+        Map<String, String> states = new LinkedHashMap<>();
+        if (anomalyStates == null || anomalyStates.isEmpty()) {
+            return states;
+        }
+        for (String entry : anomalyStates.split(STATE_SEPARATOR)) {
+            int separator = entry.indexOf(STATE_VALUE_SEPARATOR);
+            if (separator > 0) {
+                states.put(entry.substring(0, separator), entry.substring(separator + 1));
+            }
+        }
+        return states;
     }
 
     public boolean isRewardClaimed() {

@@ -6,10 +6,16 @@ import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.anomaly.ChartAnomaly;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class AtlasAnomalies {
+
+    static final long ONWARD_SALT = 0x4f4e5741524453L;
+    static final long ROLL_SALT = 0x414e4f4d524f4cL;
 
     public enum InsertCheck {
         ALLOWED,
@@ -92,11 +98,22 @@ public final class AtlasAnomalies {
 
     public static Insertion insert(AtlasGenerator generator, AtlasState state, AtlasCell cell, String anomalyId, AtlasAnomalyRecord.Source source,
                                    AtlasCell openRunCell) {
+        return insert(generator, state, cell, anomalyId, source, openRunCell, null);
+    }
+
+    public static Insertion insert(AtlasGenerator generator, AtlasState state, AtlasCell cell, String anomalyId, AtlasAnomalyRecord.Source source,
+                                   AtlasCell openRunCell, AtlasAnomalyRecord.Chain chain) {
         InsertCheck check = canInsert(generator, state, cell, anomalyId, openRunCell);
-        return new Insertion(check, check.allows() ? state.insertAnomaly(cell, anomalyId, source) : 0);
+        return new Insertion(check, check.allows() ? state.insertAnomaly(cell, anomalyId, source, chain) : 0);
     }
 
     public static InsertCheck move(AtlasGenerator generator, AtlasState state, int recordId, AtlasCell target, AtlasCell openRunCell) {
+        AtlasAnomalyRecord record = state.anomalyRecord(recordId);
+        return move(generator, state, recordId, target, openRunCell, record == null ? null : record.chain());
+    }
+
+    public static InsertCheck move(AtlasGenerator generator, AtlasState state, int recordId, AtlasCell target, AtlasCell openRunCell,
+                                   AtlasAnomalyRecord.Chain chain) {
         AtlasAnomalyRecord record = state.anomalyRecord(recordId);
         if (record == null) {
             return InsertCheck.UNKNOWN;
@@ -109,9 +126,46 @@ public final class AtlasAnomalies {
         }
         InsertCheck check = canInsert(generator, state, target, record.anomalyId(), openRunCell);
         if (check.allows()) {
-            state.moveAnomaly(recordId, target);
+            state.moveAnomaly(recordId, target, chain);
         }
         return check;
+    }
+
+    public static AtlasCell onward(AtlasGenerator generator, AtlasState state, AtlasCell from, String anomalyId, int minLanes, int maxLanes) {
+        Map<AtlasCell, Integer> lanesAway = new HashMap<>();
+        ArrayDeque<AtlasCell> frontier = new ArrayDeque<>();
+        lanesAway.put(from, 0);
+        frontier.add(from);
+        AtlasCell best = null;
+        double bestRoll = Double.POSITIVE_INFINITY;
+        while (!frontier.isEmpty()) {
+            AtlasCell cell = frontier.poll();
+            int lanes = lanesAway.get(cell) + 1;
+            if (lanes > maxLanes) {
+                continue;
+            }
+            for (AtlasCell neighbour : generator.lanes(cell)) {
+                if (lanesAway.containsKey(neighbour) || generator.isVoid(neighbour) || state.isCompleted(neighbour)) {
+                    continue;
+                }
+                lanesAway.put(neighbour, lanes);
+                frontier.add(neighbour);
+                if (lanes < minLanes || neighbour.centreDistance() <= from.centreDistance()
+                        || !canInsert(generator, state, neighbour, anomalyId, null).allows()) {
+                    continue;
+                }
+                double roll = AtlasHash.unit(AtlasHash.of(state.seed(), ONWARD_SALT ^ from.pack(), anomalyId, neighbour.gridX(), neighbour.gridY()));
+                if (roll < bestRoll) {
+                    bestRoll = roll;
+                    best = neighbour;
+                }
+            }
+        }
+        return best;
+    }
+
+    public static double roll(AtlasState state, AtlasCell cell, String anomalyId) {
+        return AtlasHash.unit(AtlasHash.of(state.seed(), ROLL_SALT, anomalyId, cell.gridX(), cell.gridY()));
     }
 
     public static AtlasCell openRunCell() {

@@ -4,8 +4,12 @@ import com.fs.starfarer.api.PluginPick;
 import com.fs.starfarer.api.campaign.CampaignPlugin;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
+import exiledsector.charts.anomaly.relay.RelayDialog;
+import exiledsector.charts.anomaly.relay.RelayKind;
+import exiledsector.charts.anomaly.relay.RelayNetwork;
 import exiledsector.charts.wormhole.ChartWormholeDialog;
 import org.junit.jupiter.api.Test;
 
@@ -39,6 +43,20 @@ class ChartCampaignPluginTest {
             assertInstanceOf(ChartWormholeDialog.class, pick.plugin);
             assertEquals(CampaignPlugin.PickPriority.MOD_SPECIFIC, pick.priority);
         }
+    }
+
+    @Test
+    void picksOurDialogForRelayNetworkRelaysOverVanillasObjectiveDialog() {
+        SectorEntityToken relay = mock(SectorEntityToken.class);
+        MemoryAPI memory = mock(MemoryAPI.class);
+        when(relay.hasTag(RelayNetwork.RELAY_TAG)).thenReturn(true);
+        when(relay.getMemoryWithoutUpdate()).thenReturn(memory);
+        when(memory.getString(RelayNetwork.KIND_MEMORY_KEY)).thenReturn(RelayKind.NAV_BUOY.key());
+
+        PluginPick<InteractionDialogPlugin> pick = new ChartCampaignPlugin().pickInteractionDialogPlugin(relay);
+
+        assertInstanceOf(RelayDialog.class, pick.plugin);
+        assertEquals(CampaignPlugin.PickPriority.MOD_SPECIFIC, pick.priority);
     }
 
     @Test

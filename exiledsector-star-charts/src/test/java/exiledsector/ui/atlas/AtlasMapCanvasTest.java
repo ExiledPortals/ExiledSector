@@ -2,12 +2,14 @@ package exiledsector.ui.atlas;
 
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
+import exiledsector.charts.anomaly.relay.RelayNetwork;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasAnomalyRecord;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasDevTools;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasMarkerRule;
+import exiledsector.charts.atlas.AtlasReach;
 import exiledsector.charts.atlas.AtlasRegion;
 import exiledsector.charts.atlas.AtlasRules;
 import exiledsector.charts.atlas.AtlasSpecial;
@@ -21,6 +23,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AtlasMapCanvasTest {
 
@@ -80,6 +83,34 @@ class AtlasMapCanvasTest {
             float iconY = canvas.screenY(view, bastion) + (float) Math.sin(AtlasMapCanvas.ANOMALY_FIRST_ANGLE) * orbit;
             assertEquals(icon, canvas.anomalyAt(view, iconX, iconY));
             assertNull(canvas.anomalyAt(view, canvas.screenX(view, bastion), canvas.screenY(view, bastion)));
+        } finally {
+            ChartTables.resetAnomalies();
+        }
+    }
+
+    @Test
+    void aChainedAnomalyShowsEvenInFogWithATraceFromTheSystemItLeft() throws Exception {
+        ChartTables.loadAnomalies();
+        try {
+            AtlasState state = new AtlasState(SEED);
+            AtlasGenerator generator = generator(state);
+            AtlasCell left = generator.lanes(AtlasCell.ORIGIN).get(0);
+            state.add(left, AtlasState.COMPLETED);
+            AtlasCell fogged = AtlasCell.ORIGIN.around(12).stream()
+                    .filter(cell -> !generator.isVoid(cell) && !AtlasReach.visible(generator, state).contains(cell))
+                    .findFirst().orElseThrow();
+            AtlasAnomalies.insert(generator, state, fogged, RelayNetwork.ID, AtlasAnomalyRecord.Source.WORLD, null,
+                    new AtlasAnomalyRecord.Chain(2, 3, left));
+            AtlasMapCanvas canvas = new AtlasMapCanvas(generator, state);
+            TreeViewport view = new TreeViewport(640f, 360f, AtlasMapCanvas.DEFAULT_ZOOM);
+
+            assertEquals(List.of(new AtlasMapCanvas.Trace(left, fogged)), canvas.traces());
+            AtlasMapCanvas.AnomalyIcon icon = canvas.anomalyIcons().stream().filter(candidate -> candidate.cell().equals(fogged)).findFirst()
+                    .orElseThrow();
+            assertTrue(icon.fogged());
+            assertEquals(RelayNetwork.ID, icon.anomalyId());
+            assertEquals(icon, canvas.anomalyAt(view, canvas.screenX(view, fogged), canvas.screenY(view, fogged)));
+            assertEquals(generator.node(fogged), canvas.nodeAt(fogged));
         } finally {
             ChartTables.resetAnomalies();
         }

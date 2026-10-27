@@ -285,6 +285,22 @@ defender makes the commander the boss and protects the station: losing it loses 
 Completing a run on the attacker's side records the system as captured in `AtlasState`, and captures feed the owner
 reader that opening, tooltips, borders and atlas traffic use (`AtlasOpening.ownerOf`, `territoryOwnerOf`).
 
+## Relay Network
+
+The anomaly places a vanilla nav buoy, comm relay and sensor array, neutral and `$objectiveNonFunctional`, sometimes
+orbiting a guarded point of interest (package `charts.anomaly.relay`). On the run script's one-second timer a relay
+syncs once the fleet holds station slowly beside the nav buoy, keeps its transponder on near the comm relay, or fires
+an Active Sensor Burst near the sensor array (`ChartRelays.check`), and it wakes once its dialog has also restored power
+for supplies and heavy machinery (`RelayDialog`; flags on the run record in `RelayStates`). A woken nav buoy or sensor
+array turns player-owned, so vanilla's objective plugins give their bonus; a woken comm relay multiplies every other
+fleet's `detected_by_player_range_mult` and raises its extended detection range, so the player sees them at any range.
+
+The stage rides on an inserted record (`AtlasAnomalyRecord.Chain`); a rolled network is stage 1 of 3 or 4. A completed
+system keeps a chained record until the run closes, then `RelayChain.settle` moves it two or three lanes further out
+through uncompleted systems if all three relays woke, or at the same stage if the network could not be placed, and
+removes it otherwise. Each stage past the first adds the `relay_stage` lines of `atlas_node_effects.csv` once more (`RelayChain.join`), and the last stage's boss, if it dies with all three
+relays woken, drops one unique hull item or subroutine whatever its source (`ChartFleetLoot.guaranteedUnique`).
+
 ## Transverse Jump in charts
 
 In any chart system, Transverse Jump takes the fleet back to where the chart was opened, the same as the exit
@@ -305,7 +321,7 @@ fall below its tier.
 Killing the objective completes the system and grants an atlas point for the first clear of each tier (`AtlasProgress`).
 A Sensor Array also reveals 6 lanes, a Nexus cleanses the systems it infested, and a Bastion gives a key fragment and
 allows one attempt. A system's anomalies are its rolled ones plus records inserted into `AtlasState`, which
-`AtlasAnomalies.canInsert` gates and any run there spends. A run that closes without its objective spends the system's
+`AtlasAnomalies.canInsert` gates and any run there spends, unless a Relay Network chain moves on. A run that closes without its objective spends the system's
 markers (Powerful Boss and every anomaly but a star one). Biomes tile the map from sites about five cells apart, and each sets how many of its cells hold a
 system (`AtlasBiomes`). Normal space wins most sites and chains into the volumes factions hold, while a special biome
 never sits beside another site of its own type, so it stays a small pocket. Each biome lists the only factions it holds

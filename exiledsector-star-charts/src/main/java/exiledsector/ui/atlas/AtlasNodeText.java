@@ -6,11 +6,14 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.relay.RelayChain;
+import exiledsector.charts.anomaly.relay.RelayNetwork;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.anomaly.skirmish.SkirmishEntry;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.atlas.AtlasAnomalies;
+import exiledsector.charts.atlas.AtlasAnomalyRecord;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasNode;
@@ -30,7 +33,7 @@ public final class AtlasNodeText {
     public record Line(String text, Tone tone) {
     }
 
-    public enum Tone { TITLE, PLAIN, MARKER, GOOD, BAD, HINT }
+    public enum Tone { TITLE, PLAIN, MARKER, GOOD, BAD, HINT, STYLED }
 
     private AtlasNodeText() {
     }
@@ -101,6 +104,9 @@ public final class AtlasNodeText {
                         .arg("attacker", factionName(FactionSkirmish.attacker(generator, state, cell)))
                         .arg("defender", factionName(FactionSkirmish.defender(generator, state, cell))).text(), Tone.PLAIN));
             }
+            if (RelayNetwork.ID.equals(anomalyId)) {
+                lines.addAll(relayLines(generator, state, cell));
+            }
         }
         if (node.infestationId() != null) {
             lines.add(state.has(cell, AtlasState.CLEANSED)
@@ -111,6 +117,38 @@ public final class AtlasNodeText {
             lines.add(new Line(Translation.text("chart.atlas.node.spent"), Tone.BAD));
         }
         return lines;
+    }
+
+    static List<Line> relayLines(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+        AtlasAnomalyRecord.Chain stage = RelayChain.stageAt(generator, state, cell);
+        if (stage == null) {
+            return List.of();
+        }
+        List<Line> lines = new ArrayList<>();
+        lines.add(new Line(Translation.msg("chart.atlas.node.relayStage").arg("stage", stage.stage()).arg("stages", stage.stages()).text(), Tone.PLAIN));
+        for (ChartGenContext.AppliedEffect applied : RelayChain.stageEffects(stage.stage())) {
+            lines.add(new Line(applied.effect().description(applied.value()).toMarkup(), Tone.STYLED));
+        }
+        if (stage.isLast()) {
+            lines.add(new Line(Translation.text("chart.atlas.node.relayLast"), Tone.GOOD));
+        }
+        return lines;
+    }
+
+    public static String plainText(Line line) {
+        return line.tone() == Tone.STYLED ? StyledText.parse(line.text()).plain() : line.text();
+    }
+
+    public static StyledText anomalyBody(AtlasGenerator generator, AtlasState state, AtlasCell cell, String anomalyId) {
+        StyledText body = anomalyBody(anomalyId);
+        if (!RelayNetwork.ID.equals(anomalyId)) {
+            return body;
+        }
+        List<StyledText> lines = new ArrayList<>(List.of(body));
+        for (Line line : relayLines(generator, state, cell)) {
+            lines.add(line.tone() == Tone.STYLED ? StyledText.parse(line.text()) : StyledText.of(line.text()));
+        }
+        return StyledText.join(StyledText.of("\n"), lines);
     }
 
     public static StyledText anomalyBody(String anomalyId) {
@@ -149,7 +187,7 @@ public final class AtlasNodeText {
         lines.add(Translation.msg("chart.atlas.confirm.system").arg("region", regionName(node.regionId()))
                 .arg("faction", factionName(AtlasOpening.factionFor(generator, state, cell, node))).text());
         for (Line marker : markers(generator, state, cell, node)) {
-            lines.add(marker.text());
+            lines.add(plainText(marker));
         }
         if (FactionSkirmish.isIn(generator, state, cell)) {
             lines.add(Translation.text("chart.atlas.skirmish.final"));

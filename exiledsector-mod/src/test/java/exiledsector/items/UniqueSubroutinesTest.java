@@ -211,6 +211,17 @@ class UniqueSubroutinesTest {
         assertEquals(Set.of("", FLEET_RELIC, HULL_RELIC_A, HULL_RELIC_B), picked);
     }
 
+    @Test
+    void theAnySourcePickerAlsoPicksSiteBoundUniques() {
+        Random random = new Random(6L);
+        Set<String> picked = new HashSet<>();
+        for (int trial = 0; trial < TRIALS; trial++) {
+            picked.add(idOrBlank(ItemDrops.pickUniqueFromAnySource(random, definition -> true)));
+        }
+
+        assertEquals(Set.of(FLEET_RELIC, SITE_RELIC, HULL_RELIC_A, HULL_RELIC_B), picked);
+    }
+
     private static String idOrBlank(ItemDefinition definition) {
         return definition == null ? "" : definition.id();
     }

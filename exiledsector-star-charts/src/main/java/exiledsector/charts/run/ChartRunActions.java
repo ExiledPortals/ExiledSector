@@ -15,6 +15,7 @@ import exiledsector.charts.run.cleanup.ChartRunCloser;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemStore;
+import exiledsector.charts.anomaly.relay.RelayChain;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.atlas.AtlasCell;
@@ -76,6 +77,7 @@ public final class ChartRunActions {
             return OpenResult.NOT_REACHABLE;
         }
         AtlasRunNode runNode = FactionSkirmish.join(AtlasOpening.runNode(generator, state, cell), generator, state, cell, side);
+        runNode = RelayChain.join(runNode, generator, state, cell);
         OpenResult result = openBesidePlayer(sector, entriesAllowed, random, AtlasOpening.request(generator, state, cell, chart, runNode),
                 ItemData.of(chart).encode(), runNode);
         if (result == OpenResult.OPENED) {
