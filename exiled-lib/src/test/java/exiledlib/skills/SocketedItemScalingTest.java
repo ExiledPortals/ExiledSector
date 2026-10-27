@@ -1,8 +1,10 @@
 package exiledlib.skills;
 
 import exiledlib.skills.skilleffect.SkillEffect;
+import exiledlib.skills.skilleffect.SkillEffectNames;
 import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
 import exiledlib.skills.skilleffect.logistics.LogisticsSkillEffect;
+import exiledlib.skills.skilleffect.special.SlotItemEffect;
 import exiledlib.skills.skilleffect.special.SpecialSkillEffect;
 import org.junit.jupiter.api.Test;
 
@@ -105,6 +107,21 @@ class SocketedItemScalingTest {
                         5f, null, true, true)));
 
         assertEquals(0f, total(scaled, DefenseSkillEffect.HULL_PERCENT), 1e-4f);
+    }
+
+    @Test
+    void aSlotEffectScalesOnlyTheItemInItsSlotAndIsFoundByName() {
+        SlotItemEffect slotEffect = SlotItemEffect.register("test_slot", () -> "Test Slot");
+
+        List<EffectContribution> scaled = SocketedItemScaling.withScaledItems(List.of(
+                item("test_slot", null, hull(10f)),
+                item("other_slot", null, hull(10f)),
+                node(effect(slotEffect, 50f))));
+
+        assertEquals(25f, total(scaled, DefenseSkillEffect.HULL_PERCENT), 1e-4f);
+        assertSame(slotEffect, SlotItemEffect.register("test_slot", () -> "Renamed"));
+        assertSame(slotEffect, SkillEffect.byName("TEST_SLOT_ITEM_EFFECT_PERCENT"));
+        assertTrue(SkillEffectNames.all().contains("TEST_SLOT_ITEM_EFFECT_PERCENT"));
     }
 
     @Test

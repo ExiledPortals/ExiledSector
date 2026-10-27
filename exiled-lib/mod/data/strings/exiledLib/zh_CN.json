@@ -186,6 +186,8 @@
     "effect.GATES_RADIUS_WHILE_PHASED": "其范围内已分配的节点仅在相位状态下生效，强度为<good>{value}</good>倍。这些节点中战斗内不实时读取的效果会被忽略。",
     "effect.SOCKETED_HULL_ITEM_EFFECT_PERCENT.more": "船体物品的效果提高<good>{value}%</good>。",
     "effect.SOCKETED_HULL_ITEM_EFFECT_PERCENT.less": "船体物品的效果降低<bad>{value}%</bad>。",
+    "effect.SLOT_ITEM_EFFECT_PERCENT.more": "{slot}物品的效果提高<good>{value}%</good>。",
+    "effect.SLOT_ITEM_EFFECT_PERCENT.less": "{slot}物品的效果降低<bad>{value}%</bad>。",
     "effect.TARGETED_HULL_ITEM_EFFECT_PERCENT.more": "目标船体物品的效果提高<good>{value}%</good>。",
     "effect.TARGETED_HULL_ITEM_EFFECT_PERCENT.less": "目标船体物品的效果降低<bad>{value}%</bad>。",
     "effect.SOCKETED_HULL_ITEM_DRAWBACK_EFFECT_PERCENT.more": "船体物品负面效果提高<bad>{value}%</bad>。",

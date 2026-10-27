@@ -371,7 +371,9 @@ dropping, and stored points are kept for switching back. Switching never locks a
 Effects can scale socketed hull items. Each section's contribution carries a `HullItemOrigin`, which Exiled Lib
 sees as a `SocketedItem`, and `SocketedItemScaling.withScaledItems` runs first in `EffectTotals.of`: it sums the
 permanent `SOCKETED_HULL_ITEM_EFFECT_PERCENT`, `TARGETED_HULL_ITEM_EFFECT_PERCENT` and drawback percents from every
-source and multiplies each item's magnitudes by them, never scaling the scaling effects themselves. A hull item with
+source and multiplies each item's magnitudes by them, never scaling the scaling effects themselves. Per-section
+effects such as `SHIELD_GENERATOR_ITEM_EFFECT_PERCENT` are `SlotItemEffect`s, which `HullUpgradesDomain` registers
+for every `ShipSection` when it is built. A hull item with
 a targeting effect rolls one other section as its target (`HullItem.targetSection`, from its seed, stored once
 rolled); the Extended Warranty Contract's 100% doubles that item, drawbacks included. The Tuning Nanoswarm rerolls
 the target (`Item.rerollTarget`). A unique item that rolled before its definition gained a fixed-value modifier

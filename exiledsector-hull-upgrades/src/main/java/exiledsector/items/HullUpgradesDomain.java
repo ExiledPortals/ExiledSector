@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.effects.ShipEffectSource;
 import exiledlib.i18n.Translation;
+import exiledlib.skills.skilleffect.special.SlotItemEffect;
 import exiledsector.loot.LootSource;
 import exiledsector.skills.ShipSections;
 import exiledsector.ui.ExiledSectorSettings;
@@ -20,6 +21,10 @@ import java.util.List;
 import static exiledsector.ExiledSector.MOD_ID;
 
 public final class HullUpgradesDomain implements ExiledSectorDomain {
+
+    public HullUpgradesDomain() {
+        ShipSection.all().forEach(section -> SlotItemEffect.register(section.id(), section::displayName));
+    }
 
     @Override
     public boolean enabled() {

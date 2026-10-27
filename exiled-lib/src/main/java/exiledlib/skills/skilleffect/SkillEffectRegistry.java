@@ -12,6 +12,7 @@ import exiledlib.skills.skilleffect.phase.PhaseSkillEffect;
 import exiledlib.skills.skilleffect.readiness.ReadinessSkillEffect;
 import exiledlib.skills.skilleffect.shield.ShieldSkillEffect;
 import exiledlib.skills.skilleffect.shipsystem.ShipSystemSkillEffect;
+import exiledlib.skills.skilleffect.special.SlotItemEffect;
 import exiledlib.skills.skilleffect.special.SpecialSkillEffect;
 import exiledlib.skills.skilleffect.hullmodule.StationModuleSkillEffect;
 import exiledlib.skills.skilleffect.weapon.ScopedWeaponEffect;
@@ -19,6 +20,7 @@ import exiledlib.skills.skilleffect.weapon.WeaponSkillEffect;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,10 +32,10 @@ final class SkillEffectRegistry {
     }
 
     static SkillEffect byName(String name) {
-        SkillEffect effect = BY_NAME.get(name);
+        SkillEffect effect = registered(name);
         if (effect == null) {
             String currentName = EffectAliases.currentName(name);
-            effect = currentName == null ? null : BY_NAME.get(currentName);
+            effect = currentName == null ? null : registered(currentName);
         }
         if (effect == null) {
             throw new IllegalArgumentException("Unknown SkillEffect: " + name);
@@ -78,11 +80,18 @@ final class SkillEffectRegistry {
         }
     }
 
+    private static SkillEffect registered(String name) {
+        SkillEffect effect = BY_NAME.get(name);
+        return effect != null ? effect : SlotItemEffect.byName(name);
+    }
+
     static boolean contains(String name) {
-        return BY_NAME.containsKey(name);
+        return registered(name) != null;
     }
 
     static Set<String> names() {
-        return Collections.unmodifiableSet(BY_NAME.keySet());
+        Set<String> names = new HashSet<>(BY_NAME.keySet());
+        SlotItemEffect.all().forEach(effect -> names.add(effect.name()));
+        return Collections.unmodifiableSet(names);
     }
 }

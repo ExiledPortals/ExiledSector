@@ -2,8 +2,10 @@ package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledlib.skills.EffectContribution;
 import exiledlib.skills.EffectTotals;
 import exiledlib.skills.SkillTypeEffect;
+import exiledlib.skills.skilleffect.SkillEffect;
 import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
 import exiledlib.skills.skilleffect.special.SpecialSkillEffect;
 import exiledsector.items.HullItem;
@@ -19,6 +21,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -121,6 +124,16 @@ class ShipSectionsTest {
         List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
 
         assertEquals(30f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(slots,HullSize.CRUISER), 2f)), 1e-4f);
+    }
+
+    @Test
+    void aSectionEffectFromANodeScalesOnlyThatSectionsItem() {
+        List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
+        List<EffectContribution> contributions = new ArrayList<>(HullUpgradeEffectSource.contributions(slots, HullSize.CRUISER));
+        contributions.add(EffectContribution.scaledPermanent("node", "node_",
+                List.of(new SkillTypeEffect(SkillEffect.byName("SHIELD_GENERATOR_ITEM_EFFECT_PERCENT"), 100f))));
+
+        assertEquals(25f, hullPercent(EffectTotals.of(contributions, 1f)), 1e-4f);
     }
 
     private static String warrantyTargeting(ShipSection target) {

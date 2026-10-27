@@ -11,17 +11,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public record SocketedItemScaling(Scope scope) implements EffectBacking {
+public record SocketedItemScaling(Scope scope, String slotId) implements EffectBacking {
 
     public enum Scope {
-        ALL, TARGETED, DRAWBACKS
+        ALL, TARGETED, SLOT, DRAWBACKS
     }
 
-    private record Percents(float all, float drawbacks, Map<String, Float> bySlot) {
+    private record Percents(float all, float drawbacks, Map<String, Float> targeted, Map<String, Float> slotScoped) {
 
         boolean none() {
-            return all == 0f && drawbacks == 0f && bySlot.isEmpty();
+            return all == 0f && drawbacks == 0f && targeted.isEmpty() && slotScoped.isEmpty();
         }
+
+        float forSlot(String slotId) {
+            return all + targeted.getOrDefault(slotId, 0f) + slotScoped.getOrDefault(slotId, 0f);
+        }
+    }
+
+    public SocketedItemScaling(Scope scope) {
+        this(scope, null);
     }
 
     @Override
@@ -54,7 +62,8 @@ public record SocketedItemScaling(Scope scope) implements EffectBacking {
     private static Percents percents(List<EffectContribution> contributions) {
         float all = 0f;
         float drawbacks = 0f;
-        Map<String, Float> bySlot = new HashMap<>();
+        Map<String, Float> targeted = new HashMap<>();
+        Map<String, Float> slotScoped = new HashMap<>();
         for (EffectContribution contribution : contributions) {
             if (!contribution.permanent()) {
                 continue;
@@ -68,19 +77,20 @@ public record SocketedItemScaling(Scope scope) implements EffectBacking {
                 switch (scaling.scope()) {
                     case ALL -> all += effect.magnitude();
                     case DRAWBACKS -> drawbacks += effect.magnitude();
+                    case SLOT -> slotScoped.merge(scaling.slotId(), effect.magnitude(), Float::sum);
                     case TARGETED -> {
                         if (targetSlotId != null) {
-                            bySlot.merge(targetSlotId, effect.magnitude(), Float::sum);
+                            targeted.merge(targetSlotId, effect.magnitude(), Float::sum);
                         }
                     }
                 }
             }
         }
-        return new Percents(all, drawbacks, bySlot);
+        return new Percents(all, drawbacks, targeted, slotScoped);
     }
 
     private static EffectContribution scaled(EffectContribution contribution, SocketedItem item, Percents percents) {
-        float itemPercent = percents.all() + percents.bySlot().getOrDefault(item.slotId(), 0f);
+        float itemPercent = percents.forSlot(item.slotId());
         List<SkillTypeEffect> effects = new ArrayList<>(contribution.effects().size());
         for (SkillTypeEffect effect : contribution.effects()) {
             if (effect.effect().socketedItemScaling() != null) {

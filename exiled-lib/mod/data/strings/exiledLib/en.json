@@ -184,6 +184,8 @@
     "effect.GATES_RADIUS_WHILE_PHASED": "Allocated nodes in its radius apply only while phased, at <good>{value}</good> times their strength. Their effects that aren't read live in combat are ignored.",
     "effect.SOCKETED_HULL_ITEM_EFFECT_PERCENT.more": "<good>{value}%</good> increased effect of hull items.",
     "effect.SOCKETED_HULL_ITEM_EFFECT_PERCENT.less": "<bad>{value}%</bad> reduced effect of hull items.",
+    "effect.SLOT_ITEM_EFFECT_PERCENT.more": "<good>{value}%</good> increased effect of {slot} items.",
+    "effect.SLOT_ITEM_EFFECT_PERCENT.less": "<bad>{value}%</bad> reduced effect of {slot} items.",
     "effect.TARGETED_HULL_ITEM_EFFECT_PERCENT.more": "<good>{value}%</good> increased effect of the targeted hull item.",
     "effect.TARGETED_HULL_ITEM_EFFECT_PERCENT.less": "<bad>{value}%</bad> reduced effect of the targeted hull item.",
     "effect.SOCKETED_HULL_ITEM_DRAWBACK_EFFECT_PERCENT.more": "<bad>{value}%</bad> increased effect of hull item drawbacks.",
