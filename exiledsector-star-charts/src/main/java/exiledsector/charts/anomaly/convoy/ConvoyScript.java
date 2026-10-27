@@ -258,7 +258,9 @@ public final class ConvoyScript implements EveryFrameScript, FleetEventListener,
                 guard(fleet, freighters);
             }
         }
-        if (freighters != null) {
+        if (convoy.phase() == ConvoyState.Phase.LOST) {
+            leave(convoy);
+        } else if (freighters != null) {
             flee(convoy, freighters);
         }
         if (CampaignMessages.available() && Global.getSector().getPlayerFleet() != null
@@ -296,13 +298,15 @@ public final class ConvoyScript implements EveryFrameScript, FleetEventListener,
         } else if (convoy.phase() != ConvoyState.Phase.DELIVERED) {
             convoy.setPhase(ConvoyState.Phase.LOST);
         }
-        for (ConvoyRole role : List.of(ConvoyRole.SCREEN, ConvoyRole.ESCORT)) {
-            CampaignFleetAPI escort = fleet(convoy, role);
-            if (escort != null && convoy.phase() == ConvoyState.Phase.DELIVERED) {
-                escort.clearAssignments();
-                escort.addAssignment(FleetAssignment.GO_TO_LOCATION_AND_DESPAWN, convoy.exitToken(), ChartContentGenerator.ASSIGNMENT_DAYS);
-            } else if (escort != null) {
-                guard(escort, null);
+        leave(convoy);
+    }
+
+    void leave(ConvoyState convoy) {
+        for (ConvoyRole role : ConvoyRole.values()) {
+            CampaignFleetAPI fleet = fleet(convoy, role);
+            if (fleet != null) {
+                fleet.clearAssignments();
+                fleet.addAssignment(FleetAssignment.GO_TO_LOCATION_AND_DESPAWN, convoy.exitToken(), ChartContentGenerator.ASSIGNMENT_DAYS);
             }
         }
     }
@@ -328,7 +332,11 @@ public final class ConvoyScript implements EveryFrameScript, FleetEventListener,
     }
 
     void recordLosses(ConvoyState convoy, float remainingFreighterPoints, Vector2f at) {
+        boolean wasLost = convoy.phase() == ConvoyState.Phase.LOST;
         float lostShare = convoy.recordFreighterPoints(remainingFreighterPoints);
+        if (!wasLost && convoy.phase() == ConvoyState.Phase.LOST) {
+            leave(convoy);
+        }
         SectorAPI sector = Global.getSector();
         ChartRun run = sector == null ? null : ChartRuns.currentOrNull();
         if (!(lostShare > 0f) || at == null || run == null || !run.runId().equals(runId)) {
@@ -374,6 +382,7 @@ public final class ConvoyScript implements EveryFrameScript, FleetEventListener,
         CampaignFleetAPI freighters = fleet(convoy, ConvoyRole.FREIGHTERS);
         if (freighters == null) {
             convoy.setPhase(ConvoyState.Phase.LOST);
+            leave(convoy);
             return;
         }
         convoy.setPhase(ConvoyState.Phase.EN_ROUTE);

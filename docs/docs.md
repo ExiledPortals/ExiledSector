@@ -288,7 +288,7 @@ reader that opening, tooltips, borders and atlas traffic use (`AtlasOpening.owne
 ## Supply Convoy
 
 The anomaly spawns freighters, a screen and a close escort at the system edge, flying the run-only faction
-`exiledSector_convoy` dressed as the chart faction (`SupplyConvoy`, `ConvoyFleets`). Five days after the player first
+`exiledSector_convoy` under its own name with the chart faction's crest (`SupplyConvoy`, `ConvoyFleets`). Five days after the player first
 arrives, the system script `ConvoyScript` sends them past two to four planets or stations to unload at an existing planet,
 with intel in `ConvoyIntel`. The convoy is non-hostile until the player attacks it through `ConvoyEncounterDialog` or hits
 one of its fleets with Interdiction Pulse (which also holds that fleet); then all three turn hostile for the run and the
@@ -299,7 +299,7 @@ The cargo is the `convoy` scope of `chart_loot.csv` plus the `exiledSector_chart
 freighters' fleet points. Each share of freighter fleet points lost drops as cargo pods, and the rest is cached on the
 destination (`ConvoyState`, `ConvoyCargo`). That planet then offers a raid (`ConvoyCacheDialog`, `raid.ChartRaid`, vanilla's
 non-market raid without reputation, response, cooldowns or rules) at a difficulty and danger level set by tier
-(`ConvoyRules`); the cache objective yields its share times vanilla's leftover-effectiveness bonus and stays until taken.
+(`ConvoyRules`); the cache objective yields exactly the delivered share and stays until taken. Once the freighters are lost, every convoy fleet left leaves through the exit.
 
 ## Transverse Jump in charts
 

@@ -183,10 +183,10 @@ public class ConvoyIntel extends BaseIntelPlugin implements ChartRunBound {
     @Override
     public SectorEntityToken getMapLocation(SectorMapAPI map) {
         ConvoyState convoy = convoy();
-        if (convoy == null) {
+        if (convoy == null || convoy.phase() == ConvoyState.Phase.LOST) {
             return null;
         }
-        CampaignFleetAPI freighters = script.fleet(convoy, ConvoyRole.FREIGHTERS);
+        CampaignFleetAPI freighters = convoy.phase() == ConvoyState.Phase.DELIVERED ? null : script.fleet(convoy, ConvoyRole.FREIGHTERS);
         return freighters != null ? freighters : script.entity(convoy.destinationId());
     }
 

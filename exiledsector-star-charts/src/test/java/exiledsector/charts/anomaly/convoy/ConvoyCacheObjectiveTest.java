@@ -8,11 +8,13 @@ import org.junit.jupiter.api.BeforeEach;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD.RaidDangerLevel;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.raid.ChartRaid;
 import exiledsector.charts.raid.RaidDangerLevels;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -64,6 +66,29 @@ class ConvoyCacheObjectiveTest {
         assertEquals(RaidDangerLevel.MEDIUM, objective.getDangerLevel());
         assertEquals("", objective.getValueString(3));
         assertEquals(0, objective.getProjectedCreditsValue());
+    }
+
+    @Test
+    void aStrongerRaidNeverTakesLessFromTheCache() {
+        ConvoyState convoy = new ConvoyState(0, List.of(), "dest", 0f, 0f, 0f, 0f, 1L);
+        convoy.loadCargo(100f, 3f, 1f);
+        convoy.setPhase(ConvoyState.Phase.EN_ROUTE);
+        convoy.recordFreighterPoints(70f);
+        convoy.deliver();
+        float difficulty = ConvoyRules.raidDifficulty(8);
+        float previousShare = 0f;
+        boolean bonusFell = false;
+        float previousBonus = 0f;
+        for (int marines = 1; marines <= 2000; marines++) {
+            float bonus = ChartRaid.lootMult(ChartRaid.raidEffectiveness(marines, difficulty));
+            bonusFell |= bonus < previousBonus;
+            previousBonus = bonus;
+            float share = ConvoyCacheObjective.cacheShare(convoy);
+            assertTrue(share >= previousShare, "at " + marines + " marines");
+            previousShare = share;
+        }
+        assertTrue(bonusFell, "vanilla's leftover bonus is a sawtooth, which is why the cache ignores it");
+        assertEquals(0.7f, previousShare, 0.001f);
     }
 
     @Test

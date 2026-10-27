@@ -71,6 +71,35 @@ class ConvoyDeliveryTest {
     }
 
     @Test
+    void whenOnlyTheGuardShipsSurviveTheWholeConvoyLeavesThroughTheExit() {
+        script.turnHostile(convoy);
+
+        script.recordLosses(convoy, 0f, null);
+
+        assertEquals(ConvoyState.Phase.LOST, convoy.phase());
+        for (ConvoyRole role : ConvoyRole.values()) {
+            List<FakeChartContentEngine.Assignment> orders = convoySystem.assignments(convoySystem.fleet(convoy, role));
+            assertEquals(List.of(new FakeChartContentEngine.Assignment(FleetAssignment.GO_TO_LOCATION_AND_DESPAWN, convoy.exitToken())), orders,
+                    role.key());
+        }
+        script.arrived(convoy);
+        script.unloaded(convoy);
+        assertEquals(ConvoyState.Phase.LOST, convoy.phase());
+        assertFalse(convoy.hasCache());
+    }
+
+    @Test
+    void escortsGoHomeOnceTheFreightersAreGone() {
+        CampaignFleetAPI freighters = convoySystem.fleet(convoy, ConvoyRole.FREIGHTERS);
+
+        script.reportFleetDespawnedToListener(freighters, FleetDespawnReason.PLAYER_FAR_AWAY, null);
+
+        assertEquals(ConvoyState.Phase.LOST, convoy.phase());
+        List<FakeChartContentEngine.Assignment> orders = convoySystem.assignments(convoySystem.fleet(convoy, ConvoyRole.ESCORT));
+        assertEquals(new FakeChartContentEngine.Assignment(FleetAssignment.GO_TO_LOCATION_AND_DESPAWN, convoy.exitToken()), orders.get(orders.size() - 1));
+    }
+
+    @Test
     void aTakenCacheIsGoneAndDestroyedFreightersDeliverNothing() {
         script.unloaded(convoy);
         assertTrue(convoy.takeCache());

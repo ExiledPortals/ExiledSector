@@ -39,6 +39,7 @@ import com.fs.starfarer.api.impl.campaign.procgen.themes.SalvageSpecialAssigner.
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.BaseSalvageSpecial;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
+import exiledlib.i18n.Translation;
 import exiledsector.charts.anomaly.convoy.ConvoyRules;
 import exiledsector.charts.anomaly.skirmish.SkirmishFactions;
 import exiledsector.charts.loot.ChartVanillaLoot;
@@ -195,23 +196,26 @@ final class VanillaChartContentEngine implements ChartContentEngine {
 
     @Override
     public String dressAllies(String factionId) {
-        return dress(SkirmishFactions.ALLY_FACTION_ID, factionId, RepLevel.FRIENDLY);
+        FactionAPI faction = Global.getSector().getFaction(factionId);
+        return faction == null ? null : dress(SkirmishFactions.ALLY_FACTION_ID, faction, faction.getDisplayName(), faction.getDisplayNameWithArticle(),
+                faction.getDisplayNameIsOrAre(), RepLevel.FRIENDLY);
     }
 
     @Override
     public String dressConvoy(String factionId) {
-        return dress(ConvoyRules.FACTION_ID, factionId, RepLevel.NEUTRAL);
+        FactionAPI faction = Global.getSector().getFaction(factionId);
+        return faction == null ? null : dress(ConvoyRules.FACTION_ID, faction, Translation.gameText("chart.convoy.faction.name"),
+                Translation.gameText("chart.convoy.faction.nameWithArticle"), Translation.gameText("chart.convoy.faction.isOrAre"), RepLevel.NEUTRAL);
     }
 
-    private static String dress(String runFactionId, String factionId, RepLevel towardsPlayer) {
+    private static String dress(String runFactionId, FactionAPI faction, String name, String nameWithArticle, String isOrAre, RepLevel towardsPlayer) {
         FactionAPI runFaction = Global.getSector().getFaction(runFactionId);
-        FactionAPI faction = Global.getSector().getFaction(factionId);
-        if (runFaction == null || faction == null) {
+        if (runFaction == null) {
             return null;
         }
-        runFaction.setDisplayNameOverride(faction.getDisplayName());
-        runFaction.setDisplayNameWithArticleOverride(faction.getDisplayNameWithArticle());
-        runFaction.setDisplayIsOrAreOverride(faction.getDisplayNameIsOrAre());
+        runFaction.setDisplayNameOverride(name);
+        runFaction.setDisplayNameWithArticleOverride(nameWithArticle);
+        runFaction.setDisplayIsOrAreOverride(isOrAre);
         runFaction.setShipNamePrefixOverride(faction.getShipNamePrefix());
         runFaction.setFactionCrestOverride(faction.getCrest());
         runFaction.setFactionLogoOverride(faction.getLogo());

@@ -107,7 +107,7 @@ public class ChartRaid {
         }
     }
 
-    static float raidEffectiveness(float attackerStr, float defenderStr) {
+    public static float raidEffectiveness(float attackerStr, float defenderStr) {
         float effectiveness = attackerStr / Math.max(1f, attackerStr + defenderStr);
         return Math.round(effectiveness * PERCENT) / PERCENT;
     }
@@ -117,7 +117,7 @@ public class ChartRaid {
         return Math.max(MarketCMD.MIN_MARINE_TOKENS, Math.min(MarketCMD.MAX_MARINE_TOKENS, tokens));
     }
 
-    static float lootMult(float raidEffectiveness) {
+    public static float lootMult(float raidEffectiveness) {
         float leftover = Math.round(raidEffectiveness * PERCENT) % Math.round(MarketCMD.RE_PER_MARINE_TOKEN * PERCENT) / PERCENT;
         if (raidEffectiveness < MarketCMD.RE_PER_MARINE_TOKEN) {
             leftover = 0f;
