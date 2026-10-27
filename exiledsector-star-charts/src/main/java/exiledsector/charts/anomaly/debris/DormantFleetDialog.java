@@ -16,7 +16,7 @@ import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.items.CraftingCurrency;
-import exiledsector.items.MaterialItems;
+import exiledsector.items.CraftingMaterials;
 import exiledsector.ui.VanillaText;
 import org.lwjgl.input.Keyboard;
 
@@ -85,7 +85,7 @@ public class DormantFleetDialog implements InteractionDialogPlugin {
 
     static int kernelsHeld(CampaignFleetAPI playerFleet) {
         CargoAPI cargo = playerFleet == null ? null : playerFleet.getCargo();
-        return cargo == null ? 0 : MaterialItems.count(cargo, KERNEL_ID);
+        return cargo == null ? 0 : CraftingMaterials.forPlayer(cargo).count(KERNEL_ID);
     }
 
     @Override
@@ -103,7 +103,10 @@ public class DormantFleetDialog implements InteractionDialogPlugin {
 
     void engage(boolean corrupt, CampaignFleetAPI playerFleet) {
         if (corrupt) {
-            MaterialItems.remove(playerFleet.getCargo(), KERNEL_ID, KERNEL_COST);
+            if (!CraftingMaterials.forPlayer(playerFleet.getCargo()).take(KERNEL_ID, KERNEL_COST)) {
+                interactionDialog.dismiss();
+                return;
+            }
             DormantFleets.corrupt(dormantFleet, runContext());
         }
         DormantFleets.wake(dormantFleet);

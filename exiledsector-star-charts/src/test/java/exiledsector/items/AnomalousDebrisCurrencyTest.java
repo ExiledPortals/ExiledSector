@@ -114,6 +114,19 @@ class AnomalousDebrisCurrencyTest {
     }
 
     @Test
+    void laterCraftingNeverAddsASecondModifierOfTheGrantedEffect() {
+        Item item = common();
+        currency(REVENANT).use(item, new CraftingContext(store, definition -> true, Set.of()), new Random(5L));
+        List<RolledModifier> withoutOtherPrefix = new java.util.ArrayList<>(item.explicits());
+        withoutOtherPrefix.removeIf(rolled -> rolled.slot() == ModifierSlot.PREFIX && !rolled.modifierId().equals(GRANTED_PREFIX));
+
+        List<List<PoolEntry>> open = AffixLayout.openSides(item.definition(), withoutOtherPrefix);
+
+        assertTrue(open.stream().flatMap(List::stream).noneMatch(entry -> entry.effectName().equals("HULL_PERCENT")));
+        assertTrue(open.stream().flatMap(List::stream).anyMatch(entry -> entry.effectName().equals("FLUX_CAPACITY_MULT")));
+    }
+
+    @Test
     void onlyNonUniqueItemsOfATakenTypeCanBeRerolled() {
         Item relic = store.add(new ItemData(RELIC, 1L));
         CraftingContext context = new CraftingContext(store, definition -> true, Set.of());

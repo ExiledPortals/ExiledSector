@@ -51,29 +51,22 @@ public final class AnomalousDebris implements ChartAnomaly {
         if (fields.isEmpty()) {
             throw new IllegalStateException("no clear spot for anomalous debris");
         }
-        StarSystemAPI system = site.system();
-        List<SectorEntityToken> added = new ArrayList<>();
-        try {
-            for (int index = 0; index < fields.size(); index++) {
-                placeField(site, fields.get(index), site.random(FLEET_SALT + index).nextLong(), added);
-            }
-        } catch (RuntimeException | LinkageError e) {
-            added.forEach(system::removeEntity);
-            throw e;
+        for (int index = 0; index < fields.size(); index++) {
+            placeField(site, fields.get(index), site.random(FLEET_SALT + index).nextLong());
         }
     }
 
-    private static void placeField(AnomalyContentSite site, Field field, long seed, List<SectorEntityToken> added) {
+    private static void placeField(AnomalyContentSite site, Field field, long seed) {
         StarSystemAPI system = site.system();
         CampaignFleetAPI fleet = DormantFleets.create(site.runId(), site.tier(), site.context(), seed);
         if (fleet == null) {
             return;
         }
         system.addEntity(fleet);
-        added.add(fleet);
+        site.track(fleet);
         fleet.setLocation(field.centre().x, field.centre().y);
         SectorEntityToken terrain = system.addTerrain(TERRAIN_ID, new AnomalousDebrisTerrainPlugin.Params(site.runId(), fleet.getId(), field.radius(), seed));
-        added.add(terrain);
+        site.track(terrain);
         terrain.setFixedLocation(field.centre().x, field.centre().y);
         terrain.addTag(ChartIds.ENTITY_TAG);
         terrain.addTag(ChartIds.runTag(site.runId()));

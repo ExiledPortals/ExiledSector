@@ -171,6 +171,7 @@ public final class DormantFleets {
         memory.set(BUILD_SEED_KEY, Long.toString(seed, SEED_RADIX));
         memory.set(DORMANT_KEY, true);
         memory.set(MemFlags.MEMORY_KEY_NO_REP_IMPACT, true);
+        memory.set(MemFlags.FLEET_IGNORED_BY_OTHER_FLEETS, true);
         ChartFleetLoot.recordStart(fleet);
         for (String abilityId : REMOVED_ABILITIES) {
             if (fleet.hasAbility(abilityId)) {
@@ -244,6 +245,7 @@ public final class DormantFleets {
         }
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();
         memory.unset(DORMANT_KEY);
+        memory.unset(MemFlags.FLEET_IGNORED_BY_OTHER_FLEETS);
         memory.unset(MemFlags.MEMORY_KEY_MAKE_ALLOW_DISENGAGE);
         memory.unset(MemFlags.MEMORY_KEY_ALLOW_LONG_PURSUIT);
         memory.set(MemFlags.MEMORY_KEY_MAKE_HOSTILE, true);

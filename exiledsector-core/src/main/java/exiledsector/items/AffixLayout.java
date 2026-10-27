@@ -135,10 +135,14 @@ public final class AffixLayout {
             return List.of();
         }
         Set<String> presentModifiers = new HashSet<>();
+        Set<String> reservedEffects = new HashSet<>();
         int takenPrefixes = 0;
         int takenSuffixes = 0;
         for (RolledModifier modifier : modifiers) {
             presentModifiers.add(modifier.modifierId());
+            if (ReservedModifiers.isReserved(modifier.modifierId())) {
+                modifier.lines().forEach(line -> reservedEffects.add(line.effectName()));
+            }
             if (modifier.slot() == ModifierSlot.PREFIX) {
                 takenPrefixes++;
             } else {
@@ -146,8 +150,10 @@ public final class AffixLayout {
             }
         }
         List<List<PoolEntry>> sides = new ArrayList<>();
-        addOpenSide(sides, rollableAt(definition.type(), definition.prefixes(), tier), takenPrefixes < limits.maxPerSide(), presentModifiers);
-        addOpenSide(sides, rollableAt(definition.type(), definition.suffixes(), tier), takenSuffixes < limits.maxPerSide(), presentModifiers);
+        addOpenSide(sides, rollableAt(definition.type(), definition.prefixes(), tier), takenPrefixes < limits.maxPerSide(), presentModifiers,
+                reservedEffects);
+        addOpenSide(sides, rollableAt(definition.type(), definition.suffixes(), tier), takenSuffixes < limits.maxPerSide(), presentModifiers,
+                reservedEffects);
         return sides;
     }
 
@@ -175,12 +181,14 @@ public final class AffixLayout {
         return (int) modifiers.stream().filter(modifier -> modifier.slot() == ModifierSlot.PREFIX).count();
     }
 
-    private static void addOpenSide(List<List<PoolEntry>> sides, List<PoolEntry> rollablePool, boolean hasRoom, Set<String> presentModifiers) {
+    private static void addOpenSide(List<List<PoolEntry>> sides, List<PoolEntry> rollablePool, boolean hasRoom, Set<String> presentModifiers,
+                                    Set<String> reservedEffects) {
         if (!hasRoom) {
             return;
         }
         List<PoolEntry> openEntries = rollablePool.stream()
-                .filter(entry -> !presentModifiers.contains(entry.modifier().id())).toList();
+                .filter(entry -> !presentModifiers.contains(entry.modifier().id()))
+                .filter(entry -> entry.modifier().lines().stream().noneMatch(line -> reservedEffects.contains(line.effectName()))).toList();
         if (!openEntries.isEmpty()) {
             sides.add(openEntries);
         }

@@ -422,7 +422,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         VanillaText.plainPara(element, title, 0f, Misc.getBasePlayerColor());
         String body = growing
                 ? Translation.msg("ui.workbench.confirm.growBody").arg("cost", currency.partsCost()).arg("parts", ItemCrafting.parts(playerMaterials())).text()
-                : Translation.text(modeDescriptionKey(currency));
+                : domainSupport() != null ? Translation.text(modeDescriptionKey(currency)) : currency.description();
         VanillaText.plainPara(element, body, LINE_PAD * 2f, Misc.getTextColor());
         for (CraftingWard ward : spentWards) {
             VanillaText.plainPara(element, Translation.msg("ui.workbench.confirm.wardSpent").arg("name", MaterialItems.displayName(ward.itemId())).text(),
