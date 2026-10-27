@@ -3,6 +3,7 @@ package exiledsector.charts;
 import com.fs.starfarer.api.Global;
 import com.thoughtworks.xstream.XStream;
 import exiledlib.compat.CompatTarget;
+import exiledsector.charts.anomaly.debris.AnomalousDebrisTerrainPlugin;
 import exiledsector.charts.effect.ChartFleetConditionSource;
 import exiledsector.charts.loot.StarChartLootSource;
 import exiledsector.charts.run.ChartRuns;
@@ -60,6 +61,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     @Override
     public void onApplicationLoad() {
         StarChartCurrency.registerAll();
+        AnomalousDebrisTerrainPlugin.preloadTextures();
         I18n.forGameText(() -> {
             for (StarChartCurrency currency : StarChartCurrency.values()) {
                 MaterialItems.localise(currency.itemId());

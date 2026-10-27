@@ -4,6 +4,7 @@ import com.thoughtworks.xstream.XStream;
 import exiledsector.charts.anomaly.breach.BreachCorePlugin;
 import exiledsector.charts.anomaly.breach.BreachSupplyBuff;
 import exiledsector.charts.anomaly.breach.BreachTerrainPlugin;
+import exiledsector.charts.anomaly.debris.AnomalousDebrisTerrainPlugin;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.objective.ChartObjectiveIntel;
 import exiledsector.charts.run.ChartRun;
@@ -24,7 +25,8 @@ public final class ChartSaveAliases {
             "exiledSector.BreachTerrainPlugin", BreachTerrainPlugin.class,
             "exiledSector.BreachCorePlugin", BreachCorePlugin.class,
             "exiledSector.BreachSupplyBuff", BreachSupplyBuff.class,
-            "exiledSector.AtlasState", AtlasState.class);
+            "exiledSector.AtlasState", AtlasState.class,
+            "exiledSector.AnomalousDebrisTerrainPlugin", AnomalousDebrisTerrainPlugin.class);
 
     private ChartSaveAliases() {
     }

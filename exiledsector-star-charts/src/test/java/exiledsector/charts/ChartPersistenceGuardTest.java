@@ -8,6 +8,7 @@ import com.thoughtworks.xstream.XStream;
 import exiledsector.charts.anomaly.breach.BreachCorePlugin;
 import exiledsector.charts.anomaly.breach.BreachSupplyBuff;
 import exiledsector.charts.anomaly.breach.BreachTerrainPlugin;
+import exiledsector.charts.anomaly.debris.AnomalousDebrisTerrainPlugin;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.objective.ChartObjectiveIntel;
 import exiledsector.charts.run.ChartContentListener;
@@ -65,6 +66,7 @@ class ChartPersistenceGuardTest {
         assertTrue(ChartSaveAliases.ALIASES.containsValue(BreachCorePlugin.class));
         assertTrue(ChartSaveAliases.ALIASES.containsValue(BreachSupplyBuff.class));
         assertTrue(ChartSaveAliases.ALIASES.containsValue(AtlasState.class));
+        assertTrue(ChartSaveAliases.ALIASES.containsValue(AnomalousDebrisTerrainPlugin.class));
         ChartSaveAliases.ALIASES.keySet().forEach(alias -> assertTrue(alias.startsWith("exiledSector."), alias));
     }
 
