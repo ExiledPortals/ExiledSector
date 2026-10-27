@@ -297,8 +297,8 @@ fleet's `detected_by_player_range_mult` and raises its extended detection range,
 
 The stage rides on an inserted record (`AtlasAnomalyRecord.Chain`); a rolled network is stage 1 of 3 or 4. A completed
 system keeps a chained record until the run closes, then `RelayChain.settle` moves it two or three lanes further out
-through uncompleted systems if all three relays woke, or removes it. Each stage past the first adds the `relay_stage`
-lines of `atlas_node_effects.csv` once more (`RelayChain.join`), and the last stage's boss, if it dies with all three
+through uncompleted systems if all three relays woke, or at the same stage if the network could not be placed, and
+removes it otherwise. Each stage past the first adds the `relay_stage` lines of `atlas_node_effects.csv` once more (`RelayChain.join`), and the last stage's boss, if it dies with all three
 relays woken, drops one unique hull item or subroutine whatever its source (`ChartFleetLoot.guaranteedUnique`).
 
 ## Transverse Jump in charts

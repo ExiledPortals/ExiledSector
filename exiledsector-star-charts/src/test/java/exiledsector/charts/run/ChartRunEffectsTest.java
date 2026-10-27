@@ -229,6 +229,19 @@ class ChartRunEffectsTest {
     }
 
     @Test
+    void liftingTheRunsEffectsAlsoLiftsWokenRelaysVanillaBonuses() {
+        StatBonus maxBurn = new StatBonus();
+        maxBurn.modifyFlat(ChartRunEffects.VANILLA_NAV_BUOY_MOD_ID, 3f);
+        when(stats.getFleetwideMaxBurnMod()).thenReturn(maxBurn);
+
+        ChartRunEffects.removeFrom(playerFleet);
+
+        verify(stats).removeTemporaryMod(ChartRunEffects.VANILLA_NAV_BUOY_MOD_ID);
+        verify(stats).removeTemporaryMod(ChartRunEffects.VANILLA_SENSOR_ARRAY_MOD_ID);
+        assertEquals(0f, maxBurn.getFlatBonus(), 0f);
+    }
+
+    @Test
     void applyingAMultOfOneRemovesInsteadOfAdding() {
         assertFalse(ChartRunEffects.applySensorRange(playerFleet, 1f, "src"));
         verify(stats).removeTemporaryMod(ChartIds.SENSOR_MOD_ID);

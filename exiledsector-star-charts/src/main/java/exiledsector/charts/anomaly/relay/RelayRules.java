@@ -4,8 +4,12 @@ import exiledsector.charts.generation.ChartTiers;
 
 public final class RelayRules {
 
-    static final float FIRST_BAND_RADIUS = 2000f;
     static final float BAND_WIDTH = 2000f;
+    static final int FIRST_HOME_BAND = 1;
+    static final int BAND_COUNT = 10;
+    static final int ORBIT_ATTEMPTS = 12;
+    static final float ORBIT_SPEED = 15f;
+    static final float MIN_RELAY_GAP = 1500f;
     static final float GUARDED_CHANCE = 0.5f;
     static final float GUARD_GAP_MIN = 150f;
     static final float GUARD_GAP_MAX = 350f;

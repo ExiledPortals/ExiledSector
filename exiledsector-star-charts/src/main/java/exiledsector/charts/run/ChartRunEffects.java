@@ -16,6 +16,8 @@ import java.util.Objects;
 public final class ChartRunEffects {
 
     static final float SENSOR_MOD_DAYS = 0.1f;
+    static final String VANILLA_NAV_BUOY_MOD_ID = "nav_buoy";
+    static final String VANILLA_SENSOR_ARRAY_MOD_ID = "sensor_array";
     private static ChartRun contextRun;
     private static String contextChartData;
     private static String contextNodeData;
@@ -70,8 +72,14 @@ public final class ChartRunEffects {
             return;
         }
         stats.removeTemporaryMod(ChartIds.SENSOR_MOD_ID);
+        stats.removeTemporaryMod(VANILLA_NAV_BUOY_MOD_ID);
+        stats.removeTemporaryMod(VANILLA_SENSOR_ARRAY_MOD_ID);
         if (stats.getSensorRangeMod() != null) {
             stats.getSensorRangeMod().unmodify(ChartIds.SENSOR_MOD_ID);
+            stats.getSensorRangeMod().unmodify(VANILLA_SENSOR_ARRAY_MOD_ID);
+        }
+        if (stats.getFleetwideMaxBurnMod() != null) {
+            stats.getFleetwideMaxBurnMod().unmodify(VANILLA_NAV_BUOY_MOD_ID);
         }
     }
 }

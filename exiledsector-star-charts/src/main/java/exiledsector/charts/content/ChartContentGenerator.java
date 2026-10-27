@@ -54,7 +54,7 @@ import java.util.Set;
 public final class ChartContentGenerator {
 
     static final float POI_GAP = 100f;
-    static final float POI_WORMHOLE_CLEARANCE = 2000f;
+    public static final float POI_WORMHOLE_CLEARANCE = 2000f;
     static final float FLEET_WORMHOLE_CLEARANCE = 3000f;
     static final float GUARD_OFFSET = 250f;
     static final float STATION_ORBIT_GAP = 300f;
@@ -85,7 +85,7 @@ public final class ChartContentGenerator {
     private static final Set<String> REPORTED_FAILURES = new HashSet<>();
     private static ChartContentEngine engine = VANILLA_ENGINE;
 
-    record Hazard(Vector2f centre, float radius) {
+    public record Hazard(Vector2f centre, float radius) {
     }
 
     private ChartContentGenerator() {
@@ -176,7 +176,7 @@ public final class ChartContentGenerator {
         return hazards;
     }
 
-    static boolean isClear(ChartSpot spot, List<Hazard> hazards, Vector2f innerWormhole, float wormholeClearance) {
+    public static boolean isClear(ChartSpot spot, List<Hazard> hazards, Vector2f innerWormhole, float wormholeClearance) {
         Vector2f position = spot.position();
         if (position == null) {
             return false;

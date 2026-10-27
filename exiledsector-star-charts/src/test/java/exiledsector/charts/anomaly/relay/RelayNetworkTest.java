@@ -7,6 +7,8 @@ import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
+import exiledsector.charts.content.ChartContentGenerator;
+import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.content.ChartSpot;
 import exiledsector.charts.generation.ChartGenContext;
 import org.junit.jupiter.api.BeforeEach;
@@ -102,6 +104,39 @@ class RelayNetworkTest {
         int nearPoi = foci.indexOf(guardedPoi);
         assertEquals(1, foci.stream().filter(guardedPoi::equals).count());
         assertEquals(50f + RelayRules.GUARD_GAP_MIN, radii.get(nearPoi), 0.001f);
+    }
+
+    @Test
+    void theNetworkStillPlacesWhenTheInnerWormholeBlocksAnyOfItsHomeBands() {
+        for (float wormholeDistance : new float[] {3000f, 5000f, 7000f}) {
+            added.clear();
+            Vector2f wormhole = new Vector2f(wormholeDistance, 0f);
+            AnomalyContentSite site = new AnomalyContentSite(system, "run1", 4, "pirates", ChartGenContext.none(), List.of(), List.of(), wormhole,
+                    spot -> ChartContentGenerator.isClear(spot, List.of(), wormhole, ChartContentGenerator.POI_WORMHOLE_CLEARANCE), salt -> new Random(salt));
+
+            RelayNetwork.INSTANCE.generate(site);
+
+            assertEquals(3, added.size(), "wormhole at " + wormholeDistance);
+            List<Vector2f> positions = new ArrayList<>();
+            for (SectorEntityToken relay : added) {
+                ArgumentCaptor<Float> angle = ArgumentCaptor.forClass(Float.class);
+                ArgumentCaptor<Float> radius = ArgumentCaptor.forClass(Float.class);
+                verify(relay).setCircularOrbitPointingDown(eq(star), angle.capture(), radius.capture(), anyFloat());
+                assertTrue(Math.abs(radius.getValue() - wormholeDistance) >= ChartContentGenerator.POI_WORMHOLE_CLEARANCE,
+                        "relay at " + radius.getValue() + " beside a wormhole at " + wormholeDistance);
+                positions.add(new ChartSites.Orbit(star, angle.getValue(), radius.getValue(), 1f).position());
+            }
+            for (int first = 0; first < positions.size(); first++) {
+                for (int second = first + 1; second < positions.size(); second++) {
+                    assertTrue(Vector2f.sub(positions.get(first), positions.get(second), new Vector2f()).length() >= RelayRules.MIN_RELAY_GAP);
+                }
+            }
+        }
+    }
+
+    @Test
+    void relayBandsAreTriedNearestTheHomeBandFirstAndOutwardBeforeInward() {
+        assertEquals(List.of(2, 3, 1, 4, 0, 5, 6, 7, 8, 9), RelayNetwork.bandOrder(2));
     }
 
     @Test
