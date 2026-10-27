@@ -10,7 +10,7 @@ An anomaly is anything a star chart system holds beyond its ordinary layout, fle
 | The Hunter | `the_hunter.md` | one, optional, on your terms |
 | Spatial Breach (built) | `../completed/anomalies/spatial_breach.md` | none |
 | Supply Convoy | `supply_convoy.md` | zero or one, sized by where you strike; a raid if it delivers |
-| Anomalous Debris | `anomalous_debris.md` | optional, one per dormant fleet |
+| Anomalous Debris (built) | `../completed/anomalies/anomalous_debris.md` | optional, one per dormant fleet |
 | Asteroid Stream (Industrial Evolution only) | `asteroid_stream.md` | none |
 
 Black Hole, Neutron Star, Dense Nebula, Asteroid Storm, Magnetic Storm and Stellar Flares are built and described in `../atlas.md` (Regions, layouts and anomalies).

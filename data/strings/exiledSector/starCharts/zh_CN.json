@@ -287,6 +287,8 @@
     "chart.debris.dialog.noKernel": "你没有{currency}。",
     "chart.debris.dialog.noReadyShips": "你没有可以作战的舰船。",
     "chart.debris.dialog.leave": "离开",
+    "chart.effect.CHART_EXTRA_ANOMALOUS_DEBRIS.other": "星域内额外出现<good>{value}</good>片异常残骸",
+    "chart.effect.CHART_ANOMALOUS_DEBRIS_CURRENCY_QUANTITY_PERCENT": "被腐化的休眠舰队掉落的通货物品数量提高<good>{value}%</good>",
     "chart.atlas.anomaly.spatial_breach.description": "一道通往超空间的裂口，会消耗燃料和补给。储藏会在其中形成。",
     "chart.atlas.anomaly.faction_skirmish": "势力冲突",
     "chart.atlas.anomaly.faction_skirmish.description": "两个势力正在争夺这个边境星系。你可以支持其中一方，或置身事外。",

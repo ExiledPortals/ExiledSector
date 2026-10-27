@@ -5,6 +5,7 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartGenerated;
 import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
+import exiledsector.charts.anomaly.debris.AnomalousDebris;
 import exiledlib.i18n.Message;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
@@ -84,7 +85,9 @@ public enum ChartEffect implements ModifierEffect {
     CHART_REWARD_PERCENT(false, ChartGenContext::addRewardPercent),
     CHART_BREACH_GROWTH_PERCENT(false, (context, value) -> context.addAnomalyPercent(SpatialBreach.GROWTH_KEY, value)),
     CHART_BREACH_CACHE_PERCENT(false, (context, value) -> context.addAnomalyPercent(SpatialBreach.CACHE_KEY, value)),
-    CHART_BREACH_CACHE_ITEM_PERCENT(false, (context, value) -> context.addAnomalyPercent(SpatialBreach.CACHE_ITEM_KEY, value));
+    CHART_BREACH_CACHE_ITEM_PERCENT(false, (context, value) -> context.addAnomalyPercent(SpatialBreach.CACHE_ITEM_KEY, value)),
+    CHART_EXTRA_ANOMALOUS_DEBRIS(true, (context, value) -> context.addAnomalyPercent(AnomalousDebris.EXTRA_KEY, Math.round(value))),
+    CHART_ANOMALOUS_DEBRIS_CURRENCY_QUANTITY_PERCENT(false, (context, value) -> context.addAnomalyPercent(AnomalousDebris.CURRENCY_KEY, value));
 
     static final String KEY_PREFIX = "chart.effect.";
 

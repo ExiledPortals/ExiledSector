@@ -8,7 +8,6 @@ import com.fs.starfarer.api.campaign.FleetAssignment;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.FactionAPI.ShipPickMode;
 import com.fs.starfarer.api.campaign.FactionAPI.ShipPickParams;
-import com.fs.starfarer.api.campaign.RepLevel;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
@@ -58,6 +57,7 @@ public final class DormantFleets {
     static final int MOST_SHIPS = 30;
     static final int MOST_FAILED_PICKS = 6;
     static final int SEED_RADIX = Character.MAX_RADIX;
+    static final float NEUTRAL_RELATIONSHIP = 0f;
 
     record HullFaction(FactionAPI faction, float weight) {
     }
@@ -86,7 +86,7 @@ public final class DormantFleets {
         faction.setDisplayNameOverride(Translation.gameText("chart.debris.faction.name"));
         faction.setDisplayNameWithArticleOverride(Translation.gameText("chart.debris.faction.article"));
         faction.setDisplayIsOrAreOverride(Translation.gameText("chart.debris.faction.isOrAre"));
-        faction.setRelationship(Factions.PLAYER, RepLevel.NEUTRAL);
+        faction.setRelationship(Factions.PLAYER, NEUTRAL_RELATIONSHIP);
     }
 
     static List<HullFaction> hullFactions(SectorAPI sector) {
