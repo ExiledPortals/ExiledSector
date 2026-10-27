@@ -40,10 +40,11 @@ public final class HullItem extends Item {
     static final String DEFINITIONS_FILE = "hull_items.csv";
     static final String UNIQUE_SOURCE_COLUMN = "source";
     static final String MECHANIC_COLUMN = "mechanic";
-    public static final String DOUBLER_MECHANIC = "doubler";
-    public static final List<String> MECHANICS = List.of(DOUBLER_MECHANIC, ItemDefinition.ONE_OF_MECHANIC);
+    public static final List<String> MECHANICS = List.of(ItemDefinition.ONE_OF_MECHANIC);
 
     private String targetSectionId;
+    private transient List<List<RolledModifier>> targetCheckedModifiers;
+    private transient boolean cachedTargetsAnotherItem;
 
     HullItem(String id, String definitionId, long seed, List<RolledModifier> explicitModifiers) {
         super(id, definitionId, seed, explicitModifiers);
@@ -81,9 +82,13 @@ public final class HullItem extends Item {
         return section != null && section == section();
     }
 
-    public boolean doubler() {
-        ItemDefinition definition = definition();
-        return definition != null && DOUBLER_MECHANIC.equals(definition.mechanic());
+    public boolean targetsAnotherItem() {
+        List<List<RolledModifier>> modifiers = List.of(explicits(), implicits());
+        if (!modifiers.equals(targetCheckedModifiers)) {
+            targetCheckedModifiers = List.of(List.copyOf(modifiers.get(0)), List.copyOf(modifiers.get(1)));
+            cachedTargetsAnotherItem = skillEffects().stream().anyMatch(effect -> effect.effect().targetsSocketedItem());
+        }
+        return cachedTargetsAnotherItem;
     }
 
     public List<ShipSection> targetChoices() {
@@ -92,7 +97,7 @@ public final class HullItem extends Item {
     }
 
     public ShipSection targetSection() {
-        List<ShipSection> choices = doubler() ? targetChoices() : List.of();
+        List<ShipSection> choices = targetsAnotherItem() ? targetChoices() : List.of();
         if (choices.isEmpty()) {
             return null;
         }
@@ -106,7 +111,7 @@ public final class HullItem extends Item {
 
     @Override
     public boolean hasRerollableTarget() {
-        return doubler() && targetChoices().size() > 1;
+        return targetsAnotherItem() && targetChoices().size() > 1;
     }
 
     @Override
@@ -141,10 +146,10 @@ public final class HullItem extends Item {
             return super.implicitLines(withRollRanges);
         }
         List<StyledText> lines = new ArrayList<>();
-        lines.add(Translation.msg("hullItem.doubler.line").arg("section", target.displayName()).styled());
+        lines.add(Translation.msg("hullItem.target.line").arg("section", target.displayName()).styled());
         if (withRollRanges) {
             String choices = targetChoices().stream().map(ShipSection::displayName).collect(Collectors.joining(", "));
-            lines.add(Translation.msg("hullItem.doubler.choices").arg("sections", choices).styled());
+            lines.add(Translation.msg("hullItem.target.choices").arg("sections", choices).styled());
         }
         lines.addAll(super.implicitLines(withRollRanges));
         return lines;

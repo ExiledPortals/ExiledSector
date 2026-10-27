@@ -1,6 +1,7 @@
 package exiledsector.items;
 
 import exiledsector.modifiers.ModifierEffects;
+import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
@@ -9,6 +10,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public record ItemDefinition(String id, ItemKind kind, String name, String icon, float rarity, boolean unique,
                                    String description, List<PoolEntry> prefixes, List<PoolEntry> suffixes, String unlock, ItemType type,
@@ -201,6 +203,32 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
             }
         }
         return resolved == null ? modifiers : resolved;
+    }
+
+    public List<RolledModifier> withAddedFixedModifiers(List<RolledModifier> modifiers) {
+        if (!unique || keepsOneModifier()) {
+            return modifiers;
+        }
+        List<RolledModifier> added = addMissingFixed(prefixes, modifiers, null);
+        added = addMissingFixed(suffixes, modifiers, added);
+        return added == null ? modifiers : added;
+    }
+
+    private static List<RolledModifier> addMissingFixed(List<PoolEntry> entries, List<RolledModifier> modifiers, List<RolledModifier> added) {
+        if (entries == null) {
+            return added;
+        }
+        for (PoolEntry entry : entries) {
+            String modifierId = entry.modifier().id();
+            boolean fixed = entry.modifier().lines().stream().noneMatch(ModifierLine::canVary);
+            if (fixed && modifiers.stream().noneMatch(modifier -> modifier.modifierId().equals(modifierId))) {
+                if (added == null) {
+                    added = new ArrayList<>(modifiers);
+                }
+                added.add(RolledModifier.roll(entry.modifier(), new Random(0L), true));
+            }
+        }
+        return added;
     }
 
     private String currentId(RolledModifier modifier) {

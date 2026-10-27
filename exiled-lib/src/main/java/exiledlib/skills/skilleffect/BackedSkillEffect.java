@@ -5,6 +5,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import exiledlib.i18n.StyledText;
 import exiledlib.skills.AffinityScaling;
 import exiledlib.skills.CombatGate;
+import exiledlib.skills.SocketedItemScaling;
 import exiledlib.skills.skilleffect.special.RadiusGate;
 
 public interface BackedSkillEffect extends SkillEffect {
@@ -17,6 +18,11 @@ public interface BackedSkillEffect extends SkillEffect {
     @Override
     default CombatGate radiusGate() {
         return backing() instanceof RadiusGate radiusGate ? radiusGate.gate() : null;
+    }
+
+    @Override
+    default SocketedItemScaling socketedItemScaling() {
+        return backing() instanceof SocketedItemScaling scaling ? scaling : null;
     }
 
     EffectBacking backing();

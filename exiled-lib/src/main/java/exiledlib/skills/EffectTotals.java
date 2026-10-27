@@ -42,7 +42,8 @@ public final class EffectTotals {
 
     public static EffectTotals of(List<EffectContribution> treeContributions, float bonusScale, StatBaseline baseline,
                                   DiminishingReturns.Config diminishing) {
-        List<EffectContribution> contributions = BallisticEnergyMirror.withMirroredBonuses(AffinitySteps.withSteppedBonuses(treeContributions));
+        List<EffectContribution> contributions = BallisticEnergyMirror.withMirroredBonuses(
+                AffinitySteps.withSteppedBonuses(SocketedItemScaling.withScaledItems(treeContributions)));
         NpcBonusScaling scaling = NpcBonusScaling.of(bonusScale, contributions);
         List<EffectContribution> scaledContributions = new ArrayList<>();
         for (EffectContribution contribution : contributions) {

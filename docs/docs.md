@@ -368,11 +368,14 @@ dropping, and stored points are kept for switching back. Switching never locks a
 
 ## Hull item mechanics
 
-A hull item whose `mechanic` column is `doubler` rolls one other section as its target (`HullItem.targetSection`,
-picked from the item's seed and stored once rolled). `ShipSections.doubledSections` finds active doublers whose
-target holds an active item that isn't a doubler, and `HullUpgradeEffectSource` doubles every magnitude of that
-item, drawbacks included. The Tuning Nanoswarm rerolls the target to another section (`Item.rerollTarget`), even
-on an item with no modifier range to vary.
+Effects can scale socketed hull items. Each section's contribution carries a `HullItemOrigin`, which Exiled Lib
+sees as a `SocketedItem`, and `SocketedItemScaling.withScaledItems` runs first in `EffectTotals.of`: it sums the
+permanent `SOCKETED_HULL_ITEM_EFFECT_PERCENT`, `TARGETED_HULL_ITEM_EFFECT_PERCENT` and drawback percents from every
+source and multiplies each item's magnitudes by them, never scaling the scaling effects themselves. A hull item with
+a targeting effect rolls one other section as its target (`HullItem.targetSection`, from its seed, stored once
+rolled); the Extended Warranty Contract's 100% doubles that item, drawbacks included. The Tuning Nanoswarm rerolls
+the target (`Item.rerollTarget`). A unique item that rolled before its definition gained a fixed-value modifier
+gains it on load (`ItemDefinition.withAddedFixedModifiers`).
 
 A unique whose `mechanic` is `one_of` keeps just one of its listed modifiers, picked from its seed when it is
 rolled (`ItemRoller`), so the choice is frozen with the item.

@@ -179,7 +179,7 @@
     "settings.socketStorage.hullUpgradePoints.tooltip": "改装图纸为舰船逐点提升，最多5点。星图进度会在你通关5级、10级和15级星图后将所有舰船分别提升至2、3、4点，且需要开启星图。",
     "settings.socketStorage.battleItems.name": "战斗掉落的船体物品",
     "settings.socketStorage.battleItems.tooltip": "100为正常，0则关闭。",
-    "hullItem.doubler.line": "使本舰{section}物品的词缀翻倍。",
-    "hullItem.doubler.choices": "可选目标：{sections}",
+    "hullItem.target.line": "目标：本舰{section}物品。",
+    "hullItem.target.choices": "可选目标：{sections}",
     "hullItem.affinity.current": "本舰当前：{line}"
 }

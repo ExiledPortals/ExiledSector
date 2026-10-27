@@ -229,18 +229,18 @@ describe('hull item mechanics', () => {
     const model = parseItemDefinitions(subroutinesText, olderText);
 
     expect(serializeHullItemsCsv(model)).toBe(olderText);
-    model.definitions[0].mechanic = 'doubler';
-    const withMechanic = 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock,mechanic\nrelic,bridge,Relic,,10,true,,@HULL_MULT_BRIDGE,,,doubler\n';
+    model.definitions[0].mechanic = 'one_of';
+    const withMechanic = 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock,mechanic\nrelic,bridge,Relic,,10,true,,@HULL_MULT_BRIDGE,,,one_of\n';
     expect(serializeHullItemsCsv(model)).toBe(withMechanic);
-    expect(parseItemDefinitions(subroutinesText, withMechanic).definitions[0].mechanic).toBe('doubler');
+    expect(parseItemDefinitions(subroutinesText, withMechanic).definitions[0].mechanic).toBe('one_of');
   });
 
   it('rejects an unknown mechanic and warns when a common hull item names one', () => {
     const issues = validateItemDefinitions([definition({ id: 'odd', unique: 'true', mechanic: 'tripler' })], vocabulary, catalogue);
 
-    expect(issues).toEqual(['odd: mechanic must be blank or one of doubler']);
-    expect(definitionWarnings([definition({ id: 'common', mechanic: 'doubler' })], 'ship')).toEqual([
-      'common: the mechanic doubler is meant for unique hull items',
+    expect(issues).toEqual(['odd: mechanic must be blank or one of one_of']);
+    expect(definitionWarnings([definition({ id: 'common', mechanic: 'one_of' })], 'ship')).toEqual([
+      'common: the mechanic one_of is meant for unique hull items',
     ]);
   });
 });

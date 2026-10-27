@@ -6,6 +6,7 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
 import exiledlib.MockSector;
+import exiledsector.modifiers.ModifierSlot;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.tags.ShipProfile;
@@ -40,7 +41,7 @@ class HullUpgradeTest {
         store = ItemStore.get();
         ItemDefinitions.register(new JSONArray()
                 .put(HullItemRows.row("officer", "bridge", "HULL_PERCENT:10:10"))
-                .put(HullItemRows.row("warranty", "bridge", "HULL_PERCENT:1:1").put("unique", "true").put("mechanic", HullItem.DOUBLER_MECHANIC))
+                .put(HullItemRows.row("warranty", "bridge", "HULL_PERCENT:1:1; TARGETED_HULL_ITEM_EFFECT_PERCENT:100:100").put("unique", "true"))
                 .put(ItemFixtures.subroutineRow("chip")));
     }
 
@@ -108,7 +109,17 @@ class HullUpgradeTest {
     }
 
     @Test
-    void theTuningNanoswarmRerollsADoublersTargetToAnotherSectionEvenWithFixedModifiers() {
+    void aWarrantySavedBeforeItsTargetingModifierExistedGainsItOnLoad() {
+        HullItem saved = new HullItem("old_warranty", "warranty", 7L,
+                List.of(RolledModifier.single(ModifierSlot.PREFIX, new RolledEffect("HULL_PERCENT", 1f))));
+
+        assertEquals(2, saved.explicits().size());
+        assertTrue(saved.targetsAnotherItem());
+        assertNotNull(saved.targetSection());
+    }
+
+    @Test
+    void theTuningNanoswarmRerollsATargetingItemsTargetToAnotherSectionEvenWithFixedModifiers() {
         HullItem warranty = (HullItem) store.add(ItemDefinitions.get("warranty"), 7L);
         ShipSection firstTarget = warranty.targetSection();
 

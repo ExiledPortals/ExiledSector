@@ -2092,6 +2092,18 @@ effect|SMALL_WEAPON_OP_COST_FLAT|12.5	1	<good>+12.5</good> to ordnance point cos
 effect|SMALL_WEAPON_OP_COST_FLAT|100.0	1	<good>+100</good> to ordnance point cost of small weapons.
 effect|SMALL_WEAPON_OP_COST_FLAT|-10.0	1	<bad>-10</bad> to ordnance point cost of small weapons.
 effect|SMALL_WEAPON_OP_COST_FLAT|-12.5	1	<bad>-12.5</bad> to ordnance point cost of small weapons.
+effect|SOCKETED_HULL_ITEM_DRAWBACK_EFFECT_PERCENT|1.0	1	<bad>1%</bad> increased effect of hull item drawbacks.
+effect|SOCKETED_HULL_ITEM_DRAWBACK_EFFECT_PERCENT|10.0	1	<bad>10%</bad> increased effect of hull item drawbacks.
+effect|SOCKETED_HULL_ITEM_DRAWBACK_EFFECT_PERCENT|12.5	1	<bad>12.5%</bad> increased effect of hull item drawbacks.
+effect|SOCKETED_HULL_ITEM_DRAWBACK_EFFECT_PERCENT|100.0	1	<bad>100%</bad> increased effect of hull item drawbacks.
+effect|SOCKETED_HULL_ITEM_DRAWBACK_EFFECT_PERCENT|-10.0	1	<good>10%</good> reduced effect of hull item drawbacks.
+effect|SOCKETED_HULL_ITEM_DRAWBACK_EFFECT_PERCENT|-12.5	1	<good>12.5%</good> reduced effect of hull item drawbacks.
+effect|SOCKETED_HULL_ITEM_EFFECT_PERCENT|1.0	0	<good>1%</good> increased effect of hull items.
+effect|SOCKETED_HULL_ITEM_EFFECT_PERCENT|10.0	0	<good>10%</good> increased effect of hull items.
+effect|SOCKETED_HULL_ITEM_EFFECT_PERCENT|12.5	0	<good>12.5%</good> increased effect of hull items.
+effect|SOCKETED_HULL_ITEM_EFFECT_PERCENT|100.0	0	<good>100%</good> increased effect of hull items.
+effect|SOCKETED_HULL_ITEM_EFFECT_PERCENT|-10.0	0	<bad>10%</bad> reduced effect of hull items.
+effect|SOCKETED_HULL_ITEM_EFFECT_PERCENT|-12.5	0	<bad>12.5%</bad> reduced effect of hull items.
 effect|SOLARIS_OVERDRIVE_PROJECTILE_SPEED_PERCENT|1.0	0	<good>1%</good> increased weapon projectile speed for those seconds.
 effect|SOLARIS_OVERDRIVE_PROJECTILE_SPEED_PERCENT|10.0	0	<good>10%</good> increased weapon projectile speed for those seconds.
 effect|SOLARIS_OVERDRIVE_PROJECTILE_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased weapon projectile speed for those seconds.
@@ -2182,6 +2194,12 @@ effect|SYSTEM_COOLDOWN_PERCENT|12.5	1	<good>12.5%</good> increased ship system c
 effect|SYSTEM_COOLDOWN_PERCENT|100.0	1	<good>100%</good> increased ship system cooldown.
 effect|SYSTEM_COOLDOWN_PERCENT|-10.0	1	<bad>10%</bad> reduced ship system cooldown.
 effect|SYSTEM_COOLDOWN_PERCENT|-12.5	1	<bad>12.5%</bad> reduced ship system cooldown.
+effect|TARGETED_HULL_ITEM_EFFECT_PERCENT|1.0	0	<good>1%</good> increased effect of the targeted hull item.
+effect|TARGETED_HULL_ITEM_EFFECT_PERCENT|10.0	0	<good>10%</good> increased effect of the targeted hull item.
+effect|TARGETED_HULL_ITEM_EFFECT_PERCENT|12.5	0	<good>12.5%</good> increased effect of the targeted hull item.
+effect|TARGETED_HULL_ITEM_EFFECT_PERCENT|100.0	0	<good>100%</good> increased effect of the targeted hull item.
+effect|TARGETED_HULL_ITEM_EFFECT_PERCENT|-10.0	0	<bad>10%</bad> reduced effect of the targeted hull item.
+effect|TARGETED_HULL_ITEM_EFFECT_PERCENT|-12.5	0	<bad>12.5%</bad> reduced effect of the targeted hull item.
 effect|TERMINAL_DESCENT_FLUX_DISSIPATION_PERCENT|1.0	0	<good>1%</good> increased flux dissipation during Terminal Descent.
 effect|TERMINAL_DESCENT_FLUX_DISSIPATION_PERCENT|10.0	0	<good>10%</good> increased flux dissipation during Terminal Descent.
 effect|TERMINAL_DESCENT_FLUX_DISSIPATION_PERCENT|12.5	0	<good>12.5%</good> increased flux dissipation during Terminal Descent.

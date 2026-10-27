@@ -82,7 +82,7 @@ export function buildVocabulary(file: VocabularyFile): Vocabulary {
     doctrineBehaviours: (file.doctrineBehaviours ?? ['TRANSFORM', 'AUGMENT']).slice(),
     radiusSizes: (file.radiusSizes ?? ['small', 'medium', 'large']).slice(),
     uniqueSourceKinds: (file.uniqueSourceKinds ?? ['faction', 'site']).slice(),
-    hullItemMechanics: (file.hullItemMechanics ?? ['doubler']).slice(),
+    hullItemMechanics: (file.hullItemMechanics ?? ['one_of']).slice(),
     itemAreas: (file.itemAreas ?? []).slice(),
     itemUnlocks: file.itemUnlocks.slice(),
     clearedChartTierPrefix: file.clearedChartTierPrefix ?? 'cleared_chart_tier_',

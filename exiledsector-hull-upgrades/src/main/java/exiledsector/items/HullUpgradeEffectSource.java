@@ -11,7 +11,6 @@ import exiledlib.skills.skilleffect.special.SpecialSkillEffect;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 public final class HullUpgradeEffectSource implements ShipEffectSource {
 
@@ -24,7 +23,8 @@ public final class HullUpgradeEffectSource implements ShipEffectSource {
     @Override
     public Object cacheKey(ShipEffectContext context) {
         List<ShipSections.UnlockedSection> sections = ShipSections.forVariant(context.shipData(), context.variant());
-        return List.of(sections, ShipSections.doubledSections(sections), context.variant() == null ? 0 : context.variant().getSMods().size());
+        List<String> targets = sections.stream().map(unlocked -> String.valueOf(new HullItemOrigin(unlocked).targetSlotId())).toList();
+        return List.of(sections, targets, context.variant() == null ? 0 : context.variant().getSMods().size());
     }
 
     @Override
@@ -39,11 +39,10 @@ public final class HullUpgradeEffectSource implements ShipEffectSource {
 
     public static List<EffectContribution> contributions(List<ShipSections.UnlockedSection> sections, HullSize hullSize, int sModCount) {
         List<EffectContribution> contributions = new ArrayList<>();
-        Set<ShipSection> doubled = ShipSections.doubledSections(sections);
         for (ShipSections.UnlockedSection unlocked : sections) {
-            List<SkillTypeEffect> effects = perSMod(ShipSections.appliedEffects(unlocked, hullSize, doubled.contains(unlocked.section())), sModCount);
+            List<SkillTypeEffect> effects = perSMod(ShipSections.appliedEffects(unlocked, hullSize), sModCount);
             if (!effects.isEmpty()) {
-                contributions.add(EffectContribution.scaledPermanent(unlocked, MOD_ID_PREFIX + unlocked.section().id() + "_",
+                contributions.add(EffectContribution.scaledPermanent(new HullItemOrigin(unlocked), MOD_ID_PREFIX + unlocked.section().id() + "_",
                         Collections.unmodifiableList(effects)));
             }
         }

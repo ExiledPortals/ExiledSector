@@ -63,7 +63,7 @@
     "settings.socketStorage.hullUpgradePoints.tooltip": "Refit Schematics add one point at a time, up to 5. Star Chart Progress raises every ship to 2, 3 and 4 points as you clear tier 5, 10 and 15 Star Charts, and needs Star Charts switched on.",
     "settings.socketStorage.battleItems.name": "Hull Item Drops From Battles",
     "settings.socketStorage.battleItems.tooltip": "100 is normal and 0 turns them off.",
-    "hullItem.doubler.line": "Doubles the modifiers of this ship's {section} item.",
-    "hullItem.doubler.choices": "Can target: {sections}",
+    "hullItem.target.line": "Targets this ship's {section} item.",
+    "hullItem.target.choices": "Can target: {sections}",
     "hullItem.affinity.current": "Currently on this ship: {line}"
 }

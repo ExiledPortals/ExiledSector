@@ -39,7 +39,7 @@ class ShipSectionsTest {
                 .put(definition("bridge_item", "bridge", "HULL_PERCENT:5:5"))
                 .put(definition("emitter", "shield_generator", "HULL_PERCENT:10:10"))
                 .put(definition("chip", "reactor", "HULL_PERCENT:20:20"))
-                .put(definition("warranty", "bridge", "HULL_PERCENT:1:1").put("unique", "true").put("mechanic", HullItem.DOUBLER_MECHANIC))
+                .put(definition("warranty", "bridge", "HULL_PERCENT:1:1; TARGETED_HULL_ITEM_EFFECT_PERCENT:100:100").put("unique", "true"))
                 .put(definition("vault", "bridge", "HIGHEST_AFFINITY_FLAT_PER_S_MOD:3:3")));
         shipData = new ShipSkillData();
         shipData.grantUnlockedSocketType("bridge");
@@ -134,18 +134,24 @@ class ShipSectionsTest {
     }
 
     @Test
-    void aDoublerDoublesTheItemInItsTargetSectionAndNothingWhileThatSectionIsEmpty() {
+    void aTargetingItemDoublesTheItemInItsTargetSectionAndNothingWhileThatSectionIsEmpty() {
         shipData.installInSection("bridge", warrantyTargeting(ShipSection.SHIELD_GENERATOR));
         List<ShipSections.UnlockedSection> slots = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
 
-        assertEquals(Set.of(ShipSection.SHIELD_GENERATOR), ShipSections.doubledSections(slots));
         assertEquals(21f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(slots, HullSize.CRUISER), 1f)), 1e-4f);
 
         shipData.installInSection("bridge", warrantyTargeting(ShipSection.REACTOR));
         List<ShipSections.UnlockedSection> emptyTarget = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
 
-        assertEquals(Set.of(), ShipSections.doubledSections(emptyTarget));
         assertEquals(11f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(emptyTarget, HullSize.CRUISER), 1f)), 1e-4f);
+    }
+
+    @Test
+    void anItemWithoutATargetingEffectHasNoTarget() {
+        HullItem plain = (HullItem) ItemStore.lookup(NpcItems.id("bridge_item", 1L));
+
+        assertFalse(plain.targetsAnotherItem());
+        assertEquals(null, plain.targetSection());
     }
 
     @Test
@@ -162,10 +168,10 @@ class ShipSectionsTest {
     }
 
     @Test
-    void aDoublerNeverTargetsItsOwnSection() {
+    void aTargetingItemNeverTargetsItsOwnSection() {
         for (long seed = 1L; seed < 200L; seed++) {
             HullItem warranty = (HullItem) ItemStore.lookup(NpcItems.id("warranty", seed));
-            assertTrue(warranty.doubler());
+            assertTrue(warranty.targetsAnotherItem());
             assertTrue(warranty.targetSection() != ShipSection.BRIDGE);
         }
     }

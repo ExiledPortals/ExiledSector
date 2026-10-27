@@ -8,6 +8,7 @@ import exiledlib.modifiers.ModifierEffect;
 import exiledlib.skills.AffinityScaling;
 import exiledlib.skills.CombatGate;
 import exiledlib.skills.ShipFacts;
+import exiledlib.skills.SocketedItemScaling;
 import exiledlib.skills.skilleffect.hullmodule.ModuleShare;
 import exiledlib.skills.skilleffect.hullmodule.ModuleShares;
 
@@ -70,6 +71,15 @@ public interface SkillEffect extends ModifierEffect {
 
     default CombatGate radiusGate() {
         return null;
+    }
+
+    default SocketedItemScaling socketedItemScaling() {
+        return null;
+    }
+
+    default boolean targetsSocketedItem() {
+        SocketedItemScaling scaling = socketedItemScaling();
+        return scaling != null && scaling.scope() == SocketedItemScaling.Scope.TARGETED;
     }
 
     default boolean appliesToNpcShips() {
