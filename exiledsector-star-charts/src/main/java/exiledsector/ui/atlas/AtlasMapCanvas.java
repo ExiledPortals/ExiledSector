@@ -7,6 +7,7 @@ import exiledsector.charts.layout.sketch.ChartSketchPalette;
 import exiledsector.charts.layout.sketch.ChartSystemSketch;
 import exiledsector.charts.layout.sketch.ChartSystemSketcher;
 import exiledsector.charts.atlas.AtlasAnomalies;
+import exiledsector.charts.atlas.AtlasAnomalyRecord;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasData;
 import exiledsector.charts.atlas.AtlasGenerator;
@@ -60,8 +61,18 @@ final class AtlasMapCanvas {
     static final float ANOMALY_FIRST_ANGLE = (float) Math.toRadians(60.0);
     static final float ANOMALY_ANGLE_STEP = (float) Math.toRadians(32.0);
     static final float ANOMALY_RING_WIDTH_SHARE = 0.5f;
+    static final float TRACE_WIDTH_SHARE = 0.6f;
+    static final float TRACE_ALPHA = 0.8f;
+    static final Color TRACE_COLOUR = new Color(120, 200, 255);
 
-    record AnomalyIcon(AtlasCell cell, String anomalyId, String iconPath, int slot) {
+    record AnomalyIcon(AtlasCell cell, String anomalyId, String iconPath, int slot, boolean fogged) {
+
+        AnomalyIcon(AtlasCell cell, String anomalyId, String iconPath, int slot) {
+            this(cell, anomalyId, iconPath, slot, false);
+        }
+    }
+
+    record Trace(AtlasCell from, AtlasCell to) {
     }
 
     private final AtlasGenerator generator;
@@ -72,6 +83,7 @@ final class AtlasMapCanvas {
     private final Map<AtlasCell, String> nodeKeys = new HashMap<>();
     private final Map<AtlasCell, AtlasSystemPreview.Prepared> sketches = new HashMap<>();
     private final List<AnomalyIcon> anomalyIcons = new ArrayList<>();
+    private final List<Trace> traces = new ArrayList<>();
     private final SpriteCache spriteCache = new SpriteCache(AtlasMapCanvas.class);
     private final AtlasSystemPreview preview = new AtlasSystemPreview();
     private final NodeRingArt ringArt = new NodeRingArt();
@@ -112,7 +124,29 @@ final class AtlasMapCanvas {
                 }
             }
         }
+        addChains();
         scenery.attach(this);
+    }
+
+    private void addChains() {
+        for (AtlasAnomalyRecord record : state.anomalyRecords()) {
+            AtlasAnomalyRecord.Chain chain = record.chain();
+            if (chain == null || generator.isVoid(record.cell()) || !AtlasAnomalies.effective(generator, state, record.cell()).contains(record.anomalyId())) {
+                continue;
+            }
+            if (chain.from() != null && !chain.from().equals(record.cell())) {
+                traces.add(new Trace(chain.from(), record.cell()));
+            }
+            if (!visible.contains(record.cell())) {
+                nodes.computeIfAbsent(record.cell(), generator::node);
+                ChartAnomalies.Definition definition = ChartAnomalies.definition(record.anomalyId());
+                anomalyIcons.add(new AnomalyIcon(record.cell(), record.anomalyId(), definition == null ? "" : definition.icon(), 0, true));
+            }
+        }
+    }
+
+    List<Trace> traces() {
+        return traces;
     }
 
     AtlasScenery scenery() {
@@ -260,11 +294,13 @@ final class AtlasMapCanvas {
     }
 
     private float anomalyX(TreeViewport view, AnomalyIcon icon, float footprint, float scale) {
-        return screenX(view, icon.cell()) + (float) Math.cos(anomalyAngle(icon)) * footprint * ANOMALY_ORBIT_SHARE * scale;
+        float orbit = icon.fogged() ? 0f : footprint * ANOMALY_ORBIT_SHARE * scale;
+        return screenX(view, icon.cell()) + (float) Math.cos(anomalyAngle(icon)) * orbit;
     }
 
     private float anomalyY(TreeViewport view, AnomalyIcon icon, float footprint, float scale) {
-        return screenY(view, icon.cell()) + (float) Math.sin(anomalyAngle(icon)) * footprint * ANOMALY_ORBIT_SHARE * scale;
+        float orbit = icon.fogged() ? 0f : footprint * ANOMALY_ORBIT_SHARE * scale;
+        return screenY(view, icon.cell()) + (float) Math.sin(anomalyAngle(icon)) * orbit;
     }
 
     void render(TreeViewport view, Color accent, float alphaMult) {
@@ -292,6 +328,20 @@ final class AtlasMapCanvas {
                 }
                 addLane(view, cell, neighbour, laneReach(innerRadius * nodeScale(cell), widthScale),
                         bothVisible ? laneReach(innerRadius * nodeScale(neighbour), widthScale) : fogRadius, bothVisible, accent, alphaMult);
+            }
+        }
+        BeamStroke.Look traceLook = beams.lit(TRACE_COLOUR);
+        float traceWidthScale = widthScale * TRACE_WIDTH_SHARE;
+        float traceAlpha = TRACE_ALPHA * alphaMult;
+        for (Trace trace : traces) {
+            float x1 = screenX(view, trace.from());
+            float y1 = screenY(view, trace.from());
+            float x2 = screenX(view, trace.to());
+            float y2 = screenY(view, trace.to());
+            if (view.overlaps(Math.min(x1, x2), Math.min(y1, y2), Math.max(x1, x2), Math.max(y1, y2))) {
+                float toRadius = visible.contains(trace.to()) ? laneReach(innerRadius * nodeScale(trace.to()), widthScale) : fogRadius;
+                beams.connector(x1, y1, laneReach(innerRadius * nodeScale(trace.from()), widthScale), x2, y2, toRadius, traceLook, traceAlpha,
+                        traceAlpha, traceWidthScale);
             }
         }
         beams.flush();

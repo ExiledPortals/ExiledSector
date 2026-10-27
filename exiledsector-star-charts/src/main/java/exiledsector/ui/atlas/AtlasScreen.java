@@ -380,7 +380,8 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
 
     private void writeAnomalyTooltip() {
         tooltipTitle.set(AtlasNodeText.name("anomaly", hoveredAnomaly.anomalyId()));
-        tooltipBody.setStyled(AtlasNodeText.anomalyBody(hoveredAnomaly.anomalyId()), SkillTreePanelStyle::standardHighlightColor);
+        tooltipBody.setStyled(AtlasNodeText.anomalyBody(map.generator(), map.state(), hoveredAnomaly.cell(), hoveredAnomaly.anomalyId()),
+                SkillTreePanelStyle::standardHighlightColor);
     }
 
     private void writeTooltip() {
@@ -399,6 +400,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             case GOOD -> StyledText.styled(line.text(), Style.GOOD);
             case BAD -> StyledText.styled(line.text(), Style.BAD);
             case HINT -> StyledText.styled(line.text(), Style.MUTED);
+            case STYLED -> StyledText.parse(line.text());
             default -> StyledText.of(line.text());
         };
     }

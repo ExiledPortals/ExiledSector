@@ -3,6 +3,8 @@ package exiledsector.ui.atlas;
 import exiledlib.i18n.Style;
 import exiledlib.i18n.StyledText;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.relay.RelayChain;
+import exiledsector.charts.anomaly.relay.RelayNetwork;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.anomaly.skirmish.SkirmishEntry;
@@ -10,6 +12,7 @@ import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasAnomalyRecord;
 import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.atlas.AtlasData;
 import exiledsector.charts.atlas.AtlasDevTools;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasMarkerRule;
@@ -19,6 +22,8 @@ import exiledsector.charts.atlas.AtlasSpecial;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasUnlocks;
 import exiledsector.ui.socket.BenchModeSupport;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -98,5 +103,34 @@ class AtlasNodeTextTest {
         assertEquals(StyledText.styled("x", Style.BAD), AtlasScreen.styled(new AtlasNodeText.Line("x", AtlasNodeText.Tone.BAD)));
         assertEquals(StyledText.styled("x", Style.MUTED), AtlasScreen.styled(new AtlasNodeText.Line("x", AtlasNodeText.Tone.HINT)));
         assertEquals(StyledText.of("x"), AtlasScreen.styled(new AtlasNodeText.Line("x", AtlasNodeText.Tone.PLAIN)));
+    }
+
+    @Test
+    void aRelayChainSystemShowsItsStageItsLinesAndTheLastStagesUnique() throws Exception {
+        ChartTables.loadAnomalies();
+        AtlasData.registerNodeEffects(new JSONArray().put(new JSONObject().put("id", RelayChain.STAGE_EFFECTS_ID)
+                .put("effects", "CHART_FLEET_SIZE_PERCENT:20; CHART_QUANTITY_PERCENT:25")));
+        try {
+            AtlasState state = new AtlasState(SEED);
+            AtlasGenerator generator = generator(state);
+            AtlasCell cell = generator.lanes(AtlasCell.ORIGIN).get(0);
+            AtlasAnomalies.insert(generator, state, cell, RelayNetwork.ID, AtlasAnomalyRecord.Source.WORLD, null,
+                    new AtlasAnomalyRecord.Chain(3, 3, AtlasCell.ORIGIN));
+
+            List<AtlasNodeText.Line> markers = AtlasNodeText.markers(generator, state, cell, generator.node(cell));
+
+            assertTrue(markers.contains(new AtlasNodeText.Line("Stage 3 of 3", AtlasNodeText.Tone.PLAIN)), markers.toString());
+            assertTrue(markers.contains(new AtlasNodeText.Line("The Star Chart Boss always drops a unique hull item or subroutine",
+                    AtlasNodeText.Tone.GOOD)), markers.toString());
+            List<String> styledLines = markers.stream().filter(line -> line.tone() == AtlasNodeText.Tone.STYLED).map(AtlasNodeText::plainText).toList();
+            assertEquals(List.of("40% increased enemy fleet size",
+                    "50% increased quantity of items found in the system, and 50% increased completion reward"), styledLines);
+            assertTrue(AtlasNodeText.confirmLines(generator, state, cell).stream().noneMatch(line -> line.contains("<")));
+            assertTrue(AtlasNodeText.anomalyBody(generator, state, cell, RelayNetwork.ID).plain().contains("Stage 3 of 3"));
+            assertEquals(StyledText.parse("<bad>40%</bad> x"), AtlasScreen.styled(new AtlasNodeText.Line("<bad>40%</bad> x", AtlasNodeText.Tone.STYLED)));
+        } finally {
+            AtlasData.registerNodeEffects(new JSONArray());
+            ChartTables.resetAnomalies();
+        }
     }
 }
