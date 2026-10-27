@@ -1,5 +1,6 @@
 package exiledsector.charts.anomaly;
 
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.charts.generation.ChartGenContext;
@@ -56,6 +57,10 @@ public final class AnomalyContentSite {
         return tier;
     }
 
+    public String factionId() {
+        return factionId;
+    }
+
     public ChartGenContext context() {
         return context;
     }
@@ -89,6 +94,13 @@ public final class AnomalyContentSite {
             placed.add(site);
         }
         return site;
+    }
+
+    public CampaignFleetAPI addFleet(CampaignFleetAPI fleet, Vector2f at) {
+        system.addEntity(fleet);
+        placed.add(fleet);
+        fleet.setLocation(at.x, at.y);
+        return fleet;
     }
 
     public List<SectorEntityToken> placed() {

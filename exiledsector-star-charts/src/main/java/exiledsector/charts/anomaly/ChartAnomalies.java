@@ -2,6 +2,7 @@ package exiledsector.charts.anomaly;
 
 import exiledlib.ModCsv;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
+import exiledsector.charts.anomaly.convoy.SupplyConvoy;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.effect.ChartEffect;
@@ -27,7 +28,8 @@ public final class ChartAnomalies {
     public static final String PATH = "data/config/exiledSector/chart_anomalies.csv";
     static final String ID_COLUMN = "id";
     static final List<ChartAnomaly> BUILT_IN = List.of(StarAnomalies.BLACK_HOLE, StarAnomalies.NEUTRON_STAR, StarAnomalies.DENSE_NEBULA,
-            AsteroidStorm.INSTANCE, MagneticStorm.INSTANCE, StellarFlares.INSTANCE, SpatialBreach.INSTANCE, FactionSkirmish.INSTANCE);
+            AsteroidStorm.INSTANCE, MagneticStorm.INSTANCE, StellarFlares.INSTANCE, SpatialBreach.INSTANCE, FactionSkirmish.INSTANCE,
+            SupplyConvoy.INSTANCE);
     private static final Logger LOG = Logger.getLogger(ChartAnomalies.class);
     private static volatile List<ChartAnomaly> anomalies = BUILT_IN;
     private static volatile Map<String, Definition> definitions = Map.of();

@@ -34,7 +34,7 @@ Tuning lines are chart effects carried by an atlas source, per `overview.md`:
 
 ## Build order
 
-1. [ ] Convoy fleets, non-hostile to the player, with the route through waypoints to the destination planet; intel with route, destination, timing and manifest.
+1. [x] Convoy fleets, non-hostile to the player, with the route through waypoints to the destination planet; intel with route, destination, timing and manifest. `charts.anomaly.convoy`: `SupplyConvoy` (anomaly, generation), `ConvoyRoute`, `ConvoyFleets` (fleets fly the run-only faction `exiledSector_convoy`, dressed as the chart faction like the skirmish allies), `ConvoyScript` (system script: departs 5 days after the player arrives), `ConvoyIntel`; anomaly fleets go through `content.ChartAnomalyFleets`.
 2. [ ] Turning the whole convoy hostile when any of its fleets is attacked or pulsed, with no reputation change.
 3. [ ] Escort formation and terrain separation.
 4. [ ] Freighter flight and cargo pod drops; split loot budget.

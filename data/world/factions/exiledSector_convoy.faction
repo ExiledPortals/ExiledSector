@@ -1,0 +1,24 @@
+{
+	id:"exiledSector_convoy",
+	"color":[215,190,120,255],
+	"baseUIColor":[215,190,120,255],
+	"displayName":"Supply Convoy",
+	"displayNameWithArticle":"the Supply Convoy",
+	"displayNameIsOrAre":"is",
+	"logo":"graphics/factions/neutral.png",
+	"crest":"graphics/factions/crest_neutral.png",
+	"showInIntelTab":false,
+	"names":{
+	},
+	"portraits":{
+	},
+	"music":{
+		"theme":"music_none",
+		"market_neutral":"music_none",
+		"market_hostile":"music_none",
+		"market_friendly":"music_none",
+		"encounter_neutral":"music_none",
+		"encounter_hostile":"music_none",
+		"encounter_friendly":"music_none",
+	},
+}

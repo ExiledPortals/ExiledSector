@@ -1,5 +1,6 @@
 package exiledsector.charts.content;
 
+import com.fs.starfarer.api.Script;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
 import com.fs.starfarer.api.campaign.FleetAssignment;
@@ -50,6 +51,8 @@ public final class FakeChartContentEngine implements ChartContentEngine {
     public final List<CampaignFleetAPI> stations = new ArrayList<>();
     public final List<String> dressedFactions = new ArrayList<>();
     public String alliesFactionId = "allies";
+    public String convoyFactionId = "convoy";
+    public int fleetPoints;
     boolean missingStations;
     boolean failFleets;
     boolean emptyFleets;
@@ -58,6 +61,11 @@ public final class FakeChartContentEngine implements ChartContentEngine {
     public static FakeChartContentEngine install(FakeChartContentEngine engine) {
         ChartContentGenerator.useEngineForTests(engine);
         return engine;
+    }
+
+    public FakeChartContentEngine withEmptyFleets() {
+        emptyFleets = true;
+        return this;
     }
 
     public static FakeChartContentEngine offeringNothing() {
@@ -166,6 +174,12 @@ public final class FakeChartContentEngine implements ChartContentEngine {
     }
 
     @Override
+    public String dressConvoy(String factionId) {
+        dressedFactions.add(factionId);
+        return convoyFactionId;
+    }
+
+    @Override
     public void addColonyItem(SectorEntityToken holder, String itemId) {
         colonyItems.add(new ColonyItem(holder, itemId));
     }
@@ -213,6 +227,14 @@ public final class FakeChartContentEngine implements ChartContentEngine {
         assignments.put(fleet, fleetAssignments);
         doAnswer(invocation -> fleetAssignments.add(new Assignment(invocation.getArgument(0), invocation.getArgument(1))))
                 .when(fleet).addAssignment(any(FleetAssignment.class), any(), anyFloat());
+        doAnswer(invocation -> fleetAssignments.add(new Assignment(invocation.getArgument(0), invocation.getArgument(1))))
+                .when(fleet).addAssignment(any(FleetAssignment.class), any(), anyFloat(), any(Script.class));
+        doAnswer(invocation -> {
+            fleetAssignments.clear();
+            return null;
+        }).when(fleet).clearAssignments();
+        when(fleet.getFleetPoints()).thenAnswer(invocation -> fleetPoints);
+        when(fleet.isAlive()).thenReturn(true);
         return fleet;
     }
 }

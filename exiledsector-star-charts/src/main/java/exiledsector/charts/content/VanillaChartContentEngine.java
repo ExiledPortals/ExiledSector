@@ -39,6 +39,7 @@ import com.fs.starfarer.api.impl.campaign.procgen.themes.SalvageSpecialAssigner.
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.BaseSalvageSpecial;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
+import exiledsector.charts.anomaly.convoy.ConvoyRules;
 import exiledsector.charts.anomaly.skirmish.SkirmishFactions;
 import exiledsector.charts.loot.ChartVanillaLoot;
 import org.lwjgl.util.vector.Vector2f;
@@ -194,18 +195,27 @@ final class VanillaChartContentEngine implements ChartContentEngine {
 
     @Override
     public String dressAllies(String factionId) {
-        FactionAPI allies = Global.getSector().getFaction(SkirmishFactions.ALLY_FACTION_ID);
+        return dress(SkirmishFactions.ALLY_FACTION_ID, factionId, RepLevel.FRIENDLY);
+    }
+
+    @Override
+    public String dressConvoy(String factionId) {
+        return dress(ConvoyRules.FACTION_ID, factionId, RepLevel.NEUTRAL);
+    }
+
+    private static String dress(String runFactionId, String factionId, RepLevel towardsPlayer) {
+        FactionAPI runFaction = Global.getSector().getFaction(runFactionId);
         FactionAPI faction = Global.getSector().getFaction(factionId);
-        if (allies == null || faction == null) {
+        if (runFaction == null || faction == null) {
             return null;
         }
-        allies.setDisplayNameOverride(faction.getDisplayName());
-        allies.setDisplayNameWithArticleOverride(faction.getDisplayNameWithArticle());
-        allies.setDisplayIsOrAreOverride(faction.getDisplayNameIsOrAre());
-        allies.setShipNamePrefixOverride(faction.getShipNamePrefix());
-        allies.setFactionCrestOverride(faction.getCrest());
-        allies.setFactionLogoOverride(faction.getLogo());
-        allies.setRelationship(Factions.PLAYER, RepLevel.FRIENDLY);
-        return allies.getId();
+        runFaction.setDisplayNameOverride(faction.getDisplayName());
+        runFaction.setDisplayNameWithArticleOverride(faction.getDisplayNameWithArticle());
+        runFaction.setDisplayIsOrAreOverride(faction.getDisplayNameIsOrAre());
+        runFaction.setShipNamePrefixOverride(faction.getShipNamePrefix());
+        runFaction.setFactionCrestOverride(faction.getCrest());
+        runFaction.setFactionLogoOverride(faction.getLogo());
+        runFaction.setRelationship(Factions.PLAYER, towardsPlayer);
+        return runFaction.getId();
     }
 }
