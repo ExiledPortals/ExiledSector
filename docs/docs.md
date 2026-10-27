@@ -20,7 +20,7 @@ hierarchy.
 `SHIELD_SOFT_FLUX_CONVERSION_PERCENT` is the engine's own shield soft flux conversion stat, used by the Hardlight Veil
 and the Low Arc core. `SHIELD_DAMAGE_PASSED_TO_ALLY_PERCENT` shares Shared Fate's listener and 90% cap, sending its
 share to the nearest qualifying ally with flux room as soft flux; what that ally can't hold returns as hard flux.
-`SHIELD_ARC_FIXED` resets the shield to the hull's own arc after the ship is built, since arc is only read then.
+`SHIELD_ARC_FIXED` sets the shield arc to its magnitude in degrees after the ship is built, since arc is only read then.
 
 ## Lion's Gaze
 

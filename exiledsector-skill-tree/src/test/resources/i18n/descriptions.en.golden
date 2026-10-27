@@ -1984,12 +1984,12 @@ effect|SHIELD_ABSORPTION_PERCENT|12.5	1	<good>12.5%</good> increased damage take
 effect|SHIELD_ABSORPTION_PERCENT|100.0	1	<good>100%</good> increased damage taken by shields.
 effect|SHIELD_ABSORPTION_PERCENT|-10.0	1	<bad>10%</bad> reduced damage taken by shields.
 effect|SHIELD_ABSORPTION_PERCENT|-12.5	1	<bad>12.5%</bad> reduced damage taken by shields.
-effect|SHIELD_ARC_FIXED|1.0	0	Shield arc is fixed and can't be modified.
-effect|SHIELD_ARC_FIXED|10.0	0	Shield arc is fixed and can't be modified.
-effect|SHIELD_ARC_FIXED|12.5	0	Shield arc is fixed and can't be modified.
-effect|SHIELD_ARC_FIXED|100.0	0	Shield arc is fixed and can't be modified.
-effect|SHIELD_ARC_FIXED|-10.0	0	Shield arc is fixed and can't be modified.
-effect|SHIELD_ARC_FIXED|-12.5	0	Shield arc is fixed and can't be modified.
+effect|SHIELD_ARC_FIXED|1.0	0	Shield arc is fixed at <hl>1</hl> degrees and can't be modified.
+effect|SHIELD_ARC_FIXED|10.0	0	Shield arc is fixed at <hl>10</hl> degrees and can't be modified.
+effect|SHIELD_ARC_FIXED|12.5	0	Shield arc is fixed at <hl>12.5</hl> degrees and can't be modified.
+effect|SHIELD_ARC_FIXED|100.0	0	Shield arc is fixed at <hl>100</hl> degrees and can't be modified.
+effect|SHIELD_ARC_FIXED|-10.0	0	Shield arc is fixed at <hl>-10</hl> degrees and can't be modified.
+effect|SHIELD_ARC_FIXED|-12.5	0	Shield arc is fixed at <hl>-12.5</hl> degrees and can't be modified.
 effect|SHIELD_ARC_FLAT|1.0	0	<good>+1</good> to shield arc.
 effect|SHIELD_ARC_FLAT|10.0	0	<good>+10</good> to shield arc.
 effect|SHIELD_ARC_FLAT|12.5	0	<good>+12.5</good> to shield arc.

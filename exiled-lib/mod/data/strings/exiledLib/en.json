@@ -270,7 +270,7 @@
     "effect.CREATE_FRONT_SHIELD_IF_NONE": "Installs a makeshift, front-facing shield if this ship has none.",
     "effect.CONVERT_SHIELD_TO_FRONT": "Converts this ship's shield to front-facing.",
     "effect.CONVERT_SHIELD_TO_OMNI": "Converts this ship's shield to omni-directional.",
-    "effect.SHIELD_ARC_FIXED": "Shield arc is fixed and can't be modified.",
+    "effect.SHIELD_ARC_FIXED": "Shield arc is fixed at <hl>{value}</hl> degrees and can't be modified.",
     "effect.DEATH_ON_COLLISION": "Touching another ship's hull, however slightly, is instantly fatal to this ship. Strikecraft, wrecks and asteroids don't count.",
     "effect.RAM_BIGGEST_ENEMY": "When this ship isn't flown by you, it flies straight at the biggest enemy ship, intent on colliding.",
     "stat.damageDealtByFightersLaunchedFromThisShipToOtherFightersAndMissiles": "damage to other strikecraft and missiles",

@@ -3,7 +3,6 @@ package exiledlib.skills.skilleffect.shield;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShieldAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
-import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
@@ -100,9 +99,8 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
         @Override
         public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
             ShieldAPI shield = ship.getShield();
-            ShipHullSpecAPI.ShieldSpecAPI hullShield = ship.getHullSpec().getShieldSpec();
-            if (shield != null && hullShield != null && hasShields(ship.getHullSpec().getShieldType())) {
-                shield.setArc(hullShield.getArc());
+            if (shield != null && hasShields(shield.getType())) {
+                shield.setArc(magnitude);
             }
         }
     },
