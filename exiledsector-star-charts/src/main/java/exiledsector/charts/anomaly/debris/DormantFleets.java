@@ -4,6 +4,8 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.AICoreOfficerPlugin;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
+import com.fs.starfarer.api.campaign.FleetAssignment;
+import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.FactionAPI.ShipPickMode;
 import com.fs.starfarer.api.campaign.FactionAPI.ShipPickParams;
 import com.fs.starfarer.api.campaign.RepLevel;
@@ -24,13 +26,16 @@ import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.util.Misc;
 import exiledlib.i18n.Translation;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.ChartFaction;
 import exiledsector.charts.content.ChartFactions;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.ChartFleetLoot;
+import exiledsector.charts.loot.ChartVanillaLoot;
 import exiledsector.items.WeightedPick;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,6 +75,7 @@ public final class DormantFleets {
             return null;
         }
         prepare(fleet, runId, tier, seed, new Random(seed));
+        ChartVanillaLoot.addToFleet(fleet, false, context == null ? ChartGenContext.none() : context, tier);
         return fleet;
     }
 
@@ -204,5 +210,29 @@ public final class DormantFleets {
         if (fleet != null) {
             fleet.getDetectedRangeMod().unmodifyMult(HIDDEN_MOD_ID);
         }
+    }
+
+    public static boolean wake(CampaignFleetAPI fleet) {
+        if (!isDormant(fleet)) {
+            return false;
+        }
+        MemoryAPI memory = fleet.getMemoryWithoutUpdate();
+        memory.unset(DORMANT_KEY);
+        memory.unset(MemFlags.MEMORY_KEY_MAKE_ALLOW_DISENGAGE);
+        memory.unset(MemFlags.MEMORY_KEY_ALLOW_LONG_PURSUIT);
+        memory.set(MemFlags.MEMORY_KEY_MAKE_HOSTILE, true);
+        memory.set(MemFlags.MEMORY_KEY_NO_REP_IMPACT, true);
+        reveal(fleet);
+        Vector2f home = new Vector2f(fleet.getLocation());
+        if (fleet.getAI() == null) {
+            fleet.setAI(Global.getFactory().createFleetAI(fleet));
+            fleet.setLocation(home.x, home.y);
+        }
+        fleet.clearAssignments();
+        LocationAPI location = fleet.getContainingLocation();
+        if (location != null) {
+            fleet.addAssignment(FleetAssignment.ORBIT_AGGRESSIVE, location.createToken(home.x, home.y), ChartContentGenerator.ASSIGNMENT_DAYS);
+        }
+        return true;
     }
 }
