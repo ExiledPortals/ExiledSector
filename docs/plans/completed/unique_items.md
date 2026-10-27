@@ -86,13 +86,12 @@ The emitter core is Tania's own Low Arc Shield Emitter turned into a trade: a na
 |---|---|---|---|
 | Helical Drive Coils (kept) | engine_room | Increased zero-flux speed; the zero-flux boost stays on while the ship system is ready | |
 | Chroma Reactor Tap (kept) | reactor | Increased flux capacity; reduced energy weapon flux cost; reduced ship system cooldown | |
-| Project Aria Retrofit | weapon_mount | Ballistic slots become energy slots | slot |
 | Ion Discharge Coils | weapon_mount | All damage from weapons in small energy mounts is converted to EMP damage | conversion |
 | Hardlight Veil Projectors | shield_generator | 30% of shield damage taken is converted to soft flux | soft flux |
 | Extended Warranty Contract | bridge | Doubles the modifiers of the hull item in its target section | doubling |
 | Nightcross Doctrine Archive (kept, subroutine) | | Adds energy rate of fire, energy flux cost, vent rate, EMP damage taken and fighter damage modifiers to nodes in radius | |
 
-The Retrofit is the mirror of the Path's Purifier Breech Refit. The warranty is Nightcross's corporate upsell, and it doubles the drawbacks too.
+The warranty is Nightcross's corporate upsell, and it doubles the drawbacks too.
 
 ## Stargazer
 
@@ -125,6 +124,14 @@ The Equivalent Exchange Core lists all three exchanges and keeps one (`one_of`),
 | Purifier Breech Refit | weapon_mount | Energy slots become ballistic slots | slot |
 
 The Charge Shells and the Breech Refit began as Tania's Fafnir Osmium Shell Stock and Black Hawk Breech Refit and were moved to the Path. The shells are solid shot packed with mining charge from the Path world Chalcedon; the refit tears out energy weapons as purification.
+
+## Tri-Tachyon
+
+| Item | Section | Effect | Family |
+|---|---|---|---|
+| Culann Conversion Kit | weapon_mount | Ballistic slots become energy slots | slot |
+
+The kit began as Nightcross's Project Aria Retrofit and mirrors the Path's Purifier Breech Refit: Tri-Tachyon's yards at Culann sell the conversion the Path tears out.
 
 ## Omega
 
