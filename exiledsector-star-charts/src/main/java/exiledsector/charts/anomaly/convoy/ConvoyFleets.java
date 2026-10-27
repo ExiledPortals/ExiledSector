@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetAssignment;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
+import com.fs.starfarer.api.campaign.listeners.FleetEventListener;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.FleetTypes;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
@@ -34,7 +35,7 @@ final class ConvoyFleets {
         };
     }
 
-    static boolean spawn(AnomalyContentSite site, ConvoyState convoy, String convoyFactionId, Random random) {
+    static boolean spawn(AnomalyContentSite site, ConvoyState convoy, String convoyFactionId, FleetEventListener freighterListener, Random random) {
         ChartGenContext context = site.context();
         ChartTier tier = ChartAnomalyFleets.tier(site.tier(), context);
         float escortMult = context.anomalyMult(SupplyConvoy.ESCORT_KEY);
@@ -68,6 +69,7 @@ final class ConvoyFleets {
                 convoy.loadCargo(freighterPoints, ConvoyRules.cargoSteps(freighterPoints, context.anomalyMult(SupplyConvoy.CARGO_KEY)),
                         ConvoyRules.itemChanceMult(site.tier(), context.anomalyMult(SupplyConvoy.CARGO_KEY)));
                 fleet.addAssignment(FleetAssignment.ORBIT_PASSIVE, entry, ChartContentGenerator.ASSIGNMENT_DAYS);
+                fleet.addEventListener(freighterListener);
             } else {
                 fleet.addAssignment(FleetAssignment.FOLLOW, role == ConvoyRole.SCREEN ? lead : freighters, ChartContentGenerator.ASSIGNMENT_DAYS);
             }

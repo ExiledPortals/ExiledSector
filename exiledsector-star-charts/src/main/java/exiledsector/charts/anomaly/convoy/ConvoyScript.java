@@ -2,7 +2,9 @@ package exiledsector.charts.anomaly.convoy;
 
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignClockAPI;
+import com.fs.starfarer.api.campaign.CampaignEventListener.FleetDespawnReason;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignTerrainPlugin;
 import com.fs.starfarer.api.campaign.FleetAssignment;
@@ -11,6 +13,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.ai.FleetAssignmentDataAPI;
+import com.fs.starfarer.api.campaign.listeners.FleetEventListener;
 import com.fs.starfarer.api.impl.campaign.abilities.InterdictionPulseAbility;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.util.Misc;
@@ -28,8 +31,9 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
-public final class ConvoyScript implements EveryFrameScript, ChartRunBound {
+public final class ConvoyScript implements EveryFrameScript, FleetEventListener, ChartRunBound {
 
     private static final Logger LOG = Logger.getLogger(ConvoyScript.class);
 
@@ -171,6 +175,7 @@ public final class ConvoyScript implements EveryFrameScript, ChartRunBound {
                     && clock.getElapsedDaysSince(arrivalTimestamp) >= ConvoyRules.DEPARTURE_DAYS) {
                 depart(convoy);
             }
+            catchUpOnLosses(convoy);
             moveScreenLead(convoy);
             keepFormation(convoy, slowing);
         }
@@ -252,11 +257,83 @@ public final class ConvoyScript implements EveryFrameScript, ChartRunBound {
                 guard(fleet, freighters);
             }
         }
+        if (freighters != null) {
+            flee(convoy, freighters);
+        }
         if (CampaignMessages.available() && Global.getSector().getPlayerFleet() != null
                 && Global.getSector().getPlayerFleet().getContainingLocation() == system) {
             CampaignMessages.plain(Translation.gameText("chart.convoy.alarm"), Misc.getNegativeHighlightColor());
         }
         return true;
+    }
+
+    void flee(ConvoyState convoy, CampaignFleetAPI freighters) {
+        if (convoy.phase() != ConvoyState.Phase.WAITING && convoy.phase() != ConvoyState.Phase.EN_ROUTE) {
+            return;
+        }
+        convoy.setPhase(ConvoyState.Phase.EN_ROUTE);
+        freighters.clearAssignments();
+        headForDestination(convoy, freighters);
+    }
+
+    @Override
+    public void reportBattleOccurred(CampaignFleetAPI fleet, CampaignFleetAPI primaryWinner, BattleAPI battle) {
+        ConvoyState convoy = freightersOf(fleet);
+        if (convoy != null) {
+            recordLosses(convoy, fleet.isEmpty() ? 0f : fleet.getFleetPoints(), fleet.getLocation());
+        }
+    }
+
+    @Override
+    public void reportFleetDespawnedToListener(CampaignFleetAPI fleet, FleetDespawnReason reason, Object param) {
+        ConvoyState convoy = freightersOf(fleet);
+        if (convoy == null) {
+            return;
+        }
+        if (reason == FleetDespawnReason.DESTROYED_BY_BATTLE) {
+            recordLosses(convoy, 0f, fleet.getLocation());
+        } else if (convoy.phase() != ConvoyState.Phase.DELIVERED) {
+            convoy.setPhase(ConvoyState.Phase.LOST);
+        }
+        for (ConvoyRole role : List.of(ConvoyRole.SCREEN, ConvoyRole.ESCORT)) {
+            CampaignFleetAPI escort = fleet(convoy, role);
+            if (escort != null && convoy.phase() == ConvoyState.Phase.DELIVERED) {
+                escort.clearAssignments();
+                escort.addAssignment(FleetAssignment.GO_TO_LOCATION_AND_DESPAWN, convoy.exitToken(), ChartContentGenerator.ASSIGNMENT_DAYS);
+            } else if (escort != null) {
+                guard(escort, null);
+            }
+        }
+    }
+
+    private ConvoyState freightersOf(CampaignFleetAPI fleet) {
+        if (fleet == null || fleet.getId() == null) {
+            return null;
+        }
+        for (ConvoyState convoy : convoys) {
+            if (fleet.getId().equals(convoy.fleetId(ConvoyRole.FREIGHTERS))) {
+                return convoy;
+            }
+        }
+        return null;
+    }
+
+    void catchUpOnLosses(ConvoyState convoy) {
+        CampaignFleetAPI freighters = fleet(convoy, ConvoyRole.FREIGHTERS);
+        if (freighters != null && convoy.isHostile() && freighters.getFleetPoints() < convoy.carriedFreighterPoints()) {
+            recordLosses(convoy, freighters.getFleetPoints(), freighters.getLocation());
+        }
+    }
+
+    void recordLosses(ConvoyState convoy, float remainingFreighterPoints, Vector2f at) {
+        float lostShare = convoy.recordFreighterPoints(remainingFreighterPoints);
+        ChartRun run = ChartRuns.currentOrNull();
+        SectorAPI sector = Global.getSector();
+        if (!(lostShare > 0f) || at == null || run == null || !run.runId().equals(runId) || sector == null) {
+            return;
+        }
+        Random dropRandom = new Random(convoy.nextDropSeed());
+        ConvoyCargo.dropPods(system, runId, ConvoyCargo.roll(sector, run, convoy, lostShare * ConvoyRules.POD_SHARE, dropRandom), at);
     }
 
     void guard(CampaignFleetAPI escort, CampaignFleetAPI freighters) {

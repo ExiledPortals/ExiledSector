@@ -25,6 +25,7 @@ public final class ConvoyRules {
     static final float TANKER_SHARE = 0.25f;
     static final float FREIGHTER_GUARD_POINTS = 5f;
     static final float CARGO_STEPS_PER_FREIGHTER_POINT = 0.03f;
+    static final float POD_SHARE = 1f;
     static final float ITEM_CHANCE_PER_TIER = 0.1f;
     static final float FREIGHTER_TERRAIN_BURN = 0.8f;
     static final float SCREEN_TERRAIN_BURN = 0.5f;

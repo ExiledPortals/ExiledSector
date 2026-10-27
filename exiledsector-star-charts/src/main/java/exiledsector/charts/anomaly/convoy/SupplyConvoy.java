@@ -71,7 +71,7 @@ public final class SupplyConvoy implements ChartAnomaly {
             }
             ConvoyState convoy = new ConvoyState(index, plan.waypoints().stream().map(SectorEntityToken::getId).toList(), plan.destination().getId(),
                     plan.entry().x, plan.entry().y, plan.exit().x, plan.exit().y, random.nextLong());
-            if (ConvoyFleets.spawn(site, convoy, convoyFactionId, random)) {
+            if (ConvoyFleets.spawn(site, convoy, convoyFactionId, script, random)) {
                 destinations.add(plan.destination());
                 script.add(convoy);
             }

@@ -1,15 +1,27 @@
 package exiledsector.charts.anomaly.convoy;
 
+import com.fs.starfarer.api.campaign.CargoAPI;
+import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
+import com.fs.starfarer.api.campaign.LocationAPI;
+import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.impl.campaign.CargoPodsEntityPlugin;
+import com.fs.starfarer.api.util.Misc;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
+import exiledsector.charts.content.ChartAnomalyFleets;
+import exiledsector.charts.loot.ChartCargoLoot;
 import exiledsector.charts.loot.ChartDrops;
 import exiledsector.charts.loot.ChartLoot;
 import exiledsector.charts.loot.DropType;
+import exiledsector.charts.run.ChartRun;
 import exiledsector.items.ItemDrops;
+import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 final class ConvoyCargo {
 
@@ -35,5 +47,23 @@ final class ConvoyCargo {
 
     static StyledText manifest(int tier) {
         return Translation.list(manifestKeys(tier).stream().map(Translation::styled).toList());
+    }
+
+    static CargoAPI roll(SectorAPI sector, ChartRun run, ConvoyState convoy, float share, Random random) {
+        return ChartCargoLoot.roll(sector, run, ConvoyRules.LOOT_SCOPE, ConvoyRules.CARGO_SITE, convoy.cargoSteps() * share,
+                convoy.itemChanceMult() * share, random);
+    }
+
+    static SectorEntityToken dropPods(LocationAPI location, String runId, CargoAPI cargo, Vector2f at) {
+        if (cargo == null || cargo.isEmpty()) {
+            return null;
+        }
+        CustomCampaignEntityAPI pods = Misc.addCargoPods(location, at);
+        pods.getCargo().addAll(cargo);
+        if (pods.getCustomPlugin() instanceof CargoPodsEntityPlugin plugin) {
+            plugin.setNeverExpire(true);
+        }
+        ChartAnomalyFleets.tag(pods, runId);
+        return pods;
     }
 }

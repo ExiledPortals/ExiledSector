@@ -132,6 +132,30 @@ public final class ChartVanillaLoot {
         }
     }
 
+    public static SiteDrops drops(String scope, int tier, float steps, ChartGenContext context) {
+        List<DropData> random = new ArrayList<>();
+        List<DropData> value = new ArrayList<>();
+        if (!(steps > 0f)) {
+            return SiteDrops.NONE;
+        }
+        for (ChartLoot.Entry entry : ChartLoot.entriesFor(scope, tier)) {
+            float mult = steps * context.dropMult(entry.type());
+            if (!(mult > 0f)) {
+                continue;
+            }
+            if (entry.mode() == ChartLoot.Mode.RANDOM) {
+                random.add(randomDrop(entry.group(), 1, entry.amount() * mult));
+            } else {
+                DropData drop = new DropData();
+                drop.group = entry.group();
+                drop.value = Math.max(1, Math.round(entry.amount()));
+                drop.valueMult = mult;
+                value.add(drop);
+            }
+        }
+        return new SiteDrops(random, value);
+    }
+
     private static DropData randomDrop(String group, int chances, float valueMult) {
         DropData drop = new DropData();
         drop.group = group;

@@ -136,6 +136,10 @@ public final class ConvoyState {
         return itemChanceMult;
     }
 
+    float carriedFreighterPoints() {
+        return carriedFreighterPoints;
+    }
+
     public float carriedShare() {
         return startFreighterPoints > 0f ? carriedFreighterPoints / startFreighterPoints : 0f;
     }
