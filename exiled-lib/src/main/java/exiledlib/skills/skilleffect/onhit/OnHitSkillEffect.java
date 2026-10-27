@@ -62,8 +62,8 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
     },
     BALLISTIC_HARDPOINT_KINETIC_TO_HIGH_EXPLOSIVE(new DamageConversion(DamageConversion.KEY_PREFIX + "ballisticHardpointKineticToHighExplosive",
             WeaponType.BALLISTIC, null, DamageConversion.Mounting.HARDPOINT, false, DamageType.KINETIC, DamageType.HIGH_EXPLOSIVE)),
-    ENERGY_TURRET_BEAM_ENERGY_TO_HIGH_EXPLOSIVE(new DamageConversion(DamageConversion.KEY_PREFIX + "energyTurretBeamEnergyToHighExplosive",
-            WeaponType.ENERGY, null, DamageConversion.Mounting.TURRET, true, DamageType.ENERGY, DamageType.HIGH_EXPLOSIVE)),
+    BEAM_ENERGY_TO_HIGH_EXPLOSIVE(new DamageConversion(DamageConversion.KEY_PREFIX + "beamEnergyToHighExplosive",
+            null, null, DamageConversion.Mounting.ANY, true, DamageType.ENERGY, DamageType.HIGH_EXPLOSIVE)),
     SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP(new DamageConversion(DamageConversion.KEY_PREFIX + "smallEnergyMountDamageToEmp",
             WeaponType.ENERGY, WeaponSize.SMALL, DamageConversion.Mounting.ANY, false, null, null));
 

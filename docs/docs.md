@@ -104,7 +104,8 @@ rebuilds its slot buttons. The ship summary names mount types that more than one
 ## Damage conversion
 
 Conversion effects (`DamageConversion`, read by `DamageConversionListener`) turn all damage from weapons in one kind of
-mount into another type: mount type (after slot conversion), size and hardpoint or turret. The first owned conversion
+mount, or from beams of one damage type, into another type: mount type (after slot conversion), size and hardpoint or
+turret. The first owned conversion
 matching a mount applies. Shots from weapon drones use the mount of the weapon they copy. Beams read their original
 type from the weapon each tick, since their damage object lasts the whole firing.
 

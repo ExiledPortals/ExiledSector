@@ -120,17 +120,33 @@ class DamageConversionListenerTest {
 
     @Test
     void aBeamReadsItsTypeFromTheWeaponAndIsSetBackOnceItsMountNoLongerConverts() {
-        owns(OnHitSkillEffect.ENERGY_TURRET_BEAM_ENERGY_TO_HIGH_EXPLOSIVE);
+        owns(OnHitSkillEffect.BEAM_ENERGY_TO_HIGH_EXPLOSIVE);
         BeamAPI turretBeam = beam(weapon(mount(WeaponType.ENERGY, WeaponSize.MEDIUM, false), true, DamageType.ENERGY));
         DamageAPI beamDamage = damage(DamageType.HIGH_EXPLOSIVE, 300f, 0f);
         DamageConversionListener listener = new DamageConversionListener(ownerShip);
 
         listener.modifyDamageDealt(turretBeam, mock(ShipAPI.class), beamDamage, null, false);
         verify(beamDamage).setType(DamageType.HIGH_EXPLOSIVE);
-        when(dynamic.getValue(OnHitSkillEffect.ENERGY_TURRET_BEAM_ENERGY_TO_HIGH_EXPLOSIVE.damageConversion().flagKey(), 0f)).thenReturn(0f);
+        when(dynamic.getValue(OnHitSkillEffect.BEAM_ENERGY_TO_HIGH_EXPLOSIVE.damageConversion().flagKey(), 0f)).thenReturn(0f);
         listener.modifyDamageDealt(turretBeam, mock(ShipAPI.class), beamDamage, null, false);
 
         verify(beamDamage).setType(DamageType.ENERGY);
+    }
+
+    @Test
+    void energyBeamsConvertInAnyMountWhileEnergyShotsStayEnergy() {
+        owns(OnHitSkillEffect.BEAM_ENERGY_TO_HIGH_EXPLOSIVE);
+        DamageAPI beamDamage = damage(DamageType.ENERGY, 300f, 0f);
+        DamageAPI shotDamage = damage(DamageType.ENERGY, 100f, 0f);
+        DamageConversionListener listener = new DamageConversionListener(ownerShip);
+        BeamAPI hardpointBeam = beam(weapon(mount(WeaponType.UNIVERSAL, WeaponSize.LARGE, true), true, DamageType.ENERGY));
+        DamagingProjectileAPI energyShot = shell(weapon(mount(WeaponType.ENERGY, WeaponSize.MEDIUM, false), false, DamageType.ENERGY));
+
+        listener.modifyDamageDealt(hardpointBeam, mock(ShipAPI.class), beamDamage, null, false);
+        listener.modifyDamageDealt(energyShot, mock(ShipAPI.class), shotDamage, null, false);
+
+        verify(beamDamage).setType(DamageType.HIGH_EXPLOSIVE);
+        verify(shotDamage, never()).setType(any());
     }
 
     @Test

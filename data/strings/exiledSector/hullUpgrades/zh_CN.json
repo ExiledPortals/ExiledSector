@@ -149,7 +149,7 @@
     "socketable.unique_ion_discharge_coils.description": "从一箱夜十字离子速射炮上拆下的放电线圈，被舰员重新绕制，装在舰上最轻的能量槽位后面。那些炮现在打出的一切都化作滋滋作响的离子电荷。",
     "socketable.unique_hardlight_veil_projectors.description": "从一艘夜十字舰体上拆下的硬光投射器，能在护盾表面织上一层薄薄的光幕，在每次命中的冲击沉入发射器之前将其接下。",
     "socketable.unique_extended_warranty_contract.description": "一份夜十字延长保修合同，由一位没读过条款的舰长一式三份签下。它把一套已安装系统保了两遍，连故障也一并算上，而月费总是准时得令人惊叹。",
-    "socketable.unique_corrosion_lens_filter.description": "按观星者腐蚀光束的样式切割的透镜滤光片。装上舰上的能量炮塔后，它把炮塔射出的光变成能蚀穿装甲的东西。",
+    "socketable.unique_corrosion_lens_filter.description": "按观星者腐蚀光束的样式切割的透镜滤光片。装上舰上的每一具光束发射器后，它把射出的光变成能蚀穿装甲的东西。",
     "socketable.unique_cosmic_shunt_array.description": "一套把护盾负荷泄入舰船之间星尘的分流阵列，由最近一艘友舰的幅能网络接住。舰上没人说得清它的原理，只知道它管用。",
     "socketable.unique_radiant_shield_lattice.description": "从一艘沉睡的机械战舰舰首切下的护盾晶格。在本该将它熔化的火力下它依旧冰冷，舰员们也不再追问原因。",
     "socketable.unique_equivalent_exchange_core.description": "从一座机械枢纽中回收的反应堆调节器，仍在核对一本并非人类写下的账目。舰船放弃的一切，它都以另一种形式收回，却从不及当初交出的那么多。",

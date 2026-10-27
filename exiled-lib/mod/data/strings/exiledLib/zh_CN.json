@@ -123,7 +123,7 @@
     "effect.NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT": "命中敌方护盾的非光束能量武器有<good>{value}%</good>的几率发生折射：同一武器会从该护盾处向武器射程内最近的另一艘敌舰射出同样的弹体。折射出的弹体命中敌方护盾时，有相同的几率再次折射。",
     "effect.NON_BEAM_ENERGY_WEAPON_CHAIN_FALLOFF_PERCENT": "每次折射造成的伤害比上一发降低<bad>{value}%</bad>。",
     "effect.BALLISTIC_HARDPOINT_KINETIC_TO_HIGH_EXPLOSIVE": "实弹硬点武器的动能伤害转化为高爆伤害。",
-    "effect.ENERGY_TURRET_BEAM_ENERGY_TO_HIGH_EXPLOSIVE": "能量炮塔中光束武器的能量伤害转化为高爆伤害。",
+    "effect.BEAM_ENERGY_TO_HIGH_EXPLOSIVE": "光束武器的能量伤害转化为高爆伤害。",
     "effect.SMALL_ENERGY_MOUNT_DAMAGE_TO_EMP": "小型能量槽位武器的全部伤害转化为EMP伤害。",
     "effect.BALLISTIC_WEAPON_PIERCE_CHANCE_PERCENT": "实弹武器的弹丸命中敌舰装甲或船体时，有<good>{value}%</good>的几率贯穿。贯穿后的弹丸不会再次贯穿。",
     "effect.NON_MISSILE_PROJECTILE_ECHO_CHANCE_PERCENT": "非导弹弹丸命中敌舰时，有<good>{value}%</good>的几率由同一武器再次发射。",

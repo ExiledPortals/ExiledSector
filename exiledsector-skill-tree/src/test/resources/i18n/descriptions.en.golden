@@ -238,6 +238,12 @@ effect|BALLISTIC_WEAPON_RANGE_PERCENT|12.5	0	<good>12.5%</good> increased ballis
 effect|BALLISTIC_WEAPON_RANGE_PERCENT|100.0	0	<good>100%</good> increased ballistic weapon range.
 effect|BALLISTIC_WEAPON_RANGE_PERCENT|-10.0	0	<bad>10%</bad> reduced ballistic weapon range.
 effect|BALLISTIC_WEAPON_RANGE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced ballistic weapon range.
+effect|BEAM_ENERGY_TO_HIGH_EXPLOSIVE|1.0	0	Energy damage from beam weapons is converted to high explosive damage.
+effect|BEAM_ENERGY_TO_HIGH_EXPLOSIVE|10.0	0	Energy damage from beam weapons is converted to high explosive damage.
+effect|BEAM_ENERGY_TO_HIGH_EXPLOSIVE|12.5	0	Energy damage from beam weapons is converted to high explosive damage.
+effect|BEAM_ENERGY_TO_HIGH_EXPLOSIVE|100.0	0	Energy damage from beam weapons is converted to high explosive damage.
+effect|BEAM_ENERGY_TO_HIGH_EXPLOSIVE|-10.0	0	Energy damage from beam weapons is converted to high explosive damage.
+effect|BEAM_ENERGY_TO_HIGH_EXPLOSIVE|-12.5	0	Energy damage from beam weapons is converted to high explosive damage.
 effect|BEAM_WEAPON_AMMO_FLAT|1.0	0	<good>+1</good> to beam weapon ammo capacity. The refit screen's weapon tooltips don't show this.
 effect|BEAM_WEAPON_AMMO_FLAT|10.0	0	<good>+10</good> to beam weapon ammo capacity. The refit screen's weapon tooltips don't show this.
 effect|BEAM_WEAPON_AMMO_FLAT|12.5	0	<good>+12.5</good> to beam weapon ammo capacity. The refit screen's weapon tooltips don't show this.
@@ -682,12 +688,6 @@ effect|ENERGY_SLOTS_BALLISTIC|12.5	0	Energy weapon mounts become ballistic mount
 effect|ENERGY_SLOTS_BALLISTIC|100.0	0	Energy weapon mounts become ballistic mounts.
 effect|ENERGY_SLOTS_BALLISTIC|-10.0	0	Energy weapon mounts become ballistic mounts.
 effect|ENERGY_SLOTS_BALLISTIC|-12.5	0	Energy weapon mounts become ballistic mounts.
-effect|ENERGY_TURRET_BEAM_ENERGY_TO_HIGH_EXPLOSIVE|1.0	0	Energy damage from beam weapons in energy turrets is converted to high explosive damage.
-effect|ENERGY_TURRET_BEAM_ENERGY_TO_HIGH_EXPLOSIVE|10.0	0	Energy damage from beam weapons in energy turrets is converted to high explosive damage.
-effect|ENERGY_TURRET_BEAM_ENERGY_TO_HIGH_EXPLOSIVE|12.5	0	Energy damage from beam weapons in energy turrets is converted to high explosive damage.
-effect|ENERGY_TURRET_BEAM_ENERGY_TO_HIGH_EXPLOSIVE|100.0	0	Energy damage from beam weapons in energy turrets is converted to high explosive damage.
-effect|ENERGY_TURRET_BEAM_ENERGY_TO_HIGH_EXPLOSIVE|-10.0	0	Energy damage from beam weapons in energy turrets is converted to high explosive damage.
-effect|ENERGY_TURRET_BEAM_ENERGY_TO_HIGH_EXPLOSIVE|-12.5	0	Energy damage from beam weapons in energy turrets is converted to high explosive damage.
 effect|ENERGY_WEAPON_AMMO_FLAT|1.0	0	<good>+1</good> to energy weapon ammo capacity.
 effect|ENERGY_WEAPON_AMMO_FLAT|10.0	0	<good>+10</good> to energy weapon ammo capacity.
 effect|ENERGY_WEAPON_AMMO_FLAT|12.5	0	<good>+12.5</good> to energy weapon ammo capacity.
