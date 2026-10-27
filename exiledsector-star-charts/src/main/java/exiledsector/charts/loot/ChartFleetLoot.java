@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.charts.anomaly.debris.DormantFleetLoot;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
@@ -141,7 +142,8 @@ public final class ChartFleetLoot {
         if (!(share > 0f)) {
             return ItemDrops.SiteLoot.NONE;
         }
-        ItemDrops.SiteLoot fleetLoot = roll(sector, run, context, ChartIds.FLEET_LOOT_SITE, ChartDrops.Source.CHART_FLEET, share, random);
+        ItemDrops.SiteLoot fleetLoot = roll(sector, run, context, ChartIds.FLEET_LOOT_SITE, ChartDrops.Source.CHART_FLEET, share, random)
+                .plus(DormantFleetLoot.currencyFor(fleet, run.tier(), context, random));
         if (fleet.getId() != null && fleet.getId().equals(run.bossFleetId())) {
             fleetLoot = fleetLoot.plus(roll(sector, run, context, ChartIds.BOSS_LOOT_SITE, ChartDrops.Source.CHART_BOSS,
                     share * context.bossSpoilsMult(), random));

@@ -19,6 +19,8 @@ public final class DebrisRules {
     static final float CORRUPTED_SIZE_MULT = 1.5f;
     static final float CORRUPTED_QUALITY_PERCENT = 30f;
     static final int CORRUPTED_CORE_STEPS = 1;
+    static final int CORRUPTED_STRENGTH_BONUS_PERCENT = 20;
+    static final float CURRENCY_PER_FLEET = 1f;
     static final float MAX_QUALITY = 1f;
     static final List<String> CORE_LEVELS = List.of(Commodities.GAMMA_CORE, Commodities.BETA_CORE, Commodities.ALPHA_CORE);
     static final List<CoreBand> CORE_BANDS = List.of(
@@ -66,6 +68,12 @@ public final class DebrisRules {
             }
         }
         return chosen;
+    }
+
+    public static int currencyCount(float quantityMult, Random random) {
+        float expected = CURRENCY_PER_FLEET * Math.max(0f, quantityMult);
+        int whole = (int) expected;
+        return whole + (random.nextFloat() < expected - whole ? 1 : 0);
     }
 
     public static int coreLevel(int tier, Random random) {

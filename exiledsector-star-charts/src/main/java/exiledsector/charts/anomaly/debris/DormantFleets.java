@@ -212,6 +212,32 @@ public final class DormantFleets {
         }
     }
 
+    public static boolean corrupt(CampaignFleetAPI fleet, ChartGenContext context) {
+        if (!isDormant(fleet) || isCorrupted(fleet)) {
+            return false;
+        }
+        MemoryAPI memory = fleet.getMemoryWithoutUpdate();
+        int tier = memory.get(ChartIds.TIER_MEMORY_KEY) instanceof Number storedTier ? storedTier.intValue() : ChartTiers.LOWEST_TIER;
+        long seed = buildSeed(memory);
+        for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
+            fleet.getFleetData().removeFleetMember(member);
+        }
+        populate(fleet, hullFactions(Global.getSector()), tier, context, seed, true);
+        memory.set(CORRUPTED_KEY, true);
+        memory.set(ChartIds.STRENGTH_BONUS_MEMORY_KEY, DebrisRules.CORRUPTED_STRENGTH_BONUS_PERCENT);
+        ChartFleetLoot.recordStart(fleet);
+        fleet.setName(Translation.gameText("chart.debris.fleet.corrupted.name"));
+        return true;
+    }
+
+    static long buildSeed(MemoryAPI memory) {
+        try {
+            return Long.parseLong(memory.getString(BUILD_SEED_KEY), SEED_RADIX);
+        } catch (RuntimeException e) {
+            return 0L;
+        }
+    }
+
     public static boolean wake(CampaignFleetAPI fleet) {
         if (!isDormant(fleet)) {
             return false;
