@@ -6,6 +6,11 @@ import exiledsector.skills.ShipSections;
 public record HullItemOrigin(ShipSections.UnlockedSection unlocked) implements SocketedItem {
 
     @Override
+    public String category() {
+        return HULL_ITEM;
+    }
+
+    @Override
     public String slotId() {
         return unlocked.section().id();
     }

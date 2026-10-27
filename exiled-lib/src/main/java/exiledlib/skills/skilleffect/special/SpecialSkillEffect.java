@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import exiledlib.i18n.StyledText;
 import exiledlib.skills.AffinityScaling;
 import exiledlib.skills.CombatGate;
+import exiledlib.skills.SocketedItem;
 import exiledlib.skills.SocketedItemScaling;
 import exiledlib.skills.skilleffect.BackedSkillEffect;
 import exiledlib.skills.skilleffect.EffectBacking;
@@ -104,9 +105,11 @@ public enum SpecialSkillEffect implements BackedSkillEffect {
     GATES_RADIUS_BELOW_HALF_HULL(new RadiusGate(CombatGate.LOW_HULL)),
     GATES_RADIUS_WHILE_SYSTEM_ACTIVE(new RadiusGate(CombatGate.SYSTEM_ACTIVE)),
     GATES_RADIUS_WHILE_PHASED(new RadiusGate(CombatGate.PHASED)),
-    SOCKETED_HULL_ITEM_EFFECT_PERCENT(new SocketedItemScaling(SocketedItemScaling.Scope.ALL)),
-    TARGETED_HULL_ITEM_EFFECT_PERCENT(new SocketedItemScaling(SocketedItemScaling.Scope.TARGETED)),
-    SOCKETED_HULL_ITEM_DRAWBACK_EFFECT_PERCENT(new SocketedItemScaling(SocketedItemScaling.Scope.DRAWBACKS));
+    SOCKETED_HULL_ITEM_EFFECT_PERCENT(new SocketedItemScaling(SocketedItemScaling.Scope.ALL, SocketedItem.HULL_ITEM)),
+    TARGETED_HULL_ITEM_EFFECT_PERCENT(new SocketedItemScaling(SocketedItemScaling.Scope.TARGETED, SocketedItem.HULL_ITEM)),
+    SOCKETED_HULL_ITEM_DRAWBACK_EFFECT_PERCENT(new SocketedItemScaling(SocketedItemScaling.Scope.DRAWBACKS, SocketedItem.HULL_ITEM)),
+    SOCKETED_SUBROUTINE_EFFECT_PERCENT(new SocketedItemScaling(SocketedItemScaling.Scope.ALL, SocketedItem.SUBROUTINE)),
+    SOCKETED_SUBROUTINE_DRAWBACK_EFFECT_PERCENT(new SocketedItemScaling(SocketedItemScaling.Scope.DRAWBACKS, SocketedItem.SUBROUTINE));
 
     private final EffectBacking backing;
 

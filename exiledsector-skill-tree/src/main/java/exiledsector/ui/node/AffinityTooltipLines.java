@@ -4,6 +4,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
 import exiledlib.skills.AffinitySteps;
+import exiledlib.skills.SocketedItemScaling;
 import exiledlib.skills.DescriptionLine;
 import exiledlib.skills.SkillTypeEffect;
 import exiledlib.skills.skilleffect.BackedSkillEffect;
@@ -42,7 +43,7 @@ final class AffinityTooltipLines {
         String affinityName = affinityName(affinity);
         List<DescriptionLine> applied = new ArrayList<>();
         if (showTotal) {
-            float total = AffinitySteps.totals(SkillTreeEffectSource.contributions(shipData, hullSize)).getOrDefault(affinity, 0f);
+            float total = AffinitySteps.totals(SocketedItemScaling.withScaledItems(SkillTreeEffectSource.contributions(shipData, hullSize))).getOrDefault(affinity, 0f);
             applied.add(new DescriptionLine(Translation.msg("ui.node.affinity.total").arg("affinity", affinityName).arg("total", total).styled(), false));
             for (SkillTypeEffect bonus : AffinitySteps.bonuses(Map.of(affinity, total))) {
                 StyledText line = bonus.effect().description(bonus.magnitude(), hullSize);

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SocketedItemScalingTest {
 
-    private record Slot(String slotId, String targetSlotId) implements SocketedItem {
+    private record Slot(String category, String slotId, String targetSlotId) implements SocketedItem {
     }
 
     private static SkillTypeEffect effect(SkillEffect effect, float magnitude) {
@@ -29,7 +29,11 @@ class SocketedItemScalingTest {
     }
 
     private static EffectContribution item(String slotId, String targetSlotId, SkillTypeEffect... effects) {
-        return EffectContribution.scaledPermanent(new Slot(slotId, targetSlotId), slotId + "_", List.of(effects));
+        return EffectContribution.scaledPermanent(new Slot(SocketedItem.HULL_ITEM, slotId, targetSlotId), slotId + "_", List.of(effects));
+    }
+
+    private static EffectContribution subroutine(String socketId, SkillTypeEffect... effects) {
+        return EffectContribution.scaledPermanent(new Slot(SocketedItem.SUBROUTINE, socketId, null), socketId + "_", List.of(effects));
     }
 
     private static EffectContribution node(SkillTypeEffect... effects) {
@@ -111,7 +115,7 @@ class SocketedItemScalingTest {
 
     @Test
     void aSlotEffectScalesOnlyTheItemInItsSlotAndIsFoundByName() {
-        SlotItemEffect slotEffect = SlotItemEffect.register("test_slot", () -> "Test Slot");
+        SlotItemEffect slotEffect = SlotItemEffect.register(SocketedItem.HULL_ITEM, "test_slot", () -> "Test Slot");
 
         List<EffectContribution> scaled = SocketedItemScaling.withScaledItems(List.of(
                 item("test_slot", null, hull(10f)),
@@ -119,9 +123,30 @@ class SocketedItemScalingTest {
                 node(effect(slotEffect, 50f))));
 
         assertEquals(25f, total(scaled, DefenseSkillEffect.HULL_PERCENT), 1e-4f);
-        assertSame(slotEffect, SlotItemEffect.register("test_slot", () -> "Renamed"));
+        assertSame(slotEffect, SlotItemEffect.register(SocketedItem.HULL_ITEM, "test_slot", () -> "Renamed"));
         assertSame(slotEffect, SkillEffect.byName("TEST_SLOT_ITEM_EFFECT_PERCENT"));
         assertTrue(SkillEffectNames.all().contains("TEST_SLOT_ITEM_EFFECT_PERCENT"));
+    }
+
+    @Test
+    void hullItemAndSubroutineEffectsOnlyScaleTheirOwnCategory() {
+        List<EffectContribution> scaled = SocketedItemScaling.withScaledItems(List.of(
+                item("shield", null, hull(10f)),
+                subroutine("socket_a", hull(20f)),
+                node(effect(SpecialSkillEffect.SOCKETED_HULL_ITEM_EFFECT_PERCENT, 100f), effect(SpecialSkillEffect.SOCKETED_SUBROUTINE_EFFECT_PERCENT, 50f))));
+
+        assertEquals(10f * 2f + 20f * 1.5f, total(scaled, DefenseSkillEffect.HULL_PERCENT), 1e-4f);
+    }
+
+    @Test
+    void aSubroutineCanScaleHullItemsWithoutScalingItself() {
+        List<EffectContribution> scaled = SocketedItemScaling.withScaledItems(List.of(
+                item("shield", null, hull(10f)),
+                subroutine("socket_a", hull(4f), hull(-2f), effect(SpecialSkillEffect.SOCKETED_HULL_ITEM_EFFECT_PERCENT, 100f)),
+                node(effect(SpecialSkillEffect.SOCKETED_SUBROUTINE_DRAWBACK_EFFECT_PERCENT, -50f))));
+
+        assertEquals(20f + 4f - 1f, total(scaled, DefenseSkillEffect.HULL_PERCENT), 1e-4f);
+        assertEquals(100f, total(scaled, SpecialSkillEffect.SOCKETED_HULL_ITEM_EFFECT_PERCENT), 1e-4f);
     }
 
     @Test

@@ -16,7 +16,7 @@ public final class GatedSubroutines {
 
     static final String GATING_EFFECT_PREFIX = "GATES_RADIUS_";
 
-    public record Gating(CombatGate gate, float strength) {
+    public record Gating(CombatGate gate, float strength, String socketNodeId) {
     }
 
     private GatedSubroutines() {
@@ -29,7 +29,7 @@ public final class GatedSubroutines {
                 continue;
             }
             Item item = ItemStore.lookup(socketed.getValue());
-            Gating gating = gatingOf(item);
+            Gating gating = gatingOf(item, socketed.getKey());
             SubroutineRadius.Footprint footprint = gating == null ? null : SubroutineRadius.footprint(item, socketed.getKey());
             if (footprint != null) {
                 for (String nodeId : SkillTree.radii().nodeIdsWithin(footprint.centreNodeId(), footprint.size())) {
@@ -48,14 +48,14 @@ public final class GatedSubroutines {
         return tier == SkillTier.SMALL || tier == SkillTier.NOTABLE || tier == SkillTier.KEYSTONE;
     }
 
-    static Gating gatingOf(Item item) {
+    static Gating gatingOf(Item item, String socketNodeId) {
         if (!(item instanceof Subroutine)) {
             return null;
         }
         for (SkillTypeEffect effect : item.skillEffects()) {
             CombatGate gate = effect.effect().radiusGate();
             if (gate != null) {
-                return new Gating(gate, effect.magnitude());
+                return new Gating(gate, effect.magnitude(), socketNodeId);
             }
         }
         return null;

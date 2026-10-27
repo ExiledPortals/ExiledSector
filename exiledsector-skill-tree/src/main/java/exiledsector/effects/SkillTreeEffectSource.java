@@ -7,6 +7,8 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.items.EmptyShells;
 import exiledsector.items.GatedSubroutines;
+import exiledsector.items.RadiusLineOrigin;
+import exiledsector.items.SubroutineOrigin;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocatedSkillEffects;
 import exiledlib.skills.EffectContribution;
@@ -17,6 +19,8 @@ import exiledlib.skills.SkillTypeEffect;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +30,8 @@ public final class SkillTreeEffectSource implements ShipEffectSource {
 
     public static final SkillTreeEffectSource INSTANCE = new SkillTreeEffectSource();
     static final String MOD_ID_PREFIX = "exiledSector_skill_";
+    static final String SUBROUTINE_MOD_ID_PART = "subroutine_";
+    static final String DOCTRINE_MOD_ID_PART = "doctrine_";
     static final Set<String> UNSCALED_NODE_TAGS = Set.of("logistics", "fleet_support", "campaign_only");
 
     private static final Object NODE_EFFECTS_KEY = new Object();
@@ -57,6 +63,7 @@ public final class SkillTreeEffectSource implements ShipEffectSource {
         List<EffectContribution> contributions = new ArrayList<>();
         Map<String, GatedSubroutines.Gating> gatedNodeIds = GatedSubroutines.gatedNodeIds(shipData);
         Set<String> hollowNodeIds = EmptyShells.hollowNodeIds(shipData);
+        String doctrineSocketId = DoctrineOverrides.layer(shipData).socketNodeId();
         for (AllocatedNode node : AllocatedNode.of(shipData)) {
             if (hollowNodeIds.contains(node.node().getId())) {
                 continue;
@@ -64,18 +71,28 @@ public final class SkillTreeEffectSource implements ShipEffectSource {
             SkillType type = node.effectiveType();
             boolean vanillaPassthrough = AllocatedSkillEffects.isVanillaPassthrough(node);
             boolean scaled = scalesNode(node);
+            String modIdPrefix = MOD_ID_PREFIX + node.node().getId() + "_";
+            AllocatedSkillEffects.NodeParts parts = AllocatedSkillEffects.nodeParts(shipData, node, hullSize);
             GatedSubroutines.Gating gating = type.getTemporaryAfterDeploymentSeconds() == null ? gatedNodeIds.get(node.node().getId()) : null;
             if (gating != null) {
                 if (!vanillaPassthrough) {
-                    contributions.add(new EffectContribution(node, MOD_ID_PREFIX + node.node().getId() + "_",
-                            gatedEffects(AllocatedSkillEffects.treeEffects(shipData, node, hullSize), gating.strength()), null, null, scaled, scaled,
-                            gating.gate()));
+                    contributions.add(new EffectContribution(new RadiusLineOrigin(node, gating.socketNodeId()), modIdPrefix,
+                            gatedEffects(parts.all(), gating.strength()), null, null, scaled, scaled, gating.gate()));
                 }
                 continue;
             }
-            contributions.add(new EffectContribution(node, MOD_ID_PREFIX + node.node().getId() + "_",
-                    Collections.unmodifiableList(AllocatedSkillEffects.treeEffects(shipData, node, hullSize)), type.getTemporaryAfterDeploymentSeconds(),
-                    vanillaPassthrough ? type.getVanillaHullModId() : null, scaled, scaled && !vanillaPassthrough));
+            Float temporarySeconds = type.getTemporaryAfterDeploymentSeconds();
+            boolean bonusScaled = scaled && !vanillaPassthrough;
+            contributions.add(new EffectContribution(node, modIdPrefix, parts.own(), temporarySeconds,
+                    vanillaPassthrough ? type.getVanillaHullModId() : null, scaled, bonusScaled));
+            if (!parts.subroutine().isEmpty()) {
+                contributions.add(new EffectContribution(new SubroutineOrigin(node), modIdPrefix + SUBROUTINE_MOD_ID_PART, parts.subroutine(),
+                        temporarySeconds, null, scaled, bonusScaled));
+            }
+            if (!parts.doctrine().isEmpty()) {
+                contributions.add(new EffectContribution(new RadiusLineOrigin(node, doctrineSocketId), modIdPrefix + DOCTRINE_MOD_ID_PART,
+                        parts.doctrine(), temporarySeconds, null, scaled, bonusScaled));
+            }
         }
         return contributions;
     }
@@ -120,15 +137,35 @@ public final class SkillTreeEffectSource implements ShipEffectSource {
     }
 
     static List<NodeEffects> nodeEffects(ResolvedTree resolvedTree) {
-        return resolvedTree.derived(NODE_EFFECTS_KEY, () -> {
-            List<NodeEffects> nodeEffects = new ArrayList<>();
-            for (EffectContribution contribution : resolvedTree.contributions()) {
-                if (contribution.origin() instanceof AllocatedNode node && contribution.gate() == null) {
-                    nodeEffects.add(new NodeEffects(node, contribution.effects()));
+        return resolvedTree.derived(NODE_EFFECTS_KEY, () -> nodeEffectsOf(resolvedTree.contributions()));
+    }
+
+    static List<NodeEffects> nodeEffectsOf(List<EffectContribution> contributions) {
+        Map<String, AllocatedNode> nodesById = new LinkedHashMap<>();
+        Map<String, List<SkillTypeEffect>> effectsById = new HashMap<>();
+        for (EffectContribution contribution : contributions) {
+            AllocatedNode node = contribution.gate() == null ? nodeOf(contribution.origin()) : null;
+            if (node != null) {
+                String nodeId = node.node().getId();
+                if (contribution.origin() instanceof AllocatedNode) {
+                    nodesById.putIfAbsent(nodeId, node);
                 }
+                effectsById.computeIfAbsent(nodeId, id -> new ArrayList<>()).addAll(contribution.effects());
             }
-            return List.copyOf(nodeEffects);
-        });
+        }
+        List<NodeEffects> nodeEffects = new ArrayList<>(nodesById.size());
+        nodesById.forEach((nodeId, node) -> nodeEffects.add(new NodeEffects(node, List.copyOf(effectsById.get(nodeId)))));
+        return List.copyOf(nodeEffects);
+    }
+
+    private static AllocatedNode nodeOf(Object origin) {
+        if (origin instanceof AllocatedNode node) {
+            return node;
+        }
+        if (origin instanceof SubroutineOrigin subroutine) {
+            return subroutine.socket();
+        }
+        return origin instanceof RadiusLineOrigin radiusLine ? radiusLine.node() : null;
     }
 
     static List<AllocatedNode> allocated(ResolvedTree resolvedTree) {

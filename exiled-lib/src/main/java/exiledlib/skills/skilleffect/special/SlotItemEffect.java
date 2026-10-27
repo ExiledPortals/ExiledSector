@@ -23,14 +23,14 @@ public final class SlotItemEffect implements SkillEffect {
     private final Supplier<String> slotName;
     private final SocketedItemScaling scaling;
 
-    private SlotItemEffect(String slotId, Supplier<String> slotName) {
+    private SlotItemEffect(String category, String slotId, Supplier<String> slotName) {
         this.name = slotId.toUpperCase(Locale.ROOT) + NAME_SUFFIX;
         this.slotName = slotName;
-        this.scaling = new SocketedItemScaling(SocketedItemScaling.Scope.SLOT, slotId);
+        this.scaling = new SocketedItemScaling(SocketedItemScaling.Scope.SLOT, category, slotId);
     }
 
-    public static synchronized SlotItemEffect register(String slotId, Supplier<String> slotName) {
-        SlotItemEffect effect = new SlotItemEffect(slotId, slotName);
+    public static synchronized SlotItemEffect register(String category, String slotId, Supplier<String> slotName) {
+        SlotItemEffect effect = new SlotItemEffect(category, slotId, slotName);
         return BY_NAME.computeIfAbsent(effect.name, name -> effect);
     }
 

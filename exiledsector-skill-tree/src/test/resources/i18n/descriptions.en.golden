@@ -2104,6 +2104,18 @@ effect|SOCKETED_HULL_ITEM_EFFECT_PERCENT|12.5	0	<good>12.5%</good> increased eff
 effect|SOCKETED_HULL_ITEM_EFFECT_PERCENT|100.0	0	<good>100%</good> increased effect of hull items.
 effect|SOCKETED_HULL_ITEM_EFFECT_PERCENT|-10.0	0	<bad>10%</bad> reduced effect of hull items.
 effect|SOCKETED_HULL_ITEM_EFFECT_PERCENT|-12.5	0	<bad>12.5%</bad> reduced effect of hull items.
+effect|SOCKETED_SUBROUTINE_DRAWBACK_EFFECT_PERCENT|1.0	1	<bad>1%</bad> increased effect of subroutine drawbacks.
+effect|SOCKETED_SUBROUTINE_DRAWBACK_EFFECT_PERCENT|10.0	1	<bad>10%</bad> increased effect of subroutine drawbacks.
+effect|SOCKETED_SUBROUTINE_DRAWBACK_EFFECT_PERCENT|12.5	1	<bad>12.5%</bad> increased effect of subroutine drawbacks.
+effect|SOCKETED_SUBROUTINE_DRAWBACK_EFFECT_PERCENT|100.0	1	<bad>100%</bad> increased effect of subroutine drawbacks.
+effect|SOCKETED_SUBROUTINE_DRAWBACK_EFFECT_PERCENT|-10.0	1	<good>10%</good> reduced effect of subroutine drawbacks.
+effect|SOCKETED_SUBROUTINE_DRAWBACK_EFFECT_PERCENT|-12.5	1	<good>12.5%</good> reduced effect of subroutine drawbacks.
+effect|SOCKETED_SUBROUTINE_EFFECT_PERCENT|1.0	0	<good>1%</good> increased effect of subroutines.
+effect|SOCKETED_SUBROUTINE_EFFECT_PERCENT|10.0	0	<good>10%</good> increased effect of subroutines.
+effect|SOCKETED_SUBROUTINE_EFFECT_PERCENT|12.5	0	<good>12.5%</good> increased effect of subroutines.
+effect|SOCKETED_SUBROUTINE_EFFECT_PERCENT|100.0	0	<good>100%</good> increased effect of subroutines.
+effect|SOCKETED_SUBROUTINE_EFFECT_PERCENT|-10.0	0	<bad>10%</bad> reduced effect of subroutines.
+effect|SOCKETED_SUBROUTINE_EFFECT_PERCENT|-12.5	0	<bad>12.5%</bad> reduced effect of subroutines.
 effect|SOLARIS_OVERDRIVE_PROJECTILE_SPEED_PERCENT|1.0	0	<good>1%</good> increased weapon projectile speed for those seconds.
 effect|SOLARIS_OVERDRIVE_PROJECTILE_SPEED_PERCENT|10.0	0	<good>10%</good> increased weapon projectile speed for those seconds.
 effect|SOLARIS_OVERDRIVE_PROJECTILE_SPEED_PERCENT|12.5	0	<good>12.5%</good> increased weapon projectile speed for those seconds.

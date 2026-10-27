@@ -366,18 +366,25 @@ schematic only applies to a ship with exactly one point fewer than its tier (Scr
 every ship has 1, plus one each once the highest cleared chart tier reaches 5, 10 and 15, schematics stop
 dropping, and stored points are kept for switching back. Switching never locks an unlocked section.
 
+## Socketed item scaling
+
+A contribution whose origin is a `SocketedItem` belongs to a socketed item of one category, hull item or subroutine.
+`SocketedItemScaling.withScaledItems` runs first in `EffectTotals.of`: it sums the permanent scaling percents of each
+category from every source and multiplies that category's item magnitudes by them, never scaling the scaling effects
+themselves. Per-section effects such as `SHIELD_GENERATOR_ITEM_EFFECT_PERCENT` are `SlotItemEffect`s, which
+`HullUpgradesDomain` registers for every `ShipSection`.
+
+Hull items carry a `HullItemOrigin`. `SkillTreeEffectSource` splits a subroutine's lines, the Root Conduit's affinity
+and the hollow affinity into a `SubroutineOrigin` contribution, and gives augmenting Doctrine lines and gated nodes a
+`RadiusLineOrigin`, so a gating line's strength scales too. Nodes a subroutine grants or transforms keep their own
+values. `nodeEffects` folds both origins back into their node for module sharing.
+
 ## Hull item mechanics
 
-Effects can scale socketed hull items. Each section's contribution carries a `HullItemOrigin`, which Exiled Lib
-sees as a `SocketedItem`, and `SocketedItemScaling.withScaledItems` runs first in `EffectTotals.of`: it sums the
-permanent `SOCKETED_HULL_ITEM_EFFECT_PERCENT`, `TARGETED_HULL_ITEM_EFFECT_PERCENT` and drawback percents from every
-source and multiplies each item's magnitudes by them, never scaling the scaling effects themselves. Per-section
-effects such as `SHIELD_GENERATOR_ITEM_EFFECT_PERCENT` are `SlotItemEffect`s, which `HullUpgradesDomain` registers
-for every `ShipSection` when it is built. A hull item with
-a targeting effect rolls one other section as its target (`HullItem.targetSection`, from its seed, stored once
-rolled); the Extended Warranty Contract's 100% doubles that item, drawbacks included. The Tuning Nanoswarm rerolls
-the target (`Item.rerollTarget`). A unique item that rolled before its definition gained a fixed-value modifier
-gains it on load (`ItemDefinition.withAddedFixedModifiers`).
+A hull item with a targeting effect rolls one other section as its target (`HullItem.targetSection`, from its seed,
+stored once rolled); the Extended Warranty Contract's 100% doubles that item, drawbacks included. The Tuning
+Nanoswarm rerolls the target (`Item.rerollTarget`). A unique item that rolled before its definition gained a
+fixed-value modifier gains it on load (`ItemDefinition.withAddedFixedModifiers`).
 
 A unique whose `mechanic` is `one_of` keeps just one of its listed modifiers, picked from its seed when it is
 rolled (`ItemRoller`), so the choice is frozen with the item.

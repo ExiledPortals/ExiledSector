@@ -357,6 +357,8 @@
     {"name": "SMALL_WEAPON_OP_COST_FLAT", "statMode": null, "lowerIsBetter": true},
     {"name": "SOCKETED_HULL_ITEM_DRAWBACK_EFFECT_PERCENT", "statMode": null, "lowerIsBetter": true},
     {"name": "SOCKETED_HULL_ITEM_EFFECT_PERCENT", "statMode": null, "lowerIsBetter": false},
+    {"name": "SOCKETED_SUBROUTINE_DRAWBACK_EFFECT_PERCENT", "statMode": null, "lowerIsBetter": true},
+    {"name": "SOCKETED_SUBROUTINE_EFFECT_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "SOLARIS_OVERDRIVE_PROJECTILE_SPEED_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "SOLARIS_OVERDRIVE_RATE_OF_FIRE_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "SOLARIS_OVERDRIVE_SECONDS_FLAT", "statMode": null, "lowerIsBetter": false},

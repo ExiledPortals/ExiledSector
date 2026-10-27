@@ -2,6 +2,7 @@ package exiledsector.ui.node;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledlib.skills.AffinitySteps;
+import exiledlib.skills.SocketedItemScaling;
 import exiledlib.skills.SkillTypeEffect;
 import exiledlib.skills.skilleffect.SkillEffect;
 import exiledsector.effects.SkillTreeEffectSource;
@@ -82,7 +83,7 @@ final class RootAffinityNumber {
 
     private Map<SkillEffect, Float> totalsFor(ShipSkillData shipData) {
         if (shipData != totalsShip || shipData.revision() != totalsRevision) {
-            totals = AffinitySteps.totals(SkillTreeEffectSource.contributions(shipData, hullSize));
+            totals = AffinitySteps.totals(SocketedItemScaling.withScaledItems(SkillTreeEffectSource.contributions(shipData, hullSize)));
             totalsShip = shipData;
             totalsRevision = shipData.revision();
         }

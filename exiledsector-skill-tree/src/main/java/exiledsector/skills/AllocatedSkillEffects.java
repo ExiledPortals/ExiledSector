@@ -16,10 +16,28 @@ import exiledsector.items.Subroutine;
 import exiledsector.persistence.ShipSkillDataManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 public final class AllocatedSkillEffects {
+
+    public record NodeParts(List<SkillTypeEffect> own, List<SkillTypeEffect> subroutine, List<SkillTypeEffect> doctrine) {
+
+        public NodeParts {
+            own = Collections.unmodifiableList(own);
+            subroutine = Collections.unmodifiableList(subroutine);
+            doctrine = Collections.unmodifiableList(doctrine);
+        }
+
+        public List<SkillTypeEffect> all() {
+            List<SkillTypeEffect> all = new ArrayList<>(own.size() + subroutine.size() + doctrine.size());
+            all.addAll(own);
+            all.addAll(subroutine);
+            all.addAll(doctrine);
+            return all;
+        }
+    }
 
     private AllocatedSkillEffects() {
     }
@@ -45,21 +63,26 @@ public final class AllocatedSkillEffects {
         Set<String> hollowNodeIds = EmptyShells.hollowNodeIds(data);
         for (AllocatedNode allocated : allocatedNodes) {
             if (!hollowNodeIds.contains(allocated.node().getId())) {
-                effects.addAll(nodeEffects(data, allocated, hullSize));
+                effects.addAll(nodeParts(data, allocated, hullSize).all());
             }
         }
         return effects;
     }
 
     public static List<SkillTypeEffect> treeEffects(ShipSkillData data, AllocatedNode allocated, HullSize hullSize) {
-        return EmptyShells.hollowNodeIds(data).contains(allocated.node().getId()) ? List.of() : nodeEffects(data, allocated, hullSize);
+        return EmptyShells.hollowNodeIds(data).contains(allocated.node().getId()) ? List.of() : nodeParts(data, allocated, hullSize).all();
     }
 
-    private static List<SkillTypeEffect> nodeEffects(ShipSkillData data, AllocatedNode allocated, HullSize hullSize) {
-        return isVanillaPassthrough(allocated) ? doctrineEffects(data, allocated, hullSize, new ArrayList<>()) : appliedEffects(data, allocated, hullSize);
+    public static NodeParts nodeParts(ShipSkillData data, AllocatedNode allocated, HullSize hullSize) {
+        List<SkillTypeEffect> doctrine = doctrineEffects(data, allocated, hullSize);
+        if (isVanillaPassthrough(allocated)) {
+            return new NodeParts(List.of(), List.of(), doctrine);
+        }
+        return new NodeParts(appliedEffects(data, allocated.effectiveType(), hullSize), subroutineEffects(data, allocated, hullSize), doctrine);
     }
 
-    private static List<SkillTypeEffect> doctrineEffects(ShipSkillData data, AllocatedNode allocated, HullSize hullSize, List<SkillTypeEffect> applied) {
+    private static List<SkillTypeEffect> doctrineEffects(ShipSkillData data, AllocatedNode allocated, HullSize hullSize) {
+        List<SkillTypeEffect> applied = new ArrayList<>();
         for (SkillTypeEffect effect : DoctrineOverrides.addedEffects(data, allocated.node(), hullSize)) {
             if (appliesTo(data, effect.effect())) {
                 applied.add(effect);
@@ -74,6 +97,13 @@ public final class AllocatedSkillEffects {
 
     public static List<SkillTypeEffect> appliedEffects(ShipSkillData data, AllocatedNode allocated, HullSize hullSize) {
         List<SkillTypeEffect> applied = appliedEffects(data, allocated.effectiveType(), hullSize);
+        applied.addAll(subroutineEffects(data, allocated, hullSize));
+        applied.addAll(doctrineEffects(data, allocated, hullSize));
+        return applied;
+    }
+
+    private static List<SkillTypeEffect> subroutineEffects(ShipSkillData data, AllocatedNode allocated, HullSize hullSize) {
+        List<SkillTypeEffect> applied = new ArrayList<>();
         Item socketed = ItemStore.lookup(data.getSocketedItem(allocated.node().getId()));
         SkillTypeEffect conduit = socketed instanceof Subroutine ? RootConduits.effectAt(data, allocated.node().getId()) : null;
         if (conduit != null && conduit.magnitude() > 0f) {
@@ -89,7 +119,7 @@ public final class AllocatedSkillEffects {
                 }
             }
         }
-        return doctrineEffects(data, allocated, hullSize, applied);
+        return applied;
     }
 
     public static List<SkillTypeEffect> appliedEffects(ShipSkillData data, SkillType type, HullSize hullSize) {
