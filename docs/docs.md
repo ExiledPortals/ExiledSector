@@ -285,6 +285,22 @@ defender makes the commander the boss and protects the station: losing it loses 
 Completing a run on the attacker's side records the system as captured in `AtlasState`, and captures feed the owner
 reader that opening, tooltips, borders and atlas traffic use (`AtlasOpening.ownerOf`, `territoryOwnerOf`).
 
+## Supply Convoy
+
+The anomaly spawns freighters, a screen and a close escort at the system edge, flying the run-only faction
+`exiledSector_convoy` dressed as the chart faction (`SupplyConvoy`, `ConvoyFleets`). Five days after the player first
+arrives, the system script `ConvoyScript` sends them past two to four planets or stations to unload at an existing planet,
+with intel in `ConvoyIntel`. The convoy is non-hostile until the player attacks it through `ConvoyEncounterDialog` or hits
+one of its fleets with Interdiction Pulse (which also holds that fleet); then all three turn hostile for the run and the
+freighters run for the destination. The screen rides 1200 su ahead, the freighters never outrun the escorts in open space,
+and asteroids and nebulae slow each fleet by its own amount (`ConvoyTerrain`).
+
+The cargo is the `convoy` scope of `chart_loot.csv` plus the `exiledSector_chart_convoy` item row, sized by the
+freighters' fleet points. Each share of freighter fleet points lost drops as cargo pods, and the rest is cached on the
+destination (`ConvoyState`, `ConvoyCargo`). That planet then offers a raid (`ConvoyCacheDialog`, `raid.ChartRaid`, vanilla's
+non-market raid without reputation, response, cooldowns or rules) at a difficulty and danger level set by tier
+(`ConvoyRules`); the cache objective yields its share times vanilla's leftover-effectiveness bonus and stays until taken.
+
 ## Transverse Jump in charts
 
 In any chart system, Transverse Jump takes the fleet back to where the chart was opened, the same as the exit

@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.FleetAssignment;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartContentGenerator;
+import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -87,6 +89,61 @@ class SupplyConvoyTest {
             assertTrue(stops >= Math.min(ConvoyRules.MIN_WAYPOINTS, planets - 1) && stops <= ConvoyRules.MAX_WAYPOINTS, "got " + stops);
             assertEquals(stops, new HashSet<>(convoy.waypointIds()).size());
         }
+    }
+
+    private static ChartGenContext with(ChartEffect effect, float value) {
+        return ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(effect, value)));
+    }
+
+    @Test
+    void theExtraConvoyLineAddsConvoysWithTheirOwnDestinations() {
+        ConvoySystem convoySystem = new ConvoySystem(6);
+
+        SupplyConvoy.INSTANCE.generate(convoySystem.site(with(ChartEffect.CHART_EXTRA_CONVOYS, 2f)));
+
+        List<ConvoyState> convoys = convoySystem.script().convoys();
+        assertEquals(3, convoys.size());
+        assertEquals(3, new HashSet<>(convoys.stream().map(ConvoyState::destinationId).toList()).size());
+        assertEquals(ConvoyRules.MAX_CONVOYS, ConvoyRules.convoyCount(10f));
+    }
+
+    @Test
+    void theEscortLineScalesTheEscortsAndCanRemoveThem() {
+        ConvoySystem plain = new ConvoySystem(4);
+        SupplyConvoy.INSTANCE.generate(plain.site(ChartGenContext.none()));
+        ConvoySystem doubled = new ConvoySystem(4);
+        SupplyConvoy.INSTANCE.generate(doubled.site(with(ChartEffect.CHART_CONVOY_ESCORT_PERCENT, 100f)));
+        ConvoySystem stripped = new ConvoySystem(4);
+        SupplyConvoy.INSTANCE.generate(stripped.site(with(ChartEffect.CHART_CONVOY_ESCORT_PERCENT, -100f)));
+
+        assertEquals(2f * plain.engine.fleetParams.get(2).combatPts, doubled.engine.fleetParams.get(2).combatPts, 0.01f);
+        assertEquals(plain.engine.fleetParams.get(0).freighterPts, doubled.engine.fleetParams.get(0).freighterPts, 0.01f);
+        ConvoyState strippedConvoy = stripped.script().convoys().get(0);
+        assertNotNull(strippedConvoy.fleetId(ConvoyRole.FREIGHTERS));
+        assertNull(strippedConvoy.fleetId(ConvoyRole.SCREEN));
+        assertNull(strippedConvoy.fleetId(ConvoyRole.ESCORT));
+    }
+
+    @Test
+    void theCargoLineScalesWhatTheFreightersCarry() {
+        ConvoySystem plain = new ConvoySystem(4);
+        plain.engine.fleetPoints = 100;
+        SupplyConvoy.INSTANCE.generate(plain.site(ChartGenContext.none()));
+        ConvoySystem richer = new ConvoySystem(4);
+        richer.engine.fleetPoints = 100;
+        SupplyConvoy.INSTANCE.generate(richer.site(with(ChartEffect.CHART_CONVOY_CARGO_PERCENT, 50f)));
+
+        ConvoyState plainConvoy = plain.script().convoys().get(0);
+        ConvoyState richerConvoy = richer.script().convoys().get(0);
+        assertEquals(100f * ConvoyRules.CARGO_STEPS_PER_FREIGHTER_POINT, plainConvoy.cargoSteps(), 0.001f);
+        assertEquals(1.5f * plainConvoy.cargoSteps(), richerConvoy.cargoSteps(), 0.001f);
+        assertEquals(1.5f * plainConvoy.itemChanceMult(), richerConvoy.itemChanceMult(), 0.001f);
+    }
+
+    @Test
+    void aReducedEscortLineReadsAsReduced() {
+        assertTrue(ChartEffect.CHART_CONVOY_ESCORT_PERCENT.description(-25f).plain().contains("25"));
+        assertFalse(ChartEffect.CHART_CONVOY_ESCORT_PERCENT.description(-25f).plain().contains("-25"));
     }
 
     @Test

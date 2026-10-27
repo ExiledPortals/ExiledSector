@@ -9,7 +9,7 @@ An anomaly is anything a star chart system holds beyond its ordinary layout, fle
 | Faction Skirmish | `faction_skirmish.md` | two sides' fleets; you join one or fight both |
 | The Hunter | `the_hunter.md` | one, optional, on your terms |
 | Spatial Breach (built) | `../completed/anomalies/spatial_breach.md` | none |
-| Supply Convoy | `supply_convoy.md` | zero or one, sized by where you strike; a raid if it delivers |
+| Supply Convoy (built) | `../completed/anomalies/supply_convoy.md` | zero or one, sized by where you strike; a raid if it delivers |
 | Stasis Vaults | `stasis_vaults.md` | optional, one per vault |
 | Asteroid Stream (Industrial Evolution only) | `asteroid_stream.md` | none |
 

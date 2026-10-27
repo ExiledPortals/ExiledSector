@@ -5,6 +5,7 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartGenerated;
 import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
+import exiledsector.charts.anomaly.convoy.SupplyConvoy;
 import exiledlib.i18n.Message;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
@@ -84,9 +85,18 @@ public enum ChartEffect implements ModifierEffect {
     CHART_REWARD_PERCENT(false, ChartGenContext::addRewardPercent),
     CHART_BREACH_GROWTH_PERCENT(false, (context, value) -> context.addAnomalyPercent(SpatialBreach.GROWTH_KEY, value)),
     CHART_BREACH_CACHE_PERCENT(false, (context, value) -> context.addAnomalyPercent(SpatialBreach.CACHE_KEY, value)),
-    CHART_BREACH_CACHE_ITEM_PERCENT(false, (context, value) -> context.addAnomalyPercent(SpatialBreach.CACHE_ITEM_KEY, value));
+    CHART_BREACH_CACHE_ITEM_PERCENT(false, (context, value) -> context.addAnomalyPercent(SpatialBreach.CACHE_ITEM_KEY, value)),
+    CHART_CONVOY_CARGO_PERCENT(false, (context, value) -> context.addAnomalyPercent(SupplyConvoy.CARGO_KEY, value)),
+    CHART_CONVOY_ESCORT_PERCENT(false, (context, value) -> context.addAnomalyPercent(SupplyConvoy.ESCORT_KEY, value)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return Translation.msg(magnitude < 0f ? key() + REDUCED_SUFFIX : key()).arg("value", Math.abs(magnitude)).styled();
+        }
+    },
+    CHART_EXTRA_CONVOYS(true, (context, value) -> context.addAnomalyPercent(SupplyConvoy.EXTRA_KEY, value));
 
     static final String KEY_PREFIX = "chart.effect.";
+    static final String REDUCED_SUFFIX = ".reduced";
 
     private interface Contribution {
         void addTo(ChartGenContext context, float value);

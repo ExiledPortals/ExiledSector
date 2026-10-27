@@ -2,7 +2,7 @@
 
 A convoy runs a fixed route through the system on a schedule you can see, carrying a known cargo to a planet. It leaves you alone until you turn on it. Where you strike is the gameplay: hit it where the escorts are spread out and you only fight part of them, or let it deliver and raid the planet for the cache with your marines.
 
-Status: planned, nothing built. Redesigned 2026-10-27: the convoy is friendly until attacked, it delivers to an existing planet, the cache is taken with a raid, and the shadowing rule is dropped. See `overview.md` for the shared framework.
+Status: built and tested 2026-10-27 (package `exiledsector.charts.anomaly.convoy`, raid in `exiledsector.charts.raid`). Not yet checked in game. Redesigned 2026-10-27: the convoy is friendly until attacked, it delivers to an existing planet, the cache is taken with a raid, and the shadowing rule is dropped. See `docs/plans/anomalies/overview.md` for the shared framework.
 
 ## How it plays
 
@@ -26,7 +26,7 @@ The cargo is chart loot budget split between the freighters (dropped as pods, sc
 
 ## Chart modifiers
 
-Tuning lines are chart effects carried by an atlas source, per `overview.md`:
+Tuning lines are chart effects carried by an atlas source, per `docs/plans/anomalies/overview.md`:
 
 - `CHART_CONVOY_CARGO_PERCENT`: increased convoy cargo.
 - `CHART_CONVOY_ESCORT_PERCENT`: increased or reduced convoy escort strength.
@@ -40,7 +40,7 @@ Tuning lines are chart effects carried by an atlas source, per `overview.md`:
 4. [x] Freighter flight and cargo pod drops; split loot budget. Once hostile the freighters skip their remaining stops and run for the destination (`ConvoyScript.flee`). The cargo is the `convoy` scope of `chart_loot.csv` plus the `exiledSector_chart_convoy` item row, sized by the freighters' fleet points; each share of freighter fleet points lost drops that share as cargo pods that last the run, and the rest is delivered (`ConvoyState`, `ConvoyCargo`, `loot.ChartCargoLoot`, `ConvoyScript.recordLosses`).
 5. [x] The raid class in `charts.raid`, copied from vanilla's non-market raid, and the cache raid objective. `raid.ChartRaid` (raid menu, objective picker, marine losses, XP, loot screen; text in the `chart.raid.*` keys) and `ConvoyCacheObjective`, which rolls the delivered share of the cargo times vanilla's leftover-effectiveness bonus. Left out from vanilla: reputation, military response, stability, hostile timeouts, cooldowns, defender preparedness and rules; other mods' raid-objective listeners aren't asked to add objectives, but marine-loss listeners still apply.
 6. [x] Delivery to the destination planet, the raid option there, difficulty by tier. The freighters' arrival and unloading run `ConvoyStep` callbacks on their assignments (`ConvoyScript.arrived`, `unloaded`); while a cache is there, `ConvoyCacheDialog` (through `ConvoyDialogs`) offers the raid before the planet's own dialog, at `ConvoyRules.raidDifficulty` and `cacheDanger` for the tier.
-7. [ ] Chart modifier lines, strings, `docs/docs.md` section and tests.
+7. [x] Chart modifier lines, strings, `docs/docs.md` section and tests. `ChartEffect.CHART_CONVOY_CARGO_PERCENT`, `CHART_CONVOY_ESCORT_PERCENT` (reads "reduced" when negative) and `CHART_EXTRA_CONVOYS` (up to 3 convoys), carried by no source yet; `chart.convoy.*` and `chart.raid.*` strings in both catalogues (zh draft); docs section "Supply Convoy"; tests in `charts.anomaly.convoy` and `charts.raid`. The `chart_anomalies.csv` row has no icon yet.
 
 ## Resolved questions
 
