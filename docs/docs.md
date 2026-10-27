@@ -301,6 +301,22 @@ through uncompleted systems if all three relays woke, or at the same stage if th
 removes it otherwise. Each stage past the first adds the `relay_stage` lines of `atlas_node_effects.csv` once more (`RelayChain.join`), and the last stage's boss, if it dies with all three
 relays woken, drops one unique hull item or subroutine whatever its source (`ChartFleetLoot.guaranteedUnique`).
 
+## Supply Convoy
+
+The anomaly spawns freighters, a screen and a close escort at the system edge, flying the run-only faction
+`exiledSector_convoy` under its own name with the chart faction's crest (`SupplyConvoy`, `ConvoyFleets`). Five days after the player first
+arrives, the system script `ConvoyScript` sends them past two to four planets or stations to unload at an existing planet,
+with intel in `ConvoyIntel`. The convoy is non-hostile until the player attacks it through `ConvoyEncounterDialog` or hits
+one of its fleets with Interdiction Pulse (which also holds that fleet); then all three turn hostile for the run and the
+freighters run for the destination. The screen rides 1200 su ahead, the freighters never outrun the escorts in open space,
+and asteroids and nebulae slow each fleet by its own amount (`ConvoyTerrain`).
+
+The cargo is the `convoy` scope of `chart_loot.csv` plus the `exiledSector_chart_convoy` item row, sized by the
+freighters' fleet points. Each share of freighter fleet points lost drops as cargo pods, and the rest is cached on the
+destination (`ConvoyState`, `ConvoyCargo`). That planet then offers a raid (`ConvoyCacheDialog`, `raid.ChartRaid`, vanilla's
+non-market raid without reputation, response, cooldowns or rules) at a difficulty and danger level set by tier
+(`ConvoyRules`); the cache objective yields exactly the delivered share and stays until taken. Once the freighters are lost, every convoy fleet left leaves through the exit.
+
 ## Transverse Jump in charts
 
 In any chart system, Transverse Jump takes the fleet back to where the chart was opened, the same as the exit

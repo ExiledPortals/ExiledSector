@@ -27,6 +27,7 @@ public final class ChartLoot {
     static final String ID_COLUMN = "id";
     static final String FLEET_SCOPE = "fleet";
     static final String BOSS_SCOPE = "boss";
+    public static final String CONVOY_SCOPE = "convoy";
     static final List<String> SCOPES = scopes();
     static final Set<String> COLONY_ITEM_GROUPS = Set.of("rare_tech", "rare_tech_low", "rare_tech_mothership", "nanoforge_always");
     static final List<String> VANILLA_TYPE_NAMES = Arrays.stream(DropType.values()).filter(DropType::isVanilla)
@@ -68,6 +69,7 @@ public final class ChartLoot {
         List<String> scopes = new ArrayList<>(ChartPois.KIND_NAMES);
         scopes.add(FLEET_SCOPE);
         scopes.add(BOSS_SCOPE);
+        scopes.add(CONVOY_SCOPE);
         return List.copyOf(scopes);
     }
 
@@ -167,6 +169,16 @@ public final class ChartLoot {
             }
         }
         return matching;
+    }
+
+    public static List<DropType> dropTypesFor(String scope, int tier) {
+        List<DropType> types = new ArrayList<>();
+        for (Entry entry : entriesFor(scope, tier)) {
+            if (!types.contains(entry.type())) {
+                types.add(entry.type());
+            }
+        }
+        return types;
     }
 
     static Map<String, DropType> groupTypes() {

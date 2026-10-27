@@ -39,6 +39,8 @@ import com.fs.starfarer.api.impl.campaign.procgen.themes.SalvageSpecialAssigner.
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.BaseSalvageSpecial;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
+import exiledlib.i18n.Translation;
+import exiledsector.charts.anomaly.convoy.ConvoyRules;
 import exiledsector.charts.anomaly.skirmish.SkirmishFactions;
 import exiledsector.charts.loot.ChartVanillaLoot;
 import org.lwjgl.util.vector.Vector2f;
@@ -194,18 +196,39 @@ final class VanillaChartContentEngine implements ChartContentEngine {
 
     @Override
     public String dressAllies(String factionId) {
-        FactionAPI allies = Global.getSector().getFaction(SkirmishFactions.ALLY_FACTION_ID);
         FactionAPI faction = Global.getSector().getFaction(factionId);
-        if (allies == null || faction == null) {
+        return faction == null ? null : dress(SkirmishFactions.ALLY_FACTION_ID, faction, faction.getDisplayName(), faction.getDisplayNameWithArticle(),
+                faction.getDisplayNameIsOrAre(), RepLevel.FRIENDLY);
+    }
+
+    @Override
+    public String dressConvoy(String factionId) {
+        FactionAPI faction = Global.getSector().getFaction(factionId);
+        String convoyId = faction == null ? null : dress(ConvoyRules.FACTION_ID, faction, Translation.gameText("chart.convoy.faction.name"),
+                Translation.gameText("chart.convoy.faction.nameWithArticle"), Translation.gameText("chart.convoy.faction.isOrAre"), RepLevel.NEUTRAL);
+        if (convoyId != null) {
+            FactionAPI convoy = Global.getSector().getFaction(convoyId);
+            for (FactionAPI other : Global.getSector().getAllFactions()) {
+                if (other != null && other != convoy && !convoyId.equals(other.getId())) {
+                    convoy.setRelationship(other.getId(), RepLevel.NEUTRAL);
+                }
+            }
+        }
+        return convoyId;
+    }
+
+    private static String dress(String runFactionId, FactionAPI faction, String name, String nameWithArticle, String isOrAre, RepLevel towardsPlayer) {
+        FactionAPI runFaction = Global.getSector().getFaction(runFactionId);
+        if (runFaction == null) {
             return null;
         }
-        allies.setDisplayNameOverride(faction.getDisplayName());
-        allies.setDisplayNameWithArticleOverride(faction.getDisplayNameWithArticle());
-        allies.setDisplayIsOrAreOverride(faction.getDisplayNameIsOrAre());
-        allies.setShipNamePrefixOverride(faction.getShipNamePrefix());
-        allies.setFactionCrestOverride(faction.getCrest());
-        allies.setFactionLogoOverride(faction.getLogo());
-        allies.setRelationship(Factions.PLAYER, RepLevel.FRIENDLY);
-        return allies.getId();
+        runFaction.setDisplayNameOverride(name);
+        runFaction.setDisplayNameWithArticleOverride(nameWithArticle);
+        runFaction.setDisplayIsOrAreOverride(isOrAre);
+        runFaction.setShipNamePrefixOverride(faction.getShipNamePrefix());
+        runFaction.setFactionCrestOverride(faction.getCrest());
+        runFaction.setFactionLogoOverride(faction.getLogo());
+        runFaction.setRelationship(Factions.PLAYER, towardsPlayer);
+        return runFaction.getId();
     }
 }

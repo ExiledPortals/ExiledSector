@@ -1,5 +1,6 @@
 package exiledsector.charts.content;
 
+import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.campaign.CampaignEventListener.FleetDespawnReason;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignTerrainAPI;
@@ -38,6 +39,7 @@ import exiledsector.charts.loot.ChartFleetLoot;
 import exiledsector.charts.loot.ChartVanillaLoot;
 import exiledsector.charts.loot.DropType;
 import exiledsector.charts.objective.ChartObjective;
+import exiledsector.charts.run.ChartRunBound;
 import exiledsector.items.WeightedPick;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
@@ -840,6 +842,11 @@ public final class ChartContentGenerator {
                     } catch (RuntimeException e) {
                         LOG.debug("Removing a half-generated Star Chart point of interest failed", e);
                     }
+                }
+            }
+            for (EveryFrameScript script : new ArrayList<>(system.getScripts())) {
+                if (script instanceof ChartRunBound bound && bound.belongsToRun(runId)) {
+                    system.removeScript(script);
                 }
             }
             fleets.clear();

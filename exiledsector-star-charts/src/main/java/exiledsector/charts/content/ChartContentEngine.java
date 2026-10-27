@@ -32,4 +32,6 @@ interface ChartContentEngine {
     String planetCategory(PlanetAPI planet);
 
     String dressAllies(String factionId);
+
+    String dressConvoy(String factionId);
 }

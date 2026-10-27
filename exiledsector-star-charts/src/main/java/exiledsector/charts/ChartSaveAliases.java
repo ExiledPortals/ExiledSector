@@ -4,6 +4,11 @@ import com.thoughtworks.xstream.XStream;
 import exiledsector.charts.anomaly.breach.BreachCorePlugin;
 import exiledsector.charts.anomaly.breach.BreachSupplyBuff;
 import exiledsector.charts.anomaly.breach.BreachTerrainPlugin;
+import exiledsector.charts.anomaly.convoy.ConvoyIntel;
+import exiledsector.charts.anomaly.convoy.ConvoyRole;
+import exiledsector.charts.anomaly.convoy.ConvoyScript;
+import exiledsector.charts.anomaly.convoy.ConvoyState;
+import exiledsector.charts.anomaly.convoy.ConvoyStep;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.objective.ChartObjectiveIntel;
 import exiledsector.charts.run.ChartRun;
@@ -15,16 +20,23 @@ import java.util.Map;
 
 public final class ChartSaveAliases {
 
-    static final Map<String, Class<?>> ALIASES = Map.of(
-            "exiledSector.ChartRun", ChartRun.class,
-            "exiledSector.ChartRunState", ChartRunState.class,
-            "exiledSector.ChartWormholePlugin", ChartWormholePlugin.class,
-            "exiledSector.ChartObjectiveIntel", ChartObjectiveIntel.class,
-            "exiledSector.WormholeGateway", WormholeGateway.class,
-            "exiledSector.BreachTerrainPlugin", BreachTerrainPlugin.class,
-            "exiledSector.BreachCorePlugin", BreachCorePlugin.class,
-            "exiledSector.BreachSupplyBuff", BreachSupplyBuff.class,
-            "exiledSector.AtlasState", AtlasState.class);
+    static final Map<String, Class<?>> ALIASES = Map.ofEntries(
+            Map.entry("exiledSector.ChartRun", ChartRun.class),
+            Map.entry("exiledSector.ChartRunState", ChartRunState.class),
+            Map.entry("exiledSector.ChartWormholePlugin", ChartWormholePlugin.class),
+            Map.entry("exiledSector.ChartObjectiveIntel", ChartObjectiveIntel.class),
+            Map.entry("exiledSector.WormholeGateway", WormholeGateway.class),
+            Map.entry("exiledSector.BreachTerrainPlugin", BreachTerrainPlugin.class),
+            Map.entry("exiledSector.BreachCorePlugin", BreachCorePlugin.class),
+            Map.entry("exiledSector.BreachSupplyBuff", BreachSupplyBuff.class),
+            Map.entry("exiledSector.AtlasState", AtlasState.class),
+            Map.entry("exiledSector.ConvoyScript", ConvoyScript.class),
+            Map.entry("exiledSector.ConvoyState", ConvoyState.class),
+            Map.entry("exiledSector.ConvoyPhase", ConvoyState.Phase.class),
+            Map.entry("exiledSector.ConvoyRole", ConvoyRole.class),
+            Map.entry("exiledSector.ConvoyStep", ConvoyStep.class),
+            Map.entry("exiledSector.ConvoyStepKind", ConvoyStep.Kind.class),
+            Map.entry("exiledSector.ConvoyIntel", ConvoyIntel.class));
 
     private ChartSaveAliases() {
     }

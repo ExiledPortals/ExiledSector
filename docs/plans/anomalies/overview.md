@@ -9,7 +9,7 @@ An anomaly is anything a star chart system holds beyond its ordinary layout, fle
 | Faction Skirmish | `faction_skirmish.md` | two sides' fleets; you join one or fight both |
 | The Hunter | `the_hunter.md` | one, optional, on your terms |
 | Spatial Breach (built) | `../completed/anomalies/spatial_breach.md` | none |
-| Supply Convoy | `supply_convoy.md` | zero or one, sized by where you strike; a raid if it delivers |
+| Supply Convoy (built) | `../completed/anomalies/supply_convoy.md` | zero or one, sized by where you strike; a raid if it delivers |
 | Anomalous Debris | `anomalous_debris.md` | optional, one per dormant fleet |
 | Asteroid Stream (Industrial Evolution only) | `asteroid_stream.md` | none |
 
@@ -44,4 +44,4 @@ Players favour one anomaly over the others with intel and atlas passives, and ca
 The atlas comes first. These steps sit inside `../atlas.md`'s build order (its steps 2, 3c, 12, 13 and 16).
 
 1. [~] Anomaly framework: `ChartAnomaly`, `chart_anomalies.csv`, the per-node roll, run requests, tooltip line, run state and cleanup, with one test anomaly that places nothing (`ChartAnomaliesTest.PlacesNothing`), plus inserted anomalies (`../atlas.md` step 17). Not built: icon and intel columns' use, which wait for the marker icons and the intel item.
-2. [~] Anomalies one at a time, each to its own plan's build order. Built apart from in-game checks: Faction Skirmish and Relay Network. Suggested order for the rest: Excavation Sites, The Hunter, Supply Convoy, Anomalous Debris, Asteroid Stream.
+2. [~] Anomalies one at a time, each to its own plan's build order. Built apart from in-game checks: Faction Skirmish, Relay Network and Supply Convoy. Suggested order for the rest: Excavation Sites, The Hunter, Anomalous Debris, Asteroid Stream.

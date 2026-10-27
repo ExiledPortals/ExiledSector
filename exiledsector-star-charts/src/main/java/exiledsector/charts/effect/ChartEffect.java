@@ -5,6 +5,7 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartGenerated;
 import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
+import exiledsector.charts.anomaly.convoy.SupplyConvoy;
 import exiledsector.charts.anomaly.relay.RelayNetwork;
 import exiledlib.i18n.Message;
 import exiledlib.i18n.StyledText;
@@ -92,7 +93,15 @@ public enum ChartEffect implements ModifierEffect {
             return Translation.msg(magnitude < 0f ? key() + REDUCED_SUFFIX : key()).arg("value", Math.abs(magnitude)).styled();
         }
     },
-    CHART_RELAY_CHAIN_STAGES(true, (context, value) -> context.addAnomalyPercent(RelayNetwork.STAGES_KEY, value));
+    CHART_RELAY_CHAIN_STAGES(true, (context, value) -> context.addAnomalyPercent(RelayNetwork.STAGES_KEY, value)),
+    CHART_CONVOY_CARGO_PERCENT(false, (context, value) -> context.addAnomalyPercent(SupplyConvoy.CARGO_KEY, value)),
+    CHART_CONVOY_ESCORT_PERCENT(false, (context, value) -> context.addAnomalyPercent(SupplyConvoy.ESCORT_KEY, value)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return Translation.msg(magnitude < 0f ? key() + REDUCED_SUFFIX : key()).arg("value", Math.abs(magnitude)).styled();
+        }
+    },
+    CHART_EXTRA_CONVOYS(true, (context, value) -> context.addAnomalyPercent(SupplyConvoy.EXTRA_KEY, value));
 
     static final String KEY_PREFIX = "chart.effect.";
     static final String REDUCED_SUFFIX = ".reduced";
