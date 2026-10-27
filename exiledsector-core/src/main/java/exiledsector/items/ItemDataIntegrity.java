@@ -48,6 +48,10 @@ public final class ItemDataIntegrity {
     private final Set<String> referencedIds = new HashSet<>();
     private final Map<String, Integer> idsNeedingNames = new LinkedHashMap<>();
     private final Map<String, String> definitionSourcesById = new HashMap<>();
+    private final Map<String, Reservation> reservationsById = new LinkedHashMap<>();
+
+    record Reservation(String ownerId, String file, int line) {
+    }
 
     static List<ItemDataRules> rules() {
         return RULES.all().stream().sorted(Comparator.comparing(ItemDataRules::type)).toList();
@@ -87,6 +91,7 @@ public final class ItemDataIntegrity {
 
     public List<Violation> finish() {
         checkNames();
+        checkReservations();
         checkReferences();
         return violations();
     }
@@ -458,9 +463,40 @@ public final class ItemDataIntegrity {
         }
     }
 
+    public void checkReservedModifier(String file, int line, String ownerId, String modifierId, Set<ModifierScope> scopes) {
+        ModifierRow modifier = modifiersById.get(modifierId);
+        if (modifier == null) {
+            error(file, line, ownerId + " reserves " + modifierId + ", which is not in " + ItemModifiers.dataPath());
+            return;
+        }
+        if (modifier.slot() == ModifierSlot.IMPLICIT) {
+            error(file, line, ownerId + " reserves " + modifierId + ", but only a prefix or suffix can be reserved");
+        }
+        for (ModifierScope scope : scopes) {
+            if (!modifier.scopes().isEmpty() && !modifier.scopes().contains(scope)) {
+                error(file, line, ownerId + " reserves " + modifierId + " for " + scope.id() + ", but it only rolls on "
+                        + modifier.scopes().stream().map(ModifierScope::id).collect(Collectors.joining(", ")));
+            }
+        }
+        Reservation earlier = reservationsById.putIfAbsent(modifierId, new Reservation(ownerId, file, line));
+        if (earlier != null) {
+            error(file, line, modifierId + " is already reserved by " + earlier.ownerId());
+        }
+    }
+
+    private void checkReservations() {
+        reservationsById.forEach((modifierId, reservation) -> {
+            if (referencedIds.contains(modifierId)) {
+                error(reservation.file(), reservation.line(), modifierId + " is reserved by " + reservation.ownerId()
+                        + ", so no item pool or implicit may list it");
+            }
+        });
+    }
+
     private void checkReferences() {
         for (ModifierRow modifier : modifiersById.values()) {
-            if (!referencedIds.contains(modifier.id()) && !modifier.scopes().contains(ModifierScope.DOCTRINE)) {
+            if (!referencedIds.contains(modifier.id()) && !modifier.scopes().contains(ModifierScope.DOCTRINE)
+                    && !reservationsById.containsKey(modifier.id())) {
                 warning(modifier.file(), modifier.line(), modifier.id() + " is not used by any item or implicit");
             }
         }

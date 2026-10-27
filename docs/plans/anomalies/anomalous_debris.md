@@ -36,7 +36,7 @@ Tuning lines are chart effects carried by an atlas source, per `overview.md`:
 
 ## Build order
 
-1. [ ] The currency-only modifier pool in `item_modifiers.csv`, kept out of every other roll; `anomalous_debris_currencies.csv`, the currency items and their reroll through `ItemCrafting`; one or two placeholder modifiers; tests.
+1. [x] The currency-only modifier pool in `item_modifiers.csv`, kept out of every other roll; `anomalous_debris_currencies.csv`, the currency items and their reroll through `ItemCrafting`; one or two placeholder modifiers; tests. Built: the pool is every modifier a currency row names, held in core `ReservedModifiers` (an item keeps a reserved id on load, `Item.explicitModifier` finds it outside the pool, and `ItemDataIntegrity.checkReservedModifier` makes listing one in any pool or implicit an error); star-charts `AnomalousDebrisCurrency` and `AnomalousDebrisCurrencies` (loaded in `StarChartsDomain.loadItems`, checked through `StarChartDataRules`); placeholder engrams `exiledSector_revenant_engram` (`HULL_PERCENT_ANOMALOUS_DEBRIS`, 15% increased hull) and `exiledSector_vigil_engram` (`BEAM_WEAPON_RANGE_PERCENT_ANOMALOUS_DEBRIS`, 25% increased beam range) in `special_items.csv` with vanilla AI core icons as placeholders. The Hull Item bench shows an extra currency tile only while you own one (`SocketWorkbenchPanel.hullBenchCurrencies`). Tests: `AnomalousDebrisCurrencyTest`, `AnomalousDebrisCurrencyDataTest`, `HullBenchCurrenciesTest`.
 2. [ ] The anomaly class and `chart_anomalies.csv` row; the visual-only debris fields; dormant fleets of random-faction hulls with AI core captains, non-hostile and still, hidden until you're close.
 3. [ ] Turning a fleet hostile on attack (reusing the convoy's code) and its normal chart loot.
 4. [ ] The encounter dialog: Engage and Corrupt and engage with its bracketed cost, greyed out without a kernel; the stronger fleet and the currency drop.
@@ -49,5 +49,5 @@ Tuning lines are chart effects carried by an atlas source, per `overview.md`:
 - How to keep a fleet off the map and sensors until the player is close, and the reveal range.
 - The visual-only debris field: a custom `BaseTerrain` drawing vanilla's debris art (the Foiler rules in `../atlas.md`), since vanilla's debris field is salvageable.
 - Which AI core levels captain the ships at each tier.
-- Whether an item rerolled with the currency is locked like a corrupted item.
-- The currency names, alongside the nanoswarm and cipher theme.
+- Whether an item rerolled with the currency is locked like a corrupted item. Decided as a placeholder: no. It stays an ordinary rare item that other currencies can still change, so Substitution or Corruption can remove the granted modifier. The granted modifier has a fixed value, so Recalibration leaves it alone. Inhibitors block the engram like Metamorph (`AnomalousDebrisCurrency.canUse`).
+- The currency names, alongside the nanoswarm and cipher theme. Placeholder: engrams, the memory traces of the dormant AI cores (Revenant Engram, Vigil Engram), named after the modifier each grants.

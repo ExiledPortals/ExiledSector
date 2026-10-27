@@ -392,7 +392,12 @@ public abstract class Item {
     public Modifier explicitModifier(String modifierId) {
         ItemDefinition definition = definition();
         PoolEntry entry = definition == null ? null : definition.poolEntryFor(modifierId);
-        return entry == null ? null : entry.modifier();
+        if (entry != null) {
+            return entry.modifier();
+        }
+        boolean reservedForType = definition != null && ReservedModifiers.isReserved(modifierId)
+                && ItemModifiers.itemTypes(modifierId).contains(definition.type());
+        return reservedForType ? ItemModifiers.get(modifierId) : null;
     }
 
     public List<SlottedRoll> rolls(ModifierCategory category) {

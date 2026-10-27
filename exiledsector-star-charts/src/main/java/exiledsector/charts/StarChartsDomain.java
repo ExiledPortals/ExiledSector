@@ -16,6 +16,7 @@ import exiledsector.effects.ShipEffectSource;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.SpecLocalisation;
 import exiledlib.i18n.Translation;
+import exiledsector.items.AnomalousDebrisCurrencies;
 import exiledsector.items.ItemDataRules;
 import exiledsector.items.ItemTypeSupport;
 import exiledsector.items.MaterialItems;
@@ -99,6 +100,8 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     @Override
     public void loadItems() {
         StarChartItems.load();
+        AnomalousDebrisCurrencies.load();
+        I18n.forGameText(AnomalousDebrisCurrencies::localise);
     }
 
     @Override

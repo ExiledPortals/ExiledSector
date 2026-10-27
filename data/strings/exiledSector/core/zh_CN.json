@@ -17,6 +17,8 @@
     "socketable.modifier.ARMOR_DAMAGE_TAKEN_MULT_PER_DMOD": "伤痕",
     "socketable.modifier.ARMOR_FLAT_ARMOR_PLATING": "层压",
     "socketable.modifier.ARMOR_PERCENT": "镀甲",
+    "socketable.modifier.HULL_PERCENT_ANOMALOUS_DEBRIS": "亡魂",
+    "socketable.modifier.BEAM_WEAPON_RANGE_PERCENT_ANOMALOUS_DEBRIS": "守望",
     "socketable.modifier.BALLISTIC_WEAPON_DAMAGE_PERCENT_WEAPON_MOUNT": "重击",
     "socketable.modifier.BEAM_WEAPON_DAMAGE_PERCENT_WEAPON_MOUNT": "聚焦",
     "socketable.modifier.CR_LOSS_PER_SECOND_PERCENT_BRIDGE": "不倦",
