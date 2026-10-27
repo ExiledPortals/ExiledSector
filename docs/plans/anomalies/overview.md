@@ -4,7 +4,7 @@ An anomaly is anything a star chart system holds beyond its ordinary layout, fle
 
 | Anomaly | Plan | Fights it adds |
 |---|---|---|
-| Relay Network | `relay_network.md` | none, changes every chart battle |
+| Relay Network | `relay_network.md` | none, escalates the systems it leads to |
 | Excavation Sites | `excavation_sites.md` | none, scales the boss |
 | Faction Skirmish | `faction_skirmish.md` | two sides' fleets; you join one or fight both |
 | The Hunter | `the_hunter.md` | one, optional, on your terms |
