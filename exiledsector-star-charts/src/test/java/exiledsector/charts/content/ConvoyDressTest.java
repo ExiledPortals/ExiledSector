@@ -10,6 +10,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -51,6 +53,20 @@ class ConvoyDressTest {
         verify(convoy).setShipNamePrefixOverride("HSS");
         verify(convoy).setFactionCrestOverride("crest");
         verify(convoy).setRelationship(Factions.PLAYER, RepLevel.NEUTRAL);
+    }
+
+    @Test
+    void theConvoyFactionIsNeutralWithEveryOtherFaction() {
+        FactionAPI pirates = mock(FactionAPI.class);
+        when(pirates.getId()).thenReturn(Factions.PIRATES);
+        when(mockSector.sector.getAllFactions()).thenReturn(List.of(convoy, hegemony, pirates));
+        when(hegemony.getId()).thenReturn("hegemony");
+
+        new VanillaChartContentEngine().dressConvoy("hegemony");
+
+        verify(convoy).setRelationship("hegemony", RepLevel.NEUTRAL);
+        verify(convoy).setRelationship(Factions.PIRATES, RepLevel.NEUTRAL);
+        verify(convoy, never()).setRelationship(ConvoyRules.FACTION_ID, RepLevel.NEUTRAL);
     }
 
     @Test

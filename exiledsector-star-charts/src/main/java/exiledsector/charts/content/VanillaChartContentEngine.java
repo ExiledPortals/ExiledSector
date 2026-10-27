@@ -204,8 +204,17 @@ final class VanillaChartContentEngine implements ChartContentEngine {
     @Override
     public String dressConvoy(String factionId) {
         FactionAPI faction = Global.getSector().getFaction(factionId);
-        return faction == null ? null : dress(ConvoyRules.FACTION_ID, faction, Translation.gameText("chart.convoy.faction.name"),
+        String convoyId = faction == null ? null : dress(ConvoyRules.FACTION_ID, faction, Translation.gameText("chart.convoy.faction.name"),
                 Translation.gameText("chart.convoy.faction.nameWithArticle"), Translation.gameText("chart.convoy.faction.isOrAre"), RepLevel.NEUTRAL);
+        if (convoyId != null) {
+            FactionAPI convoy = Global.getSector().getFaction(convoyId);
+            for (FactionAPI other : Global.getSector().getAllFactions()) {
+                if (other != null && other != convoy && !convoyId.equals(other.getId())) {
+                    convoy.setRelationship(other.getId(), RepLevel.NEUTRAL);
+                }
+            }
+        }
+        return convoyId;
     }
 
     private static String dress(String runFactionId, FactionAPI faction, String name, String nameWithArticle, String isOrAre, RepLevel towardsPlayer) {
