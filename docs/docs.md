@@ -385,6 +385,18 @@ biome borders: no system sits under one and lanes route around them, and a grid 
 Gateway and every Bastion joined to the rest of the map (`AtlasTerrain`). A biome or Threat infestation behind
 an unlock is decided when first seen, and that is saved.
 
+## Atlas Catalysts
+
+Atlas Catalysts are special items listed in `atlas_catalysts.csv` (`AtlasCatalysts`) and used on a revealed atlas system.
+Most insert their anomaly as a player record through `AtlasAnomalies.canInsert` and `insert` (`AnomalyCatalystUse`), so
+an anomaly they add takes the system's own faction. Redeployment Orders instead hand the system to another faction from its
+biome's list, raced on the atlas seed, the system and its current owner so a reload never changes the pick, and stored
+as a capture (`RedeploymentCatalystUse`). Both go through core `Consumables.use`, which spends the item only once the change has taken.
+
+Every chart drop source inside a live run rolls its `catalyst_chance` from `chart_drops.csv` after its chart currency,
+picking by weight among catalysts whose `min_tier` the run's tier reaches (`ChartDrops.roll`, `AtlasCatalysts.pickDrop`).
+The Catalyst % chart line and the quantity lines scale the chance, and nothing outside chart systems drops one.
+
 ## Modspec caches
 
 The Contraband Modspec Cache (`contraband_modspec_cache`, kind `MODSPEC_CACHE`) is a corrupted unique
