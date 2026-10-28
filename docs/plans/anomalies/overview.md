@@ -45,4 +45,4 @@ Players favour one anomaly over the others with intel and atlas passives, and ca
 The atlas comes first. These steps sit inside `../atlas.md`'s build order (its steps 2, 3c, 12, 13 and 16).
 
 1. [~] Anomaly framework: `ChartAnomaly`, `chart_anomalies.csv`, the per-node roll, run requests, tooltip line, run state and cleanup, with one test anomaly that places nothing (`ChartAnomaliesTest.PlacesNothing`), plus inserted anomalies (`../atlas.md` step 17). Not built: icon and intel columns' use, which wait for the marker icons and the intel item.
-2. [~] Anomalies one at a time, each to its own plan's build order. Built apart from in-game checks: Faction Skirmish, Relay Network, Supply Convoy, Anomalous Debris and Excavation Sites. Suggested order for the rest: Storm Front, Derelict Forge, Listening Post.
+2. [~] Anomalies one at a time, each to its own plan's build order. Built apart from in-game checks: Faction Skirmish, Relay Network, Supply Convoy, Anomalous Debris, Excavation Sites and Derelict Forge. Suggested order for the rest: Storm Front, Listening Post.

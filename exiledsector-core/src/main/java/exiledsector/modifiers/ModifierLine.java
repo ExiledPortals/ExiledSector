@@ -147,6 +147,22 @@ public record ModifierLine(String effectName, float min, float max, ValueScaling
         return (float) (Math.signum(middleStep) * Math.round(Math.abs(middleStep)) / steps.perUnit());
     }
 
+    public float bestRoll(ScaleContext context, boolean lowerIsBetter) {
+        RollSteps steps = steps();
+        if (steps.highest() < steps.lowest()) {
+            return Math.round(min * steps.perUnit()) / steps.perUnit();
+        }
+        float lowestRoll = steps.lowest() / steps.perUnit();
+        float highestRoll = steps.highest() / steps.perUnit();
+        return isBetter(lowestRoll, highestRoll, context, lowerIsBetter) ? lowestRoll : highestRoll;
+    }
+
+    public boolean isBetter(float candidateRoll, float currentRoll, ScaleContext context, boolean lowerIsBetter) {
+        float candidateValue = valueFor(candidateRoll, context);
+        float currentValue = valueFor(currentRoll, context);
+        return lowerIsBetter ? candidateValue < currentValue : candidateValue > currentValue;
+    }
+
     public int stepCount() {
         RollSteps steps = steps();
         return Math.max(1, steps.highest() - steps.lowest() + 1);

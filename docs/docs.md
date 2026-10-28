@@ -361,6 +361,22 @@ and 10% stronger per tier, so shields block it. `StarChartLootSource` records th
 auto-resolved battles count too, and `ChartFleetLoot` rolls chart fleet items with 50% more quantity, rerolling a
 quarter of hull items around one reserved storm modifier (`StormLoot`, `GrantedModifiers`).
 
+## Derelict Forge
+
+The anomaly places one neutral station on a clear orbit and rolls three programs (plus the programs line) from
+`chart_forge_programs.csv` by weight and tier, with one run (plus the runs line), kept on the run record
+(`DerelictForge`, `ForgeStates`, `ForgePrograms`; package `charts.anomaly.forge`). Its `effects` column adds +100%
+Resource %. `ForgeDialog` lists the programs and their costs in metals, rare metals and Nanite Feedstock, which grow
+15% per tier and follow the cost line (`ForgeRules`), and opens the Modification Bench in Forge mode (`ForgeBench`),
+which takes hull items only.
+
+The programs are `ForgeOperation`s in core (`ItemForging`), refusing mirrored, corrupted and locked items as nanoswarms
+do. Graft groups modifiers by the `skilleffect` subpackage of each line's effect, so a hybrid counts for every part it
+touches. Perfect and Retemper take the best end of a range for the player: the higher value, or the lower one for
+effects whose description colours invert (`ModifierLine.bestRoll`). Excise, Anchor Reroll and Graft refuse uniques, and
+Excise and Anchor Reroll leave immutable modifiers alone. `ChartForge.run` takes the cost and the run only once the
+program has changed the item.
+
 ## Transverse Jump in charts
 
 In any chart system, Transverse Jump takes the fleet back to where the chart was opened, the same as the exit

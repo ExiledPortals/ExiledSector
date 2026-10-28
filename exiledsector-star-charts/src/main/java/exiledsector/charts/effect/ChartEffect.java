@@ -8,6 +8,7 @@ import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.convoy.SupplyConvoy;
 import exiledsector.charts.anomaly.debris.AnomalousDebris;
 import exiledsector.charts.anomaly.excavation.ExcavationSites;
+import exiledsector.charts.anomaly.forge.DerelictForge;
 import exiledsector.charts.anomaly.relay.RelayNetwork;
 import exiledsector.charts.anomaly.storm.StormFront;
 import exiledlib.i18n.Message;
@@ -112,7 +113,15 @@ public enum ChartEffect implements ModifierEffect {
     CHART_EXCAVATION_LOOT_QUANTITY_PERCENT(false, (context, value) -> context.addAnomalyPercent(ExcavationSites.LOOT_KEY, value)),
     CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT(false, (context, value) -> context.addAnomalyPercent(StormFront.LOOT_KEY, value)),
     CHART_STORM_STRIKE_FREQUENCY_PERCENT(false, (context, value) -> context.addAnomalyPercent(StormFront.STRIKE_KEY, value)),
-    CHART_STORM_FRONT_SIZE_PERCENT(false, (context, value) -> context.addAnomalyPercent(StormFront.SIZE_KEY, value));
+    CHART_STORM_FRONT_SIZE_PERCENT(false, (context, value) -> context.addAnomalyPercent(StormFront.SIZE_KEY, value)),
+    CHART_FORGE_PROGRAMS(true, (context, value) -> context.addAnomalyPercent(DerelictForge.EXTRA_PROGRAMS_KEY, Math.round(value))),
+    CHART_FORGE_RUNS(true, (context, value) -> context.addAnomalyPercent(DerelictForge.EXTRA_RUNS_KEY, Math.round(value))),
+    CHART_FORGE_COST_PERCENT(false, (context, value) -> context.addAnomalyPercent(DerelictForge.COST_KEY, value)) {
+        @Override
+        public StyledText description(float magnitude) {
+            return Translation.msg(magnitude < 0f ? key() + REDUCED_SUFFIX : key()).arg("value", Math.abs(magnitude)).styled();
+        }
+    };
 
     static final String KEY_PREFIX = "chart.effect.";
     static final String REDUCED_SUFFIX = ".reduced";

@@ -203,7 +203,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     public void load(Item item) {
         queue(() -> {
-            if (item == loadedItem || (item != null && BenchModes.modeFor(item.type()) != benchMode)) {
+            if (item == loadedItem || (item != null && !BenchModes.accepts(benchMode, item))) {
                 return;
             }
             cancelConfirm();
@@ -741,8 +741,8 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         BenchModeSupport.OpenTarget openTarget = workbenchListener.openTarget();
         pendingOpenItem = loadedItem;
         pendingOpenTarget = openTarget == null ? null : openTarget.target();
-        List<String> confirmLines = openTarget == null ? List.of() : openTarget.confirmLines().get();
-        List<BenchModeSupport.OpenChoice> choices = openTarget == null ? List.of() : openTarget.choices().get();
+        List<String> confirmLines = modeSupport().confirmLines(loadedItem, openTarget);
+        List<BenchModeSupport.OpenChoice> choices = modeSupport().openChoices(loadedItem, openTarget);
         if (choices.isEmpty()) {
             showOpenConfirm(confirmLines);
         } else {
@@ -758,7 +758,9 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         List<String> labels = new ArrayList<>();
         List<Object> ids = new ArrayList<>();
         for (BenchModeSupport.OpenChoice choice : choices) {
-            lines.add(choice.description());
+            if (choice.description() != null && !choice.description().isEmpty()) {
+                lines.add(choice.description());
+            }
             labels.add(choice.label());
             ids.add(new OpenChoiceButton(choice.target()));
         }
@@ -783,8 +785,10 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         for (String line : confirmLines) {
             VanillaText.plainPara(element, line, LINE_PAD, Misc.getHighlightColor());
         }
-        VanillaText.plainPara(element, Translation.msg(openTexts.confirmEntriesKey()).count(entries).text(), LINE_PAD * 2f,
-                Misc.getGrayColor());
+        if (openTexts.confirmEntriesKey() != null) {
+            VanillaText.plainPara(element, Translation.msg(openTexts.confirmEntriesKey()).count(entries).text(), LINE_PAD * 2f,
+                    Misc.getGrayColor());
+        }
     }
 
     private void confirmOpen() {
@@ -806,7 +810,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             return;
         }
         wormholeOpened = true;
-        SkillTreeSounds.wormholeJumped();
+        modeSupport().playOpened();
         rebuildOpenButton();
         refreshOpacity();
         workbenchListener.wormholeOpened(message);
@@ -828,7 +832,10 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             float tileCentreY = socketY - benchMode.orbitRadiusY() * sceneScale * (float) Math.sin(angle);
             addTile(element, shownCurrencies.get(i), tileCentreX - tileSize / 2f, tileCentreY - tileSize / 2f, tileSize, materials);
         }
-        addInhibitorTiles(element, tileSize, materials);
+        BenchModeSupport support = domainSupport();
+        if (support == null || support.usesInhibitors()) {
+            addInhibitorTiles(element, tileSize, materials);
+        }
         recipesElement = replaceElement(recipesElement, element, FRAME_INSET, FRAME_INSET);
     }
 

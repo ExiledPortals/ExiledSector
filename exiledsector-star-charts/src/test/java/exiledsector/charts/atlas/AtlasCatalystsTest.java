@@ -36,7 +36,7 @@ class AtlasCatalystsTest {
 
         assertEquals(List.of(), problems);
         assertEquals(Set.of("spatial_breach", "asteroid_storm", "magnetic_storm", "stellar_flares", "anomalous_debris", "excavation_sites",
-                "relay_network", "supply_convoy", "storm_front"), Set.copyOf(AtlasCatalysts.all().stream().filter(catalyst -> catalyst.effect() == AtlasCatalysts.Effect.ANOMALY)
+                "relay_network", "supply_convoy", "storm_front", "derelict_forge"), Set.copyOf(AtlasCatalysts.all().stream().filter(catalyst -> catalyst.effect() == AtlasCatalysts.Effect.ANOMALY)
                 .map(AtlasCatalysts.Catalyst::anomalyId).toList()));
         AtlasCatalysts.Catalyst redeployment = AtlasCatalysts.byItemId("exiledSector_redeployment_orders");
         assertNotNull(redeployment);

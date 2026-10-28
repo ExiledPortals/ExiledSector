@@ -1,0 +1,6 @@
+id,weight,min_tier,item_types,metals,rare_metals,feedstock,note
+graft,1,1,hull_item,60,15,35,"Adds a modifier of a chosen ship part"
+excise,1,1,hull_item,40,10,25,"Removes a chosen modifier"
+perfect,1,1,hull_item,80,25,50,"Sets a chosen modifier to the top of its range"
+anchor_reroll,1,1,hull_item,60,20,35,"Rerolls every modifier but a chosen one"
+retemper,1,1,hull_item,40,10,20,"Rerolls the implicit values, keeping the better roll of each line"

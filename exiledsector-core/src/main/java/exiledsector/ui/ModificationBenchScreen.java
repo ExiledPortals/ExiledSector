@@ -7,6 +7,8 @@ import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import exiledlib.skills.skilleffect.render.Fade;
 import exiledsector.items.SocketCustody;
+import exiledsector.ui.socket.BenchMode;
+import exiledsector.ui.socket.BenchModeSupport;
 import exiledsector.ui.socket.ModificationBay;
 import exiledsector.ui.socket.SocketPanelPlacement;
 import exiledsector.ui.util.GLDraw;
@@ -16,6 +18,7 @@ import org.lwjgl.input.Keyboard;
 import java.awt.Color;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 final class ModificationBenchScreen extends BaseCustomUIPanelPlugin implements CampaignOverlay.Screen {
 
@@ -36,6 +39,9 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin implements C
     }
 
     private final CampaignOverlay.Host host;
+    private final BenchMode benchMode;
+    private final BenchModeSupport.OpenTarget openTarget;
+    private final Consumer<String> opened;
     private CustomPanelAPI hostPanel;
     private ModificationBay bay;
     private Map<String, FleetMemberAPI> ownedShips = Map.of();
@@ -45,7 +51,14 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin implements C
     private boolean closeRequested;
 
     ModificationBenchScreen(CampaignOverlay.Host host) {
+        this(host, null, null, null);
+    }
+
+    ModificationBenchScreen(CampaignOverlay.Host host, BenchMode benchMode, BenchModeSupport.OpenTarget openTarget, Consumer<String> opened) {
         this.host = host;
+        this.benchMode = benchMode;
+        this.openTarget = openTarget;
+        this.opened = opened;
     }
 
     @Override
@@ -78,8 +91,15 @@ final class ModificationBenchScreen extends BaseCustomUIPanelPlugin implements C
                 public void pressedInside() {
                 }
 
+                @Override
+                public void wormholeOpened(String message) {
+                    if (opened != null) {
+                        opened.accept(message);
+                    }
+                }
             };
-            bay = ModificationBay.open(hostPanel, area, SocketCustody.shipNames(ownedShips), bayListener);
+            bay = benchMode == null ? ModificationBay.open(hostPanel, area, SocketCustody.shipNames(ownedShips), bayListener)
+                    : ModificationBay.openMode(hostPanel, area, benchMode, SocketCustody.shipNames(ownedShips), openTarget, bayListener);
         }
         if (closing && openLevel <= 0f && !closeRequested) {
             closeRequested = true;

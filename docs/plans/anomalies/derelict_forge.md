@@ -1,32 +1,32 @@
 # Anomaly: Derelict Forge
 
-A Domain nanoforge the lockdown missed is still running on a derelict station in the system. It can do precise work the crew's nanoswarms can't: add a modifier of a chosen kind, remove a chosen modifier, perfect one. Each forge offers a few programs, and running one costs metals and rare metals, which the system itself helps you gather. There are no fights.
+A Domain nanoforge the lockdown missed is still running on a derelict station in the system. It can do precise work the crew's nanoswarms can't: add a modifier of a chosen kind, remove a chosen modifier, perfect one. Each forge offers a few programs, and running one costs metals, rare metals and Nanite Feedstock, which the system itself helps you gather. There are no fights.
 
-Status: planned, nothing built. Proposed 2026-10-28. See `overview.md` for the shared framework.
+Status: built 2026-10-29 apart from the in-game checks (package `exiledsector.charts.anomaly.forge`, programs in core `ItemForging`); move this plan to `completed/anomalies/` once those are done. Proposed 2026-10-28. See `overview.md` for the shared framework.
 
 ## Lore
 
-The crews reprogram nanoswarms because the Domain's licensed nanoforges are locked down. This one never got the lockdown signal. It still takes raw stock and runs its programs, and a crew that feeds it can direct a single, exact change to a hull item or subroutine.
+The crews reprogram nanoswarms because the Domain's licensed nanoforges are locked down. This one never got the lockdown signal. It still takes raw stock and runs its programs, and a crew that feeds it can direct a single, exact change to a hull item.
 
 ## How it plays
 
-The chart places the forge station on a clear orbit (`AnomalyContentSite.clearOrbit`). Interacting with it opens a dialog of ours listing the forge's programs, each with its cost. Choosing one opens a Forge mode on the Modification Bench to pick the item, and the modifier where the program needs one. The forge runs one program per run (placeholder), after which it goes dark.
+The chart places the forge station on a clear orbit (`AnomalyContentSite.clearOrbit`). Interacting with it opens a dialog of ours listing the forge's programs, each with its cost. Choosing one opens a Forge mode on the Modification Bench, drawn over its own forge chamber art, to pick a hull item, and the modifier or ship part where the program needs one. Subroutines, Star Charts and corrupted hull items can't be forged (decided 2026-10-29). The forge runs one program per run (placeholder), after which it goes dark.
 
 While the forge is in the system, the chart's sites lean toward resources (`DropType.RESOURCE`, placeholder +100%), so a player who sweeps the system can usually fuel it from what they find.
 
 ## Programs
 
-Each forge rolls three programs (placeholder) from `data/config/exiledSector/chart_forge_programs.csv` (`id,weight,min_tier,item_types,metals,rare_metals,note`) on the chart seed. Starting rows, all placeholders:
+Each forge rolls three programs (placeholder) from `data/config/exiledSector/chart_forge_programs.csv` (`id,weight,min_tier,item_types,metals,rare_metals,feedstock,note`) on the chart seed. Starting rows, all placeholders:
 
 | Program | What it does |
 |---|---|
 | Graft | Adds a modifier whose effect belongs to a chosen ship part (the subpackage of `exiledlib.skills.skilleffect` the line's effect lives in: shield, flux, weapon and so on) to an item with room for one. |
 | Excise | Removes a chosen modifier. |
-| Perfect | Sets a chosen modifier's values to the top of its range. |
-| Anchor reroll | Rerolls every modifier but a chosen one. |
+| Perfect | Sets a chosen modifier's values to the best end of its range for the player: the highest value, or the least harmful for a negative effect, so a "-5% to -10% damage dealt" line perfects to -5%. |
+| Anchor reroll | Rerolls every other modifier into new ones, keeping the chosen one and the modifier count. |
 | Retemper | Rerolls a hull item's implicit values, keeping the better roll of the old and the new for each line. |
 
-Costs scale with tier (placeholder). Items the currency can't touch are refused in the same way (`ItemCrafting.isLockedFromCurrency`, corrupted and mirrored items), and an immutable modifier can't be excised, rerolled or replaced. Prefix and Suffix Inhibitors don't apply, because every program picks exactly what it touches.
+Each program costs metals, rare metals and 20 to 50 Nanite Feedstock, all scaling with tier (placeholders). Graft, Excise and Anchor reroll refuse unique items; Perfect and Retemper accept them. Items the currency can't touch are refused in the same way (`ItemCrafting.isLockedFromCurrency`, corrupted and mirrored items), and an immutable modifier can't be excised, rerolled or replaced. Prefix and Suffix Inhibitors don't apply, because every program picks exactly what it touches.
 
 ## Rewards
 
@@ -42,15 +42,20 @@ Tuning lines are chart effects carried by an atlas source, per `overview.md`:
 
 ## Build order
 
-1. [ ] The anomaly class (`exiledsector.charts.anomaly.forge`) and its insertable `chart_anomalies.csv` row; the forge station on a clear orbit, its rolled programs and runs left in `ChartRunState`; the resource leaning on the system's sites.
-2. [ ] `chart_forge_programs.csv` and its loader; each program as an operation on `Item` next to `ItemCrafting`, sharing its refusal rules, with tests per program.
-3. [ ] The forge dialog through `ChartCampaignPlugin.pickInteractionDialogPlugin`, and the Forge bench mode registered through `StarChartsDomain.benchModes` (item picker, modifier picker, cost and a confirmation).
-4. [ ] Chart modifier lines, strings (en and zh_CN), the atlas marker icon, the `docs/docs.md` section and tests.
-5. [ ] The Forge Survey catalyst (`atlas_catalysts.md`): the `atlas_catalysts.csv` row (survey family), its `special_items.csv` row and name strings (en and zh_CN); it loads once the anomaly has its icon.
+1. [x] The anomaly class (`exiledsector.charts.anomaly.forge`) and its insertable `chart_anomalies.csv` row; the forge station on a clear orbit, its rolled programs and runs left in `ChartRunState`; the resource leaning on the system's sites. Built: `DerelictForge` (a neutral `station_mining` entity tagged `FORGE_TAG` on the first clear orbit in 2000 su bands from 2500 su out), `ForgeStates` (offered programs and runs left in the run's anomaly state), `ForgeRules`; the leaning is `CHART_RESOURCE_PERCENT:100` in the row's `effects`. Tests: `DerelictForgeTest`.
+2. [x] `chart_forge_programs.csv` and its loader; each program as an operation on `Item` next to `ItemCrafting`, sharing its refusal rules, with tests per program. Built: `ForgePrograms` (loaded after `AtlasCatalysts`), and in core `ForgeOperation`, `ForgeChoice` and `ItemForging`, sharing the mirrored, corrupted and locked rules of `ItemCrafting`; Graft reads each line's part from its effect's `skilleffect` subpackage (`ItemForging.partOf`), so a hybrid counts for every part it touches; Perfect and Retemper use `ModifierLine.bestRoll` and `isBetter` with the effect's `invertsDescriptionColours`. Tests: `ItemForgingTest` (hull-upgrades), `ForgeProgramsTest`.
+3. [x] The forge dialog through `ChartCampaignPlugin.pickInteractionDialogPlugin`, and the Forge bench mode registered through `StarChartsDomain.benchModes` (item picker, modifier picker, cost and a confirmation). Built: `ForgeDialog` (programs, costs and stock; opens the bench with `ModificationBenchCargoLauncher.openMode` and reports the result), `ForgeBench` (`BenchMode.FORGE`, art `graphics/ui/exiledSector/derelict_forge.png`, hull item storage as the picker, no nanoswarm or Inhibitor tiles, a Run Program button whose confirmation names the program, a prompt and the cost and offers one button per modifier, "Keep ..." buttons for Anchor reroll, or per ship part), `ChartForge` (verdict and run: the cost and the run are taken only after the program changed the item). Core bench hooks: `BenchModeSupport.accepts`, `usesInhibitors`, `confirmLines`, `openChoices`, `playOpened`. Tests: `ChartForgeTest` (mod).
+4. [x] Chart modifier lines, strings (en and zh_CN), the atlas marker icon, the `docs/docs.md` section and tests. Built: `ChartEffect.CHART_FORGE_PROGRAMS`, `CHART_FORGE_RUNS` and `CHART_FORGE_COST_PERCENT` (reads "reduced" when negative), carried by no source yet; `chart.forge.*` strings and `ui.forge.refused.*` in core (zh draft); docs section "Derelict Forge"; atlas icon `graphics/icons/anomalies/derelict_forge.png`, a circular crop of vanilla's pristine nanoforge item icon.
+5. [x] The Forge Survey catalyst (`atlas_catalysts.md`): the `atlas_catalysts.csv` row (survey family), its `special_items.csv` row and name strings (en and zh_CN); it loads once the anomaly has its icon. Built: row `exiledSector_forge_survey` (survey family), special item row (order 935), names in both catalogues. Tests: `AtlasCatalystsTest`.
 
 ## Open questions
 
-- How Graft groups modifiers by part: through the effect's registry entry in `SkillEffectRegistry`, or a `part` column on `item_modifiers.csv`. Lines whose effects span parts need a rule.
-- Whether Star Charts can be forged too, and which programs make sense for them.
-- Whether programs that pick a modifier are too strong against Reshaping and Tuning Nanoswarms, and need a higher cost or fewer runs at low tiers.
-- Whether some programs should cost Nanite Feedstock as well as metals.
+- Whether programs that pick a modifier are too strong against Reshaping and Tuning Nanoswarms, and need a higher cost or fewer runs at low tiers (left to balance for now).
+
+## Resolved questions
+
+- Graft finds a modifier's ship part automatically from its effect's package in `exiledlib.skills.skilleffect`, with no csv column; a hybrid counts under every part any of its lines belongs to.
+- The forge takes uncorrupted hull items only: no subroutines and no Star Charts.
+- Every program also costs Nanite Feedstock, 20 to 50 per run before tier scaling.
+- Anchor reroll rerolls the other modifiers themselves, not just their values.
+- Graft, Excise and Anchor reroll refuse unique hull items; Perfect and Retemper accept them (decided 2026-10-29).

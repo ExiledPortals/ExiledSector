@@ -10,6 +10,8 @@ import exiledsector.charts.anomaly.convoy.ConvoyDialogs;
 import exiledsector.charts.anomaly.debris.DormantFleetDialog;
 import exiledsector.charts.anomaly.debris.DormantFleets;
 import exiledsector.charts.anomaly.excavation.ExcavationSiteDialog;
+import exiledsector.charts.anomaly.forge.DerelictForge;
+import exiledsector.charts.anomaly.forge.ForgeDialog;
 import exiledsector.charts.anomaly.excavation.ShaftBattleCreationPlugin;
 import exiledsector.charts.anomaly.excavation.ShaftEncounters;
 import exiledsector.charts.anomaly.relay.RelayDialog;
@@ -40,6 +42,9 @@ public class ChartCampaignPlugin extends BaseCampaignPlugin {
         }
         if (ChartWormholeDialog.isChartWormhole(interactionTarget)) {
             return new PluginPick<>(new ChartWormholeDialog(), CampaignPlugin.PickPriority.MOD_SPECIFIC);
+        }
+        if (DerelictForge.isForge(interactionTarget)) {
+            return new PluginPick<>(new ForgeDialog(), CampaignPlugin.PickPriority.MOD_SPECIFIC);
         }
         if (ExcavationSiteDialog.wantsToHandle(interactionTarget)) {
             return new PluginPick<>(new ExcavationSiteDialog(), CampaignPlugin.PickPriority.MOD_SPECIFIC);
