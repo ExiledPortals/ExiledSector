@@ -34,9 +34,9 @@ class AtlasCatalystsTest {
     void theShippedTableLoadsEveryCatalystWhoseAnomalyCanBeInsertedAndSkipsTheRest() throws Exception {
         List<String> problems = AtlasCatalysts.register(ChartTables.csvRows(AtlasCatalysts.PATH));
 
-        assertEquals(List.of("exiledSector_convoy_orders skipped: anomaly 'supply_convoy' has no icon"), problems);
+        assertEquals(List.of(), problems);
         assertEquals(Set.of("spatial_breach", "asteroid_storm", "magnetic_storm", "stellar_flares", "anomalous_debris", "excavation_sites",
-                "relay_network"), Set.copyOf(AtlasCatalysts.all().stream().filter(catalyst -> catalyst.effect() == AtlasCatalysts.Effect.ANOMALY)
+                "relay_network", "supply_convoy"), Set.copyOf(AtlasCatalysts.all().stream().filter(catalyst -> catalyst.effect() == AtlasCatalysts.Effect.ANOMALY)
                 .map(AtlasCatalysts.Catalyst::anomalyId).toList()));
         AtlasCatalysts.Catalyst redeployment = AtlasCatalysts.byItemId("exiledSector_redeployment_orders");
         assertNotNull(redeployment);
@@ -65,6 +65,17 @@ class AtlasCatalystsTest {
         List<String> problems = AtlasCatalysts.register(rows);
 
         assertEquals(List.of("test_catalyst skipped: family 'relic' is not terminus, survey or orders"), problems);
+        assertNull(AtlasCatalysts.byItemId("test_catalyst"));
+    }
+
+    @Test
+    void aRowWhoseAnomalyHasNoIconIsSkipped() throws Exception {
+        ChartAnomalies.useForTests(List.of(new ChartAnomalies.Definition("spatial_breach", 1f, 1, 15, "", "", true, Set.of(), false, List.of())));
+        JSONArray rows = new JSONArray().put(new JSONObject().put("id", "test_catalyst").put("anomaly", "spatial_breach").put("family", "terminus"));
+
+        List<String> problems = AtlasCatalysts.register(rows);
+
+        assertEquals(List.of("test_catalyst skipped: anomaly 'spatial_breach' has no icon"), problems);
         assertNull(AtlasCatalysts.byItemId("test_catalyst"));
     }
 
