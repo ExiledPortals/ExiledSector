@@ -451,6 +451,12 @@ public abstract class Item {
         return lines;
     }
 
+    public List<StyledText> explicitLines(RolledModifier explicitModifier) {
+        List<SlottedLine> lines = new ArrayList<>();
+        addModifierLines(lines, explicitModifier, explicitModifier(explicitModifier.modifierId()), modifierEffects(), false, scaleContext(null));
+        return texts(lines);
+    }
+
     private void addModifierLines(List<SlottedLine> lines, RolledModifier rolledModifier, Modifier modifier, ModifierEffects effects,
                                   boolean withRollRanges, ScaleContext context) {
         List<StyledText> descriptions = new ArrayList<>();

@@ -11,3 +11,4 @@ relay_network,1,1,15,,graphics/icons/anomalies/relay_network.png,,yes,,,"A dorma
 supply_convoy,1,1,15,,graphics/icons/anomalies/supply_convoy.png,,yes,,,"A friendly escorted convoy runs a visible route to a planet; attack it for cargo pods or raid the cache it delivers"
 anomalous_debris,1,1,15,,graphics/icons/anomalies/anomalous_debris.png,,yes,,,"Debris fields hiding dormant AI-core fleets that wait for the player to strike; corrupting one first drops an engram"
 excavation_sites,1,1,15,,graphics/icons/anomalies/excavation_sites.png,,yes,,,"AI War bolt-holes under some planets, each with its own items: an open shaft is a fight between frigates and destroyers only, a collapsed one a marine raid"
+derelict_forge,1,1,15,,graphics/icons/anomalies/derelict_forge.png,,yes,,CHART_RESOURCE_PERCENT:100,"A Domain nanoforge on a derelict station runs a few precise programs on hull items and subroutines for metals and rare metals"

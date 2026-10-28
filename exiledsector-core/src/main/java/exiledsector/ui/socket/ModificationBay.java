@@ -177,17 +177,17 @@ public final class ModificationBay {
 
     private void openPicker(SocketPanelPlacement placement) {
         BenchModeSupport modeSupport = BenchModes.of(benchMode);
-        if (modeSupport != null) {
-            openModePicker(modeSupport, placement);
+        if (modePicker == null && modeSupport != null) {
+            modePicker = modeSupport.pickerSession();
+        }
+        if (modePicker != null) {
+            openModePicker(placement);
         } else {
-            openStorage(placement);
+            openStorage(placement, hullItemsOnly || modeSupport != null);
         }
     }
 
-    private void openModePicker(BenchModeSupport modeSupport, SocketPanelPlacement placement) {
-        if (modePicker == null) {
-            modePicker = modeSupport.pickerSession();
-        }
+    private void openModePicker(SocketPanelPlacement placement) {
         modePicker.open(hostPanel, placement, benchPanel == null ? null : benchPanel.loaded(), new BenchModeSupport.PickerListener() {
             @Override
             public boolean accepting() {
@@ -225,7 +225,7 @@ public final class ModificationBay {
         });
     }
 
-    private void openStorage(SocketPanelPlacement placement) {
+    private void openStorage(SocketPanelPlacement placement, boolean onlyHullItems) {
         storagePanel = ItemStoragePanel.openPicker(hostPanel, placement, installedShipLookup, new ItemStoragePanel.Listener() {
             @Override
             public void selected(Item item) {
@@ -268,7 +268,7 @@ public final class ModificationBay {
                     benchPanel.refresh();
                 }
             }
-        }, hullItemsOnly);
+        }, onlyHullItems);
         if (benchPanel != null && benchPanel.loaded() != null) {
             storagePanel.setSelected(benchPanel.loaded());
         }

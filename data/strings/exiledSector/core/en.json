@@ -282,5 +282,15 @@
     "socketable.tooltip.mirrored": "<hl>Mirrored</hl>",
     "socketable.tooltip.corrupted": "<bad>Corrupted</bad>",
     "codex.socketables.range": "{low} to {high}",
-    "codex.socketables.rangeGrouped": "({low} to {high})"
+    "codex.socketables.rangeGrouped": "({low} to {high})",
+    "ui.forge.refused.loadFirst": "Load a hull item first.",
+    "ui.forge.refused.itemType": "The forge can't work on this kind of item.",
+    "ui.forge.refused.mirrored": "Mirrored items can't be forged.",
+    "ui.forge.refused.corrupted": "Corrupted items can't be forged.",
+    "ui.forge.refused.uniqueSubroutine": "The forge can't modify a unique subroutine.",
+    "ui.forge.refused.graft": "This item has no room for a modifier the forge can graft.",
+    "ui.forge.refused.excise": "This item has no modifier the forge can remove.",
+    "ui.forge.refused.perfect": "Every modifier on this item is already at the top of its range.",
+    "ui.forge.refused.anchor_reroll": "This item needs at least two modifiers that can be rerolled.",
+    "ui.forge.refused.retemper": "This item's implicit values are already at the top of their range."
 }

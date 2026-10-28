@@ -11,6 +11,7 @@ import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemStore;
 import exiledsector.items.ItemType;
 import exiledsector.items.UseVerdict;
+import exiledsector.ui.SkillTreeSounds;
 
 import java.util.List;
 import java.util.Random;
@@ -90,6 +91,14 @@ public interface BenchModeSupport {
 
     ItemType itemType();
 
+    default boolean accepts(Item item) {
+        return item != null && item.type() == itemType();
+    }
+
+    default boolean usesInhibitors() {
+        return true;
+    }
+
     boolean enabled();
 
     ItemStore store();
@@ -122,6 +131,18 @@ public interface BenchModeSupport {
 
     default OpenCheck openCheck(SectorAPI sector, ItemStore store, Item loaded, Object target) {
         return openCheck(sector, store, loaded);
+    }
+
+    default List<String> confirmLines(Item loaded, OpenTarget target) {
+        return target == null ? List.of() : target.confirmLines().get();
+    }
+
+    default List<OpenChoice> openChoices(Item loaded, OpenTarget target) {
+        return target == null ? List.of() : target.choices().get();
+    }
+
+    default void playOpened() {
+        SkillTreeSounds.wormholeJumped();
     }
 
     int openEntries();

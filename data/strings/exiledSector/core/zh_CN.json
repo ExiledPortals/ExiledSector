@@ -653,5 +653,15 @@
     "socketable.tooltip.mirrored": "<hl>镜像</hl>",
     "socketable.tooltip.corrupted": "<bad>已腐化</bad>",
     "codex.socketables.range": "{low}至{high}",
-    "codex.socketables.rangeGrouped": "（{low}至{high}）"
+    "codex.socketables.rangeGrouped": "（{low}至{high}）",
+    "ui.forge.refused.loadFirst": "请先装入一件船体部件。",
+    "ui.forge.refused.itemType": "熔炉无法处理这类物品。",
+    "ui.forge.refused.mirrored": "镜像物品无法锻造。",
+    "ui.forge.refused.corrupted": "已腐化的物品无法锻造。",
+    "ui.forge.refused.uniqueSubroutine": "熔炉无法修改独特子程序。",
+    "ui.forge.refused.graft": "这件物品没有可供熔炉嫁接词缀的空位。",
+    "ui.forge.refused.excise": "这件物品没有熔炉可以移除的词缀。",
+    "ui.forge.refused.perfect": "这件物品的每条词缀都已达到其范围的上限。",
+    "ui.forge.refused.anchor_reroll": "这件物品至少需要两条可以重铸的词缀。",
+    "ui.forge.refused.retemper": "这件物品的固有数值都已达到其范围的上限。"
 }

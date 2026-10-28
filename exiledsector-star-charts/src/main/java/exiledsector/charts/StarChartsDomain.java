@@ -31,6 +31,7 @@ import exiledsector.items.StarChartItems;
 import exiledsector.loot.FleetDifficulty;
 import exiledsector.loot.LootSource;
 import exiledsector.ui.cargo.CatalystIconFx;
+import exiledsector.ui.chart.ForgeBench;
 import exiledsector.ui.chart.StarChartBench;
 import exiledsector.ui.chart.WormholeGatewayOption;
 import exiledsector.ui.socket.BenchModeSupport;
@@ -150,7 +151,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
 
     @Override
     public List<BenchModeSupport> benchModes() {
-        return List.of(StarChartBench.INSTANCE);
+        return List.of(StarChartBench.INSTANCE, ForgeBench.INSTANCE);
     }
 
     @Override

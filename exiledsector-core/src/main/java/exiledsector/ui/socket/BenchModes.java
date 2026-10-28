@@ -26,6 +26,11 @@ public final class BenchModes {
                 .orElse(BenchMode.HULL_ITEMS);
     }
 
+    public static boolean accepts(BenchMode mode, Item item) {
+        BenchModeSupport support = of(mode);
+        return support == null ? modeFor(item.type()) == mode : support.accepts(item);
+    }
+
     public static boolean enabled(BenchMode mode) {
         return ENABLED_SUPPORTS.all().stream().anyMatch(support -> support.mode() == mode && support.enabled());
     }

@@ -8,3 +8,4 @@ exiledSector_bolthole_survey,excavation_sites,survey,1,1,,,Bolt-hole Survey
 exiledSector_relay_survey,relay_network,survey,1,1,,,Relay Survey
 exiledSector_convoy_orders,supply_convoy,orders,1,1,,,Convoy Orders
 exiledSector_redeployment_orders,,orders,1,1,redeploy,graphics/icons/catalysts/redeployment_orders.png,"Redeployment Orders; hands the system to another faction of its region"
+exiledSector_forge_survey,derelict_forge,survey,1,1,,,Forge Survey
