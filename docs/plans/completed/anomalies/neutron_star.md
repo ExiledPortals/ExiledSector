@@ -35,7 +35,7 @@ The research station is placed after the layout, so `clearOrbit` already avoids 
 
 ## 2. Non-player fleets ignore the star
 
-Add `ChartPulsarBeamTerrainPlugin extends PulsarBeamTerrainPlugin` and `ChartCoronaTerrainPlugin extends StarCoronaTerrainPlugin` in the star charts module. Both override `applyEffect` and return straight away unless the entity is the player fleet (`fleet.isPlayerFleet()`). This covers everything else in the system: chart fleets, bosses, the Hunter, convoys and skirmish factions, and allied escorts too. The player still feels the full effect, and the beam still looks and sounds the same.
+Add `ChartPulsarBeamTerrainPlugin extends PulsarBeamTerrainPlugin` and `ChartCoronaTerrainPlugin extends StarCoronaTerrainPlugin` in the star charts module. Both override `applyEffect` and return straight away unless the entity is the player fleet (`fleet.isPlayerFleet()`). This covers everything else in the system: chart fleets, bosses, convoys and skirmish factions, and allied escorts too. The player still feels the full effect, and the beam still looks and sounds the same.
 
 Register both under new ids in `data/campaign/terrain.json` (for example `exiledSector_chart_pulsar_beam` and `exiledSector_chart_corona`), copying vanilla's entries except for the plugin class. Then override `setPulsarIfNeutron` in `ChartStarSystemGenerator` to add those ids with the same parameters vanilla uses. This covers every neutron star a chart system could get, not only the forced primary.
 
