@@ -143,6 +143,10 @@ public final class AtlasGenerator {
         return territories.factionAt(cell, regionOf(cell));
     }
 
+    Map<String, Float> factionPool(AtlasCell cell) {
+        return territories.factionPool(regionOf(cell));
+    }
+
     public Map<String, String> factionDecisions(Collection<AtlasCell> revealed) {
         Set<AtlasCell> shown = new LinkedHashSet<>();
         for (AtlasCell cell : revealed) {

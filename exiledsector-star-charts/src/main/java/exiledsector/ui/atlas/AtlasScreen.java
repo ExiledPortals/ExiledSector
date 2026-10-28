@@ -197,7 +197,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
 
     private AtlasCatalystUse catalystUse() {
         return selectedCatalyst == null ? null
-                : new AtlasCatalystUse(selectedCatalyst, map.generator(), map.state(), AtlasAnomalies.openRunCell(), map.visibleCells());
+                : AtlasCatalystUse.of(selectedCatalyst, map.generator(), map.state(), AtlasAnomalies.openRunCell(), map.visibleCells());
     }
 
     private void retarget() {
@@ -517,8 +517,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         UseVerdict verdict = map.targetVerdict(hoveredCell);
         AtlasCatalystUse use = catalystUse();
         if (verdict != null && use != null) {
-            String anomaly = AtlasCatalystUse.anomalyName(use.catalyst().anomalyId());
-            body.add(0, verdict.allowed() ? StyledText.styled(Translation.msg("catalyst.target.usable").arg("anomaly", anomaly).text(), Style.GOOD)
+            body.add(0, verdict.allowed() ? StyledText.styled(use.usableText(), Style.GOOD)
                     : StyledText.styled(verdict.text(MaterialItems.displayName(use.itemId()), title), Style.BAD));
         }
         tooltipBody.setStyled(StyledText.join(StyledText.of("\n"), body), SkillTreePanelStyle::standardHighlightColor);

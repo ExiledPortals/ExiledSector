@@ -59,6 +59,9 @@ public final class AtlasCatalystItems {
     }
 
     public static String addsLine(AtlasCatalysts.Catalyst catalyst) {
+        if (catalyst.effect() == AtlasCatalysts.Effect.REDEPLOY) {
+            return Translation.text("catalyst.redeploys");
+        }
         return Translation.msg("catalyst.adds").arg("anomaly", Translation.text("chart.atlas.anomaly." + catalyst.anomalyId())).text();
     }
 

@@ -51,7 +51,7 @@ Tuning lines are chart effects carried by an atlas source, per `overview.md`:
 3. [ ] The alarm: the vault purge, the pickets gathering into one guard fleet, intel and tooltip updates.
 4. [ ] The post dialog through `ChartCampaignPlugin.pickInteractionDialogPlugin`, the vault loot with its leanings, and the lane reveal for a clean heist.
 5. [ ] Chart modifier lines, strings (en and zh_CN), the atlas marker icon, the `docs/docs.md` section and tests.
-6. [ ] The Picket Orders catalyst (`atlas_catalysts.md`), after that plan's step 7 puts the faction on Transit Orders: the pickets and post fly the order's faction when one is recorded; the `atlas_catalysts.csv` row (orders family), its `special_items.csv` row, name strings (en and zh_CN) and tests.
+6. [ ] The Picket Orders catalyst (`atlas_catalysts.md`), with the pickets and post flying the system's faction as when the atlas rolls the anomaly: the `atlas_catalysts.csv` row (orders family), its `special_items.csv` row, name strings (en and zh_CN) and tests.
 
 ## Open questions
 

@@ -2,7 +2,7 @@
 
 Atlas Catalysts are one category of consumable item: each adds one anomaly to a system on the Outer Reach Atlas. You pick a catalyst on the atlas, click a system, and the anomaly is there until a run spends it. Catalysts come in themed families with their own names and art, but every one works and drops the same way.
 
-Status: steps 1 to 6 built (2026-10-28), steps 3 to 6 not yet seen in game. Proposed 2026-10-28. This is the player's way of inserting anomalies that `../atlas.md` (Anomalies, step 17) leaves for later. See `overview.md` for the shared framework.
+Status: steps 1 to 7 built (2026-10-28), steps 3 to 7 not yet seen in game. Proposed 2026-10-28. This is the player's way of inserting anomalies that `../atlas.md` (Anomalies, step 17) leaves for later. See `overview.md` for the shared framework.
 
 ## Lore
 
@@ -28,6 +28,7 @@ Each catalyst is one special item (a `special_items.csv` row, like the nanoswarm
 | Explorarium Survey | Bolt-hole Survey | Excavation Sites |
 | Explorarium Survey | Relay Survey | Relay Network |
 | Transit Orders | Convoy Orders | Supply Convoy |
+| Transit Orders | Redeployment Orders | none: changes the system's faction (see Redeployment Orders) |
 
 A row whose anomaly isn't insertable, is unknown or needs a missing mod is skipped with a load problem. Asteroid Storm, Magnetic Storm and Stellar Flares become `insertable` in `chart_anomalies.csv`, as `../atlas.md` already allows. Catalysts for anomalies still being built are a step in each anomaly's own plan: Storm Terminus (`storm_front.md`), Forge Survey (`derelict_forge.md`), Picket Orders (`listening_post.md`) and Assault Orders (`faction_skirmish.md`).
 
@@ -41,7 +42,7 @@ Catalysts are animated like the doctrines (`DoctrineIconFx`), the Modspec Cache 
 
 - Unstable Termini: a terminus straining to open around the icon and failing, the collapse leaving the icon scarred for a moment.
 - Explorarium Surveys: a survey pass resolving the icon out of the dark, as if a sensor sweep is finding what was always there.
-- Transit Orders: wormhole traffic, fleets or transit streaks passing through the icon, tinted in the order's faction colour.
+- Transit Orders: wormhole traffic, fleets or transit streaks passing through the icon.
 
 Before building, the agent opens the vanilla game's `graphics/fx/` directory (`E:\Dev\Starsector\starsector-core\graphics\fx\`) and looks through the textures there, as `CacheIconFx` already uses vanilla's `glow64`, `emp_arcs`, `starburst_glow1` and `smoke32`. It picks textures whose look matches each family's theme and the shared category element (a wormhole or warp texture for termini, a scan or sensor texture for surveys, a streak or jump flash for orders), and gives the user a short list of each choice and how it would move, for the user to approve before it's built. Textures are preloaded like every other chart texture. The effects follow the Fast Rendering rules (GL11 only, render thread only, no `glGet` while drawing), set their own blend state per sprite, and honour the Item Animation setting (Full, Calm, Off) like every animated icon.
 
@@ -69,7 +70,7 @@ Any revealed system, reachable or not, so you can seed systems ahead of your rou
 | `OPEN_RUN` | The Gateway is already holding this system's coordinates. |
 | `ALREADY_PRESENT` | This system already holds that anomaly. |
 | `CONFLICT` | Names the anomaly already there that it can't share the system with. |
-| `DOES_NOT_FIT` | The anomaly's own reason, from its `fitsAt` (Assault Orders: the faction has no border with this system). |
+| `DOES_NOT_FIT` | The anomaly's own reason, from its `fitsAt` (Assault Orders: no neighbouring faction can attack this system). |
 
 A catalyst never goes into a system that already holds its anomaly, whether rolled or inserted, and never strengthens one. Strengthening an anomaly is left to other sources.
 
@@ -93,9 +94,15 @@ Catalysts don't add a fifth way. The first build step extracts one abstraction i
 
 The agent first maps all four paths and the UI that drives them, then settles the exact shape, keeping whatever reads most simply over a forced fit. Persisted classes and enums keep their names (`CraftingCurrency`, `StarChartCurrency` and anything `ItemCodec` reads), and existing crafting, Star Chart and socketing tests must pass unchanged apart from moved call sites.
 
-## Transit Orders carry a faction
+## Factions
 
-Each Transit Order carries the faction of the fleet it dropped from, stored on the item and shown in its name ("Hegemony Convoy Orders"). Inserting one stores the faction on the anomaly record, and the anomaly uses it where it has a faction to set: the Supply Convoy's fleets, the Listening Post's pickets and post, and the Faction Skirmish's attacker. Assault Orders only fit a system on a border with the order's faction. `AtlasAnomalyRecord` gets an optional faction field, read as absent from records saved before it.
+Transit Orders carry no faction of their own. An anomaly an Order inserts takes the system's faction, as the anomaly does when the atlas rolls it: the Supply Convoy and the Listening Post fly the system's owner, and the Faction Skirmish defends with the owner and picks its attacker from the neighbours as usual.
+
+## Redeployment Orders
+
+Redeployment Orders (placeholder name, Transit Orders family) insert no anomaly. They hand the system to a random other faction that could hold a system in its biome: the region's faction weights from `atlas_regions.csv`, or the territory pool for a region that keeps the territories, without the current owner, weighted as the atlas weights them. The change is a capture record (`AtlasState.capture`), so the owner shown on the map, the chart's faction, borders and fleet traffic all follow it, and a later Faction Skirmish capture replaces it like any other. The new faction is seeded per system (the atlas seed, the cell and the current owner, raced like the atlas's own faction picks), so reloading never rerolls it and no new state is saved, and a second Order on the same system moves it on from the new owner. The window names the new faction after use.
+
+It uses the same window, targeting and spend as the anomaly catalysts, with its own consumable beside `AtlasCatalystUse` and its own refusals: a fogged, completed or open-run system as for anomalies, no system, the Gateway and special sites (which hold no faction), an infested system (the infestation holds it), and a biome with no other faction to take it. Its row in `atlas_catalysts.csv` names an effect in place of an anomaly, and its icon is its own, picked by the user from an option sheet of vanilla art before it's built. Its tooltip says what it does ("Hands a system on the Outer Reach Atlas to another faction of its biome").
 
 ## Drops
 
@@ -111,7 +118,7 @@ A new `CATALYST` drop type gets its own chart modifier, Catalyst % (`CHART_CATAL
 4. [x] The Catalysts window: the button with its count on `AtlasScreen`, the window opening and closing as a `HoloPanel` through `SocketPanelPlacement`, catalysts grouped by family with counts and tooltips, and selection. Built: `AtlasCatalystPanel` and `CatalystTile` (`exiledsector.ui.socket`, star charts module), the Catalysts toggle on `AtlasScreen` (opening a system's bench closes the window; Esc drops the pick, then closes the window), and `AtlasCatalystItems.carried`. The selection is held on `AtlasScreen` for step 5. Tests: `AtlasCatalystItemsTest`.
 5. [x] Targeting mode in `ui.atlas`: usable and refused markers on `AtlasMapCanvas`, refusal tooltips, confirmation, spending the catalyst through the shared use routine, and the window refreshing after. Built: `AtlasCatalystUse` (`charts.atlas`, the `AtlasCell` consumable with `catalyst.refused.*` verdicts; fogged systems refuse as well), `AtlasMapCanvas.target` with green and red rings, the verdict line in system tooltips, and the confirm and spend in `AtlasCatalystPanel`. `DOES_NOT_FIT` shows one generic line until an anomaly with its own fit rule (the Faction Skirmish's border check) gives its own reason. Tests: `AtlasCatalystUseTest`, refusal keys in `StarChartUiStringKeysTest`.
 6. [x] Drops: the catalyst roll on every chart source that rolls crafting materials, the `CATALYST` drop type and the Catalyst % chart modifier (row in `star_chart_modifiers.csv`, strings). Built: a `catalyst_chance` column in `chart_drops.csv` (run_reward 0.25, system_salvage 0.03, chart_fleet 0.04, chart_boss 0.25, placeholders; a load problem zeroes it outside chart systems), rolled in `ChartDrops.roll` after the chart currency through `AtlasCatalysts.pickDrop` (by weight, `min_tier` against the run tier); `ChartDrops.Mults` carries the chart, currency and catalyst multipliers, and `Loot.materials()` adds catalysts to cargo wherever chart currencies go. `DropType.CATALYST` and `ChartEffect.CHART_CATALYST_PERCENT` ("Catalysis" suffix, weight 4 in the chart suffix pool, placeholder) scale it alongside the quantity lines; at run rewards Catalyst % multiplies the reward multiplier. Tests: `ChartDropsTest`.
-7. [ ] Transit Orders' faction: on the item and on `AtlasAnomalyRecord`, read by the Supply Convoy. The Listening Post and Faction Skirmish read it in their own catalyst steps.
+7. [x] Redeployment Orders: the user picks the icon from an option sheet; the effect column and icon override in `atlas_catalysts.csv`, the faction-change consumable with its refusals, the capture on use, the window, confirm and tooltip texts for it, the special item row, strings (en and zh_CN) and tests. Built: icon `graphics/icons/catalysts/redeployment_orders.png`, a circular crop of vanilla's `entering_hyperspace` illustration; `effect` (`anomaly` by default, or `redeploy`) and `icon` columns read by `AtlasCatalysts` (a redeploy row needs an icon); `AtlasCatalystUse` is now a sealed interface returning an `Outcome` (the window's notice), with `AnomalyCatalystUse` (the step 5 logic) and `RedeploymentCatalystUse`, which takes the pool from `AtlasGenerator.factionPool` (`AtlasTerritories.factionPool`), drops the current territory owner, races the rest on the atlas seed, the cell and the owner, and writes `AtlasState.capture`; the window, confirm and system tooltip ask the use for their texts. Tests: `RedeploymentCatalystUseTest`, `AtlasCatalystsTest`, `AtlasCatalystUseTest`, keys in `StarChartUiStringKeysTest`.
 8. [ ] A console command to grant catalysts, strings (en and zh_CN), the `docs/docs.md` section and tests.
 
 ## Open questions
@@ -120,4 +127,3 @@ A new `CATALYST` drop type gets its own chart modifier, Catalyst % (`CHART_CATAL
 - Whether seeding unreachable systems is too strong, letting players pile anomalies on a far system before reaching it.
 - Whether the Catalysts window needs filters once there are many rows, or the atlas's search bar should find systems a picked catalyst can go into.
 - Whether catalysts should also be sold anywhere, or stay drops only.
-- Which faction a Transit Order carries when it drops from salvage, cargo or a reward rather than a fleet.

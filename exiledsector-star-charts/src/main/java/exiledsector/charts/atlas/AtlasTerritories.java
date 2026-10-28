@@ -115,9 +115,17 @@ final class AtlasTerritories {
         return nearest;
     }
 
-    private String territoryFor(SeedPoint point) {
+    Map<String, Float> factionPool(AtlasRegion region) {
+        return region.factionWeights().isEmpty() ? territoryPool() : region.factionWeights();
+    }
+
+    private Map<String, Float> territoryPool() {
         Map<String, Float> normalPool = rules.normalRegion().factionWeights();
-        Map<String, Float> pool = normalPool.isEmpty() ? rules.factionWeights() : normalPool;
+        return normalPool.isEmpty() ? rules.factionWeights() : normalPool;
+    }
+
+    private String territoryFor(SeedPoint point) {
+        Map<String, Float> pool = territoryPool();
         return recordedOr(territoryKey(point), pool, () -> AtlasHash.race(seed, TERRITORY_PICK_SALT, point.gridX(), point.gridY(), pool));
     }
 }

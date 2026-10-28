@@ -10,7 +10,6 @@ import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledlib.i18n.Translation;
-import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasCatalystUse;
 import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.atlas.AtlasCell;
@@ -179,11 +178,9 @@ public final class AtlasCatalystPanel extends HoloPanel {
 
     private void writeConfirm(TooltipMakerAPI element) {
         AtlasCatalysts.Catalyst catalyst = pendingUse.catalyst();
-        String anomaly = AtlasCatalystUse.anomalyName(catalyst.anomalyId());
         VanillaText.plainPara(element, Translation.msg("catalyst.confirm.title").arg("name", MaterialItems.displayName(catalyst.itemId()))
                 .arg("system", pendingSystem).text(), 0f, AtlasCatalystItems.color(catalyst.family()));
-        VanillaText.plainPara(element, Translation.msg("catalyst.confirm.body").arg("anomaly", anomaly).arg("system", pendingSystem).text(),
-                LINE_PAD * 2f, Misc.getTextColor());
+        VanillaText.plainPara(element, pendingUse.confirmBody(pendingSystem), LINE_PAD * 2f, Misc.getTextColor());
     }
 
     private void cancelUse() {
@@ -206,8 +203,8 @@ public final class AtlasCatalystPanel extends HoloPanel {
         if (use == null) {
             return;
         }
-        AtlasAnomalies.Insertion insertion = Consumables.use(use, cell, playerMaterials());
-        if (insertion == null) {
+        AtlasCatalystUse.Outcome outcome = Consumables.use(use, cell, playerMaterials());
+        if (outcome == null) {
             SkillTreeSounds.refused();
             UseVerdict verdict = use.check(cell);
             showNotice(verdict.allowed() ? Translation.text("catalyst.window.failed")
@@ -215,8 +212,7 @@ public final class AtlasCatalystPanel extends HoloPanel {
             return;
         }
         SkillTreeSounds.socketed();
-        noticeText = Translation.msg("catalyst.window.used").arg("anomaly", AtlasCatalystUse.anomalyName(use.catalyst().anomalyId()))
-                .arg("system", systemName).text();
+        noticeText = outcome.text(systemName);
         noticeIsWarning = false;
         if (playerMaterials().count(use.itemId()) < 1) {
             selectedItemId = null;

@@ -1,9 +1,10 @@
-id,anomaly,family,weight,min_tier,note
-exiledSector_breach_terminus,spatial_breach,terminus,1,1,Breach Terminus
-exiledSector_shattered_terminus,asteroid_storm,terminus,1,1,Shattered Terminus
-exiledSector_magnetised_terminus,magnetic_storm,terminus,1,1,Magnetised Terminus
-exiledSector_flare_terminus,stellar_flares,terminus,1,1,Flare Terminus
-exiledSector_wreck_terminus,anomalous_debris,terminus,1,1,Wreck Terminus
-exiledSector_bolthole_survey,excavation_sites,survey,1,1,Bolt-hole Survey
-exiledSector_relay_survey,relay_network,survey,1,1,Relay Survey
-exiledSector_convoy_orders,supply_convoy,orders,1,1,"Convoy Orders; skipped until the Supply Convoy has an icon"
+id,anomaly,family,weight,min_tier,effect,icon,note
+exiledSector_breach_terminus,spatial_breach,terminus,1,1,,,Breach Terminus
+exiledSector_shattered_terminus,asteroid_storm,terminus,1,1,,,Shattered Terminus
+exiledSector_magnetised_terminus,magnetic_storm,terminus,1,1,,,Magnetised Terminus
+exiledSector_flare_terminus,stellar_flares,terminus,1,1,,,Flare Terminus
+exiledSector_wreck_terminus,anomalous_debris,terminus,1,1,,,Wreck Terminus
+exiledSector_bolthole_survey,excavation_sites,survey,1,1,,,Bolt-hole Survey
+exiledSector_relay_survey,relay_network,survey,1,1,,,Relay Survey
+exiledSector_convoy_orders,supply_convoy,orders,1,1,,,"Convoy Orders; skipped until the Supply Convoy has an icon"
+exiledSector_redeployment_orders,,orders,1,1,redeploy,graphics/icons/catalysts/redeployment_orders.png,"Redeployment Orders; hands the system to another faction of its region"

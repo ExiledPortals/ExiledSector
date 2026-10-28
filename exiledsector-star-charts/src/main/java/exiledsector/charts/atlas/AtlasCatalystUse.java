@@ -1,58 +1,53 @@
 package exiledsector.charts.atlas;
 
+import exiledlib.i18n.Message;
 import exiledlib.i18n.Translation;
-import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.items.Consumable;
-import exiledsector.items.UseVerdict;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
-public record AtlasCatalystUse(AtlasCatalysts.Catalyst catalyst, AtlasGenerator generator, AtlasState state, AtlasCell openRunCell,
-                               Set<AtlasCell> revealed) implements Consumable<AtlasCell, AtlasAnomalies.Insertion> {
+public sealed interface AtlasCatalystUse extends Consumable<AtlasCell, AtlasCatalystUse.Outcome> permits AnomalyCatalystUse, RedeploymentCatalystUse {
 
-    public static final String FOGGED_KEY = "catalyst.refused.fogged";
+    String FOGGED_KEY = "catalyst.refused.fogged";
 
-    public AtlasCatalystUse {
-        revealed = Set.copyOf(revealed);
+    record Outcome(String noticeKey, Map<String, String> args) {
+
+        public Outcome {
+            args = Map.copyOf(args);
+        }
+
+        public String text(String systemName) {
+            Message message = Translation.msg(noticeKey).arg("system", systemName);
+            args.forEach(message::arg);
+            return message.text();
+        }
     }
 
-    public static String refusalKey(AtlasAnomalies.InsertCheck check) {
+    static AtlasCatalystUse of(AtlasCatalysts.Catalyst catalyst, AtlasGenerator generator, AtlasState state, AtlasCell openRunCell,
+                               Set<AtlasCell> revealed) {
+        return catalyst.effect() == AtlasCatalysts.Effect.REDEPLOY
+                ? new RedeploymentCatalystUse(catalyst, generator, state, openRunCell, revealed)
+                : new AnomalyCatalystUse(catalyst, generator, state, openRunCell, revealed);
+    }
+
+    static String refusalKey(AtlasAnomalies.InsertCheck check) {
         return "catalyst.refused." + check.name().toLowerCase(Locale.ROOT);
     }
 
-    public static String anomalyName(String anomalyId) {
+    static String anomalyName(String anomalyId) {
         return Translation.text("chart.atlas.anomaly." + anomalyId);
     }
 
-    @Override
-    public String itemId() {
-        return catalyst.itemId();
-    }
+    AtlasCatalysts.Catalyst catalyst();
+
+    String usableText();
+
+    String confirmBody(String systemName);
 
     @Override
-    public UseVerdict check(AtlasCell cell) {
-        String anomalyId = catalyst.anomalyId();
-        if (!revealed.contains(cell)) {
-            return UseVerdict.refused(FOGGED_KEY);
-        }
-        AtlasAnomalies.InsertCheck check = AtlasAnomalies.canInsert(generator, state, cell, anomalyId, openRunCell);
-        if (check.allows()) {
-            return UseVerdict.ALLOWED;
-        }
-        UseVerdict refused = UseVerdict.refused(refusalKey(check)).with("anomaly", anomalyName(anomalyId));
-        if (check == AtlasAnomalies.InsertCheck.CONFLICT) {
-            String other = AtlasAnomalies.effective(generator, state, cell).stream()
-                    .filter(existing -> ChartAnomalies.conflicts(existing, anomalyId)).findFirst().orElse("");
-            refused = refused.with("other", anomalyName(other));
-        }
-        return refused;
-    }
-
-    @Override
-    public AtlasAnomalies.Insertion apply(AtlasCell cell) {
-        AtlasAnomalies.Insertion insertion = AtlasAnomalies.insert(generator, state, cell, catalyst.anomalyId(), AtlasAnomalyRecord.Source.PLAYER,
-                openRunCell);
-        return insertion.check().allows() ? insertion : null;
+    default String itemId() {
+        return catalyst().itemId();
     }
 }

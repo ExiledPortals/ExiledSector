@@ -66,14 +66,15 @@ class AtlasCatalystUseTest {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = generator(state);
         AtlasCell cell = system(generator, 0);
-        AtlasCatalystUse use = new AtlasCatalystUse(BREACH_TERMINUS, generator, state, null, Set.of(cell));
+        AtlasCatalystUse use = new AnomalyCatalystUse(BREACH_TERMINUS, generator, state, null, Set.of(cell));
         CraftingMaterials materials = holding(2);
 
-        AtlasAnomalies.Insertion insertion = Consumables.use(use, cell, materials);
+        AtlasCatalystUse.Outcome outcome = Consumables.use(use, cell, materials);
 
-        assertNotNull(insertion);
-        assertEquals(List.of(new AtlasAnomalyRecord(insertion.recordId(), cell, SpatialBreach.ID, AtlasAnomalyRecord.Source.PLAYER)),
-                state.anomalyRecords(cell));
+        assertNotNull(outcome);
+        assertEquals(Map.of("anomaly", AtlasCatalystUse.anomalyName(SpatialBreach.ID)), outcome.args());
+        assertEquals(List.of(new AtlasAnomalyRecord(state.anomalyRecords(cell).get(0).recordId(), cell, SpatialBreach.ID,
+                AtlasAnomalyRecord.Source.PLAYER)), state.anomalyRecords(cell));
         assertEquals(1, materials.count(BREACH_TERMINUS.itemId()));
         assertEquals("catalyst.refused.already_present", use.check(cell).refusalKey());
         assertNull(Consumables.use(use, cell, materials));
@@ -88,7 +89,7 @@ class AtlasCatalystUseTest {
         AtlasCell completed = system(generator, 1);
         AtlasCell fogged = system(generator, 2);
         state.add(completed, AtlasState.COMPLETED);
-        AtlasCatalystUse use = new AtlasCatalystUse(BREACH_TERMINUS, generator, state, open, Set.of(open, completed, AtlasCell.ORIGIN));
+        AtlasCatalystUse use = new AnomalyCatalystUse(BREACH_TERMINUS, generator, state, open, Set.of(open, completed, AtlasCell.ORIGIN));
 
         assertEquals(AtlasCatalystUse.FOGGED_KEY, use.check(fogged).refusalKey());
         assertEquals("catalyst.refused.completed", use.check(completed).refusalKey());
@@ -105,7 +106,7 @@ class AtlasCatalystUseTest {
         AtlasCell cell = system(generator, 0);
         AtlasAnomalies.insert(generator, state, cell, AsteroidStorm.ID, AtlasAnomalyRecord.Source.WORLD, null);
 
-        UseVerdict verdict = new AtlasCatalystUse(BREACH_TERMINUS, generator, state, null, Set.of(cell)).check(cell);
+        UseVerdict verdict = new AnomalyCatalystUse(BREACH_TERMINUS, generator, state, null, Set.of(cell)).check(cell);
 
         assertEquals("catalyst.refused.conflict", verdict.refusalKey());
         assertEquals(AtlasCatalystUse.anomalyName(AsteroidStorm.ID), verdict.args().get("other"));

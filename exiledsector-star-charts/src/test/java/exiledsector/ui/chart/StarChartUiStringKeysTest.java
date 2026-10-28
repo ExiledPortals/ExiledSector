@@ -4,6 +4,7 @@ import exiledsector.charts.run.ChartRunActions.OpenResult;
 import exiledlib.i18n.RealCatalogue;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasCatalystUse;
+import exiledsector.charts.atlas.RedeploymentCatalystUse;
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.StarChartCurrency;
 import exiledsector.items.UseVerdict;
@@ -40,7 +41,11 @@ class StarChartUiStringKeysTest {
                 require(catalogue, AtlasCatalystUse.refusalKey(check), missing);
             }
         }
-        require(catalogue, AtlasCatalystUse.FOGGED_KEY, missing);
+        for (String key : List.of(AtlasCatalystUse.FOGGED_KEY, RedeploymentCatalystUse.SPECIAL_KEY, RedeploymentCatalystUse.INFESTED_KEY,
+                RedeploymentCatalystUse.NO_FACTION_KEY, "catalyst.redeploys", "catalyst.target.redeploy", "catalyst.confirm.redeploy",
+                "catalyst.window.redeployed")) {
+            require(catalogue, key, missing);
+        }
         for (OpenResult result : OpenResult.values()) {
             require(catalogue, new StarChartOpening.Outcome(result, null).messageKey(), missing);
         }

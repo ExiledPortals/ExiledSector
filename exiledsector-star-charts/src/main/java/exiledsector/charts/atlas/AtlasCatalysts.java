@@ -44,9 +44,37 @@ public final class AtlasCatalysts {
         }
     }
 
-    public record Catalyst(String itemId, String anomalyId, Family family, float weight, int minTier) {
+    public enum Effect {
+        ANOMALY,
+        REDEPLOY;
+
+        public String key() {
+            return name().toLowerCase(Locale.ROOT);
+        }
+
+        static Effect byKey(String key) {
+            if (key.isEmpty()) {
+                return ANOMALY;
+            }
+            for (Effect effect : values()) {
+                if (effect.key().equals(key)) {
+                    return effect;
+                }
+            }
+            return null;
+        }
+    }
+
+    public record Catalyst(String itemId, String anomalyId, Family family, float weight, int minTier, Effect effect, String icon) {
+
+        public Catalyst(String itemId, String anomalyId, Family family, float weight, int minTier) {
+            this(itemId, anomalyId, family, weight, minTier, Effect.ANOMALY, "");
+        }
 
         public String iconPath() {
+            if (!icon.isEmpty()) {
+                return icon;
+            }
             ChartAnomalies.Definition definition = ChartAnomalies.definition(anomalyId);
             return definition == null ? "" : definition.icon();
         }
@@ -64,7 +92,10 @@ public final class AtlasCatalysts {
         Map<String, Catalyst> loaded = new LinkedHashMap<>();
         CsvRows.forEachIdRow(rows, ID_COLUMN, (id, row) -> {
             String anomalyId = ModCsv.text(row, "anomaly");
-            String skipReason = skipReason(anomalyId);
+            String icon = ModCsv.text(row, "icon");
+            Effect effect = Effect.byKey(ModCsv.text(row, "effect"));
+            String skipReason = effect == null ? "effect '" + ModCsv.text(row, "effect") + "' is not anomaly or redeploy"
+                    : skipReason(effect, anomalyId, icon);
             Family family = Family.byKey(ModCsv.text(row, "family"));
             if (family == null) {
                 skipReason = "family '" + ModCsv.text(row, "family") + "' is not terminus, survey or orders";
@@ -74,7 +105,8 @@ public final class AtlasCatalysts {
                 return;
             }
             int minTier = ChartTiers.clamp(csv.integer(row, "min_tier", ChartTiers.LOWEST_TIER, id));
-            loaded.put(id, new Catalyst(id, anomalyId, family, Math.max(0f, csv.number(row, "weight", 1f, id)), minTier));
+            loaded.put(id, new Catalyst(id, effect == Effect.ANOMALY ? anomalyId : "", family, Math.max(0f, csv.number(row, "weight", 1f, id)),
+                    minTier, effect, icon));
         });
         csv.report(LOG);
         catalysts = Collections.unmodifiableMap(loaded);
@@ -82,7 +114,10 @@ public final class AtlasCatalysts {
         return csv.problems();
     }
 
-    private static String skipReason(String anomalyId) {
+    private static String skipReason(Effect effect, String anomalyId, String icon) {
+        if (effect == Effect.REDEPLOY) {
+            return icon.isEmpty() ? "a redeploy catalyst needs an icon" : null;
+        }
         ChartAnomalies.Definition definition = ChartAnomalies.definition(anomalyId);
         if (definition == null || ChartAnomalies.byId(anomalyId) == null) {
             return "anomaly '" + anomalyId + "' is unknown";
@@ -93,7 +128,7 @@ public final class AtlasCatalysts {
         if (!ChartPois.modRequirementMet(definition.requiredMod())) {
             return "anomaly '" + anomalyId + "' needs the missing mod '" + definition.requiredMod() + "'";
         }
-        return definition.icon().isEmpty() ? "anomaly '" + anomalyId + "' has no icon" : null;
+        return definition.icon().isEmpty() && icon.isEmpty() ? "anomaly '" + anomalyId + "' has no icon" : null;
     }
 
     public static Collection<Catalyst> all() {
