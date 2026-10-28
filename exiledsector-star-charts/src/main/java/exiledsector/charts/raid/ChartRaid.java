@@ -211,6 +211,10 @@ public class ChartRaid {
         return marineTokens(raidMult);
     }
 
+    public float effectiveness() {
+        return raidMult;
+    }
+
     void raidValuable() {
         List<GroundRaidObjectivePlugin> available = new ArrayList<>(objectiveSource.get());
         if (available.isEmpty()) {

@@ -332,6 +332,21 @@ Corrupting first spends a Corrupted Nanoswarm and rebuilds the fleet stronger, a
 drops an engram (`DormantFleetLoot`). An engram rerolls a non-unique hull item with four modifiers, one always its own
 from the reserved pool that no other roll draws from (`AnomalousDebrisCurrency`, core `ReservedModifiers`).
 
+## Excavation Sites
+
+The anomaly marks one to three solid planets plus the extra-sites line, each rolled 50/50 as an open or a collapsed
+shaft and leaning toward one drop type, kept on the run record (`ExcavationSites`, `ExcavationStates`, numbers in
+`ExcavationRules`; package `charts.anomaly.excavation`). A site's items are the `excavation` scope of `chart_loot.csv`
+plus the `exiledSector_chart_excavation` item row, sized by tier and the site quantity line, with +200% to its lean
+(`ExcavationLoot`). `ExcavationSiteDialog` opens on the planet while the site stands, before a convoy cache.
+
+An open shaft starts a fleet of the chart faction, or a derelict picket, built with `maxShipSize` 2 and kept in the
+planet's memory until beaten; it carries the site's vanilla drops and rolls its items in `ChartFleetLoot`. The
+encounter pulls in no other fleet and allows no AI retreat (`ShaftEncounters`), and `ChartCampaignPlugin` picks
+`ShaftBattleCreationPlugin` for it: a small dark map with rock fields along the edges, no objectives, and no cruiser or
+capital ship on either side, which `ShaftBattlePlugin` also removes from the reserves. A collapsed shaft is a
+`raid.ChartRaid` at a tier-based difficulty whose objective yields the site's items scaled by raid effectiveness.
+
 ## Transverse Jump in charts
 
 In any chart system, Transverse Jump takes the fleet back to where the chart was opened, the same as the exit

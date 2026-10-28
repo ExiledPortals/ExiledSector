@@ -32,7 +32,11 @@ public final class ChartCargoLoot {
     }
 
     public static CargoAPI roll(SectorAPI sector, ChartRun run, String scope, String siteId, float steps, float itemMult, Random random) {
-        ChartGenContext context = ChartRunEffects.contextOf(run);
+        return roll(sector, run, ChartRunEffects.contextOf(run), scope, siteId, steps, itemMult, random);
+    }
+
+    public static CargoAPI roll(SectorAPI sector, ChartRun run, ChartGenContext context, String scope, String siteId, float steps, float itemMult,
+                                Random random) {
         ChartVanillaLoot.SiteDrops drops = ChartVanillaLoot.drops(scope, run.tier(), steps, context);
         CargoAPI cargo = SalvageEntity.generateSalvage(random, 1f, 1f, 1f, 1f, drops.value(), drops.random());
         ItemLootListener.addSiteLoot(cargo, rollItems(sector, run, context, siteId, itemMult, random));

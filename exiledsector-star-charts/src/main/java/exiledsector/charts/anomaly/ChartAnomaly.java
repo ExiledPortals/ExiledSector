@@ -6,6 +6,7 @@ import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasTraits;
+import exiledsector.charts.run.ChartRun;
 
 public interface ChartAnomaly {
 
@@ -47,6 +48,10 @@ public interface ChartAnomaly {
 
     default boolean isActiveIn(LocationAPI location) {
         return true;
+    }
+
+    default String intelText(ChartRun run, LocationAPI location) {
+        return null;
     }
 
     static StarSystemType systemTypeOr(ChartAnomaly anomaly, StarSystemType fallback) {

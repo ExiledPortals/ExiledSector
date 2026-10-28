@@ -49,3 +49,8 @@ convoy_weapons1,weapon,convoy,weapons1,random,3,1,
 convoy_weapons2,weapon,convoy,weapons2,random,1,6,
 convoy_blueprints_low,blueprint,convoy,blueprints_low,random,1,4,
 convoy_ai_cores1,ai_core,convoy,ai_cores1,random,0.5,8,
+excavation_basic,resource,excavation,basic,value,2000,1,"One excavation site's stores, per step (1 at tier 1, 0.25 more per tier, scaled by the site quantity line); the site's leaning raises one drop type; an open shaft's fleet drops it on defeat and a collapsed shaft's raid drops a share by raid effectiveness"
+excavation_weapons1,weapon,excavation,weapons1,random,2,1,
+excavation_weapons2,weapon,excavation,weapons2,random,1,6,
+excavation_blueprints_low,blueprint,excavation,blueprints_low,random,1,3,
+excavation_ai_cores1,ai_core,excavation,ai_cores1,random,0.5,5,

@@ -130,10 +130,16 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
         for (String anomalyId : run.anomalyIds()) {
             ChartAnomaly anomaly = ChartAnomalies.byId(anomalyId);
             String key = "chart.anomaly." + anomalyId + ".intel";
-            if (anomaly == null || !anomaly.isActiveIn(system) || !Translation.has(key)) {
+            if (anomaly == null || !anomaly.isActiveIn(system)) {
                 continue;
             }
-            info.addPara(safe(Translation.gameText(key)), PARAGRAPH_PAD);
+            String line = anomaly.intelText(run, system);
+            if (line == null && Translation.has(key)) {
+                line = Translation.gameText(key);
+            }
+            if (line != null) {
+                info.addPara(safe(line), PARAGRAPH_PAD);
+            }
         }
         if (!run.isObjectiveComplete() && !run.isObjectiveLost()) {
             info.addPara(safe(Translation.gameText("chart.intel.reward")), PARAGRAPH_PAD);
