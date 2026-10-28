@@ -51,7 +51,6 @@ Tuning lines are chart effects carried by an atlas source, per `overview.md`:
 ## Open questions
 
 - Whether programs that pick a modifier are too strong against Reshaping and Tuning Nanoswarms, and need a higher cost or fewer runs at low tiers (left to balance for now).
-- Whether unique hull items should be refused by Perfect and Retemper too; for now only Graft, Excise and Anchor reroll refuse them.
 
 ## Resolved questions
 
@@ -59,3 +58,4 @@ Tuning lines are chart effects carried by an atlas source, per `overview.md`:
 - The forge takes uncorrupted hull items only: no subroutines and no Star Charts.
 - Every program also costs Nanite Feedstock, 20 to 50 per run before tier scaling.
 - Anchor reroll rerolls the other modifiers themselves, not just their values.
+- Graft, Excise and Anchor reroll refuse unique hull items; Perfect and Retemper accept them (decided 2026-10-29).
