@@ -50,6 +50,37 @@ public final class ItemCrafting {
         return currency.canUse(item, new CraftingContext(null, allowedUniques, CraftingWard.guardedSlots(wards)));
     }
 
+    public static UseVerdict verdict(ItemCurrency currency, Item item, Predicate<ItemDefinition> allowedUniques, Collection<CraftingWard> wards) {
+        if (canUse(currency, item, allowedUniques, wards)) {
+            return UseVerdict.ALLOWED;
+        }
+        if (canUse(currency, item, allowedUniques)) {
+            return UseVerdict.refused(currency == CraftingCurrency.TRANSPOSITION
+                    ? "ui.workbench.notice.wardBlocksTransposition" : "ui.workbench.notice.wardBlocks");
+        }
+        if (item == null) {
+            return UseVerdict.refused("ui.workbench.notice.loadFirst");
+        }
+        ItemDefinition definition = item.definition();
+        if (item.mirrored()) {
+            return UseVerdict.refused("ui.workbench.notice.mirrored");
+        }
+        if (item.corrupted()) {
+            return UseVerdict.refused("ui.workbench.notice.corruptedItem");
+        }
+        if (isLockedFromCurrency(definition)) {
+            return UseVerdict.refused("ui.workbench.notice.uniqueSubroutine");
+        }
+        if (currency == CraftingCurrency.FIXATION && item.hasLockedModifier()) {
+            return UseVerdict.refused("ui.workbench.notice.alreadyFixed");
+        }
+        if (currency == CraftingCurrency.TRANSPOSITION && definition != null && definition.unique()) {
+            return UseVerdict.refused("ui.workbench.notice.noOtherUnique");
+        }
+        String refusalKey = currency.refusalNoticeKey(item);
+        return UseVerdict.refused(refusalKey != null ? refusalKey : "ui.workbench.notice.cannotUse");
+    }
+
     public static boolean takesCurrency(ItemType type) {
         return type != null && type != ItemType.WORMHOLE_ANCHOR;
     }
@@ -90,17 +121,36 @@ public final class ItemCrafting {
 
     public static Item use(ItemCurrency currency, Item item, CraftingMaterials materials, ItemStore store, Random random,
                            Predicate<ItemDefinition> allowedUniques, Collection<CraftingWard> wards) {
-        if (materials.count(currency.itemId()) < 1 || !canUse(currency, item, allowedUniques, wards)
-                || wards.stream().anyMatch(ward -> materials.count(ward.itemId()) < 1)) {
-            return null;
+        return Consumables.use(new CurrencyUse(currency, store, random, allowedUniques, wards), item, materials);
+    }
+
+    private record CurrencyUse(ItemCurrency currency, ItemStore store, Random random, Predicate<ItemDefinition> allowedUniques,
+                               Collection<CraftingWard> wards) implements Consumable<Item, Item> {
+
+        @Override
+        public String itemId() {
+            return currency.itemId();
         }
-        Set<CraftingWard> spentWards = wardsSpentBy(currency, item, wards);
-        Item craftedItem = currency.use(item, new CraftingContext(store, allowedUniques, CraftingWard.guardedSlots(wards)), random);
-        if (craftedItem != null) {
-            materials.take(currency.itemId(), 1);
-            spentWards.forEach(ward -> materials.take(ward.itemId(), 1));
+
+        @Override
+        public UseVerdict check(Item item) {
+            return verdict(currency, item, allowedUniques, wards);
         }
-        return craftedItem;
+
+        @Override
+        public Item apply(Item item) {
+            return currency.use(item, new CraftingContext(store, allowedUniques, CraftingWard.guardedSlots(wards)), random);
+        }
+
+        @Override
+        public Collection<String> requiredItemIds() {
+            return wards.stream().map(CraftingWard::itemId).toList();
+        }
+
+        @Override
+        public Collection<String> spentAlongside(Item item) {
+            return wardsSpentBy(currency, item, wards).stream().map(CraftingWard::itemId).toList();
+        }
     }
 
     private static boolean guards(RolledModifier rolled, Set<ModifierSlot> guarded) {

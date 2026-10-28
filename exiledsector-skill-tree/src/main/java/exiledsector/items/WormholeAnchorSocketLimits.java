@@ -1,6 +1,5 @@
 package exiledsector.items;
 
-import exiledlib.i18n.Translation;
 import exiledsector.skills.ShipSkillData;
 import org.apache.log4j.Logger;
 
@@ -15,16 +14,15 @@ public final class WormholeAnchorSocketLimits {
     private WormholeAnchorSocketLimits() {
     }
 
-    public static String refusal(WormholeAnchor anchor, String socketNodeId, Map<String, String> socketedItemIds) {
+    public static UseVerdict refusal(WormholeAnchor anchor, String socketNodeId, Map<String, String> socketedItemIds) {
         if (anchor == null) {
-            return null;
+            return UseVerdict.ALLOWED;
         }
         String volume = anchor.volume();
         if (!volumeTaken(volume, anchor.id(), socketNodeId, socketedItemIds, WormholeAnchorSocketLimits::volumeOf)) {
-            return null;
+            return UseVerdict.ALLOWED;
         }
-        return Translation.msg("socketable.anchor.volumeLimit").arg("name", anchor.name())
-                .arg("volume", WormholeAnchor.volumeName(volume)).text();
+        return UseVerdict.refused("socketable.anchor.volumeLimit").with("volume", WormholeAnchor.volumeName(volume));
     }
 
     static boolean volumeTaken(String volume, String itemId, String socketNodeId, Map<String, String> socketedItemIds,

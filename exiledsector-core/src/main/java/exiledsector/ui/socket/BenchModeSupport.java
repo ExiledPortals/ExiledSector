@@ -10,6 +10,7 @@ import exiledsector.items.ItemCurrency;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemStore;
 import exiledsector.items.ItemType;
+import exiledsector.items.UseVerdict;
 
 import java.util.List;
 import java.util.Random;
@@ -19,7 +20,11 @@ import java.util.function.Supplier;
 
 public interface BenchModeSupport {
 
-    record Refusal(boolean allowed, boolean checksWards, String noticeKey) {
+    record Refusal(UseVerdict verdict, boolean checksWards) {
+
+        public boolean allowed() {
+            return verdict.allowed();
+        }
     }
 
     record Use(Item result, Item selectedAfter, String notice) {
@@ -107,7 +112,7 @@ public interface BenchModeSupport {
     Use use(ItemCurrency currency, Item loaded, ItemStore store, CraftingMaterials materials, Random random,
             Predicate<ItemDefinition> allowedUniques, Set<CraftingWard> wards, String nameBefore);
 
-    String cannotUseNoticeKey();
+    UseVerdict cannotUse();
 
     List<StyledText> detailLines(Item item);
 

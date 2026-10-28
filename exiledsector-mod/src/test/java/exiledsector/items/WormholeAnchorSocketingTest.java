@@ -189,7 +189,7 @@ class WormholeAnchorSocketingTest {
 
     @Test
     void anAnchorAloneOnItsShipIsNeverRefused() {
-        assertNull(WormholeAnchorSocketLimits.refusal(anchor(HEGEMONY_ANCHOR, "socketable_1"), "socket", Map.of()));
+        assertTrue(WormholeAnchorSocketLimits.refusal(anchor(HEGEMONY_ANCHOR, "socketable_1"), "socket", Map.of()).allowed());
     }
 
     @Test

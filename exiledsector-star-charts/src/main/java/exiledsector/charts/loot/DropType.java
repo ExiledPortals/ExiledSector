@@ -20,6 +20,7 @@ public enum DropType {
     STAR_CHART(true, true),
     CURRENCY(false, true),
     FEEDSTOCK(false, true),
+    CATALYST(false, true),
     WEAPON(false, true),
     RESOURCE(false, true),
     BLUEPRINT(false, true),

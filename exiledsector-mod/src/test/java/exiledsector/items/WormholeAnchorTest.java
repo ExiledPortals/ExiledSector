@@ -261,8 +261,8 @@ class WormholeAnchorTest {
         WormholeAnchor hegemony = (WormholeAnchor) anchor(HEGEMONY_ANCHOR);
         WormholeAnchor abyss = (WormholeAnchor) anchor(ABYSS_ANCHOR);
 
-        assertNull(hegemony.socketRefusal());
-        assertEquals(ABYSS_ANCHOR + " name can't be installed: it is inert while the Abyss volume is turned off.", abyss.socketRefusal());
+        assertTrue(hegemony.socketRefusal().allowed());
+        assertEquals(ABYSS_ANCHOR + " name can't be installed: it is inert while the Abyss volume is turned off.", abyss.socketRefusal().text(abyss.name()));
         assertEquals(List.of("Leads to the Hegemony volume."), hegemony.statusLines().stream().map(StyledText::plain).toList());
         assertEquals(2, abyss.statusLines().size());
         assertEquals("wormhole anchor", abyss.kindName());

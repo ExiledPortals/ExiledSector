@@ -2,8 +2,11 @@ package exiledsector.ui.chart;
 
 import exiledsector.charts.run.ChartRunActions.OpenResult;
 import exiledlib.i18n.RealCatalogue;
+import exiledsector.charts.atlas.AtlasAnomalies;
+import exiledsector.charts.atlas.AtlasCatalystUse;
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.StarChartCurrency;
+import exiledsector.items.UseVerdict;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -29,11 +32,15 @@ class StarChartUiStringKeysTest {
                 require(catalogue, blocker.reasonKey(), missing);
             }
         }
-        for (StarChartCrafting.Refusal refusal : StarChartCrafting.Refusal.values()) {
-            if (refusal != StarChartCrafting.Refusal.NONE) {
-                require(catalogue, refusal.noticeKey(), missing);
+        for (UseVerdict refusal : StarChartCrafting.REFUSALS) {
+            require(catalogue, refusal.refusalKey(), missing);
+        }
+        for (AtlasAnomalies.InsertCheck check : AtlasAnomalies.InsertCheck.values()) {
+            if (!check.allows()) {
+                require(catalogue, AtlasCatalystUse.refusalKey(check), missing);
             }
         }
+        require(catalogue, AtlasCatalystUse.FOGGED_KEY, missing);
         for (OpenResult result : OpenResult.values()) {
             require(catalogue, new StarChartOpening.Outcome(result, null).messageKey(), missing);
         }

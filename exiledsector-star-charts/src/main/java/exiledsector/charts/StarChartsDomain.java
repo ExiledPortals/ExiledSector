@@ -19,6 +19,7 @@ import exiledlib.i18n.I18n;
 import exiledlib.i18n.SpecLocalisation;
 import exiledlib.i18n.Translation;
 import exiledsector.items.AnomalousDebrisCurrencies;
+import exiledsector.items.AtlasCatalystItems;
 import exiledsector.items.ItemCurrency;
 import exiledsector.items.ItemDataRules;
 import exiledsector.items.ItemTypeSupport;
@@ -29,6 +30,7 @@ import exiledsector.items.StarChartDataRules;
 import exiledsector.items.StarChartItems;
 import exiledsector.loot.FleetDifficulty;
 import exiledsector.loot.LootSource;
+import exiledsector.ui.cargo.CatalystIconFx;
 import exiledsector.ui.chart.StarChartBench;
 import exiledsector.ui.chart.WormholeGatewayOption;
 import exiledsector.ui.socket.BenchModeSupport;
@@ -65,6 +67,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
         StarChartCurrency.registerAll();
         AnomalousDebrisTerrainPlugin.preloadTextures();
         AbyssArt.preload();
+        CatalystIconFx.preload();
         I18n.forGameText(() -> {
             for (StarChartCurrency currency : StarChartCurrency.values()) {
                 MaterialItems.localise(currency.itemId());
@@ -107,6 +110,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
         StarChartItems.load();
         AnomalousDebrisCurrencies.load();
         I18n.forGameText(AnomalousDebrisCurrencies::localise);
+        I18n.forGameText(AtlasCatalystItems::localise);
     }
 
     @Override

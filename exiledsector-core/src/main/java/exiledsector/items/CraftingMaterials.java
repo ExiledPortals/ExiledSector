@@ -27,6 +27,10 @@ public final class CraftingMaterials {
         return new CraftingMaterials(cargo, storedCounts(), ModSettings.booleanOr(STORE_FIELD_ID, DEFAULT_STORE));
     }
 
+    public static CraftingMaterials storedForTests(Map<String, Integer> storedCounts) {
+        return new CraftingMaterials(null, storedCounts, true);
+    }
+
     public static CraftingMaterials cargoOnly(CargoAPI cargo) {
         return new CraftingMaterials(cargo, new HashMap<>(), false);
     }

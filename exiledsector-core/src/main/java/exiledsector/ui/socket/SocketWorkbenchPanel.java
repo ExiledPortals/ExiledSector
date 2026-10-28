@@ -33,6 +33,7 @@ import exiledsector.items.ItemStore;
 import exiledsector.items.ItemAreas;
 import exiledsector.items.ItemUnlock;
 import exiledsector.items.SlottedLine;
+import exiledsector.items.UseVerdict;
 import exiledsector.modifiers.ModifierSlot;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
@@ -474,43 +475,11 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         if (droppedMissingWards(materials)) {
             return false;
         }
-        if (!ItemCrafting.canUse(currency, loadedItem, allowedUniques(), activeWards)) {
-            if (ItemCrafting.canUse(currency, loadedItem, allowedUniques())) {
-                String wardKey = currency == CraftingCurrency.TRANSPOSITION
-                        ? "ui.workbench.notice.wardBlocksTransposition" : "ui.workbench.notice.wardBlocks";
-                showNotice(Translation.msg(wardKey).arg("name", MaterialItems.displayName(currency.itemId())).text());
-                return false;
-            }
-            if (loadedItem.mirrored()) {
-                showNotice(Translation.msg("ui.workbench.notice.mirrored").arg("name", loadedItem.name()).text());
-                return false;
-            }
-            if (loadedItem.corrupted()) {
-                showNotice(Translation.msg("ui.workbench.notice.corruptedItem").arg("name", loadedItem.name()).text());
-                return false;
-            }
-            if (ItemCrafting.isLockedFromCurrency(loadedItem.definition())) {
-                showNotice(Translation.msg("ui.workbench.notice.uniqueSubroutine").arg("name", loadedItem.name()).text());
-                return false;
-            }
-            if (currency == CraftingCurrency.FIXATION && loadedItem.hasLockedModifier()) {
-                showNotice(Translation.msg("ui.workbench.notice.alreadyFixed").arg("name", loadedItem.name()).text());
-                return false;
-            }
-            if (currency == CraftingCurrency.TRANSPOSITION && loadedItem.definition() != null && loadedItem.definition().unique()) {
-                showNotice(Translation.text("ui.workbench.notice.noOtherUnique"));
-                return false;
-            }
-            String refusalKey = currency.refusalNoticeKey(loadedItem);
-            if (refusalKey != null) {
-                showNotice(Translation.msg(refusalKey).arg("name", MaterialItems.displayName(currency.itemId())).arg("target", loadedItem.name()).text());
-                return false;
-            }
-            showNotice(Translation.msg("ui.workbench.notice.cannotUse").arg("name", MaterialItems.displayName(currency.itemId()))
-                    .arg("target", loadedItem.name()).text());
-            return false;
+        UseVerdict verdict = ItemCrafting.verdict(currency, loadedItem, allowedUniques(), activeWards);
+        if (!verdict.allowed()) {
+            showNotice(refusalText(currency, verdict));
         }
-        return true;
+        return verdict.allowed();
     }
 
     private boolean droppedMissingWards(CraftingMaterials materials) {
@@ -533,13 +502,12 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         if (refusal.allowed()) {
             return true;
         }
-        showNotice(refusalText(currency, refusal.noticeKey()));
+        showNotice(refusalText(currency, refusal.verdict()));
         return false;
     }
 
-    private String refusalText(ItemCurrency currency, String noticeKey) {
-        return Translation.msg(noticeKey).arg("name", MaterialItems.displayName(currency.itemId()))
-                .arg("target", loadedItem == null ? "" : loadedItem.name()).text();
+    private String refusalText(ItemCurrency currency, UseVerdict verdict) {
+        return verdict.text(MaterialItems.displayName(currency.itemId()), loadedItem == null ? "" : loadedItem.name());
     }
 
     private BenchModeSupport domainSupport() {
@@ -565,7 +533,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         BenchModeSupport.Use used = modeSupport().use(currency, loadedItem, modeStore(), playerMaterials(), craftingRandom,
                 allowedUniques(), activeWards, nameBefore);
         if (used == null) {
-            showNotice(refusalText(currency, modeSupport().cannotUseNoticeKey()));
+            showNotice(refusalText(currency, modeSupport().cannotUse()));
             return;
         }
         activeWards.removeAll(spentWards);
@@ -1015,7 +983,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             BenchModeSupport.Refusal refusal = modeSupport().refusal(currency, loadedItem, modeStore(), playerMaterials(), allowedUniques(),
                     activeWards);
             hints.add(refusal.allowed()
-                    ? Translation.msg(modeSupport().useHintKey()).arg("target", loadedItem.name()).text() : refusalText(currency, refusal.noticeKey()));
+                    ? Translation.msg(modeSupport().useHintKey()).arg("target", loadedItem.name()).text() : refusalText(currency, refusal.verdict()));
         } else if (loadedItem != null && ItemCrafting.canUse(currency, loadedItem, allowedUniques(), activeWards)) {
             hints.add(Translation.msg("ui.workbench.tile.use").arg("target", loadedItem.name()).text());
         } else if (loadedItem != null && ItemCrafting.canUse(currency, loadedItem, allowedUniques())) {

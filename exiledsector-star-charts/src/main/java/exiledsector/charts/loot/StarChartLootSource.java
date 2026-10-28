@@ -109,7 +109,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
             try {
                 ChartDrops.Loot battleLoot = ChartDrops.forBattle(sector, playerFleet.getContainingLocation(), losses.chartStrengthDefeated,
                         losses.highestDefeatedLevel, battle.independentRandom());
-                chartLoot = chartLoot.plus(battleLoot.charts(), List.of(), battleLoot.currencies());
+                chartLoot = chartLoot.plus(battleLoot.charts(), List.of(), battleLoot.materials());
             } catch (RuntimeException e) {
                 LOG.error("[ExiledSector] Rolling Star Chart battle drops failed", e);
             }
@@ -167,7 +167,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
     public void addSalvageLoot(SectorAPI sector, SectorEntityToken salvageEntity, CargoAPI loot) {
         ChartDrops.Loot chartLoot = salvageLoot(sector, salvageEntity);
         chartLoot.charts().forEach(chart -> loot.addSpecial(chart.toSpecialItem(), 1f));
-        chartLoot.currencies().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
+        chartLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
         MaterialDropAnnouncer.announceOnLootScreen(chartLoot.currencies());
     }
 

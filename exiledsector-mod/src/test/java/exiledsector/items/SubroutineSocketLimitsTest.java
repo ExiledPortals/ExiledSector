@@ -74,14 +74,14 @@ class SubroutineSocketLimitsTest {
             SkillTree.getAllNodes().values().forEach(socket -> ShipTrees.allocate(ship, socket, 1));
             Item first = owned(definitionId, 1L);
             Item second = owned(definitionId, 2L);
-            assertNull(SubroutineSocketLimits.refusal(first, "socket_1", ship.getSocketedItems()));
+            assertTrue(SubroutineSocketLimits.refusal(first, "socket_1", ship.getSocketedItems()).allowed());
             ship.socketItem("socket_1", first.id());
 
-            String refusal = SubroutineSocketLimits.refusal(second, "socket_2", ship.getSocketedItems());
+            String refusal = SubroutineSocketLimits.refusal(second, "socket_2", ship.getSocketedItems()).text(second.name());
 
             assertEquals(second.name() + " can't be installed: this ship already has the most subroutines of its kind (1).", refusal);
-            assertNull(SubroutineSocketLimits.refusal(second, "socket_1", ship.getSocketedItems()), "replacing the one already socketed is fine");
-            assertNull(SubroutineSocketLimits.refusal(first, "socket_2", ship.getSocketedItems()), "moving the same item is not a second copy");
+            assertTrue(SubroutineSocketLimits.refusal(second, "socket_1", ship.getSocketedItems()).allowed(), "replacing the one already socketed is fine");
+            assertTrue(SubroutineSocketLimits.refusal(first, "socket_2", ship.getSocketedItems()).allowed(), "moving the same item is not a second copy");
         }
     }
 
@@ -171,13 +171,13 @@ class SubroutineSocketLimitsTest {
         Item second = owned(LIMITED_UNIQUE, 2L);
         shipData.socketItem("socket_1", first.id());
 
-        String refusal = SubroutineSocketLimits.refusal(second, "socket_2", shipData.getSocketedItems());
+        String refusal = SubroutineSocketLimits.refusal(second, "socket_2", shipData.getSocketedItems()).text(second.name());
 
         assertEquals(1, ItemDefinitions.get(LIMITED_UNIQUE).socketLimit());
         assertEquals(second.name() + " can't be installed: this ship already has the most copies of it (1).", refusal);
-        assertNull(SubroutineSocketLimits.refusal(second, "socket_1", shipData.getSocketedItems()), "swapping a copy into the same socket is fine");
-        assertNull(SubroutineSocketLimits.refusal(first, "socket_2", shipData.getSocketedItems()), "moving the same item is not a second copy");
-        assertNull(SubroutineSocketLimits.refusal(owned(UNIQUE, 3L), "socket_2", shipData.getSocketedItems()), "another definition does not count");
+        assertTrue(SubroutineSocketLimits.refusal(second, "socket_1", shipData.getSocketedItems()).allowed(), "swapping a copy into the same socket is fine");
+        assertTrue(SubroutineSocketLimits.refusal(first, "socket_2", shipData.getSocketedItems()).allowed(), "moving the same item is not a second copy");
+        assertTrue(SubroutineSocketLimits.refusal(owned(UNIQUE, 3L), "socket_2", shipData.getSocketedItems()).allowed(), "another definition does not count");
         assertTrue(SubroutineSocketLimits.limitReached(ItemDefinitions.get(LIMITED_UNIQUE), "socket_2", shipData.getSocketedItems()));
     }
 
@@ -190,7 +190,7 @@ class SubroutineSocketLimitsTest {
             ship.socketItem("socket_2", owned(definitionId, 2L).id());
 
             assertFalse(ItemDefinitions.get(definitionId).limitsSocketsPerShip(), definitionId);
-            assertNull(SubroutineSocketLimits.refusal(owned(definitionId, 3L), "socket_3", ship.getSocketedItems()), definitionId);
+            assertTrue(SubroutineSocketLimits.refusal(owned(definitionId, 3L), "socket_3", ship.getSocketedItems()).allowed(), definitionId);
         }
     }
 

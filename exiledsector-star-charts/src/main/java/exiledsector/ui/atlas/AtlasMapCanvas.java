@@ -8,6 +8,7 @@ import exiledsector.charts.layout.sketch.ChartSystemSketch;
 import exiledsector.charts.layout.sketch.ChartSystemSketcher;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasAnomalyRecord;
+import exiledsector.charts.atlas.AtlasCatalystUse;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasData;
 import exiledsector.charts.atlas.AtlasGenerator;
@@ -15,6 +16,7 @@ import exiledsector.charts.atlas.AtlasNode;
 import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasReach;
 import exiledsector.charts.atlas.AtlasState;
+import exiledsector.items.UseVerdict;
 import exiledsector.ui.SmoothZoom;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.node.BeamStroke;
@@ -64,6 +66,11 @@ final class AtlasMapCanvas {
     static final float TRACE_WIDTH_SHARE = 0.6f;
     static final float TRACE_ALPHA = 0.8f;
     static final Color TRACE_COLOUR = new Color(120, 200, 255);
+    static final float TARGET_RING_SHARE = 1.3f;
+    static final float TARGET_PULSE_SPEED = 3f;
+    static final float TARGET_USABLE_ALPHA = 0.65f;
+    static final float TARGET_PULSE_ALPHA = 0.35f;
+    static final float TARGET_REFUSED_ALPHA = 0.35f;
 
     record AnomalyIcon(AtlasCell cell, String anomalyId, String iconPath, int slot, boolean fogged) {
 
@@ -89,6 +96,7 @@ final class AtlasMapCanvas {
     private final NodeRingArt ringArt = new NodeRingArt();
     private final WormholeArt wormholeArt = new WormholeArt(ringArt);
     private final Map<AtlasCell, Float> collapsing = new HashMap<>();
+    private Map<AtlasCell, UseVerdict> targetVerdicts = Map.of();
     private final NodeBeams beams = new NodeBeams(ringArt);
     private final AtlasScenery scenery;
 
@@ -167,6 +175,26 @@ final class AtlasMapCanvas {
 
     AtlasState state() {
         return state;
+    }
+
+    void target(AtlasCatalystUse use) {
+        Map<AtlasCell, UseVerdict> verdicts = new HashMap<>();
+        if (use != null) {
+            for (AtlasCell cell : visible) {
+                if (!generator.isVoid(cell)) {
+                    verdicts.put(cell, use.check(cell));
+                }
+            }
+        }
+        targetVerdicts = verdicts;
+    }
+
+    boolean isTargeting() {
+        return !targetVerdicts.isEmpty();
+    }
+
+    UseVerdict targetVerdict(AtlasCell cell) {
+        return targetVerdicts.get(cell);
     }
 
     boolean isReachable(AtlasCell cell) {
@@ -401,6 +429,7 @@ final class AtlasMapCanvas {
             wormholeArt.drawDormant(x, y, innerRadius, tint, alphaMult, openness);
             NodeBeams.RingLight light = lit ? NodeBeams.RingLight.LIT : open ? NodeBeams.RingLight.BREATHING : NodeBeams.RingLight.DIM;
             beams.nodeRing(x, y, innerRadius, null, light, tint, nodeKey(cell), alphaMult, widthScale);
+            drawTargetMarker(targetVerdicts.get(cell), x, y, innerRadius, alphaMult, widthScale);
             beams.flush();
             AtlasSystemPreview.Prepared sketch = sketches.get(cell);
             if (sketch != null && openness > 0f) {
@@ -413,6 +442,20 @@ final class AtlasMapCanvas {
             }
         }
         beams.flush();
+    }
+
+    private void drawTargetMarker(UseVerdict verdict, float x, float y, float innerRadius, float alphaMult, float widthScale) {
+        if (verdict == null) {
+            return;
+        }
+        float radius = innerRadius * TARGET_RING_SHARE;
+        if (verdict.allowed()) {
+            float pulse = (float) Math.sin(ringArt.elapsedSeconds() * TARGET_PULSE_SPEED) * 0.5f + 0.5f;
+            beams.ring(x, y, radius, null, beams.lit(Misc.getPositiveHighlightColor()),
+                    (TARGET_USABLE_ALPHA + TARGET_PULSE_ALPHA * pulse) * alphaMult, widthScale);
+        } else {
+            beams.ring(x, y, radius, null, beams.lit(Misc.getNegativeHighlightColor()), TARGET_REFUSED_ALPHA * alphaMult, widthScale);
+        }
     }
 
     private void drawAnomalies(TreeViewport view, float alphaMult) {

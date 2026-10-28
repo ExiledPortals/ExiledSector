@@ -21,6 +21,7 @@ import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemStore;
 import exiledsector.items.ItemType;
 import exiledsector.items.StarChart;
+import exiledsector.items.UseVerdict;
 import exiledsector.ui.socket.BenchMode;
 import exiledsector.ui.socket.BenchModeSupport;
 import exiledsector.ui.socket.SocketPanelPlacement;
@@ -100,9 +101,8 @@ public final class StarChartBench implements BenchModeSupport {
     @Override
     public Refusal refusal(ItemCurrency currency, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
                            Set<CraftingWard> wards) {
-        StarChartCrafting.Refusal refusal = StarChartCrafting.refusal(currency, loaded, store, materials, allowedUniques, wards);
-        boolean checksWards = refusal != StarChartCrafting.Refusal.NO_CHART && refusal != StarChartCrafting.Refusal.NONE_OWNED;
-        return new Refusal(refusal == StarChartCrafting.Refusal.NONE, checksWards, refusal.noticeKey());
+        UseVerdict verdict = StarChartCrafting.refusal(currency, loaded, store, materials, allowedUniques, wards);
+        return new Refusal(verdict, !verdict.equals(StarChartCrafting.NO_CHART) && !verdict.equals(StarChartCrafting.NONE_OWNED));
     }
 
     @Override
@@ -113,8 +113,8 @@ public final class StarChartBench implements BenchModeSupport {
     }
 
     @Override
-    public String cannotUseNoticeKey() {
-        return StarChartCrafting.Refusal.CANNOT_USE.noticeKey();
+    public UseVerdict cannotUse() {
+        return StarChartCrafting.CANNOT_USE;
     }
 
     @Override

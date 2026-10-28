@@ -34,6 +34,7 @@ import exiledsector.items.NodeGrantLinks;
 import exiledsector.items.WormholeAnchor;
 import exiledsector.items.WormholeAnchorLinks;
 import exiledsector.items.WormholeAnchorSocketLimits;
+import exiledsector.items.UseVerdict;
 import exiledsector.ui.SkillTreeSounds;
 import lunalib.lunaRefit.BaseRefitButton;
 
@@ -613,17 +614,17 @@ public final class TreeAllocationSession {
         if (node == null || item == null) {
             return null;
         }
-        String refusal = blockingSocketRefusal(node, item);
-        return refusal != null ? refusal : releaseConfirmation.warningForAction(INSTALL_ACTION + node.getId());
+        UseVerdict refusal = blockingSocketRefusal(node, item);
+        return !refusal.allowed() ? refusal.text(item.name()) : releaseConfirmation.warningForAction(INSTALL_ACTION + node.getId());
     }
 
-    private String blockingSocketRefusal(SkillNode node, Item item) {
+    private UseVerdict blockingSocketRefusal(SkillNode node, Item item) {
         if (item instanceof WormholeAnchor anchor) {
-            String anchorRefusal = anchor.socketRefusal();
-            if (anchorRefusal == null) {
+            UseVerdict anchorRefusal = anchor.socketRefusal();
+            if (anchorRefusal.allowed()) {
                 anchorRefusal = WormholeAnchorSocketLimits.refusal(anchor, node.getId(), allocator.data().getSocketedItems());
             }
-            if (anchorRefusal != null) {
+            if (!anchorRefusal.allowed()) {
                 return anchorRefusal;
             }
         }
@@ -633,7 +634,7 @@ public final class TreeAllocationSession {
     public boolean installInSocket(SkillNode node, Item item) {
         if (isBusy() || node == null || item == null || !NodeSocketable.fits(item, node)
                 || SocketCustody.installations(ShipSkillDataManager.all()).containsKey(item.id())
-                || blockingSocketRefusal(node, item) != null
+                || !blockingSocketRefusal(node, item).allowed()
                 || !confirmRelease(INSTALL_ACTION, node, planned -> planned.socketItem(node.getId(), item.id()))) {
             return false;
         }

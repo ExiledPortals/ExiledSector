@@ -14,35 +14,30 @@ import exiledsector.items.ItemType;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.StarChart;
 import exiledsector.items.StarChartCurrency;
+import exiledsector.items.UseVerdict;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
 
 public final class StarChartCrafting {
 
-    public enum Refusal {
-        NONE,
-        NO_CHART,
-        NONE_OWNED,
-        MIRRORED,
-        CORRUPTED,
-        MAX_TIER,
-        UNIQUE,
-        NOT_UNIQUE,
-        NO_MODIFIERS,
-        FULL,
-        WARD_BLOCKS,
-        WARD_BLOCKS_TRANSPOSITION,
-        CANNOT_USE;
-
-        public String noticeKey() {
-            return "chart.ui.currency.refused." + name().toLowerCase(Locale.ROOT);
-        }
-    }
+    public static final UseVerdict NO_CHART = refused("no_chart");
+    public static final UseVerdict NONE_OWNED = refused("none_owned");
+    public static final UseVerdict MIRRORED = refused("mirrored");
+    public static final UseVerdict CORRUPTED = refused("corrupted");
+    public static final UseVerdict MAX_TIER = refused("max_tier");
+    public static final UseVerdict UNIQUE = refused("unique");
+    public static final UseVerdict NOT_UNIQUE = refused("not_unique");
+    public static final UseVerdict NO_MODIFIERS = refused("no_modifiers");
+    public static final UseVerdict FULL = refused("full");
+    public static final UseVerdict WARD_BLOCKS = refused("ward_blocks");
+    public static final UseVerdict WARD_BLOCKS_TRANSPOSITION = refused("ward_blocks_transposition");
+    public static final UseVerdict CANNOT_USE = refused("cannot_use");
+    static final List<UseVerdict> REFUSALS = List.of(NO_CHART, NONE_OWNED, MIRRORED, CORRUPTED, MAX_TIER, UNIQUE, NOT_UNIQUE, NO_MODIFIERS, FULL,
+            WARD_BLOCKS, WARD_BLOCKS_TRANSPOSITION, CANNOT_USE);
 
     public record Used(Item result, Item selectedAfter) {
     }
@@ -59,6 +54,10 @@ public final class StarChartCrafting {
     private StarChartCrafting() {
     }
 
+    private static UseVerdict refused(String reason) {
+        return UseVerdict.refused("chart.ui.currency.refused." + reason);
+    }
+
     public static String currencyDescriptionKey(ItemCurrency currency) {
         String chartKey = chartCurrencyDescriptionKey(currency);
         return Translation.has(chartKey) ? chartKey : MaterialItems.descriptionKey(currency.itemId());
@@ -72,51 +71,51 @@ public final class StarChartCrafting {
         return ItemCurrencies.forType(ItemType.STAR_CHART);
     }
 
-    public static Refusal refusal(ItemCurrency currency, Item chart, ItemStore store, CraftingMaterials materials,
+    public static UseVerdict refusal(ItemCurrency currency, Item chart, ItemStore store, CraftingMaterials materials,
                                   Predicate<ItemDefinition> allowedUniques) {
         return refusal(currency, chart, store, materials, allowedUniques, Set.of());
     }
 
-    public static Refusal refusal(ItemCurrency currency, Item chart, ItemStore store, CraftingMaterials materials,
+    public static UseVerdict refusal(ItemCurrency currency, Item chart, ItemStore store, CraftingMaterials materials,
                                   Predicate<ItemDefinition> allowedUniques, Collection<CraftingWard> wards) {
         if (chart == null || chart.type() != ItemType.STAR_CHART || store == null || !store.holdsStarCharts() || store.find(chart.id()) != chart) {
-            return Refusal.NO_CHART;
+            return NO_CHART;
         }
         if (materials.count(currency.itemId()) < 1) {
-            return Refusal.NONE_OWNED;
+            return NONE_OWNED;
         }
         if (ItemCrafting.canUse(currency, chart, allowedUniques, wards)) {
-            return Refusal.NONE;
+            return UseVerdict.ALLOWED;
         }
         if (ItemCrafting.canUse(currency, chart, allowedUniques)) {
-            return currency == CraftingCurrency.TRANSPOSITION ? Refusal.WARD_BLOCKS_TRANSPOSITION : Refusal.WARD_BLOCKS;
+            return currency == CraftingCurrency.TRANSPOSITION ? WARD_BLOCKS_TRANSPOSITION : WARD_BLOCKS;
         }
         if (chart.mirrored()) {
-            return Refusal.MIRRORED;
+            return MIRRORED;
         }
-        return chart.corrupted() ? Refusal.CORRUPTED : specificRefusal(currency, chart);
+        return chart.corrupted() ? CORRUPTED : specificRefusal(currency, chart);
     }
 
-    static Refusal specificRefusal(ItemCurrency currency, Item chart) {
+    static UseVerdict specificRefusal(ItemCurrency currency, Item chart) {
         if (!ItemCurrencies.appliesTo(currency, chart.type())) {
-            return Refusal.CANNOT_USE;
+            return CANNOT_USE;
         }
         boolean unique = chart.definition() != null && chart.definition().unique();
         if (currency == StarChartCurrency.CARTOGRAPHY && chart.tier() >= StarChart.HIGHEST_TIER) {
-            return Refusal.MAX_TIER;
+            return MAX_TIER;
         }
         if (currency == CraftingCurrency.TRANSPOSITION && !unique) {
-            return Refusal.NOT_UNIQUE;
+            return NOT_UNIQUE;
         }
         boolean changesModifiers = currency == StarChartCurrency.REFORGE || currency == StarChartCurrency.ANNULMENT
                 || currency == CraftingCurrency.AUGMENTATION;
         if (changesModifiers && unique) {
-            return Refusal.UNIQUE;
+            return UNIQUE;
         }
         if (currency == StarChartCurrency.ANNULMENT && chart.explicits().isEmpty()) {
-            return Refusal.NO_MODIFIERS;
+            return NO_MODIFIERS;
         }
-        return currency == CraftingCurrency.AUGMENTATION ? Refusal.FULL : Refusal.CANNOT_USE;
+        return currency == CraftingCurrency.AUGMENTATION ? FULL : CANNOT_USE;
     }
 
     public static Used use(ItemCurrency currency, Item chart, ItemStore store, CraftingMaterials materials, Random random,
@@ -126,7 +125,7 @@ public final class StarChartCrafting {
 
     public static Used use(ItemCurrency currency, Item chart, ItemStore store, CraftingMaterials materials, Random random,
                            Predicate<ItemDefinition> allowedUniques, Collection<CraftingWard> wards) {
-        if (refusal(currency, chart, store, materials, allowedUniques, wards) != Refusal.NONE) {
+        if (!refusal(currency, chart, store, materials, allowedUniques, wards).allowed()) {
             return null;
         }
         Item result = ItemCrafting.use(currency, chart, materials, store, random, allowedUniques, wards);

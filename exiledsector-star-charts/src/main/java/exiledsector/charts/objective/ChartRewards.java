@@ -92,16 +92,16 @@ public final class ChartRewards {
         }
         ChartDrops.Loot chartLoot = grantChartDrops(sector, run, cargo, random, rewardMult);
         int materialCount = materials.values().stream().mapToInt(Integer::intValue).sum();
-        int chartCurrencyCount = chartLoot.currencies().values().stream().mapToInt(Integer::intValue).sum();
+        int chartMaterialCount = chartLoot.materials().values().stream().mapToInt(Integer::intValue).sum();
         announce(run, credits, hullItems, chartLoot.charts().size());
         MaterialDropAnnouncer.announce(chartLoot.currencies());
-        return new Reward(credits, hullItems, materialCount + chartCurrencyCount, chartLoot.charts().size());
+        return new Reward(credits, hullItems, materialCount + chartMaterialCount, chartLoot.charts().size());
     }
 
     static ChartDrops.Loot grantChartDrops(SectorAPI sector, ChartRun run, CargoAPI cargo, Random random, float rewardMult) {
         ChartDrops.Loot chartLoot = ChartDrops.forRunReward(sector, run, rewardMult, random);
         chartLoot.charts().forEach(chart -> cargo.addSpecial(chart.toSpecialItem(), 1f));
-        chartLoot.currencies().forEach((itemId, quantity) -> MaterialItems.add(cargo, itemId, quantity));
+        chartLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(cargo, itemId, quantity));
         return chartLoot;
     }
 

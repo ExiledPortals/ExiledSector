@@ -5,6 +5,7 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.skirmish.SkirmishFactions;
+import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.atlas.AtlasData;
 import exiledsector.charts.content.ChartBosses;
 import exiledsector.charts.content.ChartColonyItems;
@@ -71,6 +72,7 @@ public final class StarCharts {
         ChartFactions.load();
         ChartBosses.load();
         ChartAnomalies.load();
+        AtlasCatalysts.load();
         SkirmishFactions.load();
         ChartFeatures.load();
         AtlasData.load();

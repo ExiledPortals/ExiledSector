@@ -1,6 +1,5 @@
 package exiledsector.items;
 
-import exiledlib.i18n.Translation;
 import exiledsector.skills.ShipSkillData;
 import org.apache.log4j.Logger;
 
@@ -16,19 +15,19 @@ public final class SubroutineSocketLimits {
     private SubroutineSocketLimits() {
     }
 
-    public static String refusal(Item item, String socketNodeId, Map<String, String> socketedItemIds) {
+    public static UseVerdict refusal(Item item, String socketNodeId, Map<String, String> socketedItemIds) {
         if (item == null) {
-            return null;
+            return UseVerdict.ALLOWED;
         }
         ItemDefinition definition = item.definition();
         SubroutineKind kind = kindOf(definition);
         if (limitReached(kind, item.id(), socketNodeId, socketedItemIds, SubroutineSocketLimits::definitionOf)) {
-            return Translation.msg("socketable.socket.kindLimit").arg("name", item.name()).arg("limit", kind.socketLimitPerShip()).text();
+            return UseVerdict.refused("socketable.socket.kindLimit").with("limit", String.valueOf(kind.socketLimitPerShip()));
         }
         if (definitionLimitReached(definition, item.id(), socketNodeId, socketedItemIds, SubroutineSocketLimits::definitionOf)) {
-            return Translation.msg("socketable.socket.definitionLimit").arg("name", item.name()).arg("limit", definition.socketLimit()).text();
+            return UseVerdict.refused("socketable.socket.definitionLimit").with("limit", String.valueOf(definition.socketLimit()));
         }
-        return null;
+        return UseVerdict.ALLOWED;
     }
 
     public static boolean limitReached(Item item, String socketNodeId, Map<String, String> socketedItemIds) {

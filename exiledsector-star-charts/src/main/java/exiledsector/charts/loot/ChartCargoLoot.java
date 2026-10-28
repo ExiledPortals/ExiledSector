@@ -26,9 +26,9 @@ public final class ChartCargoLoot {
         ItemDrops.SiteLoot items = ItemDrops.rollSite(siteId, random, context.itemChances().scaled(itemMult),
                 context.dropMult(DropType.FEEDSTOCK) * itemMult, context.dropMult(DropType.CURRENCY) * itemMult,
                 ItemUnlock.available(ItemType.HULL_ITEM, sector));
-        ChartDrops.Loot charts = ChartDrops.roll(ChartDrops.Source.SYSTEM_SALVAGE, run.tier(), context.dropMult(DropType.STAR_CHART) * itemMult,
-                context.dropMult(DropType.CURRENCY) * itemMult, random, ChartDrops.uniquesFor(sector));
-        return items.plus(charts.charts(), List.of(), charts.currencies());
+        ChartDrops.Loot charts = ChartDrops.roll(ChartDrops.Source.SYSTEM_SALVAGE, run.tier(), ChartDrops.Mults.of(context, itemMult), random,
+                ChartDrops.uniquesFor(sector));
+        return items.plus(charts.charts(), List.of(), charts.materials());
     }
 
     public static CargoAPI roll(SectorAPI sector, ChartRun run, String scope, String siteId, float steps, float itemMult, Random random) {

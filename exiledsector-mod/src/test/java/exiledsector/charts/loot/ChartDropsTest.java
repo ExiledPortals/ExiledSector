@@ -10,7 +10,10 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.util.MutableValue;
 import exiledlib.MockSector;
+import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.content.ChartContent;
+import exiledsector.charts.effect.ChartEffect;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
@@ -89,6 +92,7 @@ class ChartDropsTest {
     void tearDown() {
         mockSector.close();
         ChartDrops.clear();
+        AtlasCatalysts.resetForTests();
         StarChartCurrency.unregisterAll();
         StarChartFixtures.clear();
     }
@@ -115,6 +119,7 @@ class ChartDropsTest {
             assertNotNull(rule, source.id());
             assertTrue(rule.chance() > 0f, source.id());
             assertEquals(source.insideSystem(), rule.currencyChance() > 0f, source.id());
+            assertEquals(source.insideSystem(), rule.catalystChance() > 0f, source.id());
             if (!source.insideSystem()) {
                 assertTrue(rule.maxTier() <= 6, source.id() + " must leave the high tiers to the sustain loop");
                 assertEquals(0f, rule.tierUpChance(), source.id());
@@ -162,10 +167,10 @@ class ChartDropsTest {
     void aPowerfulBossAlwaysDropsAChartOneTierUp() throws Exception {
         ChartDrops.register(new JSONArray().put(rule("chart_boss", 0f, 0f, 0f, 0f)));
         for (long roll = 0; roll < 30; roll++) {
-            ChartDrops.Loot loot = ChartDrops.roll(ChartDrops.Source.CHART_BOSS, 5, 1f, 1f, new Random(roll), anyUnique(), true);
+            ChartDrops.Loot loot = ChartDrops.roll(ChartDrops.Source.CHART_BOSS, 5, ChartDrops.Mults.uniform(1f), new Random(roll), anyUnique(), true);
             assertEquals(6, tierOf(loot.charts().get(0)));
         }
-        assertSame(ChartDrops.Loot.NONE, ChartDrops.roll(ChartDrops.Source.CHART_BOSS, 5, 1f, 1f, new Random(3L), anyUnique(), false));
+        assertSame(ChartDrops.Loot.NONE, ChartDrops.roll(ChartDrops.Source.CHART_BOSS, 5, ChartDrops.Mults.uniform(1f), new Random(3L), anyUnique(), false));
     }
 
     @Test
@@ -243,6 +248,42 @@ class ChartDropsTest {
         assertEquals(1, systemLoot.currencies().size());
         assertTrue(CHART_CURRENCY_IDS.containsAll(systemLoot.currencies().keySet()));
         assertTrue(ChartDrops.roll(ChartDrops.Source.SALVAGE, 4, 1f, new Random(2L), anyUnique()).currencies().isEmpty());
+    }
+
+    @Test
+    void catalystsDropOnlyInsideSystemsAmongThoseTheTierReachesScaledByTheirMultiplier() throws Exception {
+        AtlasCatalysts.useForTests(List.of(new AtlasCatalysts.Catalyst("test_low", "spatial_breach", AtlasCatalysts.Family.TERMINUS, 1f, 1),
+                new AtlasCatalysts.Catalyst("test_high", "asteroid_storm", AtlasCatalysts.Family.TERMINUS, 1f, 10)));
+        ChartDrops.register(new JSONArray().put(rule("system_salvage", 0f, 0f, 0f, 0f).put("catalyst_chance", "1"))
+                .put(rule("salvage", 0f, 0f, 0f, 0f).put("catalyst_chance", "1")));
+
+        assertEquals(0f, ChartDrops.rule(ChartDrops.Source.SALVAGE).catalystChance());
+        for (long roll = 0; roll < 30; roll++) {
+            ChartDrops.Loot loot = ChartDrops.roll(ChartDrops.Source.SYSTEM_SALVAGE, 4, new ChartDrops.Mults(0f, 0f, 1f), new Random(roll), anyUnique());
+            assertEquals(Map.of("test_low", 1), loot.catalysts());
+            assertEquals(Map.of("test_low", 1), loot.materials());
+            assertTrue(ChartDrops.roll(ChartDrops.Source.SALVAGE, 4, 1f, new Random(roll), anyUnique()).isEmpty());
+        }
+        Set<String> highTierDrops = new HashSet<>();
+        int dropped = 0;
+        Random random = new Random(7L);
+        int trials = 4000;
+        for (int roll = 0; roll < trials; roll++) {
+            ChartDrops.Loot loot = ChartDrops.roll(ChartDrops.Source.SYSTEM_SALVAGE, 12, new ChartDrops.Mults(0f, 0f, 0.5f), random, anyUnique());
+            highTierDrops.addAll(loot.catalysts().keySet());
+            dropped += loot.catalysts().size();
+        }
+        assertEquals(Set.of("test_low", "test_high"), highTierDrops);
+        assertEquals(0.5, dropped / (double) trials, 0.03);
+    }
+
+    @Test
+    void theCatalystModifierScalesOnlyCatalystsAndTheQuantityLinesScaleThemToo() {
+        ChartGenContext catalysts = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_CATALYST_PERCENT, 50f)));
+        ChartGenContext quantity = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, 20f)));
+
+        assertEquals(new ChartDrops.Mults(1f, 1f, 1.5f), ChartDrops.Mults.of(catalysts, 1f));
+        assertEquals(2.4f, ChartDrops.Mults.of(quantity, 2f).catalyst(), 0.0001f);
     }
 
     @Test

@@ -181,12 +181,12 @@ public final class WormholeAnchor extends Item implements NodeSocketable {
         return socket != null && socket.getType().getTier() == SkillTier.SOCKET && areaActive();
     }
 
-    public String socketRefusal() {
+    public UseVerdict socketRefusal() {
         String volume = volume();
         if (volume == null || areaActive()) {
-            return null;
+            return UseVerdict.ALLOWED;
         }
-        return Translation.msg("socketable.anchor.areaOffRefusal").arg("name", name()).arg("volume", volumeName(volume)).text();
+        return UseVerdict.refused("socketable.anchor.areaOffRefusal").with("volume", volumeName(volume));
     }
 
     @Override
