@@ -13,3 +13,4 @@ anomalous_debris,1,1,15,,graphics/icons/anomalies/anomalous_debris.png,,yes,,,"D
 excavation_sites,1,1,15,,graphics/icons/anomalies/excavation_sites.png,,yes,,,"AI War bolt-holes under some planets, each with its own items: an open shaft is a fight between frigates and destroyers only, a collapsed one a marine raid"
 storm_front,1,1,15,,graphics/icons/anomalies/storm_front.png,,yes,,,"An ion storm front crosses the system on a visible path; battles inside it are struck by lightning and drop more items"
 derelict_forge,1,1,15,,graphics/icons/anomalies/derelict_forge.png,,yes,,CHART_RESOURCE_PERCENT:100,"A Domain nanoforge on a derelict station runs a few precise programs on hull items for metals, rare metals and Nanite Feedstock"
+listening_post,1,1,15,,graphics/icons/anomalies/listening_post.png,,yes,,,"A listening post with a data vault behind a ring of sensor pickets; reach it unseen for the whole vault, or raise the alarm and watch it purge"

@@ -377,6 +377,23 @@ effects whose description colours invert (`ModifierLine.bestRoll`). Excise, Anch
 Excise and Anchor Reroll leave immutable modifiers alone. `ChartForge.run` takes the cost and the run only once the
 program has changed the item.
 
+## Listening Post
+
+The anomaly places a post of the chart faction on a clear orbit away from the inner wormhole and three to five
+non-aggressive pickets with 50% more sensor range in a ring 1800 su around it, always shown on the map (package
+`charts.anomaly.heist`, numbers in `HeistRules`). Suspicion, the alarm and the vault's share live on the run record
+(`PostState`). Every 0.1 days `PostScript` asks each picket how well it sees the player: sensor contact (outer half of
+its range, transponder off) builds suspicion 25% a day, which drains 10% a day out of contact; identification starts
+that picket's half-day report. Full suspicion, a report going out, or a picket left with ships after a battle with the
+player raises the alarm, which never comes down.
+
+Once raised, the vault loses 20% a day down to 25%, slowed by the purge line, and the pickets fly to the post, where
+the first to arrive becomes the aggressive Post Guard and the rest merge into it with their drops, each adding a fleet's item roll (`Pickets.merge`); engaging from `PostDialog` merges
+every living picket at once, so one fight wins the vault. The vault is the `listening_post` scope of `chart_loot.csv`
+plus the `exiledSector_chart_listening_post` item row, +100% to Star Charts, blueprints and subroutines, times the
+share left (`VaultLoot`). Taking it before the alarm flags the atlas cell `LANES_REVEALED`, which reveals 3 lanes
+around it like a Sensor Array (`AtlasReach`).
+
 ## Transverse Jump in charts
 
 In any chart system, Transverse Jump takes the fleet back to where the chart was opened, the same as the exit

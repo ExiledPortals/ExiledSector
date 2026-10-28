@@ -14,6 +14,7 @@ import exiledsector.charts.anomaly.forge.DerelictForge;
 import exiledsector.charts.anomaly.forge.ForgeDialog;
 import exiledsector.charts.anomaly.excavation.ShaftBattleCreationPlugin;
 import exiledsector.charts.anomaly.excavation.ShaftEncounters;
+import exiledsector.charts.anomaly.heist.PostDialog;
 import exiledsector.charts.anomaly.relay.RelayDialog;
 import exiledsector.charts.anomaly.relay.RelayNetwork;
 import exiledsector.charts.wormhole.ChartWormholeDialog;
@@ -48,6 +49,9 @@ public class ChartCampaignPlugin extends BaseCampaignPlugin {
         }
         if (ExcavationSiteDialog.wantsToHandle(interactionTarget)) {
             return new PluginPick<>(new ExcavationSiteDialog(), CampaignPlugin.PickPriority.MOD_SPECIFIC);
+        }
+        if (PostDialog.wantsToHandle(interactionTarget)) {
+            return new PluginPick<>(new PostDialog(), CampaignPlugin.PickPriority.MOD_SPECIFIC);
         }
         InteractionDialogPlugin convoyDialog = ConvoyDialogs.pick(interactionTarget);
         return convoyDialog == null ? null : new PluginPick<>(convoyDialog, CampaignPlugin.PickPriority.MOD_SPECIFIC);

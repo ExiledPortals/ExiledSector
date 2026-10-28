@@ -33,6 +33,7 @@ import java.util.Set;
 
 public final class ChartFleetLoot {
 
+    public static final String LOOT_FLEETS_MEMORY_KEY = "$exiledSector_chartLootFleets";
     static final Set<ItemType> GUARANTEED_UNIQUE_TYPES = Set.of(ItemType.HULL_ITEM, ItemType.SUBROUTINE);
 
     private ChartFleetLoot() {
@@ -127,6 +128,11 @@ public final class ChartFleetLoot {
         return claimedDeploymentPoints / startDeploymentPoints;
     }
 
+    public static int lootFleets(CampaignFleetAPI fleet) {
+        MemoryAPI fleetMemory = fleet == null ? null : fleet.getMemoryWithoutUpdate();
+        return fleetMemory != null && fleetMemory.get(LOOT_FLEETS_MEMORY_KEY) instanceof Number fleets ? Math.max(1, fleets.intValue()) : 1;
+    }
+
     static ChartRun liveRunOf(CampaignFleetAPI fleet) {
         ChartRun run = ChartRuns.currentOrNull();
         if (run == null || !run.runState().isLive()) {
@@ -162,7 +168,7 @@ public final class ChartFleetLoot {
 
     static ItemDrops.SiteLoot roll(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, float defeatedDeploymentPoints,
                                    float quantityMult, Random random) {
-        float share = claimShare(fleet, defeatedDeploymentPoints) * quantityMult;
+        float share = claimShare(fleet, defeatedDeploymentPoints) * lootFleets(fleet) * quantityMult;
         if (!(share > 0f)) {
             return ItemDrops.SiteLoot.NONE;
         }

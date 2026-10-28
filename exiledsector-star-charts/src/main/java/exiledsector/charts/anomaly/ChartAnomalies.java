@@ -6,6 +6,7 @@ import exiledsector.charts.anomaly.convoy.SupplyConvoy;
 import exiledsector.charts.anomaly.debris.AnomalousDebris;
 import exiledsector.charts.anomaly.excavation.ExcavationSites;
 import exiledsector.charts.anomaly.forge.DerelictForge;
+import exiledsector.charts.anomaly.heist.ListeningPost;
 import exiledsector.charts.anomaly.relay.RelayNetwork;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.anomaly.storm.StormFront;
@@ -36,7 +37,7 @@ public final class ChartAnomalies {
             AsteroidStorm.INSTANCE, MagneticStorm.INSTANCE, StellarFlares.INSTANCE, SpatialBreach.INSTANCE, FactionSkirmish.INSTANCE,
             RelayNetwork.INSTANCE, SupplyConvoy.INSTANCE, AnomalousDebris.INSTANCE, ExcavationSites.INSTANCE,
             StormFront.INSTANCE,
-            DerelictForge.INSTANCE);
+            DerelictForge.INSTANCE, ListeningPost.INSTANCE);
     private static final Logger LOG = Logger.getLogger(ChartAnomalies.class);
     private static volatile List<ChartAnomaly> anomalies = BUILT_IN;
     private static volatile Map<String, Definition> definitions = Map.of();
