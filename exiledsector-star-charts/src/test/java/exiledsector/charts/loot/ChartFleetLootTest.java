@@ -137,6 +137,18 @@ class ChartFleetLootTest {
     }
 
     @Test
+    void aBattleInTheStormFrontDropsMoreItems() throws Exception {
+        ChartDrops.register(new JSONArray().put(rule("chart_fleet", 2f)));
+        storeLiveRun(7);
+
+        ItemDrops.SiteLoot calm = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("calm", RUN_ID, 100f), 100f, new Random(3L), false);
+        ItemDrops.SiteLoot stormy = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("stormy", RUN_ID, 100f), 100f, new Random(3L), true);
+
+        assertEquals(2, chartCount(calm));
+        assertEquals(3, chartCount(stormy));
+    }
+
+    @Test
     void onlyFleetsOfTheLiveRunRollAnything() throws Exception {
         ChartDrops.register(new JSONArray().put(rule("chart_fleet", 1f)));
         CampaignFleetAPI fleet = ChartFleetFixtures.chartFleet("guard", RUN_ID, 100f);

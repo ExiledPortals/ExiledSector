@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import com.fs.starfarer.api.impl.campaign.terrain.NebulaTerrainPlugin;
 import com.fs.starfarer.api.impl.campaign.terrain.StarCoronaTerrainPlugin;
+import exiledsector.charts.anomaly.storm.StormFrontTerrainPlugin;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.generation.ChartGenContext;
 import org.junit.jupiter.api.AfterEach;
@@ -106,6 +107,7 @@ class ConvoyTerrainTest {
     @Test
     void onlyAsteroidsAndNebulaeSplitTheConvoyAndTheScreenRidesBeyondBattleRange() {
         assertTrue(ConvoyTerrain.slowsConvoys(nebula));
+        assertTrue(ConvoyTerrain.slowsConvoys(new StormFrontTerrainPlugin()));
         assertFalse(ConvoyTerrain.slowsConvoys(mock(StarCoronaTerrainPlugin.class)));
         assertEquals(1f, ConvoyTerrain.formationMult(8f, 9f));
         assertTrue(ConvoyRules.SCREEN_LEAD > VANILLA_BATTLE_JOIN_RANGE, "hitting the freighters in open space leaves the screen out");

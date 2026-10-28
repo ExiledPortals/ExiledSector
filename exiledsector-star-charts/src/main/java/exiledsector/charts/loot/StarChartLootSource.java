@@ -15,6 +15,7 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
+import exiledsector.charts.anomaly.storm.StormBattles;
 import exiledsector.effects.ItemLootListener;
 import exiledsector.effects.TechMiningItemListener;
 import exiledsector.items.ItemChances;
@@ -48,6 +49,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
         private float deploymentPointsDefeated;
         private float chartStrengthDefeated;
         private int highestDefeatedLevel;
+        private Boolean inStorm;
     }
 
     private StarChartLootSource() {
@@ -60,6 +62,9 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
     @Override
     public void recordEngagement(BattleLoot battle, BattleEngagement engagement) {
         Losses losses = losses(battle);
+        if (losses.inStorm == null) {
+            losses.inStorm = playerInStorm();
+        }
         engagement.lostEnemiesBySourceFleet().forEach((sourceFleet, members) -> {
             if (ChartFleetLoot.isChartFleet(sourceFleet) || adoptedAsDefender(sourceFleet)) {
                 losses.chartFleetDeploymentPoints.merge(sourceFleet, BattleEngagement.deploymentPoints(members), Float::sum);
@@ -71,6 +76,15 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
         if (engagement.defeatedDeploymentPoints() > 0f) {
             losses.deploymentPointsDefeated += engagement.defeatedDeploymentPoints();
             losses.chartStrengthDefeated += engagement.defeatedDeploymentPoints() * engagement.difficultyMultiplier();
+        }
+    }
+
+    private static boolean playerInStorm() {
+        try {
+            return StormBattles.playerInStorm();
+        } catch (RuntimeException e) {
+            LOG.error("[ExiledSector] Checking whether a battle is in a Storm Front failed", e);
+            return false;
         }
     }
 
@@ -116,7 +130,8 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
         }
         for (Map.Entry<CampaignFleetAPI, Float> fleetLosses : losses.chartFleetDeploymentPoints.entrySet()) {
             try {
-                chartLoot = chartLoot.plus(ChartFleetLoot.roll(sector, fleetLosses.getKey(), fleetLosses.getValue(), battle.independentRandom()));
+                chartLoot = chartLoot.plus(ChartFleetLoot.roll(sector, fleetLosses.getKey(), fleetLosses.getValue(), battle.independentRandom(),
+                        Boolean.TRUE.equals(losses.inStorm)));
             } catch (RuntimeException e) {
                 LOG.error("[ExiledSector] Rolling Star Chart fleet loot failed for fleet " + fleetLosses.getKey().getId(), e);
             }

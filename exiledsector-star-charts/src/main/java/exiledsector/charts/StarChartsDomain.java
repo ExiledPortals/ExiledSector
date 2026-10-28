@@ -4,6 +4,8 @@ import com.fs.starfarer.api.Global;
 import com.thoughtworks.xstream.XStream;
 import exiledlib.compat.CompatTarget;
 import exiledsector.charts.anomaly.debris.AnomalousDebrisTerrainPlugin;
+import exiledsector.charts.anomaly.storm.StormFrontTerrainPlugin;
+import exiledsector.charts.anomaly.storm.StormLoot;
 import exiledsector.charts.layout.abyss.AbyssArt;
 import exiledsector.charts.effect.ChartFleetConditionSource;
 import exiledsector.charts.loot.StarChartLootSource;
@@ -66,6 +68,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     public void onApplicationLoad() {
         StarChartCurrency.registerAll();
         AnomalousDebrisTerrainPlugin.preloadTextures();
+        StormFrontTerrainPlugin.preloadTextures();
         AbyssArt.preload();
         CatalystIconFx.preload();
         I18n.forGameText(() -> {
@@ -109,6 +112,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     public void loadItems() {
         StarChartItems.load();
         AnomalousDebrisCurrencies.load();
+        StormLoot.reserveModifiers();
         I18n.forGameText(AnomalousDebrisCurrencies::localise);
         I18n.forGameText(AtlasCatalystItems::localise);
     }

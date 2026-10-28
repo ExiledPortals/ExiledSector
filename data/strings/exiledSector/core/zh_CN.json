@@ -19,6 +19,8 @@
     "socketable.modifier.ARMOR_PERCENT": "镀甲",
     "socketable.modifier.HULL_PERCENT_ANOMALOUS_DEBRIS": "亡魂",
     "socketable.modifier.BEAM_WEAPON_RANGE_PERCENT_ANOMALOUS_DEBRIS": "守望",
+    "socketable.modifier.EMP_DAMAGE_TAKEN_PERCENT_STORM_FRONT": "避雷",
+    "socketable.modifier.NON_BEAM_ENERGY_WEAPON_CHAIN_CHANCE_PERCENT_STORM_FRONT": "雷云",
     "socketable.modifier.BALLISTIC_WEAPON_DAMAGE_PERCENT_WEAPON_MOUNT": "重击",
     "socketable.modifier.BEAM_WEAPON_DAMAGE_PERCENT_WEAPON_MOUNT": "聚焦",
     "socketable.modifier.CR_LOSS_PER_SECOND_PERCENT_BRIDGE": "不倦",

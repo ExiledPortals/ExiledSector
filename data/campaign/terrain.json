@@ -14,6 +14,11 @@
 		"plugin":"exiledsector.charts.anomaly.debris.AnomalousDebrisTerrainPlugin",
 		"musicSuppression":0,
 	},
+	"exiledSector_chart_storm_front":{
+		"plugin":"exiledsector.charts.anomaly.storm.StormFrontTerrainPlugin",
+		"musicSuppression":0.5,
+		"loopOne":"terrain_hyperspace_storm",
+	},
 	"exiledSector_chart_abyssal_fog":{
 		"plugin":"exiledsector.charts.layout.abyss.AbyssalFogTerrainPlugin",
 		"musicSuppression":0,

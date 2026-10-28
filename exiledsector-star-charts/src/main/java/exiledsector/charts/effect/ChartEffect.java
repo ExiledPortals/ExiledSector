@@ -9,6 +9,7 @@ import exiledsector.charts.anomaly.convoy.SupplyConvoy;
 import exiledsector.charts.anomaly.debris.AnomalousDebris;
 import exiledsector.charts.anomaly.excavation.ExcavationSites;
 import exiledsector.charts.anomaly.relay.RelayNetwork;
+import exiledsector.charts.anomaly.storm.StormFront;
 import exiledlib.i18n.Message;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
@@ -108,7 +109,10 @@ public enum ChartEffect implements ModifierEffect {
     CHART_EXTRA_ANOMALOUS_DEBRIS(true, (context, value) -> context.addAnomalyPercent(AnomalousDebris.EXTRA_KEY, Math.round(value))),
     CHART_ANOMALOUS_DEBRIS_CURRENCY_QUANTITY_PERCENT(false, (context, value) -> context.addAnomalyPercent(AnomalousDebris.CURRENCY_KEY, value)),
     CHART_EXTRA_EXCAVATION_SITES(true, (context, value) -> context.addAnomalyPercent(ExcavationSites.EXTRA_KEY, Math.round(value))),
-    CHART_EXCAVATION_LOOT_QUANTITY_PERCENT(false, (context, value) -> context.addAnomalyPercent(ExcavationSites.LOOT_KEY, value));
+    CHART_EXCAVATION_LOOT_QUANTITY_PERCENT(false, (context, value) -> context.addAnomalyPercent(ExcavationSites.LOOT_KEY, value)),
+    CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT(false, (context, value) -> context.addAnomalyPercent(StormFront.LOOT_KEY, value)),
+    CHART_STORM_STRIKE_FREQUENCY_PERCENT(false, (context, value) -> context.addAnomalyPercent(StormFront.STRIKE_KEY, value)),
+    CHART_STORM_FRONT_SIZE_PERCENT(false, (context, value) -> context.addAnomalyPercent(StormFront.SIZE_KEY, value));
 
     static final String KEY_PREFIX = "chart.effect.";
     static final String REDUCED_SUFFIX = ".reduced";
