@@ -10,3 +10,4 @@ faction_skirmish,1,1,15,,graphics/icons/anomalies/faction_skirmish.png,,,,,"Two 
 relay_network,1,1,15,,graphics/icons/anomalies/relay_network.png,,yes,,,"A dormant nav buoy, comm relay and sensor array; waking all three and completing the system moves the network on to a harder, richer system"
 supply_convoy,1,1,15,,,,yes,,,"A friendly escorted convoy runs a visible route to a planet; attack it for cargo pods or raid the cache it delivers"
 anomalous_debris,1,1,15,,graphics/icons/anomalies/anomalous_debris.png,,yes,,,"Debris fields hiding dormant AI-core fleets that wait for the player to strike; corrupting one first drops an engram"
+excavation_sites,1,1,15,,graphics/icons/anomalies/excavation_sites.png,,yes,,,"AI War bolt-holes under some planets, each with its own items: an open shaft is a fight between frigates and destroyers only, a collapsed one a marine raid"

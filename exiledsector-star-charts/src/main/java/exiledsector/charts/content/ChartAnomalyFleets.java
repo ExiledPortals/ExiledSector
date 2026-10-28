@@ -50,7 +50,18 @@ public final class ChartAnomalyFleets {
     }
 
     public static CampaignFleetAPI create(Spec spec, Random random) {
-        CampaignFleetAPI fleet = ChartContentGenerator.engine().createFleet(params(spec, random));
+        return create(params(spec, random));
+    }
+
+    public static CampaignFleetAPI create(Spec spec, Random random, int maxShipSize, boolean withOfficers) {
+        FleetParamsV3 params = params(spec, random);
+        params.maxShipSize = maxShipSize;
+        params.withOfficers = params.withOfficers && withOfficers;
+        return create(params);
+    }
+
+    private static CampaignFleetAPI create(FleetParamsV3 params) {
+        CampaignFleetAPI fleet = ChartContentGenerator.engine().createFleet(params);
         return fleet == null || fleet.isEmpty() ? null : fleet;
     }
 

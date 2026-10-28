@@ -272,8 +272,11 @@ public final class ChartGenContext {
     }
 
     public ChartGenContext withAnomalyEffects(List<String> anomalyIds) {
-        List<AppliedEffect> effects = anomalyIds == null ? List.of() : ChartAnomalies.effectsOf(anomalyIds);
-        if (effects.isEmpty()) {
+        return withEffects(anomalyIds == null ? List.of() : ChartAnomalies.effectsOf(anomalyIds));
+    }
+
+    public ChartGenContext withEffects(List<AppliedEffect> effects) {
+        if (effects == null || effects.isEmpty()) {
             return this;
         }
         List<AppliedEffect> combined = new ArrayList<>(applied);

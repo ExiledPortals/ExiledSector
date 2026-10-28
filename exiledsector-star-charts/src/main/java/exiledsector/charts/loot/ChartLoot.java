@@ -28,6 +28,7 @@ public final class ChartLoot {
     static final String FLEET_SCOPE = "fleet";
     static final String BOSS_SCOPE = "boss";
     public static final String CONVOY_SCOPE = "convoy";
+    public static final String EXCAVATION_SCOPE = "excavation";
     static final List<String> SCOPES = scopes();
     static final Set<String> COLONY_ITEM_GROUPS = Set.of("rare_tech", "rare_tech_low", "rare_tech_mothership", "nanoforge_always");
     static final List<String> VANILLA_TYPE_NAMES = Arrays.stream(DropType.values()).filter(DropType::isVanilla)
@@ -70,6 +71,7 @@ public final class ChartLoot {
         scopes.add(FLEET_SCOPE);
         scopes.add(BOSS_SCOPE);
         scopes.add(CONVOY_SCOPE);
+        scopes.add(EXCAVATION_SCOPE);
         return List.copyOf(scopes);
     }
 
