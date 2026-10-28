@@ -69,6 +69,26 @@ public final class AtlasProgress {
         }
     }
 
+    public static boolean revealLanesAround(SectorAPI sector, ChartRun run) {
+        AtlasRunNode node = run == null ? null : run.atlasNode();
+        if (sector == null || node == null) {
+            return false;
+        }
+        try {
+            AtlasState state = AtlasState.get(sector);
+            AtlasCell cell = AtlasCell.unpack(node.cell());
+            if (state.has(cell, AtlasState.LANES_REVEALED)) {
+                return false;
+            }
+            state.add(cell, AtlasState.LANES_REVEALED);
+            AtlasReach.refreshReveal(AtlasRuntime.generator(sector), state);
+            return true;
+        } catch (RuntimeException e) {
+            LOG.error("[ExiledSector] Revealing the atlas lanes around run " + run.runId() + " failed", e);
+            return false;
+        }
+    }
+
     public static void closed(SectorAPI sector, ChartRun run) {
         closedWithoutObjective(sector, run);
         try {

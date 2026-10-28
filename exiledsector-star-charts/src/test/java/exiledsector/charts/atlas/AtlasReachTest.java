@@ -97,6 +97,21 @@ class AtlasReachTest {
     }
 
     @Test
+    void aCleanListeningPostHeistRevealsLanesAroundItsSystemWithoutCompletingIt() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator generator = generator(state, Set.of());
+        AtlasCell neighbour = generator.lanes(AtlasCell.ORIGIN).get(0);
+        Set<AtlasCell> around = lanesFrom(generator, Set.of(neighbour), AtlasReach.LISTENING_POST_LANES).keySet();
+        assertFalse(AtlasReach.visible(generator, state).containsAll(around));
+
+        state.add(neighbour, AtlasState.LANES_REVEALED);
+
+        assertTrue(AtlasReach.visible(generator, state).containsAll(around));
+        assertFalse(state.isCompleted(neighbour));
+        assertEquals(Set.of(neighbour), state.cellsWith(AtlasState.LANES_REVEALED));
+    }
+
+    @Test
     void aBastionAllowsOneAttempt() {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = generator(state, Set.of());

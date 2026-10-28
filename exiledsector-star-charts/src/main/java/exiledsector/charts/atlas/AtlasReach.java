@@ -9,6 +9,7 @@ import java.util.Set;
 public final class AtlasReach {
 
     public static final int VISIBLE_LANES = 2;
+    public static final int LISTENING_POST_LANES = 3;
 
     private AtlasReach() {
     }
@@ -45,6 +46,12 @@ public final class AtlasReach {
             if (reach > remaining.getOrDefault(completed, -1)) {
                 remaining.put(completed, reach);
                 frontier.add(completed);
+            }
+        }
+        for (AtlasCell revealed : state.cellsWith(AtlasState.LANES_REVEALED)) {
+            if (!generator.isVoid(revealed) && LISTENING_POST_LANES > remaining.getOrDefault(revealed, -1)) {
+                remaining.put(revealed, LISTENING_POST_LANES);
+                frontier.add(revealed);
             }
         }
         while (!frontier.isEmpty()) {

@@ -23,6 +23,7 @@ public final class AtlasState implements AtlasMemory {
     public static final int MARKERS_SPENT = 4;
     public static final int CLEANSED = 8;
     public static final int ATTEMPTED = 16;
+    public static final int LANES_REVEALED = 32;
     static final String FLAG_SEPARATOR = ",";
     private static final Random SEEDS = new Random();
 
@@ -104,6 +105,16 @@ public final class AtlasState implements AtlasMemory {
 
     public boolean isCompleted(AtlasCell cell) {
         return has(cell, COMPLETED);
+    }
+
+    public Set<AtlasCell> cellsWith(int flag) {
+        Set<AtlasCell> cells = new LinkedHashSet<>();
+        cellFlags.forEach((packed, flags) -> {
+            if ((flags & flag) != 0) {
+                cells.add(AtlasCell.unpack(packed));
+            }
+        });
+        return cells;
     }
 
     public Set<AtlasCell> completedCells() {

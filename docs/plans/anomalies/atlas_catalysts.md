@@ -30,7 +30,7 @@ Each catalyst is one special item (a `special_items.csv` row, like the nanoswarm
 | Transit Orders | Convoy Orders | Supply Convoy |
 | Transit Orders | Redeployment Orders | none: changes the system's faction (see Redeployment Orders) |
 
-A row whose anomaly isn't insertable, is unknown or needs a missing mod is skipped with a load problem. Asteroid Storm, Magnetic Storm and Stellar Flares become `insertable` in `chart_anomalies.csv`, as `../atlas.md` already allows. Catalysts for anomalies still being built are a step in each anomaly's own plan: Storm Terminus (`storm_front.md`), Forge Survey (`derelict_forge.md`), Picket Orders (`listening_post.md`) and Assault Orders (`faction_skirmish.md`).
+A row whose anomaly isn't insertable, is unknown or needs a missing mod is skipped with a load problem. Asteroid Storm, Magnetic Storm and Stellar Flares become `insertable` in `chart_anomalies.csv`, as `../atlas.md` already allows. Catalysts for anomalies still being built are a step in each anomaly's own plan: Storm Terminus (`storm_front.md`), Forge Survey (`derelict_forge.md`), Picket Orders (`../completed/anomalies/listening_post.md`, built) and Assault Orders (`faction_skirmish.md`).
 
 The tooltip names the category ("Atlas Catalyst"), says what it adds ("Adds a Spatial Breach to a system on the Outer Reach Atlas"), and carries the family's flavour, per `docs/tooltip_wording.md`.
 

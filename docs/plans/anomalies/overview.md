@@ -7,7 +7,7 @@ An anomaly is anything a star chart system holds beyond its ordinary layout, fle
 | Relay Network | `relay_network.md` | none, escalates the systems it leads to |
 | Excavation Sites (built) | `../completed/anomalies/excavation_sites.md` | one optional per open shaft, frigates and destroyers only; collapsed shafts are a marine raid |
 | Faction Skirmish | `faction_skirmish.md` | two sides' fleets; you join one or fight both |
-| Listening Post | `listening_post.md` | zero if you get in unseen, one if the alarm goes up |
+| Listening Post (built) | `../completed/anomalies/listening_post.md` | zero if you get in unseen, one if the alarm goes up |
 | Derelict Forge | `derelict_forge.md` | none |
 | Storm Front | `storm_front.md` | none, changes the fights the chart already has |
 | Spatial Breach (built) | `../completed/anomalies/spatial_breach.md` | none |
@@ -45,4 +45,4 @@ Players favour one anomaly over the others with intel and atlas passives, and ca
 The atlas comes first. These steps sit inside `../atlas.md`'s build order (its steps 2, 3c, 12, 13 and 16).
 
 1. [~] Anomaly framework: `ChartAnomaly`, `chart_anomalies.csv`, the per-node roll, run requests, tooltip line, run state and cleanup, with one test anomaly that places nothing (`ChartAnomaliesTest.PlacesNothing`), plus inserted anomalies (`../atlas.md` step 17). Not built: icon and intel columns' use, which wait for the marker icons and the intel item.
-2. [~] Anomalies one at a time, each to its own plan's build order. Built apart from in-game checks: Faction Skirmish, Relay Network, Supply Convoy, Anomalous Debris and Excavation Sites. Suggested order for the rest: Storm Front, Derelict Forge, Listening Post.
+2. [~] Anomalies one at a time, each to its own plan's build order. Built apart from in-game checks: Faction Skirmish, Relay Network, Supply Convoy, Anomalous Debris, Excavation Sites and Listening Post. Suggested order for the rest: Storm Front, Derelict Forge.
