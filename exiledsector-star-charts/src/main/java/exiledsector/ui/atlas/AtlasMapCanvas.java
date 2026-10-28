@@ -58,10 +58,10 @@ final class AtlasMapCanvas {
     static final Color ORIGIN_TINT = new Color(150, 220, 255);
     static final Color SPENT_TINT = new Color(150, 40, 40);
     static final Color CLEANSED_COLOUR = new Color(235, 240, 255);
-    static final float ANOMALY_ORBIT_SHARE = 0.8f;
-    static final float ANOMALY_ICON_SHARE = 0.12f;
+    static final float ANOMALY_ORBIT_SHARE = 0.86f;
+    static final float ANOMALY_ICON_SHARE = 0.24f;
     static final float ANOMALY_FIRST_ANGLE = (float) Math.toRadians(60.0);
-    static final float ANOMALY_ANGLE_STEP = (float) Math.toRadians(32.0);
+    static final float ANOMALY_ANGLE_STEP = (float) Math.toRadians(38.0);
     static final float ANOMALY_RING_WIDTH_SHARE = 0.5f;
     static final float TRACE_WIDTH_SHARE = 0.6f;
     static final float TRACE_ALPHA = 0.8f;
