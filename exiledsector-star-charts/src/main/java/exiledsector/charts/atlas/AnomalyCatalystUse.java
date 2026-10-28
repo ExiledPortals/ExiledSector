@@ -24,7 +24,9 @@ public record AnomalyCatalystUse(AtlasCatalysts.Catalyst catalyst, AtlasGenerato
         if (check.allows()) {
             return UseVerdict.ALLOWED;
         }
-        UseVerdict refused = UseVerdict.refused(AtlasCatalystUse.refusalKey(check)).with("anomaly", AtlasCatalystUse.anomalyName(anomalyId));
+        UseVerdict refused = (check == AtlasAnomalies.InsertCheck.DOES_NOT_FIT
+                ? ChartAnomalies.byId(anomalyId).insertVerdict(generator, state, cell)
+                : UseVerdict.refused(AtlasCatalystUse.refusalKey(check))).with("anomaly", AtlasCatalystUse.anomalyName(anomalyId));
         if (check == AtlasAnomalies.InsertCheck.CONFLICT) {
             String other = AtlasAnomalies.effective(generator, state, cell).stream()
                     .filter(existing -> ChartAnomalies.conflicts(existing, anomalyId)).findFirst().orElse("");

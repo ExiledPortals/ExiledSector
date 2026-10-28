@@ -6,6 +6,8 @@ import exiledsector.charts.ChartTables;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasAnomalyCandidate;
 import exiledsector.charts.atlas.AtlasAnomalyRecord;
+import exiledsector.charts.atlas.AtlasCatalystUse;
+import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasData;
 import exiledsector.charts.atlas.AtlasGenerator;
@@ -16,6 +18,8 @@ import exiledsector.charts.atlas.AtlasRules;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasTraits;
 import exiledsector.charts.atlas.AtlasUnlocks;
+import exiledsector.charts.atlas.RedeploymentCatalystUse;
+import exiledsector.items.UseVerdict;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -110,6 +114,33 @@ class FactionSkirmishTest {
         SkirmishFactions.useForTests(neutral);
 
         assertEquals(List.of(), AtlasAnomalies.effective(generator, state, cell));
+    }
+
+    @Test
+    void assaultOrdersInsertOnlyWhereTheCurrentOwnerCanBeAttackedAndSayWhyNot() {
+        ChartTables.useAnomalies(List.of(FactionSkirmish.INSTANCE),
+                List.of(new ChartAnomalies.Definition(FactionSkirmish.ID, 1f, 1, 15, "", "", true, Set.of(), false)));
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator generator = new AtlasGenerator(SEED, RULES, AtlasUnlocks.NONE, state);
+        AtlasCell cell = borderSystem(generator, state);
+        AtlasCatalysts.Catalyst assaultOrders = new AtlasCatalysts.Catalyst("test_assault_orders", FactionSkirmish.ID, AtlasCatalysts.Family.ORDERS,
+                1f, 1);
+        AtlasCatalystUse use = AtlasCatalystUse.of(assaultOrders, generator, state, null, Set.of(cell));
+        assertTrue(use.check(cell).allowed());
+        String owner = FactionSkirmish.defender(generator, state, cell);
+
+        state.capture(generator, cell, NEUTRAL);
+        UseVerdict neutralOwner = use.check(cell);
+        assertEquals(FactionSkirmish.NO_SIDE_KEY, neutralOwner.refusalKey());
+        assertEquals(RedeploymentCatalystUse.factionName(NEUTRAL), neutralOwner.args().get("faction"));
+
+        state.capture(generator, cell, owner);
+        Set<String> neutral = new HashSet<>(laneOwners(generator, state, cell));
+        neutral.remove(FactionSkirmish.defender(generator, state, cell));
+        SkirmishFactions.useForTests(neutral);
+
+        assertEquals(FactionSkirmish.NO_ATTACKER_KEY, use.check(cell).refusalKey());
+        assertEquals(AtlasAnomalies.InsertCheck.DOES_NOT_FIT, AtlasAnomalies.canInsert(generator, state, cell, FactionSkirmish.ID, null));
     }
 
     @Test

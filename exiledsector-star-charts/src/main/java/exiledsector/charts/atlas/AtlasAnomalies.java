@@ -93,7 +93,7 @@ public final class AtlasAnomalies {
         if (present.stream().anyMatch(existing -> ChartAnomalies.conflicts(existing, anomalyId))) {
             return InsertCheck.CONFLICT;
         }
-        return anomaly.fitsAt(generator.traits(cell)) ? InsertCheck.ALLOWED : InsertCheck.DOES_NOT_FIT;
+        return anomaly.insertVerdict(generator, state, cell).allowed() ? InsertCheck.ALLOWED : InsertCheck.DOES_NOT_FIT;
     }
 
     public static Insertion insert(AtlasGenerator generator, AtlasState state, AtlasCell cell, String anomalyId, AtlasAnomalyRecord.Source source,

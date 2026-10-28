@@ -2,11 +2,14 @@ package exiledsector.charts.anomaly;
 
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
+import exiledsector.charts.atlas.AtlasAnomalies;
+import exiledsector.charts.atlas.AtlasCatalystUse;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasTraits;
 import exiledsector.charts.run.ChartRun;
+import exiledsector.items.UseVerdict;
 
 public interface ChartAnomaly {
 
@@ -44,6 +47,11 @@ public interface ChartAnomaly {
 
     default boolean holdsAt(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
         return true;
+    }
+
+    default UseVerdict insertVerdict(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+        return fitsAt(generator.traits(cell)) && holdsAt(generator, state, cell) ? UseVerdict.ALLOWED
+                : UseVerdict.refused(AtlasCatalystUse.refusalKey(AtlasAnomalies.InsertCheck.DOES_NOT_FIT));
     }
 
     default boolean isActiveIn(LocationAPI location) {

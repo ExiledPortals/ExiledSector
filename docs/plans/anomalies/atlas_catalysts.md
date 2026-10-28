@@ -25,12 +25,16 @@ Each catalyst is one special item (a `special_items.csv` row, like the nanoswarm
 | Unstable Terminus | Magnetised Terminus | Magnetic Storm |
 | Unstable Terminus | Flare Terminus | Stellar Flares |
 | Unstable Terminus | Wreck Terminus | Anomalous Debris |
+| Unstable Terminus | Storm Terminus | Storm Front |
 | Explorarium Survey | Bolt-hole Survey | Excavation Sites |
 | Explorarium Survey | Relay Survey | Relay Network |
+| Explorarium Survey | Forge Survey | Derelict Forge |
 | Transit Orders | Convoy Orders | Supply Convoy |
+| Transit Orders | Assault Orders | Faction Skirmish |
+| Transit Orders | Picket Orders | Listening Post |
 | Transit Orders | Redeployment Orders | none: changes the system's faction (see Redeployment Orders) |
 
-A row whose anomaly isn't insertable, is unknown or needs a missing mod is skipped with a load problem. Asteroid Storm, Magnetic Storm and Stellar Flares become `insertable` in `chart_anomalies.csv`, as `../atlas.md` already allows. Catalysts for anomalies still being built are a step in each anomaly's own plan: Storm Terminus (`storm_front.md`), Forge Survey (`derelict_forge.md`), Picket Orders (`../completed/anomalies/listening_post.md`, built) and Assault Orders (`faction_skirmish.md`).
+A row whose anomaly isn't insertable, is unknown or needs a missing mod is skipped with a load problem. Asteroid Storm, Magnetic Storm and Stellar Flares become `insertable` in `chart_anomalies.csv`, as `../atlas.md` already allows. The Storm, Forge, Picket and Assault rows were built as a step of each anomaly's own plan (`storm_front.md`, `derelict_forge.md`, `../completed/anomalies/listening_post.md`, `faction_skirmish.md`).
 
 The tooltip names the category ("Atlas Catalyst"), says what it adds ("Adds a Spatial Breach to a system on the Outer Reach Atlas"), and carries the family's flavour, per `docs/tooltip_wording.md`.
 
@@ -70,7 +74,7 @@ Any revealed system, reachable or not, so you can seed systems ahead of your rou
 | `OPEN_RUN` | The Gateway is already holding this system's coordinates. |
 | `ALREADY_PRESENT` | This system already holds that anomaly. |
 | `CONFLICT` | Names the anomaly already there that it can't share the system with. |
-| `DOES_NOT_FIT` | The anomaly's own reason, from its `fitsAt` (Assault Orders: no neighbouring faction can attack this system). |
+| `DOES_NOT_FIT` | The anomaly's own reason, from its `insertVerdict` (Assault Orders: no neighbouring faction can attack this system). |
 
 A catalyst never goes into a system that already holds its anomaly, whether rolled or inserted, and never strengthens one. Strengthening an anomaly is left to other sources.
 

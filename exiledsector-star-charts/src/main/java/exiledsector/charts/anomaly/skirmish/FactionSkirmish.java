@@ -9,11 +9,15 @@ import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasTraits;
+import exiledsector.charts.atlas.RedeploymentCatalystUse;
+import exiledsector.items.UseVerdict;
 
 public final class FactionSkirmish implements ChartAnomaly {
 
     public static final String ID = "faction_skirmish";
     public static final FactionSkirmish INSTANCE = new FactionSkirmish();
+    public static final String NO_SIDE_KEY = "catalyst.refused.skirmish.no_side";
+    public static final String NO_ATTACKER_KEY = "catalyst.refused.skirmish.no_attacker";
 
     private FactionSkirmish() {
     }
@@ -34,6 +38,21 @@ public final class FactionSkirmish implements ChartAnomaly {
     @Override
     public boolean holdsAt(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
         return SkirmishFactions.takesSides(defender(generator, state, cell)) && attacker(generator, state, cell) != null;
+    }
+
+    @Override
+    public UseVerdict insertVerdict(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+        String defender = defender(generator, state, cell);
+        if (defender == null || generator.node(cell).specialId() != null) {
+            return UseVerdict.refused(RedeploymentCatalystUse.SPECIAL_KEY);
+        }
+        if (!defender.equals(AtlasOpening.territoryOwnerOf(generator, state, cell))) {
+            return UseVerdict.refused(RedeploymentCatalystUse.INFESTED_KEY).with("faction", RedeploymentCatalystUse.factionName(defender));
+        }
+        if (!SkirmishFactions.takesSides(defender)) {
+            return UseVerdict.refused(NO_SIDE_KEY).with("faction", RedeploymentCatalystUse.factionName(defender));
+        }
+        return attacker(generator, state, cell) == null ? UseVerdict.refused(NO_ATTACKER_KEY) : UseVerdict.ALLOWED;
     }
 
     public static String defender(AtlasGenerator generator, AtlasState state, AtlasCell cell) {

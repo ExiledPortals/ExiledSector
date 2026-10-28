@@ -436,7 +436,8 @@ an unlock is decided when first seen, and that is saved.
 
 Atlas Catalysts are special items listed in `atlas_catalysts.csv` (`AtlasCatalysts`) and used on a revealed atlas system.
 Most insert their anomaly as a player record through `AtlasAnomalies.canInsert` and `insert` (`AnomalyCatalystUse`), so
-an anomaly they add takes the system's own faction. Redeployment Orders instead hand the system to another faction from its
+an anomaly they add takes the system's own faction. Whether it fits is the anomaly's `insertVerdict` (its `fitsAt` and
+`holdsAt` by default; the Faction Skirmish checks the current owner, captures included). Redeployment Orders instead hand the system to another faction from its
 biome's list, raced on the atlas seed, the system and its current owner so a reload never changes the pick, and stored
 as a capture (`RedeploymentCatalystUse`). Both go through core `Consumables.use`, which spends the item only once the change has taken.
 

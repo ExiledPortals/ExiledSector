@@ -74,7 +74,7 @@ public record RedeploymentCatalystUse(AtlasCatalysts.Catalyst catalyst, AtlasGen
         return Translation.msg("catalyst.confirm.redeploy").arg("system", systemName).text();
     }
 
-    static String factionName(String factionId) {
+    public static String factionName(String factionId) {
         SectorAPI sector = Global.getSector();
         FactionAPI faction = sector == null ? null : sector.getFaction(factionId);
         return faction == null ? factionId : faction.getDisplayName();
