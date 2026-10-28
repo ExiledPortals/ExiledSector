@@ -10,6 +10,8 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.charts.anomaly.debris.DormantFleetLoot;
 import exiledsector.charts.anomaly.excavation.ExcavationLoot;
+import exiledsector.charts.anomaly.storm.StormLoot;
+import exiledsector.charts.anomaly.storm.StormRules;
 import exiledsector.charts.anomaly.relay.RelayStates;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
@@ -135,16 +137,32 @@ public final class ChartFleetLoot {
     }
 
     public static ItemDrops.SiteLoot roll(SectorAPI sector, CampaignFleetAPI fleet, float defeatedDeploymentPoints, Random random) {
+        return roll(sector, fleet, defeatedDeploymentPoints, random, false);
+    }
+
+    public static ItemDrops.SiteLoot roll(SectorAPI sector, CampaignFleetAPI fleet, float defeatedDeploymentPoints, Random random, boolean inStorm) {
         if (!isChartFleet(fleet)) {
             return ItemDrops.SiteLoot.NONE;
         }
         ChartRun run = liveRunOf(fleet);
-        return run == null ? ItemDrops.SiteLoot.NONE : roll(sector, fleet, run, ChartRunEffects.contextOf(run), defeatedDeploymentPoints, random);
+        if (run == null) {
+            return ItemDrops.SiteLoot.NONE;
+        }
+        ChartGenContext context = ChartRunEffects.contextOf(run);
+        if (!inStorm) {
+            return roll(sector, fleet, run, context, defeatedDeploymentPoints, random);
+        }
+        return StormLoot.touch(roll(sector, fleet, run, context, defeatedDeploymentPoints, StormRules.lootQuantityMult(context), random), random);
     }
 
     static ItemDrops.SiteLoot roll(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, float defeatedDeploymentPoints,
                                    Random random) {
-        float share = claimShare(fleet, defeatedDeploymentPoints);
+        return roll(sector, fleet, run, context, defeatedDeploymentPoints, 1f, random);
+    }
+
+    static ItemDrops.SiteLoot roll(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, float defeatedDeploymentPoints,
+                                   float quantityMult, Random random) {
+        float share = claimShare(fleet, defeatedDeploymentPoints) * quantityMult;
         if (!(share > 0f)) {
             return ItemDrops.SiteLoot.NONE;
         }

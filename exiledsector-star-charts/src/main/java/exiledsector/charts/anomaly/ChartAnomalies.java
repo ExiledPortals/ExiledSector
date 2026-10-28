@@ -7,6 +7,7 @@ import exiledsector.charts.anomaly.debris.AnomalousDebris;
 import exiledsector.charts.anomaly.excavation.ExcavationSites;
 import exiledsector.charts.anomaly.relay.RelayNetwork;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
+import exiledsector.charts.anomaly.storm.StormFront;
 import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext;
@@ -32,7 +33,8 @@ public final class ChartAnomalies {
     static final String ID_COLUMN = "id";
     static final List<ChartAnomaly> BUILT_IN = List.of(StarAnomalies.BLACK_HOLE, StarAnomalies.NEUTRON_STAR, StarAnomalies.DENSE_NEBULA,
             AsteroidStorm.INSTANCE, MagneticStorm.INSTANCE, StellarFlares.INSTANCE, SpatialBreach.INSTANCE, FactionSkirmish.INSTANCE,
-            RelayNetwork.INSTANCE, SupplyConvoy.INSTANCE, AnomalousDebris.INSTANCE, ExcavationSites.INSTANCE);
+            RelayNetwork.INSTANCE, SupplyConvoy.INSTANCE, AnomalousDebris.INSTANCE, ExcavationSites.INSTANCE,
+            StormFront.INSTANCE);
     private static final Logger LOG = Logger.getLogger(ChartAnomalies.class);
     private static volatile List<ChartAnomaly> anomalies = BUILT_IN;
     private static volatile Map<String, Definition> definitions = Map.of();

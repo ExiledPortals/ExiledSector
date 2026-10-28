@@ -347,6 +347,20 @@ encounter pulls in no other fleet and allows no AI retreat (`ShaftEncounters`), 
 capital ship on either side, which `ShaftBattlePlugin` also removes from the reserves. A collapsed shaft is a
 `raid.ChartRaid` at a tier-based difficulty whose objective yields the site's items scaled by raid effectiveness.
 
+## Storm Front
+
+The anomaly adds one moving `BaseTerrain` band, 3000 su wide and as long as the system is wide, that enters at a random
+edge when the run opens and leaves past the far edge 30 days later, then stops affecting anything
+(`StormFront`, `StormFrontTerrainPlugin`, geometry in `StormPath`, numbers in `StormRules`; package
+`charts.anomaly.storm`). Fleets inside it have 50% less sensor range, convoy fleets slow in it as in nebulae, and chart
+intel names the next worlds and POIs it reaches. The size and strike lines scale its width and strike rate.
+
+A battle is in the storm when the player fleet is inside the band as it starts. The global `StormBattlePlugin` then
+fires an EMP arc with no source ship every 6 seconds at a random non-phased ship of either side, weighted by hull size
+and 10% stronger per tier, so shields block it. `StarChartLootSource` records the flag at the first engagement, so
+auto-resolved battles count too, and `ChartFleetLoot` rolls chart fleet items with 50% more quantity, rerolling a
+quarter of hull items around one reserved storm modifier (`StormLoot`, `GrantedModifiers`).
+
 ## Transverse Jump in charts
 
 In any chart system, Transverse Jump takes the fleet back to where the chart was opened, the same as the exit
