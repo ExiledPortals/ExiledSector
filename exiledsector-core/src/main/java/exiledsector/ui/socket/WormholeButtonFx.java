@@ -21,6 +21,9 @@ final class WormholeButtonFx {
     static final float MOUTH_SPIN_DEGREES = 40f;
     static final float MOUTH_ALPHA = 0.8f;
     static final float IDLE_ALPHA = 0.5f;
+    static final float CORNER_CUT = 7f;
+    static final float OUTSET_CUT_SHARE = 0.4142f;
+    static final int OUTLINE_POINTS = 8;
     static final float PULSE_SPEED = 2.4f;
     private static final SpriteCache SPRITES = new SpriteCache(WormholeButtonFx.class);
 
@@ -47,27 +50,28 @@ final class WormholeButtonFx {
     }
 
     private static void outerGlow(float left, float bottom, float width, float height, float reach, float alpha) {
-        float right = left + width;
-        float top = bottom + height;
-        Color leftColour = VIOLET;
-        Color rightColour = CYAN;
-        GL11.glBegin(GL11.GL_QUADS);
-        band(leftColour, rightColour, alpha, left, bottom, right, bottom, right + reach, bottom - reach, left - reach, bottom - reach);
-        band(rightColour, rightColour, alpha, right, bottom, right, top, right + reach, top + reach, right + reach, bottom - reach);
-        band(rightColour, leftColour, alpha, right, top, left, top, left - reach, top + reach, right + reach, top + reach);
-        band(leftColour, leftColour, alpha, left, top, left, bottom, left - reach, bottom - reach, left - reach, top + reach);
+        float cut = Math.min(CORNER_CUT, Math.min(width, height) / 2f);
+        float[] inner = chamferedOutline(left, bottom, width, height, cut);
+        float[] outer = chamferedOutline(left - reach, bottom - reach, width + reach * 2f, height + reach * 2f, cut + reach * OUTSET_CUT_SHARE);
+        GL11.glBegin(GL11.GL_QUAD_STRIP);
+        for (int corner = 0; corner <= OUTLINE_POINTS; corner++) {
+            int index = (corner % OUTLINE_POINTS) * 2;
+            vertex(inner[index], inner[index + 1], left, width, alpha);
+            vertex(outer[index], outer[index + 1], left, width, 0f);
+        }
         GL11.glEnd();
     }
 
-    private static void band(Color colourA, Color colourB, float alpha, float innerAX, float innerAY, float innerBX, float innerBY,
-                             float outerBX, float outerBY, float outerAX, float outerAY) {
-        Misc.setColor(colourA, alpha);
-        GL11.glVertex2f(innerAX, innerAY);
-        Misc.setColor(colourB, alpha);
-        GL11.glVertex2f(innerBX, innerBY);
-        Misc.setColor(colourB, 0f);
-        GL11.glVertex2f(outerBX, outerBY);
-        Misc.setColor(colourA, 0f);
-        GL11.glVertex2f(outerAX, outerAY);
+    static float[] chamferedOutline(float left, float bottom, float width, float height, float cut) {
+        float right = left + width;
+        float top = bottom + height;
+        return new float[]{left + cut, bottom, right - cut, bottom, right, bottom + cut, right, top - cut,
+                right - cut, top, left + cut, top, left, top - cut, left, bottom + cut};
+    }
+
+    private static void vertex(float x, float y, float left, float width, float alpha) {
+        float share = Math.max(0f, Math.min(1f, (x - left) / width));
+        Misc.setColor(Misc.interpolateColor(VIOLET, CYAN, share), alpha);
+        GL11.glVertex2f(x, y);
     }
 }

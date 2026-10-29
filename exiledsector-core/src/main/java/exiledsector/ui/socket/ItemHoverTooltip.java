@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public final class ItemHoverTooltip {
 
@@ -51,26 +50,12 @@ public final class ItemHoverTooltip {
     }
 
     public void show(Object key, Item item, HullSize hullSize, Function<Boolean, List<StyledText>> footer, PositionAPI anchor) {
-        showItem(key, item, hullSize, footer, anchor, false);
-    }
-
-    public void showSplit(Object key, Item item, Function<Boolean, List<StyledText>> footer, PositionAPI anchor) {
-        showItem(key, item, null, footer, anchor, ItemTooltip.splits(item));
-    }
-
-    private void showItem(Object key, Item item, HullSize hullSize, Function<Boolean, List<StyledText>> footer, PositionAPI anchor, boolean split) {
         String definitionId = item == null ? null : item.definitionId();
         boolean codexLinked = ItemCodexLink.existingEntryId(definitionId) != null && !Global.getSettings().isShowingCodex();
         String codexDefinitionId = codexLinked ? definitionId : null;
-        float tooltipWidth = split ? ItemTooltip.SPLIT_WIDTH : ItemTooltip.WIDTH;
-        show(key, tooltipWidth, (element, expanded) -> {
-            Supplier<List<StyledText>> footerLines = () -> footerLines(footer.apply(expanded), codexLinked && expanded);
-            if (split) {
-                ItemTooltip.writeSplit(element, tooltipWidth - PAD * 2f, item, hullSize, footerLines, expanded);
-            } else {
-                ItemTooltip.write(element, item, hullSize, footerLines, expanded);
-            }
-        }, anchor, Placement.BESIDE, PAD, codexDefinitionId);
+        show(key, ItemTooltip.WIDTH, (element, expanded) -> ItemTooltip.write(element, item, hullSize,
+                        () -> footerLines(footer.apply(expanded), codexLinked && expanded), expanded),
+                anchor, Placement.BESIDE, PAD, codexDefinitionId);
     }
 
     private static List<StyledText> footerLines(List<StyledText> footerLines, boolean showCodexHint) {
