@@ -1,6 +1,5 @@
 package exiledsector.charts.anomaly.forge;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
@@ -8,7 +7,6 @@ import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.FleetTypes;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
-import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageGenFromSeed;
 import exiledlib.i18n.Translation;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartAnomalyFleets;
@@ -25,12 +23,8 @@ public final class ForgeGuards {
     static final String HAS_DEFENDERS_KEY = "$hasDefenders";
     static final String DEFENDER_FLEET_KEY = ChartIds.VANILLA_DEFENDER_FLEET_MEMORY_KEY;
     static final String DEFEATED_KEY = "$defenderFleetDefeated";
-    static final String DERELICT_TALLY_KEY = SalvageGenFromSeed.DEFEATED_DERELICT_STR;
     static final long GUARD_SALT = 0x4755415244L;
     static final float UNTIL_INTERACTION_ENDS = 0f;
-
-    public record DerelictTally(Object value) {
-    }
 
     private ForgeGuards() {
     }
@@ -97,18 +91,5 @@ public final class ForgeGuards {
         }
         guards.setName(Translation.gameText("chart.forge.guards.name"));
         return guards;
-    }
-
-    static DerelictTally derelictTally() {
-        return new DerelictTally(Global.getSector().getMemoryWithoutUpdate().get(DERELICT_TALLY_KEY));
-    }
-
-    static void restore(DerelictTally tally) {
-        MemoryAPI global = Global.getSector().getMemoryWithoutUpdate();
-        if (tally.value() == null) {
-            global.unset(DERELICT_TALLY_KEY);
-        } else {
-            global.set(DERELICT_TALLY_KEY, tally.value());
-        }
     }
 }

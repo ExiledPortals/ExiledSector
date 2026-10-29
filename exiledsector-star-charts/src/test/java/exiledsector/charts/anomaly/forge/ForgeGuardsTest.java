@@ -2,12 +2,16 @@ package exiledsector.charts.anomaly.forge;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
+import com.fs.starfarer.api.campaign.GenericPluginManagerAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.fleets.FleetParamsV3;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
+import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageGenFromSeed;
+import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageGenFromSeed.SDMParams;
+import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageGenFromSeed.SalvageDefenderModificationPlugin;
 import exiledlib.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartAnomalyFleets;
@@ -19,6 +23,7 @@ import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.objective.ChartObjective;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
+import exiledsector.charts.run.cleanup.ChartDefenderTallies;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,6 +36,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -39,6 +46,7 @@ class ForgeGuardsTest {
 
     private static final String RUN_ID = "run1";
     private static final long SEED = 42L;
+    private static final String DERELICT_TALLY_KEY = SalvageGenFromSeed.DEFEATED_DERELICT_STR;
 
     private MockSector mockSector;
     private FakeChartContentEngine engine;
@@ -169,25 +177,29 @@ class ForgeGuardsTest {
     }
 
     @Test
-    void theDerelictTallyGoesBackToWhatItWasBeforeTheFight() {
+    void beatingTheGuardsLeavesTheDerelictTallyWhereItWas() {
         MemoryAPI global = mockSector.sector.getMemoryWithoutUpdate();
-        global.set(ForgeGuards.DERELICT_TALLY_KEY, 50f);
-        ForgeGuards.DerelictTally before = ForgeGuards.derelictTally();
-        global.set(ForgeGuards.DERELICT_TALLY_KEY, 80f);
+        global.set(DERELICT_TALLY_KEY, 50f);
+        when(system.hasTag(ChartIds.SYSTEM_TAG)).thenReturn(true);
+        SalvageDefenderModificationPlugin vanilla = mock(SalvageDefenderModificationPlugin.class);
+        when(vanilla.getHandlingPriority(any())).thenReturn(1);
+        doAnswer(invocation -> {
+            global.set(DERELICT_TALLY_KEY, global.getFloat(DERELICT_TALLY_KEY) + 30f);
+            return null;
+        }).when(vanilla).reportDefeated(any(), any(), any());
+        ChartDefenderTallies tallies = new ChartDefenderTallies();
+        GenericPluginManagerAPI plugins = mock(GenericPluginManagerAPI.class);
+        when(mockSector.sector.getGenericPlugins()).thenReturn(plugins);
+        when(plugins.getPluginsOfClass(SalvageDefenderModificationPlugin.class)).thenReturn(List.of(vanilla, tallies));
+        SDMParams params = new SDMParams();
+        params.entity = forge;
+        params.factionId = Factions.DERELICT;
+        CampaignFleetAPI beaten = mock(CampaignFleetAPI.class);
 
-        ForgeGuards.restore(before);
+        assertTrue(tallies.getHandlingPriority(params) > vanilla.getHandlingPriority(params));
+        tallies.reportDefeated(params, forge, beaten);
 
-        assertEquals(50f, global.get(ForgeGuards.DERELICT_TALLY_KEY));
-    }
-
-    @Test
-    void anUnsetDerelictTallyIsUnsetAgain() {
-        MemoryAPI global = mockSector.sector.getMemoryWithoutUpdate();
-        ForgeGuards.DerelictTally before = ForgeGuards.derelictTally();
-        global.set(ForgeGuards.DERELICT_TALLY_KEY, 30f);
-
-        ForgeGuards.restore(before);
-
-        assertFalse(global.contains(ForgeGuards.DERELICT_TALLY_KEY));
+        assertEquals(50f, global.get(DERELICT_TALLY_KEY));
+        verify(vanilla).reportDefeated(params, forge, beaten);
     }
 }

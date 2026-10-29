@@ -368,7 +368,8 @@ The anomaly places one neutral station on a clear orbit and rolls three programs
 (`DerelictForge`, `ForgeStates`, `ForgePrograms`; package `charts.anomaly.forge`). Its `effects` column adds +100%
 Resource %. Like a vanilla cryosleeper, the forge is guarded until beaten: `ForgeGuards` builds derelict drones (half
 the tier's fleet size, cruisers at most) under one alpha-core Guardian into the forge's `$defenderFleet`, and
-`ForgeDialog` hands them to vanilla `SalvageDefenderInteraction`, putting the derelict tally back after a win. It then
+`ForgeDialog` hands them to vanilla `SalvageDefenderInteraction`. As at every chart site with vanilla defenders, a win
+leaves the main sector's derelict tally untouched (`ChartDefenderTallies`). It then
 lists the programs and their costs, which grow 15% per tier and follow the cost line (`ForgeRules`), and opens the
 Modification Bench in Forge mode (`ForgeBench`), which takes hull items only.
 

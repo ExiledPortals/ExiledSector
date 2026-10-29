@@ -20,6 +20,7 @@ import exiledsector.charts.run.ChartBlockedAbilities;
 import exiledsector.charts.run.ChartCampaignPlugin;
 import exiledsector.charts.run.ChartContentListener;
 import exiledsector.charts.run.ChartRunScript;
+import exiledsector.charts.run.cleanup.ChartDefenderTallies;
 import exiledsector.charts.run.cleanup.ChartLoadSweep;
 import exiledsector.charts.run.diagnostics.ChartSoakScript;
 import exiledsector.items.ItemStore;
@@ -34,6 +35,7 @@ public final class StarCharts {
 
     public static void onGameLoad(SectorAPI sector) {
         ChartLoadSweep.sweep(sector);
+        ChartDefenderTallies.register(sector);
         sector.unregisterPlugin(ChartCampaignPlugin.ID);
         sector.registerPlugin(new ChartCampaignPlugin());
         sector.removeTransientScriptsOfClass(ChartRunScript.class);

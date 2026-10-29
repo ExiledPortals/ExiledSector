@@ -45,7 +45,6 @@ public class ForgeDialog implements InteractionDialogPlugin {
     private InteractionDialogAPI interactionDialog;
     private SectorEntityToken forge;
     private String ranMessage;
-    private ForgeGuards.DerelictTally tallyBeforeFight;
 
     @Override
     public void init(InteractionDialogAPI interactionDialog) {
@@ -67,12 +66,7 @@ public class ForgeDialog implements InteractionDialogPlugin {
         }
         fillMemoryMap();
         VanillaText.plainPara(interactionDialog.getTextPanel(), Translation.gameText("chart.forge.guarded"));
-        tallyBeforeFight = ForgeGuards.derelictTally();
-        if (new SalvageDefenderInteraction().execute(null, interactionDialog, new ArrayList<>(), memoryMap)) {
-            return true;
-        }
-        tallyBeforeFight = null;
-        return false;
+        return new SalvageDefenderInteraction().execute(null, interactionDialog, new ArrayList<>(), memoryMap);
     }
 
     private void fillMemoryMap() {
@@ -165,10 +159,6 @@ public class ForgeDialog implements InteractionDialogPlugin {
 
     @Override
     public void optionSelected(String optionText, Object optionData) {
-        if (tallyBeforeFight != null && !ForgeGuards.guarded(forge)) {
-            ForgeGuards.restore(tallyBeforeFight);
-            tallyBeforeFight = null;
-        }
         if (BEAT_DEFENDERS_CONTINUE.equals(optionData)) {
             continueAfterGuards();
         } else if (optionData instanceof RunOption option) {
