@@ -28,14 +28,19 @@ import java.util.Map;
 
 final class AtlasSystemPreview {
 
-    record Prepared(ChartSystemSketch sketch, float outerRadius, List<String> starKeys) {
+    record Prepared(ChartSystemSketch sketch, float outerRadius, List<String> starKeys, AtlasSystemArt.Layout art) {
 
         static Prepared of(String key, ChartSystemSketch sketch) {
+            return of(key, sketch, List.of());
+        }
+
+        static Prepared of(String key, ChartSystemSketch sketch, List<String> anomalyIds) {
             List<String> starKeys = new ArrayList<>();
             for (int i = 0; i < sketch.stars().size(); i++) {
                 starKeys.add(key + "_" + i);
             }
-            return new Prepared(sketch, Math.max(MIN_OUTER_RADIUS, sketch.outerRadius()), List.copyOf(starKeys));
+            return new Prepared(sketch, Math.max(MIN_OUTER_RADIUS, sketch.outerRadius()), List.copyOf(starKeys),
+                    AtlasSystemArt.layout(key.hashCode(), sketch, anomalyIds));
         }
     }
 
@@ -56,8 +61,6 @@ final class AtlasSystemPreview {
     static final float MAX_CORONA_SHARE = 0.3f;
     static final float ORBIT_REACH_SHARE = 0.82f;
     static final float SHADOW_MIN_PIXELS = 3f;
-    static final float NEBULA_SHARE = 0.55f;
-    static final float NEBULA_ALPHA = 0.5f;
     static final float RIM_ALPHA_MULT = 0.37f;
     static final float PHOTOSPHERE_GLOW_SHARE = 0.5f;
     static final float PHOTOSPHERE_GLOW_ALPHA = 0.55f;
@@ -86,6 +89,8 @@ final class AtlasSystemPreview {
     private final SpriteCache spriteCache = new SpriteCache(AtlasSystemPreview.class);
     private final UnitSphere unitSphere = new UnitSphere();
     private final UnitSphere detailedSphere = new UnitSphere(DETAILED_SPHERE_DETAIL);
+    private final AtlasSystemArt art = new AtlasSystemArt();
+    private final AtlasSystemArt.Frame frame = new AtlasSystemArt.Frame();
     private final Map<String, PlanetSpecAPI> specs = new HashMap<>();
     private final Map<String, StarAurora> auroras = new HashMap<>();
     private final Vector2f bandCentre = new Vector2f();
@@ -113,18 +118,35 @@ final class AtlasSystemPreview {
         loadSharedTextures();
         ChartSystemSketch sketch = prepared.sketch();
         Fit fit = new Fit(cx, cy, radius, radius * ORBIT_REACH_SHARE, outerRadius, elapsedSeconds);
+        startFrame(fit, sketch.planets().size(), alpha);
         for (int i = 0; i < sketch.belts().size(); i++) {
             drawBelt(sketch.belts().get(i), i, fit, alpha);
         }
         if (sketch.photosphere() != null) {
             drawPhotosphere(sketch.photosphere(), fit, alpha);
         }
+        art.renderNebula(prepared.art(), frame);
         for (int i = 0; i < sketch.stars().size(); i++) {
-            drawStar(prepared.starKeys().get(i), sketch.stars().get(i), fit, alpha);
+            drawStar(prepared.starKeys().get(i), sketch.stars().get(i), fit, alpha, i == 0);
         }
-        for (Body planet : sketch.planets()) {
-            drawPlanet(planet, fit, alpha);
+        for (int i = 0; i < sketch.planets().size(); i++) {
+            drawPlanet(sketch.planets().get(i), i, fit, alpha);
         }
+        art.renderAnomalies(prepared.art(), frame);
+    }
+
+    private void startFrame(Fit fit, int planets, float alpha) {
+        frame.centreX = fit.cx();
+        frame.centreY = fit.cy();
+        frame.radius = fit.radius();
+        frame.reach = fit.reach();
+        frame.starX = fit.cx();
+        frame.starY = fit.cy();
+        frame.starPixels = fit.radius() * MIN_STAR_SHARE;
+        frame.starColour = FALLBACK_STAR_COLOUR;
+        frame.elapsedSeconds = fit.elapsedSeconds();
+        frame.alpha = alpha;
+        frame.ensurePlanets(planets);
     }
 
     private record Fit(float cx, float cy, float radius, float reach, float outer, float elapsedSeconds) {
@@ -191,17 +213,20 @@ final class AtlasSystemPreview {
                 Color.WHITE, alpha, angleAt(0f, belt.orbitDays(), fit.elapsedSeconds()));
     }
 
-    private void drawStar(String auroraKey, Body star, Fit fit, float alpha) {
+    private void drawStar(String auroraKey, Body star, Fit fit, float alpha, boolean primary) {
         PlanetSpecAPI spec = spec(star.typeId());
         place(star, fit);
         Color corona = spec == null || spec.getCoronaColor() == null ? FALLBACK_STAR_COLOUR : spec.getCoronaColor();
         if (spec != null && spec.isNebulaCenter()) {
-            try (GlScope glow = GlScope.flat().blend(GL11.GL_SRC_ALPHA, GL11.GL_ONE)) {
-                drawGlow(bodyX, bodyY, fit.radius() * NEBULA_SHARE, corona, NEBULA_ALPHA * alpha);
-            }
             return;
         }
         float pixels = starPixels(star, fit.radius());
+        if (primary) {
+            frame.starX = bodyX;
+            frame.starY = bodyY;
+            frame.starPixels = pixels;
+            frame.starColour = corona;
+        }
         String coronaPath = spec == null ? null : spec.getCoronaTexture();
         if (coronaPath != null && !coronaPath.isEmpty()) {
             float halo = Math.min(fit.radius() * MAX_CORONA_SHARE, pixels * Math.max(1f, spec.getCoronaSize()));
@@ -232,10 +257,13 @@ final class AtlasSystemPreview {
         return Math.round(channel + (255 - channel) * PHOTOSPHERE_CORE_WHITENING);
     }
 
-    private void drawPlanet(Body planet, Fit fit, float alpha) {
+    private void drawPlanet(Body planet, int index, Fit fit, float alpha) {
         PlanetSpecAPI spec = spec(planet.typeId());
         place(planet, fit);
         float pixels = planet.orbitRadius() <= 0f ? starPixels(planet, fit.radius()) : planetPixels(planet, fit.radius());
+        frame.planetX[index] = bodyX;
+        frame.planetY[index] = bodyY;
+        frame.planetPixels[index] = pixels;
         drawBody(spec, bodyX, bodyY, pixels, planet.startAngle(), fit.elapsedSeconds(), FALLBACK_PLANET_COLOUR, alpha, false);
         float dx = fit.cx() - bodyX;
         float dy = fit.cy() - bodyY;

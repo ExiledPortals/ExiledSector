@@ -139,7 +139,7 @@ final class AtlasMapCanvas {
                 List<String> anomalyIds = AtlasAnomalies.effective(generator, state, cell);
                 ChartSystemSketch sketch = ChartSystemSketcher.sketch(AtlasOpening.layoutSeed(state, cell),
                         AtlasData.recipeFor(node.regionId(), node.layoutId()), anomalyIds, palette);
-                sketches.put(cell, AtlasSystemPreview.Prepared.of(nodeKey(cell), sketch));
+                sketches.put(cell, AtlasSystemPreview.Prepared.of(nodeKey(cell), sketch, anomalyIds));
                 for (int slot = 0; slot < anomalyIds.size(); slot++) {
                     ChartAnomalies.Definition definition = ChartAnomalies.definition(anomalyIds.get(slot));
                     anomalyIcons.add(new AnomalyIcon(cell, anomalyIds.get(slot), definition == null ? "" : definition.icon(), slot));

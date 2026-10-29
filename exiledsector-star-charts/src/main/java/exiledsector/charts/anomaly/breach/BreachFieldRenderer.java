@@ -12,7 +12,7 @@ import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
 
-final class BreachFieldRenderer {
+public final class BreachFieldRenderer {
 
     static final String RIM_TEXTURE = "graphics/planets/aurorae.png";
     static final String CRACK_TEXTURE = "graphics/fx/emp_arcs.png";
@@ -32,7 +32,7 @@ final class BreachFieldRenderer {
     private BreachFieldRenderer() {
     }
 
-    static void render(Vector2f centre, float radius, float alphaMult, float elapsedSeconds, float viewMult) {
+    public static void render(Vector2f centre, float radius, float alphaMult, float elapsedSeconds, float viewMult) {
         if (radius <= 0f || alphaMult <= 0f) {
             return;
         }
