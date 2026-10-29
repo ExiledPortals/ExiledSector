@@ -13,6 +13,7 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.generation.ChartGenContext;
@@ -88,7 +89,7 @@ public final class ExcavationSites implements ChartAnomaly {
     }
 
     static boolean inRunSystem(ChartRun run, LocationAPI location) {
-        return run != null && run.runState().isLive() && location != null && run.systemId().equals(location.getId());
+        return run != null && run.runState().isLive() && location != null && run.systemId().equals(ChartIds.locationIdOf(location));
     }
 
     @Override

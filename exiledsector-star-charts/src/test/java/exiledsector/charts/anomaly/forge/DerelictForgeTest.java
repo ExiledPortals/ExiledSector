@@ -62,7 +62,8 @@ class DerelictForgeTest {
         star = mock(PlanetAPI.class);
         when(star.getLocation()).thenReturn(new Vector2f());
         when(system.getCenter()).thenReturn(star);
-        when(system.getId()).thenReturn(ChartIds.systemId(RUN_ID));
+        when(system.getId()).thenReturn("charted space");
+        when(system.getOptionalUniqueId()).thenReturn(ChartIds.systemId(RUN_ID));
         when(system.addCustomEntity(anyString(), any(), anyString(), anyString())).thenAnswer(invocation -> {
             SectorEntityToken entity = entity();
             added.add(entity);

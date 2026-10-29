@@ -50,7 +50,8 @@ class ExcavationSiteDialogTest {
     void setUp() {
         mockSector = new MockSector();
         system = mock(StarSystemAPI.class);
-        when(system.getId()).thenReturn(ChartIds.systemId(RUN_ID));
+        when(system.getId()).thenReturn("charted space");
+        when(system.getOptionalUniqueId()).thenReturn(ChartIds.systemId(RUN_ID));
         run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
         ChartRuns.store(run);
     }

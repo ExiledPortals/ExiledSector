@@ -41,7 +41,8 @@ final class PostSystem {
         when(star.getId()).thenReturn("star");
         when(star.isStar()).thenReturn(true);
         when(star.getLocation()).thenReturn(new Vector2f());
-        when(system.getId()).thenReturn(ChartIds.systemId(RUN_ID));
+        when(system.getId()).thenReturn("charted space");
+        when(system.getOptionalUniqueId()).thenReturn(ChartIds.systemId(RUN_ID));
         when(system.getStar()).thenReturn(star);
         when(system.getCenter()).thenReturn(star);
         when(system.getScripts()).thenAnswer(invocation -> new ArrayList<>(scripts));

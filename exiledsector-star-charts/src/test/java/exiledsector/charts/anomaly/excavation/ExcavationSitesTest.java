@@ -44,7 +44,8 @@ class ExcavationSitesTest {
         mockSector = new MockSector();
         system = mock(StarSystemAPI.class);
         when(system.getPlanets()).thenReturn(planets);
-        when(system.getId()).thenReturn(ChartIds.systemId(RUN_ID));
+        when(system.getId()).thenReturn("charted space");
+        when(system.getOptionalUniqueId()).thenReturn(ChartIds.systemId(RUN_ID));
     }
 
     @AfterEach

@@ -77,7 +77,7 @@ public final class DerelictForge implements ChartAnomaly {
     }
 
     static boolean inRunSystem(ChartRun run, LocationAPI location) {
-        return run != null && run.runState().isLive() && location != null && run.systemId().equals(location.getId());
+        return run != null && run.runState().isLive() && location != null && run.systemId().equals(ChartIds.locationIdOf(location));
     }
 
     @Override
