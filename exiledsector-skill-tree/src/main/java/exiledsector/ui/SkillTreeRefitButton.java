@@ -8,6 +8,7 @@ import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.skills.SkillTreeSetting;
+import exiledsector.ui.hyperspace.HyperspaceCamera;
 import exiledsector.ui.refit.RefitButtonColumn;
 import exiledsector.ui.refit.RefitButtonConfig;
 import exiledsector.ui.refit.RefitModuleTabs;
@@ -61,6 +62,11 @@ public class SkillTreeRefitButton extends FullScreenRefitButton {
 
     @Override
     public void initPanel(CustomPanelAPI backgroundPanel, FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
+        buildPanel(backgroundPanel, member, variant, market, null);
+    }
+
+    private void buildPanel(CustomPanelAPI backgroundPanel, FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market,
+                            HyperspaceCamera carriedCamera) {
         RefitModuleTabs.adoptDockedShip(member, variant);
         float panelWidth = getPanelWidth(member, variant);
         float panelHeight = getPanelHeight(member, variant);
@@ -76,12 +82,15 @@ public class SkillTreeRefitButton extends FullScreenRefitButton {
         canvasElement.getPosition().inTL(0f, 0f);
 
         boolean[] switching = {false};
+        SkillTreeCanvasPlugin[] canvasHolder = new SkillTreeCanvasPlugin[1];
         SkillTreeCanvasPlugin canvasPlugin = new SkillTreeCanvasPlugin(member, variant, shipCardHeight, this, contentPanel, target -> {
             if (!switching[0]) {
                 switching[0] = true;
-                switchShip(backgroundPanel, contentPanel, target, market);
+                switchShip(backgroundPanel, contentPanel, canvasHolder[0], target, market);
             }
         });
+        canvasHolder[0] = canvasPlugin;
+        canvasPlugin.carryCamera(carriedCamera);
         CustomPanelAPI canvasPanel = Global.getSettings().createCustom(panelWidth, panelHeight, canvasPlugin);
         canvasElement.addCustom(canvasPanel, 0f).getPosition().inTL(0f, 0f);
 
@@ -96,7 +105,8 @@ public class SkillTreeRefitButton extends FullScreenRefitButton {
                 ChromeMetrics.EDGE_MARGIN - frameOutset);
     }
 
-    private void switchShip(CustomPanelAPI backgroundPanel, CustomPanelAPI contentPanel, FleetMemberAPI target, MarketAPI market) {
+    private void switchShip(CustomPanelAPI backgroundPanel, CustomPanelAPI contentPanel, SkillTreeCanvasPlugin outgoingCanvas,
+                            FleetMemberAPI target, MarketAPI market) {
         Global.getSector().addTransientScript(RefitShipSwitch.to(target, shown -> {
             RefitButtonAdder adder = RefitPanelLauncher.refitButtonAdder();
             if (adder == null || adder.getActivePanel() != backgroundPanel) {
@@ -106,8 +116,9 @@ public class SkillTreeRefitButton extends FullScreenRefitButton {
                 closePanel();
                 return;
             }
+            HyperspaceCamera carriedCamera = outgoingCanvas.rememberedCamera();
             backgroundPanel.removeComponent(contentPanel);
-            initPanel(backgroundPanel, shown.member(), shown.variant(), market);
+            buildPanel(backgroundPanel, shown.member(), shown.variant(), market, carriedCamera);
         }));
     }
 }

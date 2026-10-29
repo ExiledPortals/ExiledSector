@@ -25,6 +25,7 @@ import exiledsector.ui.decoration.FactionFleetRenderer;
 import exiledsector.ui.decoration.SkillTreeFleetRenderer;
 import exiledsector.ui.decoration.StarfieldRenderer;
 import exiledsector.ui.decoration.TreeDecorations;
+import exiledsector.ui.hyperspace.HyperspaceCamera;
 import exiledsector.ui.inspect.ItemCodex;
 import exiledsector.ui.node.DoctrineColors;
 import exiledsector.ui.node.NodeRadiusRingRenderer;
@@ -115,6 +116,16 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
 
     void setShipCard(UIComponentAPI component) {
         chrome.setShipCard(component);
+    }
+
+    HyperspaceCamera rememberedCamera() {
+        return cameraMemory.isSaved() ? cameraMemory.camera() : null;
+    }
+
+    void carryCamera(HyperspaceCamera carried) {
+        if (carried != null && treeSession.getStartingRoot() != null) {
+            camera.jumpTo(carried);
+        }
     }
 
     boolean shipListAvailable() {
