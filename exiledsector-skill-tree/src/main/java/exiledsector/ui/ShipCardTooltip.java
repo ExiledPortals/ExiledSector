@@ -3,27 +3,34 @@ package exiledsector.ui;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
+import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
 import exiledsector.ui.refit.UiReflection;
 import org.apache.log4j.Logger;
 
+import java.util.List;
+
 class ShipCardTooltip {
 
     static final float GAP = 8f;
-    static final ShipCardTooltip NONE = new ShipCardTooltip(null, null);
+    static final float SHIP_NAME_GAP = 0f;
+    static final ShipCardTooltip NONE = new ShipCardTooltip(null, null, null);
     private static final Logger LOG = Logger.getLogger(ShipCardTooltip.class);
     private static boolean failureLogged;
+    private static boolean shipNameFailureLogged;
 
     record Placement(float left, float bottom) {
     }
 
     private final CustomPanelAPI hostPanel;
+    private final String shipName;
     private UIComponentAPI tooltip;
     private boolean shown;
 
-    ShipCardTooltip(CustomPanelAPI hostPanel, UIComponentAPI tooltip) {
+    ShipCardTooltip(CustomPanelAPI hostPanel, UIComponentAPI tooltip, String shipName) {
         this.hostPanel = hostPanel;
         this.tooltip = tooltip;
+        this.shipName = shipName;
     }
 
     // java:S1181: UiReflection calls declare Throwable, and a changed game build may only cost the ship card tooltip
@@ -35,7 +42,7 @@ class ShipCardTooltip {
                 return NONE;
             }
             UiReflection.call(button, "setTooltip", 0f, null);
-            return new ShipCardTooltip(hostPanel, tooltip);
+            return new ShipCardTooltip(hostPanel, tooltip, member.getShipName());
         } catch (Throwable e) {
             logFailure(e);
             return NONE;
@@ -65,6 +72,7 @@ class ShipCardTooltip {
         }
         try {
             UiReflection.call(tooltip, "beforeShown");
+            addShipName(tooltip, shipName);
             PositionAPI tooltipPosition = tooltip.getPosition();
             Placement placement = place(rect(cardPosition), tooltipPosition.getWidth(), tooltipPosition.getHeight(),
                     rect(hostPanel.getPosition()));
@@ -77,6 +85,35 @@ class ShipCardTooltip {
             hide();
             tooltip = null;
         }
+    }
+
+    // java:S1181: UiReflection calls declare Throwable, and a changed game build may only cost the ship name line
+    @SuppressWarnings("java:S1181")
+    static void addShipName(UIComponentAPI tooltip, String shipName) {
+        if (shipName == null || shipName.isBlank() || !(tooltip instanceof TooltipMakerAPI tooltipMaker)) {
+            return;
+        }
+        try {
+            if (!(UiReflection.call(tooltip, "getContents") instanceof UIComponentAPI contents)
+                    || !(firstChild(contents) instanceof UIComponentAPI topLine)
+                    || !(UiReflection.call(topLine.getPosition(), "getYAlignOffset") instanceof Float topLineOffset)
+                    || !UiReflection.hasMethod(tooltip, "updateSize", 0)) {
+                logShipNameFailure(null);
+                return;
+            }
+            float nameLineHeight = tooltipMaker.addTitle(shipName).getPosition().getHeight() + SHIP_NAME_GAP;
+            topLine.getPosition().setYAlignOffset(topLineOffset - nameLineHeight);
+            PositionAPI contentsPosition = contents.getPosition();
+            contentsPosition.setSize(contentsPosition.getWidth(), contentsPosition.getHeight() + nameLineHeight);
+            UiReflection.call(tooltip, "updateSize");
+        } catch (Throwable e) {
+            logShipNameFailure(e);
+        }
+    }
+
+    private static Object firstChild(UIComponentAPI panel) throws Throwable {
+        List<?> children = UiReflection.children(panel);
+        return children.isEmpty() ? null : children.get(0);
     }
 
     // java:S1181: UiReflection calls declare Throwable, and a changed game build may only cost the ship card tooltip
@@ -106,6 +143,13 @@ class ShipCardTooltip {
         if (!failureLogged) {
             failureLogged = true;
             LOG.warn("[ExiledSector] Couldn't reuse the vanilla ship tooltip; skill tree ship cards show none", e);
+        }
+    }
+
+    private static void logShipNameFailure(Throwable e) {
+        if (!shipNameFailureLogged) {
+            shipNameFailureLogged = true;
+            LOG.warn("[ExiledSector] Couldn't add the ship name to the vanilla ship tooltip; skill tree ship cards show it without", e);
         }
     }
 }

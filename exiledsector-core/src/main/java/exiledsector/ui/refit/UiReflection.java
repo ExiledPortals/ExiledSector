@@ -65,7 +65,7 @@ public final class UiReflection {
         return method == NONE ? null : METHOD_INVOKE.invoke(method, target, args);
     }
 
-    static boolean hasMethod(Object target, String name, int parameterCount) throws Throwable {
+    public static boolean hasMethod(Object target, String name, int parameterCount) throws Throwable {
         return target != null && method(target.getClass(), name, parameterCount) != NONE;
     }
 
