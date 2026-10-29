@@ -530,6 +530,10 @@ section's implicits (`ItemImplicits.corruptionPool`). Unique hull items can also
 modifiers, keeping their implicits. Subroutines add an implicit from `subroutine_corruption_implicits.csv`
 instead of replacing one, and their rare outcome only corrupts them.
 
+Star charts add two outcomes (`StarChartCorruption`): one tier up, reaching tier 16 from 15, or a reroll with 8 modifiers,
+4 per side. Tier 16 (`ChartTiers.CORRUPTED_TIER`) has its own row in `star_chart_tiers.csv` but is reached only this way.
+Chart drops, the Cartography Cipher and combining stop at 15, and a tier 16 clear records as tier 15 (`ItemUnlock`).
+
 ## Hull upgrade points
 
 `HullUpgradePoints` decides a player ship's points from the LunaLib "Hull Upgrade Points" setting; NPC ships

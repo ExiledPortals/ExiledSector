@@ -202,7 +202,7 @@ class StarChartCurrencyTest {
             Item corrupted = use(CraftingCurrency.CORRUPTION, chart, seed * 0x9E3779B97F4A7C15L);
             assertNotNull(corrupted);
             assertTrue(corrupted.corrupted());
-            assertEquals(8, corrupted.tier());
+            assertEquals(corrupted.corruption() == CorruptionOutcome.TIER_RAISED ? 9 : 8, corrupted.tier());
             outcomes.add(corrupted.corruption());
             if (corrupted.corruption() == CorruptionOutcome.IMPLICIT_REPLACED) {
                 assertNotEquals(implicitsBefore, corrupted.implicits());
@@ -212,7 +212,7 @@ class StarChartCurrencyTest {
                 assertFalse(ItemCrafting.canUse(currency, corrupted, ANY_UNIQUE), currency.key());
             }
         }
-        Set<CorruptionOutcome> reachable = EnumSet.copyOf(CorruptionOutcome.NANOSWARM_OUTCOMES);
+        Set<CorruptionOutcome> reachable = EnumSet.copyOf(CorruptionOutcome.STAR_CHART_OUTCOMES);
         reachable.remove(CorruptionOutcome.IMPLICIT_REPLACED);
         assertEquals(reachable, outcomes);
     }

@@ -77,4 +77,8 @@ public interface ItemTypeSupport {
     default ItemTraits traitsAtTier(ItemDefinition definition, long seed, int tier) {
         return null;
     }
+
+    default Item corrupt(CorruptionOutcome outcome, Item item, Random random) {
+        return null;
+    }
 }

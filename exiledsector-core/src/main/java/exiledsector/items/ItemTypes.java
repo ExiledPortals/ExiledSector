@@ -70,6 +70,11 @@ public final class ItemTypes {
         return support != null && support.uniqueRarity(definition);
     }
 
+    static Item corrupt(CorruptionOutcome outcome, Item item, Random random) {
+        ItemTypeSupport support = of(item.type());
+        return support == null ? null : support.corrupt(outcome, item, random);
+    }
+
     public static boolean lockedFromCurrency(ItemDefinition definition) {
         ItemTypeSupport support = of(definition.type());
         return support != null && support.lockedFromCurrency(definition);

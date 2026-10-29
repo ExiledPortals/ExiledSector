@@ -1,3 +1,3 @@
 id,weight,min_tier,max_tier,fleet_share,excluded_factions,note
-fleet,1,1,15,1,,"One large boss fleet"
-station,1,1,15,0.6,remnant;derelict,"A station from chart_boss_stations.csv, guarded by a fleet of this share of the boss size. Excluded factions never get this boss type; their Nexus and Mothership are biome anomalies instead"
+fleet,1,1,16,1,,"One large boss fleet"
+station,1,1,16,0.6,remnant;derelict,"A station from chart_boss_stations.csv, guarded by a fleet of this share of the boss size. Excluded factions never get this boss type; their Nexus and Mothership are biome anomalies instead"

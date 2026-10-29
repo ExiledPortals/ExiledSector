@@ -26,7 +26,7 @@ public final class BuiltInTable {
 
         public static TierRange parse(CsvRows csv, JSONObject row, String id) {
             int min = ChartTiers.clamp(csv.integer(row, "min_tier", ChartTiers.LOWEST_TIER, id));
-            int max = ChartTiers.clamp(csv.integer(row, "max_tier", ChartTiers.HIGHEST_TIER, id));
+            int max = ChartTiers.clamp(csv.integer(row, "max_tier", ChartTiers.CORRUPTED_TIER, id));
             return new TierRange(Math.min(min, max), Math.max(min, max));
         }
     }

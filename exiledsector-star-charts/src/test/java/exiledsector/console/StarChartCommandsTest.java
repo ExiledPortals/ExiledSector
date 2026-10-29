@@ -54,7 +54,7 @@ class StarChartCommandsTest {
         assertEquals(new GrantStarChartsCommand.GrantArguments(3, 12, null), GrantStarChartsCommand.GrantArguments.parse(" 3  12 "));
         assertNotNull(GrantStarChartsCommand.GrantArguments.parse("0").problem());
         assertNotNull(GrantStarChartsCommand.GrantArguments.parse("51").problem());
-        assertNotNull(GrantStarChartsCommand.GrantArguments.parse("3 16").problem());
+        assertNotNull(GrantStarChartsCommand.GrantArguments.parse("3 17").problem());
         assertNotNull(GrantStarChartsCommand.GrantArguments.parse("3 0").problem());
         assertNotNull(GrantStarChartsCommand.GrantArguments.parse("three").problem());
         assertNotNull(GrantStarChartsCommand.GrantArguments.parse("1 2 3").problem());

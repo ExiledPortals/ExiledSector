@@ -26,7 +26,7 @@ public final class ChartBosses {
     static final String PATH = "data/config/exiledSector/chart_bosses.csv";
     static final String STATIONS_PATH = "data/config/exiledSector/chart_boss_stations.csv";
     static final String VARIANT_COLUMN = "variant";
-    static final Definition BUILT_IN_FLEET = new Definition(ChartBossType.FLEET, 1f, ChartTiers.LOWEST_TIER, ChartTiers.HIGHEST_TIER, 1f);
+    static final Definition BUILT_IN_FLEET = new Definition(ChartBossType.FLEET, 1f, ChartTiers.LOWEST_TIER, ChartTiers.CORRUPTED_TIER, 1f);
     private static final Logger LOG = Logger.getLogger(ChartBosses.class);
     private static volatile Map<ChartBossType, Definition> definitions = Map.of(ChartBossType.FLEET, BUILT_IN_FLEET);
     private static volatile List<Station> stations = List.of();

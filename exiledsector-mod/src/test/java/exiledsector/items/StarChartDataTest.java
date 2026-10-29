@@ -147,7 +147,7 @@ class StarChartDataTest {
         assertNull(ItemDefinitions.get("chart_word"));
         assertEquals(6, StarChartDefinitions.tierAtLeastMinimum("chart_high", 2));
         assertEquals(9, StarChartDefinitions.tierAtLeastMinimum("chart_high", 9));
-        assertEquals(StarChart.HIGHEST_TIER, StarChartDefinitions.tierAtLeastMinimum("chart_low", 40));
+        assertEquals(StarChart.CORRUPTED_TIER, StarChartDefinitions.tierAtLeastMinimum("chart_low", 40));
         assertTrue(StarChartDefinitions.rollsAtTier("chart_high", 6));
         assertFalse(StarChartDefinitions.rollsAtTier("chart_high", 5));
 

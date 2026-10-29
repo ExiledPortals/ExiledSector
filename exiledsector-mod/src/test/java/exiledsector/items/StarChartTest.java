@@ -110,7 +110,7 @@ class StarChartTest {
         assertEquals(7, stored.tier());
         assertTrue(stored.id().startsWith("star_chart_"));
         assertEquals(chart.explicits(), stored.explicits());
-        assertEquals(StarChart.HIGHEST_TIER, StarChartFixtures.chart(SINGLE, 5L, 99).tier());
+        assertEquals(StarChart.CORRUPTED_TIER, StarChartFixtures.chart(SINGLE, 5L, 99).tier());
         assertEquals(StarChart.LOWEST_TIER, StarChartFixtures.chart(SINGLE, 5L, -3).tier());
         assertEquals(StarChart.LOWEST_TIER, ItemData.rolled(ItemDefinitions.get(SINGLE), 5L).preview().tier());
     }

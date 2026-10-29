@@ -54,7 +54,7 @@ public final class ItemRoller {
         }
         Random random = Seeds.random(seed);
         AffixLayout.Limits limits = AffixLayout.limits(definition.type());
-        return rollAffixes(definition, limits, AffixLayout.rolledEffectCount(limits, random.nextFloat(), rarity), random, averageRolls(),
+        return rollAffixes(definition, limits.maxPerSide(), AffixLayout.rolledEffectCount(limits, random.nextFloat(), rarity), random, averageRolls(),
                 TierRange.NO_TIER);
     }
 
@@ -64,7 +64,11 @@ public final class ItemRoller {
         }
         Random random = Seeds.random(seed);
         random.nextFloat();
-        return rollAffixes(definition, AffixLayout.limits(definition.type()), effectCount, random, averageRolls(), TierRange.NO_TIER);
+        return rollAffixes(definition, AffixLayout.limits(definition.type()).maxPerSide(), effectCount, random, averageRolls(), TierRange.NO_TIER);
+    }
+
+    public static List<RolledModifier> rollAtTierWithEffectCount(ItemDefinition definition, long seed, int tier, int effectCount, int maxPerSide) {
+        return rollAffixes(definition, maxPerSide, effectCount, Seeds.random(seed), averageRolls(), ItemTypes.rolledTier(definition, tier));
     }
 
     public static boolean canRollEffectCount(ItemDefinition definition, int effectCount) {
@@ -95,17 +99,17 @@ public final class ItemRoller {
             return rolledModifiers;
         }
         AffixLayout.Limits limits = AffixLayout.limits(definition.type());
-        return rollAffixes(definition, limits, AffixLayout.rolledEffectCount(limits, random.nextFloat()), random, averageRolls, tier);
+        return rollAffixes(definition, limits.maxPerSide(), AffixLayout.rolledEffectCount(limits, random.nextFloat()), random, averageRolls, tier);
     }
 
-    private static List<RolledModifier> rollAffixes(ItemDefinition definition, AffixLayout.Limits limits, int modifierCount, Random random,
+    private static List<RolledModifier> rollAffixes(ItemDefinition definition, int maxPerSide, int modifierCount, Random random,
                                                     boolean averageRolls, int tier) {
         List<PoolEntry> prefixes = AffixLayout.rollableAt(definition.type(), definition.prefixes(), tier);
         List<PoolEntry> suffixes = AffixLayout.rollableAt(definition.type(), definition.suffixes(), tier);
         int prefixCount = AffixLayout.prefixCount(modifierCount, random.nextBoolean());
         int suffixCount = modifierCount - prefixCount;
-        int prefixRoom = Math.min(limits.maxPerSide(), prefixes.size());
-        int suffixRoom = Math.min(limits.maxPerSide(), suffixes.size());
+        int prefixRoom = Math.min(maxPerSide, prefixes.size());
+        int suffixRoom = Math.min(maxPerSide, suffixes.size());
         if (prefixCount > prefixRoom) {
             suffixCount += prefixCount - prefixRoom;
             prefixCount = prefixRoom;

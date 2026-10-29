@@ -361,6 +361,7 @@ public final class ItemCrafting {
             case VALUES_RANDOMISED -> randomiseValues(item, random);
             case MODIFIERS_RANDOMISED -> randomiseModifiers(store, item, random, allowedUniques);
             case BECAME_RARE -> reforgeAsRareBase(store, item, random);
+            case TIER_RAISED, MODIFIERS_EXPANDED -> ItemTypes.corrupt(outcome, item, random);
         };
         if (corrupted == null) {
             corrupted = item;
@@ -373,6 +374,9 @@ public final class ItemCrafting {
     static List<CorruptionOutcome> corruptionOutcomes(Item item) {
         if (item.type() == ItemType.SUBROUTINE) {
             return CorruptionOutcome.SUBROUTINE_OUTCOMES;
+        }
+        if (item.type() == ItemType.STAR_CHART) {
+            return CorruptionOutcome.STAR_CHART_OUTCOMES;
         }
         ItemDefinition definition = item.definition();
         boolean uniqueHullItem = item.type() == ItemType.HULL_ITEM && definition != null && definition.unique();

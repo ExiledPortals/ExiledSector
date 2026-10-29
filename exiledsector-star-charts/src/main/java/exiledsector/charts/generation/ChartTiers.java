@@ -18,6 +18,7 @@ public final class ChartTiers {
 
     public static final int LOWEST_TIER = 1;
     public static final int HIGHEST_TIER = 15;
+    public static final int CORRUPTED_TIER = HIGHEST_TIER + 1;
     public static final String PATH = "data/config/exiledSector/star_chart_tiers.csv";
     static final String TIER_COLUMN = "tier";
     private static final Logger LOG = Logger.getLogger(ChartTiers.class);
@@ -44,9 +45,9 @@ public final class ChartTiers {
             ModCsv.forEach(rows, (index, row) -> {
                 String rowLabel = "row " + (index + 1);
                 int tier = csv.integer(row, TIER_COLUMN, 0, rowLabel);
-                if (tier < LOWEST_TIER || tier > HIGHEST_TIER) {
+                if (!isValid(tier)) {
                     if (!ModCsv.text(row, TIER_COLUMN).isEmpty()) {
-                        csv.skipRow(rowLabel, "tier must be " + LOWEST_TIER + " to " + HIGHEST_TIER);
+                        csv.skipRow(rowLabel, "tier must be " + LOWEST_TIER + " to " + CORRUPTED_TIER);
                     }
                     return;
                 }
@@ -83,7 +84,7 @@ public final class ChartTiers {
         }
         csv.report(LOG);
         List<Integer> missing = new ArrayList<>();
-        for (int tier = LOWEST_TIER; tier <= HIGHEST_TIER; tier++) {
+        for (int tier = LOWEST_TIER; tier <= CORRUPTED_TIER; tier++) {
             if (!loaded.containsKey(tier)) {
                 missing.add(tier);
             }
@@ -124,11 +125,11 @@ public final class ChartTiers {
     }
 
     public static int clamp(int tier) {
-        return Math.max(LOWEST_TIER, Math.min(HIGHEST_TIER, tier));
+        return Math.max(LOWEST_TIER, Math.min(CORRUPTED_TIER, tier));
     }
 
     public static boolean isValid(int tier) {
-        return tier >= LOWEST_TIER && tier <= HIGHEST_TIER;
+        return tier >= LOWEST_TIER && tier <= CORRUPTED_TIER;
     }
 
     public static ChartTier forTier(int tier) {

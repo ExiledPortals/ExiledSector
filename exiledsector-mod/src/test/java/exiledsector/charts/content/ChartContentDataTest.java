@@ -93,7 +93,7 @@ class ChartContentDataTest {
         assertEquals(3, second.fleetsMin());
         assertEquals(ChartTier.fallback(2).boss(), second.boss());
         assertEquals(ChartTier.fallback(7), ChartTiers.forTier(7));
-        assertEquals(ChartTiers.forTier(ChartTiers.HIGHEST_TIER), ChartTiers.forTier(99));
+        assertEquals(ChartTiers.forTier(ChartTiers.CORRUPTED_TIER), ChartTiers.forTier(99));
         assertEquals(ChartTiers.forTier(ChartTiers.LOWEST_TIER), ChartTiers.forTier(-3));
     }
 

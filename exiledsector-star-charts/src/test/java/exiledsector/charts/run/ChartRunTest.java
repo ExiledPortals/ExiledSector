@@ -256,7 +256,7 @@ class ChartRunTest {
         assertEquals(List.of(), ChartRun.split(null));
         ChartRun run = new ChartRun("abc", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
         run.recordContent(new ChartContent(40, null, ChartObjective.BOSS, List.of(), null, 0, 0));
-        assertEquals(ChartTiers.HIGHEST_TIER, run.tier());
+        assertEquals(ChartTiers.CORRUPTED_TIER, run.tier());
         assertFalse(run.isObjectiveMet());
         assertFalse(run.recordTargetGone(null));
     }

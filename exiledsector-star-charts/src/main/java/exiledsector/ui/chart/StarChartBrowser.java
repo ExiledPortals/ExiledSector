@@ -15,7 +15,7 @@ import java.util.List;
 public final class StarChartBrowser {
 
     public static final int LOWEST_TIER = StarChart.LOWEST_TIER;
-    public static final int HIGHEST_TIER = StarChart.HIGHEST_TIER;
+    public static final int HIGHEST_TIER = StarChart.CORRUPTED_TIER;
 
     private final int[] tierCounts = new int[HIGHEST_TIER + 1];
     private List<Item> storedCharts = List.of();

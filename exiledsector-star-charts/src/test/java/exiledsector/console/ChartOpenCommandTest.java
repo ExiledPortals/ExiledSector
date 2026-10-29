@@ -115,7 +115,7 @@ class ChartOpenCommandTest {
         assertNotNull(OpenArguments.parse("galaxy").problem());
         assertNotNull(OpenArguments.parse("100 200").problem());
         assertNotNull(OpenArguments.parse("1 2 3").problem());
-        assertNotNull(OpenArguments.parse("tier=16").problem());
+        assertNotNull(OpenArguments.parse("tier=17").problem());
         assertNotNull(OpenArguments.parse("tier=0").problem());
         assertNotNull(OpenArguments.parse("5 6 tier=3").problem());
         assertNotNull(OpenArguments.parse("tier=3 t=4").problem());

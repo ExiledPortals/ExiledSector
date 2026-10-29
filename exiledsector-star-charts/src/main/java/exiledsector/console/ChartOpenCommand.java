@@ -49,7 +49,7 @@ public class ChartOpenCommand extends CampaignCommand {
         OpenArguments arguments = OpenArguments.parse(args);
         if (arguments.problem() != null) {
             Console.showMessage(arguments.problem() + "\nUsage: ExiledSectorChartOpen [seed] [type] [tier] [breach], where type is one of "
-                    + ChartLayoutGenerator.ALLOWED_TYPES + ", tier is " + ChartTiers.LOWEST_TIER + " to " + ChartTiers.HIGHEST_TIER
+                    + ChartLayoutGenerator.ALLOWED_TYPES + ", tier is " + ChartTiers.LOWEST_TIER + " to " + ChartTiers.CORRUPTED_TIER
                     + " (default " + DEFAULT_TIER + "), breach adds a Spatial Breach, region=ID and layout=ID build the system from the"
                     + " atlas tables, each anomaly=ID adds that anomaly, and side=defender|attacker|neither adds a Faction Skirmish joined on that side."
                     + " All are optional and can come in any order; write the tier as tier=N when the seed is also a"
@@ -199,7 +199,7 @@ public class ChartOpenCommand extends CampaignCommand {
                 } else if (tierMatch.matches() && explicitTier == null) {
                     Long tierNumber = parseNumber(tierMatch.group(1));
                     if (tierNumber == null || !ChartTiers.isValid(tierNumber.intValue()) || tierNumber.intValue() != tierNumber) {
-                        return problem("The tier in \"" + token + "\" must be " + ChartTiers.LOWEST_TIER + " to " + ChartTiers.HIGHEST_TIER + ".");
+                        return problem("The tier in \"" + token + "\" must be " + ChartTiers.LOWEST_TIER + " to " + ChartTiers.CORRUPTED_TIER + ".");
                     }
                     explicitTier = tierNumber.intValue();
                 } else if (number != null) {
@@ -231,11 +231,11 @@ public class ChartOpenCommand extends CampaignCommand {
             if (isTier(first)) {
                 return new OpenArguments(second, systemType, (int) first, null);
             }
-            return problem("Neither " + first + " nor " + second + " is a tier from " + ChartTiers.LOWEST_TIER + " to " + ChartTiers.HIGHEST_TIER + ".");
+            return problem("Neither " + first + " nor " + second + " is a tier from " + ChartTiers.LOWEST_TIER + " to " + ChartTiers.CORRUPTED_TIER + ".");
         }
 
         private static boolean isTier(long number) {
-            return number >= ChartTiers.LOWEST_TIER && number <= ChartTiers.HIGHEST_TIER;
+            return number >= ChartTiers.LOWEST_TIER && number <= ChartTiers.CORRUPTED_TIER;
         }
 
         private static OpenArguments problem(String problem) {

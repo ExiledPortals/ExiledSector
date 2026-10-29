@@ -200,7 +200,8 @@ public final class ChartDrops {
         if (!StarChartSettings.enabled() || rule == null || tier == NO_TIER || !mults.any()) {
             return Loot.NONE;
         }
-        int baseTier = source.insideSystem() ? ChartTiers.clamp(tier) : Math.min(rule.maxTier(), ChartTiers.clamp(tier));
+        int naturalTier = Math.min(ChartTiers.HIGHEST_TIER, ChartTiers.clamp(tier));
+        int baseTier = source.insideSystem() ? naturalTier : Math.min(rule.maxTier(), naturalTier);
         List<ItemData> charts = new ArrayList<>();
         int chartCount = mults.chart() > 0f ? chartCount(rule, mults.chart(), random) : 0;
         if (guaranteedTierUp) {

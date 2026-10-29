@@ -1,20 +1,20 @@
 id,kind,entity,salvage_spec,derelict_type,cost,weight,min_tier,max_tier,guarded,requires_mod,planet_categories,note
 supply_small,cache,supply_cache_small,,,1,10,1,8,no,,,
-supply,cache,supply_cache,,,2,8,1,15,no,,,
+supply,cache,supply_cache,,,2,8,1,16,no,,,
 weapons_small,cache,weapons_cache_small,,,2,8,1,8,no,,,
-weapons_small_high,cache,weapons_cache_small_high,,,3,5,5,15,no,,,
-weapons,cache,weapons_cache,,,3,6,2,15,no,,,
-weapons_high,cache,weapons_cache_high,,,4,4,6,15,no,,,
+weapons_small_high,cache,weapons_cache_small_high,,,3,5,5,16,no,,,
+weapons,cache,weapons_cache,,,3,6,2,16,no,,,
+weapons_high,cache,weapons_cache_high,,,4,4,6,16,no,,,
 equipment_small,cache,equipment_cache_small,,,2,6,1,10,no,,,
-equipment,cache,equipment_cache,,,4,5,3,15,no,,,
-probe,domain,derelict_probe,,,3,4,2,15,no,,,"Vanilla Domain drones may defend it"
-derelict_civilian,derelict,wreck,,CIVILIAN,2,4,1,15,no,,,
-derelict_small,derelict,wreck,,SMALL,2,8,1,15,no,,,
-derelict_medium,derelict,wreck,,MEDIUM,3,5,3,15,no,,,
-derelict_large,derelict,wreck,,LARGE,5,3,6,15,yes,,,
-orbital_habitat,station,orbital_habitat,,,5,4,3,15,yes,,cat_hab1; cat_hab2; cat_hab3; cat_hab4,
-mining_station,station,station_mining,,,6,4,4,15,yes,,cat_barren; cat_lava; cat_irradiated; cat_frozen; cat_cryovolcanic,
-survey_ship,domain,derelict_survey_ship,,,6,3,5,15,yes,,,"Vanilla Domain drones may defend it"
-research_station,station,station_research,,,8,3,6,15,yes,,,
-mothership,domain,derelict_mothership,,,14,1,12,15,yes,,,"Vanilla Domain drones may defend it"
-arsenal_station,station,IndEvo_arsenalStation,IndEvo_arsenalStation,,7,3,5,15,yes,IndEvo,,"Industrial Evolution only, while its derelict stations are enabled"
+equipment,cache,equipment_cache,,,4,5,3,16,no,,,
+probe,domain,derelict_probe,,,3,4,2,16,no,,,"Vanilla Domain drones may defend it"
+derelict_civilian,derelict,wreck,,CIVILIAN,2,4,1,16,no,,,
+derelict_small,derelict,wreck,,SMALL,2,8,1,16,no,,,
+derelict_medium,derelict,wreck,,MEDIUM,3,5,3,16,no,,,
+derelict_large,derelict,wreck,,LARGE,5,3,6,16,yes,,,
+orbital_habitat,station,orbital_habitat,,,5,4,3,16,yes,,cat_hab1; cat_hab2; cat_hab3; cat_hab4,
+mining_station,station,station_mining,,,6,4,4,16,yes,,cat_barren; cat_lava; cat_irradiated; cat_frozen; cat_cryovolcanic,
+survey_ship,domain,derelict_survey_ship,,,6,3,5,16,yes,,,"Vanilla Domain drones may defend it"
+research_station,station,station_research,,,8,3,6,16,yes,,,
+mothership,domain,derelict_mothership,,,14,1,12,16,yes,,,"Vanilla Domain drones may defend it"
+arsenal_station,station,IndEvo_arsenalStation,IndEvo_arsenalStation,,7,3,5,16,yes,IndEvo,,"Industrial Evolution only, while its derelict stations are enabled"

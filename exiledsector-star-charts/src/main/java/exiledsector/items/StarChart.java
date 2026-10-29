@@ -21,6 +21,7 @@ public final class StarChart extends Item {
 
     public static final int LOWEST_TIER = ItemTraits.LOWEST_TIER;
     public static final int HIGHEST_TIER = ItemTraits.HIGHEST_TIER;
+    public static final int CORRUPTED_TIER = HIGHEST_TIER + 1;
     public static final int LOWEST_QUALITY = 0;
     public static final int HIGHEST_QUALITY = 20;
     static final String LOW_TIER_ICON = "graphics/icons/star_charts/star_chart_white.png";
@@ -56,6 +57,11 @@ public final class StarChart extends Item {
                     ? StarChartImplicits.roll(StarChartDefinitions.systemType(definition.id()), seed) : List.of();
             return new ItemTraits(tier, 0, null, implicits.isEmpty() ? null : implicits);
         }
+
+        @Override
+        public Item corrupt(CorruptionOutcome outcome, Item item, Random random) {
+            return StarChartCorruption.corrupt(outcome, item, random);
+        }
     };
 
     private static volatile Function<StarChart, List<StyledText>> lootTotals = chart -> List.of();
@@ -79,7 +85,7 @@ public final class StarChart extends Item {
     }
 
     public static int clampTier(int tier) {
-        return Math.max(LOWEST_TIER, Math.min(HIGHEST_TIER, tier));
+        return Math.max(LOWEST_TIER, Math.min(CORRUPTED_TIER, tier));
     }
 
     public static int clampQuality(int quality) {
