@@ -42,7 +42,7 @@ class AtlasNodeTextTest {
         List<AtlasSpecial> specials = List.of(
                 new AtlasSpecial("bastion", AtlasSpecial.Kind.BASTION, AtlasSpecial.Placement.FIXED, 0f, 1f, 0f, 3, 25f, "", "", ""));
         AtlasRules rules = new AtlasRules(regions, Map.of("compact", 1f), Map.of("pirates", 1f), AtlasMarkerRule.NEVER, AtlasMarkerRule.NEVER,
-                AtlasMarkerRule.NEVER, specials, List.of());
+                specials, List.of());
         return new AtlasGenerator(SEED, rules, AtlasUnlocks.NONE, state);
     }
 
@@ -74,7 +74,7 @@ class AtlasNodeTextTest {
             AtlasState state = new AtlasState(SEED);
             List<AtlasRegion> regions = List.of(new AtlasRegion(AtlasRegion.NORMAL, 1f, 0, "", "", Map.of(), Map.of(), Map.of()));
             AtlasGenerator generator = new AtlasGenerator(SEED, new AtlasRules(regions, Map.of("compact", 1f), Map.of("hegemony", 1f, "tritachyon", 1f),
-                    AtlasMarkerRule.NEVER, AtlasMarkerRule.NEVER, AtlasMarkerRule.NEVER, List.of(), List.of()), AtlasUnlocks.NONE, state);
+                    AtlasMarkerRule.NEVER, AtlasMarkerRule.NEVER, List.of(), List.of()), AtlasUnlocks.NONE, state);
             AtlasCell cell = AtlasCell.ORIGIN.around(20).stream()
                     .filter(candidate -> AtlasAnomalies.insert(generator, state, candidate, FactionSkirmish.ID, AtlasAnomalyRecord.Source.WORLD, null)
                             .check().allows())

@@ -40,7 +40,8 @@ public final class ChartAnomalies {
             AsteroidStorm.INSTANCE, MagneticStorm.INSTANCE, StellarFlares.INSTANCE, SpatialBreach.INSTANCE, FactionSkirmish.INSTANCE,
             RelayNetwork.INSTANCE, ExcavationSites.INSTANCE, SupplyConvoy.INSTANCE, AnomalousDebris.INSTANCE,
             StormFront.INSTANCE,
-            DerelictForge.INSTANCE, ListeningPost.INSTANCE);
+            DerelictForge.INSTANCE, ListeningPost.INSTANCE,
+            PowerfulBoss.INSTANCE);
     private static final Logger LOG = Logger.getLogger(ChartAnomalies.class);
     private static volatile List<ChartAnomaly> anomalies = BUILT_IN;
     private static volatile Map<String, Definition> definitions = Map.of();
@@ -193,6 +194,10 @@ public final class ChartAnomalies {
 
     public static List<ChartAnomaly> anomaliesOf(Collection<String> ids) {
         return ids.stream().map(ChartAnomalies::byId).filter(Objects::nonNull).toList();
+    }
+
+    public static boolean guaranteeBossTierUp(Collection<String> ids) {
+        return ids != null && anomaliesOf(ids).stream().anyMatch(ChartAnomaly::guaranteesBossTierUp);
     }
 
     public static List<ChartGenContext.AppliedEffect> effectsOf(Collection<String> ids) {

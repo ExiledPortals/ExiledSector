@@ -48,7 +48,7 @@ class RelayChainTest {
         state = new AtlasState(SEED);
         List<AtlasRegion> regions = List.of(new AtlasRegion(AtlasRegion.NORMAL, 1f, 0, "", "", Map.of(), Map.of(), Map.of()));
         AtlasRules rules = new AtlasRules(regions, Map.of("compact", 1f), Map.of("pirates", 1f), AtlasMarkerRule.NEVER, AtlasMarkerRule.NEVER,
-                AtlasMarkerRule.NEVER, List.of(), List.of());
+                List.of(), List.of());
         generator = new AtlasGenerator(SEED, rules, AtlasUnlocks.NONE, state);
         start = generator.lanes(AtlasCell.ORIGIN).get(0);
     }

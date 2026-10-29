@@ -1,4 +1,4 @@
 id,chance,chance_per_step,max_chance,note
 void,0.5,0,0.5,"Chance that a cell which may be empty is empty space (half the cells may be)"
-powerful_boss,0.2,0.003,0.35,"About 1 in 4 near the Gateway, more further out"
-anomaly,0.05,0.002,0.15,"Per anomaly, times its weight; a system can roll several"
+powerful_boss,0.2,0.003,0.35,"The Powerful Boss anomaly rolls on this chance instead of the anomaly row: about 1 in 4 near the Gateway, more further out"
+anomaly,0.05,0.002,0.15,"Per anomaly, times its weight; a system can roll several. A row named after an anomaly replaces this chance for that anomaly"

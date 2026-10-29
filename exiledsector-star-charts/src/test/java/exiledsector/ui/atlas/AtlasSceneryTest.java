@@ -41,7 +41,7 @@ class AtlasSceneryTest {
 
     private static AtlasMapCanvas canvas(AtlasState state) {
         AtlasRules rules = new AtlasRules(List.of(new AtlasRegion("graveyard", 1f, 0, "", "", Map.of(), Map.of(), Map.of())), Map.of("compact", 1f),
-                Map.of("pirates", 1f), new AtlasMarkerRule(0.5f, 0f, 0.5f), AtlasMarkerRule.NEVER, AtlasMarkerRule.NEVER,
+                Map.of("pirates", 1f), new AtlasMarkerRule(0.5f, 0f, 0.5f), AtlasMarkerRule.NEVER,
                 List.of(), List.of());
         AtlasGenerator generator = new AtlasGenerator(SEED, rules, AtlasUnlocks.NONE, state);
         AtlasScenery scenery = new AtlasScenery(SEED, id -> "graveyard".equals(id) ? GRAVEYARD : AtlasAmbience.BARE, DECORATIONS::get);

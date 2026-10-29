@@ -19,7 +19,6 @@ public final class AtlasGenerator {
     private static final int CACHE_LIMIT_CELLS = 65536;
     private static final long VOID_SALT = 0x564f4944L;
     private static final long LAYOUT_SALT = 0x4c41594fL;
-    private static final long BOSS_SALT = 0x424f5353L;
     private static final long ANOMALY_SALT = 0x455850414eL;
 
     private final long seed;
@@ -182,14 +181,13 @@ public final class AtlasGenerator {
         String factionId = territories.factionAt(cell, region);
         boolean origin = cell.equals(AtlasCell.ORIGIN);
         if (origin || isVoid(cell)) {
-            return new AtlasNode(cell, x, y, !origin, region.id(), factionId, null, false, List.of(), null, null, lanes(cell));
+            return new AtlasNode(cell, x, y, !origin, region.id(), factionId, null, List.of(), null, null, lanes(cell));
         }
         List<AtlasCell> lanes = lanes(cell);
         AtlasTraits traits = traits(cell, distance, region, factionId, lanes, placed);
         String layoutId = traits.layoutId();
-        boolean powerfulBoss = AtlasHash.unit(AtlasHash.of(seed, BOSS_SALT, cell.gridX(), cell.gridY())) < rules.powerfulBossRule().chanceAt(distance);
         List<String> anomalyIds = rollAnomalies(cell, traits, region);
-        return new AtlasNode(cell, x, y, false, region.id(), factionId, layoutId, powerfulBoss, anomalyIds, traits.specialId(), traits.infestationId(), lanes);
+        return new AtlasNode(cell, x, y, false, region.id(), factionId, layoutId, anomalyIds, traits.specialId(), traits.infestationId(), lanes);
     }
 
     public String infestationAt(AtlasCell cell) {
@@ -280,14 +278,14 @@ public final class AtlasGenerator {
     }
 
     private List<String> rollAnomalies(AtlasCell cell, AtlasTraits traits, AtlasRegion region) {
-        float chance = rules.anomalyRule().chanceAt(traits.distance());
-        if (chance <= 0f) {
-            return List.of();
-        }
         List<AtlasAnomalyCandidate> passed = new ArrayList<>();
         Map<String, Double> rolls = new HashMap<>();
         for (AtlasAnomalyCandidate candidate : rules.anomalies()) {
             if (!unlocks.allows(candidate.requiredMod(), "")) {
+                continue;
+            }
+            float chance = candidate.chanceRule(rules.anomalyRule()).chanceAt(traits.distance());
+            if (chance <= 0f) {
                 continue;
             }
             float weight = candidate.weighting().weightFor(traits, candidate.weight() * region.markerWeight(candidate.id()));

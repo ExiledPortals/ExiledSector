@@ -1,5 +1,8 @@
 package exiledsector.charts.content;
 
+import exiledsector.charts.StarChartSettings;
+import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.PowerfulBoss;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.generation.ChartTier;
@@ -333,6 +336,27 @@ class ChartContentPlannerTest {
             checked++;
         }
         assertTrue(checked > 0);
+    }
+
+    @Test
+    void thePlannedAnomaliesEffectsSizeTheBoss() throws Exception {
+        ChartTables.loadAnomalies();
+        try {
+            ChartTier tier = ChartTiers.forTier(10);
+            float bossSizePercent = ChartAnomalies.definition(PowerfulBoss.ID).effects().get(0).value();
+            ChartContentPlan ordinary = ChartContentPlanner.plan(5L, tier, ChartPois.all(), ChartFactions.all(), EVERY_FACTION, ChartGenContext.none(),
+                    StarChartSettings.DEFAULT_FLEET_LIMIT, List.of());
+            ChartContentPlan powerful = ChartContentPlanner.plan(5L, tier, ChartPois.all(), ChartFactions.all(), EVERY_FACTION, ChartGenContext.none(),
+                    StarChartSettings.DEFAULT_FLEET_LIMIT, List.of(PowerfulBoss.ID));
+
+            assertTrue(tier.boss());
+            assertEquals(ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, tier.bossSize())), ordinary.fleetPoints(FleetRole.BOSS), 0.01f);
+            assertEquals(ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, tier.bossSize() + bossSizePercent)),
+                    powerful.fleetPoints(FleetRole.BOSS), 0.01f);
+            assertEquals(List.of(PowerfulBoss.ID), powerful.anomalies());
+        } finally {
+            ChartTables.resetAnomalies();
+        }
     }
 
     @Test

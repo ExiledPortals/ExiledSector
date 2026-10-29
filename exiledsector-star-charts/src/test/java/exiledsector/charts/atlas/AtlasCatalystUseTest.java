@@ -29,7 +29,7 @@ class AtlasCatalystUseTest {
 
     private static AtlasGenerator generator(AtlasState state) {
         AtlasRules rules = new AtlasRules(REGIONS, Map.of("compact", 1f), Map.of("pirates", 1f), new AtlasMarkerRule(0.3f, 0f, 0.3f),
-                AtlasMarkerRule.NEVER, AtlasMarkerRule.NEVER, List.of(), List.of());
+                AtlasMarkerRule.NEVER, List.of(), List.of());
         return new AtlasGenerator(SEED, rules, AtlasUnlocks.NONE, state);
     }
 

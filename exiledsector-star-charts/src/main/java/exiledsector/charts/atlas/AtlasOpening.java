@@ -1,5 +1,6 @@
 package exiledsector.charts.atlas;
 
+import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.layout.ChartLayoutRequest;
 import exiledsector.charts.generation.ChartTiers;
@@ -13,7 +14,6 @@ import java.util.Locale;
 public final class AtlasOpening {
 
     public static final int NEXUS_MODIFIERS = 4;
-    public static final String POWERFUL_BOSS = "powerful_boss";
     public static final String INFESTED = "infested";
     public static final String CLEANSED = "cleansed";
     public static final String NEXUS = "nexus";
@@ -60,13 +60,7 @@ public final class AtlasOpening {
 
     public static AtlasRunNode runNode(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
         AtlasNode node = generator.node(cell);
-        boolean spent = state.has(cell, AtlasState.MARKERS_SPENT);
         List<ChartGenContext.AppliedEffect> effects = new ArrayList<>();
-        boolean bossTierUp = false;
-        if (node.powerfulBoss() && !spent) {
-            effects.addAll(AtlasData.nodeEffects(POWERFUL_BOSS));
-            bossTierUp = true;
-        }
         AtlasSpecial special = generator.specialAt(cell);
         if (node.infestationId() != null) {
             effects.addAll(AtlasData.nodeEffects(state.has(cell, AtlasState.CLEANSED) ? CLEANSED : INFESTED));
@@ -74,7 +68,8 @@ public final class AtlasOpening {
         if (special != null) {
             effects.addAll(AtlasData.nodeEffects(special.infests() ? NEXUS : special.kind().key()));
         }
-        return new AtlasRunNode(cell.pack(), factionFor(generator, state, cell, node), effects, AtlasAnomalies.effective(generator, state, cell), bossTierUp);
+        List<String> anomalyIds = AtlasAnomalies.effective(generator, state, cell);
+        return new AtlasRunNode(cell.pack(), factionFor(generator, state, cell, node), effects, anomalyIds, ChartAnomalies.guaranteeBossTierUp(anomalyIds));
     }
 
     public static String factionFor(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasNode node) {

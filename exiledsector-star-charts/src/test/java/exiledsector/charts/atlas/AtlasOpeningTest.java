@@ -3,6 +3,8 @@ package exiledsector.charts.atlas;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartTables;
+import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.PowerfulBoss;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import org.json.JSONArray;
@@ -30,15 +32,14 @@ class AtlasOpeningTest {
                 new AtlasSpecial("nexus", AtlasSpecial.Kind.INFESTATION, AtlasSpecial.Placement.CHUNK, 1f, 3f, 2.5f, 1, 1f, "", "", "remnant"),
                 new AtlasSpecial("bastion", AtlasSpecial.Kind.BASTION, AtlasSpecial.Placement.FIXED, 0f, 1f, 0f, 3, 25f, "", "", ""));
         return new AtlasRules(regions, Map.of("compact", 1f), Map.of("pirates", 1f), new AtlasMarkerRule(0.3f, 0f, 0.3f),
-                new AtlasMarkerRule(1f, 0f, 1f), new AtlasMarkerRule(1f, 0f, 1f), specials,
-                List.of(new AtlasAnomalyCandidate(SpatialBreach.ID, 1f, "")));
+                new AtlasMarkerRule(1f, 0f, 1f), specials,
+                List.of(new AtlasAnomalyCandidate(SpatialBreach.ID, 1f, ""), new AtlasAnomalyCandidate(PowerfulBoss.ID, 1f, "")));
     }
 
     @BeforeEach
     void setUp() throws Exception {
         ChartTables.loadAnomalies();
         AtlasData.registerNodeEffects(new JSONArray()
-                .put(new JSONObject().put("id", AtlasOpening.POWERFUL_BOSS).put("effects", "CHART_BOSS_SIZE_PERCENT:50"))
                 .put(new JSONObject().put("id", AtlasOpening.INFESTED).put("effects", "CHART_FLEET_SIZE_PERCENT:25"))
                 .put(new JSONObject().put("id", AtlasOpening.CLEANSED).put("effects", "CHART_REWARD_PERCENT:50"))
                 .put(new JSONObject().put("id", AtlasOpening.NEXUS).put("effects", "CHART_BOSS_SIZE_PERCENT:100; CHART_FLEET_SIZE_PERCENT:-10")));
@@ -63,7 +64,7 @@ class AtlasOpeningTest {
     }
 
     @Test
-    void aPowerfulInfestedNodeCarriesItsMarkersFactionAndAnomalyUntilItsMarkersAreSpent() {
+    void aPowerfulBossInfestedNodeCarriesItsFactionLinesAndAnomaliesUntilItsMarkersAreSpent() {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = new AtlasGenerator(SEED, rules(), AtlasUnlocks.NONE, state);
         AtlasCell cell = findInfested(generator, false);
@@ -71,10 +72,12 @@ class AtlasOpeningTest {
         AtlasRunNode node = AtlasOpening.runNode(generator, state, cell);
 
         assertEquals("remnant", node.factionId());
-        assertEquals(List.of(SpatialBreach.ID), node.anomalyIds());
+        assertEquals(Set.of(SpatialBreach.ID, PowerfulBoss.ID), Set.copyOf(node.anomalyIds()));
         assertTrue(node.guaranteedBossTierUp());
-        assertTrue(node.effects().contains(new ChartGenContext.AppliedEffect(ChartEffect.CHART_BOSS_SIZE_PERCENT, 50f)));
-        assertTrue(node.effects().contains(new ChartGenContext.AppliedEffect(ChartEffect.CHART_FLEET_SIZE_PERCENT, 25f)));
+        assertEquals(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_FLEET_SIZE_PERCENT, 25f)), node.effects());
+        ChartGenContext context = ChartGenContext.none().withAtlasNode(node).withAnomalyEffects(node.anomalyIds());
+        assertEquals(ChartAnomalies.definition(PowerfulBoss.ID).effects().get(0).value(), context.bossSizePercent());
+        assertTrue(context.bossSpoilsMult() > 1f);
 
         state.add(cell, AtlasState.MARKERS_SPENT | AtlasState.CLEANSED);
         AtlasRunNode spent = AtlasOpening.runNode(generator, state, cell);

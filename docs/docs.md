@@ -409,15 +409,17 @@ Transverse Jump plugin from another mod stays blocked like the other escape abil
 Each save has one atlas: `AtlasState` keeps the seed and per-system flags in persistent data, and `AtlasGenerator`
 rebuilds everything else from the seed. A chart opens a system joined by a lane to a completed one (`AtlasReach`), and
 the system supplies the layout seed, faction, region recipe, anomalies and the lines from
-`atlas_node_effects.csv` for Powerful Boss, infested, cleansed and special-site systems, kept on the run as an
-`AtlasRunNode` (`AtlasOpening`). A Powerful Boss always drops a chart one tier up, and chart drops inside a run never
-fall below its tier.
+`atlas_node_effects.csv` for infested, cleansed and special-site systems, kept on the run as an
+`AtlasRunNode` (`AtlasOpening`). An anomaly with its own `atlas_markers.csv` row rolls on that chance instead of the
+shared one. Powerful Boss (`PowerfulBoss`) does, and its run's boss always drops a chart one tier up
+(`ChartAnomaly.guaranteesBossTierUp`); anomaly effects reach the content plan, so its line sizes the boss. Chart drops
+inside a run never fall below its tier.
 
 Killing the objective completes the system and grants an atlas point for the first clear of each tier (`AtlasProgress`).
 A Sensor Array also reveals 6 lanes, a Nexus cleanses the systems it infested, and a Bastion gives a key fragment and
 allows one attempt. A system's anomalies are its rolled ones plus records inserted into `AtlasState`, which
 `AtlasAnomalies.canInsert` gates and any run there spends, at most 9 in all (`MAX_PER_SYSTEM`), unless a Relay Network chain moves on. A run that closes without its objective spends the system's
-markers (Powerful Boss and every anomaly but a star one). Biomes tile the map from sites about five cells apart, and each sets how many of its cells hold a
+rolled anomalies, all but star ones. Biomes tile the map from sites about five cells apart, and each sets how many of its cells hold a
 system (`AtlasBiomes`). Normal space wins most sites and chains into the volumes factions hold, while a special biome
 never sits beside another site of its own type, so it stays a small pocket. Each biome lists the only factions it holds
 (the derelict graveyard holds only derelicts), and normal space's list is the pool every faction territory draws from.

@@ -111,6 +111,10 @@ public interface ChartAnomaly {
         return false;
     }
 
+    default boolean guaranteesBossTierUp() {
+        return false;
+    }
+
     default boolean holdsPlayerBattle() {
         return false;
     }

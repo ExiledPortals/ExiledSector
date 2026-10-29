@@ -94,9 +94,6 @@ public final class AtlasNodeText {
         if (special != null) {
             lines.add(new Line(name("special", special.id()), Tone.MARKER));
         }
-        if (node.powerfulBoss() && !spent) {
-            lines.add(new Line(Translation.text("chart.atlas.node.powerfulBoss"), Tone.MARKER));
-        }
         for (String anomalyId : AtlasAnomalies.effective(generator, state, cell)) {
             lines.add(new Line(Translation.msg("chart.atlas.node.anomaly").arg("anomaly", name("anomaly", anomalyId)).text(), Tone.MARKER));
             if (FactionSkirmish.ID.equals(anomalyId)) {

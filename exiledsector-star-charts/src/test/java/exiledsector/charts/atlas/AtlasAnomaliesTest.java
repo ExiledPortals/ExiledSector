@@ -28,7 +28,7 @@ class AtlasAnomaliesTest {
     private static final List<AtlasRegion> REGIONS = List.of(new AtlasRegion(AtlasRegion.NORMAL, 1f, 0, "", "", Map.of(), Map.of(), Map.of()));
 
     private static AtlasRules rules(AtlasMarkerRule anomalyRule, List<AtlasAnomalyCandidate> anomalies) {
-        return new AtlasRules(REGIONS, Map.of("compact", 1f), Map.of("pirates", 1f), new AtlasMarkerRule(0.3f, 0f, 0.3f), AtlasMarkerRule.NEVER,
+        return new AtlasRules(REGIONS, Map.of("compact", 1f), Map.of("pirates", 1f), new AtlasMarkerRule(0.3f, 0f, 0.3f),
                 anomalyRule, List.of(), anomalies);
     }
 

@@ -47,7 +47,7 @@ class AtlasGeneratorTest {
     private static AtlasRules rules(List<AtlasRegion> regions) {
         return new AtlasRules(regions, Map.of("compact", 1f, "sprawling", 2f, "ringed", 1f),
                 Map.of("pirates", 5f, "hegemony", 3f, "remnant", 2f, "derelict", 2f, "independent", 1f),
-                new AtlasMarkerRule(0.5f, 0f, 0.5f), new AtlasMarkerRule(0.25f, 0f, 0.25f), new AtlasMarkerRule(0.15f, 0.01f, 0.5f), SPECIALS,
+                new AtlasMarkerRule(0.5f, 0f, 0.5f), new AtlasMarkerRule(0.15f, 0.01f, 0.5f), SPECIALS,
                 List.of(new AtlasAnomalyCandidate("relay", 1f, ""), new AtlasAnomalyCandidate("hunter", 1f, ""),
                         new AtlasAnomalyCandidate("black_hole", 1f, "", true, Set.of(), null), new AtlasAnomalyCandidate("flares", 1f, "")));
     }
@@ -65,7 +65,7 @@ class AtlasGeneratorTest {
     }
 
     private static AtlasRules withAnomalies(AtlasRules rules, AtlasMarkerRule anomalyRule, List<AtlasAnomalyCandidate> anomalies) {
-        return new AtlasRules(rules.regions(), rules.layoutWeights(), rules.factionWeights(), rules.voidRule(), rules.powerfulBossRule(),
+        return new AtlasRules(rules.regions(), rules.layoutWeights(), rules.factionWeights(), rules.voidRule(),
                 anomalyRule, rules.specials(), anomalies);
     }
 
@@ -149,7 +149,6 @@ class AtlasGeneratorTest {
         assertEquals(0f, origin.mapY());
         assertEquals(AtlasRegion.NORMAL, origin.regionId());
         assertNull(origin.layoutId());
-        assertFalse(origin.powerfulBoss());
         assertEquals(List.of(), origin.anomalyIds());
         assertNull(origin.specialId());
         assertFalse(origin.lanes().isEmpty());
@@ -776,7 +775,6 @@ class AtlasGeneratorTest {
             assertEquals(was.regionId(), now.regionId());
             assertEquals(was.factionId(), now.factionId());
             assertEquals(was.layoutId(), now.layoutId());
-            assertEquals(was.powerfulBoss(), now.powerfulBoss());
             assertEquals(was.specialId(), now.specialId());
             assertEquals(was.lanes(), now.lanes());
         }
@@ -896,13 +894,20 @@ class AtlasGeneratorTest {
     }
 
     @Test
-    void powerfulBossesTurnUpAtAboutTheirChance() {
+    void anAnomalyWithItsOwnChanceRollsOnItInPlaceOfTheSharedOne() {
+        List<AtlasAnomalyCandidate> anomalies = new ArrayList<>(rules().anomalies());
+        anomalies.add(new AtlasAnomalyCandidate("powerful", 1f, "", false, Set.of(), null, new AtlasMarkerRule(0.25f, 0f, 0.25f)));
+        List<AtlasNode> withShared = scan(generator(withAnomalies(rules(), anomalies)));
+        List<AtlasNode> withoutShared = scan(generator(withAnomalies(rules(), AtlasMarkerRule.NEVER, anomalies)));
         int open = 0;
         int powerful = 0;
-        for (AtlasNode node : scan(generator(rules()))) {
+        for (int index = 0; index < withShared.size(); index++) {
+            AtlasNode node = withShared.get(index);
             if (!node.isVoid() && !node.isOrigin()) {
                 open++;
-                powerful += node.powerfulBoss() ? 1 : 0;
+                powerful += node.anomalyIds().contains("powerful") ? 1 : 0;
+                List<String> alone = withoutShared.get(index).anomalyIds();
+                assertEquals(node.anomalyIds().contains("powerful") ? List.of("powerful") : List.of(), alone, node.cell().toString());
             }
         }
 

@@ -2,7 +2,8 @@ package exiledsector.charts.atlas;
 
 import java.util.Set;
 
-public record AtlasAnomalyCandidate(String id, float weight, String requiredMod, boolean replacesStar, Set<String> excludes, Weighting weighting) {
+public record AtlasAnomalyCandidate(String id, float weight, String requiredMod, boolean replacesStar, Set<String> excludes, Weighting weighting,
+                                    AtlasMarkerRule ownChance) {
 
     @FunctionalInterface
     public interface Weighting {
@@ -16,12 +17,20 @@ public record AtlasAnomalyCandidate(String id, float weight, String requiredMod,
         weighting = weighting == null ? (traits, base) -> base : weighting;
     }
 
+    public AtlasAnomalyCandidate(String id, float weight, String requiredMod, boolean replacesStar, Set<String> excludes, Weighting weighting) {
+        this(id, weight, requiredMod, replacesStar, excludes, weighting, null);
+    }
+
     public AtlasAnomalyCandidate(String id, float weight, String requiredMod, Weighting weighting) {
         this(id, weight, requiredMod, false, Set.of(), weighting);
     }
 
     public AtlasAnomalyCandidate(String id, float weight, String requiredMod) {
         this(id, weight, requiredMod, null);
+    }
+
+    public AtlasMarkerRule chanceRule(AtlasMarkerRule shared) {
+        return ownChance == null ? shared : ownChance;
     }
 
     public boolean conflictsWith(AtlasAnomalyCandidate other) {

@@ -46,7 +46,6 @@ public final class AtlasData {
     static final String ABYSS_PALETTES_PATH = "data/config/exiledSector/atlas_abyss_palettes.csv";
     static final String ID_COLUMN = "id";
     static final String VOID_MARKER = "void";
-    static final String POWERFUL_BOSS_MARKER = "powerful_boss";
     static final String ANOMALY_MARKER = "anomaly";
     static final String MODDED_FACTIONS = "modded_factions";
     private static final Logger LOG = Logger.getLogger(AtlasData.class);
@@ -83,17 +82,17 @@ public final class AtlasData {
         for (ChartFaction faction : ChartFactions.all()) {
             factionWeights.put(faction.factionId(), faction.weight());
         }
+        Map<String, AtlasMarkerRule> rules = markerRules;
         List<AtlasAnomalyCandidate> anomalies = new ArrayList<>();
         for (ChartAnomalies.Definition definition : ChartAnomalies.definitions()) {
             ChartAnomaly anomaly = ChartAnomalies.byId(definition.id());
             if (anomaly != null) {
                 anomalies.add(new AtlasAnomalyCandidate(definition.id(), definition.weight(), definition.requiredMod(), definition.replacesStar(),
-                        definition.excludes(), (traits, weight) -> anomaly.fitsAt(traits) ? anomaly.atlasWeight(traits, weight) : 0f));
+                        definition.excludes(), (traits, weight) -> anomaly.fitsAt(traits) ? anomaly.atlasWeight(traits, weight) : 0f,
+                        rules.get(definition.id())));
             }
         }
-        Map<String, AtlasMarkerRule> rules = markerRules;
-        return new AtlasRules(regions, layoutWeights, factionWeights, rule(rules, VOID_MARKER), rule(rules, POWERFUL_BOSS_MARKER),
-                rule(rules, ANOMALY_MARKER), specials, anomalies);
+        return new AtlasRules(regions, layoutWeights, factionWeights, rule(rules, VOID_MARKER), rule(rules, ANOMALY_MARKER), specials, anomalies);
     }
 
     public static Color regionTint(String regionId) {
@@ -379,8 +378,8 @@ public final class AtlasData {
         Map<String, AtlasMarkerRule> loaded = new LinkedHashMap<>();
         CsvRows csv = new CsvRows(MARKERS_PATH);
         CsvRows.forEachIdRow(rows, ID_COLUMN, (id, row) -> {
-            if (!List.of(VOID_MARKER, POWERFUL_BOSS_MARKER, ANOMALY_MARKER).contains(id)) {
-                csv.skipRow(id, "no atlas marker has this id");
+            if (!List.of(VOID_MARKER, ANOMALY_MARKER).contains(id) && ChartAnomalies.byId(id) == null) {
+                csv.skipRow(id, "no atlas marker or anomaly has this id");
                 return;
             }
             float chance = csv.number(row, "chance", 0f, id);
