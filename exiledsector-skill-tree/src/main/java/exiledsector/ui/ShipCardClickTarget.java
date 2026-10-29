@@ -26,6 +26,9 @@ final class ShipCardClickTarget extends BaseCustomUIPanelPlugin {
     private PositionAPI targetPosition;
     private boolean hovered;
     private boolean swallowMouseUp;
+    private ShipCardTooltip tooltip = ShipCardTooltip.NONE;
+    private BooleanSupplier tooltipAllowed = () -> false;
+    private boolean tooltipDismissed;
 
     ShipCardClickTarget(Runnable clicked, BooleanSupplier live, boolean selected) {
         this.clicked = clicked;
@@ -35,6 +38,15 @@ final class ShipCardClickTarget extends BaseCustomUIPanelPlugin {
 
     void clipTo(PositionAPI visibleArea) {
         this.visibleArea = visibleArea;
+    }
+
+    void showTooltip(ShipCardTooltip tooltip, BooleanSupplier tooltipAllowed) {
+        this.tooltip = tooltip;
+        this.tooltipAllowed = tooltipAllowed;
+    }
+
+    void hideTooltip() {
+        tooltip.hide();
     }
 
     @Override
@@ -70,7 +82,7 @@ final class ShipCardClickTarget extends BaseCustomUIPanelPlugin {
         }
         for (InputEventAPI event : events) {
             if (event.isMouseScrollEvent()) {
-                hovered = false;
+                leave();
             }
             if (event.isLMBUpEvent()) {
                 if (swallowMouseUp && !event.isConsumed()) {
@@ -83,13 +95,30 @@ final class ShipCardClickTarget extends BaseCustomUIPanelPlugin {
                 continue;
             }
             boolean inside = contains(event.getX(), event.getY());
-            if (event.isMouseMoveEvent()) {
-                hovered = inside;
+            if (event.isMouseMoveEvent() && inside) {
+                hovered = true;
+            } else if (event.isMouseMoveEvent()) {
+                leave();
             } else if (inside && event.isLMBDownEvent() && live.getAsBoolean()) {
                 swallowMouseUp = true;
+                tooltipDismissed = true;
                 event.consume();
                 clicked.run();
             }
+        }
+        syncTooltip();
+    }
+
+    private void leave() {
+        hovered = false;
+        tooltipDismissed = false;
+    }
+
+    private void syncTooltip() {
+        if (hovered && !tooltipDismissed && tooltipAllowed.getAsBoolean()) {
+            tooltip.show(targetPosition);
+        } else {
+            tooltip.hide();
         }
     }
 
