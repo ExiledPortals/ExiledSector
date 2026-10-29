@@ -64,11 +64,13 @@ class HullUpgradeTest {
 
     private ShipSkillData shipWithPoints(String shipId, int points) {
         ShipSkillData shipData = new ShipSkillData();
-        for (int shipPoints = HullUpgradePoints.STARTING_POINTS; shipPoints < points; shipPoints++) {
-            RefitSchematic schematic = RefitSchematic.forShipPoints(shipPoints);
-            store.addSchematics(schematic, 1);
-            assertTrue(HullUpgradeRules.applySchematic(shipData, schematic, store));
+        for (RefitSchematic schematic : RefitSchematic.values()) {
+            if (schematic.points() == points) {
+                store.addSchematics(schematic, 1);
+                assertTrue(HullUpgradeRules.applySchematic(shipData, schematic, store));
+            }
         }
+        assertEquals(points, HullUpgradePoints.of(shipData));
         ships.put(shipId, shipData);
         return shipData;
     }

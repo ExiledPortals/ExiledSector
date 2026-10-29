@@ -389,9 +389,7 @@ public final class HullUpgradePanel extends HoloPanel {
         return switch (block) {
             case STAR_CHART_PROGRESS -> Translation.text("upgrade.tooltip.chartMode");
             case AT_MAX_POINTS -> Translation.msg("framework.panel.upgradeAtMax").arg("max", HullUpgradePoints.MOST_POINTS).text();
-            case WRONG_TIER -> view.points() < schematic.requiredPoints()
-                    ? Translation.msg("framework.panel.upgradeNeeds").count(schematic.requiredPoints()).text()
-                    : Translation.msg("framework.panel.upgradeAlready").arg("points", view.points()).text();
+            case NOT_UPGRADABLE, AT_OR_ABOVE_TIER -> Translation.msg("framework.panel.upgradeAlready").arg("points", view.points()).text();
             case NONE_IN_STORAGE -> Translation.msg("framework.panel.upgradeNone").arg("level", HullUpgradesSetting.unlockLevel()).text();
         };
     }

@@ -17,7 +17,7 @@ public final class HullUpgradeTooltip {
     public static void write(TooltipMakerAPI tooltip, RefitSchematic schematic, Supplier<List<StyledText>> footer) {
         ItemTooltip.writeFrame(tooltip, schematic == null ? null : () -> {
             tooltip.addTitle(schematic.displayName(), schematic.color());
-            VanillaText.addPara(tooltip, Translation.msg("upgrade.tooltip.body").count(schematic.requiredPoints())
+            VanillaText.addPara(tooltip, Translation.msg("upgrade.tooltip.body")
                     .arg("points", schematic.points()).styled(), ItemTooltip.PAD, Misc.getTextColor());
             if (!HullUpgradesSetting.enabled()) {
                 VanillaText.addPara(tooltip, Translation.msg("upgrade.tooltip.disabled").styled(), ItemTooltip.PAD, Misc.getNegativeHighlightColor());

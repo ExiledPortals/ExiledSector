@@ -10,7 +10,7 @@ public final class HullUpgradeRules {
 
     public enum UnlockBlock {NO_POINTS, ALREADY_UNLOCKED, UNMET_REQUIREMENT}
 
-    public enum UpgradeBlock {STAR_CHART_PROGRESS, AT_MAX_POINTS, WRONG_TIER, NONE_IN_STORAGE}
+    public enum UpgradeBlock {STAR_CHART_PROGRESS, NOT_UPGRADABLE, AT_MAX_POINTS, AT_OR_ABOVE_TIER, NONE_IN_STORAGE}
 
     public enum MasterSchematicBlock {NOT_REQUIRED, ALREADY_UNLOCKED, NONE_IN_STORAGE}
 
@@ -22,11 +22,14 @@ public final class HullUpgradeRules {
             return UpgradeBlock.STAR_CHART_PROGRESS;
         }
         int shipPoints = HullUpgradePoints.of(shipData);
+        if (shipPoints < HullUpgradePoints.STARTING_POINTS) {
+            return UpgradeBlock.NOT_UPGRADABLE;
+        }
         if (shipPoints >= HullUpgradePoints.MOST_POINTS) {
             return UpgradeBlock.AT_MAX_POINTS;
         }
-        if (shipPoints != schematic.requiredPoints()) {
-            return UpgradeBlock.WRONG_TIER;
+        if (shipPoints >= schematic.points()) {
+            return UpgradeBlock.AT_OR_ABOVE_TIER;
         }
         return schematicsInStorage <= 0 ? UpgradeBlock.NONE_IN_STORAGE : null;
     }

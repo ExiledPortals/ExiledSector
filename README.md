@@ -65,7 +65,7 @@ Nobody has designed a new hull since the Collapse, and the Domain's blueprints s
 
 Every ship starts with one Hull Upgrade point. Spend it on a section of the ship, and that section takes hull items of its own.
 
-By default, Refit Schematics turn up in wrecks and salvage once you reach level 15, and each one raises a ship by a point, from Scrapped to Domain, up to five.
+By default, Refit Schematics turn up in wrecks and salvage once you reach level 15, and each one takes a ship below its tier straight up to it, from two points for Scrapped to five for Domain.
 
 Switch Hull Upgrade Points to Star Chart Progress in LunaLib settings and every ship gains a point instead as you clear tier 5, 10 and 15 Star Charts.
 
