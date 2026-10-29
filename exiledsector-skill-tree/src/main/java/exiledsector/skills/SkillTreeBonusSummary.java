@@ -11,17 +11,22 @@ import exiledlib.skills.EffectContribution;
 import exiledlib.skills.EffectTotals;
 import exiledlib.skills.SkillTypeEffect;
 import exiledlib.skills.StatBaseline;
+import exiledlib.skills.skilleffect.SkillEffect;
 import exiledlib.skills.skilleffect.weapon.WeaponEffectTooltipAggregator;
 import exiledsector.effects.SkillTreeEffectSource;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public final class SkillTreeBonusSummary {
 
     public record Summary(SkillType root, int level, int nodeCount, List<SkillType> notables, List<DescriptionLine> bonuses,
                           Set<DiminishedStat> diminishedStats) {
+    }
+
+    public record EffectLine(SkillEffect effect, float magnitude, Float temporarySeconds, CombatGate gate, DescriptionLine line) {
     }
 
     private SkillTreeBonusSummary() {
@@ -64,19 +69,26 @@ public final class SkillTreeBonusSummary {
     }
 
     private static List<DescriptionLine> describe(List<EffectTotals.Group> groups) {
-        List<DescriptionLine> lines = new ArrayList<>();
+        return lines(groups, effect -> true).stream().map(EffectLine::line).toList();
+    }
+
+    public static List<EffectLine> lines(List<EffectTotals.Group> groups, Predicate<SkillEffect> permanentShown) {
+        List<EffectLine> lines = new ArrayList<>();
         for (EffectTotals.Group group : groups) {
+            boolean permanent = group.temporarySeconds() == null && group.gate() == null;
             List<SkillTypeEffect> effects = new ArrayList<>();
             group.totals().forEach((effect, total) -> {
                 float shownTotal = rounded(total);
-                if (!effect.isMultiplicative() || shownTotal != 0f) {
+                if ((!effect.isMultiplicative() || shownTotal != 0f) && (!permanent || permanentShown.test(effect))) {
                     effects.add(new SkillTypeEffect(effect, shownTotal));
                 }
             });
             for (SkillTypeEffect effect : WeaponEffectTooltipAggregator.collapse(effects)) {
                 StyledText text = effect.effect().description(effect.magnitude());
                 if (text != null) {
-                    lines.add(new DescriptionLine(withGate(withDuration(text, group.temporarySeconds()), group.gate()), effect.effect().invertsDescriptionColours()));
+                    lines.add(new EffectLine(effect.effect(), effect.magnitude(), group.temporarySeconds(), group.gate(),
+                            new DescriptionLine(withGate(withDuration(text, group.temporarySeconds()), group.gate()),
+                                    effect.effect().invertsDescriptionColours())));
                 }
             }
         }

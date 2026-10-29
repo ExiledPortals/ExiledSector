@@ -106,6 +106,25 @@ class NodeSearchTest {
     }
 
     @Test
+    void aHoveredStatLightsOnlyTheNodesBehindItOverAnyQuery() {
+        NodeSearch search = new NodeSearch();
+        SkillNode armor = node("armor", "Heavy Armor");
+        SkillNode flux = node("flux", "Flux Coil");
+        search.setQuery("armor");
+
+        search.setStatFocus(Set.of("flux_1"));
+
+        assertTrue(search.matches(flux, tree));
+        assertFalse(search.matches(armor, tree));
+        assertEquals(NodeSearch.DIM_ALPHA, search.nodeAlpha(armor, tree));
+
+        search.setStatFocus(Set.of());
+
+        assertTrue(search.matches(armor, tree));
+        assertFalse(search.matches(flux, tree));
+    }
+
+    @Test
     void effectLinesMatchButTheDescriptionTextDoesNot() {
         I18n.install(RealCatalogue.english());
         SkillType type = new SkillType.Builder("bulkheads", "Bulkheads", "", SkillTier.SMALL)

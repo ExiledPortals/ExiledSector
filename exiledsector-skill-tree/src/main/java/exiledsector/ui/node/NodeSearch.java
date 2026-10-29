@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.StringJoiner;
 
 public final class NodeSearch {
@@ -30,6 +31,7 @@ public final class NodeSearch {
     private NodeAllocator.Snapshot matchedSnapshot;
     private boolean socketFocus;
     private boolean treeSocketFocus;
+    private Set<String> statFocusNodeIds = Set.of();
     private int nextMatchIndex;
 
     public NodeSearch() {
@@ -65,7 +67,11 @@ public final class NodeSearch {
     }
 
     public boolean isActive() {
-        return socketFocus || !query.isEmpty();
+        return !statFocusNodeIds.isEmpty() || socketFocus || !query.isEmpty();
+    }
+
+    public void setStatFocus(Set<String> nodeIds) {
+        statFocusNodeIds = nodeIds == null ? Set.of() : nodeIds;
     }
 
     public void setSocketFocus(boolean focus) {
@@ -85,6 +91,9 @@ public final class NodeSearch {
     boolean matches(SkillNode node, NodeAllocator.Snapshot allocation) {
         if (!isActive() || allocation.isHidden(node)) {
             return false;
+        }
+        if (!statFocusNodeIds.isEmpty()) {
+            return statFocusNodeIds.contains(node.getId());
         }
         if (socketFocus) {
             return treeSocketFocus && node.getType().getTier() == SkillTier.SOCKET && allocation.skillData().isAllocated(node.getId());

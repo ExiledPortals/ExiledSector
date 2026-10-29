@@ -101,6 +101,10 @@ public class SkillTreeHullMod extends BaseHullMod implements HullModFleetEffect 
         return resolvedTree == null ? Map.of() : AffinitySteps.totals(resolvedTree.contributions());
     }
 
+    public static ResolvedTree resolvedTree(FleetMemberAPI member, ShipVariantAPI variant) {
+        return variant == null ? null : resolve(ShipRecords.resolve(member, variant), member, variant);
+    }
+
     private static ResolvedTree resolve(ShipSkillData shipData, FleetMemberAPI member, ShipVariantAPI variant) {
         return shipData == null ? null : ResolvedTree.of(new ShipEffectContext(shipData, member, variant, variant.getHullSize()),
                 StatBaseline.of(variant), DiminishingReturns.current());

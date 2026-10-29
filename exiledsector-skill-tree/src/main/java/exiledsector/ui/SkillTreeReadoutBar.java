@@ -30,7 +30,7 @@ final class SkillTreeReadoutBar {
     private static final float TEXT_SHADOW_OFFSET_X = 1f;
     private static final float TEXT_SHADOW_OFFSET_Y = -1f;
 
-    private static final float BAR_WIDTH = 297f;
+    static final float BAR_WIDTH = 297f;
     private static final float BAR_HEIGHT = 30f;
     private static final float ROW_GAP = 8f;
     private static final float FONT_SIZE = 20f;

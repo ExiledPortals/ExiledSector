@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -40,6 +41,10 @@ public final class ResolvedTree {
     record EffectEntry(SkillEffect effect, String modId, float magnitude) implements Entry {
     }
 
+    public record AppliedModifier(String modId, SkillEffect effect, List<EffectContribution> sources, boolean reductionCap) {
+    }
+
+    private static final Object APPLIED_MODIFIERS_KEY = new Object();
     private static final int CAP_SCALE_STEPS = 24;
 
     record TemporaryNode(float durationSeconds, List<EffectEntry> effects) {
@@ -309,6 +314,43 @@ public final class ResolvedTree {
             derived.put(key, value);
         }
         return (T) value;
+    }
+
+    public Map<String, AppliedModifier> appliedModifiers() {
+        return derived(APPLIED_MODIFIERS_KEY, () -> appliedModifiersOf(totals));
+    }
+
+    static Map<String, AppliedModifier> appliedModifiersOf(EffectTotals totals) {
+        Map<String, AppliedModifier> modifiers = new LinkedHashMap<>();
+        Map<SkillEffect, List<EffectContribution>> pooledSources = new LinkedHashMap<>();
+        for (EffectContribution contribution : totals.contributions()) {
+            if (!contribution.permanent()) {
+                continue;
+            }
+            if (contribution.vanillaHullModId() != null) {
+                modifiers.putIfAbsent(contribution.vanillaHullModId(), new AppliedModifier(contribution.vanillaHullModId(), null, List.of(contribution), false));
+            }
+            EffectModIds modIds = new EffectModIds(contribution.modIdPrefix());
+            for (SkillTypeEffect effect : contribution.effects()) {
+                if (effect.effect().isMultiplicative()) {
+                    pooledSources.computeIfAbsent(effect.effect(), key -> new ArrayList<>()).add(contribution);
+                } else {
+                    String modId = modIds.next(effect.effect());
+                    modifiers.put(modId, new AppliedModifier(modId, effect.effect(), List.of(contribution), false));
+                }
+            }
+        }
+        pooledSources.forEach((effect, sources) -> {
+            String modId = MULTIPLIER_MOD_ID_PREFIX + effect.name();
+            modifiers.put(modId, new AppliedModifier(modId, effect, List.copyOf(sources), false));
+        });
+        for (DamageTakenCaps.Cap reductionCap : totals.reachedCaps()) {
+            List<EffectContribution> sources = totals.contributions().stream().filter(contribution -> contribution.permanent()
+                    && contribution.effects().stream().anyMatch(effect -> reductionCap.contributingEffects().contains(effect.effect()))).toList();
+            String modId = REDUCTION_CAP_MOD_ID_PREFIX + reductionCap.cappedEffect().name();
+            modifiers.put(modId, new AppliedModifier(modId, reductionCap.cappedEffect(), sources, true));
+        }
+        return Collections.unmodifiableMap(modifiers);
     }
 
     List<Entry> entries() {

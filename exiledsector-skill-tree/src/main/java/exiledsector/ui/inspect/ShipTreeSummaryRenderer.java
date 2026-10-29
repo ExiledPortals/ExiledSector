@@ -24,6 +24,9 @@ import exiledsector.skills.SkillType;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
 import exiledsector.ui.VanillaText;
+import exiledsector.ui.stats.ShipStatSheet;
+import exiledsector.ui.stats.ShipStatSheets;
+import exiledsector.ui.stats.StatSheetPanelPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +38,10 @@ public final class ShipTreeSummaryRenderer {
     private static final String BULLET = "    - ";
     private static final float HULL_MOD_TOOLTIP_PAD = 10f;
     private static final int MAX_HULL_MOD_BONUS_LINES = 25;
+    private static final float HULL_MOD_SHEET_WIDTH = 470f;
+
+    private record SheetView(ShipStatSheet sheet, int hiddenEffectRows) {
+    }
 
     private ShipTreeSummaryRenderer() {
     }
@@ -46,8 +53,31 @@ public final class ShipTreeSummaryRenderer {
                     Misc.getGrayColor()));
             return;
         }
-        render(tooltip, shipTree, hullSize, moduleSharePercent(ship.getHullSpec(), ship.isStation()), HULL_MOD_TOOLTIP_PAD,
-                MAX_HULL_MOD_BONUS_LINES);
+        FleetMemberAPI member = SkillTreeHullMod.memberOf(ship);
+        ShipStatSheet sheet = I18n.forGameText(() -> ShipStatSheets.build(new ShipStatSheets.Input(ship.getMutableStats(), ship.getHullSpec(),
+                member, shipTree.skillData(), SkillTreeHullMod.resolvedTree(member, ship.getVariant()), null, ShipStatSheet.Detail.CHANGED)));
+        ShipStatSheet shownSheet = limited(sheet, MAX_HULL_MOD_BONUS_LINES);
+        SheetView sheetView = new SheetView(shownSheet, effectRowCount(sheet) - effectRowCount(shownSheet));
+        I18n.forGameText(() -> renderSummary(tooltip, shipTree, hullSize, moduleSharePercent(ship.getHullSpec(), ship.isStation()),
+                HULL_MOD_TOOLTIP_PAD, MAX_HULL_MOD_BONUS_LINES, sheetView));
+    }
+
+    private static ShipStatSheet limited(ShipStatSheet sheet, int maxEffectRows) {
+        List<ShipStatSheet.Section> sections = new ArrayList<>();
+        int remaining = maxEffectRows;
+        for (ShipStatSheet.Section section : sheet.sections()) {
+            List<ShipStatSheet.EffectRow> effects = section.effects().subList(0, Math.min(section.effects().size(), remaining));
+            remaining -= effects.size();
+            ShipStatSheet.Section kept = new ShipStatSheet.Section(section.group(), section.values(), section.grids(), List.copyOf(effects));
+            if (!kept.isEmpty()) {
+                sections.add(kept);
+            }
+        }
+        return new ShipStatSheet(List.copyOf(sections));
+    }
+
+    private static int effectRowCount(ShipStatSheet sheet) {
+        return sheet.sections().stream().mapToInt(section -> section.effects().size()).sum();
     }
 
     public static void render(TooltipMakerAPI info, FleetMemberAPI member, ShipTreeLookup.ShipTree shipTree, float pad) {
@@ -61,11 +91,11 @@ public final class ShipTreeSummaryRenderer {
 
     public static void render(TooltipMakerAPI info, ShipTreeLookup.ShipTree shipTree, HullSize hullSize, int moduleSharePercent, float pad,
                               int maxBonusLines) {
-        I18n.forGameText(() -> renderSummary(info, shipTree, hullSize, moduleSharePercent, pad, maxBonusLines));
+        I18n.forGameText(() -> renderSummary(info, shipTree, hullSize, moduleSharePercent, pad, maxBonusLines, null));
     }
 
     private static void renderSummary(TooltipMakerAPI info, ShipTreeLookup.ShipTree shipTree, HullSize hullSize, int moduleSharePercent,
-                                      float pad, int maxBonusLines) {
+                                      float pad, int maxBonusLines, SheetView sheetView) {
         Summary bonusSummary = SkillTreeBonusSummary.of(shipTree.skillData(), hullSize, shipTree.bonusScale(),
                 partContributions(shipTree, hullSize),
                 shipTree.statBaseline(), DiminishingReturns.current());
@@ -110,7 +140,12 @@ public final class ShipTreeSummaryRenderer {
         renderModuleShare(info, moduleSharePercent);
         renderSlotConflicts(info, shipTree);
 
-        if (!bonusSummary.bonuses().isEmpty()) {
+        if (sheetView != null && StatSheetPanelPlugin.addTo(info, sheetView.sheet(), HULL_MOD_SHEET_WIDTH, SECTION_PAD)) {
+            if (sheetView.hiddenEffectRows() > 0) {
+                VanillaText.addPara(info, Translation.msg("summary.more").count(sheetView.hiddenEffectRows()).styled(), LINE_PAD,
+                        Misc.getGrayColor());
+            }
+        } else if (!bonusSummary.bonuses().isEmpty()) {
             VanillaText.addPara(info, Translation.styled("summary.bonuses"), SECTION_PAD, Misc.getTextColor());
             List<DescriptionLine> bonuses = bonusSummary.bonuses();
             int shownBonusCount = Math.min(bonuses.size(), maxBonusLines);

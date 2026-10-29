@@ -7,11 +7,11 @@ import exiledlib.skills.skilleffect.weapon.WeaponSkillEffect;
 import java.util.ArrayList;
 import java.util.List;
 
-final class BallisticEnergyMirror {
+public final class BallisticEnergyMirror {
 
     static final String MOD_ID_PREFIX = "exiledLib_ballisticAsEnergy_";
 
-    record Origin(Object mirroredOrigin) {
+    public record Origin(Object mirroredOrigin) {
     }
 
     private BallisticEnergyMirror() {

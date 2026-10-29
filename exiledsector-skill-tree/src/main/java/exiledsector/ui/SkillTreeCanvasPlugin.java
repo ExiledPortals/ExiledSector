@@ -94,7 +94,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         this.factionFleets = FactionFleetRenderer.forActiveTree(treeSession::isLocked);
         this.nodeDrawer = SkillTreeNodeDrawer.attachedTo(treeSession, member, panelStyle, nodeSearch);
         this.templateUi = new SkillTreeTemplateController(member, treeSession, panelStyle);
-        this.statPanel = new SkillTreeStatPanel(member);
+        this.statPanel = new SkillTreeStatPanel(member, variant, panelStyle);
         this.hyperspaceMode = new HyperspaceMode(camera, statPanel, treeSession::isHidden, treeSession::wormholePairs);
         this.socketPlacement = new SocketPlacement(hostPanel, treeSession, nodeSearch, searchBar);
         this.chrome = new SkillTreeChrome(member, panelStyle, statPanel, searchBar, templateUi, socketPlacement, shipCardHeight);
@@ -199,6 +199,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         socketPlacement.advance(mode.closesStorage());
         statPanel.refresh(treeSession.budget(), treeSession.statsRevision());
         statPanel.advance(amount);
+        nodeSearch.setStatFocus(statPanel.hoveredNodeIds());
         chrome.advanceVisibility(amount, mode, hyperspaceMode.chromeAlpha(), hyperspaceMode.treeAlpha());
         chrome.advance(amount, canvasPosition, mode, treeSession.budget(), mouseX, mouseY, mouseKnown);
         float dimStep = amount / WORKBENCH_DIM_SECONDS;
@@ -243,6 +244,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             event.consume();
         } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE && shipList.isOpen()) {
             shipList.close();
+            consume(event);
+        } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE && statPanel.collapse()) {
             consume(event);
         } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE && escape(mode)) {
             consume(event);
@@ -368,6 +371,8 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             handleTreePress(event, mode);
         } else if (event.isLMBUpEvent()) {
             handleTreeRelease(event);
+        } else if (event.isMouseScrollEvent() && statPanel.handleScroll(event.getX(), event.getY(), event.getEventValue())) {
+            event.consume();
         } else if (event.isMouseScrollEvent() && canvasPosition.containsEvent(event)) {
             handleMouseScroll(event, mode);
         } else if (event.isKeyboardEvent() && searchBar.handleKey(event)) {

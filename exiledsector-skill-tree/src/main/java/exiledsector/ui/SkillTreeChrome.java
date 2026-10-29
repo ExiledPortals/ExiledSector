@@ -97,6 +97,13 @@ final class SkillTreeChrome {
 
     boolean press(PositionAPI canvasPosition, CanvasMode mode, float x, float y) {
         templateUi.forgetBarPress();
+        if (statsToggleLive(mode) && statPanel.isExpandHit(x, y)) {
+            statPanel.toggleExpanded();
+            return true;
+        }
+        if (statsToggleLive(mode) && statPanel.sheetContains(x, y)) {
+            return true;
+        }
         if (mode.enables(CanvasMode.Chrome.SEARCH) && searchBar.handleClick(canvasPosition, x, y)) {
             return true;
         }
@@ -141,10 +148,16 @@ final class SkillTreeChrome {
                 mode.enables(CanvasMode.Chrome.STORAGE_BUTTON));
         ScreenRect frame = shipCardFrame(canvasPosition);
         BorderedPanel.draw(frame.left(), frame.bottom(), frame.width(), frame.height(), alphaMult);
+        statPanel.renderSheet(canvasPosition, mouseX, mouseY, alphaMult * visibility.alpha(CanvasMode.Chrome.STATS_TOGGLE) * (1f - workbenchDim),
+                statsToggleLive(mode));
     }
 
     void renderTooltips(PositionAPI canvasPosition, CanvasMode mode, float mouseX, float mouseY, float alphaMult) {
         if (!mode.showsChromeTooltips()) {
+            return;
+        }
+        if (statPanel.sheetContains(mouseX, mouseY)) {
+            statPanel.renderTooltip(mouseX, mouseY, alphaMult);
             return;
         }
         if (mode.enables(CanvasMode.Chrome.READOUTS)
@@ -157,6 +170,7 @@ final class SkillTreeChrome {
         if (mode.enables(CanvasMode.Chrome.TEMPLATE_BAR)) {
             templateUi.renderBarTooltip(mouseX, mouseY, alphaMult);
         }
+        statPanel.renderTooltip(mouseX, mouseY, alphaMult);
     }
 
     ScreenRect shipCardFrame(PositionAPI canvasPosition) {
