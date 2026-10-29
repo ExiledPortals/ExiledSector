@@ -1,5 +1,7 @@
 package exiledsector.charts.anomaly.relay;
 
+import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
+import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
@@ -10,6 +12,7 @@ import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.content.ChartSites;
+import exiledsector.charts.run.ChartRun;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -36,6 +39,21 @@ public final class RelayNetwork implements ChartAnomaly {
     @Override
     public String id() {
         return ID;
+    }
+
+    @Override
+    public InteractionDialogPlugin dialogFor(SectorEntityToken target) {
+        return isRelay(target) ? new RelayDialog() : null;
+    }
+
+    @Override
+    public void checkRun(SectorAPI sector) {
+        ChartRelays.check(sector);
+    }
+
+    @Override
+    public boolean holdsBackBossUnique(ChartRun run) {
+        return !RelayStates.allWoken(run);
     }
 
     @Override

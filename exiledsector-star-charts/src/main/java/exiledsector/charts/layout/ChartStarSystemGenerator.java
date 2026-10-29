@@ -25,8 +25,6 @@ import exiledsector.charts.layout.abyss.AbyssPalette;
 import exiledsector.charts.layout.abyss.ChartAbyss;
 import exiledsector.charts.anomaly.AnomalyLayoutSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
-import exiledsector.charts.anomaly.ChartCoronaTerrainPlugin;
-import exiledsector.charts.anomaly.ChartPulsarBeamTerrainPlugin;
 import exiledsector.charts.anomaly.StellarFlares;
 import exiledsector.compat.UnknownSkiesCompat;
 

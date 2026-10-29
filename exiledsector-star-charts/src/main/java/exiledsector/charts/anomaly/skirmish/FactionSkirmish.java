@@ -1,5 +1,8 @@
 package exiledsector.charts.anomaly.skirmish;
 
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledsector.charts.ChartIds;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.atlas.AtlasAnomalies;
@@ -25,6 +28,23 @@ public final class FactionSkirmish implements ChartAnomaly {
     @Override
     public String id() {
         return ID;
+    }
+
+    @Override
+    public void loadData() {
+        SkirmishFactions.load();
+    }
+
+    @Override
+    public void checkRun(SectorAPI sector) {
+        ChartSkirmishes.checkFinalPush(sector);
+    }
+
+    @Override
+    public void fleetGone(SectorAPI sector, CampaignFleetAPI fleet) {
+        if (fleet != null && SkirmishSide.ATTACKER.key().equals(fleet.getMemoryWithoutUpdate().getString(ChartIds.SKIRMISH_SIDE_MEMORY_KEY))) {
+            ChartSkirmishes.checkFinalPush(sector);
+        }
     }
 
     @Override

@@ -14,8 +14,8 @@ import exiledlib.Seeds;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.generation.ChartTiers;
-import exiledsector.charts.anomaly.breach.SpatialBreach;
-import exiledsector.charts.anomaly.storm.StormBattles;
+import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.effects.ItemLootListener;
 import exiledsector.effects.TechMiningItemListener;
 import exiledsector.items.ItemChances;
@@ -49,7 +49,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
         private float deploymentPointsDefeated;
         private float chartStrengthDefeated;
         private int highestDefeatedLevel;
-        private Boolean inStorm;
+        private List<ChartAnomaly> battleAnomalies;
     }
 
     private StarChartLootSource() {
@@ -62,8 +62,8 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
     @Override
     public void recordEngagement(BattleLoot battle, BattleEngagement engagement) {
         Losses losses = losses(battle);
-        if (losses.inStorm == null) {
-            losses.inStorm = playerInStorm();
+        if (losses.battleAnomalies == null) {
+            losses.battleAnomalies = anomaliesHoldingBattle();
         }
         engagement.lostEnemiesBySourceFleet().forEach((sourceFleet, members) -> {
             if (ChartFleetLoot.isChartFleet(sourceFleet) || adoptedAsDefender(sourceFleet)) {
@@ -79,12 +79,12 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
         }
     }
 
-    private static boolean playerInStorm() {
+    private static List<ChartAnomaly> anomaliesHoldingBattle() {
         try {
-            return StormBattles.playerInStorm();
+            return ChartAnomalies.holdingPlayerBattle();
         } catch (RuntimeException e) {
-            LOG.error("[ExiledSector] Checking whether a battle is in a Storm Front failed", e);
-            return false;
+            LOG.error("[ExiledSector] Checking which anomalies hold a battle failed", e);
+            return List.of();
         }
     }
 
@@ -131,7 +131,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
         for (Map.Entry<CampaignFleetAPI, Float> fleetLosses : losses.chartFleetDeploymentPoints.entrySet()) {
             try {
                 chartLoot = chartLoot.plus(ChartFleetLoot.roll(sector, fleetLosses.getKey(), fleetLosses.getValue(), battle.independentRandom(),
-                        Boolean.TRUE.equals(losses.inStorm)));
+                        losses.battleAnomalies == null ? List.of() : losses.battleAnomalies));
             } catch (RuntimeException e) {
                 LOG.error("[ExiledSector] Rolling Star Chart fleet loot failed for fleet " + fleetLosses.getKey().getId(), e);
             }
@@ -169,11 +169,8 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
             return modifiers;
         }
         ItemChances chances = modifiers.itemChances();
-        if (memory.contains(SpatialBreach.ITEM_MULT_KEY)) {
-            chances = chances.scaled(memory.getFloat(SpatialBreach.ITEM_MULT_KEY));
-        }
-        if (memory.contains(SpatialBreach.RARITY_KEY)) {
-            chances = chances.withRarity(chances.rarity() * (1f + memory.getFloat(SpatialBreach.RARITY_KEY) / ChartGenContext.PERCENT));
+        for (ChartAnomaly anomaly : ChartAnomalies.all()) {
+            chances = anomaly.siteChances(memory, chances);
         }
         return chances == modifiers.itemChances() ? modifiers : new LootModifiers(chances, modifiers.feedstockMult(), modifiers.currencyMult());
     }

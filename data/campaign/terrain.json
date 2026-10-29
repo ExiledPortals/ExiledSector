@@ -5,7 +5,7 @@
 		"loopOne":"terrain_hyperspace_abyss",
 	},
 	"exiledSector_chart_corona":{
-		"plugin":"exiledsector.charts.anomaly.ChartCoronaTerrainPlugin",
+		"plugin":"exiledsector.charts.layout.ChartCoronaTerrainPlugin",
 		"musicSuppression":1,
 		"loopOne":"terrain_corona",
 		"loopTwo":"terrain_corona_flare",
@@ -28,7 +28,7 @@
 		"musicSuppression":0,
 	},
 	"exiledSector_chart_pulsar_beam":{
-		"plugin":"exiledsector.charts.anomaly.ChartPulsarBeamTerrainPlugin",
+		"plugin":"exiledsector.charts.layout.ChartPulsarBeamTerrainPlugin",
 		"musicSuppression":1,
 		"loopOne":"terrain_corona_am",
 	},

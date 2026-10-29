@@ -11,7 +11,7 @@ import com.fs.starfarer.api.impl.campaign.graid.GroundRaidObjectivePlugin;
 import com.fs.starfarer.api.util.Misc;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
-import exiledsector.charts.raid.ChartRaid;
+import exiledsector.charts.anomaly.ChartRaid;
 import exiledsector.ui.VanillaText;
 import org.lwjgl.input.Keyboard;
 

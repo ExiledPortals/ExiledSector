@@ -1,5 +1,6 @@
 package exiledsector.charts.anomaly.heist;
 
+import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
@@ -116,6 +117,11 @@ public final class ListeningPost implements ChartAnomaly {
         ChartRun run = ChartRuns.currentOrNull();
         PostState state = inRunSystem(run, location) ? PostState.of(run) : null;
         return state != null && state.standing();
+    }
+
+    @Override
+    public InteractionDialogPlugin dialogFor(SectorEntityToken target) {
+        return PostDialog.wantsToHandle(target) ? new PostDialog() : null;
     }
 
     @Override

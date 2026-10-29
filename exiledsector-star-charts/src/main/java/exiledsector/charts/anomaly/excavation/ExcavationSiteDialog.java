@@ -20,9 +20,9 @@ import exiledlib.i18n.I18n;
 import exiledlib.i18n.Style;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
-import exiledsector.charts.anomaly.convoy.ConvoyDialogs;
 import exiledsector.charts.loot.DropType;
-import exiledsector.charts.raid.ChartRaid;
+import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.ChartRaid;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.ui.VanillaText;
@@ -130,7 +130,7 @@ public class ExcavationSiteDialog implements InteractionDialogPlugin, ChartRaid.
             raid = new ChartRaid(dialog, ExcavationRules.raidDifficulty(ChartRuns.currentOrNull().tier()), this::objectives, new Random(seed), this);
             raid.open();
         } else if (CONTINUE.equals(optionData)) {
-            InteractionDialogPlugin next = ConvoyDialogs.pick(planet);
+            InteractionDialogPlugin next = ChartAnomalies.dialogFor(planet, ExcavationSites.INSTANCE);
             InteractionDialogPlugin planetDialog = next == null ? new RuleBasedInteractionDialogPluginImpl() : next;
             dialog.setPlugin(planetDialog);
             planetDialog.init(dialog);

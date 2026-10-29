@@ -2,7 +2,7 @@
 
 `exiledsector.charts` holds 98 classes in one flat package, next to small subpackages (`anomaly` with 14, `atlas` with 30, `feature` with 6) and two empty leftover folders (`expansion` and `phenomenon`, in both `main` and `test`). Finding a class means already knowing its name. This plan sorts the root into subpackages by the stage of a chart's life each class belongs to. It only moves classes: no behaviour changes, no class renames.
 
-Status: steps 1-8 and the docs part of step 9 built on branch `charts-packages` (not yet merged into `parallel-work`); the deploy and in-game save check in step 9 is still pending.
+Status: steps 1-8 and the docs part of step 9 built and merged into `parallel-work`; the deploy and in-game save check in step 9 is still pending. A later tidy moved `raid.ChartRaid` (shared by the Supply Convoy and Excavation Sites anomalies) into `anomaly`, and the neutron star's `ChartCoronaTerrainPlugin` and `ChartPulsarBeamTerrainPlugin` into `layout`, which places them; `ChartSaveAliases.MOVED` reads their old names from existing saves.
 
 ## Constraints
 

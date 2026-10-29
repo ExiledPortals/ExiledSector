@@ -1,4 +1,4 @@
-package exiledsector.charts.anomaly;
+package exiledsector.charts.layout;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;

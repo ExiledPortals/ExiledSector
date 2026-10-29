@@ -1,4 +1,4 @@
-package exiledsector.charts.raid;
+package exiledsector.charts.anomaly;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;

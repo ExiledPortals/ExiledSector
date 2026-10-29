@@ -8,8 +8,8 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.characters.AbilityPlugin;
 import com.fs.starfarer.api.impl.campaign.ids.Abilities;
 import exiledlib.i18n.Translation;
-import exiledsector.charts.anomaly.relay.ChartRelays;
-import exiledsector.charts.anomaly.skirmish.ChartSkirmishes;
+import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.effect.ChartFleetConditions;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.objective.ChartObjectives;
@@ -74,8 +74,9 @@ public class ChartRunScript implements EveryFrameScript {
         if (run.runState() == ChartRunState.INSIDE && !run.isObjectiveComplete() && run.objective() != null) {
             ChartObjectives.reconcile(sector);
         }
-        ChartSkirmishes.checkFinalPush(sector);
-        ChartRelays.check(sector);
+        for (ChartAnomaly anomaly : ChartAnomalies.all()) {
+            anomaly.checkRun(sector);
+        }
     }
 
     void watch(SectorAPI sector, ChartRun run) {

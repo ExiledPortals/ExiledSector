@@ -1,6 +1,9 @@
 package exiledsector.charts.anomaly.excavation;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.BattleCreationPlugin;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
@@ -12,8 +15,10 @@ import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
+import exiledsector.items.ItemDrops;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -90,6 +95,21 @@ public final class ExcavationSites implements ChartAnomaly {
     public boolean isActiveIn(LocationAPI location) {
         ChartRun run = ChartRuns.currentOrNull();
         return inRunSystem(run, location) && !ExcavationStates.standing(run).isEmpty();
+    }
+
+    @Override
+    public InteractionDialogPlugin dialogFor(SectorEntityToken target) {
+        return ExcavationSiteDialog.wantsToHandle(target) ? new ExcavationSiteDialog() : null;
+    }
+
+    @Override
+    public BattleCreationPlugin battleFor(SectorEntityToken opponent) {
+        return ShaftEncounters.isShaftBattle(opponent) ? new ShaftBattleCreationPlugin() : null;
+    }
+
+    @Override
+    public ItemDrops.SiteLoot fleetItems(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, float share, Random random) {
+        return ExcavationLoot.fleetItems(sector, fleet, run, context, share, random);
     }
 
     @Override

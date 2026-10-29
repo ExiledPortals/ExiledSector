@@ -5,7 +5,7 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD.RaidDangerLe
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.loot.DropType;
-import exiledsector.charts.raid.RaidDangerLevels;
+import exiledsector.charts.anomaly.RaidDangerLevels;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

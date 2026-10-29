@@ -11,6 +11,8 @@ import exiledsector.charts.anomaly.convoy.ConvoyState;
 import exiledsector.charts.anomaly.convoy.ConvoyStep;
 import exiledsector.charts.anomaly.debris.AnomalousDebrisTerrainPlugin;
 import exiledsector.charts.anomaly.storm.StormFrontTerrainPlugin;
+import exiledsector.charts.layout.ChartCoronaTerrainPlugin;
+import exiledsector.charts.layout.ChartPulsarBeamTerrainPlugin;
 import exiledsector.charts.layout.abyss.AbyssalDarknessTerrainPlugin;
 import exiledsector.charts.layout.abyss.AbyssalFogTerrainPlugin;
 import exiledsector.charts.layout.abyss.ChartPhotospherePlugin;
@@ -46,12 +48,19 @@ public final class ChartSaveAliases {
             Map.entry("exiledSector.StormFrontTerrainPlugin", StormFrontTerrainPlugin.class),
             Map.entry("exiledSector.ChartPhotospherePlugin", ChartPhotospherePlugin.class),
             Map.entry("exiledSector.AbyssalFogTerrainPlugin", AbyssalFogTerrainPlugin.class),
-            Map.entry("exiledSector.AbyssalDarknessTerrainPlugin", AbyssalDarknessTerrainPlugin.class));
+            Map.entry("exiledSector.AbyssalDarknessTerrainPlugin", AbyssalDarknessTerrainPlugin.class),
+            Map.entry("exiledSector.ChartCoronaTerrainPlugin", ChartCoronaTerrainPlugin.class),
+            Map.entry("exiledSector.ChartPulsarBeamTerrainPlugin", ChartPulsarBeamTerrainPlugin.class));
+
+    static final Map<String, Class<?>> MOVED = Map.of(
+            "exiledsector.charts.anomaly.ChartCoronaTerrainPlugin", ChartCoronaTerrainPlugin.class,
+            "exiledsector.charts.anomaly.ChartPulsarBeamTerrainPlugin", ChartPulsarBeamTerrainPlugin.class);
 
     private ChartSaveAliases() {
     }
 
     public static void register(XStream xstream) {
+        MOVED.forEach(xstream::alias);
         ALIASES.forEach(xstream::alias);
     }
 }

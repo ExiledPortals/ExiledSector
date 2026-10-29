@@ -1,7 +1,11 @@
 package exiledsector.charts.anomaly;
 
+import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
+import exiledsector.charts.anomaly.convoy.SupplyConvoy;
+import exiledsector.charts.anomaly.excavation.ExcavationSites;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext;
@@ -23,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
 
 public class ChartAnomaliesTest {
 
@@ -38,6 +43,14 @@ public class ChartAnomaliesTest {
         @Override
         public void generate(AnomalyContentSite site) {
             sites.add(site);
+        }
+    }
+
+    private record OpensDialog(String id, InteractionDialogPlugin dialog) implements ChartAnomaly {
+
+        @Override
+        public InteractionDialogPlugin dialogFor(SectorEntityToken target) {
+            return dialog;
         }
     }
 
@@ -192,5 +205,22 @@ public class ChartAnomaliesTest {
         assertEquals(1.5f, context.anomalyMult(SpatialBreach.CACHE_KEY), 0.001f);
         assertEquals(1.25f, context.anomalyMult(SpatialBreach.CACHE_ITEM_KEY), 0.001f);
         assertEquals(1f, ChartGenContext.none().anomalyMult(SpatialBreach.GROWTH_KEY));
+    }
+
+    @Test
+    void theFirstAnomalyWithADialogOpensIt() {
+        InteractionDialogPlugin first = mock(InteractionDialogPlugin.class);
+        InteractionDialogPlugin second = mock(InteractionDialogPlugin.class);
+        OpensDialog opensFirst = new OpensDialog("first", first);
+        ChartAnomalies.useForTests(List.of(new PlacesNothing(), opensFirst, new OpensDialog("second", second)), List.of());
+        SectorEntityToken target = mock(SectorEntityToken.class);
+
+        assertSame(first, ChartAnomalies.dialogFor(target));
+        assertSame(second, ChartAnomalies.dialogFor(target, opensFirst));
+    }
+
+    @Test
+    void excavationSitesOpenTheirDialogBeforeTheSupplyConvoyCacheTheyHandOnTo() {
+        assertTrue(ChartAnomalies.all().indexOf(ExcavationSites.INSTANCE) < ChartAnomalies.all().indexOf(SupplyConvoy.INSTANCE));
     }
 }

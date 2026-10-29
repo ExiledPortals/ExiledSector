@@ -1,9 +1,11 @@
 package exiledsector.charts.anomaly.breach;
 
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignTerrainAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import exiledlib.i18n.Translation;
@@ -11,6 +13,7 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.items.ItemChances;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
@@ -105,6 +108,17 @@ public final class SpatialBreach implements ChartAnomaly {
     @Override
     public boolean isActiveIn(LocationAPI location) {
         return breachIn(location) != null;
+    }
+
+    @Override
+    public void clearFrom(CampaignFleetAPI fleet) {
+        BreachTerrainPlugin.liftFrom(fleet);
+    }
+
+    @Override
+    public ItemChances siteChances(MemoryAPI siteMemory, ItemChances chances) {
+        ItemChances scaled = siteMemory.contains(ITEM_MULT_KEY) ? chances.scaled(siteMemory.getFloat(ITEM_MULT_KEY)) : chances;
+        return siteMemory.contains(RARITY_KEY) ? scaled.withRarity(scaled.rarity() * (1f + siteMemory.getFloat(RARITY_KEY) / ChartGenContext.PERCENT)) : scaled;
     }
 
     public static String coreId(String runId) {

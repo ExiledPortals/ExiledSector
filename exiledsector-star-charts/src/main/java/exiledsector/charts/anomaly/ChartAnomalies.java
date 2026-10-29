@@ -1,5 +1,8 @@
 package exiledsector.charts.anomaly;
 
+import com.fs.starfarer.api.campaign.BattleCreationPlugin;
+import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
+import com.fs.starfarer.api.campaign.SectorEntityToken;
 import exiledlib.ModCsv;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.convoy.SupplyConvoy;
@@ -35,7 +38,7 @@ public final class ChartAnomalies {
     static final String ID_COLUMN = "id";
     static final List<ChartAnomaly> BUILT_IN = List.of(StarAnomalies.BLACK_HOLE, StarAnomalies.NEUTRON_STAR, StarAnomalies.DENSE_NEBULA,
             AsteroidStorm.INSTANCE, MagneticStorm.INSTANCE, StellarFlares.INSTANCE, SpatialBreach.INSTANCE, FactionSkirmish.INSTANCE,
-            RelayNetwork.INSTANCE, SupplyConvoy.INSTANCE, AnomalousDebris.INSTANCE, ExcavationSites.INSTANCE,
+            RelayNetwork.INSTANCE, ExcavationSites.INSTANCE, SupplyConvoy.INSTANCE, AnomalousDebris.INSTANCE,
             StormFront.INSTANCE,
             DerelictForge.INSTANCE, ListeningPost.INSTANCE);
     private static final Logger LOG = Logger.getLogger(ChartAnomalies.class);
@@ -114,6 +117,38 @@ public final class ChartAnomalies {
 
     public static ChartAnomaly byId(String id) {
         return BuiltInTable.find(anomalies, ChartAnomaly::id, id);
+    }
+
+    public static List<ChartAnomaly> all() {
+        return anomalies;
+    }
+
+    public static InteractionDialogPlugin dialogFor(SectorEntityToken target) {
+        return dialogFor(target, null);
+    }
+
+    public static InteractionDialogPlugin dialogFor(SectorEntityToken target, ChartAnomaly skipped) {
+        for (ChartAnomaly anomaly : anomalies) {
+            InteractionDialogPlugin dialog = anomaly == skipped ? null : anomaly.dialogFor(target);
+            if (dialog != null) {
+                return dialog;
+            }
+        }
+        return null;
+    }
+
+    public static BattleCreationPlugin battleFor(SectorEntityToken opponent) {
+        for (ChartAnomaly anomaly : anomalies) {
+            BattleCreationPlugin battle = anomaly.battleFor(opponent);
+            if (battle != null) {
+                return battle;
+            }
+        }
+        return null;
+    }
+
+    public static List<ChartAnomaly> holdingPlayerBattle() {
+        return anomalies.stream().filter(ChartAnomaly::holdsPlayerBattle).toList();
     }
 
     public static Collection<Definition> definitions() {

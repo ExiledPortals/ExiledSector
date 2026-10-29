@@ -4,8 +4,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.anomaly.skirmish.SkirmishFactions;
-import exiledsector.charts.anomaly.forge.ForgePrograms;
+import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.atlas.AtlasData;
 import exiledsector.charts.content.ChartBosses;
@@ -74,8 +73,7 @@ public final class StarCharts {
         ChartBosses.load();
         ChartAnomalies.load();
         AtlasCatalysts.load();
-        ForgePrograms.load();
-        SkirmishFactions.load();
+        ChartAnomalies.all().forEach(ChartAnomaly::loadData);
         ChartFeatures.load();
         AtlasData.load();
     }

@@ -28,6 +28,8 @@ Each anomaly is one class behind `ChartAnomaly` (package `exiledsector.charts.an
 2. Shape: `shape(AnomalyLayoutSite)` adds terrain right after layout (Asteroid Storm, Magnetic Storm, Stellar Flares).
 3. Content: `generate(AnomalyContentSite)` places entities and fleets after the sites and fleets (Spatial Breach, the Black Hole's derelicts, the Neutron Star's research station, the Asteroid Storm's belt caches). `AnomalyContentSite.addSite` places a `chart_poi.csv` site on a clear orbit with chart loot. Run state lives in `ChartRunState`, and `ChartRunCloser` removes it with the run tag, so the chart leaves no save trace.
 
+Run hooks let an anomaly join the shared run code without that code naming it: `dialogFor` and `battleFor` (asked in registry order by `ChartCampaignPlugin`, so an earlier anomaly claims a shared target first), `checkRun` on the run's one-second timer, `fleetGone`, `clearFrom` when the chart's effects leave a fleet, and `loadData`, `loadItems` and `preloadTextures` at game load. Loot hooks: `fleetItems` replaces a chart fleet's item roll, `extraFleetLoot` adds to it, `holdsBackBossUnique` withholds the guaranteed boss unique, `holdsPlayerBattle` with `battleLootMult` and `touchBattleLoot` change the loot of a battle fought inside the anomaly, and `siteChances` scales a salvage site's item chances.
+
 Atlas hooks have defaults: `atlasWeight` leans the node roll from the node's traits, and `fitsAt` says whether the anomaly can exist at a node at all (Faction Skirmish needs a border between two factions). Rewards go through the loot framework (`ChartLoot`, `ChartRewards`) so chart loot modifiers apply to them.
 
 `effects` lists chart lines the anomaly adds to the run, such as a loot quantity bonus.

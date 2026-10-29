@@ -10,7 +10,9 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
+import exiledsector.items.ItemDrops;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -87,6 +89,31 @@ public final class StormFront implements ChartAnomaly {
             }
         }
         return false;
+    }
+
+    @Override
+    public void preloadTextures() {
+        StormFrontTerrainPlugin.preloadTextures();
+    }
+
+    @Override
+    public void loadItems() {
+        StormLoot.reserveModifiers();
+    }
+
+    @Override
+    public boolean holdsPlayerBattle() {
+        return StormBattles.playerInStorm();
+    }
+
+    @Override
+    public float battleLootMult(ChartGenContext context) {
+        return StormRules.lootQuantityMult(context);
+    }
+
+    @Override
+    public ItemDrops.SiteLoot touchBattleLoot(ItemDrops.SiteLoot loot, Random random) {
+        return StormLoot.touch(loot, random);
     }
 
     @Override

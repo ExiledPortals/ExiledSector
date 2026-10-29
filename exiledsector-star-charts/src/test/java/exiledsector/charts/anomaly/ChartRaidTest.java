@@ -1,4 +1,4 @@
-package exiledsector.charts.raid;
+package exiledsector.charts.anomaly;
 
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD.RaidDangerLevel;
 import exiledlib.i18n.Style;

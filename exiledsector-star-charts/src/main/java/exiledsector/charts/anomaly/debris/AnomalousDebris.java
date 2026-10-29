@@ -2,12 +2,16 @@ package exiledsector.charts.anomaly.debris;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignTerrainAPI;
+import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.run.ChartRun;
+import exiledsector.items.ItemDrops;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -118,6 +122,21 @@ public final class AnomalousDebris implements ChartAnomaly {
     @Override
     public boolean isActiveIn(LocationAPI location) {
         return !fieldsIn(location).isEmpty();
+    }
+
+    @Override
+    public void preloadTextures() {
+        AnomalousDebrisTerrainPlugin.preloadTextures();
+    }
+
+    @Override
+    public InteractionDialogPlugin dialogFor(SectorEntityToken target) {
+        return DormantFleets.isDebrisFleet(target) ? new DormantFleetDialog() : null;
+    }
+
+    @Override
+    public ItemDrops.SiteLoot extraFleetLoot(CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, Random random) {
+        return DormantFleetLoot.currencyFor(fleet, run.tier(), context, random);
     }
 
     public static List<AnomalousDebrisTerrainPlugin> fieldsIn(LocationAPI location) {

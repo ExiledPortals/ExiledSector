@@ -21,8 +21,6 @@ import exiledlib.MockSector;
 import com.fs.starfarer.api.impl.campaign.terrain.StarCoronaTerrainPlugin.CoronaParams;
 import exiledsector.charts.wormhole.ChartWormholePlacement;
 import exiledsector.charts.anomaly.ChartAnomaly;
-import exiledsector.charts.anomaly.ChartCoronaTerrainPlugin;
-import exiledsector.charts.anomaly.ChartPulsarBeamTerrainPlugin;
 import exiledsector.charts.anomaly.StarAnomalies;
 import exiledsector.charts.layout.abyss.AbyssPalette;
 import exiledsector.charts.layout.abyss.AbyssalDarknessTerrainPlugin;

@@ -1,5 +1,6 @@
 package exiledsector.charts.anomaly.convoy;
 
+import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
@@ -86,5 +87,13 @@ public final class SupplyConvoy implements ChartAnomaly {
     public boolean isActiveIn(LocationAPI location) {
         ConvoyScript script = ConvoyScript.in(location);
         return script != null && script.isActive();
+    }
+
+    @Override
+    public InteractionDialogPlugin dialogFor(SectorEntityToken target) {
+        if (ConvoyEncounterDialog.wantsToHandle(target)) {
+            return new ConvoyEncounterDialog();
+        }
+        return ConvoyCacheDialog.wantsToHandle(target) ? new ConvoyCacheDialog() : null;
     }
 }

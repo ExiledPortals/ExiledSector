@@ -12,6 +12,7 @@ import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec;
 import exiledlib.MockSector;
+import exiledsector.charts.anomaly.storm.StormFront;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.generation.ChartGenContext.AppliedEffect;
 import exiledsector.charts.generation.ChartGenContext;
@@ -141,8 +142,8 @@ class ChartFleetLootTest {
         ChartDrops.register(new JSONArray().put(rule("chart_fleet", 2f)));
         storeLiveRun(7);
 
-        ItemDrops.SiteLoot calm = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("calm", RUN_ID, 100f), 100f, new Random(3L), false);
-        ItemDrops.SiteLoot stormy = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("stormy", RUN_ID, 100f), 100f, new Random(3L), true);
+        ItemDrops.SiteLoot calm = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("calm", RUN_ID, 100f), 100f, new Random(3L), List.of());
+        ItemDrops.SiteLoot stormy = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet("stormy", RUN_ID, 100f), 100f, new Random(3L), List.of(StormFront.INSTANCE));
 
         assertEquals(2, chartCount(calm));
         assertEquals(3, chartCount(stormy));

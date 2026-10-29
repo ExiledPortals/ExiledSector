@@ -1,5 +1,6 @@
 package exiledsector.charts.anomaly.forge;
 
+import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
@@ -83,6 +84,16 @@ public final class DerelictForge implements ChartAnomaly {
     public boolean isActiveIn(LocationAPI location) {
         ChartRun run = ChartRuns.currentOrNull();
         return inRunSystem(run, location) && ForgeStates.runsLeft(run) > 0;
+    }
+
+    @Override
+    public void loadData() {
+        ForgePrograms.load();
+    }
+
+    @Override
+    public InteractionDialogPlugin dialogFor(SectorEntityToken target) {
+        return isForge(target) ? new ForgeDialog() : null;
     }
 
     @Override

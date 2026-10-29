@@ -313,7 +313,7 @@ and asteroids and nebulae slow each fleet by its own amount (`ConvoyTerrain`).
 
 The cargo is the `convoy` scope of `chart_loot.csv` plus the `exiledSector_chart_convoy` item row, sized by the
 freighters' fleet points. Each share of freighter fleet points lost drops as cargo pods, and the rest is cached on the
-destination (`ConvoyState`, `ConvoyCargo`). That planet then offers a raid (`ConvoyCacheDialog`, `raid.ChartRaid`, vanilla's
+destination (`ConvoyState`, `ConvoyCargo`). That planet then offers a raid (`ConvoyCacheDialog`, `anomaly.ChartRaid`, vanilla's
 non-market raid without reputation, response, cooldowns or rules) at a difficulty and danger level set by tier
 (`ConvoyRules`); the cache objective yields exactly the delivered share and stays until taken. Once the freighters are lost, every convoy fleet left leaves through the exit.
 
@@ -345,7 +345,7 @@ planet's memory until beaten; it carries the site's vanilla drops and rolls its 
 encounter pulls in no other fleet and allows no AI retreat (`ShaftEncounters`), and `ChartCampaignPlugin` picks
 `ShaftBattleCreationPlugin` for it: a small dark map with rock fields along the edges, no objectives, and no cruiser or
 capital ship on either side, which `ShaftBattlePlugin` also removes from the reserves. A collapsed shaft is a
-`raid.ChartRaid` at a tier-based difficulty whose objective yields the site's items scaled by raid effectiveness.
+`anomaly.ChartRaid` at a tier-based difficulty whose objective yields the site's items scaled by raid effectiveness.
 
 ## Storm Front
 
