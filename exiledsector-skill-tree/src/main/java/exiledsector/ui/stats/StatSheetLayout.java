@@ -62,6 +62,7 @@ public final class StatSheetLayout {
     private final List<Region> regions;
     private final float width;
     private final float height;
+    private boolean disposed;
 
     private StatSheetLayout(List<Placed> labels, List<Bar> bars, List<Region> regions, float width, float height) {
         this.labels = labels;
@@ -105,6 +106,9 @@ public final class StatSheetLayout {
     }
 
     public void render(float left, float top, float alphaMult, Region hovered) {
+        if (disposed) {
+            return;
+        }
         if (hovered != null) {
             GLDraw.fillQuad(left + hovered.left(), top - hovered.top() - hovered.height(), hovered.width(), hovered.height(),
                     SkillTreePanelStyle.GLOW_COLOR, HOVER_FILL_ALPHA * alphaMult);
@@ -131,6 +135,7 @@ public final class StatSheetLayout {
     }
 
     public void dispose() {
+        disposed = true;
         labels.forEach(placed -> placed.label().dispose());
     }
 

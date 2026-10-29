@@ -41,7 +41,7 @@ final class StatBreakdownTooltip {
     private void show(LazyFont font, ShipStatSheet.Breakdown breakdown) {
         shownBreakdown = breakdown;
         titleLabel.setWrapped(breakdown.title(), SkillTreePanelStyle.TOOLTIP_MAX_TEXT_WIDTH, MAX_TITLE_HEIGHT);
-        bodyLabel.set(breakdown.summary() == null ? "" : breakdown.summary());
+        bodyLabel.setWrapped(breakdown.summary() == null ? "" : breakdown.summary(), SkillTreePanelStyle.TOOLTIP_MAX_TEXT_WIDTH, MAX_NOTES_HEIGHT);
         notesLabel.setWrapped(String.join("\n", breakdown.notes()), SkillTreePanelStyle.TOOLTIP_MAX_TEXT_WIDTH, MAX_NOTES_HEIGHT);
         if (breakdown.sources().isEmpty()) {
             tables = List.of();

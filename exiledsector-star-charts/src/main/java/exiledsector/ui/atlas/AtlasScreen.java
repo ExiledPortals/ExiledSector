@@ -65,6 +65,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     static final float DIM_SECONDS = 0.2f;
     static final float BACKDROP_ALPHA = 0.8f;
     static final float BENCH_DIM_ALPHA = 0.65f;
+    static final float TOOLTIP_MAX_TEXT_HEIGHT = 800f;
     static final Color HINT_COLOUR = new Color(150, 150, 150);
 
     private enum Control { CLOSE, BORDERS, BIOMES, CATALYSTS }
@@ -501,15 +502,19 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     }
 
     private void writeAnomalyTooltip() {
-        tooltipTitle.set(AtlasNodeText.name("anomaly", hoveredAnomaly.anomalyId()));
-        tooltipBody.setStyled(AtlasNodeText.anomalyBody(map.generator(), map.state(), hoveredAnomaly.cell(), hoveredAnomaly.anomalyId()),
+        writeTooltipText(AtlasNodeText.name("anomaly", hoveredAnomaly.anomalyId()),
+                AtlasNodeText.anomalyBody(map.generator(), map.state(), hoveredAnomaly.cell(), hoveredAnomaly.anomalyId()));
+    }
+
+    private void writeTooltipText(String title, StyledText body) {
+        tooltipTitle.setWrapped(title, SkillTreePanelStyle.TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT);
+        tooltipBody.setParagraphs(List.of(body), SkillTreePanelStyle.TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT,
                 SkillTreePanelStyle::standardHighlightColor);
     }
 
     private void writeTooltip() {
         List<AtlasNodeText.Line> lines = AtlasNodeText.describe(map.generator(), map.state(), hoveredCell, map.isReachable(hoveredCell));
         String title = lines.isEmpty() ? "" : lines.get(0).text();
-        tooltipTitle.set(title);
         List<StyledText> body = new ArrayList<>();
         for (AtlasNodeText.Line line : lines.subList(Math.min(1, lines.size()), lines.size())) {
             body.add(styled(line));
@@ -520,7 +525,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             body.add(0, verdict.allowed() ? StyledText.styled(use.usableText(), Style.GOOD)
                     : StyledText.styled(verdict.text(MaterialItems.displayName(use.itemId()), title), Style.BAD));
         }
-        tooltipBody.setStyled(StyledText.join(StyledText.of("\n"), body), SkillTreePanelStyle::standardHighlightColor);
+        writeTooltipText(title, StyledText.join(StyledText.of("\n"), body));
     }
 
     static StyledText styled(AtlasNodeText.Line line) {
