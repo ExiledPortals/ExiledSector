@@ -5,8 +5,10 @@ import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
+import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
+import com.fs.starfarer.api.ui.CutStyle;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
@@ -28,6 +30,7 @@ import exiledsector.charts.wormhole.WormholeGateway;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.items.AtlasCatalystItems;
 import exiledsector.items.CraftingMaterials;
+import exiledsector.items.Item;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.UseVerdict;
 import exiledsector.ui.CampaignOverlay;
@@ -37,13 +40,17 @@ import exiledsector.ui.PointerGesture;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.TreeViewport;
+import exiledsector.ui.VanillaText;
+import exiledsector.ui.chart.StarChartBench;
 import exiledsector.ui.decoration.StarfieldRenderer;
 import exiledsector.ui.socket.AtlasAnomalyPanel;
 import exiledsector.ui.socket.AtlasCatalystPanel;
+import exiledsector.ui.socket.BenchLayout;
 import exiledsector.ui.socket.BenchMode;
 import exiledsector.ui.socket.BenchModeSupport;
-import exiledsector.ui.socket.ModificationBay;
+import exiledsector.ui.socket.GameTextTooltip;
 import exiledsector.ui.socket.SocketPanelPlacement;
+import exiledsector.ui.socket.SocketWorkbenchPanel;
 import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.GlScope;
@@ -59,26 +66,38 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
 
     static final float PANEL_MARGIN = 20f;
     static final float BORDER_INSET = 16f;
-    static final float BENCH_MARGIN = 40f;
     static final float CHROME_PAD = 24f;
-    static final float SUMMARY_GAP = 6f;
     static final float CLOSE_WIDTH = 120f;
     static final float BORDERS_WIDTH = 160f;
     static final float BIOMES_WIDTH = 120f;
     static final float CATALYSTS_WIDTH = 150f;
     static final float BUTTON_GAP = 10f;
     static final float OPEN_SECONDS = 0.2f;
-    static final float DIM_SECONDS = 0.2f;
     static final float BACKDROP_ALPHA = 0.8f;
-    static final float BENCH_DIM_ALPHA = 0.65f;
     static final float FOCUS_SECONDS = 0.6f;
     static final float FOCUS_DIM_ALPHA = 0.85f;
     static final float CHOOSE_WIDTH = 320f;
     static final float CHOOSE_HEIGHT = 50f;
+    static final float SIDE_PANEL_WIDTH = AtlasAnomalyPanel.PANEL_WIDTH;
+    static final float CHART_COLUMN_GAP = 16f;
+    static final float CHART_SOCKET_SHARE = 0.085f;
+    static final float CHART_MIN_SOCKET_RADIUS = 40f;
+    static final float CHART_MAX_SOCKET_RADIUS = 72f;
+    static final float CHART_STAR_SHARE = 1.35f;
+    static final float CHART_STAR_HEADROOM = 1.3f;
+    static final float CHART_DETAILS_GAP = 14f;
+    static final float CHART_DETAILS_MAX_WIDTH = 520f;
+    static final float CHART_NOTICE_HEIGHT = 40f;
+    static final float CHART_OPEN_HEIGHT = 40f;
+    static final float CHART_FX_ROOM = 16f;
+    static final float CHART_ROW_GAP = 8f;
+    static final float DEBUG_WIDTH = 90f;
+    static final float DEBUG_HEIGHT = 24f;
+    static final float DEBUG_TOOLTIP_WIDTH = 340f;
     static final float TOOLTIP_MAX_TEXT_HEIGHT = 800f;
     static final Color HINT_COLOUR = new Color(150, 150, 150);
 
-    private enum Control { CLOSE, BORDERS, BIOMES, CATALYSTS, CHOOSE_CHART }
+    private enum Control { CLOSE, BORDERS, BIOMES, CATALYSTS, FOCUS_SWITCH, DEBUG_COMPLETE }
 
     enum Overlay { NONE, FACTIONS, BIOMES }
 
@@ -90,26 +109,33 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private final CanvasCamera camera = new CanvasCamera(AtlasMapCanvas.MIN_ZOOM, AtlasMapCanvas.MAX_ZOOM);
     private final PointerGesture<Void> gesture = new PointerGesture<>();
     private final TextLabel titleLabel = new TextLabel(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
-    private final TextLabel summaryLabel = new TextLabel(SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
     private final TextLabel hintLabel = new TextLabel(SkillTreePanelStyle.TOOLTIP_FLAVOUR_FONT_SIZE, HINT_COLOUR);
     private final TextLabel tooltipTitle = new TextLabel(SkillTreePanelStyle.TOOLTIP_TITLE_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_TITLE_COLOR);
     private final TextLabel tooltipBody = new TextLabel(SkillTreePanelStyle.TOOLTIP_BODY_FONT_SIZE, SkillTreePanelStyle.TOOLTIP_BODY_COLOR);
     private AtlasMapCanvas map;
     private CustomPanelAPI panelRoot;
     private PositionAPI panelPosition;
-    private ModificationBay bay;
     private ButtonAPI bordersButton;
     private ButtonAPI biomesButton;
+    private TooltipMakerAPI catalystToggleElement;
     private ButtonAPI catalystsButton;
     private AtlasCatalystPanel catalystPanel;
     private AtlasCatalysts.Catalyst selectedCatalyst;
     private AtlasAnomalyPanel anomalyPanel;
     private TooltipMakerAPI chooseElement;
     private ButtonAPI chooseButton;
+    private SocketWorkbenchPanel chartBench;
+    private BenchModeSupport.PickerSession chartPicker;
+    private TooltipMakerAPI debugElement;
+    private BenchLayout chartLayout;
     private AtlasCell focusedCell;
     private boolean focusing;
     private boolean focusOpenedCatalysts;
+    private boolean chartMode;
+    private boolean catalystsOpenedByUser;
+    private boolean closingChartParts;
     private float focusLevel;
+    private float chartLevel;
     private Object tooltipSubject;
     private AtlasCell hoveredCell;
     private AtlasMapCanvas.AnomalyIcon hoveredAnomaly;
@@ -117,7 +143,6 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private float mouseX;
     private float mouseY;
     private float openLevel;
-    private float benchDim;
     private boolean closing;
     private boolean closeRequested;
 
@@ -144,7 +169,6 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
 
     private void buildChrome() {
         titleLabel.set(Translation.text("chart.atlas.title"));
-        writeSummary();
         hintLabel.set(Translation.text("chart.atlas.hint"));
         PositionAPI position = panelRoot.getPosition();
         TooltipMakerAPI element = panelRoot.createUIElement(CLOSE_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
@@ -160,17 +184,47 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         biomesButton = biomeToggle.addAreaCheckbox(Translation.text("chart.atlas.biomes"), Control.BIOMES, Misc.getBasePlayerColor(),
                 Misc.getDarkPlayerColor(), Misc.getBrightPlayerColor(), BIOMES_WIDTH, ChromeMetrics.CONTROL_HEIGHT, 0f);
         biomesButton.setChecked(OVERLAY_SHOWN.get() == Overlay.BIOMES);
-        float biomesLeft = bordersLeft - BUTTON_GAP - BIOMES_WIDTH;
-        panelRoot.addUIElement(biomeToggle).inTL(biomesLeft, PANEL_MARGIN + CHROME_PAD);
+        panelRoot.addUIElement(biomeToggle).inTL(bordersLeft - BUTTON_GAP - BIOMES_WIDTH, PANEL_MARGIN + CHROME_PAD);
+        addCatalystToggle();
+    }
+
+    private void addCatalystToggle() {
+        if (catalystToggleElement != null) {
+            return;
+        }
+        PositionAPI position = panelRoot.getPosition();
         TooltipMakerAPI catalystToggle = panelRoot.createUIElement(CATALYSTS_WIDTH, ChromeMetrics.CONTROL_HEIGHT, false);
         catalystsButton = catalystToggle.addAreaCheckbox(catalystsLabel(), Control.CATALYSTS, Misc.getBasePlayerColor(), Misc.getDarkPlayerColor(),
                 Misc.getBrightPlayerColor(), CATALYSTS_WIDTH, ChromeMetrics.CONTROL_HEIGHT, 0f);
-        panelRoot.addUIElement(catalystToggle).inTL(biomesLeft - BUTTON_GAP - CATALYSTS_WIDTH, PANEL_MARGIN + CHROME_PAD);
+        catalystsButton.setChecked(catalystPanel != null);
+        float left = position.getWidth() - PANEL_MARGIN - CHROME_PAD - CLOSE_WIDTH - BORDERS_WIDTH - BIOMES_WIDTH - CATALYSTS_WIDTH - BUTTON_GAP * 3f;
+        panelRoot.addUIElement(catalystToggle).inTL(left, PANEL_MARGIN + CHROME_PAD);
+        catalystToggleElement = catalystToggle;
+    }
+
+    private void removeCatalystToggle() {
+        if (catalystToggleElement != null) {
+            panelRoot.removeComponent(catalystToggleElement);
+            catalystToggleElement = null;
+            catalystsButton = null;
+        }
     }
 
     private static String catalystsLabel() {
         int carried = AtlasCatalystItems.carriedTotal(CraftingMaterials.forPlayer(PlayerFleet.cargoOrNull()));
         return Translation.msg("chart.atlas.catalysts").arg("count", carried).text();
+    }
+
+    private float sidePanelTop() {
+        return PANEL_MARGIN + CHROME_PAD + ChromeMetrics.CONTROL_HEIGHT + BUTTON_GAP;
+    }
+
+    private float sidePanelHeight() {
+        return panelRoot.getPosition().getHeight() - sidePanelTop() - PANEL_MARGIN - CHROME_PAD;
+    }
+
+    private float chooseTop() {
+        return panelRoot.getPosition().getHeight() - PANEL_MARGIN - CHROME_PAD - CHOOSE_HEIGHT;
     }
 
     private void toggleCatalysts() {
@@ -179,47 +233,45 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             return;
         }
         PositionAPI position = panelRoot.getPosition();
-        float top = PANEL_MARGIN + CHROME_PAD + ChromeMetrics.CONTROL_HEIGHT + BUTTON_GAP;
         float left = position.getWidth() - PANEL_MARGIN - CHROME_PAD - AtlasCatalystPanel.PANEL_WIDTH;
-        catalystPanel = AtlasCatalystPanel.open(panelRoot, left, top, position.getHeight() - top - PANEL_MARGIN - CHROME_PAD,
-                new AtlasCatalystPanel.Listener() {
-                    @Override
-                    public void selected(AtlasCatalysts.Catalyst catalyst) {
-                        selectedCatalyst = catalyst;
-                        retarget();
-                        if (catalyst != null && focusing) {
-                            targetPicked(focusedCell);
-                        }
-                    }
+        catalystPanel = AtlasCatalystPanel.open(panelRoot, left, sidePanelTop(), sidePanelHeight(), new AtlasCatalystPanel.Listener() {
+            @Override
+            public void selected(AtlasCatalysts.Catalyst catalyst) {
+                selectedCatalyst = catalyst;
+                retarget();
+                if (catalyst != null && focusing) {
+                    targetPicked(focusedCell);
+                }
+            }
 
-                    @Override
-                    public void used(AtlasCell cell) {
-                        map = map.rebuilt();
-                        map.pulse(cell);
-                        retarget();
-                        if (catalystsButton != null) {
-                            catalystsButton.setText(catalystsLabel());
-                        }
-                        if (anomalyPanel != null) {
-                            anomalyPanel.refresh();
-                        }
-                    }
+            @Override
+            public void used(AtlasCell cell) {
+                map = map.rebuilt();
+                map.pulse(cell);
+                retarget();
+                if (catalystsButton != null) {
+                    catalystsButton.setText(catalystsLabel());
+                }
+                if (anomalyPanel != null) {
+                    anomalyPanel.refresh();
+                }
+            }
 
-                    @Override
-                    public void closed() {
-                        catalystPanel = null;
-                        focusOpenedCatalysts = false;
-                        selectedCatalyst = null;
-                        retarget();
-                        if (catalystsButton != null) {
-                            catalystsButton.setChecked(false);
-                        }
-                    }
+            @Override
+            public void closed() {
+                catalystPanel = null;
+                focusOpenedCatalysts = false;
+                selectedCatalyst = null;
+                retarget();
+                if (catalystsButton != null) {
+                    catalystsButton.setChecked(false);
+                }
+            }
 
-                    @Override
-                    public void pressedInside() {
-                    }
-                });
+            @Override
+            public void pressedInside() {
+            }
+        });
         SkillTreeSounds.panelOpened();
     }
 
@@ -239,13 +291,19 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         } else if (catalystPanel.selected() != null) {
             catalystPanel.escape();
         }
-        I18n.forGameText(() -> addChooseButton(cell));
-        float top = PANEL_MARGIN + CHROME_PAD + ChromeMetrics.CONTROL_HEIGHT + BUTTON_GAP;
-        anomalyPanel = AtlasAnomalyPanel.open(panelRoot, PANEL_MARGIN + CHROME_PAD, top, panelRoot.getPosition().getHeight() - top - PANEL_MARGIN - CHROME_PAD,
-                this::focusedAnomalies, () -> {
-                    anomalyPanel = null;
-                    leaveFocus();
-                });
+        I18n.forGameText(() -> {
+            addChooseButton(cell);
+            openAnomalyPanel();
+        });
+    }
+
+    private void openAnomalyPanel() {
+        anomalyPanel = AtlasAnomalyPanel.open(panelRoot, PANEL_MARGIN + CHROME_PAD, sidePanelTop(), sidePanelHeight(), this::focusedAnomalies, () -> {
+            anomalyPanel = null;
+            if (!chartMode) {
+                leaveFocus();
+            }
+        });
     }
 
     private void openFocusCatalysts() {
@@ -260,10 +318,10 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         PositionAPI position = panelRoot.getPosition();
         TooltipMakerAPI element = panelRoot.createUIElement(CHOOSE_WIDTH, CHOOSE_HEIGHT, false);
         element.setButtonFontOrbitron20Bold();
-        chooseButton = element.addButton(Translation.text("chart.atlas.focus.chooseChart"), Control.CHOOSE_CHART, CHOOSE_WIDTH, CHOOSE_HEIGHT, 0f);
+        chooseButton = element.addButton(Translation.text("chart.atlas.focus.chooseChart"), Control.FOCUS_SWITCH, CHOOSE_WIDTH, CHOOSE_HEIGHT, 0f);
         element.setButtonFontDefault();
         chooseButton.setEnabled(map.isReachable(cell));
-        panelRoot.addUIElement(element).inTL((position.getWidth() - CHOOSE_WIDTH) / 2f, position.getHeight() - PANEL_MARGIN - CHROME_PAD - CHOOSE_HEIGHT);
+        panelRoot.addUIElement(element).inTL((position.getWidth() - CHOOSE_WIDTH) / 2f, chooseTop());
         element.setOpacity(0f);
         chooseElement = element;
     }
@@ -281,6 +339,14 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             return;
         }
         focusing = false;
+        if (chartMode) {
+            closeChartParts();
+            chartMode = false;
+            if (!closing) {
+                I18n.forGameText(this::addCatalystToggle);
+                restoreUserCatalysts();
+            }
+        }
         if (chooseButton != null) {
             chooseButton.setEnabled(false);
         }
@@ -293,6 +359,208 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             catalystPanel.escape();
         }
         focusOpenedCatalysts = false;
+    }
+
+    private void enterChartMode() {
+        if (!focusing || chartMode || focusedCell == null || catalystPanel != null && catalystPanel.confirming()) {
+            return;
+        }
+        if (!map.isReachable(focusedCell)) {
+            SkillTreeSounds.refused();
+            return;
+        }
+        chartMode = true;
+        catalystsOpenedByUser = catalystPanel != null && !focusOpenedCatalysts;
+        map.pulse(focusedCell);
+        SkillTreeSounds.panelOpened();
+        if (anomalyPanel != null) {
+            anomalyPanel.close();
+        }
+        if (catalystPanel != null) {
+            catalystPanel.close();
+        }
+        focusOpenedCatalysts = false;
+        removeCatalystToggle();
+        I18n.forGameText(() -> {
+            openChartParts(focusedCell);
+            chooseButton.setText(Translation.text("chart.atlas.focus.viewAnomalies"));
+            chooseButton.setEnabled(true);
+        });
+    }
+
+    private void leaveChartMode() {
+        if (!chartMode) {
+            return;
+        }
+        closeChartParts();
+        chartMode = false;
+        SkillTreeSounds.panelOpened();
+        I18n.forGameText(() -> {
+            addCatalystToggle();
+            openAnomalyPanel();
+            if (chooseButton != null) {
+                chooseButton.setText(Translation.text("chart.atlas.focus.chooseChart"));
+                chooseButton.setEnabled(map.isReachable(focusedCell));
+            }
+        });
+        if (catalystPanel == null) {
+            openFocusCatalysts();
+            focusOpenedCatalysts = !catalystsOpenedByUser;
+        }
+    }
+
+    private void restoreUserCatalysts() {
+        if (catalystsOpenedByUser && catalystPanel == null) {
+            toggleCatalysts();
+            if (catalystsButton != null) {
+                catalystsButton.setChecked(true);
+            }
+        }
+        catalystsOpenedByUser = false;
+    }
+
+    private void openChartParts(AtlasCell cell) {
+        BenchLayout layout = chartLayout();
+        BenchModeSupport.OpenTarget target = new BenchModeSupport.OpenTarget(cell,
+                () -> AtlasNodeText.confirmLines(map.generator(), map.state(), cell), () -> AtlasNodeText.sideChoices(map.generator(), map.state(), cell));
+        chartBench = SocketWorkbenchPanel.openEmbedded(panelRoot, BenchMode.STAR_CHARTS, layout, new SocketWorkbenchPanel.Listener() {
+            @Override
+            public void changed(Item loaded) {
+                if (chartPicker != null) {
+                    chartPicker.changed(loaded);
+                }
+            }
+
+            @Override
+            public void closed() {
+                chartBench = null;
+            }
+
+            @Override
+            public void pressedInside() {
+            }
+
+            @Override
+            public BenchModeSupport.OpenTarget openTarget() {
+                return target;
+            }
+
+            @Override
+            public void wormholeOpened(String message) {
+                wormholeMessage = message;
+                close();
+            }
+
+            @Override
+            public void debugActionApplied() {
+                debugCompleted(cell);
+            }
+        });
+        chartPicker = StarChartBench.INSTANCE.pickerSession();
+        chartPicker.open(panelRoot, new SocketPanelPlacement(PANEL_MARGIN + CHROME_PAD, sidePanelTop(), SIDE_PANEL_WIDTH, sidePanelHeight(), false),
+                null, new BenchModeSupport.PickerListener() {
+                    @Override
+                    public boolean accepting() {
+                        return chartBench != null;
+                    }
+
+                    @Override
+                    public void picked(Item item) {
+                        chartBench.load(item);
+                        chartPicker.refresh();
+                    }
+
+                    @Override
+                    public void closed() {
+                        if (!closingChartParts) {
+                            chartPicker = null;
+                            leaveChartMode();
+                        }
+                    }
+
+                    @Override
+                    public void pressedInside() {
+                    }
+
+                    @Override
+                    public void storeChanged() {
+                        if (chartBench != null) {
+                            chartBench.refresh();
+                        }
+                    }
+                });
+        addDebugButton();
+    }
+
+    private void closeChartParts() {
+        closingChartParts = true;
+        if (chartPicker != null) {
+            chartPicker.close();
+            chartPicker = null;
+        }
+        if (chartBench != null) {
+            chartBench.close();
+            chartBench = null;
+        }
+        if (debugElement != null) {
+            panelRoot.removeComponent(debugElement);
+            debugElement = null;
+        }
+        closingChartParts = false;
+    }
+
+    private void addDebugButton() {
+        BenchModeSupport.DebugAction debugAction = StarChartBench.INSTANCE.debugAction();
+        if (debugAction == null) {
+            return;
+        }
+        PositionAPI position = panelRoot.getPosition();
+        TooltipMakerAPI element = panelRoot.createUIElement(DEBUG_WIDTH, DEBUG_HEIGHT, false);
+        element.addButton(Translation.text(debugAction.buttonKey()), Control.DEBUG_COMPLETE, Misc.getNegativeHighlightColor(), Misc.getDarkPlayerColor(),
+                Alignment.MID, CutStyle.ALL, DEBUG_WIDTH, DEBUG_HEIGHT, 0f);
+        String tooltipText = Translation.text(debugAction.tooltipKey());
+        element.addTooltipToPrevious(new GameTextTooltip(DEBUG_TOOLTIP_WIDTH, tooltip -> VanillaText.plainPara(tooltip, tooltipText, 0f,
+                Misc.getTextColor())), TooltipMakerAPI.TooltipLocation.ABOVE);
+        panelRoot.addUIElement(element).inTL(position.getWidth() - PANEL_MARGIN - CHROME_PAD - DEBUG_WIDTH,
+                position.getHeight() - PANEL_MARGIN - CHROME_PAD - DEBUG_HEIGHT);
+        debugElement = element;
+    }
+
+    private void debugCompleted(AtlasCell cell) {
+        map = map.rebuilt();
+        tooltipSubject = null;
+        map.pulse(cell);
+        leaveFocus();
+        map.collapse(cell);
+    }
+
+    private BenchLayout chartLayout() {
+        if (chartLayout != null) {
+            return chartLayout;
+        }
+        PositionAPI position = panelRoot.getPosition();
+        float top = sidePanelTop();
+        float sideLeft = PANEL_MARGIN + CHROME_PAD;
+        float rightLeft = position.getWidth() - PANEL_MARGIN - CHROME_PAD - SIDE_PANEL_WIDTH;
+        float columnLeft = sideLeft + SIDE_PANEL_WIDTH + CHART_COLUMN_GAP;
+        float columnWidth = rightLeft - CHART_COLUMN_GAP - columnLeft;
+        float columnHeight = chooseTop() - BUTTON_GAP - top;
+        float socketRadius = Math.max(CHART_MIN_SOCKET_RADIUS, Math.min(CHART_MAX_SOCKET_RADIUS, columnHeight * CHART_SOCKET_SHARE));
+        float starPixels = socketRadius * CHART_STAR_SHARE;
+        float socketY = starPixels * CHART_STAR_HEADROOM;
+        float rowWidth = Math.min(CHART_DETAILS_MAX_WIDTH, columnWidth - CHART_FX_ROOM * 2f);
+        float rowLeft = (columnWidth - rowWidth) / 2f;
+        float openWidth = Math.min(CHOOSE_WIDTH, rowWidth);
+        float openTop = columnHeight - CHART_FX_ROOM - CHART_OPEN_HEIGHT;
+        float noticeTop = openTop - CHART_FX_ROOM - CHART_NOTICE_HEIGHT;
+        float detailsTop = socketY + starPixels + CHART_DETAILS_GAP;
+        float detailsHeight = Math.max(0f, noticeTop - CHART_ROW_GAP - detailsTop);
+        float materialsHeight = position.getHeight() - PANEL_MARGIN - CHROME_PAD - DEBUG_HEIGHT - BUTTON_GAP - top;
+        chartLayout = new BenchLayout(new BenchLayout.Rect(columnLeft, top, columnWidth, columnHeight), columnWidth / 2f, socketY, socketRadius,
+                new BenchLayout.Rect(rowLeft, detailsTop, rowWidth, detailsHeight), new BenchLayout.Rect(rowLeft, noticeTop, rowWidth, CHART_NOTICE_HEIGHT),
+                new BenchLayout.Rect((columnWidth - openWidth) / 2f, openTop, openWidth, CHART_OPEN_HEIGHT),
+                new BenchLayout.Rect(rightLeft, top, SIDE_PANEL_WIDTH, materialsHeight));
+        return chartLayout;
     }
 
     private List<AtlasAnomalyPanel.Entry> focusedAnomalies() {
@@ -318,6 +586,19 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
 
     private float focusReach() {
         return Math.min(innerWidth() / 2f - BORDER_INSET, innerHeight() / 2f);
+    }
+
+    private AtlasMapCanvas.Focus focus() {
+        float level = Fade.smooth(focusLevel);
+        float chart = Fade.smooth(chartLevel);
+        if (chart <= 0f) {
+            return new AtlasMapCanvas.Focus(focusCentreX(), focusCentreY(), focusReach(), level, AtlasSystemPreview.Spotlight.NONE);
+        }
+        BenchLayout layout = chartLayout();
+        float chartX = panelPosition.getX() + layout.panel().left() + layout.socketX();
+        float chartY = panelPosition.getY() + panelPosition.getHeight() - layout.panel().top() - layout.socketY();
+        return new AtlasMapCanvas.Focus(AtlasMapCanvas.lerp(focusCentreX(), chartX, chart), AtlasMapCanvas.lerp(focusCentreY(), chartY, chart),
+                focusReach(), level, new AtlasSystemPreview.Spotlight(chart, layout.socketRadius() * CHART_STAR_SHARE));
     }
 
     private AtlasCatalystUse catalystUse() {
@@ -366,11 +647,6 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         showOverlay(false);
     }
 
-    private void writeSummary() {
-        AtlasState state = map.state();
-        summaryLabel.set(Translation.msg("chart.atlas.summary").arg("points", state.atlasPoints()).arg("fragments", state.keyFragments()).text());
-    }
-
     @Override
     public void positionChanged(PositionAPI position) {
         panelPosition = position;
@@ -407,71 +683,23 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         } else if (buttonId == Control.CATALYSTS && catalystsButton != null) {
             toggleCatalysts();
             catalystsButton.setChecked(catalystPanel != null);
-        } else if (buttonId == Control.CHOOSE_CHART && focusing && bay == null) {
-            pick(focusedCell);
+        } else if (buttonId == Control.FOCUS_SWITCH && focusing) {
+            if (chartMode) {
+                leaveChartMode();
+            } else {
+                enterChartMode();
+            }
+        } else if (buttonId == Control.DEBUG_COMPLETE && chartBench != null) {
+            chartBench.runDebugAction();
         }
     }
 
     private void close() {
-        leaveFocus();
-        if (bay != null && bay.isOpen()) {
-            bay.close();
-        }
-        if (catalystPanel != null) {
-            catalystPanel.close();
-        }
         closing = true;
-    }
-
-    private void pick(AtlasCell cell) {
-        if (!map.isReachable(cell)) {
-            SkillTreeSounds.refused();
-            return;
-        }
-        map.pulse(cell);
-        SkillTreeSounds.panelOpened();
+        leaveFocus();
         if (catalystPanel != null) {
             catalystPanel.close();
         }
-        BenchModeSupport.OpenTarget target = new BenchModeSupport.OpenTarget(cell,
-                () -> AtlasNodeText.confirmLines(map.generator(), map.state(), cell), () -> AtlasNodeText.sideChoices(map.generator(), map.state(), cell));
-        SocketPanelPlacement area = new SocketPanelPlacement(BENCH_MARGIN, BENCH_MARGIN, panelPosition.getWidth() - BENCH_MARGIN * 2f,
-                panelPosition.getHeight() - BENCH_MARGIN * 2f, false);
-        bay = ModificationBay.openMode(panelRoot, area, BenchMode.STAR_CHARTS, item -> null, target, new ModificationBay.Listener() {
-            @Override
-            public void closed() {
-                bay = null;
-                if (wormholeMessage != null) {
-                    closing = true;
-                } else if (focusing && catalystPanel == null) {
-                    openFocusCatalysts();
-                }
-            }
-
-            @Override
-            public void debugActionApplied() {
-                map = map.rebuilt();
-                tooltipSubject = null;
-                map.pulse(cell);
-                if (anomalyPanel != null) {
-                    anomalyPanel.refresh();
-                }
-                if (chooseButton != null && focusing) {
-                    chooseButton.setEnabled(map.isReachable(cell));
-                }
-                map.collapse(cell);
-                I18n.forGameText(AtlasScreen.this::writeSummary);
-            }
-
-            @Override
-            public void pressedInside() {
-            }
-
-            @Override
-            public void wormholeOpened(String message) {
-                wormholeMessage = message;
-            }
-        });
     }
 
     @Override
@@ -485,8 +713,6 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             }
             if (closing) {
                 event.consume();
-            } else if (bay != null) {
-                benchInput(event);
             } else if (focusedCell != null) {
                 focusInput(event);
             } else if (event.isKeyboardEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
@@ -516,26 +742,22 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             mouseY = event.getY();
         }
         if (event.isKeyUpEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE && focusing) {
-            if (catalystPanel != null && catalystPanel.confirming()) {
-                catalystPanel.escape();
-            } else {
-                leaveFocus();
-            }
+            focusEscape();
         }
         event.consume();
     }
 
-    private void benchInput(InputEventAPI event) {
-        if (event.isMouseMoveEvent()) {
-            mouseX = event.getX();
-            mouseY = event.getY();
+    private void focusEscape() {
+        if (chartMode) {
+            boolean handled = chartBench != null && chartBench.escape() || chartPicker != null && chartPicker.escape();
+            if (!handled) {
+                leaveChartMode();
+            }
+        } else if (catalystPanel != null && catalystPanel.confirming()) {
+            catalystPanel.escape();
+        } else {
+            leaveFocus();
         }
-        if (event.isKeyUpEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE) {
-            bay.escape();
-        } else if (event.isLMBDownEvent() && !bay.contains(event.getX(), event.getY())) {
-            bay.close();
-        }
-        event.consume();
     }
 
     private void mapInput(InputEventAPI event) {
@@ -561,25 +783,26 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         } else if (event.isMouseUpEvent() && event.isLMBUpEvent()) {
             AtlasCell released = map.cellAt(viewport(), x, y);
             if (released != null && gesture.releasedOn(released)) {
-                if (map.isTargeting()) {
-                    targetPicked(released);
-                } else {
-                    pick(released);
-                }
+                clicked(released);
             }
             gesture.clear();
             camera.stopDrag();
-        } else if (event.isRMBDownEvent()) {
-            AtlasCell clicked = map.cellAt(viewport(), x, y);
-            if (map.canFocus(clicked)) {
-                enterFocus(clicked);
-            } else if (map.isTargeting() && catalystPanel != null) {
-                catalystPanel.escape();
-            }
+        } else if (event.isRMBDownEvent() && map.isTargeting() && catalystPanel != null) {
+            catalystPanel.escape();
         } else if (event.isMouseScrollEvent()) {
             camera.scrollAt(event.getEventValue() > 0, x, y, panelPosition);
         }
         event.consume();
+    }
+
+    private void clicked(AtlasCell cell) {
+        if (map.isTargeting()) {
+            targetPicked(cell);
+        } else if (map.canFocus(cell)) {
+            enterFocus(cell);
+        } else {
+            SkillTreeSounds.refused();
+        }
     }
 
     @Override
@@ -588,8 +811,8 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             return;
         }
         openLevel = Fade.step(openLevel, !closing, amount / OPEN_SECONDS);
-        benchDim = Fade.step(benchDim, bay != null, amount / DIM_SECONDS);
         focusLevel = Fade.step(focusLevel, focusing, amount / FOCUS_SECONDS);
+        chartLevel = Fade.step(chartLevel, chartMode, amount / FOCUS_SECONDS);
         if (!focusing && focusLevel <= 0f) {
             focusedCell = null;
             removeChooseButton();
@@ -611,7 +834,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         camera.advanceZoom(amount);
         camera.advancePan(amount);
         if (panelPosition != null) {
-            boolean hovering = bay == null && focusedCell == null && !camera.isDragging() && (catalystPanel == null || !catalystPanel.contains(mouseX, mouseY));
+            boolean hovering = focusedCell == null && !camera.isDragging() && (catalystPanel == null || !catalystPanel.contains(mouseX, mouseY));
             hoveredAnomaly = hovering ? map.anomalyAt(viewport(), mouseX, mouseY) : null;
             AtlasCell hovered = hovering && hoveredAnomaly == null ? map.cellAt(viewport(), mouseX, mouseY) : null;
             if (hovered != null && !hovered.equals(hoveredCell)) {
@@ -642,13 +865,11 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
             if (focusedCell != null) {
                 float level = Fade.smooth(focusLevel);
                 GLDraw.fillQuad(innerLeft(), innerBottom(), innerWidth(), innerHeight(), Color.BLACK, FOCUS_DIM_ALPHA * level * alpha);
-                map.renderFocus(viewport(), focusedCell, focusCentreX(), focusCentreY(), focusReach(), level, alpha);
+                map.renderFocus(viewport(), focusedCell, focus(), alpha);
             }
         }
         drawChrome(alpha);
-        if (benchDim > 0f) {
-            GLDraw.fillQuad(innerLeft(), innerBottom(), innerWidth(), innerHeight(), Color.BLACK, BENCH_DIM_ALPHA * Fade.smooth(benchDim) * alpha);
-        } else if (hoveredAnomaly != null && !gesture.isPanning()) {
+        if (hoveredAnomaly != null && !gesture.isPanning()) {
             drawTooltip(hoveredAnomaly, this::writeAnomalyTooltip, alpha);
         } else if (hoveredCell != null && !gesture.isPanning()) {
             drawTooltip(hoveredCell, this::writeTooltip, alpha);
@@ -659,7 +880,6 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
         float left = innerLeft() + CHROME_PAD;
         float top = innerBottom() + innerHeight() - CHROME_PAD;
         titleLabel.setAlpha(alpha).draw(left, top);
-        summaryLabel.setAlpha(alpha).draw(left, top - titleLabel.height() - SUMMARY_GAP);
         hintLabel.setAlpha(alpha).draw(left, innerBottom() + CHROME_PAD + hintLabel.height());
     }
 

@@ -52,7 +52,7 @@ final class BenchScene {
     }
 
     static void drawArt(BenchMode mode, float left, float bottom, float scale, float alpha) {
-        SpriteAPI art = SPRITES.sprite(mode.artPath());
+        SpriteAPI art = mode.drawsStarfield() ? null : SPRITES.sprite(mode.artPath());
         if (art == null || alpha <= 0f) {
             return;
         }

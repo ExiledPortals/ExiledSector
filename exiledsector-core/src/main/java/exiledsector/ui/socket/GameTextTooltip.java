@@ -5,7 +5,7 @@ import exiledsector.i18n.I18n;
 
 import java.util.function.Consumer;
 
-record GameTextTooltip(float tooltipWidth, Consumer<TooltipMakerAPI> writer) implements TooltipMakerAPI.TooltipCreator {
+public record GameTextTooltip(float tooltipWidth, Consumer<TooltipMakerAPI> writer) implements TooltipMakerAPI.TooltipCreator {
 
     @Override
     public boolean isTooltipExpandable(Object tooltipParam) {

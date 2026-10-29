@@ -363,21 +363,25 @@ final class AtlasMapCanvas {
         return cell != null && sketches.containsKey(cell);
     }
 
-    void renderFocus(TreeViewport view, AtlasCell cell, float focusX, float focusY, float focusReach, float level, float alphaMult) {
+    record Focus(float x, float y, float reach, float level, AtlasSystemPreview.Spotlight spotlight) {
+    }
+
+    void renderFocus(TreeViewport view, AtlasCell cell, Focus focus, float alphaMult) {
         AtlasSystemPreview.Prepared sketch = sketches.get(cell);
         float openness = openness(cell);
         if (sketch == null || openness <= 0f) {
             return;
         }
+        float level = focus.level();
         float boardRadius = previewRadius(view, cell);
-        float focusRadius = focusReach / AtlasSystemPreview.ORBIT_REACH_SHARE;
+        float focusRadius = focus.reach() / AtlasSystemPreview.ORBIT_REACH_SHARE;
         float focusOuter = sketch.sketch().outerRadius() > 0f ? sketch.sketch().outerRadius() : sketch.outerRadius();
-        float x = lerp(screenX(view, cell), focusX, level);
-        float y = lerp(screenY(view, cell), focusY, level);
+        float x = lerp(screenX(view, cell), focus.x(), level);
+        float y = lerp(screenY(view, cell), focus.y(), level);
         float radius = boardRadius * (float) Math.pow(focusRadius / boardRadius, level);
         float outer = sketch.outerRadius() * (float) Math.pow(focusOuter / sketch.outerRadius(), level);
         float alpha = lerp(previewAlpha(cell) * openness, 1f, level) * alphaMult;
-        preview.render(sketch, x, y, radius, outer, ringArt.elapsedSeconds(), alpha);
+        preview.render(sketch, x, y, radius, outer, ringArt.elapsedSeconds(), alpha, focus.spotlight());
     }
 
     static float lerp(float from, float to, float level) {

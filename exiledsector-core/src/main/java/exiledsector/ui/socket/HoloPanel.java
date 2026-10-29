@@ -212,9 +212,13 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         this.panelPosition = panelPosition;
     }
 
+    protected boolean drawsFrame() {
+        return true;
+    }
+
     @Override
     public void renderBelow(float alphaMult) {
-        if (panelPosition == null) {
+        if (panelPosition == null || !drawsFrame()) {
             return;
         }
         panelFrame.render(panelPosition.getX(), panelPosition.getY(), panelPosition.getWidth(), panelPosition.getHeight(),
@@ -282,7 +286,9 @@ abstract class HoloPanel extends BaseCustomUIPanelPlugin {
         } else {
             addTabs(element);
         }
-        element.addButton(Translation.text(closeKey), closeId, CLOSE_BUTTON_WIDTH, HEADER_BUTTON_HEIGHT, 0f).getPosition().inTR(0f, 0f);
+        if (closeKey != null) {
+            element.addButton(Translation.text(closeKey), closeId, CLOSE_BUTTON_WIDTH, HEADER_BUTTON_HEIGHT, 0f).getPosition().inTR(0f, 0f);
+        }
         return element;
     }
 

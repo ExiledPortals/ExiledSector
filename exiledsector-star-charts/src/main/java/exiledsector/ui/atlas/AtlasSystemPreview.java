@@ -67,6 +67,7 @@ final class AtlasSystemPreview {
     static final float PHOTOSPHERE_HEART_SHARE = 0.14f;
     static final float PHOTOSPHERE_CORE_SHARE = 0.035f;
     static final float PHOTOSPHERE_CORE_WHITENING = 0.6f;
+    static final float PHOTOSPHERE_SPOTLIGHT_SHARE = 3f;
     static final float AURORA_DETAIL_RADIUS = 400f;
     static final float MIN_BAND_PIXELS = 2f;
     static final float RING_SLOT_WIDTH = 256f;
@@ -112,32 +113,46 @@ final class AtlasSystemPreview {
     }
 
     void render(Prepared prepared, float cx, float cy, float radius, float outerRadius, float elapsedSeconds, float alpha) {
+        render(prepared, cx, cy, radius, outerRadius, elapsedSeconds, alpha, Spotlight.NONE);
+    }
+
+    void render(Prepared prepared, float cx, float cy, float radius, float outerRadius, float elapsedSeconds, float alpha, Spotlight spotlight) {
         if (radius <= 0f || alpha <= 0f || outerRadius <= 0f) {
             return;
         }
         loadSharedTextures();
         ChartSystemSketch sketch = prepared.sketch();
         Fit fit = new Fit(cx, cy, radius, radius * ORBIT_REACH_SHARE, outerRadius, elapsedSeconds);
-        startFrame(fit, sketch.planets().size(), alpha);
-        for (int i = 0; i < sketch.belts().size(); i++) {
-            drawBelt(sketch.belts().get(i), i, fit, alpha);
+        float bodyAlpha = alpha * (1f - spotlight.level());
+        startFrame(fit, sketch.planets().size(), bodyAlpha);
+        if (bodyAlpha > 0f) {
+            for (int i = 0; i < sketch.belts().size(); i++) {
+                drawBelt(sketch.belts().get(i), i, fit, bodyAlpha);
+            }
         }
         if (sketch.photosphere() != null) {
-            drawPhotosphere(sketch.photosphere(), fit, alpha);
+            float photosphereRadius = spotlight.starPixels() > 0f
+                    ? AtlasMapCanvas.lerp(fit.radius(), spotlight.starPixels() * PHOTOSPHERE_SPOTLIGHT_SHARE, spotlight.level()) : fit.radius();
+            drawPhotosphere(sketch.photosphere(), fit.cx(), fit.cy(), photosphereRadius, alpha);
         }
         art.renderNebula(prepared.art(), frame);
         for (int i = 0; i < sketch.stars().size(); i++) {
-            drawStar(prepared.starKeys().get(i), sketch.stars().get(i), fit, alpha, i == 0);
+            drawStar(prepared.starKeys().get(i), sketch.stars().get(i), fit, i == 0 ? alpha : bodyAlpha, i == 0, spotlight);
         }
-        for (int i = 0; i < sketch.planets().size(); i++) {
-            drawPlanet(sketch.planets().get(i), i, fit, alpha);
+        if (bodyAlpha > 0f) {
+            for (int i = 0; i < sketch.planets().size(); i++) {
+                drawPlanet(sketch.planets().get(i), i, fit, bodyAlpha);
+            }
+            art.renderAnomalies(prepared.art(), frame);
         }
-        art.renderAnomalies(prepared.art(), frame);
+    }
+
+    record Spotlight(float level, float starPixels) {
+
+        static final Spotlight NONE = new Spotlight(0f, 0f);
     }
 
     private void startFrame(Fit fit, int planets, float alpha) {
-        frame.centreX = fit.cx();
-        frame.centreY = fit.cy();
         frame.radius = fit.radius();
         frame.reach = fit.reach();
         frame.starX = fit.cx();
@@ -213,7 +228,10 @@ final class AtlasSystemPreview {
                 Color.WHITE, alpha, angleAt(0f, belt.orbitDays(), fit.elapsedSeconds()));
     }
 
-    private void drawStar(String auroraKey, Body star, Fit fit, float alpha, boolean primary) {
+    private void drawStar(String auroraKey, Body star, Fit fit, float alpha, boolean primary, Spotlight spotlight) {
+        if (alpha <= 0f) {
+            return;
+        }
         PlanetSpecAPI spec = spec(star.typeId());
         place(star, fit);
         Color corona = spec == null || spec.getCoronaColor() == null ? FALLBACK_STAR_COLOUR : spec.getCoronaColor();
@@ -221,6 +239,11 @@ final class AtlasSystemPreview {
             return;
         }
         float pixels = starPixels(star, fit.radius());
+        if (primary && spotlight.level() > 0f) {
+            bodyX = AtlasMapCanvas.lerp(bodyX, fit.cx(), spotlight.level());
+            bodyY = AtlasMapCanvas.lerp(bodyY, fit.cy(), spotlight.level());
+            pixels = spotlight.starPixels() > 0f ? AtlasMapCanvas.lerp(pixels, spotlight.starPixels(), spotlight.level()) : pixels;
+        }
         if (primary) {
             frame.starX = bodyX;
             frame.starY = bodyY;
@@ -239,13 +262,13 @@ final class AtlasSystemPreview {
         drawBody(spec, bodyX, bodyY, pixels, star.startAngle(), fit.elapsedSeconds(), FALLBACK_STAR_COLOUR, alpha, true);
     }
 
-    private static void drawPhotosphere(Color colour, Fit fit, float alpha) {
+    private static void drawPhotosphere(Color colour, float cx, float cy, float radius, float alpha) {
         try (GlScope glow = GlScope.flat().blend(GL11.GL_SRC_ALPHA, GL11.GL_ONE)) {
-            drawGlow(fit.cx(), fit.cy(), fit.radius() * PHOTOSPHERE_GLOW_SHARE, colour, PHOTOSPHERE_GLOW_ALPHA * alpha);
-            drawGlow(fit.cx(), fit.cy(), fit.radius() * PHOTOSPHERE_HEART_SHARE, colour, alpha);
+            drawGlow(cx, cy, radius * PHOTOSPHERE_GLOW_SHARE, colour, PHOTOSPHERE_GLOW_ALPHA * alpha);
+            drawGlow(cx, cy, radius * PHOTOSPHERE_HEART_SHARE, colour, alpha);
         }
         try (GlScope flat = GlScope.flat()) {
-            drawDisc(fit.cx(), fit.cy(), Math.max(MIN_BODY_PIXELS, fit.radius() * PHOTOSPHERE_CORE_SHARE), whitened(colour), alpha);
+            drawDisc(cx, cy, Math.max(MIN_BODY_PIXELS, radius * PHOTOSPHERE_CORE_SHARE), whitened(colour), alpha);
         }
     }
 

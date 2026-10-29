@@ -50,8 +50,8 @@ class BenchSceneTest {
             String tile = mode + " tile " + index;
             assertTrue(centreY + halfTile < BenchScene.detailsTop(mode), tile + " overlaps the details plate");
             assertTrue(centreY - halfTile > BenchScene.NOTICE_TOP + BenchScene.NOTICE_HEIGHT, tile + " overlaps the notice");
-            assertTrue(centreX - halfTile > mode.leftConsoleX() + halfTile, tile + " overlaps the left console");
-            assertTrue(centreX + halfTile < mode.rightConsoleX() - halfTile, tile + " overlaps the right console");
+            assertTrue(centreX - halfTile > mode.leftWardX() + halfTile, tile + " overlaps the left inhibitor");
+            assertTrue(centreX + halfTile < mode.rightWardX() - halfTile, tile + " overlaps the right inhibitor");
         }
         for (int index = 1; index < tileCount; index++) {
             float gapX = Math.abs(centres[index][0] - centres[index - 1][0]);
@@ -70,21 +70,22 @@ class BenchSceneTest {
         }
         assertTrue(BenchScene.DETAILS_BOTTOM <= BenchScene.ART_HEIGHT);
         for (BenchMode mode : BenchMode.values()) {
-            assertTrue(BenchScene.detailsLeft(mode) - BenchScene.TILE_SIZE / 2f > mode.leftConsoleX(), mode + " left console overlaps the plate");
-            assertTrue(BenchScene.detailsLeft(mode) + BenchScene.DETAILS_WIDTH + BenchScene.TILE_SIZE / 2f < mode.rightConsoleX(),
-                    mode + " right console overlaps the plate");
+            assertTrue(BenchScene.detailsLeft(mode) - BenchScene.TILE_SIZE / 2f > mode.leftWardX(), mode + " left inhibitor overlaps the plate");
+            assertTrue(BenchScene.detailsLeft(mode) + BenchScene.DETAILS_WIDTH + BenchScene.TILE_SIZE / 2f < mode.rightWardX(),
+                    mode + " right inhibitor overlaps the plate");
         }
     }
 
     @Test
-    void theStarChartInhibitorsSitOnTheMapDeviceConsoleScreens() {
-        assertEquals(225f / 6f, BenchMode.STAR_CHARTS.leftConsoleX(), 0.1f);
-        assertEquals(621f / 6f, BenchMode.STAR_CHARTS.leftConsoleY(), 0.1f);
-        assertEquals(1702f / 6f, BenchMode.STAR_CHARTS.rightConsoleX(), 0.1f);
-        assertEquals(604f / 6f, BenchMode.STAR_CHARTS.rightConsoleY(), 0.1f);
+    void theStarfieldBenchesCentreTheSocketAndMirrorTheInhibitorsBesideIt() {
+        for (BenchMode mode : new BenchMode[]{BenchMode.HULL_ITEMS, BenchMode.STAR_CHARTS}) {
+            assertEquals(BenchScene.ART_WIDTH / 2f, mode.socketX(), 1e-6f, mode + " socket is off-centre");
+            assertEquals(mode.socketX() - mode.leftWardX(), mode.rightWardX() - mode.socketX(), 1e-6f, mode + " inhibitors are lopsided");
+            assertEquals(mode.socketY(), mode.wardY(), 1e-6f, mode + " inhibitors are not level with the socket");
+        }
         for (BenchMode mode : BenchMode.values()) {
             float halfTile = BenchScene.TILE_SIZE / 2f;
-            assertTrue(mode.leftConsoleX() - halfTile >= 0f && mode.rightConsoleX() + halfTile <= BenchScene.ART_WIDTH, mode + " console tile leaves the art");
+            assertTrue(mode.leftWardX() - halfTile >= 0f && mode.rightWardX() + halfTile <= BenchScene.ART_WIDTH, mode + " inhibitor tile leaves the art");
         }
     }
 

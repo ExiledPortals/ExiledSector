@@ -79,13 +79,23 @@ public class StarfieldRenderer {
         if (panelPosition == null) return;
 
         if (!initialized) {
-            initStars(panelPosition.getWidth(), panelPosition.getHeight());
+            initStars(panelPosition.getWidth() * 1.2f, panelPosition.getHeight() * 1.2f);
         }
 
         float panelCenterX = panelPosition.getX() + panelPosition.getWidth() / 2f;
         float panelCenterY = panelPosition.getY() + panelPosition.getHeight() / 2f;
-        Color accentColor = panelStyle.getAccentColor();
+        drawStars(panelCenterX - fieldWidth / 2f, panelCenterY - fieldHeight / 2f, panX, panY, false, alphaMult);
+    }
 
+    public void renderInside(float left, float bottom, float width, float height, float alphaMult) {
+        if (!initialized || fieldWidth != width || fieldHeight != height) {
+            initStars(width, height);
+        }
+        drawStars(left, bottom, 0f, 0f, true, alphaMult);
+    }
+
+    private void drawStars(float fieldLeft, float fieldBottom, float panX, float panY, boolean keepInside, float alphaMult) {
+        Color accentColor = panelStyle.getAccentColor();
         for (int spriteIndex = 0; spriteIndex < STAR_SPRITE_PATHS.length; spriteIndex++) {
             List<Star> stars = starsBySprite.get(spriteIndex);
             SpriteAPI starTexture = stars.isEmpty() ? null : spriteCache.texture(STAR_SPRITE_PATHS[spriteIndex]);
@@ -94,21 +104,24 @@ public class StarfieldRenderer {
                 for (Star star : stars) {
                     float wrappedX = wrap(star.baseX + panX * star.parallaxFactor, fieldWidth);
                     float wrappedY = wrap(star.baseY + panY * star.parallaxFactor, fieldHeight);
-                    float screenX = panelCenterX + wrappedX - fieldWidth / 2f;
-                    float screenY = panelCenterY + wrappedY - fieldHeight / 2f;
+                    float halfSize = star.spriteSize / 2f;
+                    if (keepInside && (wrappedX < halfSize || wrappedX > fieldWidth - halfSize
+                            || wrappedY < halfSize || wrappedY > fieldHeight - halfSize)) {
+                        continue;
+                    }
 
                     float twinkle = 0.6f + 0.4f * (float) Math.sin(twinkleElapsedSeconds * star.twinkleSpeed + star.twinklePhase);
 
-                    quads.quadAtCenter(screenX, screenY, star.spriteSize, star.spriteSize, 0f,
+                    quads.quadAtCenter(fieldLeft + wrappedX, fieldBottom + wrappedY, star.spriteSize, star.spriteSize, 0f,
                             star.useAccentColor ? accentColor : STANDARD_STAR_COLOR, alphaMult * star.baseAlpha * twinkle);
                 }
             }
         }
     }
 
-    private void initStars(float panelWidth, float panelHeight) {
-        fieldWidth = panelWidth * 1.2f;
-        fieldHeight = panelHeight * 1.2f;
+    private void initStars(float width, float height) {
+        fieldWidth = width;
+        fieldHeight = height;
         float areaScale = (fieldWidth * fieldHeight) / (REFERENCE_WIDTH * REFERENCE_HEIGHT);
 
         starsBySprite.clear();

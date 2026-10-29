@@ -4,9 +4,9 @@ import exiledsector.charts.layout.sketch.ChartSystemSketch;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.Body;
 import org.junit.jupiter.api.Test;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -57,12 +57,17 @@ class AtlasSystemArtTest {
     }
 
     @Test
-    void relaysSpreadAcrossDifferentPlanets() {
-        AtlasSystemArt.Layout layout = AtlasSystemArt.layout(3L, system("star_yellow", 4), List.of("relay_network"));
+    void everyFreeFloatingAnomalyOrbitsTheStar() {
+        Set<AtlasSystemArt.Kind> onABody = EnumSet.of(AtlasSystemArt.Kind.ACCRETION, AtlasSystemArt.Kind.PULSAR, AtlasSystemArt.Kind.AURORA,
+                AtlasSystemArt.Kind.FLARE, AtlasSystemArt.Kind.EXCAVATION);
+        AtlasSystemArt.Layout layout = AtlasSystemArt.layout(3L, system("star_yellow", 4), ALL_ANOMALIES);
 
-        Set<Integer> planets = layout.pieces().stream().map(AtlasSystemArt.Piece::planet).collect(Collectors.toSet());
-        assertEquals(3, planets.size());
-        assertFalse(planets.contains(-1));
+        List<AtlasSystemArt.Piece> floating = layout.pieces().stream().filter(piece -> !onABody.contains(piece.kind())).toList();
+        assertFalse(floating.isEmpty());
+        for (AtlasSystemArt.Piece piece : floating) {
+            assertEquals(-1, piece.planet(), piece.kind() + " circles a planet");
+            assertTrue(piece.orbit() > 0f && piece.speed() > 0f, piece.kind() + " does not orbit the star");
+        }
     }
 
     @Test
