@@ -149,7 +149,7 @@ public abstract class Item {
         ItemDefinition definition = definition();
         if (explicitModifiers != null) {
             if (!explicitIdsCurrent && definition != null) {
-                explicitModifiers = new ArrayList<>(definition.withAddedFixedModifiers(definition.withCurrentIds(explicitModifiers)));
+                explicitModifiers = new ArrayList<>(definition.withCurrentUniquePool(definition.withCurrentIds(explicitModifiers), seed));
                 explicitIdsCurrent = true;
             }
             return Collections.unmodifiableList(explicitModifiers);

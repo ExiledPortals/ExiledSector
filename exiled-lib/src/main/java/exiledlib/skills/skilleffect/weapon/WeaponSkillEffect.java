@@ -139,6 +139,13 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     DAMAGE_TO_DESTROYER_PERCENT(PERCENT, stat(MutableShipStatsAPI::getDamageToDestroyers), "stat.damageToDestroyers", false),
     DAMAGE_TO_CRUISER_PERCENT(PERCENT, stat(MutableShipStatsAPI::getDamageToCruisers), "stat.damageToCruisers", false),
     DAMAGE_TO_CAPITAL_PERCENT(PERCENT, stat(MutableShipStatsAPI::getDamageToCapital), "stat.damageToCapitalShips", false),
+    DAMAGE_TO_AUTOMATED_SHIP_PERCENT(AutomatedShipDamageListener.DAMAGE_PERCENT_KEY, AutomatedShipDamageListener.class,
+            AutomatedShipDamageListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return PERCENT.describeStat(magnitude, "stat.damageToAutomatedShips");
+        }
+    },
     WEAPON_MALFUNCTION_PERCENT(PERCENT, new StatTarget.PercentagePoints(MutableShipStatsAPI::getWeaponMalfunctionChance),
             "stat.weaponMalfunctionChance", true),
     PD_IGNORES_DECOY_FLARES {

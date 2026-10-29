@@ -580,6 +580,12 @@ effect|CR_RECOVERY_RATE_PERCENT|12.5	0	<good>12.5%</good> increased combat readi
 effect|CR_RECOVERY_RATE_PERCENT|100.0	0	<good>100%</good> increased combat readiness recovery rate.
 effect|CR_RECOVERY_RATE_PERCENT|-10.0	0	<bad>10%</bad> reduced combat readiness recovery rate.
 effect|CR_RECOVERY_RATE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced combat readiness recovery rate.
+effect|DAMAGE_TO_AUTOMATED_SHIP_PERCENT|1.0	0	<good>1%</good> increased damage to automated ships.
+effect|DAMAGE_TO_AUTOMATED_SHIP_PERCENT|10.0	0	<good>10%</good> increased damage to automated ships.
+effect|DAMAGE_TO_AUTOMATED_SHIP_PERCENT|12.5	0	<good>12.5%</good> increased damage to automated ships.
+effect|DAMAGE_TO_AUTOMATED_SHIP_PERCENT|100.0	0	<good>100%</good> increased damage to automated ships.
+effect|DAMAGE_TO_AUTOMATED_SHIP_PERCENT|-10.0	0	<bad>10%</bad> reduced damage to automated ships.
+effect|DAMAGE_TO_AUTOMATED_SHIP_PERCENT|-12.5	0	<bad>12.5%</bad> reduced damage to automated ships.
 effect|DAMAGE_TO_CAPITAL_PERCENT|1.0	0	<good>1%</good> increased damage to capital ships and stations.
 effect|DAMAGE_TO_CAPITAL_PERCENT|10.0	0	<good>10%</good> increased damage to capital ships and stations.
 effect|DAMAGE_TO_CAPITAL_PERCENT|12.5	0	<good>12.5%</good> increased damage to capital ships and stations.

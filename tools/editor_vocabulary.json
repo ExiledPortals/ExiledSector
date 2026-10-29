@@ -99,6 +99,7 @@
     {"name": "CR_LOSS_PER_SECOND_MULT", "statMode": "MULT", "lowerIsBetter": true},
     {"name": "CR_LOSS_PER_SECOND_PERCENT", "statMode": "PERCENT", "lowerIsBetter": true},
     {"name": "CR_RECOVERY_RATE_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
+    {"name": "DAMAGE_TO_AUTOMATED_SHIP_PERCENT", "statMode": null, "lowerIsBetter": false},
     {"name": "DAMAGE_TO_CAPITAL_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
     {"name": "DAMAGE_TO_CRUISER_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},
     {"name": "DAMAGE_TO_DESTROYER_PERCENT", "statMode": "PERCENT", "lowerIsBetter": false},

@@ -232,11 +232,11 @@ unique_morale_assurance_officer,PEAK_CR_DURATION_PERCENT,0.7.0,
 unique_nanoforge_seed,MISSILE_RELOAD_PERCENT_PER_MINUTE,0.7.0,
 unique_olinadu_security,CREW_LOSS_PERCENT,0.7.0,
 unique_olinadu_security,GROUND_SUPPORT_FLAT,0.7.0,
-unique_pather_cell,ARMOR_PERCENT,0.7.0,
+unique_pather_cell,ARMOR_PERCENT,0.7.0,0.9.11
 unique_pather_cell,PEAK_CR_DURATION_PERCENT,0.7.0,
-unique_pather_cell,SHIELD_DAMAGE_TAKEN_MULT,0.7.0,
-unique_pather_cell,TOP_SPEED_PERCENT,0.7.0,
-unique_pather_cell,WEAPON_DAMAGE_PERCENT,0.7.0,
+unique_pather_cell,SHIELD_DAMAGE_TAKEN_MULT,0.7.0,0.9.11
+unique_pather_cell,TOP_SPEED_PERCENT,0.7.0,0.9.11
+unique_pather_cell,WEAPON_DAMAGE_PERCENT,0.7.0,0.9.11
 unique_planetkiller_circuit,DAMAGE_TO_CAPITAL_PERCENT,0.7.0,
 unique_salvager_crew,POST_BATTLE_SALVAGE_PERCENT,0.7.0,
 unique_salvager_crew,REPAIR_RATE_PER_DAY_PERCENT,0.7.0,

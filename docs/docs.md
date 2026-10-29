@@ -507,8 +507,10 @@ values. `nodeEffects` folds both origins back into their node for module sharing
 
 A hull item with a targeting effect rolls one other section as its target (`HullItem.targetSection`, from its seed,
 stored once rolled); the Extended Warranty Contract's 100% doubles that item, drawbacks included. The Tuning
-Nanoswarm rerolls the target (`Item.rerollTarget`). A unique item that rolled before its definition gained a
-fixed-value modifier gains it on load (`ItemDefinition.withAddedFixedModifiers`).
+Nanoswarm rerolls the target (`Item.rerollTarget`). On load a unique item follows its definition's current pool
+(`ItemDefinition.withCurrentUniquePool`): it rolls modifiers added since it dropped, from its seed, and loses those
+taken out. A modifier whose effect no longer loads is kept. Unique star charts only gain fixed-value modifiers and keep
+the rest.
 
 A unique whose `mechanic` is `one_of` keeps just one of its listed modifiers, picked from its seed when it is
 rolled (`ItemRoller`), so the choice is frozen with the item.

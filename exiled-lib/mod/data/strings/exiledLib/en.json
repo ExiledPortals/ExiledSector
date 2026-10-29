@@ -250,6 +250,7 @@
     "stat.damageToDestroyers": "damage to destroyers",
     "stat.damageToCruisers": "damage to cruisers",
     "stat.damageToCapitalShips": "damage to capital ships and stations",
+    "stat.damageToAutomatedShips": "damage to automated ships",
     "stat.weaponMalfunctionChance": "weapon malfunction chance",
     "effect.BEAM_WEAPON_HARD_FLUX_PERCENT": "<good>{value}%</good> of beam weapon damage dealt to shields is dealt as hard flux.",
     "effect.SHIELD_DAMAGE_SHARED_PERCENT": "Disperses {value}% of shield damage taken to allied ships within {range} su that aren't overloaded or venting, split evenly between them as hard flux.",

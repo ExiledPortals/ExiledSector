@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledlib.Seeds;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
@@ -205,30 +206,43 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
         return resolved == null ? modifiers : resolved;
     }
 
-    public List<RolledModifier> withAddedFixedModifiers(List<RolledModifier> modifiers) {
+    public List<RolledModifier> withCurrentUniquePool(List<RolledModifier> modifiers, long seed) {
         if (!unique || keepsOneModifier()) {
             return modifiers;
         }
-        List<RolledModifier> added = addMissingFixed(prefixes, modifiers, null);
-        added = addMissingFixed(suffixes, modifiers, added);
-        return added == null ? modifiers : added;
-    }
-
-    private static List<RolledModifier> addMissingFixed(List<PoolEntry> entries, List<RolledModifier> modifiers, List<RolledModifier> added) {
-        if (entries == null) {
-            return added;
-        }
-        for (PoolEntry entry : entries) {
-            String modifierId = entry.modifier().id();
-            boolean fixed = entry.modifier().lines().stream().noneMatch(ModifierLine::canVary);
-            if (fixed && modifiers.stream().noneMatch(modifier -> modifier.modifierId().equals(modifierId))) {
-                if (added == null) {
-                    added = new ArrayList<>(modifiers);
-                }
-                added.add(RolledModifier.roll(entry.modifier(), new Random(0L), true));
+        boolean followsPool = type != ItemType.STAR_CHART;
+        List<RolledModifier> repaired = new ArrayList<>(modifiers.size());
+        boolean changed = false;
+        for (RolledModifier modifier : modifiers) {
+            if (!followsPool || poolEntryFor(modifier.modifierId()) != null || hasUnknownEffect(modifier)) {
+                repaired.add(modifier);
+            } else {
+                changed = true;
             }
         }
-        return added;
+        for (PoolEntry entry : pool()) {
+            String modifierId = entry.modifier().id();
+            if ((followsPool || isFixed(entry)) && modifiers.stream().noneMatch(modifier -> modifier.modifierId().equals(modifierId))) {
+                repaired.add(rollMissing(entry, seed));
+                changed = true;
+            }
+        }
+        return changed ? repaired : modifiers;
+    }
+
+    private static boolean isFixed(PoolEntry entry) {
+        return entry.modifier().lines().stream().noneMatch(ModifierLine::canVary);
+    }
+
+    private static RolledModifier rollMissing(PoolEntry entry, long seed) {
+        boolean fixed = isFixed(entry);
+        Random random = fixed ? new Random(0L) : Seeds.random(seed ^ entry.modifier().id().hashCode());
+        return RolledModifier.roll(entry.modifier(), random, fixed || ItemRoller.averageRolls());
+    }
+
+    private boolean hasUnknownEffect(RolledModifier modifier) {
+        ModifierEffects effects = ItemEffects.forType(type);
+        return modifier.lines().stream().anyMatch(line -> effects.byName(line.effectName()) == null);
     }
 
     private String currentId(RolledModifier modifier) {

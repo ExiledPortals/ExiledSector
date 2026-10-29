@@ -444,7 +444,7 @@ class StarChartTest {
         assertTrue(orphanLines.get(0).contains("Unreadable modifier"), orphanLines.toString());
         assertFalse(orphanLines.get(0).contains("73"), orphanLines.toString());
 
-        ItemDefinition hullDefinition = ItemDefinitions.ofType(ItemType.HULL_ITEM).iterator().next();
+        ItemDefinition hullDefinition = ItemDefinitions.ofType(ItemType.HULL_ITEM).stream().filter(definition -> !definition.unique()).findFirst().orElseThrow();
         RolledEffect hullLine = new RolledEffect("HULL_MULT", 73f);
         RolledEffect armorLine = new RolledEffect("ARMOR_FLAT", 7f);
         Item hullItem = Item.create(null, hullDefinition.id(), 4L, List.of(new RolledModifier("NOT_IN_ANY_POOL", ModifierSlot.PREFIX,

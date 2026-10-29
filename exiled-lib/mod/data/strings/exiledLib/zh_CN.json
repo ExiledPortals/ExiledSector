@@ -254,6 +254,7 @@
     "stat.damageToDestroyers": "对驱逐舰造成的伤害",
     "stat.damageToCruisers": "对巡洋舰造成的伤害",
     "stat.damageToCapitalShips": "对主力舰和空间站造成的伤害",
+    "stat.damageToAutomatedShips": "对自动化舰船造成的伤害",
     "stat.weaponMalfunctionChance": "武器故障几率",
     "effect.BEAM_WEAPON_HARD_FLUX_PERCENT": "光束武器对护盾造成的伤害中有<good>{value}%</good>转化为硬幅能。",
     "effect.SHIELD_DAMAGE_SHARED_PERCENT": "将护盾所受伤害的{value}%分散给{range} su内未过载且未在主动排散的友方舰船，由它们平均承担为硬幅能。",
