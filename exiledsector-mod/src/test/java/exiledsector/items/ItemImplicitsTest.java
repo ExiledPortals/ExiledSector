@@ -1,8 +1,8 @@
 package exiledsector.items;
 
-import exiledlib.ProjectFiles;
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.EffectAliases;
+import exiledsector.ProjectFiles;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.EffectAliases;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierCategory;
 import exiledsector.modifiers.ModifierSlot;

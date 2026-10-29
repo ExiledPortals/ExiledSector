@@ -1,7 +1,7 @@
 package exiledsector.persistence;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.TemplateStep;
 import org.junit.jupiter.api.AfterEach;

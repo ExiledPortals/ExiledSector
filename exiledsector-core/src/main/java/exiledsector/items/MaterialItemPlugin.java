@@ -4,7 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoTransferHandlerAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;

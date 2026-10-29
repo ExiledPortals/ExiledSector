@@ -10,8 +10,8 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.wormhole.ChartSupply;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.wormhole.WormholeGateway;
-import exiledlib.i18n.I18n;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.Translation;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.atlas.AtlasScreen;
 

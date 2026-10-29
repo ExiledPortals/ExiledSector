@@ -1,7 +1,7 @@
 package exiledsector.ui.util;
 
 import com.fs.starfarer.api.Global;
-import exiledlib.HostMod;
+import exiledsector.ExiledSector;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 
@@ -19,10 +19,10 @@ public final class TexturePreloader {
     }
 
     public static void preloadAll() {
-        String listPath = HostMod.configPath(LIST_FILE);
+        String listPath = ExiledSector.configPath(LIST_FILE);
         JSONArray textureRows;
         try {
-            textureRows = Global.getSettings().loadCSV(listPath, HostMod.id());
+            textureRows = Global.getSettings().loadCSV(listPath, ExiledSector.MOD_ID);
         } catch (Exception e) {
             LOG.warn("No texture preload list at " + listPath + "; textures will load the first time they are drawn", e);
             return;

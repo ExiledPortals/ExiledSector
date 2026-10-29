@@ -1,6 +1,6 @@
 package exiledsector.ui.socket;
 
-import exiledlib.i18n.RealCatalogue;
+import exiledsector.i18n.RealCatalogue;
 import exiledsector.items.CorruptionOutcome;
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.CraftingWard;

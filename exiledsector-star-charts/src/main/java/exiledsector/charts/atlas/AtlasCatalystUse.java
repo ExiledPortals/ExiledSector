@@ -1,7 +1,7 @@
 package exiledsector.charts.atlas;
 
-import exiledlib.i18n.Message;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Message;
+import exiledsector.i18n.Translation;
 import exiledsector.items.Consumable;
 
 import java.util.Locale;

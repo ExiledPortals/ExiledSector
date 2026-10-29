@@ -4,7 +4,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipLevelSystem;

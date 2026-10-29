@@ -1,7 +1,7 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
+import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.NpcItems;
 import exiledsector.items.ShipSection;

@@ -1,7 +1,7 @@
 package exiledsector.charts.loot;
 
-import exiledlib.i18n.StyledText;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.content.ChartPoi;
 import exiledsector.items.StarChart;

@@ -1,6 +1,6 @@
 package exiledsector.charts.layout.feature;
 
-import exiledlib.ModCsv;
+import exiledsector.ModCsv;
 import exiledsector.charts.table.BuiltInTable;
 import exiledsector.data.CsvRows;
 import org.apache.log4j.Logger;

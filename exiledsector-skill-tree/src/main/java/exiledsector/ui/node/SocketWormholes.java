@@ -1,6 +1,6 @@
 package exiledsector.ui.node;
 
-import exiledlib.skills.skilleffect.render.Fade;
+import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeLinks;

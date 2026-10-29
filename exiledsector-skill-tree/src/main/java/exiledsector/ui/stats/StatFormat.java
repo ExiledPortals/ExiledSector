@@ -1,6 +1,6 @@
 package exiledsector.ui.stats;
 
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

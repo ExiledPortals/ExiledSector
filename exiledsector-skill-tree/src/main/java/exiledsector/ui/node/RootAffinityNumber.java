@@ -1,10 +1,10 @@
 package exiledsector.ui.node;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.skills.AffinitySteps;
-import exiledlib.skills.SocketedItemScaling;
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.SkillEffect;
+import exiledsector.skills.AffinitySteps;
+import exiledsector.skills.SocketedItemScaling;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.effects.SkillTreeEffectSource;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;

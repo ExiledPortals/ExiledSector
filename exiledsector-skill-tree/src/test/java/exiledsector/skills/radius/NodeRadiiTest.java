@@ -2,7 +2,7 @@ package exiledsector.skills.radius;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
-import exiledlib.ProjectFiles;
+import exiledsector.ProjectFiles;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.npc.RealSkillData;

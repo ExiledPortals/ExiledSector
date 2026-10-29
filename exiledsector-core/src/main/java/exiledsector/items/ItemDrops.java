@@ -1,8 +1,8 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.Global;
-import exiledlib.ModCsv;
-import exiledlib.ModSettings;
+import exiledsector.ModCsv;
+import exiledsector.ModSettings;
 import exiledsector.compat.SalvageSiteCompat;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;

@@ -1,8 +1,8 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.util.Misc;
-import exiledlib.i18n.I18n;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.Translation;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.ui.CampaignMessages;

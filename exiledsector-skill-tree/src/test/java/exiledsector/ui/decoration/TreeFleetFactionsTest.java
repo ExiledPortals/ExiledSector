@@ -1,6 +1,6 @@
 package exiledsector.ui.decoration;
 
-import exiledlib.ProjectFiles;
+import exiledsector.ProjectFiles;
 import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.tags.SkillTags;
 import org.json.CDL;

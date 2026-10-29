@@ -2,7 +2,7 @@ package exiledsector.console;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledlib.PlayerFleet;
+import exiledsector.PlayerFleet;
 import exiledsector.items.NodeGrantStatus;
 import exiledsector.items.SocketCustody;
 import exiledsector.persistence.ShipSkillDataManager;

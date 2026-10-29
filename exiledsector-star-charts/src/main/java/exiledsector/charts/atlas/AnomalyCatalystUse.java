@@ -1,6 +1,6 @@
 package exiledsector.charts.atlas;
 
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.items.UseVerdict;
 

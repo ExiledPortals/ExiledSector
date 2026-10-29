@@ -1,7 +1,7 @@
 package exiledsector.ui.section;
 
 import com.fs.starfarer.api.util.Misc;
-import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.items.ItemKind;
 import exiledsector.items.ShipSection;
 import exiledsector.ui.cargo.AnimatedItemIcons;

@@ -3,7 +3,7 @@ package exiledsector.skills.template;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import org.junit.jupiter.api.Test;
 
-import exiledlib.skills.ShipHullSizes;
+import exiledsector.skills.ShipHullSizes;
 import java.util.EnumSet;
 import java.util.List;
 

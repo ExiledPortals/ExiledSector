@@ -2,8 +2,8 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import exiledlib.i18n.Style;
-import exiledlib.i18n.StyledText;
+import exiledsector.i18n.Style;
+import exiledsector.i18n.StyledText;
 import org.junit.jupiter.api.Test;
 
 import java.awt.Color;

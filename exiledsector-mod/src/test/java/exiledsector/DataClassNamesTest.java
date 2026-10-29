@@ -20,9 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DataClassNamesTest {
 
-    private static final List<Path> DATA = List.of(Path.of("data"), Path.of("exiled-lib/mod/data"), Path.of("mod_info.json"),
-            Path.of("exiled-lib/mod/mod_info.json"));
-    private static final Pattern CLASS_NAME = Pattern.compile("\\b(?:exiledsector|exiledlib)(?:\\.[a-z]\\w*)*\\.[A-Z][\\w$]*");
+    private static final List<Path> DATA = List.of(Path.of("data"), Path.of("mod_info.json"));
+    private static final Pattern CLASS_NAME = Pattern.compile("\\bexiledsector(?:\\.[a-z]\\w*)*\\.[A-Z][\\w$]*");
 
     @Test
     void everyOfOurClassesNamedInDataFilesResolves() throws IOException {

@@ -4,7 +4,7 @@ import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.items.Item;
 import exiledsector.ui.cargo.AnimatedItemIcons;
 import exiledsector.ui.cargo.CargoIconFx;

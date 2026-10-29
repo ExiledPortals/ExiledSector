@@ -1,6 +1,5 @@
 package exiledsector;
 
-import exiledlib.ProjectFiles;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Element;
@@ -16,8 +15,6 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PomVersionsTest {
-
-    private static final String LIBRARY_MODULE = "exiled-lib";
 
     private static Element pom(String path) throws Exception {
         return DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(ProjectFiles.projectRoot().resolve(path).toFile()).getDocumentElement();
@@ -66,17 +63,7 @@ class PomVersionsTest {
         for (String module : modules(root)) {
             Element modulePom = pom(module + "/pom.xml");
             assertEquals(exiledSectorVersion, child(childElement(modulePom, "parent"), "version"), module);
-            if (!module.equals(LIBRARY_MODULE)) {
-                assertEquals(null, child(modulePom, "version"), module + " takes its version from the parent");
-            }
+            assertEquals(null, child(modulePom, "version"), module + " takes its version from the parent");
         }
-    }
-
-    @Test
-    void exiledLibsPomVersionIsTheOneTheParentManagesAndMatchesItsModInfo() throws Exception {
-        String libraryVersion = child(pom(LIBRARY_MODULE + "/pom.xml"), "version");
-
-        assertEquals(child(childElement(pom("pom.xml"), "properties"), "exiledlib.version"), libraryVersion);
-        assertEquals(modVersion(ProjectFiles.LIBRARY_MOD.resolve("mod_info.json")), libraryVersion);
     }
 }

@@ -7,7 +7,7 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.procgen.NebulaEditor;
 import com.fs.starfarer.api.impl.campaign.terrain.BaseTiledTerrain.TileParams;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.charts.layout.ChartDeepSpace;
 import org.lwjgl.util.vector.Vector2f;
 

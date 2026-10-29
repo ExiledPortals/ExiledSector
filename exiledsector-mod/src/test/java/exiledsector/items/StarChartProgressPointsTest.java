@@ -4,7 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.skills.ShipSkillData;
 import org.junit.jupiter.api.AfterEach;

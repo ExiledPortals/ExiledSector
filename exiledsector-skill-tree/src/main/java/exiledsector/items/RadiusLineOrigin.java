@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledlib.skills.SocketedItem;
+import exiledsector.skills.SocketedItem;
 import exiledsector.skills.AllocatedNode;
 
 public record RadiusLineOrigin(AllocatedNode node, String sourceSocketNodeId) implements SocketedItem {

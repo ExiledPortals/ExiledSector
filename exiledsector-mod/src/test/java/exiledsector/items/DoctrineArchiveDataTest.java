@@ -1,8 +1,8 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.MockSector;
-import exiledlib.ProjectFiles;
+import exiledsector.MockSector;
+import exiledsector.ProjectFiles;
 import exiledsector.items.ItemDataIntegrity.Severity;
 import exiledsector.items.ItemDataIntegrity.Violation;
 import exiledsector.skills.ShipSkillData;

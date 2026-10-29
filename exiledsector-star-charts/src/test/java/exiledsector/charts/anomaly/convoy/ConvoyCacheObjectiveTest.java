@@ -3,7 +3,7 @@ package exiledsector.charts.anomaly.convoy;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import org.junit.jupiter.api.BeforeEach;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD.RaidDangerLevel;
 import exiledsector.charts.content.ChartContentGenerator;

@@ -2,11 +2,11 @@ package exiledsector.ui.stats;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.characters.SkillSpecAPI;
-import exiledlib.i18n.Translation;
-import exiledlib.skills.AffinitySteps;
-import exiledlib.skills.BallisticEnergyMirror;
-import exiledlib.skills.EffectContribution;
-import exiledlib.skills.SocketedItem;
+import exiledsector.i18n.Translation;
+import exiledsector.skills.AffinitySteps;
+import exiledsector.skills.BallisticEnergyMirror;
+import exiledsector.skills.EffectContribution;
+import exiledsector.skills.SocketedItem;
 import exiledsector.effects.ResolvedTree;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;

@@ -4,7 +4,7 @@ import com.fs.starfarer.api.campaign.BattleAPI;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.items.MaterialItems;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.loot.ChartDrops;

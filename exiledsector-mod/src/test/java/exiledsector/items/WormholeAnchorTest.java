@@ -5,7 +5,7 @@ import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
-import exiledlib.i18n.StyledText;
+import exiledsector.i18n.StyledText;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;

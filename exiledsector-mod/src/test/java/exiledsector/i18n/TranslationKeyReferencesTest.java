@@ -1,9 +1,6 @@
 package exiledsector.i18n;
 
-import exiledlib.ProjectFiles;
-import exiledlib.i18n.I18n;
-import exiledlib.i18n.LocaleChain;
-import exiledlib.i18n.RealCatalogue;
+import exiledsector.ProjectFiles;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -26,16 +23,13 @@ class TranslationKeyReferencesTest {
     private static final Pattern LITERAL_KEY = Pattern.compile("Translation\\.(?:text|msg|styled|gameText)\\(\\s*\"([^\"]+)\"");
     private static final List<String> PLURAL_FORMS = List.of(".one", ".other");
     private static final String METADATA_PREFIX = "meta.";
-    private static final String LIB = "lib";
     private static final String CORE = "core";
     private static final Map<String, String> CATALOGUE_BY_PART = Map.of(
-            LIB, I18n.LIBRARY_STRINGS_DIRECTORY + "en.json",
             CORE, "data/strings/exiledSector/core/en.json",
             "skill-tree", "data/strings/exiledSector/skillTree/en.json",
             "hull-upgrades", "data/strings/exiledSector/hullUpgrades/en.json",
             "star-charts", "data/strings/exiledSector/starCharts/en.json");
     private static final Map<String, String> PART_BY_MODULE = Map.of(
-            "exiled-lib", LIB,
             "exiledsector-core", CORE,
             "exiledsector-skill-tree", "skill-tree",
             "exiledsector-hull-upgrades", "hull-upgrades",
@@ -68,7 +62,7 @@ class TranslationKeyReferencesTest {
                 misplaced.add(source + " (" + part + "): " + key);
             }
         });
-        assertTrue(misplaced.isEmpty(), "Keys looked up outside the catalogue of the class's part, core or lib: " + misplaced);
+        assertTrue(misplaced.isEmpty(), "Keys looked up outside the catalogue of the class's part or core: " + misplaced);
     }
 
     private interface KeyVisitor {
@@ -92,10 +86,7 @@ class TranslationKeyReferencesTest {
     }
 
     private static List<String> reachableParts(String part) {
-        if (part.equals(LIB)) {
-            return List.of(LIB);
-        }
-        return part.equals(CORE) ? List.of(CORE, LIB) : List.of(part, CORE, LIB);
+        return part.equals(CORE) ? List.of(CORE) : List.of(part, CORE);
     }
 
     private static boolean isDefined(JSONObject english, String key) {

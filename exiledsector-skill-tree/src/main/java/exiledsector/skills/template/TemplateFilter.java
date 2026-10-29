@@ -1,7 +1,7 @@
 package exiledsector.skills.template;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.skills.ShipHullSizes;
+import exiledsector.skills.ShipHullSizes;
 
 import java.util.ArrayList;
 import java.util.Collection;

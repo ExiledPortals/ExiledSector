@@ -4,7 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 
 final class ShaftEncounterDialog extends FleetInteractionDialogPluginImpl {
 

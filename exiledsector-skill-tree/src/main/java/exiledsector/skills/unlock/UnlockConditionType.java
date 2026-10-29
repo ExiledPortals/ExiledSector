@@ -2,7 +2,7 @@ package exiledsector.skills.unlock;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.compat.AbyssSingularity;
-import exiledlib.compat.LostSectorCompat;
+import exiledsector.compat.LostSectorCompat;
 import exiledsector.compat.LostSectorUnlocks;
 import exiledsector.compat.NightcrossCompat;
 import exiledsector.compat.NightcrossUnlocks;

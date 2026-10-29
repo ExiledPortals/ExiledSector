@@ -4,7 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.impl.campaign.terrain.HyperspaceAutomaton;
 import com.fs.starfarer.api.impl.campaign.terrain.HyperspaceTerrainPlugin.CellStateTracker;
-import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.GlScope;
 import org.apache.log4j.Logger;

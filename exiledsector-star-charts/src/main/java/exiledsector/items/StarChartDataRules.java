@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledlib.ModCsv;
+import exiledsector.ModCsv;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.TierRange;
 import exiledsector.modifiers.ValueScaling;

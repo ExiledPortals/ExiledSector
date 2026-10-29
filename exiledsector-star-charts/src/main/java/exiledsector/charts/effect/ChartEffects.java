@@ -6,7 +6,7 @@ import exiledsector.charts.loot.ChartLootTotals;
 import exiledsector.items.ItemEffects;
 import exiledsector.items.ItemType;
 import exiledsector.items.StarChart;
-import exiledlib.modifiers.ModifierEffect;
+import exiledsector.modifiers.ModifierEffect;
 import exiledsector.modifiers.ModifierEffects;
 
 public final class ChartEffects implements ModifierEffects {

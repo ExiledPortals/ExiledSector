@@ -1,7 +1,6 @@
 package exiledsector.compat;
 
 import com.fs.starfarer.api.Global;
-import exiledlib.compat.CompatTarget;
 
 import java.util.ArrayList;
 import java.util.List;

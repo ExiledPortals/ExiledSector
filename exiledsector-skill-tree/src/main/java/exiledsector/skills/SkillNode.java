@@ -1,13 +1,10 @@
 package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.i18n.Style;
-import exiledlib.i18n.StyledText;
-import exiledlib.i18n.Translation;
-import exiledlib.skills.DescriptionLine;
-import exiledlib.skills.ShipHullSizes;
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.weapon.WeaponEffectTooltipAggregator;
+import exiledsector.i18n.Style;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
+import exiledsector.skills.skilleffect.weapon.WeaponEffectTooltipAggregator;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.skills.layout.SkillNodeDecoration;
 import exiledsector.skills.layout.SkillTreeObject;

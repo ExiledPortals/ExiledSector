@@ -2,7 +2,7 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.persistence.ShipSkillDataManager;
 import lunalib.lunaRefit.BaseRefitButton;
 import lunalib.lunaSettings.LunaSettings;

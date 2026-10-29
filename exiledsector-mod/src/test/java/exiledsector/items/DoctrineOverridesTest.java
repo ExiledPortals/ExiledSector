@@ -2,10 +2,10 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.MockSector;
-import exiledlib.skills.ShipFacts;
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.SkillEffect;
+import exiledsector.MockSector;
+import exiledsector.skills.ShipFacts;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.effects.DoctrineRevertConflicts;
 import exiledsector.effects.DoctrineRevertRelease;
 import exiledsector.skills.AllocatedNode;

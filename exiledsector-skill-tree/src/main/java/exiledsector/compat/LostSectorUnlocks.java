@@ -6,7 +6,6 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.listeners.CurrentLocationChangedListener;
-import exiledlib.compat.CompatTarget;
 import exiledsector.skills.unlock.GateTriggers;
 import exiledsector.skills.unlock.UnlockConditionType;
 import org.apache.log4j.Logger;

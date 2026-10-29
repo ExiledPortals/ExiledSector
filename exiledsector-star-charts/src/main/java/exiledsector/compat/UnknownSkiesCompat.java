@@ -3,7 +3,6 @@ package exiledsector.compat;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.StarAge;
-import exiledlib.compat.CompatTarget;
 import lunalib.lunaSettings.LunaSettings;
 import org.apache.log4j.Logger;
 import org.magiclib.util.MagicSettings;

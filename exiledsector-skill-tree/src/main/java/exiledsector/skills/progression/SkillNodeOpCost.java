@@ -2,7 +2,7 @@ package exiledsector.skills.progression;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
-import exiledlib.ModSettings;
+import exiledsector.ModSettings;
 
 public final class SkillNodeOpCost {
 

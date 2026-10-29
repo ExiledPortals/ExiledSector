@@ -5,7 +5,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.items.ItemData;
 import org.lazywizard.console.Console;
 import org.mockito.ArgumentCaptor;

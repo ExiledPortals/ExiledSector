@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledlib.skills.skilleffect.EffectAliases;
+import exiledsector.skills.skilleffect.EffectAliases;
 import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONArray;
 import org.json.JSONObject;

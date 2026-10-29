@@ -4,7 +4,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.combat.StatBonus;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.generation.ChartGenContext;

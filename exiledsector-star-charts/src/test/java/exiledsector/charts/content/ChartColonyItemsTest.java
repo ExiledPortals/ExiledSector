@@ -1,6 +1,6 @@
 package exiledsector.charts.content;
 
-import exiledlib.ProjectFiles;
+import exiledsector.ProjectFiles;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.generation.ChartTiers;
 import org.json.JSONArray;
@@ -76,7 +76,7 @@ class ChartColonyItemsTest {
         assertTrue(firstTier > 1);
         assertEquals(0f, ChartTiers.colonyItemChance(firstTier - 1));
         assertTrue(ChartTiers.colonyItemChance(ChartTiers.HIGHEST_TIER) > ChartTiers.colonyItemChance(firstTier));
-        String chartPools = Files.readString(exiledlib.ProjectFiles.projectRoot().resolve("data/config/exiledSector/star_charts.csv"),
+        String chartPools = Files.readString(exiledsector.ProjectFiles.projectRoot().resolve("data/config/exiledSector/star_charts.csv"),
                 StandardCharsets.UTF_8);
         int pooled = 0;
         for (String line : chartPools.split("\n")) {

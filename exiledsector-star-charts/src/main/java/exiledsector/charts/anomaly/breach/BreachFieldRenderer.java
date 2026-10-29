@@ -2,7 +2,7 @@ package exiledsector.charts.anomaly.breach;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.belt.AuroraBeltRenderer;
 import exiledsector.ui.belt.RadialBand;
 import exiledsector.ui.util.GlScope;

@@ -1,7 +1,7 @@
 package exiledsector.tools;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.i18n.StyledText;
+import exiledsector.i18n.StyledText;
 import exiledsector.skills.VanillaHullModLines;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

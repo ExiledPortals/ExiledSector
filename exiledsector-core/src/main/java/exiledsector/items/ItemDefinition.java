@@ -1,11 +1,11 @@
 package exiledsector.items;
 
-import exiledlib.Seeds;
+import exiledsector.Seeds;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
-import exiledlib.i18n.StyledText;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 import org.apache.log4j.Logger;
 import org.json.JSONObject;
 

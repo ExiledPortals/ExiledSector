@@ -7,7 +7,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;

@@ -2,7 +2,7 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.items.Item;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;

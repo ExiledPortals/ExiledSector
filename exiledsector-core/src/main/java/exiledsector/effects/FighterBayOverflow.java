@@ -7,8 +7,8 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.FighterWingSpecAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledlib.i18n.I18n;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.Translation;
 import exiledsector.ui.CampaignMessages;
 
 import java.util.ArrayList;

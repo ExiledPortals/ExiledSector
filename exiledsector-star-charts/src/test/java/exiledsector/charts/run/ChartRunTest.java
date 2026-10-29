@@ -4,7 +4,7 @@ import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystem
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartBossType;
 import exiledsector.charts.content.ChartContent;

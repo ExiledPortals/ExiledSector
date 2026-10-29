@@ -39,12 +39,6 @@
         </dependency>
         <dependency>
             <groupId>starsector.mods.exiledsector</groupId>
-            <artifactId>exiled-lib</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>starsector.mods.exiledsector</groupId>
             <artifactId>exiledsector-core</artifactId>
             <version>${project.version}</version>
             <type>test-jar</type>

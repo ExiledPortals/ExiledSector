@@ -1,7 +1,7 @@
 package exiledsector.charts.anomaly.heist;
 
-import exiledlib.i18n.I18n;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.Translation;
 
 import java.util.ArrayList;
 import java.util.List;

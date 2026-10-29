@@ -3,6 +3,7 @@ package exiledsector;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
+import exiledsector.motes.MoteKind;
 import exiledsector.skills.ShipSkillData;
 import org.junit.jupiter.api.Test;
 
@@ -52,5 +53,15 @@ class ShipSkillDataSaveAliasTest {
         assertTrue(olderXml.contains(ShipSkillData.class.getName()), olderXml);
         assertEquals(1, loaded.get("ship-a").getLevel());
         assertEquals(1, loaded.get("ship-a").getBankedFreeAllocations());
+    }
+
+    @Test
+    void classesSavedUnderTheRetiredLibraryPackageLoadAndResaveUnderTheirOwnPackage() {
+        String retiredName = ExiledSectorModPlugin.RETIRED_LIBRARY_PACKAGE + ".motes.MoteKind";
+
+        Object loaded = xstream(true).fromXML("<" + retiredName + ">STARDUST</" + retiredName + ">");
+
+        assertEquals(MoteKind.STARDUST, loaded);
+        assertTrue(xstream(true).toXML(loaded).contains(MoteKind.class.getName()));
     }
 }

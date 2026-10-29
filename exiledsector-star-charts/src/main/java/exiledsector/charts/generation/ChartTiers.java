@@ -3,7 +3,7 @@ package exiledsector.charts.generation;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.data.CsvRows;
-import exiledlib.ModCsv;
+import exiledsector.ModCsv;
 import exiledsector.loot.FleetLevelRange;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;

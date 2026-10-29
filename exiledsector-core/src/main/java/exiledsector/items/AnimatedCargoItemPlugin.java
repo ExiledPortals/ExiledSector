@@ -1,7 +1,7 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.impl.items.BaseSpecialItemPlugin;
-import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.cargo.CargoIconAnimation;
 import exiledsector.ui.cargo.CargoIconFx;
 import exiledsector.ui.cargo.CargoIconLook;

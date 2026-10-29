@@ -1,9 +1,9 @@
 package exiledsector.items;
 
-import exiledlib.i18n.Style;
-import exiledlib.i18n.StyledText;
-import exiledlib.modifiers.ModifierEffect;
-import exiledlib.skills.skilleffect.SkillEffect;
+import exiledsector.i18n.Style;
+import exiledsector.i18n.StyledText;
+import exiledsector.modifiers.ModifierEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.items.ItemDataIntegrity.Severity;
 import exiledsector.items.ItemDataIntegrity.Violation;
 import exiledsector.modifiers.ModifierEffects;

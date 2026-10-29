@@ -1,7 +1,7 @@
 package exiledsector.ui;
 
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledlib.skills.skilleffect.render.Fade;
+import exiledsector.skills.skilleffect.render.Fade;
 
 public class CanvasCamera {
 

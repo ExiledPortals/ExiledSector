@@ -1,7 +1,5 @@
 package exiledsector.compat;
 
-import exiledlib.compat.CompatTarget;
-
 import java.util.List;
 
 public final class FoilerCompat {

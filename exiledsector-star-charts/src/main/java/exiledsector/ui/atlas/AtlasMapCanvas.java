@@ -1,7 +1,7 @@
 package exiledsector.ui.atlas;
 
 import com.fs.starfarer.api.util.Misc;
-import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.layout.sketch.ChartSketchPalette;
 import exiledsector.charts.layout.sketch.ChartSystemSketch;

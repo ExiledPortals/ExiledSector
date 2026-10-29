@@ -7,7 +7,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.FleetTypes;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartAnomalyFleets;
 import exiledsector.charts.generation.ChartGenContext;

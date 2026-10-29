@@ -3,8 +3,8 @@ package exiledsector.items;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
-import exiledlib.i18n.Translation;
-import exiledlib.skills.ShipHullSizes;
+import exiledsector.i18n.Translation;
+import exiledsector.skills.ShipHullSizes;
 
 import java.awt.Color;
 import java.util.List;

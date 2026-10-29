@@ -1,6 +1,6 @@
 package exiledsector.charts.anomaly.forge;
 
-import exiledlib.ProjectFiles;
+import exiledsector.ProjectFiles;
 import exiledsector.items.ForgeOperation;
 import exiledsector.items.ItemType;
 import org.json.CDL;

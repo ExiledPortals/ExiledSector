@@ -1,9 +1,9 @@
 package exiledsector.ui;
 
-import exiledlib.ModSettingsListener;
+import exiledsector.ModSettingsListener;
 import exiledsector.effects.ModuleShareSetting;
 import exiledsector.effects.NpcBonusScale;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.items.AnchorJanusGate;
 import exiledsector.items.UniqueSubroutinesSetting;
 import exiledsector.skills.SkillTreeSetting;

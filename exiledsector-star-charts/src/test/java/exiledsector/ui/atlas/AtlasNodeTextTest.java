@@ -1,7 +1,7 @@
 package exiledsector.ui.atlas;
 
-import exiledlib.i18n.Style;
-import exiledlib.i18n.StyledText;
+import exiledsector.i18n.Style;
+import exiledsector.i18n.StyledText;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.relay.RelayChain;
 import exiledsector.charts.anomaly.relay.RelayNetwork;

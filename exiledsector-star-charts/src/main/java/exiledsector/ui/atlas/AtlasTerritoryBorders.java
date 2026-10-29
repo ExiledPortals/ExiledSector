@@ -1,7 +1,7 @@
 package exiledsector.ui.atlas;
 
-import exiledlib.i18n.I18n;
-import exiledlib.skills.skilleffect.render.Fade;
+import exiledsector.i18n.I18n;
+import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.GlScope;

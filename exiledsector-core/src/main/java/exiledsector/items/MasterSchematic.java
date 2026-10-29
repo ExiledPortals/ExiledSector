@@ -3,7 +3,7 @@ package exiledsector.items;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipSkillData;
 
 import java.awt.Color;

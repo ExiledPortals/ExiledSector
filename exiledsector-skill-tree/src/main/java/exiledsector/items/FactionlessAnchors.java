@@ -1,7 +1,7 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledlib.ModCsv;
+import exiledsector.ModCsv;
 import exiledsector.compat.NexerelinCompat;
 import exiledsector.skills.npc.NpcFactionVolumes;
 import org.apache.log4j.Logger;

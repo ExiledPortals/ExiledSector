@@ -1,7 +1,7 @@
 package exiledsector.ui.chart;
 
 import exiledsector.charts.run.ChartRunActions.OpenResult;
-import exiledlib.i18n.RealCatalogue;
+import exiledsector.i18n.RealCatalogue;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasCatalystUse;

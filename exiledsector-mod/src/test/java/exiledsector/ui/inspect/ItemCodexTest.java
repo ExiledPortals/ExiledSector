@@ -1,6 +1,6 @@
 package exiledsector.ui.inspect;
 
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.modifiers.ModifierSlot;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;

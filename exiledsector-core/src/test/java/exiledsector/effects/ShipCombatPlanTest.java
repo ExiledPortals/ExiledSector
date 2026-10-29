@@ -3,8 +3,8 @@ package exiledsector.effects;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.StatBonus;
-import exiledlib.skills.CombatGate;
-import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
+import exiledsector.skills.CombatGate;
+import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

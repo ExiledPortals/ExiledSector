@@ -2,7 +2,7 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.skills.template.TemplateNames;
 import exiledsector.ui.util.BorderedPanel;

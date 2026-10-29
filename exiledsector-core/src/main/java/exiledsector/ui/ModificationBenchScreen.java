@@ -5,7 +5,7 @@ import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
-import exiledlib.skills.skilleffect.render.Fade;
+import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.items.SocketCustody;
 import exiledsector.ui.socket.BenchMode;
 import exiledsector.ui.socket.BenchModeSupport;

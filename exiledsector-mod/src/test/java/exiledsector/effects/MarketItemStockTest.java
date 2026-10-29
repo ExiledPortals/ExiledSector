@@ -11,7 +11,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
 import com.fs.starfarer.api.impl.campaign.submarkets.BaseSubmarketPlugin;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.compat.RandomAssortmentCompat;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;

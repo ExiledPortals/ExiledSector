@@ -1,7 +1,7 @@
 package exiledsector.items;
 
-import exiledlib.ProjectFiles;
-import exiledlib.skills.skilleffect.EffectAliases;
+import exiledsector.ProjectFiles;
+import exiledsector.skills.skilleffect.EffectAliases;
 import exiledsector.modifiers.ModifierSlot;
 import org.json.CDL;
 import org.json.JSONArray;

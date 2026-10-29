@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledlib.Seeds;
+import exiledsector.Seeds;
 import exiledsector.modifiers.ModifierLine;
 
 import java.util.ArrayList;

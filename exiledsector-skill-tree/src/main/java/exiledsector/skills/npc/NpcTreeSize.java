@@ -1,6 +1,6 @@
 package exiledsector.skills.npc;
 
-import exiledlib.ModSettings;
+import exiledsector.ModSettings;
 
 import java.util.List;
 import java.util.Random;

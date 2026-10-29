@@ -11,7 +11,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetAssignment;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.FakeChartContentEngine;

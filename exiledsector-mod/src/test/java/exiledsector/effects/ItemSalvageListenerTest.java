@@ -8,7 +8,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.util.Misc;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.charts.loot.StarChartLootSource;
 import exiledsector.charts.loot.DropType;
 import exiledsector.loot.LootModifiers;

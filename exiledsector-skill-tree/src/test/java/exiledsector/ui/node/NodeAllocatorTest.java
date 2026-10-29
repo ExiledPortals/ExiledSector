@@ -12,7 +12,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.VariantSource;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.effects.OpReserveParity;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.persistence.ShipSkillDataManager;

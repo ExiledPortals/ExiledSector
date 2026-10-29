@@ -1,6 +1,6 @@
 package exiledsector.ui.node;
 
-import exiledlib.skills.skilleffect.render.Fade;
+import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import org.lwjgl.util.vector.Vector2f;

@@ -10,7 +10,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.skills.PhantomHullModStatus;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

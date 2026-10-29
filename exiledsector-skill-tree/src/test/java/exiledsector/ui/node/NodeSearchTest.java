@@ -1,10 +1,10 @@
 package exiledsector.ui.node;
 
-import exiledlib.i18n.Catalogue;
-import exiledlib.i18n.I18n;
-import exiledlib.i18n.RealCatalogue;
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
+import exiledsector.i18n.Catalogue;
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.RealCatalogue;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;

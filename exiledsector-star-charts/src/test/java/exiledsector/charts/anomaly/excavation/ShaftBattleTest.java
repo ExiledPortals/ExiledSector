@@ -15,7 +15,7 @@ import com.fs.starfarer.api.fleet.FleetGoal;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.mission.FleetSide;
 import com.fs.starfarer.api.mission.MissionDefinitionAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.charts.run.ChartCampaignPlugin;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

@@ -2,7 +2,7 @@ package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
-import exiledlib.i18n.StyledText;
+import exiledsector.i18n.StyledText;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.CraftingWard;
 import exiledsector.items.Item;

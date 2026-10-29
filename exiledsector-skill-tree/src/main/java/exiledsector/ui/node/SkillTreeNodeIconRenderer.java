@@ -1,6 +1,6 @@
 package exiledsector.ui.node;
 
-import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;
 import exiledsector.ui.util.SpriteDraw;

@@ -1,8 +1,8 @@
 package exiledsector.ui;
 
-import exiledlib.ProjectFiles;
-import exiledlib.i18n.LocaleChain;
-import exiledlib.i18n.RealCatalogue;
+import exiledsector.ProjectFiles;
+import exiledsector.i18n.LocaleChain;
+import exiledsector.i18n.RealCatalogue;
 import org.junit.jupiter.api.Test;
 import org.lazywizard.lazylib.ui.LazyFont;
 import org.mockito.MockedStatic;

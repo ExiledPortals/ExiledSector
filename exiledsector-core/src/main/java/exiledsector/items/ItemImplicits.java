@@ -1,7 +1,7 @@
 package exiledsector.items;
 
-import exiledlib.HostMod;
-import exiledlib.ModCsv;
+import exiledsector.ExiledSector;
+import exiledsector.ModCsv;
 import exiledsector.data.CsvRows;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
@@ -36,11 +36,11 @@ public final class ItemImplicits {
     }
 
     public static String corruptionDataPath() {
-        return HostMod.configPath(CORRUPTION_DATA_FILE);
+        return ExiledSector.configPath(CORRUPTION_DATA_FILE);
     }
 
     public static String dataPath() {
-        return HostMod.configPath(DATA_FILE);
+        return ExiledSector.configPath(DATA_FILE);
     }
 
     public static void load() {

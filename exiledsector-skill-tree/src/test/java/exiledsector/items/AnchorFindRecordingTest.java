@@ -9,7 +9,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.compat.NightcrossCompat;
 import exiledsector.compat.NightcrossUnlocks;
 import exiledsector.effects.SkillTreeLootSource;

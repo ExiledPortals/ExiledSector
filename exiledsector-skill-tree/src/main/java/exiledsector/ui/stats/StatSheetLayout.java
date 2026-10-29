@@ -1,6 +1,6 @@
 package exiledsector.ui.stats;
 
-import exiledlib.i18n.StyledText;
+import exiledsector.i18n.StyledText;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.stats.ShipStatSheet.Breakdown;
 import exiledsector.ui.stats.ShipStatSheet.Cell;

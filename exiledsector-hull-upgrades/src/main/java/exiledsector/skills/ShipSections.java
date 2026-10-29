@@ -2,7 +2,6 @@ package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import exiledlib.skills.SkillTypeEffect;
 import exiledsector.items.HullItem;
 import exiledsector.skills.tags.NodeRequirements;
 import exiledsector.skills.tags.ShipProfile;

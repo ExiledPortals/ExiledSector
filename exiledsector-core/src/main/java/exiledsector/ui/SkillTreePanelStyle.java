@@ -2,11 +2,11 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.util.Misc;
-import exiledlib.i18n.Style;
-import exiledlib.i18n.StyledText;
-import exiledlib.i18n.Translation;
-import exiledlib.skills.DescriptionLine;
-import exiledlib.skills.skilleffect.render.FallbackSupport;
+import exiledsector.i18n.Style;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
+import exiledsector.skills.DescriptionLine;
+import exiledsector.skills.skilleffect.render.FallbackSupport;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.ItalicTextLabel;
 import exiledsector.ui.util.TextLabel;

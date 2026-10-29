@@ -1,6 +1,6 @@
 package exiledsector.modifiers;
 
-import exiledlib.skills.ShipHullSizes;
+import exiledsector.skills.ShipHullSizes;
 
 import java.util.List;
 

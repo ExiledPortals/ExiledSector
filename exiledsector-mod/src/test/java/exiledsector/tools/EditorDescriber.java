@@ -1,18 +1,18 @@
 package exiledsector.tools;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.i18n.Catalogue;
-import exiledlib.i18n.I18n;
-import exiledlib.i18n.LocaleChain;
-import exiledlib.i18n.StyledText;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Catalogue;
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.LocaleChain;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 import exiledsector.charts.effect.ChartEffects;
 import exiledsector.items.ItemEffects;
 import exiledsector.items.ItemType;
 import exiledsector.items.RolledEffect;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
-import exiledlib.skills.DescriptionLine;
+import exiledsector.skills.DescriptionLine;
 import exiledsector.skills.NodeDescription;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;

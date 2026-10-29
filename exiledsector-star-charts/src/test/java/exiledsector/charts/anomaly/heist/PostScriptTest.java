@@ -8,7 +8,7 @@ import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken.VisibilityLevel;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.FakeChartContentEngine;

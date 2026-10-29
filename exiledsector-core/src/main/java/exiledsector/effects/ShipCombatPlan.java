@@ -2,7 +2,7 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.ShipAPI;
-import exiledlib.skills.CombatGate;
+import exiledsector.skills.CombatGate;
 
 import java.util.ArrayList;
 import java.util.Iterator;

@@ -1,7 +1,7 @@
 package exiledsector.ui.util;
 
-import exiledlib.i18n.StyledText;
-import exiledlib.skills.DescriptionLine;
+import exiledsector.i18n.StyledText;
+import exiledsector.skills.DescriptionLine;
 import exiledsector.ui.SkillTreePanelStyle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

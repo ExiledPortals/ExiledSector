@@ -12,7 +12,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl.FIDConfig;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -1,7 +1,7 @@
 package exiledsector.charts.layout.abyss;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
-import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.compat.RandomAssortmentCompat;
 
 import java.util.List;

@@ -5,7 +5,7 @@ import com.fs.starfarer.api.impl.campaign.procgen.DropGroupRow;
 import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.data.CsvRows;
-import exiledlib.ModCsv;
+import exiledsector.ModCsv;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;

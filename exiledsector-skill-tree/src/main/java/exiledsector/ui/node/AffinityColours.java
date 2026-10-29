@@ -1,7 +1,7 @@
 package exiledsector.ui.node;
 
-import exiledlib.skills.skilleffect.SkillEffect;
-import exiledlib.skills.skilleffect.special.SpecialSkillEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.special.SpecialSkillEffect;
 
 import java.awt.Color;
 

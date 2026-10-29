@@ -12,10 +12,10 @@ import exiledsector.charts.anomaly.forge.DerelictForge;
 import exiledsector.charts.anomaly.heist.ListeningPost;
 import exiledsector.charts.anomaly.relay.RelayNetwork;
 import exiledsector.charts.anomaly.storm.StormFront;
-import exiledlib.i18n.Message;
-import exiledlib.i18n.StyledText;
-import exiledlib.i18n.Translation;
-import exiledlib.modifiers.ModifierEffect;
+import exiledsector.i18n.Message;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
+import exiledsector.modifiers.ModifierEffect;
 import exiledsector.charts.loot.DropType;
 
 public enum ChartEffect implements ModifierEffect {

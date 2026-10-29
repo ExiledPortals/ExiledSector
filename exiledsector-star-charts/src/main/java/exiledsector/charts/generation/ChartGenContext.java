@@ -13,7 +13,7 @@ import exiledsector.items.ItemChances;
 import exiledsector.items.ItemKind;
 import exiledsector.items.SlottedRoll;
 import exiledsector.items.StarChart;
-import exiledlib.modifiers.ModifierEffect;
+import exiledsector.modifiers.ModifierEffect;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ScaleContext;
 import org.apache.log4j.Logger;

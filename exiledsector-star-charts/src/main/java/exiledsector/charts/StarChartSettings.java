@@ -1,7 +1,7 @@
 package exiledsector.charts;
 
-import exiledlib.ModSettings;
-import exiledlib.i18n.Translation;
+import exiledsector.ModSettings;
+import exiledsector.i18n.Translation;
 import exiledsector.domain.DomainSwitch;
 
 public final class StarChartSettings {

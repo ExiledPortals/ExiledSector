@@ -10,7 +10,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageGenFromSeed;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageGenFromSeed.SDMParams;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageGenFromSeed.SalvageDefenderModificationPlugin;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.FakeChartContentEngine;
 import org.junit.jupiter.api.AfterEach;

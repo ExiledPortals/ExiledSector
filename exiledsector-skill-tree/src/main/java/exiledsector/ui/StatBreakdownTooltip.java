@@ -1,6 +1,6 @@
 package exiledsector.ui;
 
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.ui.stats.ShipStatSheet;
 import exiledsector.ui.util.TextLabel;
 import org.lazywizard.lazylib.ui.LazyFont;

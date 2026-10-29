@@ -1,8 +1,8 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.MockSector;
-import exiledlib.skills.SkillTypeEffect;
+import exiledsector.MockSector;
+import exiledsector.skills.SkillTypeEffect;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocatedSkillEffects;
 import exiledsector.skills.ShipSkillData;

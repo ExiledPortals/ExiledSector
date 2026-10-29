@@ -1,6 +1,6 @@
 package exiledsector.ui.cargo;
 
-import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
 
 import java.awt.Color;

@@ -11,7 +11,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.ChartFactions;
 import exiledsector.charts.ChartIds;

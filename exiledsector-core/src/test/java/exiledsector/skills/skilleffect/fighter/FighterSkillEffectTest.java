@@ -1,0 +1,171 @@
+package exiledsector.skills.skilleffect.fighter;
+
+import com.fs.starfarer.api.combat.ArmorGridAPI;
+import com.fs.starfarer.api.combat.FighterWingAPI;
+import com.fs.starfarer.api.combat.MutableShipStatsAPI;
+import com.fs.starfarer.api.combat.MutableStat;
+import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.StatBonus;
+import com.fs.starfarer.api.loading.WingRole;
+import com.fs.starfarer.api.util.DynamicStatsAPI;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+class FighterSkillEffectTest {
+
+    private static final float EPSILON = 1e-4f;
+
+    private MutableShipStatsAPI stats;
+
+    private DynamicStatsAPI dynamic;
+
+    @BeforeEach
+    void setUp() {
+        stats = mock(MutableShipStatsAPI.class);
+        dynamic = mock(DynamicStatsAPI.class);
+        when(stats.getDynamic()).thenReturn(dynamic);
+    }
+
+    private StatBonus realDynamicMod(String key) {
+        StatBonus bonus = new StatBonus();
+        when(dynamic.getMod(key)).thenReturn(bonus);
+        return bonus;
+    }
+
+    @Test
+    void replacementRateMultDividesBothDecayAndRecoverySoTheRateDropsSlower() {
+        MutableStat decay = new MutableStat(1f);
+        MutableStat recovery = new MutableStat(1f);
+        when(dynamic.getStat("replacement_rate_decrease_mult")).thenReturn(decay);
+        when(dynamic.getStat("replacement_rate_increase_mult")).thenReturn(recovery);
+
+        FighterSkillEffect.FIGHTER_REPLACEMENT_RATE_MULT.apply(stats, "mod_id", 25f);
+
+        assertEquals(0.8f, decay.getModifiedValue(), EPSILON);
+        assertEquals(0.8f, recovery.getModifiedValue(), EPSILON);
+        assertFalse(FighterSkillEffect.FIGHTER_REPLACEMENT_RATE_MULT.supportsTemporaryGating());
+    }
+
+    @Test
+    void replacementRateMultStaysFiniteAtAFullReduction() {
+        MutableStat decay = new MutableStat(1f);
+        MutableStat recovery = new MutableStat(1f);
+        when(dynamic.getStat("replacement_rate_decrease_mult")).thenReturn(decay);
+        when(dynamic.getStat("replacement_rate_increase_mult")).thenReturn(recovery);
+
+        FighterSkillEffect.FIGHTER_REPLACEMENT_RATE_MULT.apply(stats, "mod_id", -100f);
+
+        assertTrue(Float.isFinite(decay.getModifiedValue()));
+        assertTrue(Float.isFinite(recovery.getModifiedValue()));
+    }
+
+    @Test
+    void relaunchTimeAddsAFractionOfTheBaseRefitTime() {
+        StatBonus extraRearm = realDynamicMod("fighter_rearm_time_extra_fraction_of_base_refit_time_mod");
+
+        FighterSkillEffect.FIGHTER_RELAUNCH_TIME_FLAT.apply(stats, "mod_id", 50f);
+
+        assertEquals(0.5f, extraRearm.getFlatBonus(), EPSILON);
+        assertTrue(FighterSkillEffect.FIGHTER_RELAUNCH_TIME_FLAT.lowerIsBetter());
+        assertTrue(FighterSkillEffect.FIGHTER_RELAUNCH_TIME_FLAT.supportsTemporaryGating());
+    }
+
+    private static ShipAPI fighter(WingRole role, boolean hasWing) {
+        ShipAPI fighter = mock(ShipAPI.class);
+        MutableShipStatsAPI fighterStats = mock(MutableShipStatsAPI.class);
+        when(fighter.getMutableStats()).thenReturn(fighterStats);
+        when(fighterStats.getMaxSpeed()).thenReturn(new MutableStat(100f));
+        if (hasWing) {
+            FighterWingAPI wing = mock(FighterWingAPI.class);
+            when(wing.getRole()).thenReturn(role);
+            when(fighter.getWing()).thenReturn(wing);
+        }
+        return fighter;
+    }
+
+    private static float topSpeedPercentAfter(FighterSkillEffect effect, ShipAPI fighter) {
+        effect.applyToFighterSpawnedByShip(fighter, mock(ShipAPI.class), "mod_id", 10f);
+        return fighter.getMutableStats().getMaxSpeed().getPercentMod();
+    }
+
+    @Test
+    void roleEffectsOnlyReachFightersOfThatRole() {
+        assertEquals(10f, topSpeedPercentAfter(FighterSkillEffect.INTERCEPTOR_ROLE_TOP_SPEED_PERCENT,
+                fighter(WingRole.INTERCEPTOR, true)), EPSILON);
+        assertEquals(0f, topSpeedPercentAfter(FighterSkillEffect.INTERCEPTOR_ROLE_TOP_SPEED_PERCENT,
+                fighter(WingRole.BOMBER, true)), EPSILON);
+    }
+
+    @Test
+    void assaultWingsAndWinglessFightersCountAsTheFighterRole() {
+        for (ShipAPI fighter : List.of(fighter(WingRole.ASSAULT, true), fighter(null, true), fighter(null, false))) {
+            assertEquals(10f, topSpeedPercentAfter(FighterSkillEffect.FIGHTER_ROLE_TOP_SPEED_PERCENT, fighter), EPSILON);
+        }
+        assertEquals(0f, topSpeedPercentAfter(FighterSkillEffect.SUPPORT_ROLE_TOP_SPEED_PERCENT,
+                fighter(WingRole.ASSAULT, true)), EPSILON);
+    }
+
+    @Test
+    void onlyTheParentShipStatEffectsCanBeGatedTemporarily() {
+        assertTrue(FighterSkillEffect.FIGHTER_REFIT_TIME_MULT.supportsTemporaryGating());
+        assertFalse(FighterSkillEffect.FIGHTER_CREW_LOSS_PERCENT.supportsTemporaryGating());
+        assertFalse(FighterSkillEffect.FIGHTER_ROLE_TOP_SPEED_PERCENT.supportsTemporaryGating());
+    }
+
+    private static ShipAPI armoredFighter(WingRole role, float[][] cells, StatBonus armor) {
+        ShipAPI fighter = fighter(role, true);
+        when(fighter.getMutableStats().getArmorBonus()).thenReturn(armor);
+        ShipHullSpecAPI hullSpec = mock(ShipHullSpecAPI.class);
+        when(hullSpec.getArmorRating()).thenReturn(150f);
+        when(fighter.getHullSpec()).thenReturn(hullSpec);
+        ArmorGridAPI grid = mock(ArmorGridAPI.class);
+        when(grid.getGrid()).thenReturn(cells);
+        when(grid.getArmorValue(anyInt(), anyInt())).thenAnswer(call -> cells[(int) call.getArgument(0)][(int) call.getArgument(1)]);
+        doAnswer(call -> {
+            cells[(int) call.getArgument(0)][(int) call.getArgument(1)] = call.getArgument(2);
+            return null;
+        }).when(grid).setArmorValue(anyInt(), anyInt(), anyFloat());
+        when(fighter.getArmorGrid()).thenReturn(grid);
+        return fighter;
+    }
+
+    @Test
+    void armorBonusScalesTheAlreadyBuiltArmorCellsBecauseTheGridReadsTheBonusOnlyOnce() {
+        float[][] cells = {{10f, 4f}, {0f, 10f}};
+        StatBonus armor = new StatBonus();
+        ShipAPI fighter = armoredFighter(WingRole.BOMBER, cells, armor);
+
+        FighterSkillEffect.FIGHTER_ARMOR_PERCENT.applyToFighterSpawnedByShip(fighter, mock(ShipAPI.class), "first", 20f);
+        FighterSkillEffect.BOMBER_ROLE_ARMOR_PERCENT.applyToFighterSpawnedByShip(fighter, mock(ShipAPI.class), "second", 30f);
+
+        assertEquals(50f, armor.getPercentMod(), EPSILON);
+        assertEquals(15f, cells[0][0], EPSILON);
+        assertEquals(6f, cells[0][1], EPSILON);
+        assertEquals(0f, cells[1][0], EPSILON);
+        assertEquals(15f, cells[1][1], EPSILON);
+    }
+
+    @Test
+    void armorCellsOfFightersOutsideTheRoleAreLeftAlone() {
+        float[][] cells = {{10f}};
+        StatBonus armor = new StatBonus();
+        ShipAPI fighter = armoredFighter(WingRole.INTERCEPTOR, cells, armor);
+
+        FighterSkillEffect.BOMBER_ROLE_ARMOR_PERCENT.applyToFighterSpawnedByShip(fighter, mock(ShipAPI.class), "mod_id", 30f);
+
+        assertEquals(0f, armor.getPercentMod(), EPSILON);
+        assertEquals(10f, cells[0][0], EPSILON);
+    }
+}

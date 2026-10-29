@@ -3,7 +3,7 @@ package exiledsector.ui.cargo;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloShapes;
 import exiledsector.ui.util.SpriteDraw;

@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledlib.ProjectFiles;
+import exiledsector.ProjectFiles;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;

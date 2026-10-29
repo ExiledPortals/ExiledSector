@@ -2,8 +2,8 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledlib.i18n.StyledText;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 import exiledsector.ui.VanillaText;
 
 import java.util.List;

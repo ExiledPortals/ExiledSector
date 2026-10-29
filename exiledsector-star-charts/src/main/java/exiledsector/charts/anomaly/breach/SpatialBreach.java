@@ -8,7 +8,7 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;

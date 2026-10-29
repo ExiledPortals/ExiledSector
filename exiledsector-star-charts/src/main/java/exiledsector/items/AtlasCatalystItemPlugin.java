@@ -3,7 +3,7 @@ package exiledsector.items;
 import com.fs.starfarer.api.campaign.CargoTransferHandlerAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.cargo.CargoIconLook;

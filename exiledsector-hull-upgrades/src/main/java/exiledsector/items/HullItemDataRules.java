@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledlib.ModCsv;
+import exiledsector.ModCsv;
 import org.json.JSONException;
 import org.json.JSONObject;
 

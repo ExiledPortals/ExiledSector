@@ -5,7 +5,7 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.modifiers.ModifierSlot;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;

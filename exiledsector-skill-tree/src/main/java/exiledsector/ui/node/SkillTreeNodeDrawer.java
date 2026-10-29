@@ -1,7 +1,7 @@
 package exiledsector.ui.node;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;

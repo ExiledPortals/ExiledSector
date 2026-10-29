@@ -2,9 +2,9 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledlib.i18n.StyledText;
-import exiledlib.i18n.Translation;
-import exiledlib.skills.ShipHullSizes;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
+import exiledsector.skills.ShipHullSizes;
 import exiledsector.skills.template.SkillTreeTemplate;
 import exiledsector.ui.util.GLDraw;
 import exiledsector.ui.util.HoloFrame;

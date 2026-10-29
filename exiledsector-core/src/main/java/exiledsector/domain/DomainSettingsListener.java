@@ -1,6 +1,6 @@
 package exiledsector.domain;
 
-import exiledlib.ModSettingsListener;
+import exiledsector.ModSettingsListener;
 import exiledsector.ExiledSector;
 
 public final class DomainSettingsListener extends ModSettingsListener {

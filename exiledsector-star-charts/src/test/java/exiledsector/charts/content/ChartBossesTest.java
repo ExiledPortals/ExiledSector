@@ -1,6 +1,6 @@
 package exiledsector.charts.content;
 
-import exiledlib.ProjectFiles;
+import exiledsector.ProjectFiles;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.content.ChartBosses.Definition;

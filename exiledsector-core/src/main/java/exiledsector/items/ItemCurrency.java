@@ -1,7 +1,6 @@
 package exiledsector.items;
 
-
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 
 import java.awt.Color;
 import java.util.Locale;

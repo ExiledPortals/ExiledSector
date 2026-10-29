@@ -14,7 +14,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.effect.ChartEffect;

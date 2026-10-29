@@ -2,10 +2,10 @@ package exiledsector.skills.loader;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.skills.HullSizeSkillEffect;
-import exiledlib.skills.ShipHullSizes;
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.SkillEffect;
+import exiledsector.skills.HullSizeSkillEffect;
+import exiledsector.skills.ShipHullSizes;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.CostItems;
 import exiledsector.skills.ModuleShareOverride;
 import exiledsector.skills.SkillItemCost;

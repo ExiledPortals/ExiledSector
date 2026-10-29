@@ -1,8 +1,8 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.FactionAPI;
-import exiledlib.MockSector;
-import exiledlib.ProjectFiles;
+import exiledsector.MockSector;
+import exiledsector.ProjectFiles;
 import exiledsector.ui.cargo.AnchorLook;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CargoIconLooks;

@@ -3,7 +3,7 @@ package exiledsector.ui.node;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledlib.i18n.Style;
+import exiledsector.i18n.Style;
 import exiledsector.skills.AllocationGate;
 import exiledsector.skills.ModuleShareExtent;
 import exiledsector.skills.NodeEligibility;

@@ -1,14 +1,14 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.MockSector;
-import exiledlib.skills.NpcBonusScaling;
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.SkillEffect;
-import exiledlib.skills.skilleffect.StatMode;
-import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
-import exiledlib.skills.skilleffect.logistics.LogisticsSkillEffect;
-import exiledlib.skills.skilleffect.onhit.OnHitSkillEffect;
+import exiledsector.MockSector;
+import exiledsector.skills.NpcBonusScaling;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.StatMode;
+import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
+import exiledsector.skills.skilleffect.logistics.LogisticsSkillEffect;
+import exiledsector.skills.skilleffect.onhit.OnHitSkillEffect;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;

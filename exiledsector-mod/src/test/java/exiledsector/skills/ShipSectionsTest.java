@@ -2,12 +2,9 @@ package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.skills.EffectContribution;
-import exiledlib.skills.EffectTotals;
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.SkillEffect;
-import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
-import exiledlib.skills.skilleffect.special.SpecialSkillEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
+import exiledsector.skills.skilleffect.special.SpecialSkillEffect;
 import exiledsector.items.HullItem;
 import exiledsector.items.HullUpgradeEffectSource;
 import exiledsector.items.ItemDefinitions;

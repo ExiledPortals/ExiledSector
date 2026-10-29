@@ -1,7 +1,7 @@
 package exiledsector.items;
 
-import exiledlib.i18n.Translation;
-import exiledlib.modifiers.ModifierEffect;
+import exiledsector.i18n.Translation;
+import exiledsector.modifiers.ModifierEffect;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;

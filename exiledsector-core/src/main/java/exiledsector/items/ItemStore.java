@@ -4,7 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
-import exiledlib.HostMod;
+import exiledsector.ExiledSector;
 import exiledsector.persistence.SaveData;
 import org.apache.log4j.Logger;
 
@@ -52,11 +52,11 @@ public final class ItemStore {
     }
 
     public static String dataKey() {
-        return HostMod.dataKey(DATA_KEY_NAME);
+        return ExiledSector.key(DATA_KEY_NAME);
     }
 
     public static String starChartDataKey() {
-        return HostMod.dataKey(STAR_CHART_DATA_KEY_NAME);
+        return ExiledSector.key(STAR_CHART_DATA_KEY_NAME);
     }
 
     public static void absorbStacksWith(StackAbsorber absorber) {

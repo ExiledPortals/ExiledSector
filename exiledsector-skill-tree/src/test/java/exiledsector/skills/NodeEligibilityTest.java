@@ -2,11 +2,9 @@ package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.skills.ShipFacts;
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.SkillEffect;
-import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
-import exiledlib.skills.skilleffect.shield.ShieldSkillEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
+import exiledsector.skills.skilleffect.shield.ShieldSkillEffect;
 import exiledsector.skills.npc.RealSkillData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

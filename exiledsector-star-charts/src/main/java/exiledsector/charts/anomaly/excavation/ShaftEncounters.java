@@ -6,7 +6,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.combat.BattleCreationContext;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl.BaseFIDDelegate;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl.FIDConfig;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 
 import java.util.function.Consumer;
 

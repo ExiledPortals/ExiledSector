@@ -4,7 +4,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillNode;

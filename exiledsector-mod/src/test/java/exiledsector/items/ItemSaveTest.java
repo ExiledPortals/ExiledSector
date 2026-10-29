@@ -3,7 +3,7 @@ package exiledsector.items;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.security.AnyTypePermission;
-import exiledlib.skills.skilleffect.EffectAliases;
+import exiledsector.skills.skilleffect.EffectAliases;
 import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONArray;
 import org.json.JSONObject;

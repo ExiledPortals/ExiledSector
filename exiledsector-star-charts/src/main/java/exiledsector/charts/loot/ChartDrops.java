@@ -13,7 +13,7 @@ import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.data.CsvRows;
-import exiledlib.ModCsv;
+import exiledsector.ModCsv;
 import exiledsector.items.ItemCurrencies;
 import exiledsector.items.ItemCurrency;
 import exiledsector.items.ItemData;

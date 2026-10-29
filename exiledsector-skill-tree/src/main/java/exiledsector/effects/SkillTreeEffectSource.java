@@ -13,11 +13,11 @@ import exiledsector.items.RadiusLineOrigin;
 import exiledsector.items.SubroutineOrigin;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.AllocatedSkillEffects;
-import exiledlib.skills.EffectContribution;
+import exiledsector.skills.EffectContribution;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillType;
-import exiledlib.skills.SkillTypeEffect;
+import exiledsector.skills.SkillTypeEffect;
 
 import java.util.ArrayList;
 import java.util.Collections;

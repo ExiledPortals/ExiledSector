@@ -1,7 +1,6 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import exiledlib.effects.RealVariantTags;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;

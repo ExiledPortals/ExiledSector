@@ -5,7 +5,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledlib.Seeds;
+import exiledsector.Seeds;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.ShipSkillData;

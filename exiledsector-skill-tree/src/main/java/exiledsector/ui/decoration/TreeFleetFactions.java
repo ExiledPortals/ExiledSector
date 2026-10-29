@@ -1,6 +1,6 @@
 package exiledsector.ui.decoration;
 
-import exiledlib.ModCsv;
+import exiledsector.ModCsv;
 import exiledsector.skills.npc.NpcFactionVolumes;
 import exiledsector.skills.tags.SkillTags;
 import org.apache.log4j.Logger;

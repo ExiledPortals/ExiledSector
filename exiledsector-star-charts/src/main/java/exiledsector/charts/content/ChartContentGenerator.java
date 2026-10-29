@@ -33,7 +33,7 @@ import exiledsector.charts.content.ChartContentPlan.PlannedStation;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.charts.layout.ChartLayoutGenerator;
 import exiledsector.charts.loot.ChartFleetLoot;
 import exiledsector.charts.loot.ChartVanillaLoot;

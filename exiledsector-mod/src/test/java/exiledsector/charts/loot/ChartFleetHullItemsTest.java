@@ -4,7 +4,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.charts.anomaly.relay.RelayKind;
 import exiledsector.charts.anomaly.relay.RelayStates;
 import exiledsector.charts.atlas.AtlasRunNode;

@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledlib.skills.SocketedItem;
+import exiledsector.skills.SocketedItem;
 import exiledsector.skills.ShipSections;
 
 public record HullItemOrigin(ShipSections.UnlockedSection unlocked) implements SocketedItem {

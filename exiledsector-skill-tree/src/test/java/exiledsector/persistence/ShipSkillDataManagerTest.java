@@ -1,6 +1,6 @@
 package exiledsector.persistence;
 
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.skills.ItemChargeLedger;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeRepairs;

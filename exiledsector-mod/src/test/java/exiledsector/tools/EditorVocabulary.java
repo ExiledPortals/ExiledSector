@@ -1,8 +1,8 @@
 package exiledsector.tools;
 
-import exiledlib.skills.skilleffect.SkillEffect;
-import exiledlib.skills.skilleffect.SkillEffectNames;
-import exiledlib.skills.skilleffect.StatMode;
+import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.SkillEffectNames;
+import exiledsector.skills.skilleffect.StatMode;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.items.DoctrineBehaviour;

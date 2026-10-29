@@ -1,11 +1,11 @@
 package exiledsector.skills.npc;
 
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.SkillEffect;
-import exiledlib.skills.skilleffect.fighter.FighterSkillEffect;
-import exiledlib.skills.skilleffect.movement.MovementSkillEffect;
-import exiledlib.skills.skilleffect.phase.PhaseSkillEffect;
-import exiledlib.skills.skilleffect.shipsystem.ShipSystemSkillEffect;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.fighter.FighterSkillEffect;
+import exiledsector.skills.skilleffect.movement.MovementSkillEffect;
+import exiledsector.skills.skilleffect.phase.PhaseSkillEffect;
+import exiledsector.skills.skilleffect.shipsystem.ShipSystemSkillEffect;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.tags.ShipProfile;
 

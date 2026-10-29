@@ -5,8 +5,6 @@ $modFolderName = "ExiledSector"
 $zipName = "ExiledSector.zip"
 $releaseDir = Join-Path $projectRoot "target\release"
 $stageDir = Join-Path $releaseDir $modFolderName
-$libraryFolderName = "ExiledLib"
-$libraryStageDir = Join-Path $releaseDir $libraryFolderName
 $zipPath = Join-Path $releaseDir $zipName
 
 . (Join-Path $projectRoot "build-common.ps1")
@@ -22,27 +20,6 @@ $version = Get-VersionString $modInfo.version
 $versionFileVersion = Get-VersionString $versionFile.modVersion
 if ($version -ne $versionFileVersion) {
     throw "Version mismatch: mod_info.json is $version but ExiledSector.version is $versionFileVersion."
-}
-$libraryMod = Join-Path $projectRoot $LibraryModFolder
-$libraryModInfo = Get-Content (Join-Path $libraryMod "mod_info.json") -Raw | ConvertFrom-Json
-$libraryVersionFile = Get-Content (Join-Path $libraryMod "ExiledLib.version") -Raw | ConvertFrom-Json
-$libraryVersion = Get-VersionString $libraryModInfo.version
-$libraryVersionFileVersion = Get-VersionString $libraryVersionFile.modVersion
-if ($libraryVersion -ne $libraryVersionFileVersion) {
-    throw "Version mismatch: Exiled Lib's mod_info.json is $libraryVersion but ExiledLib.version is $libraryVersionFileVersion."
-}
-$lastReleaseTag = git -C $projectRoot describe --tags --abbrev=0 --match "v*" 2>$null
-if ($LASTEXITCODE -eq 0 -and $lastReleaseTag) {
-    $libraryInfoAtTag = git -C $projectRoot show "${lastReleaseTag}:exiled-lib/mod/mod_info.json" 2>$null
-    if ($LASTEXITCODE -eq 0 -and $libraryInfoAtTag) {
-        $libraryVersionAtTag = Get-VersionString (($libraryInfoAtTag -join "`n") | ConvertFrom-Json).version
-        git -C $projectRoot diff --quiet $lastReleaseTag -- exiled-lib/src/main exiled-lib/mod 2>$null
-        $libraryChanged = $LASTEXITCODE -ne 0
-        if ($libraryChanged -and $libraryVersion -eq $libraryVersionAtTag) {
-            Write-Warning "Exiled Lib changed since $lastReleaseTag but is still version $libraryVersion; bump $LibraryModFolder\mod_info.json and ExiledLib.version if players should see a new Exiled Lib."
-        }
-    }
-    $global:LASTEXITCODE = 0
 }
 
 $dirty = git -C $projectRoot status --porcelain
@@ -64,13 +41,12 @@ if (Test-Path $releaseDir) {
     Remove-Item -Recurse -Force $releaseDir
 }
 Copy-ModFiles -ProjectRoot $projectRoot -Destination $stageDir
-Copy-LibraryModFiles -ProjectRoot $projectRoot -Destination $libraryStageDir
 
 Add-Type -AssemblyName System.IO.Compression
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $zip = [System.IO.Compression.ZipFile]::Open($zipPath, [System.IO.Compression.ZipArchiveMode]::Create)
 try {
-    Get-ChildItem $stageDir, $libraryStageDir -Recurse -File | ForEach-Object {
+    Get-ChildItem $stageDir -Recurse -File | ForEach-Object {
         $relative = $_.FullName.Substring($releaseDir.Length + 1).Replace('\', '/')
         [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip, $_.FullName, $relative,
             [System.IO.Compression.CompressionLevel]::Optimal) | Out-Null
@@ -86,21 +62,19 @@ try {
     $archive.Dispose()
 }
 $required = @($ModRootFiles + @($modInfo.jars) + @("data/config/version/version_files.csv") | ForEach-Object { "$modFolderName/$_" })
-$required += @($LibraryModRootFiles + @("LICENSE") + @($libraryModInfo.jars) + @("data/config/version/version_files.csv") |
-    ForEach-Object { "$libraryFolderName/$_" })
 foreach ($path in $required) {
     if ($entries -notcontains $path) {
         throw "Release zip is missing $path"
     }
 }
-$outsideModFolders = $entries | Where-Object { -not $_.StartsWith("$modFolderName/") -and -not $_.StartsWith("$libraryFolderName/") }
+$outsideModFolders = $entries | Where-Object { -not $_.StartsWith("$modFolderName/") }
 if ($outsideModFolders) {
-    throw "Release zip has entries outside $modFolderName/ and $libraryFolderName/: $($outsideModFolders -join ', ')"
+    throw "Release zip has entries outside $modFolderName/: $($outsideModFolders -join ', ')"
 }
 
 Save-ReleasedSkillNodes -ProjectRoot $projectRoot
 Save-ReleasedItems -ProjectRoot $projectRoot -Version $version
 
 $sizeMb = [math]::Round((Get-Item $zipPath).Length / 1MB, 1)
-Write-Host "Built $zipPath ($sizeMb MB, Exiled Sector $version, Exiled Lib $libraryVersion)"
-Write-Host "Next: tag v$version, create a GitHub release, attach $zipName (keep that exact name), then push ExiledSector.version (and $LibraryModFolder\ExiledLib.version if Exiled Lib's version changed) to main."
+Write-Host "Built $zipPath ($sizeMb MB, Exiled Sector $version)"
+Write-Host "Next: tag v$version, create a GitHub release, attach $zipName (keep that exact name), then push ExiledSector.version to main."

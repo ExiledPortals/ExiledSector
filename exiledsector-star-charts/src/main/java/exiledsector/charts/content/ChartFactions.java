@@ -2,7 +2,7 @@ package exiledsector.charts.content;
 
 import exiledsector.charts.effect.ChartFactionEffect;
 import exiledsector.data.CsvRows;
-import exiledlib.ModCsv;
+import exiledsector.ModCsv;
 import exiledsector.items.StarChartImplicits;
 import exiledsector.items.WeightedPick;
 import exiledsector.modifiers.Modifier;

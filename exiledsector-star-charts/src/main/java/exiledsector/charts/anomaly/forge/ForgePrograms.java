@@ -1,6 +1,6 @@
 package exiledsector.charts.anomaly.forge;
 
-import exiledlib.ModCsv;
+import exiledsector.ModCsv;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.data.CsvRows;
 import exiledsector.items.ForgeOperation;

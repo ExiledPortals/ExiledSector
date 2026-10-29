@@ -5,7 +5,7 @@ import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.effects.SkillTreeLootSource;
 import exiledsector.skills.AnchorLinks;
 import exiledsector.skills.ShipSkillData;

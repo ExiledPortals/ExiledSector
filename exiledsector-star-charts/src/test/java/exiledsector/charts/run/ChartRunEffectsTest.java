@@ -6,7 +6,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.MagneticStorm;

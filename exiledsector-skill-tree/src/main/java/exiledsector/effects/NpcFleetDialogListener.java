@@ -3,7 +3,7 @@ package exiledsector.effects;
 import com.fs.starfarer.api.campaign.BaseCampaignEventListener;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
-import exiledlib.PlayerFleet;
+import exiledsector.PlayerFleet;
 
 public class NpcFleetDialogListener extends BaseCampaignEventListener {
 

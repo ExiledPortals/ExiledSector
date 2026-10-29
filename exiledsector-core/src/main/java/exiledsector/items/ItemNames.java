@@ -3,10 +3,10 @@ package exiledsector.items;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierSlot;
 import com.fs.starfarer.api.Global;
-import exiledlib.HostMod;
-import exiledlib.Seeds;
-import exiledlib.i18n.Message;
-import exiledlib.i18n.Translation;
+import exiledsector.ExiledSector;
+import exiledsector.Seeds;
+import exiledsector.i18n.Message;
+import exiledsector.i18n.Translation;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -42,12 +42,12 @@ public final class ItemNames {
     }
 
     public static String namesPath() {
-        return HostMod.configPath(NAMES_FILE);
+        return ExiledSector.configPath(NAMES_FILE);
     }
 
     public static void load() {
         try {
-            registerWords(Global.getSettings().getMergedJSONForMod(namesPath(), HostMod.id()));
+            registerWords(Global.getSettings().getMergedJSONForMod(namesPath(), ExiledSector.MOD_ID));
         } catch (IOException | JSONException e) {
             LOG.error("Failed to load " + namesPath(), e);
         }

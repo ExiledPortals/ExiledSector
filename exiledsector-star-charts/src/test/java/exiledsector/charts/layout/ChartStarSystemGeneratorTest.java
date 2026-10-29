@@ -17,7 +17,7 @@ import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.GenContext
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.GenResult;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import com.fs.starfarer.api.impl.campaign.procgen.TerrainGenDataSpec;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import com.fs.starfarer.api.impl.campaign.terrain.StarCoronaTerrainPlugin.CoronaParams;
 import exiledsector.charts.wormhole.ChartWormholePlacement;
 import exiledsector.charts.anomaly.ChartAnomaly;

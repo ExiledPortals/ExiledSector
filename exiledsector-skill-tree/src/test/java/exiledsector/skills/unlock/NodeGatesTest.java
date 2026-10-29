@@ -1,7 +1,7 @@
 package exiledsector.skills.unlock;
 
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.skills.NodeEligibility;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;

@@ -2,8 +2,8 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import exiledlib.MockSector;
-import exiledlib.i18n.StyledText;
+import exiledsector.MockSector;
+import exiledsector.i18n.StyledText;
 import exiledsector.data.CsvRows;
 import exiledsector.skills.AnchorLinks;
 import exiledsector.skills.ShipSkillData;

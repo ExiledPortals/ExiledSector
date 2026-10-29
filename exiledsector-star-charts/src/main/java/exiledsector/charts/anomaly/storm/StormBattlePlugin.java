@@ -6,7 +6,7 @@ import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.DamageType;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
-import exiledlib.compat.CombatGlow;
+import exiledsector.compat.CombatGlow;
 import exiledsector.charts.run.ChartRun;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;

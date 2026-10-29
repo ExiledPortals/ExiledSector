@@ -1,11 +1,11 @@
 package exiledsector.ui;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.i18n.StyledText;
-import exiledlib.i18n.Translation;
-import exiledlib.skills.AffinityScaling;
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.SkillEffect;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
+import exiledsector.skills.AffinityScaling;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.items.Item;
 
 import java.util.ArrayList;

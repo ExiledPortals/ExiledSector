@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;

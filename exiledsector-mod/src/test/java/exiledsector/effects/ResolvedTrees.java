@@ -2,11 +2,11 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.items.HullUpgradeEffectSource;
-import exiledlib.skills.DiminishingReturns;
-import exiledlib.skills.EffectContribution;
+import exiledsector.skills.DiminishingReturns;
+import exiledsector.skills.EffectContribution;
 import exiledsector.skills.ShipSections;
 import exiledsector.skills.ShipSkillData;
-import exiledlib.skills.StatBaseline;
+import exiledsector.skills.StatBaseline;
 
 import java.util.List;
 

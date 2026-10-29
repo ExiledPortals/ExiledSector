@@ -1,6 +1,4 @@
 $ModRootFiles = @("mod_info.json", "ExiledSector.version", "LICENSE", "CREDITS.md")
-$LibraryModFolder = "exiled-lib\mod"
-$LibraryModRootFiles = @("mod_info.json", "ExiledLib.version")
 
 function Get-MavenCommand {
     $mvnCmd = Get-Command mvn -ErrorAction SilentlyContinue
@@ -53,20 +51,6 @@ function Copy-ModFiles {
         ForEach-Object { Copy-Item -Path $_.FullName -Destination $graphics.FullName -Recurse -Force }
     Get-ChildItem -LiteralPath $Destination -Recurse -File -Force -Filter ".*.tmp" | ForEach-Object { $_.Delete() }
     Write-TexturePreloadList -ProjectRoot $ProjectRoot -Destination $Destination -ExcludedFolders ($excludedGraphics + "fonts")
-}
-
-function Copy-LibraryModFiles {
-    param([string]$ProjectRoot, [string]$Destination)
-
-    $libraryMod = Join-Path $ProjectRoot $LibraryModFolder
-    New-Item -ItemType Directory -Force -Path $Destination | Out-Null
-    foreach ($file in $LibraryModRootFiles) {
-        Copy-Item -Path (Join-Path $libraryMod $file) -Destination $Destination -Force
-    }
-    Copy-Item -Path (Join-Path $ProjectRoot "LICENSE") -Destination $Destination -Force
-    foreach ($folder in @("jars", "data")) {
-        Copy-Item -Path (Join-Path $libraryMod $folder) -Destination $Destination -Recurse -Force
-    }
 }
 
 function Sync-FolderMirror {

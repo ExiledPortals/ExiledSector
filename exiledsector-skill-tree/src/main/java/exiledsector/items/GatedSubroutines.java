@@ -1,7 +1,7 @@
 package exiledsector.items;
 
-import exiledlib.skills.CombatGate;
-import exiledlib.skills.SkillTypeEffect;
+import exiledsector.skills.CombatGate;
+import exiledsector.skills.SkillTypeEffect;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillNode;

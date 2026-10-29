@@ -1,6 +1,6 @@
 package exiledsector.skills.npc;
 
-import exiledlib.ModCsv;
+import exiledsector.ModCsv;
 import exiledsector.data.CsvRows;
 import exiledsector.skills.tags.SkillTags;
 import org.apache.log4j.Logger;

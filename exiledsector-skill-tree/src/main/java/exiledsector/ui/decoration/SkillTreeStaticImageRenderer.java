@@ -1,6 +1,6 @@
 package exiledsector.ui.decoration;
 
-import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.skills.decoration.StaticImage;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.SpriteDraw;

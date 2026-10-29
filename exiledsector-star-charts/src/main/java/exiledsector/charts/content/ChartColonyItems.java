@@ -1,7 +1,7 @@
 package exiledsector.charts.content;
 
 import exiledsector.data.CsvRows;
-import exiledlib.ModCsv;
+import exiledsector.ModCsv;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.WeightedPick;
 import org.apache.log4j.Logger;

@@ -1,6 +1,6 @@
 package exiledsector.tools;
 
-import exiledlib.ProjectFiles;
+import exiledsector.ProjectFiles;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

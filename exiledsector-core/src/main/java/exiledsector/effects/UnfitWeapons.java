@@ -8,8 +8,8 @@ import com.fs.starfarer.api.loading.WeaponGroupSpec;
 import com.fs.starfarer.api.loading.WeaponSlotAPI;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledlib.i18n.I18n;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.Translation;
 import exiledsector.ui.CampaignMessages;
 
 import java.util.ArrayList;

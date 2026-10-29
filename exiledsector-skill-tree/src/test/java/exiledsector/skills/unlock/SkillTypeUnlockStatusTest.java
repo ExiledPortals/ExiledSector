@@ -10,7 +10,7 @@ import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.characters.PersonAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.compat.NightcrossCompat;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillTier;

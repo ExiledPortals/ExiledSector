@@ -15,7 +15,7 @@ import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.DerelictShipEntityPlugin;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.ShipRecoverySpecial;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.skills.unlock.UnlockCondition;
 import exiledsector.skills.unlock.UnlockConditionType;

@@ -12,7 +12,7 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.skills.unlock.AnchorFinds;
 import exiledsector.skills.unlock.RelockedGates;

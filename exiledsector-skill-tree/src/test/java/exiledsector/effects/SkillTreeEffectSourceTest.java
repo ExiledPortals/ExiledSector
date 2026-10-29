@@ -1,9 +1,9 @@
 package exiledsector.effects;
 
-import exiledlib.skills.CombatGate;
-import exiledlib.skills.EffectContribution;
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
+import exiledsector.skills.CombatGate;
+import exiledsector.skills.EffectContribution;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
 import exiledsector.items.RadiusLineOrigin;
 import exiledsector.items.SubroutineOrigin;
 import exiledsector.skills.AllocatedNode;

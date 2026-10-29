@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledlib.HostMod;
+import exiledsector.ExiledSector;
 import exiledsector.modifiers.ModifierSlot;
 import org.json.JSONObject;
 
@@ -20,7 +20,7 @@ public final class SubroutineDefinitions {
     }
 
     public static String dataPath() {
-        return HostMod.configPath(DATA_FILE);
+        return ExiledSector.configPath(DATA_FILE);
     }
 
     static ItemDefinition parse(JSONObject row) {

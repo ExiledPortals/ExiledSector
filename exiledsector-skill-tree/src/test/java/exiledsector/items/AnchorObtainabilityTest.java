@@ -6,7 +6,7 @@ import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.effects.SkillTreeLootSource;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;

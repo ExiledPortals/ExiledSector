@@ -10,7 +10,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.FleetTypes;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.content.ChartAnomalyFleets;

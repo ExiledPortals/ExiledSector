@@ -1,8 +1,8 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.SpecialItemData;
-import exiledlib.i18n.StyledText;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 import exiledsector.charts.StarChartSettings;
 
 import java.util.List;

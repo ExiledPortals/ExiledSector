@@ -17,15 +17,13 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
-import exiledlib.MockSector;
-import exiledlib.effects.RealVariantTags;
-import exiledlib.effects.RecordingHullModEffect;
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.battle.BattleSkillEffect;
-import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
-import exiledlib.skills.skilleffect.flux.FluxSkillEffect;
-import exiledlib.skills.skilleffect.logistics.LogisticsSkillEffect;
-import exiledlib.skills.skilleffect.phase.PhaseSkillEffect;
+import exiledsector.MockSector;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.battle.BattleSkillEffect;
+import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
+import exiledsector.skills.skilleffect.flux.FluxSkillEffect;
+import exiledsector.skills.skilleffect.logistics.LogisticsSkillEffect;
+import exiledsector.skills.skilleffect.phase.PhaseSkillEffect;
 import exiledsector.ExiledSector;
 import exiledsector.persistence.ShipRecords;
 import exiledsector.persistence.ShipSkillDataManager;
@@ -1004,7 +1002,7 @@ class SkillTreeHullModTest {
 
     @Test
     void fighterSpawnCallsApplyToFighterSpawnedByShipOnNonPassthroughEffects() {
-        exiledlib.skills.skilleffect.SkillEffect fighterEffect = mock(exiledlib.skills.skilleffect.SkillEffect.class);
+        exiledsector.skills.skilleffect.SkillEffect fighterEffect = mock(exiledsector.skills.skilleffect.SkillEffect.class);
         when(fighterEffect.name()).thenReturn("TEST_EFFECT");
         SkillType fighterType = new SkillType.Builder("fighter_weapon_damage", "Fighter Weapon Damage", "graphics/hullmods/fighter_uplink2.png", SkillTier.SMALL)
                 .effects(List.of(new SkillTypeEffect(fighterEffect, 15f)))
@@ -1042,7 +1040,7 @@ class SkillTreeHullModTest {
 
     @Test
     void afterShipCreationCallsApplyAfterShipCreationOnNonPassthroughEffects() {
-        exiledlib.skills.skilleffect.SkillEffect listenerEffect = mock(exiledlib.skills.skilleffect.SkillEffect.class);
+        exiledsector.skills.skilleffect.SkillEffect listenerEffect = mock(exiledsector.skills.skilleffect.SkillEffect.class);
         when(listenerEffect.name()).thenReturn("TEST_EFFECT");
         SkillType listenerType = new SkillType.Builder("high_scatter_amp", "High Scatter Amplifier", "graphics/hullmods/high_scatter_amp.png", SkillTier.NOTABLE)
                 .effects(List.of(new SkillTypeEffect(listenerEffect, 50f)))
@@ -1066,9 +1064,9 @@ class SkillTreeHullModTest {
 
     @Test
     void damageReshapingEffectsAreAppliedBeforeEveryOtherEffectWhateverTheAllocationOrder() {
-        exiledlib.skills.skilleffect.SkillEffect reader = mock(exiledlib.skills.skilleffect.SkillEffect.class);
+        exiledsector.skills.skilleffect.SkillEffect reader = mock(exiledsector.skills.skilleffect.SkillEffect.class);
         when(reader.name()).thenReturn("READER");
-        exiledlib.skills.skilleffect.SkillEffect reshaper = mock(exiledlib.skills.skilleffect.SkillEffect.class);
+        exiledsector.skills.skilleffect.SkillEffect reshaper = mock(exiledsector.skills.skilleffect.SkillEffect.class);
         when(reshaper.name()).thenReturn("RESHAPER");
         when(reshaper.reshapesDealtDamage()).thenReturn(true);
         SkillNode readerNode = new SkillNode("reader_1", new SkillType.Builder("reader", "Reader", "a.png", SkillTier.NOTABLE)
@@ -1605,7 +1603,7 @@ class SkillTreeHullModTest {
     @Test
     void combatHooksReadTheNpcTreeFromTheShipsVariant() {
         registerNpcRoot();
-        exiledlib.skills.skilleffect.SkillEffect listenerEffect = mock(exiledlib.skills.skilleffect.SkillEffect.class);
+        exiledsector.skills.skilleffect.SkillEffect listenerEffect = mock(exiledsector.skills.skilleffect.SkillEffect.class);
         when(listenerEffect.name()).thenReturn("TEST_EFFECT");
         when(listenerEffect.appliesToNpcShips()).thenReturn(true);
         SkillType listenerType = new SkillType.Builder("listener", "Listener", "a.png", SkillTier.NOTABLE)

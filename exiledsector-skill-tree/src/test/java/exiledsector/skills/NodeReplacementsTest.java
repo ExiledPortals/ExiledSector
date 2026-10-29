@@ -1,6 +1,6 @@
 package exiledsector.skills;
 
-import exiledlib.ProjectFiles;
+import exiledsector.ProjectFiles;
 import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.skills.npc.RealSkillData;
 import exiledsector.skills.template.SkillTreeTemplate;

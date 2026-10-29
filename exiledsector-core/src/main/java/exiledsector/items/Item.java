@@ -2,12 +2,12 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
-import exiledlib.i18n.Style;
-import exiledlib.i18n.StyledText;
-import exiledlib.i18n.Translation;
-import exiledlib.modifiers.ModifierEffect;
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.SkillEffect;
+import exiledsector.i18n.Style;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
+import exiledsector.modifiers.ModifierEffect;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierCategory;
 import exiledsector.modifiers.ModifierEffects;

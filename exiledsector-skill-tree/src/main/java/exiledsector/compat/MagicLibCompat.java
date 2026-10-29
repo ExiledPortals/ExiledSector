@@ -1,7 +1,6 @@
 package exiledsector.compat;
 
 import com.fs.starfarer.api.combat.ShipVariantAPI;
-import exiledlib.compat.CompatTarget;
 import org.magiclib.util.MagicIncompatibleHullmods;
 
 import java.lang.invoke.MethodHandles;

@@ -1,7 +1,7 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.Global;
-import exiledlib.PlayerFleet;
+import exiledsector.PlayerFleet;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ReleasedNodes;
 import exiledsector.skills.ShipSkillData;

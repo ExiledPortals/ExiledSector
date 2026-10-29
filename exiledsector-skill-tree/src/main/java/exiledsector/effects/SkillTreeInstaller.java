@@ -2,8 +2,8 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import exiledlib.PlayerFleet;
-import exiledlib.skills.skilleffect.logistics.FleetWideEffects;
+import exiledsector.PlayerFleet;
+import exiledsector.skills.skilleffect.logistics.FleetWideEffects;
 
 public class SkillTreeInstaller implements EveryFrameScript {
 

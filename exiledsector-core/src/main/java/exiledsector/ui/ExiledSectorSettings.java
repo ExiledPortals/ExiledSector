@@ -1,13 +1,13 @@
 package exiledsector.ui;
 
-import exiledlib.ModSettingsListener;
-import exiledlib.compat.CombatGlow;
-import exiledlib.i18n.I18n;
-import exiledlib.i18n.LanguageSetting;
-import exiledlib.i18n.Translation;
-import exiledlib.skills.DiminishedStat;
-import exiledlib.skills.DiminishingReturns;
-import exiledlib.skills.skilleffect.onhit.MaxChainCountConfig;
+import exiledsector.ModSettingsListener;
+import exiledsector.compat.CombatGlow;
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.LanguageSetting;
+import exiledsector.i18n.Translation;
+import exiledsector.skills.DiminishedStat;
+import exiledsector.skills.DiminishingReturns;
+import exiledsector.skills.skilleffect.onhit.MaxChainCountConfig;
 import exiledsector.compat.SalvageSiteCompat;
 import exiledsector.domain.DomainSettingsListener;
 import exiledsector.domain.ExiledSectorDomain;

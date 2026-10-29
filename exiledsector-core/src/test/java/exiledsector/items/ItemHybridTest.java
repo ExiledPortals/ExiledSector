@@ -1,11 +1,11 @@
 package exiledsector.items;
 
-import exiledlib.i18n.StyledText;
+import exiledsector.i18n.StyledText;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierCategory;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
-import exiledlib.skills.SkillTypeEffect;
+import exiledsector.skills.SkillTypeEffect;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

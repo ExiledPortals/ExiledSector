@@ -10,8 +10,8 @@ import com.fs.starfarer.api.impl.campaign.abilities.FractureJumpAbility;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.Misc.FleetMemberDamageLevel;
-import exiledlib.i18n.I18n;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
 import exiledsector.ui.VanillaText;
 

@@ -4,10 +4,6 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.ModSpecAPI;
 import com.fs.starfarer.api.SettingsAPI;
-import exiledlib.compat.ApiMember;
-import exiledlib.compat.CompatTarget;
-import exiledlib.compat.GraphicsLibCompat;
-import exiledlib.compat.SecondInCommandCompat;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;

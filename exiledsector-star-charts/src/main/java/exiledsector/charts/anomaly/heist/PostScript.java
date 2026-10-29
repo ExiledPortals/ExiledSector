@@ -12,7 +12,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken.VisibilityLevel;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.listeners.FleetEventListener;
 import com.fs.starfarer.api.util.Misc;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunBound;
 import exiledsector.charts.run.ChartRunEffects;

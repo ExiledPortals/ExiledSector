@@ -6,7 +6,7 @@ import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.impl.campaign.intel.misc.GateHaulerIntel;
-import exiledlib.ProjectFiles;
+import exiledsector.ProjectFiles;
 import org.json.CDL;
 import org.json.JSONArray;
 import org.json.JSONObject;

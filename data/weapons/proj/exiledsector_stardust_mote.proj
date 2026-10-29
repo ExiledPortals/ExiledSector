@@ -2,7 +2,7 @@
 	"id":"exiledsector_stardust_mote",
 	"specClass":"missile",
 	"missileType":"MOTE",
-	"onHitEffect":"exiledlib.motes.MoteImpactSound",
+	"onHitEffect":"exiledsector.motes.MoteImpactSound",
 	"sprite":"graphics/missiles/bomblet0.png",
 	"size":[4,4],
 	"center":[2,2],

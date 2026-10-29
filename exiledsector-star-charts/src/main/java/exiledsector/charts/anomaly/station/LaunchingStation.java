@@ -6,7 +6,7 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomaly;

@@ -1,7 +1,7 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.items.MasterSchematic;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;

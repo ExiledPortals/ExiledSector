@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledlib.ModCsv;
+import exiledsector.ModCsv;
 import exiledsector.data.CsvRows;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;

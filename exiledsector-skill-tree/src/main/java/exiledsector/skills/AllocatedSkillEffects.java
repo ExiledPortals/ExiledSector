@@ -2,10 +2,8 @@ package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledlib.skills.AffinitySteps;
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.SkillEffect;
-import exiledlib.skills.skilleffect.special.SpecialSkillEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.special.SpecialSkillEffect;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.items.EmptyShells;
 import exiledsector.items.Item;

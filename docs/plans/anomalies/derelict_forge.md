@@ -24,7 +24,7 @@ Each forge rolls three programs (placeholder) from `data/config/exiledSector/cha
 
 | Program | What it does |
 |---|---|
-| Graft | Adds a modifier whose effect belongs to a chosen ship part (the subpackage of `exiledlib.skills.skilleffect` the line's effect lives in: shield, flux, weapon and so on) to an item with room for one. |
+| Graft | Adds a modifier whose effect belongs to a chosen ship part (the subpackage of `exiledsector.skills.skilleffect` the line's effect lives in: shield, flux, weapon and so on) to an item with room for one. |
 | Excise | Removes a chosen modifier. |
 | Perfect | Sets a chosen modifier's values to the best end of its range for the player: the highest value, or the least harmful for a negative effect, so a "-5% to -10% damage dealt" line perfects to -5%. |
 | Anchor reroll | Rerolls every other modifier into new ones, keeping the chosen one and the modifier count. |
@@ -61,7 +61,7 @@ Tuning lines are chart effects carried by an atlas source, per `overview.md`:
 
 ## Resolved questions
 
-- Graft finds a modifier's ship part automatically from its effect's package in `exiledlib.skills.skilleffect`, with no csv column; a hybrid counts under every part any of its lines belongs to.
+- Graft finds a modifier's ship part automatically from its effect's package in `exiledsector.skills.skilleffect`, with no csv column; a hybrid counts under every part any of its lines belongs to.
 - The forge takes uncorrupted hull items only: no subroutines and no Star Charts.
 - Every program also costs Nanite Feedstock, 20 to 50 per run before tier scaling.
 - Anchor reroll rerolls the other modifiers themselves, not just their values.

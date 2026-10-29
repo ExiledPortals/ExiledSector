@@ -2,7 +2,7 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

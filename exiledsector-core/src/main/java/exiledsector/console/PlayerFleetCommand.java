@@ -1,7 +1,7 @@
 package exiledsector.console;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import exiledlib.PlayerFleet;
+import exiledsector.PlayerFleet;
 import org.lazywizard.console.Console;
 
 public abstract class PlayerFleetCommand extends CampaignCommand {

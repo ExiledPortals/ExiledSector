@@ -21,7 +21,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.loading.VariantSource;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.ExiledSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.items.NpcItems;

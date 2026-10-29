@@ -1,9 +1,9 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledlib.HostMod;
-import exiledlib.i18n.StyledText;
-import exiledlib.i18n.Translation;
+import exiledsector.ExiledSector;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 import exiledsector.skills.tags.NodeRequirements;
 import exiledsector.skills.tags.ShipProfile;
 import org.json.JSONObject;
@@ -62,7 +62,7 @@ public final class HullItem extends Item {
     }
 
     public static String definitionsPath() {
-        return HostMod.configPath(DEFINITIONS_FILE);
+        return ExiledSector.configPath(DEFINITIONS_FILE);
     }
 
     static ItemDefinition parseDefinition(JSONObject row) {

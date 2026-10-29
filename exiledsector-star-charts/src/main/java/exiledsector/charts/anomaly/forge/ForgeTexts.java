@@ -1,6 +1,6 @@
 package exiledsector.charts.anomaly.forge;
 
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.items.ForgeChoice;
 import exiledsector.items.ForgeOperation;
 import exiledsector.items.Item;

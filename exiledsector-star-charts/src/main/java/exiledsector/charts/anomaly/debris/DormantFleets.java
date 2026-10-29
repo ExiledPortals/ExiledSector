@@ -23,7 +23,7 @@ import com.fs.starfarer.api.impl.campaign.ids.ShipRoles;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantSeededFleetManager;
 import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.util.Misc;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.ChartFaction;

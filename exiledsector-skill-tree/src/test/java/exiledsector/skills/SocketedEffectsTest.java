@@ -1,6 +1,6 @@
 package exiledsector.skills;
 
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
@@ -8,7 +8,6 @@ import exiledsector.items.ItemStore;
 import exiledsector.items.RolledEffect;
 import exiledsector.items.RolledModifier;
 import exiledsector.modifiers.ModifierSlot;
-import exiledlib.skills.SkillTypeEffect;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;

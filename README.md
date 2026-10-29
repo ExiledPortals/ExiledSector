@@ -151,9 +151,6 @@ Open the wormhole, fly in, deal with whoever is home and take everything that is
 - [LazyLib](https://fractalsoftworks.com/forum/index.php?topic=5444.0)
 - [MagicLib](https://fractalsoftworks.com/forum/index.php?topic=25868.0)
 - [LunaLib](https://fractalsoftworks.com/forum/index.php?topic=25658.0)
-- Exiled Lib, which comes in the same download
-
-The download holds two mod folders, `ExiledSector` and `ExiledLib`. Extract both into your `mods` folder and enable both in the launcher.
 
 Optional:
 

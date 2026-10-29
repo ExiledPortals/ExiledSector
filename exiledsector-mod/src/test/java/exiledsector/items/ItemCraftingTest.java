@@ -1,7 +1,7 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
-import exiledlib.i18n.Style;
+import exiledsector.i18n.Style;
 import exiledsector.modifiers.ModifierSlot;
 import org.mockito.Mockito;
 import org.json.JSONArray;

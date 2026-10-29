@@ -21,19 +21,6 @@
         <sonar.javascript.lcov.reportPaths></sonar.javascript.lcov.reportPaths>
     </properties>
 
-    <dependencies>
-        <dependency>
-            <groupId>starsector.mods.exiledsector</groupId>
-            <artifactId>exiled-lib</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>starsector.mods.exiledsector</groupId>
-            <artifactId>exiled-lib</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
     <build>
         <finalName>ExiledSector-Core</finalName>
         <plugins>

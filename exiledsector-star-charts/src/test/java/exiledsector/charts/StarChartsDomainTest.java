@@ -1,7 +1,7 @@
 package exiledsector.charts;
 
 import com.fs.starfarer.api.Global;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import org.junit.jupiter.api.AfterEach;

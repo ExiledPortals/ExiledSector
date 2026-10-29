@@ -1,7 +1,7 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledlib.ModCsv;
+import exiledsector.ModCsv;
 import exiledsector.data.CsvRows;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.tags.SkillTags;

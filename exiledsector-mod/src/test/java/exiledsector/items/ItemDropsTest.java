@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledlib.ProjectFiles;
+import exiledsector.ProjectFiles;
 import exiledsector.compat.SalvageSiteCompat;
 import lunalib.lunaSettings.LunaSettings;
 import org.json.CDL;

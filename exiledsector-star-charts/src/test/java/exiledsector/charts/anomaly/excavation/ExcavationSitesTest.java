@@ -2,7 +2,7 @@ package exiledsector.charts.anomaly.excavation;
 
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomalies;

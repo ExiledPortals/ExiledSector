@@ -1,6 +1,6 @@
 package exiledsector.tools;
 
-import exiledlib.ProjectFiles;
+import exiledsector.ProjectFiles;
 import exiledsector.skills.unlock.BlueprintCategory;
 import exiledsector.skills.unlock.UnlockConditionType;
 import org.json.JSONArray;

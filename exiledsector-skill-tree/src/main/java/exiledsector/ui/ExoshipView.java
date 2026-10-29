@@ -2,7 +2,7 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledlib.skills.skilleffect.render.Fade;
+import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.skills.ExoshipNodes;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;

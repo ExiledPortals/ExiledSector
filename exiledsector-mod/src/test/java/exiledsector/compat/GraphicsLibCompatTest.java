@@ -1,17 +1,12 @@
 package exiledsector.compat;
 
-import exiledlib.compat.ApiMember;
-import exiledlib.compat.CombatGlow;
-import exiledlib.compat.GraphicsLibCompat;
-import exiledlib.compat.GraphicsLibGlow;
-import exiledlib.compat.TimedSlots;
 import exiledsector.ExiledSectorModPlugin;
 import com.fs.starfarer.api.GameState;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
-import exiledlib.ProjectFiles;
+import exiledsector.ProjectFiles;
 import org.junit.jupiter.api.Test;
 import org.dark.shaders.distortion.WaveDistortion;
 import org.lwjgl.util.vector.Vector2f;
@@ -46,7 +41,7 @@ class GraphicsLibCompatTest {
                 .sorted()
                 .toList();
         assertEquals(List.of("GraphicsLibCompat.java", "GraphicsLibGlow.java"), mentioning);
-        String compat = read(ProjectFiles.mainSource("exiledlib/compat/GraphicsLibCompat.java"));
+        String compat = read(ProjectFiles.mainSource("exiledsector/compat/GraphicsLibCompat.java"));
         assertFalse(compat.contains("import org.dark."));
         assertFalse(compat.lines().anyMatch(line -> line.contains("org.dark.") && !line.contains("\"org.dark.")));
     }

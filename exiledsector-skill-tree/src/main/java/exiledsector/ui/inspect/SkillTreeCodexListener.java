@@ -6,7 +6,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.codex.CodexDataV2;
 import com.fs.starfarer.api.impl.codex.CodexEntryPlugin;
-import exiledlib.i18n.I18n;
+import exiledsector.i18n.I18n;
 import exiledsector.skills.InstalledHullMods;
 import exiledsector.skills.PhantomHullModStatus;
 import exiledsector.skills.SkillTreeSetting;

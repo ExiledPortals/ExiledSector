@@ -1,9 +1,7 @@
 package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.skills.HullSizeSkillEffect;
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

@@ -31,7 +31,7 @@ class ItemDefinitionsTest {
     void tearDown() {
         ItemDefinitions.clear();
         ItemModifiers.clear();
-        exiledlib.skills.skilleffect.EffectAliases.clear();
+        exiledsector.skills.skilleffect.EffectAliases.clear();
     }
 
     @Test
@@ -99,7 +99,7 @@ class ItemDefinitionsTest {
 
     @Test
     void aRenamedEffectInAPoolResolvesToItsCurrentName() throws Exception {
-        exiledlib.skills.skilleffect.EffectAliases.register(new JSONArray()
+        exiledsector.skills.skilleffect.EffectAliases.register(new JSONArray()
                 .put(new org.json.JSONObject().put("alias", "OLD_HULL_MULT").put("effect", "HULL_MULT")));
 
         ItemDefinitions.register(new JSONArray().put(row("x", "crew_quarters", "OLD_HULL_MULT:4:6")));

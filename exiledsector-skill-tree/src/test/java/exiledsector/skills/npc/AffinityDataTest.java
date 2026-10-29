@@ -1,10 +1,10 @@
 package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.skills.AffinitySteps;
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.SkillEffect;
-import exiledlib.skills.skilleffect.special.SpecialSkillEffect;
+import exiledsector.skills.AffinitySteps;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.special.SpecialSkillEffect;
 import exiledsector.effects.SkillTreeEffectSource;
 import exiledsector.skills.AffinityOptions;
 import exiledsector.skills.ShipSkillData;

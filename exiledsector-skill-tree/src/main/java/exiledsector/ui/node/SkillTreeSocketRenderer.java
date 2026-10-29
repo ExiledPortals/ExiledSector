@@ -2,7 +2,7 @@ package exiledsector.ui.node;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.cargo.AnimatedItemIcons;
 import exiledsector.ui.util.SpriteDraw;
 import org.lwjgl.opengl.GL11;

@@ -3,7 +3,7 @@ package exiledsector.effects;
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
-import exiledlib.PlayerFleet;
+import exiledsector.PlayerFleet;
 import org.lwjgl.util.vector.Vector2f;
 
 public class NpcFleetSweepScript implements EveryFrameScript {

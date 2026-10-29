@@ -2,7 +2,7 @@
 
 Ideas for new skill effects and nodes, not yet designed or built. When one gets a real design, move it to its own plan in `docs/plans/` and link it here. Delete it from this list once it's built.
 
-Each idea notes the skill effect part it would most likely go in (`exiledlib/skills/skilleffect/<part>/`).
+Each idea notes the skill effect part it would most likely go in (`exiledsector/skills/skilleffect/<part>/`).
 
 ## Pull enemies in by ship mass
 

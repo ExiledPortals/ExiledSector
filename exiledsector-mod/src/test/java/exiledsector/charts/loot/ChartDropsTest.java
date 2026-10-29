@@ -9,7 +9,7 @@ import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import com.fs.starfarer.api.util.MutableValue;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.effect.ChartEffect;

@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledlib.ModCsv;
+import exiledsector.ModCsv;
 import exiledsector.domain.DomainContributions;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.modifiers.ModifierEffects;

@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledlib.skills.SocketedItem;
+import exiledsector.skills.SocketedItem;
 import exiledsector.skills.AllocatedNode;
 
 public record SubroutineOrigin(AllocatedNode socket) implements SocketedItem {

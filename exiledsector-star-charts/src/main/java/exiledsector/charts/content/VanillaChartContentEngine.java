@@ -40,7 +40,7 @@ import com.fs.starfarer.api.impl.campaign.procgen.themes.SalvageSpecialAssigner.
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.special.BaseSalvageSpecial;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.convoy.ConvoyRules;
 import exiledsector.charts.anomaly.skirmish.SkirmishFactions;
 import exiledsector.charts.loot.ChartVanillaLoot;

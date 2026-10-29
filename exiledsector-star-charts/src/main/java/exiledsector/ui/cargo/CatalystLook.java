@@ -1,6 +1,6 @@
 package exiledsector.ui.cargo;
 
-import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.charts.atlas.AtlasCatalysts;
 
 public record CatalystLook(AtlasCatalysts.Family family) implements IconArt {

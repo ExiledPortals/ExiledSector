@@ -1,8 +1,8 @@
 package exiledsector.charts.content;
 
 import com.fs.starfarer.api.Global;
-import exiledlib.ModCsv;
-import exiledlib.compat.CompatTarget;
+import exiledsector.ModCsv;
+import exiledsector.compat.CompatTarget;
 import exiledsector.charts.anomaly.debris.DormantFleets;
 import exiledsector.charts.anomaly.skirmish.SkirmishFactions;
 import org.apache.log4j.Logger;

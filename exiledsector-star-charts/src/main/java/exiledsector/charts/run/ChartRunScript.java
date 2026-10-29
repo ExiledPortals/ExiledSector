@@ -7,7 +7,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.characters.AbilityPlugin;
 import com.fs.starfarer.api.impl.campaign.ids.Abilities;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.effect.ChartFleetConditions;

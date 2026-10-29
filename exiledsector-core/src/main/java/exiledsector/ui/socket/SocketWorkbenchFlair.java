@@ -1,7 +1,7 @@
 package exiledsector.ui.socket;
 
-import exiledlib.skills.skilleffect.render.Fade;
-import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.skills.skilleffect.render.Fade;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.cargo.AnimatedItemIcons;
 import exiledsector.ui.cargo.CargoIconFx;
 import exiledsector.ui.cargo.CargoIconLook;

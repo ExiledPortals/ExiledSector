@@ -2,8 +2,8 @@ package exiledsector.ui.chart;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.StarCharts;
-import exiledlib.i18n.I18n;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.Translation;
 import exiledsector.items.Item;
 import exiledsector.items.ItemRarity;
 import exiledsector.items.ItemStore;

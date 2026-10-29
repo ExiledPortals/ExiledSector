@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledlib.ModCsv;
+import exiledsector.ModCsv;
 import exiledsector.charts.layout.ChartLayoutGenerator;
 import exiledsector.data.CsvRows;
 import org.apache.log4j.Logger;

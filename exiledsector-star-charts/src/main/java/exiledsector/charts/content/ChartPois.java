@@ -1,9 +1,9 @@
 package exiledsector.charts.content;
 
-import exiledlib.compat.CompatTarget;
+import exiledsector.compat.CompatTarget;
 import exiledsector.charts.table.BuiltInTable;
 import exiledsector.data.CsvRows;
-import exiledlib.ModCsv;
+import exiledsector.ModCsv;
 import exiledsector.compat.IndustrialEvolutionCompat;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;

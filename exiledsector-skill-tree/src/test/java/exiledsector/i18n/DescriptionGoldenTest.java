@@ -1,14 +1,12 @@
 package exiledsector.i18n;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.ProjectFiles;
-import exiledlib.i18n.HeadlessGameText;
-import exiledlib.i18n.StyledText;
-import exiledlib.skills.DescriptionLine;
-import exiledlib.skills.skilleffect.SkillEffect;
-import exiledlib.skills.skilleffect.SkillEffectNames;
-import exiledlib.skills.skilleffect.fighter.FighterSkillEffect;
-import exiledlib.skills.skilleffect.shipsystem.ShipSystemSkillEffect;
+import exiledsector.ProjectFiles;
+import exiledsector.skills.DescriptionLine;
+import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.SkillEffectNames;
+import exiledsector.skills.skilleffect.fighter.FighterSkillEffect;
+import exiledsector.skills.skilleffect.shipsystem.ShipSystemSkillEffect;
 import exiledsector.skills.NodeDescription;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;

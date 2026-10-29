@@ -1,13 +1,13 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.skills.DamageTakenCaps;
-import exiledlib.skills.DescriptionLine;
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.SkillEffect;
-import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
-import exiledlib.skills.skilleffect.flux.FluxSkillEffect;
-import exiledlib.skills.skilleffect.weapon.WeaponSkillEffect;
+import exiledsector.skills.DamageTakenCaps;
+import exiledsector.skills.DescriptionLine;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
+import exiledsector.skills.skilleffect.flux.FluxSkillEffect;
+import exiledsector.skills.skilleffect.weapon.WeaponSkillEffect;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;

@@ -1,7 +1,7 @@
 package exiledsector.console;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledlib.PlayerFleet;
+import exiledsector.PlayerFleet;
 import exiledsector.ui.refit.ShipEditSession;
 import org.lazywizard.console.Console;
 

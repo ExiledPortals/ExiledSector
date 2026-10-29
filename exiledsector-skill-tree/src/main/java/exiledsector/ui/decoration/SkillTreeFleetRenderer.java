@@ -3,8 +3,8 @@ package exiledsector.ui.decoration;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledlib.PlayerFleet;
-import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.PlayerFleet;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.skills.SkillTree;
 import exiledsector.ui.TreeViewport;
 

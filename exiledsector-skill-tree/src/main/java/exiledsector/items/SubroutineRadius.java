@@ -1,7 +1,7 @@
 package exiledsector.items;
 
-import exiledlib.i18n.StyledText;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 import exiledsector.skills.radius.RadiusSize;
 
 public final class SubroutineRadius {

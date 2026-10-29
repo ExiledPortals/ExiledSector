@@ -8,7 +8,7 @@ import exiledsector.effects.NpcBonusScale;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillDataResolver;
-import exiledlib.skills.StatBaseline;
+import exiledsector.skills.StatBaseline;
 import exiledsector.skills.npc.NpcTreeTag;
 
 import java.util.List;

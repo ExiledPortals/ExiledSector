@@ -1,7 +1,7 @@
 package exiledsector.ui.node;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
-import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.ui.SkillTreePanelStyle;

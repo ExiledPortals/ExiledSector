@@ -10,7 +10,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Industries;
 import com.fs.starfarer.api.loading.IndustrySpecAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
 import exiledsector.items.JanusDevice;

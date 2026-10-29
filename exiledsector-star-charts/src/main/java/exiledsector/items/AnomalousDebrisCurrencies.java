@@ -1,8 +1,8 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
-import exiledlib.ModCsv;
-import exiledlib.i18n.Translation;
+import exiledsector.ModCsv;
+import exiledsector.i18n.Translation;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.data.CsvRows;
 import exiledsector.modifiers.Modifier;

@@ -10,8 +10,8 @@ import com.fs.starfarer.api.impl.campaign.graid.BaseGroundRaidObjectivePluginImp
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD.RaidDangerLevel;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledlib.i18n.I18n;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.Translation;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.ui.VanillaText;

@@ -4,8 +4,8 @@ import com.fs.starfarer.api.campaign.TextPanelAPI;
 import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledlib.i18n.Style;
-import exiledlib.i18n.StyledText;
+import exiledsector.i18n.Style;
+import exiledsector.i18n.StyledText;
 
 import java.awt.Color;
 import java.util.ArrayList;

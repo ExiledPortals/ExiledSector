@@ -2,7 +2,7 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FleetDataAPI;
-import exiledlib.PlayerFleet;
+import exiledsector.PlayerFleet;
 
 public final class PlayerFleetStats {
 

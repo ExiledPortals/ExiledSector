@@ -1,6 +1,6 @@
 package exiledsector.ui.stats;
 
-import exiledlib.skills.DescriptionLine;
+import exiledsector.skills.DescriptionLine;
 
 import java.util.List;
 import java.util.Set;

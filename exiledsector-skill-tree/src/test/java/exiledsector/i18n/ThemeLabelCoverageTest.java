@@ -1,7 +1,5 @@
 package exiledsector.i18n;
 
-import exiledlib.i18n.LocaleChain;
-import exiledlib.i18n.RealCatalogue;
 import exiledsector.skills.tags.SkillTags;
 import org.junit.jupiter.api.Test;
 

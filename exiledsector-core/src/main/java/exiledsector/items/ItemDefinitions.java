@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledlib.ModCsv;
+import exiledsector.ModCsv;
 import exiledsector.data.CsvRows;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;

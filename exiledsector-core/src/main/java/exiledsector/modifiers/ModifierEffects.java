@@ -1,7 +1,5 @@
 package exiledsector.modifiers;
 
-import exiledlib.modifiers.ModifierEffect;
-
 public interface ModifierEffects {
 
     ModifierEffect byName(String effectName);

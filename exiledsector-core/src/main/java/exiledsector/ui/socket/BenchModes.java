@@ -1,6 +1,6 @@
 package exiledsector.ui.socket;
 
-import exiledlib.i18n.StyledText;
+import exiledsector.i18n.StyledText;
 import exiledsector.domain.DomainContributions;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.items.Item;

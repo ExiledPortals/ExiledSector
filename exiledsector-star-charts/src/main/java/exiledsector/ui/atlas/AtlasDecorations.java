@@ -1,7 +1,7 @@
 package exiledsector.ui.atlas;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
-import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.charts.atlas.AtlasAmbience;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasDecoration;

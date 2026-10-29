@@ -1,6 +1,6 @@
 package exiledsector.skills.npc;
 
-import exiledlib.ProjectFiles;
+import exiledsector.ProjectFiles;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillType;

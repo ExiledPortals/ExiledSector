@@ -1,7 +1,7 @@
 package exiledsector.items;
 
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.SkillEffect;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.ShipTrees;

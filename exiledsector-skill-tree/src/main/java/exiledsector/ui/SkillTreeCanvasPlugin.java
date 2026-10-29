@@ -7,7 +7,7 @@ import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
-import exiledlib.skills.skilleffect.render.Fade;
+import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.effects.OpReserveParity;
 import exiledsector.effects.PhantomConflictWatch;
 import exiledsector.effects.ShipTreeSync;

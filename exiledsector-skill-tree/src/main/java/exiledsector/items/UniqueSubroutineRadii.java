@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledlib.ModCsv;
+import exiledsector.ModCsv;
 import exiledsector.skills.radius.RadiusSize;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;

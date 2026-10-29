@@ -1,8 +1,8 @@
 package exiledsector.items;
 
-import exiledlib.HostMod;
-import exiledlib.ModCsv;
-import exiledlib.i18n.Translation;
+import exiledsector.ExiledSector;
+import exiledsector.ModCsv;
+import exiledsector.i18n.Translation;
 import exiledsector.data.CsvRows;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierEffects;
@@ -65,7 +65,7 @@ public final class ItemModifiers {
     }
 
     public static String dataPath() {
-        return HostMod.configPath(DATA_FILE);
+        return ExiledSector.configPath(DATA_FILE);
     }
 
     public static void load() {

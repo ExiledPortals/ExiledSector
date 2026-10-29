@@ -9,11 +9,11 @@ import com.fs.starfarer.api.campaign.TextPanelAPI;
 import com.fs.starfarer.api.fleet.CrewCompositionAPI;
 import com.fs.starfarer.api.impl.campaign.FleetEncounterContext;
 import com.fs.starfarer.api.util.Misc;
-import exiledlib.PlayerFleet;
-import exiledlib.i18n.I18n;
-import exiledlib.i18n.Translation;
-import exiledlib.skills.skilleffect.logistics.FleetCrewLedger.CrewChange;
-import exiledlib.skills.skilleffect.logistics.FleetCrewLedger;
+import exiledsector.PlayerFleet;
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.Translation;
+import exiledsector.skills.skilleffect.logistics.FleetCrewLedger.CrewChange;
+import exiledsector.skills.skilleffect.logistics.FleetCrewLedger;
 import exiledsector.ui.VanillaText;
 
 import java.awt.Color;

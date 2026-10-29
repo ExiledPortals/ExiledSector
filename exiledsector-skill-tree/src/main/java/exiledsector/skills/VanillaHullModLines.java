@@ -4,8 +4,8 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.HullModEffect;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
-import exiledlib.i18n.Style;
-import exiledlib.i18n.StyledText;
+import exiledsector.i18n.Style;
+import exiledsector.i18n.StyledText;
 
 import java.util.ArrayList;
 import java.util.List;

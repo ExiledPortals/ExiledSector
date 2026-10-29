@@ -1,6 +1,6 @@
 package exiledsector.ui.cargo;
 
-import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.compat.TaniaCompat;
 
 public record AnchorLook(String crestFactionId) implements IconArt {

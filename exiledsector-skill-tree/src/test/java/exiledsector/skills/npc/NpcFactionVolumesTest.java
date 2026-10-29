@@ -1,6 +1,6 @@
 package exiledsector.skills.npc;
 
-import exiledlib.ProjectFiles;
+import exiledsector.ProjectFiles;
 import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;

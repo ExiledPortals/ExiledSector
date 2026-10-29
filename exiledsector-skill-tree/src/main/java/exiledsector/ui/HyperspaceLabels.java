@@ -1,6 +1,6 @@
 package exiledsector.ui;
 
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.ui.hyperspace.HyperspaceAnchor;
 import exiledsector.ui.hyperspace.HyperspaceCamera;
 import exiledsector.ui.util.BorderedPanel;

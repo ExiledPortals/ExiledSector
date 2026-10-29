@@ -1,7 +1,7 @@
 package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.ui.CustomPanelAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.ui.chart.StarChartBrowser;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

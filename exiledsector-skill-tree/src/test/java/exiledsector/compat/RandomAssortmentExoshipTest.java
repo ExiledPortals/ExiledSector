@@ -6,7 +6,7 @@ import com.fs.starfarer.api.ModManagerAPI;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;

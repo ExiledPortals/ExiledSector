@@ -1,7 +1,7 @@
 package exiledsector.ui.decoration;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 
 record RoamingShip(String spritePath, float width, float height, HullSize hullSize, FleetShipDrift drift, HullEngines engines) {
 

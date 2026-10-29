@@ -3,7 +3,7 @@ package exiledsector.ui;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTier;
 import exiledsector.items.ItemKind;

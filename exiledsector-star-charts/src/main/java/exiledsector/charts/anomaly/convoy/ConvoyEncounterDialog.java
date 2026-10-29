@@ -9,8 +9,8 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl;
 import com.fs.starfarer.api.util.Misc;
-import exiledlib.i18n.I18n;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.Translation;
 import exiledsector.ui.VanillaText;
 import org.lwjgl.input.Keyboard;
 

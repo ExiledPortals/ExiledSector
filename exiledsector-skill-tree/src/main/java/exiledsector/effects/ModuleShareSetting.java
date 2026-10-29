@@ -1,6 +1,6 @@
 package exiledsector.effects;
 
-import exiledlib.ModSettings;
+import exiledsector.ModSettings;
 
 public final class ModuleShareSetting {
 

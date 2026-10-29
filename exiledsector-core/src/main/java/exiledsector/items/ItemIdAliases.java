@@ -1,7 +1,7 @@
 package exiledsector.items;
 
-import exiledlib.HostMod;
-import exiledlib.ModCsv;
+import exiledsector.ExiledSector;
+import exiledsector.ModCsv;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,7 +21,7 @@ public final class ItemIdAliases {
     }
 
     public static String dataPath() {
-        return HostMod.configPath(DATA_FILE);
+        return ExiledSector.configPath(DATA_FILE);
     }
 
     public static void load() {

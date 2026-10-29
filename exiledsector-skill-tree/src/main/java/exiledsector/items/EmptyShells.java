@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledlib.skills.skilleffect.special.SpecialSkillEffect;
+import exiledsector.skills.skilleffect.special.SpecialSkillEffect;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeLinks;

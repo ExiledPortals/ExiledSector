@@ -2,7 +2,7 @@ package exiledsector.charts.anomaly.forge;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.objective.ChartObjective;

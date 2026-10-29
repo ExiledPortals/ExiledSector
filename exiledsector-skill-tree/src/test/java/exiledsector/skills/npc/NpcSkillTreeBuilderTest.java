@@ -2,9 +2,9 @@ package exiledsector.skills.npc;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.SkillEffect;
-import exiledlib.skills.skilleffect.shield.ShieldSkillEffect;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.shield.ShieldSkillEffect;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
 import exiledsector.skills.SkillNode;

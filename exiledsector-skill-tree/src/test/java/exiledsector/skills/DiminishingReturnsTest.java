@@ -1,18 +1,13 @@
 package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.skills.DiminishedStat;
-import exiledlib.skills.DiminishingReturns;
-import exiledlib.skills.EffectTotals;
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.StatBaseline;
-import exiledlib.skills.skilleffect.SkillEffect;
-import exiledlib.skills.skilleffect.StatMode;
-import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
-import exiledlib.skills.skilleffect.flux.FluxSkillEffect;
-import exiledlib.skills.skilleffect.weapon.ScopedWeaponEffect;
-import exiledlib.skills.skilleffect.weapon.WeaponScope;
-import exiledlib.skills.skilleffect.weapon.WeaponStatFamily;
+import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.StatMode;
+import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
+import exiledsector.skills.skilleffect.flux.FluxSkillEffect;
+import exiledsector.skills.skilleffect.weapon.ScopedWeaponEffect;
+import exiledsector.skills.skilleffect.weapon.WeaponScope;
+import exiledsector.skills.skilleffect.weapon.WeaponStatFamily;
 import exiledsector.effects.SkillTreeEffectSource;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,7 +1,7 @@
 package exiledsector.effects;
 
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
-import exiledlib.ProjectFiles;
+import exiledsector.ProjectFiles;
 import org.junit.jupiter.api.Test;
 
 import java.nio.charset.StandardCharsets;

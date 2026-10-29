@@ -2,7 +2,7 @@ package exiledsector.ui.decoration;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
-import exiledlib.skills.skilleffect.render.FallbackSupport;
+import exiledsector.skills.skilleffect.render.FallbackSupport;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.TexturedQuadBatch;
 import org.apache.log4j.Logger;

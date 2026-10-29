@@ -1,7 +1,7 @@
 package exiledsector.modifiers;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.skills.ShipHullSizes;
+import exiledsector.skills.ShipHullSizes;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

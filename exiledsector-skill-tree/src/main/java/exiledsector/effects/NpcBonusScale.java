@@ -4,8 +4,8 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledlib.ModSettings;
-import exiledlib.ModSettingsListener;
+import exiledsector.ModSettings;
+import exiledsector.ModSettingsListener;
 import exiledsector.skills.npc.NpcLevelCaps;
 
 import java.util.concurrent.atomic.AtomicReference;

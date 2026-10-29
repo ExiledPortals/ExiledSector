@@ -5,7 +5,7 @@ import com.fs.starfarer.api.campaign.FleetAssignment;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.ChartAnomalies;

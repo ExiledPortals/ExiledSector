@@ -5,7 +5,7 @@ import { STRING_CATALOGUES } from '../../../server/stringCatalogues.ts';
 import { readRepositoryFile, startTestServer, type TestServer } from '../../test/testServer.ts';
 import { TextPage } from './TextPage.tsx';
 
-const STRINGS_FILE = 'exiled-lib/mod/data/strings/exiledLib/en.json';
+const STRINGS_FILE = 'data/strings/exiledSector/core/en.json';
 const TYPES_FILE = 'data/skilltrees/skill_types.json';
 
 let server: TestServer;

@@ -11,8 +11,8 @@ import com.fs.starfarer.api.impl.campaign.ids.HullMods;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
 import exiledsector.skills.FittedShipProfile;
-import exiledlib.skills.ShipFacts;
-import exiledlib.skills.ShipSystemCharges;
+import exiledsector.skills.ShipFacts;
+import exiledsector.skills.ShipSystemCharges;
 
 import java.util.EnumSet;
 import java.util.Set;

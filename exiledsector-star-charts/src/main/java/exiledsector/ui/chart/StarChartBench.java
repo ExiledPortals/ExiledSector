@@ -12,7 +12,7 @@ import exiledsector.charts.atlas.AtlasDevTools;
 import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.atlas.AtlasState;
-import exiledlib.i18n.StyledText;
+import exiledsector.i18n.StyledText;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.CraftingWard;
 import exiledsector.items.Item;

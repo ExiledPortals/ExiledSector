@@ -8,7 +8,7 @@ import com.fs.starfarer.api.campaign.listeners.FleetEventListener;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.FleetTypes;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.content.ChartAnomalyFleets;
 import exiledsector.charts.content.ChartContentGenerator;

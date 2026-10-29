@@ -2,7 +2,7 @@ package exiledsector.console;
 
 import com.fs.starfarer.api.Global;
 import exiledsector.charts.StarCharts;
-import exiledlib.i18n.StyledText;
+import exiledsector.i18n.StyledText;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
 import exiledsector.items.StarChart;

@@ -1,8 +1,8 @@
 package exiledsector.ui.stats;
 
-import exiledlib.i18n.Translation;
-import exiledlib.skills.skilleffect.SkillEffect;
-import exiledlib.skills.skilleffect.weapon.ScopedWeaponEffect;
+import exiledsector.i18n.Translation;
+import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.weapon.ScopedWeaponEffect;
 
 public enum StatGroup {
 

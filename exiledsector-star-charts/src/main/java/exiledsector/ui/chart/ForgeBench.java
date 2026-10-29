@@ -2,8 +2,8 @@ package exiledsector.ui.chart;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledlib.PlayerFleet;
-import exiledlib.i18n.StyledText;
+import exiledsector.PlayerFleet;
+import exiledsector.i18n.StyledText;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.anomaly.forge.ChartForge;
 import exiledsector.charts.anomaly.forge.ForgeTexts;

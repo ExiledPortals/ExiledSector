@@ -3,7 +3,7 @@ package exiledsector.charts.anomaly;
 import com.fs.starfarer.api.campaign.BattleCreationPlugin;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import exiledlib.ModCsv;
+import exiledsector.ModCsv;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.convoy.SupplyConvoy;
 import exiledsector.charts.anomaly.debris.AnomalousDebris;

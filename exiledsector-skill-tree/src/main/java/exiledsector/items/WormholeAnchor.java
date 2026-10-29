@@ -2,8 +2,8 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledlib.i18n.StyledText;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTreeLinks;
 import exiledsector.skills.SkillNode;

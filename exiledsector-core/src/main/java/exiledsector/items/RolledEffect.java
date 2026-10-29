@@ -1,12 +1,12 @@
 package exiledsector.items;
 
-import exiledlib.modifiers.ModifierEffect;
+import exiledsector.modifiers.ModifierEffect;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ValueScaling;
-import exiledlib.i18n.StyledText;
-import exiledlib.i18n.Translation;
-import exiledlib.skills.DescriptionLine;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
+import exiledsector.skills.DescriptionLine;
 
 import java.util.ArrayList;
 import java.util.List;

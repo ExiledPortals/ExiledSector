@@ -1,6 +1,6 @@
 package exiledsector.skills.progression;
 
-import exiledlib.ModSettings;
+import exiledsector.ModSettings;
 
 public final class ShipLevelConfig {
 

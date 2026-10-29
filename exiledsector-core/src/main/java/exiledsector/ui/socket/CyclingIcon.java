@@ -2,8 +2,8 @@ package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledlib.skills.skilleffect.render.Fade;
-import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.skills.skilleffect.render.Fade;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.cargo.AnimatedItemIcons;
 
 import java.awt.Color;

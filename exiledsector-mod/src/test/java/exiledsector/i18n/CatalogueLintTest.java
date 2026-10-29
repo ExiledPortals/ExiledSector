@@ -1,12 +1,8 @@
 package exiledsector.i18n;
 
-import exiledlib.i18n.CatalogueLint;
-import exiledlib.i18n.I18n;
-import exiledlib.i18n.LocaleChain;
-import exiledlib.i18n.RealCatalogue;
 import exiledsector.ExiledSectorModPlugin;
-import exiledlib.HostMod;
-import exiledlib.ProjectFiles;
+import exiledsector.ExiledSector;
+import exiledsector.ProjectFiles;
 import exiledsector.skills.SkillTreeDomain;
 import exiledsector.skills.npc.RealSkillData;
 import org.json.CDL;
@@ -116,9 +112,7 @@ class CatalogueLintTest {
 
     private static Set<String> localesOnDisk() throws IOException {
         Set<String> locales = new TreeSet<>();
-        List<String> directories = new ArrayList<>(List.of(I18n.LIBRARY_STRINGS_DIRECTORY));
-        directories.addAll(HostMod.get().stringsDirectories());
-        for (String directory : directories) {
+        for (String directory : ExiledSector.STRINGS_DIRECTORIES) {
             try (DirectoryStream<Path> files = Files.newDirectoryStream(ProjectFiles.gameFile(directory), "*.json")) {
                 for (Path file : files) {
                     locales.add(file.getFileName().toString().replaceFirst("\\.json$", ""));

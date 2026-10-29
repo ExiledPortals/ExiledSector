@@ -19,7 +19,7 @@ import com.fs.starfarer.api.fleet.RepairTrackerAPI;
 import com.fs.starfarer.api.impl.campaign.abilities.FractureJumpAbility;
 import com.fs.starfarer.api.impl.campaign.ids.Abilities;
 import com.fs.starfarer.api.loading.AbilitySpecAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.generation.ChartSystemFactory;
 import org.junit.jupiter.api.AfterEach;

@@ -5,12 +5,9 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
-import exiledlib.skills.ShipFacts;
-import exiledlib.skills.ShipSystemCharges;
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.SkillEffect;
-import exiledlib.skills.skilleffect.fighter.FighterSkillEffect;
-import exiledlib.skills.skilleffect.shield.ShieldSkillEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.fighter.FighterSkillEffect;
+import exiledsector.skills.skilleffect.shield.ShieldSkillEffect;
 import exiledsector.ExiledSector;
 import exiledsector.skills.tags.ShipProfile;
 

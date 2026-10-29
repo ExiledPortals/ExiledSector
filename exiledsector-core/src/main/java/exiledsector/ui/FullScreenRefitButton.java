@@ -7,7 +7,7 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.ui.refit.RefitButtonConfig;
 import exiledsector.ui.refit.RefitModuleTabs;
 import lunalib.lunaRefit.BaseRefitButton;

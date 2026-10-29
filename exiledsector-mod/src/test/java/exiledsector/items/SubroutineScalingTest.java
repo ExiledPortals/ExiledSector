@@ -1,15 +1,15 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.MockSector;
-import exiledlib.skills.CombatGate;
-import exiledlib.skills.EffectContribution;
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.SocketedItemScaling;
-import exiledlib.skills.skilleffect.SkillEffect;
-import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
-import exiledlib.skills.skilleffect.shield.ShieldSkillEffect;
-import exiledlib.skills.skilleffect.special.SpecialSkillEffect;
+import exiledsector.MockSector;
+import exiledsector.skills.CombatGate;
+import exiledsector.skills.EffectContribution;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.SocketedItemScaling;
+import exiledsector.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.defense.DefenseSkillEffect;
+import exiledsector.skills.skilleffect.shield.ShieldSkillEffect;
+import exiledsector.skills.skilleffect.special.SpecialSkillEffect;
 import exiledsector.effects.SkillTreeEffectSource;
 import exiledsector.skills.NodeGrants;
 import exiledsector.skills.ShipSkillData;

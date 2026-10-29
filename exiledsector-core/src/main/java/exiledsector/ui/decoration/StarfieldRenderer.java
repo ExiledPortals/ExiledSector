@@ -2,7 +2,7 @@ package exiledsector.ui.decoration;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.SkillTreePanelStyle;
 import exiledsector.ui.util.TexturedQuadBatch;
 

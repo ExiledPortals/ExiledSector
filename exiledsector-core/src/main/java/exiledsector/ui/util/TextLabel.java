@@ -1,8 +1,8 @@
 package exiledsector.ui.util;
 
-import exiledlib.i18n.Style;
-import exiledlib.i18n.StyledText;
-import exiledlib.i18n.TextWrapper;
+import exiledsector.i18n.Style;
+import exiledsector.i18n.StyledText;
+import exiledsector.i18n.TextWrapper;
 import exiledsector.ui.SkillTreePanelStyle;
 import org.lazywizard.lazylib.ui.LazyFont;
 

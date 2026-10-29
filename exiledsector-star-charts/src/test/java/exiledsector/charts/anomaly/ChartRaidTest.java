@@ -1,7 +1,7 @@
 package exiledsector.charts.anomaly;
 
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD.RaidDangerLevel;
-import exiledlib.i18n.Style;
+import exiledsector.i18n.Style;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 

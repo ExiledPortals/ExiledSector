@@ -12,7 +12,7 @@ import com.fs.starfarer.api.ui.UIPanelAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.compat.ExoticaCompat;
 import exiledsector.domain.DomainContributions;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.ui.ModificationBenchRefitButton;
 import org.apache.log4j.Logger;
 

@@ -2,7 +2,7 @@ package exiledsector.ui;
 
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.ui.node.NodeSearch;
 import exiledsector.ui.util.BorderedPanel;
 import exiledsector.ui.util.Rects;

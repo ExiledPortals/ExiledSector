@@ -3,7 +3,7 @@ package exiledsector.ui;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledlib.skills.skilleffect.SkillEffect;
+import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.effects.SkillTreeHullMod;
 import exiledsector.items.HullUpgradePoints;
 import exiledsector.items.HullUpgradeRules;

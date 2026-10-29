@@ -3,10 +3,10 @@ package exiledsector.items;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.effects.ShipEffectContext;
 import exiledsector.effects.ShipEffectSource;
-import exiledlib.skills.EffectContribution;
+import exiledsector.skills.EffectContribution;
 import exiledsector.skills.ShipSections;
-import exiledlib.skills.SkillTypeEffect;
-import exiledlib.skills.skilleffect.special.SpecialSkillEffect;
+import exiledsector.skills.SkillTypeEffect;
+import exiledsector.skills.skilleffect.special.SpecialSkillEffect;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -6,7 +6,7 @@ import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.compat.MagicLibCompat;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.InstalledHullMods;

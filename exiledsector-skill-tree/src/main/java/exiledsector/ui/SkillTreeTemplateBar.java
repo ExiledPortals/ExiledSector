@@ -1,7 +1,7 @@
 package exiledsector.ui;
 
 import com.fs.starfarer.api.ui.PositionAPI;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.ui.util.TextLabel;
 
 import java.awt.Color;

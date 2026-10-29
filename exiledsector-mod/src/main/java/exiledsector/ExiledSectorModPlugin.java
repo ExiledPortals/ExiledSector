@@ -5,17 +5,16 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.thoughtworks.xstream.XStream;
-import exiledlib.HostMod;
-import exiledlib.compat.CompatTarget;
-import exiledlib.compat.GraphicsLibCompat;
-import exiledlib.i18n.I18n;
-import exiledlib.i18n.LanguageSetting;
-import exiledlib.i18n.Languages;
-import exiledlib.i18n.SpecLocalisation;
-import exiledlib.skills.skilleffect.CsvIdList;
-import exiledlib.skills.skilleffect.EffectAliases;
-import exiledlib.skills.skilleffect.logistics.FleetCrewLedger;
-import exiledlib.skills.skilleffect.logistics.FleetWideEffects;
+import exiledsector.compat.CompatTarget;
+import exiledsector.compat.GraphicsLibCompat;
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.LanguageSetting;
+import exiledsector.i18n.Languages;
+import exiledsector.i18n.SpecLocalisation;
+import exiledsector.skills.skilleffect.CsvIdList;
+import exiledsector.skills.skilleffect.EffectAliases;
+import exiledsector.skills.skilleffect.logistics.FleetCrewLedger;
+import exiledsector.skills.skilleffect.logistics.FleetWideEffects;
 import exiledsector.charts.StarChartsDomain;
 import exiledsector.compat.CompatChecks;
 import exiledsector.domain.ExiledSectorDomain;
@@ -58,9 +57,10 @@ import java.util.Locale;
 
 public class ExiledSectorModPlugin extends BaseModPlugin {
 
-    public static final HostMod HOST = HostMod.register(ExiledSector.HOST);
     public static final String LIGHT_DATA_PATH = "data/lights/exiledsector_lights.csv";
     static final String SHIP_SKILL_DATA_ALIAS = "exiledSector.ShipSkillData";
+    static final String RETIRED_LIBRARY_PACKAGE = "exiledlib";
+    static final String ROOT_PACKAGE = "exiledsector";
     public static final List<String> LOCALISED_HULLMODS = List.of(SkillTreeHullMod.ID);
     public static final List<ExiledSectorDomain> DOMAINS;
 
@@ -126,6 +126,8 @@ public class ExiledSectorModPlugin extends BaseModPlugin {
 
     @Override
     public void configureXStream(XStream xStream) {
+        xStream.aliasPackage(RETIRED_LIBRARY_PACKAGE, ROOT_PACKAGE);
+        xStream.aliasPackage(ROOT_PACKAGE, ROOT_PACKAGE);
         ItemSaveAliases.register(xStream);
         DOMAINS.forEach(domain -> domain.configureXStream(xStream));
         xStream.alias(SHIP_SKILL_DATA_ALIAS, ShipSkillData.class);

@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledlib.ProjectFiles;
+import exiledsector.ProjectFiles;
 import org.json.CDL;
 import org.json.JSONArray;
 import org.json.JSONObject;

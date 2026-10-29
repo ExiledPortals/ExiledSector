@@ -3,7 +3,7 @@ package exiledsector.charts.atlas;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.items.UseVerdict;
 
 import java.util.LinkedHashMap;

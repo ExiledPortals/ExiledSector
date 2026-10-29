@@ -5,7 +5,7 @@ import com.fs.starfarer.api.campaign.FleetDataAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.skills.SkillTree;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

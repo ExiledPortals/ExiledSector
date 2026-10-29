@@ -10,7 +10,7 @@ import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.impl.campaign.terrain.BaseTerrain;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.ui.VanillaText;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;

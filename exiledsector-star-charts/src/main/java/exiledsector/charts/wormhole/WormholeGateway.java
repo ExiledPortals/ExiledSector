@@ -16,8 +16,8 @@ import exiledsector.compat.VaultsOfKnowledgeCompat;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.items.JanusDevice;
 import exiledsector.ui.VanillaText;
-import exiledlib.i18n.I18n;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.I18n;
+import exiledsector.i18n.Translation;
 
 import java.util.List;
 

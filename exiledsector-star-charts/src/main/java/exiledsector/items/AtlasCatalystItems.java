@@ -1,7 +1,7 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
-import exiledlib.i18n.Translation;
+import exiledsector.i18n.Translation;
 import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.ui.cargo.CargoIconLook;
 import exiledsector.ui.cargo.CatalystLook;

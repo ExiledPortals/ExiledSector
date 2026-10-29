@@ -10,7 +10,7 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.SectorEntityToken.VisibilityLevel;
 import com.fs.starfarer.api.input.InputEventAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

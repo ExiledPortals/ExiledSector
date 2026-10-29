@@ -1,7 +1,7 @@
 package exiledsector.domain;
 
-import exiledlib.ModSettings;
-import exiledlib.i18n.Translation;
+import exiledsector.ModSettings;
+import exiledsector.i18n.Translation;
 import lunalib.lunaSettings.LunaSettings.SettingsCreator;
 
 import static exiledsector.ExiledSector.MOD_ID;

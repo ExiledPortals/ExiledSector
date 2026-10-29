@@ -2,7 +2,7 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
-import exiledlib.ModSettings;
+import exiledsector.ModSettings;
 import exiledsector.domain.DomainSwitch;
 
 import java.util.List;

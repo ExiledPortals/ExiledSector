@@ -1,6 +1,6 @@
 package exiledsector.charts.atlas;
 
-import exiledlib.ModCsv;
+import exiledsector.ModCsv;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.generation.ChartTiers;

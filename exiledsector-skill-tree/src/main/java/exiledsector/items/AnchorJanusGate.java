@@ -1,7 +1,7 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledlib.ModSettings;
+import exiledsector.ModSettings;
 import exiledsector.skills.tags.SkillTags;
 
 public final class AnchorJanusGate {

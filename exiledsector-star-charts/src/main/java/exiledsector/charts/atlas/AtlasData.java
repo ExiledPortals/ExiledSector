@@ -2,7 +2,7 @@ package exiledsector.charts.atlas;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
-import exiledlib.ModCsv;
+import exiledsector.ModCsv;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.content.ChartFaction;
 import exiledsector.charts.content.ChartFactions;

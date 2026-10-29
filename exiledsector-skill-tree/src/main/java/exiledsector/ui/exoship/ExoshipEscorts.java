@@ -2,9 +2,9 @@ package exiledsector.ui.exoship;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.skills.HullSizeTable;
-import exiledlib.skills.skilleffect.render.Fade;
-import exiledlib.skills.skilleffect.render.SpriteCache;
+import exiledsector.skills.HullSizeTable;
+import exiledsector.skills.skilleffect.render.Fade;
+import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.compat.RandomAssortmentCompat;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.decoration.HullEngines;

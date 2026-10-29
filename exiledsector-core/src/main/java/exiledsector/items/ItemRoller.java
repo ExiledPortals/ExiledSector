@@ -1,9 +1,9 @@
 package exiledsector.items;
 
-import exiledlib.HostMod;
-import exiledlib.ModSettings;
-import exiledlib.ModSettingsListener;
-import exiledlib.Seeds;
+import exiledsector.ExiledSector;
+import exiledsector.ModSettings;
+import exiledsector.ModSettingsListener;
+import exiledsector.Seeds;
 import exiledsector.modifiers.TierRange;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ public final class ItemRoller {
     }
 
     public static String averageRollsFieldId() {
-        return HostMod.settingId("averageSocketableRolls");
+        return ExiledSector.key("averageSocketableRolls");
     }
 
     public static void reloadSettings() {

@@ -1,6 +1,6 @@
 package exiledsector.items;
 
-import exiledlib.ModCsv;
+import exiledsector.ModCsv;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;

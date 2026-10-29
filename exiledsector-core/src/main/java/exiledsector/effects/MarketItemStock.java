@@ -12,7 +12,7 @@ import com.fs.starfarer.api.campaign.listeners.ColonyInteractionListener;
 import com.fs.starfarer.api.campaign.listeners.SubmarketUpdateListener;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.submarkets.BaseSubmarketPlugin;
-import exiledlib.PlayerFleet;
+import exiledsector.PlayerFleet;
 import exiledsector.compat.RandomAssortmentCompat;
 import exiledsector.items.ItemData;
 import exiledsector.loot.LootSource;

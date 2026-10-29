@@ -1,10 +1,5 @@
 package exiledsector.compat;
 
-import exiledlib.compat.ApiMember;
-import exiledlib.compat.CompatTarget;
-import exiledlib.compat.LostSectorCompat;
-import exiledlib.compat.NightcrossGravityDrag;
-import exiledlib.compat.SecondInCommandCompat;
 import exiledsector.ExiledSectorModPlugin;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModManagerAPI;
@@ -16,7 +11,7 @@ import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
-import exiledlib.ProjectFiles;
+import exiledsector.ProjectFiles;
 import exiledsector.skills.npc.RealSkillData;
 import org.json.JSONArray;
 import org.json.JSONObject;

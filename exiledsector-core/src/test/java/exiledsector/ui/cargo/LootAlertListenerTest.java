@@ -6,7 +6,7 @@ import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
-import exiledlib.MockSector;
+import exiledsector.MockSector;
 import exiledsector.items.CraftingCurrency;
 import exiledsector.items.ItemDisassembly;
 import org.junit.jupiter.api.AfterEach;

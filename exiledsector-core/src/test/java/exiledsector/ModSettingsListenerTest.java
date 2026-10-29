@@ -1,6 +1,5 @@
 package exiledsector;
 
-import exiledlib.ModSettingsListener;
 import lunalib.lunaSettings.LunaSettings;
 import lunalib.lunaSettings.LunaSettingsListener;
 import org.junit.jupiter.api.Test;

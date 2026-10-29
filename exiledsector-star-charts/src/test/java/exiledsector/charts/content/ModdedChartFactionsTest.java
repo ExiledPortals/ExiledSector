@@ -3,7 +3,7 @@ package exiledsector.charts.content;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.SettingsAPI;
 import com.fs.starfarer.api.campaign.FactionSpecAPI;
-import exiledlib.ProjectFiles;
+import exiledsector.ProjectFiles;
 import exiledsector.charts.anomaly.convoy.ConvoyRules;
 import exiledsector.charts.anomaly.debris.DormantFleets;
 import exiledsector.charts.anomaly.skirmish.SkirmishFactions;
@@ -76,7 +76,7 @@ class ModdedChartFactionsTest {
 
     @Test
     void nexerelinReadsOurRunOnlyFactionsAsUnplayableAndOutOfDiplomacy() throws Exception {
-        java.nio.file.Path folder = exiledlib.ProjectFiles.projectRoot().resolve(ModdedChartFactions.CONFIG_FOLDER);
+        java.nio.file.Path folder = exiledsector.ProjectFiles.projectRoot().resolve(ModdedChartFactions.CONFIG_FOLDER);
         String listed = java.nio.file.Files.readString(folder.resolve("mod_factions.csv"));
         for (String factionId : List.of(DormantFleets.FACTION_ID, SkirmishFactions.ALLY_FACTION_ID)) {
             org.junit.jupiter.api.Assertions.assertTrue(listed.lines().anyMatch(factionId::equals), factionId);

@@ -9,8 +9,7 @@
   "dependencies": [
     {"id": "lw_lazylib", "name": "LazyLib"},
     {"id": "MagicLib", "name": "MagicLib"},
-    {"id": "lunalib", "name": "LunaLib"},
-    {"id": "exiledLib", "name": "Exiled Lib"}
+    {"id": "lunalib", "name": "LunaLib"}
   ],
   "jars": ["jars/ExiledSector-Core.jar", "jars/ExiledSector-SkillTree.jar", "jars/ExiledSector-HullUpgrades.jar",
     "jars/ExiledSector-StarCharts.jar", "jars/ExiledSector.jar"],

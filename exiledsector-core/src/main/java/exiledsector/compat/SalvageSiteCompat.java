@@ -1,9 +1,8 @@
 package exiledsector.compat;
 
 import com.fs.starfarer.api.Global;
-import exiledlib.ModCsv;
-import exiledlib.ModSettings;
-import exiledlib.compat.CompatTarget;
+import exiledsector.ModCsv;
+import exiledsector.ModSettings;
 import org.json.JSONArray;
 import org.json.JSONException;
 

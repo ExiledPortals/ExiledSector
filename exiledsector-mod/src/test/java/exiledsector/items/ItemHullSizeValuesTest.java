@@ -1,8 +1,8 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledlib.i18n.StyledText;
-import exiledlib.skills.SkillTypeEffect;
+import exiledsector.i18n.StyledText;
+import exiledsector.skills.SkillTypeEffect;
 import org.json.JSONArray;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
