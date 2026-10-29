@@ -2532,36 +2532,32 @@ effect-noSiC|CONVERTED_HANGAR_MIN_CREW_FLAT|-10.0	1	<bad>-10</bad> to minimum cr
 effect-noSiC|CONVERTED_HANGAR_MIN_CREW_FLAT|-12.5	1	<bad>-12.5</bad> to minimum crew required.
 flavour|abyssal_grid	0	Picking apart the power grids of abyssal drone wrecks, the crew works out how their couplings survive the storms of abyssal hyperspace and rebuilds the ship's energy mounts to match.
 flavourAutomated|abyssal_grid	0	Picking apart the power grids of abyssal drone wrecks, the refit crew works out how their couplings survive the storms of abyssal hyperspace and rebuilds the ship's energy mounts to match.
+itemCost|abyssal_grid	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
 type|abyssal_grid|null|0	1	<bad>10%</bad> reduced energy weapon flux cost.
 type|abyssal_grid|null|1	0	<good>+100</good> to energy weapon range.
 type|abyssal_grid|null|2	1	<bad>25%</bad> reduced EMP damage taken.
 type|abyssal_grid|null|3	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-type-detail|abyssal_grid|null|0	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
-type-detail|abyssal_grid|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Grid</hullmod>
+type-detail|abyssal_grid|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Grid</hullmod>
 type|abyssal_grid|FRIGATE|0	1	<bad>10%</bad> reduced energy weapon flux cost.
 type|abyssal_grid|FRIGATE|1	0	<good>+100</good> to energy weapon range.
 type|abyssal_grid|FRIGATE|2	1	<bad>25%</bad> reduced EMP damage taken.
 type|abyssal_grid|FRIGATE|3	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-type-detail|abyssal_grid|FRIGATE|0	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
-type-detail|abyssal_grid|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Grid</hullmod>
+type-detail|abyssal_grid|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Grid</hullmod>
 type|abyssal_grid|DESTROYER|0	1	<bad>10%</bad> reduced energy weapon flux cost.
 type|abyssal_grid|DESTROYER|1	0	<good>+100</good> to energy weapon range.
 type|abyssal_grid|DESTROYER|2	1	<bad>25%</bad> reduced EMP damage taken.
 type|abyssal_grid|DESTROYER|3	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-type-detail|abyssal_grid|DESTROYER|0	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
-type-detail|abyssal_grid|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Grid</hullmod>
+type-detail|abyssal_grid|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Grid</hullmod>
 type|abyssal_grid|CRUISER|0	1	<bad>10%</bad> reduced energy weapon flux cost.
 type|abyssal_grid|CRUISER|1	0	<good>+100</good> to energy weapon range.
 type|abyssal_grid|CRUISER|2	1	<bad>25%</bad> reduced EMP damage taken.
 type|abyssal_grid|CRUISER|3	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-type-detail|abyssal_grid|CRUISER|0	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
-type-detail|abyssal_grid|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Grid</hullmod>
+type-detail|abyssal_grid|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Grid</hullmod>
 type|abyssal_grid|CAPITAL_SHIP|0	1	<bad>10%</bad> reduced energy weapon flux cost.
 type|abyssal_grid|CAPITAL_SHIP|1	0	<good>+100</good> to energy weapon range.
 type|abyssal_grid|CAPITAL_SHIP|2	1	<bad>25%</bad> reduced EMP damage taken.
 type|abyssal_grid|CAPITAL_SHIP|3	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
-type-detail|abyssal_grid|CAPITAL_SHIP|0	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
-type-detail|abyssal_grid|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Grid</hullmod>
+type-detail|abyssal_grid|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Grid</hullmod>
 flavour|adaptive_coils	0	Phase coils lose their grip on normal space as hard flux builds. A crew willing to rewind them by hand can keep that grip a while longer.
 flavourAutomated|adaptive_coils	0	Phase coils lose their grip on normal space as hard flux builds. The ship's core models the slip from its own coil telemetry and corrects for it faster than any hand could rewind them, keeping that grip a while longer.
 type|adaptive_coils|null|0	0	<good>40%</good> increased hard flux level at which phased speed reaches its minimum.
@@ -2855,26 +2851,22 @@ type|cargo_capacity_flat|CRUISER|0	0	<good>+25</good> to cargo capacity.
 type|cargo_capacity_flat|CAPITAL_SHIP|0	0	<good>+50</good> to cargo capacity.
 flavour|chronos_adaptability	0	After long hours with a recovered Chronos core, the crew decodes how it times its own systems and rewrites the ship system's control loop to match, cycling it faster than its makers ever intended.
 flavourAutomated|chronos_adaptability	0	Linked to a recovered Chronos core, the ship's core logs how it times its own systems and rewrites the ship system's control loop to match, cycling it faster than its makers ever intended.
+itemCost|chronos_adaptability	0	Costs 1 rat_chronos_core to allocate, returned when unallocated.
 type|chronos_adaptability|null|0	1	<bad>20%</bad> reduced ship system cooldown.
 type|chronos_adaptability|null|1	0	<good>20%</good> increased ship system charge regeneration.
-type-detail|chronos_adaptability|null|0	0	Costs 1 rat_chronos_core to allocate, returned when unallocated.
-type-detail|chronos_adaptability|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Adaptability</hullmod>
+type-detail|chronos_adaptability|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Adaptability</hullmod>
 type|chronos_adaptability|FRIGATE|0	1	<bad>20%</bad> reduced ship system cooldown.
 type|chronos_adaptability|FRIGATE|1	0	<good>20%</good> increased ship system charge regeneration.
-type-detail|chronos_adaptability|FRIGATE|0	0	Costs 1 rat_chronos_core to allocate, returned when unallocated.
-type-detail|chronos_adaptability|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Adaptability</hullmod>
+type-detail|chronos_adaptability|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Adaptability</hullmod>
 type|chronos_adaptability|DESTROYER|0	1	<bad>20%</bad> reduced ship system cooldown.
 type|chronos_adaptability|DESTROYER|1	0	<good>20%</good> increased ship system charge regeneration.
-type-detail|chronos_adaptability|DESTROYER|0	0	Costs 1 rat_chronos_core to allocate, returned when unallocated.
-type-detail|chronos_adaptability|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Adaptability</hullmod>
+type-detail|chronos_adaptability|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Adaptability</hullmod>
 type|chronos_adaptability|CRUISER|0	1	<bad>20%</bad> reduced ship system cooldown.
 type|chronos_adaptability|CRUISER|1	0	<good>20%</good> increased ship system charge regeneration.
-type-detail|chronos_adaptability|CRUISER|0	0	Costs 1 rat_chronos_core to allocate, returned when unallocated.
-type-detail|chronos_adaptability|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Adaptability</hullmod>
+type-detail|chronos_adaptability|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Adaptability</hullmod>
 type|chronos_adaptability|CAPITAL_SHIP|0	1	<bad>20%</bad> reduced ship system cooldown.
 type|chronos_adaptability|CAPITAL_SHIP|1	0	<good>20%</good> increased ship system charge regeneration.
-type-detail|chronos_adaptability|CAPITAL_SHIP|0	0	Costs 1 rat_chronos_core to allocate, returned when unallocated.
-type-detail|chronos_adaptability|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Adaptability</hullmod>
+type-detail|chronos_adaptability|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Adaptability</hullmod>
 flavour|coil_efficiency	0	Exo-Tech technicians teach the crew to retune the phase coils to their own tolerances, which are tighter than anything the coils were built for.
 flavourAutomated|coil_efficiency	0	Exo-Tech technicians teach the refit crew to retune the phase coils to their own tolerances, which are tighter than anything the coils were built for.
 type|coil_efficiency|null|0	0	<good>20%</good> increased hard flux level at which phased speed reaches its minimum.
@@ -2969,26 +2961,22 @@ type|crew_capacity_flat|DESTROYER|0	0	<good>+15</good> to crew capacity.
 type|crew_capacity_flat|CRUISER|0	0	<good>+25</good> to crew capacity.
 type|crew_capacity_flat|CAPITAL_SHIP|0	0	<good>+50</good> to crew capacity.
 flavour|crustacean_integration	0	You control the speed at which these lobsters die.
+itemCost|crustacean_integration	0	Costs 1000 lobster to allocate, returned when unallocated.
 type|crustacean_integration|null|0	0	<good>15%</good> increased combat readiness recovery rate.
 type|crustacean_integration|null|1	0	<good>10%</good> increased top speed.
 type|crustacean_integration|null|2	0	<good>30%</good> increased peak combat readiness duration.
-type-detail|crustacean_integration|null|0	0	Costs 1000 lobster to allocate, returned when unallocated.
 type|crustacean_integration|FRIGATE|0	0	<good>15%</good> increased combat readiness recovery rate.
 type|crustacean_integration|FRIGATE|1	0	<good>10%</good> increased top speed.
 type|crustacean_integration|FRIGATE|2	0	<good>30%</good> increased peak combat readiness duration.
-type-detail|crustacean_integration|FRIGATE|0	0	Costs 1000 lobster to allocate, returned when unallocated.
 type|crustacean_integration|DESTROYER|0	0	<good>15%</good> increased combat readiness recovery rate.
 type|crustacean_integration|DESTROYER|1	0	<good>10%</good> increased top speed.
 type|crustacean_integration|DESTROYER|2	0	<good>30%</good> increased peak combat readiness duration.
-type-detail|crustacean_integration|DESTROYER|0	0	Costs 1000 lobster to allocate, returned when unallocated.
 type|crustacean_integration|CRUISER|0	0	<good>15%</good> increased combat readiness recovery rate.
 type|crustacean_integration|CRUISER|1	0	<good>10%</good> increased top speed.
 type|crustacean_integration|CRUISER|2	0	<good>30%</good> increased peak combat readiness duration.
-type-detail|crustacean_integration|CRUISER|0	0	Costs 1000 lobster to allocate, returned when unallocated.
 type|crustacean_integration|CAPITAL_SHIP|0	0	<good>15%</good> increased combat readiness recovery rate.
 type|crustacean_integration|CAPITAL_SHIP|1	0	<good>10%</good> increased top speed.
 type|crustacean_integration|CAPITAL_SHIP|2	0	<good>30%</good> increased peak combat readiness duration.
-type-detail|crustacean_integration|CAPITAL_SHIP|0	0	Costs 1000 lobster to allocate, returned when unallocated.
 type-detail|dedicated_targeting_core|null|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
 type-detail|dedicated_targeting_core|null|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Dedicated Targeting Core</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Integrated Targeting Unit</node>
 type|dedicated_targeting_core|FRIGATE|0	0	<good>0%</good> increased ballistic weapon range.
@@ -3604,42 +3592,34 @@ type|fluxbreakers|CAPITAL_SHIP|0	1	<bad>30%</bad> less EMP damage taken.
 type|fluxbreakers|CAPITAL_SHIP|1	0	<good>10%</good> increased venting speed.
 type-detail|fluxbreakers|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Resistant Flux Conduits</hullmod>
 flavour|fragment_coordinator	0	Processing units taken from Threat wrecks let the ship's swarm hold together in far greater numbers.
+itemCost|fragment_coordinator	0	Costs 1 threat_processing_unit to allocate, returned when unallocated.
 type|fragment_coordinator|null|0	0	<good>60%</good> increased fragment swarm size.
-type-detail|fragment_coordinator|null|0	0	Costs 1 threat_processing_unit to allocate, returned when unallocated.
-type-detail|fragment_coordinator|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Fragment Coordinator</hullmod>
+type-detail|fragment_coordinator|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Fragment Coordinator</hullmod>
 type|fragment_coordinator|FRIGATE|0	0	<good>60%</good> increased fragment swarm size.
-type-detail|fragment_coordinator|FRIGATE|0	0	Costs 1 threat_processing_unit to allocate, returned when unallocated.
-type-detail|fragment_coordinator|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Fragment Coordinator</hullmod>
+type-detail|fragment_coordinator|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Fragment Coordinator</hullmod>
 type|fragment_coordinator|DESTROYER|0	0	<good>60%</good> increased fragment swarm size.
-type-detail|fragment_coordinator|DESTROYER|0	0	Costs 1 threat_processing_unit to allocate, returned when unallocated.
-type-detail|fragment_coordinator|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Fragment Coordinator</hullmod>
+type-detail|fragment_coordinator|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Fragment Coordinator</hullmod>
 type|fragment_coordinator|CRUISER|0	0	<good>60%</good> increased fragment swarm size.
-type-detail|fragment_coordinator|CRUISER|0	0	Costs 1 threat_processing_unit to allocate, returned when unallocated.
-type-detail|fragment_coordinator|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Fragment Coordinator</hullmod>
+type-detail|fragment_coordinator|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Fragment Coordinator</hullmod>
 type|fragment_coordinator|CAPITAL_SHIP|0	0	<good>60%</good> increased fragment swarm size.
-type-detail|fragment_coordinator|CAPITAL_SHIP|0	0	Costs 1 threat_processing_unit to allocate, returned when unallocated.
-type-detail|fragment_coordinator|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Fragment Coordinator</hullmod>
+type-detail|fragment_coordinator|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Fragment Coordinator</hullmod>
 type|fragment_replacement_rate|null|0	0	<good>5%</good> increased fragment replacement rate.
 type|fragment_replacement_rate|FRIGATE|0	0	<good>5%</good> increased fragment replacement rate.
 type|fragment_replacement_rate|DESTROYER|0	0	<good>5%</good> increased fragment replacement rate.
 type|fragment_replacement_rate|CRUISER|0	0	<good>5%</good> increased fragment replacement rate.
 type|fragment_replacement_rate|CAPITAL_SHIP|0	0	<good>5%</good> increased fragment replacement rate.
 flavour|fragment_swarm	0	A fabricator pulled from a Threat wreck still builds fragments when it is fed. Seated in the hull, it keeps a swarm of them roiling around the ship to feed fragment weapons.
+itemCost|fragment_swarm	0	Costs 1 fragment_fabricator to allocate, returned when unallocated.
 type-detail|fragment_swarm|null|0	0	Can't be allocated on phase ships.
-type-detail|fragment_swarm|null|1	0	Costs 1 fragment_fabricator to allocate, returned when unallocated.
-type-detail|fragment_swarm|null|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Shrouded Lens</hullmod>\n• <hullmod>Shrouded Mantle</hullmod>\n• <hullmod>Shrouded Thunderhead</hullmod>\n• <hullmod>Fragment Swarm</hullmod>
+type-detail|fragment_swarm|null|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Shrouded Lens</hullmod>\n• <hullmod>Shrouded Mantle</hullmod>\n• <hullmod>Shrouded Thunderhead</hullmod>\n• <hullmod>Fragment Swarm</hullmod>
 type-detail|fragment_swarm|FRIGATE|0	0	Can't be allocated on phase ships.
-type-detail|fragment_swarm|FRIGATE|1	0	Costs 1 fragment_fabricator to allocate, returned when unallocated.
-type-detail|fragment_swarm|FRIGATE|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Shrouded Lens</hullmod>\n• <hullmod>Shrouded Mantle</hullmod>\n• <hullmod>Shrouded Thunderhead</hullmod>\n• <hullmod>Fragment Swarm</hullmod>
+type-detail|fragment_swarm|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Shrouded Lens</hullmod>\n• <hullmod>Shrouded Mantle</hullmod>\n• <hullmod>Shrouded Thunderhead</hullmod>\n• <hullmod>Fragment Swarm</hullmod>
 type-detail|fragment_swarm|DESTROYER|0	0	Can't be allocated on phase ships.
-type-detail|fragment_swarm|DESTROYER|1	0	Costs 1 fragment_fabricator to allocate, returned when unallocated.
-type-detail|fragment_swarm|DESTROYER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Shrouded Lens</hullmod>\n• <hullmod>Shrouded Mantle</hullmod>\n• <hullmod>Shrouded Thunderhead</hullmod>\n• <hullmod>Fragment Swarm</hullmod>
+type-detail|fragment_swarm|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Shrouded Lens</hullmod>\n• <hullmod>Shrouded Mantle</hullmod>\n• <hullmod>Shrouded Thunderhead</hullmod>\n• <hullmod>Fragment Swarm</hullmod>
 type-detail|fragment_swarm|CRUISER|0	0	Can't be allocated on phase ships.
-type-detail|fragment_swarm|CRUISER|1	0	Costs 1 fragment_fabricator to allocate, returned when unallocated.
-type-detail|fragment_swarm|CRUISER|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Shrouded Lens</hullmod>\n• <hullmod>Shrouded Mantle</hullmod>\n• <hullmod>Shrouded Thunderhead</hullmod>\n• <hullmod>Fragment Swarm</hullmod>
+type-detail|fragment_swarm|CRUISER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Shrouded Lens</hullmod>\n• <hullmod>Shrouded Mantle</hullmod>\n• <hullmod>Shrouded Thunderhead</hullmod>\n• <hullmod>Fragment Swarm</hullmod>
 type-detail|fragment_swarm|CAPITAL_SHIP|0	0	Can't be allocated on phase ships.
-type-detail|fragment_swarm|CAPITAL_SHIP|1	0	Costs 1 fragment_fabricator to allocate, returned when unallocated.
-type-detail|fragment_swarm|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Shrouded Lens</hullmod>\n• <hullmod>Shrouded Mantle</hullmod>\n• <hullmod>Shrouded Thunderhead</hullmod>\n• <hullmod>Fragment Swarm</hullmod>
+type-detail|fragment_swarm|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Shrouded Lens</hullmod>\n• <hullmod>Shrouded Mantle</hullmod>\n• <hullmod>Shrouded Thunderhead</hullmod>\n• <hullmod>Fragment Swarm</hullmod>
 type|fragment_swarm_size|null|0	0	<good>10%</good> increased fragment swarm size.
 type|fragment_swarm_size|FRIGATE|0	0	<good>10%</good> increased fragment swarm size.
 type|fragment_swarm_size|DESTROYER|0	0	<good>10%</good> increased fragment swarm size.
@@ -4530,88 +4510,76 @@ type|safety_overrides|CAPITAL_SHIP|8	0	<good>+20</good> to deceleration.
 type-detail|safety_overrides|CAPITAL_SHIP|0	0	Restricted to <hl>hull sizes</hl>: Frigate, Destroyer, Cruiser.
 type-detail|safety_overrides|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Volatile Flux Injector</hullmod>\n• <hullmod>PD Specialization</hullmod>\n• <hullmod>Enraged Systems</hullmod>\n• <hullmod>Probability Space Hypervessel</hullmod>\n• <hullmod>Silberherz Core</hullmod>\n• <hullmod>Silberherz Subcore</hullmod>\n• <hullmod>Edge Capacitors Retrofit</hullmod>\n• <hullmod>Safety Protocols</hullmod>\n• <hullmod>Guerrilla Overhaul</hullmod>\n• <hullmod>Extra Propulsion Systems</hullmod>\n• <hullmod>Prototype Core</hullmod>\n• <hullmod>Robust Flux Reactor</hullmod>\n• <hullmod>Repulse-Field</hullmod>\n• <hullmod>Illusia Resonance</hullmod>\n• <hullmod>Pristine Condition</hullmod>\n• <hullmod>Quantum Damper</hullmod>\n• <hullmod>Singularity Hullmod</hullmod>\n• <hullmod>Cetan Frame</hullmod>\n• <hullmod>Ultimate Design</hullmod>\n• <hullmod>Invasive Timefield</hullmod>\n• <hullmod>Necro Scavenger</hullmod>\n• <hullmod>Domain Machinery</hullmod>\n• <hullmod>Exogrid Overload</hullmod>\n• <hullmod>Anti-Terminal Reactive Breakers</hullmod>\n• <hullmod>Safety Overrides</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Volatile Flux Tuning</node>
 flavour|secondary_fabricator	0	A second Threat fabricator wired in beside the first replaces fragments as fast as the fighting destroys them.
+itemCost|secondary_fabricator	0	Costs 1 fragment_fabricator to allocate, returned when unallocated.
 type|secondary_fabricator|null|0	0	<good>30%</good> increased fragment replacement rate.
-type-detail|secondary_fabricator|null|0	0	Costs 1 fragment_fabricator to allocate, returned when unallocated.
-type-detail|secondary_fabricator|null|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Secondary Fabricator</hullmod>
+type-detail|secondary_fabricator|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Secondary Fabricator</hullmod>
 type|secondary_fabricator|FRIGATE|0	0	<good>30%</good> increased fragment replacement rate.
-type-detail|secondary_fabricator|FRIGATE|0	0	Costs 1 fragment_fabricator to allocate, returned when unallocated.
-type-detail|secondary_fabricator|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Secondary Fabricator</hullmod>
+type-detail|secondary_fabricator|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Secondary Fabricator</hullmod>
 type|secondary_fabricator|DESTROYER|0	0	<good>30%</good> increased fragment replacement rate.
-type-detail|secondary_fabricator|DESTROYER|0	0	Costs 1 fragment_fabricator to allocate, returned when unallocated.
-type-detail|secondary_fabricator|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Secondary Fabricator</hullmod>
+type-detail|secondary_fabricator|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Secondary Fabricator</hullmod>
 type|secondary_fabricator|CRUISER|0	0	<good>30%</good> increased fragment replacement rate.
-type-detail|secondary_fabricator|CRUISER|0	0	Costs 1 fragment_fabricator to allocate, returned when unallocated.
-type-detail|secondary_fabricator|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Secondary Fabricator</hullmod>
+type-detail|secondary_fabricator|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Secondary Fabricator</hullmod>
 type|secondary_fabricator|CAPITAL_SHIP|0	0	<good>30%</good> increased fragment replacement rate.
-type-detail|secondary_fabricator|CAPITAL_SHIP|0	0	Costs 1 fragment_fabricator to allocate, returned when unallocated.
-type-detail|secondary_fabricator|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Secondary Fabricator</hullmod>
+type-detail|secondary_fabricator|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Secondary Fabricator</hullmod>
 type|sensor_profile|null|0	1	<bad>10%</bad> reduced sensor profile.
 type|sensor_profile|FRIGATE|0	1	<bad>10%</bad> reduced sensor profile.
 type|sensor_profile|DESTROYER|0	1	<bad>10%</bad> reduced sensor profile.
 type|sensor_profile|CRUISER|0	1	<bad>10%</bad> reduced sensor profile.
 type|sensor_profile|CAPITAL_SHIP|0	1	<bad>10%</bad> reduced sensor profile.
 flavour|seraphim	0	Code pulled from a dissected Seraph core, pieced back together and patched into the damage-control software. It mends the ship on what the guns take from others.
+itemCost|seraphim	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
 type|seraphim|null|0	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
 type|seraphim|null|1	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 type|seraphim|null|2	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
-type-detail|seraphim|null|0	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
 type|seraphim|FRIGATE|0	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
 type|seraphim|FRIGATE|1	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 type|seraphim|FRIGATE|2	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 type|seraphim|FRIGATE|3	0	The full Seraph Hunting Routines damage bonus is reached after dealing 75000 armor and hull damage.
-type-detail|seraphim|FRIGATE|0	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
 type|seraphim|DESTROYER|0	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
 type|seraphim|DESTROYER|1	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 type|seraphim|DESTROYER|2	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 type|seraphim|DESTROYER|3	0	The full Seraph Hunting Routines damage bonus is reached after dealing 125000 armor and hull damage.
-type-detail|seraphim|DESTROYER|0	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
 type|seraphim|CRUISER|0	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
 type|seraphim|CRUISER|1	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 type|seraphim|CRUISER|2	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 type|seraphim|CRUISER|3	0	The full Seraph Hunting Routines damage bonus is reached after dealing 175000 armor and hull damage.
-type-detail|seraphim|CRUISER|0	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
 type|seraphim|CAPITAL_SHIP|0	0	Repairs hull equal to <good>10%</good> of the armor and hull damage this ship deals to enemy ships.
 type|seraphim|CAPITAL_SHIP|1	0	Seraph Hunting Routines repair at most <good>20%</good> of this ship's maximum hull per battle.
 type|seraphim|CAPITAL_SHIP|2	0	Up to <good>30%</good> increased ballistic and energy weapon damage, building up as this ship deals armor and hull damage to enemy ships. At the full bonus, the zero-flux speed boost works at any flux level.
 type|seraphim|CAPITAL_SHIP|3	0	The full Seraph Hunting Routines damage bonus is reached after dealing 225000 armor and hull damage.
-type-detail|seraphim|CAPITAL_SHIP|0	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
 flavour|seraphs_grace	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the crew rewires the ship to do the same. The shield emitters were never built for that load.
 flavourAutomated|seraphs_grace	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the refit crew rewires the ship to do the same. The shield emitters were never built for that load.
+itemCost|seraphs_grace	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
 type|seraphs_grace|null|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
 type|seraphs_grace|null|1	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
 type|seraphs_grace|null|2	0	<good>20%</good> increased weapon durability.
 type|seraphs_grace|null|3	1	<bad>20%</bad> reduced weapon and engine repair time.
 type|seraphs_grace|null|4	1	<good>20%</good> more damage taken by shields.
-type-detail|seraphs_grace|null|0	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
-type-detail|seraphs_grace|null|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
+type-detail|seraphs_grace|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
 type|seraphs_grace|FRIGATE|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
 type|seraphs_grace|FRIGATE|1	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
 type|seraphs_grace|FRIGATE|2	0	<good>20%</good> increased weapon durability.
 type|seraphs_grace|FRIGATE|3	1	<bad>20%</bad> reduced weapon and engine repair time.
 type|seraphs_grace|FRIGATE|4	1	<good>20%</good> more damage taken by shields.
-type-detail|seraphs_grace|FRIGATE|0	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
-type-detail|seraphs_grace|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
+type-detail|seraphs_grace|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
 type|seraphs_grace|DESTROYER|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
 type|seraphs_grace|DESTROYER|1	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
 type|seraphs_grace|DESTROYER|2	0	<good>20%</good> increased weapon durability.
 type|seraphs_grace|DESTROYER|3	1	<bad>20%</bad> reduced weapon and engine repair time.
 type|seraphs_grace|DESTROYER|4	1	<good>20%</good> more damage taken by shields.
-type-detail|seraphs_grace|DESTROYER|0	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
-type-detail|seraphs_grace|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
+type-detail|seraphs_grace|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
 type|seraphs_grace|CRUISER|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
 type|seraphs_grace|CRUISER|1	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
 type|seraphs_grace|CRUISER|2	0	<good>20%</good> increased weapon durability.
 type|seraphs_grace|CRUISER|3	1	<bad>20%</bad> reduced weapon and engine repair time.
 type|seraphs_grace|CRUISER|4	1	<good>20%</good> more damage taken by shields.
-type-detail|seraphs_grace|CRUISER|0	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
-type-detail|seraphs_grace|CRUISER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
+type-detail|seraphs_grace|CRUISER|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
 type|seraphs_grace|CAPITAL_SHIP|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
 type|seraphs_grace|CAPITAL_SHIP|1	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
 type|seraphs_grace|CAPITAL_SHIP|2	0	<good>20%</good> increased weapon durability.
 type|seraphs_grace|CAPITAL_SHIP|3	1	<bad>20%</bad> reduced weapon and engine repair time.
 type|seraphs_grace|CAPITAL_SHIP|4	1	<good>20%</good> more damage taken by shields.
-type-detail|seraphs_grace|CAPITAL_SHIP|0	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
-type-detail|seraphs_grace|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
+type-detail|seraphs_grace|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Seraphs Grace</hullmod>\n• <hullmod>Raphaels Grace</hullmod>
 type|shared_damage_taken|null|0	0	Disperses 5% of shield damage taken to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 type|shared_damage_taken|FRIGATE|0	0	Disperses 5% of shield damage taken to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 type|shared_damage_taken|DESTROYER|0	0	Disperses 5% of shield damage taken to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.

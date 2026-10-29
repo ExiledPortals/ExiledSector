@@ -4,8 +4,11 @@ import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledlib.ProjectFiles;
 import exiledlib.skills.SkillTypeEffect;
 import exiledlib.skills.skilleffect.defense.DefenseSkillEffect;
+import exiledlib.skills.skilleffect.movement.MovementSkillEffect;
 import exiledlib.skills.skilleffect.shield.ShieldSkillEffect;
 import exiledlib.skills.skilleffect.hullmodule.ModuleShare;
+import exiledlib.skills.skilleffect.hullmodule.StationModuleSkillEffect;
+import exiledlib.skills.skilleffect.special.SpecialSkillEffect;
 import exiledsector.skills.loader.SkillTypeLoader;
 import exiledsector.skills.npc.RealSkillData;
 import org.junit.jupiter.api.BeforeAll;
@@ -15,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class SkillTypeModuleShareTest {
@@ -91,5 +95,31 @@ class SkillTypeModuleShareTest {
 
         assertEquals(List.of(), builder(armor).temporaryAfterDeploymentSeconds(30f).build().moduleSharedEffects(HullSize.CRUISER));
         assertEquals(List.of(), builder(armor).vanillaHullModId("missile_autoloader").build().moduleSharedEffects(HullSize.CRUISER));
+    }
+
+    @Test
+    void theShareExtentSaysWhetherAllSomeOrNoneOfTheEffectsReachModules() {
+        SkillTypeEffect armor = new SkillTypeEffect(DefenseSkillEffect.ARMOR_PERCENT, 10f);
+        SkillTypeEffect topSpeed = new SkillTypeEffect(MovementSkillEffect.TOP_SPEED_PERCENT, 10f);
+        SkillTypeEffect sharedShieldDamage = new SkillTypeEffect(ShieldSkillEffect.SHIELD_DAMAGE_SHARED_PERCENT, 20f);
+
+        assertEquals(ModuleShareExtent.ALL, builder(armor).build().moduleShareExtent(HullSize.CRUISER));
+        assertEquals(ModuleShareExtent.SOME, builder(armor, topSpeed).build().moduleShareExtent(HullSize.CRUISER));
+        assertEquals(ModuleShareExtent.NONE, builder(topSpeed).build().moduleShareExtent(HullSize.CRUISER));
+        assertEquals(ModuleShareExtent.NONE, builder(armor, sharedShieldDamage).build().moduleShareExtent(HullSize.CRUISER));
+        assertEquals(ModuleShareExtent.NONE, builder(armor).temporaryAfterDeploymentSeconds(30f).build().moduleShareExtent(HullSize.CRUISER));
+    }
+
+    @Test
+    void affinityCountsAsSharedAndModuleOnlyEffectsAreLeftOut() {
+        SkillTypeEffect affinity = new SkillTypeEffect(SpecialSkillEffect.HIGH_TECH_AFFINITY_FLAT, 1f);
+        SkillTypeEffect moduleHull = new SkillTypeEffect(StationModuleSkillEffect.MODULE_HULL_PERCENT, 10f);
+        SkillTypeEffect armor = new SkillTypeEffect(DefenseSkillEffect.ARMOR_PERCENT, 10f);
+
+        assertEquals(ModuleShareExtent.ALL, builder(affinity).build().moduleShareExtent(HullSize.CRUISER));
+        assertEquals(ModuleShareExtent.ALL, builder(armor, moduleHull).build().moduleShareExtent(HullSize.CRUISER));
+        assertNull(builder(moduleHull).build().moduleShareExtent(HullSize.CRUISER));
+        assertNull(builder().build().moduleShareExtent(HullSize.CRUISER));
+        assertEquals(ModuleShareExtent.NONE, builder().vanillaHullModId("missile_autoloader").build().moduleShareExtent(HullSize.CRUISER));
     }
 }

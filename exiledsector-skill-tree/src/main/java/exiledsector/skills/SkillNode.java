@@ -75,7 +75,6 @@ public class SkillNode extends SkillTreeObject {
             }
         }
         addLine(details, describeHullSizes(type), false);
-        addLine(details, describeItemCost(type), false);
         addLine(details, describeExclusivity(type), false);
         return new NodeDescription(effects, details);
     }
@@ -127,12 +126,12 @@ public class SkillNode extends SkillTreeObject {
         return Translation.msg("node.hullSizes").count(hullSizes.size()).arg("hullSizes", Translation.list(names)).styled();
     }
 
-    private static StyledText describeItemCost(SkillType type) {
-        SkillItemCost itemCost = type.getItemCost();
+    public static StyledText describeItemCost(SkillItemCost itemCost, Style style) {
         if (itemCost == null) {
             return null;
         }
-        return Translation.msg("node.itemCost").arg("quantity", itemCost.formattedQuantity()).arg("item", itemCost.itemName()).styled();
+        String costText = Translation.msg("node.itemCost").arg("quantity", itemCost.formattedQuantity()).arg("item", itemCost.itemName()).text();
+        return style == null ? StyledText.of(costText) : StyledText.styled(costText, style);
     }
 
     private static StyledText describeExclusivity(SkillType type) {

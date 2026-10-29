@@ -67,6 +67,13 @@ public final class EditorDescriber {
         NodeDescription description = optionalHint
                 ? new NodeDescription(List.of(new DescriptionLine(Translation.styled("ui.node.optionalHint"), false)), List.of())
                 : SkillNode.describeMechanics(type, hullSize);
+        StyledText itemCostLine = SkillNode.describeItemCost(type.getItemCost(), null);
+        if (itemCostLine != null) {
+            List<DescriptionLine> effects = new ArrayList<>(description.effects().size() + 1);
+            effects.add(new DescriptionLine(itemCostLine, false));
+            effects.addAll(description.effects());
+            description = new NodeDescription(effects, description.details());
+        }
         return new JSONObject()
                 .put("title", type.getDisplayName())
                 .put("flavour", type.getFlavourText() == null ? JSONObject.NULL : type.getFlavourText())

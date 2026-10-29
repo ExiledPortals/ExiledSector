@@ -410,7 +410,7 @@ public final class TreeAllocationSession {
         return dropdownNode == null ? null : viewSnapshot().optionRefusalReason(dropdownNode, option);
     }
 
-    private static AllocationGate.Verdict optionVerdict(SkillNode node, SkillType option, NodeAllocator.Snapshot allocation) {
+    static AllocationGate.Verdict optionVerdict(SkillNode node, SkillType option, NodeAllocator.Snapshot allocation) {
         return allocation.skillData().isAllocated(node.getId())
                 ? allocation.gate().optionSwitch(node, option) : allocation.gate().allocation(node, option);
     }

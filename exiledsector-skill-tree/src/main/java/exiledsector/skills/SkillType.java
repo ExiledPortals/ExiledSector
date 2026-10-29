@@ -3,9 +3,11 @@ package exiledsector.skills;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
+import exiledlib.skills.AffinitySteps;
 import exiledlib.skills.HullSizeSkillEffect;
 import exiledlib.skills.SkillTypeEffect;
 import exiledlib.skills.skilleffect.hullmodule.ModuleShare;
+import exiledlib.skills.skilleffect.hullmodule.StationModuleSkillEffect;
 import exiledsector.skills.unlock.UnlockCondition;
 
 import java.util.ArrayList;
@@ -371,6 +373,28 @@ public class SkillType {
             return Collections.emptyList();
         }
         return effectsFor(hullSize).stream().filter(effect -> effect.effect().moduleShare().isShared()).toList();
+    }
+
+    public ModuleShareExtent moduleShareExtent(HullSize hullSize) {
+        boolean shares = sharesWithModules(hullSize);
+        int consideredCount = 0;
+        int sharedCount = 0;
+        for (SkillTypeEffect effect : effectsFor(hullSize)) {
+            if (effect.effect() instanceof StationModuleSkillEffect) {
+                continue;
+            }
+            consideredCount++;
+            if (shares && (effect.effect().moduleShare().isShared() || AffinitySteps.isAffinity(effect.effect()))) {
+                sharedCount++;
+            }
+        }
+        if (consideredCount == 0) {
+            return vanillaHullModId == null ? null : ModuleShareExtent.NONE;
+        }
+        if (sharedCount == 0) {
+            return ModuleShareExtent.NONE;
+        }
+        return sharedCount == consideredCount ? ModuleShareExtent.ALL : ModuleShareExtent.SOME;
     }
 
     public List<SkillTypeEffect> effectsFor(HullSize hullSize) {

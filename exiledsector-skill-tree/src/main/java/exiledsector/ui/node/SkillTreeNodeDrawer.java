@@ -259,13 +259,19 @@ public final class SkillTreeNodeDrawer {
         return new Color(Math.round(color.getRed() * scale), Math.round(color.getGreen() * scale), Math.round(color.getBlue() * scale));
     }
 
+    public void endHover() {
+        tooltipRenderer.endHover();
+    }
+
     public void renderHoverTooltip(TreeLayers layers, float mouseX, float mouseY, float alphaMult) {
         SkillNode openDropdownNode = session.dropdownNode();
         if (openDropdownNode != null) {
             SkillType hoveredOption = dropdownRenderer.findOptionAt(openDropdownNode, layers.viewportFor(openDropdownNode), mouseX, mouseY);
             if (hoveredOption != null) {
-                tooltipRenderer.renderTooltipForType(hoveredOption, session.dropdownOptionRefusalReason(hoveredOption), mouseX, mouseY,
-                        alphaMult);
+                tooltipRenderer.renderTooltipForType(openDropdownNode, hoveredOption, session.viewSnapshot(),
+                        session.dropdownOptionRefusalReason(hoveredOption), mouseX, mouseY, alphaMult);
+            } else {
+                tooltipRenderer.endHover();
             }
             return;
         }
@@ -277,6 +283,8 @@ public final class SkillTreeNodeDrawer {
                 tooltipWarning = session.doctrineRemovalWarning(hoveredNode);
             }
             tooltipRenderer.renderTooltip(hoveredNode, session.viewSnapshot(), tooltipWarning, mouseX, mouseY, alphaMult);
+        } else {
+            tooltipRenderer.endHover();
         }
     }
 

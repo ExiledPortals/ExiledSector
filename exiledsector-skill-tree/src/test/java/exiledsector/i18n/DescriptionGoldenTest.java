@@ -104,6 +104,7 @@ class DescriptionGoldenTest {
             if (type.getAutomatedFlavourText() != null) {
                 addLine(lines, "flavourAutomated|" + type.getId(), StyledText.of(type.getAutomatedFlavourText()), false);
             }
+            addLine(lines, "itemCost|" + type.getId(), SkillNode.describeItemCost(type.getItemCost(), null), false);
             for (HullSize hullSize : HULL_SIZES) {
                 NodeDescription description = SkillNode.describeMechanics(type, hullSize);
                 for (int i = 0; i < description.effects().size(); i++) {
