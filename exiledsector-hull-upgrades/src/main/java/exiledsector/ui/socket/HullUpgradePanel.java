@@ -209,6 +209,7 @@ public final class HullUpgradePanel extends HoloPanel {
     }
 
     private void rebuildList() {
+        float restoredScroll = listScrollOffset();
         hoverTooltip.hide();
         closeConfirm();
         float listWidth = panelWidth - PAD * 2f;
@@ -245,7 +246,17 @@ public final class HullUpgradePanel extends HoloPanel {
             element.addCustom(rowPanel, GAP * 2f);
         }
         listElement = replaceElement(placedComponent(listElement), element, PAD, listTop);
+        if (restoredScroll > 0f && element.getExternalScroller() != null) {
+            element.getExternalScroller().setYOffset(Math.min(restoredScroll, Math.max(0f, element.getHeightSoFar() - listHeight)));
+        }
         refreshOpacity();
+    }
+
+    private float listScrollOffset() {
+        if (listElement == null || listElement.getExternalScroller() == null) {
+            return 0f;
+        }
+        return listElement.getExternalScroller().getYOffset();
     }
 
     static TileSizes scrollingTileSizes(float gridWidth) {

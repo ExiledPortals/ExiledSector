@@ -797,17 +797,18 @@ public final class ItemStoragePanel extends HoloPanel {
             String key = markedForDisassembly.contains(row.item()) ? "ui.socketStorage.cell.unmark" : "ui.socketStorage.cell.mark";
             return List.of(Translation.msg(key).count(partCount).arg("count", partCount).styled());
         }
-        if (!expanded) {
-            return List.of(installHint(row));
+        List<StyledText> footerLines = new ArrayList<>();
+        if (workbenchPanel == null && !pickerMode) {
+            footerLines.add(installHint(row));
         }
-        int partCount = row.item().rarity().disassemblyParts();
-        return List.of(installHint(row), Translation.msg("ui.socketStorage.cell.disassemble").count(partCount).arg("count", partCount).styled());
+        if (expanded) {
+            int partCount = row.item().rarity().disassemblyParts();
+            footerLines.add(Translation.msg("ui.socketStorage.cell.disassemble").count(partCount).arg("count", partCount).styled());
+        }
+        return footerLines;
     }
 
     private StyledText installHint(ItemStorageRow row) {
-        if (workbenchPanel != null || pickerMode) {
-            return Translation.styled("ui.socketStorage.cell.workbench");
-        }
         if (targetingSocket) {
             return Translation.styled("ui.socketStorage.cell.freeTarget");
         }
