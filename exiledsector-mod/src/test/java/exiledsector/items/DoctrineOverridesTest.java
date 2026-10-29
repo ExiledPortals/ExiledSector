@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -397,6 +398,23 @@ class DoctrineOverridesTest {
         assertSame(first, DoctrineOverrides.layer(data));
         ShipTrees.deallocate(data, nearNotable);
         assertNotSameLayer(first, DoctrineOverrides.layer(data));
+    }
+
+    @Test
+    void tuningRerollsTheFirmwareRevisionAndTheRewriteFollows() {
+        ShipSkillData data = new ShipSkillData();
+        ShipTrees.allocate(data, socket, 0);
+        ShipTrees.allocate(data, nearNotable, 0);
+        Subroutine doctrine = (Subroutine) ItemStore.get().add(ItemData.rolled(ItemDefinitions.get(TRANSFORM), 3L));
+        data.socketItem(socket.getId(), doctrine.id());
+        int revisionBefore = doctrine.firmwareRevision();
+
+        assertTrue(ItemCrafting.canRecalibrate(doctrine, doctrine.definition(), Set.of()));
+        assertSame(doctrine, ItemCrafting.recalibrate(doctrine, new Random(5L)));
+        data.markChanged();
+
+        assertNotEquals(revisionBefore, doctrine.firmwareRevision());
+        assertEquals(doctrine.firmwareRevision(), DoctrineOverrides.rewrite(data, nearNotable.getId()).revision());
     }
 
     private static void assertNotSameLayer(DoctrineLayer first, DoctrineLayer second) {

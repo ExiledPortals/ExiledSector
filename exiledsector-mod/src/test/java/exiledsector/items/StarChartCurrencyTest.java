@@ -96,10 +96,11 @@ class StarChartCurrencyTest {
 
     @Test
     void theChartRowListsTheExtendedKernelsThenTheChartCurrenciesAndShipTypesStayAsTheyWere() {
-        assertEquals(List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.CORRUPTION, CraftingCurrency.RECALIBRATION,
+        assertEquals(List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.CORRUPTION, CraftingCurrency.ANNULMENT, CraftingCurrency.RECALIBRATION,
                         StarChartCurrency.REFORGE, StarChartCurrency.ANNULMENT, StarChartCurrency.CARTOGRAPHY),
                 ItemCurrencies.forType(ItemType.STAR_CHART));
-        assertEquals(Arrays.asList(CraftingCurrency.values()), ItemCurrencies.forType(ItemType.SUBROUTINE));
+        assertEquals(Arrays.stream(CraftingCurrency.values()).filter(kernel -> kernel != CraftingCurrency.ANNULMENT).toList(),
+                ItemCurrencies.forType(ItemType.SUBROUTINE));
         assertEquals(Arrays.asList(CraftingCurrency.values()), ItemCurrencies.forType(ItemType.HULL_ITEM));
         for (StarChartCurrency currency : StarChartCurrency.values()) {
             assertFalse(currency.dropsFromShipLoot(), currency.name());
@@ -112,7 +113,7 @@ class StarChartCurrencyTest {
         }
 
         StarChartCurrency.registerAll();
-        assertEquals(6, ItemCurrencies.forType(ItemType.STAR_CHART).size());
+        assertEquals(7, ItemCurrencies.forType(ItemType.STAR_CHART).size());
         StarChartCurrency.unregisterAll();
         assertEquals(List.of(), ItemCurrencies.forType(ItemType.STAR_CHART));
         assertEquals(Arrays.asList(CraftingCurrency.values()), ItemCurrencies.all());
@@ -303,6 +304,18 @@ class StarChartCurrencyTest {
         assertEquals(ItemRarity.COMMON, chart.rarity());
         assertFalse(ItemCrafting.canUse(StarChartCurrency.ANNULMENT, chart, ANY_UNIQUE));
         assertNull(use(StarChartCurrency.ANNULMENT, chart, 5L));
+        assertEquals(9, chart.tier());
+    }
+
+    @Test
+    void theAnnulmentNanoswarmRemovesOneModifierAndKeepsTheRest() {
+        StarChart chart = storedWith(SINGLE, 9, candidate -> candidate.explicits().size() >= 3);
+        List<RolledModifier> before = List.copyOf(chart.explicits());
+
+        assertSame(chart, use(CraftingCurrency.ANNULMENT, chart, 2L));
+
+        assertEquals(before.size() - 1, chart.explicits().size());
+        assertTrue(before.containsAll(chart.explicits()));
         assertEquals(9, chart.tier());
     }
 

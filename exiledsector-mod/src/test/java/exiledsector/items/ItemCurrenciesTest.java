@@ -28,18 +28,18 @@ import static org.mockito.Mockito.when;
 
 class ItemCurrenciesTest {
 
-    private static final String ANNULMENT_ID = "exiledSector_test_annulment_kernel";
+    private static final String PURGE_ID = "exiledSector_test_purge_kernel";
 
-    private static final class AnnulmentCurrency implements ItemCurrency {
+    private static final class PurgeCurrency implements ItemCurrency {
 
         @Override
         public String itemId() {
-            return ANNULMENT_ID;
+            return PURGE_ID;
         }
 
         @Override
         public String key() {
-            return "annulment";
+            return "purge";
         }
 
         @Override
@@ -87,7 +87,7 @@ class ItemCurrenciesTest {
         }
     }
 
-    private final ItemCurrency annulment = new AnnulmentCurrency();
+    private final ItemCurrency purge = new PurgeCurrency();
     private final ItemStore store = new ItemStore();
     private final CargoAPI cargo = mock(CargoAPI.class);
 
@@ -100,7 +100,7 @@ class ItemCurrenciesTest {
 
     @AfterEach
     void tearDown() {
-        ItemCurrencies.unregister(annulment);
+        ItemCurrencies.unregister(purge);
         ItemDefinitions.clear();
     }
 
@@ -116,7 +116,7 @@ class ItemCurrenciesTest {
         List<String> commonestFirst = List.of(
                 CraftingCurrency.AUGMENTATION.itemId(), CraftingCurrency.ATTUNEMENT.itemId(), CraftingCurrency.SUBSTITUTION.itemId(),
                 CraftingCurrency.CORRUPTION.itemId(), CraftingWard.PREFIX.itemId(), CraftingWard.SUFFIX.itemId(),
-                CraftingCurrency.TRANSPOSITION.itemId(), CraftingCurrency.RECALIBRATION.itemId(), CraftingCurrency.FIXATION.itemId(),
+                CraftingCurrency.TRANSPOSITION.itemId(), CraftingCurrency.ANNULMENT.itemId(), CraftingCurrency.RECALIBRATION.itemId(), CraftingCurrency.FIXATION.itemId(),
                 CraftingCurrency.REPLICATION.itemId());
         float previousWeight = Float.MAX_VALUE;
         int previousCost = 0;
@@ -142,6 +142,7 @@ class ItemCurrenciesTest {
                 new Expected("exiledSector_substitution_kernel", "substitution", 20, 3f, MaterialTier.MAJOR, true),
                 new Expected("exiledSector_corruption_kernel", "corruption", 50, 1.5f, MaterialTier.EXOTIC, true),
                 new Expected("exiledSector_transposition_kernel", "transposition", 0, 0.4f, MaterialTier.MYTHIC, false),
+                new Expected("exiledSector_annulment_kernel", "annulment", 0, 0.3f, MaterialTier.MYTHIC, false),
                 new Expected("exiledSector_recalibration_kernel", "recalibration", 0, 0.3f, MaterialTier.MYTHIC, false),
                 new Expected("exiledSector_fixation_kernel", "fixation", 0, 0.2f, MaterialTier.MYTHIC, false),
                 new Expected("exiledSector_replication_kernel", "replication", 0, 0.035f, MaterialTier.MYTHIC, false));
@@ -153,7 +154,8 @@ class ItemCurrenciesTest {
             assertSame(currency, ItemCurrencies.byItemId(currency.itemId()));
             assertEquals(currency.name().toLowerCase(java.util.Locale.ROOT), currency.key());
         }
-        assertEquals(ItemCurrencies.all(), ItemCurrencies.forType(ItemType.SUBROUTINE));
+        assertEquals(ItemCurrencies.all().stream().filter(currency -> currency != CraftingCurrency.ANNULMENT).toList(),
+                ItemCurrencies.forType(ItemType.SUBROUTINE));
         assertEquals(ItemCurrencies.all(), ItemCurrencies.forType(ItemType.HULL_ITEM));
         assertEquals(List.of(), ItemCurrencies.forType(null));
         assertNull(ItemCurrencies.byItemId(ItemDisassembly.PARTS_ITEM_ID));
@@ -177,7 +179,8 @@ class ItemCurrenciesTest {
             }
         }
 
-        assertEquals(EnumSet.of(CraftingCurrency.RECALIBRATION, CraftingCurrency.SUBSTITUTION, CraftingCurrency.FIXATION), respectsWards);
+        assertEquals(EnumSet.of(CraftingCurrency.RECALIBRATION, CraftingCurrency.SUBSTITUTION, CraftingCurrency.ANNULMENT,
+                CraftingCurrency.FIXATION), respectsWards);
         assertEquals(EnumSet.of(CraftingCurrency.REPLICATION), createsCopy);
         assertEquals(EnumSet.of(CraftingCurrency.TRANSPOSITION, CraftingCurrency.CORRUPTION), mayChangeDefinition);
     }
@@ -202,45 +205,45 @@ class ItemCurrenciesTest {
 
     @Test
     void anAddedCurrencyJoinsTheMaterialsDropsAndCraftingForItsTypesOnly() {
-        ItemCurrencies.register(annulment);
+        ItemCurrencies.register(purge);
         Item hullItem = store.add(ItemDefinitions.get(HullItemRows.MILITARY), 4L);
         Item subroutine = store.add(ItemDefinitions.get("volume"), 4L);
         int explicitsBefore = hullItem.explicits().size();
-        owns(ANNULMENT_ID, 2f);
+        owns(PURGE_ID, 2f);
 
-        assertSame(annulment, ItemCurrencies.byItemId(ANNULMENT_ID));
-        assertEquals(annulment, ItemCurrencies.all().get(CraftingCurrency.values().length));
-        assertTrue(ItemCurrencies.forType(ItemType.HULL_ITEM).contains(annulment));
-        assertFalse(ItemCurrencies.forType(ItemType.SUBROUTINE).contains(annulment));
-        assertTrue(MaterialItems.isMaterial(ANNULMENT_ID));
-        assertEquals(MaterialTier.MAJOR, MaterialItems.tier(ANNULMENT_ID));
-        assertEquals(Color.CYAN, MaterialItems.color(ANNULMENT_ID));
-        assertFalse(ItemCrafting.canUse(annulment, subroutine, definition -> true));
-        assertTrue(ItemCrafting.canUse(annulment, hullItem, definition -> true));
-        assertSame(hullItem, ItemCrafting.use(annulment, hullItem, CraftingMaterials.cargoOnly(cargo), store, new Random(2L), definition -> true));
+        assertSame(purge, ItemCurrencies.byItemId(PURGE_ID));
+        assertEquals(purge, ItemCurrencies.all().get(CraftingCurrency.values().length));
+        assertTrue(ItemCurrencies.forType(ItemType.HULL_ITEM).contains(purge));
+        assertFalse(ItemCurrencies.forType(ItemType.SUBROUTINE).contains(purge));
+        assertTrue(MaterialItems.isMaterial(PURGE_ID));
+        assertEquals(MaterialTier.MAJOR, MaterialItems.tier(PURGE_ID));
+        assertEquals(Color.CYAN, MaterialItems.color(PURGE_ID));
+        assertFalse(ItemCrafting.canUse(purge, subroutine, definition -> true));
+        assertTrue(ItemCrafting.canUse(purge, hullItem, definition -> true));
+        assertSame(hullItem, ItemCrafting.use(purge, hullItem, CraftingMaterials.cargoOnly(cargo), store, new Random(2L), definition -> true));
         assertEquals(explicitsBefore - 1, hullItem.explicits().size());
-        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(ANNULMENT_ID), 1);
-        assertTrue(ItemCrafting.wardsSpentBy(annulment, hullItem, List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)).isEmpty());
+        verify(cargo).removeItems(CargoAPI.CargoItemType.SPECIAL, MaterialItems.data(PURGE_ID), 1);
+        assertTrue(ItemCrafting.wardsSpentBy(purge, hullItem, List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)).isEmpty());
         Map<String, Integer> drops = new LinkedHashMap<>();
         Random random = new Random(5L);
         for (int pick = 0; pick < 4000; pick++) {
             drops.merge(ItemDrops.pickKernel(random), 1, Integer::sum);
         }
-        assertTrue(drops.getOrDefault(ANNULMENT_ID, 0) > 0);
+        assertTrue(drops.getOrDefault(PURGE_ID, 0) > 0);
     }
 
     @Test
     void currenciesCannotReuseAMaterialIdOrKey() {
-        ItemCurrencies.register(annulment);
+        ItemCurrencies.register(purge);
 
-        assertThrows(IllegalArgumentException.class, () -> ItemCurrencies.register(annulment));
+        assertThrows(IllegalArgumentException.class, () -> ItemCurrencies.register(purge));
         assertThrows(IllegalArgumentException.class, () -> ItemCurrencies.register(CraftingCurrency.AUGMENTATION));
         assertThrows(IllegalArgumentException.class, () -> ItemCurrencies.register(null));
         assertFalse(ItemCurrencies.unregister(CraftingCurrency.AUGMENTATION));
         assertFalse(ItemCurrencies.unregister(null));
-        assertTrue(ItemCurrencies.unregister(annulment));
-        assertFalse(ItemCurrencies.unregister(annulment));
+        assertTrue(ItemCurrencies.unregister(purge));
+        assertFalse(ItemCurrencies.unregister(purge));
         assertEquals(Arrays.asList(CraftingCurrency.values()), ItemCurrencies.all());
-        assertFalse(MaterialItems.isMaterial(ANNULMENT_ID));
+        assertFalse(MaterialItems.isMaterial(PURGE_ID));
     }
 }

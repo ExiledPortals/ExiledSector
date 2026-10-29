@@ -182,7 +182,7 @@ public final class ItemCrafting {
     }
 
     static boolean canRecalibrate(Item item, ItemDefinition definition, Set<ModifierSlot> guarded) {
-        return item.hasRerollableTarget() || item.explicits().stream().anyMatch(rolled -> !guards(rolled, guarded) && canVary(rolled, definition));
+        return item.hasTunableTrait() || item.explicits().stream().anyMatch(rolled -> !guards(rolled, guarded) && canVary(rolled, definition));
     }
 
     static Item recalibrate(Item item, Random random) {
@@ -194,7 +194,7 @@ public final class ItemCrafting {
         if (definition == null) {
             return null;
         }
-        boolean targetRerolled = item.rerollTarget(random);
+        boolean traitRetuned = item.retuneTrait(random);
         for (int attempt = 0; attempt < MAX_RECALIBRATION_ATTEMPTS; attempt++) {
             List<RolledModifier> rerolled = reroll(item.explicits(), definition, random, guarded);
             if (!rerolled.equals(item.explicits())) {
@@ -202,7 +202,7 @@ public final class ItemCrafting {
                 return item;
             }
         }
-        return targetRerolled ? item : null;
+        return traitRetuned ? item : null;
     }
 
     private static List<RolledModifier> reroll(List<RolledModifier> modifiers, ItemDefinition definition, Random random,
@@ -291,6 +291,31 @@ public final class ItemCrafting {
         item.replaceExplicits(remaining);
         item.refreezeName();
         return item;
+    }
+
+    static boolean canAnnul(Item item, Set<ModifierSlot> guarded) {
+        ItemDefinition definition = item.definition();
+        return definition != null && !definition.unique() && !annullable(item.explicits(), guarded).isEmpty();
+    }
+
+    static Item annul(Item item, Random random) {
+        return annul(item, random, Set.of());
+    }
+
+    static Item annul(Item item, Random random, Set<ModifierSlot> guarded) {
+        if (!canAnnul(item, guarded)) {
+            return null;
+        }
+        List<RolledModifier> removable = annullable(item.explicits(), guarded);
+        List<RolledModifier> remaining = new ArrayList<>(item.explicits());
+        remaining.remove(removable.get(random.nextInt(removable.size())));
+        item.replaceExplicits(remaining);
+        item.refreezeName();
+        return item;
+    }
+
+    private static List<RolledModifier> annullable(List<RolledModifier> modifiers, Set<ModifierSlot> guarded) {
+        return modifiers.stream().filter(rolled -> !guards(rolled, guarded)).toList();
     }
 
     static boolean canFixate(Item item, Set<ModifierSlot> guarded) {

@@ -1,5 +1,6 @@
 package exiledsector.effects;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
@@ -17,6 +18,7 @@ import exiledsector.items.AnchorJanusGate;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemData;
+import exiledsector.items.ItemUnlock;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.items.StarChartCurrency;
@@ -211,7 +213,8 @@ class ItemSalvageListenerTest {
             long plainItems = plainLoot.stream().filter(special -> !materialIds.contains(special.getId())).count();
             long showcaseItems = showcaseLoot.stream().filter(special -> !materialIds.contains(special.getId())).count();
             assertEquals(plainItems + 1 + 2L * SkillTreeLootSource.SHOWCASE_PICKS, showcaseItems);
-            assertTrue(showcaseLoot.stream().map(SpecialItemData::getId).toList().containsAll(materialIds));
+            assertTrue(showcaseLoot.stream().map(SpecialItemData::getId).toList().containsAll(materialIds.stream()
+                    .filter(itemId -> ItemUnlock.currencyUsable(itemId, Global.getSector())).toList()));
             assertFalse(ItemSalvageListener.canShowcase(showcaseStation));
             assertTrue(lootFrom(listener, showcaseStation).isEmpty());
         } finally {

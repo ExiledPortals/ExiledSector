@@ -12,6 +12,7 @@ public enum CraftingCurrency implements ItemCurrency {
     SUBSTITUTION("exiledSector_substitution_kernel", 20, 3, MaterialTier.MAJOR, new Color(255, 195, 80)),
     CORRUPTION("exiledSector_corruption_kernel", 50, 1.5f, MaterialTier.EXOTIC, Item.CORRUPTED_FRAME_COLOR),
     TRANSPOSITION("exiledSector_transposition_kernel", 0, 0.4f, MaterialTier.MYTHIC, new Color(255, 140, 50)),
+    ANNULMENT("exiledSector_annulment_kernel", 0, 0.3f, MaterialTier.MYTHIC, new Color(80, 230, 200)),
     RECALIBRATION("exiledSector_recalibration_kernel", 0, 0.3f, MaterialTier.MYTHIC, new Color(110, 235, 140)),
     FIXATION("exiledSector_fixation_kernel", 0, 0.2f, MaterialTier.MYTHIC, new Color(230, 80, 175)),
     REPLICATION("exiledSector_replication_kernel", 0, 0.035f, MaterialTier.MYTHIC, new Color(225, 240, 255));
@@ -76,7 +77,7 @@ public enum CraftingCurrency implements ItemCurrency {
 
     @Override
     public boolean appliesTo(ItemType type) {
-        return type == ItemType.SUBROUTINE || type == ItemType.HULL_ITEM;
+        return type == ItemType.HULL_ITEM || type == ItemType.SUBROUTINE && this != ANNULMENT;
     }
 
     @Override
@@ -88,6 +89,7 @@ public enum CraftingCurrency implements ItemCurrency {
             case SUBSTITUTION -> ItemCrafting.canSubstitute(item, item.definition(), context.guardedSlots());
             case TRANSPOSITION -> !ItemCrafting.wardBlocksTransposition(item, context.guardedSlots())
                     && ItemCrafting.canTranspose(item.definition(), item.tier(), context.allowedUniques());
+            case ANNULMENT -> ItemCrafting.canAnnul(item, context.guardedSlots());
             case FIXATION -> ItemCrafting.canFixate(item, context.guardedSlots());
             case CORRUPTION, REPLICATION -> true;
         };
@@ -101,6 +103,7 @@ public enum CraftingCurrency implements ItemCurrency {
             case RECALIBRATION -> ItemCrafting.recalibrate(item, random, context.guardedSlots());
             case SUBSTITUTION -> ItemCrafting.substitute(item, random, context.guardedSlots());
             case TRANSPOSITION -> ItemCrafting.transpose(context.store(), item, random, context.allowedUniques());
+            case ANNULMENT -> ItemCrafting.annul(item, random, context.guardedSlots());
             case FIXATION -> ItemCrafting.fixate(item, random, context.guardedSlots());
             case CORRUPTION -> ItemCrafting.corrupt(context.store(), item, random, context.allowedUniques());
             case REPLICATION -> context.store().addMirrorOf(item);
@@ -109,7 +112,7 @@ public enum CraftingCurrency implements ItemCurrency {
 
     @Override
     public boolean respectsWards() {
-        return this == RECALIBRATION || this == SUBSTITUTION || this == FIXATION;
+        return this == RECALIBRATION || this == SUBSTITUTION || this == ANNULMENT || this == FIXATION;
     }
 
     @Override
@@ -117,7 +120,7 @@ public enum CraftingCurrency implements ItemCurrency {
         return switch (this) {
             case RECALIBRATION -> ItemCrafting.canVary(rolled, item.definition());
             case SUBSTITUTION -> ItemCrafting.canSubstituteAway(item, item.definition(), rolled);
-            case FIXATION -> true;
+            case ANNULMENT, FIXATION -> true;
             default -> false;
         };
     }

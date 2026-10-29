@@ -275,11 +275,29 @@ public final class Subroutine extends Item implements NodeSocketable {
         return DoctrineRewriter.revision(seed());
     }
 
+    @Override
+    public boolean hasTunableTrait() {
+        return subroutineKind() == SubroutineKind.DOCTRINE;
+    }
+
+    @Override
+    public boolean retuneTrait(Random random) {
+        if (!hasTunableTrait()) {
+            return false;
+        }
+        int revisionBefore = firmwareRevision();
+        do {
+            reseed(random.nextLong());
+        } while (firmwareRevision() == revisionBefore);
+        return true;
+    }
+
     public SkillEffect conduitAffinity() {
         List<SkillEffect> affinities = AffinitySteps.affinities();
         return affinities.get(new SplittableRandom(seed()).nextInt(affinities.size()));
     }
 
+    @Override
     public List<StyledText> kindLines() {
         if (subroutineKind() == SubroutineKind.ROOT_CONDUIT) {
             return List.of(Translation.msg("socketable.rootConduit.line").arg("value", Math.round(RootConduits.AFFINITY_PER_STEP))

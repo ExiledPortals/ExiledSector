@@ -28,7 +28,7 @@ public abstract class Item {
 
     private final String id;
     private String definitionId;
-    private final long seed;
+    private long seed;
     private List<RolledEffect> effects;
     private List<RolledEffect> implicits;
     private List<RolledModifier> explicitModifiers;
@@ -143,6 +143,10 @@ public abstract class Item {
 
     public long seed() {
         return seed;
+    }
+
+    protected void reseed(long newSeed) {
+        seed = newSeed;
     }
 
     public List<RolledModifier> explicits() {
@@ -300,6 +304,10 @@ public abstract class Item {
         return null;
     }
 
+    public List<StyledText> kindLines() {
+        return List.of();
+    }
+
     public List<StyledText> headerLines() {
         List<StyledText> lines = new ArrayList<>();
         ItemDefinition definition = definition();
@@ -324,11 +332,11 @@ public abstract class Item {
     public void writeTooltipSections(TooltipMakerAPI tooltip, HullSize hullSize, boolean showRollRanges) {
     }
 
-    public boolean hasRerollableTarget() {
+    public boolean hasTunableTrait() {
         return false;
     }
 
-    public boolean rerollTarget(Random random) {
+    public boolean retuneTrait(Random random) {
         return false;
     }
 

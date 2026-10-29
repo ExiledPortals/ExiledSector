@@ -147,13 +147,13 @@ public final class HullItem extends Item {
     }
 
     @Override
-    public boolean hasRerollableTarget() {
+    public boolean hasTunableTrait() {
         return targetsAnotherItem() && targetChoices().size() > 1;
     }
 
     @Override
-    public boolean rerollTarget(Random random) {
-        if (!hasRerollableTarget()) {
+    public boolean retuneTrait(Random random) {
+        if (!hasTunableTrait()) {
             return false;
         }
         ShipSection current = targetSection();

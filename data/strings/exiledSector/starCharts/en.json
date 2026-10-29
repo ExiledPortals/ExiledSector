@@ -413,6 +413,7 @@
     "chart.currency.cartographer.description": "Raises a Star Chart's tier by one, up to tier 15.",
     "chart.currency.augmentation.description": "Adds a modifier to a Star Chart, up to three prefixes and three suffixes. A common chart that gains its third modifier becomes rare.",
     "chart.currency.recalibration.description": "Rerolls the value of every modifier on a Star Chart within its tier's range.",
+    "chart.currency.annulment.description": "Removes one random modifier from a Star Chart.",
     "chart.currency.attunement.description": "Rerolls a Star Chart's implicit, so a different faction inhabits its system.",
     "chart.currency.corruption.description": "Corrupts a Star Chart, modifying it unpredictably.",
     "chart.ui.currency.refused.max_tier": "{target} is already tier 15.",

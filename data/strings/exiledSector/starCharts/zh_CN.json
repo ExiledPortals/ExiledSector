@@ -397,6 +397,7 @@
     "chart.currency.cartographer.description": "将星图的等级提高一级，最高到15级。",
     "chart.currency.augmentation.description": "为星图增加一条效果，最多三条前缀和三条后缀。获得第三条效果的普通星图会变为稀有。",
     "chart.currency.recalibration.description": "在当前等级的范围内重新随机星图上每条效果的数值。",
+    "chart.currency.annulment.description": "移除星图上的一条随机效果。",
     "chart.currency.attunement.description": "重新随机星图的固有效果，使另一个势力占据其星系。",
     "chart.currency.corruption.description": "腐化一张星图，以无法预料的方式改造它。",
     "chart.ui.currency.refused.max_tier": "{target}已经是15级。",

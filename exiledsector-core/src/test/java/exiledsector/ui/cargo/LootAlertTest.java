@@ -20,8 +20,9 @@ class LootAlertTest {
     }
 
     @Test
-    void tuningImmutableAndReplicatorAreValuable() {
+    void tuningAnnulmentImmutableAndReplicatorAreValuable() {
         assertEquals(LootAlert.VALUABLE, alertFor(CraftingCurrency.RECALIBRATION.itemId()));
+        assertEquals(LootAlert.VALUABLE, alertFor(CraftingCurrency.ANNULMENT.itemId()));
         assertEquals(LootAlert.VALUABLE, alertFor(CraftingCurrency.FIXATION.itemId()));
         assertEquals(LootAlert.VALUABLE, alertFor(CraftingCurrency.REPLICATION.itemId()));
     }

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -288,6 +289,33 @@ class ItemCraftingTest {
         Item unique = store.add(ItemDefinitions.get("relic_a"), 5L);
 
         assertFalse(ItemCrafting.canUse(CraftingCurrency.SUBSTITUTION, unique, definition -> true));
+    }
+
+    @Test
+    void annullingRemovesOneUnfixedEffectUntilOnlyTheFixedOneIsLeft() {
+        Item item = common();
+        ItemCrafting.fixate(item, new Random(4L));
+        RolledModifier locked = item.explicits().stream().filter(RolledModifier::locked).findFirst().orElseThrow();
+
+        assertTrue(ItemCrafting.canUse(CraftingCurrency.ANNULMENT, item, definition -> true));
+        assertSame(item, ItemCrafting.annul(item, new Random(1L)));
+        assertEquals(List.of(locked), item.explicits(), "fixed effects are never removed");
+        assertFalse(ItemCrafting.canUse(CraftingCurrency.ANNULMENT, item, definition -> true));
+        assertNull(ItemCrafting.annul(item, new Random(1L)));
+    }
+
+    @Test
+    void annulmentSkipsUniquesSubroutinesAndGuardedSlots() {
+        Item unique = store.add(ItemDefinitions.get("relic_a"), 5L);
+        Item item = common();
+        Set<ModifierSlot> bothGuarded = EnumSet.allOf(ModifierSlot.class);
+
+        assertFalse(ItemCrafting.canUse(CraftingCurrency.ANNULMENT, unique, definition -> true));
+        assertFalse(CraftingCurrency.ANNULMENT.appliesTo(ItemType.SUBROUTINE));
+        assertTrue(CraftingCurrency.ANNULMENT.appliesTo(ItemType.HULL_ITEM));
+        assertFalse(ItemCrafting.canAnnul(item, bothGuarded));
+        assertNull(ItemCrafting.annul(item, new Random(1L), bothGuarded));
+        assertEquals(2, item.explicits().size());
     }
 
     @Test

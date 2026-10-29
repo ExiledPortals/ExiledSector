@@ -21,7 +21,7 @@ public enum LootAlert {
     STAR_CHART("exiledSector_loot_alert_star_chart");
 
     private static final Set<String> VALUABLE_CURRENCY_IDS = Set.of(CraftingCurrency.RECALIBRATION.itemId(),
-            CraftingCurrency.FIXATION.itemId(), CraftingCurrency.REPLICATION.itemId());
+            CraftingCurrency.ANNULMENT.itemId(), CraftingCurrency.FIXATION.itemId(), CraftingCurrency.REPLICATION.itemId());
 
     private final String soundId;
 

@@ -100,7 +100,7 @@ public final class StarChartCrafting {
         if (currency == StarChartCurrency.CARTOGRAPHY && chart.tier() >= StarChart.HIGHEST_TIER) {
             return MAX_TIER;
         }
-        if (currency == StarChartCurrency.ANNULMENT && chart.explicits().isEmpty()) {
+        if ((currency == StarChartCurrency.ANNULMENT || currency == CraftingCurrency.ANNULMENT) && chart.explicits().isEmpty()) {
             return NO_MODIFIERS;
         }
         return currency == CraftingCurrency.AUGMENTATION ? FULL : CANNOT_USE;
