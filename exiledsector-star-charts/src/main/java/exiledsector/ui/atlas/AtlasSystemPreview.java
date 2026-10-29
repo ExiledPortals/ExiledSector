@@ -70,6 +70,11 @@ final class AtlasSystemPreview {
     static final float SHADOW_FLOOR = 0.25f;
     static final float SHADOW_SLOPE = 0.9f;
     static final float SHADOW_MAX = 0.9f;
+    static final float DETAILED_SPHERE_PIXELS = 24f;
+    static final int DETAILED_SPHERE_DETAIL = 72;
+    static final int MIN_DISC_SEGMENTS = 16;
+    static final int MAX_DISC_SEGMENTS = 128;
+    static final float PIXELS_PER_DISC_SEGMENT = 3f;
     static final Color FALLBACK_STAR_COLOUR = new Color(255, 240, 210);
     static final Color FALLBACK_PLANET_COLOUR = new Color(170, 170, 180);
     static final String ASTEROID_RINGS = "graphics/planets/rings_asteroids0.png";
@@ -77,10 +82,10 @@ final class AtlasSystemPreview {
     static final String ICE_RINGS = "graphics/planets/rings_ice0.png";
     static final String SPECIAL_RINGS = "graphics/planets/rings_special0.png";
     private static final UnitCircle GLOW_CIRCLE = UnitCircle.of(64);
-    private static final UnitCircle DISC_CIRCLE = UnitCircle.of(16);
 
     private final SpriteCache spriteCache = new SpriteCache(AtlasSystemPreview.class);
     private final UnitSphere unitSphere = new UnitSphere();
+    private final UnitSphere detailedSphere = new UnitSphere(DETAILED_SPHERE_DETAIL);
     private final Map<String, PlanetSpecAPI> specs = new HashMap<>();
     private final Map<String, StarAurora> auroras = new HashMap<>();
     private final Vector2f bandCentre = new Vector2f();
@@ -98,12 +103,16 @@ final class AtlasSystemPreview {
     }
 
     void render(Prepared prepared, float cx, float cy, float radius, float elapsedSeconds, float alpha) {
-        if (radius <= 0f || alpha <= 0f) {
+        render(prepared, cx, cy, radius, prepared.outerRadius(), elapsedSeconds, alpha);
+    }
+
+    void render(Prepared prepared, float cx, float cy, float radius, float outerRadius, float elapsedSeconds, float alpha) {
+        if (radius <= 0f || alpha <= 0f || outerRadius <= 0f) {
             return;
         }
         loadSharedTextures();
         ChartSystemSketch sketch = prepared.sketch();
-        Fit fit = new Fit(cx, cy, radius, radius * ORBIT_REACH_SHARE, prepared.outerRadius(), elapsedSeconds);
+        Fit fit = new Fit(cx, cy, radius, radius * ORBIT_REACH_SHARE, outerRadius, elapsedSeconds);
         for (int i = 0; i < sketch.belts().size(); i++) {
             drawBelt(sketch.belts().get(i), i, fit, alpha);
         }
@@ -137,6 +146,11 @@ final class AtlasSystemPreview {
     static float planetPixels(Body planet, float radius) {
         float share = PLANET_SHARE * planet.radius() / PLANET_REFERENCE_RADIUS;
         return Math.max(MIN_BODY_PIXELS, radius * Math.max(MIN_PLANET_SHARE, Math.min(MAX_PLANET_SHARE, share)));
+    }
+
+    static int discSegments(float pixels) {
+        int segments = Math.round((float) (2 * Math.PI) * pixels / PIXELS_PER_DISC_SEGMENT);
+        return Math.max(MIN_DISC_SEGMENTS, Math.min(MAX_DISC_SEGMENTS, segments));
     }
 
     static String ringTexture(String typeId) {
@@ -264,35 +278,38 @@ final class AtlasSystemPreview {
             GL11.glRotatef(-90f, 1f, 0f, 0f);
             texture.bindTexture();
             Misc.setColor(colour, alpha);
-            unitSphere.draw(pixels);
+            UnitSphere sphere = pixels >= DETAILED_SPHERE_PIXELS ? detailedSphere : unitSphere;
+            sphere.draw(pixels);
             if (rim) {
                 Misc.setColor(colour, alpha * RIM_ALPHA_MULT);
-                unitSphere.draw(pixels * 1.03f);
-                unitSphere.draw(pixels * 1.06f);
+                sphere.draw(pixels * 1.03f);
+                sphere.draw(pixels * 1.06f);
             }
             GL11.glPopMatrix();
         }
     }
 
     private static void drawDisc(float x, float y, float radius, Color colour, float alpha) {
+        UnitCircle circle = UnitCircle.of(discSegments(radius));
         Misc.setColor(colour, alpha);
         GL11.glBegin(GL11.GL_TRIANGLE_FAN);
         GL11.glVertex2f(x, y);
-        for (int i = 0; i <= DISC_CIRCLE.segments(); i++) {
-            int index = i % DISC_CIRCLE.segments();
-            GL11.glVertex2f(x + DISC_CIRCLE.cos(index) * radius, y + DISC_CIRCLE.sin(index) * radius);
+        for (int i = 0; i <= circle.segments(); i++) {
+            int index = i % circle.segments();
+            GL11.glVertex2f(x + circle.cos(index) * radius, y + circle.sin(index) * radius);
         }
         GL11.glEnd();
     }
 
     private static void drawShadow(float x, float y, float radius, float lightX, float lightY, float alpha) {
+        UnitCircle circle = UnitCircle.of(discSegments(radius));
         GL11.glBegin(GL11.GL_TRIANGLE_FAN);
         GL11.glColor4f(0f, 0f, 0f, SHADOW_FLOOR * alpha);
         GL11.glVertex2f(x, y);
-        for (int i = 0; i <= DISC_CIRCLE.segments(); i++) {
-            int index = i % DISC_CIRCLE.segments();
-            float cos = DISC_CIRCLE.cos(index);
-            float sin = DISC_CIRCLE.sin(index);
+        for (int i = 0; i <= circle.segments(); i++) {
+            int index = i % circle.segments();
+            float cos = circle.cos(index);
+            float sin = circle.sin(index);
             GL11.glColor4f(0f, 0f, 0f, shadowAlpha(cos, sin, lightX, lightY) * alpha);
             GL11.glVertex2f(x + cos * radius, y + sin * radius);
         }

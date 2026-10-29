@@ -3,6 +3,7 @@ package exiledsector.charts.wormhole;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
@@ -49,6 +50,18 @@ public class WormholeGateway extends BaseIndustry {
     @Override
     public void unapply() {
         super.unapply();
+    }
+
+    public static StarSystemAPI playerGatewaySystem(SectorAPI sector) {
+        if (sector == null || sector.getEconomy() == null) {
+            return null;
+        }
+        for (MarketAPI market : sector.getEconomy().getMarketsCopy()) {
+            if ((market.isPlayerOwned() || Factions.PLAYER.equals(market.getFactionId())) && market.hasIndustry(INDUSTRY_ID)) {
+                return market.getStarSystem();
+            }
+        }
+        return null;
     }
 
     static boolean isUnlockedFor(MarketAPI market) {

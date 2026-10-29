@@ -87,6 +87,24 @@ class AtlasAnomaliesTest {
     }
 
     @Test
+    void aSystemHoldsAtMostNineAnomalies() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator generator = generator(state);
+        AtlasCell cell = system(generator, 0);
+        int refusedAsFull = 0;
+
+        for (ChartAnomalies.Definition definition : ChartAnomalies.definitions()) {
+            AtlasAnomalies.InsertCheck check = AtlasAnomalies.insert(generator, state, cell, definition.id(), AtlasAnomalyRecord.Source.WORLD, null).check();
+            if (check == AtlasAnomalies.InsertCheck.FULL) {
+                refusedAsFull++;
+            }
+        }
+
+        assertEquals(AtlasAnomalies.MAX_PER_SYSTEM, AtlasAnomalies.effective(generator, state, cell).size());
+        assertTrue(refusedAsFull > 0);
+    }
+
+    @Test
     void insertingRefusesWithTheReason() {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = generator(state);

@@ -31,6 +31,13 @@ class AtlasSystemPreviewTest {
     }
 
     @Test
+    void discsGainSegmentsAsTheyGrowWithinBounds() {
+        assertEquals(AtlasSystemPreview.MIN_DISC_SEGMENTS, AtlasSystemPreview.discSegments(2f));
+        assertEquals(AtlasSystemPreview.MAX_DISC_SEGMENTS, AtlasSystemPreview.discSegments(1000f));
+        assertTrue(AtlasSystemPreview.discSegments(40f) > AtlasSystemPreview.discSegments(15f));
+    }
+
+    @Test
     void ringKindsUseTheMatchingVanillaBandTexture() {
         assertEquals(AtlasSystemPreview.ASTEROID_RINGS, AtlasSystemPreview.ringTexture("asteroid_belt"));
         assertEquals(AtlasSystemPreview.ICE_RINGS, AtlasSystemPreview.ringTexture("ring_ice"));

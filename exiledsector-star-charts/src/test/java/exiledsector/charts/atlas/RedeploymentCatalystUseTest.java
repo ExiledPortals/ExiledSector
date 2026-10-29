@@ -85,7 +85,7 @@ class RedeploymentCatalystUseTest {
 
         assertEquals(AtlasCatalystUse.FOGGED_KEY, use.check(fogged).refusalKey());
         assertEquals("catalyst.refused.completed", use.check(completed).refusalKey());
-        assertEquals("catalyst.refused.open_run", use.check(open).refusalKey());
+        assertEquals(RedeploymentCatalystUse.OPEN_RUN_KEY, use.check(open).refusalKey());
         assertEquals("catalyst.refused.no_system", use.check(AtlasCell.ORIGIN).refusalKey());
         assertNull(Consumables.use(use, open, materials));
         assertEquals(1, materials.count(REDEPLOYMENT.itemId()));

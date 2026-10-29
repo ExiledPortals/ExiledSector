@@ -39,6 +39,16 @@ class AtlasMapCanvasTest {
     }
 
     @Test
+    void aRebuiltMapKeepsItsOrbitsWhereTheyWere() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasMapCanvas before = new AtlasMapCanvas(generator(state), state);
+        before.advance(3f);
+
+        assertTrue(before.elapsedSeconds() > 0f);
+        assertEquals(before.elapsedSeconds(), before.rebuilt().elapsedSeconds());
+    }
+
+    @Test
     void aCompletedSystemCollapsesIntoADormantWormholeWhileOpenOnesStayOpen() {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = generator(state);
@@ -71,7 +81,7 @@ class AtlasMapCanvasTest {
             AtlasDevTools.reach(generator, state, bastion);
             AtlasAnomalies.insert(generator, state, bastion, SpatialBreach.ID, AtlasAnomalyRecord.Source.WORLD, null);
             AtlasMapCanvas canvas = new AtlasMapCanvas(generator, state);
-            TreeViewport view = new TreeViewport(640f, 360f, AtlasMapCanvas.DEFAULT_ZOOM);
+            TreeViewport view = new TreeViewport(640f, 360f, AtlasMapCanvas.MIN_ZOOM);
 
             AtlasMapCanvas.AnomalyIcon icon = canvas.anomalyIcons().stream().filter(candidate -> candidate.cell().equals(bastion)).findFirst()
                     .orElseThrow();
@@ -102,7 +112,7 @@ class AtlasMapCanvasTest {
             AtlasAnomalies.insert(generator, state, fogged, RelayNetwork.ID, AtlasAnomalyRecord.Source.WORLD, null,
                     new AtlasAnomalyRecord.Chain(2, 3, left));
             AtlasMapCanvas canvas = new AtlasMapCanvas(generator, state);
-            TreeViewport view = new TreeViewport(640f, 360f, AtlasMapCanvas.DEFAULT_ZOOM);
+            TreeViewport view = new TreeViewport(640f, 360f, AtlasMapCanvas.MIN_ZOOM);
 
             assertEquals(List.of(new AtlasMapCanvas.Trace(left, fogged)), canvas.traces());
             AtlasMapCanvas.AnomalyIcon icon = canvas.anomalyIcons().stream().filter(candidate -> candidate.cell().equals(fogged)).findFirst()

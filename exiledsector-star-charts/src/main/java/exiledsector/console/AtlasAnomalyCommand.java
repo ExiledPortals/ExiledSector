@@ -97,6 +97,7 @@ public class AtlasAnomalyCommand extends AtlasTargetCommand {
             case COMPLETED -> "the system is completed";
             case OPEN_RUN -> "a chart run is open there";
             case ALREADY_PRESENT -> "the system already has it";
+            case FULL -> "the system already has " + AtlasAnomalies.MAX_PER_SYSTEM + " anomalies";
             case CONFLICT -> "it conflicts with an anomaly already there";
             case DOES_NOT_FIT -> "it can't exist at that system";
         };

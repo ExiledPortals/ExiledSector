@@ -443,7 +443,7 @@ public final class StarChartStoragePanel extends HoloPanel {
         return new ItemCell(chart, CELL_LOOK, new ItemCell.Listener() {
             @Override
             public void hovered(PositionAPI cellPosition) {
-                queue(() -> hoverTooltip.show(chart, chart, expanded -> cellFooter(chart, expanded), cellPosition));
+                queue(() -> hoverTooltip.showSplit(chart, chart, expanded -> cellFooter(chart, expanded), cellPosition));
             }
 
             @Override

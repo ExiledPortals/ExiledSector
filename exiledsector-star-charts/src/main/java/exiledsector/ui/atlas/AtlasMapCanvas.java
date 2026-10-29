@@ -42,7 +42,6 @@ final class AtlasMapCanvas {
     static final float CELL_PIXELS = 2400f;
     static final float NODE_SCALE = 6f;
     static final float DISPLAY_JITTER_SHARE = AtlasGenerator.DISPLAY_JITTER_SHARE;
-    static final float DEFAULT_ZOOM = 0.25f;
     static final float MAX_ZOOM = 0.8f;
     static final float MIN_ZOOM = SmoothZoom.MIN_ZOOM / 2f;
     static final float PREVIEW_FILL = 0.85f;
@@ -92,22 +91,37 @@ final class AtlasMapCanvas {
     private final List<AnomalyIcon> anomalyIcons = new ArrayList<>();
     private final List<Trace> traces = new ArrayList<>();
     private final SpriteCache spriteCache = new SpriteCache(AtlasMapCanvas.class);
-    private final AtlasSystemPreview preview = new AtlasSystemPreview();
-    private final NodeRingArt ringArt = new NodeRingArt();
-    private final WormholeArt wormholeArt = new WormholeArt(ringArt);
+    private final AtlasSystemPreview preview;
+    private final NodeRingArt ringArt;
+    private final WormholeArt wormholeArt;
     private final Map<AtlasCell, Float> collapsing = new HashMap<>();
     private Map<AtlasCell, UseVerdict> targetVerdicts = Map.of();
-    private final NodeBeams beams = new NodeBeams(ringArt);
+    private final NodeBeams beams;
     private final AtlasScenery scenery;
+    private final ChartSystemSketch gatewaySketch;
 
     AtlasMapCanvas(AtlasGenerator generator, AtlasState state) {
         this(generator, state, new AtlasScenery(generator.seed()));
     }
 
     AtlasMapCanvas(AtlasGenerator generator, AtlasState state, AtlasScenery scenery) {
+        this(generator, state, scenery, null);
+    }
+
+    AtlasMapCanvas(AtlasGenerator generator, AtlasState state, AtlasScenery scenery, ChartSystemSketch gatewaySketch) {
+        this(generator, state, scenery, gatewaySketch, new NodeRingArt(), new AtlasSystemPreview());
+    }
+
+    private AtlasMapCanvas(AtlasGenerator generator, AtlasState state, AtlasScenery scenery, ChartSystemSketch gatewaySketch, NodeRingArt ringArt,
+                           AtlasSystemPreview preview) {
         this.generator = generator;
         this.state = state;
         this.scenery = scenery;
+        this.gatewaySketch = gatewaySketch;
+        this.ringArt = ringArt;
+        this.preview = preview;
+        this.wormholeArt = new WormholeArt(ringArt);
+        this.beams = new NodeBeams(ringArt);
         this.visible = AtlasReach.refreshReveal(generator, state);
         this.reachable = AtlasReach.reachable(generator, state);
         for (AtlasCell cell : visible) {
@@ -132,8 +146,19 @@ final class AtlasMapCanvas {
                 }
             }
         }
+        if (gatewaySketch != null && visible.contains(AtlasCell.ORIGIN)) {
+            sketches.put(AtlasCell.ORIGIN, AtlasSystemPreview.Prepared.of(nodeKey(AtlasCell.ORIGIN), gatewaySketch));
+        }
         addChains();
         scenery.attach(this);
+    }
+
+    float elapsedSeconds() {
+        return ringArt.elapsedSeconds();
+    }
+
+    AtlasMapCanvas rebuilt() {
+        return new AtlasMapCanvas(generator, state, scenery, gatewaySketch, ringArt, preview);
     }
 
     private void addChains() {
@@ -233,6 +258,9 @@ final class AtlasMapCanvas {
     }
 
     float openness(AtlasCell cell) {
+        if (cell.equals(AtlasCell.ORIGIN) && sketches.containsKey(cell)) {
+            return 1f;
+        }
         return state.isCompleted(cell) ? WormholeArt.easedOpenness(collapsing.getOrDefault(cell, 0f)) : 1f;
     }
 
@@ -331,10 +359,43 @@ final class AtlasMapCanvas {
         return screenY(view, icon.cell()) + (float) Math.sin(anomalyAngle(icon)) * orbit;
     }
 
-    void render(TreeViewport view, Color accent, float alphaMult) {
+    boolean canFocus(AtlasCell cell) {
+        return cell != null && sketches.containsKey(cell);
+    }
+
+    void renderFocus(TreeViewport view, AtlasCell cell, float focusX, float focusY, float focusReach, float level, float alphaMult) {
+        AtlasSystemPreview.Prepared sketch = sketches.get(cell);
+        float openness = openness(cell);
+        if (sketch == null || openness <= 0f) {
+            return;
+        }
+        float boardRadius = previewRadius(view, cell);
+        float focusRadius = focusReach / AtlasSystemPreview.ORBIT_REACH_SHARE;
+        float focusOuter = sketch.sketch().outerRadius() > 0f ? sketch.sketch().outerRadius() : sketch.outerRadius();
+        float x = lerp(screenX(view, cell), focusX, level);
+        float y = lerp(screenY(view, cell), focusY, level);
+        float radius = boardRadius * (float) Math.pow(focusRadius / boardRadius, level);
+        float outer = sketch.outerRadius() * (float) Math.pow(focusOuter / sketch.outerRadius(), level);
+        float alpha = lerp(previewAlpha(cell) * openness, 1f, level) * alphaMult;
+        preview.render(sketch, x, y, radius, outer, ringArt.elapsedSeconds(), alpha);
+    }
+
+    static float lerp(float from, float to, float level) {
+        return from + (to - from) * level;
+    }
+
+    private float previewRadius(TreeViewport view, AtlasCell cell) {
+        return NodeMetrics.donutRadius(footprint(view)) * nodeScale(cell) * PREVIEW_FILL;
+    }
+
+    private float previewAlpha(AtlasCell cell) {
+        return state.isCompleted(cell) || reachable.contains(cell) ? 1f : DIM_PREVIEW_ALPHA;
+    }
+
+    void render(TreeViewport view, Color accent, float alphaMult, AtlasCell hiddenPreview) {
         scenery.renderBackdrop(view, alphaMult);
         drawLanes(view, accent, alphaMult);
-        drawNodes(view, accent, alphaMult);
+        drawNodes(view, accent, alphaMult, hiddenPreview);
         drawAnomalies(view, alphaMult);
         scenery.renderAbove(view, alphaMult);
     }
@@ -399,7 +460,7 @@ final class AtlasMapCanvas {
         }
     }
 
-    private void drawNodes(TreeViewport view, Color accent, float alphaMult) {
+    private void drawNodes(TreeViewport view, Color accent, float alphaMult, AtlasCell hiddenPreview) {
         float footprint = footprint(view);
         float widthScale = beamWidthScale(view);
         for (Map.Entry<AtlasCell, AtlasNode> entry : nodes.entrySet()) {
@@ -432,8 +493,8 @@ final class AtlasMapCanvas {
             drawTargetMarker(targetVerdicts.get(cell), x, y, innerRadius, alphaMult, widthScale);
             beams.flush();
             AtlasSystemPreview.Prepared sketch = sketches.get(cell);
-            if (sketch != null && openness > 0f) {
-                preview.render(sketch, x, y, innerRadius * PREVIEW_FILL, ringArt.elapsedSeconds(), (lit || open ? 1f : DIM_PREVIEW_ALPHA) * openness * alphaMult);
+            if (sketch != null && openness > 0f && !cell.equals(hiddenPreview)) {
+                preview.render(sketch, x, y, innerRadius * PREVIEW_FILL, ringArt.elapsedSeconds(), previewAlpha(cell) * openness * alphaMult);
             }
             if (node.infestationId() != null) {
                 boolean cleansed = state.has(cell, AtlasState.CLEANSED);

@@ -17,6 +17,7 @@ public record RedeploymentCatalystUse(AtlasCatalysts.Catalyst catalyst, AtlasGen
     public static final String SPECIAL_KEY = "catalyst.refused.special";
     public static final String INFESTED_KEY = "catalyst.refused.infested";
     public static final String NO_FACTION_KEY = "catalyst.refused.no_faction";
+    public static final String OPEN_RUN_KEY = "catalyst.refused.redeploy_open_run";
 
     public RedeploymentCatalystUse {
         revealed = Set.copyOf(revealed);
@@ -34,7 +35,7 @@ public record RedeploymentCatalystUse(AtlasCatalysts.Catalyst catalyst, AtlasGen
             return UseVerdict.refused(AtlasCatalystUse.refusalKey(AtlasAnomalies.InsertCheck.COMPLETED));
         }
         if (cell.equals(openRunCell)) {
-            return UseVerdict.refused(AtlasCatalystUse.refusalKey(AtlasAnomalies.InsertCheck.OPEN_RUN));
+            return UseVerdict.refused(OPEN_RUN_KEY);
         }
         if (generator.node(cell).specialId() != null) {
             return UseVerdict.refused(SPECIAL_KEY);

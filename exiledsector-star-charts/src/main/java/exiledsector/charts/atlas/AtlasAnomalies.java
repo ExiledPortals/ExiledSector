@@ -16,6 +16,7 @@ public final class AtlasAnomalies {
 
     static final long ONWARD_SALT = 0x4f4e5741524453L;
     static final long ROLL_SALT = 0x414e4f4d524f4cL;
+    public static final int MAX_PER_SYSTEM = 9;
 
     public enum InsertCheck {
         ALLOWED,
@@ -26,6 +27,7 @@ public final class AtlasAnomalies {
         COMPLETED,
         OPEN_RUN,
         ALREADY_PRESENT,
+        FULL,
         CONFLICT,
         DOES_NOT_FIT;
 
@@ -49,12 +51,12 @@ public final class AtlasAnomalies {
         for (String anomalyId : generator.node(cell).anomalyIds()) {
             ChartAnomalies.Definition definition = ChartAnomalies.definition(anomalyId);
             boolean keptWhenSpent = definition != null && definition.replacesStar();
-            if ((!spent || keptWhenSpent) && accepts(generator, state, cell, accepted, anomalyId)) {
+            if (accepted.size() < MAX_PER_SYSTEM && (!spent || keptWhenSpent) && accepts(generator, state, cell, accepted, anomalyId)) {
                 accepted.add(anomalyId);
             }
         }
         for (AtlasAnomalyRecord record : state.anomalyRecords(cell)) {
-            if (accepts(generator, state, cell, accepted, record.anomalyId())) {
+            if (accepted.size() < MAX_PER_SYSTEM && accepts(generator, state, cell, accepted, record.anomalyId())) {
                 accepted.add(record.anomalyId());
             }
         }
@@ -89,6 +91,9 @@ public final class AtlasAnomalies {
         List<String> present = effective(generator, state, cell);
         if (present.contains(anomalyId)) {
             return InsertCheck.ALREADY_PRESENT;
+        }
+        if (present.size() >= MAX_PER_SYSTEM) {
+            return InsertCheck.FULL;
         }
         if (present.stream().anyMatch(existing -> ChartAnomalies.conflicts(existing, anomalyId))) {
             return InsertCheck.CONFLICT;
