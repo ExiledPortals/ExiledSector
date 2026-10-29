@@ -242,6 +242,13 @@ public final class ChartRunCloser {
                 sector.removeTransientScript(script);
             }
         }
+        if (target.system() != null) {
+            for (EveryFrameScript script : new ArrayList<>(target.system().getScripts())) {
+                if (script instanceof ChartRunBound bound && bound.belongsToRun(target.runId())) {
+                    target.system().removeScript(script);
+                }
+            }
+        }
         for (CampaignEventListener listener : new ArrayList<>(sector.getAllListeners())) {
             if (listener instanceof ChartRunBound bound && bound.belongsToRun(target.runId())) {
                 sector.removeListener(listener);

@@ -13,8 +13,9 @@ An anomaly is anything a star chart system holds beyond its ordinary layout, fle
 | Spatial Breach (built) | `../completed/anomalies/spatial_breach.md` | none |
 | Supply Convoy (built) | `../completed/anomalies/supply_convoy.md` | zero or one, sized by where you strike; a raid if it delivers |
 | Anomalous Debris (built) | `../completed/anomalies/anomalous_debris.md` | optional, one per dormant fleet |
+| Remnant Nexus and Domain-era Mothership | `biome_stations.md` | the station, plus the few fleets it keeps launching until it dies |
 
-Black Hole, Neutron Star, Dense Nebula, Asteroid Storm, Magnetic Storm and Stellar Flares are built and described in `../atlas.md` (Regions, layouts and anomalies). Powerful Boss, the former atlas marker (a bigger boss with more spoils and a guaranteed tier-up chart), is built as `../atlas.md` step 19; it rolls on its own `atlas_markers.csv` row instead of the shared anomaly chance.
+Black Hole, Neutron Star, Dense Nebula, Asteroid Storm, Magnetic Storm and Stellar Flares are built and described in `../atlas.md` (Regions, layouts and anomalies). Powerful Boss, the former atlas marker (a bigger boss with more spoils and a guaranteed tier-up chart), is built as `../atlas.md` step 19; it rolls on its own `atlas_markers.csv` row instead of the shared anomaly chance. The Remnant Nexus and Domain-era Mothership never roll: a `biomes` column places each in exactly one system of every pocket of its biome (`biome_stations.md`), and they are the one exception to "no anomaly spawns waves", kept to two or three fleets at a time.
 
 ## Fights
 
@@ -22,7 +23,7 @@ Combat readiness makes back-to-back fleet battles miserable, so each anomaly kee
 
 ## How an anomaly plugs in
 
-Each anomaly is one class behind `ChartAnomaly` (package `exiledsector.charts.anomaly`, with the `ChartAnomalies` registry; an anomaly with several classes gets a subpackage, such as `anomaly.breach` and `anomaly.skirmish`) and one row in `data/config/exiledSector/chart_anomalies.csv` (`id,weight,min_tier,max_tier,requires_mod,icon,intel,insertable,excludes,effects,note`). The interface has optional hooks for three stages, and an anomaly implements only the ones it needs:
+Each anomaly is one class behind `ChartAnomaly` (package `exiledsector.charts.anomaly`, with the `ChartAnomalies` registry; an anomaly with several classes gets a subpackage, such as `anomaly.breach` and `anomaly.skirmish`) and one row in `data/config/exiledSector/chart_anomalies.csv` (`id,weight,min_tier,max_tier,requires_mod,icon,intel,insertable,excludes,effects,biomes,note`). The interface has optional hooks for three stages, and an anomaly implements only the ones it needs:
 
 1. Star: `primaryStar()` or `systemType()` replaces the star or the system type before layout (Black Hole, Neutron Star, Dense Nebula). These are locked to the atlas cell and can never be inserted.
 2. Shape: `shape(AnomalyLayoutSite)` adds terrain right after layout (Asteroid Storm, Magnetic Storm, Stellar Flares).
@@ -47,4 +48,4 @@ Players favour one anomaly over the others with intel and atlas passives, and ca
 The atlas comes first. These steps sit inside `../atlas.md`'s build order (its steps 2, 3c, 12, 13 and 16).
 
 1. [~] Anomaly framework: `ChartAnomaly`, `chart_anomalies.csv`, the per-node roll, run requests, tooltip line, run state and cleanup, with one test anomaly that places nothing (`ChartAnomaliesTest.PlacesNothing`), plus inserted anomalies (`../atlas.md` step 17). Not built: icon and intel columns' use, which wait for the marker icons and the intel item.
-2. [~] Anomalies one at a time, each to its own plan's build order. Built apart from in-game checks: Faction Skirmish, Relay Network, Supply Convoy, Anomalous Debris, Excavation Sites, Storm Front, Derelict Forge and Listening Post.
+2. [~] Anomalies one at a time, each to its own plan's build order. Built apart from in-game checks: Faction Skirmish, Relay Network, Supply Convoy, Anomalous Debris, Excavation Sites, Storm Front, Derelict Forge, Listening Post, and the Remnant Nexus and Domain-era Mothership.

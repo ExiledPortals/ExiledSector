@@ -50,7 +50,7 @@ public final class AtlasAnomalies {
         List<String> accepted = new ArrayList<>();
         for (String anomalyId : generator.node(cell).anomalyIds()) {
             ChartAnomalies.Definition definition = ChartAnomalies.definition(anomalyId);
-            boolean keptWhenSpent = definition != null && definition.replacesStar();
+            boolean keptWhenSpent = definition != null && definition.keptWhenSpent();
             if (accepted.size() < MAX_PER_SYSTEM && (!spent || keptWhenSpent) && accepts(generator, state, cell, accepted, anomalyId)) {
                 accepted.add(anomalyId);
             }

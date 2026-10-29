@@ -65,6 +65,12 @@ public final class ChartAnomalyFleets {
         return fleet == null || fleet.isEmpty() ? null : fleet;
     }
 
+    public static CampaignFleetAPI station(String factionId, String variantId, ChartTier tier, Random random) {
+        CampaignFleetAPI station = ChartContentGenerator.engine().createStation(factionId, variantId,
+                ChartContentPlanner.STATION_OFFICER_LEVEL + tier.officerLevelBonus(), random);
+        return station == null || station.isEmpty() ? null : station;
+    }
+
     public static CampaignFleetAPI emptyFleet(String factionId, String fleetType) {
         return ChartContentGenerator.engine().createEmptyFleet(factionId, fleetType);
     }

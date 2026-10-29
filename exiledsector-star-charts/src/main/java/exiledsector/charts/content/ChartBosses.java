@@ -31,15 +31,24 @@ public final class ChartBosses {
     private static volatile Map<ChartBossType, Definition> definitions = Map.of(ChartBossType.FLEET, BUILT_IN_FLEET);
     private static volatile List<Station> stations = List.of();
 
-    public record Definition(ChartBossType type, float weight, int minTier, int maxTier, float fleetShare) {
+    public record Definition(ChartBossType type, float weight, int minTier, int maxTier, float fleetShare, Set<String> excludedFactionIds) {
 
         public Definition {
             weight = Math.max(0f, weight);
             fleetShare = Math.max(0f, fleetShare);
+            excludedFactionIds = excludedFactionIds == null ? Set.of() : Set.copyOf(excludedFactionIds);
+        }
+
+        public Definition(ChartBossType type, float weight, int minTier, int maxTier, float fleetShare) {
+            this(type, weight, minTier, maxTier, fleetShare, Set.of());
         }
 
         public boolean allowedAt(int tier) {
             return weight > 0f && tier >= minTier && tier <= maxTier;
+        }
+
+        public boolean excludes(String factionId) {
+            return factionId != null && excludedFactionIds.contains(factionId);
         }
     }
 
@@ -92,7 +101,7 @@ public final class ChartBosses {
     private static Definition parse(CsvRows csv, JSONObject row, String id) {
         BuiltInTable.TierRange tiers = BuiltInTable.TierRange.parse(csv, row, id);
         return new Definition(ChartBossType.byKey(id), csv.number(row, "weight", 1f, id), tiers.minTier(), tiers.maxTier(),
-                csv.number(row, "fleet_share", 1f, id));
+                csv.number(row, "fleet_share", 1f, id), new LinkedHashSet<>(CsvRows.entries(ModCsv.text(row, "excluded_factions"))));
     }
 
     static List<String> registerStations(JSONArray rows) throws JSONException {
@@ -117,7 +126,8 @@ public final class ChartBosses {
         List<Definition> candidates = new ArrayList<>();
         for (ChartBossType type : ChartBossType.values()) {
             Definition definition = definitions.get(type);
-            if (definition != null && definition.allowedAt(tier) && (definition.type() != ChartBossType.STATION || !stationsFor(factionId, tier).isEmpty())) {
+            if (definition != null && definition.allowedAt(tier) && !definition.excludes(factionId)
+                    && (definition.type() != ChartBossType.STATION || !stationsFor(factionId, tier).isEmpty())) {
                 candidates.add(definition);
             }
         }
@@ -126,6 +136,10 @@ public final class ChartBosses {
     }
 
     static List<Station> stationsFor(String factionId, int tier) {
+        Definition stationBoss = definitions.get(ChartBossType.STATION);
+        if (stationBoss != null && stationBoss.excludes(factionId)) {
+            return List.of();
+        }
         List<Station> own = new ArrayList<>();
         List<Station> shared = new ArrayList<>();
         for (Station station : stations) {

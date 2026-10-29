@@ -89,7 +89,7 @@ public final class AtlasData {
             if (anomaly != null) {
                 anomalies.add(new AtlasAnomalyCandidate(definition.id(), definition.weight(), definition.requiredMod(), definition.replacesStar(),
                         definition.excludes(), (traits, weight) -> anomaly.fitsAt(traits) ? anomaly.atlasWeight(traits, weight) : 0f,
-                        rules.get(definition.id())));
+                        rules.get(definition.id()), definition.biomes()));
             }
         }
         return new AtlasRules(regions, layoutWeights, factionWeights, rule(rules, VOID_MARKER), rule(rules, ANOMALY_MARKER), specials, anomalies);

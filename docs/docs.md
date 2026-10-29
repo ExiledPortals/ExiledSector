@@ -234,7 +234,8 @@ tier instead rises one per `strength_per_tier` deployment points defeated.
 
 A chart's boss is a fleet or a station, picked by weight from the `chart_bosses.csv` rows allowed at its tier
 (`ChartBosses`). A station is only picked when `chart_boss_stations.csv` has one for the run's faction at that tier,
-and rows without factions serve every faction without its own. Each row's `fleet_share` scales the boss size for
+and rows without factions serve every faction without its own. A faction in a row's `excluded_factions` never gets
+that type, so the Remnant and derelicts always get a fleet boss. Each row's `fleet_share` scales the boss size for
 the boss's fleet: the whole boss, or the station's guard.
 
 A station boss is a vanilla station-mode fleet with no market (`VanillaChartContentEngine.createStation`) orbiting
@@ -396,6 +397,20 @@ every living picket at once, so one fight wins the vault. The vault is the `list
 plus the `exiledSector_chart_listening_post` item row, +100% to Star Charts, blueprints and subroutines, times the
 share left (`VaultLoot`). Taking it before the alarm flags the atlas cell `LANES_REVEALED`, which reveals 3 lanes
 around it like a Sensor Array (`AtlasReach`).
+
+## Remnant Nexus and Domain-era Mothership
+
+These anomalies never roll or get inserted: an anomaly with a `biomes` column in `chart_anomalies.csv` sits in
+exactly one system of each pocket (biome site) of those biomes, the one with the lowest atlas-seed hash among its
+systems that are not special sites or infested (`AtlasBiomeAnomalies`). It comes first among the node's anomalies, so
+it always fits under the limit of 9, and a failed run doesn't spend it.
+
+Each places a station-mode fleet of its faction, marked with the run's tier and carrying a chart fleet's loot, on a
+clear orbit away from the inner wormhole (package `charts.anomaly.station`): a damaged Nexus up to tier 7 and a full
+one after, or the survey mothership. A system script launches up to two or three fleets of 35% of the tier's fleet
+size, 5% more per fleet lost (at most 60%), that patrol the system, drop no chart items and stop once the station
+dies. `NexusFleetManager` is vanilla's `RemnantStationFleetManager` without its hyperspace encounter point;
+`MothershipFleetManager` does the same on `SourceBasedFleetManager` with derelict drones up to cruisers.
 
 ## Transverse Jump in charts
 

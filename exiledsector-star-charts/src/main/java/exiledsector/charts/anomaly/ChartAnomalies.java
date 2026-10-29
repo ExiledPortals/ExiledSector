@@ -12,6 +12,8 @@ import exiledsector.charts.anomaly.forge.DerelictForge;
 import exiledsector.charts.anomaly.heist.ListeningPost;
 import exiledsector.charts.anomaly.relay.RelayNetwork;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
+import exiledsector.charts.anomaly.station.DomainMothership;
+import exiledsector.charts.anomaly.station.RemnantNexusStation;
 import exiledsector.charts.anomaly.storm.StormFront;
 import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.effect.ChartEffect;
@@ -41,21 +43,28 @@ public final class ChartAnomalies {
             RelayNetwork.INSTANCE, ExcavationSites.INSTANCE, SupplyConvoy.INSTANCE, AnomalousDebris.INSTANCE,
             StormFront.INSTANCE,
             DerelictForge.INSTANCE, ListeningPost.INSTANCE,
+            RemnantNexusStation.INSTANCE, DomainMothership.INSTANCE,
             PowerfulBoss.INSTANCE);
     private static final Logger LOG = Logger.getLogger(ChartAnomalies.class);
     private static volatile List<ChartAnomaly> anomalies = BUILT_IN;
     private static volatile Map<String, Definition> definitions = Map.of();
 
     public record Definition(String id, float weight, int minTier, int maxTier, String requiredMod, String icon, boolean insertable,
-                             Set<String> excludes, boolean replacesStar, List<ChartGenContext.AppliedEffect> effects) {
+                             Set<String> excludes, boolean replacesStar, List<ChartGenContext.AppliedEffect> effects, Set<String> biomes) {
 
         public Definition {
             requiredMod = requiredMod == null ? "" : requiredMod;
             icon = icon == null ? "" : icon;
             weight = Math.max(0f, weight);
             excludes = excludes == null ? Set.of() : Set.copyOf(excludes);
-            insertable = insertable && !replacesStar;
+            biomes = biomes == null ? Set.of() : Set.copyOf(biomes);
+            insertable = insertable && !replacesStar && biomes.isEmpty();
             effects = effects == null ? List.of() : List.copyOf(effects);
+        }
+
+        public Definition(String id, float weight, int minTier, int maxTier, String requiredMod, String icon, boolean insertable,
+                          Set<String> excludes, boolean replacesStar, List<ChartGenContext.AppliedEffect> effects) {
+            this(id, weight, minTier, maxTier, requiredMod, icon, insertable, excludes, replacesStar, effects, Set.of());
         }
 
         public Definition(String id, float weight, int minTier, int maxTier, String requiredMod, String icon, boolean insertable,
@@ -65,6 +74,14 @@ public final class ChartAnomalies {
 
         public boolean allowedAt(int tier) {
             return tier >= minTier && tier <= maxTier;
+        }
+
+        public boolean perBiome() {
+            return !biomes.isEmpty();
+        }
+
+        public boolean keptWhenSpent() {
+            return replacesStar || perBiome();
         }
 
         public boolean conflictsWith(Definition other) {
@@ -95,6 +112,10 @@ public final class ChartAnomalies {
         if (insertable && replacesStar) {
             csv.problem(id, "insertable", "yes (an anomaly that replaces the star can't be inserted)");
         }
+        Set<String> biomes = new LinkedHashSet<>(CsvRows.entries(ModCsv.text(row, "biomes")));
+        if (insertable && !biomes.isEmpty()) {
+            csv.problem(id, "insertable", "yes (an anomaly placed once per biome can't be inserted)");
+        }
         Set<String> excludes = new LinkedHashSet<>();
         for (String excluded : CsvRows.entries(ModCsv.text(row, "excludes"))) {
             if (excluded.equals(id) || byId(excluded) == null) {
@@ -113,7 +134,7 @@ public final class ChartAnomalies {
             }
         });
         return new Definition(id, csv.number(row, "weight", 1f, id), tiers.minTier(), tiers.maxTier(), ModCsv.text(row, "requires_mod"),
-                ModCsv.text(row, "icon"), insertable, excludes, replacesStar, effects);
+                ModCsv.text(row, "icon"), insertable, excludes, replacesStar, effects, biomes);
     }
 
     public static ChartAnomaly byId(String id) {

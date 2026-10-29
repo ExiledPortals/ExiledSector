@@ -29,6 +29,7 @@ public final class AtlasGenerator {
     private final AtlasBiomes biomes;
     private final AtlasTerritories territories;
     private final AtlasTerrain terrain;
+    private final AtlasBiomeAnomalies biomeAnomalies;
     private final Map<Long, List<AtlasCell>> laneCache = AtlasPositions.boundedCache(CACHE_LIMIT_CELLS);
     private final Map<Long, Boolean> voidCache = AtlasPositions.boundedCache(CACHE_LIMIT_CELLS);
 
@@ -41,6 +42,9 @@ public final class AtlasGenerator {
         biomes = new AtlasBiomes(seed, rules, unlocks, memory, positions);
         territories = new AtlasTerritories(seed, rules, positions, memory);
         terrain = new AtlasTerrain(seed, rules, biomes, positions, specials.fixedCells());
+        biomeAnomalies = new AtlasBiomeAnomalies(seed,
+                rules.anomalies().stream().filter(candidate -> unlocks.allows(candidate.requiredMod(), "")).toList(), biomes::biomeOf,
+                this::canHoldBiomeAnomaly);
     }
 
     public long seed() {
@@ -186,7 +190,7 @@ public final class AtlasGenerator {
         List<AtlasCell> lanes = lanes(cell);
         AtlasTraits traits = traits(cell, distance, region, factionId, lanes, placed);
         String layoutId = traits.layoutId();
-        List<String> anomalyIds = rollAnomalies(cell, traits, region);
+        List<String> anomalyIds = anomalies(cell, traits, region);
         return new AtlasNode(cell, x, y, false, region.id(), factionId, layoutId, anomalyIds, traits.specialId(), traits.infestationId(), lanes);
     }
 
@@ -277,11 +281,35 @@ public final class AtlasGenerator {
         return region == null ? rules.normalRegion() : region;
     }
 
-    private List<String> rollAnomalies(AtlasCell cell, AtlasTraits traits, AtlasRegion region) {
+    public AtlasCell biomeAnomalyCell(AtlasBiome biome, String anomalyId) {
+        return biomeAnomalies.pick(biome, anomalyId);
+    }
+
+    private boolean canHoldBiomeAnomaly(AtlasCell cell) {
+        return !cell.equals(AtlasCell.ORIGIN) && !isVoid(cell) && specials.specialAt(cell) == null && infestationAt(cell) == null;
+    }
+
+    private List<String> anomalies(AtlasCell cell, AtlasTraits traits, AtlasRegion region) {
+        List<String> placed = biomeAnomalies.at(cell);
+        List<AtlasAnomalyCandidate> kept = new ArrayList<>();
+        for (AtlasAnomalyCandidate candidate : rules.anomalies()) {
+            if (placed.contains(candidate.id())) {
+                kept.add(candidate);
+            }
+        }
+        for (AtlasAnomalyCandidate candidate : rollAnomalies(cell, traits, region)) {
+            if (kept.stream().noneMatch(candidate::conflictsWith)) {
+                kept.add(candidate);
+            }
+        }
+        return kept.stream().map(AtlasAnomalyCandidate::id).toList();
+    }
+
+    private List<AtlasAnomalyCandidate> rollAnomalies(AtlasCell cell, AtlasTraits traits, AtlasRegion region) {
         List<AtlasAnomalyCandidate> passed = new ArrayList<>();
         Map<String, Double> rolls = new HashMap<>();
         for (AtlasAnomalyCandidate candidate : rules.anomalies()) {
-            if (!unlocks.allows(candidate.requiredMod(), "")) {
+            if (candidate.placedPerBiome() || !unlocks.allows(candidate.requiredMod(), "")) {
                 continue;
             }
             float chance = candidate.chanceRule(rules.anomalyRule()).chanceAt(traits.distance());
@@ -302,7 +330,7 @@ public final class AtlasGenerator {
                 kept.add(candidate);
             }
         }
-        return kept.stream().map(AtlasAnomalyCandidate::id).toList();
+        return kept;
     }
 
     public AtlasTraits traits(AtlasCell cell) {

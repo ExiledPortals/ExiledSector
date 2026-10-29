@@ -217,6 +217,21 @@ class ChartRunCloserTest {
     }
 
     @Test
+    void removesTheSystemsRunBoundScriptsSuchAsStationFleetManagersBeforeTheSystemGoes() {
+        BoundScript manager = new BoundScript(RUN_ID);
+        BoundScript otherScript = new BoundScript("other");
+        when(system.getScripts()).thenReturn(new ArrayList<>(List.of(manager, otherScript)));
+
+        ChartRunCloser.close(sector, run);
+
+        InOrder order = inOrder(systemFleet, system, sector);
+        order.verify(systemFleet).despawn(FleetDespawnReason.PLAYER_FAR_AWAY, null);
+        order.verify(system).removeScript(manager);
+        order.verify(sector).removeStarSystemNextFrame(system);
+        verify(system, never()).removeScript(otherScript);
+    }
+
+    @Test
     void officersStillPointingAtAFleetLeftInTheSystemArePointedAtTheCurrentFleet() {
         CampaignFleetAPI deadFleet = mock(CampaignFleetAPI.class);
         when(deadFleet.getContainingLocation()).thenReturn(system);
