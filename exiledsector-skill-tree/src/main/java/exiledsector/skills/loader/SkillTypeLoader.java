@@ -94,6 +94,7 @@ public final class SkillTypeLoader {
                 .temporaryAfterDeploymentSeconds(temporaryAfterDeploymentSeconds)
                 .requiredHullSizes(requiredHullSizes)
                 .flavour(typeJson.optString("flavour", null))
+                .flavourAutomated(typeJson.optString("flavourAutomated", null))
                 .effectText(parseStringArray(typeJson.optJSONArray("effectText")))
                 .todo(typeJson.optString("todo", null))
                 .optionalOptionIds(optionalOptionIds)

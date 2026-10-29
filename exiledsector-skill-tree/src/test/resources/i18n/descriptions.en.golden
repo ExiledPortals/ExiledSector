@@ -2531,6 +2531,7 @@ effect-noSiC|CONVERTED_HANGAR_MIN_CREW_FLAT|100.0	1	<good>+100</good> to minimum
 effect-noSiC|CONVERTED_HANGAR_MIN_CREW_FLAT|-10.0	1	<bad>-10</bad> to minimum crew required.
 effect-noSiC|CONVERTED_HANGAR_MIN_CREW_FLAT|-12.5	1	<bad>-12.5</bad> to minimum crew required.
 flavour|abyssal_grid	0	Picking apart the power grids of abyssal drone wrecks, the crew works out how their couplings survive the storms of abyssal hyperspace and rebuilds the ship's energy mounts to match.
+flavourAutomated|abyssal_grid	0	Picking apart the power grids of abyssal drone wrecks, the refit crew works out how their couplings survive the storms of abyssal hyperspace and rebuilds the ship's energy mounts to match.
 type|abyssal_grid|null|0	1	<bad>10%</bad> reduced energy weapon flux cost.
 type|abyssal_grid|null|1	0	<good>+100</good> to energy weapon range.
 type|abyssal_grid|null|2	1	<bad>25%</bad> reduced EMP damage taken.
@@ -2562,6 +2563,7 @@ type|abyssal_grid|CAPITAL_SHIP|3	1	<bad>25%</bad> less combat readiness loss fro
 type-detail|abyssal_grid|CAPITAL_SHIP|0	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
 type-detail|abyssal_grid|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Grid</hullmod>
 flavour|adaptive_coils	0	Phase coils lose their grip on normal space as hard flux builds. A crew willing to rewind them by hand can keep that grip a while longer.
+flavourAutomated|adaptive_coils	0	Phase coils lose their grip on normal space as hard flux builds. The ship's core models the slip from its own coil telemetry and corrects for it faster than any hand could rewind them, keeping that grip a while longer.
 type|adaptive_coils|null|0	0	<good>40%</good> increased hard flux level at which phased speed reaches its minimum.
 type-detail|adaptive_coils|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Phase Anchor</hullmod>\n• <hullmod>Adaptive Phase Coils</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Phase Anchor</node>
 type|adaptive_coils|FRIGATE|0	0	<good>40%</good> increased hard flux level at which phased speed reaches its minimum.
@@ -2692,6 +2694,7 @@ type|armoredweapons|CAPITAL_SHIP|2	0	<bad>25%</bad> less weapon turn rate.
 type|armoredweapons|CAPITAL_SHIP|3	1	<bad>25%</bad> less weapon recoil.
 type-detail|armoredweapons|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Armored Weapon Mounts</hullmod>
 flavour|attuned_sensors	0	Studying the sensor pickets the League posts along its Hegemony border shows the crew how to slave energy weapon targeting to the ship's own sensors. The pickets are the one League institution every member world agrees to fund.
+flavourAutomated|attuned_sensors	0	The ship's core logs the sweeps of the sensor pickets the League posts along its Hegemony border and slaves its energy weapon targeting to its own sensors on the same pattern. The pickets are the one League institution every member world agrees to fund.
 type|attuned_sensors|null|0	0	<good>+1</good> to energy weapon range for every point of this ship's sensor strength.
 type|attuned_sensors|FRIGATE|0	0	<good>+1</good> to energy weapon range for every point of this ship's sensor strength.
 type|attuned_sensors|DESTROYER|0	0	<good>+1</good> to energy weapon range for every point of this ship's sensor strength.
@@ -2765,6 +2768,7 @@ type|ballistic_damage|DESTROYER|0	0	<good>3%</good> increased ballistic weapon d
 type|ballistic_damage|CRUISER|0	0	<good>3%</good> increased ballistic weapon damage.
 type|ballistic_damage|CAPITAL_SHIP|0	0	<good>3%</good> increased ballistic weapon damage.
 flavour|ballistic_momentum	0	Sailing alongside Hegemony battle lines teaches the crew the Navy's habit of arriving at speed and firing before the enemy has settled, guns thumping out what the Navy calls its heartbeat.
+flavourAutomated|ballistic_momentum	0	The ship's core logs hours of Hegemony line engagements and reproduces the Navy's habit of arriving at speed and firing before the enemy has settled, guns thumping out what the Navy calls its heartbeat. The core keeps time more evenly than any Navy gunner.
 type|ballistic_momentum|null|0	0	<good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
 type|ballistic_momentum|FRIGATE|0	0	<good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
 type|ballistic_momentum|DESTROYER|0	0	<good>3%</good> more ballistic weapon damage for every burn level this ship has above its hull's default.
@@ -2797,6 +2801,7 @@ type|beam_damage|DESTROYER|0	0	<good>3%</good> increased beam weapon damage.
 type|beam_damage|CRUISER|0	0	<good>3%</good> increased beam weapon damage.
 type|beam_damage|CAPITAL_SHIP|0	0	<good>3%</good> increased beam weapon damage.
 flavour|beam_split	0	Diktat propaganda insists that the Lion's gaze falls on every citizen at once, and the engineer-technicians of the Lion's Guard took the slogan literally. Studying the Executors they refit teaches the crew to split this ship's beams across the target and the enemy ships around it.
+flavourAutomated|beam_split	0	Diktat propaganda insists that the Lion's gaze falls on every citizen at once, and the engineer-technicians of the Lion's Guard took the slogan literally. The ship's core records how a Lion's Guard Executor divides its beams across a target and the ships around it, and splits its own the same way. It does not record the slogan.
 type|beam_split|null|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
 type|beam_split|FRIGATE|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
 type|beam_split|DESTROYER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
@@ -2808,6 +2813,7 @@ type|beam_split_reduced_damage|DESTROYER|0	0	Beam weapon hits split their damage
 type|beam_split_reduced_damage|CRUISER|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
 type|beam_split_reduced_damage|CAPITAL_SHIP|0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
 flavour|beautiful_nightmare	0	Stargazers fight hardest when they are dying, and the Stardust Core recovered from one, the remains of what was once a person, shows the crew how to strip the ship's safeties the moment its hull starts to fail.
+flavourAutomated|beautiful_nightmare	0	Stargazers fight hardest when they are dying. The Stardust Core recovered from one, the remains of what was once a person, holds the routine that strips a ship's safeties the moment its hull starts to fail. The ship's core runs it without hesitation.
 type|beautiful_nightmare|null|0	0	When its hull drops below 25% during a battle, the ship enters Terminal Descent until its hull is back above 40%. During Terminal Descent, <good>25%</good> reduced hull damage taken, but peak performance time stops and venting is blocked.
 type|beautiful_nightmare|null|1	0	<good>15%</good> increased flux dissipation during Terminal Descent.
 type|beautiful_nightmare|null|2	0	<good>15%</good> increased ship system charge regeneration during Terminal Descent.
@@ -2848,6 +2854,7 @@ type|cargo_capacity_flat|DESTROYER|0	0	<good>+15</good> to cargo capacity.
 type|cargo_capacity_flat|CRUISER|0	0	<good>+25</good> to cargo capacity.
 type|cargo_capacity_flat|CAPITAL_SHIP|0	0	<good>+50</good> to cargo capacity.
 flavour|chronos_adaptability	0	After long hours with a recovered Chronos core, the crew decodes how it times its own systems and rewrites the ship system's control loop to match, cycling it faster than its makers ever intended.
+flavourAutomated|chronos_adaptability	0	Linked to a recovered Chronos core, the ship's core logs how it times its own systems and rewrites the ship system's control loop to match, cycling it faster than its makers ever intended.
 type|chronos_adaptability|null|0	1	<bad>20%</bad> reduced ship system cooldown.
 type|chronos_adaptability|null|1	0	<good>20%</good> increased ship system charge regeneration.
 type-detail|chronos_adaptability|null|0	0	Costs 1 rat_chronos_core to allocate, returned when unallocated.
@@ -2869,6 +2876,7 @@ type|chronos_adaptability|CAPITAL_SHIP|1	0	<good>20%</good> increased ship syste
 type-detail|chronos_adaptability|CAPITAL_SHIP|0	0	Costs 1 rat_chronos_core to allocate, returned when unallocated.
 type-detail|chronos_adaptability|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Abyssal Adaptability</hullmod>
 flavour|coil_efficiency	0	Exo-Tech technicians teach the crew to retune the phase coils to their own tolerances, which are tighter than anything the coils were built for.
+flavourAutomated|coil_efficiency	0	Exo-Tech technicians teach the refit crew to retune the phase coils to their own tolerances, which are tighter than anything the coils were built for.
 type|coil_efficiency|null|0	0	<good>20%</good> increased hard flux level at which phased speed reaches its minimum.
 type|coil_efficiency|null|1	0	<good>25%</good> increased flux dissipation while phased.
 type|coil_efficiency|FRIGATE|0	0	<good>20%</good> increased hard flux level at which phased speed reaches its minimum.
@@ -2950,6 +2958,7 @@ type-detail|converted_hangar|CAPITAL_SHIP|0	0	Unallocating it returns any strike
 type-detail|converted_hangar|CAPITAL_SHIP|1	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser, Capital.
 type-detail|converted_hangar|CAPITAL_SHIP|2	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Converted Fighter Bay</hullmod>\n• <hullmod>Converted Hangar</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Converted Fighter Bay</node>
 flavour|corrosion_beam	0	A corrosion emitter salvaged from a Stargazer wreck still drags stardust through whatever it touches, and the crew tunes this ship's beams to do the same.
+flavourAutomated|corrosion_beam	0	A corrosion emitter salvaged from a Stargazer wreck still drags stardust through whatever it touches, and the refit crew tunes this ship's beams to do the same.
 type|corrosion_beam|null|0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
 type|corrosion_beam|FRIGATE|0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
 type|corrosion_beam|DESTROYER|0	0	Every 2 seconds a beam weapon spends on an enemy ship's armor or hull, it launches a homing stardust mote at the target dealing <good>200</good> energy damage and <good>200</good> EMP. At most 20 of this ship's motes fly at once.
@@ -2999,12 +3008,14 @@ type|dedicated_targeting_core|CAPITAL_SHIP|1	0	<good>50%</good> increased energy
 type-detail|dedicated_targeting_core|CAPITAL_SHIP|0	0	Restricted to <hl>hull sizes</hl>: Cruiser, Capital.
 type-detail|dedicated_targeting_core|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Integrated Targeting Unit</hullmod>\n• <hullmod>Advanced Targeting Core</hullmod>\n• <hullmod>Distributed Fire Control</hullmod>\n• <hullmod>Dedicated Targeting Core</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Integrated Targeting Unit</node>
 flavour|defensive_targeting_array	0	Wing datalinks rewired to carry the ship's own point-defense solutions. The pilots complain about the short leash. The gunners do not.
+flavourAutomated|defensive_targeting_array	0	Wing datalinks rewired to carry the ship's own point-defense solutions. If the pilots complain about the short leash, nobody aboard hears it.
 type-detail|defensive_targeting_array|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Defensive Targeting Array</hullmod>
 type-detail|defensive_targeting_array|FRIGATE|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Defensive Targeting Array</hullmod>
 type-detail|defensive_targeting_array|DESTROYER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Defensive Targeting Array</hullmod>
 type-detail|defensive_targeting_array|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Defensive Targeting Array</hullmod>
 type-detail|defensive_targeting_array|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Defensive Targeting Array</hullmod>
 flavour|disintegration	0	Hulls killed by Remnant energy weapons come apart around every impact in a way no human weapon manages. Salvors who study enough of the wrecks learn to tune this ship's energy weapons to the same pattern, and try not to think about what it resembles.
+flavourAutomated|disintegration	0	Hulls killed by Remnant energy weapons come apart around every impact in a way no human weapon manages. The ship's core scans enough of the wrecks to model the pattern and tunes its energy weapons to match. It has no opinion on what the pattern resembles.
 type|disintegration|null|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact.
 type|disintegration|FRIGATE|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact.
 type|disintegration|DESTROYER|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact.
@@ -3022,6 +3033,7 @@ type|doctrine_luddic_blessed_plating|CRUISER|1	0	<good>15%</good> increased hull
 type|doctrine_luddic_blessed_plating|CAPITAL_SHIP|0	0	<good>20%</good> increased armor.
 type|doctrine_luddic_blessed_plating|CAPITAL_SHIP|1	0	<good>15%</good> increased hull points.
 flavour|doctrine_luddic_faithful_hands	0	The faithful do not trust machines to mend machines. Hand-repair crews drilled in the Church's way keep a ship's systems fighting through damage, slowly and without complaint.
+flavourAutomated|doctrine_luddic_faithful_hands	0	The faithful do not trust machines to mend machines, which is exactly what this ship does. Its repair drones copy the Church's hand-repair procedures from logged footage, slowly and without complaint. Nobody tells the Church.
 type|doctrine_luddic_faithful_hands|null|0	0	<good>25%</good> less weapon and engine repair time.
 type|doctrine_luddic_faithful_hands|null|1	0	<good>25%</good> increased combat readiness recovery rate.
 type|doctrine_luddic_faithful_hands|FRIGATE|0	0	<good>25%</good> less weapon and engine repair time.
@@ -3044,6 +3056,7 @@ type|doctrine_luddic_penitent_hulls|CRUISER|1	1	<bad>10%</bad> less supply use f
 type|doctrine_luddic_penitent_hulls|CAPITAL_SHIP|0	1	<bad>25%</bad> less negative effects from D-mods.
 type|doctrine_luddic_penitent_hulls|CAPITAL_SHIP|1	1	<bad>10%</bad> less supply use for maintenance.
 flavour|doctrine_luddic_pilgrim_volunteers	0	Pilgrims who sign on at Hesperus count it a blessing to stand their stations through the worst of a fight and keep vigil without complaint.
+flavourAutomated|doctrine_luddic_pilgrim_volunteers	0	Pilgrims who sign on at Hesperus stand their stations through the worst of a fight and keep vigil without complaint. This ship has no stations to stand, so its core logs their watch rotations and runs its systems on the same unbroken vigil.
 type|doctrine_luddic_pilgrim_volunteers|null|0	0	<good>20%</good> increased peak combat readiness duration.
 type|doctrine_luddic_pilgrim_volunteers|null|1	1	<bad>25%</bad> reduced crew casualties.
 type|doctrine_luddic_pilgrim_volunteers|FRIGATE|0	0	<good>20%</good> increased peak combat readiness duration.
@@ -3055,6 +3068,7 @@ type|doctrine_luddic_pilgrim_volunteers|CRUISER|1	1	<bad>25%</bad> reduced crew 
 type|doctrine_luddic_pilgrim_volunteers|CAPITAL_SHIP|0	0	<good>20%</good> increased peak combat readiness duration.
 type|doctrine_luddic_pilgrim_volunteers|CAPITAL_SHIP|1	1	<bad>25%</bad> reduced crew casualties.
 flavour|doctrine_luddic_pilgrims_burn	0	Pilgrim fleets cross the Sector on whatever drives they can keep lit. Their frugal burn discipline is learned between stations, with the tanks running low.
+flavourAutomated|doctrine_luddic_pilgrims_burn	0	Pilgrim fleets cross the Sector on whatever drives they can keep lit. The ship's core logs their burn profiles between stations and flies the same frugal burn, tanks running low.
 type|doctrine_luddic_pilgrims_burn|null|0	0	<good>+1</good> to max burn level.
 type|doctrine_luddic_pilgrims_burn|null|1	1	<bad>15%</bad> less fuel consumption rate.
 type|doctrine_luddic_pilgrims_burn|FRIGATE|0	0	<good>+1</good> to max burn level.
@@ -3067,6 +3081,7 @@ type|doctrine_luddic_pilgrims_burn|CAPITAL_SHIP|0	0	<good>+1</good> to max burn 
 type|doctrine_luddic_pilgrims_burn|CAPITAL_SHIP|1	1	<bad>15%</bad> less fuel consumption rate.
 flavour|doctrine_luddic_plain_rites	0	Luddic doctrine calls a ship system's refinements vanity. Stripped back to plain, honest machinery, it does what it was built to do and nothing more.
 flavour|doctrine_luddic_righteous_fury	0	Knights of Ludd gunners load each round as if it were a verdict. Their gunnery is crude, patient and difficult to argue with.
+flavourAutomated|doctrine_luddic_righteous_fury	0	Knights of Ludd gunners load each round as if it were a verdict. The ship's core logs their gunnery round by round and reproduces it exactly, verdicts excluded. It remains crude, patient and difficult to argue with.
 type|doctrine_luddic_righteous_fury|null|0	0	<good>15%</good> increased ballistic weapon damage.
 type|doctrine_luddic_righteous_fury|null|1	0	<good>15%</good> increased missile weapon damage.
 type|doctrine_luddic_righteous_fury|FRIGATE|0	0	<good>15%</good> increased ballistic weapon damage.
@@ -3094,6 +3109,7 @@ type|doctrine_remnant_automated_command|CAPITAL_SHIP|0	0	<good>10%</good> increa
 type|doctrine_remnant_automated_command|CAPITAL_SHIP|1	0	<good>15%</good> increased flux dissipation.
 type|doctrine_remnant_automated_command|CAPITAL_SHIP|2	0	<bad>50%</bad> reduced combat readiness recovery rate.
 flavour|doctrine_remnant_cold_logic	0	Machines do not tire. The duty cycles Remnant cores run on their own systems were never meant for a human crew, but they work.
+flavourAutomated|doctrine_remnant_cold_logic	0	Machines do not tire. The duty cycles Remnant cores run on their own systems load into this ship's core without modification.
 type|doctrine_remnant_cold_logic|null|0	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
 type|doctrine_remnant_cold_logic|null|1	0	<good>10%</good> increased maximum combat readiness.
 type|doctrine_remnant_cold_logic|FRIGATE|0	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
@@ -3105,6 +3121,7 @@ type|doctrine_remnant_cold_logic|CRUISER|1	0	<good>10%</good> increased maximum 
 type|doctrine_remnant_cold_logic|CAPITAL_SHIP|0	1	<bad>25%</bad> less rate of combat readiness loss from extended deployment.
 type|doctrine_remnant_cold_logic|CAPITAL_SHIP|1	0	<good>10%</good> increased maximum combat readiness.
 flavour|doctrine_remnant_fortress_lattice	0	Remnant warships throw their shields up and around faster than any human crew can react. Copying the projector timings from a wrecked one teaches the crew to snap this ship's shield into place and harden the emitters against ion fire.
+flavourAutomated|doctrine_remnant_fortress_lattice	0	Remnant warships throw their shields up and around faster than any human crew can react. The projector timings, copied from a wrecked one, run in this ship's core at the same speed and harden its emitters against ion fire.
 type|doctrine_remnant_fortress_lattice|null|0	0	<good>50%</good> increased shield turn rate.
 type|doctrine_remnant_fortress_lattice|null|1	0	<good>50%</good> increased shield raise rate.
 type|doctrine_remnant_fortress_lattice|null|2	1	<bad>25%</bad> reduced EMP damage taken.
@@ -3132,6 +3149,7 @@ type|doctrine_remnant_lumen_harmonics|CRUISER|1	1	<bad>10%</bad> reduced energy 
 type|doctrine_remnant_lumen_harmonics|CAPITAL_SHIP|0	0	<good>10%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|doctrine_remnant_lumen_harmonics|CAPITAL_SHIP|1	1	<bad>10%</bad> reduced energy weapon flux cost.
 flavour|doctrine_remnant_ordo_signal_mesh	0	A Remnant ordo moves as one mind, its ships murmuring to each other across a constant web of signals. One of the crew's aspiring scientists swears they can decode that chatter, tune this ship's sensors to it and turn it against enemy targeting.
+flavourAutomated|doctrine_remnant_ordo_signal_mesh	0	A Remnant ordo moves as one mind, its ships murmuring to each other across a constant web of signals. The ship's core listens long enough to parse the chatter, tunes its sensors to it and turns it against enemy targeting.
 type|doctrine_remnant_ordo_signal_mesh|null|0	0	<good>+1</good> to ECM rating.
 type|doctrine_remnant_ordo_signal_mesh|FRIGATE|0	0	<good>+1</good> to ECM rating.
 type|doctrine_remnant_ordo_signal_mesh|FRIGATE|1	0	<good>+10</good> to this ship's sensor strength.
@@ -3153,6 +3171,7 @@ type|doctrine_remnant_swarm_logic|CRUISER|1	0	Strikecraft launched from this shi
 type|doctrine_remnant_swarm_logic|CAPITAL_SHIP|0	0	<good>25%</good> increased rate at which strikecraft replacement capability recovers.
 type|doctrine_remnant_swarm_logic|CAPITAL_SHIP|1	0	Strikecraft launched from this ship have <good>15%</good> increased weapon damage.
 flavour|doctrine_remnant_unblinking_watch	0	Remnant point defense never tires and never flinches. Its tracking routines, recovered from a gutted drone, carry none of the hesitation a human gunner would add.
+flavourAutomated|doctrine_remnant_unblinking_watch	0	Remnant point defense never tires and never flinches. Its tracking routines, recovered from a gutted drone, carry none of the hesitation a human gunner would add, and this ship has no gunner to add any.
 type|doctrine_remnant_unblinking_watch|null|0	0	<good>50%</good> increased damage dealt to missiles by point-defense weapons.
 type|doctrine_remnant_unblinking_watch|null|1	0	<good>30%</good> increased weapon turn rate.
 type|doctrine_remnant_unblinking_watch|FRIGATE|0	0	<good>50%</good> increased damage dealt to missiles by point-defense weapons.
@@ -3175,6 +3194,7 @@ type|doctrine_tt_alpha_fire_control|CRUISER|1	0	<good>10%</good> increased energ
 type|doctrine_tt_alpha_fire_control|CAPITAL_SHIP|0	0	<good>50%</good> increased target leading accuracy of autofiring weapons.
 type|doctrine_tt_alpha_fire_control|CAPITAL_SHIP|1	0	<good>10%</good> increased energy weapon range.
 flavour|doctrine_tt_black_ledger_coils	0	Maintenance notes recovered from a Tri-Tachyon phase frigate's wreck, filed under a cost center that officially does not exist, show the crew how to slip this ship's coils into p-space cheaply and shed heat while it waits there.
+flavourAutomated|doctrine_tt_black_ledger_coils	0	Maintenance notes recovered from a Tri-Tachyon phase frigate's wreck, filed under a cost center that officially does not exist, show the refit crew how to slip this ship's coils into p-space cheaply and shed heat while it waits there.
 type|doctrine_tt_black_ledger_coils|null|0	1	<bad>25%</bad> less phase cloak activation cost.
 type|doctrine_tt_black_ledger_coils|null|1	0	<good>25%</good> increased flux dissipation while phased.
 type|doctrine_tt_black_ledger_coils|FRIGATE|0	1	<bad>25%</bad> less phase cloak activation cost.
@@ -3186,6 +3206,7 @@ type|doctrine_tt_black_ledger_coils|CRUISER|1	0	<good>25%</good> increased flux 
 type|doctrine_tt_black_ledger_coils|CAPITAL_SHIP|0	1	<bad>25%</bad> less phase cloak activation cost.
 type|doctrine_tt_black_ledger_coils|CAPITAL_SHIP|1	0	<good>25%</good> increased flux dissipation while phased.
 flavour|doctrine_tt_escrowed_emitters	0	Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. A crew that cracks the lock on a salvaged emitter finds the full rated performance sitting under it, and the subscription reminders keep arriving regardless.
+flavourAutomated|doctrine_tt_escrowed_emitters	0	Tri-Tachyon sells its shield emitters with firmware locked behind subscription keys. The ship's core breaks the lock on a salvaged emitter by brute force and finds the full rated performance sitting under it. The subscription reminders keep arriving, and the core files them unread.
 type|doctrine_tt_escrowed_emitters|null|0	1	<bad>10%</bad> less damage taken by shields.
 type|doctrine_tt_escrowed_emitters|null|1	1	<bad>25%</bad> less shield flux upkeep.
 type|doctrine_tt_escrowed_emitters|FRIGATE|0	1	<bad>10%</bad> less damage taken by shields.
@@ -3224,6 +3245,7 @@ type|doctrine_tt_hostile_takeover|CAPITAL_SHIP|0	0	<good>20%</good> increased en
 type|doctrine_tt_hostile_takeover|CAPITAL_SHIP|1	0	<good>5%</good> increased timeflow.
 type|doctrine_tt_hostile_takeover|CAPITAL_SHIP|2	0	<bad>30%</bad> reduced peak combat readiness duration.
 flavour|doctrine_tt_quarterly_targets	0	Tri-Tachyon fleet doctrine ranks every target by the value it carries, and its threat tables push gunners toward the largest hulls on the field. Frigates, the tables note, are rarely worth the ammunition.
+flavourAutomated|doctrine_tt_quarterly_targets	0	Tri-Tachyon fleet doctrine ranks every target by the value it carries, and its threat tables push fire control toward the largest hulls on the field. The ship's core loads the tables unedited. Frigates, the tables note, are rarely worth the ammunition.
 type|doctrine_tt_quarterly_targets|null|0	0	<good>10%</good> increased damage to cruisers.
 type|doctrine_tt_quarterly_targets|null|1	0	<good>10%</good> increased damage to capital ships and stations.
 type|doctrine_tt_quarterly_targets|FRIGATE|0	0	<good>10%</good> increased damage to cruisers.
@@ -3235,6 +3257,7 @@ type|doctrine_tt_quarterly_targets|CRUISER|1	0	<good>10%</good> increased damage
 type|doctrine_tt_quarterly_targets|CAPITAL_SHIP|0	0	<good>10%</good> increased damage to cruisers.
 type|doctrine_tt_quarterly_targets|CAPITAL_SHIP|1	0	<good>10%</good> increased damage to capital ships and stations.
 flavour|doctrine_tt_tachyon_lance_licensing	0	A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked and every one of them copied by a crew that never planned to renew.
+flavourAutomated|doctrine_tt_tachyon_lance_licensing	0	A Tri-Tachyon commission hands its captains a binder of licensed beam calibration tables, each page watermarked. The ship's core scans every page once, and the license lapses unrenewed.
 type|doctrine_tt_tachyon_lance_licensing|null|0	0	<good>15%</good> increased beam weapon damage.
 type|doctrine_tt_tachyon_lance_licensing|null|1	0	<good>10%</good> increased beam weapon range.
 type|doctrine_tt_tachyon_lance_licensing|FRIGATE|0	0	<good>15%</good> increased beam weapon damage.
@@ -3246,6 +3269,7 @@ type|doctrine_tt_tachyon_lance_licensing|CRUISER|1	0	<good>10%</good> increased 
 type|doctrine_tt_tachyon_lance_licensing|CAPITAL_SHIP|0	0	<good>15%</good> increased beam weapon damage.
 type|doctrine_tt_tachyon_lance_licensing|CAPITAL_SHIP|1	0	<good>10%</good> increased beam weapon range.
 flavour|dynamic_grid	0	Nightcross fits its dynamic coils to almost every hull it builds and never sells them on their own, so the crew pulls a set from a boarded Nightcross wreck. The warranty, naturally, does not cover third-party installation.
+flavourAutomated|dynamic_grid	0	Nightcross fits its dynamic coils to almost every hull it builds and never sells them on their own, so the refit crew pulls a set from a boarded Nightcross wreck. The warranty, naturally, does not cover third-party installation, least of all into a machine.
 type|dynamic_grid|null|0	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 type|dynamic_grid|null|1	0	<good>25%</good> increased shield raise rate.
 type|dynamic_grid|null|2	1	<good>10%</good> more damage taken by shields.
@@ -3371,6 +3395,7 @@ type|emp_damage_taken_multi|DESTROYER|0	1	<bad>20%</bad> less EMP damage taken.
 type|emp_damage_taken_multi|CRUISER|0	1	<bad>20%</bad> less EMP damage taken.
 type|emp_damage_taken_multi|CAPITAL_SHIP|0	1	<bad>20%</bad> less EMP damage taken.
 flavour|energy_chain	0	Pulling apart the energy converters of wrecked Tri-Tachyon warships shows the crew how to tune this ship's energy bolts to glance off an enemy shield and carry on to another target. Tri-Tachyon sales literature calls this efficiency.
+flavourAutomated|energy_chain	0	Pulling apart the energy converters of wrecked Tri-Tachyon warships shows the refit crew how to tune this ship's energy bolts to glance off an enemy shield and carry on to another target. Tri-Tachyon sales literature calls this efficiency.
 type|energy_chain|null|0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
 type|energy_chain|null|1	0	Each refraction deals <bad>20%</bad> less damage than the shot before it.
 type|energy_chain|FRIGATE|0	0	Non-beam energy weapon hits that land on an enemy shield have a <good>20%</good> chance to refract: the same weapon fires a copy of the shot from that shield at the nearest other enemy ship within the weapon's range. A refracted shot that hits an enemy shield has the same chance to refract again.
@@ -3427,6 +3452,7 @@ type|escort_package|CAPITAL_SHIP|2	0	While within 700 su of a larger friendly sh
 type-detail|escort_package|CAPITAL_SHIP|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
 type-detail|escort_package|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Escort Package</hullmod>
 flavour|exogrid	0	Under Exo-Tech instruction, the crew splices phase-coil components into the ship's power lattice, fusing it with the flux grid the way Exo-Tech builds its own hulls. Exo-Tech insists the sluggish vents are a feature.
+flavourAutomated|exogrid	0	Under Exo-Tech instruction, the refit crew splices phase-coil components into the ship's power lattice, fusing it with the flux grid the way Exo-Tech builds its own hulls. Exo-Tech insists the sluggish vents are a feature.
 type|exogrid|null|0	0	<good>10%</good> increased timeflow.
 type|exogrid|null|1	1	<bad>25%</bad> reduced sensor profile.
 type|exogrid|null|2	1	<bad>25%</bad> reduced sensor profile on phase hulls.
@@ -3686,12 +3712,14 @@ type|fuel_flat|DESTROYER|0	0	<good>+15</good> to fuel capacity.
 type|fuel_flat|CRUISER|0	0	<good>+25</good> to fuel capacity.
 type|fuel_flat|CAPITAL_SHIP|0	0	<good>+50</good> to fuel capacity.
 flavour|furor_machinae	0	Combat recordings pulled from a Stargazer's data core show its fire rate climbing with every hit, as if something inside it were growing angrier. The crew rewires this ship's fire control to chase the same rhythm, and tries not to wonder what it is chasing.
+flavourAutomated|furor_machinae	0	Combat recordings pulled from a Stargazer's data core show its fire rate climbing with every hit, as if something inside it were growing angrier. The ship's core matches the rhythm exactly. It does not wonder what it is matching.
 type|furor_machinae|null|0	0	Damage dealt to enemy ships builds fury, granting up to <good>15%</good> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
 type|furor_machinae|FRIGATE|0	0	Damage dealt to enemy ships builds fury, granting up to <good>15%</good> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
 type|furor_machinae|DESTROYER|0	0	Damage dealt to enemy ships builds fury, granting up to <good>15%</good> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
 type|furor_machinae|CRUISER|0	0	Damage dealt to enemy ships builds fury, granting up to <good>15%</good> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
 type|furor_machinae|CAPITAL_SHIP|0	0	Damage dealt to enemy ships builds fury, granting up to <good>15%</good> increased weapon rate of fire, full after 2000/4000/8000/20000 damage. Shield hits count at half, EMP at a quarter. Fury fades by 1% per second.
 flavour|gravitational_drag	0	Inside a recovered Ancient Prototype, where every conduit converges on a perfectly spherical void, the crew finds the Candle's Grace device that drags at the timeflow of anything near it. Who or what Candle's Grace was is not recorded, and the replica is mostly guesswork.
+flavourAutomated|gravitational_drag	0	Inside a recovered Ancient Prototype, where every conduit converges on a perfectly spherical void, the refit crew finds the Candle's Grace device that drags at the timeflow of anything near it. Who or what Candle's Grace was is not recorded, and the replica is mostly guesswork.
 type|gravitational_drag|null|0	0	Enemy ships within 1500 su have up to <good>5%</good> less timeflow, strongest at close range, or up to <good>10%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
 type-detail|gravitational_drag|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Gravitational Drag</hullmod>
 type|gravitational_drag|FRIGATE|0	0	Enemy ships within 1500 su have up to <good>5%</good> less timeflow, strongest at close range, or up to <good>10%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
@@ -3703,6 +3731,7 @@ type-detail|gravitational_drag|CRUISER|0	0	Mutually exclusive with <hullmod>hull
 type|gravitational_drag|CAPITAL_SHIP|0	0	Enemy ships within 1500 su have up to <good>5%</good> less timeflow, strongest at close range, or up to <good>10%</good> less while this ship is phased. Gravitational drag from every source is capped at 25% per ship.
 type-detail|gravitational_drag|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Gravitational Drag</hullmod>
 flavour|ground_support	0	Raids flown alongside pirate crews teach the crew to turn spare berths and cargo lifts into a drop platform for the marines, and to keep a few guns pointed at the ground while they work.
+flavourAutomated|ground_support	0	The ship's core logs every pirate raid it flies beside, down to where the guns point while the marines are on the ground. The refit crew turns its cargo lifts into a drop platform, and the core keeps the guns where the logs say.
 type|ground_support|null|0	0	Your fleet gains effective planetary raid strength equal to <good>25%</good> of this ship's maximum crew capacity, up to the total number of marines in the fleet.
 type-detail|ground_support|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Advanced Ground Support</hullmod>\n• <hullmod>Ground Support Package</hullmod>
 type|ground_support|FRIGATE|0	0	Your fleet gains effective planetary raid strength equal to <good>25%</good> of this ship's maximum crew capacity, up to the total number of marines in the fleet.
@@ -3739,6 +3768,7 @@ type|hardenedshieldemitter|CAPITAL_SHIP|0	1	<bad>10%</bad> less damage taken by 
 type|hardenedshieldemitter|CAPITAL_SHIP|1	1	<bad>50%</bad> less chance for shields to be pierced by EMP arcs.
 type-detail|hardenedshieldemitter|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Hardened Shields</hullmod>
 flavour|hardlight_infusion	0	Nightcross Restricted Hardlight Rifles, looted from a hidden NCA research outpost, keep count of every hit they land on a target, and the crew learns to port that counter into this carrier's wing datalink.
+flavourAutomated|hardlight_infusion	0	Nightcross Restricted Hardlight Rifles, looted from a hidden NCA research outpost, keep count of every hit they land on a target. The ship's core reads the counter's firmware and ports it into its own wing datalink.
 type|hardlight_infusion|null|0	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>2%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
 type|hardlight_infusion|null|1	0	Strikecraft marks grant up to a maximum of <good>30%</good> increased damage taken.
 type|hardlight_infusion|FRIGATE|0	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>2%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
@@ -3750,6 +3780,7 @@ type|hardlight_infusion|CRUISER|1	0	Strikecraft marks grant up to a maximum of <
 type|hardlight_infusion|CAPITAL_SHIP|0	0	Each hit by a strikecraft launched from this ship marks the enemy ship it hits, which then takes <good>2%</good> increased damage from this ship's strikecraft for each mark. The marks clear 2 seconds after the last hit. Each second of beam contact counts as one hit.
 type|hardlight_infusion|CAPITAL_SHIP|1	0	Strikecraft marks grant up to a maximum of <good>30%</good> increased damage taken.
 flavour|heavy_ballistics_integration	0	Stripping decommissioned Onslaughts at the Agreus shipbreaking yards shows the crew how the Navy seats its heaviest guns directly into the frame. The Ko Combine bills for the scrap, not the lesson.
+flavourAutomated|heavy_ballistics_integration	0	Stripping decommissioned Onslaughts at the Agreus shipbreaking yards shows the refit crew how the Navy seats its heaviest guns directly into the frame. The Ko Combine bills for the scrap, not the lesson.
 type|heavy_ballistics_integration|null|0	1	<bad>-5</bad> to ordnance point cost of large ballistic weapons.
 type-detail|heavy_ballistics_integration|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Heavy Ballistics Integration</hullmod>
 type|heavy_ballistics_integration|FRIGATE|0	1	<bad>-5</bad> to ordnance point cost of large ballistic weapons.
@@ -3809,6 +3840,7 @@ type|hiressensors|CAPITAL_SHIP|0	0	This ship's sensor strength always contribute
 type|hiressensors|CAPITAL_SHIP|1	0	<good>+70</good> to this ship's sensor strength.
 type-detail|hiressensors|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>High Resolution Sensors</hullmod>
 flavour|hoarded_arms	0	League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other. It is the one thing the member worlds have never argued over, and serving under a League commission drills it into the crew.
+flavourAutomated|hoarded_arms	0	League fleets drawn from a dozen squabbling polities still share one reload drill, so that any ship can rearm any other. The ship's core records it from the League ships it serves beside and runs it the same way every time, which no League crew has ever managed.
 type|hoarded_arms|null|0	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 type|hoarded_arms|null|1	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 type|hoarded_arms|FRIGATE|0	0	<good>50%</good> increased energy weapon ammo regeneration rate.
@@ -3825,6 +3857,7 @@ type|hull|DESTROYER|0	0	<good>2%</good> more hull points.
 type|hull|CRUISER|0	0	<good>2%</good> more hull points.
 type|hull|CAPITAL_SHIP|0	0	<good>2%</good> more hull points.
 flavour|hull_breacher	0	Former Hegemony Navy gunners in the crew remember the breacher loads the Navy keeps for boarding actions, shells hardened to punch through plating instead of bursting on it. The crew sees no reason to save them for boarding.
+flavourAutomated|hull_breacher	0	The Hegemony Navy keeps breacher loads for boarding actions, shells hardened to punch through plating instead of bursting on it. The ship's core finds their specifications in a seized Navy ordnance manifest and loads them for every fight. It has no boarding actions to save them for.
 type|hull_breacher|null|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
 type|hull_breacher|FRIGATE|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
 type|hull_breacher|DESTROYER|0	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
@@ -3880,12 +3913,14 @@ type|insulatedengine|CAPITAL_SHIP|1	0	<good>10%</good> increased hull points.
 type|insulatedengine|CAPITAL_SHIP|2	1	<bad>50%</bad> less sensor profile.
 type-detail|insulatedengine|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Insulated Engine Assembly</hullmod>
 flavour|ion_rounds	0	The NCA Vendor sells Ion Bolters to any well-funded mercenary, and taking one apart shows the crew how to overdrive this ship's energy shots the same way. The terms of sale forbid exactly this, in very small print.
+flavourAutomated|ion_rounds	0	The NCA Vendor sells Ion Bolters to any well-funded mercenary, and taking one apart shows the refit crew how to overdrive this ship's energy shots the same way. The terms of sale forbid exactly this, in very small print.
 type|ion_rounds|null|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
 type|ion_rounds|FRIGATE|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
 type|ion_rounds|DESTROYER|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
 type|ion_rounds|CRUISER|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
 type|ion_rounds|CAPITAL_SHIP|0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>15%</good> when the target is at full hard flux and falls with its hard flux.
 flavour|language_of_the_lost	0	The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code. The crew learns to strip that code out and fire it back.
+flavourAutomated|language_of_the_lost	0	The broken transmissions Stargazer fleets whisper across every channel carry fragments of intrusion code. The ship's core strips that code out and fires it back.
 type|language_of_the_lost|null|0	0	<good>+1</good> to ECM rating.
 type|language_of_the_lost|null|1	0	Enemy ships within 1000 su have <good>5%</good> chance for their weapons to malfunction. Only the strongest applies.
 type|language_of_the_lost|FRIGATE|0	0	<good>+1</good> to ECM rating.
@@ -3917,6 +3952,7 @@ type|live_munitions|CAPITAL_SHIP|0	0	Each Heartless stack has a <bad>3%</bad> ch
 type|live_munitions|CAPITAL_SHIP|1	0	<good>3%</good> increased missile damage for each Heartless stack while the fleet has crew left to give.
 type|live_munitions|CAPITAL_SHIP|2	0	<good>3%</good> increased missile top speed for each Heartless stack while the fleet has crew left to give.
 flavour|machine_precision	0	A recovered gamma core, kept powered just long enough to be questioned, gives up the targeting routines Remnant drones use to lead a target. Afterwards it is disposed of, in accordance with Hegemony regulations and the crew's nerves.
+flavourAutomated|machine_precision	0	A recovered gamma core holds the targeting routines Remnant drones use to lead a target. The ship's core copies them across in a fraction of a second. The refit crew disposes of the gamma core afterwards, in accordance with Hegemony regulations and their own nerves.
 type|machine_precision|null|0	0	<good>100%</good> increased target leading accuracy of autofiring weapons.
 type|machine_precision|null|1	0	<good>5%</good> increased energy weapon range.
 type|machine_precision|null|2	0	<good>5%</good> increased ballistic weapon range.
@@ -3958,6 +3994,7 @@ type|maneuverability_percent|DESTROYER|0	0	<good>25%</good> increased maneuverab
 type|maneuverability_percent|CRUISER|0	0	<good>25%</good> increased maneuverability.
 type|maneuverability_percent|CAPITAL_SHIP|0	0	<good>25%</good> increased maneuverability.
 flavour|martyrs_payload	0	Picking through the wrecks of Luddic Path carriers showed the crew how the Path tears the engine governors out of its bombers and arms their warheads the moment they leave the deck. The faithful accept that some payloads go off before they ever reach the enemy.
+flavourAutomated|martyrs_payload	0	Flight recorders from wrecked Luddic Path carriers show how the Path tears the engine governors out of its bombers and arms their warheads the moment they leave the deck. The ship's core applies the same settings to its own bombers, and logs the ones that go off early without comment.
 type|martyrs_payload|null|0	0	Bombers launched from this ship have <good>50%</good> increased top speed.
 type|martyrs_payload|null|1	0	Bombers launched from this ship have <good>50%</good> increased acceleration.
 type|martyrs_payload|null|2	1	Every 3 seconds, each bomber launched from this ship that still carries any payload has a <bad>5%</bad> chance to set off one full salvo from every loaded weapon at once, destroying itself and damaging every ship nearby, friend or foe. Bombers within 600 su of this ship's hull never detonate.
@@ -4041,6 +4078,7 @@ type|modular_hull_socket|DESTROYER|0	0	Holds one subroutine.
 type|modular_hull_socket|CRUISER|0	0	Holds one subroutine.
 type|modular_hull_socket|CAPITAL_SHIP|0	0	Holds one subroutine.
 flavour|nanoforge_mending	0	Stripping the repair nanoforge out of a gutted Nexus shows the crew how the Remnant keep their hulls whole long after a fight should have broken them.
+flavourAutomated|nanoforge_mending	0	Stripping the repair nanoforge out of a gutted Nexus shows the refit crew how the Remnant keep their hulls whole long after a fight should have broken them. Wired into an automated hull, it needs no hand to tell it where to work.
 type|nanoforge_mending|null|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 type|nanoforge_mending|FRIGATE|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
 type|nanoforge_mending|DESTROYER|0	0	After 5 seconds without taking hull damage, repairs 1% of maximum hull per second in combat, up to 100% of maximum hull in total per deployment.
@@ -4056,6 +4094,7 @@ type-detail|nav_relay|CRUISER|0	0	Mutually exclusive with <hullmod>hullmod</hull
 type|nav_relay|CAPITAL_SHIP|0	0	Your fleet has <good>+5</good> to nav rating.
 type-detail|nav_relay|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Nav Relay</hullmod>
 flavour|neural_interface	0	A direct neural link between this ship and the flagship. Captains who use one describe it as standing on two bridges at once, and are sometimes vague afterwards about which one they were on.
+flavourAutomated|neural_interface	0	A direct neural link between this ship and the flagship. Captains who link to an automated hull describe a second bridge with nobody else on it, and are not always certain of that afterwards.
 type|neural_interface|null|0	0	Transferring to either linked ship resets its ship system cooldown and adds a charge.
 type-detail|neural_interface|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Neural Interface</hullmod>
 type|neural_interface|FRIGATE|0	0	Transferring to either linked ship resets its ship system cooldown and adds a charge.
@@ -4072,6 +4111,7 @@ type|non_beam_energy_damage|DESTROYER|0	0	<good>3%</good> increased non-beam ene
 type|non_beam_energy_damage|CRUISER|0	0	<good>3%</good> increased non-beam energy weapon damage.
 type|non_beam_energy_damage|CAPITAL_SHIP|0	0	<good>3%</good> increased non-beam energy weapon damage.
 flavour|nskr_absorption	0	Disassembling the ABSORB loop from a Kingstork taught the crew how to bank the energy their shields block instead of venting it, and how to spend it on the guns.
+flavourAutomated|nskr_absorption	0	Disassembling the ABSORB loop from a Kingstork showed the refit crew how to bank the energy the shields block instead of venting it. The ship's core decides when to spend it on the guns.
 type|nskr_absorption|null|0	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>50%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
 type-detail|nskr_absorption|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>ABSORB System</hullmod>
 type|nskr_absorption|FRIGATE|0	0	Flux taken by the shield charges a reserve of up to 1000, which drains by 100 per second. While charged, up to <good>50%</good> increased ballistic and energy weapon rate of fire, at full strength from 500 reserve. Non-beam weapons also cost less flux per shot, so their faster fire costs no extra flux.
@@ -4098,6 +4138,7 @@ type|nskr_acoils|CAPITAL_SHIP|0	0	<good>+100</good> to the base range of weapons
 type|nskr_acoils|CAPITAL_SHIP|1	1	<bad>10%</bad> reduced energy weapon flux cost.
 type-detail|nskr_acoils|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>High-Energy Weapon Systems</hullmod>
 flavour|nskr_bigBats	0	A Kesteven R&D modspec for capacitor banks far larger than any sane design would carry. The ship's systems rarely run dry, and the crew has learned not to stand near the banks.
+flavourAutomated|nskr_bigBats	0	A Kesteven R&D modspec for capacitor banks far larger than any sane design would carry. The ship's systems rarely run dry, and with nobody aboard, nobody has to learn not to stand near the banks.
 type|nskr_bigBats|null|0	0	<good>+1</good> to ship system charges.
 type|nskr_bigBats|null|1	0	On hulls with Augmented Systems, <good>10%</good> increased ship system charge regeneration.
 type-detail|nskr_bigBats|null|0	0	Can only be allocated on ships whose ship system or defense system uses charges.
@@ -4119,6 +4160,7 @@ type|nskr_bigBats|CAPITAL_SHIP|1	0	On hulls with Augmented Systems, <good>10%</g
 type-detail|nskr_bigBats|CAPITAL_SHIP|0	0	Can only be allocated on ships whose ship system or defense system uses charges.
 type-detail|nskr_bigBats|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>High Capacitance Banks</hullmod>
 flavour|nskr_criticalArmor	0	A prototype modspec from Kesteven R&D shows the crew how to reinforce a light hull's critical structural points, where thin plating fails first.
+flavourAutomated|nskr_criticalArmor	0	A prototype modspec from Kesteven R&D shows the refit crew how to reinforce a light hull's critical structural points, where thin plating fails first.
 type|nskr_criticalArmor|null|0	0	Up to <good>+400/700/900/1200</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+150/300/400/500</good> at <hl>400/700/900/1200</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
 type-detail|nskr_criticalArmor|null|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Heavy Armor</hullmod>\n• <hullmod>Hel Carapace</hullmod>\n• <hullmod>Hel Plating</hullmod>\n• <hullmod>Critical Point Protection</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Heavy Armor</node>
 type|nskr_criticalArmor|FRIGATE|0	0	Up to <good>+400</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+150</good> at <hl>400</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
@@ -4130,6 +4172,7 @@ type-detail|nskr_criticalArmor|CRUISER|0	0	Mutually exclusive with <hullmod>hull
 type|nskr_criticalArmor|CAPITAL_SHIP|0	0	Up to <good>+1200</good> to armor. The bonus is highest on hulls with the least base armor and falls to <good>+500</good> at <hl>1200</hl> base armor. Can't be allocated on phase ships or on hulls with more base armor than that.
 type-detail|nskr_criticalArmor|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Heavy Armor</hullmod>\n• <hullmod>Hel Carapace</hullmod>\n• <hullmod>Hel Plating</hullmod>\n• <hullmod>Critical Point Protection</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Heavy Armor</node>
 flavour|nskr_inertial	0	A Kesteven R&D modspec lets the crew feed the ship's own momentum into its guns. Kesteven's notes recommend never slowing down.
+flavourAutomated|nskr_inertial	0	A Kesteven R&D modspec lets the refit crew feed the ship's own momentum into its guns. Kesteven's notes recommend never slowing down, and the ship's core treats the recommendation as a parameter.
 type|nskr_inertial|null|0	0	<good>0.08%</good> increased ballistic and non-beam energy weapon damage for every su/s of the ship's current speed.
 type|nskr_inertial|null|1	0	On hulls with Augmented Systems, also grants increased projectile speed equal to <good>100%</good> of the speed-based damage bonus.
 type-detail|nskr_inertial|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Inertial Supercharger</hullmod>
@@ -4146,6 +4189,7 @@ type|nskr_inertial|CAPITAL_SHIP|0	0	<good>0.08%</good> increased ballistic and n
 type|nskr_inertial|CAPITAL_SHIP|1	0	On hulls with Augmented Systems, also grants increased projectile speed equal to <good>100%</good> of the speed-based damage bonus.
 type-detail|nskr_inertial|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Inertial Supercharger</hullmod>
 flavour|nskr_volatile	0	A prototype flux injector from Kesteven R&D lets the crew trade staying power for tempo. The modspec describes the side effects as manageable.
+flavourAutomated|nskr_volatile	0	A prototype flux injector from Kesteven R&D lets the refit crew trade staying power for tempo. The modspec describes the side effects as manageable. With nobody aboard, nobody has to manage them.
 type|nskr_volatile|null|0	0	Weapon rate of fire changes with flux, from <good>40%</good> increased at no flux to <bad>40%</bad> reduced at full flux, with no change at half flux. Venting or being overloaded counts as full flux.
 type|nskr_volatile|null|1	0	<good>67%</good> increased flux capacity.
 type|nskr_volatile|null|2	0	<good>67%</good> increased flux capacity granted by each flux capacitor.
@@ -4240,6 +4284,7 @@ type|peak_cr_duration|DESTROYER|0	0	<good>25%</good> increased peak combat readi
 type|peak_cr_duration|CRUISER|0	0	<good>25%</good> increased peak combat readiness duration.
 type|peak_cr_duration|CAPITAL_SHIP|0	0	<good>25%</good> increased peak combat readiness duration.
 flavour|perseverence_through_faith	0	Luddic faithful among the crew hold that a scarred ship, like a penitent, finds its strength in hardship. They keep its battered guns fighting with patient hands, and refuse every offer to have them properly repaired.
+flavourAutomated|perseverence_through_faith	0	Luddic faithful hold that a scarred ship, like a penitent, finds its strength in hardship. The ship's core holds no faith, only damage logs showing the battered guns of Luddic ships firing long past the point they should have failed. It keeps its own guns fighting the same way.
 type|perseverence_through_faith|null|0	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 type|perseverence_through_faith|FRIGATE|0	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
 type|perseverence_through_faith|DESTROYER|0	0	<good>2%</good> more weapon damage per D-mod, up to 5 D-mods.
@@ -4271,6 +4316,7 @@ type|phase_cloak_flux_threshold|DESTROYER|0	0	<good>5%</good> increased hard flu
 type|phase_cloak_flux_threshold|CRUISER|0	0	<good>5%</good> increased hard flux level at which phased speed reaches its minimum.
 type|phase_cloak_flux_threshold|CAPITAL_SHIP|0	0	<good>5%</good> increased hard flux level at which phased speed reaches its minimum.
 flavour|phase_entangled_wings	0	Tri-Tachyon's phase labs learned to lock the coils of a strike craft wing into one shared state, so a hit on one craft bleeds through p-space into the whole wing. A defector from those labs, smuggled out at no small cost, walks the crew through retuning this carrier's strike craft coils to the same entangled frequency.
+flavourAutomated|phase_entangled_wings	0	Tri-Tachyon's phase labs learned to lock the coils of a strike craft wing into one shared state, so a hit on one craft bleeds through p-space into the whole wing. A defector from those labs, smuggled out at no small cost, walks the refit crew through retuning this carrier's strike craft coils to the same entangled frequency.
 type|phase_entangled_wings|null|0	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>100%</good> of that damage is shared across its wing.
 type|phase_entangled_wings|null|1	0	Strikecraft launched from this ship take <good>10%</good> less damage for every living strikecraft of their wing out in space, up to 80% less.
 type|phase_entangled_wings|FRIGATE|0	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>100%</good> of that damage is shared across its wing.
@@ -4282,6 +4328,7 @@ type|phase_entangled_wings|CRUISER|1	0	Strikecraft launched from this ship take 
 type|phase_entangled_wings|CAPITAL_SHIP|0	0	When a strikecraft launched from this ship takes a hit smaller than its max hull or flux, <good>100%</good> of that damage is shared across its wing.
 type|phase_entangled_wings|CAPITAL_SHIP|1	0	Strikecraft launched from this ship take <good>10%</good> less damage for every living strikecraft of their wing out in space, up to 80% less.
 flavour|phase_hull_upgrades	0	Leaked papers from Tri-Tachyon's Hybrid Physics Division (on phase work the corporation swears it abandoned under the Treaty of Thule) show the crew how to bleed this ship's sensor emissions into the masking field phase ships throw over a fleet. Tri-Tachyon maintains the papers are forgeries.
+flavourAutomated|phase_hull_upgrades	0	Leaked papers from Tri-Tachyon's Hybrid Physics Division (on phase work the corporation swears it abandoned under the Treaty of Thule) describe how to bleed a ship's sensor emissions into the masking field phase ships throw over a fleet. The ship's core parses them in full, footnotes included. Tri-Tachyon maintains the papers are forgeries.
 type|phase_hull_upgrades|null|0	0	50% of this ship's sensor strength counts toward the fleet-wide reduction in detected-at range that phase ships provide. Only applies while your fleet's transponder is off.
 type|phase_hull_upgrades|null|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|phase_hull_upgrades|null|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Phase Field</hullmod>
@@ -4298,6 +4345,7 @@ type|phase_hull_upgrades|CAPITAL_SHIP|0	0	50% of this ship's sensor strength cou
 type|phase_hull_upgrades|CAPITAL_SHIP|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type-detail|phase_hull_upgrades|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Phase Field</hullmod>
 flavour|phased_recharging	0	An Exo-Tech armorer shows the crew how to route the ammunition feeders through the phase coils, so the magazines keep filling while the ship is out of normal space.
+flavourAutomated|phased_recharging	0	An Exo-Tech armorer shows the refit crew how to route the ammunition feeders through the phase coils, so the magazines keep filling while the ship is out of normal space.
 type|phased_recharging|null|0	0	<good>100%</good> increased ammo regeneration while phased.
 type|phased_recharging|FRIGATE|0	0	<good>100%</good> increased ammo regeneration while phased.
 type|phased_recharging|DESTROYER|0	0	<good>100%</good> increased ammo regeneration while phased.
@@ -4334,6 +4382,7 @@ type|rationing|CRUISER|1	1	<bad>10%</bad> less fuel consumption rate.
 type|rationing|CAPITAL_SHIP|0	1	<bad>10%</bad> less supply use for maintenance.
 type|rationing|CAPITAL_SHIP|1	1	<bad>10%</bad> less fuel consumption rate.
 flavour|reckless_assault	0	Pirate captains who joined the crew drill the habits that make freebooters so dangerous up close: charge in, fire everything and count the casualties later. They rarely do the counting.
+flavourAutomated|reckless_assault	0	The ship's core logs every fight it sees freebooters win up close: charge in, fire everything and count the casualties later. It copies the first two steps exactly. It always does the counting.
 type|reckless_assault|null|0	1	<good>50%</good> increased crew casualties.
 type|reckless_assault|null|1	0	<good>30%</good> increased weapon damage.
 type|reckless_assault|null|2	1	<good>10%</good> more damage taken by shields.
@@ -4395,6 +4444,7 @@ type|reinforcedhull|CAPITAL_SHIP|1	0	If disabled, this ship is almost always rec
 type|reinforcedhull|CAPITAL_SHIP|2	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 type-detail|reinforcedhull|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Reinforced Bulkheads</hullmod>
 flavour|repair_coordinator	0	The wreck of an NCA Occator still holds the delta-level coordinator that once steered its repair drones between damaged hulls. The crew wires it into this ship's damage-control network, teaching it to send work teams and drones across to patch the armor of nearby allies in the middle of a battle.
+flavourAutomated|repair_coordinator	0	The wreck of an NCA Occator still holds the delta-level coordinator that once steered its repair drones between damaged hulls. Wired into this ship's damage-control network, it sends the ship's drones across to patch the armor of nearby allies in the middle of a battle.
 type|repair_coordinator|null|0	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 type|repair_coordinator|FRIGATE|0	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 type|repair_coordinator|DESTROYER|0	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
@@ -4406,6 +4456,7 @@ type|repair_time|DESTROYER|0	0	<good>15%</good> less weapon and engine repair ti
 type|repair_time|CRUISER|0	0	<good>15%</good> less weapon and engine repair time.
 type|repair_time|CAPITAL_SHIP|0	0	<good>15%</good> less weapon and engine repair time.
 flavour|restriction_breeds_creativity	0	Captured pirate hulls show the crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Pirates call this maintenance.
+flavourAutomated|restriction_breeds_creativity	0	Captured pirate hulls show the refit crew how freebooters keep a battered ship fighting, bracing broken frames and patched plates around the damage instead of hiding it. Pirates call this maintenance.
 type|restriction_breeds_creativity|null|0	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 type|restriction_breeds_creativity|FRIGATE|0	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
 type|restriction_breeds_creativity|DESTROYER|0	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
@@ -4525,6 +4576,7 @@ type|seraphim|CAPITAL_SHIP|2	0	Up to <good>30%</good> increased ballistic and en
 type|seraphim|CAPITAL_SHIP|3	0	The full Seraph Hunting Routines damage bonus is reached after dealing 225000 armor and hull damage.
 type-detail|seraphim|CAPITAL_SHIP|0	0	Costs 25 rat_abyssal_matter to allocate, returned when unallocated.
 flavour|seraphs_grace	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the crew rewires the ship to do the same. The shield emitters were never built for that load.
+flavourAutomated|seraphs_grace	0	Having taken apart enough Seraph hulls to see how they feed on their own wounds, the refit crew rewires the ship to do the same. The shield emitters were never built for that load.
 type|seraphs_grace|null|0	0	Every 100 armor and hull damage this ship takes grants a stack of Borrowed Grace lasting 15 seconds, up to <good>20</good> stacks. Stack timers pause while the ship is phased.
 type|seraphs_grace|null|1	0	Each Borrowed Grace stack grants <good>1%</good> increased top speed, flux dissipation and weapon rate of fire, and <good>1%</good> reduced weapon flux cost and damage taken.
 type|seraphs_grace|null|2	0	<good>20%</good> increased weapon durability.
@@ -4622,6 +4674,7 @@ type|shield_upkeep_multi|DESTROYER|0	1	<bad>10%</bad> less shield flux upkeep.
 type|shield_upkeep_multi|CRUISER|0	1	<bad>10%</bad> less shield flux upkeep.
 type|shield_upkeep_multi|CAPITAL_SHIP|0	1	<bad>10%</bad> less shield flux upkeep.
 flavour|sindrian_shielding	0	Sindria's day side is scoured by radiation, and array workers who fled the Askonia Crisis to sign on with this crew know how to harden an emitter against it. They learned the hard way, as most Sindrians learn most things.
+flavourAutomated|sindrian_shielding	0	Sindria's day side is scoured by radiation, and the emitters on its orbital arrays are hardened against it. The refit crew copies the shielding pattern from a derelict Askonian array onto this ship's emitters. Whoever designed it learned the hard way, as most Sindrians learn most things.
 type|sindrian_shielding|null|0	1	<bad>10%</bad> less damage taken by shields.
 type|sindrian_shielding|null|1	1	<bad>25%</bad> less combat readiness loss from being in a solar corona or a deep hyperspace storm.
 type|sindrian_shielding|FRIGATE|0	1	<bad>10%</bad> less damage taken by shields.
@@ -4687,6 +4740,7 @@ type|system_cooldown|DESTROYER|0	1	<bad>5%</bad> reduced ship system cooldown.
 type|system_cooldown|CRUISER|0	1	<bad>5%</bad> reduced ship system cooldown.
 type|system_cooldown|CAPITAL_SHIP|0	1	<bad>5%</bad> reduced ship system cooldown.
 flavour|tactical_superiority	0	Every TriPad in the Sector ships with backdoors Tri-Tachyon officially denies, and a crew that learns them can talk a nav buoy or comm relay into changing sides mid-battle. Company support declines to comment, but will gladly sell an upgrade.
+flavourAutomated|tactical_superiority	0	Every TriPad in the Sector ships with backdoors Tri-Tachyon officially denies. The ship's core maps them from intercepted TriPad traffic and talks a nav buoy or comm relay into changing sides mid-battle. Company support declines to comment, but will gladly sell an upgrade.
 type|tactical_superiority|null|0	0	<good>100%</good> more combat objective capture rate.
 type|tactical_superiority|FRIGATE|0	0	<good>100%</good> more combat objective capture rate.
 type|tactical_superiority|DESTROYER|0	0	<good>100%</good> more combat objective capture rate.
@@ -4811,6 +4865,7 @@ type-detail|top_speed_while_escorting|CRUISER|0	0	Restricted to <hl>hull sizes</
 type|top_speed_while_escorting|CAPITAL_SHIP|0	0	While within 700 su of a larger friendly ship, up to 5% increased top speed, fading out over a further 500 su. Doubled for a destroyer escorting a capital ship.
 type-detail|top_speed_while_escorting|CAPITAL_SHIP|0	0	Restricted to <hl>hull sizes</hl>: Destroyer, Cruiser.
 flavour|torpedo_specialisation	0	XIV Battlegroup strike manuals, kept by the Hegemony since the Domain, teach that a torpedo should close fast and fly straight. Following them, the crew rewires each missile's maneuvering thrusters to push it forward instead, on the principle that a missile which cannot turn must not miss.
+flavourAutomated|torpedo_specialisation	0	XIV Battlegroup strike manuals, kept by the Hegemony since the Domain, hold that a torpedo should close fast and fly straight. The refit crew rewires each missile's maneuvering thrusters to push it forward instead, on the principle that a missile which cannot turn must not miss.
 type|torpedo_specialisation|null|0	0	<good>30%</good> increased missile weapon projectile speed.
 type|torpedo_specialisation|null|1	0	<bad>30%</bad> reduced missile maneuverability.
 type|torpedo_specialisation|FRIGATE|0	0	<good>30%</good> increased missile weapon projectile speed.
@@ -4866,6 +4921,7 @@ type|vent_rate_and_emp_damage|CRUISER|1	1	<bad>10%</bad> less EMP damage taken.
 type|vent_rate_and_emp_damage|CAPITAL_SHIP|0	0	<good>5%</good> increased venting speed.
 type|vent_rate_and_emp_damage|CAPITAL_SHIP|1	1	<bad>10%</bad> less EMP damage taken.
 flavour|violence_of_action	0	The Knights of Ludd hold that a righteous ship meets its enemy at full burn, and drilling alongside them at Ceyx teaches the crew to trim the engines and controls for the charge.
+flavourAutomated|violence_of_action	0	The Knights of Ludd hold that a righteous ship meets its enemy at full burn. The ship's core logs their charges at Ceyx and trims its engines and controls to match. The Knights would not call the result righteous.
 type|violence_of_action|null|0	0	<good>20%</good> increased maneuverability.
 type|violence_of_action|null|1	0	<good>25%</good> increased top speed.
 type|violence_of_action|null|2	0	These effects only last for the first 60 seconds after the ship is deployed.
@@ -4882,6 +4938,7 @@ type|violence_of_action|CAPITAL_SHIP|0	0	<good>20%</good> increased maneuverabil
 type|violence_of_action|CAPITAL_SHIP|1	0	<good>25%</good> increased top speed.
 type|violence_of_action|CAPITAL_SHIP|2	0	These effects only last for the first 60 seconds after the ship is deployed.
 flavour|warpfield	0	Exo-Tech engineers walk the crew through scaling down the Hypatia's warp field to wrap the energy mounts. It was not designed to be scaled down, and makes this known.
+flavourAutomated|warpfield	0	Exo-Tech engineers walk the refit crew through scaling down the Hypatia's warp field to wrap the energy mounts. It was not designed to be scaled down, and makes this known.
 type|warpfield|null|0	0	<good>15%</good> increased energy weapon damage.
 type|warpfield|null|1	0	<good>20%</good> increased energy weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|warpfield|null|2	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
@@ -4903,6 +4960,7 @@ type|warpfield|CAPITAL_SHIP|1	0	<good>20%</good> increased energy weapon rate of
 type|warpfield|CAPITAL_SHIP|2	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 type-detail|warpfield|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Warpfield</hullmod>
 flavour|waste_not	0	Freebooters who signed on at a pirate base taught the crew to strip every wreck to the frame and to patch the ship back to fighting trim from whatever a battle leaves behind. Nothing is wasted, least of all the dead.
+flavourAutomated|waste_not	0	The ship's core logs how freebooters strip every wreck to the frame and patch their ships back to fighting trim from whatever a battle leaves behind. Its repair drones do the same. Nothing is wasted, least of all the dead.
 type|waste_not|null|0	0	<good>10%</good> increased combat readiness recovery rate.
 type|waste_not|FRIGATE|0	0	<good>10%</good> increased combat readiness recovery rate.
 type|waste_not|FRIGATE|1	0	Your fleet has <good>3%</good> increased post-battle salvage.
@@ -4923,6 +4981,7 @@ type|weapon_turn_rate|DESTROYER|0	0	<good>20%</good> increased weapon turn rate.
 type|weapon_turn_rate|CRUISER|0	0	<good>20%</good> increased weapon turn rate.
 type|weapon_turn_rate|CAPITAL_SHIP|0	0	<good>20%</good> increased weapon turn rate.
 flavour|wing_scramble	0	Every League member world sends its own carrier detachment to a joint fleet, and the League's flight doctrine makes them fly as one: a bomber from one world takes orders from a flight lead from another. Pilots from rival worlds fly together mostly so each can report on the other.
+flavourAutomated|wing_scramble	0	Every League member world sends its own carrier detachment to a joint fleet, and the League's flight doctrine makes them fly as one. The ship's core records the doctrine from joint fleet comm traffic and flies its own wings by it. It has no rival world to report back to.
 type|wing_scramble|null|0	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
 type|wing_scramble|FRIGATE|0	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
 type|wing_scramble|DESTROYER|0	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.

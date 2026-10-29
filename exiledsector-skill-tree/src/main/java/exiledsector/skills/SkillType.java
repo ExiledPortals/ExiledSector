@@ -31,6 +31,7 @@ public class SkillType {
     private final Float temporaryAfterDeploymentSeconds;
     private final Set<HullSize> requiredHullSizes;
     private final String flavour;
+    private final String flavourAutomated;
     private final List<String> effectText;
     private final String todo;
     private final List<String> optionalOptionIds;
@@ -57,6 +58,7 @@ public class SkillType {
         this.requiredHullSizes = builder.requiredHullSizes == null || builder.requiredHullSizes.isEmpty()
                 ? Collections.emptySet() : Collections.unmodifiableSet(EnumSet.copyOf(builder.requiredHullSizes));
         this.flavour = builder.flavour == null || builder.flavour.isBlank() ? null : builder.flavour;
+        this.flavourAutomated = builder.flavourAutomated == null || builder.flavourAutomated.isBlank() ? null : builder.flavourAutomated;
         this.effectText = builder.effectText == null ? Collections.emptyList() : builder.effectText;
         this.todo = builder.todo;
         this.optionalOptionIds = builder.optionalOptionIds == null ? Collections.emptyList() : builder.optionalOptionIds;
@@ -83,6 +85,7 @@ public class SkillType {
         private Float temporaryAfterDeploymentSeconds;
         private Collection<HullSize> requiredHullSizes;
         private String flavour;
+        private String flavourAutomated;
         private List<String> effectText = Collections.emptyList();
         private String todo;
         private List<String> optionalOptionIds = Collections.emptyList();
@@ -132,6 +135,11 @@ public class SkillType {
 
         public Builder flavour(String flavour) {
             this.flavour = flavour;
+            return this;
+        }
+
+        public Builder flavourAutomated(String flavourAutomated) {
+            this.flavourAutomated = flavourAutomated;
             return this;
         }
 
@@ -203,6 +211,15 @@ public class SkillType {
 
     public String getFlavourSource() {
         return flavour;
+    }
+
+    public String getFlavourText(boolean automated) {
+        String automatedText = automated ? getAutomatedFlavourText() : null;
+        return automatedText == null ? getFlavourText() : automatedText;
+    }
+
+    public String getAutomatedFlavourText() {
+        return flavourAutomated == null ? null : Translation.data(KEY_PREFIX + id + ".flavourAutomated", flavourAutomated);
     }
 
     public List<StyledText> getEffectTextLines() {

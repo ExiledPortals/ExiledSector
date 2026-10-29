@@ -150,11 +150,15 @@ final class SkillTreeNodeTooltipRenderer {
         if (flavours.containsKey(type.getId())) {
             return flavours.get(type.getId());
         }
-        String flavourText = type.getFlavourText();
+        String flavourText = flavourText(type, fleetMember);
         ItalicTextLabel flavour = flavourText == null ? null : new ItalicTextLabel(TOOLTIP_FLAVOUR_FONT_SIZE, Misc.getGrayColor())
                 .setWrapped(flavourText, NODE_TOOLTIP_MAX_TEXT_WIDTH, TOOLTIP_MAX_TEXT_HEIGHT);
         flavours.put(type.getId(), flavour);
         return flavour;
+    }
+
+    static String flavourText(SkillType type, FleetMemberAPI fleetMember) {
+        return type.getFlavourText(Misc.isAutomated(fleetMember));
     }
 
     private List<SkillTreeTooltipTable> tablesFor(LazyFont font, SkillType type) {
