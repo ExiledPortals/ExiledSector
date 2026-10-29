@@ -6,8 +6,8 @@
 	},
 	"bridge_officer": {
 		"style": "codename",
-		"first": ["Admiral", "Commodore", "Captain", "Helm", "Flag", "Bearing"],
-		"second": ["Watch", "Command", "Orders", "Conn", "Station", "Mandate"]
+		"first": ["Plot", "Signal", "Beacon", "Helm", "Flag", "Bearing"],
+		"second": ["Watch", "Command", "Console", "Conn", "Station", "Relay"]
 	},
 	"crew_quarters_specialists": {
 		"style": "codename",

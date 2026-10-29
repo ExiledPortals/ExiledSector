@@ -15,7 +15,7 @@ import java.util.Random;
 public record ItemDefinition(String id, ItemKind kind, String name, String icon, float rarity, boolean unique,
                                    String description, List<PoolEntry> prefixes, List<PoolEntry> suffixes, String unlock, ItemType type,
                                    Enum<?> subtype, List<UniqueSource> uniqueSources, int socketLimit, String mechanic,
-                                   String area) {
+                                   String area, String crew) {
 
     public static final String FALLBACK_ICON = "graphics/icons/cargo/chip1.png";
     public static final int NO_SOCKET_LIMIT = 0;
@@ -35,6 +35,13 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
         socketLimit = Math.max(NO_SOCKET_LIMIT, socketLimit);
         mechanic = mechanic == null || mechanic.isBlank() ? null : mechanic.trim();
         area = area == null || area.isBlank() ? null : area.trim();
+        crew = crew == null || crew.isBlank() ? null : crew.trim();
+    }
+
+    public ItemDefinition(String id, ItemKind kind, String name, String icon, float rarity, boolean unique, String description,
+                          List<PoolEntry> prefixes, List<PoolEntry> suffixes, String unlock, ItemType type, Enum<?> subtype,
+                          List<UniqueSource> uniqueSources, int socketLimit, String mechanic, String area) {
+        this(id, kind, name, icon, rarity, unique, description, prefixes, suffixes, unlock, type, subtype, uniqueSources, socketLimit, mechanic, area, null);
     }
 
     public ItemDefinition(String id, ItemKind kind, String name, String icon, float rarity, boolean unique, String description,
@@ -64,17 +71,22 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
 
     public ItemDefinition withSocketLimit(int limit) {
         return new ItemDefinition(id, kind, name, icon, rarity, unique, description, prefixes, suffixes, unlock, type, subtype,
-                uniqueSources, limit, mechanic, area);
+                uniqueSources, limit, mechanic, area, crew);
     }
 
     public ItemDefinition withMechanic(String itemMechanic) {
         return new ItemDefinition(id, kind, name, icon, rarity, unique, description, prefixes, suffixes, unlock, type, subtype,
-                uniqueSources, socketLimit, itemMechanic, area);
+                uniqueSources, socketLimit, itemMechanic, area, crew);
     }
 
     public ItemDefinition withArea(String itemArea) {
         return new ItemDefinition(id, kind, name, icon, rarity, unique, description, prefixes, suffixes, unlock, type, subtype,
-                uniqueSources, socketLimit, mechanic, itemArea);
+                uniqueSources, socketLimit, mechanic, itemArea, crew);
+    }
+
+    public ItemDefinition withCrew(String itemCrew) {
+        return new ItemDefinition(id, kind, name, icon, rarity, unique, description, prefixes, suffixes, unlock, type, subtype,
+                uniqueSources, socketLimit, mechanic, area, itemCrew);
     }
 
     public static ItemDefinition parseStarChart(JSONObject row) {

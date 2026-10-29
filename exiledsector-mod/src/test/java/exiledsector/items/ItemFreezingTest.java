@@ -137,7 +137,7 @@ class ItemFreezingTest {
         Item claimedCommon = store.add(ItemData.of(common.toSpecialItem()));
         Item claimedRare = store.add(ItemData.of(rare.toSpecialItem()));
 
-        assertEquals("Plated officer of Fortitude", commonName);
+        assertEquals("Plated command suite of Fortitude", commonName);
         assertEquals(COMMON, claimedCommon.effects());
         assertEquals(commonName, claimedCommon.name());
         assertEquals(RARE, claimedRare.effects());

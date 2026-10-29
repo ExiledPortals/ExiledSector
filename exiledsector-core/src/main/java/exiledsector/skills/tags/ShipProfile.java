@@ -7,6 +7,8 @@ import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.combat.WeaponAPI.AIHints;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.impl.campaign.ids.HullMods;
+import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
 import exiledsector.skills.FittedShipProfile;
 import exiledlib.skills.ShipFacts;
@@ -18,7 +20,7 @@ import java.util.function.Predicate;
 
 public record ShipProfile(HullSize hullSize, ShieldAPI.ShieldType shieldType, int fighterBays,
                           Set<WeaponKind> weaponKinds, boolean flagship, float baseArmor, boolean phaseHull,
-                          boolean limitedSystemCharges, boolean onlyBuiltInWings, boolean station) {
+                          boolean limitedSystemCharges, boolean onlyBuiltInWings, boolean station, boolean automated) {
 
     public ShipProfile {
         weaponKinds = weaponKinds == null ? Set.of() : Set.copyOf(weaponKinds);
@@ -39,12 +41,24 @@ public record ShipProfile(HullSize hullSize, ShieldAPI.ShieldType shieldType, in
         this(hullSize, shieldType, fighterBays, weaponKinds, flagship, baseArmor, phaseHull, limitedSystemCharges, onlyBuiltInWings, false);
     }
 
+    public ShipProfile(HullSize hullSize, ShieldAPI.ShieldType shieldType, int fighterBays, Set<WeaponKind> weaponKinds,
+                       boolean flagship, float baseArmor, boolean phaseHull, boolean limitedSystemCharges, boolean onlyBuiltInWings,
+                       boolean station) {
+        this(hullSize, shieldType, fighterBays, weaponKinds, flagship, baseArmor, phaseHull, limitedSystemCharges, onlyBuiltInWings, station, false);
+    }
+
     public static ShipProfile of(FleetMemberAPI member) {
         ShipHullSpecAPI hullSpec = member.getHullSpec();
         return new ShipProfile(hullSpec.getHullSize(), FittedShipProfile.fittedShieldType(hullSpec.getShieldType(), member.getVariant()),
                 fighterBays(member, hullSpec),
                 fittedWeaponKinds(member.getVariant()), member.isFlagship(), hullSpec.getArmorRating(),
-                hullSpec.isPhase(), ShipSystemCharges.limited(hullSpec), ShipFacts.onlyBuiltInWings(hullSpec), member.isStation());
+                hullSpec.isPhase(), ShipSystemCharges.limited(hullSpec), ShipFacts.onlyBuiltInWings(hullSpec), member.isStation(),
+                automated(member.getVariant()));
+    }
+
+    public static boolean automated(ShipVariantAPI variant) {
+        return variant != null && (variant.hasHullMod(HullMods.AUTOMATED) || variant.hasTag(Tags.AUTOMATED)
+                || (variant.getHullSpec() != null && variant.getHullSpec().hasTag(Tags.AUTOMATED)));
     }
 
     public ShipFacts facts(Predicate<String> hasHullMod) {

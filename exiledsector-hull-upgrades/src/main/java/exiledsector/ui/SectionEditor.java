@@ -98,7 +98,7 @@ final class SectionEditor {
     }
 
     boolean installInSection(ShipSection section, Item item) {
-        return apply(HullUpgradeRules.socket(data(), section, item, ShipSkillDataManager.all()), true);
+        return apply(HullUpgradeRules.socket(data(), section, item, shipEdit.currentFit(), ShipSkillDataManager.all()), true);
     }
 
     boolean removeFromSection(ShipSection section) {

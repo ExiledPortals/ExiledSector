@@ -79,13 +79,13 @@ class ItemNamesTest {
         ItemName name = name("military_bridge", 1L, List.of(DISSIPATION, SHIELDING));
 
         assertEquals(ItemRarity.COMMON, name.rarity());
-        assertEquals("Vent-efficient officer of Shielding", name.title());
+        assertEquals("Vent-efficient command suite of Shielding", name.title());
         assertEquals("Military-grade Bridge", name.baseName());
     }
 
     @Test
     void theCommonNameFollowsEachEffectsRoleNotItsOrder() {
-        assertEquals("Vent-efficient officer of Shielding", name("military_bridge", 1L, List.of(SHIELDING, DISSIPATION)).title());
+        assertEquals("Vent-efficient command suite of Shielding", name("military_bridge", 1L, List.of(SHIELDING, DISSIPATION)).title());
     }
 
     @Test
@@ -93,8 +93,8 @@ class ItemNamesTest {
         HullItemRows.registerModifierNames("FLUX_DISSIPATION_MULT,prefix,FLUX_DISSIPATION_MULT:4:6,Dissipation",
                 "HULL_MULT,suffix,HULL_MULT:4:6,Fortitude");
 
-        assertEquals("Dissipation officer", name("military_bridge", 1L, List.of(DISSIPATION, ARMOR)).title());
-        assertEquals("Officer of Fortitude",
+        assertEquals("Dissipation command suite", name("military_bridge", 1L, List.of(DISSIPATION, ARMOR)).title());
+        assertEquals("Command suite of Fortitude",
                 name("military_bridge", 1L, List.of(new RolledEffect("REMOVED_EFFECT", 1f), HULL)).title());
     }
 

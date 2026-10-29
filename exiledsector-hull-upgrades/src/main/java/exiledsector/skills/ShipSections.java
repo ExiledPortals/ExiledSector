@@ -52,14 +52,19 @@ public final class ShipSections {
             if (section == null) {
                 continue;
             }
+            Item item = ItemStore.lookup(shipData.getSectionItem(sectionId));
+            HullItem restrictedItem = item instanceof HullItem hullItem && hullItem.requirementTag() != null ? hullItem : null;
             String unmetRequirement = null;
-            if (section.requirementTag() != null && currentFit != null) {
+            if ((section.requirementTag() != null || restrictedItem != null) && currentFit != null) {
                 if (resolvedFit == null) {
                     resolvedFit = currentFit.get();
                 }
                 unmetRequirement = unmetRequirement(section, resolvedFit);
+                if (unmetRequirement == null && restrictedItem != null) {
+                    unmetRequirement = restrictedItem.unmetRequirement(resolvedFit);
+                }
             }
-            sections.add(new UnlockedSection(section, ItemStore.lookup(shipData.getSectionItem(sectionId)), unmetRequirement));
+            sections.add(new UnlockedSection(section, item, unmetRequirement));
         }
         return Collections.unmodifiableList(sections);
     }

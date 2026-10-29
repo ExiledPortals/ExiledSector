@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HullUpgradeTest {
@@ -42,6 +43,8 @@ class HullUpgradeTest {
         ItemDefinitions.register(new JSONArray()
                 .put(HullItemRows.row("officer", "bridge", "HULL_PERCENT:10:10"))
                 .put(HullItemRows.row("warranty", "bridge", "HULL_PERCENT:1:1; TARGETED_HULL_ITEM_EFFECT_PERCENT:100:100").put("unique", "true"))
+                .put(HullItemRows.row("veteran", "bridge", "HULL_PERCENT:10:10").put("crew", "crewed"))
+                .put(HullItemRows.row("relay", "bridge", "HULL_PERCENT:10:10").put("crew", "automated"))
                 .put(ItemFixtures.subroutineRow("chip")));
     }
 
@@ -53,6 +56,10 @@ class HullUpgradeTest {
 
     private static ShipProfile fit(ShieldType shieldType) {
         return new ShipProfile(HullSize.CRUISER, shieldType, 0, Set.of(), false, 1000f, shieldType == ShieldType.PHASE);
+    }
+
+    private static ShipProfile automatedFit() {
+        return new ShipProfile(HullSize.CRUISER, ShieldType.FRONT, 0, Set.of(), false, 1000f, false, false, false, false, true);
     }
 
     private ShipSkillData shipWithPoints(String shipId, int points) {
@@ -99,7 +106,7 @@ class HullUpgradeTest {
         assertFalse(HullUpgradeRules.unlock(shipData, ShipSection.REACTOR, fit(ShieldType.FRONT)));
 
         Item officer = store.add(ItemDefinitions.get("officer"), 1L);
-        assertTrue(HullUpgradeRules.socket(shipData, ShipSection.BRIDGE, officer, ships));
+        assertTrue(HullUpgradeRules.socket(shipData, ShipSection.BRIDGE, officer, fit(ShieldType.FRONT), ships));
         assertTrue(HullUpgradeRules.lock(shipData, ShipSection.BRIDGE));
 
         assertEquals(1, HullUpgradePoints.unspent(shipData));
@@ -141,13 +148,47 @@ class HullUpgradeTest {
         Item officer = store.add(ItemDefinitions.get("officer"), 1L);
         Item chip = store.add(ItemDefinitions.get("chip"), 2L);
 
-        assertFalse(HullUpgradeRules.socket(shipData, ShipSection.REACTOR, officer, ships));
-        assertFalse(HullUpgradeRules.socket(shipData, ShipSection.BRIDGE, chip, ships));
-        assertTrue(HullUpgradeRules.socket(shipData, ShipSection.BRIDGE, officer, ships));
+        assertFalse(HullUpgradeRules.socket(shipData, ShipSection.REACTOR, officer, fit(ShieldType.FRONT), ships));
+        assertFalse(HullUpgradeRules.socket(shipData, ShipSection.BRIDGE, chip, fit(ShieldType.FRONT), ships));
+        assertTrue(HullUpgradeRules.socket(shipData, ShipSection.BRIDGE, officer, fit(ShieldType.FRONT), ships));
         ShipSkillData otherShip = shipWithPoints("other", 1);
         HullUpgradeRules.unlock(otherShip, ShipSection.BRIDGE, fit(ShieldType.FRONT));
-        assertFalse(HullUpgradeRules.socket(otherShip, ShipSection.BRIDGE, officer, ships));
+        assertFalse(HullUpgradeRules.socket(otherShip, ShipSection.BRIDGE, officer, fit(ShieldType.FRONT), ships));
         assertEquals(SocketCustody.Installation.inSection("ship", "bridge"), SocketCustody.installations(ships).get(officer.id()));
+    }
+
+    @Test
+    void crewQuartersCanOnlyBeUnlockedOnACrewedShip() {
+        ShipSkillData shipData = shipWithPoints("ship", 1);
+
+        assertEquals(HullUpgradeRules.UnlockBlock.UNMET_REQUIREMENT, HullUpgradeRules.unlockBlock(shipData, ShipSection.CREW_QUARTERS, automatedFit()));
+        assertFalse(HullUpgradeRules.unlock(shipData, ShipSection.CREW_QUARTERS, automatedFit()));
+        assertTrue(HullUpgradeRules.unlock(shipData, ShipSection.CREW_QUARTERS, fit(ShieldType.FRONT)));
+    }
+
+    @Test
+    void crewedItemsOnlyGoIntoCrewedShipsAndAutomatedItemsOnlyIntoAutomatedShips() {
+        ShipSkillData shipData = shipWithPoints("ship", 1);
+        HullUpgradeRules.unlock(shipData, ShipSection.BRIDGE, fit(ShieldType.FRONT));
+        HullItem veteran = (HullItem) store.add(ItemDefinitions.get("veteran"), 1L);
+        HullItem relay = (HullItem) store.add(ItemDefinitions.get("relay"), 2L);
+        Item officer = store.add(ItemDefinitions.get("officer"), 3L);
+
+        assertEquals("req_crewed", veteran.requirementTag());
+        assertEquals("req_automated", relay.requirementTag());
+        assertNull(((HullItem) officer).requirementTag());
+        assertNotNull(veteran.limitLine());
+        assertNull(officer.limitLine());
+        assertFalse(HullUpgradeRules.canSocket(shipData, ShipSection.BRIDGE, veteran, automatedFit(), ships));
+        assertTrue(HullUpgradeRules.canSocket(shipData, ShipSection.BRIDGE, officer, automatedFit(), ships));
+        assertFalse(HullUpgradeRules.canSocket(shipData, ShipSection.BRIDGE, relay, fit(ShieldType.FRONT), ships));
+        assertTrue(HullUpgradeRules.socket(shipData, ShipSection.BRIDGE, relay, automatedFit(), ships));
+        assertTrue(HullUpgradeRules.socket(shipData, ShipSection.BRIDGE, veteran, fit(ShieldType.FRONT), ships));
+    }
+
+    @Test
+    void anUnknownCrewValueIsRejected() {
+        assertThrows(IllegalArgumentException.class, () -> HullItem.parseDefinition(HullItemRows.row("robot", "bridge", "HULL_PERCENT:1:1").put("crew", "robots")));
     }
 
     @Test
@@ -155,11 +196,11 @@ class HullUpgradeTest {
         ShipSkillData sold = shipWithPoints("sold", 1);
         HullUpgradeRules.unlock(sold, ShipSection.BRIDGE, fit(ShieldType.FRONT));
         Item kept = store.add(ItemDefinitions.get("officer"), 1L);
-        HullUpgradeRules.socket(sold, ShipSection.BRIDGE, kept, ships);
+        HullUpgradeRules.socket(sold, ShipSection.BRIDGE, kept, fit(ShieldType.FRONT), ships);
         ShipSkillData destroyed = shipWithPoints("destroyed", 1);
         HullUpgradeRules.unlock(destroyed, ShipSection.BRIDGE, fit(ShieldType.FRONT));
         Item gone = store.add(ItemDefinitions.get("officer"), 2L);
-        HullUpgradeRules.socket(destroyed, ShipSection.BRIDGE, gone, ships);
+        HullUpgradeRules.socket(destroyed, ShipSection.BRIDGE, gone, fit(ShieldType.FRONT), ships);
         lost.add("destroyed");
 
         SocketCustody.reconcile(ships, Set.of(), lost, store);
@@ -174,7 +215,7 @@ class HullUpgradeTest {
         ShipSkillData shipData = shipWithPoints("ship", 1);
         HullUpgradeRules.unlock(shipData, ShipSection.BRIDGE, fit(ShieldType.FRONT));
         Item officer = store.add(ItemDefinitions.get("officer"), 1L);
-        HullUpgradeRules.socket(shipData, ShipSection.BRIDGE, officer, ships);
+        HullUpgradeRules.socket(shipData, ShipSection.BRIDGE, officer, fit(ShieldType.FRONT), ships);
 
         ShipTrees.resetAllocations(shipData);
         assertEquals(List.of("bridge"), shipData.getUnlockedSocketTypeIds());

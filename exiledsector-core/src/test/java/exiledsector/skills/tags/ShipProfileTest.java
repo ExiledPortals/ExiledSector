@@ -9,6 +9,7 @@ import com.fs.starfarer.api.combat.WeaponAPI.AIHints;
 import com.fs.starfarer.api.combat.WeaponAPI.WeaponType;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.HullMods;
+import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.WeaponSpecAPI;
 import org.junit.jupiter.api.Test;
 
@@ -72,6 +73,25 @@ class ShipProfileTest {
 
     private static Set<WeaponKind> kindsOf(ShipVariantAPI variant) {
         return ShipProfile.of(member(HullSize.CRUISER, ShieldType.FRONT, 0, variant, false)).weaponKinds();
+    }
+
+    @Test
+    void aShipIsAutomatedByTheHullmodOrTheAutomatedTagOnItsVariantOrHull() {
+        ShipVariantAPI crewed = variant();
+        ShipVariantAPI hullmod = variant();
+        when(hullmod.hasHullMod(HullMods.AUTOMATED)).thenReturn(true);
+        ShipVariantAPI variantTag = variant();
+        when(variantTag.hasTag(Tags.AUTOMATED)).thenReturn(true);
+        ShipVariantAPI hullTag = variant();
+        ShipHullSpecAPI taggedHull = mock(ShipHullSpecAPI.class);
+        when(taggedHull.hasTag(Tags.AUTOMATED)).thenReturn(true);
+        when(hullTag.getHullSpec()).thenReturn(taggedHull);
+
+        assertFalse(ShipProfile.of(member(HullSize.CRUISER, ShieldType.FRONT, 0, crewed, false)).automated());
+        assertTrue(ShipProfile.of(member(HullSize.CRUISER, ShieldType.FRONT, 0, hullmod, false)).automated());
+        assertTrue(ShipProfile.automated(variantTag));
+        assertTrue(ShipProfile.automated(hullTag));
+        assertFalse(ShipProfile.automated(null));
     }
 
     @Test

@@ -4,6 +4,8 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledlib.HostMod;
 import exiledlib.i18n.StyledText;
 import exiledlib.i18n.Translation;
+import exiledsector.skills.tags.NodeRequirements;
+import exiledsector.skills.tags.ShipProfile;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -41,6 +43,10 @@ public final class HullItem extends Item {
     static final String UNIQUE_SOURCE_COLUMN = "source";
     static final String MECHANIC_COLUMN = "mechanic";
     public static final List<String> MECHANICS = List.of(ItemDefinition.ONE_OF_MECHANIC);
+    static final String CREW_COLUMN = "crew";
+    public static final String CREWED = "crewed";
+    public static final String AUTOMATED = "automated";
+    public static final List<String> CREW_VALUES = List.of(CREWED, AUTOMATED);
 
     private String targetSectionId;
     private transient List<List<RolledModifier>> targetCheckedModifiers;
@@ -65,8 +71,12 @@ public final class HullItem extends Item {
         if (kind == null || kind.type() != ItemType.HULL_ITEM) {
             throw new IllegalArgumentException("section \"" + sectionId + "\" is not a ship section");
         }
+        String crew = row.optString(CREW_COLUMN, "").trim();
+        if (!crew.isEmpty() && !CREW_VALUES.contains(crew)) {
+            throw new IllegalArgumentException("crew \"" + crew + "\" is not one of " + String.join(", ", CREW_VALUES));
+        }
         return ItemDefinition.parse(row, kind, UniqueSource.parseList(row.optString(UNIQUE_SOURCE_COLUMN, "")))
-                .withMechanic(row.optString(MECHANIC_COLUMN, "")).withArea(row.optString(ItemAreas.AREA_COLUMN, ""));
+                .withMechanic(row.optString(MECHANIC_COLUMN, "")).withArea(row.optString(ItemAreas.AREA_COLUMN, "")).withCrew(crew);
     }
 
     @Override
@@ -80,6 +90,33 @@ public final class HullItem extends Item {
 
     public boolean canSocketInto(ShipSection section) {
         return section != null && section == section();
+    }
+
+    public boolean canSocketInto(ShipSection section, ShipProfile fit) {
+        return canSocketInto(section) && unmetRequirement(fit) == null;
+    }
+
+    public String requirementTag() {
+        ItemDefinition definition = definition();
+        String crew = definition == null ? null : definition.crew();
+        if (CREWED.equals(crew)) {
+            return NodeRequirements.CREWED;
+        }
+        return AUTOMATED.equals(crew) ? NodeRequirements.AUTOMATED : null;
+    }
+
+    public String unmetRequirement(ShipProfile fit) {
+        String requirementTag = requirementTag();
+        if (requirementTag == null || fit == null) {
+            return null;
+        }
+        return NodeRequirements.firstUnmet(List.of(requirementTag), fit);
+    }
+
+    @Override
+    public StyledText limitLine() {
+        String requirementTag = requirementTag();
+        return requirementTag == null ? null : Translation.styled("hullItem.crew." + requirementTag);
     }
 
     public boolean targetsAnotherItem() {

@@ -251,6 +251,14 @@ function HullItemForm({ document, model, vocabulary, definition, index, descript
         allowDeselect={false}
         onChange={(area) => edit((draft) => void (draft.area = area ?? ''))}
       />
+      <Select
+        label="Crew"
+        description="crewed - only crewed ships can install it; automated - only automated ships can. Blank for every ship."
+        data={[{ value: '', label: 'Any ship' }, ...vocabulary.hullItemCrew.map((crew) => ({ value: crew, label: crew }))]}
+        value={definition.crew ?? ''}
+        allowDeselect={false}
+        onChange={(crew) => edit((draft) => void (draft.crew = crew ?? ''))}
+      />
       {(unique || Boolean(definition.mechanic)) && (
         <Select
           label="Mechanic"

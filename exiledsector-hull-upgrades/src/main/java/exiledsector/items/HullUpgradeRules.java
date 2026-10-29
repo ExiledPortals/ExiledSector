@@ -59,12 +59,14 @@ public final class HullUpgradeRules {
         return true;
     }
 
-    public static boolean canSocket(ShipSkillData shipData, ShipSection section, Item item, Map<String, ShipSkillData> shipDataById) {
-        return shipData.isSocketTypeUnlocked(section.id()) && HullItem.fits(item, section)
+    public static boolean canSocket(ShipSkillData shipData, ShipSection section, Item item, ShipProfile currentFit,
+                                    Map<String, ShipSkillData> shipDataById) {
+        return shipData.isSocketTypeUnlocked(section.id()) && item instanceof HullItem hullItem && hullItem.canSocketInto(section, currentFit)
                 && !SocketCustody.isInstalled(shipDataById, item);
     }
 
-    public static boolean socket(ShipSkillData shipData, ShipSection section, Item item, Map<String, ShipSkillData> shipDataById) {
-        return canSocket(shipData, section, item, shipDataById) && shipData.installInSection(section.id(), item.id());
+    public static boolean socket(ShipSkillData shipData, ShipSection section, Item item, ShipProfile currentFit,
+                                 Map<String, ShipSkillData> shipDataById) {
+        return canSocket(shipData, section, item, currentFit, shipDataById) && shipData.installInSection(section.id(), item.id());
     }
 }

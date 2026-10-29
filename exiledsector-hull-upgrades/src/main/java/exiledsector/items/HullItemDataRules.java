@@ -32,6 +32,10 @@ public final class HullItemDataRules implements ItemDataRules {
         } else if (!mechanic.isEmpty() && !"true".equalsIgnoreCase(ModCsv.text(row, "unique"))) {
             integrity.warning(file, line, definitionId + " names a mechanic, but mechanics are meant for unique hull items");
         }
+        String crew = ModCsv.text(row, HullItem.CREW_COLUMN);
+        if (!crew.isEmpty() && !HullItem.CREW_VALUES.contains(crew)) {
+            integrity.error(file, line, definitionId + " has an unknown crew \"" + crew + "\"; it must be blank or one of " + String.join(", ", HullItem.CREW_VALUES));
+        }
     }
 
     @Override

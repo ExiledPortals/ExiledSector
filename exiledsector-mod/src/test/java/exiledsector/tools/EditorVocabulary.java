@@ -73,6 +73,7 @@ final class EditorVocabulary {
         json.append("  \"uniqueSourceKinds\": ")
                 .append(list(Arrays.stream(UniqueSource.Kind.values()).map(UniqueSource.Kind::prefix).toList())).append(",\n");
         json.append("  \"hullItemMechanics\": ").append(list(HullItem.MECHANICS)).append(",\n");
+        json.append("  \"hullItemCrew\": ").append(list(HullItem.CREW_VALUES)).append(",\n");
         json.append("  \"itemAreas\": ").append(list(AreaToggles.ITEM_AREAS.areas().stream().sorted().toList())).append(",\n");
         json.append("  \"itemUnlocks\": ")
                 .append(list(Arrays.stream(ItemUnlock.values()).map(ItemUnlock::id).toList())).append(",\n");

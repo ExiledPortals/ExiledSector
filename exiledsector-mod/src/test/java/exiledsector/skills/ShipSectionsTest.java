@@ -43,7 +43,9 @@ class ShipSectionsTest {
                 .put(definition("emitter", "shield_generator", "HULL_PERCENT:10:10"))
                 .put(definition("chip", "reactor", "HULL_PERCENT:20:20"))
                 .put(definition("warranty", "bridge", "HULL_PERCENT:1:1; TARGETED_HULL_ITEM_EFFECT_PERCENT:100:100").put("unique", "true"))
-                .put(definition("vault", "bridge", "HIGHEST_AFFINITY_FLAT_PER_S_MOD:3:3")));
+                .put(definition("vault", "bridge", "HIGHEST_AFFINITY_FLAT_PER_S_MOD:3:3"))
+                .put(definition("veteran", "bridge", "HULL_PERCENT:7:7").put("crew", "crewed"))
+                .put(definition("specialists", "crew_quarters", "HULL_PERCENT:3:3")));
         shipData = new ShipSkillData();
         shipData.grantUnlockedSocketType("bridge");
         shipData.grantUnlockedSocketType("shield_generator");
@@ -65,6 +67,10 @@ class ShipSectionsTest {
 
     private static ShipProfile fit(ShieldType shieldType) {
         return new ShipProfile(HullSize.CRUISER, shieldType, 0, Set.of(), false, 1000f, false);
+    }
+
+    private static ShipProfile automatedFit() {
+        return new ShipProfile(HullSize.CRUISER, ShieldType.FRONT, 0, Set.of(), false, 1000f, false, false, false, false, true);
     }
 
     private static float hullPercent(EffectTotals totals) {
@@ -90,6 +96,35 @@ class ShipSectionsTest {
         assertFalse(slots.get(1).active());
         assertEquals("req_shields", slots.get(1).unmetRequirement());
         assertEquals(5f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(slots,HullSize.CRUISER), 1f)), 1e-4f);
+    }
+
+    @Test
+    void aCrewedItemAlreadyInstalledOnAShipThatBecameAutomatedGoesInactive() {
+        shipData.installInSection("bridge", NpcItems.id("veteran", 5L));
+
+        List<ShipSections.UnlockedSection> crewed = ShipSections.of(shipData, () -> fit(ShieldType.FRONT));
+        List<ShipSections.UnlockedSection> automated = ShipSections.of(shipData, ShipSectionsTest::automatedFit);
+
+        assertTrue(crewed.get(0).appliesItem());
+        assertEquals(17f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(crewed, HullSize.CRUISER), 1f)), 1e-4f);
+        assertFalse(automated.get(0).active());
+        assertFalse(automated.get(0).appliesItem());
+        assertEquals("req_crewed", automated.get(0).unmetRequirement());
+        assertTrue(automated.get(1).active());
+        assertEquals(10f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(automated, HullSize.CRUISER), 1f)), 1e-4f);
+    }
+
+    @Test
+    void crewQuartersUnlockedBeforeTheShipBecameAutomatedGoesInactive() {
+        shipData.grantUnlockedSocketType("crew_quarters");
+        shipData.installInSection("crew_quarters", NpcItems.id("specialists", 6L));
+
+        List<ShipSections.UnlockedSection> automated = ShipSections.of(shipData, ShipSectionsTest::automatedFit);
+        ShipSections.UnlockedSection quarters = automated.stream().filter(slot -> slot.section() == ShipSection.CREW_QUARTERS).findFirst().orElseThrow();
+
+        assertFalse(quarters.active());
+        assertEquals("req_crewed", quarters.unmetRequirement());
+        assertEquals(15f, hullPercent(EffectTotals.of(HullUpgradeEffectSource.contributions(automated, HullSize.CRUISER), 1f)), 1e-4f);
     }
 
     @Test

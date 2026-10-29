@@ -52,8 +52,8 @@ export const OPTIONAL_SUBROUTINE_FIELDS: readonly string[] = ['lines', 'source',
 const NODE_ID_TEXT = /^[A-Za-z0-9_.-]+$/;
 const UNIQUE_SOURCE_ID = /^[A-Za-z0-9_.-]+$/;
 const SOCKET_LIMIT_TEXT = /^\d{1,9}$/;
-export const HULL_ITEM_COLUMNS = ['id', 'section', 'name', 'icon', 'rarity', 'unique', 'description', 'prefixes', 'suffixes', 'unlock', 'source', 'mechanic', 'area'] as const;
-const OPTIONAL_HULL_ITEM_FIELDS: readonly string[] = ['source', 'mechanic', 'area'];
+export const HULL_ITEM_COLUMNS = ['id', 'section', 'name', 'icon', 'rarity', 'unique', 'description', 'prefixes', 'suffixes', 'unlock', 'source', 'mechanic', 'area', 'crew'] as const;
+const OPTIONAL_HULL_ITEM_FIELDS: readonly string[] = ['source', 'mechanic', 'area', 'crew'];
 export const STAR_CHART_COLUMNS = ['id', 'system_type', 'name', 'icon', 'rarity', 'unique', 'min_tier', 'description', 'prefixes', 'suffixes', 'unlock'] as const;
 export const UNLOCK_LABELS: Record<string, string> = {
   found_onslaught_mk1: 'Found the Onslaught Mk.I in the Abyss',
@@ -103,6 +103,7 @@ export interface ItemDefinition {
   source?: string;
   mechanic?: string;
   area?: string;
+  crew?: string;
   socketLimit?: string;
   radius?: string;
   excludedNodes?: string;
@@ -273,6 +274,7 @@ export function parseItemDefinitions(subroutinesText: string, hullItemsText: str
         source: csvCell(hullItemTable, definition.cells, 'source').trim(),
         mechanic: csvCell(hullItemTable, definition.cells, 'mechanic').trim(),
         area: csvCell(hullItemTable, definition.cells, 'area').trim(),
+        crew: csvCell(hullItemTable, definition.cells, 'crew').trim(),
       })),
     ],
   };
@@ -304,6 +306,8 @@ function definitionColumnValue(definition: ItemDefinition, column: string): unkn
       return definition.mechanic ?? '';
     case 'area':
       return definition.area ?? '';
+    case 'crew':
+      return definition.crew ?? '';
     case 'socket_limit':
       return definition.socketLimit ?? '';
     case 'radius':
@@ -483,6 +487,7 @@ export function newItemDefinition(
     definition.source = '';
     definition.mechanic = '';
     definition.area = '';
+    definition.crew = '';
   }
   return definition;
 }
@@ -799,6 +804,10 @@ export function validateItemDefinitions(
       const mechanic = (definition.mechanic ?? '').trim();
       if (mechanic !== '' && !vocabulary.hullItemMechanics.includes(mechanic)) {
         issues.push(`${label}: mechanic must be blank or one of ${vocabulary.hullItemMechanics.join(', ')}`);
+      }
+      const crew = (definition.crew ?? '').trim();
+      if (crew !== '' && !vocabulary.hullItemCrew.includes(crew)) {
+        issues.push(`${label}: crew must be blank or one of ${vocabulary.hullItemCrew.join(', ')}`);
       }
     }
     if (!(Number.parseFloat(definition.rarity) >= 0)) {

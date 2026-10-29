@@ -30,7 +30,8 @@ public final class FittedShipProfile {
         fitEffects.forEach(effect -> fitEffectsInOrder.add(effect.effect()));
         ShieldType shieldType = ShieldSkillEffect.resolveDisplayShieldType(fittedShieldType(hullSpec.getShieldType(), variant), fitEffectsInOrder);
         return new ShipProfile(hullSize, shieldType, fighterBays(hullSpec.getFighterBays(), variant, fitEffects), Set.of(), false,
-                hullSpec.getArmorRating(), hullSpec.isPhase(), ShipSystemCharges.limited(hullSpec), ShipFacts.onlyBuiltInWings(hullSpec));
+                hullSpec.getArmorRating(), hullSpec.isPhase(), ShipSystemCharges.limited(hullSpec), ShipFacts.onlyBuiltInWings(hullSpec), false,
+                ShipProfile.automated(variant));
     }
 
     private static List<SkillTypeEffect> fitEffects(ShipSkillData shipData, HullSize hullSize) {
