@@ -17,6 +17,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Abilities;
 import com.fs.starfarer.api.impl.campaign.ids.FleetTypes;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.ids.Personalities;
+import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.campaign.terrain.BaseRingTerrain;
 import com.fs.starfarer.api.impl.campaign.terrain.FlareManager.FlareManagerDelegate;
 import com.fs.starfarer.api.impl.campaign.terrain.StarCoronaTerrainPlugin;
@@ -74,6 +75,9 @@ public final class ChartContentGenerator {
     static final long COLONY_ITEM_SALT = 0x4348434f4c4f4eL;
     static final long STATION_SALT = 0x43485354415449L;
     static final long STAGING_SALT = 0x4348535441474eL;
+    static final String BOSS_REVEAL_MOD_ID = ChartIds.PREFIX + "boss_reveal";
+    static final float BOSS_REVEAL_RANGE_MULT = 1000f;
+    static final float BOSS_REVEAL_EXTENDED_RANGE = 100000f;
     static final String HOSTILE_TO_FACTION_PREFIX = "$cfai_makeHostile_";
     static final String MAKE_NON_HOSTILE = "$cfai_makeNonHostile";
     static final String NON_HOSTILE_TAKES_PRIORITY = "$makeNonHostileTakesPriority";
@@ -267,6 +271,13 @@ public final class ChartContentGenerator {
                 commander.setPersonality(Personalities.AGGRESSIVE);
             }
         }
+    }
+
+    static void revealBoss(CampaignFleetAPI boss) {
+        if (boss.getStats() != null) {
+            boss.getStats().getDynamic().getStat(Stats.DETECTED_BY_PLAYER_RANGE_MULT).modifyMult(BOSS_REVEAL_MOD_ID, BOSS_REVEAL_RANGE_MULT);
+        }
+        boss.setExtendedDetectedAtRange(BOSS_REVEAL_EXTENDED_RANGE);
     }
 
     static void joinSkirmish(CampaignFleetAPI fleet, boolean defending, ChartContentPlan plan, String allyFactionId) {
@@ -557,6 +568,7 @@ public final class ChartContentGenerator {
                 if (plan.skirmish().side() == SkirmishSide.DEFENDER) {
                     bossFleetId = commanderId;
                     bossType = ChartBossType.FLEET;
+                    revealBoss(fleet);
                 }
             }
         }
@@ -660,6 +672,7 @@ public final class ChartContentGenerator {
             } else if (role == FleetRole.BOSS) {
                 bossFleetId = fleet.getId();
                 bossType = ChartBossType.FLEET;
+                revealBoss(fleet);
             }
         }
 
@@ -706,6 +719,7 @@ public final class ChartContentGenerator {
                 fleets.add(station);
                 bossFleetId = station.getId();
                 bossType = ChartBossType.STATION;
+                revealBoss(station);
                 if (plan.skirmish() != null) {
                     skirmishStation = station;
                 }

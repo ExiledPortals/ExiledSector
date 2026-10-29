@@ -271,6 +271,8 @@ A station boss is a vanilla station-mode fleet with no market (`VanillaChartCont
 the boss's spot, and its guard holds a passive orbit beside it, so engaging either pulls in the other. The station
 is the objective target and carries the boss loot. Station rows whose variant the game has not loaded are dropped
 at load, and a station that still fails to spawn is replaced by a full-size fleet boss (`ChartContentGenerator`).
+Either kind is detected by the player from anywhere in the system, so it always shows on the radar
+(`ChartContentGenerator.revealBoss`).
 
 ## Chart anomalies
 

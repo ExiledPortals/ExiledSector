@@ -243,6 +243,19 @@ class ChartContentGeneratorTest {
         assertSame(feature, engine.assignments.get(boss).get(0).target());
     }
 
+    @Test
+    void onlyTheBossIsRevealedToThePlayerAcrossTheSystem() {
+        ChartContent content = generate(11L, 8);
+
+        for (CampaignFleetAPI fleet : engine.fleets) {
+            if (fleet.getId().equals(content.bossFleetId())) {
+                verify(fleet).setExtendedDetectedAtRange(ChartContentGenerator.BOSS_REVEAL_EXTENDED_RANGE);
+            } else {
+                verify(fleet, never()).setExtendedDetectedAtRange(anyFloat());
+            }
+        }
+    }
+
     private void useStationBosses() {
         ChartBosses.useForTests(List.of(new ChartBosses.Definition(ChartBossType.STATION, 1f, 1, 15, 0.5f)),
                 List.of(new ChartBosses.Station("station2_Standard", Set.of(), 1, 15, 1f)));
@@ -260,6 +273,7 @@ class ChartContentGeneratorTest {
             assertEquals(station.getId(), content.bossFleetId());
             assertTrue(inSystem.contains(station));
             verify(station).setAI(null);
+            verify(station).setExtendedDetectedAtRange(ChartContentGenerator.BOSS_REVEAL_EXTENDED_RANGE);
             assertTrue(station.getMemoryWithoutUpdate().getBoolean(ChartIds.BOSS_MEMORY_KEY));
             assertTrue(station.getMemoryWithoutUpdate().getBoolean(MemFlags.FLEET_FIGHT_TO_THE_LAST));
             assertTrue(station.getMemoryWithoutUpdate().getBoolean(ChartIds.fleetRunKey(RUN_ID)));
