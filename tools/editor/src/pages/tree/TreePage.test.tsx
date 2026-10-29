@@ -115,6 +115,12 @@ describe('tree page', () => {
     expect(nodeById(useTreeStore.getState().document, nodeId)?.x).toBe(1234);
     expect(useTreeStore.getState().dirty).toBe(true);
 
+    const typeId = nodeById(useTreeStore.getState().document, nodeId)?.type ?? '';
+    const automatedFlavour = screen.getByLabelText(/^Automated flavour text/);
+    fireEvent.change(automatedFlavour, { target: { value: ' The core logs the plating. ' } });
+    fireEvent.blur(automatedFlavour);
+    expect(typeById(useTreeStore.getState().document, typeId)?.flavourAutomated).toBe('The core logs the plating.');
+
     const shown = vi.spyOn(notifications, 'show');
     commitField('Node id', 'renamed_test_node');
     expect(useTreeStore.getState().selection.nodes).toEqual(['renamed_test_node']);

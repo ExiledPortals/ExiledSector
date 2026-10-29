@@ -5,10 +5,10 @@ Exiled Lib mod (`exiled-lib/mod/` in this repo) for the library, and `core/`, `s
 each folder `en.json` holds the English source and `zh_CN.json` the Simplified Chinese translation. The
 game merges every folder into one catalogue, so a key lives in exactly one of them.
 
-A few kinds of text keep their English source in the data files instead: skill type names, flavour and
+A few kinds of text keep their English source in the data files instead: skill type names, flavour, automated-hull flavour and
 effect text in `data/skilltrees/skill_types.json`, and our hullmods' names and descriptions in
 `data/hullmods/hull_mods.csv`. Translations refer to these by id, using the keys
-`skillType.<id>.name`, `skillType.<id>.flavour`, `skillType.<id>.effectText.<line>`, `hullmod.<id>.name` and
+`skillType.<id>.name`, `skillType.<id>.flavour`, `skillType.<id>.flavourAutomated`, `skillType.<id>.effectText.<line>`, `hullmod.<id>.name` and
 `hullmod.<id>.description`.
 
 ## Choosing the language

@@ -30,6 +30,7 @@ Flavour follows the voice of vanilla's codex: special items, commodities and shi
 - Hedge what nobody knows ("dimly understood", "rumored"). Show strangeness through a reading, an absence or a crew reaction, not horror adjectives, and never explain the Threat, Omega or the Dwellers. Don't reuse one device across a set, such as "nobody aboard can explain".
 - Don't address the player: no "you", no instructions, no exclamation marks, no modern idiom or real-world references.
 - Terms: normal space or n-space, p-space, cycles, light-years, strike craft (not strikecraft), alpha, beta and gamma cores in lowercase, and the Remnant and Nexus by name. "The crew" is singular.
+- On automated hulls a type's `flavourAutomated` replaces its flavour when the text mentions people. The ship's core learns only by cold observation (logs, recordings, wreck data) and has no feelings; physical work is done by "the refit crew" in dock.
 - Text written by another mod's author, such as the Navarchy of Tania nodes, stays exactly as written. The deliberate jokes stay jokes: Crustacean Integration, Ludd's Light, At Any Cost and Back-Alley Cyber-Surgeon.
 
 ## Percentages: increased/reduced vs more/less

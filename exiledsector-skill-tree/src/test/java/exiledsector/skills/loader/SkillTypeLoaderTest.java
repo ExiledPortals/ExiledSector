@@ -127,23 +127,27 @@ class SkillTypeLoaderTest {
     }
 
     @Test
-    void parsesFlavourTextAndTreatsBlankAsNone() throws Exception {
+    void parsesBothFlavourTextsAndTreatsBlankAsNone() throws Exception {
         JSONObject root = new JSONObject("{ \"skillTypes\": [ {"
                 + "\"id\": \"hull\","
                 + "\"name\": \"Hull\","
                 + "\"icon\": \"a.png\","
-                + "\"flavour\": \"Steel remembers.\""
+                + "\"flavour\": \"Steel remembers.\","
+                + "\"flavourAutomated\": \"The core logs the steel.\""
                 + "}, {"
                 + "\"id\": \"armor\","
                 + "\"name\": \"Armor\","
                 + "\"icon\": \"b.png\","
-                + "\"flavour\": \"  \""
+                + "\"flavour\": \"  \","
+                + "\"flavourAutomated\": \"  \""
                 + "} ] }");
 
         Map<String, SkillType> types = SkillTypeLoader.parseSkillTypes(root);
 
         assertEquals("Steel remembers.", types.get("hull").getFlavourText());
         assertNull(types.get("armor").getFlavourText());
+        assertEquals("The core logs the steel.", types.get("hull").getAutomatedFlavourText());
+        assertNull(types.get("armor").getAutomatedFlavourText());
     }
 
     @Test

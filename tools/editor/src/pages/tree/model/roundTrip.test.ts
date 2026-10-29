@@ -51,6 +51,14 @@ describe('text serialisation', () => {
     expect(Object.keys(serializeType({ ...base, effectText: ['Holds one subroutine.'] }))).toEqual(['id', 'name', 'icon', 'flavour', 'effectText', 'tags']);
     expect(serializeType({ ...base, effectText: [] })).not.toHaveProperty('effectText');
   });
+
+  it('writes the automated flavour after the flavour and leaves an empty one out', () => {
+    const base = { id: 'a', name: 'A', icon: '', flavour: 'Old steel.', tags: ['armor'] };
+    const automated = serializeType({ ...base, flavourAutomated: 'The core logs old steel.', effectText: ['Holds one subroutine.'] });
+    expect(Object.keys(automated)).toEqual(['id', 'name', 'icon', 'flavour', 'flavourAutomated', 'effectText', 'tags']);
+    expect(automated.flavourAutomated).toBe('The core logs old steel.');
+    expect(serializeType({ ...base, flavourAutomated: '' })).not.toHaveProperty('flavourAutomated');
+  });
 });
 
 describe('decoration serialisation', () => {

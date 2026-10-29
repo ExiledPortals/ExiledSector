@@ -64,6 +64,10 @@ class CatalogueLintTest {
             if (!flavour.isEmpty()) {
                 sources.put("skillType." + id + ".flavour", flavour);
             }
+            String flavourAutomated = type.optString("flavourAutomated", "");
+            if (!flavourAutomated.isEmpty()) {
+                sources.put("skillType." + id + ".flavourAutomated", flavourAutomated);
+            }
             JSONArray effectText = type.optJSONArray("effectText");
             for (int line = 0; effectText != null && line < effectText.length(); line++) {
                 sources.put("skillType." + id + ".effectText." + line, effectText.getString(line));

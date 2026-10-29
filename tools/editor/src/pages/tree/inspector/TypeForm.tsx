@@ -517,6 +517,15 @@ export function TypeForm(props: TypeFormProps) {
             />
             <CommitTextarea
               size="xs"
+              label={`Automated flavour text (optional, replaces the flavour on automated ships)${note}`}
+              minRows={3}
+              value={type.flavourAutomated ?? ''}
+              onCommit={(text) => onEdit((draft) => {
+                draft.flavourAutomated = text.trim();
+              })}
+            />
+            <CommitTextarea
+              size="xs"
               label={`Effect text (optional, one effect line per line, for mechanics no effect describes)${note}`}
               value={(type.effectText ?? []).join('\n')}
               onCommit={(text) => onEdit((draft) => {

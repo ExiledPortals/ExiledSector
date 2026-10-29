@@ -45,6 +45,7 @@ export interface SkillType {
   exclusiveSkillTypes?: string[];
   optionalOptions?: string[];
   flavour?: string;
+  flavourAutomated?: string;
   effectText?: string[];
   todo?: string;
   tags?: string[];
