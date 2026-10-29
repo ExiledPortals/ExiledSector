@@ -181,7 +181,7 @@ public final class ShipStatSheets {
         boolean shown = switch (input.detail()) {
             case FULL -> true;
             case STANDARD -> changed || core;
-            case CHANGED -> changed;
+            case CHANGED -> counts(reading);
         };
         if (!shown) {
             return;
@@ -204,7 +204,7 @@ public final class ShipStatSheets {
         }
         List<Integer> shownColumns = new ArrayList<>();
         for (int column = 0; column < columns.size(); column++) {
-            if (!spec.optionalColumns().contains(column) || columnChanged(readingRows, column)) {
+            if (!spec.optionalColumns().contains(column) || columnCounts(readingRows, column)) {
                 shownColumns.add(column);
             }
         }
@@ -212,7 +212,7 @@ public final class ShipStatSheets {
         for (int rowIndex = 0; rowIndex < spec.rows().size(); rowIndex++) {
             StatRows.GridRowSpec rowSpec = spec.rows().get(rowIndex);
             List<StatReading> readings = readingRows.get(rowIndex);
-            boolean rowChanged = readings.stream().anyMatch(reading -> reading != null && reading.changed());
+            boolean rowChanged = readings.stream().anyMatch(reading -> reading != null && counts(reading));
             boolean shown = rowChanged || input.detail() == Detail.FULL && readings.stream().anyMatch(Objects::nonNull);
             if (!shown) {
                 continue;
@@ -230,10 +230,18 @@ public final class ShipStatSheets {
         }
     }
 
-    private static boolean columnChanged(List<List<StatReading>> readingRows, int column) {
+    private boolean counts(StatReading reading) {
+        return reading.changed() && (input.detail() != Detail.CHANGED || touchedByTree(reading));
+    }
+
+    private boolean touchedByTree(StatReading reading) {
+        return reading.modifiers().stream().anyMatch(modifier -> sources.applied(modifier.modId()) != null);
+    }
+
+    private boolean columnCounts(List<List<StatReading>> readingRows, int column) {
         for (List<StatReading> readings : readingRows) {
             StatReading reading = readings.get(column);
-            if (reading != null && reading.changed()) {
+            if (reading != null && counts(reading)) {
                 return true;
             }
         }

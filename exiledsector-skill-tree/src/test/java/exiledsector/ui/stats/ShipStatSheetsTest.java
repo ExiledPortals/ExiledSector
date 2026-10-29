@@ -134,7 +134,7 @@ class ShipStatSheetsTest {
     void modifiersFromOutsideTheTreeAreNamedFromTheirDescription() {
         armorBonus.modifyFlat("heavyarmor", 500f, "Heavy Armor");
 
-        ValueRow armor = row(build(null, Detail.CHANGED), StatGroup.DURABILITY, "Armor");
+        ValueRow armor = row(build(null, Detail.STANDARD), StatGroup.DURABILITY, "Armor");
 
         assertEquals("1500", armor.value());
         assertEquals("+50%", armor.change());
@@ -146,7 +146,7 @@ class ShipStatSheetsTest {
     void theWeaponGridOnlyAddsTheBeamColumnWhenABeamStatChanges() {
         energyDamage.modifyPercent("energyMod", 10f);
 
-        ShipStatSheet.Grid weapons = section(build(null, Detail.CHANGED), StatGroup.WEAPONS).grids().get(0);
+        ShipStatSheet.Grid weapons = section(build(null, Detail.STANDARD), StatGroup.WEAPONS).grids().get(0);
         assertEquals(List.of("Ballistic", "Energy", "Missile"), weapons.columns());
         assertEquals("Damage", weapons.rows().get(0).label());
         assertEquals("+10%", weapons.rows().get(0).cells().get(1).text());
@@ -154,9 +154,35 @@ class ShipStatSheetsTest {
 
         beamDamage.modifyPercent("beamMod", 5f);
 
-        ShipStatSheet.Grid withBeams = section(build(null, Detail.CHANGED), StatGroup.WEAPONS).grids().get(0);
+        ShipStatSheet.Grid withBeams = section(build(null, Detail.STANDARD), StatGroup.WEAPONS).grids().get(0);
         assertEquals(List.of("Ballistic", "Energy", "Missile", "Beam"), withBeams.columns());
         assertEquals("+5%", withBeams.rows().get(0).cells().get(3).text());
+    }
+
+    @Test
+    void theChangedDetailOnlyShowsWhatTheTreeChanged() {
+        armorBonus.modifyFlat("heavyarmor", 500f, "Heavy Armor");
+        energyDamage.modifyPercent("energyMod", 10f);
+
+        ShipStatSheet sheet = sheetWithTree(Detail.CHANGED);
+
+        assertNull(findSection(sheet, StatGroup.DURABILITY));
+        assertTrue(section(sheet, StatGroup.WEAPONS).grids().isEmpty());
+        assertEquals("1200", row(sheet, StatGroup.FLUX, "Max Flux").value());
+    }
+
+    @Test
+    void temporaryNodesAppliedToTheShipAreNamedAsTreeSources() {
+        SkillNode surge = new SkillNode("surge_1", new SkillType.Builder("surge", "Opening Surge", "a.png", SkillTier.SMALL)
+                .effects(List.of(new SkillTypeEffect(FluxSkillEffect.FLUX_CAPACITY_FLAT, 100f))).temporaryAfterDeploymentSeconds(30f).build(),
+                List.of("root_1"), 0f, 0f);
+        SkillTree.register(surge);
+        ShipTrees.allocate(data, surge, 0);
+
+        ValueRow maxFlux = row(sheetWithTree(Detail.STANDARD), StatGroup.FLUX, "Max Flux");
+
+        assertTrue(maxFlux.breakdown().sources().contains(new SourceLine("Opening Surge", "+100", true)));
+        assertTrue(maxFlux.breakdown().nodeIds().contains("surge_1"));
     }
 
     @Test

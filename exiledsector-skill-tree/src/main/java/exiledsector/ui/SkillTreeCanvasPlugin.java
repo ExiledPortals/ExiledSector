@@ -245,9 +245,9 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
         } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE && shipList.isOpen()) {
             shipList.close();
             consume(event);
-        } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE && statPanel.collapse()) {
-            consume(event);
         } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE && escape(mode)) {
+            consume(event);
+        } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_ESCAPE && mode != CanvasMode.MODAL && statPanel.collapse()) {
             consume(event);
         } else if (event.isKeyDownEvent() && event.getEventValue() == Keyboard.KEY_F2 && openHoveredItemCodex(mode)) {
             event.consume();
@@ -317,6 +317,7 @@ public class SkillTreeCanvasPlugin extends BaseCustomUIPanelPlugin {
             gesture.clear();
             event.consume();
         } else if (event.isMouseScrollEvent() && canvasPosition.containsEvent(event)) {
+            statPanel.handleScroll(event.getX(), event.getY(), event.getEventValue());
             event.consume();
         }
     }

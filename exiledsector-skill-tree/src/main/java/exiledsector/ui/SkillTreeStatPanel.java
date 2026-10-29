@@ -273,15 +273,23 @@ final class SkillTreeStatPanel {
             hoveredRegion = hovered;
         }
         view.frame.render(fitted.left(), fitted.bottom(), fitted.width(), fitted.height(), SkillTreePanelStyle.GLOW_COLOR, alphaMult,
-                (frameLeft, frameBottom, frameWidth, frameHeight, frameAlpha) -> renderClipped(layout, fitted, contentTop, frameAlpha, hovered));
+                (frameLeft, frameBottom, frameWidth, frameHeight, frameAlpha) -> renderClipped(layout, fitted, contentTop, frameAlpha, hovered,
+                        view.frame.contentAlpha()));
     }
 
-    private static void renderClipped(StatSheetLayout layout, Viewport viewport, float contentTop, float alphaMult, StatSheetLayout.Region hovered) {
+    private static void renderClipped(StatSheetLayout layout, Viewport viewport, float contentTop, float alphaMult, StatSheetLayout.Region hovered,
+                                      float revealed) {
         float screenScale = Global.getSettings().getScreenScaleMult();
+        float clipTop = viewport.bottom() + viewport.height() - PADDING / 2f;
+        float revealedBottom = viewport.bottom() + viewport.height() * (1f - Math.min(1f, revealed));
+        float clipBottomY = Math.max(viewport.bottom() + PADDING / 2f, revealedBottom);
+        if (clipBottomY >= clipTop) {
+            return;
+        }
         int clipLeft = (int) Math.floor(viewport.left() * screenScale);
-        int clipBottom = (int) Math.floor((viewport.bottom() + PADDING / 2f) * screenScale);
+        int clipBottom = (int) Math.floor(clipBottomY * screenScale);
         int clipWidth = (int) Math.ceil(viewport.width() * screenScale);
-        int clipHeight = (int) Math.ceil((viewport.height() - PADDING) * screenScale);
+        int clipHeight = (int) Math.ceil((clipTop - clipBottomY) * screenScale);
         try (GlScope clip = GlScope.clip(clipLeft, clipBottom, clipWidth, clipHeight)) {
             layout.render(viewport.contentLeft(), contentTop, alphaMult, hovered);
         }

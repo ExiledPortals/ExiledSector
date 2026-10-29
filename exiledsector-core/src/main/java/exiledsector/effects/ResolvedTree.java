@@ -324,19 +324,20 @@ public final class ResolvedTree {
         Map<String, AppliedModifier> modifiers = new LinkedHashMap<>();
         Map<SkillEffect, List<EffectContribution>> pooledSources = new LinkedHashMap<>();
         for (EffectContribution contribution : totals.contributions()) {
-            if (!contribution.permanent()) {
+            if (contribution.gate() != null) {
                 continue;
             }
             if (contribution.vanillaHullModId() != null) {
                 modifiers.putIfAbsent(contribution.vanillaHullModId(), new AppliedModifier(contribution.vanillaHullModId(), null, List.of(contribution), false));
             }
+            boolean temporaryNode = contribution.vanillaHullModId() == null && !contribution.permanent();
             EffectModIds modIds = new EffectModIds(contribution.modIdPrefix());
             for (SkillTypeEffect effect : contribution.effects()) {
-                if (effect.effect().isMultiplicative()) {
-                    pooledSources.computeIfAbsent(effect.effect(), key -> new ArrayList<>()).add(contribution);
-                } else {
+                if (temporaryNode || !effect.effect().isMultiplicative()) {
                     String modId = modIds.next(effect.effect());
                     modifiers.put(modId, new AppliedModifier(modId, effect.effect(), List.of(contribution), false));
+                } else if (contribution.permanent()) {
+                    pooledSources.computeIfAbsent(effect.effect(), key -> new ArrayList<>()).add(contribution);
                 }
             }
         }
