@@ -23,6 +23,10 @@ public final class StarChart extends Item {
     public static final int HIGHEST_TIER = ItemTraits.HIGHEST_TIER;
     public static final int LOWEST_QUALITY = 0;
     public static final int HIGHEST_QUALITY = 20;
+    static final String LOW_TIER_ICON = "graphics/icons/star_charts/star_chart_white.png";
+    static final String HIGH_TIER_ICON = "graphics/icons/star_charts/star_chart_red.png";
+    private static final int LAST_LOW_TIER = 5;
+    private static final int FIRST_HIGH_TIER = 11;
 
     public static final ItemTypeSupport SUPPORT = new BasicItemTypeSupport(ItemType.STAR_CHART, StarChart.class, "exiledSector.StarChart",
             StarChart::new, StarChart::new) {
@@ -100,6 +104,18 @@ public final class StarChart extends Item {
     @Override
     public int tier() {
         return StarChartDefinitions.tierAtLeastMinimum(definitionId(), tier);
+    }
+
+    @Override
+    public String iconPath() {
+        int chartTier = tier();
+        if (chartTier <= LAST_LOW_TIER) {
+            return LOW_TIER_ICON;
+        }
+        if (chartTier >= FIRST_HIGH_TIER) {
+            return HIGH_TIER_ICON;
+        }
+        return super.iconPath();
     }
 
     public int quality() {

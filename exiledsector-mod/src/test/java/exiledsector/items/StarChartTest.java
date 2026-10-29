@@ -116,6 +116,17 @@ class StarChartTest {
     }
 
     @Test
+    void theIconIsWhiteUpToTierFiveYellowUpToTenAndRedAbove() {
+        String definitionIcon = ItemDefinitions.get(SINGLE).icon();
+        assertEquals(StarChart.LOW_TIER_ICON, StarChartFixtures.chart(SINGLE, 5L, 1).iconPath());
+        assertEquals(StarChart.LOW_TIER_ICON, StarChartFixtures.chart(SINGLE, 5L, 5).iconPath());
+        assertEquals(definitionIcon, StarChartFixtures.chart(SINGLE, 5L, 6).iconPath());
+        assertEquals(definitionIcon, StarChartFixtures.chart(SINGLE, 5L, 10).iconPath());
+        assertEquals(StarChart.HIGH_TIER_ICON, StarChartFixtures.chart(SINGLE, 5L, 11).iconPath());
+        assertEquals(StarChart.HIGH_TIER_ICON, StarChartFixtures.chart(SINGLE, 5L, 15).iconPath());
+    }
+
+    @Test
     void theTierSurvivesMirroringTransposingCorruptionAndRerolls() {
         ItemStore store = ItemStore.forStarCharts();
         Item chart = store.add(ItemData.rolledAtTier(ItemDefinitions.get(SINGLE), 11L, 9));
