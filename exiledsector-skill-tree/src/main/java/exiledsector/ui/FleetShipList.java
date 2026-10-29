@@ -106,6 +106,7 @@ final class FleetShipList extends BaseCustomUIPanelPlugin {
         TooltipMakerAPI card = rowPanel.createUIElement(cardWidth, cardHeight, false);
         card.addShipList(1, 1, cardWidth, CARD_BACKGROUND, List.of(member), 0f);
         clickTarget.showTooltip(ShipCardTooltip.takeFrom(card.getPrev(), member, hostPanel), () -> true);
+        ShipCardName.addTo(card, member, cardWidth);
         rowPanel.addUIElement(card).inTL(0f, 0f);
         rowPanel.addComponent(Global.getSettings().createCustom(cardWidth, cardHeight, clickTarget)).inTL(0f, 0f);
         return rowPanel;

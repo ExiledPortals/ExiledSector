@@ -7,6 +7,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Translation;
@@ -105,7 +106,9 @@ public class SkillTreeRefitButton extends FullScreenRefitButton {
 
         TooltipMakerAPI shipCard = contentPanel.createUIElement(SHIP_CARD_ICON_SIZE, SHIP_CARD_ICON_SIZE, false);
         shipCard.addShipList(1, 1, SHIP_CARD_ICON_SIZE, new Color(0, 0, 0, 0), Collections.singletonList(member), 0f);
-        float shipCardHeight = shipCard.getPrev().getPosition().getHeight();
+        UIComponentAPI shipList = shipCard.getPrev();
+        float shipCardHeight = shipList.getPosition().getHeight();
+        ShipCardName.addTo(shipCard, member, SHIP_CARD_ICON_SIZE);
 
         TooltipMakerAPI canvasElement = contentPanel.createUIElement(panelWidth, panelHeight, false);
         contentPanel.addUIElement(canvasElement);
@@ -130,7 +133,7 @@ public class SkillTreeRefitButton extends FullScreenRefitButton {
 
         float frameOutset = SkillTreeChrome.SHIP_CARD_FRAME_OUTSET;
         ShipCardClickTarget cardClickTarget = new ShipCardClickTarget(canvasPlugin::toggleShipList, canvasPlugin::shipListAvailable, false);
-        cardClickTarget.showTooltip(ShipCardTooltip.takeFrom(shipCard.getPrev(), member, contentPanel), canvasPlugin::shipListAvailable);
+        cardClickTarget.showTooltip(ShipCardTooltip.takeFrom(shipList, member, contentPanel), canvasPlugin::shipListAvailable);
         contentPanel.addComponent(Global.getSettings().createCustom(SHIP_CARD_ICON_SIZE + frameOutset * 2f,
                 shipCardHeight + frameOutset * 2f, cardClickTarget)).inBL(ChromeMetrics.EDGE_MARGIN - frameOutset,
                 ChromeMetrics.EDGE_MARGIN - frameOutset);
