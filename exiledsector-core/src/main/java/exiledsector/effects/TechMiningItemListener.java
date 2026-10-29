@@ -16,7 +16,7 @@ import exiledlib.i18n.Translation;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.ItemData;
-import exiledsector.items.RefitSchematic;
+import exiledsector.items.ShipCurrency;
 import exiledsector.loot.LootSources;
 import exiledsector.ui.CampaignMessages;
 
@@ -32,7 +32,7 @@ public class TechMiningItemListener implements EconomyTickListener {
     private static final String DECAY_SETTING = "techMiningDecay";
 
     public record Find(SectorAPI sector, MarketAPI market, int minedMonths, String dropSite, float chanceMult, Random random, List<ItemData> items,
-                       List<RefitSchematic> upgrades) {
+                       List<ShipCurrency> upgrades) {
     }
 
     @Override
@@ -80,7 +80,7 @@ public class TechMiningItemListener implements EconomyTickListener {
     }
 
     private static void deliver(MarketAPI minedMarket, List<ItemData> foundItems, Map<String, Integer> foundMaterials,
-                                List<RefitSchematic> foundUpgrades) {
+                                List<ShipCurrency> foundUpgrades) {
         if (foundItems.isEmpty() && foundMaterials.isEmpty() && foundUpgrades.isEmpty()) {
             return;
         }

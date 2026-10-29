@@ -16,6 +16,7 @@ import exiledsector.items.HullUpgradePoints;
 import exiledsector.items.HullUpgradeRules;
 import exiledsector.items.HullUpgradeTooltip;
 import exiledsector.items.HullUpgradesSetting;
+import exiledsector.items.MasterSchematic;
 import exiledsector.items.RefitSchematic;
 import exiledsector.items.ShipSection;
 import exiledsector.ui.SkillTreePanelStyle;
@@ -33,6 +34,8 @@ public final class HullUpgradePanel extends HoloPanel {
 
         void applySchematic(RefitSchematic schematic);
 
+        void applyMasterSchematic();
+
         void toggleSection(ShipSection section);
 
         void closed();
@@ -46,11 +49,14 @@ public final class HullUpgradePanel extends HoloPanel {
     public record SchematicEntry(RefitSchematic schematic, int inStorage, HullUpgradeRules.UpgradeBlock block) {
     }
 
+    public record MasterSchematicEntry(int inStorage, HullUpgradeRules.MasterSchematicBlock block) {
+    }
+
     public record ChartProgress(boolean chartsEnabled, int nextTier) {
     }
 
     public record View(int points, int unspentPoints, int maxPoints, List<SchematicEntry> schematics, ChartProgress chartProgress,
-                       List<SectionEntry> sections) {
+                       List<SectionEntry> sections, MasterSchematicEntry masterSchematic) {
     }
 
     public static final float WIDTH = ItemStoragePanel.WIDTH;
@@ -70,7 +76,7 @@ public final class HullUpgradePanel extends HoloPanel {
     private static final float CONFIRM_HEIGHT = 170f;
     private static final float POINTS_LINE_HEIGHT = 30f;
 
-    private enum Control {CLOSE, CONFIRM_INSTALL, CANCEL_INSTALL}
+    private enum Control {CLOSE, CONFIRM_INSTALL, CANCEL_INSTALL, CONFIRM_MASTER_SCHEMATIC}
 
     record TileSizes(int sectionColumns, float columnWidth, float sectionTile) {
     }
@@ -163,6 +169,9 @@ public final class HullUpgradePanel extends HoloPanel {
                 if (confirmed != null) {
                     panelListener.applySchematic(confirmed);
                 }
+            } else if (id == Control.CONFIRM_MASTER_SCHEMATIC) {
+                closeConfirm();
+                panelListener.applyMasterSchematic();
             } else if (id == Control.CANCEL_INSTALL) {
                 closeConfirm();
             }
@@ -189,6 +198,16 @@ public final class HullUpgradePanel extends HoloPanel {
         confirmingSchematic = schematic;
     }
 
+    private void openMasterSchematicConfirm(MasterSchematicEntry entry) {
+        openConfirm(CONFIRM_HEIGHT, element -> {
+            VanillaText.plainPara(element, Translation.msg("framework.confirm.title").arg("name", MasterSchematic.INSTANCE.displayName()).text(), 0f,
+                    MasterSchematic.COLOR);
+            VanillaText.plainPara(element, Translation.msg("masterSchematic.confirm.body").arg("left", entry.inStorage() - 1).text(),
+                    LINE_PAD * 2f, Misc.getTextColor());
+        }, "framework.confirm.install", Control.CONFIRM_MASTER_SCHEMATIC, "framework.confirm.cancel", Control.CANCEL_INSTALL);
+        confirmingSchematic = null;
+    }
+
     private void rebuildList() {
         hoverTooltip.hide();
         closeConfirm();
@@ -197,7 +216,12 @@ public final class HullUpgradePanel extends HoloPanel {
         float listHeight = panelHeight - listTop - PAD;
         TooltipMakerAPI element = panelRoot.createUIElement(listWidth, listHeight, true);
         float gridWidth = listWidth - SCROLLBAR_ROOM;
-        element.addSectionHeading(Translation.text("framework.panel.upgrades"), Alignment.MID, 0f);
+        boolean masterSchematicShown = view.masterSchematic() != null;
+        if (masterSchematicShown) {
+            element.addSectionHeading(Translation.text("masterSchematic.panel.heading"), Alignment.MID, 0f);
+            element.addCustom(masterSchematicRow(view.masterSchematic(), gridWidth), GAP * 2f);
+        }
+        element.addSectionHeading(Translation.text("framework.panel.upgrades"), Alignment.MID, masterSchematicShown ? GAP * 3f : 0f);
         boolean schematicsShown = view.chartProgress() == null;
         element.addCustom(schematicsShown ? schematicRow(gridWidth) : chartProgressRow(gridWidth), GAP * 2f);
         String hint = (schematicsShown ? Translation.msg("framework.panel.hint") : Translation.msg("framework.panel.hintCharts"))
@@ -271,6 +295,48 @@ public final class HullUpgradePanel extends HoloPanel {
                 blocked ? BLOCKED_TEXT_COLOR : schematic.color(), Alignment.MID, cellWidth, 0f, STATE_HEIGHT);
         cellPanel.addUIElement(labelElement).inTL(0f, tileSize);
         return cellPanel;
+    }
+
+    private CustomPanelAPI masterSchematicRow(MasterSchematicEntry entry, float gridWidth) {
+        boolean blocked = entry.block() != null;
+        float tileSize = UPGRADE_TILE_SIZE;
+        float cellWidth = tileSize + GAP * 4f;
+        CustomPanelAPI rowPanel = Global.getSettings().createCustom(gridWidth, tileSize + STATE_HEIGHT, null);
+        CustomPanelAPI cellPanel = Global.getSettings().createCustom(cellWidth, tileSize + STATE_HEIGHT, null);
+        IconTileCell.Hooks hooks = new IconTileCell.Hooks(() -> queue(() -> openMasterSchematicConfirm(entry)),
+                tilePosition -> queue(() -> showMasterSchematicTooltip(entry, tilePosition)), () -> queue(() -> hideTooltipOf(entry)));
+        cellPanel.addComponent(Global.getSettings().createCustom(tileSize, tileSize,
+                new IconTileCell(MasterSchematic.ICON_PATH, MasterSchematic.COLOR, blocked, hooks))).inTL((cellWidth - tileSize) / 2f, 0f);
+        TooltipMakerAPI labelElement = cellPanel.createUIElement(cellWidth, STATE_HEIGHT, false);
+        addLabel(labelElement, Translation.msg("framework.panel.inStorage").arg("count", entry.inStorage()).text(),
+                blocked ? BLOCKED_TEXT_COLOR : MasterSchematic.COLOR, Alignment.MID, cellWidth, 0f, STATE_HEIGHT);
+        cellPanel.addUIElement(labelElement).inTL(0f, tileSize);
+        rowPanel.addComponent(cellPanel).inTL(0f, 0f);
+        float textLeft = cellWidth + GAP * 2f;
+        TooltipMakerAPI textElement = rowPanel.createUIElement(gridWidth - textLeft, tileSize, false);
+        VanillaText.plainPara(textElement, Translation.text("masterSchematic.panel.locked"), 0f, Misc.getTextColor());
+        rowPanel.addUIElement(textElement).inTL(textLeft, 0f);
+        return rowPanel;
+    }
+
+    private String masterSchematicStateText(MasterSchematicEntry entry) {
+        HullUpgradeRules.MasterSchematicBlock block = entry.block();
+        if (block == null) {
+            return Translation.text("masterSchematic.panel.ready");
+        }
+        return switch (block) {
+            case NOT_REQUIRED -> Translation.text("masterSchematic.tooltip.notRequired");
+            case ALREADY_UNLOCKED -> Translation.text("masterSchematic.panel.already");
+            case NONE_IN_STORAGE -> Translation.text("masterSchematic.panel.none");
+        };
+    }
+
+    private void showMasterSchematicTooltip(MasterSchematicEntry entry, PositionAPI tilePosition) {
+        if (isConfirmOpen()) {
+            return;
+        }
+        hoverTooltip.show(entry, TOOLTIP_WIDTH, (tooltip, expanded) -> HullUpgradeTooltip.writeMasterSchematic(tooltip,
+                () -> List.of(StyledText.of(masterSchematicStateText(entry)))), tilePosition);
     }
 
     private CustomPanelAPI chartProgressRow(float gridWidth) {

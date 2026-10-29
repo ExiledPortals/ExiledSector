@@ -13,7 +13,7 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BooleanSupplier;
 
-public enum RefitSchematic {
+public enum RefitSchematic implements ShipCurrency {
 
     SCRAPPED(2, 60f, new Color(170, 170, 170)),
     STANDARD(3, 28f, ItemRarity.COMMON.color()),
@@ -115,6 +115,7 @@ public enum RefitSchematic {
         return name();
     }
 
+    @Override
     public SpecialItemData toSpecialItem() {
         return new SpecialItemData(ITEM_ID, encode());
     }
@@ -123,6 +124,7 @@ public enum RefitSchematic {
         return ICON_FOLDER + key() + ".png";
     }
 
+    @Override
     public String displayName() {
         return switch (this) {
             case SCRAPPED -> Translation.text("schematic.scrapped.name");

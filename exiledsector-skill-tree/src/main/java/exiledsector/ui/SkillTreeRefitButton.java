@@ -7,6 +7,11 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
+import com.fs.starfarer.api.util.Misc;
+import exiledlib.i18n.I18n;
+import exiledlib.i18n.Translation;
+import exiledsector.items.MasterSchematic;
+import exiledsector.skills.SkillDataResolver;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.ui.hyperspace.HyperspaceCamera;
 import exiledsector.ui.refit.RefitButtonColumn;
@@ -25,6 +30,7 @@ public class SkillTreeRefitButton extends FullScreenRefitButton {
     public static final RefitButtonColumn.ButtonSpec COLUMN_BUTTON = new RefitButtonColumn.ButtonSpec("exiledSector_skillTreeButton",
             "ui.refitButton", () -> Keyboard.KEY_K, RefitButtonConfig::buttonUnderHullMods, () -> openPanel(null));
     static final float SHIP_CARD_ICON_SIZE = 128f;
+    private static final String LOCKED_SOUND = "ui_button_disabled_pressed";
 
     public static void addButton() {
         LunaRefitManager.addRefitButton(new SkillTreeRefitButton());
@@ -32,6 +38,11 @@ public class SkillTreeRefitButton extends FullScreenRefitButton {
 
     public static boolean openPanel(InputEventAPI event) {
         if (!SkillTreeSetting.enabled()) {
+            return false;
+        }
+        RefitButtonAdder adder = RefitPanelLauncher.refitButtonAdder();
+        if (adder != null && adder.getMember() != null && !treeOpen(adder.getMember(), adder.getVariant())) {
+            SkillTreeSounds.play(LOCKED_SOUND);
             return false;
         }
         return RefitPanelLauncher.open(SkillTreeRefitButton.class, event, context -> {
@@ -53,6 +64,25 @@ public class SkillTreeRefitButton extends FullScreenRefitButton {
     @Override
     protected boolean enabled() {
         return SkillTreeSetting.enabled();
+    }
+
+    @Override
+    public boolean isClickable(FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
+        return treeOpen(member, variant);
+    }
+
+    @Override
+    public boolean hasTooltip(FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
+        return !treeOpen(member, variant);
+    }
+
+    @Override
+    public void addTooltip(TooltipMakerAPI tooltip, FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
+        I18n.forGameText(() -> VanillaText.plainPara(tooltip, Translation.text("masterSchematic.button.locked"), 0f, Misc.getNegativeHighlightColor()));
+    }
+
+    static boolean treeOpen(FleetMemberAPI member, ShipVariantAPI variant) {
+        return !MasterSchematic.required() || member == null || MasterSchematic.treeOpen(SkillDataResolver.resolve(member, variant));
     }
 
     @Override

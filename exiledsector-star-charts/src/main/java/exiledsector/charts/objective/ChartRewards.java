@@ -90,6 +90,7 @@ public final class ChartRewards {
             }
             sectionLoot.upgrades().forEach(upgrade -> cargo.addSpecial(upgrade.toSpecialItem(), 1f));
         }
+        ItemDrops.rollMasterSchematic(REWARD_SITE, random, chanceMult).forEach(schematic -> cargo.addSpecial(schematic.toSpecialItem(), 1f));
         ChartDrops.Loot chartLoot = grantChartDrops(sector, run, cargo, random, rewardMult);
         int materialCount = materials.values().stream().mapToInt(Integer::intValue).sum();
         int chartMaterialCount = chartLoot.materials().values().stream().mapToInt(Integer::intValue).sum();

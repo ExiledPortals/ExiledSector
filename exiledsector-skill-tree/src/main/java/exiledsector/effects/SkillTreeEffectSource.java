@@ -4,9 +4,11 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.items.DoctrineLayer;
 import exiledsector.items.DoctrineOverrides;
 import exiledsector.items.EmptyShells;
 import exiledsector.items.GatedSubroutines;
+import exiledsector.items.MasterSchematic;
 import exiledsector.items.RadiusLineOrigin;
 import exiledsector.items.SubroutineOrigin;
 import exiledsector.skills.AllocatedNode;
@@ -41,6 +43,9 @@ public final class SkillTreeEffectSource implements ShipEffectSource {
     public record NodeEffects(AllocatedNode node, List<SkillTypeEffect> effects) {
     }
 
+    private record CacheKey(DoctrineLayer doctrineLayer, boolean treeOpen) {
+    }
+
     private SkillTreeEffectSource() {
     }
 
@@ -51,11 +56,14 @@ public final class SkillTreeEffectSource implements ShipEffectSource {
 
     @Override
     public Object cacheKey(ShipEffectContext context) {
-        return DoctrineOverrides.layer(context.shipData());
+        return new CacheKey(DoctrineOverrides.layer(context.shipData()), MasterSchematic.treeOpen(context.shipData()));
     }
 
     @Override
     public List<EffectContribution> contributions(ShipEffectContext context) {
+        if (!MasterSchematic.treeOpen(context.shipData())) {
+            return List.of();
+        }
         return contributions(context.shipData(), context.hullSize());
     }
 

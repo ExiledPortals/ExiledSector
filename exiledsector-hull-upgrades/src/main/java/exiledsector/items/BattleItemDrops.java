@@ -35,6 +35,7 @@ public final class BattleItemDrops {
         MODS_1("mods_1", 1, false),
         MODS_2("mods_2", 2, false),
         REFIT_SCHEMATIC("refit_schematic", 0, false),
+        MASTER_SCHEMATIC("master_schematic", 0, false),
         MODS_3("mods_3", 3, true),
         MODS_4("mods_4", 4, true),
         UNIQUE("unique", 0, true);
@@ -135,16 +136,22 @@ public final class BattleItemDrops {
     }
 
     public static ItemDrops.SectionItemLoot roll(Battle battle, float dropMultiplier, Random random, Predicate<ItemDefinition> uniqueAllowed) {
+        return roll(battle, dropMultiplier, random, uniqueAllowed, true);
+    }
+
+    public static ItemDrops.SectionItemLoot roll(Battle battle, float dropMultiplier, Random random, Predicate<ItemDefinition> uniqueAllowed,
+                                                 boolean sectionsOpen) {
         if (battle == null || battle.isEmpty() || !(dropMultiplier > 0f)) {
             return ItemDrops.SectionItemLoot.NONE;
         }
         List<ItemData> items = new ArrayList<>();
-        List<RefitSchematic> upgrades = new ArrayList<>();
-        for (Planned planned : plan(battle.sources(), dropMultiplier, ItemDrops.sectionKindsWithBasics(), random)) {
+        List<ShipCurrency> upgrades = new ArrayList<>();
+        List<ItemKind> kindsWithBasics = sectionsOpen ? ItemDrops.sectionKindsWithBasics() : List.of();
+        for (Planned planned : plan(battle.sources(), dropMultiplier, kindsWithBasics, random, sectionsOpen)) {
             if (planned.drop() == Drop.REFIT_SCHEMATIC) {
-                if (RefitSchematic.dropsAllowed()) {
-                    upgrades.add(RefitSchematic.roll(random));
-                }
+                upgrades.add(RefitSchematic.roll(random));
+            } else if (planned.drop() == Drop.MASTER_SCHEMATIC) {
+                upgrades.add(MasterSchematic.INSTANCE);
             } else if (planned.drop() == Drop.UNIQUE) {
                 ItemDefinition definition = ItemDrops.pickUniqueFromFaction(battle.uniqueFactionId(), random,
                         candidate -> candidate.type() == ItemType.HULL_ITEM && uniqueAllowed.test(candidate));
@@ -165,9 +172,14 @@ public final class BattleItemDrops {
     }
 
     static List<Planned> plan(List<SourcePower> sources, float dropMultiplier, List<ItemKind> kindsWithBasics, Random random) {
+        return plan(sources, dropMultiplier, kindsWithBasics, random, true);
+    }
+
+    static List<Planned> plan(List<SourcePower> sources, float dropMultiplier, List<ItemKind> kindsWithBasics, Random random,
+                              boolean sectionsOpen) {
         List<Planned> planned = new ArrayList<>();
         for (Drop drop : Drop.values()) {
-            if (drop == Drop.REFIT_SCHEMATIC && !RefitSchematic.dropsAllowed()) {
+            if (!allowed(drop, sectionsOpen)) {
                 continue;
             }
             float expected = 0f;
@@ -189,6 +201,14 @@ public final class BattleItemDrops {
             }
         }
         return capped(planned);
+    }
+
+    static boolean allowed(Drop drop, boolean sectionsOpen) {
+        return switch (drop) {
+            case MASTER_SCHEMATIC -> MasterSchematic.required();
+            case REFIT_SCHEMATIC -> sectionsOpen && RefitSchematic.dropsAllowed();
+            default -> sectionsOpen;
+        };
     }
 
     private static float expected(SourcePower source, Drop drop, float dropMultiplier) {

@@ -12,6 +12,8 @@ public final class HullUpgradeRules {
 
     public enum UpgradeBlock {STAR_CHART_PROGRESS, AT_MAX_POINTS, WRONG_TIER, NONE_IN_STORAGE}
 
+    public enum MasterSchematicBlock {NOT_REQUIRED, ALREADY_UNLOCKED, NONE_IN_STORAGE}
+
     private HullUpgradeRules() {
     }
 
@@ -34,6 +36,25 @@ public final class HullUpgradeRules {
             return false;
         }
         shipData.setStoredHullUpgradePoints(schematic.points());
+        return true;
+    }
+
+    public static MasterSchematicBlock masterSchematicBlock(ShipSkillData shipData, int schematicsInStorage) {
+        if (!MasterSchematic.required()) {
+            return MasterSchematicBlock.NOT_REQUIRED;
+        }
+        if (shipData.isMasterSchematicd()) {
+            return MasterSchematicBlock.ALREADY_UNLOCKED;
+        }
+        return schematicsInStorage <= 0 ? MasterSchematicBlock.NONE_IN_STORAGE : null;
+    }
+
+    public static boolean applyMasterSchematic(ShipSkillData shipData, ItemStore store) {
+        if (masterSchematicBlock(shipData, store.masterSchematicCount()) != null || !store.takeMasterSchematic()) {
+            return false;
+        }
+        shipData.unlockSkillTree();
+        MasterSchematic.changed();
         return true;
     }
 

@@ -2,6 +2,7 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledlib.MockSector;
+import exiledsector.items.MasterSchematic;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
@@ -37,6 +38,7 @@ class PlayerTreePowerTest {
 
     @AfterEach
     void tearDown() {
+        MasterSchematic.requiredWhen(null);
         mockSector.close();
         lunaSettingsMock.close();
     }
@@ -95,6 +97,26 @@ class PlayerTreePowerTest {
         when(freighter.isCivilian()).thenReturn(true);
 
         assertEquals(List.of(12), PlayerTreePower.of(List.of(freighter), 12));
+    }
+
+    @Test
+    void whileMasterSchematicsAreRequiredALockedShipCountsAsNoTreeWhateverItsLevel() {
+        MasterSchematic.requiredWhen(() -> true);
+        levelled("locked", 40);
+        levelled("unlocked", 20).unlockSkillTree();
+
+        assertEquals(0, PlayerTreePower.shipPower(ShipSkillDataManager.find("locked"), 15, 1));
+        assertEquals(0, PlayerTreePower.shipPower(null, 15, 1));
+        assertEquals(List.of(0, 20), PlayerTreePower.of(List.of(member("locked"), member("unlocked")), 15));
+    }
+
+    @Test
+    void whileMasterSchematicsAreRequiredAFleetWithNoCombatShipsCountsAsNoTree() {
+        MasterSchematic.requiredWhen(() -> true);
+        FleetMemberAPI freighter = member("freighter");
+        when(freighter.isCivilian()).thenReturn(true);
+
+        assertEquals(List.of(0), PlayerTreePower.of(List.of(freighter), 12));
     }
 
     @Test

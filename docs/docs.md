@@ -490,6 +490,19 @@ schematic only applies to a ship with exactly one point fewer than its tier (Scr
 every ship has 1, plus one each once the highest cleared chart tier reaches 5, 10 and 15, schematics stop
 dropping, and stored points are kept for switching back. Switching never locks an unlocked section.
 
+## Master Schematics
+
+With the LunaLib setting "Require Master Schematics" on (and Hull Upgrades on), a player ship's tree stays shut until a
+Master Schematic is used on it on the Hull Upgrades panel (`HullUpgradeRules.applyMasterSchematic`, flag
+`ShipSkillData.skillTreeUnlocked`). `MasterSchematic.treeOpen` gates the tree's effects, phantom hull mods and the OP
+reserve. A locked ship keeps earning XP. Switching the setting on unlocks every ship with a node besides its root, and a
+save with no unlocked ship gets one Master Schematic once (`MasterSchematicActivation`). They drop from battles, salvage,
+Tech Mining and chart clears.
+
+A locked ship counts as 0 tree power in `PlayerTreePower`, and an open-world NPC ship that rolls 0 nodes gets no tree, so
+the share of NPC ships with trees follows the share of unlocked player ships. Chart ships are levelled only at their tier's
+`tree_share` in `star_chart_tiers.csv` (bosses always). A captured NPC ship keeps its tree but arrives locked.
+
 ## Socketed item scaling
 
 A contribution whose origin is a `SocketedItem` belongs to a socketed item of one category, hull item or subroutine.

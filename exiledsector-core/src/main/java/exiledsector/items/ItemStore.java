@@ -35,13 +35,14 @@ public final class ItemStore {
     private long nextId = 1;
     private Map<String, Integer> hullUpgrades;
     private Map<String, Integer> refitSchematics;
+    private int masterSchematics;
     private boolean holdsStarCharts;
     // XStream skips transient fields, so this lookup index is rebuilt after loading instead of being written into saves
     @SuppressWarnings("java:S2065")
     private transient Map<String, Item> byId;
     // java:S2065: XStream skips transient fields, so this change counter restarts after loading instead of being written into saves
     @SuppressWarnings("java:S2065")
-    private transient int schematicRevision;
+    private transient int shipCurrencyRevision;
 
     public ItemStore() {
     }
@@ -186,8 +187,8 @@ public final class ItemStore {
         return refitSchematics == null || schematic == null ? 0 : refitSchematics.getOrDefault(schematic.name(), 0);
     }
 
-    public int schematicRevision() {
-        return schematicRevision;
+    public int shipCurrencyRevision() {
+        return shipCurrencyRevision;
     }
 
     public Map<RefitSchematic, Integer> schematicCounts() {
@@ -209,7 +210,7 @@ public final class ItemStore {
             refitSchematics = new LinkedHashMap<>();
         }
         refitSchematics.merge(schematic.name(), count, Integer::sum);
-        schematicRevision++;
+        shipCurrencyRevision++;
     }
 
     public boolean takeSchematic(RefitSchematic schematic) {
@@ -222,7 +223,28 @@ public final class ItemStore {
         } else {
             refitSchematics.put(schematic.name(), count - 1);
         }
-        schematicRevision++;
+        shipCurrencyRevision++;
+        return true;
+    }
+
+    public int masterSchematicCount() {
+        return masterSchematics;
+    }
+
+    public void addMasterSchematics(int count) {
+        if (count <= 0) {
+            return;
+        }
+        masterSchematics += count;
+        shipCurrencyRevision++;
+    }
+
+    public boolean takeMasterSchematic() {
+        if (masterSchematics <= 0) {
+            return false;
+        }
+        masterSchematics--;
+        shipCurrencyRevision++;
         return true;
     }
 

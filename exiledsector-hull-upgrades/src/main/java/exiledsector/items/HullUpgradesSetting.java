@@ -4,7 +4,6 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import exiledlib.ModSettings;
 import exiledsector.domain.DomainSwitch;
-import exiledsector.effects.PlayerFleetStats;
 
 import java.util.List;
 
@@ -20,12 +19,15 @@ public final class HullUpgradesSetting {
     public static final String REFIT_SCHEMATICS = "Refit Schematics";
     public static final String STAR_CHART_PROGRESS = "Star Chart Progress";
     public static final List<String> POINTS_OPTIONS = List.of(REFIT_SCHEMATICS, STAR_CHART_PROGRESS);
+    public static final String MASTER_SCHEMATICS_FIELD_ID = "exiledSector_masterSchematicsRequired";
+    public static final boolean DEFAULT_MASTER_SCHEMATICS_REQUIRED = false;
 
     public enum PointsMode {REFIT_SCHEMATICS, STAR_CHART_PROGRESS}
 
-    public static final DomainSwitch SWITCH = new DomainSwitch(ENABLED_FIELD_ID, DEFAULT_ENABLED, PlayerFleetStats::markForStatUpdate);
+    public static final DomainSwitch SWITCH = new DomainSwitch(ENABLED_FIELD_ID, DEFAULT_ENABLED, MasterSchematicActivation::settingChanged);
     private static volatile int unlockLevelSetting = DEFAULT_UNLOCK_LEVEL;
     private static volatile PointsMode pointsModeSetting = PointsMode.REFIT_SCHEMATICS;
+    private static volatile boolean masterSchematicsRequiredSetting = DEFAULT_MASTER_SCHEMATICS_REQUIRED;
 
     private HullUpgradesSetting() {
     }
@@ -37,11 +39,21 @@ public final class HullUpgradesSetting {
             pointsModeSetting = pointsMode;
             HullUpgradePoints.markChanged();
         }
+        boolean masterSchematicsRequired = ModSettings.booleanOr(MASTER_SCHEMATICS_FIELD_ID, DEFAULT_MASTER_SCHEMATICS_REQUIRED);
+        boolean masterSchematicsChanged = masterSchematicsRequired != masterSchematicsRequiredSetting;
+        masterSchematicsRequiredSetting = masterSchematicsRequired;
         SWITCH.reload();
+        if (masterSchematicsChanged) {
+            MasterSchematicActivation.settingChanged();
+        }
     }
 
     public static boolean enabled() {
         return SWITCH.on();
+    }
+
+    public static boolean masterSchematicsRequired() {
+        return enabled() && masterSchematicsRequiredSetting;
     }
 
     public static PointsMode pointsMode() {
@@ -77,6 +89,10 @@ public final class HullUpgradesSetting {
 
     public static void setEnabledForTests(boolean enabled) {
         SWITCH.setForTests(enabled);
+    }
+
+    public static void setMasterSchematicsRequiredForTests(boolean masterSchematicsRequired) {
+        masterSchematicsRequiredSetting = masterSchematicsRequired;
     }
 
     public static void setUnlockLevelForTests(int unlockLevel) {

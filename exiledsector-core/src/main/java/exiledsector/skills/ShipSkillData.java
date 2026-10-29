@@ -27,6 +27,7 @@ public class ShipSkillData {
     Map<String, Float> chargedItemQuantities;
     Set<String> dormantNodeIds;
     int frameworkPoints;
+    boolean skillTreeUnlocked;
     List<String> unlockedSocketTypes;
     Map<String, String> frameworkItemsBySocketType;
     boolean autoAllocateTemplate;
@@ -102,6 +103,19 @@ public class ShipSkillData {
     public void setStoredHullUpgradePoints(int storedPoints) {
         revision++;
         frameworkPoints = Math.max(0, storedPoints);
+    }
+
+    public boolean isMasterSchematicd() {
+        return skillTreeUnlocked;
+    }
+
+    public boolean unlockSkillTree() {
+        if (skillTreeUnlocked) {
+            return false;
+        }
+        revision++;
+        skillTreeUnlocked = true;
+        return true;
     }
 
     public List<String> getUnlockedSocketTypeIds() {
@@ -284,7 +298,7 @@ public class ShipSkillData {
 
     public boolean isBlank() {
         return allocatedNodeIds.isEmpty() && getDormantNodeIds().isEmpty() && level == 0 && xp == 0f && bankedFreeAllocations == 0 && frameworkPoints == 0
-                && (unlockedSocketTypes == null || unlockedSocketTypes.isEmpty())
+                && !skillTreeUnlocked && (unlockedSocketTypes == null || unlockedSocketTypes.isEmpty())
                 && (frameworkItemsBySocketType == null || frameworkItemsBySocketType.isEmpty());
     }
 

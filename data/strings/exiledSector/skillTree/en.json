@@ -198,6 +198,7 @@
     "ui.template.result.none": "No template nodes could be allocated.",
     "ui.template.result.saved": "Saved template {name}.",
     "ui.refitButton": "Skill Tree",
+    "masterSchematic.button.locked": "Needs a Master Schematic. Use one on the Hull Upgrades panel.",
     "ui.node.lockedTitle": "Unidentified",
     "ui.node.lockedBody": "Unidentified - explore the sector to discover this node",
     "ui.node.lockedHint": "Hullmod blueprints would be a good place to start searching.",

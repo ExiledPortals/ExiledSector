@@ -42,11 +42,13 @@ class BattleItemDropsTest {
                 .put(rateRow("mods_3", "0.15"))
                 .put(rateRow("mods_4", "0.04"))
                 .put(rateRow("unique", "0.015"))
-                .put(rateRow("refit_schematic", "0.1")));
+                .put(rateRow("refit_schematic", "0.1"))
+                .put(rateRow("master_schematic", "0.1")));
     }
 
     @AfterEach
     void tearDown() {
+        MasterSchematic.requiredWhen(null);
         BattleItemDrops.clear();
         ItemDefinitions.clear();
     }
@@ -248,13 +250,39 @@ class BattleItemDropsTest {
         assertFalse(schematicTiersDropped(200).isEmpty());
     }
 
+    @Test
+    void schematicsOnlyDropWhileTheyAreRequired() {
+        List<BattleItemDrops.SourcePower> battle = List.of(new BattleItemDrops.SourcePower(1000f, ItemChances.BASE));
+
+        assertNull(counts(BattleItemDrops.plan(battle, 1f, List.of(), neverLucky())).get(BattleItemDrops.Drop.MASTER_SCHEMATIC));
+
+        MasterSchematic.requiredWhen(() -> true);
+        assertEquals(1, counts(BattleItemDrops.plan(battle, 1f, List.of(), neverLucky())).get(BattleItemDrops.Drop.MASTER_SCHEMATIC));
+    }
+
+    @Test
+    void beforeSectionsOpenABattleDropsMasterSchematicsAndNothingElse() {
+        MasterSchematic.requiredWhen(() -> true);
+        List<BattleItemDrops.SourcePower> battle = List.of(new BattleItemDrops.SourcePower(1000f, ItemChances.BASE));
+
+        Map<BattleItemDrops.Drop, Integer> closed = counts(BattleItemDrops.plan(battle, 1f, List.of(), neverLucky(), false));
+
+        assertEquals(Map.of(BattleItemDrops.Drop.MASTER_SCHEMATIC, 1), closed);
+        ItemDrops.SectionItemLoot loot = BattleItemDrops.roll(new BattleItemDrops.Battle(battle, null), 1f, neverLucky(),
+                definition -> true, false);
+        assertEquals(List.of(MasterSchematic.INSTANCE), loot.upgrades());
+        assertTrue(loot.items().isEmpty());
+    }
+
     private static Map<RefitSchematic, Integer> schematicTiersDropped(int battles) {
         BattleItemDrops.Battle battle = new BattleItemDrops.Battle(List.of(new BattleItemDrops.SourcePower(2000f, ItemChances.BASE)), null);
         Random random = new Random(5L);
         Map<RefitSchematic, Integer> tierCounts = new EnumMap<>(RefitSchematic.class);
         for (int trial = 0; trial < battles; trial++) {
-            for (RefitSchematic schematic : BattleItemDrops.roll(battle, 1f, random, definition -> true).upgrades()) {
-                tierCounts.merge(schematic, 1, Integer::sum);
+            for (ShipCurrency upgrade : BattleItemDrops.roll(battle, 1f, random, definition -> true).upgrades()) {
+                if (upgrade instanceof RefitSchematic schematic) {
+                    tierCounts.merge(schematic, 1, Integer::sum);
+                }
             }
         }
         return tierCounts;

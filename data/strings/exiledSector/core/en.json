@@ -4,6 +4,7 @@
     "schematic.standard.name": "Standard Refit Schematic",
     "schematic.military.name": "Military Refit Schematic",
     "schematic.domain.name": "Domain Refit Schematic",
+    "masterSchematic.name": "Master Schematic",
     "ui.socketStorage.frameworkTargetHint": "Click a {type} hull item to install it in the selected section.",
     "ui.socketStorage.emptyType": "You have no {type} items in storage.",
     "socketable.tooltip.storage": "Opening Hull Item Storage from a ship's skill tree, or installing this, moves it from your cargo into hull item storage.",

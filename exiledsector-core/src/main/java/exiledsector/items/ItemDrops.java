@@ -209,7 +209,7 @@ public final class ItemDrops {
         return definition.type() == ItemType.SUBROUTINE && !definition.unique() && isDroppable(definition);
     }
 
-    public record SectionItemLoot(List<ItemData> items, List<RefitSchematic> upgrades) {
+    public record SectionItemLoot(List<ItemData> items, List<ShipCurrency> upgrades) {
 
         public static final SectionItemLoot NONE = new SectionItemLoot(List.of(), List.of());
 
@@ -223,7 +223,7 @@ public final class ItemDrops {
         }
     }
 
-    public record SiteLoot(List<ItemData> items, List<RefitSchematic> upgrades, Map<String, Integer> materials) {
+    public record SiteLoot(List<ItemData> items, List<ShipCurrency> upgrades, Map<String, Integer> materials) {
 
         public static final SiteLoot NONE = new SiteLoot(List.of(), List.of(), Map.of());
 
@@ -237,13 +237,13 @@ public final class ItemDrops {
             return items.isEmpty() && upgrades.isEmpty() && materials.isEmpty();
         }
 
-        public SiteLoot plus(List<ItemData> moreItems, List<RefitSchematic> moreUpgrades, Map<String, Integer> moreMaterials) {
+        public SiteLoot plus(List<ItemData> moreItems, List<ShipCurrency> moreUpgrades, Map<String, Integer> moreMaterials) {
             if (moreItems.isEmpty() && moreUpgrades.isEmpty() && moreMaterials.isEmpty()) {
                 return this;
             }
             List<ItemData> allItems = new ArrayList<>(items);
             allItems.addAll(moreItems);
-            List<RefitSchematic> allUpgrades = new ArrayList<>(upgrades);
+            List<ShipCurrency> allUpgrades = new ArrayList<>(upgrades);
             allUpgrades.addAll(moreUpgrades);
             Map<String, Integer> allMaterials = new LinkedHashMap<>(materials);
             moreMaterials.forEach((itemId, quantity) -> allMaterials.merge(itemId, quantity, Integer::sum));
@@ -259,18 +259,24 @@ public final class ItemDrops {
                                     boolean sectionsOpen) {
         List<ItemData> droppedItems = new ArrayList<>(roll(siteId, random, chances));
         Map<String, Integer> droppedMaterials = rollMaterials(siteId, random, feedstockMult, currencyMult);
-        List<RefitSchematic> droppedUpgrades = new ArrayList<>();
+        List<ShipCurrency> droppedUpgrades = new ArrayList<>();
         if (sectionsOpen) {
             SectionItemLoot sectionItemLoot = rollSectionItemLoot(siteId, random, chances);
             droppedItems.addAll(sectionItemLoot.items());
             droppedUpgrades.addAll(sectionItemLoot.upgrades());
         }
+        droppedUpgrades.addAll(rollMasterSchematic(siteId, random, chances.general()));
         return new SiteLoot(droppedItems, droppedUpgrades, droppedMaterials);
     }
 
     public static SiteLoot rollFleetSalvage(String siteId, Random random, ItemChances chances, float feedstockMult, float currencyMult) {
         List<ItemData> droppedItems = rollItems(siteId, random, chances, definition -> false, false);
         return new SiteLoot(droppedItems, List.of(), rollMaterials(siteId, random, feedstockMult, currencyMult));
+    }
+
+    public static List<ShipCurrency> rollMasterSchematic(String siteId, Random random, float chanceMult) {
+        Rule rule = activeRule(siteId);
+        return rule == null || rule.chances().isEmpty() ? List.of() : MasterSchematic.rollSalvage(rule.chances().get(0) * chanceMult, random);
     }
 
     public static SectionItemLoot rollSectionItemLoot(String siteId, Random random, float chanceMult) {
@@ -283,7 +289,7 @@ public final class ItemDrops {
             return SectionItemLoot.NONE;
         }
         List<ItemData> droppedItems = rollCascade(rule, random, chances.general(), chances.rarity(), ItemDrops::pickSectionItemBasic);
-        List<RefitSchematic> droppedUpgrades = new ArrayList<>();
+        List<ShipCurrency> droppedUpgrades = new ArrayList<>();
         if (random.nextFloat() < rule.chances().get(0) * chances.general() && RefitSchematic.dropsAllowed()) {
             droppedUpgrades.add(RefitSchematic.roll(random));
         }

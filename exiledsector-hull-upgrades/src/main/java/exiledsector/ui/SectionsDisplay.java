@@ -12,6 +12,7 @@ import exiledlib.i18n.Translation;
 import exiledlib.skills.skilleffect.render.Fade;
 import exiledsector.items.HullItem;
 import exiledsector.items.HullUpgradePoints;
+import exiledsector.items.HullUpgradeRules;
 import exiledsector.items.HullUpgradeTooltip;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
@@ -71,6 +72,7 @@ final class SectionsDisplay {
     private ItemStore upgradeStore;
     private int shownSchematicRevision = Integer.MIN_VALUE;
     private Map<RefitSchematic, Integer> shownSchematicCounts = Map.of();
+    private int shownMasterSchematicCount;
     private List<ShipSections.UnlockedSection> unlockedSections = List.of();
     private List<SectionLayout.Placement> placements = List.of();
     private int renderedSections;
@@ -95,7 +97,7 @@ final class SectionsDisplay {
         int revision = sectionEditor.revision();
         int pointsRevision = HullUpgradePoints.revision();
         ItemStore store = upgradeStore();
-        int schematicRevision = store == null ? 0 : store.schematicRevision();
+        int schematicRevision = store == null ? 0 : store.shipCurrencyRevision();
         if (revision == shownRevision && pointsRevision == shownPointsRevision && schematicRevision == shownSchematicRevision) {
             return false;
         }
@@ -103,6 +105,7 @@ final class SectionsDisplay {
         shownPointsRevision = pointsRevision;
         shownSchematicRevision = schematicRevision;
         shownSchematicCounts = store == null ? Map.of() : store.schematicCounts();
+        shownMasterSchematicCount = store == null ? 0 : store.masterSchematicCount();
         unlockedSections = sectionEditor.sections();
         if (unlockedSections.size() > MAX_SECTIONS) {
             unlockedSections = unlockedSections.subList(0, MAX_SECTIONS);
@@ -118,8 +121,9 @@ final class SectionsDisplay {
         ItemStore store = upgradeStore();
         if (playerFleet != null && store != null) {
             store.absorbFrom(playerFleet.getCargo());
-            shownSchematicRevision = store.schematicRevision();
+            shownSchematicRevision = store.shipCurrencyRevision();
             shownSchematicCounts = store.schematicCounts();
+            shownMasterSchematicCount = store.masterSchematicCount();
         }
     }
 
@@ -220,6 +224,11 @@ final class SectionsDisplay {
             }
 
             @Override
+            public void applyMasterSchematic() {
+                sectionEditor.applyMasterSchematic();
+            }
+
+            @Override
             public void toggleSection(ShipSection section) {
                 if (sectionEditor.isSectionUnlocked(section)) {
                     sectionEditor.lockSection(section);
@@ -250,7 +259,15 @@ final class SectionsDisplay {
         HullUpgradePanel.ChartProgress chartProgress = HullUpgradePoints.schematicsInUse() ? null
                 : new HullUpgradePanel.ChartProgress(HullUpgradePoints.chartsEnabled(), HullUpgradePoints.nextChartTier(sector));
         return new HullUpgradePanel.View(sectionEditor.hullUpgradePoints(), sectionEditor.unspentHullUpgradePoints(), HullUpgradePoints.maxPoints(),
-                List.copyOf(schematicEntries), chartProgress, List.copyOf(sectionEntries));
+                List.copyOf(schematicEntries), chartProgress, List.copyOf(sectionEntries), masterSchematicEntry());
+    }
+
+    private HullUpgradePanel.MasterSchematicEntry masterSchematicEntry() {
+        HullUpgradeRules.MasterSchematicBlock block = sectionEditor.masterSchematicBlock(shownMasterSchematicCount);
+        if (block == HullUpgradeRules.MasterSchematicBlock.NOT_REQUIRED || block == HullUpgradeRules.MasterSchematicBlock.ALREADY_UNLOCKED) {
+            return null;
+        }
+        return new HullUpgradePanel.MasterSchematicEntry(shownMasterSchematicCount, block);
     }
 
     private HullUpgradePanel.SectionEntry sectionEntry(ShipSection section) {

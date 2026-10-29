@@ -23,8 +23,10 @@ public final class ChartTiers {
     private static final Logger LOG = Logger.getLogger(ChartTiers.class);
     static final float MAX_COLONY_ITEM_CHANCE = 1f;
     static final int BOSS_EXTRA_LEVELS = 1;
+    static final String TREE_SHARE_COLUMN = "tree_share";
     private static volatile Map<Integer, ChartTier> tiers = Map.of();
     private static volatile Map<Integer, Float> colonyItemChances = Map.of();
+    private static volatile Map<Integer, Float> treeShares = Map.of();
 
     private ChartTiers() {
     }
@@ -36,6 +38,7 @@ public final class ChartTiers {
     public static void register(JSONArray rows) throws JSONException {
         Map<Integer, ChartTier> loaded = new HashMap<>();
         Map<Integer, Float> loadedColonyItemChances = new HashMap<>();
+        Map<Integer, Float> loadedTreeShares = new HashMap<>();
         CsvRows csv = new CsvRows(PATH);
         if (rows != null) {
             ModCsv.forEach(rows, (index, row) -> {
@@ -71,6 +74,11 @@ public final class ChartTiers {
                     csv.problem(label, "colony_item_chance", colonyItemChance + " is outside 0 to 1 (a fraction, so 0.04 is 4%)");
                 }
                 loadedColonyItemChances.put(tier, Math.max(0f, Math.min(MAX_COLONY_ITEM_CHANCE, colonyItemChance)));
+                float treeShare = csv.number(row, TREE_SHARE_COLUMN, 1f, label);
+                if (treeShare < 0f || treeShare > 1f) {
+                    csv.problem(label, TREE_SHARE_COLUMN, treeShare + " is outside 0 to 1 (a fraction, so 0.5 is 50%)");
+                }
+                loadedTreeShares.put(tier, Math.max(0f, Math.min(1f, treeShare)));
             });
         }
         csv.report(LOG);
@@ -85,6 +93,11 @@ public final class ChartTiers {
         }
         tiers = Map.copyOf(loaded);
         colonyItemChances = Map.copyOf(loadedColonyItemChances);
+        treeShares = Map.copyOf(loadedTreeShares);
+    }
+
+    public static float treeShare(int tier) {
+        return treeShares.getOrDefault(clamp(tier), 1f);
     }
 
     public static float colonyItemChance(int tier) {
@@ -132,7 +145,8 @@ public final class ChartTiers {
         ChartTier tier = forTier(tierNumber.intValue());
         int bonus = fleetMemory.get(ChartIds.STRENGTH_BONUS_MEMORY_KEY) instanceof Number storedBonus ? Math.max(0, storedBonus.intValue()) : 0;
         int extraLevels = Boolean.TRUE.equals(fleetMemory.get(ChartIds.BOSS_MEMORY_KEY)) ? BOSS_EXTRA_LEVELS : 0;
-        return new FleetLevelRange(scaledLevel(tier.levelMin(), bonus), scaledLevel(tier.levelMax(), bonus), extraLevels);
+        float treeShare = extraLevels > 0 ? 1f : treeShare(tier.tier());
+        return new FleetLevelRange(scaledLevel(tier.levelMin(), bonus), scaledLevel(tier.levelMax(), bonus), extraLevels, treeShare);
     }
 
     static int scaledLevel(int level, int strengthBonusPercent) {
@@ -142,5 +156,6 @@ public final class ChartTiers {
     public static void resetForTests() {
         tiers = Map.of();
         colonyItemChances = Map.of();
+        treeShares = Map.of();
     }
 }

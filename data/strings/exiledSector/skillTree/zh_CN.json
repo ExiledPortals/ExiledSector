@@ -248,6 +248,7 @@
     "ui.template.result.none": "没有可分配的模板节点。",
     "ui.template.result.saved": "已保存模板{name}。",
     "ui.refitButton": "技能树",
+    "masterSchematic.button.locked": "需要母版图纸。请在船体升级面板上使用。",
     "ui.node.lockedTitle": "未识别",
     "ui.node.lockedBody": "未识别——探索星域以发现此节点",
     "ui.node.lockedHint": "船插蓝图会是个不错的切入点。",

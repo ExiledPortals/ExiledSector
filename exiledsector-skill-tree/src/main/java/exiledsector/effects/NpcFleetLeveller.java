@@ -28,6 +28,8 @@ import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.tags.ShipProfile;
 import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import exiledsector.items.NpcItems;
+import exiledsector.items.MasterSchematic;
+import exiledsector.loot.FleetLevelRange;
 import exiledsector.loot.LootSources;
 import exiledsector.skills.npc.NpcNodeRange;
 
@@ -52,8 +54,9 @@ public final class NpcFleetLeveller {
         List<Integer> playerShipPowers = List.of();
         String fleetFactionId = npcFleet.getFaction() == null ? null : npcFleet.getFaction().getId();
         String factionRegion = fleetFactionId == null ? null : NpcFactionVolumes.regionFor(fleetFactionId);
-        NpcNodeRange chartLevels = NpcNodeRange.of(LootSources.levelRange(npcFleet.getMemoryWithoutUpdate()), ShipLevelConfig.maxLevel(),
-                ShipLevelConfig.maxAllocatedNodesBesidesRoot());
+        FleetLevelRange chartRange = LootSources.levelRange(npcFleet.getMemoryWithoutUpdate());
+        NpcNodeRange chartLevels = NpcNodeRange.of(chartRange, ShipLevelConfig.maxLevel(), ShipLevelConfig.maxAllocatedNodesBesidesRoot());
+        float chartTreeShare = chartRange == null || !MasterSchematic.required() ? 1f : chartRange.treeShare();
         NpcLevelLimit levelLimit = null;
         String chartSeed = LootSources.levelSeed(npcFleet.getMemoryWithoutUpdate());
         List<FleetMemberAPI> members = npcFleet.getFleetData().getMembersListCopy();
@@ -75,7 +78,7 @@ public final class NpcFleetLeveller {
                     levelLimit = NpcLevelCaps.limitFor(npcFleet);
                 }
                 String memberSeedKey = chartSeed != null ? String.valueOf(memberIndex) : member.getId();
-                memberRecord = decide(member, playerShipPowers, chartLevels, levelLimit, fleetFactionId, factionRegion,
+                memberRecord = decide(member, playerShipPowers, chartLevels, chartTreeShare, levelLimit, fleetFactionId, factionRegion,
                         Seeds.random(seedPrefix + memberSeedKey));
                 recordsByMemberId.put(member.getId(), memberRecord);
             }
@@ -100,15 +103,21 @@ public final class NpcFleetLeveller {
         return member.getVariant().getPermaMods().contains(SkillTreeHullMod.ID) || ShipSkillDataManager.hasProgress(member.getId());
     }
 
-    static String decide(FleetMemberAPI member, List<Integer> playerShipPowers, NpcNodeRange chartLevels, NpcLevelLimit levelLimit,
-                         String fleetFactionId, String factionRegion, Random random) {
+    static String decide(FleetMemberAPI member, List<Integer> playerShipPowers, NpcNodeRange chartLevels, float chartTreeShare,
+                         NpcLevelLimit levelLimit, String fleetFactionId, String factionRegion, Random random) {
         if (!NpcShipSelector.isCandidate(member) || !NpcShipSelector.isChosen(member, random)) {
             return NpcTreeRecords.NOT_LEVELLED;
         }
-        ShipProfile shipProfile = ShipProfile.of(member);
+        if (chartLevels != null && chartTreeShare < 1f && random.nextFloat() >= chartTreeShare) {
+            return NpcTreeRecords.NOT_LEVELLED;
+        }
         int nodeCount = chartLevels != null ? chartLevels.roll(random)
                 : levelLimit.nodeCount(NpcTreeSize.roll(playerShipPowers, random), ShipLevelConfig.maxAllocatedNodesBesidesRoot(),
                         member.isFlagship());
+        if (nodeCount <= 0 && chartLevels == null && MasterSchematic.required()) {
+            return NpcTreeRecords.NOT_LEVELLED;
+        }
+        ShipProfile shipProfile = ShipProfile.of(member);
         NpcHullMods hullMods = NpcHullMods.of(member.getVariant());
         String designType = designType(member.getHullSpec());
         NpcTreeBuild treeBuild = NpcSkillTreeBuilder.generate(new NpcBuildRequest(shipProfile, designType, factionRegion, hullMods,

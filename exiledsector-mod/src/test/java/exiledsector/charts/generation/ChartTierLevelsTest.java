@@ -98,6 +98,15 @@ class ChartTierLevelsTest {
     }
 
     @Test
+    void theShareOfChartShipsWithATreeRisesToEveryShipByTierTenAndBossesAlwaysHaveOne() {
+        assertEquals(0.5f, ChartTiers.fleetStrengthRangeFor(chartFleet(1, null, false)).treeShare(), 1e-6f);
+        assertTrue(ChartTiers.treeShare(5) > ChartTiers.treeShare(1));
+        assertEquals(1f, ChartTiers.fleetStrengthRangeFor(chartFleet(10, null, false)).treeShare(), 1e-6f);
+        assertEquals(1f, ChartTiers.fleetStrengthRangeFor(chartFleet(15, null, false)).treeShare(), 1e-6f);
+        assertEquals(1f, ChartTiers.fleetStrengthRangeFor(chartFleet(1, null, true)).treeShare(), 1e-6f);
+    }
+
+    @Test
     void bossShipsRollOneLevelAboveTheTierEvenPastTheMaxLevel() {
         ChartTier seventh = ChartTiers.forTier(7);
 

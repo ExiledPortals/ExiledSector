@@ -57,6 +57,7 @@ import exiledsector.items.RootConduits;
 import exiledsector.items.NodeGrantLinks;
 import exiledsector.items.NodeGrantStatus;
 import exiledsector.items.NpcItems;
+import exiledsector.items.MasterSchematic;
 import exiledsector.items.ShipCustody;
 import exiledsector.items.SocketCustody;
 import exiledsector.items.Subroutine;
@@ -135,6 +136,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
         ItemAreas.bind(AreaToggles.ITEM_AREAS);
         I18n.forGameText(() -> LOCALISED_HULLMODS.forEach(SpecLocalisation::hullMod));
         SkillTreeRefitButton.addButton();
+        MasterSchematic.onChange(PlayerTreePower::invalidate);
     }
 
     @Override
@@ -292,6 +294,9 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
 
     @Override
     public List<SkillTypeEffect> fitEffects(ShipSkillData shipData, HullSize hullSize) {
+        if (!MasterSchematic.treeOpen(shipData)) {
+            return List.of();
+        }
         return AllocatedSkillEffects.treeEffects(shipData, AllocatedNode.of(shipData), hullSize);
     }
 

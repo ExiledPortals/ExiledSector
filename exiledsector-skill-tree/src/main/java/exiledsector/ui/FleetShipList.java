@@ -23,6 +23,7 @@ final class FleetShipList extends BaseCustomUIPanelPlugin {
     static final float CARD_GAP = 12f;
     static final float SCROLLBAR_ROOM = 14f;
     private static final Color CARD_BACKGROUND = new Color(0, 0, 0, 0);
+    static final float LOCKED_OPACITY = 0.35f;
 
     record Layout(float innerHeight, boolean scrolls, float scrollOffset) {
     }
@@ -78,9 +79,14 @@ final class FleetShipList extends BaseCustomUIPanelPlugin {
             FleetMemberAPI member = members.get(index);
             boolean selected = index == roster.selectedIndex();
             boolean alreadyShown = index == roster.shownIndex();
-            ShipCardClickTarget clickTarget = new ShipCardClickTarget(() -> pick(member, alreadyShown), () -> true, selected);
+            boolean treeOpen = SkillTreeRefitButton.treeOpen(member, member.getVariant());
+            ShipCardClickTarget clickTarget = new ShipCardClickTarget(() -> pick(member, alreadyShown), () -> treeOpen, selected);
             clickTargets.add(clickTarget);
-            element.addCustom(row(member, cardWidth, clickTarget), index == 0 ? 0f : ROW_GAP);
+            CustomPanelAPI rowPanel = row(member, cardWidth, clickTarget);
+            if (!treeOpen) {
+                rowPanel.setOpacity(LOCKED_OPACITY);
+            }
+            element.addCustom(rowPanel, index == 0 ? 0f : ROW_GAP);
         }
         listPanel.addUIElement(element).inTL(outset, outset);
         ScrollPanelAPI scroller = element.getExternalScroller();

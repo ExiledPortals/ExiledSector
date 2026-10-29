@@ -21,7 +21,7 @@ import exiledsector.items.MaterialItems;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemRarity;
-import exiledsector.items.RefitSchematic;
+import exiledsector.items.ShipCurrency;
 import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
 import exiledsector.loot.LootSources;
@@ -145,7 +145,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         siteLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(loot, itemId, quantity));
     }
 
-    private static void addSpecials(CargoAPI cargo, List<ItemData> items, List<RefitSchematic> upgrades) {
+    private static void addSpecials(CargoAPI cargo, List<ItemData> items, List<ShipCurrency> upgrades) {
         items.forEach(item -> cargo.addSpecial(item.toSpecialItem(), 1f));
         upgrades.forEach(upgrade -> cargo.addSpecial(upgrade.toSpecialItem(), 1f));
     }
@@ -157,9 +157,9 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
     public static void deliverSiteLoot(CargoAPI cargo, ItemDrops.SiteLoot siteLoot, Consumer<Supplier<String>> announceFind,
                                        Consumer<Map<String, Integer>> announceMaterials) {
         deliverItems(cargo, siteLoot.items(), announceFind);
-        for (RefitSchematic schematic : siteLoot.upgrades()) {
-            cargo.addSpecial(schematic.toSpecialItem(), 1f);
-            announceFind.accept(schematic::displayName);
+        for (ShipCurrency upgrade : siteLoot.upgrades()) {
+            cargo.addSpecial(upgrade.toSpecialItem(), 1f);
+            announceFind.accept(upgrade::displayName);
         }
         siteLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(cargo, itemId, quantity));
         announceMaterials.accept(siteLoot.materials());

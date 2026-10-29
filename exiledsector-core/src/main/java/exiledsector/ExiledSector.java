@@ -5,6 +5,7 @@ import exiledsector.domain.DomainContributions;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.items.ItemStore;
 import exiledsector.items.ItemTypes;
+import exiledsector.items.MasterSchematic;
 import exiledsector.items.RefitSchematic;
 
 import java.util.List;
@@ -34,6 +35,7 @@ public final class ExiledSector {
         List<ExiledSectorDomain> installing = List.copyOf(domains);
         installing.forEach(domain -> domain.itemTypes().forEach(ItemTypes::register));
         ItemStore.absorbStacksWith(RefitSchematic::absorbInto);
+        ItemStore.absorbStacksWith(MasterSchematic::absorbInto);
         installedDomains = installing;
     }
 

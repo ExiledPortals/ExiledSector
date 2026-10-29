@@ -23,6 +23,7 @@ import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipLevelSystem;
 import exiledsector.items.EmptyShells;
 import exiledsector.items.NpcItems;
+import exiledsector.items.MasterSchematic;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -123,7 +124,7 @@ public final class ShipTreeSync {
     static boolean syncVariant(FleetMemberAPI member, ShipVariantAPI variant, List<AllocatedNode> allocatedNodes,
                                Set<String> phantomHullModIds) {
         if (SkillDataResolver.borrowsShipTree(member, variant)) return false;
-        if (!SkillTreeSetting.enabled()) {
+        if (!SkillTreeSetting.enabled() || !MasterSchematic.treeOpen(SkillDataResolver.resolve(member, variant))) {
             allocatedNodes = List.of();
             phantomHullModIds = Set.of();
         }

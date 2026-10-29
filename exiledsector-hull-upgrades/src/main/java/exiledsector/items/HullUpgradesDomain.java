@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import exiledsector.domain.ExiledSectorDomain;
 import exiledsector.effects.ShipEffectSource;
@@ -75,6 +76,7 @@ public final class HullUpgradesDomain implements ExiledSectorDomain {
     @Override
     public void onApplicationLoad() {
         HullUpgradePoints.install();
+        MasterSchematic.requiredWhen(HullUpgradesSetting::masterSchematicsRequired);
         HullUpgradesRefitButton.addButton();
     }
 
@@ -89,6 +91,9 @@ public final class HullUpgradesDomain implements ExiledSectorDomain {
         SettingsCreator.addRadio(MOD_ID, HullUpgradesSetting.POINTS_FIELD_ID,
                 Translation.text("settings.socketStorage.hullUpgradePoints.name"), Translation.text("settings.socketStorage.hullUpgradePoints.tooltip"),
                 HullUpgradesSetting.REFIT_SCHEMATICS, String.join(",", HullUpgradesSetting.POINTS_OPTIONS), itemsTab);
+        SettingsCreator.addBoolean(MOD_ID, HullUpgradesSetting.MASTER_SCHEMATICS_FIELD_ID,
+                Translation.text("settings.socketStorage.masterSchematics.name"), Translation.text("settings.socketStorage.masterSchematics.tooltip"),
+                HullUpgradesSetting.DEFAULT_MASTER_SCHEMATICS_REQUIRED, itemsTab);
         SettingsCreator.addInt(MOD_ID, BattleItemDrops.DROP_PERCENT_FIELD_ID,
                 Translation.text("settings.socketStorage.battleItems.name"), Translation.text("settings.socketStorage.battleItems.tooltip"),
                 BattleItemDrops.DEFAULT_DROP_PERCENT, 0, BattleItemDrops.MAX_DROP_PERCENT, itemsTab);
@@ -110,5 +115,6 @@ public final class HullUpgradesDomain implements ExiledSectorDomain {
         ShipSections.clearCache();
         HullUpgradeMigration.runOnSave(savedCargoes);
         HullUpgradePoints.markChanged();
+        MasterSchematicActivation.sync(Global.getSector());
     }
 }

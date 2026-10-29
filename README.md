@@ -69,6 +69,8 @@ By default, Refit Schematics turn up in wrecks and salvage once you reach level 
 
 Switch Hull Upgrade Points to Star Chart Progress in LunaLib settings and every ship gains a point instead as you clear tier 5, 10 and 15 Star Charts.
 
+For a harder game, switch on Require Master Schematics in LunaLib settings. Each ship's skill tree then stays locked until you use a rare Master Schematic on it, and NPC fleets only bring as many trees as you have.
+
 <details>
 <summary>Unlocking a section</summary>
 

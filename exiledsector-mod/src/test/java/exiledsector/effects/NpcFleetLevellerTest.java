@@ -25,6 +25,7 @@ import exiledlib.MockSector;
 import exiledsector.ExiledSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.items.NpcItems;
+import exiledsector.items.MasterSchematic;
 import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.items.WormholeAnchorLinks;
 import exiledsector.persistence.ShipSkillDataManager;
@@ -104,6 +105,8 @@ class NpcFleetLevellerTest {
 
     @AfterEach
     void tearDown() {
+        MasterSchematic.requiredWhen(null);
+        PlayerTreePower.invalidate();
         lunaSettingsMock.close();
         mockSector.close();
         NpcFactionVolumes.clear();
@@ -190,6 +193,19 @@ class NpcFleetLevellerTest {
         assertTrue(hullMods.contains(SkillTreeHullMod.ID));
         assertFalse(hullMods.contains("heavyarmor"));
         assertTrue(hullMods.contains("hardenedshieldemitter"));
+    }
+
+    @Test
+    void whileMasterSchematicsAreRequiredAShipMirroringOnlyLockedShipsGetsNoTree() {
+        MasterSchematic.requiredWhen(() -> true);
+        PlayerTreePower.invalidate();
+        FleetMemberAPI officered = member("m1", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
+        CampaignFleetAPI npcFleet = fleetOf(officered);
+
+        NpcFleetLeveller.ensure(npcFleet);
+
+        assertNull(NpcTreeTag.find(officered.getVariant()));
+        assertEquals(NpcTreeRecords.NOT_LEVELLED, records(npcFleet).get("m1"));
     }
 
     @Test

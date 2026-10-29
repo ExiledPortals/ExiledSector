@@ -27,6 +27,17 @@ public final class HullUpgradeTooltip {
         }, footer);
     }
 
+    public static void writeMasterSchematic(TooltipMakerAPI tooltip, Supplier<List<StyledText>> footer) {
+        ItemTooltip.writeFrame(tooltip, () -> {
+            tooltip.addTitle(MasterSchematic.INSTANCE.displayName(), MasterSchematic.COLOR);
+            VanillaText.addPara(tooltip, Translation.styled("masterSchematic.tooltip.body"), ItemTooltip.PAD, Misc.getTextColor());
+            VanillaText.addPara(tooltip, Translation.styled("masterSchematic.tooltip.flavour"), ItemTooltip.PAD, Misc.getGrayColor());
+            if (!MasterSchematic.required()) {
+                VanillaText.addPara(tooltip, Translation.styled("masterSchematic.tooltip.notRequired"), ItemTooltip.PAD, Misc.getNegativeHighlightColor());
+            }
+        }, footer);
+    }
+
     public static StyledText sectionLine(ShipSection section) {
         if (section.requirementTag() == null) {
             return StyledText.of(section.displayName());

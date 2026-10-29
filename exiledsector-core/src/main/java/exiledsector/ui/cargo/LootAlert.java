@@ -7,6 +7,7 @@ import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDisassembly;
 import exiledsector.items.ItemRarity;
+import exiledsector.items.MasterSchematic;
 import exiledsector.items.MaterialItems;
 import exiledsector.items.RefitSchematic;
 
@@ -39,7 +40,7 @@ public enum LootAlert {
 
     static LootAlert of(SpecialItemData special) {
         String itemId = special.getId();
-        if (RefitSchematic.of(special) != null) {
+        if (RefitSchematic.of(special) != null || MasterSchematic.is(special)) {
             return REFIT_SCHEMATIC;
         }
         if (ItemData.STAR_CHART_ITEM_ID.equals(itemId)) {

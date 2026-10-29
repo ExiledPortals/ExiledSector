@@ -79,20 +79,24 @@ public final class HullUpgradeLootSource implements LootSource {
         ItemDrops.SectionItemLoot battleItems = battleItemDrops(battle);
         battleItems.items().forEach(item -> playerCargo.addSpecial(item.toSpecialItem(), 1f));
         ItemLootListener.announceBattleItems(battleItems.items());
-        for (RefitSchematic schematic : battleItems.upgrades()) {
-            playerCargo.addSpecial(schematic.toSpecialItem(), 1f);
-            ItemLootListener.announceSalvaged(schematic::displayName);
+        for (ShipCurrency upgrade : battleItems.upgrades()) {
+            playerCargo.addSpecial(upgrade.toSpecialItem(), 1f);
+            ItemLootListener.announceSalvaged(upgrade::displayName);
         }
     }
 
     private ItemDrops.SectionItemLoot battleItemDrops(BattleLoot battle) {
         SectorAPI sector = Global.getSector();
-        if (!battle.playerWon() || sector == null || !HullUpgradesSetting.sectionsOpen(sector)) {
+        if (!battle.playerWon() || sector == null) {
+            return ItemDrops.SectionItemLoot.NONE;
+        }
+        boolean sectionsOpen = HullUpgradesSetting.sectionsOpen(sector);
+        if (!sectionsOpen && !MasterSchematic.required()) {
             return ItemDrops.SectionItemLoot.NONE;
         }
         try {
             return BattleItemDrops.roll(losses(battle).battleItems(), BattleItemDrops.settingMultiplier(), battle.random(),
-                    definition -> ItemUnlock.canDrop(definition, sector));
+                    definition -> ItemUnlock.canDrop(definition, sector), sectionsOpen);
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Rolling battle hull item drops failed", e);
             return ItemDrops.SectionItemLoot.NONE;
@@ -105,6 +109,7 @@ public final class HullUpgradeLootSource implements LootSource {
                 ? ItemDrops.rollSectionItemLoot(find.dropSite(), find.random(), find.chanceMult()) : ItemDrops.SectionItemLoot.NONE;
         find.items().addAll(sectionItemLoot.items());
         find.upgrades().addAll(sectionItemLoot.upgrades());
+        find.upgrades().addAll(ItemDrops.rollMasterSchematic(find.dropSite(), find.random(), find.chanceMult()));
     }
 
     @Override

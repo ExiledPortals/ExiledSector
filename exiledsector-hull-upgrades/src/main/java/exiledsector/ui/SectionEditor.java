@@ -65,6 +65,14 @@ final class SectionEditor {
         return HullUpgradeRules.upgradeBlock(data(), schematic, schematicsInStorage);
     }
 
+    HullUpgradeRules.MasterSchematicBlock masterSchematicBlock(int schematicsInStorage) {
+        return HullUpgradeRules.masterSchematicBlock(data(), schematicsInStorage);
+    }
+
+    boolean applyMasterSchematic() {
+        return apply(HullUpgradeRules.applyMasterSchematic(data(), ItemStore.get()), true);
+    }
+
     boolean isSectionUnlocked(ShipSection section) {
         return section != null && data().isSocketTypeUnlocked(section.id());
     }

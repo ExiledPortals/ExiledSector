@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.items.MasterSchematic;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
@@ -83,13 +84,16 @@ public final class PlayerTreePower {
             shipPowers.add(shipPower(ShipSkillDataManager.find(member.getId()), levelFloor, SkillNodeOpCost.perNode(member.getHullSpec())));
         }
         if (shipPowers.isEmpty()) {
-            shipPowers.add(Math.max(0, levelFloor));
+            shipPowers.add(MasterSchematic.required() ? 0 : Math.max(0, levelFloor));
         }
         shipPowers.sort(null);
         return List.copyOf(shipPowers);
     }
 
     static int shipPower(ShipSkillData shipData, int levelFloor, int opCostPerNode) {
+        if (!MasterSchematic.treeOpen(shipData)) {
+            return 0;
+        }
         int level = Math.max(shipData == null ? 0 : shipData.getLevel(), levelFloor);
         if (shipData == null) {
             return level;

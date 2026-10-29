@@ -3,6 +3,7 @@ package exiledsector.effects;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import exiledsector.items.MasterSchematic;
 import exiledsector.persistence.RetiredReserveIds;
 import exiledsector.persistence.ShipSkillDataManager;
 import exiledsector.skills.ShipSkillData;
@@ -55,7 +56,7 @@ public final class OpReserveHullMods {
         if (shipData == null) {
             return removeMatching(variant, hullModId -> hullModId.startsWith(LEGACY_ID_PREFIX));
         }
-        int opSpent = SkillTreeSetting.enabled() ? ShipTrees.getSpentOp(shipData, SkillNodeOpCost.perNode(member.getHullSpec())) : 0;
+        int opSpent = SkillTreeSetting.enabled() && MasterSchematic.treeOpen(shipData) ? ShipTrees.getSpentOp(shipData, SkillNodeOpCost.perNode(member.getHullSpec())) : 0;
         reportIfCapped(member, opSpent);
         List<String> wantedReserveIds = reserveHullModsFor(opSpent);
         boolean changed = removeMatching(variant, hullModId -> isReserveHullMod(hullModId) && !wantedReserveIds.contains(hullModId));
