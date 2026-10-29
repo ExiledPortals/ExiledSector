@@ -95,6 +95,11 @@ class CanvasModeTest {
     }
 
     @Test
+    void theFleetShipListOpensWheneverTheTreeIsReachable() {
+        assertEquals(EnumSet.of(CanvasMode.TREE, CanvasMode.ROOT_CHOICE, CanvasMode.EXOSHIP_VIEW), matching(CanvasMode::switchesShips));
+    }
+
+    @Test
     void onlyTheIdleTreeScrollsOutIntoHyperspace() {
         assertEquals(EnumSet.of(CanvasMode.TREE), matching(CanvasMode::entersHyperspaceOnScrollOut));
     }

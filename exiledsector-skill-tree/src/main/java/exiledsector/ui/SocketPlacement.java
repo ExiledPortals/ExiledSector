@@ -93,6 +93,15 @@ final class SocketPlacement {
         }
     }
 
+    void dismiss() {
+        if (storage.placingItem() != null) {
+            stopPlacing();
+        }
+        if (storage.isOpen()) {
+            storage.panel().close();
+        }
+    }
+
     boolean emptySocket(SkillNode node) {
         if (node == null || node.getType().getTier() != SkillTier.SOCKET) {
             return false;

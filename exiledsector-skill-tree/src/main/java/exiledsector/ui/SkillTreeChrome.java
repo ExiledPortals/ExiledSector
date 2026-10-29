@@ -14,7 +14,7 @@ import exiledsector.ui.util.BorderedPanel;
 
 final class SkillTreeChrome {
 
-    private static final float SHIP_CARD_FRAME_OUTSET = 8f;
+    static final float SHIP_CARD_FRAME_OUTSET = 8f;
     private static final int READOUT_ROWS = 3;
 
     private final SkillTreeStatPanel statPanel;

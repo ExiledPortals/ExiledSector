@@ -58,6 +58,10 @@ enum CanvasMode {
         return this == TREE || this == ROOT_CHOICE || this == EXOSHIP_VIEW;
     }
 
+    boolean switchesShips() {
+        return this == TREE || this == ROOT_CHOICE || this == EXOSHIP_VIEW;
+    }
+
     boolean closesStorage() {
         return this == ROOT_CHOICE || this == MODAL || this == HYPERSPACE;
     }

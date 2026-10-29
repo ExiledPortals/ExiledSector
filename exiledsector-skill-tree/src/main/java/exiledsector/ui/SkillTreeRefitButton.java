@@ -11,6 +11,7 @@ import exiledsector.skills.SkillTreeSetting;
 import exiledsector.ui.refit.RefitButtonColumn;
 import exiledsector.ui.refit.RefitButtonConfig;
 import exiledsector.ui.refit.RefitModuleTabs;
+import lunalib.backend.ui.refit.RefitButtonAdder;
 import lunalib.backend.ui.refit.RefitPanelBackgroundPlugin;
 import lunalib.lunaRefit.LunaRefitManager;
 import org.lwjgl.input.Keyboard;
@@ -63,21 +64,50 @@ public class SkillTreeRefitButton extends FullScreenRefitButton {
         RefitModuleTabs.adoptDockedShip(member, variant);
         float panelWidth = getPanelWidth(member, variant);
         float panelHeight = getPanelHeight(member, variant);
+        CustomPanelAPI contentPanel = Global.getSettings().createCustom(panelWidth, panelHeight, null);
+        backgroundPanel.addComponent(contentPanel).inTL(0f, 0f);
 
-        TooltipMakerAPI shipCard = backgroundPanel.createUIElement(SHIP_CARD_ICON_SIZE, SHIP_CARD_ICON_SIZE, false);
+        TooltipMakerAPI shipCard = contentPanel.createUIElement(SHIP_CARD_ICON_SIZE, SHIP_CARD_ICON_SIZE, false);
         shipCard.addShipList(1, 1, SHIP_CARD_ICON_SIZE, new Color(0, 0, 0, 0), Collections.singletonList(member), 0f);
         float shipCardHeight = shipCard.getPrev().getPosition().getHeight();
 
-        TooltipMakerAPI canvasElement = backgroundPanel.createUIElement(panelWidth, panelHeight, false);
-        backgroundPanel.addUIElement(canvasElement);
+        TooltipMakerAPI canvasElement = contentPanel.createUIElement(panelWidth, panelHeight, false);
+        contentPanel.addUIElement(canvasElement);
         canvasElement.getPosition().inTL(0f, 0f);
 
-        SkillTreeCanvasPlugin canvasPlugin = new SkillTreeCanvasPlugin(member, variant, shipCardHeight, this, backgroundPanel);
+        boolean[] switching = {false};
+        SkillTreeCanvasPlugin canvasPlugin = new SkillTreeCanvasPlugin(member, variant, shipCardHeight, this, contentPanel, target -> {
+            if (!switching[0]) {
+                switching[0] = true;
+                switchShip(backgroundPanel, contentPanel, target, market);
+            }
+        });
         CustomPanelAPI canvasPanel = Global.getSettings().createCustom(panelWidth, panelHeight, canvasPlugin);
         canvasElement.addCustom(canvasPanel, 0f).getPosition().inTL(0f, 0f);
 
-        backgroundPanel.addUIElement(shipCard);
+        contentPanel.addUIElement(shipCard);
         shipCard.getPosition().inBL(ChromeMetrics.EDGE_MARGIN, ChromeMetrics.EDGE_MARGIN);
         canvasPlugin.setShipCard(shipCard);
+
+        float frameOutset = SkillTreeChrome.SHIP_CARD_FRAME_OUTSET;
+        ShipCardClickTarget cardClickTarget = new ShipCardClickTarget(canvasPlugin::toggleShipList, canvasPlugin::shipListAvailable, false);
+        contentPanel.addComponent(Global.getSettings().createCustom(SHIP_CARD_ICON_SIZE + frameOutset * 2f,
+                shipCardHeight + frameOutset * 2f, cardClickTarget)).inBL(ChromeMetrics.EDGE_MARGIN - frameOutset,
+                ChromeMetrics.EDGE_MARGIN - frameOutset);
+    }
+
+    private void switchShip(CustomPanelAPI backgroundPanel, CustomPanelAPI contentPanel, FleetMemberAPI target, MarketAPI market) {
+        Global.getSector().addTransientScript(RefitShipSwitch.to(target, shown -> {
+            RefitButtonAdder adder = RefitPanelLauncher.refitButtonAdder();
+            if (adder == null || adder.getActivePanel() != backgroundPanel) {
+                return;
+            }
+            if (shown == null) {
+                closePanel();
+                return;
+            }
+            backgroundPanel.removeComponent(contentPanel);
+            initPanel(backgroundPanel, shown.member(), shown.variant(), market);
+        }));
     }
 }
