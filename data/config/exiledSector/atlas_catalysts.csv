@@ -8,6 +8,7 @@ exiledSector_bolthole_survey,excavation_sites,survey,1,1,,,Bolt-hole Survey
 exiledSector_relay_survey,relay_network,survey,1,1,,,Relay Survey
 exiledSector_convoy_orders,supply_convoy,orders,1,1,,,Convoy Orders
 exiledSector_assault_orders,faction_skirmish,orders,1,1,,,Assault Orders
+exiledSector_flagship_orders,powerful_boss,orders,1,1,,,Flagship Orders
 exiledSector_redeployment_orders,,orders,1,1,redeploy,graphics/icons/catalysts/redeployment_orders.png,"Redeployment Orders; hands the system to another faction of its region"
 exiledSector_storm_terminus,storm_front,terminus,1,1,,,Storm Terminus
 exiledSector_forge_survey,derelict_forge,survey,1,1,,,Forge Survey

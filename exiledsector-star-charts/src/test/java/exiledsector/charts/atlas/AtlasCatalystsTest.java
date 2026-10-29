@@ -36,7 +36,7 @@ class AtlasCatalystsTest {
 
         assertEquals(List.of(), problems);
         assertEquals(Set.of("spatial_breach", "asteroid_storm", "magnetic_storm", "stellar_flares", "anomalous_debris", "excavation_sites",
-                "relay_network", "supply_convoy", "storm_front", "derelict_forge", "listening_post", "faction_skirmish"), Set.copyOf(AtlasCatalysts.all().stream().filter(catalyst -> catalyst.effect() == AtlasCatalysts.Effect.ANOMALY)
+                "relay_network", "supply_convoy", "storm_front", "derelict_forge", "listening_post", "faction_skirmish", "powerful_boss"), Set.copyOf(AtlasCatalysts.all().stream().filter(catalyst -> catalyst.effect() == AtlasCatalysts.Effect.ANOMALY)
                 .map(AtlasCatalysts.Catalyst::anomalyId).toList()));
         AtlasCatalysts.Catalyst redeployment = AtlasCatalysts.byItemId("exiledSector_redeployment_orders");
         assertNotNull(redeployment);
@@ -61,6 +61,11 @@ class AtlasCatalystsTest {
         assertEquals(AtlasCatalysts.Family.ORDERS, picket.family());
         assertEquals("listening_post", picket.anomalyId());
         assertEquals(ChartAnomalies.definition("listening_post").icon(), picket.iconPath());
+        AtlasCatalysts.Catalyst flagship = AtlasCatalysts.byItemId("exiledSector_flagship_orders");
+        assertNotNull(flagship);
+        assertEquals(AtlasCatalysts.Family.ORDERS, flagship.family());
+        assertEquals("powerful_boss", flagship.anomalyId());
+        assertEquals("graphics/icons/anomalies/powerful_boss.png", flagship.iconPath());
     }
 
     @Test

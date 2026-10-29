@@ -33,9 +33,6 @@ final class AtlasCommandText {
         if (node.specialId() != null) {
             parts.add("site " + node.specialId());
         }
-        if (node.powerfulBoss()) {
-            parts.add("powerful boss");
-        }
         List<String> anomalyIds = AtlasAnomalies.effective(generator, state, cell);
         if (!anomalyIds.isEmpty()) {
             parts.add("anomalies " + String.join(" ", anomalyIds));

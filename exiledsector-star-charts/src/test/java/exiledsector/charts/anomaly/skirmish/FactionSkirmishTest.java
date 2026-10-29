@@ -39,7 +39,7 @@ class FactionSkirmishTest {
     private static final long SEED = 0x5C1A7L;
     private static final String NEUTRAL = "remnant";
     private static final AtlasRules RULES = new AtlasRules(List.of(AtlasRegion.DEFAULT_NORMAL), Map.of("compact", 1f),
-            Map.of("hegemony", 1f, "tritachyon", 1f, "pirates", 1f, NEUTRAL, 1f), AtlasMarkerRule.NEVER, AtlasMarkerRule.NEVER, AtlasMarkerRule.NEVER,
+            Map.of("hegemony", 1f, "tritachyon", 1f, "pirates", 1f, NEUTRAL, 1f), AtlasMarkerRule.NEVER, AtlasMarkerRule.NEVER,
             List.of(), List.of());
 
     private static AtlasTraits traits(String factionId, List<String> neighbourFactionIds, String specialId, String infestationId) {

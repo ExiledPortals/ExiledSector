@@ -272,13 +272,24 @@ public final class ChartGenContext {
     }
 
     public ChartGenContext withAnomalyEffects(List<String> anomalyIds) {
-        return withEffects(anomalyIds == null ? List.of() : ChartAnomalies.effectsOf(anomalyIds));
+        if (anomalyIds == null || anomalyIds.isEmpty()) {
+            return this;
+        }
+        List<AppliedEffect> effects = ChartAnomalies.effectsOf(anomalyIds);
+        boolean bossTierUp = !guaranteedBossTierUp && ChartAnomalies.guaranteeBossTierUp(anomalyIds);
+        if (effects.isEmpty() && !bossTierUp) {
+            return this;
+        }
+        ChartGenContext context = copyWith(effects);
+        context.guaranteedBossTierUp = guaranteedBossTierUp || bossTierUp;
+        return context;
     }
 
     public ChartGenContext withEffects(List<AppliedEffect> effects) {
-        if (effects == null || effects.isEmpty()) {
-            return this;
-        }
+        return effects == null || effects.isEmpty() ? this : copyWith(effects);
+    }
+
+    private ChartGenContext copyWith(List<AppliedEffect> effects) {
         List<AppliedEffect> combined = new ArrayList<>(applied);
         combined.addAll(effects);
         ChartGenContext context = new ChartGenContext(combined, quality, factionId);

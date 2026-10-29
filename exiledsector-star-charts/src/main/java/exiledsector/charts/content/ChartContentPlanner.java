@@ -64,12 +64,13 @@ public final class ChartContentPlanner {
 
     static ChartContentPlan plan(long seed, ChartTier baseTier, List<ChartPoi> pois, List<ChartFaction> factions, Predicate<String> factionLoaded,
                                  ChartGenContext chartContext, int fleetLimit, List<String> anomalyIds) {
-        ChartTier tier = chartContext.adjust(baseTier);
-        ChartFaction faction = ChartFactions.resolve(chartContext.factionId(), factions, factionLoaded, ChartLayoutGenerator.derivedRandom(seed, FACTION_SALT));
+        List<String> plannedAnomalies = anomalyIds == null ? ChartAnomalies.planned(chartContext) : anomalyIds;
+        ChartGenContext context = chartContext.withAnomalyEffects(plannedAnomalies);
+        ChartTier tier = context.adjust(baseTier);
+        ChartFaction faction = ChartFactions.resolve(context.factionId(), factions, factionLoaded, ChartLayoutGenerator.derivedRandom(seed, FACTION_SALT));
         ChartObjective objective = pickObjective(tier, ChartLayoutGenerator.derivedRandom(seed, OBJECTIVE_SALT));
         List<PlannedPoi> plannedPois = spendLoot(tier, pois, ChartLayoutGenerator.derivedRandom(seed, LOOT_SALT));
-        plannedPois = addExtraPois(tier, pois, plannedPois, chartContext.extraPois(), ChartLayoutGenerator.derivedRandom(seed, EXTRA_POI_SALT));
-        List<String> plannedAnomalies = anomalyIds == null ? ChartAnomalies.planned(chartContext) : anomalyIds;
+        plannedPois = addExtraPois(tier, pois, plannedPois, context.extraPois(), ChartLayoutGenerator.derivedRandom(seed, EXTRA_POI_SALT));
         boolean skirmish = plannedAnomalies.contains(FactionSkirmish.ID);
         Random bossRandom = ChartLayoutGenerator.derivedRandom(seed, BOSS_SALT);
         ChartBossType bossType = skirmish ? ChartBossType.STATION
@@ -80,10 +81,10 @@ public final class ChartContentPlanner {
         }
         List<PlannedFleet> plannedFleets = new ArrayList<>();
         plannedPois = planFleets(tier, objective, plannedPois, plannedFleets, ChartLayoutGenerator.derivedRandom(seed, FLEET_SALT),
-                chartContext.extraFleets(), fleetLimit, bossType);
+                context.extraFleets(), fleetLimit, bossType);
         PlannedStation bossStation = stationVariant == null ? null : plannedStation(tier, stationVariant, plannedFleets);
         ChartContentPlan plan = new ChartContentPlan(tier.tier(), faction, objective, plannedPois, plannedFleets, plannedAnomalies, bossType, bossStation);
-        return skirmish ? SkirmishPlanner.apply(plan, tier, chartContext, factions, factionLoaded, ChartLayoutGenerator.derivedRandom(seed, SKIRMISH_SALT))
+        return skirmish ? SkirmishPlanner.apply(plan, tier, context, factions, factionLoaded, ChartLayoutGenerator.derivedRandom(seed, SKIRMISH_SALT))
                 : plan;
     }
 

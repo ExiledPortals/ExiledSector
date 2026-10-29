@@ -3,6 +3,7 @@ package exiledsector.charts.atlas;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import exiledsector.charts.layout.ChartLayoutRecipe;
 import exiledsector.charts.ChartTables;
+import exiledsector.charts.anomaly.PowerfulBoss;
 import exiledsector.charts.layout.abyss.AbyssPalette;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -23,12 +24,14 @@ class AtlasDataTest {
     @AfterEach
     void tearDown() {
         AtlasData.resetForTests();
+        ChartTables.resetAnomalies();
     }
 
     @Test
     void theShippedAtlasTablesParseWithoutProblems() throws Exception {
         ChartTables.loadShipped();
         ChartTables.loadFeatures();
+        ChartTables.loadAnomalies();
 
         assertEquals(List.of(), AtlasData.registerLayouts(ChartTables.csvRows(AtlasData.LAYOUTS_PATH)));
         assertEquals(List.of(), AtlasData.registerDecorations(ChartTables.csvRows(AtlasData.DECORATIONS_PATH)));
@@ -40,7 +43,11 @@ class AtlasDataTest {
         AtlasRules rules = AtlasData.rules();
 
         assertFalse(rules.regions().isEmpty());
-        assertTrue(rules.powerfulBossRule().chanceAt(0) > 0f);
+        AtlasAnomalyCandidate powerfulBoss = rules.anomalies().stream().filter(candidate -> candidate.id().equals(PowerfulBoss.ID)).findFirst()
+                .orElseThrow();
+        assertTrue(powerfulBoss.chanceRule(rules.anomalyRule()).chanceAt(0) > rules.anomalyRule().chanceAt(0));
+        assertTrue(rules.anomalies().stream().filter(candidate -> !candidate.id().equals(PowerfulBoss.ID))
+                .allMatch(candidate -> candidate.ownChance() == null));
         for (AtlasRegion region : rules.regions()) {
             for (String decorationId : AtlasData.ambience(region.id()).decorations().keySet()) {
                 AtlasDecoration decoration = AtlasData.decoration(decorationId);
@@ -174,7 +181,8 @@ class AtlasDataTest {
 
     @Test
     void unknownMarkersAndBadSpecialsAreReported() throws Exception {
-        List<String> markerProblems = AtlasData.registerMarkers(new JSONArray().put(new JSONObject().put("id", "storm").put("chance", "0.1")));
+        List<String> markerProblems = AtlasData.registerMarkers(new JSONArray().put(new JSONObject().put("id", "storm").put("chance", "0.1"))
+                .put(new JSONObject().put("id", PowerfulBoss.ID).put("chance", "0.2")));
         List<String> specialProblems = AtlasData.registerSpecials(new JSONArray()
                 .put(new JSONObject().put("id", "bastion").put("placement", "fixed").put("count", "4").put("steps", "25"))
                 .put(new JSONObject().put("id", "nexus").put("kind", "infestation").put("radius", "12"))

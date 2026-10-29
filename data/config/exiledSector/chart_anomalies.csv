@@ -6,6 +6,7 @@ asteroid_storm,1,1,15,,graphics/icons/anomalies/asteroid_storm.png,,yes,,,"Extra
 magnetic_storm,1,1,15,,graphics/icons/anomalies/magnetic_storm.png,,yes,,CHART_CURRENCY_PERCENT:50,"Magnetic fields around the star and several worlds that blind sensors"
 stellar_flares,1,1,15,,graphics/icons/anomalies/stellar_flares.png,,yes,,CHART_FEEDSTOCK_PERCENT:50,"Every corona throws flares constantly"
 spatial_breach,1,1,15,,graphics/icons/anomalies/spatial_breach.png,,yes,,,"A growing tear into hyperspace: drains and breach caches"
+powerful_boss,1,1,15,,graphics/icons/anomalies/powerful_boss.png,,yes,,CHART_BOSS_SIZE_PERCENT:50; CHART_BOSS_SPOILS_PERCENT:50,"A bigger boss with more spoils that always drops a chart one tier up; rolls on its own atlas_markers.csv row. Icon is a placeholder copy of vanilla bounties"
 faction_skirmish,1,1,15,,graphics/icons/anomalies/faction_skirmish.png,,yes,,,"Two factions fight over a border system; the player sides with one or stays out"
 relay_network,1,1,15,,graphics/icons/anomalies/relay_network.png,,yes,,,"A dormant nav buoy, comm relay and sensor array; waking all three and completing the system moves the network on to a harder, richer system"
 supply_convoy,1,1,15,,graphics/icons/anomalies/supply_convoy.png,,yes,,,"A friendly escorted convoy runs a visible route to a planet; attack it for cargo pods or raid the cache it delivers"
