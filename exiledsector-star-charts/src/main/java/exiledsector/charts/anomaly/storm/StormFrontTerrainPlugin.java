@@ -16,7 +16,6 @@ import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.ui.VanillaText;
 import org.apache.log4j.Logger;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
@@ -53,7 +52,6 @@ public class StormFrontTerrainPlugin extends BaseTerrain {
     static final int INTEL_MARKS = 3;
     static final Color CLOUD_COLOUR = new Color(90, 110, 255);
     static final Color FLASH_COLOUR = new Color(170, 200, 255);
-    static final Color PATH_COLOUR = new Color(120, 140, 255);
     private static final Logger LOG = Logger.getLogger(StormFrontTerrainPlugin.class);
 
     public record Params(String runId, StormPath path, List<String> markIds, long startTimestamp, long seed) {
@@ -311,29 +309,6 @@ public class StormFrontTerrainPlugin extends BaseTerrain {
             cloud.setAlphaMult(alphaMult * MAP_ALPHA * endFade(puff.across(), bandLength));
             cloud.renderAtCenter(position.x * factor, position.y * factor);
         }
-        renderPathAhead(factor, alphaMult);
-    }
-
-    private void renderPathAhead(float factor, float alphaMult) {
-        StormPath stormPath = path();
-        float nearAlong = stormPath.offset(elapsedDays()) + stormPath.bandWidth() / 2f;
-        float farAlong = stormPath.endOffset() + stormPath.bandWidth() / 2f;
-        float halfLength = stormPath.bandLength() / 2f;
-        float directionX = stormPath.directionX();
-        float directionY = stormPath.directionY();
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.glColor4f(PATH_COLOUR.getRed() / 255f, PATH_COLOUR.getGreen() / 255f, PATH_COLOUR.getBlue() / 255f, alphaMult * MAP_ALPHA * 0.5f);
-        GL11.glBegin(GL11.GL_LINE_LOOP);
-        for (float[] corner : new float[][]{{nearAlong, -halfLength}, {farAlong, -halfLength}, {farAlong, halfLength}, {nearAlong, halfLength}}) {
-            float x = directionX * corner[0] - directionY * corner[1];
-            float y = directionY * corner[0] + directionX * corner[1];
-            GL11.glVertex2f(x * factor, y * factor);
-        }
-        GL11.glEnd();
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
 
     String intelText() {
