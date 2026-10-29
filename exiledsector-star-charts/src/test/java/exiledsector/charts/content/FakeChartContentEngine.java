@@ -35,6 +35,9 @@ public final class FakeChartContentEngine implements ChartContentEngine {
     public record ColonyItem(SectorEntityToken holder, String itemId) {
     }
 
+    public record Flagship(CampaignFleetAPI fleet, String variantId, String aiCoreId) {
+    }
+
     public final List<Vector2f> spotPositions = new ArrayList<>();
     public final List<ChartSpot> focusedSpots = new ArrayList<>();
     public final List<SectorEntityToken> salvageEntities = new ArrayList<>();
@@ -50,12 +53,15 @@ public final class FakeChartContentEngine implements ChartContentEngine {
     public final List<String> stationVariants = new ArrayList<>();
     public final List<CampaignFleetAPI> stations = new ArrayList<>();
     public final List<String> dressedFactions = new ArrayList<>();
+    public final List<CampaignFleetAPI> emptyFleetsCreated = new ArrayList<>();
+    public final List<Flagship> flagships = new ArrayList<>();
     public String alliesFactionId = "allies";
     public String convoyFactionId = "convoy";
     public int fleetPoints;
     boolean missingStations;
     boolean failFleets;
     boolean emptyFleets;
+    boolean missingFlagships;
     int spotCalls;
 
     public static FakeChartContentEngine install(FakeChartContentEngine engine) {
@@ -65,6 +71,11 @@ public final class FakeChartContentEngine implements ChartContentEngine {
 
     public FakeChartContentEngine withEmptyFleets() {
         emptyFleets = true;
+        return this;
+    }
+
+    public FakeChartContentEngine withoutFlagships() {
+        missingFlagships = true;
         return this;
     }
 
@@ -206,6 +217,22 @@ public final class FakeChartContentEngine implements ChartContentEngine {
         CampaignFleetAPI station = newFleet("station-" + stations.size());
         stations.add(station);
         return station;
+    }
+
+    @Override
+    public CampaignFleetAPI createEmptyFleet(String factionId, String fleetType) {
+        CampaignFleetAPI fleet = newFleet("empty-" + emptyFleetsCreated.size());
+        emptyFleetsCreated.add(fleet);
+        return fleet;
+    }
+
+    @Override
+    public boolean addCoreFlagship(CampaignFleetAPI fleet, String variantId, String aiCoreId, Random random) {
+        if (missingFlagships) {
+            return false;
+        }
+        flagships.add(new Flagship(fleet, variantId, aiCoreId));
+        return true;
     }
 
     private CampaignFleetAPI newFleet(String id) {

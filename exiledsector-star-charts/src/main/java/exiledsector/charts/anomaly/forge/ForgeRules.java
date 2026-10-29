@@ -11,6 +11,8 @@ public final class ForgeRules {
     static final float ORBIT_BAND_WIDTH = 2000f;
     static final int ORBIT_BANDS = 6;
     static final float COST_PER_TIER = 0.15f;
+    static final float ESCORT_SIZE_SHARE = 0.5f;
+    static final int ESCORT_MAX_SHIP_SIZE = 3;
 
     public record Cost(int metals, int rareMetals, int feedstock) {
     }

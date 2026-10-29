@@ -4,12 +4,15 @@ import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
+import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import exiledlib.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.content.ChartSpot;
+import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
@@ -80,6 +83,8 @@ class DerelictForgeTest {
         CustomCampaignEntityAPI entity = mock(CustomCampaignEntityAPI.class);
         doAnswer(invocation -> tags.add(invocation.getArgument(0))).when(entity).addTag(anyString());
         when(entity.hasTag(anyString())).thenAnswer(invocation -> tags.contains((String) invocation.getArgument(0)));
+        MemoryAPI memory = FakeChartContentEngine.memory();
+        when(entity.getMemoryWithoutUpdate()).thenReturn(memory);
         return entity;
     }
 
@@ -107,6 +112,18 @@ class DerelictForgeTest {
         verify(forge).setCircularOrbitPointingDown(eq(star), anyFloat(), anyFloat(), anyFloat());
         assertEquals(ForgeRules.BASE_PROGRAMS, ForgeStates.programs(run).size());
         assertEquals(ForgeRules.BASE_RUNS, ForgeStates.runsLeft(run));
+    }
+
+    @Test
+    void theForgeIsPlacedGuardedWithASeedForItsDefenders() {
+        ChartRuns.store(run());
+
+        DerelictForge.INSTANCE.generate(site(ChartGenContext.none(), spot -> true));
+
+        MemoryAPI memory = added.get(0).getMemoryWithoutUpdate();
+        assertTrue(ForgeGuards.guarded(added.get(0)));
+        assertTrue(memory.getBoolean(ForgeGuards.HAS_DEFENDERS_KEY));
+        assertTrue(memory.get(MemFlags.SALVAGE_SEED) instanceof Long);
     }
 
     @Test

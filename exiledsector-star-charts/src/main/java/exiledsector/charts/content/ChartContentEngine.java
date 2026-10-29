@@ -25,6 +25,10 @@ interface ChartContentEngine {
 
     CampaignFleetAPI createStation(String factionId, String variantId, int officerLevel, Random random);
 
+    CampaignFleetAPI createEmptyFleet(String factionId, String fleetType);
+
+    boolean addCoreFlagship(CampaignFleetAPI fleet, String variantId, String aiCoreId, Random random);
+
     ChartVanillaLoot.SiteDrops siteDrops(String salvageSpec);
 
     void addColonyItem(SectorEntityToken holder, String itemId);

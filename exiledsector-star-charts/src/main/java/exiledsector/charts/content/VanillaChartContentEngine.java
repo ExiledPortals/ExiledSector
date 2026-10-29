@@ -32,6 +32,7 @@ import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.BaseThemeGenerator;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.BaseThemeGenerator.EntityLocation;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.BaseThemeGenerator.LocationType;
+import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantOfficerGeneratorPlugin;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.RemnantThemeGenerator;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.SalvageEntityGeneratorOld;
 import com.fs.starfarer.api.impl.campaign.procgen.themes.SalvageSpecialAssigner.ShipRecoverySpecialCreator;
@@ -165,6 +166,39 @@ final class VanillaChartContentEngine implements ChartContentEngine {
         member.setCaptain(commander);
         member.getRepairTracker().setCR(member.getRepairTracker().getMaxCR());
         return station;
+    }
+
+    @Override
+    public CampaignFleetAPI createEmptyFleet(String factionId, String fleetType) {
+        return FleetFactoryV3.createEmptyFleet(factionId, fleetType, null);
+    }
+
+    @Override
+    public boolean addCoreFlagship(CampaignFleetAPI fleet, String variantId, String aiCoreId, Random random) {
+        AICoreOfficerPlugin core = Misc.getAICoreOfficerPlugin(aiCoreId);
+        if (!Global.getSettings().doesVariantExist(variantId) || core == null) {
+            return false;
+        }
+        FleetMemberAPI flagship = fleet.getFleetData().addFleetMember(variantId);
+        if (flagship == null) {
+            return false;
+        }
+        FactionAPI faction = fleet.getFaction();
+        flagship.setShipName(faction.pickRandomShipName(random));
+        PersonAPI commander = core.createPerson(aiCoreId, faction.getId(), random);
+        commander.setPortraitSprite(faction.createRandomPerson().getPortraitSprite());
+        for (FleetMemberAPI member : fleet.getFleetData().getMembersListCopy()) {
+            member.setFlagship(member == flagship);
+            member.getRepairTracker().setCR(member.getRepairTracker().getMaxCR());
+        }
+        fleet.setCommander(commander);
+        flagship.setCaptain(commander);
+        RemnantOfficerGeneratorPlugin.integrateAndAdaptCoreForAIFleet(flagship);
+        if (fleet.getInflater() != null) {
+            fleet.getInflater().setRemoveAfterInflating(false);
+        }
+        fleet.getFleetData().sort();
+        return true;
     }
 
     private static PersonAPI stationCommander(FactionAPI faction, FleetMemberAPI station, int officerLevel, Random random) {

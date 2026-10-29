@@ -366,9 +366,11 @@ quarter of hull items around one reserved storm modifier (`StormLoot`, `GrantedM
 The anomaly places one neutral station on a clear orbit and rolls three programs (plus the programs line) from
 `chart_forge_programs.csv` by weight and tier, with one run (plus the runs line), kept on the run record
 (`DerelictForge`, `ForgeStates`, `ForgePrograms`; package `charts.anomaly.forge`). Its `effects` column adds +100%
-Resource %. `ForgeDialog` lists the programs and their costs in metals, rare metals and Nanite Feedstock, which grow
-15% per tier and follow the cost line (`ForgeRules`), and opens the Modification Bench in Forge mode (`ForgeBench`),
-which takes hull items only.
+Resource %. Like a vanilla cryosleeper, the forge is guarded until beaten: `ForgeGuards` builds derelict drones (half
+the tier's fleet size, cruisers at most) under one alpha-core Guardian into the forge's `$defenderFleet`, and
+`ForgeDialog` hands them to vanilla `SalvageDefenderInteraction`, putting the derelict tally back after a win. It then
+lists the programs and their costs, which grow 15% per tier and follow the cost line (`ForgeRules`), and opens the
+Modification Bench in Forge mode (`ForgeBench`), which takes hull items only.
 
 The programs are `ForgeOperation`s in core (`ItemForging`), refusing mirrored, corrupted and locked items as nanoswarms
 do. Graft groups modifiers by the `skilleffect` subpackage of each line's effect, so a hybrid counts for every part it
