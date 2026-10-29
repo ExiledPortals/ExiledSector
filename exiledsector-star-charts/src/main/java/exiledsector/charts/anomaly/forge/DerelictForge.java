@@ -4,7 +4,6 @@ import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
-import com.fs.starfarer.api.impl.campaign.ids.Entities;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import exiledlib.i18n.I18n;
 import exiledlib.i18n.Style;
@@ -28,7 +27,7 @@ public final class DerelictForge implements ChartAnomaly {
     public static final String COST_KEY = ID + ".cost";
     public static final String FORGE_TAG = ChartIds.PREFIX + "derelict_forge";
     public static final DerelictForge INSTANCE = new DerelictForge();
-    static final String ENTITY_TYPE = Entities.STATION_MINING;
+    static final String ENTITY_TYPE = ChartIds.PREFIX + "derelict_forge_station";
     static final long PLACEMENT_SALT = 0x464f524745L;
 
     private DerelictForge() {
@@ -64,6 +63,7 @@ public final class DerelictForge implements ChartAnomaly {
                 ForgeRules.programCount(site.context().anomalyPercent(EXTRA_PROGRAMS_KEY)), random);
         SectorEntityToken forge = site.addEntity(forgeId(site.runId()), Translation.gameText("chart.forge.name"), ENTITY_TYPE, Factions.NEUTRAL, orbit);
         forge.addTag(FORGE_TAG);
+        ForgeGuards.arm(forge, site.random(ForgeGuards.GUARD_SALT).nextLong());
         ForgeStates.record(run, programs, ForgeRules.runCount(site.context().anomalyPercent(EXTRA_RUNS_KEY)));
         return forge;
     }

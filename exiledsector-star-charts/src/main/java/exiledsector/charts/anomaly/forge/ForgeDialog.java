@@ -1,15 +1,20 @@
 package exiledsector.charts.anomaly.forge;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
+import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.TextPanelAPI;
+import com.fs.starfarer.api.campaign.SectorAPI;
+import com.fs.starfarer.api.campaign.rules.MemKeys;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
+import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageDefenderInteraction;
 import com.fs.starfarer.api.util.Misc;
 import exiledlib.PlayerFleet;
 import exiledlib.i18n.Style;
@@ -23,6 +28,7 @@ import exiledsector.ui.socket.BenchMode;
 import exiledsector.ui.socket.BenchModeSupport;
 import org.lwjgl.input.Keyboard;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +36,7 @@ import java.util.Map;
 public class ForgeDialog implements InteractionDialogPlugin {
 
     static final String LEAVE = "exiledSector_forgeLeave";
+    static final String BEAT_DEFENDERS_CONTINUE = "salBeatDefendersContinue";
 
     private record RunOption(ForgePrograms.Program program) {
     }
@@ -38,6 +45,7 @@ public class ForgeDialog implements InteractionDialogPlugin {
     private InteractionDialogAPI interactionDialog;
     private SectorEntityToken forge;
     private String ranMessage;
+    private ForgeGuards.DerelictTally tallyBeforeFight;
 
     @Override
     public void init(InteractionDialogAPI interactionDialog) {
@@ -47,6 +55,39 @@ public class ForgeDialog implements InteractionDialogPlugin {
             interactionDialog.getVisualPanel().showImageVisual(forge.getCustomInteractionDialogImageVisual());
         }
         VanillaText.plainPara(interactionDialog.getTextPanel(), Translation.gameText("chart.forge.description"));
+        if (!engageGuards()) {
+            showState(true);
+        }
+    }
+
+    private boolean engageGuards() {
+        CampaignFleetAPI guards = ForgeGuards.muster(forge, liveRun());
+        if (guards == null) {
+            return false;
+        }
+        fillMemoryMap();
+        VanillaText.plainPara(interactionDialog.getTextPanel(), Translation.gameText("chart.forge.guarded"));
+        tallyBeforeFight = ForgeGuards.derelictTally();
+        if (new SalvageDefenderInteraction().execute(null, interactionDialog, new ArrayList<>(), memoryMap)) {
+            return true;
+        }
+        tallyBeforeFight = null;
+        return false;
+    }
+
+    private void fillMemoryMap() {
+        SectorAPI sector = Global.getSector();
+        memoryMap.put(MemKeys.LOCAL, forge.getMemoryWithoutUpdate());
+        FactionAPI faction = forge.getFaction();
+        memoryMap.put(MemKeys.FACTION, faction != null ? faction.getMemoryWithoutUpdate() : Global.getFactory().createMemory());
+        memoryMap.put(MemKeys.GLOBAL, sector.getMemoryWithoutUpdate());
+        memoryMap.put(MemKeys.PLAYER, sector.getCharacterData().getMemoryWithoutUpdate());
+    }
+
+    private void continueAfterGuards() {
+        if (forge.getCustomInteractionDialogImageVisual() != null) {
+            interactionDialog.getVisualPanel().showImageVisual(forge.getCustomInteractionDialogImageVisual());
+        }
         showState(true);
     }
 
@@ -124,7 +165,13 @@ public class ForgeDialog implements InteractionDialogPlugin {
 
     @Override
     public void optionSelected(String optionText, Object optionData) {
-        if (optionData instanceof RunOption option) {
+        if (tallyBeforeFight != null && !ForgeGuards.guarded(forge)) {
+            ForgeGuards.restore(tallyBeforeFight);
+            tallyBeforeFight = null;
+        }
+        if (BEAT_DEFENDERS_CONTINUE.equals(optionData)) {
+            continueAfterGuards();
+        } else if (optionData instanceof RunOption option) {
             openBench(option.program());
         } else {
             interactionDialog.dismiss();

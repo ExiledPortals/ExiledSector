@@ -8,7 +8,7 @@ An anomaly is anything a star chart system holds beyond its ordinary layout, fle
 | Excavation Sites (built) | `../completed/anomalies/excavation_sites.md` | one optional per open shaft, frigates and destroyers only; collapsed shafts are a marine raid |
 | Faction Skirmish | `faction_skirmish.md` | two sides' fleets; you join one or fight both |
 | Listening Post (built) | `../completed/anomalies/listening_post.md` | zero if you get in unseen, one if the alarm goes up |
-| Derelict Forge | `derelict_forge.md` | none |
+| Derelict Forge | `derelict_forge.md` | one, a Guardian and its drones guarding the forge |
 | Storm Front | `storm_front.md` | none, changes the fights the chart already has |
 | Spatial Breach (built) | `../completed/anomalies/spatial_breach.md` | none |
 | Supply Convoy (built) | `../completed/anomalies/supply_convoy.md` | zero or one, sized by where you strike; a raid if it delivers |

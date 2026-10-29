@@ -65,6 +65,14 @@ public final class ChartAnomalyFleets {
         return fleet == null || fleet.isEmpty() ? null : fleet;
     }
 
+    public static CampaignFleetAPI emptyFleet(String factionId, String fleetType) {
+        return ChartContentGenerator.engine().createEmptyFleet(factionId, fleetType);
+    }
+
+    public static boolean addCoreFlagship(CampaignFleetAPI fleet, String variantId, String aiCoreId, Random random) {
+        return fleet != null && ChartContentGenerator.engine().addCoreFlagship(fleet, variantId, aiCoreId, random);
+    }
+
     public static void prepare(CampaignFleetAPI fleet, String runId, int tier, long fleetSeed, boolean lootable, ChartGenContext context) {
         ChartContentGenerator.prepareFleet(fleet, runId, tier, FleetRole.PATROL, 0, fleetSeed);
         if (!lootable) {
