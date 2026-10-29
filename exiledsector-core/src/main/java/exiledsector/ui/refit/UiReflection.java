@@ -59,7 +59,7 @@ public final class UiReflection {
         return returnType.isInstance(value) ? returnType.cast(value) : null;
     }
 
-    static Object call(Object target, String name, Object... args) throws Throwable {
+    public static Object call(Object target, String name, Object... args) throws Throwable {
         if (target == null) return null;
         Object method = method(target.getClass(), name, args.length);
         return method == NONE ? null : METHOD_INVOKE.invoke(method, target, args);

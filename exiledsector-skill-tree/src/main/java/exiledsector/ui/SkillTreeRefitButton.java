@@ -130,6 +130,7 @@ public class SkillTreeRefitButton extends FullScreenRefitButton {
 
         float frameOutset = SkillTreeChrome.SHIP_CARD_FRAME_OUTSET;
         ShipCardClickTarget cardClickTarget = new ShipCardClickTarget(canvasPlugin::toggleShipList, canvasPlugin::shipListAvailable, false);
+        cardClickTarget.showTooltip(ShipCardTooltip.takeFrom(shipCard.getPrev(), member, contentPanel), canvasPlugin::shipListAvailable);
         contentPanel.addComponent(Global.getSettings().createCustom(SHIP_CARD_ICON_SIZE + frameOutset * 2f,
                 shipCardHeight + frameOutset * 2f, cardClickTarget)).inBL(ChromeMetrics.EDGE_MARGIN - frameOutset,
                 ChromeMetrics.EDGE_MARGIN - frameOutset);

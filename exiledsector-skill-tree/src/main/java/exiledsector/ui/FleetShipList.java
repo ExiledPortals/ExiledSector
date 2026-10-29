@@ -31,6 +31,7 @@ final class FleetShipList extends BaseCustomUIPanelPlugin {
     private final CustomPanelAPI hostPanel;
     private final float cardHeight;
     private final Consumer<FleetMemberAPI> picked;
+    private final List<ShipCardClickTarget> clickTargets = new ArrayList<>();
     private CustomPanelAPI listPanel;
     private PositionAPI listPosition;
 
@@ -74,7 +75,6 @@ final class FleetShipList extends BaseCustomUIPanelPlugin {
         hostPanel.addComponent(listPanel).inBL(left, bottom);
 
         TooltipMakerAPI element = listPanel.createUIElement(elementWidth, layout.innerHeight(), layout.scrolls());
-        List<ShipCardClickTarget> clickTargets = new ArrayList<>();
         for (int index = 0; index < members.size(); index++) {
             FleetMemberAPI member = members.get(index);
             boolean selected = index == roster.selectedIndex();
@@ -105,6 +105,7 @@ final class FleetShipList extends BaseCustomUIPanelPlugin {
         CustomPanelAPI rowPanel = Global.getSettings().createCustom(cardWidth, cardHeight, null);
         TooltipMakerAPI card = rowPanel.createUIElement(cardWidth, cardHeight, false);
         card.addShipList(1, 1, cardWidth, CARD_BACKGROUND, List.of(member), 0f);
+        clickTarget.showTooltip(ShipCardTooltip.takeFrom(card.getPrev(), member, hostPanel), () -> true);
         rowPanel.addUIElement(card).inTL(0f, 0f);
         rowPanel.addComponent(Global.getSettings().createCustom(cardWidth, cardHeight, clickTarget)).inTL(0f, 0f);
         return rowPanel;
@@ -122,6 +123,10 @@ final class FleetShipList extends BaseCustomUIPanelPlugin {
         if (listPanel == null) {
             return;
         }
+        for (ShipCardClickTarget clickTarget : clickTargets) {
+            clickTarget.hideTooltip();
+        }
+        clickTargets.clear();
         hostPanel.removeComponent(listPanel);
         listPanel = null;
         listPosition = null;
