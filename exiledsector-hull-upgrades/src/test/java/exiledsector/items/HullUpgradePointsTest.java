@@ -98,49 +98,68 @@ class HullUpgradePointsTest {
 
         assertEquals(0, HullUpgradePoints.of(npcShip));
         assertEquals(0, HullUpgradePoints.unspent(npcShip));
-        assertEquals(HullUpgradeRules.UpgradeBlock.WRONG_TIER, HullUpgradeRules.upgradeBlock(npcShip, RefitSchematic.SCRAPPED, 1));
+        assertEquals(HullUpgradeRules.UpgradeBlock.NOT_UPGRADABLE, HullUpgradeRules.upgradeBlock(npcShip, RefitSchematic.SCRAPPED, 1));
+        assertEquals(HullUpgradeRules.UpgradeBlock.NOT_UPGRADABLE, HullUpgradeRules.upgradeBlock(npcShip, RefitSchematic.DOMAIN, 1));
     }
 
     @Test
-    void eachSchematicAppliesOnlyOnePointBelowItsTierSetsThePointsAndIsUsedUp() {
+    void eachSchematicTakesAnyShipBelowItsTierStraightToItAndIsUsedUp() {
+        for (RefitSchematic schematic : RefitSchematic.values()) {
+            for (int startPoints = HullUpgradePoints.STARTING_POINTS; startPoints < schematic.points(); startPoints++) {
+                String scenario = schematic.name() + " on " + startPoints;
+                store.addSchematics(schematic, 1);
+                ShipSkillData shipData = shipWithStoredPoints(startPoints);
+
+                assertNull(HullUpgradeRules.upgradeBlock(shipData, schematic, store.schematicCount(schematic)), scenario);
+                assertTrue(HullUpgradeRules.applySchematic(shipData, schematic, store), scenario);
+                assertEquals(schematic.points(), HullUpgradePoints.of(shipData), scenario);
+                assertEquals(0, store.schematicCount(schematic), scenario);
+            }
+        }
+    }
+
+    @Test
+    void aSchematicSkipsTheTiersBetweenAndLowerTiersStopWorkingAfterwards() {
         for (RefitSchematic schematic : RefitSchematic.values()) {
             store.addSchematics(schematic, 1);
         }
         ShipSkillData shipData = new ShipSkillData();
 
-        for (RefitSchematic schematic : RefitSchematic.values()) {
-            for (RefitSchematic other : RefitSchematic.values()) {
-                if (other != schematic) {
-                    assertEquals(HullUpgradeRules.UpgradeBlock.WRONG_TIER, HullUpgradeRules.upgradeBlock(shipData, other, 1), other.name());
-                }
-            }
-            assertNull(HullUpgradeRules.upgradeBlock(shipData, schematic, store.schematicCount(schematic)));
-            assertTrue(HullUpgradeRules.applySchematic(shipData, schematic, store));
-            assertEquals(schematic.points(), HullUpgradePoints.of(shipData));
-            assertEquals(0, store.schematicCount(schematic));
-        }
+        assertTrue(HullUpgradeRules.applySchematic(shipData, RefitSchematic.MILITARY, store));
+        assertEquals(4, HullUpgradePoints.of(shipData));
+        assertEquals(HullUpgradeRules.UpgradeBlock.AT_OR_ABOVE_TIER, HullUpgradeRules.upgradeBlock(shipData, RefitSchematic.SCRAPPED, 1));
+        assertEquals(HullUpgradeRules.UpgradeBlock.AT_OR_ABOVE_TIER, HullUpgradeRules.upgradeBlock(shipData, RefitSchematic.STANDARD, 1));
+        assertTrue(HullUpgradeRules.applySchematic(shipData, RefitSchematic.DOMAIN, store));
+
         assertEquals(5, shipData.getStoredHullUpgradePoints());
+        assertEquals(1, store.schematicCount(RefitSchematic.SCRAPPED));
+        assertEquals(1, store.schematicCount(RefitSchematic.STANDARD));
+        assertEquals(0, store.schematicCount(RefitSchematic.MILITARY));
+        assertEquals(0, store.schematicCount(RefitSchematic.DOMAIN));
     }
 
     @Test
-    void aWrongTierOrAFullShipIsRefusedAndTheSchematicIsKept() {
-        store.addSchematics(RefitSchematic.STANDARD, 1);
-        store.addSchematics(RefitSchematic.SCRAPPED, 1);
-        store.addSchematics(RefitSchematic.DOMAIN, 1);
-        ShipSkillData freshShip = new ShipSkillData();
-        ShipSkillData twoPointShip = shipWithStoredPoints(2);
-        ShipSkillData fullShip = shipWithStoredPoints(5);
+    void aSchematicIsRefusedOnAShipAtOrAboveItsTierAndIsKept() {
+        for (RefitSchematic schematic : RefitSchematic.values()) {
+            store.addSchematics(schematic, 1);
+        }
+        for (RefitSchematic schematic : RefitSchematic.values()) {
+            for (int startPoints = schematic.points(); startPoints < HullUpgradePoints.MOST_POINTS; startPoints++) {
+                String scenario = schematic.name() + " on " + startPoints;
+                ShipSkillData shipData = shipWithStoredPoints(startPoints);
 
-        assertEquals(HullUpgradeRules.UpgradeBlock.WRONG_TIER, HullUpgradeRules.upgradeBlock(freshShip, RefitSchematic.STANDARD, 1));
-        assertFalse(HullUpgradeRules.applySchematic(freshShip, RefitSchematic.STANDARD, store));
-        assertFalse(HullUpgradeRules.applySchematic(twoPointShip, RefitSchematic.SCRAPPED, store));
-        assertEquals(HullUpgradeRules.UpgradeBlock.AT_MAX_POINTS, HullUpgradeRules.upgradeBlock(fullShip, RefitSchematic.DOMAIN, 1));
-        assertFalse(HullUpgradeRules.applySchematic(fullShip, RefitSchematic.DOMAIN, store));
-        assertEquals(HullUpgradeRules.UpgradeBlock.NONE_IN_STORAGE, HullUpgradeRules.upgradeBlock(freshShip, RefitSchematic.SCRAPPED, 0));
-
-        assertEquals(1, HullUpgradePoints.of(freshShip));
-        assertEquals(2, HullUpgradePoints.of(twoPointShip));
-        assertEquals(Map.of(RefitSchematic.SCRAPPED, 1, RefitSchematic.STANDARD, 1, RefitSchematic.DOMAIN, 1), store.schematicCounts());
+                assertEquals(HullUpgradeRules.UpgradeBlock.AT_OR_ABOVE_TIER, HullUpgradeRules.upgradeBlock(shipData, schematic, 1), scenario);
+                assertFalse(HullUpgradeRules.applySchematic(shipData, schematic, store), scenario);
+                assertEquals(startPoints, HullUpgradePoints.of(shipData), scenario);
+            }
+            ShipSkillData fullShip = shipWithStoredPoints(HullUpgradePoints.MOST_POINTS);
+            assertEquals(HullUpgradeRules.UpgradeBlock.AT_MAX_POINTS, HullUpgradeRules.upgradeBlock(fullShip, schematic, 1), schematic.name());
+            assertFalse(HullUpgradeRules.applySchematic(fullShip, schematic, store), schematic.name());
+        }
+        assertEquals(HullUpgradeRules.UpgradeBlock.NONE_IN_STORAGE, HullUpgradeRules.upgradeBlock(new ShipSkillData(), RefitSchematic.SCRAPPED, 0));
+        for (RefitSchematic schematic : RefitSchematic.values()) {
+            assertEquals(1, store.schematicCount(schematic), schematic.name());
+        }
     }
 
     @Test

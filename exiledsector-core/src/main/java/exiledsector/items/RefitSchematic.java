@@ -56,15 +56,6 @@ public enum RefitSchematic implements ShipCurrency {
         return special != null && ITEM_ID.equals(special.getId()) ? parse(special.getData()) : null;
     }
 
-    public static RefitSchematic forShipPoints(int shipPoints) {
-        for (RefitSchematic schematic : TIERS) {
-            if (schematic.requiredPoints() == shipPoints) {
-                return schematic;
-            }
-        }
-        return null;
-    }
-
     public static Integer absorbInto(ItemStore store, CargoAPI cargo, CargoStackAPI stack) {
         RefitSchematic schematic = of(stack.getSpecialDataIfSpecial());
         if (schematic == null) {
@@ -93,10 +84,6 @@ public enum RefitSchematic implements ShipCurrency {
 
     public int points() {
         return points;
-    }
-
-    public int requiredPoints() {
-        return points - 1;
     }
 
     public float dropWeight() {

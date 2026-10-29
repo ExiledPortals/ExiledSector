@@ -505,8 +505,8 @@ instead of replacing one, and their rare outcome only corrupts them.
 
 `HullUpgradePoints` decides a player ship's points from the LunaLib "Hull Upgrade Points" setting; NPC ships
 have none. With Refit Schematics a ship has its stored points (`ShipSkillData.frameworkPoints`), at least 1. A
-schematic only applies to a ship with exactly one point fewer than its tier (Scrapped 2, Standard 3, Military
-4, Domain 5) and sets the points to that tier (`HullUpgradeRules.applySchematic`). With Star Chart Progress
+schematic applies to any ship with fewer points than its tier (Scrapped 2, Standard 3, Military 4, Domain 5)
+and sets the points straight to that tier, skipping any between (`HullUpgradeRules.applySchematic`). With Star Chart Progress
 every ship has 1, plus one each once the highest cleared chart tier reaches 5, 10 and 15, schematics stop
 dropping, and stored points are kept for switching back. Switching never locks an unlocked section.
 
