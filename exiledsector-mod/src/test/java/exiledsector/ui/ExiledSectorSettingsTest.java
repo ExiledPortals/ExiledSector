@@ -97,6 +97,17 @@ class ExiledSectorSettingsTest {
     }
 
     @Test
+    void registersTheNpcLevelModeAndRecoveryFallbacksOnTheNpcTab() {
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addRadio(eq("exiledSector"), eq(NpcTreeConfig.LEVEL_MODE_FIELD_ID),
+                anyString(), anyString(), eq(NpcTreeConfig.YOUR_SHIPS), eq("Your Ships,Fixed Range"), eq(SkillTreeSettings.npcTab())));
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addInt(eq("exiledSector"),
+                eq(NpcTreeConfig.FIXED_MIN_PERCENT_FIELD_ID), anyString(), anyString(), eq(50), eq(0), eq(100),
+                eq(SkillTreeSettings.npcTab())));
+        settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addBoolean(eq("exiledSector"),
+                eq(NpcTreeConfig.RECOVERED_START_BLANK_FIELD_ID), anyString(), anyString(), eq(false), eq(SkillTreeSettings.npcTab())));
+    }
+
+    @Test
     void registersTheBattleDifficultyXpSettingsWithDefaultsThatMatchVanilla() {
         settingsCreatorMock.verify(() -> LunaSettings.SettingsCreator.addDouble(eq("exiledSector"),
                 eq(ShipLevelConfig.XP_DIFFICULTY_STRENGTH_FIELD_ID), anyString(), anyString(), eq(1.0), eq(0.0), eq(5.0), eq(SkillTreeSettings.skillTreeTab())));
@@ -203,7 +214,8 @@ class ExiledSectorSettingsTest {
                     || LanguageSetting.OPTIONS.contains(text) || text.equals(areaOptions) || text.equals(String.join(",", AreaToggles.REQUIRED_MOD_OPTIONS))
                     || AreaToggles.OPTIONS.contains(text) || ItemAnimationSetting.OPTIONS.contains(text)
                     || text.equals(String.join(",", ItemAnimationSetting.OPTIONS)) || HullUpgradesSetting.POINTS_OPTIONS.contains(text)
-                    || text.equals(String.join(",", HullUpgradesSetting.POINTS_OPTIONS));
+                    || text.equals(String.join(",", HullUpgradesSetting.POINTS_OPTIONS)) || NpcTreeConfig.LEVEL_MODE_OPTIONS.contains(text)
+                    || text.equals(String.join(",", NpcTreeConfig.LEVEL_MODE_OPTIONS));
             assertFalse(!untranslated && PseudoLeaks.hasLeak(text), () -> "Hardcoded settings text: " + text);
         }
     }

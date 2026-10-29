@@ -21,8 +21,14 @@ import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -82,6 +88,83 @@ class NpcLevelCapsTest {
         assertEquals(12, NpcLevelCaps.capFor("typo", true, false));
         assertEquals(25, NpcLevelCaps.capFor("bad_cap", false, false));
         assertEquals(25, NpcLevelCaps.capFor("empty", false, false));
+    }
+
+    @Test
+    void fixedRangesComeFromTheFactionRowThenTheCategoryRowThenLunaLib() throws Exception {
+        NpcLevelCaps.register(new JSONArray("[{\"id\": \"pirate\", \"category\": \"pirate\", \"cap\": \"15\", \"min\": \"5\", \"mode\": \"fixed\"},"
+                + "{\"id\": \"elite_guard\", \"category\": \"\", \"cap\": \"30\", \"min\": \"20\", \"mode\": \"Fixed\"},"
+                + "{\"id\": \"scaled_raiders\", \"category\": \"pirate\", \"mode\": \"player\"}]"));
+
+        assertEquals(new NpcLevelLimit(15, 15, 0, 5), NpcLevelCaps.limitFor(fleet("pirates", true, false)));
+        assertEquals(new NpcLevelLimit(30, 30, 0, 20), NpcLevelCaps.limitFor(fleet("elite_guard", false, false)));
+        assertEquals(NpcLevelLimit.of(15), NpcLevelCaps.limitFor(fleet("scaled_raiders", false, false)));
+        assertEquals(NpcLevelLimit.of(25), NpcLevelCaps.limitFor(fleet("hegemony", false, false)));
+
+        lunaSettingsMock.when(() -> LunaSettings.getString("exiledSector", NpcTreeConfig.LEVEL_MODE_FIELD_ID))
+                .thenReturn(NpcTreeConfig.FIXED_RANGE);
+        assertEquals(new NpcLevelLimit(25, 25, 0, 13), NpcLevelCaps.limitFor(fleet("hegemony", false, false)));
+        assertEquals(NpcLevelLimit.of(15), NpcLevelCaps.limitFor(fleet("scaled_raiders", false, false)));
+        lunaSettingsMock.when(() -> LunaSettings.getInt("exiledSector", NpcTreeConfig.FIXED_MIN_PERCENT_FIELD_ID)).thenReturn(100);
+        assertEquals(new NpcLevelLimit(25, 25, 0, 25), NpcLevelCaps.limitFor(fleet("hegemony", false, false)));
+    }
+
+    @Test
+    void aMinimumAboveTheCapIsClampedAndABountyRaisesOnlyTheTopOfTheRange() throws Exception {
+        NpcLevelCaps.register(new JSONArray("[{\"id\": \"pirate\", \"category\": \"pirate\", \"min\": \"5\", \"mode\": \"fixed\"},"
+                + "{\"id\": \"backwards\", \"category\": \"\", \"cap\": \"10\", \"min\": \"40\", \"mode\": \"fixed\"}]"));
+        CampaignFleetAPI pirateBounty = fleet("pirates", true, false);
+        when(pirateBounty.hasTag(NpcBounties.MAGICLIB_TARGET_TAG)).thenReturn(true);
+
+        assertEquals(new NpcLevelLimit(10, 10, 0, 10), NpcLevelCaps.limitFor(fleet("backwards", false, false)));
+        assertEquals(new NpcLevelLimit(25, 28, 3, 5), NpcLevelCaps.limitFor(pirateBounty));
+    }
+
+    @Test
+    void aFixedLimitRollsEveryLevelFromItsMinimumToItsCap() {
+        NpcLevelLimit limit = NpcLevelLimit.of(12).fixedFrom(10);
+        Set<Integer> rolled = new TreeSet<>();
+        Random random = new Random(1);
+        for (int roll = 0; roll < 200; roll++) {
+            rolled.add(limit.rollFixed(random));
+        }
+
+        assertEquals(Set.of(10, 11, 12), rolled);
+        assertEquals(new NpcLevelLimit(12, 12, 0, 0), NpcLevelLimit.of(12).fixedFrom(-3));
+    }
+
+    @Test
+    void rowsWithAnUnknownModeKeepTreeOrMinAreIgnored() throws Exception {
+        NpcLevelCaps.register(new JSONArray("[{\"id\": \"bad_mode\", \"category\": \"\", \"cap\": \"5\", \"mode\": \"static\"},"
+                + "{\"id\": \"bad_keep\", \"category\": \"\", \"cap\": \"5\", \"keep_tree\": \"yes\"},"
+                + "{\"id\": \"bad_min\", \"category\": \"\", \"cap\": \"5\", \"min\": \"some\"}]"));
+
+        assertEquals(25, NpcLevelCaps.capFor("bad_mode", false, false));
+        assertEquals(25, NpcLevelCaps.capFor("bad_keep", false, false));
+        assertEquals(25, NpcLevelCaps.capFor("bad_min", false, false));
+    }
+
+    @Test
+    void keepTreeComesFromTheFactionOrCategoryRowAndIsCarriedOnTheVariant() throws Exception {
+        NpcLevelCaps.register(new JSONArray("[{\"id\": \"pirate\", \"category\": \"pirate\", \"keep_tree\": \"wipe\"},"
+                + "{\"id\": \"salvagers\", \"category\": \"pirate\", \"keep_tree\": \"keep\"}]"));
+        List<String> tags = new ArrayList<>();
+        ShipVariantAPI variant = mock(ShipVariantAPI.class);
+        when(variant.getTags()).thenAnswer(invocation -> new ArrayList<>(tags));
+        doAnswer(invocation -> tags.add(invocation.getArgument(0))).when(variant).addTag(anyString());
+        doAnswer(invocation -> tags.remove((String) invocation.getArgument(0))).when(variant).removeTag(anyString());
+
+        assertEquals(Boolean.FALSE, NpcLevelCaps.keepTreeSetting(fleet("pirates", true, false)));
+        assertEquals(Boolean.TRUE, NpcLevelCaps.keepTreeSetting(fleet("salvagers", true, false)));
+        assertNull(NpcLevelCaps.keepTreeSetting(fleet("hegemony", false, false)));
+
+        assertTrue(NpcLevelCaps.keepsTreeOnRecovery(variant));
+        NpcLevelCaps.tagRecovery(variant, false);
+        assertFalse(NpcLevelCaps.keepsTreeOnRecovery(variant));
+        NpcLevelCaps.tagRecovery(variant, true);
+        assertEquals(List.of(NpcLevelCaps.RECOVERY_TAG_PREFIX + "keep"), tags);
+        NpcLevelCaps.tagRecovery(variant, null);
+        assertEquals(List.of(), tags);
     }
 
     @Test

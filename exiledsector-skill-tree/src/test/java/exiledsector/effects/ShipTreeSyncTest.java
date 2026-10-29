@@ -33,6 +33,8 @@ import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.SkillType;
 import exiledsector.skills.layout.SkillNodeDecoration;
+import exiledsector.skills.npc.NpcLevelCaps;
+import exiledsector.skills.npc.NpcTreeConfig;
 import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.skills.progression.ShipLevelConfig;
 import lunalib.lunaSettings.LunaSettings;
@@ -346,6 +348,37 @@ class ShipTreeSyncTest {
         assertEquals(List.of("root_1", "a_1"), List.copyOf(adopted.getAllocatedNodeIds()));
         assertEquals(1, adopted.getLevel());
         assertEquals(0, ShipTrees.paidNodeCount(adopted));
+    }
+
+    @Test
+    void aCapturedShipFromAFactionThatWipesTreesStartsBlankAndLosesItsNpcTags() {
+        registerNpcTreeNodes();
+        Set<String> hullMods = new HashSet<>(Set.of(SkillTreeHullMod.ID));
+        List<String> tags = new ArrayList<>(List.of("exiledSector_npcTree|generated|1|root_1,a_1", NpcLevelCaps.TAG_PREFIX + "15",
+                NpcLevelCaps.RECOVERY_TAG_PREFIX + "wipe"));
+        FleetMemberAPI member = recoveredNpc("captured", hullMods, tags);
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(member));
+
+        ShipTreeSync.fleetChanged(playerFleet());
+
+        assertTrue(ShipSkillDataManager.get("captured").isBlank());
+        assertEquals(List.of(), tags);
+    }
+
+    @Test
+    void theRecoverySettingDecidesForUntaggedShipsAndAKeepTagOverridesIt() {
+        registerNpcTreeNodes();
+        lunaSettingsMock.when(() -> LunaSettings.getBoolean(anyString(), eq(NpcTreeConfig.RECOVERED_START_BLANK_FIELD_ID))).thenReturn(true);
+        FleetMemberAPI untagged = recoveredNpc("untagged", new HashSet<>(Set.of(SkillTreeHullMod.ID)),
+                new ArrayList<>(List.of("exiledSector_npcTree|generated|1|root_1,a_1")));
+        FleetMemberAPI kept = recoveredNpc("kept", new HashSet<>(Set.of(SkillTreeHullMod.ID)),
+                new ArrayList<>(List.of("exiledSector_npcTree|generated|1|root_1,a_1", NpcLevelCaps.RECOVERY_TAG_PREFIX + "keep")));
+        when(fleetData.getMembersListCopy()).thenReturn(List.of(untagged, kept));
+
+        ShipTreeSync.fleetChanged(playerFleet());
+
+        assertTrue(ShipSkillDataManager.get("untagged").isBlank());
+        assertEquals(1, ShipSkillDataManager.get("kept").getLevel());
     }
 
     @Test

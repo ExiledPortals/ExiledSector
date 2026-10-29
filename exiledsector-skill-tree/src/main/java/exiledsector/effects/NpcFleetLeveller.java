@@ -89,6 +89,7 @@ public final class NpcFleetLeveller {
                         levelLimit = NpcLevelCaps.limitFor(npcFleet);
                     }
                     NpcLevelCaps.tag(member.getVariant(), levelLimit.capFor(member.isFlagship()));
+                    NpcLevelCaps.tagRecovery(member.getVariant(), NpcLevelCaps.keepTreeSetting(npcFleet));
                 }
             }
         }
@@ -112,8 +113,8 @@ public final class NpcFleetLeveller {
             return NpcTreeRecords.NOT_LEVELLED;
         }
         int nodeCount = chartLevels != null ? chartLevels.roll(random)
-                : levelLimit.nodeCount(NpcTreeSize.roll(playerShipPowers, random), ShipLevelConfig.maxAllocatedNodesBesidesRoot(),
-                        member.isFlagship());
+                : levelLimit.nodeCount(levelLimit.isFixed() ? levelLimit.rollFixed(random) : NpcTreeSize.roll(playerShipPowers, random),
+                        ShipLevelConfig.maxAllocatedNodesBesidesRoot(), member.isFlagship());
         if (nodeCount <= 0 && chartLevels == null && MasterSchematic.required()) {
             return NpcTreeRecords.NOT_LEVELLED;
         }

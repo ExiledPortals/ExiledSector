@@ -5,3 +5,4 @@ data.scripts.sbe.EWAROnFire,ET-IX,Each split fires a full EMP burst around the p
 data.weapons.onhit.PlasmaAcceleratorEffect7s,Rumours of Neoteric,Each split drone fires its own full unshared 1000-damage bolt which carries most of the weapon's damage
 data.kaysaar.aotd.vok.weapons.AoTDShadowLanceBeamEffect,AotD VoK,Repeats the 30% hard-flux spike on every big ship near each split impact including allies and the primary target
 data.scripts.weapons.gr_SadalmelikLaser_BeamEffect,Galactic Constellate,Its hull-hit listener calls getSystem() on the system-less drone and crashes
+data.scripts.weapons.armaa_chaosBurstBeam,Arma Armatura,Split drones carrying the Zanac's head beam crash the game (player report)

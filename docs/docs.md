@@ -241,6 +241,11 @@ ship's tree power (`NpcTreeSize.roll`), capped by category in `NpcLevelCaps`: `n
 AI-core commander (35), pirate flag (15), otherwise faction (25). The cap is stored per ship as a variant tag,
 because battles merge fleets. Chart fleets are uncapped.
 
+In fixed mode (`mode` column, else the LunaLib "NPC Level Mode") a ship instead rolls between `min` (else the
+LunaLib percent of its cap) and its cap (`NpcLevelLimit.rollFixed`). Faction rows win over category rows. A
+`keep_tree` of `wipe` is tagged on the ship and `ShipTreeSync.adoptNpcTree` then leaves a recovered ship blank;
+without the column the LunaLib "Recovered Ships Start Blank" decides.
+
 ### Bounties
 
 `NpcBounties` turns a bounty fleet into a 0 to 1 difficulty that raises the cap from the category cap towards

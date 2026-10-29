@@ -162,6 +162,15 @@ public final class SkillTreeSettings {
         SettingsCreator.addInt(MOD_ID, NpcTreeSize.MAX_PERCENT_FIELD_ID,
                 Translation.text("settings.npcTreeSize.max.name"), "",
                 NpcTreeSize.DEFAULT_MAX_PERCENT, NpcTreeSize.LOWEST_PERCENT, NpcTreeSize.HIGHEST_PERCENT, npcTab);
+        SettingsCreator.addRadio(MOD_ID, NpcTreeConfig.LEVEL_MODE_FIELD_ID, Translation.text("settings.npcTreeSize.mode.name"),
+                Translation.text("settings.npcTreeSize.mode.tooltip"), NpcTreeConfig.YOUR_SHIPS,
+                String.join(",", NpcTreeConfig.LEVEL_MODE_OPTIONS), npcTab);
+        SettingsCreator.addInt(MOD_ID, NpcTreeConfig.FIXED_MIN_PERCENT_FIELD_ID,
+                Translation.text("settings.npcTreeSize.fixedMin.name"), Translation.text("settings.npcTreeSize.fixedMin.tooltip"),
+                NpcTreeConfig.DEFAULT_FIXED_MIN_PERCENT, 0, 100, npcTab);
+        SettingsCreator.addBoolean(MOD_ID, NpcTreeConfig.RECOVERED_START_BLANK_FIELD_ID,
+                Translation.text("settings.npcTreeSize.startBlank.name"), Translation.text("settings.npcTreeSize.startBlank.tooltip"),
+                NpcTreeConfig.DEFAULT_RECOVERED_START_BLANK, npcTab);
 
         SettingsCreator.addHeader(MOD_ID, "exiledSector_npcBonusScaleHeader", Translation.text("settings.npcBonusScale.header"), npcTab);
         SettingsCreator.addText(MOD_ID, "exiledSector_npcBonusScaleAbout", Translation.text("settings.npcBonusScale.about"), npcTab);

@@ -19,6 +19,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
 public final class NpcLevelCaps {
 
@@ -26,24 +27,46 @@ public final class NpcLevelCaps {
     public static final int BOUNTY_TOP_CAP = 25;
     public static final int BOUNTY_FLAGSHIP_LEVELS = 3;
     public static final String TAG_PREFIX = "exiledSector_npcLevelCap|";
+    public static final String RECOVERY_TAG_PREFIX = "exiledSector_npcTreeRecovery|";
     static final String DATA_PATH = "data/config/exiledSector/npc_levels.csv";
     private static final String ID_COLUMN = "id";
     private static final String CATEGORY_COLUMN = "category";
     private static final String CAP_COLUMN = "cap";
+    private static final String MIN_COLUMN = "min";
+    private static final String MODE_COLUMN = "mode";
+    private static final String KEEP_TREE_COLUMN = "keep_tree";
+    private static final String MODE_FIXED = "fixed";
+    private static final String MODE_PLAYER = "player";
+    private static final String KEEP = "keep";
+    private static final String WIPE = "wipe";
     private static final Logger LOG = Logger.getLogger(NpcLevelCaps.class);
     private static final AtomicReference<CapData> CAP_DATA = new AtomicReference<>(CapData.defaults());
 
-    private record FactionOverride(NpcLevelCategory category, Integer cap) {
+    private record LevelRule(Integer cap, Integer min, Boolean fixed, Boolean keepTree) {
+
+        static final LevelRule EMPTY = new LevelRule(null, null, null, null);
+
+        boolean isEmpty() {
+            return equals(EMPTY);
+        }
+
+        LevelRule over(LevelRule base) {
+            return new LevelRule(cap != null ? cap : base.cap(), min != null ? min : base.min(), fixed != null ? fixed : base.fixed(),
+                    keepTree != null ? keepTree : base.keepTree());
+        }
     }
 
-    private record CapData(Map<NpcLevelCategory, Integer> capByCategory, Map<String, FactionOverride> overrideByFaction) {
+    private record FactionOverride(NpcLevelCategory category, LevelRule rule) {
+    }
+
+    private record CapData(Map<NpcLevelCategory, LevelRule> ruleByCategory, Map<String, FactionOverride> overrideByFaction) {
 
         static CapData defaults() {
-            Map<NpcLevelCategory, Integer> capByCategory = new EnumMap<>(NpcLevelCategory.class);
+            Map<NpcLevelCategory, LevelRule> ruleByCategory = new EnumMap<>(NpcLevelCategory.class);
             for (NpcLevelCategory category : NpcLevelCategory.values()) {
-                capByCategory.put(category, category.defaultCap());
+                ruleByCategory.put(category, new LevelRule(category.defaultCap(), null, null, null));
             }
-            return new CapData(capByCategory, Map.of());
+            return new CapData(ruleByCategory, Map.of());
         }
     }
 
@@ -55,13 +78,11 @@ public final class NpcLevelCaps {
     }
 
     public static void register(JSONArray rows) throws JSONException {
-        CapData loaded = CapData.defaults();
-        Map<NpcLevelCategory, Integer> capByCategory = new EnumMap<>(loaded.capByCategory());
+        Map<NpcLevelCategory, LevelRule> ruleByCategory = new EnumMap<>(CapData.defaults().ruleByCategory());
         Map<String, FactionOverride> overrideByFaction = new HashMap<>();
         ModCsv.forEach(rows, (index, row) -> {
             String rowId = ModCsv.text(row, ID_COLUMN);
             String categoryText = ModCsv.text(row, CATEGORY_COLUMN);
-            String capText = ModCsv.text(row, CAP_COLUMN);
             if (rowId.isEmpty()) {
                 return;
             }
@@ -70,35 +91,50 @@ public final class NpcLevelCaps {
                 LOG.warn("Ignoring " + rowId + " in " + DATA_PATH + ": '" + categoryText + "' is not pirate, faction or ai");
                 return;
             }
-            Integer cap = parseCap(rowId, capText);
-            if (!capText.isEmpty() && cap == null) {
+            LevelRule rule;
+            try {
+                rule = new LevelRule(parseLevel(ModCsv.text(row, CAP_COLUMN), CAP_COLUMN), parseLevel(ModCsv.text(row, MIN_COLUMN), MIN_COLUMN),
+                        parseChoice(ModCsv.text(row, MODE_COLUMN), MODE_COLUMN, MODE_FIXED, MODE_PLAYER),
+                        parseChoice(ModCsv.text(row, KEEP_TREE_COLUMN), KEEP_TREE_COLUMN, KEEP, WIPE));
+            } catch (IllegalArgumentException e) {
+                LOG.warn("Ignoring " + rowId + " in " + DATA_PATH + ": " + e.getMessage());
                 return;
             }
             if (category != null && rowId.equals(category.csvId())) {
-                if (cap != null) {
-                    capByCategory.put(category, cap);
-                }
+                ruleByCategory.put(category, rule.over(ruleByCategory.get(category)));
                 return;
             }
-            if (category == null && cap == null) {
-                LOG.warn("Ignoring " + rowId + " in " + DATA_PATH + ": it sets neither a category nor a cap");
+            if (category == null && rule.isEmpty()) {
+                LOG.warn("Ignoring " + rowId + " in " + DATA_PATH + ": it sets no category, cap, min, mode or keep_tree");
                 return;
             }
-            overrideByFaction.put(rowId, new FactionOverride(category, cap));
+            overrideByFaction.put(rowId, new FactionOverride(category, rule));
         });
-        CAP_DATA.set(new CapData(capByCategory, Map.copyOf(overrideByFaction)));
+        CAP_DATA.set(new CapData(ruleByCategory, Map.copyOf(overrideByFaction)));
     }
 
-    private static Integer parseCap(String rowId, String capText) {
-        if (capText.isEmpty()) {
+    private static Integer parseLevel(String text, String column) {
+        if (text.isEmpty()) {
             return null;
         }
         try {
-            return Math.max(0, Integer.parseInt(capText));
+            return Math.max(0, Integer.parseInt(text));
         } catch (NumberFormatException e) {
-            LOG.warn("Ignoring " + rowId + " in " + DATA_PATH + ": cap '" + capText + "' is not a whole number");
+            throw new IllegalArgumentException(column + " '" + text + "' is not a whole number", e);
+        }
+    }
+
+    private static Boolean parseChoice(String text, String column, String yes, String no) {
+        if (text.isEmpty()) {
             return null;
         }
+        if (yes.equalsIgnoreCase(text)) {
+            return true;
+        }
+        if (no.equalsIgnoreCase(text)) {
+            return false;
+        }
+        throw new IllegalArgumentException(column + " '" + text + "' is not " + yes + " or " + no);
     }
 
     public static void clear() {
@@ -107,18 +143,45 @@ public final class NpcLevelCaps {
 
     public static NpcLevelLimit limitFor(CampaignFleetAPI fleet) {
         if (fleet == null) {
-            return NpcLevelLimit.of(capFor(null, false, false));
+            return withMode(null, NpcLevelCategory.FACTION, NpcLevelLimit.of(capFor(null, false, false)));
         }
         if (isChartFleet(fleet.getMemoryWithoutUpdate())) {
             return NpcLevelLimit.UNCAPPED;
         }
+        String factionId = factionIdOf(fleet);
+        NpcBounties.Bounty bounty = NpcBounties.find(fleet);
+        NpcLevelCategory category = categoryFor(fleet, bounty);
+        int categoryCap = capFor(factionId, category);
+        return withMode(factionId, category, bounty == null ? NpcLevelLimit.of(categoryCap) : bountyLimit(categoryCap, bounty.difficulty()));
+    }
+
+    private static String factionIdOf(CampaignFleetAPI fleet) {
+        FactionAPI faction = fleet.getFaction();
+        return faction == null ? null : faction.getId();
+    }
+
+    private static NpcLevelCategory categoryFor(CampaignFleetAPI fleet, NpcBounties.Bounty bounty) {
         FactionAPI faction = fleet.getFaction();
         PersonAPI commander = fleet.getCommander();
-        NpcBounties.Bounty bounty = NpcBounties.find(fleet);
-        int categoryCap = capFor(faction == null ? null : faction.getId(),
+        return categoryFor(factionIdOf(fleet),
                 (bounty != null && bounty.personBounty()) || (faction != null && faction.getCustomBoolean(Factions.CUSTOM_PIRATE_BEHAVIOR)),
                 commander != null && commander.isAICore());
-        return bounty == null ? NpcLevelLimit.of(categoryCap) : bountyLimit(categoryCap, bounty.difficulty());
+    }
+
+    private static NpcLevelLimit withMode(String factionId, NpcLevelCategory category, NpcLevelLimit limit) {
+        Boolean fixed = resolve(factionId, category, LevelRule::fixed);
+        if (fixed == null ? !NpcTreeConfig.fixedLevels() : !fixed) {
+            return limit;
+        }
+        Integer min = resolve(factionId, category, LevelRule::min);
+        return limit.fixedFrom(min != null ? min : Math.round(capFor(factionId, category) * NpcTreeConfig.fixedMinPercent() / 100f));
+    }
+
+    public static Boolean keepTreeSetting(CampaignFleetAPI fleet) {
+        if (fleet == null) {
+            return null;
+        }
+        return resolve(factionIdOf(fleet), categoryFor(fleet, NpcBounties.find(fleet)), LevelRule::keepTree);
     }
 
     public static int capFor(CampaignFleetAPI fleet) {
@@ -138,7 +201,7 @@ public final class NpcLevelCaps {
     }
 
     public static int capFor(FleetMemberAPI member, ShipVariantAPI variant) {
-        String capTag = findTag(variant);
+        String capTag = findTag(variant, TAG_PREFIX);
         if (capTag != null) {
             try {
                 return Integer.parseInt(capTag.substring(TAG_PREFIX.length()));
@@ -150,30 +213,52 @@ public final class NpcLevelCaps {
     }
 
     public static void tag(ShipVariantAPI variant, int levelCap) {
-        String capTag = TAG_PREFIX + levelCap;
-        if (capTag.equals(findTag(variant))) {
-            return;
+        replaceTag(variant, TAG_PREFIX, TAG_PREFIX + levelCap);
+    }
+
+    public static void tagRecovery(ShipVariantAPI variant, Boolean keepTree) {
+        replaceTag(variant, RECOVERY_TAG_PREFIX, keepTree == null ? null : RECOVERY_TAG_PREFIX + (keepTree ? KEEP : WIPE));
+    }
+
+    public static boolean keepsTreeOnRecovery(ShipVariantAPI variant) {
+        String recoveryTag = findTag(variant, RECOVERY_TAG_PREFIX);
+        if (recoveryTag == null) {
+            return !NpcTreeConfig.recoveredShipsStartBlank();
         }
-        removeTag(variant);
-        variant.addTag(capTag);
+        return !WIPE.equals(recoveryTag.substring(RECOVERY_TAG_PREFIX.length()));
     }
 
     public static boolean hasTag(ShipVariantAPI variant) {
-        return findTag(variant) != null;
+        return findTag(variant, TAG_PREFIX) != null;
     }
 
     public static void removeTag(ShipVariantAPI variant) {
-        for (String capTag = findTag(variant); capTag != null; capTag = findTag(variant)) {
-            variant.removeTag(capTag);
+        removeTags(variant, TAG_PREFIX);
+        removeTags(variant, RECOVERY_TAG_PREFIX);
+    }
+
+    private static void replaceTag(ShipVariantAPI variant, String prefix, String wantedTag) {
+        if (wantedTag != null && wantedTag.equals(findTag(variant, prefix))) {
+            return;
+        }
+        removeTags(variant, prefix);
+        if (wantedTag != null) {
+            variant.addTag(wantedTag);
         }
     }
 
-    private static String findTag(ShipVariantAPI variant) {
+    private static void removeTags(ShipVariantAPI variant, String prefix) {
+        for (String foundTag = findTag(variant, prefix); foundTag != null; foundTag = findTag(variant, prefix)) {
+            variant.removeTag(foundTag);
+        }
+    }
+
+    private static String findTag(ShipVariantAPI variant, String prefix) {
         if (variant == null || variant.getTags() == null) {
             return null;
         }
         for (String variantTag : variant.getTags()) {
-            if (variantTag.startsWith(TAG_PREFIX)) {
+            if (variantTag.startsWith(prefix)) {
                 return variantTag;
             }
         }
@@ -181,7 +266,7 @@ public final class NpcLevelCaps {
     }
 
     public static NpcLevelCategory categoryFor(String factionId, boolean pirateBehavior, boolean aiCommander) {
-        FactionOverride override = factionId == null ? null : CAP_DATA.get().overrideByFaction().get(factionId);
+        FactionOverride override = overrideFor(factionId);
         if (override != null && override.category() != null) {
             return override.category();
         }
@@ -192,13 +277,25 @@ public final class NpcLevelCaps {
     }
 
     public static int capFor(String factionId, boolean pirateBehavior, boolean aiCommander) {
-        FactionOverride override = factionId == null ? null : CAP_DATA.get().overrideByFaction().get(factionId);
-        int cap = override != null && override.cap() != null ? override.cap() : capOf(categoryFor(factionId, pirateBehavior, aiCommander));
-        return clampToMaxLevel(cap);
+        return capFor(factionId, categoryFor(factionId, pirateBehavior, aiCommander));
+    }
+
+    private static int capFor(String factionId, NpcLevelCategory category) {
+        return clampToMaxLevel(resolve(factionId, category, LevelRule::cap));
     }
 
     public static int capOf(NpcLevelCategory category) {
-        return clampToMaxLevel(CAP_DATA.get().capByCategory().get(category));
+        return clampToMaxLevel(CAP_DATA.get().ruleByCategory().get(category).cap());
+    }
+
+    private static <T> T resolve(String factionId, NpcLevelCategory category, Function<LevelRule, T> field) {
+        FactionOverride override = overrideFor(factionId);
+        T factionValue = override == null ? null : field.apply(override.rule());
+        return factionValue != null ? factionValue : field.apply(CAP_DATA.get().ruleByCategory().get(category));
+    }
+
+    private static FactionOverride overrideFor(String factionId) {
+        return factionId == null ? null : CAP_DATA.get().overrideByFaction().get(factionId);
     }
 
     private static int clampToMaxLevel(int cap) {

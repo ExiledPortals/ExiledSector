@@ -106,6 +106,7 @@ class NpcFleetLevellerTest {
     @AfterEach
     void tearDown() {
         MasterSchematic.requiredWhen(null);
+        NpcLevelCaps.clear();
         PlayerTreePower.invalidate();
         lunaSettingsMock.close();
         mockSector.close();
@@ -640,6 +641,32 @@ class NpcFleetLevellerTest {
         assertEquals(15, nodesBesidesRoot(treeForFaction(true, false)));
         assertEquals(25, nodesBesidesRoot(treeForFaction(false, false)));
         assertEquals(35, nodesBesidesRoot(treeForFaction(true, true)));
+    }
+
+    @Test
+    void aFixedRangeFactionIgnoresThePlayersFleetAndCarriesItsRecoveryRule() throws Exception {
+        registerLongChain();
+        when(playerStats.getLevel()).thenReturn(1);
+        NpcLevelCaps.register(new JSONArray("[{\"id\": \"pirate\", \"category\": \"pirate\", \"cap\": \"15\", \"min\": \"10\","
+                + " \"mode\": \"fixed\", \"keep_tree\": \"wipe\"}]"));
+
+        String pirateTree = treeForFaction(true, false);
+        int pirateNodes = nodesBesidesRoot(pirateTree);
+
+        assertTrue(pirateNodes >= 10 && pirateNodes <= 15, "rolled " + pirateNodes);
+        assertTrue(nodesBesidesRoot(treeForFaction(false, false)) < 10);
+    }
+
+    @Test
+    void aWipeRuleIsTaggedOnTheLevelledShip() throws Exception {
+        NpcLevelCaps.register(new JSONArray("[{\"id\": \"pirate\", \"category\": \"pirate\", \"keep_tree\": \"wipe\"}]"));
+        FleetMemberAPI officered = member("m1", statefulVariant(new LinkedHashSet<>(), new ArrayList<>()), true);
+        CampaignFleetAPI pirateFleet = fleetOf(officered);
+        when(pirateFleet.getFaction().getCustomBoolean(Factions.CUSTOM_PIRATE_BEHAVIOR)).thenReturn(true);
+
+        NpcFleetLeveller.ensure(pirateFleet);
+
+        assertFalse(NpcLevelCaps.keepsTreeOnRecovery(officered.getVariant()));
     }
 
     @Test
