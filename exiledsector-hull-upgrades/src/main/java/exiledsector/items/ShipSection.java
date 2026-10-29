@@ -8,7 +8,7 @@ import java.util.List;
 public enum ShipSection {
 
     BRIDGE("bridge", null),
-    CREW_QUARTERS("crew_quarters", null),
+    CREW_QUARTERS("crew_quarters", "req_crewed"),
     ENGINE_ROOM("engine_room", null),
     REACTOR("reactor", null),
     ARMOR_PLATING("armor_plating", null),

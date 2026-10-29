@@ -245,6 +245,37 @@ describe('hull item mechanics', () => {
   });
 });
 
+describe('hull item crew', () => {
+  it('adds the crew column only once a hull item uses it and reads it back', () => {
+    const subroutinesText = 'id,name,icon,rarity,unique,kind,description,unlock\n';
+    const olderText = 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock\nrelic,bridge,Relic,,10,true,,@HULL_MULT_BRIDGE,,\n';
+    const model = parseItemDefinitions(subroutinesText, olderText);
+
+    expect(serializeHullItemsCsv(model)).toBe(olderText);
+    model.definitions[0].crew = 'crewed';
+    const withCrew = 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock,crew\nrelic,bridge,Relic,,10,true,,@HULL_MULT_BRIDGE,,,crewed\n';
+    expect(serializeHullItemsCsv(model)).toBe(withCrew);
+    const reloaded = parseItemDefinitions(subroutinesText, withCrew);
+    expect(reloaded.definitions[0].crew).toBe('crewed');
+    expect(serializeHullItemsCsv(reloaded)).toBe(withCrew);
+  });
+
+  it('keeps the crew column after the last item using it is cleared', () => {
+    const withCrew = 'id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock,crew\nrelic,bridge,Relic,,10,true,,@HULL_MULT_BRIDGE,,,automated\n';
+    const model = parseItemDefinitions('id,name,icon,rarity,unique,kind,description,unlock\n', withCrew);
+
+    model.definitions[0].crew = '';
+    expect(serializeHullItemsCsv(model)).toBe('id,section,name,icon,rarity,unique,description,prefixes,suffixes,unlock,crew\nrelic,bridge,Relic,,10,true,,@HULL_MULT_BRIDGE,,,\n');
+  });
+
+  it('rejects a crew value the vocabulary does not list and starts new hull items blank', () => {
+    const issues = validateItemDefinitions([definition({ id: 'robot', crew: 'robots' })], vocabulary, catalogue);
+
+    expect(issues).toEqual(['robot: crew must be blank or one of crewed, automated']);
+    expect(newItemDefinition([], 'bridge', []).crew).toBe('');
+  });
+});
+
 describe('item areas', () => {
   it('writes the area column of hull items and subroutines only once one is set', () => {
     const subroutinesText = 'id,name,icon,rarity,unique,kind,description,unlock\nchip,Chip,,10,,MODSPEC_CACHE,,\n';

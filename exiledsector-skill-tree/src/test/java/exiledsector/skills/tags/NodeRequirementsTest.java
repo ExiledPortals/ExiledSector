@@ -47,6 +47,10 @@ class NodeRequirementsTest {
         return profile(HullSize.DESTROYER, ShieldType.FRONT, 0, Set.of(), flagship);
     }
 
+    private static ShipProfile automated() {
+        return new ShipProfile(HullSize.DESTROYER, ShieldType.FRONT, 0, Set.of(), false, 0f, false, false, false, false, true);
+    }
+
     private static ShipProfile everything() {
         return profile(HullSize.CAPITAL_SHIP, ShieldType.OMNI, 4, EnumSet.allOf(WeaponKind.class), true);
     }
@@ -133,6 +137,16 @@ class NodeRequirementsTest {
     }
 
     @Test
+    void reqCrewedAndReqAutomatedSplitShipsOnTheAutomatedFlag() {
+        ShipProfile automated = automated();
+
+        assertTrue(met("req_crewed", hull(HullSize.DESTROYER)));
+        assertFalse(met("req_crewed", automated));
+        assertTrue(met("req_automated", automated));
+        assertFalse(met("req_automated", hull(HullSize.DESTROYER)));
+    }
+
+    @Test
     void campaignOnlyAndPlayerOnlyAreNeverMetForNpcGeneration() {
         assertFalse(met("campaign_only", everything()));
         assertFalse(met("player_only", everything()));
@@ -178,6 +192,7 @@ class NodeRequirementsTest {
         }
         profiles.add(everything());
         profiles.add(profile(HullSize.FRIGATE, ShieldType.NONE, 0, Set.of(), false));
+        profiles.add(automated());
 
         for (String requirement : SkillTags.REQUIREMENT) {
             if (SkillTags.isHullRequirement(requirement)) {

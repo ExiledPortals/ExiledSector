@@ -2,6 +2,8 @@
     "framework.requirement.req_shields": "shields",
     "framework.requirement.req_phase": "a phase hull",
     "framework.requirement.req_fighter_bays": "strikecraft bays",
+    "framework.requirement.req_crewed": "a crewed ship",
+    "framework.requirement.req_automated": "an automated ship",
     "summary.framework": "Hull Upgrades {used}/{points}: {sockets}",
     "summary.frameworkNone": "no sections unlocked",
     "summary.frameworkSocket.filled": "{type} ({item})",
@@ -39,7 +41,7 @@
     "framework.socketHint.restricted": "This ship cannot use this section with its current fit.",
     "framework.socketHint.noPoints": "Apply a Refit Schematic to gain a point for this section.",
     "framework.socketHint.noPointsCharts": "Clear a higher tier Star Chart to gain a point for this section.",
-    "framework.socketDescription.bridge": "Holds bridge officers who improve combat readiness, weapon handling and how hard the ship hits each hull size.",
+    "framework.socketDescription.bridge": "Holds command suites for combat readiness, weapon handling and how hard the ship hits each hull size.",
     "framework.socketDescription.crew_quarters": "Holds specialist crews for crew capacity, upkeep, repairs, sensors, electronic warfare and salvage.",
     "framework.socketDescription.engine_room": "Holds drive assemblies for speed, maneuverability, burn level and fuel economy.",
     "framework.socketDescription.reactor": "Holds power regulators for venting, capacitors, EMP resistance and weapon flux costs.",
@@ -47,7 +49,7 @@
     "framework.socketDescription.weapon_mount": "Holds fire control for weapon damage, range, ammunition and point defense.",
     "framework.socketDescription.shield_generator": "Holds shield emitters for shield efficiency, upkeep, arc and response.",
     "framework.socketDescription.phase_coil": "Holds phase coils for cloak cost, phase speed and stealth.",
-    "framework.socketDescription.flight_deck": "Holds deck crews for strikecraft replacement, refit times and strikecraft performance.",
+    "framework.socketDescription.flight_deck": "Holds launch assemblies for strikecraft replacement, refit times and strikecraft performance.",
     "framework.socket.removeHint": "Right-click the section to return this hull item to storage, or click it to choose a different one.",
     "framework.socket.empty": "Empty: click to install",
     "framework.socket.inactive": "Inactive: needs {requirement}",
@@ -65,5 +67,7 @@
     "settings.socketStorage.battleItems.tooltip": "100 is normal and 0 turns them off.",
     "hullItem.target.line": "Targets this ship's {section} item.",
     "hullItem.target.choices": "Can target: {sections}",
-    "hullItem.affinity.current": "Currently on this ship: {line}"
+    "hullItem.affinity.current": "Currently on this ship: {line}",
+    "hullItem.crew.req_crewed": "Crewed ships only",
+    "hullItem.crew.req_automated": "Automated ships only"
 }

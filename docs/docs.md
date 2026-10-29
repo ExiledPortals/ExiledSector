@@ -515,6 +515,16 @@ the rest.
 A unique whose `mechanic` is `one_of` keeps just one of its listed modifiers, picked from its seed when it is
 rolled (`ItemRoller`), so the choice is frozen with the item.
 
+## Crewed and automated ships
+
+A ship is automated when vanilla's `Misc.isAutomated` would say so: the `automated` hullmod or the `automated` tag
+on its variant or hull spec (`ShipProfile.automated`). Crew Quarters needs `req_crewed`, so an automated ship can't
+unlock it, and one that already did keeps it inactive until it is locked again.
+
+A hull item's `crew` column is `crewed`, `automated` or blank. `HullItem.requirementTag` turns it into `req_crewed`
+or `req_automated`: `HullUpgradeRules.canSocket` refuses the wrong kind of ship, and `ShipSections.of` marks an item
+already socketed on one inactive, like an unmet section.
+
 ## Item areas
 
 A hull item or subroutine can name an `area`, one of the toggled tree regions. `ItemAreas` asks the skill tree's

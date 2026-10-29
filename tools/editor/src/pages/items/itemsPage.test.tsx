@@ -128,7 +128,7 @@ describe('hull item types', () => {
 
     fireEvent.click(await findLabelled('Socket type filter', itemTypes));
     fireEvent.click(await screen.findByRole('option', { name: /^bridge/ }));
-    await waitFor(() => expect(within(itemTypes).queryByText('Deck Crew')).toBeNull());
+    await waitFor(() => expect(within(itemTypes).queryByText('Launch Assembly')).toBeNull());
     expect(within(itemTypes).getByText('Back-Alley Cyber-Surgeon')).toBeTruthy();
     fireEvent.click(await findLabelled('Rarity filter', itemTypes));
     fireEvent.click(await screen.findByRole('option', { name: /^Not unique/ }));
@@ -162,7 +162,7 @@ describe('hull item types', () => {
     await save('Saved hull_items.csv');
 
     const seed = server.readProjectFile(HULL_ITEMS_FILE).split(/\r?\n/).find((line) => line.startsWith('unique_nanoforge_seed,'));
-    expect(seed).toMatch(/,faction:pirates,,$/);
+    expect(seed).toMatch(/,faction:pirates,,,$/);
   }, 90000);
 });
 
@@ -170,7 +170,7 @@ describe('hull item validation', () => {
   it('refuses to give a common item a modifier without a name for its common name', async () => {
     const before = server.readProjectFile(HULL_ITEMS_FILE);
     const itemTypes = await openItems('Item types');
-    fireEvent.click(await within(itemTypes).findByText('Deck Crew', undefined, LOAD_TIMEOUT));
+    fireEvent.click(await within(itemTypes).findByText('Launch Assembly', undefined, LOAD_TIMEOUT));
 
     await pickOption(itemTypes, 'Add to prefixes', 'min crew', /min crew percent.*MIN_CREW_PERCENT$/);
     fireEvent.click(saveButton());

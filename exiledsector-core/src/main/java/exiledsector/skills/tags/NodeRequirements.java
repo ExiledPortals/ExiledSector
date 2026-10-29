@@ -10,12 +10,15 @@ import java.util.stream.Stream;
 
 public final class NodeRequirements {
 
+    public static final String CREWED = "req_crewed";
+    public static final String AUTOMATED = "req_automated";
+
     public static final List<String> HULL_TAGS = List.of("req_civilian_hull", "req_non_phase_hull", "req_system_charges", "req_modules");
 
     public static final List<String> TAGS = Stream.of(List.of(
             "req_shields", "req_no_shields", "req_phase", "req_fighter_bays", "req_no_fighter_bays", "req_ballistic",
             "req_missile", "req_energy", "req_beam", "req_offensive_beam", "req_non_beam_energy", "req_flagship",
-            "campaign_only", "player_only"), HULL_TAGS).flatMap(List::stream).toList();
+            CREWED, AUTOMATED, "campaign_only", "player_only"), HULL_TAGS).flatMap(List::stream).toList();
 
     private NodeRequirements() {
     }
@@ -75,6 +78,8 @@ public final class NodeRequirements {
             case "req_offensive_beam" -> profile.weaponKinds().contains(WeaponKind.OFFENSIVE_BEAM);
             case "req_non_beam_energy" -> profile.weaponKinds().contains(WeaponKind.NON_BEAM_ENERGY);
             case "req_flagship" -> profile.flagship();
+            case CREWED -> !profile.automated();
+            case AUTOMATED -> profile.automated();
             default -> false;
         };
     }

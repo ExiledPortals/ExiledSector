@@ -23,6 +23,7 @@ interface VocabularyFile {
   radiusSizes?: string[];
   uniqueSourceKinds?: string[];
   hullItemMechanics?: string[];
+  hullItemCrew?: string[];
   itemAreas?: string[];
   itemUnlocks: string[];
   clearedChartTierPrefix?: string;
@@ -52,6 +53,7 @@ export interface Vocabulary {
   radiusSizes: string[];
   uniqueSourceKinds: string[];
   hullItemMechanics: string[];
+  hullItemCrew: string[];
   itemAreas: string[];
   itemUnlocks: string[];
   clearedChartTierPrefix: string;
@@ -83,6 +85,7 @@ export function buildVocabulary(file: VocabularyFile): Vocabulary {
     radiusSizes: (file.radiusSizes ?? ['small', 'medium', 'large']).slice(),
     uniqueSourceKinds: (file.uniqueSourceKinds ?? ['faction', 'site']).slice(),
     hullItemMechanics: (file.hullItemMechanics ?? ['one_of']).slice(),
+    hullItemCrew: (file.hullItemCrew ?? ['crewed', 'automated']).slice(),
     itemAreas: (file.itemAreas ?? []).slice(),
     itemUnlocks: file.itemUnlocks.slice(),
     clearedChartTierPrefix: file.clearedChartTierPrefix ?? 'cleared_chart_tier_',
