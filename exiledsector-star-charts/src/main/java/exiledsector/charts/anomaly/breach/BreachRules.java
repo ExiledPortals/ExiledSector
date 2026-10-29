@@ -72,6 +72,10 @@ public final class BreachRules {
         return new Growth(maxRadius, OPEN_SECONDS / Math.max(MIN_GROWTH_MULT, growthMult), COLLAPSE_SECONDS);
     }
 
+    static float coreScale(float radius, boolean collapsing) {
+        return collapsing ? Math.max(0f, Math.min(1f, radius / BreachCorePlugin.HALO_SIZE)) : 1f;
+    }
+
     static boolean triggers(float distance, float fleetRadius) {
         return distance <= Math.max(0f, fleetRadius) + TRIGGER_REACH;
     }

@@ -222,11 +222,10 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
         if (!unique || keepsOneModifier()) {
             return modifiers;
         }
-        boolean followsPool = type != ItemType.STAR_CHART;
         List<RolledModifier> repaired = new ArrayList<>(modifiers.size());
         boolean changed = false;
         for (RolledModifier modifier : modifiers) {
-            if (!followsPool || poolEntryFor(modifier.modifierId()) != null || hasUnknownEffect(modifier)) {
+            if (poolEntryFor(modifier.modifierId()) != null || hasUnknownEffect(modifier)) {
                 repaired.add(modifier);
             } else {
                 changed = true;
@@ -234,7 +233,7 @@ public record ItemDefinition(String id, ItemKind kind, String name, String icon,
         }
         for (PoolEntry entry : pool()) {
             String modifierId = entry.modifier().id();
-            if ((followsPool || isFixed(entry)) && modifiers.stream().noneMatch(modifier -> modifier.modifierId().equals(modifierId))) {
+            if (modifiers.stream().noneMatch(modifier -> modifier.modifierId().equals(modifierId))) {
                 repaired.add(rollMissing(entry, seed));
                 changed = true;
             }

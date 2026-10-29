@@ -40,6 +40,11 @@ public final class StarChartOpening {
         return open(opener, blocker, sector, store, chart, entriesAllowed, random);
     }
 
+    public static Outcome openReplacingRun(Opener opener, SectorAPI sector, ItemStore store, Item chart, int entriesAllowed, Random random) {
+        WormholeOpenCheck.Blocker blocker = WormholeOpenCheck.replacingRun(sector, store, chart);
+        return open(opener, blocker, sector, store, chart, entriesAllowed, random);
+    }
+
     static Outcome open(Opener opener, WormholeOpenCheck.Blocker blocker, SectorAPI sector, ItemStore store, Item chart, int entriesAllowed,
                         Random random) {
         if (!blocker.allowsOpening()) {

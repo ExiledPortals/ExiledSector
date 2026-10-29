@@ -47,6 +47,10 @@ public final class WormholeOpenCheck {
                 dialogTarget(sector));
     }
 
+    public static Blocker replacingRun(SectorAPI sector, ItemStore store, Item chart) {
+        return evaluate(chart, store, StarChartSettings.openAnywhere(), false, sector == null ? null : sector.getPlayerFleet(), dialogTarget(sector));
+    }
+
     static SectorEntityToken dialogTarget(SectorAPI sector) {
         CampaignUIAPI campaignUi = sector == null ? null : sector.getCampaignUI();
         InteractionDialogAPI dialog = campaignUi == null ? null : campaignUi.getCurrentInteractionDialog();

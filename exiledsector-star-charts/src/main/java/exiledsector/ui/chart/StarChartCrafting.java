@@ -29,15 +29,12 @@ public final class StarChartCrafting {
     public static final UseVerdict MIRRORED = refused("mirrored");
     public static final UseVerdict CORRUPTED = refused("corrupted");
     public static final UseVerdict MAX_TIER = refused("max_tier");
-    public static final UseVerdict UNIQUE = refused("unique");
-    public static final UseVerdict NOT_UNIQUE = refused("not_unique");
     public static final UseVerdict NO_MODIFIERS = refused("no_modifiers");
     public static final UseVerdict FULL = refused("full");
     public static final UseVerdict WARD_BLOCKS = refused("ward_blocks");
-    public static final UseVerdict WARD_BLOCKS_TRANSPOSITION = refused("ward_blocks_transposition");
     public static final UseVerdict CANNOT_USE = refused("cannot_use");
-    static final List<UseVerdict> REFUSALS = List.of(NO_CHART, NONE_OWNED, MIRRORED, CORRUPTED, MAX_TIER, UNIQUE, NOT_UNIQUE, NO_MODIFIERS, FULL,
-            WARD_BLOCKS, WARD_BLOCKS_TRANSPOSITION, CANNOT_USE);
+    static final List<UseVerdict> REFUSALS = List.of(NO_CHART, NONE_OWNED, MIRRORED, CORRUPTED, MAX_TIER, NO_MODIFIERS, FULL, WARD_BLOCKS,
+            CANNOT_USE);
 
     public record Used(Item result, Item selectedAfter) {
     }
@@ -88,7 +85,7 @@ public final class StarChartCrafting {
             return UseVerdict.ALLOWED;
         }
         if (ItemCrafting.canUse(currency, chart, allowedUniques)) {
-            return currency == CraftingCurrency.TRANSPOSITION ? WARD_BLOCKS_TRANSPOSITION : WARD_BLOCKS;
+            return WARD_BLOCKS;
         }
         if (chart.mirrored()) {
             return MIRRORED;
@@ -100,17 +97,8 @@ public final class StarChartCrafting {
         if (!ItemCurrencies.appliesTo(currency, chart.type())) {
             return CANNOT_USE;
         }
-        boolean unique = chart.definition() != null && chart.definition().unique();
         if (currency == StarChartCurrency.CARTOGRAPHY && chart.tier() >= StarChart.HIGHEST_TIER) {
             return MAX_TIER;
-        }
-        if (currency == CraftingCurrency.TRANSPOSITION && !unique) {
-            return NOT_UNIQUE;
-        }
-        boolean changesModifiers = currency == StarChartCurrency.REFORGE || currency == StarChartCurrency.ANNULMENT
-                || currency == CraftingCurrency.AUGMENTATION;
-        if (changesModifiers && unique) {
-            return UNIQUE;
         }
         if (currency == StarChartCurrency.ANNULMENT && chart.explicits().isEmpty()) {
             return NO_MODIFIERS;

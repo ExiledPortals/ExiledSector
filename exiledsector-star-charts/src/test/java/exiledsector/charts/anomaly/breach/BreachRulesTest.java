@@ -112,4 +112,12 @@ class BreachRulesTest {
         assertTrue(BreachRules.reached(500f, 1000f));
         assertFalse(BreachRules.reached(950f, 1000f));
     }
+
+    @Test
+    void theCoreKeepsItsSizeUntilTheCollapsingFieldShrinksPastItsHaloThenContractsToNothing() {
+        assertEquals(1f, BreachRules.coreScale(10f, false));
+        assertEquals(1f, BreachRules.coreScale(BreachCorePlugin.HALO_SIZE * 3f, true));
+        assertEquals(0.5f, BreachRules.coreScale(BreachCorePlugin.HALO_SIZE / 2f, true), 0.001f);
+        assertEquals(0f, BreachRules.coreScale(0f, true));
+    }
 }

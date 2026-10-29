@@ -248,4 +248,14 @@ class AnomalousDebrisCurrencyTest {
         assertTrue(errors.stream().anyMatch(message -> message.contains("no item pool")));
         assertTrue(errors.stream().anyMatch(message -> message.contains("NOT_A_MODIFIER")));
     }
+
+    @Test
+    void theTooltipNamesTheModifierAndListsItsLines() {
+        AnomalousDebrisCurrency revenant = currency(REVENANT);
+
+        assertEquals(1, revenant.grantedLines().size());
+        assertTrue(revenant.grantedLines().get(0).plain().contains("15"));
+        assertTrue(revenant.description().contains("Revenant"));
+        assertEquals(AnomalousDebrisCurrency.DEFAULT_COLOR, revenant.color());
+    }
 }

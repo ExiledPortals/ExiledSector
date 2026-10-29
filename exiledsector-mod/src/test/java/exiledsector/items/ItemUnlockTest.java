@@ -243,15 +243,12 @@ class ItemUnlockTest {
         ItemDefinition charted = ItemDefinitions.get("charted");
 
         assertFalse(ItemUnlock.unlockConditionMet(charted, sector));
-        assertFalse(ItemUnlock.canDropChart(charted, sector));
-        assertTrue(ItemUnlock.canDropChart(ItemDefinitions.get("basic"), sector));
         assertTrue(ItemUnlock.recordChartCleared(sector, 3));
         assertFalse(ItemUnlock.unlockConditionMet(charted, sector));
         assertTrue(ItemUnlock.recordChartCleared(sector, 4));
         assertTrue(ItemUnlock.unlockConditionMet(charted, sector));
         assertFalse(ItemUnlock.recordChartCleared(sector, 2));
         assertEquals(4, ItemUnlock.highestClearedChartTier(sector));
-        assertTrue(ItemUnlock.canDropChart(charted, sector));
         assertFalse(ItemUnlock.unlockConditionMet(charted, null));
         assertFalse(ItemUnlock.recordChartCleared(null, 5));
         assertEquals(0, ItemUnlock.highestClearedChartTier(null));

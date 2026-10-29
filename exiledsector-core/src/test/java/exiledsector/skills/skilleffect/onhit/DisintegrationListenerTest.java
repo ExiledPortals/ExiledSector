@@ -12,6 +12,9 @@ import com.fs.starfarer.api.util.DynamicStatsAPI;
 import exiledsector.skills.skilleffect.weapon.BallisticAsEnergy;
 import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
+import org.mockito.ArgumentCaptor;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyFloat;
@@ -19,10 +22,19 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class DisintegrationListenerTest {
+
+    private static DisintegrationListener.ArmorDecay decay(ShipAPI target) {
+        ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
+        verify(target).addListener(captor.capture());
+        DisintegrationListener.ArmorDecay armorDecay = (DisintegrationListener.ArmorDecay) captor.getValue();
+        when(target.getListeners(DisintegrationListener.ArmorDecay.class)).thenReturn(List.of(armorDecay));
+        return armorDecay;
+    }
 
     private static ShipAPI shipWithDynamicValue(String key, float value) {
         ShipAPI ship = mock(ShipAPI.class);
@@ -58,7 +70,7 @@ class DisintegrationListenerTest {
     }
 
     @Test
-    void disintegrationStripsExtraArmorAroundAnEnergyHit() {
+    void disintegrationStripsExtraArmorAroundAnEnergyHitOverFiveSeconds() {
         ShipAPI ship = shipWithDynamicValue(DisintegrationListener.ARMOR_DAMAGE_PERCENT_KEY, 50f);
         Vector2f point = new Vector2f();
         ArmorGridAPI grid = mock(ArmorGridAPI.class);
@@ -70,10 +82,17 @@ class DisintegrationListenerTest {
                 projectileFrom(WeaponAPI.WeaponType.ENERGY), target, damage, point, false);
 
         assertEquals(null, modId);
-        verify(grid).setArmorValue(2, 2, 90f);
-        verify(grid).setArmorValue(0, 1, 95f);
+        verify(grid, never()).setArmorValue(anyInt(), anyInt(), anyFloat());
+        DisintegrationListener.ArmorDecay armorDecay = decay(target);
+        armorDecay.advance(DisintegrationListener.STRIP_SECONDS / 2f);
+        verify(grid).setArmorValue(2, 2, 95f);
+        armorDecay.advance(DisintegrationListener.STRIP_SECONDS);
+        verify(grid, times(2)).setArmorValue(2, 2, 95f);
+        armorDecay.advance(1f);
+        verify(grid, times(2)).setArmorValue(2, 2, 95f);
+        verify(grid, times(2)).setArmorValue(0, 1, 97.5f);
         verify(grid, never()).setArmorValue(eq(0), eq(0), anyFloat());
-        verify(target).syncWithArmorGridState();
+        verify(target, times(2)).syncWithArmorGridState();
     }
 
     @Test
@@ -107,7 +126,26 @@ class DisintegrationListenerTest {
         when(ballisticShot.getWeapon().getShip()).thenReturn(ship);
 
         new DisintegrationListener(ship).modifyDamageDealt(ballisticShot, target, damage, point, false);
+        decay(target).advance(DisintegrationListener.STRIP_SECONDS);
 
+        verify(grid).setArmorValue(2, 2, 90f);
+    }
+
+    @Test
+    void ballisticDisintegrationStripsArmorAroundBallisticHitsOnly() {
+        ShipAPI ship = shipWithDynamicValue(DisintegrationListener.BALLISTIC_ARMOR_DAMAGE_PERCENT_KEY, 50f);
+        Vector2f point = new Vector2f();
+        ArmorGridAPI grid = mock(ArmorGridAPI.class);
+        ShipAPI target = armoredTarget(grid, point);
+        DamageAPI damage = mock(DamageAPI.class);
+        when(damage.getDamage()).thenReturn(300f);
+        DisintegrationListener listener = new DisintegrationListener(ship);
+
+        listener.modifyDamageDealt(projectileFrom(WeaponAPI.WeaponType.ENERGY), target, damage, point, false);
+        verify(grid, never()).setArmorValue(anyInt(), anyInt(), anyFloat());
+
+        listener.modifyDamageDealt(projectileFrom(WeaponAPI.WeaponType.BALLISTIC), target, damage, point, false);
+        decay(target).advance(DisintegrationListener.STRIP_SECONDS);
         verify(grid).setArmorValue(2, 2, 90f);
     }
 }

@@ -77,9 +77,8 @@ class WormholeGatewayOptionTest {
 
         List<IndustryOptionProvider.IndustryOptionData> options = provider.getIndustryOptions(gateway);
 
-        assertEquals(2, options.size());
+        assertEquals(1, options.size());
         assertSame(WormholeGatewayOption.OPEN_ATLAS, options.get(0).id);
-        assertSame(WormholeGatewayOption.BUY_STAR_CHART, options.get(1).id);
         assertSame(gateway, options.get(0).ind);
         assertSame(provider, options.get(0).provider);
         assertTrue(options.get(0).enabled);

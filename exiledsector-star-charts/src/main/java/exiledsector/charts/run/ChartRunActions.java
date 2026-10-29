@@ -76,6 +76,19 @@ public final class ChartRunActions {
         if (!AtlasOpening.check(generator, state, cell, chart).allowsOpening()) {
             return OpenResult.NOT_REACHABLE;
         }
+        OpenResult playerBlocker = playerBlocker(sector);
+        if (playerBlocker != null) {
+            return playerBlocker;
+        }
+        ChartRun previous = ChartRuns.currentOrNull();
+        if (previous != null) {
+            LOG.info("[ExiledSector] Closing Star Chart run " + previous.runId() + " to open another from the atlas");
+            previous.beginClosing();
+            ChartRunCloser.close(sector, previous);
+            if (ChartRuns.hasRun() || !AtlasOpening.check(generator, state, cell, chart).allowsOpening()) {
+                return ChartRuns.hasRun() ? OpenResult.RUN_EXISTS : OpenResult.NOT_REACHABLE;
+            }
+        }
         AtlasRunNode runNode = FactionSkirmish.join(AtlasOpening.runNode(generator, state, cell), generator, state, cell, side);
         runNode = RelayChain.join(runNode, generator, state, cell);
         OpenResult result = openBesidePlayer(sector, entriesAllowed, random, AtlasOpening.request(generator, state, cell, chart, runNode),
@@ -108,17 +121,12 @@ public final class ChartRunActions {
         if (ChartRuns.hasRun()) {
             return OpenResult.RUN_EXISTS;
         }
+        OpenResult playerBlocker = playerBlocker(sector);
+        if (playerBlocker != null) {
+            return playerBlocker;
+        }
         CampaignFleetAPI playerFleet = sector.getPlayerFleet();
-        if (playerFleet == null || playerFleet.getContainingLocation() == null) {
-            return OpenResult.NO_PLAYER_FLEET;
-        }
-        if (playerFleet.isInHyperspaceTransition()) {
-            return OpenResult.PLAYER_IN_TRANSITION;
-        }
         LocationAPI origin = playerFleet.getContainingLocation();
-        if (origin.hasTag(ChartIds.SYSTEM_TAG)) {
-            return OpenResult.PLAYER_IN_SYSTEM;
-        }
         Vector2f playerLocation = playerFleet.getLocation();
         ChartRun run = new ChartRun(newRunId(random), ChartIds.locationIdOf(origin), playerLocation.x, playerLocation.y, entriesAllowed);
         SectorEntityToken anchor = marketBeside(origin, playerLocation);
@@ -157,6 +165,17 @@ public final class ChartRunActions {
             }
         }
         return nearest;
+    }
+
+    private static OpenResult playerBlocker(SectorAPI sector) {
+        CampaignFleetAPI playerFleet = sector.getPlayerFleet();
+        if (playerFleet == null || playerFleet.getContainingLocation() == null) {
+            return OpenResult.NO_PLAYER_FLEET;
+        }
+        if (playerFleet.isInHyperspaceTransition()) {
+            return OpenResult.PLAYER_IN_TRANSITION;
+        }
+        return playerFleet.getContainingLocation().hasTag(ChartIds.SYSTEM_TAG) ? OpenResult.PLAYER_IN_SYSTEM : null;
     }
 
     static String newRunId(Random random) {

@@ -3,14 +3,12 @@ package exiledsector.ui.chart;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
-import exiledsector.items.ItemRarity;
 import exiledsector.items.ItemStore;
 import exiledsector.items.StarChartFixtures;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -122,24 +120,5 @@ class StarChartBrowserTest {
         assertSame(chart, browser.selectedChart());
         browser.toggle(chart);
         assertNull(browser.selectedChart());
-    }
-
-    @Test
-    void theRarityFilterOnlyNarrowsTheShownTier() {
-        List<Item> charts = new ArrayList<>();
-        for (long seed = 1L; seed <= 12L; seed++) {
-            charts.add(stored("star_chart", seed, 6));
-        }
-        StarChartBrowser browser = new StarChartBrowser();
-        browser.reload(store.owned());
-        ItemRarity filtered = charts.get(0).rarity();
-
-        browser.toggleRarity(filtered);
-
-        assertTrue(browser.showsRarity(filtered));
-        assertEquals(charts.stream().filter(chart -> chart.rarity() == filtered).toList(), browser.shownCharts());
-        assertEquals(12, browser.count(6), "tier counts ignore the filter");
-        browser.toggleRarity(filtered);
-        assertEquals(charts, browser.shownCharts());
     }
 }

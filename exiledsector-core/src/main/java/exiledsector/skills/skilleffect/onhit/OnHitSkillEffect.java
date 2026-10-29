@@ -19,6 +19,8 @@ import java.util.function.Function;
 public enum OnHitSkillEffect implements BackedSkillEffect {
 
     BEAM_WEAPON_HARD_FLUX_PERCENT(BeamHardFluxListener.HARD_FLUX_PERCENT_KEY, BeamHardFluxListener.class, ship -> new BeamHardFluxListener()),
+    BEAM_WEAPON_SHIELD_DISRUPTION_PERCENT(BeamShieldDisruptionListener.SHIELD_DAMAGE_PERCENT_KEY, BeamShieldDisruptionListener.class,
+            BeamShieldDisruptionListener::new),
     BEAM_WEAPON_SPLIT_TARGETS_FLAT(BeamSplitListener.TARGETS_KEY, BeamSplitListener.class, BeamSplitListener::new) {
         @Override
         public boolean reshapesDealtDamage() {
@@ -52,7 +54,26 @@ public enum OnHitSkillEffect implements BackedSkillEffect {
         }
     },
     DISINTEGRATION_ARMOR_DAMAGE_PERCENT(DisintegrationListener.ARMOR_DAMAGE_PERCENT_KEY,
-            DisintegrationListener.class, DisintegrationListener::new),
+            DisintegrationListener.class, DisintegrationListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("seconds", DisintegrationListener.STRIP_SECONDS).styled();
+        }
+    },
+    BALLISTIC_DISINTEGRATION_ARMOR_DAMAGE_PERCENT(DisintegrationListener.BALLISTIC_ARMOR_DAMAGE_PERCENT_KEY,
+            DisintegrationListener.class, DisintegrationListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("seconds", DisintegrationListener.STRIP_SECONDS).styled();
+        }
+    },
+    MISSILE_SNARE_TOP_SPEED_PERCENT(MissileSnareListener.TOP_SPEED_PERCENT_KEY, MissileSnareListener.class, MissileSnareListener::new) {
+        @Override
+        public StyledText description(float magnitude) {
+            return EffectText.msg(this).arg("value", magnitude).arg("seconds", MissileSnareListener.SNARE_SECONDS).styled();
+        }
+    },
+    KILL_FLUX_VENT_PERCENT(KillFluxVentListener.MAX_FLUX_PERCENT_KEY, KillFluxVentListener.class, KillFluxVentListener::new),
     CORROSION_MOTE_DAMAGE_FLAT(CorrosionMoteListener.MOTE_DAMAGE_KEY, CorrosionMoteListener.class, CorrosionMoteListener::new) {
         @Override
         public StyledText description(float magnitude) {

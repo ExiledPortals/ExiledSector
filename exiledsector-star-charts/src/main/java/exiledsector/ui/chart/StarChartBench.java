@@ -130,9 +130,12 @@ public final class StarChartBench implements BenchModeSupport {
 
     @Override
     public OpenCheck openCheck(SectorAPI sector, ItemStore store, Item loaded, Object target) {
-        OpenCheck wormhole = openCheck(sector, store, loaded);
-        if (!wormhole.allowsOpening() || !(target instanceof AtlasCell cell) || sector == null) {
-            return wormhole;
+        if (!(target instanceof AtlasCell cell) || sector == null) {
+            return openCheck(sector, store, loaded);
+        }
+        WormholeOpenCheck.Blocker wormhole = WormholeOpenCheck.replacingRun(sector, store, loaded);
+        if (!wormhole.allowsOpening()) {
+            return new OpenCheck(false, wormhole.reasonKey());
         }
         AtlasOpening.Blocker blocker = AtlasOpening.check(AtlasRuntime.generator(sector), AtlasState.get(sector), cell,
                 loaded instanceof StarChart chart ? chart : null);
@@ -151,7 +154,7 @@ public final class StarChartBench implements BenchModeSupport {
             return open(sector, store, loaded, entries, random);
         }
         SkirmishSide side = target instanceof SkirmishEntry entry ? entry.side() : null;
-        StarChartOpening.Outcome outcome = StarChartOpening.open(
+        StarChartOpening.Outcome outcome = StarChartOpening.openReplacingRun(
                 (openSector, allowed, openRandom, openStore, chart) -> ChartRunActions.openFromAtlas(openSector, allowed, openRandom, openStore, chart, cell,
                         side),
                 sector, store, loaded, entries, random);

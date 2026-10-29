@@ -1,3 +1,8 @@
-id,name,modifier,item_types,min_tier,weight,note
-exiledSector_revenant_engram,Revenant Engram,HULL_PERCENT_ANOMALOUS_DEBRIS,hull_item,1,1,"Placeholder: a hull item rerolled with the Revenant prefix"
-exiledSector_vigil_engram,Vigil Engram,BEAM_WEAPON_RANGE_PERCENT_ANOMALOUS_DEBRIS,hull_item,1,1,"Placeholder: a hull item rerolled with the Vigil suffix"
+id,name,modifier,item_types,min_tier,weight,color,note
+exiledSector_revenant_engram,Revenant Engram,HYBRID_WEAPON_FIRE_RATE_WEAPON_FLUX_COST_ANOMALOUS_DEBRIS,hull_item,1,1,#FF3C50,"Placeholder: a hull item rerolled with the Revenant prefix"
+exiledSector_vigil_engram,Vigil Engram,BEAM_WEAPON_SHIELD_DISRUPTION_PERCENT_ANOMALOUS_DEBRIS,hull_item,1,1,#50E6C8,"Placeholder: a hull item rerolled with the Vigil suffix"
+exiledSector_aegis_engram,Aegis Engram,SHIELD_SOFT_FLUX_CONVERSION_PERCENT_ANOMALOUS_DEBRIS,hull_item,1,1,#B45AFF,"Placeholder: a hull item rerolled with the Aegis suffix"
+exiledSector_reaper_engram,Reaper Engram,KILL_FLUX_VENT_PERCENT_ANOMALOUS_DEBRIS,hull_item,1,1,#F0C850,"Placeholder: a hull item rerolled with the Reaper suffix"
+exiledSector_snare_engram,Snare Engram,MISSILE_SNARE_TOP_SPEED_PERCENT_ANOMALOUS_DEBRIS,hull_item,1,1,#FF50D2,"Placeholder: a hull item rerolled with the Snare prefix"
+exiledSector_recursion_engram,Recursion Engram,HYBRID_SYSTEM_CHARGES_SYSTEM_CHARGE_REGEN_ANOMALOUS_DEBRIS,hull_item,1,1,#5AE65A,"Placeholder: a hull item rerolled with the Recursion suffix"
+exiledSector_fracture_engram,Fracture Engram,BALLISTIC_DISINTEGRATION_ARMOR_DAMAGE_PERCENT_ANOMALOUS_DEBRIS,hull_item,1,1,#FF9A3C,"Placeholder: a hull item rerolled with the Fracture suffix"

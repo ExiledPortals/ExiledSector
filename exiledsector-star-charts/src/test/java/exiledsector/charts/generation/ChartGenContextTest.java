@@ -83,9 +83,9 @@ class ChartGenContextTest {
 
     @Test
     void aChartsModifiersAreReadDeterministicallyWithTheirTierValues() {
-        StarChart chart = StarChartFixtures.chart(StarChartFixtures.TEST_GATED_UNIQUE, 5L, 12);
+        StarChart chart = StarChartFixtures.fullChart(StarChartFixtures.TEST_GATED, 5L, 12);
         ChartGenContext first = ChartGenContext.from(chart);
-        ChartGenContext second = ChartGenContext.from(StarChartFixtures.chart(StarChartFixtures.TEST_GATED_UNIQUE, 5L, 12));
+        ChartGenContext second = ChartGenContext.from(StarChartFixtures.fullChart(StarChartFixtures.TEST_GATED, 5L, 12));
 
         assertEquals(first.applied(), second.applied());
         assertTrue(first.applied().contains(new AppliedEffect(ChartEffect.CHART_BOSS_SIZE_PERCENT, 700f)), first.applied().toString());
@@ -264,11 +264,11 @@ class ChartGenContextTest {
         boolean sawUnderCap = false;
         for (int tier = 10; tier <= 15; tier++) {
             ChartTier base = ChartTiers.forTier(tier);
-            ChartGenContext gatedUnique = ChartGenContext.from(StarChartFixtures.chart(StarChartFixtures.TEST_GATED_UNIQUE, 5L, tier));
-            ChartGenContext gatedUniqueAndWarded = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_BOSS_SIZE_PERCENT, 700f),
+            ChartGenContext gatedChart = ChartGenContext.from(StarChartFixtures.fullChart(StarChartFixtures.TEST_GATED, 5L, tier));
+            ChartGenContext gatedAndWarded = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_BOSS_SIZE_PERCENT, 700f),
                     new AppliedEffect(ChartEffect.CHART_BOSS_SIZE_PERCENT, 540f)));
-            assertEquals(700f, gatedUnique.bossSizePercent(), TOLERANCE, "tier " + tier);
-            for (ChartGenContext context : List.of(ChartGenContext.none(), gatedUnique, gatedUniqueAndWarded)) {
+            assertEquals(700f, gatedChart.bossSizePercent(), TOLERANCE, "tier " + tier);
+            for (ChartGenContext context : List.of(ChartGenContext.none(), gatedChart, gatedAndWarded)) {
                 float bossSize = base.bossSize() + context.bossSizePercent();
                 PlannedFleet boss = ChartContentPlanner.plannedBoss(context.adjust(base), 50f, 0);
                 assertEquals(ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, bossSize)), boss.combatPoints(), TOLERANCE,
@@ -290,11 +290,11 @@ class ChartGenContextTest {
 
     @Test
     void aPlannedBossFleetCarriesTheChartsBossSize() {
-        ChartGenContext gatedUnique = ChartGenContext.from(StarChartFixtures.chart(StarChartFixtures.TEST_GATED_UNIQUE, 5L, 12));
+        ChartGenContext gatedChart = ChartGenContext.from(StarChartFixtures.fullChart(StarChartFixtures.TEST_GATED, 5L, 12));
         ChartTier base = ChartTiers.forTier(12);
         for (long seed = 0; seed < 20; seed++) {
-            ChartContentPlan plan = plan(gatedUnique, seed, 12);
-            float bossSize = base.bossSize() + gatedUnique.bossSizePercent();
+            ChartContentPlan plan = plan(gatedChart, seed, 12);
+            float bossSize = base.bossSize() + gatedChart.bossSizePercent();
             assertEquals(ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, bossSize)), plan.fleetPoints(FleetRole.BOSS), TOLERANCE,
                     "seed " + seed);
         }

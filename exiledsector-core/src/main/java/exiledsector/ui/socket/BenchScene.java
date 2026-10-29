@@ -13,6 +13,8 @@ final class BenchScene {
     static final float ORBIT_DROP_RADIANS = (float) Math.toRadians(15.0);
     static final float SLOT_RADIUS = 24f;
     static final float TILE_SIZE = 15f;
+    static final float COLUMN_RIGHT_MARGIN = 12f;
+    static final float COLUMN_GAP = 4f;
     static final float SOCKET_GLOW_SHARE = 1.05f;
     static final float DETAILS_SOCKET_GAP = 2.5f;
     static final float DETAILS_WIDTH = 130f;

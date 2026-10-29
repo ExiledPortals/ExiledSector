@@ -107,10 +107,6 @@ public enum ItemUnlock {
         return unlockId == null || unlockId.isEmpty() || byId(unlockId) != null || clearedChartTierRequiredBy(unlockId) != NO_CLEARED_TIER;
     }
 
-    public static boolean canDropChart(ItemDefinition definition, SectorAPI sector) {
-        return !definition.unique() || unlockConditionMet(definition, sector);
-    }
-
     static int clearedChartTierRequiredBy(String unlockId) {
         if (unlockId == null || !unlockId.startsWith(CLEARED_CHART_TIER_PREFIX)) {
             return NO_CLEARED_TIER;

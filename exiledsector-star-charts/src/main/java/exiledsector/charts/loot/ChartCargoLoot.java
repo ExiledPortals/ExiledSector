@@ -26,8 +26,7 @@ public final class ChartCargoLoot {
         ItemDrops.SiteLoot items = ItemDrops.rollSite(siteId, random, context.itemChances().scaled(itemMult),
                 context.dropMult(DropType.FEEDSTOCK) * itemMult, context.dropMult(DropType.CURRENCY) * itemMult,
                 ItemUnlock.available(ItemType.HULL_ITEM, sector));
-        ChartDrops.Loot charts = ChartDrops.roll(ChartDrops.Source.SYSTEM_SALVAGE, run.tier(), ChartDrops.Mults.of(context, itemMult), random,
-                ChartDrops.uniquesFor(sector));
+        ChartDrops.Loot charts = ChartDrops.roll(ChartDrops.Source.SYSTEM_SALVAGE, run.tier(), ChartDrops.Mults.of(context, itemMult), random);
         return items.plus(charts.charts(), List.of(), charts.materials());
     }
 

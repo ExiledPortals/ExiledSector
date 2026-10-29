@@ -21,7 +21,6 @@ import exiledsector.items.ItemDefinition;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemTypes;
-import exiledsector.items.ItemUnlock;
 import exiledsector.items.WeightedPick;
 import exiledsector.loot.LootSources;
 import org.apache.log4j.Logger;
@@ -35,7 +34,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
-import java.util.function.Predicate;
 
 public final class ChartDrops {
 
@@ -189,15 +187,15 @@ public final class ChartDrops {
         return rule(source) != null;
     }
 
-    public static Loot roll(Source source, int tier, float chanceMult, Random random, Predicate<ItemDefinition> allowedUniques) {
-        return roll(source, tier, Mults.uniform(chanceMult), random, allowedUniques);
+    public static Loot roll(Source source, int tier, float chanceMult, Random random) {
+        return roll(source, tier, Mults.uniform(chanceMult), random);
     }
 
-    public static Loot roll(Source source, int tier, Mults mults, Random random, Predicate<ItemDefinition> allowedUniques) {
-        return roll(source, tier, mults, random, allowedUniques, false);
+    public static Loot roll(Source source, int tier, Mults mults, Random random) {
+        return roll(source, tier, mults, random, false);
     }
 
-    public static Loot roll(Source source, int tier, Mults mults, Random random, Predicate<ItemDefinition> allowedUniques, boolean guaranteedTierUp) {
+    public static Loot roll(Source source, int tier, Mults mults, Random random, boolean guaranteedTierUp) {
         Rule rule = rule(source);
         if (!StarChartSettings.enabled() || rule == null || tier == NO_TIER || !mults.any()) {
             return Loot.NONE;
@@ -212,7 +210,7 @@ public final class ChartDrops {
             boolean forced = guaranteedTierUp && i == 0;
             boolean tierUp = forced || random.nextFloat() < rule.tierUpChance();
             int dropTier = tierUp ? Math.max(baseTier, Math.min(forced ? ChartTiers.HIGHEST_TIER : rule.maxTier(), baseTier + 1)) : baseTier;
-            ItemDefinition definition = pickChartAtTier(random, dropTier, allowedUniques);
+            ItemDefinition definition = pickChartAtTier(random, dropTier);
             if (definition != null) {
                 charts.add(ItemData.rolledAtTier(definition, random.nextLong(), dropTier));
             }
@@ -235,8 +233,8 @@ public final class ChartDrops {
         return charts.isEmpty() && currencies.isEmpty() && catalysts.isEmpty() ? Loot.NONE : new Loot(charts, currencies, catalysts);
     }
 
-    public static ItemDefinition pickChartAtTier(Random random, int tier, Predicate<ItemDefinition> filter) {
-        return ItemDrops.pickOfType(random, ItemType.STAR_CHART, definition -> ItemTypes.rollsAtTier(definition, tier) && filter.test(definition));
+    public static ItemDefinition pickChartAtTier(Random random, int tier) {
+        return ItemDrops.pickOfType(random, ItemType.STAR_CHART, definition -> ItemTypes.rollsAtTier(definition, tier));
     }
 
     public static String pickChartCurrency(Random random) {
@@ -268,25 +266,21 @@ public final class ChartDrops {
         return Math.min(rule.maxTier(), ChartTiers.clamp(ChartTiers.LOWEST_TIER + steps));
     }
 
-    static Predicate<ItemDefinition> uniquesFor(SectorAPI sector) {
-        return definition -> ItemUnlock.canDropChart(definition, sector);
-    }
-
-    public static Loot forRunReward(SectorAPI sector, ChartRun run, float rewardMult, Random random) {
+    public static Loot forRunReward(ChartRun run, float rewardMult, Random random) {
         if (run == null) {
             return Loot.NONE;
         }
         float catalystMult = rewardMult * Math.max(0f, 1f + ChartRunEffects.contextOf(run).dropPercent(DropType.CATALYST) / ChartGenContext.PERCENT);
-        return roll(Source.RUN_REWARD, run.tier(), new Mults(rewardMult, rewardMult, catalystMult), random, uniquesFor(sector));
+        return roll(Source.RUN_REWARD, run.tier(), new Mults(rewardMult, rewardMult, catalystMult), random);
     }
 
-    public static Loot forBattle(SectorAPI sector, LocationAPI battleLocation, float difficultyScaledDeploymentPoints, int highestDefeatedLevel,
+    public static Loot forBattle(LocationAPI battleLocation, float difficultyScaledDeploymentPoints, int highestDefeatedLevel,
                                  Random random) {
         if (isSystem(battleLocation)) {
             return Loot.NONE;
         }
         return roll(Source.BATTLE, battleTier(difficultyScaledDeploymentPoints, highestDefeatedLevel),
-                difficultyScaledDeploymentPoints / BATTLE_DEPLOYMENT_POINTS_PER_CHANCE, random, uniquesFor(sector));
+                difficultyScaledDeploymentPoints / BATTLE_DEPLOYMENT_POINTS_PER_CHANCE, random);
     }
 
     static int battleTier(float defeatedDeploymentPoints, int highestDefeatedLevel) {
@@ -299,14 +293,14 @@ public final class ChartDrops {
 
     public static Loot forSalvage(SectorAPI sector, LocationAPI salvageLocation, Random random) {
         if (isSystem(salvageLocation)) {
-            return forSystem(sector, Source.SYSTEM_SALVAGE, liveSystemRun(salvageLocation), random);
+            return forSystem(Source.SYSTEM_SALVAGE, liveSystemRun(salvageLocation), random);
         }
-        return roll(Source.SALVAGE, tierForStrength(Source.SALVAGE, playerLevel(sector)), 1f, random, uniquesFor(sector));
+        return roll(Source.SALVAGE, tierForStrength(Source.SALVAGE, playerLevel(sector)), 1f, random);
     }
 
     public static Loot forTechMining(SectorAPI sector, boolean firstFind, float chanceMult, Random random) {
         Source source = firstFind ? Source.TECHMINING_FIRST_FIND : Source.TECHMINING_MONTHLY;
-        return roll(source, tierForStrength(source, playerLevel(sector)), chanceMult, random, uniquesFor(sector));
+        return roll(source, tierForStrength(source, playerLevel(sector)), chanceMult, random);
     }
 
     static int playerLevel(SectorAPI sector) {
@@ -314,12 +308,12 @@ public final class ChartDrops {
         return playerStats == null ? 0 : playerStats.getLevel();
     }
 
-    private static Loot forSystem(SectorAPI sector, Source source, ChartRun systemRun, Random random) {
+    private static Loot forSystem(Source source, ChartRun systemRun, Random random) {
         if (systemRun == null) {
             return Loot.NONE;
         }
         ChartGenContext context = ChartRunEffects.contextOf(systemRun);
-        return roll(source, systemRun.tier(), Mults.of(context, 1f), random, uniquesFor(sector));
+        return roll(source, systemRun.tier(), Mults.of(context, 1f), random);
     }
 
     public static ChartGenContext liveContextAt(LocationAPI location) {

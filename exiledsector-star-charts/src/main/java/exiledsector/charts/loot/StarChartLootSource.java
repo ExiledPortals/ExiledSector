@@ -121,7 +121,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
         ItemDrops.SiteLoot chartLoot = ItemDrops.SiteLoot.NONE;
         if (battle.playerWon()) {
             try {
-                ChartDrops.Loot battleLoot = ChartDrops.forBattle(sector, playerFleet.getContainingLocation(), losses.chartStrengthDefeated,
+                ChartDrops.Loot battleLoot = ChartDrops.forBattle(playerFleet.getContainingLocation(), losses.chartStrengthDefeated,
                         losses.highestDefeatedLevel, battle.independentRandom());
                 chartLoot = chartLoot.plus(battleLoot.charts(), List.of(), battleLoot.materials());
             } catch (RuntimeException e) {

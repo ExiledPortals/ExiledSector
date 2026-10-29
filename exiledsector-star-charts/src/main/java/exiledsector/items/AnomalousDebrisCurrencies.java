@@ -7,11 +7,13 @@ import exiledsector.charts.generation.ChartTiers;
 import exiledsector.data.CsvRows;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierSlot;
+import exiledsector.ui.util.ColorUtil;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -79,7 +81,8 @@ public final class AnomalousDebrisCurrencies {
             return null;
         }
         int minTier = ChartTiers.clamp(csv.integer(row, "min_tier", ChartTiers.LOWEST_TIER, id));
-        return new AnomalousDebrisCurrency(id, ModCsv.text(row, "name"), modifierId, itemTypes, minTier, csv.number(row, "weight", 1f, id));
+        Color color = ColorUtil.parseHexColor(ModCsv.text(row, "color"), AnomalousDebrisCurrency.DEFAULT_COLOR, LOG, id + " color in " + PATH);
+        return new AnomalousDebrisCurrency(id, ModCsv.text(row, "name"), modifierId, itemTypes, minTier, csv.number(row, "weight", 1f, id), color);
     }
 
     public static void unregisterAll() {

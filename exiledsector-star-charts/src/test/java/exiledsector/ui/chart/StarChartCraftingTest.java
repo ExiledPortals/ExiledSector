@@ -125,15 +125,14 @@ class StarChartCraftingTest {
 
         StarChartCurrency.registerAll();
 
-        assertEquals(List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.CORRUPTION, CraftingCurrency.TRANSPOSITION,
-                CraftingCurrency.RECALIBRATION, StarChartCurrency.REFORGE, StarChartCurrency.ANNULMENT, StarChartCurrency.CARTOGRAPHY),
-                StarChartCrafting.currencies());
+        assertEquals(List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.CORRUPTION, CraftingCurrency.RECALIBRATION,
+                StarChartCurrency.REFORGE, StarChartCurrency.ANNULMENT, StarChartCurrency.CARTOGRAPHY), StarChartCrafting.currencies());
         for (ItemCurrency currency : List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.RECALIBRATION, CraftingCurrency.CORRUPTION,
                 StarChartCurrency.REFORGE, StarChartCurrency.ANNULMENT, StarChartCurrency.CARTOGRAPHY)) {
             assertEquals(UseVerdict.ALLOWED, refusalWithOne(currency), currency.key());
         }
         for (CraftingCurrency currency : List.of(CraftingCurrency.ATTUNEMENT, CraftingCurrency.SUBSTITUTION, CraftingCurrency.FIXATION,
-                CraftingCurrency.REPLICATION)) {
+                CraftingCurrency.REPLICATION, CraftingCurrency.TRANSPOSITION)) {
             assertEquals(StarChartCrafting.CANNOT_USE, refusalWithOne(currency), currency.key());
         }
     }
@@ -144,14 +143,9 @@ class StarChartCraftingTest {
         CraftingMaterials materials = CraftingMaterials.cargoOnly(cargo);
         when(cargo.getQuantity(eq(CargoAPI.CargoItemType.SPECIAL), any())).thenReturn(100f);
         Item topTier = store.add(ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 3L, 15));
-        Item unique = store.add(ItemData.rolledAtTier(ItemDefinitions.get(StarChartFixtures.TEST_UNIQUE), 3L, 2));
 
         assertEquals(StarChartCrafting.MAX_TIER, StarChartCrafting.refusal(StarChartCurrency.CARTOGRAPHY, topTier, store, materials, definition -> true));
-        assertEquals(StarChartCrafting.UNIQUE, StarChartCrafting.refusal(StarChartCurrency.REFORGE, unique, store, materials, definition -> true));
-        assertEquals(StarChartCrafting.UNIQUE, StarChartCrafting.refusal(StarChartCurrency.ANNULMENT, unique, store, materials, definition -> true));
-        assertEquals(StarChartCrafting.UNIQUE, StarChartCrafting.refusal(CraftingCurrency.AUGMENTATION, unique, store, materials, definition -> true));
-        assertEquals(StarChartCrafting.NOT_UNIQUE, StarChartCrafting.refusal(CraftingCurrency.TRANSPOSITION, chart, store, materials, definition -> true));
-        assertEquals(StarChartCrafting.CANNOT_USE, StarChartCrafting.refusal(CraftingCurrency.TRANSPOSITION, unique, store, materials, definition -> true));
+        assertEquals(StarChartCrafting.CANNOT_USE, StarChartCrafting.refusal(CraftingCurrency.TRANSPOSITION, chart, store, materials, definition -> true));
         assertEquals(StarChartCrafting.WARD_BLOCKS, StarChartCrafting.refusal(StarChartCurrency.ANNULMENT, chart, store, materials, definition -> true,
                 List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)));
         Random random = new Random(4L);
@@ -167,23 +161,16 @@ class StarChartCraftingTest {
     }
 
     @Test
-    void aChartCurrencyKeepsTheChartSelectedAndATranspositionSelectsTheReplacement() {
+    void aChartCurrencyKeepsTheChartSelected() {
         StarChartCurrency.registerAll();
         CraftingMaterials materials = CraftingMaterials.cargoOnly(cargo);
         owns(StarChartCurrency.CARTOGRAPHY.itemId(), 1f);
-        owns(CraftingCurrency.TRANSPOSITION.itemId(), 1f);
 
         StarChartCrafting.Used raised = StarChartCrafting.use(StarChartCurrency.CARTOGRAPHY, chart, store, materials, new Random(1L),
                 definition -> true);
 
         assertSame(chart, raised.selectedAfter());
         assertEquals(7, chart.tier());
-        Item unique = store.add(ItemData.rolledAtTier(ItemDefinitions.get(StarChartFixtures.TEST_UNIQUE), 3L, 8));
-        StarChartCrafting.Used transposed = StarChartCrafting.use(CraftingCurrency.TRANSPOSITION, unique, store, materials, new Random(1L),
-                definition -> true);
-        assertEquals(StarChartFixtures.TEST_GATED_UNIQUE, transposed.selectedAfter().definitionId());
-        assertSame(transposed.selectedAfter(), store.find(unique.id()));
-        assertEquals(8, transposed.selectedAfter().tier());
     }
 
     private UseVerdict refusalWithOne(ItemCurrency currency) {

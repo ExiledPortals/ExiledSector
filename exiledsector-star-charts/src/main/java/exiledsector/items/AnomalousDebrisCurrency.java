@@ -1,7 +1,8 @@
 package exiledsector.items;
 
+import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.modifiers.ModifierEffect;
+import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.Modifier;
 import exiledsector.modifiers.ModifierLine;
 import exiledsector.modifiers.ModifierSlot;
@@ -16,20 +17,22 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public record AnomalousDebrisCurrency(String itemId, String englishName, String modifierId, Set<ItemType> itemTypes, int minTier, float weight)
+public record AnomalousDebrisCurrency(String itemId, String englishName, String modifierId, Set<ItemType> itemTypes, int minTier, float weight,
+                                      Color color)
         implements ItemCurrency {
 
-    static final Color COLOR = new Color(120, 225, 210);
+    static final Color DEFAULT_COLOR = new Color(120, 225, 210);
     static final String DESCRIPTION_KEY = "chart.debris.currency.description";
     static final String ITEMS_KEY_PREFIX = "chart.debris.currency.items.";
     static final String USED_NOTICE_KEY_PREFIX = "ui.workbench.notice.used.anomalousDebris.";
     static final String LOCKED_CLASH_KEY = "chart.debris.currency.lockedClash";
-    static final String LINE_SEPARATOR = ", ";
+    static final String SLOT_KEY_PREFIX = "chart.debris.currency.slot.";
     static final String ITEMS_SEPARATOR = " or ";
 
     public AnomalousDebrisCurrency {
         itemTypes = Set.copyOf(itemTypes);
         weight = Math.max(0f, weight);
+        color = color == null ? DEFAULT_COLOR : color;
     }
 
     @Override
@@ -45,11 +48,6 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
     @Override
     public MaterialTier tier() {
         return MaterialTier.EXOTIC;
-    }
-
-    @Override
-    public Color color() {
-        return COLOR;
     }
 
     @Override
@@ -171,26 +169,38 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
 
     @Override
     public String description() {
-        return Translation.msg(DESCRIPTION_KEY).arg("items", itemsText()).arg("modifier", modifierText()).text();
+        return Translation.msg(DESCRIPTION_KEY).arg("items", itemsText()).arg("modifier", modifierName()).arg("slot", slotText()).text();
     }
 
     String itemsText() {
         return itemTypes.stream().sorted().map(type -> Translation.text(ITEMS_KEY_PREFIX + type.id())).collect(Collectors.joining(ITEMS_SEPARATOR));
     }
 
-    String modifierText() {
+    String modifierName() {
+        String name = ItemModifiers.name(modifierId);
+        return name == null ? modifierId : name;
+    }
+
+    String slotText() {
+        Modifier granted = modifier();
+        return granted == null ? "" : Translation.text(SLOT_KEY_PREFIX + granted.slot().name().toLowerCase(Locale.ROOT));
+    }
+
+    @Override
+    public List<StyledText> grantedLines() {
         Modifier granted = modifier();
         if (granted == null) {
-            return modifierId;
+            return List.of();
         }
-        ItemType type = itemTypes.stream().sorted().findFirst().orElse(null);
-        RolledModifier rolled = RolledModifier.roll(granted, new Random(0L), true);
-        List<String> lines = new ArrayList<>();
-        for (RolledEffect line : rolled.lines()) {
-            ModifierEffect effect = ItemEffects.forType(type).byName(line.effectName());
-            lines.add(effect == null ? line.effectName() : effect.description(line.magnitude()).plain());
+        ModifierEffects effects = ItemEffects.forType(itemTypes.stream().sorted().findFirst().orElse(null));
+        List<StyledText> lines = new ArrayList<>();
+        for (ModifierLine line : granted.lines()) {
+            StyledText lineText = new RolledEffect(line.effectName(), line.boundFarthestFromZero()).rangeDescription(effects, line);
+            if (lineText != null) {
+                lines.add(lineText);
+            }
         }
-        return String.join(LINE_SEPARATOR, lines);
+        return lines;
     }
 
     @Override

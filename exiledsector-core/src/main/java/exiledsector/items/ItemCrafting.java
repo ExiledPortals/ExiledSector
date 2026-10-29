@@ -515,7 +515,7 @@ public final class ItemCrafting {
         if (!currentDefinition.unique()) {
             return false;
         }
-        for (ItemDefinition definition : transpositionCandidates(currentDefinition)) {
+        for (ItemDefinition definition : ItemDefinitions.all()) {
             if (otherUnique(definition, currentDefinition, tier, allowedUniques)) {
                 return true;
             }
@@ -539,10 +539,6 @@ public final class ItemCrafting {
         replacement.copyTraitsFrom(item);
         replacement.freezeName();
         return store.replace(item, replacement) ? replacement : null;
-    }
-
-    private static Collection<ItemDefinition> transpositionCandidates(ItemDefinition currentDefinition) {
-        return currentDefinition.type() == ItemType.STAR_CHART ? ItemDefinitions.ofType(ItemType.STAR_CHART) : ItemDefinitions.all();
     }
 
     private static boolean otherUnique(ItemDefinition definition, ItemDefinition currentDefinition, int tier,

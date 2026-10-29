@@ -1,8 +1,10 @@
 package exiledsector.items;
 
+import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 
 import java.awt.Color;
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
@@ -54,6 +56,10 @@ public interface ItemCurrency {
 
     default String description() {
         return Translation.text(MaterialItems.descriptionKey(itemId()));
+    }
+
+    default List<StyledText> grantedLines() {
+        return List.of();
     }
 
     default String usedNoticeKey(ItemNature nature) {

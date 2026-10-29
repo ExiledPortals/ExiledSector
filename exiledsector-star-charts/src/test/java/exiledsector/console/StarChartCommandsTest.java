@@ -74,7 +74,7 @@ class StarChartCommandsTest {
     }
 
     @Test
-    void grantingAtALowTierNeverPicksAUniqueThatStartsHigher() {
+    void grantingAtALowTierNeverPicksAChartThatStartsHigher() {
         CommandResult result = new GrantStarChartsCommand(new java.util.Random(11)).runCommand("50 3", campaign());
 
         assertEquals(CommandResult.SUCCESS, result);
@@ -82,7 +82,7 @@ class StarChartCommandsTest {
         verify(fixture.cargo, times(50)).addSpecial(added.capture(), anyFloat());
         for (SpecialItemData special : added.getAllValues()) {
             ItemData chart = ItemData.ofStarChart(special);
-            assertNotEquals(StarChartFixtures.TEST_GATED_UNIQUE, chart.definitionId(), "the gated unique starts at tier 4");
+            assertNotEquals(StarChartFixtures.TEST_GATED, chart.definitionId(), "the gated chart starts at tier 4");
             assertEquals(3, chart.preview().tier());
         }
     }
@@ -102,7 +102,7 @@ class StarChartCommandsTest {
 
     @Test
     void listingAbsorbsCargoChartsAndDescribesThem() {
-        ItemData chart = ItemData.rolledAtTier(exiledsector.items.ItemDefinitions.get(StarChartFixtures.TEST_GATED_UNIQUE), 2L, 5);
+        ItemData chart = StarChartFixtures.withEveryModifier(StarChartFixtures.TEST_GATED, 2L, 5);
         com.fs.starfarer.api.campaign.CargoStackAPI stack = mock(com.fs.starfarer.api.campaign.CargoStackAPI.class);
         when(stack.getSpecialDataIfSpecial()).thenReturn(chart.toSpecialItem());
         when(stack.getSize()).thenReturn(1f);
@@ -113,7 +113,7 @@ class StarChartCommandsTest {
         ArgumentCaptor<String> shown = ArgumentCaptor.forClass(String.class);
         fixture.console.verify(() -> Console.showMessage(shown.capture()));
         assertTrue(shown.getValue().contains("Moved 1 Star Chart"), shown.getValue());
-        assertTrue(shown.getValue().contains("1. Test Gated Unique Chart [unique, tier 5, TRINARY_2FAR]"), shown.getValue());
+        assertTrue(shown.getValue().contains("1. " + chart.preview().name() + " [rare, tier 5, TRINARY_2FAR]"), shown.getValue());
         verify(fixture.cargo).removeStack(stack);
     }
 }

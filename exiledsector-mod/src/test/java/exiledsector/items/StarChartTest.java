@@ -47,8 +47,8 @@ class StarChartTest {
 
     private static final String SINGLE = "star_chart";
     private static final String BINARY = "star_chart";
-    private static final String UNGATED_UNIQUE = StarChartFixtures.TEST_UNIQUE;
-    private static final String GATED_UNIQUE = StarChartFixtures.TEST_GATED_UNIQUE;
+    private static final String UNGATED = StarChartFixtures.TEST_FIXED;
+    private static final String GATED = StarChartFixtures.TEST_GATED;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -89,7 +89,7 @@ class StarChartTest {
         assertNull(single.kind());
         assertEquals(StarChartDefinitions.ANY_SYSTEM_TYPE, StarChartDefinitions.systemType(SINGLE));
         assertEquals(StarChartDefinitions.ANY_SYSTEM_TYPE, StarChartDefinitions.systemType("not_a_chart"));
-        assertTrue(ItemDefinitions.get(UNGATED_UNIQUE).unique());
+        assertTrue(ItemDefinitions.ofType(ItemType.STAR_CHART).stream().noneMatch(ItemDefinition::unique));
     }
 
     @Test
@@ -127,7 +127,7 @@ class StarChartTest {
     }
 
     @Test
-    void theTierSurvivesMirroringTransposingCorruptionAndRerolls() {
+    void theTierSurvivesMirroringCorruptionAndRerolls() {
         ItemStore store = ItemStore.forStarCharts();
         Item chart = store.add(ItemData.rolledAtTier(ItemDefinitions.get(SINGLE), 11L, 9));
 
@@ -140,13 +140,6 @@ class StarChartTest {
         assertEquals(9, chart.tier());
         assertSame(chart, ItemCrafting.randomiseModifiers(store, chart, new Random(4), definition -> true));
         assertEquals(9, chart.tier());
-
-        Item unique = store.add(ItemData.rolledAtTier(ItemDefinitions.get(UNGATED_UNIQUE), 12L, 13));
-        Item transposed = ItemCrafting.transpose(store, unique, new Random(5), definition -> true);
-        assertNotNull(transposed);
-        assertEquals(GATED_UNIQUE, transposed.definitionId());
-        assertEquals(13, transposed.tier());
-        assertEquals(ItemType.STAR_CHART, transposed.type());
     }
 
     @Test
@@ -192,13 +185,12 @@ class StarChartTest {
             assertEquals(chart.explicits().size() <= 2 ? ItemRarity.COMMON : ItemRarity.RARE, chart.rarity());
         }
         assertEquals(Set.of(1, 2, 3, 4, 5, 6), counts);
-        assertEquals(ItemRarity.UNIQUE, StarChartFixtures.chart(UNGATED_UNIQUE, 1L, 3).rarity());
     }
 
     @Test
     void tierBandsScaleTheShownValuesWithTheChartsTier() {
-        StarChart lowTier = StarChartFixtures.chart(GATED_UNIQUE, 3L, 1);
-        StarChart highTier = StarChartFixtures.chart(GATED_UNIQUE, 3L, 12);
+        StarChart lowTier = StarChartFixtures.fullChart(GATED, 3L, 1);
+        StarChart highTier = StarChartFixtures.fullChart(GATED, 3L, 12);
         String lowText = lowTier.effectLines().get(0).plain();
         String highText = highTier.effectLines().get(0).plain();
 
@@ -210,7 +202,7 @@ class StarChartTest {
 
     @Test
     void chartsRollNoImplicitsBecauseTheAtlasNodeDecidesTheFaction() {
-        for (String definitionId : List.of(SINGLE, BINARY, GATED_UNIQUE)) {
+        for (String definitionId : List.of(SINGLE, BINARY, GATED)) {
             for (long seed = 0; seed < 20; seed++) {
                 StarChart chart = StarChartFixtures.chart(definitionId, seed, 5);
                 assertTrue(chart.implicits().isEmpty(), definitionId + " " + chart.implicits());
@@ -435,7 +427,7 @@ class StarChartTest {
     void aRollWhoseModifierLeftThePoolFallsBackToTheCatalogueOrIsDroppedAndFlagged() {
         List<RolledModifier> movedExplicits = List.of(new RolledModifier("HYBRID_CHART_BOSS_SIZE", ModifierSlot.PREFIX,
                 List.of(new RolledEffect("CHART_BOSS_SIZE_PERCENT", 100f), new RolledEffect("CHART_QUANTITY_PERCENT", 0f))));
-        StarChart moved = (StarChart) Item.create(null, UNGATED_UNIQUE, 4L, movedExplicits, ItemTraits.ofTier(12));
+        StarChart moved = (StarChart) Item.create(null, UNGATED, 4L, movedExplicits, ItemTraits.ofTier(12));
         ChartGenContext movedContext = ChartGenContext.from(moved);
 
         assertNull(moved.definition().poolEntryFor("HYBRID_CHART_BOSS_SIZE"));
@@ -465,38 +457,31 @@ class StarChartTest {
     }
 
     @Test
-    void uniqueChartsNeverExistBelowTheirMinimumTier() {
-        ItemDefinition gatedUnique = ItemDefinitions.get(GATED_UNIQUE);
+    void gatedChartsNeverExistBelowTheirMinimumTier() {
+        ItemDefinition gatedChart = ItemDefinitions.get(GATED);
 
-        assertEquals(4, StarChartDefinitions.minTier(GATED_UNIQUE));
-        assertEquals(StarChart.LOWEST_TIER, StarChartDefinitions.minTier(UNGATED_UNIQUE));
+        assertEquals(4, StarChartDefinitions.minTier(GATED));
+        assertEquals(StarChart.LOWEST_TIER, StarChartDefinitions.minTier(UNGATED));
         assertEquals(StarChart.LOWEST_TIER, StarChartDefinitions.minTier(SINGLE));
-        assertEquals(4, ItemData.rolledAtTier(gatedUnique, 3L, 1).traits().tier());
-        assertEquals(4, ItemData.rolledAtTier(gatedUnique, 3L, 1).preview().tier());
-        assertEquals(4, ItemData.rolled(gatedUnique, 3L).preview().tier());
-        assertEquals(4, new ItemData(GATED_UNIQUE, 3L).preview().tier());
-        assertEquals(9, ItemData.rolledAtTier(gatedUnique, 3L, 9).preview().tier());
-        ItemData lowTierData = new ItemData(GATED_UNIQUE, 3L, null, null, ItemTraits.ofTier(2));
+        assertEquals(4, ItemData.rolledAtTier(gatedChart, 3L, 1).traits().tier());
+        assertEquals(4, ItemData.rolledAtTier(gatedChart, 3L, 1).preview().tier());
+        assertEquals(4, ItemData.rolled(gatedChart, 3L).preview().tier());
+        assertEquals(4, new ItemData(GATED, 3L).preview().tier());
+        assertEquals(9, ItemData.rolledAtTier(gatedChart, 3L, 9).preview().tier());
+        ItemData lowTierData = new ItemData(GATED, 3L, null, null, ItemTraits.ofTier(2));
         assertEquals(4, lowTierData.preview().tier());
         assertEquals(4, ItemStore.forStarCharts().add(lowTierData).tier());
-        assertEquals(4, ItemData.ofStarChart(new SpecialItemData(ItemData.STAR_CHART_ITEM_ID, GATED_UNIQUE + "|5")).preview().tier());
-        assertTrue(exiledsector.charts.generation.ChartTiers.forTier(StarChartDefinitions.minTier(GATED_UNIQUE)).boss(),
-                "the gated unique's boss prefix always has a boss to strengthen");
+        assertEquals(4, ItemData.ofStarChart(new SpecialItemData(ItemData.STAR_CHART_ITEM_ID, GATED + "|5")).preview().tier());
+        assertTrue(exiledsector.charts.generation.ChartTiers.forTier(StarChartDefinitions.minTier(GATED)).boss(),
+                "the gated chart's boss prefix always has a boss to strengthen");
 
         Random random = new Random(5);
-        boolean gatedUniqueAtTierFour = false;
+        boolean gatedAtTierFour = false;
         for (int draw = 0; draw < 1000; draw++) {
-            assertNotEquals(GATED_UNIQUE, ChartDrops.pickChartAtTier(random, 3, definition -> true).id());
-            gatedUniqueAtTierFour |= GATED_UNIQUE.equals(ChartDrops.pickChartAtTier(random, 4, definition -> true).id());
+            assertNotEquals(GATED, ChartDrops.pickChartAtTier(random, 3).id());
+            gatedAtTierFour |= GATED.equals(ChartDrops.pickChartAtTier(random, 4).id());
         }
-        assertTrue(gatedUniqueAtTierFour);
-
-        ItemDefinition ungatedUnique = ItemDefinitions.get(UNGATED_UNIQUE);
-        assertFalse(ItemCrafting.canTranspose(ungatedUnique, 3, definition -> true));
-        assertTrue(ItemCrafting.canTranspose(ungatedUnique, 4, definition -> true));
-        ItemStore store = ItemStore.forStarCharts();
-        Item lowUngatedUnique = store.add(ItemData.rolledAtTier(ungatedUnique, 12L, 3));
-        assertNull(ItemCrafting.transpose(store, lowUngatedUnique, new Random(5), definition -> true));
+        assertTrue(gatedAtTierFour);
     }
 
     @Test

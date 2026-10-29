@@ -94,6 +94,12 @@ effect|BALLISTIC_COUNTS_AS_ENERGY|12.5	0	Ballistic weapons also gain this ship's
 effect|BALLISTIC_COUNTS_AS_ENERGY|100.0	0	Ballistic weapons also gain this ship's energy weapon modifiers.
 effect|BALLISTIC_COUNTS_AS_ENERGY|-10.0	0	Ballistic weapons also gain this ship's energy weapon modifiers.
 effect|BALLISTIC_COUNTS_AS_ENERGY|-12.5	0	Ballistic weapons also gain this ship's energy weapon modifiers.
+effect|BALLISTIC_DISINTEGRATION_ARMOR_DAMAGE_PERCENT|1.0	0	Ballistic weapon hits on armor strip an additional 1% of the hit's damage from the armor around the impact over 5 seconds.
+effect|BALLISTIC_DISINTEGRATION_ARMOR_DAMAGE_PERCENT|10.0	0	Ballistic weapon hits on armor strip an additional 10% of the hit's damage from the armor around the impact over 5 seconds.
+effect|BALLISTIC_DISINTEGRATION_ARMOR_DAMAGE_PERCENT|12.5	0	Ballistic weapon hits on armor strip an additional 12.5% of the hit's damage from the armor around the impact over 5 seconds.
+effect|BALLISTIC_DISINTEGRATION_ARMOR_DAMAGE_PERCENT|100.0	0	Ballistic weapon hits on armor strip an additional 100% of the hit's damage from the armor around the impact over 5 seconds.
+effect|BALLISTIC_DISINTEGRATION_ARMOR_DAMAGE_PERCENT|-10.0	0	Ballistic weapon hits on armor strip an additional -10% of the hit's damage from the armor around the impact over 5 seconds.
+effect|BALLISTIC_DISINTEGRATION_ARMOR_DAMAGE_PERCENT|-12.5	0	Ballistic weapon hits on armor strip an additional -12.5% of the hit's damage from the armor around the impact over 5 seconds.
 effect|BALLISTIC_HARDPOINT_KINETIC_TO_HIGH_EXPLOSIVE|1.0	0	Kinetic damage from weapons in ballistic hardpoints is converted to high explosive damage.
 effect|BALLISTIC_HARDPOINT_KINETIC_TO_HIGH_EXPLOSIVE|10.0	0	Kinetic damage from weapons in ballistic hardpoints is converted to high explosive damage.
 effect|BALLISTIC_HARDPOINT_KINETIC_TO_HIGH_EXPLOSIVE|12.5	0	Kinetic damage from weapons in ballistic hardpoints is converted to high explosive damage.
@@ -340,6 +346,12 @@ effect|BEAM_WEAPON_RANGE_PERCENT|12.5	0	<good>12.5%</good> increased beam weapon
 effect|BEAM_WEAPON_RANGE_PERCENT|100.0	0	<good>100%</good> increased beam weapon range.
 effect|BEAM_WEAPON_RANGE_PERCENT|-10.0	0	<bad>10%</bad> reduced beam weapon range.
 effect|BEAM_WEAPON_RANGE_PERCENT|-12.5	0	<bad>12.5%</bad> reduced beam weapon range.
+effect|BEAM_WEAPON_SHIELD_DISRUPTION_PERCENT|1.0	0	Beam weapons disrupt the target's shields, increasing all shield damage taken by <good>1%</good>.
+effect|BEAM_WEAPON_SHIELD_DISRUPTION_PERCENT|10.0	0	Beam weapons disrupt the target's shields, increasing all shield damage taken by <good>10%</good>.
+effect|BEAM_WEAPON_SHIELD_DISRUPTION_PERCENT|12.5	0	Beam weapons disrupt the target's shields, increasing all shield damage taken by <good>12.5%</good>.
+effect|BEAM_WEAPON_SHIELD_DISRUPTION_PERCENT|100.0	0	Beam weapons disrupt the target's shields, increasing all shield damage taken by <good>100%</good>.
+effect|BEAM_WEAPON_SHIELD_DISRUPTION_PERCENT|-10.0	0	Beam weapons disrupt the target's shields, increasing all shield damage taken by <good>-10%</good>.
+effect|BEAM_WEAPON_SHIELD_DISRUPTION_PERCENT|-12.5	0	Beam weapons disrupt the target's shields, increasing all shield damage taken by <good>-12.5%</good>.
 effect|BEAM_WEAPON_SPLIT_TARGETS_FLAT|1.0	0	Beam weapon hits split their damage evenly across the target and up to 1 additional nearby enemy ship. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
 effect|BEAM_WEAPON_SPLIT_TARGETS_FLAT|10.0	0	Beam weapon hits split their damage evenly across the target and up to 10 additional nearby enemy ships. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
 effect|BEAM_WEAPON_SPLIT_TARGETS_FLAT|12.5	0	Beam weapon hits split their damage evenly across the target and up to 12.5 additional nearby enemy ships. Strikecraft are never chosen. The target acquisition range is half the beam weapon's range.
@@ -622,12 +634,12 @@ effect|DECELERATION_FLAT|12.5	0	<good>+12.5</good> to deceleration.
 effect|DECELERATION_FLAT|100.0	0	<good>+100</good> to deceleration.
 effect|DECELERATION_FLAT|-10.0	0	<bad>-10</bad> to deceleration.
 effect|DECELERATION_FLAT|-12.5	0	<bad>-12.5</bad> to deceleration.
-effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|1.0	0	Energy weapon hits on armor strip an additional 1% of the hit's damage from the armor around the impact.
-effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|10.0	0	Energy weapon hits on armor strip an additional 10% of the hit's damage from the armor around the impact.
-effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|12.5	0	Energy weapon hits on armor strip an additional 12.5% of the hit's damage from the armor around the impact.
-effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|100.0	0	Energy weapon hits on armor strip an additional 100% of the hit's damage from the armor around the impact.
-effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|-10.0	0	Energy weapon hits on armor strip an additional -10% of the hit's damage from the armor around the impact.
-effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|-12.5	0	Energy weapon hits on armor strip an additional -12.5% of the hit's damage from the armor around the impact.
+effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|1.0	0	Energy weapon hits on armor strip an additional 1% of the hit's damage from the armor around the impact over 5 seconds.
+effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|10.0	0	Energy weapon hits on armor strip an additional 10% of the hit's damage from the armor around the impact over 5 seconds.
+effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|12.5	0	Energy weapon hits on armor strip an additional 12.5% of the hit's damage from the armor around the impact over 5 seconds.
+effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|100.0	0	Energy weapon hits on armor strip an additional 100% of the hit's damage from the armor around the impact over 5 seconds.
+effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|-10.0	0	Energy weapon hits on armor strip an additional -10% of the hit's damage from the armor around the impact over 5 seconds.
+effect|DISINTEGRATION_ARMOR_DAMAGE_PERCENT|-12.5	0	Energy weapon hits on armor strip an additional -12.5% of the hit's damage from the armor around the impact over 5 seconds.
 effect|DISPLACER_FAILSAFE_HULL_PERCENT|1.0	0	Once per deployment, when hull drops below <good>1%</good>, this ship teleports 1200 su away from the nearest enemy and vents its flux.
 effect|DISPLACER_FAILSAFE_HULL_PERCENT|10.0	0	Once per deployment, when hull drops below <good>10%</good>, this ship teleports 1200 su away from the nearest enemy and vents its flux.
 effect|DISPLACER_FAILSAFE_HULL_PERCENT|12.5	0	Once per deployment, when hull drops below <good>12.5%</good>, this ship teleports 1200 su away from the nearest enemy and vents its flux.
@@ -1312,6 +1324,12 @@ effect|ION_ARC_CHANCE_PERCENT|12.5	0	Energy shots that hit an enemy shield can a
 effect|ION_ARC_CHANCE_PERCENT|100.0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>100%</good> when the target is at full hard flux and falls with its hard flux.
 effect|ION_ARC_CHANCE_PERCENT|-10.0	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>-10%</good> when the target is at full hard flux and falls with its hard flux.
 effect|ION_ARC_CHANCE_PERCENT|-12.5	0	Energy shots that hit an enemy shield can arc through to its hull, dealing 25% of the shot's damage plus 50% as EMP. The chance is <good>-12.5%</good> when the target is at full hard flux and falls with its hard flux.
+effect|KILL_FLUX_VENT_PERCENT|1.0	0	Destroying an enemy ship removes flux equal to <good>1%</good> of this ship's maximum flux.
+effect|KILL_FLUX_VENT_PERCENT|10.0	0	Destroying an enemy ship removes flux equal to <good>10%</good> of this ship's maximum flux.
+effect|KILL_FLUX_VENT_PERCENT|12.5	0	Destroying an enemy ship removes flux equal to <good>12.5%</good> of this ship's maximum flux.
+effect|KILL_FLUX_VENT_PERCENT|100.0	0	Destroying an enemy ship removes flux equal to <good>100%</good> of this ship's maximum flux.
+effect|KILL_FLUX_VENT_PERCENT|-10.0	0	Destroying an enemy ship removes flux equal to <good>-10%</good> of this ship's maximum flux.
+effect|KILL_FLUX_VENT_PERCENT|-12.5	0	Destroying an enemy ship removes flux equal to <good>-12.5%</good> of this ship's maximum flux.
 effect|KINETIC_DAMAGE_TAKEN_PERCENT|1.0	1	<good>1%</good> increased kinetic damage taken.
 effect|KINETIC_DAMAGE_TAKEN_PERCENT|10.0	1	<good>10%</good> increased kinetic damage taken.
 effect|KINETIC_DAMAGE_TAKEN_PERCENT|12.5	1	<good>12.5%</good> increased kinetic damage taken.
@@ -1408,6 +1426,12 @@ effect|MISSILE_SLOTS_ENERGY|12.5	0	Missile weapon mounts become energy mounts.
 effect|MISSILE_SLOTS_ENERGY|100.0	0	Missile weapon mounts become energy mounts.
 effect|MISSILE_SLOTS_ENERGY|-10.0	0	Missile weapon mounts become energy mounts.
 effect|MISSILE_SLOTS_ENERGY|-12.5	0	Missile weapon mounts become energy mounts.
+effect|MISSILE_SNARE_TOP_SPEED_PERCENT|1.0	0	Enemy ships hit by this ship's missiles have <good>1%</good> less top speed for 2 seconds.
+effect|MISSILE_SNARE_TOP_SPEED_PERCENT|10.0	0	Enemy ships hit by this ship's missiles have <good>10%</good> less top speed for 2 seconds.
+effect|MISSILE_SNARE_TOP_SPEED_PERCENT|12.5	0	Enemy ships hit by this ship's missiles have <good>12.5%</good> less top speed for 2 seconds.
+effect|MISSILE_SNARE_TOP_SPEED_PERCENT|100.0	0	Enemy ships hit by this ship's missiles have <good>100%</good> less top speed for 2 seconds.
+effect|MISSILE_SNARE_TOP_SPEED_PERCENT|-10.0	0	Enemy ships hit by this ship's missiles have <good>-10%</good> less top speed for 2 seconds.
+effect|MISSILE_SNARE_TOP_SPEED_PERCENT|-12.5	0	Enemy ships hit by this ship's missiles have <good>-12.5%</good> less top speed for 2 seconds.
 effect|MISSILE_WEAPON_AMMO_FLAT|1.0	0	<good>+1</good> to missile weapon ammo capacity.
 effect|MISSILE_WEAPON_AMMO_FLAT|10.0	0	<good>+10</good> to missile weapon ammo capacity.
 effect|MISSILE_WEAPON_AMMO_FLAT|12.5	0	<good>+12.5</good> to missile weapon ammo capacity.
@@ -3004,11 +3028,11 @@ type-detail|defensive_targeting_array|CRUISER|0	0	Mutually exclusive with <hullm
 type-detail|defensive_targeting_array|CAPITAL_SHIP|0	0	Mutually exclusive with <hullmod>hullmod</hullmod>:\n• <hullmod>Defensive Targeting Array</hullmod>
 flavour|disintegration	0	Hulls killed by Remnant energy weapons come apart around every impact in a way no human weapon manages. Salvors who study enough of the wrecks learn to tune this ship's energy weapons to the same pattern, and try not to think about what it resembles.
 flavourAutomated|disintegration	0	Hulls killed by Remnant energy weapons come apart around every impact in a way no human weapon manages. The ship's core scans enough of the wrecks to model the pattern and tunes its energy weapons to match. It has no opinion on what the pattern resembles.
-type|disintegration|null|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact.
-type|disintegration|FRIGATE|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact.
-type|disintegration|DESTROYER|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact.
-type|disintegration|CRUISER|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact.
-type|disintegration|CAPITAL_SHIP|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact.
+type|disintegration|null|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact over 5 seconds.
+type|disintegration|FRIGATE|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact over 5 seconds.
+type|disintegration|DESTROYER|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact over 5 seconds.
+type|disintegration|CRUISER|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact over 5 seconds.
+type|disintegration|CAPITAL_SHIP|0	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact over 5 seconds.
 flavour|doctrine_luddic_blessed_plating	0	Luddic shipwrights bless every plate they hang, and they hang far more of them than any yard would allow. Their slow, devout layering takes cycles to learn and longer to finish.
 type|doctrine_luddic_blessed_plating|null|0	0	<good>20%</good> increased armor.
 type|doctrine_luddic_blessed_plating|null|1	0	<good>15%</good> increased hull points.
@@ -5040,7 +5064,7 @@ summary|option0|FRIGATE|54	0	Every 2 seconds a beam weapon spends on an enemy sh
 summary|option0|FRIGATE|55	0	<good>75%</good> increased combat readiness recovery rate.
 summary|option0|FRIGATE|56	0	<good>0%</good> increased top speed.
 summary|option0|FRIGATE|57	0	<good>80%</good> increased peak combat readiness duration.
-summary|option0|FRIGATE|58	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact.
+summary|option0|FRIGATE|58	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact over 5 seconds.
 summary|option0|FRIGATE|59	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 summary|option0|FRIGATE|60	0	<good>22%</good> increased venting speed.
 summary|option0|FRIGATE|61	0	<good>50%</good> increased chance for missiles to resist enemy ECM and flares.
@@ -5268,7 +5292,7 @@ summary|option0|DESTROYER|54	0	Every 2 seconds a beam weapon spends on an enemy 
 summary|option0|DESTROYER|55	0	<good>75%</good> increased combat readiness recovery rate.
 summary|option0|DESTROYER|56	0	<good>0%</good> increased top speed.
 summary|option0|DESTROYER|57	0	<good>80%</good> increased peak combat readiness duration.
-summary|option0|DESTROYER|58	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact.
+summary|option0|DESTROYER|58	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact over 5 seconds.
 summary|option0|DESTROYER|59	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 summary|option0|DESTROYER|60	0	<good>20%</good> increased venting speed.
 summary|option0|DESTROYER|61	0	<good>50%</good> increased chance for missiles to resist enemy ECM and flares.
@@ -5496,7 +5520,7 @@ summary|option0|CRUISER|54	0	Every 2 seconds a beam weapon spends on an enemy sh
 summary|option0|CRUISER|55	0	<good>75%</good> increased combat readiness recovery rate.
 summary|option0|CRUISER|56	0	<good>0%</good> increased top speed.
 summary|option0|CRUISER|57	0	<good>80%</good> increased peak combat readiness duration.
-summary|option0|CRUISER|58	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact.
+summary|option0|CRUISER|58	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact over 5 seconds.
 summary|option0|CRUISER|59	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 summary|option0|CRUISER|60	0	<good>18%</good> increased venting speed.
 summary|option0|CRUISER|61	0	<good>50%</good> increased chance for missiles to resist enemy ECM and flares.
@@ -5724,7 +5748,7 @@ summary|option0|CAPITAL_SHIP|54	0	Every 2 seconds a beam weapon spends on an ene
 summary|option0|CAPITAL_SHIP|55	0	<good>75%</good> increased combat readiness recovery rate.
 summary|option0|CAPITAL_SHIP|56	0	<good>0%</good> increased top speed.
 summary|option0|CAPITAL_SHIP|57	0	<good>80%</good> increased peak combat readiness duration.
-summary|option0|CAPITAL_SHIP|58	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact.
+summary|option0|CAPITAL_SHIP|58	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact over 5 seconds.
 summary|option0|CAPITAL_SHIP|59	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 summary|option0|CAPITAL_SHIP|60	0	<good>16%</good> increased venting speed.
 summary|option0|CAPITAL_SHIP|61	0	<good>50%</good> increased chance for missiles to resist enemy ECM and flares.
@@ -5952,7 +5976,7 @@ summary|option1|FRIGATE|54	0	Every 2 seconds a beam weapon spends on an enemy sh
 summary|option1|FRIGATE|55	0	<good>75%</good> increased combat readiness recovery rate.
 summary|option1|FRIGATE|56	0	<good>0%</good> increased top speed.
 summary|option1|FRIGATE|57	0	<good>80%</good> increased peak combat readiness duration.
-summary|option1|FRIGATE|58	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact.
+summary|option1|FRIGATE|58	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact over 5 seconds.
 summary|option1|FRIGATE|59	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 summary|option1|FRIGATE|60	0	<good>22%</good> increased venting speed.
 summary|option1|FRIGATE|61	0	<good>50%</good> increased chance for missiles to resist enemy ECM and flares.
@@ -6177,7 +6201,7 @@ summary|option1|DESTROYER|54	0	Every 2 seconds a beam weapon spends on an enemy 
 summary|option1|DESTROYER|55	0	<good>75%</good> increased combat readiness recovery rate.
 summary|option1|DESTROYER|56	0	<good>0%</good> increased top speed.
 summary|option1|DESTROYER|57	0	<good>80%</good> increased peak combat readiness duration.
-summary|option1|DESTROYER|58	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact.
+summary|option1|DESTROYER|58	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact over 5 seconds.
 summary|option1|DESTROYER|59	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 summary|option1|DESTROYER|60	0	<good>20%</good> increased venting speed.
 summary|option1|DESTROYER|61	0	<good>50%</good> increased chance for missiles to resist enemy ECM and flares.
@@ -6402,7 +6426,7 @@ summary|option1|CRUISER|54	0	Every 2 seconds a beam weapon spends on an enemy sh
 summary|option1|CRUISER|55	0	<good>75%</good> increased combat readiness recovery rate.
 summary|option1|CRUISER|56	0	<good>0%</good> increased top speed.
 summary|option1|CRUISER|57	0	<good>80%</good> increased peak combat readiness duration.
-summary|option1|CRUISER|58	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact.
+summary|option1|CRUISER|58	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact over 5 seconds.
 summary|option1|CRUISER|59	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 summary|option1|CRUISER|60	0	<good>18%</good> increased venting speed.
 summary|option1|CRUISER|61	0	<good>50%</good> increased chance for missiles to resist enemy ECM and flares.
@@ -6627,7 +6651,7 @@ summary|option1|CAPITAL_SHIP|54	0	Every 2 seconds a beam weapon spends on an ene
 summary|option1|CAPITAL_SHIP|55	0	<good>75%</good> increased combat readiness recovery rate.
 summary|option1|CAPITAL_SHIP|56	0	<good>0%</good> increased top speed.
 summary|option1|CAPITAL_SHIP|57	0	<good>80%</good> increased peak combat readiness duration.
-summary|option1|CAPITAL_SHIP|58	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact.
+summary|option1|CAPITAL_SHIP|58	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact over 5 seconds.
 summary|option1|CAPITAL_SHIP|59	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 summary|option1|CAPITAL_SHIP|60	0	<good>16%</good> increased venting speed.
 summary|option1|CAPITAL_SHIP|61	0	<good>50%</good> increased chance for missiles to resist enemy ECM and flares.
@@ -6852,7 +6876,7 @@ summary|option2|FRIGATE|54	0	Every 2 seconds a beam weapon spends on an enemy sh
 summary|option2|FRIGATE|55	0	<good>75%</good> increased combat readiness recovery rate.
 summary|option2|FRIGATE|56	0	<good>0%</good> increased top speed.
 summary|option2|FRIGATE|57	0	<good>80%</good> increased peak combat readiness duration.
-summary|option2|FRIGATE|58	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact.
+summary|option2|FRIGATE|58	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact over 5 seconds.
 summary|option2|FRIGATE|59	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 summary|option2|FRIGATE|60	0	<good>22%</good> increased venting speed.
 summary|option2|FRIGATE|61	0	<good>50%</good> increased chance for missiles to resist enemy ECM and flares.
@@ -7080,7 +7104,7 @@ summary|option2|DESTROYER|54	0	Every 2 seconds a beam weapon spends on an enemy 
 summary|option2|DESTROYER|55	0	<good>75%</good> increased combat readiness recovery rate.
 summary|option2|DESTROYER|56	0	<good>0%</good> increased top speed.
 summary|option2|DESTROYER|57	0	<good>80%</good> increased peak combat readiness duration.
-summary|option2|DESTROYER|58	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact.
+summary|option2|DESTROYER|58	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact over 5 seconds.
 summary|option2|DESTROYER|59	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 summary|option2|DESTROYER|60	0	<good>20%</good> increased venting speed.
 summary|option2|DESTROYER|61	0	<good>50%</good> increased chance for missiles to resist enemy ECM and flares.
@@ -7308,7 +7332,7 @@ summary|option2|CRUISER|54	0	Every 2 seconds a beam weapon spends on an enemy sh
 summary|option2|CRUISER|55	0	<good>75%</good> increased combat readiness recovery rate.
 summary|option2|CRUISER|56	0	<good>0%</good> increased top speed.
 summary|option2|CRUISER|57	0	<good>80%</good> increased peak combat readiness duration.
-summary|option2|CRUISER|58	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact.
+summary|option2|CRUISER|58	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact over 5 seconds.
 summary|option2|CRUISER|59	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 summary|option2|CRUISER|60	0	<good>18%</good> increased venting speed.
 summary|option2|CRUISER|61	0	<good>50%</good> increased chance for missiles to resist enemy ECM and flares.
@@ -7536,7 +7560,7 @@ summary|option2|CAPITAL_SHIP|54	0	Every 2 seconds a beam weapon spends on an ene
 summary|option2|CAPITAL_SHIP|55	0	<good>75%</good> increased combat readiness recovery rate.
 summary|option2|CAPITAL_SHIP|56	0	<good>0%</good> increased top speed.
 summary|option2|CAPITAL_SHIP|57	0	<good>80%</good> increased peak combat readiness duration.
-summary|option2|CAPITAL_SHIP|58	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact.
+summary|option2|CAPITAL_SHIP|58	0	Energy weapon hits on armor strip an additional 20% of the hit's damage from the armor around the impact over 5 seconds.
 summary|option2|CAPITAL_SHIP|59	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 summary|option2|CAPITAL_SHIP|60	0	<good>16%</good> increased venting speed.
 summary|option2|CAPITAL_SHIP|61	0	<good>50%</good> increased chance for missiles to resist enemy ECM and flares.

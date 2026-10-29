@@ -42,6 +42,30 @@ instant damage plus a MagicLib fake beam, without the weapon's effect code.
 `BEAM_WEAPON_HARD_FLUX_PERCENT` converts that share (capped at 100%) of a beam hit's shield flux from soft to
 hard on the target, never above its total flux. Beams that already force hard flux are skipped.
 
+## Beam shield disruption
+
+`BEAM_WEAPON_SHIELD_DISRUPTION_PERCENT` works like vanilla's Graviton Beam: a beam hit on shields multiplies the
+target's shield damage taken from every source for 1 second, refreshed by each hit. Several sources don't stack; the
+strongest one applies (`BeamShieldDisruptionListener`).
+
+## Missile snare
+
+`MISSILE_SNARE_TOP_SPEED_PERCENT` multiplies the top speed of an enemy ship hit by this ship's missiles for 2 seconds,
+refreshed by each hit, capped at 90% less. As with shield disruption, the strongest source applies
+(`MissileSnareListener`).
+
+## Kill flux vent
+
+`KILL_FLUX_VENT_PERCENT` watches every enemy ship this ship damages and, when one's hull reaches zero, removes that
+share of maximum flux from whichever ship dealt the killing blow, if it has the effect. Strikecraft and station
+modules don't count (`KillFluxVentListener`).
+
+## Disintegration
+
+`DISINTEGRATION_ARMOR_DAMAGE_PERCENT` (energy hits) and `BALLISTIC_DISINTEGRATION_ARMOR_DAMAGE_PERCENT` (ballistic
+hits) queue that share of a hit's damage on a 5 by 5 patch of armor cells around the impact, on top of the hit
+itself. Each target strips its queued armor evenly over 5 seconds (`DisintegrationListener.ArmorDecay`).
+
 ## Weapon range cap
 
 `NON_MISSILE_WEAPON_RANGE_CAP_FLAT` uses the engine's range threshold, as Safety Overrides does, and multiplies range
@@ -542,8 +566,7 @@ A hull item with a targeting effect rolls one other section as its target (`Hull
 stored once rolled); the Extended Warranty Contract's 100% doubles that item, drawbacks included. The Tuning
 Nanoswarm rerolls the target (`Item.rerollTarget`). On load a unique item follows its definition's current pool
 (`ItemDefinition.withCurrentUniquePool`): it rolls modifiers added since it dropped, from its seed, and loses those
-taken out. A modifier whose effect no longer loads is kept. Unique star charts only gain fixed-value modifiers and keep
-the rest.
+taken out. A modifier whose effect no longer loads is kept.
 
 A unique whose `mechanic` is `one_of` keeps just one of its listed modifiers, picked from its seed when it is
 rolled (`ItemRoller`), so the choice is frozen with the item.

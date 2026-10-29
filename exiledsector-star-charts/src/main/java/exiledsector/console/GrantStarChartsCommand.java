@@ -68,7 +68,7 @@ public class GrantStarChartsCommand extends PlayerFleetCommand {
         }
         List<String> names = new ArrayList<>();
         for (int i = 0; i < arguments.count(); i++) {
-            ItemDefinition definition = ChartDrops.pickChartAtTier(random, arguments.tier(), chart -> true);
+            ItemDefinition definition = ChartDrops.pickChartAtTier(random, arguments.tier());
             if (definition == null) {
                 break;
             }

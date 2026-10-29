@@ -15,7 +15,7 @@ public enum StarChartCurrency implements ItemCurrency {
     CARTOGRAPHY("exiledSector_cartographer_cipher", "cartographer", 120, 2f, MaterialTier.EXOTIC, new Color(245, 215, 110));
 
     public static final List<CraftingCurrency> KERNELS_ON_CHARTS = List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.CORRUPTION,
-            CraftingCurrency.TRANSPOSITION, CraftingCurrency.RECALIBRATION);
+            CraftingCurrency.RECALIBRATION);
     static final int MAX_REFORGE_ATTEMPTS = 16;
 
     private final String itemId;
@@ -144,7 +144,7 @@ public enum StarChartCurrency implements ItemCurrency {
 
     static boolean canReforge(StarChart chart, Set<ModifierSlot> guarded) {
         ItemDefinition definition = chart.definition();
-        return definition != null && !definition.unique() && (rerollable(definition, definition.prefixes(), ModifierSlot.PREFIX, chart.tier(), guarded)
+        return definition != null && (rerollable(definition, definition.prefixes(), ModifierSlot.PREFIX, chart.tier(), guarded)
                 || rerollable(definition, definition.suffixes(), ModifierSlot.SUFFIX, chart.tier(), guarded));
     }
 
@@ -192,7 +192,7 @@ public enum StarChartCurrency implements ItemCurrency {
     static List<Integer> annullable(StarChart chart, Set<ModifierSlot> guarded) {
         List<Integer> removable = new ArrayList<>();
         ItemDefinition definition = chart.definition();
-        if (definition == null || definition.unique()) {
+        if (definition == null) {
             return removable;
         }
         List<RolledModifier> explicits = chart.explicits();

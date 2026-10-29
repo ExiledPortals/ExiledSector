@@ -180,6 +180,7 @@ class WormholeOpenCheckTest {
 
             ChartRuns.store(new ChartRun("busy", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1));
             assertEquals(Blocker.RUN_OPEN, WormholeOpenCheck.current(mockSector.sector, store, chart));
+            assertEquals(Blocker.NO_GATEWAY, WormholeOpenCheck.replacingRun(mockSector.sector, store, chart), "the atlas replaces an open run");
             ChartRuns.delete("busy");
 
             lunaMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.OPEN_ANYWHERE_FIELD_ID)).thenReturn(true);

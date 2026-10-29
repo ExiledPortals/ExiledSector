@@ -231,8 +231,7 @@ public final class ChartFleetLoot {
                 ? ItemDrops.rollFleetSalvage(siteId, random, chances, feedstockMult, currencyMult)
                 : ItemDrops.rollSite(siteId, random, chances, feedstockMult, currencyMult, ItemUnlock.available(ItemType.HULL_ITEM, sector));
         boolean offerTierUp = source == ChartDrops.Source.CHART_BOSS && context.guaranteedBossTierUp() && !run.isBossTierUpGranted();
-        ChartDrops.Loot chartLoot = ChartDrops.roll(source, run.tier(), ChartDrops.Mults.of(context, chanceMult), random, ChartDrops.uniquesFor(sector),
-                offerTierUp);
+        ChartDrops.Loot chartLoot = ChartDrops.roll(source, run.tier(), ChartDrops.Mults.of(context, chanceMult), random, offerTierUp);
         if (offerTierUp && !chartLoot.charts().isEmpty()) {
             run.grantBossTierUp();
         }

@@ -57,9 +57,6 @@ public final class StarChartStoragePanel extends HoloPanel {
     private record TierChip(int tier) {
     }
 
-    private record RarityChip(ItemRarity rarity) {
-    }
-
     private final StarChartBrowser browser;
     private final Listener storageListener;
     private final String openNotice;
@@ -72,6 +69,8 @@ public final class StarChartStoragePanel extends HoloPanel {
     private TooltipMakerAPI gridElement;
     private UIComponentAPI noticeElement;
     private UIComponentAPI summaryElement;
+    private float controlsBottom;
+    private float noticeHeight = NOTICE_HEIGHT;
     private float gridTop;
 
     private StarChartStoragePanel(CustomPanelAPI hostPanel, StarChartBrowser browser, Listener storageListener, String openNotice) {
@@ -174,9 +173,6 @@ public final class StarChartStoragePanel extends HoloPanel {
         } else if (id instanceof TierChip chip) {
             browser.selectTier(chip.tier());
             rebuildControls();
-        } else if (id instanceof RarityChip chip) {
-            browser.toggleRarity(chip.rarity());
-            rebuildControls();
         }
     }
 
@@ -205,24 +201,21 @@ public final class StarChartStoragePanel extends HoloPanel {
         for (int tier = StarChartBrowser.LOWEST_TIER; tier <= StarChartBrowser.HIGHEST_TIER; tier++) {
             tierLabels.add(tierLabel(tier, browser.count(tier)));
         }
-        int tierRows = ChipFlow.rowsFor(tierLabels, innerWidth());
-        int controlRows = tierRows + 1;
-        TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), ChipFlow.height(controlRows), false);
+        float chipWidth = ChipFlow.uniformWidth(tierLabels, innerWidth());
+        int tierRows = ChipFlow.uniformRows(tierLabels.size(), chipWidth, innerWidth());
+        TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), ChipFlow.height(tierRows), false);
         ChipFlow chips = new ChipFlow(element, innerWidth());
         for (int tier = StarChartBrowser.LOWEST_TIER; tier <= StarChartBrowser.HIGHEST_TIER; tier++) {
             boolean stocked = browser.count(tier) > 0;
             Color base = stocked ? Misc.getBasePlayerColor() : Misc.scaleColorOnly(Misc.getGrayColor(), EMPTY_TIER_SCALE);
             Color bright = stocked ? Misc.getBrightPlayerColor() : Misc.getGrayColor();
             chips.place(tierLabels.get(tier - StarChartBrowser.LOWEST_TIER), new TierChip(tier), ChipFlow.Colors.of(base, bright),
-                    tier == browser.selectedTier());
-        }
-        chips.startRow(tierRows);
-        for (ItemRarity rarity : ItemRarity.values()) {
-            chips.placeInRow(rarityLabel(rarity), new RarityChip(rarity), ChipFlow.Colors.of(rarity.color()), browser.showsRarity(rarity));
+                    tier == browser.selectedTier(), chipWidth);
         }
         float controlsTop = PAD + HEADER_HEIGHT + GAP;
         controlsElement = replaceElement(controlsElement, element, PAD, controlsTop);
-        gridTop = controlsTop + ChipFlow.rowsHeight(controlRows) + NOTICE_HEIGHT;
+        controlsBottom = controlsTop + ChipFlow.rowsHeight(tierRows);
+        gridTop = controlsBottom + noticeHeight;
         rebuildGrid();
     }
 
@@ -241,10 +234,7 @@ public final class StarChartStoragePanel extends HoloPanel {
         if (browser.storedCount() == 0) {
             return Translation.text("chart.ui.storage.empty");
         }
-        if (browser.inSelectedTierCount() == 0) {
-            return Translation.msg("chart.ui.storage.emptyTier").arg("tier", browser.selectedTier()).text();
-        }
-        return Translation.text("chart.ui.storage.noMatches");
+        return Translation.msg("chart.ui.storage.emptyTier").arg("tier", browser.selectedTier()).text();
     }
 
     private void combineSelectedTier() {
@@ -332,10 +322,6 @@ public final class StarChartStoragePanel extends HoloPanel {
         addRarityBreakdown(element, targets);
         VanillaText.plainPara(element, Translation.msg("ui.socketStorage.confirm.batchBody").arg("count", totalParts).text(), LINE_PAD * 2f,
                 Misc.getTextColor());
-        if (targets.stream().anyMatch(chart -> chart.rarity() == ItemRarity.UNIQUE)) {
-            VanillaText.plainPara(element, Translation.text("chart.ui.storage.confirm.includesUnique"), LINE_PAD * 2f,
-                    Misc.getNegativeHighlightColor());
-        }
     }
 
     private static void addRarityBreakdown(TooltipMakerAPI element, List<Item> targets) {
@@ -411,16 +397,21 @@ public final class StarChartStoragePanel extends HoloPanel {
     }
 
     private void rebuildFooter() {
-        TooltipMakerAPI notice = panelRoot.createUIElement(innerWidth(), NOTICE_HEIGHT, false);
         String shownNotice = footerNotice();
+        TooltipMakerAPI notice = panelRoot.createUIElement(innerWidth(), NOTICE_HEIGHT * 3f, false);
         if (shownNotice != null) {
             VanillaText.plainPara(notice, shownNotice, 0f, disassemblyMode ? Misc.getNegativeHighlightColor() : Misc.getPositiveHighlightColor());
         }
-        noticeElement = replaceElement(noticeElement, notice, PAD, gridTop - NOTICE_HEIGHT);
+        float neededHeight = Math.max(NOTICE_HEIGHT, notice.getHeightSoFar() + GAP);
+        if (Math.abs(neededHeight - noticeHeight) > 0.5f) {
+            noticeHeight = neededHeight;
+            gridTop = controlsBottom + noticeHeight;
+            rebuildGrid();
+            return;
+        }
+        notice.getPosition().setSize(innerWidth(), noticeHeight);
+        noticeElement = replaceElement(noticeElement, notice, PAD, controlsBottom);
         TooltipMakerAPI summary = panelRoot.createUIElement(innerWidth(), FOOTER_HEIGHT, false);
-        VanillaText.plainPara(summary, Translation.msg("chart.ui.storage.summary").arg("shown", browser.shownCharts().size())
-                .arg("tier", browser.selectedTier()).arg("stored", browser.storedCount()).text(), 0f, Misc.getGrayColor())
-                .getPosition().inTL(0f, PARTS_TEXT_TOP);
         String modeKey = !disassemblyMode ? "ui.socketStorage.disassemblyMode"
                 : markedForDisassembly.isEmpty() ? "ui.socketStorage.exitDisassemblyMode" : "ui.socketStorage.confirmDisassembly";
         String modeLabel = Translation.text(modeKey);

@@ -3,6 +3,7 @@ package exiledsector.charts.anomaly.breach;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignEngineLayers;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
+import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
@@ -65,6 +66,7 @@ public class BreachTerrainPlugin extends BaseTerrain {
     private boolean[] cacheFormed;
     private boolean closed;
     private transient boolean coreChecked;
+    private transient BreachCorePlugin corePlugin;
     private transient float daysSinceTick;
     private transient float elapsedSeconds;
     private transient SpriteAPI bodySprite;
@@ -188,6 +190,19 @@ public class BreachTerrainPlugin extends BaseTerrain {
         radius = growth.radiusAt(secondsOpen);
         if (growth.isCollapsed(secondsOpen)) {
             collapse();
+        } else if (growth.isCollapsing(secondsOpen)) {
+            shrinkCore();
+        }
+    }
+
+    private void shrinkCore() {
+        if (corePlugin == null && entity != null && entity.getContainingLocation() != null
+                && entity.getContainingLocation().getEntityById(SpatialBreach.coreId(runId)) instanceof CustomCampaignEntityAPI core
+                && core.getCustomPlugin() instanceof BreachCorePlugin plugin) {
+            corePlugin = plugin;
+        }
+        if (corePlugin != null) {
+            corePlugin.shrinkTo(BreachRules.coreScale(radius, true));
         }
     }
 

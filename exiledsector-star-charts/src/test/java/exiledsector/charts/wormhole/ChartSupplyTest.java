@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -52,20 +51,10 @@ class ChartSupplyTest {
 
         assertNotNull(made);
         assertEquals(5, ((StarChart) made).tier());
-        assertFalse(((StarChart) made).definition().unique());
         assertTrue(store.owned().contains(kept));
         assertEquals(3, store.owned().size());
         assertTrue(ChartSupply.combinable(store, 4, kept).isEmpty());
         assertNull(ChartSupply.combine(store, 4, kept, new Random(9L)));
-    }
-
-    @Test
-    void uniqueChartsAreNeverSpentByCombining() {
-        stored(1L, 3);
-        stored(2L, 3);
-        store.add(ItemData.rolledAtTier(ItemDefinitions.get(StarChartFixtures.TEST_UNIQUE), 3L, 3));
-
-        assertEquals(List.of(), ChartSupply.combinable(store, 3, null));
     }
 
     @Test

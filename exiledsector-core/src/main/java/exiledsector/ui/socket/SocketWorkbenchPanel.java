@@ -185,6 +185,16 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         return firstAngle - index * (firstAngle - lastAngle) / (tileCount - 1);
     }
 
+    static List<ItemCurrency> orbitCurrencies(List<ItemCurrency> shownCurrencies) {
+        return shownCurrencies.stream().filter(CraftingCurrency.class::isInstance).toList();
+    }
+
+    static float columnTileTop(int index, int tileCount, float centreY, float tileSize, float gap, float areaHeight) {
+        float columnHeight = tileCount * tileSize + Math.max(0, tileCount - 1) * gap;
+        float columnTop = Math.max(0f, Math.min(centreY - columnHeight / 2f, areaHeight - columnHeight));
+        return columnTop + index * (tileSize + gap);
+    }
+
     private float artX(float artPixels) {
         return FRAME_INSET + artPixels * sceneScale;
     }
@@ -788,8 +798,8 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         openAllowed = blocker.allowsOpening() && !wormholeOpened;
         TooltipMakerAPI element = panelRoot.createUIElement(open.width(), open.height(), false);
         element.setButtonFontOrbitron20Bold();
-        ButtonAPI openButton = element.addButton(Translation.text(openTexts.buttonKey()), Control.OPEN_WORMHOLE, Misc.getBrightPlayerColor(),
-                Misc.getDarkPlayerColor(), Alignment.MID, CutStyle.ALL, open.width(), open.height(), 0f);
+        ButtonAPI openButton = element.addButton(Translation.text(openTexts.buttonKey()), Control.OPEN_WORMHOLE, WormholeButtonFx.TEXT_COLOR,
+                WormholeButtonFx.BACKGROUND_COLOR, Alignment.MID, CutStyle.ALL, open.width(), open.height(), 0f);
         openButton.setEnabled(openAllowed);
         openButton.setShowTooltipWhileInactive(true);
         String tooltipText = Translation.text(blocker.allowsOpening() ? openTexts.tooltipKey() : blocker.reasonKey());
@@ -835,7 +845,9 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         pendingOpenTarget = openTarget == null ? null : openTarget.target();
         List<String> confirmLines = modeSupport().confirmLines(loadedItem, openTarget);
         List<BenchModeSupport.OpenChoice> choices = modeSupport().openChoices(loadedItem, openTarget);
-        if (choices.isEmpty()) {
+        if (choices.isEmpty() && embeddedLayout != null) {
+            confirmOpen();
+        } else if (choices.isEmpty()) {
             showOpenConfirm(confirmLines);
         } else {
             showChoiceConfirm(confirmLines, choices);
@@ -918,17 +930,25 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         float artHeight = BenchScene.ART_HEIGHT * sceneScale;
         TooltipMakerAPI element = panelRoot.createUIElement(artWidth, artHeight, false);
         CraftingMaterials materials = playerMaterials();
+        BenchModeSupport support = domainSupport();
         List<ItemCurrency> shownCurrencies = currencies();
+        List<ItemCurrency> orbitCurrencies = support == null ? orbitCurrencies(shownCurrencies) : shownCurrencies;
+        List<ItemCurrency> columnCurrencies = shownCurrencies.stream().filter(currency -> !orbitCurrencies.contains(currency)).toList();
         float tileSize = tileSize();
         float socketX = benchMode.socketX() * sceneScale;
         float socketY = benchMode.socketY() * sceneScale;
-        for (int i = 0; i < shownCurrencies.size(); i++) {
-            float angle = tileAngle(i, shownCurrencies.size());
+        for (int i = 0; i < orbitCurrencies.size(); i++) {
+            float angle = tileAngle(i, orbitCurrencies.size());
             float tileCentreX = socketX + benchMode.orbitRadiusX() * sceneScale * (float) Math.cos(angle);
             float tileCentreY = socketY - benchMode.orbitRadiusY() * sceneScale * (float) Math.sin(angle);
-            addTile(element, shownCurrencies.get(i), tileCentreX - tileSize / 2f, tileCentreY - tileSize / 2f, tileSize, materials);
+            addTile(element, orbitCurrencies.get(i), tileCentreX - tileSize / 2f, tileCentreY - tileSize / 2f, tileSize, materials);
         }
-        BenchModeSupport support = domainSupport();
+        float columnLeft = artWidth - BenchScene.COLUMN_RIGHT_MARGIN * sceneScale - tileSize;
+        float columnGap = BenchScene.COLUMN_GAP * sceneScale;
+        for (int i = 0; i < columnCurrencies.size(); i++) {
+            float tileTop = columnTileTop(i, columnCurrencies.size(), socketY, tileSize, columnGap, artHeight);
+            addTile(element, columnCurrencies.get(i), columnLeft, tileTop, tileSize, materials);
+        }
         if (support == null || support.usesInhibitors()) {
             addInhibitorTiles(element, tileSize, materials);
         }
@@ -937,8 +957,8 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private void addInhibitorTiles(TooltipMakerAPI element, float tileSize, CraftingMaterials materials) {
         float wardTop = benchMode.wardY() * sceneScale - tileSize / 2f;
-        addWardTile(element, CraftingWard.SUFFIX, benchMode.leftWardX() * sceneScale - tileSize / 2f, wardTop, tileSize, materials);
-        addWardTile(element, CraftingWard.PREFIX, benchMode.rightWardX() * sceneScale - tileSize / 2f, wardTop, tileSize, materials);
+        addWardTile(element, CraftingWard.PREFIX, benchMode.leftWardX() * sceneScale - tileSize / 2f, wardTop, tileSize, materials);
+        addWardTile(element, CraftingWard.SUFFIX, benchMode.rightWardX() * sceneScale - tileSize / 2f, wardTop, tileSize, materials);
     }
 
     private void rebuildMaterials() {
@@ -1110,6 +1130,11 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         element.setParaFontDefault();
         String description = domainSupport() != null ? Translation.text(modeDescriptionKey(currency)) : currency.description();
         VanillaText.plainPara(element, description, GAP, Misc.getTextColor());
+        float linePad = GAP;
+        for (StyledText line : domainSupport() != null ? List.<StyledText>of() : currency.grantedLines()) {
+            VanillaText.addPara(element, line, linePad, Misc.getTextColor());
+            linePad = LINE_PAD;
+        }
         for (String line : tooltipHints(currency)) {
             VanillaText.plainPara(element, line, GAP, Misc.getGrayColor());
         }

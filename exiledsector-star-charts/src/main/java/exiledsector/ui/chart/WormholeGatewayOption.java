@@ -7,21 +7,17 @@ import com.fs.starfarer.api.campaign.listeners.DialogCreatorUI;
 import com.fs.starfarer.api.campaign.listeners.IndustryOptionProvider;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.charts.wormhole.ChartSupply;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.wormhole.WormholeGateway;
-import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.ui.VanillaText;
 import exiledsector.ui.atlas.AtlasScreen;
 
 import java.util.List;
-import java.util.Random;
 
 public class WormholeGatewayOption extends BaseIndustryOptionProvider {
 
     static final Object OPEN_ATLAS = new Object();
-    static final Object BUY_STAR_CHART = new Object();
 
     @Override
     public List<IndustryOptionProvider.IndustryOptionData> getIndustryOptions(Industry industry) {
@@ -29,33 +25,20 @@ public class WormholeGatewayOption extends BaseIndustryOptionProvider {
                 || !industry.getMarket().isPlayerOwned()) {
             return List.of();
         }
-        IndustryOptionProvider.IndustryOptionData buy = new IndustryOptionProvider.IndustryOptionData(buyText("chart.gateway.option.buy"),
-                BUY_STAR_CHART, industry, this);
-        buy.enabled = ChartSupply.canAfford(Global.getSector());
-        return List.of(new IndustryOptionProvider.IndustryOptionData(Translation.gameText("chart.gateway.option.open"), OPEN_ATLAS, industry, this),
-                buy);
+        return List.of(new IndustryOptionProvider.IndustryOptionData(Translation.gameText("chart.gateway.option.open"), OPEN_ATLAS, industry, this));
     }
 
     @Override
     public void createTooltip(IndustryOptionProvider.IndustryOptionData option, TooltipMakerAPI tooltip, float width) {
         if (option.id == OPEN_ATLAS) {
             VanillaText.plainPara(tooltip, Translation.gameText("chart.gateway.option.tooltip"), 0f, Misc.getTextColor());
-        } else if (option.id == BUY_STAR_CHART) {
-            VanillaText.plainPara(tooltip, buyText("chart.gateway.option.buy.tooltip"), 0f, Misc.getTextColor());
         }
-    }
-
-    private static String buyText(String key) {
-        return I18n.forGameText(() -> Translation.msg(key).arg("tier", ChartSupply.VENDOR_TIER).arg("credits", Misc.getDGSCredits(ChartSupply.VENDOR_PRICE))
-                .text());
     }
 
     @Override
     public void optionSelected(IndustryOptionProvider.IndustryOptionData option, DialogCreatorUI ui) {
         if (option.id == OPEN_ATLAS) {
             AtlasScreen.open(Global.getSector().getCampaignUI());
-        } else if (option.id == BUY_STAR_CHART) {
-            ChartSupply.buyFromGateway(Global.getSector(), new Random());
         }
     }
 }

@@ -23,7 +23,6 @@ import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.objective.ChartObjective;
 import exiledsector.charts.objective.ChartRewards;
 import exiledsector.items.ItemData;
-import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemUnlock;
 import exiledsector.items.StarChartCurrency;
 import exiledsector.items.StarChartFixtures;
@@ -42,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -60,8 +58,8 @@ import static org.mockito.Mockito.when;
 class ChartDropsTest {
 
     private static final String RUN_ID = "dropRun";
-    private static final String GATED_UNIQUE = StarChartFixtures.TEST_GATED_UNIQUE;
-    private static final String UNGATED_UNIQUE = StarChartFixtures.TEST_UNIQUE;
+    private static final String GATED = StarChartFixtures.TEST_GATED;
+    private static final String UNGATED = StarChartFixtures.TEST_FIXED;
     private static final Set<String> CHART_CURRENCY_IDS = Set.of(StarChartCurrency.REFORGE.itemId(), StarChartCurrency.ANNULMENT.itemId(),
             StarChartCurrency.CARTOGRAPHY.itemId());
 
@@ -106,10 +104,6 @@ class ChartDropsTest {
         return chart.preview().tier();
     }
 
-    private static Predicate<exiledsector.items.ItemDefinition> anyUnique() {
-        return definition -> true;
-    }
-
     @Test
     void theShippedTableCoversEverySourceAndKeepsChartCurrenciesInsideSystems() throws Exception {
         ChartDrops.register(ChartTables.csvRows(ChartDrops.PATH));
@@ -135,7 +129,7 @@ class ChartDropsTest {
         assertEquals(0f, ChartDrops.rule(ChartDrops.Source.BATTLE).currencyChance());
         assertFalse(ChartDrops.hasRule(ChartDrops.Source.SALVAGE));
         for (int roll = 0; roll < 200; roll++) {
-            assertTrue(ChartDrops.roll(ChartDrops.Source.BATTLE, 3, 1f, new Random(roll), anyUnique()).currencies().isEmpty());
+            assertTrue(ChartDrops.roll(ChartDrops.Source.BATTLE, 3, 1f, new Random(roll)).currencies().isEmpty());
         }
     }
 
@@ -145,13 +139,13 @@ class ChartDropsTest {
         StarChartSettings.setEnabledForTests(false);
         try {
             for (int roll = 0; roll < 50; roll++) {
-                assertSame(ChartDrops.Loot.NONE, ChartDrops.roll(ChartDrops.Source.RUN_REWARD, 5, 1f, new Random(roll), anyUnique()));
-                assertSame(ChartDrops.Loot.NONE, ChartDrops.roll(ChartDrops.Source.CHART_BOSS, 5, 2f, new Random(roll), anyUnique()));
+                assertSame(ChartDrops.Loot.NONE, ChartDrops.roll(ChartDrops.Source.RUN_REWARD, 5, 1f, new Random(roll)));
+                assertSame(ChartDrops.Loot.NONE, ChartDrops.roll(ChartDrops.Source.CHART_BOSS, 5, 2f, new Random(roll)));
             }
         } finally {
             StarChartSettings.setEnabledForTests(StarChartSettings.DEFAULT_ENABLED);
         }
-        assertEquals(2, ChartDrops.roll(ChartDrops.Source.RUN_REWARD, 5, 1f, new Random(1L), anyUnique()).charts().size());
+        assertEquals(2, ChartDrops.roll(ChartDrops.Source.RUN_REWARD, 5, 1f, new Random(1L)).charts().size());
     }
 
     @Test
@@ -159,18 +153,18 @@ class ChartDropsTest {
         ChartDrops.register(new JSONArray().put(rule("chart_fleet", 1f, 0f, 0f, 0f).put("max_tier", "3"))
                 .put(rule("battle", 1f, 0f, 0f, 0f).put("max_tier", "3")));
 
-        assertEquals(9, tierOf(ChartDrops.roll(ChartDrops.Source.CHART_FLEET, 9, 1f, new Random(4L), anyUnique()).charts().get(0)));
-        assertEquals(3, tierOf(ChartDrops.roll(ChartDrops.Source.BATTLE, 9, 1f, new Random(4L), anyUnique()).charts().get(0)));
+        assertEquals(9, tierOf(ChartDrops.roll(ChartDrops.Source.CHART_FLEET, 9, 1f, new Random(4L)).charts().get(0)));
+        assertEquals(3, tierOf(ChartDrops.roll(ChartDrops.Source.BATTLE, 9, 1f, new Random(4L)).charts().get(0)));
     }
 
     @Test
     void aPowerfulBossAlwaysDropsAChartOneTierUp() throws Exception {
         ChartDrops.register(new JSONArray().put(rule("chart_boss", 0f, 0f, 0f, 0f)));
         for (long roll = 0; roll < 30; roll++) {
-            ChartDrops.Loot loot = ChartDrops.roll(ChartDrops.Source.CHART_BOSS, 5, ChartDrops.Mults.uniform(1f), new Random(roll), anyUnique(), true);
+            ChartDrops.Loot loot = ChartDrops.roll(ChartDrops.Source.CHART_BOSS, 5, ChartDrops.Mults.uniform(1f), new Random(roll), true);
             assertEquals(6, tierOf(loot.charts().get(0)));
         }
-        assertSame(ChartDrops.Loot.NONE, ChartDrops.roll(ChartDrops.Source.CHART_BOSS, 5, ChartDrops.Mults.uniform(1f), new Random(3L), anyUnique(), false));
+        assertSame(ChartDrops.Loot.NONE, ChartDrops.roll(ChartDrops.Source.CHART_BOSS, 5, ChartDrops.Mults.uniform(1f), new Random(3L), false));
     }
 
     @Test
@@ -180,7 +174,7 @@ class ChartDropsTest {
         int trials = 3000;
         int tierUps = 0;
         for (int roll = 0; roll < trials; roll++) {
-            ChartDrops.Loot loot = ChartDrops.roll(ChartDrops.Source.RUN_REWARD, 5, 1f, random, anyUnique());
+            ChartDrops.Loot loot = ChartDrops.roll(ChartDrops.Source.RUN_REWARD, 5, 1f, random);
             assertEquals(1, loot.charts().size());
             int tier = tierOf(loot.charts().get(0));
             assertTrue(tier == 5 || tier == 6, "tier " + tier);
@@ -188,7 +182,7 @@ class ChartDropsTest {
         }
         assertEquals(0.4, tierUps / (double) trials, 0.03);
         for (int roll = 0; roll < 50; roll++) {
-            ChartDrops.Loot loot = ChartDrops.roll(ChartDrops.Source.RUN_REWARD, 15, 1f, random, anyUnique());
+            ChartDrops.Loot loot = ChartDrops.roll(ChartDrops.Source.RUN_REWARD, 15, 1f, random);
             assertEquals(15, tierOf(loot.charts().get(0)));
         }
     }
@@ -208,32 +202,25 @@ class ChartDropsTest {
         int charts = 0;
         int trials = 2000;
         for (int roll = 0; roll < trials; roll++) {
-            charts += ChartDrops.roll(ChartDrops.Source.RUN_REWARD, 4, mult, random, definition -> true).charts().size();
+            charts += ChartDrops.roll(ChartDrops.Source.RUN_REWARD, 4, mult, random).charts().size();
         }
         return charts / (double) trials;
     }
 
     @Test
-    void uniqueChartsNeedTheirUnlockAndTheirMinimumTier() throws Exception {
+    void aChartOnlyDropsFromItsMinimumTier() throws Exception {
         ChartDrops.register(new JSONArray().put(rule("run_reward", 1f, 0f, 0f, 0f)));
-        assertEquals(ItemUnlock.CLEARED_CHART_TIER_PREFIX + "3", ItemDefinitions.get(GATED_UNIQUE).unlock());
 
-        Set<String> lockedDrops = dropIds(6);
-        assertFalse(lockedDrops.contains(GATED_UNIQUE));
-        assertTrue(lockedDrops.contains(UNGATED_UNIQUE));
-
-        assertTrue(ItemUnlock.recordChartCleared(sector, 3));
-        assertFalse(ItemUnlock.recordChartCleared(sector, 2));
-        assertEquals(3, ItemUnlock.highestClearedChartTier(sector));
-        assertTrue(dropIds(6).contains(GATED_UNIQUE));
-        assertFalse(dropIds(3).contains(GATED_UNIQUE), "the gated unique never rolls below its minimum tier");
+        assertTrue(dropIds(6).contains(GATED));
+        assertTrue(dropIds(3).contains(UNGATED));
+        assertFalse(dropIds(3).contains(GATED), "the gated chart never rolls below its minimum tier");
     }
 
     private Set<String> dropIds(int tier) {
         Set<String> ids = new HashSet<>();
         Random random = new Random(tier);
         for (int roll = 0; roll < 4000; roll++) {
-            ChartDrops.roll(ChartDrops.Source.RUN_REWARD, tier, 1f, random, ChartDrops.uniquesFor(sector)).charts()
+            ChartDrops.roll(ChartDrops.Source.RUN_REWARD, tier, 1f, random).charts()
                     .forEach(chart -> ids.add(chart.definitionId()));
         }
         return ids;
@@ -243,11 +230,11 @@ class ChartDropsTest {
     void onlySystemsourcesDropChartCurrencies() throws Exception {
         ChartDrops.register(new JSONArray().put(rule("system_salvage", 0f, 0f, 0f, 1f)).put(rule("salvage", 1f, 0f, 0f, 0f)));
 
-        ChartDrops.Loot systemLoot = ChartDrops.roll(ChartDrops.Source.SYSTEM_SALVAGE, 4, 1f, new Random(2L), anyUnique());
+        ChartDrops.Loot systemLoot = ChartDrops.roll(ChartDrops.Source.SYSTEM_SALVAGE, 4, 1f, new Random(2L));
         assertTrue(systemLoot.charts().isEmpty());
         assertEquals(1, systemLoot.currencies().size());
         assertTrue(CHART_CURRENCY_IDS.containsAll(systemLoot.currencies().keySet()));
-        assertTrue(ChartDrops.roll(ChartDrops.Source.SALVAGE, 4, 1f, new Random(2L), anyUnique()).currencies().isEmpty());
+        assertTrue(ChartDrops.roll(ChartDrops.Source.SALVAGE, 4, 1f, new Random(2L)).currencies().isEmpty());
     }
 
     @Test
@@ -259,17 +246,17 @@ class ChartDropsTest {
 
         assertEquals(0f, ChartDrops.rule(ChartDrops.Source.SALVAGE).catalystChance());
         for (long roll = 0; roll < 30; roll++) {
-            ChartDrops.Loot loot = ChartDrops.roll(ChartDrops.Source.SYSTEM_SALVAGE, 4, new ChartDrops.Mults(0f, 0f, 1f), new Random(roll), anyUnique());
+            ChartDrops.Loot loot = ChartDrops.roll(ChartDrops.Source.SYSTEM_SALVAGE, 4, new ChartDrops.Mults(0f, 0f, 1f), new Random(roll));
             assertEquals(Map.of("test_low", 1), loot.catalysts());
             assertEquals(Map.of("test_low", 1), loot.materials());
-            assertTrue(ChartDrops.roll(ChartDrops.Source.SALVAGE, 4, 1f, new Random(roll), anyUnique()).isEmpty());
+            assertTrue(ChartDrops.roll(ChartDrops.Source.SALVAGE, 4, 1f, new Random(roll)).isEmpty());
         }
         Set<String> highTierDrops = new HashSet<>();
         int dropped = 0;
         Random random = new Random(7L);
         int trials = 4000;
         for (int roll = 0; roll < trials; roll++) {
-            ChartDrops.Loot loot = ChartDrops.roll(ChartDrops.Source.SYSTEM_SALVAGE, 12, new ChartDrops.Mults(0f, 0f, 0.5f), random, anyUnique());
+            ChartDrops.Loot loot = ChartDrops.roll(ChartDrops.Source.SYSTEM_SALVAGE, 12, new ChartDrops.Mults(0f, 0f, 0.5f), random);
             highTierDrops.addAll(loot.catalysts().keySet());
             dropped += loot.catalysts().size();
         }
@@ -297,7 +284,7 @@ class ChartDropsTest {
         assertEquals(1, ChartDrops.tierForStrength(ChartDrops.Source.SALVAGE, 60f));
         assertEquals(1, ChartDrops.tierForStrength(ChartDrops.Source.TECHMINING_FIRST_FIND, 60f));
         assertEquals(1, ChartDrops.tierForStrength(ChartDrops.Source.TECHMINING_MONTHLY, 60f));
-        assertTrue(ChartDrops.roll(ChartDrops.Source.BATTLE, ChartDrops.NO_TIER, 1f, new Random(1L), anyUnique()).isEmpty());
+        assertTrue(ChartDrops.roll(ChartDrops.Source.BATTLE, ChartDrops.NO_TIER, 1f, new Random(1L)).isEmpty());
     }
 
     @Test
@@ -311,8 +298,8 @@ class ChartDropsTest {
             assertEquals(1, ChartDrops.battleTier(400f, 25));
             assertEquals(2, ChartDrops.battleTier(400f, 28));
             assertEquals(7, ChartDrops.battleTier(400f, 35));
-            assertEquals(6, tierOf(ChartDrops.roll(ChartDrops.Source.BATTLE, ChartDrops.battleTier(400f, 35), 100f, new Random(1L),
-                    anyUnique()).charts().get(0)));
+            assertEquals(6, tierOf(ChartDrops.roll(ChartDrops.Source.BATTLE, ChartDrops.battleTier(400f, 35), 100f, new Random(1L)).charts()
+                    .get(0)));
         } finally {
             ChartTiers.resetForTests();
         }
@@ -341,15 +328,15 @@ class ChartDropsTest {
         try {
             LocationAPI outside = mock(LocationAPI.class);
             for (int roll = 0; roll < 50; roll++) {
-                assertEquals(1, ChartDrops.forBattle(sector, outside, 500f, 0, new Random(roll)).charts().size());
-                assertEquals(2, ChartDrops.forBattle(sector, outside, 1000f, 0, new Random(roll)).charts().size());
-                assertEquals(10, ChartDrops.forBattle(sector, outside, 5000f, 0, new Random(roll)).charts().size());
+                assertEquals(1, ChartDrops.forBattle(outside, 500f, 0, new Random(roll)).charts().size());
+                assertEquals(2, ChartDrops.forBattle(outside, 1000f, 0, new Random(roll)).charts().size());
+                assertEquals(10, ChartDrops.forBattle(outside, 5000f, 0, new Random(roll)).charts().size());
             }
             Random random = new Random(3L);
             int trials = 4000;
             int drops = 0;
             for (int roll = 0; roll < trials; roll++) {
-                drops += ChartDrops.forBattle(sector, outside, 100f, 0, random).charts().size();
+                drops += ChartDrops.forBattle(outside, 100f, 0, random).charts().size();
             }
             assertEquals(0.2f, drops / (float) trials, 0.03f);
         } finally {
@@ -384,7 +371,7 @@ class ChartDropsTest {
         ChartDrops.Loot salvage = ChartDrops.forSalvage(sector, system, new Random(1L));
         assertEquals(9, tierOf(salvage.charts().get(0)));
         assertEquals(1, salvage.currencies().size());
-        assertTrue(ChartDrops.forBattle(sector, system, 400f, 30, new Random(1L)).isEmpty());
+        assertTrue(ChartDrops.forBattle(system, 400f, 30, new Random(1L)).isEmpty());
         assertTrue(ChartDrops.forSalvage(sector, system("otherRun"), new Random(1L)).isEmpty());
 
         LocationAPI outside = mock(LocationAPI.class);

@@ -5,15 +5,12 @@ import exiledsector.charts.StarCharts;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.items.Item;
-import exiledsector.items.ItemRarity;
 import exiledsector.items.ItemStore;
 import exiledsector.items.StarChart;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 
 public final class StarChartBrowser {
 
@@ -21,7 +18,6 @@ public final class StarChartBrowser {
     public static final int HIGHEST_TIER = StarChart.HIGHEST_TIER;
 
     private final int[] tierCounts = new int[HIGHEST_TIER + 1];
-    private final Set<ItemRarity> rarityFilter = EnumSet.noneOf(ItemRarity.class);
     private List<Item> storedCharts = List.of();
     private List<Item> shownCharts = List.of();
     private int selectedTier = LOWEST_TIER;
@@ -119,17 +115,6 @@ public final class StarChartBrowser {
         return select(isSelected(chart) ? null : chart);
     }
 
-    public boolean showsRarity(ItemRarity rarity) {
-        return rarityFilter.contains(rarity);
-    }
-
-    public void toggleRarity(ItemRarity rarity) {
-        if (!rarityFilter.remove(rarity)) {
-            rarityFilter.add(rarity);
-        }
-        rebuildShown();
-    }
-
     public List<Item> shownCharts() {
         return shownCharts;
     }
@@ -141,7 +126,7 @@ public final class StarChartBrowser {
     private void rebuildShown() {
         List<Item> shown = new ArrayList<>();
         for (Item chart : storedCharts) {
-            if (tierOf(chart) == selectedTier && (rarityFilter.isEmpty() || rarityFilter.contains(chart.rarity()))) {
+            if (tierOf(chart) == selectedTier) {
                 shown.add(chart);
             }
         }

@@ -25,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -41,8 +40,7 @@ import static org.mockito.Mockito.when;
 class StarChartCurrencyTest {
 
     private static final String SINGLE = "star_chart";
-    private static final String UNGATED_UNIQUE = StarChartFixtures.TEST_UNIQUE;
-    private static final String GATED_UNIQUE = StarChartFixtures.TEST_GATED_UNIQUE;
+    private static final String GATED = StarChartFixtures.TEST_GATED;
     private static final String FLEET_SIZE = "HYBRID_CHART_FLEET_SIZE";
     private static final Predicate<ItemDefinition> ANY_UNIQUE = definition -> true;
 
@@ -98,8 +96,8 @@ class StarChartCurrencyTest {
 
     @Test
     void theChartRowListsTheExtendedKernelsThenTheChartCurrenciesAndShipTypesStayAsTheyWere() {
-        assertEquals(List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.CORRUPTION, CraftingCurrency.TRANSPOSITION,
-                        CraftingCurrency.RECALIBRATION, StarChartCurrency.REFORGE, StarChartCurrency.ANNULMENT, StarChartCurrency.CARTOGRAPHY),
+        assertEquals(List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.CORRUPTION, CraftingCurrency.RECALIBRATION,
+                        StarChartCurrency.REFORGE, StarChartCurrency.ANNULMENT, StarChartCurrency.CARTOGRAPHY),
                 ItemCurrencies.forType(ItemType.STAR_CHART));
         assertEquals(Arrays.asList(CraftingCurrency.values()), ItemCurrencies.forType(ItemType.SUBROUTINE));
         assertEquals(Arrays.asList(CraftingCurrency.values()), ItemCurrencies.forType(ItemType.HULL_ITEM));
@@ -114,7 +112,7 @@ class StarChartCurrencyTest {
         }
 
         StarChartCurrency.registerAll();
-        assertEquals(7, ItemCurrencies.forType(ItemType.STAR_CHART).size());
+        assertEquals(6, ItemCurrencies.forType(ItemType.STAR_CHART).size());
         StarChartCurrency.unregisterAll();
         assertEquals(List.of(), ItemCurrencies.forType(ItemType.STAR_CHART));
         assertEquals(Arrays.asList(CraftingCurrency.values()), ItemCurrencies.all());
@@ -140,6 +138,7 @@ class StarChartCurrencyTest {
     void theKernelsOnlyReachChartsWhileExtended() {
         StarChart chart = storedWith(SINGLE, 6, candidate -> candidate.explicits().size() == 1);
         assertTrue(ItemCrafting.canUse(CraftingCurrency.AUGMENTATION, chart, ANY_UNIQUE));
+        assertFalse(ItemCrafting.canUse(CraftingCurrency.TRANSPOSITION, chart, ANY_UNIQUE));
 
         StarChartCurrency.unregisterAll();
 
@@ -190,23 +189,6 @@ class StarChartCurrencyTest {
                 assertTrue(position >= 0f && position <= ModifierLine.TIER_ROLL_POSITIONS, "position " + position);
             }
         }
-    }
-
-    @Test
-    void transpositionOnlyPicksAUniqueThatRollsAtTheChartsTier() {
-        StarChart lowTier = stored(UNGATED_UNIQUE, 5L, 2);
-        assertFalse(ItemCrafting.canUse(CraftingCurrency.TRANSPOSITION, lowTier, ANY_UNIQUE));
-        assertNull(use(CraftingCurrency.TRANSPOSITION, lowTier, 1L));
-
-        StarChart highTier = stored(UNGATED_UNIQUE, 5L, 6);
-        Item transposed = use(CraftingCurrency.TRANSPOSITION, highTier, 1L);
-
-        assertNotNull(transposed);
-        assertEquals(GATED_UNIQUE, transposed.definitionId());
-        assertEquals(6, transposed.tier());
-        assertSame(transposed, store.find(transposed.id()));
-        assertNotSame(highTier, store.find(highTier.id()));
-        assertFalse(ItemCrafting.canUse(CraftingCurrency.TRANSPOSITION, stored(SINGLE, 2L, 6), ANY_UNIQUE));
     }
 
     @Test
@@ -294,14 +276,12 @@ class StarChartCurrencyTest {
     }
 
     @Test
-    void reforgeAndAnnulmentRefuseUniqueCorruptedAndMirroredCharts() {
-        StarChart unique = stored(UNGATED_UNIQUE, 4L, 3);
+    void reforgeAndAnnulmentRefuseCorruptedAndMirroredCharts() {
         StarChart chart = storedWith(SINGLE, 4, candidate -> candidate.explicits().size() >= 2);
         Item mirror = store.addMirrorOf(chart);
         StarChart corrupted = stored(SINGLE, 5L, 4);
         corrupted.corrupt(CorruptionOutcome.NOTHING);
         for (StarChartCurrency currency : List.of(StarChartCurrency.REFORGE, StarChartCurrency.ANNULMENT)) {
-            assertFalse(ItemCrafting.canUse(currency, unique, ANY_UNIQUE), currency.name());
             assertFalse(ItemCrafting.canUse(currency, mirror, ANY_UNIQUE), currency.name());
             assertFalse(ItemCrafting.canUse(currency, corrupted, ANY_UNIQUE), currency.name());
             assertTrue(ItemCrafting.canUse(currency, chart, ANY_UNIQUE), currency.name());
@@ -391,17 +371,17 @@ class StarChartCurrencyTest {
     }
 
     @Test
-    void cartographyStopsAtTheHighestTierAndStartsAUniqueFromItsMinimumTier() {
+    void cartographyStopsAtTheHighestTierAndStartsAGatedChartFromItsMinimumTier() {
         StarChart top = stored(SINGLE, 1L, 14);
         assertSame(top, use(StarChartCurrency.CARTOGRAPHY, top, 1L));
         assertEquals(StarChart.HIGHEST_TIER, top.tier());
         assertFalse(ItemCrafting.canUse(StarChartCurrency.CARTOGRAPHY, top, ANY_UNIQUE));
         assertNull(use(StarChartCurrency.CARTOGRAPHY, top, 2L));
 
-        StarChart gatedUnique = stored(GATED_UNIQUE, 3L, 1);
-        assertEquals(4, gatedUnique.tier());
-        use(StarChartCurrency.CARTOGRAPHY, gatedUnique, 1L);
-        assertEquals(5, gatedUnique.tier());
+        StarChart gated = stored(GATED, 3L, 1);
+        assertEquals(4, gated.tier());
+        use(StarChartCurrency.CARTOGRAPHY, gated, 1L);
+        assertEquals(5, gated.tier());
     }
 
     @Test
