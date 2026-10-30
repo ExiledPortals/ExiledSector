@@ -438,6 +438,19 @@ returns, and `ShipCombatPlan` applies them while the gate holds and zeroes them 
 <details>
 <summary><b>Star Charts</b></summary>
 
+### Wormhole Gateway
+
+The Wormhole Tech Blueprint is added to the Limbo Mothballed Equipment Cache's extra salvage, or straight to cargo
+when that cache is already opened or missing, the latter once the Janus Device is obtained (`LimboBlueprintCache`).
+Without Vaults of Knowledge, right-clicking it sets `$exiledSector_gatewayUnlocked`, which `WormholeGateway` checks
+before it can be built, and every chart tier can be opened.
+
+With Vaults of Knowledge, the blueprint is instead the item cost of the tier 0 gateway research. The gateway opens
+charts up to tier 5; the Advanced and Perfected researches each unlock an upgrade of the structure, which opens up to
+tier 10 and then every tier (`GatewayTierLimit` reads the player's built gateway, checked by `AtlasOpening`).
+Completing the first tier 5 and tier 10 chart puts each upgrade item into cargo with a popup, as do already cleared
+tiers on load (`GatewayUpgradeRewards`).
+
 ### The atlas
 
 Each save has one atlas: `AtlasState` keeps the seed and per-system flags in persistent data, and `AtlasGenerator`

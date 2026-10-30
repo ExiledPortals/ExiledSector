@@ -6,15 +6,16 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.econ.impl.BaseIndustry;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.ExiledSector;
 import exiledsector.charts.StarChartSettings;
+import exiledsector.charts.generation.ChartTiers;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
 import exiledsector.domain.ExiledSectorDomain;
-import exiledsector.items.JanusDevice;
 import exiledsector.ui.VanillaText;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
@@ -24,22 +25,56 @@ import java.util.List;
 public class WormholeGateway extends BaseIndustry {
 
     public static final String INDUSTRY_ID = "exiledSector_wormhole_gateway";
+    public static final String ADVANCED_INDUSTRY_ID = "exiledSector_wormhole_gateway_advanced";
+    public static final String PERFECTED_INDUSTRY_ID = "exiledSector_wormhole_gateway_perfected";
+    public static final List<String> INDUSTRY_IDS = List.of(INDUSTRY_ID, ADVANCED_INDUSTRY_ID, PERFECTED_INDUSTRY_ID);
+    public static final String UNLOCKED_FLAG = "$exiledSector_gatewayUnlocked";
     private static final float TOOLTIP_PAD = 10f;
 
     public enum Status {
         NONE, INACTIVE, WORKING
     }
 
+    public static boolean isGateway(String industryId) {
+        return INDUSTRY_IDS.contains(industryId);
+    }
+
+    public static Industry gatewayAt(MarketAPI market) {
+        if (market == null) {
+            return null;
+        }
+        for (String industryId : INDUSTRY_IDS) {
+            Industry gateway = market.getIndustry(industryId);
+            if (gateway != null) {
+                return gateway;
+            }
+        }
+        return null;
+    }
+
+    static boolean hasGateway(MarketAPI market) {
+        for (String industryId : INDUSTRY_IDS) {
+            if (market.hasIndustry(industryId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static Status statusAt(SectorEntityToken dockedAt) {
         MarketAPI market = dockedAt == null ? null : dockedAt.getMarket();
-        if (market == null || !market.isPlayerOwned() && !Factions.PLAYER.equals(market.getFactionId())) {
+        if (market == null || !isPlayers(market)) {
             return Status.NONE;
         }
-        Industry gateway = market.getIndustry(INDUSTRY_ID);
+        Industry gateway = gatewayAt(market);
         if (gateway == null) {
             return Status.NONE;
         }
         return gateway.isFunctional() ? Status.WORKING : Status.INACTIVE;
+    }
+
+    private static boolean isPlayers(MarketAPI market) {
+        return market.isPlayerOwned() || Factions.PLAYER.equals(market.getFactionId());
     }
 
     @Override
@@ -53,12 +88,22 @@ public class WormholeGateway extends BaseIndustry {
     }
 
     public static StarSystemAPI playerGatewaySystem(SectorAPI sector) {
+        MarketAPI market = playerGatewayMarket(sector);
+        return market == null ? null : market.getStarSystem();
+    }
+
+    public static String playerGatewayId(SectorAPI sector) {
+        Industry gateway = gatewayAt(playerGatewayMarket(sector));
+        return gateway == null ? null : gateway.getId();
+    }
+
+    private static MarketAPI playerGatewayMarket(SectorAPI sector) {
         if (sector == null || sector.getEconomy() == null) {
             return null;
         }
         for (MarketAPI market : sector.getEconomy().getMarketsCopy()) {
-            if ((market.isPlayerOwned() || Factions.PLAYER.equals(market.getFactionId())) && market.hasIndustry(INDUSTRY_ID)) {
-                return market.getStarSystem();
+            if (isPlayers(market) && hasGateway(market)) {
+                return market;
             }
         }
         return null;
@@ -68,18 +113,53 @@ public class WormholeGateway extends BaseIndustry {
         if (VaultsOfKnowledgeCompat.isModEnabled()) {
             return VaultsOfKnowledgeCompat.isGatewayResearched(market);
         }
-        return janusDeviceKnown();
+        return blueprintUsed();
     }
 
-    private static boolean janusDeviceKnown() {
-        return ExiledSector.domains().stream().anyMatch(ExiledSectorDomain::ignoresMemoryFlagUnlocks)
-                || JanusDevice.obtained(Global.getSector());
+    private static boolean blueprintUsed() {
+        return ExiledSector.domains().stream().anyMatch(ExiledSectorDomain::ignoresMemoryFlagUnlocks) || isUnlocked(Global.getSector());
+    }
+
+    public static boolean isUnlocked(SectorAPI sector) {
+        MemoryAPI sectorMemory = sector == null ? null : sector.getMemoryWithoutUpdate();
+        return sectorMemory != null && sectorMemory.getBoolean(UNLOCKED_FLAG);
+    }
+
+    public static void unlock(SectorAPI sector) {
+        if (sector != null && sector.getMemoryWithoutUpdate() != null) {
+            sector.getMemoryWithoutUpdate().set(UNLOCKED_FLAG, true);
+        }
+    }
+
+    static String predecessorOf(String industryId) {
+        if (ADVANCED_INDUSTRY_ID.equals(industryId)) {
+            return INDUSTRY_ID;
+        }
+        return PERFECTED_INDUSTRY_ID.equals(industryId) ? ADVANCED_INDUSTRY_ID : null;
+    }
+
+    static String researchFor(String industryId) {
+        if (ADVANCED_INDUSTRY_ID.equals(industryId)) {
+            return VaultsOfKnowledgeCompat.GATEWAY_ADVANCED_RESEARCH_ID;
+        }
+        return PERFECTED_INDUSTRY_ID.equals(industryId) ? VaultsOfKnowledgeCompat.GATEWAY_PERFECTED_RESEARCH_ID : null;
+    }
+
+    static boolean upgradeResearched(String industryId) {
+        String research = researchFor(industryId);
+        return research != null && VaultsOfKnowledgeCompat.isModEnabled() && VaultsOfKnowledgeCompat.isResearchedForPlayer(research);
     }
 
     @Override
     public boolean isAvailableToBuild() {
-        return market != null && StarChartSettings.enabled() && super.isAvailableToBuild() && isUnlockedFor(market)
-                && otherGatewayOf(market) == null;
+        if (market == null || !StarChartSettings.enabled() || !super.isAvailableToBuild()) {
+            return false;
+        }
+        String predecessor = predecessorOf(getId());
+        if (predecessor != null) {
+            return upgradeResearched(getId()) && market.hasIndustry(predecessor);
+        }
+        return isUnlockedFor(market) && otherGatewayOf(market) == null;
     }
 
     @Override
@@ -88,13 +168,22 @@ public class WormholeGateway extends BaseIndustry {
     }
 
     @Override
+    public boolean canUpgrade() {
+        return getSpec().getUpgrade() != null && VaultsOfKnowledgeCompat.isModEnabled();
+    }
+
+    @Override
     public String getUnavailableReason() {
         if (market == null) {
             return super.getUnavailableReason();
         }
+        if (predecessorOf(getId()) != null) {
+            return Translation.gameText(ADVANCED_INDUSTRY_ID.equals(getId()) ? "chart.gateway.unavailable.researchAdvanced"
+                    : "chart.gateway.unavailable.researchPerfected");
+        }
         if (!isUnlockedFor(market)) {
             return Translation.gameText(VaultsOfKnowledgeCompat.isModEnabled() ? "chart.gateway.unavailable.research"
-                    : "chart.gateway.unavailable.janus");
+                    : "chart.gateway.unavailable.blueprint");
         }
         MarketAPI otherGateway = otherGatewayOf(market);
         if (otherGateway != null) {
@@ -110,7 +199,7 @@ public class WormholeGateway extends BaseIndustry {
         }
         List<MarketAPI> markets = sector.getEconomy().getMarketsCopy();
         for (MarketAPI factionMarket : markets) {
-            if (!isSameColony(factionMarket, market) && market.getFactionId().equals(factionMarket.getFactionId()) && factionMarket.hasIndustry(INDUSTRY_ID)) {
+            if (!isSameColony(factionMarket, market) && market.getFactionId().equals(factionMarket.getFactionId()) && hasGateway(factionMarket)) {
                 return factionMarket;
             }
         }
@@ -134,5 +223,11 @@ public class WormholeGateway extends BaseIndustry {
     @Override
     protected void addPostDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode) {
         VanillaText.plainPara(tooltip, Translation.gameText("chart.gateway.tooltip.opens"), TOOLTIP_PAD, Misc.getTextColor());
+        if (VaultsOfKnowledgeCompat.isModEnabled()) {
+            int maxTier = GatewayTierLimit.maxTierFor(getId());
+            VanillaText.plainPara(tooltip, maxTier >= ChartTiers.CORRUPTED_TIER ? Translation.gameText("chart.gateway.tooltip.everyTier")
+                    : I18n.forGameText(() -> Translation.msg("chart.gateway.tooltip.tierLimit").arg("tier", maxTier).text()), TOOLTIP_PAD,
+                    Misc.getTextColor());
+        }
     }
 }

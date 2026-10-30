@@ -21,7 +21,7 @@ public class WormholeGatewayOption extends BaseIndustryOptionProvider {
 
     @Override
     public List<IndustryOptionProvider.IndustryOptionData> getIndustryOptions(Industry industry) {
-        if (!StarChartSettings.enabled() || isUnsuitable(industry, true) || !WormholeGateway.INDUSTRY_ID.equals(industry.getId())
+        if (!StarChartSettings.enabled() || isUnsuitable(industry, true) || !WormholeGateway.isGateway(industry.getId())
                 || !industry.getMarket().isPlayerOwned()) {
             return List.of();
         }

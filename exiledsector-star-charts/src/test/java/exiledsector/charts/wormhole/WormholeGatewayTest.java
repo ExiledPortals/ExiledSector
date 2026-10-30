@@ -13,7 +13,8 @@ import com.fs.starfarer.api.loading.IndustrySpecAPI;
 import exiledsector.MockSector;
 import exiledsector.charts.StarChartSettings;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
-import exiledsector.items.JanusDevice;
+import exiledsector.ExiledSector;
+import exiledsector.domain.ExiledSectorDomain;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,14 +48,19 @@ class WormholeGatewayTest {
     @BeforeEach
     void setUp() {
         SettingsAPI settings = mock(SettingsAPI.class);
-        when(settings.getIndustrySpec(WormholeGateway.INDUSTRY_ID)).thenReturn(mock(IndustrySpecAPI.class));
+        for (String industryId : WormholeGateway.INDUSTRY_IDS) {
+            IndustrySpecAPI spec = mock(IndustrySpecAPI.class);
+            when(spec.getId()).thenReturn(industryId);
+            when(spec.getUpgrade()).thenReturn(WormholeGateway.PERFECTED_INDUSTRY_ID.equals(industryId) ? null : "next");
+            when(settings.getIndustrySpec(industryId)).thenReturn(spec);
+        }
         when(settings.getModManager()).thenReturn(modManager);
         mockSector = new MockSector();
         EconomyAPI economy = mock(EconomyAPI.class);
         when(economy.getMarketsCopy()).thenAnswer(invocation -> new ArrayList<>(markets));
         when(mockSector.sector.getEconomy()).thenReturn(economy);
         when(mockSector.sector.getMemoryWithoutUpdate()).thenReturn(sectorMemory);
-        when(sectorMemory.getBoolean(JanusDevice.FLAG)).thenReturn(true);
+        when(sectorMemory.getBoolean(WormholeGateway.UNLOCKED_FLAG)).thenReturn(true);
         mockSector.global.when(Global::getSettings).thenReturn(settings);
         lunaMock = Mockito.mockStatic(LunaSettings.class);
     }
@@ -75,9 +81,21 @@ class WormholeGatewayTest {
     }
 
     private static WormholeGateway gatewayOn(MarketAPI market) {
+        return gatewayOn(market, WormholeGateway.INDUSTRY_ID);
+    }
+
+    private static WormholeGateway gatewayOn(MarketAPI market, String industryId) {
         WormholeGateway gateway = new WormholeGateway();
-        gateway.init(WormholeGateway.INDUSTRY_ID, market);
+        gateway.init(industryId, market);
         return gateway;
+    }
+
+    private static MockedStatic<VaultsOfKnowledgeCompat> vaults(boolean advanced, boolean perfected) {
+        MockedStatic<VaultsOfKnowledgeCompat> compat = Mockito.mockStatic(VaultsOfKnowledgeCompat.class, Mockito.CALLS_REAL_METHODS);
+        compat.when(VaultsOfKnowledgeCompat::isModEnabled).thenReturn(true);
+        compat.when(() -> VaultsOfKnowledgeCompat.isResearchedForPlayer(VaultsOfKnowledgeCompat.GATEWAY_ADVANCED_RESEARCH_ID)).thenReturn(advanced);
+        compat.when(() -> VaultsOfKnowledgeCompat.isResearchedForPlayer(VaultsOfKnowledgeCompat.GATEWAY_PERFECTED_RESEARCH_ID)).thenReturn(perfected);
+        return compat;
     }
 
     @Test
@@ -138,21 +156,90 @@ class WormholeGatewayTest {
     }
 
     @Test
-    void withoutVaultsOfKnowledgeItNeedsTheJanusDeviceLikeTheTreeWormholes() {
-        when(sectorMemory.getBoolean(JanusDevice.FLAG)).thenReturn(false);
+    void withoutVaultsOfKnowledgeItNeedsTheBlueprintUnlock() {
+        when(sectorMemory.getBoolean(WormholeGateway.UNLOCKED_FLAG)).thenReturn(false);
         WormholeGateway gateway = gatewayOn(colony("Home"));
 
         assertFalse(gateway.isAvailableToBuild());
-        assertEquals("Requires the Janus Device.", gateway.getUnavailableReason());
+        assertEquals("Requires the Wormhole Tech Blueprint.", gateway.getUnavailableReason());
 
-        when(sectorMemory.getBoolean(JanusDevice.FLAG)).thenReturn(true);
+        when(sectorMemory.getBoolean(WormholeGateway.UNLOCKED_FLAG)).thenReturn(true);
         assertTrue(gateway.isAvailableToBuild());
     }
 
     @Test
-    void withVaultsOfKnowledgeTheResearchReplacesTheJanusDevice() {
+    void theJanusDeviceNoLongerUnlocksIt() {
+        when(sectorMemory.getBoolean(WormholeGateway.UNLOCKED_FLAG)).thenReturn(false);
+        when(sectorMemory.getBoolean("$playerCanUseGates")).thenReturn(true);
+
+        assertFalse(WormholeGateway.isUnlockedFor(colony("Home")));
+    }
+
+    @Test
+    void theUnlockBypassOpensItWithoutTheBlueprint() {
+        when(sectorMemory.getBoolean(WormholeGateway.UNLOCKED_FLAG)).thenReturn(false);
+        ExiledSectorDomain bypass = mock(ExiledSectorDomain.class);
+        when(bypass.ignoresMemoryFlagUnlocks()).thenReturn(true);
+        try (MockedStatic<ExiledSector> exiledSector = Mockito.mockStatic(ExiledSector.class, Mockito.CALLS_REAL_METHODS)) {
+            exiledSector.when(ExiledSector::domains).thenReturn(List.of(bypass));
+
+            assertTrue(WormholeGateway.isUnlockedFor(colony("Home")));
+        }
+    }
+
+    @Test
+    void unlockingSetsThePersistentSectorFlag() {
+        WormholeGateway.unlock(mockSector.sector);
+
+        Mockito.verify(sectorMemory).set(WormholeGateway.UNLOCKED_FLAG, true);
+    }
+
+    @Test
+    void anUpgradeNeedsItsResearchAndTheGatewayBeforeIt() {
+        MarketAPI colony = colony("Home");
+        when(colony.hasIndustry(WormholeGateway.INDUSTRY_ID)).thenReturn(true);
+        try (MockedStatic<VaultsOfKnowledgeCompat> ignored = vaults(false, false)) {
+            WormholeGateway advanced = gatewayOn(colony, WormholeGateway.ADVANCED_INDUSTRY_ID);
+            assertFalse(advanced.isAvailableToBuild());
+            assertEquals("Requires the Advanced Wormhole Gateway research.", advanced.getUnavailableReason());
+        }
+        try (MockedStatic<VaultsOfKnowledgeCompat> ignored = vaults(true, true)) {
+            assertTrue(gatewayOn(colony, WormholeGateway.ADVANCED_INDUSTRY_ID).isAvailableToBuild());
+            assertFalse(gatewayOn(colony, WormholeGateway.PERFECTED_INDUSTRY_ID).isAvailableToBuild());
+            when(colony.hasIndustry(WormholeGateway.ADVANCED_INDUSTRY_ID)).thenReturn(true);
+            assertTrue(gatewayOn(colony, WormholeGateway.PERFECTED_INDUSTRY_ID).isAvailableToBuild());
+        }
+    }
+
+    @Test
+    void theGatewayOnlyUpgradesWithVaultsOfKnowledge() {
+        MarketAPI colony = colony("Home");
+
+        assertFalse(gatewayOn(colony).canUpgrade());
+        try (MockedStatic<VaultsOfKnowledgeCompat> ignored = vaults(true, true)) {
+            assertTrue(gatewayOn(colony).canUpgrade());
+            assertTrue(gatewayOn(colony, WormholeGateway.ADVANCED_INDUSTRY_ID).canUpgrade());
+            assertFalse(gatewayOn(colony, WormholeGateway.PERFECTED_INDUSTRY_ID).canUpgrade());
+        }
+    }
+
+    @Test
+    void anUpgradedGatewayStillCountsAsTheFactionsGateway() {
+        MarketAPI first = colony("Home");
+        when(first.hasIndustry(WormholeGateway.PERFECTED_INDUSTRY_ID)).thenReturn(true);
+        when(first.isPlayerOwned()).thenReturn(true);
+        Industry perfected = mock(Industry.class);
+        when(perfected.getId()).thenReturn(WormholeGateway.PERFECTED_INDUSTRY_ID);
+        when(first.getIndustry(WormholeGateway.PERFECTED_INDUSTRY_ID)).thenReturn(perfected);
+
+        assertFalse(gatewayOn(colony("Outpost")).isAvailableToBuild());
+        assertEquals(WormholeGateway.PERFECTED_INDUSTRY_ID, WormholeGateway.playerGatewayId(mockSector.sector));
+    }
+
+    @Test
+    void withVaultsOfKnowledgeTheResearchReplacesTheBlueprintUnlock() {
         when(modManager.isModEnabled(VaultsOfKnowledgeCompat.MOD_ID)).thenReturn(true);
-        when(sectorMemory.getBoolean(JanusDevice.FLAG)).thenReturn(false);
+        when(sectorMemory.getBoolean(WormholeGateway.UNLOCKED_FLAG)).thenReturn(false);
 
         assertTrue(WormholeGateway.isUnlockedFor(colony("Home")));
     }

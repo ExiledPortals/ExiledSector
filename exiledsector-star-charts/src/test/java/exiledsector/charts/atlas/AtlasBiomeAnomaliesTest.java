@@ -208,6 +208,7 @@ class AtlasBiomeAnomaliesTest {
         assertEquals(MOTHERSHIP, present.get(0));
         assertEquals(AtlasAnomalies.MAX_PER_SYSTEM - 1, inserted);
         String absent = ChartAnomalies.definitions().stream().filter(ChartAnomalies.Definition::insertable).map(ChartAnomalies.Definition::id)
+                .filter(ChartAnomalies::usable)
                 .filter(id -> !present.contains(id)).findFirst().orElseThrow();
         assertEquals(AtlasAnomalies.InsertCheck.FULL, AtlasAnomalies.canInsert(generator, state, holder, absent, null));
     }

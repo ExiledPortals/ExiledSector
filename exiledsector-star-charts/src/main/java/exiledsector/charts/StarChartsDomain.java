@@ -8,8 +8,10 @@ import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.layout.abyss.AbyssArt;
 import exiledsector.charts.effect.ChartFleetConditionSource;
 import exiledsector.charts.loot.StarChartLootSource;
+import exiledsector.charts.objective.GatewayUpgradeRewards;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.run.ChartTransverseJump;
+import exiledsector.charts.wormhole.LimboBlueprintCache;
 import exiledsector.charts.wormhole.WormholeGateway;
 import exiledsector.compat.FoilerCompat;
 import exiledsector.compat.UnknownSkiesCompat;
@@ -29,6 +31,7 @@ import exiledsector.items.StarChart;
 import exiledsector.items.StarChartCurrency;
 import exiledsector.items.StarChartDataRules;
 import exiledsector.items.StarChartItems;
+import exiledsector.items.WormholeTechItems;
 import exiledsector.loot.FleetDifficulty;
 import exiledsector.loot.LootSource;
 import exiledsector.ui.cargo.CatalystIconFx;
@@ -74,7 +77,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
             for (StarChartCurrency currency : StarChartCurrency.values()) {
                 MaterialItems.localise(currency.itemId());
             }
-            SpecLocalisation.industry(WormholeGateway.INDUSTRY_ID);
+            WormholeGateway.INDUSTRY_IDS.forEach(SpecLocalisation::industry);
         });
     }
 
@@ -114,6 +117,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
         ChartAnomalies.all().forEach(ChartAnomaly::loadItems);
         I18n.forGameText(AnomalousDebrisCurrencies::localise);
         I18n.forGameText(AtlasCatalystItems::localise);
+        I18n.forGameText(WormholeTechItems::localise);
     }
 
     @Override
@@ -129,6 +133,10 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     @Override
     public void afterSocketCustody() {
         StarCharts.onGameLoad(Global.getSector());
+        if (enabled()) {
+            LimboBlueprintCache.onGameLoad(Global.getSector());
+            GatewayUpgradeRewards.onGameLoad(Global.getSector());
+        }
     }
 
     @Override

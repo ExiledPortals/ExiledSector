@@ -112,6 +112,11 @@ public final class ChartObjectives {
         } catch (RuntimeException | LinkageError e) {
             LOG.error("[ExiledSector] Delivering the Star Chart reward for run " + run.runId() + " failed", e);
         }
+        try {
+            GatewayUpgradeRewards.completed(sector, run.tier());
+        } catch (RuntimeException | LinkageError e) {
+            LOG.error("[ExiledSector] Granting the Wormhole Gateway upgrade for run " + run.runId() + " failed", e);
+        }
         updateIntel(sector, run);
     }
 

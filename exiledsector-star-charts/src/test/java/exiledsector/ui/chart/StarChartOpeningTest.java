@@ -10,6 +10,7 @@ import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
+import exiledsector.charts.run.ChartRunActions;
 import exiledsector.charts.run.ChartRunActions.OpenResult;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.StarChartSettings;
@@ -113,7 +114,7 @@ class StarChartOpeningTest {
     void theRealOpenerRefusesWhileARunExistsAndKeepsTheChart() {
         ChartRuns.store(new ChartRun("busy", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1));
 
-        StarChartOpening.Outcome outcome = StarChartOpening.open(StarChartOpening.FROM_STORE, Blocker.NONE, sector, store, chart, 1,
+        StarChartOpening.Outcome outcome = StarChartOpening.open(ChartRunActions::openFromStore, Blocker.NONE, sector, store, chart, 1,
                 new Random(1L));
 
         assertEquals(OpenResult.RUN_EXISTS, outcome.result());

@@ -1,7 +1,6 @@
 package exiledsector.ui.chart;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledsector.charts.run.ChartRunActions;
 import exiledsector.charts.run.ChartRunActions.OpenResult;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
@@ -15,8 +14,6 @@ public final class StarChartOpening {
 
         OpenResult open(SectorAPI sector, int entriesAllowed, Random random, ItemStore store, Item chart);
     }
-
-    public static final Opener FROM_STORE = ChartRunActions::openFromStore;
 
     public record Outcome(OpenResult result, WormholeOpenCheck.Blocker blocker) {
 

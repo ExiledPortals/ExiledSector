@@ -36,6 +36,7 @@ import java.util.function.Predicate;
 public final class StarChartBench implements BenchModeSupport {
 
     public static final StarChartBench INSTANCE = new StarChartBench();
+    static final String NO_SYSTEM_KEY = "chart.atlas.blocked.no_system";
     private static final DebugAction COMPLETE_TARGET = new DebugAction("chart.atlas.debug.complete", "chart.atlas.debug.complete.tooltip");
     private static final OpenTexts OPEN_TEXTS = new OpenTexts("chart.ui.open.button", "chart.ui.open.tooltip", "chart.ui.open.confirm.title",
             "chart.ui.open.confirm.body", "chart.ui.open.confirm.entries", "chart.ui.open.confirm.yes", "chart.ui.open.confirm.no");
@@ -124,13 +125,13 @@ public final class StarChartBench implements BenchModeSupport {
 
     @Override
     public OpenCheck openCheck(SectorAPI sector, ItemStore store, Item loaded) {
-        WormholeOpenCheck.Blocker blocker = WormholeOpenCheck.current(sector, store, loaded);
-        return new OpenCheck(blocker.allowsOpening(), blocker.reasonKey());
+        return new OpenCheck(false, NO_SYSTEM_KEY);
     }
 
     @Override
     public OpenCheck openCheck(SectorAPI sector, ItemStore store, Item loaded, Object target) {
-        if (!(target instanceof AtlasCell cell) || sector == null) {
+        AtlasCell cell = atlasCell(target);
+        if (cell == null || sector == null) {
             return openCheck(sector, store, loaded);
         }
         WormholeOpenCheck.Blocker wormhole = WormholeOpenCheck.replacingRun(sector, store, loaded);
@@ -149,7 +150,7 @@ public final class StarChartBench implements BenchModeSupport {
 
     @Override
     public OpenOutcome openAt(SectorAPI sector, ItemStore store, Item loaded, int entries, Random random, Object target) {
-        AtlasCell cell = target instanceof SkirmishEntry entry ? entry.cell() : target instanceof AtlasCell atlasCell ? atlasCell : null;
+        AtlasCell cell = atlasCell(target);
         if (cell == null) {
             return open(sector, store, loaded, entries, random);
         }
@@ -176,8 +177,14 @@ public final class StarChartBench implements BenchModeSupport {
 
     @Override
     public OpenOutcome open(SectorAPI sector, ItemStore store, Item loaded, int entries, Random random) {
-        StarChartOpening.Outcome outcome = StarChartOpening.open(StarChartOpening.FROM_STORE, sector, store, loaded, entries, random);
-        return new OpenOutcome(outcome.opened(), outcome.messageKey());
+        return new OpenOutcome(false, NO_SYSTEM_KEY);
+    }
+
+    private static AtlasCell atlasCell(Object target) {
+        if (target instanceof SkirmishEntry entry) {
+            return entry.cell();
+        }
+        return target instanceof AtlasCell cell ? cell : null;
     }
 
     private static final class ChartPicker implements PickerSession {

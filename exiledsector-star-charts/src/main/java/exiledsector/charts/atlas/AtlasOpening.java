@@ -1,9 +1,11 @@
 package exiledsector.charts.atlas;
 
+import com.fs.starfarer.api.Global;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.layout.ChartLayoutRequest;
 import exiledsector.charts.generation.ChartTiers;
+import exiledsector.charts.wormhole.GatewayTierLimit;
 import exiledsector.items.StarChart;
 import exiledsector.modifiers.ModifierSlot;
 
@@ -23,14 +25,19 @@ public final class AtlasOpening {
         NONE,
         NOT_REACHABLE,
         BASTION_NEEDS_TOP_TIER,
-        NEXUS_NEEDS_MODIFIERS;
+        NEXUS_NEEDS_MODIFIERS,
+        GATEWAY_TIER_LIMIT;
 
         public boolean allowsOpening() {
             return this == NONE;
         }
 
         public String reasonKey() {
-            return "chart.atlas.blocked." + name().toLowerCase(Locale.ROOT);
+            String key = "chart.atlas.blocked." + name().toLowerCase(Locale.ROOT);
+            if (this == GATEWAY_TIER_LIMIT) {
+                return key + (GatewayTierLimit.maxTier(Global.getSector()) < GatewayTierLimit.ADVANCED_MAX_TIER ? ".advanced" : ".perfected");
+            }
+            return key;
         }
     }
 
@@ -38,6 +45,10 @@ public final class AtlasOpening {
     }
 
     public static Blocker check(AtlasGenerator generator, AtlasState state, AtlasCell cell, StarChart chart) {
+        return check(generator, state, cell, chart, chart == null ? ChartTiers.CORRUPTED_TIER : GatewayTierLimit.maxTier(Global.getSector()));
+    }
+
+    static Blocker check(AtlasGenerator generator, AtlasState state, AtlasCell cell, StarChart chart, int maxTier) {
         if (!AtlasReach.isReachable(generator, state, cell)) {
             return Blocker.NOT_REACHABLE;
         }
@@ -47,6 +58,9 @@ public final class AtlasOpening {
         }
         if (special != null && special.infests() && explicitModifiers(chart) < NEXUS_MODIFIERS) {
             return Blocker.NEXUS_NEEDS_MODIFIERS;
+        }
+        if (chart != null && chart.tier() > maxTier) {
+            return Blocker.GATEWAY_TIER_LIMIT;
         }
         return Blocker.NONE;
     }

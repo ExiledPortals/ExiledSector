@@ -13,6 +13,8 @@ public final class VaultsOfKnowledgeCompat {
 
     public static final String MOD_ID = "aotd_vok";
     public static final String GATEWAY_RESEARCH_ID = "exiledSector_tech_wormhole_gateway";
+    public static final String GATEWAY_ADVANCED_RESEARCH_ID = "exiledSector_tech_wormhole_gateway_advanced";
+    public static final String GATEWAY_PERFECTED_RESEARCH_ID = "exiledSector_tech_wormhole_gateway_perfected";
     public static final String DATABANK_DROP_GROUP = "ashes_research";
     static final String DEFENCE_MIN_SETTING = "aotd_defence_min_val";
     static final String DEFENCE_MAX_SETTING = "aotd_defence_max_val";
@@ -30,6 +32,12 @@ public final class VaultsOfKnowledgeCompat {
     private static final OptionalApi RESEARCH_API = new OptionalApi(List.of(GET_INSTANCE, IS_AVAILABLE_FOR_MARKET),
             Logger.getLogger(VaultsOfKnowledgeCompat.class), Level.ERROR,
             "Vaults of Knowledge research lookup failed; the Wormhole Gateway is treated as researched", OptionalApi.RuntimeFailure.RETRY_NEXT_CALL);
+    static final ApiMember IS_RESEARCHED_FOR_PLAYER = ApiMember.instanceMethod(RESEARCH_MANAGER_CLASS, "isResearchedForPlayer",
+            ApiMember.BOOLEAN, "java.lang.String");
+    private static final OptionalApi PLAYER_RESEARCH_API = new OptionalApi(List.of(GET_INSTANCE, IS_RESEARCHED_FOR_PLAYER),
+            Logger.getLogger(VaultsOfKnowledgeCompat.class), Level.ERROR,
+            "Vaults of Knowledge player research lookup failed; the Wormhole Gateway upgrades are treated as researched",
+            OptionalApi.RuntimeFailure.RETRY_NEXT_CALL);
 
     private VaultsOfKnowledgeCompat() {
     }
@@ -48,6 +56,16 @@ public final class VaultsOfKnowledgeCompat {
         }, true);
     }
 
+    public static boolean isResearchedForPlayer(String researchId) {
+        if (!isModEnabled()) {
+            return true;
+        }
+        return PLAYER_RESEARCH_API.call(api -> {
+            Object manager = api.handle(GET_INSTANCE).invoke();
+            return manager == null || (boolean) api.handle(IS_RESEARCHED_FOR_PLAYER).invoke(manager, researchId);
+        }, true);
+    }
+
     public static int defenceFleetPoints(Random random) {
         return defenceFleetPoints(ModSettings.otherModIntOr(MOD_ID, DEFENCE_MIN_SETTING, DEFAULT_DEFENCE_MIN),
                 ModSettings.otherModIntOr(MOD_ID, DEFENCE_MAX_SETTING, DEFAULT_DEFENCE_MAX), random);
@@ -61,12 +79,16 @@ public final class VaultsOfKnowledgeCompat {
 
     static void clearCachedLookups() {
         RESEARCH_API.reset();
+        PLAYER_RESEARCH_API.reset();
     }
 
     static List<String> missingFeatures() {
         List<String> missing = new ArrayList<>();
         if (!RESEARCH_API.missingMembers().isEmpty()) {
             missing.add("AoTDMainResearchManager.getInstance and isAvailableForThisMarket, used to gate the Wormhole Gateway behind research");
+        }
+        if (!PLAYER_RESEARCH_API.missingMembers().isEmpty()) {
+            missing.add("AoTDMainResearchManager.getInstance and isResearchedForPlayer, used to raise the Wormhole Gateway tier limit");
         }
         return missing;
     }

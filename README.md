@@ -283,7 +283,7 @@ If you'd rather skip all of this, LunaLib settings can reveal hidden nodes, or s
 <details>
 <summary><b>When do Hull Upgrades and Star Charts start?</b></summary>
 
-Exiled Sector is meant as an endgame expansion, so the extra modules wait until the skill tree has had time to sink in. Refit Schematics and unique hull items start dropping once your character reaches level 15. Star Charts need a Wormhole Gateway, which you can only build once the Janus Device gives you access to the Gate network. With Ashes of the Domain installed, you unlock it on the Vaults of Knowledge tree instead. Hull Upgrades can be switched off in LunaLib settings.
+Exiled Sector is meant as an endgame expansion, so the extra modules wait until the skill tree has had time to sink in. Refit Schematics and unique hull items start dropping once your character reaches level 15. Star Charts need a Wormhole Gateway, which you can only build once you recover the Wormhole Tech Blueprint from the Mothballed Equipment Cache in Limbo, where vanilla hides the first wormhole anchor. With Vaults of Knowledge installed, the blueprint goes into the gateway research instead, and two upgrade researches raise the chart tiers it can open. Hull Upgrades can be switched off in LunaLib settings.
 
 </details>
 

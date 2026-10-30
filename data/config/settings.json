@@ -6,6 +6,8 @@
 	"graphics":{
 		"ui_icons_tech_tree":{
 			"exiledSector_wormhole_gateway":"graphics/icons/tech/exiledSector_wormhole_gateway.png",
+			"exiledSector_wormhole_gateway_advanced":"graphics/icons/tech/exiledSector_wormhole_gateway_advanced.png",
+			"exiledSector_wormhole_gateway_perfected":"graphics/icons/tech/exiledSector_wormhole_gateway_perfected.png",
 		},
 	},
 }

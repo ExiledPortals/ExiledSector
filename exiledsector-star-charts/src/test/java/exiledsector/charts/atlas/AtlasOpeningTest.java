@@ -7,6 +7,8 @@ import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.PowerfulBoss;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
+import exiledsector.charts.wormhole.GatewayTierLimit;
+import exiledsector.items.StarChart;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -21,6 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class AtlasOpeningTest {
 
@@ -176,6 +180,42 @@ class AtlasOpeningTest {
         assertEquals(1, state.keyFragments());
         assertEquals(AtlasOpening.Blocker.NOT_REACHABLE, AtlasOpening.check(generator, state, findInfested(generator, true), null));
         assertEquals(0, AtlasOpening.explicitModifiers(null));
+    }
+
+    private static AtlasCell reachablePlainCell(AtlasGenerator generator, AtlasState state) {
+        for (AtlasCell start : AtlasCell.ORIGIN.around(10)) {
+            if (generator.isVoid(start)) {
+                continue;
+            }
+            for (AtlasCell neighbour : generator.lanes(start)) {
+                if (!generator.isVoid(neighbour) && generator.specialAt(neighbour) == null) {
+                    state.add(start, AtlasState.COMPLETED);
+                    return neighbour;
+                }
+            }
+        }
+        throw new AssertionError("no reachable plain cell");
+    }
+
+    private static StarChart chartOfTier(int tier) {
+        StarChart chart = mock(StarChart.class);
+        when(chart.tier()).thenReturn(tier);
+        when(chart.rolls()).thenReturn(List.of());
+        return chart;
+    }
+
+    @Test
+    void theGatewayTierLimitBlocksChartsAboveIt() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator generator = new AtlasGenerator(SEED, rules(), AtlasUnlocks.NONE, state);
+        AtlasCell cell = reachablePlainCell(generator, state);
+
+        assertEquals(AtlasOpening.Blocker.GATEWAY_TIER_LIMIT,
+                AtlasOpening.check(generator, state, cell, chartOfTier(6), GatewayTierLimit.BASE_MAX_TIER));
+        assertEquals(AtlasOpening.Blocker.NONE, AtlasOpening.check(generator, state, cell, chartOfTier(5), GatewayTierLimit.BASE_MAX_TIER));
+        assertEquals(AtlasOpening.Blocker.NONE, AtlasOpening.check(generator, state, cell, null, GatewayTierLimit.BASE_MAX_TIER));
+        assertEquals(AtlasOpening.Blocker.NONE, AtlasOpening.check(generator, state, cell, chartOfTier(16)));
+        assertTrue(AtlasOpening.Blocker.GATEWAY_TIER_LIMIT.reasonKey().startsWith("chart.atlas.blocked.gateway_tier_limit."));
     }
 
     @Test
