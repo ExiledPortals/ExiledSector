@@ -1,17 +1,19 @@
 package exiledsector.items;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.skills.ShipHullSizes;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import static exiledsector.items.ItemFixtures.MILITARY_PREFIXES;
 import static exiledsector.items.ItemFixtures.MILITARY_SUFFIXES;
@@ -124,20 +126,13 @@ class BattleItemDropsTest {
     }
 
     @Test
-    void theCapCutsCommonRowsFirstSoRareAndUniqueDropsSurvive() {
-        List<BattleItemDrops.Planned> planned = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
-            planned.add(new BattleItemDrops.Planned(BattleItemDrops.Drop.MODS_1, null));
-        }
-        planned.add(new BattleItemDrops.Planned(BattleItemDrops.Drop.UNIQUE, null));
-        planned.add(new BattleItemDrops.Planned(BattleItemDrops.Drop.MODS_4, null));
-        planned.add(new BattleItemDrops.Planned(BattleItemDrops.Drop.HULL_UPGRADE, null));
+    void aBigBattleKeepsEveryPlannedDropWithNoCap() {
+        List<BattleItemDrops.Planned> planned = BattleItemDrops.plan(List.of(new BattleItemDrops.SourcePower(10000f, ItemChances.BASE)),
+                1f, List.of(), neverLucky());
 
-        List<BattleItemDrops.Planned> capped = BattleItemDrops.capped(planned);
-
-        assertEquals(BattleItemDrops.MAX_ITEMS_PER_BATTLE, capped.size());
-        assertEquals(Map.of(BattleItemDrops.Drop.MODS_1, 22, BattleItemDrops.Drop.HULL_UPGRADE, 1, BattleItemDrops.Drop.MODS_4, 1,
-                BattleItemDrops.Drop.UNIQUE, 1), counts(capped));
+        assertEquals(Map.of(BattleItemDrops.Drop.MODS_1, 40, BattleItemDrops.Drop.MODS_2, 25, BattleItemDrops.Drop.MODS_3, 15,
+                BattleItemDrops.Drop.MODS_4, 4, BattleItemDrops.Drop.UNIQUE, 1, BattleItemDrops.Drop.HULL_UPGRADE, 10), counts(planned));
+        assertEquals(95, planned.size());
     }
 
     @Test
@@ -160,7 +155,7 @@ class BattleItemDropsTest {
     @Test
     void aBattleNeverRollsAnItemThatCannotHoldItsModifiersAndUniquesNeedTheirUnlock() {
         BattleItemDrops.Battle bigBattle = new BattleItemDrops.Battle(List.of(new BattleItemDrops.SourcePower(4000f, ItemChances.BASE)),
-                Map.of(HullSize.CRUISER, 4000f), "pirates");
+                "pirates");
         Random random = new Random(3L);
         int relics = 0;
         int lockedRelics = 0;
@@ -170,7 +165,6 @@ class BattleItemDropsTest {
                 relics += HULL_RELIC.equals(item.definitionId()) ? 1 : 0;
                 assertFalse(THIN_BRIDGE.equals(item.definitionId()) && item.explicits().size() > 1, item.toString());
             }
-            loot.upgrades().forEach(upgrade -> assertEquals(HullSize.CRUISER, upgrade.hullSize()));
             for (ItemData item : BattleItemDrops.roll(bigBattle, 1f, random, definition -> false).items()) {
                 lockedRelics += HULL_RELIC.equals(item.definitionId()) ? 1 : 0;
             }
@@ -183,24 +177,26 @@ class BattleItemDropsTest {
     @Test
     void aBattleWithNoPowerOrADropMultiplierOfZeroDropsNothing() {
         BattleItemDrops.Battle battle = new BattleItemDrops.Battle(List.of(new BattleItemDrops.SourcePower(4000f, ItemChances.BASE)),
-                Map.of(), null);
+                null);
 
         assertEquals(BattleItemDrops.Loot.NONE, BattleItemDrops.roll(battle, 0f, new Random(1L), definition -> true));
-        assertEquals(BattleItemDrops.Loot.NONE, BattleItemDrops.roll(new BattleItemDrops.Battle(List.of(), Map.of(), null), 1f,
+        assertEquals(BattleItemDrops.Loot.NONE, BattleItemDrops.roll(new BattleItemDrops.Battle(List.of(), null), 1f,
                 new Random(1L), definition -> true));
     }
 
     @Test
-    void aHullUpgradeTakesTheHullSizeOfADefeatedShipWeightedByItsPower() {
+    void battleHullUpgradesComeInEveryShipHullSize() {
+        BattleItemDrops.Battle battle = new BattleItemDrops.Battle(List.of(new BattleItemDrops.SourcePower(4000f, ItemChances.BASE)),
+                "pirates");
         Random random = new Random(5L);
-        int capitals = 0;
-        for (int trial = 0; trial < 4000; trial++) {
-            capitals += BattleItemDrops.hullSize(Map.of(HullSize.FRIGATE, 100f, HullSize.CAPITAL_SHIP, 300f), random) == HullSize.CAPITAL_SHIP
-                    ? 1 : 0;
+        Set<HullSize> sizes = EnumSet.noneOf(HullSize.class);
+        for (int trial = 0; trial < 100; trial++) {
+            BattleItemDrops.roll(battle, 1f, random, definition -> true).upgrades().forEach(upgrade -> sizes.add(upgrade.hullSize()));
         }
 
-        assertEquals(0.75, capitals / 4000.0, 0.03);
+        assertEquals(EnumSet.copyOf(ShipHullSizes.ORDER), sizes);
     }
+
     @Test
     void rarityMultipliesOnlyTheRareRowsOfABattle() {
         List<BattleItemDrops.Planned> plain = BattleItemDrops.plan(List.of(new BattleItemDrops.SourcePower(1600f, ItemChances.BASE)),

@@ -105,12 +105,12 @@ The table, in a new `data/config/exiledSector/battle_item_drops.csv` (`drop,per_
 | `unique` | 0.015 | unique |
 | `hull_upgrade` | 0.10 | |
 
-For each row: `expected = Σ (ship power × difficulty multiplier) / 100 × rate × source multiplier` (section 2.3). The count is `ItemDrops.wholeParts(expected)`: the whole part, plus one more at the leftover chance. The battle total is capped at `MAX_ITEMS_PER_BATTLE`, placeholder 25. When the cap cuts, the common rows are cut first, so the rare and unique drops survive.
+For each row: `expected = Σ (ship power × difficulty multiplier) / 100 × rate × source multiplier` (section 2.3). The count is `ItemDrops.wholeParts(expected)`: the whole part, plus one more at the leftover chance.
 
 How the drops are rolled:
 - `mods_N` picks a basic hull item through `ItemDrops.pickSectionItemBasic` (random section kind, then weighted by rarity). Only definitions whose prefix and suffix pools can hold N modifiers count. It is rolled with exactly N modifiers through a new `ItemRoller.rollWithEffectCount`, plus `ItemData.rolledWithEffectCount`. The rest of `rollAffixes` is unchanged. Rolled modifiers are stored in `ItemData`, so the forced count survives saving. Check that nothing re-rolls hull items from their seed alone before relying on that.
 - `unique` picks through `ItemDrops.pickUniqueFrom(FACTION, factionId, …)`, filtered to `ItemType.HULL_ITEM` and `ItemUnlock.canDrop`. The faction is the one that lost the most DP in the battle. No unique hull item has sources today, so every faction can drop every one. A `source` column for hull items can make them faction flavoured later.
-- `hull_upgrade` takes the hull size of a defeated ship, weighted by its power. That replaces today's own-hull-size rule.
+- `hull_upgrade` rolls a uniformly random hull size through `HullUpgradeRoller.rollHullSize`, the same as salvage and tech mining.
 
 Worked examples (difficulty multiplier as vanilla computes it):
 
@@ -120,7 +120,7 @@ Worked examples (difficulty multiplier as vanilla computes it):
 | Large faction fleet | 300 | 30 | 600 | 1.5 | 7.6 | 0.14 | 0.9 |
 | Doom stack, outmatched | 400 | 35 | 867 | 2.0 | 14.6 | 0.26 | 1.7 |
 
-Code: a pure, testable `items/BattleItemDrops` (table, power, expected counts, rolls) that takes the gathered power and the source multipliers. `ItemLootListener.hold` gathers power per source (2.3), next to `partsEarned`. `reportEncounterLootGenerated` and `reportBattleFinished` add the rolled drops where they add the battle drops now. With up to 25 drops, `announceSalvaged` would print 25 lines, so battle drops get one grouped message per rarity instead ("Salvaged 4 common, 2 rare hull items").
+Code: a pure, testable `items/BattleItemDrops` (table, power, expected counts, rolls) that takes the gathered power and the source multipliers. `ItemLootListener.hold` gathers power per source (2.3), next to `partsEarned`. `reportEncounterLootGenerated` and `reportBattleFinished` add the rolled drops where they add the battle drops now. A battle has no drop cap, so `announceSalvaged` would print a line per drop, so battle drops get one grouped message per rarity instead ("Salvaged 4 common, 2 rare hull items").
 
 Settings: one LunaLib setting `exiledSector_battleItemDropPercent` (default 100) multiplies the whole table, next to the existing battle Feedstock setting. Its name and tooltip go in `en.json` and `zh_CN.json`.
 

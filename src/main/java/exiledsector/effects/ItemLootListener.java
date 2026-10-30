@@ -11,7 +11,6 @@ import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.listeners.ShipRecoveryListener;
 import com.fs.starfarer.api.combat.EngagementResultAPI;
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.PlayerFleet;
@@ -53,7 +52,6 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         private final Map<CampaignFleetAPI, Float> chartFleetDeploymentPoints = new LinkedHashMap<>();
         private final Map<String, Float> defeatedDeploymentPointsByFaction = new LinkedHashMap<>();
         private final Map<CampaignFleetAPI, Float> battlePowerByFleet = new LinkedHashMap<>();
-        private final Map<HullSize, Float> battlePowerByHullSize = new EnumMap<>(HullSize.class);
         private boolean playerWon;
         private float partsEarned;
         private float deploymentPointsDefeated;
@@ -63,7 +61,7 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
         BattleItemDrops.Battle battleItems() {
             List<BattleItemDrops.SourcePower> sources = new ArrayList<>();
             battlePowerByFleet.forEach((fleet, power) -> sources.add(new BattleItemDrops.SourcePower(power, chancesFor(fleet))));
-            return new BattleItemDrops.Battle(sources, battlePowerByHullSize, mostDefeatedFaction());
+            return new BattleItemDrops.Battle(sources, mostDefeatedFaction());
         }
 
         private static ItemChances chancesFor(CampaignFleetAPI fleet) {
@@ -151,10 +149,6 @@ public class ItemLootListener extends BaseCampaignEventListener implements ShipR
                 continue;
             }
             pendingLoot.battlePowerByFleet.merge(battle.getSourceFleet(member), power, Float::sum);
-            HullSize hullSize = member.getHullSpec() == null ? null : member.getHullSpec().getHullSize();
-            if (hullSize != null) {
-                pendingLoot.battlePowerByHullSize.merge(hullSize, power, Float::sum);
-            }
         }
     }
 

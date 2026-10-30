@@ -1,6 +1,5 @@
 package exiledsector.items;
 
-import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import exiledsector.ModCsv;
 import exiledsector.ModSettings;
 import org.apache.log4j.Logger;
@@ -9,7 +8,6 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +24,6 @@ public final class BattleItemDrops {
     static final String DROP_COLUMN = "drop";
     static final String RATE_COLUMN = "per_100_power";
     static final float NODES_PER_DOUBLING = 30f;
-    static final int MAX_ITEMS_PER_BATTLE = 25;
     private static final float POWER_PER_RATE_STEP = 100f;
     private static final Logger LOG = Logger.getLogger(BattleItemDrops.class);
     private static final AtomicReference<Map<Drop, Float>> RATES = new AtomicReference<>(Map.of());
@@ -79,11 +76,10 @@ public final class BattleItemDrops {
         }
     }
 
-    public record Battle(List<SourcePower> sources, Map<HullSize, Float> powerByHullSize, String uniqueFactionId) {
+    public record Battle(List<SourcePower> sources, String uniqueFactionId) {
 
         public Battle {
             sources = sources == null ? List.of() : List.copyOf(sources);
-            powerByHullSize = powerByHullSize == null ? Map.of() : Map.copyOf(powerByHullSize);
         }
 
         public boolean isEmpty() {
@@ -160,7 +156,7 @@ public final class BattleItemDrops {
         List<HullUpgradeData> upgrades = new ArrayList<>();
         for (Planned planned : plan(battle.sources(), dropMultiplier, ItemDrops.sectionKindsWithBasics(), random)) {
             if (planned.drop() == Drop.HULL_UPGRADE) {
-                upgrades.add(new HullUpgradeData(hullSize(battle.powerByHullSize(), random)));
+                upgrades.add(new HullUpgradeData(HullUpgradeRoller.rollHullSize(random)));
             } else if (planned.drop() == Drop.UNIQUE) {
                 ItemDefinition definition = ItemDrops.pickUniqueFrom(UniqueSource.Kind.FACTION, battle.uniqueFactionId(), random,
                         candidate -> candidate.type() == ItemType.HULL_ITEM && uniqueAllowed.test(candidate));
@@ -201,7 +197,7 @@ public final class BattleItemDrops {
                 addPlanned(planned, drop, kind, ItemDrops.wholeParts(expected, random));
             }
         }
-        return capped(planned);
+        return planned;
     }
 
     private static float expected(SourcePower source, Drop drop, float dropMultiplier) {
@@ -213,28 +209,5 @@ public final class BattleItemDrops {
         for (int i = 0; i < count; i++) {
             planned.add(new Planned(drop, kind));
         }
-    }
-
-    static List<Planned> capped(List<Planned> planned) {
-        if (planned.size() <= MAX_ITEMS_PER_BATTLE) {
-            return planned;
-        }
-        List<Planned> byCutOrder = new ArrayList<>(planned);
-        byCutOrder.sort(Comparator.comparingInt(entry -> entry.drop().ordinal()));
-        return List.copyOf(byCutOrder.subList(byCutOrder.size() - MAX_ITEMS_PER_BATTLE, byCutOrder.size()));
-    }
-
-    static HullSize hullSize(Map<HullSize, Float> powerByHullSize, Random random) {
-        List<HullSize> sizes = new ArrayList<>();
-        for (Map.Entry<HullSize, Float> entry : powerByHullSize.entrySet()) {
-            if (entry.getValue() != null && entry.getValue() > 0f) {
-                sizes.add(entry.getKey());
-            }
-        }
-        if (sizes.isEmpty()) {
-            return HullUpgradeRoller.rollHullSize(random);
-        }
-        sizes.sort(Comparator.naturalOrder());
-        return WeightedPick.pick(sizes, powerByHullSize::get, random);
     }
 }
