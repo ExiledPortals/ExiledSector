@@ -24,7 +24,7 @@ public final class GrantedModifiers {
         if (!canGrant(definition, modifierId)) {
             return item;
         }
-        List<RolledModifier> explicits = AnomalousDebrisCurrency.reroll(definition, ItemModifiers.get(modifierId), null, random);
+        List<RolledModifier> explicits = AnomalousDebrisCurrency.reroll(definition, ItemModifiers.get(modifierId), List.of(), random);
         return new ItemData(item.definitionId(), item.seed(), explicits, ItemNames.freeze(definition, item.seed(), explicits), item.traits());
     }
 }

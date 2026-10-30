@@ -123,6 +123,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     private UIComponentAPI detailsElement;
     private UIComponentAPI noticeElement;
     private UIComponentAPI openElement;
+    private ButtonAPI embeddedOpenButton;
     private Item pendingOpenItem;
     private Object pendingOpenTarget;
     private boolean wormholeOpened;
@@ -335,10 +336,9 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         BenchLayout.Rect details = embeddedLayout.details();
         GLDraw.fillQuad(panelPosition.getX() + details.left() - PLATE_PAD, panelPosition.getY() + panelHeight - details.bottom() - PLATE_PAD,
                 details.width() + PLATE_PAD * 2f, details.height() + PLATE_PAD * 2f, PLATE_COLOR, PLATE_ALPHA * alpha);
-        if (openElement != null) {
-            BenchLayout.Rect open = embeddedLayout.openButton();
-            openFx.render(panelPosition.getX() + open.left(), panelPosition.getY() + panelHeight - open.bottom(), open.width(), open.height(),
-                    openAllowed, alpha);
+        if (openElement != null && embeddedOpenButton != null) {
+            PositionAPI open = embeddedOpenButton.getPosition();
+            openFx.render(open.getX(), open.getY(), open.getWidth(), open.getHeight(), openAllowed, alpha);
         }
         Color subjectColor = loadedItem == null ? null : loadedItem.frameColor();
         socketFlair.render(socketScreenX(), socketScreenY(), slotRadius(), SkillTreePanelStyle.GLOW_COLOR, subjectColor,
@@ -800,6 +800,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         element.setButtonFontOrbitron20Bold();
         ButtonAPI openButton = element.addButton(Translation.text(openTexts.buttonKey()), Control.OPEN_WORMHOLE, WormholeButtonFx.TEXT_COLOR,
                 WormholeButtonFx.BACKGROUND_COLOR, Alignment.MID, CutStyle.ALL, open.width(), open.height(), 0f);
+        embeddedOpenButton = openButton;
         openButton.setEnabled(openAllowed);
         openButton.setShowTooltipWhileInactive(true);
         String tooltipText = Translation.text(blocker.allowsOpening() ? openTexts.tooltipKey() : blocker.reasonKey());

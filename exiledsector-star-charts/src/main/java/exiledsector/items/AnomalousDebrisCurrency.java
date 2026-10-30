@@ -86,10 +86,20 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
                 || !ItemModifiers.itemTypes(modifierId).contains(definition.type()) || granted.slot() == ModifierSlot.IMPLICIT) {
             return false;
         }
-        if (ItemCrafting.wardBlocksTransposition(item, context.guardedSlots()) || lockedClash(item, granted)) {
+        if (lockedClash(item, granted) || keptClash(item, granted, context.guardedSlots())) {
             return false;
         }
         return AffixLayout.rollableAt(definition.type(), List.of(new PoolEntry(granted, 1f)), TierRange.NO_TIER).size() == 1;
+    }
+
+    @Override
+    public boolean respectsWards() {
+        return true;
+    }
+
+    @Override
+    public boolean wouldChange(Item item, RolledModifier rolled) {
+        return true;
     }
 
     @Override
@@ -99,6 +109,19 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
 
     static RolledModifier lockedModifier(Item item) {
         return item.explicits().stream().filter(RolledModifier::locked).findFirst().orElse(null);
+    }
+
+    static List<RolledModifier> keptModifiers(Item item, Set<ModifierSlot> guarded) {
+        return item.explicits().stream().filter(rolled -> rolled.locked() || guarded.contains(rolled.slot())).toList();
+    }
+
+    static boolean keptClash(Item item, Modifier granted, Set<ModifierSlot> guarded) {
+        List<RolledModifier> others = keptModifiers(item, guarded).stream().filter(rolled -> !rolled.modifierId().equals(granted.id())).toList();
+        Set<String> grantedEffects = effectsOf(granted);
+        AffixLayout.Limits limits = AffixLayout.limits(item.definition().type());
+        long grantedSide = others.stream().filter(rolled -> rolled.slot() == granted.slot()).count();
+        return grantedSide >= limits.maxPerSide() || others.size() >= limits.maxEffects()
+                || others.stream().anyMatch(rolled -> rolled.lines().stream().anyMatch(line -> grantedEffects.contains(line.effectName())));
     }
 
     static boolean lockedClash(Item item, Modifier granted) {
@@ -121,24 +144,27 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
         if (!canUse(item, context)) {
             return null;
         }
-        item.replaceExplicits(reroll(item.definition(), modifier(), lockedModifier(item), random));
+        item.replaceExplicits(reroll(item.definition(), modifier(), keptModifiers(item, context.guardedSlots()), random));
         item.refreezeName();
         return item;
     }
 
-    static List<RolledModifier> reroll(ItemDefinition definition, Modifier granted, RolledModifier locked, Random random) {
+    static List<RolledModifier> reroll(ItemDefinition definition, Modifier granted, List<RolledModifier> kept, Random random) {
         AffixLayout.Limits limits = AffixLayout.limits(definition.type());
         List<RolledModifier> prefixes = new ArrayList<>();
         List<RolledModifier> suffixes = new ArrayList<>();
-        boolean keepsGranted = locked != null && locked.modifierId().equals(granted.id());
-        RolledModifier grantedRoll = keepsGranted ? locked : RolledModifier.roll(granted, random, false);
+        RolledModifier grantedRoll = kept.stream().filter(rolled -> rolled.modifierId().equals(granted.id())).findFirst()
+                .orElseGet(() -> RolledModifier.roll(granted, random, false));
         (granted.slot() == ModifierSlot.PREFIX ? prefixes : suffixes).add(grantedRoll);
         Set<String> takenIds = new HashSet<>(List.of(granted.id()));
         Set<String> takenEffects = new HashSet<>(effectsOf(granted));
-        if (locked != null && !keepsGranted) {
-            (locked.slot() == ModifierSlot.PREFIX ? prefixes : suffixes).add(locked);
-            takenIds.add(locked.modifierId());
-            locked.lines().forEach(line -> takenEffects.add(line.effectName()));
+        for (RolledModifier keptModifier : kept) {
+            if (keptModifier.modifierId().equals(granted.id())) {
+                continue;
+            }
+            (keptModifier.slot() == ModifierSlot.PREFIX ? prefixes : suffixes).add(keptModifier);
+            takenIds.add(keptModifier.modifierId());
+            keptModifier.lines().forEach(line -> takenEffects.add(line.effectName()));
         }
         int othersLeft = limits.maxEffects() - prefixes.size() - suffixes.size();
         othersLeft -= draw(candidates(definition, definition.prefixes(), takenIds, takenEffects),

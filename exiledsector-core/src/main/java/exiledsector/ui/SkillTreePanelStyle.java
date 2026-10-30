@@ -40,7 +40,7 @@ public final class SkillTreePanelStyle {
     public static final float TOOLTIP_BORDER_THICKNESS = 2f;
     public static final Color GLOW_COLOR = new Color(120, 200, 255);
     public static final Color POSITIVE_STAT_COLOR = new Color(0x98, 0xFB, 0x00);
-    public static final Color IMMUTABLE_TEXT_COLOR = new Color(163, 141, 109);
+    public static final Color IMMUTABLE_TEXT_COLOR = new Color(230, 80, 175);
     public static final Color NEGATIVE_STAT_COLOR = new Color(0xFC, 0x63, 0x00);
 
     private static final Color FALLBACK_LOW_TECH_COLOR = new Color(255, 160, 60);

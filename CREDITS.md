@@ -32,7 +32,7 @@ Files: everything prefixed `nskr_` in `graphics/icons` and `graphics/unused`, an
 
 By Kaysaar. Permission requested from Kaysaar; approval pending.
 
-Files: everything prefixed `aotd_` in `graphics/icons`, which is the Pre-Collapse Facility anomaly icon `graphics/icons/anomalies/aotd_pre_collapse_facility.png`, a copy of Vaults of Knowledge's Pre-Collapse Facility market condition icon.
+Files: everything prefixed `aotd_` in `graphics/icons`, which is the Pre-Collapse Facility anomaly icon `graphics/icons/anomalies/aotd_pre_collapse_facility.png`, a circular copy of Vaults of Knowledge's Pre-Collapse Facility market condition icon.
 
 ## Path of Exile
 

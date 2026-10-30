@@ -601,7 +601,8 @@ detected-range multiplier hides each one until the player fleet comes within 600
 no reputation change and an AI that holds its field (`DormantFleets.wake`), then hands over to vanilla's encounter.
 Corrupting first spends a Corrupted Nanoswarm and rebuilds the fleet stronger, and the first engagement won against it
 drops an engram (`DormantFleetLoot`). An engram rerolls a non-unique hull item with four modifiers, one always its own
-from the reserved pool that no other roll draws from (`AnomalousDebrisCurrency`, core `ReservedModifiers`).
+from the reserved pool that no other roll draws from (`AnomalousDebrisCurrency`, core `ReservedModifiers`). An immutable
+modifier and an inhibited side's modifiers are kept, and the reroll fills up to two per side and four in total around them.
 
 ### Excavation Sites
 

@@ -195,7 +195,87 @@ class AnomalousDebrisCurrencyTest {
         assertFalse(currency(REVENANT).canUse(relic, context));
         assertTrue(currency(REVENANT).canUse(common(), context));
         assertFalse(currency(REVENANT).appliesTo(ItemType.STAR_CHART));
-        assertFalse(currency(REVENANT).canUse(common(), new CraftingContext(store, definition -> true, Set.of(ModifierSlot.PREFIX))));
+    }
+
+    private Item withModifiers(RolledModifier... modifiers) {
+        return store.add(new ItemData(BASE, 11L, List.of(modifiers), null));
+    }
+
+    private static RolledModifier rolled(ModifierSlot slot, String effectName, float magnitude) {
+        return RolledModifier.single(slot, new RolledEffect(effectName, magnitude));
+    }
+
+    private static List<RolledModifier> onSide(Item item, ModifierSlot slot) {
+        return item.explicits().stream().filter(rolled -> rolled.slot() == slot).toList();
+    }
+
+    @Test
+    void anInhibitedSideKeepsItsModifiersWhileTheOtherSideRerollsAroundTheEngram() {
+        for (long seed = 0; seed < 40; seed++) {
+            RolledModifier armor = rolled(ModifierSlot.SUFFIX, "ARMOR_PERCENT", 5f);
+            RolledModifier hull = rolled(ModifierSlot.SUFFIX, "HULL_MULT", 5f);
+            Item item = withModifiers(rolled(ModifierSlot.PREFIX, "FLUX_CAPACITY_MULT", 5f), armor, hull);
+            CraftingContext context = new CraftingContext(store, definition -> true, Set.of(ModifierSlot.SUFFIX));
+
+            assertSame(item, currency(REVENANT).use(item, context, new Random(seed)));
+
+            assertEquals(List.of(armor, hull), onSide(item, ModifierSlot.SUFFIX));
+            assertEquals(2, onSide(item, ModifierSlot.PREFIX).size());
+            assertTrue(item.explicits().stream().anyMatch(rolled -> rolled.modifierId().equals(GRANTED_PREFIX)));
+        }
+    }
+
+    @Test
+    void anInhibitedSideWithOneModifierGainsASecond() {
+        for (long seed = 0; seed < 40; seed++) {
+            RolledModifier armor = rolled(ModifierSlot.SUFFIX, "ARMOR_PERCENT", 5f);
+            Item item = withModifiers(armor);
+            CraftingContext context = new CraftingContext(store, definition -> true, Set.of(ModifierSlot.SUFFIX));
+
+            currency(REVENANT).use(item, context, new Random(seed));
+
+            assertEquals(4, item.explicits().size());
+            assertEquals(2, onSide(item, ModifierSlot.SUFFIX).size());
+            assertTrue(onSide(item, ModifierSlot.SUFFIX).contains(armor));
+            assertEquals(2, onSide(item, ModifierSlot.PREFIX).size());
+        }
+    }
+
+    @Test
+    void thePrefixInhibitorKeepsPrefixesForASuffixEngram() {
+        for (long seed = 0; seed < 40; seed++) {
+            RolledModifier capacity = rolled(ModifierSlot.PREFIX, "FLUX_CAPACITY_MULT", 5f);
+            RolledModifier dissipation = rolled(ModifierSlot.PREFIX, "FLUX_DISSIPATION_MULT", 5f);
+            Item item = withModifiers(capacity, dissipation, rolled(ModifierSlot.SUFFIX, "ARMOR_PERCENT", 5f));
+            CraftingContext context = new CraftingContext(store, definition -> true, Set.of(ModifierSlot.PREFIX));
+
+            currency(VIGIL).use(item, context, new Random(seed));
+
+            assertEquals(List.of(capacity, dissipation), onSide(item, ModifierSlot.PREFIX));
+            assertEquals(2, onSide(item, ModifierSlot.SUFFIX).size());
+            assertTrue(item.explicits().stream().anyMatch(rolled -> rolled.modifierId().equals(GRANTED_SUFFIX)));
+        }
+    }
+
+    @Test
+    void anEngramIsRefusedWhenTheInhibitedSideHasNoRoomOrSharesItsEffect() {
+        Item fullPrefixes = withModifiers(rolled(ModifierSlot.PREFIX, "FLUX_CAPACITY_MULT", 5f), rolled(ModifierSlot.PREFIX, "FLUX_DISSIPATION_MULT", 5f));
+        Item sameEffect = withModifiers(rolled(ModifierSlot.SUFFIX, "BEAM_WEAPON_RANGE_PERCENT", 5f));
+        CraftingContext prefixWard = new CraftingContext(store, definition -> true, Set.of(ModifierSlot.PREFIX));
+        CraftingContext suffixWard = new CraftingContext(store, definition -> true, Set.of(ModifierSlot.SUFFIX));
+
+        assertFalse(currency(REVENANT).canUse(fullPrefixes, prefixWard));
+        assertTrue(currency(REVENANT).canUse(common(), prefixWard));
+        assertFalse(currency(VIGIL).canUse(sameEffect, suffixWard));
+        assertTrue(currency(VIGIL).canUse(sameEffect, prefixWard));
+    }
+
+    @Test
+    void anInhibitorIsSpentOnlyWhenItsSideHasSomethingToKeep() {
+        Item withSuffix = withModifiers(rolled(ModifierSlot.PREFIX, "FLUX_CAPACITY_MULT", 5f), rolled(ModifierSlot.SUFFIX, "ARMOR_PERCENT", 5f));
+
+        assertEquals(Set.of(CraftingWard.SUFFIX), ItemCrafting.wardsSpentBy(currency(REVENANT), withSuffix, List.of(CraftingWard.SUFFIX)));
+        assertEquals(Set.of(), ItemCrafting.wardsSpentBy(currency(REVENANT), common(), List.of(CraftingWard.SUFFIX)));
     }
 
     @Test
