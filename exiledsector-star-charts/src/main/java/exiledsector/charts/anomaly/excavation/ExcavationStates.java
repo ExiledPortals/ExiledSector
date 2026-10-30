@@ -16,7 +16,7 @@ public final class ExcavationStates {
         return KEY_PREFIX + index;
     }
 
-    static void record(ChartRun run, ExcavationSite site) {
+    public static void record(ChartRun run, ExcavationSite site) {
         run.recordAnomalyState(key(site.index()), site.encode());
     }
 

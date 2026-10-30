@@ -28,6 +28,12 @@ Originally by Kissa Mies, now maintained by SirHartley ([github.com/SirHartley/L
 
 Files: everything prefixed `nskr_` in `graphics/icons` and `graphics/unused`, and the faction crests `graphics/icons/crests/enigma.png` and `graphics/icons/crests/kesteven.png`. The `_shifted` icons are hue-shifted copies of the originals. The Kesteven nodes are modelled on LOST_SECTOR hull mods, but their code is Exiled Sector's own and is covered by the GPL.
 
+## Ashes of the Domain: Vaults of Knowledge
+
+By Kaysaar. Permission requested from Kaysaar; approval pending.
+
+Files: everything prefixed `aotd_` in `graphics/icons`, which is the Pre-Collapse Facility anomaly icon `graphics/icons/anomalies/aotd_pre_collapse_facility.png`, a copy of Vaults of Knowledge's Pre-Collapse Facility market condition icon.
+
 ## Path of Exile
 
 The loot alert sounds are from Path of Exile and are copyright Grinding Gear Games.

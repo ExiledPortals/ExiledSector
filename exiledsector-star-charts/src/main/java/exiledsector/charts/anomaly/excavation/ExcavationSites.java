@@ -16,6 +16,7 @@ import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.facility.FacilityStates;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
@@ -61,6 +62,7 @@ public final class ExcavationSites implements ChartAnomaly {
     static List<ExcavationSite> place(AnomalyContentSite site, ChartRun run, SectorAPI sector) {
         Random random = site.random(PLACEMENT_SALT);
         List<PlanetAPI> planets = candidates(site.system());
+        planets.removeIf(planet -> FacilityStates.holds(run, planet.getId()));
         Collections.shuffle(planets, random);
         int count = Math.min(planets.size(), ExcavationRules.siteCount(random, Math.round(site.context().anomalyPercent(EXTRA_KEY))));
         List<ExcavationSite> placed = new ArrayList<>();

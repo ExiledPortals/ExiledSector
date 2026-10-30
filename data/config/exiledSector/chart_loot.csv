@@ -58,3 +58,8 @@ listening_post_basic,resource,listening_post,basic,value,1500,1,"A listening pos
 listening_post_blueprints_low,blueprint,listening_post,blueprints_low,random,1,1,
 listening_post_weapon_bp,blueprint,listening_post,weapon_bp,random,0.5,4,
 listening_post_ship_bp,blueprint,listening_post,ship_bp,random,0.3,8,
+pre_collapse_facility_basic,resource,pre_collapse_facility,basic,value,1500,1,"A Pre-Collapse Facility's salvage, per step (1.5 at tier 1, 0.35 more per tier); research databanks come from VoK's own ashes_research group in code, 10 rolls plus 2 per tier"
+pre_collapse_facility_blueprints_low,blueprint,pre_collapse_facility,blueprints_low,random,2,1,
+pre_collapse_facility_weapon_bp,blueprint,pre_collapse_facility,weapon_bp,random,0.5,4,
+pre_collapse_facility_ship_bp,blueprint,pre_collapse_facility,ship_bp,random,0.3,8,
+pre_collapse_facility_ai_cores1,ai_core,pre_collapse_facility,ai_cores1,random,0.5,5,

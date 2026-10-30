@@ -94,6 +94,9 @@ public final class AtlasCatalysts {
             String anomalyId = ModCsv.text(row, "anomaly");
             String icon = ModCsv.text(row, "icon");
             Effect effect = Effect.byKey(ModCsv.text(row, "effect"));
+            if (effect == Effect.ANOMALY && needsMissingMod(anomalyId)) {
+                return;
+            }
             String skipReason = effect == null ? "effect '" + ModCsv.text(row, "effect") + "' is not anomaly or redeploy"
                     : skipReason(effect, anomalyId, icon);
             Family family = Family.byKey(ModCsv.text(row, "family"));
@@ -114,6 +117,11 @@ public final class AtlasCatalysts {
         return csv.problems();
     }
 
+    static boolean needsMissingMod(String anomalyId) {
+        ChartAnomalies.Definition definition = ChartAnomalies.definition(anomalyId);
+        return definition != null && !ChartPois.modRequirementMet(definition.requiredMod());
+    }
+
     private static String skipReason(Effect effect, String anomalyId, String icon) {
         if (effect == Effect.REDEPLOY) {
             return icon.isEmpty() ? "a redeploy catalyst needs an icon" : null;
@@ -124,9 +132,6 @@ public final class AtlasCatalysts {
         }
         if (!definition.insertable()) {
             return "anomaly '" + anomalyId + "' is not insertable";
-        }
-        if (!ChartPois.modRequirementMet(definition.requiredMod())) {
-            return "anomaly '" + anomalyId + "' needs the missing mod '" + definition.requiredMod() + "'";
         }
         return definition.icon().isEmpty() && icon.isEmpty() ? "anomaly '" + anomalyId + "' has no icon" : null;
     }

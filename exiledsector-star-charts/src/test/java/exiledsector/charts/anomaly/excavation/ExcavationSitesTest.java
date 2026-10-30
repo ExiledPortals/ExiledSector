@@ -6,6 +6,7 @@ import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.facility.PreCollapseFacility;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.loot.DropType;
@@ -99,6 +100,20 @@ class ExcavationSitesTest {
                 assertFalse(site.cleared());
                 assertTrue(ExcavationRules.LEANS.contains(site.lean()));
             }
+        }
+    }
+
+    @Test
+    void sitesSkipThePreCollapseFacilityPlanet() {
+        planet("facility", false, false);
+        planet("rock", false, false);
+        for (long seed = 0; seed < 20; seed++) {
+            ChartRun run = run();
+            run.recordAnomalyState(PreCollapseFacility.ID + ".planet", "facility");
+
+            List<ExcavationSite> placed = ExcavationSites.place(site(ChartGenContext.none(), seed), run, mockSector.sector);
+
+            assertEquals(List.of("rock"), placed.stream().map(ExcavationSite::planetId).toList());
         }
     }
 

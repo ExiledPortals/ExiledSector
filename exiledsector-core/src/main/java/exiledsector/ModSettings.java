@@ -26,6 +26,11 @@ public final class ModSettings {
         return otherModBooleanOr(ExiledSector.MOD_ID, fieldId, defaultValue);
     }
 
+    public static int otherModIntOr(String modId, String fieldId, int defaultValue) {
+        Integer value = LunaSettings.getInt(modId, fieldId);
+        return value != null ? value : defaultValue;
+    }
+
     public static boolean otherModBooleanOr(String modId, String fieldId, boolean defaultValue) {
         Boolean value = LunaSettings.getBoolean(modId, fieldId);
         return value != null ? value : defaultValue;

@@ -8,6 +8,7 @@ import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.convoy.SupplyConvoy;
 import exiledsector.charts.anomaly.debris.AnomalousDebris;
 import exiledsector.charts.anomaly.excavation.ExcavationSites;
+import exiledsector.charts.anomaly.facility.PreCollapseFacility;
 import exiledsector.charts.anomaly.forge.DerelictForge;
 import exiledsector.charts.anomaly.heist.ListeningPost;
 import exiledsector.charts.anomaly.relay.RelayNetwork;
@@ -42,7 +43,7 @@ public final class ChartAnomalies {
             AsteroidStorm.INSTANCE, MagneticStorm.INSTANCE, StellarFlares.INSTANCE, SpatialBreach.INSTANCE, FactionSkirmish.INSTANCE,
             RelayNetwork.INSTANCE, ExcavationSites.INSTANCE, SupplyConvoy.INSTANCE, AnomalousDebris.INSTANCE,
             StormFront.INSTANCE,
-            DerelictForge.INSTANCE, ListeningPost.INSTANCE,
+            DerelictForge.INSTANCE, ListeningPost.INSTANCE, PreCollapseFacility.INSTANCE,
             RemnantNexusStation.INSTANCE, DomainMothership.INSTANCE,
             PowerfulBoss.INSTANCE);
     private static final Logger LOG = Logger.getLogger(ChartAnomalies.class);

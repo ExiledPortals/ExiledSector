@@ -1,16 +1,23 @@
 package exiledsector.compat;
 
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import exiledsector.ModSettings;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public final class VaultsOfKnowledgeCompat {
 
     public static final String MOD_ID = "aotd_vok";
     public static final String GATEWAY_RESEARCH_ID = "exiledSector_tech_wormhole_gateway";
+    public static final String DATABANK_DROP_GROUP = "ashes_research";
+    static final String DEFENCE_MIN_SETTING = "aotd_defence_min_val";
+    static final String DEFENCE_MAX_SETTING = "aotd_defence_max_val";
+    static final int DEFAULT_DEFENCE_MIN = 140;
+    static final int DEFAULT_DEFENCE_MAX = 180;
     public static final List<String> TESTED_VERSIONS = List.of("5.0.7");
     public static final CompatTarget TARGET = new CompatTarget("Ashes of the Domain: Vaults of Knowledge", List.of(MOD_ID), TESTED_VERSIONS,
             VaultsOfKnowledgeCompat::missingFeatures);
@@ -39,6 +46,17 @@ public final class VaultsOfKnowledgeCompat {
             Object manager = api.handle(GET_INSTANCE).invoke();
             return manager == null || (boolean) api.handle(IS_AVAILABLE_FOR_MARKET).invoke(manager, GATEWAY_RESEARCH_ID, market);
         }, true);
+    }
+
+    public static int defenceFleetPoints(Random random) {
+        return defenceFleetPoints(ModSettings.otherModIntOr(MOD_ID, DEFENCE_MIN_SETTING, DEFAULT_DEFENCE_MIN),
+                ModSettings.otherModIntOr(MOD_ID, DEFENCE_MAX_SETTING, DEFAULT_DEFENCE_MAX), random);
+    }
+
+    static int defenceFleetPoints(int min, int max, Random random) {
+        int low = Math.max(0, Math.min(min, max));
+        int high = Math.max(low, Math.max(min, max));
+        return low + random.nextInt(high - low + 1);
     }
 
     static void clearCachedLookups() {

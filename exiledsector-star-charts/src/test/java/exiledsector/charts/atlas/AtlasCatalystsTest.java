@@ -1,7 +1,14 @@
 package exiledsector.charts.atlas;
 
+import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.ModManagerAPI;
+import com.fs.starfarer.api.SettingsAPI;
+import exiledsector.MockSector;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.facility.PreCollapseFacility;
+import exiledsector.charts.generation.ChartTiers;
+import exiledsector.compat.VaultsOfKnowledgeCompat;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -10,14 +17,19 @@ import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class AtlasCatalystsTest {
+
+    private static final String FACILITY_SURVEY = "exiledSector_facility_survey";
 
     @BeforeEach
     void setUp() throws Exception {
@@ -66,6 +78,31 @@ class AtlasCatalystsTest {
         assertEquals(AtlasCatalysts.Family.ORDERS, flagship.family());
         assertEquals("powerful_boss", flagship.anomalyId());
         assertEquals("graphics/icons/anomalies/powerful_boss.png", flagship.iconPath());
+    }
+
+    @Test
+    void theFacilitySurveyLoadsOnlyWithVaultsOfKnowledgeAndNeverDrops() throws Exception {
+        assertEquals(List.of(), AtlasCatalysts.register(ChartTables.csvRows(AtlasCatalysts.PATH)));
+        assertNull(AtlasCatalysts.byItemId(FACILITY_SURVEY));
+
+        SettingsAPI settings = mock(SettingsAPI.class);
+        ModManagerAPI modManager = mock(ModManagerAPI.class);
+        when(settings.getModManager()).thenReturn(modManager);
+        when(modManager.isModEnabled(VaultsOfKnowledgeCompat.MOD_ID)).thenReturn(true);
+        try (MockSector mockSector = new MockSector()) {
+            mockSector.global.when(Global::getSettings).thenReturn(settings);
+
+            assertEquals(List.of(), AtlasCatalysts.register(ChartTables.csvRows(AtlasCatalysts.PATH)));
+            AtlasCatalysts.Catalyst survey = AtlasCatalysts.byItemId(FACILITY_SURVEY);
+            assertNotNull(survey);
+            assertEquals(PreCollapseFacility.ID, survey.anomalyId());
+            assertEquals(0f, survey.weight());
+            Random random = new Random(5L);
+            for (int roll = 0; roll < 2000; roll++) {
+                AtlasCatalysts.Catalyst dropped = AtlasCatalysts.pickDrop(ChartTiers.HIGHEST_TIER, random);
+                assertTrue(dropped == null || !FACILITY_SURVEY.equals(dropped.itemId()));
+            }
+        }
     }
 
     @Test

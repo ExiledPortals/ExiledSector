@@ -668,6 +668,21 @@ plus the `exiledSector_chart_listening_post` item row, +100% to Star Charts, blu
 share left (`VaultLoot`). Taking it before the alarm flags the atlas cell `LANES_REVEALED`, which reveals 3 lanes
 around it like a Sensor Array (`AtlasReach`).
 
+### Pre-Collapse Facility
+
+Only rolls or inserts with Ashes of the Domain: Vaults of Knowledge enabled (`requires_mod` `aotd_vok`), as a chart
+version of VoK's Pre-Collapse Facility. It marks one solid planet that holds no excavation site, kept on the run record
+with its stage (`PreCollapseFacility`, `FacilityStates`; package `charts.anomaly.facility`). `FacilityDialog` opens on
+the planet until it is salvaged; engaging brings a Remnant fleet of three quarters the tier's fleet size,
+but never fewer combat points than VoK's own roll between its `aotd_defence_min_val` and `aotd_defence_max_val`
+settings (`FacilityGuards`, `VaultsOfKnowledgeCompat.defenceFleetPoints`), kept in the planet's memory until beaten, with no other fleet pulled in and no AI retreat.
+
+The salvage is the `pre_collapse_facility` scope of `chart_loot.csv` plus the `exiledSector_chart_pre_collapse_facility`
+item row, plus VoK's own `ashes_research` drop group rolled 10 times and 2 more per tier for research databanks
+(`FacilityLoot`, numbers in `FacilityRules`). The planet never gets VoK's market condition, so VoK's intel and rules
+don't see it. Its Facility Survey catalyst has `weight` 0 in `atlas_catalysts.csv`, so `AtlasCatalysts.pickDrop` never
+drops it and only `ExiledSectorGrantAtlasCatalysts` hands it out; a catalyst whose anomaly needs a missing mod isn't loaded.
+
 ### Remnant Nexus and Domain-era Mothership
 
 These anomalies never roll or get inserted: an anomaly with a `biomes` column in `chart_anomalies.csv` sits in
