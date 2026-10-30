@@ -446,7 +446,7 @@ Without Vaults of Knowledge, right-clicking it sets `$exiledSector_gatewayUnlock
 before it can be built, and every chart tier can be opened.
 
 With Vaults of Knowledge, the blueprint is instead the item cost of the tier 0 gateway research. The gateway opens
-charts up to tier 5; the Advanced and Perfected researches each unlock an upgrade of the structure, which opens up to
+charts up to tier 5; the Gateway Array and Gateway Nexus researches each unlock an upgrade of the structure, which opens up to
 tier 10 and then every tier (`GatewayTierLimit` reads the player's built gateway, checked by `AtlasOpening`).
 Completing the first tier 5 and tier 10 chart puts each upgrade item into cargo with a popup, as do already cleared
 tiers on load (`GatewayUpgradeRewards`).

@@ -201,7 +201,7 @@ class WormholeGatewayTest {
         try (MockedStatic<VaultsOfKnowledgeCompat> ignored = vaults(false, false)) {
             WormholeGateway advanced = gatewayOn(colony, WormholeGateway.ADVANCED_INDUSTRY_ID);
             assertFalse(advanced.isAvailableToBuild());
-            assertEquals("Requires the Advanced Wormhole Gateway research.", advanced.getUnavailableReason());
+            assertEquals("Requires the Gateway Array research.", advanced.getUnavailableReason());
         }
         try (MockedStatic<VaultsOfKnowledgeCompat> ignored = vaults(true, true)) {
             assertTrue(gatewayOn(colony, WormholeGateway.ADVANCED_INDUSTRY_ID).isAvailableToBuild());

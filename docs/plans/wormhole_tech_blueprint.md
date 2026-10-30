@@ -19,8 +19,8 @@ This plan replaces the Janus Device with a new item, the Wormhole Tech Blueprint
 Three special items in `data/campaign/special_items.csv`, star-charts domain, null data, stack size 1, real icon paths:
 
 - `exiledSector_wormhole_blueprint`, "Wormhole Tech Blueprint". Icon: the wormhole anchor art, core white.
-- `exiledSector_gateway_upgrade_advanced`, "Wormhole Gateway Upgrade (Advanced)". Core yellow (the tier 6 to 10 chart colour).
-- `exiledSector_gateway_upgrade_perfected`, "Wormhole Gateway Upgrade (Perfected)". Core red (the tier 11+ chart colour).
+- `exiledSector_gateway_upgrade_advanced`, "Gateway Array Upgrade". Core yellow (the tier 6 to 10 chart colour).
+- `exiledSector_gateway_upgrade_perfected`, "Gateway Nexus Upgrade". Core red (the tier 11+ chart colour).
 
 Names and descriptions go through the star-charts string catalogue like the other chart items, with zh_CN drafts. Descriptions are flavour only, no numbers.
 
@@ -85,7 +85,7 @@ The upgrades are separate structures, built with vanilla's Upgrade button like H
 ## Step 5: the upgrade drops
 
 - New `GatewayUpgradeRewards` (`charts.objective`), called from `ChartObjectives.progressed` after `ChartRewards.grant`, only with VoK enabled. A completed run of tier 5 or more grants Advanced once (flag `$exiledSector_gatewayAdvancedGranted`); tier 10 or more grants Perfected once. Both can fire from the same run.
-- The upgrades never drop as loot. A boss or salvage drop can be missed, left behind or lost in a full hold, and then the gateway could never be upgraded. Each grant instead adds the item straight to the player's cargo and queues a popup: a small `InteractionDialogPlugin` shown by an `EveryFrameScript` once no dialog, menu or combat is open. It shows the item icon, a short text ("Your science teams have pieced together field readings from the chart. Store the Wormhole Gateway Upgrade (Advanced) in a Research Facility to research it.") and one confirm option. The queue is transient-safe: the pending grant lives in a memory flag, so a save made before the popup shows still shows it on load.
+- The upgrades never drop as loot. A boss or salvage drop can be missed, left behind or lost in a full hold, and then the gateway could never be upgraded. Each grant instead adds the item straight to the player's cargo and queues a popup: a small `InteractionDialogPlugin` shown by an `EveryFrameScript` once no dialog, menu or combat is open. It shows the item icon, a short text ("Your science teams have pieced together field readings from the chart. Store the Gateway Array Upgrade in a Research Facility to research it.") and one confirm option. The queue is transient-safe: the pending grant lives in a memory flag, so a save made before the popup shows still shows it on load.
 - Load migration with VoK: if `AtlasState`'s cleared tiers already include 5+ or 10+ and the matching item was never granted, grant it (with the popup). Saves that already run high-tier charts aren't stuck.
 
 ## Step 6: text and docs

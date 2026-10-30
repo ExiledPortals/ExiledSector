@@ -84,9 +84,9 @@ class WormholeTechItemPluginTest {
                 Translation.text(WormholeTechItemPlugin.usageKey(WormholeTechItems.BLUEPRINT, false)));
         assertEquals("Store in a Research Facility to research the Wormhole Gateway.",
                 Translation.text(WormholeTechItemPlugin.usageKey(WormholeTechItems.BLUEPRINT, true)));
-        assertEquals("Store in a Research Facility to research the Advanced Wormhole Gateway, then upgrade your gateway.",
+        assertEquals("Store in a Research Facility to research the Gateway Array, then upgrade your gateway.",
                 Translation.text(WormholeTechItemPlugin.usageKey(WormholeTechItems.UPGRADE_ADVANCED, true)));
-        assertEquals("Store in a Research Facility to research the Perfected Wormhole Gateway, then upgrade your gateway.",
+        assertEquals("Store in a Research Facility to research the Gateway Nexus, then upgrade your gateway.",
                 Translation.text(WormholeTechItemPlugin.usageKey(WormholeTechItems.UPGRADE_PERFECTED, true)));
         assertTrue(Translation.has(WormholeTechItemPlugin.usageKey(WormholeTechItems.UPGRADE_PERFECTED, false)));
     }

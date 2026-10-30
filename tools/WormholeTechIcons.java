@@ -235,7 +235,7 @@ public final class WormholeTechIcons {
         graphics.fillRect(0, 0, sheet.getWidth(), sheet.getHeight());
         graphics.setColor(Color.WHITE);
         graphics.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 16));
-        String[] columns = {"Wormhole Gateway", "Advanced", "Perfected"};
+        String[] columns = {"Wormhole Gateway", "Gateway Array", "Gateway Nexus"};
         String[] rows = {"1 solid spiral", "2 outline rings", "3 numeral badge"};
         for (int column = 0; column < 3; column++) {
             graphics.drawString(columns[column], labelWidth + column * cell + 40, 26);
