@@ -10,6 +10,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import exiledsector.ProjectFiles;
 import exiledsector.skills.npc.RealSkillData;
@@ -267,6 +268,16 @@ class CompatChecksTest {
         timeMult.modifyMult("target" + NightcrossGravityDrag.MOD_SUFFIX, 0.85f);
         timeMult.modifyMult("unrelated", 0.5f);
         assertEquals(15f, NightcrossGravityDrag.percentOn(target), 0.0001f);
+    }
+
+    @Test
+    void aSalvageSiteOnAPlanetCountsThroughItsSalvageSpec() throws Exception {
+        SalvageSiteCompat.Source vaults = SalvageSiteCompat.SOURCES.stream().filter(source -> source.modId().equals("aotd_vok")).findFirst().orElseThrow();
+        when(settings.getMergedSpreadsheetDataForMod("site", vaults.file(), "exiledSector"))
+                .thenReturn(new JSONArray("[{\"site\": \"aotd_pre_collapse_fac\"}, {\"site\": \"aotd_beyond_veil\"}]"));
+        when(settings.getSpec(SalvageEntityGenDataSpec.class, "aotd_pre_collapse_fac", true)).thenReturn(mock(SalvageEntityGenDataSpec.class));
+
+        assertEquals(List.of("the salvage site aotd_beyond_veil"), vaults.target().missingFeatures().get());
     }
 
     @Test

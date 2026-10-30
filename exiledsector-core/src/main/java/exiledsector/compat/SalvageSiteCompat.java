@@ -1,6 +1,7 @@
 package exiledsector.compat;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec;
 import exiledsector.ModCsv;
 import exiledsector.ModSettings;
 import org.json.JSONArray;
@@ -36,7 +37,8 @@ public final class SalvageSiteCompat {
             new Source("What We Left Behind", "niko_morePlanetaryConditions", List.of("4.5.3")),
             new Source("Ship Mastery System", "shipmasterysystem", List.of("2.0.8")),
             new Source("Unthemed Weapons Collection", "unthemedweapons", List.of("0.7.4")),
-            new Source("DIY Planets", "diyplanets", List.of("1.0.30")));
+            new Source("DIY Planets", "diyplanets", List.of("1.0.30")),
+            new Source("Ashes of the Domain: Vaults of Knowledge", "aotd_vok", List.of("5.0.7")));
 
     private SalvageSiteCompat() {
     }
@@ -72,11 +74,25 @@ public final class SalvageSiteCompat {
         return missing;
     }
 
+    private static boolean hasEntitySpec(String site) {
+        return hasCustomEntitySpec(site) || hasSalvageSpec(site);
+    }
+
     // java:S1181: an unknown custom entity id can surface as any RuntimeException from the game, and it only means the site is missing
     @SuppressWarnings("java:S1181")
-    private static boolean hasEntitySpec(String site) {
+    private static boolean hasCustomEntitySpec(String site) {
         try {
             return Global.getSettings().getCustomEntitySpec(site) != null;
+        } catch (Throwable e) {
+            return false;
+        }
+    }
+
+    // java:S1181: an unknown salvage spec id can surface as any RuntimeException from the game, and it only means the site is missing
+    @SuppressWarnings("java:S1181")
+    private static boolean hasSalvageSpec(String site) {
+        try {
+            return Global.getSettings().getSpec(SalvageEntityGenDataSpec.class, site, true) != null;
         } catch (Throwable e) {
             return false;
         }
