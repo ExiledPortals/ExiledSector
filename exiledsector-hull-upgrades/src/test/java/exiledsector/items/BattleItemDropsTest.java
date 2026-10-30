@@ -6,7 +6,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -127,20 +126,13 @@ class BattleItemDropsTest {
     }
 
     @Test
-    void theCapCutsCommonRowsFirstSoRareAndUniqueDropsSurvive() {
-        List<BattleItemDrops.Planned> planned = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
-            planned.add(new BattleItemDrops.Planned(BattleItemDrops.Drop.MODS_1, null));
-        }
-        planned.add(new BattleItemDrops.Planned(BattleItemDrops.Drop.UNIQUE, null));
-        planned.add(new BattleItemDrops.Planned(BattleItemDrops.Drop.MODS_4, null));
-        planned.add(new BattleItemDrops.Planned(BattleItemDrops.Drop.REFIT_SCHEMATIC, null));
+    void aBigBattleKeepsEveryPlannedDropWithNoCap() {
+        List<BattleItemDrops.Planned> planned = BattleItemDrops.plan(List.of(new BattleItemDrops.SourcePower(10000f, ItemChances.BASE)),
+                1f, List.of(), neverLucky());
 
-        List<BattleItemDrops.Planned> capped = BattleItemDrops.capped(planned);
-
-        assertEquals(BattleItemDrops.MAX_ITEMS_PER_BATTLE, capped.size());
-        assertEquals(Map.of(BattleItemDrops.Drop.MODS_1, 22, BattleItemDrops.Drop.REFIT_SCHEMATIC, 1, BattleItemDrops.Drop.MODS_4, 1,
-                BattleItemDrops.Drop.UNIQUE, 1), counts(capped));
+        assertEquals(Map.of(BattleItemDrops.Drop.MODS_1, 40, BattleItemDrops.Drop.MODS_2, 25, BattleItemDrops.Drop.MODS_3, 15,
+                BattleItemDrops.Drop.MODS_4, 4, BattleItemDrops.Drop.UNIQUE, 1, BattleItemDrops.Drop.REFIT_SCHEMATIC, 10), counts(planned));
+        assertEquals(95, planned.size());
     }
 
     @Test

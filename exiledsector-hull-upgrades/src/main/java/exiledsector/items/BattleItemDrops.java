@@ -9,7 +9,6 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +25,6 @@ public final class BattleItemDrops {
     static final String DROP_COLUMN = "drop";
     static final String RATE_COLUMN = "per_100_power";
     static final float NODES_PER_DOUBLING = 30f;
-    static final int MAX_ITEMS_PER_BATTLE = 25;
     private static final float POWER_PER_RATE_STEP = 100f;
     private static final Logger LOG = Logger.getLogger(BattleItemDrops.class);
     private static final AtomicReference<Map<Drop, Float>> RATES = new AtomicReference<>(Map.of());
@@ -200,7 +198,7 @@ public final class BattleItemDrops {
                 addPlanned(planned, drop, kind, ItemDrops.wholeParts(expected, random));
             }
         }
-        return capped(planned);
+        return planned;
     }
 
     static boolean allowed(Drop drop, boolean sectionsOpen) {
@@ -220,14 +218,5 @@ public final class BattleItemDrops {
         for (int i = 0; i < count; i++) {
             planned.add(new Planned(drop, kind));
         }
-    }
-
-    static List<Planned> capped(List<Planned> planned) {
-        if (planned.size() <= MAX_ITEMS_PER_BATTLE) {
-            return planned;
-        }
-        List<Planned> byCutOrder = new ArrayList<>(planned);
-        byCutOrder.sort(Comparator.comparingInt(entry -> entry.drop().ordinal()));
-        return List.copyOf(byCutOrder.subList(byCutOrder.size() - MAX_ITEMS_PER_BATTLE, byCutOrder.size()));
     }
 }
