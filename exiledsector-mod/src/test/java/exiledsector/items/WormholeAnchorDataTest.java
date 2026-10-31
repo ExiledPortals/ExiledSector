@@ -26,6 +26,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -47,6 +48,7 @@ class WormholeAnchorDataTest {
             Map.entry("abyss", "rat_abyss_wormhole_1"),
             Map.entry("threat", "threat_wormhole_1"),
             Map.entry("tania", "tania_wormhole_1"),
+            Map.entry("shrouded", "shrouded_wormhole_1"),
             Map.entry("exotech", "exoship"));
 
     @AfterEach
@@ -97,6 +99,20 @@ class WormholeAnchorDataTest {
             colors.add(style.color());
         }
         assertEquals(EXPECTED_EXITS.size(), colors.size());
+    }
+
+    @Test
+    void onlyTheShroudedAnchorAlwaysDropsAndOnlyFromDwellerFleets() throws Exception {
+        WormholeAnchorDefinitions.register(shippedAnchors());
+
+        FactionFleetDrops.Source shrouded = FactionFleetDrops.source("wormhole_anchor_shrouded");
+        assertTrue(shrouded.guaranteed());
+        assertEquals(Set.of("dweller"), shrouded.extraFactionIds());
+        for (ItemDefinition anchor : ItemDefinitions.ofType(ItemType.WORMHOLE_ANCHOR)) {
+            if (!anchor.id().equals("wormhole_anchor_shrouded")) {
+                assertFalse(FactionFleetDrops.source(anchor.id()).guaranteed(), anchor.id());
+            }
+        }
     }
 
     @Test

@@ -1,4 +1,4 @@
-import { Button, ColorInput, Divider, Group, Select, Stack, Text, TextInput } from '@mantine/core';
+import { Button, Checkbox, ColorInput, Divider, Group, Select, Stack, Text, TextInput } from '@mantine/core';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { useCallback, useState } from 'react';
 import { DecimalInput } from '../../../shared/DecimalInput.tsx';
@@ -157,6 +157,15 @@ function AnchorForm({ document, model, vocabulary, anchor, index, onSelect }: An
           onChange={(text) => edit((draft) => void (draft.dropChance = text))}
         />
       </Group>
+      <Checkbox
+        label="Always drops"
+        description="Every won battle that defeats a matching ship drops this anchor, ignoring the drop chance"
+        checked={anchor.guaranteedDrop}
+        onChange={(event) => {
+          const checked = event.currentTarget.checked;
+          edit((draft) => void (draft.guaranteedDrop = checked));
+        }}
+      />
       <Group grow align="flex-start">
         <DecimalInput
           label="Market chance per restock"

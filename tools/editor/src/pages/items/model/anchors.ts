@@ -11,7 +11,7 @@ export const DEFAULT_ANCHOR_DROP_CHANCE = '0.5';
 export const DEFAULT_ANCHOR_PRICE = '100000';
 export const DROP_FACTION_SEPARATOR = ';';
 export const ANCHOR_COLOR_PATTERN = /^#[0-9A-Fa-f]{6}$/;
-export const WORMHOLE_ANCHOR_COLUMNS = ['id', 'volume', 'exit_node', 'name', 'icon', 'color', 'crest_faction', 'rarity', 'description', 'unlock', 'drop_factions', 'drop_chance', 'market_chance', 'price'] as const;
+export const WORMHOLE_ANCHOR_COLUMNS = ['id', 'volume', 'exit_node', 'name', 'icon', 'color', 'crest_faction', 'rarity', 'description', 'unlock', 'drop_factions', 'drop_chance', 'market_chance', 'price', 'guaranteed_drop'] as const;
 
 export interface WormholeAnchor {
   cells: string[];
@@ -27,6 +27,7 @@ export interface WormholeAnchor {
   unlock: string;
   dropFactions: string;
   dropChance: string;
+  guaranteedDrop: boolean;
   marketChance: string;
   price: string;
   loadedId?: string;
@@ -60,6 +61,7 @@ export function parseWormholeAnchorsCsv(text: string): WormholeAnchorsModel {
       unlock: columns.unlock,
       dropFactions: columns.drop_factions,
       dropChance: columns.drop_chance,
+      guaranteedDrop: columns.guaranteed_drop.toLowerCase() === 'true',
       marketChance: columns.market_chance,
       price: columns.price,
       loadedId: columns.id,
@@ -68,8 +70,10 @@ export function parseWormholeAnchorsCsv(text: string): WormholeAnchorsModel {
   return { table, anchors };
 }
 
-function anchorColumnValues(anchor: WormholeAnchor): Record<(typeof WORMHOLE_ANCHOR_COLUMNS)[number], string> {
-  return {
+const GUARANTEED_DROP_COLUMN = 'guaranteed_drop';
+
+function anchorColumnValues(anchor: WormholeAnchor, writeGuaranteedDrop: boolean): Partial<Record<(typeof WORMHOLE_ANCHOR_COLUMNS)[number], string>> {
+  const values: Partial<Record<(typeof WORMHOLE_ANCHOR_COLUMNS)[number], string>> = {
     id: anchor.id,
     volume: anchor.volume,
     exit_node: anchor.exitNode,
@@ -85,10 +89,15 @@ function anchorColumnValues(anchor: WormholeAnchor): Record<(typeof WORMHOLE_ANC
     market_chance: anchor.marketChance,
     price: anchor.price,
   };
+  if (writeGuaranteedDrop) {
+    values.guaranteed_drop = anchor.guaranteedDrop ? 'true' : '';
+  }
+  return values;
 }
 
 export function serializeWormholeAnchorsCsv(model: WormholeAnchorsModel): string {
-  return serializeCsvTable(csvTableFromRows(model.table, model.anchors, anchorColumnValues));
+  const writeGuaranteedDrop = model.table.header.includes(GUARANTEED_DROP_COLUMN) || model.anchors.some((anchor) => anchor.guaranteedDrop);
+  return serializeCsvTable(csvTableFromRows(model.table, model.anchors, (anchor) => anchorColumnValues(anchor, writeGuaranteedDrop)));
 }
 
 export function anchorVolumes(vocabulary: Vocabulary): string[] {
@@ -137,6 +146,7 @@ export function newWormholeAnchor(anchors: WormholeAnchor[], vocabulary: Vocabul
     unlock: '',
     dropFactions: '',
     dropChance: DEFAULT_ANCHOR_DROP_CHANCE,
+    guaranteedDrop: false,
     marketChance: '',
     price: DEFAULT_ANCHOR_PRICE,
   };

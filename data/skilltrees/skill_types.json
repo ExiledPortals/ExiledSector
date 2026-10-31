@@ -4254,6 +4254,111 @@
 			]
 		},
 		{
+			"id": "shrouded_lens",
+			"name": "Shrouded Lens",
+			"icon": "graphics/icons/shrouded_lens.png",
+			"tier": "NOTABLE",
+			"vanillaHullMod": "shrouded_lens",
+			"itemCost": {
+				"itemId": "shrouded_lens",
+				"quantity": 1
+			},
+			"exclusiveHullMods": [
+				"fragment_swarm"
+			],
+			"phantomHullMods": [
+				"shrouded_lens"
+			],
+			"tags": [
+				"weapons",
+				"req_non_phase_hull"
+			]
+		},
+		{
+			"id": "shrouded_mantle",
+			"name": "Shrouded Mantle",
+			"icon": "graphics/icons/shrouded_mantle.png",
+			"tier": "NOTABLE",
+			"vanillaHullMod": "shrouded_mantle",
+			"itemCost": {
+				"itemId": "shrouded_mantle",
+				"quantity": 1
+			},
+			"exclusiveHullMods": [
+				"fragment_swarm"
+			],
+			"phantomHullMods": [
+				"shrouded_mantle"
+			],
+			"tags": [
+				"hull",
+				"req_non_phase_hull"
+			]
+		},
+		{
+			"id": "shrouded_thunderhead",
+			"name": "Shrouded Thunderhead",
+			"icon": "graphics/icons/shrouded_thunderhead.png",
+			"tier": "NOTABLE",
+			"vanillaHullMod": "shrouded_thunderhead",
+			"itemCost": {
+				"itemId": "shrouded_thunderhead",
+				"quantity": 1
+			},
+			"exclusiveHullMods": [
+				"fragment_swarm"
+			],
+			"phantomHullMods": [
+				"shrouded_thunderhead"
+			],
+			"tags": [
+				"weapons",
+				"req_non_phase_hull"
+			]
+		},
+		{
+			"id": "shrouded_lens_damage",
+			"name": "Shrouded Lens Damage",
+			"icon": "graphics/icons/shrouded_lens_damage.png",
+			"effects": [
+				{
+					"effect": "SHROUDED_LENS_DAMAGE_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"weapons"
+			]
+		},
+		{
+			"id": "rift_lightning_damage",
+			"name": "Rift Lightning Damage",
+			"icon": "graphics/icons/rift_lightning_damage.png",
+			"effects": [
+				{
+					"effect": "RIFT_LIGHTNING_DAMAGE_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"weapons"
+			]
+		},
+		{
+			"id": "hungering_rift_healing",
+			"name": "Hungering Rift Healing",
+			"icon": "graphics/icons/hungering_rift_healing.png",
+			"effects": [
+				{
+					"effect": "HUNGERING_RIFT_HEALING_PERCENT",
+					"magnitude": 10
+				}
+			],
+			"tags": [
+				"repair"
+			]
+		},
+		{
 			"id": "chronos_adaptability",
 			"name": "Chronos Rhythms",
 			"icon": "graphics/icons/rat_skill_time.png",

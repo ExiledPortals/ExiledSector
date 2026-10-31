@@ -80,6 +80,7 @@ import exiledsector.skills.npc.NpcFocus;
 import exiledsector.skills.npc.NpcLevelCaps;
 import exiledsector.skills.radius.NodeRadii;
 import exiledsector.skills.tags.AreaToggles;
+import exiledsector.skills.unlock.DwellerEncounter;
 import exiledsector.skills.unlock.NodeGates;
 import exiledsector.skills.unlock.RemnantEncounter;
 import exiledsector.skills.unlock.ThreatEncounter;
@@ -226,6 +227,7 @@ public final class SkillTreeDomain implements ExiledSectorDomain {
         SectorAPI sector = Global.getSector();
         sector.addTransientListener(new RemnantEncounter.BattleListener());
         sector.addTransientListener(new ThreatEncounter.BattleListener());
+        sector.addTransientListener(new DwellerEncounter.BattleListener());
         if (LostSectorCompat.isModEnabled()) {
             sector.getListenerManager().addListener(new LostSectorUnlocks.LocationListener(), true);
         }

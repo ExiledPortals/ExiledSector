@@ -68,6 +68,7 @@ function anchor(overrides: Partial<WormholeAnchor>): WormholeAnchor {
     unlock: '',
     dropFactions: '',
     dropChance: '0.06',
+    guaranteedDrop: false,
     marketChance: '',
     price: '',
     ...overrides,
@@ -101,6 +102,17 @@ describe('wormhole anchors', () => {
     expect(serializeWormholeAnchorsCsv(model)).toBe(
       'id,volume,exit_node,name,icon,color,crest_faction,rarity,description,unlock,drop_factions,drop_chance,market_chance,price,note\nold,pirate,pirate_wormhole_3,Old,,,,1,,,,0.06,,,keep me\n',
     );
+  });
+
+  it('reads the guaranteed drop flag and only adds its column once an anchor sets it', () => {
+    const flagged = 'id,volume,exit_node,name,icon,color,crest_faction,rarity,description,unlock,drop_factions,drop_chance,market_chance,price,guaranteed_drop\nold,pirate,pirate_wormhole_2,Old,,,,1,,,,0.06,,,true\n';
+    const model = parseWormholeAnchorsCsv(CSV);
+
+    expect(parseWormholeAnchorsCsv(flagged).anchors[0].guaranteedDrop).toBe(true);
+    expect(serializeWormholeAnchorsCsv(parseWormholeAnchorsCsv(flagged))).toBe(flagged);
+    expect(model.anchors.map((parsed) => parsed.guaranteedDrop)).toEqual([false, false]);
+    model.anchors[1].guaranteedDrop = true;
+    expect(serializeWormholeAnchorsCsv(model).split('\r\n').map((line) => line.split(',').at(-1))).toEqual(['guaranteed_drop', '', 'true', '']);
   });
 
   it('offers only the wormhole exit nodes of the volume as exits, and every region but the core as a volume', () => {

@@ -7,8 +7,10 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
+import com.fs.starfarer.api.impl.combat.dweller.AssayingRiftEffect;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
 import org.junit.jupiter.api.AfterEach;
@@ -77,5 +79,15 @@ class DefenseSkillEffectTest {
 
         assertEquals(0.81f, dModEffect.getModifiedValue(), EPSILON);
         assertTrue(DefenseSkillEffect.DMOD_EFFECT_MULT_PER_DMOD.lowerIsBetter());
+    }
+
+    @Test
+    void hungeringRiftHealingAddsPercentagePointsOfTheRiftsHeal() {
+        StatBonus healShare = new StatBonus();
+        when(dynamic.getMod(AssayingRiftEffect.HUNGERING_RIFT_HEAL_MOD_HUMAN_SHIPS)).thenReturn(healShare);
+
+        DefenseSkillEffect.HUNGERING_RIFT_HEALING_PERCENT.apply(stats, "mod_id", 25f);
+
+        assertEquals(0.25f, healShare.computeEffective(0f), EPSILON);
     }
 }

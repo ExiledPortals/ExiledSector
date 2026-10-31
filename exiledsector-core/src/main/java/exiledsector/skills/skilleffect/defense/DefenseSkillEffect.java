@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
+import com.fs.starfarer.api.impl.combat.dweller.AssayingRiftEffect;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipFacts;
@@ -239,6 +240,12 @@ public enum DefenseSkillEffect implements BackedSkillEffect {
             TerminalDescentListener::new),
     TERMINAL_DESCENT_SHIELD_DAMAGE_TAKEN_PERCENT(TerminalDescentListener.SHIELD_DAMAGE_TAKEN_PERCENT_KEY, TerminalDescentListener.class,
             TerminalDescentListener::new),
+    HUNGERING_RIFT_HEALING_PERCENT {
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
+            stats.getDynamic().getMod(AssayingRiftEffect.HUNGERING_RIFT_HEAL_MOD_HUMAN_SHIPS).modifyFlat(modId, magnitude / 100f);
+        }
+    },
     DISPLACER_FAILSAFE_HULL_PERCENT(DisplacerFailsafeListener.HULL_PERCENT_KEY, DisplacerFailsafeListener.class, DisplacerFailsafeListener::new) {
         @Override
         public StyledText description(float magnitude) {

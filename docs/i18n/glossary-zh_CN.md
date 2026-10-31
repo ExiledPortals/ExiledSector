@@ -47,6 +47,9 @@ The zh_CN catalogue was drafted by Claude and still needs review by a native spe
 | Hegemony / Tri-Tachyon / Luddic / Sindrian Diktat / Persean League / pirates | 霸主 / 速子科技 / 卢德 / 辛达强权 / 英仙座联盟 / 海盗 | Faction names; check against the official localisation |
 | Remnant | 残存者 | Check against the official localisation |
 | [REDACTED] | [数据删除] | Stands in for Remnant wherever it shows before the player has fought them |
+| Shrouded / Shrouded Dweller | 幽影 / 幽影栖居者 | Check against the official localisation |
+| Shrouded Lens / Mantle / Thunderhead | 幽影透镜 / 幽影斗篷 / 幽影雷暴云 | Vanilla hullmod names; check against the official localisation |
+| Rift Lightning / Hungering Rift | 裂隙闪电 / 饥渴裂隙 | Vanilla weapon names; check against the official localisation |
 
 ## Mod terms
 

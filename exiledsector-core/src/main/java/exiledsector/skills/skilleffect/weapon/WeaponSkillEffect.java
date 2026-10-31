@@ -217,7 +217,10 @@ public enum WeaponSkillEffect implements BackedSkillEffect {
     SOLARIS_OVERDRIVE_PROJECTILE_SPEED_PERCENT(SolarisOverdriveListener.PROJECTILE_SPEED_PERCENT_KEY, SolarisOverdriveListener.class,
             SolarisOverdriveListener::new),
     SOLARIS_OVERDRIVE_RATE_OF_FIRE_PERCENT(SolarisOverdriveListener.RATE_OF_FIRE_PERCENT_KEY, SolarisOverdriveListener.class,
-            SolarisOverdriveListener::new);
+            SolarisOverdriveListener::new),
+    SHROUDED_LENS_DAMAGE_PERCENT(ShroudedDamageListener.LENS_DAMAGE_PERCENT_KEY, ShroudedDamageListener.class, ShroudedDamageListener::new),
+    RIFT_LIGHTNING_DAMAGE_PERCENT(ShroudedDamageListener.RIFT_LIGHTNING_DAMAGE_PERCENT_KEY, ShroudedDamageListener.class,
+            ShroudedDamageListener::new);
 
     private static final String LARGE_BALLISTIC_OP_COST_KEY = "large_ballistic_mod";
     private static final List<String> SMALL_WEAPON_OP_COST_KEYS = List.of(Stats.SMALL_BALLISTIC_MOD, Stats.SMALL_ENERGY_MOD, Stats.SMALL_MISSILE_MOD);

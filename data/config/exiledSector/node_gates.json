@@ -57,6 +57,14 @@
 			}
 		]
 	},
+	"gate_dweller_fought": {
+		"anchors": "withheld",
+		"unlockConditions": [
+			{
+				"type": "dwellerFought"
+			}
+		]
+	},
 	"gate_blood_trail_defeated": {
 		"unlockConditions": [
 			{

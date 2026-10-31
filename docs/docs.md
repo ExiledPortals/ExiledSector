@@ -164,6 +164,13 @@ itself. Each target strips its queued armor evenly over 5 seconds (`Disintegrati
 The rate of fire bonus is ship-wide, and `ThermoAcceleratorListener` stops every hardpoint weapon from firing
 each frame, so only turrets benefit. Decorative and system slots are left alone.
 
+### Shrouded damage and healing
+
+Shrouded Lens Damage and Rift Lightning Damage raise the damage of explosions the ship sources, picked out by their
+vanilla sound set; the Lens also needs vanilla's no-friendly-fire collision class, which keeps Abyssal Glare out
+(`ShroudedDamageListener`). Hungering Rift Healing adds percentage points to vanilla's `hungering_rift_heal_mod`, the
+share of a Hungering Rift heal the ship receives.
+
 ### Missile snare
 
 `MISSILE_SNARE_TOP_SPEED_PERCENT` multiplies the top speed of an enemy ship hit by this ship's missiles for 2 seconds,
@@ -380,7 +387,8 @@ and opens on `anchorFound` once any of its anchors reaches the player (`AnchorFi
 Threat battles add one area anchor to their loot once per save (`GateRewardAnchors`). NPC anchors ignore all of
 this, and open wormholes stay open.
 
-An anchor whose factions are all missing, or whose playable factions Nexerelin has all eliminated, drops from the
+An anchor with `guaranteed_drop` in `wormhole_anchors.csv` drops from every won battle that defeats one of its
+factions instead of rolling its chance (`FactionFleetDrops`); the Shrouded anchor does this for Dweller fleets. An anchor whose factions are all missing, or whose playable factions Nexerelin has all eliminated, drops from the
 salvage and tech mining sites in `anchor_salvage.csv` instead (`FactionlessAnchors`).
 
 ### Corruption

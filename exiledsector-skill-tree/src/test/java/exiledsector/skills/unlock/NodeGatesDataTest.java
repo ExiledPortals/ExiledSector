@@ -40,6 +40,7 @@ class NodeGatesDataTest {
     private static final String EXISTENTIAL_THREAT_GATE = "gate_existential_threat_defeated";
     private static final String THREAT_GATE = "gate_threat_fought";
     private static final String REMNANT_GATE = "gate_remnant_fought";
+    private static final String DWELLER_GATE = "gate_dweller_fought";
     private static final String FROZEN_HEART_GATE = "gate_frozen_heart_visited";
     private static final String PROTOTYPE_GATE = "gate_ancient_prototype_found";
     private static final String CANDLES_GRACE_NODE_ID = "gravitational_drag_1";
@@ -108,6 +109,14 @@ class NodeGatesDataTest {
     @Test
     void everyThreatNodeAndTheWormholeIntoItWaitUntilTheThreatIsFought() {
         assertTrue(ungatedIn("threat", THREAT_GATE).isEmpty(), "Threat nodes without the gate: " + ungatedIn("threat", THREAT_GATE));
+    }
+
+    @Test
+    void everyShroudedNodeAndTheWormholeIntoItWaitUntilTheDwellersAreFought() {
+        assertEquals(List.of(UnlockConditionType.DWELLER_FOUGHT),
+                NodeGates.all().get(DWELLER_GATE).stream().map(UnlockCondition::getType).toList());
+        assertTrue(ungatedIn(SkillTags.SHROUDED_REGION, DWELLER_GATE).isEmpty(),
+                "Shrouded nodes without the gate: " + ungatedIn(SkillTags.SHROUDED_REGION, DWELLER_GATE));
     }
 
     @Test

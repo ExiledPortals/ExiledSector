@@ -184,6 +184,7 @@ export const UNLOCK_CONDITION_LABELS: Record<string, string> = {
   taniaLastStriveCompleted: 'Tania: The Last Strive completed',
   threatFought: 'Player has fought a Threat fleet',
   remnantFought: 'Player has fought a Remnant fleet',
+  dwellerFought: 'Player has fought the Shrouded Dwellers',
 };
 
 export const PARAMETERISED_UNLOCK_CONDITIONS: ReadonlySet<string> = new Set(['blueprint', 'characterStat', 'minShipLevel', 'memoryFlag', 'anchorFound']);

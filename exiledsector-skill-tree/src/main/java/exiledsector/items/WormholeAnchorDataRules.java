@@ -80,6 +80,10 @@ public final class WormholeAnchorDataRules implements ItemDataRules {
             if (!CsvRows.isValidChance(dropChance)) {
                 integrity.error(file, line, definitionId + " has the drop chance \"" + dropChance + "\"; expected a number of 0 or more");
             }
+            String guaranteedDrop = ModCsv.text(row, WormholeAnchorDefinitions.GUARANTEED_DROP_COLUMN);
+            if (!WormholeAnchorDefinitions.isValidGuaranteedDrop(guaranteedDrop)) {
+                integrity.error(file, line, definitionId + " has the guaranteed drop \"" + guaranteedDrop + "\"; expected true, false or blank");
+            }
             String color = ModCsv.text(row, WormholeAnchorDefinitions.COLOR_COLUMN);
             if (!WormholeAnchorDefinitions.isValidColor(color)) {
                 integrity.error(file, line, definitionId + " has the color \"" + color + "\"; expected #RRGGBB or blank");

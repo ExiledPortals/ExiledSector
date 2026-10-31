@@ -19,18 +19,22 @@ public final class FactionFleetDrops {
     static final float DEPLOYMENT_POINTS_PER_CHANCE_STEP = 100f;
     private static final AtomicReference<Map<String, Map<String, Source>>> SOURCES_BY_GROUP = new AtomicReference<>(Map.of());
 
-    public record Source(String volume, Set<String> extraFactionIds, float chance, boolean anyFaction) {
+    public record Source(String volume, Set<String> extraFactionIds, float chance, boolean anyFaction, boolean guaranteed) {
 
         public Source {
             extraFactionIds = extraFactionIds == null ? Set.of() : Set.copyOf(extraFactionIds);
         }
 
         public static Source forVolume(String volume, Set<String> extraFactionIds, float chancePer100DeploymentPoints) {
-            return new Source(volume, extraFactionIds, chancePer100DeploymentPoints, false);
+            return forVolume(volume, extraFactionIds, chancePer100DeploymentPoints, false);
+        }
+
+        public static Source forVolume(String volume, Set<String> extraFactionIds, float chancePer100DeploymentPoints, boolean guaranteed) {
+            return new Source(volume, extraFactionIds, chancePer100DeploymentPoints, false, guaranteed);
         }
 
         public static Source anyFaction(float chancePer100DeploymentPoints) {
-            return new Source(null, Set.of(), chancePer100DeploymentPoints, true);
+            return new Source(null, Set.of(), chancePer100DeploymentPoints, true, false);
         }
 
         boolean dropsFrom(String factionId) {
@@ -72,6 +76,9 @@ public final class FactionFleetDrops {
         }
         if (!(qualifyingDeploymentPoints > 0f)) {
             return 0f;
+        }
+        if (source.guaranteed()) {
+            return 1f;
         }
         float chance = Math.max(0f, source.chance()) * qualifyingDeploymentPoints / DEPLOYMENT_POINTS_PER_CHANCE_STEP;
         return Math.min(MAX_CHANCE_PER_BATTLE, chance);

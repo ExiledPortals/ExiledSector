@@ -67,8 +67,8 @@
 				"magazines_1",
 				"non_beam_energy_damage_2"
 			],
-			"x": -972,
-			"y": 2100,
+			"x": -1122,
+			"y": 1884,
 			"orbitAnchorId": "anchor_57",
 			"orbitAngle": -147.97741800099922,
 			"tags": [
@@ -338,8 +338,8 @@
 				"ballistic_damage_4",
 				"non_beam_energy_damage_1"
 			],
-			"x": -781,
-			"y": 2019,
+			"x": -931,
+			"y": 1803,
 			"orbitAnchorId": "anchor_57",
 			"orbitAngle": -77.74631840379944,
 			"tags": [
@@ -945,8 +945,8 @@
 				"small_flux_optional_37",
 				"non_beam_energy_damage_1"
 			],
-			"x": -962,
-			"y": 2305,
+			"x": -1112,
+			"y": 2089,
 			"orbitAnchorId": "anchor_57",
 			"orbitAngle": 142.5252930230804,
 			"tags": [
@@ -2848,8 +2848,8 @@
 				"ballistic_damage_5",
 				"magazines_1"
 			],
-			"x": -641,
-			"y": 2165,
+			"x": -791,
+			"y": 1949,
 			"orbitAnchorId": "anchor_57",
 			"orbitAngle": -9.452073371602191,
 			"tags": [
@@ -2863,8 +2863,8 @@
 				"ballistic_damage_4",
 				"small_flux_optional_35"
 			],
-			"x": -716,
-			"y": 2343,
+			"x": -866,
+			"y": 2127,
 			"orbitAnchorId": "anchor_57",
 			"orbitAngle": 55.225593271153066,
 			"tags": [
@@ -7608,6 +7608,282 @@
 			"tags": [
 				"tania"
 			]
+		},
+		{
+			"id": "shrouded_wormhole_1",
+			"type": "wormhole_exit",
+			"connectedTo": [
+				"small_flux_optional_80"
+			],
+			"x": -34386,
+			"y": 26838,
+			"tags": [
+				"shrouded",
+				"gate_dweller_fought"
+			]
+		},
+		{
+			"id": "shrouded_mantle_1",
+			"type": "shrouded_mantle",
+			"connectedTo": [
+				"hungering_rift_healing_1",
+				"hungering_rift_healing_3"
+			],
+			"x": -34613,
+			"y": 27837,
+			"orbitAnchorId": "anchor_82",
+			"orbitAngle": 0,
+			"tags": [
+				"shrouded",
+				"gate_dweller_fought"
+			]
+		},
+		{
+			"id": "hungering_rift_healing_1",
+			"type": "hungering_rift_healing",
+			"connectedTo": [
+				"hungering_rift_healing_2",
+				"shrouded_mantle_1"
+			],
+			"x": -34763,
+			"y": 27687,
+			"orbitAnchorId": "anchor_82",
+			"orbitAngle": 270,
+			"tags": [
+				"shrouded",
+				"gate_dweller_fought"
+			]
+		},
+		{
+			"id": "shrouded_lens_damage_1",
+			"type": "shrouded_lens_damage",
+			"connectedTo": [
+				"shrouded_lens_damage_2",
+				"shrouded_lens_damage_3",
+				"small_flux_optional_103"
+			],
+			"x": -33852,
+			"y": 27854,
+			"orbitAnchorId": "anchor_87",
+			"orbitAngle": 0,
+			"tags": [
+				"shrouded",
+				"gate_dweller_fought"
+			]
+		},
+		{
+			"id": "shrouded_lens_damage_2",
+			"type": "shrouded_lens_damage",
+			"connectedTo": [
+				"shrouded_lens_damage_1",
+				"shrouded_lens_1"
+			],
+			"x": -34002,
+			"y": 27704,
+			"orbitAnchorId": "anchor_87",
+			"orbitAngle": 270,
+			"tags": [
+				"shrouded",
+				"gate_dweller_fought"
+			]
+		},
+		{
+			"id": "shrouded_lens_1",
+			"type": "shrouded_lens",
+			"connectedTo": [
+				"shrouded_lens_damage_2",
+				"shrouded_lens_damage_3"
+			],
+			"x": -34152,
+			"y": 27854,
+			"orbitAnchorId": "anchor_87",
+			"orbitAngle": 180,
+			"tags": [
+				"shrouded",
+				"gate_dweller_fought"
+			]
+		},
+		{
+			"id": "hungering_rift_healing_2",
+			"type": "hungering_rift_healing",
+			"connectedTo": [
+				"hungering_rift_healing_1",
+				"small_flux_optional_81",
+				"hungering_rift_healing_3"
+			],
+			"x": -34913,
+			"y": 27837,
+			"orbitAnchorId": "anchor_82",
+			"orbitAngle": 180,
+			"tags": [
+				"shrouded",
+				"gate_dweller_fought"
+			]
+		},
+		{
+			"id": "rift_lightning_damage_1",
+			"type": "rift_lightning_damage",
+			"connectedTo": [
+				"rift_lightning_damage_2",
+				"small_flux_optional_104",
+				"rift_lightning_damage_3"
+			],
+			"x": -34383,
+			"y": 28337,
+			"orbitAnchorId": "anchor_86",
+			"orbitAngle": 90,
+			"tags": [
+				"shrouded",
+				"gate_dweller_fought"
+			]
+		},
+		{
+			"id": "rift_lightning_damage_2",
+			"type": "rift_lightning_damage",
+			"connectedTo": [
+				"rift_lightning_damage_1",
+				"shrouded_thunderhead_1"
+			],
+			"x": -34533,
+			"y": 28187,
+			"orbitAnchorId": "anchor_86",
+			"orbitAngle": 180,
+			"tags": [
+				"shrouded",
+				"gate_dweller_fought"
+			]
+		},
+		{
+			"id": "shrouded_thunderhead_1",
+			"type": "shrouded_thunderhead",
+			"connectedTo": [
+				"rift_lightning_damage_2",
+				"rift_lightning_damage_3"
+			],
+			"x": -34383,
+			"y": 28037,
+			"orbitAnchorId": "anchor_86",
+			"orbitAngle": 270,
+			"tags": [
+				"shrouded",
+				"gate_dweller_fought"
+			]
+		},
+		{
+			"id": "small_flux_optional_80",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"shrouded_wormhole_1",
+				"small_flux_optional_81",
+				"small_flux_optional_103"
+			],
+			"x": -34386,
+			"y": 27128,
+			"orbitAnchorId": "anchor_85",
+			"orbitAngle": 270,
+			"tags": [
+				"shrouded",
+				"gate_dweller_fought"
+			]
+		},
+		{
+			"id": "small_flux_optional_81",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_80",
+				"small_flux_optional_104",
+				"hungering_rift_healing_2"
+			],
+			"x": -35090,
+			"y": 27832,
+			"orbitAnchorId": "anchor_85",
+			"orbitAngle": 180,
+			"tags": [
+				"shrouded",
+				"gate_dweller_fought"
+			]
+		},
+		{
+			"id": "small_flux_optional_103",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_80",
+				"small_flux_optional_104",
+				"shrouded_lens_damage_1"
+			],
+			"x": -33682,
+			"y": 27832,
+			"orbitAnchorId": "anchor_85",
+			"orbitAngle": 0,
+			"tags": [
+				"shrouded",
+				"gate_dweller_fought"
+			]
+		},
+		{
+			"id": "small_flux_optional_104",
+			"type": "small_flux_optional",
+			"connectedTo": [
+				"small_flux_optional_81",
+				"small_flux_optional_103",
+				"rift_lightning_damage_1"
+			],
+			"x": -34386,
+			"y": 28536,
+			"orbitAnchorId": "anchor_85",
+			"orbitAngle": 90,
+			"tags": [
+				"shrouded",
+				"gate_dweller_fought"
+			]
+		},
+		{
+			"id": "rift_lightning_damage_3",
+			"type": "rift_lightning_damage",
+			"connectedTo": [
+				"rift_lightning_damage_1",
+				"shrouded_thunderhead_1"
+			],
+			"x": -34233,
+			"y": 28187,
+			"orbitAnchorId": "anchor_86",
+			"orbitAngle": 0,
+			"tags": [
+				"shrouded",
+				"gate_dweller_fought"
+			]
+		},
+		{
+			"id": "hungering_rift_healing_3",
+			"type": "hungering_rift_healing",
+			"connectedTo": [
+				"hungering_rift_healing_2",
+				"shrouded_mantle_1"
+			],
+			"x": -34763,
+			"y": 27987,
+			"orbitAnchorId": "anchor_82",
+			"orbitAngle": 90,
+			"tags": [
+				"shrouded",
+				"gate_dweller_fought"
+			]
+		},
+		{
+			"id": "shrouded_lens_damage_3",
+			"type": "shrouded_lens_damage",
+			"connectedTo": [
+				"shrouded_lens_damage_1",
+				"shrouded_lens_1"
+			],
+			"x": -34002,
+			"y": 28004,
+			"orbitAnchorId": "anchor_87",
+			"orbitAngle": 90,
+			"tags": [
+				"shrouded",
+				"gate_dweller_fought"
+			]
 		}
 	],
 	"connectorCurves": [
@@ -8778,20 +9054,20 @@
 		{
 			"a": "ballistic_damage_4",
 			"b": "ballistic_damage_5",
-			"controlX": -653,
-			"controlY": 2265
+			"controlX": -803,
+			"controlY": 2049
 		},
 		{
 			"a": "magazines_1",
 			"b": "non_beam_energy_damage_1",
-			"controlX": -889,
-			"controlY": 2029
+			"controlX": -1039,
+			"controlY": 1813
 		},
 		{
 			"a": "ballistic_damage_4",
 			"b": "magazines_1",
-			"controlX": -689,
-			"controlY": 2071
+			"controlX": -839,
+			"controlY": 1855
 		},
 		{
 			"a": "repair_time_1",
@@ -8964,8 +9240,8 @@
 		{
 			"a": "non_beam_energy_damage_1",
 			"b": "non_beam_energy_damage_2",
-			"controlX": -999,
-			"controlY": 2204
+			"controlX": -1149,
+			"controlY": 1988
 		},
 		{
 			"a": "crew_capacity_flat_6",
@@ -9908,6 +10184,102 @@
 			"b": "small_flux_optional_89",
 			"controlX": -347,
 			"controlY": 4062
+		},
+		{
+			"a": "shrouded_lens_damage_1",
+			"b": "shrouded_lens_damage_2",
+			"controlX": -33896,
+			"controlY": 27748
+		},
+		{
+			"a": "shrouded_lens_1",
+			"b": "shrouded_lens_damage_2",
+			"controlX": -34108,
+			"controlY": 27748
+		},
+		{
+			"a": "rift_lightning_damage_1",
+			"b": "rift_lightning_damage_2",
+			"controlX": -34489,
+			"controlY": 28293
+		},
+		{
+			"a": "rift_lightning_damage_2",
+			"b": "shrouded_thunderhead_1",
+			"controlX": -34489,
+			"controlY": 28081
+		},
+		{
+			"a": "small_flux_optional_80",
+			"b": "small_flux_optional_81",
+			"controlX": -34884,
+			"controlY": 27334
+		},
+		{
+			"a": "small_flux_optional_103",
+			"b": "small_flux_optional_80",
+			"controlX": -33888,
+			"controlY": 27334
+		},
+		{
+			"a": "small_flux_optional_104",
+			"b": "small_flux_optional_81",
+			"controlX": -34884,
+			"controlY": 28330
+		},
+		{
+			"a": "small_flux_optional_103",
+			"b": "small_flux_optional_104",
+			"controlX": -33888,
+			"controlY": 28330
+		},
+		{
+			"a": "hungering_rift_healing_1",
+			"b": "hungering_rift_healing_2",
+			"controlX": -34869,
+			"controlY": 27731
+		},
+		{
+			"a": "hungering_rift_healing_1",
+			"b": "shrouded_mantle_1",
+			"controlX": -34657,
+			"controlY": 27731
+		},
+		{
+			"a": "rift_lightning_damage_1",
+			"b": "rift_lightning_damage_3",
+			"controlX": -34277,
+			"controlY": 28293
+		},
+		{
+			"a": "rift_lightning_damage_3",
+			"b": "shrouded_thunderhead_1",
+			"controlX": -34277,
+			"controlY": 28081
+		},
+		{
+			"a": "hungering_rift_healing_2",
+			"b": "hungering_rift_healing_3",
+			"controlX": -34869,
+			"controlY": 27943
+		},
+		{
+			"a": "hungering_rift_healing_3",
+			"b": "shrouded_mantle_1",
+			"controlX": -34657,
+			"controlY": 27943
+		},
+		{
+			"a": "shrouded_lens_damage_1",
+			"b": "shrouded_lens_damage_3",
+			"controlX": -33896,
+			"controlY": 27960
+		},
+		{
+			"a": "shrouded_lens_1",
+			"b": "shrouded_lens_damage_3",
+			"controlX": -34108,
+			"controlY": 27960
 		}
 	],
 	"hiddenConnectors": [
@@ -10405,8 +10777,8 @@
 		},
 		{
 			"id": "anchor_57",
-			"x": -819,
-			"y": 2195,
+			"x": -969,
+			"y": 1979,
 			"radius": 180
 		},
 		{
@@ -10598,6 +10970,30 @@
 			"x": 0,
 			"y": 18000,
 			"radius": 1204
+		},
+		{
+			"id": "anchor_85",
+			"x": -34386,
+			"y": 27832,
+			"radius": 704
+		},
+		{
+			"id": "anchor_82",
+			"x": -34763,
+			"y": 27837,
+			"radius": 150
+		},
+		{
+			"id": "anchor_86",
+			"x": -34383,
+			"y": 28187,
+			"radius": 150
+		},
+		{
+			"id": "anchor_87",
+			"x": -34002,
+			"y": 27854,
+			"radius": 150
 		}
 	],
 	"decorations": [
@@ -11184,6 +11580,18 @@
 			"rotation": 44,
 			"tags": [
 				"abyss"
+			]
+		},
+		{
+			"kind": "image",
+			"id": "shrouded_maw",
+			"x": -34386,
+			"y": 27832,
+			"width": 620,
+			"height": 458,
+			"imagePath": "graphics/ships/shroud/maw_flat.png",
+			"tags": [
+				"shrouded"
 			]
 		},
 		{

@@ -31,6 +31,7 @@ public final class WormholeAnchorDefinitions {
     static final String EXIT_NODE_COLUMN = "exit_node";
     static final String DROP_FACTIONS_COLUMN = "drop_factions";
     static final String DROP_CHANCE_COLUMN = "drop_chance";
+    static final String GUARANTEED_DROP_COLUMN = "guaranteed_drop";
     static final String MARKET_CHANCE_COLUMN = "market_chance";
     static final String PRICE_COLUMN = "price";
     public static final int DEFAULT_PRICE = 100000;
@@ -102,7 +103,8 @@ public final class WormholeAnchorDefinitions {
             styles.put(definition.id(), style(definition.id(), ModCsv.text(row, COLOR_COLUMN), ModCsv.text(row, CREST_FACTION_COLUMN)));
             markets.put(definition.id(), new AnchorMarket(chance(definition.id(), MARKET_CHANCE_COLUMN, ModCsv.text(row, MARKET_CHANCE_COLUMN)),
                     price(definition.id(), ModCsv.text(row, PRICE_COLUMN))));
-            dropSources.put(definition.id(), FactionFleetDrops.Source.forVolume(volume, dropFactions(ModCsv.text(row, DROP_FACTIONS_COLUMN)), dropChance));
+            dropSources.put(definition.id(), FactionFleetDrops.Source.forVolume(volume, dropFactions(ModCsv.text(row, DROP_FACTIONS_COLUMN)), dropChance,
+                    isGuaranteedDrop(ModCsv.text(row, GUARANTEED_DROP_COLUMN))));
         });
         ItemDefinitions.registerOwnType(ItemType.WORMHOLE_ANCHOR, definitions);
         TARGETS_BY_ID.set(Collections.unmodifiableMap(targets));
@@ -133,6 +135,14 @@ public final class WormholeAnchorDefinitions {
     public static AnchorStyle style(String definitionId) {
         AnchorStyle style = definitionId == null ? null : STYLES_BY_ID.get().get(ItemIdAliases.currentId(definitionId));
         return style == null ? DEFAULT_STYLE : style;
+    }
+
+    static boolean isGuaranteedDrop(String flagText) {
+        return Boolean.parseBoolean(flagText);
+    }
+
+    static boolean isValidGuaranteedDrop(String flagText) {
+        return flagText.isEmpty() || "true".equalsIgnoreCase(flagText) || "false".equalsIgnoreCase(flagText);
     }
 
     static float dropChance(String definitionId, String chanceText) {
