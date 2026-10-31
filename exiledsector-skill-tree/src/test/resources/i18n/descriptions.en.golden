@@ -4804,7 +4804,7 @@ type|tania_rise_from_the_ashes|CAPITAL_SHIP|0	0	Once per battle, the hit that wo
 type|tania_rise_from_the_ashes|CAPITAL_SHIP|1	0	Surviving that hit restores <good>50%</good> of maximum armor to every armor cell.
 type|tania_rise_from_the_ashes|CAPITAL_SHIP|2	0	<good>50%</good> less damage taken for 6 seconds after surviving that hit.
 type-detail|tania_rise_from_the_ashes|CAPITAL_SHIP|0	0	Can't be allocated on phase ships.
-flavour|tania_solaris_overdrive	0	The Aracari's Solaris Phalanx primes thermo-dynamic flux cores until its guns fire without drawing on the grid. A deserter from an Aracari engine room walks the crew through a smaller version, keyed to this ship's own system.
+flavour|tania_solaris_overdrive	0	The Aracari's Solaris Phalanx primes thermo-dynamic flux cores directly linked to weapons, allowing them to fire without drawing from the main grid.. A deserter from an Aracari engine room walks the crew through a smaller version, keyed to this ship's own system.
 type|tania_solaris_overdrive|null|0	0	Weapons cost no flux to fire for <good>4</good> seconds after this ship's system activates, at most once every 60 seconds.
 type|tania_solaris_overdrive|null|1	0	<good>50%</good> increased weapon projectile speed for those seconds.
 type|tania_solaris_overdrive|null|2	0	<good>25%</good> increased weapon rate of fire for those seconds.
