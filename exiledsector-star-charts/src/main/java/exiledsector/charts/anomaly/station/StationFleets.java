@@ -32,13 +32,8 @@ final class StationFleets {
         return managerSeed ^ (SPAWN_SALT * (spawned + 1L));
     }
 
-    static ChartRun liveRun(String runId) {
-        ChartRun run = ChartRuns.currentOrNull();
-        return run != null && run.runId().equals(runId) && run.runState().isLive() ? run : null;
-    }
-
     static CampaignFleetAPI spawn(SectorEntityToken source, Launch launch, String runId, int runTier, int fleetsLost, long fleetSeed) {
-        ChartRun run = liveRun(runId);
+        ChartRun run = ChartRuns.live(runId);
         LocationAPI location = source == null ? null : source.getContainingLocation();
         if (run == null || location == null || !source.isAlive()) {
             return null;

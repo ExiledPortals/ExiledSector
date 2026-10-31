@@ -6,7 +6,6 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.loot.ChartCargoLoot;
-import exiledsector.charts.loot.ChartLoot;
 import exiledsector.charts.loot.ChartVanillaLoot;
 import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.ChartRun;
@@ -43,12 +42,12 @@ public final class ExcavationLoot {
     public static CargoAPI raidCargo(SectorAPI sector, ChartRun run, ExcavationSite site, float share, Random random) {
         ChartGenContext runContext = ChartRunEffects.contextOf(run);
         float quantity = quantityMult(runContext);
-        return ChartCargoLoot.roll(sector, run, contextFor(runContext, site.lean()), ChartLoot.EXCAVATION_SCOPE, ExcavationRules.LOOT_SITE,
+        return ChartCargoLoot.roll(sector, run, contextFor(runContext, site.lean()), ExcavationRules.LOOT_SCOPE, ExcavationRules.LOOT_SITE,
                 ExcavationRules.lootSteps(run.tier(), quantity) * share, ExcavationRules.itemMult(quantity) * share, random);
     }
 
     public static void addToFleet(CampaignFleetAPI fleet, DropType lean, ChartGenContext runContext, int tier) {
-        ChartVanillaLoot.SiteDrops drops = ChartVanillaLoot.drops(ChartLoot.EXCAVATION_SCOPE, tier,
+        ChartVanillaLoot.SiteDrops drops = ChartVanillaLoot.drops(ExcavationRules.LOOT_SCOPE, tier,
                 ExcavationRules.lootSteps(tier, quantityMult(runContext)), contextFor(runContext, lean));
         drops.random().forEach(fleet::addDropRandom);
         drops.value().forEach(fleet::addDropValue);

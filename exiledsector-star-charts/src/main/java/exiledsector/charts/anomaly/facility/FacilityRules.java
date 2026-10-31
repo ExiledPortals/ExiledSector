@@ -5,6 +5,7 @@ import exiledsector.charts.generation.ChartTiers;
 public final class FacilityRules {
 
     public static final String LOOT_SITE = "exiledSector_chart_pre_collapse_facility";
+    public static final String LOOT_SCOPE = "pre_collapse_facility";
     static final float GUARD_SIZE_SHARE = 0.75f;
     static final float LOOT_STEPS = 1.5f;
     static final float LOOT_STEPS_PER_TIER = 0.35f;

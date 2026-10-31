@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.generation.ChartGenContext;
@@ -22,9 +23,9 @@ import java.util.Random;
 public final class StormFront implements ChartAnomaly {
 
     public static final String ANOMALY_ID = "storm_front";
-    public static final String LOOT_KEY = ANOMALY_ID + ".loot";
-    public static final String STRIKE_KEY = ANOMALY_ID + ".strikes";
-    public static final String SIZE_KEY = ANOMALY_ID + ".size";
+    public static final String LOOT_KEY = ChartEffect.CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT.anomalyTuningKey();
+    public static final String STRIKE_KEY = ChartEffect.CHART_STORM_STRIKE_FREQUENCY_PERCENT.anomalyTuningKey();
+    public static final String SIZE_KEY = ChartEffect.CHART_STORM_FRONT_SIZE_PERCENT.anomalyTuningKey();
     public static final String TERRAIN_ID = "exiledSector_chart_storm_front";
     public static final String FRONT_TAG = ChartIds.PREFIX + "storm_front";
     public static final StormFront INSTANCE = new StormFront();
@@ -89,6 +90,11 @@ public final class StormFront implements ChartAnomaly {
             }
         }
         return false;
+    }
+
+    @Override
+    public void clearFrom(CampaignFleetAPI fleet) {
+        StormFrontTerrainPlugin.liftFrom(fleet);
     }
 
     @Override

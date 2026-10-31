@@ -76,7 +76,7 @@ public final class ChartRunActions {
         if (!AtlasOpening.check(generator, state, cell, chart).allowsOpening()) {
             return OpenResult.NOT_REACHABLE;
         }
-        OpenResult playerBlocker = playerBlocker(sector);
+        OpenResult playerBlocker = fleetBlocker(sector.getPlayerFleet());
         if (playerBlocker != null) {
             return playerBlocker;
         }
@@ -121,7 +121,7 @@ public final class ChartRunActions {
         if (ChartRuns.hasRun()) {
             return OpenResult.RUN_EXISTS;
         }
-        OpenResult playerBlocker = playerBlocker(sector);
+        OpenResult playerBlocker = fleetBlocker(sector.getPlayerFleet());
         if (playerBlocker != null) {
             return playerBlocker;
         }
@@ -167,8 +167,7 @@ public final class ChartRunActions {
         return nearest;
     }
 
-    private static OpenResult playerBlocker(SectorAPI sector) {
-        CampaignFleetAPI playerFleet = sector.getPlayerFleet();
+    public static OpenResult fleetBlocker(CampaignFleetAPI playerFleet) {
         if (playerFleet == null || playerFleet.getContainingLocation() == null) {
             return OpenResult.NO_PLAYER_FLEET;
         }
@@ -234,9 +233,5 @@ public final class ChartRunActions {
         }
         LocationAPI hyperspace = sector.getHyperspace();
         return hyperspace == null ? null : hyperspace.createToken(0f, 0f);
-    }
-
-    public static boolean collapseOuter(ChartRun run) {
-        return run.collapseOuter();
     }
 }

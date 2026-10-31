@@ -10,6 +10,7 @@ import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.content.ChartSites;
@@ -22,9 +23,9 @@ import java.util.Random;
 public final class DerelictForge implements ChartAnomaly {
 
     public static final String ANOMALY_ID = "derelict_forge";
-    public static final String EXTRA_PROGRAMS_KEY = ANOMALY_ID + ".extraPrograms";
-    public static final String EXTRA_RUNS_KEY = ANOMALY_ID + ".extraRuns";
-    public static final String COST_KEY = ANOMALY_ID + ".cost";
+    public static final String EXTRA_PROGRAMS_KEY = ChartEffect.CHART_FORGE_PROGRAMS.anomalyTuningKey();
+    public static final String EXTRA_RUNS_KEY = ChartEffect.CHART_FORGE_RUNS.anomalyTuningKey();
+    public static final String COST_KEY = ChartEffect.CHART_FORGE_COST_PERCENT.anomalyTuningKey();
     public static final String FORGE_TAG = ChartIds.PREFIX + "derelict_forge";
     public static final DerelictForge INSTANCE = new DerelictForge();
     static final String ENTITY_TYPE = ChartIds.PREFIX + "derelict_forge_station";

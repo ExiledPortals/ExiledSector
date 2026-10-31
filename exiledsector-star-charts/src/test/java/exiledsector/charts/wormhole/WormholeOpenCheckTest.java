@@ -1,4 +1,4 @@
-package exiledsector.ui.chart;
+package exiledsector.charts.wormhole;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
@@ -13,13 +13,12 @@ import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.StarChartSettings;
-import exiledsector.charts.wormhole.WormholeGateway;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemStore;
 import exiledsector.items.StarChartFixtures;
-import exiledsector.ui.chart.WormholeOpenCheck.Blocker;
+import exiledsector.charts.wormhole.WormholeOpenCheck.Blocker;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,7 +54,7 @@ class WormholeOpenCheckTest {
 
     @Test
     void aStoredChartOpensWhenNothingStandsInTheWay() {
-        Blocker blocker = WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet);
+        Blocker blocker = WormholeOpenCheck.evaluate(chart, store, true, playerFleet);
 
         assertEquals(Blocker.NONE, blocker);
         assertTrue(blocker.allowsOpening());
@@ -65,12 +64,12 @@ class WormholeOpenCheckTest {
     void openingNeedsAChartThatIsReallyInTheChartStore() {
         Item loose = ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 5L, 3).preview();
 
-        assertEquals(Blocker.NO_CHART, WormholeOpenCheck.evaluate(null, store, true, false, playerFleet));
-        assertEquals(Blocker.NO_CHART, WormholeOpenCheck.evaluate(loose, store, true, false, playerFleet));
-        assertEquals(Blocker.NO_CHART, WormholeOpenCheck.evaluate(chart, new ItemStore(), true, false, playerFleet));
-        assertEquals(Blocker.NO_CHART, WormholeOpenCheck.evaluate(chart, null, true, false, playerFleet));
+        assertEquals(Blocker.NO_CHART, WormholeOpenCheck.evaluate(null, store, true, playerFleet));
+        assertEquals(Blocker.NO_CHART, WormholeOpenCheck.evaluate(loose, store, true, playerFleet));
+        assertEquals(Blocker.NO_CHART, WormholeOpenCheck.evaluate(chart, new ItemStore(), true, playerFleet));
+        assertEquals(Blocker.NO_CHART, WormholeOpenCheck.evaluate(chart, null, true, playerFleet));
         store.remove(chart);
-        assertEquals(Blocker.NO_CHART, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet));
+        assertEquals(Blocker.NO_CHART, WormholeOpenCheck.evaluate(chart, store, true, playerFleet));
     }
 
     private static SectorEntityToken colony(boolean playerOwned, Boolean gatewayFunctional) {
@@ -88,37 +87,37 @@ class WormholeOpenCheckTest {
 
     @Test
     void withoutTheDevSwitchTheFleetMustBeDockedAtAPlayerColonyWithAWorkingGateway() {
-        assertEquals(Blocker.NO_GATEWAY, WormholeOpenCheck.evaluate(chart, store, false, false, playerFleet));
-        assertEquals(Blocker.NO_GATEWAY, WormholeOpenCheck.evaluate(chart, store, false, false, playerFleet, mock(SectorEntityToken.class)));
-        assertEquals(Blocker.NO_GATEWAY, WormholeOpenCheck.evaluate(chart, store, false, false, playerFleet, colony(true, null)));
-        assertEquals(Blocker.NO_GATEWAY, WormholeOpenCheck.evaluate(chart, store, false, false, playerFleet, colony(false, true)));
-        assertEquals(Blocker.GATEWAY_INACTIVE, WormholeOpenCheck.evaluate(chart, store, false, false, playerFleet, colony(true, false)));
-        assertEquals(Blocker.NONE, WormholeOpenCheck.evaluate(chart, store, false, false, playerFleet, colony(true, true)));
+        assertEquals(Blocker.NO_GATEWAY, WormholeOpenCheck.evaluate(chart, store, false, playerFleet));
+        assertEquals(Blocker.NO_GATEWAY, WormholeOpenCheck.evaluate(chart, store, false, playerFleet, mock(SectorEntityToken.class)));
+        assertEquals(Blocker.NO_GATEWAY, WormholeOpenCheck.evaluate(chart, store, false, playerFleet, colony(true, null)));
+        assertEquals(Blocker.NO_GATEWAY, WormholeOpenCheck.evaluate(chart, store, false, playerFleet, colony(false, true)));
+        assertEquals(Blocker.GATEWAY_INACTIVE, WormholeOpenCheck.evaluate(chart, store, false, playerFleet, colony(true, false)));
+        assertEquals(Blocker.NONE, WormholeOpenCheck.evaluate(chart, store, false, playerFleet, colony(true, true)));
         assertFalse(Blocker.NO_GATEWAY.allowsOpening());
         assertFalse(Blocker.GATEWAY_INACTIVE.allowsOpening());
     }
 
     @Test
     void theDevSwitchOpensAnywhereWithoutAGateway() {
-        assertEquals(Blocker.NONE, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet, colony(true, false)));
-        assertEquals(Blocker.NONE, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet));
+        assertEquals(Blocker.NONE, WormholeOpenCheck.evaluate(chart, store, true, playerFleet, colony(true, false)));
+        assertEquals(Blocker.NONE, WormholeOpenCheck.evaluate(chart, store, true, playerFleet));
     }
 
     @Test
     void aWorkingGatewayNeverOverridesTheOtherBlockers() {
         SectorEntityToken gatewayColony = colony(true, true);
 
-        assertEquals(Blocker.RUN_OPEN, WormholeOpenCheck.evaluate(chart, store, false, true, playerFleet, gatewayColony));
+        assertEquals(Blocker.IN_FLEET_ENCOUNTER, WormholeOpenCheck.evaluate(chart, store, false, playerFleet, mock(CampaignFleetAPI.class)));
         when(hyperspace.hasTag(ChartIds.SYSTEM_TAG)).thenReturn(true);
-        assertEquals(Blocker.IN_SYSTEM, WormholeOpenCheck.evaluate(chart, store, false, false, playerFleet, gatewayColony));
+        assertEquals(Blocker.IN_SYSTEM, WormholeOpenCheck.evaluate(chart, store, false, playerFleet, gatewayColony));
     }
 
     @Test
     void switchingStarChartsOffBlocksOpeningBeforeAnythingElse() {
         StarChartSettings.setEnabledForTests(false);
         try {
-            assertEquals(Blocker.DISABLED, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet, colony(true, true)));
-            assertEquals(Blocker.DISABLED, WormholeOpenCheck.evaluate(null, store, true, true, playerFleet));
+            assertEquals(Blocker.DISABLED, WormholeOpenCheck.evaluate(chart, store, true, playerFleet, colony(true, true)));
+            assertEquals(Blocker.DISABLED, WormholeOpenCheck.evaluate(null, store, true, playerFleet));
             assertFalse(Blocker.DISABLED.allowsOpening());
         } finally {
             StarChartSettings.setEnabledForTests(StarChartSettings.DEFAULT_ENABLED);
@@ -126,20 +125,15 @@ class WormholeOpenCheckTest {
     }
 
     @Test
-    void anOpenRunBlocksOpening() {
-        assertEquals(Blocker.RUN_OPEN, WormholeOpenCheck.evaluate(chart, store, true, true, playerFleet));
-    }
-
-    @Test
     void theFleetMustBeOutsideASystemAndNotMidJump() {
-        assertEquals(Blocker.NO_FLEET, WormholeOpenCheck.evaluate(chart, store, true, false, null));
+        assertEquals(Blocker.NO_FLEET, WormholeOpenCheck.evaluate(chart, store, true, null));
         when(playerFleet.isInHyperspaceTransition()).thenReturn(true);
-        assertEquals(Blocker.IN_TRANSITION, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet));
+        assertEquals(Blocker.IN_TRANSITION, WormholeOpenCheck.evaluate(chart, store, true, playerFleet));
         when(playerFleet.isInHyperspaceTransition()).thenReturn(false);
         when(hyperspace.hasTag(ChartIds.SYSTEM_TAG)).thenReturn(true);
-        assertEquals(Blocker.IN_SYSTEM, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet));
+        assertEquals(Blocker.IN_SYSTEM, WormholeOpenCheck.evaluate(chart, store, true, playerFleet));
         when(playerFleet.getContainingLocation()).thenReturn(null);
-        assertEquals(Blocker.NO_FLEET, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet));
+        assertEquals(Blocker.NO_FLEET, WormholeOpenCheck.evaluate(chart, store, true, playerFleet));
     }
 
     @Test
@@ -147,11 +141,11 @@ class WormholeOpenCheckTest {
         CampaignFleetAPI otherFleet = mock(CampaignFleetAPI.class);
         SectorEntityToken station = mock(SectorEntityToken.class);
 
-        assertEquals(Blocker.IN_FLEET_ENCOUNTER, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet, otherFleet));
+        assertEquals(Blocker.IN_FLEET_ENCOUNTER, WormholeOpenCheck.evaluate(chart, store, true, playerFleet, otherFleet));
         assertFalse(Blocker.IN_FLEET_ENCOUNTER.allowsOpening());
-        assertEquals(Blocker.NONE, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet, station));
-        assertEquals(Blocker.NONE, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet, playerFleet));
-        assertEquals(Blocker.NONE, WormholeOpenCheck.evaluate(chart, store, true, false, playerFleet, null));
+        assertEquals(Blocker.NONE, WormholeOpenCheck.evaluate(chart, store, true, playerFleet, station));
+        assertEquals(Blocker.NONE, WormholeOpenCheck.evaluate(chart, store, true, playerFleet, playerFleet));
+        assertEquals(Blocker.NONE, WormholeOpenCheck.evaluate(chart, store, true, playerFleet, null));
     }
 
     @Test
@@ -171,20 +165,19 @@ class WormholeOpenCheckTest {
     }
 
     @Test
-    void theLiveCheckReadsTheSettingTheRunAndThePlayerFleet() {
+    void theLiveCheckReadsTheSettingAndThePlayerFleetButIgnoresAnOpenRun() {
         try (MockSector mockSector = new MockSector();
              MockedStatic<LunaSettings> lunaMock = Mockito.mockStatic(LunaSettings.class)) {
             when(mockSector.sector.getPlayerFleet()).thenReturn(playerFleet);
             lunaMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.OPEN_ANYWHERE_FIELD_ID)).thenReturn(null);
-            assertEquals(Blocker.NO_GATEWAY, WormholeOpenCheck.current(mockSector.sector, store, chart), "the dev switch defaults to off");
+            assertEquals(Blocker.NO_GATEWAY, WormholeOpenCheck.replacingRun(mockSector.sector, store, chart), "the dev switch defaults to off");
 
             ChartRuns.store(new ChartRun("busy", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1));
-            assertEquals(Blocker.RUN_OPEN, WormholeOpenCheck.current(mockSector.sector, store, chart));
-            assertEquals(Blocker.NO_GATEWAY, WormholeOpenCheck.replacingRun(mockSector.sector, store, chart), "the atlas replaces an open run");
+            assertEquals(Blocker.NO_GATEWAY, WormholeOpenCheck.replacingRun(mockSector.sector, store, chart), "an open run is replaced");
             ChartRuns.delete("busy");
 
             lunaMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.OPEN_ANYWHERE_FIELD_ID)).thenReturn(true);
-            assertEquals(Blocker.NONE, WormholeOpenCheck.current(mockSector.sector, store, chart));
+            assertEquals(Blocker.NONE, WormholeOpenCheck.replacingRun(mockSector.sector, store, chart));
         }
     }
 }

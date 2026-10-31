@@ -189,7 +189,6 @@
     "chart.ui.bench.empty": "点击星图仓库中的星图即可将其载入星图装置。载入期间它仍留在仓库中。",
     "chart.ui.open.blocked.disabled": "星图已在LunaLib设置中关闭。",
     "chart.ui.open.blocked.no_chart": "选择一张星图以开启其虫洞。",
-    "chart.ui.open.blocked.run_open": "已有一次星图探索正在进行。请先完成或使其坍缩，再开启新的虫洞。",
     "chart.ui.open.blocked.no_fleet": "找不到你的舰队。",
     "chart.ui.open.blocked.in_transition": "你的舰队正在跃迁。请等它抵达。",
     "chart.ui.open.blocked.in_system": "你的舰队正在测绘星域内。请先离开。",

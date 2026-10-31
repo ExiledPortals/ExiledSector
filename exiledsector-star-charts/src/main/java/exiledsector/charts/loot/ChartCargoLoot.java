@@ -10,6 +10,7 @@ import exiledsector.effects.ItemLootListener;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.ItemType;
 import exiledsector.items.ItemUnlock;
+import exiledsector.loot.LootModifiers;
 
 import java.util.List;
 import java.util.Random;
@@ -23,8 +24,8 @@ public final class ChartCargoLoot {
         if (!(itemMult > 0f)) {
             return ItemDrops.SiteLoot.NONE;
         }
-        ItemDrops.SiteLoot items = ItemDrops.rollSite(siteId, random, context.itemChances().scaled(itemMult),
-                context.dropMult(DropType.FEEDSTOCK) * itemMult, context.dropMult(DropType.CURRENCY) * itemMult,
+        LootModifiers modifiers = context.lootModifiers(itemMult);
+        ItemDrops.SiteLoot items = ItemDrops.rollSite(siteId, random, modifiers.itemChances(), modifiers.feedstockMult(), modifiers.currencyMult(),
                 ItemUnlock.available(ItemType.HULL_ITEM, sector));
         ChartDrops.Loot charts = ChartDrops.roll(ChartDrops.Source.SYSTEM_SALVAGE, run.tier(), ChartDrops.Mults.of(context, itemMult), random);
         return items.plus(charts.charts(), List.of(), charts.materials());

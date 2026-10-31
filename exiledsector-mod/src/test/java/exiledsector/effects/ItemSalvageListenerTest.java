@@ -155,6 +155,7 @@ class ItemSalvageListenerTest {
             StarSystemAPI system = mock(StarSystemAPI.class);
             when(system.hasTag(ChartIds.SYSTEM_TAG)).thenReturn(true);
             when(system.getTags()).thenReturn(List.of(ChartIds.SYSTEM_TAG, ChartIds.runTag("salvageRun")));
+            when(system.getOptionalUniqueId()).thenReturn(ChartIds.systemId("salvageRun"));
             SectorEntityToken station = site("station_research", null);
             when(station.getContainingLocation()).thenReturn(system);
             CargoAPI loot = mock(CargoAPI.class);

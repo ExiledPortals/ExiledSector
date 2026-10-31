@@ -104,6 +104,11 @@ public final class ChartDrops {
                     context.dropMult(DropType.CATALYST) * scale);
         }
 
+        public static Mults ofReward(ChartGenContext context) {
+            return new Mults(context.rewardDropMult(DropType.STAR_CHART), context.rewardDropMult(DropType.CURRENCY),
+                    context.rewardDropMult(DropType.CATALYST));
+        }
+
         boolean any() {
             return chart > 0f || currency > 0f || catalyst > 0f;
         }
@@ -267,12 +272,11 @@ public final class ChartDrops {
         return Math.min(rule.maxTier(), ChartTiers.clamp(ChartTiers.LOWEST_TIER + steps));
     }
 
-    public static Loot forRunReward(ChartRun run, float rewardMult, Random random) {
+    public static Loot forRunReward(ChartRun run, Random random) {
         if (run == null) {
             return Loot.NONE;
         }
-        float catalystMult = rewardMult * Math.max(0f, 1f + ChartRunEffects.contextOf(run).dropPercent(DropType.CATALYST) / ChartGenContext.PERCENT);
-        return roll(Source.RUN_REWARD, run.tier(), new Mults(rewardMult, rewardMult, catalystMult), random);
+        return roll(Source.RUN_REWARD, run.tier(), Mults.ofReward(ChartRunEffects.contextOf(run)), random);
     }
 
     public static Loot forBattle(LocationAPI battleLocation, float difficultyScaledDeploymentPoints, int highestDefeatedLevel,
@@ -294,7 +298,7 @@ public final class ChartDrops {
 
     public static Loot forSalvage(SectorAPI sector, LocationAPI salvageLocation, Random random) {
         if (isSystem(salvageLocation)) {
-            return forSystem(Source.SYSTEM_SALVAGE, liveSystemRun(salvageLocation), random);
+            return forSystem(Source.SYSTEM_SALVAGE, ChartRuns.liveIn(salvageLocation), random);
         }
         return roll(Source.SALVAGE, tierForStrength(Source.SALVAGE, playerLevel(sector)), 1f, random);
     }
@@ -318,22 +322,11 @@ public final class ChartDrops {
     }
 
     public static ChartGenContext liveContextAt(LocationAPI location) {
-        ChartRun run = liveSystemRun(location);
+        ChartRun run = ChartRuns.liveIn(location);
         return run == null ? LootContexts.global() : ChartRunEffects.contextOf(run);
     }
 
     static boolean isSystem(LocationAPI location) {
         return location instanceof StarSystemAPI system && system.hasTag(ChartIds.SYSTEM_TAG);
-    }
-
-    static ChartRun liveSystemRun(LocationAPI location) {
-        if (!(location instanceof StarSystemAPI system) || !system.hasTag(ChartIds.SYSTEM_TAG)) {
-            return null;
-        }
-        ChartRun run = ChartRuns.currentOrNull();
-        if (run == null || !run.runState().isLive() || !run.runId().equals(ChartIds.runIdOf(system))) {
-            return null;
-        }
-        return run;
     }
 }

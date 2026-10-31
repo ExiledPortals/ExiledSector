@@ -1,4 +1,4 @@
-package exiledsector.ui.chart;
+package exiledsector.charts.wormhole;
 
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
@@ -14,13 +14,12 @@ import exiledsector.charts.run.ChartRunActions;
 import exiledsector.charts.run.ChartRunActions.OpenResult;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.StarChartSettings;
-import exiledsector.charts.wormhole.WormholeGateway;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemStore;
 import exiledsector.items.StarChartFixtures;
-import exiledsector.ui.chart.WormholeOpenCheck.Blocker;
+import exiledsector.charts.wormhole.WormholeOpenCheck.Blocker;
 import lunalib.lunaSettings.LunaSettings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -79,7 +78,7 @@ class StarChartOpeningTest {
 
     @Test
     void anOpenedWormholeUsesUpTheChartAndClosesTheScreen() {
-        StarChartOpening.Outcome outcome = StarChartOpening.open(answering(OpenResult.OPENED), sector, store, chart, 1, new Random(1L));
+        StarChartOpening.Outcome outcome = StarChartOpening.openReplacingRun(answering(OpenResult.OPENED), sector, store, chart, 1, new Random(1L));
 
         assertTrue(outcome.opened());
         assertEquals(List.of(chart), openedCharts);
@@ -89,25 +88,12 @@ class StarChartOpeningTest {
 
     @Test
     void aFailedOpeningKeepsTheChartAndExplainsWhy() {
-        StarChartOpening.Outcome outcome = StarChartOpening.open(answering(OpenResult.FAILED), sector, store, chart, 1, new Random(1L));
+        StarChartOpening.Outcome outcome = StarChartOpening.openReplacingRun(answering(OpenResult.FAILED), sector, store, chart, 1, new Random(1L));
 
         assertFalse(outcome.opened());
         assertEquals(List.of(chart), store.owned());
         assertEquals("chart.ui.open.result.failed", outcome.messageKey());
-        assertEquals(OpenResult.FAILED, StarChartOpening.open((s, e, r, st, c) -> null, sector, store, chart, 1, new Random(1L)).result());
-    }
-
-    @Test
-    void anOpenRunStopsTheOpenerBeingCalledAndKeepsTheChart() {
-        ChartRuns.store(new ChartRun("busy", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1));
-
-        StarChartOpening.Outcome outcome = StarChartOpening.open(answering(OpenResult.OPENED), sector, store, chart, 1, new Random(1L));
-
-        assertFalse(outcome.opened());
-        assertTrue(openedCharts.isEmpty());
-        assertEquals(Blocker.RUN_OPEN, outcome.blocker());
-        assertEquals("chart.ui.open.blocked.run_open", outcome.messageKey());
-        assertEquals(List.of(chart), store.owned());
+        assertEquals(OpenResult.FAILED, StarChartOpening.openReplacingRun((s, e, r, st, c) -> null, sector, store, chart, 1, new Random(1L)).result());
     }
 
     @Test
@@ -127,7 +113,7 @@ class StarChartOpeningTest {
         lunaMock.when(() -> LunaSettings.getBoolean("exiledSector", StarChartSettings.OPEN_ANYWHERE_FIELD_ID))
                 .thenReturn(null);
 
-        StarChartOpening.Outcome outcome = StarChartOpening.open(answering(OpenResult.OPENED), sector, store, chart, 1, new Random(1L));
+        StarChartOpening.Outcome outcome = StarChartOpening.openReplacingRun(answering(OpenResult.OPENED), sector, store, chart, 1, new Random(1L));
 
         assertEquals(Blocker.NO_GATEWAY, outcome.blocker());
         assertEquals("chart.ui.open.blocked.no_gateway", outcome.messageKey());
@@ -136,7 +122,7 @@ class StarChartOpeningTest {
 
         dockAtColonyWithWorkingGateway();
 
-        assertTrue(StarChartOpening.open(answering(OpenResult.OPENED), sector, store, chart, 1, new Random(1L)).opened());
+        assertTrue(StarChartOpening.openReplacingRun(answering(OpenResult.OPENED), sector, store, chart, 1, new Random(1L)).opened());
     }
 
     private void dockAtColonyWithWorkingGateway() {

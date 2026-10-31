@@ -9,6 +9,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.content.ChartSites;
@@ -26,8 +27,8 @@ import java.util.Set;
 public final class RelayNetwork implements ChartAnomaly {
 
     public static final String ANOMALY_ID = "relay_network";
-    public static final String COST_KEY = ANOMALY_ID + ".cost";
-    public static final String STAGES_KEY = ANOMALY_ID + ".stages";
+    public static final String COST_KEY = ChartEffect.CHART_RELAY_COST_PERCENT.anomalyTuningKey();
+    public static final String STAGES_KEY = ChartEffect.CHART_RELAY_CHAIN_STAGES.anomalyTuningKey();
     public static final String RELAY_TAG = ChartIds.PREFIX + "relay";
     public static final String KIND_MEMORY_KEY = "$exiledSector_chartRelayKind";
     public static final RelayNetwork INSTANCE = new RelayNetwork();

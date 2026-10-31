@@ -11,6 +11,7 @@ import com.fs.starfarer.api.util.FaderUtil;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
+import exiledsector.charts.run.ChartRuns;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
@@ -113,7 +114,7 @@ final class ChartWormholeVisual {
         if (!wormhole.hasTag(ChartIds.INNER_WORMHOLE_TAG)) {
             return STARFIELD_BACKDROP;
         }
-        ChartRun run = ChartWormholeDialog.runFor(wormhole);
+        ChartRun run = ChartRuns.unclosedOwning(wormhole);
         LocationAPI origin = run == null ? null : ChartIds.resolveLocation(sector, run.originLocationId());
         return origin != null && origin.isHyperspace() ? HYPERSPACE_BACKDROP : STARFIELD_BACKDROP;
     }

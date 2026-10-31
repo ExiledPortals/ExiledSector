@@ -1,15 +1,13 @@
-package exiledsector.ui.chart;
+package exiledsector.charts.wormhole;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignUIAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
-import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import exiledsector.charts.ChartIds;
-import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.StarChartSettings;
-import exiledsector.charts.wormhole.WormholeGateway;
+import exiledsector.charts.run.ChartRunActions;
+import exiledsector.charts.run.ChartRunActions.OpenResult;
 import exiledsector.items.Item;
 import exiledsector.items.ItemStore;
 import exiledsector.items.StarChart;
@@ -22,7 +20,6 @@ public final class WormholeOpenCheck {
         NONE,
         DISABLED,
         NO_CHART,
-        RUN_OPEN,
         NO_FLEET,
         IN_TRANSITION,
         IN_SYSTEM,
@@ -42,13 +39,8 @@ public final class WormholeOpenCheck {
     private WormholeOpenCheck() {
     }
 
-    public static Blocker current(SectorAPI sector, ItemStore store, Item chart) {
-        return evaluate(chart, store, StarChartSettings.openAnywhere(), ChartRuns.hasRun(), sector == null ? null : sector.getPlayerFleet(),
-                dialogTarget(sector));
-    }
-
     public static Blocker replacingRun(SectorAPI sector, ItemStore store, Item chart) {
-        return evaluate(chart, store, StarChartSettings.openAnywhere(), false, sector == null ? null : sector.getPlayerFleet(), dialogTarget(sector));
+        return evaluate(chart, store, StarChartSettings.openAnywhere(), sector == null ? null : sector.getPlayerFleet(), dialogTarget(sector));
     }
 
     static SectorEntityToken dialogTarget(SectorAPI sector) {
@@ -57,12 +49,11 @@ public final class WormholeOpenCheck {
         return dialog == null ? null : dialog.getInteractionTarget();
     }
 
-    public static Blocker evaluate(Item chart, ItemStore store, boolean openAnywhere, boolean runOpen, CampaignFleetAPI playerFleet) {
-        return evaluate(chart, store, openAnywhere, runOpen, playerFleet, null);
+    public static Blocker evaluate(Item chart, ItemStore store, boolean openAnywhere, CampaignFleetAPI playerFleet) {
+        return evaluate(chart, store, openAnywhere, playerFleet, null);
     }
 
-    public static Blocker evaluate(Item chart, ItemStore store, boolean openAnywhere, boolean runOpen, CampaignFleetAPI playerFleet,
-                                   SectorEntityToken dialogTarget) {
+    public static Blocker evaluate(Item chart, ItemStore store, boolean openAnywhere, CampaignFleetAPI playerFleet, SectorEntityToken dialogTarget) {
         if (!StarChartSettings.enabled()) {
             return Blocker.DISABLED;
         }
@@ -70,18 +61,13 @@ public final class WormholeOpenCheck {
                 || store.find(chart.id()) != chart) {
             return Blocker.NO_CHART;
         }
-        if (runOpen) {
-            return Blocker.RUN_OPEN;
-        }
-        LocationAPI location = playerFleet == null ? null : playerFleet.getContainingLocation();
-        if (location == null) {
-            return Blocker.NO_FLEET;
-        }
-        if (playerFleet.isInHyperspaceTransition()) {
-            return Blocker.IN_TRANSITION;
-        }
-        if (location.hasTag(ChartIds.SYSTEM_TAG)) {
-            return Blocker.IN_SYSTEM;
+        OpenResult fleetBlocker = ChartRunActions.fleetBlocker(playerFleet);
+        if (fleetBlocker != null) {
+            return switch (fleetBlocker) {
+                case PLAYER_IN_TRANSITION -> Blocker.IN_TRANSITION;
+                case PLAYER_IN_SYSTEM -> Blocker.IN_SYSTEM;
+                default -> Blocker.NO_FLEET;
+            };
         }
         if (dialogTarget instanceof CampaignFleetAPI otherFleet && otherFleet != playerFleet) {
             return Blocker.IN_FLEET_ENCOUNTER;

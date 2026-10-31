@@ -7,6 +7,7 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.generation.ChartGenContext;
@@ -21,8 +22,8 @@ import java.util.Random;
 public final class AnomalousDebris implements ChartAnomaly {
 
     public static final String ANOMALY_ID = "anomalous_debris";
-    public static final String EXTRA_KEY = ANOMALY_ID + ".extra";
-    public static final String CURRENCY_KEY = ANOMALY_ID + ".currency";
+    public static final String EXTRA_KEY = ChartEffect.CHART_EXTRA_ANOMALOUS_DEBRIS.anomalyTuningKey();
+    public static final String CURRENCY_KEY = ChartEffect.CHART_ANOMALOUS_DEBRIS_CURRENCY_QUANTITY_PERCENT.anomalyTuningKey();
     public static final String TERRAIN_ID = "exiledSector_chart_anomalous_debris";
     public static final String FIELD_TAG = ChartIds.PREFIX + "anomalous_debris";
     public static final AnomalousDebris INSTANCE = new AnomalousDebris();

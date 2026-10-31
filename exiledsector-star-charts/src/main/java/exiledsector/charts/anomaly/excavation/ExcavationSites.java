@@ -14,6 +14,7 @@ import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.anomaly.facility.FacilityStates;
@@ -30,8 +31,8 @@ import java.util.Random;
 public final class ExcavationSites implements ChartAnomaly {
 
     public static final String ANOMALY_ID = "excavation_sites";
-    public static final String EXTRA_KEY = ANOMALY_ID + ".extra";
-    public static final String LOOT_KEY = ANOMALY_ID + ".loot";
+    public static final String EXTRA_KEY = ChartEffect.CHART_EXTRA_EXCAVATION_SITES.anomalyTuningKey();
+    public static final String LOOT_KEY = ChartEffect.CHART_EXCAVATION_LOOT_QUANTITY_PERCENT.anomalyTuningKey();
     public static final ExcavationSites INSTANCE = new ExcavationSites();
     static final long PLACEMENT_SALT = 0x45584341564154L;
 
@@ -41,6 +42,11 @@ public final class ExcavationSites implements ChartAnomaly {
     @Override
     public String id() {
         return ANOMALY_ID;
+    }
+
+    @Override
+    public List<String> lootScopes() {
+        return List.of(ExcavationRules.LOOT_SCOPE);
     }
 
     @Override

@@ -158,7 +158,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
             LOG.error("[ExiledSector] Reading the Star Chart loot bonuses failed", e);
             context = ChartGenContext.none();
         }
-        return new LootModifiers(context.itemChances(), context.dropMult(DropType.FEEDSTOCK), context.dropMult(DropType.CURRENCY));
+        return context.lootModifiers(1f);
     }
 
     @Override

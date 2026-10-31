@@ -1,20 +1,6 @@
-package exiledsector.ui.chart;
+package exiledsector.items;
 
 import exiledsector.i18n.Translation;
-import exiledsector.items.CraftingCurrency;
-import exiledsector.items.CraftingMaterials;
-import exiledsector.items.CraftingWard;
-import exiledsector.items.Item;
-import exiledsector.items.ItemCrafting;
-import exiledsector.items.ItemCurrencies;
-import exiledsector.items.ItemCurrency;
-import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemStore;
-import exiledsector.items.ItemType;
-import exiledsector.items.MaterialItems;
-import exiledsector.items.StarChart;
-import exiledsector.items.StarChartCurrency;
-import exiledsector.items.UseVerdict;
 
 import java.util.Collection;
 import java.util.List;
@@ -33,7 +19,7 @@ public final class StarChartCrafting {
     public static final UseVerdict FULL = refused("full");
     public static final UseVerdict WARD_BLOCKS = refused("ward_blocks");
     public static final UseVerdict CANNOT_USE = refused("cannot_use");
-    static final List<UseVerdict> REFUSALS = List.of(NO_CHART, NONE_OWNED, MIRRORED, CORRUPTED, MAX_TIER, NO_MODIFIERS, FULL, WARD_BLOCKS,
+    public static final List<UseVerdict> REFUSALS = List.of(NO_CHART, NONE_OWNED, MIRRORED, CORRUPTED, MAX_TIER, NO_MODIFIERS, FULL, WARD_BLOCKS,
             CANNOT_USE);
 
     public record Used(Item result, Item selectedAfter) {

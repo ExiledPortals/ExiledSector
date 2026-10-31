@@ -10,6 +10,7 @@ import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
@@ -22,9 +23,9 @@ import java.util.Random;
 public final class SpatialBreach implements ChartAnomaly {
 
     public static final String ANOMALY_ID = "spatial_breach";
-    public static final String GROWTH_KEY = ANOMALY_ID + ".growth";
-    public static final String CACHE_KEY = ANOMALY_ID + ".caches";
-    public static final String CACHE_ITEM_KEY = ANOMALY_ID + ".cacheItems";
+    public static final String GROWTH_KEY = ChartEffect.CHART_BREACH_GROWTH_PERCENT.anomalyTuningKey();
+    public static final String CACHE_KEY = ChartEffect.CHART_BREACH_CACHE_PERCENT.anomalyTuningKey();
+    public static final String CACHE_ITEM_KEY = ChartEffect.CHART_BREACH_CACHE_ITEM_PERCENT.anomalyTuningKey();
     public static final String TERRAIN_ID = "exiledSector_chart_breach";
     public static final String CORE_TYPE = "exiledSector_chart_breach_core";
     public static final String CORE_TAG = ChartIds.PREFIX + "breach_core";

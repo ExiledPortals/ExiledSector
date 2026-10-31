@@ -12,6 +12,7 @@ import java.util.Random;
 public final class ExcavationRules {
 
     public static final String LOOT_SITE = "exiledSector_chart_excavation";
+    public static final String LOOT_SCOPE = "excavation";
     public static final int MAX_SHIP_SIZE = 2;
     static final int MIN_SITES = 1;
     static final int MAX_SITES = 3;

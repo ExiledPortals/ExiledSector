@@ -44,14 +44,6 @@ public class ChartWormholeDialog implements InteractionDialogPlugin {
                 && (entity.hasTag(ChartIds.OUTER_WORMHOLE_TAG) || entity.hasTag(ChartIds.INNER_WORMHOLE_TAG));
     }
 
-    static ChartRun runFor(SectorEntityToken wormhole) {
-        ChartRun run = ChartRuns.currentOrNull();
-        if (run == null || wormhole == null || !ChartIds.belongsToRun(wormhole, run.runId()) || run.runState() == ChartRunState.CLOSED) {
-            return null;
-        }
-        return run;
-    }
-
     private static boolean isInner(SectorEntityToken wormhole) {
         return wormhole.hasTag(ChartIds.INNER_WORMHOLE_TAG);
     }
@@ -59,7 +51,7 @@ public class ChartWormholeDialog implements InteractionDialogPlugin {
     private void showOptions() {
         OptionPanelAPI options = interactionDialog.getOptionPanel();
         options.clearOptions();
-        ChartRun run = runFor(wormhole);
+        ChartRun run = ChartRuns.unclosedOwning(wormhole);
         if (run == null) {
             VanillaText.plainPara(interactionDialog.getTextPanel(), Translation.gameText("chart.dialog.stale"));
         } else if (isInner(wormhole)) {
@@ -95,12 +87,12 @@ public class ChartWormholeDialog implements InteractionDialogPlugin {
     @Override
     public void optionSelected(String optionText, Object optionData) {
         SectorAPI sector = Global.getSector();
-        ChartRun run = runFor(wormhole);
+        ChartRun run = ChartRuns.unclosedOwning(wormhole);
         if (ENTER.equals(optionData) && run != null) {
             interactionDialog.dismiss();
             ChartRunActions.enter(sector, run, wormhole);
         } else if (COLLAPSE.equals(optionData) && run != null) {
-            ChartRunActions.collapseOuter(run);
+            run.collapseOuter();
             interactionDialog.dismiss();
         } else if (RETURN.equals(optionData) && run != null) {
             interactionDialog.dismiss();

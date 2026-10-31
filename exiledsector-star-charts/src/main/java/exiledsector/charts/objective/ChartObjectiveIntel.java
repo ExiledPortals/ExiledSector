@@ -14,7 +14,6 @@ import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunBound;
-import exiledsector.charts.run.ChartRunState;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.anomaly.ChartAnomaly;
 
@@ -52,11 +51,6 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
 
     String runId() {
         return runId;
-    }
-
-    private ChartRun liveRun() {
-        ChartRun run = ChartRuns.currentOrNull();
-        return run != null && run.runId().equals(runId) && run.runState() != ChartRunState.CLOSED ? run : null;
     }
 
     static String objectiveName(ChartObjective objective) {
@@ -102,7 +96,7 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
 
     @Override
     protected String getName() {
-        ChartRun run = liveRun();
+        ChartRun run = ChartRuns.unclosed(runId);
         String objective = run == null ? "" : objectiveName(run.objective());
         return I18n.forGameText(() -> Translation.msg("chart.intel.title").arg("objective", objective).text());
     }
@@ -110,7 +104,7 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
     @Override
     public void createIntelInfo(TooltipMakerAPI info, ListInfoMode mode) {
         info.addPara(safe(getName()), getTitleColor(mode), 0f);
-        ChartRun run = liveRun();
+        ChartRun run = ChartRuns.unclosed(runId);
         if (run != null) {
             info.addPara(safe(progressText(run)), PROGRESS_COLOUR, BULLET_PAD);
         }
@@ -118,7 +112,7 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
 
     @Override
     public void createSmallDescription(TooltipMakerAPI info, float width, float height) {
-        ChartRun run = liveRun();
+        ChartRun run = ChartRuns.unclosed(runId);
         if (run == null || run.objective() == null) {
             info.addPara(safe(Translation.gameText("chart.dialog.stale")), 0f);
             return;
@@ -168,6 +162,6 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
 
     @Override
     public boolean shouldRemoveIntel() {
-        return liveRun() == null;
+        return ChartRuns.unclosed(runId) == null;
     }
 }

@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.atlas.AtlasTraits;
@@ -13,14 +14,15 @@ import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 
+import java.util.List;
 import java.util.Random;
 
 public final class ListeningPost implements ChartAnomaly {
 
     public static final String ANOMALY_ID = "listening_post";
-    public static final String PICKETS_KEY = ANOMALY_ID + ".pickets";
-    public static final String LOOT_KEY = ANOMALY_ID + ".loot";
-    public static final String PURGE_KEY = ANOMALY_ID + ".purge";
+    public static final String PICKETS_KEY = ChartEffect.CHART_LISTENING_POST_PICKETS.anomalyTuningKey();
+    public static final String LOOT_KEY = ChartEffect.CHART_LISTENING_POST_LOOT_QUANTITY_PERCENT.anomalyTuningKey();
+    public static final String PURGE_KEY = ChartEffect.CHART_LISTENING_POST_PURGE_PERCENT.anomalyTuningKey();
     public static final String ENTITY_TYPE = ChartIds.PREFIX + "listening_post";
     public static final String POST_TAG = ChartIds.PREFIX + "listening_post";
     public static final ListeningPost INSTANCE = new ListeningPost();
@@ -33,6 +35,11 @@ public final class ListeningPost implements ChartAnomaly {
     @Override
     public String id() {
         return ANOMALY_ID;
+    }
+
+    @Override
+    public List<String> lootScopes() {
+        return List.of(HeistRules.LOOT_SCOPE);
     }
 
     @Override

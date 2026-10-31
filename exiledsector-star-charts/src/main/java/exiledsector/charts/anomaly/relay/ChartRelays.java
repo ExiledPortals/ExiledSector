@@ -36,14 +36,6 @@ public final class ChartRelays {
     private ChartRelays() {
     }
 
-    public static ChartRun liveRunFor(SectorEntityToken relay) {
-        ChartRun run = ChartRuns.currentOrNull();
-        if (run == null || relay == null || !run.runState().isLive() || !ChartIds.belongsToRun(relay, run.runId())) {
-            return null;
-        }
-        return run;
-    }
-
     public static boolean check(SectorAPI sector) {
         ChartRun run = ChartRuns.currentOrNull();
         if (run == null || run.runState() != ChartRunState.INSIDE || !run.anomalyIds().contains(RelayNetwork.ANOMALY_ID)) {

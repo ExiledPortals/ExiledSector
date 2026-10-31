@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.StarChartSettings;
+import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.content.ChartContentPlan.FleetRole;
 import exiledsector.charts.content.ChartContentPlan.PlannedFleet;
@@ -118,6 +119,18 @@ class ChartGenContextTest {
         assertEquals(BASE.fleetSize(), with(ChartEffect.CHART_FLEET_QUALITY_PERCENT, 20f).adjust(BASE).fleetSize(), TOLERANCE,
                 "fleet quality and fleet size are separate");
         assertEquals(BASE.poiBudget(), with(ChartEffect.CHART_FLEET_SIZE_PERCENT, 50f).adjust(BASE).poiBudget(), TOLERANCE);
+    }
+
+    @Test
+    void theCompletionRewardAddsEveryDropLineToTheRewardLine() {
+        ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_REWARD_PERCENT, 20f),
+                new AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, 10f), new AppliedEffect(ChartEffect.CHART_STAR_CHART_PERCENT, 30f),
+                new AppliedEffect(ChartEffect.CHART_CATALYST_PERCENT, 40f), new AppliedEffect(ChartEffect.CHART_ITEM_PERCENT, 50f)));
+
+        assertEquals(2.1f, context.rewardDropMult(DropType.STAR_CHART), TOLERANCE);
+        assertEquals(1.7f, context.rewardDropMult(DropType.CATALYST), TOLERANCE);
+        assertEquals(1.3f, context.rewardDropMult(DropType.CURRENCY), TOLERANCE);
+        assertEquals(1f, ChartGenContext.none().rewardDropMult(DropType.CATALYST), TOLERANCE);
     }
 
     @Test
@@ -399,6 +412,17 @@ class ChartGenContextTest {
         }
         assertEquals(BASE.poiBudget(), context.adjust(BASE).poiBudget(), TOLERANCE);
     }
+    @Test
+    void anAtlasNodeKeepsBothBossGuaranteesTheContextAlreadyHas() {
+        ChartGenContext guaranteed = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "", List.of(), List.of(), true, null, null, true));
+
+        ChartGenContext plain = guaranteed.withAtlasNode(new AtlasRunNode(2L, "", List.of(), List.of(), false));
+
+        assertTrue(plain.guaranteedBossTierUp());
+        assertTrue(plain.guaranteedBossUnique());
+        assertFalse(ChartGenContext.none().withAtlasNode(new AtlasRunNode(2L, "", List.of(), List.of(), false)).guaranteedBossTierUp());
+    }
+
     @Test
     void rarityAddsUpAndOnlyShiftsTheRarityOfItemChances() {
         ChartGenContext context = ChartGenContext.of(List.of(new AppliedEffect(ChartEffect.CHART_ITEM_RARITY_PERCENT, 30f),

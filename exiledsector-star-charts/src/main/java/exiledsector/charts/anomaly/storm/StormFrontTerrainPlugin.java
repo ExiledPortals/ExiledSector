@@ -5,7 +5,9 @@ import com.fs.starfarer.api.campaign.CampaignEngineLayers;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.ViewportAPI;
+import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.impl.campaign.terrain.BaseTerrain;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
@@ -48,6 +50,8 @@ public class StormFrontTerrainPlugin extends BaseTerrain {
     static final float FLASH_SIZE_MULT = 1.3f;
     static final float RENDER_MARGIN = 1500f;
     static final float SENSOR_MOD_DAYS = 0.1f;
+    static final String SENSOR_MOD_ID = StormFront.TERRAIN_ID + "_stat_mod";
+    static final String IN_FRONT_MEMORY_KEY = "$terrain_" + StormFront.TERRAIN_ID;
     static final float TOOLTIP_PAD = 10f;
     static final int INTEL_MARKS = 3;
     static final Color CLOUD_COLOUR = new Color(90, 110, 255);
@@ -147,8 +151,25 @@ public class StormFrontTerrainPlugin extends BaseTerrain {
     @Override
     public void applyEffect(SectorEntityToken target, float days) {
         if (target instanceof CampaignFleetAPI fleet && fleet.getStats() != null) {
-            fleet.getStats().addTemporaryModMult(SENSOR_MOD_DAYS, getModId(), getTerrainName(), StormRules.SENSOR_RANGE_MULT,
+            fleet.getStats().addTemporaryModMult(SENSOR_MOD_DAYS, SENSOR_MOD_ID, getTerrainName(), StormRules.SENSOR_RANGE_MULT,
                     fleet.getStats().getSensorRangeMod());
+        }
+    }
+
+    static void liftFrom(CampaignFleetAPI fleet) {
+        if (fleet == null) {
+            return;
+        }
+        MutableFleetStatsAPI stats = fleet.getStats();
+        if (stats != null) {
+            stats.removeTemporaryMod(SENSOR_MOD_ID);
+            if (stats.getSensorRangeMod() != null) {
+                stats.getSensorRangeMod().unmodify(SENSOR_MOD_ID);
+            }
+        }
+        MemoryAPI fleetMemory = fleet.getMemoryWithoutUpdate();
+        if (fleetMemory != null) {
+            fleetMemory.unset(IN_FRONT_MEMORY_KEY);
         }
     }
 

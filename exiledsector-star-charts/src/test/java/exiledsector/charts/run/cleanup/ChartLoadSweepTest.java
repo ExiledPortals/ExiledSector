@@ -1,5 +1,6 @@
 package exiledsector.charts.run.cleanup;
 
+import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
 import com.fs.starfarer.api.campaign.IntelDataAPI;
@@ -11,6 +12,7 @@ import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
+import exiledsector.charts.run.ChartRunBound;
 import exiledsector.charts.run.ChartRunState;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.objective.ChartObjectiveIntel;
@@ -251,6 +253,25 @@ class ChartLoadSweepTest {
     }
 
     @Test
+    void aSystemLeftForNowIsPurgedOnceThePlayerLeavesIt() {
+        ChartRuns.store(new ChartRun("other", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1));
+        when(sector.getStarSystem(ChartIds.systemId("other"))).thenReturn(mock(StarSystemAPI.class));
+        when(sector.getEntityById(ChartIds.outerWormholeId("other"))).thenReturn(mock(SectorEntityToken.class));
+        when(playerFleet.getContainingLocation()).thenReturn(system);
+        ChartLoadSweep.sweep(sector);
+
+        ChartLoadSweep.closeLeftForNowSystemOnceLeft(sector);
+        verify(sector, never()).removeStarSystemNextFrame(system);
+
+        when(playerFleet.getContainingLocation()).thenReturn(hyperspace);
+        ChartLoadSweep.closeLeftForNowSystemOnceLeft(sector);
+        ChartLoadSweep.closeLeftForNowSystemOnceLeft(sector);
+
+        verify(sector).removeStarSystemNextFrame(system);
+        assertEquals("other", ChartRuns.currentOrNull().runId());
+    }
+
+    @Test
     void aBrokenSectorNeverThrowsOutOfTheSweep() {
         when(sector.getStarSystems()).thenThrow(new IllegalStateException("not loaded"));
 
@@ -258,21 +279,32 @@ class ChartLoadSweepTest {
     }
 
     @Test
-    void objectiveIntelOfADeadRunIsRemovedAndUnselectedButTheLiveRunsStays() {
+    void intelAndScriptsOfADeadRunAreRemovedButTheLiveRunsStay() {
         ChartRuns.store(new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1));
         ChartObjectiveIntel live = new ChartObjectiveIntel(RUN_ID);
         ChartObjectiveIntel orphan = new ChartObjectiveIntel("long_gone");
         IntelManagerAPI intelManager = mock(IntelManagerAPI.class);
-        when(intelManager.getIntel(ChartObjectiveIntel.class)).thenReturn(List.of(live, orphan));
+        when(intelManager.getIntel()).thenReturn(List.of(live, orphan));
         when(sector.getIntelManager()).thenReturn(intelManager);
         IntelDataAPI intelTab = mock(IntelDataAPI.class);
         when(intelTab.getSelectedIntel()).thenReturn(orphan);
         when(sector.getIntel()).thenReturn(intelTab);
+        EveryFrameScript liveScript = boundScript(RUN_ID);
+        EveryFrameScript orphanScript = boundScript("long_gone");
+        when(sector.getScripts()).thenReturn(List.of(liveScript, orphanScript));
 
-        assertEquals(1, ChartLoadSweep.removeOrphanIntel(sector));
+        ChartLoadSweep.removeDeadRunObjects(sector);
 
         verify(intelManager).removeIntel(orphan);
         verify(intelManager, never()).removeIntel(live);
         verify(intelTab).setSelectedIntel(null);
+        verify(sector).removeScript(orphanScript);
+        verify(sector, never()).removeScript(liveScript);
+    }
+
+    private static EveryFrameScript boundScript(String runId) {
+        EveryFrameScript script = mock(EveryFrameScript.class, Mockito.withSettings().extraInterfaces(ChartRunBound.class));
+        when(((ChartRunBound) script).belongsToRun(runId)).thenReturn(true);
+        return script;
     }
 }

@@ -5,7 +5,6 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.loot.ChartCargoLoot;
-import exiledsector.charts.loot.ChartLoot;
 import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
@@ -47,7 +46,7 @@ public final class VaultLoot {
     public static CargoAPI roll(SectorAPI sector, ChartRun run, float share, Random random) {
         ChartGenContext runContext = ChartRunEffects.contextOf(run);
         float quantity = quantityMult(runContext);
-        return ChartCargoLoot.roll(sector, run, contextFor(runContext), ChartLoot.LISTENING_POST_SCOPE, HeistRules.LOOT_SITE,
+        return ChartCargoLoot.roll(sector, run, contextFor(runContext), HeistRules.LOOT_SCOPE, HeistRules.LOOT_SITE,
                 HeistRules.lootSteps(run.tier(), quantity) * share, HeistRules.itemMult(quantity) * share, random);
     }
 }

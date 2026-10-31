@@ -5,7 +5,6 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.SalvageEntityGenDataSpec.DropData;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageEntity;
 import exiledsector.charts.loot.ChartCargoLoot;
-import exiledsector.charts.loot.ChartLoot;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
 
@@ -19,7 +18,7 @@ public final class FacilityLoot {
     }
 
     public static CargoAPI roll(SectorAPI sector, ChartRun run, Random random) {
-        CargoAPI cargo = ChartCargoLoot.roll(sector, run, ChartLoot.PRE_COLLAPSE_FACILITY_SCOPE, FacilityRules.LOOT_SITE,
+        CargoAPI cargo = ChartCargoLoot.roll(sector, run, FacilityRules.LOOT_SCOPE, FacilityRules.LOOT_SITE,
                 FacilityRules.lootSteps(run.tier()), FacilityRules.ITEM_MULT, random);
         if (VaultsOfKnowledgeCompat.isModEnabled()) {
             cargo.addAll(SalvageEntity.generateSalvage(random, 1f, 1f, 1f, 1f, new ArrayList<>(), databankDrops(run.tier())));

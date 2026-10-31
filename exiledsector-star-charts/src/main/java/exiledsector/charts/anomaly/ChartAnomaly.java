@@ -20,6 +20,7 @@ import exiledsector.items.ItemChances;
 import exiledsector.items.ItemDrops;
 import exiledsector.items.UseVerdict;
 
+import java.util.List;
 import java.util.Random;
 
 public interface ChartAnomaly {
@@ -129,6 +130,10 @@ public interface ChartAnomaly {
 
     default ItemChances siteChances(MemoryAPI siteMemory, ItemChances chances) {
         return chances;
+    }
+
+    default List<String> lootScopes() {
+        return List.of();
     }
 
     static StarSystemType systemTypeOr(ChartAnomaly anomaly, StarSystemType fallback) {

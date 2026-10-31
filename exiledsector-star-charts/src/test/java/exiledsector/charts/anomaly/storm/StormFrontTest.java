@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.CampaignTerrainAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import exiledsector.MockSector;
@@ -150,8 +151,27 @@ class StormFrontTest {
 
         front.applyEffect(fleet, 0.1f);
 
-        verify(stats).addTemporaryModMult(eq(StormFrontTerrainPlugin.SENSOR_MOD_DAYS), eq(front.getModId()), any(),
+        verify(stats).addTemporaryModMult(eq(StormFrontTerrainPlugin.SENSOR_MOD_DAYS), eq(StormFrontTerrainPlugin.SENSOR_MOD_ID), any(),
                 eq(StormRules.SENSOR_RANGE_MULT), eq(sensorRange));
+    }
+
+    @Test
+    void leavingTheChartLiftsTheSensorPenaltyAndTheTerrainKey() {
+        CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
+        MutableFleetStatsAPI stats = mock(MutableFleetStatsAPI.class);
+        StatBonus sensorRange = new StatBonus();
+        sensorRange.modifyMult(StormFrontTerrainPlugin.SENSOR_MOD_ID, StormRules.SENSOR_RANGE_MULT);
+        when(stats.getSensorRangeMod()).thenReturn(sensorRange);
+        when(fleet.getStats()).thenReturn(stats);
+        MemoryAPI fleetMemory = mock(MemoryAPI.class);
+        when(fleet.getMemoryWithoutUpdate()).thenReturn(fleetMemory);
+
+        StormFront.INSTANCE.clearFrom(fleet);
+        StormFront.INSTANCE.clearFrom(null);
+
+        verify(stats).removeTemporaryMod(StormFrontTerrainPlugin.SENSOR_MOD_ID);
+        assertNull(sensorRange.getMultBonus(StormFrontTerrainPlugin.SENSOR_MOD_ID));
+        verify(fleetMemory).unset("$terrain_" + StormFront.TERRAIN_ID);
     }
 
     @Test

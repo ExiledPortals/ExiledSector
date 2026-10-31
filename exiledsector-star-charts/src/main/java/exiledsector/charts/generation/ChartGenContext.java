@@ -13,6 +13,7 @@ import exiledsector.items.ItemChances;
 import exiledsector.items.ItemKind;
 import exiledsector.items.SlottedRoll;
 import exiledsector.items.StarChart;
+import exiledsector.loot.LootModifiers;
 import exiledsector.modifiers.ModifierEffect;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ScaleContext;
@@ -245,15 +246,16 @@ public final class ChartGenContext {
         if (node == null) {
             return this;
         }
-        List<AppliedEffect> combined = new ArrayList<>(applied);
-        combined.addAll(node.effects());
-        ChartGenContext context = new ChartGenContext(combined, quality, node.factionId().isEmpty() ? factionId : node.factionId());
-        context.forceAnomalies(forcedAnomalies);
+        ChartGenContext context = derive(appliedPlus(node.effects()), node.factionId().isEmpty() ? factionId : node.factionId());
         context.forceAnomalies(node.anomalyIds());
-        context.guaranteedBossTierUp = node.guaranteedBossTierUp();
-        context.guaranteedBossUnique = guaranteedBossUnique || node.guaranteedBossUnique();
-        context.skirmishAttackerId = node.skirmishAttackerId() == null ? skirmishAttackerId : node.skirmishAttackerId();
-        context.skirmishSide = node.skirmishSide() == null ? skirmishSide : node.skirmishSide();
+        context.guaranteedBossTierUp |= node.guaranteedBossTierUp();
+        context.guaranteedBossUnique |= node.guaranteedBossUnique();
+        if (node.skirmishAttackerId() != null) {
+            context.skirmishAttackerId = node.skirmishAttackerId();
+        }
+        if (node.skirmishSide() != null) {
+            context.skirmishSide = node.skirmishSide();
+        }
         return context;
     }
 
@@ -261,13 +263,8 @@ public final class ChartGenContext {
         if (anomalyIds == null || anomalyIds.isEmpty()) {
             return this;
         }
-        ChartGenContext context = new ChartGenContext(applied, quality, factionId);
-        context.forceAnomalies(forcedAnomalies);
+        ChartGenContext context = derive(applied, factionId);
         context.forceAnomalies(anomalyIds);
-        context.guaranteedBossTierUp = guaranteedBossTierUp;
-        context.guaranteedBossUnique = guaranteedBossUnique;
-        context.skirmishAttackerId = skirmishAttackerId;
-        context.skirmishSide = skirmishSide;
         return context;
     }
 
@@ -280,19 +277,23 @@ public final class ChartGenContext {
         if (effects.isEmpty() && !bossTierUp) {
             return this;
         }
-        ChartGenContext context = copyWith(effects);
-        context.guaranteedBossTierUp = guaranteedBossTierUp || bossTierUp;
+        ChartGenContext context = derive(appliedPlus(effects), factionId);
+        context.guaranteedBossTierUp |= bossTierUp;
         return context;
     }
 
     public ChartGenContext withEffects(List<AppliedEffect> effects) {
-        return effects == null || effects.isEmpty() ? this : copyWith(effects);
+        return effects == null || effects.isEmpty() ? this : derive(appliedPlus(effects), factionId);
     }
 
-    private ChartGenContext copyWith(List<AppliedEffect> effects) {
+    private List<AppliedEffect> appliedPlus(List<AppliedEffect> effects) {
         List<AppliedEffect> combined = new ArrayList<>(applied);
         combined.addAll(effects);
-        ChartGenContext context = new ChartGenContext(combined, quality, factionId);
+        return combined;
+    }
+
+    private ChartGenContext derive(List<AppliedEffect> effects, String derivedFactionId) {
+        ChartGenContext context = new ChartGenContext(effects, quality, derivedFactionId);
         context.forceAnomalies(forcedAnomalies);
         context.guaranteedBossTierUp = guaranteedBossTierUp;
         context.guaranteedBossUnique = guaranteedBossUnique;
@@ -325,11 +326,7 @@ public final class ChartGenContext {
         if (side == null || side == skirmishSide) {
             return this;
         }
-        ChartGenContext context = new ChartGenContext(applied, quality, factionId);
-        context.forceAnomalies(forcedAnomalies);
-        context.guaranteedBossTierUp = guaranteedBossTierUp;
-        context.guaranteedBossUnique = guaranteedBossUnique;
-        context.skirmishAttackerId = skirmishAttackerId;
+        ChartGenContext context = derive(applied, factionId);
         context.skirmishSide = side;
         return context;
     }
@@ -452,6 +449,14 @@ public final class ChartGenContext {
     }
 
     public float dropMult(DropType type) {
+        return multiplier(totalDropPercent(type));
+    }
+
+    public float rewardDropMult(DropType type) {
+        return multiplier(rewardPercent + totalDropPercent(type));
+    }
+
+    private float totalDropPercent(DropType type) {
         float percent = dropPercent(type);
         if (type.isItem()) {
             percent += itemPercent;
@@ -459,7 +464,11 @@ public final class ChartGenContext {
         if (type.quantityApplies()) {
             percent += quantityPercent();
         }
-        return multiplier(percent);
+        return percent;
+    }
+
+    public LootModifiers lootModifiers(float scale) {
+        return new LootModifiers(itemChances().scaled(scale), dropMult(DropType.FEEDSTOCK) * scale, dropMult(DropType.CURRENCY) * scale);
     }
 
     public float bossSpoilsPercent() {

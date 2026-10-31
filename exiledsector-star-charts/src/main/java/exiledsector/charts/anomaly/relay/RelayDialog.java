@@ -17,6 +17,7 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.run.ChartRun;
+import exiledsector.charts.run.ChartRuns;
 import exiledsector.ui.VanillaText;
 import org.lwjgl.input.Keyboard;
 
@@ -51,7 +52,7 @@ public class RelayDialog implements InteractionDialogPlugin {
         TextPanelAPI text = interactionDialog.getTextPanel();
         OptionPanelAPI options = interactionDialog.getOptionPanel();
         options.clearOptions();
-        ChartRun run = ChartRelays.liveRunFor(relay);
+        ChartRun run = ChartRuns.liveOwning(relay);
         if (run == null || kind == null) {
             VanillaText.plainPara(text, Translation.gameText("chart.relay.stale"));
         } else if (RelayStates.isWoken(run, kind)) {
@@ -93,7 +94,7 @@ public class RelayDialog implements InteractionDialogPlugin {
 
     @Override
     public void optionSelected(String optionText, Object optionData) {
-        ChartRun run = ChartRelays.liveRunFor(relay);
+        ChartRun run = ChartRuns.liveOwning(relay);
         if (RESTORE.equals(optionData) && run != null) {
             ChartRelays.restorePower(run, cargo(), relay.getContainingLocation(), relay, kind, ChartRelays.costFor(run));
             showState();

@@ -2,6 +2,8 @@ package exiledsector.charts.loot;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.impl.campaign.procgen.DropGroupRow;
+import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.data.CsvRows;
@@ -27,11 +29,6 @@ public final class ChartLoot {
     static final String ID_COLUMN = "id";
     static final String FLEET_SCOPE = "fleet";
     static final String BOSS_SCOPE = "boss";
-    public static final String CONVOY_SCOPE = "convoy";
-    public static final String EXCAVATION_SCOPE = "excavation";
-    public static final String LISTENING_POST_SCOPE = "listening_post";
-    public static final String PRE_COLLAPSE_FACILITY_SCOPE = "pre_collapse_facility";
-    static final List<String> SCOPES = scopes();
     static final Set<String> COLONY_ITEM_GROUPS = Set.of("rare_tech", "rare_tech_low", "rare_tech_mothership", "nanoforge_always");
     static final List<String> VANILLA_TYPE_NAMES = Arrays.stream(DropType.values()).filter(DropType::isVanilla)
             .map(type -> type.name().toLowerCase(Locale.ROOT)).toList();
@@ -68,14 +65,13 @@ public final class ChartLoot {
     private ChartLoot() {
     }
 
-    private static List<String> scopes() {
+    static List<String> scopes() {
         List<String> scopes = new ArrayList<>(ChartPois.KIND_NAMES);
         scopes.add(FLEET_SCOPE);
         scopes.add(BOSS_SCOPE);
-        scopes.add(CONVOY_SCOPE);
-        scopes.add(EXCAVATION_SCOPE);
-        scopes.add(LISTENING_POST_SCOPE);
-        scopes.add(PRE_COLLAPSE_FACILITY_SCOPE);
+        for (ChartAnomaly anomaly : ChartAnomalies.all()) {
+            scopes.addAll(anomaly.lootScopes());
+        }
         return List.copyOf(scopes);
     }
 
@@ -96,11 +92,12 @@ public final class ChartLoot {
         Map<String, DropType> groupTypes = new LinkedHashMap<>();
         List<Entry> entries = new ArrayList<>();
         CsvRows csv = new CsvRows(PATH);
+        List<String> scopes = scopes();
         if (rows != null) {
             ModCsv.forEach(rows, (index, row) -> {
                 String id = ModCsv.text(row, ID_COLUMN);
                 if (!id.isEmpty()) {
-                    parse(csv, row, id, groupExists, groupTypes, entries);
+                    parse(csv, row, id, groupExists, scopes, groupTypes, entries);
                 }
             });
         }
@@ -109,8 +106,8 @@ public final class ChartLoot {
         return csv.problems();
     }
 
-    private static void parse(CsvRows csv, JSONObject row, String id, Predicate<String> groupExists, Map<String, DropType> groupTypes,
-                              List<Entry> entries) {
+    private static void parse(CsvRows csv, JSONObject row, String id, Predicate<String> groupExists, List<String> scopes,
+                              Map<String, DropType> groupTypes, List<Entry> entries) {
         DropType type = vanillaType(ModCsv.text(row, "drop_type"));
         String group = ModCsv.text(row, "group");
         String scope = ModCsv.text(row, "scope").toLowerCase(Locale.ROOT);
@@ -133,8 +130,8 @@ public final class ChartLoot {
             }
             return;
         }
-        if (!SCOPES.contains(scope)) {
-            csv.skipRow(id, "scope must be empty or one of " + SCOPES);
+        if (!scopes.contains(scope)) {
+            csv.skipRow(id, "scope must be empty or one of " + scopes);
             return;
         }
         Mode mode = Mode.parse(ModCsv.text(row, "mode"));

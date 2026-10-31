@@ -61,8 +61,8 @@ public final class ChartVanillaLoot {
                 if (chances > 0) {
                     site.addDropRandom(randomDrop(entry.group(), chances, 1f));
                 }
-            } else {
-                addValue(site, entry, mult);
+            } else if (mult > 0f) {
+                site.addDropValue(valueDrop(entry, mult));
             }
         }
     }
@@ -108,28 +108,13 @@ public final class ChartVanillaLoot {
 
     public static void addToFleet(CampaignFleetAPI fleet, boolean boss, ChartGenContext context, int tier) {
         float fleetPointSteps = fleet.getFleetPoints() / FLEET_POINTS_PER_STEP;
-        if (!(fleetPointSteps > 0f)) {
-            return;
-        }
-        for (ChartLoot.Entry entry : ChartLoot.entriesFor(ChartLoot.FLEET_SCOPE, tier)) {
-            addToFleet(fleet, entry, fleetPointSteps * context.dropMult(entry.type()));
-        }
+        SiteDrops fleetDrops = drops(ChartLoot.FLEET_SCOPE, tier, fleetPointSteps, context);
         if (boss) {
-            for (ChartLoot.Entry entry : ChartLoot.entriesFor(ChartLoot.BOSS_SCOPE, tier)) {
-                addToFleet(fleet, entry, fleetPointSteps * context.dropMult(entry.type()) * context.bossSpoilsMult());
-            }
+            SiteDrops spoils = drops(ChartLoot.BOSS_SCOPE, tier, fleetPointSteps * context.bossSpoilsMult(), context);
+            fleetDrops = fleetDrops.plus(spoils.random(), spoils.value());
         }
-    }
-
-    private static void addToFleet(CampaignFleetAPI fleet, ChartLoot.Entry entry, float mult) {
-        if (!(mult > 0f)) {
-            return;
-        }
-        if (entry.mode() == ChartLoot.Mode.RANDOM) {
-            fleet.addDropRandom(randomDrop(entry.group(), 1, entry.amount() * mult));
-        } else {
-            addValue(fleet, entry, mult);
-        }
+        fleetDrops.random().forEach(fleet::addDropRandom);
+        fleetDrops.value().forEach(fleet::addDropValue);
     }
 
     public static SiteDrops drops(String scope, int tier, float steps, ChartGenContext context) {
@@ -146,11 +131,7 @@ public final class ChartVanillaLoot {
             if (entry.mode() == ChartLoot.Mode.RANDOM) {
                 random.add(randomDrop(entry.group(), 1, entry.amount() * mult));
             } else {
-                DropData drop = new DropData();
-                drop.group = entry.group();
-                drop.value = Math.max(1, Math.round(entry.amount()));
-                drop.valueMult = mult;
-                value.add(drop);
+                value.add(valueDrop(entry, mult));
             }
         }
         return new SiteDrops(random, value);
@@ -164,14 +145,11 @@ public final class ChartVanillaLoot {
         return drop;
     }
 
-    private static void addValue(SectorEntityToken holder, ChartLoot.Entry entry, float mult) {
-        if (!(mult > 0f)) {
-            return;
-        }
+    private static DropData valueDrop(ChartLoot.Entry entry, float valueMult) {
         DropData drop = new DropData();
         drop.group = entry.group();
         drop.value = Math.max(1, Math.round(entry.amount()));
-        drop.valueMult = mult;
-        holder.addDropValue(drop);
+        drop.valueMult = valueMult;
+        return drop;
     }
 }

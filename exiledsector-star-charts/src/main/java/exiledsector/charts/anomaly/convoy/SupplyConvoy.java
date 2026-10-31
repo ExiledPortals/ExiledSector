@@ -7,6 +7,7 @@ import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import exiledsector.charts.anomaly.AnomalyContentSite;
+import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.atlas.AtlasTraits;
 import exiledsector.charts.content.ChartAnomalyFleets;
@@ -20,9 +21,9 @@ import java.util.Set;
 public final class SupplyConvoy implements ChartAnomaly {
 
     public static final String ANOMALY_ID = "supply_convoy";
-    public static final String CARGO_KEY = ANOMALY_ID + ".cargo";
-    public static final String ESCORT_KEY = ANOMALY_ID + ".escort";
-    public static final String EXTRA_KEY = ANOMALY_ID + ".extra";
+    public static final String CARGO_KEY = ChartEffect.CHART_CONVOY_CARGO_PERCENT.anomalyTuningKey();
+    public static final String ESCORT_KEY = ChartEffect.CHART_CONVOY_ESCORT_PERCENT.anomalyTuningKey();
+    public static final String EXTRA_KEY = ChartEffect.CHART_EXTRA_CONVOYS.anomalyTuningKey();
     public static final String CONVOY_MEMORY_KEY = "$exiledSector_chartConvoy";
     public static final String ROLE_MEMORY_KEY = "$exiledSector_chartConvoyRole";
     public static final SupplyConvoy INSTANCE = new SupplyConvoy();
@@ -35,6 +36,11 @@ public final class SupplyConvoy implements ChartAnomaly {
     @Override
     public String id() {
         return ANOMALY_ID;
+    }
+
+    @Override
+    public List<String> lootScopes() {
+        return List.of(ConvoyRules.LOOT_SCOPE);
     }
 
     @Override

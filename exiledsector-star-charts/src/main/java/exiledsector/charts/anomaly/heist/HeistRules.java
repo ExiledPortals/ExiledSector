@@ -9,6 +9,7 @@ import java.util.Random;
 public final class HeistRules {
 
     public static final String LOOT_SITE = "exiledSector_chart_listening_post";
+    public static final String LOOT_SCOPE = "listening_post";
     static final int MIN_PICKETS = 3;
     static final int MAX_PICKETS = 5;
     static final int MAX_EXTRA_PICKETS = 5;

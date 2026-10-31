@@ -35,6 +35,11 @@ public final class PreCollapseFacility implements ChartAnomaly {
     }
 
     @Override
+    public List<String> lootScopes() {
+        return List.of(FacilityRules.LOOT_SCOPE);
+    }
+
+    @Override
     public int minPlanets() {
         return 1;
     }
