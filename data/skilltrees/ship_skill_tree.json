@@ -10620,6 +10620,9 @@
 			"radius": 400,
 			"starType": "star_blue_giant",
 			"color": "#00479e",
+			"overlayPath": "graphics/fx/tritachyon_logo.png",
+			"overlaySize": 0.95,
+			"overlayAlpha": 0.45,
 			"tags": [
 				"tritachyon"
 			]
@@ -10642,6 +10645,9 @@
 			"y": 2893,
 			"radius": 400,
 			"starType": "star_red_dwarf",
+			"overlayPath": "graphics/fx/pirates_logo.png",
+			"overlaySize": 0.95,
+			"overlayAlpha": 0.45,
 			"tags": [
 				"pirate"
 			]
@@ -10654,6 +10660,9 @@
 			"radius": 400,
 			"starType": "star_red_supergiant",
 			"color": "#ff4900",
+			"overlayPath": "graphics/fx/hegemony_logo.png",
+			"overlaySize": 0.95,
+			"overlayAlpha": 0.45,
 			"tags": [
 				"hegemony"
 			]
@@ -10666,6 +10675,9 @@
 			"radius": 400,
 			"starType": "star_browndwarf",
 			"color": "#780039",
+			"overlayPath": "graphics/fx/sindrian_diktat_logo.png",
+			"overlaySize": 0.95,
+			"overlayAlpha": 0.45,
 			"tags": [
 				"sindrian_dictat"
 			]
@@ -10678,6 +10690,9 @@
 			"radius": 400,
 			"starType": "star_orange",
 			"color": "#f4c537",
+			"overlayPath": "graphics/fx/persean_league_logo.png",
+			"overlaySize": 0.95,
+			"overlayAlpha": 0.45,
 			"tags": [
 				"persean_league"
 			]
