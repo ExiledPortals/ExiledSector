@@ -10646,7 +10646,7 @@
 			"radius": 400,
 			"starType": "star_red_dwarf",
 			"overlayPath": "graphics/fx/pirates_logo.png",
-			"overlaySize": 0.95,
+			"overlaySize": 0.75,
 			"overlayAlpha": 0.45,
 			"tags": [
 				"pirate"
@@ -10662,7 +10662,7 @@
 			"color": "#ff4900",
 			"overlayPath": "graphics/fx/hegemony_logo.png",
 			"overlaySize": 0.95,
-			"overlayAlpha": 0.45,
+			"overlayAlpha": 0.7,
 			"tags": [
 				"hegemony"
 			]
@@ -10691,8 +10691,8 @@
 			"starType": "star_orange",
 			"color": "#f4c537",
 			"overlayPath": "graphics/fx/persean_league_logo.png",
-			"overlaySize": 0.95,
-			"overlayAlpha": 0.45,
+			"overlaySize": 0.7,
+			"overlayAlpha": 0.3,
 			"tags": [
 				"persean_league"
 			]
