@@ -28,8 +28,7 @@ public final class ModificationBay {
     private final Listener bayListener;
     private Function<Item, String> installedShipLookup;
     private SocketWorkbenchPanel benchPanel;
-    private ItemStoragePanel storagePanel;
-    private BenchModeSupport.PickerSession modePicker;
+    private BenchModeSupport.PickerSession picker;
     private SocketPanelPlacement drawerPlacement;
     private BenchMode benchMode = BenchMode.HULL_ITEMS;
     private BenchModeSupport.OpenTarget openTarget;
@@ -101,12 +100,8 @@ public final class ModificationBay {
         return new SocketWorkbenchPanel.Listener() {
             @Override
             public void changed(Item loaded) {
-                if (storagePanel != null) {
-                    storagePanel.refresh(installedShipLookup);
-                    storagePanel.setSelected(loaded);
-                }
-                if (modePicker != null) {
-                    modePicker.changed(loaded);
+                if (picker != null) {
+                    picker.changed(loaded);
                 }
             }
 
@@ -151,15 +146,12 @@ public final class ModificationBay {
     }
 
     private boolean pickerOpen() {
-        return storagePanel != null || modePicker != null && modePicker.isOpen();
+        return picker != null && picker.isOpen();
     }
 
     private void closePicker() {
-        if (storagePanel != null) {
-            storagePanel.close();
-        }
-        if (modePicker != null) {
-            modePicker.close();
+        if (picker != null) {
+            picker.close();
         }
     }
 
@@ -176,19 +168,13 @@ public final class ModificationBay {
     }
 
     private void openPicker(SocketPanelPlacement placement) {
-        BenchModeSupport modeSupport = BenchModes.of(benchMode);
-        if (modePicker == null && modeSupport != null) {
-            modePicker = modeSupport.pickerSession();
+        if (picker == null) {
+            picker = BenchModes.of(benchMode).pickerSession();
         }
-        if (modePicker != null) {
-            openModePicker(placement);
-        } else {
-            openStorage(placement, hullItemsOnly || modeSupport != null);
+        if (picker == null) {
+            picker = new ItemStoragePicker(item -> installedShipLookup.apply(item), hullItemsOnly || benchMode != BenchMode.HULL_ITEMS);
         }
-    }
-
-    private void openModePicker(SocketPanelPlacement placement) {
-        modePicker.open(hostPanel, placement, benchPanel == null ? null : benchPanel.loaded(), new BenchModeSupport.PickerListener() {
+        picker.open(hostPanel, placement, benchPanel == null ? null : benchPanel.loaded(), new BenchModeSupport.PickerListener() {
             @Override
             public boolean accepting() {
                 return benchPanel != null;
@@ -197,10 +183,10 @@ public final class ModificationBay {
             @Override
             public void picked(Item item) {
                 benchPanel.load(item);
-                if (drawer) {
-                    modePicker.close();
+                if (drawer && item != null) {
+                    picker.close();
                 } else {
-                    modePicker.refresh();
+                    picker.changed(item);
                 }
             }
 
@@ -225,62 +211,10 @@ public final class ModificationBay {
         });
     }
 
-    private void openStorage(SocketPanelPlacement placement, boolean onlyHullItems) {
-        storagePanel = ItemStoragePanel.openPicker(hostPanel, placement, installedShipLookup, new ItemStoragePanel.Listener() {
-            @Override
-            public void selected(Item item) {
-                if (item == null) {
-                    if (benchPanel != null) {
-                        benchPanel.load(null);
-                    }
-                    if (storagePanel != null) {
-                        storagePanel.setSelected(null);
-                    }
-                    return;
-                }
-                if (benchPanel == null) {
-                    return;
-                }
-                benchPanel.load(item);
-                if (drawer && storagePanel != null) {
-                    storagePanel.close();
-                } else if (storagePanel != null) {
-                    storagePanel.setSelected(item);
-                }
-            }
-
-            @Override
-            public void closed() {
-                storagePanel = null;
-                if (!drawer) {
-                    close();
-                }
-            }
-
-            @Override
-            public void pressedInside() {
-                bayListener.pressedInside();
-            }
-
-            @Override
-            public void disassembled() {
-                if (benchPanel != null) {
-                    benchPanel.refresh();
-                }
-            }
-        }, onlyHullItems);
-        if (benchPanel != null && benchPanel.loaded() != null) {
-            storagePanel.setSelected(benchPanel.loaded());
-        }
-    }
-
     public void refresh(Function<Item, String> lookup) {
         installedShipLookup = lookup;
-        if (storagePanel != null) {
-            storagePanel.refresh(lookup);
-        }
-        if (modePicker != null) {
-            modePicker.refresh();
+        if (picker != null) {
+            picker.refresh();
         }
         if (benchPanel != null) {
             benchPanel.refresh();
@@ -288,8 +222,7 @@ public final class ModificationBay {
     }
 
     public boolean contains(float x, float y) {
-        return (benchPanel != null && benchPanel.contains(x, y)) || (storagePanel != null && storagePanel.contains(x, y))
-                || (modePicker != null && modePicker.contains(x, y));
+        return (benchPanel != null && benchPanel.contains(x, y)) || (picker != null && picker.contains(x, y));
     }
 
     public boolean isOpen() {
@@ -307,10 +240,7 @@ public final class ModificationBay {
         if (benchPanel != null && benchPanel.escape()) {
             return true;
         }
-        if (storagePanel != null && storagePanel.escape()) {
-            return true;
-        }
-        if (modePicker != null && modePicker.escape()) {
+        if (picker != null && picker.escape()) {
             return true;
         }
         if (drawer && pickerOpen()) {

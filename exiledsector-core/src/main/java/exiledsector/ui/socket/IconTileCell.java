@@ -4,8 +4,6 @@ import com.fs.starfarer.api.campaign.BaseCustomUIPanelPlugin;
 import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.skills.skilleffect.render.SpriteCache;
-import exiledsector.ui.cargo.AnimatedItemIcons;
-import exiledsector.ui.util.GLDraw;
 
 import java.awt.Color;
 import java.util.List;
@@ -13,7 +11,6 @@ import java.util.function.Consumer;
 
 final class IconTileCell extends BaseCustomUIPanelPlugin {
 
-    private static final Color BACKGROUND = new Color(0, 0, 0, 200);
     private static final Color BLOCKED_COLOR = new Color(110, 110, 110);
     private static final float BORDER_WIDTH = 1.5f;
     private static final float HOVER_BORDER_WIDTH = 2.5f;
@@ -50,16 +47,11 @@ final class IconTileCell extends BaseCustomUIPanelPlugin {
         if (cellPosition == null) {
             return;
         }
-        float x = cellPosition.getX();
-        float y = cellPosition.getY();
-        float width = cellPosition.getWidth();
-        float height = cellPosition.getHeight();
         Color shownAccent = blocked ? BLOCKED_COLOR : accent;
         boolean hovered = tileInput.isHovered();
-        GLDraw.fillQuad(x, y, width, height, BACKGROUND, alphaMult);
-        GLDraw.innerGlow(x, y, width, height, GLOW_WIDTH, shownAccent, GLOW_ALPHA * (hovered && !blocked ? 1.4f : 1f) * alphaMult);
-        GLDraw.strokeQuad(x, y, width, height, shownAccent, hovered && !blocked ? HOVER_BORDER_WIDTH : BORDER_WIDTH,
-                (hovered ? 1f : IDLE_BORDER_ALPHA) * alphaMult);
+        boolean lit = hovered && !blocked;
+        TileChrome.draw(cellPosition, new TileChrome.Frame(shownAccent, GLOW_WIDTH, GLOW_ALPHA * (lit ? 1.4f : 1f), lit ? HOVER_BORDER_WIDTH : BORDER_WIDTH,
+                hovered ? 1f : IDLE_BORDER_ALPHA), alphaMult);
     }
 
     @Override
@@ -68,8 +60,7 @@ final class IconTileCell extends BaseCustomUIPanelPlugin {
             return;
         }
         float iconSize = cellPosition.getWidth() - ICON_INSET * 2f;
-        AnimatedItemIcons.drawAtCenter(ICONS, iconPath, cellPosition.getCenterX(), cellPosition.getCenterY(), iconSize, iconSize,
-                Color.WHITE, (blocked ? BLOCKED_ICON_ALPHA : 1f) * alphaMult);
+        TileChrome.drawIcon(ICONS, iconPath, null, cellPosition, iconSize, (blocked ? BLOCKED_ICON_ALPHA : 1f) * alphaMult, 0f, 0);
     }
 
     @Override

@@ -3,6 +3,7 @@ package exiledsector.ui.socket;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import exiledsector.i18n.StyledText;
+import exiledsector.i18n.Translation;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.CraftingWard;
 import exiledsector.items.Item;
@@ -115,6 +116,18 @@ public interface BenchModeSupport {
 
     String currencyDescriptionKey(ItemCurrency currency);
 
+    default String currencyDescription(ItemCurrency currency) {
+        return Translation.text(currencyDescriptionKey(currency));
+    }
+
+    default List<StyledText> currencyLines(ItemCurrency currency) {
+        return List.of();
+    }
+
+    default boolean inOrbit(ItemCurrency currency) {
+        return true;
+    }
+
     Refusal refusal(ItemCurrency currency, Item loaded, ItemStore store, CraftingMaterials materials, Predicate<ItemDefinition> allowedUniques,
                     Set<CraftingWard> wards);
 
@@ -122,6 +135,10 @@ public interface BenchModeSupport {
             Predicate<ItemDefinition> allowedUniques, Set<CraftingWard> wards, String nameBefore);
 
     UseVerdict cannotUse();
+
+    default List<StyledText> headerLines(Item item) {
+        return item.headerLines();
+    }
 
     List<StyledText> detailLines(Item item);
 

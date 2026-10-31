@@ -1,10 +1,7 @@
 package exiledsector.ui.socket;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.ui.Alignment;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.Fonts;
-import com.fs.starfarer.api.ui.LabelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
@@ -39,8 +36,6 @@ public final class AtlasCatalystPanel extends HoloPanel {
     public static final float PANEL_WIDTH = 380f;
     private static final float FAMILY_HEIGHT = 22f;
     private static final float NOTICE_HEIGHT = 40f;
-    private static final float COUNT_HEIGHT = 16f;
-    private static final float COUNT_INSET = 4f;
     private static final float TOOLTIP_WIDTH = 340f;
     private static final int MIN_GRID_ROWS = 2;
     private static final float CONFIRM_HEIGHT = 150f;
@@ -74,12 +69,11 @@ public final class AtlasCatalystPanel extends HoloPanel {
     static float preferredHeight() {
         int columns = ItemGrid.columnsFor(PANEL_WIDTH);
         float cellSize = ItemGrid.cellSize(PANEL_WIDTH - PAD * 2f, columns);
-        float gridHeight = 0f;
+        List<Integer> familySizes = new ArrayList<>();
         for (AtlasCatalysts.Family family : AtlasCatalysts.Family.values()) {
-            long inFamily = AtlasCatalysts.all().stream().filter(catalyst -> catalyst.family() == family).count();
-            int rows = (int) Math.max(1, (inFamily + columns - 1) / columns);
-            gridHeight += FAMILY_HEIGHT + rows * (cellSize + GAP);
+            familySizes.add((int) AtlasCatalysts.all().stream().filter(catalyst -> catalyst.family() == family).count());
         }
+        float gridHeight = SectionedTileGrid.height(PANEL_WIDTH, familySizes);
         float minimum = MIN_GRID_ROWS * (cellSize + GAP) + FAMILY_HEIGHT;
         return PAD + HEADER_HEIGHT + GAP + Math.max(minimum, gridHeight) + NOTICE_HEIGHT + PAD;
     }
@@ -248,73 +242,35 @@ public final class AtlasCatalystPanel extends HoloPanel {
     private void rebuildGrid() {
         hoverTooltip.hide();
         List<AtlasCatalystItems.Carried> carried = AtlasCatalystItems.carried(playerMaterials());
-        int columns = ItemGrid.columnsFor(panelWidth);
-        float cellSize = ItemGrid.cellSize(innerWidth(), columns);
-        float gridHeight = panelHeight - gridTop() - NOTICE_HEIGHT - PAD;
-        TooltipMakerAPI element = panelRoot.createUIElement(innerWidth(), gridHeight, true);
+        List<SectionedTileGrid.Section> sections = new ArrayList<>();
+        for (AtlasCatalysts.Family family : AtlasCatalysts.Family.values()) {
+            List<SectionedTileGrid.Tile> tiles = carried.stream().filter(entry -> entry.catalyst().family() == family)
+                    .map(entry -> new SectionedTileGrid.Tile(catalystTile(entry), entry.count())).toList();
+            if (!tiles.isEmpty()) {
+                sections.add(new SectionedTileGrid.Section(AtlasCatalystItems.familyName(family), AtlasCatalystItems.color(family), tiles));
+            }
+        }
+        TooltipMakerAPI element = SectionedTileGrid.build(panelRoot, panelWidth, panelHeight - gridTop() - NOTICE_HEIGHT - PAD, sections);
         if (carried.isEmpty()) {
             VanillaText.plainPara(element, Translation.text("catalyst.window.empty"), 0f, Misc.getGrayColor());
-        }
-        for (AtlasCatalysts.Family family : AtlasCatalysts.Family.values()) {
-            List<AtlasCatalystItems.Carried> inFamily = carried.stream().filter(entry -> entry.catalyst().family() == family).toList();
-            if (inFamily.isEmpty()) {
-                continue;
-            }
-            element.setParaFont(Fonts.ORBITRON_12);
-            VanillaText.plainPara(element, AtlasCatalystItems.familyName(family), element.getHeightSoFar() > 0f ? GAP : 0f,
-                    AtlasCatalystItems.color(family));
-            element.setParaFontDefault();
-            for (int start = 0; start < inFamily.size(); start += columns) {
-                element.addCustom(rowPanel(inFamily.subList(start, Math.min(inFamily.size(), start + columns)), cellSize), GAP);
-            }
         }
         gridElement = replaceElement(placedComponent(gridElement), element, PAD, gridTop());
         rebuildNotice();
         refreshOpacity();
     }
 
-    private CustomPanelAPI rowPanel(List<AtlasCatalystItems.Carried> row, float cellSize) {
-        CustomPanelAPI rowPanel = Global.getSettings().createCustom(innerWidth() - ItemGrid.SCROLLBAR_ROOM, cellSize, null);
-        for (int index = 0; index < row.size(); index++) {
-            AtlasCatalystItems.Carried entry = row.get(index);
-            AtlasCatalysts.Catalyst catalyst = entry.catalyst();
-            float cellLeft = index * (cellSize + GAP);
-            CatalystTile tile = new CatalystTile(catalyst.iconPath(), AtlasCatalystItems.look(catalyst.family()),
-                    () -> catalyst.itemId().equals(selectedItemId), tileHandler(entry));
-            rowPanel.addComponent(Global.getSettings().createCustom(cellSize, cellSize, tile)).inTL(cellLeft, 0f);
-            TooltipMakerAPI countElement = rowPanel.createUIElement(cellSize - COUNT_INSET * 2f, COUNT_HEIGHT, false);
-            countElement.setParaFont(Fonts.ORBITRON_12);
-            LabelAPI countLabel = VanillaText.plainPara(countElement, String.valueOf(entry.count()), 0f, Misc.getBrightPlayerColor());
-            countLabel.setAlignment(Alignment.RMID);
-            countElement.setParaFontDefault();
-            rowPanel.addUIElement(countElement).inTL(cellLeft + COUNT_INSET, cellSize - COUNT_HEIGHT - COUNT_INSET);
-        }
-        return rowPanel;
-    }
-
-    private TileInput.Handler tileHandler(AtlasCatalystItems.Carried entry) {
-        String itemId = entry.catalyst().itemId();
-        return new TileInput.Handler() {
-            @Override
-            public void entered(PositionAPI tilePosition) {
-                queue(() -> showTooltip(entry, tilePosition));
+    private WorkbenchTile catalystTile(AtlasCatalystItems.Carried entry) {
+        AtlasCatalysts.Catalyst catalyst = entry.catalyst();
+        String itemId = catalyst.itemId();
+        TileInput.Handler handler = TileInput.Handler.of(tilePosition -> queue(() -> showTooltip(entry, tilePosition)), () -> queue(() -> {
+            if (hoverTooltip.isShowing(itemId)) {
+                hoverTooltip.hide();
             }
-
-            @Override
-            public void left() {
-                queue(() -> {
-                    if (hoverTooltip.isShowing(itemId)) {
-                        hoverTooltip.hide();
-                    }
-                });
-            }
-
-            @Override
-            public boolean clicked() {
-                queue(() -> select(itemId.equals(selectedItemId) ? null : entry.catalyst()));
-                return true;
-            }
-        };
+        }), () -> {
+            queue(() -> select(itemId.equals(selectedItemId) ? null : catalyst));
+            return true;
+        }, () -> false);
+        return WorkbenchTile.selectable(catalyst.iconPath(), AtlasCatalystItems.look(catalyst.family()), () -> itemId.equals(selectedItemId), handler);
     }
 
     private void select(AtlasCatalysts.Catalyst catalyst) {

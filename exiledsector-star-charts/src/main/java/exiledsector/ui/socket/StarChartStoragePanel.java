@@ -1,9 +1,6 @@
 package exiledsector.ui.socket;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.ui.ButtonAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
-import com.fs.starfarer.api.ui.Fonts;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
@@ -14,7 +11,6 @@ import exiledsector.charts.wormhole.ChartSupply;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.Item;
 import exiledsector.items.ItemDisassembly;
-import exiledsector.items.ItemRarity;
 import exiledsector.items.ItemStore;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.VanillaText;
@@ -22,11 +18,8 @@ import exiledsector.ui.chart.StarChartBrowser;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
-import java.util.Set;
 
 public final class StarChartStoragePanel extends HoloPanel {
 
@@ -47,10 +40,9 @@ public final class StarChartStoragePanel extends HoloPanel {
     private static final float FOOTER_HEIGHT = 24f;
     private static final float COMBINE_BUTTON_WIDTH = 130f;
     private static final float COMBINE_TOOLTIP_WIDTH = 300f;
-    private static final float BUTTON_TEXT_PADDING = 30f;
-    private static final float CONFIRM_HEIGHT = 130f;
-    private static final float BATCH_CONFIRM_HEIGHT = 170f;
     private static final ItemCell.Look CELL_LOOK = new ItemCell.Look(7f, true, 1f);
+    private static final DisassemblySelection.Texts DISASSEMBLY_TEXTS = new DisassemblySelection.Texts("chart.ui.storage.disassemblyHint",
+            "chart.ui.storage.confirm.batchTitle", "chart.ui.storage.disassembledMany", false);
 
     private enum Control {CLOSE, COMBINE, DISASSEMBLY_MODE, CONFIRM_DISASSEMBLE, CANCEL_DISASSEMBLE}
 
@@ -61,9 +53,7 @@ public final class StarChartStoragePanel extends HoloPanel {
     private final Listener storageListener;
     private final String openNotice;
     private String actionNotice;
-    private boolean disassemblyMode;
-    private final Set<Item> markedForDisassembly = new LinkedHashSet<>();
-    private List<Item> pendingDisassembly = List.of();
+    private final DisassemblySelection disassembly = new DisassemblySelection(DISASSEMBLY_TEXTS);
     private UIComponentAPI headerElement;
     private UIComponentAPI controlsElement;
     private TooltipMakerAPI gridElement;
@@ -90,10 +80,10 @@ public final class StarChartStoragePanel extends HoloPanel {
     public void refresh() {
         queue(() -> {
             List<Item> owned = ownedCharts();
-            if (pendingDisassembly.stream().anyMatch(chart -> !owned.contains(chart))) {
+            if (disassembly.pending().stream().anyMatch(chart -> !owned.contains(chart))) {
                 closeDisassemblyConfirm();
             }
-            markedForDisassembly.removeIf(chart -> !owned.contains(chart));
+            disassembly.forget(chart -> !owned.contains(chart));
             rebuildControls();
         });
     }
@@ -103,9 +93,9 @@ public final class StarChartStoragePanel extends HoloPanel {
             queue(this::closeDisassemblyConfirm);
             return true;
         }
-        if (disassemblyMode) {
+        if (disassembly.active()) {
             queue(() -> {
-                leaveDisassemblyMode();
+                disassembly.leave();
                 rebuildFooter();
             });
             return true;
@@ -156,7 +146,7 @@ public final class StarChartStoragePanel extends HoloPanel {
     private void handleButton(Object id) {
         if (isConfirmOpen()) {
             if (id == Control.CONFIRM_DISASSEMBLE) {
-                List<Item> targets = pendingDisassembly;
+                List<Item> targets = disassembly.pending();
                 closeDisassemblyConfirm();
                 disassembleNow(targets, true);
             } else if (id == Control.CANCEL_DISASSEMBLE) {
@@ -190,10 +180,6 @@ public final class StarChartStoragePanel extends HoloPanel {
 
     private static String tierLabel(int tier, int count) {
         return Translation.msg("chart.ui.storage.tierTab").arg("tier", tier).arg("count", count).text();
-    }
-
-    private static String rarityLabel(ItemRarity rarity) {
-        return Translation.text("ui.socketStorage.rarity." + rarity.name().toLowerCase(Locale.ROOT));
     }
 
     private void rebuildControls() {
@@ -248,7 +234,7 @@ public final class StarChartStoragePanel extends HoloPanel {
         SkillTreeSounds.crafted();
         actionNotice = Translation.msg("chart.ui.storage.combined").arg("tier", tier).arg("name", made.name()).text();
         browser.reload(store.owned());
-        markedForDisassembly.removeIf(chart -> !store.owned().contains(chart));
+        disassembly.forget(chart -> !store.owned().contains(chart));
         rebuildControls();
     }
 
@@ -258,33 +244,26 @@ public final class StarChartStoragePanel extends HoloPanel {
     }
 
     private void disassemblyModePressed() {
-        if (!disassemblyMode) {
-            disassemblyMode = true;
+        if (!disassembly.active()) {
+            disassembly.enter();
             rebuildFooter();
-        } else if (markedForDisassembly.isEmpty()) {
-            leaveDisassemblyMode();
+        } else if (disassembly.nothingMarked()) {
+            disassembly.leave();
             rebuildFooter();
         } else {
-            openDisassemblyConfirm(List.copyOf(markedForDisassembly));
+            openDisassemblyConfirm(disassembly.marked());
         }
-    }
-
-    private void leaveDisassemblyMode() {
-        disassemblyMode = false;
-        markedForDisassembly.clear();
     }
 
     private void chartClicked(Item chart) {
         if (isConfirmOpen()) {
             return;
         }
-        if (disassemblyMode && ctrlHeld()) {
+        if (disassembly.active() && ctrlHeld()) {
             queue(() -> disassembleNow(List.of(chart), false));
-        } else if (disassemblyMode) {
+        } else if (disassembly.active()) {
             queue(() -> {
-                if (!markedForDisassembly.remove(chart)) {
-                    markedForDisassembly.add(chart);
-                }
+                disassembly.toggle(chart);
                 rebuildFooter();
             });
         } else {
@@ -293,7 +272,7 @@ public final class StarChartStoragePanel extends HoloPanel {
     }
 
     private void chartRightClicked(Item chart) {
-        if (!isConfirmOpen() && !disassemblyMode) {
+        if (!isConfirmOpen() && !disassembly.active()) {
             queue(() -> openDisassemblyConfirm(List.of(chart)));
         }
     }
@@ -303,40 +282,9 @@ public final class StarChartStoragePanel extends HoloPanel {
             return;
         }
         hoverTooltip.hide();
-        pendingDisassembly = List.copyOf(targets);
-        openConfirm(targets.size() == 1 ? CONFIRM_HEIGHT : BATCH_CONFIRM_HEIGHT, element -> writeDisassemblyConfirm(element, targets),
-                "ui.socketStorage.confirm.disassemble", Control.CONFIRM_DISASSEMBLE, "ui.socketStorage.confirm.cancel", Control.CANCEL_DISASSEMBLE);
-    }
-
-    private static void writeDisassemblyConfirm(TooltipMakerAPI element, List<Item> targets) {
-        int totalParts = targets.stream().mapToInt(chart -> chart.rarity().disassemblyParts()).sum();
-        if (targets.size() == 1) {
-            Item chart = targets.get(0);
-            VanillaText.plainPara(element, Translation.msg("ui.socketStorage.confirm.title").arg("name", chart.name()).text(), 0f,
-                    chart.rarity().color());
-            VanillaText.plainPara(element, partsText("ui.socketStorage.confirm.body", totalParts), LINE_PAD * 2f, Misc.getTextColor());
-            return;
-        }
-        VanillaText.plainPara(element, Translation.msg("chart.ui.storage.confirm.batchTitle").arg("count", targets.size()).text(), 0f,
-                Misc.getBasePlayerColor());
-        addRarityBreakdown(element, targets);
-        VanillaText.plainPara(element, Translation.msg("ui.socketStorage.confirm.batchBody").arg("count", totalParts).text(), LINE_PAD * 2f,
-                Misc.getTextColor());
-    }
-
-    private static void addRarityBreakdown(TooltipMakerAPI element, List<Item> targets) {
-        List<String> rarityCounts = new ArrayList<>();
-        List<Color> rarityColors = new ArrayList<>();
-        for (ItemRarity rarity : ItemRarity.values()) {
-            long count = targets.stream().filter(chart -> chart.rarity() == rarity).count();
-            if (count > 0) {
-                rarityCounts.add(Translation.msg("ui.socketStorage.confirm.rarityCount").arg("count", count).arg("rarity", rarityLabel(rarity)).text());
-                rarityColors.add(rarity.color());
-            }
-        }
-        String format = String.join(VanillaText.escapeFormat(Translation.text("ui.socketStorage.confirm.raritySeparator")),
-                rarityCounts.stream().map(text -> "%s").toList());
-        element.addPara(format, LINE_PAD * 2f, rarityColors.toArray(new Color[0]), rarityCounts.toArray(new String[0]));
+        disassembly.confirming(targets);
+        openConfirm(disassembly.confirmHeight(targets), element -> disassembly.writeConfirm(element, targets), "ui.socketStorage.confirm.disassemble",
+                Control.CONFIRM_DISASSEMBLE, "ui.socketStorage.confirm.cancel", Control.CANCEL_DISASSEMBLE);
     }
 
     private void closeDisassemblyConfirm() {
@@ -344,7 +292,7 @@ public final class StarChartStoragePanel extends HoloPanel {
             return;
         }
         closeConfirm();
-        pendingDisassembly = List.of();
+        disassembly.confirmClosed();
     }
 
     private void disassembleNow(List<Item> requested, boolean leaveMode) {
@@ -355,52 +303,30 @@ public final class StarChartStoragePanel extends HoloPanel {
             return;
         }
         CraftingMaterials materials = playerMaterials();
-        int totalParts = 0;
-        int disassembledCount = 0;
-        Item lastDisassembled = null;
-        for (Item chart : targets) {
-            int gainedParts = ItemDisassembly.disassemble(chart, materials, store);
-            if (gainedParts > 0) {
-                totalParts += gainedParts;
-                disassembledCount++;
-                lastDisassembled = chart;
-            }
+        String notice = disassembly.disassemble(targets, chart -> ItemDisassembly.disassemble(chart, materials, store));
+        if (notice != null) {
+            actionNotice = notice;
         }
-        if (disassembledCount == 1) {
-            actionNotice = Translation.msg("ui.socketStorage.disassembled").count(totalParts)
-                    .arg("name", lastDisassembled.name()).arg("count", totalParts).text();
-        } else if (disassembledCount > 1) {
-            actionNotice = Translation.msg("chart.ui.storage.disassembledMany").arg("count", disassembledCount).arg("parts", totalParts).text();
-        }
-        markedForDisassembly.removeAll(targets);
         if (leaveMode) {
-            leaveDisassemblyMode();
+            disassembly.leave();
         }
         browser.reload(store.owned());
         storageListener.disassembled();
         rebuildControls();
     }
 
-    private static String partsText(String key, int partCount) {
-        return Translation.msg(key).count(partCount).arg("count", partCount).text();
-    }
-
     private String footerNotice() {
-        if (!disassemblyMode) {
+        if (!disassembly.active()) {
             return actionNotice != null ? actionNotice : openNotice;
         }
-        if (markedForDisassembly.isEmpty()) {
-            return Translation.text("chart.ui.storage.disassemblyHint");
-        }
-        int markedParts = markedForDisassembly.stream().mapToInt(chart -> chart.rarity().disassemblyParts()).sum();
-        return Translation.msg("ui.socketStorage.disassemblyMarked").arg("count", markedForDisassembly.size()).arg("parts", markedParts).text();
+        return disassembly.hint();
     }
 
     private void rebuildFooter() {
         String shownNotice = footerNotice();
         TooltipMakerAPI notice = panelRoot.createUIElement(innerWidth(), NOTICE_HEIGHT * 3f, false);
         if (shownNotice != null) {
-            VanillaText.plainPara(notice, shownNotice, 0f, disassemblyMode ? Misc.getNegativeHighlightColor() : Misc.getPositiveHighlightColor());
+            VanillaText.plainPara(notice, shownNotice, 0f, disassembly.active() ? Misc.getNegativeHighlightColor() : Misc.getPositiveHighlightColor());
         }
         float neededHeight = Math.max(NOTICE_HEIGHT, notice.getHeightSoFar() + GAP);
         if (Math.abs(neededHeight - noticeHeight) > 0.5f) {
@@ -412,15 +338,9 @@ public final class StarChartStoragePanel extends HoloPanel {
         notice.getPosition().setSize(innerWidth(), noticeHeight);
         noticeElement = replaceElement(noticeElement, notice, PAD, controlsBottom);
         TooltipMakerAPI summary = panelRoot.createUIElement(innerWidth(), FOOTER_HEIGHT, false);
-        String modeKey = !disassemblyMode ? "ui.socketStorage.disassemblyMode"
-                : markedForDisassembly.isEmpty() ? "ui.socketStorage.exitDisassemblyMode" : "ui.socketStorage.confirmDisassembly";
-        String modeLabel = Translation.text(modeKey);
-        float modeWidth = Global.getSettings().computeStringWidth(modeLabel, Fonts.ORBITRON_20AA) + BUTTON_TEXT_PADDING;
-        ButtonAPI modeButton = summary.addButton(modeLabel, Control.DISASSEMBLY_MODE, modeWidth, FOOTER_HEIGHT, 0f);
-        modeButton.getPosition().inTR(0f, 0f);
-        modeButton.setEnabled(disassemblyMode || browser.storedCount() > 0);
+        float modeWidth = disassembly.addModeButton(summary, Control.DISASSEMBLY_MODE, FOOTER_HEIGHT, browser.storedCount() > 0);
         int tier = browser.selectedTier();
-        if (!disassemblyMode && !ChartSupply.combinable(ItemStore.starChartsIfCreated(), tier, browser.selectedChart()).isEmpty()) {
+        if (!disassembly.active() && !ChartSupply.combinable(ItemStore.starChartsIfCreated(), tier, browser.selectedChart()).isEmpty()) {
             summary.addButton(Translation.text("chart.ui.storage.combine"), Control.COMBINE, COMBINE_BUTTON_WIDTH, FOOTER_HEIGHT, 0f)
                     .getPosition().inTR(modeWidth + GAP, 0f);
             summary.addTooltipToPrevious(new GameTextTooltip(COMBINE_TOOLTIP_WIDTH, tooltip -> VanillaText.plainPara(tooltip,
@@ -465,21 +385,19 @@ public final class StarChartStoragePanel extends HoloPanel {
 
             @Override
             public boolean marked() {
-                return markedForDisassembly.contains(chart);
+                return disassembly.isMarked(chart);
             }
         });
     }
 
     private List<StyledText> cellFooter(Item chart, boolean expanded) {
-        int partCount = chart.rarity().disassemblyParts();
-        if (disassemblyMode) {
-            String key = markedForDisassembly.contains(chart) ? "ui.socketStorage.cell.unmark" : "ui.socketStorage.cell.mark";
-            return List.of(Translation.msg(key).count(partCount).arg("count", partCount).styled());
+        if (disassembly.active()) {
+            return List.of(disassembly.cellLine(chart));
         }
         StyledText selectHint = Translation.styled(browser.isSelected(chart) ? "chart.ui.storage.cell.selected" : "chart.ui.storage.cell.select");
         if (!expanded) {
             return List.of(selectHint);
         }
-        return List.of(selectHint, Translation.msg("ui.socketStorage.cell.disassemble").count(partCount).arg("count", partCount).styled());
+        return List.of(selectHint, DisassemblySelection.disassembleHint(chart));
     }
 }

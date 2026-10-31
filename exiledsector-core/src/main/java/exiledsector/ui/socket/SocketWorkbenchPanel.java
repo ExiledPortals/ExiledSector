@@ -13,21 +13,13 @@ import com.fs.starfarer.api.ui.UIComponentAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.ExiledSector;
 import exiledsector.items.MaterialItems;
-import exiledsector.items.CraftingCurrency;
 import exiledsector.items.CraftingWard;
-import exiledsector.items.CorruptionOutcome;
-import exiledsector.items.SocketCustody;
 import exiledsector.items.CraftingMaterials;
 import exiledsector.items.Item;
 import exiledsector.items.ItemCrafting;
-import exiledsector.items.ItemCurrencies;
 import exiledsector.items.ItemCurrency;
 import exiledsector.items.ItemDefinition;
-import exiledsector.items.ItemType;
-import exiledsector.items.ItemNature;
-import exiledsector.items.ItemKind;
 import exiledsector.items.ItemName;
 import exiledsector.items.ItemStore;
 import exiledsector.items.ItemAreas;
@@ -54,7 +46,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
-import java.util.function.ToIntFunction;
 
 public final class SocketWorkbenchPanel extends HoloPanel {
 
@@ -186,10 +177,6 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         return firstAngle - index * (firstAngle - lastAngle) / (tileCount - 1);
     }
 
-    static List<ItemCurrency> orbitCurrencies(List<ItemCurrency> shownCurrencies) {
-        return shownCurrencies.stream().filter(CraftingCurrency.class::isInstance).toList();
-    }
-
     static float columnTileTop(int index, int tileCount, float centreY, float tileSize, float gap, float areaHeight) {
         float columnHeight = tileCount * tileSize + Math.max(0, tileCount - 1) * gap;
         float columnTop = Math.max(0f, Math.min(centreY - columnHeight / 2f, areaHeight - columnHeight));
@@ -238,7 +225,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     public void load(Item item) {
         queue(() -> {
-            if (item == loadedItem || (item != null && !BenchModes.accepts(benchMode, item))) {
+            if (item == loadedItem || (item != null && !support().accepts(item))) {
                 return;
             }
             cancelConfirm();
@@ -251,7 +238,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     public void refresh() {
         queue(() -> {
-            ItemStore store = modeStore();
+            ItemStore store = support().store();
             if (loadedItem != null && (store == null || !store.owned().contains(loadedItem))) {
                 loadedItem = null;
                 cancelConfirm();
@@ -501,7 +488,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         VanillaText.plainPara(element, title, 0f, Misc.getBasePlayerColor());
         String body = growing
                 ? Translation.msg("ui.workbench.confirm.growBody").arg("cost", currency.partsCost()).arg("parts", ItemCrafting.parts(playerMaterials())).text()
-                : domainSupport() != null ? Translation.text(modeDescriptionKey(currency)) : currency.description();
+                : support().currencyDescription(currency);
         VanillaText.plainPara(element, body, LINE_PAD * 2f, Misc.getTextColor());
         for (CraftingWard ward : spentWards) {
             VanillaText.plainPara(element, Translation.msg("ui.workbench.confirm.wardSpent").arg("name", MaterialItems.displayName(ward.itemId())).text(),
@@ -536,27 +523,16 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     }
 
     private boolean usable(ItemCurrency currency) {
-        if (domainSupport() != null) {
-            return domainUsable(currency);
-        }
         CraftingMaterials materials = playerMaterials();
-        if (materials.count(currency.itemId()) < 1) {
-            String noneOwnedKey = currency.synthesisable() ? "ui.workbench.notice.noneOwned" : "ui.workbench.notice.noneFound";
-            showNotice(Translation.msg(noneOwnedKey).arg("name", MaterialItems.displayName(currency.itemId())).text());
+        BenchModeSupport.Refusal refusal = support().refusal(currency, loadedItem, support().store(), materials, allowedUniques(), activeWards);
+        if (refusal.checksWards() && droppedMissingWards(materials)) {
             return false;
         }
-        if (loadedItem == null) {
-            showNotice(Translation.text("ui.workbench.notice.loadFirst"));
-            return false;
+        if (refusal.allowed()) {
+            return true;
         }
-        if (droppedMissingWards(materials)) {
-            return false;
-        }
-        UseVerdict verdict = ItemCrafting.verdict(currency, loadedItem, allowedUniques(), activeWards);
-        if (!verdict.allowed()) {
-            showNotice(refusalText(currency, verdict));
-        }
-        return verdict.allowed();
+        showNotice(refusalText(currency, refusal.verdict()));
+        return false;
     }
 
     private boolean droppedMissingWards(CraftingMaterials materials) {
@@ -569,48 +545,21 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         return true;
     }
 
-    private boolean domainUsable(ItemCurrency currency) {
-        CraftingMaterials materials = playerMaterials();
-        BenchModeSupport.Refusal refusal = modeSupport().refusal(currency, loadedItem, modeStore(), materials, allowedUniques(),
-                activeWards);
-        if (refusal.checksWards() && droppedMissingWards(materials)) {
-            return false;
-        }
-        if (refusal.allowed()) {
-            return true;
-        }
-        showNotice(refusalText(currency, refusal.verdict()));
-        return false;
-    }
-
     private String refusalText(ItemCurrency currency, UseVerdict verdict) {
         return verdict.text(MaterialItems.displayName(currency.itemId()), loadedItem == null ? "" : loadedItem.name());
     }
 
-    private BenchModeSupport domainSupport() {
+    private BenchModeSupport support() {
         return BenchModes.of(benchMode);
     }
 
-    private ItemStore modeStore() {
-        BenchModeSupport support = domainSupport();
-        return support != null ? support.store() : ItemStore.get();
-    }
-
-    private BenchModeSupport modeSupport() {
-        BenchModeSupport support = domainSupport();
-        if (support == null) {
-            throw new IllegalStateException("No domain supports the " + benchMode + " bench mode");
-        }
-        return support;
-    }
-
-    private void applyDomainUse(ItemCurrency currency) {
+    private void applyUse(ItemCurrency currency) {
         String nameBefore = loadedItem.name();
         Set<CraftingWard> spentWards = ItemCrafting.wardsSpentBy(currency, loadedItem, activeWards);
-        BenchModeSupport.Use used = modeSupport().use(currency, loadedItem, modeStore(), playerMaterials(), craftingRandom,
+        BenchModeSupport.Use used = support().use(currency, loadedItem, support().store(), playerMaterials(), craftingRandom,
                 allowedUniques(), activeWards, nameBefore);
         if (used == null) {
-            showNotice(refusalText(currency, modeSupport().cannotUse()));
+            showNotice(refusalText(currency, support().cannotUse()));
             return;
         }
         activeWards.removeAll(spentWards);
@@ -618,37 +567,6 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         noticeText = withSpentWards(used.notice(), spentWards);
         SkillTreeSounds.socketed();
         socketFlair.flash(used.result().frameColor());
-        afterChange();
-    }
-
-    private void applyUse(ItemCurrency currency) {
-        if (domainSupport() != null) {
-            applyDomainUse(currency);
-            return;
-        }
-        CraftingMaterials materials = playerMaterials();
-        String nameBefore = loadedItem.name();
-        Set<CraftingWard> spentWards = ItemCrafting.wardsSpentBy(currency, loadedItem, activeWards);
-        Item result = ItemCrafting.use(currency, loadedItem, materials, ItemStore.get(), craftingRandom, allowedUniques(), activeWards);
-        if (result == null) {
-            return;
-        }
-        activeWards.removeAll(spentWards);
-        if (currency != CraftingCurrency.REPLICATION) {
-            loadedItem = result;
-        }
-        String usedKey = usedNoticeKey(currency, result.corruption(), ItemNature.of(result.kind()));
-        noticeText = Translation.msg(usedKey)
-                .arg("before", nameBefore).arg("name", result.name()).text();
-        SocketCustody.markHostsChanged(result);
-        if ((currency == CraftingCurrency.TRANSPOSITION || currency == CraftingCurrency.CORRUPTION) && SocketCustody.unsocketIfMisfit(result)) {
-            String movedNotice = Translation.msg("ui.workbench.notice.movedToStorage").arg("name", result.name())
-                    .arg("type", result.kindName()).text();
-            noticeText = Translation.msg("format.sentences").arg("a", noticeText).arg("b", movedNotice).text();
-        }
-        noticeText = withSpentWards(noticeText, spentWards);
-        SkillTreeSounds.socketed();
-        socketFlair.flash(result.frameColor());
         afterChange();
     }
 
@@ -696,8 +614,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         if (embeddedLayout != null) {
             return;
         }
-        BenchModeSupport support = domainSupport();
-        TooltipMakerAPI element = startHeader(support != null ? support.titleKey() : "ui.workbench.title", "ui.workbench.close", Control.CLOSE);
+        TooltipMakerAPI element = startHeader(support().titleKey(), "ui.workbench.close", Control.CLOSE);
         float partsRight = CLOSE_BUTTON_WIDTH + GAP * 2f;
         if (workbenchListener.offersItemPicker()) {
             element.addButton(Translation.text("ui.workbench.pickItem"), Control.PICK, PICK_BUTTON_WIDTH, HEADER_BUTTON_HEIGHT, 0f)
@@ -706,28 +623,6 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         }
         addPartsCount(element, partsRight);
         headerElement = finishHeader(element, headerElement);
-    }
-
-    private List<ItemCurrency> currencies() {
-        BenchModeSupport support = domainSupport();
-        if (support != null) {
-            return support.currencies();
-        }
-        CraftingMaterials materials = playerMaterials();
-        List<ItemCurrency> offered = new ArrayList<>();
-        ExiledSector.enabledDomains().forEach(domain -> offered.addAll(domain.hullBenchCurrencies()));
-        return hullBenchCurrencies(offered, materials::count);
-    }
-
-    static List<ItemCurrency> hullBenchCurrencies(List<ItemCurrency> registered, ToIntFunction<String> owned) {
-        List<ItemCurrency> shown = new ArrayList<>(List.of(CraftingCurrency.values()));
-        for (ItemCurrency currency : registered) {
-            boolean hullBench = ItemCurrencies.appliesTo(currency, ItemType.HULL_ITEM) || ItemCurrencies.appliesTo(currency, ItemType.SUBROUTINE);
-            if (!(currency instanceof CraftingCurrency) && hullBench && owned.applyAsInt(currency.itemId()) > 0) {
-                shown.add(currency);
-            }
-        }
-        return shown;
     }
 
     private void rebuildContent() {
@@ -739,8 +634,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     }
 
     private boolean showsOpenButton() {
-        BenchModeSupport support = domainSupport();
-        return support != null && support.openTexts() != null && workbenchListener.openTarget() != null;
+        return support().openTexts() != null && workbenchListener.openTarget() != null;
     }
 
     private float detailsArtHeight() {
@@ -750,7 +644,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private BenchModeSupport.OpenCheck openBlocker() {
         BenchModeSupport.OpenTarget openTarget = workbenchListener.openTarget();
-        return modeSupport().openCheck(Global.getSector(), modeStore(), loadedItem, openTarget == null ? null : openTarget.target());
+        return support().openCheck(Global.getSector(), support().store(), loadedItem, openTarget == null ? null : openTarget.target());
     }
 
     private void rebuildOpenButton() {
@@ -766,13 +660,13 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             return;
         }
         BenchModeSupport.OpenCheck blocker = openBlocker();
-        BenchModeSupport.OpenTexts openTexts = modeSupport().openTexts();
+        BenchModeSupport.OpenTexts openTexts = support().openTexts();
         float buttonWidth = BenchScene.DETAILS_WIDTH * sceneScale;
         float plateBottom = artY(BenchScene.CHART_DETAILS_BOTTOM) + PLATE_PAD;
         float buttonTop = Math.max(artY(BenchScene.OPEN_BUTTON_TOP), plateBottom + PLATE_PAD);
         float artBottom = artY(BenchScene.ART_HEIGHT);
         float buttonHeight = Math.min(Math.max(MIN_OPEN_BUTTON_HEIGHT, BenchScene.OPEN_BUTTON_HEIGHT * sceneScale), artBottom - buttonTop);
-        BenchModeSupport.DebugAction debugAction = modeSupport().debugAction();
+        BenchModeSupport.DebugAction debugAction = support().debugAction();
         float debugWidth = debugAction == null ? 0f : buttonWidth * DEBUG_BUTTON_SHARE;
         float openWidth = debugAction == null ? buttonWidth : buttonWidth - debugWidth - DEBUG_BUTTON_GAP;
         TooltipMakerAPI element = panelRoot.createUIElement(buttonWidth, buttonHeight, false);
@@ -793,7 +687,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private void rebuildEmbeddedOpenButton() {
         BenchModeSupport.OpenCheck blocker = openBlocker();
-        BenchModeSupport.OpenTexts openTexts = modeSupport().openTexts();
+        BenchModeSupport.OpenTexts openTexts = support().openTexts();
         BenchLayout.Rect open = embeddedLayout.openButton();
         openAllowed = blocker.allowsOpening() && !wormholeOpened;
         TooltipMakerAPI element = panelRoot.createUIElement(open.width(), open.height(), false);
@@ -823,10 +717,10 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     private void debugPressed() {
         hoverTooltip.hide();
         BenchModeSupport.OpenTarget openTarget = workbenchListener.openTarget();
-        if (openTarget == null || modeSupport().debugAction() == null) {
+        if (openTarget == null || support().debugAction() == null) {
             return;
         }
-        modeSupport().runDebugAction(Global.getSector(), loadedItem, openTarget.target());
+        support().runDebugAction(Global.getSector(), loadedItem, openTarget.target());
         SkillTreeSounds.panelOpened();
         workbenchListener.debugActionApplied();
     }
@@ -844,8 +738,8 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         BenchModeSupport.OpenTarget openTarget = workbenchListener.openTarget();
         pendingOpenItem = loadedItem;
         pendingOpenTarget = openTarget == null ? null : openTarget.target();
-        List<String> confirmLines = modeSupport().confirmLines(loadedItem, openTarget);
-        List<BenchModeSupport.OpenChoice> choices = modeSupport().openChoices(loadedItem, openTarget);
+        List<String> confirmLines = support().confirmLines(loadedItem, openTarget);
+        List<BenchModeSupport.OpenChoice> choices = support().openChoices(loadedItem, openTarget);
         if (choices.isEmpty() && embeddedLayout != null) {
             confirmOpen();
         } else if (choices.isEmpty()) {
@@ -857,8 +751,8 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private void showChoiceConfirm(List<String> confirmLines, List<BenchModeSupport.OpenChoice> choices) {
         Item confirmedItem = pendingOpenItem;
-        int entries = modeSupport().openEntries();
-        BenchModeSupport.OpenTexts openTexts = modeSupport().openTexts();
+        int entries = support().openEntries();
+        BenchModeSupport.OpenTexts openTexts = support().openTexts();
         List<String> lines = new ArrayList<>(confirmLines);
         List<String> labels = new ArrayList<>();
         List<Object> ids = new ArrayList<>();
@@ -875,8 +769,8 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private void showOpenConfirm(List<String> confirmLines) {
         Item confirmedItem = pendingOpenItem;
-        int entries = modeSupport().openEntries();
-        BenchModeSupport.OpenTexts openTexts = modeSupport().openTexts();
+        int entries = support().openEntries();
+        BenchModeSupport.OpenTexts openTexts = support().openTexts();
         openConfirm(OPEN_CONFIRM_HEIGHT + confirmLines.size() * WARD_LINE_HEIGHT,
                 element -> writeOpenConfirm(element, openTexts, confirmedItem, entries, confirmLines), openTexts.confirmYesKey(),
                 Control.CONFIRM_OPEN, openTexts.confirmNoKey(), Control.CANCEL_CONFIRM);
@@ -904,7 +798,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         if (openedItem == null || openedItem != loadedItem) {
             return;
         }
-        BenchModeSupport.OpenOutcome outcome = modeSupport().openAt(Global.getSector(), modeStore(), openedItem, modeSupport().openEntries(),
+        BenchModeSupport.OpenOutcome outcome = support().openAt(Global.getSector(), support().store(), openedItem, support().openEntries(),
                 craftingRandom, openedTarget);
         String message = Translation.msg(outcome.messageKey()).arg("name", openedItem.name()).text();
         if (!outcome.opened()) {
@@ -915,7 +809,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             return;
         }
         wormholeOpened = true;
-        modeSupport().playOpened();
+        support().playOpened();
         rebuildOpenButton();
         refreshOpacity();
         workbenchListener.wormholeOpened(message);
@@ -931,10 +825,10 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         float artHeight = BenchScene.ART_HEIGHT * sceneScale;
         TooltipMakerAPI element = panelRoot.createUIElement(artWidth, artHeight, false);
         CraftingMaterials materials = playerMaterials();
-        BenchModeSupport support = domainSupport();
-        List<ItemCurrency> shownCurrencies = currencies();
-        List<ItemCurrency> orbitCurrencies = support == null ? orbitCurrencies(shownCurrencies) : shownCurrencies;
-        List<ItemCurrency> columnCurrencies = shownCurrencies.stream().filter(currency -> !orbitCurrencies.contains(currency)).toList();
+        BenchModeSupport support = support();
+        List<ItemCurrency> shownCurrencies = support.currencies();
+        List<ItemCurrency> orbitCurrencies = shownCurrencies.stream().filter(support::inOrbit).toList();
+        List<ItemCurrency> columnCurrencies = shownCurrencies.stream().filter(currency -> !support.inOrbit(currency)).toList();
         float tileSize = tileSize();
         float socketX = benchMode.socketX() * sceneScale;
         float socketY = benchMode.socketY() * sceneScale;
@@ -950,7 +844,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             float tileTop = columnTileTop(i, columnCurrencies.size(), socketY, tileSize, columnGap, artHeight);
             addTile(element, columnCurrencies.get(i), columnLeft, tileTop, tileSize, materials);
         }
-        if (support == null || support.usesInhibitors()) {
+        if (support.usesInhibitors()) {
             addInhibitorTiles(element, tileSize, materials);
         }
         recipesElement = replaceElement(recipesElement, element, FRAME_INSET, FRAME_INSET);
@@ -967,22 +861,18 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             return;
         }
         CraftingMaterials materials = playerMaterials();
-        List<BenchMaterialsPanel.Tile> currencyTiles = new ArrayList<>();
-        for (ItemCurrency currency : currencies()) {
-            int ownedCount = materials.count(currency.itemId());
-            currencyTiles.add(new BenchMaterialsPanel.Tile(recipeIcons(currency), recipeLook(currency), () -> ownedCount > 0, false,
-                    currencyHandler(currency), ownedCount));
+        List<SectionedTileGrid.Tile> currencyTiles = new ArrayList<>();
+        for (ItemCurrency currency : support().currencies()) {
+            currencyTiles.add(new SectionedTileGrid.Tile(currencyTile(currency, materials), materials.count(currency.itemId())));
         }
-        List<BenchMaterialsPanel.Section> sections = new ArrayList<>();
-        sections.add(new BenchMaterialsPanel.Section(Translation.text("ui.workbench.materials.currencies"), currencyTiles));
-        BenchModeSupport support = domainSupport();
-        if (support == null || support.usesInhibitors()) {
-            List<BenchMaterialsPanel.Tile> wardTiles = new ArrayList<>();
+        List<SectionedTileGrid.Section> sections = new ArrayList<>();
+        sections.add(new SectionedTileGrid.Section(Translation.text("ui.workbench.materials.currencies"), Misc.getBasePlayerColor(), currencyTiles));
+        if (support().usesInhibitors()) {
+            List<SectionedTileGrid.Tile> wardTiles = new ArrayList<>();
             for (CraftingWard ward : List.of(CraftingWard.PREFIX, CraftingWard.SUFFIX)) {
-                wardTiles.add(new BenchMaterialsPanel.Tile(wardIcons(ward), CargoIconLooks.forMaterial(ward.itemId()), () -> activeWards.contains(ward), true,
-                        wardHandler(ward), materials.count(ward.itemId())));
+                wardTiles.add(new SectionedTileGrid.Tile(wardTile(ward), materials.count(ward.itemId())));
             }
-            sections.add(new BenchMaterialsPanel.Section(Translation.text("ui.workbench.materials.inhibitors"), wardTiles));
+            sections.add(new SectionedTileGrid.Section(Translation.text("ui.workbench.materials.inhibitors"), Misc.getBasePlayerColor(), wardTiles));
         }
         if (materialsPanel == null) {
             materialsPanel = BenchMaterialsPanel.open(hostPanel, embeddedLayout.materials(), sections, () -> queue(hoverTooltip::hide));
@@ -1009,11 +899,18 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private void addWardTile(TooltipMakerAPI element, CraftingWard ward, float tileLeft, float tileTop, float tileSize,
                              CraftingMaterials materials) {
-        WorkbenchTile wardTile = new WorkbenchTile(wardIcons(ward), CargoIconLooks.forMaterial(ward.itemId()), () -> activeWards.contains(ward), true,
-                wardHandler(ward));
-        CustomPanelAPI tilePanel = Global.getSettings().createCustom(tileSize, tileSize, wardTile);
+        CustomPanelAPI tilePanel = Global.getSettings().createCustom(tileSize, tileSize, wardTile(ward));
         element.addCustom(tilePanel, 0f).getPosition().inTL(tileLeft, tileTop);
         addCount(element, ward.itemId(), tileLeft, tileTop, tileSize, materials);
+    }
+
+    private WorkbenchTile wardTile(CraftingWard ward) {
+        return WorkbenchTile.toggle(wardIcons(ward), CargoIconLooks.forMaterial(ward.itemId()), () -> activeWards.contains(ward), wardHandler(ward));
+    }
+
+    private WorkbenchTile currencyTile(ItemCurrency currency, CraftingMaterials materials) {
+        boolean owned = materials.count(currency.itemId()) > 0;
+        return WorkbenchTile.usable(recipeIcons(currency), recipeLook(currency), () -> owned, currencyHandler(currency));
     }
 
     private void toggleWard(CraftingWard ward) {
@@ -1064,35 +961,19 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private TileInput.Handler tileHandler(Object tooltipKey, Consumer<PositionAPI> showTooltip, Consumer<Boolean> clicked,
                                           Consumer<Boolean> rightClicked) {
-        return new TileInput.Handler() {
-            @Override
-            public void entered(PositionAPI tilePosition) {
-                queue(() -> showTooltip.accept(tilePosition));
+        return TileInput.Handler.of(tilePosition -> queue(() -> showTooltip.accept(tilePosition)), () -> queue(() -> {
+            if (hoverTooltip.isShowing(tooltipKey)) {
+                hoverTooltip.hide();
             }
-
-            @Override
-            public void left() {
-                queue(() -> {
-                    if (hoverTooltip.isShowing(tooltipKey)) {
-                        hoverTooltip.hide();
-                    }
-                });
-            }
-
-            @Override
-            public boolean clicked() {
-                boolean skipConfirm = ctrlHeld();
-                queue(() -> clicked.accept(skipConfirm));
-                return true;
-            }
-
-            @Override
-            public boolean rightClicked() {
-                boolean skipConfirm = ctrlHeld();
-                queue(() -> rightClicked.accept(skipConfirm));
-                return true;
-            }
-        };
+        }), () -> {
+            boolean skipConfirm = ctrlHeld();
+            queue(() -> clicked.accept(skipConfirm));
+            return true;
+        }, () -> {
+            boolean skipConfirm = ctrlHeld();
+            queue(() -> rightClicked.accept(skipConfirm));
+            return true;
+        });
     }
 
     private static void addCount(TooltipMakerAPI element, String itemId, float tileLeft, float tileTop, float tileSize,
@@ -1109,9 +990,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
 
     private void addTile(TooltipMakerAPI element, ItemCurrency currency, float tileLeft, float tileTop, float tileSize,
                          CraftingMaterials materials) {
-        boolean owned = materials.count(currency.itemId()) > 0;
-        CustomPanelAPI tilePanel = Global.getSettings().createCustom(tileSize, tileSize, new WorkbenchTile(recipeIcons(currency), recipeLook(currency),
-                () -> owned, false, currencyHandler(currency)));
+        CustomPanelAPI tilePanel = Global.getSettings().createCustom(tileSize, tileSize, currencyTile(currency, materials));
         element.addCustom(tilePanel, 0f).getPosition().inTL(tileLeft, tileTop);
         addCount(element, currency.itemId(), tileLeft, tileTop, tileSize, materials);
     }
@@ -1129,10 +1008,9 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         element.setParaFont(Fonts.ORBITRON_20AA);
         VanillaText.plainPara(element, recipeName(currency), 0f, Misc.getBrightPlayerColor());
         element.setParaFontDefault();
-        String description = domainSupport() != null ? Translation.text(modeDescriptionKey(currency)) : currency.description();
-        VanillaText.plainPara(element, description, GAP, Misc.getTextColor());
+        VanillaText.plainPara(element, support().currencyDescription(currency), GAP, Misc.getTextColor());
         float linePad = GAP;
-        for (StyledText line : domainSupport() != null ? List.<StyledText>of() : currency.grantedLines()) {
+        for (StyledText line : support().currencyLines(currency)) {
             VanillaText.addPara(element, line, linePad, Misc.getTextColor());
             linePad = LINE_PAD;
         }
@@ -1152,17 +1030,11 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             if (currency.synthesisable()) {
                 hints.add(Translation.text("ui.workbench.tile.noneOwned"));
             }
-        } else if (domainSupport() != null) {
-            BenchModeSupport.Refusal refusal = modeSupport().refusal(currency, loadedItem, modeStore(), playerMaterials(), allowedUniques(),
+        } else {
+            BenchModeSupport.Refusal refusal = support().refusal(currency, loadedItem, support().store(), playerMaterials(), allowedUniques(),
                     activeWards);
             hints.add(refusal.allowed()
-                    ? Translation.msg(modeSupport().useHintKey()).arg("target", loadedItem.name()).text() : refusalText(currency, refusal.verdict()));
-        } else if (loadedItem != null && ItemCrafting.canUse(currency, loadedItem, allowedUniques(), activeWards)) {
-            hints.add(Translation.msg("ui.workbench.tile.use").arg("target", loadedItem.name()).text());
-        } else if (loadedItem != null && ItemCrafting.canUse(currency, loadedItem, allowedUniques())) {
-            hints.add(Translation.text("ui.workbench.tile.wardBlocks"));
-        } else {
-            hints.add(Translation.text("ui.workbench.tile.noTarget"));
+                    ? Translation.msg(support().useHintKey()).arg("target", loadedItem.name()).text() : refusalText(currency, refusal.verdict()));
         }
         hints.add(synthesiseHint);
         return hints;
@@ -1171,21 +1043,6 @@ public final class SocketWorkbenchPanel extends HoloPanel {
     private static List<String> recipeIcons(ItemCurrency currency) {
         String iconPath = MaterialItems.loadedIconPath(currency.itemId());
         return List.of(iconPath == null ? FALLBACK_ICON : iconPath);
-    }
-
-    static String descriptionKey(ItemCurrency currency) {
-        return MaterialItems.descriptionKey(currency.itemId());
-    }
-
-    private String modeDescriptionKey(ItemCurrency currency) {
-        return domainSupport() != null ? modeSupport().currencyDescriptionKey(currency) : descriptionKey(currency);
-    }
-
-    static String usedNoticeKey(ItemCurrency currency, CorruptionOutcome outcome, ItemNature nature) {
-        if (currency == CraftingCurrency.CORRUPTION && outcome != null) {
-            return "ui.workbench.notice.corrupted." + outcome.name().toLowerCase(Locale.ROOT) + "." + nature.name().toLowerCase(Locale.ROOT);
-        }
-        return currency.usedNoticeKey(nature);
     }
 
     private static CargoIconLook recipeLook(ItemCurrency currency) {
@@ -1203,8 +1060,7 @@ public final class SocketWorkbenchPanel extends HoloPanel {
         float detailsHeight = embeddedLayout != null ? embeddedLayout.details().height() : detailsArtHeight() * sceneScale;
         TooltipMakerAPI element = panelRoot.createUIElement(detailsWidth, detailsHeight, true);
         if (loadedItem == null) {
-            String emptyKey = domainSupport() != null ? modeSupport().emptyKey() : "ui.workbench.empty";
-            centred(VanillaText.plainPara(element, Translation.text(emptyKey), 0f, Misc.getGrayColor()));
+            centred(VanillaText.plainPara(element, Translation.text(support().emptyKey()), 0f, Misc.getGrayColor()));
         } else {
             ItemName displayName = loadedItem.displayName();
             element.setParaFont(Fonts.ORBITRON_20AA);
@@ -1213,24 +1069,12 @@ public final class SocketWorkbenchPanel extends HoloPanel {
             if (displayName.baseName() != null) {
                 centred(VanillaText.plainPara(element, displayName.baseName(), LINE_PAD, Misc.getGrayColor()));
             }
-            if (domainSupport() != null) {
-                for (StyledText line : loadedItem.headerLines()) {
-                    centred(VanillaText.addPara(element, line, LINE_PAD, Misc.getGrayColor()));
-                }
-            } else {
-                if (loadedItem.mirrored()) {
-                    centred(VanillaText.addPara(element, Translation.styled("socketable.tooltip.mirrored"), LINE_PAD, Misc.getGrayColor()));
-                }
-                if (loadedItem.corrupted()) {
-                    centred(VanillaText.addPara(element, Translation.styled("socketable.tooltip.corrupted"), LINE_PAD, Misc.getGrayColor()));
-                }
-                for (StyledText line : loadedItem.kindLines()) {
-                    centred(VanillaText.addPara(element, line, LINE_PAD, Misc.getGrayColor()));
-                }
+            for (StyledText line : support().headerLines(loadedItem)) {
+                centred(VanillaText.addPara(element, line, LINE_PAD, Misc.getGrayColor()));
             }
             float paraPad = GAP * 2f;
             float linePad = paraPad;
-            for (StyledText line : BenchModes.detailLines(loadedItem)) {
+            for (StyledText line : support().detailLines(loadedItem)) {
                 centred(VanillaText.addPara(element, line, linePad, Misc.getTextColor()));
                 linePad = LINE_PAD;
             }
