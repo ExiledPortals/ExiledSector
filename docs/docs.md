@@ -338,7 +338,7 @@ the share of NPC ships with trees follows the share of unlocked player ships. Ch
 
 A hull item with a targeting effect rolls one other section as its target (`HullItem.targetSection`, from its seed,
 stored once rolled); the Extended Warranty Contract's 100% doubles that item, drawbacks included. The Tuning
-Nanoswarm rerolls the target (`Item.rerollTarget`). On load a unique item follows its definition's current pool
+Nanoswarm rerolls the target (`Item.retuneTrait`). On load a unique item follows its definition's current pool
 (`ItemDefinition.withCurrentUniquePool`): it rolls modifiers added since it dropped, from its seed, and loses those
 taken out. A modifier whose effect no longer loads is kept.
 

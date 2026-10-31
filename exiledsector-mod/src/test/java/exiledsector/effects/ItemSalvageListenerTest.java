@@ -169,7 +169,7 @@ class ItemSalvageListenerTest {
             assertEquals(1, specials.getAllValues().stream().filter(special -> StarChartCurrency.byItemId(special.getId()) != null).count());
         } finally {
             ChartDrops.clear();
-            StarChartCurrency.unregisterAll();
+            StarChartFixtures.unregisterCurrencies();
             StarChartFixtures.clear();
         }
     }

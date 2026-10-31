@@ -91,7 +91,7 @@ class ChartDropsTest {
         mockSector.close();
         ChartDrops.clear();
         AtlasCatalysts.resetForTests();
-        StarChartCurrency.unregisterAll();
+        StarChartFixtures.unregisterCurrencies();
         StarChartFixtures.clear();
     }
 

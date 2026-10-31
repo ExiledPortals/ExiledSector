@@ -55,11 +55,6 @@ public final class StarChartBench implements BenchModeSupport {
     }
 
     @Override
-    public boolean enabled() {
-        return StarChartSettings.enabled();
-    }
-
-    @Override
     public ItemStore store() {
         return ItemStore.starChartsIfCreated();
     }

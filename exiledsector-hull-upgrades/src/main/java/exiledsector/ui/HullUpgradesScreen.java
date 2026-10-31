@@ -83,7 +83,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         hostPanel = panel;
         storage.reconcileOwnedShips();
         sectionEditor = new SectionEditor(member, variant, refitButton);
-        sectionsDisplay = new SectionsDisplay(panel, sectionEditor, SectionLayout.Arrangement.LEFT_ABOVE_BELOW);
+        sectionsDisplay = new SectionsDisplay(panel, sectionEditor);
         sectionsDisplay.refreshIfChanged();
     }
 
@@ -138,7 +138,7 @@ final class HullUpgradesScreen extends BaseCustomUIPanelPlugin {
         upgradesPanel = HullUpgradePanel.open(hostPanel, placement(instantly), sectionsDisplay.panelView(), sectionsDisplay.panelListener(() -> {
             upgradesPanel = null;
             close();
-        }), tabListener, SHOWN_TABS, HullUpgradePanel.Sizing.SCROLL);
+        }), tabListener, SHOWN_TABS);
         if (!instantly) {
             SkillTreeSounds.panelOpened();
         }

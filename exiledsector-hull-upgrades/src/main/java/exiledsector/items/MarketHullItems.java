@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.ExiledSector;
 import exiledsector.ModCsv;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
@@ -15,7 +16,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public final class MarketHullItems {
 
-    public static final String DATA_PATH = "data/config/exiledSector/market_hull_items.csv";
+    public static final String DATA_PATH = ExiledSector.configPath("market_hull_items.csv");
     static final String SUBMARKET_COLUMN = "submarket";
     static final String MIN_COUNT_COLUMN = "min_count";
     static final String MAX_COUNT_COLUMN = "max_count";

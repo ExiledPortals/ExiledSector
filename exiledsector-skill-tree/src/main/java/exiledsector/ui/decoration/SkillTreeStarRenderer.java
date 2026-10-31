@@ -3,15 +3,13 @@ package exiledsector.ui.decoration;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.PlanetSpecAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
-import com.fs.starfarer.api.util.Misc;
+import exiledsector.PlanetSpecs;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.skills.decoration.Star;
 import exiledsector.ui.SmoothZoom;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.ColorUtil;
-import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.SpriteDraw;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.Color;
 import java.util.HashMap;
@@ -27,7 +25,6 @@ public class SkillTreeStarRenderer implements DecorationRenderer {
     private final SpriteCache spriteCache = new SpriteCache(SkillTreeStarRenderer.class);
     private final UnitSphere unitSphere = new UnitSphere();
     private final Map<String, StarAnimation> animationById = new HashMap<>();
-    private Map<String, PlanetSpecAPI> specsByType;
     private SpriteAPI atmosphereTexture;
     private SpriteAPI auroraTexture;
     private float mapRadius;
@@ -123,30 +120,8 @@ public class SkillTreeStarRenderer implements DecorationRenderer {
         }
         StarAnimation animation = animationById.get(star.getId());
         float rotationAngle = animation == null ? 0f : animation.rotationAngle;
-        Color discColor = resolveColor(star, spec.getPlanetColor());
-
-        try (GlScope scope = GlScope.save(GlScope.DRAW_ATTRIBS | GL11.GL_POLYGON_BIT).enable(GL11.GL_TEXTURE_2D).normalBlend()
-                .enable(GL11.GL_CULL_FACE)) {
-            // TODO: if the star renders inside-out in-game, swap GL11.GL_CW <-> GL11.GL_CCW here.
-            GL11.glFrontFace(GL11.GL_CW);
-            GL11.glCullFace(GL11.GL_BACK);
-
-            GL11.glPushMatrix();
-            GL11.glTranslatef(screenX, screenY, 0f);
-            GL11.glRotatef(spec.getTilt(), 0f, 0f, 1f);
-            GL11.glRotatef(spec.getPitch(), 1f, 0f, 0f);
-            GL11.glRotatef(rotationAngle, 0f, 1f, 0f);
-            GL11.glRotatef(-90f, 1f, 0f, 0f);
-            discTexture.bindTexture();
-
-            Misc.setColor(discColor, alphaMult);
-            unitSphere.draw(discRadius);
-            Misc.setColor(discColor, alphaMult * RIM_ALPHA_MULT);
-            unitSphere.draw(discRadius + 0.25f * zoom);
-            unitSphere.draw(discRadius + 0.5f * zoom);
-
-            GL11.glPopMatrix();
-        }
+        PlanetSphere.draw(unitSphere, discTexture, spec, screenX, screenY, discRadius, rotationAngle, resolveColor(star, spec.getPlanetColor()),
+                alphaMult, alphaMult * RIM_ALPHA_MULT, 0.25f * zoom);
     }
 
     private void renderAtmosphere(TreeViewport viewport, float alphaMult) {
@@ -239,15 +214,9 @@ public class SkillTreeStarRenderer implements DecorationRenderer {
         });
     }
 
-    private PlanetSpecAPI resolveSpec(String starType) {
-        if (specsByType == null) {
-            specsByType = new HashMap<>();
-            for (PlanetSpecAPI spec : Global.getSettings().getAllPlanetSpecs()) {
-                specsByType.put(spec.getPlanetType(), spec);
-            }
-        }
-        PlanetSpecAPI spec = specsByType.get(starType);
-        return spec != null ? spec : specsByType.get(FALLBACK_STAR_TYPE);
+    private static PlanetSpecAPI resolveSpec(String starType) {
+        PlanetSpecAPI spec = PlanetSpecs.byType(starType);
+        return spec != null ? spec : PlanetSpecs.byType(FALLBACK_STAR_TYPE);
     }
 
     private static float normalizeAngle(float angle) {

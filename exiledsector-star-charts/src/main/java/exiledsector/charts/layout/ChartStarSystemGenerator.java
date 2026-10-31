@@ -17,6 +17,7 @@ import com.fs.starfarer.api.impl.campaign.terrain.StarCoronaTerrainPlugin;
 import com.fs.starfarer.api.impl.campaign.terrain.StarCoronaTerrainPlugin.CoronaParams;
 import com.fs.starfarer.api.util.Misc;
 import com.fs.starfarer.api.util.WeightedRandomPicker;
+import exiledsector.PlanetSpecs;
 import exiledsector.charts.wormhole.ChartWormholePlacement;
 import exiledsector.charts.layout.feature.ChartFeature;
 import exiledsector.charts.layout.feature.ChartFeatures;
@@ -82,10 +83,9 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
     public PlanetSpecAPI pickStar(StarAge age) {
         if (starAnomaly != null && starAnomaly.primaryStar() != null && !primaryForced) {
             primaryForced = true;
-            for (PlanetSpecAPI spec : Global.getSettings().getAllPlanetSpecs()) {
-                if (spec.isStar() && starAnomaly.primaryStar().equals(spec.getPlanetType())) {
-                    return spec;
-                }
+            PlanetSpecAPI forced = PlanetSpecs.byType(starAnomaly.primaryStar());
+            if (forced != null && forced.isStar()) {
+                return forced;
             }
         }
         WeightedRandomPicker<PlanetSpecAPI> picker = new WeightedRandomPicker<>(random);

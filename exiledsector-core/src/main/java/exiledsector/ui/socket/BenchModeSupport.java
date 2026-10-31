@@ -100,8 +100,6 @@ public interface BenchModeSupport {
         return true;
     }
 
-    boolean enabled();
-
     ItemStore store();
 
     String titleKey();

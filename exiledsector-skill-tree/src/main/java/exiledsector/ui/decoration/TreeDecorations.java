@@ -1,9 +1,12 @@
 package exiledsector.ui.decoration;
 
+import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.decoration.Decorations;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public final class TreeDecorations {
 
@@ -13,17 +16,23 @@ public final class TreeDecorations {
         this.renderers = List.copyOf(renderers);
     }
 
-    public static TreeDecorations forActiveTree() {
-        return of(SkillTree.getDecorations());
+    public static TreeDecorations forActiveTree(Predicate<SkillNode> nodeHidden) {
+        List<DecorationRenderer> renderers = new ArrayList<>(sceneryOf(SkillTree.getDecorations()));
+        renderers.add(FactionFleetRenderer.forActiveTree(nodeHidden));
+        return new TreeDecorations(renderers);
     }
 
     static TreeDecorations of(Decorations decorations) {
-        return new TreeDecorations(List.of(
+        return new TreeDecorations(sceneryOf(decorations));
+    }
+
+    private static List<DecorationRenderer> sceneryOf(Decorations decorations) {
+        return List.of(
                 new SkillTreeStaticImageRenderer(decorations.images()),
                 new SkillTreeStarRenderer(decorations.stars()),
                 new SkillTreeRingBeltRenderer(decorations.ringBelts()),
                 new AbyssSerpentRenderer(decorations.serpents()),
-                new ThreatUnitRenderer(decorations.threatUnits())));
+                new ThreatUnitRenderer(decorations.threatUnits()));
     }
 
     public void advance(float amount) {

@@ -4,7 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.RepLevel;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
-import exiledsector.skills.skilleffect.render.SpriteCache;
+import exiledsector.compat.NexerelinCompat;
 import exiledsector.ui.TreeViewport;
 
 import java.awt.Color;
@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,25 +47,20 @@ public final class LaneFleetTraffic {
     static final float VISIT_CHANCE = 0.25f;
     static final float RETURN_CHANCE = 0.5f;
     static final float ENCOUNTER_CHANCE = 0.35f;
-    static final int MAX_ACTIVE_BATTLES = 3;
     static final RepLevel FRIENDLY_LEVEL = RepLevel.COOPERATIVE;
 
     private final Factions factions;
     private final Random random;
-    private final SpriteCache spriteCache = new SpriteCache(LaneFleetTraffic.class);
-    private final DrawnShips drawnShips = new DrawnShips(spriteCache);
-    private final BattleEffects effects = new BattleEffects();
+    private final FleetTraffic traffic;
     private final Map<Long, Port> ports = new LinkedHashMap<>();
     private final Map<Long, RoamVolume> volumes = new HashMap<>();
     private final Map<RoamVolume, Port> portsByVolume = new IdentityHashMap<>();
-    private final List<FactionFleet> fleets = new ArrayList<>();
-    private final List<FleetBattle> battles = new ArrayList<>();
-    private final List<Float> respawns = new ArrayList<>();
     private boolean seeded;
 
     public LaneFleetTraffic(Factions factions, Random random) {
         this.factions = factions;
         this.random = random;
+        this.traffic = new FleetTraffic(random, MIN_RESPAWN_SECONDS, MAX_RESPAWN_SECONDS, homeRegion -> spawn());
     }
 
     public static Factions sectorFactions() {
@@ -86,8 +80,8 @@ public final class LaneFleetTraffic {
             }
             portsByVolume.put(volume, port);
         }
-        fleets.removeIf(fleet -> fleet.battle() == null && !portsByVolume.containsKey(fleet.home()));
-        int missing = targetFleets(ports.values(), factions) - fleets.size() - respawns.size();
+        traffic.removeFleetsIf(fleet -> fleet.battle() == null && !portsByVolume.containsKey(fleet.home()));
+        int missing = targetFleets(ports.values(), factions) - traffic.fleetAndRespawnCount();
         for (int index = 0; index < missing; index++) {
             FactionFleet fleet = spawn();
             if (fleet != null && !seeded) {
@@ -98,68 +92,15 @@ public final class LaneFleetTraffic {
     }
 
     public void advance(float amount) {
-        for (FactionFleet fleet : fleets) {
-            fleet.advance(amount);
-        }
-        for (Iterator<FleetBattle> iterator = battles.iterator(); iterator.hasNext(); ) {
-            FleetBattle battle = iterator.next();
-            battle.advance(amount, random, effects);
-            if (battle.isOver()) {
-                iterator.remove();
-            }
-        }
-        for (Iterator<FactionFleet> iterator = fleets.iterator(); iterator.hasNext(); ) {
-            if (iterator.next().isDestroyed()) {
-                iterator.remove();
-                respawns.add(MIN_RESPAWN_SECONDS + random.nextFloat() * (MAX_RESPAWN_SECONDS - MIN_RESPAWN_SECONDS));
-            }
-        }
-        effects.advance(amount);
-        for (int index = respawns.size() - 1; index >= 0; index--) {
-            float left = respawns.get(index) - amount;
-            if (left > 0f) {
-                respawns.set(index, left);
-            } else {
-                respawns.remove(index);
-                spawn();
-            }
-        }
+        traffic.advance(amount);
     }
 
     public void render(TreeViewport viewport, float alphaMult) {
-        if ((fleets.isEmpty() && effects.isEmpty()) || alphaMult <= 0f) {
-            return;
-        }
-        float zoom = viewport.zoom();
-        int shipCount = 0;
-        for (FactionFleet fleet : fleets) {
-            shipCount += fleet.ships().size();
-        }
-        drawnShips.begin(shipCount);
-        for (FactionFleet fleet : fleets) {
-            FleetFlight flight = fleet.flight();
-            float fleetAlpha = alphaMult * fleet.spawnLevel();
-            if (fleetAlpha <= 0f
-                    || !viewport.isVisible(viewport.screenX(flight.positionX()), viewport.screenY(flight.positionY()), fleet.cullRadius() * zoom)) {
-                continue;
-            }
-            for (RoamingShip ship : fleet.ships()) {
-                float screenScale = ship.drift().motion().scaleMult() * zoom;
-                float screenX = viewport.screenX(fleet.shipX(ship));
-                float screenY = viewport.screenY(fleet.shipY(ship));
-                if (drawnShips.add(ship, screenX, screenY, screenScale, flight.engineLevel(), fleetAlpha)) {
-                    ship.drawHull(spriteCache, screenX, screenY, screenScale, fleetAlpha);
-                }
-            }
-        }
-        drawnShips.renderFlames(zoom);
-        if (!drawnShips.isEmpty() || !effects.isEmpty()) {
-            drawnShips.renderGlows(quads -> effects.render(quads, viewport, alphaMult));
-        }
+        traffic.render(viewport, alphaMult);
     }
 
     int fleetCount() {
-        return fleets.size();
+        return traffic.fleetCount();
     }
 
     static int targetFleets(Collection<Port> ports, Factions factions) {
@@ -197,14 +138,7 @@ public final class LaneFleetTraffic {
         Color colour = factions.colour(home.factionId());
         FactionFleet fleet = new FactionFleet(home.factionId(), colour == null ? Color.WHITE : colour, String.valueOf(home.id()),
                 volumes.get(home.id()), List.of(), travelSpeed, random, this::arrive);
-        List<ShipHullSpecAPI> hulls = FleetHulls.pickHulls(factions.hulls(home.factionId()), random);
-        List<RoamingShip> ships = FleetFormation.of(hulls, FLEET_RADIUS).shipsLargestFirst(hulls, spriteCache, fleet.flight().facingDeg(), random);
-        if (ships.isEmpty()) {
-            return null;
-        }
-        fleet.addShips(ships, FLEET_RADIUS);
-        fleets.add(fleet);
-        return fleet;
+        return traffic.addFleet(fleet, factions.hulls(home.factionId()), FLEET_RADIUS);
     }
 
     private RoamVolume arrive(FactionFleet fleet, RoamVolume current) {
@@ -212,7 +146,7 @@ public final class LaneFleetTraffic {
         if (here == null) {
             return fleet.home();
         }
-        if (random.nextFloat() < ENCOUNTER_CHANCE && startBattle(fleet, here)) {
+        if (random.nextFloat() < ENCOUNTER_CHANCE && traffic.startBattle(fleet, other -> neighbouringEnemy(fleet, other, here))) {
             return current;
         }
         if (current != fleet.home() && random.nextFloat() < RETURN_CHANCE) {
@@ -227,23 +161,9 @@ public final class LaneFleetTraffic {
         return current;
     }
 
-    private boolean startBattle(FactionFleet fleet, Port here) {
-        if (battles.size() >= MAX_ACTIVE_BATTLES || !fleet.isFree()) {
-            return false;
-        }
-        List<FactionFleet> enemies = new ArrayList<>();
-        for (FactionFleet other : fleets) {
-            Port at = portsByVolume.get(other.flight().roamVolume());
-            if (other != fleet && other.isFree() && at != null && here.neighbours().contains(at.id())
-                    && factions.hostile(fleet.factionId(), other.factionId())) {
-                enemies.add(other);
-            }
-        }
-        if (enemies.isEmpty()) {
-            return false;
-        }
-        battles.add(FleetBattle.start(fleet, enemies.get(random.nextInt(enemies.size())), random));
-        return true;
+    private boolean neighbouringEnemy(FactionFleet fleet, FactionFleet other, Port here) {
+        Port at = portsByVolume.get(other.flight().roamVolume());
+        return at != null && here.neighbours().contains(at.id()) && factions.hostile(fleet.factionId(), other.factionId());
     }
 
     private static final class SectorFactions implements Factions {
@@ -263,7 +183,7 @@ public final class LaneFleetTraffic {
         @Override
         public boolean friendly(String factionId, String otherFactionId) {
             FactionAPI faction = faction(factionId);
-            return faction != null && faction.isAtWorst(otherFactionId, FRIENDLY_LEVEL);
+            return (faction != null && faction.isAtWorst(otherFactionId, FRIENDLY_LEVEL)) || NexerelinCompat.areAllied(factionId, otherFactionId);
         }
 
         @Override

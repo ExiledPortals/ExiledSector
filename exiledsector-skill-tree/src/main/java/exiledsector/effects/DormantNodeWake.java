@@ -18,7 +18,6 @@ import exiledsector.skills.SkillType;
 import exiledsector.skills.progression.ShipLevelConfig;
 import exiledsector.skills.progression.ShipOpBudget;
 import exiledsector.skills.progression.SkillNodeOpCost;
-import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import org.apache.log4j.Logger;
 
 import java.util.List;
@@ -60,8 +59,7 @@ final class DormantNodeWake {
 
     private static boolean isEligible(ShipSkillData shipData, SkillNode dormantNode, ShipFacts shipFacts) {
         SkillType option = dormantNode.offersOptions(shipData) ? SkillTree.getType(shipData.getOptionalSelection(dormantNode.getId())) : null;
-        NodeEligibility.Context context = NodeEligibility.Context.of(shipData, shipFacts, SkillTypeUnlockStatus.lockedFor(shipData),
-                itemId -> Double.MAX_VALUE);
+        NodeEligibility.Context context = NodeEligibility.Context.forShip(shipData, shipFacts, itemId -> Double.MAX_VALUE);
         return NodeEligibility.check(DoctrineOverrides.asTransformed(shipData, dormantNode), option, context) == null;
     }
 

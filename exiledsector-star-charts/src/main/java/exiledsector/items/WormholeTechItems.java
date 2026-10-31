@@ -2,8 +2,6 @@ package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
-import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
-import exiledsector.i18n.Translation;
 
 import java.util.List;
 
@@ -18,13 +16,7 @@ public final class WormholeTechItems {
     }
 
     public static void localise() {
-        for (String itemId : ALL) {
-            SpecialItemSpecAPI spec = MaterialItems.spec(itemId);
-            if (spec != null) {
-                spec.setName(Translation.data("gatewayItem." + itemId + ".name", spec.getName()));
-                spec.setDesc(Translation.data("gatewayItem." + itemId + ".description", spec.getDesc()));
-            }
-        }
+        ALL.forEach(itemId -> MaterialItems.localise(itemId, "gatewayItem."));
     }
 
     public static String displayName(String itemId) {
@@ -32,10 +24,10 @@ public final class WormholeTechItems {
     }
 
     public static SpecialItemData data(String itemId) {
-        return new SpecialItemData(itemId, null);
+        return MaterialItems.data(itemId);
     }
 
     public static void addTo(CargoAPI cargo, String itemId) {
-        cargo.addSpecial(data(itemId), 1f);
+        MaterialItems.add(cargo, itemId, 1);
     }
 }

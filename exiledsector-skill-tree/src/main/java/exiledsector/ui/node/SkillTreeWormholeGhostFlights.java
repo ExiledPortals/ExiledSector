@@ -23,7 +23,7 @@ final class SkillTreeWormholeGhostFlights {
     private static final float GHOST_SIZE_RATIO = 0.35f;
 
     private final Random random;
-    private final Map<String, float[]> secondsUntilNextFlight = new HashMap<>();
+    private final Map<String, GhostFlightPool.LaunchTimer> launchTimers = new HashMap<>();
     private final GhostFlightPool flights = new GhostFlightPool();
     private List<SkillTreeTopology.WormholePair> pairs = List.of();
     private ShipSkillData pairsShip;
@@ -60,18 +60,14 @@ final class SkillTreeWormholeGhostFlights {
     }
 
     private void scheduleFlights(SkillTreeTopology.WormholePair pair, float amount) {
-        String pairKey = pair.first().getId();
-        float[] remainingSeconds = secondsUntilNextFlight.get(pairKey);
-        if (remainingSeconds == null) {
-            remainingSeconds = new float[]{random.nextFloat() * MAX_SECONDS_BETWEEN_FLIGHTS};
-            secondsUntilNextFlight.put(pairKey, remainingSeconds);
+        GhostFlightPool.LaunchTimer timer = launchTimers.get(pair.first().getId());
+        if (timer == null) {
+            timer = new GhostFlightPool.LaunchTimer(MIN_SECONDS_BETWEEN_FLIGHTS, MAX_SECONDS_BETWEEN_FLIGHTS, random);
+            launchTimers.put(pair.first().getId(), timer);
         }
-        remainingSeconds[0] -= amount;
-        if (remainingSeconds[0] <= 0f) {
+        if (timer.launchesAfter(amount)) {
             boolean forwards = random.nextBoolean();
             flights.add(forwards ? launch(pair.first(), pair.second()) : launch(pair.second(), pair.first()));
-            remainingSeconds[0] = MIN_SECONDS_BETWEEN_FLIGHTS
-                    + random.nextFloat() * (MAX_SECONDS_BETWEEN_FLIGHTS - MIN_SECONDS_BETWEEN_FLIGHTS);
         }
     }
 

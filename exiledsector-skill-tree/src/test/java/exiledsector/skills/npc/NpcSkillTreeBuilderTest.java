@@ -209,7 +209,7 @@ class NpcSkillTreeBuilderTest {
 
         NpcTreeBuild build = generate(1, null, new NpcHullMods(Set.of("heavyarmor"), Set.of()), freedOp, 1L);
 
-        assertEquals(List.of("heavyarmor"), build.strippedHullModIds());
+        assertEquals(List.of("heavyarmor"), NpcBuildSimulator.convertedHullModIds(build));
         assertEquals(List.of(ROOT, "armor_node", "n1", "n2", "n3"), allocated(build));
         assertEquals(6, ShipTrees.getSpentOp(build.shipData(), 2));
         assertTrue(build.steps().get(0).outcome().startsWith(NpcBuildStep.CONVERTED_HULLMOD));
@@ -224,7 +224,7 @@ class NpcSkillTreeBuilderTest {
 
         NpcTreeBuild build = generate(2, null, new NpcHullMods(Set.of("heavyarmor"), Set.of()), freedOp, 1L);
 
-        assertTrue(build.strippedHullModIds().isEmpty());
+        assertTrue(NpcBuildSimulator.convertedHullModIds(build).isEmpty());
         assertTrue(build.steps().stream().anyMatch(step -> step.outcome().equals(NpcBuildStep.HULLMOD_KEPT + "heavyarmor")));
         assertEquals(3, build.shipData().getAllocatedNodeIds().size());
         assertEquals(0, ShipTrees.getSpentOp(build.shipData(), 2));
@@ -475,7 +475,7 @@ class NpcSkillTreeBuilderTest {
         NpcTreeBuild unknown = generate(hangarShip, null, 1, null, hullMods, new NpcFreedOp(2, Map.of("converted_hangar", 10), 60), 1L);
 
         assertTrue(counted.shipData().isAllocated("hangar"));
-        assertEquals(List.of("converted_hangar"), counted.strippedHullModIds());
+        assertEquals(List.of("converted_hangar"), NpcBuildSimulator.convertedHullModIds(counted));
         assertFalse(unknown.shipData().isAllocated("hangar"));
     }
 

@@ -2,10 +2,8 @@ package exiledsector;
 
 import exiledsector.domain.DomainContributions;
 import exiledsector.domain.ExiledSectorDomain;
-import exiledsector.items.ItemStore;
+import exiledsector.items.ItemType;
 import exiledsector.items.ItemTypes;
-import exiledsector.items.MasterSchematic;
-import exiledsector.items.RefitSchematic;
 
 import java.util.List;
 
@@ -33,8 +31,6 @@ public final class ExiledSector {
         }
         List<ExiledSectorDomain> installing = List.copyOf(domains);
         installing.forEach(domain -> domain.itemTypes().forEach(ItemTypes::register));
-        ItemStore.absorbStacksWith(RefitSchematic.STACK_ABSORBER);
-        ItemStore.absorbStacksWith(MasterSchematic.STACK_ABSORBER);
         installedDomains = installing;
     }
 
@@ -57,6 +53,15 @@ public final class ExiledSector {
 
     public static List<ExiledSectorDomain> enabledDomains() {
         return ENABLED_DOMAINS.all();
+    }
+
+    public static boolean domainEnabledFor(ItemType type) {
+        for (ExiledSectorDomain domain : domains()) {
+            if (domain.itemTypes().stream().anyMatch(support -> support.type() == type)) {
+                return domain.enabled();
+            }
+        }
+        return false;
     }
 
     private static List<Class<?>> domainClasses(List<ExiledSectorDomain> domains) {

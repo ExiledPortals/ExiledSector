@@ -58,7 +58,7 @@ class ChartFleetHullItemsTest {
     @AfterEach
     void tearDown() {
         mockSector.close();
-        StarChartCurrency.unregisterAll();
+        StarChartFixtures.unregisterCurrencies();
         StarChartFixtures.clear();
     }
 

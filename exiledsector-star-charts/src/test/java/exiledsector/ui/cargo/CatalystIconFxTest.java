@@ -1,6 +1,7 @@
 package exiledsector.ui.cargo;
 
 import exiledsector.charts.atlas.AtlasCatalysts;
+import exiledsector.skills.skilleffect.render.Fade;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -40,7 +41,7 @@ class CatalystIconFxTest {
     void everyFamilyLoopsOnItsOwnCycle() {
         for (AtlasCatalysts.Family family : AtlasCatalysts.Family.values()) {
             float seconds = CatalystIconFx.cycleSeconds(family);
-            assertEquals(0.25f, CatalystIconFx.cycleOf(seconds * 3.25f, seconds), EPSILON, family.key());
+            assertEquals(0.25f, Fade.cycle(seconds * 3.25f, seconds), EPSILON, family.key());
         }
         assertTrue(CatalystIconFx.streakProgress(0.2f, 0) > 0f && CatalystIconFx.streakProgress(0.2f, 2) < 0f);
     }

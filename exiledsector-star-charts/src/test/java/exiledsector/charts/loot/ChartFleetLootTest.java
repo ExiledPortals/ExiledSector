@@ -71,7 +71,7 @@ class ChartFleetLootTest {
     void tearDown() {
         mockSector.close();
         ChartDrops.clear();
-        StarChartCurrency.unregisterAll();
+        StarChartFixtures.unregisterCurrencies();
         StarChartFixtures.clear();
     }
 

@@ -36,8 +36,6 @@ import java.util.Map;
 final class SectionsDisplay {
 
     record SectionBounds(float minCentreX, float maxCentreX, float minCentreY, float maxCentreY) {
-        static final SectionBounds UNBOUNDED = new SectionBounds(Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY,
-                Float.NEGATIVE_INFINITY, Float.POSITIVE_INFINITY);
 
         float clampX(float centreX) {
             return Math.max(minCentreX, Math.min(maxCentreX, centreX));
@@ -57,7 +55,6 @@ final class SectionsDisplay {
 
     private final CustomPanelAPI hostPanel;
     private final SectionEditor sectionEditor;
-    private final SectionLayout.Arrangement arrangement;
     private final ItemHoverTooltip hoverTooltip;
     private final TextLabel[] typeLabels = new TextLabel[MAX_SECTIONS];
     private final TextLabel[] stateLabels = new TextLabel[MAX_SECTIONS];
@@ -77,10 +74,9 @@ final class SectionsDisplay {
     private List<SectionLayout.Placement> placements = List.of();
     private int renderedSections;
 
-    SectionsDisplay(CustomPanelAPI hostPanel, SectionEditor sectionEditor, SectionLayout.Arrangement arrangement) {
+    SectionsDisplay(CustomPanelAPI hostPanel, SectionEditor sectionEditor) {
         this.hostPanel = hostPanel;
         this.sectionEditor = sectionEditor;
-        this.arrangement = arrangement;
         this.hoverTooltip = new ItemHoverTooltip(hostPanel);
         for (int i = 0; i < MAX_SECTIONS; i++) {
             typeLabels[i] = new TextLabel(LABEL_FONT_SIZE, Color.WHITE);
@@ -145,10 +141,6 @@ final class SectionsDisplay {
             }
         }
         return -1;
-    }
-
-    void forgetRenderedSections() {
-        renderedSections = 0;
     }
 
     private ItemStore upgradeStore() {
@@ -299,7 +291,7 @@ final class SectionsDisplay {
         if (placements.size() != unlockedSections.size()) {
             List<HullPoint> sectionPoints = new ArrayList<>(unlockedSections.size());
             unlockedSections.forEach(unlocked -> sectionPoints.add(sectionAnchors.forSection(unlocked.section())));
-            placements = SectionLayout.place(sectionPoints, arrangement);
+            placements = SectionLayout.place(sectionPoints);
         }
         for (int i = 0; i < unlockedSections.size(); i++) {
             ShipSections.UnlockedSection unlocked = unlockedSections.get(i);

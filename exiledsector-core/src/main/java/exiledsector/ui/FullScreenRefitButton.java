@@ -5,14 +5,13 @@ import com.fs.starfarer.api.campaign.CustomUIPanelPlugin;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
+import com.fs.starfarer.api.input.InputEventAPI;
 import com.fs.starfarer.api.ui.CustomPanelAPI;
 import com.fs.starfarer.api.ui.PositionAPI;
 import exiledsector.i18n.Translation;
 import exiledsector.ui.refit.RefitButtonConfig;
 import exiledsector.ui.refit.RefitModuleTabs;
 import lunalib.lunaRefit.BaseRefitButton;
-
-import java.util.function.Consumer;
 
 public abstract class FullScreenRefitButton extends BaseRefitButton {
 
@@ -24,11 +23,29 @@ public abstract class FullScreenRefitButton extends BaseRefitButton {
         return true;
     }
 
-    protected static void fillWithScreen(CustomPanelAPI backgroundPanel, CustomUIPanelPlugin screen, Consumer<CustomPanelAPI> attach) {
+    protected Class<? extends CustomUIPanelPlugin> screenClass() {
+        return null;
+    }
+
+    protected RefitPanelLauncher.Background createScreen(FleetMemberAPI member, ShipVariantAPI variant) {
+        return null;
+    }
+
+    protected static boolean openScreen(Class<? extends FullScreenRefitButton> buttonClass, InputEventAPI event) {
+        return RefitPanelLauncher.open(buttonClass, event,
+                context -> ((FullScreenRefitButton) context.button()).createScreen(context.member(), context.variant()));
+    }
+
+    @Override
+    public void initPanel(CustomPanelAPI backgroundPanel, FleetMemberAPI member, ShipVariantAPI variant, MarketAPI market) {
+        if (screenClass().isInstance(backgroundPanel.getPlugin())) {
+            return;
+        }
+        RefitPanelLauncher.Background screen = createScreen(member, variant);
         PositionAPI backgroundPosition = backgroundPanel.getPosition();
-        CustomPanelAPI screenPanel = Global.getSettings().createCustom(backgroundPosition.getWidth(), backgroundPosition.getHeight(), screen);
+        CustomPanelAPI screenPanel = Global.getSettings().createCustom(backgroundPosition.getWidth(), backgroundPosition.getHeight(), screen.plugin());
         backgroundPanel.addComponent(screenPanel).inTL(0f, 0f);
-        attach.accept(screenPanel);
+        screen.attached().accept(screenPanel);
     }
 
     @Override

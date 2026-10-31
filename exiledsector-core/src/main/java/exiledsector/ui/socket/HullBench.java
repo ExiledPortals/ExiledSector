@@ -52,11 +52,6 @@ public final class HullBench implements BenchModeSupport {
     }
 
     @Override
-    public boolean enabled() {
-        return true;
-    }
-
-    @Override
     public ItemStore store() {
         return ItemStore.get();
     }

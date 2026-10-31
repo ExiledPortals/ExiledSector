@@ -83,7 +83,7 @@ class RootConduitsTest {
         assertEquals(8, found.path().size());
         assertEquals(6, found.nodesBetween());
         assertEquals(5f, found.affinityGranted(), 1e-4f);
-        assertTrue(found.connectorKeys().contains(RootConduits.connectorKey("link_5", "socket")));
+        assertTrue(found.connectorKeys().contains(SkillTree.curveKey("link_5", "socket")));
         assertEquals(Set.copyOf(found.path()).size(), found.path().size());
         assertTrue(found.path() == RootConduits.of(data).path());
     }

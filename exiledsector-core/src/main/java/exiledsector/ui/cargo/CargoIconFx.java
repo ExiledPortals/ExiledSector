@@ -482,4 +482,14 @@ public final class CargoIconFx {
         mixed ^= mixed >>> 33;
         return (mixed >>> 40) / (float) (1 << 24);
     }
+
+    static Color mix(Color base, Color other, float amount) {
+        return new Color(Math.round(base.getRed() + (other.getRed() - base.getRed()) * amount),
+                Math.round(base.getGreen() + (other.getGreen() - base.getGreen()) * amount),
+                Math.round(base.getBlue() + (other.getBlue() - base.getBlue()) * amount));
+    }
+
+    static Color lighten(Color color, float amount) {
+        return mix(color, Color.WHITE, amount);
+    }
 }

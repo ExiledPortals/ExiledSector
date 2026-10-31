@@ -17,6 +17,7 @@ import exiledsector.items.ItemTypeSupport;
 import exiledsector.items.ShipCustody;
 import exiledsector.loot.FleetDifficulty;
 import exiledsector.loot.LootSource;
+import exiledsector.loot.MarketStock;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.SkillTypeEffect;
 import exiledsector.ui.cargo.ItemIconLooks;
@@ -146,6 +147,10 @@ public interface ExiledSectorDomain {
     }
 
     default List<FleetDifficulty> fleetDifficulties() {
+        return List.of();
+    }
+
+    default List<MarketStock> marketStocks() {
         return List.of();
     }
 }

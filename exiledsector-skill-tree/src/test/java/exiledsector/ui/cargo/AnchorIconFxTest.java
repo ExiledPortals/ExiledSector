@@ -1,5 +1,6 @@
 package exiledsector.ui.cargo;
 
+import exiledsector.skills.skilleffect.render.Fade;
 import org.junit.jupiter.api.Test;
 
 import java.awt.Color;
@@ -11,13 +12,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class AnchorIconFxTest {
 
-    private static final float FRAME_HALF = 38.25f;
-
     @Test
     void theCycleWrapsEverySixSecondsAndStaysInTheUnitRange() {
-        assertEquals(0.5f, AnchorIconFx.cycleOf(3f), 1e-5f);
-        assertEquals(AnchorIconFx.cycleOf(1f), AnchorIconFx.cycleOf(1f + AnchorIconFx.CYCLE_SECONDS), 1e-4f);
-        float negative = AnchorIconFx.cycleOf(-1f);
+        assertEquals(0.5f, Fade.cycle(3f, AnchorIconFx.CYCLE_SECONDS), 1e-5f);
+        assertEquals(Fade.cycle(1f, AnchorIconFx.CYCLE_SECONDS), Fade.cycle(1f + AnchorIconFx.CYCLE_SECONDS, AnchorIconFx.CYCLE_SECONDS), 1e-4f);
+        float negative = Fade.cycle(-1f, AnchorIconFx.CYCLE_SECONDS);
         assertTrue(negative >= 0f && negative < 1f);
     }
 
@@ -55,19 +54,19 @@ class AnchorIconFxTest {
         assertEquals(0f, AnchorIconFx.lockAlpha(arrival));
         assertTrue(AnchorIconFx.badgeFlash(AnchorIconFx.wave(0.5f)) < 0.01f);
         for (float distance = 0f; distance <= 2f; distance += 0.1f) {
-            assertEquals(0f, AnchorIconFx.lightLevel(distance, AnchorIconFx.IDLE_WAVE), 1e-6f);
+            assertEquals(0f, IconFxKit.lightLevel(distance, IconFxKit.IDLE_WAVE), 1e-6f);
         }
-        assertEquals(1f, AnchorIconFx.lightLevel(0.7f, 0.7f), 1e-6f);
+        assertEquals(1f, IconFxKit.lightLevel(0.7f, 0.7f), 1e-6f);
     }
 
     @Test
     void bothLightPathsRunFromTheTopLeftCornerToTheCrestCorner() {
         for (int path = 0; path < 2; path++) {
-            assertArrayEquals(new float[]{-FRAME_HALF, -FRAME_HALF}, AnchorIconFx.framePoint(path, 0f), 1e-4f);
-            assertArrayEquals(new float[]{FRAME_HALF, FRAME_HALF}, AnchorIconFx.framePoint(path, 1.9999f), 1e-2f);
+            assertArrayEquals(new float[]{-IconFxKit.FRAME_HALF, -IconFxKit.FRAME_HALF}, IconFxKit.framePoint(path, 0f), 1e-4f);
+            assertArrayEquals(new float[]{IconFxKit.FRAME_HALF, IconFxKit.FRAME_HALF}, IconFxKit.framePoint(path, 1.9999f), 1e-2f);
         }
-        assertArrayEquals(new float[]{FRAME_HALF, -FRAME_HALF}, AnchorIconFx.framePoint(0, 1f), 1e-4f);
-        assertArrayEquals(new float[]{-FRAME_HALF, FRAME_HALF}, AnchorIconFx.framePoint(1, 1f), 1e-4f);
+        assertArrayEquals(new float[]{IconFxKit.FRAME_HALF, -IconFxKit.FRAME_HALF}, IconFxKit.framePoint(0, 1f), 1e-4f);
+        assertArrayEquals(new float[]{-IconFxKit.FRAME_HALF, IconFxKit.FRAME_HALF}, IconFxKit.framePoint(1, 1f), 1e-4f);
     }
 
     @Test
@@ -88,8 +87,8 @@ class AnchorIconFxTest {
 
     @Test
     void lighteningMovesEachChannelTowardsWhite() {
-        assertEquals(new Color(250, 203, 143), AnchorIconFx.lighten(new Color(245, 150, 30), 0.5f));
-        assertEquals(Color.WHITE, AnchorIconFx.lighten(Color.BLACK, 1f));
+        assertEquals(new Color(250, 203, 143), CargoIconFx.lighten(new Color(245, 150, 30), 0.5f));
+        assertEquals(Color.WHITE, CargoIconFx.lighten(Color.BLACK, 1f));
         assertNull(AnchorIconFx.crestPath(null));
     }
 }

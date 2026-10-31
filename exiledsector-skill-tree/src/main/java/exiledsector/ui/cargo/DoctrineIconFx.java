@@ -2,6 +2,7 @@ package exiledsector.ui.cargo;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.skills.skilleffect.render.Fade;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.util.GlScope;
 import exiledsector.ui.util.HoloShapes;
@@ -16,7 +17,6 @@ public final class DoctrineIconFx {
     static final String FRAME_PATH = STILL_PREFIX + "frame.png";
     public static final String EMBLEM_PREFIX = "graphics/icons/socketables/exiledSector_doctrine_emblem_";
     static final float CYCLE_SECONDS = 6f;
-    static final float IDLE_WAVE = -10f;
     static final float SEAL_KEY = 0.55f;
     static final float STAMP_DROP = 0.04f;
     static final float STAMP_FADE = 0.06f;
@@ -46,7 +46,6 @@ public final class DoctrineIconFx {
     static final float COMMITTEE_KEY = EDIT_START + (EDITS - 1) * EDIT_STEP + STRIKE_SPAN + ERASE_SPAN + REWRITE_SPAN;
     static final float BLACKOUT_START = 0.47f;
     static final float REDACTED_KEY = 0.5f;
-    static final float FLASH_WIDTH = 0.035f;
     static final int ROWS = 9;
     static final float ROW_TOP = 0.2f;
     static final float ROW_BOTTOM = 0.94f;
@@ -136,24 +135,17 @@ public final class DoctrineIconFx {
         float scale = (framed ? CargoIconFx.ICON_INSET : 1f) * unit;
         Color color = look.color();
         if (!animated) {
-            SpriteAPI still = iconPath == null ? null : sprites.sprite(iconPath);
-            if (still != null) {
-                SpriteDraw.drawAtCenter(still, cx, cy, DESIGN_SIZE * scale, DESIGN_SIZE * scale, null, alphaMult, 0f);
-            }
-            if (framed) {
-                AnchorIconFx.drawFrame(color, cx, cy, unit, alphaMult);
-                AnchorIconFx.drawLights(sprites, color, cx, cy, unit, IDLE_WAVE, alphaMult);
-            }
+            IconFxKit.drawStill(sprites, iconPath, color, cx, cy, scale, unit, framed, alphaMult);
             return;
         }
         float t = CargoIconFx.seconds() + CargoIconFx.hash(phaseSeed, 1, 1) * CYCLE_SECONDS;
-        float cycle = cycleOf(t);
+        float cycle = Fade.cycle(t, CYCLE_SECONDS);
         float key = keyMoment(screen);
-        float flash = flash(cycle, key);
+        float flash = IconFxKit.flash(cycle, key);
         int seed = doctrine.factionId().hashCode();
         SpriteAPI frame = sprites.sprite(FRAME_PATH);
         if (frame != null) {
-            SpriteDraw.drawAtCenter(frame, cx, cy, DESIGN_SIZE * scale, DESIGN_SIZE * scale, mix(Color.WHITE, color, FRAME_TINT), alphaMult, 0f);
+            SpriteDraw.drawAtCenter(frame, cx, cy, DESIGN_SIZE * scale, DESIGN_SIZE * scale, CargoIconFx.mix(Color.WHITE, color, FRAME_TINT), alphaMult, 0f);
         }
         placeScreen(cx, cy, scale);
         try (GlScope scope = GlScope.flat().additive()) {
@@ -175,14 +167,8 @@ public final class DoctrineIconFx {
             }
         }
         if (framed) {
-            AnchorIconFx.drawFrame(flash > 0.01f ? AnchorIconFx.lighten(color, 0.6f * flash) : color, cx, cy, unit, alphaMult);
-            AnchorIconFx.drawLights(sprites, color, cx, cy, unit, wave(cycle, key), alphaMult);
+            IconFxKit.drawBorder(sprites, color, cx, cy, unit, IconFxKit.wave(cycle, key), flash, alphaMult);
         }
-    }
-
-    static float cycleOf(float seconds) {
-        float cycle = seconds % CYCLE_SECONDS / CYCLE_SECONDS;
-        return cycle < 0f ? cycle + 1f : cycle;
     }
 
     static float keyMoment(DoctrineScreen screen) {
@@ -195,22 +181,6 @@ public final class DoctrineIconFx {
             case REDACTED -> REDACTED_KEY;
             default -> SEAL_KEY;
         };
-    }
-
-    static float cyclicDistance(float first, float second) {
-        float distance = Math.abs(first - second) % 1f;
-        return Math.min(distance, 1f - distance);
-    }
-
-    static float flash(float cycle, float key) {
-        float offset = cyclicDistance(cycle, key) / FLASH_WIDTH;
-        return (float) Math.exp(-offset * offset);
-    }
-
-    static float wave(float cycle, float key) {
-        float lead = cycle - key;
-        lead -= (float) Math.floor(lead + 0.8f);
-        return 2f + lead * 2.8f;
     }
 
     static float stampScale(float cycle) {
@@ -256,13 +226,13 @@ public final class DoctrineIconFx {
     }
 
     static float pageAlpha(float cycle) {
-        return 1f - AnchorIconFx.smooth(PAGE_CLEAR_START, PAGE_CLEAR_END, cycle);
+        return 1f - Fade.window(PAGE_CLEAR_START, PAGE_CLEAR_END, cycle);
     }
 
     static float drillOffset(float seconds) {
         float beats = seconds / BEAT_SECONDS;
         float beat = (float) Math.floor(beats);
-        return beat + AnchorIconFx.smooth(0f, DRILL_SNAP, beats - beat);
+        return beat + Fade.window(0f, DRILL_SNAP, beats - beat);
     }
 
     static boolean dropped(float cycle) {
@@ -274,7 +244,7 @@ public final class DoctrineIconFx {
     }
 
     static float committeeAlpha(float cycle) {
-        return AnchorIconFx.smooth(0f, 0.04f, cycle) * (1f - AnchorIconFx.smooth(0.95f, 1f, cycle));
+        return Fade.window(0f, 0.04f, cycle) * (1f - Fade.window(0.95f, 1f, cycle));
     }
 
     static boolean blackedOut(float cycle) {
@@ -366,7 +336,7 @@ public final class DoctrineIconFx {
     }
 
     private static float rowFade(float v) {
-        return AnchorIconFx.smooth(ROW_TOP, ROW_TOP + ROW_FADE, v) * (1f - AnchorIconFx.smooth(ROW_BOTTOM - ROW_FADE, ROW_BOTTOM, v));
+        return Fade.window(ROW_TOP, ROW_TOP + ROW_FADE, v) * (1f - Fade.window(ROW_BOTTOM - ROW_FADE, ROW_BOTTOM, v));
     }
 
     private static float rowDepth(float v) {
@@ -441,7 +411,7 @@ public final class DoctrineIconFx {
                 continue;
             }
             float blipV = ROW_TOP + (ROW_BOTTOM - ROW_TOP - 0.03f) * CargoIconFx.hash(seed, 71 + blip, round);
-            Misc.setColor(AnchorIconFx.lighten(color, 0.5f), (1f - age / BLIP_LIFE) * alphaMult);
+            Misc.setColor(CargoIconFx.lighten(color, 0.5f), (1f - age / BLIP_LIFE) * alphaMult);
             screenQuad(0.955f, blipV, 0.975f, blipV + 0.03f);
         }
     }
@@ -459,14 +429,14 @@ public final class DoctrineIconFx {
             float fromU = indented ? INDENT : TEXT_LEFT;
             float written = Math.min(1f, progress - row);
             if (opensParagraph) {
-                Misc.setColor(AnchorIconFx.lighten(color, 0.3f), 0.85f * page * alphaMult);
+                Misc.setColor(CargoIconFx.lighten(color, 0.3f), 0.85f * page * alphaMult);
                 screenQuad(TEXT_LEFT, v - ROW_THICKNESS, TEXT_LEFT + DROP_CAP_WIDTH, v + ROW_PITCH + ROW_THICKNESS / 2f);
             }
             float revealU = fromU + (TEXT_RIGHT - fromU) * written;
             Misc.setColor(color, TEXT_ALPHA * page * alphaMult);
             words(seed, row, v, fromU, TEXT_RIGHT, revealU, 0f, ROW_THICKNESS, WOBBLE);
             if (written < 1f && t * 4f % 1f < 0.6f) {
-                Misc.setColor(AnchorIconFx.lighten(color, 0.6f), alphaMult);
+                Misc.setColor(CargoIconFx.lighten(color, 0.6f), alphaMult);
                 screenQuad(revealU, v - 0.025f, revealU + 0.015f, v + 0.025f);
             }
         }
@@ -591,7 +561,7 @@ public final class DoctrineIconFx {
 
     private static void drawRedactedRows(Color color, int seed, float t, float cycle, float alphaMult) {
         int flicker = (int) (t / FLICKER_SECONDS);
-        float boost = flash(cycle, REDACTED_KEY);
+        float boost = IconFxKit.flash(cycle, REDACTED_KEY);
         for (int row = 0; row < ROWS; row++) {
             if (CargoIconFx.hash(seed, row + 400, flicker) < FLICKER_CHANCE) {
                 continue;
@@ -654,10 +624,10 @@ public final class DoctrineIconFx {
             HoloShapes.radialGlow(centreX, centreY, 0f, radius * 1.4f, Color.BLACK, EMBLEM_SHADE * emblemAlpha * alphaMult);
         }
         if (screen == DoctrineScreen.MANUSCRIPT) {
-            float halo = (float) Math.exp(-Math.pow(cyclicDistance(cycle, MANUSCRIPT_KEY) / HALO_WIDTH, 2));
+            float halo = (float) Math.exp(-Math.pow(IconFxKit.cyclicDistance(cycle, MANUSCRIPT_KEY) / HALO_WIDTH, 2));
             if (halo > 0.01f) {
-                SpriteDraw.drawAdditiveAtCenter(sprites, AnchorIconFx.LIGHT_TEXTURE, centreX, centreY, radius * 4f, radius * 4f,
-                        AnchorIconFx.lighten(color, 0.4f), halo * alphaMult);
+                SpriteDraw.drawAdditiveAtCenter(sprites, IconFxKit.LIGHT_TEXTURE, centreX, centreY, radius * 4f, radius * 4f,
+                        CargoIconFx.lighten(color, 0.4f), halo * alphaMult);
             }
         }
         SpriteAPI emblem = sprites.texture(doctrine.emblemPath());
@@ -670,7 +640,7 @@ public final class DoctrineIconFx {
         float textureHeight = emblem.getTexHeight();
         try (GlScope scope = GlScope.textured(GL11.GL_SRC_ALPHA, GL11.GL_ONE)) {
             emblem.bindTexture();
-            Misc.setColor(AnchorIconFx.lighten(color, EMBLEM_LIFT), emblemAlpha * alphaMult);
+            Misc.setColor(CargoIconFx.lighten(color, EMBLEM_LIFT), emblemAlpha * alphaMult);
             GL11.glBegin(GL11.GL_QUADS);
             GL11.glTexCoord2f(textureLeft, textureBottom + textureHeight);
             vertex(centreU - halfU, EMBLEM_V - halfV);
@@ -757,11 +727,5 @@ public final class DoctrineIconFx {
         GL11.glColor4f((base.getRed() + (other.getRed() - base.getRed()) * amount) / 255f,
                 (base.getGreen() + (other.getGreen() - base.getGreen()) * amount) / 255f,
                 (base.getBlue() + (other.getBlue() - base.getBlue()) * amount) / 255f, Math.max(0f, Math.min(1f, alpha)));
-    }
-
-    static Color mix(Color base, Color other, float amount) {
-        return new Color(Math.round(base.getRed() + (other.getRed() - base.getRed()) * amount),
-                Math.round(base.getGreen() + (other.getGreen() - base.getGreen()) * amount),
-                Math.round(base.getBlue() + (other.getBlue() - base.getBlue()) * amount));
     }
 }

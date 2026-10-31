@@ -106,7 +106,7 @@ class StarChartCraftingTest {
 
     @AfterEach
     void tearDown() {
-        StarChartCurrency.unregisterAll();
+        StarChartFixtures.unregisterCurrencies();
         ItemCurrencies.unregister(survey);
         ItemCurrencies.unregister(copier);
         StarChartFixtures.clear();

@@ -3,7 +3,6 @@ package exiledsector.items;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
-import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
@@ -13,6 +12,7 @@ import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
 import exiledsector.loot.LootSource;
 import exiledsector.loot.LootSources;
+import exiledsector.loot.MarketStock;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public final class HullUpgradeLootSource implements LootSource {
+public final class HullUpgradeLootSource implements LootSource, MarketStock {
 
     public static final HullUpgradeLootSource INSTANCE = new HullUpgradeLootSource();
     private static final Logger LOG = Logger.getLogger(HullUpgradeLootSource.class);
@@ -113,23 +113,15 @@ public final class HullUpgradeLootSource implements LootSource {
     }
 
     @Override
-    public void stockSubmarket(SubmarketAPI submarket, CargoAPI cargo, Random random) {
-        if (MarketHullItems.stocks(submarket.getSpecId())) {
-            stockHullItems(submarket.getSpecId(), cargo, random);
-        }
+    public boolean isOwnListing(ItemData listing) {
+        return MarketHullItems.isStock(listing);
     }
 
-    private static void stockHullItems(String submarketId, CargoAPI cargo, Random random) {
-        for (CargoStackAPI stack : cargo.getStacksCopy()) {
-            if (stack.isSpecialStack() && MarketHullItems.isStock(ItemData.of(stack.getSpecialDataIfSpecial()))) {
-                cargo.removeStack(stack);
-            }
-        }
+    @Override
+    public List<ItemData> restock(SubmarketAPI submarket, Random random) {
         if (!HullUpgradesSetting.sectionsOpen(Global.getSector())) {
-            return;
+            return List.of();
         }
-        for (ItemData item : MarketHullItems.roll(submarketId, random)) {
-            cargo.addSpecial(item.toSpecialItem(), 1f);
-        }
+        return MarketHullItems.roll(submarket.getSpecId(), random);
     }
 }

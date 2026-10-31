@@ -3,8 +3,6 @@ package exiledsector.items;
 import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.atlas.AtlasCatalysts;
-import exiledsector.ui.cargo.CargoIconLook;
-import exiledsector.ui.cargo.CatalystLook;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -31,10 +29,6 @@ public final class AtlasCatalystItems {
             case SURVEY -> SURVEY_COLOR;
             case ORDERS -> ORDERS_COLOR;
         };
-    }
-
-    public static CargoIconLook look(AtlasCatalysts.Family family) {
-        return CargoIconLook.withArt(color(family), new CatalystLook(family));
     }
 
     public static List<Carried> carried(CraftingMaterials materials) {

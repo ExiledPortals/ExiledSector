@@ -54,10 +54,6 @@ public final class StarChartBrowser {
         rebuildShown();
     }
 
-    public List<Item> storedCharts() {
-        return storedCharts;
-    }
-
     public int storedCount() {
         return storedCharts.size();
     }
@@ -111,16 +107,8 @@ public final class StarChartBrowser {
         return true;
     }
 
-    public boolean toggle(Item chart) {
-        return select(isSelected(chart) ? null : chart);
-    }
-
     public List<Item> shownCharts() {
         return shownCharts;
-    }
-
-    public int inSelectedTierCount() {
-        return count(selectedTier);
     }
 
     private void rebuildShown() {

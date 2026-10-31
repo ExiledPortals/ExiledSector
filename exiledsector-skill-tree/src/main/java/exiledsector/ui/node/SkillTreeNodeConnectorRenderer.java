@@ -118,7 +118,7 @@ final class SkillTreeNodeConnectorRenderer {
 
     private boolean onConduit(SkillNode node, SkillNode other) {
         return conduitNodeIds.contains(node.getId()) && conduitNodeIds.contains(other.getId())
-                && conduitConnectorKeys.contains(RootConduits.connectorKey(node.getId(), other.getId()));
+                && conduitConnectorKeys.contains(SkillTree.curveKey(node.getId(), other.getId()));
     }
 
     void drawGrantTethers(TreeLayers layers, SkillNode socket, List<String> grantedNodeIds, Color tetherColor) {

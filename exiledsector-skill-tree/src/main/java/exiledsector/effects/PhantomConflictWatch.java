@@ -170,9 +170,8 @@ public final class PhantomConflictWatch {
             if (!data.isAllocated(provider.getId())) {
                 continue;
             }
-            for (SkillNode released : RespecPlan.of(data, SkillTree.topology(), ShipTrees.resolveStartingRootId(data), provider)) {
-                ShipTrees.deallocateReleasingCharges(data, released).forEach(charged -> charged.refundTo(cargo));
-            }
+            String rootId = ShipTrees.resolveStartingRootId(data);
+            ShipTrees.release(data, SkillTree.topology(), rootId, RespecPlan.of(data, SkillTree.topology(), rootId, provider)).refundTo(cargo);
         }
         ShipTreeSync.memberChanged(member, member.getVariant());
         member.setStatUpdateNeeded(true);

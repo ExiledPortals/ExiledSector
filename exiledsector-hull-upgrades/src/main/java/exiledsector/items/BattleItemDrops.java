@@ -1,5 +1,6 @@
 package exiledsector.items;
 
+import exiledsector.ExiledSector;
 import exiledsector.ModCsv;
 import exiledsector.ModSettings;
 import exiledsector.data.CsvRows;
@@ -18,7 +19,7 @@ import java.util.function.Predicate;
 
 public final class BattleItemDrops {
 
-    public static final String DATA_PATH = "data/config/exiledSector/battle_item_drops.csv";
+    public static final String DATA_PATH = ExiledSector.configPath("battle_item_drops.csv");
     public static final String DROP_PERCENT_FIELD_ID = "exiledSector_battleItemDropPercent";
     public static final int DEFAULT_DROP_PERCENT = 100;
     public static final int MAX_DROP_PERCENT = 1000;
@@ -133,10 +134,6 @@ public final class BattleItemDrops {
         return Math.max(0f, deploymentPoints) * (1f + Math.max(0, allocatedNodeCount) / NODES_PER_DOUBLING);
     }
 
-    public static ItemDrops.SectionItemLoot roll(Battle battle, float dropMultiplier, Random random, Predicate<ItemDefinition> uniqueAllowed) {
-        return roll(battle, dropMultiplier, random, uniqueAllowed, true);
-    }
-
     public static ItemDrops.SectionItemLoot roll(Battle battle, float dropMultiplier, Random random, Predicate<ItemDefinition> uniqueAllowed,
                                                  boolean sectionsOpen) {
         if (battle == null || battle.isEmpty() || !(dropMultiplier > 0f)) {
@@ -167,10 +164,6 @@ public final class BattleItemDrops {
             }
         }
         return new ItemDrops.SectionItemLoot(items, upgrades);
-    }
-
-    static List<Planned> plan(List<SourcePower> sources, float dropMultiplier, List<ItemKind> kindsWithBasics, Random random) {
-        return plan(sources, dropMultiplier, kindsWithBasics, random, true);
     }
 
     static List<Planned> plan(List<SourcePower> sources, float dropMultiplier, List<ItemKind> kindsWithBasics, Random random,

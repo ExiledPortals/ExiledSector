@@ -110,15 +110,7 @@ public final class SkillTreeLoader {
 
     public static List<SkillNode> parseNodes(JSONObject treeJson, Map<String, SkillType> skillTypes) throws JSONException {
         List<SkillNode> nodes = new ArrayList<>();
-        JSONArray nodeArray = treeJson.getJSONArray("nodes");
-        for (int i = 0; i < nodeArray.length(); i++) {
-            try {
-                nodes.add(parseNode(nodeArray.getJSONObject(i), skillTypes));
-            } catch (JSONException e) {
-                Logger.getLogger(SkillTreeLoader.class).error("Skipping skill node " + SkillTypeLoader.entryLabel(nodeArray, i)
-                        + " in " + DATA_PATH + ": " + e.getMessage());
-            }
-        }
+        forEachEntry(treeJson.getJSONArray("nodes"), "skill node", nodeJson -> nodes.add(parseNode(nodeJson, skillTypes)));
         return nodes;
     }
 

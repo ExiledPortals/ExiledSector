@@ -1,7 +1,6 @@
 package exiledsector.ui.socket;
 
 import com.fs.starfarer.api.ui.CustomPanelAPI;
-import com.fs.starfarer.api.ui.Fonts;
 import com.fs.starfarer.api.ui.PositionAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.ui.UIComponentAPI;
@@ -16,6 +15,7 @@ import exiledsector.items.MaterialItems;
 import exiledsector.items.UseVerdict;
 import exiledsector.ui.SkillTreeSounds;
 import exiledsector.ui.VanillaText;
+import exiledsector.ui.cargo.CatalystCargo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -270,7 +270,7 @@ public final class AtlasCatalystPanel extends HoloPanel {
             queue(() -> select(itemId.equals(selectedItemId) ? null : catalyst));
             return true;
         }, () -> false);
-        return WorkbenchTile.selectable(catalyst.iconPath(), AtlasCatalystItems.look(catalyst.family()), () -> itemId.equals(selectedItemId), handler);
+        return WorkbenchTile.selectable(catalyst.iconPath(), CatalystCargo.look(catalyst.family()), () -> itemId.equals(selectedItemId), handler);
     }
 
     private void select(AtlasCatalysts.Catalyst catalyst) {
@@ -292,12 +292,7 @@ public final class AtlasCatalystPanel extends HoloPanel {
 
     private void writeTooltip(TooltipMakerAPI element, AtlasCatalystItems.Carried entry) {
         AtlasCatalysts.Catalyst catalyst = entry.catalyst();
-        element.setParaFont(Fonts.ORBITRON_20AA);
-        VanillaText.plainPara(element, MaterialItems.displayName(catalyst.itemId()), 0f, AtlasCatalystItems.color(catalyst.family()));
-        element.setParaFontDefault();
-        VanillaText.plainPara(element, Translation.text("catalyst.category"), LINE_PAD, Misc.getGrayColor());
-        VanillaText.plainPara(element, AtlasCatalystItems.addsLine(catalyst), GAP, Misc.getTextColor());
-        VanillaText.plainPara(element, Translation.text(AtlasCatalystItems.flavourKey(catalyst.family())), GAP, Misc.getGrayColor());
+        CatalystCargo.writeTooltip(element, catalyst.itemId(), GAP);
         VanillaText.plainPara(element, Translation.msg("catalyst.cell.inCargo").arg("count", entry.count()).text(), GAP, Misc.getGrayColor());
         String hintKey = catalyst.itemId().equals(selectedItemId) ? "catalyst.cell.picked" : "catalyst.cell.pick";
         VanillaText.plainPara(element, Translation.text(hintKey), GAP, Misc.getGrayColor());

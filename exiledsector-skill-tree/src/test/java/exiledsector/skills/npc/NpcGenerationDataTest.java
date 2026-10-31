@@ -128,14 +128,14 @@ class NpcGenerationDataTest {
                         new Random(label.hashCode()));
                 check(label, build, archetype, null, problems);
                 long charged = build.steps().stream().filter(NpcBuildStep::isCharged).count();
-                long expected = Math.min(NpcSkillTreeBuilder.MAX_NODE_COUNT,
-                        count + (long) build.strippedHullModIds().size() * HULLMOD_OP / OP_PER_NODE);
+                List<String> stripped = NpcBuildSimulator.convertedHullModIds(build);
+                long expected = Math.min(NpcSkillTreeBuilder.MAX_NODE_COUNT, count + (long) stripped.size() * HULLMOD_OP / OP_PER_NODE);
                 if (charged != expected) {
-                    problems.add(label + ": allocated " + charged + ", expected " + expected + " after stripping " + build.strippedHullModIds());
+                    problems.add(label + ": allocated " + charged + ", expected " + expected + " after stripping " + stripped);
                 }
                 for (AllocatedNode node : AllocatedNode.of(build.shipData())) {
                     for (String hullModId : node.exclusiveHullModIds()) {
-                        if (removable.contains(hullModId) && !build.strippedHullModIds().contains(hullModId)) {
+                        if (removable.contains(hullModId) && !stripped.contains(hullModId)) {
                             problems.add(label + ": " + node.node().getId() + " clashes with kept hullmod " + hullModId);
                         }
                     }

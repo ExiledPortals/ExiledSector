@@ -2,10 +2,8 @@ package exiledsector.effects;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CargoAPI;
-import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.econ.MarketAPI;
 import com.fs.starfarer.api.campaign.econ.SubmarketAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Submarkets;
@@ -27,6 +25,7 @@ import exiledsector.loot.BattleEngagement;
 import exiledsector.loot.BattleLoot;
 import exiledsector.loot.FleetDifficulty;
 import exiledsector.loot.LootSource;
+import exiledsector.loot.MarketStock;
 import exiledsector.skills.SkillTreeSetting;
 import exiledsector.skills.npc.NpcTreeTag;
 import exiledsector.skills.progression.ShipLevelConfig;
@@ -42,7 +41,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
 
-public final class SkillTreeLootSource implements LootSource, FleetDifficulty {
+public final class SkillTreeLootSource implements LootSource, FleetDifficulty, MarketStock {
 
     public static final SkillTreeLootSource INSTANCE = new SkillTreeLootSource();
     static final int SHOWCASE_PICKS = 3;
@@ -165,21 +164,21 @@ public final class SkillTreeLootSource implements LootSource, FleetDifficulty {
     }
 
     @Override
-    public void stockSubmarket(SubmarketAPI submarket, CargoAPI cargo, Random random) {
-        if (ANCHOR_SUBMARKETS.contains(submarket.getSpecId())) {
-            stockAnchors(submarket.getMarket(), cargo, random);
-        }
+    public boolean isOwnListing(ItemData listing) {
+        ItemDefinition definition = listing == null ? null : listing.definition();
+        return definition != null && definition.type() == ItemType.WORMHOLE_ANCHOR;
     }
 
-    private static void stockAnchors(MarketAPI market, CargoAPI cargo, Random random) {
-        for (CargoStackAPI stack : cargo.getStacksCopy()) {
-            if (stack.isSpecialStack() && ItemData.isMarketListing(stack.getSpecialDataIfSpecial())) {
-                cargo.removeStack(stack);
-            }
+    @Override
+    public List<ItemData> restock(SubmarketAPI submarket, Random random) {
+        if (!ANCHOR_SUBMARKETS.contains(submarket.getSpecId())) {
+            return List.of();
         }
-        for (ItemDefinition definition : WormholeAnchorDefinitions.rollMarketStock(market.getFactionId(), random)) {
-            cargo.addSpecial(ItemData.rolled(definition, random.nextLong()).toMarketListing(), 1f);
+        List<ItemData> anchors = new ArrayList<>();
+        for (ItemDefinition definition : WormholeAnchorDefinitions.rollMarketStock(submarket.getMarket().getFactionId(), random)) {
+            anchors.add(ItemData.rolled(definition, random.nextLong()));
         }
+        return anchors;
     }
 
     @Override

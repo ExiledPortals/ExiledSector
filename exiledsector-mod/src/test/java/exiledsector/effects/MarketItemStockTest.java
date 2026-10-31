@@ -14,6 +14,7 @@ import com.fs.starfarer.api.impl.campaign.submarkets.BaseSubmarketPlugin;
 import exiledsector.MockSector;
 import exiledsector.compat.RandomAssortmentCompat;
 import exiledsector.items.ItemData;
+import exiledsector.items.HullUpgradesSetting;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.JanusDevice;
 import exiledsector.items.MarketHullItems;
@@ -208,21 +209,39 @@ class MarketItemStockTest {
     @Test
     void aMarketRestocksHullItemsWithOneModifierAndNoUniquesReplacingTheOldOnes() {
         CargoAPI cargo = mock(CargoAPI.class);
-        CargoStackAPI oldStock = specialStack(ItemData.rolledWithEffectCount(ItemDefinitions.get("bridge_basic"), 1L, 1).toSpecialItem());
-        CargoStackAPI oldAnchor = specialStack(ItemData.rolled(ItemDefinitions.get(HEGEMONY_ANCHOR), 2L).toSpecialItem());
-        when(cargo.getStacksCopy()).thenReturn(List.of(oldStock, oldAnchor));
+        CargoStackAPI oldStock = specialStack(ItemData.rolledWithEffectCount(ItemDefinitions.get("bridge_basic"), 1L, 1).toMarketListing());
+        CargoStackAPI soldHullItem = specialStack(ItemData.rolledWithEffectCount(ItemDefinitions.get("bridge_basic"), 3L, 1).toSpecialItem());
+        CargoStackAPI oldAnchor = specialStack(ItemData.rolled(ItemDefinitions.get(HEGEMONY_ANCHOR), 2L).toMarketListing());
+        when(cargo.getStacksCopy()).thenReturn(List.of(oldStock, soldHullItem, oldAnchor));
 
         listener.reportSubmarketCargoAndShipsUpdated(submarket(Submarkets.SUBMARKET_BLACK, "pirates", 0f, cargo));
 
         verify(cargo).removeStack(oldStock);
-        verify(cargo, never()).removeStack(oldAnchor);
+        verify(cargo, never()).removeStack(soldHullItem);
+        verify(cargo).removeStack(oldAnchor);
         List<SpecialItemData> stocked = added(cargo, 3);
         for (SpecialItemData special : stocked) {
             ItemData item = ItemData.of(special);
             assertEquals("bridge_basic", item.definitionId());
             assertEquals(1, item.explicits().size());
-            assertTrue(!ItemData.isMarketListing(special));
+            assertTrue(ItemData.isMarketListing(special));
         }
+    }
+
+    @Test
+    void aSwitchedOffDomainsListingsAreClearedOnRestockAndNotReplaced() {
+        CargoAPI cargo = mock(CargoAPI.class);
+        CargoStackAPI oldStock = specialStack(ItemData.rolledWithEffectCount(ItemDefinitions.get("bridge_basic"), 1L, 1).toMarketListing());
+        when(cargo.getStacksCopy()).thenReturn(List.of(oldStock));
+        HullUpgradesSetting.setEnabledForTests(false);
+        try {
+            listener.reportSubmarketCargoAndShipsUpdated(submarket(Submarkets.SUBMARKET_BLACK, "pirates", 0f, cargo));
+        } finally {
+            HullUpgradesSetting.setEnabledForTests(true);
+        }
+
+        verify(cargo).removeStack(oldStock);
+        verify(cargo, never()).addSpecial(any(), anyFloat());
     }
 
     @Test

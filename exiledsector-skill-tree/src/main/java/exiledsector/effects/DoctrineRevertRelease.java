@@ -1,6 +1,5 @@
 package exiledsector.effects;
 
-import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.PlayerFleet;
 import exiledsector.items.DoctrineOverrides;
@@ -10,18 +9,14 @@ import exiledsector.skills.ReleasedNodes;
 import exiledsector.skills.ShipFacts;
 import exiledsector.skills.ShipSkillData;
 import exiledsector.skills.ShipTrees;
-import exiledsector.skills.SkillItemCost;
 import exiledsector.skills.SkillNode;
 import exiledsector.skills.SkillTree;
 import exiledsector.skills.SkillTreeTopology;
 import exiledsector.skills.SkillType;
-import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 public final class DoctrineRevertRelease {
 
@@ -40,8 +35,7 @@ public final class DoctrineRevertRelease {
         if (released.nodeIds().isEmpty()) {
             return false;
         }
-        CargoAPI cargo = PlayerFleet.cargoOrNull();
-        released.charges().forEach(charged -> charged.refundTo(cargo));
+        released.refundTo(PlayerFleet.cargoOrNull());
         LOG.info("[ExiledSector] Released nodes of ship " + member.getId() + " that were allocated as doctrine replacements and whose originals"
                 + " are not allowed on it: " + released.nodeIds());
         return true;
@@ -64,24 +58,20 @@ public final class DoctrineRevertRelease {
         if (reverted.isEmpty()) {
             return ReleasedNodes.NONE;
         }
-        Set<String> allocatedBefore = new LinkedHashSet<>(shipData.getAllocatedNodeIds());
-        Set<String> reachableBefore = ShipTrees.reachableAllocatedNodeIds(shipData, topology, rootId);
-        List<SkillItemCost> charges = new ArrayList<>();
-        for (SkillNode node : reverted) {
-            NodeEligibility.Context eligibility = NodeEligibility.Context.of(shipData, shipFacts, SkillTypeUnlockStatus.lockedFor(shipData),
-                    itemId -> 0d);
-            SkillType option = NodeEligibility.validOption(node.getType(), shipData.getOptionalSelection(node.getId()));
-            if (NodeEligibility.check(node, option, eligibility.excluding(node.getId(), shipData)) == null) {
-                shipData.keepAsOriginal(node.getId());
-            } else {
-                charges.addAll(ShipTrees.deallocateReleasingCharges(shipData, node));
+        return ShipTrees.releaseWithStranded(shipData, topology, rootId, () -> {
+            for (SkillNode node : reverted) {
+                if (allowedAsOriginal(shipData, shipFacts, node)) {
+                    shipData.keepAsOriginal(node.getId());
+                } else {
+                    ShipTrees.deallocate(shipData, node);
+                }
             }
-        }
-        if (allocatedBefore.equals(shipData.getAllocatedNodeIds())) {
-            return ReleasedNodes.NONE;
-        }
-        charges.addAll(ShipTrees.releaseNewlyStranded(shipData, topology, rootId, reachableBefore).charges());
-        allocatedBefore.removeAll(shipData.getAllocatedNodeIds());
-        return new ReleasedNodes(List.copyOf(allocatedBefore), charges);
+        });
+    }
+
+    private static boolean allowedAsOriginal(ShipSkillData shipData, ShipFacts shipFacts, SkillNode node) {
+        NodeEligibility.Context eligibility = NodeEligibility.Context.forShip(shipData, shipFacts, itemId -> 0d);
+        SkillType option = NodeEligibility.validOption(node.getType(), shipData.getOptionalSelection(node.getId()));
+        return NodeEligibility.check(node, option, eligibility.excluding(node.getId(), shipData)) == null;
     }
 }

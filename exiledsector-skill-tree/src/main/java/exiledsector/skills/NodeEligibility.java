@@ -2,10 +2,12 @@ package exiledsector.skills;
 
 import com.fs.starfarer.api.combat.ShieldAPI.ShieldType;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
+import exiledsector.items.DoctrineOverrides;
 import exiledsector.skills.skilleffect.shield.ShieldSkillEffect;
 import exiledsector.skills.tags.NodeRequirements;
 import exiledsector.skills.tags.ShipProfile;
 import exiledsector.skills.unlock.NodeGates;
+import exiledsector.skills.unlock.SkillTypeUnlockStatus;
 
 import java.util.List;
 import java.util.Set;
@@ -42,6 +44,15 @@ public final class NodeEligibility {
 
         public static Context of(ShipSkillData data, ShipFacts shipFacts, Predicate<SkillType> locked) {
             return of(data, shipFacts, locked, null);
+        }
+
+        public static Context forShip(ShipSkillData data, ShipFacts shipFacts, ToDoubleFunction<String> heldItems) {
+            return forShip(data, shipFacts, SkillTypeUnlockStatus.lockedFor(data), heldItems);
+        }
+
+        public static Context forShip(ShipSkillData data, ShipFacts shipFacts, Predicate<SkillType> locked, ToDoubleFunction<String> heldItems) {
+            DoctrineOverrides.bindShipFacts(data, () -> shipFacts);
+            return of(data, shipFacts, locked, heldItems);
         }
 
         public static Context of(ShipSkillData data, ShipFacts shipFacts, Predicate<SkillType> locked, ToDoubleFunction<String> heldItems) {

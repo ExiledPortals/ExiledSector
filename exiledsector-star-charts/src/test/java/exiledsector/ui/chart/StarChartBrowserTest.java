@@ -108,7 +108,7 @@ class StarChartBrowserTest {
     }
 
     @Test
-    void selectingIgnoresChartsOutsideStorageAndTogglingClears() {
+    void selectingIgnoresChartsOutsideStorageAndNothingClears() {
         Item chart = stored("star_chart", 1L, 4);
         Item loose = ItemData.rolledAtTier(ItemDefinitions.get("star_chart"), 5L, 4).preview();
         StarChartBrowser browser = new StarChartBrowser();
@@ -116,9 +116,9 @@ class StarChartBrowserTest {
 
         assertFalse(browser.select(loose));
         assertNull(browser.selectedChart());
-        browser.toggle(chart);
+        browser.select(chart);
         assertSame(chart, browser.selectedChart());
-        browser.toggle(chart);
+        browser.select(null);
         assertNull(browser.selectedChart());
     }
 }

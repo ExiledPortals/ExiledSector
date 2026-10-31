@@ -95,7 +95,7 @@ class BattleItemDropsTest {
     @Test
     void eachRowExpectsPowerOverAHundredTimesItsRateAndKeepsTheWholePart() {
         List<BattleItemDrops.Planned> planned = BattleItemDrops.plan(List.of(new BattleItemDrops.SourcePower(1000f, ItemChances.BASE)),
-                1f, List.of(), neverLucky());
+                1f, List.of(), neverLucky(), true);
 
         assertEquals(Map.of(BattleItemDrops.Drop.MODS_1, 4, BattleItemDrops.Drop.MODS_2, 2, BattleItemDrops.Drop.MODS_3, 1,
                 BattleItemDrops.Drop.REFIT_SCHEMATIC, 1), counts(planned));
@@ -106,8 +106,8 @@ class BattleItemDropsTest {
         List<BattleItemDrops.SourcePower> twoFleets = List.of(new BattleItemDrops.SourcePower(400f, ItemChances.of(2f)),
                 new BattleItemDrops.SourcePower(200f, ItemChances.BASE));
 
-        List<BattleItemDrops.Planned> planned = BattleItemDrops.plan(twoFleets, 1f, List.of(), neverLucky());
-        List<BattleItemDrops.Planned> halved = BattleItemDrops.plan(twoFleets, 0.5f, List.of(), neverLucky());
+        List<BattleItemDrops.Planned> planned = BattleItemDrops.plan(twoFleets, 1f, List.of(), neverLucky(), true);
+        List<BattleItemDrops.Planned> halved = BattleItemDrops.plan(twoFleets, 0.5f, List.of(), neverLucky(), true);
 
         assertEquals(4, counts(planned).get(BattleItemDrops.Drop.MODS_1));
         assertEquals(2, counts(halved).get(BattleItemDrops.Drop.MODS_1));
@@ -117,7 +117,7 @@ class BattleItemDropsTest {
     void aTargetedChanceAddsItemsOfThatSectionOnTopOfTheGeneralRoll() {
         ItemChances bridgeBonus = new ItemChances(1f, Map.of(ItemKind.BRIDGE, 1f));
         List<BattleItemDrops.Planned> planned = BattleItemDrops.plan(List.of(new BattleItemDrops.SourcePower(2000f, bridgeBonus)), 1f,
-                List.of(ItemKind.BRIDGE, ItemKind.REACTOR), neverLucky());
+                List.of(ItemKind.BRIDGE, ItemKind.REACTOR), neverLucky(), true);
 
         long targeted = planned.stream().filter(entry -> entry.kind() != null).count();
         assertTrue(planned.stream().filter(entry -> entry.kind() != null).allMatch(entry -> entry.kind() == ItemKind.BRIDGE));
@@ -128,7 +128,7 @@ class BattleItemDropsTest {
     @Test
     void aBigBattleKeepsEveryPlannedDropWithNoCap() {
         List<BattleItemDrops.Planned> planned = BattleItemDrops.plan(List.of(new BattleItemDrops.SourcePower(10000f, ItemChances.BASE)),
-                1f, List.of(), neverLucky());
+                1f, List.of(), neverLucky(), true);
 
         assertEquals(Map.of(BattleItemDrops.Drop.MODS_1, 40, BattleItemDrops.Drop.MODS_2, 25, BattleItemDrops.Drop.MODS_3, 15,
                 BattleItemDrops.Drop.MODS_4, 4, BattleItemDrops.Drop.UNIQUE, 1, BattleItemDrops.Drop.REFIT_SCHEMATIC, 10), counts(planned));
@@ -160,12 +160,12 @@ class BattleItemDropsTest {
         int relics = 0;
         int lockedRelics = 0;
         for (int trial = 0; trial < 100; trial++) {
-            ItemDrops.SectionItemLoot loot = BattleItemDrops.roll(bigBattle, 1f, random, definition -> true);
+            ItemDrops.SectionItemLoot loot = BattleItemDrops.roll(bigBattle, 1f, random, definition -> true, true);
             for (ItemData item : loot.items()) {
                 relics += HULL_RELIC.equals(item.definitionId()) ? 1 : 0;
                 assertFalse(THIN_BRIDGE.equals(item.definitionId()) && item.explicits().size() > 1, item.toString());
             }
-            for (ItemData item : BattleItemDrops.roll(bigBattle, 1f, random, definition -> false).items()) {
+            for (ItemData item : BattleItemDrops.roll(bigBattle, 1f, random, definition -> false, true).items()) {
                 lockedRelics += HULL_RELIC.equals(item.definitionId()) ? 1 : 0;
             }
         }
@@ -200,7 +200,7 @@ class BattleItemDropsTest {
         Map<String, Integer> drops = new HashMap<>();
         Random random = new Random(5L);
         for (int trial = 0; trial < 2000; trial++) {
-            for (ItemData item : BattleItemDrops.roll(battle, 1f, random, definition -> true).items()) {
+            for (ItemData item : BattleItemDrops.roll(battle, 1f, random, definition -> true, true).items()) {
                 if (ItemDefinitions.get(item.definitionId()).unique()) {
                     drops.merge(item.definitionId(), 1, Integer::sum);
                 }
@@ -213,9 +213,9 @@ class BattleItemDropsTest {
     void aBattleWithNoPowerOrADropMultiplierOfZeroDropsNothing() {
         BattleItemDrops.Battle battle = new BattleItemDrops.Battle(List.of(new BattleItemDrops.SourcePower(4000f, ItemChances.BASE)), null);
 
-        assertEquals(ItemDrops.SectionItemLoot.NONE, BattleItemDrops.roll(battle, 0f, new Random(1L), definition -> true));
+        assertEquals(ItemDrops.SectionItemLoot.NONE, BattleItemDrops.roll(battle, 0f, new Random(1L), definition -> true, true));
         assertEquals(ItemDrops.SectionItemLoot.NONE, BattleItemDrops.roll(new BattleItemDrops.Battle(List.of(), null), 1f,
-                new Random(1L), definition -> true));
+                new Random(1L), definition -> true, true));
     }
 
     @Test
@@ -246,10 +246,10 @@ class BattleItemDropsTest {
     void schematicsOnlyDropWhileTheyAreRequired() {
         List<BattleItemDrops.SourcePower> battle = List.of(new BattleItemDrops.SourcePower(1000f, ItemChances.BASE));
 
-        assertNull(counts(BattleItemDrops.plan(battle, 1f, List.of(), neverLucky())).get(BattleItemDrops.Drop.MASTER_SCHEMATIC));
+        assertNull(counts(BattleItemDrops.plan(battle, 1f, List.of(), neverLucky(), true)).get(BattleItemDrops.Drop.MASTER_SCHEMATIC));
 
         MasterSchematic.requiredWhen(() -> true);
-        assertEquals(1, counts(BattleItemDrops.plan(battle, 1f, List.of(), neverLucky())).get(BattleItemDrops.Drop.MASTER_SCHEMATIC));
+        assertEquals(1, counts(BattleItemDrops.plan(battle, 1f, List.of(), neverLucky(), true)).get(BattleItemDrops.Drop.MASTER_SCHEMATIC));
     }
 
     @Test
@@ -271,7 +271,7 @@ class BattleItemDropsTest {
         Random random = new Random(5L);
         Map<RefitSchematic, Integer> tierCounts = new EnumMap<>(RefitSchematic.class);
         for (int trial = 0; trial < battles; trial++) {
-            for (ShipCurrency upgrade : BattleItemDrops.roll(battle, 1f, random, definition -> true).upgrades()) {
+            for (ShipCurrency upgrade : BattleItemDrops.roll(battle, 1f, random, definition -> true, true).upgrades()) {
                 if (upgrade instanceof RefitSchematic schematic) {
                     tierCounts.merge(schematic, 1, Integer::sum);
                 }
@@ -282,9 +282,9 @@ class BattleItemDropsTest {
     @Test
     void rarityMultipliesOnlyTheRareRowsOfABattle() {
         List<BattleItemDrops.Planned> plain = BattleItemDrops.plan(List.of(new BattleItemDrops.SourcePower(1600f, ItemChances.BASE)),
-                1f, List.of(), neverLucky());
+                1f, List.of(), neverLucky(), true);
         List<BattleItemDrops.Planned> rarer = BattleItemDrops.plan(List.of(new BattleItemDrops.SourcePower(1600f,
-                ItemChances.BASE.withRarity(2f))), 1f, List.of(), neverLucky());
+                ItemChances.BASE.withRarity(2f))), 1f, List.of(), neverLucky(), true);
 
         assertEquals(counts(plain).get(BattleItemDrops.Drop.MODS_1), counts(rarer).get(BattleItemDrops.Drop.MODS_1));
         assertEquals(counts(plain).get(BattleItemDrops.Drop.REFIT_SCHEMATIC), counts(rarer).get(BattleItemDrops.Drop.REFIT_SCHEMATIC));
