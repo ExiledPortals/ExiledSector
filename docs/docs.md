@@ -457,6 +457,14 @@ tier 10 and then every tier (`GatewayTierLimit` reads the player's built gateway
 Completing the first tier 5 and tier 10 chart puts each upgrade item into cargo with a popup, as do already cleared
 tiers on load (`GatewayUpgradeRewards`).
 
+### No colony requirement
+
+The No Colony Requirement setting (`ColonyFreeAtlas`) hides the gateway from the build list and lets wormholes open
+anywhere outside a chart system. Using the blueprint, which is then a right-click item even with Vaults of Knowledge,
+grants the Outer Reach Atlas ability (`AtlasAbility`). Every tier opens, and the three gateway researches are removed
+from each faction's tree one frame after load, once Vaults of Knowledge has re-added them; switching the setting off
+gives them back.
+
 ### The atlas
 
 Each save has one atlas: `AtlasState` keeps the seed and per-system flags in persistent data, and `AtlasGenerator`
@@ -496,7 +504,9 @@ Most insert their anomaly as a player record through `AtlasAnomalies.canInsert` 
 an anomaly they add takes the system's own faction. Whether it fits is the anomaly's `insertVerdict` (its `fitsAt` and
 `holdsAt` by default; the Faction Skirmish checks the current owner, captures included). Redeployment Orders instead hand the system to another faction from its
 biome's list, raced on the atlas seed, the system and its current owner so a reload never changes the pick, and stored
-as a capture (`RedeploymentCatalystUse`). Both go through core `Consumables.use`, which spends the item only once the change has taken.
+as a capture (`RedeploymentCatalystUse`). A row with the `star` effect may insert a star anomaly through
+`AtlasAnomalies.canInsertStar` and `insertStar`, which skip only the insertable check, so it never replaces a star
+anomaly already there; it never drops. Both go through core `Consumables.use`, which spends the item only once the change has taken.
 
 Every chart drop source inside a live run rolls its `catalyst_chance` from `chart_drops.csv` after its chart currency,
 picking by weight among catalysts whose `min_tier` the run's tier reaches (`ChartDrops.roll`, `AtlasCatalysts.pickDrop`).
@@ -702,6 +712,19 @@ item row, plus VoK's own `ashes_research` drop group rolled 10 times and 2 more 
 (`FacilityLoot`, numbers in `FacilityRules`). The planet never gets VoK's market condition, so VoK's intel and rules
 don't see it. Its Facility Survey catalyst has `weight` 0 in `atlas_catalysts.csv`, so `AtlasCatalysts.pickDrop` never
 drops it and only `ExiledSectorGrantAtlasCatalysts` hands it out; a catalyst whose anomaly needs a missing mod isn't loaded.
+
+### Coronal Hypershunt
+
+A rare star anomaly (`CoronalHypershunt`, package `charts.anomaly.hypershunt`): the system is a single blue supergiant,
+and its `fitsAt` keeps it 15 or more cells from the Gateway, both for the atlas roll and for its catalyst. It places
+vanilla's `coronal_tap` entity in a pointing-down orbit just outside the star, guarded like the Derelict Forge:
+`HypershuntGuards` builds an officered Omega fleet of the tier's fleet size, never fewer than vanilla's 80 defender
+points, with chart loot and vanilla's Omega weapon drops, and `HypershuntDialog` hands it to
+`SalvageDefenderInteraction`.
+
+`HypershuntDialog` takes every interaction with the hypershunt during its run, so vanilla's rules never offer the repair
+or add hypershunt intel; once beaten it only says the structure is beyond repair. Its Hypershunt Survey catalyst has
+the `star` effect and `weight` 0, so only `ExiledSectorGrantAtlasCatalysts` hands it out.
 
 ### Remnant Nexus and Domain-era Mothership
 

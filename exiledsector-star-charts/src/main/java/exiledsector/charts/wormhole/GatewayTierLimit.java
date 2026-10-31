@@ -2,7 +2,6 @@ package exiledsector.charts.wormhole;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.generation.ChartTiers;
-import exiledsector.compat.VaultsOfKnowledgeCompat;
 
 public final class GatewayTierLimit {
 
@@ -13,7 +12,7 @@ public final class GatewayTierLimit {
     }
 
     public static int maxTier(SectorAPI sector) {
-        if (sector == null || !VaultsOfKnowledgeCompat.isModEnabled()) {
+        if (sector == null || !WormholeGateway.researchGated()) {
             return ChartTiers.CORRUPTED_TIER;
         }
         return maxTierFor(WormholeGateway.playerGatewayId(sector));

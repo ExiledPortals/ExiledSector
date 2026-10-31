@@ -151,7 +151,11 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     }
 
     public static boolean open(CampaignUIAPI campaignUI) {
-        return CampaignOverlay.open(campaignUI, AtlasScreen::new, null);
+        return open(campaignUI, null);
+    }
+
+    public static boolean open(CampaignUIAPI campaignUI, Runnable afterClose) {
+        return CampaignOverlay.open(campaignUI, AtlasScreen::new, afterClose);
     }
 
     @Override

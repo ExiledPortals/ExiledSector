@@ -12,7 +12,7 @@ The factions are pushing into the Outer Reaches through wormholes, and the Gatew
 - Explorarium Surveys are Domain survey records recovered in the Outer Reaches. They create nothing. They show where something old lies, and the Gateway plots the way to it.
 - Transit Orders are a faction's intercepted wormhole transit orders. Rewritten with a system's coordinates, they send that faction's next push to the system you chose.
 
-Star anomalies have no catalyst: not even a failing terminus can turn a star into a black hole.
+Star anomalies have no catalyst that drops: not even a failing terminus can turn a star into a black hole. The one exception is the dev-only Hypershunt Survey (`coronal_hypershunt.md`), a `star` catalyst with weight 0 that only the console grants.
 
 ## The items
 

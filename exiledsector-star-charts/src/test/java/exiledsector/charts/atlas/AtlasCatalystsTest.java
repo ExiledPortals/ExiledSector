@@ -7,6 +7,7 @@ import exiledsector.MockSector;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.facility.PreCollapseFacility;
+import exiledsector.charts.anomaly.hypershunt.CoronalHypershunt;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
 import org.json.JSONArray;
@@ -30,6 +31,7 @@ import static org.mockito.Mockito.when;
 class AtlasCatalystsTest {
 
     private static final String FACILITY_SURVEY = "exiledSector_facility_survey";
+    private static final String HYPERSHUNT_SURVEY = "exiledSector_hypershunt_survey";
 
     @BeforeEach
     void setUp() throws Exception {
@@ -106,6 +108,39 @@ class AtlasCatalystsTest {
     }
 
     @Test
+    void theHypershuntSurveyForcesItsStarAnomalyAndNeverDrops() throws Exception {
+        assertEquals(List.of(), AtlasCatalysts.register(ChartTables.csvRows(AtlasCatalysts.PATH)));
+
+        AtlasCatalysts.Catalyst survey = AtlasCatalysts.byItemId(HYPERSHUNT_SURVEY);
+        assertNotNull(survey);
+        assertEquals(AtlasCatalysts.Effect.STAR, survey.effect());
+        assertEquals(AtlasCatalysts.Family.SURVEY, survey.family());
+        assertEquals(CoronalHypershunt.ID, survey.anomalyId());
+        assertEquals(ChartAnomalies.definition(CoronalHypershunt.ID).icon(), survey.iconPath());
+        assertEquals(0f, survey.weight());
+        Random random = new Random(7L);
+        for (int roll = 0; roll < 2000; roll++) {
+            AtlasCatalysts.Catalyst dropped = AtlasCatalysts.pickDrop(ChartTiers.HIGHEST_TIER, random);
+            assertTrue(dropped == null || !HYPERSHUNT_SURVEY.equals(dropped.itemId()));
+        }
+    }
+
+    @Test
+    void aStarCatalystNeedsAStarAnomalyAndNeverDrops() throws Exception {
+        JSONArray rows = new JSONArray()
+                .put(new JSONObject().put("id", "test_not_star").put("anomaly", "spatial_breach").put("family", "terminus").put("effect", "star"))
+                .put(new JSONObject().put("id", "test_star").put("anomaly", CoronalHypershunt.ID).put("family", "survey").put("effect", "star")
+                        .put("weight", 1));
+
+        List<String> problems = AtlasCatalysts.register(rows);
+
+        assertEquals(List.of("test_not_star skipped: anomaly 'spatial_breach' does not replace the star",
+                "test_star weight = '1.0 (a star catalyst never drops)'"), problems);
+        assertEquals(0f, AtlasCatalysts.byItemId("test_star").weight());
+        assertNull(AtlasCatalysts.byItemId("test_not_star"));
+    }
+
+    @Test
     void aRowWithAnUnknownFamilyIsSkipped() throws Exception {
         JSONArray rows = new JSONArray().put(new JSONObject().put("id", "test_catalyst").put("anomaly", "spatial_breach").put("family", "relic"));
 
@@ -136,7 +171,7 @@ class AtlasCatalystsTest {
         List<String> problems = AtlasCatalysts.register(rows);
 
         assertEquals(List.of("test_iconless skipped: a redeploy catalyst needs an icon",
-                "test_unknown skipped: effect 'teleport' is not anomaly or redeploy"), problems);
+                "test_unknown skipped: effect 'teleport' is not anomaly, star or redeploy"), problems);
         assertEquals(List.of("test_redeploy"), AtlasCatalysts.all().stream().map(AtlasCatalysts.Catalyst::itemId).toList());
     }
 }

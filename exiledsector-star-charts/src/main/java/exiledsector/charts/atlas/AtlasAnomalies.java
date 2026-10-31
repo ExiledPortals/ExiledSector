@@ -68,12 +68,22 @@ public final class AtlasAnomalies {
     }
 
     public static InsertCheck canInsert(AtlasGenerator generator, AtlasState state, AtlasCell cell, String anomalyId, AtlasCell openRunCell) {
+        return canInsert(generator, state, cell, anomalyId, openRunCell, false);
+    }
+
+    public static InsertCheck canInsertStar(AtlasGenerator generator, AtlasState state, AtlasCell cell, String anomalyId, AtlasCell openRunCell) {
+        return canInsert(generator, state, cell, anomalyId, openRunCell, true);
+    }
+
+    private static InsertCheck canInsert(AtlasGenerator generator, AtlasState state, AtlasCell cell, String anomalyId, AtlasCell openRunCell,
+                                         boolean forcingStar) {
         ChartAnomalies.Definition definition = ChartAnomalies.definition(anomalyId);
         ChartAnomaly anomaly = ChartAnomalies.byId(anomalyId);
         if (definition == null || anomaly == null) {
             return InsertCheck.UNKNOWN;
         }
-        if (!definition.insertable()) {
+        boolean forcedStar = forcingStar && definition.replacesStar() && !definition.perBiome();
+        if (!definition.insertable() && !forcedStar) {
             return InsertCheck.NOT_INSERTABLE;
         }
         if (!ChartAnomalies.usable(anomalyId)) {
@@ -110,6 +120,12 @@ public final class AtlasAnomalies {
                                    AtlasCell openRunCell, AtlasAnomalyRecord.Chain chain) {
         InsertCheck check = canInsert(generator, state, cell, anomalyId, openRunCell);
         return new Insertion(check, check.allows() ? state.insertAnomaly(cell, anomalyId, source, chain) : 0);
+    }
+
+    public static Insertion insertStar(AtlasGenerator generator, AtlasState state, AtlasCell cell, String anomalyId, AtlasAnomalyRecord.Source source,
+                                       AtlasCell openRunCell) {
+        InsertCheck check = canInsertStar(generator, state, cell, anomalyId, openRunCell);
+        return new Insertion(check, check.allows() ? state.insertAnomaly(cell, anomalyId, source) : 0);
     }
 
     public static InsertCheck move(AtlasGenerator generator, AtlasState state, int recordId, AtlasCell target, AtlasCell openRunCell) {

@@ -22,6 +22,7 @@ import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunState;
 import exiledsector.charts.wormhole.ChartWormholePlugin;
 import exiledsector.charts.wormhole.WormholeGateway;
+import exiledsector.ui.atlas.AtlasAbility;
 
 import java.util.Map;
 
@@ -33,6 +34,7 @@ public final class ChartSaveAliases {
             Map.entry("exiledSector.ChartWormholePlugin", ChartWormholePlugin.class),
             Map.entry("exiledSector.ChartObjectiveIntel", ChartObjectiveIntel.class),
             Map.entry("exiledSector.WormholeGateway", WormholeGateway.class),
+            Map.entry("exiledSector.AtlasAbility", AtlasAbility.class),
             Map.entry("exiledSector.BreachTerrainPlugin", BreachTerrainPlugin.class),
             Map.entry("exiledSector.BreachCorePlugin", BreachCorePlugin.class),
             Map.entry("exiledSector.BreachSupplyBuff", BreachSupplyBuff.class),

@@ -165,13 +165,13 @@ class PreCollapseFacilityTest {
     @Test
     void theGuardsNeverFallBelowAoTDsFleetButGrowPastItWithTier() {
         ChartAnomalyFleets.Spec small = new ChartAnomalyFleets.Spec("remnant", "patrolLarge", 75f, 0f, 0f, 0.6f, 1, 2, 1);
-        ChartAnomalyFleets.Spec floored = FacilityGuards.atLeast(small, 160f);
+        ChartAnomalyFleets.Spec floored = small.atLeast(160f);
         assertEquals(160f, floored.combatPoints());
         assertEquals(small.quality(), floored.quality());
         assertEquals(small.officerCountBonus(), floored.officerCountBonus());
 
         ChartAnomalyFleets.Spec large = new ChartAnomalyFleets.Spec("remnant", "patrolLarge", 450f, 0f, 0f, 0.9f, 3, 4, 2);
-        assertSame(large, FacilityGuards.atLeast(large, 180f));
+        assertSame(large, large.atLeast(180f));
     }
 
     @Test

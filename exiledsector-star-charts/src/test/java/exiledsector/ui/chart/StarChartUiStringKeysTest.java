@@ -2,6 +2,7 @@ package exiledsector.ui.chart;
 
 import exiledsector.charts.run.ChartRunActions.OpenResult;
 import exiledsector.i18n.RealCatalogue;
+import exiledsector.charts.anomaly.hypershunt.CoronalHypershunt;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasCatalystUse;
@@ -43,7 +44,7 @@ class StarChartUiStringKeysTest {
             }
         }
         for (String key : List.of(AtlasCatalystUse.FOGGED_KEY, RedeploymentCatalystUse.SPECIAL_KEY, RedeploymentCatalystUse.INFESTED_KEY,
-                RedeploymentCatalystUse.NO_FACTION_KEY, FactionSkirmish.NO_SIDE_KEY, FactionSkirmish.NO_ATTACKER_KEY, "catalyst.redeploys", "catalyst.target.redeploy", "catalyst.confirm.redeploy",
+                RedeploymentCatalystUse.NO_FACTION_KEY, FactionSkirmish.NO_SIDE_KEY, FactionSkirmish.NO_ATTACKER_KEY, CoronalHypershunt.TOO_CLOSE_KEY, "catalyst.redeploys", "catalyst.target.redeploy", "catalyst.confirm.redeploy",
                 "catalyst.window.redeployed")) {
             require(catalogue, key, missing);
         }

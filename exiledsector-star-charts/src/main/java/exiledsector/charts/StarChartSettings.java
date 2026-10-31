@@ -18,11 +18,15 @@ public final class StarChartSettings {
     public static final int MAX_FLEET_LIMIT = 12;
     public static final String OPEN_ANYWHERE_FIELD_ID = "exiledSector_starChartOpenAnywhereDev";
     public static final boolean DEFAULT_OPEN_ANYWHERE = false;
+    public static final String NO_COLONY_FIELD_ID = "exiledSector_starChartNoColony";
+    public static final boolean DEFAULT_NO_COLONY = false;
     public static final String DEBUG_TOOLS_FIELD_ID = "exiledSector_starChartDebugTools";
     public static final boolean DEFAULT_DEBUG_TOOLS = false;
 
     public static final DomainSwitch SWITCH = new DomainSwitch(ENABLED_FIELD_ID, DEFAULT_ENABLED, () -> {
     });
+
+    private static boolean noColony = DEFAULT_NO_COLONY;
 
     private StarChartSettings() {
     }
@@ -33,6 +37,7 @@ public final class StarChartSettings {
 
     public static void reloadSettings() {
         SWITCH.reload();
+        noColony = ModSettings.booleanOr(NO_COLONY_FIELD_ID, DEFAULT_NO_COLONY);
     }
 
     public static boolean enabled() {
@@ -59,7 +64,15 @@ public final class StarChartSettings {
     }
 
     public static boolean openAnywhere() {
-        return ModSettings.booleanOr(OPEN_ANYWHERE_FIELD_ID, DEFAULT_OPEN_ANYWHERE);
+        return ModSettings.booleanOr(OPEN_ANYWHERE_FIELD_ID, DEFAULT_OPEN_ANYWHERE) || noColony();
+    }
+
+    public static boolean noColony() {
+        return noColony;
+    }
+
+    public static void setNoColonyForTests(boolean value) {
+        noColony = value;
     }
 
     public static boolean debugTools() {

@@ -245,6 +245,34 @@ class WormholeGatewayTest {
     }
 
     @Test
+    void withoutAColonyRequirementTheGatewayIsHiddenAndCannotBeBuilt() {
+        StarChartSettings.setNoColonyForTests(true);
+        try {
+            WormholeGateway gateway = gatewayOn(colony("Home"));
+
+            assertFalse(gateway.isAvailableToBuild());
+            assertFalse(gateway.showWhenUnavailable());
+        } finally {
+            StarChartSettings.setNoColonyForTests(StarChartSettings.DEFAULT_NO_COLONY);
+        }
+    }
+
+    @Test
+    void withoutAColonyRequirementVaultsOfKnowledgeNeedsOnlyTheBlueprint() {
+        when(modManager.isModEnabled(VaultsOfKnowledgeCompat.MOD_ID)).thenReturn(true);
+        StarChartSettings.setNoColonyForTests(true);
+        try {
+            assertFalse(WormholeGateway.researchGated());
+            when(sectorMemory.getBoolean(WormholeGateway.UNLOCKED_FLAG)).thenReturn(false);
+            assertFalse(WormholeGateway.isUnlockedFor(colony("Home")));
+            when(sectorMemory.getBoolean(WormholeGateway.UNLOCKED_FLAG)).thenReturn(true);
+            assertTrue(WormholeGateway.isUnlockedFor(colony("Home")));
+        } finally {
+            StarChartSettings.setNoColonyForTests(StarChartSettings.DEFAULT_NO_COLONY);
+        }
+    }
+
+    @Test
     void withVaultsOfKnowledgeTheResearchIsCheckedAndAFailedLookupNeverLocksTheBuildingAway() {
         when(modManager.isModEnabled(VaultsOfKnowledgeCompat.MOD_ID)).thenReturn(true);
 

@@ -4,7 +4,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.atlas.AtlasState;
-import exiledsector.compat.VaultsOfKnowledgeCompat;
+import exiledsector.charts.wormhole.WormholeGateway;
 import exiledsector.items.WormholeTechItems;
 import org.apache.log4j.Logger;
 
@@ -26,7 +26,7 @@ public final class GatewayUpgradeRewards {
     }
 
     public static List<String> completed(SectorAPI sector, int tier) {
-        if (sector == null || !VaultsOfKnowledgeCompat.isModEnabled()) {
+        if (sector == null || !WormholeGateway.researchGated()) {
             return List.of();
         }
         return grantUpTo(sector, tier);
@@ -35,7 +35,7 @@ public final class GatewayUpgradeRewards {
     public static void onGameLoad(SectorAPI sector) {
         sector.removeTransientScriptsOfClass(GatewayUpgradeNotice.class);
         try {
-            AtlasState state = VaultsOfKnowledgeCompat.isModEnabled() ? AtlasState.getIfCreated(sector) : null;
+            AtlasState state = WormholeGateway.researchGated() ? AtlasState.getIfCreated(sector) : null;
             if (state != null) {
                 grantUpTo(sector, state.clearedTiers().stream().mapToInt(Integer::intValue).max().orElse(0));
             }

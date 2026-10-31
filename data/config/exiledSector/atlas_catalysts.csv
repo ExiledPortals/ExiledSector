@@ -14,3 +14,4 @@ exiledSector_storm_terminus,storm_front,terminus,1,1,,,Storm Terminus
 exiledSector_forge_survey,derelict_forge,survey,1,1,,,Forge Survey
 exiledSector_picket_orders,listening_post,orders,1,1,,,Picket Orders
 exiledSector_facility_survey,pre_collapse_facility,survey,0,1,,,"Facility Survey; dev only: weight 0 so it never drops, granted only by ExiledSectorGrantAtlasCatalysts; loads only with Vaults of Knowledge"
+exiledSector_hypershunt_survey,coronal_hypershunt,survey,0,1,star,,"Hypershunt Survey; dev only: weight 0 so it never drops, granted only by ExiledSectorGrantAtlasCatalysts; star effect, so it turns the system's star into a blue supergiant"

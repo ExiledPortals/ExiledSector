@@ -1,0 +1,2 @@
+name,id,type,tags,activationDays,activationCooldown,durationDays,deactivationDays,deactivationCooldown,unlockedAtStart,defaultForAIFleet,musicSuppression,uiOn,uiOff,uiLoop,worldOn,worldOff,worldLoop,icon,plugin,ai,desc,sortOrder
+Outer Reach Atlas,exiledSector_outer_reach_atlas,DURATION,,,,,,,FALSE,FALSE,,,,,,,,graphics/icons/cargo/exiledSector_wormhole_blueprint.png,exiledsector.ui.atlas.AtlasAbility,,"Pick a system in the Outer Reach Atlas, ready a Star Chart for it and open its wormhole.",950

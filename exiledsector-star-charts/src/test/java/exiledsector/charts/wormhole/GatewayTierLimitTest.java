@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.econ.EconomyAPI;
 import com.fs.starfarer.api.campaign.econ.Industry;
 import com.fs.starfarer.api.campaign.econ.MarketAPI;
+import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
 import org.junit.jupiter.api.Test;
@@ -51,6 +52,16 @@ class GatewayTierLimitTest {
             assertEquals(5, GatewayTierLimit.maxTier(sectorWithGateway(WormholeGateway.INDUSTRY_ID)));
             assertEquals(10, GatewayTierLimit.maxTier(sectorWithGateway(WormholeGateway.ADVANCED_INDUSTRY_ID)));
             assertEquals(ChartTiers.CORRUPTED_TIER, GatewayTierLimit.maxTier(sectorWithGateway(WormholeGateway.PERFECTED_INDUSTRY_ID)));
+        }
+    }
+
+    @Test
+    void withoutAColonyRequirementEveryTierOpensWithVaultsOfKnowledge() {
+        StarChartSettings.setNoColonyForTests(true);
+        try (MockedStatic<VaultsOfKnowledgeCompat> ignored = vaults(true)) {
+            assertEquals(ChartTiers.CORRUPTED_TIER, GatewayTierLimit.maxTier(sectorWithGateway(WormholeGateway.INDUSTRY_ID)));
+        } finally {
+            StarChartSettings.setNoColonyForTests(StarChartSettings.DEFAULT_NO_COLONY);
         }
     }
 

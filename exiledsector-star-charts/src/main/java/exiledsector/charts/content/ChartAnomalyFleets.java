@@ -16,6 +16,12 @@ public final class ChartAnomalyFleets {
 
     public record Spec(String factionId, String fleetType, float combatPoints, float freighterPoints, float tankerPoints, float quality,
                        int officerLevelBonus, int officerCountBonus, int averageSMods) {
+
+        public Spec atLeast(float minCombatPoints) {
+            return combatPoints >= minCombatPoints ? this
+                    : new Spec(factionId, fleetType, minCombatPoints, freighterPoints, tankerPoints, quality, officerLevelBonus, officerCountBonus,
+                    averageSMods);
+        }
     }
 
     private ChartAnomalyFleets() {

@@ -20,7 +20,8 @@ public record AnomalyCatalystUse(AtlasCatalysts.Catalyst catalyst, AtlasGenerato
         if (!revealed.contains(cell)) {
             return UseVerdict.refused(FOGGED_KEY);
         }
-        AtlasAnomalies.InsertCheck check = AtlasAnomalies.canInsert(generator, state, cell, anomalyId, openRunCell);
+        AtlasAnomalies.InsertCheck check = forcesStar() ? AtlasAnomalies.canInsertStar(generator, state, cell, anomalyId, openRunCell)
+                : AtlasAnomalies.canInsert(generator, state, cell, anomalyId, openRunCell);
         if (check.allows()) {
             return UseVerdict.ALLOWED;
         }
@@ -37,8 +38,9 @@ public record AnomalyCatalystUse(AtlasCatalysts.Catalyst catalyst, AtlasGenerato
 
     @Override
     public Outcome apply(AtlasCell cell) {
-        AtlasAnomalies.Insertion insertion = AtlasAnomalies.insert(generator, state, cell, catalyst.anomalyId(), AtlasAnomalyRecord.Source.PLAYER,
-                openRunCell);
+        AtlasAnomalies.Insertion insertion = forcesStar()
+                ? AtlasAnomalies.insertStar(generator, state, cell, catalyst.anomalyId(), AtlasAnomalyRecord.Source.PLAYER, openRunCell)
+                : AtlasAnomalies.insert(generator, state, cell, catalyst.anomalyId(), AtlasAnomalyRecord.Source.PLAYER, openRunCell);
         return insertion.check().allows() ? new Outcome("catalyst.window.used", Map.of("anomaly", anomalyName())) : null;
     }
 
@@ -50,6 +52,10 @@ public record AnomalyCatalystUse(AtlasCatalysts.Catalyst catalyst, AtlasGenerato
     @Override
     public String confirmBody(String systemName) {
         return Translation.msg("catalyst.confirm.body").arg("anomaly", anomalyName()).arg("system", systemName).text();
+    }
+
+    private boolean forcesStar() {
+        return catalyst.effect() == AtlasCatalysts.Effect.STAR;
     }
 
     private String anomalyName() {

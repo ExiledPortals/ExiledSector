@@ -49,7 +49,7 @@ public final class FacilityGuards {
         ChartTier tier = ChartAnomalyFleets.tier(run.tier(), context);
         ChartAnomalyFleets.Spec scaled = ChartAnomalyFleets.combat(Factions.REMNANTS, FleetTypes.PATROL_LARGE, tier,
                 tier.fleetSize() * FacilityRules.GUARD_SIZE_SHARE);
-        CampaignFleetAPI guards = ChartAnomalyFleets.create(atLeast(scaled, VaultsOfKnowledgeCompat.defenceFleetPoints(random)), random);
+        CampaignFleetAPI guards = ChartAnomalyFleets.create(scaled.atLeast(VaultsOfKnowledgeCompat.defenceFleetPoints(random)), random);
         if (guards == null) {
             return null;
         }
@@ -58,13 +58,5 @@ public final class FacilityGuards {
         ChartAnomalyFleets.prepare(guards, run.runId(), run.tier(), random.nextLong(), false, context);
         guards.getMemoryWithoutUpdate().set(MemFlags.MEMORY_KEY_NO_REP_IMPACT, true);
         return guards;
-    }
-
-    static ChartAnomalyFleets.Spec atLeast(ChartAnomalyFleets.Spec spec, float combatPoints) {
-        if (spec.combatPoints() >= combatPoints) {
-            return spec;
-        }
-        return new ChartAnomalyFleets.Spec(spec.factionId(), spec.fleetType(), combatPoints, spec.freighterPoints(), spec.tankerPoints(),
-                spec.quality(), spec.officerLevelBonus(), spec.officerCountBonus(), spec.averageSMods());
     }
 }

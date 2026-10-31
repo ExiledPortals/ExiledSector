@@ -11,6 +11,7 @@ import exiledsector.charts.loot.StarChartLootSource;
 import exiledsector.charts.objective.GatewayUpgradeRewards;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.run.ChartTransverseJump;
+import exiledsector.charts.wormhole.ColonyFreeAtlas;
 import exiledsector.charts.wormhole.LimboBlueprintCache;
 import exiledsector.charts.wormhole.WormholeGateway;
 import exiledsector.compat.FoilerCompat;
@@ -92,6 +93,9 @@ public final class StarChartsDomain implements ExiledSectorDomain {
         SettingsCreator.addInt(MOD_ID, StarChartSettings.FLEET_LIMIT_FIELD_ID,
                 Translation.text("settings.starCharts.fleetLimit.name"), Translation.text("settings.starCharts.fleetLimit.tooltip"),
                 StarChartSettings.DEFAULT_FLEET_LIMIT, StarChartSettings.MIN_FLEET_LIMIT, StarChartSettings.MAX_FLEET_LIMIT, chartsTab);
+        SettingsCreator.addBoolean(MOD_ID, StarChartSettings.NO_COLONY_FIELD_ID,
+                Translation.text("settings.starCharts.noColony.name"), Translation.text("settings.starCharts.noColony.tooltip"),
+                StarChartSettings.DEFAULT_NO_COLONY, chartsTab);
         SettingsCreator.addBoolean(MOD_ID, StarChartSettings.OPEN_ANYWHERE_FIELD_ID,
                 Translation.text("chart.ui.settings.openAnywhere.name"), Translation.text("chart.ui.settings.openAnywhere.tooltip"),
                 StarChartSettings.DEFAULT_OPEN_ANYWHERE, chartsTab);
@@ -103,6 +107,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
     @Override
     public void reloadSettings() {
         StarChartSettings.reloadSettings();
+        ColonyFreeAtlas.onSettingsChanged();
     }
 
     @Override
@@ -137,6 +142,7 @@ public final class StarChartsDomain implements ExiledSectorDomain {
             LimboBlueprintCache.onGameLoad(Global.getSector());
             GatewayUpgradeRewards.onGameLoad(Global.getSector());
         }
+        ColonyFreeAtlas.onGameLoad(Global.getSector());
     }
 
     @Override

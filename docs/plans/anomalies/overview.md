@@ -14,6 +14,7 @@ An anomaly is anything a star chart system holds beyond its ordinary layout, fle
 | Supply Convoy (built) | `../completed/anomalies/supply_convoy.md` | zero or one, sized by where you strike; a raid if it delivers |
 | Anomalous Debris (built) | `../completed/anomalies/anomalous_debris.md` | optional, one per dormant fleet |
 | Remnant Nexus and Domain-era Mothership | `biome_stations.md` | the station, plus the few fleets it keeps launching until it dies |
+| Coronal Hypershunt | `coronal_hypershunt.md` | one, the Omega fleet guarding the hypershunt |
 
 Black Hole, Neutron Star, Dense Nebula, Asteroid Storm, Magnetic Storm and Stellar Flares are built and described in `../atlas.md` (Regions, layouts and anomalies). Powerful Boss, the former atlas marker (a bigger boss with more spoils and a guaranteed tier-up chart), is built as `../atlas.md` step 19; it rolls on its own `atlas_markers.csv` row instead of the shared anomaly chance. The Remnant Nexus and Domain-era Mothership never roll: a `biomes` column places each in exactly one system of every pocket of its biome (`biome_stations.md`), and they are the one exception to "no anomaly spawns waves", kept to two or three fleets at a time.
 
@@ -48,4 +49,4 @@ Players favour one anomaly over the others with intel and atlas passives, and ca
 The atlas comes first. These steps sit inside `../atlas.md`'s build order (its steps 2, 3c, 12, 13 and 16).
 
 1. [~] Anomaly framework: `ChartAnomaly`, `chart_anomalies.csv`, the per-node roll, run requests, tooltip line, run state and cleanup, with one test anomaly that places nothing (`ChartAnomaliesTest.PlacesNothing`), plus inserted anomalies (`../atlas.md` step 17). Not built: icon and intel columns' use, which wait for the marker icons and the intel item.
-2. [~] Anomalies one at a time, each to its own plan's build order. Built apart from in-game checks: Faction Skirmish, Relay Network, Supply Convoy, Anomalous Debris, Excavation Sites, Storm Front, Derelict Forge, Listening Post, and the Remnant Nexus and Domain-era Mothership.
+2. [~] Anomalies one at a time, each to its own plan's build order. Built apart from in-game checks: Faction Skirmish, Relay Network, Supply Convoy, Anomalous Debris, Excavation Sites, Storm Front, Derelict Forge, Listening Post, the Remnant Nexus and Domain-era Mothership, and the Coronal Hypershunt.

@@ -7,6 +7,7 @@ import com.fs.starfarer.api.campaign.SpecialItemSpecAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.MockSector;
 import exiledsector.charts.MapMemory;
+import exiledsector.charts.StarChartSettings;
 import exiledsector.charts.wormhole.WormholeGateway;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
 import exiledsector.i18n.Translation;
@@ -70,6 +71,25 @@ class WormholeTechItemPluginTest {
         assertFalse(blueprint.shouldRemoveOnRightClickAction());
         blueprint.performRightClickAction();
         assertFalse(WormholeGateway.isUnlocked(mockSector.sector));
+    }
+
+    @Test
+    void withoutAColonyRequirementTheBlueprintIsRightClickedEvenWithVaultsOfKnowledge() {
+        when(modManager.isModEnabled(VaultsOfKnowledgeCompat.MOD_ID)).thenReturn(true);
+        StarChartSettings.setNoColonyForTests(true);
+        try {
+            WormholeTechItemPlugin blueprint = plugin(WormholeTechItems.BLUEPRINT);
+
+            assertTrue(blueprint.hasRightClickAction());
+            blueprint.performRightClickAction();
+            assertTrue(WormholeGateway.isUnlocked(mockSector.sector));
+            assertEquals("Right-click to unlock the Outer Reach Atlas ability.",
+                    Translation.text(WormholeTechItemPlugin.usageKey(WormholeTechItems.BLUEPRINT, false, true)));
+            assertEquals(WormholeTechItemPlugin.usageKey(WormholeTechItems.UPGRADE_ADVANCED, false),
+                    WormholeTechItemPlugin.usageKey(WormholeTechItems.UPGRADE_ADVANCED, false, true));
+        } finally {
+            StarChartSettings.setNoColonyForTests(StarChartSettings.DEFAULT_NO_COLONY);
+        }
     }
 
     @Test

@@ -46,6 +46,7 @@ public final class AtlasCatalysts {
 
     public enum Effect {
         ANOMALY,
+        STAR,
         REDEPLOY;
 
         public String key() {
@@ -94,10 +95,10 @@ public final class AtlasCatalysts {
             String anomalyId = ModCsv.text(row, "anomaly");
             String icon = ModCsv.text(row, "icon");
             Effect effect = Effect.byKey(ModCsv.text(row, "effect"));
-            if (effect == Effect.ANOMALY && needsMissingMod(anomalyId)) {
+            if (effect != null && effect != Effect.REDEPLOY && needsMissingMod(anomalyId)) {
                 return;
             }
-            String skipReason = effect == null ? "effect '" + ModCsv.text(row, "effect") + "' is not anomaly or redeploy"
+            String skipReason = effect == null ? "effect '" + ModCsv.text(row, "effect") + "' is not anomaly, star or redeploy"
                     : skipReason(effect, anomalyId, icon);
             Family family = Family.byKey(ModCsv.text(row, "family"));
             if (family == null) {
@@ -108,8 +109,12 @@ public final class AtlasCatalysts {
                 return;
             }
             int minTier = ChartTiers.clamp(csv.integer(row, "min_tier", ChartTiers.LOWEST_TIER, id));
-            loaded.put(id, new Catalyst(id, effect == Effect.ANOMALY ? anomalyId : "", family, Math.max(0f, csv.number(row, "weight", 1f, id)),
-                    minTier, effect, icon));
+            float weight = Math.max(0f, csv.number(row, "weight", 1f, id));
+            if (effect == Effect.STAR && weight > 0f) {
+                csv.problem(id, "weight", weight + " (a star catalyst never drops)");
+                weight = 0f;
+            }
+            loaded.put(id, new Catalyst(id, effect == Effect.REDEPLOY ? "" : anomalyId, family, weight, minTier, effect, icon));
         });
         csv.report(LOG);
         catalysts = Collections.unmodifiableMap(loaded);
@@ -130,7 +135,10 @@ public final class AtlasCatalysts {
         if (definition == null || ChartAnomalies.byId(anomalyId) == null) {
             return "anomaly '" + anomalyId + "' is unknown";
         }
-        if (!definition.insertable()) {
+        if (effect == Effect.STAR && (!definition.replacesStar() || definition.perBiome())) {
+            return "anomaly '" + anomalyId + "' does not replace the star";
+        }
+        if (effect == Effect.ANOMALY && !definition.insertable()) {
             return "anomaly '" + anomalyId + "' is not insertable";
         }
         return definition.icon().isEmpty() && icon.isEmpty() ? "anomaly '" + anomalyId + "' has no icon" : null;

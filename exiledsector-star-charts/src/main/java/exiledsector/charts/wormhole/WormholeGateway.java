@@ -110,13 +110,17 @@ public class WormholeGateway extends BaseIndustry {
     }
 
     static boolean isUnlockedFor(MarketAPI market) {
-        if (VaultsOfKnowledgeCompat.isModEnabled()) {
+        if (researchGated()) {
             return VaultsOfKnowledgeCompat.isGatewayResearched(market);
         }
         return blueprintUsed();
     }
 
-    private static boolean blueprintUsed() {
+    public static boolean researchGated() {
+        return VaultsOfKnowledgeCompat.isModEnabled() && !ColonyFreeAtlas.active();
+    }
+
+    static boolean blueprintUsed() {
         return ExiledSector.domains().stream().anyMatch(ExiledSectorDomain::ignoresMemoryFlagUnlocks) || isUnlocked(Global.getSector());
     }
 
@@ -152,7 +156,7 @@ public class WormholeGateway extends BaseIndustry {
 
     @Override
     public boolean isAvailableToBuild() {
-        if (market == null || !StarChartSettings.enabled() || !super.isAvailableToBuild()) {
+        if (market == null || !StarChartSettings.enabled() || ColonyFreeAtlas.active() || !super.isAvailableToBuild()) {
             return false;
         }
         String predecessor = predecessorOf(getId());
@@ -164,12 +168,12 @@ public class WormholeGateway extends BaseIndustry {
 
     @Override
     public boolean showWhenUnavailable() {
-        return market != null && StarChartSettings.enabled() && super.showWhenUnavailable();
+        return market != null && StarChartSettings.enabled() && !ColonyFreeAtlas.active() && super.showWhenUnavailable();
     }
 
     @Override
     public boolean canUpgrade() {
-        return getSpec().getUpgrade() != null && VaultsOfKnowledgeCompat.isModEnabled();
+        return getSpec().getUpgrade() != null && researchGated();
     }
 
     @Override
@@ -223,7 +227,7 @@ public class WormholeGateway extends BaseIndustry {
     @Override
     protected void addPostDescriptionSection(TooltipMakerAPI tooltip, IndustryTooltipMode mode) {
         VanillaText.plainPara(tooltip, Translation.gameText("chart.gateway.tooltip.opens"), TOOLTIP_PAD, Misc.getTextColor());
-        if (VaultsOfKnowledgeCompat.isModEnabled()) {
+        if (researchGated()) {
             int maxTier = GatewayTierLimit.maxTierFor(getId());
             VanillaText.plainPara(tooltip, maxTier >= ChartTiers.CORRUPTED_TIER ? Translation.gameText("chart.gateway.tooltip.everyTier")
                     : I18n.forGameText(() -> Translation.msg("chart.gateway.tooltip.tierLimit").arg("tier", maxTier).text()), TOOLTIP_PAD,
