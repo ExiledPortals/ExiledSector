@@ -1,7 +1,6 @@
 package exiledsector.ui.cargo;
 
 import exiledsector.ModSettings;
-import exiledsector.ModSettingsListener;
 
 import java.util.List;
 
@@ -16,14 +15,6 @@ public final class ItemAnimationSetting {
     public enum Mode {FULL, CALM, OFF}
 
     private static volatile Mode mode = Mode.FULL;
-
-    public static final class SettingsListener extends ModSettingsListener {
-
-        @Override
-        protected void reload() {
-            reloadSettings();
-        }
-    }
 
     private ItemAnimationSetting() {
     }

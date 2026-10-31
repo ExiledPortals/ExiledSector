@@ -2,7 +2,6 @@ package exiledsector.items;
 
 import exiledsector.ExiledSector;
 import exiledsector.ModSettings;
-import exiledsector.ModSettingsListener;
 import exiledsector.Seeds;
 import exiledsector.modifiers.TierRange;
 
@@ -15,14 +14,6 @@ public final class ItemRoller {
     public static final boolean DEFAULT_AVERAGE_ROLLS = false;
 
     private static volatile boolean averageRollsSetting = DEFAULT_AVERAGE_ROLLS;
-
-    public static final class SettingsListener extends ModSettingsListener {
-
-        @Override
-        protected void reload() {
-            reloadSettings();
-        }
-    }
 
     private ItemRoller() {
     }
@@ -49,7 +40,7 @@ public final class ItemRoller {
     }
 
     public static List<RolledModifier> rollWithRarity(ItemDefinition definition, long seed, float rarity) {
-        if (rarity == 1f || definition.unique() || definition.type() == ItemType.STAR_CHART) {
+        if (rarity == 1f || definition.unique() || ItemTypes.tiered(definition.type())) {
             return roll(definition, seed);
         }
         Random random = Seeds.random(seed);
@@ -59,7 +50,7 @@ public final class ItemRoller {
     }
 
     public static List<RolledModifier> rollWithEffectCount(ItemDefinition definition, long seed, int effectCount) {
-        if (definition.unique() || definition.type() == ItemType.STAR_CHART) {
+        if (definition.unique() || ItemTypes.tiered(definition.type())) {
             return roll(definition, seed);
         }
         Random random = Seeds.random(seed);
@@ -72,7 +63,7 @@ public final class ItemRoller {
     }
 
     public static boolean canRollEffectCount(ItemDefinition definition, int effectCount) {
-        if (definition.unique() || definition.type() == ItemType.STAR_CHART) {
+        if (definition.unique() || ItemTypes.tiered(definition.type())) {
             return false;
         }
         AffixLayout.Limits limits = AffixLayout.limits(definition.type());

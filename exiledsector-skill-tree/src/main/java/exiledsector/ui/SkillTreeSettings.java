@@ -35,7 +35,7 @@ public final class SkillTreeSettings {
     public static void register() {
         registerSkillTree();
         registerNpc();
-        ModSettingsListener.ensureRegistered(NpcBonusScale.SettingsListener.class, NpcBonusScale.SettingsListener::new);
+        ModSettingsListener.onReload(NpcBonusScale.class, NpcBonusScale::reloadSettings);
     }
 
     private static void registerSkillTree() {

@@ -2,7 +2,6 @@ package exiledsector.skills;
 
 import exiledsector.ExiledSector;
 import exiledsector.ModSettings;
-import exiledsector.ModSettingsListener;
 import exiledsector.skills.skilleffect.SkillEffect;
 import exiledsector.skills.skilleffect.StatMode;
 import exiledsector.skills.skilleffect.weapon.ScopedWeaponEffect;
@@ -71,12 +70,8 @@ public final class DiminishingReturns {
         }
     }
 
-    public static final class SettingsListener extends ModSettingsListener {
-
-        @Override
-        protected void reload() {
-            CURRENT.set(null);
-        }
+    public static void reloadSettings() {
+        CURRENT.set(null);
     }
 
     private DiminishingReturns() {
