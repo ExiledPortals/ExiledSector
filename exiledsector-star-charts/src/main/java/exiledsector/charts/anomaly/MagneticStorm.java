@@ -9,7 +9,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class MagneticStorm implements ChartAnomaly {
+public final class MagneticStorm implements LayoutShaper {
 
     public static final String ANOMALY_ID = "magnetic_storm";
     public static final MagneticStorm INSTANCE = new MagneticStorm();

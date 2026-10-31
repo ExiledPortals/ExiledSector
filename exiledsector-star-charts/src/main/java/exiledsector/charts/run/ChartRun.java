@@ -334,6 +334,11 @@ public final class ChartRun {
         anomalyStates = entries.isEmpty() ? null : String.join(STATE_SEPARATOR, entries);
     }
 
+    public void forgetAnomalyStates(String anomalyId) {
+        anomalyStatesMap().keySet().stream().filter(key -> key.equals(anomalyId) || key.startsWith(anomalyId + "."))
+                .forEach(key -> recordAnomalyState(key, null));
+    }
+
     private Map<String, String> anomalyStatesMap() {
         Map<String, String> states = new LinkedHashMap<>();
         if (anomalyStates == null || anomalyStates.isEmpty()) {

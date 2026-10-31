@@ -9,7 +9,7 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
@@ -141,7 +141,7 @@ public final class ChartFleetLoot {
     }
 
     public static ItemDrops.SiteLoot roll(SectorAPI sector, CampaignFleetAPI fleet, float defeatedDeploymentPoints, Random random,
-                                          List<ChartAnomaly> battleAnomalies) {
+                                          List<LootShaper> battleAnomalies) {
         if (!isChartFleet(fleet)) {
             return ItemDrops.SiteLoot.NONE;
         }
@@ -151,11 +151,11 @@ public final class ChartFleetLoot {
         }
         ChartGenContext context = ChartRunEffects.contextOf(run);
         float quantityMult = 1f;
-        for (ChartAnomaly anomaly : battleAnomalies) {
+        for (LootShaper anomaly : battleAnomalies) {
             quantityMult *= anomaly.battleLootMult(context);
         }
         ItemDrops.SiteLoot loot = roll(sector, fleet, run, context, defeatedDeploymentPoints, quantityMult, random);
-        for (ChartAnomaly anomaly : battleAnomalies) {
+        for (LootShaper anomaly : battleAnomalies) {
             loot = anomaly.touchBattleLoot(loot, random);
         }
         return loot;
@@ -175,7 +175,7 @@ public final class ChartFleetLoot {
         ItemDrops.SiteLoot siteItems = anomalyFleetItems(sector, fleet, run, context, share, random);
         ItemDrops.SiteLoot fleetLoot = siteItems != null ? siteItems
                 : roll(sector, run, context, ChartIds.FLEET_LOOT_SITE, ChartDrops.Source.CHART_FLEET, share, random);
-        for (ChartAnomaly anomaly : ChartAnomalies.all()) {
+        for (LootShaper anomaly : ChartAnomalies.inRun(run, LootShaper.class)) {
             fleetLoot = fleetLoot.plus(anomaly.extraFleetLoot(fleet, run, context, random));
         }
         if (fleet.getId() != null && fleet.getId().equals(run.bossFleetId())) {
@@ -196,7 +196,7 @@ public final class ChartFleetLoot {
 
     private static ItemDrops.SiteLoot anomalyFleetItems(SectorAPI sector, CampaignFleetAPI fleet, ChartRun run, ChartGenContext context, float share,
                                                         Random random) {
-        for (ChartAnomaly anomaly : ChartAnomalies.all()) {
+        for (LootShaper anomaly : ChartAnomalies.inRun(run, LootShaper.class)) {
             ItemDrops.SiteLoot items = anomaly.fleetItems(sector, fleet, run, context, share, random);
             if (items != null) {
                 return items;
@@ -207,7 +207,7 @@ public final class ChartFleetLoot {
 
     static ItemData guaranteedUnique(SectorAPI sector, ChartRun run, ChartGenContext context, Random random) {
         if (!context.guaranteedBossUnique() || run.isBossUniqueGranted()
-                || ChartAnomalies.all().stream().anyMatch(anomaly -> anomaly.holdsBackBossUnique(run))) {
+                || ChartAnomalies.inRun(run, LootShaper.class).stream().anyMatch(anomaly -> anomaly.holdsBackBossUnique(run))) {
             return null;
         }
         ItemDefinition unique = ItemDrops.pickUniqueFromAnySource(random, definition -> GUARANTEED_UNIQUE_TYPES.contains(definition.type())

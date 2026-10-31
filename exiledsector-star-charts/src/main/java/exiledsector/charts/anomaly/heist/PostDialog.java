@@ -5,56 +5,41 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.CoreInteractionListener;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
-import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.TextPanelAPI;
-import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl.BaseFIDDelegate;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl.FIDConfig;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
+import exiledsector.charts.anomaly.AnomalyDialog;
+import exiledsector.charts.anomaly.AnomalyEncounters;
 import exiledsector.charts.atlas.AtlasProgress;
 import exiledsector.charts.atlas.AtlasReach;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.ui.VanillaText;
-import org.lwjgl.input.Keyboard;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
-public class PostDialog implements InteractionDialogPlugin {
+public class PostDialog extends AnomalyDialog {
 
     static final String OPEN = "exiledSector_postOpen";
     static final String ENGAGE_OPTION = "exiledSector_postEngage";
-    static final String LEAVE = "exiledSector_postLeave";
 
-    private final Map<String, MemoryAPI> memoryMap = new HashMap<>();
-    private InteractionDialogAPI dialog;
     private SectorEntityToken post;
 
-    public static boolean wantsToHandle(SectorEntityToken target) {
-        return ListeningPost.isPost(target);
-    }
-
     @Override
-    public void init(InteractionDialogAPI interactionDialog) {
-        dialog = interactionDialog;
-        post = interactionDialog.getInteractionTarget();
-        if (post.getCustomInteractionDialogImageVisual() != null) {
-            dialog.getVisualPanel().showImageVisual(post.getCustomInteractionDialogImageVisual());
-        }
-        VanillaText.plainPara(dialog.getTextPanel(), Translation.gameText("chart.post.dialog.description"));
+    protected void open() {
+        post = dialog().getInteractionTarget();
+        showEntityVisual(post);
+        VanillaText.plainPara(text(), Translation.gameText("chart.post.dialog.description"));
         showMain();
     }
 
     private ChartRun run() {
-        ChartRun run = ChartRuns.currentOrNull();
-        return ListeningPost.inRunSystem(run, post.getContainingLocation()) ? run : null;
+        return ChartRuns.liveIn(post.getContainingLocation());
     }
 
     private PostScript script() {
@@ -62,11 +47,10 @@ public class PostDialog implements InteractionDialogPlugin {
     }
 
     void showMain() {
-        TextPanelAPI text = dialog.getTextPanel();
-        OptionPanelAPI options = dialog.getOptionPanel();
+        TextPanelAPI text = text();
+        OptionPanelAPI options = options();
         options.clearOptions();
-        ChartRun run = run();
-        PostState state = PostState.of(run);
+        PostState state = PostState.of(run());
         PostScript script = script();
         if (state == null) {
             VanillaText.plainPara(text, Translation.gameText("chart.post.dialog.stale"));
@@ -86,8 +70,7 @@ public class PostDialog implements InteractionDialogPlugin {
                 options.addOption(Translation.gameText("chart.post.dialog.option.openPurged"), OPEN);
             }
         }
-        options.addOption(Translation.gameText("chart.dialog.option.leave"), LEAVE);
-        options.setShortcut(LEAVE, Keyboard.KEY_ESCAPE, false, false, false, true);
+        addLeaveOption();
     }
 
     @Override
@@ -101,14 +84,14 @@ public class PostDialog implements InteractionDialogPlugin {
         } else if (ENGAGE_OPTION.equals(optionData) && state != null && state.alarm() && !state.taken() && script != null) {
             engage(script.gatherDefenders());
         } else {
-            dialog.dismiss();
+            dialog().dismiss();
         }
     }
 
     void openVault(ChartRun run, PostState state) {
         PostState taken = state.asTaken();
         PostState.record(run, taken);
-        TextPanelAPI text = dialog.getTextPanel();
+        TextPanelAPI text = text();
         if (taken.clean() && AtlasProgress.revealLanesAround(Global.getSector(), run)) {
             VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg("chart.post.dialog.lanes").count(AtlasReach.LISTENING_POST_LANES).text()));
         }
@@ -118,7 +101,7 @@ public class PostDialog implements InteractionDialogPlugin {
             showMain();
             return;
         }
-        dialog.getVisualPanel().showLoot(Translation.gameText("chart.post.dialog.vaultTitle"), vault, false, true, true, new CoreInteractionListener() {
+        dialog().getVisualPanel().showLoot(Translation.gameText("chart.post.dialog.vaultTitle"), vault, false, true, true, new CoreInteractionListener() {
             @Override
             public void coreUIDismissed() {
                 showMain();
@@ -131,10 +114,7 @@ public class PostDialog implements InteractionDialogPlugin {
             showMain();
             return;
         }
-        FleetInteractionDialogPluginImpl encounter = new FleetInteractionDialogPluginImpl(config());
-        dialog.setInteractionTarget(guard);
-        dialog.setPlugin(encounter);
-        encounter.init(dialog);
+        AnomalyEncounters.engage(dialog(), guard, new FleetInteractionDialogPluginImpl(config()));
     }
 
     FIDConfig config() {
@@ -147,36 +127,11 @@ public class PostDialog implements InteractionDialogPlugin {
         config.delegate = new BaseFIDDelegate() {
             @Override
             public void notifyLeave(InteractionDialogAPI leaving) {
-                leaving.setPlugin(PostDialog.this);
-                leaving.setInteractionTarget(post);
-                if (post.getCustomInteractionDialogImageVisual() != null) {
-                    leaving.getVisualPanel().showImageVisual(post.getCustomInteractionDialogImageVisual());
-                }
+                returnHere(leaving, post);
+                showEntityVisual(post);
                 showMain();
             }
         };
         return config;
-    }
-
-    @Override
-    public void optionMousedOver(String optionText, Object optionData) {
-    }
-
-    @Override
-    public void advance(float amount) {
-    }
-
-    @Override
-    public void backFromEngagement(EngagementResultAPI battleResult) {
-    }
-
-    @Override
-    public Object getContext() {
-        return null;
-    }
-
-    @Override
-    public Map<String, MemoryAPI> getMemoryMap() {
-        return memoryMap;
     }
 }

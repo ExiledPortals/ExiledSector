@@ -13,14 +13,17 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
-import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.AnomalyRun;
+import exiledsector.charts.anomaly.ContentPlacer;
+import exiledsector.charts.anomaly.LootShaper;
+import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.items.ItemChances;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.List;
 import java.util.Random;
 
-public final class SpatialBreach implements ChartAnomaly {
+public final class SpatialBreach implements ContentPlacer, RunParticipant, LootShaper {
 
     public static final String ANOMALY_ID = "spatial_breach";
     public static final String GROWTH_KEY = ChartEffect.CHART_BREACH_GROWTH_PERCENT.anomalyTuningKey();
@@ -107,8 +110,8 @@ public final class SpatialBreach implements ChartAnomaly {
     }
 
     @Override
-    public boolean isActiveIn(LocationAPI location) {
-        return breachIn(location) != null;
+    public String intelText(AnomalyRun run) {
+        return breachIn(run.system()) != null ? intelLine() : null;
     }
 
     @Override

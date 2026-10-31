@@ -9,14 +9,16 @@ import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
-import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.AnomalyRun;
+import exiledsector.charts.anomaly.ContentPlacer;
+import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.content.ChartAnomalyFleets;
 import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.generation.ChartTier;
 
 import java.util.Random;
 
-abstract class LaunchingStation implements ChartAnomaly {
+abstract class LaunchingStation implements ContentPlacer, RunParticipant {
 
     static final long PLACEMENT_SALT = 0x535441544e4cL;
     static final String DAMAGED_STATION_KEY = "$damagedStation";
@@ -102,7 +104,7 @@ abstract class LaunchingStation implements ChartAnomaly {
     }
 
     @Override
-    public boolean isActiveIn(LocationAPI location) {
-        return stationIn(location) != null;
+    public String intelText(AnomalyRun run) {
+        return stationIn(run.system()) != null ? intelLine() : null;
     }
 }

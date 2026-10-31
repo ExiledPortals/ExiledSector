@@ -8,6 +8,7 @@ public final class RelayStates {
     public static final int SYNCED = 2;
     public static final int WOKEN = 4;
     static final String KEY_PREFIX = RelayNetwork.ANOMALY_ID + ".";
+    static final String SETTLED_KEY = KEY_PREFIX + "settled";
 
     private RelayStates() {
     }
@@ -48,6 +49,14 @@ public final class RelayStates {
     static boolean readyToWake(ChartRun run, RelayKind kind) {
         int current = flags(run, kind);
         return (current & WOKEN) == 0 && (current & PAID) != 0 && (current & SYNCED) != 0;
+    }
+
+    static boolean markSettled(ChartRun run) {
+        if (run.anomalyState(SETTLED_KEY) != null) {
+            return false;
+        }
+        run.recordAnomalyState(SETTLED_KEY, Boolean.TRUE.toString());
+        return true;
     }
 
     public static boolean allWoken(ChartRun run) {

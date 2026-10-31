@@ -21,11 +21,13 @@ import exiledsector.charts.layout.abyss.AbyssPalette;
 import exiledsector.charts.layout.abyss.ChartAbyss;
 import exiledsector.charts.wormhole.ChartWormholePlacement;
 import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.StarRule;
 import exiledsector.charts.run.cleanup.ChartUsedNames;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -83,6 +85,14 @@ public final class ChartLayoutGenerator {
         return null;
     }
 
+    public static StarSystemType systemTypeFor(ChartLayoutRequest request, Collection<String> anomalyIds) {
+        return StarRule.systemTypeOr(ChartAnomalies.starOf(anomalyIds), typeFor(request));
+    }
+
+    public static boolean hasStar(StarSystemType systemType) {
+        return systemType != StarSystemType.DEEP_SPACE && systemType != StarSystemType.NEBULA;
+    }
+
     public static StarSystemType typeFor(ChartLayoutRequest request) {
         if (request.systemType() != null) {
             return request.systemType();
@@ -134,8 +144,8 @@ public final class ChartLayoutGenerator {
     public static ChartLayout generate(SectorAPI sector, StarSystemAPI system, String runId, ChartLayoutRequest request) {
         long seed = request.seed();
         List<String> anomalyIds = ChartAnomalies.planned(request.chartContext());
-        List<ChartAnomaly> anomalies = ChartAnomalies.anomaliesOf(anomalyIds);
-        StarSystemType systemType = ChartAnomaly.systemTypeOr(ChartAnomalies.starOf(anomalyIds), typeFor(request));
+        List<ChartAnomaly> anomalies = ChartAnomalies.anomaliesOf(anomalyIds, ChartAnomaly.class);
+        StarSystemType systemType = systemTypeFor(request, anomalyIds);
         Set<Object> namesBefore = ChartUsedNames.snapshot();
         Built built;
         try {
@@ -158,21 +168,22 @@ public final class ChartLayoutGenerator {
         SectorEntityToken anchor = built.featureAnchor();
         Vector2f avoid = anchor == null || anchor.getLocation() == null ? null : new Vector2f(anchor.getLocation());
         Vector2f innerWormhole = ChartWormholePlacement.choose(system, derivedRandom(seed, PLACEMENT_SALT), avoid);
-        return new ChartLayout(seed, systemType, built.generated(), innerWormhole, anchor, anomalyIds);
+        List<String> shapedAnomalyIds = anomalyIds.stream().filter(id -> !built.unshapedAnomalyIds().contains(id)).toList();
+        return new ChartLayout(seed, systemType, built.generated(), innerWormhole, anchor, shapedAnomalyIds);
     }
 
-    private record Built(boolean generated, SectorEntityToken featureAnchor) {
+    private record Built(boolean generated, SectorEntityToken featureAnchor, List<String> unshapedAnomalyIds) {
     }
 
     private static Built buildWithVanilla(StarSystemAPI system, String runId, StarSystemType systemType, long seed, ChartLayoutRecipe recipe,
                                           List<ChartAnomaly> anomalies) {
         try {
-            SectorEntityToken anchor = engine.build(system, ChartIds.starId(runId), systemType, pickAge(seed), derivedRandom(seed, LAYOUT_SALT), settleAbyss(seed, recipe),
-                    anomalies);
+            ChartLayoutEngine.Result result = engine.build(system, ChartIds.starId(runId), systemType, pickAge(seed), derivedRandom(seed, LAYOUT_SALT),
+                    settleAbyss(seed, recipe), anomalies);
             if (system.getStar() == null && (systemType != StarSystemType.DEEP_SPACE || system.getCenter() == null)) {
                 throw new IllegalStateException("the generator finished without a star");
             }
-            return new Built(true, anchor);
+            return new Built(true, result.featureAnchor(), result.unshapedAnomalyIds());
         } catch (RuntimeException | LinkageError e) {
             if (!failureReported) {
                 failureReported = true;
@@ -181,7 +192,7 @@ public final class ChartLayoutGenerator {
             } else {
                 LOG.debug("[ExiledSector] Generating a Star Chart layout (seed " + seed + ", " + systemType + ") failed again", e);
             }
-            return new Built(false, null);
+            return new Built(false, null, List.of());
         }
     }
 

@@ -3,6 +3,7 @@ package exiledsector.charts.atlas;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import exiledsector.ModCsv;
+import exiledsector.charts.anomaly.AtlasRule;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.content.ChartFaction;
 import exiledsector.charts.content.ChartFactions;
@@ -87,8 +88,9 @@ public final class AtlasData {
         for (ChartAnomalies.Definition definition : ChartAnomalies.definitions()) {
             ChartAnomaly anomaly = ChartAnomalies.byId(definition.id());
             if (anomaly != null) {
+                AtlasRule rule = AtlasRule.of(anomaly);
                 anomalies.add(new AtlasAnomalyCandidate(definition.id(), definition.weight(), definition.requiredMod(), definition.replacesStar(),
-                        definition.excludes(), (traits, weight) -> anomaly.fitsAt(traits) ? anomaly.atlasWeight(traits, weight) : 0f,
+                        definition.excludes(), (traits, weight) -> rule.fitsAt(traits) ? rule.atlasWeight(traits, weight) : 0f,
                         rules.get(definition.id()), definition.biomes()));
             }
         }

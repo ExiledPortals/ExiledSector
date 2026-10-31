@@ -4,18 +4,17 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.campaign.intel.BaseIntelPlugin;
 import com.fs.starfarer.api.ui.SectorMapAPI;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
+import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunBound;
 import exiledsector.charts.run.ChartRuns;
-import exiledsector.charts.anomaly.ChartAnomaly;
 
 import java.awt.Color;
 import java.util.Set;
@@ -123,18 +122,9 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
         info.addPara(safe(I18n.forGameText(() -> Translation.msg("chart.intel.tier").arg("tier", tier).arg("faction", faction).text())),
                 PARAGRAPH_PAD);
         info.addPara(safe(progressText(run)), PARAGRAPH_PAD);
-        StarSystemAPI system = Global.getSector().getStarSystem(run.systemId());
-        for (String anomalyId : run.anomalyIds()) {
-            ChartAnomaly anomaly = ChartAnomalies.byId(anomalyId);
-            String key = "chart.anomaly." + anomalyId + ".intel";
-            if (anomaly == null || !anomaly.isActiveIn(system)) {
-                continue;
-            }
-            String line = anomaly.intelText(run, system);
-            if (line == null && Translation.has(key)) {
-                line = Translation.gameText(key);
-            }
-            if (line != null) {
+        AnomalyRun anomalyRun = AnomalyRun.live(Global.getSector());
+        if (anomalyRun != null && anomalyRun.run() == run) {
+            for (String line : ChartAnomalies.intelLines(anomalyRun)) {
                 info.addPara(safe(line), PARAGRAPH_PAD);
             }
         }

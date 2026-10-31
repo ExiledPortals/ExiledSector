@@ -92,8 +92,7 @@ public final class PostScript implements EveryFrameScript, FleetEventListener, C
     }
 
     ChartRun run() {
-        ChartRun run = ChartRuns.currentOrNull();
-        return run != null && run.runId().equals(runId) ? run : null;
+        return ChartRuns.live(runId);
     }
 
     @Override
@@ -102,9 +101,12 @@ public final class PostScript implements EveryFrameScript, FleetEventListener, C
         if (sector == null) {
             return;
         }
+        if (ChartRuns.unclosed(runId) == null) {
+            done = true;
+            return;
+        }
         ChartRun run = run();
         if (run == null) {
-            done = true;
             return;
         }
         daysSinceCheck += sector.getClock().convertToDays(amount);

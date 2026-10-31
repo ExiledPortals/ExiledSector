@@ -1,38 +1,26 @@
 package exiledsector.charts.anomaly.convoy;
 
-import com.fs.starfarer.api.campaign.InteractionDialogAPI;
-import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import com.fs.starfarer.api.combat.EngagementResultAPI;
-import com.fs.starfarer.api.impl.campaign.RuleBasedInteractionDialogPluginImpl;
 import com.fs.starfarer.api.impl.campaign.graid.GroundRaidObjectivePlugin;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
+import exiledsector.charts.anomaly.AnomalyDialog;
 import exiledsector.charts.anomaly.ChartRaid;
 import exiledsector.ui.VanillaText;
-import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
-public class ConvoyCacheDialog implements InteractionDialogPlugin, ChartRaid.Host {
+public class ConvoyCacheDialog extends AnomalyDialog {
 
     static final String RAID_OPTION = "exiledSector_convoyCacheRaid";
     static final String CONTINUE = "exiledSector_convoyCacheContinue";
-    static final String LEAVE = "exiledSector_convoyCacheLeave";
 
-    private final Map<String, MemoryAPI> memoryMap = new HashMap<>();
-    private InteractionDialogAPI dialog;
+    private final ChartRaid.Session raid = new ChartRaid.Session(closedDialog -> showMain());
     private SectorEntityToken planet;
     private ConvoyScript script;
-    private ChartRaid raid;
-    private int raidsLaunched;
 
     static boolean wantsToHandle(SectorEntityToken target) {
         ConvoyScript script = target == null ? null : ConvoyScript.in(target.getContainingLocation());
@@ -40,9 +28,8 @@ public class ConvoyCacheDialog implements InteractionDialogPlugin, ChartRaid.Hos
     }
 
     @Override
-    public void init(InteractionDialogAPI interactionDialog) {
-        dialog = interactionDialog;
-        planet = interactionDialog.getInteractionTarget();
+    protected void open() {
+        planet = dialog().getInteractionTarget();
         script = ConvoyScript.in(planet.getContainingLocation());
         showMain();
     }
@@ -53,80 +40,41 @@ public class ConvoyCacheDialog implements InteractionDialogPlugin, ChartRaid.Hos
             return objectives;
         }
         for (ConvoyState convoy : script.cachesAt(planet)) {
-            objectives.add(new ConvoyCacheObjective(planet.getMarket(), script, convoy.index(), ConvoyRules.cacheDanger(script.tier())));
+            objectives.add(new ConvoyCacheObjective(planet.getMarket(), script, convoy.index(), ChartRaid.danger(script.tier())));
         }
         return objectives;
     }
 
     private void showMain() {
-        dialog.getVisualPanel().showPlanetInfo(planet);
-        OptionPanelAPI options = dialog.getOptionPanel();
+        dialog().getVisualPanel().showPlanetInfo(planet);
+        OptionPanelAPI options = options();
         options.clearOptions();
         List<ConvoyState> caches = script == null ? List.of() : script.cachesAt(planet);
         String planetName = planet.getName();
         if (caches.isEmpty()) {
-            VanillaText.plainPara(dialog.getTextPanel(), I18n.forGameText(() -> Translation.msg("chart.convoy.cache.empty").arg("planet", planetName).text()));
+            VanillaText.plainPara(text(), I18n.forGameText(() -> Translation.msg("chart.convoy.cache.empty").arg("planet", planetName).text()));
         } else {
             int tier = script.tier();
-            VanillaText.plainPara(dialog.getTextPanel(), I18n.forGameText(() -> Translation.msg("chart.convoy.cache.description")
+            VanillaText.plainPara(text(), I18n.forGameText(() -> Translation.msg("chart.convoy.cache.description")
                     .arg("planet", planetName).text()));
-            VanillaText.addPara(dialog.getTextPanel(), I18n.forGameText(() -> Translation.msg("chart.convoy.intel.manifest")
+            VanillaText.addPara(text(), I18n.forGameText(() -> Translation.msg("chart.convoy.intel.manifest")
                     .arg("cargo", ConvoyCargo.manifest(tier)).styled()), Misc.getTextColor());
             options.addOption(Translation.gameText("chart.convoy.cache.option.raid"), RAID_OPTION);
         }
         options.addOption(Translation.gameText("chart.convoy.cache.option.continue"), CONTINUE);
-        options.addOption(Translation.gameText("chart.dialog.option.leave"), LEAVE);
-        options.setShortcut(LEAVE, Keyboard.KEY_ESCAPE, false, false, false, true);
+        addLeaveOption();
     }
 
     @Override
     public void optionSelected(String optionText, Object optionData) {
-        if (raid != null && ChartRaid.handles(optionData)) {
+        if (raid.handles(optionData)) {
             raid.optionSelected(optionData);
         } else if (RAID_OPTION.equals(optionData) && script != null) {
-            long seed = planet.getId().hashCode() * 31L + script.runId().hashCode() + raidsLaunched++;
-            raid = new ChartRaid(dialog, ConvoyRules.raidDifficulty(script.tier()), this::objectives, new Random(seed), this);
-            raid.open();
+            raid.launch(dialog(), script.tier(), planet.getId().hashCode() * 31L + script.runId().hashCode(), this::objectives);
         } else if (CONTINUE.equals(optionData)) {
-            RuleBasedInteractionDialogPluginImpl planetDialog = new RuleBasedInteractionDialogPluginImpl();
-            dialog.setPlugin(planetDialog);
-            planetDialog.init(dialog);
+            continueAfter(SupplyConvoy.INSTANCE, planet);
         } else {
-            dialog.dismiss();
+            dialog().dismiss();
         }
-    }
-
-    @Override
-    public void raidLeft(InteractionDialogAPI raidDialog) {
-        raid = null;
-        showMain();
-    }
-
-    @Override
-    public void raidFinished(InteractionDialogAPI raidDialog) {
-        raid = null;
-        showMain();
-    }
-
-    @Override
-    public void optionMousedOver(String optionText, Object optionData) {
-    }
-
-    @Override
-    public void advance(float amount) {
-    }
-
-    @Override
-    public void backFromEngagement(EngagementResultAPI battleResult) {
-    }
-
-    @Override
-    public Object getContext() {
-        return null;
-    }
-
-    @Override
-    public Map<String, MemoryAPI> getMemoryMap() {
-        return memoryMap;
     }
 }

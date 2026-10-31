@@ -9,7 +9,10 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.anomaly.AnomalyContentSite;
-import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.AnomalyRun;
+import exiledsector.charts.anomaly.ContentPlacer;
+import exiledsector.charts.anomaly.LootShaper;
+import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.items.ItemDrops;
@@ -19,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public final class AnomalousDebris implements ChartAnomaly {
+public final class AnomalousDebris implements ContentPlacer, RunParticipant, LootShaper {
 
     public static final String ANOMALY_ID = "anomalous_debris";
     public static final String EXTRA_KEY = ChartEffect.CHART_EXTRA_ANOMALOUS_DEBRIS.anomalyTuningKey();
@@ -121,8 +124,8 @@ public final class AnomalousDebris implements ChartAnomaly {
     }
 
     @Override
-    public boolean isActiveIn(LocationAPI location) {
-        return !fieldsIn(location).isEmpty();
+    public String intelText(AnomalyRun run) {
+        return fieldsIn(run.system()).isEmpty() ? null : intelLine();
     }
 
     @Override
@@ -131,7 +134,7 @@ public final class AnomalousDebris implements ChartAnomaly {
     }
 
     @Override
-    public InteractionDialogPlugin dialogFor(SectorEntityToken target) {
+    public InteractionDialogPlugin dialogFor(AnomalyRun run, SectorEntityToken target) {
         return DormantFleets.isDebrisFleet(target) ? new DormantFleetDialog() : null;
     }
 

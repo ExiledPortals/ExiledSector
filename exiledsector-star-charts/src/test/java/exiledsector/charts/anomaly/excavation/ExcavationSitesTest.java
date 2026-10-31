@@ -6,7 +6,7 @@ import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.anomaly.facility.PreCollapseFacility;
+import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.loot.DropType;
@@ -25,6 +25,7 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -104,16 +105,17 @@ class ExcavationSitesTest {
     }
 
     @Test
-    void sitesSkipThePreCollapseFacilityPlanet() {
-        planet("facility", false, false);
-        planet("rock", false, false);
+    void sitesSkipPlanetsAnotherAnomalyHoldsAndClaimTheirOwn() {
+        PlanetAPI facility = planet("facility", false, false);
+        PlanetAPI rock = planet("rock", false, false);
         for (long seed = 0; seed < 20; seed++) {
-            ChartRun run = run();
-            run.recordAnomalyState(PreCollapseFacility.ANOMALY_ID + ".planet", "facility");
+            AnomalyContentSite site = site(ChartGenContext.none(), seed);
+            site.claim(facility);
 
-            List<ExcavationSite> placed = ExcavationSites.place(site(ChartGenContext.none(), seed), run, mockSector.sector);
+            List<ExcavationSite> placed = ExcavationSites.place(site, run(), mockSector.sector);
 
             assertEquals(List.of("rock"), placed.stream().map(ExcavationSite::planetId).toList());
+            assertTrue(site.isClaimed(rock));
         }
     }
 
@@ -148,9 +150,9 @@ class ExcavationSitesTest {
         planet("sun", true, false);
         planet("giant", false, true);
 
-        assertEquals(List.of("giant"), ExcavationSites.candidates(system).stream().map(PlanetAPI::getId).toList());
+        assertEquals(List.of("giant"), ExcavationSites.candidates(site(ChartGenContext.none(), 1L)).stream().map(PlanetAPI::getId).toList());
         planet("rock", false, false);
-        assertEquals(List.of("rock"), ExcavationSites.candidates(system).stream().map(PlanetAPI::getId).toList());
+        assertEquals(List.of("rock"), ExcavationSites.candidates(site(ChartGenContext.none(), 1L)).stream().map(PlanetAPI::getId).toList());
     }
 
     @Test
@@ -169,7 +171,7 @@ class ExcavationSitesTest {
         ExcavationSites.INSTANCE.generate(site(ChartGenContext.none(), 1L));
 
         assertEquals("rock", ExcavationStates.all(run).get(0).planetId());
-        assertTrue(ExcavationSites.INSTANCE.isActiveIn(system));
+        assertNotNull(ExcavationSites.INSTANCE.intelText(new AnomalyRun(run, system)));
     }
 
     @Test
@@ -209,10 +211,10 @@ class ExcavationSitesTest {
         ExcavationStates.record(run, rock);
         ExcavationStates.record(run, new ExcavationSite(1, "stone", ExcavationSite.Access.COLLAPSED, DropType.WEAPON, 2L, false));
 
-        String both = ExcavationSites.INSTANCE.intelText(run, system);
+        String both = ExcavationSites.INSTANCE.intelText(new AnomalyRun(run, system));
         assertTrue(both.contains("Planet rock") && both.contains("Planet stone"), both);
         ExcavationStates.clear(run, rock);
-        String one = ExcavationSites.INSTANCE.intelText(run, system);
+        String one = ExcavationSites.INSTANCE.intelText(new AnomalyRun(run, system));
         assertFalse(one.contains("Planet rock"), one);
         assertTrue(one.contains("Planet stone"), one);
     }

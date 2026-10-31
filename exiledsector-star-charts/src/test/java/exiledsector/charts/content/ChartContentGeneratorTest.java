@@ -16,7 +16,10 @@ import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.ChartAnomaliesTest;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.run.ChartRun;
+import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.generation.ChartTier;
 import exiledsector.charts.generation.ChartTiers;
@@ -25,6 +28,7 @@ import exiledsector.charts.content.ChartContentPlan.FleetRole;
 import exiledsector.charts.content.ChartContentPlan.PlannedFleet;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.ContentPlacer;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
@@ -634,7 +638,7 @@ class ChartContentGeneratorTest {
 
     @Test
     void aFailingAnomalyIsLeftOutAndTheRestOfTheContentStays() {
-        ChartAnomaly failing = new ChartAnomaly() {
+        ChartAnomaly failing = new ContentPlacer() {
             @Override
             public String id() {
                 return SpatialBreach.ANOMALY_ID;
@@ -680,7 +684,7 @@ class ChartContentGeneratorTest {
 
     @Test
     void aFailingAnomalyTakesTheSitesItPlacedWithIt() {
-        ChartAnomaly placesThenFails = new ChartAnomaly() {
+        ChartAnomaly placesThenFails = new ContentPlacer() {
             @Override
             public String id() {
                 return SpatialBreach.ANOMALY_ID;
@@ -701,6 +705,36 @@ class ChartContentGeneratorTest {
 
             assertEquals(List.of(), content.anomalies());
             verify(system).removeEntity(engine.salvageEntities.get(engine.salvageEntities.size() - 1));
+        } finally {
+            ChartAnomalies.resetForTests();
+        }
+    }
+
+    @Test
+    void aFailingAnomalyForgetsTheRunStateItRecorded() {
+        String stateKey = SpatialBreach.ANOMALY_ID + ".placed";
+        ContentPlacer recordsThenFails = new ContentPlacer() {
+            @Override
+            public String id() {
+                return SpatialBreach.ANOMALY_ID;
+            }
+
+            @Override
+            public void generate(AnomalyContentSite site) {
+                site.run().recordAnomalyState(stateKey, "yes");
+                throw new IllegalStateException("test failure");
+            }
+        };
+        ChartAnomalies.useForTests(List.of(recordsThenFails), List.of(ChartAnomaliesTest.definition(SpatialBreach.ANOMALY_ID)));
+        try (MockSector mockSector = new MockSector()) {
+            ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+            ChartRuns.store(run);
+
+            ChartContent content = ChartContentGenerator.generate(sector, system, RUN_ID, 42L, 10, WORMHOLE,
+                    ChartGenContext.none().withAnomalies(List.of(SpatialBreach.ANOMALY_ID)));
+
+            assertEquals(List.of(), content.anomalies());
+            assertNull(run.anomalyState(stateKey));
         } finally {
             ChartAnomalies.resetForTests();
         }

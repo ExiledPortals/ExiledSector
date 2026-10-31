@@ -14,7 +14,7 @@ import exiledsector.charts.layout.sketch.ChartSketchPalette.BodyKind;
 import exiledsector.charts.layout.sketch.ChartSketchPalette.StarKind;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.Belt;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.Body;
-import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.StarRule;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -49,9 +49,9 @@ public final class ChartSystemSketcher {
 
     public static ChartSystemSketch sketch(long seed, ChartLayoutRecipe recipe, Collection<String> anomalyIds, ChartSketchPalette palette) {
         ChartLayoutRecipe layoutRecipe = recipe == null ? ChartLayoutRecipe.ORDINARY : recipe;
-        ChartAnomaly starAnomaly = ChartAnomalies.starOf(anomalyIds == null ? List.of() : anomalyIds);
-        StarSystemType systemType = ChartAnomaly.systemTypeOr(starAnomaly,
-                ChartLayoutGenerator.typeFor(new ChartLayoutRequest(seed, null).withRecipe(layoutRecipe)));
+        Collection<String> planned = anomalyIds == null ? List.of() : anomalyIds;
+        StarRule starAnomaly = ChartAnomalies.starOf(planned);
+        StarSystemType systemType = ChartLayoutGenerator.systemTypeFor(new ChartLayoutRequest(seed, null).withRecipe(layoutRecipe), planned);
         StarAge age = ChartLayoutGenerator.pickAge(seed);
         Random random = ChartLayoutGenerator.derivedRandom(seed, SKETCH_SALT);
         boolean nebula = systemType == StarSystemType.NEBULA;
@@ -189,7 +189,7 @@ public final class ChartSystemSketcher {
         return picked == null ? null : picked.getKey();
     }
 
-    private static StarKind forcedStar(ChartAnomaly starAnomaly, ChartSketchPalette palette, boolean nebula, ChartLayoutRecipe recipe,
+    private static StarKind forcedStar(StarRule starAnomaly, ChartSketchPalette palette, boolean nebula, ChartLayoutRecipe recipe,
                                        StarAge age, Random random) {
         String forced = starAnomaly == null ? null : starAnomaly.primaryStar();
         for (StarKind kind : palette.stars()) {

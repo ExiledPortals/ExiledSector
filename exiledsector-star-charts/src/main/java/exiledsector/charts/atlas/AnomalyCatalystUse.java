@@ -1,6 +1,7 @@
 package exiledsector.charts.atlas;
 
 import exiledsector.i18n.Translation;
+import exiledsector.charts.anomaly.AtlasRule;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.items.UseVerdict;
 
@@ -26,7 +27,7 @@ public record AnomalyCatalystUse(AtlasCatalysts.Catalyst catalyst, AtlasGenerato
             return UseVerdict.ALLOW;
         }
         UseVerdict refused = (check == AtlasAnomalies.InsertCheck.DOES_NOT_FIT
-                ? ChartAnomalies.byId(anomalyId).insertVerdict(generator, state, cell)
+                ? AtlasRule.of(ChartAnomalies.byId(anomalyId)).insertVerdict(generator, state, cell)
                 : UseVerdict.refused(AtlasCatalystUse.refusalKey(check))).with("anomaly", AtlasCatalystUse.anomalyName(anomalyId));
         if (check == AtlasAnomalies.InsertCheck.CONFLICT) {
             String other = AtlasAnomalies.effective(generator, state, cell).stream()

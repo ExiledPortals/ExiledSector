@@ -1,56 +1,43 @@
 package exiledsector.charts.anomaly.relay;
 
-import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
-import com.fs.starfarer.api.campaign.InteractionDialogAPI;
-import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.TextPanelAPI;
-import com.fs.starfarer.api.campaign.rules.MemoryAPI;
-import com.fs.starfarer.api.combat.EngagementResultAPI;
 import com.fs.starfarer.api.impl.campaign.NavBuoyEntityPlugin;
 import com.fs.starfarer.api.impl.campaign.SensorArrayEntityPlugin;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.PlayerFleet;
+import exiledsector.i18n.I18n;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
+import exiledsector.charts.anomaly.AnomalyDialog;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.ui.VanillaText;
-import org.lwjgl.input.Keyboard;
 
-import java.util.HashMap;
-import java.util.Map;
-
-public class RelayDialog implements InteractionDialogPlugin {
+public class RelayDialog extends AnomalyDialog {
 
     static final String RESTORE = "exiledSector_relayRestore";
-    static final String LEAVE = "exiledSector_relayLeave";
 
-    private final Map<String, MemoryAPI> memoryMap = new HashMap<>();
-    private InteractionDialogAPI interactionDialog;
     private SectorEntityToken relay;
     private RelayKind kind;
 
     @Override
-    public void init(InteractionDialogAPI interactionDialog) {
-        this.interactionDialog = interactionDialog;
-        this.relay = interactionDialog.getInteractionTarget();
-        this.kind = RelayKind.of(relay);
-        if (relay != null && relay.getCustomInteractionDialogImageVisual() != null) {
-            interactionDialog.getVisualPanel().showImageVisual(relay.getCustomInteractionDialogImageVisual());
-        }
+    protected void open() {
+        relay = dialog().getInteractionTarget();
+        kind = RelayKind.of(relay);
+        showEntityVisual(relay);
         if (kind != null) {
-            VanillaText.plainPara(interactionDialog.getTextPanel(), Translation.gameText("chart.relay." + kind.key() + ".description"));
+            VanillaText.plainPara(text(), Translation.gameText("chart.relay." + kind.key() + ".description"));
         }
         showState();
     }
 
     private void showState() {
-        TextPanelAPI text = interactionDialog.getTextPanel();
-        OptionPanelAPI options = interactionDialog.getOptionPanel();
+        TextPanelAPI text = text();
+        OptionPanelAPI options = options();
         options.clearOptions();
         ChartRun run = ChartRuns.liveOwning(relay);
         if (run == null || kind == null) {
@@ -61,8 +48,7 @@ public class RelayDialog implements InteractionDialogPlugin {
         } else {
             showDormant(run, text, options);
         }
-        options.addOption(Translation.gameText("chart.dialog.option.leave"), LEAVE);
-        options.setShortcut(LEAVE, Keyboard.KEY_ESCAPE, false, false, false, true);
+        addLeaveOption();
     }
 
     private void showDormant(ChartRun run, TextPanelAPI text, OptionPanelAPI options) {
@@ -76,52 +62,26 @@ public class RelayDialog implements InteractionDialogPlugin {
         Misc.showCost(text, Translation.gameText("chart.relay.cost.title"), true, null, null,
                 new String[] {Commodities.SUPPLIES, Commodities.HEAVY_MACHINERY}, new int[] {cost.supplies(), cost.machinery()});
         options.addOption(Translation.gameText("chart.relay.option.restore"), RESTORE);
-        options.setEnabled(RESTORE, ChartRelays.canAfford(cargo(), cost));
+        options.setEnabled(RESTORE, ChartRelays.canAfford(PlayerFleet.cargoOrNull(), cost));
     }
 
     static StyledText wokenEffect(RelayKind kind) {
-        return switch (kind) {
+        return I18n.forGameText(() -> switch (kind) {
             case NAV_BUOY -> Translation.msg("chart.relay.effect.nav_buoy").arg("value", Math.round(NavBuoyEntityPlugin.NAV_BONUS)).styled();
             case SENSOR_ARRAY -> Translation.msg("chart.relay.effect.sensor_array").arg("value", Math.round(SensorArrayEntityPlugin.SENSOR_BONUS)).styled();
             case COMM_RELAY -> Translation.msg("chart.relay.effect.comm_relay").styled();
-        };
-    }
-
-    private static CargoAPI cargo() {
-        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
-        return playerFleet == null ? null : playerFleet.getCargo();
+        });
     }
 
     @Override
     public void optionSelected(String optionText, Object optionData) {
         ChartRun run = ChartRuns.liveOwning(relay);
         if (RESTORE.equals(optionData) && run != null) {
-            ChartRelays.restorePower(run, cargo(), relay.getContainingLocation(), relay, kind, ChartRelays.costFor(run));
+            CargoAPI cargo = PlayerFleet.cargoOrNull();
+            ChartRelays.restorePower(run, cargo, relay.getContainingLocation(), relay, kind, ChartRelays.costFor(run));
             showState();
         } else {
-            interactionDialog.dismiss();
+            dialog().dismiss();
         }
-    }
-
-    @Override
-    public void optionMousedOver(String optionText, Object optionData) {
-    }
-
-    @Override
-    public void advance(float amount) {
-    }
-
-    @Override
-    public void backFromEngagement(EngagementResultAPI battleResult) {
-    }
-
-    @Override
-    public Object getContext() {
-        return null;
-    }
-
-    @Override
-    public Map<String, MemoryAPI> getMemoryMap() {
-        return memoryMap;
     }
 }

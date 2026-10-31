@@ -25,8 +25,11 @@ import exiledsector.charts.layout.abyss.AbyssPalette;
 import exiledsector.charts.layout.abyss.ChartAbyss;
 import exiledsector.charts.anomaly.AnomalyLayoutSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.LayoutShaper;
+import exiledsector.charts.anomaly.StarRule;
 import exiledsector.charts.anomaly.StellarFlares;
 import exiledsector.compat.UnknownSkiesCompat;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,9 +53,12 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
             NEBULA_AMBER, List.of("graphics/backgrounds/background6.jpg"),
             NEBULA_DEFAULT, List.of("graphics/backgrounds/background1.jpg", "graphics/backgrounds/background2.jpg"));
 
+    private static final Logger LOG = Logger.getLogger(ChartStarSystemGenerator.class);
+
     private final ChartLayoutRecipe recipe;
-    private final List<ChartAnomaly> anomalies;
-    private final ChartAnomaly starAnomaly;
+    private final List<LayoutShaper> shapers;
+    private final StarRule starAnomaly;
+    private final List<String> unshapedAnomalyIds = new ArrayList<>();
     private SectorEntityToken featureAnchor;
     private PlanetAPI deepSpaceCentre;
     private String bodyIdPrefix;
@@ -60,9 +66,10 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
 
     ChartStarSystemGenerator(StarAge age, StarSystemType chartType, ChartLayoutRecipe recipe, List<ChartAnomaly> anomalies) {
         super(new CustomConstellationParams(age));
-        this.anomalies = anomalies == null ? List.of() : List.copyOf(anomalies);
-        starAnomaly = this.anomalies.stream().filter(ChartAnomaly::replacesStar).findFirst().orElse(null);
-        systemType = ChartAnomaly.systemTypeOr(starAnomaly, chartType);
+        List<ChartAnomaly> planned = anomalies == null ? List.of() : List.copyOf(anomalies);
+        shapers = planned.stream().filter(LayoutShaper.class::isInstance).map(LayoutShaper.class::cast).toList();
+        starAnomaly = planned.stream().filter(StarRule.class::isInstance).map(StarRule.class::cast).findFirst().orElse(null);
+        systemType = StarRule.systemTypeOr(starAnomaly, chartType);
         this.recipe = recipe == null ? ChartLayoutRecipe.ORDINARY : recipe;
     }
 
@@ -217,7 +224,7 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
 
     private int minPlanets() {
         int wanted = 0;
-        for (ChartAnomaly anomaly : anomalies) {
+        for (LayoutShaper anomaly : shapers) {
             wanted = Math.max(wanted, anomaly.minPlanets());
         }
         return wanted;
@@ -281,14 +288,32 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
         if (systemType == StarSystemType.NEBULA) {
             hideNebulaCentre();
         }
-        for (ChartAnomaly anomaly : anomalies) {
-            anomaly.shape(new AnomalyLayoutSite(system, centre(), visibleStars(),
-                    ChartWormholePlacement.outermost(system, List.of()), random));
+        for (LayoutShaper anomaly : shapers) {
+            shapeOrDrop(anomaly);
         }
         if (abyss != null) {
             ChartAbyss.dress(system, abyss, abyssalCentre, ChartWormholePlacement.outermost(system, List.of()), starId, random);
         }
         system.setAge(starAge);
+    }
+
+    private void shapeOrDrop(LayoutShaper anomaly) {
+        Set<SectorEntityToken> before = new HashSet<>(system.getAllEntities());
+        try {
+            anomaly.shape(new AnomalyLayoutSite(system, centre(), visibleStars(), ChartWormholePlacement.outermost(system, List.of()), random));
+        } catch (RuntimeException | LinkageError e) {
+            LOG.warn("[ExiledSector] Shaping the " + anomaly.id() + " anomaly failed; the Star Chart is generated without it", e);
+            for (SectorEntityToken added : new ArrayList<>(system.getAllEntities())) {
+                if (!before.contains(added)) {
+                    system.removeEntity(added);
+                }
+            }
+            unshapedAnomalyIds.add(anomaly.id());
+        }
+    }
+
+    List<String> unshapedAnomalyIds() {
+        return List.copyOf(unshapedAnomalyIds);
     }
 
     private void addAbyssalCentre() {

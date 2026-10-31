@@ -32,6 +32,7 @@ import exiledsector.charts.content.ChartContentPlan.PlannedPoi;
 import exiledsector.charts.content.ChartContentPlan.PlannedStation;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.ContentPlacer;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.layout.ChartLayoutGenerator;
@@ -47,9 +48,11 @@ import org.lwjgl.util.vector.Vector2f;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
@@ -376,6 +379,8 @@ public final class ChartContentGenerator {
         private final Set<SectorEntityToken> usedFoci = new LinkedHashSet<>();
         private final List<String> anomalies = new ArrayList<>();
         private final List<SectorEntityToken> anomalySites = new ArrayList<>();
+        private final Set<String> claimedPlanetIds = new HashSet<>();
+        private final Map<String, AnomalyContentSite> generatedSites = new LinkedHashMap<>();
         private List<Hazard> hazards = List.of();
         private String bossFleetId;
         private ChartBossType bossType = ChartBossType.FLEET;
@@ -785,18 +790,25 @@ public final class ChartContentGenerator {
                 if (anomaly == null) {
                     continue;
                 }
+                if (!(anomaly instanceof ContentPlacer placer)) {
+                    anomalies.add(anomalyId);
+                    continue;
+                }
                 AnomalyContentSite site = new AnomalyContentSite(system, runId, tier, plan.faction().factionId(), chartContext, poiEntities,
                         guardedPois, innerWormhole, spot -> isClear(spot, hazards, innerWormhole, POI_WORMHOLE_CLEARANCE),
-                        salt -> ChartLayoutGenerator.derivedRandom(seed ^ ((long) anomalyId.hashCode() << 32), salt));
+                        salt -> ChartLayoutGenerator.derivedRandom(seed ^ ((long) anomalyId.hashCode() << 32), salt), claimedPlanetIds);
                 try {
-                    anomaly.generate(site);
+                    placer.generate(site);
                     anomalies.add(anomalyId);
                 } catch (RuntimeException | LinkageError e) {
                     site.placed().forEach(system::removeEntity);
+                    site.releaseClaims();
+                    site.forgetRecordedStates(anomalyId);
                     report("generate the " + anomalyId + " anomaly", seed, e);
                     continue;
                 }
                 anomalySites.addAll(site.placed());
+                generatedSites.put(anomalyId, site);
             }
         }
 
@@ -861,6 +873,8 @@ public final class ChartContentGenerator {
             fleets.clear();
             poiEntities.clear();
             anomalySites.clear();
+            generatedSites.forEach((anomalyId, site) -> site.forgetRecordedStates(anomalyId));
+            generatedSites.clear();
         }
     }
 }

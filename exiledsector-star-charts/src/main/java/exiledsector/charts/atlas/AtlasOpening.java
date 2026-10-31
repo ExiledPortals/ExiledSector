@@ -1,8 +1,10 @@
 package exiledsector.charts.atlas;
 
 import com.fs.starfarer.api.Global;
+import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.layout.ChartLayoutGenerator;
 import exiledsector.charts.layout.ChartLayoutRequest;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.wormhole.GatewayTierLimit;
@@ -114,6 +116,14 @@ public final class AtlasOpening {
 
     public static long layoutSeed(AtlasState state, AtlasCell cell) {
         return AtlasHash.of(state.seed(), LAYOUT_SEED_SALT, cell.gridX(), cell.gridY());
+    }
+
+    public static StarSystemType systemTypeAt(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+        AtlasNode node = generator.node(cell);
+        List<String> anomalyIds = new ArrayList<>(node.anomalyIds());
+        state.anomalyRecords(cell).forEach(record -> anomalyIds.add(record.anomalyId()));
+        ChartLayoutRequest request = new ChartLayoutRequest(layoutSeed(state, cell), null).withRecipe(AtlasData.recipeFor(node.regionId(), node.layoutId()));
+        return ChartLayoutGenerator.systemTypeFor(request, anomalyIds);
     }
 
     public static ChartLayoutRequest request(AtlasGenerator generator, AtlasState state, AtlasCell cell, StarChart chart, AtlasRunNode runNode) {

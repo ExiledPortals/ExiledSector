@@ -3,7 +3,6 @@ package exiledsector.charts.anomaly.forge;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
-import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRuns;
@@ -35,13 +34,15 @@ public final class ChartForge {
     }
 
     public static ChartRun liveRun(String runId) {
-        ChartRun run = ChartRuns.currentOrNull();
-        return run != null && run.runState().isLive() && run.runId().equals(runId) && run.anomalyIds().contains(DerelictForge.ANOMALY_ID) ? run : null;
+        return withForge(ChartRuns.live(runId));
     }
 
     public static ChartRun liveRunFor(SectorEntityToken forge) {
-        ChartRun run = ChartRuns.currentOrNull();
-        return run != null && DerelictForge.isForge(forge) && ChartIds.belongsToRun(forge, run.runId()) ? liveRun(run.runId()) : null;
+        return DerelictForge.isForge(forge) ? withForge(ChartRuns.liveOwning(forge)) : null;
+    }
+
+    private static ChartRun withForge(ChartRun run) {
+        return run != null && run.anomalyIds().contains(DerelictForge.ANOMALY_ID) ? run : null;
     }
 
     public static ForgeRules.Cost costFor(ChartRun run, ForgePrograms.Program program) {

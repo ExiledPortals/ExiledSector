@@ -4,8 +4,11 @@ import com.fs.starfarer.api.PluginPick;
 import com.fs.starfarer.api.campaign.CampaignPlugin;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
+import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.anomaly.LiveAnomalyRuns;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.relay.RelayDialog;
 import exiledsector.charts.anomaly.relay.RelayKind;
@@ -45,27 +48,41 @@ class ChartCampaignPluginTest {
         }
     }
 
-    @Test
-    void picksOurDialogForRelayNetworkRelaysOverVanillasObjectiveDialog() {
+    private static SectorEntityToken relay() {
         SectorEntityToken relay = mock(SectorEntityToken.class);
         MemoryAPI memory = mock(MemoryAPI.class);
         when(relay.hasTag(RelayNetwork.RELAY_TAG)).thenReturn(true);
         when(relay.getMemoryWithoutUpdate()).thenReturn(memory);
         when(memory.getString(RelayNetwork.KIND_MEMORY_KEY)).thenReturn(RelayKind.NAV_BUOY.key());
+        return relay;
+    }
 
-        PluginPick<InteractionDialogPlugin> pick = new ChartCampaignPlugin().pickInteractionDialogPlugin(relay);
+    @Test
+    void picksOurDialogForRelayNetworkRelaysOverVanillasObjectiveDialog() {
+        try (MockSector ignored = new MockSector()) {
+            SectorEntityToken relay = LiveAnomalyRuns.placedIn(relay(), LiveAnomalyRuns.systemWith(RelayNetwork.ANOMALY_ID));
 
-        assertInstanceOf(RelayDialog.class, pick.plugin);
-        assertEquals(CampaignPlugin.PickPriority.MOD_SPECIFIC, pick.priority);
+            PluginPick<InteractionDialogPlugin> pick = new ChartCampaignPlugin().pickInteractionDialogPlugin(relay);
+
+            assertInstanceOf(RelayDialog.class, pick.plugin);
+            assertEquals(CampaignPlugin.PickPriority.MOD_SPECIFIC, pick.priority);
+        }
     }
 
     @Test
     void leavesEveryOtherEntityToTheGame() {
-        SectorEntityToken breachCore = mock(SectorEntityToken.class);
-        when(breachCore.hasTag(SpatialBreach.CORE_TAG)).thenReturn(true);
+        try (MockSector ignored = new MockSector()) {
+            SectorEntityToken outsideAnyRun = relay();
+            StarSystemAPI system = LiveAnomalyRuns.systemWith(SpatialBreach.ANOMALY_ID);
+            SectorEntityToken breachCore = LiveAnomalyRuns.placedIn(mock(SectorEntityToken.class), system);
+            when(breachCore.hasTag(SpatialBreach.CORE_TAG)).thenReturn(true);
+            SectorEntityToken relayWithoutANetwork = LiveAnomalyRuns.placedIn(relay(), system);
 
-        assertNull(new ChartCampaignPlugin().pickInteractionDialogPlugin(mock(SectorEntityToken.class)));
-        assertNull(new ChartCampaignPlugin().pickInteractionDialogPlugin(breachCore));
-        assertNull(new ChartCampaignPlugin().pickInteractionDialogPlugin(null));
+            assertNull(new ChartCampaignPlugin().pickInteractionDialogPlugin(mock(SectorEntityToken.class)));
+            assertNull(new ChartCampaignPlugin().pickInteractionDialogPlugin(outsideAnyRun));
+            assertNull(new ChartCampaignPlugin().pickInteractionDialogPlugin(breachCore));
+            assertNull(new ChartCampaignPlugin().pickInteractionDialogPlugin(relayWithoutANetwork));
+            assertNull(new ChartCampaignPlugin().pickInteractionDialogPlugin(null));
+        }
     }
 }

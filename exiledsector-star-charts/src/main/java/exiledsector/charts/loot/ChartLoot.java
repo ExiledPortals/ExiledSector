@@ -3,7 +3,7 @@ package exiledsector.charts.loot;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.impl.campaign.procgen.DropGroupRow;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.data.CsvRows;
@@ -69,7 +69,7 @@ public final class ChartLoot {
         List<String> scopes = new ArrayList<>(ChartPois.KIND_NAMES);
         scopes.add(FLEET_SCOPE);
         scopes.add(BOSS_SCOPE);
-        for (ChartAnomaly anomaly : ChartAnomalies.all()) {
+        for (LootShaper anomaly : ChartAnomalies.with(LootShaper.class)) {
             scopes.addAll(anomaly.lootScopes());
         }
         return List.copyOf(scopes);

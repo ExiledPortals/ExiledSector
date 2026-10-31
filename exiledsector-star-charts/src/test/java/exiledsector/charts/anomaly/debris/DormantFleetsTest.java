@@ -13,6 +13,7 @@ import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl.FIDConfig;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import exiledsector.MockSector;
+import exiledsector.charts.anomaly.AnomalyEncounters;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -123,8 +124,8 @@ class DormantFleetsTest {
 
     @Test
     void anEncounterNeverPullsInOtherFleetsOrTouchesReputation() {
-        FIDConfig first = DormantEncounters.config(true);
-        FIDConfig later = DormantEncounters.config(false);
+        FIDConfig first = AnomalyEncounters.isolated(true, null, null);
+        FIDConfig later = AnomalyEncounters.isolated(false, null, null);
 
         assertTrue(first.straightToEngage);
         assertFalse(later.straightToEngage);

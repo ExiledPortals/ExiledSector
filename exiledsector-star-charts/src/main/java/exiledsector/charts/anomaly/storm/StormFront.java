@@ -10,9 +10,11 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.anomaly.AnomalyContentSite;
-import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.AnomalyRun;
+import exiledsector.charts.anomaly.ContentPlacer;
+import exiledsector.charts.anomaly.LootShaper;
+import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.charts.run.ChartRun;
 import exiledsector.items.ItemDrops;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -20,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public final class StormFront implements ChartAnomaly {
+public final class StormFront implements ContentPlacer, RunParticipant, LootShaper {
 
     public static final String ANOMALY_ID = "storm_front";
     public static final String LOOT_KEY = ChartEffect.CHART_STORM_FRONT_LOOT_QUANTITY_PERCENT.anomalyTuningKey();
@@ -83,16 +85,6 @@ public final class StormFront implements ChartAnomaly {
     }
 
     @Override
-    public boolean isActiveIn(LocationAPI location) {
-        for (StormFrontTerrainPlugin front : frontsIn(location)) {
-            if (!front.isDone()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @Override
     public void clearFrom(CampaignFleetAPI fleet) {
         StormFrontTerrainPlugin.liftFrom(fleet);
     }
@@ -123,8 +115,8 @@ public final class StormFront implements ChartAnomaly {
     }
 
     @Override
-    public String intelText(ChartRun run, LocationAPI location) {
-        for (StormFrontTerrainPlugin front : frontsIn(location)) {
+    public String intelText(AnomalyRun run) {
+        for (StormFrontTerrainPlugin front : frontsIn(run.system())) {
             if (!front.isDone()) {
                 return front.intelText();
             }

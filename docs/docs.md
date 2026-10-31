@@ -481,7 +481,7 @@ the system supplies the layout seed, faction, region recipe, anomalies and the l
 `atlas_node_effects.csv` for infested, cleansed and special-site systems, kept on the run as an
 `AtlasRunNode` (`AtlasOpening`). An anomaly with its own `atlas_markers.csv` row rolls on that chance instead of the
 shared one. Powerful Boss (`PowerfulBoss`) does, and its run's boss always drops a chart one tier up
-(`ChartAnomaly.guaranteesBossTierUp`); anomaly effects reach the content plan, so its line sizes the boss. Chart drops
+(`LootShaper.guaranteesBossTierUp`); anomaly effects reach the content plan, so its line sizes the boss. Chart drops
 inside a run never fall below its tier.
 
 Killing the objective completes the system and grants an atlas point for the first clear of each tier (`AtlasProgress`).
@@ -552,12 +552,15 @@ Transverse Jump plugin from another mod stays blocked like the other escape abil
 
 A run's anomalies are its atlas system's own, decided once before layout (`ChartAnomalies.planned`, ignoring tier
 ranges); Star Charts roll no anomaly lines. Each id needs a `chart_anomalies.csv` row with its `requires_mod` loaded,
-and one that conflicts with an anomaly already taken (both replace the star, or `excludes`) is dropped. A star anomaly picks the star or system type, every
-anomaly's `shape` adds terrain after layout and its `generate` places entities after the sites and fleets (package
-`charts.anomaly`), and the run record keeps the ids that placed. An anomaly's `effects` lines join the run's context for
-generation and loot (`ChartGenContext.withAnomalyEffects`). `AnomalyContentSite.addSite` places chart POIs on clear
-orbits: derelicts around a black hole, a research station around a neutron star whatever the tier (`StarAnomalies`),
-and caches in an Asteroid Storm's belts.
+and one that conflicts with an anomaly already taken (both replace the star, or `excludes`) is dropped. A star anomaly
+picks the star or system type, a `shape` adds terrain after layout and a `generate` places entities after the sites and
+fleets (role interfaces in package `charts.anomaly`); one that fails at either step is left out, and the run record
+keeps the ids that placed. Run hooks reach only the live run's anomalies (`ChartAnomalies`, `AnomalyRun`). An
+anomaly's `effects` lines join the run's context for generation and loot (`ChartGenContext.withAnomalyEffects`).
+
+`AnomalyContentSite.addSite` places chart POIs on clear orbits: derelicts around a black hole, a research station
+around a neutron star whatever the tier (`StarAnomalies`), and caches in an Asteroid Storm's belts. Stellar Flares need
+a visible star, so a starless system never holds them, rolled or inserted (`StellarFlares`).
 
 ### Spatial Breach
 
@@ -571,7 +574,7 @@ the cache item line, and content sites it covers get a smaller rarity bonus (`St
 
 ### Neutron Star charts
 
-A Neutron Star chart has at least 7 planets to hide behind from the pulsar beam (`ChartAnomaly.minPlanets`).
+A Neutron Star chart has at least 7 planets to hide behind from the pulsar beam (`LayoutShaper.minPlanets`).
 `ChartStarSystemGenerator.topUpPlanets` adds planet-only orbits past the layout's last one, then into gaps between
 orbits once the layout's orbit limit is reached, then further out. Every neutron star in a chart gets
 `ChartCoronaTerrainPlugin` and `ChartPulsarBeamTerrainPlugin` in place of vanilla's corona and beam
@@ -614,7 +617,7 @@ relays woken, drops one unique hull item or subroutine whatever its source (`Cha
 The anomaly spawns freighters, a screen and a close escort at the system edge, flying the run-only faction
 `exiledSector_convoy` under its own name with the chart faction's crest (`SupplyConvoy`, `ConvoyFleets`). Five days after the player first
 arrives, the system script `ConvoyScript` sends them past two to four planets or stations to unload at an existing planet,
-with intel in `ConvoyIntel`. The convoy is non-hostile until the player attacks it through `ConvoyEncounterDialog` or hits
+avoiding planets another anomaly holds where it can, with intel in `ConvoyIntel`. The convoy is non-hostile until the player attacks it through `ConvoyEncounterDialog` or hits
 one of its fleets with Interdiction Pulse (which also holds that fleet); then all three turn hostile for the run and the
 freighters run for the destination. The screen rides 1200 su ahead, the freighters never outrun the escorts in open space,
 and asteroids and nebulae slow each fleet by its own amount (`ConvoyTerrain`).
@@ -623,7 +626,8 @@ The cargo is the `convoy` scope of `chart_loot.csv` plus the `exiledSector_chart
 freighters' fleet points. Each share of freighter fleet points lost drops as cargo pods, and the rest is cached on the
 destination (`ConvoyState`, `ConvoyCargo`). That planet then offers a raid (`ConvoyCacheDialog`, `anomaly.ChartRaid`, vanilla's
 non-market raid without reputation, response, cooldowns or rules) at a difficulty and danger level set by tier
-(`ConvoyRules`); the cache objective yields exactly the delivered share and stays until taken. Once the freighters are lost, every convoy fleet left leaves through the exit.
+(`ChartRaid.difficulty`, `danger`); the cache objective yields exactly the delivered share and stays until taken, and
+Continue moves on to the planet's next anomaly dialog (`AnomalyDialog.continueAfter`). Once the freighters are lost, every convoy fleet left leaves through the exit.
 
 ### Anomalous Debris
 
@@ -650,7 +654,7 @@ plus the `exiledSector_chart_excavation` item row, sized by tier and the site qu
 (`ExcavationLoot`). `ExcavationSiteDialog` opens on the planet while the site stands, before a convoy cache.
 
 An open shaft starts a fleet of the chart faction, or a derelict picket, built with `maxShipSize` 2 and kept in the
-planet's memory until beaten; it carries the site's vanilla drops and rolls its items in `ChartFleetLoot`. The
+planet's memory until beaten, repairing between fights like vanilla's salvage defenders (`HeldGuards`); it carries the site's vanilla drops and rolls its items in `ChartFleetLoot`. The
 encounter pulls in no other fleet and allows no AI retreat (`ShaftEncounters`), and `ChartCampaignPlugin` picks
 `ShaftBattleCreationPlugin` for it: a small dark map with rock fields along the edges, no objectives, and no cruiser or
 capital ship on either side, which `ShaftBattlePlugin` also removes from the reserves. A collapsed shaft is a
@@ -709,11 +713,12 @@ around it like a Sensor Array (`AtlasReach`).
 ### Pre-Collapse Facility
 
 Only rolls or inserts with Ashes of the Domain: Vaults of Knowledge enabled (`requires_mod` `aotd_vok`), as a chart
-version of VoK's Pre-Collapse Facility. It marks one solid planet that holds no excavation site, kept on the run record
+version of VoK's Pre-Collapse Facility. It marks one solid planet that no other anomaly holds, kept on the run record
 with its stage (`PreCollapseFacility`, `FacilityStates`; package `charts.anomaly.facility`). `FacilityDialog` opens on
 the planet until it is salvaged; engaging brings a Remnant fleet of three quarters the tier's fleet size,
 but never fewer combat points than VoK's own roll between its `aotd_defence_min_val` and `aotd_defence_max_val`
-settings (`FacilityGuards`, `VaultsOfKnowledgeCompat.defenceFleetPoints`), kept in the planet's memory until beaten, with no other fleet pulled in and no AI retreat.
+settings (`FacilityGuards`, `VaultsOfKnowledgeCompat.defenceFleetPoints`), kept in the planet's memory until beaten
+and repairing between fights (`HeldGuards`), with no other fleet pulled in and no AI retreat.
 
 The salvage is the `pre_collapse_facility` scope of `chart_loot.csv` plus the `exiledSector_chart_pre_collapse_facility`
 item row, plus VoK's own `ashes_research` drop group rolled 10 times and 2 more per tier for research databanks
@@ -727,8 +732,9 @@ A rare star anomaly (`CoronalHypershunt`, package `charts.anomaly.hypershunt`): 
 and its `fitsAt` keeps it 15 or more cells from the Gateway, both for the atlas roll and for its catalyst. It places
 vanilla's `coronal_tap` entity in a pointing-down orbit just outside the star, guarded like the Derelict Forge:
 `HypershuntGuards` builds an officered Omega fleet of the tier's fleet size, never fewer than vanilla's 80 defender
-points, with chart loot and vanilla's Omega weapon drops, and `HypershuntDialog` hands it to
-`SalvageDefenderInteraction`.
+points, with vanilla's Omega weapon drops, and `HypershuntDialog` hands it to `SalvageDefenderInteraction`
+(`VanillaDefenders`, shared with the forge). Its chart loot is booked on the hypershunt itself, so a rematch with a
+kept fleet drops loot only for the ships not yet beaten.
 
 `HypershuntDialog` takes every interaction with the hypershunt during its run, so vanilla's rules never offer the repair
 or add hypershunt intel; once beaten it only says the structure is beyond repair. Its Hypershunt Survey catalyst has

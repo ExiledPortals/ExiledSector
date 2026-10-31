@@ -87,7 +87,7 @@ public final class RelayChain {
 
     public static void closed(SectorAPI sector, ChartRun run) {
         AtlasRunNode node = run == null ? null : run.atlasNode();
-        if (sector == null || node == null || !node.anomalyIds().contains(RelayNetwork.ANOMALY_ID)) {
+        if (sector == null || node == null || !node.anomalyIds().contains(RelayNetwork.ANOMALY_ID) || !RelayStates.markSettled(run)) {
             return;
         }
         settle(AtlasRuntime.generator(sector), AtlasState.get(sector), AtlasCell.unpack(node.cell()), run.isObjectiveComplete(),

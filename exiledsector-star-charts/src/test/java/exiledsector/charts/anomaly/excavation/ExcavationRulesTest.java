@@ -1,7 +1,6 @@
 package exiledsector.charts.anomaly.excavation;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD.RaidDangerLevel;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.loot.DropType;
@@ -38,12 +37,7 @@ class ExcavationRulesTest {
     }
 
     @Test
-    void theRaidGetsHarderWithTierAndItsShareGrowsWithEffectiveness() {
-        assertEquals(RaidDangerLevel.LOW, ExcavationRules.siteDanger(1));
-        assertEquals(RaidDangerLevel.MEDIUM, ExcavationRules.siteDanger(8));
-        assertEquals(RaidDangerLevel.HIGH, ExcavationRules.siteDanger(15));
-        assertTrue(ExcavationRules.raidDifficulty(15) > ExcavationRules.raidDifficulty(1));
-        assertEquals(ExcavationRules.raidDifficulty(1), ExcavationRules.raidDifficulty(0));
+    void theRaidShareGrowsWithEffectiveness() {
         assertEquals(ExcavationRules.MIN_RAID_SHARE, ExcavationRules.raidShare(0f), 0.0001f);
         assertEquals(0.5f / ExcavationRules.FULL_LOOT_EFFECTIVENESS, ExcavationRules.raidShare(0.5f), 0.0001f);
         assertEquals(1f, ExcavationRules.raidShare(ExcavationRules.FULL_LOOT_EFFECTIVENESS), 0.0001f);

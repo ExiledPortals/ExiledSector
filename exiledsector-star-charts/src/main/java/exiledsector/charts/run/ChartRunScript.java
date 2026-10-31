@@ -8,8 +8,8 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.characters.AbilityPlugin;
 import com.fs.starfarer.api.impl.campaign.ids.Abilities;
 import exiledsector.i18n.Translation;
+import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.effect.ChartFleetConditions;
 import exiledsector.charts.objective.ChartObjectives;
 import exiledsector.charts.run.cleanup.ChartLoadSweep;
@@ -57,7 +57,7 @@ public class ChartRunScript implements EveryFrameScript {
         try {
             SectorAPI sector = Global.getSector();
             watch(sector, run);
-            checkObjective(sector, run, amount);
+            checkObjective(sector, run, systemFor(sector, run), amount);
         } catch (RuntimeException | LinkageError e) {
             if (!failureReported) {
                 failureReported = true;
@@ -66,7 +66,7 @@ public class ChartRunScript implements EveryFrameScript {
         }
     }
 
-    void checkObjective(SectorAPI sector, ChartRun run, float amount) {
+    void checkObjective(SectorAPI sector, ChartRun run, StarSystemAPI system, float amount) {
         secondsSinceObjectiveCheck += amount;
         if (secondsSinceObjectiveCheck < OBJECTIVE_CHECK_SECONDS) {
             return;
@@ -75,8 +75,8 @@ public class ChartRunScript implements EveryFrameScript {
         if (run.runState() == ChartRunState.INSIDE && !run.isObjectiveComplete() && run.objective() != null) {
             ChartObjectives.reconcile(sector);
         }
-        for (ChartAnomaly anomaly : ChartAnomalies.all()) {
-            anomaly.checkRun(sector);
+        if (run.runState().isLive() && system != null) {
+            ChartAnomalies.checkRun(sector, new AnomalyRun(run, system));
         }
     }
 

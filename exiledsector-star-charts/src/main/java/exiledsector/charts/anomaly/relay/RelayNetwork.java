@@ -11,7 +11,10 @@ import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.anomaly.AnomalyContentSite;
-import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.AnomalyRun;
+import exiledsector.charts.anomaly.ContentPlacer;
+import exiledsector.charts.anomaly.LootShaper;
+import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.run.ChartRun;
 import org.lwjgl.util.vector.Vector2f;
@@ -24,7 +27,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-public final class RelayNetwork implements ChartAnomaly {
+public final class RelayNetwork implements ContentPlacer, RunParticipant, LootShaper {
 
     public static final String ANOMALY_ID = "relay_network";
     public static final String COST_KEY = ChartEffect.CHART_RELAY_COST_PERCENT.anomalyTuningKey();
@@ -43,13 +46,18 @@ public final class RelayNetwork implements ChartAnomaly {
     }
 
     @Override
-    public InteractionDialogPlugin dialogFor(SectorEntityToken target) {
+    public InteractionDialogPlugin dialogFor(AnomalyRun run, SectorEntityToken target) {
         return isRelay(target) ? new RelayDialog() : null;
     }
 
     @Override
-    public void checkRun(SectorAPI sector) {
-        ChartRelays.check(sector);
+    public void checkRun(SectorAPI sector, AnomalyRun run) {
+        ChartRelays.check(sector, run);
+    }
+
+    @Override
+    public String intelText(AnomalyRun run) {
+        return intelLine();
     }
 
     @Override

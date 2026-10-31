@@ -4,7 +4,6 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.effect.ChartFleetConditions;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.items.Item;
@@ -64,9 +63,7 @@ public final class ChartRunEffects {
 
     public static void lift(CampaignFleetAPI fleet) {
         ChartFleetConditions.clear(fleet);
-        for (ChartAnomaly anomaly : ChartAnomalies.all()) {
-            anomaly.clearFrom(fleet);
-        }
+        ChartAnomalies.clearFrom(fleet);
         MutableFleetStatsAPI stats = fleet == null ? null : fleet.getStats();
         if (stats == null) {
             return;

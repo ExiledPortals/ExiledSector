@@ -16,6 +16,7 @@ import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext;
@@ -224,13 +225,13 @@ class ChartRelaysTest {
         when(system.getEntitiesWithTag(RelayNetwork.RELAY_TAG)).thenReturn(List.of(array, buoy));
         RelayStates.add(run, RelayKind.SENSOR_ARRAY, RelayStates.PAID);
 
-        assertTrue(ChartRelays.check(mockSector.sector));
+        assertTrue(ChartRelays.check(mockSector.sector, new AnomalyRun(run, system)));
 
         assertTrue(RelayStates.isWoken(run, RelayKind.SENSOR_ARRAY));
         assertFalse(RelayStates.has(run, RelayKind.NAV_BUOY, RelayStates.SYNCED));
-        assertFalse(ChartRelays.check(mockSector.sector));
+        assertFalse(ChartRelays.check(mockSector.sector, new AnomalyRun(run, system)));
         when(player.getContainingLocation()).thenReturn(mock(StarSystemAPI.class));
-        assertFalse(ChartRelays.check(mockSector.sector));
+        assertFalse(ChartRelays.check(mockSector.sector, new AnomalyRun(run, system)));
     }
 
     @Test
@@ -260,7 +261,7 @@ class ChartRelaysTest {
         CampaignFleetAPI defenders = RelayFixtures.fleet(false, new Vector2f(7000f, 0f));
         when(system.getFleets()).thenReturn(List.of(player, defenders));
 
-        ChartRelays.check(mockSector.sector);
+        ChartRelays.check(mockSector.sector, new AnomalyRun(run, system));
 
         verify(defenders).setExtendedDetectedAtRange(RelayRules.REVEAL_EXTENDED_RANGE);
     }

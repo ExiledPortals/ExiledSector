@@ -8,12 +8,16 @@ import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.content.ChartSpot;
+import exiledsector.charts.run.ChartRun;
+import exiledsector.charts.run.ChartRuns;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.LongFunction;
 import java.util.function.Predicate;
 
@@ -32,7 +36,10 @@ public final class AnomalyContentSite {
     private final Vector2f entry;
     private final Predicate<ChartSpot> clear;
     private final LongFunction<Random> randoms;
+    private final Set<String> claimedPlanetIds;
     private final List<SectorEntityToken> placed = new ArrayList<>();
+    private final List<String> claims = new ArrayList<>();
+    private ChartRun recordingRun;
 
     public AnomalyContentSite(StarSystemAPI system, String runId, int tier, String factionId, ChartGenContext context, List<SectorEntityToken> pois,
                               Vector2f entry, Predicate<ChartSpot> clear, LongFunction<Random> randoms) {
@@ -41,6 +48,12 @@ public final class AnomalyContentSite {
 
     public AnomalyContentSite(StarSystemAPI system, String runId, int tier, String factionId, ChartGenContext context, List<SectorEntityToken> pois,
                               List<SectorEntityToken> guardedPois, Vector2f entry, Predicate<ChartSpot> clear, LongFunction<Random> randoms) {
+        this(system, runId, tier, factionId, context, pois, guardedPois, entry, clear, randoms, new HashSet<>());
+    }
+
+    public AnomalyContentSite(StarSystemAPI system, String runId, int tier, String factionId, ChartGenContext context, List<SectorEntityToken> pois,
+                              List<SectorEntityToken> guardedPois, Vector2f entry, Predicate<ChartSpot> clear, LongFunction<Random> randoms,
+                              Set<String> claimedPlanetIds) {
         this.system = system;
         this.runId = runId;
         this.tier = tier;
@@ -51,6 +64,7 @@ public final class AnomalyContentSite {
         this.entry = entry == null ? null : new Vector2f(entry);
         this.clear = clear;
         this.randoms = randoms;
+        this.claimedPlanetIds = claimedPlanetIds;
     }
 
     public StarSystemAPI system() {
@@ -71,6 +85,38 @@ public final class AnomalyContentSite {
 
     public ChartGenContext context() {
         return context;
+    }
+
+    public ChartRun run() {
+        if (recordingRun == null) {
+            ChartRun run = ChartRuns.currentOrNull();
+            if (run == null || !run.runId().equals(runId)) {
+                throw new IllegalStateException("no run to record the anomaly in");
+            }
+            recordingRun = run;
+        }
+        return recordingRun;
+    }
+
+    public void forgetRecordedStates(String anomalyId) {
+        if (recordingRun != null) {
+            recordingRun.forgetAnomalyStates(anomalyId);
+        }
+    }
+
+    public boolean isClaimed(SectorEntityToken planet) {
+        return planet != null && claimedPlanetIds.contains(planet.getId());
+    }
+
+    public void claim(SectorEntityToken planet) {
+        if (planet != null && claimedPlanetIds.add(planet.getId())) {
+            claims.add(planet.getId());
+        }
+    }
+
+    public void releaseClaims() {
+        claims.forEach(claimedPlanetIds::remove);
+        claims.clear();
     }
 
     public List<SectorEntityToken> pois() {

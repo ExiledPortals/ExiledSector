@@ -4,23 +4,22 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.BattleCreationPlugin;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
-import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
 import exiledsector.i18n.Translation;
-import exiledsector.charts.ChartIds;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.anomaly.AnomalyContentSite;
-import exiledsector.charts.anomaly.ChartAnomaly;
-import exiledsector.charts.anomaly.facility.FacilityStates;
+import exiledsector.charts.anomaly.AnomalyRun;
+import exiledsector.charts.anomaly.ContentPlacer;
+import exiledsector.charts.anomaly.LayoutShaper;
+import exiledsector.charts.anomaly.LootShaper;
+import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.charts.run.ChartRuns;
 import exiledsector.items.ItemDrops;
 
 import java.util.ArrayList;
@@ -28,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-public final class ExcavationSites implements ChartAnomaly {
+public final class ExcavationSites implements LayoutShaper, ContentPlacer, RunParticipant, LootShaper {
 
     public static final String ANOMALY_ID = "excavation_sites";
     public static final String EXTRA_KEY = ChartEffect.CHART_EXTRA_EXCAVATION_SITES.anomalyTuningKey();
@@ -56,19 +55,14 @@ public final class ExcavationSites implements ChartAnomaly {
 
     @Override
     public void generate(AnomalyContentSite site) {
-        ChartRun run = ChartRuns.currentOrNull();
-        if (run == null || !run.runId().equals(site.runId())) {
-            throw new IllegalStateException("no run to record the excavation sites in");
-        }
-        if (place(site, run, Global.getSector()).isEmpty()) {
+        if (place(site, site.run(), Global.getSector()).isEmpty()) {
             throw new IllegalStateException("no planet for an excavation site");
         }
     }
 
     static List<ExcavationSite> place(AnomalyContentSite site, ChartRun run, SectorAPI sector) {
         Random random = site.random(PLACEMENT_SALT);
-        List<PlanetAPI> planets = candidates(site.system());
-        planets.removeIf(planet -> FacilityStates.holds(run, planet.getId()));
+        List<PlanetAPI> planets = candidates(site);
         Collections.shuffle(planets, random);
         int count = Math.min(planets.size(), ExcavationRules.siteCount(random, Math.round(site.context().anomalyPercent(EXTRA_KEY))));
         List<ExcavationSite> placed = new ArrayList<>();
@@ -76,16 +70,17 @@ public final class ExcavationSites implements ChartAnomaly {
             ExcavationSite placedSite = new ExcavationSite(index, planets.get(index).getId(), ExcavationRules.access(random),
                     ExcavationRules.lean(sector, random), random.nextLong(), false);
             ExcavationStates.record(run, placedSite);
+            site.claim(planets.get(index));
             placed.add(placedSite);
         }
         return placed;
     }
 
-    static List<PlanetAPI> candidates(StarSystemAPI system) {
+    static List<PlanetAPI> candidates(AnomalyContentSite site) {
         List<PlanetAPI> solid = new ArrayList<>();
         List<PlanetAPI> any = new ArrayList<>();
-        for (PlanetAPI planet : system.getPlanets()) {
-            if (planet.isStar() || !ExcavationSite.encodable(planet.getId())) {
+        for (PlanetAPI planet : site.system().getPlanets()) {
+            if (planet.isStar() || !ExcavationSite.encodable(planet.getId()) || site.isClaimed(planet)) {
                 continue;
             }
             any.add(planet);
@@ -96,19 +91,9 @@ public final class ExcavationSites implements ChartAnomaly {
         return solid.isEmpty() ? any : solid;
     }
 
-    static boolean inRunSystem(ChartRun run, LocationAPI location) {
-        return run != null && run.runState().isLive() && location != null && run.systemId().equals(ChartIds.locationIdOf(location));
-    }
-
     @Override
-    public boolean isActiveIn(LocationAPI location) {
-        ChartRun run = ChartRuns.currentOrNull();
-        return inRunSystem(run, location) && !ExcavationStates.standing(run).isEmpty();
-    }
-
-    @Override
-    public InteractionDialogPlugin dialogFor(SectorEntityToken target) {
-        return ExcavationSiteDialog.wantsToHandle(target) ? new ExcavationSiteDialog() : null;
+    public InteractionDialogPlugin dialogFor(AnomalyRun run, SectorEntityToken target) {
+        return ExcavationSiteDialog.wantsToHandle(run.run(), target) ? new ExcavationSiteDialog() : null;
     }
 
     @Override
@@ -122,10 +107,10 @@ public final class ExcavationSites implements ChartAnomaly {
     }
 
     @Override
-    public String intelText(ChartRun run, LocationAPI location) {
+    public String intelText(AnomalyRun run) {
         List<StyledText> planets = new ArrayList<>();
-        for (ExcavationSite site : ExcavationStates.standing(run)) {
-            SectorEntityToken planet = location == null ? null : location.getEntityById(site.planetId());
+        for (ExcavationSite site : ExcavationStates.standing(run.run())) {
+            SectorEntityToken planet = run.system().getEntityById(site.planetId());
             if (planet != null) {
                 planets.add(StyledText.styled(planet.getName(), Style.HIGHLIGHT));
             }

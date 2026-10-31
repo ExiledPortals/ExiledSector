@@ -11,6 +11,7 @@ import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.anomaly.VanillaDefenders;
 import exiledsector.charts.content.ChartSpot;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.effect.ChartEffect;
@@ -122,8 +123,7 @@ class DerelictForgeTest {
         DerelictForge.INSTANCE.generate(site(ChartGenContext.none(), spot -> true));
 
         MemoryAPI memory = added.get(0).getMemoryWithoutUpdate();
-        assertTrue(ForgeGuards.guarded(added.get(0)));
-        assertTrue(memory.getBoolean(ForgeGuards.HAS_DEFENDERS_KEY));
+        assertTrue(VanillaDefenders.guarded(added.get(0)));
         assertTrue(memory.get(MemFlags.SALVAGE_SEED) instanceof Long);
     }
 

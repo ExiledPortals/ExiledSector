@@ -12,6 +12,7 @@ import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
+import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.generation.ChartGenContext;
 import org.junit.jupiter.api.AfterEach;
@@ -26,6 +27,7 @@ import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -131,13 +133,13 @@ class StormFrontTest {
         front.advance(0.1f);
         assertEquals(0f, front.getEntity().getLocation().x, 0.01f);
         assertSame(front, StormFront.frontHolding(fleet));
-        assertTrue(StormFront.INSTANCE.isActiveIn(system));
+        AnomalyRun anomalyRun = new AnomalyRun(null, system);
+        assertNotNull(StormFront.INSTANCE.intelText(anomalyRun));
 
         elapsedDays = 30f;
         assertTrue(front.isDone());
         assertNull(StormFront.frontHolding(fleet));
-        assertFalse(StormFront.INSTANCE.isActiveIn(system));
-        assertNull(StormFront.INSTANCE.intelText(null, system));
+        assertNull(StormFront.INSTANCE.intelText(anomalyRun));
     }
 
     @Test

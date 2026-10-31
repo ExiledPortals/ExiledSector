@@ -4,7 +4,9 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.atlas.AtlasRunNode;
-import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.AnomalyRun;
+import exiledsector.charts.anomaly.AtlasRule;
+import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.atlas.AtlasAnomalies;
 import exiledsector.charts.atlas.AtlasBorders;
 import exiledsector.charts.atlas.AtlasCell;
@@ -15,7 +17,7 @@ import exiledsector.charts.atlas.AtlasTraits;
 import exiledsector.charts.atlas.RedeploymentCatalystUse;
 import exiledsector.items.UseVerdict;
 
-public final class FactionSkirmish implements ChartAnomaly {
+public final class FactionSkirmish implements AtlasRule, RunParticipant {
 
     public static final String ANOMALY_ID = "faction_skirmish";
     public static final FactionSkirmish INSTANCE = new FactionSkirmish();
@@ -36,15 +38,20 @@ public final class FactionSkirmish implements ChartAnomaly {
     }
 
     @Override
-    public void checkRun(SectorAPI sector) {
-        ChartSkirmishes.checkFinalPush(sector);
+    public void checkRun(SectorAPI sector, AnomalyRun run) {
+        ChartSkirmishes.pushCommander(run.system());
     }
 
     @Override
-    public void fleetGone(SectorAPI sector, CampaignFleetAPI fleet) {
+    public void fleetGone(AnomalyRun run, CampaignFleetAPI fleet) {
         if (fleet != null && SkirmishSide.ATTACKER.key().equals(fleet.getMemoryWithoutUpdate().getString(ChartIds.SKIRMISH_SIDE_MEMORY_KEY))) {
-            ChartSkirmishes.checkFinalPush(sector);
+            ChartSkirmishes.pushCommander(run.system());
         }
+    }
+
+    @Override
+    public String intelText(AnomalyRun run) {
+        return intelLine();
     }
 
     @Override

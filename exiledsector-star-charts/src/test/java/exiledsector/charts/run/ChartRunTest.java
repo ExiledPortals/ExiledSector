@@ -305,4 +305,21 @@ class ChartRunTest {
         loaded.grantBossUnique();
         assertTrue(loaded.isBossUniqueGranted());
     }
+
+    @Test
+    void forgettingAnAnomalysStatesLeavesTheOtherAnomaliesAlone() {
+        ChartRun run = new ChartRun("abc", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+        run.recordAnomalyState("listening_post", "state");
+        run.recordAnomalyState("excavation_sites.0", "rock");
+        run.recordAnomalyState("excavation_sites.1", "stone");
+        run.recordAnomalyState("excavation_sites_extra", "kept");
+
+        run.forgetAnomalyStates("excavation_sites");
+        run.forgetAnomalyStates("listening_post");
+
+        assertNull(run.anomalyState("excavation_sites.0"));
+        assertNull(run.anomalyState("excavation_sites.1"));
+        assertNull(run.anomalyState("listening_post"));
+        assertEquals("kept", run.anomalyState("excavation_sites_extra"));
+    }
 }

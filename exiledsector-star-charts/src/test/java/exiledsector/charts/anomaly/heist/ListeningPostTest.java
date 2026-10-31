@@ -8,6 +8,7 @@ import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartTables;
+import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.FakeChartContentEngine;
@@ -152,10 +153,10 @@ class ListeningPostTest {
 
         ListeningPost.INSTANCE.generate(postSystem.site(ChartGenContext.none(), new Vector2f(9000f, 0f), 1L));
 
-        assertTrue(ListeningPost.INSTANCE.isActiveIn(postSystem.system));
-        assertTrue(ListeningPost.INSTANCE.intelText(run, postSystem.system).contains("Suspicion: 0%"));
+        AnomalyRun anomalyRun = new AnomalyRun(run, postSystem.system);
+        assertTrue(ListeningPost.INSTANCE.intelText(anomalyRun).contains("Suspicion: 0%"));
         PostState.record(run, PostState.of(run).asTaken());
-        assertFalse(ListeningPost.INSTANCE.isActiveIn(postSystem.system));
+        assertNull(ListeningPost.INSTANCE.intelText(anomalyRun));
     }
 
     @Test

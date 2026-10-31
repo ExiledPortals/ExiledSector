@@ -27,15 +27,25 @@ public final class BreachFieldRenderer {
     }
 
     public static void render(Vector2f centre, float radius, float alphaMult, float elapsedSeconds, float viewMult) {
+        render(rimBand(centre, radius, null), radius, alphaMult, elapsedSeconds, viewMult);
+    }
+
+    static void render(RadialBand rimBand, float radius, float alphaMult, float elapsedSeconds, float viewMult) {
         if (radius <= 0f || alphaMult <= 0f) {
             return;
         }
-        drawVoid(centre, radius * VOID_SHARE, alphaMult);
+        drawVoid(rimBand.center(), radius * VOID_SHARE, alphaMult);
         SpriteAPI rim = SPRITES.texture(RIM_TEXTURE);
         if (rim != null) {
-            RadialBand band = new RadialBand(centre, radius * RIM_INNER_SHARE, radius * RIM_OUTER_SHARE);
-            AuroraBeltRenderer.renderShaded(rim, band, RIM_COLOUR, alphaMult, elapsedSeconds, rimDetail(band.outerRadius(), viewMult));
+            AuroraBeltRenderer.renderShaded(rim, rimBand, RIM_COLOUR, alphaMult, elapsedSeconds, rimDetail(rimBand.outerRadius(), viewMult));
         }
+    }
+
+    static RadialBand rimBand(Vector2f centre, float radius, RadialBand previous) {
+        float innerRadius = radius * RIM_INNER_SHARE;
+        float outerRadius = radius * RIM_OUTER_SHARE;
+        boolean unchanged = previous != null && previous.center() == centre && previous.innerRadius() == innerRadius && previous.outerRadius() == outerRadius;
+        return unchanged ? previous : new RadialBand(centre, innerRadius, outerRadius);
     }
 
     static float rimDetail(float outerRadius, float viewMult) {

@@ -15,7 +15,7 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.effects.ItemLootListener;
 import exiledsector.effects.TechMiningItemListener;
 import exiledsector.items.ItemChances;
@@ -49,7 +49,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
         private float deploymentPointsDefeated;
         private float chartStrengthDefeated;
         private int highestDefeatedLevel;
-        private List<ChartAnomaly> battleAnomalies;
+        private List<LootShaper> battleAnomalies;
     }
 
     private StarChartLootSource() {
@@ -79,7 +79,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
         }
     }
 
-    private static List<ChartAnomaly> anomaliesHoldingBattle() {
+    private static List<LootShaper> anomaliesHoldingBattle() {
         try {
             return ChartAnomalies.holdingPlayerBattle();
         } catch (RuntimeException e) {
@@ -169,7 +169,7 @@ public final class StarChartLootSource implements LootSource, FleetDifficulty {
             return modifiers;
         }
         ItemChances chances = modifiers.itemChances();
-        for (ChartAnomaly anomaly : ChartAnomalies.all()) {
+        for (LootShaper anomaly : ChartAnomalies.with(LootShaper.class)) {
             chances = anomaly.siteChances(memory, chances);
         }
         return chances == modifiers.itemChances() ? modifiers : new LootModifiers(chances, modifiers.feedstockMult(), modifiers.currencyMult());

@@ -3,6 +3,7 @@ package exiledsector.charts.atlas;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.AsteroidStorm;
+import exiledsector.charts.anomaly.AtlasRule;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.StarAnomalies;
@@ -133,7 +134,7 @@ class AtlasAnomaliesTest {
         assertEquals(AtlasAnomalies.InsertCheck.ALLOWED, AtlasAnomalies.insert(generator, state, cell, AsteroidStorm.ANOMALY_ID, AtlasAnomalyRecord.Source.PLAYER, null).check());
         assertEquals(AtlasAnomalies.InsertCheck.CONFLICT, AtlasAnomalies.canInsert(generator, state, cell, SpatialBreach.ANOMALY_ID, null));
 
-        ChartAnomaly nowhere = new ChartAnomaly() {
+        ChartAnomaly nowhere = new AtlasRule() {
             @Override
             public String id() {
                 return SpatialBreach.ANOMALY_ID;

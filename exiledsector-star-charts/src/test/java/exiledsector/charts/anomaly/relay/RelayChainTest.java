@@ -1,5 +1,6 @@
 package exiledsector.charts.anomaly.relay;
 
+import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.atlas.AtlasAnomalies;
@@ -15,6 +16,7 @@ import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasUnlocks;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.run.ChartRun;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
@@ -204,6 +206,14 @@ class RelayChainTest {
         assertFalse(RelayChain.join(node, generator, state, start).guaranteedBossUnique());
         AtlasRunNode plain = new AtlasRunNode(start.pack(), "pirates", List.of(), List.of(), false);
         assertSame(plain, RelayChain.join(plain, generator, state, start));
+    }
+
+    @Test
+    void aClosingRunSettlesItsChainOnlyOnce() {
+        ChartRun run = new ChartRun("run1", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+
+        assertTrue(RelayStates.markSettled(run));
+        assertFalse(RelayStates.markSettled(run));
     }
 
     @Test

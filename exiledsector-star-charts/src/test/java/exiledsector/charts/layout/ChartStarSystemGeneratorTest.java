@@ -20,7 +20,9 @@ import com.fs.starfarer.api.impl.campaign.procgen.TerrainGenDataSpec;
 import exiledsector.MockSector;
 import com.fs.starfarer.api.impl.campaign.terrain.StarCoronaTerrainPlugin.CoronaParams;
 import exiledsector.charts.wormhole.ChartWormholePlacement;
+import exiledsector.charts.anomaly.AnomalyLayoutSite;
 import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.LayoutShaper;
 import exiledsector.charts.anomaly.StarAnomalies;
 import exiledsector.charts.layout.abyss.AbyssPalette;
 import exiledsector.charts.layout.abyss.AbyssalDarknessTerrainPlugin;
@@ -205,6 +207,32 @@ class ChartStarSystemGeneratorTest {
     }
 
     @Test
+    void anAnomalyWhoseShapeFailsIsDroppedWithWhatItAdded() {
+        List<SectorEntityToken> entities = new ArrayList<>();
+        SectorEntityToken leftover = mock(SectorEntityToken.class);
+        LayoutShaper breaks = new LayoutShaper() {
+            @Override
+            public String id() {
+                return "breaks";
+            }
+
+            @Override
+            public void shape(AnomalyLayoutSite site) {
+                entities.add(leftover);
+                throw new IllegalStateException("test failure");
+            }
+        };
+        LayoutShaper fine = () -> "fine";
+        TopUpLayout layout = new TopUpLayout(20000f, List.<ChartAnomaly>of(breaks, fine));
+        when(layout.system.getAllEntities()).thenAnswer(call -> new ArrayList<>(entities));
+
+        layout.generate();
+
+        assertEquals(List.of("breaks"), layout.generator.unshapedAnomalyIds());
+        verify(layout.system).removeEntity(leftover);
+    }
+
+    @Test
     void anOrdinaryChartGetsNoExtraPlanets() {
         TopUpLayout layout = new TopUpLayout(20000f, List.of());
 
@@ -302,7 +330,7 @@ class ChartStarSystemGeneratorTest {
         private final SectorEntityToken centreToken = mock(SectorEntityToken.class);
 
         TopUpLayout(float orbitLimit) {
-            this(orbitLimit, List.of(new ChartAnomaly() {
+            this(orbitLimit, List.of(new LayoutShaper() {
                 @Override
                 public String id() {
                     return "needs_planets";

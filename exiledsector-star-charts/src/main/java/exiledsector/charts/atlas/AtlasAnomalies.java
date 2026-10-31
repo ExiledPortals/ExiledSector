@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
+import exiledsector.charts.anomaly.AtlasRule;
 import exiledsector.charts.anomaly.ChartAnomaly;
 
 import java.util.ArrayDeque;
@@ -64,7 +65,7 @@ public final class AtlasAnomalies {
     }
 
     private static boolean accepts(AtlasGenerator generator, AtlasState state, AtlasCell cell, List<String> accepted, String anomalyId) {
-        return ChartAnomalies.accepts(accepted, anomalyId) && ChartAnomalies.byId(anomalyId).holdsAt(generator, state, cell);
+        return ChartAnomalies.accepts(accepted, anomalyId) && AtlasRule.of(ChartAnomalies.byId(anomalyId)).holdsAt(generator, state, cell);
     }
 
     public static InsertCheck canInsert(AtlasGenerator generator, AtlasState state, AtlasCell cell, String anomalyId, AtlasCell openRunCell) {
@@ -108,7 +109,7 @@ public final class AtlasAnomalies {
         if (present.stream().anyMatch(existing -> ChartAnomalies.conflicts(existing, anomalyId))) {
             return InsertCheck.CONFLICT;
         }
-        return anomaly.insertVerdict(generator, state, cell).allowed() ? InsertCheck.ALLOWED : InsertCheck.DOES_NOT_FIT;
+        return AtlasRule.of(anomaly).insertVerdict(generator, state, cell).allowed() ? InsertCheck.ALLOWED : InsertCheck.DOES_NOT_FIT;
     }
 
     public static Insertion insert(AtlasGenerator generator, AtlasState state, AtlasCell cell, String anomalyId, AtlasAnomalyRecord.Source source,

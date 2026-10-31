@@ -132,11 +132,10 @@ public final class ConvoyScript implements EveryFrameScript, FleetEventListener,
     @Override
     public void advance(float amount) {
         SectorAPI sector = Global.getSector();
-        ChartRun run = ChartRuns.currentOrNull();
         if (sector == null) {
             return;
         }
-        if (run == null || !run.runId().equals(runId)) {
+        if (ChartRuns.unclosed(runId) == null) {
             done = true;
             return;
         }
@@ -258,9 +257,9 @@ public final class ConvoyScript implements EveryFrameScript, FleetEventListener,
                 guard(fleet, freighters);
             }
         }
-        if (convoy.phase() == ConvoyState.Phase.LOST) {
+        if (freighters == null || convoy.phase() == ConvoyState.Phase.LOST || convoy.phase() == ConvoyState.Phase.DELIVERED) {
             leave(convoy);
-        } else if (freighters != null) {
+        } else {
             flee(convoy, freighters);
         }
         if (CampaignMessages.available() && Global.getSector().getPlayerFleet() != null
@@ -338,8 +337,8 @@ public final class ConvoyScript implements EveryFrameScript, FleetEventListener,
             leave(convoy);
         }
         SectorAPI sector = Global.getSector();
-        ChartRun run = sector == null ? null : ChartRuns.currentOrNull();
-        if (!(lostShare > 0f) || at == null || run == null || !run.runId().equals(runId)) {
+        ChartRun run = sector == null ? null : ChartRuns.live(runId);
+        if (!(lostShare > 0f) || at == null || run == null) {
             return;
         }
         Random dropRandom = new Random(convoy.nextDropSeed());

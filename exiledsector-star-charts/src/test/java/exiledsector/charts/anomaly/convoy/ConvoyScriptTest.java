@@ -139,6 +139,20 @@ class ConvoyScriptTest {
     }
 
     @Test
+    void escortsAttackedAfterTheDeliveryStillLeaveThroughTheExit() {
+        ConvoyScript script = convoySystem.script();
+        convoy().setPhase(ConvoyState.Phase.DELIVERED);
+        convoySystem.entities.remove(convoy().fleetId(ConvoyRole.FREIGHTERS));
+
+        assertTrue(script.turnHostile(convoy()));
+
+        for (ConvoyRole role : List.of(ConvoyRole.SCREEN, ConvoyRole.ESCORT)) {
+            List<FleetAssignment> given = orders(role);
+            assertEquals(FleetAssignment.GO_TO_LOCATION_AND_DESPAWN, given.get(given.size() - 1), role.key());
+        }
+    }
+
+    @Test
     void attackingOneFleetTurnsTheWholeConvoyHostileWithoutTouchingStanding() {
         ConvoyScript script = convoySystem.script();
         CampaignFleetAPI freighters = convoySystem.fleet(convoy(), ConvoyRole.FREIGHTERS);

@@ -24,6 +24,7 @@ import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.content.ChartSites;
 import exiledsector.ui.VanillaText;
+import exiledsector.ui.belt.RadialBand;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -66,6 +67,7 @@ public class BreachTerrainPlugin extends BaseTerrain {
     private boolean[] cacheFormed;
     private boolean closed;
     private transient boolean coreChecked;
+    private transient RadialBand rimBand;
     private transient BreachCorePlugin corePlugin;
     private transient float daysSinceTick;
     private transient float elapsedSeconds;
@@ -316,8 +318,8 @@ public class BreachTerrainPlugin extends BaseTerrain {
     }
 
     private ChartGenContext runContext() {
-        ChartRun run = ChartRuns.currentOrNull();
-        return run != null && run.runId().equals(runId) ? ChartRunEffects.contextOf(run) : ChartGenContext.none();
+        ChartRun run = ChartRuns.live(runId);
+        return run == null ? ChartGenContext.none() : ChartRunEffects.contextOf(run);
     }
 
     void collapse() {
@@ -373,7 +375,8 @@ public class BreachTerrainPlugin extends BaseTerrain {
         if (closed || entity == null || radius <= 0f) {
             return;
         }
-        BreachFieldRenderer.render(entity.getLocation(), radius, viewport.getAlphaMult(), elapsedSeconds, viewport.getViewMult());
+        rimBand = BreachFieldRenderer.rimBand(entity.getLocation(), radius, rimBand);
+        BreachFieldRenderer.render(rimBand, radius, viewport.getAlphaMult(), elapsedSeconds, viewport.getViewMult());
     }
 
     @Override

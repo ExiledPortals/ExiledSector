@@ -137,6 +137,33 @@ class ChartFleetHullItemsTest {
         }
     }
 
+    @Test
+    void aRunWithoutARelayNetworkNeverHoldsBackItsGuaranteedUnique() throws Exception {
+        when(sector.getPlayerStats().getLevel()).thenReturn(15);
+        ItemDefinitions.register(new JSONArray()
+                .put(new JSONObject().put("id", "site_relic").put("section", "bridge").put("rarity", "10").put("unique", "true")
+                        .put("source", "site:somewhere_else").put("prefixes", "HULL_PERCENT:4:6")));
+        ItemDrops.register(new JSONArray()
+                .put(new JSONObject().put("site", ChartIds.FLEET_LOOT_SITE).put("chances", "0").put("uniqueChance", "0"))
+                .put(new JSONObject().put("site", ChartIds.BOSS_LOOT_SITE).put("chances", "0").put("uniqueChance", "0")));
+        try {
+            ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+            run.recordContent(new ChartContent(6, "hegemony", ChartObjective.BOSS, List.of(BOSS_ID), BOSS_ID, 4, 6, List.of()));
+            run.recordArrival();
+            ChartRuns.store(run);
+            ChartGenContext guaranteed = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of(), false)
+                    .withExtraEffects(List.of(), true));
+
+            ItemDrops.SiteLoot bossLoot = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, guaranteed, 100f,
+                    new Random(1L));
+
+            assertEquals(1, bossLoot.items().stream().filter(item -> "site_relic".equals(item.definitionId())).count());
+        } finally {
+            ItemDrops.clear();
+            ItemDefinitions.clear();
+        }
+    }
+
     private ChartRun storeLiveRun(int tier) {
         ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
         run.recordContent(new ChartContent(tier, "hegemony", ChartObjective.BOSS, List.of(BOSS_ID), BOSS_ID, 4, 6));

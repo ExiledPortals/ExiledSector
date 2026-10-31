@@ -18,10 +18,10 @@ import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRunState;
-import exiledsector.charts.run.ChartRuns;
 import exiledsector.ui.CampaignMessages;
 
 import java.awt.Color;
@@ -36,14 +36,14 @@ public final class ChartRelays {
     private ChartRelays() {
     }
 
-    public static boolean check(SectorAPI sector) {
-        ChartRun run = ChartRuns.currentOrNull();
-        if (run == null || run.runState() != ChartRunState.INSIDE || !run.anomalyIds().contains(RelayNetwork.ANOMALY_ID)) {
+    public static boolean check(SectorAPI sector, AnomalyRun anomalyRun) {
+        ChartRun run = anomalyRun.run();
+        if (run.runState() != ChartRunState.INSIDE) {
             return false;
         }
         CampaignFleetAPI playerFleet = sector.getPlayerFleet();
-        StarSystemAPI system = sector.getStarSystem(run.systemId());
-        if (playerFleet == null || system == null || playerFleet.getContainingLocation() != system || playerFleet.isInHyperspaceTransition()) {
+        StarSystemAPI system = anomalyRun.system();
+        if (playerFleet == null || playerFleet.getContainingLocation() != system || playerFleet.isInHyperspaceTransition()) {
             return false;
         }
         if (RelayStates.isWoken(run, RelayKind.COMM_RELAY)) {

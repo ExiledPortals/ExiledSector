@@ -7,13 +7,11 @@ import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.anomaly.AnomalyContentSite;
+import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.anomaly.excavation.ExcavationSite;
 import exiledsector.charts.content.ChartAnomalyFleets;
-import exiledsector.charts.anomaly.excavation.ExcavationStates;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;
-import exiledsector.charts.loot.DropType;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.compat.VaultsOfKnowledgeCompat;
@@ -91,16 +89,18 @@ class PreCollapseFacilityTest {
     }
 
     @Test
-    void theFacilityGoesOnASolidPlanetWithoutAnExcavationSite() {
+    void theFacilityGoesOnASolidPlanetNoOtherAnomalyHolds() {
         planet("sun", true, false);
         planet("giant", false, true);
-        planet("dug", false, false);
-        planet("rock", false, false);
+        PlanetAPI dug = planet("dug", false, false);
+        PlanetAPI rock = planet("rock", false, false);
         for (long seed = 0; seed < 20; seed++) {
             ChartRun run = run();
-            ExcavationStates.record(run, new ExcavationSite(0, "dug", ExcavationSite.Access.OPEN, DropType.WEAPON, 1L, false));
+            AnomalyContentSite site = site(seed);
+            site.claim(dug);
 
-            assertEquals("rock", PreCollapseFacility.place(site(seed), run).getId());
+            assertEquals("rock", PreCollapseFacility.place(site, run).getId());
+            assertTrue(site.isClaimed(rock));
             assertEquals("rock", FacilityStates.planetId(run));
             assertEquals(FacilityStates.Stage.GUARDED, FacilityStates.stage(run));
         }
@@ -111,7 +111,7 @@ class PreCollapseFacilityTest {
         planet("sun", true, false);
         planet("giant", false, true);
 
-        assertEquals(List.of("giant"), PreCollapseFacility.candidates(system, run()).stream().map(PlanetAPI::getId).toList());
+        assertEquals(List.of("giant"), PreCollapseFacility.candidates(site(1L)).stream().map(PlanetAPI::getId).toList());
         planets.remove(1);
         assertNull(PreCollapseFacility.place(site(1L), run()));
     }
@@ -148,18 +148,18 @@ class PreCollapseFacilityTest {
         ChartRuns.store(run);
         FacilityStates.record(run, "rock");
 
-        assertTrue(FacilityDialog.wantsToHandle(rock));
-        assertTrue(PreCollapseFacility.INSTANCE.isActiveIn(system));
-        assertFalse(FacilityDialog.wantsToHandle(stone));
-        assertFalse(FacilityDialog.wantsToHandle(mock(CampaignFleetAPI.class)));
-        String intel = PreCollapseFacility.INSTANCE.intelText(run, system);
+        AnomalyRun anomalyRun = new AnomalyRun(run, system);
+
+        assertTrue(FacilityDialog.wantsToHandle(run, rock));
+        assertFalse(FacilityDialog.wantsToHandle(run, stone));
+        assertFalse(FacilityDialog.wantsToHandle(run, mock(CampaignFleetAPI.class)));
+        String intel = PreCollapseFacility.INSTANCE.intelText(anomalyRun);
         assertTrue(intel.contains("Planet rock"), intel);
 
         FacilityStates.advance(run, FacilityStates.Stage.GUARDED, FacilityStates.Stage.OPEN);
         FacilityStates.advance(run, FacilityStates.Stage.OPEN, FacilityStates.Stage.SALVAGED);
-        assertFalse(FacilityDialog.wantsToHandle(rock));
-        assertFalse(PreCollapseFacility.INSTANCE.isActiveIn(system));
-        assertNull(PreCollapseFacility.INSTANCE.intelText(run, system));
+        assertFalse(FacilityDialog.wantsToHandle(run, rock));
+        assertNull(PreCollapseFacility.INSTANCE.intelText(anomalyRun));
     }
 
     @Test

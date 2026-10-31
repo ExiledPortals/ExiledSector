@@ -6,6 +6,7 @@ import com.fs.starfarer.api.PluginPick;
 import com.fs.starfarer.api.campaign.BattleCreationPlugin;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CampaignPlugin;
+import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.BattleCreationContext;
 import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatFleetManagerAPI;
@@ -16,6 +17,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.mission.FleetSide;
 import com.fs.starfarer.api.mission.MissionDefinitionAPI;
 import exiledsector.MockSector;
+import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.run.ChartCampaignPlugin;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -137,6 +139,8 @@ class ShaftBattleTest {
         CampaignFleetAPI shaftFleet = mock(CampaignFleetAPI.class);
         when(shaftFleet.hasTag(ShaftFleets.FLEET_TAG)).thenReturn(true);
         CampaignFleetAPI combined = mock(CampaignFleetAPI.class);
+        MemoryAPI combinedMemory = FakeChartContentEngine.memory();
+        when(combined.getMemoryWithoutUpdate()).thenReturn(combinedMemory);
         CampaignFleetAPI other = mock(CampaignFleetAPI.class);
 
         PluginPick<BattleCreationPlugin> pick = new ChartCampaignPlugin().pickBattleCreationPlugin(shaftFleet);
@@ -144,14 +148,13 @@ class ShaftBattleTest {
         assertEquals(CampaignPlugin.PickPriority.MOD_SPECIFIC, pick.priority);
         assertNull(new ChartCampaignPlugin().pickBattleCreationPlugin(other));
 
-        ShaftEncounters.expect(combined);
+        assertFalse(ShaftEncounters.isShaftBattle(combined));
+        ShaftEncounters.config(dialog -> {
+        }).delegate.battleContextCreated(null, new BattleCreationContext(mock(CampaignFleetAPI.class), FleetGoal.ATTACK, combined, FleetGoal.ATTACK));
         assertTrue(ShaftEncounters.isShaftBattle(combined));
-        assertTrue(ShaftEncounters.isShaftBattle(combined));
+        assertInstanceOf(ShaftBattleCreationPlugin.class, new ChartCampaignPlugin().pickBattleCreationPlugin(combined).plugin);
         assertFalse(ShaftEncounters.isShaftBattle(other));
         assertFalse(ShaftEncounters.isShaftBattle(null));
-        ShaftEncounters.config(dialog -> {
-        }).delegate.notifyLeave(null);
-        assertFalse(ShaftEncounters.isShaftBattle(combined));
     }
 
     @Test
@@ -167,6 +170,8 @@ class ShaftBattleTest {
 
         CampaignFleetAPI playerFleet = mock(CampaignFleetAPI.class);
         CampaignFleetAPI enemyFleet = mock(CampaignFleetAPI.class);
+        MemoryAPI enemyMemory = FakeChartContentEngine.memory();
+        when(enemyFleet.getMemoryWithoutUpdate()).thenReturn(enemyMemory);
         BattleCreationContext context = new BattleCreationContext(playerFleet, FleetGoal.ATTACK, enemyFleet, FleetGoal.ATTACK);
         config.delegate.battleContextCreated(null, context);
         assertFalse(context.aiRetreatAllowed);

@@ -19,6 +19,7 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD.RaidDangerLevel;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.charts.generation.ChartTiers;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
@@ -37,9 +38,38 @@ public class ChartRaid {
 
     public interface Host {
 
-        void raidLeft(InteractionDialogAPI dialog);
+        void raidClosed(InteractionDialogAPI dialog);
+    }
 
-        void raidFinished(InteractionDialogAPI dialog);
+    public static final class Session {
+
+        private final Host host;
+        private ChartRaid raid;
+        private int raidsLaunched;
+
+        public Session(Host host) {
+            this.host = host;
+        }
+
+        public boolean handles(Object optionData) {
+            return raid != null && ChartRaid.handles(optionData);
+        }
+
+        public void optionSelected(Object optionData) {
+            raid.optionSelected(optionData);
+        }
+
+        public void launch(InteractionDialogAPI dialog, int tier, long seed, Supplier<List<GroundRaidObjectivePlugin>> objectives) {
+            raid = new ChartRaid(dialog, difficulty(tier), objectives, new Random(seed + raidsLaunched++), closedDialog -> {
+                raid = null;
+                host.raidClosed(closedDialog);
+            });
+            raid.open();
+        }
+
+        public double effectiveness() {
+            return raid == null ? 0d : raid.effectiveness();
+        }
     }
 
     static final String RAID_VALUABLE = "exiledSector_raidValuable";
@@ -57,6 +87,10 @@ public class ChartRaid {
     static final float LOSS_VARIANCE_SHARE = 0.25f;
     static final double NORMAL_SPREAD = 0.2d;
     static final float PERCENT = 100f;
+    static final float DIFFICULTY = 60f;
+    static final float DIFFICULTY_PER_TIER = 30f;
+    static final int LOW_DANGER_MAX_TIER = 5;
+    static final int MEDIUM_DANGER_MAX_TIER = 10;
 
     private final InteractionDialogAPI dialog;
     private final SectorEntityToken entity;
@@ -87,6 +121,18 @@ public class ChartRaid {
         this.host = host;
     }
 
+    public static float difficulty(int tier) {
+        return DIFFICULTY + DIFFICULTY_PER_TIER * (ChartTiers.clamp(tier) - 1);
+    }
+
+    public static RaidDangerLevel danger(int tier) {
+        int clamped = ChartTiers.clamp(tier);
+        if (clamped <= LOW_DANGER_MAX_TIER) {
+            return RaidDangerLevel.LOW;
+        }
+        return clamped <= MEDIUM_DANGER_MAX_TIER ? RaidDangerLevel.MEDIUM : RaidDangerLevel.HIGH;
+    }
+
     public static boolean handles(Object optionData) {
         return optionData instanceof String option && RAID_OPTIONS.contains(option);
     }
@@ -95,7 +141,7 @@ public class ChartRaid {
         if (RAID_VALUABLE.equals(optionData)) {
             raidValuable();
         } else if (RAID_GO_BACK.equals(optionData)) {
-            host.raidLeft(dialog);
+            host.raidClosed(dialog);
         } else if (RAID_CONFIRM.equals(optionData)) {
             raidConfirm();
         } else if (RAID_NEVER_MIND.equals(optionData)) {
@@ -474,6 +520,6 @@ public class ChartRaid {
     private void finished() {
         objectives = new ArrayList<>();
         raidLoot = null;
-        host.raidFinished(dialog);
+        host.raidClosed(dialog);
     }
 }

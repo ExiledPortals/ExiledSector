@@ -86,7 +86,6 @@ final class ConvoyFleets {
         fleet.setName(Translation.gameText("chart.convoy.fleet." + role.key() + ".name"));
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();
         memory.set(SupplyConvoy.CONVOY_MEMORY_KEY, convoy.index());
-        memory.set(SupplyConvoy.ROLE_MEMORY_KEY, role.key());
         if (role == ConvoyRole.FREIGHTERS) {
             memory.set(MemFlags.MEMORY_KEY_TRADE_FLEET, true);
         }
