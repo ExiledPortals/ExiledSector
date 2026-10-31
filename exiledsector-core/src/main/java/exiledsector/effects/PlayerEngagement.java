@@ -10,8 +10,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public record PlayerEngagement(EngagementResultAPI result, boolean playerWon, float enemyDeploymentPointsDefeated, float difficulty,
-                               Set<String> playerLossIds) {
+public record PlayerEngagement(EngagementResultAPI result, boolean playerWon, List<FleetMemberAPI> enemyLosses, float enemyDeploymentPointsDefeated,
+                               float difficulty, Set<String> playerLossIds) {
 
     static PlayerEngagement of(EngagementResultAPI result, float difficulty) {
         boolean playerWon = result.didPlayerWin();
@@ -21,11 +21,13 @@ public record PlayerEngagement(EngagementResultAPI result, boolean playerWon, fl
         for (FleetMemberAPI member : lostBy(playerResult)) {
             playerLossIds.add(member.getId());
         }
+        List<FleetMemberAPI> enemyLosses = lostBy(enemyResult);
         float enemyDeploymentPointsLost = 0f;
-        for (FleetMemberAPI member : lostBy(enemyResult)) {
+        for (FleetMemberAPI member : enemyLosses) {
             enemyDeploymentPointsLost += member.getDeploymentPointsCost();
         }
-        return new PlayerEngagement(result, playerWon, enemyDeploymentPointsLost, difficulty, Collections.unmodifiableSet(playerLossIds));
+        return new PlayerEngagement(result, playerWon, List.copyOf(enemyLosses), enemyDeploymentPointsLost, difficulty,
+                Collections.unmodifiableSet(playerLossIds));
     }
 
     private static List<FleetMemberAPI> lostBy(EngagementResultForFleetAPI fleetResult) {

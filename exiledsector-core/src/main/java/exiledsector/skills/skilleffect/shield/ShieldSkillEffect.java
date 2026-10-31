@@ -10,15 +10,13 @@ import exiledsector.skills.ShipFacts;
 import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
-import exiledsector.skills.skilleffect.ListenerEffect;
-import exiledsector.skills.skilleffect.SimpleStatEffect;
 import exiledsector.skills.skilleffect.SkillEffect;
-import exiledsector.skills.skilleffect.StatMode;
 import exiledsector.skills.skilleffect.StatTarget;
 
 import java.util.List;
-import java.util.function.Function;
 
+import static exiledsector.skills.skilleffect.Backings.listener;
+import static exiledsector.skills.skilleffect.Backings.statEffect;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
@@ -104,50 +102,50 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
             }
         }
     },
-    SHIELD_ARC_PERCENT(PERCENT, bonus(MutableShipStatsAPI::getShieldArcBonus), StatNames.SHIELD_ARC, false),
-    SHIELD_ARC_FLAT(FLAT, bonus(MutableShipStatsAPI::getShieldArcBonus), StatNames.SHIELD_ARC, false),
-    SHIELD_ARC_MULT(MULT, bonus(MutableShipStatsAPI::getShieldArcBonus), StatNames.SHIELD_ARC, false),
-    SHIELD_ABSORPTION_PERCENT(PERCENT, liveStat(MutableShipStatsAPI::getShieldAbsorptionMult), StatNames.DAMAGE_TAKEN_BY_SHIELDS, true),
-    SHIELD_DAMAGE_TAKEN_MULT(MULT, liveStat(MutableShipStatsAPI::getShieldDamageTakenMult), StatNames.DAMAGE_TAKEN_BY_SHIELDS, true),
-    SHIELD_PIERCE_CHANCE_PERCENT(PERCENT, dynamicStat(Stats.SHIELD_PIERCED_MULT), "stat.chanceForShieldsToBePiercedByEmpArcs", true),
-    SHIELD_PIERCE_CHANCE_MULT(MULT, dynamicStat(Stats.SHIELD_PIERCED_MULT), "stat.chanceForShieldsToBePiercedByEmpArcs", true),
-    SHIELD_UPKEEP_PERCENT(PERCENT, stat(MutableShipStatsAPI::getShieldUpkeepMult), "stat.shieldFluxUpkeep", true),
-    SHIELD_UPKEEP_MULT(MULT, stat(MutableShipStatsAPI::getShieldUpkeepMult), "stat.shieldFluxUpkeep", true),
-    SHIELD_TURN_RATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getShieldTurnRateMult), "stat.shieldTurnRate", false),
-    SHIELD_RAISE_RATE_PERCENT(PERCENT, stat(MutableShipStatsAPI::getShieldUnfoldRateMult), "stat.shieldRaiseRate", false),
-    SHIELD_SOFT_FLUX_CONVERSION_PERCENT(PERCENT, new StatTarget.PercentagePoints(MutableShipStatsAPI::getShieldSoftFluxConversion),
-            "stat.shieldSoftFluxConversion", false) {
+    SHIELD_ARC_PERCENT(statEffect(PERCENT, bonus(MutableShipStatsAPI::getShieldArcBonus), StatNames.SHIELD_ARC, false)),
+    SHIELD_ARC_FLAT(statEffect(FLAT, bonus(MutableShipStatsAPI::getShieldArcBonus), StatNames.SHIELD_ARC, false)),
+    SHIELD_ARC_MULT(statEffect(MULT, bonus(MutableShipStatsAPI::getShieldArcBonus), StatNames.SHIELD_ARC, false)),
+    SHIELD_ABSORPTION_PERCENT(statEffect(PERCENT, liveStat(MutableShipStatsAPI::getShieldAbsorptionMult), StatNames.DAMAGE_TAKEN_BY_SHIELDS, true)),
+    SHIELD_DAMAGE_TAKEN_MULT(statEffect(MULT, liveStat(MutableShipStatsAPI::getShieldDamageTakenMult), StatNames.DAMAGE_TAKEN_BY_SHIELDS, true)),
+    SHIELD_PIERCE_CHANCE_PERCENT(statEffect(PERCENT, dynamicStat(Stats.SHIELD_PIERCED_MULT), "stat.chanceForShieldsToBePiercedByEmpArcs", true)),
+    SHIELD_PIERCE_CHANCE_MULT(statEffect(MULT, dynamicStat(Stats.SHIELD_PIERCED_MULT), "stat.chanceForShieldsToBePiercedByEmpArcs", true)),
+    SHIELD_UPKEEP_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getShieldUpkeepMult), "stat.shieldFluxUpkeep", true)),
+    SHIELD_UPKEEP_MULT(statEffect(MULT, stat(MutableShipStatsAPI::getShieldUpkeepMult), "stat.shieldFluxUpkeep", true)),
+    SHIELD_TURN_RATE_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getShieldTurnRateMult), "stat.shieldTurnRate", false)),
+    SHIELD_RAISE_RATE_PERCENT(statEffect(PERCENT, stat(MutableShipStatsAPI::getShieldUnfoldRateMult), "stat.shieldRaiseRate", false)),
+    SHIELD_SOFT_FLUX_CONVERSION_PERCENT(statEffect(PERCENT, new StatTarget.PercentagePoints(MutableShipStatsAPI::getShieldSoftFluxConversion),
+            "stat.shieldSoftFluxConversion", false)) {
         @Override
         public StyledText description(float magnitude) {
             return EffectText.templated(this, magnitude);
         }
     },
-    SHIELD_DAMAGE_SHARED_PERCENT(SharedShieldDamageListener.SHARED_PERCENT_KEY,
-            SharedShieldDamageListener.class, SharedShieldDamageListener::new) {
+    SHIELD_DAMAGE_SHARED_PERCENT(listener(SharedShieldDamageListener.SHARED_PERCENT_KEY,
+            SharedShieldDamageListener.class, SharedShieldDamageListener::new)) {
         @Override
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", Math.min(magnitude, SharedShieldDamageListener.MAX_SHARED_PERCENT))
                     .arg("range", Math.round(SharedShieldDamageListener.RANGE)).styled();
         }
     },
-    SHIELD_DAMAGE_PASSED_TO_ALLY_PERCENT(SharedShieldDamageListener.PASSED_PERCENT_KEY,
-            SharedShieldDamageListener.class, SharedShieldDamageListener::new) {
+    SHIELD_DAMAGE_PASSED_TO_ALLY_PERCENT(listener(SharedShieldDamageListener.PASSED_PERCENT_KEY,
+            SharedShieldDamageListener.class, SharedShieldDamageListener::new)) {
         @Override
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", Math.min(magnitude, SharedShieldDamageListener.MAX_SHARED_PERCENT))
                     .arg("range", Math.round(SharedShieldDamageListener.RANGE)).styled();
         }
     },
-    SHIELD_ABSORB_RATE_OF_FIRE_PERCENT(AbsorbReserveListener.RATE_OF_FIRE_PERCENT_KEY,
-            AbsorbReserveListener.class, AbsorbReserveListener::new) {
+    SHIELD_ABSORB_RATE_OF_FIRE_PERCENT(listener(AbsorbReserveListener.RATE_OF_FIRE_PERCENT_KEY,
+            AbsorbReserveListener.class, AbsorbReserveListener::new)) {
         @Override
         public StyledText description(float magnitude) {
             return EffectText.msg(this).arg("value", magnitude).arg("full", AbsorbReserveListener.FULL_RESERVE)
                     .arg("drain", AbsorbReserveListener.DRAIN_PER_SECOND).arg("max", AbsorbReserveListener.MAX_RESERVE).styled();
         }
     },
-    DYNAMIC_GRID_ENERGY_WEAPON_BONUS_PERCENT(DynamicGridListener.ENERGY_BONUS_PERCENT_KEY, DynamicGridListener.class,
-            DynamicGridListener::new) {
+    DYNAMIC_GRID_ENERGY_WEAPON_BONUS_PERCENT(listener(DynamicGridListener.ENERGY_BONUS_PERCENT_KEY, DynamicGridListener.class,
+            DynamicGridListener::new)) {
         @Override
         public StyledText description(float magnitude) {
             return DynamicGridListener.SHIELDS_DOWN_SECONDS.withShipSizeArgs(EffectText.msg(this).arg("value", magnitude)).styled();
@@ -166,15 +164,7 @@ public enum ShieldSkillEffect implements BackedSkillEffect {
     private final EffectBacking backing;
 
     ShieldSkillEffect() {
-        this((EffectBacking) null);
-    }
-
-    ShieldSkillEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
-        this(new SimpleStatEffect(mode, target, statKey, lowerIsBetter));
-    }
-
-    <T> ShieldSkillEffect(String magnitudeKey, Class<T> listenerType, Function<ShipAPI, ? extends T> listenerFactory) {
-        this(new ListenerEffect<>(magnitudeKey, listenerType, listenerFactory));
+        this(null);
     }
 
     ShieldSkillEffect(EffectBacking backing) {

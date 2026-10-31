@@ -9,6 +9,7 @@ import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
 import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
+import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.util.Misc;
 import org.lwjgl.util.vector.Vector2f;
@@ -65,6 +66,13 @@ public final class CombatQueries {
         return damageSource instanceof BeamAPI beam ? beam.getSource() : null;
     }
 
+    public static WeaponAPI weaponBehind(Object damageParam) {
+        if (damageParam instanceof DamagingProjectileAPI projectile) {
+            return projectile.getWeapon();
+        }
+        return damageParam instanceof BeamAPI beam ? beam.getWeapon() : null;
+    }
+
     public static float hitDamage(DamageAPI damage) {
         return damage.isDps() ? damage.getDamage() * damage.getDpsDuration() : damage.getDamage();
     }
@@ -91,6 +99,10 @@ public final class CombatQueries {
         return result;
     }
 
+    public static List<ShipAPI> shipsWithin(Vector2f loc, float radius, Predicate<ShipAPI> filter) {
+        return shipsNear(loc, radius, other -> filter.test(other) && withinRadius(other.getLocation(), loc, radius));
+    }
+
     public static ShipAPI nearestShip(Vector2f point, float radius, Predicate<ShipAPI> filter) {
         ShipAPI nearest = null;
         float nearestDistanceSquared = radius * radius;
@@ -108,8 +120,8 @@ public final class CombatQueries {
     }
 
     public static List<ShipAPI> hostilesNear(ShipAPI owner, Vector2f point, float radius, Predicate<ShipAPI> extraFilter) {
-        return shipsNear(point, radius, other -> extraFilter.test(other) && isAliveNotHulk(other)
-                && other.getCollisionClass() != CollisionClass.NONE && isHostile(owner, other) && withinRadius(other.getLocation(), point, radius));
+        return shipsWithin(point, radius, other -> extraFilter.test(other) && isAliveNotHulk(other)
+                && other.getCollisionClass() != CollisionClass.NONE && isHostile(owner, other));
     }
 
     public static List<ShipAPI> nearestFirst(List<ShipAPI> ships, Vector2f point, int count) {

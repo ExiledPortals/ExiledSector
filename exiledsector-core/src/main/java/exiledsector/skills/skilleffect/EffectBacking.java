@@ -9,7 +9,7 @@ public interface EffectBacking {
     default void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
     }
 
-    default void applyAfterShipCreation(ShipAPI ship) {
+    default void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
     }
 
     default void advanceInCombat(ShipAPI ship, String modId, float magnitude) {
@@ -23,6 +23,10 @@ public interface EffectBacking {
     }
 
     default boolean advancesInCombat() {
+        return false;
+    }
+
+    default boolean appliesAfterOtherEffects() {
         return false;
     }
 

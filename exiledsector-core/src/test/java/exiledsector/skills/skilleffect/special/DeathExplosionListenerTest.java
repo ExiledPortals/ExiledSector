@@ -103,7 +103,7 @@ class DeathExplosionListenerTest {
         ShipAPI outside = ship(400f, 0f, Map.of());
         ShipAPI hulk = ship(100f, 0f, Map.of());
         when(hulk.isHulk()).thenReturn(true);
-        ships.addAll(List.of(ship, near, outside, hulk));
+        gridShips.addAll(List.of(ship, near, outside, hulk));
         HullDamageAboutToBeTakenListener listener = attachedListener(SpecialSkillEffect.EXPLODE_ON_DEATH, ship,
                 HullDamageAboutToBeTakenListener.class);
 
@@ -119,7 +119,7 @@ class DeathExplosionListenerTest {
     @Test
     void theShipOnlyExplodesOnceAndNotOnAHitItSurvives() {
         ShipAPI ship = explodingShip(200f, 50f);
-        ships.add(ship);
+        gridShips.add(ship);
         HullDamageAboutToBeTakenListener listener = attachedListener(SpecialSkillEffect.EXPLODE_ON_DEATH, ship,
                 HullDamageAboutToBeTakenListener.class);
 
@@ -136,7 +136,7 @@ class DeathExplosionListenerTest {
         ShipAPI ship = explodingShip(200f, 50f);
         when(ship.getMutableStats().getFleetMember()).thenReturn(null);
         ShipAPI near = ship(150f, 0f, Map.of());
-        ships.addAll(List.of(ship, near));
+        gridShips.addAll(List.of(ship, near));
         HullDamageAboutToBeTakenListener listener = attachedListener(SpecialSkillEffect.EXPLODE_ON_DEATH, ship,
                 HullDamageAboutToBeTakenListener.class);
 

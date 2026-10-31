@@ -11,11 +11,11 @@ import exiledsector.skills.skilleffect.BackedSkillEffect;
 import exiledsector.skills.skilleffect.ConditionalStatEffect;
 import exiledsector.skills.skilleffect.EffectBacking;
 import exiledsector.skills.skilleffect.EffectText;
-import exiledsector.skills.skilleffect.SimpleStatEffect;
 import exiledsector.skills.skilleffect.SkillEffectSupport;
 import exiledsector.skills.skilleffect.StatMode;
 import exiledsector.skills.skilleffect.StatTarget;
 
+import static exiledsector.skills.skilleffect.Backings.statEffect;
 import static exiledsector.skills.skilleffect.StatMode.FLAT;
 import static exiledsector.skills.skilleffect.StatMode.MULT;
 import static exiledsector.skills.skilleffect.StatMode.PERCENT;
@@ -23,12 +23,12 @@ import static exiledsector.skills.skilleffect.StatTarget.dynamicMod;
 
 public enum BattleSkillEffect implements BackedSkillEffect {
 
-    ELECTRONIC_WARFARE(FLAT, dynamicMod("electronic_warfare_flat"), "stat.ecmRating", false),
-    ELECTRONIC_WARFARE_PENALTY_PERCENT(PERCENT, dynamicMod(Stats.ELECTRONIC_WARFARE_PENALTY_MOD),
-            "stat.electronicWarfarePenaltyAgainstThisShipSWeaponRange", true),
-    ELECTRONIC_WARFARE_PENALTY_MULT(MULT, dynamicMod(Stats.ELECTRONIC_WARFARE_PENALTY_MOD),
-            "stat.electronicWarfarePenaltyAgainstThisShipSWeaponRange", true),
-    NAV_RATING(FLAT, dynamicMod("coord_maneuvers_flat"), "stat.fleetNavRating", false) {
+    ELECTRONIC_WARFARE(statEffect(FLAT, dynamicMod("electronic_warfare_flat"), "stat.ecmRating", false)),
+    ELECTRONIC_WARFARE_PENALTY_PERCENT(statEffect(PERCENT, dynamicMod(Stats.ELECTRONIC_WARFARE_PENALTY_MOD),
+            "stat.electronicWarfarePenaltyAgainstThisShipSWeaponRange", true)),
+    ELECTRONIC_WARFARE_PENALTY_MULT(statEffect(MULT, dynamicMod(Stats.ELECTRONIC_WARFARE_PENALTY_MOD),
+            "stat.electronicWarfarePenaltyAgainstThisShipSWeaponRange", true)),
+    NAV_RATING(statEffect(FLAT, dynamicMod("coord_maneuvers_flat"), "stat.fleetNavRating", false)) {
         @Override
         public StyledText description(float magnitude) {
             return FLAT.describeStat(magnitude, "subject.yourFleet", "stat.fleetNavRating");
@@ -50,8 +50,8 @@ public enum BattleSkillEffect implements BackedSkillEffect {
             return EffectText.signed(this, magnitude).styled();
         }
     },
-    OBJECTIVE_CAPTURE_RANGE_FLAT(FLAT, dynamicMod(Stats.SHIP_OBJECTIVE_CAP_RANGE_MOD),
-            "stat.rangeFromWhichCombatObjectivesCanBeCaptured", false),
+    OBJECTIVE_CAPTURE_RANGE_FLAT(statEffect(FLAT, dynamicMod(Stats.SHIP_OBJECTIVE_CAP_RANGE_MOD),
+            "stat.rangeFromWhichCombatObjectivesCanBeCaptured", false)),
     COMMAND_POINT_RECOVERY_WHILE_FLAGSHIP(new ConditionalStatEffect(PERCENT,
             new StatTarget.BonusPercentagePoints(stats -> stats.getDynamic().getMod("command_point_rate_flat")),
             "stat.commandPointRecoveryWhileFlagship", BattleSkillEffect::isFlagship));
@@ -72,11 +72,7 @@ public enum BattleSkillEffect implements BackedSkillEffect {
     private final EffectBacking backing;
 
     BattleSkillEffect() {
-        this((EffectBacking) null);
-    }
-
-    BattleSkillEffect(StatMode mode, StatTarget target, String statKey, boolean lowerIsBetter) {
-        this(new SimpleStatEffect(mode, target, statKey, lowerIsBetter));
+        this(null);
     }
 
     BattleSkillEffect(EffectBacking backing) {
