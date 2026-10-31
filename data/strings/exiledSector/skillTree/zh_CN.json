@@ -728,7 +728,7 @@
     "skillType.tania_carina_charge.name": "卡里纳冲锋",
     "skillType.tania_solaris_overdrive.name": "索拉里斯超载",
     "skillType.tania_thermo_accelerator.name": "热能加速器",
-    "skillType.tania_touraco_prow.name": "图拉科级舰首",
+    "skillType.tania_merite_lunge.name": "默里特突进",
     "skillType.phase_entangled_wings.name": "相位纠缠联队",
     "skillType.gravitational_drag.name": "Candle's Grace复制品",
 
@@ -851,7 +851,7 @@
     "skillType.tania_carina_charge.flavour": "塔尼亚海军的舰长们以全速逼近目标，依靠古老的装甲硬扛冲撞，同时让每门火炮对准接触点开火。曾与塔尼亚舰队并肩作战的船员训练本舰的炮手以同样的方式开火，舰船冲得越快，炮弹打得越狠。",
     "skillType.tania_solaris_overdrive.flavour": "阿拉卡里级的索拉里斯方阵会启动热力学幅能核心，直到其火炮开火时不再消耗幅能网络。一名来自阿拉卡里级引擎舱的逃兵向船员讲解了一个缩小版本，与本舰自己的战术系统相连。",
     "skillType.tania_thermo_accelerator.flavour": "在维拉冲破神圣舰队护卫舰屏障的那艘鹰级，把硬点的能量抽给炮塔使用。从鹰级残骸中取出的受限校准程序让船员也能在本舰上如法炮制，硬点就此停摆，炮塔开火时却清凉许多。",
-    "skillType.tania_touraco_prow.flavour": "图拉科级携带的装甲板远超任何巡洋舰所需，塔尼亚海军的舰长们把这些多余的装甲当作武器。曾吃过它苦头的船员把同样的装甲板铆进本舰的骨架。舵手已经提交了投诉。",
+    "skillType.tania_merite_lunge.flavour": "默里特级驱逐舰常因能凭借跳跃喷射器舰船系统强行冲击敌舰而受到称赞。听取了其他塔尼亚海军军官的“高见”后，你命令船员改装本舰，增加重量并加强防护，以抵御过高G力带来的附带伤害。",
     "skillType.phase_entangled_wings.flavour": "速子科技的相位实验室学会了把一支战机联队的线圈锁定在同一个共享状态中，使一架战机受到的打击会穿过相位空间，渗入整支联队。一名从这些实验室叛逃、付出不小代价才被偷运出来的研究员，指导船员把本舰战机的线圈重新调谐到同一纠缠频率。",
     "skillType.phase_entangled_wings.flavourAutomated": "速子科技的相位实验室学会了把一支战机联队的线圈锁定在同一个共享状态中，使一架战机受到的打击会穿过相位空间，渗入整支联队。一名从这些实验室叛逃、付出不小代价才被偷运出来的研究员，指导改装班组把本舰战机的线圈重新调谐到同一纠缠频率。",
     "skillType.gravitational_drag.flavour": "在一艘回收的远古原型舰内部，所有导管都汇聚于一个完美的球形空洞，船员在那里找到了 Candle's Grace 装置，它会拖慢附近一切事物的时间流速。Candle's Grace 究竟是谁或是什么，没有任何记录，据此造出的复制品大多靠猜。",

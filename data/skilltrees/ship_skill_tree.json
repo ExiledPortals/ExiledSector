@@ -7408,7 +7408,7 @@
 				"maneuverability_percent_5",
 				"top_speed_9",
 				"tania_carina_charge_1",
-				"tania_touraco_prow_1"
+				"tania_merite_lunge_1"
 			],
 			"x": 650,
 			"y": 19150,
@@ -7598,8 +7598,8 @@
 			]
 		},
 		{
-			"id": "tania_touraco_prow_1",
-			"type": "tania_touraco_prow",
+			"id": "tania_merite_lunge_1",
+			"type": "tania_merite_lunge",
 			"connectedTo": [
 				"tania_top_speed_2"
 			],

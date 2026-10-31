@@ -4885,9 +4885,9 @@
 			]
 		},
 		{
-			"id": "tania_touraco_prow",
-			"name": "Touraco Prow",
-			"icon": "graphics/icons/tania_touraco_prow.png",
+			"id": "tania_merite_lunge",
+			"name": "Merite Lunge",
+			"icon": "graphics/icons/tania_merite_lunge.png",
 			"tier": "NOTABLE",
 			"effects": [
 				{
@@ -4899,7 +4899,7 @@
 					"magnitude": -35
 				}
 			],
-			"flavour": "The Touraco carries more plate than any cruiser needs, and Navarchy captains treat the surplus as a weapon. A crew that has been on the wrong end of one bolts the same plate into this ship's frame. The helm has filed a complaint.",
+			"flavour": "The Merite Class Destroyer is often praised by its ability to assault enemy ships by sheer brute force, thanks to its Jump Jets ship system. By listening to \"sage\" advice from fellow Navarchy of Tania officers, you order your crew to refit the ship with increased weight and improved protection against collateral effects from excessive G-force.",
 			"tags": [
 				"hull"
 			]
