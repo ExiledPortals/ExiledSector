@@ -39,6 +39,22 @@ class BeamStrokeTest {
     }
 
     @Test
+    void longStrokesKeepAdvancingDespiteFloatRounding() {
+        float tile = 11.2f;
+        for (float scroll = 0f; scroll < tile; scroll += 0.37f) {
+            float length = 60000f;
+            float start = 0f;
+            while (start < length) {
+                float tileStart = BeamStroke.tileStart(start, tile, scroll);
+                float end = BeamStroke.pieceEnd(start, tileStart, length, tile, 0f);
+                assertTrue(end > start, "stalled at " + start + " with scroll " + scroll);
+                assertTrue(start >= tileStart && end - tileStart <= tile + 4f * Math.ulp(end), "texture stays within one tile at " + start);
+                start = end;
+            }
+        }
+    }
+
+    @Test
     void scrollingShiftsWhereTheTilesBreak() {
         assertEquals(0f, BeamStroke.tileStart(0f, 40f, 0f));
         assertEquals(-10f, BeamStroke.tileStart(0f, 40f, 10f));

@@ -84,7 +84,7 @@ public final class BeamStroke {
     public void addLine(float fromX, float fromY, float toX, float toY, float distanceOffset, Style style, Look look, float startAlpha, float endAlpha,
                         float elapsedSeconds, float widthScale) {
         linePath.set(fromX, fromY, toX, toY);
-        if (linePath.length() <= MIN_PIECE || (startAlpha <= 0f && endAlpha <= 0f)) {
+        if (!drawable(linePath.length()) || (startAlpha <= 0f && endAlpha <= 0f)) {
             return;
         }
         stroke(linePath, style, look, startAlpha, endAlpha, elapsedSeconds, widthScale, 0f, distanceOffset);
@@ -93,7 +93,7 @@ public final class BeamStroke {
     public void addHelix(float fromX, float fromY, float toX, float toY, float distanceOffset, Helix helix, Style style, Look look,
                          float startAlpha, float endAlpha, float elapsedSeconds, float widthScale) {
         linePath.set(fromX, fromY, toX, toY);
-        if (linePath.length() <= MIN_PIECE || (startAlpha <= 0f && endAlpha <= 0f)) {
+        if (!drawable(linePath.length()) || (startAlpha <= 0f && endAlpha <= 0f)) {
             return;
         }
         helixPath.set(linePath, helix, distanceOffset);
@@ -120,7 +120,7 @@ public final class BeamStroke {
 
     public void addRing(float cx, float cy, float radius, float[] outlineRadii, Style style, Look look, float alpha, float elapsedSeconds,
                         float widthScale) {
-        if (radius <= MIN_PIECE || alpha <= 0f) {
+        if (!drawable(radius) || alpha <= 0f) {
             return;
         }
         ringPath.set(cx, cy, radius, outlineRadii);
@@ -173,6 +173,9 @@ public final class BeamStroke {
         while (start < length) {
             float tileStart = tileStart(start, tile, scroll);
             float end = pieceEnd(start, tileStart, length, tile, maxPiece);
+            if (end <= start) {
+                return;
+            }
             float startU = (start - tileStart) / tile * textureWidth;
             float endU = (end - tileStart) / tile * textureWidth;
             path.at(start, point);
@@ -187,6 +190,10 @@ public final class BeamStroke {
         }
     }
 
+    private static boolean drawable(float size) {
+        return size > MIN_PIECE && Float.isFinite(size);
+    }
+
     static float ringPiece(float ringLength) {
         int pieces = Math.max(MIN_RING_PIECES, Math.min(MAX_RING_PIECES, Math.round(ringLength / RING_PIECE_LENGTH)));
         return ringLength / pieces;
@@ -194,7 +201,8 @@ public final class BeamStroke {
 
     static float tileStart(float start, float tile, float scroll) {
         float intoTile = positiveModulo(start + scroll, tile);
-        return tile - intoTile < TILE_EPSILON ? start : start - intoTile;
+        float snap = Math.max(TILE_EPSILON, 4f * Math.ulp(Math.abs(start) + tile));
+        return tile - intoTile < snap ? start : start - intoTile;
     }
 
     static float pieceEnd(float start, float tileStart, float length, float tile, float maxPiece) {
