@@ -37,7 +37,7 @@ import java.util.Random;
 public class ExcavationSiteDialog implements InteractionDialogPlugin, ChartRaid.Host {
 
     static final String DESCEND = "exiledSector_excavationDescend";
-    static final String RAID = "exiledSector_excavationRaid";
+    static final String RAID_OPTION = "exiledSector_excavationRaid";
     static final String CONTINUE = "exiledSector_excavationContinue";
     static final String LEAVE = "exiledSector_excavationLeave";
     static final String DROP_TYPE_KEY_PREFIX = "chart.dropType.";
@@ -108,7 +108,7 @@ public class ExcavationSiteDialog implements InteractionDialogPlugin, ChartRaid.
                     options.setTooltip(DESCEND, Translation.gameText("chart.excavation.dialog.noShaftShips"));
                 }
             } else {
-                options.addOption(Translation.gameText("chart.excavation.dialog.option.raid"), RAID);
+                options.addOption(Translation.gameText("chart.excavation.dialog.option.raid"), RAID_OPTION);
             }
         }
         options.addOption(Translation.gameText("chart.excavation.dialog.option.continue"), CONTINUE);
@@ -125,7 +125,7 @@ public class ExcavationSiteDialog implements InteractionDialogPlugin, ChartRaid.
         } else if (DESCEND.equals(optionData) && standing && site.access() == ExcavationSite.Access.OPEN
                 && hasShaftShips(Global.getSector().getPlayerFleet())) {
             descend(site);
-        } else if (RAID.equals(optionData) && standing && site.access() == ExcavationSite.Access.COLLAPSED) {
+        } else if (RAID_OPTION.equals(optionData) && standing && site.access() == ExcavationSite.Access.COLLAPSED) {
             long seed = site.seed() * 31L + raidsLaunched++;
             raid = new ChartRaid(dialog, ExcavationRules.raidDifficulty(ChartRuns.currentOrNull().tier()), this::objectives, new Random(seed), this);
             raid.open();

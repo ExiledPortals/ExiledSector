@@ -2,7 +2,7 @@ package exiledsector.charts.anomaly;
 
 public final class PowerfulBoss implements ChartAnomaly {
 
-    public static final String ID = "powerful_boss";
+    public static final String ANOMALY_ID = "powerful_boss";
     public static final PowerfulBoss INSTANCE = new PowerfulBoss();
 
     private PowerfulBoss() {
@@ -10,7 +10,7 @@ public final class PowerfulBoss implements ChartAnomaly {
 
     @Override
     public String id() {
-        return ID;
+        return ANOMALY_ID;
     }
 
     @Override

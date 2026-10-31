@@ -20,9 +20,9 @@ import java.util.Random;
 
 public final class AnomalousDebris implements ChartAnomaly {
 
-    public static final String ID = "anomalous_debris";
-    public static final String EXTRA_KEY = ID + ".extra";
-    public static final String CURRENCY_KEY = ID + ".currency";
+    public static final String ANOMALY_ID = "anomalous_debris";
+    public static final String EXTRA_KEY = ANOMALY_ID + ".extra";
+    public static final String CURRENCY_KEY = ANOMALY_ID + ".currency";
     public static final String TERRAIN_ID = "exiledSector_chart_anomalous_debris";
     public static final String FIELD_TAG = ChartIds.PREFIX + "anomalous_debris";
     public static final AnomalousDebris INSTANCE = new AnomalousDebris();
@@ -44,7 +44,7 @@ public final class AnomalousDebris implements ChartAnomaly {
 
     @Override
     public String id() {
-        return ID;
+        return ANOMALY_ID;
     }
 
     @Override

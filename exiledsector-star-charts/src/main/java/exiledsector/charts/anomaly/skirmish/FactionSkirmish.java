@@ -17,7 +17,7 @@ import exiledsector.items.UseVerdict;
 
 public final class FactionSkirmish implements ChartAnomaly {
 
-    public static final String ID = "faction_skirmish";
+    public static final String ANOMALY_ID = "faction_skirmish";
     public static final FactionSkirmish INSTANCE = new FactionSkirmish();
     public static final String NO_SIDE_KEY = "catalyst.refused.skirmish.no_side";
     public static final String NO_ATTACKER_KEY = "catalyst.refused.skirmish.no_attacker";
@@ -27,7 +27,7 @@ public final class FactionSkirmish implements ChartAnomaly {
 
     @Override
     public String id() {
-        return ID;
+        return ANOMALY_ID;
     }
 
     @Override
@@ -72,7 +72,7 @@ public final class FactionSkirmish implements ChartAnomaly {
         if (!SkirmishFactions.takesSides(defender)) {
             return UseVerdict.refused(NO_SIDE_KEY).with("faction", RedeploymentCatalystUse.factionName(defender));
         }
-        return attacker(generator, state, cell) == null ? UseVerdict.refused(NO_ATTACKER_KEY) : UseVerdict.ALLOWED;
+        return attacker(generator, state, cell) == null ? UseVerdict.refused(NO_ATTACKER_KEY) : UseVerdict.ALLOW;
     }
 
     public static String defender(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
@@ -84,11 +84,11 @@ public final class FactionSkirmish implements ChartAnomaly {
     }
 
     public static boolean isIn(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
-        return AtlasAnomalies.effective(generator, state, cell).contains(ID);
+        return AtlasAnomalies.effective(generator, state, cell).contains(ANOMALY_ID);
     }
 
     public static AtlasRunNode join(AtlasRunNode node, AtlasGenerator generator, AtlasState state, AtlasCell cell, SkirmishSide side) {
-        if (!node.anomalyIds().contains(ID)) {
+        if (!node.anomalyIds().contains(ANOMALY_ID)) {
             return node;
         }
         return node.withSkirmish(attacker(generator, state, cell), side == null ? SkirmishSide.NEITHER : side);

@@ -26,7 +26,7 @@ public final class RelayChain {
 
     public static AtlasAnomalyRecord recordAt(AtlasState state, AtlasCell cell) {
         for (AtlasAnomalyRecord record : state.anomalyRecords(cell)) {
-            if (RelayNetwork.ID.equals(record.anomalyId())) {
+            if (RelayNetwork.ANOMALY_ID.equals(record.anomalyId())) {
                 return record;
             }
         }
@@ -35,11 +35,11 @@ public final class RelayChain {
 
     public static int rolledStages(AtlasState state, AtlasCell cell) {
         int spread = RelayRules.MAX_STAGES - RelayRules.MIN_STAGES + 1;
-        return RelayRules.MIN_STAGES + Math.min(spread - 1, (int) (AtlasAnomalies.roll(state, cell, RelayNetwork.ID) * spread));
+        return RelayRules.MIN_STAGES + Math.min(spread - 1, (int) (AtlasAnomalies.roll(state, cell, RelayNetwork.ANOMALY_ID) * spread));
     }
 
     public static AtlasAnomalyRecord.Chain stageAt(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
-        if (!AtlasAnomalies.effective(generator, state, cell).contains(RelayNetwork.ID)) {
+        if (!AtlasAnomalies.effective(generator, state, cell).contains(RelayNetwork.ANOMALY_ID)) {
             return null;
         }
         return chainAt(generator, state, cell, recordAt(state, cell));
@@ -75,7 +75,7 @@ public final class RelayChain {
     }
 
     public static AtlasRunNode join(AtlasRunNode node, AtlasGenerator generator, AtlasState state, AtlasCell cell) {
-        if (node == null || !node.anomalyIds().contains(RelayNetwork.ID)) {
+        if (node == null || !node.anomalyIds().contains(RelayNetwork.ANOMALY_ID)) {
             return node;
         }
         AtlasAnomalyRecord.Chain stage = stageAt(generator, state, cell);
@@ -87,11 +87,11 @@ public final class RelayChain {
 
     public static void closed(SectorAPI sector, ChartRun run) {
         AtlasRunNode node = run == null ? null : run.atlasNode();
-        if (sector == null || node == null || !node.anomalyIds().contains(RelayNetwork.ID)) {
+        if (sector == null || node == null || !node.anomalyIds().contains(RelayNetwork.ANOMALY_ID)) {
             return;
         }
         settle(AtlasRuntime.generator(sector), AtlasState.get(sector), AtlasCell.unpack(node.cell()), run.isObjectiveComplete(),
-                run.anomalyIds().contains(RelayNetwork.ID), RelayStates.allWoken(run));
+                run.anomalyIds().contains(RelayNetwork.ANOMALY_ID), RelayStates.allWoken(run));
     }
 
     static AtlasCell settle(AtlasGenerator generator, AtlasState state, AtlasCell cell, boolean completed, boolean placed, boolean allWoken) {
@@ -104,10 +104,10 @@ public final class RelayChain {
             next = new AtlasAnomalyRecord.Chain(current.stage() + 1, current.stages(), cell);
         }
         AtlasCell target = next == null ? null
-                : AtlasAnomalies.onward(generator, state, cell, RelayNetwork.ID, RelayRules.MIN_ONWARD_LANES, RelayRules.MAX_ONWARD_LANES);
+                : AtlasAnomalies.onward(generator, state, cell, RelayNetwork.ANOMALY_ID, RelayRules.MIN_ONWARD_LANES, RelayRules.MAX_ONWARD_LANES);
         boolean moved = target != null && (record != null
                 ? AtlasAnomalies.move(generator, state, record.recordId(), target, null, next).allows()
-                : AtlasAnomalies.insert(generator, state, target, RelayNetwork.ID, AtlasAnomalyRecord.Source.WORLD, null, next).check().allows());
+                : AtlasAnomalies.insert(generator, state, target, RelayNetwork.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null, next).check().allows());
         if (!moved && record != null) {
             state.removeAnomaly(record.recordId());
         }

@@ -70,7 +70,7 @@ class ChartRelaysTest {
 
     static ChartRun liveRelayRun() {
         ChartRun run = run();
-        run.recordContent(new ChartContent(4, "pirates", ChartObjective.BOSS, List.of("boss"), "boss", 3, 2, List.of(RelayNetwork.ID)));
+        run.recordContent(new ChartContent(4, "pirates", ChartObjective.BOSS, List.of("boss"), "boss", 3, 2, List.of(RelayNetwork.ANOMALY_ID)));
         run.recordArrival();
         return run;
     }

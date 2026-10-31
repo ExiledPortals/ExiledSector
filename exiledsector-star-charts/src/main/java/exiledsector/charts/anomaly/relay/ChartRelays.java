@@ -46,7 +46,7 @@ public final class ChartRelays {
 
     public static boolean check(SectorAPI sector) {
         ChartRun run = ChartRuns.currentOrNull();
-        if (run == null || run.runState() != ChartRunState.INSIDE || !run.anomalyIds().contains(RelayNetwork.ID)) {
+        if (run == null || run.runState() != ChartRunState.INSIDE || !run.anomalyIds().contains(RelayNetwork.ANOMALY_ID)) {
             return false;
         }
         CampaignFleetAPI playerFleet = sector.getPlayerFleet();

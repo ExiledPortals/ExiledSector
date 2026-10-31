@@ -100,7 +100,7 @@ public enum ForgeOperation {
         if (ItemCrafting.isLockedFromCurrency(item.definition())) {
             return UseVerdict.refused(REFUSAL_PREFIX + "uniqueSubroutine");
         }
-        return choices(item).isEmpty() ? UseVerdict.refused(REFUSAL_PREFIX + id()) : UseVerdict.ALLOWED;
+        return choices(item).isEmpty() ? UseVerdict.refused(REFUSAL_PREFIX + id()) : UseVerdict.ALLOW;
     }
 
     public boolean apply(Item item, ForgeChoice choice, Random random) {

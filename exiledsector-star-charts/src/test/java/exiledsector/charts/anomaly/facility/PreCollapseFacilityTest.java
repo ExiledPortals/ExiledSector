@@ -81,13 +81,13 @@ class PreCollapseFacilityTest {
 
     @Test
     void theAnomalyIsBuiltInAndNeedsVaultsOfKnowledge() throws Exception {
-        assertSame(PreCollapseFacility.INSTANCE, ChartAnomalies.byId(PreCollapseFacility.ID));
+        assertSame(PreCollapseFacility.INSTANCE, ChartAnomalies.byId(PreCollapseFacility.ANOMALY_ID));
         assertEquals(List.of(), ChartAnomalies.register(ChartTables.csvRows(ChartAnomalies.PATH)));
 
-        ChartAnomalies.Definition definition = ChartAnomalies.definition(PreCollapseFacility.ID);
+        ChartAnomalies.Definition definition = ChartAnomalies.definition(PreCollapseFacility.ANOMALY_ID);
         assertEquals(VaultsOfKnowledgeCompat.MOD_ID, definition.requiredMod());
         assertTrue(definition.insertable());
-        assertFalse(ChartAnomalies.usable(PreCollapseFacility.ID));
+        assertFalse(ChartAnomalies.usable(PreCollapseFacility.ANOMALY_ID));
     }
 
     @Test

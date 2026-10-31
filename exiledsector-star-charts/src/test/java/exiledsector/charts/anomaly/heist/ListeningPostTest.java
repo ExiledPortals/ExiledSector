@@ -54,9 +54,9 @@ class ListeningPostTest {
 
     @Test
     void theAnomalyIsBuiltInAndInsertable() throws Exception {
-        assertSame(ListeningPost.INSTANCE, ChartAnomalies.byId(ListeningPost.ID));
+        assertSame(ListeningPost.INSTANCE, ChartAnomalies.byId(ListeningPost.ANOMALY_ID));
         ChartAnomalies.register(ChartTables.csvRows(ChartAnomalies.PATH));
-        assertTrue(ChartAnomalies.definition(ListeningPost.ID).insertable());
+        assertTrue(ChartAnomalies.definition(ListeningPost.ANOMALY_ID).insertable());
     }
 
     @Test

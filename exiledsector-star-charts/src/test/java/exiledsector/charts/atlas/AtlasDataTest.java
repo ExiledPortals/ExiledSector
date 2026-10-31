@@ -43,10 +43,10 @@ class AtlasDataTest {
         AtlasRules rules = AtlasData.rules();
 
         assertFalse(rules.regions().isEmpty());
-        AtlasAnomalyCandidate powerfulBoss = rules.anomalies().stream().filter(candidate -> candidate.id().equals(PowerfulBoss.ID)).findFirst()
+        AtlasAnomalyCandidate powerfulBoss = rules.anomalies().stream().filter(candidate -> candidate.id().equals(PowerfulBoss.ANOMALY_ID)).findFirst()
                 .orElseThrow();
         assertTrue(powerfulBoss.chanceRule(rules.anomalyRule()).chanceAt(0) > rules.anomalyRule().chanceAt(0));
-        assertTrue(rules.anomalies().stream().filter(candidate -> !candidate.id().equals(PowerfulBoss.ID))
+        assertTrue(rules.anomalies().stream().filter(candidate -> !candidate.id().equals(PowerfulBoss.ANOMALY_ID))
                 .allMatch(candidate -> candidate.ownChance() == null));
         for (AtlasRegion region : rules.regions()) {
             for (String decorationId : AtlasData.ambience(region.id()).decorations().keySet()) {
@@ -182,7 +182,7 @@ class AtlasDataTest {
     @Test
     void unknownMarkersAndBadSpecialsAreReported() throws Exception {
         List<String> markerProblems = AtlasData.registerMarkers(new JSONArray().put(new JSONObject().put("id", "storm").put("chance", "0.1"))
-                .put(new JSONObject().put("id", PowerfulBoss.ID).put("chance", "0.2")));
+                .put(new JSONObject().put("id", PowerfulBoss.ANOMALY_ID).put("chance", "0.2")));
         List<String> specialProblems = AtlasData.registerSpecials(new JSONArray()
                 .put(new JSONObject().put("id", "bastion").put("placement", "fixed").put("count", "4").put("steps", "25"))
                 .put(new JSONObject().put("id", "nexus").put("kind", "infestation").put("radius", "12"))

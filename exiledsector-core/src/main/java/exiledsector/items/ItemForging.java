@@ -163,7 +163,7 @@ public final class ItemForging {
 
     public static boolean anchorReroll(Item item, RolledModifier anchor, Random random) {
         ItemDefinition definition = item.definition();
-        if (!anchors(item).contains(anchor)) {
+        if (definition == null || !anchors(item).contains(anchor)) {
             return false;
         }
         int modifierCount = item.explicits().size();

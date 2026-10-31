@@ -17,10 +17,10 @@ import java.util.Random;
 
 public final class ListeningPost implements ChartAnomaly {
 
-    public static final String ID = "listening_post";
-    public static final String PICKETS_KEY = ID + ".pickets";
-    public static final String LOOT_KEY = ID + ".loot";
-    public static final String PURGE_KEY = ID + ".purge";
+    public static final String ANOMALY_ID = "listening_post";
+    public static final String PICKETS_KEY = ANOMALY_ID + ".pickets";
+    public static final String LOOT_KEY = ANOMALY_ID + ".loot";
+    public static final String PURGE_KEY = ANOMALY_ID + ".purge";
     public static final String ENTITY_TYPE = ChartIds.PREFIX + "listening_post";
     public static final String POST_TAG = ChartIds.PREFIX + "listening_post";
     public static final ListeningPost INSTANCE = new ListeningPost();
@@ -32,7 +32,7 @@ public final class ListeningPost implements ChartAnomaly {
 
     @Override
     public String id() {
-        return ID;
+        return ANOMALY_ID;
     }
 
     @Override

@@ -29,9 +29,9 @@ import java.util.Random;
 
 public final class ExcavationSites implements ChartAnomaly {
 
-    public static final String ID = "excavation_sites";
-    public static final String EXTRA_KEY = ID + ".extra";
-    public static final String LOOT_KEY = ID + ".loot";
+    public static final String ANOMALY_ID = "excavation_sites";
+    public static final String EXTRA_KEY = ANOMALY_ID + ".extra";
+    public static final String LOOT_KEY = ANOMALY_ID + ".loot";
     public static final ExcavationSites INSTANCE = new ExcavationSites();
     static final long PLACEMENT_SALT = 0x45584341564154L;
 
@@ -40,7 +40,7 @@ public final class ExcavationSites implements ChartAnomaly {
 
     @Override
     public String id() {
-        return ID;
+        return ANOMALY_ID;
     }
 
     @Override

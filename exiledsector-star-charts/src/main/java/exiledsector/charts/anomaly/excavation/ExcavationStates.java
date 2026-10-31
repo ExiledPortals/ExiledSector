@@ -7,7 +7,7 @@ import java.util.List;
 
 public final class ExcavationStates {
 
-    static final String KEY_PREFIX = ExcavationSites.ID + ".";
+    static final String KEY_PREFIX = ExcavationSites.ANOMALY_ID + ".";
 
     private ExcavationStates() {
     }

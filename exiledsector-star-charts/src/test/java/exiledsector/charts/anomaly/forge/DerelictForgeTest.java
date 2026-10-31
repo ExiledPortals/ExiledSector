@@ -170,6 +170,6 @@ class DerelictForgeTest {
 
     @Test
     void theForgeIsABuiltInAnomaly() {
-        assertSame(DerelictForge.INSTANCE, ChartAnomalies.byId(DerelictForge.ID));
+        assertSame(DerelictForge.INSTANCE, ChartAnomalies.byId(DerelictForge.ANOMALY_ID));
     }
 }

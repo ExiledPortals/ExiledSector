@@ -41,7 +41,9 @@ public class RelayDialog implements InteractionDialogPlugin {
         if (relay != null && relay.getCustomInteractionDialogImageVisual() != null) {
             interactionDialog.getVisualPanel().showImageVisual(relay.getCustomInteractionDialogImageVisual());
         }
-        VanillaText.plainPara(interactionDialog.getTextPanel(), Translation.gameText("chart.relay." + kind.key() + ".description"));
+        if (kind != null) {
+            VanillaText.plainPara(interactionDialog.getTextPanel(), Translation.gameText("chart.relay." + kind.key() + ".description"));
+        }
         showState();
     }
 
@@ -50,7 +52,7 @@ public class RelayDialog implements InteractionDialogPlugin {
         OptionPanelAPI options = interactionDialog.getOptionPanel();
         options.clearOptions();
         ChartRun run = ChartRelays.liveRunFor(relay);
-        if (run == null) {
+        if (run == null || kind == null) {
             VanillaText.plainPara(text, Translation.gameText("chart.relay.stale"));
         } else if (RelayStates.isWoken(run, kind)) {
             VanillaText.plainPara(text, Translation.gameText("chart.relay.awake"));

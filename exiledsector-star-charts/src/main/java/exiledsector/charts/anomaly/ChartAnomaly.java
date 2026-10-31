@@ -61,7 +61,7 @@ public interface ChartAnomaly {
     }
 
     default UseVerdict insertVerdict(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
-        return fitsAt(generator.traits(cell)) && holdsAt(generator, state, cell) ? UseVerdict.ALLOWED
+        return fitsAt(generator.traits(cell)) && holdsAt(generator, state, cell) ? UseVerdict.ALLOW
                 : UseVerdict.refused(AtlasCatalystUse.refusalKey(AtlasAnomalies.InsertCheck.DOES_NOT_FIT));
     }
 

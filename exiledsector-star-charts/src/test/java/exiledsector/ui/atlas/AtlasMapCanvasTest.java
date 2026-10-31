@@ -79,13 +79,13 @@ class AtlasMapCanvasTest {
             AtlasGenerator generator = generator(state);
             AtlasCell bastion = AtlasDevTools.nearestOpenSite(generator, state, "bastion");
             AtlasDevTools.reach(generator, state, bastion);
-            AtlasAnomalies.insert(generator, state, bastion, SpatialBreach.ID, AtlasAnomalyRecord.Source.WORLD, null);
+            AtlasAnomalies.insert(generator, state, bastion, SpatialBreach.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null);
             AtlasMapCanvas canvas = new AtlasMapCanvas(generator, state);
             TreeViewport view = new TreeViewport(640f, 360f, AtlasMapCanvas.MIN_ZOOM);
 
             AtlasMapCanvas.AnomalyIcon icon = canvas.anomalyIcons().stream().filter(candidate -> candidate.cell().equals(bastion)).findFirst()
                     .orElseThrow();
-            assertEquals(SpatialBreach.ID, icon.anomalyId());
+            assertEquals(SpatialBreach.ANOMALY_ID, icon.anomalyId());
             assertEquals("graphics/icons/anomalies/spatial_breach.png", icon.iconPath());
 
             float orbit = AtlasMapCanvas.footprint(view) * AtlasMapCanvas.ANOMALY_ORBIT_SHARE;
@@ -109,7 +109,7 @@ class AtlasMapCanvasTest {
             AtlasCell fogged = AtlasCell.ORIGIN.around(12).stream()
                     .filter(cell -> !generator.isVoid(cell) && !AtlasReach.visible(generator, state).contains(cell))
                     .findFirst().orElseThrow();
-            AtlasAnomalies.insert(generator, state, fogged, RelayNetwork.ID, AtlasAnomalyRecord.Source.WORLD, null,
+            AtlasAnomalies.insert(generator, state, fogged, RelayNetwork.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null,
                     new AtlasAnomalyRecord.Chain(2, 3, left));
             AtlasMapCanvas canvas = new AtlasMapCanvas(generator, state);
             TreeViewport view = new TreeViewport(640f, 360f, AtlasMapCanvas.MIN_ZOOM);
@@ -118,7 +118,7 @@ class AtlasMapCanvasTest {
             AtlasMapCanvas.AnomalyIcon icon = canvas.anomalyIcons().stream().filter(candidate -> candidate.cell().equals(fogged)).findFirst()
                     .orElseThrow();
             assertTrue(icon.fogged());
-            assertEquals(RelayNetwork.ID, icon.anomalyId());
+            assertEquals(RelayNetwork.ANOMALY_ID, icon.anomalyId());
             assertEquals(icon, canvas.anomalyAt(view, canvas.screenX(view, fogged), canvas.screenY(view, fogged)));
             assertEquals(generator.node(fogged), canvas.nodeAt(fogged));
         } finally {

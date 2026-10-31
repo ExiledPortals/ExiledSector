@@ -19,10 +19,10 @@ import java.util.Set;
 
 public final class SupplyConvoy implements ChartAnomaly {
 
-    public static final String ID = "supply_convoy";
-    public static final String CARGO_KEY = ID + ".cargo";
-    public static final String ESCORT_KEY = ID + ".escort";
-    public static final String EXTRA_KEY = ID + ".extra";
+    public static final String ANOMALY_ID = "supply_convoy";
+    public static final String CARGO_KEY = ANOMALY_ID + ".cargo";
+    public static final String ESCORT_KEY = ANOMALY_ID + ".escort";
+    public static final String EXTRA_KEY = ANOMALY_ID + ".extra";
     public static final String CONVOY_MEMORY_KEY = "$exiledSector_chartConvoy";
     public static final String ROLE_MEMORY_KEY = "$exiledSector_chartConvoyRole";
     public static final SupplyConvoy INSTANCE = new SupplyConvoy();
@@ -34,7 +34,7 @@ public final class SupplyConvoy implements ChartAnomaly {
 
     @Override
     public String id() {
-        return ID;
+        return ANOMALY_ID;
     }
 
     @Override

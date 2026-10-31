@@ -48,7 +48,7 @@ public class ChartRaid {
     static final String RAID_NEVER_MIND = "exiledSector_raidNeverMind";
     static final String RAID_CONFIRM_CONTINUE = "exiledSector_raidConfirmContinue";
     static final String RAID_RESULT = "exiledSector_raidResult";
-    static final List<String> OPTIONS = List.of(RAID_VALUABLE, RAID_GO_BACK, RAID_CONFIRM, RAID_NEVER_MIND, RAID_CONFIRM_CONTINUE, RAID_RESULT);
+    static final List<String> RAID_OPTIONS = List.of(RAID_VALUABLE, RAID_GO_BACK, RAID_CONFIRM, RAID_NEVER_MIND, RAID_CONFIRM_CONTINUE, RAID_RESULT);
     static final float GRID_WIDTH = 350f;
     static final float GRID_VALUE_WIDTH = 50f;
     static final float PARAGRAPH_PAD = 10f;
@@ -88,7 +88,7 @@ public class ChartRaid {
     }
 
     public static boolean handles(Object optionData) {
-        return optionData instanceof String option && OPTIONS.contains(option);
+        return optionData instanceof String option && RAID_OPTIONS.contains(option);
     }
 
     public void optionSelected(Object optionData) {

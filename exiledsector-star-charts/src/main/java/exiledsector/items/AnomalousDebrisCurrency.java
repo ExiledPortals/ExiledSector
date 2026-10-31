@@ -118,7 +118,8 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
     static boolean keptClash(Item item, Modifier granted, Set<ModifierSlot> guarded) {
         List<RolledModifier> others = keptModifiers(item, guarded).stream().filter(rolled -> !rolled.modifierId().equals(granted.id())).toList();
         Set<String> grantedEffects = effectsOf(granted);
-        AffixLayout.Limits limits = AffixLayout.limits(item.definition().type());
+        ItemDefinition definition = item.definition();
+        AffixLayout.Limits limits = AffixLayout.limits(definition == null ? null : definition.type());
         long grantedSide = others.stream().filter(rolled -> rolled.slot() == granted.slot()).count();
         return grantedSide >= limits.maxPerSide() || others.size() >= limits.maxEffects()
                 || others.stream().anyMatch(rolled -> rolled.lines().stream().anyMatch(line -> grantedEffects.contains(line.effectName())));

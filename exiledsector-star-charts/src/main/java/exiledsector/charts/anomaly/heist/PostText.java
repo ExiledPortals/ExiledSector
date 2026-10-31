@@ -8,13 +8,13 @@ import java.util.List;
 
 final class PostText {
 
-    static final float PERCENT = 100f;
+    static final float PERCENT_SCALE = 100f;
 
     private PostText() {
     }
 
     static int percent(float share) {
-        return Math.round(share * PERCENT);
+        return Math.round(share * PERCENT_SCALE);
     }
 
     static List<String> lines(PostState state, PostScript script) {

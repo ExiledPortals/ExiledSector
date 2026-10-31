@@ -247,7 +247,7 @@ class LaunchingStationTest {
     void neitherStationAnomalyIsInsertableNorCanACatalystCarryIt() throws Exception {
         ChartTables.loadAnomalies();
 
-        for (String id : List.of(RemnantNexusStation.ID, DomainMothership.ID)) {
+        for (String id : List.of(RemnantNexusStation.ANOMALY_ID, DomainMothership.ANOMALY_ID)) {
             ChartAnomalies.Definition definition = ChartAnomalies.definition(id);
             assertNotNull(definition, id);
             assertFalse(definition.insertable(), id);
@@ -255,20 +255,20 @@ class LaunchingStationTest {
             assertTrue(definition.keptWhenSpent(), id);
             assertFalse(definition.icon().isEmpty(), id);
         }
-        assertEquals(Set.of("remnant_expanse"), ChartAnomalies.definition(RemnantNexusStation.ID).biomes());
-        assertEquals(Set.of("derelict_graveyard"), ChartAnomalies.definition(DomainMothership.ID).biomes());
-        assertSame(RemnantNexusStation.INSTANCE, ChartAnomalies.byId(RemnantNexusStation.ID));
-        assertSame(DomainMothership.INSTANCE, ChartAnomalies.byId(DomainMothership.ID));
+        assertEquals(Set.of("remnant_expanse"), ChartAnomalies.definition(RemnantNexusStation.ANOMALY_ID).biomes());
+        assertEquals(Set.of("derelict_graveyard"), ChartAnomalies.definition(DomainMothership.ANOMALY_ID).biomes());
+        assertSame(RemnantNexusStation.INSTANCE, ChartAnomalies.byId(RemnantNexusStation.ANOMALY_ID));
+        assertSame(DomainMothership.INSTANCE, ChartAnomalies.byId(DomainMothership.ANOMALY_ID));
 
         List<String> problems = AtlasCatalysts.register(new JSONArray()
-                .put(new JSONObject().put("id", "nexus_orders").put("anomaly", RemnantNexusStation.ID).put("family", "orders").put("effect", "anomaly"))
-                .put(new JSONObject().put("id", "mothership_survey").put("anomaly", DomainMothership.ID).put("family", "survey").put("effect", "anomaly")));
+                .put(new JSONObject().put("id", "nexus_orders").put("anomaly", RemnantNexusStation.ANOMALY_ID).put("family", "orders").put("effect", "anomaly"))
+                .put(new JSONObject().put("id", "mothership_survey").put("anomaly", DomainMothership.ANOMALY_ID).put("family", "survey").put("effect", "anomaly")));
 
         assertEquals(2, problems.size());
         assertNull(AtlasCatalysts.byItemId("nexus_orders"));
         assertNull(AtlasCatalysts.byItemId("mothership_survey"));
-        assertEquals(1, ChartAnomalies.register(new JSONArray().put(new JSONObject().put("id", RemnantNexusStation.ID).put("insertable", "yes")
+        assertEquals(1, ChartAnomalies.register(new JSONArray().put(new JSONObject().put("id", RemnantNexusStation.ANOMALY_ID).put("insertable", "yes")
                 .put("biomes", "remnant_expanse"))).size());
-        assertFalse(ChartAnomalies.definition(RemnantNexusStation.ID).insertable());
+        assertFalse(ChartAnomalies.definition(RemnantNexusStation.ANOMALY_ID).insertable());
     }
 }

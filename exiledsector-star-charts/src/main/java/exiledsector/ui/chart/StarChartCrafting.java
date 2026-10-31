@@ -82,7 +82,7 @@ public final class StarChartCrafting {
             return NONE_OWNED;
         }
         if (ItemCrafting.canUse(currency, chart, allowedUniques, wards)) {
-            return UseVerdict.ALLOWED;
+            return UseVerdict.ALLOW;
         }
         if (ItemCrafting.canUse(currency, chart, allowedUniques)) {
             return WARD_BLOCKS;

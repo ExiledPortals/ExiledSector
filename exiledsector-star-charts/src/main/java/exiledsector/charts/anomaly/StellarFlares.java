@@ -6,7 +6,7 @@ import com.fs.starfarer.api.util.Misc;
 
 public final class StellarFlares implements ChartAnomaly {
 
-    public static final String ID = "stellar_flares";
+    public static final String ANOMALY_ID = "stellar_flares";
     public static final StellarFlares INSTANCE = new StellarFlares();
     static final float FLARE_CHANCE = 1f;
 
@@ -15,7 +15,7 @@ public final class StellarFlares implements ChartAnomaly {
 
     @Override
     public String id() {
-        return ID;
+        return ANOMALY_ID;
     }
 
     @Override

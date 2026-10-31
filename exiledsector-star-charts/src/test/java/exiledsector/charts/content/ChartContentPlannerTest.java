@@ -343,17 +343,17 @@ class ChartContentPlannerTest {
         ChartTables.loadAnomalies();
         try {
             ChartTier tier = ChartTiers.forTier(10);
-            float bossSizePercent = ChartAnomalies.definition(PowerfulBoss.ID).effects().get(0).value();
+            float bossSizePercent = ChartAnomalies.definition(PowerfulBoss.ANOMALY_ID).effects().get(0).value();
             ChartContentPlan ordinary = ChartContentPlanner.plan(5L, tier, ChartPois.all(), ChartFactions.all(), EVERY_FACTION, ChartGenContext.none(),
                     StarChartSettings.DEFAULT_FLEET_LIMIT, List.of());
             ChartContentPlan powerful = ChartContentPlanner.plan(5L, tier, ChartPois.all(), ChartFactions.all(), EVERY_FACTION, ChartGenContext.none(),
-                    StarChartSettings.DEFAULT_FLEET_LIMIT, List.of(PowerfulBoss.ID));
+                    StarChartSettings.DEFAULT_FLEET_LIMIT, List.of(PowerfulBoss.ANOMALY_ID));
 
             assertTrue(tier.boss());
             assertEquals(ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, tier.bossSize())), ordinary.fleetPoints(FleetRole.BOSS), 0.01f);
             assertEquals(ChartTier.fleetPoints(Math.min(ChartContentPlanner.BOSS_SIZE_CAP, tier.bossSize() + bossSizePercent)),
                     powerful.fleetPoints(FleetRole.BOSS), 0.01f);
-            assertEquals(List.of(PowerfulBoss.ID), powerful.anomalies());
+            assertEquals(List.of(PowerfulBoss.ANOMALY_ID), powerful.anomalies());
         } finally {
             ChartTables.resetAnomalies();
         }

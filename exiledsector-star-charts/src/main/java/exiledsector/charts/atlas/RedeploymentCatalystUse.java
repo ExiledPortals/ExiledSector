@@ -44,7 +44,7 @@ public record RedeploymentCatalystUse(AtlasCatalysts.Catalyst catalyst, AtlasGen
         if (holder != null && !holder.equals(AtlasOpening.territoryOwnerOf(generator, state, cell))) {
             return UseVerdict.refused(INFESTED_KEY).with("faction", factionName(holder));
         }
-        return newOwner(cell) == null ? UseVerdict.refused(NO_FACTION_KEY) : UseVerdict.ALLOWED;
+        return newOwner(cell) == null ? UseVerdict.refused(NO_FACTION_KEY) : UseVerdict.ALLOW;
     }
 
     @Override

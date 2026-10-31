@@ -49,7 +49,7 @@ class AnomalousDebrisTest {
 
     @Test
     void theAnomalyIsBuiltIn() {
-        assertSame(AnomalousDebris.INSTANCE, ChartAnomalies.byId(AnomalousDebris.ID));
+        assertSame(AnomalousDebris.INSTANCE, ChartAnomalies.byId(AnomalousDebris.ANOMALY_ID));
     }
 
     @Test

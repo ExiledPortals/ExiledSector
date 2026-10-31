@@ -20,7 +20,7 @@ public final class ChartSkirmishes {
 
     public static boolean checkFinalPush(SectorAPI sector) {
         ChartRun run = ChartRuns.currentOrNull();
-        if (run == null || !run.runState().isLive() || !run.anomalyIds().contains(FactionSkirmish.ID)) {
+        if (run == null || !run.runState().isLive() || !run.anomalyIds().contains(FactionSkirmish.ANOMALY_ID)) {
             return false;
         }
         StarSystemAPI system = sector.getStarSystem(run.systemId());

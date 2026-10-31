@@ -108,7 +108,7 @@ class ChartRunEffectsTest {
             ChartRun run = new ChartRun("storm", ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
             assertEquals(0f, ChartRunEffects.contextOf(run).dropPercent(DropType.CURRENCY));
 
-            run.recordContent(new ChartContent(1, "pirates", null, List.of(), null, 0, 0, List.of(MagneticStorm.ID)));
+            run.recordContent(new ChartContent(1, "pirates", null, List.of(), null, 0, 0, List.of(MagneticStorm.ANOMALY_ID)));
 
             assertTrue(ChartRunEffects.contextOf(run).dropPercent(DropType.CURRENCY) > 0f);
         } finally {

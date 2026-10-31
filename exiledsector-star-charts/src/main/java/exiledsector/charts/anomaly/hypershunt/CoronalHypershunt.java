@@ -29,7 +29,7 @@ import java.util.Random;
 
 public final class CoronalHypershunt implements ChartAnomaly {
 
-    public static final String ID = "coronal_hypershunt";
+    public static final String ANOMALY_ID = "coronal_hypershunt";
     public static final String HYPERSHUNT_TAG = ChartIds.PREFIX + "coronal_hypershunt";
     public static final CoronalHypershunt INSTANCE = new CoronalHypershunt();
     public static final float MIN_DISTANCE = 15f;
@@ -44,7 +44,7 @@ public final class CoronalHypershunt implements ChartAnomaly {
 
     @Override
     public String id() {
-        return ID;
+        return ANOMALY_ID;
     }
 
     @Override
@@ -64,7 +64,7 @@ public final class CoronalHypershunt implements ChartAnomaly {
 
     @Override
     public UseVerdict insertVerdict(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
-        return fitsAt(generator.traits(cell)) ? UseVerdict.ALLOWED : UseVerdict.refused(TOO_CLOSE_KEY);
+        return fitsAt(generator.traits(cell)) ? UseVerdict.ALLOW : UseVerdict.refused(TOO_CLOSE_KEY);
     }
 
     @Override
@@ -104,7 +104,7 @@ public final class CoronalHypershunt implements ChartAnomaly {
             return null;
         }
         ChartRun run = ChartRuns.currentOrNull();
-        return run != null && run.runState().isLive() && ChartIds.belongsToRun(hypershunt, run.runId()) && run.anomalyIds().contains(ID) ? run : null;
+        return run != null && run.runState().isLive() && ChartIds.belongsToRun(hypershunt, run.runId()) && run.anomalyIds().contains(ANOMALY_ID) ? run : null;
     }
 
     static SectorEntityToken hypershuntIn(LocationAPI location) {

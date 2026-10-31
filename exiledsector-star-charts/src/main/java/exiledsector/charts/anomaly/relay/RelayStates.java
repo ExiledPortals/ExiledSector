@@ -7,7 +7,7 @@ public final class RelayStates {
     public static final int PAID = 1;
     public static final int SYNCED = 2;
     public static final int WOKEN = 4;
-    static final String KEY_PREFIX = RelayNetwork.ID + ".";
+    static final String KEY_PREFIX = RelayNetwork.ANOMALY_ID + ".";
 
     private RelayStates() {
     }
@@ -38,7 +38,7 @@ public final class RelayStates {
 
     static boolean add(ChartRun run, RelayKind kind, int flag) {
         int current = flags(run, kind);
-        if ((current & flag) == flag) {
+        if (run == null || (current & flag) == flag) {
             return false;
         }
         run.recordAnomalyState(key(kind), Integer.toString(current | flag));
@@ -51,7 +51,7 @@ public final class RelayStates {
     }
 
     public static boolean allWoken(ChartRun run) {
-        if (run == null || !run.anomalyIds().contains(RelayNetwork.ID)) {
+        if (run == null || !run.anomalyIds().contains(RelayNetwork.ANOMALY_ID)) {
             return false;
         }
         for (RelayKind kind : RelayKind.values()) {

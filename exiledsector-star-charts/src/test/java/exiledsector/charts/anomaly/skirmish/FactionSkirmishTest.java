@@ -102,12 +102,12 @@ class FactionSkirmishTest {
     @Test
     void theSkirmishDropsFromASystemOnceNoNeighbourCanAttack() {
         ChartTables.useAnomalies(List.of(FactionSkirmish.INSTANCE),
-                List.of(new ChartAnomalies.Definition(FactionSkirmish.ID, 1f, 1, 15, "", "", true, Set.of(), false)));
+                List.of(new ChartAnomalies.Definition(FactionSkirmish.ANOMALY_ID, 1f, 1, 15, "", "", true, Set.of(), false)));
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = new AtlasGenerator(SEED, RULES, AtlasUnlocks.NONE, state);
         AtlasCell cell = borderSystem(generator, state);
-        AtlasAnomalies.insert(generator, state, cell, FactionSkirmish.ID, AtlasAnomalyRecord.Source.WORLD, null);
-        assertEquals(List.of(FactionSkirmish.ID), AtlasAnomalies.effective(generator, state, cell));
+        AtlasAnomalies.insert(generator, state, cell, FactionSkirmish.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null);
+        assertEquals(List.of(FactionSkirmish.ANOMALY_ID), AtlasAnomalies.effective(generator, state, cell));
 
         Set<String> neutral = new HashSet<>(laneOwners(generator, state, cell));
         neutral.remove(FactionSkirmish.defender(generator, state, cell));
@@ -119,11 +119,11 @@ class FactionSkirmishTest {
     @Test
     void assaultOrdersInsertOnlyWhereTheCurrentOwnerCanBeAttackedAndSayWhyNot() {
         ChartTables.useAnomalies(List.of(FactionSkirmish.INSTANCE),
-                List.of(new ChartAnomalies.Definition(FactionSkirmish.ID, 1f, 1, 15, "", "", true, Set.of(), false)));
+                List.of(new ChartAnomalies.Definition(FactionSkirmish.ANOMALY_ID, 1f, 1, 15, "", "", true, Set.of(), false)));
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = new AtlasGenerator(SEED, RULES, AtlasUnlocks.NONE, state);
         AtlasCell cell = borderSystem(generator, state);
-        AtlasCatalysts.Catalyst assaultOrders = new AtlasCatalysts.Catalyst("test_assault_orders", FactionSkirmish.ID, AtlasCatalysts.Family.ORDERS,
+        AtlasCatalysts.Catalyst assaultOrders = new AtlasCatalysts.Catalyst("test_assault_orders", FactionSkirmish.ANOMALY_ID, AtlasCatalysts.Family.ORDERS,
                 1f, 1);
         AtlasCatalystUse use = AtlasCatalystUse.of(assaultOrders, generator, state, null, Set.of(cell));
         assertTrue(use.check(cell).allowed());
@@ -140,7 +140,7 @@ class FactionSkirmishTest {
         SkirmishFactions.useForTests(neutral);
 
         assertEquals(FactionSkirmish.NO_ATTACKER_KEY, use.check(cell).refusalKey());
-        assertEquals(AtlasAnomalies.InsertCheck.DOES_NOT_FIT, AtlasAnomalies.canInsert(generator, state, cell, FactionSkirmish.ID, null));
+        assertEquals(AtlasAnomalies.InsertCheck.DOES_NOT_FIT, AtlasAnomalies.canInsert(generator, state, cell, FactionSkirmish.ANOMALY_ID, null));
     }
 
     @Test
@@ -148,7 +148,7 @@ class FactionSkirmishTest {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = new AtlasGenerator(SEED, RULES, AtlasUnlocks.NONE, state);
         AtlasCell cell = borderSystem(generator, state);
-        AtlasRunNode skirmish = new AtlasRunNode(cell.pack(), "hegemony", List.of(), List.of(FactionSkirmish.ID), false);
+        AtlasRunNode skirmish = new AtlasRunNode(cell.pack(), "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID), false);
         AtlasRunNode plain = new AtlasRunNode(cell.pack(), "hegemony", List.of(), List.of(), false);
 
         AtlasRunNode joined = FactionSkirmish.join(skirmish, generator, state, cell, SkirmishSide.DEFENDER);
@@ -175,7 +175,7 @@ class FactionSkirmishTest {
     void theAtlasRollSkipsSystemsTheSkirmishDoesNotFit() throws Exception {
         ChartTables.loadAnomalies();
         AtlasAnomalyCandidate candidate = AtlasData.rules().anomalies().stream()
-                .filter(anomaly -> anomaly.id().equals(FactionSkirmish.ID)).findFirst().orElseThrow();
+                .filter(anomaly -> anomaly.id().equals(FactionSkirmish.ANOMALY_ID)).findFirst().orElseThrow();
 
         assertTrue(candidate.weighting().weightFor(traits("hegemony", List.of("tritachyon"), null, null), 1f) > 0f);
         assertEquals(0f, candidate.weighting().weightFor(traits("hegemony", List.of("hegemony"), null, null), 1f));

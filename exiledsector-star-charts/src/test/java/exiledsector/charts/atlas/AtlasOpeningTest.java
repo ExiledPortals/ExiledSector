@@ -37,7 +37,7 @@ class AtlasOpeningTest {
                 new AtlasSpecial("bastion", AtlasSpecial.Kind.BASTION, AtlasSpecial.Placement.FIXED, 0f, 1f, 0f, 3, 25f, "", "", ""));
         return new AtlasRules(regions, Map.of("compact", 1f), Map.of("pirates", 1f), new AtlasMarkerRule(0.3f, 0f, 0.3f),
                 new AtlasMarkerRule(1f, 0f, 1f), specials,
-                List.of(new AtlasAnomalyCandidate(SpatialBreach.ID, 1f, ""), new AtlasAnomalyCandidate(PowerfulBoss.ID, 1f, "")));
+                List.of(new AtlasAnomalyCandidate(SpatialBreach.ANOMALY_ID, 1f, ""), new AtlasAnomalyCandidate(PowerfulBoss.ANOMALY_ID, 1f, "")));
     }
 
     @BeforeEach
@@ -76,11 +76,11 @@ class AtlasOpeningTest {
         AtlasRunNode node = AtlasOpening.runNode(generator, state, cell);
 
         assertEquals("remnant", node.factionId());
-        assertEquals(Set.of(SpatialBreach.ID, PowerfulBoss.ID), Set.copyOf(node.anomalyIds()));
+        assertEquals(Set.of(SpatialBreach.ANOMALY_ID, PowerfulBoss.ANOMALY_ID), Set.copyOf(node.anomalyIds()));
         assertTrue(node.guaranteedBossTierUp());
         assertEquals(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_FLEET_SIZE_PERCENT, 25f)), node.effects());
         ChartGenContext context = ChartGenContext.none().withAtlasNode(node).withAnomalyEffects(node.anomalyIds());
-        assertEquals(ChartAnomalies.definition(PowerfulBoss.ID).effects().get(0).value(), context.bossSizePercent());
+        assertEquals(ChartAnomalies.definition(PowerfulBoss.ANOMALY_ID).effects().get(0).value(), context.bossSizePercent());
         assertTrue(context.bossSpoilsMult() > 1f);
 
         state.add(cell, AtlasState.MARKERS_SPENT | AtlasState.CLEANSED);

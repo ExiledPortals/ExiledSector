@@ -26,8 +26,8 @@ class AtlasBiomeAnomaliesTest {
     private static final int SCAN_RADIUS = 36;
     private static final String EXPANSE = "remnant_expanse";
     private static final String GRAVEYARD = "derelict_graveyard";
-    private static final String NEXUS = RemnantNexusStation.ID;
-    private static final String MOTHERSHIP = DomainMothership.ID;
+    private static final String NEXUS = RemnantNexusStation.ANOMALY_ID;
+    private static final String MOTHERSHIP = DomainMothership.ANOMALY_ID;
     private static final AtlasMarkerRule ALWAYS = new AtlasMarkerRule(1f, 0f, 1f);
 
     private static final List<AtlasRegion> REGIONS = List.of(

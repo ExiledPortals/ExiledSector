@@ -248,11 +248,11 @@ public class ChartOpenCommand extends CampaignCommand {
 
         List<String> forcedAnomalyIds() {
             List<String> ids = new ArrayList<>(anomalyIds);
-            if (breach && !ids.contains(SpatialBreach.ID)) {
-                ids.add(SpatialBreach.ID);
+            if (breach && !ids.contains(SpatialBreach.ANOMALY_ID)) {
+                ids.add(SpatialBreach.ANOMALY_ID);
             }
-            if (side != null && !ids.contains(FactionSkirmish.ID)) {
-                ids.add(FactionSkirmish.ID);
+            if (side != null && !ids.contains(FactionSkirmish.ANOMALY_ID)) {
+                ids.add(FactionSkirmish.ANOMALY_ID);
             }
             return List.copyOf(ids);
         }

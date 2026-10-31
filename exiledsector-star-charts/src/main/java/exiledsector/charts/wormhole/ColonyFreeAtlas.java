@@ -40,7 +40,7 @@ public final class ColonyFreeAtlas {
     }
 
     public static void syncAbility(SectorAPI sector) {
-        CharacterDataAPI character = sector == null ? null : sector.getCharacterData();
+        CharacterDataAPI character = sector.getCharacterData();
         if (character == null || sector.getPlayerFleet() == null) {
             return;
         }

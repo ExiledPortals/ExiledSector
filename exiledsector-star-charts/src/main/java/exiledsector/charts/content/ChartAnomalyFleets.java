@@ -28,8 +28,7 @@ public final class ChartAnomalyFleets {
     }
 
     public static ChartTier tier(int tier, ChartGenContext context) {
-        ChartTier base = ChartTiers.forTier(ChartTiers.clamp(tier));
-        return context == null ? base : context.adjust(base);
+        return context.adjust(ChartTiers.forTier(ChartTiers.clamp(tier)));
     }
 
     public static Spec combat(String factionId, String fleetType, ChartTier tier, float sizePercent) {

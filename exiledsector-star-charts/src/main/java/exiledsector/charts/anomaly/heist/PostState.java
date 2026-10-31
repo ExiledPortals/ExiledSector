@@ -6,7 +6,7 @@ import java.util.Locale;
 
 public record PostState(float suspicion, boolean alarm, float vaultShare, boolean taken, long seed) {
 
-    static final String KEY = ListeningPost.ID;
+    static final String KEY = ListeningPost.ANOMALY_ID;
     static final String SEPARATOR = ",";
     static final int SEED_RADIX = Character.MAX_RADIX;
 

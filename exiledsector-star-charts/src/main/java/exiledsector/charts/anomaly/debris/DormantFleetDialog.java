@@ -25,7 +25,7 @@ import java.util.Map;
 
 public class DormantFleetDialog implements InteractionDialogPlugin {
 
-    static final String ENGAGE = "exiledSector_debrisEngage";
+    static final String ENGAGE_OPTION = "exiledSector_debrisEngage";
     static final String CORRUPT = "exiledSector_debrisCorrupt";
     static final String LEAVE = "exiledSector_debrisLeave";
     static final String KERNEL_ID = CraftingCurrency.CORRUPTION.itemId();
@@ -63,8 +63,8 @@ public class DormantFleetDialog implements InteractionDialogPlugin {
     private void showOptions(Options choices) {
         OptionPanelAPI options = interactionDialog.getOptionPanel();
         options.clearOptions();
-        options.addOption(Translation.gameText("chart.debris.dialog.engage"), ENGAGE);
-        options.setEnabled(ENGAGE, choices.canEngage());
+        options.addOption(Translation.gameText("chart.debris.dialog.engage"), ENGAGE_OPTION);
+        options.setEnabled(ENGAGE_OPTION, choices.canEngage());
         String kernelName = Translation.gameText("material." + KERNEL_ID + ".name");
         options.addOption(I18n.forGameText(() -> Translation.msg("chart.debris.dialog.corrupt").arg("count", KERNEL_COST).arg("currency", kernelName)
                 .text()), CORRUPT, Translation.gameText("chart.debris.dialog.corruptTooltip"));
@@ -73,7 +73,7 @@ public class DormantFleetDialog implements InteractionDialogPlugin {
             options.setTooltip(CORRUPT, I18n.forGameText(() -> Translation.msg(choices.corruptBlockedKey()).arg("currency", kernelName).text()));
         }
         if (!choices.canEngage()) {
-            options.setTooltip(ENGAGE, Translation.gameText("chart.debris.dialog.noReadyShips"));
+            options.setTooltip(ENGAGE_OPTION, Translation.gameText("chart.debris.dialog.noReadyShips"));
         }
         options.addOption(Translation.gameText("chart.debris.dialog.leave"), LEAVE);
         options.setShortcut(LEAVE, Keyboard.KEY_ESCAPE, false, false, false, true);
@@ -92,7 +92,7 @@ public class DormantFleetDialog implements InteractionDialogPlugin {
     public void optionSelected(String optionText, Object optionData) {
         CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
         Options choices = options(hasReadyShips(playerFleet), kernelsHeld(playerFleet));
-        if (ENGAGE.equals(optionData) && choices.canEngage()) {
+        if (ENGAGE_OPTION.equals(optionData) && choices.canEngage()) {
             engage(false, playerFleet);
         } else if (CORRUPT.equals(optionData) && choices.canCorrupt()) {
             engage(true, playerFleet);

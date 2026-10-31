@@ -69,14 +69,14 @@ class AtlasNodeTextTest {
     @Test
     void aSkirmishSystemNamesBothSidesAndOffersEachSideToJoin() {
         ChartTables.useAnomalies(List.of(FactionSkirmish.INSTANCE),
-                List.of(new ChartAnomalies.Definition(FactionSkirmish.ID, 1f, 1, 15, "", "", true, Set.of(), false)));
+                List.of(new ChartAnomalies.Definition(FactionSkirmish.ANOMALY_ID, 1f, 1, 15, "", "", true, Set.of(), false)));
         try {
             AtlasState state = new AtlasState(SEED);
             List<AtlasRegion> regions = List.of(new AtlasRegion(AtlasRegion.NORMAL, 1f, 0, "", "", Map.of(), Map.of(), Map.of()));
             AtlasGenerator generator = new AtlasGenerator(SEED, new AtlasRules(regions, Map.of("compact", 1f), Map.of("hegemony", 1f, "tritachyon", 1f),
                     AtlasMarkerRule.NEVER, AtlasMarkerRule.NEVER, List.of(), List.of()), AtlasUnlocks.NONE, state);
             AtlasCell cell = AtlasCell.ORIGIN.around(20).stream()
-                    .filter(candidate -> AtlasAnomalies.insert(generator, state, candidate, FactionSkirmish.ID, AtlasAnomalyRecord.Source.WORLD, null)
+                    .filter(candidate -> AtlasAnomalies.insert(generator, state, candidate, FactionSkirmish.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null)
                             .check().allows())
                     .findFirst().orElseThrow();
             String defender = AtlasNodeText.tidy(FactionSkirmish.defender(generator, state, cell));
@@ -114,7 +114,7 @@ class AtlasNodeTextTest {
             AtlasState state = new AtlasState(SEED);
             AtlasGenerator generator = generator(state);
             AtlasCell cell = generator.lanes(AtlasCell.ORIGIN).get(0);
-            AtlasAnomalies.insert(generator, state, cell, RelayNetwork.ID, AtlasAnomalyRecord.Source.WORLD, null,
+            AtlasAnomalies.insert(generator, state, cell, RelayNetwork.ANOMALY_ID, AtlasAnomalyRecord.Source.WORLD, null,
                     new AtlasAnomalyRecord.Chain(3, 3, AtlasCell.ORIGIN));
 
             List<AtlasNodeText.Line> markers = AtlasNodeText.markers(generator, state, cell, generator.node(cell));
@@ -126,7 +126,7 @@ class AtlasNodeTextTest {
             assertEquals(List.of("40% increased enemy fleet size",
                     "50% increased quantity of items found in the system, and 50% increased completion reward"), styledLines);
             assertTrue(AtlasNodeText.confirmLines(generator, state, cell).stream().noneMatch(line -> line.contains("<")));
-            assertTrue(AtlasNodeText.anomalyBody(generator, state, cell, RelayNetwork.ID).plain().contains("Stage 3 of 3"));
+            assertTrue(AtlasNodeText.anomalyBody(generator, state, cell, RelayNetwork.ANOMALY_ID).plain().contains("Stage 3 of 3"));
             assertEquals(StyledText.parse("<bad>40%</bad> x"), AtlasScreen.styled(new AtlasNodeText.Line("<bad>40%</bad> x", AtlasNodeText.Tone.STYLED)));
         } finally {
             AtlasData.registerNodeEffects(new JSONArray());

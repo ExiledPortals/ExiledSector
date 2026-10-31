@@ -109,7 +109,8 @@ public final class ChartAnomalies {
 
     private static Definition parse(CsvRows csv, JSONObject row, String id) {
         BuiltInTable.TierRange tiers = BuiltInTable.TierRange.parse(csv, row, id);
-        boolean replacesStar = byId(id).replacesStar();
+        ChartAnomaly anomaly = byId(id);
+        boolean replacesStar = anomaly != null && anomaly.replacesStar();
         boolean insertable = csv.flag(row, "insertable", false, id);
         if (insertable && replacesStar) {
             csv.problem(id, "insertable", "yes (an anomaly that replaces the star can't be inserted)");

@@ -8,8 +8,8 @@ public record ExcavationSite(int index, String planetId, Access access, DropType
 
     static final String SEPARATOR = ",";
     static final int SEED_RADIX = Character.MAX_RADIX;
-    static final String CLEARED = "cleared";
-    static final String STANDING = "standing";
+    static final String CLEARED_MARK = "cleared";
+    static final String STANDING_MARK = "standing";
 
     public enum Access {
         OPEN,
@@ -34,7 +34,7 @@ public record ExcavationSite(int index, String planetId, Access access, DropType
     }
 
     String encode() {
-        return String.join(SEPARATOR, planetId, access.key(), lean.name(), Long.toString(seed, SEED_RADIX), cleared ? CLEARED : STANDING);
+        return String.join(SEPARATOR, planetId, access.key(), lean.name(), Long.toString(seed, SEED_RADIX), cleared ? CLEARED_MARK : STANDING_MARK);
     }
 
     static boolean encodable(String planetId) {
@@ -52,7 +52,7 @@ public record ExcavationSite(int index, String planetId, Access access, DropType
             return null;
         }
         try {
-            return new ExcavationSite(index, parts[0], access, lean, Long.parseLong(parts[3], SEED_RADIX), CLEARED.equals(parts[4]));
+            return new ExcavationSite(index, parts[0], access, lean, Long.parseLong(parts[3], SEED_RADIX), CLEARED_MARK.equals(parts[4]));
         } catch (NumberFormatException e) {
             return null;
         }

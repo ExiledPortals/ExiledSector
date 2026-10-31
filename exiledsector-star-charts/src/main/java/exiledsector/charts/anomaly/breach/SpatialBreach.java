@@ -21,10 +21,10 @@ import java.util.Random;
 
 public final class SpatialBreach implements ChartAnomaly {
 
-    public static final String ID = "spatial_breach";
-    public static final String GROWTH_KEY = ID + ".growth";
-    public static final String CACHE_KEY = ID + ".caches";
-    public static final String CACHE_ITEM_KEY = ID + ".cacheItems";
+    public static final String ANOMALY_ID = "spatial_breach";
+    public static final String GROWTH_KEY = ANOMALY_ID + ".growth";
+    public static final String CACHE_KEY = ANOMALY_ID + ".caches";
+    public static final String CACHE_ITEM_KEY = ANOMALY_ID + ".cacheItems";
     public static final String TERRAIN_ID = "exiledSector_chart_breach";
     public static final String CORE_TYPE = "exiledSector_chart_breach_core";
     public static final String CORE_TAG = ChartIds.PREFIX + "breach_core";
@@ -46,7 +46,7 @@ public final class SpatialBreach implements ChartAnomaly {
 
     @Override
     public String id() {
-        return ID;
+        return ANOMALY_ID;
     }
 
     @Override

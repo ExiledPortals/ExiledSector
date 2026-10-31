@@ -293,9 +293,9 @@ class ChartContentGeneratorTest {
     }
 
     private ChartContent skirmish(SkirmishSide side) {
-        ChartGenContext context = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of(FactionSkirmish.ID), false,
+        ChartGenContext context = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID), false,
                 "tritachyon", side));
-        return ChartContentGenerator.generate(sector, system, RUN_ID, 11L, 8, WORMHOLE, context, null, List.of(FactionSkirmish.ID));
+        return ChartContentGenerator.generate(sector, system, RUN_ID, 11L, 8, WORMHOLE, context, null, List.of(FactionSkirmish.ANOMALY_ID));
     }
 
     private String factionOf(CampaignFleetAPI fleet) {
@@ -611,13 +611,13 @@ class ChartContentGeneratorTest {
     @Test
     void aPlannedAnomalyIsGeneratedWithThePlacedSitesAndRecorded() {
         ChartAnomaliesTest.PlacesNothing expansion = new ChartAnomaliesTest.PlacesNothing();
-        ChartAnomalies.useForTests(List.of(expansion), List.of(ChartAnomaliesTest.definition(SpatialBreach.ID)));
+        ChartAnomalies.useForTests(List.of(expansion), List.of(ChartAnomaliesTest.definition(SpatialBreach.ANOMALY_ID)));
         try {
-            ChartGenContext breach = ChartGenContext.none().withAnomalies(List.of(SpatialBreach.ID));
+            ChartGenContext breach = ChartGenContext.none().withAnomalies(List.of(SpatialBreach.ANOMALY_ID));
 
             ChartContent content = ChartContentGenerator.generate(sector, system, RUN_ID, 42L, 10, WORMHOLE, breach);
 
-            assertEquals(List.of(SpatialBreach.ID), content.anomalies());
+            assertEquals(List.of(SpatialBreach.ANOMALY_ID), content.anomalies());
             assertEquals(1, expansion.sites.size());
             AnomalyContentSite site = expansion.sites.get(0);
             assertEquals(RUN_ID, site.runId());
@@ -637,7 +637,7 @@ class ChartContentGeneratorTest {
         ChartAnomaly failing = new ChartAnomaly() {
             @Override
             public String id() {
-                return SpatialBreach.ID;
+                return SpatialBreach.ANOMALY_ID;
             }
 
             @Override
@@ -645,9 +645,9 @@ class ChartContentGeneratorTest {
                 throw new IllegalStateException("test failure");
             }
         };
-        ChartAnomalies.useForTests(List.of(failing), List.of(ChartAnomaliesTest.definition(SpatialBreach.ID)));
+        ChartAnomalies.useForTests(List.of(failing), List.of(ChartAnomaliesTest.definition(SpatialBreach.ANOMALY_ID)));
         try {
-            ChartGenContext breach = ChartGenContext.none().withAnomalies(List.of(SpatialBreach.ID));
+            ChartGenContext breach = ChartGenContext.none().withAnomalies(List.of(SpatialBreach.ANOMALY_ID));
 
             ChartContent content = ChartContentGenerator.generate(sector, system, RUN_ID, 42L, 10, WORMHOLE, breach);
 
@@ -683,7 +683,7 @@ class ChartContentGeneratorTest {
         ChartAnomaly placesThenFails = new ChartAnomaly() {
             @Override
             public String id() {
-                return SpatialBreach.ID;
+                return SpatialBreach.ANOMALY_ID;
             }
 
             @Override
@@ -693,9 +693,9 @@ class ChartContentGeneratorTest {
                 throw new IllegalStateException("test failure");
             }
         };
-        ChartAnomalies.useForTests(List.of(placesThenFails), List.of(ChartAnomaliesTest.definition(SpatialBreach.ID)));
+        ChartAnomalies.useForTests(List.of(placesThenFails), List.of(ChartAnomaliesTest.definition(SpatialBreach.ANOMALY_ID)));
         try {
-            ChartGenContext breach = ChartGenContext.none().withAnomalies(List.of(SpatialBreach.ID));
+            ChartGenContext breach = ChartGenContext.none().withAnomalies(List.of(SpatialBreach.ANOMALY_ID));
 
             ChartContent content = ChartContentGenerator.generate(sector, system, RUN_ID, 42L, 10, WORMHOLE, breach);
 

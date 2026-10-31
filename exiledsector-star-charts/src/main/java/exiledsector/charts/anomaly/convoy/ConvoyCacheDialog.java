@@ -23,7 +23,7 @@ import java.util.Random;
 
 public class ConvoyCacheDialog implements InteractionDialogPlugin, ChartRaid.Host {
 
-    static final String RAID = "exiledSector_convoyCacheRaid";
+    static final String RAID_OPTION = "exiledSector_convoyCacheRaid";
     static final String CONTINUE = "exiledSector_convoyCacheContinue";
     static final String LEAVE = "exiledSector_convoyCacheLeave";
 
@@ -72,7 +72,7 @@ public class ConvoyCacheDialog implements InteractionDialogPlugin, ChartRaid.Hos
                     .arg("planet", planetName).text()));
             VanillaText.addPara(dialog.getTextPanel(), I18n.forGameText(() -> Translation.msg("chart.convoy.intel.manifest")
                     .arg("cargo", ConvoyCargo.manifest(tier)).styled()), Misc.getTextColor());
-            options.addOption(Translation.gameText("chart.convoy.cache.option.raid"), RAID);
+            options.addOption(Translation.gameText("chart.convoy.cache.option.raid"), RAID_OPTION);
         }
         options.addOption(Translation.gameText("chart.convoy.cache.option.continue"), CONTINUE);
         options.addOption(Translation.gameText("chart.dialog.option.leave"), LEAVE);
@@ -83,7 +83,7 @@ public class ConvoyCacheDialog implements InteractionDialogPlugin, ChartRaid.Hos
     public void optionSelected(String optionText, Object optionData) {
         if (raid != null && ChartRaid.handles(optionData)) {
             raid.optionSelected(optionData);
-        } else if (RAID.equals(optionData) && script != null) {
+        } else if (RAID_OPTION.equals(optionData) && script != null) {
             long seed = planet.getId().hashCode() * 31L + script.runId().hashCode() + raidsLaunched++;
             raid = new ChartRaid(dialog, ConvoyRules.raidDifficulty(script.tier()), this::objectives, new Random(seed), this);
             raid.open();

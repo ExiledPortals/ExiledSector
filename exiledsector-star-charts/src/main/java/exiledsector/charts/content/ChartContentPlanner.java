@@ -71,7 +71,7 @@ public final class ChartContentPlanner {
         ChartObjective objective = pickObjective(tier, ChartLayoutGenerator.derivedRandom(seed, OBJECTIVE_SALT));
         List<PlannedPoi> plannedPois = spendLoot(tier, pois, ChartLayoutGenerator.derivedRandom(seed, LOOT_SALT));
         plannedPois = addExtraPois(tier, pois, plannedPois, context.extraPois(), ChartLayoutGenerator.derivedRandom(seed, EXTRA_POI_SALT));
-        boolean skirmish = plannedAnomalies.contains(FactionSkirmish.ID);
+        boolean skirmish = plannedAnomalies.contains(FactionSkirmish.ANOMALY_ID);
         Random bossRandom = ChartLayoutGenerator.derivedRandom(seed, BOSS_SALT);
         ChartBossType bossType = skirmish ? ChartBossType.STATION
                 : tier.boss() ? ChartBosses.pickType(tier.tier(), faction.factionId(), bossRandom) : ChartBossType.FLEET;

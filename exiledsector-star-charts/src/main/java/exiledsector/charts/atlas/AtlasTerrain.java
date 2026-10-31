@@ -1,8 +1,10 @@
 package exiledsector.charts.atlas;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 final class AtlasTerrain {
@@ -40,6 +42,23 @@ final class AtlasTerrain {
     private final Map<Long, List<Corridor>> hubCorridors = AtlasPositions.boundedCache(HUB_CACHE_LIMIT);
 
     private record Corridor(float[] points, float minX, float minY, float maxX, float maxY) {
+
+        @Override
+        public boolean equals(Object other) {
+            return other instanceof Corridor corridor && Arrays.equals(points, corridor.points)
+                    && Float.compare(minX, corridor.minX) == 0 && Float.compare(minY, corridor.minY) == 0
+                    && Float.compare(maxX, corridor.maxX) == 0 && Float.compare(maxY, corridor.maxY) == 0;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(Arrays.hashCode(points), minX, minY, maxX, maxY);
+        }
+
+        @Override
+        public String toString() {
+            return "Corridor[points=" + Arrays.toString(points) + ", minX=" + minX + ", minY=" + minY + ", maxX=" + maxX + ", maxY=" + maxY + "]";
+        }
 
         boolean clears(float x, float y) {
             float reach = SYSTEM_CLEARANCE + CORRIDOR_MARGIN;

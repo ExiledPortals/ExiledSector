@@ -7,8 +7,8 @@ import java.util.List;
 
 public final class ForgeStates {
 
-    static final String PROGRAMS_KEY = DerelictForge.ID + ".offered";
-    static final String RUNS_KEY = DerelictForge.ID + ".runsLeft";
+    static final String PROGRAMS_KEY = DerelictForge.ANOMALY_ID + ".offered";
+    static final String RUNS_KEY = DerelictForge.ANOMALY_ID + ".runsLeft";
     static final String PROGRAM_SEPARATOR = ",";
 
     private ForgeStates() {

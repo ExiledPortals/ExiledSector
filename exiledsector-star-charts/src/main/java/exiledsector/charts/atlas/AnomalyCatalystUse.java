@@ -23,7 +23,7 @@ public record AnomalyCatalystUse(AtlasCatalysts.Catalyst catalyst, AtlasGenerato
         AtlasAnomalies.InsertCheck check = forcesStar() ? AtlasAnomalies.canInsertStar(generator, state, cell, anomalyId, openRunCell)
                 : AtlasAnomalies.canInsert(generator, state, cell, anomalyId, openRunCell);
         if (check.allows()) {
-            return UseVerdict.ALLOWED;
+            return UseVerdict.ALLOW;
         }
         UseVerdict refused = (check == AtlasAnomalies.InsertCheck.DOES_NOT_FIT
                 ? ChartAnomalies.byId(anomalyId).insertVerdict(generator, state, cell)

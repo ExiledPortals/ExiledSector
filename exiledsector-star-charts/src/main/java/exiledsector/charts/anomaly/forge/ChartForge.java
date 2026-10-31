@@ -36,7 +36,7 @@ public final class ChartForge {
 
     public static ChartRun liveRun(String runId) {
         ChartRun run = ChartRuns.currentOrNull();
-        return run != null && run.runState().isLive() && run.runId().equals(runId) && run.anomalyIds().contains(DerelictForge.ID) ? run : null;
+        return run != null && run.runState().isLive() && run.runId().equals(runId) && run.anomalyIds().contains(DerelictForge.ANOMALY_ID) ? run : null;
     }
 
     public static ChartRun liveRunFor(SectorEntityToken forge) {
@@ -65,7 +65,7 @@ public final class ChartForge {
         if (!operationVerdict.allowed()) {
             return operationVerdict;
         }
-        return canAfford(cargo, materials, costFor(run, program)) ? UseVerdict.ALLOWED : COST;
+        return canAfford(cargo, materials, costFor(run, program)) ? UseVerdict.ALLOW : COST;
     }
 
     public static boolean run(ChartRun run, ForgePrograms.Program program, Item item, ForgeChoice choice, CargoAPI cargo,

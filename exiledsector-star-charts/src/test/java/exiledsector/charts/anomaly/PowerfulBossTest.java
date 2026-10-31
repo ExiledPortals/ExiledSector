@@ -46,21 +46,21 @@ class PowerfulBossTest {
 
     @Test
     void theShippedRowMakesTheBossBiggerAndRicherAndAnyRunHoldingItGuaranteesTheTierUp() {
-        ChartAnomalies.Definition definition = ChartAnomalies.definition(PowerfulBoss.ID);
+        ChartAnomalies.Definition definition = ChartAnomalies.definition(PowerfulBoss.ANOMALY_ID);
         assertNotNull(definition);
         assertTrue(definition.insertable());
         assertFalse(definition.icon().isEmpty());
         assertEquals(Set.of(ChartEffect.CHART_BOSS_SIZE_PERCENT, ChartEffect.CHART_BOSS_SPOILS_PERCENT),
                 Set.copyOf(definition.effects().stream().map(ChartGenContext.AppliedEffect::effect).toList()));
 
-        ChartGenContext powerful = ChartGenContext.none().withAnomalyEffects(List.of(SpatialBreach.ID, PowerfulBoss.ID));
+        ChartGenContext powerful = ChartGenContext.none().withAnomalyEffects(List.of(SpatialBreach.ANOMALY_ID, PowerfulBoss.ANOMALY_ID));
 
         assertTrue(powerful.guaranteedBossTierUp());
         assertTrue(powerful.bossSizePercent() > 0f);
         assertTrue(powerful.bossSpoilsMult() > 1f);
-        assertFalse(ChartGenContext.none().withAnomalyEffects(List.of(SpatialBreach.ID)).guaranteedBossTierUp());
-        assertTrue(ChartAnomalies.guaranteeBossTierUp(List.of(PowerfulBoss.ID)));
-        assertFalse(ChartAnomalies.guaranteeBossTierUp(List.of(SpatialBreach.ID)));
+        assertFalse(ChartGenContext.none().withAnomalyEffects(List.of(SpatialBreach.ANOMALY_ID)).guaranteedBossTierUp());
+        assertTrue(ChartAnomalies.guaranteeBossTierUp(List.of(PowerfulBoss.ANOMALY_ID)));
+        assertFalse(ChartAnomalies.guaranteeBossTierUp(List.of(SpatialBreach.ANOMALY_ID)));
     }
 
     @Test
@@ -70,7 +70,7 @@ class PowerfulBossTest {
         AtlasCell cell = AtlasCell.ORIGIN.around(6).stream().filter(candidate -> !candidate.equals(AtlasCell.ORIGIN) && !generator.isVoid(candidate))
                 .findFirst().orElseThrow();
         assertFalse(AtlasOpening.runNode(generator, state, cell).guaranteedBossTierUp());
-        AtlasCatalysts.Catalyst flagshipOrders = new AtlasCatalysts.Catalyst("test_flagship_orders", PowerfulBoss.ID, AtlasCatalysts.Family.ORDERS,
+        AtlasCatalysts.Catalyst flagshipOrders = new AtlasCatalysts.Catalyst("test_flagship_orders", PowerfulBoss.ANOMALY_ID, AtlasCatalysts.Family.ORDERS,
                 1f, 1);
         AtlasCatalystUse use = AtlasCatalystUse.of(flagshipOrders, generator, state, null, Set.of(cell));
 
@@ -78,7 +78,7 @@ class PowerfulBossTest {
         assertNotNull(use.apply(cell));
         AtlasRunNode node = AtlasOpening.runNode(generator, state, cell);
 
-        assertEquals(List.of(PowerfulBoss.ID), node.anomalyIds());
+        assertEquals(List.of(PowerfulBoss.ANOMALY_ID), node.anomalyIds());
         assertTrue(node.guaranteedBossTierUp());
         assertEquals("catalyst.refused.already_present", use.check(cell).refusalKey());
     }

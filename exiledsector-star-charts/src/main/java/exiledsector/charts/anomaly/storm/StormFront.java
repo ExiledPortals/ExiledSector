@@ -21,10 +21,10 @@ import java.util.Random;
 
 public final class StormFront implements ChartAnomaly {
 
-    public static final String ID = "storm_front";
-    public static final String LOOT_KEY = ID + ".loot";
-    public static final String STRIKE_KEY = ID + ".strikes";
-    public static final String SIZE_KEY = ID + ".size";
+    public static final String ANOMALY_ID = "storm_front";
+    public static final String LOOT_KEY = ANOMALY_ID + ".loot";
+    public static final String STRIKE_KEY = ANOMALY_ID + ".strikes";
+    public static final String SIZE_KEY = ANOMALY_ID + ".size";
     public static final String TERRAIN_ID = "exiledSector_chart_storm_front";
     public static final String FRONT_TAG = ChartIds.PREFIX + "storm_front";
     public static final StormFront INSTANCE = new StormFront();
@@ -35,7 +35,7 @@ public final class StormFront implements ChartAnomaly {
 
     @Override
     public String id() {
-        return ID;
+        return ANOMALY_ID;
     }
 
     @Override

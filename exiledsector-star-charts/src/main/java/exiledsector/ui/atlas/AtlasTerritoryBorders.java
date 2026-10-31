@@ -12,11 +12,13 @@ import org.lwjgl.opengl.GL11;
 import java.awt.Color;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -49,6 +51,24 @@ final class AtlasTerritoryBorders {
     private static final int[][] SIDES = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
 
     record Loop(float[] outline, float[] inner, float minX, float minY, float maxX, float maxY) {
+
+        @Override
+        public boolean equals(Object other) {
+            return other instanceof Loop loop && Arrays.equals(outline, loop.outline) && Arrays.equals(inner, loop.inner)
+                    && Float.compare(minX, loop.minX) == 0 && Float.compare(minY, loop.minY) == 0
+                    && Float.compare(maxX, loop.maxX) == 0 && Float.compare(maxY, loop.maxY) == 0;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(Arrays.hashCode(outline), Arrays.hashCode(inner), minX, minY, maxX, maxY);
+        }
+
+        @Override
+        public String toString() {
+            return "Loop[outline=" + Arrays.toString(outline) + ", inner=" + Arrays.toString(inner) + ", minX=" + minX + ", minY=" + minY
+                    + ", maxX=" + maxX + ", maxY=" + maxY + "]";
+        }
     }
 
     record Region(String groupId, List<Loop> loops, float labelX, float labelY, int cells, float minX, float minY, float maxX, float maxY) {

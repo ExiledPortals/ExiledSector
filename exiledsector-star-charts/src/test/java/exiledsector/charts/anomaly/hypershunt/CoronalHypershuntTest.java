@@ -111,7 +111,7 @@ class CoronalHypershuntTest {
 
     private static ChartRun run() {
         ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(4, "pirates", ChartObjective.CLEAR, List.of(), null, 3, 2, List.of(CoronalHypershunt.ID)));
+        run.recordContent(new ChartContent(4, "pirates", ChartObjective.CLEAR, List.of(), null, 3, 2, List.of(CoronalHypershunt.ANOMALY_ID)));
         return run;
     }
 
@@ -123,12 +123,12 @@ class CoronalHypershuntTest {
     void theShippedRowIsARareStarAnomalyThatNoOrdinaryCatalystInserts() throws Exception {
         ChartTables.loadAnomalies();
 
-        assertSame(CoronalHypershunt.INSTANCE, ChartAnomalies.byId(CoronalHypershunt.ID));
-        ChartAnomalies.Definition definition = ChartAnomalies.definition(CoronalHypershunt.ID);
+        assertSame(CoronalHypershunt.INSTANCE, ChartAnomalies.byId(CoronalHypershunt.ANOMALY_ID));
+        ChartAnomalies.Definition definition = ChartAnomalies.definition(CoronalHypershunt.ANOMALY_ID);
         assertTrue(definition.replacesStar());
         assertFalse(definition.insertable());
         assertTrue(definition.weight() < ChartAnomalies.definition(StarAnomalies.BLACK_HOLE.id()).weight());
-        assertTrue(ChartAnomalies.conflicts(CoronalHypershunt.ID, StarAnomalies.BLACK_HOLE.id()));
+        assertTrue(ChartAnomalies.conflicts(CoronalHypershunt.ANOMALY_ID, StarAnomalies.BLACK_HOLE.id()));
         assertFalse(definition.icon().isEmpty());
     }
 

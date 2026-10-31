@@ -25,9 +25,9 @@ import java.util.Set;
 
 public final class RelayNetwork implements ChartAnomaly {
 
-    public static final String ID = "relay_network";
-    public static final String COST_KEY = ID + ".cost";
-    public static final String STAGES_KEY = ID + ".stages";
+    public static final String ANOMALY_ID = "relay_network";
+    public static final String COST_KEY = ANOMALY_ID + ".cost";
+    public static final String STAGES_KEY = ANOMALY_ID + ".stages";
     public static final String RELAY_TAG = ChartIds.PREFIX + "relay";
     public static final String KIND_MEMORY_KEY = "$exiledSector_chartRelayKind";
     public static final RelayNetwork INSTANCE = new RelayNetwork();
@@ -38,7 +38,7 @@ public final class RelayNetwork implements ChartAnomaly {
 
     @Override
     public String id() {
-        return ID;
+        return ANOMALY_ID;
     }
 
     @Override

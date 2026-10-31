@@ -96,12 +96,12 @@ public final class AtlasNodeText {
         }
         for (String anomalyId : AtlasAnomalies.effective(generator, state, cell)) {
             lines.add(new Line(Translation.msg("chart.atlas.node.anomaly").arg("anomaly", name("anomaly", anomalyId)).text(), Tone.MARKER));
-            if (FactionSkirmish.ID.equals(anomalyId)) {
+            if (FactionSkirmish.ANOMALY_ID.equals(anomalyId)) {
                 lines.add(new Line(Translation.msg("chart.atlas.node.skirmish")
                         .arg("attacker", factionName(FactionSkirmish.attacker(generator, state, cell)))
                         .arg("defender", factionName(FactionSkirmish.defender(generator, state, cell))).text(), Tone.PLAIN));
             }
-            if (RelayNetwork.ID.equals(anomalyId)) {
+            if (RelayNetwork.ANOMALY_ID.equals(anomalyId)) {
                 lines.addAll(relayLines(generator, state, cell));
             }
         }
@@ -138,7 +138,7 @@ public final class AtlasNodeText {
 
     public static StyledText anomalyBody(AtlasGenerator generator, AtlasState state, AtlasCell cell, String anomalyId) {
         StyledText body = anomalyBody(anomalyId);
-        if (!RelayNetwork.ID.equals(anomalyId)) {
+        if (!RelayNetwork.ANOMALY_ID.equals(anomalyId)) {
             return body;
         }
         List<StyledText> lines = new ArrayList<>(List.of(body));

@@ -76,7 +76,7 @@ class ExcavationSitesTest {
 
     @Test
     void theAnomalyIsBuiltIn() {
-        assertSame(ExcavationSites.INSTANCE, ChartAnomalies.byId(ExcavationSites.ID));
+        assertSame(ExcavationSites.INSTANCE, ChartAnomalies.byId(ExcavationSites.ANOMALY_ID));
     }
 
     @Test
@@ -109,7 +109,7 @@ class ExcavationSitesTest {
         planet("rock", false, false);
         for (long seed = 0; seed < 20; seed++) {
             ChartRun run = run();
-            run.recordAnomalyState(PreCollapseFacility.ID + ".planet", "facility");
+            run.recordAnomalyState(PreCollapseFacility.ANOMALY_ID + ".planet", "facility");
 
             List<ExcavationSite> placed = ExcavationSites.place(site(ChartGenContext.none(), seed), run, mockSector.sector);
 

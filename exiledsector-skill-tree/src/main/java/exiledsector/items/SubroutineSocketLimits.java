@@ -17,7 +17,7 @@ public final class SubroutineSocketLimits {
 
     public static UseVerdict refusal(Item item, String socketNodeId, Map<String, String> socketedItemIds) {
         if (item == null) {
-            return UseVerdict.ALLOWED;
+            return UseVerdict.ALLOW;
         }
         ItemDefinition definition = item.definition();
         SubroutineKind kind = kindOf(definition);
@@ -27,7 +27,7 @@ public final class SubroutineSocketLimits {
         if (definitionLimitReached(definition, item.id(), socketNodeId, socketedItemIds, SubroutineSocketLimits::definitionOf)) {
             return UseVerdict.refused("socketable.socket.definitionLimit").with("limit", String.valueOf(definition.socketLimit()));
         }
-        return UseVerdict.ALLOWED;
+        return UseVerdict.ALLOW;
     }
 
     public static boolean limitReached(Item item, String socketNodeId, Map<String, String> socketedItemIds) {

@@ -43,12 +43,12 @@ class SkirmishPlannerTest {
     }
 
     private static ChartGenContext joined(SkirmishSide side) {
-        return ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of(FactionSkirmish.ID), false, "tritachyon", side));
+        return ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID), false, "tritachyon", side));
     }
 
     private static ChartContentPlan plan(ChartGenContext context) {
         return ChartContentPlanner.plan(5L, ChartTiers.forTier(TIER), ChartPois.all(), ChartFactions.all(), id -> true, context,
-                StarChartSettings.DEFAULT_FLEET_LIMIT, List.of(FactionSkirmish.ID));
+                StarChartSettings.DEFAULT_FLEET_LIMIT, List.of(FactionSkirmish.ANOMALY_ID));
     }
 
     private static float points(List<PlannedFleet> fleets) {

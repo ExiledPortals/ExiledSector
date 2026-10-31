@@ -129,7 +129,7 @@ class StarChartCraftingTest {
                 StarChartCurrency.REFORGE, StarChartCurrency.ANNULMENT, StarChartCurrency.CARTOGRAPHY), StarChartCrafting.currencies());
         for (ItemCurrency currency : List.of(CraftingCurrency.AUGMENTATION, CraftingCurrency.RECALIBRATION, CraftingCurrency.CORRUPTION, CraftingCurrency.ANNULMENT,
                 StarChartCurrency.REFORGE, StarChartCurrency.ANNULMENT, StarChartCurrency.CARTOGRAPHY)) {
-            assertEquals(UseVerdict.ALLOWED, refusalWithOne(currency), currency.key());
+            assertEquals(UseVerdict.ALLOW, refusalWithOne(currency), currency.key());
         }
         for (CraftingCurrency currency : List.of(CraftingCurrency.ATTUNEMENT, CraftingCurrency.SUBSTITUTION, CraftingCurrency.FIXATION,
                 CraftingCurrency.REPLICATION, CraftingCurrency.TRANSPOSITION)) {
@@ -185,7 +185,7 @@ class StarChartCraftingTest {
         CraftingMaterials materials = CraftingMaterials.cargoOnly(cargo);
 
         assertEquals(List.of(survey), StarChartCrafting.currencies());
-        assertEquals(UseVerdict.ALLOWED, StarChartCrafting.refusal(survey, chart, store, materials, definition -> true));
+        assertEquals(UseVerdict.ALLOW, StarChartCrafting.refusal(survey, chart, store, materials, definition -> true));
         StarChartCrafting.Used used = StarChartCrafting.use(survey, chart, store, materials, new Random(1L), definition -> true);
 
         assertSame(chart, used.result());

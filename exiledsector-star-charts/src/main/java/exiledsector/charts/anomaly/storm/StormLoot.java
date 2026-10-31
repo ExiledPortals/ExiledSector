@@ -21,7 +21,7 @@ public final class StormLoot {
 
     public static void reserveModifiers() {
         for (String modifierId : MODIFIER_IDS) {
-            ReservedModifiers.reserve(modifierId, StormFront.ID);
+            ReservedModifiers.reserve(modifierId, StormFront.ANOMALY_ID);
         }
     }
 

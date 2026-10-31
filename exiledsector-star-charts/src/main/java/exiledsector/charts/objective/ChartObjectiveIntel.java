@@ -64,9 +64,12 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
     }
 
     public static String descriptionKey(ChartRun run) {
-        String objectiveKey = run.objective().key();
-        String bossKey = run.objective() == ChartObjective.BOSS ? "." + run.bossType().key() : "";
-        return "chart.objective." + objectiveKey + bossKey + ".description";
+        ChartObjective objective = run.objective();
+        if (objective == null) {
+            return "chart.dialog.stale";
+        }
+        String bossKey = objective == ChartObjective.BOSS ? "." + run.bossType().key() : "";
+        return "chart.objective." + objective.key() + bossKey + ".description";
     }
 
     static String progressText(ChartRun run) {

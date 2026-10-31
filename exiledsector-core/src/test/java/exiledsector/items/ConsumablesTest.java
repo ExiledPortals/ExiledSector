@@ -58,7 +58,7 @@ class ConsumablesTest {
     void anAllowedUseSpendsTheConsumableAndOnlyTheExtrasItSpent() {
         CraftingMaterials materials = holding(2, 1, 1);
 
-        assertEquals(6, Consumables.use(new Doubling(UseVerdict.ALLOWED, true), 3, materials));
+        assertEquals(6, Consumables.use(new Doubling(UseVerdict.ALLOW, true), 3, materials));
 
         assertEquals(1, materials.count(CONSUMABLE_ID));
         assertEquals(0, materials.count(WARD_ID));
@@ -70,9 +70,9 @@ class ConsumablesTest {
         CraftingMaterials materials = holding(1, 1, 1);
 
         assertNull(Consumables.use(new Doubling(UseVerdict.refused("test.refused"), true), 3, materials));
-        assertNull(Consumables.use(new Doubling(UseVerdict.ALLOWED, false), 3, materials));
-        assertNull(Consumables.use(new Doubling(UseVerdict.ALLOWED, true), 3, holding(0, 1, 1)));
-        assertNull(Consumables.use(new Doubling(UseVerdict.ALLOWED, true), 3, holding(1, 1, 0)));
+        assertNull(Consumables.use(new Doubling(UseVerdict.ALLOW, false), 3, materials));
+        assertNull(Consumables.use(new Doubling(UseVerdict.ALLOW, true), 3, holding(0, 1, 1)));
+        assertNull(Consumables.use(new Doubling(UseVerdict.ALLOW, true), 3, holding(1, 1, 0)));
 
         assertEquals(1, materials.count(CONSUMABLE_ID));
         assertEquals(1, materials.count(WARD_ID));
@@ -82,8 +82,8 @@ class ConsumablesTest {
     void aVerdictCarriesItsKeyAndArguments() {
         UseVerdict refused = UseVerdict.refused("test.refused").with("limit", "2");
 
-        assertTrue(UseVerdict.ALLOWED.allowed());
-        assertNull(UseVerdict.ALLOWED.text("name"));
+        assertTrue(UseVerdict.ALLOW.allowed());
+        assertNull(UseVerdict.ALLOW.text("name"));
         assertFalse(refused.allowed());
         assertEquals("test.refused", refused.refusalKey());
         assertEquals(Map.of("limit", "2"), refused.args());

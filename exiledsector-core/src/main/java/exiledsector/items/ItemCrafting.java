@@ -52,7 +52,7 @@ public final class ItemCrafting {
 
     public static UseVerdict verdict(ItemCurrency currency, Item item, Predicate<ItemDefinition> allowedUniques, Collection<CraftingWard> wards) {
         if (canUse(currency, item, allowedUniques, wards)) {
-            return UseVerdict.ALLOWED;
+            return UseVerdict.ALLOW;
         }
         if (canUse(currency, item, allowedUniques)) {
             return UseVerdict.refused(currency == CraftingCurrency.TRANSPOSITION

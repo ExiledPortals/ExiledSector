@@ -8,7 +8,7 @@ import java.util.Map;
 
 public record UseVerdict(String refusalKey, Map<String, String> args) {
 
-    public static final UseVerdict ALLOWED = new UseVerdict(null, Map.of());
+    public static final UseVerdict ALLOW = new UseVerdict(null, Map.of());
 
     public UseVerdict {
         args = Map.copyOf(args);

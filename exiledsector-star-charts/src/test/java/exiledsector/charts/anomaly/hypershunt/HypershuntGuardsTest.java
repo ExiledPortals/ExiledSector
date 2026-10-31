@@ -68,7 +68,7 @@ class HypershuntGuardsTest {
 
     private static ChartRun run(int tier) {
         ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
-        run.recordContent(new ChartContent(tier, "pirates", ChartObjective.CLEAR, List.of(), null, 3, 2, List.of(CoronalHypershunt.ID)));
+        run.recordContent(new ChartContent(tier, "pirates", ChartObjective.CLEAR, List.of(), null, 3, 2, List.of(CoronalHypershunt.ANOMALY_ID)));
         ChartRuns.store(run);
         return run;
     }

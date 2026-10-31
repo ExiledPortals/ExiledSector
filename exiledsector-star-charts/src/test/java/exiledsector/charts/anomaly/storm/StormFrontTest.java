@@ -88,7 +88,7 @@ class StormFrontTest {
 
     @Test
     void theAnomalyIsBuiltIn() {
-        assertSame(StormFront.INSTANCE, ChartAnomalies.byId(StormFront.ID));
+        assertSame(StormFront.INSTANCE, ChartAnomalies.byId(StormFront.ANOMALY_ID));
     }
 
     @Test

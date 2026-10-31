@@ -30,7 +30,7 @@ import java.util.Random;
 public class PostDialog implements InteractionDialogPlugin {
 
     static final String OPEN = "exiledSector_postOpen";
-    static final String ENGAGE = "exiledSector_postEngage";
+    static final String ENGAGE_OPTION = "exiledSector_postEngage";
     static final String LEAVE = "exiledSector_postLeave";
 
     private final Map<String, MemoryAPI> memoryMap = new HashMap<>();
@@ -81,7 +81,7 @@ public class PostDialog implements InteractionDialogPlugin {
             String key = defended ? "chart.post.dialog.guarded" : "chart.post.dialog.purged";
             VanillaText.plainPara(text, I18n.forGameText(() -> Translation.msg(key).arg("value", vault).text()));
             if (defended) {
-                options.addOption(Translation.gameText("chart.post.dialog.option.engage"), ENGAGE);
+                options.addOption(Translation.gameText("chart.post.dialog.option.engage"), ENGAGE_OPTION);
             } else {
                 options.addOption(Translation.gameText("chart.post.dialog.option.openPurged"), OPEN);
             }
@@ -98,7 +98,7 @@ public class PostDialog implements InteractionDialogPlugin {
         boolean open = state != null && !state.taken() && (!state.alarm() || script == null || !script.defended());
         if (OPEN.equals(optionData) && open) {
             openVault(run, state);
-        } else if (ENGAGE.equals(optionData) && state != null && state.alarm() && !state.taken() && script != null) {
+        } else if (ENGAGE_OPTION.equals(optionData) && state != null && state.alarm() && !state.taken() && script != null) {
             engage(script.gatherDefenders());
         } else {
             dialog.dismiss();

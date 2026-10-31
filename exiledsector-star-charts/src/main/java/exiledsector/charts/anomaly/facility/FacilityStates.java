@@ -4,8 +4,8 @@ import exiledsector.charts.run.ChartRun;
 
 public final class FacilityStates {
 
-    static final String PLANET_KEY = PreCollapseFacility.ID + ".planet";
-    static final String STAGE_KEY = PreCollapseFacility.ID + ".stage";
+    static final String PLANET_KEY = PreCollapseFacility.ANOMALY_ID + ".planet";
+    static final String STAGE_KEY = PreCollapseFacility.ANOMALY_ID + ".stage";
 
     public enum Stage {
         GUARDED,
@@ -47,7 +47,7 @@ public final class FacilityStates {
     }
 
     static boolean advance(ChartRun run, Stage from, Stage to) {
-        if (stage(run) != from) {
+        if (run == null || stage(run) != from) {
             return false;
         }
         run.recordAnomalyState(STAGE_KEY, to.name());

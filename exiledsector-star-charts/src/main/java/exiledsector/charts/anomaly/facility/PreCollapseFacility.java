@@ -22,7 +22,7 @@ import java.util.Random;
 
 public final class PreCollapseFacility implements ChartAnomaly {
 
-    public static final String ID = "pre_collapse_facility";
+    public static final String ANOMALY_ID = "pre_collapse_facility";
     public static final PreCollapseFacility INSTANCE = new PreCollapseFacility();
     static final long PLACEMENT_SALT = 0x50524546414331L;
 
@@ -31,7 +31,7 @@ public final class PreCollapseFacility implements ChartAnomaly {
 
     @Override
     public String id() {
-        return ID;
+        return ANOMALY_ID;
     }
 
     @Override
