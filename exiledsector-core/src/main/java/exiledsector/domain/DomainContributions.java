@@ -45,6 +45,20 @@ public final class DomainContributions<T> {
         return current.contributions();
     }
 
+    public <R> R first(Function<? super T, ? extends R> answer) {
+        return firstOr(answer, null);
+    }
+
+    public <R> R firstOr(Function<? super T, ? extends R> answer, R fallback) {
+        for (T contributor : all()) {
+            R contributed = answer.apply(contributor);
+            if (contributed != null) {
+                return contributed;
+            }
+        }
+        return fallback;
+    }
+
     static long enabledMask(List<ExiledSectorDomain> domains) {
         long enabledMask = 0L;
         for (int index = 0; index < domains.size(); index++) {

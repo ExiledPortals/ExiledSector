@@ -99,7 +99,7 @@ public final class ItemDrops {
     }
 
     public static boolean hasUniqueRoll(String siteId) {
-        Rule rule = siteId == null ? null : RULES.get().get(siteId);
+        Rule rule = activeRule(siteId);
         return rule != null && rule.uniqueChance() > 0f;
     }
 
