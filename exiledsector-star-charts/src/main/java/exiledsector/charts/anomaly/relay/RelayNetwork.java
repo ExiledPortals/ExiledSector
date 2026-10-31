@@ -3,7 +3,6 @@ package exiledsector.charts.anomaly.relay;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
@@ -67,8 +66,7 @@ public final class RelayNetwork implements ContentPlacer, RunParticipant, LootSh
 
     @Override
     public void generate(AnomalyContentSite site) {
-        StarSystemAPI system = site.system();
-        SectorEntityToken centre = system.getCenter() != null ? system.getCenter() : system.getStar();
+        SectorEntityToken centre = site.centre();
         Random random = site.random(PLACEMENT_SALT);
         List<SectorEntityToken> guarded = new ArrayList<>(site.guardedPois());
         Collections.shuffle(guarded, random);
@@ -81,7 +79,8 @@ public final class RelayNetwork implements ContentPlacer, RunParticipant, LootSh
             ChartSites.Orbit orbit = null;
             if (!guarded.isEmpty() && random.nextFloat() < RelayRules.GUARDED_CHANCE) {
                 SectorEntityToken poi = guarded.remove(0);
-                orbit = spreadOrbit(site, poi, poi.getRadius() + RelayRules.GUARD_GAP_MIN, poi.getRadius() + RelayRules.GUARD_GAP_MAX, placedAt, random);
+                orbit = site.clearOrbit(poi, poi.getRadius() + RelayRules.GUARD_GAP_MIN, poi.getRadius() + RelayRules.GUARD_GAP_MAX,
+                        position -> clearOfRelays(position, placedAt), random);
             }
             if (orbit == null && centre != null) {
                 orbit = bandOrbit(site, centre, RelayRules.FIRST_HOME_BAND + slot, usedBands, placedAt, random);
@@ -109,21 +108,10 @@ public final class RelayNetwork implements ContentPlacer, RunParticipant, LootSh
             if (usedBands.contains(band)) {
                 continue;
             }
-            ChartSites.Orbit orbit = spreadOrbit(site, centre, band * RelayRules.BAND_WIDTH, (band + 1) * RelayRules.BAND_WIDTH, placedAt, random);
+            ChartSites.Orbit orbit = site.clearOrbit(centre, band * RelayRules.BAND_WIDTH, (band + 1) * RelayRules.BAND_WIDTH,
+                    position -> clearOfRelays(position, placedAt), random);
             if (orbit != null) {
                 usedBands.add(band);
-                return orbit;
-            }
-        }
-        return null;
-    }
-
-    private static ChartSites.Orbit spreadOrbit(AnomalyContentSite site, SectorEntityToken focus, float minRadius, float maxRadius, List<Vector2f> placedAt,
-                                                Random random) {
-        for (int attempt = 0; attempt < RelayRules.ORBIT_ATTEMPTS; attempt++) {
-            float radius = minRadius + random.nextFloat() * Math.max(0f, maxRadius - minRadius);
-            ChartSites.Orbit orbit = new ChartSites.Orbit(focus, random.nextFloat() * 360f, radius, radius / RelayRules.ORBIT_SPEED);
-            if (site.isClear(orbit) && clearOfRelays(orbit.position(), placedAt)) {
                 return orbit;
             }
         }

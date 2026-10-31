@@ -1,9 +1,7 @@
 package exiledsector.charts.anomaly.convoy;
 
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
-import com.fs.starfarer.api.campaign.PlanetAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
@@ -58,19 +56,13 @@ public final class SupplyConvoy implements LayoutShaper, ContentPlacer, RunParti
 
     @Override
     public void generate(AnomalyContentSite site) {
-        StarSystemAPI system = site.system();
-        List<SectorEntityToken> planets = new ArrayList<>();
-        for (PlanetAPI planet : system.getPlanets()) {
-            if (!planet.isStar()) {
-                planets.add(planet);
-            }
-        }
+        List<SectorEntityToken> planets = new ArrayList<>(site.worlds());
         if (planets.isEmpty()) {
             throw new IllegalStateException("no planet for the convoy to deliver to");
         }
         List<SectorEntityToken> stations = site.pois().stream().filter(poi -> poi.hasTag(Tags.STATION)).toList();
         String convoyFactionId = ChartAnomalyFleets.dressConvoy(site.factionId());
-        ConvoyScript script = new ConvoyScript(site.runId(), site.tier(), system);
+        ConvoyScript script = new ConvoyScript(site.runId(), site.tier(), site.system());
         Set<SectorEntityToken> takenDestinations = new HashSet<>(planets.stream().filter(site::isClaimed).toList());
         int count = ConvoyRules.convoyCount(site.context().anomalyPercent(EXTRA_KEY));
         for (int index = 0; index < count; index++) {
@@ -90,7 +82,7 @@ public final class SupplyConvoy implements LayoutShaper, ContentPlacer, RunParti
         if (script.convoys().isEmpty()) {
             throw new IllegalStateException("no convoy could be formed");
         }
-        system.addScript(script);
+        site.addScript(script);
     }
 
     @Override

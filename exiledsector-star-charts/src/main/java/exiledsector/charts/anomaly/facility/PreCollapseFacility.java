@@ -15,7 +15,6 @@ import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.run.ChartRun;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -45,36 +44,21 @@ public final class PreCollapseFacility implements LayoutShaper, ContentPlacer, R
 
     @Override
     public void generate(AnomalyContentSite site) {
-        if (place(site, site.run()) == null) {
+        if (place(site) == null) {
             throw new IllegalStateException("no planet for a pre-collapse facility");
         }
     }
 
-    static PlanetAPI place(AnomalyContentSite site, ChartRun run) {
-        List<PlanetAPI> planets = candidates(site);
+    static PlanetAPI place(AnomalyContentSite site) {
+        List<PlanetAPI> planets = site.freePlanets(true);
         if (planets.isEmpty()) {
             return null;
         }
         Random random = site.random(PLACEMENT_SALT);
         PlanetAPI planet = planets.get(random.nextInt(planets.size()));
-        FacilityStates.record(run, planet.getId());
+        FacilityStates.record(site.state(ANOMALY_ID), planet.getId());
         site.claim(planet);
         return planet;
-    }
-
-    static List<PlanetAPI> candidates(AnomalyContentSite site) {
-        List<PlanetAPI> solid = new ArrayList<>();
-        List<PlanetAPI> any = new ArrayList<>();
-        for (PlanetAPI planet : site.system().getPlanets()) {
-            if (planet.isStar() || site.isClaimed(planet)) {
-                continue;
-            }
-            any.add(planet);
-            if (!planet.isGasGiant()) {
-                solid.add(planet);
-            }
-        }
-        return solid.isEmpty() ? any : solid;
     }
 
     static long seed(ChartRun run, String planetId, long salt) {

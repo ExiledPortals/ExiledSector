@@ -41,7 +41,6 @@ public final class CoronalHypershunt implements StarRule, AtlasRule, ContentPlac
     public static final String TOO_CLOSE_KEY = "catalyst.refused.hypershunt.too_close";
     static final String ENTITY_TYPE = Entities.CORONAL_TAP;
     static final float ORBIT_GAP = 250f;
-    static final float ORBIT_DAYS_PER_UNIT = 1f / 20f;
     static final long PLACEMENT_SALT = 0x48595053484e54L;
 
     private CoronalHypershunt() {
@@ -88,7 +87,7 @@ public final class CoronalHypershunt implements StarRule, AtlasRule, ContentPlac
         float radius = star.getRadius() + ORBIT_GAP;
         ChartSites.Orbit orbit = site.clearOrbit(star, radius, radius, random);
         if (orbit == null) {
-            orbit = new ChartSites.Orbit(star, random.nextFloat() * 360f, radius, radius * ORBIT_DAYS_PER_UNIT);
+            orbit = AnomalyContentSite.orbit(star, random.nextFloat() * 360f, radius);
         }
         SectorEntityToken hypershunt = site.addEntity(hypershuntId(site.runId()), null, ENTITY_TYPE, Factions.NEUTRAL, orbit);
         hypershunt.addTag(HYPERSHUNT_TAG);

@@ -28,6 +28,7 @@ import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.anomaly.LayoutShaper;
 import exiledsector.charts.anomaly.StarRule;
 import exiledsector.charts.anomaly.StellarFlares;
+import exiledsector.charts.table.BuiltInTable;
 import exiledsector.compat.UnknownSkiesCompat;
 import org.apache.log4j.Logger;
 
@@ -37,6 +38,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 import java.util.Set;
 
 final class ChartStarSystemGenerator extends StarSystemGenerator {
@@ -47,6 +49,7 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
     static final float PULSAR_CORONA_RADIUS = 300f;
     static final float PULSAR_CORONA_WIND = 3f;
     static final float PULSAR_CORONA_CR_LOSS = 3f;
+    static final long SHAPE_SALT = 0x5348415045L;
     static final Map<String, List<String>> BACKGROUNDS_BY_NEBULA = Map.of(
             NEBULA_NONE, List.of("graphics/backgrounds/background2.jpg", "graphics/backgrounds/background4.jpg"),
             NEBULA_BLUE, List.of("graphics/backgrounds/background5.jpg"),
@@ -288,8 +291,9 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
         if (systemType == StarSystemType.NEBULA) {
             hideNebulaCentre();
         }
+        long shapeSeed = random.nextLong();
         for (LayoutShaper anomaly : shapers) {
-            shapeOrDrop(anomaly);
+            shapeOrDrop(anomaly, BuiltInTable.rollFor(shapeSeed, anomaly.id(), SHAPE_SALT));
         }
         if (abyss != null) {
             ChartAbyss.dress(system, abyss, abyssalCentre, ChartWormholePlacement.outermost(system, List.of()), starId, random);
@@ -297,10 +301,10 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
         system.setAge(starAge);
     }
 
-    private void shapeOrDrop(LayoutShaper anomaly) {
+    private void shapeOrDrop(LayoutShaper anomaly, Random anomalyRandom) {
         Set<SectorEntityToken> before = new HashSet<>(system.getAllEntities());
         try {
-            anomaly.shape(new AnomalyLayoutSite(system, centre(), visibleStars(), ChartWormholePlacement.outermost(system, List.of()), random));
+            anomaly.shape(new AnomalyLayoutSite(system, centre(), visibleStars(), ChartWormholePlacement.outermost(system, List.of()), anomalyRandom));
         } catch (RuntimeException | LinkageError e) {
             LOG.warn("[ExiledSector] Shaping the " + anomaly.id() + " anomaly failed; the Star Chart is generated without it", e);
             for (SectorEntityToken added : new ArrayList<>(system.getAllEntities())) {

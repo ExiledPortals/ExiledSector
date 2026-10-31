@@ -63,12 +63,9 @@ public final class StarAnomalies {
             return;
         }
         Random random = site.random(STATION_SALT);
-        for (float radius = star.getRadius() + STATION_GAP; radius <= STATION_REACH; radius += STATION_STEP) {
-            ChartSites.Orbit orbit = site.clearOrbit(star, radius, radius, random);
-            if (orbit != null) {
-                site.addSite(station, orbit, random);
-                return;
-            }
+        ChartSites.Orbit orbit = site.clearOrbit(OrbitSearch.stepping(star, star.getRadius() + STATION_GAP, STATION_REACH, STATION_STEP), random);
+        if (orbit != null) {
+            site.addSite(station, orbit, random);
         }
     }
 }

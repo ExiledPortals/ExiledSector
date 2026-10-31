@@ -5,7 +5,9 @@ import com.fs.starfarer.api.campaign.comm.IntelManagerAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
 import exiledsector.MockSector;
+import exiledsector.charts.anomaly.AnomalyState;
 import exiledsector.charts.anomaly.relay.RelayKind;
+import exiledsector.charts.anomaly.relay.RelayNetwork;
 import exiledsector.charts.anomaly.relay.RelayStates;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.content.ChartContent;
@@ -114,11 +116,11 @@ class ChartFleetHullItemsTest {
                     ChartGenContext.none(), 200f, new Random(1L));
             ItemDrops.SiteLoot relaysAsleep = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, lastStage, 100f,
                     new Random(1L));
-            run.recordAnomalyState(RelayStates.key(RelayKind.NAV_BUOY), Integer.toString(RelayStates.WOKEN));
-            run.recordAnomalyState(RelayStates.key(RelayKind.COMM_RELAY), Integer.toString(RelayStates.WOKEN));
+            AnomalyState.of(run, RelayNetwork.ANOMALY_ID).put(RelayKind.NAV_BUOY.key(), RelayStates.WOKEN);
+            AnomalyState.of(run, RelayNetwork.ANOMALY_ID).put(RelayKind.COMM_RELAY.key(), RelayStates.WOKEN);
             ItemDrops.SiteLoot oneRelayAsleep = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, lastStage, 100f,
                     new Random(1L));
-            run.recordAnomalyState(RelayStates.key(RelayKind.SENSOR_ARRAY), Integer.toString(RelayStates.WOKEN));
+            AnomalyState.of(run, RelayNetwork.ANOMALY_ID).put(RelayKind.SENSOR_ARRAY.key(), RelayStates.WOKEN);
             ItemDrops.SiteLoot firstBattle = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, lastStage, 100f,
                     new Random(1L));
             ItemDrops.SiteLoot secondBattle = ChartFleetLoot.roll(sector, ChartFleetFixtures.chartFleet(BOSS_ID, RUN_ID, 200f), run, lastStage, 100f,

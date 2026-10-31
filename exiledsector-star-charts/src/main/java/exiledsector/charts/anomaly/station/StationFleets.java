@@ -20,16 +20,11 @@ import java.util.function.BiConsumer;
 final class StationFleets {
 
     static final String SOURCE_ID_KEY = "$sourceId";
-    static final long SPAWN_SALT = 0x4c41554e4348L;
 
     private StationFleets() {
     }
 
     record Launch(String factionId, int maxShipSize, BiConsumer<Random, CampaignFleetAPI> dress) {
-    }
-
-    static long spawnSeed(long managerSeed, int spawned) {
-        return managerSeed ^ (SPAWN_SALT * (spawned + 1L));
     }
 
     static CampaignFleetAPI spawn(SectorEntityToken source, Launch launch, String runId, int runTier, int fleetsLost, long fleetSeed) {

@@ -18,6 +18,7 @@ import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.content.ChartContent;
+import exiledsector.charts.content.ChartFleetVisibility;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.objective.ChartObjective;
@@ -105,10 +106,10 @@ class ChartRelaysTest {
 
         assertTrue(ChartRelays.wake(run, system, relay, RelayKind.COMM_RELAY));
 
-        assertEquals(RelayRules.REVEAL_RANGE_MULT, enemy.getStats().getDynamic().getStat(Stats.DETECTED_BY_PLAYER_RANGE_MULT).getModifiedValue(), 0.001f);
-        verify(enemy).setExtendedDetectedAtRange(RelayRules.REVEAL_EXTENDED_RANGE);
+        assertEquals(ChartFleetVisibility.REVEAL_RANGE_MULT, enemy.getStats().getDynamic().getStat(Stats.DETECTED_BY_PLAYER_RANGE_MULT).getModifiedValue(), 0.001f);
+        verify(enemy).setExtendedDetectedAtRange(ChartFleetVisibility.REVEAL_EXTENDED_RANGE);
         assertEquals(1f, player.getStats().getDynamic().getStat(Stats.DETECTED_BY_PLAYER_RANGE_MULT).getModifiedValue(), 0.001f);
-        verify(player, never()).setExtendedDetectedAtRange(RelayRules.REVEAL_EXTENDED_RANGE);
+        verify(player, never()).setExtendedDetectedAtRange(ChartFleetVisibility.REVEAL_EXTENDED_RANGE);
         assertTrue(relay.getMemoryWithoutUpdate().getBoolean(MemFlags.OBJECTIVE_NON_FUNCTIONAL));
     }
 
@@ -263,7 +264,7 @@ class ChartRelaysTest {
 
         ChartRelays.check(mockSector.sector, new AnomalyRun(run, system));
 
-        verify(defenders).setExtendedDetectedAtRange(RelayRules.REVEAL_EXTENDED_RANGE);
+        verify(defenders).setExtendedDetectedAtRange(ChartFleetVisibility.REVEAL_EXTENDED_RANGE);
     }
 
     @Test

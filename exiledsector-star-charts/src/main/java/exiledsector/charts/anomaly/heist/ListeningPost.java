@@ -2,7 +2,6 @@ package exiledsector.charts.anomaly.heist;
 
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.effect.ChartEffect;
@@ -11,10 +10,10 @@ import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.AtlasRule;
 import exiledsector.charts.anomaly.ContentPlacer;
 import exiledsector.charts.anomaly.LootShaper;
+import exiledsector.charts.anomaly.OrbitSearch;
 import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.atlas.AtlasTraits;
 import exiledsector.charts.content.ChartSites;
-import exiledsector.charts.run.ChartRun;
 
 import java.util.List;
 import java.util.Random;
@@ -51,11 +50,10 @@ public final class ListeningPost implements AtlasRule, ContentPlacer, RunPartici
 
     @Override
     public void generate(AnomalyContentSite site) {
-        place(site, site.run());
+        place(site);
     }
 
-    static PostScript place(AnomalyContentSite site, ChartRun run) {
-        StarSystemAPI system = site.system();
+    static PostScript place(AnomalyContentSite site) {
         Random random = site.random(PLACEMENT_SALT);
         ChartSites.Orbit orbit = postOrbit(site, random);
         if (orbit == null) {
@@ -63,7 +61,7 @@ public final class ListeningPost implements AtlasRule, ContentPlacer, RunPartici
         }
         SectorEntityToken post = site.addEntity(postId(site.runId()), Translation.gameText("chart.post.name"), ENTITY_TYPE, site.factionId(), orbit);
         post.addTag(POST_TAG);
-        PostScript script = new PostScript(site.runId(), site.tier(), system, post.getId());
+        PostScript script = new PostScript(site.runId(), site.tier(), site.system(), post.getId());
         Random picketRandom = site.random(PICKET_SALT);
         int count = HeistRules.picketCount(picketRandom, Math.round(site.context().anomalyPercent(PICKETS_KEY)));
         float firstAngle = picketRandom.nextFloat() * 360f;
@@ -78,31 +76,13 @@ public final class ListeningPost implements AtlasRule, ContentPlacer, RunPartici
         if (script.stations().isEmpty()) {
             throw new IllegalStateException("no picket could be formed");
         }
-        PostState.record(run, PostState.fresh(random.nextLong()));
-        system.addScript(script);
-        return script;
+        PostState.record(site.state(ANOMALY_ID), PostState.fresh(random.nextLong()));
+        return site.addScript(script);
     }
 
     static ChartSites.Orbit postOrbit(AnomalyContentSite site, Random random) {
-        SectorEntityToken centre = site.system().getCenter() != null ? site.system().getCenter() : site.system().getStar();
-        if (centre == null) {
-            return null;
-        }
-        ChartSites.Orbit farthest = null;
-        for (int attempt = 0; attempt < HeistRules.POST_ATTEMPTS; attempt++) {
-            ChartSites.Orbit orbit = site.clearOrbit(centre, HeistRules.POST_MIN_RADIUS, HeistRules.POST_MAX_RADIUS, random);
-            if (orbit == null) {
-                continue;
-            }
-            float gap = site.distanceToEntry(orbit.position());
-            if (gap >= HeistRules.POST_MIN_ENTRY_GAP) {
-                return orbit;
-            }
-            if (farthest == null || gap > site.distanceToEntry(farthest.position())) {
-                farthest = orbit;
-            }
-        }
-        return farthest;
+        return site.clearOrbit(OrbitSearch.repeated(site.centre(), HeistRules.POST_MIN_RADIUS, HeistRules.POST_MAX_RADIUS, HeistRules.POST_ATTEMPTS)
+                .awayFromEntry(HeistRules.POST_MIN_ENTRY_GAP), random);
     }
 
     public static String postId(String runId) {

@@ -1,10 +1,10 @@
 package exiledsector.charts.anomaly.debris;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl;
+import exiledsector.PlayerFleet;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.AnomalyDialog;
@@ -44,7 +44,7 @@ public class DormantFleetDialog extends AnomalyDialog {
             fight(false);
             return;
         }
-        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
+        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
         dialog().getVisualPanel().showFleetInfo(null, playerFleet, null, dormantFleet);
         VanillaText.plainPara(text(), Translation.gameText("chart.debris.dialog.intro"));
         showOptions(options(hasReadyShips(playerFleet), kernelsHeld(playerFleet)));
@@ -79,7 +79,7 @@ public class DormantFleetDialog extends AnomalyDialog {
 
     @Override
     public void optionSelected(String optionText, Object optionData) {
-        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
+        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
         Options choices = options(hasReadyShips(playerFleet), kernelsHeld(playerFleet));
         if (ENGAGE_OPTION.equals(optionData) && choices.canEngage()) {
             engage(false, playerFleet);

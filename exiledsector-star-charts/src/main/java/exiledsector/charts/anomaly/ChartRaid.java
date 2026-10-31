@@ -19,6 +19,7 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD;
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD.RaidDangerLevel;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.PlayerFleet;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Style;
@@ -112,7 +113,7 @@ public class ChartRaid {
         this.dialog = dialog;
         this.entity = dialog.getInteractionTarget();
         this.market = entity == null ? null : entity.getMarket();
-        this.playerFleet = Global.getSector().getPlayerFleet();
+        this.playerFleet = PlayerFleet.orNull();
         this.text = dialog.getTextPanel();
         this.options = dialog.getOptionPanel();
         this.difficulty = difficulty;

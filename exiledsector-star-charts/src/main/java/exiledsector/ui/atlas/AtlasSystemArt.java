@@ -88,7 +88,8 @@ final class AtlasSystemArt {
     static final float NEBULA_ALPHA = 0.6f;
     static final int ASTEROIDS_PER_BELT = 14;
     static final int DEBRIS_PIECES = 5;
-    static final float SHEET_CELL = 0.25f;
+    static final int SHEET_SIDE = 4;
+    static final int CLOUD_SHEET_SIDE = 2;
     static final int SHEET_CELLS = 16;
     static final float FLARE_SECONDS = 2.4f;
     static final int FLARES = 3;
@@ -299,21 +300,8 @@ final class AtlasSystemArt {
         pieceY = frame.starY + (float) Math.sin(angle) * distance;
     }
 
-    private void drawCell(SpriteAPI sheet, int cell, float x, float y, float size, float angle, Color tint, float alpha, boolean additive) {
-        sheet.setTexX((cell % 4) * SHEET_CELL * sheet.getTextureWidth());
-        sheet.setTexY((cell / 4) * SHEET_CELL * sheet.getTextureHeight());
-        sheet.setTexWidth(SHEET_CELL * sheet.getTextureWidth());
-        sheet.setTexHeight(SHEET_CELL * sheet.getTextureHeight());
-        sheet.setSize(size, size);
-        sheet.setAngle(angle);
-        sheet.setColor(tint);
-        sheet.setAlphaMult(alpha);
-        if (additive) {
-            sheet.setAdditiveBlend();
-        } else {
-            sheet.setNormalBlend();
-        }
-        sheet.renderAtCenter(x, y);
+    private static void drawCell(SpriteAPI sheet, int cell, float x, float y, float size, float angle, Color tint, float alpha, boolean additive) {
+        SpriteDraw.drawCellAtCenter(sheet, SHEET_SIDE, SHEET_SIDE, cell, x, y, size, size, angle, tint, alpha, additive);
     }
 
     private void drawSprite(String path, float x, float y, float height, float aspect, float facingDegrees, Color tint, float alpha) {
@@ -557,17 +545,8 @@ final class AtlasSystemArt {
             float x = pieceX;
             float y = pieceY;
             float edgeFade = 1f - across * across * 0.6f;
-            int cell = (index + piece.variant()) % 4;
-            clouds.setTexX((cell % 2) * 0.5f * clouds.getTextureWidth());
-            clouds.setTexY((cell / 2) * 0.5f * clouds.getTextureHeight());
-            clouds.setTexWidth(0.5f * clouds.getTextureWidth());
-            clouds.setTexHeight(0.5f * clouds.getTextureHeight());
-            clouds.setSize(size, size);
-            clouds.setAngle(index * 47f + frame.elapsedSeconds * 4f);
-            clouds.setColor(STORM_TINT);
-            clouds.setAlphaMult(0.45f * edgeFade * frame.alpha);
-            clouds.setNormalBlend();
-            clouds.renderAtCenter(x, y);
+            SpriteDraw.drawCellAtCenter(clouds, CLOUD_SHEET_SIDE, CLOUD_SHEET_SIDE, index + piece.variant(), x, y, size, size, index * 47f + frame.elapsedSeconds * 4f,
+                    STORM_TINT, 0.45f * edgeFade * frame.alpha, false);
             if (index == flashing) {
                 drawGlow(x, y, size * 0.8f, LIGHTNING_COLOUR, flash * edgeFade * frame.alpha);
             }

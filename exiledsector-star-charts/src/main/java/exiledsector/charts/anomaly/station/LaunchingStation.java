@@ -3,14 +3,13 @@ package exiledsector.charts.anomaly.station;
 import com.fs.starfarer.api.EveryFrameScript;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
-import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ContentPlacer;
+import exiledsector.charts.anomaly.OrbitSearch;
 import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.content.ChartAnomalyFleets;
 import exiledsector.charts.content.ChartSites;
@@ -64,31 +63,13 @@ abstract class LaunchingStation implements ContentPlacer, RunParticipant {
         station.setAI(null);
         station.setCircularOrbitWithSpin(orbit.focus(), orbit.angle(), orbit.radius(), orbit.days(), StationRules.STATION_SPIN,
                 StationRules.STATION_SPIN);
-        site.system().addScript(manager(station, site.runId(), site.tier(), random.nextLong()));
+        site.addScript(manager(station, site.runId(), site.tier(), random.nextLong()));
         return station;
     }
 
     static ChartSites.Orbit orbit(AnomalyContentSite site, Random random) {
-        StarSystemAPI system = site.system();
-        SectorEntityToken centre = system.getCenter() != null ? system.getCenter() : system.getStar();
-        if (centre == null) {
-            return null;
-        }
-        ChartSites.Orbit farthest = null;
-        for (int band = 0; band < StationRules.ORBIT_BANDS; band++) {
-            float bandMin = StationRules.ORBIT_MIN + band * StationRules.ORBIT_BAND_WIDTH;
-            ChartSites.Orbit orbit = site.clearOrbit(centre, bandMin, bandMin + StationRules.ORBIT_BAND_WIDTH, random);
-            if (orbit == null) {
-                continue;
-            }
-            if (site.distanceToEntry(orbit.position()) >= StationRules.MIN_ENTRY_GAP) {
-                return orbit;
-            }
-            if (farthest == null || site.distanceToEntry(orbit.position()) > site.distanceToEntry(farthest.position())) {
-                farthest = orbit;
-            }
-        }
-        return farthest;
+        return site.clearOrbit(OrbitSearch.bands(site.centre(), StationRules.ORBIT_MIN, StationRules.ORBIT_BAND_WIDTH, StationRules.ORBIT_BANDS)
+                .awayFromEntry(StationRules.MIN_ENTRY_GAP), random);
     }
 
     CampaignFleetAPI stationIn(LocationAPI location) {

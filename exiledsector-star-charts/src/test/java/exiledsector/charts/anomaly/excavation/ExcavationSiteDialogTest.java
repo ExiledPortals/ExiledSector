@@ -74,7 +74,7 @@ class ExcavationSiteDialogTest {
     @Test
     void theCampaignPluginOpensTheSiteOnlyWhileItStands() {
         ExcavationSite site = new ExcavationSite(0, "rock", ExcavationSite.Access.OPEN, DropType.WEAPON, 1L, false);
-        ExcavationStates.record(run, site);
+        ExcavationStates.record(ExcavationStates.of(run), site);
         PlanetAPI rock = planet("rock", system);
         PlanetAPI bare = planet("bare", system);
         PlanetAPI elsewhere = planet("rock", mock(StarSystemAPI.class));

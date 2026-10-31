@@ -11,26 +11,17 @@ public final class MothershipFleetManager extends SourceBasedFleetManager implem
     static final StationFleets.Launch LAUNCH = new StationFleets.Launch(Factions.DERELICT, StationRules.DRONE_MAX_SHIP_SIZE, (random, fleet) -> {
     });
 
-    private final String runId;
-    private final int tier;
-    private final long seed;
-    private int spawned;
+    private final StationLaunches launches;
     private int fleetsLost;
 
     MothershipFleetManager(CampaignFleetAPI mothership, String runId, int tier, long seed) {
         super(mothership, StationRules.THRESHOLD_LY, StationRules.MIN_FLEETS, StationRules.MOTHERSHIP_MAX_FLEETS, StationRules.MOTHERSHIP_RESPAWN_DAYS);
-        this.runId = runId;
-        this.tier = tier;
-        this.seed = seed;
+        this.launches = new StationLaunches(runId, tier, seed);
     }
 
     @Override
     protected CampaignFleetAPI spawnFleet() {
-        CampaignFleetAPI fleet = StationFleets.spawn(source, LAUNCH, runId, tier, fleetsLost, StationFleets.spawnSeed(seed, spawned));
-        if (fleet != null) {
-            spawned++;
-        }
-        return fleet;
+        return launches.next(source, LAUNCH, fleetsLost);
     }
 
     @Override
@@ -43,7 +34,7 @@ public final class MothershipFleetManager extends SourceBasedFleetManager implem
 
     @Override
     public boolean belongsToRun(String wantedRunId) {
-        return runId.equals(wantedRunId);
+        return launches.belongsToRun(wantedRunId);
     }
 
     int fleetsLost() {

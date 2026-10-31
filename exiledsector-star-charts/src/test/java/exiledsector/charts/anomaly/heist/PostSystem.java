@@ -10,6 +10,7 @@ import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.content.FakeChartContentEngine;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.run.ChartRun;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
@@ -85,6 +86,12 @@ final class PostSystem {
             return null;
         }).when(token).setLocation(anyFloat(), anyFloat());
         return token;
+    }
+
+    static PostScript placeIn(AnomalyContentSite site, ChartRun run) {
+        PostScript script = ListeningPost.place(site);
+        site.commitStates(run);
+        return script;
     }
 
     AnomalyContentSite site(ChartGenContext context, Vector2f entry, long seed) {

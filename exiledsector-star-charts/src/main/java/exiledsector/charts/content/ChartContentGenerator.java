@@ -16,7 +16,6 @@ import com.fs.starfarer.api.impl.campaign.ids.Abilities;
 import com.fs.starfarer.api.impl.campaign.ids.FleetTypes;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import com.fs.starfarer.api.impl.campaign.ids.Personalities;
-import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.impl.campaign.terrain.BaseRingTerrain;
 import com.fs.starfarer.api.impl.campaign.terrain.FlareManager.FlareManagerDelegate;
 import com.fs.starfarer.api.impl.campaign.terrain.StarCoronaTerrainPlugin;
@@ -40,6 +39,9 @@ import exiledsector.charts.loot.ChartFleetLoot;
 import exiledsector.charts.loot.ChartVanillaLoot;
 import exiledsector.charts.loot.DropType;
 import exiledsector.charts.objective.ChartObjective;
+import exiledsector.charts.run.ChartRun;
+import exiledsector.charts.table.BuiltInTable;
+import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.run.cleanup.ChartRunCloser;
 import exiledsector.items.WeightedPick;
 import org.apache.log4j.Logger;
@@ -78,8 +80,6 @@ public final class ChartContentGenerator {
     static final long STATION_SALT = 0x43485354415449L;
     static final long STAGING_SALT = 0x4348535441474eL;
     static final String BOSS_REVEAL_MOD_ID = ChartIds.PREFIX + "boss_reveal";
-    static final float BOSS_REVEAL_RANGE_MULT = 1000f;
-    static final float BOSS_REVEAL_EXTENDED_RANGE = 100000f;
     static final String HOSTILE_TO_FACTION_PREFIX = "$cfai_makeHostile_";
     static final String MAKE_NON_HOSTILE = "$cfai_makeNonHostile";
     static final String NON_HOSTILE_TAKES_PRIORITY = "$makeNonHostileTakesPriority";
@@ -132,7 +132,9 @@ public final class ChartContentGenerator {
             build.spawnFleets(plan);
             build.placeColonyItem(plan);
             build.generateAnomalies(plan);
-            return build.settle(plan);
+            ChartContent content = build.settle(plan);
+            build.commitAnomalyStates();
+            return content;
         } catch (RuntimeException | LinkageError e) {
             report("generate the content", seed, e);
             build.removeEverything();
@@ -277,10 +279,7 @@ public final class ChartContentGenerator {
     }
 
     static void revealBoss(CampaignFleetAPI boss) {
-        if (boss.getStats() != null) {
-            boss.getStats().getDynamic().getStat(Stats.DETECTED_BY_PLAYER_RANGE_MULT).modifyMult(BOSS_REVEAL_MOD_ID, BOSS_REVEAL_RANGE_MULT);
-        }
-        boss.setExtendedDetectedAtRange(BOSS_REVEAL_EXTENDED_RANGE);
+        ChartFleetVisibility.reveal(boss, BOSS_REVEAL_MOD_ID);
     }
 
     static void joinSkirmish(CampaignFleetAPI fleet, boolean defending, ChartContentPlan plan, String allyFactionId) {
@@ -378,7 +377,6 @@ public final class ChartContentGenerator {
         private final List<SectorEntityToken> guardedPois = new ArrayList<>();
         private final Set<SectorEntityToken> usedFoci = new LinkedHashSet<>();
         private final List<String> anomalies = new ArrayList<>();
-        private final List<SectorEntityToken> anomalySites = new ArrayList<>();
         private final Set<String> claimedPlanetIds = new HashSet<>();
         private final Map<String, AnomalyContentSite> generatedSites = new LinkedHashMap<>();
         private List<Hazard> hazards = List.of();
@@ -620,7 +618,7 @@ public final class ChartContentGenerator {
             if (skirmishStation != null) {
                 fleet.addAssignment(FleetAssignment.ORBIT_AGGRESSIVE, skirmishStation, ASSIGNMENT_DAYS);
             }
-            SectorEntityToken patrolCentre = system.getCenter() != null ? system.getCenter() : system.getStar();
+            SectorEntityToken patrolCentre = ChartSites.centreOf(system);
             if (patrolCentre != null) {
                 fleet.addAssignment(FleetAssignment.PATROL_SYSTEM, patrolCentre, ASSIGNMENT_DAYS);
             }
@@ -767,7 +765,7 @@ public final class ChartContentGenerator {
         }
 
         private void assign(CampaignFleetAPI fleet, FleetRole role, SectorEntityToken guarded) {
-            SectorEntityToken patrolCentre = system.getCenter() != null ? system.getCenter() : system.getStar();
+            SectorEntityToken patrolCentre = ChartSites.centreOf(system);
             if (role == FleetRole.PATROL && skirmishStation != null) {
                 fleet.addAssignment(FleetAssignment.ORBIT_AGGRESSIVE, skirmishStation, ASSIGNMENT_DAYS);
             } else if (role != FleetRole.PATROL) {
@@ -796,19 +794,24 @@ public final class ChartContentGenerator {
                 }
                 AnomalyContentSite site = new AnomalyContentSite(system, runId, tier, plan.faction().factionId(), chartContext, poiEntities,
                         guardedPois, innerWormhole, spot -> isClear(spot, hazards, innerWormhole, POI_WORMHOLE_CLEARANCE),
-                        salt -> ChartLayoutGenerator.derivedRandom(seed ^ ((long) anomalyId.hashCode() << 32), salt), claimedPlanetIds);
+                        salt -> BuiltInTable.rollFor(seed, anomalyId, salt), claimedPlanetIds);
                 try {
                     placer.generate(site);
                     anomalies.add(anomalyId);
                 } catch (RuntimeException | LinkageError e) {
-                    site.placed().forEach(system::removeEntity);
-                    site.releaseClaims();
-                    site.forgetRecordedStates(anomalyId);
+                    site.rollBack();
                     report("generate the " + anomalyId + " anomaly", seed, e);
                     continue;
                 }
-                anomalySites.addAll(site.placed());
                 generatedSites.put(anomalyId, site);
+            }
+        }
+
+        void commitAnomalyStates() {
+            List<AnomalyContentSite> recording = generatedSites.values().stream().filter(AnomalyContentSite::hasStagedStates).toList();
+            if (!recording.isEmpty()) {
+                ChartRun run = ChartRuns.currentOrNull();
+                recording.forEach(site -> site.commitStates(run));
             }
         }
 
@@ -859,9 +862,7 @@ public final class ChartContentGenerator {
                     LOG.debug("Removing a half-generated Star Chart fleet failed", e);
                 }
             }
-            List<SectorEntityToken> sites = new ArrayList<>(poiEntities);
-            sites.addAll(anomalySites);
-            for (SectorEntityToken entity : sites) {
+            for (SectorEntityToken entity : poiEntities) {
                 if (entity != null) {
                     try {
                         system.removeEntity(entity);
@@ -872,8 +873,13 @@ public final class ChartContentGenerator {
             }
             fleets.clear();
             poiEntities.clear();
-            anomalySites.clear();
-            generatedSites.forEach((anomalyId, site) -> site.forgetRecordedStates(anomalyId));
+            for (AnomalyContentSite site : generatedSites.values()) {
+                try {
+                    site.rollBack();
+                } catch (RuntimeException e) {
+                    LOG.debug("Removing a half-generated Star Chart anomaly failed", e);
+                }
+            }
             generatedSites.clear();
         }
     }

@@ -1,9 +1,9 @@
 package exiledsector.charts.anomaly.excavation;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl;
+import exiledsector.PlayerFleet;
 import exiledsector.i18n.Translation;
 
 final class ShaftEncounterDialog extends FleetInteractionDialogPluginImpl {
@@ -15,7 +15,7 @@ final class ShaftEncounterDialog extends FleetInteractionDialogPluginImpl {
     @Override
     protected void updateEngagementChoice(boolean withText) {
         super.updateEngagementChoice(withText);
-        disableEngageWithoutShaftShips(options, Global.getSector().getPlayerFleet());
+        disableEngageWithoutShaftShips(options, PlayerFleet.orNull());
     }
 
     static void disableEngageWithoutShaftShips(OptionPanelAPI options, CampaignFleetAPI playerFleet) {

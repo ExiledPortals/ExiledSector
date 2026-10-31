@@ -26,6 +26,10 @@ public final class ChartSites {
     private ChartSites() {
     }
 
+    public static SectorEntityToken centreOf(StarSystemAPI system) {
+        return system.getCenter() != null ? system.getCenter() : system.getStar();
+    }
+
     public static ChartPoi pick(ChartPoi.Kind kind, int tier, Random random) {
         return WeightedPick.pick(ChartPois.ofKind(ChartPois.lootAt(ChartPois.all(), ChartTiers.clamp(tier)), kind), ChartPoi::weight, random);
     }

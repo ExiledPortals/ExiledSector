@@ -554,8 +554,9 @@ A run's anomalies are its atlas system's own, decided once before layout (`Chart
 ranges); Star Charts roll no anomaly lines. Each id needs a `chart_anomalies.csv` row with its `requires_mod` loaded,
 and one that conflicts with an anomaly already taken (both replace the star, or `excludes`) is dropped. A star anomaly
 picks the star or system type, a `shape` adds terrain after layout and a `generate` places entities after the sites and
-fleets (role interfaces in package `charts.anomaly`); one that fails at either step is left out, and the run record
-keeps the ids that placed. Run hooks reach only the live run's anomalies (`ChartAnomalies`, `AnomalyRun`). An
+fleets (role interfaces in package `charts.anomaly`); one that fails at either step is left out with what it added, and
+the run record keeps the ids that placed. Each anomaly shapes with its own seeded random, and the run state a
+`generate` records reaches the run only once the whole content is built (`AnomalyContentSite.commitStates`). Run hooks reach only the live run's anomalies (`ChartAnomalies`, `AnomalyRun`). An
 anomaly's `effects` lines join the run's context for generation and loot (`ChartGenContext.withAnomalyEffects`).
 
 `AnomalyContentSite.addSite` places chart POIs on clear orbits: derelicts around a black hole, a research station

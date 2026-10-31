@@ -1,6 +1,5 @@
 package exiledsector.charts.anomaly.excavation;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogAPI;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
@@ -11,6 +10,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl;
 import com.fs.starfarer.api.impl.campaign.graid.GroundRaidObjectivePlugin;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.PlayerFleet;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Style;
 import exiledsector.i18n.StyledText;
@@ -90,7 +90,7 @@ public class ExcavationSiteDialog extends AnomalyDialog {
             if (site.access() == ExcavationSite.Access.OPEN) {
                 options.addOption(Translation.gameText("chart.excavation.dialog.option.descend"), DESCEND,
                         Translation.gameText("chart.excavation.dialog.descendTooltip"));
-                if (!hasShaftShips(Global.getSector().getPlayerFleet())) {
+                if (!hasShaftShips(PlayerFleet.orNull())) {
                     options.setEnabled(DESCEND, false);
                     options.setTooltip(DESCEND, Translation.gameText("chart.excavation.dialog.noShaftShips"));
                 }
@@ -109,7 +109,7 @@ public class ExcavationSiteDialog extends AnomalyDialog {
         if (raid.handles(optionData)) {
             raid.optionSelected(optionData);
         } else if (DESCEND.equals(optionData) && standing && site.access() == ExcavationSite.Access.OPEN
-                && hasShaftShips(Global.getSector().getPlayerFleet())) {
+                && hasShaftShips(PlayerFleet.orNull())) {
             descend(site);
         } else if (RAID_OPTION.equals(optionData) && standing && site.access() == ExcavationSite.Access.COLLAPSED) {
             raid.launch(dialog(), run().tier(), site.seed() * 31L, this::objectives);

@@ -253,7 +253,7 @@ class ChartContentGeneratorTest {
 
         for (CampaignFleetAPI fleet : engine.fleets) {
             if (fleet.getId().equals(content.bossFleetId())) {
-                verify(fleet).setExtendedDetectedAtRange(ChartContentGenerator.BOSS_REVEAL_EXTENDED_RANGE);
+                verify(fleet).setExtendedDetectedAtRange(ChartFleetVisibility.REVEAL_EXTENDED_RANGE);
             } else {
                 verify(fleet, never()).setExtendedDetectedAtRange(anyFloat());
             }
@@ -277,7 +277,7 @@ class ChartContentGeneratorTest {
             assertEquals(station.getId(), content.bossFleetId());
             assertTrue(inSystem.contains(station));
             verify(station).setAI(null);
-            verify(station).setExtendedDetectedAtRange(ChartContentGenerator.BOSS_REVEAL_EXTENDED_RANGE);
+            verify(station).setExtendedDetectedAtRange(ChartFleetVisibility.REVEAL_EXTENDED_RANGE);
             assertTrue(station.getMemoryWithoutUpdate().getBoolean(ChartIds.BOSS_MEMORY_KEY));
             assertTrue(station.getMemoryWithoutUpdate().getBoolean(MemFlags.FLEET_FIGHT_TO_THE_LAST));
             assertTrue(station.getMemoryWithoutUpdate().getBoolean(ChartIds.fleetRunKey(RUN_ID)));
@@ -721,7 +721,7 @@ class ChartContentGeneratorTest {
 
             @Override
             public void generate(AnomalyContentSite site) {
-                site.run().recordAnomalyState(stateKey, "yes");
+                site.state(SpatialBreach.ANOMALY_ID).put("placed", "yes");
                 throw new IllegalStateException("test failure");
             }
         };
@@ -735,6 +735,35 @@ class ChartContentGeneratorTest {
 
             assertEquals(List.of(), content.anomalies());
             assertNull(run.anomalyState(stateKey));
+        } finally {
+            ChartAnomalies.resetForTests();
+        }
+    }
+
+    @Test
+    void aGeneratedAnomalysStateReachesTheRunOnlyOnceTheContentIsBuilt() {
+        String stateKey = SpatialBreach.ANOMALY_ID + ".placed";
+        ContentPlacer records = new ContentPlacer() {
+            @Override
+            public String id() {
+                return SpatialBreach.ANOMALY_ID;
+            }
+
+            @Override
+            public void generate(AnomalyContentSite site) {
+                site.state(SpatialBreach.ANOMALY_ID).put("placed", "yes");
+            }
+        };
+        ChartAnomalies.useForTests(List.of(records), List.of(ChartAnomaliesTest.definition(SpatialBreach.ANOMALY_ID)));
+        try (MockSector mockSector = new MockSector()) {
+            ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
+            ChartRuns.store(run);
+
+            ChartContent content = ChartContentGenerator.generate(sector, system, RUN_ID, 42L, 10, WORMHOLE,
+                    ChartGenContext.none().withAnomalies(List.of(SpatialBreach.ANOMALY_ID)));
+
+            assertEquals(List.of(SpatialBreach.ANOMALY_ID), content.anomalies());
+            assertEquals("yes", run.anomalyState(stateKey));
         } finally {
             ChartAnomalies.resetForTests();
         }

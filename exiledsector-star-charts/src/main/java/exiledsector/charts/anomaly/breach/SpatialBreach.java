@@ -1,7 +1,6 @@
 package exiledsector.charts.anomaly.breach;
 
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
-import com.fs.starfarer.api.campaign.CampaignTerrainAPI;
 import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
@@ -14,6 +13,7 @@ import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
+import exiledsector.charts.anomaly.AnomalyTerrains;
 import exiledsector.charts.anomaly.ContentPlacer;
 import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.anomaly.RunParticipant;
@@ -39,10 +39,7 @@ public final class SpatialBreach implements ContentPlacer, RunParticipant, LootS
     static final long CENTRE_SALT = 0x425243454e5452L;
     static final long CACHE_SALT = 0x42524341434845L;
     static final long SPAWN_SALT = 0x42525350574e53L;
-    static final int CENTRE_ATTEMPTS = 24;
     static final float POI_OFFSET_SHARE = 0.5f;
-    static final float MIN_OPEN_DISTANCE = 2000f;
-    static final float MAX_OPEN_DISTANCE = 8000f;
     static final float ENTRY_MARGIN = 500f;
 
     private SpatialBreach() {
@@ -66,47 +63,17 @@ public final class SpatialBreach implements ContentPlacer, RunParticipant, LootS
         List<BreachRules.CacheSite> caches = BreachRules.cacheSites(centre, growth.maxRadius(), cacheCount, site::isClear, site.random(CACHE_SALT));
         BreachTerrainPlugin.Params params = new BreachTerrainPlugin.Params(site.runId(), site.tier(), growth, caches,
                 context.anomalyMult(CACHE_ITEM_KEY), site.random(SPAWN_SALT).nextLong());
-        SectorEntityToken terrain = system.addTerrain(TERRAIN_ID, params);
-        try {
-            terrain.setFixedLocation(centre.x, centre.y);
-            SectorEntityToken core = system.addCustomEntity(coreId(site.runId()), Translation.gameText("chart.breach.core.name"), CORE_TYPE,
-                    Factions.NEUTRAL);
-            core.setFixedLocation(centre.x, centre.y);
-            core.addTag(CORE_TAG);
-            core.addTag(Tags.NON_CLICKABLE);
-        } catch (RuntimeException | LinkageError e) {
-            system.removeEntity(terrain);
-            throw e;
-        }
+        site.addTerrain(TERRAIN_ID, params, centre);
+        SectorEntityToken core = site.track(system.addCustomEntity(coreId(site.runId()), Translation.gameText("chart.breach.core.name"), CORE_TYPE,
+                Factions.NEUTRAL));
+        core.setFixedLocation(centre.x, centre.y);
+        core.addTag(CORE_TAG);
+        core.addTag(Tags.NON_CLICKABLE);
     }
 
     static Vector2f pickCentre(AnomalyContentSite site, float maxRadius, Random random) {
-        List<SectorEntityToken> pois = site.pois();
-        for (int attempt = 0; attempt < CENTRE_ATTEMPTS; attempt++) {
-            Vector2f candidate = attempt < CENTRE_ATTEMPTS / 2 && !pois.isEmpty()
-                    ? nearPoi(pois.get(random.nextInt(pois.size())), maxRadius * POI_OFFSET_SHARE, random)
-                    : inOpenSpace(random);
-            if (candidate != null && site.isClear(candidate) && site.distanceToEntry(candidate) > maxRadius + ENTRY_MARGIN) {
-                return candidate;
-            }
-        }
-        return null;
-    }
-
-    private static Vector2f nearPoi(SectorEntityToken poi, float maxOffset, Random random) {
-        if (poi.getLocation() == null) {
-            return null;
-        }
-        return offset(poi.getLocation(), random.nextFloat() * maxOffset, random);
-    }
-
-    private static Vector2f inOpenSpace(Random random) {
-        return offset(new Vector2f(), MIN_OPEN_DISTANCE + random.nextFloat() * (MAX_OPEN_DISTANCE - MIN_OPEN_DISTANCE), random);
-    }
-
-    private static Vector2f offset(Vector2f from, float distance, Random random) {
-        double angle = random.nextDouble() * Math.PI * 2d;
-        return new Vector2f(from.x + (float) Math.cos(angle) * distance, from.y + (float) Math.sin(angle) * distance);
+        return site.findSpot((poi, spotRandom) -> spotRandom.nextFloat() * maxRadius * POI_OFFSET_SHARE,
+                candidate -> site.distanceToEntry(candidate) > maxRadius + ENTRY_MARGIN, random);
     }
 
     @Override
@@ -130,14 +97,6 @@ public final class SpatialBreach implements ContentPlacer, RunParticipant, LootS
     }
 
     public static BreachTerrainPlugin breachIn(LocationAPI location) {
-        if (location == null) {
-            return null;
-        }
-        for (CampaignTerrainAPI terrain : location.getTerrainCopy()) {
-            if (terrain.getPlugin() instanceof BreachTerrainPlugin breach && !breach.isClosed()) {
-                return breach;
-            }
-        }
-        return null;
+        return AnomalyTerrains.in(location, BreachTerrainPlugin.class).stream().filter(breach -> !breach.isClosed()).findFirst().orElse(null);
     }
 }

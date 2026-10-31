@@ -210,4 +210,13 @@ public enum ChartEffect implements ModifierEffect {
         }
         return null;
     }
+
+    public static ChartEffect forDropType(DropType type) {
+        for (ChartEffect effect : values()) {
+            if (type != null && effect.dropType == type) {
+                return effect;
+            }
+        }
+        return null;
+    }
 }

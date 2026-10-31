@@ -16,10 +16,6 @@ public final class FacilityRules {
     private FacilityRules() {
     }
 
-    public static float lootSteps(int tier) {
-        return LOOT_STEPS + LOOT_STEPS_PER_TIER * (ChartTiers.clamp(tier) - ChartTiers.LOWEST_TIER);
-    }
-
     public static int databankRolls(int tier) {
         return DATABANK_ROLLS + DATABANK_ROLLS_PER_TIER * (ChartTiers.clamp(tier) - ChartTiers.LOWEST_TIER);
     }

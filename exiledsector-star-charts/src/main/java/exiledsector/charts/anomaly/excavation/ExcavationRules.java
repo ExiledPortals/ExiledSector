@@ -2,7 +2,6 @@ package exiledsector.charts.anomaly.excavation;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.DropType;
 
 import java.util.List;
@@ -43,14 +42,6 @@ public final class ExcavationRules {
         List<DropType> droppable = LEANS.stream().filter(type -> type.canDrop(sector)).toList();
         List<DropType> choices = droppable.isEmpty() ? List.of(DropType.RESOURCE) : droppable;
         return choices.get(random.nextInt(choices.size()));
-    }
-
-    public static float lootSteps(int tier, float quantityMult) {
-        return (LOOT_STEPS + LOOT_STEPS_PER_TIER * (ChartTiers.clamp(tier) - 1)) * Math.max(0f, quantityMult);
-    }
-
-    public static float itemMult(float quantityMult) {
-        return ITEM_MULT * Math.max(0f, quantityMult);
     }
 
     public static float raidShare(float raidEffectiveness) {

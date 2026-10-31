@@ -46,11 +46,11 @@ class ExcavationRulesTest {
 
     @Test
     void theSiteBudgetGrowsWithTierAndTheQuantityLine() {
-        assertEquals(ExcavationRules.LOOT_STEPS, ExcavationRules.lootSteps(1, 1f), 0.0001f);
-        assertTrue(ExcavationRules.lootSteps(10, 1f) > ExcavationRules.lootSteps(1, 1f));
-        assertEquals(ExcavationRules.lootSteps(5, 1f) * 1.5f, ExcavationRules.lootSteps(5, 1.5f), 0.0001f);
-        assertEquals(ExcavationRules.ITEM_MULT * 1.5f, ExcavationRules.itemMult(1.5f), 0.0001f);
-        assertEquals(0f, ExcavationRules.itemMult(-1f), 0.0001f);
+        assertEquals(ExcavationRules.LOOT_STEPS, ExcavationLoot.LOOT.steps(1, 1f), 0.0001f);
+        assertTrue(ExcavationLoot.LOOT.steps(10, 1f) > ExcavationLoot.LOOT.steps(1, 1f));
+        assertEquals(ExcavationLoot.LOOT.steps(5, 1f) * 1.5f, ExcavationLoot.LOOT.steps(5, 1.5f), 0.0001f);
+        assertEquals(ExcavationRules.ITEM_MULT * 1.5f, ExcavationLoot.LOOT.items(1.5f), 0.0001f);
+        assertEquals(0f, ExcavationLoot.LOOT.items(-1f), 0.0001f);
     }
 
     @Test
@@ -60,21 +60,21 @@ class ExcavationRulesTest {
                 new ChartGenContext.AppliedEffect(ChartEffect.CHART_EXCAVATION_LOOT_QUANTITY_PERCENT, 50f)));
 
         assertEquals(3, Math.round(context.anomalyPercent(ExcavationSites.EXTRA_KEY)));
-        assertEquals(1.5f, ExcavationLoot.quantityMult(context), 0.0001f);
-        assertEquals(1f, ExcavationLoot.quantityMult(ChartGenContext.none()), 0.0001f);
+        assertEquals(1.5f, ExcavationLoot.LOOT.quantityMult(context), 0.0001f);
+        assertEquals(1f, ExcavationLoot.LOOT.quantityMult(ChartGenContext.none()), 0.0001f);
     }
 
     @Test
     void aSiteLeansTowardItsDropType() {
         ChartGenContext context = ChartGenContext.of(List.of(new ChartGenContext.AppliedEffect(ChartEffect.CHART_QUANTITY_PERCENT, 10f)));
 
-        ChartGenContext leaned = ExcavationLoot.contextFor(context, DropType.WEAPON);
+        ChartGenContext leaned = ExcavationLoot.LOOT.leaning(context, List.of(DropType.WEAPON));
 
         float expected = 1f + (10f + ExcavationRules.LEAN_PERCENT) / ChartGenContext.PERCENT;
         assertEquals(expected, leaned.dropMult(DropType.WEAPON), 0.0001f);
         assertEquals(context.dropMult(DropType.AI_CORE), leaned.dropMult(DropType.AI_CORE), 0.0001f);
-        assertSame(ChartEffect.CHART_WEAPON_PERCENT, ExcavationLoot.effectFor(DropType.WEAPON));
-        assertSame(context, ExcavationLoot.contextFor(context, null));
-        ExcavationRules.LEANS.forEach(lean -> assertNotNull(ExcavationLoot.effectFor(lean), lean.name()));
+        assertSame(ChartEffect.CHART_WEAPON_PERCENT, ChartEffect.forDropType(DropType.WEAPON));
+        assertSame(context, ExcavationLoot.LOOT.leaning(context, ExcavationLoot.leaning(null)));
+        ExcavationRules.LEANS.forEach(lean -> assertNotNull(ChartEffect.forDropType(lean), lean.name()));
     }
 }

@@ -10,7 +10,6 @@ import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import exiledsector.MockSector;
-import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
@@ -117,7 +116,6 @@ class StormFrontTest {
         assertEquals(StormRules.BAND_WIDTH, front.path().bandWidth());
         assertEquals(StormRules.CROSSING_DAYS, front.path().crossingDays());
         assertEquals(100L, front.startTimestamp());
-        verify(added).addTag(ChartIds.runTag("run1"));
         verify(added).addTag(StormFront.FRONT_TAG);
         assertTrue(site.placed().contains(added));
     }

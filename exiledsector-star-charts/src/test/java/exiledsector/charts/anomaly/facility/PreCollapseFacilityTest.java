@@ -28,7 +28,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -99,7 +98,8 @@ class PreCollapseFacilityTest {
             AnomalyContentSite site = site(seed);
             site.claim(dug);
 
-            assertEquals("rock", PreCollapseFacility.place(site, run).getId());
+            assertEquals("rock", PreCollapseFacility.place(site).getId());
+            site.commitStates(run);
             assertTrue(site.isClaimed(rock));
             assertEquals("rock", FacilityStates.planetId(run));
             assertEquals(FacilityStates.Stage.GUARDED, FacilityStates.stage(run));
@@ -111,16 +111,9 @@ class PreCollapseFacilityTest {
         planet("sun", true, false);
         planet("giant", false, true);
 
-        assertEquals(List.of("giant"), PreCollapseFacility.candidates(site(1L)).stream().map(PlanetAPI::getId).toList());
+        assertEquals(List.of("giant"), site(1L).freePlanets(true).stream().map(PlanetAPI::getId).toList());
         planets.remove(1);
-        assertNull(PreCollapseFacility.place(site(1L), run()));
-    }
-
-    @Test
-    void generatingWithoutARunToRecordInFails() {
-        planet("rock", false, false);
-
-        assertThrows(IllegalStateException.class, () -> PreCollapseFacility.INSTANCE.generate(site(1L)));
+        assertNull(PreCollapseFacility.place(site(1L)));
     }
 
     @Test
@@ -128,7 +121,7 @@ class PreCollapseFacilityTest {
         ChartRun run = run();
         assertNull(FacilityStates.stage(run));
         assertFalse(FacilityStates.standing(run));
-        FacilityStates.record(run, "rock");
+        FacilityStates.record(FacilityStates.of(run), "rock");
 
         assertFalse(FacilityStates.advance(run, FacilityStates.Stage.OPEN, FacilityStates.Stage.SALVAGED));
         assertTrue(FacilityStates.advance(run, FacilityStates.Stage.GUARDED, FacilityStates.Stage.OPEN));
@@ -146,7 +139,7 @@ class PreCollapseFacilityTest {
         PlanetAPI stone = planet("stone", false, false);
         ChartRun run = run();
         ChartRuns.store(run);
-        FacilityStates.record(run, "rock");
+        FacilityStates.record(FacilityStates.of(run), "rock");
 
         AnomalyRun anomalyRun = new AnomalyRun(run, system);
 

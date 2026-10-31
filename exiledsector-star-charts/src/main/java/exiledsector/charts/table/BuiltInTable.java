@@ -53,7 +53,10 @@ public final class BuiltInTable {
                 csv.skipRow(id, "no " + noun + " has this id");
                 return;
             }
-            loaded.put(id, parser.parse(csv, row, id));
+            D parsed = parser.parse(csv, row, id);
+            if (parsed != null) {
+                loaded.put(id, parsed);
+            }
         });
         return loaded;
     }

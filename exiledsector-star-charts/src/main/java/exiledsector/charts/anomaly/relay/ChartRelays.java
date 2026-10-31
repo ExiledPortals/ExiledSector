@@ -13,11 +13,11 @@ import com.fs.starfarer.api.impl.campaign.ids.Abilities;
 import com.fs.starfarer.api.impl.campaign.ids.Commodities;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
-import com.fs.starfarer.api.impl.campaign.ids.Stats;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.content.ChartFleetVisibility;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
@@ -164,7 +164,7 @@ public final class ChartRelays {
         }
         int revealed = 0;
         for (CampaignFleetAPI fleet : system.getFleets()) {
-            if (!fleet.isPlayerFleet() && fleet.getExtendedDetectedAtRange() < RelayRules.REVEAL_EXTENDED_RANGE) {
+            if (!fleet.isPlayerFleet() && !ChartFleetVisibility.isRevealed(fleet)) {
                 reveal(fleet);
                 revealed++;
             }
@@ -173,7 +173,6 @@ public final class ChartRelays {
     }
 
     static void reveal(CampaignFleetAPI fleet) {
-        fleet.getStats().getDynamic().getStat(Stats.DETECTED_BY_PLAYER_RANGE_MULT).modifyMult(REVEAL_MOD_ID, RelayRules.REVEAL_RANGE_MULT);
-        fleet.setExtendedDetectedAtRange(RelayRules.REVEAL_EXTENDED_RANGE);
+        ChartFleetVisibility.reveal(fleet, REVEAL_MOD_ID);
     }
 }

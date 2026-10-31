@@ -1,10 +1,10 @@
 package exiledsector.charts.anomaly.convoy;
 
-import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.OptionPanelAPI;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl;
 import com.fs.starfarer.api.util.Misc;
+import exiledsector.PlayerFleet;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.AnomalyDialog;
@@ -19,7 +19,7 @@ public class ConvoyEncounterDialog extends AnomalyDialog {
     @Override
     protected void open() {
         fleet = (CampaignFleetAPI) dialog().getInteractionTarget();
-        CampaignFleetAPI playerFleet = Global.getSector().getPlayerFleet();
+        CampaignFleetAPI playerFleet = PlayerFleet.orNull();
         dialog().getVisualPanel().showFleetInfo(null, playerFleet, null, fleet);
         ConvoyScript script = ConvoyScript.in(fleet.getContainingLocation());
         String fleetName = fleet.getName();

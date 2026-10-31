@@ -1,13 +1,11 @@
 package exiledsector.charts.anomaly.breach;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
-import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.belt.AuroraBeltRenderer;
 import exiledsector.ui.belt.RadialBand;
 import exiledsector.ui.util.GlScope;
-import exiledsector.ui.util.UnitCircle;
-import org.lwjgl.opengl.GL11;
+import exiledsector.ui.util.HoloShapes;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.Color;
@@ -55,16 +53,8 @@ public final class BreachFieldRenderer {
     }
 
     private static void drawVoid(Vector2f centre, float voidRadius, float alphaMult) {
-        UnitCircle circle = UnitCircle.of(VOID_SEGMENTS);
         try (GlScope ignored = GlScope.flat()) {
-            Misc.setColor(Color.BLACK, alphaMult);
-            GL11.glBegin(GL11.GL_TRIANGLE_FAN);
-            GL11.glVertex2f(centre.x, centre.y);
-            for (int i = 0; i <= VOID_SEGMENTS; i++) {
-                int segment = i % VOID_SEGMENTS;
-                GL11.glVertex2f(centre.x + circle.cos(segment) * voidRadius, centre.y + circle.sin(segment) * voidRadius);
-            }
-            GL11.glEnd();
+            HoloShapes.disc(centre.x, centre.y, voidRadius, VOID_SEGMENTS, Color.BLACK, alphaMult);
         }
     }
 }

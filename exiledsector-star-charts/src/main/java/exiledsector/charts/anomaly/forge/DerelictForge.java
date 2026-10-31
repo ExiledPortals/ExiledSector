@@ -2,7 +2,6 @@ package exiledsector.charts.anomaly.forge;
 
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Style;
@@ -13,10 +12,10 @@ import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ContentPlacer;
+import exiledsector.charts.anomaly.OrbitSearch;
 import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.anomaly.VanillaDefenders;
 import exiledsector.charts.content.ChartSites;
-import exiledsector.charts.run.ChartRun;
 
 import java.util.List;
 import java.util.Random;
@@ -42,18 +41,13 @@ public final class DerelictForge implements ContentPlacer, RunParticipant {
 
     @Override
     public void generate(AnomalyContentSite site) {
-        place(site, site.run());
+        place(site);
     }
 
-    static SectorEntityToken place(AnomalyContentSite site, ChartRun run) {
-        StarSystemAPI system = site.system();
-        SectorEntityToken centre = system.getCenter() != null ? system.getCenter() : system.getStar();
+    static SectorEntityToken place(AnomalyContentSite site) {
         Random random = site.random(PLACEMENT_SALT);
-        ChartSites.Orbit orbit = null;
-        for (int band = 0; orbit == null && centre != null && band < ForgeRules.ORBIT_BANDS; band++) {
-            float bandMin = ForgeRules.ORBIT_MIN + band * ForgeRules.ORBIT_BAND_WIDTH;
-            orbit = site.clearOrbit(centre, bandMin, bandMin + ForgeRules.ORBIT_BAND_WIDTH, random);
-        }
+        ChartSites.Orbit orbit = site.clearOrbit(OrbitSearch.bands(site.centre(), ForgeRules.ORBIT_MIN, ForgeRules.ORBIT_BAND_WIDTH, ForgeRules.ORBIT_BANDS),
+                random);
         if (orbit == null) {
             throw new IllegalStateException("no clear orbit for the derelict forge");
         }
@@ -62,7 +56,7 @@ public final class DerelictForge implements ContentPlacer, RunParticipant {
         SectorEntityToken forge = site.addEntity(forgeId(site.runId()), Translation.gameText("chart.forge.name"), ENTITY_TYPE, Factions.NEUTRAL, orbit);
         forge.addTag(FORGE_TAG);
         VanillaDefenders.arm(forge, site.random(ForgeGuards.GUARD_SALT).nextLong());
-        ForgeStates.record(run, programs, ForgeRules.runCount(site.context().anomalyPercent(EXTRA_RUNS_KEY)));
+        ForgeStates.record(site.state(ANOMALY_ID), programs, ForgeRules.runCount(site.context().anomalyPercent(EXTRA_RUNS_KEY)));
         return forge;
     }
 

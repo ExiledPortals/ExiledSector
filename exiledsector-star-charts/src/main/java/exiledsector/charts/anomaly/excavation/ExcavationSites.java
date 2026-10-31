@@ -18,6 +18,7 @@ import exiledsector.charts.anomaly.ContentPlacer;
 import exiledsector.charts.anomaly.LayoutShaper;
 import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.anomaly.RunParticipant;
+import exiledsector.charts.anomaly.StateFields;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.items.ItemDrops;
@@ -55,40 +56,25 @@ public final class ExcavationSites implements LayoutShaper, ContentPlacer, RunPa
 
     @Override
     public void generate(AnomalyContentSite site) {
-        if (place(site, site.run(), Global.getSector()).isEmpty()) {
+        if (place(site, Global.getSector()).isEmpty()) {
             throw new IllegalStateException("no planet for an excavation site");
         }
     }
 
-    static List<ExcavationSite> place(AnomalyContentSite site, ChartRun run, SectorAPI sector) {
+    static List<ExcavationSite> place(AnomalyContentSite site, SectorAPI sector) {
         Random random = site.random(PLACEMENT_SALT);
-        List<PlanetAPI> planets = candidates(site);
+        List<PlanetAPI> planets = new ArrayList<>(site.freePlanets(true).stream().filter(planet -> StateFields.fits(planet.getId())).toList());
         Collections.shuffle(planets, random);
         int count = Math.min(planets.size(), ExcavationRules.siteCount(random, Math.round(site.context().anomalyPercent(EXTRA_KEY))));
         List<ExcavationSite> placed = new ArrayList<>();
         for (int index = 0; index < count; index++) {
             ExcavationSite placedSite = new ExcavationSite(index, planets.get(index).getId(), ExcavationRules.access(random),
                     ExcavationRules.lean(sector, random), random.nextLong(), false);
-            ExcavationStates.record(run, placedSite);
+            ExcavationStates.record(site.state(ANOMALY_ID), placedSite);
             site.claim(planets.get(index));
             placed.add(placedSite);
         }
         return placed;
-    }
-
-    static List<PlanetAPI> candidates(AnomalyContentSite site) {
-        List<PlanetAPI> solid = new ArrayList<>();
-        List<PlanetAPI> any = new ArrayList<>();
-        for (PlanetAPI planet : site.system().getPlanets()) {
-            if (planet.isStar() || !ExcavationSite.encodable(planet.getId()) || site.isClaimed(planet)) {
-                continue;
-            }
-            any.add(planet);
-            if (!planet.isGasGiant()) {
-                solid.add(planet);
-            }
-        }
-        return solid.isEmpty() ? any : solid;
     }
 
     @Override

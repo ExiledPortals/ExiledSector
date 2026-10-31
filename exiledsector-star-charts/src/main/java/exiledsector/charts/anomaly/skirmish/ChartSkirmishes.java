@@ -7,6 +7,7 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.content.ChartContentGenerator;
+import exiledsector.charts.content.ChartSites;
 
 public final class ChartSkirmishes {
 
@@ -41,7 +42,7 @@ public final class ChartSkirmishes {
         if (station != null) {
             commander.addAssignment(FleetAssignment.ORBIT_AGGRESSIVE, station, ChartContentGenerator.ASSIGNMENT_DAYS);
         }
-        SectorEntityToken patrolCentre = system.getCenter() != null ? system.getCenter() : system.getStar();
+        SectorEntityToken patrolCentre = ChartSites.centreOf(system);
         if (patrolCentre != null) {
             commander.addAssignment(FleetAssignment.PATROL_SYSTEM, patrolCentre, ChartContentGenerator.ASSIGNMENT_DAYS);
         }

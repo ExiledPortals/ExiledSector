@@ -1,6 +1,5 @@
 package exiledsector.charts.anomaly.heist;
 
-import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.DropType;
 
 import java.util.List;
@@ -21,8 +20,6 @@ public final class HeistRules {
     static final float POST_MAX_RADIUS = 8000f;
     static final float POST_MIN_ENTRY_GAP = 4000f;
     static final int POST_ATTEMPTS = 6;
-    static final float REVEAL_RANGE_MULT = 1000f;
-    static final float REVEAL_EXTENDED_RANGE = 100000f;
     static final float CHECK_DAYS = 0.1f;
     static final float SUSPICION_PER_DAY = 0.25f;
     static final float SUSPICION_DRAIN_PER_DAY = 0.1f;
@@ -57,13 +54,5 @@ public final class HeistRules {
             return vaultShare;
         }
         return Math.max(VAULT_FLOOR, vaultShare - purgeRate(purgeReductionPercent) * Math.max(0f, days));
-    }
-
-    public static float lootSteps(int tier, float quantityMult) {
-        return (LOOT_STEPS + LOOT_STEPS_PER_TIER * (ChartTiers.clamp(tier) - 1)) * Math.max(0f, quantityMult);
-    }
-
-    public static float itemMult(float quantityMult) {
-        return ITEM_MULT * Math.max(0f, quantityMult);
     }
 }
