@@ -10,6 +10,11 @@ import exiledsector.charts.anomaly.convoy.ConvoyScript;
 import exiledsector.charts.anomaly.convoy.ConvoyState;
 import exiledsector.charts.anomaly.convoy.ConvoyStep;
 import exiledsector.charts.anomaly.debris.AnomalousDebrisTerrainPlugin;
+import exiledsector.charts.anomaly.heist.ListeningPostPlugin;
+import exiledsector.charts.anomaly.heist.PicketStation;
+import exiledsector.charts.anomaly.heist.PostScript;
+import exiledsector.charts.anomaly.station.MothershipFleetManager;
+import exiledsector.charts.anomaly.station.NexusFleetManager;
 import exiledsector.charts.anomaly.storm.StormFrontTerrainPlugin;
 import exiledsector.charts.layout.ChartCoronaTerrainPlugin;
 import exiledsector.charts.layout.ChartPulsarBeamTerrainPlugin;
@@ -52,7 +57,12 @@ public final class ChartSaveAliases {
             Map.entry("exiledSector.AbyssalFogTerrainPlugin", AbyssalFogTerrainPlugin.class),
             Map.entry("exiledSector.AbyssalDarknessTerrainPlugin", AbyssalDarknessTerrainPlugin.class),
             Map.entry("exiledSector.ChartCoronaTerrainPlugin", ChartCoronaTerrainPlugin.class),
-            Map.entry("exiledSector.ChartPulsarBeamTerrainPlugin", ChartPulsarBeamTerrainPlugin.class));
+            Map.entry("exiledSector.ChartPulsarBeamTerrainPlugin", ChartPulsarBeamTerrainPlugin.class),
+            Map.entry("exiledSector.ListeningPostPlugin", ListeningPostPlugin.class),
+            Map.entry("exiledSector.PostScript", PostScript.class),
+            Map.entry("exiledSector.PicketStation", PicketStation.class),
+            Map.entry("exiledSector.MothershipFleetManager", MothershipFleetManager.class),
+            Map.entry("exiledSector.NexusFleetManager", NexusFleetManager.class));
 
     static final Map<String, Class<?>> MOVED = Map.of(
             "exiledsector.charts.anomaly.ChartCoronaTerrainPlugin", ChartCoronaTerrainPlugin.class,

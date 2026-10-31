@@ -3,7 +3,7 @@ package exiledsector.charts.anomaly.heist;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import org.lwjgl.util.vector.Vector2f;
 
-final class PicketStation {
+public final class PicketStation {
 
     private final int index;
     private final float angle;
