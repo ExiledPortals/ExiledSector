@@ -6,12 +6,10 @@ import exiledsector.modifiers.ModifierSlot;
 import exiledsector.modifiers.TierRange;
 
 import java.util.ArrayList;
-import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
 
 public final class AffixLayout {
 
@@ -23,8 +21,6 @@ public final class AffixLayout {
     static final float THREE_EFFECTS_CHANCE = 0.35f;
     static final Limits DEFAULT_LIMITS = new Limits(COMMON_MAX_EFFECTS, MAX_EFFECTS, MAX_PER_SIDE,
             List.of(ONE_EFFECT_CHANCE, TWO_EFFECTS_CHANCE, THREE_EFFECTS_CHANCE));
-    static final Limits STAR_CHART_LIMITS = new Limits(2, 6, 3, List.of(0.2f, 0.25f, 0.2f, 0.15f, 0.1f));
-    private static final AtomicReference<Map<ItemType, Limits>> LIMITS_BY_TYPE = new AtomicReference<>(Map.of(ItemType.STAR_CHART, STAR_CHART_LIMITS));
 
     public record Limits(int commonMaxEffects, int maxEffects, int maxPerSide, List<Float> effectCountChances) {
 
@@ -43,25 +39,8 @@ public final class AffixLayout {
     }
 
     public static Limits limits(ItemType type) {
-        Limits limits = type == null ? null : LIMITS_BY_TYPE.get().get(type);
-        return limits == null ? DEFAULT_LIMITS : limits;
-    }
-
-    public static Limits register(ItemType type, Limits limits) {
-        Map<ItemType, Limits> previous;
-        Map<ItemType, Limits> updated;
-        do {
-            previous = LIMITS_BY_TYPE.get();
-            Map<ItemType, Limits> byType = new EnumMap<>(ItemType.class);
-            byType.putAll(previous);
-            if (limits == null) {
-                byType.remove(type);
-            } else {
-                byType.put(type, limits);
-            }
-            updated = Map.copyOf(byType);
-        } while (!LIMITS_BY_TYPE.compareAndSet(previous, updated));
-        return previous.get(type);
+        ItemTypeSupport support = ItemTypes.of(type);
+        return support == null ? DEFAULT_LIMITS : support.affixLimits();
     }
 
     public static ItemRarity rarityFor(ItemDefinition definition, int effectCount) {
@@ -172,6 +151,15 @@ public final class AffixLayout {
             }
         }
         return true;
+    }
+
+    public static void insert(List<RolledModifier> modifiers, RolledModifier added) {
+        modifiers.add(insertIndex(modifiers, added.slot()), added);
+    }
+
+    static RolledModifier rollFrom(List<List<PoolEntry>> sides, Random random) {
+        PoolEntry poolEntry = WeightedPick.pick(sides.get(random.nextInt(sides.size())), PoolEntry::weight, random);
+        return RolledModifier.roll(poolEntry.modifier(), random, false);
     }
 
     public static int insertIndex(List<RolledModifier> modifiers, ModifierSlot addedSlot) {

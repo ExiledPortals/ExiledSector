@@ -33,8 +33,8 @@ public final class ExiledSector {
         }
         List<ExiledSectorDomain> installing = List.copyOf(domains);
         installing.forEach(domain -> domain.itemTypes().forEach(ItemTypes::register));
-        ItemStore.absorbStacksWith(RefitSchematic::absorbInto);
-        ItemStore.absorbStacksWith(MasterSchematic::absorbInto);
+        ItemStore.absorbStacksWith(RefitSchematic.STACK_ABSORBER);
+        ItemStore.absorbStacksWith(MasterSchematic.STACK_ABSORBER);
         installedDomains = installing;
     }
 

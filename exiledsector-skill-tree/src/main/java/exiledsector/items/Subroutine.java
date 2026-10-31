@@ -75,6 +75,11 @@ public final class Subroutine extends Item implements NodeSocketable {
         public boolean lockedFromCurrency(ItemDefinition definition) {
             return SubroutineKind.isUnique(definition);
         }
+
+        @Override
+        public List<CorruptionOutcome> corruptionOutcomes(Item item) {
+            return CorruptionOutcome.SUBROUTINE_OUTCOMES;
+        }
     };
 
     private List<String> rolledNodeIds;

@@ -4,6 +4,7 @@ import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemDefinitions;
 import exiledsector.items.ItemKind;
+import exiledsector.items.ItemTypes;
 import exiledsector.items.WormholeAnchorDefinitions;
 import exiledsector.skills.SkillTree;
 import org.json.JSONArray;
@@ -54,7 +55,7 @@ class ItemStorageAnchorTest {
     void anchorsAreListedWithSubroutinesAndNeverWithSectionItems() {
         Set<ItemKind> noChips = EnumSet.noneOf(ItemKind.class);
 
-        assertEquals(ItemKind.SUBROUTINE, ItemStoragePanel.listedKind(anchor));
+        assertEquals(ItemKind.SUBROUTINE, ItemTypes.listedKind(anchor));
         assertTrue(ItemStoragePanel.showsItem(anchor, ItemKind.SUBROUTINE, false, noChips));
         assertTrue(ItemStoragePanel.showsItem(anchor, null, false, noChips));
         assertTrue(ItemStoragePanel.showsItem(anchor, null, false, EnumSet.of(ItemKind.SUBROUTINE)));

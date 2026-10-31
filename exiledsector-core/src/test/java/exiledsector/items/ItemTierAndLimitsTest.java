@@ -13,7 +13,6 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,7 +37,7 @@ class ItemTierAndLimitsTest {
 
     @AfterEach
     void restore() {
-        AffixLayout.register(ItemType.SUBROUTINE, null);
+        ItemTypes.unregister(ItemType.SUBROUTINE);
         ItemDefinitions.clear();
     }
 
@@ -117,7 +116,12 @@ class ItemTierAndLimitsTest {
     @Test
     void aTypeCanCarryMoreModifiersWithItsOwnLimits() {
         AffixLayout.Limits wide = new AffixLayout.Limits(3, 6, 3, List.of(0f, 0f, 0f, 0f, 0f));
-        assertNull(AffixLayout.register(ItemType.SUBROUTINE, wide));
+        ItemTypes.register(new BasicItemTypeSupport(ItemType.SUBROUTINE, Item.class, "test.Subroutine", null, null) {
+            @Override
+            public AffixLayout.Limits affixLimits() {
+                return wide;
+            }
+        });
 
         assertEquals(ItemRarity.COMMON, AffixLayout.rarityFor(UNGATED, 3));
         assertEquals(ItemRarity.RARE, AffixLayout.rarityFor(UNGATED, 4));
@@ -129,8 +133,7 @@ class ItemTierAndLimitsTest {
         }
         assertEquals(Set.of(6), counts);
         assertEquals(2, AffixLayout.openSides(UNGATED, ItemRoller.roll(UNGATED, 1L, false).subList(0, 2)).size());
-        assertSame(wide, AffixLayout.register(ItemType.SUBROUTINE, null));
-        assertSame(AffixLayout.DEFAULT_LIMITS, AffixLayout.limits(ItemType.SUBROUTINE));
+        assertSame(wide, AffixLayout.limits(ItemType.SUBROUTINE));
     }
 
     @Test

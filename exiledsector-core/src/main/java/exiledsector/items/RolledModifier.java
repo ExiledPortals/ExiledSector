@@ -10,6 +10,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 public final class RolledModifier {
 
@@ -109,6 +111,21 @@ public final class RolledModifier {
 
     public RolledModifier withLines(List<RolledEffect> replacementLines) {
         return new RolledModifier(modifierId, slot, replacementLines, locked);
+    }
+
+    public RolledModifier mapLines(UnaryOperator<RolledEffect> lineMapper) {
+        List<RolledEffect> mappedLines = new ArrayList<>(lines.size());
+        for (RolledEffect line : lines) {
+            mappedLines.add(lineMapper.apply(line));
+        }
+        return withLines(mappedLines);
+    }
+
+    public RolledModifier rerolled(Function<String, ModifierLine> lineDefinitions, Random random) {
+        return mapLines(line -> {
+            ModifierLine lineDefinition = lineDefinitions.apply(line.effectName());
+            return lineDefinition == null ? line : new RolledEffect(line.effectName(), lineDefinition.roll(random));
+        });
     }
 
     @Override

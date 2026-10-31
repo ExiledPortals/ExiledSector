@@ -88,7 +88,7 @@ public enum ForgeOperation {
         if (item == null) {
             return UseVerdict.refused(REFUSAL_PREFIX + "loadFirst");
         }
-        if (!ItemCrafting.takesCurrency(item.type())) {
+        if (!ItemTypes.takesCurrency(item.type())) {
             return UseVerdict.refused(REFUSAL_PREFIX + "itemType");
         }
         if (item.mirrored()) {

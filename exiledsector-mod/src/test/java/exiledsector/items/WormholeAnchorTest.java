@@ -226,7 +226,7 @@ class WormholeAnchorTest {
         }
         verify(cargo, never()).removeItems(Mockito.any(), Mockito.any(), anyFloat());
         assertTrue(ItemCurrencies.forType(ItemType.WORMHOLE_ANCHOR).isEmpty());
-        assertFalse(ItemCrafting.takesCurrency(ItemType.WORMHOLE_ANCHOR));
+        assertFalse(ItemTypes.takesCurrency(ItemType.WORMHOLE_ANCHOR));
     }
 
     @Test

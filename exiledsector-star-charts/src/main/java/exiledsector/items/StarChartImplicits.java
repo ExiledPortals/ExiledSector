@@ -98,10 +98,9 @@ public final class StarChartImplicits {
     }
 
     static Modifier sharedChoice(String modifierId) {
-        for (Modifier choice : sharedChoices()) {
-            if (choice.id().equals(modifierId)) {
-                return choice;
-            }
+        Modifier listed = Modifier.byId(sharedChoices(), modifierId);
+        if (listed != null) {
+            return listed;
         }
         return modifierId == null ? null : UNLISTED_CHOICE.get().apply(modifierId);
     }
@@ -135,12 +134,8 @@ public final class StarChartImplicits {
     }
 
     static Modifier anyById(String modifierId) {
-        for (Modifier implicit : corruptionPool()) {
-            if (implicit.id().equals(modifierId)) {
-                return implicit;
-            }
-        }
-        return sharedChoice(modifierId);
+        Modifier pooled = Modifier.byId(corruptionPool(), modifierId);
+        return pooled != null ? pooled : sharedChoice(modifierId);
     }
 
     static ModifierLine line(String systemType, String effectName) {
@@ -148,13 +143,7 @@ public final class StarChartImplicits {
         if (sharedChoice != null && sharedChoice.line(effectName) != null) {
             return sharedChoice.line(effectName);
         }
-        for (Modifier implicit : forSystemType(systemType)) {
-            ModifierLine line = implicit.line(effectName);
-            if (line != null) {
-                return line;
-            }
-        }
-        return null;
+        return Modifier.lineIn(forSystemType(systemType), effectName);
     }
 
     static List<RolledModifier> roll(String systemType, long seed) {

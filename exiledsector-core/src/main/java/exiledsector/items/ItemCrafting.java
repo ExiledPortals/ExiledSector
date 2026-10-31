@@ -43,7 +43,7 @@ public final class ItemCrafting {
     public static boolean canUse(ItemCurrency currency, Item item, Predicate<ItemDefinition> allowedUniques,
                                  Collection<CraftingWard> wards) {
         ItemDefinition definition = item == null ? null : item.definition();
-        if (definition == null || !takesCurrency(definition.type()) || item.mirrored() || item.corrupted() || isLockedFromCurrency(definition)
+        if (definition == null || !ItemTypes.takesCurrency(definition.type()) || item.mirrored() || item.corrupted() || isLockedFromCurrency(definition)
                 || !ItemCurrencies.appliesTo(currency, definition.type())) {
             return false;
         }
@@ -79,10 +79,6 @@ public final class ItemCrafting {
         }
         String refusalKey = currency.refusalNoticeKey(item);
         return UseVerdict.refused(refusalKey != null ? refusalKey : "ui.workbench.notice.cannotUse");
-    }
-
-    public static boolean takesCurrency(ItemType type) {
-        return type != null && type != ItemType.WORMHOLE_ANCHOR;
     }
 
     public static boolean isLockedFromCurrency(ItemDefinition definition) {
@@ -168,16 +164,8 @@ public final class ItemCrafting {
         if (definition == null || openSides.isEmpty()) {
             return null;
         }
-        List<PoolEntry> chosenSide = openSides.get(random.nextInt(openSides.size()));
-        PoolEntry poolEntry = WeightedPick.pick(chosenSide, PoolEntry::weight, random);
-        RolledModifier addedModifier = RolledModifier.roll(poolEntry.modifier(), random, false);
-        ItemRarity rarityBefore = item.rarity();
-        List<RolledModifier> updatedModifiers = new ArrayList<>(item.explicits());
-        updatedModifiers.add(AffixLayout.insertIndex(updatedModifiers, addedModifier.slot()), addedModifier);
-        item.replaceExplicits(updatedModifiers);
-        if (item.rarity() != rarityBefore) {
-            item.refreezeName();
-        }
+        RolledModifier addedModifier = AffixLayout.rollFrom(openSides, random);
+        item.addExplicit(addedModifier);
         return addedModifier;
     }
 
@@ -210,16 +198,7 @@ public final class ItemCrafting {
         List<RolledModifier> rerolled = new ArrayList<>(modifiers.size());
         for (RolledModifier rolled : modifiers) {
             PoolEntry poolEntry = guards(rolled, guarded) ? null : definition.poolEntryFor(rolled.modifierId());
-            if (poolEntry == null) {
-                rerolled.add(rolled);
-                continue;
-            }
-            List<RolledEffect> rerolledLines = new ArrayList<>(rolled.lines().size());
-            for (RolledEffect line : rolled.lines()) {
-                ModifierLine lineDefinition = poolEntry.modifier().line(line.effectName());
-                rerolledLines.add(lineDefinition == null ? line : new RolledEffect(line.effectName(), lineDefinition.roll(random)));
-            }
-            rerolled.add(rolled.withLines(rerolledLines));
+            rerolled.add(poolEntry == null ? rolled : rolled.rerolled(poolEntry.modifier()::line, random));
         }
         return rerolled;
     }
@@ -283,13 +262,7 @@ public final class ItemCrafting {
         }
         RolledModifier removed = removable.get(random.nextInt(removable.size()));
         List<List<PoolEntry>> openSides = replacementSides(definition, item.explicits(), removed, item.tier());
-        List<PoolEntry> chosenSide = openSides.get(random.nextInt(openSides.size()));
-        RolledModifier addedModifier = RolledModifier.roll(WeightedPick.pick(chosenSide, PoolEntry::weight, random).modifier(), random, false);
-        List<RolledModifier> remaining = new ArrayList<>(item.explicits());
-        remaining.remove(removed);
-        remaining.add(AffixLayout.insertIndex(remaining, addedModifier.slot()), addedModifier);
-        item.replaceExplicits(remaining);
-        item.refreezeName();
+        item.swapExplicit(removed, AffixLayout.rollFrom(openSides, random));
         return item;
     }
 
@@ -307,10 +280,7 @@ public final class ItemCrafting {
             return null;
         }
         List<RolledModifier> removable = annullable(item.explicits(), guarded);
-        List<RolledModifier> remaining = new ArrayList<>(item.explicits());
-        remaining.remove(removable.get(random.nextInt(removable.size())));
-        item.replaceExplicits(remaining);
-        item.refreezeName();
+        item.removeExplicit(removable.get(random.nextInt(removable.size())));
         return item;
     }
 
@@ -372,15 +342,8 @@ public final class ItemCrafting {
     }
 
     static List<CorruptionOutcome> corruptionOutcomes(Item item) {
-        if (item.type() == ItemType.SUBROUTINE) {
-            return CorruptionOutcome.SUBROUTINE_OUTCOMES;
-        }
-        if (item.type() == ItemType.STAR_CHART) {
-            return CorruptionOutcome.STAR_CHART_OUTCOMES;
-        }
-        ItemDefinition definition = item.definition();
-        boolean uniqueHullItem = item.type() == ItemType.HULL_ITEM && definition != null && definition.unique();
-        return uniqueHullItem ? CorruptionOutcome.UNIQUE_HULL_ITEM_OUTCOMES : CorruptionOutcome.NANOSWARM_OUTCOMES;
+        ItemTypeSupport support = ItemTypes.of(item.type());
+        return support == null ? CorruptionOutcome.NANOSWARM_OUTCOMES : support.corruptionOutcomes(item);
     }
 
     static boolean replaceImplicit(Item item, Random random) {
@@ -422,10 +385,10 @@ public final class ItemCrafting {
 
     static Item reforgeAsRareBase(ItemStore store, Item item, Random random) {
         ItemDefinition uniqueDefinition = item.definition();
-        if (item.type() != ItemType.HULL_ITEM || uniqueDefinition == null || !uniqueDefinition.unique()) {
+        if (uniqueDefinition == null || !uniqueDefinition.unique()) {
             return null;
         }
-        List<ItemDefinition> bases = ItemDefinitions.ofType(ItemType.HULL_ITEM).stream()
+        List<ItemDefinition> bases = ItemDefinitions.ofType(item.type()).stream()
                 .filter(definition -> definition.kind() == uniqueDefinition.kind() && !definition.unique() && definition.rarity() > 0f).toList();
         ItemDefinition base = WeightedPick.pick(bases, ItemDefinition::rarity, random);
         List<Integer> modifierCounts = base == null ? List.of() : rareBaseModifierCounts(base);
@@ -471,15 +434,7 @@ public final class ItemCrafting {
     }
 
     private static RolledModifier stretchedReroll(RolledModifier rolled, Modifier modifier, Random random) {
-        if (modifier == null) {
-            return rolled;
-        }
-        List<RolledEffect> lines = new ArrayList<>(rolled.lines().size());
-        for (RolledEffect line : rolled.lines()) {
-            ModifierLine stretchedLine = stretchedForCorruption(modifier.line(line.effectName()));
-            lines.add(stretchedLine == null ? line : new RolledEffect(line.effectName(), stretchedLine.roll(random)));
-        }
-        return rolled.withLines(lines);
+        return modifier == null ? rolled : rolled.rerolled(effectName -> stretchedForCorruption(modifier.line(effectName)), random);
     }
 
     static ModifierLine stretchedForCorruption(ModifierLine lineDefinition) {

@@ -1,7 +1,5 @@
 package exiledsector.items;
 
-import com.fs.starfarer.api.campaign.CargoAPI;
-import com.fs.starfarer.api.campaign.CargoStackAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
 import exiledsector.i18n.Translation;
 import exiledsector.skills.ShipSkillData;
@@ -18,6 +16,8 @@ public enum MasterSchematic implements ShipCurrency {
     INSTANCE;
 
     public static final String ITEM_ID = "exiledSector_master_schematic";
+    public static final ItemStore.StackAbsorber STACK_ABSORBER = ItemStore.StackAbsorber.counting(special -> is(special) ? INSTANCE : null,
+            (store, schematic, count) -> store.addMasterSchematics(count));
     public static final String ICON_PATH = "graphics/icons/hull_upgrades/master_schematic.png";
     public static final Color COLOR = new Color(235, 245, 255);
     static final float SALVAGE_CHANCE_SHARE = 0.5f;
@@ -53,18 +53,6 @@ public enum MasterSchematic implements ShipCurrency {
         return special != null && ITEM_ID.equals(special.getId());
     }
 
-    public static Integer absorbInto(ItemStore store, CargoAPI cargo, CargoStackAPI stack) {
-        if (!is(stack.getSpecialDataIfSpecial())) {
-            return null;
-        }
-        int stackCount = Math.round(stack.getSize());
-        if (stackCount < 1) {
-            return 0;
-        }
-        store.addMasterSchematics(stackCount);
-        cargo.removeStack(stack);
-        return stackCount;
-    }
 
     public static List<ShipCurrency> rollSalvage(float firstItemChance, Random random) {
         return required() && random.nextFloat() < firstItemChance * SALVAGE_CHANCE_SHARE ? List.of(INSTANCE) : List.of();

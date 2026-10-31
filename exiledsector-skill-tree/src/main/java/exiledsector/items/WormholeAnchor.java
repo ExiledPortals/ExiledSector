@@ -43,6 +43,16 @@ public final class WormholeAnchor extends Item implements NodeSocketable {
             return forSale ? anchorMarket.price() : WormholeAnchorDefinitions.sellBaseValue(anchorMarket.price(),
                     Global.getSettings().getFloat(BUY_PRICE_MULT_SETTING), Global.getSettings().getFloat(SELL_PRICE_MULT_SETTING));
         }
+
+        @Override
+        public boolean takesCurrency() {
+            return false;
+        }
+
+        @Override
+        public ItemKind listedKind(Item item) {
+            return ItemKind.SUBROUTINE;
+        }
     };
 
     static final String BUY_PRICE_MULT_SETTING = "nonEconItemBuyPriceMult";
