@@ -4830,14 +4830,19 @@ type|tania_dysis_drive|CAPITAL_SHIP|0	0	Top speed changes with flux, from <good>
 flavour|tania_fafnir_breeches	0	Navarchy dockyards at Farige run a flux line beside the ammunition feed in every mount, so a captain can field whatever the last salvage turned up. Mount plans traded by Navarchy quartermasters let the crew rebuild this ship's ballistic mounts the same way, though the shared feed draws harder on the grid each time they fire shells.
 type|tania_fafnir_breeches|null|0	0	Ballistic weapon mounts become hybrid mounts.
 type|tania_fafnir_breeches|null|1	1	<good>25%</good> increased ballistic weapon flux cost.
+type|tania_fafnir_breeches|null|2	1	<good>25%</good> increased energy weapon flux cost.
 type|tania_fafnir_breeches|FRIGATE|0	0	Ballistic weapon mounts become hybrid mounts.
 type|tania_fafnir_breeches|FRIGATE|1	1	<good>25%</good> increased ballistic weapon flux cost.
+type|tania_fafnir_breeches|FRIGATE|2	1	<good>25%</good> increased energy weapon flux cost.
 type|tania_fafnir_breeches|DESTROYER|0	0	Ballistic weapon mounts become hybrid mounts.
 type|tania_fafnir_breeches|DESTROYER|1	1	<good>25%</good> increased ballistic weapon flux cost.
+type|tania_fafnir_breeches|DESTROYER|2	1	<good>25%</good> increased energy weapon flux cost.
 type|tania_fafnir_breeches|CRUISER|0	0	Ballistic weapon mounts become hybrid mounts.
 type|tania_fafnir_breeches|CRUISER|1	1	<good>25%</good> increased ballistic weapon flux cost.
+type|tania_fafnir_breeches|CRUISER|2	1	<good>25%</good> increased energy weapon flux cost.
 type|tania_fafnir_breeches|CAPITAL_SHIP|0	0	Ballistic weapon mounts become hybrid mounts.
 type|tania_fafnir_breeches|CAPITAL_SHIP|1	1	<good>25%</good> increased ballistic weapon flux cost.
+type|tania_fafnir_breeches|CAPITAL_SHIP|2	1	<good>25%</good> increased energy weapon flux cost.
 flavour|tania_merite_lunge	0	The Merite Class Destroyer is often praised by its ability to assault enemy ships by sheer brute force, thanks to its Jump Jets ship system. By listening to "sage" advice from fellow Navarchy of Tania officers, you order your crew to refit the ship with increased weight and improved protection against collateral effects from excessive G-force.
 type|tania_merite_lunge|null|0	0	<good>50%</good> increased mass.
 type|tania_merite_lunge|null|1	0	<bad>35%</bad> less maneuverability.
@@ -5217,8 +5222,8 @@ summary|option0|FRIGATE|118	0	<good>+90</good> to this ship's sensor strength.
 summary|option0|FRIGATE|119	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option0|FRIGATE|120	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option0|FRIGATE|121	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-summary|option0|FRIGATE|122	0	<good>255%</good> more hull points.
-summary|option0|FRIGATE|123	0	<good>+20%</good> to Hungering Rift healing received.
+summary|option0|FRIGATE|122	0	<good>263%</good> more hull points.
+summary|option0|FRIGATE|123	0	<good>+30%</good> to Hungering Rift healing received.
 summary|option0|FRIGATE|124	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option0|FRIGATE|125	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
 summary|option0|FRIGATE|126	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
@@ -5277,7 +5282,7 @@ summary|option0|FRIGATE|178	0	If disabled, this ship is almost always recoverabl
 summary|option0|FRIGATE|179	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 summary|option0|FRIGATE|180	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 summary|option0|FRIGATE|181	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option0|FRIGATE|182	0	<good>20%</good> increased Rift Lightning damage.
+summary|option0|FRIGATE|182	0	<good>30%</good> increased Rift Lightning damage.
 summary|option0|FRIGATE|183	0	<good>+10</good> to High Tech Affinity.
 summary|option0|FRIGATE|184	0	The zero-flux speed boost works at any flux level.
 summary|option0|FRIGATE|185	0	<bad>67%</bad> less peak combat readiness duration.
@@ -5295,8 +5300,8 @@ summary|option0|FRIGATE|196	1	<bad>20%</bad> reduced weapon and engine repair ti
 summary|option0|FRIGATE|197	0	Disperses 35% of shield damage taken to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 summary|option0|FRIGATE|198	0	Removes this ship's shield.
 summary|option0|FRIGATE|199	1	<bad>60%</bad> less shield flux upkeep.
-summary|option0|FRIGATE|200	0	<good>20%</good> increased Shrouded Lens damage.
-summary|option0|FRIGATE|201	0	<good>+540</good> to Low Tech Affinity.
+summary|option0|FRIGATE|200	0	<good>30%</good> increased Shrouded Lens damage.
+summary|option0|FRIGATE|201	0	<good>+560</good> to Low Tech Affinity.
 summary|option0|FRIGATE|202	1	Your fleet has <bad>-7</bad> to heavy machinery needed to perform surveys.
 summary|option0|FRIGATE|203	1	Your fleet has <bad>-5</bad> to supplies needed to perform surveys.
 summary|option0|FRIGATE|204	0	<good>100%</good> more combat objective capture rate.
@@ -5323,8 +5328,8 @@ summary|option0|FRIGATE|224	0	The zero-flux speed boost also works while flux is
 summary|option0|FRIGATE|225	0	Your fleet has <good>3%</good> increased post-battle salvage.
 summary|option0|FRIGATE|226	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
 summary|option0|FRIGATE|227	0	<good>2%</good> more crew capacity.
-summary|option0|FRIGATE|228	0	<good>36%</good> more armor.
-summary|option0|FRIGATE|229	0	<good>108%</good> more fuel capacity.
+summary|option0|FRIGATE|228	0	<good>37%</good> more armor.
+summary|option0|FRIGATE|229	0	<good>112%</good> more fuel capacity.
 summary|option0|FRIGATE|230	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option0|FRIGATE|231	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option0|FRIGATE|232	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
@@ -5450,8 +5455,8 @@ summary|option0|DESTROYER|118	0	<good>+110</good> to this ship's sensor strength
 summary|option0|DESTROYER|119	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option0|DESTROYER|120	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option0|DESTROYER|121	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-summary|option0|DESTROYER|122	0	<good>255%</good> more hull points.
-summary|option0|DESTROYER|123	0	<good>+20%</good> to Hungering Rift healing received.
+summary|option0|DESTROYER|122	0	<good>263%</good> more hull points.
+summary|option0|DESTROYER|123	0	<good>+30%</good> to Hungering Rift healing received.
 summary|option0|DESTROYER|124	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option0|DESTROYER|125	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
 summary|option0|DESTROYER|126	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
@@ -5510,7 +5515,7 @@ summary|option0|DESTROYER|178	0	If disabled, this ship is almost always recovera
 summary|option0|DESTROYER|179	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 summary|option0|DESTROYER|180	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 summary|option0|DESTROYER|181	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option0|DESTROYER|182	0	<good>20%</good> increased Rift Lightning damage.
+summary|option0|DESTROYER|182	0	<good>30%</good> increased Rift Lightning damage.
 summary|option0|DESTROYER|183	0	<good>+10</good> to High Tech Affinity.
 summary|option0|DESTROYER|184	0	The zero-flux speed boost works at any flux level.
 summary|option0|DESTROYER|185	0	<bad>67%</bad> less peak combat readiness duration.
@@ -5528,8 +5533,8 @@ summary|option0|DESTROYER|196	1	<bad>20%</bad> reduced weapon and engine repair 
 summary|option0|DESTROYER|197	0	Disperses 35% of shield damage taken to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 summary|option0|DESTROYER|198	0	Removes this ship's shield.
 summary|option0|DESTROYER|199	1	<bad>60%</bad> less shield flux upkeep.
-summary|option0|DESTROYER|200	0	<good>20%</good> increased Shrouded Lens damage.
-summary|option0|DESTROYER|201	0	<good>+540</good> to Low Tech Affinity.
+summary|option0|DESTROYER|200	0	<good>30%</good> increased Shrouded Lens damage.
+summary|option0|DESTROYER|201	0	<good>+560</good> to Low Tech Affinity.
 summary|option0|DESTROYER|202	1	Your fleet has <bad>-13</bad> to heavy machinery needed to perform surveys.
 summary|option0|DESTROYER|203	1	Your fleet has <bad>-11</bad> to supplies needed to perform surveys.
 summary|option0|DESTROYER|204	0	<good>100%</good> more combat objective capture rate.
@@ -5556,8 +5561,8 @@ summary|option0|DESTROYER|224	0	The zero-flux speed boost also works while flux 
 summary|option0|DESTROYER|225	0	Your fleet has <good>6%</good> increased post-battle salvage.
 summary|option0|DESTROYER|226	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
 summary|option0|DESTROYER|227	0	<good>2%</good> more crew capacity.
-summary|option0|DESTROYER|228	0	<good>36%</good> more armor.
-summary|option0|DESTROYER|229	0	<good>108%</good> more fuel capacity.
+summary|option0|DESTROYER|228	0	<good>37%</good> more armor.
+summary|option0|DESTROYER|229	0	<good>112%</good> more fuel capacity.
 summary|option0|DESTROYER|230	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option0|DESTROYER|231	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option0|DESTROYER|232	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
@@ -5683,8 +5688,8 @@ summary|option0|CRUISER|118	0	<good>+160</good> to this ship's sensor strength.
 summary|option0|CRUISER|119	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option0|CRUISER|120	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option0|CRUISER|121	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-summary|option0|CRUISER|122	0	<good>255%</good> more hull points.
-summary|option0|CRUISER|123	0	<good>+20%</good> to Hungering Rift healing received.
+summary|option0|CRUISER|122	0	<good>263%</good> more hull points.
+summary|option0|CRUISER|123	0	<good>+30%</good> to Hungering Rift healing received.
 summary|option0|CRUISER|124	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option0|CRUISER|125	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
 summary|option0|CRUISER|126	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
@@ -5743,7 +5748,7 @@ summary|option0|CRUISER|178	0	If disabled, this ship is almost always recoverabl
 summary|option0|CRUISER|179	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 summary|option0|CRUISER|180	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 summary|option0|CRUISER|181	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option0|CRUISER|182	0	<good>20%</good> increased Rift Lightning damage.
+summary|option0|CRUISER|182	0	<good>30%</good> increased Rift Lightning damage.
 summary|option0|CRUISER|183	0	<good>+10</good> to High Tech Affinity.
 summary|option0|CRUISER|184	0	The zero-flux speed boost works at any flux level.
 summary|option0|CRUISER|185	0	<bad>67%</bad> less peak combat readiness duration.
@@ -5761,8 +5766,8 @@ summary|option0|CRUISER|196	1	<bad>20%</bad> reduced weapon and engine repair ti
 summary|option0|CRUISER|197	0	Disperses 35% of shield damage taken to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 summary|option0|CRUISER|198	0	Removes this ship's shield.
 summary|option0|CRUISER|199	1	<bad>60%</bad> less shield flux upkeep.
-summary|option0|CRUISER|200	0	<good>20%</good> increased Shrouded Lens damage.
-summary|option0|CRUISER|201	0	<good>+540</good> to Low Tech Affinity.
+summary|option0|CRUISER|200	0	<good>30%</good> increased Shrouded Lens damage.
+summary|option0|CRUISER|201	0	<good>+560</good> to Low Tech Affinity.
 summary|option0|CRUISER|202	1	Your fleet has <bad>-22</bad> to heavy machinery needed to perform surveys.
 summary|option0|CRUISER|203	1	Your fleet has <bad>-20</bad> to supplies needed to perform surveys.
 summary|option0|CRUISER|204	0	<good>100%</good> more combat objective capture rate.
@@ -5789,8 +5794,8 @@ summary|option0|CRUISER|224	0	The zero-flux speed boost also works while flux is
 summary|option0|CRUISER|225	0	Your fleet has <good>10%</good> increased post-battle salvage.
 summary|option0|CRUISER|226	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
 summary|option0|CRUISER|227	0	<good>2%</good> more crew capacity.
-summary|option0|CRUISER|228	0	<good>36%</good> more armor.
-summary|option0|CRUISER|229	0	<good>108%</good> more fuel capacity.
+summary|option0|CRUISER|228	0	<good>37%</good> more armor.
+summary|option0|CRUISER|229	0	<good>112%</good> more fuel capacity.
 summary|option0|CRUISER|230	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option0|CRUISER|231	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option0|CRUISER|232	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
@@ -5916,8 +5921,8 @@ summary|option0|CAPITAL_SHIP|118	0	<good>+220</good> to this ship's sensor stren
 summary|option0|CAPITAL_SHIP|119	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option0|CAPITAL_SHIP|120	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option0|CAPITAL_SHIP|121	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-summary|option0|CAPITAL_SHIP|122	0	<good>255%</good> more hull points.
-summary|option0|CAPITAL_SHIP|123	0	<good>+20%</good> to Hungering Rift healing received.
+summary|option0|CAPITAL_SHIP|122	0	<good>263%</good> more hull points.
+summary|option0|CAPITAL_SHIP|123	0	<good>+30%</good> to Hungering Rift healing received.
 summary|option0|CAPITAL_SHIP|124	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option0|CAPITAL_SHIP|125	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
 summary|option0|CAPITAL_SHIP|126	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
@@ -5976,7 +5981,7 @@ summary|option0|CAPITAL_SHIP|178	0	If disabled, this ship is almost always recov
 summary|option0|CAPITAL_SHIP|179	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 summary|option0|CAPITAL_SHIP|180	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 summary|option0|CAPITAL_SHIP|181	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option0|CAPITAL_SHIP|182	0	<good>20%</good> increased Rift Lightning damage.
+summary|option0|CAPITAL_SHIP|182	0	<good>30%</good> increased Rift Lightning damage.
 summary|option0|CAPITAL_SHIP|183	0	<good>+10</good> to High Tech Affinity.
 summary|option0|CAPITAL_SHIP|184	0	The zero-flux speed boost works at any flux level.
 summary|option0|CAPITAL_SHIP|185	0	<bad>67%</bad> less peak combat readiness duration.
@@ -5994,8 +5999,8 @@ summary|option0|CAPITAL_SHIP|196	1	<bad>20%</bad> reduced weapon and engine repa
 summary|option0|CAPITAL_SHIP|197	0	Disperses 35% of shield damage taken to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 summary|option0|CAPITAL_SHIP|198	0	Removes this ship's shield.
 summary|option0|CAPITAL_SHIP|199	1	<bad>60%</bad> less shield flux upkeep.
-summary|option0|CAPITAL_SHIP|200	0	<good>20%</good> increased Shrouded Lens damage.
-summary|option0|CAPITAL_SHIP|201	0	<good>+540</good> to Low Tech Affinity.
+summary|option0|CAPITAL_SHIP|200	0	<good>30%</good> increased Shrouded Lens damage.
+summary|option0|CAPITAL_SHIP|201	0	<good>+560</good> to Low Tech Affinity.
 summary|option0|CAPITAL_SHIP|202	1	Your fleet has <bad>-42</bad> to heavy machinery needed to perform surveys.
 summary|option0|CAPITAL_SHIP|203	1	Your fleet has <bad>-40</bad> to supplies needed to perform surveys.
 summary|option0|CAPITAL_SHIP|204	0	<good>100%</good> more combat objective capture rate.
@@ -6022,8 +6027,8 @@ summary|option0|CAPITAL_SHIP|224	0	The zero-flux speed boost also works while fl
 summary|option0|CAPITAL_SHIP|225	0	Your fleet has <good>15%</good> increased post-battle salvage.
 summary|option0|CAPITAL_SHIP|226	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
 summary|option0|CAPITAL_SHIP|227	0	<good>2%</good> more crew capacity.
-summary|option0|CAPITAL_SHIP|228	0	<good>36%</good> more armor.
-summary|option0|CAPITAL_SHIP|229	0	<good>108%</good> more fuel capacity.
+summary|option0|CAPITAL_SHIP|228	0	<good>37%</good> more armor.
+summary|option0|CAPITAL_SHIP|229	0	<good>112%</good> more fuel capacity.
 summary|option0|CAPITAL_SHIP|230	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option0|CAPITAL_SHIP|231	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option0|CAPITAL_SHIP|232	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
@@ -6122,8 +6127,8 @@ summary|option1|FRIGATE|91	0	When this ship isn't flown by you, it flies straigh
 summary|option1|FRIGATE|92	0	<good>+100</good> to shield arc.
 summary|option1|FRIGATE|93	0	Strikecraft launched from this ship have <good>20%</good> increased top speed.
 summary|option1|FRIGATE|94	0	Strikecraft launched from this ship have <good>15%</good> increased weapon damage.
-summary|option1|FRIGATE|95	0	<good>224%</good> more flux capacity.
-summary|option1|FRIGATE|96	0	<good>159%</good> more flux dissipation.
+summary|option1|FRIGATE|95	0	<good>232%</good> more flux capacity.
+summary|option1|FRIGATE|96	0	<good>161%</good> more flux dissipation.
 summary|option1|FRIGATE|97	0	<good>80%</good> increased fragment swarm size.
 summary|option1|FRIGATE|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option1|FRIGATE|99	0	<good>100%</good> increased shield arc.
@@ -6150,7 +6155,7 @@ summary|option1|FRIGATE|119	0	<good>50%</good> increased energy weapon ammo rege
 summary|option1|FRIGATE|120	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option1|FRIGATE|121	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
 summary|option1|FRIGATE|122	0	<good>39%</good> more hull points.
-summary|option1|FRIGATE|123	0	<good>+20%</good> to Hungering Rift healing received.
+summary|option1|FRIGATE|123	0	<good>+30%</good> to Hungering Rift healing received.
 summary|option1|FRIGATE|124	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option1|FRIGATE|125	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
 summary|option1|FRIGATE|126	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
@@ -6209,8 +6214,8 @@ summary|option1|FRIGATE|178	0	If disabled, this ship is almost always recoverabl
 summary|option1|FRIGATE|179	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 summary|option1|FRIGATE|180	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 summary|option1|FRIGATE|181	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option1|FRIGATE|182	0	<good>20%</good> increased Rift Lightning damage.
-summary|option1|FRIGATE|183	0	<good>+550</good> to High Tech Affinity.
+summary|option1|FRIGATE|182	0	<good>30%</good> increased Rift Lightning damage.
+summary|option1|FRIGATE|183	0	<good>+570</good> to High Tech Affinity.
 summary|option1|FRIGATE|184	0	The zero-flux speed boost works at any flux level.
 summary|option1|FRIGATE|185	0	<bad>67%</bad> less peak combat readiness duration.
 summary|option1|FRIGATE|186	0	<bad>100%</bad> less venting speed.
@@ -6227,7 +6232,7 @@ summary|option1|FRIGATE|196	1	<bad>20%</bad> reduced weapon and engine repair ti
 summary|option1|FRIGATE|197	0	Disperses 35% of shield damage taken to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 summary|option1|FRIGATE|198	0	Removes this ship's shield.
 summary|option1|FRIGATE|199	1	<bad>60%</bad> less shield flux upkeep.
-summary|option1|FRIGATE|200	0	<good>20%</good> increased Shrouded Lens damage.
+summary|option1|FRIGATE|200	0	<good>30%</good> increased Shrouded Lens damage.
 summary|option1|FRIGATE|201	1	Your fleet has <bad>-7</bad> to heavy machinery needed to perform surveys.
 summary|option1|FRIGATE|202	1	Your fleet has <bad>-5</bad> to supplies needed to perform surveys.
 summary|option1|FRIGATE|203	0	<good>100%</good> more combat objective capture rate.
@@ -6253,7 +6258,7 @@ summary|option1|FRIGATE|222	0	<good>15%</good> increased energy weapon damage.
 summary|option1|FRIGATE|223	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option1|FRIGATE|224	0	Your fleet has <good>3%</good> increased post-battle salvage.
 summary|option1|FRIGATE|225	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option1|FRIGATE|226	0	<good>110%</good> more crew capacity.
+summary|option1|FRIGATE|226	0	<good>114%</good> more crew capacity.
 summary|option1|FRIGATE|227	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option1|FRIGATE|228	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option1|FRIGATE|229	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
@@ -6352,8 +6357,8 @@ summary|option1|DESTROYER|91	0	When this ship isn't flown by you, it flies strai
 summary|option1|DESTROYER|92	0	<good>+100</good> to shield arc.
 summary|option1|DESTROYER|93	0	Strikecraft launched from this ship have <good>20%</good> increased top speed.
 summary|option1|DESTROYER|94	0	Strikecraft launched from this ship have <good>15%</good> increased weapon damage.
-summary|option1|DESTROYER|95	0	<good>224%</good> more flux capacity.
-summary|option1|DESTROYER|96	0	<good>159%</good> more flux dissipation.
+summary|option1|DESTROYER|95	0	<good>232%</good> more flux capacity.
+summary|option1|DESTROYER|96	0	<good>161%</good> more flux dissipation.
 summary|option1|DESTROYER|97	0	<good>80%</good> increased fragment swarm size.
 summary|option1|DESTROYER|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option1|DESTROYER|99	0	<good>100%</good> increased shield arc.
@@ -6380,7 +6385,7 @@ summary|option1|DESTROYER|119	0	<good>50%</good> increased energy weapon ammo re
 summary|option1|DESTROYER|120	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option1|DESTROYER|121	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
 summary|option1|DESTROYER|122	0	<good>39%</good> more hull points.
-summary|option1|DESTROYER|123	0	<good>+20%</good> to Hungering Rift healing received.
+summary|option1|DESTROYER|123	0	<good>+30%</good> to Hungering Rift healing received.
 summary|option1|DESTROYER|124	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option1|DESTROYER|125	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
 summary|option1|DESTROYER|126	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
@@ -6439,8 +6444,8 @@ summary|option1|DESTROYER|178	0	If disabled, this ship is almost always recovera
 summary|option1|DESTROYER|179	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 summary|option1|DESTROYER|180	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 summary|option1|DESTROYER|181	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option1|DESTROYER|182	0	<good>20%</good> increased Rift Lightning damage.
-summary|option1|DESTROYER|183	0	<good>+550</good> to High Tech Affinity.
+summary|option1|DESTROYER|182	0	<good>30%</good> increased Rift Lightning damage.
+summary|option1|DESTROYER|183	0	<good>+570</good> to High Tech Affinity.
 summary|option1|DESTROYER|184	0	The zero-flux speed boost works at any flux level.
 summary|option1|DESTROYER|185	0	<bad>67%</bad> less peak combat readiness duration.
 summary|option1|DESTROYER|186	0	<bad>100%</bad> less venting speed.
@@ -6457,7 +6462,7 @@ summary|option1|DESTROYER|196	1	<bad>20%</bad> reduced weapon and engine repair 
 summary|option1|DESTROYER|197	0	Disperses 35% of shield damage taken to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 summary|option1|DESTROYER|198	0	Removes this ship's shield.
 summary|option1|DESTROYER|199	1	<bad>60%</bad> less shield flux upkeep.
-summary|option1|DESTROYER|200	0	<good>20%</good> increased Shrouded Lens damage.
+summary|option1|DESTROYER|200	0	<good>30%</good> increased Shrouded Lens damage.
 summary|option1|DESTROYER|201	1	Your fleet has <bad>-13</bad> to heavy machinery needed to perform surveys.
 summary|option1|DESTROYER|202	1	Your fleet has <bad>-11</bad> to supplies needed to perform surveys.
 summary|option1|DESTROYER|203	0	<good>100%</good> more combat objective capture rate.
@@ -6483,7 +6488,7 @@ summary|option1|DESTROYER|222	0	<good>15%</good> increased energy weapon damage.
 summary|option1|DESTROYER|223	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option1|DESTROYER|224	0	Your fleet has <good>6%</good> increased post-battle salvage.
 summary|option1|DESTROYER|225	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option1|DESTROYER|226	0	<good>110%</good> more crew capacity.
+summary|option1|DESTROYER|226	0	<good>114%</good> more crew capacity.
 summary|option1|DESTROYER|227	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option1|DESTROYER|228	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option1|DESTROYER|229	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
@@ -6582,8 +6587,8 @@ summary|option1|CRUISER|91	0	When this ship isn't flown by you, it flies straigh
 summary|option1|CRUISER|92	0	<good>+100</good> to shield arc.
 summary|option1|CRUISER|93	0	Strikecraft launched from this ship have <good>20%</good> increased top speed.
 summary|option1|CRUISER|94	0	Strikecraft launched from this ship have <good>15%</good> increased weapon damage.
-summary|option1|CRUISER|95	0	<good>224%</good> more flux capacity.
-summary|option1|CRUISER|96	0	<good>159%</good> more flux dissipation.
+summary|option1|CRUISER|95	0	<good>232%</good> more flux capacity.
+summary|option1|CRUISER|96	0	<good>161%</good> more flux dissipation.
 summary|option1|CRUISER|97	0	<good>80%</good> increased fragment swarm size.
 summary|option1|CRUISER|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option1|CRUISER|99	0	<good>100%</good> increased shield arc.
@@ -6610,7 +6615,7 @@ summary|option1|CRUISER|119	0	<good>50%</good> increased energy weapon ammo rege
 summary|option1|CRUISER|120	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option1|CRUISER|121	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
 summary|option1|CRUISER|122	0	<good>39%</good> more hull points.
-summary|option1|CRUISER|123	0	<good>+20%</good> to Hungering Rift healing received.
+summary|option1|CRUISER|123	0	<good>+30%</good> to Hungering Rift healing received.
 summary|option1|CRUISER|124	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option1|CRUISER|125	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
 summary|option1|CRUISER|126	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
@@ -6669,8 +6674,8 @@ summary|option1|CRUISER|178	0	If disabled, this ship is almost always recoverabl
 summary|option1|CRUISER|179	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 summary|option1|CRUISER|180	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 summary|option1|CRUISER|181	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option1|CRUISER|182	0	<good>20%</good> increased Rift Lightning damage.
-summary|option1|CRUISER|183	0	<good>+550</good> to High Tech Affinity.
+summary|option1|CRUISER|182	0	<good>30%</good> increased Rift Lightning damage.
+summary|option1|CRUISER|183	0	<good>+570</good> to High Tech Affinity.
 summary|option1|CRUISER|184	0	The zero-flux speed boost works at any flux level.
 summary|option1|CRUISER|185	0	<bad>67%</bad> less peak combat readiness duration.
 summary|option1|CRUISER|186	0	<bad>100%</bad> less venting speed.
@@ -6687,7 +6692,7 @@ summary|option1|CRUISER|196	1	<bad>20%</bad> reduced weapon and engine repair ti
 summary|option1|CRUISER|197	0	Disperses 35% of shield damage taken to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 summary|option1|CRUISER|198	0	Removes this ship's shield.
 summary|option1|CRUISER|199	1	<bad>60%</bad> less shield flux upkeep.
-summary|option1|CRUISER|200	0	<good>20%</good> increased Shrouded Lens damage.
+summary|option1|CRUISER|200	0	<good>30%</good> increased Shrouded Lens damage.
 summary|option1|CRUISER|201	1	Your fleet has <bad>-22</bad> to heavy machinery needed to perform surveys.
 summary|option1|CRUISER|202	1	Your fleet has <bad>-20</bad> to supplies needed to perform surveys.
 summary|option1|CRUISER|203	0	<good>100%</good> more combat objective capture rate.
@@ -6713,7 +6718,7 @@ summary|option1|CRUISER|222	0	<good>15%</good> increased energy weapon damage.
 summary|option1|CRUISER|223	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option1|CRUISER|224	0	Your fleet has <good>10%</good> increased post-battle salvage.
 summary|option1|CRUISER|225	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option1|CRUISER|226	0	<good>110%</good> more crew capacity.
+summary|option1|CRUISER|226	0	<good>114%</good> more crew capacity.
 summary|option1|CRUISER|227	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option1|CRUISER|228	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option1|CRUISER|229	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
@@ -6812,8 +6817,8 @@ summary|option1|CAPITAL_SHIP|91	0	When this ship isn't flown by you, it flies st
 summary|option1|CAPITAL_SHIP|92	0	<good>+100</good> to shield arc.
 summary|option1|CAPITAL_SHIP|93	0	Strikecraft launched from this ship have <good>20%</good> increased top speed.
 summary|option1|CAPITAL_SHIP|94	0	Strikecraft launched from this ship have <good>15%</good> increased weapon damage.
-summary|option1|CAPITAL_SHIP|95	0	<good>224%</good> more flux capacity.
-summary|option1|CAPITAL_SHIP|96	0	<good>159%</good> more flux dissipation.
+summary|option1|CAPITAL_SHIP|95	0	<good>232%</good> more flux capacity.
+summary|option1|CAPITAL_SHIP|96	0	<good>161%</good> more flux dissipation.
 summary|option1|CAPITAL_SHIP|97	0	<good>80%</good> increased fragment swarm size.
 summary|option1|CAPITAL_SHIP|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option1|CAPITAL_SHIP|99	0	<good>100%</good> increased shield arc.
@@ -6840,7 +6845,7 @@ summary|option1|CAPITAL_SHIP|119	0	<good>50%</good> increased energy weapon ammo
 summary|option1|CAPITAL_SHIP|120	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option1|CAPITAL_SHIP|121	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
 summary|option1|CAPITAL_SHIP|122	0	<good>39%</good> more hull points.
-summary|option1|CAPITAL_SHIP|123	0	<good>+20%</good> to Hungering Rift healing received.
+summary|option1|CAPITAL_SHIP|123	0	<good>+30%</good> to Hungering Rift healing received.
 summary|option1|CAPITAL_SHIP|124	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option1|CAPITAL_SHIP|125	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
 summary|option1|CAPITAL_SHIP|126	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
@@ -6899,8 +6904,8 @@ summary|option1|CAPITAL_SHIP|178	0	If disabled, this ship is almost always recov
 summary|option1|CAPITAL_SHIP|179	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 summary|option1|CAPITAL_SHIP|180	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 summary|option1|CAPITAL_SHIP|181	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option1|CAPITAL_SHIP|182	0	<good>20%</good> increased Rift Lightning damage.
-summary|option1|CAPITAL_SHIP|183	0	<good>+550</good> to High Tech Affinity.
+summary|option1|CAPITAL_SHIP|182	0	<good>30%</good> increased Rift Lightning damage.
+summary|option1|CAPITAL_SHIP|183	0	<good>+570</good> to High Tech Affinity.
 summary|option1|CAPITAL_SHIP|184	0	The zero-flux speed boost works at any flux level.
 summary|option1|CAPITAL_SHIP|185	0	<bad>67%</bad> less peak combat readiness duration.
 summary|option1|CAPITAL_SHIP|186	0	<bad>100%</bad> less venting speed.
@@ -6917,7 +6922,7 @@ summary|option1|CAPITAL_SHIP|196	1	<bad>20%</bad> reduced weapon and engine repa
 summary|option1|CAPITAL_SHIP|197	0	Disperses 35% of shield damage taken to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 summary|option1|CAPITAL_SHIP|198	0	Removes this ship's shield.
 summary|option1|CAPITAL_SHIP|199	1	<bad>60%</bad> less shield flux upkeep.
-summary|option1|CAPITAL_SHIP|200	0	<good>20%</good> increased Shrouded Lens damage.
+summary|option1|CAPITAL_SHIP|200	0	<good>30%</good> increased Shrouded Lens damage.
 summary|option1|CAPITAL_SHIP|201	1	Your fleet has <bad>-42</bad> to heavy machinery needed to perform surveys.
 summary|option1|CAPITAL_SHIP|202	1	Your fleet has <bad>-40</bad> to supplies needed to perform surveys.
 summary|option1|CAPITAL_SHIP|203	0	<good>100%</good> more combat objective capture rate.
@@ -6943,7 +6948,7 @@ summary|option1|CAPITAL_SHIP|222	0	<good>15%</good> increased energy weapon dama
 summary|option1|CAPITAL_SHIP|223	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
 summary|option1|CAPITAL_SHIP|224	0	Your fleet has <good>15%</good> increased post-battle salvage.
 summary|option1|CAPITAL_SHIP|225	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option1|CAPITAL_SHIP|226	0	<good>110%</good> more crew capacity.
+summary|option1|CAPITAL_SHIP|226	0	<good>114%</good> more crew capacity.
 summary|option1|CAPITAL_SHIP|227	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option1|CAPITAL_SHIP|228	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option1|CAPITAL_SHIP|229	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
@@ -7042,8 +7047,8 @@ summary|option2|FRIGATE|91	0	When this ship isn't flown by you, it flies straigh
 summary|option2|FRIGATE|92	0	<good>+100</good> to shield arc.
 summary|option2|FRIGATE|93	0	Strikecraft launched from this ship have <good>20%</good> increased top speed.
 summary|option2|FRIGATE|94	0	Strikecraft launched from this ship have <good>15%</good> increased weapon damage.
-summary|option2|FRIGATE|95	0	<good>224%</good> more flux capacity.
-summary|option2|FRIGATE|96	0	<good>159%</good> more flux dissipation.
+summary|option2|FRIGATE|95	0	<good>232%</good> more flux capacity.
+summary|option2|FRIGATE|96	0	<good>161%</good> more flux dissipation.
 summary|option2|FRIGATE|97	0	<good>80%</good> increased fragment swarm size.
 summary|option2|FRIGATE|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option2|FRIGATE|99	0	<good>100%</good> increased shield arc.
@@ -7069,8 +7074,8 @@ summary|option2|FRIGATE|118	0	<good>+90</good> to this ship's sensor strength.
 summary|option2|FRIGATE|119	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option2|FRIGATE|120	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option2|FRIGATE|121	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-summary|option2|FRIGATE|122	0	<good>255%</good> more hull points.
-summary|option2|FRIGATE|123	0	<good>+20%</good> to Hungering Rift healing received.
+summary|option2|FRIGATE|122	0	<good>263%</good> more hull points.
+summary|option2|FRIGATE|123	0	<good>+30%</good> to Hungering Rift healing received.
 summary|option2|FRIGATE|124	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option2|FRIGATE|125	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
 summary|option2|FRIGATE|126	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
@@ -7129,7 +7134,7 @@ summary|option2|FRIGATE|178	0	If disabled, this ship is almost always recoverabl
 summary|option2|FRIGATE|179	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 summary|option2|FRIGATE|180	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 summary|option2|FRIGATE|181	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option2|FRIGATE|182	0	<good>20%</good> increased Rift Lightning damage.
+summary|option2|FRIGATE|182	0	<good>30%</good> increased Rift Lightning damage.
 summary|option2|FRIGATE|183	0	<good>+10</good> to High Tech Affinity.
 summary|option2|FRIGATE|184	0	The zero-flux speed boost works at any flux level.
 summary|option2|FRIGATE|185	0	<bad>67%</bad> less peak combat readiness duration.
@@ -7147,8 +7152,8 @@ summary|option2|FRIGATE|196	1	<bad>20%</bad> reduced weapon and engine repair ti
 summary|option2|FRIGATE|197	0	Disperses 35% of shield damage taken to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 summary|option2|FRIGATE|198	0	Removes this ship's shield.
 summary|option2|FRIGATE|199	1	<bad>60%</bad> less shield flux upkeep.
-summary|option2|FRIGATE|200	0	<good>20%</good> increased Shrouded Lens damage.
-summary|option2|FRIGATE|201	0	<good>+540</good> to Midline Affinity.
+summary|option2|FRIGATE|200	0	<good>30%</good> increased Shrouded Lens damage.
+summary|option2|FRIGATE|201	0	<good>+560</good> to Midline Affinity.
 summary|option2|FRIGATE|202	1	Your fleet has <bad>-7</bad> to heavy machinery needed to perform surveys.
 summary|option2|FRIGATE|203	1	Your fleet has <bad>-5</bad> to supplies needed to perform surveys.
 summary|option2|FRIGATE|204	0	<good>100%</good> more combat objective capture rate.
@@ -7175,8 +7180,8 @@ summary|option2|FRIGATE|224	0	The zero-flux speed boost also works while flux is
 summary|option2|FRIGATE|225	0	Your fleet has <good>3%</good> increased post-battle salvage.
 summary|option2|FRIGATE|226	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
 summary|option2|FRIGATE|227	0	<good>2%</good> more crew capacity.
-summary|option2|FRIGATE|228	0	<good>27%</good> more armor.
-summary|option2|FRIGATE|229	0	<good>108%</good> more cargo capacity.
+summary|option2|FRIGATE|228	0	<good>28%</good> more armor.
+summary|option2|FRIGATE|229	0	<good>112%</good> more cargo capacity.
 summary|option2|FRIGATE|230	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option2|FRIGATE|231	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option2|FRIGATE|232	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
@@ -7275,8 +7280,8 @@ summary|option2|DESTROYER|91	0	When this ship isn't flown by you, it flies strai
 summary|option2|DESTROYER|92	0	<good>+100</good> to shield arc.
 summary|option2|DESTROYER|93	0	Strikecraft launched from this ship have <good>20%</good> increased top speed.
 summary|option2|DESTROYER|94	0	Strikecraft launched from this ship have <good>15%</good> increased weapon damage.
-summary|option2|DESTROYER|95	0	<good>224%</good> more flux capacity.
-summary|option2|DESTROYER|96	0	<good>159%</good> more flux dissipation.
+summary|option2|DESTROYER|95	0	<good>232%</good> more flux capacity.
+summary|option2|DESTROYER|96	0	<good>161%</good> more flux dissipation.
 summary|option2|DESTROYER|97	0	<good>80%</good> increased fragment swarm size.
 summary|option2|DESTROYER|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option2|DESTROYER|99	0	<good>100%</good> increased shield arc.
@@ -7302,8 +7307,8 @@ summary|option2|DESTROYER|118	0	<good>+110</good> to this ship's sensor strength
 summary|option2|DESTROYER|119	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option2|DESTROYER|120	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option2|DESTROYER|121	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-summary|option2|DESTROYER|122	0	<good>255%</good> more hull points.
-summary|option2|DESTROYER|123	0	<good>+20%</good> to Hungering Rift healing received.
+summary|option2|DESTROYER|122	0	<good>263%</good> more hull points.
+summary|option2|DESTROYER|123	0	<good>+30%</good> to Hungering Rift healing received.
 summary|option2|DESTROYER|124	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option2|DESTROYER|125	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
 summary|option2|DESTROYER|126	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
@@ -7362,7 +7367,7 @@ summary|option2|DESTROYER|178	0	If disabled, this ship is almost always recovera
 summary|option2|DESTROYER|179	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 summary|option2|DESTROYER|180	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 summary|option2|DESTROYER|181	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option2|DESTROYER|182	0	<good>20%</good> increased Rift Lightning damage.
+summary|option2|DESTROYER|182	0	<good>30%</good> increased Rift Lightning damage.
 summary|option2|DESTROYER|183	0	<good>+10</good> to High Tech Affinity.
 summary|option2|DESTROYER|184	0	The zero-flux speed boost works at any flux level.
 summary|option2|DESTROYER|185	0	<bad>67%</bad> less peak combat readiness duration.
@@ -7380,8 +7385,8 @@ summary|option2|DESTROYER|196	1	<bad>20%</bad> reduced weapon and engine repair 
 summary|option2|DESTROYER|197	0	Disperses 35% of shield damage taken to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 summary|option2|DESTROYER|198	0	Removes this ship's shield.
 summary|option2|DESTROYER|199	1	<bad>60%</bad> less shield flux upkeep.
-summary|option2|DESTROYER|200	0	<good>20%</good> increased Shrouded Lens damage.
-summary|option2|DESTROYER|201	0	<good>+540</good> to Midline Affinity.
+summary|option2|DESTROYER|200	0	<good>30%</good> increased Shrouded Lens damage.
+summary|option2|DESTROYER|201	0	<good>+560</good> to Midline Affinity.
 summary|option2|DESTROYER|202	1	Your fleet has <bad>-13</bad> to heavy machinery needed to perform surveys.
 summary|option2|DESTROYER|203	1	Your fleet has <bad>-11</bad> to supplies needed to perform surveys.
 summary|option2|DESTROYER|204	0	<good>100%</good> more combat objective capture rate.
@@ -7408,8 +7413,8 @@ summary|option2|DESTROYER|224	0	The zero-flux speed boost also works while flux 
 summary|option2|DESTROYER|225	0	Your fleet has <good>6%</good> increased post-battle salvage.
 summary|option2|DESTROYER|226	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
 summary|option2|DESTROYER|227	0	<good>2%</good> more crew capacity.
-summary|option2|DESTROYER|228	0	<good>27%</good> more armor.
-summary|option2|DESTROYER|229	0	<good>108%</good> more cargo capacity.
+summary|option2|DESTROYER|228	0	<good>28%</good> more armor.
+summary|option2|DESTROYER|229	0	<good>112%</good> more cargo capacity.
 summary|option2|DESTROYER|230	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option2|DESTROYER|231	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option2|DESTROYER|232	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
@@ -7508,8 +7513,8 @@ summary|option2|CRUISER|91	0	When this ship isn't flown by you, it flies straigh
 summary|option2|CRUISER|92	0	<good>+100</good> to shield arc.
 summary|option2|CRUISER|93	0	Strikecraft launched from this ship have <good>20%</good> increased top speed.
 summary|option2|CRUISER|94	0	Strikecraft launched from this ship have <good>15%</good> increased weapon damage.
-summary|option2|CRUISER|95	0	<good>224%</good> more flux capacity.
-summary|option2|CRUISER|96	0	<good>159%</good> more flux dissipation.
+summary|option2|CRUISER|95	0	<good>232%</good> more flux capacity.
+summary|option2|CRUISER|96	0	<good>161%</good> more flux dissipation.
 summary|option2|CRUISER|97	0	<good>80%</good> increased fragment swarm size.
 summary|option2|CRUISER|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option2|CRUISER|99	0	<good>100%</good> increased shield arc.
@@ -7535,8 +7540,8 @@ summary|option2|CRUISER|118	0	<good>+160</good> to this ship's sensor strength.
 summary|option2|CRUISER|119	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option2|CRUISER|120	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option2|CRUISER|121	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-summary|option2|CRUISER|122	0	<good>255%</good> more hull points.
-summary|option2|CRUISER|123	0	<good>+20%</good> to Hungering Rift healing received.
+summary|option2|CRUISER|122	0	<good>263%</good> more hull points.
+summary|option2|CRUISER|123	0	<good>+30%</good> to Hungering Rift healing received.
 summary|option2|CRUISER|124	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option2|CRUISER|125	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
 summary|option2|CRUISER|126	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
@@ -7595,7 +7600,7 @@ summary|option2|CRUISER|178	0	If disabled, this ship is almost always recoverabl
 summary|option2|CRUISER|179	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 summary|option2|CRUISER|180	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 summary|option2|CRUISER|181	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option2|CRUISER|182	0	<good>20%</good> increased Rift Lightning damage.
+summary|option2|CRUISER|182	0	<good>30%</good> increased Rift Lightning damage.
 summary|option2|CRUISER|183	0	<good>+10</good> to High Tech Affinity.
 summary|option2|CRUISER|184	0	The zero-flux speed boost works at any flux level.
 summary|option2|CRUISER|185	0	<bad>67%</bad> less peak combat readiness duration.
@@ -7613,8 +7618,8 @@ summary|option2|CRUISER|196	1	<bad>20%</bad> reduced weapon and engine repair ti
 summary|option2|CRUISER|197	0	Disperses 35% of shield damage taken to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 summary|option2|CRUISER|198	0	Removes this ship's shield.
 summary|option2|CRUISER|199	1	<bad>60%</bad> less shield flux upkeep.
-summary|option2|CRUISER|200	0	<good>20%</good> increased Shrouded Lens damage.
-summary|option2|CRUISER|201	0	<good>+540</good> to Midline Affinity.
+summary|option2|CRUISER|200	0	<good>30%</good> increased Shrouded Lens damage.
+summary|option2|CRUISER|201	0	<good>+560</good> to Midline Affinity.
 summary|option2|CRUISER|202	1	Your fleet has <bad>-22</bad> to heavy machinery needed to perform surveys.
 summary|option2|CRUISER|203	1	Your fleet has <bad>-20</bad> to supplies needed to perform surveys.
 summary|option2|CRUISER|204	0	<good>100%</good> more combat objective capture rate.
@@ -7641,8 +7646,8 @@ summary|option2|CRUISER|224	0	The zero-flux speed boost also works while flux is
 summary|option2|CRUISER|225	0	Your fleet has <good>10%</good> increased post-battle salvage.
 summary|option2|CRUISER|226	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
 summary|option2|CRUISER|227	0	<good>2%</good> more crew capacity.
-summary|option2|CRUISER|228	0	<good>27%</good> more armor.
-summary|option2|CRUISER|229	0	<good>108%</good> more cargo capacity.
+summary|option2|CRUISER|228	0	<good>28%</good> more armor.
+summary|option2|CRUISER|229	0	<good>112%</good> more cargo capacity.
 summary|option2|CRUISER|230	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option2|CRUISER|231	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option2|CRUISER|232	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
@@ -7741,8 +7746,8 @@ summary|option2|CAPITAL_SHIP|91	0	When this ship isn't flown by you, it flies st
 summary|option2|CAPITAL_SHIP|92	0	<good>+100</good> to shield arc.
 summary|option2|CAPITAL_SHIP|93	0	Strikecraft launched from this ship have <good>20%</good> increased top speed.
 summary|option2|CAPITAL_SHIP|94	0	Strikecraft launched from this ship have <good>15%</good> increased weapon damage.
-summary|option2|CAPITAL_SHIP|95	0	<good>224%</good> more flux capacity.
-summary|option2|CAPITAL_SHIP|96	0	<good>159%</good> more flux dissipation.
+summary|option2|CAPITAL_SHIP|95	0	<good>232%</good> more flux capacity.
+summary|option2|CAPITAL_SHIP|96	0	<good>161%</good> more flux dissipation.
 summary|option2|CAPITAL_SHIP|97	0	<good>80%</good> increased fragment swarm size.
 summary|option2|CAPITAL_SHIP|98	0	<good>40%</good> increased fragment replacement rate.
 summary|option2|CAPITAL_SHIP|99	0	<good>100%</good> increased shield arc.
@@ -7768,8 +7773,8 @@ summary|option2|CAPITAL_SHIP|118	0	<good>+220</good> to this ship's sensor stren
 summary|option2|CAPITAL_SHIP|119	0	<good>50%</good> increased energy weapon ammo regeneration rate.
 summary|option2|CAPITAL_SHIP|120	0	<good>50%</good> increased ballistic weapon ammo regeneration rate.
 summary|option2|CAPITAL_SHIP|121	0	Ballistic projectile hits on an enemy ship's armor or hull have a <good>20%</good> chance to pierce. A pierced shot cannot pierce again.
-summary|option2|CAPITAL_SHIP|122	0	<good>255%</good> more hull points.
-summary|option2|CAPITAL_SHIP|123	0	<good>+20%</good> to Hungering Rift healing received.
+summary|option2|CAPITAL_SHIP|122	0	<good>263%</good> more hull points.
+summary|option2|CAPITAL_SHIP|123	0	<good>+30%</good> to Hungering Rift healing received.
 summary|option2|CAPITAL_SHIP|124	0	Gaining a Heartless stack restores <good>5%</good> of maximum armor to every armor cell.
 summary|option2|CAPITAL_SHIP|125	0	Each Heartless stack grants <good>2%</good> more armor in every armor cell, above its normal maximum.
 summary|option2|CAPITAL_SHIP|126	0	<bad>3%</bad> reduced top speed and maneuverability for each Heartless stack.
@@ -7828,7 +7833,7 @@ summary|option2|CAPITAL_SHIP|178	0	If disabled, this ship is almost always recov
 summary|option2|CAPITAL_SHIP|179	1	<bad>100%</bad> reduced chance of this ship breaking apart when destroyed.
 summary|option2|CAPITAL_SHIP|180	0	Repairs the armor of the closest damaged allied ship within 1000 su by <good>1%</good> of its total armor per second. Each ship with this effect restores at most 10% of any one ally's armor per battle, and each ally regains at most 30% in total from all of them. Pauses while overloaded or venting.
 summary|option2|CAPITAL_SHIP|181	1	<bad>2%</bad> less armor damage taken per D-mod, up to 5 D-mods.
-summary|option2|CAPITAL_SHIP|182	0	<good>20%</good> increased Rift Lightning damage.
+summary|option2|CAPITAL_SHIP|182	0	<good>30%</good> increased Rift Lightning damage.
 summary|option2|CAPITAL_SHIP|183	0	<good>+10</good> to High Tech Affinity.
 summary|option2|CAPITAL_SHIP|184	0	The zero-flux speed boost works at any flux level.
 summary|option2|CAPITAL_SHIP|185	0	<bad>67%</bad> less peak combat readiness duration.
@@ -7846,8 +7851,8 @@ summary|option2|CAPITAL_SHIP|196	1	<bad>20%</bad> reduced weapon and engine repa
 summary|option2|CAPITAL_SHIP|197	0	Disperses 35% of shield damage taken to allied ships within 1000 su that aren't overloaded or venting, split evenly between them as hard flux.
 summary|option2|CAPITAL_SHIP|198	0	Removes this ship's shield.
 summary|option2|CAPITAL_SHIP|199	1	<bad>60%</bad> less shield flux upkeep.
-summary|option2|CAPITAL_SHIP|200	0	<good>20%</good> increased Shrouded Lens damage.
-summary|option2|CAPITAL_SHIP|201	0	<good>+540</good> to Midline Affinity.
+summary|option2|CAPITAL_SHIP|200	0	<good>30%</good> increased Shrouded Lens damage.
+summary|option2|CAPITAL_SHIP|201	0	<good>+560</good> to Midline Affinity.
 summary|option2|CAPITAL_SHIP|202	1	Your fleet has <bad>-42</bad> to heavy machinery needed to perform surveys.
 summary|option2|CAPITAL_SHIP|203	1	Your fleet has <bad>-40</bad> to supplies needed to perform surveys.
 summary|option2|CAPITAL_SHIP|204	0	<good>100%</good> more combat objective capture rate.
@@ -7874,8 +7879,8 @@ summary|option2|CAPITAL_SHIP|224	0	The zero-flux speed boost also works while fl
 summary|option2|CAPITAL_SHIP|225	0	Your fleet has <good>15%</good> increased post-battle salvage.
 summary|option2|CAPITAL_SHIP|226	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
 summary|option2|CAPITAL_SHIP|227	0	<good>2%</good> more crew capacity.
-summary|option2|CAPITAL_SHIP|228	0	<good>27%</good> more armor.
-summary|option2|CAPITAL_SHIP|229	0	<good>108%</good> more cargo capacity.
+summary|option2|CAPITAL_SHIP|228	0	<good>28%</good> more armor.
+summary|option2|CAPITAL_SHIP|229	0	<good>112%</good> more cargo capacity.
 summary|option2|CAPITAL_SHIP|230	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
 summary|option2|CAPITAL_SHIP|231	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
 summary|option2|CAPITAL_SHIP|232	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.

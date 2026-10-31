@@ -4878,6 +4878,10 @@
 				{
 					"effect": "BALLISTIC_WEAPON_FLUX_COST_PERCENT",
 					"magnitude": 25
+				},
+				{
+					"effect": "ENERGY_WEAPON_FLUX_COST_PERCENT",
+					"magnitude": 25
 				}
 			],
 			"flavour": "Navarchy dockyards at Farige run a flux line beside the ammunition feed in every mount, so a captain can field whatever the last salvage turned up. Mount plans traded by Navarchy quartermasters let the crew rebuild this ship's ballistic mounts the same way, though the shared feed draws harder on the grid each time they fire shells.",
