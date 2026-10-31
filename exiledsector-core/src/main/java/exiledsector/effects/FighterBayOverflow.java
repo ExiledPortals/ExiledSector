@@ -6,10 +6,6 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.loading.FighterWingSpecAPI;
-import com.fs.starfarer.api.util.Misc;
-import exiledsector.i18n.I18n;
-import exiledsector.i18n.Translation;
-import exiledsector.ui.CampaignMessages;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,19 +46,11 @@ public final class FighterBayOverflow {
     }
 
     public static void returnUnhousedWingsAndAnnounce(FleetMemberAPI member, ShipVariantAPI variant, CargoAPI cargo) {
-        List<String> returnedWingIds = returnUnhousedWings(member, variant, cargo);
-        if (returnedWingIds.isEmpty()) {
-            return;
-        }
-        member.setStatUpdateNeeded(true);
-        member.updateStats();
-        if (!CampaignMessages.available()) {
-            return;
-        }
-        for (String wingId : returnedWingIds) {
-            FighterWingSpecAPI wing = Global.getSettings().getFighterWingSpec(wingId);
-            String name = wing == null ? wingId : wing.getWingName();
-            CampaignMessages.plain(I18n.forGameText(() -> Translation.msg("fighterBay.returned").arg("wing", name).text()), Misc.getTextColor());
-        }
+        ReturnedToCargo.announce(member, returnUnhousedWings(member, variant, cargo), FighterBayOverflow::wingName, "fighterBay.returned", "wing");
+    }
+
+    private static String wingName(String wingId) {
+        FighterWingSpecAPI wing = Global.getSettings().getFighterWingSpec(wingId);
+        return wing == null ? wingId : wing.getWingName();
     }
 }

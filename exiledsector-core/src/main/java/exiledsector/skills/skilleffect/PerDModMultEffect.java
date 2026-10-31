@@ -3,22 +3,23 @@ package exiledsector.skills.skilleffect;
 import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import exiledsector.i18n.StyledText;
 
-public record PerDModMultEffect(StatTarget target, String statKey, boolean lowerIsBetter) implements EffectBacking {
+public record PerDModMultEffect(StatApplier multApplier, String statKey, boolean lowerIsBetter, boolean supportsTemporaryGating)
+        implements EffectBacking {
+
+    public PerDModMultEffect(StatTarget target, String statKey, boolean lowerIsBetter) {
+        this((stats, modId, multPercent) -> target.apply(stats, modId, StatMode.MULT, multPercent), statKey, lowerIsBetter,
+                target.supportsTemporaryGating());
+    }
 
     @Override
     public void apply(MutableShipStatsAPI stats, String modId, float magnitude) {
         float mult = SkillEffectSupport.compoundMultPerDMod(stats, magnitude);
-        target.apply(stats, modId, StatMode.MULT, (mult - 1f) * 100f);
+        multApplier.apply(stats, modId, (mult - 1f) * 100f);
     }
 
     @Override
     public boolean isMultiplicative() {
         return true;
-    }
-
-    @Override
-    public boolean supportsTemporaryGating() {
-        return target.supportsTemporaryGating();
     }
 
     @Override

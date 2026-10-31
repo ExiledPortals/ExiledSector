@@ -77,6 +77,12 @@ class BeamHardFluxListenerTest {
         return ship;
     }
 
+    private static ShipAPI hostileShip() {
+        ShipAPI ship = mock(ShipAPI.class);
+        when(ship.getOwner()).thenReturn(1);
+        return ship;
+    }
+
     private static <T> T attachedListener(SkillEffect effect, ShipAPI ship, Class<T> type) {
         effect.applyAfterShipCreation(ship, "mod_id", 0f);
         ArgumentCaptor<Object> captor = ArgumentCaptor.forClass(Object.class);
@@ -94,7 +100,7 @@ class BeamHardFluxListenerTest {
     void highScatterAmpNeverTouchesTheBeamsDamageAndInstallsAConverterOnTheShipItHits() {
         DamageDealtModifier listener = attachedListener(OnHitSkillEffect.BEAM_WEAPON_HARD_FLUX_PERCENT,
                 ship(HARD_FLUX_PERCENT_KEY, 50f), DamageDealtModifier.class);
-        ShipAPI target = mock(ShipAPI.class);
+        ShipAPI target = hostileShip();
         DamageAPI damage = mock(DamageAPI.class);
 
         assertNull(listener.modifyDamageDealt(mock(BeamAPI.class), target, damage, new Vector2f(), true));
@@ -107,13 +113,40 @@ class BeamHardFluxListenerTest {
     void highScatterAmpIgnoresHullHitsNonBeamsAndNonShipTargets() {
         DamageDealtModifier listener = attachedListener(OnHitSkillEffect.BEAM_WEAPON_HARD_FLUX_PERCENT,
                 ship(HARD_FLUX_PERCENT_KEY, 50f), DamageDealtModifier.class);
-        ShipAPI target = mock(ShipAPI.class);
+        ShipAPI target = hostileShip();
 
         listener.modifyDamageDealt(mock(BeamAPI.class), target, mock(DamageAPI.class), new Vector2f(), false);
         listener.modifyDamageDealt(new Object(), target, mock(DamageAPI.class), new Vector2f(), true);
         listener.modifyDamageDealt(mock(BeamAPI.class), mock(CombatEntityAPI.class), mock(DamageAPI.class), new Vector2f(), true);
 
         verify(target, never()).addListener(any());
+    }
+
+    @Test
+    void highScatterAmpLeavesAlliedShieldsAlone() {
+        DamageDealtModifier listener = attachedListener(OnHitSkillEffect.BEAM_WEAPON_HARD_FLUX_PERCENT,
+                ship(HARD_FLUX_PERCENT_KEY, 50f), DamageDealtModifier.class);
+        ShipAPI ally = mock(ShipAPI.class);
+
+        listener.modifyDamageDealt(mock(BeamAPI.class), ally, mock(DamageAPI.class), new Vector2f(), true);
+
+        verify(ally, never()).addListener(any());
+    }
+
+    @Test
+    void theConverterIgnoresBeamsFromTheShieldedShipsOwnSide() {
+        ShipAPI target = hostileShip();
+        FluxTrackerAPI flux = mock(FluxTrackerAPI.class);
+        when(target.getFluxTracker()).thenReturn(flux);
+        DamageListener converter = converterOn(target);
+        ShipAPI targetsAlly = ship(HARD_FLUX_PERCENT_KEY, 50f);
+        when(targetsAlly.getOwner()).thenReturn(1);
+        BeamAPI beam = beamFrom(targetsAlly, false);
+        when(target.getParamAboutToApplyDamage()).thenReturn(beam);
+
+        converter.reportDamageApplied(targetsAlly, target, shieldFlux(40f));
+
+        verify(flux, never()).setHardFlux(anyFloat());
     }
 
     private DamageListener converterOn(ShipAPI target) {
@@ -136,7 +169,7 @@ class BeamHardFluxListenerTest {
 
     @Test
     void theConverterTurnsTheStatedShareOfTheShieldFluxTheBeamDealtIntoHardFlux() {
-        ShipAPI target = mock(ShipAPI.class);
+        ShipAPI target = hostileShip();
         FluxTrackerAPI flux = mock(FluxTrackerAPI.class);
         when(target.getFluxTracker()).thenReturn(flux);
         when(flux.getCurrFlux()).thenReturn(300f);
@@ -155,7 +188,7 @@ class BeamHardFluxListenerTest {
 
     @Test
     void theConverterSkipsTheZeroDamageFramesBetweenBeamTicksWithoutLookingAtTheBeam() {
-        ShipAPI target = mock(ShipAPI.class);
+        ShipAPI target = hostileShip();
         FluxTrackerAPI flux = mock(FluxTrackerAPI.class);
         when(target.getFluxTracker()).thenReturn(flux);
         DamageListener converter = converterOn(target);
@@ -168,7 +201,7 @@ class BeamHardFluxListenerTest {
 
     @Test
     void theConverterStandsDownWhileASimulatedSplitHitIsBeingApplied() {
-        ShipAPI target = mock(ShipAPI.class);
+        ShipAPI target = hostileShip();
         FluxTrackerAPI flux = mock(FluxTrackerAPI.class);
         when(target.getFluxTracker()).thenReturn(flux);
         DamageListener converter = converterOn(target);
@@ -187,7 +220,7 @@ class BeamHardFluxListenerTest {
 
     @Test
     void theConverterNeverMakesHardFluxExceedTheTotalFlux() {
-        ShipAPI target = mock(ShipAPI.class);
+        ShipAPI target = hostileShip();
         FluxTrackerAPI flux = mock(FluxTrackerAPI.class);
         when(target.getFluxTracker()).thenReturn(flux);
         when(flux.getCurrFlux()).thenReturn(110f);
@@ -205,7 +238,7 @@ class BeamHardFluxListenerTest {
 
     @Test
     void theConverterLeavesOtherBeamsAndHitsAlone() {
-        ShipAPI target = mock(ShipAPI.class);
+        ShipAPI target = hostileShip();
         FluxTrackerAPI flux = mock(FluxTrackerAPI.class);
         when(target.getFluxTracker()).thenReturn(flux);
         DamageListener converter = converterOn(target);

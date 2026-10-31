@@ -28,7 +28,7 @@ class ShipCombatPlanTest {
         StatBonus hull = mock(StatBonus.class);
         when(ship.getMutableStats()).thenReturn(stats);
         when(stats.getHullBonus()).thenReturn(hull);
-        ShipCombatPlan plan = new ShipCombatPlan();
+        ShipCombatPlan plan = new ShipCombatPlan(null);
         plan.addGatedNode(CombatGate.LOW_HULL, List.of(new ResolvedTree.EffectEntry(DefenseSkillEffect.HULL_PERCENT, "gated_hull", 30f)));
 
         when(ship.getHullLevel()).thenReturn(0.9f);

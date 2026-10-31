@@ -1,10 +1,8 @@
 package exiledsector.skills.skilleffect.onhit;
 
 import com.fs.starfarer.api.combat.ArmorGridAPI;
-import com.fs.starfarer.api.combat.BeamAPI;
 import com.fs.starfarer.api.combat.CombatEntityAPI;
 import com.fs.starfarer.api.combat.DamageAPI;
-import com.fs.starfarer.api.combat.DamagingProjectileAPI;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.WeaponAPI;
 import com.fs.starfarer.api.combat.listeners.AdvanceableListener;
@@ -32,10 +30,10 @@ final class DisintegrationListener extends ShipCombatListener implements DamageD
     @SuppressWarnings("java:S3516")
     @Override
     public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-        if (shieldHit || !(target instanceof ShipAPI targetShip)) {
+        if (shieldHit || !(target instanceof ShipAPI targetShip) || !CombatQueries.isHostile(ownerShip, targetShip)) {
             return null;
         }
-        float percent = armorDamagePercent(hitWeapon(param));
+        float percent = armorDamagePercent(CombatQueries.weaponBehind(param));
         float armorDamage = CombatQueries.hitDamage(damage) * percent / 100f
                 * targetShip.getMutableStats().getArmorDamageTakenMult().getModifiedValue();
         if (armorDamage > 0f) {
@@ -49,13 +47,6 @@ final class DisintegrationListener extends ShipCombatListener implements DamageD
             return magnitude(ARMOR_DAMAGE_PERCENT_KEY);
         }
         return weapon != null && weapon.getType() == WeaponAPI.WeaponType.BALLISTIC ? magnitude(BALLISTIC_ARMOR_DAMAGE_PERCENT_KEY) : 0f;
-    }
-
-    private static WeaponAPI hitWeapon(Object param) {
-        if (param instanceof DamagingProjectileAPI proj) {
-            return proj.getWeapon();
-        }
-        return param instanceof BeamAPI beam ? beam.getWeapon() : null;
     }
 
     private static void queueStrip(ShipAPI target, Vector2f point, float armorDamage) {

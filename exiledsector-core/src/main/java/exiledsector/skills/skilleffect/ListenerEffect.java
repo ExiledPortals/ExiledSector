@@ -16,7 +16,7 @@ public record ListenerEffect<T>(String magnitudeKey, Class<T> listenerType, Func
     }
 
     @Override
-    public void applyAfterShipCreation(ShipAPI ship) {
+    public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
         if (listenerType != null) {
             SkillEffectSupport.ensureListener(ship, listenerType, listenerFactory);
         }

@@ -68,7 +68,9 @@ final class FluxScaledVolatilityListener extends ShipCombatListener implements A
         if (ratio != appliedRatio) {
             applyRatio(ratio, topSpeed, rateOfFire);
         }
-        showStatus(ratio, topSpeed, rateOfFire);
+        if (engine.getPlayerShip() == ownerShip) {
+            showStatus(ratio, topSpeed, rateOfFire);
+        }
         if (ratio > 0f) {
             showLowFluxEffects(engine, ratio);
         }

@@ -156,12 +156,12 @@ aimed at the target, costing no flux or ammo. Echoes are tagged and never echo a
 ### Disintegration
 
 `DISINTEGRATION_ARMOR_DAMAGE_PERCENT` (energy hits) and `BALLISTIC_DISINTEGRATION_ARMOR_DAMAGE_PERCENT` (ballistic
-hits) queue that share of a hit's damage on a 5 by 5 patch of armor cells around the impact, on top of the hit
+hits on enemy ships) queue that share of a hit's damage on a 5 by 5 patch of armor cells around the impact, on top of the hit
 itself. Each target strips its queued armor evenly over 5 seconds (`DisintegrationListener.ArmorDecay`).
 
 ### Thermo-Accelerator
 
-The rate of fire bonus is ship-wide, and `ThermoAcceleratorListener` stops every hardpoint weapon from firing
+The flux cost reduction is an ordinary ship-wide weapon stat, and `ThermoAcceleratorListener` stops every hardpoint weapon from firing
 each frame, so only turrets benefit. Decorative and system slots are left alone.
 
 ### Shrouded damage and healing
@@ -206,11 +206,11 @@ instant damage plus a MagicLib fake beam, without the weapon's effect code.
 ### High Scatter Amplifier
 
 `BEAM_WEAPON_HARD_FLUX_PERCENT` converts that share (capped at 100%) of a beam hit's shield flux from soft to
-hard on the target, never above its total flux. Beams that already force hard flux are skipped.
+hard on an enemy target, never above its total flux. Beams that already force hard flux are skipped.
 
 ### Beam shield disruption
 
-`BEAM_WEAPON_SHIELD_DISRUPTION_PERCENT` works like vanilla's Graviton Beam: a beam hit on shields multiplies the
+`BEAM_WEAPON_SHIELD_DISRUPTION_PERCENT` works like vanilla's Graviton Beam: a beam hit on enemy shields multiplies the
 target's shield damage taken from every source for 1 second, refreshed by each hit. Several sources don't stack; the
 strongest one applies (`BeamShieldDisruptionListener`).
 

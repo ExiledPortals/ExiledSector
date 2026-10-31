@@ -12,7 +12,7 @@ public record SimpleStatEffect(StatMode mode, StatTarget target, String statKey,
     }
 
     @Override
-    public void applyAfterShipCreation(ShipAPI ship) {
+    public void applyAfterShipCreation(ShipAPI ship, String modId, float magnitude) {
         target.applyAfterShipCreation(ship);
     }
 

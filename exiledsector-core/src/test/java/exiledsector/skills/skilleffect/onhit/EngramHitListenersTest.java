@@ -12,11 +12,13 @@ import org.junit.jupiter.api.Test;
 import org.lwjgl.util.vector.Vector2f;
 import org.mockito.ArgumentCaptor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -51,13 +53,16 @@ class EngramHitListenersTest {
     void aBeamShieldHitRaisesShieldDamageTakenUntilTheDisruptionLapses() {
         ShipAPI shooter = ship(0, BeamShieldDisruptionListener.SHIELD_DAMAGE_PERCENT_KEY, 10f);
         ShipAPI target = ship(1, null, 0f);
+        ShipAPI ally = ship(0, null, 0f);
         BeamShieldDisruptionListener listener = new BeamShieldDisruptionListener(shooter);
 
         listener.modifyDamageDealt(mock(BeamAPI.class), target, mock(DamageAPI.class), new Vector2f(), false);
+        listener.modifyDamageDealt(mock(BeamAPI.class), ally, mock(DamageAPI.class), new Vector2f(), true);
         verify(target, never()).addListener(any());
+        verify(ally, never()).addListener(any());
         listener.modifyDamageDealt(mock(BeamAPI.class), target, mock(DamageAPI.class), new Vector2f(), true);
 
-        BeamShieldDisruptionListener.ShieldDisruption disruption = addedListener(target, BeamShieldDisruptionListener.ShieldDisruption.class);
+        TimedTargetDebuff disruption = addedListener(target, TimedTargetDebuff.class);
         assertEquals(1.1f, target.getMutableStats().getShieldDamageTakenMult().getModifiedValue(), 1e-4f);
         disruption.advance(BeamShieldDisruptionListener.DISRUPTION_SECONDS + 0.01f);
         assertEquals(1f, target.getMutableStats().getShieldDamageTakenMult().getModifiedValue(), 1e-4f);
@@ -75,12 +80,35 @@ class EngramHitListenersTest {
         verify(ally, never()).addListener(any());
         listener.modifyDamageDealt(mock(MissileAPI.class), target, mock(DamageAPI.class), new Vector2f(), true);
 
-        MissileSnareListener.Snare snare = addedListener(target, MissileSnareListener.Snare.class);
+        TimedTargetDebuff snare = addedListener(target, TimedTargetDebuff.class);
         assertEquals(80f, target.getMutableStats().getMaxSpeed().getModifiedValue(), 1e-3f);
         snare.advance(MissileSnareListener.SNARE_SECONDS - 0.5f);
         assertEquals(80f, target.getMutableStats().getMaxSpeed().getModifiedValue(), 1e-3f);
         snare.advance(1f);
         assertEquals(100f, target.getMutableStats().getMaxSpeed().getModifiedValue(), 1e-3f);
+    }
+
+    @Test
+    void aSnareAndADisruptionOnOneShipShareOneListenerAndLapseSeparately() {
+        ShipAPI target = ship(1, null, 0f);
+        List<TimedTargetDebuff> attached = new ArrayList<>();
+        when(target.getListeners(TimedTargetDebuff.class)).thenReturn(attached);
+        doAnswer(invocation -> attached.add(invocation.getArgument(0))).when(target).addListener(any(TimedTargetDebuff.class));
+
+        TimedTargetDebuff.refresh(target, MissileSnareListener.SNARE, 50f);
+        TimedTargetDebuff.refresh(target, BeamShieldDisruptionListener.DISRUPTION, 20f);
+        TimedTargetDebuff.refresh(target, MissileSnareListener.SNARE, 10f);
+
+        assertEquals(1, attached.size());
+        assertEquals(50f, target.getMutableStats().getMaxSpeed().getModifiedValue(), 1e-3f);
+        assertEquals(1.2f, target.getMutableStats().getShieldDamageTakenMult().getModifiedValue(), 1e-4f);
+        attached.get(0).advance(BeamShieldDisruptionListener.DISRUPTION_SECONDS + 0.01f);
+        assertEquals(50f, target.getMutableStats().getMaxSpeed().getModifiedValue(), 1e-3f);
+        assertEquals(1f, target.getMutableStats().getShieldDamageTakenMult().getModifiedValue(), 1e-4f);
+        verify(target, never()).removeListener(any());
+        attached.get(0).advance(MissileSnareListener.SNARE_SECONDS);
+        assertEquals(100f, target.getMutableStats().getMaxSpeed().getModifiedValue(), 1e-3f);
+        verify(target).removeListener(attached.get(0));
     }
 
     @Test
