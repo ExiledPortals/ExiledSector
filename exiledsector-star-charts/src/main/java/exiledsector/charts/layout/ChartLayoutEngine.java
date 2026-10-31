@@ -11,6 +11,13 @@ import java.util.Random;
 
 interface ChartLayoutEngine {
 
-    SectorEntityToken build(StarSystemAPI system, String starId, StarSystemType systemType, StarAge age, Random random, ChartLayoutRecipe recipe,
+    record Result(SectorEntityToken featureAnchor, List<String> unshapedAnomalyIds) {
+
+        public Result {
+            unshapedAnomalyIds = unshapedAnomalyIds == null ? List.of() : List.copyOf(unshapedAnomalyIds);
+        }
+    }
+
+    Result build(StarSystemAPI system, String starId, StarSystemType systemType, StarAge age, Random random, ChartLayoutRecipe recipe,
                             List<ChartAnomaly> anomalies);
 }

@@ -23,7 +23,7 @@ public class ChartSoakCommand extends CampaignCommand {
         }
         SectorAPI sector = Global.getSector();
         if (ChartRuns.hasRun()) {
-            Console.showMessage("A Star Chart run is already open. Collapse it or finish it first.");
+            Console.showMessage(ChartConsoleText.RUN_ALREADY_OPEN);
             return CommandResult.ERROR;
         }
         if (sector.hasTransientScript(ChartSoakScript.class)) {

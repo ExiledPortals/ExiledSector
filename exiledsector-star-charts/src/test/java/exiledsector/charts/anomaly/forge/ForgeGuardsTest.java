@@ -14,6 +14,7 @@ import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageGenFromSeed.SDM
 import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.SalvageGenFromSeed.SalvageDefenderModificationPlugin;
 import exiledsector.MockSector;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.anomaly.VanillaDefenders;
 import exiledsector.charts.content.ChartAnomalyFleets;
 import exiledsector.charts.content.ChartContent;
 import exiledsector.charts.content.ChartContentGenerator;
@@ -66,7 +67,7 @@ class ForgeGuardsTest {
         when(forge.getMemoryWithoutUpdate()).thenReturn(forgeMemory);
         when(forge.getContainingLocation()).thenReturn(system);
         when(forge.getLocation()).thenReturn(new Vector2f(300f, 400f));
-        ForgeGuards.arm(forge, SEED);
+        VanillaDefenders.arm(forge, SEED);
     }
 
     @AfterEach
@@ -103,7 +104,7 @@ class ForgeGuardsTest {
     @Test
     void theEscortGrowsWithTheTierWhileTheGuardianStaysAlone() {
         ForgeGuards.muster(forge, run(1));
-        forgeMemory.unset(ForgeGuards.DEFENDER_FLEET_KEY);
+        forgeMemory.unset(VanillaDefenders.DEFENDER_FLEET_KEY);
         ForgeGuards.muster(forge, run(12));
 
         assertTrue(engine.fleetParams.get(1).combatPts > engine.fleetParams.get(0).combatPts);
@@ -116,7 +117,7 @@ class ForgeGuardsTest {
         CampaignFleetAPI guards = ForgeGuards.muster(forge, run(4));
 
         assertSame(guards, forgeMemory.get(ChartIds.VANILLA_DEFENDER_FLEET_MEMORY_KEY));
-        assertTrue(forgeMemory.getBoolean(ForgeGuards.HAS_DEFENDERS_KEY));
+        assertTrue(forgeMemory.getBoolean(VanillaDefenders.HAS_DEFENDERS_KEY));
         assertEquals(SEED, forgeMemory.get(MemFlags.SALVAGE_SEED));
         verify(guards).setContainingLocation(system);
         assertEquals(new Vector2f(300f, 400f), guards.getLocation());
@@ -146,9 +147,9 @@ class ForgeGuardsTest {
 
     @Test
     void aBeatenForgeHasNoGuards() {
-        forgeMemory.set(ForgeGuards.DEFEATED_KEY, true);
+        forgeMemory.set(VanillaDefenders.DEFEATED_KEY, true);
 
-        assertFalse(ForgeGuards.guarded(forge));
+        assertFalse(VanillaDefenders.guarded(forge));
         assertNull(ForgeGuards.muster(forge, run(4)));
         assertTrue(engine.fleetParams.isEmpty());
     }

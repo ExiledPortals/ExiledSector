@@ -14,14 +14,15 @@ import exiledsector.charts.layout.sketch.ChartSketchPalette.BodyKind;
 import exiledsector.charts.layout.sketch.ChartSketchPalette.StarKind;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.Belt;
 import exiledsector.charts.layout.sketch.ChartSystemSketch.Body;
-import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.StarRule;
+import exiledsector.Seeds;
+import exiledsector.items.WeightedPick;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.function.ToDoubleFunction;
 
 public final class ChartSystemSketcher {
 
@@ -49,11 +50,11 @@ public final class ChartSystemSketcher {
 
     public static ChartSystemSketch sketch(long seed, ChartLayoutRecipe recipe, Collection<String> anomalyIds, ChartSketchPalette palette) {
         ChartLayoutRecipe layoutRecipe = recipe == null ? ChartLayoutRecipe.ORDINARY : recipe;
-        ChartAnomaly starAnomaly = ChartAnomalies.starOf(anomalyIds == null ? List.of() : anomalyIds);
-        StarSystemType systemType = ChartAnomaly.systemTypeOr(starAnomaly,
-                ChartLayoutGenerator.typeFor(new ChartLayoutRequest(seed, null).withRecipe(layoutRecipe)));
+        Collection<String> planned = anomalyIds == null ? List.of() : anomalyIds;
+        StarRule starAnomaly = ChartAnomalies.starOf(planned);
+        StarSystemType systemType = ChartLayoutGenerator.systemTypeFor(new ChartLayoutRequest(seed, null).withRecipe(layoutRecipe), planned);
         StarAge age = ChartLayoutGenerator.pickAge(seed);
-        Random random = ChartLayoutGenerator.derivedRandom(seed, SKETCH_SALT);
+        Random random = Seeds.derived(seed, SKETCH_SALT);
         boolean nebula = systemType == StarSystemType.NEBULA;
 
         List<Body> stars = new ArrayList<>();
@@ -152,14 +153,14 @@ public final class ChartSystemSketcher {
         for (int i = 0; i < orbits && orbit < limit; i++) {
             String category = pickCategory(recipe, palette, random);
             if (RINGS.equals(category)) {
-                BodyKind kind = pick(palette.bodies().get(category), BodyKind::frequency, random);
+                BodyKind kind = WeightedPick.pick(palette.bodies().get(category), BodyKind::frequency, random);
                 float width = BELT_WIDTH_BASE + BELT_WIDTH_RANGE * random.nextFloat();
                 float middle = orbit + width / 2f;
                 belts.add(new Belt(kind.typeId(), middle, width, orbitDays(middle, random), random.nextInt(BELT_VARIANTS)));
                 outermost = orbit + width;
                 orbit += width;
             } else if (category != null && !NOTHING.equals(category)) {
-                BodyKind kind = pick(palette.bodies().get(category), BodyKind::frequency, random);
+                BodyKind kind = WeightedPick.pick(palette.bodies().get(category), BodyKind::frequency, random);
                 float radius = planetRadius(kind, random);
                 float middle = orbit + radius;
                 planets.add(new Body(kind.typeId(), radius, middle, orbitDays(middle, random), random.nextFloat() * 360f));
@@ -185,11 +186,11 @@ public final class ChartSystemSketcher {
                 weighted.add(Map.entry(category, weight));
             }
         }
-        Map.Entry<String, Float> picked = pick(weighted, Map.Entry::getValue, random);
+        Map.Entry<String, Float> picked = WeightedPick.pick(weighted, Map.Entry::getValue, random);
         return picked == null ? null : picked.getKey();
     }
 
-    private static StarKind forcedStar(ChartAnomaly starAnomaly, ChartSketchPalette palette, boolean nebula, ChartLayoutRecipe recipe,
+    private static StarKind forcedStar(StarRule starAnomaly, ChartSketchPalette palette, boolean nebula, ChartLayoutRecipe recipe,
                                        StarAge age, Random random) {
         String forced = starAnomaly == null ? null : starAnomaly.primaryStar();
         for (StarKind kind : palette.stars()) {
@@ -208,7 +209,7 @@ public final class ChartSystemSketcher {
                 weighted.add(Map.entry(kind, weight));
             }
         }
-        Map.Entry<StarKind, Float> picked = pick(weighted, Map.Entry::getValue, random);
+        Map.Entry<StarKind, Float> picked = WeightedPick.pick(weighted, Map.Entry::getValue, random);
         return picked == null ? new StarKind(FALLBACK_STAR, 1f, 1f, 1f, FALLBACK_STAR_RADIUS, FALLBACK_STAR_RADIUS, false) : picked.getKey();
     }
 
@@ -223,20 +224,5 @@ public final class ChartSystemSketcher {
 
     private static float between(float min, float max, Random random) {
         return max > min ? min + (max - min) * random.nextFloat() : min;
-    }
-
-    private static <T> T pick(List<T> options, ToDoubleFunction<T> weightOf, Random random) {
-        double total = 0.0;
-        for (T option : options) {
-            total += weightOf.applyAsDouble(option);
-        }
-        double roll = random.nextDouble() * total;
-        for (T option : options) {
-            roll -= weightOf.applyAsDouble(option);
-            if (roll < 0.0) {
-                return option;
-            }
-        }
-        return options.isEmpty() ? null : options.get(options.size() - 1);
     }
 }

@@ -8,7 +8,7 @@ import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.impl.campaign.terrain.AsteroidBeltTerrainPlugin;
 import com.fs.starfarer.api.impl.campaign.terrain.AsteroidFieldTerrainPlugin;
 import com.fs.starfarer.api.impl.campaign.terrain.NebulaTerrainPlugin;
-import exiledsector.charts.anomaly.storm.StormFrontTerrainPlugin;
+import exiledsector.charts.anomaly.SlowsFleets;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ final class ConvoyTerrain {
 
     static boolean slowsConvoys(CampaignTerrainPlugin plugin) {
         return plugin instanceof AsteroidBeltTerrainPlugin || plugin instanceof AsteroidFieldTerrainPlugin || plugin instanceof NebulaTerrainPlugin
-                || plugin instanceof StormFrontTerrainPlugin;
+                || plugin instanceof SlowsFleets;
     }
 
     static List<CampaignTerrainPlugin> slowingTerrain(LocationAPI location) {

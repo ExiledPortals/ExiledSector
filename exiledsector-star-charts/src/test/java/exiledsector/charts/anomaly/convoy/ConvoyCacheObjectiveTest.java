@@ -47,15 +47,6 @@ class ConvoyCacheObjectiveTest {
     }
 
     @Test
-    void theCacheNeedsMoreMarinesAtHigherTiersAndAHarderOperation() {
-        assertEquals(RaidDangerLevel.LOW, ConvoyRules.cacheDanger(1));
-        assertEquals(RaidDangerLevel.MEDIUM, ConvoyRules.cacheDanger(8));
-        assertEquals(RaidDangerLevel.HIGH, ConvoyRules.cacheDanger(15));
-        assertTrue(ConvoyRules.raidDifficulty(15) > ConvoyRules.raidDifficulty(1));
-        assertEquals(ConvoyRules.raidDifficulty(1), ConvoyRules.raidDifficulty(0));
-    }
-
-    @Test
     void anObjectiveTakesTheTokensOfItsDangerLevelAndShowsNoValueColumns() {
         ConvoySystem convoySystem = new ConvoySystem(4);
         SupplyConvoy.INSTANCE.generate(convoySystem.site(ChartGenContext.none()));
@@ -75,7 +66,7 @@ class ConvoyCacheObjectiveTest {
         convoy.setPhase(ConvoyState.Phase.EN_ROUTE);
         convoy.recordFreighterPoints(70f);
         convoy.deliver();
-        float difficulty = ConvoyRules.raidDifficulty(8);
+        float difficulty = ChartRaid.difficulty(8);
         float previousShare = 0f;
         boolean bonusFell = false;
         float previousBonus = 0f;

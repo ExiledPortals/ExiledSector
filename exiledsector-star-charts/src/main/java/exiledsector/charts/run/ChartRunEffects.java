@@ -4,7 +4,6 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.fleet.MutableFleetStatsAPI;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.effect.ChartFleetConditions;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.items.Item;
@@ -52,24 +51,19 @@ public final class ChartRunEffects {
         return context;
     }
 
-    public static boolean applySensorRange(CampaignFleetAPI fleet, float sensorRangeMult, String source) {
+    public static void apply(CampaignFleetAPI fleet, ChartRun run, String sensorSource) {
+        ChartGenContext runContext = contextOf(run);
         MutableFleetStatsAPI stats = fleet == null ? null : fleet.getStats();
-        if (stats == null) {
-            return false;
+        if (stats != null && runContext.sensorRangeMult() != 1f) {
+            stats.addTemporaryModMult(SENSOR_MOD_DAYS, ChartIds.SENSOR_MOD_ID, sensorSource, runContext.sensorRangeMult(), stats.getSensorRangeMod());
         }
-        if (sensorRangeMult == 1f) {
-            removeFrom(fleet);
-            return false;
-        }
-        stats.addTemporaryModMult(SENSOR_MOD_DAYS, ChartIds.SENSOR_MOD_ID, source, sensorRangeMult, stats.getSensorRangeMod());
-        return true;
+        ChartFleetConditions.set(runContext.fleetStatMults(), fleet);
+        ChartFleetConditions.setBattleSizeBonus(runContext.battleSizeBonus());
     }
 
-    public static void removeFrom(CampaignFleetAPI fleet) {
+    public static void lift(CampaignFleetAPI fleet) {
         ChartFleetConditions.clear(fleet);
-        for (ChartAnomaly anomaly : ChartAnomalies.all()) {
-            anomaly.clearFrom(fleet);
-        }
+        ChartAnomalies.clearFrom(fleet);
         MutableFleetStatsAPI stats = fleet == null ? null : fleet.getStats();
         if (stats == null) {
             return;

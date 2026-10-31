@@ -10,8 +10,8 @@ import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.content.ChartContentPlan.FleetRole;
 import exiledsector.charts.content.ChartContentPlan.PlannedFleet;
 import exiledsector.charts.content.ChartContentPlan.PlannedPoi;
-import exiledsector.charts.layout.ChartLayoutGenerator;
 import exiledsector.charts.objective.ChartObjective;
+import exiledsector.Seeds;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -176,7 +176,7 @@ class ChartContentPlannerTest {
             float spentTotal = 0f;
             for (long seed = 0; seed < seeds; seed++) {
                 List<PlannedPoi> planned = ChartContentPlanner.spendLoot(withSiteBudgets(15, 0f, budget, 0f, 0f), pois,
-                        ChartLayoutGenerator.derivedRandom(seed, ChartContentPlanner.LOOT_SALT));
+                        Seeds.derived(seed, ChartContentPlanner.LOOT_SALT));
                 float spent = spentOn(planned, ChartPoi.Kind.DOMAIN);
                 assertTrue(budget - spent < 3f && spent < budget + 3f, "budget " + budget + " spent " + spent);
                 spentTotal += spent;

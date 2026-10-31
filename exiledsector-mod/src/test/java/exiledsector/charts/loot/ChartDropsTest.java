@@ -348,6 +348,7 @@ class ChartDropsTest {
         StarSystemAPI system = mock(StarSystemAPI.class);
         when(system.hasTag(ChartIds.SYSTEM_TAG)).thenReturn(true);
         when(system.getTags()).thenReturn(List.of(ChartIds.SYSTEM_TAG, ChartIds.runTag(runId)));
+        when(system.getOptionalUniqueId()).thenReturn(ChartIds.systemId(runId));
         return system;
     }
 

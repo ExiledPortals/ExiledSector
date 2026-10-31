@@ -199,7 +199,6 @@
     "chart.ui.bench.empty": "Click a Star Chart in Star Chart storage to load it into the map device. It stays in storage while it is loaded.",
     "chart.ui.open.blocked.disabled": "Star Charts are switched off in LunaLib settings.",
     "chart.ui.open.blocked.no_chart": "Select a Star Chart to open its wormhole.",
-    "chart.ui.open.blocked.run_open": "A Star Chart run is already open. Finish or collapse it before opening another.",
     "chart.ui.open.blocked.no_fleet": "Your fleet can't be found.",
     "chart.ui.open.blocked.in_transition": "Your fleet is jumping. Wait until it arrives.",
     "chart.ui.open.blocked.in_system": "Your fleet is inside a Star Chart system. Leave it first.",

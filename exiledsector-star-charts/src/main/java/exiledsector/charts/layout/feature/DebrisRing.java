@@ -27,7 +27,7 @@ public final class DebrisRing implements ChartFeature {
 
     @Override
     public SectorEntityToken build(FeatureSite site) {
-        float orbit = site.outerRadius() + GAP + BELT_WIDTH / 2f + site.between(0f, 500f);
+        float orbit = site.orbitBeyond(GAP + BELT_WIDTH / 2f, 500f);
         float days = FeatureSite.orbitDays(orbit);
         int asteroids = 80 + site.random().nextInt(60);
         site.system().addAsteroidBelt(site.centre(), asteroids, orbit, BELT_WIDTH, days * 0.75f, days * 1.5f, Terrain.ASTEROID_BELT, null);

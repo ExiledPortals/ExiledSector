@@ -1,4 +1,4 @@
-package exiledsector.ui.chart;
+package exiledsector.charts.wormhole;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.charts.run.ChartRunActions.OpenResult;
@@ -30,11 +30,6 @@ public final class StarChartOpening {
     }
 
     private StarChartOpening() {
-    }
-
-    public static Outcome open(Opener opener, SectorAPI sector, ItemStore store, Item chart, int entriesAllowed, Random random) {
-        WormholeOpenCheck.Blocker blocker = WormholeOpenCheck.current(sector, store, chart);
-        return open(opener, blocker, sector, store, chart, entriesAllowed, random);
     }
 
     public static Outcome openReplacingRun(Opener opener, SectorAPI sector, ItemStore store, Item chart, int entriesAllowed, Random random) {

@@ -12,18 +12,19 @@ import com.fs.starfarer.api.combat.ViewportAPI;
 import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
-import com.fs.starfarer.api.impl.campaign.terrain.BaseTerrain;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.i18n.I18n;
+import exiledsector.PlayerFleet;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.anomaly.ChartAnomalyTerrain;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.content.ChartSites;
 import exiledsector.ui.VanillaText;
+import exiledsector.ui.belt.RadialBand;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -33,18 +34,18 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Random;
 
-public class BreachTerrainPlugin extends BaseTerrain {
+public class BreachTerrainPlugin extends ChartAnomalyTerrain {
 
     static final float TICK_DAYS = 0.1f;
     public static final String MOD_ID = SpatialBreach.TERRAIN_ID + "_stat_mod";
     static final String SUPPLY_BUFF_ID = MOD_ID + "_supplies";
     static final float MOD_DAYS = TICK_DAYS * 2.5f;
     static final float RENDER_MARGIN = 500f;
-    static final float TOOLTIP_PAD = 10f;
     static final float ANIMATION_WRAP_SECONDS = 3600f;
     static final float BODY_ALPHA = 0.45f;
     static final float MAP_ALPHA = 0.5f;
     static final Color BODY_COLOUR = new Color(120, 60, 200);
+    private static final EnumSet<CampaignEngineLayers> LAYERS = EnumSet.of(CampaignEngineLayers.TERRAIN_1);
     private static final Logger LOG = Logger.getLogger(BreachTerrainPlugin.class);
 
     public record Params(String runId, int tier, BreachRules.Growth growth, List<BreachRules.CacheSite> caches, float cacheItemMult, long seed) {
@@ -66,6 +67,7 @@ public class BreachTerrainPlugin extends BaseTerrain {
     private boolean[] cacheFormed;
     private boolean closed;
     private transient boolean coreChecked;
+    private transient RadialBand rimBand;
     private transient BreachCorePlugin corePlugin;
     private transient float daysSinceTick;
     private transient float elapsedSeconds;
@@ -133,21 +135,22 @@ public class BreachTerrainPlugin extends BaseTerrain {
     }
 
     @Override
-    protected boolean shouldCheckFleetsToApplyEffect() {
-        return false;
-    }
-
-    @Override
-    public String getEffectCategory() {
+    protected String terrainId() {
         return SpatialBreach.TERRAIN_ID;
     }
 
     @Override
-    public void advance(float amount) {
-        if (amount <= 0f || closed || entity == null || entity.getContainingLocation() == null) {
-            return;
-        }
-        super.advance(amount);
+    protected String nameKey() {
+        return "chart.breach.name";
+    }
+
+    @Override
+    protected boolean isGone() {
+        return closed;
+    }
+
+    @Override
+    protected void advanceLive(float amount) {
         if (!coreChecked) {
             coreChecked = true;
             makeCoreUnclickable();
@@ -178,8 +181,8 @@ public class BreachTerrainPlugin extends BaseTerrain {
     }
 
     private boolean playerFleetOver() {
-        CampaignFleetAPI player = Global.getSector().getPlayerFleet();
-        return player != null && player.getContainingLocation() == entity.getContainingLocation() && player.getLocation() != null
+        CampaignFleetAPI player = PlayerFleet.orNull();
+        return PlayerFleet.isIn(entity.getContainingLocation()) && player.getLocation() != null
                 && BreachRules.triggers(Misc.getDistance(entity.getLocation(), player.getLocation()), player.getRadius());
     }
 
@@ -316,8 +319,8 @@ public class BreachTerrainPlugin extends BaseTerrain {
     }
 
     private ChartGenContext runContext() {
-        ChartRun run = ChartRuns.currentOrNull();
-        return run != null && run.runId().equals(runId) ? ChartRunEffects.contextOf(run) : ChartGenContext.none();
+        ChartRun run = ChartRuns.live(runId);
+        return run == null ? ChartGenContext.none() : ChartRunEffects.contextOf(run);
     }
 
     void collapse() {
@@ -365,7 +368,7 @@ public class BreachTerrainPlugin extends BaseTerrain {
 
     @Override
     public EnumSet<CampaignEngineLayers> getActiveLayers() {
-        return EnumSet.of(CampaignEngineLayers.TERRAIN_1);
+        return LAYERS;
     }
 
     @Override
@@ -373,7 +376,8 @@ public class BreachTerrainPlugin extends BaseTerrain {
         if (closed || entity == null || radius <= 0f) {
             return;
         }
-        BreachFieldRenderer.render(entity.getLocation(), radius, viewport.getAlphaMult(), elapsedSeconds, viewport.getViewMult());
+        rimBand = BreachFieldRenderer.rimBand(entity.getLocation(), radius, rimBand);
+        BreachFieldRenderer.render(rimBand, radius, viewport.getAlphaMult(), elapsedSeconds, viewport.getViewMult());
     }
 
     @Override
@@ -406,38 +410,13 @@ public class BreachTerrainPlugin extends BaseTerrain {
     }
 
     @Override
-    public boolean hasTooltip() {
-        return true;
-    }
-
-    @Override
-    public boolean isTooltipExpandable() {
-        return false;
-    }
-
-    @Override
-    public void createTooltip(TooltipMakerAPI tooltip, boolean expanded) {
-        I18n.forGameText(() -> addTooltipLines(tooltip));
-    }
-
-    private void addTooltipLines(TooltipMakerAPI tooltip) {
+    protected void tooltipLines(TooltipMakerAPI tooltip) {
         Color text = Misc.getTextColor();
-        tooltip.addTitle(getTerrainName());
         VanillaText.plainPara(tooltip, Translation.gameText("chart.breach.description"), TOOLTIP_PAD, text);
         int supplyIncrease = Math.round(BreachRules.SUPPLY_USE_PERCENT);
         VanillaText.addPara(tooltip, Translation.msg("chart.breach.effect.supplies").arg("value", supplyIncrease).styled(), TOOLTIP_PAD, text);
         VanillaText.addPara(tooltip, Translation.msg("chart.breach.effect.fuel").styled(), TOOLTIP_PAD, text);
         VanillaText.plainPara(tooltip, Translation.gameText("chart.breach.effect.depth"), TOOLTIP_PAD, Misc.getGrayColor());
-    }
-
-    @Override
-    public String getTerrainName() {
-        return Translation.gameText("chart.breach.name");
-    }
-
-    @Override
-    public String getNameForTooltip() {
-        return getTerrainName();
     }
 
     @Override

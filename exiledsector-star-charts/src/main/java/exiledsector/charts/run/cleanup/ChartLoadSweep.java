@@ -8,13 +8,12 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import exiledsector.charts.effect.ChartFleetConditions;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.run.ChartRun;
+import exiledsector.charts.run.ChartRunBound;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.run.ChartRunState;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.charts.generation.ChartSystemFactory;
 import exiledsector.charts.wormhole.ChartWormholePlacement;
-import exiledsector.charts.atlas.AtlasProgress;
-import exiledsector.charts.objective.ChartObjectiveIntel;
 import exiledsector.charts.objective.ChartObjectives;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
@@ -22,10 +21,12 @@ import org.lwjgl.util.vector.Vector2f;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Predicate;
 
 public final class ChartLoadSweep {
 
     private static final Logger LOG = Logger.getLogger(ChartLoadSweep.class);
+    private static volatile String leftForNowSystemId;
 
     public enum SystemDecision {
         KEEP,
@@ -38,25 +39,25 @@ public final class ChartLoadSweep {
     }
 
     public static void sweep(SectorAPI sector) {
+        leftForNowSystemId = null;
         runSafely("repair the run record", () -> repairRunRecord(sector));
         runSafely("purge orphan systems", () -> purgeOrphanSystems(sector));
         runSafely("remove leftover chart entities", () -> removeLeftoverEntities(sector));
-        runSafely("remove orphan chart intel", () -> removeOrphanIntel(sector));
+        runSafely("remove scripts, listeners and intel of dead runs", () -> removeDeadRunObjects(sector));
         runSafely("lift chart effects outside the run's system", () -> liftEffectsOutsideSystem(sector));
         runSafely("catch up on the objective", () -> ChartObjectives.reconcile(sector));
     }
 
     public static void liftEffectsOutsideSystem(SectorAPI sector) {
         CampaignFleetAPI playerFleet = sector.getPlayerFleet();
-        ChartFleetConditions.clear(playerFleet);
-        if (playerFleet == null) {
-            return;
-        }
         ChartRun run = ChartRuns.currentOrNull();
         StarSystemAPI system = run == null ? null : sector.getStarSystem(run.systemId());
-        boolean insideRunSystem = system != null && run.runState().keepsRunEffects() && playerFleet.getContainingLocation() == system;
-        if (!insideRunSystem) {
-            ChartRunEffects.removeFrom(playerFleet);
+        boolean insideRunSystem = playerFleet != null && system != null && run.runState().keepsRunEffects()
+                && playerFleet.getContainingLocation() == system;
+        if (insideRunSystem) {
+            ChartFleetConditions.clear(playerFleet);
+        } else {
+            ChartRunEffects.lift(playerFleet);
         }
     }
 
@@ -82,8 +83,7 @@ public final class ChartLoadSweep {
         if (system == null) {
             LOG.warn("[ExiledSector] Star Chart run " + run.runId() + " lost its system; closing it");
             run.beginClosing();
-            AtlasProgress.closed(sector, run);
-            ChartRunCloser.close(sector, run.runId(), null);
+            ChartRunCloser.close(sector, run);
             return;
         }
         if (playerInside) {
@@ -123,12 +123,40 @@ public final class ChartLoadSweep {
                         ensureInnerWormhole(sector, system, runId);
                     }
                 }
-                case LEAVE_FOR_NOW -> LOG.warn("[ExiledSector] The player is inside Star Chart system " + system.getOptionalUniqueId()
-                        + " while another run is open; leaving it until they leave");
+                case LEAVE_FOR_NOW -> {
+                    LOG.warn("[ExiledSector] The player is inside Star Chart system " + system.getOptionalUniqueId()
+                            + " while another run is open; leaving it until they leave");
+                    leftForNowSystemId = system.getOptionalUniqueId();
+                }
                 default -> {
                 }
             }
         }
+    }
+
+    public static void closeLeftForNowSystemOnceLeft(SectorAPI sector) {
+        String systemId = leftForNowSystemId;
+        if (systemId == null) {
+            return;
+        }
+        try {
+            StarSystemAPI system = sector.getStarSystem(systemId);
+            if (system != null && mayStillBeInside(sector.getPlayerFleet(), system)) {
+                return;
+            }
+            leftForNowSystemId = null;
+            if (system != null) {
+                LOG.info("[ExiledSector] The player left orphan Star Chart system " + systemId + "; purging it");
+                ChartRunCloser.close(sector, ChartIds.runIdOf(system), system);
+            }
+        } catch (RuntimeException | LinkageError e) {
+            leftForNowSystemId = null;
+            LOG.warn("[ExiledSector] Purging orphan Star Chart system " + systemId + " failed; the next load sweep retries", e);
+        }
+    }
+
+    private static boolean mayStillBeInside(CampaignFleetAPI playerFleet, StarSystemAPI system) {
+        return playerFleet == null || playerFleet.getContainingLocation() == system || playerFleet.isInHyperspaceTransition();
     }
 
     private static void adopt(SectorAPI sector, StarSystemAPI system, String runId, ChartRun staleRun) {
@@ -163,8 +191,7 @@ public final class ChartLoadSweep {
     }
 
     static void removeLeftoverEntities(SectorAPI sector) {
-        ChartRun run = ChartRuns.currentOrNull();
-        String liveRunId = run != null && run.runState().isLive() ? run.runId() : null;
+        String liveRunId = liveRunId();
         List<LocationAPI> locations = new ArrayList<>(sector.getStarSystems());
         if (sector.getHyperspace() != null) {
             locations.add(sector.getHyperspace());
@@ -183,11 +210,16 @@ public final class ChartLoadSweep {
         }
     }
 
-    static int removeOrphanIntel(SectorAPI sector) {
-        ChartRun run = ChartRuns.currentOrNull();
-        String liveRunId = run != null && run.runState().isLive() ? run.runId() : null;
-        return ChartRunCloser.endIntelWhere(sector, intelManager -> intelManager.getIntel(ChartObjectiveIntel.class),
-                intel -> intel instanceof ChartObjectiveIntel objectiveIntel && !objectiveIntel.belongsToRun(liveRunId));
+    static void removeDeadRunObjects(SectorAPI sector) {
+        String liveRunId = liveRunId();
+        Predicate<ChartRunBound> dead = bound -> !bound.belongsToRun(liveRunId);
+        ChartRunCloser.removeBound(sector, null, dead);
+        ChartRunCloser.endBoundIntel(sector, dead);
+    }
+
+    private static String liveRunId() {
+        ChartRun run = ChartRuns.live();
+        return run == null ? null : run.runId();
     }
 
     private static void runSafely(String stepName, Runnable step) {

@@ -69,7 +69,7 @@ public class StormBattlePlugin extends BaseEveryFrameCombatPlugin {
 
     @Override
     public void advance(float amount, List<InputEventAPI> events) {
-        if (!active || engine == null || engine.isPaused() || amount <= 0f) {
+        if (!active || engine == null || engine.isPaused() || engine.isCombatOver() || amount <= 0f) {
             return;
         }
         secondsToStrike -= amount;

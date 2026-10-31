@@ -74,7 +74,7 @@ class ChartForgeTest {
         ChartRun run = new ChartRun(RUN_ID, ChartIds.HYPERSPACE_LOCATION_ID, 0f, 0f, 1);
         run.recordContent(new ChartContent(1, "pirates", ChartObjective.BOSS, List.of("boss"), "boss", 3, 2, List.of(DerelictForge.ANOMALY_ID)));
         run.recordArrival();
-        ForgeStates.record(run, programs, runs);
+        ForgeStates.record(ForgeStates.of(run), programs, runs);
         ChartRuns.store(run);
         return run;
     }

@@ -4,6 +4,7 @@ import com.fs.starfarer.api.FactoryAPI;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
+import com.fs.starfarer.api.campaign.RepLevel;
 import com.fs.starfarer.api.campaign.FleetAssignment;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
@@ -13,6 +14,7 @@ import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.impl.campaign.FleetInteractionDialogPluginImpl.FIDConfig;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import exiledsector.MockSector;
+import exiledsector.charts.anomaly.AnomalyEncounters;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -115,16 +117,16 @@ class DormantFleetsTest {
 
         DormantFleets.dressFaction(dormant, List.of(dormant, pirates, threat));
 
-        verify(dormant).setRelationship("player", 0f);
-        verify(dormant).setRelationship("pirates", 0f);
-        verify(dormant).setRelationship("threat", 0f);
-        verify(dormant, never()).setRelationship(DormantFleets.FACTION_ID, 0f);
+        verify(dormant).setRelationship("player", RepLevel.NEUTRAL);
+        verify(dormant).setRelationship("pirates", RepLevel.NEUTRAL);
+        verify(dormant).setRelationship("threat", RepLevel.NEUTRAL);
+        verify(dormant, never()).setRelationship(DormantFleets.FACTION_ID, RepLevel.NEUTRAL);
     }
 
     @Test
     void anEncounterNeverPullsInOtherFleetsOrTouchesReputation() {
-        FIDConfig first = DormantEncounters.config(true);
-        FIDConfig later = DormantEncounters.config(false);
+        FIDConfig first = AnomalyEncounters.isolated(true, null, null);
+        FIDConfig later = AnomalyEncounters.isolated(false, null, null);
 
         assertTrue(first.straightToEngage);
         assertFalse(later.straightToEngage);

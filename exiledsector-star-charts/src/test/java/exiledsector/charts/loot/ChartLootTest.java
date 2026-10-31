@@ -90,7 +90,7 @@ class ChartLootTest {
                 assertTrue(ChartLoot.groupTypes().containsValue(type), type.name());
             }
         }
-        for (String scope : ChartLoot.SCOPES) {
+        for (String scope : ChartLoot.scopes()) {
             for (ChartLoot.Entry entry : ChartLoot.entriesFor(scope, ChartTiers.HIGHEST_TIER)) {
                 assertEquals(entry.type(), ChartLoot.typeOfGroup(entry.group()), entry.toString());
             }

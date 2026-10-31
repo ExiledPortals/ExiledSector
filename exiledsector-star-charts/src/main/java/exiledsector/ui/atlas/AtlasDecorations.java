@@ -1,6 +1,8 @@
 package exiledsector.ui.atlas;
 
 import com.fs.starfarer.api.graphics.SpriteAPI;
+import exiledsector.Seeds;
+import exiledsector.items.WeightedPick;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.charts.atlas.AtlasAmbience;
 import exiledsector.charts.atlas.AtlasCell;
@@ -110,7 +112,7 @@ final class AtlasDecorations {
         List<Piece> placed = new ArrayList<>();
         Map<String, Float> weights = new TreeMap<>(ambience.decorations());
         for (int placement = 0; placement < placements; placement++) {
-            String picked = pick(weights, random);
+            String picked = WeightedPick.pick(weights, random);
             AtlasDecoration decoration = picked == null ? null : canvas.scenery().decoration(picked);
             float[] spot = spot(cell, random);
             if (decoration == null || spot == null) {
@@ -164,26 +166,6 @@ final class AtlasDecorations {
             }
         }
         return true;
-    }
-
-    static String pick(Map<String, Float> weights, Random random) {
-        float total = 0f;
-        for (float weight : weights.values()) {
-            total += Math.max(0f, weight);
-        }
-        float roll = random.nextFloat() * total;
-        String last = null;
-        for (Map.Entry<String, Float> entry : weights.entrySet()) {
-            if (entry.getValue() <= 0f) {
-                continue;
-            }
-            last = entry.getKey();
-            roll -= entry.getValue();
-            if (roll < 0f) {
-                return last;
-            }
-        }
-        return last;
     }
 
     private void drawAll(TreeViewport view, String path, List<Piece> list, boolean glow, float alphaMult) {
@@ -300,9 +282,6 @@ final class AtlasDecorations {
     }
 
     private static long mix(long seed, long value) {
-        long mixed = seed + value * 0x9e3779b97f4a7c15L;
-        mixed = (mixed ^ (mixed >>> 30)) * 0xbf58476d1ce4e5b9L;
-        mixed = (mixed ^ (mixed >>> 27)) * 0x94d049bb133111ebL;
-        return mixed ^ (mixed >>> 31);
+        return Seeds.mix(seed + value * Seeds.GOLDEN_GAMMA);
     }
 }

@@ -1,9 +1,8 @@
 package exiledsector.charts.anomaly.relay;
 
+import exiledsector.data.EnumKeys;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.impl.campaign.ids.Entities;
-
-import java.util.Locale;
 
 public enum RelayKind {
     NAV_BUOY(Entities.NAV_BUOY, true),
@@ -27,16 +26,11 @@ public enum RelayKind {
     }
 
     public String key() {
-        return name().toLowerCase(Locale.ROOT);
+        return EnumKeys.key(this);
     }
 
     public static RelayKind parse(String key) {
-        for (RelayKind kind : values()) {
-            if (kind.key().equals(key)) {
-                return kind;
-            }
-        }
-        return null;
+        return EnumKeys.parse(RelayKind.class, key);
     }
 
     public static RelayKind of(SectorEntityToken entity) {

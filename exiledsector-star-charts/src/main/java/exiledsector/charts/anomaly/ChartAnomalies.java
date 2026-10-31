@@ -1,7 +1,9 @@
 package exiledsector.charts.anomaly;
 
 import com.fs.starfarer.api.campaign.BattleCreationPlugin;
+import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
+import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import exiledsector.ModCsv;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
@@ -17,9 +19,15 @@ import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.anomaly.station.DomainMothership;
 import exiledsector.charts.anomaly.station.RemnantNexusStation;
 import exiledsector.charts.anomaly.storm.StormFront;
-import exiledsector.charts.content.ChartPois;
+import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.atlas.AtlasGenerator;
+import exiledsector.charts.atlas.AtlasRunChoice;
+import exiledsector.charts.atlas.AtlasRunNode;
+import exiledsector.charts.atlas.AtlasState;
+import exiledsector.compat.ChartModGates;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext;
+import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.table.BuiltInTable;
 import exiledsector.data.CsvRows;
 import org.apache.log4j.Logger;
@@ -35,6 +43,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 public final class ChartAnomalies {
 
@@ -50,6 +60,8 @@ public final class ChartAnomalies {
     private static final Logger LOG = Logger.getLogger(ChartAnomalies.class);
     private static volatile List<ChartAnomaly> anomalies = BUILT_IN;
     private static volatile Map<String, Definition> definitions = Map.of();
+    private static final Map<Class<?>, List<?>> ROLES = new ConcurrentHashMap<>();
+    private static final Set<String> REPORTED_FAILURES = ConcurrentHashMap.newKeySet();
 
     public record Definition(String id, float weight, int minTier, int maxTier, String requiredMod, String icon, boolean insertable,
                              Set<String> excludes, boolean replacesStar, List<ChartGenContext.AppliedEffect> effects, Set<String> biomes) {
@@ -110,7 +122,7 @@ public final class ChartAnomalies {
     private static Definition parse(CsvRows csv, JSONObject row, String id) {
         BuiltInTable.TierRange tiers = BuiltInTable.TierRange.parse(csv, row, id);
         ChartAnomaly anomaly = byId(id);
-        boolean replacesStar = anomaly != null && anomaly.replacesStar();
+        boolean replacesStar = anomaly instanceof StarRule;
         boolean insertable = csv.flag(row, "insertable", false, id);
         if (insertable && replacesStar) {
             csv.problem(id, "insertable", "yes (an anomaly that replaces the star can't be inserted)");
@@ -148,13 +160,41 @@ public final class ChartAnomalies {
         return anomalies;
     }
 
-    public static InteractionDialogPlugin dialogFor(SectorEntityToken target) {
-        return dialogFor(target, null);
+    public static <R extends ChartAnomaly> List<R> with(Class<R> role) {
+        @SuppressWarnings("unchecked")
+        List<R> cached = (List<R>) ROLES.computeIfAbsent(role, wanted -> anomalies.stream().filter(wanted::isInstance).map(wanted::cast).toList());
+        return cached;
     }
 
-    public static InteractionDialogPlugin dialogFor(SectorEntityToken target, ChartAnomaly skipped) {
-        for (ChartAnomaly anomaly : anomalies) {
-            InteractionDialogPlugin dialog = anomaly == skipped ? null : anomaly.dialogFor(target);
+    public static <R extends ChartAnomaly> List<R> inRun(ChartRun run, Class<R> role) {
+        return among(run == null ? List.of() : run.anomalyIds(), role);
+    }
+
+    public static <R extends ChartAnomaly> List<R> among(Collection<String> ids, Class<R> role) {
+        return with(role).stream().filter(anomaly -> ids.contains(anomaly.id())).toList();
+    }
+
+    public static <R extends ChartAnomaly> R role(String id, Class<R> role) {
+        ChartAnomaly anomaly = byId(id);
+        return role.isInstance(anomaly) ? role.cast(anomaly) : null;
+    }
+
+    public static InteractionDialogPlugin dialogFor(SectorEntityToken target) {
+        return dialogAfter(null, target);
+    }
+
+    public static InteractionDialogPlugin dialogAfter(ChartAnomaly previous, SectorEntityToken target) {
+        AnomalyRun run = target == null ? null : AnomalyRun.in(target.getContainingLocation());
+        if (run == null) {
+            return null;
+        }
+        List<RunParticipant> participants = inRun(run.run(), RunParticipant.class);
+        int previousIndex = participants.indexOf(previous);
+        if (previous != null && previousIndex < 0) {
+            return null;
+        }
+        for (RunParticipant anomaly : participants.subList(previousIndex + 1, participants.size())) {
+            InteractionDialogPlugin dialog = askSafely(anomaly, "dialog", () -> anomaly.dialogFor(run, target));
             if (dialog != null) {
                 return dialog;
             }
@@ -163,8 +203,8 @@ public final class ChartAnomalies {
     }
 
     public static BattleCreationPlugin battleFor(SectorEntityToken opponent) {
-        for (ChartAnomaly anomaly : anomalies) {
-            BattleCreationPlugin battle = anomaly.battleFor(opponent);
+        for (RunParticipant anomaly : with(RunParticipant.class)) {
+            BattleCreationPlugin battle = askSafely(anomaly, "battle", () -> anomaly.battleFor(opponent));
             if (battle != null) {
                 return battle;
             }
@@ -172,8 +212,77 @@ public final class ChartAnomalies {
         return null;
     }
 
-    public static List<ChartAnomaly> holdingPlayerBattle() {
-        return anomalies.stream().filter(ChartAnomaly::holdsPlayerBattle).toList();
+    public static void checkRun(SectorAPI sector, AnomalyRun run) {
+        for (RunParticipant anomaly : inRun(run.run(), RunParticipant.class)) {
+            runSafely(anomaly, "run check", () -> anomaly.checkRun(sector, run));
+        }
+    }
+
+    public static void fleetGone(AnomalyRun run, CampaignFleetAPI fleet) {
+        for (RunParticipant anomaly : inRun(run.run(), RunParticipant.class)) {
+            runSafely(anomaly, "fleet check", () -> anomaly.fleetGone(run, fleet));
+        }
+    }
+
+    public static List<String> intelLines(AnomalyRun run) {
+        List<String> lines = new ArrayList<>();
+        for (RunParticipant anomaly : inRun(run.run(), RunParticipant.class)) {
+            String line = askSafely(anomaly, "intel", () -> anomaly.intelText(run));
+            if (line != null) {
+                lines.add(line);
+            }
+        }
+        return lines;
+    }
+
+    public static AtlasRunNode joinRunNode(AtlasRunNode node, AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasRunChoice choice) {
+        AtlasRunNode joined = node;
+        for (AtlasRule anomaly : among(node.anomalyIds(), AtlasRule.class)) {
+            AtlasRunNode current = joined;
+            AtlasRunNode next = askSafely(anomaly, "run join", () -> anomaly.joinRunNode(current, generator, state, cell, choice));
+            joined = next == null ? current : next;
+        }
+        return joined;
+    }
+
+    public static void runCompleted(SectorAPI sector, ChartRun run) {
+        for (AtlasRule anomaly : among(run.atlasNode().anomalyIds(), AtlasRule.class)) {
+            runSafely(anomaly, "run completion", () -> anomaly.runCompleted(sector, run));
+        }
+    }
+
+    public static void runClosed(SectorAPI sector, ChartRun run) {
+        for (AtlasRule anomaly : among(run.atlasNode().anomalyIds(), AtlasRule.class)) {
+            runSafely(anomaly, "run close", () -> anomaly.runClosed(sector, run));
+        }
+    }
+
+    public static void clearFrom(CampaignFleetAPI fleet) {
+        for (RunParticipant anomaly : with(RunParticipant.class)) {
+            runSafely(anomaly, "cleanup", () -> anomaly.clearFrom(fleet));
+        }
+    }
+
+    public static List<LootShaper> holdingPlayerBattle() {
+        return with(LootShaper.class).stream().filter(LootShaper::holdsPlayerBattle).toList();
+    }
+
+    private static void runSafely(ChartAnomaly anomaly, String hook, Runnable call) {
+        askSafely(anomaly, hook, () -> {
+            call.run();
+            return null;
+        });
+    }
+
+    private static <T> T askSafely(ChartAnomaly anomaly, String hook, Supplier<T> call) {
+        try {
+            return call.get();
+        } catch (RuntimeException | LinkageError e) {
+            if (REPORTED_FAILURES.add(anomaly.id() + ":" + hook)) {
+                LOG.error("[ExiledSector] The " + anomaly.id() + " anomaly's " + hook + " failed; it is skipped until the next try", e);
+            }
+            return null;
+        }
     }
 
     public static Collection<Definition> definitions() {
@@ -186,7 +295,7 @@ public final class ChartAnomalies {
 
     public static boolean usable(String id) {
         Definition definition = definition(id);
-        return definition != null && byId(id) != null && ChartPois.modRequirementMet(definition.requiredMod());
+        return definition != null && byId(id) != null && ChartModGates.met(definition.requiredMod());
     }
 
     public static boolean conflicts(String first, String second) {
@@ -206,22 +315,22 @@ public final class ChartAnomalies {
         return true;
     }
 
-    public static ChartAnomaly starOf(Collection<String> ids) {
+    public static StarRule starOf(Collection<String> ids) {
         for (String id : ids) {
-            ChartAnomaly anomaly = byId(id);
-            if (anomaly != null && anomaly.replacesStar() && usable(id)) {
-                return anomaly;
+            StarRule star = role(id, StarRule.class);
+            if (star != null && usable(id)) {
+                return star;
             }
         }
         return null;
     }
 
-    public static List<ChartAnomaly> anomaliesOf(Collection<String> ids) {
-        return ids.stream().map(ChartAnomalies::byId).filter(Objects::nonNull).toList();
+    public static <R extends ChartAnomaly> List<R> anomaliesOf(Collection<String> ids, Class<R> role) {
+        return ids.stream().map(id -> role(id, role)).filter(Objects::nonNull).toList();
     }
 
     public static boolean guaranteeBossTierUp(Collection<String> ids) {
-        return ids != null && anomaliesOf(ids).stream().anyMatch(ChartAnomaly::guaranteesBossTierUp);
+        return ids != null && anomaliesOf(ids, LootShaper.class).stream().anyMatch(LootShaper::guaranteesBossTierUp);
     }
 
     public static List<ChartGenContext.AppliedEffect> effectsOf(Collection<String> ids) {
@@ -250,6 +359,7 @@ public final class ChartAnomalies {
 
     public static void useForTests(List<ChartAnomaly> testAnomalies, List<Definition> testDefinitions) {
         anomalies = List.copyOf(testAnomalies);
+        ROLES.clear();
         Map<String, Definition> byId = new LinkedHashMap<>();
         testDefinitions.forEach(definition -> byId.put(definition.id(), definition));
         definitions = Map.copyOf(byId);
@@ -261,6 +371,7 @@ public final class ChartAnomalies {
 
     public static void resetForTests() {
         anomalies = BUILT_IN;
+        ROLES.clear();
         definitions = Map.of();
     }
 }

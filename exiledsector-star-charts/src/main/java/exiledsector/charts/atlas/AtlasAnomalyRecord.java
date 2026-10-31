@@ -1,6 +1,6 @@
 package exiledsector.charts.atlas;
 
-import java.util.Locale;
+import exiledsector.data.EnumKeys;
 
 public record AtlasAnomalyRecord(int recordId, AtlasCell cell, String anomalyId, Source source, Chain chain) {
 
@@ -13,12 +13,7 @@ public record AtlasAnomalyRecord(int recordId, AtlasCell cell, String anomalyId,
         WORLD;
 
         static Source parse(String text) {
-            for (Source source : values()) {
-                if (source.name().equals(text.trim().toUpperCase(Locale.ROOT))) {
-                    return source;
-                }
-            }
-            return null;
+            return EnumKeys.parse(Source.class, text);
         }
     }
 

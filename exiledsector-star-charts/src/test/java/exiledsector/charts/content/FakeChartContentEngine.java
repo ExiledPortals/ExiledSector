@@ -1,5 +1,6 @@
 package exiledsector.charts.content;
 
+import exiledsector.charts.anomaly.RunFactionDress;
 import com.fs.starfarer.api.Script;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.CustomCampaignEntityAPI;
@@ -58,6 +59,7 @@ public final class FakeChartContentEngine implements ChartContentEngine {
     public String alliesFactionId = "allies";
     public String convoyFactionId = "convoy";
     public int fleetPoints;
+    public boolean failSiteDrops;
     boolean missingStations;
     boolean failFleets;
     boolean emptyFleets;
@@ -172,6 +174,9 @@ public final class FakeChartContentEngine implements ChartContentEngine {
 
     @Override
     public ChartVanillaLoot.SiteDrops siteDrops(String salvageSpec) {
+        if (failSiteDrops) {
+            throw new IllegalStateException("no drops for " + salvageSpec);
+        }
         return siteDropsBySpec.getOrDefault(salvageSpec, ChartVanillaLoot.SiteDrops.NONE);
     }
 
@@ -181,15 +186,9 @@ public final class FakeChartContentEngine implements ChartContentEngine {
     }
 
     @Override
-    public String dressAllies(String factionId) {
-        dressedFactions.add(factionId);
-        return alliesFactionId;
-    }
-
-    @Override
-    public String dressConvoy(String factionId) {
-        dressedFactions.add(factionId);
-        return convoyFactionId;
+    public String dress(String runFactionId, RunFactionDress dress) {
+        dressedFactions.add(dress.likenessFactionId());
+        return RunFactionDress.ALLY_FACTION_ID.equals(runFactionId) ? alliesFactionId : convoyFactionId;
     }
 
     @Override

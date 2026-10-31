@@ -138,17 +138,18 @@ class ChartRunEffectsTest {
     }
 
     @Test
-    void aRunWithoutASensorModifierNeverTouchesTheFleetsSensors() {
+    void aRunWithoutASensorModifierAddsNoPenaltyButStillLiftsItsEffectsOnLeaving() {
         storeRun(null).recordArrival();
         ChartRunScript watchdog = new ChartRunScript();
         when(playerFleet.getContainingLocation()).thenReturn(system);
 
         watchdog.advance(0f);
+        verify(stats, never()).removeTemporaryMod(anyString());
         when(playerFleet.getContainingLocation()).thenReturn(hyperspace);
         watchdog.advance(0f);
 
         verify(stats, never()).addTemporaryModMult(anyFloat(), anyString(), anyString(), anyFloat(), Mockito.any(StatBonus.class));
-        verify(stats, never()).removeTemporaryMod(anyString());
+        verify(stats).removeTemporaryMod(ChartRunEffects.VANILLA_NAV_BUOY_MOD_ID);
     }
 
     @Test
@@ -224,7 +225,7 @@ class ChartRunEffectsTest {
         assertFalse(ChartFleetConditions.isActive(), "loading a save always starts from a clean snapshot");
 
         ChartFleetConditions.set(Map.of(ChartFleetStat.TOP_SPEED, 0.8f), playerFleet);
-        ChartRunEffects.removeFrom(playerFleet);
+        ChartRunEffects.lift(playerFleet);
         assertFalse(ChartFleetConditions.isActive(), "closing the run lifts the fleet drawbacks");
     }
 
@@ -234,18 +235,10 @@ class ChartRunEffectsTest {
         maxBurn.modifyFlat(ChartRunEffects.VANILLA_NAV_BUOY_MOD_ID, 3f);
         when(stats.getFleetwideMaxBurnMod()).thenReturn(maxBurn);
 
-        ChartRunEffects.removeFrom(playerFleet);
+        ChartRunEffects.lift(playerFleet);
 
         verify(stats).removeTemporaryMod(ChartRunEffects.VANILLA_NAV_BUOY_MOD_ID);
         verify(stats).removeTemporaryMod(ChartRunEffects.VANILLA_SENSOR_ARRAY_MOD_ID);
         assertEquals(0f, maxBurn.getFlatBonus(), 0f);
-    }
-
-    @Test
-    void applyingAMultOfOneRemovesInsteadOfAdding() {
-        assertFalse(ChartRunEffects.applySensorRange(playerFleet, 1f, "src"));
-        verify(stats).removeTemporaryMod(ChartIds.SENSOR_MOD_ID);
-        assertTrue(ChartRunEffects.applySensorRange(playerFleet, 0.6f, "src"));
-        assertFalse(ChartRunEffects.applySensorRange(null, 0.6f, "src"));
     }
 }

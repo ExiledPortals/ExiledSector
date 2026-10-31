@@ -15,13 +15,12 @@ import exiledsector.charts.run.cleanup.ChartRunCloser;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemStore;
-import exiledsector.charts.anomaly.relay.RelayChain;
-import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
-import exiledsector.charts.anomaly.skirmish.SkirmishSide;
+import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasProgress;
+import exiledsector.charts.atlas.AtlasRunChoice;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.items.StarChart;
@@ -66,7 +65,7 @@ public final class ChartRunActions {
     }
 
     public static OpenResult openFromAtlas(SectorAPI sector, int entriesAllowed, Random random, ItemStore store, Item storedChart,
-                                           AtlasCell cell, SkirmishSide side) {
+                                           AtlasCell cell, AtlasRunChoice choice) {
         if (!(storedChart instanceof StarChart chart) || chart.definition() == null || store == null || !store.holdsStarCharts()
                 || store.find(chart.id()) != chart || cell == null) {
             return OpenResult.NO_CHART;
@@ -76,7 +75,7 @@ public final class ChartRunActions {
         if (!AtlasOpening.check(generator, state, cell, chart).allowsOpening()) {
             return OpenResult.NOT_REACHABLE;
         }
-        OpenResult playerBlocker = playerBlocker(sector);
+        OpenResult playerBlocker = fleetBlocker(sector.getPlayerFleet());
         if (playerBlocker != null) {
             return playerBlocker;
         }
@@ -89,8 +88,7 @@ public final class ChartRunActions {
                 return ChartRuns.hasRun() ? OpenResult.RUN_EXISTS : OpenResult.NOT_REACHABLE;
             }
         }
-        AtlasRunNode runNode = FactionSkirmish.join(AtlasOpening.runNode(generator, state, cell), generator, state, cell, side);
-        runNode = RelayChain.join(runNode, generator, state, cell);
+        AtlasRunNode runNode = ChartAnomalies.joinRunNode(AtlasOpening.runNode(generator, state, cell), generator, state, cell, choice);
         OpenResult result = openBesidePlayer(sector, entriesAllowed, random, AtlasOpening.request(generator, state, cell, chart, runNode),
                 ItemData.of(chart).encode(), runNode);
         if (result == OpenResult.OPENED) {
@@ -121,7 +119,7 @@ public final class ChartRunActions {
         if (ChartRuns.hasRun()) {
             return OpenResult.RUN_EXISTS;
         }
-        OpenResult playerBlocker = playerBlocker(sector);
+        OpenResult playerBlocker = fleetBlocker(sector.getPlayerFleet());
         if (playerBlocker != null) {
             return playerBlocker;
         }
@@ -167,8 +165,7 @@ public final class ChartRunActions {
         return nearest;
     }
 
-    private static OpenResult playerBlocker(SectorAPI sector) {
-        CampaignFleetAPI playerFleet = sector.getPlayerFleet();
+    public static OpenResult fleetBlocker(CampaignFleetAPI playerFleet) {
         if (playerFleet == null || playerFleet.getContainingLocation() == null) {
             return OpenResult.NO_PLAYER_FLEET;
         }
@@ -234,9 +231,5 @@ public final class ChartRunActions {
         }
         LocationAPI hyperspace = sector.getHyperspace();
         return hyperspace == null ? null : hyperspace.createToken(0f, 0f);
-    }
-
-    public static boolean collapseOuter(ChartRun run) {
-        return run.collapseOuter();
     }
 }

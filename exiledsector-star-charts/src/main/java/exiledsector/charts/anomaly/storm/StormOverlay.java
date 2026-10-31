@@ -6,6 +6,7 @@ import com.fs.starfarer.api.combat.CombatEngineAPI;
 import com.fs.starfarer.api.combat.CombatEngineLayers;
 import com.fs.starfarer.api.combat.ViewportAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
+import exiledsector.ui.util.SpriteDraw;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -31,6 +32,8 @@ final class StormOverlay extends BaseCombatLayeredRenderingPlugin {
     static final Color CLOUD_COLOUR = StormFrontTerrainPlugin.CLOUD_COLOUR;
     static final Color FLASH_COLOUR = StormFrontTerrainPlugin.FLASH_COLOUR;
     private static final Logger LOG = Logger.getLogger(StormOverlay.class);
+    private static final EnumSet<CombatEngineLayers> LAYERS = EnumSet.of(CombatEngineLayers.BELOW_SHIPS_LAYER,
+            CombatEngineLayers.ABOVE_SHIPS_AND_MISSILES_LAYER);
 
     static final class Cloud {
         final float size;
@@ -64,7 +67,7 @@ final class StormOverlay extends BaseCombatLayeredRenderingPlugin {
     private final List<Cloud> clouds = new ArrayList<>();
     private final List<Flash> flashes = new ArrayList<>();
     private final Vector2f scratchPosition = new Vector2f();
-    private SpriteAPI[] cloudCells;
+    private SpriteAPI cloudSheet;
     private SpriteAPI flashSprite;
     private SpriteAPI glowSprite;
     private boolean spritesFailed;
@@ -97,7 +100,7 @@ final class StormOverlay extends BaseCombatLayeredRenderingPlugin {
 
     @Override
     public EnumSet<CombatEngineLayers> getActiveLayers() {
-        return EnumSet.of(CombatEngineLayers.BELOW_SHIPS_LAYER, CombatEngineLayers.ABOVE_SHIPS_AND_MISSILES_LAYER);
+        return LAYERS;
     }
 
     @Override
@@ -137,28 +140,16 @@ final class StormOverlay extends BaseCombatLayeredRenderingPlugin {
     }
 
     private boolean ensureSprites() {
-        if (cloudCells != null) {
+        if (cloudSheet != null) {
             return true;
         }
         if (spritesFailed) {
             return false;
         }
         try {
-            int cellCount = StormFrontTerrainPlugin.SHEET_COLUMNS * StormFrontTerrainPlugin.SHEET_ROWS;
-            SpriteAPI[] cells = new SpriteAPI[cellCount];
-            for (int cell = 0; cell < cellCount; cell++) {
-                SpriteAPI sheet = Global.getSettings().getSprite(StormFrontTerrainPlugin.CLOUD_TEXTURE);
-                float cellWidth = sheet.getTextureWidth() / StormFrontTerrainPlugin.SHEET_COLUMNS;
-                float cellHeight = sheet.getTextureHeight() / StormFrontTerrainPlugin.SHEET_ROWS;
-                sheet.setTexX(cell % StormFrontTerrainPlugin.SHEET_COLUMNS * cellWidth);
-                sheet.setTexY(cell / StormFrontTerrainPlugin.SHEET_COLUMNS * cellHeight);
-                sheet.setTexWidth(cellWidth);
-                sheet.setTexHeight(cellHeight);
-                cells[cell] = sheet;
-            }
             flashSprite = Global.getSettings().getSprite(StormFrontTerrainPlugin.FLASH_TEXTURE);
             glowSprite = Global.getSettings().getSprite(HIT_GLOW_TEXTURE);
-            cloudCells = cells;
+            cloudSheet = Global.getSettings().getSprite(StormFrontTerrainPlugin.CLOUD_TEXTURE);
             return true;
         } catch (RuntimeException e) {
             spritesFailed = true;
@@ -186,13 +177,8 @@ final class StormOverlay extends BaseCombatLayeredRenderingPlugin {
             if (!viewport.isNearViewport(scratchPosition, cloud.size)) {
                 continue;
             }
-            SpriteAPI sprite = cloudCells[cloud.cell];
-            sprite.setSize(cloud.size, cloud.size);
-            sprite.setAngle(cloud.facing);
-            sprite.setColor(CLOUD_COLOUR);
-            sprite.setAdditiveBlend();
-            sprite.setAlphaMult(alpha * CLOUD_ALPHA);
-            sprite.renderAtCenter(cloud.x, cloud.y);
+            SpriteDraw.drawCellAtCenter(cloudSheet, StormFrontTerrainPlugin.SHEET_COLUMNS, StormFrontTerrainPlugin.SHEET_ROWS, cloud.cell, cloud.x, cloud.y,
+                    cloud.size, cloud.size, cloud.facing, CLOUD_COLOUR, alpha * CLOUD_ALPHA, true);
         }
     }
 

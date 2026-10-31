@@ -7,8 +7,6 @@ public final class RelayRules {
     static final float BAND_WIDTH = 2000f;
     static final int FIRST_HOME_BAND = 1;
     static final int BAND_COUNT = 10;
-    static final int ORBIT_ATTEMPTS = 12;
-    static final float ORBIT_SPEED = 15f;
     static final float MIN_RELAY_GAP = 1500f;
     static final float GUARDED_CHANCE = 0.5f;
     static final float GUARD_GAP_MIN = 150f;
@@ -23,8 +21,6 @@ public final class RelayRules {
     static final int SUPPLIES_PER_TIER = 4;
     static final int MACHINERY_BASE = 5;
     static final int MACHINERY_PER_TIER = 2;
-    static final float REVEAL_RANGE_MULT = 1000f;
-    static final float REVEAL_EXTENDED_RANGE = 100000f;
     public static final int MIN_ONWARD_LANES = 2;
     public static final int MAX_ONWARD_LANES = 3;
     public static final int MIN_STAGES = 3;

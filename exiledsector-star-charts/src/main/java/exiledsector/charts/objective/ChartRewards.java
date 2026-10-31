@@ -6,7 +6,6 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.loot.ChartDrops;
-import exiledsector.charts.layout.ChartLayoutGenerator;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.generation.ChartTiers;
@@ -17,6 +16,7 @@ import exiledsector.items.ItemUnlock;
 import exiledsector.items.MaterialItems;
 import exiledsector.ui.CampaignMessages;
 import exiledsector.ui.cargo.MaterialDropAnnouncer;
+import exiledsector.Seeds;
 import org.apache.log4j.Logger;
 
 import java.awt.Color;
@@ -56,7 +56,7 @@ public final class ChartRewards {
     }
 
     static Random rewardRandom(ChartRun run) {
-        return ChartLayoutGenerator.derivedRandom(run.layoutSeed() ^ run.runId().hashCode(), REWARD_SALT);
+        return Seeds.derived(run.layoutSeed() ^ run.runId().hashCode(), REWARD_SALT);
     }
 
     public static Reward grant(SectorAPI sector, ChartRun run) {
@@ -91,7 +91,7 @@ public final class ChartRewards {
             sectionLoot.upgrades().forEach(upgrade -> cargo.addSpecial(upgrade.toSpecialItem(), 1f));
         }
         ItemDrops.rollMasterSchematic(REWARD_SITE, random, chanceMult).forEach(schematic -> cargo.addSpecial(schematic.toSpecialItem(), 1f));
-        ChartDrops.Loot chartLoot = grantChartDrops(run, cargo, random, rewardMult);
+        ChartDrops.Loot chartLoot = grantChartDrops(run, cargo, random);
         int materialCount = materials.values().stream().mapToInt(Integer::intValue).sum();
         int chartMaterialCount = chartLoot.materials().values().stream().mapToInt(Integer::intValue).sum();
         announce(run, credits, hullItems, chartLoot.charts().size());
@@ -99,8 +99,8 @@ public final class ChartRewards {
         return new Reward(credits, hullItems, materialCount + chartMaterialCount, chartLoot.charts().size());
     }
 
-    static ChartDrops.Loot grantChartDrops(ChartRun run, CargoAPI cargo, Random random, float rewardMult) {
-        ChartDrops.Loot chartLoot = ChartDrops.forRunReward(run, rewardMult, random);
+    static ChartDrops.Loot grantChartDrops(ChartRun run, CargoAPI cargo, Random random) {
+        ChartDrops.Loot chartLoot = ChartDrops.forRunReward(run, random);
         chartLoot.charts().forEach(chart -> cargo.addSpecial(chart.toSpecialItem(), 1f));
         chartLoot.materials().forEach((itemId, quantity) -> MaterialItems.add(cargo, itemId, quantity));
         return chartLoot;

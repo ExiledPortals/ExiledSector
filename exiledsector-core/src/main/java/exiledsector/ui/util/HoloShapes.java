@@ -27,12 +27,17 @@ public final class HoloShapes {
     }
 
     public static void disc(float cx, float cy, float radius, Color color, float alpha) {
+        disc(cx, cy, radius, CIRCLE_STEPS, color, alpha);
+    }
+
+    public static void disc(float cx, float cy, float radius, int segments, Color color, float alpha) {
+        UnitCircle circle = UnitCircle.of(segments);
         Misc.setColor(color, alpha);
         GL11.glBegin(GL11.GL_TRIANGLE_FAN);
         GL11.glVertex2f(cx, cy);
-        for (int i = 0; i <= CIRCLE_STEPS; i++) {
-            int index = i % CIRCLE_STEPS;
-            GL11.glVertex2f(cx + UNIT_CIRCLE.cos(index) * radius, cy + UNIT_CIRCLE.sin(index) * radius);
+        for (int i = 0; i <= circle.segments(); i++) {
+            int index = i % circle.segments();
+            GL11.glVertex2f(cx + circle.cos(index) * radius, cy + circle.sin(index) * radius);
         }
         GL11.glEnd();
     }

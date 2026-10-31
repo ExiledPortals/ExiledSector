@@ -3,14 +3,24 @@ package exiledsector.charts.anomaly.relay;
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
-import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.Factions;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.anomaly.AnomalyContentSite;
-import exiledsector.charts.anomaly.ChartAnomaly;
+import exiledsector.charts.anomaly.AnomalyRun;
+import exiledsector.charts.anomaly.AtlasRule;
+import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.atlas.AtlasGenerator;
+import exiledsector.charts.atlas.AtlasLine;
+import exiledsector.charts.atlas.AtlasRunChoice;
+import exiledsector.charts.atlas.AtlasRunNode;
+import exiledsector.charts.atlas.AtlasState;
+import exiledsector.charts.anomaly.ContentPlacer;
+import exiledsector.charts.anomaly.LootShaper;
+import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.run.ChartRun;
 import org.lwjgl.util.vector.Vector2f;
@@ -23,11 +33,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-public final class RelayNetwork implements ChartAnomaly {
+public final class RelayNetwork implements ContentPlacer, RunParticipant, LootShaper, AtlasRule {
 
     public static final String ANOMALY_ID = "relay_network";
-    public static final String COST_KEY = ANOMALY_ID + ".cost";
-    public static final String STAGES_KEY = ANOMALY_ID + ".stages";
+    public static final String COST_KEY = ChartEffect.CHART_RELAY_COST_PERCENT.anomalyTuningKey();
+    public static final String STAGES_KEY = ChartEffect.CHART_RELAY_CHAIN_STAGES.anomalyTuningKey();
     public static final String RELAY_TAG = ChartIds.PREFIX + "relay";
     public static final String KIND_MEMORY_KEY = "$exiledSector_chartRelayKind";
     public static final RelayNetwork INSTANCE = new RelayNetwork();
@@ -42,13 +52,33 @@ public final class RelayNetwork implements ChartAnomaly {
     }
 
     @Override
-    public InteractionDialogPlugin dialogFor(SectorEntityToken target) {
+    public InteractionDialogPlugin dialogFor(AnomalyRun run, SectorEntityToken target) {
         return isRelay(target) ? new RelayDialog() : null;
     }
 
     @Override
-    public void checkRun(SectorAPI sector) {
-        ChartRelays.check(sector);
+    public void checkRun(SectorAPI sector, AnomalyRun run) {
+        ChartRelays.check(sector, run);
+    }
+
+    @Override
+    public String intelText(AnomalyRun run) {
+        return intelLine();
+    }
+
+    @Override
+    public List<AtlasLine> atlasLines(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+        return RelayChain.lines(generator, state, cell);
+    }
+
+    @Override
+    public AtlasRunNode joinRunNode(AtlasRunNode node, AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasRunChoice choice) {
+        return RelayChain.join(node, generator, state, cell);
+    }
+
+    @Override
+    public void runClosed(SectorAPI sector, ChartRun run) {
+        RelayChain.closed(sector, run);
     }
 
     @Override
@@ -58,8 +88,7 @@ public final class RelayNetwork implements ChartAnomaly {
 
     @Override
     public void generate(AnomalyContentSite site) {
-        StarSystemAPI system = site.system();
-        SectorEntityToken centre = system.getCenter() != null ? system.getCenter() : system.getStar();
+        SectorEntityToken centre = site.centre();
         Random random = site.random(PLACEMENT_SALT);
         List<SectorEntityToken> guarded = new ArrayList<>(site.guardedPois());
         Collections.shuffle(guarded, random);
@@ -72,7 +101,8 @@ public final class RelayNetwork implements ChartAnomaly {
             ChartSites.Orbit orbit = null;
             if (!guarded.isEmpty() && random.nextFloat() < RelayRules.GUARDED_CHANCE) {
                 SectorEntityToken poi = guarded.remove(0);
-                orbit = spreadOrbit(site, poi, poi.getRadius() + RelayRules.GUARD_GAP_MIN, poi.getRadius() + RelayRules.GUARD_GAP_MAX, placedAt, random);
+                orbit = site.clearOrbit(poi, poi.getRadius() + RelayRules.GUARD_GAP_MIN, poi.getRadius() + RelayRules.GUARD_GAP_MAX,
+                        position -> clearOfRelays(position, placedAt), random);
             }
             if (orbit == null && centre != null) {
                 orbit = bandOrbit(site, centre, RelayRules.FIRST_HOME_BAND + slot, usedBands, placedAt, random);
@@ -100,21 +130,10 @@ public final class RelayNetwork implements ChartAnomaly {
             if (usedBands.contains(band)) {
                 continue;
             }
-            ChartSites.Orbit orbit = spreadOrbit(site, centre, band * RelayRules.BAND_WIDTH, (band + 1) * RelayRules.BAND_WIDTH, placedAt, random);
+            ChartSites.Orbit orbit = site.clearOrbit(centre, band * RelayRules.BAND_WIDTH, (band + 1) * RelayRules.BAND_WIDTH,
+                    position -> clearOfRelays(position, placedAt), random);
             if (orbit != null) {
                 usedBands.add(band);
-                return orbit;
-            }
-        }
-        return null;
-    }
-
-    private static ChartSites.Orbit spreadOrbit(AnomalyContentSite site, SectorEntityToken focus, float minRadius, float maxRadius, List<Vector2f> placedAt,
-                                                Random random) {
-        for (int attempt = 0; attempt < RelayRules.ORBIT_ATTEMPTS; attempt++) {
-            float radius = minRadius + random.nextFloat() * Math.max(0f, maxRadius - minRadius);
-            ChartSites.Orbit orbit = new ChartSites.Orbit(focus, random.nextFloat() * 360f, radius, radius / RelayRules.ORBIT_SPEED);
-            if (site.isClear(orbit) && clearOfRelays(orbit.position(), placedAt)) {
                 return orbit;
             }
         }

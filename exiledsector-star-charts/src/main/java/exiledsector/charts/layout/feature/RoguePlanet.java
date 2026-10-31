@@ -21,7 +21,7 @@ public final class RoguePlanet implements ChartFeature {
 
     @Override
     public SectorEntityToken build(FeatureSite site) {
-        float orbit = site.outerRadius() + GAP + site.between(0f, 2000f);
+        float orbit = site.orbitBeyond(GAP, 2000f);
         return site.addPlanet("rogue", site.centre(), site.pick(ROGUE_TYPES), site.between(90f, 140f), orbit, orbit * 2f);
     }
 }

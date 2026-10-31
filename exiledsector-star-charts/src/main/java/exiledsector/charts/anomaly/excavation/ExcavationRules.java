@@ -2,8 +2,6 @@ package exiledsector.charts.anomaly.excavation;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
-import com.fs.starfarer.api.impl.campaign.rulecmd.salvage.MarketCMD.RaidDangerLevel;
-import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.loot.DropType;
 
 import java.util.List;
@@ -12,6 +10,7 @@ import java.util.Random;
 public final class ExcavationRules {
 
     public static final String LOOT_SITE = "exiledSector_chart_excavation";
+    public static final String LOOT_SCOPE = "excavation";
     public static final int MAX_SHIP_SIZE = 2;
     static final int MIN_SITES = 1;
     static final int MAX_SITES = 3;
@@ -25,10 +24,6 @@ public final class ExcavationRules {
     static final float LEAN_PERCENT = 200f;
     static final float FULL_LOOT_EFFECTIVENESS = 0.75f;
     static final float MIN_RAID_SHARE = 0.25f;
-    static final float RAID_DIFFICULTY = 60f;
-    static final float RAID_DIFFICULTY_PER_TIER = 30f;
-    static final int LOW_DANGER_MAX_TIER = 5;
-    static final int MEDIUM_DANGER_MAX_TIER = 10;
     static final List<DropType> LEANS = List.of(DropType.WEAPON, DropType.BLUEPRINT, DropType.AI_CORE, DropType.RESOURCE, DropType.CURRENCY,
             DropType.FEEDSTOCK, DropType.SUBROUTINE, DropType.STAR_CHART);
 
@@ -49,29 +44,9 @@ public final class ExcavationRules {
         return choices.get(random.nextInt(choices.size()));
     }
 
-    public static float lootSteps(int tier, float quantityMult) {
-        return (LOOT_STEPS + LOOT_STEPS_PER_TIER * (ChartTiers.clamp(tier) - 1)) * Math.max(0f, quantityMult);
-    }
-
-    public static float itemMult(float quantityMult) {
-        return ITEM_MULT * Math.max(0f, quantityMult);
-    }
-
     public static float raidShare(float raidEffectiveness) {
         float share = raidEffectiveness / FULL_LOOT_EFFECTIVENESS;
         return Math.max(MIN_RAID_SHARE, Math.min(1f, share));
-    }
-
-    public static float raidDifficulty(int tier) {
-        return RAID_DIFFICULTY + RAID_DIFFICULTY_PER_TIER * (ChartTiers.clamp(tier) - 1);
-    }
-
-    public static RaidDangerLevel siteDanger(int tier) {
-        int clamped = ChartTiers.clamp(tier);
-        if (clamped <= LOW_DANGER_MAX_TIER) {
-            return RaidDangerLevel.LOW;
-        }
-        return clamped <= MEDIUM_DANGER_MAX_TIER ? RaidDangerLevel.MEDIUM : RaidDangerLevel.HIGH;
     }
 
     public static boolean fitsShaft(HullSize size) {

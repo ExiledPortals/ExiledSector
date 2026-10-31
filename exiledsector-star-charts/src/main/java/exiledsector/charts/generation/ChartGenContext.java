@@ -2,7 +2,6 @@ package exiledsector.charts.generation;
 
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.anomaly.ChartAnomalies;
-import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.effect.ChartFactionEffect;
@@ -13,6 +12,7 @@ import exiledsector.items.ItemChances;
 import exiledsector.items.ItemKind;
 import exiledsector.items.SlottedRoll;
 import exiledsector.items.StarChart;
+import exiledsector.loot.LootModifiers;
 import exiledsector.modifiers.ModifierEffect;
 import exiledsector.modifiers.ModifierEffects;
 import exiledsector.modifiers.ScaleContext;
@@ -69,8 +69,7 @@ public final class ChartGenContext {
     private final List<String> forcedAnomalies = new ArrayList<>();
     private boolean guaranteedBossTierUp;
     private boolean guaranteedBossUnique;
-    private String skirmishAttackerId;
-    private SkirmishSide skirmishSide;
+    private final Map<String, String> anomalyData = new LinkedHashMap<>();
 
     private ChartGenContext(List<AppliedEffect> applied, int quality, String factionId) {
         this.applied = List.copyOf(applied);
@@ -245,15 +244,11 @@ public final class ChartGenContext {
         if (node == null) {
             return this;
         }
-        List<AppliedEffect> combined = new ArrayList<>(applied);
-        combined.addAll(node.effects());
-        ChartGenContext context = new ChartGenContext(combined, quality, node.factionId().isEmpty() ? factionId : node.factionId());
-        context.forceAnomalies(forcedAnomalies);
+        ChartGenContext context = derive(appliedPlus(node.effects()), node.factionId().isEmpty() ? factionId : node.factionId());
         context.forceAnomalies(node.anomalyIds());
-        context.guaranteedBossTierUp = node.guaranteedBossTierUp();
-        context.guaranteedBossUnique = guaranteedBossUnique || node.guaranteedBossUnique();
-        context.skirmishAttackerId = node.skirmishAttackerId() == null ? skirmishAttackerId : node.skirmishAttackerId();
-        context.skirmishSide = node.skirmishSide() == null ? skirmishSide : node.skirmishSide();
+        context.guaranteedBossTierUp |= node.guaranteedBossTierUp();
+        context.guaranteedBossUnique |= node.guaranteedBossUnique();
+        context.anomalyData.putAll(node.anomalyData());
         return context;
     }
 
@@ -261,13 +256,8 @@ public final class ChartGenContext {
         if (anomalyIds == null || anomalyIds.isEmpty()) {
             return this;
         }
-        ChartGenContext context = new ChartGenContext(applied, quality, factionId);
-        context.forceAnomalies(forcedAnomalies);
+        ChartGenContext context = derive(applied, factionId);
         context.forceAnomalies(anomalyIds);
-        context.guaranteedBossTierUp = guaranteedBossTierUp;
-        context.guaranteedBossUnique = guaranteedBossUnique;
-        context.skirmishAttackerId = skirmishAttackerId;
-        context.skirmishSide = skirmishSide;
         return context;
     }
 
@@ -280,24 +270,27 @@ public final class ChartGenContext {
         if (effects.isEmpty() && !bossTierUp) {
             return this;
         }
-        ChartGenContext context = copyWith(effects);
-        context.guaranteedBossTierUp = guaranteedBossTierUp || bossTierUp;
+        ChartGenContext context = derive(appliedPlus(effects), factionId);
+        context.guaranteedBossTierUp |= bossTierUp;
         return context;
     }
 
     public ChartGenContext withEffects(List<AppliedEffect> effects) {
-        return effects == null || effects.isEmpty() ? this : copyWith(effects);
+        return effects == null || effects.isEmpty() ? this : derive(appliedPlus(effects), factionId);
     }
 
-    private ChartGenContext copyWith(List<AppliedEffect> effects) {
+    private List<AppliedEffect> appliedPlus(List<AppliedEffect> effects) {
         List<AppliedEffect> combined = new ArrayList<>(applied);
         combined.addAll(effects);
-        ChartGenContext context = new ChartGenContext(combined, quality, factionId);
+        return combined;
+    }
+
+    private ChartGenContext derive(List<AppliedEffect> effects, String derivedFactionId) {
+        ChartGenContext context = new ChartGenContext(effects, quality, derivedFactionId);
         context.forceAnomalies(forcedAnomalies);
         context.guaranteedBossTierUp = guaranteedBossTierUp;
         context.guaranteedBossUnique = guaranteedBossUnique;
-        context.skirmishAttackerId = skirmishAttackerId;
-        context.skirmishSide = skirmishSide;
+        context.anomalyData.putAll(anomalyData);
         return context;
     }
 
@@ -321,25 +314,17 @@ public final class ChartGenContext {
         return guaranteedBossUnique;
     }
 
-    public ChartGenContext withSkirmishSide(SkirmishSide side) {
-        if (side == null || side == skirmishSide) {
+    public ChartGenContext withAnomalyData(String anomalyId, String data) {
+        if (data == null || data.equals(anomalyData.get(anomalyId))) {
             return this;
         }
-        ChartGenContext context = new ChartGenContext(applied, quality, factionId);
-        context.forceAnomalies(forcedAnomalies);
-        context.guaranteedBossTierUp = guaranteedBossTierUp;
-        context.guaranteedBossUnique = guaranteedBossUnique;
-        context.skirmishAttackerId = skirmishAttackerId;
-        context.skirmishSide = side;
+        ChartGenContext context = derive(applied, factionId);
+        context.anomalyData.put(anomalyId, data);
         return context;
     }
 
-    public String skirmishAttackerId() {
-        return skirmishAttackerId;
-    }
-
-    public SkirmishSide skirmishSide() {
-        return skirmishSide;
+    public String anomalyData(String anomalyId) {
+        return anomalyData.get(anomalyId);
     }
 
     public float anomalyPercent(String tuningKey) {
@@ -452,6 +437,14 @@ public final class ChartGenContext {
     }
 
     public float dropMult(DropType type) {
+        return multiplier(totalDropPercent(type));
+    }
+
+    public float rewardDropMult(DropType type) {
+        return multiplier(rewardPercent + totalDropPercent(type));
+    }
+
+    private float totalDropPercent(DropType type) {
         float percent = dropPercent(type);
         if (type.isItem()) {
             percent += itemPercent;
@@ -459,7 +452,11 @@ public final class ChartGenContext {
         if (type.quantityApplies()) {
             percent += quantityPercent();
         }
-        return multiplier(percent);
+        return percent;
+    }
+
+    public LootModifiers lootModifiers(float scale) {
+        return new LootModifiers(itemChances().scaled(scale), dropMult(DropType.FEEDSTOCK) * scale, dropMult(DropType.CURRENCY) * scale);
     }
 
     public float bossSpoilsPercent() {

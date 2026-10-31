@@ -1,23 +1,7 @@
-package exiledsector.ui.chart;
+package exiledsector.items;
 
 import com.fs.starfarer.api.campaign.CargoAPI;
 import com.fs.starfarer.api.campaign.SpecialItemData;
-import exiledsector.items.CraftingContext;
-import exiledsector.items.CraftingCurrency;
-import exiledsector.items.CraftingMaterials;
-import exiledsector.items.CraftingWard;
-import exiledsector.items.Item;
-import exiledsector.items.ItemCurrencies;
-import exiledsector.items.ItemCurrency;
-import exiledsector.items.ItemData;
-import exiledsector.items.ItemDefinitions;
-import exiledsector.items.ItemStore;
-import exiledsector.items.ItemType;
-import exiledsector.items.MaterialItems;
-import exiledsector.items.MaterialTier;
-import exiledsector.items.StarChartCurrency;
-import exiledsector.items.StarChartFixtures;
-import exiledsector.items.UseVerdict;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

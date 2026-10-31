@@ -1,14 +1,19 @@
-package exiledsector.charts.content;
+package exiledsector.charts.anomaly.skirmish;
 
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartTables;
 import exiledsector.charts.generation.ChartTiers;
 import exiledsector.charts.StarChartSettings;
+import exiledsector.charts.content.ChartBossType;
+import exiledsector.charts.content.ChartBosses;
+import exiledsector.charts.content.ChartContentPlan;
 import exiledsector.charts.content.ChartContentPlan.FleetRole;
 import exiledsector.charts.content.ChartContentPlan.PlannedFleet;
-import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
-import exiledsector.charts.anomaly.skirmish.SkirmishSide;
+import exiledsector.charts.content.ChartContentPlanner;
+import exiledsector.charts.content.ChartFaction;
+import exiledsector.charts.content.ChartFactions;
+import exiledsector.charts.content.ChartPois;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -43,12 +48,17 @@ class SkirmishPlannerTest {
     }
 
     private static ChartGenContext joined(SkirmishSide side) {
-        return ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID), false, "tritachyon", side));
+        return ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID), false)
+                .withAnomalyData(FactionSkirmish.ANOMALY_ID, new SkirmishJoin(side, "tritachyon").encode()));
     }
 
     private static ChartContentPlan plan(ChartGenContext context) {
         return ChartContentPlanner.plan(5L, ChartTiers.forTier(TIER), ChartPois.all(), ChartFactions.all(), id -> true, context,
                 StarChartSettings.DEFAULT_FLEET_LIMIT, List.of(FactionSkirmish.ANOMALY_ID));
+    }
+
+    private static SkirmishPlan skirmishOf(ChartContentPlan plan) {
+        return (SkirmishPlan) plan.anomalyPlan(FactionSkirmish.ANOMALY_ID);
     }
 
     private static float points(List<PlannedFleet> fleets) {
@@ -64,11 +74,11 @@ class SkirmishPlannerTest {
         assertEquals(ChartBossType.STATION, plan.bossType());
         assertNotNull(plan.bossStation());
         assertEquals(ChartBossType.FLEET, plain.bossType());
-        assertNull(plain.skirmish());
+        assertNull(skirmishOf(plain));
         assertEquals("hegemony", plan.faction().factionId());
-        assertEquals("tritachyon", plan.skirmish().attackerFactionId());
-        assertEquals(SkirmishSide.NEITHER, plan.skirmish().side());
-        List<PlannedFleet> attackers = plan.skirmish().attackerFleets();
+        assertEquals("tritachyon", skirmishOf(plan).attackerFactionId());
+        assertEquals(SkirmishSide.NEITHER, skirmishOf(plan).side());
+        List<PlannedFleet> attackers = skirmishOf(plan).attackerFleets();
         long ordinaryDefenders = plan.fleets().stream().filter(fleet -> !fleet.role().bossFleet()).count();
         assertEquals(ordinaryDefenders, attackers.stream().filter(fleet -> fleet.role() == FleetRole.PATROL).count());
         assertEquals(1, attackers.stream().filter(fleet -> fleet.role() == FleetRole.BOSS).count());
@@ -84,10 +94,10 @@ class SkirmishPlannerTest {
         ChartContentPlan withAttacker = plan(joined(SkirmishSide.ATTACKER));
 
         assertEquals(points(neither.fleets()) / SkirmishPlanner.ALLY_STRENGTH_DIVISOR, points(withDefender.fleets()), 0.01f);
-        assertEquals(points(neither.skirmish().attackerFleets()), points(withDefender.skirmish().attackerFleets()), 0.01f);
+        assertEquals(points(skirmishOf(neither).attackerFleets()), points(skirmishOf(withDefender).attackerFleets()), 0.01f);
         assertEquals(points(neither.fleets()), points(withAttacker.fleets()), 0.01f);
-        assertEquals(points(neither.skirmish().attackerFleets()) / SkirmishPlanner.ALLY_STRENGTH_DIVISOR,
-                points(withAttacker.skirmish().attackerFleets()), 0.01f);
+        assertEquals(points(skirmishOf(neither).attackerFleets()) / SkirmishPlanner.ALLY_STRENGTH_DIVISOR,
+                points(skirmishOf(withAttacker).attackerFleets()), 0.01f);
         assertEquals(neither.bossStation().variantId(), withDefender.bossStation().variantId());
         assertEquals(neither.bossStation().fallbackBoss().combatPoints() / SkirmishPlanner.ALLY_STRENGTH_DIVISOR,
                 withDefender.bossStation().fallbackBoss().combatPoints(), 0.01f);
@@ -104,9 +114,9 @@ class SkirmishPlannerTest {
         assertEquals("pirates", SkirmishPlanner.attacker("unloaded", "hegemony", factions, id -> !id.equals("unloaded"), new Random(1)));
         assertNull(SkirmishPlanner.attacker(null, "hegemony", factions, id -> !id.equals("pirates"), new Random(1)));
 
-        ChartGenContext consoleRun = ChartGenContext.none().withSkirmishSide(SkirmishSide.ATTACKER);
+        ChartGenContext consoleRun = ChartGenContext.none().withAnomalyData(FactionSkirmish.ANOMALY_ID, new SkirmishJoin(SkirmishSide.ATTACKER, null).encode());
         ChartContentPlan picked = plan(consoleRun);
-        assertNotEquals(picked.faction().factionId(), picked.skirmish().attackerFactionId());
-        assertEquals(SkirmishSide.ATTACKER, picked.skirmish().side());
+        assertNotEquals(picked.faction().factionId(), skirmishOf(picked).attackerFactionId());
+        assertEquals(SkirmishSide.ATTACKER, skirmishOf(picked).side());
     }
 }

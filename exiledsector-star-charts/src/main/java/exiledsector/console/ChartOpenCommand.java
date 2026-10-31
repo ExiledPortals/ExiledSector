@@ -65,7 +65,9 @@ public class ChartOpenCommand extends CampaignCommand {
         if (!anomalyIds.isEmpty()) {
             layoutRequest = layoutRequest.withAnomalies(anomalyIds);
         }
-        layoutRequest = layoutRequest.withSkirmishSide(arguments.side());
+        if (arguments.side() != null) {
+            layoutRequest = FactionSkirmish.joinedOn(layoutRequest, arguments.side());
+        }
         int entries = StarChartSettings.wormholeEntries();
         OpenResult result = ChartRunActions.openBesidePlayer(Global.getSector(), entries, random, layoutRequest);
         switch (result) {
@@ -76,11 +78,7 @@ public class ChartOpenCommand extends CampaignCommand {
                 Console.showMessage(describeContent(run));
                 return CommandResult.SUCCESS;
             }
-            case RUN_EXISTS -> Console.showMessage("A Star Chart run is already open. Collapse it or finish it first (see ExiledSectorChartStatus).");
-            case NO_PLAYER_FLEET -> Console.showMessage(PlayerFleetCommand.NO_PLAYER_FLEET);
-            case PLAYER_IN_TRANSITION -> Console.showMessage("Your fleet is jumping. Try again once it arrives.");
-            case PLAYER_IN_SYSTEM -> Console.showMessage("Your fleet is inside a Star Chart system.");
-            default -> Console.showMessage("Opening the wormhole failed; see starsector.log.");
+            default -> Console.showMessage(ChartConsoleText.openFailure(result, "Opening the wormhole failed; see starsector.log."));
         }
         return CommandResult.ERROR;
     }
@@ -250,9 +248,6 @@ public class ChartOpenCommand extends CampaignCommand {
             List<String> ids = new ArrayList<>(anomalyIds);
             if (breach && !ids.contains(SpatialBreach.ANOMALY_ID)) {
                 ids.add(SpatialBreach.ANOMALY_ID);
-            }
-            if (side != null && !ids.contains(FactionSkirmish.ANOMALY_ID)) {
-                ids.add(FactionSkirmish.ANOMALY_ID);
             }
             return List.copyOf(ids);
         }

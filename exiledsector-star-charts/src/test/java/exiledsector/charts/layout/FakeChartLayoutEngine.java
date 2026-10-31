@@ -1,6 +1,5 @@
 package exiledsector.charts.layout;
 
-import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.procgen.StarAge;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
@@ -42,11 +41,11 @@ public final class FakeChartLayoutEngine implements ChartLayoutEngine {
     }
 
     @Override
-    public SectorEntityToken build(StarSystemAPI system, String starId, StarSystemType systemType, StarAge age, Random random, ChartLayoutRecipe recipe,
+    public Result build(StarSystemAPI system, String starId, StarSystemType systemType, StarAge age, Random random, ChartLayoutRecipe recipe,
                                    java.util.List<exiledsector.charts.anomaly.ChartAnomaly> anomalies) {
         long firstRandomLong = new Random(random.nextLong()).nextLong();
         builds.add(new Build(system, starId, systemType, age, firstRandomLong, recipe));
         layout.build(system, starId, systemType, random);
-        return null;
+        return new Result(null, List.of());
     }
 }

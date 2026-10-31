@@ -23,9 +23,9 @@ import java.util.Map;
 import java.util.Random;
 import java.util.function.ToDoubleFunction;
 
-final class ChartThreatFleets {
+public final class ChartThreatFleets {
 
-    static final String FACTION_ID = "threat";
+    public static final String FACTION_ID = "threat";
     static final String FABRICATOR_ROLE = "threatFabricator";
     static final String HIVE_ROLE = "threatHive";
     static final String OVERSEER_ROLE = "threatOverseer";

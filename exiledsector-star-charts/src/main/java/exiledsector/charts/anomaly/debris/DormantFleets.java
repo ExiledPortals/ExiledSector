@@ -6,6 +6,7 @@ import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.FleetAssignment;
 import com.fs.starfarer.api.campaign.LocationAPI;
+import com.fs.starfarer.api.campaign.RepLevel;
 import com.fs.starfarer.api.campaign.FactionAPI.ShipPickMode;
 import com.fs.starfarer.api.campaign.FactionAPI.ShipPickParams;
 import com.fs.starfarer.api.campaign.SectorAPI;
@@ -25,6 +26,7 @@ import com.fs.starfarer.api.loading.VariantSource;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.anomaly.RunFactionDress;
 import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.ChartFaction;
 import exiledsector.charts.content.ChartFactions;
@@ -57,7 +59,6 @@ public final class DormantFleets {
     static final int MOST_SHIPS = 30;
     static final int MOST_FAILED_PICKS = 6;
     static final int SEED_RADIX = Character.MAX_RADIX;
-    static final float NEUTRAL_RELATIONSHIP = 0f;
 
     record HullFaction(FactionAPI faction, float weight) {
     }
@@ -83,15 +84,8 @@ public final class DormantFleets {
         if (faction == null) {
             throw new IllegalStateException("the " + FACTION_ID + " faction is not loaded");
         }
-        faction.setDisplayNameOverride(Translation.gameText("chart.debris.faction.name"));
-        faction.setDisplayNameWithArticleOverride(Translation.gameText("chart.debris.faction.article"));
-        faction.setDisplayIsOrAreOverride(Translation.gameText("chart.debris.faction.isOrAre"));
-        faction.setRelationship(Factions.PLAYER, NEUTRAL_RELATIONSHIP);
-        for (FactionAPI other : others == null ? List.<FactionAPI>of() : others) {
-            if (other != null && other != faction && !FACTION_ID.equals(other.getId())) {
-                faction.setRelationship(other.getId(), NEUTRAL_RELATIONSHIP);
-            }
-        }
+        new RunFactionDress(null, Translation.gameText("chart.debris.faction.name"), Translation.gameText("chart.debris.faction.article"),
+                Translation.gameText("chart.debris.faction.isOrAre"), RepLevel.NEUTRAL, true).apply(faction, null, others);
     }
 
     static List<HullFaction> hullFactions(SectorAPI sector) {
@@ -170,24 +164,17 @@ public final class DormantFleets {
         RemnantSeededFleetManager.initRemnantFleetProperties(random, fleet, true);
         MemoryAPI memory = fleet.getMemoryWithoutUpdate();
         memory.unset(MemFlags.FLEET_INTERACTION_DIALOG_CONFIG_OVERRIDE_GEN);
-        memory.set(ChartIds.TIER_MEMORY_KEY, tier);
-        memory.set(ChartIds.SEED_MEMORY_KEY, Long.toString(seed, SEED_RADIX));
-        memory.set(ChartIds.fleetRunKey(runId), true);
+        ChartContentGenerator.markRunFleet(fleet, runId, tier, seed);
         memory.set(BUILD_SEED_KEY, Long.toString(seed, SEED_RADIX));
         memory.set(DORMANT_KEY, true);
         memory.set(MemFlags.MEMORY_KEY_NO_REP_IMPACT, true);
         memory.set(MemFlags.FLEET_IGNORED_BY_OTHER_FLEETS, true);
-        ChartFleetLoot.recordStart(fleet);
         for (String abilityId : REMOVED_ABILITIES) {
             if (fleet.hasAbility(abilityId)) {
                 fleet.removeAbility(abilityId);
             }
         }
         fleet.setNullAIActionText(Translation.gameText("chart.debris.fleet.dormant"));
-        fleet.setNoAutoDespawn(true);
-        fleet.addTag(ChartIds.ENTITY_TAG);
-        fleet.addTag(ChartIds.runTag(runId));
-        fleet.addTag(ChartIds.CONTENT_TAG);
         fleet.addTag(FLEET_TAG);
         hide(fleet);
     }

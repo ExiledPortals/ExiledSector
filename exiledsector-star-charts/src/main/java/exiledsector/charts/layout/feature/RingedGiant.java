@@ -41,7 +41,7 @@ public final class RingedGiant implements ChartFeature {
             moonOrbits[moon] = moonOrbit;
         }
         float reach = moonOrbit + moonRadii[moonCount - 1];
-        float orbit = site.outerRadius() + reach + GAP + site.between(0f, 600f);
+        float orbit = site.orbitBeyond(reach + GAP, 600f);
         PlanetAPI giant = site.addPlanet("giant", site.centre(), giantType, giantRadius, orbit, FeatureSite.orbitDays(orbit));
         for (int band = 0; band < 3; band++) {
             float middle = ringStart + band * BAND_WIDTH * 0.6f;

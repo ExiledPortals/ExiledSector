@@ -4,7 +4,6 @@ import com.fs.starfarer.api.campaign.SectorEntityToken.VisibilityLevel;
 import com.fs.starfarer.api.impl.campaign.BaseCustomEntityPlugin;
 import com.fs.starfarer.api.ui.TooltipMakerAPI;
 import com.fs.starfarer.api.util.Misc;
-import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRuns;
 import exiledsector.ui.VanillaText;
 
@@ -38,8 +37,7 @@ public class ListeningPostPlugin extends BaseCustomEntityPlugin {
     }
 
     private void addStatus(TooltipMakerAPI tooltip) {
-        ChartRun run = ChartRuns.currentOrNull();
-        PostState state = entity != null && ListeningPost.inRunSystem(run, entity.getContainingLocation()) ? PostState.of(run) : null;
+        PostState state = entity == null ? null : PostState.of(ChartRuns.liveIn(entity.getContainingLocation()));
         if (state == null) {
             return;
         }

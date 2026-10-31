@@ -7,12 +7,14 @@ import exiledsector.charts.atlas.AtlasAnomalyRecord;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasData;
 import exiledsector.charts.atlas.AtlasGenerator;
+import exiledsector.charts.atlas.AtlasLine;
 import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasRunNode;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
+import exiledsector.i18n.Translation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,9 +77,6 @@ public final class RelayChain {
     }
 
     public static AtlasRunNode join(AtlasRunNode node, AtlasGenerator generator, AtlasState state, AtlasCell cell) {
-        if (node == null || !node.anomalyIds().contains(RelayNetwork.ANOMALY_ID)) {
-            return node;
-        }
         AtlasAnomalyRecord.Chain stage = stageAt(generator, state, cell);
         if (stage == null) {
             return node;
@@ -85,9 +84,26 @@ public final class RelayChain {
         return node.withExtraEffects(stageEffects(stage.stage()), stage.isLast());
     }
 
+    public static List<AtlasLine> lines(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+        AtlasAnomalyRecord.Chain stage = stageAt(generator, state, cell);
+        if (stage == null) {
+            return List.of();
+        }
+        List<AtlasLine> lines = new ArrayList<>();
+        lines.add(new AtlasLine(Translation.msg("chart.atlas.node.relayStage").arg("stage", stage.stage()).arg("stages", stage.stages()).text(),
+                AtlasLine.Tone.PLAIN));
+        for (ChartGenContext.AppliedEffect applied : stageEffects(stage.stage())) {
+            lines.add(new AtlasLine(applied.effect().description(applied.value()).toMarkup(), AtlasLine.Tone.STYLED));
+        }
+        if (stage.isLast()) {
+            lines.add(new AtlasLine(Translation.text("chart.atlas.node.relayLast"), AtlasLine.Tone.GOOD));
+        }
+        return lines;
+    }
+
     public static void closed(SectorAPI sector, ChartRun run) {
-        AtlasRunNode node = run == null ? null : run.atlasNode();
-        if (sector == null || node == null || !node.anomalyIds().contains(RelayNetwork.ANOMALY_ID)) {
+        AtlasRunNode node = run.atlasNode();
+        if (!RelayStates.markSettled(run)) {
             return;
         }
         settle(AtlasRuntime.generator(sector), AtlasState.get(sector), AtlasCell.unpack(node.cell()), run.isObjectiveComplete(),
