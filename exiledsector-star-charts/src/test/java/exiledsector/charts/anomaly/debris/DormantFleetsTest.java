@@ -4,6 +4,7 @@ import com.fs.starfarer.api.FactoryAPI;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.campaign.CampaignFleetAPI;
 import com.fs.starfarer.api.campaign.FactionAPI;
+import com.fs.starfarer.api.campaign.RepLevel;
 import com.fs.starfarer.api.campaign.FleetAssignment;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
@@ -116,10 +117,10 @@ class DormantFleetsTest {
 
         DormantFleets.dressFaction(dormant, List.of(dormant, pirates, threat));
 
-        verify(dormant).setRelationship("player", 0f);
-        verify(dormant).setRelationship("pirates", 0f);
-        verify(dormant).setRelationship("threat", 0f);
-        verify(dormant, never()).setRelationship(DormantFleets.FACTION_ID, 0f);
+        verify(dormant).setRelationship("player", RepLevel.NEUTRAL);
+        verify(dormant).setRelationship("pirates", RepLevel.NEUTRAL);
+        verify(dormant).setRelationship("threat", RepLevel.NEUTRAL);
+        verify(dormant, never()).setRelationship(DormantFleets.FACTION_ID, RepLevel.NEUTRAL);
     }
 
     @Test

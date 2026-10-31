@@ -31,6 +31,7 @@ import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.anomaly.ContentPlacer;
 import exiledsector.charts.anomaly.breach.SpatialBreach;
 import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
+import exiledsector.charts.anomaly.skirmish.SkirmishJoin;
 import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.loot.ChartLoot;
@@ -148,6 +149,22 @@ class ChartContentGeneratorTest {
         assertEquals(firstTypes, engine.salvageTypes);
         assertEquals(firstPower, engine.fleetParams.stream().map(params -> params.combatPts).toList());
         assertEquals(firstSeeds, engine.fleets.stream().map(fleet -> ChartIds.fleetSeed(fleet.getMemoryWithoutUpdate())).toList());
+    }
+
+    @Test
+    void aSiteWhoseLootFailsIsRemovedInsteadOfLeftEmpty() {
+        engine = FakeChartContentEngine.install(new FakeChartContentEngine().offering(-4000f, 0f, 0f, 5000f));
+        engine.failSiteDrops = true;
+
+        ChartContent content = generate(3L, 12);
+
+        List<SectorEntityToken> salvage = engine.salvageEntities.stream().filter(entity -> !"wreck".equals(entity.getCustomEntityType())).toList();
+        assertFalse(salvage.isEmpty());
+        for (SectorEntityToken site : salvage) {
+            verify(system).removeEntity(site);
+            assertFalse(inSystem.contains(site));
+        }
+        assertEquals(engine.salvageEntities.size() - salvage.size(), content.pois());
     }
 
     @Test
@@ -297,8 +314,8 @@ class ChartContentGeneratorTest {
     }
 
     private ChartContent skirmish(SkirmishSide side) {
-        ChartGenContext context = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID), false,
-                "tritachyon", side));
+        ChartGenContext context = ChartGenContext.none().withAtlasNode(new AtlasRunNode(1L, "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID), false)
+                .withAnomalyData(FactionSkirmish.ANOMALY_ID, new SkirmishJoin(side, "tritachyon").encode()));
         return ChartContentGenerator.generate(sector, system, RUN_ID, 11L, 8, WORMHOLE, context, null, List.of(FactionSkirmish.ANOMALY_ID));
     }
 

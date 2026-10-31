@@ -4,6 +4,7 @@ import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.impl.campaign.terrain.HyperspaceAutomaton;
 import com.fs.starfarer.api.impl.campaign.terrain.HyperspaceTerrainPlugin.CellStateTracker;
+import exiledsector.Seeds;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.util.GlScope;
@@ -400,20 +401,13 @@ public final class HyperspaceClouds {
     }
 
     static long hash(long seed, long salt, int x, int y) {
-        long mixed = seed ^ salt * 0x9e3779b97f4a7c15L;
-        mixed = mix(mixed + x * 0xc2b2ae3d27d4eb4fL);
-        mixed = mix(mixed + y * 0x165667b19e3779f9L);
+        long mixed = seed ^ salt * Seeds.GOLDEN_GAMMA;
+        mixed = Seeds.mix(mixed + x * 0xc2b2ae3d27d4eb4fL);
+        mixed = Seeds.mix(mixed + y * 0x165667b19e3779f9L);
         return mixed;
     }
 
     static double unit(long hash) {
         return (hash >>> 11) * 0x1.0p-53;
-    }
-
-    private static long mix(long value) {
-        long mixed = value;
-        mixed = (mixed ^ (mixed >>> 30)) * 0xbf58476d1ce4e5b9L;
-        mixed = (mixed ^ (mixed >>> 27)) * 0x94d049bb133111ebL;
-        return mixed ^ (mixed >>> 31);
     }
 }

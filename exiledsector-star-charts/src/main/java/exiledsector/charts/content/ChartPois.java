@@ -1,10 +1,9 @@
 package exiledsector.charts.content;
 
-import exiledsector.compat.CompatTarget;
+import exiledsector.compat.ChartModGates;
 import exiledsector.charts.table.BuiltInTable;
 import exiledsector.data.CsvRows;
 import exiledsector.ModCsv;
-import exiledsector.compat.IndustrialEvolutionCompat;
 import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,7 +16,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BooleanSupplier;
 
 public final class ChartPois {
 
@@ -25,7 +23,6 @@ public final class ChartPois {
     static final String ID_COLUMN = "id";
     static final Set<String> DERELICT_TYPES = Set.of("CIVILIAN", "SMALL", "MEDIUM", "LARGE");
     public static final List<String> KIND_NAMES = Arrays.stream(ChartPoi.Kind.values()).map(kind -> kind.name().toLowerCase(Locale.ROOT)).toList();
-    static final Map<String, BooleanSupplier> MOD_SETTING_GATES = Map.of(IndustrialEvolutionCompat.MOD_ID, IndustrialEvolutionCompat::derelictStationsEnabled);
     private static final Logger LOG = Logger.getLogger(ChartPois.class);
     private static volatile List<ChartPoi> pois = List.of();
 
@@ -102,18 +99,7 @@ public final class ChartPois {
     }
 
     static boolean requirementMet(ChartPoi poi) {
-        return modRequirementMet(poi.requiredMod());
-    }
-
-    public static boolean modRequirementMet(String modId) {
-        if (modId == null || modId.isEmpty()) {
-            return true;
-        }
-        if (!CompatTarget.isModEnabled(modId)) {
-            return false;
-        }
-        BooleanSupplier settingGate = MOD_SETTING_GATES.get(modId);
-        return settingGate == null || settingGate.getAsBoolean();
+        return ChartModGates.met(poi.requiredMod());
     }
 
     static List<ChartPoi> ofKind(List<ChartPoi> candidates, ChartPoi.Kind kind) {

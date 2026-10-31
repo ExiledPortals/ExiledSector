@@ -2,6 +2,7 @@ package exiledsector.charts.loot;
 
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.impl.campaign.procgen.DropGroupRow;
+import exiledsector.data.EnumKeys;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.content.ChartPois;
@@ -40,12 +41,7 @@ public final class ChartLoot {
         VALUE;
 
         static Mode parse(String text) {
-            for (Mode mode : values()) {
-                if (mode.name().equalsIgnoreCase(text)) {
-                    return mode;
-                }
-            }
-            return null;
+            return EnumKeys.parse(Mode.class, text);
         }
     }
 
@@ -148,12 +144,8 @@ public final class ChartLoot {
     }
 
     private static DropType vanillaType(String text) {
-        for (DropType type : DropType.values()) {
-            if (type.isVanilla() && type.name().equalsIgnoreCase(text)) {
-                return type;
-            }
-        }
-        return null;
+        DropType type = EnumKeys.parse(DropType.class, text);
+        return type != null && type.isVanilla() ? type : null;
     }
 
     public static void clear() {

@@ -513,7 +513,7 @@ an anomaly they add takes the system's own faction. Whether it fits is the anoma
 `holdsAt` by default; the Faction Skirmish checks the current owner, captures included). Redeployment Orders instead hand the system to another faction from its
 biome's list, raced on the atlas seed, the system and its current owner so a reload never changes the pick, and stored
 as a capture (`RedeploymentCatalystUse`). A row with the `star` effect may insert a star anomaly through
-`AtlasAnomalies.canInsertStar` and `insertStar`, which skip only the insertable check, so it never replaces a star
+`AtlasAnomalies.canInsert` and `insert` with `forcingStar`, which skip only the insertable check, so it never replaces a star
 anomaly already there; it never drops. Both go through core `Consumables.use`, which spends the item only once the change has taken.
 
 Every chart drop source inside a live run rolls its `catalyst_chance` from `chart_drops.csv` after its chart currency,
@@ -555,11 +555,13 @@ ranges); Star Charts roll no anomaly lines. Each id needs a `chart_anomalies.csv
 and one that conflicts with an anomaly already taken (both replace the star, or `excludes`) is dropped. A star anomaly
 picks the star or system type, a `shape` adds terrain after layout and a `generate` places entities after the sites and
 fleets (role interfaces in package `charts.anomaly`); one that fails at either step is left out with what it added, and
-the run record keeps the ids that placed. Each anomaly shapes with its own seeded random, and the run state a
+the run record keeps the ids that placed. A layout that fails and falls back to a single star keeps only the anomalies that
+need no layout (`ChartLayoutGenerator`). Each anomaly shapes with its own seeded random, and the run state a
 `generate` records reaches the run only once the whole content is built (`AnomalyContentSite.commitStates`). Run hooks reach only the live run's anomalies (`ChartAnomalies`, `AnomalyRun`). An
 anomaly's `effects` lines join the run's context for generation and loot (`ChartGenContext.withAnomalyEffects`).
 
-`AnomalyContentSite.addSite` places chart POIs on clear orbits: derelicts around a black hole, a research station
+`AnomalyContentSite.addSite` places chart POIs on clear orbits through the same `ChartSites.spawn` as the system's own sites,
+which leaves out a site whose vanilla loot fails: derelicts around a black hole, a research station
 around a neutron star whatever the tier (`StarAnomalies`), and caches in an Asteroid Storm's belts. Stellar Flares need
 a visible star, so a starless system never holds them, rolled or inserted (`StellarFlares`).
 
@@ -588,9 +590,9 @@ The anomaly rolls only on atlas border systems whose owner and a lane neighbour 
 don't). The attacker is raced from the neighbours' current owners, weighted by lanes (`AtlasBorders.attacker`), and the
 player picks a side before the wormhole opens, kept on the `AtlasRunNode`. The defender always has a station, and the
 attacker matches the defender's ordinary fleets plus a commander that pushes on the station once the rest have fallen
-(`SkirmishPlanner`, `ChartSkirmishes`). The joined side is 30% weaker, drops nothing and flies as the run-only faction
-`exiledSector_skirmish_ally`, which is friendly to the player; per-fleet `$cfai_makeHostile_<faction>` flags set the two
-sides against each other (`ChartContentGenerator.joinSkirmish`).
+(`SkirmishPlanner` through `adjustPlan`, `SkirmishBattle`, `ChartSkirmishes`). The joined side is 30% weaker, drops nothing
+and flies as the run-only faction `exiledSector_skirmish_ally`, which is friendly to the player (`RunFactionDress`);
+per-fleet `$cfai_makeHostile_<faction>` flags set the two sides against each other.
 
 Siding with the attacker or staying out makes the station the boss, counted whoever destroys it. Siding with the
 defender makes the commander the boss and protects the station: losing it loses the run (`ChartRun.objectiveLost`).

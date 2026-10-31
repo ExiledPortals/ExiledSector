@@ -18,7 +18,8 @@ import exiledsector.charts.atlas.AtlasRules;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.atlas.AtlasTraits;
 import exiledsector.charts.atlas.AtlasUnlocks;
-import exiledsector.charts.atlas.RedeploymentCatalystUse;
+import exiledsector.charts.content.ChartFactions;
+import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.items.UseVerdict;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -132,7 +133,7 @@ class FactionSkirmishTest {
         state.capture(generator, cell, NEUTRAL);
         UseVerdict neutralOwner = use.check(cell);
         assertEquals(FactionSkirmish.NO_SIDE_KEY, neutralOwner.refusalKey());
-        assertEquals(RedeploymentCatalystUse.factionName(NEUTRAL), neutralOwner.args().get("faction"));
+        assertEquals(ChartFactions.displayName(NEUTRAL), neutralOwner.args().get("faction"));
 
         state.capture(generator, cell, owner);
         Set<String> neutral = new HashSet<>(laneOwners(generator, state, cell));
@@ -151,12 +152,41 @@ class FactionSkirmishTest {
         AtlasRunNode skirmish = new AtlasRunNode(cell.pack(), "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID), false);
         AtlasRunNode plain = new AtlasRunNode(cell.pack(), "hegemony", List.of(), List.of(), false);
 
-        AtlasRunNode joined = FactionSkirmish.join(skirmish, generator, state, cell, SkirmishSide.DEFENDER);
+        SkirmishJoin joined = SkirmishJoin.of(ChartAnomalies.joinRunNode(skirmish, generator, state, cell, SkirmishSide.DEFENDER));
 
-        assertEquals(FactionSkirmish.attacker(generator, state, cell), joined.skirmishAttackerId());
-        assertEquals(SkirmishSide.DEFENDER, joined.skirmishSide());
-        assertEquals(SkirmishSide.NEITHER, FactionSkirmish.join(skirmish, generator, state, cell, null).skirmishSide());
-        assertEquals(plain, FactionSkirmish.join(plain, generator, state, cell, SkirmishSide.ATTACKER));
+        assertEquals(FactionSkirmish.attacker(generator, state, cell), joined.attackerId());
+        assertEquals(SkirmishSide.DEFENDER, joined.side());
+        assertEquals(SkirmishSide.NEITHER, SkirmishJoin.of(ChartAnomalies.joinRunNode(skirmish, generator, state, cell, null)).side());
+        assertEquals(plain, ChartAnomalies.joinRunNode(plain, generator, state, cell, SkirmishSide.ATTACKER));
+    }
+
+    @Test
+    void onlyWinningOnTheAttackersSideCapturesTheSystem() {
+        AtlasState state = new AtlasState(SEED);
+        AtlasGenerator generator = new AtlasGenerator(SEED, RULES, AtlasUnlocks.NONE, state);
+        AtlasCell cell = new AtlasCell(3, 2);
+
+        FactionSkirmish.captureForWinner(generator, state, cell, new SkirmishJoin(SkirmishSide.DEFENDER, "hegemony"));
+        FactionSkirmish.captureForWinner(generator, state, cell, new SkirmishJoin(SkirmishSide.NEITHER, "hegemony"));
+        FactionSkirmish.captureForWinner(generator, state, cell, new SkirmishJoin(SkirmishSide.ATTACKER, null));
+        assertEquals(Map.of(), state.captures());
+
+        FactionSkirmish.captureForWinner(generator, state, cell, new SkirmishJoin(SkirmishSide.ATTACKER, "hegemony"));
+        assertEquals(Map.of(cell, "hegemony"), state.captures());
+    }
+
+    @Test
+    void theJoinSurvivesTheRunNodeEncodingAndReachesTheChartContext() {
+        AtlasRunNode node = new AtlasRunNode(9L, "hegemony", List.of(), List.of(FactionSkirmish.ANOMALY_ID), true)
+                .withAnomalyData(FactionSkirmish.ANOMALY_ID, new SkirmishJoin(SkirmishSide.ATTACKER, "tritachyon").encode());
+        AtlasRunNode decoded = AtlasRunNode.decode(node.encode());
+
+        assertEquals(node, decoded);
+        assertEquals(new SkirmishJoin(SkirmishSide.ATTACKER, "tritachyon"), SkirmishJoin.of(decoded));
+        assertEquals(new SkirmishJoin(SkirmishSide.ATTACKER, "tritachyon"),
+                SkirmishJoin.of(ChartGenContext.none().withAtlasNode(decoded).withAnomalies(List.of("black_hole"))));
+        assertEquals(new SkirmishJoin(SkirmishSide.NEITHER, null), SkirmishJoin.decode(new SkirmishJoin(null, "").encode()));
+        assertEquals(null, SkirmishJoin.decode("attacker"));
     }
 
     @Test

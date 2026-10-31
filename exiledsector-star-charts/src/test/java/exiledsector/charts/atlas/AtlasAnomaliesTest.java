@@ -218,7 +218,7 @@ class AtlasAnomaliesTest {
     }
 
     @Test
-    void completingASystemKeepsItsChainedRecordsForTheirAnomalyToSettleButFailingSpendsThem() {
+    void completingASystemKeepsItsChainedRecordsForTheirAnomalyToSettleEvenFromTheConsoleButFailingSpendsThem() {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = generator(state);
         AtlasCell completed = system(generator, 0);
@@ -234,7 +234,7 @@ class AtlasAnomaliesTest {
         assertEquals(chain, state.anomalyRecords(completed).get(0).chain());
         assertEquals(List.of(), state.anomalyRecords(failed));
         AtlasDevTools.complete(generator, state, completed, 3);
-        assertEquals(List.of(), state.anomalyRecords());
+        assertEquals(1, state.anomalyRecords().size());
     }
 
     @Test

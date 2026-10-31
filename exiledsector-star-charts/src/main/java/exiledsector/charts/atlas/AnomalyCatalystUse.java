@@ -21,8 +21,7 @@ public record AnomalyCatalystUse(AtlasCatalysts.Catalyst catalyst, AtlasGenerato
         if (!revealed.contains(cell)) {
             return UseVerdict.refused(FOGGED_KEY);
         }
-        AtlasAnomalies.InsertCheck check = forcesStar() ? AtlasAnomalies.canInsertStar(generator, state, cell, anomalyId, openRunCell)
-                : AtlasAnomalies.canInsert(generator, state, cell, anomalyId, openRunCell);
+        AtlasAnomalies.InsertCheck check = AtlasAnomalies.canInsert(generator, state, cell, anomalyId, openRunCell, forcesStar());
         if (check.allows()) {
             return UseVerdict.ALLOW;
         }
@@ -39,9 +38,8 @@ public record AnomalyCatalystUse(AtlasCatalysts.Catalyst catalyst, AtlasGenerato
 
     @Override
     public Outcome apply(AtlasCell cell) {
-        AtlasAnomalies.Insertion insertion = forcesStar()
-                ? AtlasAnomalies.insertStar(generator, state, cell, catalyst.anomalyId(), AtlasAnomalyRecord.Source.PLAYER, openRunCell)
-                : AtlasAnomalies.insert(generator, state, cell, catalyst.anomalyId(), AtlasAnomalyRecord.Source.PLAYER, openRunCell);
+        AtlasAnomalies.Insertion insertion = AtlasAnomalies.insert(generator, state, cell, catalyst.anomalyId(), AtlasAnomalyRecord.Source.PLAYER,
+                openRunCell, null, forcesStar());
         return insertion.check().allows() ? new Outcome("catalyst.window.used", Map.of("anomaly", anomalyName())) : null;
     }
 

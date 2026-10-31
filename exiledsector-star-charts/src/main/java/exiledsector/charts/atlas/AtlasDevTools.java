@@ -93,7 +93,6 @@ public final class AtlasDevTools {
 
     public static void complete(AtlasGenerator generator, AtlasState state, AtlasCell cell, int tier) {
         AtlasProgress.complete(generator, state, cell, tier);
-        state.spendInsertedAnomalies(cell);
         AtlasReach.refreshReveal(generator, state);
     }
 

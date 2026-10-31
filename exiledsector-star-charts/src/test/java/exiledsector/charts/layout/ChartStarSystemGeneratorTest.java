@@ -127,7 +127,7 @@ class ChartStarSystemGeneratorTest {
 
         assertEquals("black_hole", blackHole.pickStar(StarAge.OLD).getPlanetType());
         for (int pick = 0; pick < 50; pick++) {
-            assertFalse(ChartLayoutRecipe.ANOMALY_STARS.contains(blackHole.pickStar(StarAge.OLD).getPlanetType()));
+            assertFalse(ChartLayoutRecipe.isAnomalyStar(blackHole.pickStar(StarAge.OLD).getPlanetType()));
         }
     }
 

@@ -15,10 +15,9 @@ public final class AtlasRuntime {
 
     public static synchronized AtlasGenerator generator(SectorAPI sector) {
         AtlasState state = AtlasState.get(sector);
-        AtlasRules rules = AtlasData.rules();
-        AtlasUnlocks unlocks = AtlasData.unlocksFor(sector, rules);
+        AtlasUnlocks unlocks = AtlasData.unlocksFor(sector);
         if (cachedGenerator == null || cachedState != state || !unlocks.unlockedFlags().equals(cachedFlags)) {
-            cachedGenerator = new AtlasGenerator(state.seed(), rules, unlocks, state);
+            cachedGenerator = new AtlasGenerator(state.seed(), AtlasData.rules(), unlocks, state);
             cachedState = state;
             cachedFlags = unlocks.unlockedFlags();
         }

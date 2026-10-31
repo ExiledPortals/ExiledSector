@@ -19,7 +19,12 @@ import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
 import exiledsector.charts.anomaly.station.DomainMothership;
 import exiledsector.charts.anomaly.station.RemnantNexusStation;
 import exiledsector.charts.anomaly.storm.StormFront;
-import exiledsector.charts.content.ChartPois;
+import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.atlas.AtlasGenerator;
+import exiledsector.charts.atlas.AtlasRunChoice;
+import exiledsector.charts.atlas.AtlasRunNode;
+import exiledsector.charts.atlas.AtlasState;
+import exiledsector.compat.ChartModGates;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
@@ -162,8 +167,11 @@ public final class ChartAnomalies {
     }
 
     public static <R extends ChartAnomaly> List<R> inRun(ChartRun run, Class<R> role) {
-        List<String> runAnomalyIds = run == null ? List.of() : run.anomalyIds();
-        return with(role).stream().filter(anomaly -> runAnomalyIds.contains(anomaly.id())).toList();
+        return among(run == null ? List.of() : run.anomalyIds(), role);
+    }
+
+    public static <R extends ChartAnomaly> List<R> among(Collection<String> ids, Class<R> role) {
+        return with(role).stream().filter(anomaly -> ids.contains(anomaly.id())).toList();
     }
 
     public static <R extends ChartAnomaly> R role(String id, Class<R> role) {
@@ -227,6 +235,28 @@ public final class ChartAnomalies {
         return lines;
     }
 
+    public static AtlasRunNode joinRunNode(AtlasRunNode node, AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasRunChoice choice) {
+        AtlasRunNode joined = node;
+        for (AtlasRule anomaly : among(node.anomalyIds(), AtlasRule.class)) {
+            AtlasRunNode current = joined;
+            AtlasRunNode next = askSafely(anomaly, "run join", () -> anomaly.joinRunNode(current, generator, state, cell, choice));
+            joined = next == null ? current : next;
+        }
+        return joined;
+    }
+
+    public static void runCompleted(SectorAPI sector, ChartRun run) {
+        for (AtlasRule anomaly : among(run.atlasNode().anomalyIds(), AtlasRule.class)) {
+            runSafely(anomaly, "run completion", () -> anomaly.runCompleted(sector, run));
+        }
+    }
+
+    public static void runClosed(SectorAPI sector, ChartRun run) {
+        for (AtlasRule anomaly : among(run.atlasNode().anomalyIds(), AtlasRule.class)) {
+            runSafely(anomaly, "run close", () -> anomaly.runClosed(sector, run));
+        }
+    }
+
     public static void clearFrom(CampaignFleetAPI fleet) {
         for (RunParticipant anomaly : with(RunParticipant.class)) {
             runSafely(anomaly, "cleanup", () -> anomaly.clearFrom(fleet));
@@ -265,7 +295,7 @@ public final class ChartAnomalies {
 
     public static boolean usable(String id) {
         Definition definition = definition(id);
-        return definition != null && byId(id) != null && ChartPois.modRequirementMet(definition.requiredMod());
+        return definition != null && byId(id) != null && ChartModGates.met(definition.requiredMod());
     }
 
     public static boolean conflicts(String first, String second) {

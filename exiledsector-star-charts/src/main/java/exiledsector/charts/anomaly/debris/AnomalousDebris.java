@@ -20,6 +20,7 @@ import org.lwjgl.util.vector.Vector2f;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 public final class AnomalousDebris implements ContentPlacer, RunParticipant, LootShaper {
 
@@ -45,6 +46,11 @@ public final class AnomalousDebris implements ContentPlacer, RunParticipant, Loo
     @Override
     public String id() {
         return ANOMALY_ID;
+    }
+
+    @Override
+    public Set<String> runFactionIds() {
+        return Set.of(DormantFleets.FACTION_ID);
     }
 
     @Override

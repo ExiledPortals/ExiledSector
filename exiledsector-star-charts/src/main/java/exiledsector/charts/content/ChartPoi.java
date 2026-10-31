@@ -1,7 +1,7 @@
 package exiledsector.charts.content;
 
+import exiledsector.data.EnumKeys;
 import java.util.List;
-import java.util.Locale;
 
 public record ChartPoi(String id, Kind kind, String entityType, String salvageSpec, String derelictType, float cost, float weight, int minTier,
                        int maxTier, boolean guarded, String requiredMod, List<String> planetCategories) {
@@ -13,16 +13,7 @@ public record ChartPoi(String id, Kind kind, String entityType, String salvageSp
         DERELICT;
 
         static Kind parse(String text) {
-            if (text == null) {
-                return null;
-            }
-            String wanted = text.trim().toUpperCase(Locale.ROOT);
-            for (Kind kind : values()) {
-                if (kind.name().equals(wanted)) {
-                    return kind;
-                }
-            }
-            return null;
+            return EnumKeys.parse(Kind.class, text);
         }
     }
 

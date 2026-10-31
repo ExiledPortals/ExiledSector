@@ -1,25 +1,16 @@
 package exiledsector.charts.objective;
 
-import java.util.Locale;
+import exiledsector.data.EnumKeys;
 
 public enum ChartObjective {
     CLEAR,
     BOSS;
 
     public static ChartObjective parse(String text) {
-        if (text == null || text.isBlank()) {
-            return null;
-        }
-        String wanted = text.trim().toUpperCase(Locale.ROOT);
-        for (ChartObjective objective : values()) {
-            if (objective.name().equals(wanted)) {
-                return objective;
-            }
-        }
-        return null;
+        return EnumKeys.parse(ChartObjective.class, text);
     }
 
     public String key() {
-        return name().toLowerCase(Locale.ROOT);
+        return EnumKeys.key(this);
     }
 }

@@ -1,6 +1,7 @@
 package exiledsector.charts.layout;
 
 import com.fs.starfarer.api.impl.campaign.procgen.StarAge;
+import exiledsector.items.WeightedPick;
 
 import java.awt.Color;
 import java.util.Collections;
@@ -26,7 +27,7 @@ public final class ChartDeepSpace {
 
     public static String pickCentre(Random random) {
         boolean giant = random.nextFloat() * (PLANETOID_WEIGHT + GIANT_WEIGHT) >= PLANETOID_WEIGHT;
-        return pick(giant ? GIANTS : PLANETOIDS, random);
+        return WeightedPick.pick(giant ? GIANTS : PLANETOIDS, random);
     }
 
     static String centreDataId(StarAge age) {
@@ -35,23 +36,6 @@ public final class ChartDeepSpace {
             case AVERAGE -> "average";
             default -> "old";
         };
-    }
-
-    private static String pick(Map<String, Float> weights, Random random) {
-        float total = 0f;
-        for (float weight : weights.values()) {
-            total += weight;
-        }
-        float roll = random.nextFloat() * total;
-        String last = null;
-        for (Map.Entry<String, Float> entry : weights.entrySet()) {
-            last = entry.getKey();
-            roll -= entry.getValue();
-            if (roll < 0f) {
-                return last;
-            }
-        }
-        return last;
     }
 
     private static Map<String, Float> ordered(Object... typesAndWeights) {

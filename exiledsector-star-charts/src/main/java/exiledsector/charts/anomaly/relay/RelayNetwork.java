@@ -11,6 +11,13 @@ import exiledsector.charts.ChartIds;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.anomaly.AnomalyRun;
+import exiledsector.charts.anomaly.AtlasRule;
+import exiledsector.charts.atlas.AtlasCell;
+import exiledsector.charts.atlas.AtlasGenerator;
+import exiledsector.charts.atlas.AtlasLine;
+import exiledsector.charts.atlas.AtlasRunChoice;
+import exiledsector.charts.atlas.AtlasRunNode;
+import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.anomaly.ContentPlacer;
 import exiledsector.charts.anomaly.LootShaper;
 import exiledsector.charts.anomaly.RunParticipant;
@@ -26,7 +33,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-public final class RelayNetwork implements ContentPlacer, RunParticipant, LootShaper {
+public final class RelayNetwork implements ContentPlacer, RunParticipant, LootShaper, AtlasRule {
 
     public static final String ANOMALY_ID = "relay_network";
     public static final String COST_KEY = ChartEffect.CHART_RELAY_COST_PERCENT.anomalyTuningKey();
@@ -57,6 +64,21 @@ public final class RelayNetwork implements ContentPlacer, RunParticipant, LootSh
     @Override
     public String intelText(AnomalyRun run) {
         return intelLine();
+    }
+
+    @Override
+    public List<AtlasLine> atlasLines(AtlasGenerator generator, AtlasState state, AtlasCell cell) {
+        return RelayChain.lines(generator, state, cell);
+    }
+
+    @Override
+    public AtlasRunNode joinRunNode(AtlasRunNode node, AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasRunChoice choice) {
+        return RelayChain.join(node, generator, state, cell);
+    }
+
+    @Override
+    public void runClosed(SectorAPI sector, ChartRun run) {
+        RelayChain.closed(sector, run);
     }
 
     @Override

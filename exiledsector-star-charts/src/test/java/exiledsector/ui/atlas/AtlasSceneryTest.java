@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -158,18 +157,6 @@ class AtlasSceneryTest {
         for (AtlasCell cell : plain.visibleCells()) {
             assertTrue(plain.scenery().decorations().piecesIn(cell).isEmpty());
         }
-    }
-
-    @Test
-    void weightedPicksFollowTheirWeights() {
-        Random random = new Random(2L);
-        Map<String, Integer> picks = new HashMap<>();
-        for (int roll = 0; roll < 4000; roll++) {
-            picks.merge(AtlasDecorations.pick(new java.util.TreeMap<>(Map.of("a", 1f, "b", 3f, "c", 0f)), random), 1, Integer::sum);
-        }
-
-        assertFalse(picks.containsKey("c"));
-        assertTrue(picks.get("b") > picks.get("a") * 2.5f && picks.get("b") < picks.get("a") * 3.5f, picks.toString());
     }
 
     @Test

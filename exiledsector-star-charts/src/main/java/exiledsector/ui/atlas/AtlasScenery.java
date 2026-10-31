@@ -9,6 +9,7 @@ import exiledsector.charts.atlas.AtlasDecoration;
 import exiledsector.charts.atlas.AtlasNode;
 import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasRegion;
+import exiledsector.charts.content.ChartFactions;
 import exiledsector.ui.TreeViewport;
 import exiledsector.ui.decoration.FactionStarColours;
 import exiledsector.ui.decoration.HyperspaceClouds;
@@ -43,7 +44,7 @@ final class AtlasScenery {
         this.ambiences = ambiences;
         this.decorationLookup = decorationLookup;
         clouds = new HyperspaceClouds(CLOUD_TILE, seed, CLOUD_ALPHA);
-        borders = new AtlasTerritoryBorders(seed, AtlasScenery::factionColour, AtlasScenery::factionName);
+        borders = new AtlasTerritoryBorders(seed, AtlasScenery::factionColour, ChartFactions::displayName);
         biomes = new AtlasTerritoryBorders(seed, AtlasData::regionTint, AtlasNodeText::regionName);
     }
 
@@ -134,11 +135,6 @@ final class AtlasScenery {
         }
         FactionAPI faction = faction(factionId);
         return faction == null ? null : faction.getColor();
-    }
-
-    private static String factionName(String factionId) {
-        FactionAPI faction = faction(factionId);
-        return faction == null ? factionId : faction.getDisplayName();
     }
 
     private static FactionAPI faction(String factionId) {

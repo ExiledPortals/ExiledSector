@@ -1,6 +1,7 @@
 package exiledsector.charts.anomaly.convoy;
 
 import com.fs.starfarer.api.campaign.InteractionDialogPlugin;
+import com.fs.starfarer.api.campaign.RepLevel;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import exiledsector.charts.anomaly.AnomalyContentSite;
@@ -9,10 +10,12 @@ import exiledsector.charts.anomaly.AtlasRule;
 import exiledsector.charts.anomaly.ContentPlacer;
 import exiledsector.charts.anomaly.LayoutShaper;
 import exiledsector.charts.anomaly.LootShaper;
+import exiledsector.charts.anomaly.RunFactionDress;
 import exiledsector.charts.anomaly.RunParticipant;
 import exiledsector.charts.effect.ChartEffect;
 import exiledsector.charts.atlas.AtlasTraits;
 import exiledsector.charts.content.ChartAnomalyFleets;
+import exiledsector.i18n.Translation;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -39,6 +42,16 @@ public final class SupplyConvoy implements LayoutShaper, ContentPlacer, RunParti
         return ANOMALY_ID;
     }
 
+    static RunFactionDress factionDress(String lookalikeFactionId) {
+        return new RunFactionDress(lookalikeFactionId, Translation.gameText("chart.convoy.faction.name"),
+                Translation.gameText("chart.convoy.faction.nameWithArticle"), Translation.gameText("chart.convoy.faction.isOrAre"), RepLevel.NEUTRAL, true);
+    }
+
+    @Override
+    public Set<String> runFactionIds() {
+        return Set.of(ConvoyRules.FACTION_ID);
+    }
+
     @Override
     public List<String> lootScopes() {
         return List.of(ConvoyRules.LOOT_SCOPE);
@@ -61,7 +74,7 @@ public final class SupplyConvoy implements LayoutShaper, ContentPlacer, RunParti
             throw new IllegalStateException("no planet for the convoy to deliver to");
         }
         List<SectorEntityToken> stations = site.pois().stream().filter(poi -> poi.hasTag(Tags.STATION)).toList();
-        String convoyFactionId = ChartAnomalyFleets.dressConvoy(site.factionId());
+        String convoyFactionId = ChartAnomalyFleets.dress(ConvoyRules.FACTION_ID, factionDress(site.factionId()));
         ConvoyScript script = new ConvoyScript(site.runId(), site.tier(), site.system());
         Set<SectorEntityToken> takenDestinations = new HashSet<>(planets.stream().filter(site::isClaimed).toList());
         int count = ConvoyRules.convoyCount(site.context().anomalyPercent(EXTRA_KEY));

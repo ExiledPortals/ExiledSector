@@ -15,13 +15,12 @@ import exiledsector.charts.run.cleanup.ChartRunCloser;
 import exiledsector.items.Item;
 import exiledsector.items.ItemData;
 import exiledsector.items.ItemStore;
-import exiledsector.charts.anomaly.relay.RelayChain;
-import exiledsector.charts.anomaly.skirmish.FactionSkirmish;
-import exiledsector.charts.anomaly.skirmish.SkirmishSide;
+import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasGenerator;
 import exiledsector.charts.atlas.AtlasOpening;
 import exiledsector.charts.atlas.AtlasProgress;
+import exiledsector.charts.atlas.AtlasRunChoice;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.items.StarChart;
@@ -66,7 +65,7 @@ public final class ChartRunActions {
     }
 
     public static OpenResult openFromAtlas(SectorAPI sector, int entriesAllowed, Random random, ItemStore store, Item storedChart,
-                                           AtlasCell cell, SkirmishSide side) {
+                                           AtlasCell cell, AtlasRunChoice choice) {
         if (!(storedChart instanceof StarChart chart) || chart.definition() == null || store == null || !store.holdsStarCharts()
                 || store.find(chart.id()) != chart || cell == null) {
             return OpenResult.NO_CHART;
@@ -89,8 +88,7 @@ public final class ChartRunActions {
                 return ChartRuns.hasRun() ? OpenResult.RUN_EXISTS : OpenResult.NOT_REACHABLE;
             }
         }
-        AtlasRunNode runNode = FactionSkirmish.join(AtlasOpening.runNode(generator, state, cell), generator, state, cell, side);
-        runNode = RelayChain.join(runNode, generator, state, cell);
+        AtlasRunNode runNode = ChartAnomalies.joinRunNode(AtlasOpening.runNode(generator, state, cell), generator, state, cell, choice);
         OpenResult result = openBesidePlayer(sector, entriesAllowed, random, AtlasOpening.request(generator, state, cell, chart, runNode),
                 ItemData.of(chart).encode(), runNode);
         if (result == OpenResult.OPENED) {

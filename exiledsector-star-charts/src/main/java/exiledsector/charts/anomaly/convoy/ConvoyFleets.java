@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.listeners.FleetEventListener;
 import com.fs.starfarer.api.campaign.rules.MemoryAPI;
 import com.fs.starfarer.api.impl.campaign.ids.FleetTypes;
 import com.fs.starfarer.api.impl.campaign.ids.MemFlags;
+import exiledsector.charts.content.ChartSites;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.AnomalyContentSite;
 import exiledsector.charts.content.ChartAnomalyFleets;
@@ -60,8 +61,7 @@ final class ConvoyFleets {
             ChartAnomalyFleets.prepare(fleet, site.runId(), site.tier(), fleetSeed, role != ConvoyRole.FREIGHTERS, context);
             dress(fleet, role, convoy, convoyFactionId);
             double angle = random.nextDouble() * Math.PI * 2d;
-            site.addFleet(fleet, new Vector2f(convoy.entryX() + (float) Math.cos(angle) * ConvoyRules.SPAWN_SPREAD,
-                    convoy.entryY() + (float) Math.sin(angle) * ConvoyRules.SPAWN_SPREAD));
+            site.addFleet(fleet, ChartSites.pointAround(new Vector2f(convoy.entryX(), convoy.entryY()), angle, ConvoyRules.SPAWN_SPREAD));
             convoy.setFleetId(role, fleet.getId());
             if (role == ConvoyRole.FREIGHTERS) {
                 freighters = fleet;

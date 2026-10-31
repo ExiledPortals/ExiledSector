@@ -6,7 +6,6 @@ import com.fs.starfarer.api.campaign.SectorAPI;
 import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.loot.ChartDrops;
-import exiledsector.charts.layout.ChartLayoutGenerator;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunEffects;
 import exiledsector.charts.generation.ChartTiers;
@@ -17,6 +16,7 @@ import exiledsector.items.ItemUnlock;
 import exiledsector.items.MaterialItems;
 import exiledsector.ui.CampaignMessages;
 import exiledsector.ui.cargo.MaterialDropAnnouncer;
+import exiledsector.Seeds;
 import org.apache.log4j.Logger;
 
 import java.awt.Color;
@@ -56,7 +56,7 @@ public final class ChartRewards {
     }
 
     static Random rewardRandom(ChartRun run) {
-        return ChartLayoutGenerator.derivedRandom(run.layoutSeed() ^ run.runId().hashCode(), REWARD_SALT);
+        return Seeds.derived(run.layoutSeed() ^ run.runId().hashCode(), REWARD_SALT);
     }
 
     public static Reward grant(SectorAPI sector, ChartRun run) {

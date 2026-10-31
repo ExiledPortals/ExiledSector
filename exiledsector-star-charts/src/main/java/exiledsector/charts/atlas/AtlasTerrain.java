@@ -28,6 +28,7 @@ final class AtlasTerrain {
     private static final long RIDGE_SALT = 0x52494447L;
     private static final long CLUMP_SALT = 0x434c554dL;
     private static final long OCTAVE_SALT = 0x4f4354L;
+    private static final float OCTAVE_SHARE = 0.5f;
     private static final long HUB_X_SALT = 0x4855425fL;
     private static final long HUB_Y_SALT = 0x48554259L;
 
@@ -314,29 +315,7 @@ final class AtlasTerrain {
     }
 
     private float noise(long salt, float x, float y) {
-        return (valueNoise(salt, x, y) + 0.5f * valueNoise(salt ^ OCTAVE_SALT, x * 2f, y * 2f)) / 1.5f;
-    }
-
-    private float valueNoise(long salt, float x, float y) {
-        int cornerX = (int) Math.floor(x);
-        int cornerY = (int) Math.floor(y);
-        float fractionX = smooth(x - cornerX);
-        float fractionY = smooth(y - cornerY);
-        float bottom = lerp(corner(salt, cornerX, cornerY), corner(salt, cornerX + 1, cornerY), fractionX);
-        float top = lerp(corner(salt, cornerX, cornerY + 1), corner(salt, cornerX + 1, cornerY + 1), fractionX);
-        return lerp(bottom, top, fractionY);
-    }
-
-    private float corner(long salt, int x, int y) {
-        return (float) AtlasHash.unit(AtlasHash.of(seed, salt, x, y));
-    }
-
-    private static float smooth(float fraction) {
-        return fraction * fraction * (3f - 2f * fraction);
-    }
-
-    private static float lerp(float from, float to, float fraction) {
-        return from + (to - from) * fraction;
+        return AtlasNoise.twoOctave(seed, salt, OCTAVE_SALT, OCTAVE_SHARE, x, y);
     }
 
     private static float centre(int tile) {

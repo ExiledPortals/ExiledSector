@@ -13,7 +13,6 @@ import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.layout.ChartLayoutGenerator;
 import exiledsector.charts.layout.ChartLayoutRecipe;
 import exiledsector.charts.layout.ChartLook;
-import exiledsector.charts.content.ChartPois;
 import exiledsector.charts.content.ModdedChartFactions;
 import exiledsector.charts.layout.ChartShape;
 import exiledsector.charts.layout.abyss.AbyssPalette;
@@ -24,6 +23,8 @@ import org.apache.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import exiledsector.data.EnumKeys;
+import exiledsector.compat.ChartModGates;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -31,7 +32,6 @@ import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -125,10 +125,10 @@ public final class AtlasData {
         return new ChartLayoutRecipe(look, layout == null ? ChartShape.ANY : layout.shape());
     }
 
-    public static AtlasUnlocks unlocksFor(SectorAPI sector, AtlasRules rules) {
+    public static AtlasUnlocks unlocksFor(SectorAPI sector) {
         Set<String> keys = new HashSet<>();
-        rules.regions().forEach(region -> keys.add(region.unlock()));
-        rules.specials().forEach(special -> keys.add(special.unlock()));
+        regions.forEach(region -> keys.add(region.unlock()));
+        specials.forEach(special -> keys.add(special.unlock()));
         keys.remove("");
         Set<String> unlocked = new HashSet<>();
         if (sector != null) {
@@ -138,7 +138,7 @@ public final class AtlasData {
                 }
             }
         }
-        return new AtlasUnlocks(ChartPois::modRequirementMet, unlocked);
+        return new AtlasUnlocks(ChartModGates::met, unlocked);
     }
 
     private static AtlasMarkerRule rule(Map<String, AtlasMarkerRule> rules, String id) {
@@ -206,7 +206,7 @@ public final class AtlasData {
     private static ChartLook look(CsvRows csv, JSONObject row, String rowId) {
         Map<String, Float> stars = csv.weights(row, "stars", rowId, null);
         for (String star : List.copyOf(stars.keySet())) {
-            if (ChartLayoutRecipe.ANOMALY_STARS.contains(star)) {
+            if (ChartLayoutRecipe.isAnomalyStar(star)) {
                 csv.problem(rowId, "stars", star + " (only anomalies add it)");
                 stars.remove(star);
             }
@@ -396,11 +396,10 @@ public final class AtlasData {
         List<AtlasSpecial> loaded = new ArrayList<>();
         CsvRows csv = new CsvRows(SPECIALS_PATH);
         CsvRows.forEachIdRow(rows, ID_COLUMN, (id, row) -> {
-            String placementText = ModCsv.text(row, "placement").toUpperCase(Locale.ROOT);
-            AtlasSpecial.Placement placement;
-            try {
-                placement = placementText.isEmpty() ? AtlasSpecial.Placement.CHUNK : AtlasSpecial.Placement.valueOf(placementText);
-            } catch (IllegalArgumentException e) {
+            String placementText = ModCsv.text(row, "placement");
+            AtlasSpecial.Placement placement = placementText.isEmpty() ? AtlasSpecial.Placement.CHUNK
+                    : EnumKeys.parse(AtlasSpecial.Placement.class, placementText);
+            if (placement == null) {
                 csv.skipRow(id, "placement must be chunk or fixed");
                 return;
             }

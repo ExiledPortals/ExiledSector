@@ -14,22 +14,25 @@ import com.fs.starfarer.api.impl.campaign.ids.Conditions;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.campaign.procgen.StarAge;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
+import exiledsector.data.EnumKeys;
 import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.ChartIds;
 import exiledsector.charts.generation.ChartSystemFactory;
 import exiledsector.charts.layout.abyss.AbyssPalette;
-import exiledsector.charts.layout.abyss.ChartAbyss;
 import exiledsector.charts.wormhole.ChartWormholePlacement;
 import exiledsector.charts.anomaly.ChartAnomaly;
 import exiledsector.charts.anomaly.StarRule;
 import exiledsector.charts.run.cleanup.ChartUsedNames;
+import exiledsector.Seeds;
+import exiledsector.items.WeightedPick;
+import exiledsector.charts.anomaly.LayoutShaper;
 import org.apache.log4j.Logger;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -73,16 +76,8 @@ public final class ChartLayoutGenerator {
     }
 
     private static StarSystemType parse(String text, List<StarSystemType> types) {
-        if (text == null) {
-            return null;
-        }
-        String wanted = text.trim().toUpperCase(Locale.ROOT);
-        for (StarSystemType allowed : types) {
-            if (allowed.name().equals(wanted)) {
-                return allowed;
-            }
-        }
-        return null;
+        StarSystemType parsed = EnumKeys.parse(StarSystemType.class, text);
+        return parsed != null && types.contains(parsed) ? parsed : null;
     }
 
     public static StarSystemType systemTypeFor(ChartLayoutRequest request, Collection<String> anomalyIds) {
@@ -98,40 +93,22 @@ public final class ChartLayoutGenerator {
             return request.systemType();
         }
         Map<StarSystemType, Float> weights = request.recipe().shape().systemTypeWeights();
-        return pickType(derivedRandom(request.seed(), TYPE_SALT), weights.isEmpty() ? TYPE_WEIGHTS : weights);
+        return pickType(Seeds.derived(request.seed(), TYPE_SALT), weights.isEmpty() ? TYPE_WEIGHTS : weights);
     }
 
     static StarSystemType pickType(Random typeRandom, Map<StarSystemType, Float> weights) {
-        float total = 0f;
-        for (StarSystemType allowed : RECIPE_TYPES) {
-            total += Math.max(0f, weights.getOrDefault(allowed, 0f));
-        }
-        if (total <= 0f) {
-            return StarSystemType.SINGLE;
-        }
-        float roll = typeRandom.nextFloat() * total;
-        for (StarSystemType allowed : RECIPE_TYPES) {
-            roll -= Math.max(0f, weights.getOrDefault(allowed, 0f));
-            if (roll < 0f) {
-                return allowed;
-            }
-        }
-        return StarSystemType.SINGLE;
-    }
-
-    public static Random derivedRandom(long seed, long salt) {
-        long mixed = seed ^ salt;
-        mixed = (mixed ^ (mixed >>> 30)) * 0xbf58476d1ce4e5b9L;
-        mixed = (mixed ^ (mixed >>> 27)) * 0x94d049bb133111ebL;
-        return new Random(mixed ^ (mixed >>> 31));
+        Map<StarSystemType, Float> ordered = new LinkedHashMap<>();
+        RECIPE_TYPES.forEach(allowed -> ordered.put(allowed, weights.getOrDefault(allowed, 0f)));
+        StarSystemType picked = WeightedPick.pick(ordered, typeRandom);
+        return picked == null ? StarSystemType.SINGLE : picked;
     }
 
     public static StarAge pickAge(long seed) {
-        return AGES.get(derivedRandom(seed, AGE_SALT).nextInt(AGES.size()));
+        return AGES.get(Seeds.derived(seed, AGE_SALT).nextInt(AGES.size()));
     }
 
     public static AbyssPalette abyssPalette(long seed, ChartLayoutRecipe recipe) {
-        return recipe == null ? null : ChartAbyss.pick(recipe.look().abyssPalettes(), derivedRandom(seed, ABYSS_SALT));
+        return recipe == null ? null : WeightedPick.pick(recipe.look().abyssPalettes(), Seeds.derived(seed, ABYSS_SALT));
     }
 
     static ChartLayoutRecipe settleAbyss(long seed, ChartLayoutRecipe recipe) {
@@ -163,13 +140,18 @@ public final class ChartLayoutGenerator {
         if (!request.recipe().look().musicSetId().isEmpty()) {
             system.getMemoryWithoutUpdate().set(MusicPlayerPluginImpl.MUSIC_SET_MEM_KEY, request.recipe().look().musicSetId());
         }
-        ChartBodyNames.assign(system, ChartBodyNames.designation(derivedRandom(seed, NAME_SALT)));
+        ChartBodyNames.assign(system, ChartBodyNames.designation(Seeds.derived(seed, NAME_SALT)));
         system.updateAllOrbits();
         SectorEntityToken anchor = built.featureAnchor();
         Vector2f avoid = anchor == null || anchor.getLocation() == null ? null : new Vector2f(anchor.getLocation());
-        Vector2f innerWormhole = ChartWormholePlacement.choose(system, derivedRandom(seed, PLACEMENT_SALT), avoid);
-        List<String> shapedAnomalyIds = anomalyIds.stream().filter(id -> !built.unshapedAnomalyIds().contains(id)).toList();
+        Vector2f innerWormhole = ChartWormholePlacement.choose(system, Seeds.derived(seed, PLACEMENT_SALT), avoid);
+        List<String> shapedAnomalyIds = anomalyIds.stream()
+                .filter(id -> built.generated() ? !built.unshapedAnomalyIds().contains(id) : needsNoLayout(id)).toList();
         return new ChartLayout(seed, systemType, built.generated(), innerWormhole, anchor, shapedAnomalyIds);
+    }
+
+    private static boolean needsNoLayout(String anomalyId) {
+        return ChartAnomalies.role(anomalyId, StarRule.class) == null && ChartAnomalies.role(anomalyId, LayoutShaper.class) == null;
     }
 
     private record Built(boolean generated, SectorEntityToken featureAnchor, List<String> unshapedAnomalyIds) {
@@ -178,7 +160,7 @@ public final class ChartLayoutGenerator {
     private static Built buildWithVanilla(StarSystemAPI system, String runId, StarSystemType systemType, long seed, ChartLayoutRecipe recipe,
                                           List<ChartAnomaly> anomalies) {
         try {
-            ChartLayoutEngine.Result result = engine.build(system, ChartIds.starId(runId), systemType, pickAge(seed), derivedRandom(seed, LAYOUT_SALT),
+            ChartLayoutEngine.Result result = engine.build(system, ChartIds.starId(runId), systemType, pickAge(seed), Seeds.derived(seed, LAYOUT_SALT),
                     settleAbyss(seed, recipe), anomalies);
             if (system.getStar() == null && (systemType != StarSystemType.DEEP_SPACE || system.getCenter() == null)) {
                 throw new IllegalStateException("the generator finished without a star");

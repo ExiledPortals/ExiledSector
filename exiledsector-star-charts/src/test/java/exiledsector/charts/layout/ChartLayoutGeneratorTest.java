@@ -14,8 +14,11 @@ import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.impl.campaign.procgen.ProcgenUsedNames;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import exiledsector.MockSector;
+import exiledsector.Seeds;
+import exiledsector.charts.ChartTables;
 import exiledsector.charts.FakeSystem;
 import exiledsector.charts.ChartIds;
+import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.generation.ChartSystemFactory;
 import exiledsector.charts.layout.abyss.AbyssPalette;
 import exiledsector.charts.run.cleanup.ChartUsedNames;
@@ -29,6 +32,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -243,7 +247,7 @@ class ChartLayoutGeneratorTest {
 
         ChartLayoutGenerator.generate(sector, fake.system, RUN_ID, new ChartLayoutRequest(11L, StarSystemType.SINGLE));
 
-        String designation = ChartBodyNames.designation(ChartLayoutGenerator.derivedRandom(11L, ChartLayoutGenerator.NAME_SALT));
+        String designation = ChartBodyNames.designation(Seeds.derived(11L, ChartLayoutGenerator.NAME_SALT));
         for (SectorEntityToken entity : fake.entities) {
             if (entity instanceof PlanetAPI planet) {
                 String name = fake.names.get(planet);
@@ -307,6 +311,27 @@ class ChartLayoutGeneratorTest {
         verify(fake.system).setCenter(null);
         verify(fake.system).initStar(eq(ChartIds.starId(RUN_ID)), eq(ChartSystemFactory.STAR_TYPE), anyFloat(), anyFloat());
         assertEquals(namesBefore, ChartUsedNames.count());
+    }
+
+    @Test
+    void aFailedGenerationKeepsOnlyTheAnomaliesThatNeedNoLayout() {
+        ChartTables.useAnomalies(List.of(new ChartAnomalies.Definition("black_hole", 1f, 1, 15, "", "", false, Set.of(), true),
+                new ChartAnomalies.Definition("faction_skirmish", 1f, 1, 15, "", "", true, Set.of(), false)));
+        try {
+            FakeSystem fake = new FakeSystem();
+            when(fake.system.initStar(anyString(), anyString(), anyFloat(), anyFloat())).thenReturn(mock(PlanetAPI.class));
+            FakeChartLayoutEngine.install(new FakeChartLayoutEngine((system, starId, systemType, random) -> {
+                throw new IllegalStateException("spec missing");
+            }));
+
+            ChartLayout layout = ChartLayoutGenerator.generate(sector, fake.system, RUN_ID,
+                    new ChartLayoutRequest(4L, null).withAnomalies(List.of("black_hole", "faction_skirmish")));
+
+            assertFalse(layout.generated());
+            assertEquals(List.of("faction_skirmish"), layout.anomalyIds());
+        } finally {
+            ChartTables.resetAnomalies();
+        }
     }
 
     @Test

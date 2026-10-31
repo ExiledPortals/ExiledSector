@@ -1,8 +1,8 @@
 package exiledsector.charts.table;
 
 import exiledsector.charts.generation.ChartTiers;
-import exiledsector.charts.layout.ChartLayoutGenerator;
 import exiledsector.data.CsvRows;
+import exiledsector.Seeds;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,6 +62,6 @@ public final class BuiltInTable {
     }
 
     public static Random rollFor(long seed, String id, long salt) {
-        return ChartLayoutGenerator.derivedRandom(seed ^ ((long) id.hashCode() << 32), salt);
+        return Seeds.derived(seed ^ ((long) id.hashCode() << 32), salt);
     }
 }

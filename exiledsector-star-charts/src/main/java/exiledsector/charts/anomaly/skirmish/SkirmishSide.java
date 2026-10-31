@@ -1,25 +1,18 @@
 package exiledsector.charts.anomaly.skirmish;
 
-import java.util.Locale;
+import exiledsector.data.EnumKeys;
+import exiledsector.charts.atlas.AtlasRunChoice;
 
-public enum SkirmishSide {
+public enum SkirmishSide implements AtlasRunChoice {
     DEFENDER,
     ATTACKER,
     NEITHER;
 
     public String key() {
-        return name().toLowerCase(Locale.ROOT);
+        return EnumKeys.key(this);
     }
 
     public static SkirmishSide parse(String text) {
-        if (text == null) {
-            return null;
-        }
-        for (SkirmishSide side : values()) {
-            if (side.key().equals(text.trim().toLowerCase(Locale.ROOT))) {
-                return side;
-            }
-        }
-        return null;
+        return EnumKeys.parse(SkirmishSide.class, text);
     }
 }

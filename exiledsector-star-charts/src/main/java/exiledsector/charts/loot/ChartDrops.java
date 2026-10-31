@@ -4,6 +4,7 @@ import com.fs.starfarer.api.campaign.LocationAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.characters.MutableCharacterStatsAPI;
+import exiledsector.data.EnumKeys;
 import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.ChartIds;
@@ -61,7 +62,7 @@ public final class ChartDrops {
         }
 
         public String id() {
-            return name().toLowerCase(Locale.ROOT);
+            return EnumKeys.key(this);
         }
 
         public boolean insideSystem() {
@@ -69,12 +70,7 @@ public final class ChartDrops {
         }
 
         static Source byId(String id) {
-            for (Source source : values()) {
-                if (source.id().equals(id)) {
-                    return source;
-                }
-            }
-            return null;
+            return EnumKeys.parse(Source.class, id);
         }
     }
 

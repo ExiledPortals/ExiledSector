@@ -19,11 +19,11 @@ final class AtlasBiomes {
     static final float SITE_REACH = BIOME_SPACING * (float) Math.sqrt(2) + MAX_BONUS - MIN_BONUS;
     static final float TOUCH_DISTANCE = 2f * SITE_REACH + (1f + 2f * AtlasPositions.JITTER_REACH) * (float) Math.sqrt(2);
     static final int TOUCH_WINDOW = (int) Math.ceil(TOUCH_DISTANCE / BIOME_SPACING) + 1;
-    private static final int CACHE_LIMIT = 4096;
+    private static final int OWNER_CACHE_LIMIT = 4096;
+    private static final int REGION_CACHE_LIMIT = 65536;
     private static final long SITE_POINT_SALT = 0x53495445505443L;
     private static final long SITE_PRIORITY_SALT = 0x5349544550524fL;
     private static final long REGION_PICK_SALT = 0x5245474e50434bL;
-    private static final long AXIS_SALT = 0x59L;
 
     private final long seed;
     private final AtlasRules rules;
@@ -33,8 +33,9 @@ final class AtlasBiomes {
     private final boolean neighbourRules;
     private final boolean boostingRules;
     private final Set<String> ruledRegions = new HashSet<>();
-    private final Map<Long, AtlasRegion> regionCache = AtlasPositions.boundedCache(CACHE_LIMIT);
-    private final Map<Long, AtlasBiome> ownerCache = AtlasPositions.boundedCache(CACHE_LIMIT);
+    private final JitteredGrid sitePoints;
+    private final Map<Long, AtlasRegion> regionCache = AtlasPositions.boundedCache(REGION_CACHE_LIMIT);
+    private final Map<Long, AtlasBiome> ownerCache = AtlasPositions.boundedCache(OWNER_CACHE_LIMIT);
 
     record Border(AtlasBiome owner, AtlasBiome runnerUp, float gap) {
     }
@@ -56,6 +57,7 @@ final class AtlasBiomes {
 
     AtlasBiomes(long seed, AtlasRules rules, AtlasUnlocks unlocks, AtlasMemory memory, AtlasPositions positions) {
         this.seed = seed;
+        this.sitePoints = new JitteredGrid(seed, SITE_POINT_SALT);
         this.rules = rules;
         this.unlocks = unlocks;
         this.memory = memory;
@@ -170,8 +172,8 @@ final class AtlasBiomes {
     }
 
     private Site site(int siteX, int siteY) {
-        float centreX = (siteX + (float) AtlasHash.unit(AtlasHash.of(seed, SITE_POINT_SALT, siteX, siteY))) * BIOME_SPACING;
-        float centreY = (siteY + (float) AtlasHash.unit(AtlasHash.of(seed, SITE_POINT_SALT ^ AXIS_SALT, siteX, siteY))) * BIOME_SPACING;
+        float centreX = sitePoints.x(siteX, siteY) * BIOME_SPACING;
+        float centreY = sitePoints.y(siteX, siteY) * BIOME_SPACING;
         return new Site(siteX, siteY, centreX, centreY, AtlasHash.unit(AtlasHash.of(seed, SITE_PRIORITY_SALT, siteX, siteY)));
     }
 

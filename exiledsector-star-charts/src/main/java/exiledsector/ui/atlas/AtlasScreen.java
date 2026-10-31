@@ -24,6 +24,7 @@ import exiledsector.charts.atlas.AtlasCatalysts;
 import exiledsector.charts.atlas.AtlasCell;
 import exiledsector.charts.atlas.AtlasRuntime;
 import exiledsector.charts.atlas.AtlasGenerator;
+import exiledsector.charts.atlas.AtlasLine;
 import exiledsector.charts.atlas.AtlasState;
 import exiledsector.charts.layout.sketch.SectorSystemSketcher;
 import exiledsector.charts.wormhole.WormholeGateway;
@@ -426,7 +427,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     private void openChartParts(AtlasCell cell) {
         BenchLayout layout = chartLayout();
         BenchModeSupport.OpenTarget target = new BenchModeSupport.OpenTarget(cell,
-                () -> AtlasNodeText.confirmLines(map.generator(), map.state(), cell), () -> AtlasNodeText.sideChoices(map.generator(), map.state(), cell));
+                () -> AtlasNodeText.confirmLines(map.generator(), map.state(), cell), () -> AtlasNodeText.entryChoices(map.generator(), map.state(), cell));
         chartBench = SocketWorkbenchPanel.openEmbedded(panelRoot, BenchMode.STAR_CHARTS, layout, new SocketWorkbenchPanel.Listener() {
             @Override
             public void changed(Item loaded) {
@@ -617,7 +618,7 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     }
 
     private String systemName(AtlasCell cell) {
-        List<AtlasNodeText.Line> lines = AtlasNodeText.describe(map.generator(), map.state(), cell, map.isReachable(cell));
+        List<AtlasLine> lines = AtlasNodeText.describe(map.generator(), map.state(), cell, map.isReachable(cell));
         return lines.isEmpty() ? "" : lines.get(0).text();
     }
 
@@ -907,11 +908,11 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
     }
 
     private void writeTooltip() {
-        List<AtlasNodeText.Line> lines = AtlasNodeText.describe(map.generator(), map.state(), hoveredCell, map.isReachable(hoveredCell));
+        List<AtlasLine> lines = AtlasNodeText.describe(map.generator(), map.state(), hoveredCell, map.isReachable(hoveredCell));
         String title = lines.isEmpty() ? "" : lines.get(0).text();
         List<StyledText> body = new ArrayList<>();
-        for (AtlasNodeText.Line line : lines.subList(Math.min(1, lines.size()), lines.size())) {
-            body.add(styled(line));
+        for (AtlasLine line : lines.subList(Math.min(1, lines.size()), lines.size())) {
+            body.add(line.styled());
         }
         UseVerdict verdict = map.targetVerdict(hoveredCell);
         AtlasCatalystUse use = catalystUse();
@@ -920,16 +921,5 @@ public final class AtlasScreen extends BaseCustomUIPanelPlugin implements Campai
                     : StyledText.styled(verdict.text(MaterialItems.displayName(use.itemId()), title), Style.BAD));
         }
         writeTooltipText(title, StyledText.join(StyledText.of("\n"), body));
-    }
-
-    static StyledText styled(AtlasNodeText.Line line) {
-        return switch (line.tone()) {
-            case MARKER -> StyledText.styled(line.text(), Style.HIGHLIGHT);
-            case GOOD -> StyledText.styled(line.text(), Style.GOOD);
-            case BAD -> StyledText.styled(line.text(), Style.BAD);
-            case HINT -> StyledText.styled(line.text(), Style.MUTED);
-            case STYLED -> StyledText.parse(line.text());
-            default -> StyledText.of(line.text());
-        };
     }
 }

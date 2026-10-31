@@ -151,7 +151,7 @@ class AtlasCatalystUseTest {
         AtlasState state = new AtlasState(SEED);
         AtlasGenerator generator = generator(state);
         AtlasCell far = farSystem(generator);
-        assertTrue(AtlasAnomalies.insertStar(generator, state, far, StarAnomalies.BLACK_HOLE.id(), AtlasAnomalyRecord.Source.WORLD, null).check().allows());
+        assertTrue(AtlasAnomalies.insert(generator, state, far, StarAnomalies.BLACK_HOLE.id(), AtlasAnomalyRecord.Source.WORLD, null, null, true).check().allows());
 
         UseVerdict verdict = new AnomalyCatalystUse(HYPERSHUNT_SURVEY, generator, state, null, Set.of(far)).check(far);
 

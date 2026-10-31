@@ -1,9 +1,8 @@
 package exiledsector.charts.atlas;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
-import exiledsector.charts.anomaly.relay.RelayChain;
+import exiledsector.charts.anomaly.ChartAnomalies;
 import exiledsector.charts.run.ChartRun;
-import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import org.apache.log4j.Logger;
 
 public final class AtlasProgress {
@@ -23,18 +22,10 @@ public final class AtlasProgress {
             AtlasGenerator generator = AtlasRuntime.generator(sector);
             AtlasCell cell = AtlasCell.unpack(node.cell());
             complete(generator, state, cell, run.tier());
-            if (node.skirmishAttackerId() != null && sector.getFaction(node.skirmishAttackerId()) != null) {
-                captureForWinner(generator, state, cell, node);
-            }
+            ChartAnomalies.runCompleted(sector, run);
             AtlasReach.refreshReveal(generator, state);
         } catch (RuntimeException e) {
             LOG.error("[ExiledSector] Recording the completed atlas system for run " + run.runId() + " failed", e);
-        }
-    }
-
-    static void captureForWinner(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasRunNode node) {
-        if (node.skirmishSide() == SkirmishSide.ATTACKER && node.skirmishAttackerId() != null) {
-            state.capture(generator, cell, node.skirmishAttackerId());
         }
     }
 
@@ -46,17 +37,8 @@ public final class AtlasProgress {
         state.spendUnchainedAnomalies(cell);
         state.clearTier(tier);
         AtlasSpecial special = generator.specialAt(cell);
-        if (special == null) {
-            return;
-        }
-        if (special.kind() == AtlasSpecial.Kind.SENSOR_ARRAY) {
-            state.addAtlasPoints(1);
-        } else if (special.infests()) {
-            cleanse(generator, state, cell, special);
-            state.addAtlasPoints(1);
-        } else if (special.kind() == AtlasSpecial.Kind.BASTION) {
-            state.addKeyFragment();
-            state.addAtlasPoints(1);
+        if (special != null) {
+            special.kind().onCompleted(generator, state, cell, special);
         }
     }
 
@@ -91,10 +73,8 @@ public final class AtlasProgress {
 
     public static void closed(SectorAPI sector, ChartRun run) {
         closedWithoutObjective(sector, run);
-        try {
-            RelayChain.closed(sector, run);
-        } catch (RuntimeException e) {
-            LOG.error("[ExiledSector] Moving the relay network on from run " + run.runId() + " failed", e);
+        if (sector != null && run != null && run.atlasNode() != null) {
+            ChartAnomalies.runClosed(sector, run);
         }
     }
 
@@ -113,7 +93,7 @@ public final class AtlasProgress {
 
     public static void opened(SectorAPI sector, AtlasGenerator generator, AtlasCell cell) {
         AtlasSpecial special = generator.specialAt(cell);
-        if (AtlasSpecial.ofKind(special, AtlasSpecial.Kind.BASTION)) {
+        if (special != null && special.kind().oneAttempt()) {
             AtlasState.get(sector).add(cell, AtlasState.ATTEMPTED);
         }
     }

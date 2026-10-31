@@ -1,7 +1,6 @@
 package exiledsector.charts.objective;
 
 import com.fs.starfarer.api.Global;
-import com.fs.starfarer.api.campaign.FactionAPI;
 import com.fs.starfarer.api.campaign.SectorAPI;
 import com.fs.starfarer.api.campaign.SectorEntityToken;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
@@ -12,6 +11,7 @@ import exiledsector.i18n.I18n;
 import exiledsector.i18n.Translation;
 import exiledsector.charts.anomaly.AnomalyRun;
 import exiledsector.charts.anomaly.ChartAnomalies;
+import exiledsector.charts.content.ChartFactions;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.charts.run.ChartRunBound;
 import exiledsector.charts.run.ChartRuns;
@@ -77,18 +77,6 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
         return I18n.forGameText(() -> Translation.msg("chart.intel.progress").arg("done", done).arg("total", total).text());
     }
 
-    static String factionName(String factionId) {
-        if (factionId == null) {
-            return "";
-        }
-        try {
-            FactionAPI faction = Global.getSector().getFaction(factionId);
-            return faction == null ? factionId : faction.getDisplayName();
-        } catch (RuntimeException e) {
-            return factionId;
-        }
-    }
-
     static String safe(String text) {
         return text == null ? "" : text.replace("%", "%%");
     }
@@ -117,7 +105,7 @@ public class ChartObjectiveIntel extends BaseIntelPlugin implements ChartRunBoun
             return;
         }
         int tier = run.tier();
-        String faction = factionName(run.contentFaction());
+        String faction = ChartFactions.displayName(run.contentFaction());
         info.addPara(safe(Translation.gameText(descriptionKey(run))), 0f);
         info.addPara(safe(I18n.forGameText(() -> Translation.msg("chart.intel.tier").arg("tier", tier).arg("faction", faction).text())),
                 PARAGRAPH_PAD);

@@ -8,6 +8,7 @@ import com.fs.starfarer.api.campaign.StarSystemAPI;
 import com.fs.starfarer.api.impl.campaign.terrain.BaseRingTerrain;
 import com.fs.starfarer.api.impl.campaign.terrain.FlareManager.FlareManagerDelegate;
 import com.fs.starfarer.api.impl.campaign.terrain.PulsarBeamTerrainPlugin;
+import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.generation.ChartSystemFactory;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -69,7 +70,7 @@ public final class ChartWormholePlacement {
     }
 
     private static Vector2f polar(double angle, float radius) {
-        return new Vector2f((float) (Math.cos(angle) * radius), (float) (Math.sin(angle) * radius));
+        return ChartSites.pointAround(new Vector2f(), angle, radius);
     }
 
     static boolean isClear(List<Band> blocked, float distance) {
@@ -122,10 +123,13 @@ public final class ChartWormholePlacement {
         if (!(plugin instanceof BaseRingTerrain ring) || ring.params == null || plugin instanceof PulsarBeamTerrainPlugin) {
             return null;
         }
-        float outerEdge = ring.params.middleRadius + ring.params.bandWidthInEngine * 0.5f;
         float innerEdge = Math.max(0f, ring.params.middleRadius - ring.params.bandWidthInEngine * 0.5f);
-        float flareReach = plugin instanceof FlareManagerDelegate flares ? flareReach(flares, outerEdge) : 0f;
-        return centreBand(terrain, 0).sweptAt(innerEdge, outerEdge + flareReach).widenedBy(TERRAIN_CLEARANCE);
+        return centreBand(terrain, 0).sweptAt(innerEdge, reachWithFlares(ring)).widenedBy(TERRAIN_CLEARANCE);
+    }
+
+    public static float reachWithFlares(BaseRingTerrain ring) {
+        float outerEdge = ring.params.middleRadius + ring.params.bandWidthInEngine * 0.5f;
+        return outerEdge + (ring instanceof FlareManagerDelegate flares ? flareReach(flares, outerEdge) : 0f);
     }
 
     public static float flareReach(FlareManagerDelegate flares, float outerEdge) {

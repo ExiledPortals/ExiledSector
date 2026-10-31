@@ -72,11 +72,17 @@ public final class AtlasAnomalies {
         return canInsert(generator, state, cell, anomalyId, openRunCell, false);
     }
 
-    public static InsertCheck canInsertStar(AtlasGenerator generator, AtlasState state, AtlasCell cell, String anomalyId, AtlasCell openRunCell) {
-        return canInsert(generator, state, cell, anomalyId, openRunCell, true);
+    public static InsertCheck systemCheck(AtlasGenerator generator, AtlasState state, AtlasCell cell, AtlasCell openRunCell) {
+        if (cell.equals(AtlasCell.ORIGIN) || generator.isVoid(cell)) {
+            return InsertCheck.NO_SYSTEM;
+        }
+        if (state.isCompleted(cell)) {
+            return InsertCheck.COMPLETED;
+        }
+        return cell.equals(openRunCell) ? InsertCheck.OPEN_RUN : InsertCheck.ALLOWED;
     }
 
-    private static InsertCheck canInsert(AtlasGenerator generator, AtlasState state, AtlasCell cell, String anomalyId, AtlasCell openRunCell,
+    public static InsertCheck canInsert(AtlasGenerator generator, AtlasState state, AtlasCell cell, String anomalyId, AtlasCell openRunCell,
                                          boolean forcingStar) {
         ChartAnomalies.Definition definition = ChartAnomalies.definition(anomalyId);
         ChartAnomaly anomaly = ChartAnomalies.byId(anomalyId);
@@ -90,14 +96,9 @@ public final class AtlasAnomalies {
         if (!ChartAnomalies.usable(anomalyId)) {
             return InsertCheck.MOD_MISSING;
         }
-        if (cell.equals(AtlasCell.ORIGIN) || generator.isVoid(cell)) {
-            return InsertCheck.NO_SYSTEM;
-        }
-        if (state.isCompleted(cell)) {
-            return InsertCheck.COMPLETED;
-        }
-        if (cell.equals(openRunCell)) {
-            return InsertCheck.OPEN_RUN;
+        InsertCheck system = systemCheck(generator, state, cell, openRunCell);
+        if (!system.allows()) {
+            return system;
         }
         List<String> present = effective(generator, state, cell);
         if (present.contains(anomalyId)) {
@@ -119,14 +120,13 @@ public final class AtlasAnomalies {
 
     public static Insertion insert(AtlasGenerator generator, AtlasState state, AtlasCell cell, String anomalyId, AtlasAnomalyRecord.Source source,
                                    AtlasCell openRunCell, AtlasAnomalyRecord.Chain chain) {
-        InsertCheck check = canInsert(generator, state, cell, anomalyId, openRunCell);
-        return new Insertion(check, check.allows() ? state.insertAnomaly(cell, anomalyId, source, chain) : 0);
+        return insert(generator, state, cell, anomalyId, source, openRunCell, chain, false);
     }
 
-    public static Insertion insertStar(AtlasGenerator generator, AtlasState state, AtlasCell cell, String anomalyId, AtlasAnomalyRecord.Source source,
-                                       AtlasCell openRunCell) {
-        InsertCheck check = canInsertStar(generator, state, cell, anomalyId, openRunCell);
-        return new Insertion(check, check.allows() ? state.insertAnomaly(cell, anomalyId, source) : 0);
+    public static Insertion insert(AtlasGenerator generator, AtlasState state, AtlasCell cell, String anomalyId, AtlasAnomalyRecord.Source source,
+                                   AtlasCell openRunCell, AtlasAnomalyRecord.Chain chain, boolean forcingStar) {
+        InsertCheck check = canInsert(generator, state, cell, anomalyId, openRunCell, forcingStar);
+        return new Insertion(check, check.allows() ? state.insertAnomaly(cell, anomalyId, source, chain) : 0);
     }
 
     public static InsertCheck move(AtlasGenerator generator, AtlasState state, int recordId, AtlasCell target, AtlasCell openRunCell) {

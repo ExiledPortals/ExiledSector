@@ -205,7 +205,7 @@ class RelayChainTest {
         insertAtStart(new AtlasAnomalyRecord.Chain(3, 4, AtlasCell.ORIGIN));
         assertFalse(RelayChain.join(node, generator, state, start).guaranteedBossUnique());
         AtlasRunNode plain = new AtlasRunNode(start.pack(), "pirates", List.of(), List.of(), false);
-        assertSame(plain, RelayChain.join(plain, generator, state, start));
+        assertSame(plain, ChartAnomalies.joinRunNode(plain, generator, state, start, null));
     }
 
     @Test

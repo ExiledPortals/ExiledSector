@@ -10,6 +10,8 @@ import exiledsector.charts.content.ChartContentGenerator;
 import exiledsector.charts.content.ChartPoi;
 import exiledsector.charts.content.ChartSites;
 import exiledsector.charts.content.ChartSpot;
+import exiledsector.charts.content.ContentForces;
+import exiledsector.charts.content.SettledObjective;
 import exiledsector.charts.run.ChartRun;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -48,6 +50,9 @@ public final class AnomalyContentSite {
     private final Predicate<ChartSpot> clear;
     private final LongFunction<Random> randoms;
     private final Set<String> claimedPlanetIds;
+    private final ContentForces forces;
+    private final Object plan;
+    private SettledObjective settledObjective;
     private final List<SectorEntityToken> placed = new ArrayList<>();
     private final List<EveryFrameScript> scripts = new ArrayList<>();
     private final List<String> claims = new ArrayList<>();
@@ -66,6 +71,12 @@ public final class AnomalyContentSite {
     public AnomalyContentSite(StarSystemAPI system, String runId, int tier, String factionId, ChartGenContext context, List<SectorEntityToken> pois,
                               List<SectorEntityToken> guardedPois, Vector2f entry, Predicate<ChartSpot> clear, LongFunction<Random> randoms,
                               Set<String> claimedPlanetIds) {
+        this(system, runId, tier, factionId, context, pois, guardedPois, entry, clear, randoms, claimedPlanetIds, ContentForces.NONE, null);
+    }
+
+    public AnomalyContentSite(StarSystemAPI system, String runId, int tier, String factionId, ChartGenContext context, List<SectorEntityToken> pois,
+                              List<SectorEntityToken> guardedPois, Vector2f entry, Predicate<ChartSpot> clear, LongFunction<Random> randoms,
+                              Set<String> claimedPlanetIds, ContentForces forces, Object plan) {
         this.system = system;
         this.runId = runId;
         this.tier = tier;
@@ -77,6 +88,8 @@ public final class AnomalyContentSite {
         this.clear = clear;
         this.randoms = randoms;
         this.claimedPlanetIds = claimedPlanetIds;
+        this.forces = forces == null ? ContentForces.NONE : forces;
+        this.plan = plan;
     }
 
     public StarSystemAPI system() {
@@ -97,6 +110,26 @@ public final class AnomalyContentSite {
 
     public ChartGenContext context() {
         return context;
+    }
+
+    public ContentForces forces() {
+        return forces;
+    }
+
+    public <T> T plan(Class<T> type) {
+        return type.isInstance(plan) ? type.cast(plan) : null;
+    }
+
+    public void settle(SettledObjective objective) {
+        settledObjective = objective;
+    }
+
+    public SettledObjective settledObjective() {
+        return settledObjective;
+    }
+
+    public Vector2f entry() {
+        return entry == null ? null : new Vector2f(entry);
     }
 
     public SectorEntityToken centre() {
@@ -150,6 +183,7 @@ public final class AnomalyContentSite {
         claims.forEach(claimedPlanetIds::remove);
         claims.clear();
         stagedStates.clear();
+        settledObjective = null;
     }
 
     public List<SectorEntityToken> pois() {
@@ -230,7 +264,7 @@ public final class AnomalyContentSite {
 
     private static Vector2f offset(Vector2f from, float distance, Random random) {
         double angle = random.nextDouble() * Math.PI * 2d;
-        return new Vector2f(from.x + (float) Math.cos(angle) * distance, from.y + (float) Math.sin(angle) * distance);
+        return ChartSites.pointAround(from, angle, distance);
     }
 
     public SectorEntityToken addSite(ChartPoi poi, ChartSites.Orbit orbit, Random random) {

@@ -13,12 +13,12 @@ final class AtlasTerritories {
     private static final long TERRITORY_POINT_SALT = 0x54455252505443L;
     private static final long TERRITORY_PICK_SALT = 0x544552525043L;
     private static final long FACTION_SALT = 0x46414354L;
-    private static final long AXIS_SALT = 0x59L;
 
     private final long seed;
     private final AtlasRules rules;
     private final AtlasPositions positions;
     private final AtlasMemory memory;
+    private final JitteredGrid territoryPoints;
 
     private record SeedPoint(int gridX, int gridY) {
     }
@@ -28,6 +28,7 @@ final class AtlasTerritories {
         this.rules = rules;
         this.positions = positions;
         this.memory = memory;
+        this.territoryPoints = new JitteredGrid(seed, TERRITORY_POINT_SALT);
     }
 
     String territoryAt(AtlasCell cell) {
@@ -103,8 +104,8 @@ final class AtlasTerritories {
                 if (Math.abs(gridX - baseX) == 2 && Math.abs(gridY - baseY) == 2) {
                     continue;
                 }
-                float sx = gridX + (float) AtlasHash.unit(AtlasHash.of(seed, TERRITORY_POINT_SALT, gridX, gridY));
-                float sy = gridY + (float) AtlasHash.unit(AtlasHash.of(seed, TERRITORY_POINT_SALT ^ AXIS_SALT, gridX, gridY));
+                float sx = territoryPoints.x(gridX, gridY);
+                float sy = territoryPoints.y(gridX, gridY);
                 float distance = AtlasPositions.squared(sx - px, sy - py);
                 if (distance < nearestDistance) {
                     nearestDistance = distance;

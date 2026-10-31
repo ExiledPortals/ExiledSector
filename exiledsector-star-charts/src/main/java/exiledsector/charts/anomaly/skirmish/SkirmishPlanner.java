@@ -1,13 +1,15 @@
-package exiledsector.charts.content;
+package exiledsector.charts.anomaly.skirmish;
 
-import exiledsector.charts.generation.ChartGenContext;
-import exiledsector.charts.generation.ChartTier;
+import exiledsector.charts.anomaly.ContentPlanSite;
+import exiledsector.charts.content.ChartBossType;
+import exiledsector.charts.content.ChartContentPlan;
 import exiledsector.charts.content.ChartContentPlan.FleetRole;
 import exiledsector.charts.content.ChartContentPlan.PlannedFleet;
-import exiledsector.charts.content.ChartContentPlan.PlannedSkirmish;
 import exiledsector.charts.content.ChartContentPlan.PlannedStation;
-import exiledsector.charts.anomaly.skirmish.SkirmishFactions;
-import exiledsector.charts.anomaly.skirmish.SkirmishSide;
+import exiledsector.charts.content.ChartContentPlanner;
+import exiledsector.charts.content.ChartFaction;
+import exiledsector.charts.generation.ChartTier;
+import exiledsector.charts.objective.ChartObjective;
 import exiledsector.items.WeightedPick;
 
 import java.util.ArrayList;
@@ -18,19 +20,21 @@ import java.util.function.Predicate;
 final class SkirmishPlanner {
 
     static final float ALLY_STRENGTH_DIVISOR = 1.3f;
+    static final long ATTACKER_SALT = 0x4348534b524d53L;
 
     private SkirmishPlanner() {
     }
 
-    static ChartContentPlan apply(ChartContentPlan plan, ChartTier tier, ChartGenContext chartContext, List<ChartFaction> factions,
-                                  Predicate<String> factionLoaded, Random random) {
+    static ChartContentPlan apply(ChartContentPlan plan, ContentPlanSite site) {
         String defenderId = plan.faction().factionId();
-        String attackerId = attacker(chartContext.skirmishAttackerId(), defenderId, factions, factionLoaded, random);
+        SkirmishJoin join = SkirmishJoin.of(site.context());
+        String attackerId = attacker(join == null ? null : join.attackerId(), defenderId, site.factions(), site.factionLoaded(),
+                site.random(ATTACKER_SALT));
         if (attackerId == null) {
             return plan;
         }
-        SkirmishSide side = chartContext.skirmishSide() == null ? SkirmishSide.NEITHER : chartContext.skirmishSide();
-        List<PlannedFleet> attackerFleets = attackerFleets(plan.fleets(), tier);
+        SkirmishSide side = join == null ? SkirmishSide.NEITHER : join.side();
+        List<PlannedFleet> attackerFleets = attackerFleets(plan.fleets(), site.tier());
         List<PlannedFleet> defenderFleets = plan.fleets();
         PlannedStation station = plan.bossStation();
         if (side == SkirmishSide.DEFENDER) {
@@ -41,8 +45,9 @@ final class SkirmishPlanner {
         } else if (side == SkirmishSide.ATTACKER) {
             attackerFleets = asAllies(attackerFleets);
         }
-        return new ChartContentPlan(plan.tier(), plan.faction(), plan.objective(), plan.pois(), defenderFleets, plan.anomalies(), plan.bossType(),
-                station, new PlannedSkirmish(attackerId, side, attackerFleets));
+        ChartContentPlan joined = plan.withDefenders(defenderFleets, station, side == SkirmishSide.DEFENDER)
+                .withAnomalyPlan(FactionSkirmish.ANOMALY_ID, new SkirmishPlan(attackerId, side, attackerFleets));
+        return side == SkirmishSide.DEFENDER ? joined : joined.withObjective(ChartObjective.BOSS);
     }
 
     static String attacker(String chosenId, String defenderId, List<ChartFaction> factions, Predicate<String> factionLoaded, Random random) {

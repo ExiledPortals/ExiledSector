@@ -70,6 +70,7 @@ final class AtlasMapCanvas {
     static final float TARGET_USABLE_ALPHA = 0.65f;
     static final float TARGET_PULSE_ALPHA = 0.35f;
     static final float TARGET_REFUSED_ALPHA = 0.35f;
+    static final int LOOK_STATES = 4;
 
     record AnomalyIcon(AtlasCell cell, String anomalyId, String iconPath, int slot, boolean fogged) {
 
@@ -99,6 +100,8 @@ final class AtlasMapCanvas {
     private final NodeBeams beams;
     private final AtlasScenery scenery;
     private final ChartSystemSketch gatewaySketch;
+    private final Map<Color, NodeRingArt.NotableLook[]> notableLooks = new HashMap<>();
+    private Color lookAccent;
 
     AtlasMapCanvas(AtlasGenerator generator, AtlasState state) {
         this(generator, state, new AtlasScenery(generator.seed()));
@@ -487,7 +490,7 @@ final class AtlasMapCanvas {
             Color tint = ringTint(cell, node);
             float openness = openness(cell);
             float innerRadius = NodeMetrics.donutRadius(footprint) * WormholeArt.visualScale(openness);
-            NodeRingArt.NotableLook look = new NodeRingArt.NotableLook(lit, open, tint, tint, accent);
+            NodeRingArt.NotableLook look = notableLook(lit, open, tint, accent);
             if (openness > 0f) {
                 ringArt.drawPortalRings(x, y, innerRadius, nodeKey(cell), look, openness * alphaMult);
             }
@@ -543,6 +546,19 @@ final class AtlasMapCanvas {
             beams.ring(x, y, NodeBeams.huggingRingRadius(radius, ringWidthScale), null, ringLook, alpha, ringWidthScale);
         }
         beams.flush();
+    }
+
+    private NodeRingArt.NotableLook notableLook(boolean lit, boolean open, Color tint, Color accent) {
+        if (!accent.equals(lookAccent)) {
+            notableLooks.clear();
+            lookAccent = accent;
+        }
+        NodeRingArt.NotableLook[] byState = notableLooks.computeIfAbsent(tint, key -> new NodeRingArt.NotableLook[LOOK_STATES]);
+        int index = (lit ? 2 : 0) + (open ? 1 : 0);
+        if (byState[index] == null) {
+            byState[index] = new NodeRingArt.NotableLook(lit, open, tint, tint, accent);
+        }
+        return byState[index];
     }
 
     private Color ringTint(AtlasCell cell, AtlasNode node) {

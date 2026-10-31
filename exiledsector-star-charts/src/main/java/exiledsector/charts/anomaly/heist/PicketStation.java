@@ -1,6 +1,7 @@
 package exiledsector.charts.anomaly.heist;
 
 import com.fs.starfarer.api.campaign.SectorEntityToken;
+import exiledsector.charts.content.ChartSites;
 import org.lwjgl.util.vector.Vector2f;
 
 public final class PicketStation {
@@ -38,8 +39,7 @@ public final class PicketStation {
     }
 
     Vector2f around(Vector2f centre) {
-        double radians = Math.toRadians(angle);
-        return new Vector2f(centre.x + (float) Math.cos(radians) * radius, centre.y + (float) Math.sin(radians) * radius);
+        return ChartSites.pointAround(centre, Math.toRadians(angle), radius);
     }
 
     void follow(Vector2f centre) {

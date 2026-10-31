@@ -55,11 +55,9 @@ public final class AtlasOpening {
             return Blocker.NOT_REACHABLE;
         }
         AtlasSpecial special = generator.specialAt(cell);
-        if (AtlasSpecial.ofKind(special, AtlasSpecial.Kind.BASTION) && (chart == null || chart.tier() < ChartTiers.HIGHEST_TIER)) {
-            return Blocker.BASTION_NEEDS_TOP_TIER;
-        }
-        if (special != null && special.infests() && explicitModifiers(chart) < NEXUS_MODIFIERS) {
-            return Blocker.NEXUS_NEEDS_MODIFIERS;
+        Blocker specialBlocker = special == null ? null : special.kind().openBlocker(chart);
+        if (specialBlocker != null) {
+            return specialBlocker;
         }
         if (chart != null && chart.tier() > maxTier) {
             return Blocker.GATEWAY_TIER_LIMIT;
@@ -82,7 +80,7 @@ public final class AtlasOpening {
             effects.addAll(AtlasData.nodeEffects(state.has(cell, AtlasState.CLEANSED) ? CLEANSED : INFESTED));
         }
         if (special != null) {
-            effects.addAll(AtlasData.nodeEffects(special.infests() ? NEXUS : special.kind().key()));
+            effects.addAll(AtlasData.nodeEffects(special.kind().nodeEffectsId()));
         }
         List<String> anomalyIds = AtlasAnomalies.effective(generator, state, cell);
         return new AtlasRunNode(cell.pack(), factionFor(generator, state, cell, node), effects, anomalyIds, ChartAnomalies.guaranteeBossTierUp(anomalyIds));

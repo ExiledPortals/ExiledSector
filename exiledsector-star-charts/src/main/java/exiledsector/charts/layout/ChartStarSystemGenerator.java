@@ -30,6 +30,7 @@ import exiledsector.charts.anomaly.StarRule;
 import exiledsector.charts.anomaly.StellarFlares;
 import exiledsector.charts.table.BuiltInTable;
 import exiledsector.compat.UnknownSkiesCompat;
+import exiledsector.items.WeightedPick;
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -266,7 +267,7 @@ final class ChartStarSystemGenerator extends StarSystemGenerator {
         tertiary = null;
         systemCenter = null;
         bodyIdPrefix = starId;
-        AbyssPalette abyss = ChartAbyss.pick(recipe.look().abyssPalettes(), random);
+        AbyssPalette abyss = WeightedPick.pick(recipe.look().abyssPalettes(), random);
         boolean abyssalCentre = abyss != null && systemType == StarSystemType.DEEP_SPACE;
         if (abyssalCentre) {
             addAbyssalCentre();

@@ -1,6 +1,7 @@
 package exiledsector.charts.effect;
 
 import com.fs.starfarer.api.campaign.SectorAPI;
+import exiledsector.data.EnumKeys;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartGenerated;
 import exiledsector.charts.content.ChartPoi;
@@ -200,15 +201,7 @@ public enum ChartEffect implements ModifierEffect {
     }
 
     public static ChartEffect byNameOrNull(String effectName) {
-        if (effectName == null) {
-            return null;
-        }
-        for (ChartEffect effect : values()) {
-            if (effect.name().equalsIgnoreCase(effectName.trim())) {
-                return effect;
-            }
-        }
-        return null;
+        return EnumKeys.parse(ChartEffect.class, effectName);
     }
 
     public static ChartEffect forDropType(DropType type) {

@@ -27,10 +27,6 @@ final class AtlasAbyssShade {
         anyAbyss = knownCells.stream().anyMatch(abyssalCell);
     }
 
-    boolean hasAbyss() {
-        return anyAbyss;
-    }
-
     void render(TreeViewport view, float alphaMult) {
         if (!anyAbyss || alphaMult <= 0f) {
             return;

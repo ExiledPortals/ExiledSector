@@ -3,7 +3,6 @@ package exiledsector.charts.layout;
 import com.fs.starfarer.api.impl.campaign.procgen.StarSystemGenerator.StarSystemType;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.generation.ChartTiers;
-import exiledsector.charts.anomaly.skirmish.SkirmishSide;
 import exiledsector.items.StarChart;
 
 import java.util.List;
@@ -45,8 +44,8 @@ public record ChartLayoutRequest(long seed, StarSystemType systemType, int tier,
         return new ChartLayoutRequest(seed, systemType, tier, chartContext.withAnomalies(anomalyIds), recipe, chartSeed);
     }
 
-    public ChartLayoutRequest withSkirmishSide(SkirmishSide side) {
-        return new ChartLayoutRequest(seed, systemType, tier, chartContext.withSkirmishSide(side), recipe, chartSeed);
+    public ChartLayoutRequest withAnomalyData(String anomalyId, String data) {
+        return new ChartLayoutRequest(seed, systemType, tier, chartContext.withAnomalyData(anomalyId, data), recipe, chartSeed);
     }
 
     public static ChartLayoutRequest randomFrom(Random random) {
