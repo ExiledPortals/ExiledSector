@@ -16,6 +16,7 @@ import static exiledsector.skills.skilleffect.StatTarget.liveStat;
 public enum MovementSkillEffect implements BackedSkillEffect {
 
     MANEUVERABILITY_PERCENT(PERCENT, Maneuverability.target(), "stat.maneuverability", false),
+    MANEUVERABILITY_MULT(MULT, Maneuverability.multTarget(), "stat.maneuverability", false),
     TOP_SPEED_PERCENT(PERCENT, liveStat(MutableShipStatsAPI::getMaxSpeed), StatNames.TOP_SPEED, false),
     TOP_SPEED_FLAT(FLAT, liveStat(MutableShipStatsAPI::getMaxSpeed), StatNames.TOP_SPEED, false),
     TOP_SPEED_MULT(MULT, liveStat(MutableShipStatsAPI::getMaxSpeed), StatNames.TOP_SPEED, false),
@@ -24,6 +25,7 @@ public enum MovementSkillEffect implements BackedSkillEffect {
     DECELERATION_FLAT(FLAT, liveStat(MutableShipStatsAPI::getDeceleration), "stat.deceleration", false),
     TIMEFLOW_PERCENT(PERCENT, liveStat(MutableShipStatsAPI::getTimeMult), "stat.timeflow", false),
     TIMEFLOW_MULT(MULT, liveStat(MutableShipStatsAPI::getTimeMult), "stat.timeflow", false),
+    SHIP_MASS_PERCENT(PERCENT, new StatTarget.ShipMass(), "stat.shipMass", false),
     TOP_SPEED_MULT_PER_DMOD(new PerDModMultEffect(liveStat(MutableShipStatsAPI::getMaxSpeed), "stat.topSpeedPerDMod", false));
 
     private final EffectBacking backing;

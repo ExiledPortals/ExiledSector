@@ -767,6 +767,7 @@
     "stat.topSpeed": "最高速度",
     "stat.ventingSpeed": "主动排散速度",
     "stat.timeflow": "时间流速",
+    "stat.shipMass": "质量",
     "stat.fluxDissipationPerFluxVent": "每个耗散器提供的幅能耗散",
     "stat.sensorProfileOnPhaseHulls": "相位舰体的传感器特征",
     "stat.fluxDissipationWhilePhased": "相位状态下的幅能耗散速度",

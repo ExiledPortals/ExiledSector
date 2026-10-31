@@ -215,6 +215,41 @@ public sealed interface StatTarget {
         }
     }
 
+    record ShipMass() implements StatTarget {
+
+        static final String KEY = "exiledLib_SHIP_MASS";
+        static final String BASE_MASS_KEY = "exiledLib_baseMass";
+        static final float MIN_MASS_FRACTION = 0.1f;
+
+        @Override
+        public void apply(MutableShipStatsAPI stats, String modId, StatMode mode, float magnitude) {
+            mode.apply(stats.getDynamic().getMod(KEY), modId, magnitude);
+        }
+
+        @Override
+        public void remove(MutableShipStatsAPI stats, String modId) {
+            stats.getDynamic().getMod(KEY).unmodify(modId);
+        }
+
+        @Override
+        public void applyAfterShipCreation(ShipAPI ship) {
+            float baseMass;
+            if (ship.getCustomData().get(BASE_MASS_KEY) instanceof Float stored) {
+                baseMass = stored;
+            } else {
+                baseMass = ship.getMass();
+                ship.setCustomData(BASE_MASS_KEY, baseMass);
+            }
+            float massFactor = ship.getMutableStats().getDynamic().getMod(KEY).computeEffective(1f);
+            ship.setMass(baseMass * Math.max(MIN_MASS_FRACTION, massFactor));
+        }
+
+        @Override
+        public boolean supports(StatMode mode) {
+            return mode != StatMode.FLAT;
+        }
+    }
+
     record PerWeaponAmmo(WeaponScope scope, boolean regeneration) implements StatTarget {
 
         private String key() {

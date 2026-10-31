@@ -7,6 +7,7 @@ import com.fs.starfarer.api.combat.MutableShipStatsAPI;
 import com.fs.starfarer.api.combat.MutableStat;
 import com.fs.starfarer.api.combat.ShipAPI;
 import com.fs.starfarer.api.combat.ShipVariantAPI;
+import com.fs.starfarer.api.combat.StatBonus;
 import com.fs.starfarer.api.impl.campaign.ids.Tags;
 import com.fs.starfarer.api.loading.HullModSpecAPI;
 import com.fs.starfarer.api.util.DynamicStatsAPI;
@@ -16,10 +17,15 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -72,5 +78,38 @@ class MovementSkillEffectTest {
         MovementSkillEffect.TOP_SPEED_MULT_PER_DMOD.apply(stats, "mod_id", 2f);
 
         assertEquals(100f * (float) Math.pow(1.02, 5), maxSpeed.getModifiedValue(), 0.001f);
+    }
+
+    private float[] giveMass(float buildMass) {
+        Map<String, Object> customData = new HashMap<>();
+        float[] mass = {buildMass};
+        when(ship.getCustomData()).thenReturn(customData);
+        doAnswer(call -> customData.put(call.getArgument(0), call.getArgument(1))).when(ship).setCustomData(anyString(), any());
+        when(ship.getMass()).thenAnswer(call -> mass[0]);
+        doAnswer(call -> mass[0] = call.<Float>getArgument(0)).when(ship).setMass(anyFloat());
+        when(dynamic.getMod("exiledLib_SHIP_MASS")).thenReturn(new StatBonus());
+        return mass;
+    }
+
+    @Test
+    void shipMassScalesTheBuildMassWithoutCompoundingOnReapply() {
+        float[] mass = giveMass(1000f);
+        MovementSkillEffect.SHIP_MASS_PERCENT.apply(stats, "a", 30f);
+        MovementSkillEffect.SHIP_MASS_PERCENT.apply(stats, "b", 20f);
+
+        MovementSkillEffect.SHIP_MASS_PERCENT.applyAfterShipCreation(ship, "a", 30f);
+        MovementSkillEffect.SHIP_MASS_PERCENT.applyAfterShipCreation(ship, "b", 20f);
+
+        assertEquals(1500f, mass[0], 0.001f);
+    }
+
+    @Test
+    void shipMassNeverDropsBelowATenthOfTheBuildMass() {
+        float[] mass = giveMass(1000f);
+        MovementSkillEffect.SHIP_MASS_PERCENT.apply(stats, "a", -150f);
+
+        MovementSkillEffect.SHIP_MASS_PERCENT.applyAfterShipCreation(ship, "a", -150f);
+
+        assertEquals(100f, mass[0], 0.001f);
     }
 }

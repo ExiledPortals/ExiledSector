@@ -1360,6 +1360,12 @@ effect|MALFUNCTION_AURA_PERCENT|12.5	0	Enemy ships within 1000 su have <good>12.
 effect|MALFUNCTION_AURA_PERCENT|100.0	0	Enemy ships within 1000 su have <good>100%</good> chance for their weapons to malfunction. Only the strongest applies.
 effect|MALFUNCTION_AURA_PERCENT|-10.0	0	Enemy ships within 1000 su have <good>-10%</good> chance for their weapons to malfunction. Only the strongest applies.
 effect|MALFUNCTION_AURA_PERCENT|-12.5	0	Enemy ships within 1000 su have <good>-12.5%</good> chance for their weapons to malfunction. Only the strongest applies.
+effect|MANEUVERABILITY_MULT|1.0	0	<good>1%</good> more maneuverability.
+effect|MANEUVERABILITY_MULT|10.0	0	<good>10%</good> more maneuverability.
+effect|MANEUVERABILITY_MULT|12.5	0	<good>12.5%</good> more maneuverability.
+effect|MANEUVERABILITY_MULT|100.0	0	<good>100%</good> more maneuverability.
+effect|MANEUVERABILITY_MULT|-10.0	0	<bad>10%</bad> less maneuverability.
+effect|MANEUVERABILITY_MULT|-12.5	0	<bad>12.5%</bad> less maneuverability.
 effect|MANEUVERABILITY_PERCENT|1.0	0	<good>1%</good> increased maneuverability.
 effect|MANEUVERABILITY_PERCENT|10.0	0	<good>10%</good> increased maneuverability.
 effect|MANEUVERABILITY_PERCENT|12.5	0	<good>12.5%</good> increased maneuverability.
@@ -2098,6 +2104,12 @@ effect|SHIELD_UPKEEP_PERCENT|12.5	1	<good>12.5%</good> increased shield flux upk
 effect|SHIELD_UPKEEP_PERCENT|100.0	1	<good>100%</good> increased shield flux upkeep.
 effect|SHIELD_UPKEEP_PERCENT|-10.0	1	<bad>10%</bad> reduced shield flux upkeep.
 effect|SHIELD_UPKEEP_PERCENT|-12.5	1	<bad>12.5%</bad> reduced shield flux upkeep.
+effect|SHIP_MASS_PERCENT|1.0	0	<good>1%</good> increased mass.
+effect|SHIP_MASS_PERCENT|10.0	0	<good>10%</good> increased mass.
+effect|SHIP_MASS_PERCENT|12.5	0	<good>12.5%</good> increased mass.
+effect|SHIP_MASS_PERCENT|100.0	0	<good>100%</good> increased mass.
+effect|SHIP_MASS_PERCENT|-10.0	0	<bad>10%</bad> reduced mass.
+effect|SHIP_MASS_PERCENT|-12.5	0	<bad>12.5%</bad> reduced mass.
 effect|SHIP_RECOVERY_CHANCE_BONUS|1.0	0	If disabled, this ship is almost always recoverable after the battle.
 effect|SHIP_RECOVERY_CHANCE_BONUS|10.0	0	If disabled, this ship is almost always recoverable after the battle.
 effect|SHIP_RECOVERY_CHANCE_BONUS|12.5	0	If disabled, this ship is almost always recoverable after the battle.
@@ -4803,6 +4815,17 @@ type|tania_thermo_accelerator|FRIGATE|0	0	Turret weapons have <good>50%</good> r
 type|tania_thermo_accelerator|DESTROYER|0	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
 type|tania_thermo_accelerator|CRUISER|0	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
 type|tania_thermo_accelerator|CAPITAL_SHIP|0	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
+flavour|tania_touraco_prow	0	The Touraco carries more plate than any cruiser needs, and Navarchy captains treat the surplus as a weapon. A crew that has been on the wrong end of one bolts the same plate into this ship's frame. The helm has filed a complaint.
+type|tania_touraco_prow|null|0	0	<good>50%</good> increased mass.
+type|tania_touraco_prow|null|1	0	<bad>35%</bad> less maneuverability.
+type|tania_touraco_prow|FRIGATE|0	0	<good>50%</good> increased mass.
+type|tania_touraco_prow|FRIGATE|1	0	<bad>35%</bad> less maneuverability.
+type|tania_touraco_prow|DESTROYER|0	0	<good>50%</good> increased mass.
+type|tania_touraco_prow|DESTROYER|1	0	<bad>35%</bad> less maneuverability.
+type|tania_touraco_prow|CRUISER|0	0	<good>50%</good> increased mass.
+type|tania_touraco_prow|CRUISER|1	0	<bad>35%</bad> less maneuverability.
+type|tania_touraco_prow|CAPITAL_SHIP|0	0	<good>50%</good> increased mass.
+type|tania_touraco_prow|CAPITAL_SHIP|1	0	<bad>35%</bad> less maneuverability.
 type|tania_weapon_fire_rate|null|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|tania_weapon_fire_rate|FRIGATE|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
 type|tania_weapon_fire_rate|DESTROYER|0	0	<good>3%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
@@ -5217,23 +5240,25 @@ summary|option0|FRIGATE|207	0	Weapons cost no flux to fire for <good>4</good> se
 summary|option0|FRIGATE|208	0	<good>50%</good> increased weapon projectile speed for those seconds.
 summary|option0|FRIGATE|209	0	<good>25%</good> increased weapon rate of fire for those seconds.
 summary|option0|FRIGATE|210	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
-summary|option0|FRIGATE|211	0	<good>6%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
-summary|option0|FRIGATE|212	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-summary|option0|FRIGATE|213	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option0|FRIGATE|214	0	<good>100%</good> increased weapon turn rate.
-summary|option0|FRIGATE|215	0	<bad>15%</bad> less ballistic weapon range.
-summary|option0|FRIGATE|216	0	<bad>15%</bad> less energy weapon range.
-summary|option0|FRIGATE|217	1	<good>25%</good> increased strikecraft refit time.
-summary|option0|FRIGATE|218	0	<good>15%</good> increased energy weapon damage.
-summary|option0|FRIGATE|219	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
-summary|option0|FRIGATE|220	0	Your fleet has <good>3%</good> increased post-battle salvage.
-summary|option0|FRIGATE|221	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option0|FRIGATE|222	0	<good>2%</good> more crew capacity.
-summary|option0|FRIGATE|223	0	<good>36%</good> more armor.
-summary|option0|FRIGATE|224	0	<good>108%</good> more fuel capacity.
-summary|option0|FRIGATE|225	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option0|FRIGATE|226	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option0|FRIGATE|227	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option0|FRIGATE|211	0	<good>50%</good> increased mass.
+summary|option0|FRIGATE|212	0	<bad>35%</bad> less maneuverability.
+summary|option0|FRIGATE|213	0	<good>6%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
+summary|option0|FRIGATE|214	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+summary|option0|FRIGATE|215	0	<bad>30%</bad> reduced missile maneuverability.
+summary|option0|FRIGATE|216	0	<good>100%</good> increased weapon turn rate.
+summary|option0|FRIGATE|217	0	<bad>15%</bad> less ballistic weapon range.
+summary|option0|FRIGATE|218	0	<bad>15%</bad> less energy weapon range.
+summary|option0|FRIGATE|219	1	<good>25%</good> increased strikecraft refit time.
+summary|option0|FRIGATE|220	0	<good>15%</good> increased energy weapon damage.
+summary|option0|FRIGATE|221	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+summary|option0|FRIGATE|222	0	Your fleet has <good>3%</good> increased post-battle salvage.
+summary|option0|FRIGATE|223	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
+summary|option0|FRIGATE|224	0	<good>2%</good> more crew capacity.
+summary|option0|FRIGATE|225	0	<good>36%</good> more armor.
+summary|option0|FRIGATE|226	0	<good>108%</good> more fuel capacity.
+summary|option0|FRIGATE|227	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option0|FRIGATE|228	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option0|FRIGATE|229	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option0|DESTROYER|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option0|DESTROYER|1	0	<good>+100</good> to energy weapon range.
 summary|option0|DESTROYER|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -5445,23 +5470,25 @@ summary|option0|DESTROYER|207	0	Weapons cost no flux to fire for <good>4</good> 
 summary|option0|DESTROYER|208	0	<good>50%</good> increased weapon projectile speed for those seconds.
 summary|option0|DESTROYER|209	0	<good>25%</good> increased weapon rate of fire for those seconds.
 summary|option0|DESTROYER|210	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
-summary|option0|DESTROYER|211	0	<good>6%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
-summary|option0|DESTROYER|212	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-summary|option0|DESTROYER|213	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option0|DESTROYER|214	0	<good>100%</good> increased weapon turn rate.
-summary|option0|DESTROYER|215	0	<bad>15%</bad> less ballistic weapon range.
-summary|option0|DESTROYER|216	0	<bad>15%</bad> less energy weapon range.
-summary|option0|DESTROYER|217	1	<good>25%</good> increased strikecraft refit time.
-summary|option0|DESTROYER|218	0	<good>15%</good> increased energy weapon damage.
-summary|option0|DESTROYER|219	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
-summary|option0|DESTROYER|220	0	Your fleet has <good>6%</good> increased post-battle salvage.
-summary|option0|DESTROYER|221	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option0|DESTROYER|222	0	<good>2%</good> more crew capacity.
-summary|option0|DESTROYER|223	0	<good>36%</good> more armor.
-summary|option0|DESTROYER|224	0	<good>108%</good> more fuel capacity.
-summary|option0|DESTROYER|225	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option0|DESTROYER|226	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option0|DESTROYER|227	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option0|DESTROYER|211	0	<good>50%</good> increased mass.
+summary|option0|DESTROYER|212	0	<bad>35%</bad> less maneuverability.
+summary|option0|DESTROYER|213	0	<good>6%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
+summary|option0|DESTROYER|214	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+summary|option0|DESTROYER|215	0	<bad>30%</bad> reduced missile maneuverability.
+summary|option0|DESTROYER|216	0	<good>100%</good> increased weapon turn rate.
+summary|option0|DESTROYER|217	0	<bad>15%</bad> less ballistic weapon range.
+summary|option0|DESTROYER|218	0	<bad>15%</bad> less energy weapon range.
+summary|option0|DESTROYER|219	1	<good>25%</good> increased strikecraft refit time.
+summary|option0|DESTROYER|220	0	<good>15%</good> increased energy weapon damage.
+summary|option0|DESTROYER|221	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+summary|option0|DESTROYER|222	0	Your fleet has <good>6%</good> increased post-battle salvage.
+summary|option0|DESTROYER|223	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
+summary|option0|DESTROYER|224	0	<good>2%</good> more crew capacity.
+summary|option0|DESTROYER|225	0	<good>36%</good> more armor.
+summary|option0|DESTROYER|226	0	<good>108%</good> more fuel capacity.
+summary|option0|DESTROYER|227	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option0|DESTROYER|228	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option0|DESTROYER|229	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option0|CRUISER|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option0|CRUISER|1	0	<good>+100</good> to energy weapon range.
 summary|option0|CRUISER|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -5673,23 +5700,25 @@ summary|option0|CRUISER|207	0	Weapons cost no flux to fire for <good>4</good> se
 summary|option0|CRUISER|208	0	<good>50%</good> increased weapon projectile speed for those seconds.
 summary|option0|CRUISER|209	0	<good>25%</good> increased weapon rate of fire for those seconds.
 summary|option0|CRUISER|210	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
-summary|option0|CRUISER|211	0	<good>6%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
-summary|option0|CRUISER|212	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-summary|option0|CRUISER|213	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option0|CRUISER|214	0	<good>100%</good> increased weapon turn rate.
-summary|option0|CRUISER|215	0	<bad>15%</bad> less ballistic weapon range.
-summary|option0|CRUISER|216	0	<bad>15%</bad> less energy weapon range.
-summary|option0|CRUISER|217	1	<good>25%</good> increased strikecraft refit time.
-summary|option0|CRUISER|218	0	<good>15%</good> increased energy weapon damage.
-summary|option0|CRUISER|219	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
-summary|option0|CRUISER|220	0	Your fleet has <good>10%</good> increased post-battle salvage.
-summary|option0|CRUISER|221	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option0|CRUISER|222	0	<good>2%</good> more crew capacity.
-summary|option0|CRUISER|223	0	<good>36%</good> more armor.
-summary|option0|CRUISER|224	0	<good>108%</good> more fuel capacity.
-summary|option0|CRUISER|225	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option0|CRUISER|226	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option0|CRUISER|227	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option0|CRUISER|211	0	<good>50%</good> increased mass.
+summary|option0|CRUISER|212	0	<bad>35%</bad> less maneuverability.
+summary|option0|CRUISER|213	0	<good>6%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
+summary|option0|CRUISER|214	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+summary|option0|CRUISER|215	0	<bad>30%</bad> reduced missile maneuverability.
+summary|option0|CRUISER|216	0	<good>100%</good> increased weapon turn rate.
+summary|option0|CRUISER|217	0	<bad>15%</bad> less ballistic weapon range.
+summary|option0|CRUISER|218	0	<bad>15%</bad> less energy weapon range.
+summary|option0|CRUISER|219	1	<good>25%</good> increased strikecraft refit time.
+summary|option0|CRUISER|220	0	<good>15%</good> increased energy weapon damage.
+summary|option0|CRUISER|221	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+summary|option0|CRUISER|222	0	Your fleet has <good>10%</good> increased post-battle salvage.
+summary|option0|CRUISER|223	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
+summary|option0|CRUISER|224	0	<good>2%</good> more crew capacity.
+summary|option0|CRUISER|225	0	<good>36%</good> more armor.
+summary|option0|CRUISER|226	0	<good>108%</good> more fuel capacity.
+summary|option0|CRUISER|227	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option0|CRUISER|228	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option0|CRUISER|229	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option0|CAPITAL_SHIP|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option0|CAPITAL_SHIP|1	0	<good>+100</good> to energy weapon range.
 summary|option0|CAPITAL_SHIP|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -5901,23 +5930,25 @@ summary|option0|CAPITAL_SHIP|207	0	Weapons cost no flux to fire for <good>4</goo
 summary|option0|CAPITAL_SHIP|208	0	<good>50%</good> increased weapon projectile speed for those seconds.
 summary|option0|CAPITAL_SHIP|209	0	<good>25%</good> increased weapon rate of fire for those seconds.
 summary|option0|CAPITAL_SHIP|210	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
-summary|option0|CAPITAL_SHIP|211	0	<good>6%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
-summary|option0|CAPITAL_SHIP|212	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-summary|option0|CAPITAL_SHIP|213	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option0|CAPITAL_SHIP|214	0	<good>100%</good> increased weapon turn rate.
-summary|option0|CAPITAL_SHIP|215	0	<bad>15%</bad> less ballistic weapon range.
-summary|option0|CAPITAL_SHIP|216	0	<bad>15%</bad> less energy weapon range.
-summary|option0|CAPITAL_SHIP|217	1	<good>25%</good> increased strikecraft refit time.
-summary|option0|CAPITAL_SHIP|218	0	<good>15%</good> increased energy weapon damage.
-summary|option0|CAPITAL_SHIP|219	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
-summary|option0|CAPITAL_SHIP|220	0	Your fleet has <good>15%</good> increased post-battle salvage.
-summary|option0|CAPITAL_SHIP|221	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option0|CAPITAL_SHIP|222	0	<good>2%</good> more crew capacity.
-summary|option0|CAPITAL_SHIP|223	0	<good>36%</good> more armor.
-summary|option0|CAPITAL_SHIP|224	0	<good>108%</good> more fuel capacity.
-summary|option0|CAPITAL_SHIP|225	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option0|CAPITAL_SHIP|226	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option0|CAPITAL_SHIP|227	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option0|CAPITAL_SHIP|211	0	<good>50%</good> increased mass.
+summary|option0|CAPITAL_SHIP|212	0	<bad>35%</bad> less maneuverability.
+summary|option0|CAPITAL_SHIP|213	0	<good>6%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
+summary|option0|CAPITAL_SHIP|214	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+summary|option0|CAPITAL_SHIP|215	0	<bad>30%</bad> reduced missile maneuverability.
+summary|option0|CAPITAL_SHIP|216	0	<good>100%</good> increased weapon turn rate.
+summary|option0|CAPITAL_SHIP|217	0	<bad>15%</bad> less ballistic weapon range.
+summary|option0|CAPITAL_SHIP|218	0	<bad>15%</bad> less energy weapon range.
+summary|option0|CAPITAL_SHIP|219	1	<good>25%</good> increased strikecraft refit time.
+summary|option0|CAPITAL_SHIP|220	0	<good>15%</good> increased energy weapon damage.
+summary|option0|CAPITAL_SHIP|221	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+summary|option0|CAPITAL_SHIP|222	0	Your fleet has <good>15%</good> increased post-battle salvage.
+summary|option0|CAPITAL_SHIP|223	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
+summary|option0|CAPITAL_SHIP|224	0	<good>2%</good> more crew capacity.
+summary|option0|CAPITAL_SHIP|225	0	<good>36%</good> more armor.
+summary|option0|CAPITAL_SHIP|226	0	<good>108%</good> more fuel capacity.
+summary|option0|CAPITAL_SHIP|227	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option0|CAPITAL_SHIP|228	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option0|CAPITAL_SHIP|229	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option1|FRIGATE|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option1|FRIGATE|1	0	<good>+100</good> to energy weapon range.
 summary|option1|FRIGATE|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -6128,21 +6159,23 @@ summary|option1|FRIGATE|206	0	Weapons cost no flux to fire for <good>4</good> se
 summary|option1|FRIGATE|207	0	<good>50%</good> increased weapon projectile speed for those seconds.
 summary|option1|FRIGATE|208	0	<good>25%</good> increased weapon rate of fire for those seconds.
 summary|option1|FRIGATE|209	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
-summary|option1|FRIGATE|210	0	<good>6%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
-summary|option1|FRIGATE|211	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-summary|option1|FRIGATE|212	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option1|FRIGATE|213	0	<good>100%</good> increased weapon turn rate.
-summary|option1|FRIGATE|214	0	<bad>15%</bad> less ballistic weapon range.
-summary|option1|FRIGATE|215	0	<bad>15%</bad> less energy weapon range.
-summary|option1|FRIGATE|216	1	<good>25%</good> increased strikecraft refit time.
-summary|option1|FRIGATE|217	0	<good>15%</good> increased energy weapon damage.
-summary|option1|FRIGATE|218	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
-summary|option1|FRIGATE|219	0	Your fleet has <good>3%</good> increased post-battle salvage.
-summary|option1|FRIGATE|220	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option1|FRIGATE|221	0	<good>110%</good> more crew capacity.
-summary|option1|FRIGATE|222	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option1|FRIGATE|223	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option1|FRIGATE|224	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option1|FRIGATE|210	0	<good>50%</good> increased mass.
+summary|option1|FRIGATE|211	0	<bad>35%</bad> less maneuverability.
+summary|option1|FRIGATE|212	0	<good>6%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
+summary|option1|FRIGATE|213	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+summary|option1|FRIGATE|214	0	<bad>30%</bad> reduced missile maneuverability.
+summary|option1|FRIGATE|215	0	<good>100%</good> increased weapon turn rate.
+summary|option1|FRIGATE|216	0	<bad>15%</bad> less ballistic weapon range.
+summary|option1|FRIGATE|217	0	<bad>15%</bad> less energy weapon range.
+summary|option1|FRIGATE|218	1	<good>25%</good> increased strikecraft refit time.
+summary|option1|FRIGATE|219	0	<good>15%</good> increased energy weapon damage.
+summary|option1|FRIGATE|220	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+summary|option1|FRIGATE|221	0	Your fleet has <good>3%</good> increased post-battle salvage.
+summary|option1|FRIGATE|222	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
+summary|option1|FRIGATE|223	0	<good>110%</good> more crew capacity.
+summary|option1|FRIGATE|224	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option1|FRIGATE|225	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option1|FRIGATE|226	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option1|DESTROYER|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option1|DESTROYER|1	0	<good>+100</good> to energy weapon range.
 summary|option1|DESTROYER|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -6353,21 +6386,23 @@ summary|option1|DESTROYER|206	0	Weapons cost no flux to fire for <good>4</good> 
 summary|option1|DESTROYER|207	0	<good>50%</good> increased weapon projectile speed for those seconds.
 summary|option1|DESTROYER|208	0	<good>25%</good> increased weapon rate of fire for those seconds.
 summary|option1|DESTROYER|209	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
-summary|option1|DESTROYER|210	0	<good>6%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
-summary|option1|DESTROYER|211	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-summary|option1|DESTROYER|212	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option1|DESTROYER|213	0	<good>100%</good> increased weapon turn rate.
-summary|option1|DESTROYER|214	0	<bad>15%</bad> less ballistic weapon range.
-summary|option1|DESTROYER|215	0	<bad>15%</bad> less energy weapon range.
-summary|option1|DESTROYER|216	1	<good>25%</good> increased strikecraft refit time.
-summary|option1|DESTROYER|217	0	<good>15%</good> increased energy weapon damage.
-summary|option1|DESTROYER|218	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
-summary|option1|DESTROYER|219	0	Your fleet has <good>6%</good> increased post-battle salvage.
-summary|option1|DESTROYER|220	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option1|DESTROYER|221	0	<good>110%</good> more crew capacity.
-summary|option1|DESTROYER|222	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option1|DESTROYER|223	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option1|DESTROYER|224	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option1|DESTROYER|210	0	<good>50%</good> increased mass.
+summary|option1|DESTROYER|211	0	<bad>35%</bad> less maneuverability.
+summary|option1|DESTROYER|212	0	<good>6%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
+summary|option1|DESTROYER|213	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+summary|option1|DESTROYER|214	0	<bad>30%</bad> reduced missile maneuverability.
+summary|option1|DESTROYER|215	0	<good>100%</good> increased weapon turn rate.
+summary|option1|DESTROYER|216	0	<bad>15%</bad> less ballistic weapon range.
+summary|option1|DESTROYER|217	0	<bad>15%</bad> less energy weapon range.
+summary|option1|DESTROYER|218	1	<good>25%</good> increased strikecraft refit time.
+summary|option1|DESTROYER|219	0	<good>15%</good> increased energy weapon damage.
+summary|option1|DESTROYER|220	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+summary|option1|DESTROYER|221	0	Your fleet has <good>6%</good> increased post-battle salvage.
+summary|option1|DESTROYER|222	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
+summary|option1|DESTROYER|223	0	<good>110%</good> more crew capacity.
+summary|option1|DESTROYER|224	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option1|DESTROYER|225	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option1|DESTROYER|226	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option1|CRUISER|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option1|CRUISER|1	0	<good>+100</good> to energy weapon range.
 summary|option1|CRUISER|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -6578,21 +6613,23 @@ summary|option1|CRUISER|206	0	Weapons cost no flux to fire for <good>4</good> se
 summary|option1|CRUISER|207	0	<good>50%</good> increased weapon projectile speed for those seconds.
 summary|option1|CRUISER|208	0	<good>25%</good> increased weapon rate of fire for those seconds.
 summary|option1|CRUISER|209	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
-summary|option1|CRUISER|210	0	<good>6%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
-summary|option1|CRUISER|211	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-summary|option1|CRUISER|212	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option1|CRUISER|213	0	<good>100%</good> increased weapon turn rate.
-summary|option1|CRUISER|214	0	<bad>15%</bad> less ballistic weapon range.
-summary|option1|CRUISER|215	0	<bad>15%</bad> less energy weapon range.
-summary|option1|CRUISER|216	1	<good>25%</good> increased strikecraft refit time.
-summary|option1|CRUISER|217	0	<good>15%</good> increased energy weapon damage.
-summary|option1|CRUISER|218	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
-summary|option1|CRUISER|219	0	Your fleet has <good>10%</good> increased post-battle salvage.
-summary|option1|CRUISER|220	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option1|CRUISER|221	0	<good>110%</good> more crew capacity.
-summary|option1|CRUISER|222	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option1|CRUISER|223	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option1|CRUISER|224	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option1|CRUISER|210	0	<good>50%</good> increased mass.
+summary|option1|CRUISER|211	0	<bad>35%</bad> less maneuverability.
+summary|option1|CRUISER|212	0	<good>6%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
+summary|option1|CRUISER|213	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+summary|option1|CRUISER|214	0	<bad>30%</bad> reduced missile maneuverability.
+summary|option1|CRUISER|215	0	<good>100%</good> increased weapon turn rate.
+summary|option1|CRUISER|216	0	<bad>15%</bad> less ballistic weapon range.
+summary|option1|CRUISER|217	0	<bad>15%</bad> less energy weapon range.
+summary|option1|CRUISER|218	1	<good>25%</good> increased strikecraft refit time.
+summary|option1|CRUISER|219	0	<good>15%</good> increased energy weapon damage.
+summary|option1|CRUISER|220	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+summary|option1|CRUISER|221	0	Your fleet has <good>10%</good> increased post-battle salvage.
+summary|option1|CRUISER|222	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
+summary|option1|CRUISER|223	0	<good>110%</good> more crew capacity.
+summary|option1|CRUISER|224	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option1|CRUISER|225	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option1|CRUISER|226	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option1|CAPITAL_SHIP|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option1|CAPITAL_SHIP|1	0	<good>+100</good> to energy weapon range.
 summary|option1|CAPITAL_SHIP|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -6803,21 +6840,23 @@ summary|option1|CAPITAL_SHIP|206	0	Weapons cost no flux to fire for <good>4</goo
 summary|option1|CAPITAL_SHIP|207	0	<good>50%</good> increased weapon projectile speed for those seconds.
 summary|option1|CAPITAL_SHIP|208	0	<good>25%</good> increased weapon rate of fire for those seconds.
 summary|option1|CAPITAL_SHIP|209	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
-summary|option1|CAPITAL_SHIP|210	0	<good>6%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
-summary|option1|CAPITAL_SHIP|211	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-summary|option1|CAPITAL_SHIP|212	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option1|CAPITAL_SHIP|213	0	<good>100%</good> increased weapon turn rate.
-summary|option1|CAPITAL_SHIP|214	0	<bad>15%</bad> less ballistic weapon range.
-summary|option1|CAPITAL_SHIP|215	0	<bad>15%</bad> less energy weapon range.
-summary|option1|CAPITAL_SHIP|216	1	<good>25%</good> increased strikecraft refit time.
-summary|option1|CAPITAL_SHIP|217	0	<good>15%</good> increased energy weapon damage.
-summary|option1|CAPITAL_SHIP|218	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
-summary|option1|CAPITAL_SHIP|219	0	Your fleet has <good>15%</good> increased post-battle salvage.
-summary|option1|CAPITAL_SHIP|220	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option1|CAPITAL_SHIP|221	0	<good>110%</good> more crew capacity.
-summary|option1|CAPITAL_SHIP|222	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option1|CAPITAL_SHIP|223	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option1|CAPITAL_SHIP|224	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option1|CAPITAL_SHIP|210	0	<good>50%</good> increased mass.
+summary|option1|CAPITAL_SHIP|211	0	<bad>35%</bad> less maneuverability.
+summary|option1|CAPITAL_SHIP|212	0	<good>6%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
+summary|option1|CAPITAL_SHIP|213	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+summary|option1|CAPITAL_SHIP|214	0	<bad>30%</bad> reduced missile maneuverability.
+summary|option1|CAPITAL_SHIP|215	0	<good>100%</good> increased weapon turn rate.
+summary|option1|CAPITAL_SHIP|216	0	<bad>15%</bad> less ballistic weapon range.
+summary|option1|CAPITAL_SHIP|217	0	<bad>15%</bad> less energy weapon range.
+summary|option1|CAPITAL_SHIP|218	1	<good>25%</good> increased strikecraft refit time.
+summary|option1|CAPITAL_SHIP|219	0	<good>15%</good> increased energy weapon damage.
+summary|option1|CAPITAL_SHIP|220	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+summary|option1|CAPITAL_SHIP|221	0	Your fleet has <good>15%</good> increased post-battle salvage.
+summary|option1|CAPITAL_SHIP|222	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
+summary|option1|CAPITAL_SHIP|223	0	<good>110%</good> more crew capacity.
+summary|option1|CAPITAL_SHIP|224	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option1|CAPITAL_SHIP|225	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option1|CAPITAL_SHIP|226	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option2|FRIGATE|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option2|FRIGATE|1	0	<good>+100</good> to energy weapon range.
 summary|option2|FRIGATE|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -7029,23 +7068,25 @@ summary|option2|FRIGATE|207	0	Weapons cost no flux to fire for <good>4</good> se
 summary|option2|FRIGATE|208	0	<good>50%</good> increased weapon projectile speed for those seconds.
 summary|option2|FRIGATE|209	0	<good>25%</good> increased weapon rate of fire for those seconds.
 summary|option2|FRIGATE|210	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
-summary|option2|FRIGATE|211	0	<good>6%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
-summary|option2|FRIGATE|212	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-summary|option2|FRIGATE|213	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option2|FRIGATE|214	0	<good>100%</good> increased weapon turn rate.
-summary|option2|FRIGATE|215	0	<bad>15%</bad> less ballistic weapon range.
-summary|option2|FRIGATE|216	0	<bad>15%</bad> less energy weapon range.
-summary|option2|FRIGATE|217	1	<good>25%</good> increased strikecraft refit time.
-summary|option2|FRIGATE|218	0	<good>15%</good> increased energy weapon damage.
-summary|option2|FRIGATE|219	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
-summary|option2|FRIGATE|220	0	Your fleet has <good>3%</good> increased post-battle salvage.
-summary|option2|FRIGATE|221	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option2|FRIGATE|222	0	<good>2%</good> more crew capacity.
-summary|option2|FRIGATE|223	0	<good>27%</good> more armor.
-summary|option2|FRIGATE|224	0	<good>108%</good> more cargo capacity.
-summary|option2|FRIGATE|225	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option2|FRIGATE|226	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option2|FRIGATE|227	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option2|FRIGATE|211	0	<good>50%</good> increased mass.
+summary|option2|FRIGATE|212	0	<bad>35%</bad> less maneuverability.
+summary|option2|FRIGATE|213	0	<good>6%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
+summary|option2|FRIGATE|214	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+summary|option2|FRIGATE|215	0	<bad>30%</bad> reduced missile maneuverability.
+summary|option2|FRIGATE|216	0	<good>100%</good> increased weapon turn rate.
+summary|option2|FRIGATE|217	0	<bad>15%</bad> less ballistic weapon range.
+summary|option2|FRIGATE|218	0	<bad>15%</bad> less energy weapon range.
+summary|option2|FRIGATE|219	1	<good>25%</good> increased strikecraft refit time.
+summary|option2|FRIGATE|220	0	<good>15%</good> increased energy weapon damage.
+summary|option2|FRIGATE|221	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+summary|option2|FRIGATE|222	0	Your fleet has <good>3%</good> increased post-battle salvage.
+summary|option2|FRIGATE|223	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
+summary|option2|FRIGATE|224	0	<good>2%</good> more crew capacity.
+summary|option2|FRIGATE|225	0	<good>27%</good> more armor.
+summary|option2|FRIGATE|226	0	<good>108%</good> more cargo capacity.
+summary|option2|FRIGATE|227	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option2|FRIGATE|228	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option2|FRIGATE|229	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option2|DESTROYER|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option2|DESTROYER|1	0	<good>+100</good> to energy weapon range.
 summary|option2|DESTROYER|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -7257,23 +7298,25 @@ summary|option2|DESTROYER|207	0	Weapons cost no flux to fire for <good>4</good> 
 summary|option2|DESTROYER|208	0	<good>50%</good> increased weapon projectile speed for those seconds.
 summary|option2|DESTROYER|209	0	<good>25%</good> increased weapon rate of fire for those seconds.
 summary|option2|DESTROYER|210	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
-summary|option2|DESTROYER|211	0	<good>6%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
-summary|option2|DESTROYER|212	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-summary|option2|DESTROYER|213	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option2|DESTROYER|214	0	<good>100%</good> increased weapon turn rate.
-summary|option2|DESTROYER|215	0	<bad>15%</bad> less ballistic weapon range.
-summary|option2|DESTROYER|216	0	<bad>15%</bad> less energy weapon range.
-summary|option2|DESTROYER|217	1	<good>25%</good> increased strikecraft refit time.
-summary|option2|DESTROYER|218	0	<good>15%</good> increased energy weapon damage.
-summary|option2|DESTROYER|219	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
-summary|option2|DESTROYER|220	0	Your fleet has <good>6%</good> increased post-battle salvage.
-summary|option2|DESTROYER|221	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option2|DESTROYER|222	0	<good>2%</good> more crew capacity.
-summary|option2|DESTROYER|223	0	<good>27%</good> more armor.
-summary|option2|DESTROYER|224	0	<good>108%</good> more cargo capacity.
-summary|option2|DESTROYER|225	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option2|DESTROYER|226	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option2|DESTROYER|227	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option2|DESTROYER|211	0	<good>50%</good> increased mass.
+summary|option2|DESTROYER|212	0	<bad>35%</bad> less maneuverability.
+summary|option2|DESTROYER|213	0	<good>6%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
+summary|option2|DESTROYER|214	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+summary|option2|DESTROYER|215	0	<bad>30%</bad> reduced missile maneuverability.
+summary|option2|DESTROYER|216	0	<good>100%</good> increased weapon turn rate.
+summary|option2|DESTROYER|217	0	<bad>15%</bad> less ballistic weapon range.
+summary|option2|DESTROYER|218	0	<bad>15%</bad> less energy weapon range.
+summary|option2|DESTROYER|219	1	<good>25%</good> increased strikecraft refit time.
+summary|option2|DESTROYER|220	0	<good>15%</good> increased energy weapon damage.
+summary|option2|DESTROYER|221	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+summary|option2|DESTROYER|222	0	Your fleet has <good>6%</good> increased post-battle salvage.
+summary|option2|DESTROYER|223	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
+summary|option2|DESTROYER|224	0	<good>2%</good> more crew capacity.
+summary|option2|DESTROYER|225	0	<good>27%</good> more armor.
+summary|option2|DESTROYER|226	0	<good>108%</good> more cargo capacity.
+summary|option2|DESTROYER|227	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option2|DESTROYER|228	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option2|DESTROYER|229	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option2|CRUISER|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option2|CRUISER|1	0	<good>+100</good> to energy weapon range.
 summary|option2|CRUISER|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -7485,23 +7528,25 @@ summary|option2|CRUISER|207	0	Weapons cost no flux to fire for <good>4</good> se
 summary|option2|CRUISER|208	0	<good>50%</good> increased weapon projectile speed for those seconds.
 summary|option2|CRUISER|209	0	<good>25%</good> increased weapon rate of fire for those seconds.
 summary|option2|CRUISER|210	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
-summary|option2|CRUISER|211	0	<good>6%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
-summary|option2|CRUISER|212	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-summary|option2|CRUISER|213	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option2|CRUISER|214	0	<good>100%</good> increased weapon turn rate.
-summary|option2|CRUISER|215	0	<bad>15%</bad> less ballistic weapon range.
-summary|option2|CRUISER|216	0	<bad>15%</bad> less energy weapon range.
-summary|option2|CRUISER|217	1	<good>25%</good> increased strikecraft refit time.
-summary|option2|CRUISER|218	0	<good>15%</good> increased energy weapon damage.
-summary|option2|CRUISER|219	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
-summary|option2|CRUISER|220	0	Your fleet has <good>10%</good> increased post-battle salvage.
-summary|option2|CRUISER|221	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option2|CRUISER|222	0	<good>2%</good> more crew capacity.
-summary|option2|CRUISER|223	0	<good>27%</good> more armor.
-summary|option2|CRUISER|224	0	<good>108%</good> more cargo capacity.
-summary|option2|CRUISER|225	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option2|CRUISER|226	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option2|CRUISER|227	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option2|CRUISER|211	0	<good>50%</good> increased mass.
+summary|option2|CRUISER|212	0	<bad>35%</bad> less maneuverability.
+summary|option2|CRUISER|213	0	<good>6%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
+summary|option2|CRUISER|214	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+summary|option2|CRUISER|215	0	<bad>30%</bad> reduced missile maneuverability.
+summary|option2|CRUISER|216	0	<good>100%</good> increased weapon turn rate.
+summary|option2|CRUISER|217	0	<bad>15%</bad> less ballistic weapon range.
+summary|option2|CRUISER|218	0	<bad>15%</bad> less energy weapon range.
+summary|option2|CRUISER|219	1	<good>25%</good> increased strikecraft refit time.
+summary|option2|CRUISER|220	0	<good>15%</good> increased energy weapon damage.
+summary|option2|CRUISER|221	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+summary|option2|CRUISER|222	0	Your fleet has <good>10%</good> increased post-battle salvage.
+summary|option2|CRUISER|223	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
+summary|option2|CRUISER|224	0	<good>2%</good> more crew capacity.
+summary|option2|CRUISER|225	0	<good>27%</good> more armor.
+summary|option2|CRUISER|226	0	<good>108%</good> more cargo capacity.
+summary|option2|CRUISER|227	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option2|CRUISER|228	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option2|CRUISER|229	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
 summary|option2|CAPITAL_SHIP|0	1	<bad>25%</bad> reduced energy weapon flux cost.
 summary|option2|CAPITAL_SHIP|1	0	<good>+100</good> to energy weapon range.
 summary|option2|CAPITAL_SHIP|2	1	<bad>50%</bad> reduced EMP damage taken.
@@ -7713,20 +7758,22 @@ summary|option2|CAPITAL_SHIP|207	0	Weapons cost no flux to fire for <good>4</goo
 summary|option2|CAPITAL_SHIP|208	0	<good>50%</good> increased weapon projectile speed for those seconds.
 summary|option2|CAPITAL_SHIP|209	0	<good>25%</good> increased weapon rate of fire for those seconds.
 summary|option2|CAPITAL_SHIP|210	0	Turret weapons have <good>50%</good> reduced flux cost. Hardpoint weapons can't fire.
-summary|option2|CAPITAL_SHIP|211	0	<good>6%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
-summary|option2|CAPITAL_SHIP|212	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
-summary|option2|CAPITAL_SHIP|213	0	<bad>30%</bad> reduced missile maneuverability.
-summary|option2|CAPITAL_SHIP|214	0	<good>100%</good> increased weapon turn rate.
-summary|option2|CAPITAL_SHIP|215	0	<bad>15%</bad> less ballistic weapon range.
-summary|option2|CAPITAL_SHIP|216	0	<bad>15%</bad> less energy weapon range.
-summary|option2|CAPITAL_SHIP|217	1	<good>25%</good> increased strikecraft refit time.
-summary|option2|CAPITAL_SHIP|218	0	<good>15%</good> increased energy weapon damage.
-summary|option2|CAPITAL_SHIP|219	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
-summary|option2|CAPITAL_SHIP|220	0	Your fleet has <good>15%</good> increased post-battle salvage.
-summary|option2|CAPITAL_SHIP|221	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
-summary|option2|CAPITAL_SHIP|222	0	<good>2%</good> more crew capacity.
-summary|option2|CAPITAL_SHIP|223	0	<good>27%</good> more armor.
-summary|option2|CAPITAL_SHIP|224	0	<good>108%</good> more cargo capacity.
-summary|option2|CAPITAL_SHIP|225	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
-summary|option2|CAPITAL_SHIP|226	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
-summary|option2|CAPITAL_SHIP|227	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.
+summary|option2|CAPITAL_SHIP|211	0	<good>50%</good> increased mass.
+summary|option2|CAPITAL_SHIP|212	0	<bad>35%</bad> less maneuverability.
+summary|option2|CAPITAL_SHIP|213	0	<good>6%</good> increased weapon rate of fire. Burst beams instead recharge faster between bursts.
+summary|option2|CAPITAL_SHIP|214	0	Enemy ships within 1000 su have <good>-25%</good> to the target leading accuracy of their autofiring weapons. Penalties from several ships with this effect stack.
+summary|option2|CAPITAL_SHIP|215	0	<bad>30%</bad> reduced missile maneuverability.
+summary|option2|CAPITAL_SHIP|216	0	<good>100%</good> increased weapon turn rate.
+summary|option2|CAPITAL_SHIP|217	0	<bad>15%</bad> less ballistic weapon range.
+summary|option2|CAPITAL_SHIP|218	0	<bad>15%</bad> less energy weapon range.
+summary|option2|CAPITAL_SHIP|219	1	<good>25%</good> increased strikecraft refit time.
+summary|option2|CAPITAL_SHIP|220	0	<good>15%</good> increased energy weapon damage.
+summary|option2|CAPITAL_SHIP|221	0	The zero-flux speed boost also works while flux is at or below <good>10%</good>.
+summary|option2|CAPITAL_SHIP|222	0	Your fleet has <good>15%</good> increased post-battle salvage.
+summary|option2|CAPITAL_SHIP|223	0	When this ship deploys, its wings that share a role lend each other strikecraft. Each wing keeps at least 1 of its own strikecraft and fills the rest of its normal wing size with up to <good>1</good> of every other strikecraft type in its group. All its wings use the engagement range of its longest-ranged wing. Strikecraft in each group fly at the group's average top speed.
+summary|option2|CAPITAL_SHIP|224	0	<good>2%</good> more crew capacity.
+summary|option2|CAPITAL_SHIP|225	0	<good>27%</good> more armor.
+summary|option2|CAPITAL_SHIP|226	0	<good>108%</good> more cargo capacity.
+summary|option2|CAPITAL_SHIP|227	0	For the first 90 seconds after deployment: <good>100%</good> increased maneuverability.
+summary|option2|CAPITAL_SHIP|228	0	For the first 60 seconds after deployment: <good>20%</good> increased maneuverability.
+summary|option2|CAPITAL_SHIP|229	0	For the first 60 seconds after deployment: <good>25%</good> increased top speed.

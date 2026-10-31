@@ -386,6 +386,7 @@
     "stat.topSpeed": "top speed",
     "stat.ventingSpeed": "venting speed",
     "stat.timeflow": "timeflow",
+    "stat.shipMass": "mass",
     "stat.fluxDissipationPerFluxVent": "flux dissipation per flux vent",
     "stat.sensorProfileOnPhaseHulls": "sensor profile on phase hulls",
     "stat.fluxDissipationWhilePhased": "flux dissipation while phased",

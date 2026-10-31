@@ -7311,8 +7311,8 @@
 			"connectedTo": [
 				"ballistic_projectile_speed_7"
 			],
-			"x": -1128,
-			"y": 19106,
+			"x": -1300,
+			"y": 18800,
 			"tags": [
 				"tania"
 			]
@@ -7341,8 +7341,8 @@
 				"tania_weapon_fire_rate_1",
 				"tania_wormhole_1"
 			],
-			"x": -645,
-			"y": 18474,
+			"x": -650,
+			"y": 18450,
 			"tags": [
 				"tania"
 			]
@@ -7355,7 +7355,7 @@
 				"tania_wormhole_1"
 			],
 			"x": 650,
-			"y": 18452,
+			"y": 18450,
 			"tags": [
 				"tania"
 			]
@@ -7367,7 +7367,7 @@
 				"tania_hull_3"
 			],
 			"x": 0,
-			"y": 19492,
+			"y": 19500,
 			"tags": [
 				"tania",
 				"gate_frost_fire_defeated"
@@ -7382,7 +7382,7 @@
 				"tania_thermo_accelerator_1"
 			],
 			"x": 0,
-			"y": 18805,
+			"y": 18800,
 			"tags": [
 				"tania"
 			]
@@ -7396,7 +7396,7 @@
 				"armor_12"
 			],
 			"x": 0,
-			"y": 19138,
+			"y": 19150,
 			"tags": [
 				"tania"
 			]
@@ -7407,10 +7407,11 @@
 			"connectedTo": [
 				"maneuverability_percent_5",
 				"top_speed_9",
-				"tania_carina_charge_1"
+				"tania_carina_charge_1",
+				"tania_touraco_prow_1"
 			],
 			"x": 650,
-			"y": 19114,
+			"y": 19150,
 			"tags": [
 				"tania"
 			]
@@ -7424,8 +7425,8 @@
 				"ballistic_projectile_speed_7",
 				"ballistic_damage_9"
 			],
-			"x": -645,
-			"y": 18825,
+			"x": -650,
+			"y": 18800,
 			"tags": [
 				"tania"
 			]
@@ -7438,8 +7439,8 @@
 				"tania_fafnir_breeches_1",
 				"ballistic_damage_8"
 			],
-			"x": -645,
-			"y": 19118,
+			"x": -650,
+			"y": 19150,
 			"tags": [
 				"tania"
 			]
@@ -7450,8 +7451,8 @@
 			"connectedTo": [
 				"tania_weapon_fire_rate_2"
 			],
-			"x": -645,
-			"y": 19477,
+			"x": -650,
+			"y": 19500,
 			"tags": [
 				"tania",
 				"gate_last_strive_completed"
@@ -7465,7 +7466,7 @@
 				"tania_wormhole_1"
 			],
 			"x": 0,
-			"y": 18449,
+			"y": 18450,
 			"tags": [
 				"tania"
 			]
@@ -7476,8 +7477,8 @@
 			"connectedTo": [
 				"tania_hull_2"
 			],
-			"x": 266,
-			"y": 19069,
+			"x": 325,
+			"y": 19150,
 			"ringBeltColor": "#d27937",
 			"tags": [
 				"tania"
@@ -7492,7 +7493,7 @@
 				"maneuverability_percent_6"
 			],
 			"x": 650,
-			"y": 18789,
+			"y": 18800,
 			"tags": [
 				"tania"
 			]
@@ -7503,8 +7504,8 @@
 			"connectedTo": [
 				"maneuverability_percent_5"
 			],
-			"x": 342,
-			"y": 18634,
+			"x": 325,
+			"y": 18800,
 			"tags": [
 				"tania"
 			]
@@ -7516,8 +7517,8 @@
 				"tania_top_speed_2",
 				"tania_dysis_drive_1"
 			],
-			"x": 859,
-			"y": 19338,
+			"x": 975,
+			"y": 18800,
 			"tags": [
 				"tania"
 			]
@@ -7528,8 +7529,8 @@
 			"connectedTo": [
 				"tania_hull_3"
 			],
-			"x": -221,
-			"y": 18929,
+			"x": -325,
+			"y": 18800,
 			"tags": [
 				"tania"
 			]
@@ -7540,8 +7541,8 @@
 			"connectedTo": [
 				"tania_weapon_fire_rate_2"
 			],
-			"x": -859,
-			"y": 19310,
+			"x": -975,
+			"y": 18800,
 			"tags": [
 				"tania"
 			]
@@ -7553,8 +7554,8 @@
 				"tania_weapon_fire_rate_1",
 				"tania_solaris_overdrive_1"
 			],
-			"x": -943,
-			"y": 18825,
+			"x": -975,
+			"y": 18450,
 			"tags": [
 				"tania"
 			]
@@ -7565,8 +7566,8 @@
 			"connectedTo": [
 				"tania_weapon_fire_rate_1"
 			],
-			"x": -410,
-			"y": 19030,
+			"x": -325,
+			"y": 19150,
 			"tags": [
 				"tania"
 			]
@@ -7577,8 +7578,8 @@
 			"connectedTo": [
 				"top_speed_9"
 			],
-			"x": 1027,
-			"y": 19110,
+			"x": 1300,
+			"y": 19150,
 			"tags": [
 				"tania"
 			]
@@ -7590,10 +7591,22 @@
 				"tania_top_speed_2"
 			],
 			"x": 650,
-			"y": 19504,
+			"y": 19500,
 			"tags": [
 				"tania",
 				"gate_blood_trail_defeated"
+			]
+		},
+		{
+			"id": "tania_touraco_prow_1",
+			"type": "tania_touraco_prow",
+			"connectedTo": [
+				"tania_top_speed_2"
+			],
+			"x": 981,
+			"y": 19385,
+			"tags": [
+				"tania"
 			]
 		}
 	],

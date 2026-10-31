@@ -17,4 +17,12 @@ public final class Maneuverability {
                 StatTarget.scaled(StatTarget.liveStat(MutableShipStatsAPI::getTurnAcceleration), TURN_ACCELERATION_FACTOR),
                 StatTarget.liveStat(MutableShipStatsAPI::getMaxTurnRate));
     }
+
+    public static StatTarget multTarget() {
+        return StatTarget.all(
+                StatTarget.liveStat(MutableShipStatsAPI::getAcceleration),
+                StatTarget.liveStat(MutableShipStatsAPI::getDeceleration),
+                StatTarget.liveStat(MutableShipStatsAPI::getTurnAcceleration),
+                StatTarget.liveStat(MutableShipStatsAPI::getMaxTurnRate));
+    }
 }

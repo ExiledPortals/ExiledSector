@@ -4883,6 +4883,26 @@
 			"tags": [
 				"weapons"
 			]
+		},
+		{
+			"id": "tania_touraco_prow",
+			"name": "Touraco Prow",
+			"icon": "graphics/icons/tania_touraco_prow.png",
+			"tier": "NOTABLE",
+			"effects": [
+				{
+					"effect": "SHIP_MASS_PERCENT",
+					"magnitude": 50
+				},
+				{
+					"effect": "MANEUVERABILITY_MULT",
+					"magnitude": -35
+				}
+			],
+			"flavour": "The Touraco carries more plate than any cruiser needs, and Navarchy captains treat the surplus as a weapon. A crew that has been on the wrong end of one bolts the same plate into this ship's frame. The helm has filed a complaint.",
+			"tags": [
+				"hull"
+			]
 		}
 	]
 }

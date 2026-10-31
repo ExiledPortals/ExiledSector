@@ -56,6 +56,12 @@ A ship docked into another's module slot (Arma Armatura's core units) keeps its 
 `ShipRecords.resolve` lends it to any member outside its fleet's list, refit module tabs included, it gets no share of the
 parent's tree, and `SocketCustody.addDockedShips` counts it as owned so its items stay socketed.
 
+### Ship mass
+
+`SHIP_MASS_PERCENT` pools in a dynamic stat and `StatTarget.ShipMass` sets the ship's mass after creation, from the
+mass it was built with (kept in custom data), never below 10%. Ram damage dealt scales with the rammer's mass, while
+damage taken depends only on the other ship's, so it raises ram damage without making rams cost more.
+
 ### Phantom hull mods
 
 A node that recreates a vanilla hull mod also places the real one as a zero-OP perma mod tagged
