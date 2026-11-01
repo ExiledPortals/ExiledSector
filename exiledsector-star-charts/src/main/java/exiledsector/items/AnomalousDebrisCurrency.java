@@ -147,7 +147,11 @@ public record AnomalousDebrisCurrency(String itemId, String englishName, String 
     }
 
     static List<RolledModifier> reroll(ItemDefinition definition, Modifier granted, List<RolledModifier> kept, Random random) {
-        AffixLayout.Limits limits = AffixLayout.limits(definition.type());
+        return reroll(definition, granted, kept, AffixLayout.limits(definition.type()), random);
+    }
+
+    static List<RolledModifier> reroll(ItemDefinition definition, Modifier granted, List<RolledModifier> kept, AffixLayout.Limits limits,
+                                       Random random) {
         List<RolledModifier> prefixes = new ArrayList<>();
         List<RolledModifier> suffixes = new ArrayList<>();
         RolledModifier grantedRoll = kept.stream().filter(rolled -> rolled.modifierId().equals(granted.id())).findFirst()

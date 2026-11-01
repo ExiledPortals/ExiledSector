@@ -82,6 +82,10 @@ public interface ItemTypeSupport {
         return AffixLayout.DEFAULT_LIMITS;
     }
 
+    default AffixLayout.Limits dropLimits() {
+        return affixLimits();
+    }
+
     default ItemKind listedKind(Item item) {
         return item.kind();
     }

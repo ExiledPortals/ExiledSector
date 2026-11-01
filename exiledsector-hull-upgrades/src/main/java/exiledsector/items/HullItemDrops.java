@@ -29,6 +29,7 @@ public final class HullItemDrops {
     }
 
     static final float SALVAGE_SHARE = 0.5f;
+    static final AffixLayout.Limits DROP_LIMITS = new AffixLayout.Limits(2, 2, AffixLayout.MAX_PER_SIDE, List.of(0.64f));
 
     private HullItemDrops() {
     }

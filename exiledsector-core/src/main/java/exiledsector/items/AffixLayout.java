@@ -43,6 +43,11 @@ public final class AffixLayout {
         return support == null ? DEFAULT_LIMITS : support.affixLimits();
     }
 
+    public static Limits dropLimits(ItemType type) {
+        ItemTypeSupport support = ItemTypes.of(type);
+        return support == null ? DEFAULT_LIMITS : support.dropLimits();
+    }
+
     public static ItemRarity rarityFor(ItemDefinition definition, int effectCount) {
         if (definition != null && definition.hasUniqueRarity()) {
             return ItemRarity.UNIQUE;

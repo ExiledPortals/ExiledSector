@@ -35,8 +35,6 @@ public final class BattleItemDrops {
         MODS_2("mods_2", 2, false),
         REFIT_SCHEMATIC("refit_schematic", 0, false),
         MASTER_SCHEMATIC("master_schematic", 0, false),
-        MODS_3("mods_3", 3, true),
-        MODS_4("mods_4", 4, true),
         UNIQUE("unique", 0, true);
 
         private final String id;

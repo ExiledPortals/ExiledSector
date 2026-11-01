@@ -32,7 +32,7 @@ public record ItemData(String definitionId, long seed, List<RolledModifier> expl
     }
 
     public static ItemData rolledWithRarity(ItemDefinition definition, long seed, float rarity) {
-        if (rarity == 1f || ItemTypes.tiered(definition.type())) {
+        if (ItemTypes.tiered(definition.type())) {
             return rolled(definition, seed);
         }
         List<RolledModifier> modifiers = ItemRoller.rollWithRarity(definition, seed, rarity);

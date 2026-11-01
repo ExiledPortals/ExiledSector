@@ -40,11 +40,11 @@ public final class ItemRoller {
     }
 
     public static List<RolledModifier> rollWithRarity(ItemDefinition definition, long seed, float rarity) {
-        if (rarity == 1f || definition.unique() || ItemTypes.tiered(definition.type())) {
+        if (definition.unique() || definition.keepsOneModifier() || ItemTypes.tiered(definition.type())) {
             return roll(definition, seed);
         }
         Random random = Seeds.random(seed);
-        AffixLayout.Limits limits = AffixLayout.limits(definition.type());
+        AffixLayout.Limits limits = AffixLayout.dropLimits(definition.type());
         return rollAffixes(definition, limits.maxPerSide(), AffixLayout.rolledEffectCount(limits, random.nextFloat(), rarity), random, averageRolls(),
                 TierRange.NO_TIER);
     }

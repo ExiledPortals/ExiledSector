@@ -44,6 +44,11 @@ public final class HullItem extends Item {
         }
 
         @Override
+        public AffixLayout.Limits dropLimits() {
+            return HullItemDrops.DROP_LIMITS;
+        }
+
+        @Override
         public List<CorruptionOutcome> corruptionOutcomes(Item item) {
             ItemDefinition definition = item.definition();
             return definition != null && definition.unique() ? CorruptionOutcome.UNIQUE_HULL_ITEM_OUTCOMES : CorruptionOutcome.NANOSWARM_OUTCOMES;

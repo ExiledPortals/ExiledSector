@@ -38,8 +38,6 @@ class BattleItemDropsTest {
         BattleItemDrops.register(new JSONArray()
                 .put(rateRow("mods_1", "0.4"))
                 .put(rateRow("mods_2", "0.25"))
-                .put(rateRow("mods_3", "0.15"))
-                .put(rateRow("mods_4", "0.04"))
                 .put(rateRow("unique", "0.015"))
                 .put(rateRow("refit_schematic", "0.1"))
                 .put(rateRow("master_schematic", "0.1")));
@@ -97,8 +95,8 @@ class BattleItemDropsTest {
         List<BattleItemDrops.Planned> planned = BattleItemDrops.plan(List.of(new BattleItemDrops.SourcePower(1000f, ItemChances.BASE)),
                 1f, List.of(), neverLucky(), true);
 
-        assertEquals(Map.of(BattleItemDrops.Drop.MODS_1, 4, BattleItemDrops.Drop.MODS_2, 2, BattleItemDrops.Drop.MODS_3, 1,
-                BattleItemDrops.Drop.REFIT_SCHEMATIC, 1), counts(planned));
+        assertEquals(Map.of(BattleItemDrops.Drop.MODS_1, 4, BattleItemDrops.Drop.MODS_2, 2, BattleItemDrops.Drop.REFIT_SCHEMATIC, 1),
+                counts(planned));
     }
 
     @Test
@@ -121,7 +119,7 @@ class BattleItemDropsTest {
 
         long targeted = planned.stream().filter(entry -> entry.kind() != null).count();
         assertTrue(planned.stream().filter(entry -> entry.kind() != null).allMatch(entry -> entry.kind() == ItemKind.BRIDGE));
-        assertEquals(4 + 2 + 1, targeted);
+        assertEquals(4 + 2, targeted);
         assertEquals(8, counts(planned.stream().filter(entry -> entry.kind() == null).toList()).get(BattleItemDrops.Drop.MODS_1));
     }
 
@@ -130,9 +128,9 @@ class BattleItemDropsTest {
         List<BattleItemDrops.Planned> planned = BattleItemDrops.plan(List.of(new BattleItemDrops.SourcePower(10000f, ItemChances.BASE)),
                 1f, List.of(), neverLucky(), true);
 
-        assertEquals(Map.of(BattleItemDrops.Drop.MODS_1, 40, BattleItemDrops.Drop.MODS_2, 25, BattleItemDrops.Drop.MODS_3, 15,
-                BattleItemDrops.Drop.MODS_4, 4, BattleItemDrops.Drop.UNIQUE, 1, BattleItemDrops.Drop.REFIT_SCHEMATIC, 10), counts(planned));
-        assertEquals(95, planned.size());
+        assertEquals(Map.of(BattleItemDrops.Drop.MODS_1, 40, BattleItemDrops.Drop.MODS_2, 25, BattleItemDrops.Drop.UNIQUE, 1,
+                BattleItemDrops.Drop.REFIT_SCHEMATIC, 10), counts(planned));
+        assertEquals(76, planned.size());
     }
 
     @Test
@@ -280,32 +278,30 @@ class BattleItemDropsTest {
         return tierCounts;
     }
     @Test
-    void rarityMultipliesOnlyTheRareRowsOfABattle() {
-        List<BattleItemDrops.Planned> plain = BattleItemDrops.plan(List.of(new BattleItemDrops.SourcePower(1600f, ItemChances.BASE)),
+    void rarityMultipliesOnlyTheUniqueRowOfABattle() {
+        List<BattleItemDrops.Planned> plain = BattleItemDrops.plan(List.of(new BattleItemDrops.SourcePower(10000f, ItemChances.BASE)),
                 1f, List.of(), neverLucky(), true);
-        List<BattleItemDrops.Planned> rarer = BattleItemDrops.plan(List.of(new BattleItemDrops.SourcePower(1600f,
+        List<BattleItemDrops.Planned> rarer = BattleItemDrops.plan(List.of(new BattleItemDrops.SourcePower(10000f,
                 ItemChances.BASE.withRarity(2f))), 1f, List.of(), neverLucky(), true);
 
         assertEquals(counts(plain).get(BattleItemDrops.Drop.MODS_1), counts(rarer).get(BattleItemDrops.Drop.MODS_1));
+        assertEquals(counts(plain).get(BattleItemDrops.Drop.MODS_2), counts(rarer).get(BattleItemDrops.Drop.MODS_2));
         assertEquals(counts(plain).get(BattleItemDrops.Drop.REFIT_SCHEMATIC), counts(rarer).get(BattleItemDrops.Drop.REFIT_SCHEMATIC));
-        assertEquals(2, counts(plain).get(BattleItemDrops.Drop.MODS_3));
-        assertEquals(4, counts(rarer).get(BattleItemDrops.Drop.MODS_3));
-        assertNull(counts(plain).get(BattleItemDrops.Drop.MODS_4));
-        assertEquals(1, counts(rarer).get(BattleItemDrops.Drop.MODS_4));
+        assertEquals(1, counts(plain).get(BattleItemDrops.Drop.UNIQUE));
+        assertEquals(3, counts(rarer).get(BattleItemDrops.Drop.UNIQUE));
     }
 
     @Test
-    void siteRarityShiftsTheModifierCountTowardsRareButLeavesTheUsualRollAlone() {
+    void aDroppedHullItemRollsOneOrTwoModifiersWhateverTheSiteRarity() {
         ItemDefinition fullBridge = ItemDefinitions.get(FULL_BRIDGE);
-        int rareAtBase = 0;
-        int rareWithRarity = 0;
+        int singleModifier = 0;
         for (long seed = 0; seed < 4000; seed++) {
-            assertEquals(ItemData.rolled(fullBridge, seed), ItemData.rolledWithRarity(fullBridge, seed, 1f));
-            rareAtBase += ItemData.rolledWithRarity(fullBridge, seed, 1f).explicits().size() > 2 ? 1 : 0;
-            rareWithRarity += ItemData.rolledWithRarity(fullBridge, seed, 2f).explicits().size() > 2 ? 1 : 0;
+            ItemData dropped = ItemData.rolledWithRarity(fullBridge, seed, 1f);
+            assertEquals(dropped, ItemData.rolledWithRarity(fullBridge, seed, 2f));
+            assertTrue(dropped.explicits().size() == 1 || dropped.explicits().size() == 2, dropped.toString());
+            singleModifier += dropped.explicits().size() == 1 ? 1 : 0;
         }
 
-        assertEquals(0.45, rareAtBase / 4000.0, 0.03);
-        assertEquals(0.9 / 1.45, rareWithRarity / 4000.0, 0.03);
+        assertEquals(0.64, singleModifier / 4000.0, 0.03);
     }
 }

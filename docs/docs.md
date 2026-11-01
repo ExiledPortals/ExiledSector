@@ -345,7 +345,9 @@ the share of NPC ships with trees follows the share of unlocked player ships. Ch
 Hull items share `item_salvage.csv` with subroutines but keep only half its rolls: each item of the site cascade, the
 targeted extras and a unique hull item from the site's unique roll survive at `HullItemDrops.SALVAGE_SHARE`
 (`ItemTypeSupport.salvageShare`). Battle drops (`battle_item_drops.csv`) and market stock (`market_hull_items.csv`)
-are hull-only tables and carry their own rates.
+are hull-only tables and carry their own rates. A dropped non-unique hull item has one or two modifiers
+(`HullItemDrops.DROP_LIMITS` through `ItemTypeSupport.dropLimits`), storm-touched loot included, so it never drops rare;
+crafting can still take it to four.
 
 ### Hull item mechanics
 
