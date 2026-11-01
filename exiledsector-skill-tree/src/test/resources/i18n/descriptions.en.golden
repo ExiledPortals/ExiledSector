@@ -2194,12 +2194,12 @@ effect|SOLARIS_OVERDRIVE_SECONDS_FLAT|12.5	0	Weapons cost no flux to fire for <g
 effect|SOLARIS_OVERDRIVE_SECONDS_FLAT|100.0	0	Weapons cost no flux to fire for <good>100</good> seconds after this ship's system activates, at most once every 60 seconds.
 effect|SOLARIS_OVERDRIVE_SECONDS_FLAT|-10.0	0	Weapons cost no flux to fire for <good>-10</good> seconds after this ship's system activates, at most once every 60 seconds.
 effect|SOLARIS_OVERDRIVE_SECONDS_FLAT|-12.5	0	Weapons cost no flux to fire for <good>-12.5</good> seconds after this ship's system activates, at most once every 60 seconds.
-effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|1.0	0	Strikecraft launched from this ship gain its affinity bonuses to hull, armor and flux.
-effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|10.0	0	Strikecraft launched from this ship gain its affinity bonuses to hull, armor and flux.
-effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|12.5	0	Strikecraft launched from this ship gain its affinity bonuses to hull, armor and flux.
-effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|100.0	0	Strikecraft launched from this ship gain its affinity bonuses to hull, armor and flux.
-effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|-10.0	0	Strikecraft launched from this ship gain its affinity bonuses to hull, armor and flux.
-effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|-12.5	0	Strikecraft launched from this ship gain its affinity bonuses to hull, armor and flux.
+effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|1.0	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
+effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|10.0	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
+effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|12.5	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
+effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|100.0	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
+effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|-10.0	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
+effect|STRIKECRAFT_GAIN_AFFINITY_BONUSES|-12.5	0	Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.
 effect|SUPPLIES_PER_MONTH_MULT|1.0	1	<good>1%</good> more supply use for maintenance.
 effect|SUPPLIES_PER_MONTH_MULT|10.0	1	<good>10%</good> more supply use for maintenance.
 effect|SUPPLIES_PER_MONTH_MULT|12.5	1	<good>12.5%</good> more supply use for maintenance.

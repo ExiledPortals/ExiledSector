@@ -859,7 +859,7 @@
     "effect.AFFINITY_EXCHANGE_TO_LOW_TECH_PERCENT": "移除所有高科技亲和与中端科技亲和，并将其中的<good>{value}%</good>转为低科技亲和。",
     "effect.AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT": "移除所有低科技亲和与中端科技亲和，并将其中的<good>{value}%</good>转为高科技亲和。",
     "effect.AFFINITY_EXCHANGE_TO_MIDLINE_PERCENT": "移除所有低科技亲和与高科技亲和，并将其中的<good>{value}%</good>转为中端科技亲和。",
-    "effect.STRIKECRAFT_GAIN_AFFINITY_BONUSES": "本舰放出的战机获得本舰对船体、装甲和幅能的亲和加成。",
+    "effect.STRIKECRAFT_GAIN_AFFINITY_BONUSES": "本舰放出的战机获得本舰除后勤外的全部亲和加成。",
     "effect.EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE.more": "免费接管其范围内的所有节点。每个节点不再提供自身效果，而是让每种亲和<good>+{value}</good>。",
     "effect.EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE.less": "免费接管其范围内的所有节点。每个节点不再提供自身效果，而是让每种亲和<bad>-{value}</bad>。",
     "effect.GATES_RADIUS_BELOW_HALF_HULL": "其范围内已分配的节点仅在船体低于50%时生效，强度为<good>{value}</good>倍。这些节点中战斗内不实时读取的效果会被忽略。",

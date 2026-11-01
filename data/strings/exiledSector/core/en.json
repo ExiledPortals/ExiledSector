@@ -479,7 +479,7 @@
     "effect.AFFINITY_EXCHANGE_TO_LOW_TECH_PERCENT": "Removes all High Tech and Midline Affinity and grants <good>{value}%</good> of it as Low Tech Affinity.",
     "effect.AFFINITY_EXCHANGE_TO_HIGH_TECH_PERCENT": "Removes all Low Tech and Midline Affinity and grants <good>{value}%</good> of it as High Tech Affinity.",
     "effect.AFFINITY_EXCHANGE_TO_MIDLINE_PERCENT": "Removes all Low Tech and High Tech Affinity and grants <good>{value}%</good> of it as Midline Affinity.",
-    "effect.STRIKECRAFT_GAIN_AFFINITY_BONUSES": "Strikecraft launched from this ship gain its affinity bonuses to hull, armor and flux.",
+    "effect.STRIKECRAFT_GAIN_AFFINITY_BONUSES": "Strikecraft launched from this ship gain all of its affinity bonuses except logistics ones.",
     "effect.EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE.more": "Takes over every node in its radius for free. Each grants <good>+{value}</good> to every affinity instead of its own effects.",
     "effect.EVERY_AFFINITY_FLAT_PER_HOLLOW_NODE.less": "Takes over every node in its radius for free. Each grants <bad>-{value}</bad> to every affinity instead of its own effects.",
     "effect.GATES_RADIUS_BELOW_HALF_HULL": "Allocated nodes in its radius apply only below 50% hull, at <good>{value}</good> times their strength. Their effects that aren't read live in combat are ignored.",

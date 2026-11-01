@@ -26,7 +26,8 @@ they read all three, in a contribution of its own so module sharing is unaffecte
 `HIGHEST_AFFINITY_FLAT_PER_S_MOD` (already multiplied by the ship's s-mods in `HullUpgradeEffectSource`) to the
 highest affinity, then `LOWEST_AFFINITY_AS_HIGHEST` raises the lowest to match it, and last each `AFFINITY_EXCHANGE_TO_*`
 empties the other two affinities (never below zero) into its own at its share. With `STRIKECRAFT_GAIN_AFFINITY_BONUSES`,
-`AffinityStrikecraft` gives launched strikecraft the step bonuses to hull, armor and flux. `ModuleTreeShare` gives modules
+`AffinityStrikecraft` gives launched strikecraft every step and scaled affinity bonus except logistics ones (and
+strikecraft ones, which already reach them), rescaling their already built hull and armor. `ModuleTreeShare` gives modules
 no bonus the parent exchanged away.
 
 ### Diminishing returns
