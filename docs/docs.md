@@ -677,7 +677,8 @@ An open shaft starts a fleet of the chart faction, or a derelict picket, built w
 planet's memory until beaten, repairing between fights like vanilla's salvage defenders (`HeldGuards`); it carries the site's vanilla drops and rolls its items in `ChartFleetLoot`. The
 encounter pulls in no other fleet and allows no AI retreat (`ShaftEncounters`), and `ChartCampaignPlugin` picks
 `ShaftBattleCreationPlugin` for it: a small dark map with rock fields along the edges, no objectives, and no cruiser or
-capital ship on either side, which `ShaftBattlePlugin` also removes from the reserves. A collapsed shaft is a
+capital ship on either side. `ShaftBattlePlugin`, a global combat plugin, also removes them from the reserves in any
+battle against a shaft fleet, so the rule holds even when another mod's battle plugin builds the map. A collapsed shaft is a
 `anomaly.ChartRaid` at a tier-based difficulty whose objective yields the site's items scaled by raid effectiveness.
 
 ### Storm Front

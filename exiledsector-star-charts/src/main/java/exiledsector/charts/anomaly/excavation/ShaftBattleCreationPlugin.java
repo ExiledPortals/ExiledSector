@@ -48,7 +48,6 @@ public class ShaftBattleCreationPlugin implements BattleCreationPlugin {
             loader.addFleetMember(FleetSide.ENEMY, member);
         }
         createCavern(loader, playerFleet.getContainingLocation());
-        loader.addPlugin(new ShaftBattlePlugin());
         context.setInitialDeploymentBurnDuration(INITIAL_BURN_SECONDS);
         context.setNormalDeploymentBurnDuration(NORMAL_BURN_SECONDS);
         context.setEscapeDeploymentBurnDuration(ESCAPE_BURN_SECONDS);
@@ -84,5 +83,6 @@ public class ShaftBattleCreationPlugin implements BattleCreationPlugin {
     public void afterDefinitionLoad(CombatEngineAPI engine) {
         engine.setBackgroundColor(CAVERN_TINT);
         engine.setRenderStarfield(false);
+        engine.getCustomData().put(ShaftBattlePlugin.CAVERN_KEY, true);
     }
 }

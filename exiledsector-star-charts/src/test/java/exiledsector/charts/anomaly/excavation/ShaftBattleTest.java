@@ -23,6 +23,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -71,6 +72,20 @@ class ShaftBattleTest {
         return manager;
     }
 
+    private static CombatEngineAPI engineAgainst(CampaignFleetAPI opponent) {
+        BattleCreationContext context = new BattleCreationContext(mock(CampaignFleetAPI.class), FleetGoal.ATTACK, opponent, FleetGoal.ATTACK);
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        when(engine.getContext()).thenReturn(context);
+        when(engine.getCustomData()).thenReturn(new HashMap<>());
+        return engine;
+    }
+
+    private static CampaignFleetAPI shaftFleet() {
+        CampaignFleetAPI fleet = mock(CampaignFleetAPI.class);
+        when(fleet.hasTag(ShaftFleets.FLEET_TAG)).thenReturn(true);
+        return fleet;
+    }
+
     @Test
     void cruisersAndCapitalsOnBothSidesHoldStationAboveTheShaft() {
         FleetMemberAPI playerFrigate = ship(HullSize.FRIGATE);
@@ -79,7 +94,7 @@ class ShaftBattleTest {
         FleetMemberAPI enemyCapital = ship(HullSize.CAPITAL_SHIP);
         CombatFleetManagerAPI player = manager(List.of(playerFrigate, playerCruiser));
         CombatFleetManagerAPI enemy = manager(List.of(enemyDestroyer, enemyCapital));
-        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        CombatEngineAPI engine = engineAgainst(shaftFleet());
         when(engine.getFleetManager(FleetSide.PLAYER)).thenReturn(player);
         when(engine.getFleetManager(FleetSide.ENEMY)).thenReturn(enemy);
 
@@ -93,10 +108,45 @@ class ShaftBattleTest {
     }
 
     @Test
+    void largeHullsHoldBackEvenWhenAnotherBattlePluginBuiltTheMap() {
+        FleetMemberAPI capital = ship(HullSize.CAPITAL_SHIP);
+        CombatFleetManagerAPI player = manager(List.of(capital));
+        CampaignFleetAPI combined = mock(CampaignFleetAPI.class);
+        MemoryAPI combinedMemory = FakeChartContentEngine.memory();
+        combinedMemory.set(ShaftEncounters.OPPONENT_KEY, true);
+        when(combined.getMemoryWithoutUpdate()).thenReturn(combinedMemory);
+        CombatEngineAPI engine = engineAgainst(combined);
+        when(engine.getFleetManager(FleetSide.PLAYER)).thenReturn(player);
+
+        assertFalse(ShaftBattlePlugin.onCavernMap(engine));
+        new ShaftBattlePlugin().init(engine);
+
+        verify(player).removeFromReserves(capital);
+    }
+
+    @Test
+    void otherBattlesKeepTheirLargeHulls() {
+        FleetMemberAPI capital = ship(HullSize.CAPITAL_SHIP);
+        CombatFleetManagerAPI player = manager(List.of(capital));
+        CombatEngineAPI engine = engineAgainst(mock(CampaignFleetAPI.class));
+        when(engine.getFleetManager(FleetSide.PLAYER)).thenReturn(player);
+        CombatEngineAPI simulator = mock(CombatEngineAPI.class);
+        when(simulator.getFleetManager(FleetSide.PLAYER)).thenReturn(player);
+        ShaftBattlePlugin plugin = new ShaftBattlePlugin();
+
+        plugin.init(engine);
+        plugin.advance(2f, List.of());
+        plugin.init(simulator);
+        plugin.advance(2f, List.of());
+
+        verify(player, never()).removeFromReserves(any());
+    }
+
+    @Test
     void thePluginChecksTheReservesAgainOnlyOnceASecond() {
         FleetMemberAPI capital = ship(HullSize.CAPITAL_SHIP);
         CombatFleetManagerAPI player = manager(List.of(capital));
-        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        CombatEngineAPI engine = engineAgainst(shaftFleet());
         when(engine.getFleetManager(FleetSide.PLAYER)).thenReturn(player);
         ShaftBattlePlugin plugin = new ShaftBattlePlugin();
 
@@ -129,9 +179,14 @@ class ShaftBattleTest {
         verify(loader).initMap(-ShaftBattleCreationPlugin.MAP_WIDTH / 2f, ShaftBattleCreationPlugin.MAP_WIDTH / 2f,
                 -ShaftBattleCreationPlugin.MAP_HEIGHT / 2f, ShaftBattleCreationPlugin.MAP_HEIGHT / 2f);
         verify(loader, times(4)).addAsteroidField(anyFloat(), anyFloat(), anyFloat(), anyFloat(), anyFloat(), anyFloat(), anyInt());
-        verify(loader).addPlugin(any(ShaftBattlePlugin.class));
+        verify(loader, never()).addPlugin(any());
         verify(loader, never()).addObjective(anyFloat(), anyFloat(), any());
         verify(loader).setHyperspaceMode(eq(false));
+
+        CombatEngineAPI engine = mock(CombatEngineAPI.class);
+        when(engine.getCustomData()).thenReturn(new HashMap<>());
+        new ShaftBattleCreationPlugin().afterDefinitionLoad(engine);
+        assertTrue(ShaftBattlePlugin.onCavernMap(engine));
     }
 
     @Test

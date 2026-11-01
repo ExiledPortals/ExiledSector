@@ -2,6 +2,7 @@
 	"plugins":{
 		"exiledSector_chartBattlePlugin":"exiledsector.charts.effect.ChartBattlePlugin",
 		"exiledSector_stormFrontBattlePlugin":"exiledsector.charts.anomaly.storm.StormBattlePlugin",
+		"exiledSector_shaftBattlePlugin":"exiledsector.charts.anomaly.excavation.ShaftBattlePlugin",
 	},
 	"graphics":{
 		"ui_icons_tech_tree":{

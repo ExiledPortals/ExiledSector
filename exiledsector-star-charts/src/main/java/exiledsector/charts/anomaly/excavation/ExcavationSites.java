@@ -22,6 +22,7 @@ import exiledsector.charts.anomaly.StateFields;
 import exiledsector.charts.generation.ChartGenContext;
 import exiledsector.charts.run.ChartRun;
 import exiledsector.items.ItemDrops;
+import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,6 +36,7 @@ public final class ExcavationSites implements LayoutShaper, ContentPlacer, RunPa
     public static final String LOOT_KEY = ChartEffect.CHART_EXCAVATION_LOOT_QUANTITY_PERCENT.anomalyTuningKey();
     public static final ExcavationSites INSTANCE = new ExcavationSites();
     static final long PLACEMENT_SALT = 0x45584341564154L;
+    private static final Logger LOG = Logger.getLogger(ExcavationSites.class);
 
     private ExcavationSites() {
     }
@@ -84,7 +86,11 @@ public final class ExcavationSites implements LayoutShaper, ContentPlacer, RunPa
 
     @Override
     public BattleCreationPlugin battleFor(SectorEntityToken opponent) {
-        return ShaftEncounters.isShaftBattle(opponent) ? new ShaftBattleCreationPlugin() : null;
+        if (!ShaftEncounters.isShaftBattle(opponent)) {
+            return null;
+        }
+        LOG.info("[ExiledSector] Offering the cavern map for the shaft fight against " + opponent.getName());
+        return new ShaftBattleCreationPlugin();
     }
 
     @Override
