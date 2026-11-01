@@ -1,0 +1,3 @@
+id,trigger,conditions,script,text,options,notes
+exiledSector_chartHideForeignColonyOptions,PopulateOptions,$player.locTag:exiledSector_chart_system,"RemoveOption ratCreateSettlement
+RemoveOption nex_outpostPreview",,,"Chart systems are deleted when the run ends, so Random Assortment of Things settlements and Nexerelin outposts are never offered there"
