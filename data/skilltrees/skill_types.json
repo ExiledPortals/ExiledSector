@@ -4285,6 +4285,11 @@
 			"phantomHullMods": [
 				"shrouded_lens"
 			],
+			"effectText": [
+				"Strikes a random target within <hl>400</hl> su <hl>1</hl> to <hl>4</hl> times a second, depending on hull size, dealing <hl>75</hl> energy damage in an area.",
+				"Each strike generates <hl>75</hl> flux. Keeps striking while venting or overloaded and can't be turned off.",
+				"<bad>50%</bad> increased crew casualties."
+			],
 			"tags": [
 				"weapons",
 				"req_non_phase_hull"
@@ -4326,6 +4331,11 @@
 			],
 			"phantomHullMods": [
 				"shrouded_thunderhead"
+			],
+			"effectText": [
+				"Fires Rift Lightning at points this ship's weapons hit, more often the more hits landed in the last <hl>5</hl> seconds. Beams and other soft flux hits don't count.",
+				"Each bolt deals <hl>200</hl> to <hl>500</hl> energy damage and <hl>400</hl> to <hl>1000</hl> EMP damage, depending on hull size, and generates flux equal to its energy damage.",
+				"<bad>50%</bad> increased crew casualties."
 			],
 			"tags": [
 				"weapons",

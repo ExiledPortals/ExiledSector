@@ -4706,14 +4706,29 @@ type|shield_upkeep_multi|DESTROYER|0	1	<bad>10%</bad> less shield flux upkeep.
 type|shield_upkeep_multi|CRUISER|0	1	<bad>10%</bad> less shield flux upkeep.
 type|shield_upkeep_multi|CAPITAL_SHIP|0	1	<bad>10%</bad> less shield flux upkeep.
 itemCost|shrouded_lens	0	Costs 1 shrouded_lens to allocate, returned when unallocated.
+type|shrouded_lens|null|0	0	Strikes a random target within <hl>400</hl> su <hl>1</hl> to <hl>4</hl> times a second, depending on hull size, dealing <hl>75</hl> energy damage in an area.
+type|shrouded_lens|null|1	0	Each strike generates <hl>75</hl> flux. Keeps striking while venting or overloaded and can't be turned off.
+type|shrouded_lens|null|2	0	<bad>50%</bad> increased crew casualties.
 type-detail|shrouded_lens|null|0	0	Can't be allocated on phase ships.
 type-detail|shrouded_lens|null|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Fragment Swarm</hullmod>\n• <hullmod>Shrouded Lens</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Fragment Swarm</node>
+type|shrouded_lens|FRIGATE|0	0	Strikes a random target within <hl>400</hl> su <hl>1</hl> to <hl>4</hl> times a second, depending on hull size, dealing <hl>75</hl> energy damage in an area.
+type|shrouded_lens|FRIGATE|1	0	Each strike generates <hl>75</hl> flux. Keeps striking while venting or overloaded and can't be turned off.
+type|shrouded_lens|FRIGATE|2	0	<bad>50%</bad> increased crew casualties.
 type-detail|shrouded_lens|FRIGATE|0	0	Can't be allocated on phase ships.
 type-detail|shrouded_lens|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Fragment Swarm</hullmod>\n• <hullmod>Shrouded Lens</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Fragment Swarm</node>
+type|shrouded_lens|DESTROYER|0	0	Strikes a random target within <hl>400</hl> su <hl>1</hl> to <hl>4</hl> times a second, depending on hull size, dealing <hl>75</hl> energy damage in an area.
+type|shrouded_lens|DESTROYER|1	0	Each strike generates <hl>75</hl> flux. Keeps striking while venting or overloaded and can't be turned off.
+type|shrouded_lens|DESTROYER|2	0	<bad>50%</bad> increased crew casualties.
 type-detail|shrouded_lens|DESTROYER|0	0	Can't be allocated on phase ships.
 type-detail|shrouded_lens|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Fragment Swarm</hullmod>\n• <hullmod>Shrouded Lens</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Fragment Swarm</node>
+type|shrouded_lens|CRUISER|0	0	Strikes a random target within <hl>400</hl> su <hl>1</hl> to <hl>4</hl> times a second, depending on hull size, dealing <hl>75</hl> energy damage in an area.
+type|shrouded_lens|CRUISER|1	0	Each strike generates <hl>75</hl> flux. Keeps striking while venting or overloaded and can't be turned off.
+type|shrouded_lens|CRUISER|2	0	<bad>50%</bad> increased crew casualties.
 type-detail|shrouded_lens|CRUISER|0	0	Can't be allocated on phase ships.
 type-detail|shrouded_lens|CRUISER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Fragment Swarm</hullmod>\n• <hullmod>Shrouded Lens</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Fragment Swarm</node>
+type|shrouded_lens|CAPITAL_SHIP|0	0	Strikes a random target within <hl>400</hl> su <hl>1</hl> to <hl>4</hl> times a second, depending on hull size, dealing <hl>75</hl> energy damage in an area.
+type|shrouded_lens|CAPITAL_SHIP|1	0	Each strike generates <hl>75</hl> flux. Keeps striking while venting or overloaded and can't be turned off.
+type|shrouded_lens|CAPITAL_SHIP|2	0	<bad>50%</bad> increased crew casualties.
 type-detail|shrouded_lens|CAPITAL_SHIP|0	0	Can't be allocated on phase ships.
 type-detail|shrouded_lens|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Fragment Swarm</hullmod>\n• <hullmod>Shrouded Lens</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Fragment Swarm</node>
 type|shrouded_lens_damage|null|0	0	<good>10%</good> increased Shrouded Lens damage.
@@ -4733,14 +4748,29 @@ type-detail|shrouded_mantle|CRUISER|1	0	Mutually exclusive with <hullmod>hullmod
 type-detail|shrouded_mantle|CAPITAL_SHIP|0	0	Can't be allocated on phase ships.
 type-detail|shrouded_mantle|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Fragment Swarm</hullmod>\n• <hullmod>Shrouded Mantle</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Fragment Swarm</node>
 itemCost|shrouded_thunderhead	0	Costs 1 shrouded_thunderhead to allocate, returned when unallocated.
+type|shrouded_thunderhead|null|0	0	Fires Rift Lightning at points this ship's weapons hit, more often the more hits landed in the last <hl>5</hl> seconds. Beams and other soft flux hits don't count.
+type|shrouded_thunderhead|null|1	0	Each bolt deals <hl>200</hl> to <hl>500</hl> energy damage and <hl>400</hl> to <hl>1000</hl> EMP damage, depending on hull size, and generates flux equal to its energy damage.
+type|shrouded_thunderhead|null|2	0	<bad>50%</bad> increased crew casualties.
 type-detail|shrouded_thunderhead|null|0	0	Can't be allocated on phase ships.
 type-detail|shrouded_thunderhead|null|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Fragment Swarm</hullmod>\n• <hullmod>Shrouded Thunderhead</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Fragment Swarm</node>
+type|shrouded_thunderhead|FRIGATE|0	0	Fires Rift Lightning at points this ship's weapons hit, more often the more hits landed in the last <hl>5</hl> seconds. Beams and other soft flux hits don't count.
+type|shrouded_thunderhead|FRIGATE|1	0	Each bolt deals <hl>200</hl> to <hl>500</hl> energy damage and <hl>400</hl> to <hl>1000</hl> EMP damage, depending on hull size, and generates flux equal to its energy damage.
+type|shrouded_thunderhead|FRIGATE|2	0	<bad>50%</bad> increased crew casualties.
 type-detail|shrouded_thunderhead|FRIGATE|0	0	Can't be allocated on phase ships.
 type-detail|shrouded_thunderhead|FRIGATE|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Fragment Swarm</hullmod>\n• <hullmod>Shrouded Thunderhead</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Fragment Swarm</node>
+type|shrouded_thunderhead|DESTROYER|0	0	Fires Rift Lightning at points this ship's weapons hit, more often the more hits landed in the last <hl>5</hl> seconds. Beams and other soft flux hits don't count.
+type|shrouded_thunderhead|DESTROYER|1	0	Each bolt deals <hl>200</hl> to <hl>500</hl> energy damage and <hl>400</hl> to <hl>1000</hl> EMP damage, depending on hull size, and generates flux equal to its energy damage.
+type|shrouded_thunderhead|DESTROYER|2	0	<bad>50%</bad> increased crew casualties.
 type-detail|shrouded_thunderhead|DESTROYER|0	0	Can't be allocated on phase ships.
 type-detail|shrouded_thunderhead|DESTROYER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Fragment Swarm</hullmod>\n• <hullmod>Shrouded Thunderhead</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Fragment Swarm</node>
+type|shrouded_thunderhead|CRUISER|0	0	Fires Rift Lightning at points this ship's weapons hit, more often the more hits landed in the last <hl>5</hl> seconds. Beams and other soft flux hits don't count.
+type|shrouded_thunderhead|CRUISER|1	0	Each bolt deals <hl>200</hl> to <hl>500</hl> energy damage and <hl>400</hl> to <hl>1000</hl> EMP damage, depending on hull size, and generates flux equal to its energy damage.
+type|shrouded_thunderhead|CRUISER|2	0	<bad>50%</bad> increased crew casualties.
 type-detail|shrouded_thunderhead|CRUISER|0	0	Can't be allocated on phase ships.
 type-detail|shrouded_thunderhead|CRUISER|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Fragment Swarm</hullmod>\n• <hullmod>Shrouded Thunderhead</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Fragment Swarm</node>
+type|shrouded_thunderhead|CAPITAL_SHIP|0	0	Fires Rift Lightning at points this ship's weapons hit, more often the more hits landed in the last <hl>5</hl> seconds. Beams and other soft flux hits don't count.
+type|shrouded_thunderhead|CAPITAL_SHIP|1	0	Each bolt deals <hl>200</hl> to <hl>500</hl> energy damage and <hl>400</hl> to <hl>1000</hl> EMP damage, depending on hull size, and generates flux equal to its energy damage.
+type|shrouded_thunderhead|CAPITAL_SHIP|2	0	<bad>50%</bad> increased crew casualties.
 type-detail|shrouded_thunderhead|CAPITAL_SHIP|0	0	Can't be allocated on phase ships.
 type-detail|shrouded_thunderhead|CAPITAL_SHIP|1	0	Mutually exclusive with <hullmod>hullmods</hullmod>:\n• <hullmod>Fragment Swarm</hullmod>\n• <hullmod>Shrouded Thunderhead</hullmod>\n\nMutually exclusive with <node>node</node>:\n• <node>Fragment Swarm</node>
 flavour|sindrian_shielding	0	Sindria's day side is scoured by radiation, and array workers who fled the Askonia Crisis to sign on with this crew know how to harden an emitter against it. They learned the hard way, as most Sindrians learn most things.
