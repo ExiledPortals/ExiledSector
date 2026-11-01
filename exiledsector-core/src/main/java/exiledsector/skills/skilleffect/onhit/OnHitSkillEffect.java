@@ -17,7 +17,7 @@ import static exiledsector.skills.skilleffect.Backings.listener;
 
 public enum OnHitSkillEffect implements BackedSkillEffect {
 
-    BEAM_WEAPON_HARD_FLUX_PERCENT(listener(BeamHardFluxListener.HARD_FLUX_PERCENT_KEY, BeamHardFluxListener.class, BeamHardFluxListener::new)),
+    BEAM_WEAPON_HARD_FLUX_PERCENT(listener(BeamHardFluxListener.HARD_FLUX_PERCENT_KEY, BeamHardFluxListener.class, ship -> new BeamHardFluxListener())),
     BEAM_WEAPON_SHIELD_DISRUPTION_PERCENT(listener(BeamShieldDisruptionListener.SHIELD_DAMAGE_PERCENT_KEY, BeamShieldDisruptionListener.class,
             BeamShieldDisruptionListener::new)),
     BEAM_WEAPON_SPLIT_TARGETS_FLAT(listener(BeamSplitListener.TARGETS_KEY, BeamSplitListener.class, BeamSplitListener::new)) {

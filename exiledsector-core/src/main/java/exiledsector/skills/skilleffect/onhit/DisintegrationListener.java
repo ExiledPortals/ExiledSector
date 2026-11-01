@@ -30,7 +30,7 @@ final class DisintegrationListener extends ShipCombatListener implements DamageD
     @SuppressWarnings("java:S3516")
     @Override
     public String modifyDamageDealt(Object param, CombatEntityAPI target, DamageAPI damage, Vector2f point, boolean shieldHit) {
-        if (shieldHit || !(target instanceof ShipAPI targetShip) || !CombatQueries.isHostile(ownerShip, targetShip)) {
+        if (shieldHit || !(target instanceof ShipAPI targetShip)) {
             return null;
         }
         float percent = armorDamagePercent(CombatQueries.weaponBehind(param));

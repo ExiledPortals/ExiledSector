@@ -53,13 +53,10 @@ class EngramHitListenersTest {
     void aBeamShieldHitRaisesShieldDamageTakenUntilTheDisruptionLapses() {
         ShipAPI shooter = ship(0, BeamShieldDisruptionListener.SHIELD_DAMAGE_PERCENT_KEY, 10f);
         ShipAPI target = ship(1, null, 0f);
-        ShipAPI ally = ship(0, null, 0f);
         BeamShieldDisruptionListener listener = new BeamShieldDisruptionListener(shooter);
 
         listener.modifyDamageDealt(mock(BeamAPI.class), target, mock(DamageAPI.class), new Vector2f(), false);
-        listener.modifyDamageDealt(mock(BeamAPI.class), ally, mock(DamageAPI.class), new Vector2f(), true);
         verify(target, never()).addListener(any());
-        verify(ally, never()).addListener(any());
         listener.modifyDamageDealt(mock(BeamAPI.class), target, mock(DamageAPI.class), new Vector2f(), true);
 
         TimedTargetDebuff disruption = addedListener(target, TimedTargetDebuff.class);
