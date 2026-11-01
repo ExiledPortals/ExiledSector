@@ -16,6 +16,7 @@ final class WormholeButtonFx {
     static final Color TEXT_COLOR = new Color(215, 195, 255);
     static final Color BACKGROUND_COLOR = new Color(40, 22, 70);
     static final float GLOW_REACH = 18f;
+    static final float GLOW_UNDERLAP = 4f;
     static final float GLOW_ALPHA = 0.5f;
     static final float MOUTH_SIZE_SHARE = 2.4f;
     static final float MOUTH_SPIN_DEGREES = 40f;
@@ -51,13 +52,20 @@ final class WormholeButtonFx {
 
     private static void outerGlow(float left, float bottom, float width, float height, float reach, float alpha) {
         float cut = Math.min(CORNER_CUT, Math.min(width, height) / 2f);
-        float[] inner = chamferedOutline(left, bottom, width, height, cut);
+        float underlap = Math.min(GLOW_UNDERLAP, Math.min(width, height) / 2f - cut);
+        float[] under = chamferedOutline(left + underlap, bottom + underlap, width - underlap * 2f, height - underlap * 2f, cut);
+        float[] edge = chamferedOutline(left, bottom, width, height, cut);
         float[] outer = chamferedOutline(left - reach, bottom - reach, width + reach * 2f, height + reach * 2f, cut + reach * OUTSET_CUT_SHARE);
+        ring(under, alpha, edge, alpha, left, width);
+        ring(edge, alpha, outer, 0f, left, width);
+    }
+
+    private static void ring(float[] inner, float innerAlpha, float[] outer, float outerAlpha, float left, float width) {
         GL11.glBegin(GL11.GL_QUAD_STRIP);
         for (int corner = 0; corner <= OUTLINE_POINTS; corner++) {
             int index = (corner % OUTLINE_POINTS) * 2;
-            vertex(inner[index], inner[index + 1], left, width, alpha);
-            vertex(outer[index], outer[index + 1], left, width, 0f);
+            vertex(inner[index], inner[index + 1], left, width, innerAlpha);
+            vertex(outer[index], outer[index + 1], left, width, outerAlpha);
         }
         GL11.glEnd();
     }
