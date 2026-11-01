@@ -74,11 +74,11 @@ The nodes allocated in the subroutine's radius apply only while a combat conditi
 
 | Item | Section | Effect | Family |
 |---|---|---|---|
-| Low Arc Shield Emitter Core | shield_generator | All shield damage taken is converted to soft flux; shield arc is fixed and can't be modified | soft flux |
+| Low Arc Shield Emitter Core | shield_generator | 50% of shield damage taken is converted to soft flux; shield arc is fixed at 60 degrees and can't be modified | soft flux |
 | Farige Blueprint Vault | bridge | +3 to the root's affinity for each s-mod on the ship | affinity |
 | Phoenix Ash Archive (subroutine) | | Allocated nodes in radius apply only below 50% hull, at triple strength | gated |
 
-The emitter core is Tania's own Low Arc Shield Emitter turned into a trade: a narrow shield that never builds hard flux. The vault ties Tania's s-mod pillar to affinity.
+The emitter core is Tania's own Low Arc Shield Emitter turned into a trade: a narrow shield that builds half the hard flux. The vault ties Tania's s-mod pillar to affinity.
 
 ## Nightcross
 
