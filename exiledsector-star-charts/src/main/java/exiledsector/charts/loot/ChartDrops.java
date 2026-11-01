@@ -218,7 +218,8 @@ public final class ChartDrops {
             }
         }
         Map<String, Integer> currencies = new LinkedHashMap<>();
-        if (source.insideSystem() && random.nextFloat() < rule.currencyChance() * Math.max(0f, mults.currency())) {
+        int currencyCount = source.insideSystem() ? ItemDrops.wholeParts(rule.currencyChance() * Math.max(0f, mults.currency()), random) : 0;
+        for (int drop = 0; drop < currencyCount; drop++) {
             String currencyId = pickChartCurrency(random);
             if (currencyId != null) {
                 currencies.merge(currencyId, 1, Integer::sum);

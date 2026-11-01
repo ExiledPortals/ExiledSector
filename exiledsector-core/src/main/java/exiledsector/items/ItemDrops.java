@@ -29,7 +29,7 @@ public final class ItemDrops {
     public static final String TECH_MINING_MONTHLY = "techmining_monthly";
     static final int MIN_PARTS_PER_FIND = 1;
     static final int MAX_PARTS_PER_FIND = 3;
-    static final float KERNEL_CHANCE_SHARE = 0.35f;
+    static final float KERNEL_CHANCE_SHARE = 0.7f;
     static final float FACTION_SOURCE_WEIGHT_MULT = 2f;
     public static final String BATTLE_PARTS_FIELD_ID = "exiledSector_socketPartsPer100DeploymentPoints";
     public static final int DEFAULT_BATTLE_PARTS_PER_100_DP = 5;
@@ -146,8 +146,8 @@ public final class ItemDrops {
         if (partsFound > 0) {
             droppedMaterials.put(ItemDisassembly.PARTS_ITEM_ID, partsFound);
         }
-        if (random.nextFloat() < rule.chances().get(0) * KERNEL_CHANCE_SHARE * currencyMult) {
-            droppedMaterials.put(pickKernel(random), 1);
+        for (int kernels = wholeParts(rule.chances().get(0) * KERNEL_CHANCE_SHARE * currencyMult, random); kernels > 0; kernels--) {
+            droppedMaterials.merge(pickKernel(random), 1, Integer::sum);
         }
         return droppedMaterials;
     }
