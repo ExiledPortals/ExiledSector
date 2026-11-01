@@ -71,12 +71,23 @@ each such hull mod's effect in `PhantomHullModEffect`, which forwards to the ori
 copies, where it does nothing, can't be removed and is hidden from refit and Codex. Fleet-wide hull mods
 (High Resolution Sensors, Phase Field) are never phantoms.
 
+### Hull mod conflicts
+
+`data/config/exiledSector/hullmod_conflicts.csv` lists hull mods that can't share a ship: each row names a hull
+mod and its `;`-separated partners, and a pair counts both ways. The game merges the file across mods by the
+`hullmod` column, so another mod adds its own rows (a row with the same key replaces ours), and `HullModConflicts`
+reads it in `SkillTypeLoader`. A node excludes the partners of the hull mods it places (`vanillaHullMod`,
+`phantomHullMods`); a node that places none names the hull mods it stands in for in `exclusiveHullMods` and
+excludes their partners instead. Two nodes whose hull mods are partners exclude each other.
+
+`NodeEligibility` refuses a node when an excluded hull mod is on the ship or comes from another allocated node,
+for the player and NPC builds alike. Most rows are other mods' hull mods that remove vanilla ones in code, which no
+data shows. `SkillTypesDataConsistencyTest` rejects pairs listed twice, rows without notes and rows naming no
+node's hull mod.
+
 ### Phantom hull mod conflicts
 
-Known conflicts are hull mod pairs in `data/config/exiledSector/hullmod_conflicts.csv`, merged across mods
-and read by `HullModConflicts`. A pair counts both ways, and a node excludes every hull mod paired with the hull
-mods it places, or with those it stands in for when it places none; only those nodes keep `exclusiveHullMods`.
-`HullModConflictResolver` removes a conflict that turns up later. A hull mod that tries to remove a phantom
+`HullModConflictResolver` removes a conflicting hull mod that turns up after the node. A hull mod that tries to remove a phantom
 through MagicLib has its cause removed instead. When the conflict is built-in, permanent or an S-mod,
 `PhantomConflictWatch` refunds the node instead, as below.
 
