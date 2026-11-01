@@ -76,7 +76,7 @@ public class SkillTreeFleetRenderer {
         RoamingShip viewedShip = null;
         FleetMemberAPI viewedMember = null;
         for (FleetMemberAPI member : members) {
-            RoamingShip ship = formation.ship(member.getHullSpec(), measuringCache, flight.facingDeg(), random);
+            RoamingShip ship = formation.ship(member.getHullSpec(), member.getVariant(), measuringCache, flight.facingDeg(), random);
             if (ship == null) {
                 continue;
             }

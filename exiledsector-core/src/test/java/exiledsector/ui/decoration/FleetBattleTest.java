@@ -77,7 +77,7 @@ class FleetBattleTest {
         for (HullSize hullSize : hullSizes) {
             FleetShipDrift.HullMotion motion = FleetShipDrift.HullMotion.of(hullSize);
             ships.add(new RoamingShip("graphics/ships/test.png", 100f, 100f, hullSize, new FleetShipDrift(motion, 20f, 0f, random),
-                    HullEngines.of(FleetHullVisuals.NONE)));
+                    HullEngines.of(FleetHullVisuals.NONE), HullModules.NONE));
         }
         fleet.addShips(ships, 40f);
         fleet.showFullySpawned();

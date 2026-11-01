@@ -2,6 +2,7 @@ package exiledsector.ui.decoration;
 
 import com.fs.starfarer.api.combat.ShipAPI.HullSize;
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import com.fs.starfarer.api.util.Misc;
 import exiledsector.skills.skilleffect.render.SpriteCache;
@@ -41,6 +42,10 @@ final class FleetFormation {
     }
 
     RoamingShip ship(ShipHullSpecAPI hull, SpriteCache spriteCache, float startFacingDeg, Random random) {
+        return ship(hull, null, spriteCache, startFacingDeg, random);
+    }
+
+    RoamingShip ship(ShipHullSpecAPI hull, ShipVariantAPI variant, SpriteCache spriteCache, float startFacingDeg, Random random) {
         String spritePath = hull.getSpriteName();
         SpriteAPI texture = spritePath == null ? null : spriteCache.texture(spritePath);
         if (texture == null) {
@@ -52,7 +57,9 @@ final class FleetFormation {
         FleetShipDrift.HullMotion motion = FleetShipDrift.HullMotion.of(hullSize);
         float maxOffset = FleetShipDrift.maxOffset(fleetRadius, largestSizeNum, sizeNum, onlyLargest);
         FleetShipDrift drift = new FleetShipDrift(motion, maxOffset, startFacingDeg, random);
-        return new RoamingShip(spritePath, texture.getWidth(), texture.getHeight(), hullSize, drift, HullEngines.of(FleetHullVisuals.of(hull)));
+        HullModules modules = variant == null ? HullModules.of(hull, spriteCache) : HullModules.of(variant, spriteCache);
+        return new RoamingShip(spritePath, texture.getWidth(), texture.getHeight(), hullSize, drift, HullEngines.of(FleetHullVisuals.of(hull)),
+                modules);
     }
 
     List<RoamingShip> shipsLargestFirst(List<ShipHullSpecAPI> hulls, SpriteCache spriteCache, float startFacingDeg, Random random) {

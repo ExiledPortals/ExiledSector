@@ -54,12 +54,18 @@ public final class HullEngines {
 
     public void drawHull(SpriteCache spriteCache, String spritePath, float screenX, float screenY, float hullWidth, float hullHeight,
                          float screenScale, float facingDeg, float alpha) {
+        drawSprite(spriteCache, spritePath, screenX, screenY, hullWidth, hullHeight, visuals.centerX(), visuals.centerY(), screenScale, facingDeg,
+                alpha);
+    }
+
+    static void drawSprite(SpriteCache spriteCache, String spritePath, float screenX, float screenY, float spriteWidth, float spriteHeight,
+                           float centerX, float centerY, float screenScale, float facingDeg, float alpha) {
         float angleDeg = facingDeg - SPRITE_ANGLE_OFFSET;
-        if (visuals.hasCenter()) {
-            SpriteDraw.drawAtPivot(spriteCache, spritePath, screenX, screenY, hullWidth, hullHeight,
-                    visuals.centerX() * screenScale, visuals.centerY() * screenScale, Color.WHITE, alpha, angleDeg);
+        if (!Float.isNaN(centerX) && !Float.isNaN(centerY)) {
+            SpriteDraw.drawAtPivot(spriteCache, spritePath, screenX, screenY, spriteWidth, spriteHeight,
+                    centerX * screenScale, centerY * screenScale, Color.WHITE, alpha, angleDeg);
         } else {
-            SpriteDraw.drawAtCenter(spriteCache, spritePath, screenX, screenY, hullWidth, hullHeight, Color.WHITE, alpha, angleDeg);
+            SpriteDraw.drawAtCenter(spriteCache, spritePath, screenX, screenY, spriteWidth, spriteHeight, Color.WHITE, alpha, angleDeg);
         }
     }
 
