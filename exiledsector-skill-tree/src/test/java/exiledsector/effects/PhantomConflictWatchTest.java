@@ -9,6 +9,7 @@ import com.fs.starfarer.api.fleet.FleetMemberAPI;
 import exiledsector.MockSector;
 import exiledsector.compat.MagicLibCompat;
 import exiledsector.persistence.ShipSkillDataManager;
+import exiledsector.skills.AllocatedNode;
 import exiledsector.skills.InstalledHullMods;
 import exiledsector.skills.LearnedPhantomConflicts;
 import exiledsector.skills.ShipSkillData;
@@ -39,6 +40,7 @@ import static org.mockito.Mockito.when;
 class PhantomConflictWatchTest {
 
     private static final String SAFETY_OVERRIDES = "safetyoverrides";
+    private static final String IFF_OVERRIDE = "zea_edf_iff_override";
 
     private MockSector mockSector;
 
@@ -189,9 +191,17 @@ class PhantomConflictWatchTest {
     }
 
     private ShipSkillData treeWithOverrides(String memberId) {
+        return treeWith(memberId, new SkillType.Builder("safety_overrides", "Safety Overrides", "a.png", SkillTier.NOTABLE).effects(List.of())
+                .phantomHullModIds(List.of(SAFETY_OVERRIDES)).build());
+    }
+
+    private ShipSkillData treeWithShunt(String memberId) {
+        return treeWith(memberId, new SkillType.Builder("shield_shunt", "Shield Shunt", "a.png", SkillTier.NOTABLE).effects(List.of())
+                .exclusiveHullModIds(List.of(IFF_OVERRIDE)).build());
+    }
+
+    private ShipSkillData treeWith(String memberId, SkillType overridesType) {
         SkillType rootType = new SkillType.Builder("root", "Root", "a.png", SkillTier.ROOT).effects(List.of()).build();
-        SkillType overridesType = new SkillType.Builder("safety_overrides", "Safety Overrides", "a.png", SkillTier.NOTABLE).effects(List.of())
-                .phantomHullModIds(List.of(SAFETY_OVERRIDES)).build();
         SkillType plainType = new SkillType.Builder("plain", "Plain", "a.png", SkillTier.SMALL).effects(List.of()).build();
         SkillNode root = new SkillNode("root_1", rootType, List.of("overrides_1"), 0f, 0f);
         SkillNode overrides = new SkillNode("overrides_1", overridesType, List.of("root_1", "beyond_1"), 0f, 0f);
@@ -255,6 +265,68 @@ class PhantomConflictWatchTest {
     void aRevertIsDroppedWhenTheShipNoLongerHasTheConflict() {
         ShipSkillData data = treeWithOverrides("ship-a");
         PhantomConflictWatch.inspect(member("ship-a"), attemptedRemoval("cetan", "csp_cetanframe", true), Set.of(SAFETY_OVERRIDES), true);
+        playerFleetHolds(fittedMember("ship-a", variant("wolf", List.of(), Set.of())));
+
+        assertFalse(PhantomConflictWatch.applyPendingReverts());
+
+        assertTrue(data.isAllocated("overrides_1"));
+    }
+
+    @Test
+    void aBuiltInHullModTheNodeDeclaresAConflictWithRevertsTheNodeAndWhatDependedOnIt() {
+        ShipSkillData data = treeWithShunt("ship-a");
+        ShipVariantAPI variant = variant("zea_edf_seiryu", List.of(IFF_OVERRIDE), Set.of(IFF_OVERRIDE));
+        FleetMemberAPI member = fittedMember("ship-a", variant);
+        playerFleetHolds(member);
+
+        PhantomConflictWatch.queueRevertsForFixedConflicts(member, variant, AllocatedNode.of(data), true);
+        try (MockedStatic<ShipTreeSync> sync = Mockito.mockStatic(ShipTreeSync.class)) {
+            assertTrue(PhantomConflictWatch.applyPendingReverts("ship-a"));
+        }
+
+        assertTrue(data.isAllocated("root_1"));
+        assertFalse(data.isAllocated("overrides_1"));
+        assertFalse(data.isAllocated("beyond_1"));
+    }
+
+    @Test
+    void anSModTheNodeDeclaresAConflictWithAlsoRevertsTheNode() {
+        ShipSkillData data = treeWithShunt("ship-a");
+        ShipVariantAPI variant = variant("wolf", List.of(IFF_OVERRIDE), Set.of());
+        when(variant.getSMods()).thenReturn(new LinkedHashSet<>(List.of(IFF_OVERRIDE)));
+
+        PhantomConflictWatch.queueRevertsForFixedConflicts(member("ship-a"), variant, AllocatedNode.of(data), true);
+
+        assertTrue(PhantomConflictWatch.hasPendingReverts());
+    }
+
+    @Test
+    void aRemovableOrAbsentDeclaredConflictIsLeftToTheResolver() {
+        ShipSkillData data = treeWithShunt("ship-a");
+
+        PhantomConflictWatch.queueRevertsForFixedConflicts(member("ship-a"), variant("wolf", List.of(IFF_OVERRIDE), Set.of()),
+                AllocatedNode.of(data), true);
+        PhantomConflictWatch.queueRevertsForFixedConflicts(member("ship-a"), variant("wolf", List.of(), Set.of()),
+                AllocatedNode.of(data), true);
+
+        assertFalse(PhantomConflictWatch.hasPendingReverts());
+    }
+
+    @Test
+    void npcTreesAreNeverQueuedForDeclaredConflicts() {
+        ShipSkillData data = treeWithShunt("npc");
+        ShipVariantAPI variant = variant("zea_edf_seiryu", List.of(IFF_OVERRIDE), Set.of(IFF_OVERRIDE));
+
+        PhantomConflictWatch.queueRevertsForFixedConflicts(member("npc"), variant, AllocatedNode.of(data), false);
+
+        assertFalse(PhantomConflictWatch.hasPendingReverts());
+    }
+
+    @Test
+    void aDeclaredRevertIsDroppedWhenTheHullModIsNoLongerFixed() {
+        ShipSkillData data = treeWithShunt("ship-a");
+        ShipVariantAPI seiryu = variant("zea_edf_seiryu", List.of(IFF_OVERRIDE), Set.of(IFF_OVERRIDE));
+        PhantomConflictWatch.queueRevertsForFixedConflicts(member("ship-a"), seiryu, AllocatedNode.of(data), true);
         playerFleetHolds(fittedMember("ship-a", variant("wolf", List.of(), Set.of())));
 
         assertFalse(PhantomConflictWatch.applyPendingReverts());

@@ -1368,7 +1368,8 @@
 			"exclusiveHullMods": [
 				"frontemitter",
 				"adaptiveshields",
-				"frontshield"
+				"frontshield",
+				"zea_edf_iff_override"
 			],
 			"phantomHullMods": [
 				"shield_shunt"

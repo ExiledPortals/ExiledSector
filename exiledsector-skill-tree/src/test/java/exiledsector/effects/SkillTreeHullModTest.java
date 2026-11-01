@@ -88,6 +88,7 @@ class SkillTreeHullModTest {
     @AfterEach
     void tearDown() {
         PhantomHullMods.clearForTests();
+        PhantomConflictWatch.clearPendingReverts();
         mockSector.close();
         lunaSettingsMock.close();
         SkillTree.clearNodes();
