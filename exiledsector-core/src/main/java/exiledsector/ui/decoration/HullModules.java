@@ -26,6 +26,7 @@ final class HullModules {
     private static final Comparator<HullModule> LARGEST_FIRST = Comparator.comparingDouble(module -> -module.sizeNum());
     private static final Logger LOG = Logger.getLogger(HullModules.class);
     private static final Map<String, HullModules> MODULES_BY_HULL = new HashMap<>();
+    private static final SpriteCache MEASURING_CACHE = new SpriteCache(HullModules.class);
 
     private final List<HullModule> underParent;
     private final List<HullModule> overParent;
@@ -52,14 +53,14 @@ final class HullModules {
         return new HullModules(List.copyOf(under), List.copyOf(over), withEngines);
     }
 
-    static HullModules of(ShipHullSpecAPI hullSpec, SpriteCache spriteCache) {
+    static HullModules of(ShipHullSpecAPI hullSpec) {
         if (hullSpec == null || !ShipFacts.hasModuleSlots(hullSpec)) {
             return NONE;
         }
-        return MODULES_BY_HULL.computeIfAbsent(hullSpec.getHullId(), hullId -> of(defaultVariant(hullSpec), spriteCache));
+        return MODULES_BY_HULL.computeIfAbsent(hullSpec.getHullId(), hullId -> of(defaultVariant(hullSpec)));
     }
 
-    static HullModules of(ShipVariantAPI variant, SpriteCache spriteCache) {
+    static HullModules of(ShipVariantAPI variant) {
         Map<String, String> stationModules = variant == null ? null : variant.getStationModules();
         if (stationModules == null || stationModules.isEmpty() || variant.getHullSpec() == null) {
             return NONE;
@@ -70,7 +71,7 @@ final class HullModules {
         for (Map.Entry<String, String> stationModule : stationModules.entrySet()) {
             WeaponSlotAPI slot = parentHull.getWeaponSlotAPI(stationModule.getKey());
             ShipVariantAPI moduleVariant = moduleVariant(variant, stationModule.getKey(), stationModule.getValue());
-            HullModule module = slot == null || moduleVariant == null ? null : module(slot, moduleVariant.getHullSpec(), parentSizeNum, spriteCache);
+            HullModule module = slot == null || moduleVariant == null ? null : module(slot, moduleVariant.getHullSpec(), parentSizeNum);
             if (module != null) {
                 modules.add(module);
             }
@@ -78,9 +79,9 @@ final class HullModules {
         return of(modules);
     }
 
-    private static HullModule module(WeaponSlotAPI slot, ShipHullSpecAPI moduleHull, float parentSizeNum, SpriteCache spriteCache) {
+    private static HullModule module(WeaponSlotAPI slot, ShipHullSpecAPI moduleHull, float parentSizeNum) {
         String spritePath = moduleHull == null ? null : moduleHull.getSpriteName();
-        SpriteAPI texture = spritePath == null ? null : spriteCache.texture(spritePath);
+        SpriteAPI texture = spritePath == null ? null : MEASURING_CACHE.texture(spritePath);
         if (texture == null) {
             return null;
         }
@@ -151,28 +152,30 @@ final class HullModules {
         }
     }
 
-    void addFlames(FlameBatch flames, float screenX, float screenY, float facingDeg, float screenScale, float detailScale, float lengthFactor,
+    boolean hasEngines() {
+        return !withEngines.isEmpty();
+    }
+
+    void addFlames(FlameBatch flames, float screenX, float screenY, double facingRad, float screenScale, float detailScale, float lengthFactor,
                    float alpha) {
         if (withEngines.isEmpty()) return;
-        double facingRad = Math.toRadians(facingDeg);
         float facingCos = (float) Math.cos(facingRad);
         float facingSin = (float) Math.sin(facingRad);
         for (HullModule module : withEngines) {
             module.engines().addFlames(flames, module.screenX(screenX, facingCos, facingSin, screenScale),
-                    module.screenY(screenY, facingCos, facingSin, screenScale), Math.toRadians(module.facingDeg(facingDeg)), screenScale, detailScale,
-                    lengthFactor, alpha);
+                    module.screenY(screenY, facingCos, facingSin, screenScale), facingRad + Math.toRadians(module.angleDeg()), screenScale,
+                    detailScale, lengthFactor, alpha);
         }
     }
 
-    void addGlows(TexturedQuadBatch quads, float screenX, float screenY, float facingDeg, float screenScale, float glowFactor, float alpha) {
+    void addGlows(TexturedQuadBatch quads, float screenX, float screenY, double facingRad, float screenScale, float glowFactor, float alpha) {
         if (withEngines.isEmpty()) return;
-        double facingRad = Math.toRadians(facingDeg);
         float facingCos = (float) Math.cos(facingRad);
         float facingSin = (float) Math.sin(facingRad);
         for (HullModule module : withEngines) {
             module.engines().addGlows(quads, module.screenX(screenX, facingCos, facingSin, screenScale),
-                    module.screenY(screenY, facingCos, facingSin, screenScale), Math.toRadians(module.facingDeg(facingDeg)), screenScale, glowFactor,
-                    alpha);
+                    module.screenY(screenY, facingCos, facingSin, screenScale), facingRad + Math.toRadians(module.angleDeg()), screenScale,
+                    glowFactor, alpha);
         }
     }
 }

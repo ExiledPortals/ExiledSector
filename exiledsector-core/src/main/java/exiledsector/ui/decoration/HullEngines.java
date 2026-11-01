@@ -1,6 +1,7 @@
 package exiledsector.ui.decoration;
 
 import com.fs.starfarer.api.combat.ShipHullSpecAPI;
+import com.fs.starfarer.api.combat.ShipVariantAPI;
 import com.fs.starfarer.api.graphics.SpriteAPI;
 import exiledsector.skills.skilleffect.render.SpriteCache;
 import exiledsector.ui.util.SpriteDraw;
@@ -20,20 +21,27 @@ public final class HullEngines {
     private static final float COLOR_CHANNEL_MAX = 255f;
     private static final FlameBatch SHARED_FLAME_BATCH = new FlameBatch();
 
-    public static final HullEngines NONE = new HullEngines(FleetHullVisuals.NONE);
+    public static final HullEngines NONE = new HullEngines(FleetHullVisuals.NONE, HullModules.NONE);
 
     private final FleetHullVisuals visuals;
+    private final HullModules modules;
 
-    private HullEngines(FleetHullVisuals visuals) {
+    private HullEngines(FleetHullVisuals visuals, HullModules modules) {
         this.visuals = visuals;
+        this.modules = modules;
     }
 
     public static HullEngines of(ShipHullSpecAPI hullSpec) {
-        return hullSpec == null ? NONE : new HullEngines(FleetHullVisuals.of(hullSpec));
+        return hullSpec == null ? NONE : new HullEngines(FleetHullVisuals.of(hullSpec), HullModules.of(hullSpec));
+    }
+
+    public static HullEngines of(ShipVariantAPI variant) {
+        ShipHullSpecAPI hullSpec = variant == null ? null : variant.getHullSpec();
+        return hullSpec == null ? NONE : new HullEngines(FleetHullVisuals.of(hullSpec), HullModules.of(variant));
     }
 
     static HullEngines of(FleetHullVisuals visuals) {
-        return visuals == null ? NONE : new HullEngines(visuals);
+        return visuals == null ? NONE : new HullEngines(visuals, HullModules.NONE);
     }
 
     FleetHullVisuals visuals() {
@@ -41,7 +49,7 @@ public final class HullEngines {
     }
 
     public boolean hasEngines() {
-        return !visuals.flames().isEmpty();
+        return !visuals.flames().isEmpty() || modules.hasEngines();
     }
 
     static float flameLengthFactor(float engineLevel) {
@@ -54,8 +62,10 @@ public final class HullEngines {
 
     public void drawHull(SpriteCache spriteCache, String spritePath, float screenX, float screenY, float hullWidth, float hullHeight,
                          float screenScale, float facingDeg, float alpha) {
+        modules.drawUnderParent(spriteCache, screenX, screenY, screenScale, facingDeg, alpha);
         drawSprite(spriteCache, spritePath, screenX, screenY, hullWidth, hullHeight, visuals.centerX(), visuals.centerY(), screenScale, facingDeg,
                 alpha);
+        modules.drawOverParent(spriteCache, screenX, screenY, screenScale, facingDeg, alpha);
     }
 
     static void drawSprite(SpriteCache spriteCache, String spritePath, float screenX, float screenY, float spriteWidth, float spriteHeight,
@@ -122,6 +132,7 @@ public final class HullEngines {
             flames.vertex(color, 0f, textureRight, textureTop, tipX + sideX * halfWidth / 2f, tipY + sideY * halfWidth / 2f);
             flames.vertex(color, 0f, textureRight, 0f, tipX - sideX * halfWidth / 2f, tipY - sideY * halfWidth / 2f);
         }
+        modules.addFlames(flames, screenX, screenY, facingRad, screenScale, detailScale, lengthFactor, alpha);
     }
 
     void addGlows(TexturedQuadBatch quads, float screenX, float screenY, double facingRad, float screenScale, float glowFactor,
@@ -134,5 +145,6 @@ public final class HullEngines {
             float glowSize = flame.length() * screenScale * glowFactor;
             quads.quadAtCenter(slotX, slotY, glowSize, glowSize, 0f, flame.color(), alpha);
         }
+        modules.addGlows(quads, screenX, screenY, facingRad, screenScale, glowFactor, alpha);
     }
 }

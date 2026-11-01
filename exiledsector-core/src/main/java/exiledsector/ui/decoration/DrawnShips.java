@@ -63,10 +63,8 @@ final class DrawnShips {
         try (FlameBatch flames = flameBatch.begin(flameTexture)) {
             for (int i = 0; i < count; i++) {
                 RoamingShip ship = ships[i];
-                float lengthFactor = HullEngines.flameLengthFactor(engineLevel[i]);
                 ship.engines().addFlames(flames, screenX[i], screenY[i], Math.toRadians(ship.drift().facingDeg()), screenScale[i], zoom,
-                        lengthFactor, alpha[i]);
-                ship.modules().addFlames(flames, screenX[i], screenY[i], ship.drift().facingDeg(), screenScale[i], zoom, lengthFactor, alpha[i]);
+                        HullEngines.flameLengthFactor(engineLevel[i]), alpha[i]);
             }
         }
     }
@@ -81,10 +79,8 @@ final class DrawnShips {
         try (TexturedQuadBatch quads = glowQuads.beginAdditive(glowTexture)) {
             for (int i = 0; i < count; i++) {
                 RoamingShip ship = ships[i];
-                float glowFactor = HullEngines.glowFactor(engineLevel[i]);
-                ship.engines().addGlows(quads, screenX[i], screenY[i], Math.toRadians(ship.drift().facingDeg()), screenScale[i], glowFactor,
-                        alpha[i]);
-                ship.modules().addGlows(quads, screenX[i], screenY[i], ship.drift().facingDeg(), screenScale[i], glowFactor, alpha[i]);
+                ship.engines().addGlows(quads, screenX[i], screenY[i], Math.toRadians(ship.drift().facingDeg()), screenScale[i],
+                        HullEngines.glowFactor(engineLevel[i]), alpha[i]);
             }
             extraGlows.accept(quads);
         }

@@ -22,17 +22,18 @@ public final class RefitShipPortrait {
     private VanillaShipView vanillaView;
     private boolean vanillaViewTried;
 
-    private RefitShipPortrait(String spritePath, float spriteWidth, float spriteHeight, FleetHullVisuals visuals, ShipHullSpecAPI hullSpec) {
+    private RefitShipPortrait(String spritePath, float spriteWidth, float spriteHeight, FleetHullVisuals visuals, HullEngines engines,
+                              ShipHullSpecAPI hullSpec) {
         this.spritePath = spritePath;
         this.spriteWidth = spriteWidth;
         this.spriteHeight = spriteHeight;
         this.visuals = visuals;
-        this.engines = HullEngines.of(visuals);
+        this.engines = engines;
         this.hullSpec = hullSpec;
     }
 
     public static RefitShipPortrait of(FleetMemberAPI member, ShipVariantAPI variant) {
-        RefitShipPortrait portrait = of(variant == null ? null : variant.getHullSpec());
+        RefitShipPortrait portrait = of(variant);
         if (portrait != null) {
             portrait.member = member;
             portrait.variant = variant;
@@ -40,7 +41,8 @@ public final class RefitShipPortrait {
         return portrait;
     }
 
-    private static RefitShipPortrait of(ShipHullSpecAPI hullSpec) {
+    private static RefitShipPortrait of(ShipVariantAPI variant) {
+        ShipHullSpecAPI hullSpec = variant == null ? null : variant.getHullSpec();
         String spritePath = hullSpec == null ? null : hullSpec.getSpriteName();
         if (spritePath == null) {
             return null;
@@ -50,7 +52,7 @@ public final class RefitShipPortrait {
             return null;
         }
         FleetHullVisuals visuals = FleetHullVisuals.of(hullSpec);
-        return new RefitShipPortrait(spritePath, texture.getWidth(), texture.getHeight(), visuals, hullSpec);
+        return new RefitShipPortrait(spritePath, texture.getWidth(), texture.getHeight(), visuals, HullEngines.of(variant), hullSpec);
     }
 
     ShipHullSpecAPI hullSpec() {

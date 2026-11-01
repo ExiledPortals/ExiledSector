@@ -2,7 +2,11 @@ package exiledsector.ui.decoration;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HullModuleTest {
 
@@ -66,5 +70,19 @@ class HullModuleTest {
         assertEquals(-80f + (localX * Math.sin(facingRad) + localY * Math.cos(facingRad)) * 3f,
                 module.screenY(-80f, facingCos, facingSin, 3f), TOLERANCE);
         assertEquals(165f, module.facingDeg(parentFacingDeg), TOLERANCE);
+    }
+
+    @Test
+    void onlyModulesWithEngineSlotsCountAsHavingEngines() {
+        FleetHullVisuals withFlame = new FleetHullVisuals(32f, 16f,
+                List.of(new FleetHullVisuals.EngineFlame(-30f, 0f, 180f, 8f, 20f, FleetHullVisuals.DEFAULT_FLAME_COLOR)), List.of());
+        HullModule poweredModule = HullModule.attached("graphics/ships/module.png", 64f, 32f, 32f, 16f, 50f, 0f, 0f, 0f, 0f, 2f, false,
+                HullEngines.of(withFlame));
+        HullModule bareModule = HullModule.attached("graphics/ships/module.png", 64f, 32f, 32f, 16f, -50f, 0f, 0f, 0f, 0f, 2f, true,
+                HullEngines.NONE);
+
+        assertTrue(HullModules.of(List.of(poweredModule, bareModule)).hasEngines());
+        assertFalse(HullModules.of(List.of(bareModule)).hasEngines());
+        assertFalse(HullModules.NONE.hasEngines());
     }
 }

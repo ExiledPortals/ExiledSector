@@ -57,9 +57,8 @@ final class FleetFormation {
         FleetShipDrift.HullMotion motion = FleetShipDrift.HullMotion.of(hullSize);
         float maxOffset = FleetShipDrift.maxOffset(fleetRadius, largestSizeNum, sizeNum, onlyLargest);
         FleetShipDrift drift = new FleetShipDrift(motion, maxOffset, startFacingDeg, random);
-        HullModules modules = variant == null ? HullModules.of(hull, spriteCache) : HullModules.of(variant, spriteCache);
-        return new RoamingShip(spritePath, texture.getWidth(), texture.getHeight(), hullSize, drift, HullEngines.of(FleetHullVisuals.of(hull)),
-                modules);
+        HullEngines engines = variant == null ? HullEngines.of(hull) : HullEngines.of(variant);
+        return new RoamingShip(spritePath, texture.getWidth(), texture.getHeight(), hullSize, drift, engines);
     }
 
     List<RoamingShip> shipsLargestFirst(List<ShipHullSpecAPI> hulls, SpriteCache spriteCache, float startFacingDeg, Random random) {

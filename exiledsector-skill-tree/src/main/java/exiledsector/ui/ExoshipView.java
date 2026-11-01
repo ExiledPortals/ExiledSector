@@ -108,7 +108,7 @@ final class ExoshipView {
     }
 
     void setPlayerShip(FleetMemberAPI member) {
-        renderer.setPlayerShip(member == null ? null : member.getHullSpec());
+        renderer.setPlayerShip(member == null ? null : member.getVariant());
     }
 
     void advance(float amount, boolean docked) {
