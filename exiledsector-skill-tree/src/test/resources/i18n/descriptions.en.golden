@@ -3310,8 +3310,8 @@ type|doctrine_tt_tachyon_lance_licensing|CRUISER|0	0	<good>15%</good> increased 
 type|doctrine_tt_tachyon_lance_licensing|CRUISER|1	0	<good>10%</good> increased beam weapon range.
 type|doctrine_tt_tachyon_lance_licensing|CAPITAL_SHIP|0	0	<good>15%</good> increased beam weapon damage.
 type|doctrine_tt_tachyon_lance_licensing|CAPITAL_SHIP|1	0	<good>10%</good> increased beam weapon range.
-flavour|dynamic_grid	0	Nightcross fits its dynamic coils to almost every hull it builds and never sells them on their own, so the crew pulls a set from a boarded Nightcross wreck. The warranty, naturally, does not cover third-party installation.
-flavourAutomated|dynamic_grid	0	Nightcross fits its dynamic coils to almost every hull it builds and never sells them on their own, so the refit crew pulls a set from a boarded Nightcross wreck. The warranty, naturally, does not cover third-party installation, least of all into a machine.
+flavour|dynamic_grid	0	Nightcross Armory fits its dynamic coils to almost every hull it builds and never sells them on their own, so the crew pulls a set from a boarded Nightcross wreck. The warranty, naturally, does not cover third-party installation.
+flavourAutomated|dynamic_grid	0	Nightcross Armory fits its dynamic coils to almost every hull it builds and never sells them on their own, so the refit crew pulls a set from a boarded Nightcross wreck. The warranty, naturally, does not cover third-party installation, least of all into a machine.
 type|dynamic_grid|null|0	0	Once shields have been down for 0.75/1.1/2/3 seconds while not venting or overloaded, <good>15%</good> increased energy weapon rate of fire and <good>15%</good> reduced energy weapon flux cost.
 type|dynamic_grid|null|1	0	<good>25%</good> increased shield raise rate.
 type|dynamic_grid|null|2	1	<good>10%</good> more damage taken by shields.

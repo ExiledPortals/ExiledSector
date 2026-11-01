@@ -3675,8 +3675,8 @@
 			"exclusiveHullMods": [
 				"nightcrosstargeting"
 			],
-			"flavour": "Nightcross fits its dynamic coils to almost every hull it builds and never sells them on their own, so the crew pulls a set from a boarded Nightcross wreck. The warranty, naturally, does not cover third-party installation.",
-			"flavourAutomated": "Nightcross fits its dynamic coils to almost every hull it builds and never sells them on their own, so the refit crew pulls a set from a boarded Nightcross wreck. The warranty, naturally, does not cover third-party installation, least of all into a machine.",
+			"flavour": "Nightcross Armory fits its dynamic coils to almost every hull it builds and never sells them on their own, so the crew pulls a set from a boarded Nightcross wreck. The warranty, naturally, does not cover third-party installation.",
+			"flavourAutomated": "Nightcross Armory fits its dynamic coils to almost every hull it builds and never sells them on their own, so the refit crew pulls a set from a boarded Nightcross wreck. The warranty, naturally, does not cover third-party installation, least of all into a machine.",
 			"tags": [
 				"shield",
 				"energy",
