@@ -84,43 +84,9 @@
         </exiledSector.HullItem>
         <exiledSector.Subroutine>
           <id>socketable_2</id>
-          <definitionId>unique_halcyon_fire_lattice</definitionId>
+          <definitionId>unique_p_space_lattice</definitionId>
           <seed>12</seed>
-          <explicitModifiers>
-            <exiledSector.RolledModifier>
-              <modifierId>BEAM_WEAPON_RANGE_PERCENT_HALCYON_LATTICE</modifierId>
-              <slot>PREFIX</slot>
-              <lines>
-                <exiledSector.RolledEffect>
-                  <effectName>BEAM_WEAPON_RANGE_PERCENT</effectName>
-                  <magnitude>11.0</magnitude>
-                </exiledSector.RolledEffect>
-              </lines>
-              <locked>false</locked>
-            </exiledSector.RolledModifier>
-            <exiledSector.RolledModifier>
-              <modifierId>WEAPON_AUTOFIRE_ACCURACY_PERCENT_HALCYON_LATTICE</modifierId>
-              <slot>PREFIX</slot>
-              <lines>
-                <exiledSector.RolledEffect>
-                  <effectName>WEAPON_AUTOFIRE_ACCURACY_PERCENT</effectName>
-                  <magnitude>19.0</magnitude>
-                </exiledSector.RolledEffect>
-              </lines>
-              <locked>false</locked>
-            </exiledSector.RolledModifier>
-            <exiledSector.RolledModifier>
-              <modifierId>SENSOR_PROFILE_PERCENT_HALCYON_LATTICE</modifierId>
-              <slot>PREFIX</slot>
-              <lines>
-                <exiledSector.RolledEffect>
-                  <effectName>SENSOR_PROFILE_PERCENT</effectName>
-                  <magnitude>15.0</magnitude>
-                </exiledSector.RolledEffect>
-              </lines>
-              <locked>false</locked>
-            </exiledSector.RolledModifier>
-          </explicitModifiers>
+          <explicitModifiers/>
           <frozenName reference="../../exiledSector.HullItem/frozenName"/>
           <mirrored>false</mirrored>
         </exiledSector.Subroutine>

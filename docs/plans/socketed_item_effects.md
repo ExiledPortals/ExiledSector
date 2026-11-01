@@ -50,7 +50,7 @@ Each `SocketedItem` gets a `category()` ("hull_item" or "subroutine") and `Socke
 | Effect | Scales |
 |---|---|
 | `SOCKETED_SUBROUTINE_EFFECT_PERCENT` | every socketed subroutine's effect, as above |
-| `SOCKETED_SUBROUTINE_DRAWBACK_EFFECT_PERCENT` | only its drawback lines (the Cracked Drive Governor's CR loss) |
+| `SOCKETED_SUBROUTINE_DRAWBACK_EFFECT_PERCENT` | only its drawback lines (such as a CR loss) |
 
 No targeted subroutine effect: sockets are tree nodes, not fixed slots, so there is nothing stable to target. A catch-all "increased effect of socketed items" (category null) and per-kind effects such as increased effect of Doctrine Archives are cheap to add later and wait for stage 4 content that wants them.
 

@@ -254,32 +254,31 @@ describe('star charts', () => {
 });
 
 describe('skill tree socketables', () => {
-  it('shows a unique subroutine its lines as in-game text and saves an added line to subroutines.csv only', async () => {
+  it('saves a unique subroutine its edited drop source to subroutines.csv only', async () => {
     const before = Object.fromEntries([SUBROUTINES_FILE, HULL_ITEMS_FILE].map((file) => [file, server.readProjectFile(file)]));
     const subroutines = await openItems('Skill Tree Socketables', 'Subroutines');
 
-    fireEvent.click(await within(subroutines).findByText('Halcyon Fire-Control Lattice', undefined, LOAD_TIMEOUT));
-    expect((await within(subroutines).findAllByText('10 to 15', undefined, LOAD_TIMEOUT)).length).toBeGreaterThan(0);
+    fireEvent.click(await within(subroutines).findByText('P-Space Lattice', undefined, LOAD_TIMEOUT));
     expect(within(subroutines).queryByText('Hegemony Doctrine Archive')).toBeNull();
-    await pickOption(subroutines, 'Add to lines', 'top speed', /TOP_SPEED_PERCENT_CRACKED_GOVERNOR$/);
+    fireEvent.change(await findLabelled('Drop source', subroutines), { target: { value: 'faction:omega; site:station_research' } });
     await save('Saved subroutines.csv');
 
-    const halcyon = server.readProjectFile(SUBROUTINES_FILE).split(/\r?\n/).find((line) => line.startsWith('unique_halcyon_fire_lattice,'));
-    expect(halcyon).toContain('@SENSOR_PROFILE_PERCENT_HALCYON_LATTICE; @TOP_SPEED_PERCENT_CRACKED_GOVERNOR,');
+    const lattice = server.readProjectFile(SUBROUTINES_FILE).split(/\r?\n/).find((line) => line.startsWith('unique_p_space_lattice,'));
+    expect(lattice).toContain(',GATES_RADIUS_WHILE_PHASED:3:3,faction:omega; site:station_research,');
     expect(server.readProjectFile(HULL_ITEMS_FILE)).toBe(before[HULL_ITEMS_FILE]);
   }, 90000);
 
   it('gives a unique subroutine a radius and saves it to subroutines.csv', async () => {
     const subroutines = await openItems('Skill Tree Socketables', 'Subroutines');
-    fireEvent.click(await within(subroutines).findByText('Cracked Drive Governor', undefined, LOAD_TIMEOUT));
+    fireEvent.click(await within(subroutines).findByText('P-Space Lattice', undefined, LOAD_TIMEOUT));
 
     fireEvent.click(await findLabelled('Radius', subroutines));
-    fireEvent.click(await screen.findByRole('option', { name: 'medium' }, LOAD_TIMEOUT));
+    fireEvent.click(await screen.findByRole('option', { name: 'large' }, LOAD_TIMEOUT));
     await save('Saved subroutines.csv');
 
     const lines = server.readProjectFile(SUBROUTINES_FILE).split(/\r?\n/);
     expect(lines[0]).toMatch(/,radius,area$/);
-    expect(lines.find((line) => line.startsWith('unique_cracked_drive_governor,'))).toMatch(/,medium,$/);
+    expect(lines.find((line) => line.startsWith('unique_p_space_lattice,'))).toMatch(/,large,$/);
   }, 90000);
 
   it('edits a doctrine archive row and its subroutine together and refuses line counts out of order', async () => {

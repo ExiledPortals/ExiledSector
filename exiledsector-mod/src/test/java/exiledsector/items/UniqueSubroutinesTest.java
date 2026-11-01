@@ -307,7 +307,7 @@ class UniqueSubroutinesTest {
             }
         }
         assertEquals(uniqueRows, uniques.size());
-        assertTrue(uniques.size() >= 4 && uniques.size() <= 8, String.valueOf(uniques.size()));
+        assertTrue(uniques.size() >= 3 && uniques.size() <= 8, String.valueOf(uniques.size()));
         for (ItemDefinition unique : uniques) {
             assertTrue(unique.unique(), unique.id());
             assertTrue(unique.pool().size() >= 2 || EmptyShells.hollows(unique) || GatedSubroutines.gates(unique), unique.id());
